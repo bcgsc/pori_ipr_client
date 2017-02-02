@@ -1,0 +1,154 @@
+md-dialog(layout="column", aria-label="Update Alterations Entry", flex-md=60, flex-xs=100, flex-lg=50)
+  form(flex='auto', name='form', ng-submit="update(form)")
+    md-toolbar
+      .md-toolbar-tools
+        h2 {{formAction}} Alterations Entry
+        span(flex)
+        md-button.md-icon-button(ng-click='cancel()')
+          md-icon cancel
+    md-dialog-content(layout-padding).alterationsForm
+      md-tabs(md-dynamic-height, md-border-bottom)
+        md-tab(label="Report Details")
+                    
+          div(layout="column")
+          
+            div(layout="row")
+              md-input-container(flex)
+                input(ng-model="gene.ident", disabled, placeholder="DEBUG UUID")
+        
+            div(layout="row")
+              md-input-container(flex)
+                input(ng-model="gene.gene", name="Gene", placeholder="Gene", required)
+                div(ng-messages="form.Gene.$error")
+                  p(ng-message="required") Gene name is required
+              md-input-container(flex) 
+                input(ng-model="gene.variant", name='Variant', placeholder='Variant', required)
+                div(ng-messages="form.Variant.$error")
+                  p(ng-message="required") Variant is required
+                  
+            div(layout="row")
+              md-input-container(flex)
+                label Clinical Relevance
+                md-select(ng-model="gene.alterationType", aria-label"Clinical Relevance",required)
+                  md-option(ng-repeat="(k, v) in $alterations.type", ng-value="k", placeholder="Clinical Relevance") {{v}}
+                  
+             
+            div(layout="row")
+              md-input-container(flex)
+                label Biological Sample
+                md-select(ng-model="gene.sample", aria-label="Biological Sample", required)
+                  md-option(ng-repeat="sample in samples", ng-value="sample", placeholder="Biological Sample") {{sample}}
+                  
+             
+            div(layout="row")
+              md-input-container(flex)
+                input(ng-model="gene.therapeuticContext", name="Context", placeholder="Therapeutic Context", required)
+                div(ng-messages="form.Context.$error")
+                  p(ng-message="required") Therapeutic Context is required
+                  
+            div(layout="row")
+              md-input-container(flex)
+                md-autocomplete(
+                  md-input-name="Disease",
+                  placeholder="Cancer Type",
+                  md-selected-item="gene.disease",
+                  md-search-text="disease.SearchText",
+                  md-items="item in findDisease(disease.SearchText)",
+                  md-item-text="item",
+                  md-min-length=0,
+                  md-whiteframe="1",
+                  md-require-match="true",
+                  required
+                )
+                  //span(md-highlight-text="disease.SearchText", md-highlight-falgs="^i") {{item}}
+                  md-item-template  {{item}}
+                  md-not-found No Matches Found.
+            div(layout="row")
+              md-input-container(flex)
+                md-autocomplete(
+                  md-input-name="Association",
+                  placeholder="Association",
+                  md-selected-item="gene.association",
+                  md-search-text="assoc.SearchText",
+                  md-items="item in findRelevance(assoc.SearchText)",
+                  md-item-text="item",
+                  md-min-length=0,
+                  md-whiteframe="1",
+                  md-require-match="true",
+                  reqiured
+                )
+                  span(md-highlight-text="assoc.SearchText", md-highlight-falgs="^i") {{item}}
+                  md-item-template  {{item}}
+                  md-not-found No Matches Found.
+                  
+              md-input-container(flex)
+                md-select(ng-model="gene.variant_type", aria-label="Variant Type", required)
+                  md-option(ng-repeat="varType in $alterations.variant", ng-value="varType", placeholder="Variant Type") {{varType}}
+              
+        md-tab(label="Reference")
+                    
+          div(layout="column")
+        
+            div(layout="row")
+              md-input-container(flex)
+                label Evidence
+                md-select(ng-model="gene.evidence", aria-label="Evidence")
+                  md-option(ng-repeat="(k, val) in $alterations.evidence", ng-value="k", placeholder="Evidence", required) {{val}}
+            div(layout="row")
+              md-input-container(flex=30)
+                md-select(ng-model="reference.type", aria-label="Reference Type")
+                  md-option(ng-repeat="refType in $alterations.referenceTypes", ng-value="refType", placeholder="Ref Type", required) {{refType}}
+                  
+              md-input-container(flex)
+                input(ng-model="gene.reference", name="Reference", placeholder="Reference", ng-change="checkPMID()", required)
+                div(ng-messages="form.Reference.$error")
+                  p(ng-message="required") A reference is required - Pubmed article ID preferred.
+                  
+             
+            div(layout="row")
+              md-input-container(flex)
+                input(ng-model="reference.title", name="RefTitle", placeholder="Reference Title", ng-disabled="disableRefTitle")
+                  
+            div(layout="row")
+              md-input-container(flex)
+                textarea(ng-model="reference.summary", name="RefSummary", placeholder="Reference Summary", rows=3, required)
+              
+              
+        md-tab(label="Knowledge Base")
+          div(layout="column")
+        
+            div(layout="row")
+              md-input-container(flex)
+                label Events-Expression
+                input(ng-model="kb.events_expression", name="kbEventsExpression", placeholder="Events-Expression", required, ng-disabled="!kbEditDisabled")
+            
+            div(layout="row")
+              md-input-container(flex)
+                input(ng-model="kb.context", name="kbContext", placeholder="Context", required, ng-disabled="!kbEditDisabled")
+            
+            div(layout="row")
+              md-input-container(flex=30)
+                input(ng-model="kb.type", name="kbType", placeholder="Type", required, ng-disabled="!kbEditDisabled")
+                  
+              md-input-container(flex)
+                input(ng-model="kb.relevance", name="kbRelevance", placeholder="Relevance", required, ng-disabled="!kbEditDisabled")
+                
+            div(layout="row")
+              md-input-container(flex=30)
+                input(ng-model="kb.disease_list", name="kbDiseaseList", placeholder="Disease-List", required, ng-disabled="!kbEditDisabled")
+                  
+              md-input-container(flex)
+                input(ng-model="kb.evidence", name="kbEvidence", placeholder="Evidence", required, ng-disabled="!kbEditDisabled")
+                
+            div(layout="row")
+              md-checkbox(ng-model="kbEditDisabled", ng-init="kbEditDisabled=false", ng-true-value="true", ng-false-value="false", aria-label="Edit Knowledge Base values manually")
+              | I know what I'm doing, I want to edit these fields manually.
+                
+        md-tab(ng-hide="true")
+          
+            
+      
+      
+    md-dialog-actions(layout="row", layout-aligh="end center", layout-padding) 
+      md-button(type="submit").md-primary {{formAction}} Alteration
+

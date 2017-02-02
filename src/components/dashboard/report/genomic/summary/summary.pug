@@ -1,0 +1,185 @@
+section
+  md-subheader.md-primary Patient Information
+  
+  div(layout="column", flex).details
+    div(layout="row", flex)
+      dt(flex="{{detailSize}}", ng-init="detailSize=15") Patient ID: 
+      dd(flex) {{pog.POGID}}
+      
+      dt(flex="{{detailSize}}") Gender: 
+      dd(flex) {{data.pi.gender}}
+      
+      dt(flex="{{detailSize}}") Tumour Sample: 
+      dd(flex) {{data.pi.tumourSample}}
+      
+    div(layout="row", flex)
+      dt(flex="{{detailSize}}") Tumour Type: 
+      dd(flex) {{data.pi.tumourType}}
+      
+      dt(flex="{{detailSize}}") Case Type: 
+      dd(flex) Adult
+      
+      dt(flex="{{detailSize}}") Constitutional Sample: 
+      dd(flex) {{data.pi.constitutionalSample}}
+      
+    div(layout="row", flex)
+      dt(flex="{{detailSize}}") Report Date: 
+      dd(flex) N/A
+      
+      dt(flex="{{detailSize}}") Age at Diagnosis: 
+      dd(flex) Not Specified
+      
+      dt(flex="{{detailSize}}") Biopsy Details: 
+      dd(flex) {{data.pi.biopsySite}}
+      
+    div(layout="row", flex)
+      dt(flex="{{detailSize}}") Physician: 
+      dd(flex) {{data.pi.physician}}
+      
+      dt(flex="{{detailSize}}") 
+      dd(flex) 
+      
+      dt(flex="{{detailSize}}") Protocol: 
+      dd(flex) {{data.pi.tumourProtocol}}
+
+section
+  md-subheader.md-primary Patient Tumour Analysis Summary
+  
+  div(layout="column", flex)
+    
+    div(layout="row")
+      div(layout="column", flex).dataBox
+        h2.title Genome Status
+        
+        div.box
+          div(layout="row", flex).heading
+            div(flex) Tumour Content
+            div(flex) Ploidy Model
+          div(layout="row", flex).content
+            div(flex) 
+              ipr-tumour-content(tc="{{data.ta.tumourContent}}", md-whiteframe="1")
+            div(flex) {{data.ta.ploidy}}
+            
+      div(layout="column", flex).dataBox
+        h2.title Tissue Comparators
+        
+        div.box
+          div(layout="row", flex).heading
+            div(flex) Normal Expression
+            div(flex) Disease Expression
+          div(layout="row", flex).content
+            div(flex) {{data.ta.normalExpressionComparator}}
+            div(flex) {{data.ta.diseaseExpressionComparator}}
+      
+      div(layout="column", flex).dataBox
+        h2.title Subtyping
+        
+        div.box
+          div(layout="row", flex).heading
+            div(flex) Subtype
+          div(layout="row", flex).content
+            div(flex) {{(data.ta.subtyping || "Not Specified")}}
+      
+      div(layout="column", flex).dataBox
+        h2.title Microbial Content
+        
+        div.box
+          div(layout="row", flex).heading
+            div(flex) Species
+            div(flex) Integration
+          div(layout="row", flex).content
+            div(flex) None
+            div(flex) None
+    
+    div(layout="row")
+      div(layout="column", flex="25").dataBox.noBottomMargin
+        h2.title Mutation Signature
+      div(layout="column", flex="75").dataBox.noBottomMargin
+        h2.title Mutation Burden
+          span (in protein coding genes)
+    
+    div(layout="column").mutationTable
+      div(layout="row").header
+        div(flex).signature {{(data.ms.mutationSignature || "Not Specified" )}}
+        div(layout="row", flex).mutationType
+          div(flex) 
+            | SNVs
+            md-button(md-no-ink).md-icon-button
+              md-tooltip(md-direction="bottom") Single Nucleotide Variations
+              md-icon help
+          div(flex="30").total {{mutationBurdenFilter(data.ms.totalSNV)}}
+          
+        div(layout="row", flex).mutationType
+          div(flex) 
+            | Indels
+            md-button(md-no-ink).md-icon-button
+              md-tooltip(md-direction="bottom") Inserations and Deletions
+              md-icon help
+          div(flex="30").total {{mutationBurdenFilter(data.ms.totalIndel)}}
+          
+        div(layout="row", flex).mutationType 
+          div(flex) 
+            | SVs
+            md-button(md-no-ink).md-icon-button
+              md-tooltip(md-direction="bottom") Structural Variants
+              md-icon help
+          div(flex="30").total {{mutationBurdenFilter(data.ms.totalSV)}}
+      
+      div(layout="column").data
+        div(layout="row", flex)
+          div(flex) Interpreted prevelance
+          div(flex) {{data.ms.snvPercentileDiseaseCategory}}
+          div(flex) {{data.ms.indelPercentileDiseaseCategory}}
+          div(flex) {{data.ms.svPercentilePOGCategory}}
+        div(layout="row", flex).data
+          div(flex) Percentile among compendium
+          div(flex) {{data.ms.snvPercentileTCGA}}
+          div(flex) {{data.ms.indelPercentileTCGA}}
+          div(flex) {{data.ms.svPercentilePOG}} (POG)
+        div(layout="row", flex).data
+          div(flex) Percentile among {{data.ta.diseaseExpressionComparator}}
+          div(flex) {{data.ms.snvPercentileDisease}}
+          div(flex) {{data.ms.indelPercentileDisease}}
+          div(flex) 
+      
+  div(layout="column", flex)
+    
+    div(layout="row")
+      div(layout="column", flex).dataBox.noBottomMargin
+        h2.title Key Genomic and Transcriptomic Alterations Identified
+        
+    div(layout="row").keyAlterationsIdentified
+      div(layout="row", flex).header.sm
+        div(flex) Small Mutations
+        div(flex="30") {{data.vc.smallMutations}}
+      div(layout="row", flex).header.cnv
+        div(flex) Copy Number Variants
+        div(flex="30") {{data.vc.CNVs}}
+      div(layout="row", flex).header.sv
+        div(flex) Structural Variants
+        div(flex="30") {{data.vc.SVs}}
+      div(layout="row", flex).header.outliers
+        div(flex) Expression Outliers
+        div(flex="30") {{data.vc.expressionOutliers}}
+    div(flex).alterations
+      div(ng-repeat="variant in data.gai", class="{{variant.type}}") {{variant.geneVariant}}
+      
+section
+  md-subheader.md-primary Genomic Events with Potential Therapeutic Association
+  
+  div(layout="column", flex)
+    
+    div(layout="row")
+      div(layout="column", flex).dataBox
+        
+        div.box
+          div(layout="row", flex).heading
+            div(flex) Genomic Events
+            div(flex) Approved in this cancer type
+            div(flex) Approved in other cancer type
+            div(flex) Emerging Evidence
+          div(layout="row", flex, ng-repeat="gene in data.get").row
+            div(flex) {{gene.genomicEvent}}
+            div(flex) {{gene.approvedThisCancerType}}
+            div(flex) {{gene.approvedOtherCancerType}}
+            div(flex) {{gene.emergingPreclinicalEvidence}}

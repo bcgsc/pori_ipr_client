@@ -1,0 +1,39 @@
+.bread-crumbs {
+  background-color: #dcdcdc;
+  color: #636363;
+  margin: 0;
+  padding: 10px 10px 10px 15px;
+  border-bottom: 3px solid #cfcfcf;
+  
+  .md-subheader-inner {
+    margin: 0;
+    padding: 0 !important;
+    
+    ol {
+      list-style-type: none;
+      clear: both;
+      margin: 0;
+      padding: 0;
+      
+      li {
+        float: left;
+        padding: 0 0 0 5px;
+        
+        span {
+          padding-right: 5px;
+        }
+        
+        a {
+          color: #636363;
+          text-decoration: none;
+        }
+        a:hover {
+          text-decoration: underline;
+          color: rgb(63,81,181);
+        }
+        
+      }
+    }
+  }
+  
+}

@@ -1,0 +1,12 @@
+section
+  md-subheader.md-primary Analyst Comments
+      
+  div(layout="column").analystComments
+    
+    div(flex=10) 
+      md-button(ng-click="updateComments()").md-icon-button.edit-icon
+        md-icon edit 
+    div(marked="(analystComments.comments || '### Report Draft \n No comments yet.')")
+  div Updated by: [name] on {{analystComments.updatedAt}}
+  
+  div.smallBottom &nbsp;

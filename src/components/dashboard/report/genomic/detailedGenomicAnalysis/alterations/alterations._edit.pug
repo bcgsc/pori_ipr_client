@@ -1,0 +1,95 @@
+md-dialog(layout="column", aria-label="Update Alterations Entry", ng-cloak, flex-md=60, flex-xs=100, flex-lg=50)
+  form(flex='auto', name='form', ng-submit="update(form)")
+    md-toolbar
+      .md-toolbar-tools
+        h2 Update Alterations Entry
+        span(flex)
+        md-button.md-icon-button(ng-click='cancel()')
+          md-icon cancel
+    md-dialog-content(layout-padding)
+      div(layout="column")
+        
+        div(layout="row")
+          md-input-container(flex)
+            input(ng-model="gene.gene", name="Gene", placeholder="Gene", required)
+            div(ng-messages="form.Gene.$error")
+              p(ng-message="required") Gene name is required
+          md-input-container(flex) 
+            input(ng-model="gene.variant", name='Variant', placeholder='Variant', required)
+            div(ng-messages="form.Variant.$error")
+              p(ng-message="required") Variant is required
+        
+        div(layout="row")
+          md-input-container(flex)
+            input(ng-model="gene.sample", name="Sample", placeholder="Sample", disabled)
+            div(ng-messages="form.Sample.$error")
+              p(ng-message="required") Sample is required
+              
+        div(layout="row")
+          md-input-container(flex)
+            input(ng-model="gene.gene", name="Gene", placeholder="Gene", required)
+            div(ng-messages="form.Gene.$error")
+              p(ng-message="required") Gene name is required
+          md-input-container(flex) 
+            input(ng-model="gene.expression_cancer_percentile", name='Disease', placeholder='Disease Percentile', required)
+            div(ng-messages="form.Disease.$error")
+              p(ng-message="required") Variant is required
+              
+        div(layout="row")
+          md-input-container(flex)
+            input(ng-model="gene.copyNumber", name="CopyNumber", placeholder="Copy Number", required)
+            div(ng-messages="form.CopyNumber.$error")
+              p(ng-message="required") Copy Number is required
+          md-input-container(flex) 
+            input(ng-model="gene.zygosity", name='Zygosity', placeholder='Zygosity', required)
+            div(ng-messages="form.Zygosity.$error")
+              p(ng-message="required") Zygosity is required
+              
+        div(layout="row")
+          md-input-container(flex)
+            input(ng-model="gene.disease", name="Disease", placeholder="Disease", required)
+            div(ng-messages="form.Disease.$error")
+              p(ng-message="required") Expression is required
+          md-input-container(flex)
+            label Alteration Type
+            md-select(ng-model="gene.alterationType", placeholder="Alteration Type")
+              md-option(ng-repeat="(k, v) in $alterations.type track by k", ng-value="k") {{v}}
+              
+        div(layout="row")
+          md-input-container(flex)
+            input(ng-model="gene.therapeuticContext", name="TherapeuticContext", placeholder="Therapeutic Context", required)
+            div(ng-messages="form.TherapeuticContext.$error")
+              p(ng-message="required") Therapeutic Context is required
+          md-input-container(flex)
+            label Evidence
+            md-select(ng-model="gene.evidence", placeholder="Alteration Type/Relevance")
+              md-option(ng-repeat="(k, v) in $alterations.evidence track by k", ng-value="k") {{v}}
+              
+        div(layout="row")
+          md-input-container(flex)
+            md-autocomplete(
+              md-input-name="Association",
+              placeholder="Association",
+              md-selected-item="gene.association",
+              md-search-text="assoc.SearchText",
+              md-items="item in findRelevance(assoc.SearchText)",
+              md-item-text="item",
+              md-min-length=0,
+              md-whiteframe="1",
+              md-require-match="true"
+            )
+              //span(md-highlight-text="searchText", md-highlight-falgs="^i") {{item}}
+              md-item-template  {{item}}
+              md-not-found No Matches Found.
+                
+        div(layout="row") 
+          p(ng-show="form.Association.$error.required") Association is required
+          p(ng-show="form.Association.$error.md-require-match") Association must match an entry from the provided list.
+        div {{form.Association.$error}}
+          
+            
+      
+      
+    md-dialog-actions(layout="row", layout-aligh="end center", layout-padding) 
+      md-button(type="submit").md-primary Update Alteration
+

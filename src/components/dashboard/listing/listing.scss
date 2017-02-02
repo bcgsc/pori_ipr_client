@@ -1,0 +1,43 @@
+div.PogList {
+  
+  background-color: #d5dee2;
+  margin: 0 0 10px 0;
+  padding: 0 0 10px 0;
+  
+  h2 {
+    margin: 0 0 10px 0;
+    padding: 10px 0 7px 7px;
+    text-align: left;
+    background-color: #0277bd;
+    color: #fff;
+    font-size: 1.2em;
+    
+    span.title {
+      font-size: 1.0em;
+      cursor: pointer;
+    }
+    
+    span {
+      font-size: 0.65em;
+    }
+  }
+  
+  div { // Column
+  
+    padding: 0 10px;
+    
+    div { // Row
+    
+      padding: 0;
+      
+      div { // Content
+        padding: 0;
+        font-weight: 100;
+        
+        span {
+          font-weight: 500;
+        }
+      }
+    }
+  }
+}

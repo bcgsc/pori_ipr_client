@@ -1,0 +1,22 @@
+section
+  md-subheader.md-primary Detailed Genomic Analysis
+  
+  div(layout="column", flex)
+    
+    div(layout="column", flex)
+      
+      h2.title Therapries Approved in this Tumour Type
+      ipr-genomic-alteration(ng-repeat="gene in approvedThisCancer", samples="samples", gene="gene").container
+      
+      h2.title Therapries Approved in other tumour types
+      ipr-genomic-alteration(ng-repeat="gene in approvedOtherCancer", samples="samples", gene="gene").container
+    
+      
+      h2.title Alterations With Therapeutic Relevance
+      
+    div(ng-repeat="(alteration, genes) in alterations")
+      h3.title {{alteration}}
+
+      div(ng-if="genes.length == 0") None.
+      ipr-genomic-alteration(ng-repeat="gene in genes", samples="samples", gene="gene").container
+      

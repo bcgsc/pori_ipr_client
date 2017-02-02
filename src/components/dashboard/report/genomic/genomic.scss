@@ -1,0 +1,342 @@
+.pog-report {
+  
+  section {
+    
+    margin-bottom: 10px;
+    background: rgb(220,220,220);
+    
+    .md-subheader {
+      background: rgb(204,207,226);
+      
+      .md-subheader-inner {
+        padding: 10px;
+        margin: 0;
+        
+        .md-subheader-content {
+          font-size: 1.2em;
+          color: rgb(50,50,50);
+        }
+        
+      }
+      
+    }
+    
+    .details {
+      padding: 15px;
+      font-size: 0.9em;
+      
+      div {
+        margin: 3px 0;
+        
+        dt {
+          text-align: right;
+          color: rgb(100,100,100);
+          font-size: 0.9em;
+          margin: 0;
+          padding: 0;
+        }
+        
+        dd {
+          font-weight: 600;
+          margin: 0;
+          padding: 0 0 0 5px;
+        }
+      }
+      
+      &.box {
+        background-color: rgb(235,235,235);
+        margin: 8px 0 0 0;
+      }
+      
+      .collapse {
+        position: absolute;
+        right: 21.5%;
+        margin-top: -5px;
+        
+        md-icon {
+          cursor: pointer;
+          font-size: 1.3em;
+        }
+        
+      }
+      
+    }
+    
+    .analystComments {
+      margin: 7px 4px 7px 4px;
+      padding: 20px;
+      background-color: rgb(235,235,235);
+    }
+    .smallBottom {
+      height: 4px;
+      line-height: 4px;
+      overflow: hidden;
+    }
+    
+    h2.title {
+      font-size: 0.85em;
+      font-weight: 500;
+      margin: 0;
+      padding: 5px 2px 5px 7px;
+      text-transform: uppercase;
+      width: 100%;
+      background-color: rgb(154,162,204);
+      
+      span {
+        font-size: 0.75em;
+        margin-left: 6px;
+        text-transform: lowercase;
+      }
+    }
+    
+    h3.title {
+      font-size: 0.75em;
+      font-weight: 500;
+      margin: 0;
+      padding: 5px 2px 5px 7px;
+      text-transform: uppercase;
+      background-color: rgb(197, 197, 197);
+      
+      span {
+        font-size: 0.75em;
+        margin-left: 6px;
+        text-transform: lowercase;
+      }
+    }
+    
+    .dataBox {
+      margin: 7px 4px;
+      
+      &.noBottomMargin {
+        margin-bottom: 0;
+      }
+      
+      div.box {
+        background-color: rgb(180,180,180);
+        
+        div.heading {
+          font-weight: 100;
+          font-size: 0.8em;
+          text-align: center;
+          padding: 10px 0;
+          background-color: rgb(204,207,226);
+        }
+        div.content {
+          font-weight: 600;
+          font-size: 0.9em;
+          text-align: center;
+          padding: 20px 0;
+          background-color: rgb(235,235,235);
+          
+          div {
+            padding: 0 5px;
+          }
+        }
+        div.row {
+          background-color: rgb(235,235,235);
+          font-weight: 300;
+          padding: 3px 2px 3px 5px;
+          font-size: 0.85em;
+          
+          div {
+            min-height: 20px;
+            vertical-align: middle;
+          }
+          
+          &:nth-of-type(odd) {
+            background-color: rgb(215, 215, 215);
+          }
+          &:hover {
+            background-color: rgb(247,206,170);
+            
+            .edit {
+              md-icon {
+                display: inline;
+              }
+              
+            }
+            
+          }
+          
+          span.reference {
+            cursor: pointer;
+            
+            md-icon {
+              vertical-align: middle;
+              margin-left: 5px;
+              font-size: 1.2em;
+              height: auto;
+              width: auto;
+              min-height: 0;
+              min-width: 0;
+            }
+            
+          }
+          
+          .edit {
+            
+            md-icon {
+              cursor: pointer;
+              display: none;
+              font-size: 1.2em;
+              
+              &:hover {
+                color: rgb(63,81,181);
+              }
+            }
+            
+          }
+          
+        }
+      }
+    }
+    
+    .mutationTable {
+      background-color: rgb(235,235,235);
+      margin: 0px 4px 7px 4px;
+      
+      .header {
+        
+        .signature {
+          text-align: center;
+          padding: 15px 0;
+          font-size: 0.9em;
+          background-color: rgb(190,190,190);
+          box-sizing: border-box;
+          border-right: 8px solid rgb(220,220,220);
+          border-bottom: 8px solid rgb(220,220,220);
+        }
+        
+        .mutationType {
+          font-weight: 100;
+          font-size: 0.9em;
+          text-align: center;
+          background-color: rgb(204,207,226);
+          
+          div {
+            padding: 15px 0;
+            
+            button {
+              margin: 0;
+              padding: 0;
+              width: auto;
+              height: 18px;
+              min-height: auto;
+              line-height: initial;
+              
+              md-icon {
+                width: auto;
+                height: 18px;
+                font-size: 1.0em;
+              }
+            }
+          }
+          
+          .total {
+            background-color: rgb(144,147,166);
+            font-weight: 600;
+            color: rgb(255,255,255);
+          }
+        }
+        
+      }
+      
+      .data {
+        
+        div {
+          div:first-of-type {
+            text-align: left;
+          }
+          div:nth-of-type(3) {
+            background-color: rgb(225,225,225);
+          }
+          div {
+            padding: 5px 0 5px 5px;
+            text-align: center;
+          }
+        }
+        
+      }
+      
+    }
+    
+    .keyAlterationsIdentified {
+      
+      margin: 0 4px 0px 4px;
+      
+      div.header {
+        div {  
+          padding: 15px 0;
+          font-size: 0.8em;
+        }
+        div:first-of-type {
+          padding-left: 10px;
+        }
+        div:nth-of-type(2) {
+          text-align: center;
+          font-weight: 600;
+        }
+      }
+      
+      div.sm {
+        background-color: rgb(179,187,232);
+        
+        div:nth-of-type(2) {
+          color: #ffffff;
+          background-color: rgb(63,81,181);
+        }
+      }
+      
+      div.cnv {
+        background-color: rgb(178,214,171);
+        
+        div:nth-of-type(2) {
+          color: #ffffff;
+          background-color: rgb(19,165,44);
+        }
+      }
+      
+      div.sv {
+        background-color: rgb(212,179,232);
+        
+        div:nth-of-type(2) {
+          color: #ffffff;
+          background-color: rgb(141,63,181);
+        }
+      }
+      
+      div.outliers {
+        background-color: rgb(247,206,170);
+        
+        div:nth-of-type(2) {
+          color: #ffffff;
+          background-color: rgb(193,101,20);
+        }
+      }
+      
+    }
+    
+    .alterations {
+      margin: 0 4px 7px 4px;
+      padding: 20px 0;
+      background-color: rgb(235,235,235);
+      
+      div {
+        display: inline-block;
+        width: 250px;
+        border-radius: 4px;
+        margin: 4px;
+        font-size: 0.9em;
+        padding: 4px 8px;
+        
+        &.smallMutation { background-color: rgb(179,187,232); }
+        &.cnv { background-color: rgb(178,214,171); }
+        &.structuralVariant { background-color: rgb(212,179,232); }
+        &.expressionOutlier { background-color: rgb(247,206,170); }
+      }
+      
+    }
+    
+  }
+  
+}

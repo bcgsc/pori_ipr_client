@@ -1,0 +1,20 @@
+.md-toolbar-tools
+  md-button.md-icon-button(ng-click="toggleMenu()")
+    md-icon menu
+  h2 
+    img(src="/assets/images/bcca_logo.png") 
+    |  BCGSC Interactive POG Reports
+  span(flex)
+  
+  md-menu
+    div(ng-click='$mdOpenMenu()', aria-label='User')
+      md-icon person
+      md-button.white Brandon Pierce
+    
+    md-menu-content(width="4")
+      md-menu-item(ng-repeat="(loc, name) in accountMenu")
+        md-button(ui-sref="{{loc}}") {{name}}
+      md-menu-divider
+      md-menu-item(ng-click="userLogout()")
+        md-button Logout
+

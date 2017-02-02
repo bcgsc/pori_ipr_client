@@ -1,0 +1,21 @@
+
+md-content(flex).md-padding
+  md-toolbar
+    div.md-toolbar-tools
+      span(flex)
+      h2(flex).text-center.md-hue-3 {{pog.POGID}}
+      span(flex)
+  div(layout="row", flex).pog-report
+    div(flex, ui-view="")
+      
+    md-content(flex="20", ng-show="showSideBar", ng-init="showSideBar=true")
+      md-list
+        md-subheader Report Sections
+        md-list-item(ng-click="goToReportSection('summary')") Summary
+        md-list-item(ng-click="goToReportSection('analystComments')") Analyst Comments
+        md-list-item(ng-click="goToReportSection('detailedGenomicAnalysis')") Detailed Genomic Analysis
+        md-list-item Disease Specific Analysis
+        md-list-item Somatic Mutations
+        md-list-item Structural Variation
+        md-list-item Expression Analysis
+        md-list-item Appendices
