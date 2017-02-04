@@ -97,7 +97,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
 		            $state.go('public.login');
 		            reject(err);
 	            }
-            );
+				);
 			      
 		      });
 		    }],
@@ -143,7 +143,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         }]
       }
     })
-    
+
     .state('dashboard.report.genomic', {
       url: '/genomic',
 			breadcrumb: {
