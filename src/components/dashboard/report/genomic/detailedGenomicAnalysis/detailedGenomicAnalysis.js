@@ -81,7 +81,7 @@ app.controller('controller.dashboard.report.genomic.detailedGenomicAnalysis',
       
     });
     
-    return collection;
+    return _.values(collection);
     
   }
   
@@ -114,9 +114,7 @@ app.controller('controller.dashboard.report.genomic.detailedGenomicAnalysis',
       $scope.alterations[k] = _.values(values);
       //console.log('Iteree: ', k, values, _.values(values));
     });
-    
-    console.log('Alterations', $scope.alterations);
-    
+        
   }
   
   // Group Entries
