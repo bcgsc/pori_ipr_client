@@ -1,0 +1,65 @@
+md-dialog-content.iprBox {
+
+  svg {
+    width: 100%;
+    height: 300px;
+  }
+
+  .dataBox {
+    margin: 7px 4px;
+
+    &.noBottomMargin {
+      margin-bottom: 0;
+    }
+
+    div.box {
+      background-color: rgb(180, 180, 180);
+
+      div.heading {
+        font-weight: 100;
+        font-size: 0.8em;
+        text-align: center;
+        padding: 10px 0;
+        background-color: rgb(204, 207, 226);
+      }
+      div.content {
+        font-weight: 600;
+        font-size: 0.9em;
+        text-align: center;
+        padding: 20px 0;
+        background-color: rgb(235, 235, 235);
+
+        div {
+          padding: 0 5px;
+        }
+      }
+      div.row {
+        background-color: rgb(235, 235, 235);
+        font-weight: 300;
+        padding: 3px 2px 3px 5px;
+        font-size: 0.85em;
+
+        div {
+          min-height: 20px;
+          vertical-align: middle;
+        }
+
+        &:nth-of-type(odd) {
+          background-color: rgb(215, 215, 215);
+        }
+        &:hover {
+          background-color: rgb(247, 206, 170);
+
+          .edit {
+            md-icon {
+              display: inline;
+            }
+
+          }
+
+        }
+
+      }
+    }
+  }
+}

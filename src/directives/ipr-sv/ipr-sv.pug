@@ -1,0 +1,31 @@
+div(flex, layout="column")
+
+    div(layout="column", flex).dataBox
+
+        div.box
+            div(layout="row", flex).heading
+                div(flex) Genes 5`::3`
+                div(flex=5) Exons 5`/3`
+                div(flex=15) Breakpoint
+                div(flex) Event Type
+                div(flex=5) Sample
+                div(flex) Cytogenic Description
+                div(flex) RPKM 5`/3`
+                div(flex) Fold Chage Vs. {{pog.tumourAnalysis.normalExpressionComparator}}
+                div(flex=5) {{pog.tumourAnalysis.diseaseExpressionComparator}} %ile
+                div(flex=5) Image
+            div(ng-if="svs.length == 0")
+                div.text-center.details.bg-white No gene fusions of this kind were found from the analysis.
+            div(layout="row", flex, ng-repeat="sv in svs").row
+                div(flex) {{sv.genes}}
+                div(flex=5) {{sv.exons}}
+                div(flex=15) {{sv.breakpoint}}
+                div(flex) {{sv.eventType}}
+                div(flex=5) {{sv.detectedIn}}
+                div(flex) {{sv.conventionalName}}
+                div(flex) {{sv.rpkm}}
+                div(flex) {{sv.foldChange}}
+                div(flex=5) {{sv.tcgaPerc}}
+                div(flex=5).text-center
+                    span(ng-if="sv.svg")
+                        md-icon(ng-click="svDetails($event, sv)") open_in_new

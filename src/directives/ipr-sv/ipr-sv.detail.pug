@@ -1,0 +1,43 @@
+md-dialog(layout="column", aria-label="Structural Variant Details", flex-md=80, flex-xs=100, flex-lg=80)
+    md-toolbar
+        .md-toolbar-tools
+            h2 {{formAction}} Structural Variant Details
+            span(flex)
+            md-button.md-icon-button(ng-click='cancel()')
+                md-icon cancel
+    md-dialog-content(layout-padding).iprBox
+        div(height="300px")
+            div(id="svgImage")
+
+        div(flex, layout="column").dataBox
+            div.box
+                div(flex, layout="row").heading
+                    div(flex) Position
+                    div(flex) HGNC Gene
+                    div(flex) Ensembl Gene
+                    div(flex) Ensembl Transcript
+                    div(flex) Exon
+                    div(flex) Strand
+                    div(flex) Breakpoint
+                div(flex, layout="row").row
+                    div(flex) 5`
+                    div(flex) {{sv.name.split('::')[0]}}
+                    div(flex) {{ensemblName(sv.ntermGene)}}
+                    div(flex) {{sv.ntermTranscript}}
+                    div(flex) {{sv.exon.split(':')[0]}}
+                    div(flex)
+                    div(flex) {{sv.breakpoint.split('|')[0]}}
+                div(flex, layout="row").row
+                    div(flex) 3`
+                    div(flex) {{sv.name.split('::')[1]}}
+                    div(flex) {{ensemblName(sv.ctermGene)}}
+                    div(flex) {{sv.ctermTranscript}}
+                    div(flex) {{sv.exon.split(':')[1]}}
+                    div(flex)
+                    div(flex) {{sv.breakpoint.split('|')[1]}}
+
+        div(flex).md-padding {{sv.svgTitle}}
+
+    md-dialog-actions(layout="row", layout-aligh="end center", layout-padding)
+        md-button(ng-click="cancel()").md-primary Close
+
