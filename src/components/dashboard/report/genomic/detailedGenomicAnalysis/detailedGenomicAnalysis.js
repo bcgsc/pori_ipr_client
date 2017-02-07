@@ -1,12 +1,13 @@
 app.controller('controller.dashboard.report.genomic.detailedGenomicAnalysis', 
-  ['_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', 'api.pog', 'pog', 'alterations', 'approvedThisCancer', 'approvedOtherCancer',
-  (_, $q, $scope, $state, $mdDialog, $mdToast, $pog, pog, alterations, approvedThisCancer, approvedOtherCancer) => {
+  ['_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', 'api.pog', 'pog', 'alterations', 'approvedThisCancer', 'approvedOtherCancer', 'targetedGenes',
+  (_, $q, $scope, $state, $mdDialog, $mdToast, $pog, pog, alterations, approvedThisCancer, approvedOtherCancer, targetedGenes) => {
   
   $scope.approvedThisCancer = {};
   $scope.approvedOtherCancer = {};
   $scope.pog = pog;
   $scope.samples = [];
   $scope.alterations = {therapeutic: {}, prognostic: {}, diagnostic: {}, biological: {}, unknown: null};
+  $scope.targetedGenes = targetedGenes;
   
   // Filter reference type
   $scope.refType = (ref) => {
