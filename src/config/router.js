@@ -260,4 +260,22 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       }
     })
 
+    .state('dashboard.report.genomic.structuralVariation', {
+      url: '/structuralVariation',
+      breadcrumb: 'Structural Variation',
+      templateUrl: 'dashboard/report/genomic/structuralVariation/structuralVariation.html',
+      controller: 'controller.dashboard.report.genomic.structuralVariation',
+      resolve: {
+        images: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
+          return $image.get($stateParams.POG, 'mutSummary.barSv,mutSummary.sv,circosSv.genome,circosSv.transcriptome');
+        }],
+        ms: ['$q', '$stateParams', 'api.summary.mutationSummary', ($q, $stateParams, $ms) => {
+          return $ms.get($stateParams.POG);
+        }],
+        svs: ['$q', '$stateParams', 'api.structuralVariation.sv', ($q, $stateParams, $sv) => {
+          return $sv.all($stateParams.POG);
+        }]
+      }
+    })
+
 }]);
