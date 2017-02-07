@@ -14,8 +14,9 @@ md-content(flex).md-padding
         md-list-item(ng-click="goToReportSection('summary')") Summary
         md-list-item(ng-click="goToReportSection('analystComments')") Analyst Comments
         md-list-item(ng-click="goToReportSection('detailedGenomicAnalysis')") Detailed Genomic Analysis
-        md-list-item Disease Specific Analysis
-        md-list-item Somatic Mutations
-        md-list-item Structural Variation
+        md-list-item(ng-click="goToReportSection('diseaseSpecificAnalysis')") Disease Specific Analysis
+        md-list-item(ng-click="goToReportSection('somaticMutations')") Somatic Mutations
+        md-list-item(ng-click="goToReportSection('copyNumberAnalyses')") Copy Number Analyses
+        md-list-item(ng-click="goToReportSection('structuralVariation')") Structural Variation
         md-list-item Expression Analysis
         md-list-item Appendices

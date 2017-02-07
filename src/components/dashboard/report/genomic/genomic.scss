@@ -61,7 +61,31 @@
       }
       
     }
-    
+
+    div.editable {
+      md-icon {
+        cursor: pointer;
+        display: none;
+        position: absolute;
+        float: right;
+        font-size: 1.25em;
+        line-height: inherit;
+        height: 18px;
+        width: 18px;
+        min-height: 18px;
+        min-width: 18px;
+        margin-left: 5px;
+        margin-top: -2px;
+      }
+    }
+
+    div.editable:hover {
+      md-icon {
+        font-size: 1.25em;
+        display: inline-block;
+      }
+    }
+
     .analystComments {
       margin: 7px 4px 7px 4px;
       padding: 20px;
@@ -127,6 +151,7 @@
           text-align: center;
           padding: 20px 0;
           background-color: rgb(235,235,235);
+
           
           div {
             padding: 0 5px;
