@@ -26,6 +26,9 @@ app.factory('api.pog', ['_', '$http', '$q', (_, $http, $q) => {
       // Retrieve from API
       $http.get(api).then(
         (result) => {
+          // Empty Cache
+          _pogs = [];
+
           // Load into cache
           _.forEach(result.data, (val) => {
             _pogs.push(val);
@@ -68,6 +71,40 @@ app.factory('api.pog', ['_', '$http', '$q', (_, $http, $q) => {
         }
       );
     });
+  }
+
+
+  /*
+   * Load a new POG
+   *
+   * Load a new POG into the API from sources
+   *
+   * @param string POGID
+   *
+   */
+  $pog.load = (POGID) => {
+
+    return $q((resolve, reject) => {
+
+      $http.get(api + '/' + POGID + '/loadPog').then(
+        (result) => {
+          // Reload All POGS
+          $pog.all().then(
+            (resp) => {
+              resolve();
+            },
+            (err) => {
+              reject('Unable to reload POGS');
+            }
+          )
+        },
+        (error) => {
+          reject('Unable to load the requested POG');
+        }
+      )
+
+    });
+
   }
   
   return $pog;
