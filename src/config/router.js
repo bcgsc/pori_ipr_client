@@ -206,6 +206,54 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         approvedOtherCancer: ['$q', '$stateParams', 'api.detailedGenomicAnalysis.alterations', ($q, $stateParams, $APC) => {
           return $APC.getType($stateParams.POG, 'otherCancer');
         }],
+				targetedGenes: ['$q', '$stateParams', 'api.detailedGenomicAnalysis.targetedGenes', ($q, $stateParams, $tg) => {
+          return $tg.getAll($stateParams.POG);
+        }],
+      }
+    })
+
+    .state('dashboard.report.genomic.diseaseSpecificAnalysis', {
+      url: '/diseaseSpecificAnalysis',
+      breadcrumb: 'Detailed Genomic Analysis',
+      templateUrl: 'dashboard/report/genomic/diseaseSpecificAnalysis/diseaseSpecificAnalysis.html',
+      controller: 'controller.dashboard.report.genomic.diseaseSpecificAnalysis',
+      resolve: {
+        images: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
+          return $image.get($stateParams.POG, 'subtypePlot.molecular,subtypePlot.receptorStatus');
+        }]
+      }
+    })
+
+    .state('dashboard.report.genomic.somaticMutations', {
+      url: '/somaticMutations',
+      breadcrumb: 'Somatic Mutations',
+      templateUrl: 'dashboard/report/genomic/somaticMutations/somaticMutations.html',
+      controller: 'controller.dashboard.report.genomic.somaticMutations',
+      resolve: {
+        images: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
+          return $image.get($stateParams.POG, 'mutSummary.snv,mutSummary.indel,mutSummary.barSnv,mutSummary.barIndel,mutSignature.corPcors,mutSignature.snvsAllStrelka');
+        }],
+        ms: ['$q', '$stateParams', 'api.summary.mutationSummary', ($q, $stateParams, $ms) => {
+          return $ms.get($stateParams.POG);
+        }],
+        smallMutations: ['$q', '$stateParams', 'api.somaticMutations.smallMutations', ($q, $stateParams, $smallMuts) => {
+          return $smallMuts.all($stateParams.POG);
+        }]
+      }
+    })
+
+    .state('dashboard.report.genomic.copyNumberAnalyses', {
+      url: '/copyNumberAnalyses',
+      breadcrumb: 'Copy Number Analyses',
+      templateUrl: 'dashboard/report/genomic/copyNumberAnalyses/copyNumberAnalyses.html',
+      controller: 'controller.dashboard.report.genomic.copyNumberAnalyses',
+      resolve: {
+        images: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
+          return $image.get($stateParams.POG, 'cnvLoh.circos');
+        }],
+        ms: ['$q', '$stateParams', 'api.summary.mutationSummary', ($q, $stateParams, $ms) => {
+          return $ms.get($stateParams.POG);
+        }]
       }
     })
 
