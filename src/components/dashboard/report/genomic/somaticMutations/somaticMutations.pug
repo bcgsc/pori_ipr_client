@@ -33,6 +33,7 @@ section
                 div
                     img(data-ng-src="data:image/png;base64,{{images['mutSignature.snvsAllStrelka'].data}}")
 
+        div(layout="column", flex)
             h2.title Small Mutations: Genomic Details
 
             div(ng-repeat="(title, smallMutation) in smallMutations")
