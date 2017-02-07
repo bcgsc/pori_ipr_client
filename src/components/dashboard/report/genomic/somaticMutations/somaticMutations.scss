@@ -1,0 +1,25 @@
+div.smEvents {
+
+  div {
+    font-size: 1.0em;
+    font-weight: 500;
+    text-align: center;
+    padding: 10px;
+
+  }
+
+  div.count {
+    font-size: 1.0em;
+    padding: 0;
+    div {
+      padding: 10px;
+      font-size: 0.9em;
+      font-weight: 600;
+      width: 80%;
+
+      &.snv { background-color: rgb(204, 236, 197); }
+      &.indel { background-color: rgb(222, 203, 228); }
+    }
+  }
+
+}
