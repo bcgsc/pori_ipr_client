@@ -1,0 +1,25 @@
+div(flex, layout="column")
+
+    div(layout="column", flex).dataBox
+
+        div.box
+            div(layout="row", flex).heading
+                div(flex) Gene
+                div(flex) Location
+                div(flex=10) Copy Change
+                div(flex=10) LOH State
+                div(flex=10) CNV State
+                div(flex) Expression (RPKM)
+                div(flex) Fold Chage Vs. {{pog.tumourAnalysis.normalExpressionComparator}}
+                div(flex=10) {{pog.tumourAnalysis.diseaseExpressionComparator}} %ile
+            div(ng-if="outliers.length == 0")
+                div.text-center.details No small somatic mutations of this kind were found from the analysis.
+            div(layout="row", flex, ng-repeat="outlier in outliers").row
+                div(flex) {{outlier.gene}}
+                div(flex) {{outlier.location}}
+                div(flex=10) {{outlier.copyChange}}
+                div(flex=10) {{outlier.lohState}}
+                div(flex=10) {{outlier.cnvState}}
+                div(flex) {{outlier.rpkm}}
+                div(flex) {{outlier.foldChange}}
+                div(flex=10) {{outlier.tcgaPerc}}
