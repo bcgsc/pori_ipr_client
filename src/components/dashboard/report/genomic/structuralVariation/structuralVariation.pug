@@ -1,0 +1,41 @@
+section
+    md-subheader.md-primary Somatic Mutations
+
+    div(layout="column", flex)
+
+        div(layout="column", flex).bg-white
+
+            h2.title Small Somatic Mutations
+            h3.title Summary of Somatic Events
+
+            div(layout="row", layout-align="space-around center").margin-bottom-40
+                div(layout="column").smEvents.snv
+                    div(layout="row")
+                        div(flex=60) Structural Variants (Expressed Fusions)
+                        div(flex=40, layout="row", layout-align="center center").count
+                            div.sv {{ms.totalSV}}
+                    img(data-ng-src="data:image/png;base64,{{images['mutSummary.sv'].data}}")
+
+                div(layout="column").smEvents.indel
+                    div(layout="row")
+                        div(flex=60) &nbsp;
+                        div(flex=40, layout="row", layout-align="center center").count
+                            div &nbsp;
+                    img(data-ng-src="data:image/png;base64,{{images['mutSummary.barSv'].data}}")
+
+            md-tabs(md-dynamic-height=true, md-center-tabs=true).margin-bottom-20
+                md-tab(label="Genome")
+                    div(layout="column", layout-align="center center")
+                        img(data-ng-src="data:image/svg;base64,{{images['circosSv.genome'].data}}")
+                md-tab(label="Transcriptome")
+                    div(layout="column", layout-align="center center")
+                        img(data-ng-src="data:image/svg;base64,{{images['circosSv.transcriptome'].data}}")
+
+        div(layout="column", flex)
+
+            h2.title Small Mutations: Genomic Details
+
+            div(ng-repeat="(title, svs) in StrucVars")
+                h3.title {{titleMap[title]}}
+
+                ipr-sv(svs="svs", pog="pog")
