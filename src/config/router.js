@@ -278,4 +278,25 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       }
     })
 
+    .state('dashboard.report.genomic.expressionAnalysis', {
+      url: '/expressionAnalysis',
+      breadcrumb: 'Expression Analysis',
+      templateUrl: 'dashboard/report/genomic/expressionAnalysis/expressionAnalysis.html',
+      controller: 'controller.dashboard.report.genomic.expressionAnalysis',
+      resolve: {
+        images: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
+          return $image.get($stateParams.POG, 'expression.chart,expression.legend');
+        }],
+        ms: ['$q', '$stateParams', 'api.summary.mutationSummary', ($q, $stateParams, $ms) => {
+          return $ms.get($stateParams.POG);
+        }],
+        outliers: ['$q', '$stateParams', 'api.expressionAnalysis.outlier', ($q, $stateParams, $outliers) => {
+          return $outliers.all($stateParams.POG);
+        }],
+        drugTargets: ['$q', '$stateParams', 'api.expressionAnalysis.drugTarget', ($q, $stateParams, $drugTarget) => {
+          return $drugTarget.all($stateParams.POG);
+        }]
+      }
+    })
+
 }]);
