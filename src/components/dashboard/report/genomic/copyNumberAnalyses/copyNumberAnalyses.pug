@@ -8,16 +8,62 @@ section
             h2.title Copy Number and LOH
             h3.title Summary of Copy Number Events
 
-            div(layout="row", layout-align="space-around center").margin-bottom-40
+            div(layout="row", layout-align="space-around center").margin-bottom-40.margin-top-30
                 div(layout="column").smEvents.snv
                     img(data-ng-src="data:image/png;base64,{{images['cnvLoh.circos'].data}}")
 
             h2.title Copy Number Variants: Genomic Details
 
-            div(ng-repeat="(title, smallMutation) in smallMutations")
-                h3(ng-if="title == 'biological'").title Variants of Biological Relevance
-                h3(ng-if="title == 'unknown'").title Variants of Unknown Significance in Known Cancer-Related Genes
-                h3(ng-if="title == 'clinical'").title Variants of Clinical Relevance
-                h3(ng-if="title == 'nostic'").title Variants of Prognostic or Diagnostic Relevance
+            div(ng-repeat="(title, cnvs) in cnvGroups")
+                h3.title {{titleMap[title]}}
 
-                ipr-small-mutations(mutations="smallMutation", pog="pog")
+                ipr-cnv(cnvs="cnvs", pog="pog")
+
+            h2.title Copy Number & LOH
+
+            div(layout="column", layout-align="center start").cnvloh
+                div(layout="column").container
+                    div(layout="row")
+                        span(flex)
+                        span(flex) Chr 1
+                        span(flex) Chr 2
+                        span(flex) Chr 3
+                        span(flex) Chr 4
+                    img(data-ng-src="data:image/png;base64,{{images['cnv.1'].data}}")
+                    img(data-ng-src="data:image/png;base64,{{images['loh.1'].data}}")
+
+                    div(layout="row")
+                        span(flex) Chr 5
+                        span(flex) Chr 6
+                        span(flex) Chr 7
+                        span(flex) Chr 8
+                        span(flex) Chr 9
+                    img(data-ng-src="data:image/png;base64,{{images['cnv.2'].data}}")
+                    img(data-ng-src="data:image/png;base64,{{images['loh.2'].data}}")
+
+                    div(layout="row")
+                        span(flex) Chr 10
+                        span(flex) Chr 11
+                        span(flex) Chr 12
+                        span(flex) Chr 13
+                        span(flex) Chr 14
+                    img(data-ng-src="data:image/png;base64,{{images['cnv.3'].data}}")
+                    img(data-ng-src="data:image/png;base64,{{images['loh.3'].data}}")
+
+                    div(layout="row")
+                        span(flex) Chr 15
+                        span(flex) Chr 16
+                        span(flex) Chr 17
+                        span(flex) Chr 18
+                        span(flex) Chr 19
+                    img(data-ng-src="data:image/png;base64,{{images['cnv.4'].data}}")
+                    img(data-ng-src="data:image/png;base64,{{images['loh.4'].data}}")
+
+                    div(layout="row")
+                        span(flex) Chr 20
+                        span(flex) Chr 21
+                        span(flex) Chr 22
+                        span(flex) Chr 23
+                        span(flex)
+                    img(data-ng-src="data:image/png;base64,{{images['cnv.5'].data}}")
+                    img(data-ng-src="data:image/png;base64,{{images['loh.5'].data}}")

@@ -249,10 +249,13 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       controller: 'controller.dashboard.report.genomic.copyNumberAnalyses',
       resolve: {
         images: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
-          return $image.get($stateParams.POG, 'cnvLoh.circos');
+          return $image.get($stateParams.POG, 'cnvLoh.circos,cnv.1,cnv.2,cnv.3,cnv.4,cnv.5,loh.1,loh.2,loh.3,loh.4,loh.5');
         }],
         ms: ['$q', '$stateParams', 'api.summary.mutationSummary', ($q, $stateParams, $ms) => {
           return $ms.get($stateParams.POG);
+        }],
+        cnvs: ['$q', '$stateParams', 'api.copyNumberAnalyses.cnv', ($q, $stateParams, $cnv) => {
+          return $cnv.all($stateParams.POG);
         }]
       }
     })
