@@ -1,0 +1,23 @@
+section
+    md-subheader.md-primary Copy Number Analyses
+
+    div(layout="column", flex)
+
+        div(layout="column", flex).bg-white
+
+            h2.title Copy Number and LOH
+            h3.title Summary of Copy Number Events
+
+            div(layout="row", layout-align="space-around center").margin-bottom-40
+                div(layout="column").smEvents.snv
+                    img(data-ng-src="data:image/png;base64,{{images['cnvLoh.circos'].data}}")
+
+            h2.title Copy Number Variants: Genomic Details
+
+            div(ng-repeat="(title, smallMutation) in smallMutations")
+                h3(ng-if="title == 'biological'").title Variants of Biological Relevance
+                h3(ng-if="title == 'unknown'").title Variants of Unknown Significance in Known Cancer-Related Genes
+                h3(ng-if="title == 'clinical'").title Variants of Clinical Relevance
+                h3(ng-if="title == 'nostic'").title Variants of Prognostic or Diagnostic Relevance
+
+                ipr-small-mutations(mutations="smallMutation", pog="pog")
