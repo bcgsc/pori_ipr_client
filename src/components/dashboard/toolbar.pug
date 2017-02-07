@@ -15,6 +15,9 @@
       md-menu-item(ng-repeat="(loc, name) in accountMenu")
         md-button(ui-sref="{{loc}}") {{name}}
       md-menu-divider
+      md-menu-item
+        md-button(ng-click="loadNewPog($event)") Load POG
+      md-menu-divider
       md-menu-item(ng-click="userLogout()")
         md-button Logout
 

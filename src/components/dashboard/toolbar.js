@@ -1,4 +1,4 @@
-app.controller('controller.dashboard.toolbar', ['_', '$scope', '$mdSidenav', '$state', 'api.session', (_, $scope, $mdSidenav, $state, $session) => {
+app.controller('controller.dashboard.toolbar', ['_', '$scope', '$mdSidenav', '$state', '$mdDialog', '$mdToast', 'api.session', (_, $scope, $mdSidenav, $state, $mdDialog, $mdToast, $session) => {
     
   $scope.accountMenu = {
     'dashboard.profile': 'Profile',
@@ -8,6 +8,16 @@ app.controller('controller.dashboard.toolbar', ['_', '$scope', '$mdSidenav', '$s
   $scope.toggleMenu = () => {
     console.log('[toolbar]', 'Clicked toggle');
     $mdSidenav('topLevelNavigation').toggle();
+  }
+
+  $scope.loadNewPog = ($event) => {
+
+    $mdDialog.show({
+      targetEvent: $event,
+      templateUrl: 'dashboard/loadPOG.html',
+      clickOutToClose: false,
+      controller: 'controller.dashboard.loadPOG'
+    });
   }
   
   $scope.userLogout = () => {
