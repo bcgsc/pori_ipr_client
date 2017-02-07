@@ -15,6 +15,8 @@ md-dialog.editor {
   }
 }
 
+.bg-white { background-color: rgb(255,255,255); }
+
 .hide-validation-error {
   margin: 0;
 
@@ -30,6 +32,12 @@ md-dialog.editor {
 
 .pull-right { float: right; }
 .pull-left { float: left; }
+
+.margin-bottom-20 {margin-bottom: 20px;}
+.margin-bottom-30 {margin-bottom: 20px;}
+.margin-bottom-40 {margin-bottom: 30px;}
+.margin-top-20 {margin-top: 20px;}
+
 
 @-webkit-keyframes rotate {
   from {
