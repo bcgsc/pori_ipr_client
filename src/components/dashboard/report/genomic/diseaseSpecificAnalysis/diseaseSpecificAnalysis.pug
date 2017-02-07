@@ -1,0 +1,13 @@
+section
+    md-subheader.md-primary Disease Specific Analysis
+
+    div(layout="column", flex)
+
+        div(layout="column", flex).bg-white
+
+            h2.title Expression Subtype
+            div(layout="row", flex, layout-align="center center").md-padding
+                img(data-ng-src="data:image/png;base64,{{images['subtypePlot.molecular'].data}}")
+
+            div(layout="row", flex, layout-align="center center").md-padding
+                img(data-ng-src="data:image/png;base64,{{images['subtypePlot.receptorStatus'].data}}")
