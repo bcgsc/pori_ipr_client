@@ -44,7 +44,8 @@ let files = {
       './node_modules/angular-ui-router-breadcrumbs/dist/angular-ui-router-breadcrumbs.min.js',
       './node_modules/simplemde/dist/simplemde.min.js',
       './node_modules/marked/marked.min.js',
-      './node_modules/angular-marked/dist/angular-marked.min.js'
+      './node_modules/angular-marked/dist/angular-marked.min.js',
+      './node_modules/svg-pan-zoom/dist/svg-pan-zoom.js'
     ],
     
     // Application javascript sources
