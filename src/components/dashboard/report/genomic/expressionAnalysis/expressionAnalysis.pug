@@ -56,9 +56,19 @@ section
                         div(ng-if="outliers.length == 0")
                             div.text-center.details No small somatic mutations of this kind were found from the analysis.
                         div(layout="row", flex, ng-repeat="target in drugTargetList = (drugTargets | filter: searchDrugs(drugQuery))").row
-                            div(flex) {{target.gene}}
+                            div(flex)
+                                a(href="http://dgidb.genome.wustl.edu/genes/{{target.gene}}", target="_blank") {{target.gene}}
                             div(flex) {{target.lohRegion}}
                             div(flex) {{target.copy}}
                             div(flex) {{target.foldChange}}
                             div(flex) {{target.tcgaPerc}}
                             div(flex) {{target.kIQR}}
+
+        div(flex, layout="column").bg-white
+            h2.title Expression Distributions
+
+            div(flex, layout="row", ng-repeat="row in densityGraphs", layout-align="space-around start").margin-top-20
+                div
+                    img(data-ng-src="data:image/png;base64,{{row[0].data}}")
+                div
+                    img(data-ng-src="data:image/png;base64,{{row[1].data}}")

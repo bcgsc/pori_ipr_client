@@ -21,11 +21,9 @@ app.factory('api.image', ['_', '$http', '$q', (_, $http, $q) => {
   $image.get = (POGID, key) => {
     
     return $q((resolve, reject) => {
-      
-      console.log('Stepped into POG api');
-      
+
       // Get result from API
-      $http.get(api + '/' + POGID + '/image/' + key).then(
+      $http.get(api + '/' + POGID + '/image/retrieve/' + key).then(
         (result) => {
           resolve(result.data);
         },
@@ -35,8 +33,31 @@ app.factory('api.image', ['_', '$http', '$q', (_, $http, $q) => {
         }
       );
     });
-  }
-  
+  };
+
+  /*
+   * Get Density Graphs
+   *
+   *
+   */
+  $image.expDensityGraphs = (POGID) => {
+
+    return $q((resolve, reject) => {
+
+      // Get Graphs
+      $http.get(api + '/' + POGID + '/image/expressionDensityGraphs').then(
+        (result) => {
+          resolve(result.data);
+        },
+        (error) => {
+          reject(error.status);
+        }
+      )
+
+    });
+
+  };
+
   return $image;
   
 }]);

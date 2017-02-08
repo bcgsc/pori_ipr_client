@@ -295,8 +295,19 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         }],
         drugTargets: ['$q', '$stateParams', 'api.expressionAnalysis.drugTarget', ($q, $stateParams, $drugTarget) => {
           return $drugTarget.all($stateParams.POG);
+        }],
+        densityGraphs: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
+          return $image.expDensityGraphs($stateParams.POG);
         }]
       }
+    })
+
+    .state('dashboard.report.genomic.appendices', {
+      url: '/appendices',
+      breadcrumb: 'Appendices',
+      templateUrl: 'dashboard/report/genomic/appendices/appendices.html',
+      controller: 'controller.dashboard.report.genomic.appendices',
+      resolve: {}
     })
 
 }]);

@@ -1,12 +1,14 @@
 app.controller('controller.dashboard.report.genomic.expressionAnalysis',
-  ['_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', 'api.pog', 'pog', 'ms', 'images', 'outliers', 'drugTargets',
-    (_, $q, $scope, $state, $mdDialog, $mdToast, $pog, pog, ms, images, outliers, drugTargets) => {
+  ['_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', 'api.pog', 'pog', 'ms', 'images', 'outliers', 'drugTargets', 'densityGraphs',
+    (_, $q, $scope, $state, $mdDialog, $mdToast, $pog, pog, ms, images, outliers, drugTargets, densityGraphs) => {
 
       // Load Images into template
       $scope.images = images;
       $scope.pog = pog;
       $scope.expOutliers = {};
       $scope.drugTargets = drugTargets;
+      $scope.densityGraphs = _.chunk(_.values(densityGraphs),2);
+      console.log('Density Graphs', $scope.densityGraphs);
 
 
       $scope.titleMap = {
