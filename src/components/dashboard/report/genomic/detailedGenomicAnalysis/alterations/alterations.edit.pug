@@ -1,5 +1,5 @@
 md-dialog(layout="column", aria-label="Update Alterations Entry", flex-md=60, flex-xs=100, flex-lg=50)
-  form(flex='auto', name='form', ng-submit="update(form)")
+  form(flex='auto', name='form', ng-submit="update(form)", novalidate)
     md-toolbar
       .md-toolbar-tools
         h2 {{formAction}} Alterations Entry
@@ -25,13 +25,6 @@ md-dialog(layout="column", aria-label="Update Alterations Entry", flex-md=60, fl
                 input(ng-model="gene.variant", name='Variant', placeholder='Variant', required)
                 div(ng-messages="form.Variant.$error")
                   p(ng-message="required") Variant is required
-                  
-            div(layout="row")
-              md-input-container(flex)
-                label Clinical Relevance
-                md-select(ng-model="gene.alterationType", aria-label"Clinical Relevance",required)
-                  md-option(ng-repeat="(k, v) in $alterations.type", ng-value="k", placeholder="Clinical Relevance") {{v}}
-                  
              
             div(layout="row")
               md-input-container(flex)
@@ -84,6 +77,13 @@ md-dialog(layout="column", aria-label="Update Alterations Entry", flex-md=60, fl
               md-input-container(flex)
                 md-select(ng-model="gene.variant_type", aria-label="Variant Type", required)
                   md-option(ng-repeat="varType in $alterations.variant", ng-value="varType", placeholder="Variant Type") {{varType}}
+
+
+            div(layout="row")
+              md-input-container(flex)
+                label Clinical Relevance
+                md-select(ng-model="gene.alterationType", aria-label"Clinical Relevance",required)
+                  md-option(ng-repeat="(k, v) in $alterations.type", ng-value="k", placeholder="Clinical Relevance") {{v}}
               
         md-tab(label="Reference")
                     
@@ -108,6 +108,7 @@ md-dialog(layout="column", aria-label="Update Alterations Entry", flex-md=60, fl
             div(layout="row")
               md-input-container(flex)
                 input(ng-model="reference.title", name="RefTitle", placeholder="Reference Title", ng-disabled="disableRefTitle")
+                md-progress-linear(md-mode="indeterminate", ng-show="refLoading", ng-init="refLoading=false")
                   
             div(layout="row")
               md-input-container(flex)

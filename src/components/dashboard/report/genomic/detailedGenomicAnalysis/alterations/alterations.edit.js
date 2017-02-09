@@ -1,5 +1,6 @@
 app.controller('controller.dashboard.reports.genomic.detailedGenomicAnalysis.alterations.edit', 
-  ['_', '$scope', '$mdDialog', 'api.complete', 'api.pubmed', 'gene', 'rowEvent', 'samples', (_, scope, $mdDialog, $complete, $pubmed, gene, rowEvent, samples) => {
+  ['_', '$scope', '$mdDialog', 'api.complete', 'api.pubmed', 'api.kb.associations', 'gene', 'rowEvent', 'samples', 'api.detailedGenomicAnalysis.alterations', 'pog',
+    (_, scope, $mdDialog, $complete, $pubmed, $kbAssoc, gene, rowEvent, samples, $dgaAPC, pog) => {
   
   scope.gene = (rowEvent == 'create') ? {reference: '', gene: '', variant: '', variant_type: ''} : gene;
   scope.samples = samples;
@@ -7,8 +8,9 @@ app.controller('controller.dashboard.reports.genomic.detailedGenomicAnalysis.alt
   scope.$alterations = $complete.get('alterations');
   scope.disableRefTitle = false;
   scope.reference = {};
-  scope.kb = {}
-  
+  scope.kb = {};
+  scope.pog = pog;
+
   // Watch Values and Build KB Entries
   scope.$watchGroup(['gene.variant_type', 'gene.gene', 'gene.variant', 'gene.alterationType', 'gene.therapeuticContext', 'gene.disease', 'gene.evidence', 'gene.association'], (newVals, oldVals) => {
         
@@ -25,18 +27,18 @@ app.controller('controller.dashboard.reports.genomic.detailedGenomicAnalysis.alt
   // Close Dialog
   scope.cancel = () => {
     $mdDialog.cancel('No changes have been made.');
-  }
+  };
   
   // Filter Auto-compelte for relevances
   scope.findRelevance = (searchText) => {
     return searchText ? scope.$alterations.association.filter( filterFunction(searchText) ) : scope.$alterations.association; 
-  }
+  };
   
   
   // Filter Auto-compelte for relevances
   scope.findDisease = (searchText) => {
     return searchText ? scope.$alterations.disease.filter( filterFunction(searchText) ) : scope.$alterations.disease; 
-  }
+  };
   
   // Autocomplete Filter
   let filterFunction = (query) => {
@@ -47,18 +49,33 @@ app.controller('controller.dashboard.reports.genomic.detailedGenomicAnalysis.alt
     return (entry) => {            
       return (entry.indexOf(lowerCaseQuery) > -1);
     }
-  }
+  };
+
+  // Gene association
+  scope.$watch('gene.association', (newVal, oldVal) => {
+
+    let kbLookup = $kbAssoc.association(newVal);
+    if(kbLookup) {
+      if(kbLookup == '*') return;
+      scope.gene.alterationType = kbLookup;
+    }
+
+  });
   
   // Check for pubmed entry if set
   scope.checkPMID = () => {
-    
+
+    // Disable loading bar
+    scope.refLoading = false;
+
     if(scope.gene.reference === '' || scope.gene.reference === undefined || scope.gene.reference.length === 0) {
-      console.log('No reference found...');
       scope.disableRefTitle = false;
       scope.reference.title = "";
       scope.reference.type='other';
       return;
     }
+
+    // Define PubMed ID
     let pmid;
     
     // Is this a PMID?
@@ -71,7 +88,9 @@ app.controller('controller.dashboard.reports.genomic.detailedGenomicAnalysis.alt
     
     pmid = scope.gene.reference.match(/^[0-9]{5,8}/)[0];
     
-    
+    // Show reference loading bar
+    scope.refLoading = true;
+
     // Get PMID and process
     $pubmed.article(pmid).then(
       (article) => {
@@ -79,17 +98,18 @@ app.controller('controller.dashboard.reports.genomic.detailedGenomicAnalysis.alt
         scope.disableRefTitle = true;
         scope.reference.title = article.title;
         scope.reference.type = 'pubmed';
+        scope.refLoading = false;
       },
       (err) => {
         console.log('Unable to retrieve PubMed Article: ', err);
       }
     );
     
-  }
+  };
   
   // Update the specified entry
   scope.update = (f) => {
-    
+
     // Check for valid inputs by touching each entry
     if(f.$invalid) {
       f.$setDirty();
@@ -100,9 +120,9 @@ app.controller('controller.dashboard.reports.genomic.detailedGenomicAnalysis.alt
       });
       return;
     }
-    
+
     // Send updated entry to API
-    $dgaAPC.one($scope.pog.POGID, gene.ident).update(scope.gene).then(
+    $dgaAPC.one(scope.pog.POGID, gene.ident).update(scope.gene).then(
       (result) => {
         $mdDialog.hide('Entry has been updated');
       },
@@ -112,9 +132,9 @@ app.controller('controller.dashboard.reports.genomic.detailedGenomicAnalysis.alt
       }
     );
     
-  } // End update
+  }; // End update
   
   // Trigger Pubmed Check
   scope.checkPMID();
   
-}]) // End controller
+}]); // End controller
