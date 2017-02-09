@@ -307,7 +307,11 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       breadcrumb: 'Appendices',
       templateUrl: 'dashboard/report/genomic/appendices/appendices.html',
       controller: 'controller.dashboard.report.genomic.appendices',
-      resolve: {}
+      resolve: {
+        tcgaAcronyms: ['$q', '$stateParams', 'api.appendices', ($q, $stateParams, $appendices) => {
+          return $appendices.tcga($stateParams.POG);
+        }]
+      }
     })
 
 }]);
