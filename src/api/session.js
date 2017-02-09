@@ -8,7 +8,7 @@
 app.factory('api.session', ['_', '$http', '$q', '$localStorage', 'api.user', (_, $http, $q, $localStorage, $user) => {
   
   const localStorageKey = 'bcgscIprToken';  // Local Storage Token Key
-  const api = 'http://localhost:8001/api/1.0' + '/session';   // API Namespace setting
+  const api = 'http://10.9.202.110:8001/api/1.0' + '/session';   // API Namespace setting
   
   let _token = null,        // User API token
       initialized = false,  // Set initialization status

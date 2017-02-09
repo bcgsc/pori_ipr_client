@@ -7,7 +7,7 @@
  */
 app.factory('api.user', ['_', '$http', '$q', (_, $http, $q) => {
   
-  const api = 'http://localhost:8001/api/1.0' + '/user';
+  const api = 'http://10.9.202.110:8001/api/1.0' + '/user';
   let _me = null; // Local user cache
   let _users = {} // Local users cache
   let _token = null; // User API token

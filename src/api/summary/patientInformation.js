@@ -7,7 +7,7 @@
  */
 app.factory('api.summary.patientInformation', ['_', '$http', '$q', (_, $http, $q) => {
   
-  const api = 'http://localhost:8001/api/1.0' + '/POG';
+  const api = 'http://10.9.202.110:8001/api/1.0' + '/POG';
   
   let $pi = {};
   

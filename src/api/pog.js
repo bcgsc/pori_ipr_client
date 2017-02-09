@@ -7,7 +7,7 @@
  */
 app.factory('api.pog', ['_', '$http', '$q', (_, $http, $q) => {
   
-  const api = 'http://localhost:8001/api/1.0' + '/POG';
+  const api = 'http://10.9.202.110:8001/api/1.0' + '/POG';
   let _pogs = [] // Local POGS cache by ident
 
   
@@ -84,12 +84,46 @@ app.factory('api.pog', ['_', '$http', '$q', (_, $http, $q) => {
    */
   $pog.load = (POGID) => {
 
-    return $q((resolve, reject) => {
+    let deferred = $q.defer();
 
+
+    // Custom data stream from API for loading
+    let xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = (stateChange) => {
+
+      // On data drip
+      if (xhttp.readyState === 3) {
+        deferred.notify(xhttp.responseText);
+      }
+
+      // Wait until readyState === 4 (request finished)
+      if (xhttp.readyState === 4) {
+
+        if (xhttp.status >= 200 && xhttp.status < 400) {
+
+          deferred.resolve(xhttp.responseText);
+
+        } else {
+          reject(xhttp);
+        }
+
+      }
+    }
+
+    xhttp.open('GET', api + '/' + POGID + '/loadPog', true);
+    xhttp.send();
+
+
+    return deferred;
+      /*
       $http.get(api + '/' + POGID + '/loadPog').then(
         (result) => {
           // Reload All POGS
-          $pog.all().then(
+          $pog.all()
+            .notify((progress) => {
+              console.log('Loading pog progress:', progress);
+            })
+            .then(
             (resp) => {
               resolve();
             },
@@ -102,10 +136,9 @@ app.factory('api.pog', ['_', '$http', '$q', (_, $http, $q) => {
           reject('Unable to load the requested POG');
         }
       )
+     */
 
-    });
-
-  }
+  };
   
   return $pog;
   
