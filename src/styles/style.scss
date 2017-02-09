@@ -26,6 +26,12 @@ md-dialog.editor {
   
 }
 
+.sticky {
+  position: -webkit-sticky;  // required for Safari
+  position: sticky;
+  top: 0; // required as well.
+}
+
 .text-center { text-align: center; }
 .text-right { text-align: right; }
 .text-left { text-align: left; }
