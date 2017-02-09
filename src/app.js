@@ -7,6 +7,7 @@ const app = angular.module('bcgscIPR', [
 	'angularMoment',
 	'ngStorage',
 	'ui.router.breadcrumbs',
-	'hc.marked'
+	'hc.marked',
+  'hl.sticky'
 ]);
 

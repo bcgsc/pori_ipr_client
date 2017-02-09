@@ -45,7 +45,8 @@ let files = {
       './node_modules/simplemde/dist/simplemde.min.js',
       './node_modules/marked/marked.min.js',
       './node_modules/angular-marked/dist/angular-marked.min.js',
-      './node_modules/svg-pan-zoom/dist/svg-pan-zoom.js'
+      './node_modules/svg-pan-zoom/dist/svg-pan-zoom.js',
+      './node_modules/angular-sticky-plugin/dist/angular-sticky.min.js'
     ],
     
     // Application javascript sources
@@ -323,6 +324,7 @@ gulp.task('pug', ['pug-index','pug-templates']);
 gulp.task('sass', ['sass-app','sass-libs','sass-components']);
 gulp.task('build', ['favicon', 'pug','libs','js','sass', 'images']);
 
+//gulp.task('run', runSequence('favicon','pug', 'js', 'sass-app', 'sass-components',['watch', 'connect']));
 /*
  * Default Gulp Task
  *
