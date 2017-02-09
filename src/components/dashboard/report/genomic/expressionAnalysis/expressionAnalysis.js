@@ -8,8 +8,6 @@ app.controller('controller.dashboard.report.genomic.expressionAnalysis',
       $scope.expOutliers = {};
       $scope.drugTargets = drugTargets;
       $scope.densityGraphs = _.chunk(_.values(densityGraphs),2);
-      console.log('Density Graphs', $scope.densityGraphs);
-
 
       $scope.titleMap = {
         clinical: 'Expression Level Outliers of Potential Clinical Relevance',

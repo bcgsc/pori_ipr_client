@@ -55,6 +55,7 @@ section
                             div(flex) kIQR
                         div(ng-if="outliers.length == 0")
                             div.text-center.details No small somatic mutations of this kind were found from the analysis.
+
                         div(layout="row", flex, ng-repeat="target in drugTargetList = (drugTargets | filter: searchDrugs(drugQuery))").row
                             div(flex)
                                 a(href="http://dgidb.genome.wustl.edu/genes/{{target.gene}}", target="_blank") {{target.gene}}
