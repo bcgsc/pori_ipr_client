@@ -139,6 +139,13 @@ app.factory('api.pog', ['_', '$http', '$q', (_, $http, $q) => {
      */
 
   };
+
+  // Empty out cache
+  $pog.destroy = () => {
+
+    _pogs = {};
+
+  };
   
   return $pog;
   
