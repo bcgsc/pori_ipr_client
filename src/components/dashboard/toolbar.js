@@ -21,15 +21,12 @@ app.controller('controller.dashboard.toolbar', ['_', '$scope', '$mdSidenav', '$s
   }
   
   $scope.userLogout = () => {
-    
-    console.log('Running logout func');
-    
+
     // Logout user
     $session.logout();
     
     // Push user to public state
     $state.go('public.login');
-    
   }
   
 }]);
