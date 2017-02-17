@@ -6,8 +6,8 @@ const app = angular.module('bcgscIPR', [
 	'ui.router',
 	'angularMoment',
 	'ngStorage',
-	'ui.router.breadcrumbs',
+	'angularUtils.directives.uiBreadcrumbs',
 	'hc.marked',
-  'hl.sticky'
+  'stickyfill'
 ]);
 

@@ -1,9 +1,7 @@
 md-toolbar(ui-view="toolbar", layout='row').headerToolbar
-md-subheader.bread-crumbs 
-  ol(breadcrumbs)
-    li(ng-repeat="breadcrumb in breadcrumbs")
-      span /
-      a(ui-sref="{{breadcrumb.stateName}}") {{breadcrumb.text}}
+md-subheader.bread-crumbs
+  ui-breadcrumbs(displayname-property="data.displayName", template-url="uiBreadcrumbs/uiBreadcrumbs.tpl.html")
+  | {{data}}
 
 div(layout='row', flex)
   md-sidenav.md-sidenav-left.md-whiteframe-z1(
