@@ -27,9 +27,29 @@ section
 
             h3.title Mutational Spectrum
 
+            div(layout="column", flex).mutationSignature
+                div(layout="row", flex).header
+                    div(flex) Signature
+                    div(flex=5) Pearson
+                    div(flex=5) NNLS
+                    div(flex) Probably Associations
+                    div(flex=10) Additional Features
+                    div(flex=10) # Cancer Types
+                    div(flex=50) Significant Cancer Type
+                div(layout="row", ng-repeat="row in mutationSignature", flex).row
+                    div(flex) Signature {{row.signature}}
+                    div(flex=5, class="sig-{{row.pearsonColour}}").signatureCorrelation {{row.pearson}}
+                    div(flex=5, class="sig-{{row.nnlsColour}}").signatureCorrelation {{row.nnls}}
+                    div(flex).text-center {{row.associations}}
+                    div(flex).text-center {{row.features}}
+                    div(flex).text-center {{row.numCancerTypes}}
+                    div(flex=50) {{row.cancerTypes}}
+
             div(layout="column", layout-align="center center")
                 div
-                    img(data-ng-src="data:image/jpg;base64,{{images['mutSignature.corPcors'].data}}")
+                    img(data-ng-src="data:image/png;base64,{{images['mutSignature.corPcors'].data}}")
+
+            div(layout="column", layout-align="center center")
                 div
                     img(data-ng-src="data:image/png;base64,{{images['mutSignature.snvsAllStrelka'].data}}")
 
