@@ -1,5 +1,10 @@
-div(layout='column', flex)
-  div(ui-view, layout='column', layout-align='center center')
-  md-button.md-fab
-    a(href="/")
-      md-icon home
+div(layout='column', flex).error
+  div(layout="row").title
+    img(src="/assets/images/bcca_logo_grey.png")
+    span(ui-sref="dashboard.listing") BC Genome Sciences Center - POG
+  div(layout="column", flex)
+    div(layout="column").text-center
+    div(ui-view="", layout='column', layout-align='center center')
+  div(layout="row").bottom
+    span Interactive Pog Reports V0.0.1
+

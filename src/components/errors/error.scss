@@ -1,0 +1,21 @@
+div.error {
+
+  div.title {
+    background-color: rgb(150,150,150);
+    padding: 10px 10px 10px 30px;
+
+    span {
+      padding: 3px 0 0 0;
+      margin-left: 10px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+  }
+
+  div.bottom {
+    background-color: rgb(180,180,180);
+    padding: 10px;
+    font-size: 0.85em;
+  }
+
+}
