@@ -168,10 +168,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
 
     .state('dashboard.pog.report', {
       url: '/report',
-      abstract: true,
       data: {
         displayName: "Reports",
-        breadcrumbProxy: 'dashboard.pog.report.genomic.summary'
+        stateProxy: 'dashboard.pog.report.genomic.summary'
       },
 			templateUrl: 'dashboard/report/report.html',
     })
@@ -179,7 +178,8 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     .state('dashboard.pog.report.genomic', {
       url: '/genomic',
       data: {
-        displayName: "Genomic"
+        displayName: "Genomic",
+        stateProxy: 'dashboard.pog.report.genomic.summary'
       },
       templateUrl: 'dashboard/report/genomic/genomic.html',
       controller: 'controller.dashboard.report.genomic'
