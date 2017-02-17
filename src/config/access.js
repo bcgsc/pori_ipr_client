@@ -6,8 +6,16 @@ app.config(['$httpProvider', ($httpProvider) => {
     return {
       // Build Error Response Handler
       responseError: (responseError) => {
-        
-        var $state = $injector.get('$state');
+
+        console.log('Response error', responseError);
+
+        let $state = $injector.get('$state');
+
+        // API Is not Available
+        if(responseError.status === -1) {
+          $state.go('error.500');
+          return $q.reject(responseError);
+        }
         
         // Check if the response has a 403 error status
         if(responseError.status === 403) {
@@ -26,7 +34,7 @@ app.config(['$httpProvider', ($httpProvider) => {
         }
         
       } // end ResponseError
-    } // end return
+    }; // end return
     
   }]);
   
