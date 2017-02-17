@@ -7,7 +7,7 @@ md-content(flex).md-padding
   
   div(ng-repeat="pog in pogList = ( pogs | filter: searchPogs(pogQuery))", flex, md-whiteframe="1").PogList.md-padding
     h2(layout="row")
-      span(ui-sref="dashboard.report.genomic.summary({POG: '{{pog.POGID}}' })", flex).title {{pog.POGID}}
+      span(ui-sref="dashboard.pog.report.genomic.summary({POG: '{{pog.POGID}}' })", flex).title {{pog.POGID}}
       span(flex).text-center {{pog.patientInformation.reportDate}}
       span(flex) My Role: (Clinician|Bioinformatician|Analyist|Admin)
       
