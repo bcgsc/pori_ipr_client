@@ -5,7 +5,7 @@ app.controller('controller.dashboard.report.genomic',
   $scope.pog = pog;
   $scope.goToReportSection = (goto) => {
     
-    $state.go('dashboard.report.genomic.' + goto);
+    $state.go('^.' + goto);
     
   }
   
