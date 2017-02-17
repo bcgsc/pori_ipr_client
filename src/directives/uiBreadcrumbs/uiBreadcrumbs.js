@@ -41,7 +41,6 @@ app.directive('uiBreadcrumbs', ['$interpolate', '$state', function($interpolate,
             displayName = getDisplayName(workingState);
 
             if (displayName !== false && !stateAlreadyInBreadcrumbs(workingState, breadcrumbs)) {
-              console.log(workingState);
               breadcrumbs.push({
                 displayName: displayName,
                 route: (workingState.data && workingState.data.stateProxy) ? workingState.data.stateProxy : workingState.name
