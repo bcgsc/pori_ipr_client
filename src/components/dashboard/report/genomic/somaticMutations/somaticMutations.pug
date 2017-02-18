@@ -36,18 +36,16 @@ section
                     div(flex=10) Additional Features
                     div(flex=10) # Cancer Types
                     div(flex=50) Significant Cancer Type
-                div(layout="row", ng-repeat="row in mutationSignature", flex).row
-                    div(flex) Signature {{row.signature}}
+                div(layout="row", ng-repeat="row in mutationSignature", flex, ng-class="((isSelectedMutation(row.ident)) ? 'selected' : '')").row
+                    div(flex)
+                        | Signature {{row.signature}}
+                        md-tooltip(ng-if="isSelectedMutation(row.ident)") This signature has been selected by [analyst.name]
                     div(flex=5, class="sig-{{row.pearsonColour}}").signatureCorrelation {{row.pearson}}
                     div(flex=5, class="sig-{{row.nnlsColour}}").signatureCorrelation {{row.nnls}}
                     div(flex).text-center {{row.associations}}
                     div(flex).text-center {{row.features}}
                     div(flex).text-center {{row.numCancerTypes}}
                     div(flex=50) {{row.cancerTypes}}
-
-            div(layout="column", layout-align="center center")
-                div
-                    img(data-ng-src="data:image/png;base64,{{images['mutSignature.corPcors'].data}}")
 
             div(layout="column", layout-align="center center")
                 div

@@ -1,4 +1,4 @@
-md-dialog(layout="column", aria-label="Update Mutation Signature Details", ng-cloak, flex=35).editor
+md-dialog(layout="column", aria-label="Update Mutation Signature Details", ng-cloak, flex=75).editor
     form(flex='auto', name='form', ng-submit="update(form)")
         md-toolbar
             .md-toolbar-tools
@@ -8,13 +8,26 @@ md-dialog(layout="column", aria-label="Update Mutation Signature Details", ng-cl
                     md-icon cancel
         md-dialog-content(layout-padding)
 
-            div(layout="column")
-                p Specify the patient tumour analysis subtype.
-
-                div(layout="row")
-                    md-input-container(flex)
-                        input(name="Signature", placeholder="Mutation Signature", ng-model="ms.mutationSignature")
-
+            div(layout="column", flex).mutationSignature
+                div(layout="row", flex).header
+                    div(flex=5)
+                    div(flex) Signature
+                    div(flex=5) Pearson
+                    div(flex=5) NNLS
+                    div(flex) Probably Associations
+                    div(flex=10) Additional Features
+                    div(flex=10) # Cancer Types
+                    div(flex=50) Significant Cancer Type
+                div(layout="row", ng-repeat="(k, row) in mutationSignature", flex).row
+                    div(flex=5).text-center
+                        md-checkbox(aria-label="Select Signature", ng-checked="selectedSigs.indexOf(row.ident) > -1", ng-click="addToSelection(row.ident)")
+                    div(flex) Signature {{row.signature}}
+                    div(flex=5, class="sig-{{row.pearsonColour}}").signatureCorrelation {{row.pearson}}
+                    div(flex=5, class="sig-{{row.nnlsColour}}").signatureCorrelation {{row.nnls}}
+                    div(flex).text-center {{row.associations}}
+                    div(flex).text-center {{row.features}}
+                    div(flex).text-center {{row.numCancerTypes}}
+                    div(flex=50) {{row.cancerTypes}}
 
         md-dialog-actions(layout="row", layout-aligh="end center", layout-padding)
             md-button(type="submit").md-primary Update Details

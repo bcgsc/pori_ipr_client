@@ -104,9 +104,14 @@ section
         div(layout="column").mutationTable
             div(layout="row").header
                 div(flex).signature.editable
-                    span
-                        | {{(data.ms.mutationSignature || "Not Specified" )}}
+                    span(ng-if="data.ms.mutationSignature.length == 0") Not Specified
                         md-icon(ng-click="updateMs()") edit
+                    span(ng-if="data.ms.mutationSignature.length > 0")
+                        span(ng-repeat="sig in data.ms.mutationSignature")
+                            span(ng-click="toMutations()").listitem {{sig.associations}}
+                                md-tooltip Pearson: {{sig.pearson}} | NNLS: {{sig.nnls}} | Cancer Types: {{sig.cancerTypes}}
+                        md-icon(ng-click="updateMs()") edit
+
                 div(layout="row", flex).mutationType
                     div(flex)
                         | SNVs

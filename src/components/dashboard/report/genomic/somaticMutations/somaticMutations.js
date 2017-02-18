@@ -8,6 +8,15 @@ app.controller('controller.dashboard.report.genomic.somaticMutations',
       $scope.smallMutations = {};
       $scope.mutationSignature = [];
 
+      // Check if the current mutation is a selected one.
+      $scope.isSelectedMutation = (ident) => {
+        let found = _.find(ms.mutationSignature, (m) => {
+          return m.ident == ident;
+        });
+
+        return found !== undefined;
+      };
+
       let processSignature = (sigs) => {
 
         _.forEach(sigs, (r, k) => {

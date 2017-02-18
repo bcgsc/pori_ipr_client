@@ -45,6 +45,22 @@ div.smEvents {
 
     font-size: 0.85em;
 
+    &:hover {
+      background-color: rgb(247,206,170);
+    }
+
+    &.selected {
+      background-color: rgb(220, 239, 255);
+
+      div:first-child::before {
+        content: '» ';
+      }
+      div:first-child {
+        cursor: pointer;
+      }
+
+    }
+
     div {
       padding: 5px 3px;
 
