@@ -207,6 +207,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         }],
         pt: ['$q', '$stateParams', 'api.summary.probeTarget', ($q, $stateParams, $pt) => {
           return $pt.all($stateParams.POG);
+        }],
+        mutationSignature: ['$q', '$stateParams', 'api.somaticMutations.mutationSignature', ($q, $stateParams, $mutationSignature) => {
+          return $mutationSignature.all($stateParams.POG);
         }]
       }
     })
