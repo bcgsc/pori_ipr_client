@@ -369,4 +369,90 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       }
     })
 
+    .state('print', {
+      url: '/print',
+      abstract: true,
+      templateUrl: 'print/print.html',
+      controller: 'controller.print',
+      data: {
+        displayName: 'Print'
+      },
+      resolve: {
+        user: ['$q', 'api.session', '$state', ($q, $session, $state) => {
+          return $q((resolve, reject) => {
+            // Attempt session initialization
+            $session.init().then(
+              (user) => {
+                // Session init'd, return user
+                resolve(user);
+              },
+              (err) => {
+                // No session, go to login page
+                $state.go('public.login');
+                reject(err);
+              }
+            );
+
+          });
+        }],
+      }
+    })
+
+    .state('print.POG', {
+      url: '/POG/:POG',
+      abstract: true,
+      data: {
+        displayName: '{{POG.POGID}}'
+      },
+      template: '<ui-view \\>',
+      resolve: {
+        pog: ['$q', '$stateParams', 'api.pog', ($q, $stateParams, $pog) => {
+          return $pog.id($stateParams.POG);
+        }]
+      }
+    })
+
+    .state('print.POG.report', {
+      url: '/report',
+      abstract: true,
+      template: '<ui-view \\>',
+    })
+
+    .state('print.POG.report.genomic', {
+      url: '/genomic',
+      data: {
+        displayName: 'Genomic Report'
+      },
+      views: {
+        "": {
+          templateUrl: 'print/report/genomic/genomic.html',
+          controller: 'controller.print.POG.report.genomic',
+        },
+        "summary@print.POG.report.genomic": { templateUrl: 'print/report/genomic/sections/summary/summary.html' },
+      },
+      resolve: {
+        gai: ['$q', '$stateParams', 'api.summary.genomicAterationsIdentified', ($q, $stateParams, $gai) => {
+          return $gai.all($stateParams.POG);
+        }],
+        get: ['$q', '$stateParams', 'api.summary.genomicEventsTherapeutic', ($q, $stateParams, $get) => {
+          return $get.all($stateParams.POG);
+        }],
+        ms: ['$q', '$stateParams', 'api.summary.mutationSummary', ($q, $stateParams, $ms) => {
+          return $ms.get($stateParams.POG);
+        }],
+        vc: ['$q', '$stateParams', 'api.summary.variantCounts', ($q, $stateParams, $vc) => {
+          return $vc.get($stateParams.POG);
+        }],
+        pt: ['$q', '$stateParams', 'api.summary.probeTarget', ($q, $stateParams, $pt) => {
+          return $pt.all($stateParams.POG);
+        }],
+        mutationSignature: ['$q', '$stateParams', 'api.somaticMutations.mutationSignature', ($q, $stateParams, $mutationSignature) => {
+          return $mutationSignature.all($stateParams.POG);
+        }],
+        comments: ['$q', '$stateParams', 'api.summary.analystComments', ($q, $stateParams, $comments) => {
+          return $comments.get($stateParams.POG);
+        }]
+      }
+    })
+
 }]);
