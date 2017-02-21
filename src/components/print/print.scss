@@ -1,0 +1,13 @@
+@page {
+  //size: letter;
+  margin: 0 0;
+}
+
+@media print {
+  html, body {
+    width: 216mm;
+    height: 229mm;
+    background-color: rgb(255,255,255);
+    font-family: Sans-Serif;
+  }
+}

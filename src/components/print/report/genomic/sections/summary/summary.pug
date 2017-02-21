@@ -1,0 +1,219 @@
+div(layout="row").header
+    div(flex=50)
+        img(src="/assets/images/print_logo.png", width="100%")
+    div(flex=50, layout-align="start end")
+        div(flex).text-right Tumour Genome Analysis
+
+div(layout="row").version
+    div(flex=50) Report version: x.x.x
+    div(flex=50).text-right Knowledgebase version: x.x.x
+
+div(flex).pogid.text-center {{pog.POGID}}
+
+div.report-section
+    h1 Patient Information
+
+    div(layout="column", flex).details
+
+        table(width="100%")
+            tr
+                th(width="12%") Patient ID:
+                td(width="15%") {{pog.POGID}}
+                th(width="14%") Gender:
+                td(width="14%") {{data.pi.gender}}
+                th(width="15%") Tumour Sample:
+                td(width="30%") {{data.pi.tumourSample}}
+            tr
+                th Tumour Type:
+                td {{data.pi.tumourType}}
+                th Case Type:
+                td Adult
+                th Tumour Sample
+                td {{data.pi.constitutionalSample}}
+            tr
+                th Report Date:
+                td {{data.pi.reportDate}}
+                th Age at Diagnosis:
+                td Not Specified
+                th Biopsy Details:
+                td {{data.pi.biopsySite}}
+            tr
+                th Physician:
+                td {{data.pi.physician}}
+                th
+                td
+                th Protocol:
+                td {{data.pi.tumourProtocol}}
+
+    h1 Patient Tumour Analysis Summary
+
+    div(layout="column", flex)
+
+        div(layout="row")
+            div(layout="column", flex).dataBox
+                h4 Genome Status
+                div.inner
+                    div(layout="row", flex).heading
+                        div(flex) Tumour Content
+                        div(flex) Ploidy Model
+                    div(layout="row", flex).content
+                        div(flex) {{data.ta.tumourContent}}%
+                        div(flex) {{data.ta.ploidy}}
+
+            div(layout="column", flex).dataBox
+                h4 Tissue Comparators
+
+                div.inner
+                    div(layout="row", flex).heading
+                        div(flex) Normal Expression
+                        div(flex) Disease Expression
+                    div(layout="row", flex).content
+                        div(flex) {{data.ta.normalExpressionComparator}}
+                        div(flex) {{data.ta.diseaseExpressionComparator}}
+
+            div(layout="column", flex=20).dataBox
+                h4 Subtyping
+
+                div.inner
+                    div(layout="row", flex).heading
+                        div(flex) Subtype
+                    div(layout="row", flex).content
+                        div(flex)
+                            span
+                                | {{(data.ta.subtyping || "Not Specified")}}
+
+            div(layout="column", flex=20).dataBox
+                h4 Microbial Content
+
+                div.inner
+                    div(layout="row", flex).heading
+                        div(flex) Species
+                        div(flex) Integration
+                    div(layout="row", flex).content
+                        div(flex) None
+                        div(flex) None
+
+        div(layout="row")
+            div(layout="column", flex="25").dataBox
+                h4 Mutation Signature
+            div(layout="column", flex="75").dataBox
+                h4 Mutation Burden
+                    span (in protein coding genes)
+
+
+        table.mutation
+            thead
+                tr
+                    th.signature
+                        div(ng-if="data.ms.mutationSignature.length == 0") Not Specified
+                        div(ng-if="data.ms.mutationSignature.length > 0")
+                            span(ng-repeat="sig in data.ms.mutationSignature").listitem {{sig.associations}}
+                    th SNVs
+                    th.total {{mutationBurdenFilter(data.ms.totalSNV)}}
+                    th Indels
+                    th.total {{mutationBurdenFilter(data.ms.totalIndel)}}
+                    th SVs
+                    th.total {{mutationBurdenFilter(data.ms.totalSV)}}
+            tbody
+                tr
+                    td(width="25%").label Interpreted prevelance
+                    td(width="25%", colspan=2) {{(data.ms.snvPercentileDiseaseCategory === "na") ? 'LOW' : data.ms.snvPercentileDiseaseCategory}}
+                    td(width="25%", colspan=2) {{(data.ms.indelPercentileDiseaseCategory === "na") ? 'LOW' : data.ms.indelPercentileDiseaseCategory}}
+                    td(width="25%", colspan=2) {{data.ms.svPercentilePOGCategory}}
+                tr
+                    td.label Percentile among compendium
+                    td(colspan=2) {{data.ms.snvPercentileTCGA}}
+                    td(colspan=2) {{data.ms.indelPercentileTCGA}}
+                    td(colspan=2) {{data.ms.svPercentilePOG}} (POG)
+                tr
+                    td.label Percentile among {{data.ta.diseaseExpressionComparator}}
+                    td(colspan=2) {{data.ms.snvPercentileDisease}}
+                    td(colspan=2) {{data.ms.indelPercentileDisease}}
+                    td(colspan=2)
+
+
+    div(layout="column", flex)
+
+        div(layout="row")
+            div(layout="column", flex).dataBox
+                h4 Key Genomic and Transcriptomic Alterations Identified
+
+        div(layout="row").keyAlterationsIdentified
+            div(layout="row", flex).title.sm
+                div(flex) Small Mutations
+                div(flex="30") {{data.vc.smallMutations}}
+            div(layout="row", flex).title.cnv
+                div(flex) Copy Number Variants
+                div(flex="30") {{data.vc.CNVs}}
+            div(layout="row", flex).title.sv
+                div(flex) Structural Variants
+                div(flex="30") {{data.vc.SVs}}
+            div(layout="row", flex).title.outliers
+                div(flex) Expression Outliers
+                div(flex="30") {{data.vc.expressionOutliers}}
+        div(flex).alterations
+            div(ng-repeat="variant in data.gai", class="{{variant.type}}") {{variant.geneVariant}}
+
+        div(layout="row").keyAlterationsIdentified
+            div(layout="row", flex).title.unknown
+                div(flex, style="padding:0; padding-right: 1mm;").text-right Additional variants of uncertain significance (VUS) detected in cancer-related genes:
+                div(flex=10, style="padding:0") {{data.vc.variantsUnknown}}
+
+    h1 Genomic Events with Potential Therapeutic Association
+
+    div(layout="column", flex)
+
+        div(layout="row")
+            div(layout="column", flex).dataBox
+                div.inner
+                    div(layout="row", flex).heading.yellow
+                        div(flex) Genomic Events
+                        div(flex) Approved in this cancer type
+                        div(flex) Approved in other cancer type
+                        div(flex) Emerging Evidence
+                    div(layout="row", flex, ng-repeat="gene in data.get[0]").content.left
+                        div(flex) {{gene.genomicEvent}}
+                        div(flex) {{gene.approvedThisCancerType}}
+                        div(flex) {{gene.approvedOtherCancerType}}
+                        div(flex) {{gene.emergingPreclinicalEvidence}}
+div(ng-if="data.get[1]").pageBreak
+div.pageHeaderSpace
+div.report-section
+    h1 Genomic Events with Potential Therapeutic Association
+    div(layout="column", flex)
+
+        div(layout="row")
+            div(layout="column", flex).dataBox
+                div.inner
+                    div(layout="row", flex).heading.yellow
+                        div(flex) Genomic Events
+                        div(flex) Approved in this cancer type
+                        div(flex) Approved in other cancer type
+                        div(flex) Emerging Evidence
+                    div(layout="row", flex, ng-repeat="gene in data.get[1]").content.left
+                        div(flex) {{gene.genomicEvent}}
+                        div(flex) {{gene.approvedThisCancerType}}
+                        div(flex) {{gene.approvedOtherCancerType}}
+                        div(flex) {{gene.emergingPreclinicalEvidence}}
+
+div(ng-if="data.get[1]").pageBreak
+div.pageHeaderSpace
+div.report-section
+    h1 Analyst Comments
+    div(layout="column", flex, layout-align="end start").analystComments
+        div(flex=95, style="width: 100%", marked="(analystComments.comments || '### Report Draft \n No comments yet.')").body
+        div(layout="row").reviewed
+            div(flex) Date:
+            div(flex) Reviewed By:
+
+div(ng-if="data.get[1]").pageBreak
+div.pageHeaderSpace
+div.report-section
+    h1 Pathway Analysis
+    div(layout="column", flex)
+
+div(ng-if="data.get[1]").pageBreak
+div.pageHeaderSpace
+div.report-section
+    h1 Potential Therapeutic Targets
+    div(layout="column", flex)

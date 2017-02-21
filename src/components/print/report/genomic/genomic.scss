@@ -1,0 +1,462 @@
+@media print {
+
+  body {
+    margin: 8mm 15mm;
+  }
+
+}
+
+$print_purple: rgb(51, 0, 153);
+$print_section_bg: rgb(117,107,177);
+$print_grey_border: rgb(192,192,192);
+
+div.print {
+
+  .page {
+
+    display: block;
+    margin: 8mm 15mm;
+    padding: 2mm 0;
+
+    .pageBreak {
+      page-break-after: always;
+    }
+    .pageHeaderSpace {
+      height: 20mm;
+    }
+
+    .pageHeader {
+      position: fixed;
+      top: 10mm;
+      color: $print_purple;
+      font-weight: 700;
+      font-size: 10pt;
+      width: 87%;
+
+      div {
+        display: inline-block;
+        width: 33%;
+
+        &:nth-of-type(2) { text-align: center; }
+        &:last-of-type { text-align: right; }
+
+      }
+
+    }
+
+    .pageFooter {
+      position: fixed;
+      bottom: 8mm;
+      color: $print_purple;
+      font-weight: 700;
+      font-size: 9pt;
+      width: 87%;
+
+      div {
+        display: inline-block;
+        width: 20%;
+
+        &:nth-of-type(2) {
+          text-align: center;
+          width: 60%
+        }
+        &:last-of-type {
+          text-align: right;
+          counter-increment: page;
+          content: counter(page);
+        }
+
+      }
+    }
+    /*
+      Pan-Report styles
+     */
+    .report-section {
+
+      h1 {
+        font-size: 10pt;
+        font-weight: 700;
+        text-transform: uppercase;
+        padding: 1mm;
+        color: rgb(0,0,0);
+        background-color: rgb(80, 255, 0);
+        margin: 1mm 0;
+      }
+      h2 {
+        font-size: 9pt;
+        font-weight: 700;
+        text-transform: uppercase;
+        padding: 1mm;
+        color: rgb(0,0,0);
+        background-color: rgb(255, 0, 225);
+        margin: 1mm 0;
+      }
+      h3 {
+        font-size: 8pt;
+        font-weight: 700;
+        text-transform: uppercase;
+        padding: 1mm;
+        color: rgb(0,0,0);
+        background-color: rgb(192, 192, 192);
+        margin: 1mm 0;
+      }
+
+    }
+    /*
+      Summary Section of Report
+     */
+    .summary {
+
+      h1 { background-color: rgb(188,189,220); }
+      h2 { background-color: rgb(211, 212, 244); }
+      h4 { margin: 1mm 0; padding: 0; font-size: 8pt; }
+
+      .header {
+        margin-top: 10mm;
+        div:nth-child(2) {
+          font-size: 18pt;
+          vertical-align: bottom;
+          color: $print_purple;
+        }
+      }
+
+      .pogid {
+        margin: 2mm 0;
+        padding: 1mm;
+        text-align: center;
+        background-color: $print_section_bg;
+        border: 1mm solid $print_grey_border;
+        color: rgb(255,255,255);
+      }
+
+      .details {
+        padding: 1mm;
+        font-size: 7pt;
+
+        table {
+          th {
+            text-align: right;
+            font-weight: 100;
+          }
+          td {
+            font-weight: 600;
+          }
+        }
+      }
+
+      .dataBox {
+        margin: 0 0.5mm;
+
+        h4 {
+          font-size: 9pt;
+          font-weight: 600;
+          text-transform: uppercase;
+
+          span {
+            font-size: 7pt;
+            margin-left: 1mm;
+          }
+
+        }
+
+        .inner {
+          border: 1px solid rgb(110,110,110);
+
+          div {
+            padding: 1mm 0;
+            font-size: 7pt;
+          }
+
+          div.heading {
+            background-color: rgb(150, 150, 150);
+            font-size: 6pt;
+            text-align: center;
+
+            &.yellow {
+              background-color: rgb(255, 234, 42);
+            }
+          }
+          div.content {
+            background-color: rgb(220, 220, 220);
+            text-align: center;
+
+            &.left {
+              padding: 0.5mm;
+              text-align: left;
+            }
+          }
+        }
+      } // end DataBox
+
+      table.mutation {
+        width: 100%;
+        border-spacing: 0;
+        border-collapse: collapse;
+
+        thead {
+
+          th:first-of-type {
+            border-top: none;
+            border-left: none;
+          }
+          th:last-of-type {
+            border-right: 0.5mm solid grey;
+          }
+
+          th {
+            background-color: rgb(192,232,252);
+            padding: 1mm 0;
+            text-align: center;
+            font-size: 9pt;
+            font-weight: 300;
+            border-top: 0.5mm solid grey;
+            border-left: 0.5mm solid grey;
+          }
+          th.signature {
+            background-color: rgb(255,255,255);
+
+            div {
+              background-color: rgb(180, 180, 180);
+              border: 0.5mm solid rgb(110,110,110);
+              text-align: center;
+              font-size: 8pt;
+              margin: 0 1mm 1mm 0;
+              padding: 0.5mm 0;
+
+              span::before {
+                content: ', ';
+              }
+              span:first-of-type {
+                margin-left: 0;
+                &::before {
+                  content: '';
+                }
+              }
+            }
+          }
+          th.total {
+            font-size: 10pt;
+            padding: 1mm 0;
+            text-align: center;
+            color: rgb(255,255,255);
+            background-color: rgb(82, 132, 177);
+            width: 10%;
+          }
+        }
+        tbody {
+
+          tr:first-of-type {
+            td {
+              border-top: 0.5mm solid grey;
+            }
+          }
+
+          tr:last-of-type {
+            td {
+              border-bottom: 0.5mm solid grey;
+            }
+          }
+
+          td {
+            background-color: rgb(220, 220, 220);
+            font-size: 9pt;
+            text-align: center;
+            padding: 1mm 0;
+            border-right: 0.5mm solid grey;
+
+            &.label {
+              text-align: left;
+              padding: 0 0 0 2mm;
+            }
+            &:first-of-type {
+              border-left: 0.5mm solid grey;
+            }
+          }
+        }
+        .mutationBurden {
+          font-size: 8pt;
+
+          .label {
+            border: 0.5mm solid rgb(110,110,110);
+            border-top: 0;
+          }
+          .data {
+            background-color: rgb(220, 220, 220);
+            border-top: 0.5mm solid rgb(110,110,110);
+            border-right: 0.5mm solid rgb(110,110,110);
+            border-bottom: 0.5mm solid rgb(110,110,110);
+            text-align: center;
+          }
+        }
+
+      }
+
+      .keyAlterationsIdentified {
+
+        .title {
+          font-size: 8pt;
+
+          div {
+            padding: 1mm 0;
+          }
+
+          div:first-of-type { padding-left: 1mm; }
+
+          div:nth-of-type(2) {
+            font-size: 10pt;
+            font-weight: 600;
+            padding: 1mm 0;
+            text-align: center;
+          }
+        }
+
+        div.sm {
+          background-color: rgb(179,187,232);
+
+          div:nth-of-type(2) {
+            color: #ffffff;
+            background-color: rgb(63,81,181);
+          }
+        }
+
+        div.cnv {
+          background-color: rgb(178,214,171);
+
+          div:nth-of-type(2) {
+            color: #ffffff;
+            background-color: rgb(19,165,44);
+          }
+        }
+
+        div.sv {
+          background-color: rgb(212,179,232);
+
+          div:nth-of-type(2) {
+            color: #ffffff;
+            background-color: rgb(141,63,181);
+          }
+        }
+
+        div.outliers {
+          background-color: rgb(247,206,170);
+
+          div:nth-of-type(2) {
+            color: #ffffff;
+            background-color: rgb(193,101,20);
+          }
+        }
+
+        div.unknown {
+
+          div:nth-of-type(2) {
+            color: #ffffff;
+            background-color: rgb(175,175,175);
+          }
+        }
+
+      } // end Alterations Count
+
+
+
+      .alterations {
+        padding: 1mm;
+        background-color: rgb(235,235,235);
+
+        div {
+          display: inline-block;
+          width: 20%;
+          font-size: 8pt;
+
+          &.smallMutation { background-color: rgb(179,187,232); }
+          &.cnv { background-color: rgb(178,214,171); }
+          &.structuralVariant { background-color: rgb(212,179,232); }
+          &.expressionOutlier { background-color: rgb(247,206,170); }
+        }
+
+      }
+
+      .analystComments {
+        border: 0.5mm solid rgb(0,0,0);
+        height: 230mm;
+
+        .body {
+
+          padding: 0 3mm;
+
+          h1 {
+            display: block;
+            font-size: 2em;
+            margin-top: 0.67em;
+            margin-bottom: 0.67em;
+            margin-left: 0;
+            margin-right: 0;
+            font-weight: 600;
+            background: none;
+          }
+          h2 {
+            display: block;
+            font-size: 1.5em;
+            margin-top: 0.83em;
+            margin-bottom: 0.83em;
+            margin-left: 0;
+            margin-right: 0;
+            font-weight: 600;
+            background: none;
+          }
+          h3 {
+            display: block;
+            font-size: 1.17em;
+            margin-top: 1em;
+            margin-bottom: 1em;
+            margin-left: 0;
+            margin-right: 0;
+            font-weight: 600;
+            background: none;
+          }
+          h4 {
+            display: block;
+            margin-top: 1.33em;
+            margin-bottom: 1.33em;
+            margin-left: 0;
+            margin-right: 0;
+            font-weight: 600;
+            background: none;
+          }
+          h5 {
+            display: block;
+            font-size: 0.83em;
+            margin-top: 1.67em;
+            margin-bottom: 1.67em;
+            margin-left: 0;
+            margin-right: 0;
+            font-weight: 600;
+            background: none;
+          }
+          h6 {
+            display: block;
+            font-size: 0.67em;
+            margin-top: 2.33em;
+            margin-bottom: 2.33em;
+            margin-left: 0;
+            margin-right: 0;
+            font-weight: 600;
+            background: none;
+          }
+        }
+
+        .reviewed {
+          width: 130mm;
+          padding: 2mm;
+          margin: 2mm;
+          border: 0.5mm solid rgb(0,0,0);
+        }
+
+      }
+
+
+    } // End Summary
+
+  }
+
+
+}

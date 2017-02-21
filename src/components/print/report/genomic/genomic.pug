@@ -1,0 +1,15 @@
+div(layout="column").page
+    div(layout="row", flex).pageHeader
+        div {{pog.POGID}}
+        div {{pog.patientInformation.reportDate}}
+        div {{pog.patientInformation.tumourType}}
+
+    // Summary Section
+    section(ui-view="summary").summary
+
+    div(layout="row", flex).pageFooter
+        div Tumour Content - {{pog.tumourAnalysis.tumourContent}}%
+            br
+            | Ploidy Model - {{data.ta.ploidy}}
+        div BCCA Confidential - For Research Purposes Only
+        div
