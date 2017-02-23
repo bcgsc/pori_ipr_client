@@ -19,15 +19,19 @@ section
 
             h2.title Alterations With Therapeutic Relevance
 
+        div(ng-show="showUnknown").text-center.details
+            md-button(ng-click="toggleUnknown()", ng-disabled="disableUnknownButtons").md-primary.md-raised.md-hue-1 View Characterized Alterations
+
         div(ng-repeat="(alteration, genes) in alterations")
-            h3.title {{alteration}}
+            h3(ng-hide="alteration !== 'unknown' && showUnknown").title {{alteration}}
 
             div(ng-if="genes.length == 0 && alteration !== 'unknown'")
-                div.text-center.details None Found.
-            div(ng-if="alteration == 'unknown'")
+                div(ng-hide="showUnknown").text-center.details None Found.
+
+            div(ng-if="alteration == 'unknown'", ng-hide="showUnknown")
                 div.text-center.details
-                    md-button.md-primary.md-raised.md-hue-1 View Uncharacterized Alterations
-            ipr-genomic-alteration(ng-repeat="gene in genes", samples="samples", gene="gene", pog="pog").container
+                    md-button(ng-click="toggleUnknown()", ng-disabled="disableUnknownButtons").md-primary.md-raised.md-hue-1 View Uncharacterized Alterations
+            ipr-genomic-alteration(ng-repeat="(i, gene) in genes", samples="samples", gene="gene", pog="pog", trigger="trigger").container
 
         div(layout="column", flex)
             h2.title Targeted Gene Report - Detected Alterations

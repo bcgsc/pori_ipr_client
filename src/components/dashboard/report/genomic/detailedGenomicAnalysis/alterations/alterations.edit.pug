@@ -1,4 +1,4 @@
-md-dialog(layout="column", aria-label="Update Alterations Entry", flex-md=60, flex-xs=100, flex-lg=50)
+md-dialog(layout="column", aria-label="Update Alterations Entry", flex-md=80, flex-xs=100, flex-lg=60, flex=60)
   form(flex='auto', name='form', ng-submit="update(form)", novalidate)
     md-toolbar
       .md-toolbar-tools
@@ -82,7 +82,7 @@ md-dialog(layout="column", aria-label="Update Alterations Entry", flex-md=60, fl
             div(layout="row")
               md-input-container(flex)
                 label Clinical Relevance
-                md-select(ng-model="gene.alterationType", aria-label"Clinical Relevance",required)
+                md-select(ng-model="gene.alterationType", aria-label"Clinical Relevance", required, ng-disabled="relevanceLock")
                   md-option(ng-repeat="(k, v) in $alterations.type", ng-value="k", placeholder="Clinical Relevance") {{v}}
               
         md-tab(label="Reference")
@@ -112,7 +112,7 @@ md-dialog(layout="column", aria-label="Update Alterations Entry", flex-md=60, fl
                   
             div(layout="row")
               md-input-container(flex)
-                textarea(ng-model="reference.summary", name="RefSummary", placeholder="Reference Summary", rows=3, required)
+                textarea(ng-model="reference.summary", name="RefSummary", placeholder="Reference Summary", rows=3)
               
               
         md-tab(label="Knowledge Base")

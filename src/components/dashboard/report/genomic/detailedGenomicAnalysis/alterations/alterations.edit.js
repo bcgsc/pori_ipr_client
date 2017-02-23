@@ -11,6 +11,8 @@ app.controller('controller.dashboard.reports.genomic.detailedGenomicAnalysis.alt
   scope.kb = {};
   scope.pog = pog;
 
+  console.log('Edit Alteration:', gene);
+
   // Watch Values and Build KB Entries
   scope.$watchGroup(['gene.variant_type', 'gene.gene', 'gene.variant', 'gene.alterationType', 'gene.therapeuticContext', 'gene.disease', 'gene.evidence', 'gene.association'], (newVals, oldVals) => {
         
@@ -56,7 +58,14 @@ app.controller('controller.dashboard.reports.genomic.detailedGenomicAnalysis.alt
 
     let kbLookup = $kbAssoc.association(newVal);
     if(kbLookup) {
-      if(kbLookup == '*') return;
+      if(kbLookup == '*') {
+        // Release Relevance Lock
+        scope.relevanceLock=false;
+        scope.gene.alterationType = null;
+        return;
+      }
+      // Maintain Relevance Lock
+      scope.relevanceLock=true;
       scope.gene.alterationType = kbLookup;
     }
 
@@ -94,7 +103,6 @@ app.controller('controller.dashboard.reports.genomic.detailedGenomicAnalysis.alt
     // Get PMID and process
     $pubmed.article(pmid).then(
       (article) => {
-        console.log('Retrieved PubMed artcile: ', article);
         scope.disableRefTitle = true;
         scope.reference.title = article.title;
         scope.reference.type = 'pubmed';
@@ -127,7 +135,7 @@ app.controller('controller.dashboard.reports.genomic.detailedGenomicAnalysis.alt
         $mdDialog.hide('Entry has been updated');
       },
       (error) => {
-        alert('Unable to update. See console');
+        alert('System Error - Unable to update. See console');
         console.log(error);
       }
     );

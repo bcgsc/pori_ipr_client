@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.report.genomic.detailedGenomicAnalysis', 
-  ['_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', 'api.pog', 'pog', 'alterations', 'approvedThisCancer', 'approvedOtherCancer', 'targetedGenes',
-  (_, $q, $scope, $state, $mdDialog, $mdToast, $pog, pog, alterations, approvedThisCancer, approvedOtherCancer, targetedGenes) => {
+  ['_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', 'api.pog', 'api.detailedGenomicAnalysis.alterations', 'pog', 'alterations', 'approvedThisCancer', 'approvedOtherCancer', 'targetedGenes',
+  (_, $q, $scope, $state, $mdDialog, $mdToast, $pog, $alterations, pog, alterations, approvedThisCancer, approvedOtherCancer, targetedGenes) => {
   
   $scope.approvedThisCancer = {};
   $scope.approvedOtherCancer = {};
@@ -8,7 +8,78 @@ app.controller('controller.dashboard.report.genomic.detailedGenomicAnalysis',
   $scope.samples = [];
   $scope.alterations = {therapeutic: {}, prognostic: {}, diagnostic: {}, biological: {}, unknown: null};
   $scope.targetedGenes = targetedGenes;
-  
+  $scope.showUnknown = false;
+  $scope.disableUnknownButtons = false;
+
+
+  // Toggle viewing unknowns state
+  $scope.toggleUnknown = () => {
+
+    $scope.disableUnknownButtons = true;
+
+    // Show unknowns
+    if(!$scope.showUnknown) {
+      // First dump all alterations
+      $scope.alterations = {therapeutic: {}, prognostic: {}, diagnostic: {}, biological: {}, unknown: {}};
+
+      // Load unknowns
+      $alterations.getType(pog.POGID, 'unknown').then(
+        (resp) => {
+          groupEntries(resp);
+          $scope.showUnknown = true;
+          $scope.disableUnknownButtons = false;
+        },
+        (err) => {
+          console.log('Unable to load unknowns', err);
+        }
+      );
+    }
+
+    // Show All others
+    if($scope.showUnknown) {
+
+      // First dump all alterations
+      $scope.alterations = {therapeutic: {}, prognostic: {}, diagnostic: {}, biological: {}, unknown: null};
+
+      // Load unknowns
+      $alterations.getAll(pog.POGID).then(
+        (resp) => {
+          groupEntries(resp);
+          $scope.disableUnknownButtons =
+          $scope.showUnknown = false;
+        },
+        (err) => {
+          console.log('Unable to load unknowns', err);
+        }
+      );
+
+    }
+
+  };
+
+  // Resort Groupings
+  $scope.trigger = (val) => {
+    if(val === false) return;
+
+    // Loop over defined alterations
+    _.forEach($scope.alterations, (v, k) => {
+      // Loop over alterion type
+      _.forEach(v, (row, rowID) => {
+        // Is there a mismatch?
+        if(row && row.alterationType !== k) {
+
+          // Move to new alteration
+          $scope.alterations[row.alterationType].unshift(row);
+
+          $scope.alterations[k].splice(rowID,1);
+        }
+
+      });
+
+    });
+
+  };
+
   // Filter reference type
   $scope.refType = (ref) => {
     if(ref.match(/^[0-9]{8}\#/)) {
@@ -18,19 +89,19 @@ app.controller('controller.dashboard.report.genomic.detailedGenomicAnalysis',
       return 'link';
     } 
     return 'text';
-  }
+  };
   
   // Prepend a link with http:// if necessary
   $scope.prependLink = (link) => {
     return (link.indexOf('http://') == -1) ? 'http://' + link : link;
-  }
+  };
   
   // Clean up PMIDs
   $scope.cleanPMID = (pmid) => {
     return pmid.match(/^[0-9]{8}/)[0];
-  }
+  };
   
-  // Group Alterations
+  // Group Alterations by type
   let groupAlterations = (collection, alterations) => {
     
     alterations.forEach((row) => {
@@ -47,9 +118,9 @@ app.controller('controller.dashboard.report.genomic.detailedGenomicAnalysis',
     
     return _.values(collection);
     
-  }
+  };
   
-  // Setup Entries
+  // Group Entries by Type
   let groupEntries = (alterations) => {
     // Process the entries for grouping
     alterations.forEach((row) => {
@@ -59,7 +130,8 @@ app.controller('controller.dashboard.report.genomic.detailedGenomicAnalysis',
       
       // Grouping
       if(!(row.alterationType in $scope.alterations)) $scope.alterations[row.alterationType] = {};
-      
+
+
       // Check if it exists already?
       if(!(row.gene+'-'+row.variant in $scope.alterations[row.alterationType])) {
         row.children = [];
@@ -79,7 +151,7 @@ app.controller('controller.dashboard.report.genomic.detailedGenomicAnalysis',
       //console.log('Iteree: ', k, values, _.values(values));
     });
         
-  }
+  };
   
   // Group Entries
   groupEntries(alterations);
