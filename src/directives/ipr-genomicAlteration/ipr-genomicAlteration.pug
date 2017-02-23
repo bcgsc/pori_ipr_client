@@ -61,7 +61,7 @@ div(flex, layout="column", ng-show="gene.showChildren")
           md-icon(ng-click="updateRow($event, gene)") edit
             md-tooltip Modify this entry
       
-      div(layout="row", flex, ng-repeat="childGene in gene.children").row
+      div(layout="row", flex, ng-repeat="(i, childGene) in gene.children").row
         div(flex) {{childGene.variant}}
         div(flex) {{childGene.effect}}
         div(flex) {{childGene.disease}}

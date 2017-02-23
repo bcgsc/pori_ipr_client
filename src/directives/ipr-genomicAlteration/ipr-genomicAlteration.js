@@ -7,11 +7,12 @@ app.directive("iprGenomicAlteration", ['$q', '_', '$mdDialog', '$mdToast', ($q, 
     scope: {
       samples: '=samples',
       gene: '=gene',
-      pog: '=pog'
+      pog: '=pog',
+      trigger: '='
     },
     templateUrl: 'ipr-genomicAlteration/ipr-genomicAlteration.html',
-    link: (scope, element, attr) => {      
-      
+    link: (scope, element, attr) => {
+
       // Filter reference type
       scope.refType = (ref) => {
         if(ref.match(/^[0-9]{8}\#/)) {
@@ -21,17 +22,17 @@ app.directive("iprGenomicAlteration", ['$q', '_', '$mdDialog', '$mdToast', ($q, 
           return 'link';
         } 
         return 'text';
-      }
+      };
       
       // Prepend a link with http:// if necessary
       scope.prependLink = (link) => {
         return (link.indexOf('http://') == -1) ? 'http://' + link : link;
-      }
+      };
       
       // Clean up PMIDs
       scope.cleanPMID = (pmid) => {
         return pmid.match(/^[0-9]{8}/)[0];
-      }
+      };
       
       // Update entry icon clicked
       scope.updateRow = ($event, row) => {
@@ -50,10 +51,11 @@ app.directive("iprGenomicAlteration", ['$q', '_', '$mdDialog', '$mdToast', ($q, 
          
         }).then((outcome) => {
           if(outcome) $mdToast.show($mdToast.simple().textContent(outcome));
+          scope.trigger(true);
         }, (error) => {
           $mdToast.show($mdToast.simple().textContent(error));
         });
-      }
+      };
       
       // Create new entry...
       scope.createRow = ($event, section) => {
@@ -72,6 +74,6 @@ app.directive("iprGenomicAlteration", ['$q', '_', '$mdDialog', '$mdToast', ($q, 
       }
       
     } // end link
-  } // end return
+  }; // end return
   
 }]);
