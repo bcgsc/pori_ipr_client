@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.report.genomic.summary', 
-  ['_', '$q', '$state', '$scope', 'api.pog', 'api.summary.tumourAnalysis', 'api.summary.mutationSummary', '$mdDialog', '$mdToast', 'pog', 'gai', 'get', 'ms', 'vc', 'pt', 'mutationSignature',
-  (_, $q, $state, $scope, $pog, $tumourAnalysis, $mutationSummary, $mdDialog, $mdToast, pog, gai, get, ms, vc, pt, mutationSignature) => {
+  ['_', '$q', '$state', '$scope', 'api.pog', 'api.summary.tumourAnalysis', 'api.summary.patientInformation', 'api.summary.mutationSummary', '$mdDialog', '$mdToast', 'pog', 'gai', 'get', 'ms', 'vc', 'pt', 'mutationSignature',
+  (_, $q, $state, $scope, $pog, $tumourAnalysis, $patientInformation, $mutationSummary, $mdDialog, $mdToast, pog, gai, get, ms, vc, pt, mutationSignature) => {
   
   console.log('Loaded dashboard genomic report summary controller');
   
@@ -184,7 +184,45 @@ app.controller('controller.dashboard.report.genomic.summary',
 
   }; // End edit tumour analysis
 
+    // Update Patient Information
+    $scope.updatePatient = ($event) => {
 
+      $mdDialog.show({
+        targetEvent: $event,
+        templateUrl: 'dashboard/report/genomic/summary/patientInformation.edit.html',
+        clickOutToClose: false,
+        controller: ['scope', (scope) => {
+
+          scope.pi = angular.copy($scope.data.pi); //
+
+          scope.cancel = () => {
+            $mdDialog.cancel('No changes were saved.');
+          };
+
+          scope.update = () => {
+
+            // Send updated entry to API
+            $patientInformation.update($scope.pog.POGID, scope.pi).then(
+              (result) => {
+                $mdDialog.hide({message: 'Entry has been updated', data: scope.pi});
+              },
+              (error) => {
+                alert('Unable to update. See console');
+                console.log(error);
+              }
+            );
+
+          }// End update
+        }] // End controller
+
+      }).then((outcome) => {
+        if(outcome) $mdToast.show($mdToast.simple().textContent(outcome.message));
+        $scope.data.pi = outcome.data;
+      }, (error) => {
+        $mdToast.show($mdToast.simple().textContent(error));
+      });
+
+    }; // End edit tumour analysis
 
 
 

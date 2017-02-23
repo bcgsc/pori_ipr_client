@@ -34,7 +34,25 @@ app.factory('api.summary.patientInformation', ['_', '$http', '$q', (_, $http, $q
       
     });
     
-  }
+  };
+
+  $pi.update = (POGID, pi) => {
+
+    return $q((resolve, reject) => {
+
+      $http.put(api + '/' + POGID + '/summary/patientInformation', pi).then(
+        (result) => {
+          // All done!
+          resolve(result.data);
+        },
+        (error) => {
+          reject(error);
+        }
+      );
+
+    });
+
+  };
   
   return $pi;
   

@@ -1,9 +1,11 @@
 section
     md-subheader.md-primary Patient Information
+        span.edit
+            md-icon(ng-click="updatePatient($event)") edit
 
     div(layout="column", flex).details
         div(layout="row", flex)
-            dt(flex="{{detailSize}}", ng-init="detailSize=15") Patient ID:
+            dt(flex="{{detailSize}}", ng-init="detailSize=10") Patient ID:
             dd(flex) {{pog.POGID}}
 
             dt(flex="{{detailSize}}") Gender:
@@ -27,7 +29,7 @@ section
             dd(flex) N/A
 
             dt(flex="{{detailSize}}") Age at Diagnosis:
-            dd(flex) Not Specified
+            dd(flex) {{data.pi.age}}
 
             dt(flex="{{detailSize}}") Biopsy Details:
             dd(flex) {{data.pi.biopsySite}}

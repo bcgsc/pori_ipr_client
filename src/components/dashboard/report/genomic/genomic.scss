@@ -1,7 +1,26 @@
 .pog-report {
-  
+
+  button.accent {
+    background-color: rgb(175, 61, 161);
+    color: white;
+
+    &.md-raised:hover {
+      background-color: rgb(202, 110, 196);
+    }
+  }
+
+  .reportSections {
+    div {
+      md-list-item.active {
+        background-color: rgb(175, 61, 161);
+        color: white;
+      }
+    }
+
+  }
+
   section {
-    
+
     margin-bottom: 10px;
     background: rgb(220,220,220);
     
@@ -17,6 +36,28 @@
           color: rgb(50,50,50);
         }
         
+      }
+
+      span.edit {
+        margin-left: 10px;
+        cursor: pointer;
+        md-icon {
+          font-size: 1.2em;
+          display: none;
+          margin: 0;
+          padding: 0;
+          min-height: inherit;
+          height: 10px;
+          line-height: 0.2;
+        }
+      }
+
+      &:hover {
+        span.edit {
+          md-icon {
+            display: inline-block;
+          }
+        }
       }
       
     }
@@ -145,6 +186,7 @@
         margin-left: 6px;
         text-transform: lowercase;
       }
+
     }
     
     h3.title {
@@ -153,8 +195,8 @@
       margin: 0;
       padding: 5px 2px 5px 7px;
       text-transform: uppercase;
-      background-color: rgb(197, 197, 197);
-      
+      background-color: rgb(178, 183, 204);
+
       span {
         font-size: 0.75em;
         margin-left: 6px;
@@ -285,7 +327,7 @@
               padding: 0;
               width: auto;
               height: 18px;
-              min-height: auto;
+              min-height: inherit;
               line-height: initial;
               
               md-icon {
