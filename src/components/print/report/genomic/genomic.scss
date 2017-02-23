@@ -383,9 +383,50 @@ div.print {
 
           padding: 0 3mm;
 
+          font-size: 8pt;
+
+          code {
+            background-color: rgb(230,230,230);
+            padding: 0.3mm;
+            display: inline-block;
+            color: rgb(30,30,30);
+          }
+
+          a:after {
+            content: " (" attr(href) ") ";
+            font-size: 7pt;
+            font-weight: 100;
+          }
+
+          pre {
+            background-color: rgb(230,230,230);
+            -webkit-border-radius: 5px;
+            -moz-border-radius: 5px;
+            border-radius: 5px;
+            border: 1px solid rgb(150,150,150);
+            padding: 0.5mm;
+
+            code {
+              margin: 0.2mm;
+            }
+
+          }
+
+          table {
+            border: 0.5mm solid rgb(170,170,170);
+            border-collapse: collapse;
+            th, td {
+              border: 0.5mm solid rgb(170,170,170);
+              padding: 4px;
+            }
+            th {
+              padding: 7px 5px 5px 5px;
+            }
+          }
+
           h1 {
             display: block;
-            font-size: 2em;
+            font-size: 12pt;
             margin-top: 0.67em;
             margin-bottom: 0.67em;
             margin-left: 0;
@@ -395,7 +436,7 @@ div.print {
           }
           h2 {
             display: block;
-            font-size: 1.5em;
+            font-size: 11pt;
             margin-top: 0.83em;
             margin-bottom: 0.83em;
             margin-left: 0;
@@ -405,7 +446,7 @@ div.print {
           }
           h3 {
             display: block;
-            font-size: 1.17em;
+            font-size: 10pt;
             margin-top: 1em;
             margin-bottom: 1em;
             margin-left: 0;
@@ -415,6 +456,7 @@ div.print {
           }
           h4 {
             display: block;
+            font-size: 9pt;
             margin-top: 1.33em;
             margin-bottom: 1.33em;
             margin-left: 0;

@@ -90,6 +90,40 @@
       margin: 7px 4px 7px 4px;
       padding: 20px;
       background-color: rgb(235,235,235);
+
+      table {
+        border: 1px solid rgb(170,170,170);
+        border-collapse: collapse;
+        th, td {
+          border: 1px solid rgb(170,170,170);
+          padding: 4px;
+        }
+        th {
+          padding: 7px 5px 5px 5px;
+        }
+      }
+
+      code {
+        background-color: rgb(210,210,210);
+        padding: 0.3mm;
+        display: inline-block;
+        color: rgb(30,30,30);
+      }
+
+      pre {
+        background-color: rgb(210,210,210);
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+        border: 1px solid rgb(170,170,170);
+        padding: 0.5mm;
+
+        code {
+          margin: 0.2mm;
+        }
+
+      }
+
     }
     .smallBottom {
       height: 4px;
@@ -233,10 +267,7 @@
 
           span.listitem {
             cursor: pointer;
-          }
-
-          span.listitem:not:first-child {
-            margin-left: 5px;
+            margin-right: 5px;
           }
         }
         
@@ -294,7 +325,7 @@
     }
     
     .keyAlterationsIdentified {
-      
+
       margin: 0 4px 0px 4px;
       
       div.header {
@@ -361,7 +392,7 @@
         margin: 4px;
         font-size: 0.9em;
         padding: 4px 8px;
-        
+
         &.smallMutation { background-color: rgb(179,187,232); }
         &.cnv { background-color: rgb(178,214,171); }
         &.structuralVariant { background-color: rgb(212,179,232); }

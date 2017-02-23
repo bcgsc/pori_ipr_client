@@ -8,7 +8,7 @@ app.controller('controller.print.POG.report.genomic',
     $scope.data.get = [];
     $scope.data.get[0] = _.chunk(get, 11)[0];
     $scope.data.get[1] = _.chain(get).chunk(11).tail().flatten().value();
-    $scope.comments;
+    $scope.analystComments = comments;
 
     console.log($scope.data);
 
