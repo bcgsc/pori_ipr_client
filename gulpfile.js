@@ -1,5 +1,5 @@
 let colors = require('colors');
-let scriptVer = '1.0.0';
+let scriptVer = '1.1.0';
 
 console.log(('  BCGSC - IPR-Client Build Script '+ scriptVer +'  ').blue.bold.bgWhite);
 console.log("=".repeat(50).dim);
@@ -40,13 +40,11 @@ let files = {
       './node_modules/moment/min/moment.min.js',    // Order is important! Moment before Angular Moment
       './node_modules/angular-moment/angular-moment.min.js',
       './node_modules/ng-storage/ngStorage.min.js',
-      './node_modules/angular-breadcrumb/dist/angular-breadcrumb.min.js',
-      './node_modules/angular-ui-router-breadcrumbs/dist/angular-ui-router-breadcrumbs.min.js',
       './node_modules/simplemde/dist/simplemde.min.js',
       './node_modules/marked/marked.min.js',
       './node_modules/angular-marked/dist/angular-marked.min.js',
       './node_modules/svg-pan-zoom/dist/svg-pan-zoom.js',
-      './node_modules/angular-sticky-plugin/dist/angular-sticky.min.js'
+      './node_modules/ng-stickyfill/dist/ng-stickyfill.min.js'
     ],
     
     // Application javascript sources
@@ -88,9 +86,9 @@ let files = {
   
   // Stylesheet sources
   scss: {
-    app: ['./src/styles/style.scss', './src/styles/ie.scss'],                 // Application wide
-    components: ['./src/directives/**/*.scss', './src/components/**/*.scss'], // Component specific
-    libs: ['./src/styles/libs.scss']                                          // Library sources
+    app: ['./src/styles/style.scss', './src/styles/ie.scss'],                             // Application wide
+    components: ['./src/directives/**/*.scss', './src/components/**/*.scss'],             // Component specific
+    libs: ['./src/styles/libs.scss', './node_modules/simplemde/dist/simplemde.min.css'],  // Library sources
   },
   
   // Output locations for generated files
