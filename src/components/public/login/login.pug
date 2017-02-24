@@ -5,9 +5,10 @@ md-content(layout="column", flex)
       div(layout)
         md-input-container.md-icon-float(flex)
           label Username
-          input(ng-model="user.username", name="Username", type="text", placeholder="Username", required)
+          input(ng-model="user.username", name="username", type="text", placeholder="Username", required)
           div(ng-messages="form.Username.$error")
             p(ng-message="required") Please enter your username
+            p(ng-message="badCredentials") The supplied credentials failed to find a match in our records
       
       div(layout)
         md-input-container.md-icon-float(flex)
