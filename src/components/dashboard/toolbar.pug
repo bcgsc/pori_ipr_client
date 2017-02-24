@@ -9,7 +9,7 @@
   md-menu
     div(ng-click='$mdOpenMenu()', aria-label='User')
       md-icon person
-      md-button.white Brandon Pierce
+      md-button.white {{user.firstName}} {{user.lastName}}
     
     md-menu-content(width="4")
       md-menu-item(ng-repeat="(loc, name) in accountMenu")

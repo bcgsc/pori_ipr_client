@@ -3,12 +3,12 @@ app.controller('controller.dashboard.toolbar', ['_', '$scope', '$mdSidenav', '$s
   $scope.accountMenu = {
     'dashboard.profile': 'Profile',
     'dashboard.feedback': 'Feedback'
-  }
+  };
   
   $scope.toggleMenu = () => {
     console.log('[toolbar]', 'Clicked toggle');
     $mdSidenav('topLevelNavigation').toggle();
-  }
+  };
 
   $scope.loadNewPog = ($event) => {
 
@@ -18,7 +18,7 @@ app.controller('controller.dashboard.toolbar', ['_', '$scope', '$mdSidenav', '$s
       clickOutToClose: false,
       controller: 'controller.dashboard.loadPOG'
     });
-  }
+  };
   
   $scope.userLogout = () => {
 
