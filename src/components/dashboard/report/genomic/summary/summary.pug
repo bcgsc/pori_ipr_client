@@ -19,7 +19,7 @@ section
             dd(flex) {{data.pi.tumourType}}
 
             dt(flex="{{detailSize}}") Case Type:
-            dd(flex) Adult
+            dd(flex) {{data.pi.caseType}}
 
             dt(flex="{{detailSize}}") Constitutional Sample:
             dd(flex) {{data.pi.constitutionalSample}}
@@ -126,7 +126,7 @@ section
                     div(flex)
                         | Indels
                         md-button(md-no-ink).md-icon-button
-                            md-tooltip(md-direction="bottom") Inserations and Deletions
+                            md-tooltip(md-direction="bottom") Insertions and Deletions
                             md-icon help
                     div(flex="30").total {{mutationBurdenFilter(data.ms.totalIndel)}}
 
@@ -176,6 +176,8 @@ section
                 div(flex="30") {{data.vc.expressionOutliers}}
         div(flex).alterations
             div(ng-repeat="variant in data.gai", class="{{variant.type}}") {{variant.geneVariant}}
+                span(ng-click="removeAlteration($event, variant)")
+                    md-icon remove_circle
 
 section
     md-subheader.md-primary Genomic Events with Potential Therapeutic Association

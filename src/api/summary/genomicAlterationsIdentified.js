@@ -96,12 +96,12 @@ app.factory('api.summary.genomicAterationsIdentified', ['_', '$http', '$q', (_, 
    * @param string ident - UUID4 identity string for entry
    *
    */
-  $gai.remove = (POGID, ident) => {
+  $gai.remove = (POGID, ident, cascade=false) => {
     
     return $q((resolve, reject) => {
       
       // Get result from API
-      $http.delete(api + '/' + POGID + '/summary/genomicAlterationsIdentified/' + ident).then(
+      $http.delete(api + '/' + POGID + '/summary/genomicAlterationsIdentified/' + ident + ((cascade) ? '?cascade=true' : '')).then(
         (result) => {
           resolve(true);
         },
