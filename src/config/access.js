@@ -32,6 +32,10 @@ app.config(['$httpProvider', ($httpProvider) => {
           // Otherwise, user is not permitted to perform this action, but is otherwise logged in
           return $q.reject(responseError);
         }
+
+        if(responseError.status >= 400) {
+          return $q.reject(responseError);
+        }
         
       } // end ResponseError
     }; // end return
