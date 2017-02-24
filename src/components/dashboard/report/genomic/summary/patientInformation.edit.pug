@@ -16,7 +16,10 @@ md-dialog(layout="column", aria-label="Update Patient Information", ng-cloak, fl
                         input(name="PatiendID", placeholder="Patient ID", ng-model="pi.POGID", disabled)
 
                     md-input-container(flex)
-                        input(name="Gender", placeholder="Gender", ng-model="pi.gender", disabled)
+                        md-select(ng-model="pi.gender", aria-label"Clinical Relevance", required)
+                            md-option(ng-value="'Male'") Male
+                            md-option(ng-value="'Female'") Female
+                            md-option(ng-value="'Unspecified'") Unspecified
 
                 div(layout="row")
                     md-input-container(flex)
@@ -34,7 +37,7 @@ md-dialog(layout="column", aria-label="Update Patient Information", ng-cloak, fl
 
                 div(layout="row")
                     md-input-container(flex)
-                        input(name="BiopsyDetails", placeholder="Biopsy Details", ng-model="pi.biopsySite", disabled)
+                        input(name="BiopsyDetails", placeholder="Biopsy Details", ng-model="pi.biopsySite")
 
                     md-input-container(flex)
                         input(name="Physician", placeholder="Physician", ng-model="pi.physician")
