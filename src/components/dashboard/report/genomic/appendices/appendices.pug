@@ -55,6 +55,20 @@ section.appendices
 
             h2.title Appendix B
             h3.title TCGA Acronyms
+            div(layout="column", flex).dataBox
+                div.box
+                    div(layout="row", flex).heading
+                        div(flex=30) Code Name
+                        div(flex=30) Full Name
+                        div(flex) Data Source
+                        div(flex) Tumour Count
+                        div(flex) Normal Count
+                    div(layout="row", flex, ng-repeat="t in tcga").row
+                        div(flex=30) {{t['Code Name']}}
+                        div(flex=30) {{t['Full Name']}}
+                        div(flex) {{t['Data Source']}}
+                        div(flex) {{hashClean(t['Tumour Count'])}}
+                        div(flex) {{hashClean(t['Normal Count'])}}
 
             h2.title Appendix C
             h3.title Report Overview
