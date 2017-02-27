@@ -419,6 +419,15 @@
           background-color: rgb(193,101,20);
         }
       }
+
+      div.vus {
+        background-color: rgb(200,200,200);
+
+        div:nth-of-type(2) {
+          color: #ffffff;
+          background-color: rgb(155,155,155);
+        }
+      }
       
     }
     

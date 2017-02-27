@@ -178,6 +178,10 @@ section
             div(ng-repeat="variant in data.gai", class="{{variant.type}}") {{variant.geneVariant}}
                 span(ng-click="removeAlteration($event, variant)")
                     md-icon remove_circle
+        div(flex, layout="row", layout-align="end end").keyAlterationsIdentified.margin-bottom-10
+            div(flex=25, layout="row").header.vus
+                div(flex) Variants of unknown significance
+                div(flex=30) {{data.vc.variantsUnknown}}
 
 section
     md-subheader.md-primary Genomic Events with Potential Therapeutic Association
