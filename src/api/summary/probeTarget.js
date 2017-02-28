@@ -7,7 +7,7 @@
  */
 app.factory('api.summary.probeTarget', ['_', '$http', '$q', (_, $http, $q) => {
   
-  const api = 'http://10.9.202.110:8001/api/1.0' + '/POG';
+  const api = CONFIG.ENDPOINTS.API + '/POG';
   
   let $pt = {};
   
