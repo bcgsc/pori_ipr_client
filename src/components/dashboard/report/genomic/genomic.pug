@@ -8,15 +8,18 @@ md-content(flex).md-padding
   div(layout="row", flex).pog-report
     div(flex, ui-view="")
       
-    md-content(flex="20", layout="column", ng-show="showSideBar", ng-init="showSideBar=true")
-      md-list(flex, layout="column", style="position: fixed")
-        md-subheader(flex) Report Sections
-        md-list-item(flex, ng-click="goToReportSection('summary')") Summary
-        md-list-item(flex, ng-click="goToReportSection('analystComments')") Analyst Comments
-        md-list-item(flex, ng-click="goToReportSection('detailedGenomicAnalysis')") Detailed Genomic Analysis
-        md-list-item(flex, ng-click="goToReportSection('diseaseSpecificAnalysis')") Disease Specific Analysis
-        md-list-item(flex, ng-click="goToReportSection('somaticMutations')") Somatic Mutations
-        md-list-item(flex, ng-click="goToReportSection('copyNumberAnalyses')") Copy Number Analyses
-        md-list-item(flex, ng-click="goToReportSection('structuralVariation')") Structural Variation
-        md-list-item(flex, ng-click="goToReportSection('expressionAnalysis')") Expression Analysis
-        md-list-item(flex, ng-click="goToReportSection('appendices')") Appendices
+    md-content(flex="20", layout="column", ng-show="showSideBar", ng-init="showSideBar=true").reportSections
+      div
+        md-list(layout-align="start start")
+          md-subheader Report Sections
+          md-list-item(
+            ng-repeat="section in sections",
+            ng-click="goToReportSection(section.state)",
+            ng-class="activeSection(section) ? 'active' : ''"
+          ) {{section.name}}
+            md-list-item(
+              ng-if="section.children.length > 0",
+              ng-show="section.showChildren",
+              ng-repeat="child in section.children",
+              ng-click="goToReportSection(child.state)"
+            ).child {{child.name}}
