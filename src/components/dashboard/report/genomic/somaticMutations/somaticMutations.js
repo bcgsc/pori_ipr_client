@@ -19,6 +19,12 @@ app.controller('controller.dashboard.report.genomic.somaticMutations',
 
       let processSignature = (sigs) => {
 
+        let nnlsMax = 0;
+
+        _.forEach(sigs, (r, k) => {
+          if(r.nnls > nnlsMax) nnlsMax = r.nnls;
+        });
+
         _.forEach(sigs, (r, k) => {
 
           // Round to 3 sigfigs
@@ -27,7 +33,7 @@ app.controller('controller.dashboard.report.genomic.somaticMutations',
 
           // Produced rounded numbers
           r.pearsonColour = Math.round((((r.pearson < 0) ? 0 : r.pearson)  * 100) / 5) * 5;
-          r.nnlsColour = Math.round((r.nnls * 100) / 5) * 5;
+          r.nnlsColour = Math.round(((r.nnls/nnlsMax) * 100) / 5) * 5;
 
           $scope.mutationSignature.push(r);
 
