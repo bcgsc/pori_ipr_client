@@ -5,7 +5,7 @@ md-content(layout="column", flex)
       div(layout)
         md-input-container.md-icon-float(flex)
           label Username
-          input(ng-model="user.username", name="username", type="text", placeholder="Username", required)
+          input(ng-model="user.username", name="username", type="text", placeholder="Username", autofocus, required)
           div(ng-messages="form.Username.$error")
             p(ng-message="required") Please enter your username
             p(ng-message="badCredentials") The supplied credentials failed to find a match in our records
@@ -24,5 +24,6 @@ md-content(layout="column", flex)
       div(layout)
         button.md-button.md-primary.md-raised(flex, type="submit") Login
         
-      div(layout)
+      div(layout="column")
         p New accounts must be created by BC Genome Sciences Centre IT Systems
+        p.md-warning Alpha login (admin) access has been removed. Please login with your GIN account credentials. If your GIN account does not authenticate, contact Brandon Pierce (bpierce@bcgsc.ca)

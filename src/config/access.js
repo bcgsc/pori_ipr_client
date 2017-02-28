@@ -7,8 +7,6 @@ app.config(['$httpProvider', ($httpProvider) => {
       // Build Error Response Handler
       responseError: (responseError) => {
 
-        console.log('Response error', responseError);
-
         let $state = $injector.get('$state');
 
         // API Is not Available

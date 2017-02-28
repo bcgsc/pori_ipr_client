@@ -4,19 +4,34 @@ app.run(($rootScope) => {
   
   // On State Change, Show Spinner!
   $rootScope.$on('$stateChangeStart', (event, toState, toParams, fromState, fromParams) => {
-    //$rootScope.showLoader = true;
+    $rootScope.showLoader = true;
   });
   
   // On State Change Success, Hide Spinner!
   $rootScope.$on('$stateChangeSuccess', (event, toState, toParams, fromState, fromParams) => {
-    //$rootScope.showLoader = false;
+    $rootScope.showLoader = false;
+
+    // If toState
+    if(toState.name === 'public.login') {
+      setTimeout(() => {
+        $rootScope.showLoader = false;
+      }, 200);
+    }
+
+  });
+
+  $rootScope.$on('$stateChangeError', (event, toState, toParams, fromState, fromParams) => {
+
+    console.log('State Change Error:', event);
+    $rootScope.showLoader = false;
+
   });
   
   
   
 });
 
-
+/*
 app.factory('httpLoadSpinner', ['$q', '$rootScope', '$injector', ($q, $rootScope, $injector) => {
 
   return {
@@ -43,3 +58,4 @@ app.factory('httpLoadSpinner', ['$q', '$rootScope', '$injector', ($q, $rootScope
 app.config(function ($httpProvider) {
   $httpProvider.interceptors.push('httpLoadSpinner');
 });
+*/

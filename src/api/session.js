@@ -5,10 +5,10 @@
  * managed through this construct.
  *
  */
-app.factory('api.session', ['_', '$http', '$q', '$localStorage', 'api.user', (_, $http, $q, $localStorage, $user) => {
+app.factory('api.session', ['_', '$http', '$q', '$localStorage', 'api.user', 'api.pog', (_, $http, $q, $localStorage, $user, $pog) => {
   
   const localStorageKey = 'bcgscIprToken';  // Local Storage Token Key
-  const api = 'http://10.9.202.110:8001/api/1.0' + '/session';   // API Namespace setting
+  const api = CONFIG.ENDPOINTS.API + '/session';   // API Namespace setting
   
   let _token = null,        // User API token
       initialized = false,  // Set initialization status
@@ -25,6 +25,10 @@ app.factory('api.session', ['_', '$http', '$q', '$localStorage', 'api.user', (_,
   $session.user = () => {
     return me;
   }
+
+  $session.getToken = () => {
+    return angular.copy(_token);
+  };
   
   /*
    * Retrieve local me promise
@@ -68,6 +72,7 @@ app.factory('api.session', ['_', '$http', '$q', '$localStorage', 'api.user', (_,
       
       // Retrieve token from local storage
       let token = $localStorage[localStorageKey];
+      _token = token; // Set local cache.
       
       // Token exists?
       if(token === false || token === undefined || token === null) {
@@ -129,7 +134,11 @@ app.factory('api.session', ['_', '$http', '$q', '$localStorage', 'api.user', (_,
    *
    */
   $session.logout = (all=false) => {
-    
+
+    let deferred = $q.defer();
+
+
+
     // Logout of all?
     if(all === true) {
       // Session destroy all keys
@@ -137,18 +146,31 @@ app.factory('api.session', ['_', '$http', '$q', '$localStorage', 'api.user', (_,
     
     if(all === false) {
       // Session destroy this key
+
+      $http.delete(api + '/').then(
+        (resp) => {
+
+          // Local logout
+          delete $localStorage[localStorageKey]; // Remove localStorage entry
+          me = null; // Reset lib cache
+          $user._me = null; // Reset $user lib cache
+          $user._token = null; // Reset $user lib token
+          _token = null; // Reset lib token cache
+          delete $http.defaults.headers.common['Authorization']; // Remove authorization token entry
+
+          deferred.resolve(true);
+        },
+        (err) => {
+          console.log(err);
+          deferred.reject({status: false, message: 'Unable to destroy API token.'});
+        }
+      );
+
     }
+
+    return deferred.promise;
     
-    // Local logout
-    delete $localStorage[localStorageKey]; // Remove localStorage entry
-    me = null; // Reset lib cache
-    $user.me = null; // Reset $user lib cache
-    _token = null; // Reset lib token cache
-    delete $http.defaults.headers.common['Authorization'] // Remove authorization token entry
-    
-    return;
-    
-  }
+  };
   
   
   return $session;
