@@ -1,6 +1,6 @@
 app.controller('controller.print.POG.report.genomic',
-  ['_', '$scope', 'pog', 'gai', 'get', 'ms', 'vc', 'pt', 'comments',
-  (_, $scope, pog, gai, get, ms, vc, pt, comments) => {
+  ['_', '$scope', 'pog', 'gai', 'get', 'ms', 'vc', 'pt', 'comments', 'pathway',
+  (_, $scope, pog, gai, get, ms, vc, pt, comments, pathway) => {
 
     // Data
     $scope.data = {gai: gai, ms: ms, vc: vc, pt: pt, pi: pog.patientInformation, ta: pog.tumourAnalysis };
@@ -9,6 +9,28 @@ app.controller('controller.print.POG.report.genomic',
     $scope.data.get[0] = _.chunk(get, 11)[0];
     $scope.data.get[1] = _.chain(get).chunk(11).tail().flatten().value();
     $scope.analystComments = comments;
+    $scope.pathwayAnalysis = pathway;
+
+    // Create SVG DOM element from String
+    $scope.pathway = new DOMParser().parseFromString(pathway.pathway, 'application/xml');
+
+    // Extract SVG element from within XML wrapper.
+    let xmlSVG = $scope.pathway.getElementsByTagName('svg')[0];
+    xmlSVG.id="pathway"; // Set ID that we can grapple.
+    xmlSVG.style = 'width: 190mm; height: 190mm;'; // Set width & height TODO: Make responsive
+
+    // Create PanZoom object
+    let panZoom = {};
+
+    // Load in SVG after slight delay. (otherwise xmlSVG processing isn't ready.
+    // TODO: Use promises to clean this up.
+    setTimeout(() => {
+      let svgImage = document.getElementById('svgImage');
+
+      svgImage.appendChild(
+        svgImage.ownerDocument.importNode($scope.pathway.documentElement, true)
+      );
+    },100);
 
     console.log($scope.data);
 

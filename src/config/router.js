@@ -465,6 +465,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         }],
         comments: ['$q', '$stateParams', 'api.summary.analystComments', ($q, $stateParams, $comments) => {
           return $comments.get($stateParams.POG);
+        }],
+        pathway: ['$q', '$stateParams', 'api.summary.pathwayAnalysis', ($q, $stateParams, $pathway) => {
+          return $pathway.get($stateParams.POG);
         }]
       }
     })
