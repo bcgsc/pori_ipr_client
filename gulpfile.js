@@ -1,23 +1,13 @@
 let colors = require('colors');
-let scriptVer = '1.1.0';
+let scriptVer = '1.2.0';
+let configManager = require('./libs/configManager');
+configManager.detectEnvironment(); // Detect Env.
 
 console.log(('  BCGSC - IPR-Client Build Script '+ scriptVer +'  ').blue.bold.bgWhite);
 console.log("=".repeat(50).dim);
-console.log(("Node Version: " + process.version).yellow, '\n');
+console.log(("Node Version: " + process.version).yellow);
+console.log(("Build Environment: " + configManager.getEnvironment()).green, '\n');
 
-/*
- * Gulp Configuration
- *
- * Basic setup and configuration for builds of application
- *
- */
-let config = {
-  env: {
-    dev: true,
-    test: false,
-    production: false
-  }
-}
 
 /*
  * Input & Output file definitions
@@ -44,7 +34,8 @@ let files = {
       './node_modules/marked/marked.min.js',
       './node_modules/angular-marked/dist/angular-marked.min.js',
       './node_modules/svg-pan-zoom/dist/svg-pan-zoom.js',
-      './node_modules/ng-stickyfill/dist/ng-stickyfill.min.js'
+      './node_modules/ng-stickyfill/dist/ng-stickyfill.min.js',
+      './node_modules/angular-file-upload/dist/angular-file-upload.min.js'
     ],
     
     // Application javascript sources
@@ -93,15 +84,16 @@ let files = {
   
   // Output locations for generated files
   public: [
-    './builds/**/*.html',
-    './builds/assets/*.js',
-    './builds/assets/*.css',
-    './builds/assets/**/*.css',
-    './builds/assets/templates.js'
+    './builds/'+configManager.getEnvironment()+'/**/*.html',
+    './builds/'+configManager.getEnvironment()+'/assets/*.js',
+    './builds/'+configManager.getEnvironment()+'/assets/*.css',
+    './builds/'+configManager.getEnvironment()+'/assets/**/*.css',
+    './builds/'+configManager.getEnvironment()+'/assets/templates.js'
   ]
 };
 
 let gulp = require('gulp'),
+    fs = require('fs'),
     connect = require('gulp-connect'),
     modRewrite = require('connect-modrewrite'),
     gzip = require('connect-gzip'),
@@ -121,13 +113,34 @@ let gulp = require('gulp'),
     sourcemaps = require('gulp-sourcemaps'),
     pako = require('gulp-pako'),
     runSequence = require('run-sequence'),
+    minimist = require('minimist'),
     gulpStylelint = require('gulp-stylelint');
 
 // Gulp task to clean/empty out builds directory 
 gulp.task('clean', () => {
-  return del(['./builds']);
+  return del(['./builds/'+configManager.getEnvironment()]);
 });
-  
+
+
+gulp.task('config', () => {
+
+  // Detect Environment
+  let env = configManager.detectEnvironment();
+
+  // load config
+  let conf = configManager.loadConfig();
+
+  if(!fs.existsSync('./builds')) fs.mkdirSync('./builds/');
+  if(!fs.existsSync('./builds/'+configManager.getEnvironment())) fs.mkdirSync('./builds/'+configManager.getEnvironment());
+  if(!fs.existsSync('./builds/'+configManager.getEnvironment()+'/assets')) fs.mkdirSync('./builds/'+configManager.getEnvironment()+'/assets');
+
+  // Write Config
+  configManager.writeConfig();
+
+  return true;
+});
+
+
 /*
  * Compile App JS
  *
@@ -141,9 +154,9 @@ gulp.task('js', () => {
     .pipe(sourcemaps.init())
     .pipe(babel())
     .pipe(concat('app.js'))
-    .pipe(If(config.env.production, uglify()))
+    //.pipe(If(config.env.production, uglify()))
     .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest('./builds/assets/js'))
+    .pipe(gulp.dest('./builds/'+configManager.getEnvironment()+'/assets/js'))
     .pipe(connect.reload());
 });
 
@@ -157,9 +170,9 @@ gulp.task('js', () => {
 gulp.task('libs', () => {
   return gulp.src(files.js.libs)
     .pipe(concat('libs.js'))
-    .pipe(If(config.env.production, uglify()))
+    //.pipe(If(config.env.production, uglify()))
     //.pipe(pako.gzip())
-    .pipe(gulp.dest('./builds/assets/libs'));
+    .pipe(gulp.dest('./builds/'+configManager.getEnvironment()+'/assets/libs'));
 });
 
 gulp.task('compileASN1', () => {
@@ -178,7 +191,7 @@ gulp.task('compileASN1', () => {
 gulp.task('pug-index', () => {
   return gulp.src(files.pug.index)
     .pipe(pug().on('error', gutil.log))
-    .pipe(gulp.dest('./builds'))
+    .pipe(gulp.dest('./builds/'+configManager.getEnvironment()))
     .pipe(connect.reload());
 });
 
@@ -193,8 +206,8 @@ gulp.task('pug-templates', () => {
   return gulp.src(files.pug.templates)
     .pipe(pug().on('error', gutil.log))
     .pipe(template('templates.js', {standalone: true}).on('error', gutil.log))
-    .pipe(If(config.env.production, uglify()))
-    .pipe(gulp.dest('./builds/assets/js'))
+    //.pipe(If(config.env.production, uglify()))
+    .pipe(gulp.dest('./builds/'+configManager.getEnvironment()+'/assets/js'))
     .pipe(connect.reload());
 });
 
@@ -218,7 +231,7 @@ gulp.task('sass-components', () => {
     .pipe(concat('components.css'))
     .pipe(cleanCSS())
     .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest('./builds/assets/styles'))
+    .pipe(gulp.dest('./builds/'+configManager.getEnvironment()+'/assets/styles'))
     .pipe(connect.reload());
 });
 
@@ -241,7 +254,7 @@ gulp.task('sass-app', () => {
     .pipe(concat('app.css'))
     .pipe(cleanCSS())
     .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest('./builds/assets/styles'))
+    .pipe(gulp.dest('./builds/'+configManager.getEnvironment()+'/assets/styles'))
     .pipe(connect.reload());
 });
 
@@ -257,7 +270,7 @@ gulp.task('sass-libs', () => {
     .pipe(autoprefixer())
     .pipe(concat('libs.css'))
     .pipe(cleanCSS())
-    .pipe(gulp.dest('./builds/assets/libs'));
+    .pipe(gulp.dest('./builds/'+configManager.getEnvironment()+'/assets/libs'));
 });
 
 
@@ -270,7 +283,7 @@ gulp.task('sass-libs', () => {
 gulp.task('images-app', () => {
   
   return gulp.src(files.images.app)
-    .pipe(gulp.dest('./builds/assets/images'));
+    .pipe(gulp.dest('./builds/'+configManager.getEnvironment()+'/assets/images'));
 });
 
 /*
@@ -281,7 +294,7 @@ gulp.task('images-app', () => {
  */
 gulp.task('favicon', function () {
     return gulp.src('./src/statics/favicon.ico')
-        .pipe(gulp.dest('./builds/'));
+        .pipe(gulp.dest('./builds/'+configManager.getEnvironment()));
 });
 
 /*
@@ -305,22 +318,23 @@ gulp.task('watch', () => {
  *
  */
 gulp.task('connect', () => {
+
   return connect.server({
     middleware: () => {
       let middlewares = [modRewrite(['^[^.]*$ /index.html'])];
       return middlewares;
     },
-    livereload: true,
-    root: ['builds'],
+    livereload: configManager.getConfig().CONNECT.LIVE_RELOAD || false,
+    root: ['builds/'+configManager.getEnvironment()],
     host: '0.0.0.0',
-    port: process.env.PORT || 3000
+    port: configManager.getConfig().CONNECT.PORT || 3000
   });
 });
 
 gulp.task('images', ['images-app']);
 gulp.task('pug', ['pug-index','pug-templates']);
 gulp.task('sass', ['sass-app','sass-libs','sass-components']);
-gulp.task('build', ['favicon', 'pug','libs','js','sass', 'images']);
+gulp.task('build', ['favicon', 'config', 'pug','libs','js','sass', 'images']);
 
 //gulp.task('run', runSequence('favicon','pug', 'js', 'sass-app', 'sass-components',['watch', 'connect']));
 /*
@@ -337,4 +351,18 @@ gulp.task('default', () => {
   );
 });
 
+
+/*
+ * Default Gulp Task
+ *
+ * Remove old build, build new, and start dev server
+ *
+ */
+gulp.task('host', () => {
+  runSequence(
+    'clean',
+    'build',
+    'connect'
+  );
+});
 
