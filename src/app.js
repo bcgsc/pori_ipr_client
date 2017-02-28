@@ -7,6 +7,7 @@ const app = angular.module('bcgscIPR', [
 	'angularMoment',
 	'ngStorage',
 	'hc.marked',
-  'stickyfill'
+  'stickyfill',
+	'angularFileUpload'
 ]);
 

@@ -16,6 +16,7 @@ html(lang='en', ng-app='bcgscIPR')
     script(src='/assets/libs/libs.js')
     script(src='/assets/js/templates.js')
     script(src='/assets/js/app.js')
-    div(layout="row" layout-align="center center", id="page-loading", ng-if="showLoader", ng-init="showLoader=false", ng-cloak) 
+    script(src='/assets/env.js')
+    div(layout="row" layout-align="center center", id="page-loading", ng-if="showLoader", ng-init="showLoader=false", ng-cloak)
       div 
         img(src="/assets/images/spinlogo.png")

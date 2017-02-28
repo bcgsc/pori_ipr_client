@@ -229,6 +229,20 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       }
     })
 
+    .state('dashboard.pog.report.genomic.pathwayAnalysis', {
+      url: '/pathwayAnalysis',
+      data: {
+        displayName: "Pathway Analysis"
+      },
+      templateUrl: 'dashboard/report/genomic/pathwayAnalysis/pathwayAnalysis.html',
+      controller: 'controller.dashboard.report.genomic.pathwayAnalysis',
+      resolve: {
+        pathway: ['$q', '$stateParams', 'api.summary.pathwayAnalysis', ($q, $stateParams, $pathway) => {
+          return $pathway.get($stateParams.POG);
+        }]
+      }
+    })
+
     .state('dashboard.pog.report.genomic.detailedGenomicAnalysis', {
       url: '/detailedGenomicAnalysis',
       data: {
