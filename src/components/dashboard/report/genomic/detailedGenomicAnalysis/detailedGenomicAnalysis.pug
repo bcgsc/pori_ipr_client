@@ -20,7 +20,7 @@ section
             h2.title Alterations With Therapeutic Relevance
 
         div(ng-show="showUnknown").text-center.details
-            md-button(ng-click="toggleUnknown()", ng-disabled="disableUnknownButtons").md-primary.md-raised.md-hue-1 View Characterized Alterations
+            md-button(ng-click="toggleUnknown()", ng-disabled="disableUnknownButtons").accent.md-raised View Characterized Alterations
 
         div(ng-repeat="(alteration, genes) in alterations")
             h3(ng-hide="alteration !== 'unknown' && showUnknown").title {{alteration}}
@@ -30,7 +30,7 @@ section
 
             div(ng-if="alteration == 'unknown'", ng-hide="showUnknown")
                 div.text-center.details
-                    md-button(ng-click="toggleUnknown()", ng-disabled="disableUnknownButtons").md-primary.md-raised.md-hue-1 View Uncharacterized Alterations
+                    md-button(ng-click="toggleUnknown()", ng-disabled="disableUnknownButtons").accent.md-raised View Uncharacterized Alterations
             ipr-genomic-alteration(ng-repeat="(i, gene) in genes", samples="samples", gene="gene", pog="pog", trigger="trigger").container
 
         div(layout="column", flex)

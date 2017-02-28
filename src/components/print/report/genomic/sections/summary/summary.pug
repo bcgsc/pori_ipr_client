@@ -151,7 +151,7 @@ div.report-section
             div(layout="row", flex).title.outliers
                 div(flex) Expression Outliers
                 div(flex="30") {{data.vc.expressionOutliers}}
-        div(flex).alterations
+        div(flex, layout-align="start start").alterations
             div(ng-repeat="variant in data.gai", class="{{variant.type}}") {{variant.geneVariant}}
 
         div(layout="row").keyAlterationsIdentified
@@ -176,27 +176,28 @@ div.report-section
                         div(flex) {{gene.approvedThisCancerType}}
                         div(flex) {{gene.approvedOtherCancerType}}
                         div(flex) {{gene.emergingPreclinicalEvidence}}
-div(ng-if="data.get[1]").pageBreak
-div.pageHeaderSpace
-div.report-section
-    h1 Genomic Events with Potential Therapeutic Association
-    div(layout="column", flex)
+div(ng-if="data.get[1].length > 0")
+    div.pageBreak
+    div.pageHeaderSpace
+    div.report-section
+        h1 Genomic Events with Potential Therapeutic Association
+        div(layout="column", flex)
 
-        div(layout="row")
-            div(layout="column", flex).dataBox
-                div.inner
-                    div(layout="row", flex).heading.yellow
-                        div(flex) Genomic Events
-                        div(flex) Approved in this cancer type
-                        div(flex) Approved in other cancer type
-                        div(flex) Emerging Evidence
-                    div(layout="row", flex, ng-repeat="gene in data.get[1]").content.left
-                        div(flex) {{gene.genomicEvent}}
-                        div(flex) {{gene.approvedThisCancerType}}
-                        div(flex) {{gene.approvedOtherCancerType}}
-                        div(flex) {{gene.emergingPreclinicalEvidence}}
+            div(layout="row")
+                div(layout="column", flex).dataBox
+                    div.inner
+                        div(layout="row", flex).heading.yellow
+                            div(flex) Genomic Events
+                            div(flex) Approved in this cancer type
+                            div(flex) Approved in other cancer type
+                            div(flex) Emerging Evidence
+                        div(layout="row", flex, ng-repeat="gene in data.get[1]").content.left
+                            div(flex) {{gene.genomicEvent}}
+                            div(flex) {{gene.approvedThisCancerType}}
+                            div(flex) {{gene.approvedOtherCancerType}}
+                            div(flex) {{gene.emergingPreclinicalEvidence}}
 
-div(ng-if="data.get[1]").pageBreak
+div.pageBreak
 div.pageHeaderSpace
 div.report-section
     h1 Analyst Comments
@@ -206,13 +207,13 @@ div.report-section
             div(flex) Date:
             div(flex) Reviewed By:
 
-div(ng-if="data.get[1]").pageBreak
+div.pageBreak
 div.pageHeaderSpace
 div.report-section
     h1 Pathway Analysis
     div(layout="column", flex)
 
-div(ng-if="data.get[1]").pageBreak
+div.pageBreak
 div.pageHeaderSpace
 div.report-section
     h1 Potential Therapeutic Targets
