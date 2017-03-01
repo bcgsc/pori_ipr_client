@@ -35,7 +35,8 @@ let files = {
       './node_modules/angular-marked/dist/angular-marked.min.js',
       './node_modules/svg-pan-zoom/dist/svg-pan-zoom.js',
       './node_modules/ng-stickyfill/dist/ng-stickyfill.min.js',
-      './node_modules/angular-file-upload/dist/angular-file-upload.min.js'
+      './node_modules/angular-file-upload/dist/angular-file-upload.min.js',
+      './node_modules/angular-sanitize/angular-sanitize.min.js',
     ],
     
     // Application javascript sources

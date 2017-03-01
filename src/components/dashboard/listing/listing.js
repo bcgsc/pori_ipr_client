@@ -1,4 +1,4 @@
-app.controller('controller.dashboard.listing', ['_', '$q', '$scope', 'pogs',  (_, $q, $scope, pogs) => {
+app.controller('controller.dashboard.listing', ['_', '$q', '$scope', 'pogs', '$mdDialog',  (_, $q, $scope, pogs, $mdDialog) => {
   
   console.log('Loaded dashboard listing controller');
   
@@ -29,13 +29,28 @@ app.controller('controller.dashboard.listing', ['_', '$q', '$scope', 'pogs',  (_
       
       return result;
       
-    }
+    };
     
-  }
+  };
   
   $scope.filterFn = (pogInput) => {
     console.log(pogInput);
     return true;
+  };
+
+  // Show Dialog with searching tips
+  $scope.showFilterTips = ($event) => {
+
+    let alert = $mdDialog.show(
+      $mdDialog.alert()
+        .clickOutsideToClose(true)
+        .title('POG Searching Tips')
+        .htmlContent("The search bar can filter the listing of POGs using a number of special terms. <ul><li>Filter by tumour content: <code>tc>50 tc<40 tc=35</code></li><li>Filter by POG: <code>pog544</code></li><li>By tumour type: <code>brca</code></li><li>By ploidy: <code>diploid</code></li></ul>")
+        .ok('Got it!')
+        .targetEvent($event)
+    );
+
   }
+
   
 }]);

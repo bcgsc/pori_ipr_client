@@ -3,7 +3,8 @@ md-content(flex).md-padding
     span(flex) My Assigned POG Cases
     span(flex)
       md-input-container.hide-validation-error.pull-right
-        input(placeholder="Search", name="Search", ng-model="pogQuery")
+        input(placeholder="Search", name="Search", ng-model="pogQuery", size=40)
+        md-icon(ng-click="showFilterTips()") help
   
   div(ng-repeat="pog in pogList = ( pogs | filter: searchPogs(pogQuery))", flex, md-whiteframe="1").PogList.md-padding
     h2(layout="row")

@@ -3,6 +3,7 @@ const app = angular.module('bcgscIPR', [
   'templates',
 	'ngMaterial',
 	'ngResource',
+	'ngSanitize',
 	'ui.router',
 	'angularMoment',
 	'ngStorage',
