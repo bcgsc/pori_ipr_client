@@ -4,13 +4,14 @@ app.controller('controller.dashboard.report.genomic',
 
   $scope.pog = pog;
 
+
+
+  $scope.openPrint = () => {
+    // State go!
+    window.open($state.href('print.POG.report.genomic',{POG: pog.POGID}), '_blank');
+  };
+
   $scope.sections = [
-    {
-      name: 'Summary',
-      state: 'summary',
-      showChildren: false,
-      children: []
-    },
     {
       name: 'Analyst Comments',
       state: 'analystComments',
@@ -69,12 +70,12 @@ app.controller('controller.dashboard.report.genomic',
     },
   ];
 
-    /**
-     * Check if the provided state is the current one
-     *
-     * @param state
-     * @returns {boolean}
-     */
+  /**
+   * Check if the provided state is the current one
+   *
+   * @param state
+   * @returns {boolean}
+   */
   $scope.activeSection = (section) => {
     if($state.current.name.indexOf(section.state) > -1) {
       return true;

@@ -1,25 +1,27 @@
-
 md-content(flex).md-padding
-  md-toolbar
-    div.md-toolbar-tools
-      span(flex)
-      h2(flex).text-center.md-hue-3 {{pog.POGID}}
-      span(flex)
-  div(layout="row", flex).pog-report
-    div(flex, ui-view="")
-      
-    md-content(flex="20", layout="column", ng-show="showSideBar", ng-init="showSideBar=true").reportSections
-      div
-        md-list(layout-align="start start")
-          md-subheader Report Sections
-          md-list-item(
-            ng-repeat="section in sections",
-            ng-click="goToReportSection(section.state)",
-            ng-class="activeSection(section) ? 'active' : ''"
-          ) {{section.name}}
-            md-list-item(
-              ng-if="section.children.length > 0",
-              ng-show="section.showChildren",
-              ng-repeat="child in section.children",
-              ng-click="goToReportSection(child.state)"
-            ).child {{child.name}}
+    md-toolbar
+        div.md-toolbar-tools
+            span(flex)
+            h2(flex).text-center.md-hue-3 {{pog.POGID}}
+            span(flex)
+    div(layout="row", flex).pog-report
+        div(flex, ui-view="")
+
+        md-content(flex="20", layout="column", ng-show="showSideBar", ng-init="showSideBar=true").reportSections
+            div
+                md-list(layout-align="start start")
+                    md-subheader Report Sections
+                    md-list-item(ng-click="goToReportSection('summary')", ng-class="activeSection({state: 'summary'}) ? 'active' : ''") Summary
+                        md-icon(ng-click="openPrint()", aria-label="Print Summary Section").md-secondary print
+                    md-list-item(
+                    ng-repeat="section in sections",
+                    ng-click="goToReportSection(section.state)",
+                    ng-class="activeSection(section) ? 'active' : ''"
+                    ) {{section.name}}
+
+                        md-list-item(
+                        ng-if="section.children.length > 0",
+                        ng-show="section.showChildren",
+                        ng-repeat="child in section.children",
+                        ng-click="goToReportSection(child.state)"
+                        ).child {{child.name}}
