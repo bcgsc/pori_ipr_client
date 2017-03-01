@@ -7,6 +7,23 @@ app.controller('controller.dashboard.report.genomic.somaticMutations',
       $scope.pog = pog;
       $scope.smallMutations = {};
       $scope.mutationSignature = [];
+      $scope.nnlsNormal = true;
+      $scope.mutationSort = {col: "signature", order: true};
+
+      $scope.sortMutations = (col) => {
+        // Is this a valid column?
+        if(['signature', 'nnls', 'pearson'].indexOf(col) === -1) return false;
+
+        if($scope.mutationSort.col === col) {
+          $scope.mutationSort.order = !$scope.mutationSort.order;
+
+        } else {
+          $scope.mutationSort.col = col;
+          $scope.mutationSort.order = true;
+        }
+
+        processSignature(angular.copy(mutationSignature));
+      };
 
       // Check if the current mutation is a selected one.
       $scope.isSelectedMutation = (ident) => {
@@ -17,9 +34,17 @@ app.controller('controller.dashboard.report.genomic.somaticMutations',
         return found !== undefined;
       };
 
-      let processSignature = (sigs) => {
+      $scope.toggleNnlsNormalize = () => {
+        $scope.nnlsNormal = !$scope.nnlsNormal;
+        console.log('nnls Normal bool', $scope.nnlsNormal);
 
-        let nnlsMax = 0;
+        processSignature(angular.copy(mutationSignature));
+      };
+
+
+      let processSignature = (sigs) => {
+        $scope.mutationSignature = [];
+        let nnlsMax = ($scope.nnlsNormal) ? 0 : 1;
 
         _.forEach(sigs, (r, k) => {
           if(r.nnls > nnlsMax) nnlsMax = r.nnls;
@@ -38,6 +63,9 @@ app.controller('controller.dashboard.report.genomic.somaticMutations',
           $scope.mutationSignature.push(r);
 
         });
+
+        $scope.mutationSignature = _.sortBy($scope.mutationSignature, $scope.mutationSort.col);
+        if(!$scope.mutationSort.order) $scope.mutationSignature.reverse();
 
       };
 
@@ -62,7 +90,7 @@ app.controller('controller.dashboard.report.genomic.somaticMutations',
       };
 
       processMutations(smallMutations);
-      processSignature(mutationSignature);
+      processSignature(angular.copy(mutationSignature));
 
     }
   ]

@@ -35,6 +35,35 @@ div.smEvents {
     font-size: 0.8em;
     padding: 5px;
     background-color: rgb(220,220,220);
+
+    span {
+      outline: 0;
+
+      &:active {
+        outline: 0;
+      }
+      &:hover {
+        outline: 0;
+      }
+    }
+
+    span.sortable {
+      cursor: pointer;
+
+      span.order {
+        font-size: 0.9em;
+        margin-left: 5px;
+        color: rgb(100,100,100);
+      }
+    }
+
+    span.subhead {
+      font-size: 0.8em;
+      margin-left: 5px;
+      color: rgb(100,100,100);
+      cursor: pointer;
+    }
+
   }
 
   .row:nth-child(odd) {
