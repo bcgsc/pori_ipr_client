@@ -66,6 +66,10 @@ app.controller('controller.dashboard.report.genomic.pathwayAnalysis',
           clickOutToClose: false,
           controller: ['$q', '_', '$scope', '$mdDialog', '$timeout', ($q, _, scope, $mdDialog, $timeout) => {
 
+            scope.process = 'select';
+            scope.progress = 0;
+            scope.filename = "";
+
             // Cancel Dialog
             scope.cancel = () => {
               $mdDialog.cancel('Canceled Edit - No changes made.');
@@ -94,17 +98,25 @@ app.controller('controller.dashboard.report.genomic.pathwayAnalysis',
             };
 
             // Kick off upload
-            uploader.onAfterAddingFile = function(fileItem) {
+            uploader.onAfterAddingFile = (fileItem) => {
+              console.log('Selected ', fileItem);
+              scope.filename = fileItem.file.name;
               selectedItem = fileItem;
+              scope.process="upload";
+            };
+
+            uploader.onProgressItem = (fileItem, progress) => {
+              scope.progress = progress;
             };
 
             // Initiate Upload
             scope.initiateUpload = () => {
+              scope.startedUpload = true;
               uploader.uploadItem(selectedItem);
             };
 
             // Only allow 1 upload. When Finished
-            uploader.onCompleteItem = function(fileItem, response, status, headers) {
+            uploader.onCompleteItem = (fileItem, response, status, headers) => {
               console.info('API Response on complete', response);
               $mdDialog.hide({data: response, message: 'Pathway Analysis data updated.'})
             };
