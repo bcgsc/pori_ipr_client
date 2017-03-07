@@ -1,9 +1,15 @@
-app.controller('controller.dashboard.listing', ['_', '$q', '$scope', 'pogs', '$mdDialog',  (_, $q, $scope, pogs, $mdDialog) => {
+app.controller('controller.dashboard.listing', ['_', '$q', '$scope', 'pogs', '$mdDialog', 'user',  (_, $q, $scope, pogs, $mdDialog, user) => {
   
   console.log('Loaded dashboard listing controller');
   
   $scope.pogs = pogs;
-  
+
+  // Filter Users For a POG
+  _.forEach($scope.pogs, (p, i) => {
+    // Loop over pogusers
+    $scope.pogs[i].myRoles = _.filter(p.POGUsers, {user: {ident: user.ident}});
+  });
+
   $scope.searchPogs = (query) => {
     
     return (pog) => {

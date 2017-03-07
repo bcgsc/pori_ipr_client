@@ -10,7 +10,10 @@ md-content(flex).md-padding
     h2(layout="row")
       span(ui-sref="dashboard.pog.report.genomic.summary({POG: '{{pog.POGID}}' })", flex).title {{pog.POGID}}
       span(flex).text-center {{pog.patientInformation.reportDate}}
-      span(flex) My Role: (Clinician|Bioinformatician|Analyist|Admin)
+      span(flex) My Roles:
+        span(ng-if="pog.myRoles.length === 0").role None
+        span(ng-repeat="role in pog.myRoles").role {{role.role}}
+          md-tooltip Assigned by {{role.addedBy.firstName}} {{role.addedBy.lastName}} {{role.addedBy.createdAt | amTimeAgo}}
       
     div(flex, layout="column")
       div(flex, layout="row")

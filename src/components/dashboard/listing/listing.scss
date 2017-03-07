@@ -20,6 +20,11 @@ div.PogList {
     span {
       font-size: 0.65em;
     }
+    span.role {
+      font-size: 0.95em;
+      margin-left: 10px;
+      cursor: pointer;
+    }
   }
   
   div { // Column
