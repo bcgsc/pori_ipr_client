@@ -1,0 +1,26 @@
+md-content(flex).adminSection
+    md-toolbar
+        div(layout="row").md-toolbar-tools
+            span.close
+                div(ui-sref="dashboard.listing")
+            span(flex)
+            span(flex)
+                h2 System Users
+            span(flex)
+            span(flex=5)
+    div.content
+
+        p All users currently given access to the Interactive POG Reports system.
+
+        div(flex, layout="column").table
+            div(flex, layout="row").header
+                div(flex) Username
+                div(flex) Name
+                div(flex) Authority
+                div(flex) Last Activity
+            div(flex, layout="row", ng-repeat="u in users", ng-click="userDiag($event, u)").row.clickable
+                div(flex) {{u.username}}
+                div(flex) {{u.firstName}} {{u.lastName}}
+                div(flex) {{u.type}}
+                div(flex, ng-bind="(u.lastLogin | amTimeAgo) || 'never'").clickable
+                    md-tooltip(md-direction="left", ng-if="u.lastLogin") {{u.lastLogin | amDateFormat:'dddd, MMMM Do YYYY, h:mm:ss a'}}

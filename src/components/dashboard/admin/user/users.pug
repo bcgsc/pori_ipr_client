@@ -1,0 +1,16 @@
+div(flex, layout="row")
+    div(ui-view="", flex)
+
+    md-content(flex-gt-sm=20, flex=25, style="height: 130px;", layout-align="start start").adminSection
+        md-toolbar
+            div(layout="row").md-toolbar-tools
+                span(flex)
+                span(flex)
+                    h2 Tools
+                span(flex)
+        div.content.side
+            ul
+                li(ui-sref="dashboard.admin.users.userList") Users
+                li(ng-click="userDiag($event, {}, true)") Add User
+                li(ui-sref="dashboard.admin.users.groups") Groups
+                li Add Group

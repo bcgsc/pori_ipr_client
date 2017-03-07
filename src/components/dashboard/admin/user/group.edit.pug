@@ -1,0 +1,68 @@
+md-dialog(flex=50).adminSection
+    form(name='form', ng-submit="update(form)", novalidate)
+        md-toolbar
+            div(layout="row").md-toolbar-tools
+                span.close
+                    div(ng-click="cancel()")
+                span(flex)
+                span(flex)
+                    h2 {{(!newGroup) ? 'Edit Group' : 'Add Group'}}
+                span(flex)
+                span(flex=5)
+        md-dialog-content(layout="column").content
+
+            p(ng-hide="newGroup") Modify a permission group
+            p(ng-show="newGroup") Create a new permission group
+
+            div(flex, layout="row")
+                md-input-container(flex)
+                    input(ng-model="group.name", placeholder="Group Name", required)
+
+            h3(style="margin: 0;") Group Members
+
+            div(flex, layout="column")
+                div(flex, layout="row")
+                    md-autocomplete(
+                    md-input-name="Member",
+                    md-selected-item="member",
+                    md-search-text="searchQuery",
+                    md-items="user in searchUsers(searchQuery)",
+                    md-item-text="user.firstName + ' ' + user.lastName",
+                    md-floating-label="Add user",
+                    md-autofocus=true,
+                    md-autoselect=true,
+                    md-require-match,
+                    md-dropdown-position="bottom",
+                    flex
+                    )
+                        md-item-template {{user.firstName}} {{user.lastName}}
+
+                    div(layout="column", layout-align="center end", style="padding-left: 20px;")
+                        div(ng-click="addUser()").buttonWrap
+                            md-button Add Member
+                div(flex, layout="column")
+                    md-content(flex, layout="column").diagTable
+                        div(flex, layout="row").header
+                            div(flex=30) Name
+                            div(flex=20) Email
+                            div(flex=30) Username
+                            div
+                        div(ng-show="group.users.length === 0").text-center.margin-top-10.margin-bottom-10 No Members
+                        div(ng-repeat="u in group.users", layout="row").row
+                            div(flex=40).c {{u.firstName}} {{u.lastName}}
+                            div(flex=40).c {{u.email}}
+                            div(flex=40).c {{u.username}}
+                            div
+                                div(ng-click="removeUser($event, u)").buttonWrap
+                                    md-button Remove
+
+
+
+        md-dialog-actions(layout="row")
+            .buttonWrap
+                md-button(ng-click="cancel()") Cancel
+            div(ng-hide="newGroup").buttonWrap.delete
+                md-button(ng-click="groupDelete($event, group)") Remove
+            span(flex)
+            .buttonWrap
+                md-button(type="submit") {{(!newUser) ? 'Done' : 'Add Group'}}

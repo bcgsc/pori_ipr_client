@@ -1,0 +1,55 @@
+md-dialog(flex=50).adminSection
+    form(name='form', ng-submit="update(form)", novalidate)
+        md-toolbar
+            div(layout="row").md-toolbar-tools
+                span.close
+                    div(ng-click="cancel()")
+                span(flex)
+                span(flex)
+                    h2 {{(!newUser) ? 'Edit User' : 'Add User'}}
+                span(flex)
+                span(flex=5)
+        md-dialog-content(layout="column").content
+
+            p(ng-hide="newUser") Modify a user's record.
+            p(ng-show="newUser") Create a new user record.
+
+            div(flex, layout="row")
+                md-input-container(flex)
+                    input(ng-model="user.username", placeholder="Username", required)
+                md-input-container(flex)
+                    label(name="Authority") Authority
+                    md-select(ng-model="user.type", name="Authority", placeholder="Authority")
+                        md-option(ng-value="'local'") Local DB (IPR)
+                        md-option(ng-value="'bcgsc'") BCGSC LDAP
+
+            div(flex, layout="row")
+                md-input-container(flex)
+                    input(ng-model="user.firstName", placeholder="First Name", required)
+                md-input-container(flex)
+                    input(ng-model="user.lastName", placeholder="Last Name", required)
+
+            div(flex, layout="row")
+                md-input-container(flex)
+                    input(ng-model="user.email", type="email", placeholder="Email Address")
+
+            div(flex, layout="row", ng-show="(user.type === 'local')")
+                md-input-container(flex)
+                    input(ng-model="local.newPass", type="password", placeholder="New Password", minlength=6)
+                    div(ng-messages="NewPass")
+                        div(ng-message="minlength") Passwords are required to be at least 6 characters or more.
+
+            div(flex, layout="row", ng-show="(user.type === 'local')")
+                md-input-container(flex)
+                    input(ng-model="local.newPassConfirm", type="password", name="NewPassConfirm", placeholder="Confirm New Password")
+                    div(ng-messages="NewPassConfirm")
+                        div(ng-message="nomatch") The confirmation password does not match.
+
+        md-dialog-actions(layout="row")
+            .buttonWrap
+                md-button(ng-click="cancel()") Cancel
+            div(ng-hide="newUser").buttonWrap.delete
+                md-button(ng-click="userDelete($event, user)") Remove
+            span(flex)
+            .buttonWrap
+                md-button(type="submit") {{(!newUser) ? 'Update User' : 'Add User'}}

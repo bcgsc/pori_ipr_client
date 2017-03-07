@@ -92,7 +92,11 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
 				"navigation@dashboard": {
 				  templateUrl: 'dashboard/navigation.html',
 				  controller: 'controller.dashboard.navigation'
-				}
+				},
+        "adminbar@dashboard": {
+				  templateUrl: 'dashboard/adminbar/adminbar.html',
+          controller: 'controller.dashboard.adminbar'
+        }
 			},
       data: {
 			  displayName: 'Dashboard',
@@ -116,6 +120,12 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
 			      
 		      });
 		    }],
+        isAdmin: ['$q', 'api.user', 'user', ($q, $user, user) => {
+			    return $q((resolve, reject) => {
+			      console.log('Is Admin', $user.isAdmin());
+			      resolve($user.isAdmin());
+          });
+        }],
 		    pogs: ['$q', 'api.pog', ($q, $pog) => {
 		      return $q((resolve, reject) => {
 		        $pog.all().then(
@@ -379,6 +389,61 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       resolve: {
         tcgaAcronyms: ['$q', '$stateParams', 'api.appendices', ($q, $stateParams, $appendices) => {
           return $appendices.tcga($stateParams.POG);
+        }]
+      }
+    })
+
+    .state('dashboard.pog.report.genomic.meta', {
+      url: '/meta',
+      data: {
+        displayName: "POG Meta Information"
+      },
+      templateUrl: 'dashboard/report/genomic/meta/meta.html',
+      controller: 'controller.dashboard.report.genomic.meta',
+    })
+
+    .state('dashboard.admin', {
+      url: '/admin',
+      data: {
+        displayName: 'Administration'
+      },
+      templateUrl: 'dashboard/admin/admin.html',
+    })
+
+    .state('dashboard.admin.users', {
+      url: '/users',
+      data: {
+        displayName: 'Users & Groups',
+        stateProxy: 'dashboard.admin.users.userList'
+      },
+      controller: 'controller.dashboard.admin.users',
+      templateUrl: 'dashboard/admin/user/users.html',
+      resolve: {
+        users: ['$q', 'api.user', ($q, $user) => {
+          return $user.all();
+        }]
+      }
+    })
+
+    .state('dashboard.admin.users.userList', {
+      url: '/userList',
+      data: {
+        displayName: 'Users'
+      },
+      controller: 'controller.dashboard.admin.users.userList',
+      templateUrl: 'dashboard/admin/user/userList.html',
+    })
+
+    .state('dashboard.admin.users.groups', {
+      url: '/groups',
+      data: {
+        displayName: 'Groups'
+      },
+      controller: 'controller.dashboard.admin.users.groups',
+      templateUrl: 'dashboard/admin/user/group.html',
+      resolve: {
+        groups: ['$q', 'api.user', ($q, $user) => {
+          return $user.group.all();
         }]
       }
     })
