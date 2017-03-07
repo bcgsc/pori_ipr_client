@@ -115,29 +115,6 @@ app.factory('api.pog', ['_', '$http', '$q', (_, $http, $q) => {
 
 
     return deferred;
-      /*
-      $http.get(api + '/' + POGID + '/loadPog').then(
-        (result) => {
-          // Reload All POGS
-          $pog.all()
-            .notify((progress) => {
-              console.log('Loading pog progress:', progress);
-            })
-            .then(
-            (resp) => {
-              resolve();
-            },
-            (err) => {
-              reject('Unable to reload POGS');
-            }
-          )
-        },
-        (error) => {
-          reject('Unable to load the requested POG');
-        }
-      )
-     */
-
   };
 
   // Empty out cache
@@ -145,6 +122,51 @@ app.factory('api.pog', ['_', '$http', '$q', (_, $http, $q) => {
 
     _pogs = {};
 
+  };
+
+  $pog.user = (POGID) => {
+    return {
+      bind: (ident, role) => {
+
+        let deferred = $q.defer();
+
+        $http.post(api + '/' + POGID + '/user', {user: ident, role: role}).then(
+          (resp) => {
+            deferred.resolve(resp.data);
+          },
+          (err) => {
+            deferred.reject(err);
+          }
+        );
+
+        return deferred.promise;
+      },
+
+      unbind: (ident, role) => {
+        let deferred = $q.defer();
+
+        $http({
+          url: api + '/' + POGID + '/user',
+          method: 'DELETE',
+          data: {
+            user: ident,
+            role: role
+          },
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }).then(
+          (resp) => {
+            deferred.resolve(resp.data);
+          },
+          (err) => {
+            deferred.reject(err);
+          }
+        );
+
+        return deferred.promise;
+      }
+    }
   };
   
   return $pog;

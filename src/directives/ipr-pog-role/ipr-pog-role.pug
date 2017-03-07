@@ -1,0 +1,18 @@
+md-card(layout="column").userRole
+    md-card-title
+        md-card-title-text
+            span.md-headline {{role.user.firstName}} {{role.user.lastName}}
+            span.md-subhead {{role.user.email}}
+        md-card-title-media
+            div.md-media-medium
+                md-icon person
+    md-card-content(layout="column")
+        div(layout="row")
+            div(flex) Last activity:
+            div(flex=70).value.clickable {{(role.user.lastLogin | amTimeAgo) || 'never'}}
+                md-tooltip(md-direction="bottom", ng-if="role.user.lastLogin") {{role.user.lastLogin | amDateFormat:'dddd, MMMM Do YYYY, h:mm:ss a'}}
+        div(layout="row")
+            div(flex) Last edit:
+            div(flex=70).value.clickable never
+    md-card-actions(flex, layout="row", layout-align="end end")
+        md-button(ng-click="remove($event)").md-primary.md-raised Remove

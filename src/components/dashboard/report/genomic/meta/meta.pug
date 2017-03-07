@@ -1,0 +1,10 @@
+section(ng-repeat="role in roles").meta
+    md-subheader.md-primary {{role}}s
+
+    div(layout="row", flex, layout-align="start center").roleList
+        ipr-pog-role(role="u", ng-repeat="u in pog.POGUsers | filter: roleFilter(role)", remove="remove()")
+
+        div(layout="column", layout-align="center center", ng-click="addUser($event, role)").add
+            span.icon
+                md-icon add
+            span Add New
