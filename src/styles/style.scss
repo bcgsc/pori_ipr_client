@@ -34,9 +34,12 @@ md-dialog.editor {
 
 .clickable { cursor: pointer; }
 
+.xScroll { }
+
 .text-center { text-align: center; }
 .text-right { text-align: right; }
 .text-left { text-align: left; }
+.text-capitalize { text-transform: capitalize; }
 
 .text-small { font-size: 0.8em }
 .text-xsmall { font-size: 0.7em }
@@ -82,3 +85,8 @@ md-dialog.editor {
 .hidden { display: none; }
 
 
+.md-tooltip {
+  background-color: rgb(63,81,181) !important;
+  color: white;
+  font-size: 11px !important;
+}
