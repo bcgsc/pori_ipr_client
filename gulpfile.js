@@ -43,11 +43,12 @@ let files = {
     app: [
       './src/app.js',
       './src/libs/*.js',
+      './src/filters/*.js',
       './src/api/**/*.js',
       './src/services/*.js',
       './src/directives/**/*.js',
-      './src/components/**/*.js',
       './src/config/*.js',
+      './src/components/**/*.js',
     ]
   },
   
