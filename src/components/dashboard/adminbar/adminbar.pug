@@ -1,0 +1,27 @@
+div(layout="row", flex).inner
+    p Administration
+    md-menu-bar
+        md-menu
+            md-button(ng-click="$mdMenu.open()") Users
+            md-menu-content.adminBar
+                md-menu-item
+                    md-button(ui-sref="dashboard.admin.users.userList") View All Users
+                md-menu-item
+                    md-button(ng-click="alert('Users')") Add User
+                md-menu-divider
+                md-menu-item
+                    md-button(ui-sref="dashboard.admin.users.groups") View All Groups
+                md-menu-item
+                    md-button(ng-click="alert('Users')") Add Group
+        md-menu
+            md-button(ng-click="$mdMenu.open()") POGs
+            md-menu-content.adminBar
+                md-menu-item
+                    md-button(ng-click="alert('Users')") Manage POGs
+                md-menu-item
+                    md-button(ng-click="alert('Users')") Add POG
+        md-menu
+            md-button(ng-click="$mdMenu.open()") Settings
+            md-menu-content.adminBar
+                md-menu-item
+                    md-button(ng-click="alert('Not Available')") Na
