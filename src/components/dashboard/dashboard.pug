@@ -1,3 +1,4 @@
+div(ui-view="adminbar", layout="row", ng-if="isAdmin").adminBar
 md-toolbar(ui-view="toolbar", layout='row').headerToolbar
 md-subheader.bread-crumbs
   ui-breadcrumbs(displayname-property="data.displayName", template-url="uiBreadcrumbs/uiBreadcrumbs.tpl.html")

@@ -1,7 +1,8 @@
 app.controller('controller.dashboard.toolbar',
-  ['_', '$scope', '$mdSidenav', '$state', '$mdDialog', '$mdToast', 'api.session',
-    (_, $scope, $mdSidenav, $state, $mdDialog, $mdToast, $session) => {
+  ['_', '$scope', '$mdSidenav', '$state', '$mdDialog', '$mdToast', 'api.session', 'isAdmin',
+    (_, $scope, $mdSidenav, $state, $mdDialog, $mdToast, $session, isAdmin) => {
 
+      $scope.isAdmin = isAdmin;
       $scope.accountMenu = {
         'dashboard.profile': 'Profile',
         'dashboard.feedback': 'Feedback'
