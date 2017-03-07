@@ -68,6 +68,12 @@ app.controller('controller.dashboard.report.genomic',
       showChildren: false,
       children: []
     },
+    {
+      name: 'Meta',
+      state: 'meta',
+      showChildren: false,
+      children: []
+    }
   ];
 
   /**
