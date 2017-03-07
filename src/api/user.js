@@ -165,10 +165,10 @@ app.factory('api.user', ['_', '$http', '$q', (_, $http, $q) => {
      * @param name
      * @returns {promise}
      */
-    create: (name) => {
+    create: (group) => {
       let deferred = $q.defer();
 
-      $http.post(api + '/group', {name: name}).then(
+      $http.post(api + '/group', group).then(
         (resp) => {
           deferred.resolve(resp.data);
         },

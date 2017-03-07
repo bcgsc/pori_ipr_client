@@ -5,6 +5,8 @@ app.controller('controller.dashboard.user.groups.edit', ['$q', '_', '$scope', '$
   scope.newGroup = newGroup;
   scope.groupDelete = groupDelete;
 
+  console.log('Group Diag', newGroup);
+
   // Creating new user
   if(newGroup) {
     scope.group = {
@@ -102,7 +104,7 @@ app.controller('controller.dashboard.user.groups.edit', ['$q', '_', '$scope', '$
     // Send updated user to api
     if(newGroup) {
       $user.group.create(scope.group).then(
-        (user) => {
+        (group) => {
           // Success
           $mdDialog.hide({status: true, data: group, message: "The group has been added!", newGroup: true});
         },

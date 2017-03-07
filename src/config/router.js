@@ -421,6 +421,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       resolve: {
         users: ['$q', 'api.user', ($q, $user) => {
           return $user.all();
+        }],
+        groups: ['$q', 'api.user', ($q, $user) => {
+          return $user.group.all();
         }]
       }
     })
@@ -441,11 +444,6 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       },
       controller: 'controller.dashboard.admin.users.groups',
       templateUrl: 'dashboard/admin/user/group.html',
-      resolve: {
-        groups: ['$q', 'api.user', ($q, $user) => {
-          return $user.group.all();
-        }]
-      }
     })
 
     .state('print', {
