@@ -22,29 +22,29 @@ app.factory('api.pubmed', ['_', '$http', '$q', (_, $http, $q) => {
    */
   $pubmed.article = (pmid) => {
     return $q((resolve, reject) => {
-      
+
       var xhttp = new XMLHttpRequest();
       xhttp.onreadystatechange = (stateChange) => {
-        
+
         // Wait until readyState === 4 (request finished)
         if(xhttp.readyState === 4) {
-          
+
           if(xhttp.status >= 200 && xhttp.status < 400) {
             resolve(JSON.parse(xhttp.responseText).result[parseInt(pmid, 10)]);
           } else {
             reject(xhttp);
-          } 
-          
+          }
+
         }
-        
+
       };
-      
+
       xhttp.open('GET', api + pmid, true);
       xhttp.send();
       
     });
     
-  }
+  };
   
   return $pubmed;
   
