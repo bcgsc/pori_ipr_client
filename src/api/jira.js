@@ -5,9 +5,10 @@
  * managed through this factory.
  *
  */
-app.factory('api.jira', ['_', '$http', '$q', (_, $http, $q) => {
+app.factory('api.jira', ['_', '$http', '$q', 'api.user', (_, $http, $q, $user) => {
 
   const api = 'https://www.bcgsc.ca/jira/rest/api/2';
+  const apiProxy = CONFIG.ENDPOINTS.API + '/jira';
   let $jira = {};
   let $session = null;
 
@@ -66,6 +67,35 @@ app.factory('api.jira', ['_', '$http', '$q', (_, $http, $q) => {
           deferred.reject({status: error.status, body: error.data});
         }
       );
+
+      return deferred.promise;
+    },
+
+    /**
+     * Add subtask to existing ticket
+     *
+     *
+     * @param {string} ticket
+     * @param {string} title
+     * @param {string} description
+     * @returns {{resolve, reject, promise}|*|Deferred}
+     */
+    subtask: (ticket, title, description) => {
+
+      let deferred = $q.defer();
+
+      // Try to create ticket
+      $http.post(apiProxy + '/subtask', {title: title, ticket: ticket, description: description}).then(
+        (resp) => {
+          deferred.resolve(resp.data);
+        },
+        (err) => {
+          // After testing, we'll check response header to see if user needs to login to JIRA first.
+          console.log('JIRA Sub-task create error', err);
+          deferred.reject(err);
+        }
+      );
+
 
       return deferred.promise;
     },

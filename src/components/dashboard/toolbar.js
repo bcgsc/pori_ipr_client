@@ -3,14 +3,29 @@ app.controller('controller.dashboard.toolbar',
     (_, $scope, $mdSidenav, $state, $mdDialog, $mdToast, $session, isAdmin) => {
 
       $scope.isAdmin = isAdmin;
-      $scope.accountMenu = {
-        'dashboard.profile': 'Profile',
-        'dashboard.feedback': 'Feedback'
-      };
 
       $scope.toggleMenu = () => {
         console.log('[toolbar]', 'Clicked toggle');
         $mdSidenav('topLevelNavigation').toggle();
+      };
+
+      // Open Feedback
+      $scope.openFeedback = ($event) => {
+
+        $mdDialog.show({
+          controller: 'controller.dashboard.toolbar.feedback',
+          templateUrl: 'dashboard/feedback.html',
+          targetEvent: $event,
+          clickOutsideToClose: false,
+        }).then(
+          (res) => {
+            // Toast!
+          },
+          (cancel) => {
+            // Toast!
+          }
+        )
+
       };
 
       $scope.loadNewPog = ($event) => {

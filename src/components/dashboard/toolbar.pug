@@ -12,8 +12,10 @@
       md-button.white {{user.firstName}} {{user.lastName}}
     
     md-menu-content(width="4")
-      md-menu-item(ng-repeat="(loc, name) in accountMenu")
-        md-button(ui-sref="{{loc}}") {{name}}
+      md-menu-item
+        md-button Profile
+      md-menu-item
+        md-button(ng-click="openFeedback($event)") Feedback
       md-menu-divider
       md-menu-item(ng-click="userLogout()")
         md-button Logout

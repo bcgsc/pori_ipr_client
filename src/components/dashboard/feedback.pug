@@ -1,0 +1,49 @@
+md-dialog(layout="column", aria-label="Feedback", ng-cloak, flex=30)
+    form(flex='auto', name='form', ng-submit="send(form)")
+        md-toolbar
+            .md-toolbar-tools
+                h2 Feedback
+                span(flex)
+                md-button.md-icon-button(ng-click='cancel()')
+                    md-icon cancel
+        md-dialog-content(layout-padding)
+
+            div(layout="column", ng-show="showForm")
+                p Feedback is always appreciated!
+                p Filling out this form will automatically create a JIRA sub-task on your behalf in our tracking ticket. You will be notified of changes to this ticket.
+
+                div(layout="row")
+                    md-input-container(flex)
+                        md-select(ng-model="feedback.type", aria-label="Type", required, placeholder="Type")
+                            md-option(ng-value="'Bug Report'") Bug Report
+                            md-option(ng-value="'Spelling Mistake'") Spelling Mistake
+                            md-option(ng-value="'Suggestion'") Suggestion
+                            md-option(ng-value="'Feature Request'") Feature Request
+                            md-option(ng-value="'Other'") Other
+
+                div(layout="row")
+                    md-input-container(flex)
+                        input(ng-model="feedback.title", aria-label="Title", placeholder="Subject", required)
+                        div(ng-messages="Title")
+                            div(ng-message="required") A title is required to send feedback
+
+                div(layout="row")
+                    md-input-container(flex)
+                        label Message
+                        textarea(ng-model="feedback.description", md-maxlength="450", rows="5", md-select-on-focus)
+
+            div(layout="column", ng-hide="showForm")
+
+                p Thanks for the feedback! The ticket has been created:
+
+                div(layout="row", layout-align="center center")
+                    div(layout="row", flex=60).jiraTicket
+                        div(flex=20)
+                            div.icon
+                        div(flex).link
+                            a(href="https://www.bcgsc.ca/jira/browse/{{ticket.key}}", target="_blank") {{ticket.key}}
+
+
+        md-dialog-actions(layout="row", layout-aligh="end center")
+            md-button(type="submit", ng-show="showForm", ng-disabled="formSubmitted", ng-init="formSubmitted=false").md-primary.md-raised Send Feedback
+            md-button(ng-click="close()", ng-hide="showForm").md-primary.md-raised Done

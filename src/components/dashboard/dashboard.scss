@@ -37,3 +37,27 @@
   }
   
 }
+
+.jiraTicket {
+  background: rgb(220,220,220);
+  padding: 20px;
+
+  .icon {
+    width: 50px;
+    height: 66px;
+    background: url('/assets/images/jira.png');
+  }
+  .link {
+    text-align: center;
+    font-size: 1.3em;
+    padding-top: 20px;
+
+    a, a:visited, a:active {
+      color: rgb(63,81,181);
+      text-decoration: none;
+    }
+    a:hover {
+      color: rgb(99, 140, 255);
+    }
+  }
+}
