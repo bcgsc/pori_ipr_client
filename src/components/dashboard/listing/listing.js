@@ -1,7 +1,5 @@
 app.controller('controller.dashboard.listing', ['_', '$q', '$scope', 'pogs', '$mdDialog', 'user',  (_, $q, $scope, pogs, $mdDialog, user) => {
-  
-  console.log('Loaded dashboard listing controller');
-  
+
   $scope.pogs = pogs;
 
   // Filter Users For a POG

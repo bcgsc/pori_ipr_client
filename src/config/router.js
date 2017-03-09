@@ -122,7 +122,6 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
 		    }],
         isAdmin: ['$q', 'api.user', 'user', ($q, $user, user) => {
 			    return $q((resolve, reject) => {
-			      console.log('Is Admin', $user.isAdmin());
 			      resolve($user.isAdmin());
           });
         }],
