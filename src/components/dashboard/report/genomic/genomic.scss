@@ -15,6 +15,15 @@
         background-color: rgb(175, 61, 161);
         color: white;
       }
+      md-list-item.meta {
+        background-color: rgb(230,230,230);
+        color: rgb(90,90,90);
+
+        &.active {
+          background-color: rgb(175, 61, 161);
+          color: white;
+        }
+      }
     }
 
   }
@@ -297,19 +306,21 @@
       margin: 0px 4px 7px 4px;
       
       .header {
-        
-        .signature {
-          text-align: center;
-          padding: 15px 0;
-          font-size: 0.9em;
-          background-color: rgb(190,190,190);
-          box-sizing: border-box;
-          border-right: 8px solid rgb(220,220,220);
-          border-bottom: 8px solid rgb(220,220,220);
 
-          span.listitem {
-            cursor: pointer;
-            margin-right: 5px;
+        .container {
+          .signature {
+            text-align: center;
+            padding: 15px 0;
+            font-size: 0.9em;
+            background-color: rgb(190,190,190);
+            box-sizing: border-box;
+            border-right: 8px solid rgb(220,220,220);
+            border-bottom: 8px solid rgb(220,220,220);
+
+            span.listitem {
+              cursor: pointer;
+              margin-right: 5px;
+            }
           }
         }
         

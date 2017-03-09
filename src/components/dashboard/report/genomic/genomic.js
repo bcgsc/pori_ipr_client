@@ -15,18 +15,21 @@ app.controller('controller.dashboard.report.genomic',
     {
       name: 'Analyst Comments',
       state: 'analystComments',
+      meta: false,
       showChildren: false,
       children: []
     },
     {
       name: 'Pathway Analysis',
       state: 'pathwayAnalysis',
+      meta: false,
       showChildren: false,
       children: []
     },
     {
       name: 'Detailed Genomic Analysis',
       state: 'detailedGenomicAnalysis',
+      meta: false,
       showChildren: false,
       children: [
         { name: 'Targeted Gene Report', state: 'detailedGenomicAnalysis'}
@@ -35,42 +38,49 @@ app.controller('controller.dashboard.report.genomic',
     {
       name: 'Disease Specific Analysis',
       state: 'diseaseSpecificAnalysis',
+      meta: false,
       showChildren: false,
       children: []
     },
     {
       name: 'Somatic Mutations',
       state: 'somaticMutations',
+      meta: false,
       showChildren: false,
       children: []
     },
     {
       name: 'Copy Number Analyses',
       state: 'copyNumberAnalyses',
+      meta: false,
       showChildren: false,
       children: []
     },
     {
       name: 'Structural Variation',
       state: 'structuralVariation',
+      meta: false,
       showChildren: false,
       children: []
     },
     {
       name: 'Expression Analysis',
       state: 'expressionAnalysis',
+      meta: false,
       showChildren: false,
       children: []
     },
     {
       name: 'Appendices',
       state: 'appendices',
+      meta: false,
       showChildren: false,
       children: []
     },
     {
-      name: 'Meta',
+      name: 'Users',
       state: 'meta',
+      meta: true,
       showChildren: false,
       children: []
     }

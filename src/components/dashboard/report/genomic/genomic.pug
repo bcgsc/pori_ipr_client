@@ -16,7 +16,7 @@ md-content(flex).md-padding
                     md-list-item(
                     ng-repeat="section in sections",
                     ng-click="goToReportSection(section.state)",
-                    ng-class="activeSection(section) ? 'active' : ''"
+                    ng-class="{active: activeSection(section), meta: section.meta}"
                     ) {{section.name}}
 
                         md-list-item(
