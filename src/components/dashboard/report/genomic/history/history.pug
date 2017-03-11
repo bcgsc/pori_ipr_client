@@ -1,0 +1,33 @@
+section.dataHistory
+    md-subheader.md-primary Data History
+
+    div(layout="column", flex)
+
+        div(layout="column", flex)
+
+            h2.title History Viewer
+
+            div(layout="column", flex).dataBox
+                div.box
+                    div(layout="row", flex).heading
+                        div(flex) Data Section
+                        div(flex) Event
+                        div(flex=10) Previous
+                        div(flex=10) New
+                        div(flex) Comment
+                        div(flex) User
+                        div(flex) Tags
+                        div(flex) Date
+                    div(layout="row", flex, ng-repeat="h in history").row
+                        div(flex, ng-click="detail($event, h)").clickable.link {{h.model}}
+                        div(flex, ng-class="[h.type]").historyType
+                            span {{h.type}}
+                        div(flex) {{h.previous}}
+                        div(flex=10) {{h.new || 'none'}}
+                        div(flex=10) {{h.comment || 'none'}}
+                        div(flex) {{h.user.firstName}} {{h.user.lastName}}
+                        div(flex).tags
+                            span(ng-repeat="t in h.tags").pill {{t.tag}}
+                        div(flex)
+                            span.clickable {{h.createdAt | amTimeAgo}}
+                                md-tooltip {{h.createdAt | amDateFormat: 'DD/MM/YYYY HH:mm:ss'}}
