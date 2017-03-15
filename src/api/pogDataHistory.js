@@ -93,7 +93,7 @@ app.factory('api.pogDataHistory', ['_', '$http', '$q', (_, $http, $q) => {
       restore: (ident) => {
         let deferred = $q.defer();
 
-        $http.get(API + '/history/revert/' +ident).then(
+        $http.get(API + '/history/restore/' +ident).then(
           (resp) => {
             deferred.resolve(true);
           },
@@ -143,7 +143,7 @@ app.factory('api.pogDataHistory', ['_', '$http', '$q', (_, $http, $q) => {
         create: (tag, ident="") => {
           let deferred = $q.defer();
 
-          $http.post(tag, API + '/history/tag/' +ident).then(
+          $http.post(API + '/history/tag/' +ident, tag).then(
             (resp) => {
               deferred.resolve(resp.data);
             },
@@ -165,7 +165,7 @@ app.factory('api.pogDataHistory', ['_', '$http', '$q', (_, $http, $q) => {
         remove: (ident) => {
           let deferred = $q.defer();
 
-          $http.delete(tag, API + '/history/tag/' +ident).then(
+          $http.delete(API + '/history/tag/' +ident).then(
             (resp) => {
               deferred.resolve(true);
             },
