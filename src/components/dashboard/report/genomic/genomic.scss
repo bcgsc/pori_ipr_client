@@ -222,7 +222,7 @@
       
       div.box {
         background-color: rgb(180,180,180);
-        
+
         div.heading {
           font-weight: 100;
           font-size: 0.8em;
@@ -230,6 +230,18 @@
           padding: 10px 0;
           background-color: rgb(204,207,226);
         }
+
+        div.search {
+          background-color: rgb(235,235,235);
+
+          md-input-container {
+            margin: 10px 0 0 10px;
+            padding: 0;
+            height: 34px;
+            font-size: 0.9em;
+          }
+        }
+
         div.content {
           font-weight: 600;
           font-size: 0.9em;
@@ -385,6 +397,12 @@
         div {  
           padding: 15px 0;
           font-size: 0.8em;
+
+          &.active:before {
+            content: '» ';
+            font-weight: 500;
+          }
+
         }
         div:first-of-type {
           padding-left: 10px;

@@ -15,6 +15,7 @@ app.controller('controller.dashboard.report.genomic.summary',
       };
       $scope.geneVariants = [];
       $scope.mutationSignature = mutationSignature;
+      $scope.mutationMask = null;
 
       $scope.toMutations = () => {
         $state.go('^.somaticMutations');
@@ -51,6 +52,17 @@ app.controller('controller.dashboard.report.genomic.summary',
       gai.forEach((variant, k) => {
         gai[k] = variantCategory(variant);
       });
+
+      $scope.setMutationMask = (mask) => {
+        if($scope.mutationMask == mask) return $scope.mutationMask = null;
+        $scope.mutationMask = mask;
+      };
+
+      $scope.mutationFilter = (mutation) => {
+        if($scope.mutationMask == null) return true;
+        if(mutation.type == $scope.mutationMask) return true;
+        return false;
+      };
 
       // Update Tumour Analysis Details
       $scope.updateTa = ($event) => {
@@ -255,7 +267,7 @@ app.controller('controller.dashboard.report.genomic.summary',
             scope.update = (cascade) => {
 
               // Remove entry
-              $gai.remove(pog.POGID, alteration.ident, cascade).then(
+              $gai.remove(pog.POGID, alteration.ident, scope.comment, cascade).then(
                 (resp) => {
                   $scope.data.gai = _.reject($scope.data.gai, (r) => { return (r.ident === alteration.ident); });
                   // Remove from Get

@@ -164,22 +164,24 @@ section
 
         div(layout="row").keyAlterationsIdentified
             div(layout="row", flex).header.sm
-                div(flex) Small Mutations
+                div(flex, ng-click="setMutationMask('smallMutation')", ng-class="{active: (mutationMask == 'smallMutation')}").clickable Small Mutations
                 div(flex="30") {{data.vc.smallMutations}}
             div(layout="row", flex).header.cnv
-                div(flex) Copy Number Variants
+                div(flex, ng-click="setMutationMask('cnv')", ng-class="{active: (mutationMask == 'cnv')}").clickable Copy Number Variants
                 div(flex="30") {{data.vc.CNVs}}
             div(layout="row", flex).header.sv
-                div(flex) Structural Variants
+                div(flex, ng-click="setMutationMask('structuralVariant')", ng-class="{active: (mutationMask == 'structuralVariant')}").clickable Structural Variants
                 div(flex="30") {{data.vc.SVs}}
             div(layout="row", flex).header.outliers
-                div(flex) Expression Outliers
+                div(flex, ng-click="setMutationMask('expressionOutlier')", ng-class="{active: (mutationMask == 'expressionOutlier')}").clickable Expression Outliers
                 div(flex="30") {{data.vc.expressionOutliers}}
         div(flex).alterations
-            div(ng-repeat="variant in data.gai", class="{{variant.type}}") {{variant.geneVariant}}
+            div(ng-repeat="variant in data.gai | filter: mutationFilter", class="{{variant.type}}") {{variant.geneVariant}}
                 span(ng-click="removeAlteration($event, variant)")
                     md-icon remove_circle
         div(flex, layout="row", layout-align="end end").keyAlterationsIdentified.margin-bottom-10
+            div(flex=10, ng-click="setMutationMask(null)", ng-show="mutationMask !== null").margin-bottom-10.text-small.clickable View all
+            span(flex)
             div(flex=25, layout="row").header.vus
                 div(flex) Variants of unknown significance
                 div(flex=30) {{data.vc.variantsUnknown}}
