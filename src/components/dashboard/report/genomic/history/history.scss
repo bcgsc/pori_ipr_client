@@ -5,7 +5,7 @@ section.dataHistory {
     padding: 2px 0;
     text-align: center;
     &.change span{
-      background-color: rgb(99, 140, 255);
+      background-color: rgb(161, 87, 174);
       color: rgb(255, 255, 255);
       padding: 2px 5px;
       border-radius: 3px;
@@ -35,6 +35,7 @@ section.dataHistory {
       color: rgb(255, 255, 255);
       padding: 2px 6px;
       border-radius: 3px;
+      margin-left: 3px;
     }
   }
 
@@ -54,7 +55,7 @@ section.dataHistory {
       overflow-x: auto;
 
       .changed {
-        background-color: rgb(99, 140, 255);
+        background-color: rgb(161, 87, 174);
         color: rgb(255,255,255);
       }
 
@@ -64,6 +65,19 @@ section.dataHistory {
         }
       }
     }
+  }
+
+  h5 {
+    margin: 0 0 5px 10px;
+    padding: 0;
+  }
+  pre {
+    padding: 8px;
+    background-color: rgb(240, 240, 240);
+    border: 1px solid rgb(210, 210, 210);
+    border-radius: 3px;
+    margin: 0 5px 0 10px;
+    overflow-x: auto;
   }
 
 }
