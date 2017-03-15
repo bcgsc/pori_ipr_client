@@ -63,12 +63,16 @@ section.appendices
                         div(flex) Data Source
                         div(flex) Tumour Count
                         div(flex) Normal Count
-                    div(layout="row", flex, ng-repeat="t in tcga").row
-                        div(flex=30) {{t['Code Name']}}
-                        div(flex=30) {{t['Full Name']}}
-                        div(flex) {{t['Data Source']}}
-                        div(flex) {{hashClean(t['Tumour Count'])}}
-                        div(flex) {{hashClean(t['Normal Count'])}}
+                    div(layout="row", layout-align="start end").search
+                        md-input-container(flex=40)
+                            input(placeholder="Search", name="AcroSearch", ng-model="acroQuery")
+                    div(style="max-height: 300px; overflow-y: auto")
+                        div(layout="row", flex, ng-repeat="t in tcga | filter: acroQuery").row
+                            div(flex=30) {{t['Code Name']}}
+                            div(flex=30) {{t['Full Name']}}
+                            div(flex) {{t['Data Source']}}
+                            div(flex) {{hashClean(t['Tumour Count'])}}
+                            div(flex) {{hashClean(t['Normal Count'])}}
 
             h2.title Appendix C
             h3.title Report Overview
@@ -107,6 +111,6 @@ section.appendices
             h2.title Appendix D
             h3.title Genomic Report v/KB v.Genome Ref hg19
 
-            pre.tcga {{pog.config}}
+            pre(style="max-height: 300px; overflow-y: auto").tcga {{pog.config}}
 
 
