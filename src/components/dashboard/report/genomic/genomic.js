@@ -83,6 +83,13 @@ app.controller('controller.dashboard.report.genomic',
       meta: true,
       showChildren: false,
       children: []
+    },
+    {
+      name: 'History',
+      state: 'history',
+      meta: true,
+      showChildren: false,
+      children: []
     }
   ];
 

@@ -29,6 +29,12 @@ md-dialog(layout="column", aria-label="Update Mutation Signature Details", ng-cl
                     div(flex).text-center {{row.numCancerTypes}}
                     div(flex=50) {{row.cancerTypes}}
 
+
+
         md-dialog-actions(layout="row", layout-aligh="end center", layout-padding)
+            div(layout="row", flex=60, layout-padding).margin-top-10
+                md-input-container(flex)
+                    textarea(ng-model="ms.comment", md-maxlength=150, placeholder="Why are you making this change?", required)
+            span(flex)
             md-button(type="submit").md-primary Update Details
 

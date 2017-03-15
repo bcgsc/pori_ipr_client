@@ -401,6 +401,23 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       controller: 'controller.dashboard.report.genomic.meta',
     })
 
+    .state('dashboard.pog.report.genomic.history', {
+      url: '/history',
+      data: {
+        displayName: "Data History"
+      },
+      templateUrl: 'dashboard/report/genomic/history/history.html',
+      controller: 'controller.dashboard.report.genomic.history',
+      resolve: {
+        history: ['$q', '$stateParams', 'api.pogDataHistory', ($q, $stateParams, $history) => {
+          return $history($stateParams.POG).all();
+        }],
+        tags: ['$q', '$stateParams', 'api.pogDataHistory', ($q, $stateParams, $history) => {
+          return $history($stateParams.POG).tag.all();
+        }]
+      }
+    })
+
     .state('dashboard.admin', {
       url: '/admin',
       data: {

@@ -1,4 +1,4 @@
-md-dialog(layout="column", aria-label="Update Tumour Analysis Details", ng-cloak, flex=35).editor
+md-dialog(layout="column", aria-label="Update Tumour Analysis Details", ng-cloak, flex=55).editor
     form(flex='auto', name='form', ng-submit="update(form)")
         md-toolbar
             .md-toolbar-tools
@@ -14,6 +14,11 @@ md-dialog(layout="column", aria-label="Update Tumour Analysis Details", ng-cloak
                 div(layout="row")
                     md-input-container(flex)
                         input(name="Subtype", placeholder="Subtype", ng-model="ta.subtyping")
+
+                div(layout="row")
+                    md-input-container(flex)
+                        label Comment
+                        textarea(ng-model="ta.comment", md-maxlength=150, placeholder="Why are you making this change?", required)
 
 
         md-dialog-actions(layout="row", layout-aligh="end center", layout-padding)

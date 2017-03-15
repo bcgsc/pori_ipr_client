@@ -1,0 +1,72 @@
+md-dialog(layout="column", aria-label="Data History Entry", flex-gt-md=75, flex=100).dataHistoryDetails
+    md-toolbar
+        .md-toolbar-tools
+            h2 Data History Entry
+            span(flex)
+            md-button.md-icon-button(ng-click='cancel()')
+                md-icon cancel
+    md-dialog-content(layout-padding)
+
+        p A detailed summary of the data history event.
+
+        h5 User comment:
+        pre {{(entry.comment || ' -- None provided --')}}
+
+        div(ng-if="entry.type == 'change'")
+            div(layout="row")
+                h5(flex) Previous
+                h5(flex) New
+
+            div(layout="row", flex).diff
+                div(layout="column", flex).previous
+                    div(layout="row", ng-repeat="(k,v) in previousEntry", ng-hide="ignored.indexOf(k) > -1", ng-class="{changed: changed(k)}").row
+                        div(flex=40).label {{k}}
+                        div(flex) {{v}}
+                div(layout="column", flex).new
+                    div(layout="row", ng-repeat="(k,v) in newEntry", ng-hide="ignored.indexOf(k) > -1", ng-class="{changed: changed(k)}").row
+                        div(flex=40).label {{k}}
+                        div(flex) {{v}}
+
+            div(layout="column", ng-show="action.revert.active")
+                md-input-container
+                    label Revert Comments
+                    textarea(ng-model="action.revert.comment", flex, md-select-on-focus, md-maxlength=150, placeholder="Why are you reverting this change?")
+
+        div(ng-if="entry.type=='remove'").padding-none
+            h5 Removed Data Entry
+            div(layout="row", flex, layout-align="start start").diff
+                div(layout="column", flex=50).previous
+                    div(layout="row", ng-repeat="(k,v) in previousEntry", ng-hide="ignored.indexOf(k) > -1").row
+                        div(flex=40).label {{k}}
+                        div(flex) {{v}}
+
+        div(flex, layout="column")
+            md-chips(
+            ng-model="tagSelected",
+            md-autocomplete-snap,
+            md-require-match="false",
+            md-transform-chip="transformChip($chip)",
+            md-removable="'true'",
+            md-on-add="newTag($chip)",
+            md-on-remove="removeTag($chip)"
+            )
+                md-autocomplete(
+                md-selected-item="tagSearch.selectedItem",
+                md-search-text="tagSearch.searchText",
+                md-items="tag in tagSearch.filter(tagSearch.searchText)",
+                md-item-text="tag.tag",
+                md-select-on-match="'true'",
+                placeholder="Tags..."
+                )
+                    span(md-highlight-text="tagSearch.searchText") {{tag.tag}}
+                md-chip-template
+                    strong {{$chip.tag}}
+
+
+
+
+    md-dialog-actions(layout="row", layout-aligh="end center")
+        md-button(ng-if="entry.type == 'change'", ng-click="action.revert.active = true", ng-hide="action.revert.active").md-primary.md-raised Revert Change
+        md-button(ng-if="entry.type == 'remove'", ng-click="restore()").md-primary.md-raised Restore Entry
+        span(flex)
+        md-button(ng-click="cancel()").md-primary.md-raised Done
