@@ -105,7 +105,10 @@ app.factory('api.pogDataHistory', ['_', '$http', '$q', (_, $http, $q) => {
         return deferred.promise;
       },
 
-
+      /**
+       * All Tag entries
+       *
+       */
       tag: {
 
         /**
@@ -170,6 +173,27 @@ app.factory('api.pogDataHistory', ['_', '$http', '$q', (_, $http, $q) => {
               deferred.reject(err);
             }
           );
+          return deferred.promise;
+        },
+
+        /**
+         * Search for tags
+         *
+         * @param {string} query - Tg UUID ident string
+         * @returns {promise|array} - Resolves an array of tags
+         */
+        search: (query) => {
+          let deferred = $q.defer();
+
+          $http.get(API + '/history/tag/search/' + query).then(
+            (resp) => {
+              deferred.resolve(resp.data);
+            },
+            (err) => {
+              deferred.reject(err);
+            }
+          );
+
           return deferred.promise;
         }
       }
