@@ -15,19 +15,20 @@ section.dataHistory
                         div(flex=10) Previous
                         div(flex=10) New
                         div(flex) Comment
-                        div(flex) User
+                        div(flex=10) User
                         div(flex) Tags
-                        div(flex) Date
+                        div(flex=10) Date
                     div(layout="row", flex, ng-repeat="h in history").row
                         div(flex, ng-click="detail($event, h)").clickable.link {{h.model}}
                         div(flex, ng-class="[h.type]").historyType
                             span {{h.type}}
-                        div(flex) {{h.previous}}
-                        div(flex=10) {{h.new || 'none'}}
-                        div(flex=10) {{h.comment || 'none'}}
-                        div(flex) {{h.user.firstName}} {{h.user.lastName}}
+                        div(flex=10).text-center {{h.previous}}
+                        div(flex=10).text-center {{h.new || 'none'}}
+                        div(flex).text-elipsis {{h.comment || 'none'}}
+                        div(flex=10) {{h.user.firstName}} {{h.user.lastName}}
                         div(flex).tags
                             span(ng-repeat="t in h.tags").pill {{t.tag}}
-                        div(flex)
+                            span(ng-if="h.tags.length === 0").text-emphasis none
+                        div(flex=10)
                             span.clickable {{h.createdAt | amTimeAgo}}
                                 md-tooltip {{h.createdAt | amDateFormat: 'DD/MM/YYYY HH:mm:ss'}}
