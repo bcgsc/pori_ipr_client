@@ -1,0 +1,83 @@
+section.dataHistory {
+
+  div.historyType {
+
+    padding: 2px 0;
+    text-align: center;
+    &.change span{
+      background-color: rgb(161, 87, 174);
+      color: rgb(255, 255, 255);
+      padding: 2px 5px;
+      border-radius: 3px;
+    }
+    &.remove span{
+      background-color: rgb(255, 106, 107);
+      color: rgb(255, 255, 255);
+      padding: 2px 5px;
+      border-radius: 3px;
+    }
+
+  }
+
+  .link {
+    color: rgb(63,81,181);
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .tags {
+    padding: 2px 0;
+    text-align: center;
+    .pill {
+      background-color: rgb(63, 81, 181);
+      color: rgb(255, 255, 255);
+      padding: 2px 6px;
+      border-radius: 3px;
+      margin-left: 3px;
+    }
+  }
+
+
+}
+
+
+.dataHistoryDetails {
+
+  .diff {
+    .previous, .new {
+      padding: 8px;
+      background-color: rgb(240, 240, 240);
+      border: 1px solid rgb(210, 210, 210);
+      border-radius: 3px;
+      margin: 0 5px;
+      overflow-x: auto;
+
+      .changed {
+        background-color: rgb(161, 87, 174);
+        color: rgb(255,255,255);
+      }
+
+      .row {
+        div {
+          padding: 2px 0 2px 5px;
+        }
+      }
+    }
+  }
+
+  h5 {
+    margin: 0 0 5px 10px;
+    padding: 0;
+  }
+  pre {
+    padding: 8px;
+    background-color: rgb(240, 240, 240);
+    border: 1px solid rgb(210, 210, 210);
+    border-radius: 3px;
+    margin: 0 5px 0 10px;
+    overflow-x: auto;
+  }
+
+}

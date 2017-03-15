@@ -1,11 +1,16 @@
 md-dialog(layout="column", aria-label="Remove Alteration", ng-cloak, flex=55).editor
-    md-dialog-content(layout-padding)
+    md-dialog-content(layout-padding, layout="column")
 
         h3 Remove Alteration
         h5 {{alteration.geneVariant}}
         p When removing this alteration, you may opt to remove associated entries in the "Genomic Events with Potential Therapeutic Association" and "Detailed Genomic Analysis" sections.
 
-        md-dialog-actions(layout="row", layout-aligh="end center")
-            md-button(ng-click="cancel()").md-primary Cancel
-            md-button(ng-click="update(false)").md-primary.md-raised Remove only this entry
-            md-button(ng-click="update(true)").md-primary.md-raised Removed associated entries
+        md-input-container(flex)
+            label Comment
+            textarea(ng-model="comment", placeholder="Why are you removing this entry?", md-maxlength=150, flex)
+
+    md-dialog-actions(layout="row", layout-aligh="end center")
+        md-button(ng-click="cancel()").md-primary Cancel
+        span(flex)
+        md-button(ng-click="update(false)").md-primary.md-raised Remove only this entry
+        md-button(ng-click="update(true)").md-primary.md-raised Removed associated entries
