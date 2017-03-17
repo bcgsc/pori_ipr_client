@@ -96,14 +96,13 @@ section
                         div(flex) None
                         div(flex) None
 
-        div(layout="row")
-            div(layout="column", flex="25").dataBox.noBottomMargin
-                h2.title Mutation Signature
-            div(layout="column", flex="75").dataBox.noBottomMargin
-                h2.title Mutation Burden
-                    span (in protein coding genes)
-
         div(layout="column").mutationTable
+            div(layout="row")
+                div(layout="column", flex=25).signatureTitle
+                    h2.title Mutation Signature
+                div(layout="column", flex=75)
+                    h2.title Mutation Burden
+                        span (in protein coding genes)
             div(layout="row").header
                 div(flex).container
                     div(flex).signature.editable
