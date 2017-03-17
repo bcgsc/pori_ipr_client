@@ -428,6 +428,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         history: ['$q', '$stateParams', 'api.pogDataHistory', ($q, $stateParams, $history) => {
           return $history($stateParams.POG).all();
         }],
+        exports: ['$q', '$stateParams', 'api.pog', ($q, $stateParams, $pog) => {
+          return $pog.export($stateParams.POG).all();
+        }],
         tags: ['$q', '$stateParams', 'api.pogDataHistory', ($q, $stateParams, $history) => {
           return $history($stateParams.POG).tag.all();
         }]
