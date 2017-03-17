@@ -69,6 +69,16 @@ md-dialog.editor {
 
 .padding-none { padding: 0; }
 
+span.preformated {
+  background-color: rgb(230,230,230);
+  padding: 2px;
+  display: inline-block;
+  color: rgb(50,50,50);
+  border: 1px solid rgb(190,190,190);
+  border-radius: 3px;
+  margin: 0 3px;
+}
+
 @-webkit-keyframes rotate {
   from {
     -webkit-transform: rotate(0deg);
