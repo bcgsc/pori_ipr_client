@@ -1,4 +1,4 @@
-md-dialog(layout="column", aria-label="Feedback", ng-cloak, flex=30)
+md-dialog(layout="column", aria-label="Feedback", ng-cloak, flex=50)
     form(flex='auto', name='form', ng-submit="send(form)")
         md-toolbar
             .md-toolbar-tools
@@ -16,6 +16,8 @@ md-dialog(layout="column", aria-label="Feedback", ng-cloak, flex=30)
                     md-input-container(flex)
                         md-select(ng-model="feedback.type", aria-label="Type", required, placeholder="Type")
                             md-option(ng-value="'Bug Report'") Bug Report
+                            md-option(ng-value="'UI/UX Suggestion'") UI/UX Suggestion
+                            md-option(ng-value="'Workflow'") Workflow
                             md-option(ng-value="'Spelling Mistake'") Spelling Mistake
                             md-option(ng-value="'Suggestion'") Suggestion
                             md-option(ng-value="'Feature Request'") Feature Request
