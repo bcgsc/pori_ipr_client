@@ -5,12 +5,5 @@ md-subheader.bread-crumbs
   | {{data}}
 
 div(layout='row', flex)
-  md-sidenav.md-sidenav-left.md-whiteframe-z1(
-    ui-view="navigation", 
-    layout='column', 
-    layout-align='space-between center', 
-    layout-align-xs='start start', 
-    md-component-id='topLevelNavigation', 
-  )
   div(flex, layout="column")
     div(flex, layout='row', ui-view="")
