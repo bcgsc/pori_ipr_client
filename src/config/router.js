@@ -136,7 +136,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
 	              reject(err);
               }
 		        );
-		        
+
 	        });
 	      }]
 		  }
@@ -149,6 +149,22 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
 			controller: 'controller.dashboard.listing',
       data: {
 			  displayName: "Listing"
+      },
+      resolve: {
+        pogs: ['$q', 'api.pog', ($q, $pog) => {
+          return $q((resolve, reject) => {
+            $pog.all().then(
+              (pogs) => {
+                resolve(pogs);
+              },
+              (err) => {
+                console.log('[route.dashboard.pogAll]', err);
+                reject(err);
+              }
+            );
+
+          });
+        }]
       }
 		})
     
