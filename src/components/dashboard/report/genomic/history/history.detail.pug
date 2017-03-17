@@ -40,6 +40,11 @@ md-dialog(layout="column", aria-label="Data History Entry", flex-gt-md=75, flex=
                         div(flex=40).label {{k}}
                         div(flex) {{v}}
 
+            div(layout="column", ng-show="action.restore.active")
+                md-input-container
+                    label Restore Comments
+                    textarea(ng-model="action.restore.comment", flex, md-select-on-focus, md-maxlength=150, placeholder="Why are you restoring this change?")
+
         div(flex, layout="column")
             md-chips(
             ng-model="tagSelected",
@@ -67,6 +72,10 @@ md-dialog(layout="column", aria-label="Data History Entry", flex-gt-md=75, flex=
 
     md-dialog-actions(layout="row", layout-aligh="end center")
         md-button(ng-if="entry.type == 'change'", ng-click="action.revert.active = true", ng-hide="action.revert.active").md-primary.md-raised Revert Change
-        md-button(ng-if="entry.type == 'remove'", ng-click="restore()").md-primary.md-raised Restore Entry
+        md-button(ng-if="entry.type == 'change'", ng-click="revert()", ng-show="action.revert.active").md-primary.md-raised Revert
+
+        md-button(ng-if="entry.type == 'remove'", ng-click="action.restore.active = true", ng-hide="action.restore.active").md-primary.md-raised Restore Entry
+        md-button(ng-if="entry.type == 'remove'", ng-click="restore()", ng-show="action.restore.active").md-primary.md-raised Restore
+
         span(flex)
-        md-button(ng-click="cancel()").md-primary.md-raised Done
+        md-button(ng-click="cancel()").md-primary.md-raised Close

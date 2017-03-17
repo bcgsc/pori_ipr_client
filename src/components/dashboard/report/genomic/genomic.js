@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.report.genomic', 
-  ['_', '$q', '$scope', '$state', 'api.pog', 'pog',
-  (_, $q, $scope, $state, $pog, pog) => {
+  ['_', '$q', '$scope', '$state', 'api.pog', 'pog', '$mdDialog', '$mdToast',
+  (_, $q, $scope, $state, $pog, pog, $mdDialog, $mdToast) => {
 
   $scope.pog = pog;
 
@@ -84,13 +84,6 @@ app.controller('controller.dashboard.report.genomic',
       showChildren: false,
       children: []
     },
-    {
-      name: 'History',
-      state: 'history',
-      meta: true,
-      showChildren: false,
-      children: []
-    }
   ];
 
   /**
@@ -110,5 +103,27 @@ app.controller('controller.dashboard.report.genomic',
     
     $state.go('^.' + goto);
   };
+
+
+  /**
+   * Open export modal
+   *
+   */
+  $scope.openExport = ($event) => {
+    $mdDialog.show({
+      controller: 'controller.dashboard.report.genomic.history.export',
+      templateUrl: 'dashboard/report/genomic/history/history.export.html',
+      targetEvent: $event,
+      locals: {pog: pog},
+      clickOutsideToClose: false,
+    }).then(
+      (result) => {
+        // Result of hidden
+      },
+      () => {
+        // Closed
+      }
+    );
+  }
   
 }]);

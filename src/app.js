@@ -9,6 +9,7 @@ const app = angular.module('bcgscIPR', [
 	'ngStorage',
 	'hc.marked',
   'stickyfill',
-	'angularFileUpload'
+	'angularFileUpload',
+	'ngclipboard'
 ]);
 

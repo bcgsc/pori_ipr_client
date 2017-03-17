@@ -4,18 +4,16 @@ section.dataHistory {
 
     padding: 2px 0;
     text-align: center;
-    &.change span{
-      background-color: rgb(161, 87, 174);
+
+    span {
       color: rgb(255, 255, 255);
       padding: 2px 5px;
       border-radius: 3px;
     }
-    &.remove span{
-      background-color: rgb(255, 106, 107);
-      color: rgb(255, 255, 255);
-      padding: 2px 5px;
-      border-radius: 3px;
-    }
+
+    &.change span{ background-color: rgb(161, 87, 174); }
+    &.remove span{ background-color: rgb(255, 106, 107); }
+    &.export span{ background-color: rgb(200, 134, 7); }
 
   }
 
@@ -36,6 +34,10 @@ section.dataHistory {
       padding: 2px 6px;
       border-radius: 3px;
       margin-left: 3px;
+
+      &.export {
+        background-color: rgb(200, 134, 7);
+      }
     }
   }
 
@@ -80,4 +82,45 @@ section.dataHistory {
     overflow-x: auto;
   }
 
+}
+
+md-dialog.dataExport {
+
+  div.copypaste {
+    border: 1px solid rgb(210,210,210);
+    border-radius: 3px;
+    md-icon {
+      padding: 5px;
+      cursor: pointer;
+      background-color: rgb(230,230,230);
+      font-size: 18px;
+      height: 20px;
+      width: 17px;
+      min-height: 20px;
+      min-width: 17px;
+
+      &:hover {
+        background-color: rgb(63,81,181);
+        color: white;
+      }
+    }
+    input {
+      border: 0;
+      border-left: 1px solid rgb(210,210,210);
+      padding: 3px;
+      font-size: 12px;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+    }
+  }
+
+  div.log {
+    background-color: rgb(230,230,230);
+    display: inline-block;
+    color: rgb(50,50,50);
+    border: 1px solid rgb(190,190,190);
+    border-radius: 3px;
+    padding: 0 8px;
+    max-height: 150px;
+    overflow-y: auto;
+  }
 }
