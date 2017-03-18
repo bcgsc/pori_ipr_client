@@ -1,0 +1,37 @@
+md-dialog(layout="column", aria-label="JReport Data Export", flex-gt-md=45, flex=70).dataExport
+    md-toolbar
+        .md-toolbar-tools
+            h2 JReport Data Export
+            span(flex)
+            md-button.md-icon-button(ng-click='cancel()')
+                md-icon cancel
+    md-dialog-content(layout-padding)
+
+        div(ng-show="stage=='start'")
+            p Exporting report data will create a new folder in
+                span.preformated /projects/tumour_char/reports/genomic/{{pog.POGID}}/[report_version]/
+                |. Once the export has been completed, a command will be given that needs to be run in terminal to submit the job to JReport for processing.
+
+        div(ng-show="stage=='running'", layout-align="center center", layout="column")
+            div.text-center Export in Progress
+            md-progress-circular(md-mode="indeterminate").margin-top-20.margin-bottom-20
+            div This process can anywhere from 10 to 60 seconds.
+
+        div(ng-show="stage=='complete'", layout="column")
+            div The export has successfully completed. The csv files required by JReport have been created. To generate the new PDF report, copy+paste the command provided below into a terminal window and press enter.
+            div.margin-top-10
+                div(layout="row")
+                    div(flex, layout="row").copypaste
+                        md-icon(ngclipboard, data-clipboard-target="#commandToCopy", ng-click="changeCopyTooltip()") content_copy
+                            md-tooltip {{copyTooltip}}
+                        input(flex, id="commandToCopy", ng-model="command")
+            p Export Log:
+            div.log
+                pre {{export.log}}
+
+    md-dialog-actions(layout="row", layout-aligh="end center")
+        md-button(ng-click="cancel()", ng-show="stage=='start'").md-primary.md-raised Cancel
+        span(flex)
+        md-button(ng-click="runExport()", ng-show="stage=='start'").md-primary.md-raised Start Export
+        md-button(ng-show="stage=='running'", disabled).md-primary.md-raised Running...
+        md-button(ng-click="cancel()", ng-show="stage=='complete'").md-primary.md-raised Done

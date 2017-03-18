@@ -1,11 +1,18 @@
 app.controller('controller.dashboard.report.genomic.history',
-['_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', 'api.pog', 'pog', 'api.pogDataHistory', 'history', 'tags',
-(_, $q, $scope, $state, $mdDialog, $mdToast, $pog, pog, $history, history, tags) => {
+['_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', 'api.pog', 'pog', 'api.pogDataHistory', 'history', 'tags', 'exports',
+(_, $q, $scope, $state, $mdDialog, $mdToast, $pog, pog, $history, history, tags, exports) => {
 
   $scope.history = history;
-  $scope.tags = tags;
+
+  _.forEach(exports, (ex) => {
+    $scope.history.push(ex);
+  });
+
+  $scope.history = _.sortBy($scope.history, 'createdAt').reverse();
 
   console.log($scope.history);
+
+  $scope.tags = tags;
 
   $scope.detail = ($event, entry) => {
 

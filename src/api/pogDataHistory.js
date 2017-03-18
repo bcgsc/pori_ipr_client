@@ -69,10 +69,10 @@ app.factory('api.pogDataHistory', ['_', '$http', '$q', (_, $http, $q) => {
        * @param {string} ident - UUID of history event
        * @returns {promise|object} - Returns new history object that defines the change
        */
-      revert: (ident) => {
+      revert: (ident, comment) => {
         let deferred = $q.defer();
 
-        $http.get(API + '/history/revert/' +ident).then(
+        $http.put(API + '/history/revert/' +ident, {comment: comment}).then(
           (resp) => {
             deferred.resolve(resp.data);
           },
@@ -90,10 +90,10 @@ app.factory('api.pogDataHistory', ['_', '$http', '$q', (_, $http, $q) => {
        * @param {string} ident - UUID of history event
        * @returns {promise|boolean} - Returns boolean
        */
-      restore: (ident) => {
+      restore: (ident, comment) => {
         let deferred = $q.defer();
 
-        $http.get(API + '/history/restore/' +ident).then(
+        $http.put(API + '/history/restore/' +ident, {comment: comment}).then(
           (resp) => {
             deferred.resolve(true);
           },
