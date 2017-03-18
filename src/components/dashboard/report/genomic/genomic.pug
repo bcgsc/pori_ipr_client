@@ -25,3 +25,7 @@ md-content(flex).md-padding
                         ng-repeat="child in section.children",
                         ng-click="goToReportSection(child.state)"
                         ).child {{child.name}}
+
+                    md-list-item(ng-click="goToReportSection('history')", ng-class="activeSection({state: 'history'}) ? 'active' : ''").meta History
+                        md-icon(ng-click="openExport()", aria-label="Export Changes").md-secondary archive
+                            md-tooltip Export Changes to JReport

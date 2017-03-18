@@ -168,7 +168,55 @@ app.factory('api.pog', ['_', '$http', '$q', (_, $http, $q) => {
       }
     }
   };
-  
+
+  $pog.export = (POGID) => {
+    return {
+
+      /**
+       * Run export
+       * @returns {promise} - Resolves the export return
+       */
+      csv: () => {
+        let deferred = $q.defer();
+
+        // Send request
+        $http.get(api + '/' + POGID + '/export/csv').then(
+          (resp) => {
+            deferred.resolve(resp.data);
+          },
+          (err) => {
+            deferred.reject(err);
+          }
+        );
+
+        return deferred.promise;
+      },
+
+      /**
+       * Get all pog export entries
+       *
+       * @returns {promise} - Resolves with array of pog export events
+       */
+      all: () => {
+
+        let deferred = $q.defer();
+
+        // Send request
+        $http.get(api + '/' + POGID + '/export/all').then(
+          (resp) => {
+            deferred.resolve(resp.data);
+          },
+          (err) => {
+            deferred.reject(err);
+          }
+        );
+
+        return deferred.promise;
+
+      }
+    }
+  };
+
   return $pog;
   
 }]);

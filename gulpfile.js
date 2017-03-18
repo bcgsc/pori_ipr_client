@@ -1,5 +1,5 @@
 let colors = require('colors');
-let scriptVer = '1.2.0';
+let scriptVer = '1.3.0';
 let configManager = require('./libs/configManager');
 configManager.detectEnvironment(); // Detect Env.
 
@@ -37,6 +37,8 @@ let files = {
       './node_modules/ng-stickyfill/dist/ng-stickyfill.min.js',
       './node_modules/angular-file-upload/dist/angular-file-upload.min.js',
       './node_modules/angular-sanitize/angular-sanitize.min.js',
+      './node_modules/clipboard/dist/clipboard.min.js',
+      './node_modules/ngclipboard/dist/ngclipboard.min.js'
     ],
     
     // Application javascript sources

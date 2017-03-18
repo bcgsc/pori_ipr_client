@@ -19,6 +19,11 @@ app.controller('controller.dashboard.report.genomic.history.detail',
       disableButton: false,
       active: false,
       comment: ""
+    },
+    restore: {
+      disableButton: false,
+      active: false,
+      comment: ""
     }
   };
 
@@ -102,9 +107,8 @@ app.controller('controller.dashboard.report.genomic.history.detail',
 
   // Revert the opened change
   scope.revert = () => {
-    console.log('Attempting to revert');
     // Hit API
-    $history(pog.POGID).revert(entry.ident).then(
+    $history(pog.POGID).revert(entry.ident, scope.action.revert.comment).then(
       (resp) => {
         // Add to history
         $mdDialog.hide({event: 'revert', data: resp});
@@ -119,7 +123,7 @@ app.controller('controller.dashboard.report.genomic.history.detail',
   // Restore entry
   scope.restore = () => {
     let cached = angular.copy(entry);
-    $history(pog.POGID).restore(entry.ident).then(
+    $history(pog.POGID).restore(entry.ident, scope.action.restore.comment).then(
       (result) => {
         // Add to history
         $mdDialog.hide({event: 'restore', data: cached});
