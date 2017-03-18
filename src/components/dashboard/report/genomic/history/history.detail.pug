@@ -32,7 +32,7 @@ md-dialog(layout="column", aria-label="Data History Entry", flex-gt-md=75, flex=
                     label Revert Comments
                     textarea(ng-model="action.revert.comment", flex, md-select-on-focus, md-maxlength=150, placeholder="Why are you reverting this change?")
 
-        div(ng-if="entry.type=='remove'").padding-none
+        div(ng-if="entry.type==='remove'").padding-none
             h5 Removed Data Entry
             div(layout="row", flex, layout-align="start start").diff
                 div(layout="column", flex=50).previous
