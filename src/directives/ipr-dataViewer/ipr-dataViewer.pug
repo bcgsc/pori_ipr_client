@@ -1,0 +1,16 @@
+md-dialog(layout="column", aria-label="Update Alterations Entry", flex-md=80, flex-xs=100, flex-lg=60, flex=60).detailedDataViewer
+    md-toolbar
+        .md-toolbar-tools
+            h2 Data Details Viewer
+            span(flex)
+            md-button.md-icon-button(ng-click='cancel()')
+                md-icon cancel
+    md-dialog-content(layout-padding)
+
+        p Below is a list of all data entries for this item. Some rows may contain meta information created and used by the Interactive POG Report API.
+
+        div(layout="column").content
+            div(layout="row", ng-repeat="(k, d) in data").row
+                div(flex=30).key {{k}}:
+                div(flex, ng-if="d !== null") {{d}}
+                div(flex, ng-if="d === null").null null

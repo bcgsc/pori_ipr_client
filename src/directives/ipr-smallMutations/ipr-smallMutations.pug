@@ -17,6 +17,7 @@ div(flex, layout="column")
                 div(flex) Expression (RPKM)
                 div(flex) Fold Change Vs. {{pog.tumourAnalysis.normalExpressionComparator}}
                 div(flex) {{pog.tumourAnalysis.diseaseExpressionComparator}} %ile
+                div(flex=5)
             div(ng-if="mutations.length == 0")
                 div.text-center.details No small somatic mutations of this kind were found from the analysis.
             div(layout="row", flex, ng-repeat="mutation in mutations").row
@@ -33,3 +34,6 @@ div(flex, layout="column")
                 div(flex) {{mutation.expressionRpkm}}
                 div(flex) {{mutation.foldChange}}
                 div(flex) {{mutation.TCGAPerc}}
+                div(flex=5).text-center
+                    md-icon(ipr-data-viewer="mutation").clickable search
+                        md-tooltip View Details

@@ -15,6 +15,7 @@ div(flex, layout="column")
                 div(flex) Expression (RPKM)
                 div(flex) Fold Change Vs. {{pog.tumourAnalysis.normalExpressionComparator}}
                 div(flex) {{pog.tumourAnalysis.diseaseExpressionComparator}} %ile
+                div(flex=5)
             div(ng-if="mutations.length == 0")
                 div.text-center.details No small somatic mutations of this kind were found from the analysis.
             div(layout="row", flex, ng-repeat="cnv in cnvs").row
@@ -29,3 +30,6 @@ div(flex, layout="column")
                 div(flex) {{cnv.expressionRpkm}}
                 div(flex) {{cnv.foldChange}}
                 div(flex) {{cnv.tcgaPerc}}
+                div(flex=5).text-center
+                    md-icon(ipr-data-viewer="cnv").clickable search
+                        md-tooltip View Details

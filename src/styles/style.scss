@@ -26,10 +26,8 @@ md-dialog.editor {
   
 }
 
-.sticky {
-  position: -webkit-sticky;  // required for Safari
-  position: sticky;
-  top: 0; // required as well.
+.stuck {
+  position:fixed
 }
 
 .clickable { cursor: pointer; }

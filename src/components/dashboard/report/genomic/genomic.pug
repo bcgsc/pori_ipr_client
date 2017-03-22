@@ -9,7 +9,7 @@ md-content(flex).md-padding
 
         md-content(flex="20", layout="column", ng-show="showSideBar", ng-init="showSideBar=true").reportSections
             div
-                md-list(layout-align="start start")
+                md-list(layout-align="start start", id="reportSections")
                     md-subheader Report Sections
                     md-list-item(ng-click="goToReportSection('summary')", ng-class="activeSection({state: 'summary'}) ? 'active' : ''") Summary
                         md-icon(ng-click="openPrint()", aria-label="Print Summary Section").md-secondary print
