@@ -315,6 +315,31 @@ app.factory('api.complete', ['_', function (_) {
         "pubmed",
         "url"
       ]
+    },
+    knowledgebase: {
+
+      sampleType: [
+        "caenorhabditis elegans",
+        "chicken",
+        "drosophila melanogaster",
+        "hamster",
+        "human cell-line",
+        "human patient",
+        "human patient-cells",
+        "human patient-xenograft",
+        "mouse",
+        "rat",
+        "saccharomyces cerevisiae",
+        "saccharomyces pombe"
+      ],
+      preClinicalModel: [
+        "dominant negative",
+        "inhibitor",
+        "knockout",
+        "mutant",
+        "RNAi"
+      ]
+
     }
   };
 
