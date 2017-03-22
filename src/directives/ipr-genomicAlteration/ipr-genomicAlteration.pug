@@ -1,6 +1,6 @@
 div(layout="column", flex).details.box
   div.collapse(ng-init="gene.showChildren=false")
-    md-icon(ng-click="createRow($event, gene.alterationType)") add
+    md-icon(ng-click="createRow($event, gene)") add
       md-tooltip Add new Knowledge Base entry
     md-icon(ng-click="gene.showChildren=!gene.showChildren") {{((gene.showChildren) ? 'expand_less' : 'expand_more')}}
       md-tooltip Show more entries related to this
@@ -58,6 +58,8 @@ div(flex, layout="column", ng-show="gene.showChildren")
             md-icon help
             md-tooltip {{gene.reference}}
         div(flex=5).text-center.edit
+          md-icon(ipr-data-viewer="gene", ipr-hidden="['children', 'showChildren']") search
+            md-tooltip View Details
           md-icon(ng-click="updateRow($event, gene)") edit
             md-tooltip Modify this entry
       
@@ -77,6 +79,7 @@ div(flex, layout="column", ng-show="gene.showChildren")
             md-icon help
             md-tooltip {{childGene.reference}}
         div(flex=5).text-center.edit
+          md-icon(ipr-data-viewer="childGene", ipr-hidden="['children']") search
+            md-tooltip View Details
           md-icon(ng-click="updateRow($event, childGene)") edit
             md-tooltip Modify this entry
-
