@@ -69,5 +69,31 @@ md-dialog-content.alterationsForm {
     }
     
   }
+
+  md-input-container {
+    margin-top: 14px;
+    margin-bottom: 8px;
+  }
+
+  .hint {
+    font-size: 0.75em;
+    color: rgb(130,130,130);
+    padding: 4px;
+    //margin-top: 4px;
+    display: inline-block;
+  }
+
+  .kbEntryStatus {
+    margin: 25px 6px 0 0;
+
+    .valid { color: rgb(43, 167, 20); }
+    .invalid { color: rgb(213, 44, 47); }
+  }
 }
 
+md-dialog.alterations {
+  md-dialog-actions button.md-button {
+    line-height: 18px;
+    text-transform: none;
+  }
+}

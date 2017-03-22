@@ -1,17 +1,107 @@
 app.controller('controller.dashboard.reports.genomic.detailedGenomicAnalysis.alterations.edit', 
-  ['_', '$scope', '$mdDialog', 'api.complete', 'api.pubmed', 'api.kb.associations', 'gene', 'rowEvent', 'samples', 'api.detailedGenomicAnalysis.alterations', 'pog',
-    (_, scope, $mdDialog, $complete, $pubmed, $kbAssoc, gene, rowEvent, samples, $dgaAPC, pog) => {
+['_', '$scope', '$mdDialog', '$mdToast', 'api.complete', 'api.pubmed', 'api.kb.associations', 'api.knowledgebase', 'api.user', '$interval', '$timeout', 'gene', 'rowEvent', 'samples', 'api.detailedGenomicAnalysis.alterations', 'pog',
+(_, scope, $mdDialog, $mdToast, $complete, $pubmed, $kbAssoc, $kb, $user, $interval, $timeout, gene, rowEvent, samples, $dgaAPC, pog) => {
   
-  scope.gene = (rowEvent == 'create') ? {reference: '', gene: '', variant: '', variant_type: ''} : gene;
+  scope.gene = angular.copy(gene);
   scope.samples = samples;
   scope.formAction = (rowEvent == 'update') ? 'Update' : 'Create';
   scope.$alterations = $complete.get('alterations');
   scope.disableRefTitle = false;
   scope.reference = {};
-  scope.kb = {};
   scope.pog = pog;
 
-  console.log('Edit Alteration:', gene);
+  scope.stages = [
+    {title: 'Report Details', description:'Details that appear in the report', id: "report"},
+    {title: 'Reference Details', description: 'Specifics about the source', id: "reference"},
+    {title: 'Knowledgebase Entry', description: 'KB database column values', id: "kb"}
+  ];
+  let activeStage = scope.activeStage = 0;
+
+  scope.$knowledgebase = $complete.get('knowledgebase');
+  scope.kb = {
+    context: null,
+    events_expression: (rowEvent === 'create') ? null : gene.kb_event_key,
+    type: null,
+    relevance: null,
+    context: null,
+    disease_list: null,
+    evidence: null,
+    id_type: null,
+    id: null,
+    id_title: null,
+    status: 'new',
+    summary: null,
+    update_comments: null,
+    comments: null,
+    user: $user._me.username,
+  };
+
+  scope.events = {
+    valid: false,
+    dirty: true,
+    pristine: true,
+  };
+
+  scope.lastStage = () => {
+    scope.activeStage--;
+  };
+  scope.nextStage = () => {
+    let form;
+    // Try to trigger submit...
+    switch(scope.activeStage) {
+      case 0:
+        form = scope.reportForm;
+        break;
+      case 1:
+        form = scope.referenceForm;
+        break;
+      case 2:
+        form = scope.kbForm;
+        break;
+    }
+
+    form.$setSubmitted();
+    if(form.$valid) {
+      scope.activeStage++;
+    }
+    if(!form.$valid) $mdToast.show($mdToast.simple({textContent:'Please check all the fields for errors'}));
+  };
+
+  scope.submit = () => {
+    scope.kbForm.$setSubmitted();
+
+    if(!scope.kbForm.$valid) $mdToast.show($mdToast.simple({textContent:'Please check all the fields for errors'}));
+
+    // All are valid
+    if(scope.kbForm.$valid) {
+
+      // Remove gene children element from controller element
+      delete scope.gene.children;
+
+      scope.gene.kb_data = scope.kb;
+      scope.gene.kb_data.id = scope.reference.type;
+      scope.gene.kb_data.id_type = scope.gene.reference;
+      scope.gene.kb_data.id_title = scope.reference.title;
+      scope.gene.kb_data.evidence = scope.gene.evidence;
+      scope.gene.kb_data.update_comments = scope.gene.comment;
+      scope.gene.kb_data.summary = scope.reference.summary;
+
+      console.log('submitting gene entry', scope.gene);
+
+       // Send updated entry to API
+       $dgaAPC.one(scope.pog.POGID, gene.ident).update(scope.gene).then(
+         (result) => {
+          $mdDialog.hide('Entry has been updated');
+         },
+         (error) => {
+           alert('System Error - Unable to update. See console');
+           console.log(error);
+         }
+       );
+
+
+    }
+  };
 
   // Watch Values and Build KB Entries
   scope.$watchGroup(['gene.variant_type', 'gene.gene', 'gene.variant', 'gene.alterationType', 'gene.therapeuticContext', 'gene.disease', 'gene.evidence', 'gene.association'], (newVals, oldVals) => {
@@ -57,6 +147,7 @@ app.controller('controller.dashboard.reports.genomic.detailedGenomicAnalysis.alt
   scope.$watch('gene.association', (newVal, oldVal) => {
 
     let kbLookup = $kbAssoc.association(newVal);
+    console.log('KBLookup result', kbLookup);
     if(kbLookup) {
       if(kbLookup == '*') {
         // Release Relevance Lock
@@ -67,6 +158,12 @@ app.controller('controller.dashboard.reports.genomic.detailedGenomicAnalysis.alt
       // Maintain Relevance Lock
       scope.relevanceLock=true;
       scope.gene.alterationType = kbLookup;
+    }
+    // No match found
+    if(kbLookup === false) {
+      scope.relevanceLock=false;
+      scope.gene.alterationType = null;
+      return;
     }
 
   });
@@ -112,36 +209,43 @@ app.controller('controller.dashboard.reports.genomic.detailedGenomicAnalysis.alt
         console.log('Unable to retrieve PubMed Article: ', err);
       }
     );
-    
   };
-  
-  // Update the specified entry
-  scope.update = (f) => {
 
-    // Check for valid inputs by touching each entry
-    if(f.$invalid) {
-      f.$setDirty();
-      angular.forEach(f.$error, (field) => {
-        angular.forEach(field, (errorField) => {
-          errorField.$setTouched();
-        });
-      });
-      return;
+  // When the modal opens, watch for the events-expression value to load and validate it.
+  scope.$watch('kb.events_expression', (newval, oldval) => {
+
+    // Are we transitioning from an empty form to a prefilled?
+    if((oldval === undefined || oldval === null) && (newval !== undefined && newval !== null)) {
+      scope.validateKBEvents();
+    } else {
+      // If not, are we just looking at a normal typing change?
+      if(scope.events.pristine) scope.validateKBEvents();
     }
 
-    // Send updated entry to API
-    $dgaAPC.one(scope.pog.POGID, gene.ident).update(scope.gene).then(
+    // If the previous value was null/undefined, mark as no longer pristine.
+    if(newval !== null && newval !== undefined) scope.events.pristine = false;
+  });
+
+
+  // Validate KB Events string
+  scope.validateKBEvents = () => {
+    scope.events.dirty = true;
+    scope.events.valid = false;
+
+    // Try to validate
+    $kb.validate.events(scope.kb.events_expression).then(
       (result) => {
-        $mdDialog.hide('Entry has been updated');
+        scope.events.dirty = false;
+        scope.events.valid = true;
       },
-      (error) => {
-        alert('System Error - Unable to update. See console');
-        console.log(error);
+      (err) => {
+        scope.events.dirty = false;
+        scope.events.valid = false;
       }
-    );
-    
-  }; // End update
-  
+    )
+  };
+
+
   // Trigger Pubmed Check
   scope.checkPMID();
   

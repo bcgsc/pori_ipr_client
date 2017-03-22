@@ -100,12 +100,14 @@ app.controller('controller.dashboard.report.genomic.detailedGenomicAnalysis',
   $scope.cleanPMID = (pmid) => {
     return pmid.match(/^[0-9]{8}/)[0];
   };
-  
+
   // Group Alterations by type
   let groupAlterations = (collection, alterations) => {
     
     alterations.forEach((row) => {
-      
+
+      // Modify type
+
       // Does grouping exist?
       if(!(row.gene + '-' + row.variant in collection)) {
         row.children = [];

@@ -23,7 +23,7 @@ app.controller('controller.dashboard.reports.genomic.detailedGenomicAnalysis.alt
     }, (error) => {
       $mdToast.show($mdToast.simple().textContent(error));
     });
-  }
+  };
   
   
   alterations.forEach((row) => {
