@@ -14,6 +14,7 @@ app.factory('api.user', ['_', '$http', '$q', (_, $http, $q) => {
   
   let $user = {};
 
+  $user._me = {};
   
   $user.me = () => {
     
@@ -23,6 +24,7 @@ app.factory('api.user', ['_', '$http', '$q', (_, $http, $q) => {
         (self) => {
           _me = self.data;
           _groups = self.data.groups;
+          $user._me = self.data;
           resolve(_me);
         },
         (error) => {
