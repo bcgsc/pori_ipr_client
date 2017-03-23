@@ -45,6 +45,19 @@ md-dialog(layout="column", aria-label="Data History Entry", flex-gt-md=75, flex=
                     label Restore Comments
                     textarea(ng-model="action.restore.comment", flex, md-select-on-focus, md-maxlength=150, placeholder="Why are you restoring this change?")
 
+        div(ng-if="entry.type==='create'").padding-none
+            h5 New Data Entry
+            div(layout="row", flex, layout-align="start start").diff
+                div(layout="column", flex=100).previous
+                    div(layout="row", ng-repeat="(k,v) in newEntry", ng-hide="ignored.indexOf(k) > -1").row
+                        div(flex=30).label {{k}}
+                        div(flex) {{v}}
+
+            div(layout="column", ng-show="action.restore.active")
+                md-input-container
+                    label Restore Comments
+                    textarea(ng-model="action.restore.comment", flex, md-select-on-focus, md-maxlength=150, placeholder="Why are you restoring this change?")
+
         div(flex, layout="column")
             md-chips(
             ng-model="tagSelected",

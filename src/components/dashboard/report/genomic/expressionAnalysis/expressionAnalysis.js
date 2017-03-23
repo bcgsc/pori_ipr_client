@@ -9,6 +9,8 @@ app.controller('controller.dashboard.report.genomic.expressionAnalysis',
       $scope.drugTargets = drugTargets;
       $scope.densityGraphs = _.chunk(_.values(densityGraphs),2);
 
+      console.log(densityGraphs);
+
       $scope.titleMap = {
         clinical: 'Expression Level Outliers of Potential Clinical Relevance',
         nostic: 'Expression Level Outliers of Prognostic or Diagnostic Relevance',
@@ -18,7 +20,7 @@ app.controller('controller.dashboard.report.genomic.expressionAnalysis',
       // Convert full hex to 6chr
       $scope.colourHex = (hex) => {
         return hex.match(/([A-z0-9]{6}$)/)[0];
-      }
+      };
 
       $scope.searchDrugs = (query) => {
 
