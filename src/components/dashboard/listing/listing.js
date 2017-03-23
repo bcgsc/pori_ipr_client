@@ -1,12 +1,34 @@
-app.controller('controller.dashboard.listing', ['_', '$q', '$scope', 'pogs', '$mdDialog', 'user',  (_, $q, $scope, pogs, $mdDialog, user) => {
+app.controller('controller.dashboard.listing', ['_', '$q', '$scope', 'api.pog', 'pogs', '$mdDialog', 'user',  (_, $q, $scope, $pog, pogs, $mdDialog, user) => {
 
   $scope.pogs = pogs;
 
-  // Filter Users For a POG
-  _.forEach($scope.pogs, (p, i) => {
-    // Loop over pogusers
-    $scope.pogs[i].myRoles = _.filter(p.POGUsers, {user: {ident: user.ident}});
-  });
+  $scope.filter ={
+    currentUser: true,
+    query: null
+  };
+
+
+  $scope.refreshList = () => {
+    $pog.all(!$scope.filter.currentUser, $scope.filter.query).then(
+      (result) => {
+        $scope.pogs = result;
+        associateUsers();
+      },
+      (err) => {
+        console.log('Unable to get pogs', err);
+      }
+    )
+  };
+
+  let associateUsers = () => {
+    // Filter Users For a POG
+    _.forEach($scope.pogs, (p, i) => {
+      // Loop over pogusers
+      $scope.pogs[i].myRoles = _.filter(p.POGUsers, {user: {ident: user.ident}});
+    });
+  };
+
+  associateUsers();
 
   $scope.searchPogs = (query) => {
     

@@ -1,6 +1,23 @@
+.userCases {
+  md-switch {
+    margin: 3px 0;
+  }
+
+  font-size: 0.85em;
+
+  margin-right: 20px;
+}
+
+.noPogs {
+  background-color: rgb(230,230,230);
+  padding: 20px 0;
+  text-align: center;
+  width: 100%;
+}
+
 div.PogList {
   
-  background-color: #d5dee2;
+  background-color: rgb(222,222,222);
   margin: 0 0 10px 0;
   padding: 0 0 10px 0;
   
@@ -8,8 +25,8 @@ div.PogList {
     margin: 0 0 10px 0;
     padding: 10px 0 7px 7px;
     text-align: left;
-    background-color: #0277bd;
-    color: #fff;
+    background-color: rgb(2,119,189);
+    color: rgb(255,255,255);
     font-size: 1.2em;
     
     span.title {
