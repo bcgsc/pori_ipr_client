@@ -78,6 +78,11 @@ let files = {
       './src/components/**/*.svg',
     ]
   },
+
+  // JSON DBs
+  jsonDB: [
+    './src/statics/**/*.json'
+  ],
   
   // Stylesheet sources
   scss: {
@@ -291,6 +296,18 @@ gulp.task('images-app', () => {
 });
 
 /*
+ * Application Static JSON DBs
+ *
+ * Collect application static json DB files and copy
+ *
+ */
+gulp.task('json-db', () => {
+
+  return gulp.src(files.jsonDB)
+    .pipe(gulp.dest('./builds/'+configManager.getEnvironment()+'/assets/json'));
+});
+
+/*
  * Favicon Process
  *
  * Move Favicon
@@ -336,9 +353,11 @@ gulp.task('connect', () => {
 });
 
 gulp.task('images', ['images-app']);
+gulp.task('json', ['json-db']);
 gulp.task('pug', ['pug-index','pug-templates']);
 gulp.task('sass', ['sass-app','sass-libs','sass-components']);
-gulp.task('build', ['favicon', 'config', 'pug','libs','js','sass', 'images']);
+gulp.task('build', ['favicon', 'config', 'pug','libs','js','sass', 'images', 'json']);
+gulp.task('deploy-build', () => { runSequence('clean', 'build')});
 
 //gulp.task('run', runSequence('favicon','pug', 'js', 'sass-app', 'sass-components',['watch', 'connect']));
 /*
