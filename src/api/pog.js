@@ -20,11 +20,19 @@ app.factory('api.pog', ['_', '$http', '$q', (_, $http, $q) => {
    * Retrieve all POGs from API that user can access
    *
    */
-  $pog.all = () => {
+  $pog.all = (all=false,query=null) => {
     return $q((resolve, reject) => {
-      
+
+      let url = api;
+
+      if(all !== false || query !== null) {
+        url += '?';
+        if(all !== false) url += 'all=true&';
+        if(query) url += 'query='+query+'&';
+      }
+
       // Retrieve from API
-      $http.get(api).then(
+      $http.get(url).then(
         (result) => {
           // Empty Cache
           _pogs = [];
