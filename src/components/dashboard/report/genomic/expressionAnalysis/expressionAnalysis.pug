@@ -49,6 +49,7 @@ section
                             div(flex) Fold Change Vs. {{pog.tumourAnalysis.normalExpressionComparator}}
                             div(flex) {{pog.tumourAnalysis.diseaseExpressionComparator}} %ile
                             div(flex) kIQR
+                            div(flex=5)
                         div(layout="row", layout-align="start end").search
                             md-input-container(flex=40)
                                 input(placeholder="Search", name="DrugSearch", ng-model="drugQuery")
@@ -64,6 +65,8 @@ section
                                 div(flex) {{target.foldChange}}
                                 div(flex) {{target.tcgaPerc}}
                                 div(flex) {{target.kIQR}}
+                                div(flex=5)
+                                    md-icon(ipr-data-viewer="target").clickable search
 
         div(flex, layout="column").bg-white
             h2.title Expression Distributions
