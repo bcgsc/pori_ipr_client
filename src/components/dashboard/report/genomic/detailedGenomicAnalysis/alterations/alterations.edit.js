@@ -10,6 +10,8 @@ app.controller('controller.dashboard.reports.genomic.detailedGenomicAnalysis.alt
   scope.reference = {};
   scope.pog = pog;
 
+  scope.requiredNew = !(rowEvent === 'new'); // For tagging ng-required on values that are optional for newly created entries.
+
   scope.stages = [
     {title: 'Report Details', description:'Details that appear in the report', id: "report"},
     {title: 'Reference Details', description: 'Specifics about the source', id: "reference"},
@@ -87,24 +89,34 @@ app.controller('controller.dashboard.reports.genomic.detailedGenomicAnalysis.alt
       scope.gene.kb_data.summary = scope.reference.summary;
 
       console.log('submitting gene entry', scope.gene);
-
-       // Send updated entry to API
-       $dgaAPC.one(scope.pog.POGID, gene.ident).update(scope.gene).then(
-         (result) => {
-          $mdDialog.hide('Entry has been updated');
-         },
-         (error) => {
-           alert('System Error - Unable to update. See console');
-           console.log(error);
-         }
-       );
-
+      // Send updated entry to API
+      if(rowEvent === 'new') {
+        $dgaAPC.one(scope.pog.POGID, gene.ident).create(scope.gene).then(
+          (result) => {
+            $mdDialog.hide('Entry has been updated');
+          },
+          (error) => {
+            alert('System Error - Unable to update. See console');
+            console.log(error);
+          }
+        );
+      } else {
+        $dgaAPC.one(scope.pog.POGID, gene.ident).update(scope.gene).then(
+          (result) => {
+            $mdDialog.hide('Entry has been updated');
+          },
+          (error) => {
+            alert('System Error - Unable to update. See console');
+            console.log(error);
+          }
+        );
+      }
 
     }
   };
 
   // Watch Values and Build KB Entries
-  scope.$watchGroup(['gene.variant_type', 'gene.gene', 'gene.variant', 'gene.alterationType', 'gene.therapeuticContext', 'gene.disease', 'gene.evidence', 'gene.association'], (newVals, oldVals) => {
+  scope.$watchGroup(['gene.variant_type', 'gene.gene', 'gene.kbVariant', 'gene.alterationType', 'gene.therapeuticContext', 'gene.disease', 'gene.evidence', 'gene.association'], (newVals, oldVals) => {
         
     scope.kb.events_expression = newVals[0] + '_' + newVals[1] + ':' + newVals[2];
     

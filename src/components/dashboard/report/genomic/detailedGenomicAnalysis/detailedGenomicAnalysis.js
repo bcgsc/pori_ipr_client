@@ -12,6 +12,25 @@ app.controller('controller.dashboard.report.genomic.detailedGenomicAnalysis',
   $scope.disableUnknownButtons = false;
 
 
+  // Create new entry...
+  $scope.createNewKBEntry = ($event) => {
+
+    let gene = {};
+
+    $mdDialog.show({
+      targetEvent: $event,
+      templateUrl: 'dashboard/report/genomic/detailedGenomicAnalysis/alterations/alterations.edit.html',
+      clickOutToClose: false,
+      locals: {
+        pog: $scope.pog,
+        gene: gene,
+        samples: $scope.samples,
+        rowEvent: 'new'
+      },
+      controller: 'controller.dashboard.reports.genomic.detailedGenomicAnalysis.alterations.edit' // End controller
+    });
+  };
+
   // Toggle viewing unknowns state
   $scope.toggleUnknown = () => {
 
@@ -45,8 +64,7 @@ app.controller('controller.dashboard.report.genomic.detailedGenomicAnalysis',
       $alterations.getAll(pog.POGID).then(
         (resp) => {
           groupEntries(resp);
-          $scope.disableUnknownButtons =
-          $scope.showUnknown = false;
+          $scope.disableUnknownButtons = $scope.showUnknown = false;
         },
         (err) => {
           console.log('Unable to load unknowns', err);

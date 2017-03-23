@@ -36,7 +36,7 @@ md-dialog(layout="column", aria-label="Update Alterations Entry", flex-md=80, fl
           div(layout="row")
             md-input-container(flex)
               label Approved Therapy Status
-              md-select(ng-model="gene.approvedTherapy", placeholder="Select therapy approval status")
+              md-select(ng-model="gene.approvedTherapy", placeholder="Select therapy approval status", required)
                 md-option(ng-value="null") Not Approved/Not Applicable
                 md-option(ng-value="'otherCancer'") Approved in other tumour types
                 md-option(ng-value="'thisCancer'") Approved in this tumour type
@@ -44,7 +44,7 @@ md-dialog(layout="column", aria-label="Update Alterations Entry", flex-md=80, fl
           div(layout="row")
             md-input-container(flex)
               label Biological Sample
-              md-select(ng-model="gene.sample", aria-label="Biological Sample", required)
+              md-select(ng-model="gene.sample", aria-label="Biological Sample", ng-required="requiredNew")
                 md-option(ng-repeat="sample in samples", ng-value="sample", placeholder="Biological Sample") {{sample}}
 
           div(layout="row")
