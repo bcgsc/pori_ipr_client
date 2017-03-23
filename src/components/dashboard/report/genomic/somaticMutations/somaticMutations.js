@@ -9,6 +9,7 @@ app.controller('controller.dashboard.report.genomic.somaticMutations',
       $scope.mutationSignature = [];
       $scope.nnlsNormal = true;
       $scope.mutationSort = {col: "signature", order: true};
+      $scope.ms = ms;
 
       $scope.sortMutations = (col) => {
         // Is this a valid column?
