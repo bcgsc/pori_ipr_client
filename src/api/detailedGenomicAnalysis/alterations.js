@@ -46,6 +46,28 @@ app.factory('api.detailedGenomicAnalysis.alterations', ['_', '$http', '$q', (_, 
         );
         
         return deferred.promise;
+      },
+
+      /**
+       * Create new Detailed Genomic Alterations Entry
+       *
+       * @param {object} data - Alteration data object
+       * @returns {promise|object} - Promise resolves new entry
+       */
+      create: (data) => {
+        let deferred = $q.defer();
+
+        $http.post(api + '/' + pog + '/genomic/detailedGenomicAnalysis/alterations/', data).then(
+          (resp) => {
+            deferred.resolve(resp.data);
+          },
+          (error) => {
+            console.log('Unable to create APC', error);
+            deferred.reject('Unable to create');
+          }
+        );
+
+        return deferred.promise;
       }
     }
   }
