@@ -1,0 +1,33 @@
+section.therapeuticTargets
+    md-subheader.md-primary Potential Therapeutic Targets
+    div(layout="column", flex)
+        div(layout="column", flex)
+            h2.title Potential Therapeutic Targets
+
+            div.dataBox.columns
+                div(flex, layout="column").therapeutic.box
+                    div(layout="row", flex).heading
+                        div(flex=30) Drug Target
+                        div(flex=30) Biomarker
+                        div(flex) Notes
+                    div(layout="row", flex, ng-repeat="th in therapeutic.therapeutic").row
+                        div(flex=15)
+                            span(ng-repeat="target in th.target") {{target}}
+                        div(flex=15) {{th.targetContext}}
+                        div(flex=15) {{th.biomarker}}
+                        div(flex=15) {{th.biomarkerContext}}
+                        div(flex) {{th.notes}}
+
+
+        h2.title Potential Chemoresistance
+        div.dataBox.columns
+            div(layout="column", flex).chemoresistance.box
+                div(layout="row", flex).heading
+                    div(flex=30) Resistance To
+                    div(flex=30) Biomarker
+                    div(flex) Notes
+                div(layout="row", flex, ng-repeat="ch in therapeutic.chemoresistance").row
+                    div(flex=30) {{ch.resistance}}
+                    div(flex=15) {{ch.biomarker}}
+                    div(flex=15) {{ch.biomarkerContext}}
+                    div(flex) {{ch.notes}}
