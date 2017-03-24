@@ -25,6 +25,13 @@ app.controller('controller.dashboard.report.genomic',
       children: []
     },
     {
+      name: 'Potential Therapeutic Targets',
+      state: 'therapeutic',
+      meta: false,
+      showChildren: false,
+      children: []
+    },
+    {
       name: 'Detailed Genomic Analysis',
       state: 'detailedGenomicAnalysis',
       meta: false,

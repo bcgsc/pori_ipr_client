@@ -437,6 +437,20 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       }
     })
 
+    .state('dashboard.pog.report.genomic.therapeutic', {
+      url: '/therapeutic',
+      data: {
+        displayName: "Potential Therapeutic Targets"
+      },
+      templateUrl: 'dashboard/report/genomic/therapeutic/therapeutic.html',
+      controller: 'controller.dashboard.report.genomic.therapeutic',
+      resolve: {
+        therapeutic: ['$q', '$stateParams', 'api.therapeuticOptions', ($q, $stateParams, $therapeutic) => {
+          return $therapeutic.all($stateParams.POG);
+        }]
+      }
+    })
+
     .state('dashboard.admin', {
       url: '/admin',
       data: {
