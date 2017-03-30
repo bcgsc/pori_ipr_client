@@ -43,8 +43,6 @@ app.controller('controller.dashboard.report.genomic.copyNumberAnalyses',
 
       processCNV(cnvs);
 
-      console.log('CNVs', $scope.cnvGroups);
-
 
     }
   ]

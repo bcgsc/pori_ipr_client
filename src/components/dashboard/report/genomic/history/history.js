@@ -10,8 +10,6 @@ app.controller('controller.dashboard.report.genomic.history',
 
   $scope.history = _.sortBy($scope.history, 'createdAt').reverse();
 
-  console.log($scope.history);
-
   $scope.tags = tags;
 
   $scope.detail = ($event, entry) => {
