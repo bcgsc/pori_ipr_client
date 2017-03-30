@@ -1,0 +1,98 @@
+md-dialog(layout="column", aria-label="Update Therapeutic Target", ng-cloak, flex=85).editor.therapeuticTargets
+    form(flex='auto', name='form', ng-submit="update(form)")
+        md-toolbar
+            .md-toolbar-tools
+                h2 Update Therapeutic Target
+                span(flex)
+                md-button.md-icon-button(ng-click='cancel()')
+                    md-icon cancel
+        md-dialog-content(layout-padding)
+
+            div(layout="column", flex)
+                h2(style="font-weight: 400") Drug Target
+                div(layout="row", flex, style="margin-bottom: 15px;")
+                    md-chips(
+                    ng-model="entry.target",
+                    md-autocomplete-snap,
+                    md-require-match="false",
+                    md-transform-chip="transformChip($chip)",
+                    md-removable="'true'",
+                    md-on-add="newTag($chip)",
+                    md-on-remove="removeTag($chip)"
+                    flex
+                    )
+                        md-autocomplete(
+                        md-selected-item="geneVar.selectedItem",
+                        md-search-text="geneVar.searchText",
+                        md-items="entry in geneVar.filter(geneVar.searchText)",
+                        md-item-text="entry",
+                        md-select-on-match="'true'",
+                        placeholder="New Target"
+                        )
+                            span(md-highlight-text="geneVar.searchText") {{entry}}
+                        md-chip-template
+                            strong {{$chip.geneVar}}
+
+                div(layout="row", flex)
+                    md-autocomplete(
+                    md-input-name="geneTarget",
+                    md-selected-item="entry.targetContext",
+                    md-search-text="geneTarget.searchText",
+                    md-items="entry in geneTarget.filter(geneTarget.searchText)",
+                    md-item-text="entry",
+                    md-floating-label="Pathway/Context"
+                    flex
+                    )
+                        span(md-highlight-text="geneTarget.searchText") {{entry}}
+
+
+                div.biomarkers
+                    h3 Biomarkers
+                    div(layout="row", flex, ng-repeat="(i, marker) in entry.biomarker track by $index").marker
+                        div(style="padding-top: 10px;")
+                            md-icon(ng-click="removeBiomarker(i)") delete
+                                md-tooltip Remove biomarker entry
+                        md-autocomplete(
+                        md-input-name="biomarker",
+                        md-selected-item="entry.biomarker[i].entry",
+                        md-search-text="biomarker[i].searchText",
+                        md-items="entry in geneVar.filter(biomarker[i].searchText)",
+                        md-item-text="entry",
+                        md-floating-label="Biomarker",
+                        flex
+                        )
+                            span(md-highlight-text="biomarker.searchText") {{entry}}
+                        div(layout="column", flex).contexts
+                            div(ng-repeat="(k, c) in marker.context track by $index", flex, layout="row")
+                                md-select(ng-model="entry.biomarker[i].context[k]", flex)
+                                    md-option(ng-repeat="context in bioMarketContexts", ng-value="context") {{context}}
+                                md-icon(ng-click="removeBiomarkerContext(i, k)") delete
+                                    md-tooltip Remove biomarker context entry
+
+                            div(flex, layout="row")
+                                md-select(ng-model="new.biomarkerContextValue", flex, ng-change="newBiomarkerContext(i)", placeholder="New Value")
+                                    md-option(ng-repeat="context in bioMarketContexts", ng-value="context") {{context}}
+                                md-icon sdf
+
+                    div(layout="row", flex).marker
+                        md-autocomplete(
+                        md-input-name="biomarker",
+                        md-selected-item="new.biomarkerValue",
+                        md-search-text="new.biomarker.searchText",
+                        md-items="entry in geneVar.filter(new.biomarker.searchText)",
+                        md-item-text="entry",
+                        md-floating-label="New Biomarker Entry",
+                        md-selected-item-change="newBiomarker()"
+                        flex
+                        )
+                            span(md-highlight-text="biomarker.searchText") {{entry}}
+                        div(flex)
+
+                md-input-container(layout="row").md-block
+                    textarea(ng-model="entry.notes", name="Notes", placeholder="Notes", rows=3, md-maxlength=150)
+
+            pre {{entry.biomarker}}
+
+        md-dialog-actions(layout="row")
+            span(flex)
+            md-button(ng-click="save()").md-primary.md-raised  Save

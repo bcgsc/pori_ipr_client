@@ -1,33 +1,53 @@
 section.therapeuticTargets
     md-subheader.md-primary Potential Therapeutic Targets
+        span.edit
+            md-icon(ng-click="edit($event)") edit
+
     div(layout="column", flex)
-        div(layout="column", flex)
-            h2.title Potential Therapeutic Targets
 
-            div.dataBox.columns
-                div(flex, layout="column").therapeutic.box
-                    div(layout="row", flex).heading
-                        div(flex=30) Drug Target
-                        div(flex=30) Biomarker
-                        div(flex) Notes
-                    div(layout="row", flex, ng-repeat="th in therapeutic.therapeutic").row
-                        div(flex=15)
-                            span(ng-repeat="target in th.target") {{target}}
-                        div(flex=15) {{th.targetContext}}
-                        div(flex=15) {{th.biomarker}}
-                        div(flex=15) {{th.biomarkerContext}}
-                        div(flex) {{th.notes}}
+        h2.title Potential Therapeutic Targets
+        div(sv-root, sv-part="therapeutic.therapeutic",)
+            div(layout="row", md-whiteframe=1, ng-repeat="th in therapeutic.therapeutic", sv-element).rowCard
+                div(flex=25, layout="column")
+                    h5 Drug Target
+                    div(flex, layout="row")
+                        span(ng-if="th.target.length !== 0")
+                            div(ng-repeat="target in th.target") {{target.geneVar}}
+                        span.context {{th.targetContext}}
+
+                div(flex=30, layout="column")
+                    h5 Biomarker
+                    div(layout="column").markers
+                        div(ng-repeat="marker in th.biomarker", layout="row")
+                            div.entry {{marker.entry}}
+                            div(layout="column").context
+                                span(ng-repeat="c in marker.context") {{c}}
+
+                div(flex)
+                    h5 Notes
+                    span {{th.notes}}
+                div(layout="column", layout-align="start start").options
+                    div
+                        md-icon(ng-click="edit($event, th)") edit
+                    div
+                        md-icon(sv-handle) drag_handle
+
+            div(layout="row", md-whiteframe=1, layout-align="center center", ng-click="newEntry($event, 'therapeutic')").rowCard.clickable
+                div New Entry
 
 
-        h2.title Potential Chemoresistance
-        div.dataBox.columns
-            div(layout="column", flex).chemoresistance.box
-                div(layout="row", flex).heading
-                    div(flex=30) Resistance To
-                    div(flex=30) Biomarker
-                    div(flex) Notes
-                div(layout="row", flex, ng-repeat="ch in therapeutic.chemoresistance").row
-                    div(flex=30) {{ch.resistance}}
-                    div(flex=15) {{ch.biomarker}}
-                    div(flex=15) {{ch.biomarkerContext}}
-                    div(flex) {{ch.notes}}
+        h2(style="margin-top: 15px;").title Potential Chemoresistance
+        div(layout="row", md-whiteframe=1, ng-repeat="ch in therapeutic.chemoresistance").rowCard
+            div(flex=25, layout="column")
+                h5 Resistance To
+                div(flex, layout="row")
+                    span {{ch.resistance}}
+
+            div(flex=30, layout="column")
+                h5 Biomarker
+                div(layout="row")
+                    span {{ch.biomarker}}
+                    span.context {{ch.biomarkerContext}}
+            div(flex)
+                h5 Notes
+                span {{ch.notes}}
