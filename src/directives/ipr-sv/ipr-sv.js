@@ -33,7 +33,6 @@ app.directive("iprSv", ['$q', '_', '$mdDialog', '$mdToast', ($q, _, $mdDialog, $
             $_scope.svg = new DOMParser().parseFromString(sv.svg, 'application/xml');
 
             let xmlSVG = $_scope.svg.getElementsByTagName('svg')[0];
-            console.log($_scope.svg.getElementsByTagName('svg')[0]);
             xmlSVG.id="fusionDiagram";
 
 
