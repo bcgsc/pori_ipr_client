@@ -10,6 +10,7 @@ const app = angular.module('bcgscIPR', [
 	'hc.marked',
   'stickyfill',
 	'angularFileUpload',
-	'ngclipboard'
+	'ngclipboard',
+	'angular-sortable-view'
 ]);
 

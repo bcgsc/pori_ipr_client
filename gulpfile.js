@@ -38,7 +38,8 @@ let files = {
       './node_modules/angular-file-upload/dist/angular-file-upload.min.js',
       './node_modules/angular-sanitize/angular-sanitize.min.js',
       './node_modules/clipboard/dist/clipboard.min.js',
-      './node_modules/ngclipboard/dist/ngclipboard.min.js'
+      './node_modules/ngclipboard/dist/ngclipboard.min.js',
+      './node_modules/angular-sortable-view/src/angular-sortable-view.js'
     ],
     
     // Application javascript sources
