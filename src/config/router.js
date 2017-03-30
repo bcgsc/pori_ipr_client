@@ -580,6 +580,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         }],
         pathway: ['$q', '$stateParams', 'api.summary.pathwayAnalysis', ($q, $stateParams, $pathway) => {
           return $pathway.get($stateParams.POG);
+        }],
+        therapeutic: ['$q', '$stateParams', 'api.therapeuticOptions', ($q, $stateParams, $therapeutic) => {
+          return $therapeutic.all($stateParams.POG);
         }]
       }
     })

@@ -495,6 +495,60 @@ div.print {
 
       }
 
+      table.therapeuticTargets {
+
+        width: 100%;
+        font-size: 12px;
+        border-spacing: 0;
+
+        th, td {
+          text-align: center;
+          border: 0.5mm solid rgb(82, 132, 177);
+          border-left: 0;
+          border-top: 0;
+
+          &:last-of-type {
+            border-right: none;
+          }
+        }
+
+        th {
+          border-top: 1px solid rgb(82, 132, 177);
+        }
+
+        thead tr:nth-of-type(odd) {
+          background-color: white;
+        }
+
+        tr:nth-of-type(odd) {
+          background-color: rgb(192,232,252);
+        }
+
+        &.chemoresistance {
+          th, td {
+            border: 0.5mm solid rgb(125, 103, 177);
+            border-left: 0;
+            border-top: 0;
+
+            &:last-of-type {
+              border-right: none;
+            }
+          }
+
+          th {
+            border-top: 1px solid rgb(125, 103, 177);
+          }
+
+          tr:nth-of-type(odd) {
+            background-color: rgb(232, 225, 252);
+          }
+          thead tr:nth-of-type(odd) {
+            background-color: white;
+          }
+        }
+
+      }
+
 
     } // End Summary
 

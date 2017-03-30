@@ -1,6 +1,6 @@
 app.controller('controller.print.POG.report.genomic',
-  ['_', '$scope', 'pog', 'gai', 'get', 'ms', 'vc', 'pt', 'comments', 'pathway',
-  (_, $scope, pog, gai, get, ms, vc, pt, comments, pathway) => {
+  ['_', '$scope', 'pog', 'gai', 'get', 'ms', 'vc', 'pt', 'comments', 'pathway', 'therapeutic',
+  (_, $scope, pog, gai, get, ms, vc, pt, comments, pathway, therapeutic) => {
 
     // Data
     $scope.data = {gai: gai, ms: ms, vc: vc, pt: pt, pi: pog.patientInformation, ta: pog.tumourAnalysis };
@@ -10,6 +10,17 @@ app.controller('controller.print.POG.report.genomic',
     $scope.data.get[1] = _.chain(get).chunk(11).tail().flatten().value();
     $scope.analystComments = comments;
     $scope.pathwayAnalysis = pathway;
+    $scope.therapeutic = {therapeutic: [], chemoresistance: []};
+
+    // Sort into groups
+    let groupTherapeutics = () => {
+      _.forEach(therapeutic, (v) => {
+        if(v.type === 'therapeutic') $scope.therapeutic.therapeutic.push(v);
+        if(v.type === 'chemoresistance') $scope.therapeutic.chemoresistance.push(v);
+      });
+    };
+
+    groupTherapeutics();
 
     // Create SVG DOM element from String
     $scope.pathway = new DOMParser().parseFromString(pathway.pathway, 'application/xml');
@@ -31,8 +42,6 @@ app.controller('controller.print.POG.report.genomic',
         svgImage.ownerDocument.importNode($scope.pathway.documentElement, true)
       );
     },100);
-
-    console.log($scope.data);
 
     $scope.pog = pog;
 

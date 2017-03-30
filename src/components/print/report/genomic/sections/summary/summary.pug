@@ -219,3 +219,40 @@ div.pageHeaderSpace
 div.report-section
     h1 Potential Therapeutic Targets
     div(layout="column", flex)
+        br
+        span Potential Therapeutic Options
+        table(id="therapeutic").therapeuticTargets
+            thead
+                tr
+                    th(colspan=2, width="30%") Drug Target
+                    th(width="40%") Biomarker
+                    th(width="30%") Notes
+            tbody
+                tr(ng-repeat="th in therapeutic.therapeutic")
+                    td
+                        div(ng-repeat="e in th.target") {{e}}
+                    td {{th.targetContext}}
+                    td(layout="column")
+                        div(ng-repeat="marker in th.biomarker", layout="row")
+                            div(flex) {{marker.entry}}
+                            div(flex, layout="column")
+                                span(ng-repeat="c in marker.context") {{c}}
+                    td {{th.notes}}
+        br
+        br
+        span Potential Chemoresistance
+        table.therapeuticTargets.chemoresistance
+            thead
+                tr
+                    th(width="30%") Resistance to
+                    th(width="40%") Biomarker
+                    th(width="30%") Notes
+            tbody
+                tr(ng-repeat="ch in therapeutic.chemoresistance")
+                    td {{ch.resistance}}
+                    td(layout="column")
+                        div(ng-repeat="marker in ch.biomarker", layout="row")
+                            div(flex) {{marker.entry}}
+                            div(flex, layout="column")
+                                span(ng-repeat="c in marker.context") {{c}}
+                    td {{ch.notes}}
