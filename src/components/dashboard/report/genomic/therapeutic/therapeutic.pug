@@ -32,7 +32,7 @@ section.therapeuticTargets
                     div
                         md-icon(sv-handle) drag_handle
 
-            div(layout="row", md-whiteframe=1, layout-align="center center", ng-click="newEntry($event, 'therapeutic')").rowCard.clickable
+            div(layout="row", md-whiteframe=1, layout-align="center center", ng-click="newEntry($event, 'therapeutic')").rowCard.clickable.new
                 div New Entry
 
 
@@ -45,9 +45,18 @@ section.therapeuticTargets
 
             div(flex=30, layout="column")
                 h5 Biomarker
-                div(layout="row")
-                    span {{ch.biomarker}}
-                    span.context {{ch.biomarkerContext}}
+                div(layout="column").markers
+                    div(ng-repeat="marker in ch.biomarker", layout="row")
+                        div.entry {{marker.entry}}
+                        div(layout="column").context
+                            span(ng-repeat="c in marker.context") {{c}}
             div(flex)
                 h5 Notes
                 span {{ch.notes}}
+            div(layout="column", layout-align="start start").options
+                div
+                    md-icon(ng-click="edit($event, ch)") edit
+                div
+                    md-icon(sv-handle) drag_handle
+        div(layout="row", md-whiteframe=1, layout-align="center center", ng-click="newEntry($event, 'chemoresistance')").rowCard.clickable.new
+            div New Entry

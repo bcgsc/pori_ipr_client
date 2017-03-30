@@ -9,8 +9,8 @@ md-dialog(layout="column", aria-label="Update Therapeutic Target", ng-cloak, fle
         md-dialog-content(layout-padding)
 
             div(layout="column", flex)
-                h2(style="font-weight: 400") Drug Target
-                div(layout="row", flex, style="margin-bottom: 15px;")
+                label(ng-if="type=='therapeutic'").title Drug Target
+                div(layout="row", flex, style="margin-bottom: 15px;", ng-if="type=='therapeutic'")
                     md-chips(
                     ng-model="entry.target",
                     md-autocomplete-snap,
@@ -33,7 +33,7 @@ md-dialog(layout="column", aria-label="Update Therapeutic Target", ng-cloak, fle
                         md-chip-template
                             strong {{$chip.geneVar}}
 
-                div(layout="row", flex)
+                div(layout="row", flex, ng-if="type=='therapeutic'")
                     md-autocomplete(
                     md-input-name="geneTarget",
                     md-selected-item="entry.targetContext",
@@ -45,6 +45,9 @@ md-dialog(layout="column", aria-label="Update Therapeutic Target", ng-cloak, fle
                     )
                         span(md-highlight-text="geneTarget.searchText") {{entry}}
 
+                div(layout="row", flex, ng-if="type=='chemoresistance'")
+                    md-input-container(flex)
+                        input(ng-model="entry.resistance", name="Resistance", placeholder="Resistance To")
 
                 div.biomarkers
                     h3 Biomarkers
@@ -89,10 +92,14 @@ md-dialog(layout="column", aria-label="Update Therapeutic Target", ng-cloak, fle
                         div(flex)
 
                 md-input-container(layout="row").md-block
-                    textarea(ng-model="entry.notes", name="Notes", placeholder="Notes", rows=3, md-maxlength=150)
+                    textarea(ng-model="entry.notes", name="Notes", placeholder="Entry Notes", rows=1, md-maxlength=150)
 
-            pre {{entry.biomarker}}
+                md-input-container(layout="row").md-block
+                    input(ng-model="entry.comment", placeholder="Changelog Comment")
 
         md-dialog-actions(layout="row")
+            md-button(ng-click="cancel()").md-raised  Cancel
+            md-button(ng-click="showConfirm=true", ng-disabled="showConfirm", ng-show="create").md-primary.md-raised.md-warn  Delete
+            md-button(ng-show="showConfirm", ng-click="remove()", ng-init="showConfirm=false").md-primary.md-raised.md-warn  Confirm Delete
             span(flex)
             md-button(ng-click="save()").md-primary.md-raised  Save

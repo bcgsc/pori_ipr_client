@@ -8,6 +8,12 @@ section.therapeuticTargets {
     margin: 6px 20px;
     padding: 10px;
     background-color: rgb(255,255,255);
+    min-height: 68px;
+
+    &.new {
+      min-height: 0;
+      opacity: 0.5;
+    }
 
     &:hover {
       background-color: rgb(240,240,240);
@@ -62,6 +68,13 @@ section.therapeuticTargets {
 }
 
 .therapeuticTargets.editor {
+
+  label.title {
+    color: rgba(0,0,0,0.54);
+    font-size: 12px;
+    display: inline-block;
+  }
+
   .biomarkers {
     background-color: rgb(240,240,240);
     padding: 10px 20px;

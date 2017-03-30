@@ -5,6 +5,7 @@ app.controller('controller.dashboard.report.genomic.therapeutic.edit',
   scope.tab = 'listing';
   scope.entry = (entry || { target: [], targetContext: null, biomarker: [], notes: null });
   scope.type = (entry) ? entry.type : newEntry;
+  scope.create = (!newEntry);
   scope.bioMarketContexts = [
     'Homozygous Deletion',
     'Copy Gain',
@@ -109,7 +110,7 @@ app.controller('controller.dashboard.report.genomic.therapeutic.edit',
       $therapeutic.create(pog.POGID, newTherapeutic).then(
         (result) => {
           // New entry created!
-          $mdDialog.hide({status: true, data: result, 'new': true});
+          $mdDialog.hide({status: 'create', data: result});
         },
         (err) => {
           console.log('Unable to create new entry!');
@@ -120,13 +121,28 @@ app.controller('controller.dashboard.report.genomic.therapeutic.edit',
       $therapeutic.one(pog.POGID).update(newTherapeutic.ident, newTherapeutic).then(
         (result) => {
           // New entry created!
-          $mdDialog.hide({status: true, data: result, 'new': false});
+          $mdDialog.hide({status: 'update', data: result});
         },
         (err) => {
           console.log('Unable to update entry!');
         }
       );
     }
+  };
+
+  // Remove Entry from DB
+  scope.remove = () => {
+    let removedIdent = angular.copy(entry).ident;
+    $therapeutic.one(pog.POGID).remove(entry.ident).then(
+      (result) => {
+        console.log('Entry removed! within modal');
+        // Entry removed!
+        $mdDialog.hide({status: 'deleted', data: removedIdent});
+      },
+      (err) => {
+        console.log('Unable to update entry!');
+      }
+    );
   };
 
   scope.cancel = () => {
