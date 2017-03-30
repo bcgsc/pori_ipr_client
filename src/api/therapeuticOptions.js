@@ -42,7 +42,7 @@ app.factory('api.therapeuticOptions', ['_', '$http', '$q', (_, $http, $q) => {
   $therapeutic.create = (POGID, entry) => {
     let deferred = $q.defer();
 
-    $http.post(API + '/' + POGID + '/genomic/therapeuticTargets', entry).then(
+    $http.post(api + '/' + POGID + '/genomic/therapeuticTargets', entry).then(
       (resp) => {
         deferred.resolve(resp.data);
       },
