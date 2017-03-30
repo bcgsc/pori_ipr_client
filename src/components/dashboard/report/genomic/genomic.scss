@@ -258,8 +258,15 @@
           font-weight: 100;
           font-size: 0.8em;
           text-align: center;
-          padding: 10px 0;
           background-color: rgb(204,207,226);
+
+          div {
+            padding: 10px 0;
+          }
+
+          .bg1 { background-color: rgb(193, 196, 215); }
+          .bg2 { background-color: rgb(178, 181, 200); }
+
         }
 
         div.search {
@@ -288,17 +295,26 @@
         div.row {
           background-color: rgb(235,235,235);
           font-weight: 300;
-          padding: 3px 2px 3px 5px;
           font-size: 0.85em;
-          
+
+          .bg1 { background-color: rgb(225, 225, 225); }
+          .bg2 { background-color: rgb(215, 215, 215); }
+
           div {
+            padding: 3px 2px 3px 5px;
             min-height: 20px;
             vertical-align: middle;
           }
           
           &:nth-of-type(odd) {
-            background-color: rgb(215, 215, 215);
+            background-color: rgb(205, 205, 205);
+
+            .bg1 { background-color: rgb(195, 195, 195); }
+            .bg2 { background-color: rgb(185, 185, 185); }
+
           }
+
+
           &:hover {
             background-color: rgb(247,206,170);
             
@@ -548,4 +564,45 @@
       }
     }
   }
+}
+
+.editor {
+  h2 {
+    font-size: 0.95em;
+    margin: 15px 0 7px 0;
+    padding: 0;
+  }
+}
+
+.inlineEditor {
+
+  .header {
+    background-color: rgb(215, 216, 230);
+    color: rgb(40,40,40);
+
+    div {
+      padding: 8px 3px 3px 3px;
+
+      &.bg1 { background-color: rgb(200, 201, 215);}
+    }
+  }
+
+  .row {
+
+    div {
+      padding: 3px;
+
+      &.bg1 { background-color: rgb(240,240,240); }
+      &.bg2 { background-color: rgb(230,230,230); }
+    }
+
+    &:nth-of-type(even) {
+      background-color: rgb(240, 240, 240);
+      div {
+        &.bg1 { background-color: rgb(220, 220, 220); }
+        &.bg2 { background-color: rgb(210, 210, 210); }
+      }
+    }
+  }
+
 }
