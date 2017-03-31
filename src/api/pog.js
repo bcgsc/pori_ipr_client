@@ -14,25 +14,28 @@ app.factory('api.pog', ['_', '$http', '$q', (_, $http, $q) => {
   let $pog = {};
   
   
-  /*
-   * Get All POGS
+  /**
+   * Get All POGs
    *
    * Retrieve all POGs from API that user can access
    *
+   * @param {object} opts - Options block
+   * @returns {promise} - Resolves with array of POGs
    */
-  $pog.all = (all=false,query=null) => {
+  $pog.all = (opts={}) => {
     return $q((resolve, reject) => {
-
       let url = api;
 
-      if(all !== false || query !== null) {
+      /*
+      if(opts.all !== false || opts.query !== null || opts.role) {
         url += '?';
-        if(all !== false) url += 'all=true&';
-        if(query) url += 'query='+query+'&';
-      }
+        if(opts.all !== false) url += 'all=true&';
+        if(opts.query) url += 'query='+opts.query+'&';
+        if(opts.role) url += 'role='+opts.role+'&';
+      }*/
 
       // Retrieve from API
-      $http.get(url).then(
+      $http.get(url, {params: opts}).then(
         (result) => {
           // Empty Cache
           _pogs = [];
