@@ -5,9 +5,11 @@ app.controller('controller.print.POG.report.genomic',
     // Data
     $scope.data = {gai: gai, ms: ms, vc: vc, pt: pt, pi: pog.patientInformation, ta: pog.tumourAnalysis };
 
+    let initChunk = 9;
+
     $scope.data.get = [];
-    $scope.data.get[0] = _.chunk(get, 11)[0];
-    $scope.data.get[1] = _.chain(get).chunk(11).tail().flatten().value();
+    $scope.data.get[0] = _.chunk(get, initChunk)[0];
+    $scope.data.get[1] = _.chain(get).chunk(initChunk).tail().flatten().value();
     $scope.analystComments = comments;
     $scope.pathwayAnalysis = pathway;
     $scope.therapeutic = {therapeutic: [], chemoresistance: []};
