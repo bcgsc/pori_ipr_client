@@ -1,7 +1,7 @@
 @media print {
 
   body {
-    margin: 8mm 15mm;
+    margin: 7mm 14mm;
   }
 
 }
@@ -12,11 +12,27 @@ $print_grey_border: rgb(192,192,192);
 
 div.print {
 
+  font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+
   .page {
 
     display: block;
     margin: 8mm 15mm;
     padding: 2mm 0;
+
+    .text-left { text-align: left; }
+    .text-right { text-align: right; }
+
+    .text-light { font-weight: 100; }
+
+    .text-xxsmall { font-size: 5pt }
+    .text-xsmall { font-size: 7pt }
+    .text-small { font-size: 8pt }
+    .text-medium { font-size: 9pt }
+    .text-large { font-size: 11pt }
+    .text-xlarge { font-size: 13pt }
+
+    .text-black { color: black !important;}
 
     .pageBreak {
       page-break-after: always;
@@ -68,6 +84,10 @@ div.print {
 
       }
     }
+
+    .index-row {
+      margin-bottom: 2mm;
+    }
     /*
       Pan-Report styles
      */
@@ -114,7 +134,7 @@ div.print {
       .header {
         margin-top: 10mm;
         div:nth-child(2) {
-          font-size: 18pt;
+          font-size: 16pt;
           vertical-align: bottom;
           color: $print_purple;
         }
@@ -127,6 +147,11 @@ div.print {
         background-color: $print_section_bg;
         border: 1mm solid $print_grey_border;
         color: rgb(255,255,255);
+      }
+
+      .version {
+        font-size: 8pt;
+        font-weight: 700;
       }
 
       .details {
@@ -168,7 +193,7 @@ div.print {
           }
 
           div.heading {
-            background-color: rgb(150, 150, 150);
+            background-color: rgb(180, 180, 180);
             font-size: 6pt;
             text-align: center;
 
@@ -177,8 +202,13 @@ div.print {
             }
           }
           div.content {
-            background-color: rgb(220, 220, 220);
+            //background-color: rgb(220, 220, 220);
+            border-bottom: 0.5mm solid rgb(220,220,220);
             text-align: center;
+
+            &:last-of-type {
+              border-bottom: none;
+            }
 
             &.left {
               padding: 0.5mm;
@@ -214,6 +244,7 @@ div.print {
           }
           th.signature {
             background-color: rgb(255,255,255);
+            padding: 0;
 
             div {
               background-color: rgb(180, 180, 180);
@@ -259,7 +290,7 @@ div.print {
 
           td {
             background-color: rgb(220, 220, 220);
-            font-size: 9pt;
+            font-size: 8pt;
             text-align: center;
             padding: 1mm 0;
             border-right: 0.5mm solid grey;

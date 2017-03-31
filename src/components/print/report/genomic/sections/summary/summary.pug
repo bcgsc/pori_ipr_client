@@ -2,7 +2,9 @@ div(layout="row").header
     div(flex=50)
         img(src="/assets/images/print_logo.png", width="100%")
     div(flex=50, layout-align="start end")
-        div(flex).text-right Tumour Genome Analysis
+        div(flex, layout="column").text-right
+            span Tumour Genome Analysis
+            span.text-small Whole genome; Transcriptome; Somatic
 
 div(layout="row").version
     div(flex=50) Report version: x.x.x
@@ -71,7 +73,7 @@ div.report-section
                         div(flex) {{data.ta.normalExpressionComparator}}
                         div(flex) {{data.ta.diseaseExpressionComparator}}
 
-            div(layout="column", flex=20).dataBox
+            div(layout="column", flex=25).dataBox
                 h4 Subtyping
 
                 div.inner
@@ -93,10 +95,17 @@ div.report-section
                         div(flex) None
                         div(flex) None
 
+        div(layout="row").index-row
+            div(flex, style="padding-left: 2mm;").text-xxsmall For description of method see APPENDIX
+            div(flex).text-xxsmall Details in EXPRESSION ANALYSIS section
+            div(flex=25).text-xxsmall Details in EXPRESSION ANALYSIS section
+            div(flex=20).text-xxsmall Details in MICROBIAL CONTENT section
+
+
         div(layout="row")
             div(layout="column", flex="25").dataBox
                 h4 Mutation Signature
-            div(layout="column", flex="75").dataBox
+            div(layout="column", flex="75").dataBoxcontent
                 h4 Mutation Burden
                     span (in protein coding genes)
 
@@ -116,21 +125,26 @@ div.report-section
                     th.total {{mutationBurdenFilter(data.ms.totalSV)}}
             tbody
                 tr
-                    td(width="25%").label Interpreted prevelance
+                    td(width="25%").label.text-light Interpreted prevelance
                     td(width="25%", colspan=2) {{(data.ms.snvPercentileDiseaseCategory === "na") ? 'LOW' : data.ms.snvPercentileDiseaseCategory}}
                     td(width="25%", colspan=2) {{(data.ms.indelPercentileDiseaseCategory === "na") ? 'LOW' : data.ms.indelPercentileDiseaseCategory}}
                     td(width="25%", colspan=2) {{data.ms.svPercentilePOGCategory}}
                 tr
-                    td.label Percentile among compendium
+                    td.label.text-light Percentile among compendium
                     td(colspan=2) {{data.ms.snvPercentileTCGA}}
                     td(colspan=2) {{data.ms.indelPercentileTCGA}}
                     td(colspan=2) {{data.ms.svPercentilePOG}} (POG)
                 tr
-                    td.label Percentile among {{data.ta.diseaseExpressionComparator}}
+                    td.label.text-light Percentile among {{data.ta.diseaseExpressionComparator}}
                     td(colspan=2) {{data.ms.snvPercentileDisease}}
                     td(colspan=2) {{data.ms.indelPercentileDisease}}
                     td(colspan=2)
 
+    div(layout="row").index-row
+        div(flex, style="padding-left: 2mm;").text-xxsmall
+        div(flex).text-xxsmall Details in SOMATIC MUTATIONS section
+        div(flex).text-xxsmall
+        div(flex).text-xxsmall Details in STRUCTURAL VARIATION section
 
     div(layout="column", flex)
 
@@ -138,7 +152,7 @@ div.report-section
             div(layout="column", flex).dataBox
                 h4 Key Genomic and Transcriptomic Alterations Identified
 
-        div(layout="row").keyAlterationsIdentified
+        div(layout="row", style="margin-bottom: 2mm; border: 0.5mm solid rgb(110,110,110);").keyAlterationsIdentified
             div(layout="row", flex).title.sm
                 div(flex) Small Mutations
                 div(flex="30") {{data.vc.smallMutations}}
@@ -151,13 +165,19 @@ div.report-section
             div(layout="row", flex).title.outliers
                 div(flex) Expression Outliers
                 div(flex="30") {{data.vc.expressionOutliers}}
-        div(flex, layout-align="start start").alterations
+        div(flex, layout-align="start start", style="border: 0.5mm solid rgb(110,110,110);").alterations
             div(ng-repeat="variant in data.gai", class="{{variant.type}}") {{variant.geneVariant}}
 
         div(layout="row").keyAlterationsIdentified
             div(layout="row", flex).title.unknown
-                div(flex, style="padding:0; padding-right: 1mm;").text-right Additional variants of uncertain significance (VUS) detected in cancer-related genes:
-                div(flex=10, style="padding:0") {{data.vc.variantsUnknown}}
+                div(flex, style="padding:0; padding-right: 1mm; ").text-right Additional variants of uncertain significance (VUS) detected in cancer-related genes:
+                div(flex=10, style="padding:0; border: 0.5mm solid rgb(110,110,110); border-top: 0;").text-black {{data.vc.variantsUnknown}}
+
+    div(layout="row").index-row
+        div(flex, style="padding-left: 2mm;").text-xxsmall
+        div(flex).text-xxsmall
+        div(flex).text-xxsmall
+        div(flex).text-xxsmall Details in DETAILED GENOMIC ANALYSIS section
 
     h1 Genomic Events with Potential Therapeutic Association
 
@@ -167,10 +187,10 @@ div.report-section
             div(layout="column", flex).dataBox
                 div.inner
                     div(layout="row", flex).heading.yellow
-                        div(flex) Genomic Events
-                        div(flex) Approved in this cancer type
-                        div(flex) Approved in other cancer type
-                        div(flex) Emerging Evidence
+                        div(flex).text-left Genomic Events
+                        div(flex).text-left Approved in this cancer type
+                        div(flex).text-left Approved in other cancer type
+                        div(flex).text-left Emerging Evidence
                     div(layout="row", flex, ng-repeat="gene in data.get[0]").content.left
                         div(flex) {{gene.genomicEvent}}
                         div(flex) {{gene.approvedThisCancerType}}
