@@ -1,33 +1,39 @@
 md-content(flex).md-padding
-  h1.md-title(layout="row") 
-    span(flex) My Assigned POG Cases
-    span(flex, layout="row", layout-align="end end")
-      div.userCases
-        md-switch(ng-model="filter.currentUser", ng-change="refreshList()").md-primary Only my cases
-      md-input-container.hide-validation-error.pull-right
-        input(placeholder="Search", name="Search", ng-model="pogQuery", size=40)
-        md-icon(ng-click="showFilterTips()").clickable help
+    h1.md-title(layout="row")
+        span(flex) My Assigned POG Cases
+        span(flex, layout="row", layout-align="end end")
+            md-input-container.hide-validation-error.pull-right
+                md-select(ng-model="filter.role", placeholder="Filter by my Role", ng-change="refreshList()").text-small
+                    md-option(ng-value="null") All
+                    md-option(ng-repeat="role in roles", ng-value="role") {{role}}
+            span(flex=5)
+            div.userCases
+                md-switch(ng-model="filter.currentUser", ng-change="refreshList()").md-primary Only my cases
+            span(flex=5)
+            md-input-container.hide-validation-error.pull-right
+                input(placeholder="Search", name="Search", ng-model="pogQuery", size=40).text-small
+                md-icon(ng-click="showFilterTips()").clickable help
 
-  div(layout="row", ng-show="pogList.length === 0", layout-align="center center")
-    div(md-whiteframe="1").noPogs No active cases assigned to you.
-      
-  div(ng-repeat="pog in pogList = ( pogs | filter: searchPogs(pogQuery))", flex, md-whiteframe="1").PogList.md-padding
-    h2(layout="row")
-      span(ui-sref="dashboard.pog.report.genomic.summary({POG: '{{pog.POGID}}' })", flex).title {{pog.POGID}}
-      span(flex).text-center {{pog.patientInformation.reportDate}}
-      span(flex) My Roles:
-        span(ng-if="pog.myRoles.length === 0", md-whiteframe="1").role None
-        span(ng-repeat="role in pog.myRoles", md-whiteframe="2").role {{role.role}}
-          md-tooltip Assigned by {{role.addedBy.firstName}} {{role.addedBy.lastName}} {{role.createdAt | amTimeAgo}}
-      
-    div(flex, layout="column")
-      div(flex, layout="row")
-        div(flex) 
-          span Tumour Content:
-            ipr-tumour-content(tc="{{pog.tumourAnalysis.tumourContent}}", md-whiteframe="1")
-        div(flex) 
-          span Tumour Type: 
-          | {{pog.patientInformation.tumourType}}
-        div(flex) 
-          span Ploidy Model: 
-          | {{pog.tumourAnalysis.ploidy}}
+    div(layout="row", ng-show="pogList.length === 0", layout-align="center center")
+        div(md-whiteframe="1").noPogs No active cases assigned to you.
+
+    div(ng-repeat="pog in pogList = ( pogs | filter: searchPogs(pogQuery))", flex, md-whiteframe="1").PogList.md-padding
+        h2(layout="row")
+            span(ui-sref="dashboard.pog.report.genomic.summary({POG: '{{pog.POGID}}' })", flex).title {{pog.POGID}}
+            span(flex).text-center {{pog.patientInformation.reportDate}}
+            span(flex) My Roles:
+                span(ng-if="pog.myRoles.length === 0", md-whiteframe="1").role None
+                span(ng-repeat="role in pog.myRoles", md-whiteframe="2").role {{role.role}}
+                    md-tooltip Assigned by {{role.addedBy.firstName}} {{role.addedBy.lastName}} {{role.createdAt | amTimeAgo}}
+
+        div(flex, layout="column")
+            div(flex, layout="row")
+                div(flex)
+                    span Tumour Content:
+                        ipr-tumour-content(tc="{{pog.tumourAnalysis.tumourContent}}", md-whiteframe="1")
+                div(flex)
+                    span Tumour Type:
+                    | {{pog.patientInformation.tumourType}}
+                div(flex)
+                    span Ploidy Model:
+                    | {{pog.tumourAnalysis.ploidy}}

@@ -2,6 +2,14 @@ app.controller('controller.dashboard.listing', ['_', '$q', '$scope', 'api.pog', 
 
   $scope.pogs = pogs;
 
+  $scope.roles = [
+    'bioinformatician',
+    'analyst',
+    'reviewer',
+    'admin',
+    'clinician'
+  ];
+
   $scope.filter ={
     currentUser: true,
     query: null
@@ -9,7 +17,7 @@ app.controller('controller.dashboard.listing', ['_', '$q', '$scope', 'api.pog', 
 
 
   $scope.refreshList = () => {
-    $pog.all(!$scope.filter.currentUser, $scope.filter.query).then(
+    $pog.all({all: !$scope.filter.currentUser, query: $scope.filter.query, role: $scope.filter.role}).then(
       (result) => {
         $scope.pogs = result;
         associateUsers();
