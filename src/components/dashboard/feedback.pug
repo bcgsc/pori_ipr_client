@@ -8,7 +8,9 @@ md-dialog(layout="column", aria-label="Feedback", ng-cloak, flex=50)
                     md-icon cancel
         md-dialog-content(layout-padding)
 
-            div(layout="column", ng-show="showForm")
+            div The form is unfortunately not working at the moment, please send an email directly to:
+                a(href="mailto:bpierce@bcgsc.ca") bpierce@bcgsc.ca
+            div(layout="column", ng-show="false")
                 p Feedback is always appreciated!
                 p Filling out this form will automatically create a JIRA sub-task on your behalf in our tracking ticket. You will be notified of changes to this ticket.
 
@@ -47,5 +49,6 @@ md-dialog(layout="column", aria-label="Feedback", ng-cloak, flex=50)
 
 
         md-dialog-actions(layout="row", layout-aligh="end center")
-            md-button(type="submit", ng-show="showForm", ng-disabled="formSubmitted", ng-init="formSubmitted=false").md-primary.md-raised Send Feedback
+            //md-button(type="submit", ng-show="showForm", ng-disabled="formSubmitted", ng-init="formSubmitted=false").md-primary.md-raised Send Feedback
             md-button(ng-click="close()", ng-hide="showForm").md-primary.md-raised Done
+            md-button(ng-click="cancel()").md-primary.md-raised Close
