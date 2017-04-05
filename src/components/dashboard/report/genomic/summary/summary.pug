@@ -141,8 +141,8 @@ section
             div(layout="column").data
                 div(layout="row", flex)
                     div(flex) Interpreted prevelance
-                    div(flex) {{(data.ms.snvPercentileDiseaseCategory === "na") ? 'LOW' : data.ms.snvPercentileDiseaseCategory}}
-                    div(flex) {{(data.ms.indelPercentileDiseaseCategory === "na") ? 'LOW' : data.ms.indelPercentileDiseaseCategory}}
+                    div(flex) {{data.ms.snvPercentileCategory}}
+                    div(flex) {{data.ms.indelPercentileCategory}}
                     div(flex) {{data.ms.svPercentilePOGCategory}}
                 div(layout="row", flex).data
                     div(flex) Percentile among compendium

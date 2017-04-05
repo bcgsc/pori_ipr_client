@@ -4,6 +4,10 @@ app.controller('controller.dashboard.report.genomic.summary',
 
       console.log('Loaded dashboard genomic report summary controller');
 
+      // Determine which interpreted prevalence value will be displayed
+      ms.snvPercentileCategory = (pog.tumourAnalysis.diseaseExpressionComparator === 'average') ? ms.snvPercentileTCGACategory : ms.snvPercentileDiseaseCategory;
+      ms.indelPercentileCategory = (pog.tumourAnalysis.diseaseExpressionComparator === 'average') ? ms.indelPercentileTCGACategory : ms.indelPercentileDiseaseCategory;
+
       $scope.pog = pog;
       $scope.data = {
         get: get,
