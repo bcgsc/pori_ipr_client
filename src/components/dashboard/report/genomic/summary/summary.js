@@ -29,7 +29,7 @@ app.controller('controller.dashboard.report.genomic.summary',
         let cnvs = ['copy gain', 'copy loss', 'amplification', 'Homozygous Loss', 'Homozygous Gain'];
 
         // Small Mutations
-        if (variant.geneVariant.match(/([A-z0-9]*)\s(\(\p\.[A-z]*[0-9]*[A-z]*\))/g)) {
+        if (variant.geneVariant.match(/([A-z0-9]*)\s(\(\p\.[A-z]*[0-9]*[A-z]*\*\))/g)) {
           variant.type = "smallMutation";
           return variant;
         }
