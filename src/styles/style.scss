@@ -45,6 +45,11 @@ md-dialog.editor {
   }
 }
 
+.option-description {
+  color: rgb(150,150,150);
+  padding-left: 10px;
+  font-size: 0.85em;
+}
 
 .text-center { text-align: center; }
 .text-right { text-align: right; }
@@ -121,4 +126,14 @@ span.preformated {
   background-color: rgb(63,81,181) !important;
   color: white;
   font-size: 11px !important;
+}
+
+.controls-fixed{
+  background-color:rgba(0, 0, 0, 0.1);
+  bottom:0;
+  left:0;
+  padding:10px 15px;
+  position:fixed;
+  top:auto;
+  width:100%;
 }
