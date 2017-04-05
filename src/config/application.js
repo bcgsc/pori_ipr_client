@@ -22,7 +22,7 @@ app.run(($rootScope) => {
 
   $rootScope.$on('$stateChangeError', (event, toState, toParams, fromState, fromParams) => {
 
-    console.log('State Change Error:', event);
+    console.log('State Change Error:', event, toState, toParams);
     $rootScope.showLoader = false;
 
   });
