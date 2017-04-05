@@ -6,15 +6,29 @@ app.controller('controller.dashboard.report.genomic.therapeutic.edit',
   scope.entry = (entry || { target: [], targetContext: null, biomarker: [], notes: null });
   scope.type = (entry) ? entry.type : newEntry;
   scope.create = (!newEntry);
-  scope.bioMarketContexts = [
-    'Homozygous Deletion',
-    'Copy Gain',
-    'Likely LoF',
-    'Structural Variant',
-    'Likely GoF',
-    'Outlier',
-    'Outlier Expression'
-  ];
+  scope.bioMarkerContexts = [
+    {entry: 'overexpressed', description:'a high fold-change alone is of significance'},
+    {entry: 'underexpressed', description:'a low fold-change alone is of significance'},
+    {entry: 'high percentile', description:'high percentile alone is of significance'},
+    {entry: 'low percentile', description:'low percentile alone is of significance'},
+    {entry: 'outlier', description:'high outlier by both percentile and fold change'},
+    {entry: 'outlier', description:'low outlier by both percentile and fold change'},
+    {entry: 'amp amplification', description:'(usually focal or extreme copy number)'},
+    {entry: 'hom-del', description:'homozygous deletion (reviewed as real)'},
+    {entry: 'copy gain', description:'any copy gain deemed significant'},
+    {entry: 'copy loss', description:'any copy loss deemed significant'},
+    {entry: 'LoF mutation', description:'loss-of-function mutation'},
+    {entry: 'GoF mutation', description:'gain-of-function mutation'},
+    {entry: 'SoF mutation', description:'switch-of-function mutation'},
+    {entry: 'DN mutation', description:'dominant-negative mutation'},
+    {entry: 'mutation', description:'significant mutation with no formal functional description'},
+    {entry: 'structural variant', description:'any significant structural variant'},
+    {entry: 'gene-fusion', description:'any significant gene fusion'},
+    {entry: 'mutation signature', description:'any significant mutation signature (specify type in previous field)'},
+    {entry: 'mutation burden', description:'any significant mutation burden'}
+  ].sort();
+
+  console.log(scope.bioMarkerContexts);
 
   scope.new = {
     biomarkerContextValue: null,

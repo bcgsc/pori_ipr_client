@@ -68,13 +68,15 @@ md-dialog(layout="column", aria-label="Update Therapeutic Target", ng-cloak, fle
                         div(layout="column", flex).contexts
                             div(ng-repeat="(k, c) in marker.context track by $index", flex, layout="row")
                                 md-select(ng-model="entry.biomarker[i].context[k]", flex)
-                                    md-option(ng-repeat="context in bioMarketContexts", ng-value="context") {{context}}
+                                    md-option(ng-repeat="context in bioMarkerContexts", ng-value="context.entry") {{context.entry}}
+                                        span.option-description {{context.description}}
                                 md-icon(ng-click="removeBiomarkerContext(i, k)") delete
                                     md-tooltip Remove biomarker context entry
 
                             div(flex, layout="row")
                                 md-select(ng-model="new.biomarkerContextValue", flex, ng-change="newBiomarkerContext(i)", placeholder="New Value")
-                                    md-option(ng-repeat="context in bioMarketContexts", ng-value="context") {{context}}
+                                    md-option(ng-repeat="context in bioMarkerContexts", ng-value="context.entry") {{context.entry}}
+                                        span.option-description {{context.description}}
                                 md-icon sdf
 
                     div(layout="row", flex).marker
@@ -96,6 +98,7 @@ md-dialog(layout="column", aria-label="Update Therapeutic Target", ng-cloak, fle
 
                 md-input-container(layout="row").md-block
                     input(ng-model="entry.comment", placeholder="Changelog Comment")
+
 
         md-dialog-actions(layout="row")
             md-button(ng-click="cancel()").md-raised  Cancel
