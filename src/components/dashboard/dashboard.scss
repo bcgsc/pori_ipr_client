@@ -38,6 +38,68 @@
   
 }
 
+.sidebar {
+  background-color: rgb(55, 72, 145);
+  //border-top: 4px solid rgb(54, 65, 130);
+  color: white;
+  padding: 10px 0;
+  transition: width 0.5s ease !important;
+  border-right: 3px solid rgb(51, 57, 115);
+
+  div {
+    cursor: pointer;
+    padding: 5px 10px 5px 10px;
+    transition: all 0.2s;
+
+    &.active {
+      background-color: rgb(240,240,240);
+      border-right: 3px solid rgb(200, 200, 200);
+      color: rgb(0,0,0);
+      position: relative;
+      width: calc(100% + 3px);
+
+      md-icon {
+        color: rgb(59, 76, 155);
+      }
+      &:hover {
+        background-color: rgb(214, 243, 255);
+      }
+    }
+
+    md-icon {
+      color: rgba(0,0,0,0.60);
+      margin: 0;
+      transition: all 0.2s;
+    }
+    span {
+      padding-left: 6px;
+      padding-right: 10px;
+      padding-top: 2px;
+    }
+
+    &:hover {
+      background-color: rgb(72, 90, 224);
+      md-icon {
+        color: rgba(20,20,20,0.60);
+      }
+    }
+
+    &.minimize {
+      cursor: pointer;
+      outline: none;
+
+      md-icon {
+        transition: all 0s;
+      }
+
+      span {
+        color: rgba(0,0,0,0.60);
+      }
+    }
+  }
+
+}
+
 .jiraTicket {
   background: rgb(220,220,220);
   padding: 20px;

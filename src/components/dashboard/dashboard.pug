@@ -1,9 +1,32 @@
 div(ui-view="adminbar", layout="row", ng-if="isAdmin").adminBar
 md-toolbar(ui-view="toolbar", layout='row').headerToolbar
-md-subheader.bread-crumbs
-  ui-breadcrumbs(displayname-property="data.displayName", template-url="uiBreadcrumbs/uiBreadcrumbs.tpl.html")
-  | {{data}}
 
 div(layout='row', flex)
-  div(flex, layout="column")
-    div(flex, layout='row', ui-view="")
+    div(flex, layout="row")
+
+        div(layout="column").sidebar
+            div(layout="row", ui-sref="dashboard.listing")
+                md-icon chrome_reader_mode
+                    md-tooltip(ng-if="!maximized", md-direction="right") Dashboard
+                span(flex, ng-show="maximized") Dashboard
+
+            div(layout="row", ui-sref="dashboard.listing")
+                md-icon assignment
+                    md-tooltip(ng-if="!maximized", md-direction="right") Reports
+                span(flex, ng-show="maximized") Reports
+
+            div(layout="row", ui-sref="dashboard.knowledgebase.references").active
+                md-icon local_library
+                    md-tooltip(ng-if="!maximized", md-direction="right") Knowledgebase
+                span(flex, ng-show="maximized") Knowledgebase
+            span(flex)
+            div(layout="row", layout-align="end center", ng-click="toggle()").minimize
+                md-icon(ng-show="maximized") keyboard_arrow_left
+                md-icon(ng-hide="maximized") keyboard_arrow_right
+                span(ng-show="maximized") Minimize
+
+        div(flex, layout='column')
+            md-subheader.bread-crumbs
+                ui-breadcrumbs(displayname-property="data.displayName", template-url="uiBreadcrumbs/uiBreadcrumbs.tpl.html")
+                | {{data}}
+            div(ui-view="", layout="row", flex)

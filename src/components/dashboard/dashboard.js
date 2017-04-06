@@ -5,6 +5,11 @@ app.controller('controller.dashboard',
       $scope.isAdmin = isAdmin;
       $scope.user = user;
 
+      $scope.maximized = true;
+      $scope.toggle = () => {
+        $scope.maximized = !$scope.maximized;
+      }
+
     }
   ]
 );
