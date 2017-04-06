@@ -1,0 +1,85 @@
+md-content(layout="column", flex, layout-padding)
+
+    div(layout="column")
+        h1 References
+        div(layout="row")
+            span(flex) Filter
+            span(flex) Options
+            span(flex) Search
+
+        div(layout="row").kbTable.header
+            div(flex="20") events_expression
+            div(flex="10") type
+            div(flex="10") relevance
+            div(flex="20") context
+            div(flex="20") disease_list
+            div(flex="10") evidence
+            div(flex="10") status
+            div.spacer
+
+    div(flex, layout-fill).kbTable.rows
+        div(ng-repeat="ref in references").rowContainer
+            div(layout="row").row
+                div(flex="20")
+                    div(ng-click="showEvExDropper(ref)", ng-class="{clickable: hasChildren(ref)}")
+                        span(ng-if="ref.events_expression.ands.length === 0") ({{$index}}) {{ref.events_expression.ors[0][0]}}
+                        span(ng-if="ref.events_expression.ands.length > 0") ({{$index}}) {{ref.events_expression.ands[0]}}
+                        md-icon(ng-if="hasChildren(ref) && !ref.showEEs") keyboard_arrow_down
+                        md-icon(ng-if="hasChildren(ref) && ref.showEEs") keyboard_arrow_up
+                    div(ng-show="ref.showEEs").dropper
+                        // Dropdown listing of entries
+                        ul(ng-init="ref.showEEs=false", md-whiteframe=2)
+
+                            // Are there no "and" children?
+                            li(ng-if="ref.events_expression.ors.length > 1", ng-repeat="(k, event) in ref.events_expression.ors track by $index")
+
+                                // Is there only 1 entry in this? (suggesting no nested "ands")
+                                div(ng-if="$index !== 0 && event.length === 1").text-small.orBetween or
+                                span(ng-if="event.length === 1")  {{event[0]}}
+
+                                // Are there nested "ands" in this?
+                                div(ng-if="event.length > 1", ng-repeat="(i, a) in event track by $index").andGroup
+                                    // Only display or on subsequent entries
+                                    div(ng-if="i === 0 && k !== 0").text-small.orBetween or
+                                    span(ng-if="i !== 0").text-small and
+                                    span {{a}}
+
+                            // Are there "ands" children?
+                            li(ng-if="ref.events_expression.ands.length > 1", ng-repeat="(k, event) in ref.events_expression.ands track by $index")
+                                div(ng-if="$index !== 0").text-small.orBetween and
+                                span {{event}}
+
+                div(flex="10") {{ref.type}}
+                div(flex="10") {{ref.relevance}}
+                div(flex="20")
+                    div(ng-click="showDropper(ref.context, ref, 'showCs')", ng-class="{clickable: (ref.context.length > 1)}")
+                        span {{ref.context[0]}}
+                        md-icon(ng-if="(ref.context.length > 1) && !ref.showCs") keyboard_arrow_down
+                        md-icon(ng-if="(ref.context.length > 1) && ref.showCs") keyboard_arrow_up
+                    div(ng-show="ref.showCs").dropper
+                        // Dropdown listing of entries
+                        ul(ng-init="ref.showCs=false", md-whiteframe=2)
+                            li(ng-repeat="(k, context) in ref.context track by $index") {{context}}
+
+                div(flex="20")
+                    div(ng-click="showDropper(ref.disease_list, ref, 'showDLs')", ng-class="{clickable: (ref.disease_list.length > 1)}")
+                        span {{ref.disease_list[0]}}
+                        md-icon(ng-if="(ref.disease_list.length > 1) && !ref.showDLs") keyboard_arrow_down
+                        md-icon(ng-if="(ref.disease_list.length > 1) && ref.showDLs") keyboard_arrow_up
+                    div(ng-show="ref.showDLs").dropper
+                        // Dropdown listing of entries
+                        ul(ng-init="ref.showDLs=false", md-whiteframe=2)
+                            li(ng-repeat="(k, disease) in ref.disease_list track by $index") {{disease}}
+
+                div(flex="10") {{ref.evidence}}
+                div(flex="10") {{ref.status}}
+    div(layout="column").pagination
+        span Pagination
+        div(layout="row").page
+            span.pageButton <
+            span(ng-if="paginate.displayPages()[0] > 2").pageButton 1
+            span(ng-if="paginate.displayPages()[0] > 2") ...
+            span(ng-repeat="page in paginate.displayPages()", ng-class="{current: (page === paginate.current)}", ng-click="paginate.changePage(page)").pageButton {{page}}
+            span(ng-if="paginate.displayPages()[paginate.displayPages().length-1] !== paginate.pages") ...
+            span(ng-if="paginate.displayPages()[paginate.displayPages().length-1] !== paginate.pages").pageButton {{paginate.pages}}
+            span(ng-click="paginate.changePage(paginate.current+1)").pageButton.clickable >

@@ -587,4 +587,31 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       }
     })
 
+    .state('dashboard.knowledgebase', {
+      url: '/knowledgebase',
+      abstract: true,
+      data: {
+        displayName: 'Dashboard',
+        breadcrumbProxy: 'dashboard.knowledgebase.references'
+      },
+      controller: 'knowledgebase',
+      templateUrl: 'dashboard/knowledgebase/knowledgebase.html'
+    })
+    .state('dashboard.knowledgebase.references', {
+      url: '/references',
+      data: {
+        displayName: "References"
+      },
+      controller: 'knowledgebase.references',
+      templateUrl: 'dashboard/knowledgebase/references/references.html',
+      resolve: {
+        references: ['$q', 'api.knowledgebase', ($q, $kb) => {
+          return $kb.references.all(250, 0);
+        }],
+        ref_count: ['$q', 'api.knowledgebase', ($q, $kb) => {
+          return $kb.references.count();
+        }]
+      }
+    })
+
 }]);

@@ -1,0 +1,102 @@
+.knowledgebase {
+
+  .kbTable {
+
+    &.header {
+      background-color: rgb(220, 220, 220);
+      div {
+        font-weight: 100;
+        font-size: 0.85em;
+        text-align: left;
+        padding: 8px 0 4px 4px;
+
+        &.spacer {
+          width: 20px;
+        }
+      }
+    }
+
+    &.rows {
+      overflow-y:scroll;
+
+      .rowContainer {
+
+        &:nth-of-type(even) {
+          background-color: rgb(240,240,240);
+        }
+
+        div.row {
+          margin: 2px 0;
+
+          div {
+            text-overflow: ellipsis;
+            padding: 3px;
+            outline: none;
+
+
+            div.dropper {
+              position: relative;
+              display: inline-block;
+              width: 0;
+              height: 0;
+              float: left;
+              margin: 0;
+              padding :0;
+
+              ul {
+                position: absolute;
+                min-width: 350px;
+                z-index: 1;
+                list-style: none;
+                margin: 0;
+                padding: 0;
+
+
+                li {
+                  padding: 8px 6px;
+                  color: white;
+                  background-color: rgb(55, 72, 145);
+
+                  div.orBetween {
+                    margin: -19px 50% 0 50%;
+                  }
+
+                  div.andGroup {
+                    div.orBetween {
+                      margin: -22px 50% 0 50%;
+                    }
+                  }
+
+                  &:nth-of-type(even) {
+                    background-color: rgb(61, 78, 161);
+                  }
+                }
+
+              }
+            }
+          }
+        }
+      }
+    }
+
+  }
+
+  .pagination {
+    border-top: 3px solid rgb(200, 200, 200);
+
+    .pageButton {
+      border: 1px solid black;
+      margin: 0 3px;
+      padding: 3px 5px;
+
+      &.current {
+        background-color: black;
+        color: white;
+      }
+    }
+  }
+}
+
+.test-rows {
+  margin-bottom: 5px;
+}
