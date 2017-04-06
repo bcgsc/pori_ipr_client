@@ -30,7 +30,10 @@ md-dialog.editor {
   position:fixed
 }
 
-.clickable { cursor: pointer; }
+.clickable {
+  cursor: pointer;
+  outline: 0;
+}
 
 .xScroll { }
 
@@ -136,4 +139,11 @@ span.preformated {
   position:fixed;
   top:auto;
   width:100%;
+}
+
+.input-error-message {
+  color: red;
+  font-size: 0.85em;
+  line-height: 156%;
+  transition: 0.5s ease-in-out;
 }
