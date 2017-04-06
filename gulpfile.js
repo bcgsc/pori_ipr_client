@@ -39,7 +39,9 @@ let files = {
       './node_modules/angular-sanitize/angular-sanitize.min.js',
       './node_modules/clipboard/dist/clipboard.min.js',
       './node_modules/ngclipboard/dist/ngclipboard.min.js',
-      './node_modules/angular-sortable-view/src/angular-sortable-view.js'
+      './node_modules/angular-sortable-view/src/angular-sortable-view.js',
+      './node_modules/quill/dist/quill.min.js',
+      './node_modules/ng-quill/dist/ng-quill.min.js'
     ],
     
     // Application javascript sources
@@ -89,7 +91,12 @@ let files = {
   scss: {
     app: ['./src/styles/style.scss', './src/styles/ie.scss'],                             // Application wide
     components: ['./src/directives/**/*.scss', './src/components/**/*.scss'],             // Component specific
-    libs: ['./src/styles/libs.scss', './node_modules/simplemde/dist/simplemde.min.css'],  // Library sources
+    libs: [
+      './src/styles/libs.scss',
+      './node_modules/simplemde/dist/simplemde.min.css',
+      './node_modules/quill/dist/quill.bubble.css',
+      './node_modules/quill/dist/quill.snow.css'
+    ],  // Library sources
   },
   
   // Output locations for generated files

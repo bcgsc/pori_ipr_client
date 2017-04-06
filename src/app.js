@@ -11,6 +11,7 @@ const app = angular.module('bcgscIPR', [
   'stickyfill',
 	'angularFileUpload',
 	'ngclipboard',
-	'angular-sortable-view'
+	'angular-sortable-view',
+	'ngQuill'
 ]);
 

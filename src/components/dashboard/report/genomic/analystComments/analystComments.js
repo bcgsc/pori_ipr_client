@@ -6,7 +6,7 @@ app.controller('controller.dashboard.report.genomic.analystComments',
   
   $scope.pog = pog;
   $scope.analystComments = (analystComments || "");
-  
+
   // Editor Update Modal
   $scope.updateComments = ($event) => {
     
@@ -19,24 +19,12 @@ app.controller('controller.dashboard.report.genomic.analystComments',
       clickOutToClose: false,
       controller: ['$q', '_', '$scope', '$mdDialog', '$timeout', 'api.summary.analystComments', ($q, _, scope, $mdDialog, $timeout, $comments) => {
         
-        let simplemde = {};
-        
-        // Create Editor
-        $timeout(() => {
-          simplemde = new SimpleMDE({ element: document.getElementById("markup-editor") } );
-          
-          // Load in current value
-          simplemde.value($scope.analystComments.comments);
-          
-          console.log('Simple MDE', simplemde);
-        }, 10);
-        
-        
+        scope.analystComments = $scope.analystComments;
+
         // Cancel Dialog
         scope.cancel = () => {
           $mdDialog.cancel('Canceled Edit - No changes made.');
-        }
-        
+        };
         
         // Update Details
         scope.update = (f) => {
@@ -51,8 +39,8 @@ app.controller('controller.dashboard.report.genomic.analystComments',
             return;
           }
           
-          let updatedComment = {'comments': simplemde.value()}
-          
+          let updatedComment = {'comments': scope.analystComments.comments};
+
           console.log('Updating value with: ', updatedComment);
           
           $comments.update(pog.POGID, updatedComment).then(
