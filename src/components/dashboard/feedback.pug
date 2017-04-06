@@ -1,5 +1,5 @@
 md-dialog(layout="column", aria-label="Feedback", ng-cloak, flex=50)
-    form(flex='auto', name='form', ng-submit="send(form)")
+    form(flex='auto', name='form', novalidate, ng-submit="send(form)")
         md-toolbar
             .md-toolbar-tools
                 h2 Feedback
@@ -8,9 +8,9 @@ md-dialog(layout="column", aria-label="Feedback", ng-cloak, flex=50)
                     md-icon cancel
         md-dialog-content(layout-padding)
 
-            div The form is unfortunately not working at the moment, please send an email directly to:
+            //div The form is unfortunately not working at the moment, please send an email directly to:
                 a(href="mailto:bpierce@bcgsc.ca") bpierce@bcgsc.ca
-            div(layout="column", ng-show="false")
+            div(layout="column", ng-show="state === 'form'")
                 p Feedback is always appreciated!
                 p Filling out this form will automatically create a JIRA sub-task on your behalf in our tracking ticket. You will be notified of changes to this ticket.
 
@@ -36,7 +36,25 @@ md-dialog(layout="column", aria-label="Feedback", ng-cloak, flex=50)
                         label Message
                         textarea(ng-model="feedback.description", md-maxlength="450", rows="5", md-select-on-focus)
 
-            div(layout="column", ng-hide="showForm")
+            div(layout="column", ng-show="state === 'login'")
+
+                p The login we created for you with JIRA has gone stale, and needs to be renewed.
+                | Because we don't store your JIRA/GIN credentials, we'll need you to renew your login session.
+                | If the authentication is successful, we'll resubmit your feedback.
+
+                div(layout)
+                    md-input-container.md-icon-float(flex)
+                        label Username
+                        input(ng-model="user.username", name="username", type="text", placeholder="Username", required, ng-disabled="login.submitting")
+                        div(ng-show="login.badCredentials").input-error-message The supplied credentials failed to find a match in our records
+
+                div(layout)
+                    md-input-container.md-icon-float(flex)
+                        label Password
+                        input(ng-model="user.password", name="Password", type="password", placeholder="Password", required, ng-disabled="login.submitting")
+
+
+            div(layout="column", ng-show="state === 'issue'")
 
                 p Thanks for the feedback! The ticket has been created:
 
@@ -49,6 +67,8 @@ md-dialog(layout="column", aria-label="Feedback", ng-cloak, flex=50)
 
 
         md-dialog-actions(layout="row", layout-aligh="end center")
-            //md-button(type="submit", ng-show="showForm", ng-disabled="formSubmitted", ng-init="formSubmitted=false").md-primary.md-raised Send Feedback
-            md-button(ng-click="close()", ng-hide="showForm").md-primary.md-raised Done
-            md-button(ng-click="cancel()").md-primary.md-raised Close
+            md-button(ng-click="cancel()", ng-hide="state === 'issue'").md-primary.md-raised Cancel
+            span(flex)
+            md-button(type="submit", ng-show="state === 'form'", ng-disabled="formSubmitted", ng-init="formSubmitted=false").md-primary.md-raised Send Feedback
+            md-button(ng-click="close()", ng-show="state === 'issue'").md-primary.md-raised Done
+            md-button(ng-click="login()", ng-show="state === 'login'").md-primary.md-raised Authenticate
