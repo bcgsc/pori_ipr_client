@@ -52,5 +52,81 @@ app.factory('api.knowledgebase', ['_', '$http', '$q', (_, $http, $q) => {
     return deferred.promise;
   };
 
+  $kb.references = {
+
+    /**
+     * Get KB References
+     *
+     * Paginated interface
+     *
+     * @param {int} limit - Pagination records requested
+     * @param {int} offset - Pagination start point
+     * @returns {promise|collection} - Resolves with a collection
+     */
+    all: (limit, offset) => {
+      let deferred = $q.defer();
+
+      $http.get(api + '/references', {params: {limit: limit, offset: offset}}).then(
+        (result) => {
+          deferred.resolve(result.data);
+        },
+        (err) => {
+          deferred.reject(err);
+        }
+      );
+
+      return deferred.promise;
+    },
+
+    /**
+     * Get the count of references
+     *
+     * Informs pagination
+     *
+     * @returns {promise} - Resolves a key-value pair object with the amount of references
+     */
+    count: () => {
+      let deferred = $q.defer();
+
+      $http.get(api + '/references/count').then(
+        (result) => {
+          deferred.resolve(result.data);
+        },
+        (err) => {
+          deferred.reject(err);
+        }
+      );
+
+      return deferred.promise;
+    }
+  };
+
+  $kb.events = {
+
+    /**
+     * Get KB Events
+     *
+     * Paginated interface
+     *
+     * @param {int} limit - Pagination records requested
+     * @param {int} offset - Pagination start point
+     * @returns {promise|collection} - Resolves with a collection
+     */
+    all: (limit, offset) => {
+      let deferred = $q.defer();
+
+      $http.get(api + '/events', {params: {limit: limit, offset: offset}}).then(
+        (result) => {
+          deferred.resolve(result.data);
+        },
+        (err) => {
+          deferred.reject(err);
+        }
+      );
+
+      return deferred;
+    }
+  };
+
   return $kb;
 }]);
