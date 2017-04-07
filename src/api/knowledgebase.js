@@ -6,6 +6,26 @@ app.factory('api.knowledgebase', ['_', '$http', '$q', (_, $http, $q) => {
 
   let $kb = {};
 
+  /**
+   * Get controlled vocabulary JSON arrays
+   *
+   * @returns {Promise}
+   */
+  $kb.vocabulary = () => {
+    let deferred = $q.defer();
+
+    $http.get(api + '/controlled-vocabulary').then(
+      (result) => {
+        deferred.resolve(result.data);
+      },
+      (err) => {
+        deferred.reject(err);
+      }
+    );
+
+    return deferred.promise;
+  };
+
   $kb.validate = {
 
     /**

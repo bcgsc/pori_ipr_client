@@ -610,6 +610,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         }],
         ref_count: ['$q', 'api.knowledgebase', ($q, $kb) => {
           return $kb.references.count();
+        }],
+        vocabulary: ['$q', 'api.knowledgebase', ($q, $kb) => {
+          return $kb.vocabulary();
         }]
       }
     })
