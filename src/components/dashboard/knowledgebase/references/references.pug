@@ -17,7 +17,7 @@ md-content(layout="column", flex, layout-padding)
             div(flex="10") status
             div.spacer
 
-    div(flex, layout-fill).kbTable.rows
+    div(flex, layout-fill, id="kbViewerWindow").kbTable.rows
         div(ng-repeat="ref in references").rowContainer
             div(layout="row").row
                 div(flex="20")
@@ -74,12 +74,11 @@ md-content(layout="column", flex, layout-padding)
                 div(flex="10") {{ref.evidence}}
                 div(flex="10") {{ref.status}}
     div(layout="column").pagination
-        span Pagination
-        div(layout="row").page
-            span.pageButton <
-            span(ng-if="paginate.displayPages()[0] > 2").pageButton 1
-            span(ng-if="paginate.displayPages()[0] > 2") ...
-            span(ng-repeat="page in paginate.displayPages()", ng-class="{current: (page === paginate.current)}", ng-click="paginate.changePage(page)").pageButton {{page}}
+        div(layout="row", layout-align="center center").page
+            span(ng-if="paginate.current !== 1", ng-click="paginate.changePage(paginate.current-1)").pageButton.clickable <
+            span(ng-if="paginate.displayPages()[0] > 1", ng-click="paginate.changePage(1)").pageButton.clickable 1
+            span(ng-if="paginate.displayPages()[0] > 1") ...
+            span(ng-repeat="page in paginate.displayPages()", ng-class="{current: (page === paginate.current)}", ng-click="paginate.changePage(page)").pageButton.clickable {{page}}
             span(ng-if="paginate.displayPages()[paginate.displayPages().length-1] !== paginate.pages") ...
-            span(ng-if="paginate.displayPages()[paginate.displayPages().length-1] !== paginate.pages").pageButton {{paginate.pages}}
+            span(ng-if="paginate.displayPages()[paginate.displayPages().length-1] !== paginate.pages", ng-click="paginate.changePage(paginate.pages)").pageButton.clickable {{paginate.pages}}
             span(ng-click="paginate.changePage(paginate.current+1)").pageButton.clickable >
