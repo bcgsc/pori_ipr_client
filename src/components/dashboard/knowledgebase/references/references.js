@@ -1,4 +1,4 @@
-app.controller('knowledgebase.references', ['$q', '_', '$scope', '$sanitize', 'api.knowledgebase', 'references', 'ref_count', ($q, _, $scope, $sanitize, $kb, references, ref_count) => {
+app.controller('knowledgebase.references', ['$rootScope', '$q', '_', '$scope', '$sanitize', 'api.knowledgebase', 'references', 'ref_count', ($rootScope, $q, _, $scope, $sanitize, $kb, references, ref_count) => {
 
   $scope.references = [];
 
@@ -79,7 +79,7 @@ app.controller('knowledgebase.references', ['$q', '_', '$scope', '$sanitize', 'a
 
   let $paginate = {
     current: 1,         // current page
-    limit: 250,         // # of records per page
+    limit: 150,         // # of records per page
     offset: 0,          // Current offset
     pages: 0,           // Total Pages
     records: ref_count.references, // Total References
@@ -121,16 +121,23 @@ app.controller('knowledgebase.references', ['$q', '_', '$scope', '$sanitize', 'a
      */
     changePage: (target) => {
 
+      $rootScope.showLoader = true;
+
       // Attempt to load the next page
       let startRecord = $paginate.limit * target;
 
       $kb.references.all($paginate.limit, startRecord).then(
         (results) => {
+
+          var myDiv = document.getElementById('kbViewerWindow');
+          myDiv.scrollTop = 0;
+
           $scope.references = [];
           // Process References
           processReferences(results);
 
           $paginate.current = target;
+          $rootScope.showLoader = false;
         },
         (err) => {
 

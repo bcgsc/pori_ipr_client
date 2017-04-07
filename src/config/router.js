@@ -606,7 +606,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       templateUrl: 'dashboard/knowledgebase/references/references.html',
       resolve: {
         references: ['$q', 'api.knowledgebase', ($q, $kb) => {
-          return $kb.references.all(250, 0);
+          return $kb.references.all(150, 0);
         }],
         ref_count: ['$q', 'api.knowledgebase', ($q, $kb) => {
           return $kb.references.count();
