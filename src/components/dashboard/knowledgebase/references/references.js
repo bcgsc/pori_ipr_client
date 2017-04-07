@@ -61,7 +61,26 @@ app.controller('knowledgebase.references',
     return (ref.events_expression.ors.length > 1 || ref.events_expression.ands.length > 1);
   };
 
-  console.log('Total references:', ref_count);
+  // Open Filters Modal
+  $scope.openFilters = ($event) => {
+    $mdDialog.show({
+      targetEvent: $event,
+      templateUrl: 'dashboard/knowledgebase/references/references.filter.html',
+      locals: {
+        filters: filters,
+        vocabulary: vocabulary
+      },
+      clickOutToClose: false,
+      controller: ['$q', '_', '$scope', '$mdDialog', 'vocabulary', ($q, _, scope, $mdDialog, vocabulary) => {
+        scope.cancel = () => {
+          $mdDialog.hide();
+        }
+
+        console.log("Vocab:", vocabulary);
+      }]
+    });
+
+  };
 
   let $paginate = {
     current: 1,         // current page

@@ -1,0 +1,23 @@
+md-dialog(layout="column", aria-label="Knowledgebase References Filters", ng-cloak, flex=85).kbDialog
+    form(flex='auto', name='form', ng-submit="update(form)")
+        md-toolbar
+            .md-toolbar-tools
+                h2 Reference Filters
+                span(flex)
+                md-button.md-icon-button(ng-click='cancel()')
+                    md-icon cancel
+        md-dialog-content(layout-padding).filters
+            div(layout="row") Multiple different types of selected filters will work in an "and" union together.
+            div(layout="row")
+                div(layout="column", flex) type (list:many)
+                div(layout="column", flex) relevance (list:many)
+                div(layout="column", flex) disease_list (list:many)
+                div(layout="column", flex) context (freeform:many)
+                div(layout="column", flex) evidence (freeform:many)
+                div(layout="column", flex) status (list:many)
+                div(layout="column", flex) events_expression (freeform:many)
+
+
+        md-dialog-actions(layout="row", layout-aligh="end center", layout-padding)
+            md-button(type="submit").md-primary Close
+
