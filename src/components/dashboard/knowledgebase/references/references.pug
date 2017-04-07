@@ -1,11 +1,14 @@
-md-content(layout="column", flex, layout-padding)
+md-content(layout="column", flex)
 
     div(layout="column")
-        h1 References
-        div(layout="row")
-            span(flex) Filter
-            span(flex) Options
-            span(flex) Search
+        div.options
+            h1.title KB.
+                span.subject References
+
+            div(layout="row").filters
+                span(flex)
+                    md-button(ng-click="openFilters($event)").md-raised.md-primary Filters
+                span(flex) Search
 
         div(layout="row").kbTable.header
             div(flex="20") events_expression
@@ -18,7 +21,7 @@ md-content(layout="column", flex, layout-padding)
             div.spacer
 
     div(flex, layout-fill, id="kbViewerWindow").kbTable.rows
-        div(ng-repeat="ref in references").rowContainer
+        div(ng-repeat="ref in references", ng-class="{incorrect: ref.status.toLowerCase().indexOf('incorrect') !== -1}").rowContainer
             div(layout="row").row
                 div(flex="20")
                     div(ng-click="showEvExDropper(ref)", ng-class="{clickable: hasChildren(ref)}")
@@ -34,19 +37,22 @@ md-content(layout="column", flex, layout-padding)
                             li(ng-if="ref.events_expression.ors.length > 1", ng-repeat="(k, event) in ref.events_expression.ors track by $index")
 
                                 // Is there only 1 entry in this? (suggesting no nested "ands")
-                                div(ng-if="$index !== 0 && event.length === 1").text-small.orBetween or
+                                div(ng-if="$index !== 0 && event.length === 1").text-small.orBetween
+                                    span or
                                 span(ng-if="event.length === 1")  {{event[0]}}
 
                                 // Are there nested "ands" in this?
                                 div(ng-if="event.length > 1", ng-repeat="(i, a) in event track by $index").andGroup
                                     // Only display or on subsequent entries
-                                    div(ng-if="i === 0 && k !== 0").text-small.orBetween or
-                                    span(ng-if="i !== 0").text-small and
+                                    div(ng-if="i === 0 && k !== 0").text-small.orBetween
+                                        span or
+                                    span(ng-if="i !== 0").text-small.andInline and
                                     span {{a}}
 
                             // Are there "ands" children?
                             li(ng-if="ref.events_expression.ands.length > 1", ng-repeat="(k, event) in ref.events_expression.ands track by $index")
-                                div(ng-if="$index !== 0").text-small.orBetween and
+                                div(ng-if="$index !== 0").text-small.orBetween
+                                    span and
                                 span {{event}}
 
                 div(flex="10") {{ref.type}}
@@ -72,13 +78,15 @@ md-content(layout="column", flex, layout-padding)
                             li(ng-repeat="(k, disease) in ref.disease_list track by $index") {{disease}}
 
                 div(flex="10") {{ref.evidence}}
-                div(flex="10") {{ref.status}}
+                div(flex="10", ng-class="{ '{{ref.status.toLowerCase()}}' : true}", layout-align="center start", layout="column").status
+                    span {{ref.status}}
+
     div(layout="column").pagination
         div(layout="row", layout-align="center center").page
             span(ng-if="paginate.current !== 1", ng-click="paginate.changePage(paginate.current-1)").pageButton.clickable <
             span(ng-if="paginate.displayPages()[0] > 1", ng-click="paginate.changePage(1)").pageButton.clickable 1
             span(ng-if="paginate.displayPages()[0] > 1") ...
             span(ng-repeat="page in paginate.displayPages()", ng-class="{current: (page === paginate.current)}", ng-click="paginate.changePage(page)").pageButton.clickable {{page}}
-            span(ng-if="paginate.displayPages()[paginate.displayPages().length-1] !== paginate.pages") ...
-            span(ng-if="paginate.displayPages()[paginate.displayPages().length-1] !== paginate.pages", ng-click="paginate.changePage(paginate.pages)").pageButton.clickable {{paginate.pages}}
-            span(ng-click="paginate.changePage(paginate.current+1)").pageButton.clickable >
+            span(ng-if="paginate.displayPages()[paginate.displayPages().length-1] !== paginate.pages && paginate.current !== paginate.pages") ...
+            span(ng-if="paginate.displayPages()[paginate.displayPages().length-1] !== paginate.pages", ng-click="paginate.changePage(paginate.pages)", ng-class="{current: (paginate.pages === paginate.current)}").pageButton.clickable {{paginate.pages}}
+            span(ng-click="paginate.changePage(paginate.current+1)", ng-show="paginate.current !== paginate.pages").pageButton.clickable >

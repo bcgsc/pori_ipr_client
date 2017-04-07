@@ -1,22 +1,9 @@
-app.controller('knowledgebase.references', ['$rootScope', '$q', '_', '$scope', '$sanitize', 'api.knowledgebase', 'references', 'ref_count', ($rootScope, $q, _, $scope, $sanitize, $kb, references, ref_count) => {
+app.controller('knowledgebase.references',
+['$rootScope', '$q', '_', '$scope', '$sanitize', '$mdDialog', '$mdToast', 'api.knowledgebase', 'references', 'ref_count', 'vocabulary',
+($rootScope, $q, _, $scope, $sanitize, $mdDialog, $mdToast, $kb, references, ref_count, vocabulary) => {
 
   $scope.references = [];
-
-  let groupAnds = (andGroups) => {
-    returnandGroups.split('&');
-  };
-
-  /*
-
-   {
-     "ors": [
-       [], // 1st and group
-       [], // nth and group
-     ],
-       "ands": [] // only 1 and group
-   }
-
-   */
+  let filters = {};
 
   // Loop over references and process groups
   let processReferences = (references) => {
@@ -33,7 +20,6 @@ app.controller('knowledgebase.references', ['$rootScope', '$q', '_', '$scope', '
 
           // Are there any "and" operators?
           if (orGroup.indexOf('&') > -1) {
-            console.log('Something Interesting', k);
             // Explode!
             refs.ors[i] = orGroup.split('&');
           } else {
@@ -124,13 +110,13 @@ app.controller('knowledgebase.references', ['$rootScope', '$q', '_', '$scope', '
       $rootScope.showLoader = true;
 
       // Attempt to load the next page
-      let startRecord = $paginate.limit * target;
+      let startRecord = $paginate.limit * (target-1); // -1 as we're 0 based.
 
       $kb.references.all($paginate.limit, startRecord).then(
         (results) => {
 
-          var myDiv = document.getElementById('kbViewerWindow');
-          myDiv.scrollTop = 0;
+          let rowsWindow = document.getElementById('kbViewerWindow');
+          rowsWindow.scrollTop = 0;
 
           $scope.references = [];
           // Process References
@@ -147,10 +133,7 @@ app.controller('knowledgebase.references', ['$rootScope', '$q', '_', '$scope', '
   };
 
   processReferences(references);
-
   $paginate.calcPages();
   $scope.paginate = $paginate;
-
-  console.log('Pagination setup', $paginate);
 
 }]);
