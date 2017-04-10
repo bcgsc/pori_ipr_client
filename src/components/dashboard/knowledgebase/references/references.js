@@ -74,9 +74,39 @@ app.controller('knowledgebase.references',
       controller: ['$q', '_', '$scope', '$mdDialog', 'vocabulary', ($q, _, scope, $mdDialog, vocabulary) => {
         scope.cancel = () => {
           $mdDialog.hide();
-        }
+        };
 
-        console.log("Vocab:", vocabulary);
+        scope.vocabulary = vocabulary;
+
+        // Transform chip for auto complete
+        scope.transformChip = (disease) => {
+          // If it is an object, it's already a known chip
+          if (angular.isObject(disease)) return disease;
+
+          // Otherwise, create a new one
+          return { disease: disease, type: 'new' }
+        };
+
+        scope.disease = {};
+
+        // Auto-complete search filter
+        scope.disease.filter = (query) => {
+          let deferred = $q.defer();
+          if(query.length < 3) deferred.resolve([]);
+
+          if(query.length >= 3) {
+            $kb.diseaseOntology(query).then(
+              (entries) => {
+                deferred.resolve(entries);
+              },
+              (err) => {
+                console.log('Unable to search for disease-ontology entries', err);
+              }
+            );
+          }
+          return deferred.promise;
+        };
+
       }]
     });
 
