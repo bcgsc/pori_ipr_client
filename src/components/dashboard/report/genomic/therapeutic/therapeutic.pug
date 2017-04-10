@@ -19,7 +19,7 @@ section.therapeuticTargets
                     h5 Biomarker
                     div(layout="column").markers
                         div(ng-repeat="marker in th.biomarker", layout="row")
-                            div.entry {{marker.entry}}
+                            div(ng-if="marker.entry").entry {{marker.entry}}
                             div(layout="column").context
                                 span(ng-repeat="c in marker.context") {{c}}
 
@@ -47,7 +47,7 @@ section.therapeuticTargets
                 h5 Biomarker
                 div(layout="column").markers
                     div(ng-repeat="marker in ch.biomarker", layout="row")
-                        div.entry {{marker.entry}}
+                        div(ng-if="marker.entry").entry {{marker.entry}}
                         div(layout="column").context
                             span(ng-repeat="c in marker.context") {{c}}
             div(flex)

@@ -27,16 +27,21 @@ md-dialog(layout="column", aria-label="Update Therapeutic Target", ng-cloak, fle
                         md-items="entry in geneVar.filter(geneVar.searchText)",
                         md-item-text="entry",
                         md-select-on-match="'true'",
-                        placeholder="New Target"
+                        placeholder="New Target",
+                        md-delay=200
                         )
                             span(md-highlight-text="geneVar.searchText") {{entry}}
                         md-chip-template
                             strong {{$chip.geneVar}}
 
                 div(layout="row", flex, ng-if="type=='therapeutic'")
+                    md-input-container(flex)
+                        input(ng-model="entry.targetContext", placeholder="Pathway/Context")
+
+                //div(layout="row", flex, ng-if="type=='therapeutic'")
                     md-autocomplete(
-                    md-input-name="geneTarget",
                     md-selected-item="entry.targetContext",
+                    md-require-match=false,
                     md-search-text="geneTarget.searchText",
                     md-items="entry in geneTarget.filter(geneTarget.searchText)",
                     md-item-text="entry",
@@ -91,7 +96,10 @@ md-dialog(layout="column", aria-label="Update Therapeutic Target", ng-cloak, fle
                         flex
                         )
                             span(md-highlight-text="biomarker.searchText") {{entry}}
-                        div(flex)
+                        div(flex, layout="row")
+                            md-select(ng-model="new.biomarkerContextValue", flex, ng-change="newBiomarkerContext(null)", placeholder="New Value")
+                                md-option(ng-repeat="context in bioMarkerContexts", ng-value="context.entry") {{context.entry}}
+                                    span.option-description {{context.description}}
 
                 md-input-container(layout="row").md-block
                     textarea(ng-model="entry.notes", name="Notes", placeholder="Entry Notes", rows=1, md-maxlength=150)

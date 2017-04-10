@@ -44,6 +44,14 @@ app.controller('controller.dashboard.report.genomic.therapeutic.edit',
   };
 
   scope.newBiomarkerContext = (marker) => {
+
+    // New Biomarker Entry
+    if(marker===null) {
+      scope.entry.biomarker.push({entry: null, context: [scope.new.biomarkerContextValue]});
+      scope.new.biomarkerContextValue = null; // Blank out!
+      return;
+    }
+
     if(scope.new.biomarkerContextValue === null) return;
     scope.entry.biomarker[marker].context.push(scope.new.biomarkerContextValue); // Add new entry
     scope.new.biomarkerContextValue = null; // Blank out!
