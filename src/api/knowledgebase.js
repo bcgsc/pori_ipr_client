@@ -72,6 +72,27 @@ app.factory('api.knowledgebase', ['_', '$http', '$q', (_, $http, $q) => {
     return deferred.promise;
   };
 
+  /**
+   * Search the disease ontology list
+   *
+   * @param {string} query - Input string to search DB against
+   * @returns {Promise|array} - Resolves an array of text values
+   */
+  $kb.diseaseOntology = (query) => {
+    let deferred = $q.defer();
+
+    $http.get(api + '/disease-ontology?query=' + query).then(
+      (result) =>{
+        deferred.resolve(result.data);
+      },
+      (err) => {
+        deferred.reject(err);
+      }
+    );
+
+    return deferred.promise;
+  };
+
   $kb.references = {
 
     /**
