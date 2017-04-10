@@ -84,7 +84,7 @@ app.controller('knowledgebase.references',
 
   let $paginate = {
     current: 1,         // current page
-    limit: 150,         // # of records per page
+    limit: 100,         // # of records per page
     offset: 0,          // Current offset
     pages: 0,           // Total Pages
     records: ref_count.references, // Total References
