@@ -1,0 +1,49 @@
+md-dialog(layout="column", aria-label="Knowledgebase Reference Viewer", ng-cloak, flex=85).kbDialog
+    form(flex='auto', name='form', ng-submit="update(form)")
+        md-toolbar
+            .md-toolbar-tools
+                h2 Knowledgebase Reference Viewer
+                span(flex)
+                md-button.md-icon-button(ng-click='cancel()')
+                    md-icon cancel
+        md-dialog-content.filters
+
+            h2.title Matching Criteria
+
+            div(layout="row").rowCard
+                div(flex=60, layout="column")
+                    h5 Events Expression
+                    div(flex, layout="row") {{reference.events_expression}}
+
+                div(flex)
+                    h5 Status
+                    span {{reference.status}}
+
+            div(layout="row").rowCard
+                div(flex=50, layout="column")
+                    h5  Disease
+                    div(flex, layout="row") {{reference.disease_list}}
+
+                div(flex=50, layout="column")
+                    h5 Context
+                    div(layout="column") {{reference.context}}
+
+            div(layout="row").rowCard
+                div(flex=35, layout="column")
+                    h5 Type
+                    div(flex, layout="row") {{reference.type}}
+
+                div(flex=30, layout="column")
+                    h5 Relevance
+                    div(layout="column") {{reference.relevance}}
+
+                div(flex=35)
+                    h5 Evidence
+                    span {{reference.evidence}}
+
+            h2.title Reference Details
+
+
+        md-dialog-actions(layout="row", layout-aligh="end center", layout-padding)
+            md-button(ng-click="cancel()").md-primary Close
+
