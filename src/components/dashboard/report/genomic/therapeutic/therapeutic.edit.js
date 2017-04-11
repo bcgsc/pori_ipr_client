@@ -11,8 +11,8 @@ app.controller('controller.dashboard.report.genomic.therapeutic.edit',
     {entry: 'underexpressed', description:'a low fold-change alone is of significance'},
     {entry: 'high percentile', description:'high percentile alone is of significance'},
     {entry: 'low percentile', description:'low percentile alone is of significance'},
-    {entry: 'outlier', description:'high outlier by both percentile and fold change'},
-    {entry: 'outlier', description:'low outlier by both percentile and fold change'},
+    {entry: 'outlier high', description:'high outlier by both percentile and fold change'},
+    {entry: 'outlier low', description:'low outlier by both percentile and fold change'},
     {entry: 'amp amplification', description:'(usually focal or extreme copy number)'},
     {entry: 'hom-del', description:'homozygous deletion (reviewed as real)'},
     {entry: 'copy gain', description:'any copy gain deemed significant'},
@@ -27,8 +27,6 @@ app.controller('controller.dashboard.report.genomic.therapeutic.edit',
     {entry: 'mutation signature', description:'any significant mutation signature (specify type in previous field)'},
     {entry: 'mutation burden', description:'any significant mutation burden'}
   ].sort();
-
-  console.log(scope.bioMarkerContexts);
 
   scope.new = {
     biomarkerContextValue: null,
