@@ -57,7 +57,7 @@ md-dialog(layout="column", aria-label="Update Therapeutic Target", flex=85).edit
 
                 div.biomarkers
                     h3 Biomarkers
-                    div(layout="row", flex, ng-repeat="(i, marker) in entry.biomarker track by $index").marker
+                    div(layout="row", flex, ng-repeat="(i, marker) in entry.biomarker track by i").marker
                         div(style="padding-top: 10px;")
                             md-icon(ng-click="removeBiomarker(i)") delete
                                 md-tooltip Remove biomarker entry
@@ -73,14 +73,14 @@ md-dialog(layout="column", aria-label="Update Therapeutic Target", flex=85).edit
                             span(md-highlight-text="biomarker.searchText") {{entry}}
                         div(layout="column", flex).contexts
                             div(ng-repeat="(k, c) in marker.context track by $index", flex, layout="row")
-                                md-select(ng-model="entry.biomarker[i].context[k]", flex)
+                                md-select(ng-model="entry.biomarker[i].context[k]", flex, aria-label="Biomarker context")
                                     md-option(ng-repeat="context in bioMarkerContexts", ng-value="context.entry") {{context.entry}}
                                         span.option-description {{context.description}}
                                 md-icon(ng-click="removeBiomarkerContext(i, k)") delete
                                     md-tooltip Remove biomarker context entry
 
                             div(flex, layout="row")
-                                md-select(ng-model="new.biomarkerContextValue", flex, ng-change="newBiomarkerContext(i)", placeholder="New Value")
+                                md-select(ng-model="new.biomarkerContextValue", flex, ng-change="newBiomarkerContext(i)", placeholder="New Value", aria-label="Biomarker context")
                                     md-option(ng-repeat="context in bioMarkerContexts", ng-value="context.entry") {{context.entry}}
                                         span.option-description {{context.description}}
                                 md-icon sdf
