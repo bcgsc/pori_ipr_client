@@ -1,5 +1,5 @@
-md-dialog(layout="column", aria-label="Update Therapeutic Target", ng-cloak, flex=85).editor.therapeuticTargets
-    form(flex='auto', name='form', ng-submit="update(form)")
+md-dialog(layout="column", aria-label="Update Therapeutic Target", flex=85).editor.therapeuticTargets
+    form(flex='auto', name='form')
         md-toolbar
             .md-toolbar-tools
                 h2 Update Therapeutic Target
@@ -18,7 +18,8 @@ md-dialog(layout="column", aria-label="Update Therapeutic Target", ng-cloak, fle
                     md-transform-chip="transformChip($chip)",
                     md-removable="'true'",
                     md-on-add="newTag($chip)",
-                    md-on-remove="removeTag($chip)"
+                    md-on-remove="removeTag($chip)",
+                    md-add-on-blur=true
                     flex
                     )
                         md-autocomplete(

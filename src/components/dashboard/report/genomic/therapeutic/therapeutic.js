@@ -38,7 +38,33 @@ app.controller('controller.dashboard.report.genomic.therapeutic',
       },
       templateUrl: 'dashboard/report/genomic/therapeutic/therapeutic.edit.html',
       controller: 'controller.dashboard.report.genomic.therapeutic.edit'
-    });
+    }).then(
+      (result) => {
+        // If an existing entry was updated
+        if(result.status === 'updated') {
+          let data = result.data;
+
+          if(data.type === 'therapeutic') data.target = cleanTargets(data.target);
+
+          // Loop over entries in type, find matching ident, and replace
+          _.forEach($scope.therapeutic[data.type], (e, i) => {
+            if(e.ident === data.ident) $scope.therapeutic[data.type][i] = e;
+          });
+
+          $mdToast.show($mdToast.simple({textContent: 'Changes saved'}));
+        }
+
+        // Removing an entry
+        if(result.status === 'deleted') {
+          let data = result.data;
+         _.remove($scope.therapeutic[data.type], (e) => {return (e.ident === data.ident); });
+          $mdToast.show($mdToast.simple({textContent: 'The entry has been removed'}));
+        }
+      },
+      () => {
+        $mdToast.show($mdToast.simple({textContent: 'No changes were made.'}));
+      }
+    );
   };
 
   /**
@@ -70,44 +96,18 @@ app.controller('controller.dashboard.report.genomic.therapeutic',
       controller: 'controller.dashboard.report.genomic.therapeutic.edit'
     }).then(
       (result) => {
-        console.log('Closing Dialog Result', result);
+        let data = result.data;
 
-        // If a new entry was created
-        if(result.status === 'create') {
-          let data = result.data;
-
-          // If therapeutic
-          if(data.type === 'therapeutic') {
-            data.target = cleanTargets(data.target);
-            $scope.therapeutic.therapeutic.push(data);
-          }
-          if(data.type === 'chemoresistance') $scope.therapeutic.chemoresistance.push(data);
-
-          $mdToast.show($mdToast.simple({textContent: 'New entry saved'}));
+        // If therapeutic
+        if(data.type === 'therapeutic') {
+          data.target = cleanTargets(data.target);
+          $scope.therapeutic.therapeutic.push(data);
         }
+        if(data.type === 'chemoresistance') $scope.therapeutic.chemoresistance.push(data);
 
-        // If an existing entry was updated
-        if(result.status === 'updated') {
-          let data = result.data;
-
-          if(data.type === 'therapeutic') data.target = cleanTargets(data.target);
-
-          // Loop over entries in type, find matching ident, and replace
-          _.forEach($scope.therapeutic[data.type], (e, i) => {
-            if(e.ident === data.ident) $scope.therapeutic[data.type][i] = e;
-          });
-
-          $mdToast.show($mdToast.simple({textContent: 'Changes saved'}));
-        }
-
-        // Removing an entry
-        if(result.status === 'deleted') {
-          $scope.therapeutic[data.type] = _.remove($scope.therapeutic[data.type], {ident: data.ident});
-          $mdToast.show($mdToast.simple({textContent: 'The entry has been removed'}));
-        }
-
+        $mdToast.show($mdToast.simple({textContent: 'New entry saved'}));
       },
-      () => {
+      (cancel) => {
         $mdToast.show($mdToast.simple({textContent: 'No changes were made'}));
       }
     );
