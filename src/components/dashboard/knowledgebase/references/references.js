@@ -3,7 +3,6 @@ app.controller('knowledgebase.references',
 ($rootScope, $q, _, $scope, $sanitize, $mdDialog, $mdToast, $kb, references, ref_count, vocabulary) => {
 
   $scope.references = [];
-  let filters = {};
 
   // Loop over references and process groups
   let processReferences = (references) => {
@@ -67,48 +66,43 @@ app.controller('knowledgebase.references',
       targetEvent: $event,
       templateUrl: 'dashboard/knowledgebase/references/references.filter.html',
       locals: {
-        filters: filters,
+        filters: $paginate.filters,
         vocabulary: vocabulary
       },
       clickOutToClose: false,
-      controller: ['$q', '_', '$scope', '$mdDialog', 'vocabulary', ($q, _, scope, $mdDialog, vocabulary) => {
-        scope.cancel = () => {
-          $mdDialog.hide();
-        };
+      controller: 'knowledgebase.references.filter'
+    }).then(
+      // Save Filters
+      (filters) => {
+        $paginate.setFilters(filters); // Updated Filters
+        $paginate.updateFilters(); // Refresh Pagination
+      },
+      // Cancel
+      () => {
 
-        scope.vocabulary = vocabulary;
+      }
+    );
+  };
 
-        // Transform chip for auto complete
-        scope.transformChip = (disease) => {
-          // If it is an object, it's already a known chip
-          if (angular.isObject(disease)) return disease;
+  // Open Filters Modal
+  $scope.openView = ($event, reference) => {
+    $mdDialog.show({
+      targetEvent: $event,
+      templateUrl: 'dashboard/knowledgebase/references/references.view.html',
+      locals: {
+        reference: reference
+      },
+      clickOutToClose: false,
+      controller: 'knowledgebase.references.view'
+    }).then(
+      // Save Filters
+      () => {
+      },
+      // Cancel
+      () => {
 
-          // Otherwise, create a new one
-          return { disease: disease, type: 'new' }
-        };
-
-        scope.disease = {};
-
-        // Auto-complete search filter
-        scope.disease.filter = (query) => {
-          let deferred = $q.defer();
-          if(query.length < 3) deferred.resolve([]);
-
-          if(query.length >= 3) {
-            $kb.diseaseOntology(query).then(
-              (entries) => {
-                deferred.resolve(entries);
-              },
-              (err) => {
-                console.log('Unable to search for disease-ontology entries', err);
-              }
-            );
-          }
-          return deferred.promise;
-        };
-
-      }]
-    });
+      }
+    );
 
   };
 
@@ -117,13 +111,14 @@ app.controller('knowledgebase.references',
     limit: 100,         // # of records per page
     offset: 0,          // Current offset
     pages: 0,           // Total Pages
-    records: ref_count.references, // Total References
+    records: ref_count.references, // Total References,
+    filters: {},        // Filters
 
     /**
      * Setup the page count
      */
     calcPages: () => {
-      $paginate.pages = _.floor(parseInt(ref_count.references)/$paginate.limit);
+      $paginate.pages = _.ceil(parseInt($paginate.records)/$paginate.limit);
     },
 
     /**
@@ -145,10 +140,57 @@ app.controller('knowledgebase.references',
     },
 
     /**
-     * Next Page
+     * Update Count
      */
-    nextPage: () => {
+    updateCount: () => {
+      $kb.references.count($paginate.filters).then(
+        (count) => {
+          $paginate.records = count.references;
+          $paginate.calcPages(); // Recount Pages
+        },
+        (err) => {
 
+        }
+      )
+    },
+
+    /**
+     * Set Filters
+     *
+     * @param {object} filters - Hashmap of filter query values
+     */
+    setFilters: (filters) => {
+      let newFilters = {};
+      _.forEach(filters, (value, filter) => {
+        if(value.length > 0) newFilters[filter] = value;
+      });
+
+      // Did the user clear the filters?
+      if(_.size(newFilters) === 0) return $paginate.filters = {};
+
+      $paginate.filters = newFilters;
+
+    },
+
+    /**
+     * Updated filters
+     */
+    updateFilters: () => {
+      $paginate.updateCount();
+      $paginate.changePage(1);
+    },
+
+    /**
+     * Remove a filter
+     *
+     * @param {string} filter - The filter type to be spliced
+     * @param {int} i - The array ID to be spliced
+     */
+    removeFilter: (filter, i) => {
+      $paginate.filters[filter].splice(i,1);
+      // If it's now empty, remove it
+      if($paginate.filters[filter].length === 0) delete $paginate.filters[filter];
+      $paginate.updateFilters(); // Refresh Pagination
     },
 
     /**
@@ -161,7 +203,7 @@ app.controller('knowledgebase.references',
       // Attempt to load the next page
       let startRecord = $paginate.limit * (target-1); // -1 as we're 0 based.
 
-      $kb.references.all($paginate.limit, startRecord).then(
+      $kb.references.all($paginate.limit, startRecord, $paginate.filters).then(
         (results) => {
 
           let rowsWindow = document.getElementById('kbViewerWindow');

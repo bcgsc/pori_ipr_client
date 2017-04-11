@@ -6,12 +6,20 @@ md-content(layout="column", flex)
                 span.subject References
 
             div(layout="row").filters
+                span
+                    md-button(ng-click="openFilters($event)").md-raised.md-primary Set Filters
                 span(flex)
-                    md-button(ng-click="openFilters($event)").md-raised.md-primary Filters
-                span(flex) Search
+                div(layout="row")
+                    span(ng-repeat="(filter, values) in paginate.filters").filterEntry
+                        |{{filter}}: (
+                        span(ng-repeat="(i, v) in values").filterValue
+                            | {{v}}
+                            span(ng-click="paginate.removeFilter(filter, i)").remove x
+                        | )
 
         div(layout="row").kbTable.header
-            div(flex="20") events_expression
+            div(style="width: 25px;")
+            div(flex) events_expression
             div(flex="10") type
             div(flex="10") relevance
             div(flex="20") context
@@ -23,12 +31,15 @@ md-content(layout="column", flex)
     div(flex, layout-fill, id="kbViewerWindow").kbTable.rows
         div(ng-repeat="ref in references", ng-class="{incorrect: ref.status.toLowerCase().indexOf('incorrect') !== -1}").rowContainer
             div(layout="row").row
-                div(flex="20")
-
+                div(style="width: 25px;", layout="column", layout-align="center center").open
+                    md-icon(ng-click="openView($event, ref)").text-xsmall open_in_new
+                div(flex)
+                    // If there are no children, don't make anything with watchers
                     div(ng-if="!hasChildren(ref)")
-                        span(ng-if="ref.events_expression.ands.length === 0") ({{$index}}) {{ref.events_expression.ors[0][0]}}
-                        span(ng-if="ref.events_expression.ands.length > 0") ({{$index}}) {{ref.events_expression.ands[0]}}
+                        span(ng-if="ref.events_expression.ands.length === 0") {{ref.events_expression.ors[0][0]}}
+                        span(ng-if="ref.events_expression.ands.length > 0") {{ref.events_expression.ands[0]}}
 
+                    // Watcher heavy, since there are children
                     div(ng-if="hasChildren(ref)")
 
                         div(ng-click="showEvExDropper(ref)", ng-init="ref.showEEs=false").clickable
@@ -104,6 +115,7 @@ md-content(layout="column", flex)
             span(ng-if="paginate.displayPages()[0] > 1", ng-click="paginate.changePage(1)").pageButton.clickable 1
             span(ng-if="paginate.displayPages()[0] > 1") ...
             span(ng-repeat="page in paginate.displayPages()", ng-class="{current: (page === paginate.current)}", ng-click="paginate.changePage(page)").pageButton.clickable {{page}}
-            span(ng-if="paginate.displayPages()[paginate.displayPages().length-1] !== paginate.pages && paginate.current !== paginate.pages") ...
+            span(ng-if="paginate.displayPages()[paginate.displayPages().length-1] !== paginate.pages && paginate.current !== paginate.pages && paginate.pages > 8") ...
             span(ng-if="paginate.displayPages()[paginate.displayPages().length-1] !== paginate.pages", ng-click="paginate.changePage(paginate.pages)", ng-class="{current: (paginate.pages === paginate.current)}").pageButton.clickable {{paginate.pages}}
             span(ng-click="paginate.changePage(paginate.current+1)", ng-show="paginate.current !== paginate.pages").pageButton.clickable >
+            span.text-xsmall Total entries: {{paginate.records}}
