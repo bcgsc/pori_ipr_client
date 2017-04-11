@@ -102,12 +102,24 @@ app.factory('api.knowledgebase', ['_', '$http', '$q', (_, $http, $q) => {
      *
      * @param {int} limit - Pagination records requested
      * @param {int} offset - Pagination start point
+     * @param {object} filters - Query string filter arguments
      * @returns {promise|collection} - Resolves with a collection
      */
-    all: (limit, offset) => {
+    all: (limit=100, offset=0, filters={}) => {
       let deferred = $q.defer();
+      let processFilters = {};
 
-      $http.get(api + '/references', {params: {limit: limit, offset: offset}}).then(
+      // Process Filters
+      _.forEach(filters, (value, filter) => {
+        processFilters[filter] = _.join(value,',');
+      });
+
+
+      let opts = {params: processFilters};
+      opts.params.limit = limit;
+      opts.params.offset = offset;
+
+      $http.get(api + '/references', opts).then(
         (result) => {
           deferred.resolve(result.data);
         },
@@ -126,10 +138,19 @@ app.factory('api.knowledgebase', ['_', '$http', '$q', (_, $http, $q) => {
      *
      * @returns {promise} - Resolves a key-value pair object with the amount of references
      */
-    count: () => {
+    count: (filters={}) => {
       let deferred = $q.defer();
+      let processFilters = {};
 
-      $http.get(api + '/references/count').then(
+      // Process Filters
+      _.forEach(filters, (value, filter) => {
+        processFilters[filter] = _.join(value,',');
+      });
+
+
+      let params = {params: processFilters};
+
+      $http.get(api + '/references/count', params).then(
         (result) => {
           deferred.resolve(result.data);
         },
