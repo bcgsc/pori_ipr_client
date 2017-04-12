@@ -48,10 +48,42 @@ md-dialog.editor {
   }
 }
 
+.comma-between:after {
+  content:',';
+  padding: 0 2px;
+}
+.comma-between:last-of-type:after {
+  content: normal;
+  padding: 0;
+}
+
 .option-description {
   color: rgb(150,150,150);
   padding-left: 10px;
   font-size: 0.85em;
+}
+
+.pill {
+  background-color: rgb(200,200,200);
+  border-radius: 3px;
+  margin: 2px 3px;
+  padding: 3px 6px;
+  display: inline-block;
+  line-height: 130%;
+  font-weight: 300;
+
+  &.white {
+    color: rgb(60,60,60);
+    background-color: rgb(255,255,255);
+  }
+  &.blue {
+    color: rgb(31, 58, 147);
+    background-color: rgb(196, 228, 244);
+  }
+  &.green {
+    color: rgb(19, 78, 36);
+    background-color: rgb(179, 224, 183);
+  }
 }
 
 .text-center { text-align: center; }
