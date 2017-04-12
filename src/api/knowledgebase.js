@@ -93,6 +93,30 @@ app.factory('api.knowledgebase', ['_', '$http', '$q', (_, $http, $q) => {
     return deferred.promise;
   };
 
+  /**
+   * Get history for a data entry
+   *
+   * @param {string} type - The type of entry to lookup history for (entry, reference)
+   * @param {string} ident - The UUIDv4 identification string
+   * @returns {Promise} - Resolves with the history array
+   */
+  $kb.history = (type, ident) => {
+
+    let deferred = $q.defer();
+
+    $http.get(api + '/history', {params: { type:type, entry:ident }}).then(
+      (result) =>{
+        deferred.resolve(result.data);
+      },
+      (err) => {
+        deferred.reject(err);
+      }
+    );
+
+    return deferred.promise;
+
+  };
+
   $kb.references = {
 
     /**
@@ -160,7 +184,73 @@ app.factory('api.knowledgebase', ['_', '$http', '$q', (_, $http, $q) => {
       );
 
       return deferred.promise;
+    },
+
+
+    /**
+     * Update an existing reference entry
+     *
+     * @param {object} reference - The updated reference object
+     * @returns {Promise} - Resolves with the updated entry
+     */
+    update: (reference) => {
+      let deferred = $q.defer();
+
+      $http.put(api + '/references/' + reference.ident, reference).then(
+        (result) => {
+          deferred.resolve(result.data);
+        },
+        (err) => {
+          deferred.reject(err);
+        }
+      );
+
+      return deferred.promise;
+    },
+
+    /**
+     * Create a new reference entry
+     *
+     * @param {object} reference - The new reference object
+     * @returns {Promise} - Resolves with the created entry
+     */
+    create: (reference) => {
+      let deferred = $q.defer();
+
+      $http.post(api + '/references', reference).then(
+        (result) => {
+          deferred.resolve(result.data);
+        },
+        (err) => {
+          deferred.reject(err);
+        }
+      );
+
+      return deferred.promise;
+    },
+
+    /**
+     * Remove a reference entry
+     *
+     * @param {string} reference - The ident of the entry to be removed
+     * @returns {Promise} - Resolves with success
+     */
+    remove: (reference) => {
+      let deferred = $q.defer();
+
+      $http.delete(api + '/references/' + reference).then(
+        (result) => {
+          deferred.resolve(result.status);
+        },
+        (err) => {
+          deferred.reject(err);
+        }
+      );
+
+      return deferred.promise;
     }
+
+
   };
 
   $kb.events = {
