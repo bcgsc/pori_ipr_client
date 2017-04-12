@@ -1,3 +1,15 @@
+$kb-status-reviewed-solid: rgb(38, 166, 91);
+$kb-status-reviewed-hlight: rgb(214, 247, 219);
+
+$kb-status-new-solid: rgb(31, 58, 147);
+$kb-status-new-hligh: rgb(196, 228, 244);
+
+$kb-status-requires-solid: rgb(211, 84, 0);
+$kb-status-requires-hlight: rgb(253, 246, 206);
+
+$kb-status-flagged-solid: rgb(207, 0, 15);
+$kb-status-flagged-hlight: rgb(251, 208, 204);
+
 .knowledgebase {
 
   h1.title {
@@ -84,9 +96,9 @@
         &.incorrect { background-color: rgb(251, 208, 204); }
 
         div.row {
-
           div.open {
             text-align: center;
+            padding: 0 10px;
 
             md-icon {
               width: 18px;
@@ -96,6 +108,10 @@
               font-size: 15px;
               margin-right: 7px;
               cursor: pointer;
+              color: rgb(70, 91, 193);
+              display: inline-block;
+
+              &:hover { color: rgb(96, 166, 255); }
             }
           }
 
@@ -103,7 +119,6 @@
             text-overflow: ellipsis;
             padding: 3px;
             outline: none;
-
 
             &.status {
 
@@ -114,29 +129,26 @@
               }
 
               &.new span {
-                color: rgb(31, 58, 147);
-                border: 1px solid rgb(31, 58, 147);
-                background-color: rgb(196, 228, 244);
+                color: $kb-status-new-solid;
+                border: 1px solid $kb-status-new-solid;
+                background-color: $kb-status-new-hligh;
               }
               &.reviewed span {
-                color: rgb(38, 166, 91);
-                border: 1px solid rgb(38, 166, 91);
-                background-color: rgb(214, 247, 219);
+                color: $kb-status-reviewed-solid;
+                border: 1px solid $kb-status-reviewed-solid;
+                background-color: $kb-status-reviewed-hlight;
               }
               &.flagged-incorrect span {
-                color: rgb(207, 0, 15);
-                border: 1px solid rgb(207, 0, 15);
-                background-color: rgb(251, 208, 204);
+                color: $kb-status-flagged-solid;
+                border: 1px solid $kb-status-flagged-solid;
+                background-color: $kb-status-flagged-hlight;
               }
               &.requires-review span {
-                color: rgb(211, 84, 0);
-                border: 1px solid rgb(211, 84, 0);
-                background-color: rgb(253, 246, 206);
+                color: $kb-status-requires-solid;
+                border: 1px solid $kb-status-requires-solid;
+                background-color: $kb-status-requires-hlight;
               }
-
-
             }
-
 
             div.dropper {
               position: relative;
@@ -233,9 +245,16 @@
 
 md-dialog.kbDialog {
 
+  h2.title {
+    margin: 10px 0 10px 15px;
+    padding-top: 10px;
+    font-size: 20px;
+    font-weight: 400;
+  }
+
   .rowCard {
-    margin: 6px 10px;
-    padding: 5px 10px;
+    margin: 4px 10px;
+    padding: 0px 10px;
     background-color: rgb(255,255,255);
     min-height: 68px;
 
@@ -265,6 +284,41 @@ md-dialog.kbDialog {
       }
     }
 
+    div.reference {
+      md-icon {
+        margin-left: 3px;
+        width: 20px;
+        height: 20px;
+        min-width: 20px;
+        min-height: 20px;
+        font-size: 18px;
+      }
+    }
+
+  }
+
+  div.history {
+    margin: 4px 20px;
+
+    div.header {
+      background-color: rgb(220, 220, 220);
+      color: rgb(70, 70, 70);
+
+      div {
+        padding: 6px 0 3px 4px;
+        text-align: left;
+      }
+    }
+    div.row {
+      &:nth-of-type(odd) {
+        background-color: rgb(240,240,240);
+      }
+
+      div {
+        padding: 4px 2px;
+      }
+    }
+
   }
 
   md-dialog-content.filters {
@@ -280,6 +334,77 @@ md-dialog.kbDialog {
         margin: 0 3px;
       }
 
+    }
+
+    .events-expression {
+
+      .orGroup {
+
+        &:after {
+          content: ' or ';
+          color: rgb(50,50,50);
+        }
+        &:last-of-type:after {
+          content: '';
+        }
+
+        &.andGroup {
+
+          &:before { content: '('; }
+          &:after { content: ')'; }
+
+          span:first-of-type:before { content: ''; }
+
+          span:before {
+            content: ' or ';
+            color: rgb(20,20,20);
+            font-weight: 100;
+            font-size: 0.85em;
+          }
+        }
+      }
+
+      .andGroup {
+
+        span:first-of-type:before { content: ''; }
+
+        span:before {
+          content: ' & ';
+          color: rgb(20,20,20);
+          font-weight: 100;
+          font-size: 0.85em;
+        }
+      }
+    }
+
+    .status {
+
+      span {
+        padding: 2px 7px;
+        border-radius: 3px;
+        font-size: 0.75em;
+      }
+
+      &.new span {
+        color: $kb-status-new-solid;
+        border: 1px solid $kb-status-new-solid;
+        background-color: $kb-status-new-hligh;
+      }
+      &.reviewed span {
+        color: $kb-status-reviewed-solid;
+        border: 1px solid $kb-status-reviewed-solid;
+        background-color: $kb-status-reviewed-hlight;
+      }
+      &.flagged-incorrect span {
+        color: $kb-status-flagged-solid;
+        border: 1px solid $kb-status-flagged-solid;
+        background-color: $kb-status-flagged-hlight;
+      }
+      &.requires-review span {
+        color: $kb-status-requires-solid;
+        border: 1px solid $kb-status-requires-solid;
+        background-color: $kb-status-requires-hlight;
+      }
     }
 
     div.row {
