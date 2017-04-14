@@ -55,8 +55,6 @@ app.controller('knowledgebase.references.filter',
 
   // New Freeform Entry
   scope.new.action = (type) => {
-    console.log('Trying to add', type, scope.new.values[type]);
-
     if(scope.new.values[type] === null || scope.new.values[type] === undefined) return null;
 
     // Create new Disease entry filter
@@ -71,7 +69,6 @@ app.controller('knowledgebase.references.filter',
   };
 
   scope.save = () => {
-    console.log('Saving...', scope.filter);
     $mdDialog.hide(scope.filter);
   }
 

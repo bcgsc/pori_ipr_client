@@ -41,12 +41,16 @@ md-dialog(layout="column", aria-label="Knowledgebase References Filters", ng-clo
                             input(ng-model="new.values.context", ng-keyup="$event.keyCode === 13 ? new.action('context') : null", ng-blur="new.action('context')", placeholder="Context")
 
                     div(layout="column", flex)
-                        div(layout="column")
+
+                        md-select(ng-model="filter.evidence", multiple, placeholder="Evidence")
+                            md-option(ng-value="evidence", ng-repeat="evidence in vocabulary.evidence track by $index") {{evidence}}
+
+                        //div(layout="column")
                             div(ng-repeat="(i, evidence) in filter.evidence track by $index", ng-if="filter.evidence.length > 0").removableFilter
                                 md-icon(ng-click="removeFilterEntry('evidence', i)") remove_circle
                                 | {{evidence}}
 
-                        md-input-container
+                        //md-input-container
                             input(ng-model="new.values.evidence", ng-keyup="$event.keyCode === 13 ? new.action('evidence') : null", ng-blur="new.action('evidence')", placeholder="Evidence")
 
                     div(layout="column", flex)
@@ -82,10 +86,6 @@ md-dialog(layout="column", aria-label="Knowledgebase References Filters", ng-clo
                                 input(ng-model="new.values.events_expression", ng-keyup="$event.keyCode === 13 ? new.action('events_expression') : null", ng-blur="new.action('events_expression')", placeholder="events expression")
                     div(flex=50)
 
-
-            div()
-                pre {{filter}}
-
         md-dialog-actions(layout="row", layout-aligh="end center", layout-padding)
-            md-button(ng-click="save()").md-primary Save Filters
+            md-button(ng-click="save()").md-primary.md-raised Save Filters
 
