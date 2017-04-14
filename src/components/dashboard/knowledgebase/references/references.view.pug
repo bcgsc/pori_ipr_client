@@ -1,4 +1,4 @@
-md-dialog(layout="column", aria-label="Knowledgebase Reference Viewer", ng-cloak, flex=85).kbDialog
+md-dialog(layout="column", aria-label="Knowledgebase Reference Viewer", flex=85).kbDialog
     form(flex='auto', name='form', ng-submit="update(form)")
         md-toolbar
             .md-toolbar-tools
@@ -6,27 +6,60 @@ md-dialog(layout="column", aria-label="Knowledgebase Reference Viewer", ng-cloak
                 span(flex)
                 md-button.md-icon-button(ng-click='cancel()')
                     md-icon cancel
-        md-dialog-content.filters
+        md-dialog-content
 
             h2.title Matching Criteria
 
             div(layout="row").rowCard
-                div(flex=60, layout="column")
+                div(flex=65, layout="column")
                     h5 Events Expression
-                    div(flex, layout="row") {{reference.events_expression}}
+                    div(flex, layout="row").events-expression
+                        // Need to repeat
+                        div(ng-if="reference.events_expression_expanded.ors.length > 1 || reference.events_expression_expanded.ands.length > 1")
+                            span(ng-if="reference.events_expression_expanded.ors.length > 1", ng-repeat="event in reference.events_expression_expanded.ors track by $index", ng-class="{'andGroup': (event.length > 1)}").orGroup
+                                // Is there only 1 entry in this? (suggesting no nested "ands")
+                                span(ng-if="event.length === 1")
+                                    var {{event[0]}}
+
+                                // Are there nested "ands" in this?
+                                span(ng-if="event.length > 1", ng-repeat="(i, a) in event track by $index")
+                                    // Only display or on subsequent entries
+                                    span
+                                        var {{a}}
+
+                            div(ng-if="reference.events_expression_expanded.ands.length > 1").andGroup
+                                span(ng-repeat="events in reference.events_expression_expanded.ands")
+                                    var {{events}}
+
+                        // Don't need to repeat
+                        div(ng-if="reference.events_expression_expanded.ors.length === 1 || reference.events_expression_expanded.ands.length === 1")
+                            span
+                                var {{reference.events_expression_expanded.ors[0][0] || reference.events_expression_expanded.ands[0][0]}}
 
                 div(flex)
                     h5 Status
-                    span {{reference.status}}
+                    span(class="{{reference.status.toLowerCase()}}", layout-align="center start", layout="column").status
+                        span {{reference.status}}
+                        md-icon(ng-show="!reference.createdBy || reference.createdBy.ident !== user.ident", ng-click="editingStatus=!editingStatus") edit
+                    span(layout="column", ng-show="editingStatus").updateStatus
+                        md-select(ng-model="reference.status", placeholder="Update Status")
+                            md-option(ng-value="status", ng-if="status !== 'NEW'", ng-repeat="status in vocabulary.status track by $index") {{status}}
+                        div(layout="row")
+                            md-input-container(flex)
+                                input(ng-model="update.comments", flex, placeholder="Update Comments")
+                            span
+                                md-button(ng-click="updateStatus()").md-primary.md-raised Save
 
             div(layout="row").rowCard
                 div(flex=50, layout="column")
                     h5  Disease
-                    div(flex, layout="row") {{reference.disease_list}}
+                    div
+                        span(ng-repeat="disease in reference.disease_list track by $index").pill.white {{disease}}
 
                 div(flex=50, layout="column")
                     h5 Context
-                    div(layout="column") {{reference.context}}
+                    div
+                        span(ng-repeat="context in reference.context track by $index").pill.white {{context}}
 
             div(layout="row").rowCard
                 div(flex=35, layout="column")
@@ -43,7 +76,56 @@ md-dialog(layout="column", aria-label="Knowledgebase Reference Viewer", ng-cloak
 
             h2.title Reference Details
 
+            div(layout="row").rowCard
+                div(flex=20, layout="column")
+                    h5 Reference Source
+                    div(flex, layout="row") {{reference.id_type}}
+
+                div(flex=60)
+                    h5 Title
+                    span {{reference.id_title}}
+
+                div(flex=20, layout="column")
+                    h5 Reference Value
+                    div(layout="column").reference
+                        span(ng-if="reference.id_type === 'pubmed'")
+                            a(href="https://www.ncbi.nlm.nih.gov/pubmed/?term={{reference.ref_id}}", target="_blank") {{reference.ref_id}}
+                                md-icon open_in_new
+                        span(ng-if="reference.id_type !== 'pubmed'") {{reference.ref_id}}
+
+            div(layout="row").rowCard
+                div(flex, layout="column")
+                    h5 Reference Summary
+                    div(flex, layout="row") {{reference.summary || 'N/A'}}
+
+            div(layout="row").rowCard
+                div(flex, layout="column")
+                    h5 KB Submission Comments
+                    div(flex, layout="row") {{reference.comments || 'None specified'}}
+
+            h2.title Entry History
+
+            div(layout="column").history
+                div(layout="row").header
+                    div(flex) Event
+                    div(flex) User
+                    div(flex) From
+                    div(flex) To
+                    div(flex) Date
+                div(layout="row", ng-repeat="entry in history").row
+                    div(flex) {{entry.type}}
+                    div(flex) {{entry.user.firstName}} {{entry.user.lastName}}
+                    div(flex) {{entry.previous}}
+                    div(flex) {{entry.new}}
+                    div(flex)
+                        span.clickable {{entry.createdAt | amTimeAgo}}
+                            md-tooltip {{entry.createdAt}}
+                div(layout="row", ng-if="history.length === 0").row
+                    div(flex).text-center Entry created by import {{reference.createdAt | amTimeAgo}}
+
 
         md-dialog-actions(layout="row", layout-aligh="end center", layout-padding)
-            md-button(ng-click="cancel()").md-primary Close
+            md-button(ng-click="edit()").md-primary.md-raised Edit
+            span(flex)
+            md-button(ng-click="cancel()").md-primary.md-raised Close
 
