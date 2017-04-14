@@ -208,6 +208,30 @@ app.factory('api.knowledgebase', ['_', '$http', '$q', (_, $http, $q) => {
       return deferred.promise;
     },
 
+
+    /**
+     * Update reference status
+     *
+     * @param {object} reference - Reference object
+     * @param {string} status - Status to update reference to
+     * @param {string} comments - Comment to log update with
+     * @returns {Promise} - Resolves with updated object
+     */
+    status: (reference, status, comments) => {
+      let deferred = $q.defer();
+
+      $http.put(api + '/references/' + reference.ident + '/status/' + status, {comments: comments}).then(
+        (result) => {
+          deferred.resolve(result.data);
+        },
+        (err) => {
+          deferred.reject(err);
+        }
+      );
+
+      return deferred.promise;
+    },
+
     /**
      * Create a new reference entry
      *
