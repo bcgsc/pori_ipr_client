@@ -27,15 +27,15 @@ $kb-status-flagged-hlight: rgb(251, 208, 204);
     padding: 5px;
   }
 
+  .narrowButton {
+    line-height: 25px;
+    min-height: 25px;
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
   .filters {
     margin: 5px;
-
-    .md-button {
-      line-height: 25px;
-      min-height: 25px;
-      padding-right: 10px;
-      padding-left: 10px;
-    }
 
     .filterEntry {
 
@@ -245,6 +245,15 @@ $kb-status-flagged-hlight: rgb(251, 208, 204);
 
 md-dialog.kbDialog {
 
+
+  md-dialog-actions {
+
+    button.md-button {
+      line-height: normal;
+    }
+
+  }
+
   h2.title {
     margin: 10px 0 10px 15px;
     padding-top: 10px;
@@ -297,6 +306,31 @@ md-dialog.kbDialog {
 
   }
 
+  h4 {
+    color: rgba(0,0,0, 0.7);
+    margin: 7px 0 0 0;
+    font-weight: 400;
+  }
+
+  .diseaseList {
+    padding-left: 10px;
+    md-icon {
+      margin-right: 3px;
+      width: 20px;
+      height: 20px;
+      min-width: 20px;
+      min-height: 20px;
+      font-size: 18px;
+    }
+    > span {
+      margin: 2px 0;
+
+      &:nth-of-type(even) {
+        background-color: rgb(240,240,240);
+      }
+    }
+  }
+
   div.history {
     margin: 4px 20px;
 
@@ -321,7 +355,7 @@ md-dialog.kbDialog {
 
   }
 
-  md-dialog-content.filters {
+  md-dialog-content {
 
     div.header {
       background-color: rgb(220, 220, 220);
@@ -338,11 +372,23 @@ md-dialog.kbDialog {
 
     .events-expression {
 
+      var {
+        font-style: normal;
+        background-color: rgb(237, 220, 255);
+        color: rgb(90, 32, 128);
+        padding: 3px 7px;
+        border-radius: 3px;
+        font-size: 0.75em;
+        line-height: 200%;
+      }
+
       .orGroup {
 
         &:after {
           content: ' or ';
           color: rgb(50,50,50);
+          padding: 0 5px;
+          font-size: 0.8em;
         }
         &:last-of-type:after {
           content: '';
@@ -350,16 +396,25 @@ md-dialog.kbDialog {
 
         &.andGroup {
 
-          &:before { content: '('; }
-          &:after { content: ')'; }
+          background-color: rgb(171, 138, 208);
+          padding: 3px 2px 5px 2px;
+          border-radius: 3px;
+          margin-right: 4px;
+
+          var {
+            margin: 0 4px;
+          }
+
+          &:before { content: '('; padding-left: 2px; font-size: 0.8em }
+          &:after { content: ')';  padding: 0 2px; font-size: 0.8em }
 
           span:first-of-type:before { content: ''; }
 
           span:before {
-            content: ' or ';
+            content: ' and ';
             color: rgb(20,20,20);
             font-weight: 100;
-            font-size: 0.85em;
+            font-size: 0.8em;
           }
         }
       }
@@ -377,12 +432,29 @@ md-dialog.kbDialog {
       }
     }
 
+    .updateStatus {
+      .md-button {
+        line-height: normal;
+        min-height: 36px;
+      }
+    }
+
     .status {
 
       span {
         padding: 2px 7px;
         border-radius: 3px;
         font-size: 0.75em;
+      }
+
+      md-icon {
+        width: 18px;
+        height: 18px;
+        min-height: 18px;
+        min-width: 18px;
+        font-size: 15px;
+        margin-left: 4px;
+        cursor: pointer;
       }
 
       &.new span {
