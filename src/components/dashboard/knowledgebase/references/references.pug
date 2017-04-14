@@ -2,12 +2,15 @@ md-content(layout="column", flex)
 
     div(layout="column")
         div.options
-            h1.title KB.
-                span.subject References
+            div(layout="row")
+                h1.title KB.
+                    span.subject References
+                span(flex)
+                md-button(ng-click="newReference($event)").md-primary.md-raised.narrowButton New Reference
 
             div(layout="row").filters
                 span
-                    md-button(ng-click="openFilters($event)").md-raised.md-primary Set Filters
+                    md-button(ng-click="openFilters($event)").md-raised.md-primary.narrowButton Set Filters
                 span(flex)
                 div(layout="row")
                     span(ng-repeat="(filter, values) in paginate.filters").filterEntry
@@ -18,33 +21,33 @@ md-content(layout="column", flex)
                         | )
 
         div(layout="row").kbTable.header
-            div(style="width: 25px;")
-            div(flex) events_expression
-            div(flex="10") type
-            div(flex="10") relevance
-            div(flex="20") context
-            div(flex="20") disease_list
-            div(flex="10") evidence
-            div(flex="10") status
+            div(flex=20) events_expression
+            div(flex=10) type
+            div(flex=10) relevance
+            div(flex=20) context
+            div(flex=20) disease_list
+            div(flex=10) evidence
+            div(flex=10) status
             div.spacer
 
     div(flex, layout-fill, id="kbViewerWindow").kbTable.rows
         div(ng-repeat="ref in references", ng-class="{incorrect: ref.status.toLowerCase().indexOf('incorrect') !== -1}").rowContainer
             div(layout="row").row
-                div(style="width: 25px;", layout="column", layout-align="center center").open
-                    md-icon(ng-click="openView($event, ref)").text-xsmall open_in_new
-                div(flex)
+                div(flex=20, layout="row")
+                    div(style="width: 35px;", layout="column", layout-align="center center").open
+                        md-icon(ng-click="openView($event, ref)").text-xsmall library_books
+                        md-tooltip(md-direction="right") View reference entry
                     // If there are no children, don't make anything with watchers
                     div(ng-if="!hasChildren(ref)")
-                        span(ng-if="ref.events_expression.ands.length === 0") {{ref.events_expression.ors[0][0]}}
-                        span(ng-if="ref.events_expression.ands.length > 0") {{ref.events_expression.ands[0]}}
+                        span(ng-if="ref.events_expression_expanded.ands.length === 0") {{ref.events_expression_expanded.ors[0][0]}}
+                        span(ng-if="ref.events_expression_expanded.ands.length > 0") {{ref.events_expression_expanded.ands[0]}}
 
                     // Watcher heavy, since there are children
                     div(ng-if="hasChildren(ref)")
 
                         div(ng-click="showEvExDropper(ref)", ng-init="ref.showEEs=false").clickable
-                            span(ng-if="ref.events_expression.ands.length === 0") ({{$index}}) {{ref.events_expression.ors[0][0]}}
-                            span(ng-if="ref.events_expression.ands.length > 0") ({{$index}}) {{ref.events_expression.ands[0]}}
+                            span(ng-if="ref.events_expression_expanded.ands.length === 0") {{ref.events_expression_expanded.ors[0][0]}}
+                            span(ng-if="ref.events_expression_expanded.ands.length > 0") {{ref.events_expression_expanded.ands[0]}}
                             md-icon(ng-if="hasChildren(ref) && !ref.showEEs") keyboard_arrow_down
                             md-icon(ng-if="hasChildren(ref) && ref.showEEs") keyboard_arrow_up
                         div(ng-if="ref.showEEs").dropper
@@ -52,7 +55,7 @@ md-content(layout="column", flex)
                             ul(md-whiteframe=2)
 
                                 // Are there no "and" children?
-                                li(ng-if="ref.events_expression.ors.length > 1", ng-repeat="(k, event) in ref.events_expression.ors track by $index")
+                                li(ng-if="ref.events_expression_expanded.ors.length > 1", ng-repeat="(k, event) in ref.events_expression_expanded.ors track by $index")
 
                                     // Is there only 1 entry in this? (suggesting no nested "ands")
                                     div(ng-if="$index !== 0 && event.length === 1").text-small.orBetween
@@ -68,7 +71,7 @@ md-content(layout="column", flex)
                                         span {{a}}
 
                                 // Are there "ands" children?
-                                li(ng-if="ref.events_expression.ands.length > 1", ng-repeat="(k, event) in ref.events_expression.ands track by $index")
+                                li(ng-if="ref.events_expression_expanded.ands.length > 1", ng-repeat="(k, event) in ref.events_expression_expanded.ands track by $index")
                                     div(ng-if="$index !== 0").text-small.orBetween
                                         span and
                                     span {{event}}

@@ -1,53 +1,12 @@
 app.controller('knowledgebase.references',
-['$rootScope', '$q', '_', '$scope', '$sanitize', '$mdDialog', '$mdToast', 'api.knowledgebase', 'references', 'ref_count', 'vocabulary',
-($rootScope, $q, _, $scope, $sanitize, $mdDialog, $mdToast, $kb, references, ref_count, vocabulary) => {
+['$rootScope', '$q', '_', '$scope', '$sanitize', '$mdDialog', '$mdToast', '$kbUtils', 'api.knowledgebase', 'references', 'ref_count', 'vocabulary',
+($rootScope, $q, _, $scope, $sanitize, $mdDialog, $mdToast, $kbUtils, $kb, references, ref_count, vocabulary) => {
 
   $scope.references = [];
 
-  // Loop over references and process groups
-  let processReferences = (references) => {
-    _.forEach(references, (r, k) => {
-
-      // Build Events Expression Object
-      let refs = {ors: [], ands: []};
-
-      // Split by OR first
-      if (r.events_expression.indexOf('|') > -1) {
-
-        // Take each or block and blow it into "and" groups
-        _.forEach(r.events_expression.split('|'), (orGroup, i) => {
-
-          // Are there any "and" operators?
-          if (orGroup.indexOf('&') > -1) {
-            // Explode!
-            refs.ors[i] = orGroup.split('&');
-          } else {
-            refs.ors[i] = [orGroup];
-          }
-
-        });
-
-      } else if (r.events_expression.indexOf('&') > -1) {
-        refs.ands = r.events_expression.split('&');
-      } else {
-        refs.ors[0] = [r.events_expression];
-      }
-
-      r.events_expression = refs;
-
-
-      r.disease_list = r.disease_list.split(';');
-      r.context = r.context.split(';');
-
-      // Add to array
-      $scope.references.push(r);
-
-    });
-  };
-
   // Toggle Events Expression Dropper
   $scope.showEvExDropper = (ref) => {
-    if(ref.events_expression.ors.length > 1 || ref.events_expression.ands.length > 1) ref.showEEs = !ref.showEEs;
+    if(ref.events_expression_expanded.ors.length > 1 || ref.events_expression_expanded.ands.length > 1) ref.showEEs = !ref.showEEs;
   };
 
   // Toggle Dropper
@@ -57,7 +16,7 @@ app.controller('knowledgebase.references',
 
   // Determine if this reference has children
   $scope.hasChildren = (ref) => {
-    return (ref.events_expression.ors.length > 1 || ref.events_expression.ands.length > 1);
+    return (ref.events_expression_expanded.ors.length > 1 || ref.events_expression_expanded.ands.length > 1);
   };
 
   // Open Filters Modal
@@ -90,7 +49,13 @@ app.controller('knowledgebase.references',
       targetEvent: $event,
       templateUrl: 'dashboard/knowledgebase/references/references.view.html',
       locals: {
-        reference: reference
+        reference: reference,
+        vocabulary: vocabulary
+      },
+      resolve: {
+        history: ['$q', 'api.knowledgebase', ($q, $kb) => {
+          return $kb.history('reference', reference.ident);
+        }]
       },
       clickOutToClose: false,
       controller: 'knowledgebase.references.view'
@@ -181,6 +146,13 @@ app.controller('knowledgebase.references',
     },
 
     /**
+     * Refresh current page
+     */
+    refresh: () => {
+      $paginate.changePage($paginate.current); // Trigger change page with current value
+    },
+
+    /**
      * Remove a filter
      *
      * @param {string} filter - The filter type to be spliced
@@ -209,9 +181,8 @@ app.controller('knowledgebase.references',
           let rowsWindow = document.getElementById('kbViewerWindow');
           rowsWindow.scrollTop = 0;
 
-          $scope.references = [];
           // Process References
-          processReferences(results);
+          $scope.references = $kbUtils.processReferences(results);
 
           $paginate.current = target;
           $rootScope.showLoader = false;
@@ -223,7 +194,44 @@ app.controller('knowledgebase.references',
     }
   };
 
-  processReferences(references);
+  /**
+   * Open modal for new dialog
+   *
+   * @param $event
+   */
+  $scope.newReference = ($event) => {
+    $mdDialog.show({
+      targetEvent: $event,
+      templateUrl: 'dashboard/knowledgebase/references/references.edit.html',
+      locals: {
+        action: 'new',
+        vocabulary: vocabulary,
+        reference: {}
+      },
+      multiple: true,
+      clickOutToClose: false,
+      controller: 'knowledgebase.references.edit'
+    }).then(
+      // Save Filters
+      (result) => {
+
+        if(result.status === 'new') {
+          // New Entry Added, refresh!
+          $paginate.refresh();
+          $mdToast.show($mdToast.simple({textContent: 'New entry successfully added'}))
+        }
+
+      },
+      // Cancel
+      () => {
+
+      }
+    );
+  };
+
+  // Loop over references and process groups
+  $scope.references = $kbUtils.processReferences(references);
+
   $paginate.calcPages();
   $scope.paginate = $paginate;
 
