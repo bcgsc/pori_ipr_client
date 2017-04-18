@@ -1,11 +1,12 @@
 app.controller('controller.dashboard.report.genomic.analystComments', 
-  ['_', '$q', '$scope', '$mdDialog', '$mdToast', 'api.pog', 'pog', 'comments', 
-  (_, $q, $scope, $mdDialog, $mdToast, $pog, pog, analystComments) => {
+  ['_', '$q', '$scope', '$mdDialog', '$mdToast', '$sce', 'api.pog', 'pog', 'comments',
+  (_, $q, $scope, $mdDialog, $mdToast, $sce, $pog, pog, analystComments) => {
   
   console.log('Analyst Comments Loaded');
   
   $scope.pog = pog;
   $scope.analystComments = (analystComments || "");
+  $scope.commentsHTML = $sce.trustAsHtml(analystComments.comments);
 
   // Editor Update Modal
   $scope.updateComments = ($event) => {

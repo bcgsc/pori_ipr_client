@@ -6,7 +6,7 @@ section
     div(flex=10) 
       md-button(ng-click="updateComments()").md-icon-button.edit-icon
         md-icon edit 
-    div(ng-bind-html="analystComments.comments || '<h2>Report Draft</h2> <br /> No comments yet.'")
+    div(ng-bind-html="commentsHTML || '<h2>Report Draft</h2> <br /> No comments yet.'")
   //div Updated by: [name] on {{analystComments.updatedAt}}
   
   div.smallBottom &nbsp;
