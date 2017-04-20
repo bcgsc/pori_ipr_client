@@ -4,21 +4,34 @@ md-toolbar(ui-view="toolbar", layout='row').headerToolbar
 div(layout='row', flex)
     div(flex, layout="row")
 
-        div(layout="column").sidebar
+        div(layout="column", ng-cloak).sidebar
             div(layout="row", ui-sref="dashboard.listing")
                 md-icon chrome_reader_mode
                     md-tooltip(ng-if="!maximized", md-direction="right") Dashboard
                 span(flex, ng-show="maximized") Dashboard
 
-            div(layout="row", ui-sref="dashboard.listing")
+            div(layout="row", ui-sref="dashboard.listing", ng-class="{active: ($state.current.name === 'dashboard.listing' || $state.current.name.indexOf('report') > -1)}")
                 md-icon assignment
                     md-tooltip(ng-if="!maximized", md-direction="right") Reports
                 span(flex, ng-show="maximized") Reports
 
-            div(layout="row", ui-sref="dashboard.knowledgebase.references").active
+            div(layout="row", ui-sref="dashboard.knowledgebase.dashboard", ng-class="{active: ($state.current.name.indexOf('knowledgebase') > -1)}")
                 md-icon local_library
                     md-tooltip(ng-if="!maximized", md-direction="right") Knowledgebase
                 span(flex, ng-show="maximized") Knowledgebase
+
+            div(layout="row", ui-sref="dashboard.knowledgebase.references", ng-class="{active: ($state.current.name === 'dashboard.knowledgebase.references')}", ng-show="maximized || (!maximized && $state.current.name.indexOf('knowledgebase') > 1)").submenu
+                md-icon(ng-show="maximized") subdirectory_arrow_right
+                md-icon(ng-show="!maximized") import_contacts
+                    md-tooltip(ng-if="!maximized", md-direction="right") References
+                span(flex, ng-show="maximized") References
+
+            div(layout="row", ui-sref="dashboard.knowledgebase.events", ng-class="{active: ($state.current.name === 'dashboard.knowledgebase.events')}", ng-show="maximized || (!maximized && $state.current.name.indexOf('knowledgebase') > 1)").submenu
+                md-icon(ng-show="maximized") subdirectory_arrow_right
+                md-icon(ng-show="!maximized") location_on
+                    md-tooltip(ng-if="!maximized", md-direction="right") Events
+                span(flex, ng-show="maximized") Events
+
             span(flex)
             div(layout="row", layout-align="end center", ng-click="toggle()").minimize
                 md-icon(ng-show="maximized") keyboard_arrow_left

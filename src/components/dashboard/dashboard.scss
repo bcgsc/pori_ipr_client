@@ -51,6 +51,26 @@
     padding: 5px 10px 5px 10px;
     transition: all 0.2s;
 
+    &.submenu {
+      font-size: 0.8em;
+      padding-left: 17px;
+
+      &.active {
+        background-color: rgb(225, 225, 225);
+      }
+
+      span {
+        padding-left: 4px;
+      }
+      md-icon {
+        width: 19px;
+        height: 19px;
+        min-height: 19px;
+        min-width: 19px;
+        font-size: 17px;
+      }
+    }
+
     &.active {
       background-color: rgb(240,240,240);
       border-right: 3px solid rgb(200, 200, 200);
