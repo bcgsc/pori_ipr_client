@@ -73,6 +73,26 @@ app.factory('api.knowledgebase', ['_', '$http', '$q', (_, $http, $q) => {
   };
 
   /**
+   * Get KB Metrics
+   *
+   * @returns {Promise|object} - Resolves a key-value pair of metric data
+   */
+  $kb.metrics = () => {
+    let deferred = $q.defer();
+
+    $http.get(api + '/metrics').then(
+      (result) =>{
+        deferred.resolve(result.data);
+      },
+      (err) => {
+        deferred.reject(err);
+      }
+    );
+
+    return deferred.promise;
+  };
+
+  /**
    * Search the disease ontology list
    *
    * @param {string} query - Input string to search DB against
@@ -127,6 +147,7 @@ app.factory('api.knowledgebase', ['_', '$http', '$q', (_, $http, $q) => {
      * @param {int} limit - Pagination records requested
      * @param {int} offset - Pagination start point
      * @param {object} filters - Query string filter arguments
+     *
      * @returns {promise|collection} - Resolves with a collection
      */
     all: (limit=100, offset=0, filters={}) => {
@@ -135,6 +156,7 @@ app.factory('api.knowledgebase', ['_', '$http', '$q', (_, $http, $q) => {
 
       // Process Filters
       _.forEach(filters, (value, filter) => {
+        if(filter === 'search') return processFilters[filter] = value;
         processFilters[filter] = _.join(value,',');
       });
 
@@ -168,6 +190,7 @@ app.factory('api.knowledgebase', ['_', '$http', '$q', (_, $http, $q) => {
 
       // Process Filters
       _.forEach(filters, (value, filter) => {
+        if(filter === 'search') return processFilters[filter] = value;
         processFilters[filter] = _.join(value,',');
       });
 
@@ -286,12 +309,25 @@ app.factory('api.knowledgebase', ['_', '$http', '$q', (_, $http, $q) => {
      *
      * @param {int} limit - Pagination records requested
      * @param {int} offset - Pagination start point
-     * @returns {promise|collection} - Resolves with a collection
+     * @param {object} filters - Query string filter arguments
+     *
+     * @returns {Promise|collection} - Resolves with a collection
      */
-    all: (limit, offset) => {
+    all: (limit, offset, filters) => {
       let deferred = $q.defer();
+      let processFilters = {};
 
-      $http.get(api + '/events', {params: {limit: limit, offset: offset}}).then(
+      // Process Filters
+      _.forEach(filters, (value, filter) => {
+        if(filter === 'search') return processFilters[filter] = value;
+        processFilters[filter] = _.join(value,',');
+      });
+
+      let opts = {params: processFilters};
+      opts.params.limit = limit;
+      opts.params.offset = offset;
+
+      $http.get(api + '/events', opts).then(
         (result) => {
           deferred.resolve(result.data);
         },
@@ -300,8 +336,129 @@ app.factory('api.knowledgebase', ['_', '$http', '$q', (_, $http, $q) => {
         }
       );
 
-      return deferred;
+      return deferred.promise;
+    },
+
+    /**
+     * Get the count of events
+     *
+     * Informs pagination
+     *
+     * @returns {promise} - Resolves a key-value pair object with the amount of events
+     */
+    count: (filters={}) => {
+      let deferred = $q.defer();
+      let processFilters = {};
+
+      // Process Filters
+      _.forEach(filters, (value, filter) => {
+        if(filter === 'search') return processFilters[filter] = value;
+        processFilters[filter] = _.join(value,',');
+      });
+
+
+      let params = {params: processFilters};
+
+      $http.get(api + '/events/count', params).then(
+        (result) => {
+          deferred.resolve(result.data);
+        },
+        (err) => {
+          deferred.reject(err);
+        }
+      );
+
+      return deferred.promise;
+    },
+
+
+    /**
+     * Update an existing event entry
+     *
+     * @param {object} event - The updated event object
+     * @returns {Promise} - Resolves with the updated entry
+     */
+    update: (event) => {
+      let deferred = $q.defer();
+
+      $http.put(api + '/events/' + event.ident, event).then(
+        (result) => {
+          deferred.resolve(result.data);
+        },
+        (err) => {
+          deferred.reject(err);
+        }
+      );
+
+      return deferred.promise;
+    },
+
+
+    /**
+     * Update event status
+     *
+     * @param {object} event - Event object
+     * @param {string} status - Status to update event to
+     * @param {string} comments - Comment to log update with
+     * @returns {Promise} - Resolves with updated object
+     */
+    status: (event, status, comments) => {
+      let deferred = $q.defer();
+
+      $http.put(api + '/events/' + event.ident + '/status/' + status, {comments: comments}).then(
+        (result) => {
+          deferred.resolve(result.data);
+        },
+        (err) => {
+          deferred.reject(err);
+        }
+      );
+
+      return deferred.promise;
+    },
+
+    /**
+     * Create a new event entry
+     *
+     * @param {object} event - The new reference object
+     * @returns {Promise} - Resolves with the created entry
+     */
+    create: (event) => {
+      let deferred = $q.defer();
+
+      $http.post(api + '/events', event).then(
+        (result) => {
+          deferred.resolve(result.data);
+        },
+        (err) => {
+          deferred.reject(err);
+        }
+      );
+
+      return deferred.promise;
+    },
+
+    /**
+     * Remove a event entry
+     *
+     * @param {string} event - The ident of the entry to be removed
+     * @returns {Promise} - Resolves with success
+     */
+    remove: (event) => {
+      let deferred = $q.defer();
+
+      $http.delete(api + '/events/' + event).then(
+        (result) => {
+          deferred.resolve(result.status);
+        },
+        (err) => {
+          deferred.reject(err);
+        }
+      );
+
+      return deferred.promise;
     }
+
   };
 
   return $kb;
