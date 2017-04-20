@@ -1,0 +1,63 @@
+md-dialog(layout="column", aria-label="Modify/Create Events Entry", flex-md=80, flex-xs=100, flex-lg=60, flex=60).kbDialog
+    md-toolbar
+        .md-toolbar-tools
+            h2 {{formAction}} Events Entry
+            span(flex)
+            md-button.md-icon-button(ng-click='cancel()')
+                md-icon cancel
+    md-dialog-content(layout-padding).alterationsForm
+        div(label="Matching Criteria")
+            div(layout="column")
+                form(flex='auto', name='form', ng-submit="submit(form)", novalidate)
+                    div(layout="row")
+                        div(layout-align="center center").kbEntryStatus
+                            md-icon(ng-show="!events.dirty && !events.valid").invalid.clickable error_outline
+                                md-tooltip The Events-Expression provided does not satisfy the required format. Please check the provided documentation
+                            md-icon(ng-show="!events.dirty && events.valid").valid check
+                            md-icon(ng-show="events.dirty && !events.valid").checking more_horiz
+
+                        md-input-container(flex, ng-class="{ 'md-input-invalid': (!events.dirty && !events.valid) }")
+                            label Key
+                            input(ng-model="event.key", name="Key", placeholder="Key", required, ng-disabled="(events.dirty === true)", ng-blur="validateKBEvents()")
+
+                            div.md-input-messages-animation.md-auto-hide
+                                p(ng-show="!events.dirty && !events.valid", style="opacity: 1; margin-top: 0px;").help-block.md-input-message-animation The Key value provided does not satisfy the required format. Please check the provided documentation
+
+                        div(style="margin-top:25px")
+                            md-icon.clickable help_outline
+
+                    div(layout="row")
+                        md-input-container(flex)
+                            input(ng-model="event.related_events", name="RelatedEvents", placeholder="related_events", required)
+
+                    div(layout="row")
+                        md-input-container(flex)
+                            input(disabled=true, ng-model="event.type", placeholder="Type")
+
+                        md-input-container(flex)
+                            input(disabled=true, ng-model="event.name", placeholder="Name")
+
+                    div(layout="row")
+                        md-input-container(flex)
+                            input(disabled=true, ng-model="event.display_coord", placeholder="Display_Coords")
+
+                        md-input-container(flex)
+                            input(disabled=true, ng-model="event.notation", placeholder="Notation")
+
+
+                    div(layout="row")
+                        md-input-container(flex)
+                            input(ng-model="event.description", placeholder="Description")
+
+                    div(layout="row")
+                        md-input-container(flex)
+                            label Entry Comments
+                            textarea(rows=2, md-maxlength=250, ng-model="reference.comments", required)
+                            span.text-xsmall.text-grey Notes about this entry for other analysts.
+                    div
+                        pre {{disease}}
+
+
+    md-dialog-actions(layout="row", layout-aligh="end center", layout-padding)
+        md-button(ng-click="submit()", ng-disabled="!events.valid").md-raised.md-primary Save
+
