@@ -1,0 +1,91 @@
+md-dialog(layout="column", aria-label="Knowledgebase References Filters", ng-cloak, flex=85).kbDialog
+    form(flex='auto', name='form', ng-submit="update(form)")
+        md-toolbar
+            .md-toolbar-tools
+                h2 Reference Filters
+                span(flex)
+                md-button.md-icon-button(ng-click='cancel()')
+                    md-icon cancel
+        md-dialog-content(layout-padding).filters
+            div(layout="row") Multiple different types of selected filters will work in an "and" union together.
+
+            div(layout="column")
+                div(layout="row").header
+                    div(layout="column", flex) Type
+                    div(layout="column", flex) Relevance
+                    div(layout="column", flex) Status
+                div(layout="row").row
+                    div(layout="column", flex)
+                        md-select(ng-model="filter.type", multiple, placeholder="Type")
+                            md-option(ng-value="type", ng-repeat="type in vocabulary.type track by $index") {{type}}
+
+                    div(layout="column", flex)
+                        md-select(ng-model="filter.relevance", multiple, placeholder="Relevance")
+                            md-option(ng-value="relevance", ng-repeat="relevance in vocabulary.relevance track by $index") {{relevance}}
+
+                    div(layout="column", flex)
+                        md-select(ng-model="filter.status", multiple, placeholder="Status")
+                            md-option(ng-value="status", ng-repeat="status in vocabulary.status track by $index") {{status}}
+                div(layout="row").header
+                    div(layout="column", flex) Context
+                    div(layout="column", flex) Evidence
+                    div(layout="column", flex) Disease
+                div(layout="row").row
+                    div(layout="column", flex)
+                        div(layout="column")
+                            div(ng-repeat="(i, context) in filter.context track by $index", ng-if="filter.context.length > 0").removableFilter
+                                md-icon(ng-click="removeFilterEntry('context', i)") remove_circle
+                                | {{context}}
+
+                        md-input-container
+                            input(ng-model="new.values.context", ng-keyup="$event.keyCode === 13 ? new.action('context') : null", ng-blur="new.action('context')", placeholder="Context")
+
+                    div(layout="column", flex)
+
+                        md-select(ng-model="filter.evidence", multiple, placeholder="Evidence")
+                            md-option(ng-value="evidence", ng-repeat="evidence in vocabulary.evidence track by $index") {{evidence}}
+
+                        //div(layout="column")
+                            div(ng-repeat="(i, evidence) in filter.evidence track by $index", ng-if="filter.evidence.length > 0").removableFilter
+                                md-icon(ng-click="removeFilterEntry('evidence', i)") remove_circle
+                                | {{evidence}}
+
+                        //md-input-container
+                            input(ng-model="new.values.evidence", ng-keyup="$event.keyCode === 13 ? new.action('evidence') : null", ng-blur="new.action('evidence')", placeholder="Evidence")
+
+                    div(layout="column", flex)
+                        div(ng-repeat="(i, disease) in filter.disease_list track by $index", ng-if="filter.disease_list.length > 0").removableFilter
+                            md-icon(ng-click="removeFilterEntry('disease_list', i)") remove_circle
+                            | {{disease}}
+
+                        md-autocomplete(
+                        md-selected-item="new.values.disease_list",
+                        md-search-text="disease.newSearchText",
+                        md-items="entry in disease.filter(disease.newSearchText)",
+                        md-item-text="entry",
+                        md-select-on-match="'true'",
+                        placeholder="Disease Filter",
+                        md-floating-label="Disease Filter",
+                        md-selected-item-change="new.action('disease_list')"
+                        )
+                            span(md-highlight-text="disease.searchText") {{entry}}
+
+                div(layout="row")
+                    div(flex).header
+                        div Events Expression
+                    div(flex=50)
+                div(layout="row")
+                    div(flex).row
+                        div(layout="column")
+                            div(ng-repeat="(i, events_expression) in filter.events_expression track by $index", ng-if="filter.events_expression.length > 0").removableFilter
+                                md-icon(ng-click="removeFilterEntry('events_expression', i)") remove_circle
+                                | {{events_expression}}
+
+                        div(layout="column")
+                            md-input-container(flex)
+                                input(ng-model="new.values.events_expression", ng-keyup="$event.keyCode === 13 ? new.action('events_expression') : null", ng-blur="new.action('events_expression')", placeholder="events expression")
+                    div(flex=50)
+
+        md-dialog-actions(layout="row", layout-aligh="end center", layout-padding)
+            md-button(ng-click="save()").md-primary.md-raised Save Filters
+

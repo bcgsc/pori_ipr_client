@@ -1,0 +1,61 @@
+md-content(layout="column", flex)
+
+    div(layout="column")
+        div.options
+            div(layout="row")
+                h1.title KB.
+                    span.subject Events
+                span(flex)
+                //md-button(ng-click="newReference($event)").md-primary.md-raised.narrowButton New Event
+
+            div(layout="row").filters
+                span
+                    md-button(ng-click="openFilters($event)").md-raised.md-primary.narrowButton Set Filters
+                span(flex)
+                div(layout="row")
+                    span(ng-repeat="(filter, values) in paginate.filters").filterEntry
+                        |{{filter}}: (
+                        span(ng-repeat="(i, v) in values").filterValue
+                            | {{v}}
+                            span(ng-click="paginate.removeFilter(filter, i)").remove x
+                        | )
+
+        div(layout="row").kbTable.header
+            div(flex=15) key
+            div(flex=5) type
+            div(flex=10) name
+            div(flex) display_coord
+            div(flex) notation
+            div(flex) related_events
+            div(flex) description
+            div(flex=10) status
+            div.spacer
+
+    div(flex, layout-fill, id="kbViewerWindow").kbTable.rows
+        div(ng-repeat="ev in events", ng-class="{incorrect: ev.status.toLowerCase().indexOf('incorrect') !== -1}").rowContainer
+            div(layout="row").row
+                div(layout="row", flex=15)
+                    div(style="width: 35px;", layout="column", layout-align="center center").open
+                        //md-icon(ng-click="openView($event, event)").text-xsmall edit
+                        md-tooltip(md-direction="right") Edit event entry
+                    // If there are no children, don't make anything with watchers
+                    | {{ev.key}}
+                div(flex=5, md-wrapped) {{ev.type}}
+                div(flex=10, md-truncate) {{ev.name}}
+                div(flex) {{ev.display_coord}}
+                div(flex, md-truncate) {{ev.notation}}
+                div(flex, md-truncate) {{ev.related_events}}
+                div(flex, md-truncate) {{ev.description}}
+                div(flex=10, class="{{ev.status.toLowerCase()}}", layout-align="center start", layout="column").status
+                    span {{ev.status}}
+
+    div(layout="column").pagination
+        div(layout="row", layout-align="center center").page
+            span(ng-if="paginate.current !== 1", ng-click="paginate.changePage(paginate.current-1)").pageButton.clickable <
+            span(ng-if="paginate.displayPages()[0] > 1", ng-click="paginate.changePage(1)").pageButton.clickable 1
+            span(ng-if="paginate.displayPages()[0] > 1") ...
+            span(ng-repeat="page in paginate.displayPages()", ng-class="{current: (page === paginate.current)}", ng-click="paginate.changePage(page)").pageButton.clickable {{page}}
+            span(ng-if="paginate.displayPages()[paginate.displayPages().length-1] !== paginate.pages && paginate.current !== paginate.pages && paginate.pages > 8") ...
+            span(ng-if="paginate.displayPages()[paginate.displayPages().length-1] !== paginate.pages", ng-click="paginate.changePage(paginate.pages)", ng-class="{current: (paginate.pages === paginate.current)}").pageButton.clickable {{paginate.pages}}
+            span(ng-click="paginate.changePage(paginate.current+1)", ng-show="paginate.current !== paginate.pages").pageButton.clickable >
+            span.text-xsmall Total entries: {{paginate.records}}
