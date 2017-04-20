@@ -41,7 +41,9 @@ let files = {
       './node_modules/ngclipboard/dist/ngclipboard.min.js',
       './node_modules/angular-sortable-view/src/angular-sortable-view.js',
       './node_modules/quill/dist/quill.min.js',
-      './node_modules/ng-quill/dist/ng-quill.min.js'
+      './node_modules/ng-quill/dist/ng-quill.min.js',
+      './node_modules/chart.js/dist/Chart.min.js',
+      './node_modules/angular-chart.js/dist/angular-chart.min.js'
     ],
     
     // Application javascript sources

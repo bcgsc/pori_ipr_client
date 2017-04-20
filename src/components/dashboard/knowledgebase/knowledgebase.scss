@@ -70,6 +70,41 @@ $kb-status-flagged-hlight: rgb(251, 208, 204);
     }
   }
 
+  .dashboard {
+    .section {
+      h2 {
+        font-size: 1.0em;
+      }
+
+      .widget {
+        margin: 20px;
+        border: 1px solid rgb(200,200,200);
+        border-radius: 5px;
+        min-height: 600px;
+
+        h1 {
+          font-size: 1.2em;
+          font-weight: 400;
+          padding: 8px 10px 5px;
+          margin: 0;
+          background-color: rgb(200,200,200);
+        }
+        .content {
+          padding: 15px;
+        }
+
+        .doughnut {
+          width: 70%;
+          margin: 0 auto;
+        }
+        canvas {
+          margin-bottom: 20px;
+        }
+      }
+    }
+
+  }
+
   .kbTable {
 
     &.header {
@@ -133,7 +168,7 @@ $kb-status-flagged-hlight: rgb(251, 208, 204);
                 border: 1px solid $kb-status-new-solid;
                 background-color: $kb-status-new-hligh;
               }
-              &.reviewed span {
+              &.reviewed span, &.approved span {
                 color: $kb-status-reviewed-solid;
                 border: 1px solid $kb-status-reviewed-solid;
                 background-color: $kb-status-reviewed-hlight;
@@ -462,7 +497,7 @@ md-dialog.kbDialog {
         border: 1px solid $kb-status-new-solid;
         background-color: $kb-status-new-hligh;
       }
-      &.reviewed span {
+      &.reviewed span, &.approved span {
         color: $kb-status-reviewed-solid;
         border: 1px solid $kb-status-reviewed-solid;
         background-color: $kb-status-reviewed-hlight;

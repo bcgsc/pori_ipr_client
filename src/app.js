@@ -12,6 +12,7 @@ const app = angular.module('bcgscIPR', [
 	'angularFileUpload',
 	'ngclipboard',
 	'angular-sortable-view',
-	'ngQuill'
+	'ngQuill',
+	'chart.js'
 ]);
 
