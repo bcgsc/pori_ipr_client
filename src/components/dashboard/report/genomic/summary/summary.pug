@@ -149,7 +149,7 @@ section
                     div(flex) {{data.ms.snvPercentileTCGA}}
                     div(flex) {{data.ms.indelPercentileTCGA}}
                     div(flex) {{data.ms.svPercentilePOG}} (POG)
-                div(layout="row", flex).data
+                div(layout="row", flex, ng-hide="data.ta.diseaseExpressionComparator === 'average'").data
                     div(flex) Percentile among {{data.ta.diseaseExpressionComparator}}
                     div(flex) {{data.ms.snvPercentileDisease}}
                     div(flex) {{data.ms.indelPercentileDisease}}
