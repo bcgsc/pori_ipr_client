@@ -597,22 +597,76 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       controller: 'knowledgebase',
       templateUrl: 'dashboard/knowledgebase/knowledgebase.html'
     })
+
+    .state('dashboard.knowledgebase.dashboard', {
+      url: '/dashboard',
+      data: {
+        displayName: "Knowledgebase"
+      },
+      controller: 'knowledgebase.dashboard',
+      templateUrl: 'dashboard/knowledgebase/dashboard/dashboard.html',
+      resolve: {
+        metrics: ['$q', 'api.knowledgebase', ($q, $kb) => {
+          return $kb.metrics();
+        }]
+      }
+    })
+
     .state('dashboard.knowledgebase.references', {
       url: '/references',
       data: {
         displayName: "References"
       },
+      params: {
+        filters: null
+      },
       controller: 'knowledgebase.references',
       templateUrl: 'dashboard/knowledgebase/references/references.html',
       resolve: {
-        references: ['$q', 'api.knowledgebase', ($q, $kb) => {
-          return $kb.references.all(100, 0);
+        references: ['$q', 'api.knowledgebase', '$stateParams', ($q, $kb, $stateParams) => {
+          if($stateParams.filters) {
+            return $kb.references.all(100, 0, $stateParams.filters);
+          } else {
+            return $kb.references.all(100, 0);
+          }
         }],
-        ref_count: ['$q', 'api.knowledgebase', ($q, $kb) => {
-          return $kb.references.count();
+        ref_count: ['$q', 'api.knowledgebase', '$stateParams',  ($q, $kb, $stateParams) => {
+          if($stateParams.filters !== null) {
+            return $kb.references.count($stateParams.filters);
+          } else {
+            return $kb.references.count();
+          }
         }],
         vocabulary: ['$q', 'api.knowledgebase', ($q, $kb) => {
           return $kb.vocabulary();
+        }]
+      }
+    })
+
+    .state('dashboard.knowledgebase.events', {
+      url: '/events',
+      data: {
+        displayName: "Events"
+      },
+      params: {
+        filters: null
+      },
+      controller: 'knowledgebase.events',
+      templateUrl: 'dashboard/knowledgebase/events/events.html',
+      resolve: {
+        events: ['$q', 'api.knowledgebase', '$stateParams', ($q, $kb, $stateParams) => {
+          if($stateParams.filters) {
+            return $kb.events.all(100, 0, $stateParams.filters);
+          } else {
+            return $kb.events.all(100, 0);
+          }
+        }],
+        events_count: ['$q', 'api.knowledgebase', '$stateParams', ($q, $kb, $stateParams) => {
+          if($stateParams.filters !== null) {
+            return $kb.events.count($stateParams.filters);
+          } else {
+            return $kb.events.count();
+          }
         }]
       }
     })
