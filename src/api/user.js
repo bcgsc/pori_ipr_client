@@ -8,24 +8,21 @@
 app.factory('api.user', ['_', '$http', '$q', (_, $http, $q) => {
   
   const api = CONFIG.ENDPOINTS.API + '/user';
-  let _me = null; // Local user cache
   let _token = null; // User API token
   let _groups = [];
   
   let $user = {};
-
-  $user._me = {};
+  $user._me = null; // Local User Cache
   
   $user.me = () => {
     
     return $q((resolve, reject) => {
-      if(_me) return resolve(_me);
+      if($user._me) return resolve($user._me);
       $http.get(api + '/me').then(
         (self) => {
-          _me = self.data;
           _groups = self.data.groups;
           $user._me = self.data;
-          resolve(_me);
+          resolve($user._me);
         },
         (error) => {
           reject(error);
