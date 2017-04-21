@@ -35,7 +35,7 @@ md-content(layout="column", flex)
         div(ng-repeat="ev in events", ng-class="{incorrect: ev.status.toLowerCase().indexOf('incorrect') !== -1}").rowContainer
             div(layout="row").row
                 div(layout="row", flex=15)
-                    div(style="width: 35px;", layout="column", layout-align="center center").open
+                    //div(style="width: 35px;", layout="column", layout-align="center center").open
                         //md-icon(ng-click="openView($event, event)").text-xsmall edit
                         md-tooltip(md-direction="right") Edit event entry
                     // If there are no children, don't make anything with watchers
