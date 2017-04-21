@@ -103,12 +103,13 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         breadcrumbProxy: 'dashboard.listing'
       },
 			resolve: {
-			  user: ['$q', 'api.session', '$state', ($q, $session, $state) => {
+			  user: ['$q', 'api.session', '$state', '$userSettings', ($q, $session, $state, $userSettings) => {
 			    return $q((resolve, reject) => {
 			      // Attempt session initialization
 			      $session.init().then(
 			        (user) => {
-			          // Session init'd, return user
+                // Session init'd, return user
+                $userSettings.init(); // Init settings
 			          resolve(user);
 		          },
 		          (err) => {
@@ -151,19 +152,10 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
 			  displayName: "Listing"
       },
       resolve: {
-        pogs: ['$q', 'api.pog', ($q, $pog) => {
-          return $q((resolve, reject) => {
-            $pog.all().then(
-              (pogs) => {
-                resolve(pogs);
-              },
-              (err) => {
-                console.log('[route.dashboard.pogAll]', err);
-                reject(err);
-              }
-            );
-
-          });
+        pogs: ['$q', 'api.pog', '$userSettings', 'user', ($q, $pog, $userSettings) => {
+          let currentUserOnly = $userSettings.get('pogListCurrentUser');
+          if(currentUserOnly === null || currentUserOnly === true) return $pog.all();
+          if(currentUserOnly === false) return $pog.all({all:true});
         }]
       }
 		})

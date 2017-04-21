@@ -1,4 +1,4 @@
-app.controller('controller.dashboard.listing', ['_', '$q', '$scope', 'api.pog', 'pogs', '$mdDialog', 'user',  (_, $q, $scope, $pog, pogs, $mdDialog, user) => {
+app.controller('controller.dashboard.listing', ['_', '$q', '$scope', 'api.pog', 'pogs', '$mdDialog', 'user', '$userSettings',  (_, $q, $scope, $pog, pogs, $mdDialog, user, $userSettings) => {
 
   $scope.pogs = pogs;
 
@@ -11,10 +11,16 @@ app.controller('controller.dashboard.listing', ['_', '$q', '$scope', 'api.pog', 
   ];
 
   $scope.filter ={
-    currentUser: true,
+    currentUser: $userSettings.get('pogListCurrentUser'),
     query: null
   };
 
+  $scope.$watch('filter.currentUser', (newVal, oldVal) => {
+    // Ignore onload message
+    if(JSON.stringify(newVal) === JSON.stringify(oldVal)) return;
+    $userSettings.save('pogListCurrentUser', newVal);
+
+  });
 
   $scope.refreshList = () => {
     $pog.all({all: !$scope.filter.currentUser, query: $scope.filter.query, role: $scope.filter.role}).then(

@@ -8,7 +8,7 @@ md-content(flex).md-padding
                     md-option(ng-repeat="role in roles", ng-value="role") {{role}}
             span(flex=5)
             div.userCases
-                md-switch(ng-model="filter.currentUser", ng-change="refreshList()").md-primary Only my cases
+                md-switch(ng-model="filter.currentUser", ng-change="refreshList()", ng-false-value="false", ng-true-value="true").md-primary Only my cases
             span(flex=5)
             md-input-container.hide-validation-error.pull-right
                 input(placeholder="Search", name="Search", ng-model="pogQuery", size=40).text-small
