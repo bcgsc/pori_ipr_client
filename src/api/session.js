@@ -24,7 +24,7 @@ app.factory('api.session', ['_', '$http', '$q', '$localStorage', 'api.user', 'ap
    */
   $session.user = () => {
     return me;
-  }
+  };
 
   $session.getToken = () => {
     return angular.copy(_token);
@@ -40,7 +40,7 @@ app.factory('api.session', ['_', '$http', '$q', '$localStorage', 'api.user', 'ap
   $session.$user = () => {
     // Wrap local me in Q promise so it can wait...
     return $q.when($session.user());
-  }
+  };
   
   /*
    * Store session data
@@ -55,7 +55,7 @@ app.factory('api.session', ['_', '$http', '$q', '$localStorage', 'api.user', 'ap
     me = user; // Set lib cache
     
     return;
-  }
+  };
   
   /*
    * Initialize session
@@ -94,7 +94,7 @@ app.factory('api.session', ['_', '$http', '$q', '$localStorage', 'api.user', 'ap
       
     });
     
-  }
+  };
   
   /*
    * User login attempt
@@ -125,7 +125,7 @@ app.factory('api.session', ['_', '$http', '$q', '$localStorage', 'api.user', 'ap
       
     });
     
-  }
+  };
   
   /*
    * End Session
