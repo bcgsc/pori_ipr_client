@@ -149,7 +149,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
 			templateUrl: 'dashboard/listing/listing.html',
 			controller: 'controller.dashboard.listing',
       data: {
-			  displayName: "Listing"
+			  displayName: "POG Cases"
       },
       resolve: {
         pogs: ['$q', 'api.pog', '$userSettings', 'user', ($q, $pog, $userSettings) => {
@@ -159,15 +159,6 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         }]
       }
 		})
-    
-    .state('dashboard.listing.detail', {
-      url: '/detail',
-      templateUrl: 'dashboard/listing/detail.html',
-      controller: 'controller.dashboard.listing.detail',
-      data: {
-        displayName: "Listing Detail"
-      }
-    })
 
     .state('dashboard.pog', {
       data: {
@@ -198,7 +189,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       url: '/report',
       data: {
         displayName: "Reports",
-        stateProxy: 'dashboard.pog.report.genomic.summary'
+        breadcrumbProxy: 'dashboard.pog.report.listing'
       },
 			templateUrl: 'dashboard/report/report.html',
       resolve: {
@@ -211,7 +202,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     .state('dashboard.pog.report.listing', {
       url: '/listing',
       data: {
-        displayName: "Listing",
+        displayName: "Reports",
       },
 			templateUrl: 'dashboard/report/listing/listing.html',
       controller: 'controller.dashboard.pog.report.listing',
@@ -221,7 +212,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       url: '/{analysis_report}/genomic',
       data: {
         displayName: "Genomic",
-        stateProxy: 'dashboard.pog.report.genomic.summary'
+        breadcrumbProxy: 'dashboard.pog.report.genomic.summary'
       },
       templateUrl: 'dashboard/report/genomic/genomic.html',
       controller: 'controller.dashboard.report.genomic',
@@ -485,7 +476,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       url: '/users',
       data: {
         displayName: 'Users & Groups',
-        stateProxy: 'dashboard.admin.users.userList'
+        breadcrumbProxy: 'dashboard.admin.users.userList'
       },
       controller: 'controller.dashboard.admin.users',
       templateUrl: 'dashboard/admin/user/users.html',
