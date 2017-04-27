@@ -18,10 +18,10 @@ section
                         div(layout="row").expressionDetails
                             div(flex).normal
                                 | Normal Tissue Expression Comparator
-                                span(style="background-color: #{{colourHex(pog.tumourAnalysis.tcgaColor)}}") {{pog.tumourAnalysis.normalExpressionComparator}}
+                                span(style="background-color: #{{colourHex(report.tumourAnalysis.tcgaColor)}}") {{report.tumourAnalysis.normalExpressionComparator}}
                             div(flex).disease
                                 | Disease Expression Comparator
-                                span(style="background-color: #{{colourHex(pog.tumourAnalysis.tcgaColor)}}") {{pog.tumourAnalysis.diseaseExpressionComparator}}
+                                span(style="background-color: #{{colourHex(report.tumourAnalysis.tcgaColor)}}") {{report.tumourAnalysis.diseaseExpressionComparator}}
                         span.details Tissue Comparator Details
                 span(flex=20)
 
@@ -46,8 +46,8 @@ section
                             div(flex) Gene
                             div(flex) LOH
                             div(flex) Copy Number
-                            div(flex) Fold Change Vs. {{pog.tumourAnalysis.normalExpressionComparator}}
-                            div(flex) {{pog.tumourAnalysis.diseaseExpressionComparator}} %ile
+                            div(flex) Fold Change Vs. {{report.tumourAnalysis.normalExpressionComparator}}
+                            div(flex) {{report.tumourAnalysis.diseaseExpressionComparator}} %ile
                             div(flex) kIQR
                             div(flex=5)
                         div(layout="row", layout-align="start end").search

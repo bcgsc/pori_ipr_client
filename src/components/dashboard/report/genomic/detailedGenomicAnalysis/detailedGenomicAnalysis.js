@@ -1,10 +1,11 @@
 app.controller('controller.dashboard.report.genomic.detailedGenomicAnalysis', 
-  ['_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', 'api.pog', 'api.detailedGenomicAnalysis.alterations', 'pog', 'alterations', 'approvedThisCancer', 'approvedOtherCancer', 'targetedGenes',
-  (_, $q, $scope, $state, $mdDialog, $mdToast, $pog, $alterations, pog, alterations, approvedThisCancer, approvedOtherCancer, targetedGenes) => {
+  ['_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', 'api.pog', 'api.detailedGenomicAnalysis.alterations', 'pog', 'report', 'alterations', 'approvedThisCancer', 'approvedOtherCancer', 'targetedGenes',
+  (_, $q, $scope, $state, $mdDialog, $mdToast, $pog, $alterations, pog, report, alterations, approvedThisCancer, approvedOtherCancer, targetedGenes) => {
   
   $scope.approvedThisCancer = {};
   $scope.approvedOtherCancer = {};
   $scope.pog = pog;
+  $scope.report = report;
   $scope.samples = [];
   $scope.alterations = {therapeutic: {}, prognostic: {}, diagnostic: {}, biological: {}, unknown: null};
   $scope.targetedGenes = targetedGenes;
@@ -25,7 +26,8 @@ app.controller('controller.dashboard.report.genomic.detailedGenomicAnalysis',
         pog: $scope.pog,
         gene: gene,
         samples: $scope.samples,
-        rowEvent: 'new'
+        rowEvent: 'new',
+        report: report
       },
       controller: 'controller.dashboard.reports.genomic.detailedGenomicAnalysis.alterations.edit' // End controller
     });

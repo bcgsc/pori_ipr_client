@@ -106,7 +106,7 @@ section
             div(layout="row").header
                 div(flex).container
                     div(flex).signature.editable
-                        span(ng-if="data.ms.mutationSignature.length == 0") Not Specified
+                        span(ng-if="(data.ms.mutationSignature.length === 0 || data.ms.mutationSignature === null)") Not Specified
                             md-icon(ng-click="updateMs()") edit
                         span(ng-if="data.ms.mutationSignature.length > 0")
                             span(ng-repeat="sig in data.ms.mutationSignature").repeat-comma
