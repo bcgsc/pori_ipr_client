@@ -12,11 +12,11 @@ app.factory('api.expressionAnalysis.outlier', ['_', '$http', '$q', (_, $http, $q
   let $outlier = {};
 
 
-  $outlier.all = (pog) => {
+  $outlier.all = (pog, report) => {
 
     let deferred = $q.defer();
 
-    $http.get(api + '/' + pog + '/genomic/expressionAnalysis/outlier').then(
+    $http.get(api + '/' + pog + '/report/'+ report +'/genomic/expressionAnalysis/outlier').then(
       (resp) => {
         // Successful authentication
         deferred.resolve(resp.data);
@@ -30,12 +30,12 @@ app.factory('api.expressionAnalysis.outlier', ['_', '$http', '$q', (_, $http, $q
 
   };
 
-  $outlier.one = (pog, ident) => {
+  $outlier.one = (pog, report, ident) => {
     return {
       update: (data) => {
         let deferred = $q.defer();
 
-        $http.put(api + '/' + pog + '/genomic/expressionAnalysis/outlier/' + ident, data).then(
+        $http.put(api + '/' + pog + '/report/'+ report +'/genomic/expressionAnalysis/outlier/' + ident, data).then(
           (resp) => {
             deferred.resolve(resp.data);
           },
@@ -51,10 +51,10 @@ app.factory('api.expressionAnalysis.outlier', ['_', '$http', '$q', (_, $http, $q
   };
 
   // Get alterations by specific type
-  $outlier.getType = (pog, type) => {
+  $outlier.getType = (pog, report, type) => {
     let deferred = $q.defer();
 
-    $http.get(api + '/'  + pog + '/genomic/expressionAnalysis/outlier/' + type).then(
+    $http.get(api + '/'  + pog + '/report/'+ report +'/genomic/expressionAnalysis/outlier/' + type).then(
       (resp) => {
         deferred.resolve(resp.data);
       },

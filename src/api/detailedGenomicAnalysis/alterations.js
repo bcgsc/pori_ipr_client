@@ -12,11 +12,11 @@ app.factory('api.detailedGenomicAnalysis.alterations', ['_', '$http', '$q', (_, 
   let $APC = {};
   
   
-  $APC.getAll = (pog) => {
+  $APC.getAll = (pog, report) => {
     
     let deferred = $q.defer();
     
-    $http.get(api + '/' + pog + '/genomic/detailedGenomicAnalysis/alterations').then(
+    $http.get(api + '/' + pog + '/report/'+ report +'/genomic/detailedGenomicAnalysis/alterations').then(
       (resp) => {
         // Successful authentication
         deferred.resolve(resp.data);
@@ -30,12 +30,12 @@ app.factory('api.detailedGenomicAnalysis.alterations', ['_', '$http', '$q', (_, 
     
   }
   
-  $APC.one = (pog, ident) => {
+  $APC.one = (pog, report, ident) => {
     return {
       update: (data) => {
         let deferred = $q.defer();
         
-        $http.put(api + '/' + pog + '/genomic/detailedGenomicAnalysis/alterations/' + ident, data).then( 
+        $http.put(api + '/' + pog + '/report/'+ report +'/genomic/detailedGenomicAnalysis/alterations/' + ident, data).then(
           (resp) => {
             deferred.resolve(resp.data);
           },
@@ -57,7 +57,7 @@ app.factory('api.detailedGenomicAnalysis.alterations', ['_', '$http', '$q', (_, 
       create: (data) => {
         let deferred = $q.defer();
 
-        $http.post(api + '/' + pog + '/genomic/detailedGenomicAnalysis/alterations/', data).then(
+        $http.post(api + '/' + pog + '/report/'+ report +'/genomic/detailedGenomicAnalysis/alterations/', data).then(
           (resp) => {
             deferred.resolve(resp.data);
           },
@@ -70,13 +70,13 @@ app.factory('api.detailedGenomicAnalysis.alterations', ['_', '$http', '$q', (_, 
         return deferred.promise;
       }
     }
-  }
+  };
   
   // Get alterations by specific type
-  $APC.getType = (pog, type) => {
+  $APC.getType = (pog, report, type) => {
     let deferred = $q.defer();
     
-    $http.get(api + '/'  + pog + '/genomic/detailedGenomicAnalysis/alterations/' + type).then(
+    $http.get(api + '/'  + pog + '/report/'+ report +'/genomic/detailedGenomicAnalysis/alterations/' + type).then(
       (resp) => {
         deferred.resolve(resp.data);
       },
@@ -86,19 +86,19 @@ app.factory('api.detailedGenomicAnalysis.alterations', ['_', '$http', '$q', (_, 
     );
     
     return deferred.promise;
-  }
+  };
   
   // Update an existing entry
   $APC.update = (pog, gene) => {
     let deferred = $q.defer();
     
-    $http.put
-  }
+    //$http.put
+  };
   
   // Create a new entry
   $APC.create = (pog, gene) => {
     
-  }
+  };
       
   
   

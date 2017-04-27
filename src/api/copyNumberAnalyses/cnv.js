@@ -12,11 +12,11 @@ app.factory('api.copyNumberAnalyses.cnv', ['_', '$http', '$q', (_, $http, $q) =>
   let $cnv = {};
 
 
-  $cnv.all = (pog) => {
+  $cnv.all = (pog, report) => {
 
     let deferred = $q.defer();
 
-    $http.get(api + '/' + pog + '/genomic/copyNumberAnalyses/cnv').then(
+    $http.get(api + '/' + pog + '/report/'+ report +'/genomic/copyNumberAnalyses/cnv').then(
       (resp) => {
         // Successful authentication
         deferred.resolve(resp.data);
@@ -30,12 +30,12 @@ app.factory('api.copyNumberAnalyses.cnv', ['_', '$http', '$q', (_, $http, $q) =>
 
   };
 
-  $cnv.one = (pog, ident) => {
+  $cnv.one = (pog, report, ident) => {
     return {
       update: (data) => {
         let deferred = $q.defer();
 
-        $http.put(api + '/' + pog + '/genomic/copyNumberAnalyses/cnv/' + ident, data).then(
+        $http.put(api + '/' + pog + '/report/'+ report +'/genomic/copyNumberAnalyses/cnv/' + ident, data).then(
           (resp) => {
             deferred.resolve(resp.data);
           },
@@ -48,13 +48,13 @@ app.factory('api.copyNumberAnalyses.cnv', ['_', '$http', '$q', (_, $http, $q) =>
         return deferred.promise;
       }
     }
-  }
+  };
 
   // Get alterations by specific type
-  $cnv.getType = (pog, type) => {
+  $cnv.getType = (pog, report, type) => {
     let deferred = $q.defer();
 
-    $http.get(api + '/'  + pog + '/genomic/copyNumberAnalyses/cnv/' + type).then(
+    $http.get(api + '/'  + pog + '/report/'+ report +'/genomic/copyNumberAnalyses/cnv/' + type).then(
       (resp) => {
         deferred.resolve(resp.data);
       },
