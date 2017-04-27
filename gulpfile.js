@@ -31,8 +31,6 @@ let files = {
       './node_modules/angular-moment/angular-moment.min.js',
       './node_modules/ng-storage/ngStorage.min.js',
       './node_modules/simplemde/dist/simplemde.min.js',
-      './node_modules/marked/marked.min.js',
-      './node_modules/angular-marked/dist/angular-marked.min.js',
       './node_modules/svg-pan-zoom/dist/svg-pan-zoom.js',
       './node_modules/ng-stickyfill/dist/ng-stickyfill.min.js',
       './node_modules/angular-file-upload/dist/angular-file-upload.min.js',
@@ -189,7 +187,7 @@ gulp.task('js', () => {
 gulp.task('libs', () => {
   return gulp.src(files.js.libs)
     .pipe(concat('libs.js'))
-    //.pipe(If(config.env.production, uglify()))
+    //.pipe(uglify())
     //.pipe(pako.gzip())
     .pipe(gulp.dest('./builds/'+configManager.getEnvironment()+'/assets/libs'));
 });

@@ -7,7 +7,6 @@ const app = angular.module('bcgscIPR', [
 	'ui.router',
 	'angularMoment',
 	'ngStorage',
-	'hc.marked',
   'stickyfill',
 	'angularFileUpload',
 	'ngclipboard',
