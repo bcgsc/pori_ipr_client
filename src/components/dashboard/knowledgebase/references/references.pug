@@ -11,11 +11,18 @@ md-content(layout="column", flex)
             div(layout="row").filters
                 span
                     md-button(ng-click="openFilters($event)").md-raised.md-primary.narrowButton Set Filters
+                span(flex=5)
+                div(flex=20, layout-align="center center", layout="row")
+                    form(ng-submit="search.go()", layout="row", flex)
+                        md-input-container(flex).hide-validation-error.pull-right
+                            label
+                            input(placeholder="Search", ng-model="search.query")
                 span(flex)
                 div(layout="row")
                     span(ng-repeat="(filter, values) in paginate.filters").filterEntry
                         |{{filter}}: (
-                        span(ng-repeat="(i, v) in values").filterValue
+                        span(ng-if="filter === 'search'") {{values}}
+                        span(ng-if="filter !== 'search'", ng-repeat="(i, v) in values").filterValue
                             | {{v}}
                             span(ng-click="paginate.removeFilter(filter, i)").remove x
                         | )

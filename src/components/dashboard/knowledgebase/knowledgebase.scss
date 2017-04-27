@@ -41,11 +41,19 @@ $kb-status-flagged-hlight: rgb(251, 208, 204);
 
       span.remove {
         vertical-align: super;
-        padding: 0 1px;
-        color: rgb(100,100,100);
-        font-size: 0.8em;
+        font-size: 10px;
+        display: inline-block;
         cursor: pointer;
+        background-color: rgb(207, 0, 15);
+        color: white;
+        border-radius: 16px;
+        width: 13px;
+        height: 13px;
+        text-align: center;
+        margin-left: 3px;
+
         &:hover {
+          background-color: rgb(250, 153, 148);
           color: rgb(207, 0, 15);
         }
       }

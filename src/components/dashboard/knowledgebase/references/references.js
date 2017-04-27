@@ -43,6 +43,12 @@ app.controller('knowledgebase.references',
     );
   };
 
+  $scope.search = {};
+  $scope.search.go = () => {
+    $paginate.filters.search = $scope.search.query;
+    $paginate.refresh();
+  };
+
   // Open Filters Modal
   $scope.openView = ($event, reference) => {
     $mdDialog.show({
