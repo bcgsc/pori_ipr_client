@@ -5,7 +5,7 @@ div(flex, layout="column")
         div.box
             div(layout="row", flex).heading
                 div(flex) Gene
-                div(flex=12) Transcript
+                div(flex=10) Transcript
                 div(flex) Protein Change
                 div(flex) Location
                 div(flex) Ref/Alt
@@ -22,9 +22,11 @@ div(flex, layout="column")
                 div.text-center.details No small somatic mutations of this kind were found from the analysis.
             div(layout="row", flex, ng-repeat="mutation in mutations").row
                 div(flex) {{mutation.gene}}
-                div(flex=12) {{mutation.transcript}}
+                div(flex=10, md-truncate) {{mutation.transcript}}
+                    md-tooltip {{mutation.transcript}}
                 div(flex) {{mutation.proteinChange}}
-                div(flex) {{mutation.location}}
+                div(flex, md-truncate) {{mutation.location}}
+                    md-tooltip {{mutation.location}}
                 div(flex) {{mutation.zygosity}}
                 div(flex) {{mutation.refAlt}}
                 div(flex) {{copyFilter(mutation.ploidyCorrCpChange)}}
@@ -37,3 +39,5 @@ div(flex, layout="column")
                 div(flex=5).text-center
                     md-icon(ipr-data-viewer="mutation").clickable search
                         md-tooltip View Details
+                    md-icon(ng-click="vardbVarLib($event, mutation)").clickable track_changes
+                        md-tooltip Lookup Variant in VarDB
