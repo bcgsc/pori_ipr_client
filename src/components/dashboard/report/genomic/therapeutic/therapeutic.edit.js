@@ -25,8 +25,12 @@ app.controller('controller.dashboard.report.genomic.therapeutic.edit',
     {entry: 'structural variant', description:'any significant structural variant'},
     {entry: 'gene-fusion', description:'any significant gene fusion'},
     {entry: 'mutation signature', description:'any significant mutation signature (specify type in previous field)'},
-    {entry: 'mutation burden', description:'any significant mutation burden'}
-  ].sort();
+    {entry: 'mutation burden', description:'any significant mutation burden'},
+    {entry: 'high expression outlier', description: 'N/A'},
+    {entry: 'low expression outlier', description: 'N/A'}
+  ];
+
+  scope.bioMarkerContexts = _.sortBy(scope.bioMarkerContexts, 'entry');
 
   scope.new = {
     biomarkerContextValue: null,
