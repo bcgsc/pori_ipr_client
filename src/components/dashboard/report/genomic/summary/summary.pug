@@ -164,16 +164,16 @@ section
         div(layout="row").keyAlterationsIdentified
             div(layout="row", flex).header.sm
                 div(flex, ng-click="setMutationMask('smallMutation')", ng-class="{active: (mutationMask == 'smallMutation')}").clickable Small Mutations
-                div(flex="30") {{data.vc.smallMutations}}
+                div(flex="30") {{variantCounts.smallMutation}}
             div(layout="row", flex).header.cnv
                 div(flex, ng-click="setMutationMask('cnv')", ng-class="{active: (mutationMask == 'cnv')}").clickable Copy Number Variants
-                div(flex="30") {{data.vc.CNVs}}
+                div(flex="30") {{variantCounts.cnv}}
             div(layout="row", flex).header.sv
                 div(flex, ng-click="setMutationMask('structuralVariant')", ng-class="{active: (mutationMask == 'structuralVariant')}").clickable Structural Variants
-                div(flex="30") {{data.vc.SVs}}
+                div(flex="30") {{variantCounts.structuralVariant}}
             div(layout="row", flex).header.outliers
                 div(flex, ng-click="setMutationMask('expressionOutlier')", ng-class="{active: (mutationMask == 'expressionOutlier')}").clickable Expression Outliers
-                div(flex="30") {{data.vc.expressionOutliers}}
+                div(flex="30") {{variantCounts.expressionOutlier}}
         div(flex).alterations
             div(ng-repeat="variant in data.gai | filter: mutationFilter", class="{{variant.type}}") {{variant.geneVariant}}
                 span(ng-click="removeAlteration($event, variant)")
