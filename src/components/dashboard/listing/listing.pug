@@ -1,4 +1,4 @@
-md-content(flex).md-padding
+md-content(flex, layout="column").md-padding
     h1.md-title(layout="row")
         span(flex) My Assigned POG Cases
         span(flex, layout="row", layout-align="end end")
@@ -14,10 +14,10 @@ md-content(flex).md-padding
                 input(placeholder="Search", name="Search", ng-model="pogQuery", size=40).text-small
                 md-icon(ng-click="showFilterTips()").clickable help
 
-    div(layout="row", ng-show="pogList.length === 0", layout-align="center center")
+    //div(layout="row", ng-show="pogList.length === 0", layout-align="center center")
         div(md-whiteframe="1").noPogs No active cases assigned to you.
 
-    div(ng-repeat="pog in pogList = ( pogs | filter: searchPogs(pogQuery))", flex, md-whiteframe="1").PogList.md-padding
+    //div(ng-repeat="pog in pogList = ( pogs | filter: searchPogs(pogQuery))", flex, md-whiteframe="1").PogList.md-padding
         h2(layout="row")
             span(ui-sref="dashboard.pog.report.genomic.summary({POG: '{{pog.POGID}}' })", flex).title {{pog.POGID}}
             span(flex).text-center {{pog.patientInformation.reportDate}}
@@ -37,3 +37,46 @@ md-content(flex).md-padding
                 div(flex)
                     span Ploidy Model:
                     |  {{pog.tumourAnalysis.ploidy}}
+
+    div(layout="column", flex).kanban
+        div(layout="row", layout-align="space-between").title
+            div(layout="column", flex=30) Active
+            div(layout="column", flex=30) Presented
+            div(layout="column", flex=30) Archived
+
+        div(layout="row", flex, layout-align="space-between")
+            md-content(layout="column", flex=30).column
+                div(layout="column", ng-repeat="pog in pogs", md-whiteframe=1).pog
+                    h1(ui-sref="dashboard.pog.report.listing({POG: pog.POGID})").clickable {{pog.POGID}}
+                    div(layout="row")
+                        div(flex=50)
+                            span Type
+                            span {{pog.patientInformation.tumourType}}
+                        div(flex=50)
+                            span Priority
+                            span Normal
+                    div(layout="row")
+                        div(flex=50)
+                            span TC
+                            span {{getTumourContent(pog)}}%
+                        div(flex=50)
+                            span Ploidy
+                            span.text-capitalize {{getPloidy(pog)}}
+                    div(layout="row")
+                        div(flex=50)
+                            span Bioinformatics
+                            span Brandon Pierce
+                        div(flex=50)
+                            span Analyst
+                            span Simon Chan
+                    div(layout="row")
+                        div(flex=50)
+                            span Probe Report
+                            span
+                                span(ng-class="{active: checkProbeGenomic(pog, 'probe')}").circle
+                        div(flex=50, ui-sref="dashboard.pog.report.genomic.summary({POG: pog.POGID, analysis_report: getReport(pog, 'genomic').ident})").clickable
+                            span Genomic Report
+                            span
+                                span(ng-class="{active: checkProbeGenomic(pog, 'genomic')}").circle
+            div(layout="column", flex=30).column
+            div(layout="column", flex=30).column

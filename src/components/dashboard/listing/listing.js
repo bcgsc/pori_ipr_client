@@ -92,5 +92,33 @@ app.controller('controller.dashboard.listing', ['_', '$q', '$scope', 'api.pog', 
 
   }
 
-  
+  // Check for TA, Ploidy
+
+
+  // Determine if probe/genomic available
+  $scope.checkProbeGenomic = (pog, type) => {
+    return (_.find(pog.analysis_reports, {type: type})) ? true : false;
+  };
+
+  // Get Tumour Content
+  $scope.getTumourContent = (pog) => {
+    let genomic = _.find(pog.analysis_reports, {type: 'genomic'});
+    if(!genomic) return "N/A";
+    return genomic.tumourAnalysis.tumourContent;
+  };
+
+  // Get Ploidy Model Content
+  $scope.getPloidy = (pog) => {
+    let genomic = _.find(pog.analysis_reports, {type: 'genomic'});
+    if(!genomic) return "N/A";
+    return genomic.tumourAnalysis.ploidy;
+  };
+
+  // Get Report
+  $scope.getReport = (pog, type) => {
+    return _.find(pog.analysis_reports, {type: type});
+  };
+
+
+
 }]);

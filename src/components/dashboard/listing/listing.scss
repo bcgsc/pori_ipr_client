@@ -69,3 +69,81 @@ div.PogList {
     }
   }
 }
+
+.kanban {
+
+  .title {
+    div {
+      font-size: 0.90em;
+      color: rgba(0,0,0, 0.54);
+      padding: 0 0 8px 0;
+      text-align: center;
+    }
+  }
+
+  .column {
+    overflow-y: auto;
+    background-color: rgb(240,240,240);
+    border: 1px solid rgb(200,200,200);
+    padding: 7px 8px;
+  }
+  .pog {
+    border-radius: 3px;
+    border: 1px solid rgb(200,200,200);
+    background-color: rgb(255,255,255);
+    margin: 5px 0;
+    min-height: 137px;
+
+    &:first-of-type {
+      margin-top: 0;
+    }
+
+    h1 {
+      background-color: rgb(83, 100, 219);
+      border-top-left-radius: 3px;
+      border-top-right-radius: 3px;
+      font-weight: 400;
+      color: rgb(255,255,255);
+      font-size: 1.2em;
+      padding: 7px 13px;
+      margin: 0 0 5px 0;
+    }
+
+    div {
+      padding: 3px 10px;
+      div {
+        padding: 0;
+        font-size: 0.80em;
+
+        span:first-of-type {
+          font-weight: 100;
+        }
+        span:nth-of-type(2) {
+          font-weight: 700;
+          margin-left: 10px;
+        }
+
+        span md-icon {
+          font-size: 18px;
+          max-height: 20px;
+          height: 20px;
+          max-width: 20px;
+          width: 20px;
+        }
+
+        span.circle {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          border: 1px solid rgb(100,100,100);
+          display: inline-block;
+          margin-bottom: -2px;
+
+          &.active {
+            background-color: rgb(46, 204, 113);
+          }
+        }
+      }
+    }
+  }
+}
