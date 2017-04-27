@@ -18,12 +18,12 @@ app.factory('api.image', ['_', '$http', '$q', (_, $http, $q) => {
    * Retrieve one image from API.
    *
    */
-  $image.get = (POGID, key) => {
+  $image.get = (POGID, report, key) => {
     
     return $q((resolve, reject) => {
 
       // Get result from API
-      $http.get(api + '/' + POGID + '/image/retrieve/' + key).then(
+      $http.get(api + '/' + POGID + '/report/' + report + '/image/retrieve/' + key).then(
         (result) => {
           resolve(result.data);
         },
@@ -40,12 +40,12 @@ app.factory('api.image', ['_', '$http', '$q', (_, $http, $q) => {
    *
    *
    */
-  $image.expDensityGraphs = (POGID) => {
+  $image.expDensityGraphs = (POGID, report) => {
 
     return $q((resolve, reject) => {
 
       // Get Graphs
-      $http.get(api + '/' + POGID + '/image/expressionDensityGraphs').then(
+      $http.get(api + '/' + POGID + '/report/' + report + '/image/expressionDensityGraphs').then(
         (result) => {
           resolve(result.data);
         },

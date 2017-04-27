@@ -18,11 +18,11 @@ app.factory('api.summary.pathwayAnalysis', ['_', '$http', '$q', (_, $http, $q) =
    * Retrieve analysis for this POG
    *
    */
-  $pa.get = (POGID) => {
+  $pa.get = (POGID, report) => {
     return $q((resolve, reject) => {
 
       // Retrieve from API
-      $http.get(api + '/' + POGID + '/summary/pathwayAnalysis').then(
+      $http.get(api + '/' + POGID + '/report/' + report + '/genomic/summary/pathwayAnalysis').then(
         (result) => {
           // Return to requestee
           resolve(result.data);
@@ -45,12 +45,12 @@ app.factory('api.summary.pathwayAnalysis', ['_', '$http', '$q', (_, $http, $q) =
    * @param string XMLbody - text string of SVG
    *
    */
-  $pa.update = (POGID, summary) => {
+  $pa.update = (POGID, report, summary) => {
 
     return $q((resolve, reject) => {
 
       // Get result from API
-      $http.put(api + '/' + POGID + '/summary/pathwayAnalysis', summary).then(
+      $http.put(api + '/' + POGID + '/report/' + report + '/genomic/summary/pathwayAnalysis', summary).then(
         (result) => {
           resolve(result.data);
         },

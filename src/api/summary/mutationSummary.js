@@ -18,11 +18,11 @@ app.factory('api.summary.mutationSummary', ['_', '$http', '$q', (_, $http, $q) =
    * Retrieve all POGs from API that user can access
    *
    */
-  $ms.get = (POGID) => {
+  $ms.get = (POGID, report) => {
     return $q((resolve, reject) => {
       
       // Retrieve from API
-      $http.get(api + '/' + POGID + '/summary/mutationSummary').then(
+      $http.get(api + '/' + POGID + '/report/' + report + '/genomic/summary/mutationSummary').then(
         (result) => {
           // Load into cache
           resolve(result.data);
@@ -35,7 +35,7 @@ app.factory('api.summary.mutationSummary', ['_', '$http', '$q', (_, $http, $q) =
       
     });
     
-  }
+  };
   
   
   /*
@@ -45,12 +45,12 @@ app.factory('api.summary.mutationSummary', ['_', '$http', '$q', (_, $http, $q) =
    * @param string ident - UUID4 identity string for entry
    *
    */
-  $ms.update = (POGID, summary) => {
+  $ms.update = (POGID, report, summary) => {
     
     return $q((resolve, reject) => {
       
       // Get result from API
-      $http.put(api + '/' + POGID + '/summary/mutationSummary/', summary).then(
+      $http.put(api + '/' + POGID + '/report/' + report + '/genomic/summary/mutationSummary/', summary).then(
         (result) => {
           resolve(result.data);
         },
@@ -60,7 +60,7 @@ app.factory('api.summary.mutationSummary', ['_', '$http', '$q', (_, $http, $q) =
         }
       );
     });
-  }
+  };
   
   return $ms;
   

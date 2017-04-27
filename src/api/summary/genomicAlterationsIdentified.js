@@ -17,11 +17,11 @@ app.factory('api.summary.genomicAterationsIdentified', ['_', '$http', '$q', (_, 
    * Retrieve all POGs from API that user can access
    *
    */
-  $gai.all = (POGID) => {
+  $gai.all = (POGID, report) => {
     return $q((resolve, reject) => {
       
       // Retrieve from API
-      $http.get(api + '/' + POGID + '/summary/genomicAlterationsIdentified').then(
+      $http.get(api + '/' + POGID + '/report/' + report + '/genomic/summary/genomicAlterationsIdentified').then(
         (result) => {
         
           resolve(result.data);
@@ -43,12 +43,12 @@ app.factory('api.summary.genomicAterationsIdentified', ['_', '$http', '$q', (_, 
    * @param string ident - UUID4 identity string for entry
    *
    */
-  $gai.id = (POGID, ident) => {
+  $gai.id = (POGID, report, ident) => {
     
     return $q((resolve, reject) => {
       
       // Get result from API
-      $http.get(api + '/' + POGID + '/summary/genomicAlterationsIdentified/' + ident).then(
+      $http.get(api + '/' + POGID + '/report/' + report + '/genomic/summary/genomicAlterationsIdentified/' + ident).then(
         (result) => {
 
           resolve(result.data);
@@ -68,7 +68,7 @@ app.factory('api.summary.genomicAterationsIdentified', ['_', '$http', '$q', (_, 
    * @param string ident - UUID4 identity string for entry
    *
    */
-  $gai.update = (POGID, ident, gai) => {
+  $gai.update = (POGID, report, ident, gai) => {
     
     return $q((resolve, reject) => {
       
@@ -76,7 +76,7 @@ app.factory('api.summary.genomicAterationsIdentified', ['_', '$http', '$q', (_, 
       if(_gai[ident] !== undefined) return resolve(_gai[ident]);
       
       // Get result from API
-      $http.put(api + '/' + POGID + '/summary/genomicAlterationsIdentified/' + ident, gai).then(
+      $http.put(api + '/' + POGID + '/report/' + report + '/genomic/summary/genomicAlterationsIdentified/' + ident, gai).then(
         (result) => {
         
           resolve(result.data);
@@ -96,12 +96,12 @@ app.factory('api.summary.genomicAterationsIdentified', ['_', '$http', '$q', (_, 
    * @param string ident - UUID4 identity string for entry
    *
    */
-  $gai.remove = (POGID, ident, comment, cascade=false) => {
+  $gai.remove = (POGID, report, ident, comment, cascade=false) => {
     
     return $q((resolve, reject) => {
       
       // Get result from API
-      $http.delete(api + '/' + POGID + '/summary/genomicAlterationsIdentified/' + ident + ((cascade) ? '?cascade=true' : ''), {data: {comment: comment}, headers: {'Content-Type': 'application/json'}}).then(
+      $http.delete(api + '/' + POGID + '/report/' + report + '/genomic/summary/genomicAlterationsIdentified/' + ident + ((cascade) ? '?cascade=true' : ''), {data: {comment: comment}, headers: {'Content-Type': 'application/json'}}).then(
         (result) => {
           resolve(true);
         },

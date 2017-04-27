@@ -19,11 +19,11 @@ app.factory('api.summary.probeTarget', ['_', '$http', '$q', (_, $http, $q) => {
    * @param string POGID - POGID associated with these resource
    *
    */
-  $pt.all = (POGID) => {
+  $pt.all = (POGID, report) => {
     return $q((resolve, reject) => {
       
       // Retrieve from API
-      $http.get(api + '/' + POGID + '/summary/probeTarget').then(
+      $http.get(api + '/' + POGID + '/report/' + report + '/genomic/summary/probeTarget').then(
         (result) => {
         
           resolve(result.data);
@@ -36,7 +36,7 @@ app.factory('api.summary.probeTarget', ['_', '$http', '$q', (_, $http, $q) => {
       
     });
     
-  }
+  };
   
   /*
    * Get a Probe Target
@@ -45,12 +45,12 @@ app.factory('api.summary.probeTarget', ['_', '$http', '$q', (_, $http, $q) => {
    * @param string ident - UUID4 identity string for entry
    *
    */
-  $pt.id = (POGID, ident) => {
+  $pt.id = (POGID, report, ident) => {
     
     return $q((resolve, reject) => {
       
       // Get result from API
-      $http.get(api + '/' + POGID + '/summary/probeTarget/' + ident).then(
+      $http.get(api + '/' + POGID + '/report/' + report + '/genomic/summary/probeTarget/' + ident).then(
         (result) => {
 
           resolve(result.data);
@@ -70,7 +70,7 @@ app.factory('api.summary.probeTarget', ['_', '$http', '$q', (_, $http, $q) => {
    * @param string ident - UUID4 identity string for entry
    *
    */
-  $pt.update = (POGID, ident, gai) => {
+  $pt.update = (POGID, report, ident, gai) => {
     
     return $q((resolve, reject) => {
       
@@ -78,7 +78,7 @@ app.factory('api.summary.probeTarget', ['_', '$http', '$q', (_, $http, $q) => {
       if(_gai[ident] !== undefined) return resolve(_gai[ident]);
       
       // Get result from API
-      $http.put(api + '/' + POGID + '/summary/probeTarget/' + ident, gai).then(
+      $http.put(api + '/' + POGID + '/report/' + report + '/genomic/summary/probeTarget/' + ident, gai).then(
         (result) => {
         
           resolve(result.data);
@@ -98,12 +98,12 @@ app.factory('api.summary.probeTarget', ['_', '$http', '$q', (_, $http, $q) => {
    * @param string ident - UUID4 identity string for entry
    *
    */
-  $pt.remove = (POGID, ident) => {
+  $pt.remove = (POGID, report, ident) => {
     
     return $q((resolve, reject) => {
       
       // Get result from API
-      $http.delete(api + '/' + POGID + '/summary/probeTarget/' + ident).then(
+      $http.delete(api + '/' + POGID + '/report/' + report + '/genomic/summary/probeTarget/' + ident).then(
         (result) => {
           resolve(true);
         },
