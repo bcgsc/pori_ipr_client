@@ -606,3 +606,36 @@
   }
 
 }
+
+md-dialog-content {
+
+  .dialogTable {
+
+    font-size: 0.90em;
+
+    .header {
+      color: rgba(0,0,0, 0.54);
+      //background-color: rgba(0,0,0,0.08);
+    }
+
+    .header, .row {
+
+      div {
+        padding: 10px 4px;
+        margin: 0 12px;
+      }
+      border-bottom: 1px solid rgba(0,0,0,0.12);
+    }
+
+    .row:nth-of-type(odd) {
+      background-color: rgba(0,0,0,0.04);
+    }
+
+    .row:hover {
+      background-color: rgba(0,0,0,0.1);
+    }
+
+
+  }
+
+}
