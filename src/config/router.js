@@ -188,7 +188,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       abstract: true,
       url: '/report',
       data: {
-        displayName: "Reports",
+        displayName: "Analysis Reports",
         breadcrumbProxy: 'dashboard.pog.report.listing'
       },
 			templateUrl: 'dashboard/report/report.html',
@@ -202,7 +202,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     .state('dashboard.pog.report.listing', {
       url: '/listing',
       data: {
-        displayName: "Reports",
+        displayName: "Analysis Reports",
       },
 			templateUrl: 'dashboard/report/listing/listing.html',
       controller: 'controller.dashboard.pog.report.listing',
