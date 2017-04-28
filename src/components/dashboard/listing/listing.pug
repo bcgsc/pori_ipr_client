@@ -40,43 +40,43 @@ md-content(flex, layout="column").md-padding
 
     div(layout="column", flex).kanban
         div(layout="row", layout-align="space-between").title
-            div(layout="column", flex=30) Active
-            div(layout="column", flex=30) Presented
-            div(layout="column", flex=30) Archived
+            div(layout="column", flex) Active
+            div(layout="column", flex) Presented
+            div(layout="column", flex) Archived
 
         div(layout="row", flex, layout-align="space-between")
-            md-content(layout="column", flex=30).column
-                div(layout="column", ng-repeat="pog in pogs", md-whiteframe=1).pog
+            md-content(layout="column", flex).column
+                div(layout="column", ng-repeat="pog in pogs", md-whiteframe=2).pog
                     h1(ui-sref="dashboard.pog.report.listing({POG: pog.POGID})").clickable {{pog.POGID}}
-                    div(layout="row")
-                        div(flex=50)
+                    div(layout="row", layout-md="column")
+                        div(flex=50, flex-md=100)
                             span Type
                             span {{pog.patientInformation.tumourType}}
-                        div(flex=50)
+                        div(flex=50, flex-md=100)
                             span Priority
                             span Normal
-                    div(layout="row")
-                        div(flex=50)
+                    div(layout="row", layout-md="column")
+                        div(flex=50, flex-md=100)
                             span TC
                             span {{getTumourContent(pog)}}%
-                        div(flex=50)
+                        div(flex=50, flex-md=100)
                             span Ploidy
                             span.text-capitalize {{getPloidy(pog)}}
-                    div(layout="row")
-                        div(flex=50)
+                    div(layout="row", layout-md="column")
+                        div(flex=50, flex-md=100)
                             span Bioinformatics
                             span Brandon Pierce
-                        div(flex=50)
+                        div(flex=50, flex-md=100)
                             span Analyst
                             span Simon Chan
-                    div(layout="row")
-                        div(flex=50)
+                    div(layout="row", layout-md="column")
+                        div(flex=50, flex-md=100)
                             span Probe Report
                             span
                                 span(ng-class="{active: checkProbeGenomic(pog, 'probe')}").circle
-                        div(flex=50, ui-sref="dashboard.pog.report.genomic.summary({POG: pog.POGID, analysis_report: getReport(pog, 'genomic').ident})").clickable
+                        div(flex=50, ui-sref="dashboard.pog.report.genomic.summary({POG: pog.POGID, analysis_report: getReport(pog, 'genomic').ident})", flex-md=100).clickable
                             span Genomic Report
                             span
                                 span(ng-class="{active: checkProbeGenomic(pog, 'genomic')}").circle
-            div(layout="column", flex=30).column
-            div(layout="column", flex=30).column
+            div(layout="column", flex).column
+            div(layout="column", flex).column

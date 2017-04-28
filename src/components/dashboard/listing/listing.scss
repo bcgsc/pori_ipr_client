@@ -86,10 +86,9 @@ div.PogList {
     background-color: rgb(240,240,240);
     border: 1px solid rgb(200,200,200);
     padding: 7px 8px;
+    margin-right: 10px;
   }
   .pog {
-    border-radius: 3px;
-    border: 1px solid rgb(200,200,200);
     background-color: rgb(255,255,255);
     margin: 5px 0;
     min-height: 137px;
@@ -100,8 +99,6 @@ div.PogList {
 
     h1 {
       background-color: rgb(83, 100, 219);
-      border-top-left-radius: 3px;
-      border-top-right-radius: 3px;
       font-weight: 400;
       color: rgb(255,255,255);
       font-size: 1.2em;

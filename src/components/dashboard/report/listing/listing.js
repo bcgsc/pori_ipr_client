@@ -7,8 +7,6 @@ app.controller('controller.dashboard.pog.report.listing',
       $scope.reports = reports;
       $scope.pog = pog;
 
-      console.log('Report Listing', reports);
-
     }
   ]
 );
