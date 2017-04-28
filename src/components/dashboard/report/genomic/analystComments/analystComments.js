@@ -5,8 +5,8 @@ app.controller('controller.dashboard.report.genomic.analystComments',
   console.log('Analyst Comments Loaded');
   
   $scope.pog = pog;
-  $scope.analystComments = (analystComments || "");
-  $scope.commentsHTML = $sce.trustAsHtml(analystComments.comments);
+  $scope.analystComments = (analystComments === null) ?  "" : analystComments.comments;
+  $scope.commentsHTML = $sce.trustAsHtml($scope.analystComments);
 
   // Editor Update Modal
   $scope.updateComments = ($event) => {
