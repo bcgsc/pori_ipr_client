@@ -541,6 +541,16 @@
             color: rgb(193,101,20);
           }
         }
+        &.add {
+          opacity: 0.5;
+          background-color: rgba(0,0,0,0.1);
+          md-icon {
+            color: rgba(0,0,0,0.25);
+          }
+          &:hover {
+            opacity: 1.0;
+          }
+        }
 
         span {
           display: none;

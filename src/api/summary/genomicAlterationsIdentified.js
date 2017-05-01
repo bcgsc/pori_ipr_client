@@ -34,7 +34,7 @@ app.factory('api.summary.genomicAterationsIdentified', ['_', '$http', '$q', (_, 
       
     });
     
-  }
+  };
   
   /*
    * Get an Identified Genomic Alteration
@@ -59,7 +59,7 @@ app.factory('api.summary.genomicAterationsIdentified', ['_', '$http', '$q', (_, 
         }
       );
     });
-  }
+  };
   
   /*
    * Update an Identified Genomic Alteration
@@ -87,7 +87,32 @@ app.factory('api.summary.genomicAterationsIdentified', ['_', '$http', '$q', (_, 
         }
       );
     });
-  }
+  };
+
+  /*
+   * Create an Identified Genomic Alteration
+   *
+   * @param string POGID - POGID, eg POG129
+   * @param string ident - UUID4 identity string for entry
+   *
+   */
+  $gai.create = (POGID, report, alteration) => {
+
+    return $q((resolve, reject) => {
+
+      // Get result from API
+      $http.post(api + '/' + POGID + '/report/' + report + '/genomic/summary/genomicAlterationsIdentified/', alteration).then(
+        (result) => {
+
+          resolve(result.data);
+        },
+        (error) => {
+          // TODO: Better error handling
+          reject();
+        }
+      );
+    });
+  };
   
   /*
    * Remove an Identified Genomic Alteration
@@ -111,7 +136,7 @@ app.factory('api.summary.genomicAterationsIdentified', ['_', '$http', '$q', (_, 
         }
       );
     });
-  }
+  };
   
   return $gai;
   

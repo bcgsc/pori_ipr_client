@@ -16,7 +16,6 @@ app.controller('controller.dashboard.report.genomic.summary',
     ta: report.tumourAnalysis,
     pi: report.patientInformation
   };
-  $scope.geneVariants = [];
   $scope.mutationSignature = mutationSignature;
   $scope.mutationMask = null;
   $scope.variantCounts = {
@@ -58,21 +57,36 @@ app.controller('controller.dashboard.report.genomic.summary',
   };
 
   // Process variants and create chunks
-  gai.forEach((variant, k) => {
-    gai[k] = variantCategory(variant);
-    if(!$scope.variantCounts[gai[k].type]) $scope.variantCounts[gai[k].type] = 0;
-    $scope.variantCounts[gai[k].type]++;
-  });
+  let processVariants = (variants) => {
+
+    let output = [];
+
+    variants.forEach((variant, k) => {
+      // Add processed Variant
+      output.push(variantCategory(variant));
+
+      // Reset counts
+      $scope.variantCounts = { cnv: 0, smallMutation: 0, expressionOutlier: 0, structuralVariant: 0 };
+
+      // Update counts
+      if (!$scope.variantCounts[gai[k].type]) $scope.variantCounts[gai[k].type] = 0;
+      $scope.variantCounts[gai[k].type]++;
+    });
+
+    return output;
+  };
+
+
+  $scope.geneVariants = processVariants(gai);
+
 
   $scope.setMutationMask = (mask) => {
-    if($scope.mutationMask == mask) return $scope.mutationMask = null;
+    if($scope.mutationMask === mask) return $scope.mutationMask = null;
     $scope.mutationMask = mask;
   };
 
   $scope.mutationFilter = (mutation) => {
-    if($scope.mutationMask == null) return true;
-    if(mutation.type == $scope.mutationMask) return true;
-    return false;
+    return (mutation.type === $scope.mutationMask || $scope.mutationMask === null);
   };
 
   // Update Tumour Analysis Details
@@ -179,7 +193,7 @@ app.controller('controller.dashboard.report.genomic.summary',
 
             let sig = _.find($scope.mutationSignature, (s) => {
               return s.ident === v;
-            })
+            });
 
             scope.ms.mutationSignature.push(sig);
 
@@ -252,7 +266,53 @@ app.controller('controller.dashboard.report.genomic.summary',
   $scope.data.gai = _.sortBy(gai, 'type');
 
   $scope.mutationBurdenFilter = (input) => {
-    return (input == "nan [nan]") ? 'na' : input.replace(/\[[0-9]*\]/g, '');
+    return (input === "nan [nan]") ? 'na' : input.replace(/\[[0-9]*\]/g, '');
+  };
+
+  /**
+   * Add Alteration
+   */
+  $scope.addAlteration = ($event) => {
+
+    $mdDialog.show({
+      targetEvent: $event,
+      templateUrl: 'dashboard/report/genomic/summary/alteration.add.html',
+      clickOutToClose: false,
+      controller: ['scope', (scope) => {
+        scope.cancel = () => {
+          $mdDialog.cancel({message: 'No changes were saved.'});
+        };
+
+        // Perform Update/Change
+        scope.add = () => {
+
+          // Remove entry
+          $gai.create(pog.POGID, report.ident, scope.alteration).then(
+            (resp) => {
+              // Add to array of alterations
+              gai.push(resp);
+
+              // Reprocess variants
+              $scope.data.gai = processVariants(gai);
+              $scope.data.gai = _.sortBy(gai, 'type');
+
+              $mdDialog.hide({status: true, message: 'Added the new alteration.'});
+            },
+            (err) => {
+              console.log('Unable to remove entries', err);
+              $mdDialog.hide({status: false, message: 'Unable to create the new entry'});
+            }
+          );
+
+        }; // End update
+      }] // End controller
+
+    }).then((outcome) => {
+      if (outcome) $mdToast.show($mdToast.simple().textContent(outcome.message));
+    }, (error) => {
+      $mdToast.show($mdToast.simple().textContent('No changes where made.'));
+    });
+
   };
 
   /**
