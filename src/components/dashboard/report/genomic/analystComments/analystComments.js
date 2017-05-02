@@ -20,7 +20,7 @@ app.controller('controller.dashboard.report.genomic.analystComments',
       clickOutToClose: false,
       controller: ['$q', '_', '$scope', '$mdDialog', '$timeout', 'api.summary.analystComments', ($q, _, scope, $mdDialog, $timeout, $comments) => {
         
-        scope.analystComments = $scope.analystComments;
+        scope.analystComments = $scope.commentsHTML;
 
         // Cancel Dialog
         scope.cancel = () => {
@@ -58,8 +58,8 @@ app.controller('controller.dashboard.report.genomic.analystComments',
       }]
     }).then((result) => {
       // Update current page content
-      $scope.analystComments = result.comment;
-      
+      $scope.commentsHTML = $sce.trustAsHtml(result.comment);
+
       // Display Message from Hiding
       $mdToast.show($mdToast.simple().textContent(result.message));
     }, (error) => {
