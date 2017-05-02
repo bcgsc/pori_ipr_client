@@ -44,7 +44,7 @@ app.controller('controller.dashboard.report.genomic.detailedGenomicAnalysis',
       $scope.alterations = {therapeutic: {}, prognostic: {}, diagnostic: {}, biological: {}, unknown: {}};
 
       // Load unknowns
-      $alterations.getType(pog.POGID, 'unknown').then(
+      $alterations.getType(pog.POGID, report.ident, 'unknown').then(
         (resp) => {
           groupEntries(resp);
           $scope.showUnknown = true;
@@ -63,7 +63,7 @@ app.controller('controller.dashboard.report.genomic.detailedGenomicAnalysis',
       $scope.alterations = {therapeutic: {}, prognostic: {}, diagnostic: {}, biological: {}, unknown: null};
 
       // Load unknowns
-      $alterations.getAll(pog.POGID).then(
+      $alterations.getAll(pog.POGID, report.ident).then(
         (resp) => {
           groupEntries(resp);
           $scope.disableUnknownButtons = $scope.showUnknown = false;
