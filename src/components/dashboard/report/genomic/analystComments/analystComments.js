@@ -58,7 +58,7 @@ app.controller('controller.dashboard.report.genomic.analystComments',
       }]
     }).then((result) => {
       // Update current page content
-      $scope.commentsHTML = $sce.trustAsHtml(result.comment);
+      $scope.commentsHTML = $sce.trustAsHtml(result.comment.comments);
 
       // Display Message from Hiding
       $mdToast.show($mdToast.simple().textContent(result.message));
