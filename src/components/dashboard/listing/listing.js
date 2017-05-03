@@ -135,8 +135,5 @@ app.controller('controller.dashboard.listing', ['_', '$q', '$scope', 'api.pog', 
     }
   };
 
-  console.log('Bioinformatician', $scope.getRoleUser(pogs[0], 'bioinformatician'));
-
-
 
 }]);
