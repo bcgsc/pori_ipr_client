@@ -251,6 +251,19 @@
         }
       }
 
+      div.horizontalBox {
+        font-weight: 100;
+        font-size: 0.9em;
+        padding: 15px;
+
+        .row {
+          margin: 5px 0;
+          span:last-of-type {
+            font-weight: 700;
+          }
+        }
+      }
+
       div.box {
         background-color: rgb(180,180,180);
 
