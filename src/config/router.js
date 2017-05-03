@@ -163,6 +163,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     .state('dashboard.pog', {
       data: {
         displayName: '{{pog.POGID}}',
+        breadcrumbProxy: 'dashboard.pog.report.listing'
       },
       url: '/POG/{POG}',
       controller: 'controller.dashboard.pog',
@@ -208,6 +209,82 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       controller: 'controller.dashboard.pog.report.listing',
     })
 
+
+    /**
+     * Probing
+     *
+     */
+    .state('dashboard.pog.report.probe', {
+      url: '/{analysis_report}/probe',
+      data: {
+        displayName: "Probe",
+        breadcrumbProxy: 'dashboard.pog.report.probe.summary'
+      },
+      templateUrl: 'dashboard/report/probe/probe.html',
+      controller: 'controller.dashboard.report.probe',
+      resolve: {
+        report: ['$q', '$stateParams', 'api.pog_analysis_report', ($q, $stateParams, $report) => {
+          return $report.pog($stateParams.POG).get($stateParams.analysis_report);
+        }]
+      }
+    })
+
+    .state('dashboard.pog.report.probe.summary', {
+      url: '/summary',
+      templateUrl: 'dashboard/report/probe/summary/summary.html',
+      controller: 'controller.dashboard.report.probe.summary',
+      data: {
+        displayName: "Summary"
+      },
+      resolve: {
+        testInformation: ['$q', '$stateParams', 'api.probe.testInformation', ($q, $stateParams, $ti) => {
+          return $ti.get($stateParams.POG, $stateParams.analysis_report);
+        }],
+        genomicEvents: ['$q', '$stateParams', 'api.summary.genomicEventsTherapeutic', ($q, $stateParams, $get) => {
+          return $get.all($stateParams.POG, $stateParams.analysis_report);
+        }],
+      }
+    })
+
+    .state('dashboard.pog.report.probe.detailedGenomicAnalysis', {
+      url: '/appendices',
+      data: {
+        displayName: "Appendices"
+      },
+      templateUrl: 'dashboard/report/probe/detailedGenomicAnalysis/detailedGenomicAnalysis.html',
+      controller: 'controller.dashboard.report.probe.detailedGenomicAnalysis',
+      resolve: {
+        alterations: ['$q', '$stateParams', 'api.probe.alterations', ($q, $stateParams, $alterations) => {
+          return $alterations.getAll($stateParams.POG, $stateParams.analysis_report);
+        }],
+        approvedThisCancer: ['$q', '$stateParams', 'api.probe.alterations', ($q, $stateParams, $alterations) => {
+          return $alterations.getType($stateParams.POG, $stateParams.analysis_report, 'thisCancer');
+        }],
+        approvedOtherCancer: ['$q', '$stateParams', 'api.probe.alterations', ($q, $stateParams, $alterations) => {
+          return $alterations.getType($stateParams.POG, $stateParams.analysis_report, 'otherCancer');
+        }],
+      }
+    })
+
+    .state('dashboard.pog.report.probe.appendices', {
+      url: '/appendices',
+      data: {
+        displayName: "Appendices"
+      },
+      templateUrl: 'dashboard/report/probe/appendices/appendices.html',
+      controller: 'controller.dashboard.report.probe.appendices',
+      resolve: {
+        tcgaAcronyms: ['$q', '$stateParams', 'api.appendices', ($q, $stateParams, $appendices) => {
+          return $appendices.tcga($stateParams.POG, $stateParams.analysis_report);
+        }]
+      }
+    })
+
+
+    /**
+     * Genomic
+     *
+     */
     .state('dashboard.pog.report.genomic', {
       url: '/{analysis_report}/genomic',
       data: {

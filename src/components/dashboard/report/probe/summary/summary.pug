@@ -1,0 +1,115 @@
+section
+    md-subheader.md-primary Patient Information
+        span.edit
+            md-icon(ng-click="updatePatient($event)") edit
+
+    div(layout="column", flex).details
+        div(layout="row", flex)
+            dt(flex="{{detailSize}}", ng-init="detailSize=10") Patient ID:
+            dd(flex) {{pog.POGID}}
+
+            dt(flex="{{detailSize}}") Gender:
+            dd(flex) {{report.patientInformation.gender}}
+
+            dt(flex="{{detailSize}}") Tumour Sample:
+            dd(flex) {{report.patientInformation.tumourSample}}
+
+        div(layout="row", flex)
+            dt(flex="{{detailSize}}") Tumour Type:
+            dd(flex) {{report.patientInformation.tumourType}}
+
+            dt(flex="{{detailSize}}") Case Type:
+            dd(flex) {{report.patientInformation.caseType}}
+
+            dt(flex="{{detailSize}}") Constitutional Sample:
+            dd(flex) {{report.patientInformation.constitutionalSample}}
+
+        div(layout="row", flex)
+            dt(flex="{{detailSize}}") Report Date:
+            dd(flex) N/A
+
+            dt(flex="{{detailSize}}") Age at Diagnosis:
+            dd(flex) {{report.patientInformation.age}}
+
+            dt(flex="{{detailSize}}") Biopsy Details:
+            dd(flex) {{report.patientInformation.biopsySite}}
+
+        div(layout="row", flex)
+            dt(flex="{{detailSize}}") Physician:
+            dd(flex) {{report.patientInformation.physician}}
+
+            dt(flex="{{detailSize}}")
+            dd(flex)
+
+            dt(flex="{{detailSize}}") Protocol:
+            dd(flex) {{report.patientInformation.tumourProtocol}}
+
+section
+    div(layout="row")
+        div(layout="column", flex).dataBox
+            h2.title Sample Information
+            div.box
+                div(layout="row", flex).heading
+                    div(flex) Sample
+                    div(flex) Sample Name
+                    div(flex) Collection Date
+                    div(flex) Primary Site
+                    div(flex=20) Biopsy Site
+                    div(flex) Pathology Estimated Tumour Content
+                div(layout="row", flex, ng-repeat="sample in report.sampleInfo").row
+                    div(flex) {{sample['Sample']}}
+                    div(flex) {{sample['Sample Name']}}
+                    div(flex) {{sample['Collection Date']}}
+                    div(flex) {{sample['Primary Site']}}
+                    div(flex=20) {{sample['Biopsy Site']}}
+                    div(flex) {{sample['Patho TC']}}
+
+    div(layout="row")
+        div(layout="column", flex).dataBox
+            h2.title Test Information
+
+            div(layout="row", flex).horizontalBox
+                div(layout="column", flex)
+                    div(layout="row").row
+                        span(flex=40) Variant Probe Version
+                        span {{testInformation.snpProbe}}
+                    div(layout="row").row
+                        span(flex=40) Fusion Probe Version
+                        span {{testInformation.fusionProbe}}
+                    div(layout="row").row
+                        span(flex=40) Knowledgebase Version
+                        span {{testInformation.kbVersion}}
+                div(layout="column", flex)
+                    div(layout="row").row
+                        span(flex=40) # Genes Screened
+                        span {{testInformation.snpGenes}}
+                    div(layout="row").row
+                        span(flex=40) # Variants Screen
+                        span {{testInformation.snpVars}}
+                    div(layout="row").row
+                        span(flex=40) # Fusion Genes Screened
+                        span {{testInformation.fusionGenes}}
+                    div(layout="row").row
+                        span(flex=40) # Fusion Variants Screened
+                        span {{testInformation.fusionVars}}
+
+
+section
+    md-subheader.md-primary Genomic Events with Potential Therapeutic Association
+
+    div(layout="column", flex)
+
+        div(layout="row")
+            div(layout="column", flex).dataBox
+
+                div.box
+                    div(layout="row", flex).heading
+                        div(flex) Genomic Events
+                        div(flex) Approved in this cancer type
+                        div(flex) Approved in other cancer type
+                        div(flex) Emerging Evidence
+                    div(layout="row", flex, ng-repeat="gene in genomicEvents").row
+                        div(flex) {{gene.genomicEvent}}
+                        div(flex) {{gene.approvedThisCancerType}}
+                        div(flex) {{gene.approvedOtherCancerType}}
+                        div(flex) {{gene.emergingPreclinicalEvidence}}
