@@ -129,7 +129,6 @@ app.controller('controller.dashboard.report.genomic.therapeutic.edit',
 
       newTherapeutic.type = newEntry; // Set Type passed by creator
 
-      console.log(newTherapeutic);
       // Save new entry
       $therapeutic.create(pog.POGID, report.ident, newTherapeutic).then(
         (result) => {

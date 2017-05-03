@@ -93,7 +93,9 @@ md-dialog(layout="column", aria-label="Update Therapeutic Target", flex=85).edit
                         md-items="entry in geneVar.filter(new.biomarker.searchText)",
                         md-item-text="entry",
                         md-floating-label="New Biomarker Entry",
-                        md-selected-item-change="newBiomarker()"
+                        md-selected-item-change="newBiomarker()",
+                        md-select-on-match,
+                        md-select-on-focus,
                         flex
                         )
                             span(md-highlight-text="biomarker.searchText") {{entry}}

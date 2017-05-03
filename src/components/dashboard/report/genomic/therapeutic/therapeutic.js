@@ -76,8 +76,8 @@ app.controller('controller.dashboard.report.genomic.therapeutic',
    */
   let cleanTargets = (targets) => {
     let newTargets = [];
-    _.forEach(data.target, (e) => {
-      targets.push((angular.isObject(e)) ? e : {geneVar: e});
+    _.forEach(targets, (e) => {
+      newTargets.push((angular.isObject(e)) ? e : {geneVar: e});
     });
     return newTargets;
   };
