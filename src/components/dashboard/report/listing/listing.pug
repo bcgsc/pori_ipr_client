@@ -1,23 +1,14 @@
 md-content(layout="column").padding-left-10.padding-right-10
     h2.title {{pog.POGID}} Reports
 
-    div(ng-repeat="report in reports", flex, md-whiteframe="1").PogList
-        h2(layout="row")
-            span(ui-sref="dashboard.pog.report.genomic.summary({POG: '{{pog.POGID}}', analysis_report: '{{report.ident}}' })", flex).title {{report.pog.POGID}} - {{report.type}}
-            span(flex).text-center {{report.patientInformation.reportDate}}
-            span(flex) My Roles:
-                span(ng-if="pog.myRoles.length === 0", md-whiteframe="1").role None
-                span(ng-repeat="role in pog.myRoles", md-whiteframe="2").role {{role.role}}
-                    md-tooltip Assigned by {{role.addedBy.firstName}} {{role.addedBy.lastName}} {{role.createdAt | amTimeAgo}}
+    div(layout="column", flex).kanban
+        div(layout="row", layout-align="space-between").title
+            div(layout="column", flex) Probe
+            div(layout="column", flex) Genomic
 
-        div(flex, layout="column")
-            div(flex, layout="row")
-                div(flex)
-                    span Tumour Content:
-                        ipr-tumour-content(tc="{{report.tumourAnalysis.tumourContent}}", md-whiteframe="1")
-                div(flex)
-                    span Tumour Type:
-                    |  {{report.patientInformation.tumourType}}
-                div(flex)
-                    span Ploidy Model:
-                    |  {{report.tumourAnalysis.ploidy}}
+        div(layout="row", flex, layout-align="space-between")
+            md-content(layout="column", flex).column
+                ipr-report-card(ng-repeat="report in reports | filter: {type: 'probe'}", report="report", pog="pog")
+
+            md-content(layout="column", flex).column
+                ipr-report-card(ng-repeat="report in reports | filter: {type: 'genomic'}", report="report", pog="pog")
