@@ -1,10 +1,11 @@
 app.controller('controller.dashboard.report.genomic.detailedGenomicAnalysis', 
-  ['_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', 'api.pog', 'api.detailedGenomicAnalysis.alterations', 'pog', 'alterations', 'approvedThisCancer', 'approvedOtherCancer', 'targetedGenes',
-  (_, $q, $scope, $state, $mdDialog, $mdToast, $pog, $alterations, pog, alterations, approvedThisCancer, approvedOtherCancer, targetedGenes) => {
+  ['_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', 'api.pog', 'api.detailedGenomicAnalysis.alterations', 'pog', 'report', 'alterations', 'approvedThisCancer', 'approvedOtherCancer', 'targetedGenes',
+  (_, $q, $scope, $state, $mdDialog, $mdToast, $pog, $alterations, pog, report, alterations, approvedThisCancer, approvedOtherCancer, targetedGenes) => {
   
   $scope.approvedThisCancer = {};
   $scope.approvedOtherCancer = {};
   $scope.pog = pog;
+  $scope.report = report;
   $scope.samples = [];
   $scope.alterations = {therapeutic: {}, prognostic: {}, diagnostic: {}, biological: {}, unknown: null};
   $scope.targetedGenes = targetedGenes;
@@ -25,7 +26,8 @@ app.controller('controller.dashboard.report.genomic.detailedGenomicAnalysis',
         pog: $scope.pog,
         gene: gene,
         samples: $scope.samples,
-        rowEvent: 'new'
+        rowEvent: 'new',
+        report: report
       },
       controller: 'controller.dashboard.reports.genomic.detailedGenomicAnalysis.alterations.edit' // End controller
     });
@@ -42,7 +44,7 @@ app.controller('controller.dashboard.report.genomic.detailedGenomicAnalysis',
       $scope.alterations = {therapeutic: {}, prognostic: {}, diagnostic: {}, biological: {}, unknown: {}};
 
       // Load unknowns
-      $alterations.getType(pog.POGID, 'unknown').then(
+      $alterations.getType(pog.POGID, report.ident, 'unknown').then(
         (resp) => {
           groupEntries(resp);
           $scope.showUnknown = true;
@@ -61,7 +63,7 @@ app.controller('controller.dashboard.report.genomic.detailedGenomicAnalysis',
       $scope.alterations = {therapeutic: {}, prognostic: {}, diagnostic: {}, biological: {}, unknown: null};
 
       // Load unknowns
-      $alterations.getAll(pog.POGID).then(
+      $alterations.getAll(pog.POGID, report.ident).then(
         (resp) => {
           groupEntries(resp);
           $scope.disableUnknownButtons = $scope.showUnknown = false;

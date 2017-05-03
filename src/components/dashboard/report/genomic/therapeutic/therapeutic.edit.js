@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.report.genomic.therapeutic.edit',
-['_', '$q', '$scope', '$mdDialog', '$mdToast', 'api.complete', 'api.therapeuticOptions', 'api.knowledgebase', 'pog', 'entry', 'newEntry',
-(_, $q, scope, $mdDialog, $mdToast, $complete, $therapeutic, $kb, pog, entry, newEntry) => {
+['_', '$q', '$scope', '$mdDialog', '$mdToast', 'api.complete', 'api.therapeuticOptions', 'api.knowledgebase', 'pog', 'report', 'entry', 'newEntry',
+(_, $q, scope, $mdDialog, $mdToast, $complete, $therapeutic, $kb, pog, report, entry, newEntry) => {
 
   scope.tab = 'listing';
   scope.entry = (entry || { target: [], targetContext: null, biomarker: [], notes: null });
@@ -129,9 +129,8 @@ app.controller('controller.dashboard.report.genomic.therapeutic.edit',
 
       newTherapeutic.type = newEntry; // Set Type passed by creator
 
-      console.log(newTherapeutic);
       // Save new entry
-      $therapeutic.create(pog.POGID, newTherapeutic).then(
+      $therapeutic.create(pog.POGID, report.ident, newTherapeutic).then(
         (result) => {
           // New entry created!
           $mdDialog.hide({status: 'create', data: result});
@@ -142,7 +141,7 @@ app.controller('controller.dashboard.report.genomic.therapeutic.edit',
       );
     } else {
       // Update existing entry
-      $therapeutic.one(pog.POGID).update(newTherapeutic.ident, newTherapeutic).then(
+      $therapeutic.one(pog.POGID, report.ident, ).update(newTherapeutic.ident, newTherapeutic).then(
         (result) => {
           // New entry created!
           $mdDialog.hide({status: 'update', data: result});

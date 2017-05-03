@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.reports.genomic.detailedGenomicAnalysis.alterations.edit', 
-['_', '$scope', '$mdDialog', '$mdToast', 'api.complete', 'api.pubmed', 'api.kb.associations', 'api.knowledgebase', 'api.user', '$interval', '$timeout', 'gene', 'rowEvent', 'samples', 'api.detailedGenomicAnalysis.alterations', 'pog',
-(_, scope, $mdDialog, $mdToast, $complete, $pubmed, $kbAssoc, $kb, $user, $interval, $timeout, gene, rowEvent, samples, $dgaAPC, pog) => {
+['_', '$scope', '$mdDialog', '$mdToast', 'api.complete', 'api.pubmed', 'api.kb.associations', 'api.knowledgebase', 'api.user', '$interval', '$timeout', 'gene', 'rowEvent', 'samples', 'api.detailedGenomicAnalysis.alterations', 'pog', 'report',
+(_, scope, $mdDialog, $mdToast, $complete, $pubmed, $kbAssoc, $kb, $user, $interval, $timeout, gene, rowEvent, samples, $dgaAPC, pog, report) => {
   
   scope.gene = angular.copy(gene);
   scope.samples = samples;
@@ -91,7 +91,7 @@ app.controller('controller.dashboard.reports.genomic.detailedGenomicAnalysis.alt
       console.log('submitting gene entry', scope.gene);
       // Send updated entry to API
       if(rowEvent === 'new') {
-        $dgaAPC.one(scope.pog.POGID, gene.ident).create(scope.gene).then(
+        $dgaAPC.one(scope.pog.POGID, report.ident, gene.ident).create(scope.gene).then(
           (result) => {
             $mdDialog.hide('Entry has been updated');
           },
@@ -101,7 +101,7 @@ app.controller('controller.dashboard.reports.genomic.detailedGenomicAnalysis.alt
           }
         );
       } else {
-        $dgaAPC.one(scope.pog.POGID, gene.ident).update(scope.gene).then(
+        $dgaAPC.one(scope.pog.POGID, report.ident, gene.ident).update(scope.gene).then(
           (result) => {
             $mdDialog.hide('Entry has been updated');
           },

@@ -12,11 +12,11 @@ app.factory('api.expressionAnalysis.drugTarget', ['_', '$http', '$q', (_, $http,
   let $drugTarget = {};
 
 
-  $drugTarget.all = (pog) => {
+  $drugTarget.all = (pog, report) => {
 
     let deferred = $q.defer();
 
-    $http.get(api + '/' + pog + '/genomic/expressionAnalysis/drugTarget').then(
+    $http.get(api + '/' + pog + '/report/'+ report +'/genomic/expressionAnalysis/drugTarget').then(
       (resp) => {
         // Successful authentication
         deferred.resolve(resp.data);
@@ -30,12 +30,12 @@ app.factory('api.expressionAnalysis.drugTarget', ['_', '$http', '$q', (_, $http,
 
   };
 
-  $drugTarget.one = (pog, ident) => {
+  $drugTarget.one = (pog, report, ident) => {
     return {
       update: (data) => {
         let deferred = $q.defer();
 
-        $http.put(api + '/' + pog + '/genomic/expressionAnalysis/drugTarget/' + ident, data).then(
+        $http.put(api + '/' + pog + '/report/'+ report +'/genomic/expressionAnalysis/drugTarget/' + ident, data).then(
           (resp) => {
             deferred.resolve(resp.data);
           },
@@ -51,10 +51,10 @@ app.factory('api.expressionAnalysis.drugTarget', ['_', '$http', '$q', (_, $http,
   };
 
   // Get alterations by specific type
-  $drugTarget.getType = (pog, type) => {
+  $drugTarget.getType = (pog, report, type) => {
     let deferred = $q.defer();
 
-    $http.get(api + '/'  + pog + '/genomic/expressionAnalysis/drugTarget/' + type).then(
+    $http.get(api + '/'  + pog + '/report/'+ report +'/genomic/expressionAnalysis/drugTarget/' + type).then(
       (resp) => {
         deferred.resolve(resp.data);
       },

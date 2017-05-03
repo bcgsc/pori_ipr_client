@@ -1,23 +1,21 @@
 app.controller('controller.dashboard.report.genomic.summary',
-['_', '$q', '$state', '$scope', 'api.pog', 'api.summary.tumourAnalysis', 'api.summary.patientInformation', 'api.summary.mutationSummary', 'api.summary.genomicAterationsIdentified', '$mdDialog', '$mdToast', 'pog', 'gai', 'get', 'ms', 'vc', 'pt', 'mutationSignature',
-(_, $q, $state, $scope, $pog, $tumourAnalysis, $patientInformation, $mutationSummary, $gai, $mdDialog, $mdToast, pog, gai, get, ms, vc, pt, mutationSignature) => {
-
-  console.log('Loaded dashboard genomic report summary controller');
+['_', '$q', '$state', '$scope', 'api.pog', 'api.summary.tumourAnalysis', 'api.summary.patientInformation', 'api.summary.mutationSummary', 'api.summary.genomicAterationsIdentified', '$mdDialog', '$mdToast', 'pog', 'report', 'gai', 'get', 'ms', 'vc', 'pt', 'mutationSignature',
+(_, $q, $state, $scope, $pog, $tumourAnalysis, $patientInformation, $mutationSummary, $gai, $mdDialog, $mdToast, pog, report, gai, get, ms, vc, pt, mutationSignature) => {
 
   // Determine which interpreted prevalence value will be displayed
-  ms.snvPercentileCategory = (pog.tumourAnalysis.diseaseExpressionComparator === 'average') ? ms.snvPercentileTCGACategory : ms.snvPercentileDiseaseCategory;
-  ms.indelPercentileCategory = (pog.tumourAnalysis.diseaseExpressionComparator === 'average') ? ms.indelPercentileTCGACategory : ms.indelPercentileDiseaseCategory;
+  ms.snvPercentileCategory = (report.tumourAnalysis.diseaseExpressionComparator === 'average') ? ms.snvPercentileTCGACategory : ms.snvPercentileDiseaseCategory;
+  ms.indelPercentileCategory = (report.tumourAnalysis.diseaseExpressionComparator === 'average') ? ms.indelPercentileTCGACategory : ms.indelPercentileDiseaseCategory;
 
   $scope.pog = pog;
+  $scope.report = report;
   $scope.data = {
     get: get,
     ms: ms,
     vc: vc,
     pt: pt,
-    ta: pog.tumourAnalysis,
-    pi: pog.patientInformation
+    ta: report.tumourAnalysis,
+    pi: report.patientInformation
   };
-  $scope.geneVariants = [];
   $scope.mutationSignature = mutationSignature;
   $scope.mutationMask = null;
   $scope.variantCounts = {
@@ -59,21 +57,36 @@ app.controller('controller.dashboard.report.genomic.summary',
   };
 
   // Process variants and create chunks
-  gai.forEach((variant, k) => {
-    gai[k] = variantCategory(variant);
-    if(!$scope.variantCounts[gai[k].type]) $scope.variantCounts[gai[k].type] = 0;
-    $scope.variantCounts[gai[k].type]++;
-  });
+  let processVariants = (variants) => {
+
+    let output = [];
+
+    variants.forEach((variant, k) => {
+      // Add processed Variant
+      output.push(variantCategory(variant));
+
+      // Reset counts
+      $scope.variantCounts = { cnv: 0, smallMutation: 0, expressionOutlier: 0, structuralVariant: 0 };
+
+      // Update counts
+      if (!$scope.variantCounts[gai[k].type]) $scope.variantCounts[gai[k].type] = 0;
+      $scope.variantCounts[gai[k].type]++;
+    });
+
+    return output;
+  };
+
+
+  $scope.geneVariants = processVariants(gai);
+
 
   $scope.setMutationMask = (mask) => {
-    if($scope.mutationMask == mask) return $scope.mutationMask = null;
+    if($scope.mutationMask === mask) return $scope.mutationMask = null;
     $scope.mutationMask = mask;
   };
 
   $scope.mutationFilter = (mutation) => {
-    if($scope.mutationMask == null) return true;
-    if(mutation.type == $scope.mutationMask) return true;
-    return false;
+    return (mutation.type === $scope.mutationMask || $scope.mutationMask === null);
   };
 
   // Update Tumour Analysis Details
@@ -106,7 +119,7 @@ app.controller('controller.dashboard.report.genomic.summary',
           console.log($tumourAnalysis);
 
           // Send updated entry to API
-          $tumourAnalysis.update($scope.pog.POGID, scope.ta).then(
+          $tumourAnalysis.update(pog.POGID, report.ident, scope.ta).then(
             (result) => {
               $mdDialog.hide('Entry has been updated');
             },
@@ -179,15 +192,15 @@ app.controller('controller.dashboard.report.genomic.summary',
           _.forEach(scope.selectedSigs, (v) => {
 
             let sig = _.find($scope.mutationSignature, (s) => {
-              return s.ident == v;
-            })
+              return s.ident === v;
+            });
 
             scope.ms.mutationSignature.push(sig);
 
           });
 
           // Send updated entry to API
-          $mutationSummary.update($scope.pog.POGID, scope.ms).then(
+          $mutationSummary.update($scope.pog.POGID, report.ident, scope.ms).then(
             (result) => {
               $mdDialog.hide({message: 'Entry has been updated', data: scope.ms});
             },
@@ -227,7 +240,7 @@ app.controller('controller.dashboard.report.genomic.summary',
         scope.update = () => {
 
           // Send updated entry to API
-          $patientInformation.update($scope.pog.POGID, scope.pi).then(
+          $patientInformation.update($scope.pog.POGID, report.ident, scope.pi).then(
             (result) => {
               $mdDialog.hide({message: 'Entry has been updated', data: scope.pi});
             },
@@ -253,7 +266,53 @@ app.controller('controller.dashboard.report.genomic.summary',
   $scope.data.gai = _.sortBy(gai, 'type');
 
   $scope.mutationBurdenFilter = (input) => {
-    return (input == "nan [nan]") ? 'na' : input.replace(/\[[0-9]*\]/g, '');
+    return (input === "nan [nan]") ? 'na' : input.replace(/\[[0-9]*\]/g, '');
+  };
+
+  /**
+   * Add Alteration
+   */
+  $scope.addAlteration = ($event) => {
+
+    $mdDialog.show({
+      targetEvent: $event,
+      templateUrl: 'dashboard/report/genomic/summary/alteration.add.html',
+      clickOutToClose: false,
+      controller: ['scope', (scope) => {
+        scope.cancel = () => {
+          $mdDialog.cancel({message: 'No changes were saved.'});
+        };
+
+        // Perform Update/Change
+        scope.add = () => {
+
+          // Remove entry
+          $gai.create(pog.POGID, report.ident, scope.alteration).then(
+            (resp) => {
+              // Add to array of alterations
+              gai.push(resp);
+
+              // Reprocess variants
+              $scope.data.gai = processVariants(gai);
+              $scope.data.gai = _.sortBy(gai, 'type');
+
+              $mdDialog.hide({status: true, message: 'Added the new alteration.'});
+            },
+            (err) => {
+              console.log('Unable to remove entries', err);
+              $mdDialog.hide({status: false, message: 'Unable to create the new entry'});
+            }
+          );
+
+        }; // End update
+      }] // End controller
+
+    }).then((outcome) => {
+      if (outcome) $mdToast.show($mdToast.simple().textContent(outcome.message));
+    }, (error) => {
+      $mdToast.show($mdToast.simple().textContent('No changes where made.'));
+    });
+
   };
 
   /**
@@ -281,7 +340,7 @@ app.controller('controller.dashboard.report.genomic.summary',
         scope.update = (cascade) => {
 
           // Remove entry
-          $gai.remove(pog.POGID, alteration.ident, scope.comment, cascade).then(
+          $gai.remove(pog.POGID, report.ident, alteration.ident, scope.comment, cascade).then(
             (resp) => {
               $scope.data.gai = _.reject($scope.data.gai, (r) => { return (r.ident === alteration.ident); });
               // Remove from Get

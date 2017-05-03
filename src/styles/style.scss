@@ -167,7 +167,6 @@ span.preformated {
 
 
 .md-tooltip {
-  background-color: rgb(63,81,181) !important;
   color: white;
   font-size: 11px !important;
 }
@@ -187,4 +186,8 @@ span.preformated {
   font-size: 0.85em;
   line-height: 156%;
   transition: 0.5s ease-in-out;
+}
+
+.ng-hide.ng-hide-animate{
+  display: none !important;
 }

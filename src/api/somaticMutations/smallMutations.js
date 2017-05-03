@@ -12,11 +12,11 @@ app.factory('api.somaticMutations.smallMutations', ['_', '$http', '$q', (_, $htt
   let $smallMutations = {};
 
 
-  $smallMutations.all = (pog) => {
+  $smallMutations.all = (pog, report) => {
 
     let deferred = $q.defer();
 
-    $http.get(api + '/' + pog + '/genomic/somaticMutations/smallMutations').then(
+    $http.get(api + '/' + pog + '/report/'+ report +'/genomic/somaticMutations/smallMutations').then(
       (resp) => {
         // Successful authentication
         deferred.resolve(resp.data);
@@ -30,12 +30,12 @@ app.factory('api.somaticMutations.smallMutations', ['_', '$http', '$q', (_, $htt
 
   }
 
-  $smallMutations.one = (pog, ident) => {
+  $smallMutations.one = (pog, report, ident) => {
     return {
       update: (data) => {
         let deferred = $q.defer();
 
-        $http.put(api + '/' + pog + '/genomic/somaticMutations/smallMutations/' + ident, data).then(
+        $http.put(api + '/' + pog + '/report/'+ report +'/genomic/somaticMutations/smallMutations/' + ident, data).then(
           (resp) => {
             deferred.resolve(resp.data);
           },
@@ -51,10 +51,10 @@ app.factory('api.somaticMutations.smallMutations', ['_', '$http', '$q', (_, $htt
   }
 
   // Get alterations by specific type
-  $smallMutations.getType = (pog, type) => {
+  $smallMutations.getType = (pog, report, type) => {
     let deferred = $q.defer();
 
-    $http.get(api + '/'  + pog + '/genomic/somaticMutations/smallMutations/' + type).then(
+    $http.get(api + '/'  + pog + '/report/'+ report +'/genomic/somaticMutations/smallMutations/' + type).then(
       (resp) => {
         deferred.resolve(resp.data);
       },

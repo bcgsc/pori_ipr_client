@@ -1,9 +1,7 @@
 app.controller('controller.dashboard.report.genomic.analystComments', 
-  ['_', '$q', '$scope', '$mdDialog', '$mdToast', '$sce', 'api.pog', 'pog', 'comments',
-  (_, $q, $scope, $mdDialog, $mdToast, $sce, $pog, pog, analystComments) => {
-  
-  console.log('Analyst Comments Loaded');
-  
+  ['_', '$q', '$scope', '$mdDialog', '$mdToast', '$sce', 'api.pog', 'pog', 'report', 'comments',
+  (_, $q, $scope, $mdDialog, $mdToast, $sce, $pog, pog, report, analystComments) => {
+
   $scope.pog = pog;
   $scope.analystComments = (analystComments === null) ?  "" : analystComments.comments;
   $scope.commentsHTML = $sce.trustAsHtml($scope.analystComments);
@@ -44,7 +42,7 @@ app.controller('controller.dashboard.report.genomic.analystComments',
 
           console.log('Updating value with: ', updatedComment);
           
-          $comments.update(pog.POGID, updatedComment).then(
+          $comments.update(pog.POGID, report.ident, updatedComment).then(
             (result) => {
               $mdDialog.hide({message: 'Entry has been updated', comment: updatedComment});
             },

@@ -18,12 +18,12 @@ app.factory('api.appendices', ['_', '$http', '$q', (_, $http, $q) => {
    * Retrieve one image from API.
    *
    */
-  $appendices.tcga = (POGID) => {
+  $appendices.tcga = (POGID, report) => {
 
     return $q((resolve, reject) => {
 
       // Get result from API
-      $http.get(api + '/' + POGID + '/genomic/appendices/tcga').then(
+      $http.get(api + '/' + POGID + '/report/' + report + '/genomic/appendices/tcga').then(
         (result) => {
           resolve(result.data);
         },

@@ -20,7 +20,7 @@ app.factory('api.summary.patientInformation', ['_', '$http', '$q', (_, $http, $q
     return $q((resolve, reject) => {
       
       // Retrieve from API
-      $http.get(api + '/' + POGID + '/summary/patientInformation').then(
+      $http.get(api + '/' + POGID + '/patientInformation').then(
         (result) => {
           // Load into cache
           
@@ -40,7 +40,7 @@ app.factory('api.summary.patientInformation', ['_', '$http', '$q', (_, $http, $q
 
     return $q((resolve, reject) => {
 
-      $http.put(api + '/' + POGID + '/summary/patientInformation', pi).then(
+      $http.put(api + '/' + POGID + '/patientInformation', pi).then(
         (result) => {
           // All done!
           resolve(result.data);

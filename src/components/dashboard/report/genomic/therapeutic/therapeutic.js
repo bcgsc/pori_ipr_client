@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.report.genomic.therapeutic',
-['_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', 'api.pog', 'pog', 'api.therapeuticOptions', 'therapeutic',
-(_, $q, $scope, $state, $mdDialog, $mdToast, $pog, pog, $therapeutic, therapeutic) => {
+['_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', 'api.pog', 'pog', 'report', 'api.therapeuticOptions', 'therapeutic',
+(_, $q, $scope, $state, $mdDialog, $mdToast, $pog, pog, report, $therapeutic, therapeutic) => {
 
   $scope.therapeutic = {
     therapeutic: [],
@@ -34,7 +34,8 @@ app.controller('controller.dashboard.report.genomic.therapeutic',
       locals: {
         newEntry: false,
         entry: entry,
-        pog: pog
+        pog: pog,
+        report: report
       },
       templateUrl: 'dashboard/report/genomic/therapeutic/therapeutic.edit.html',
       controller: 'controller.dashboard.report.genomic.therapeutic.edit'
@@ -75,8 +76,8 @@ app.controller('controller.dashboard.report.genomic.therapeutic',
    */
   let cleanTargets = (targets) => {
     let newTargets = [];
-    _.forEach(data.target, (e) => {
-      targets.push((angular.isObject(e)) ? e : {geneVar: e});
+    _.forEach(targets, (e) => {
+      newTargets.push((angular.isObject(e)) ? e : {geneVar: e});
     });
     return newTargets;
   };
@@ -90,7 +91,8 @@ app.controller('controller.dashboard.report.genomic.therapeutic',
       locals: {
         newEntry: type,
         entry: false,
-        pog: pog
+        pog: pog,
+        report: report
       },
       templateUrl: 'dashboard/report/genomic/therapeutic/therapeutic.edit.html',
       controller: 'controller.dashboard.report.genomic.therapeutic.edit'

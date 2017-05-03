@@ -40,6 +40,6 @@ div(layout='row', flex)
 
         div(flex, layout='column')
             md-subheader.bread-crumbs
-                ui-breadcrumbs(displayname-property="data.displayName", template-url="uiBreadcrumbs/uiBreadcrumbs.tpl.html")
+                ui-breadcrumbs(displayname-property="data.displayName", abstract-proxy-property="data.breadcrumbProxy", template-url="uiBreadcrumbs/uiBreadcrumbs.tpl.html")
                 | {{data}}
             div(ui-view="", layout="row", flex)

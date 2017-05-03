@@ -9,12 +9,12 @@ section.detailedGenomicAnalysis
 
             div(ng-if="approvedThisCancer.length == 0")
                 div.text-center.details None Found.
-            ipr-genomic-alteration(ng-repeat="gene in approvedThisCancer", samples="samples", gene="gene").container
+            ipr-genomic-alteration(ng-repeat="gene in approvedThisCancer", samples="samples", gene="gene", report="report").container
 
             h2.title Therapries Approved in other tumour types
             div(ng-if="approvedOtherCancer.length == 0")
                 div.text-center.details None Found.
-            ipr-genomic-alteration(ng-repeat="gene in approvedOtherCancer", samples="samples", gene="gene").container
+            ipr-genomic-alteration(ng-repeat="gene in approvedOtherCancer", samples="samples", gene="gene", report="report").container
 
 
             h2.title Alterations With Potential Clinical Relevance
@@ -32,7 +32,7 @@ section.detailedGenomicAnalysis
             div(ng-if="alteration == 'unknown'", ng-hide="showUnknown")
                 div.text-center.details
                     md-button(ng-click="toggleUnknown()", ng-disabled="disableUnknownButtons").accent.md-raised View Uncharacterized Alterations
-            ipr-genomic-alteration(ng-repeat="(i, gene) in genes", samples="samples", gene="gene", pog="pog", trigger="trigger").container
+            ipr-genomic-alteration(ng-repeat="(i, gene) in genes", samples="samples", gene="gene", pog="pog", trigger="trigger", report="report").container
 
         div(layout="column", flex)
             h2.title Targeted Gene Report - Detected Alterations

@@ -8,7 +8,8 @@ app.directive("iprGenomicAlteration", ['$q', '_', '$mdDialog', '$mdToast', ($q, 
       samples: '=samples',
       gene: '=gene',
       pog: '=pog',
-      trigger: '='
+      trigger: '=',
+      report: '=report'
     },
     templateUrl: 'ipr-genomicAlteration/ipr-genomicAlteration.html',
     link: (scope, element, attr) => {
@@ -43,6 +44,7 @@ app.directive("iprGenomicAlteration", ['$q', '_', '$mdDialog', '$mdToast', ($q, 
           clickOutToClose: false,
           locals: {
             pog: scope.pog,
+            report: scope.report,
             gene: row,
             samples: scope.samples,
             rowEvent: 'update',

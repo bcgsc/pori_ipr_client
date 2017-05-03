@@ -57,10 +57,10 @@ app.controller('controller.dashboard.listing', ['_', '$q', '$scope', 'api.pog', 
       if(pog.POGID.toLowerCase().indexOf(query.toLowerCase()) !== -1) result = true;
       
       // Tumour Type
-      if(pog.patientInformation.tumourType.toLowerCase().indexOf(query.toLowerCase()) !== -1) result = true;
+      if(pog.patientInformation.tumourType && pog.patientInformation.tumourType.toLowerCase().indexOf(query.toLowerCase()) !== -1) result = true;
       
       // Ploidy Model
-      if(pog.tumourAnalysis.ploidy.toLowerCase().indexOf(query.toLowerCase()) !== -1) result = true;
+      if(pog.tumourAnalysis && pog.tumourAnalysis.ploidy.toLowerCase().indexOf(query.toLowerCase()) !== -1) result = true;
       
       // TC Search TODO: Cleanup to single line using regex. Proof of concept/do they want this?
       if(query.toLowerCase().indexOf('tc>') !== -1) (pog.tumourAnalysis.tumourContent > parseInt(_.last(query.split('>')))) ? result = true : null;
@@ -90,7 +90,53 @@ app.controller('controller.dashboard.listing', ['_', '$q', '$scope', 'api.pog', 
         .targetEvent($event)
     );
 
-  }
+  };
 
-  
+  // Check for TA, Ploidy
+
+
+  // Determine if probe/genomic available
+  $scope.checkProbeGenomic = (pog, type) => {
+    return (_.find(pog.analysis_reports, {type: type})) ? true : false;
+  };
+
+  // Get Tumour Content
+  $scope.getTumourContent = (pog) => {
+    let genomic = _.find(pog.analysis_reports, {type: 'genomic'});
+    if(!genomic) return "N/A";
+    return genomic.tumourAnalysis.tumourContent;
+  };
+
+  // Get Ploidy Model Content
+  $scope.getPloidy = (pog) => {
+    let genomic = _.find(pog.analysis_reports, {type: 'genomic'});
+    if(!genomic) return "N/A";
+    return genomic.tumourAnalysis.ploidy;
+  };
+
+  // Get Report
+  $scope.getReport = (pog, type) => {
+    return _.find(pog.analysis_reports, {type: type});
+  };
+
+  // Get Role
+  $scope.getRoleUser = (pog, role, resp) => {
+    let user =  _.find(pog.POGUsers, {role: role});
+
+    if(!user) return null;
+
+    switch(resp) {
+      case 'name':
+        return user.user.firstName + ' ' + user.user.lastName;
+        break;
+      case 'username':
+        return user.user.username;
+        break;
+    }
+  };
+
+  console.log('Bioinformatician', $scope.getRoleUser(pogs[0], 'bioinformatician'));
+
+
+
 }]);

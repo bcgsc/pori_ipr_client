@@ -17,10 +17,10 @@ app.factory('api.therapeuticOptions', ['_', '$http', '$q', (_, $http, $q) => {
    *
    * @params {string} POGID - PogID to be queried against (eg. POG123)
    */
-  $therapeutic.all = (POGID) => {
+  $therapeutic.all = (POGID, report) => {
     let deferred = $q.defer();
 
-    $http.get(api + '/' + POGID + '/genomic/therapeuticTargets').then(
+    $http.get(api + '/' + POGID + '/report/' + report + '/genomic/therapeuticTargets').then(
       (resp) => {
         deferred.resolve(resp.data);
       },
@@ -39,10 +39,10 @@ app.factory('api.therapeuticOptions', ['_', '$http', '$q', (_, $http, $q) => {
    * @param {object} entry - The therapeutic target entry to be created
    * @returns {Function|promise} - Resolves with the new data entry
    */
-  $therapeutic.create = (POGID, entry) => {
+  $therapeutic.create = (POGID, report, entry) => {
     let deferred = $q.defer();
 
-    $http.post(api + '/' + POGID + '/genomic/therapeuticTargets', entry).then(
+    $http.post(api + '/' + POGID + '/report/' + report + '/genomic/therapeuticTargets', entry).then(
       (resp) => {
         deferred.resolve(resp.data);
       },
@@ -58,9 +58,9 @@ app.factory('api.therapeuticOptions', ['_', '$http', '$q', (_, $http, $q) => {
    *
    * @params {string} POGID - PogID to be queried against (eg. POG123)
    */
-  $therapeutic.one = (POGID) => {
+  $therapeutic.one = (POGID, report) => {
 
-    let API = api + '/' + POGID + '/genomic/therapeuticTargets';
+    let API = api + '/' + POGID + '/report/' + report + '/genomic/therapeuticTargets';
 
     return {
 

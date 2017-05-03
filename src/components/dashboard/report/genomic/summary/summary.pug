@@ -106,7 +106,7 @@ section
             div(layout="row").header
                 div(flex).container
                     div(flex).signature.editable
-                        span(ng-if="data.ms.mutationSignature.length == 0") Not Specified
+                        span(ng-if="(data.ms.mutationSignature.length === 0 || data.ms.mutationSignature === null)") Not Specified
                             md-icon(ng-click="updateMs()") edit
                         span(ng-if="data.ms.mutationSignature.length > 0")
                             span(ng-repeat="sig in data.ms.mutationSignature").repeat-comma
@@ -178,6 +178,12 @@ section
             div(ng-repeat="variant in data.gai | filter: mutationFilter", class="{{variant.type}}") {{variant.geneVariant}}
                 span(ng-click="removeAlteration($event, variant)")
                     md-icon remove_circle
+
+            div.add.clickable Add new entry
+                span(ng-click="addAlteration($event)")
+                    md-icon add_circle
+
+
         div(flex, layout="row", layout-align="end end").keyAlterationsIdentified.margin-bottom-10
             div(flex=10, ng-click="setMutationMask(null)", ng-show="mutationMask !== null").margin-bottom-10.text-small.clickable View all
             span(flex)

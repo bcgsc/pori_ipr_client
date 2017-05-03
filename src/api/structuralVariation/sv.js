@@ -12,11 +12,11 @@ app.factory('api.structuralVariation.sv', ['_', '$http', '$q', (_, $http, $q) =>
   let $sv = {};
 
 
-  $sv.all = (pog) => {
+  $sv.all = (pog, report) => {
 
     let deferred = $q.defer();
 
-    $http.get(api + '/' + pog + '/genomic/structuralVariation/sv').then(
+    $http.get(api + '/' + pog + '/report/' + report+ '/genomic/structuralVariation/sv').then(
       (resp) => {
         // Successful authentication
         deferred.resolve(resp.data);
@@ -30,12 +30,12 @@ app.factory('api.structuralVariation.sv', ['_', '$http', '$q', (_, $http, $q) =>
 
   };
 
-  $sv.one = (pog, ident) => {
+  $sv.one = (pog, report, ident) => {
     return {
       update: (data) => {
         let deferred = $q.defer();
 
-        $http.put(api + '/' + pog + '/genomic/structuralVariation/sv/' + ident, data).then(
+        $http.put(api + '/' + pog + '/report/' + report+ '/genomic/structuralVariation/sv/' + ident, data).then(
           (resp) => {
             deferred.resolve(resp.data);
           },
@@ -51,10 +51,10 @@ app.factory('api.structuralVariation.sv', ['_', '$http', '$q', (_, $http, $q) =>
   };
 
   // Get alterations by specific type
-  $sv.getType = (pog, type) => {
+  $sv.getType = (pog, report, type) => {
     let deferred = $q.defer();
 
-    $http.get(api + '/'  + pog + '/genomic/structuralVariation/sv/' + type).then(
+    $http.get(api + '/'  + pog + '/report/' + report+ '/genomic/structuralVariation/sv/' + type).then(
       (resp) => {
         deferred.resolve(resp.data);
       },

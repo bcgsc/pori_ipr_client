@@ -1,0 +1,91 @@
+section.appendices
+    md-subheader.md-primary Appendices
+
+    div(layout="column", flex)
+
+        div(layout="column", flex)
+
+            h2.title Appendix A
+            h3.title Sample Information
+
+            div(layout="column", flex).dataBox
+                div.box
+                    div(layout="row", flex).heading
+                        div(flex) Sample
+                        div(flex) Sample Name
+                        div(flex) Collection Date
+                        div(flex) Primary Site
+                        div(flex=30) Biopsy Site
+                        div(flex) Pathology Estimated Tumour Content
+                    div(layout="row", flex, ng-repeat="sample in report.sampleInfo").row
+                        div(flex) {{sample['Sample']}}
+                        div(flex) {{sample['Sample Name']}}
+                        div(flex) {{sample['Collection Date']}}
+                        div(flex) {{sample['Primary Site']}}
+                        div(flex=30) {{sample['Biopsy Site']}}
+                        div(flex) {{sample['Patho TC']}}
+
+            h3.title Sequencing QC
+
+            div(layout="column", flex).dataBox
+                div.box
+                    div(layout="row", flex).heading
+                        div(flex) Type
+                        div(flex) Sample Name
+                        div(flex) Input (ng)
+                        div(flex) Library Construction Protocol
+                        div(flex) Library
+                        div(flex) Lab QC
+                        div(flex) Sequencing QC
+                        div(flex) % Duplicates
+                        div(flex) Total Coverage
+                        div(flex) # Reads
+                    div(layout="row", flex, ng-repeat="qc in report.seqQC").row
+                        div(flex) {{qc['Sample']}}
+                        div(flex) {{qc['Sample Name']}}
+                        div(flex) {{qc['Input_ng']}}
+                        div(flex) {{qc['Protocol']}}
+                        div(flex) {{qc['Library']}}
+                        div(flex) {{qc['labQC']}}
+                        div(flex) {{qc['bioQC']}}
+                        div(flex) {{qc['Duplicate_Reads_Perc']}}
+                        div(flex) {{qc['Coverage']}}
+                        div(flex) {{qc['Reads']}}
+
+            h2.title TCGA Acronyms
+            div(layout="column", flex).dataBox
+                div.box
+                    div(layout="row", flex).heading
+                        div(flex=30) Code Name
+                        div(flex=30) Full Name
+                        div(flex) Data Source
+                        div(flex) Tumour Count
+                        div(flex) Normal Count
+                    div(layout="row", layout-align="start end").search
+                        md-input-container(flex=40)
+                            input(placeholder="Search", name="AcroSearch", ng-model="acroQuery")
+                    div(style="max-height: 300px; overflow-y: auto")
+                        div(layout="row", flex, ng-repeat="t in tcga | filter: acroQuery").row
+                            div(flex=30) {{t['Code Name']}}
+                            div(flex=30) {{t['Full Name']}}
+                            div(flex) {{t['Data Source']}}
+                            div(flex) {{hashClean(t['Tumour Count'])}}
+                            div(flex) {{hashClean(t['Normal Count'])}}
+
+            h2.title Test Summary
+            div.md-padding
+
+                P ABOUT THE TEST
+                p The Report: The Targeted Gene Report (TGR) provides results from a rapid analysis pipeline designed to identify specific somatic alterations in a select set of cancer-associated genes and gene fusion events. This rapid analysis is not a complete description of aberrations present in the tumour genome. The absence of a specific mutation in this report is not a guarantee that the mutation is not present in the patient's tumour. Germline variants are not included in this report.
+
+                p Test Method: In the TGR, whole genome and whole transcriptome sequence reads are computationally queried to identify events matching a specific list of known cancer-related aberrations. A subset of genes is examined for specific events which include, but are not limited to, individual gene mutations such as hotspot mutations in KRAS, BRAF and PIK3CA, and gene-pair fusions such as BCR-ABL1, EML4-ALK, and CCDC6-RET. Genome and transcriptome sequence data are queried for individual gene mutations; only transcriptome data are queried for gene fusion events.
+                p Reporting of information of Potential Clinical Relevance: The TGR incorporates results from published peer-reviewed studies and other publicly available information through our in-house Knowledgebase - a curated database of cancer-associated genes and genomic alterations. Reported associations may include those of potential biological, diagnostic, prognostic and therapeutic significance. Therapeutic associations of potential clinical benefit (or potential lack of clinical benefit) are derived from public data and are not independently verified.
+                p This report will generally be followed by a final report, which will provide a more comprehensive description of both previously observed and novel aberrations.
+                p The TGR is developed by Canada's Michael Smith Genome Sciences Centre, part of the British Columbia Cancer Agency. Contents should be regarded as purely investigational and are intended for research purposes only.
+
+            h2.title Appendix D
+            h3.title Genomic Report v/KB v./ Genome Ref hg19
+
+            pre(style="max-height: 300px; overflow-y: auto").tcga {{report.config}}
+
+

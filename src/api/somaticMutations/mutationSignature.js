@@ -11,11 +11,11 @@ app.factory('api.somaticMutations.mutationSignature', ['_', '$http', '$q', (_, $
 
   let $mutationSignature = {};
 
-  $mutationSignature.all = (pog) => {
+  $mutationSignature.all = (pog, report) => {
 
     let deferred = $q.defer();
 
-    $http.get(api + '/' + pog + '/genomic/somaticMutations/mutationSignature').then(
+    $http.get(api + '/' + pog + '/report/'+ report +'/genomic/somaticMutations/mutationSignature').then(
       (resp) => {
         deferred.resolve(resp.data);
       },

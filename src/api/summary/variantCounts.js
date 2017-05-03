@@ -18,11 +18,11 @@ app.factory('api.summary.variantCounts', ['_', '$http', '$q', (_, $http, $q) => 
    * @param string POGID - PogID of requested resource, eg. POG129
    *
    */
-  $vc.get = (POGID) => {
+  $vc.get = (POGID, report) => {
     return $q((resolve, reject) => {
       
       // Retrieve from API
-      $http.get(api + '/' + POGID + '/summary/variantCounts').then(
+      $http.get(api + '/' + POGID + '/report/' + report + '/genomic/summary/variantCounts').then(
         (result) => {
           // Load into cache
           
@@ -45,12 +45,12 @@ app.factory('api.summary.variantCounts', ['_', '$http', '$q', (_, $http, $q) => 
    * @param string POGID - POGID, eg POG129
    *
    */
-  $vc.update = (POGID, analysis) => {
+  $vc.update = (POGID, report, analysis) => {
     
     return $q((resolve, reject) => {
       
       // Get result from API
-      $http.put(api + '/' + POGID + '/summary/variantCounts/', analysis).then(
+      $http.put(api + '/' + POGID + '/report/' + report + '/genomic/summary/variantCounts/', analysis).then(
         (result) => {
           resolve(result.data);
         },
