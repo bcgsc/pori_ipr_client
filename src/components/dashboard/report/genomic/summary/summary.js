@@ -61,22 +61,21 @@ app.controller('controller.dashboard.report.genomic.summary',
 
     let output = [];
 
+    // Reset counts
+    $scope.variantCounts = { cnv: 0, smallMutation: 0, expressionOutlier: 0, structuralVariant: 0 };
+
     variants.forEach((variant, k) => {
       // Add processed Variant
       output.push(variantCategory(variant));
 
-      // Reset counts
-      $scope.variantCounts = { cnv: 0, smallMutation: 0, expressionOutlier: 0, structuralVariant: 0 };
-
       // Update counts
       if (!$scope.variantCounts[gai[k].type]) $scope.variantCounts[gai[k].type] = 0;
       $scope.variantCounts[gai[k].type]++;
+
     });
 
     return output;
   };
-
-
   $scope.geneVariants = processVariants(gai);
 
 
