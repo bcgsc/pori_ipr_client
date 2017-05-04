@@ -37,13 +37,14 @@ app.controller('knowledgebase.dashboard', ['$q', '$scope', '$timeout', '$state',
   $scope.doughnut.references = {
     data: [0,0,0,0],
     labels: [
-      'Reviewed', 'New', 'Flagged-Incorrect', 'Requires-Review'
+      'Reviewed', 'New', 'Flagged-Incorrect', 'Requires-Review', 'Interim'
     ],
     colors: [
       '#2ECC71',
       '#19B5FE',
       '#F22613',
-      '#F9BF3B'
+      '#F9BF3B',
+      '#c104f9',
 
     ],
     options: {
@@ -68,7 +69,8 @@ app.controller('knowledgebase.dashboard', ['$q', '$scope', '$timeout', '$state',
       metrics.refReviewed,
       metrics.refNew,
       metrics.refFlaggedIncorrect,
-      metrics.refRequiresReview
+      metrics.refRequiresReview,
+      metrics.refInterim
     ];
   },300);
 
