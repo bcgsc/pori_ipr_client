@@ -1,0 +1,48 @@
+thead
+    tr
+        td.pageHeader
+            div(layout="row")
+                div(flex=20) {{pog.POGID}} - {{report.patientInformation.tumourType}}
+                div(flex) BCCA Confidential - For Research Purposes Only
+                div(flex=20) {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
+            h1 Potential Therapeutic Targets
+tbody
+    tr
+        td
+            h2 Potential Therapeutic Options
+
+            div(layout="column").therapeuticOptions
+                div(layout="row").header
+                    div(flex=30) Drug Target
+                    div(flex) Biomarker
+                    div(flex) Notes
+                div(layout="row", ng-repeat="pt in therapeutic.therapeutic").entry
+                    div(flex=30, layout="row")
+                        div(flex, layout="column", layout-align="center center")
+                            span(ng-repeat="target in pt.target") {{target}}
+                        div(flex, layout="column").text-center {{pt.targetContext}}
+
+                    div(flex)
+                        div(layout="row", ng-repeat="biomarker in pt.biomarker")
+                            div(layout="column", flex).text-center {{biomarker.entry}}
+                            div(layout="column", flex, layout-align="center center")
+                                span(ng-repeat="c in biomarker.context").text-center {{c}}
+                    div(flex) {{pt.notes}}
+
+            br
+            h2 Potential Chemoresistance
+
+            div(layout="column").therapeuticOptions.chemo
+                div(layout="row").header
+                    div(flex=30) Resistance To
+                    div(flex) Biomarker
+                    div(flex) Notes
+                div(layout="row", ng-repeat="pt in therapeutic.chemoresistance").entry
+                    div(flex=30).text-center {{pt.resistance}}
+
+                    div(flex)
+                        div(layout="row", ng-repeat="biomarker in pt.biomarker")
+                            div(layout="column", flex).text-center {{biomarker.entry}}
+                            div(layout="column", flex, layout-align="center center")
+                                span(ng-repeat="c in biomarker.context").text-center {{c}}
+                    div(flex) {{pt.notes}}

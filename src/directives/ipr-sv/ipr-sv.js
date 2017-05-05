@@ -22,12 +22,12 @@ app.directive("iprSv", ['$q', '_', '$mdDialog', '$mdToast', ($q, _, $mdDialog, $
             // Close Modal
             $_scope.cancel = () => {
               $mdDialog.cancel();
-            }
+            };
 
             // Extract Ensembl Name from String
             $_scope.ensemblName = (input) => {
               return _.first(input.match(/(ENS[A-z0-9]*)/));
-            }
+            };
 
             // Create SVG DOM element from String
             $_scope.svg = new DOMParser().parseFromString(sv.svg, 'application/xml');

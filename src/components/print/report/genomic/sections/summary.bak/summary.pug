@@ -1,7 +1,23 @@
-tr
-    td.report-section
+td
+    div(layout="row").header
+        div(flex=50)
+            img(src="/assets/images/print_logo.png", width="100%")
+        div(flex=50, layout-align="start end")
+            div(flex, layout="column").text-right
+                span Tumour Genome Analysis
+                span.text-small Whole genome; Transcriptome; Somatic
+
+    div(layout="row").version
+        div(flex=50) Report version: x.x.x
+        div(flex=50).text-right Knowledgebase version: x.x.x
+
+    div(flex).pogid.text-center {{pog.POGID}}
+
+    div.report-section
         h1 Patient Information
+
         div(layout="column", flex).details
+
             table(width="100%")
                 tr
                     th(width="12%") Patient ID:
@@ -31,8 +47,7 @@ tr
                     td
                     th Protocol:
                     td {{data.pi.tumourProtocol}}
-tr
-    td.report-section
+
         h1 Patient Tumour Analysis Summary
 
         div(layout="column", flex)
@@ -87,11 +102,11 @@ tr
                 div(flex=25).text-xxsmall Details in EXPRESSION ANALYSIS section
                 div(flex=20).text-xxsmall Details in MICROBIAL CONTENT section
 
-            div.section-break
+
             div(layout="row")
                 div(layout="column", flex="25").dataBox
                     h4 Mutation Signature
-                div(layout="column", flex="75").dataBox
+                div(layout="column", flex="75").dataBoxcontent
                     h4 Mutation Burden
                         span (in protein coding genes)
 
@@ -131,9 +146,7 @@ tr
             div(flex).text-xxsmall Details in SOMATIC MUTATIONS section
             div(flex).text-xxsmall
             div(flex).text-xxsmall Details in STRUCTURAL VARIATION section
-        div.section-break
-tr
-    td.report-section
+
         div(layout="column", flex)
 
             div(layout="row")
@@ -143,18 +156,18 @@ tr
             div(layout="row", style="margin-bottom: 2mm; border: 0.5mm solid rgb(110,110,110);").keyAlterationsIdentified
                 div(layout="row", flex).title.sm
                     div(flex) Small Mutations
-                    div(flex="30") {{variantCounts.smallMutation}}
+                    div(flex="30") {{data.vc.smallMutations}}
                 div(layout="row", flex).title.cnv
                     div(flex) Copy Number Variants
-                    div(flex="30") {{variantCounts.cnv}}
+                    div(flex="30") {{data.vc.CNVs}}
                 div(layout="row", flex).title.sv
                     div(flex) Structural Variants
-                    div(flex="30") {{variantCounts.structuralVariant}}
+                    div(flex="30") {{data.vc.SVs}}
                 div(layout="row", flex).title.outliers
                     div(flex) Expression Outliers
-                    div(flex="30") {{variantCounts.expressionOutlier}}
+                    div(flex="30") {{data.vc.expressionOutliers}}
             div(flex, layout-align="start start", style="border: 0.5mm solid rgb(110,110,110);").alterations
-                div(ng-repeat="variant in data.gai" ) {{variant.geneVariant}}
+                div(ng-repeat="variant in data.gai", class="{{variant.type}}") {{variant.geneVariant}}
 
             div(layout="row").keyAlterationsIdentified
                 div(layout="row", flex).title.unknown
@@ -166,24 +179,102 @@ tr
             div(flex).text-xxsmall
             div(flex).text-xxsmall
             div(flex).text-xxsmall Details in DETAILED GENOMIC ANALYSIS section
-        div.section-break
-tr.borderRow
-    td.report-section
+
         h1 Genomic Events with Potential Therapeutic Association
 
-        table(width="100%").therapeuticAssociationTable
-            thead
-                tr
-                    th.text-left Genomic Events
-                    th.text-left Approved in this cancer type
-                    th.text-left Approved in other cancer type
-                    th.text-left Emerging Evidence
-tr(ng-repeat="(i, gene) in data.get track by $index").borderRow
-    td
-        table(width="100%").therapeuticAssociationTable
-            tbody(ng-class="{first: (i === 0), last: (i === (data.get.length-1))}")
-                tr
-                    td(width="25%") {{gene.genomicEvent}}
-                    td(width="25%") {{gene.approvedThisCancerType}}
-                    td(width="25%") {{gene.approvedOtherCancerType}}
-                    td(width="25%") {{gene.emergingPreclinicalEvidence}}
+        div(layout="column", flex)
+
+            div(layout="row")
+                div(layout="column", flex).dataBox
+                    div.inner
+                        div(layout="row", flex).heading.yellow
+                            div(flex).text-left Genomic Events
+                            div(flex).text-left Approved in this cancer type
+                            div(flex).text-left Approved in other cancer type
+                            div(flex).text-left Emerging Evidence
+                        div(layout="row", flex, ng-repeat="gene in data.get[0]").content.left
+                            div(flex) {{gene.genomicEvent}}
+                            div(flex) {{gene.approvedThisCancerType}}
+                            div(flex) {{gene.approvedOtherCancerType}}
+                            div(flex) {{gene.emergingPreclinicalEvidence}}
+    div(ng-if="data.get[1].length > 0")
+        div.pageBreak
+        div.pageHeaderSpace
+        div.report-section
+            h1 Genomic Events with Potential Therapeutic Association
+            div(layout="column", flex)
+
+                div(layout="row")
+                    div(layout="column", flex).dataBox
+                        div.inner
+                            div(layout="row", flex).heading.yellow
+                                div(flex) Genomic Events
+                                div(flex) Approved in this cancer type
+                                div(flex) Approved in other cancer type
+                                div(flex) Emerging Evidence
+                            div(layout="row", flex, ng-repeat="gene in data.get[1]").content.left
+                                div(flex) {{gene.genomicEvent}}
+                                div(flex) {{gene.approvedThisCancerType}}
+                                div(flex) {{gene.approvedOtherCancerType}}
+                                div(flex) {{gene.emergingPreclinicalEvidence}}
+
+    div.pageBreak
+    div.pageHeaderSpace
+    div.report-section
+        h1 Analyst Comments
+        div(layout="column", flex, layout-align="end start").analystComments
+            div(flex=95, style="width: 100%", ng-bind-html="analystComments.comments || '<h2>Report Draft</h2> <br /> No comments yet.'").body
+            div(layout="row").reviewed
+                div(flex) Date:
+                div(flex) Reviewed By:
+
+    div.pageBreak
+    div.pageHeaderSpace
+    div.report-section
+        h1 Pathway Analysis
+        div(layout="column", flex)
+            div(id="svgContainer")
+                div(id="svgImage", style="width: 190mm; height: 190mm")
+
+    div.pageBreak
+    div.pageHeaderSpace
+    div.report-section
+        h1 Potential Therapeutic Targets
+        div(layout="column", flex)
+            br
+            span Potential Therapeutic Options
+            table(id="therapeutic").therapeuticTargets
+                thead
+                    tr
+                        th(colspan=2, width="30%") Drug Target
+                        th(width="40%") Biomarker
+                        th(width="30%") Notes
+                tbody
+                    tr(ng-repeat="th in therapeutic.therapeutic")
+                        td
+                            div(ng-repeat="e in th.target") {{e}}
+                        td {{th.targetContext}}
+                        td(layout="column")
+                            div(ng-repeat="marker in th.biomarker", layout="row")
+                                div(flex) {{marker.entry}}
+                                div(flex, layout="column")
+                                    span(ng-repeat="c in marker.context") {{c}}
+                        td {{th.notes}}
+            br
+            br
+            span Potential Chemoresistance
+            table.therapeuticTargets.chemoresistance
+                thead
+                    tr
+                        th(width="30%") Resistance to
+                        th(width="40%") Biomarker
+                        th(width="30%") Notes
+                tbody
+                    tr(ng-repeat="ch in therapeutic.chemoresistance")
+                        td {{ch.resistance}}
+                        td(layout="column")
+                            div(ng-repeat="marker in ch.biomarker", layout="row")
+                                div(flex) {{marker.entry}}
+                                div(flex, layout="column")
+                                    span(ng-repeat="c in marker.context") {{c}}
+                        td {{ch.notes}}

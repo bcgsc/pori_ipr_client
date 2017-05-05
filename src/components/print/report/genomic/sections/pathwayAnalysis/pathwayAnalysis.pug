@@ -1,0 +1,13 @@
+thead
+    tr
+        td.pageHeader
+            div(layout="row")
+                div(flex=20) {{pog.POGID}} - {{report.patientInformation.tumourType}}
+                div(flex) BCCA Confidential - For Research Purposes Only
+                div(flex=20) {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
+            h1 Pathway Analysis
+tbody
+    tr
+        td
+            div(layout="row", flex).pathwayAnalysis
+                div(id="svgImage", flex)

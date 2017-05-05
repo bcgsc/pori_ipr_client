@@ -629,9 +629,14 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     })
 
     .state('print.POG.report', {
-      url: '/report',
+      url: '/report/:analysis_report',
       abstract: true,
       template: '<ui-view \\>',
+      resolve: {
+        report: ['$q', '$stateParams', 'api.pog_analysis_report', ($q, $stateParams, $report) => {
+          return $report.pog($stateParams.POG).get($stateParams.analysis_report);
+        }]
+      }
     })
 
     .state('print.POG.report.genomic', {
@@ -644,35 +649,176 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
           templateUrl: 'print/report/genomic/genomic.html',
           controller: 'controller.print.POG.report.genomic',
         },
-        "summary@print.POG.report.genomic": { templateUrl: 'print/report/genomic/sections/summary/summary.html' },
+        "summary@print.POG.report.genomic": {
+          templateUrl: 'print/report/genomic/sections/summary/summary.html',
+          controller: 'controller.print.POG.report.genomic.summary',
+          resolve: {
+            gai: ['$q', '$stateParams', 'api.summary.genomicAterationsIdentified', ($q, $stateParams, $gai) => {
+              return $gai.all($stateParams.POG, $stateParams.analysis_report);
+            }],
+            get: ['$q', '$stateParams', 'api.summary.genomicEventsTherapeutic', ($q, $stateParams, $get) => {
+              return $get.all($stateParams.POG, $stateParams.analysis_report);
+            }],
+            ms: ['$q', '$stateParams', 'api.summary.mutationSummary', ($q, $stateParams, $ms) => {
+              return $ms.get($stateParams.POG, $stateParams.analysis_report);
+            }],
+            vc: ['$q', '$stateParams', 'api.summary.variantCounts', ($q, $stateParams, $vc) => {
+              return $vc.get($stateParams.POG, $stateParams.analysis_report);
+            }],
+            pt: ['$q', '$stateParams', 'api.summary.probeTarget', ($q, $stateParams, $pt) => {
+              return $pt.all($stateParams.POG, $stateParams.analysis_report);
+            }],
+            mutationSignature: ['$q', '$stateParams', 'api.somaticMutations.mutationSignature', ($q, $stateParams, $mutationSignature) => {
+              return $mutationSignature.all($stateParams.POG, $stateParams.analysis_report);
+            }]
+          }
+        },
+        "analystComments@print.POG.report.genomic": {
+          templateUrl: 'print/report/genomic/sections/analystComments/analystComments.html',
+          controller: 'controller.print.POG.report.genomic.analystComments',
+          resolve: {
+            comments: ['$q', '$stateParams', 'api.summary.analystComments', ($q, $stateParams, $comments) => {
+              return $comments.get($stateParams.POG, $stateParams.analysis_report);
+            }],
+          }
+        },
+        "pathwayAnalysis@print.POG.report.genomic": {
+          templateUrl: 'print/report/genomic/sections/pathwayAnalysis/pathwayAnalysis.html',
+          controller: 'controller.print.POG.report.genomic.pathwayAnalysis',
+          resolve: {
+            pathway: ['$q', '$stateParams', 'api.summary.pathwayAnalysis', ($q, $stateParams, $pathway) => {
+              return $pathway.get($stateParams.POG, $stateParams.analysis_report);
+            }]
+          }
+        },
+        "pathwayAnalysisLegend@print.POG.report.genomic": { templateUrl: 'print/report/genomic/sections/pathwayAnalysis/pathwayAnalysisLegend.html' },
+        "therapeuticOptions@print.POG.report.genomic": {
+          templateUrl: 'print/report/genomic/sections/therapeuticOptions/therapeuticOptions.html',
+          controller: 'controller.print.POG.report.genomic.therapeuticOptions',
+          resolve: {
+            therapeutic: ['$q', '$stateParams', 'api.therapeuticOptions', ($q, $stateParams, $therapeutic) => {
+              return $therapeutic.all($stateParams.POG, $stateParams.analysis_report);
+            }],
+          }
+        },
+        "dga@print.POG.report.genomic": {
+          templateUrl: 'print/report/genomic/sections/dga/dga.html',
+          controller: 'controller.print.POG.report.genomic.dga',
+          resolve: {
+            alterations: ['$q', '$stateParams', 'api.detailedGenomicAnalysis.alterations', ($q, $stateParams, $APC) => {
+              return $APC.getAll($stateParams.POG, $stateParams.analysis_report);
+            }],
+            unknownAlterations: ['$q', '$stateParams', 'api.detailedGenomicAnalysis.alterations', ($q, $stateParams, $APC) => {
+              return $APC.getType($stateParams.POG, $stateParams.analysis_report, 'unknown');
+            }],
+            approvedThisCancer: ['$q', '$stateParams', 'api.detailedGenomicAnalysis.alterations', ($q, $stateParams, $APC) => {
+              return $APC.getType($stateParams.POG, $stateParams.analysis_report, 'thisCancer');
+            }],
+            approvedOtherCancer: ['$q', '$stateParams', 'api.detailedGenomicAnalysis.alterations', ($q, $stateParams, $APC) => {
+              return $APC.getType($stateParams.POG, $stateParams.analysis_report, 'otherCancer');
+            }]
+          }
+        },
+        "diseaseSpecificAnalysis@print.POG.report.genomic": {
+          templateUrl: 'print/report/genomic/sections/diseaseSpecificAnalysis/diseaseSpecificAnalysis.html',
+          controller: 'controller.print.POG.report.genomic.diseaseSpecificAnalysis',
+          resolve: {
+            images: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
+              return $image.get($stateParams.POG, $stateParams.analysis_report, 'subtypePlot.molecular,subtypePlot.receptorStatus');
+            }]
+          }
+        },
+        "somaticMutations@print.POG.report.genomic": {
+          templateUrl: 'print/report/genomic/sections/somaticMutations/somaticMutations.html',
+          controller: 'controller.print.POG.report.genomic.somaticMutations',
+          resolve: {
+            images: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
+              return $image.get($stateParams.POG, $stateParams.analysis_report, 'mutSummary.snv,mutSummary.indel,mutSummary.barSnv,mutSummary.barIndel,mutSignature.corPcors,mutSignature.snvsAllStrelka');
+            }],
+            ms: ['$q', '$stateParams', 'api.summary.mutationSummary', ($q, $stateParams, $ms) => {
+              return $ms.get($stateParams.POG, $stateParams.analysis_report);
+            }],
+            smallMutations: ['$q', '$stateParams', 'api.somaticMutations.smallMutations', ($q, $stateParams, $smallMuts) => {
+              return $smallMuts.all($stateParams.POG, $stateParams.analysis_report);
+            }],
+            mutationSignature: ['$q', '$stateParams', 'api.somaticMutations.mutationSignature', ($q, $stateParams, $mutationSignature) => {
+              return $mutationSignature.all($stateParams.POG, $stateParams.analysis_report);
+            }]
+          }
+        },
+        "copyNumberAnalysis@print.POG.report.genomic": {
+          templateUrl: 'print/report/genomic/sections/copyNumberAnalysis/copyNumberAnalysis.html',
+          controller: 'controller.print.POG.report.genomic.copyNumberAnalysis',
+          resolve: {
+            images: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
+              return $image.get($stateParams.POG, $stateParams.analysis_report, 'cnvLoh.circos');
+            }],
+            ms: ['$q', '$stateParams', 'api.summary.mutationSummary', ($q, $stateParams, $ms) => {
+              return $ms.get($stateParams.POG, $stateParams.analysis_report);
+            }],
+            cnvs: ['$q', '$stateParams', 'api.copyNumberAnalyses.cnv', ($q, $stateParams, $cnv) => {
+              return $cnv.all($stateParams.POG, $stateParams.analysis_report);
+            }]
+          }
+        },
+        "copyNumberAnalysisCNVLOH@print.POG.report.genomic": {
+          templateUrl: 'print/report/genomic/sections/copyNumberAnalysis/copyNumberAnalysisCNVLOH.html',
+          controller: 'controller.print.POG.report.genomic.copyNumberAnalysisCNVLOH',
+          resolve: {
+            images: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
+              return $image.get($stateParams.POG, $stateParams.analysis_report, 'cnv.1,cnv.2,cnv.3,cnv.4,cnv.5,loh.1,loh.2,loh.3,loh.4,loh.5');
+            }]
+          }
+        },
+        "structuralVariants@print.POG.report.genomic": {
+          templateUrl: 'print/report/genomic/sections/structuralVariants/structuralVariants.html',
+          controller: 'controller.print.POG.report.genomic.structuralVariants',
+          resolve: {
+            images: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
+              return $image.get($stateParams.POG, $stateParams.analysis_report, 'mutSummary.barSv,mutSummary.sv,circosSv.genome,circosSv.transcriptome');
+            }],
+            ms: ['$q', '$stateParams', 'api.summary.mutationSummary', ($q, $stateParams, $ms) => {
+              return $ms.get($stateParams.POG, $stateParams.analysis_report);
+            }],
+            svs: ['$q', '$stateParams', 'api.structuralVariation.sv', ($q, $stateParams, $sv) => {
+              return $sv.all($stateParams.POG, $stateParams.analysis_report);
+            }]
+          }
+        },
+        "expressionAnalysis@print.POG.report.genomic": {
+          templateUrl: 'print/report/genomic/sections/expressionAnalysis/expressionAnalysis.html',
+          controller: 'controller.print.POG.report.genomic.expressionAnalysis',
+          resolve: {
+            images: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
+              return $image.get($stateParams.POG, $stateParams.analysis_report, 'expression.chart,expression.legend');
+            }],
+            ms: ['$q', '$stateParams', 'api.summary.mutationSummary', ($q, $stateParams, $ms) => {
+              return $ms.get($stateParams.POG, $stateParams.analysis_report);
+            }],
+            outliers: ['$q', '$stateParams', 'api.expressionAnalysis.outlier', ($q, $stateParams, $outliers) => {
+              return $outliers.all($stateParams.POG, $stateParams.analysis_report);
+            }],
+            drugTargets: ['$q', '$stateParams', 'api.expressionAnalysis.drugTarget', ($q, $stateParams, $drugTarget) => {
+              return $drugTarget.all($stateParams.POG, $stateParams.analysis_report);
+            }],
+            densityGraphs: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
+              return $image.expDensityGraphs($stateParams.POG, $stateParams.analysis_report);
+            }]
+          }
+        },
+        "appendices@print.POG.report.genomic": {
+          templateUrl: 'print/report/genomic/sections/appendices/appendices.html',
+          controller: 'controller.print.POG.report.genomic.appendices',
+          resolve: {
+            tcgaAcronyms: ['$q', '$stateParams', 'api.appendices', ($q, $stateParams, $appendices) => {
+              return $appendices.tcga($stateParams.POG, $stateParams.analysis_report);
+            }]
+          }
+        }
       },
       resolve: {
-        gai: ['$q', '$stateParams', 'api.summary.genomicAterationsIdentified', ($q, $stateParams, $gai) => {
-          return $gai.all($stateParams.POG, $stateParams.analysis_report);
-        }],
-        get: ['$q', '$stateParams', 'api.summary.genomicEventsTherapeutic', ($q, $stateParams, $get) => {
-          return $get.all($stateParams.POG, $stateParams.analysis_report);
-        }],
-        ms: ['$q', '$stateParams', 'api.summary.mutationSummary', ($q, $stateParams, $ms) => {
-          return $ms.get($stateParams.POG, $stateParams.analysis_report);
-        }],
-        vc: ['$q', '$stateParams', 'api.summary.variantCounts', ($q, $stateParams, $vc) => {
-          return $vc.get($stateParams.POG, $stateParams.analysis_report);
-        }],
-        pt: ['$q', '$stateParams', 'api.summary.probeTarget', ($q, $stateParams, $pt) => {
-          return $pt.all($stateParams.POG, $stateParams.analysis_report);
-        }],
-        mutationSignature: ['$q', '$stateParams', 'api.somaticMutations.mutationSignature', ($q, $stateParams, $mutationSignature) => {
-          return $mutationSignature.all($stateParams.POG, $stateParams.analysis_report);
-        }],
-        comments: ['$q', '$stateParams', 'api.summary.analystComments', ($q, $stateParams, $comments) => {
-          return $comments.get($stateParams.POG, $stateParams.analysis_report);
-        }],
-        pathway: ['$q', '$stateParams', 'api.summary.pathwayAnalysis', ($q, $stateParams, $pathway) => {
-          return $pathway.get($stateParams.POG, $stateParams.analysis_report);
-        }],
-        therapeutic: ['$q', '$stateParams', 'api.therapeuticOptions', ($q, $stateParams, $therapeutic) => {
-          return $therapeutic.all($stateParams.POG, $stateParams.analysis_report);
+        targetedGenes: ['$q', '$stateParams', 'api.detailedGenomicAnalysis.targetedGenes', ($q, $stateParams, $tg) => {
+          return $tg.getAll($stateParams.POG, $stateParams.analysis_report);
         }]
       }
     })

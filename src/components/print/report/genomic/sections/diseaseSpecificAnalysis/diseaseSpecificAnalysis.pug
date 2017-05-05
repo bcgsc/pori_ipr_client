@@ -1,0 +1,23 @@
+thead
+    tr
+        td.pageHeader.padded
+            div(layout="row")
+                div(flex=20) {{pog.POGID}} - {{report.patientInformation.tumourType}}
+                div(flex) BCCA Confidential - For Research Purposes Only
+                div(flex=20) {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
+tbody
+    tr
+        td
+            div(layout="row").sectionHeader
+                h1.blue Disease Specific Analysis
+                p(flex) This section provides details of results from disease-specific analyses routinely run as part of the POG analysis pipeline. The results of ad-hoc analysis requests or emerging analyses that are not part of the analysis pipeline will also be included in this section where available.
+            h1 Disease Specific Analysis
+            h2 Expression Subtype
+
+            span(ng-if="!images['subtypePlot.molecular']") Current disease specific analysis is not applicable for this case
+
+            div(layout="row", flex, layout-align="center center").md-padding
+                img(data-ng-src="data:image/png;base64,{{images['subtypePlot.molecular'].data}}")
+
+            div(layout="row", flex, layout-align="center center").md-padding
+                img(data-ng-src="data:image/png;base64,{{images['subtypePlot.receptorStatus'].data}}")

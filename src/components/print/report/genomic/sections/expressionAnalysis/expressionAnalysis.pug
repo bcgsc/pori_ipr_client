@@ -1,0 +1,122 @@
+table.print
+    thead
+        tr
+            td.pageHeader.padded
+                div(layout="row")
+                    div(flex=20) {{pog.POGID}} - {{report.patientInformation.tumourType}}
+                    div(flex) BCCA Confidential - For Research Purposes Only
+                    div(flex=20) {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
+    tbody
+        tr
+            td.expressionAnalysis
+                div(layout="row").sectionHeader
+                    h1 Structural Variation
+                    p(flex) This section provides details of the expression analyses performed as part of the POG pipeline. Look in this section for details about expression comparator choice and potentially relevant genes determined to be significant expression outliers.
+                h1 Expression Analysis
+                h2 Spearman Correlation with Available Expression Datasets
+
+                div(layout="row", layout-align="center center").md-padding
+                    span(flex, layout="row", layout-align="start start")
+                        img(data-ng-src="data:image/png;base64,{{images['expression.chart'].data}}")
+                        div(layout="column")
+                            div(flex, layout-align="center start")
+                                img(data-ng-src="data:image/png;base64,{{images['expression.legend'].data}}")
+                            div(layout="row").expressionDetails
+                                div(flex).normal
+                                    | Normal Tissue Expression Comparator
+                                    span(style="background-color: #{{colourHex(report.tumourAnalysis.tcgaColor)}}") {{report.tumourAnalysis.normalExpressionComparator}}
+                                div(flex).disease
+                                    | Disease Expression Comparator
+                                    span(style="background-color: #{{colourHex(report.tumourAnalysis.tcgaColor)}}") {{report.tumourAnalysis.diseaseExpressionComparator}}
+                            span(layout="row", layout-align="space-around").text-xsmall
+                                span For details of tissue comparator datasets used, see 'APPENDIX B'
+div.pageBreak
+table.print
+    thead
+        tr
+            td.pageHeader.padded.expressionAnalysis
+                div(layout="row")
+                    div(flex=20) {{pog.POGID}} - {{report.patientInformation.tumourType}}
+                    div(flex) BCCA Confidential - For Research Purposes Only
+                    div(flex=20) {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
+                h1 Expression Analysis
+    tbody
+        tr(ng-repeat="(k, group) in expOutliers")
+            td.expressionAnalysis
+
+                h2 {{titleMap[k]}}
+                table.detailedData
+                    tr.header
+                        th(style="width: 12%") Gene
+                        th(style="width: 14%") Location
+                        th(style="width: 12%") Copy Change
+                        th(style="width: 12%") LOH State
+                        th(style="width: 8%") CNV State
+                        th(style="width: 12%") Expression (RPKM)
+                        th(style="width: 12%") Fold Change vs. {{report.tumourAnalysis.normalExpressionComparator}}
+                        th(style="width: 12%") {{report.tumourAnalysis.diseaseExpressionComparator}} %ile
+                    tr(ng-if="group.length === 0")
+                        td(colspan=13) No relevant results were found from the analysis.
+                    tr(ng-repeat="exp in group")
+                        td(style="width: 12%") {{exp.gene}}
+                        td(style="width: 14%") {{exp.location}}
+                        td(style="width: 12%") {{exp.copyChange}}
+                        td(style="width: 12%") {{exp.lohState}}
+                        td(style="width: 8%") {{exp.cnvState}}
+                        td(style="width: 12%") {{exp.rpkm}}
+                        td(style="width: 12%") {{exp.foldChange}}
+                        td(style="width: 12%") {{exp.tcgaPerc}}
+
+div.pageBreak
+table.print
+    thead
+        tr
+            td.pageHeader.padded.expressionAnalysis
+                div(layout="row")
+                    div(flex=20) {{pog.POGID}} - {{report.patientInformation.tumourType}}
+                    div(flex) BCCA Confidential - For Research Purposes Only
+                    div(flex=20) {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
+                h1 Expression Analysis
+                h2 Drug Targetable High Percentile Genes
+        tr
+            td.expressionAnalysis
+                table.detailedData
+                    tr.header
+                        th(style="width: 16%") Gene
+                        th(style="width: 16%") LOH
+                        th(style="width: 16%") Copy #
+                        th(style="width: 16%") Fold Change vs. {{report.tumourAnalysis.normalExpressionComparator}}
+                        th(style="width: 16%") {{report.tumourAnalysis.diseaseExpressionComparator}} %ile
+                        th(style="width: 16%") kIQR
+    tbody
+
+        tr(ng-repeat="drug in drugTargets")
+            td.expressionAnalysis
+                table.detailedData
+                    tr
+                        td(style="width: 16%") {{drug.gene}}
+                        td(style="width: 16%") {{drug.lohRegion}}
+                        td(style="width: 16%") {{drug.copy}}
+                        td(style="width: 16%") {{drug.foldChange}}
+                        td(style="width: 16%") {{drug.tcgaPerc}}
+                        td(style="width: 16%") {{drug.kIQR}}
+
+div.pageBreak
+table.print
+    thead
+        tr
+            td.pageHeader.padded.expressionAnalysis
+                div(layout="row")
+                    div(flex=20) {{pog.POGID}} - {{report.patientInformation.tumourType}}
+                    div(flex) BCCA Confidential - For Research Purposes Only
+                    div(flex=20) {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
+                h1 Expression Analysis
+                h2 Expression Distributions
+    tbody
+        tr(ng-repeat="graph in densityGraphs")
+            td.expressionAnalysis
+                div(layout="row", layout-align="space-around")
+                    div(flex=50)
+                        img(data-ng-src="data:image/png;base64,{{graph[0].data}}")
+                    div(flex=50)
+                        img(data-ng-src="data:image/png;base64,{{graph[1].data}}")

@@ -1,0 +1,60 @@
+thead
+    tr
+        td.pageHeader.xpadded.copyNumberAnalysis
+            div(layout="row")
+                div(flex=20) {{pog.POGID}} - {{report.patientInformation.tumourType}}
+                div(flex) BCCA Confidential - For Research Purposes Only
+                div(flex=20) {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
+            h1 Copy Number and LOH
+tbody
+    tr
+        td.copyNumberAnalysis
+            div(layout="column", layout-align="center start").cnvloh
+                div(layout="column").container
+                    div(layout="row")
+                        span(flex)
+                        span(flex) Chr 1
+                        span(flex) Chr 2
+                        span(flex) Chr 3
+                        span(flex) Chr 4
+                    img(data-ng-src="data:image/png;base64,{{images['cnv.1'].data}}")
+                    img(data-ng-src="data:image/png;base64,{{images['loh.1'].data}}")
+
+                    div(layout="row")
+                        span(flex) Chr 5
+                        span(flex) Chr 6
+                        span(flex) Chr 7
+                        span(flex) Chr 8
+                        span(flex) Chr 9
+                    img(data-ng-src="data:image/png;base64,{{images['cnv.2'].data}}")
+                    img(data-ng-src="data:image/png;base64,{{images['loh.2'].data}}")
+
+                    div(layout="row")
+                        span(flex) Chr 10
+                        span(flex) Chr 11
+                        span(flex) Chr 12
+                        span(flex) Chr 13
+                        span(flex) Chr 14
+                    img(data-ng-src="data:image/png;base64,{{images['cnv.3'].data}}")
+                    img(data-ng-src="data:image/png;base64,{{images['loh.3'].data}}")
+    tr
+        td
+            div(layout="column", layout-align="center start").cnvloh
+                div(layout="column").container
+                    div(layout="row")
+                        span(flex) Chr 15
+                        span(flex) Chr 16
+                        span(flex) Chr 17
+                        span(flex) Chr 18
+                        span(flex) Chr 19
+                    img(data-ng-src="data:image/png;base64,{{images['cnv.4'].data}}")
+                    img(data-ng-src="data:image/png;base64,{{images['loh.4'].data}}")
+
+                    div(layout="row")
+                        span(flex) Chr 20
+                        span(flex) Chr 21
+                        span(flex) Chr 22
+                        span(flex) Chr 23
+                        span(flex)
+                    img(data-ng-src="data:image/png;base64,{{images['cnv.5'].data}}")
+                    img(data-ng-src="data:image/png;base64,{{images['loh.5'].data}}")

@@ -1,0 +1,16 @@
+thead
+    tr
+        td.pageHeader
+            div(layout="row")
+                div(flex=20) {{pog.POGID}} - {{report.patientInformation.tumourType}}
+                div(flex) BCCA Confidential - For Research Purposes Only
+                div(flex=20) {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
+            h1 Analyst Comments
+tbody
+    tr(ng-repeat="(i, paragraph)  in analystParagraphs track by $index", ng-class="{first: (i === 0)}").analystComments
+        td(ng-bind-html="paragraph").report-section
+    tr.analystComments.last
+        td
+            div(layout="row").signatureBox
+                div(flex) Date: YYYY/MM/DD
+                div(flex=70) Reviewed By: Simon Chan & Martin R. Jones
