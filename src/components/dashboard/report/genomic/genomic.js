@@ -3,10 +3,11 @@ app.controller('controller.dashboard.report.genomic',
   (_, $q, $scope, $state, $timeout, $window, $pog, pog, report, $mdDialog, $mdToast) => {
 
   $scope.pog = pog;
+  $scope.report = report;
 
   $scope.openPrint = () => {
     // State go!
-    $window.open($state.href('print.POG.report.genomic',{POG: pog.POGID, report: report.ident}), '_blank');
+    $window.open($state.href('print.POG.report.genomic',{POG: pog.POGID, analysis_report: report.ident}), '_blank');
   };
 
   $scope.sections = [
