@@ -17,6 +17,9 @@ app.directive('uiBreadcrumbs', ['$interpolate', '$state', function($interpolate,
       abstractProxyProperty: '@?'
     },
     link: function(scope) {
+
+      scope.dataProxy = scope.abstractProxyProperty.split('.')[1];
+
       scope.breadcrumbs = [];
       if ($state.$current.name !== '') {
         updateBreadcrumbsArray();
@@ -43,7 +46,7 @@ app.directive('uiBreadcrumbs', ['$interpolate', '$state', function($interpolate,
             if (displayName !== false && !stateAlreadyInBreadcrumbs(workingState, breadcrumbs)) {
               breadcrumbs.push({
                 displayName: displayName,
-                route: (workingState.data && workingState.data.stateProxy) ? workingState.data.stateProxy : workingState.name
+                route: (workingState.data && workingState.data[scope.dataProxy]) ? workingState.data[scope.dataProxy] : workingState.name
               });
             }
           }
