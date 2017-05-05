@@ -63,9 +63,8 @@ md-content(flex, layout="column").md-padding
                                 md-tooltip(ng-if="getTumourContent(pog) < 40") Low tumour content
                         div {{getPloidy(pog)}}
 
-
-                    //div(layout="column").tasks
-                    div(layout="column", ng-init="pog.showTasks=false", ng-show="pog.showTasks").tasks
+                    //div(layout="column", ng-init="pog.showTasks=false", ng-show="pog.showTasks").tasks
+                    div(layout="column", ng-hide="true").tasks
                         div(layout="row")
                             span 1.
                             span(flex, md-truncate) Setup Pipeline
@@ -102,23 +101,24 @@ md-content(flex, layout="column").md-padding
                             md-icon person
                             span &nbsp;
 
-                    div(layout="row", flex, ng-click="pog.showTasks = !pog.showTasks").taskToggle.text-center.clickable {{(pog.showTasks) ? 'hide' : 'show'}} tasks
+                    div(layout="row", flex, ng-click="pog.showTasks = !pog.showTasks", ng-hide="true").taskToggle.text-center.clickable {{(pog.showTasks) ? 'hide' : 'show'}} tasks
 
-                    div(layout="row", layout-md="column", ng-hide="true")
-                        div(flex=50, flex-md=100, ng-hide="true")
+                    //div(layout="row", layout-md="column",)
+                        div(flex=50, flex-md=100)
                             span TC
-                            span {{getTumourContent(pog)}}%
-                        div(flex=50, flex-md=100, ng-hide=true)
+                            span(ng-class="{low: getTumourContent(pog) < 40, clickable: getTumourContent(pog) < 40}") {{getTumourContent(pog)}}%
+                                md-tooltip(ng-if="getTumourContent(pog) < 40") Low tumour content
+                        div(flex=50, flex-md=100)
                             span Ploidy
                             span.text-capitalize {{getPloidy(pog)}}
-                    div(layout="row", layout-md="column", ng-hide="true")
+                    div(layout="row", layout-md="column")
                         div(flex=50, flex-md=100)
                             span Bioinformatics
                             span {{getRoleUser(pog, 'bioinformatician', 'name') || 'N/A'}}
                         div(flex=50, flex-md=100)
                             span Analyst
                             span {{getRoleUser(pog, 'analyst', 'name') || 'N/A'}}
-                    div(layout="row", layout-md="column", ng-hide="true")
+                    div(layout="row", layout-md="column")
                         div(flex=50, flex-md=100, ui-sref="dashboard.pog.report.probe.summary({POG: pog.POGID, analysis_report: getReport(pog, 'probe').ident})").clickable
                             span Probe Report
                             span
