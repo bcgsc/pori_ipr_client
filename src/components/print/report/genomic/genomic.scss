@@ -493,10 +493,11 @@ table.print {
     &.last { border-bottom: 1px solid black; }
 
     .signatureBox {
-      width: 60%;
+      width: 80%;
       border: 1px solid black;
       margin: 0 1mm 1mm 0;
       float: right;
+      font-size: 11pt;
     }
 
     > td {

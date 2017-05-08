@@ -11,6 +11,10 @@ tbody
         td(ng-bind-html="paragraph").report-section
     tr.analystComments.last
         td
-            div(layout="row").signatureBox
-                div(flex) Date: YYYY/MM/DD
-                div(flex=70) Reviewed By: Simon Chan & Martin R. Jones
+            div(layout="row", layout-align="space-around", layout-wrap).signatureBox
+                div(flex=45) Author Review:&nbsp;
+                    span(ng-if="comments.authorSignature.ident") {{comments.authorSignature.firstName}} {{comments.authorSignature.lastName}} {{comments.authorSignedAt | amDateFormat: 'YYYY/MM/DD HH:hh'}}
+                    span(ng-if="comments.authorSignature.ident === null").text-red NOT REVIEWED
+                div(flex=45) Reviewer:&nbsp;
+                    span(ng-if="comments.authorSignature.ident") {{comments.reviewerSignature.firstName}} {{comments.reviewerSignature.lastName}} {{comments.reviewerSignedAt | amDateFormat: 'YYYY/MM/DD HH:hh'}}
+                    span(ng-if="comments.authorSignature.ident === null").text-red NOT REVIEWED
