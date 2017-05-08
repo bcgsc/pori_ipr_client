@@ -14,8 +14,6 @@
     "number-leading-zero": "always",
     "indentation": 2,
     "no-duplicate-selectors": true,
-    "no-extra-semicolons": true,
-    "comment-empty-line-before": "never",
-    
+    "no-extra-semicolons": true
   }
 }
