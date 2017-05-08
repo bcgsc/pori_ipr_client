@@ -1,8 +1,9 @@
 app.controller('controller.print.POG.report.genomic.analystComments',
-['_', '$scope', '$sce', 'pog', 'report', 'comments',
-(_, $scope, $sce, pog, report, comments) => {
+['_', '$scope', '$sce', 'pog', 'report', 'comments', 'api.summary.analystComments',
+(_, $scope, $sce, pog, report, comments, $comments) => {
 
   // Data
+  $scope.comments = comments;
   $scope.report = report;
   $scope.pog = pog;
   $scope.analystParagraphs = [];
@@ -12,6 +13,5 @@ app.controller('controller.print.POG.report.genomic.analystComments',
   _.forEach(rawParagraphs, (p) => {
     if(p.length > 0) $scope.analystParagraphs.push($sce.trustAsHtml(p));
   });
-
 
 }]);
