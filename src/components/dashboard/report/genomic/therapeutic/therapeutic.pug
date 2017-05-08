@@ -37,26 +37,27 @@ section.therapeuticTargets
 
 
         h2(style="margin-top: 15px;").title Potential Chemoresistance
-        div(layout="row", md-whiteframe=1, ng-repeat="ch in therapeutic.chemoresistance").rowCard
-            div(flex=25, layout="column")
-                h5 Resistance To
-                div(flex, layout="row")
-                    span {{ch.resistance}}
+        div(sv-root, sv-part="therapeutic.chemoresistance",)
+            div(layout="row", md-whiteframe=1, ng-repeat="ch in therapeutic.chemoresistance", sv-element).rowCard
+                div(flex=25, layout="column")
+                    h5 Resistance To
+                    div(flex, layout="row")
+                        span {{ch.resistance}}
 
-            div(flex=30, layout="column")
-                h5 Biomarker
-                div(layout="column").markers
-                    div(ng-repeat="marker in ch.biomarker", layout="row")
-                        div(ng-if="marker.entry").entry {{marker.entry}}
-                        div(layout="column").context
-                            span(ng-repeat="c in marker.context") {{c}}
-            div(flex)
-                h5 Notes
-                span {{ch.notes}}
-            div(layout="column", layout-align="start start").options
-                div
-                    md-icon(ng-click="edit($event, ch)") edit
-                div
-                    md-icon(sv-handle) drag_handle
+                div(flex=30, layout="column")
+                    h5 Biomarker
+                    div(layout="column").markers
+                        div(ng-repeat="marker in ch.biomarker", layout="row")
+                            div(ng-if="marker.entry").entry {{marker.entry}}
+                            div(layout="column").context
+                                span(ng-repeat="c in marker.context") {{c}}
+                div(flex)
+                    h5 Notes
+                    span {{ch.notes}}
+                div(layout="column", layout-align="start start").options
+                    div
+                        md-icon(ng-click="edit($event, ch)") edit
+                    div
+                        md-icon(sv-handle) drag_handle
         div(layout="row", md-whiteframe=1, layout-align="center center", ng-click="newEntry($event, 'chemoresistance')").rowCard.clickable.new
             div New Entry
