@@ -28,7 +28,7 @@ section
                     span.context {{comments.authorSignedAt | amDateFormat: 'YYYY/MM/DD HH:hh'}}
             div(flex)
             div(layout="column", layout-align="start start").options
-                div(ng-if="comments.reviewerSignature.ident")
+                div(ng-if="comments.authorSignature.ident")
                     md-icon(ng-click="revokeSign('author')") remove_circle
                         md-tooltip Remove signing
 
