@@ -1,12 +1,37 @@
 app.controller('controller.dashboard.report.genomic.analystComments', 
-  ['_', '$q', '$scope', '$mdDialog', '$mdToast', '$sce', 'api.pog', 'pog', 'report', 'comments',
-  (_, $q, $scope, $mdDialog, $mdToast, $sce, $pog, pog, report, analystComments) => {
+  ['_', '$q', '$scope', '$mdDialog', '$mdToast', '$sce', 'api.pog', 'api.summary.analystComments', 'pog', 'report', 'comments',
+  (_, $q, $scope, $mdDialog, $mdToast, $sce, $pog, $comments, pog, report, analystComments) => {
 
   $scope.pog = pog;
   $scope.analystComments = (analystComments === null) ?  "" : analystComments.comments;
   $scope.commentsHTML = $sce.trustAsHtml($scope.analystComments);
+  $scope.comments = analystComments;
 
-  // Editor Update Modal
+
+  // Sign The comments
+  $scope.sign = (role) => {
+
+    // Send signature to API
+    $comments.sign(pog.POGID, report.ident, role).then(
+      (result) => {
+        $scope.comments = result;
+      }
+    )
+  };
+
+  // Sign The comments
+  $scope.revokeSign = (role) => {
+
+    // Send signature to API
+    $comments.revokeSign(pog.POGID, report.ident, role).then(
+      (result) => {
+        $scope.comments = result;
+      }
+    )
+  };
+
+
+    // Editor Update Modal
   $scope.updateComments = ($event) => {
     
     $mdDialog.show({
