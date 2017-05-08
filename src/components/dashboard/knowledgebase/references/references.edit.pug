@@ -133,7 +133,7 @@ md-dialog(layout="column", aria-label="Modify/Create Reference Entry", flex-md=8
                     div(layout="row")
                         md-input-container(flex)
                             label Entry Comments
-                            textarea(rows=2, md-maxlength=250, ng-model="reference.comments", required)
+                            textarea(rows=2, md-maxlength=250, ng-model="reference.comments")
                             span.text-xsmall.text-grey Notes about this entry for other analysts.
                     div
                         pre {{disease}}
