@@ -30,6 +30,16 @@ div.smEvents {
 .mutationSignature {
   margin: 10px;
 
+  md-select {
+    margin: 0;
+    span {
+      text-align: left;
+    }
+    div.md-text {
+      text-align: left;
+    }
+  }
+
   .header {
     font-weight: 600;
     font-size: 0.8em;

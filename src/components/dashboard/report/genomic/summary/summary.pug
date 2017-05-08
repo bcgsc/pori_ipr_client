@@ -110,7 +110,9 @@ section
                             md-icon(ng-click="updateMs()") edit
                         span(ng-if="data.ms.mutationSignature.length > 0")
                             span(ng-repeat="sig in data.ms.mutationSignature").repeat-comma
-                                span(ng-click="toMutations()").listitem {{(sig.associations == '-') ? 'Signature '+sig.signature : sig.associations}}
+                                span(ng-click="toMutations()").listitem
+                                    span(ng-if="sig.modifier !== null") {{sig.modifier}}&nbsp;
+                                    span {{(sig.associations == '-') ? 'Signature '+sig.signature : sig.associations}}
                                     md-tooltip Pearson: {{sig.pearson}} | NNLS: {{sig.nnls}} | Cancer Types: {{sig.cancerTypes}}
                             md-icon(ng-click="updateMs()") edit
 

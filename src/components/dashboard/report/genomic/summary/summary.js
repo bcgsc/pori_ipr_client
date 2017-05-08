@@ -149,54 +149,14 @@ app.controller('controller.dashboard.report.genomic.summary',
       controller: ['scope', (scope) => {
 
         scope.ms = angular.copy($scope.data.ms); //
-        scope.mutationSignature = []; // Array of all computed signal correlations
-        scope.selectedSigs = []; // Model for selected signatures
-
-        // prepare fresh selection form
-        _.forEach($scope.data.ms.mutationSignature, (v) => {
-          scope.selectedSigs.push(v.ident);
-        });
-
-        // Process mutation signatures to include class name based rounded number and 3 sigfig values
-        let processSignature = (sigs) => {
-          _.forEach(sigs, (r, k) => {
-            // Round to 3 sigfigs
-            r.pearson = r.pearson.toFixed(3);
-            r.nnls = r.nnls.toFixed(3);
-            // Produced rounded numbers
-            r.pearsonColour = Math.round((((r.pearson < 0) ? 0 : r.pearson) * 100) / 5) * 5;
-            r.nnlsColour = Math.round((r.nnls * 100) / 5) * 5;
-            scope.mutationSignature.push(r);
-          });
-
-        };
-        processSignature(angular.copy($scope.mutationSignature));
-
-        scope.addToSelection = (ident) => {
-
-          if (scope.selectedSigs.indexOf(ident) > -1) {
-            _.pull(scope.selectedSigs, ident)
-          } else {
-            scope.selectedSigs.push(ident);
-          }
-        };
+        //scope.mutationSignature = []; // Array of all computed signal correlations
+        scope.mutationSignature = $scope.mutationSignature; // Array of all computed signal correlations
 
         scope.cancel = () => {
           $mdDialog.cancel('No changes were saved.');
         };
 
         scope.update = () => {
-          scope.ms.mutationSignature = [];
-          // Interpret values
-          _.forEach(scope.selectedSigs, (v) => {
-
-            let sig = _.find($scope.mutationSignature, (s) => {
-              return s.ident === v;
-            });
-
-            scope.ms.mutationSignature.push(sig);
-
-          });
 
           // Send updated entry to API
           $mutationSummary.update($scope.pog.POGID, report.ident, scope.ms).then(

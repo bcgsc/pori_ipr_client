@@ -8,7 +8,10 @@ md-dialog(layout="column", aria-label="Update Mutation Signature Details", ng-cl
                     md-icon cancel
         md-dialog-content(layout-padding)
 
-            div(layout="column", flex).mutationSignature
+
+            ipr-mutation-signature(pog="pog", report="report", mutation-summary="ms", mutation-signature="mutationSignature", mode="'pick'")
+
+            //div(layout="column", flex).mutationSignature
                 div(layout="row", flex).header
                     div(flex=5)
                     div(flex) Signature
