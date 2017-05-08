@@ -17,8 +17,8 @@ table.print
                             span Tumour Genome Analysis
                             span.text-small Whole genome; Transcriptome; Somatic
                 div(layout="row").version
-                    div(flex=50) Report version: x.x.x
-                    div(flex=50).text-right Knowledgebase version: x.x.x
+                    div(flex=50) Report version: {{report.reportVersion || 'N/A'}}
+                    div(flex=50).text-right Knowledgebase version: {{report.kbVersion || 'N/A'}}
 
                 div(flex).pogid.text-center {{pog.POGID}}
     tbody(ui-view="summary")

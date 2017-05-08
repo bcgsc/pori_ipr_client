@@ -129,7 +129,7 @@ table(style="margin-top: 3mm").print
                     div(flex) BCCA Confidential - For Research Purposes Only
                     div(flex=20) {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
                 h1 Appendix D
-                h2 Genomic Report Vx.x.x/ KB Vx.x.x / Genome Ref hg19
+                h2 Genomic Report {{report.reportVersion || 'N/A'}}/ KB {{report.kbVersion || 'N/A'}} / Genome Ref hg19
     tbody
         tr(ng-repeat="c in config track by $index")
             td.appendices
