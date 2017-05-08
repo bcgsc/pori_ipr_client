@@ -301,10 +301,10 @@ table.print {
           margin: 0 1mm 1mm 0;
           padding: 1mm 0;
 
-          span::before {
+          > span::before {
             content: ', ';
           }
-          span:first-of-type {
+          > span:first-of-type {
             margin-left: 0;
             &::before {
               content: '';
