@@ -35,7 +35,7 @@ app.factory('api.summary.analystComments', ['_', '$http', '$q', (_, $http, $q) =
       
     });
     
-  }
+  };
   
   
   /*
@@ -60,8 +60,54 @@ app.factory('api.summary.analystComments', ['_', '$http', '$q', (_, $http, $q) =
         }
       );
     });
-  }
-  
+  };
+
+  /**
+   * Sign Analyst Comments
+   *
+   * @param {string} POGID
+   * @param {string} report - Report unique identifier
+   * @param {string} role - The role to sign for
+   *
+   */
+  $ac.sign = (POGID, report, role) => {
+
+    return $q((resolve, reject) => {
+
+      $http.put(api + '/' + POGID + '/report/' + report + '/genomic/summary/analystComments/sign/' + role, {}).then(
+        (result) => {
+          resolve(result.data);
+        },
+        (err) => {
+          reject(err);
+        }
+      );
+    });
+  };
+
+  /**
+   * Revoke Analyst Comments Signature
+   *
+   * @param {string} POGID
+   * @param {string} report - Report unique identifier
+   * @param {string} role - The role to sign for
+   *
+   */
+  $ac.revokeSign = (POGID, report, role) => {
+
+    return $q((resolve, reject) => {
+
+      $http.put(api + '/' + POGID + '/report/' + report + '/genomic/summary/analystComments/sign/revoke/' + role, {}).then(
+        (result) => {
+          resolve(result.data);
+        },
+        (err) => {
+          reject(err);
+        }
+      );
+    });
+  };
+
   return $ac;
   
 }]);
