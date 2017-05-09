@@ -46,6 +46,10 @@ app.directive("iprPrintDiagram", ['$q', '_', '$mdDialog', '$mdToast', ($q, _, $m
         panzoom.resize();
         panzoom.fit();
         panzoom.center();
+        panzoom.disablePan();
+        panzoom.disableMouseWheelZoom();
+        panzoom.disableZoom();
+        panzoom.disableDblClickZoom();
       },500);
 
 

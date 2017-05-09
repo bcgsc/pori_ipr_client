@@ -44,6 +44,10 @@ app.controller('controller.print.POG.report.genomic.pathwayAnalysis',
       panZoom.resize();
       panZoom.fit();
       panZoom.center();
+      panZoom.disablePan();
+      panZoom.disableMouseWheelZoom();
+      panZoom.disableZoom();
+      panZoom.disableDblClickZoom();
     },100);
 
   };
