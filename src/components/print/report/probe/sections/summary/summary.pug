@@ -1,0 +1,98 @@
+tr
+    td.report-section
+        h1 Patient Information
+        div(layout="column", flex).details
+            table(width="100%")
+                tr
+                    th(width="12%") Patient ID:
+                    td(width="15%") {{pog.POGID}}
+                    th(width="14%") Gender:
+                    td(width="14%") {{data.pi.gender}}
+                    th(width="15%") Tumour Sample:
+                    td(width="30%") {{data.pi.tumourSample}}
+                tr
+                    th Tumour Type:
+                    td {{data.pi.tumourType}}
+                    th Case Type:
+                    td Adult
+                    th Tumour Sample
+                    td {{data.pi.constitutionalSample}}
+                tr
+                    th Report Date:
+                    td {{data.pi.reportDate}}
+                    th Age at Diagnosis:
+                    td Not Specified
+                    th Biopsy Details:
+                    td {{data.pi.biopsySite}}
+                tr
+                    th Physician:
+                    td {{data.pi.physician}}
+                    th
+                    td
+                    th Protocol:
+                    td {{data.pi.tumourProtocol}}
+tr
+    td.report-section
+        h1 Sample Information
+
+        table.detailedData
+            tr.header
+                th(style="width: 16%") Sample
+                th(style="width: 16%") Sample Name
+                th(style="width: 16%") Collection Date
+                th(style="width: 16%") Primary Site
+                th(style="width: 16%") Biopsy Site
+                th(style="width: 16%") Pathology Estimated Tumour Content
+            tr(ng-repeat="sample in report.sampleInfo")
+                td {{sample['Sample']}}
+                td {{sample['Sample Name']}}
+                td {{sample['Collection Date']}}
+                td {{sample['Primary Site']}}
+                td {{sample['Biopsy Site']}}
+                td {{sample['Patho TC']}}
+
+        h1 Test Information
+
+        div(layout="row")
+            div(layout="column", flex).dataBox
+
+                div(layout="row", flex).horizontalBox
+                    div(layout="column", flex)
+                        div(layout="row").row
+                            span(flex=40) Variant Probe Version
+                            span {{testInformation.snpProbe}}
+                        div(layout="row").row
+                            span(flex=40) Fusion Probe Version
+                            span {{testInformation.fusionProbe}}
+                        div(layout="row").row
+                            span(flex=40) Knowledgebase Version
+                            span {{testInformation.kbVersion}}
+                    div(layout="column", flex)
+                        div(layout="row").row
+                            span(flex=40) # Genes Screened
+                            span {{testInformation.snpGenes}}
+                        div(layout="row").row
+                            span(flex=40) # Variants Screen
+                            span {{testInformation.snpVars}}
+                        div(layout="row").row
+                            span(flex=40) # Fusion Genes Screened
+                            span {{testInformation.fusionGenes}}
+                        div(layout="row").row
+                            span(flex=40) # Fusion Variants Screened
+                            span {{testInformation.fusionVars}}
+
+
+        h1 Summary of Alterations Identified and Potential Clinical Relevance
+
+        p(ng-if="genomicEvents.length === 0") No clinically relevant genomic alterations were found from the analysis.
+        table(ng-if="genomicEvents.length > 0").detailedData
+            tr.header
+                th(style="width: 25%") Genomic Events
+                th(style="width: 25%") Approved in this cancer type
+                th(style="width: 25%") Approved in other cancer type
+                th(style="width: 25%") Emerging Evidence
+            tr(ng-repeat="gene in genomicEvents").rowBar
+                td {{gene.genomicEvent}}
+                td {{gene.approvedThisCancerType}}
+                td {{gene.approvedOtherCancerType}}
+                td {{gene.emergingPreclinicalEvidence}}

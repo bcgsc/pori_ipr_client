@@ -823,6 +823,52 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       }
     })
 
+
+
+    .state('print.POG.report.probe', {
+      url: '/probe',
+      data: {
+        displayName: 'Probe Report'
+      },
+      views: {
+        "": {
+          templateUrl: 'print/report/probe/probe.html',
+          controller: 'controller.print.POG.report.probe',
+        },
+        "summary@print.POG.report.probe": {
+          templateUrl: 'print/report/probe/sections/summary/summary.html',
+          controller: 'controller.print.POG.report.probe.summary',
+          resolve: {
+            testInformation: ['$q', '$stateParams', 'api.probe.testInformation', ($q, $stateParams, $ti) => {
+              return $ti.get($stateParams.POG, $stateParams.analysis_report);
+            }],
+            genomicEvents: ['$q', '$stateParams', 'api.summary.genomicEventsTherapeutic', ($q, $stateParams, $get) => {
+              return $get.all($stateParams.POG, $stateParams.analysis_report);
+            }]
+          }
+        },
+        "alterations@print.POG.report.probe": {
+          templateUrl: 'print/report/probe/sections/alterations/alterations.html',
+          controller: 'controller.print.POG.report.probe.alterations',
+          resolve: {
+            alterations: ['$q', '$stateParams', 'api.probe.alterations', ($q, $stateParams, $alterations) => {
+              return $alterations.getAll($stateParams.POG, $stateParams.analysis_report);
+            }],
+            approvedThisCancer: ['$q', '$stateParams', 'api.probe.alterations', ($q, $stateParams, $alterations) => {
+              return $alterations.getType($stateParams.POG, $stateParams.analysis_report, 'thisCancer');
+            }],
+            approvedOtherCancer: ['$q', '$stateParams', 'api.probe.alterations', ($q, $stateParams, $alterations) => {
+              return $alterations.getType($stateParams.POG, $stateParams.analysis_report, 'otherCancer');
+            }]
+          }
+        },
+        "appendices@print.POG.report.probe": {
+          templateUrl: 'print/report/probe/sections/appendices/appendices.html',
+          controller: 'controller.print.POG.report.probe.appendices',
+        }
+      }
+    })
+
     .state('dashboard.knowledgebase', {
       url: '/knowledgebase',
       abstract: true,
