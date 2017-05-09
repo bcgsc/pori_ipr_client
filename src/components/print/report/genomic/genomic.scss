@@ -603,15 +603,19 @@ table.print {
   }
 
   div.pathwayAnalysis {
+    overflow: hidden;
+
     #svgImage {
       width: 248mm;
-      height: 285mm;
-      padding-top: 25mm;
+      height: 315mm;
+      padding-top: 30mm;
 
       svg {
         transform: rotate(-90deg);
-        height: 258mm !important;
-        width: 258mm !important;
+        height: 256mm!important;
+        left: -27mm;
+        position: relative;
+        width: 310mm!important;
         margin: auto;
       }
     }
