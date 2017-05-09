@@ -64,8 +64,6 @@ app.controller('controller.dashboard.report.genomic.analystComments',
           }
           
           let updatedComment = {'comments': scope.analystComments.comments};
-
-          console.log('Updating value with: ', updatedComment);
           
           $comments.update(pog.POGID, report.ident, updatedComment).then(
             (result) => {
@@ -82,6 +80,7 @@ app.controller('controller.dashboard.report.genomic.analystComments',
     }).then((result) => {
       // Update current page content
       $scope.commentsHTML = $sce.trustAsHtml(result.comment.comments);
+      $scope.comments = result.comment;
 
       // Display Message from Hiding
       $mdToast.show($mdToast.simple().textContent(result.message));

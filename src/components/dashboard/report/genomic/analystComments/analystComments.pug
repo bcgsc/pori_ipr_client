@@ -10,7 +10,7 @@ section
     //div Updated by: [name] on {{analystComments.updatedAt}}
 
     div.smallBottom &nbsp;
-    div(layout="column").layout-padding.analystSignatures
+    div(layout="column", ng-show="comments !== null").layout-padding.analystSignatures
         div Signed By
 
         div(layout="row", md-whiteframe=1, layout-align="start start", ng-click="newEntry($event, 'therapeutic')").rowCard
