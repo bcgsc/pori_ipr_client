@@ -6,7 +6,7 @@ app.controller('controller.dashboard.report.probe',
 
   $scope.openPrint = () => {
     // State go!
-    $window.open($state.href('print.POG.report.genomic',{POG: pog.POGID}), '_blank');
+    $window.open($state.href('print.POG.report.probe',{POG: pog.POGID, analysis_report: report.ident}), '_blank');
   };
 
   /**
