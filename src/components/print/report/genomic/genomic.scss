@@ -244,6 +244,11 @@ table.print {
     table-layout: auto;
     page-break-inside: avoid;
 
+    &.fixed {
+      table-layout: fixed;
+    }
+
+
     tr.header {
       th {
         border-bottom: 1px solid black;
@@ -623,10 +628,10 @@ table.print {
   }
 
   div.therapeuticOptions {
+    font-size: 10pt;
     .header {
       padding: 2mm 0 1mm 0;
       font-weight: 500;
-      font-size: 11pt;
       border-bottom: 1px solid rgb(100,100,100);
 
 
@@ -706,6 +711,19 @@ table.print {
   }
 
   .somaticMutations {
+
+    h1 {
+      background-color: rgb(51, 51, 153);
+      color: rgb(255,255,255);
+    }
+    h2 {
+      background-color: rgb(110, 155, 222);
+      color: rgb(255,255,255);
+    }
+    h3 {
+      background-color: rgb(192, 192, 192);
+    }
+
     img.bar {
       width: 80mm;
       margin: 0 auto;

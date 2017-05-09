@@ -76,14 +76,16 @@ table.print
                 h3 Variants of Potential Clinical Relevance
         tr
             td.somaticMutations
-                table.detailedData
+                div.detailedDataAbsent No somatic small mutations of clinical relevance were found from the analysis.
+
+                table(ng-if="smallMutations.clinical.length > 0").detailedData
                     tr.header
                         th Gene
                         th Transcript
                         th Protein Change
                         th Location
-                        th Ref/Alt
                         th Zygosity
+                        th Ref/Alt
                         th Copy Change
                         th LOH State
                         th Ref/Alt DNA
@@ -91,14 +93,12 @@ table.print
                         th Expression (RPKM)
                         th Fold Change vs. {{report.tumourAnalysis.normalExpressionComparator}}
                         th {{report.tumourAnalysis.diseaseExpressionComparator}} %ile
-                    tr(ng-if="smallMutations.nostic.length === 0")
-                        td(colspan=13) No somatic small mutations of clinical relevance were found from the analysis.
                     tr(ng-repeat="mutation in smallMutations.clinical")
                         td(style="width: 7%") {{mutation.gene}}
                         td(style="width: 15%") {{mutation.transcript}}
                         td(style="width: 6%") {{mutation.proteinChange}}
-                        td(style="width: 12%") {{mutation.location}}
-                        td(style="width: 5%") {{mutation.zygosity}}
+                        td(style="width: 10%") {{mutation.location}}
+                        td(style="width: 6%") {{mutation.zygosity}}
                         td(style="width: 8%") {{mutation.refAlt}}
                         td(style="width: 7%") {{copyFilter(mutation.ploidyCorrCpChange)}}
                         td(style="width: 7%") {{mutation.lohState}}
@@ -112,14 +112,16 @@ table.print
                 h3 Variants of Prognostic or Diagnostic Relevance
         tr
             td.somaticMutations
-                table.detailedData
+                div.detailedDataAbsent No somatic small mutations of prognostic or diagnostic relevance were found from the analysis.
+
+                table(ng-if="smallMutations.nostic.length > 0").detailedData
                     tr.header
                         th Gene
                         th Transcript
                         th Protein Change
                         th Location
-                        th Ref/Alt
                         th Zygosity
+                        th Ref/Alt
                         th Copy Change
                         th LOH State
                         th Ref/Alt DNA
@@ -127,35 +129,36 @@ table.print
                         th Expression (RPKM)
                         th Fold Change vs. {{report.tumourAnalysis.normalExpressionComparator}}
                         th {{report.tumourAnalysis.diseaseExpressionComparator}} %ile
-                    tr(ng-if="smallMutations.nostic.length === 0")
-                        td(colspan=13) No somatic small mutations of prognostic or diagnostic relevance were found from the analysis.
                     tr(ng-repeat="mutation in smallMutations.nostic")
                         td(style="width: 7%") {{mutation.gene}}
                         td(style="width: 15%") {{mutation.transcript}}
                         td(style="width: 6%") {{mutation.proteinChange}}
-                        td(style="width: 12%") {{mutation.location}}
-                        td(style="width: 5%") {{mutation.zygosity}}
+                        td(style="width: 10%") {{mutation.location}}
+                        td(style="width: 6%") {{mutation.zygosity}}
                         td(style="width: 8%") {{mutation.refAlt}}
                         td(style="width: 7%") {{copyFilter(mutation.ploidyCorrCpChange)}}
                         td(style="width: 7%") {{mutation.lohState}}
                         td(style="width: 7%") {{mutation.tumourReads}}
                         td(style="width: 7%") {{mutation.RNAReads}}
                         td(style="width: 7%") {{mutation.expressionRpkm}}
-                        td {{mutation.foldChange}}
+                        td(style="width: 7%") {{mutation.foldChange}}
                         td(style="width: 5%") {{mutation.TCGAPerc}}
         tr
             td.somaticMutations
                 h3 Variants of Biological Relevance
         tr
             td.somaticMutations
-                table.detailedData
+
+                div.detailedDataAbsent No somatic small mutations of biological relevance were found from the analysis.
+
+                table(ng-if="smallMutations.biological.length > 0").detailedData
                     tr.header
                         th Gene
                         th Transcript
                         th Protein Change
                         th Location
-                        th Ref/Alt
                         th Zygosity
+                        th Ref/Alt
                         th Copy Change
                         th LOH State
                         th Ref/Alt DNA
@@ -163,14 +166,12 @@ table.print
                         th Expression (RPKM)
                         th Fold Change vs. {{report.tumourAnalysis.normalExpressionComparator}}
                         th {{report.tumourAnalysis.diseaseExpressionComparator}} %ile
-                    tr(ng-if="smallMutations.nostic.length === 0")
-                        td(colspan=13) No somatic small mutations of biological relevance were found from the analysis.
                     tr(ng-repeat="mutation in smallMutations.biological")
                         td(style="width: 7%") {{mutation.gene}}
                         td(style="width: 15%") {{mutation.transcript}}
                         td(style="width: 6%") {{mutation.proteinChange}}
-                        td(style="width: 12%") {{mutation.location}}
-                        td(style="width: 5%") {{mutation.zygosity}}
+                        td(style="width: 10%") {{mutation.location}}
+                        td(style="width: 6%") {{mutation.zygosity}}
                         td(style="width: 8%") {{mutation.refAlt}}
                         td(style="width: 7%") {{copyFilter(mutation.ploidyCorrCpChange)}}
                         td(style="width: 7%") {{mutation.lohState}}
@@ -185,23 +186,23 @@ table.print
         tr
             td.somaticMutations
 
-                table.detailedData
+                div.detailedDataAbsent No somatic small mutations of unknown relevance were found from the analysis.
+
+                table(ng-if="smallMutations.unknown.length > 0").detailedData
                     tr.header
-                        th Gene
-                        th Transcript
-                        th Protein Change
-                        th Location
-                        th Ref/Alt
-                        th Zygosity
-                        th Copy Change
-                        th LOH State
-                        th Ref/Alt DNA
-                        th Ref/Alt RNA
-                        th Expression (RPKM)
+                        th(style="width: 7%") Gene
+                        th(style="width: 15%") Transcript
+                        th(style="width: 6%") Protein Change
+                        th(style="width: 10%") Location
+                        th(style="width: 6%") Zygosity
+                        th(style="width: 8%") Ref/Alt
+                        th(style="width: 7%") Copy Change
+                        th(style="width: 7%") LOH State
+                        th(style="width: 7%") Ref/Alt DNA
+                        th(style="width: 7%") Ref/Alt RNA
+                        th(style="width: 7%") Expression (RPKM)
                         th Fold Change vs. {{report.tumourAnalysis.normalExpressionComparator}}
-                        th {{report.tumourAnalysis.diseaseExpressionComparator}} %ile
-                    tr(ng-if="smallMutations.unknown.length === 0")
-                        td(colspan=13) No somatic small mutations of unknown relevance were found from the analysis.
+                        th(style="width: 5%") {{report.tumourAnalysis.diseaseExpressionComparator}} %ile
 
         tr(ng-repeat="mutation in smallMutations.unknown")
             td
@@ -210,8 +211,8 @@ table.print
                         td(style="width: 7%") {{mutation.gene}}
                         td(style="width: 15%") {{mutation.transcript}}
                         td(style="width: 6%") {{mutation.proteinChange}}
-                        td(style="width: 12%") {{mutation.location}}
-                        td(style="width: 5%") {{mutation.zygosity}}
+                        td(style="width: 10%") {{mutation.location}}
+                        td(style="width: 6%") {{mutation.zygosity}}
                         td(style="width: 8%") {{mutation.refAlt}}
                         td(style="width: 7%") {{copyFilter(mutation.ploidyCorrCpChange)}}
                         td(style="width: 7%") {{mutation.lohState}}
