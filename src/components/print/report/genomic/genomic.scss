@@ -133,7 +133,7 @@ table.print {
     padding: 1mm;
     color: rgb(0,0,0);
     background-color: rgb(188, 189, 220);
-    margin: 1mm 0;
+    margin: 2mm 0 1mm 0;
   }
   h2 {
     font-size: 13pt;
@@ -197,6 +197,19 @@ table.print {
 
       }
 
+      div.horizontalBox {
+        font-weight: 100;
+        font-size: 0.9em;
+        padding: 15px;
+
+        .row {
+          margin: 5px 0;
+          span:last-of-type {
+            font-weight: 700;
+          }
+        }
+      }
+
       .inner {
         border: 1px solid rgb(110,110,110);
 
@@ -255,14 +268,20 @@ table.print {
         font-weight: 700;
         font-size: 9pt;
         color: rgb(0,0,0);
-        padding: 0;
+        padding: 1mm 0;
         text-align: left;
       }
     }
+
+    tr.rowBar {
+      border-bottom: 1px solid rgb(200,200,200);
+    }
+
     tr td {
       font-size: 9pt;
       color: rgb(0,0,0);
       font-weight: 100;
+      padding: 1mm 0;
     }
   }
 
