@@ -8,7 +8,7 @@ app.controller('controller.print.POG.report.genomic.somaticMutations',
   $scope.images = images;
   $scope.smallMutations = {};
   $scope.mutationSignature = [];
-  $scope.nnlsNormal = true;
+  $scope.nnlsNormal = false;
   $scope.ms = ms;
 
   $scope.copyFilter = (copyChange) => {
