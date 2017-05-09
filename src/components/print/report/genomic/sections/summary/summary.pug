@@ -100,7 +100,7 @@ tr
                 thead
                     tr
                         th.signature
-                            div(ng-if="data.ms.mutationSignature.length == 0") Not Specified
+                            div(ng-if="data.ms.mutationSignature.length == 0") Nothing striking
                             div(ng-if="data.ms.mutationSignature.length > 0")
                                 span(ng-repeat="sig in data.ms.mutationSignature").listitem
                                     span(ng-if="sig.modifier !== null") {{sig.modifier}}&nbsp;
