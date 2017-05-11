@@ -53,9 +53,37 @@ tr
 
         h1 Test Information
 
-        div(layout="row")
-            div(layout="column", flex).dataBox
+        div(layout="column").testInformation
+            div(layout="row")
+                div(layout="column", flex)
+                    div(layout="row").title Variants Probe Version {{testInformation.snpProbe}}
+                    div(layout="row").data
+                        div(flex=50) Genes Screened
+                        div(flex) {{testInformation.snpGenes}}
+                    div(layout="row").data
+                        div(flex=50) Variants Screened
+                        div(flex) {{testInformation.snpVars}}
+                div(layout="column", flex)
+                    div(layout="row").title Fusion Probe Version {{testInformation.fusionProbe}}
+                    div(layout="row").data
+                        div(flex=50) Fusion Genes Screened
+                        div(flex) {{testInformation.fusionGenes}}
+                    div(layout="row").data
+                        div(flex=50) Fusion Variants Screened
+                        div(flex) {{testInformation.fusionVars}}
+            div(layout="row")
+                div(layout="column", flex=50)
+                    div(layout="row").title KB Version {{testInformation.kbVersion}}
+                    div(layout="row").data
+                        div(flex=50) References
+                        div(flex) {{kbmetrics.refTotal}}
+                    div(layout="row").data
+                        div(flex=50) Characterized Events
+                        div(flex) {{kbmetrics.evTotal}}
 
+
+        //div(layout="row")
+            div(layout="column", flex).dataBox
                 div(layout="row", flex).horizontalBox
                     div(layout="column", flex)
                         div(layout="row").row
@@ -69,16 +97,16 @@ tr
                             span {{testInformation.kbVersion}}
                     div(layout="column", flex)
                         div(layout="row").row
-                            span(flex=40) # Genes Screened
+                            span(flex=40) Genes Screened
                             span {{testInformation.snpGenes}}
                         div(layout="row").row
-                            span(flex=40) # Variants Screen
+                            span(flex=40) Variants Screened
                             span {{testInformation.snpVars}}
                         div(layout="row").row
-                            span(flex=40) # Fusion Genes Screened
+                            span(flex=40) Fusion Genes Screened
                             span {{testInformation.fusionGenes}}
                         div(layout="row").row
-                            span(flex=40) # Fusion Variants Screened
+                            span(flex=40) Fusion Variants Screened
                             span {{testInformation.fusionVars}}
 
 
@@ -87,12 +115,14 @@ tr
         p(ng-if="genomicEvents.length === 0") No clinically relevant genomic alterations were found from the analysis.
         table(ng-if="genomicEvents.length > 0").detailedData
             tr.header
-                th(style="width: 25%") Genomic Events
-                th(style="width: 25%") Approved in this cancer type
-                th(style="width: 25%") Approved in other cancer type
-                th(style="width: 25%") Emerging Evidence
+                th(style="width: 17%") Genomic Events
+                th(style="width: 20%") Comments
+                th(style="width: 20%") Approved in this cancer type
+                th(style="width: 20%") Approved in other cancer type
+                th(style="width: 23%") Emerging Evidence
             tr(ng-repeat="gene in genomicEvents").rowBar
                 td {{gene.genomicEvent}}
+                td {{gene.comments}}
                 td {{gene.approvedThisCancerType}}
                 td {{gene.approvedOtherCancerType}}
                 td {{gene.emergingPreclinicalEvidence}}

@@ -844,6 +844,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
             }],
             genomicEvents: ['$q', '$stateParams', 'api.summary.genomicEventsTherapeutic', ($q, $stateParams, $get) => {
               return $get.all($stateParams.POG, $stateParams.analysis_report);
+            }],
+            metrics: ['$q', 'api.knowledgebase', ($q, $kb) => {
+              return $kb.metrics();
             }]
           }
         },
