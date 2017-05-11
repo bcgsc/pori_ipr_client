@@ -8,8 +8,8 @@ div(flex, layout="column")
                 div(flex=10) Transcript
                 div(flex) Protein Change
                 div(flex) Location
-                div(flex) Ref/Alt
                 div(flex) Zygosity
+                div(flex) Ref/Alt
                 div(flex) Copy Change
                 div(flex) LOH State
                 div(flex) Ref/Alt DNA
@@ -23,12 +23,10 @@ div(flex, layout="column")
             div(layout="row", flex, ng-repeat="mutation in mutations").row
                 div(flex) {{mutation.gene}}
                 div(flex=10, md-truncate) {{mutation.transcript}}
-                    md-tooltip {{mutation.transcript}}
                 div(flex) {{mutation.proteinChange}}
                 div(flex, md-truncate) {{mutation.location}}
-                    md-tooltip {{mutation.location}}
                 div(flex) {{mutation.zygosity}}
-                div(flex) {{mutation.refAlt}}
+                div(flex md-truncate) {{mutation.refAlt}}
                 div(flex) {{copyFilter(mutation.ploidyCorrCpChange)}}
                 div(flex) {{mutation.lohState}}
                 div(flex) {{mutation.tumourReads}}
