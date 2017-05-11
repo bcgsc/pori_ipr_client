@@ -57,10 +57,10 @@ app.controller('controller.dashboard.listing', ['_', '$q', '$scope', 'api.pog', 
       if(pog.POGID.toLowerCase().indexOf(query.toLowerCase()) !== -1) result = true;
       
       // Tumour Type
-      if(pog.patientInformation.tumourType && pog.patientInformation.tumourType.toLowerCase().indexOf(query.toLowerCase()) !== -1) result = true;
+      //if(pog.patientInformation.tumourType && pog.patientInformation.tumourType.toLowerCase().indexOf(query.toLowerCase()) !== -1) result = true;
       
       // Ploidy Model
-      if(pog.tumourAnalysis && pog.tumourAnalysis.ploidy.toLowerCase().indexOf(query.toLowerCase()) !== -1) result = true;
+      //if(pog.tumourAnalysis && pog.tumourAnalysis.ploidy.toLowerCase().indexOf(query.toLowerCase()) !== -1) result = true;
       
       // TC Search TODO: Cleanup to single line using regex. Proof of concept/do they want this?
       if(query.toLowerCase().indexOf('tc>') !== -1) (pog.tumourAnalysis.tumourContent > parseInt(_.last(query.split('>')))) ? result = true : null;
