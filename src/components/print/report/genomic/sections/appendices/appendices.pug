@@ -131,6 +131,6 @@ table(style="margin-top: 3mm").print
                 h1 Appendix D
                 h2 Genomic Report {{report.reportVersion || 'N/A'}}/ KB {{report.kbVersion || 'N/A'}} / Genome Ref hg19
     tbody
-        tr(ng-repeat="c in config track by $index")
-            td.appendices
+        tr(ng-repeat="c in config track by $index", ng-if="c.length > 1")
+            td.appendices.config
                 span.config {{c}}

@@ -813,10 +813,17 @@ table.print {
   }
 
   .appendices {
+
+    &.config {
+      font-size: 8pt;
+    }
+
     .config {
+      padding: 0;
+      margin: 0;
 
       font-family: monospace;
-      font-size: 8pt;
+      font-size: 7pt;
 
       /* These are technically the same, but use both */
       overflow-wrap: break-word;
@@ -833,6 +840,12 @@ table.print {
       -moz-hyphens: auto;
       -webkit-hyphens: auto;
       hyphens: auto;
+
+      span {
+        padding: 0;
+        line-height: 90%;
+        margin: 0;
+      }
     }
   }
 
