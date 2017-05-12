@@ -9,7 +9,7 @@ md-dialog(layout="column", aria-label="Modify/Create Reference Entry", flex-md=8
         div(layout-align="center center", layout="column")
             ipr-progressor(ipr-stages="stages", ipr-active-stage="activeStage")
 
-        div(label="Reference Details", ng-show="activeStage === 0")
+        div(label="Reference Details", ng-show="activeStage === 1")
 
             div(layout="column")
 
@@ -47,18 +47,38 @@ md-dialog(layout="column", aria-label="Modify/Create Reference Entry", flex-md=8
                             textarea(ng-model="reference.summary", name="RefSummary", placeholder="Reference Summary", rows=3, required)
                             div(ng-messages="referenceForm.RefSummary.$error")
                                 div(ng-message="required") A reference summary is required.
-                            span.text-xsmall.text-grey Your summary of the reference
+                            span.text-xsmall.text-grey Quote or summary of relevant portions of the reference as applies to the current statement
+
+                    div(layout="row")
+                        md-checkbox(ng-init="sampleInfo = false", ng-model="sampleInfo") This reference has a sample information
+
+                    div(layout="row", ng-show="sampleInfo")
+                        md-input-container(flex=70)
+                            label Sample Type
+                            md-select(ng-model="reference.sample_type", name="kbSampleType", placeholder="Sample Type")
+                                md-option(ng-value="null") N/A
+                                md-option(ng-repeat="type in $knowledgebase.sampleType", ng-value="type") {{type}}
+
+                        md-input-container(flex)
+                            input(ng-model="reference.sample_size", name="kbSampleSize", placeholder="Sample Size", type="number", step=1, min=0)
+
+                    div(layout="row", ng-show="sampleInfo")
+                        md-input-container(flex)
+                            label Pre-Clinical Model
+                            md-select(ng-model="reference.pre_clinical_model", name="kbPreClinicalModel", placeholder="Pre-Clinical Model")
+                                md-option(ng-value="null") N/A
+                                md-option(ng-repeat="model in $knowledgebase.preClinicalModel", ng-value="model") {{model}}
 
 
-        div(label="Matching Criteria", ng-show="activeStage === 1")
+        div(label="Event Criteria", ng-show="activeStage === 0")
             div(layout="column")
                 form(flex='auto', name='matching', ng-submit="validateReportForm(matching)", novalidate)
                     div(layout="row")
                         div(layout-align="center center").kbEntryStatus
-                            md-icon(ng-show="!events.dirty && !events.valid").invalid.clickable error_outline
+                            md-icon(ng-show="!events.dirty && !events.valid").invalid.clickable sentiment_very_dissatisfied
                                 md-tooltip The Events-Expression provided does not satisfy the required format. Please check the provided documentation
-                            md-icon(ng-show="!events.dirty && events.valid").valid check
-                            md-icon(ng-show="events.dirty && !events.valid").checking more_horiz
+                            md-icon(ng-show="!events.dirty && events.valid").valid mood
+                            md-icon(ng-show="events.dirty && !events.valid").checking sentiment_neutral
 
                         md-input-container(flex, ng-class="{ 'md-input-invalid': (!events.dirty && !events.valid) }")
                             label Events-Expression
@@ -113,35 +133,17 @@ md-dialog(layout="column", aria-label="Modify/Create Reference Entry", flex-md=8
                                 md-option(ng-value="status", ng-repeat="status in vocabulary.status track by $index") {{status}}
                             span(ng-if="user.ident === reference.createdBy.ident").text-xsmall.text-grey An entry's author may not change the status.
 
-                    div(layout="row")
-                        md-input-container(flex=70)
-                            label Sample Type
-                            md-select(ng-model="reference.sample_type", name="kbSampleType", placeholder="Sample Type")
-                                md-option(ng-value="null") N/A
-                                md-option(ng-repeat="type in $knowledgebase.sampleType", ng-value="type") {{type}}
-
-                        md-input-container(flex)
-                            input(ng-model="reference.sample_size", name="kbSampleSize", placeholder="Sample Size", type="number", step=1, min=0)
-
-                    div(layout="row")
-                        md-input-container(flex)
-                            label Pre-Clinical Model
-                            md-select(ng-model="reference.pre_clinical_model", name="kbPreClinicalModel", placeholder="Pre-Clinical Model")
-                                md-option(ng-value="null") N/A
-                                md-option(ng-repeat="model in $knowledgebase.preClinicalModel", ng-value="model") {{model}}
 
                     div(layout="row")
                         md-input-container(flex)
                             label Entry Comments
                             textarea(rows=2, md-maxlength=250, ng-model="reference.comments")
                             span.text-xsmall.text-grey Notes about this entry for other analysts.
-                    div
-                        pre {{disease}}
 
 
     md-dialog-actions(layout="row", layout-aligh="end center", layout-padding)
         md-button(ng-click="lastStage()", ng-show="activeStage > 0").md-raised.md-primary Previous
         span(flex)
-        md-button(ng-click="nextStage()", ng-show="activeStage < 1").md-raised.md-primary Next
+        md-button(ng-click="nextStage()", ng-show="activeStage < 1", ng-disabled="!events.valid").md-raised.md-primary Next
         md-button(ng-click="submit()", ng-show="activeStage === 1", ng-disabled="!events.valid").md-raised.md-primary Done
 

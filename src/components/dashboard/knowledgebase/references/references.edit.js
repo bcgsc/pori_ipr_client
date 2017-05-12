@@ -21,8 +21,8 @@ app.controller('knowledgebase.references.edit',
   console.log('User', $user);
 
   scope.stages = [
-    {title: 'Reference Details', description: 'Specifics about the source', id: "reference"},
-    {title: 'Matching Criteria', description: 'Characterization details', id: "matching"}
+    {title: 'Event Statement', description: 'Characterization details', id: "matching", ordinal: 0},
+    {title: 'Reference Details', description: 'Specifics about the source', id: "reference", ordinal: 1}
   ];
   let activeStage = scope.activeStage = 0;
 
@@ -41,10 +41,10 @@ app.controller('knowledgebase.references.edit',
     let form;
     // Try to trigger submit...
     switch(scope.activeStage) {
-      case 0:
+      case 1:
         form = scope.referenceForm;
         break;
-      case 1:
+      case 0:
         form = scope.matching;
         break;
     }
@@ -53,6 +53,9 @@ app.controller('knowledgebase.references.edit',
     if(form.$valid) {
       scope.activeStage++;
     }
+
+    console.log('Stage validity:', form.$valid, form);
+
     if(!form.$valid) $mdToast.show($mdToast.simple({textContent:'Please check all the fields for errors'}));
   };
 
