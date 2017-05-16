@@ -25,7 +25,7 @@ section
             div(flex=25, layout="column")
                 h5 Date
                 div(flex, layout="row")
-                    span.context {{comments.authorSignedAt | amDateFormat: 'YYYY/MM/DD HH:hh'}}
+                    span.context {{comments.authorSignedAt | amDateFormat: 'dddd, MMMM Do YYYY HH:mm'}}
             div(flex)
             div(layout="column", layout-align="start start").options
                 div(ng-if="comments.authorSignature.ident")
@@ -43,7 +43,7 @@ section
             div(flex=25, layout="column")
                 h5 Date
                 div(flex, layout="row")
-                    span.context {{comments.reviewerSignedAt | amDateFormat: 'YYYY/MM/DD HH:hh'}}
+                    span.context {{comments.reviewerSignedAt | amDateFormat: 'dddd, MMMM Do YYYY HH:mm'}}
             div(flex)
             div(layout="column", layout-align="start start").options
                 div(ng-if="comments.reviewerSignature.ident")
