@@ -6,7 +6,7 @@ section.therapeuticTargets
     div(layout="column", flex)
 
         h2.title Potential Therapeutic Targets
-        div(sv-root, sv-part="therapeutic.therapeutic",)
+        div(sv-root, sv-part="therapeutic.therapeutic", sv-on-sort="updateSorting($item, $partFrom, $partTo, $indexFrom, $indexTo)")
             div(layout="row", md-whiteframe=1, ng-repeat="th in therapeutic.therapeutic", sv-element).rowCard
                 div(flex=25, layout="column")
                     h5 Drug Target

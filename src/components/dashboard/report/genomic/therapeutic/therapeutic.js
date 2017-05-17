@@ -116,5 +116,35 @@ app.controller('controller.dashboard.report.genomic.therapeutic',
 
   };
 
+  // Order updated
+  $scope.updateSorting = ($item, $partFrom, $partTo, $indexFrom, $indexTo) => {
+
+    console.log('Item', $item);
+    console.log('partFrom', $partFrom);
+    console.log('partTo', $partTo);
+    console.log('indexFrom', $indexFrom);
+    console.log('indexTo', $indexTo);
+
+    // Loop over each and update their positions
+    let updates = [];
+
+    // Update Each Entry
+    _.forEach($partTo, (e, i) => {
+      e.rank = i;
+      updates.push($therapeutic.one(pog.POGID, report.ident, ).update(e.ident, e))
+    });
+
+    $q.all(updates).then(
+      (result) => {
+        console.log('Updated rankings', result);
+        $mdToast.show($mdToast.simple().textContent('Changed order saved'));
+      },
+      (err) => {
+        console.log('Unable to update rank.');
+      }
+    )
+
+  };
+
 
 }]);
