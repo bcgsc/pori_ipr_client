@@ -3,9 +3,11 @@ table.print
         tr
             td.pageHeader.padded
                 div(layout="row")
-                    div(flex=20) {{pog.POGID}} - {{report.patientInformation.tumourType}}
+                    div(flex=30) {{pog.POGID}}
+                        br
+                        | {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
                     div(flex) BCCA Confidential - For Research Purposes Only
-                    div(flex=20) {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
+                    div(flex=30)  {{report.patientInformation.tumourType}}
     tbody
         tr
             td.somaticMutations
@@ -60,9 +62,11 @@ table.print
         tr
             td(style="padding-top: 5mm").pageHeader.padded
                 div(layout="row")
-                    div(flex=20) {{pog.POGID}} - {{report.patientInformation.tumourType}}
+                    div(flex=30) {{pog.POGID}}
+                        br
+                        | {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
                     div(flex) BCCA Confidential - For Research Purposes Only
-                    div(flex=20) {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
+                    div(flex=30)  {{report.patientInformation.tumourType}}
                 h1 Small Somatic Mutations
     tbody
         tr

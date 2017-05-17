@@ -3,9 +3,11 @@ table.print
         tr
             td.pageHeader.padded
                 div(layout="row")
-                    div(flex=20) {{pog.POGID}} - {{report.patientInformation.tumourType}}
+                    div(flex=30) {{pog.POGID}}
+                        br
+                        | {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
                     div(flex) BCCA Confidential - For Research Purposes Only
-                    div(flex=20) {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
+                    div(flex=30)  {{report.patientInformation.tumourType}}
     tbody
         tr
             td.expressionAnalysis
@@ -36,9 +38,11 @@ table.print
         tr
             td.pageHeader.padded.expressionAnalysis
                 div(layout="row")
-                    div(flex=20) {{pog.POGID}} - {{report.patientInformation.tumourType}}
+                    div(flex=30) {{pog.POGID}}
+                        br
+                        | {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
                     div(flex) BCCA Confidential - For Research Purposes Only
-                    div(flex=20) {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
+                    div(flex=30)  {{report.patientInformation.tumourType}}
                 h1 Expression Analysis
     tbody
         tr(ng-repeat="(k, group) in expOutliers")
@@ -73,9 +77,11 @@ table.print
         tr
             td.pageHeader.padded.expressionAnalysis
                 div(layout="row")
-                    div(flex=20) {{pog.POGID}} - {{report.patientInformation.tumourType}}
+                    div(flex=30) {{pog.POGID}}
+                        br
+                        | {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
                     div(flex) BCCA Confidential - For Research Purposes Only
-                    div(flex=20) {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
+                    div(flex=30)  {{report.patientInformation.tumourType}}
                 h1 Expression Analysis
                 h2 Drug Targetable High Percentile Genes
         tr
@@ -107,9 +113,11 @@ table.print
         tr
             td.pageHeader.padded.expressionAnalysis
                 div(layout="row")
-                    div(flex=20) {{pog.POGID}} - {{report.patientInformation.tumourType}}
+                    div(flex=30) {{pog.POGID}}
+                        br
+                        | {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
                     div(flex) BCCA Confidential - For Research Purposes Only
-                    div(flex=20) {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
+                    div(flex=30)  {{report.patientInformation.tumourType}}
                 h1 Expression Analysis
                 h2 Expression Distributions
     tbody

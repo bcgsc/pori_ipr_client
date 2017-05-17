@@ -3,9 +3,11 @@ table(style="margin-top: 3mm").print
         tr
             td.pageHeader
                 div(layout="row")
-                    div(flex=20) {{pog.POGID}} - {{report.patientInformation.tumourType}}
+                    div(flex=30) {{pog.POGID}}
+                        br
+                        | {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
                     div(flex) BCCA Confidential - For Research Purposes Only
-                    div(flex=20) {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
+                    div(flex=30)  {{report.patientInformation.tumourType}}
     tbody
         tr
             td.appendices
@@ -79,9 +81,11 @@ table(style="margin-top: 3mm").print
         tr
             td.pageHeader
                 div(layout="row")
-                    div(flex=20) {{pog.POGID}} - {{report.patientInformation.tumourType}}
+                    div(flex=30) {{pog.POGID}}
+                        br
+                        | {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
                     div(flex) BCCA Confidential - For Research Purposes Only
-                    div(flex=20) {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
+                    div(flex=30)  {{report.patientInformation.tumourType}}
     tbody
         tr
             td.appendices
@@ -125,9 +129,11 @@ table(style="margin-top: 3mm").print
         tr
             td.pageHeader
                 div(layout="row")
-                    div(flex=20) {{pog.POGID}} - {{report.patientInformation.tumourType}}
+                    div(flex=30) {{pog.POGID}}
+                        br
+                        | {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
                     div(flex) BCCA Confidential - For Research Purposes Only
-                    div(flex=20) {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
+                    div(flex=30)  {{report.patientInformation.tumourType}}
                 h1 Appendix D
                 h2 Genomic Report {{report.reportVersion || 'N/A'}}/ KB {{report.kbVersion || 'N/A'}} / Genome Ref hg19
     tbody
