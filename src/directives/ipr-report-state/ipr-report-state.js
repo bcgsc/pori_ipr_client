@@ -13,6 +13,7 @@ app.directive("iprReportState", ['$q', '_', ($q, _) => {
         if(state === 'ready') return 'Ready for analysis';
         if(state === 'presented') return 'Review/Presentation';
         if(state === 'active') return 'Analysis underway';
+        if(state === 'archived') return 'Archived';
       };
 
       scope.parsedState = parse(scope.state);
