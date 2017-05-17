@@ -136,11 +136,10 @@ app.controller('controller.dashboard.report.genomic.therapeutic',
 
     $q.all(updates).then(
       (result) => {
-        console.log('Updated rankings', result);
         $mdToast.show($mdToast.simple().textContent('Changed order saved'));
       },
       (err) => {
-        console.log('Unable to update rank.');
+        $mdToast.show($mdToast.simple().textContent('Unable to save the updated order'));
       }
     )
 
