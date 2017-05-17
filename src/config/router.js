@@ -280,6 +280,15 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       }
     })
 
+    .state('dashboard.pog.report.probe.meta', {
+      url: '/meta',
+      data: {
+        displayName: "Report Meta Information"
+      },
+      templateUrl: 'dashboard/report/probe/meta/meta.html',
+      controller: 'controller.dashboard.report.probe.meta',
+    })
+
 
     /**
      * Genomic
