@@ -66,7 +66,7 @@ app.controller('controller.dashboard.listing', ['_', '$q', '$scope', 'api.pog', 
         // Pog ID?
         if(pog.POGID.toLowerCase().indexOf(q.toLowerCase()) !== -1) result = true;
 
-        if(pog.patientInformation.tumourType && pog.patientInformation.tumourType.toLowerCase().indexOf(q.toLowerCase()) !== -1) result = true;
+        if(pog.patientInformation !== null && pog.patientInformation.tumourType && pog.patientInformation.tumourType.toLowerCase().indexOf(q.toLowerCase()) !== -1) result = true;
 
         // Tumour Type & Ploidy Model
         //if(pog.patientInformation.tumourType && pog.patientInformation.tumourType.toLowerCase().indexOf(q.toLowerCase()) !== -1) result = true;
