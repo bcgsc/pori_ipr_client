@@ -126,3 +126,9 @@ tr
                 td {{gene.approvedThisCancerType}}
                 td {{gene.approvedOtherCancerType}}
                 td {{gene.emergingPreclinicalEvidence}}
+
+        div(layout="row").signature
+            div(flex=40)
+            div(flex, layout="row")
+                span(flex) Manual Review: {{ signature.reviewerSignature.firstName.substring(0,1) }}.{{ signature.reviewerSignature.lastName.substring(0,1) }}.
+                span(flex) Date: {{ signature.reviewerSignedAt | amDateFormat: 'YYYY/MM/DD' }}

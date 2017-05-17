@@ -30,4 +30,12 @@
     }
 
   }
+  .signature {
+    margin-top: 2mm;
+    div:nth-of-type(2) {
+      border: 1px solid black;
+      padding: 1mm;
+      font-size: 11pt;
+    }
+  }
 }

@@ -243,6 +243,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         genomicEvents: ['$q', '$stateParams', 'api.summary.genomicEventsTherapeutic', ($q, $stateParams, $get) => {
           return $get.all($stateParams.POG, $stateParams.analysis_report);
         }],
+        signature: ['$q', '$stateParams', 'api.probe.signature', ($q, $stateParams, $signature) => {
+          return $signature.get($stateParams.POG, $stateParams.analysis_report);
+        }]
       }
     })
 
@@ -859,6 +862,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
             }],
             metrics: ['$q', 'api.knowledgebase', ($q, $kb) => {
               return $kb.metrics();
+            }],
+            signature: ['$q', '$stateParams', 'api.probe.signature', ($q, $stateParams, $signature) => {
+              return $signature.get($stateParams.POG, $stateParams.analysis_report);
             }]
           }
         },

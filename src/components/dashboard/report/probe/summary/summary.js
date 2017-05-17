@@ -1,11 +1,12 @@
 app.controller('controller.dashboard.report.probe.summary',
-['_', '$q', '$state', '$scope', 'api.pog', '$mdDialog', '$mdToast', 'pog', 'report', 'testInformation', 'genomicEvents',
-(_, $q, $state, $scope, $pog, $mdDialog, $mdToast, pog, report, testInformation, genomicEvents) => {
+['_', '$q', '$state', '$scope', 'api.pog', '$mdDialog', '$mdToast', 'pog', 'report', 'testInformation', 'genomicEvents', 'api.probe.signature', 'signature',
+(_, $q, $state, $scope, $pog, $mdDialog, $mdToast, pog, report, testInformation, genomicEvents, $signature, signature) => {
 
   $scope.pog = pog;
   $scope.report = report;
   $scope.testInformation = testInformation;
   $scope.genomicEvents = genomicEvents;
+  $scope.signature = signature;
 
   // Update Patient Information
   $scope.updatePatient = ($event) => {
@@ -47,5 +48,27 @@ app.controller('controller.dashboard.report.probe.summary',
 
   }; // End edit tumour analysis
 
+
+  // Sign The comments
+  $scope.sign = (role) => {
+
+    // Send signature to API
+    $signature.sign(pog.POGID, report.ident, role).then(
+      (result) => {
+        $scope.signature = result;
+      }
+    )
+  };
+
+  // Sign The comments
+  $scope.revokeSign = (role) => {
+
+    // Send signature to API
+    $signature.revoke(pog.POGID, report.ident, role).then(
+      (result) => {
+        $scope.signature = result;
+      }
+    )
+  };
 
 }]);
