@@ -157,8 +157,8 @@ app.controller('controller.dashboard.report.genomic.therapeutic.edit',
   scope.remove = () => {
     let removed = angular.copy(entry);
     $mdDialog.hide({status: 'deleted', data: {ident: removed.ident, type: removed.type}});
-    /*
-    $therapeutic.one(pog.POGID).remove(entry.ident).then(
+
+    $therapeutic.one(pog.POGID, report.ident).remove(entry.ident).then(
       (result) => {
         console.log('Entry removed! within modal');
         // Entry removed!
@@ -167,7 +167,7 @@ app.controller('controller.dashboard.report.genomic.therapeutic.edit',
       (err) => {
         console.log('Unable to update entry!');
       }
-    ); */
+    );
   };
 
   scope.cancel = () => {

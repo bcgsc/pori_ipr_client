@@ -35,7 +35,6 @@ section.therapeuticTargets
             div(layout="row", md-whiteframe=1, layout-align="center center", ng-click="newEntry($event, 'therapeutic')").rowCard.clickable.new
                 div New Entry
 
-
         h2(style="margin-top: 15px;").title Potential Chemoresistance
         div(sv-root, sv-part="therapeutic.chemoresistance",)
             div(layout="row", md-whiteframe=1, ng-repeat="ch in therapeutic.chemoresistance", sv-element).rowCard
