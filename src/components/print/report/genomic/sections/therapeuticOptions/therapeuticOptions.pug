@@ -19,7 +19,9 @@ tbody
                 div(layout="row", ng-repeat="pt in therapeutic.therapeutic").entry
                     div(flex=30, layout="row")
                         div(flex, layout="column", layout-align="center center")
-                            span(ng-repeat="target in pt.target") {{target.geneVar}}
+                            span(ng-repeat="target in pt.target")
+                                span(ng-if="target.geneVar") {{target.geneVar}}
+                                span(ng-if="!target.geneVar") {{target}}
                         div(flex, layout="column", layout-align="center center").text-center
                             span {{pt.targetContext}}
 
