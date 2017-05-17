@@ -30,19 +30,19 @@ tbody
                     div(flex) {{pt.notes}}
 
             br
-            h2 Potential Chemoresistance
+            div(ng-if="therapeutic.chemoresistance.length > 0")
+                h2 Potential Chemoresistance
+                div(layout="column").therapeuticOptions.chemo
+                    div(layout="row").header
+                        div(flex=30) Resistance To
+                        div(flex) Biomarker
+                        div(flex) Notes
+                    div(layout="row", ng-repeat="pt in therapeutic.chemoresistance").entry
+                        div(flex=30).text-center {{pt.resistance}}
 
-            div(layout="column").therapeuticOptions.chemo
-                div(layout="row").header
-                    div(flex=30) Resistance To
-                    div(flex) Biomarker
-                    div(flex) Notes
-                div(layout="row", ng-repeat="pt in therapeutic.chemoresistance").entry
-                    div(flex=30).text-center {{pt.resistance}}
-
-                    div(flex)
-                        div(layout="row", ng-repeat="biomarker in pt.biomarker")
-                            div(layout="column", flex).text-center {{biomarker.entry}}
-                            div(layout="column", flex, layout-align="center center")
-                                span(ng-repeat="c in biomarker.context").text-center {{c}}
-                    div(flex) {{pt.notes}}
+                        div(flex)
+                            div(layout="row", ng-repeat="biomarker in pt.biomarker")
+                                div(layout="column", flex).text-center {{biomarker.entry}}
+                                div(layout="column", flex, layout-align="center center")
+                                    span(ng-repeat="c in biomarker.context").text-center {{c}}
+                        div(flex) {{pt.notes}}

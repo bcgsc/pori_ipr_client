@@ -154,7 +154,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       resolve: {
         pogs: ['$q', 'api.pog', '$userSettings', 'user', ($q, $pog, $userSettings) => {
           let currentUserOnly = $userSettings.get('pogListCurrentUser');
-          if(currentUserOnly === null || currentUserOnly === true) return $pog.all();
+          if(currentUserOnly === null || currentUserOnly === undefined || currentUserOnly === true) return $pog.all();
           if(currentUserOnly === false) return $pog.all({all:true});
         }]
       }
@@ -325,6 +325,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         }],
         mutationSignature: ['$q', '$stateParams', 'api.somaticMutations.mutationSignature', ($q, $stateParams, $mutationSignature) => {
           return $mutationSignature.all($stateParams.POG, $stateParams.analysis_report);
+        }],
+        microbial: ['$q', '$stateParams', 'api.summary.microbial', ($q, $stateParams, $microbial) => {
+          return $microbial.get($stateParams.POG, $stateParams.analysis_report);
         }]
       }
     })
@@ -390,7 +393,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       controller: 'controller.dashboard.report.genomic.diseaseSpecificAnalysis',
       resolve: {
         images: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
-          return $image.get($stateParams.POG, $stateParams.analysis_report, 'subtypePlot.molecular,subtypePlot.receptorStatus');
+          return $image.get($stateParams.POG, $stateParams.analysis_report, 'subtypePlot.molecular,subtypePlot.receptorStatus,microbial.circos');
         }]
       }
     })
@@ -724,7 +727,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
           controller: 'controller.print.POG.report.genomic.diseaseSpecificAnalysis',
           resolve: {
             images: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
-              return $image.get($stateParams.POG, $stateParams.analysis_report, 'subtypePlot.molecular,subtypePlot.receptorStatus');
+              return $image.get($stateParams.POG, $stateParams.analysis_report, 'subtypePlot.molecular,subtypePlot.receptorStatus,microbial.circos');
             }]
           }
         },

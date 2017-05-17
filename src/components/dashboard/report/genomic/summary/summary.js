@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.report.genomic.summary',
-['_', '$q', '$state', '$scope', 'api.pog', 'api.summary.tumourAnalysis', 'api.summary.patientInformation', 'api.summary.mutationSummary', 'api.summary.genomicAterationsIdentified', '$mdDialog', '$mdToast', 'pog', 'report', 'gai', 'get', 'ms', 'vc', 'pt', 'mutationSignature',
-(_, $q, $state, $scope, $pog, $tumourAnalysis, $patientInformation, $mutationSummary, $gai, $mdDialog, $mdToast, pog, report, gai, get, ms, vc, pt, mutationSignature) => {
+['_', '$q', '$state', '$scope', 'api.pog', 'api.summary.tumourAnalysis', 'api.summary.patientInformation', 'api.summary.mutationSummary', 'api.summary.genomicAterationsIdentified', '$mdDialog', '$mdToast', 'pog', 'report', 'gai', 'get', 'ms', 'vc', 'pt', 'mutationSignature', 'microbial',
+(_, $q, $state, $scope, $pog, $tumourAnalysis, $patientInformation, $mutationSummary, $gai, $mdDialog, $mdToast, pog, report, gai, get, ms, vc, pt, mutationSignature, microbial) => {
 
   // Determine which interpreted prevalence value will be displayed
   ms.snvPercentileCategory = (report.tumourAnalysis.diseaseExpressionComparator === 'average') ? ms.snvPercentileTCGACategory : ms.snvPercentileDiseaseCategory;
@@ -14,7 +14,8 @@ app.controller('controller.dashboard.report.genomic.summary',
     vc: vc,
     pt: pt,
     ta: report.tumourAnalysis,
-    pi: report.patientInformation
+    pi: report.patientInformation,
+    microbial: (microbial !== null) ? microbial : {species: "None", integrationSite: "None"}
   };
   $scope.mutationSignature = mutationSignature;
   $scope.mutationMask = null;

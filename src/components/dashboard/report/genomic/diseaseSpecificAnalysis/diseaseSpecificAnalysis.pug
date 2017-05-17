@@ -6,8 +6,18 @@ section
         div(layout="column", flex).bg-white
 
             h2.title Expression Subtype
+
+            p(ng-if="images['subtypePlot.molecular'] === undefined && images['subtypePlot.receptorStatus'] === undefined").padding-left-10 Current disease specific analysis is not applicable for this case
+
             div(layout="row", flex, layout-align="center center").md-padding
                 img(data-ng-src="data:image/png;base64,{{images['subtypePlot.molecular'].data}}")
 
             div(layout="row", flex, layout-align="center center").md-padding
                 img(data-ng-src="data:image/png;base64,{{images['subtypePlot.receptorStatus'].data}}")
+
+            h2.title Microbial Integration
+
+            p(ng-if="images['microbial.circos'] === undefined").padding-left-10 Microbial integration circos plots are not applicable for this case
+
+            div(layout="row", flex, layout-align="center center").md-padding
+                img(data-ng-src="data:image/png;base64,{{images['microbial.circos'].data}}")

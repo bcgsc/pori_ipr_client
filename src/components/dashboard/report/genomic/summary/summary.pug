@@ -26,7 +26,7 @@ section
 
         div(layout="row", flex)
             dt(flex="{{detailSize}}") Report Date:
-            dd(flex) N/A
+            dd(flex) {{data.pi.reportDate}}
 
             dt(flex="{{detailSize}}") Age at Diagnosis:
             dd(flex) {{data.pi.age}}
@@ -93,8 +93,8 @@ section
                         div(flex) Species
                         div(flex) Integration
                     div(layout="row", flex).content
-                        div(flex) None
-                        div(flex) None
+                        div(flex) {{data.microbial.species}}
+                        div(flex) {{data.microbial.integrationSite}}
 
         div(layout="column").mutationTable
             div(layout="row")
