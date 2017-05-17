@@ -11,9 +11,12 @@ app.controller('controller.dashboard.listing', ['_', '$q', '$scope', 'api.pog', 
   ];
 
   $scope.filter ={
-    currentUser: $userSettings.get('pogListCurrentUser'),
+    currentUser: ($userSettings.get('pogListCurrentUser') === undefined) ? true : $userSettings.get('pogListCurrentUser'),
     query: null
   };
+
+  if($userSettings.get('pogListCurrentUser') === undefined) $userSettings.save('pogListCurrentUser', true);
+
 
   $scope.$watch('filter.currentUser', (newVal, oldVal) => {
     // Ignore onload message
