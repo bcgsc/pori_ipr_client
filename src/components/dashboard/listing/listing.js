@@ -108,7 +108,7 @@ app.controller('controller.dashboard.listing', ['_', '$q', '$scope', 'api.pog', 
       $mdDialog.alert()
         .clickOutsideToClose(true)
         .title('POG Searching Tips')
-        .htmlContent("The search bar can filter the listing of POGs using a number of special terms. <ul><li>Filter by tumour content: <code>tc>50 tc<40 tc=35</code></li><li>Filter by POG: <code>pog544</code></li><li>By tumour type: <code>brca</code></li><li>By ploidy: <code>diploid</code></li></ul>")
+        .htmlContent("The search bar can filter the listing of POGs using a number of special terms. <ul><li>Filter by tumour content: <code>tc>50 tc<40 tc=35</code></li><li>Filter by POG: <code>pog544</code></li><li>By tumour type: <code>brca</code></li><li>By ploidy: <code>diploid</code></li><li>By user involved: <code>bpierce</code>, <code>Brandon</code></li> <li>By disease: <code>melanoma</code></li> </ul>")
         .ok('Got it!')
         .targetEvent($event)
     );
