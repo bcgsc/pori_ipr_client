@@ -61,6 +61,30 @@ app.factory('api.pog_analysis_report', ['_', '$http', '$q', (_, $http, $q) => {
     });
   };
 
+  /**
+   * Update a report entry
+   *
+   * @param {object} report - Report object to be updated
+   * @returns {Promise|object}
+   */
+  $report.update = (report) => {
+
+    return $q((resolve, reject) => {
+
+      $http.put(api + '/reports/' + report.ident, report)
+        .then(
+          (result) => {
+            resolve(result.data);
+          },
+          (err) => {
+            reject(error);
+          }
+        );
+
+    });
+
+  };
+
 
   /**
    * POG Nested Reports

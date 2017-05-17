@@ -1,0 +1,81 @@
+
+div.header
+    h1(layout="row")
+        span(flex, ui-sref="dashboard.pog.report.listing({POG: pog.POGID})").clickable {{pog.POGID}}
+        span(layout="row", layout-align="middle space-around", ng-hide="true").priority.clickable
+            span(ng-repeat="pip in [1,2]").pip.normal &nbsp;
+            md-tooltip Priority: Normal
+    div(layout="row").subheader
+        span(flex) {{pog.patientInformation.tumourType}}
+
+div(layout="row").details
+    div(flex)
+        span TC
+        span(ng-class="{low: getTumourContent(pog) < 40, clickable: getTumourContent(pog) < 40}") {{getTumourContent(pog)}}%
+            md-tooltip(ng-if="getTumourContent(pog) < 40") Low tumour content
+    div {{getPloidy(pog)}}
+
+//div(layout="column", ng-init="pog.showTasks=false", ng-show="pog.showTasks").tasks
+div(layout="column", ng-hide="true").tasks
+    div(layout="row")
+        span 1.
+        span(flex, md-truncate) Setup Pipeline
+        md-icon person
+        span.done &nbsp;
+
+    div(layout="row")
+        span 2.
+        span(flex) Clinical data available
+        md-icon person
+        span.active &nbsp;
+
+    div(layout="row")
+        span 3.
+        span(flex) Review Disease Comparator
+        md-icon person
+        span &nbsp;
+
+    div(layout="row")
+        span 4.
+        span(flex) Tumour content & ploidy
+        md-icon person
+        span &nbsp;
+
+    div(layout="row")
+        span 5.
+        span(flex) HOMD Analysis
+        md-icon person
+        span &nbsp;
+
+    div(layout="row")
+        span 6.
+        span(flex) Review Indels & SNVs
+        md-icon person
+        span &nbsp;
+
+div(layout="row", flex, ng-click="pog.showTasks = !pog.showTasks", ng-hide="true").taskToggle.text-center.clickable {{(pog.showTasks) ? 'hide' : 'show'}} tasks
+
+//div(layout="row", layout-md="column",)
+    div(flex=50, flex-md=100)
+        span TC
+        span(ng-class="{low: getTumourContent(pog) < 40, clickable: getTumourContent(pog) < 40}") {{getTumourContent(pog)}}%
+            md-tooltip(ng-if="getTumourContent(pog) < 40") Low tumour content
+    div(flex=50, flex-md=100)
+        span Ploidy
+        span.text-capitalize {{getPloidy(pog)}}
+div(layout="row", layout-md="column")
+    div(flex=50, flex-md=100)
+        span Bioinformatics
+        span {{getRoleUser(pog, 'bioinformatician', 'name') || 'N/A'}}
+    div(flex=50, flex-md=100)
+        span Analyst
+        span {{getRoleUser(pog, 'analyst', 'name') || 'N/A'}}
+div(layout="row", layout-md="column")
+    div(flex=50, flex-md=100, ui-sref="dashboard.pog.report.probe.summary({POG: pog.POGID, analysis_report: getReport(pog, 'probe').ident})").clickable
+        span Probe Report
+        span
+            span(ng-class="{active: checkProbeGenomic(pog, 'probe')}").circle
+    div(flex=50, flex-md=100, ui-sref="dashboard.pog.report.genomic.summary({POG: pog.POGID, analysis_report: getReport(pog, 'genomic').ident})").clickable
+        span Genomic Report
+        span
+            span(ng-class="{active: checkProbeGenomic(pog, 'genomic')}").circle

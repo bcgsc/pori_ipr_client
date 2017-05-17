@@ -1,10 +1,38 @@
-section(ng-repeat="role in roles").meta
-    md-subheader.md-primary {{role}}s
 
-    div(layout="row", flex, layout-align="start center").roleList
-        ipr-pog-role(role="u", ng-repeat="u in pog.POGUsers | filter: roleFilter(role)", remove="remove()")
+section.meta
+    h2.title Settings
 
-        div(layout="column", layout-align="center center", ng-click="addUser($event, role)").add
-            span.icon
-                md-icon add
-            span Add New
+    div(layout="column").inlineSettings
+        div(layout="row")
+            md-input-container(flex)
+                label Report Type
+                md-select(ng-model="report.type", placeholder="Report Type", aria-label="Report Type", ng-disabled="true", required, md-on-close="checkChange()")
+                    md-option(ng-value="'genomic'") Genomic Report
+                    md-option(ng-value="'probe'") Probe Report
+            md-input-container(flex)
+                label Report State
+                md-select(ng-model="report.state", placeholder="Report State", aria-label="Report State", required, md-on-close="checkChange()")
+                    md-option(ng-value="'ready'") Ready for analysis
+                    md-option(ng-value="'active'") Analysis underway
+                    md-option(ng-value="'presented'") Review/Presentation
+                    md-option(ng-value="'archived'") Archived
+        div(layout="row")
+            md-input-container(flex)
+                input(ng-model="report.reportVersion", placeholder="Report Version", required, ng-change="checkChange()")
+            md-input-container(flex)
+                input(ng-model="report.kbVersion", placeholder="Knowledgebase Version", required, ng-change="checkChange()")
+        div(layout="row")
+            span(flex)
+            span
+                md-button(ng-click="updateSettings()", ng-disabled="!reportSettingsChanged").md-primary.md-raised Update
+    h2.title User Associations
+    div(ng-repeat="role in roles")
+        md-subheader.md-primary {{role}}s
+
+        div(layout="row", flex, layout-align="start center").roleList
+            ipr-pog-role(role="u", ng-repeat="u in pog.POGUsers | filter: roleFilter(role)", remove="remove()")
+
+            div(layout="column", layout-align="center center", ng-click="addUser($event, role)").add
+                span.icon
+                    md-icon add
+                span Add New

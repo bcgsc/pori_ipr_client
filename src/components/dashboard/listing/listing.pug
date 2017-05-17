@@ -40,13 +40,14 @@ md-content(flex, layout="column").md-padding
 
     div(layout="column", flex).kanban
         div(layout="row", layout-align="space-between").title
-            div(layout="column", flex) Bioinformatics
-            div(layout="column", flex) Analysis
-            div(layout="column", flex) Archived
+            div(layout="column", flex) Ready for Analysis
+            div(layout="column", flex) Analysis Underway
+            div(layout="column", flex) Presented
 
         div(layout="row", flex, layout-align="space-between")
             md-content(layout="column", flex).column
-                div(ng-repeat="pog in pogs | filter: searchPogs(pogQuery)", md-whiteframe=2).pog
+                ipr-report-listing-card(ng-repeat="pog in pogs | filter: searchPogs('ready', pogQuery)", md-whiteframe=2, report="report", pog="pog").pog
+                //div(ng-repeat="pog in pogs | filter: searchPogs(pogQuery)", md-whiteframe=2).pog
                     div.header
                         h1(layout="row")
                             span(flex, ui-sref="dashboard.pog.report.listing({POG: pog.POGID})").clickable {{pog.POGID}}
@@ -127,5 +128,7 @@ md-content(flex, layout="column").md-padding
                             span Genomic Report
                             span
                                 span(ng-class="{active: checkProbeGenomic(pog, 'genomic')}").circle
-            div(layout="column", flex).column
-            div(layout="column", flex).column
+            md-content(layout="column", flex).column
+                ipr-report-listing-card(ng-repeat="pog in pogs | filter: searchPogs('active', pogQuery)", md-whiteframe=2, report="report", pog="pog").pog
+            md-content(layout="column", flex).column
+                ipr-report-listing-card(ng-repeat="pog in pogs | filter: searchPogs('presented', pogQuery)", md-whiteframe=2, report="report", pog="pog").pog
