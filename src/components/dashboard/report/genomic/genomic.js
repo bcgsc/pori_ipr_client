@@ -84,7 +84,7 @@ app.controller('controller.dashboard.report.genomic',
       children: []
     },
     {
-      name: 'Users',
+      name: 'Report Settings',
       state: 'meta',
       meta: true,
       showChildren: false,
