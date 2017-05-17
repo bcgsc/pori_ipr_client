@@ -5,13 +5,13 @@ section.detailedGenomicAnalysis
 
         div(layout="column", flex)
 
-            h2.title Therapries Approved in this Tumour Type
+            h2.title Therapies Approved in this Tumour Type
 
             div(ng-if="approvedThisCancer.length == 0")
                 div.text-center.details None Found.
             ipr-genomic-alteration(ng-repeat="gene in approvedThisCancer", samples="samples", gene="gene", report="report").container
 
-            h2.title Therapries Approved in other tumour types
+            h2.title Therapies Approved in other tumour types
             div(ng-if="approvedOtherCancer.length == 0")
                 div.text-center.details None Found.
             ipr-genomic-alteration(ng-repeat="gene in approvedOtherCancer", samples="samples", gene="gene", report="report").container
