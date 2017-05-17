@@ -1,9 +1,9 @@
 md-content(flex).md-padding
     md-toolbar
         div.md-toolbar-tools
-            span(flex)
+            span(flex).text-left {{report.patientInformation.tumourType}}
             h2(flex).text-center.md-hue-3 {{pog.POGID}} Genomic Report
-            span(flex)
+            span(flex, ipr-report-state, state="report.state").text-right
     div(layout="row", flex).pog-report
         div(flex, ui-view="")
 
