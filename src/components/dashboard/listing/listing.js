@@ -19,6 +19,15 @@ app.controller('controller.dashboard.listing', ['_', '$q', '$scope', 'api.pog', 
 
   if($userSettings.get('pogListCurrentUser') === undefined) $userSettings.save('pogListCurrentUser', true);
 
+  $scope.numPogs = (state) => {
+    let i = 0;
+    let pogs = [];
+    _.forEach($scope.pogs, (p) => {
+      let pr = _.filter(p.analysis_reports, {state: state}).length;
+      if(pr > 0 && pogs.indexOf(p.POGID)) pogs.push(p.POGID);
+    });
+    return pogs.length;
+  };
 
   $scope.$watch('filter.currentUser', (newVal, oldVal) => {
     // Ignore onload message

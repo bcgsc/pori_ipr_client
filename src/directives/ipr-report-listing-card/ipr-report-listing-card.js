@@ -6,17 +6,21 @@ app.directive("iprReportListingCard", ['$q', '_', '$mdDialog', '$mdToast', '$sta
     transclude: false,
     scope: {
       report: '=report',
-      pog: '=pog'
+      pog: '=pog',
+      state: '@state'
     },
     templateUrl: 'ipr-report-listing-card/ipr-report-listing-card.html',
     link: (scope, element, attr) => {
 
       let pog = scope.pog;
-      let repot = scope.report;
+      let reports =  angular.copy(pog.analysis_reports);
+
+      // Build array of reports limited to this state
+      scope.reports = _.filter(reports, {state: scope.state});
 
       // Determine if probe/genomic available
       scope.checkProbeGenomic = (pog, type) => {
-        return (_.find(pog.analysis_reports, {type: type})) ? true : false;
+        return (_.find(scope.reports, {type: type})) ? true : false;
       };
 
       // Get Tumour Content
@@ -35,7 +39,7 @@ app.directive("iprReportListingCard", ['$q', '_', '$mdDialog', '$mdToast', '$sta
 
       // Get Report
       scope.getReport = (pog, type) => {
-        return _.find(pog.analysis_reports, {type: type});
+        return _.find(scope.reports, {type: type});
       };
 
       // Get Role
@@ -52,6 +56,11 @@ app.directive("iprReportListingCard", ['$q', '_', '$mdDialog', '$mdToast', '$sta
             return user.user.username;
             break;
         }
+      };
+
+
+      scope.reportCount = (type) => {
+        return _.filter(scope.reports, {type: type}).length;
       };
 
 

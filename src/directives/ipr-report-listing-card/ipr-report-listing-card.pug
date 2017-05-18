@@ -79,3 +79,4 @@ div(layout="row", layout-md="column")
         span Genomic Report
         span
             span(ng-class="{active: checkProbeGenomic(pog, 'genomic')}").circle
+            span(ng-if="reportCount('genomic') > 1") ({{reportCount('genomic')}})

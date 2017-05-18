@@ -54,21 +54,21 @@ md-content(flex, layout="column").md-padding
 
     div(layout="column", flex).kanban
         div(layout="row", layout-align="space-between").title
-            div(layout="column", flex) Ready for Analysis
-            div(layout="column", flex) Analysis Underway
-            div(layout="column", flex) Review/Presented
-            div(layout="column", flex, ng-show="archived") Archived
+            div(layout="column", flex) Ready for Analysis ({{numPogs('ready')}})
+            div(layout="column", flex) Analysis Underway ({{numPogs('active')}})
+            div(layout="column", flex) Review/Presented ({{numPogs('presented')}})
+            div(layout="column", flex, ng-show="archived") Archived ({{numPogs('archived')}})
 
         div(layout="row", flex, layout-align="space-between")
             md-content(layout="column", flex).column
                 div(ng-show="loading").text-center Loading...
-                ipr-report-listing-card(ng-repeat="pog in pogs | filter: searchPogs('ready', pogQuery)", md-whiteframe=2, report="report", pog="pog", ng-hide="loading").pog
+                ipr-report-listing-card(ng-repeat="pog in pogs | filter: searchPogs('ready', pogQuery)", md-whiteframe=2, report="report", pog="pog", state="ready" ng-hide="loading").pog
             md-content(layout="column", flex).column
                 div(ng-show="loading").text-center Loading...
-                ipr-report-listing-card(ng-repeat="pog in pogs | filter: searchPogs('active', pogQuery)", md-whiteframe=2, report="report", pog="pog", ng-hide="loading").pog
+                ipr-report-listing-card(ng-repeat="pog in pogs | filter: searchPogs('active', pogQuery)", md-whiteframe=2, report="report", pog="pog", state="active", ng-hide="loading").pog
             md-content(layout="column", flex).column
                 div(ng-show="loading").text-center Loading...
-                ipr-report-listing-card(ng-repeat="pog in pogs | filter: searchPogs('presented', pogQuery)", md-whiteframe=2, report="report", pog="pog", ng-hide="loading").pog
+                ipr-report-listing-card(ng-repeat="pog in pogs | filter: searchPogs('presented', pogQuery)", md-whiteframe=2, report="report", pog="pog", state="presented", ng-hide="loading").pog
             md-content(layout="column", flex, ng-show="archived").column
                 div(ng-show="loading").text-center Loading...
-                ipr-report-listing-card(ng-repeat="pog in pogs | filter: searchPogs('archived', pogQuery)", md-whiteframe=2, report="report", pog="pog", ng-hide="loading").pog
+                ipr-report-listing-card(ng-repeat="pog in pogs | filter: searchPogs('archived', pogQuery)", md-whiteframe=2, report="report", pog="pog", state="archived", ng-hide="loading").pog
