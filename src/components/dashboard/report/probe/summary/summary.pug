@@ -125,7 +125,7 @@ section
             div(flex=25, layout="column")
                 h5 Ready
                 div(flex, layout="row")
-                    span(ng-show="signature.readySignature.ident === null", layout="row", layout-align="start center", ng-click="sign('ready')").clickable
+                    span(ng-show="signature === null || signature.readySignature.ident === null", layout="row", layout-align="start center", ng-click="sign('ready')").clickable
                         md-icon(style="margin-right: 5px;") gesture
                         span Sign
                     span(ng-show="signature.readySignature.ident") {{signature.readySignature.firstName}} {{signature.readySignature.lastName}}
@@ -144,7 +144,7 @@ section
             div(flex=25, layout="column")
                 h5 Reviewer
                 div(flex, layout="row")
-                    span(ng-show="signature.reviewerSignature.ident === null", layout="row", layout-align="start center", ng-click="sign('reviewer')").clickable
+                    span(ng-show="signature === null || signature.reviewerSignature.ident === null", layout="row", layout-align="start center", ng-click="sign('reviewer')").clickable
                         md-icon(style="margin-right: 5px;") gesture
                         span Sign
                     span(ng-show="signature.reviewerSignature.ident") {{signature.reviewerSignature.firstName}} {{signature.reviewerSignature.lastName}}
