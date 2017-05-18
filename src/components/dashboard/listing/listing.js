@@ -1,6 +1,8 @@
 app.controller('controller.dashboard.listing', ['_', '$q', '$scope', 'api.pog', 'pogs', '$mdDialog', 'user', '$userSettings',  (_, $q, $scope, $pog, pogs, $mdDialog, user, $userSettings) => {
 
   $scope.pogs = pogs;
+  $scope.archived = false;
+  $scope.loading = false;
 
   $scope.roles = [
     'bioinformatician',
@@ -26,8 +28,10 @@ app.controller('controller.dashboard.listing', ['_', '$q', '$scope', 'api.pog', 
   });
 
   $scope.refreshList = () => {
-    $pog.all({all: !$scope.filter.currentUser, query: $scope.filter.query, role: $scope.filter.role}).then(
+    $scope.loading = true;
+    $pog.all({all: !$scope.filter.currentUser, query: $scope.filter.query, role: $scope.filter.role, archived: $scope.archived}).then(
       (result) => {
+        $scope.loading = false;
         $scope.pogs = result;
         associateUsers();
       },
