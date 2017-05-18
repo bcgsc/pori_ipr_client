@@ -1,0 +1,13 @@
+.reportListingDetail {
+  margin-bottom: 5px;
+  .reportButton{
+    //border: 1px solid red;
+    border-radius: 3px;
+    padding: 2px;
+    margin-left: -2px;
+    &:hover {
+      background-color: #d2ddff;
+    }
+  }
+
+}

@@ -70,13 +70,16 @@ div(layout="row", layout-md="column")
     div(flex=50, flex-md=100)
         span Analyst
         span {{getRoleUser(pog, 'analyst', 'name') || 'N/A'}}
-div(layout="row", layout-md="column")
-    div(flex=50, flex-md=100, ui-sref="dashboard.pog.report.probe.summary({POG: pog.POGID, analysis_report: getReport(pog, 'probe').ident})").clickable
-        span Probe Report
-        span
-            span(ng-class="{active: checkProbeGenomic(pog, 'probe')}").circle
-    div(flex=50, flex-md=100, ui-sref="dashboard.pog.report.genomic.summary({POG: pog.POGID, analysis_report: getReport(pog, 'genomic').ident})").clickable
-        span Genomic Report
-        span
-            span(ng-class="{active: checkProbeGenomic(pog, 'genomic')}").circle
-            span(ng-if="reportCount('genomic') > 1") ({{reportCount('genomic')}})
+div(layout="row", layout-md="column").reportListingDetail
+    div(flex=50, flex-md=100, ui-sref="dashboard.pog.report.probe.summary({POG: pog.POGID, analysis_report: getReport(pog, 'probe').ident})")
+        span(ng-class="{reportButton: checkProbeGenomic(pog, 'probe'), clickable: checkProbeGenomic(pog, 'probe')}")
+            span Probe Report
+            span
+                span(ng-class="{active: checkProbeGenomic(pog, 'probe')}").circle
+
+    div(flex=50, flex-md=100, ui-sref="dashboard.pog.report.genomic.summary({POG: pog.POGID, analysis_report: getReport(pog, 'genomic').ident})")
+        span(ng-class="{reportButton: checkProbeGenomic(pog, 'genomic'), clickable: checkProbeGenomic(pog, 'genomic')}")
+            span Genomic Report
+            span
+                span(ng-class="{active: checkProbeGenomic(pog, 'genomic')}").circle
+                span(ng-if="reportCount('genomic') > 1") ({{reportCount('genomic')}})
