@@ -9,6 +9,7 @@ div(md-whiteframe=2).pog
                 md-tooltip Priority: Normal
         div(layout="row").subheader
             span(flex) {{report.patientInformation.tumourType}}
+            span(flex).text-right Report: {{report.ident}}
 
     div(layout="row", ng-if="report.type === 'genomic'").details
         div(flex)
