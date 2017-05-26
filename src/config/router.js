@@ -329,9 +329,6 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         ms: ['$q', '$stateParams', 'api.summary.mutationSummary', ($q, $stateParams, $ms) => {
           return $ms.get($stateParams.POG, $stateParams.analysis_report);
         }],
-        vc: ['$q', '$stateParams', 'api.summary.variantCounts', ($q, $stateParams, $vc) => {
-          return $vc.get($stateParams.POG, $stateParams.analysis_report);
-        }],
         pt: ['$q', '$stateParams', 'api.summary.probeTarget', ($q, $stateParams, $pt) => {
           return $pt.all($stateParams.POG, $stateParams.analysis_report);
         }],
