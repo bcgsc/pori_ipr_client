@@ -9,6 +9,7 @@ app.controller('controller.print.POG.report.genomic.dga',
   $scope.alterations = {therapeutic: {}, prognostic: {}, diagnostic: {}, biological: {}, unknown: {}};
   $scope.approvedThisCancer = {};
   $scope.approvedOtherCancer= {};
+  $scope.targetedGenes = targetedGenes;
 
   alterations = alterations.concat(unknownAlterations);
 

@@ -365,3 +365,21 @@ tbody
                         div(flex)
                             span Zygosity
                             span {{gene.zygosity}}
+    tr
+        td.dga
+            h2 Targeted Gene Report - Detected Alterations
+
+    tr(ng-repeat="gene in targetedGenes")
+        td.dga
+            div.variant
+                div(layout="column").block
+                    div(layout="row")
+                        div(flex=25)
+                            span Gene
+                            span {{gene.gene}}
+                        div(flex=25)
+                            span Variant
+                            span {{gene.variant}}
+                        div(flex)
+                            span Source
+                            span {{gene.sample}}
