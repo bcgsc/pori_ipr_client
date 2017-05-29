@@ -368,6 +368,7 @@ tbody
     tr
         td.dga
             h2 Targeted Gene Report - Detected Alterations
+            p(ng-if="targetedGenes.length === 0") No significant results were found from the analysis.
 
     tr(ng-repeat="gene in targetedGenes")
         td.dga
