@@ -323,6 +323,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         gai: ['$q', '$stateParams', 'api.summary.genomicAterationsIdentified', ($q, $stateParams, $gai) => {
           return $gai.all($stateParams.POG, $stateParams.analysis_report);
         }],
+        vc: ['$q', '$stateParams', 'api.summary.variantCounts', ($q, $stateParams, $vc) => {
+          return $vc.get($stateParams.POG, $stateParams.analysis_report);
+        }],
         get: ['$q', '$stateParams', 'api.summary.genomicEventsTherapeutic', ($q, $stateParams, $get) => {
           return $get.all($stateParams.POG, $stateParams.analysis_report);
         }],
