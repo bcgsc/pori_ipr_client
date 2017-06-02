@@ -115,7 +115,8 @@ md-dialog(layout="column", aria-label="Modify/Create Reference Entry", flex-md=8
                         placeholder="Add Disease",
                         md-floating-label="Add Disease",
                         md-selected-item-change="disease.add(disease.new)",
-                        md-dropdown-position="bottom"
+                        md-dropdown-position="bottom",
+                        md-require-match=true
                         flex=40
                         )
                             span(md-highlight-text="disease.searchText") {{entry}}
