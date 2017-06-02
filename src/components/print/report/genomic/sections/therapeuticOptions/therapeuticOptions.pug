@@ -32,7 +32,7 @@ tbody
                             div(layout="column", flex).text-center {{biomarker.entry}}
                             div(layout="column", flex, layout-align="center center")
                                 span(ng-repeat="c in biomarker.context").text-center {{c}}
-                    div(flex) {{pt.notes}}
+                    div(flex).line-break-preserve {{pt.notes}}
 
             br
             div(ng-if="therapeutic.chemoresistance.length > 0")
@@ -50,4 +50,4 @@ tbody
                                 div(layout="column", flex).text-center {{biomarker.entry}}
                                 div(layout="column", flex, layout-align="center center")
                                     span(ng-repeat="c in biomarker.context").text-center {{c}}
-                        div(flex) {{pt.notes}}
+                        div(flex).line-break-preserve {{pt.notes}}

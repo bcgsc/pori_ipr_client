@@ -25,7 +25,7 @@ section.therapeuticTargets
 
                 div(flex)
                     h5 Notes
-                    span {{th.notes}}
+                    span.line-break-preserve {{th.notes}}
                 div(layout="column", layout-align="start start").options
                     div
                         md-icon(ng-click="edit($event, th)") edit
@@ -52,7 +52,7 @@ section.therapeuticTargets
                                 span(ng-repeat="c in marker.context") {{c}}
                 div(flex)
                     h5 Notes
-                    span {{ch.notes}}
+                    span.line-break-preserve {{ch.notes}}
                 div(layout="column", layout-align="start start").options
                     div
                         md-icon(ng-click="edit($event, ch)") edit

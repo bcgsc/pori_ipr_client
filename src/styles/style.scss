@@ -191,3 +191,7 @@ span.preformated {
 .ng-hide.ng-hide-animate{
   display: none !important;
 }
+
+.line-break-preserve {
+  white-space: pre-wrap;
+}
