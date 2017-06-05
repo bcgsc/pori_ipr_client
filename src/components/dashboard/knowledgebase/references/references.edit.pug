@@ -90,9 +90,18 @@ md-dialog(layout="column", aria-label="Modify/Create Reference Entry", flex-md=8
                         div(style="margin-top:25px")
                             md-icon.clickable help_outline
 
+
+
+                    h4 Context
                     div(layout="row")
-                        md-input-container(flex)
-                            input(ng-model="reference.context", name="kbContext", placeholder="Context", required)
+                        md-input-container(flex=40)
+                            input(ng-model="context.new", name="newContext", placeholder="Add Context", ng-blur="context.add(context.new)", ng-keyup="$event.keyCode == 13 && context.add(context.new)")
+                        div(flex, layout="column").diseaseList
+                            span(ng-repeat="(i, disEntry) in context.all track by $index", layout="row")
+                                span(ng-click="context.remove(i)").clickable
+                                    md-icon remove_circle
+                                span  {{disEntry}}
+
 
                     div(layout="row")
                         md-input-container(flex=30)
