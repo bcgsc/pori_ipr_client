@@ -17,6 +17,13 @@ app.controller('knowledgebase.references.edit',
   scope.disease.new = '';
   scope.disease.all = reference.disease_list;
 
+  scope.context = {};
+  scope.context.all = [];
+  scope.context.new = '';
+  scope.context.all = reference.context;
+
+  console.log(scope.context, reference);
+
   console.log(scope.reference);
   console.log('User', $user);
 
@@ -68,6 +75,7 @@ app.controller('knowledgebase.references.edit',
     if(scope.matching.$valid) {
 
       scope.reference.disease_list = _.join(scope.disease.all, ';');
+      scope.reference.context = _.join(scope.context.all, ';');
 
       // Send updated entry to API
       if(action === 'new') {
@@ -180,6 +188,17 @@ app.controller('knowledgebase.references.edit',
   };
   scope.disease.remove = (i) => {
     scope.disease.all.splice(i,1);
+  };
+
+  // Auto-complete filter
+  scope.context.add = (entry) => {
+    if(scope.context.all === undefined) scope.context.all = [];
+    if(entry === null || entry === "") return;
+    scope.context.all.push(entry);
+    scope.context.new = null;
+  };
+  scope.context.remove = (i) => {
+    scope.context.all.splice(i,1);
   };
 
   scope.disease.filter = (query) => {
