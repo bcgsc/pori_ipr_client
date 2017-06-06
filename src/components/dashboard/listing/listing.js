@@ -2,6 +2,7 @@ app.controller('controller.dashboard.listing', ['_', '$q', '$scope', 'api.pog', 
 
   $scope.pogs = pogs;
   $scope.archived = false;
+  $scope.nonproduction = false;
   $scope.loading = false;
 
   $scope.roles = [
@@ -38,7 +39,7 @@ app.controller('controller.dashboard.listing', ['_', '$q', '$scope', 'api.pog', 
 
   $scope.refreshList = () => {
     $scope.loading = true;
-    $pog.all({all: !$scope.filter.currentUser, query: $scope.filter.query, role: $scope.filter.role, archived: $scope.archived}).then(
+    $pog.all({all: !$scope.filter.currentUser, query: $scope.filter.query, role: $scope.filter.role, archived: $scope.archived, nonproduction: $scope.nonproduction}).then(
       (result) => {
         $scope.loading = false;
         $scope.pogs = result;
