@@ -197,10 +197,11 @@ app.controller('controller.dashboard.report.genomic.summary',
           $mdDialog.cancel('No changes were saved.');
         };
 
+
         scope.update = () => {
 
           // Send updated entry to API
-          $patientInformation.update($scope.pog.POGID, report.ident, scope.pi).then(
+          $patientInformation.update($scope.pog.POGID, scope.pi).then(
             (result) => {
               $mdDialog.hide({message: 'Entry has been updated', data: scope.pi});
             },
