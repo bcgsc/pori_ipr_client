@@ -10,6 +10,7 @@ app.directive("iprReportState", ['$q', '_', ($q, _) => {
     link: (scope, element, attr) => {
 
       let parse = (state) => {
+        if(state === 'nonproduction') return 'Non-Production/Test';
         if(state === 'ready') return 'Ready for analysis';
         if(state === 'presented') return 'Review/Presentation';
         if(state === 'active') return 'Analysis underway';
