@@ -304,6 +304,9 @@ app.controller('controller.dashboard.report.genomic.summary',
           $gai.remove(pog.POGID, report.ident, alteration.ident, scope.comment, cascade).then(
             (resp) => {
               $scope.data.gai = _.reject($scope.data.gai, (r) => { return (r.ident === alteration.ident); });
+              gai = _.reject(gai, (r) => { return (r.ident === alteration.ident); });
+
+
               // Remove from Get
               if(cascade) $scope.data.get = _.reject($scope.data.get, (e) => { return (e.genomicEvent === alteration.geneVariant); });
 
