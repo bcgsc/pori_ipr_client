@@ -26,7 +26,7 @@ section
 
         div(layout="row", flex)
             dt(flex="{{detailSize}}") Report Date:
-            dd(flex) N/A
+            dd(flex) {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
 
             dt(flex="{{detailSize}}") Age at Diagnosis:
             dd(flex) {{report.patientInformation.age}}
