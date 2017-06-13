@@ -974,4 +974,23 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       }
     })
 
+
+
+    .state('dashboard.tracking', {
+      url: '/tracking',
+      data: {
+        displayName: 'POG Tracking'
+      },
+      controller: 'controller.dashboard.tracking',
+      templateUrl: 'dashboard/tracking/tracking.html',
+      resolve: {
+        definitions: ['$q', 'api.tracking.definition', ($q, $definition) => {
+          return $definition.all();
+        }],
+        states: ['$q', 'api.tracking.state', ($q, $state) => {
+          return $state.all();
+        }]
+      }
+    })
+
 }]);

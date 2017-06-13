@@ -5,10 +5,10 @@ div(layout='row', flex)
     div(flex, layout="row")
 
         div(layout="column", ng-cloak).sidebar
-            div(layout="row", ui-sref="dashboard.listing")
-                md-icon chrome_reader_mode
-                    md-tooltip(ng-if="!maximized", md-direction="right") Dashboard
-                span(flex, ng-show="maximized") Dashboard
+            div(layout="row", ui-sref="dashboard.tracking", ng-class="{active: ($state.current.name === 'dashboard.tracking' || $state.current.name.indexOf('tracking') > -1)}")
+                md-icon my_location
+                    md-tooltip(ng-if="!maximized", md-direction="right") Tracking
+                span(flex, ng-show="maximized") Tracking
 
             div(layout="row", ui-sref="dashboard.listing", ng-class="{active: ($state.current.name === 'dashboard.listing' || $state.current.name.indexOf('report') > -1)}")
                 md-icon assignment
