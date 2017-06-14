@@ -1,0 +1,12 @@
+div(layout="column")
+    div(ng-if="type === 'date'", layout="row")
+        md-icon.margin-right-10 date_range
+        md-datepicker(ng-model="outcome.value", md-placeholder="Select date", md-hide-icons="calendar", flex)
+
+    div(ng-if="type === 'text'", layout="row")
+        md-input-container(flex)
+            label Result
+            textarea(ng-model="outcome.value", md-no-resize, md-maxlength="500")
+    div(layout="row")
+        span(flex)
+        md-button(ng-click="checkin()").md-raised.md-primary Check-in Task
