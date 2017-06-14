@@ -340,6 +340,13 @@ md-dialog.tracking-task {
       height: 18px;
       max-height: 18px;
 
+      &.md-icon-active {
+        color: rgb(76, 97, 223);
+      }
+      &:hover {
+        color: rgb(153, 171, 255);
+      }
+
       &.disabled {
         color: rgba(0,0,0,0.2);
 
@@ -369,6 +376,42 @@ md-dialog.tracking-task {
     }
     div:nth-of-type(2) {
       font-size: 0.9em;
+    }
+
+    div.assignedTo {
+
+      span img {
+        padding-right: 10px;
+      }
+
+      div.content {
+        text-transform: none;
+
+        h1 {
+          padding: 0;
+          margin: 0 0 7px 0;
+          font-weight: 400;
+          font-size: 20px;
+        }
+
+        div {
+          margin-bottom: 4px;
+          font-size: 11px;
+          span { font-size: 12px; }
+        }
+
+        div a {
+          text-transform: none;
+        }
+        div span:first-of-type {
+          font-weight: 200;
+        }
+        div span:nth-of-type(2) {
+          font-weight: 700;
+          padding-left: 10px;
+        }
+      }
+
     }
   }
 

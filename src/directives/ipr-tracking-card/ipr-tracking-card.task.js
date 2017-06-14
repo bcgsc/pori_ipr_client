@@ -1,11 +1,13 @@
 app.controller('controller.ipr-tracking-card.task',
-['_', '$scope', '$mdDialog', '$mdToast', 'api.tracking.task', 'api.tracking.state', 'pog', 'state', 'task',
-(_, $scope, $mdDialog, $mdToast, $task, $state, pog, state, task) => {
+['_', '$scope', '$q', '$mdDialog', '$mdToast', 'api.tracking.task', 'api.tracking.state', 'api.user', 'pog', 'state', 'task',
+(_, $scope, $q, $mdDialog, $mdToast, $task, $state, $user, pog, state, task) => {
 
   $scope.pog = pog;
   $scope.state = state;
   $scope.task = task;
   $scope.addCheckin = false;
+  $scope.assign = {user: null};
+  $scope.showAssignUser = false;
 
   $scope.cancel = () => {
     $mdDialog.hide({task: $scope.task, state: state});
@@ -55,5 +57,39 @@ app.controller('controller.ipr-tracking-card.task',
     'complete',
     'failed'
   ];
+
+  // Search Users with auto complete
+  $scope.searchUsers = (searchText) => {
+    let deferred = $q.defer();
+
+    if(searchText.length === 0) return [];
+
+    $user.search(searchText).then(
+      (resp) => {
+        deferred.resolve(resp);
+      },
+      (err) => {
+        console.log(err);
+        deferred.reject();
+      }
+    );
+
+    return deferred.promise;
+  };
+
+  $scope.assignUser = () => {
+
+    $task.assignUser(task.ident, $scope.assign.user.ident).then(
+      (result) => {
+        $scope.task = task = result;
+        $scope.showAssignUser = false;
+      },
+      (err) => {
+        console.log('Failed to assign user', err);
+      }
+    )
+
+  }
+
 
 }]);

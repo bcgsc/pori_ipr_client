@@ -154,8 +154,27 @@ app.factory('api.tracking.task', ['_', '$http', '$q', (_, $http, $q) => {
       )
 
     });
+  };
 
+  /**
+   * Change the assigned user of a task
+   *
+   * @param {string} task - Task ident string
+   * @param {string} user - User ident string
+   * @returns {Promise} - Resolves with updated task object
+   */
+  $task.assignUser = (task, user) => {
 
+    return $q((resolve, reject) => {
+      $http.put(api + '/' + task + '/assignTo/' + user).then(
+        (result) => {
+          resolve(result.data);
+        },
+        (err) => {
+          reject(err);
+        }
+      )
+    });
   };
 
   return $task;

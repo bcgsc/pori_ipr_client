@@ -44,7 +44,7 @@ md-dialog(layout="column", aria-label="Task -{{task.name}}", flex-md=80, flex-xs
             div Outcome/Results
 
             div(layout="column")
-                span(ng-if="task.outcome.length === null") None
+                span(ng-if="task.outcome === null") None
                 div(layout="row", ng-if="task.outcome")
                     span(flex=40) Check-in Date
                     span Check-in Value
@@ -54,4 +54,42 @@ md-dialog(layout="column", aria-label="Task -{{task.name}}", flex-md=80, flex-xs
                     span(flex, ng-if="task.outcomeType === 'text'") {{ outcome.value }}
                     span
                         md-icon(ng-click="removeCheckin(d)").clickable delete
+
+
+        div(layout="column", md-whiteframe=2).detail
+            div(layout="row")
+                span(flex) Assigned To
+                md-icon(ng-click="showAssignUser=!showAssignUser", ng-class="{'md-icon-active': showAssignUser}").clickable group_add
+            div(layout="row", ng-if="!task.assignedTo.username").assignedTo
+                span No user assigned to this task.
+            div(layout="row", ng-if="task.assignedTo.username", ng-hide="showAssignUser").assignedTo
+                span
+                    img(ng-src="https://www.bcgsc.ca/jira/secure/useravatar?size=xlarge&ownerId={{task.assignedTo.username}}")
+                div(flex, layout="column").content
+                    h1 {{task.assignedTo.firstName}} {{task.assignedTo.lastName}}
+                    div
+                        a(href="mailto: {{task.assignedTo.firstName}} {{task.assignedTo.lastName}} <{{task.assignedTo.email}}>?subject={{pog.POGID}} {{task.name}}") {{task.assignedTo.email}}
+                    div
+                        span Last online
+                        span {{ task.assignedTo.lastLogin | amDateFormat: 'dddd, MMMM Do YYYY, h:mm:ss a' }}
+            div(layout="row", ng-show="showAssignUser")
+                md-autocomplete(
+                md-input-name="User",
+                md-selected-item="assign.user",
+                md-search-text="searchQuery",
+                md-items="user in searchUsers(searchQuery)",
+                md-item-text="user.firstName + ' ' + user.lastName",
+                md-floating-label="User",
+                md-autofocus=true,
+                md-autoselect=true,
+                md-require-match,
+                md-dropdown-position="bottom",
+                required,
+                flex
+                )
+                    md-item-template {{user.firstName}} {{user.lastName}}
+                    div(ng-messages="User", ng-if="form.User.$touched")
+                        div(ng-message="required") A user must be selected
+                span
+                    md-button(ng-click="assignUser()").md-raised.md-primary Assign
 
