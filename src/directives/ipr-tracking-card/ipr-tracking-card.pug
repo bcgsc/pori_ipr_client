@@ -1,0 +1,59 @@
+div.header
+    h1(layout="row")
+        md-icon(md-whiteframe=2, ng-if="error").warning.clickable error
+            md-tooltip {{getTaskStateCount('failed')}} task(s) have failed
+        md-icon(md-whiteframe=2, ng-if="hold").notice.clickable watch_later
+            md-tooltip {{getTaskStateCount('hold')}} task(s) are being held
+        span(flex) {{pog.POGID}}
+        //span(layout="row", layout-align="middle space-around").priority.clickable
+        div.priority
+            span Priority
+            span(ng-if="analysis.priority===1") Low
+            span(ng-if="analysis.priority===2") Normal
+            span(ng-if="analysis.priority===3").high High
+    div(layout="row").subheader
+        span(flex) {{analysis.name}}
+        span
+            span Complete
+            span {{ getTaskStateCount('complete') }}/{{state.tasks.length}}
+
+//div(layout="row").details
+    div(flex)
+        span TC
+        span(ng-class="{low: getTumourContent(pog) < 40, clickable: getTumourContent(pog) < 40}") {{getTumourContent(pog)}}%
+            md-tooltip(ng-if="getTumourContent(pog) < 40") Low tumour content
+    div {{getPloidy(pog)}}
+
+//div(layout="column", ng-show="pog.showTasks").tasks
+div(layout="column", ng-show="pog.showTasks").tasks
+    div(layout="row", ng-repeat="(i, task) in state.tasks", ng-class="{warning: (task.status === 'failed' ), notice: (task.status === 'hold' )}")
+        span {{i+1}}.
+        span(flex, md-truncate, ng-click="showTask($event, task)").clickable {{task.name}}
+
+        span(ng-if="task.outcomeType === 'date' && task.outcome !== null && numKeys(task.outcome) === 1").value {{ getFirstOutcome(task) | amDateFormat: 'YYYY-MM-DD' }}
+        span(ng-if="task.outcomeType === 'text' && task.outcome !== null && numKeys(task.outcome) === 1", md-truncate).value {{ getFirstOutcome(task) }}
+
+        span.assignedTo
+            md-icon(ng-if="!task.assignedTo.username") person
+                md-tooltip Assign a user
+
+            img(ng-src="https://www.bcgsc.ca/jira/secure/useravatar?size=xsmall&ownerId={{task.assignedTo.username}}", ng-if="task.assignedTo.username", ng-mouseenter="openUserWindow(task.assignedTo)", ng-mouseleave="closeUserWindow(task.assignedTo)")
+
+            div(ng-if="task.assignedTo.username", ng-show="task.assignedTo.show").popover-container
+                div(ng-mouseenter="keepUserWindow(task.assignedTo)", ng-mouseleave="unKeepUserWindow(task.assignedTo)", md-whiteframe="4").content
+                    div.header {{task.assignedTo.firstName}} {{task.assignedTo.lastName}}
+                    div(layout="row").body
+                        div.avatar
+                            img(ng-src="https://www.bcgsc.ca/jira/secure/useravatar?size=medium&ownerId={{task.assignedTo.username}}")
+                        div(flex, layout="column").details
+                            span
+                                a(href="mailto: {{task.assignedTo.firstName}} {{task.assignedTo.lastName}} <{{task.assignedTo.email}}>?subject={{pog.POGID}} {{task.name}}") {{task.assignedTo.email}}
+                            span
+                                span Last online
+                                span {{ task.assignedTo.lastLogin | amDateFormat: 'dddd, MMMM Do YYYY, h:mm:ss a' }}
+        span.status(ng-class="task.status").clickable &nbsp;
+            md-tooltip Status: {{task.status}}
+
+
+
+div(layout="row", flex, ng-click="pog.showTasks = !pog.showTasks").taskToggle.text-center.clickable {{(pog.showTasks) ? 'hide' : 'show'}} tasks

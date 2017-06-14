@@ -1,0 +1,57 @@
+md-dialog(layout="column", aria-label="Task -{{task.name}}", flex-md=80, flex-xs=100, flex-lg=80, flex=60).tracking-task
+    md-toolbar
+        .md-toolbar-tools
+            h2 {{pog.POGID}} - {{task.name}}
+            span(flex)
+            md-button.md-icon-button(ng-click='cancel()')
+                md-icon cancel
+        div(ng-class="task.status").md-toolbar-subheader
+            h3(flex) Status:
+                span {{task.status}}
+                md-menu
+                    md-button(aria-label="Open menu with custom trigger" class="md-icon-button" ng-click="$mdMenu.open()")
+                        md-icon edit
+                    md-menu-content(width="4" ng-mouseleave="$mdMenu.close()")
+                        md-menu-item(ng-repeat="state in states")
+                            md-button(ng-click="updateStatus(state)").text-capitalize {{state}}
+    md-dialog-content.iprBox
+
+        div(layout="column", md-whiteframe=2).detail
+            div Description
+            div {{task.description}}
+
+        div(layout="row")
+            div(layout="column", flex)
+                div(md-whiteframe=2).detail
+                    div Expected Outcome Type
+                    div {{task.outcomeType}}
+
+            div(layout="column", flex)
+                div(md-whiteframe=2).detail
+                    div Check-ins
+                    div(layout="row")
+                        span(flex) {{task.checkIns}}/{{task.checkInsTarget}}
+                        span
+                            md-icon(ng-if="task.checkIns === task.checkInsTarget").disabled library_add
+                            md-icon(ng-if="task.checkIns !== task.checkInsTarget", ng-click="toggleCheckIn()").checkIn.clickable library_add
+
+        div(layout="column", md-whiteframe=2, ng-show="addCheckin").detail
+            div Check-in
+            div
+                ipr-tracking-checkin(task="task", state="state")
+
+        div(layout="column", md-whiteframe=2).detail
+            div Outcome/Results
+
+            div(layout="column")
+                span(ng-if="task.outcome.length === null") None
+                div(layout="row", ng-if="task.outcome")
+                    span(flex=40) Check-in Date
+                    span Check-in Value
+                div(ng-repeat="(d, outcome) in task.outcome", layout="row")
+                    span(flex=40) {{ d | amDateFormat: 'YYYY-MM-DD HH:mm:ss' }}
+                    span(flex, ng-if="task.outcomeType === 'date'") {{ outcome.value | amDateFormat: 'YYYY-MM-DD' }}
+                    span(flex, ng-if="task.outcomeType === 'text'") {{ outcome.value }}
+                    span
+                        md-icon(ng-click="removeCheckin(d)").clickable delete
+
