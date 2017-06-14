@@ -80,7 +80,7 @@ table.print
                 h3 Variants of Potential Clinical Relevance
         tr
             td.somaticMutations
-                div.detailedDataAbsent No somatic small mutations of clinical relevance were found from the analysis.
+                div(ng-if="smallMutations.clinical.length == 0").detailedDataAbsent No somatic small mutations of clinical relevance were found from the analysis.
 
                 table(ng-if="smallMutations.clinical.length > 0").detailedData
                     tr.header
@@ -110,13 +110,13 @@ table.print
                         td(style="width: 7%") {{mutation.RNAReads}}
                         td(style="width: 7%") {{mutation.expressionRpkm}}
                         td {{mutation.foldChange}}
-                        td(style="width: 5%") {{mutation.TCGAPerc}}
+                        td(style="width: 5%") {{mutation.TCGAPerc || 'na'}}
         tr
             td.somaticMutations
                 h3 Variants of Prognostic or Diagnostic Relevance
         tr
             td.somaticMutations
-                div.detailedDataAbsent No somatic small mutations of prognostic or diagnostic relevance were found from the analysis.
+                div(ng-if="smallMutations.nostic.length == 0").detailedDataAbsent No somatic small mutations of prognostic or diagnostic relevance were found from the analysis.
 
                 table(ng-if="smallMutations.nostic.length > 0").detailedData
                     tr.header
@@ -146,14 +146,14 @@ table.print
                         td(style="width: 7%") {{mutation.RNAReads}}
                         td(style="width: 7%") {{mutation.expressionRpkm}}
                         td(style="width: 7%") {{mutation.foldChange}}
-                        td(style="width: 5%") {{mutation.TCGAPerc}}
+                        td(style="width: 5%") {{mutation.TCGAPerc || 'na'}}
         tr
             td.somaticMutations
                 h3 Variants of Biological Relevance
         tr
             td.somaticMutations
 
-                div.detailedDataAbsent No somatic small mutations of biological relevance were found from the analysis.
+                div(ng-if="smallMutations.biological.length == 0").detailedDataAbsent No somatic small mutations of biological relevance were found from the analysis.
 
                 table(ng-if="smallMutations.biological.length > 0").detailedData
                     tr.header
@@ -183,14 +183,14 @@ table.print
                         td(style="width: 7%") {{mutation.RNAReads}}
                         td(style="width: 7%") {{mutation.expressionRpkm}}
                         td {{mutation.foldChange}}
-                        td(style="width: 5%") {{mutation.TCGAPerc}}
+                        td(style="width: 5%") {{mutation.TCGAPerc || 'na'}}
         tr
             td.somaticMutations
-                h3 Variants of Unknown Significant in known cancer-related genes
+                h3 Variants of Unknown Significance in known cancer-related genes
         tr
             td.somaticMutations
 
-                div.detailedDataAbsent No somatic small mutations of unknown relevance were found from the analysis.
+                div(ng-if="smallMutations.unknown.length == 0").detailedDataAbsent No somatic small mutations of unknown relevance were found from the analysis.
 
                 table(ng-if="smallMutations.unknown.length > 0").detailedData
                     tr.header
@@ -224,4 +224,4 @@ table.print
                         td(style="width: 7%") {{mutation.RNAReads}}
                         td(style="width: 7%") {{mutation.expressionRpkm}}
                         td {{mutation.foldChange}}
-                        td(style="width: 5%") {{mutation.TCGAPerc}}
+                        td(style="width: 5%") {{mutation.TCGAPerc || 'na'}}
