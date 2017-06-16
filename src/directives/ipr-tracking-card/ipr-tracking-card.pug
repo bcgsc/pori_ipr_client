@@ -17,14 +17,6 @@ div.header
             span Complete
             span {{ getTaskStateCount('complete') }}/{{state.tasks.length}}
 
-//div(layout="row").details
-    div(flex)
-        span TC
-        span(ng-class="{low: getTumourContent(pog) < 40, clickable: getTumourContent(pog) < 40}") {{getTumourContent(pog)}}%
-            md-tooltip(ng-if="getTumourContent(pog) < 40") Low tumour content
-    div {{getPloidy(pog)}}
-
-//div(layout="column", ng-show="pog.showTasks").tasks
 div(layout="column", ng-show="pog.showTasks").tasks
     div(layout="row", ng-repeat="(i, task) in state.tasks", ng-class="{warning: (task.status === 'failed' ), notice: (task.status === 'hold' )}")
         span {{i+1}}.
@@ -44,7 +36,7 @@ div(layout="column", ng-show="pog.showTasks").tasks
                     div.header {{task.assignedTo.firstName}} {{task.assignedTo.lastName}}
                     div(layout="row").body
                         div.avatar
-                            img(ng-src="https://www.bcgsc.ca/jira/secure/useravatar?size=medium&ownerId={{task.assignedTo.username}}")
+                            img(ng-if="task.assignedTo.username", ng-src="https://www.bcgsc.ca/jira/secure/useravatar?size=medium&ownerId={{task.assignedTo.username}}")
                         div(flex, layout="column").details
                             span
                                 a(href="mailto: {{task.assignedTo.firstName}} {{task.assignedTo.lastName}} <{{task.assignedTo.email}}>?subject={{pog.POGID}} {{task.name}}") {{task.assignedTo.email}}
