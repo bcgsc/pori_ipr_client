@@ -22,10 +22,12 @@ div(md-whiteframe=2).pog
             span Role
             span.text-capitalize {{(pog.myRoles.length === 0) ? 'None' : pog.myRoles[0].role}}
                 md-tooltip Assigned by {{role.addedBy.firstName}} {{role.addedBy.lastName}} {{role.createdAt | amTimeAgo}}
-        div {{report.createdAt | amDateFormat: 'YYYY/MM/DD' }}
+        div.clickable {{report.createdAt | amDateFormat: 'YYYY/MM/DD' }}
+            md-tooltip {{report.createdAt | amDateFormat: 'YYYY/MM/DD HH:mm:ss' }}
 
     div(layout="row", ng-if="report.type === 'probe'").details
         div(flex)
             span Report version
             span {{report.reportVersion || 'N/A'}}
-        div {{report.createdAt | amDateFormat: 'YYYY/MM/DD' }}
+        div.clickable {{report.createdAt | amDateFormat: 'YYYY/MM/DD' }}
+            md-tooltip {{report.createdAt | amDateFormat: 'YYYY/MM/DD HH:mm:ss' }}
