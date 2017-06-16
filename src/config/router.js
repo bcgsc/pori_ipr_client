@@ -974,21 +974,45 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       }
     })
 
-
-
     .state('dashboard.tracking', {
       url: '/tracking',
       data: {
-        displayName: 'POG Tracking'
+        displayName: 'POG Tracking',
+        breadcrumbProxy: 'dashboard.tracking.board'
       },
       controller: 'controller.dashboard.tracking',
       templateUrl: 'dashboard/tracking/tracking.html',
       resolve: {
         definitions: ['$q', 'api.tracking.definition', ($q, $definition) => {
           return $definition.all();
-        }],
+        }]
+      }
+    })
+
+    .state('dashboard.tracking.board', {
+      url: '/board',
+      data: {
+        displayName: 'Board'
+      },
+      controller: 'controller.dashboard.tracking.board',
+      templateUrl: 'dashboard/tracking/board/board.html',
+      resolve: {
         states: ['$q', 'api.tracking.state', ($q, $state) => {
           return $state.all();
+        }]
+      }
+    })
+
+    .state('dashboard.tracking.definition', {
+      url: '/definition',
+      data: {
+        displayName: 'State Definitions'
+      },
+      controller: 'controller.dashboard.tracking.definition',
+      templateUrl: 'dashboard/tracking/definition/definition.html',
+      resolve: {
+        groups: ['$q', 'api.user', ($q, $user) => {
+          return $user.group.all();
         }]
       }
     })

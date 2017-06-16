@@ -5,7 +5,7 @@ div(layout='row', flex)
     div(flex, layout="row")
 
         div(layout="column", ng-cloak).sidebar
-            div(layout="row", ui-sref="dashboard.tracking", ng-class="{active: ($state.current.name === 'dashboard.tracking' || $state.current.name.indexOf('tracking') > -1)}")
+            div(layout="row", ui-sref="dashboard.tracking.board", ng-class="{active: ($state.current.name === 'dashboard.tracking' || $state.current.name.indexOf('tracking') > -1)}")
                 md-icon my_location
                     md-tooltip(ng-if="!maximized", md-direction="right") Tracking
                 span(flex, ng-show="maximized") Tracking
