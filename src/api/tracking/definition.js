@@ -17,10 +17,12 @@ app.factory('api.tracking.definition', ['_', '$http', '$q', (_, $http, $q) => {
    *
    * @returns {Promise} - Resolves with array of definitions
    */
-  $definition.all = () => {
+  $definition.all = (options={params: null}) => {
     return $q((resolve, reject) => {
 
-      $http.get(api + '/definition').then(
+      if(!options.params) options.params = null;
+
+      $http.get(api + '/definition', options).then(
         (result) => {
           resolve(result.data);
         },
