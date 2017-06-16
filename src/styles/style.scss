@@ -220,3 +220,13 @@ img.loader-spin {
 .line-break-preserve {
   white-space: pre-wrap;
 }
+
+
+md-input-container {
+  .hint {
+    font-size: 0.75em;
+    color: rgb(130,130,130);
+    padding: 4px;
+    display: inline-block;
+  }
+}
