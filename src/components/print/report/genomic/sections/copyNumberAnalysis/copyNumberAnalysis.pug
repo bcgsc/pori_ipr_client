@@ -51,7 +51,7 @@ tbody
                     th Fold Change vs. {{report.tumourAnalysis.normalExpressionComparator}}
                     th {{report.tumourAnalysis.diseaseExpressionComparator}} %ile
                 tr(ng-if="group.length === 0")
-                    td(colspan=13) No somatic small mutations of clinical relevance were found from the analysis.
+                    td(colspan=13) No copy number variants of {{titleMap[k]}} were found from the analysis.
                 tr(ng-repeat="cnv in group")
                     td(style="width: 11%") {{cnv.gene}}
                     td(style="width: 7%") {{cnv.ploidyCorrCpChange}}
