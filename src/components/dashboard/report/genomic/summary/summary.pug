@@ -8,7 +8,7 @@ section
             dt(flex="{{detailSize}}", ng-init="detailSize=10") Patient ID:
             dd(flex) {{pog.POGID}}
 
-            dt(flex="{{detailSize}}") Gender:
+            dt(flex="{{detailSize}}") Sex:
             dd(flex) {{data.pi.gender}}
 
             dt(flex="{{detailSize}}") Tumour Sample:
@@ -143,8 +143,8 @@ section
             div(layout="column").data
                 div(layout="row", flex)
                     div(flex) Interpreted prevelance
-                    div(flex) {{data.ms.snvPercentileCategory}}
-                    div(flex) {{data.ms.indelPercentileCategory}}
+                    div(flex) {{data.ms.snvReportCategory}}
+                    div(flex) {{data.ms.indelReportCategory}}
                     div(flex) {{data.ms.svPercentilePOGCategory}}
                 div(layout="row", flex).data
                     div(flex) Percentile among compendium
