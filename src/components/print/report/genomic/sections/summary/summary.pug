@@ -114,8 +114,8 @@ tr
                 tbody
                     tr
                         td(width="25%").label.text-light Interpreted prevelance
-                        td(width="25%", colspan=2) {{(data.ms.snvPercentileDiseaseCategory === "na") ? 'LOW' : data.ms.snvPercentileDiseaseCategory}}
-                        td(width="25%", colspan=2) {{(data.ms.indelPercentileDiseaseCategory === "na") ? 'LOW' : data.ms.indelPercentileDiseaseCategory}}
+                        td(width="25%", colspan=2) {{(data.ms.snvReportCategory === "na") ? 'na' : data.ms.snvReportCategory}}
+                        td(width="25%", colspan=2) {{(data.ms.indelReportCategory === "na") ? 'na' : data.ms.indelReportCategory}}
                         td(width="25%", colspan=2) {{data.ms.svPercentilePOGCategory}}
                     tr
                         td.label.text-light Percentile among compendium
