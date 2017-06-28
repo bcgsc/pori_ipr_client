@@ -1,4 +1,4 @@
-md-content(flex, layout="column").md-padding
+md-content(flex, layout="column").md-padding.trackingBoard
 
     md-sidenav(md-is-open="showOptions", md-whiteframe=4).md-sidenav-right
         md-toolbar
@@ -10,7 +10,7 @@ md-content(flex, layout="column").md-padding
                     md-switch(ng-model="filter.hidden", ng-change="refreshList()").md-primary
                 md-list-item
                     p Track new POG
-                    md-button(ng-click="trackNewPOG()").md-raised.md-primary.md-icon-button
+                    md-button(ng-click="trackNewPOG($event)").md-raised.md-primary.md-icon-button
                         md-icon add
                 md-list-item
                     p Update Definitions
@@ -31,7 +31,7 @@ md-content(flex, layout="column").md-padding
     div(layout="column", flex).kanban
         div(layout="row", layout-align="space-between").title
 
-            div(layout="column", flex, ng-repeat="definition in definitions") {{definition.name}}
+            div(layout="column", flex, ng-repeat="definition in definitions") {{definition.name}} ({{definition.group.name || 'N/A' }})
 
         div(layout="row", flex, layout-align="space-between")
 
@@ -39,6 +39,9 @@ md-content(flex, layout="column").md-padding
                 div(ng-show="loading").text-center Loading...
                 ipr-tracking-card(ng-repeat="state in sortedStates[definition.slug] | filter: searchPogs(state, pogQuery)", md-whiteframe=2, state="state", ng-hide="loading").pog
 
-            //md-content(layout="column", flex).column
-                div(ng-show="loading").text-center Loading...
-                ipr-report-listing-card(ng-repeat="pog in pogs | filter: searchPogs('active', pogQuery)", md-whiteframe=2, report="report", pog="pog", state="active", ng-hide="loading").pog
+    div(layout="row").stateDefs
+        p.pending Pending
+        p.active Active
+        p.complete Completed
+        p.hold Hold
+        p.failed Failed

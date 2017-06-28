@@ -1,0 +1,31 @@
+md-content.trackingBoard {
+
+  .stateDefs {
+
+    p {
+      margin: 10px 10px 0 0;
+      font-size: 11px;
+      color: rgba(0,0,0,0.6);
+    }
+
+    p:before {
+      content: "";
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border: 1px solid #c8c8c8;
+      margin-right: 4px;
+      border-radius: 3px;
+    }
+
+    p.complete:before { background-color: #2bae57; }
+    p.active:before { background-color: #65d1cb; }
+    p.hold:before { background-color: #e9dd4e; }
+    p.pending:before { background-color: #aaaaaa; }
+    p.failed:before { background-color: #df2816; }
+
+  }
+
+
+
+}

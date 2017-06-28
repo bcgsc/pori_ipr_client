@@ -1,5 +1,5 @@
 md-dialog(layout="column", aria-label="Start Tracking POG", flex=50).editor
-    form(flex='auto', name='Track', ng-submit="submit(form)", novalidate)
+    form(flex='auto', name='Track', ng-submit="submit(Track)", novalidate)
         md-toolbar
             .md-toolbar-tools
                 h2 Start Tracking POG
@@ -22,6 +22,7 @@ md-dialog(layout="column", aria-label="Start Tracking POG", flex=50).editor
                         md-autofocus=true,
                         md-autoselect=true,
                         md-dropdown-position="bottom",
+                        md-require-match=false,
                         required,
                         flex
                         )
@@ -41,8 +42,13 @@ md-dialog(layout="column", aria-label="Start Tracking POG", flex=50).editor
 
 
                     md-input-container(flex)
-                        input(name="AnalysisName", placeholder="Analysis Name (Biopsy #)", ng-model="track.analysis_name")
+                        input(name="AnalysisBiopsy", placeholder="Analysis Biopsy (Biopsy #)", ng-model="track.analysis_biopsy")
                         p.hint Indicates the ordinal of the analysis run post-sequencing. This value can be automatically populated later by BioApps.
+
+                div(layout="row")
+                    md-input-container(flex)
+                        input(name="AnalysisName", placeholder="Analysis Name", ng-model="track.name")
+                        p.hint The human friendly name for this analysis. Eg: Biopsy 2
 
                 div(layout="row")
                     md-input-container(flex)
