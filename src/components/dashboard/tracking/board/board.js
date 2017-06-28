@@ -77,7 +77,7 @@ app.controller('controller.dashboard.tracking.board',
     $mdDialog.show({
       targetEvent: $event,
       templateUrl: 'dashboard/tracking/board/board.new.html',
-      controller: ['$q', 'scope', 'api.lims', 'api.pog', ($q, scope, $lims, $pog) => {
+      controller: ['$q', 'scope', 'api.lims', 'api.pog', 'api.tracking', ($q, scope, $lims, $pog, $tracking) => {
 
 
         scope.cancel = () => {
@@ -87,6 +87,24 @@ app.controller('controller.dashboard.tracking.board',
         scope.submit = (f) => {
           // Check Validation
           console.log('Check validation of form', f);
+
+          if(scope.track.POGID === undefined || scope.track.POGID === null) scope.track.POGID = scope.searchQuery;
+          if(typeof scope.track.POGID === 'object') scope.track.POGID = scope.track.POGID.POGID;
+
+          if(typeof scope.track.disease === 'object') scope.track.disease = scope.track.disease.text;
+
+          // Submit data to API
+          $tracking.init(scope.track).then(
+            (result) => {
+
+              // Add new states to array
+              $mdDialog.hide({states: result});
+
+            },
+            (err) => {
+              console.log('Failed to init tracking', err);
+            }
+          )
 
         };
 
@@ -131,6 +149,22 @@ app.controller('controller.dashboard.tracking.board',
 
       }]
     })
+      // Modal closed
+      .then(
+        // Successfully
+        (result) => {
+
+          // Take result, merge with existing and sort
+          states = states.concat(result.states);
+          sortStates(states);
+
+          $mdToast.show($mdToast.simple().textContent('Tracking successfully initialized.'));
+        },
+        // Canceled
+        () => {
+          $mdToast.show($mdToast.simple().textContent('No tracking initialized.'));
+        }
+      )
 
   };
 
