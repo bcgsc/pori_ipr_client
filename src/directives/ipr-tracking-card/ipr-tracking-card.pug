@@ -6,24 +6,31 @@ div.header
             md-tooltip {{getTaskStateCount('hold')}} task(s) are being held
         span(flex) {{pog.POGID}}
         //span(layout="row", layout-align="middle space-around").priority.clickable
-        div.priority
+        span.completion
+            span Complete
+            span {{ getTaskStateCount('complete') }}/{{state.tasks.length}}
+        //div.priority
+            span Priority
+
+    div(layout="row").subheader
+        span(flex) {{analysis.name}}
+        span.priority
             span Priority
             span(ng-if="analysis.priority===1") Low
             span(ng-if="analysis.priority===2") Normal
-            span(ng-if="analysis.priority===3").high High
-    div(layout="row").subheader
-        span(flex) {{analysis.name}}
-        span
-            span Complete
-            span {{ getTaskStateCount('complete') }}/{{state.tasks.length}}
+            span(ng-if="analysis.priority===3").high.ipr-raised High
 
-div(layout="column", ng-show="pog.showTasks").tasks
+div(layout="column", ng-show="showTasks").tasks
+    div(ng-show="loadingTasks")
+        md-progress-linear(md-mode="indeterminate")
+        div.text-center Loading Tasks
+
     div(layout="row", ng-repeat="(i, task) in state.tasks", ng-class="{warning: (task.status === 'failed' ), notice: (task.status === 'hold' )}")
         span {{i+1}}.
         span(flex, md-truncate, ng-click="showTask($event, task)").clickable {{task.name}}
 
-        span(ng-if="task.outcomeType === 'date' && task.outcome !== null && numKeys(task.outcome) === 1").value {{ getFirstOutcome(task) | amDateFormat: 'YYYY-MM-DD' }}
-        span(ng-if="task.outcomeType === 'text' && task.outcome !== null && numKeys(task.outcome) === 1", md-truncate).value {{ getFirstOutcome(task) }}
+        span(ng-if="task.outcomeType === 'date' && task.checkins.length === 1").value {{ task.checkins[0].outcome | amDateFormat: 'YYYY-MM-DD' }}
+        span(ng-if="task.outcomeType === 'text' && task.checkins.length === 1", md-truncate).value {{ task.checkins[0].outcome }}
 
         span.assignedTo
             md-icon(ng-show="!task.assignedTo.username") person
@@ -48,4 +55,13 @@ div(layout="column", ng-show="pog.showTasks").tasks
 
 
 
-div(layout="row", flex, ng-click="pog.showTasks = !pog.showTasks").taskToggle.text-center.clickable {{(pog.showTasks) ? 'hide' : 'show'}} tasks
+div(layout="row", flex).taskToggle
+    div(flex)
+    div(ng-click="getTasks()").clickable.text-center.toggle
+        md-icon {{(pog.showTasks) ? 'arrow_drop_up' : 'arrow_drop_down'}}
+            md-tooltip {{(pog.showTasks) ? 'Hide list of tasks' : 'Show list of tasks'}}
+    div(flex, layout="row").edit
+        span(flex)
+        span(layout="row", ng-click="showState()").clickable
+            span(flex).text-right settings
+            md-icon edit

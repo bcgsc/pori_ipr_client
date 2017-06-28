@@ -1,4 +1,4 @@
-app.directive("iprTrackingCard", ['$q', '_', '$mdDialog', '$mdToast', '$state', '$timeout', ($q, _, $mdDialog, $mdToast, $state, $timeout) => {
+app.directive("iprTrackingCard", ['$q', '_', '$mdDialog', '$mdToast', '$timeout', 'api.tracking.state', ($q, _, $mdDialog, $mdToast, $timeout, $state) => {
 
 
   return {
@@ -10,12 +10,16 @@ app.directive("iprTrackingCard", ['$q', '_', '$mdDialog', '$mdToast', '$state', 
     templateUrl: 'ipr-tracking-card/ipr-tracking-card.html',
     link: (scope, element, attr) => {
 
+      // Add state status to classList
+      element[0].classList.add(scope.state.status);
+
       let pog = scope.pog = scope.state.analysis.pog;
       let analysis = scope.analysis = scope.state.analysis;
       let state = scope.state;
       
       // Sort Tasks by ordinal
       scope.state.tasks = state.tasks =_.sortBy(scope.state.tasks, 'ordinal');
+      scope.showTasks = false;
       scope.error = false; // Default error state
       scope.priority = new Array(analysis.priority);
 
@@ -70,8 +74,27 @@ app.directive("iprTrackingCard", ['$q', '_', '$mdDialog', '$mdToast', '$state', 
         return first.value;
       };
 
-      scope.numKeys = (o) => {
-        return Object.keys(o).length;
+      scope.getTasks = () => {
+
+        if(scope.showTasks) return scope.showTasks = false;
+
+        scope.showTasks = true;
+        scope.state.tasks = [];
+        scope.loadingTasks = true;
+
+        // Retrieve tasks
+        $state.getState(state.ident).then(
+          (result) => {
+
+            scope.state.tasks =_.sortBy(result.tasks, 'ordinal');
+            scope.loadingTasks = false;
+
+          },
+          (err) => {
+            console.log('Unable to get results');
+          }
+        )
+
       };
 
       scope.showTask = ($event, task) => {
@@ -104,10 +127,46 @@ app.directive("iprTrackingCard", ['$q', '_', '$mdDialog', '$mdToast', '$state', 
         );
       };
 
+
+      scope.showState = ($event) => {
+
+        scope.showTasks = false;
+
+        $mdDialog.show({
+          targetEvent: $event,
+          escapeToClose: false,
+          locals: {
+            state: state,
+            pog: pog
+          },
+          templateUrl: 'ipr-tracking-card/ipr-tracking-card.state.html',
+          controller: 'controller.ipr-tracking-card.state',
+          clickOutToClose: false
+        }).then(
+          (data) => {
+            // Remove Previous state class
+            element[0].classList.remove(scope.state.status);
+
+            checkStates();
+            // Propagate
+            scope.state = data.state;
+            state = data.state;
+            scope.state.tasks = _.sortBy(data.state.tasks, 'ordinal');
+
+            // Add new state class
+            element[0].classList.add(scope.state.status);
+          },
+          (err) => {
+            console.log('Error closing err', err);
+          }
+        );
+      };
+
       // Trigger State Check
       checkStates();
 
     } // end link
+
   }; // end return
 
 }]);
