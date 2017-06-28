@@ -149,7 +149,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
 			templateUrl: 'dashboard/listing/listing.html',
 			controller: 'controller.dashboard.listing',
       data: {
-			  displayName: "POG Cases"
+			  displayName: CONFIG.PROJECT.NAME + " Cases"
       },
       resolve: {
         pogs: ['$q', 'api.pog', '$userSettings', 'user', ($q, $pog, $userSettings) => {
@@ -165,7 +165,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         displayName: '{{pog.POGID}}',
         breadcrumbProxy: 'dashboard.pog.report.listing'
       },
-      url: '/POG/{POG}',
+      url: '/'+CONFIG.PROJECT.NAME+'/{POG}',
       controller: 'controller.dashboard.pog',
       templateUrl: 'dashboard/pog/pog.html',
       resolve: {

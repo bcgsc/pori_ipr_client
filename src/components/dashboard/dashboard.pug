@@ -5,7 +5,7 @@ div(layout='row', flex)
     div(flex, layout="row")
 
         div(layout="column", ng-cloak).sidebar
-            div(layout="row", ui-sref="dashboard.tracking.board", ng-class="{active: ($state.current.name === 'dashboard.tracking' || $state.current.name.indexOf('tracking') > -1)}")
+            div(layout="row",ng-if="PROJECT.FEATURE.TRACKING", ui-sref="dashboard.tracking.board", ng-class="{active: ($state.current.name === 'dashboard.tracking' || $state.current.name.indexOf('tracking') > -1)}")
                 md-icon my_location
                     md-tooltip(ng-if="!maximized", md-direction="right") Tracking
                 span(flex, ng-show="maximized") Tracking
@@ -15,18 +15,18 @@ div(layout='row', flex)
                     md-tooltip(ng-if="!maximized", md-direction="right") Reports
                 span(flex, ng-show="maximized") Reports
 
-            div(layout="row", ui-sref="dashboard.knowledgebase.dashboard", ng-class="{active: ($state.current.name.indexOf('knowledgebase') > -1)}")
+            div(layout="row", ng-if="PROJECT.FEATURE.KNOWLEDGEBASE", ui-sref="dashboard.knowledgebase.dashboard", ng-class="{active: ($state.current.name.indexOf('knowledgebase') > -1)}")
                 md-icon local_library
                     md-tooltip(ng-if="!maximized", md-direction="right") Knowledgebase
                 span(flex, ng-show="maximized") Knowledgebase
 
-            div(layout="row", ui-sref="dashboard.knowledgebase.references", ng-class="{active: ($state.current.name === 'dashboard.knowledgebase.references')}", ng-show="maximized || (!maximized && $state.current.name.indexOf('knowledgebase') > 1)").submenu
+            div(layout="row", ng-if="PROJECT.FEATURE.KNOWLEDGEBASE", ui-sref="dashboard.knowledgebase.references", ng-class="{active: ($state.current.name === 'dashboard.knowledgebase.references')}", ng-show="maximized || (!maximized && $state.current.name.indexOf('knowledgebase') > 1)").submenu
                 md-icon(ng-show="maximized") subdirectory_arrow_right
                 md-icon(ng-show="!maximized") import_contacts
                     md-tooltip(ng-if="!maximized", md-direction="right") References
                 span(flex, ng-show="maximized") References
 
-            div(layout="row", ui-sref="dashboard.knowledgebase.events", ng-class="{active: ($state.current.name === 'dashboard.knowledgebase.events')}", ng-show="maximized || (!maximized && $state.current.name.indexOf('knowledgebase') > 1)").submenu
+            div(layout="row", ng-if="PROJECT.FEATURE.KNOWLEDGEBASE", ui-sref="dashboard.knowledgebase.events", ng-class="{active: ($state.current.name === 'dashboard.knowledgebase.events')}", ng-show="maximized || (!maximized && $state.current.name.indexOf('knowledgebase') > 1)").submenu
                 md-icon(ng-show="maximized") subdirectory_arrow_right
                 md-icon(ng-show="!maximized") location_on
                     md-tooltip(ng-if="!maximized", md-direction="right") Events

@@ -26,8 +26,9 @@ app.run(($rootScope) => {
     $rootScope.showLoader = false;
 
   });
-  
-  
+
+  // Mount configuration
+  $rootScope.PROJECT = CONFIG.PROJECT;
   
 });
 
