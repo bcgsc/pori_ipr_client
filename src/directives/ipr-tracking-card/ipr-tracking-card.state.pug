@@ -1,0 +1,55 @@
+md-dialog(layout="column", aria-label="Task -{{task.name}}", flex-md=70, flex-xs=100, flex-lg=50, flex=50).tracking-task
+    md-toolbar
+        .md-toolbar-tools
+            h2 {{pog.POGID}} - {{state.name}}
+            span(flex)
+            md-button.md-icon-button(ng-click='cancel()')
+                md-icon cancel
+        div(ng-class="state.status").md-toolbar-subheader
+            h3(flex) Status:
+                span {{state.status}}
+                md-menu
+                    md-button(aria-label="Open menu with custom trigger" class="md-icon-button" ng-click="$mdMenu.open()")
+                        md-icon edit
+                    md-menu-content(width="4" ng-mouseleave="$mdMenu.close()")
+                        md-menu-item(ng-repeat="state in states")
+                            md-button(ng-click="updateStatus(state)").text-capitalize {{state}}
+    md-dialog-content.background-white
+        div(layout="column").padding-10
+            p Settings for the {{PROJECT.NAME}} tracking state. Changes here will immediately affect tasks associated with this state.
+
+
+            div(layout="row", layout-align="space-between", style="width: 90%; margin: 0 auto;")
+                div(flex=40, layout="row")
+                    label(style="padding-top:10px;") Started
+                    md-datepicker(ng-model="state.startedAt", md-placeholder="Started at", flex)
+
+                div(flex=40, layout="row")
+                    label(style="padding-top:10px;") Completed
+                    md-datepicker(ng-model="state.completedAt", md-placeholder="Completed at", flex)
+
+            div(layout="row")
+                md-autocomplete(
+                md-input-name="User",
+                md-selected-item="assign.user",
+                md-search-text="searchQuery",
+                md-items="user in searchUsers(searchQuery)",
+                md-item-text="user.firstName + ' ' + user.lastName",
+                md-floating-label="Assign all task to this user",
+                md-autofocus=true,
+                md-autoselect=true,
+                md-require-match,
+                md-dropdown-position="bottom",
+                required,
+                flex
+                )
+                    md-item-template {{user.firstName}} {{user.lastName}}
+                    div(ng-messages="User", ng-if="form.User.$touched")
+                        div(ng-message="required") A user must be selected
+
+
+
+            md-dialog-actions(layout="row", layout-aligh="end center")
+                span(flex)
+                md-button(type="submit").md-primary.md-raised Update State
+
