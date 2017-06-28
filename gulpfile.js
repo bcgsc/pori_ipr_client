@@ -131,13 +131,16 @@ let gulp = require('gulp'),
     pako = require('gulp-pako'),
     runSequence = require('run-sequence'),
     minimist = require('minimist'),
-    gulpStylelint = require('gulp-stylelint');
+    gulpStylelint = require('gulp-stylelint'),
+    gulpif = require('gulp-if');
 
 // Gulp task to clean/empty out builds directory 
 gulp.task('clean', () => {
   return del(['./builds/'+configManager.getEnvironment()]);
 });
 
+
+let env = configManager.detectEnvironment();
 
 gulp.task('config', () => {
 
@@ -168,10 +171,10 @@ gulp.task('config', () => {
  */
 gulp.task('js', () => {
   return gulp.src(files.js.app)
-    .pipe(sourcemaps.init())
+    .pipe(gulpif(env === 'development', sourcemaps.init()))
     .pipe(babel())
     .pipe(concat('app.js'))
-    //.pipe(If(config.env.production, uglify()))
+   // .pipe(gulpif(env === 'production', uglify()))
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('./builds/'+configManager.getEnvironment()+'/assets/js'))
     .pipe(connect.reload());
@@ -187,7 +190,7 @@ gulp.task('js', () => {
 gulp.task('libs', () => {
   return gulp.src(files.js.libs)
     .pipe(concat('libs.js'))
-    //.pipe(uglify())
+    //.pipe(gulpif(env === 'production', uglify()))
     //.pipe(pako.gzip())
     .pipe(gulp.dest('./builds/'+configManager.getEnvironment()+'/assets/libs'));
 });
@@ -223,7 +226,7 @@ gulp.task('pug-templates', () => {
   return gulp.src(files.pug.templates)
     .pipe(pug().on('error', gutil.log))
     .pipe(template('templates.js', {standalone: true}).on('error', gutil.log))
-    //.pipe(If(config.env.production, uglify()))
+    //.pipe(gulpif(env === 'production', uglify()))
     .pipe(gulp.dest('./builds/'+configManager.getEnvironment()+'/assets/js'))
     .pipe(connect.reload());
 });
