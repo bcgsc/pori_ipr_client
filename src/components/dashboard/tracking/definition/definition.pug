@@ -12,7 +12,7 @@ md-content(flex, layout="column", layout-fill).md-padding.definitions
 
         div(layout="row", flex, layout-align="space-between")
 
-            md-content(layout="column", flex=35, sv-root, sv-part="definitions", sv-on-sort="updateOrdinal()").column.definitionsList
+            md-content(layout="column", flex=35, sv-root="definitions", sv-part="definitions", sv-on-sort="updateOrdinal()").column.definitionsList
                 div(ng-repeat="def in definitions", ng-class="{active: (editing.ident === def.ident)}", sv-element).def
                     div(layout="row")
                         div
@@ -63,7 +63,7 @@ md-content(flex, layout="column", layout-fill).md-padding.definitions
                                         p(ng-message="maxlength") A maximum of 500 characters is allowed for descriptions
                             div(layout="column")
                                 h2 Tasks
-                                md-content(flex, sv-root, sv-part="editing.tasks").tasks
+                                md-content(flex, sv-root="tasks", sv-part="editing.tasks").tasks
                                     div(layout="row", ng-repeat="(i, task) in editing.tasks", sv-element).task
                                         span
                                             md-icon(sv-handle) drag_handle
