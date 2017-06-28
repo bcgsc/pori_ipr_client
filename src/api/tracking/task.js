@@ -21,7 +21,7 @@ app.factory('api.tracking.task', ['_', '$http', '$q', (_, $http, $q) => {
   $task.getByIdent = (ident) => {
     return $q((resolve, reject) => {
 
-      $http.get(api + '/' + getByIdent).then(
+      $http.get(api + '/' + ident).then(
         (result) => {
           resolve(result.data);
         },
@@ -140,11 +140,11 @@ app.factory('api.tracking.task', ['_', '$http', '$q', (_, $http, $q) => {
    * @param {string} datestamp - Datestamp key to be removed
    * @returns {Promise} - Resolves with updated task
    */
-  $task.revokeCheckin = (task, datestamp) => {
+  $task.revokeCheckin = (task, checkin) => {
 
     return $q((resolve, reject) => {
 
-      $http.delete(api + '/checkin/' + task + '/' + datestamp).then(
+      $http.delete(api + '/checkin/' + task + '/' + checkin).then(
         (result) => {
           resolve(result.data);
         },
