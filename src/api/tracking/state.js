@@ -65,7 +65,7 @@ app.factory('api.tracking.state', ['_', '$http', '$q', (_, $http, $q) => {
 
     return $q((resolve, reject) => {
 
-      $http.put(api + '/state/' + ident).then(
+      $http.put(api + '/state/' + ident, state).then(
         (result) => {
           resolve(result.data);
         },
