@@ -39,9 +39,9 @@ app.controller('controller.ipr-tracking-card.task',
 
   };
 
-  $scope.removeCheckin = (datestamp) => {
+  $scope.removeCheckin = (checkin) => {
 
-    $task.revokeCheckin($scope.task.ident, datestamp).then(
+    $task.revokeCheckin(task.ident, checkin.ident).then(
       (result) => {
         // Remove date stamp
         $scope.task = task = result;

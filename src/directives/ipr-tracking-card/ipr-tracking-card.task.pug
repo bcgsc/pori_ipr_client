@@ -30,7 +30,7 @@ md-dialog(layout="column", aria-label="Task -{{task.name}}", flex-md=80, flex-xs
                 div(md-whiteframe=2).detail
                     div Check-ins
                     div(layout="row")
-                        span(flex) {{task.checkIns}}/{{task.checkInsTarget}}
+                        span(flex) {{task.checkins.length}}/{{task.checkInsTarget}}
                         span
                             md-icon(ng-if="task.checkIns === task.checkInsTarget").disabled library_add
                             md-icon(ng-if="task.checkIns !== task.checkInsTarget", ng-click="toggleCheckIn()").checkIn.clickable library_add
@@ -41,19 +41,18 @@ md-dialog(layout="column", aria-label="Task -{{task.name}}", flex-md=80, flex-xs
                 ipr-tracking-checkin(task="task", state="state")
 
         div(layout="column", md-whiteframe=2).detail
-            div Outcome/Results
-
+            div Checkins
             div(layout="column")
                 span(ng-if="task.outcome === null") None
                 div(layout="row", ng-if="task.outcome")
                     span(flex=40) Check-in Date
                     span Check-in Value
-                div(ng-repeat="(d, outcome) in task.outcome", layout="row")
-                    span(flex=40) {{ d | amDateFormat: 'YYYY-MM-DD HH:mm:ss' }}
-                    span(flex, ng-if="task.outcomeType === 'date'") {{ outcome.value | amDateFormat: 'YYYY-MM-DD' }}
-                    span(flex, ng-if="task.outcomeType === 'text'") {{ outcome.value }}
+                div(ng-repeat="checkin in task.checkins", layout="row")
+                    span(flex=40) {{ checkin.createdAt | amDateFormat: 'YYYY-MM-DD HH:mm:ss' }}
+                    span(flex, ng-if="task.outcomeType === 'date'") {{ checkin.outcome | amDateFormat: 'YYYY-MM-DD' }}
+                    span(flex, ng-if="task.outcomeType === 'text'") {{ checkin.outcome }}
                     span
-                        md-icon(ng-click="removeCheckin(d)").clickable delete
+                        md-icon(ng-click="removeCheckin(checkin)").clickable delete
 
 
         div(layout="column", md-whiteframe=2).detail
