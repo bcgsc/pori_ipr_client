@@ -379,10 +379,9 @@ md-dialog.tracking-task {
       }
 
       md-menu {
-        display: none;
+        //display: none;
         .md-button {
           padding: 0;
-          height: 18px;
           min-width: 18px;
           min-height: 18px;
         }
@@ -491,6 +490,27 @@ md-dialog.tracking-task {
           font-weight: 700;
           padding-left: 10px;
         }
+      }
+
+    }
+
+    .table {
+
+      .header {
+        margin-bottom: 4px;
+        background-color: rgba(0,0,0,0.1);
+        padding: 7px 0;
+        //border-bottom: 1px solid rgba(0,0,0,0.3);
+
+        span {
+          padding-left: 4px;
+          color: rgba(0, 0, 0, 0.8);
+          font-weight: 300;
+          text-transform: none;
+        }
+      }
+      .row {
+        padding-left: 4px;
       }
 
     }

@@ -42,15 +42,22 @@ md-dialog(layout="column", aria-label="Task -{{task.name}}", flex-md=80, flex-xs
 
         div(layout="column", md-whiteframe=2).detail
             div Checkins
-            div(layout="column")
-                span(ng-if="task.outcome === null") None
-                div(layout="row", ng-if="task.outcome")
-                    span(flex=40) Check-in Date
-                    span Check-in Value
-                div(ng-repeat="checkin in task.checkins", layout="row")
-                    span(flex=40) {{ checkin.createdAt | amDateFormat: 'YYYY-MM-DD HH:mm:ss' }}
-                    span(flex, ng-if="task.outcomeType === 'date'") {{ checkin.outcome | amDateFormat: 'YYYY-MM-DD' }}
-                    span(flex, ng-if="task.outcomeType === 'text'") {{ checkin.outcome }}
+            div(layout="column").table
+                span(ng-if="task.checkins.length === 0") None
+                div(layout="row", ng-if="task.checkins.length > 0").header
+                    span(flex=20) Date
+                    span(flex=50) Payload
+                    span User
+                div(ng-repeat="checkin in task.checkins", layout="row", layout-align="start center").row
+                    span(flex=20) {{ checkin.createdAt | amDateFormat: 'YYYY-MM-DD HH:mm:ss' }}
+                    span(flex=50)
+                        span(ng-if="task.outcomeType === 'date'") {{ checkin.outcome | amDateFormat: 'YYYY-MM-DD' }}
+                        span(ng-if="task.outcomeType === 'boolean'") Outcome: {{ checkin.outcome || 'false' }}
+                        span(ng-if="task.outcomeType === 'text'") {{ checkin.outcome }}
+                        span(ng-if="task.outcomeType === 'location'", layout="row")
+                            ipr-copypaste(text="checkin.outcome", flex=90)
+
+                    span(flex) {{checkin.user.firstName}} {{checkin.user.lastName}}
                     span
                         md-icon(ng-click="removeCheckin(checkin)").clickable delete
 

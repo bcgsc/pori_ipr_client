@@ -75,25 +75,24 @@ app.directive("iprTrackingCard", ['$q', '_', '$mdDialog', '$mdToast', '$timeout'
       };
 
       scope.getTasks = () => {
+        scope.showTasks = !scope.showTasks;
+      };
 
-        if(scope.showTasks) return scope.showTasks = false;
+      let checkTaskCompletion = () => {
 
-        scope.showTasks = true;
-        scope.state.tasks = [];
-        scope.loadingTasks = true;
+        let completeTasks = 0;
 
-        // Retrieve tasks
-        $state.getState(state.ident).then(
-          (result) => {
+        _.forEach(state.tasks, (task, i) => {
+          if(task.status === 'complete') completeTasks++;
+        });
 
-            scope.state.tasks =_.sortBy(result.tasks, 'ordinal');
-            scope.loadingTasks = false;
-
-          },
-          (err) => {
-            console.log('Unable to get results');
-          }
-        )
+        if(completeTasks === state.tasks.length) {
+          // Add new state class
+          element[0].classList.remove(scope.state.status);
+          scope.state.status = 'complete';
+          // Add new state class
+          element[0].classList.add(scope.state.status);
+        }
 
       };
 
@@ -111,13 +110,13 @@ app.directive("iprTrackingCard", ['$q', '_', '$mdDialog', '$mdToast', '$timeout'
           clickOutToClose: false
         }).then(
           (data) => {
-            // Update scope copy of task
+            // Update scope copy of task - Check for completeness
             _.forEach(state.tasks, (task, i) => {
-              if(data.task.ident === task.ident) {
-                state.tasks[i] = data.task;
-              }
+              if(data.task.ident === task.ident) state.tasks[i] = data.task;
             });
+
             checkStates();
+            checkTaskCompletion();
             // Propagate
             scope.state = state;
           },
@@ -129,8 +128,6 @@ app.directive("iprTrackingCard", ['$q', '_', '$mdDialog', '$mdToast', '$timeout'
 
 
       scope.showState = ($event) => {
-
-        scope.showTasks = false;
 
         $mdDialog.show({
           targetEvent: $event,

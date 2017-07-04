@@ -17,7 +17,7 @@ app.controller('controller.ipr-tracking-card.task',
     $scope.addCheckin = !$scope.addCheckin;
   };
 
-  $scope.$watch('task.outcome', (newVal, oldVal) => {
+  $scope.$watch('task.checkins', (newVal, oldVal) => {
     if($scope.addCheckin) $scope.addCheckin = false;
   });
 
