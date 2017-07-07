@@ -45,7 +45,7 @@ tr
                             div(flex) Tumour Content
                             div(flex) Ploidy Model
                         div(layout="row", flex).content
-                            div(flex) {{data.ta.tumourContent}}%
+                            div(flex, ng-class="{'text-red': (data.ta.tumourContent < 40)}") {{data.ta.tumourContent}}%
                             div(flex) {{data.ta.ploidy}}
 
                 div(layout="column", flex).dataBox
