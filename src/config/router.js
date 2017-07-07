@@ -138,15 +138,26 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
 	      }]
 		  }
 		})
-		
+
+    .state('dashboard.home', {
+      url: '/',
+      templateUrl: 'dashboard/home/home.html',
+      controller: 'controller.dashboard.home',
+      resolve: {
+        redirect: ['$state', ($state) => {
+          $state.go('dashboard.listing.genomic');
+        }]
+      }
+    })
+
 		// Dashboard Overview/POG Listing
 		.state('dashboard.listing', {
-			url: '/',
+			url: '/listing',
 			templateUrl: 'dashboard/listing/listing.html',
 			controller: 'controller.dashboard.listing',
       data: {
-			  displayName: CONFIG.PROJECT.NAME + " Cases",
-        breadcrumbProxy: 'dashboard.listing.genomic'
+			  displayName: "Reports",
+        //breadcrumbProxy: 'dashboard.listing.genomic'
       },
       resolve: {
         pogs: ['$q', 'api.pog', '$userSettings', 'user', ($q, $pog, $userSettings) => {
@@ -156,8 +167,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         }]
       }
 		})
+
     .state('dashboard.listing.genomic', {
-      url: 'listing/genomic',
+      url: '/genomic',
       templateUrl: 'dashboard/listing/genomic/genomic.html',
       controller: 'controller.dashboard.listing.genomic',
       data: {
@@ -172,7 +184,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       }
     })
     .state('dashboard.listing.probe', {
-      url: 'listing/probe',
+      url: '/probe',
       templateUrl: 'dashboard/listing/probe/probe.html',
       controller: 'controller.dashboard.listing.probe',
       data: {
