@@ -13,38 +13,32 @@ app.directive("iprReportListingCard", ['$q', '_', '$mdDialog', '$mdToast', '$sta
     link: (scope, element, attr) => {
 
       let pog = scope.pog;
-      let reports =  angular.copy(pog.analysis_reports);
-
-      // Build array of reports limited to this state
-      scope.reports = _.filter(reports, {state: scope.state});
 
       // Determine if probe/genomic available
       scope.checkProbeGenomic = (pog, type) => {
-        return (_.find(scope.reports, {type: type})) ? true : false;
+        return (scope.report.type === type);
       };
 
       // Get Tumour Content
       scope.getTumourContent = (pog) => {
-        let genomic = _.find(pog.analysis_reports, {type: 'genomic'});
-        if(!genomic) return "N/A";
-        return genomic.tumourAnalysis.tumourContent;
+        if(scope.report.type !== 'genomic') return "N/A";
+        return scope.report.tumourAnalysis.tumourContent;
       };
 
       // Get Ploidy Model Content
       scope.getPloidy = (pog) => {
-        let genomic = _.find(pog.analysis_reports, {type: 'genomic'});
-        if(!genomic) return "N/A";
-        return genomic.tumourAnalysis.ploidy;
+        if(scope.report.type !== 'genomic') return "N/A";
+        return scope.report.tumourAnalysis.ploidy;
       };
 
       // Get Report
       scope.getReport = (pog, type) => {
-        return _.find(scope.reports, {type: type});
+        return (scope.report.type === type);
       };
 
       // Get Role
       scope.getRoleUser = (pog, role, resp) => {
-        let user =  _.find(pog.POGUsers, {role: role});
+        let user =  _.find(scope.report.users, {role: role});
 
         if(!user) return null;
 
@@ -56,11 +50,6 @@ app.directive("iprReportListingCard", ['$q', '_', '$mdDialog', '$mdToast', '$sta
             return user.user.username;
             break;
         }
-      };
-
-
-      scope.reportCount = (type) => {
-        return _.filter(scope.reports, {type: type}).length;
       };
 
 
