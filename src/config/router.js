@@ -89,10 +89,6 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
 					templateUrl: 'dashboard/toolbar.html',
 					controller: 'controller.dashboard.toolbar'
 				},
-				"navigation@dashboard": {
-				  templateUrl: 'dashboard/navigation.html',
-				  controller: 'controller.dashboard.navigation'
-				},
         "adminbar@dashboard": {
 				  templateUrl: 'dashboard/adminbar/adminbar.html',
           controller: 'controller.dashboard.adminbar'
@@ -149,7 +145,8 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
 			templateUrl: 'dashboard/listing/listing.html',
 			controller: 'controller.dashboard.listing',
       data: {
-			  displayName: CONFIG.PROJECT.NAME + " Cases"
+			  displayName: CONFIG.PROJECT.NAME + " Cases",
+        breadcrumbProxy: 'dashboard.listing.genomic'
       },
       resolve: {
         pogs: ['$q', 'api.pog', '$userSettings', 'user', ($q, $pog, $userSettings) => {
@@ -159,6 +156,36 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         }]
       }
 		})
+    .state('dashboard.listing.genomic', {
+      url: 'listing/genomic',
+      templateUrl: 'dashboard/listing/genomic/genomic.html',
+      controller: 'controller.dashboard.listing.genomic',
+      data: {
+        displayName: 'Genomic'
+      },
+      resolve: {
+        reports: ['$q', 'api.pog_analysis_report', '$userSettings', 'user', ($q, $report, $userSettings) => {
+          let currentUser = $userSettings.get('genomicReportListCurrentUser');
+          if(currentUser === null || currentUser === undefined || currentUser === true) return $report.all({type: 'genomic'});
+          if(currentUser === false) return $report.all({all:true, type: 'genomic'});
+        }]
+      }
+    })
+    .state('dashboard.listing.probe', {
+      url: 'listing/probe',
+      templateUrl: 'dashboard/listing/probe/probe.html',
+      controller: 'controller.dashboard.listing.probe',
+      data: {
+        displayName: 'Probe'
+      },
+      resolve: {
+        reports: ['$q', 'api.pog_analysis_report', '$userSettings', 'user', ($q, $report, $userSettings) => {
+          let currentUser = $userSettings.get('probeReportListCurrentUser');
+          if(currentUser === null || currentUser === undefined || currentUser === true) return $report.all({type: 'probe'});
+          if(currentUser === false) return $report.all({all:true, type: 'probe'});
+        }]
+      }
+    })
 
     .state('dashboard.pog', {
       data: {

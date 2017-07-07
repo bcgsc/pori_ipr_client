@@ -102,11 +102,19 @@ div.PogList {
       padding: 4px 13px 4px 13px;
       min-height: 57px;
 
+
       h1 {
         font-weight: 500;
         font-size: 1.2em;
         margin: 0 0 5px 0;
-        padding: 7px 8px 0 0;
+        padding: 7px 0 0 0;
+
+        md-icon.pediatric {
+          color: rgb(255, 255, 255);
+          margin-right: 6px;
+          background-color: rgb(255, 66, 96);
+          border-radius: 3px;
+        }
 
         span.priority {
           margin-right: auto;
@@ -135,8 +143,11 @@ div.PogList {
     }
 
     div.details {
-      padding: 8px 10px;
+      padding: 4px 10px;
       min-height: 15px;
+
+      &:first-of-type { padding-top: 8px; }
+      &:last-of-type { padding-bottom: 8px; }
 
       span.low {
         color: red;
