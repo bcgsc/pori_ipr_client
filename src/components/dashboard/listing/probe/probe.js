@@ -20,14 +20,8 @@ app.controller('controller.dashboard.listing.probe', ['_', '$q', '$scope', 'api.
 
   if($userSettings.get('probeReportListCurrentUser') === undefined) $userSettings.save('probeReportListCurrentUser', true);
 
-  $scope.numPogs = (state) => {
-    let i = 0;
-    let pogs = [];
-    _.forEach($scope.pogs, (p) => {
-      let pr = _.filter(p.analysis_reports, {state: state}).length;
-      if(pr > 0 && pogs.indexOf(p.POGID)) pogs.push(p.POGID);
-    });
-    return pogs.length;
+  $scope.numReports = (state) => {
+    return _.filter(reports, {state: state}).length;
   };
 
   $scope.$watch('filter.currentUser', (newVal, oldVal) => {
