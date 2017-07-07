@@ -57,11 +57,11 @@ md-content(flex, layout="column").md-padding
 
     div(layout="column", flex).kanban
         div(layout="row", layout-align="space-between").title
-            div(layout="column", flex) Ready for Analysis ({{numPogs('ready')}})
-            div(layout="column", flex) Analysis Underway ({{numPogs('active')}})
-            div(layout="column", flex) Review/Presented ({{numPogs('presented')}})
-            div(layout="column", flex, ng-show="archived") Archived ({{numPogs('archived')}})
-            div(layout="column", flex, ng-show="nonproduction") Non-Production/Test ({{numPogs('nonproduction')}})
+            div(layout="column", flex) Ready for Analysis ({{numReports('ready')}})
+            div(layout="column", flex) Analysis Underway ({{numReports('active')}})
+            div(layout="column", flex) Review/Presented ({{numReports('presented')}})
+            div(layout="column", flex, ng-show="archived") Archived ({{numReports('archived')}})
+            div(layout="column", flex, ng-show="nonproduction") Non-Production/Test ({{numReports('nonproduction')}})
 
         div(layout="row", flex, layout-align="space-between")
             md-content(layout="column", flex).column

@@ -21,13 +21,7 @@ app.controller('controller.dashboard.listing.genomic', ['_', '$q', '$scope', 'ap
   if($userSettings.get('genomicReportListCurrentUser') === undefined) $userSettings.save('genomicReportListCurrentUser', true);
 
   $scope.numReports = (state) => {
-    let i = 0;
-    let reports = [];
-    _.forEach($scope.reports, (p) => {
-      let pr = _.filter(p, {state: state}).length;
-      if(pr > 0 && reports.indexOf(p.POGID)) reports.push(p.POGID);
-    });
-    return reports.length;
+    return _.filter(reports, {state: state}).length;
   };
 
   $scope.$watch('filter.currentUser', (newVal, oldVal) => {

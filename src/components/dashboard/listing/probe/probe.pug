@@ -33,10 +33,10 @@ md-content(flex, layout="column").md-padding
 
     div(layout="column", flex).kanban
         div(layout="row", layout-align="space-between").title
-            div(layout="column", flex) Uploaded ({{numPogs('uploaded')}})
-            div(layout="column", flex) Signed-Off ({{numPogs('signedoff')}})
-            div(layout="column", flex, ng-show="reviewed") Reviewed ({{numPogs('reviewed')}})
-            div(layout="column", flex, ng-show="nonproduction") Non-Production/Test ({{numPogs('nonproduction')}})
+            div(layout="column", flex) Uploaded ({{numReports('uploaded')}})
+            div(layout="column", flex) Signed-Off ({{numReports('signedoff')}})
+            div(layout="column", flex, ng-show="reviewed") Reviewed ({{numReports('reviewed')}})
+            div(layout="column", flex, ng-show="nonproduction") Non-Production/Test ({{numReports('nonproduction')}})
 
         div(layout="row", flex, layout-align="space-between")
             md-content(layout="column", flex).column
