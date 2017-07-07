@@ -89,10 +89,6 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
 					templateUrl: 'dashboard/toolbar.html',
 					controller: 'controller.dashboard.toolbar'
 				},
-				"navigation@dashboard": {
-				  templateUrl: 'dashboard/navigation.html',
-				  controller: 'controller.dashboard.navigation'
-				},
         "adminbar@dashboard": {
 				  templateUrl: 'dashboard/adminbar/adminbar.html',
           controller: 'controller.dashboard.adminbar'
@@ -149,7 +145,8 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
 			templateUrl: 'dashboard/listing/listing.html',
 			controller: 'controller.dashboard.listing',
       data: {
-			  displayName: "POG Cases"
+			  displayName: CONFIG.PROJECT.NAME + " Cases",
+        breadcrumbProxy: 'dashboard.listing.genomic'
       },
       resolve: {
         pogs: ['$q', 'api.pog', '$userSettings', 'user', ($q, $pog, $userSettings) => {
@@ -159,13 +156,43 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         }]
       }
 		})
+    .state('dashboard.listing.genomic', {
+      url: 'listing/genomic',
+      templateUrl: 'dashboard/listing/genomic/genomic.html',
+      controller: 'controller.dashboard.listing.genomic',
+      data: {
+        displayName: 'Genomic'
+      },
+      resolve: {
+        reports: ['$q', 'api.pog_analysis_report', '$userSettings', 'user', ($q, $report, $userSettings) => {
+          let currentUser = $userSettings.get('genomicReportListCurrentUser');
+          if(currentUser === null || currentUser === undefined || currentUser === true) return $report.all({type: 'genomic'});
+          if(currentUser === false) return $report.all({all:true, type: 'genomic'});
+        }]
+      }
+    })
+    .state('dashboard.listing.probe', {
+      url: 'listing/probe',
+      templateUrl: 'dashboard/listing/probe/probe.html',
+      controller: 'controller.dashboard.listing.probe',
+      data: {
+        displayName: 'Probe'
+      },
+      resolve: {
+        reports: ['$q', 'api.pog_analysis_report', '$userSettings', 'user', ($q, $report, $userSettings) => {
+          let currentUser = $userSettings.get('probeReportListCurrentUser');
+          if(currentUser === null || currentUser === undefined || currentUser === true) return $report.all({type: 'probe'});
+          if(currentUser === false) return $report.all({all:true, type: 'probe'});
+        }]
+      }
+    })
 
     .state('dashboard.pog', {
       data: {
         displayName: '{{pog.POGID}}',
         breadcrumbProxy: 'dashboard.pog.report.listing'
       },
-      url: '/POG/{POG}',
+      url: '/'+CONFIG.PROJECT.NAME+'/{POG}',
       controller: 'controller.dashboard.pog',
       templateUrl: 'dashboard/pog/pog.html',
       resolve: {
@@ -970,6 +997,49 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
           } else {
             return $kb.events.count();
           }
+        }]
+      }
+    })
+
+    .state('dashboard.tracking', {
+      url: '/tracking',
+      data: {
+        displayName: 'POG Tracking',
+        breadcrumbProxy: 'dashboard.tracking.board'
+      },
+      controller: 'controller.dashboard.tracking',
+      templateUrl: 'dashboard/tracking/tracking.html',
+      resolve: {
+        definitions: ['$q', 'api.tracking.definition', ($q, $definition) => {
+          return $definition.all();
+        }]
+      }
+    })
+
+    .state('dashboard.tracking.board', {
+      url: '/board',
+      data: {
+        displayName: 'Board'
+      },
+      controller: 'controller.dashboard.tracking.board',
+      templateUrl: 'dashboard/tracking/board/board.html',
+      resolve: {
+        states: ['$q', 'api.tracking.state', ($q, $state) => {
+          return $state.all();
+        }]
+      }
+    })
+
+    .state('dashboard.tracking.definition', {
+      url: '/definition',
+      data: {
+        displayName: 'State Definitions'
+      },
+      controller: 'controller.dashboard.tracking.definition',
+      templateUrl: 'dashboard/tracking/definition/definition.html',
+      resolve: {
+        groups: ['$q', 'api.user', ($q, $user) => {
+          return $user.group.all();
         }]
       }
     })

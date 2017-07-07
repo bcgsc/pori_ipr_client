@@ -1,0 +1,72 @@
+div.header
+    h1(layout="row")
+        md-icon(md-whiteframe=2, ng-if="error").warning.clickable error
+            md-tooltip {{getTaskStateCount('failed')}} task(s) have failed
+        md-icon(md-whiteframe=2, ng-if="hold").notice.clickable watch_later
+            md-tooltip {{getTaskStateCount('hold')}} task(s) are being held
+        span(flex) {{pog.POGID}}
+        //span(layout="row", layout-align="middle space-around").priority.clickable
+        span.completion
+            span Complete
+            span {{ getTaskStateCount('complete') }}/{{state.tasks.length}}
+        //div.priority
+            span Priority
+
+    div(layout="row").subheader
+        span {{analysis.name}}
+            md-tooltip Clinical: {{analysis.clinical_biopsy}} - Bioinformatics: {{analysis.analysis_biopsy}}
+        span(flex)
+        span.priority
+            span Priority
+            span(ng-if="analysis.priority===1") Low
+            span(ng-if="analysis.priority===2") Normal
+            span(ng-if="analysis.priority===3").high.ipr-raised High
+
+div(layout="column", ng-show="showTasks").tasks
+    div(ng-show="loadingTasks")
+        md-progress-linear(md-mode="indeterminate")
+        div.text-center Loading Tasks
+
+    div(layout="row", ng-repeat="(i, task) in state.tasks", ng-class="{warning: (task.status === 'failed' ), notice: (task.status === 'hold' )}")
+        span {{i+1}}.
+        span(flex, md-truncate, ng-click="showTask($event, task)").clickable {{task.name}}
+
+        span(ng-if="task.outcomeType === 'date' && task.checkins.length === 1").value {{ task.checkins[0].outcome | amDateFormat: 'YYYY-MM-DD' }}
+        span(ng-if="task.outcomeType === 'text' && task.checkins.length === 1", md-truncate).value {{ task.checkins[0].outcome }}
+        span(ng-if="task.outcomeType === 'boolean' && task.checkins.length === 1", md-truncate).value
+            md-icon(ng-class="{green: task.checkins[0].outcome, red: !task.checkins[0].outcome}") {{(task.checkins[0].outcome) ? 'check_circle' : 'cancel' }}
+                md-tooltip Outcome: {{task.checkins[0].outcome || 'false' }}
+
+        span.assignedTo
+            md-icon(ng-show="!task.assignedTo.username") person
+                md-tooltip Assign a user
+
+            img(ng-src="https://www.bcgsc.ca/jira/secure/useravatar?size=xsmall&ownerId={{task.assignedTo.username}}", ng-if="task.assignedTo.username", ng-mouseenter="openUserWindow(task.assignedTo)", ng-mouseleave="closeUserWindow(task.assignedTo)")
+
+            div(ng-show="task.assignedTo.show").popover-container
+                div(ng-mouseenter="keepUserWindow(task.assignedTo)", ng-mouseleave="unKeepUserWindow(task.assignedTo)", md-whiteframe="4").content
+                    div.header {{task.assignedTo.firstName}} {{task.assignedTo.lastName}}
+                    div(layout="row").body
+                        div.avatar
+                            img(ng-if="task.assignedTo.username", ng-src="https://www.bcgsc.ca/jira/secure/useravatar?size=medium&ownerId={{task.assignedTo.username}}")
+                        div(flex, layout="column").details
+                            span
+                                a(href="mailto: {{task.assignedTo.firstName}} {{task.assignedTo.lastName}} <{{task.assignedTo.email}}>?subject={{pog.POGID}} {{task.name}}") {{task.assignedTo.email}}
+                            span
+                                span Last online
+                                span {{ task.assignedTo.lastLogin | amDateFormat: 'dddd, MMMM Do YYYY, h:mm:ss a' }}
+        span.status(ng-class="task.status").clickable &nbsp;
+            md-tooltip Status: {{task.status}}
+
+
+
+div(layout="row", flex).taskToggle
+    div(flex)
+    div(ng-click="getTasks()").clickable.text-center.toggle
+        md-icon {{(showTasks) ? 'arrow_drop_up' : 'arrow_drop_down'}}
+            md-tooltip {{(showTasks) ? 'Hide list of tasks' : 'Show list of tasks'}}
+    div(flex, layout="row").edit
+        span(flex)
+        span(layout="row", ng-click="showState()").clickable
+            span(flex).text-right settings
+            md-icon edit

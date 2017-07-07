@@ -1,0 +1,56 @@
+md-content(flex, layout="column").md-padding
+
+    md-sidenav(md-is-open="showOptions", md-whiteframe=4).md-sidenav-right
+        md-toolbar
+            h1.md-toolbar-tools Options
+        md-content
+            md-list
+                md-list-item
+                    p Show only my reports
+                    md-switch(ng-model="filter.currentUser", ng-change="refreshList()", ng-false-value="false", ng-true-value="true").md-primary
+                md-list-item
+                    p Filter by my role
+                    md-select(ng-model="filter.role", placeholder="Roles", ng-change="refreshList()").text-small
+                        md-option(ng-value="null") All
+                        md-option(ng-repeat="role in roles", ng-value="role") {{role}}
+                md-list-item
+                    p Show Reviewed reports
+                    md-switch(ng-model="reviewed", ng-change="refreshList()", ng-false-value="false", ng-true-value="true").md-primary
+                md-list-item
+                    p Show non-production/test reports
+                    md-switch(ng-model="nonproduction", ng-change="refreshList()", ng-false-value="false", ng-true-value="true").md-primary
+
+    h1.md-title(layout="row")
+        span(flex) My {{PROJECT.NAME}} Probe Reports
+        span(flex, layout="row", layout-align="end end")
+            md-input-container.hide-validation-error.pull-right
+                input(placeholder="Search", name="Search", ng-model="pogQuery", size=40).text-small
+                md-icon(ng-click="showFilterTips()").clickable help
+            span(flex=5)
+            span
+                md-button(ng-click="showOptions = !showOptions").md-primary.md-icon-button.md-raised
+                    md-icon settings
+
+    div(layout="column", flex).kanban
+        div(layout="row", layout-align="space-between").title
+            div(layout="column", flex) Uploaded ({{numPogs('uploaded')}})
+            div(layout="column", flex) Signed-Off ({{numPogs('signedoff')}})
+            div(layout="column", flex, ng-show="reviewed") Reviewed ({{numPogs('reviewed')}})
+            div(layout="column", flex, ng-show="nonproduction") Non-Production/Test ({{numPogs('nonproduction')}})
+
+        div(layout="row", flex, layout-align="space-between")
+            md-content(layout="column", flex).column
+                div(ng-show="loading").text-center Loading...
+                ipr-report-listing-card(ng-repeat="report in reports | filter: searchPogs('uploaded', pogQuery)", md-whiteframe=2, report="report", pog="report.analysis.pog", state="uploaded" ng-hide="loading").pog
+
+            md-content(layout="column", flex).column
+                div(ng-show="loading").text-center Loading...
+                ipr-report-listing-card(ng-repeat="report in reports | filter: searchPogs('signedoff', pogQuery)", md-whiteframe=2, report="report", pog="report.analysis.pog", state="signedoff", ng-hide="loading").pog
+
+            md-content(layout="column", flex, ng-show="reviewed").column
+                div(ng-show="loading").text-center Loading...
+                ipr-report-listing-card(ng-repeat="report in reports | filter: searchPogs('reviewed', pogQuery)", md-whiteframe=2, report="report", pog="report.analysis.pog", state="reviewed", ng-hide="loading").pog
+
+            md-content(layout="column", flex, ng-show="nonproduction").column
+                div(ng-show="loading").text-center Loading...
+                ipr-report-listing-card(ng-repeat="report in reports | filter: searchPogs('nonproduction', pogQuery)", md-whiteframe=2, report="report", pog="report.analysis.pog", state="nonproduction", ng-hide="loading").pog

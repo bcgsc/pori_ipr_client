@@ -15,7 +15,10 @@ md-dialog.editor {
   }
 }
 
-.bg-white { background-color: rgb(255,255,255); }
+.hide { display: none; }
+.show { display: inline; }
+
+.bg-white, .background-white { background-color: rgb(255,255,255) !important; }
 
 .hide-validation-error {
   margin: 0;
@@ -86,6 +89,9 @@ md-dialog.editor {
   }
 }
 
+.red { color: rgb(223, 40, 22) }
+.green { color: rgb(43, 174, 87) }
+
 .text-center { text-align: center; }
 .text-right { text-align: right; }
 .text-left { text-align: left; }
@@ -98,6 +104,8 @@ md-dialog.editor {
 
 .pull-right { float: right; }
 .pull-left { float: left; }
+
+.text-red { color: rgba(255,0,0,1); }
 
 .margin-top-10 {margin-top: 10px;}
 .margin-top-20 {margin-top: 20px;}
@@ -125,6 +133,9 @@ md-dialog.editor {
 .padding-left-10 { padding-left: 10px; }
 .padding-left-15 { padding-left: 15px; }
 .padding-left-20 { padding-left: 20px; }
+.padding-10 { padding: 10px; }
+.padding-20 { padding: 20px; }
+.padding-30 { padding: 30px; }
 
 .padding-none { padding: 0; }
 
@@ -178,7 +189,7 @@ img.loader-spin {
 
 img.loader-spin {
   animation-name: spin;
-  animation-duration: 2s;
+  animation-duration: 1.3s;
   animation-iteration-count: infinite;
   animation-timing-function: ease-in-out;
 }
@@ -219,4 +230,58 @@ img.loader-spin {
 
 .line-break-preserve {
   white-space: pre-wrap;
+}
+
+
+md-input-container {
+  .hint {
+    font-size: 0.75em;
+    color: rgb(130,130,130);
+    padding: 4px;
+    display: inline-block;
+  }
+}
+
+.ipr-raised {
+  padding: 2px 5px;
+  border-radius: 4px;
+  box-shadow: 0 2px 0 1px rgba(180,180,180,1);
+
+  &:hover {
+    box-shadow: none;
+    position: relative;
+    top: 2px;
+    cursor: pointer;
+  }
+  &:active {
+    top: 2px;
+    position: relative;
+    box-shadow: inset 0 -1px 0 1px rgba(160,160,160,1);
+  }
+}
+div.copypaste {
+  border: 1px solid rgb(210,210,210);
+  border-radius: 3px;
+  md-icon {
+    padding: 3px;
+    cursor: pointer;
+    background-color: rgb(230,230,230);
+    font-size: 14px !important;
+    height: 14px !important;
+    width: 14px !important;
+    min-height: 14px;
+    min-width: 14px;
+
+    &:hover {
+      background-color: rgb(63,81,181);
+      color: white;
+    }
+  }
+  input {
+    border: 0;
+    border-left: 1px solid rgb(210,210,210);
+    padding: 3px;
+    font-size: 10px;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  }
 }
