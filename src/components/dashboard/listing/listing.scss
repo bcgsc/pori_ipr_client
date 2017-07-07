@@ -102,11 +102,19 @@ div.PogList {
       padding: 4px 13px 4px 13px;
       min-height: 57px;
 
+
       h1 {
         font-weight: 500;
         font-size: 1.2em;
         margin: 0 0 5px 0;
-        padding: 7px 8px 0 0;
+        padding: 7px 0 0 0;
+
+        md-icon.pediatric {
+          color: rgb(255, 255, 255);
+          margin-right: 6px;
+          background-color: rgb(255, 66, 96);
+          border-radius: 3px;
+        }
 
         span.priority {
           margin-right: auto;
@@ -135,8 +143,11 @@ div.PogList {
     }
 
     div.details {
-      padding: 8px 10px;
+      padding: 4px 10px;
       min-height: 15px;
+
+      &:first-of-type { padding-top: 8px; }
+      &:last-of-type { padding-bottom: 8px; }
 
       span.low {
         color: red;
@@ -145,63 +156,6 @@ div.PogList {
       div:last-of-type {
         text-transform: capitalize;
       }
-    }
-
-    div.tasks {
-      border-top: 1px solid rgba(0,0,0,0.2);
-      border-bottom: 1px solid rgba(0,0,0,0.2);
-      padding: 5px 0;
-
-      div {
-
-        border-bottom: 1px solid rgba(0,0,0,0.1);
-        padding: 2px 0;
-        min-height: 15px;
-
-        &:last-of-type { border-bottom: none; }
-
-        md-icon {
-          width: 17px;
-          height: 17px;
-          min-height: 17px;
-          min-width: 17px;
-          font-size: 17px;
-          margin-right: 5px;
-          cursor: pointer;
-        }
-
-        span:first-of-type {
-          font-weight: 100;
-          margin-right: 5px;
-          padding-left: 10px;
-        }
-        span:nth-of-type(2) {
-          margin-left: 0;
-          font-weight: 700;
-        }
-        span:last-of-type {
-          width: 9px;
-          height: 9px;
-          border: 1px solid rgba(0,0,0,0.4);
-          margin-top: 2px;
-          border-radius: 50%;
-          margin-right: 10px;
-
-          &.active {
-            background-color: rgb(242, 220, 17);
-          }
-          &.done {
-            background-color: rgb(46, 204, 113);
-          }
-
-        }
-      }
-    }
-
-    div.taskToggle {
-      font-size: 0.8em;
-      text-align: center;
-      display: inherit;
     }
 
     div {

@@ -9,23 +9,18 @@ app.controller('controller.dashboard.report.genomic.meta',
 
   let reportCache = angular.copy(report);
 
-  // Remove an entry
+  // Unbind user
   let removeEntry = (role) => {
 
-    let deferred = $q.defer();
-
-    $pog.user(pog.POGID).unbind(role.user.ident, role.role).then(
+    $report.unbindUser($scope.report.ident, role.user.ident, role.role).then(
       (result) => {
-
         // Find and remove the ident!
-        $scope.pog.POGUsers = _.filter($scope.pog.POGUsers, (r) => {return (r.ident !== role.ident)});
+        $scope.report = report = result;
       },
       (err) => {
-
+        $mdToast.show($mdToast.simple().textContent('Failed to unbind user.'))
       }
     );
-
-    return deferred.promise;
 
   };
 
@@ -86,10 +81,10 @@ app.controller('controller.dashboard.report.genomic.meta',
             return;
           }
 
-          // Remap user obj to ident
-          $pog.user(pog.POGID).bind(scope.role.user.ident, scope.role.role).then(
+          // Perform binding
+          $report.bindUser($scope.report.ident, scope.role.user.ident, scope.role.role).then(
             (resp) => {
-              $mdDialog.hide({data: resp, message: resp.user.firstName + ' ' + resp.user.lastName + ' has been added as ' + indefiniteArticleFilter(resp.role) + ' ' + resp.role});
+              $mdDialog.hide({data: resp, message: scope.role.user.firstName + ' ' + scope.role.user.lastName + ' has been added as ' + indefiniteArticleFilter(scope.role.role) + ' ' + scope.role.role});
             },
             (err) => {
               console.log('Binding error', err);
@@ -99,12 +94,15 @@ app.controller('controller.dashboard.report.genomic.meta',
 
       }] // End controller
 
-    }).then((outcome) => {
-      if (outcome) $mdToast.show($mdToast.simple().textContent(outcome.message));
-      $scope.pog.POGUsers.push(outcome.data);
-    }, (error) => {
-      $mdToast.show($mdToast.simple().textContent('No changes were made'));
-    });
+    }).then(
+      (outcome) => {
+        if (outcome) $mdToast.show($mdToast.simple().textContent(outcome.message));
+        $scope.report = report = outcome.data;
+      },
+      (error) => {
+        $mdToast.show($mdToast.simple().textContent('No changes were made'));
+      }
+    );
 
   }; // End add user
 

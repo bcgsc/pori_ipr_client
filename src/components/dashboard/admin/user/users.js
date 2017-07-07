@@ -1,4 +1,6 @@
-app.controller('controller.dashboard.admin.users', ['_', '$scope', '$mdSidenav', '$state', '$mdDialog', '$mdToast', 'api.session', 'api.user', 'isAdmin', 'groups', (_, $scope, $mdSidenav, $state, $mdDialog, $mdToast, $session, $user, isAdmin, groups) => {
+app.controller('controller.dashboard.admin.users',
+['_', '$scope', '$mdSidenav', '$state', '$mdDialog', '$mdToast', 'api.session', 'api.user', 'isAdmin', 'groups', 'users',
+(_, $scope, $mdSidenav, $state, $mdDialog, $mdToast, $session, $user, isAdmin, groups, users) => {
 
   let passDelete = () => { return () => {}};
 
@@ -23,8 +25,7 @@ app.controller('controller.dashboard.admin.users', ['_', '$scope', '$mdSidenav',
         });
 
         if(newUser) {
-          $scope.users.push(resp.data);
-          $scope.users = _.sortBy($scope.users, 'username');
+          users.push(resp.data);
         }
       },
       (err) => {

@@ -19,11 +19,15 @@ app.factory('api.pog_analysis_report', ['_', '$http', '$q', (_, $http, $q) => {
    *
    * @returns {promise} - Resolves with array of reports
    */
-  $report.all = () => {
+  $report.all = (params={}) => {
     return $q((resolve, reject) => {
 
+      let opts = {
+        params: params
+      };
+
       // Retrieve from API
-      $http.get(api + '/reports').then(
+      $http.get(api + '/reports', opts).then(
         (reports) => {
           resolve(reports.data);
         },
@@ -83,6 +87,61 @@ app.factory('api.pog_analysis_report', ['_', '$http', '$q', (_, $http, $q) => {
 
     });
 
+  };
+
+  /**
+   * Bind a user to a report
+   *
+   * @param {string} report - Report Ident
+   * @param {string} user - User Ident (or username)
+   * @param {string} role - role name
+   *
+   * @returns {Promise}
+   */
+  $report.bindUser = (report, user, role) => {
+    return $q((resolve, reject) => {
+
+      $http.post(api + '/reports/' + report + '/user', {user: user, role: role})
+        .then(
+          (result) => {
+            resolve(result.data);
+          },
+          (err) => {
+            reject(error);
+          }
+        );
+
+    });
+  };
+
+  /**
+   * Unbind a user from a report
+   *
+   * @param {string} report - Report Ident
+   * @param {string} user - User Ident (or username)
+   * @param {string} role - role name
+   *
+   * @returns {Promise}
+   */
+  $report.unbindUser = (report, user, role) => {
+    return $q((resolve, reject) => {
+
+      $http.delete(api + '/reports/' + report + '/user', {
+        data: {user: user, role: role},
+        headers: {
+          "Content-Type": "application/json;charset=utf-8"
+        }
+      })
+        .then(
+          (result) => {
+            resolve(result.data);
+          },
+          (err) => {
+            reject(err);
+          }
+        );
+
+    });
   };
 
 

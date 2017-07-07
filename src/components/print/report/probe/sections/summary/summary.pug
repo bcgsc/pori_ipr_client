@@ -5,7 +5,7 @@ tr
             table(width="100%")
                 tr
                     th(width="12%") Patient ID:
-                    td(width="15%") {{pog.POGID}}
+                    td(width="15%") {{data.pi.POGID}}
                     th(width="14%") Gender:
                     td(width="14%") {{data.pi.gender}}
                     th(width="15%") Tumour Sample:
@@ -21,7 +21,7 @@ tr
                     th Report Date:
                     td {{data.pi.reportDate}}
                     th Age at Diagnosis:
-                    td Not Specified
+                    td {{data.pi.age}}
                     th Biopsy Details:
                     td {{data.pi.biopsySite}}
                 tr

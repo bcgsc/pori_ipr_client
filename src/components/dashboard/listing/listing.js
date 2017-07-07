@@ -1,5 +1,8 @@
-app.controller('controller.dashboard.listing', ['_', '$q', '$scope', 'api.pog', 'pogs', '$mdDialog', 'user', '$userSettings',  (_, $q, $scope, $pog, pogs, $mdDialog, user, $userSettings) => {
+app.controller('controller.dashboard.listing', ['_', '$q', '$scope', '$state', 'api.pog', 'pogs', '$mdDialog', 'user', '$userSettings',  (_, $q, $scope, $state, $pog, pogs, $mdDialog, user, $userSettings) => {
 
+  $state.go('dashboard.listing.genomic');
+
+  /*
   $scope.pogs = pogs;
   $scope.archived = false;
   $scope.nonproduction = false;
@@ -128,6 +131,7 @@ app.controller('controller.dashboard.listing', ['_', '$q', '$scope', 'api.pog', 
     );
 
   };
+  */
 
 
 }]);

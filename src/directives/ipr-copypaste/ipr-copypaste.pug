@@ -1,0 +1,4 @@
+div(flex, layout="row").copypaste
+    md-icon(ngclipboard, data-clipboard-target="#commandToCopy", ng-click="changeCopyTooltip()") content_copy
+        md-tooltip {{text}}
+    input(flex, id="commandToCopy", ng-model="text")

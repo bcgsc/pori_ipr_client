@@ -87,33 +87,6 @@ section.dataHistory {
 
 md-dialog.dataExport {
 
-  div.copypaste {
-    border: 1px solid rgb(210,210,210);
-    border-radius: 3px;
-    md-icon {
-      padding: 5px;
-      cursor: pointer;
-      background-color: rgb(230,230,230);
-      font-size: 18px;
-      height: 20px;
-      width: 17px;
-      min-height: 20px;
-      min-width: 17px;
-
-      &:hover {
-        background-color: rgb(63,81,181);
-        color: white;
-      }
-    }
-    input {
-      border: 0;
-      border-left: 1px solid rgb(210,210,210);
-      padding: 3px;
-      font-size: 12px;
-      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
-    }
-  }
-
   div.log {
     background-color: rgb(230,230,230);
     display: inline-block;
