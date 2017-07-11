@@ -13,6 +13,14 @@ app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$scope', 'ap
     'clinician'
   ];
 
+  $scope.states = {
+    ready: true,
+    active: true,
+    presented: true,
+    archived: false,
+    nonproduction: false
+  };
+
   $scope.filter ={
     currentUser: ($userSettings.get('genomicReportListCurrentUser') === undefined) ? true : $userSettings.get('genomicReportListCurrentUser'),
     query: null
@@ -32,11 +40,15 @@ app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$scope', 'ap
   });
 
   $scope.refreshList = () => {
+    let states = [];
+    _.each($scope.states, (v,k) => {
+      if(v) states.push(k);
+    });
     $scope.loading = true;
-    $report.all({all: !$scope.filter.currentUser, query: $scope.filter.query, role: $scope.filter.role, archived: $scope.archived, nonproduction: $scope.nonproduction, type: 'genomic'}).then(
+    $report.all({all: !$scope.filter.currentUser, query: $scope.filter.query, role: $scope.filter.role, states: _.join(states, ','), type: 'genomic'}).then(
       (result) => {
         $scope.loading = false;
-        $scope.reports = result;
+        $scope.reports = reports = result;
         associateUsers();
       },
       (err) => {

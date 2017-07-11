@@ -13,12 +13,28 @@ md-content(flex, layout="column").md-padding
                     md-select(ng-model="filter.role", placeholder="Roles", ng-change="refreshList()").text-small
                         md-option(ng-value="null") All
                         md-option(ng-repeat="role in roles", ng-value="role") {{role}}
-                md-list-item
+                //md-list-item
                     p Show archived reports
                     md-switch(ng-model="archived", ng-change="refreshList()", ng-false-value="false", ng-true-value="true").md-primary
-                md-list-item
+                //md-list-item
                     p Show non-production/test reports
                     md-switch(ng-model="nonproduction", ng-change="refreshList()", ng-false-value="false", ng-true-value="true").md-primary
+
+                md-list-item
+                    p Show Ready for Analysis
+                    md-switch(ng-model="states.ready", ng-change="refreshList()", ng-false-value="false", ng-true-value="true").md-primary
+                md-list-item
+                    p Show Analysis Underway
+                    md-switch(ng-model="states.active", ng-change="refreshList()", ng-false-value="false", ng-true-value="true").md-primary
+                md-list-item
+                    p Show Review/Presented
+                    md-switch(ng-model="states.presented", ng-change="refreshList()", ng-false-value="false", ng-true-value="true").md-primary
+                md-list-item
+                    p Show Archived
+                    md-switch(ng-model="states.archived", ng-change="refreshList()", ng-false-value="false", ng-true-value="true").md-primary
+                md-list-item
+                    p Show Nonproduction
+                    md-switch(ng-model="states.nonproduction", ng-change="refreshList()", ng-false-value="false", ng-true-value="true").md-primary
 
     h1.md-title(layout="row")
         span(flex) My {{PROJECT.NAME}} Genomic Cases
@@ -57,29 +73,29 @@ md-content(flex, layout="column").md-padding
 
     div(layout="column", flex).kanban
         div(layout="row", layout-align="space-between").title
-            div(layout="column", flex) Ready for Analysis ({{numReports('ready')}})
-            div(layout="column", flex) Analysis Underway ({{numReports('active')}})
-            div(layout="column", flex) Review/Presented ({{numReports('presented')}})
-            div(layout="column", flex, ng-show="archived") Archived ({{numReports('archived')}})
-            div(layout="column", flex, ng-show="nonproduction") Non-Production/Test ({{numReports('nonproduction')}})
+            div(layout="column", flex, ng-show="states.ready") Ready for Analysis ({{numReports('ready')}})
+            div(layout="column", flex, ng-show="states.active") Analysis Underway ({{numReports('active')}})
+            div(layout="column", flex, ng-show="states.presented") Review/Presented ({{numReports('presented')}})
+            div(layout="column", flex, ng-show="states.archived") Archived ({{numReports('archived')}})
+            div(layout="column", flex, ng-show="states.nonproduction") Non-Production/Test ({{numReports('nonproduction')}})
 
         div(layout="row", flex, layout-align="space-between")
-            md-content(layout="column", flex).column
+            md-content(layout="column", flex, ng-show="states.ready").column
                 div(ng-show="loading").text-center Loading...
                 ipr-report-listing-card(ng-repeat="report in reports | filter: searchPogs('ready', pogQuery)", md-whiteframe=2, report="report", pog="report.analysis.pog", state="ready" ng-hide="loading").pog
 
-            md-content(layout="column", flex).column
+            md-content(layout="column", flex, ng-show="states.active").column
                 div(ng-show="loading").text-center Loading...
                 ipr-report-listing-card(ng-repeat="report in reports | filter: searchPogs('active', pogQuery)", md-whiteframe=2, report="report", pog="report.analysis.pog", state="active", ng-hide="loading").pog
 
-            md-content(layout="column", flex).column
+            md-content(layout="column", flex, ng-show="states.presented").column
                 div(ng-show="loading").text-center Loading...
                 ipr-report-listing-card(ng-repeat="report in reports | filter: searchPogs('presented', pogQuery)", md-whiteframe=2, report="report", pog="report.analysis.pog", state="presented", ng-hide="loading").pog
 
-            md-content(layout="column", flex, ng-show="archived").column
+            md-content(layout="column", flex, ng-show="states.archived").column
                 div(ng-show="loading").text-center Loading...
                 ipr-report-listing-card(ng-repeat="report in reports | filter: searchPogs('archived', pogQuery)", md-whiteframe=2, report="report", pog="report.analysis.pog", state="archived", ng-hide="loading").pog
 
-            md-content(layout="column", flex, ng-show="nonproduction").column
+            md-content(layout="column", flex, ng-show="states.nonproduction").column
                 div(ng-show="loading").text-center Loading...
                 ipr-report-listing-card(ng-repeat="report in reports | filter: searchPogs('nonproduction', pogQuery)", md-whiteframe=2, report="report", pog="report.analysis.pog", state="nonproduction", ng-hide="loading").pog
