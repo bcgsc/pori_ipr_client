@@ -170,7 +170,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       },
       resolve: {
         reports: ['$q', 'api.pog_analysis_report', ($q, $report) => {
-          return $report.all();
+          return $report.all({states: 'ready,active'});
         }]
       }
     })
@@ -185,8 +185,8 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       resolve: {
         reports: ['$q', 'api.pog_analysis_report', '$userSettings', 'user', ($q, $report, $userSettings) => {
           let currentUser = $userSettings.get('genomicReportListCurrentUser');
-          if(currentUser === null || currentUser === undefined || currentUser === true) return $report.all({type: 'genomic'});
-          if(currentUser === false) return $report.all({all:true, type: 'genomic'});
+          if(currentUser === null || currentUser === undefined || currentUser === true) return $report.all({type: 'genomic', states: 'ready,active,presented'});
+          if(currentUser === false) return $report.all({all:true, type: 'genomic', states: 'ready,active,presented'});
         }]
       }
     })
@@ -200,8 +200,8 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       resolve: {
         reports: ['$q', 'api.pog_analysis_report', '$userSettings', 'user', ($q, $report, $userSettings) => {
           let currentUser = $userSettings.get('probeReportListCurrentUser');
-          if(currentUser === null || currentUser === undefined || currentUser === true) return $report.all({type: 'probe'});
-          if(currentUser === false) return $report.all({all:true, type: 'probe'});
+          if(currentUser === null || currentUser === undefined || currentUser === true) return $report.all({type: 'probe', states: 'uploaded,signedoff'});
+          if(currentUser === false) return $report.all({all:true, type: 'probe', states: 'uploaded,signedoff'});
         }]
       }
     })

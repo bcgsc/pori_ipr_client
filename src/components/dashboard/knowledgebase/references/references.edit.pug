@@ -94,7 +94,7 @@ md-dialog(layout="column", aria-label="Modify/Create Reference Entry", flex-md=8
 
                     h4 Context
                     div(layout="row")
-                        md-input-container(flex=40)
+                        md-input-container(flex=50)
                             input(ng-model="context.new", name="newContext", placeholder="Add Context", ng-blur="context.add(context.new)", ng-keyup="$event.keyCode == 13 && context.add(context.new)")
                         div(flex, layout="column").diseaseList
                             span(ng-repeat="(i, disEntry) in context.all track by $index", layout="row")

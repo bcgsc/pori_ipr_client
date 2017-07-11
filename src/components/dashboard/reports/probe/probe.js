@@ -13,6 +13,13 @@ app.controller('controller.dashboard.reports.probe', ['_', '$q', '$scope', 'api.
     'clinician'
   ];
 
+  $scope.states = {
+    uploaded: true,
+    signedoff: true,
+    reviewed: false,
+    nonproduction: false
+  };
+
   $scope.filter ={
     currentUser: ($userSettings.get('probeReportListCurrentUser') === undefined) ? true : $userSettings.get('probeReportListCurrentUser'),
     query: null
@@ -32,8 +39,14 @@ app.controller('controller.dashboard.reports.probe', ['_', '$q', '$scope', 'api.
   });
 
   $scope.refreshList = () => {
+
+    let states = [];
+    _.each($scope.states, (v,k) => {
+      if(v) states.push(k);
+    });
+
     $scope.loading = true;
-    $report.all({all: !$scope.filter.currentUser, query: $scope.filter.query, role: $scope.filter.role, reviewed: $scope.reviewed, nonproduction: $scope.nonproduction, type: 'probe'}).then(
+    $report.all({all: !$scope.filter.currentUser, query: $scope.filter.query, role: $scope.filter.role, states: _.join(states, ','), type: 'probe'}).then(
       (result) => {
         $scope.loading = false;
         $scope.reports = result;
