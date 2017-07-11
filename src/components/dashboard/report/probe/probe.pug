@@ -11,8 +11,8 @@ md-content(flex).md-padding
             div
                 md-list(layout-align="start start", id="reportSections")
                     md-subheader Report Sections
-                    md-list-item(ui-sref="dashboard.pog.report.probe.summary", ng-class="activeSection({state: 'summary'}) ? 'active' : ''") Summary
+                    md-list-item(ui-sref="dashboard.reports.pog.report.probe.summary", ng-class="activeSection({state: 'summary'}) ? 'active' : ''") Summary
                         md-icon(ng-click="openPrint()", aria-label="Print Summary Section").md-secondary print
-                    md-list-item(ui-sref="dashboard.pog.report.probe.detailedGenomicAnalysis", ng-class="activeSection({state: 'detailedGenomicAnalysis'}) ? 'active' : ''") Detailed Genomic Analysis
-                    md-list-item(ui-sref="dashboard.pog.report.probe.appendices", ng-class="activeSection({state: 'appendices'}) ? 'active' : ''") Appendices
-                    md-list-item(ui-sref="dashboard.pog.report.probe.meta", ng-class="activeSection({state: 'meta'}) ? 'active' : ''").meta Report Settings
+                    md-list-item(ui-sref="dashboard.reports.pog.report.probe.detailedGenomicAnalysis", ng-class="activeSection({state: 'detailedGenomicAnalysis'}) ? 'active' : ''") Detailed Genomic Analysis
+                    md-list-item(ui-sref="dashboard.reports.pog.report.probe.appendices", ng-class="activeSection({state: 'appendices'}) ? 'active' : ''") Appendices
+                    md-list-item(ui-sref="dashboard.reports.pog.report.probe.meta", ng-class="activeSection({state: 'meta'}) ? 'active' : ''").meta Report Settings
