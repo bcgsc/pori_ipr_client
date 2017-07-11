@@ -16,18 +16,18 @@ div(layout='row', flex)
                     md-tooltip(ng-if="!maximized", md-direction="right") Tracking
                 span(flex, ng-show="maximized") Tracking
 
-            div(layout="row", ui-sref="dashboard.listing.genomic", ng-class="{active: ($state.current.name === 'dashboard.listing' || $state.current.name.indexOf('dashboard.listing') > -1 || $state.current.name.indexOf('dashboard.pog') > -1)}")
+            div(layout="row", ui-sref="dashboard.reports.dashboard", ng-class="{active: ($state.current.name === 'dashboard.reports' || $state.current.name.indexOf('dashboard.reports') > -1)}")
                 md-icon assignment
                     md-tooltip(ng-if="!maximized", md-direction="right") Reports
                 span(flex, ng-show="maximized") Reports
 
-            div(layout="row", ui-sref="dashboard.listing.genomic", ng-class="{active: ($state.current.name.indexOf('genomic') > 0)}", ng-show="maximized || (!maximized && ($state.current.name.indexOf('dashboard.listing') > -1 || $state.current.name.indexOf('dashboard.pog') > -1))").submenu
+            div(layout="row", ui-sref="dashboard.reports.genomic", ng-class="{active: ($state.current.name.indexOf('genomic') > 0)}", ng-show="maximized || (!maximized && ($state.current.name.indexOf('dashboard.listing') > -1 || $state.current.name.indexOf('dashboard.pog') > -1))").submenu
                 md-icon(ng-show="maximized") subdirectory_arrow_right
                 md-icon(ng-show="!maximized") developer_board
                     md-tooltip(ng-if="!maximized", md-direction="right") Genomic
                 span(flex, ng-show="maximized") Genomic
 
-            div(layout="row", ui-sref="dashboard.listing.probe", ng-class="{active: ($state.current.name.indexOf('probe') > 0)}", ng-show="maximized || (!maximized && ($state.current.name.indexOf('dashboard.listing') > -1 || $state.current.name.indexOf('dashboard.pog') > -1))").submenu
+            div(layout="row", ui-sref="dashboard.reports.probe", ng-class="{active: ($state.current.name.indexOf('probe') > 0)}", ng-show="maximized || (!maximized && ($state.current.name.indexOf('dashboard.listing') > -1 || $state.current.name.indexOf('dashboard.pog') > -1))").submenu
                 md-icon(ng-show="maximized") subdirectory_arrow_right
                 md-icon(ng-show="!maximized") highlight
                     md-tooltip(ng-if="!maximized", md-direction="right") Probe

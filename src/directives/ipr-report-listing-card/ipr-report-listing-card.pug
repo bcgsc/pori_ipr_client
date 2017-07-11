@@ -4,8 +4,8 @@ div.header
     h1(layout="row")
         //md-icon(ng-if="report.patientInformation.caseType.toLowerCase() === 'pediatric'", md-whiteframe=2).pediatric.clickable supervisor_account
             md-tooltip Pediatric case
-        span(flex, ng-if="report.type === 'genomic'", ui-sref="dashboard.pog.report.genomic.summary({POG: pog.POGID, analysis_report: report.ident})").clickable {{pog.POGID}}
-        span(flex, ng-if="report.type === 'probe'", ui-sref="dashboard.pog.report.probe.summary({POG: pog.POGID, analysis_report: report.ident})").clickable {{pog.POGID}}
+        span(flex, ng-if="report.type === 'genomic'", ui-sref="dashboard.reports.pog.report.genomic.summary({POG: pog.POGID, analysis_report: report.ident})").clickable {{pog.POGID}}
+        span(flex, ng-if="report.type === 'probe'", ui-sref="dashboard.reports.pog.report.probe.summary({POG: pog.POGID, analysis_report: report.ident})").clickable {{pog.POGID}}
         span(layout="row").text-small
             ipr-report-state(state="report.state")
     div(layout="row").subheader

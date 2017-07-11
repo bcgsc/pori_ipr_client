@@ -107,7 +107,7 @@ app.controller('controller.dashboard.report.genomic',
 
   $scope.goToReportSection = (goto) => {
     
-    $state.go('dashboard.pog.report.genomic.' + goto);
+    $state.go('dashboard.reports.pog.report.genomic.' + goto);
   };
 
 
