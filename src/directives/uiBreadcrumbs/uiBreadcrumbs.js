@@ -44,9 +44,17 @@ app.directive('uiBreadcrumbs', ['$interpolate', '$state', function($interpolate,
             displayName = getDisplayName(workingState);
 
             if (displayName !== false && !stateAlreadyInBreadcrumbs(workingState, breadcrumbs)) {
+
+              let proxyState = workingState.data[scope.dataProxy];
+
+              // If the proxy state is a function, pass in $state and receive string back
+              if(workingState.data && workingState.data[scope.dataProxy] && typeof workingState.data[scope.dataProxy] === 'function') {
+                proxyState = workingState.data[scope.dataProxy]($state);
+              }
+
               breadcrumbs.push({
                 displayName: displayName,
-                route: (workingState.data && workingState.data[scope.dataProxy]) ? workingState.data[scope.dataProxy] : workingState.name
+                route: (workingState.data && workingState.data[scope.dataProxy]) ? proxyState : workingState.name
               });
             }
           }
@@ -130,6 +138,11 @@ app.directive('uiBreadcrumbs', ['$interpolate', '$state', function($interpolate,
         for (i = 0; i < propertyArray.length; i ++) {
           if (angular.isDefined(propertyReference[propertyArray[i]])) {
             propertyReference = propertyReference[propertyArray[i]];
+
+            if(typeof propertyReference === 'function') {
+              propertyReference = propertyReference($state);
+            }
+
           } else {
             // if the specified property was not found, default to the state's name
             return undefined;

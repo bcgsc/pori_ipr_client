@@ -12,8 +12,8 @@ app.directive("iprReportCard", ['$q', '_', '$mdDialog', '$mdToast', '$state', ($
     link: (scope, element, attr) => {
 
       scope.goToReport = (report) => {
-        if(report.type === 'genomic') $state.go('dashboard.pog.report.genomic.summary', {POG: scope.pog.POGID, analysis_report: report.ident});
-        if(report.type === 'probe') $state.go('dashboard.pog.report.probe.summary', {POG: scope.pog.POGID, analysis_report: report.ident});
+        if(report.type === 'genomic') $state.go('dashboard.reports.pog.report.genomic.summary', {POG: scope.pog.POGID, analysis_report: report.ident});
+        if(report.type === 'probe') $state.go('dashboard.reports.pog.report.probe.summary', {POG: scope.pog.POGID, analysis_report: report.ident});
       };
 
 
