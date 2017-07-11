@@ -143,11 +143,6 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       url: '/',
       templateUrl: 'dashboard/home/home.html',
       controller: 'controller.dashboard.home',
-      resolve: {
-        redirect: ['$state', ($state) => {
-          $state.go('dashboard.listing.genomic');
-        }]
-      }
     })
 
 		// Dashboard Overview/POG Listing
