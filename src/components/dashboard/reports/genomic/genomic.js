@@ -87,12 +87,18 @@ app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$scope', 'ap
         // Pog ID?
         if(report.analysis.pog.POGID.toLowerCase().indexOf(q.toLowerCase()) !== -1) result = true;
 
+        // Tumour Type
         if(report.patientInformation !== null && report.patientInformation.tumourType && report.patientInformation.tumourType.toLowerCase().indexOf(q.toLowerCase()) !== -1) result = true;
 
         // Tumour Type & Ploidy Model
         //if(pog.patientInformation.tumourType && pog.patientInformation.tumourType.toLowerCase().indexOf(q.toLowerCase()) !== -1) result = true;
         if(!report.tumourAnalysis) return;
+
         if(report.tumourAnalysis && report.tumourAnalysis.ploidy && report.tumourAnalysis.ploidy.toLowerCase().indexOf(q.toLowerCase()) !== -1) result = true;
+
+        // Comparators
+        if(report.tumourAnalysis && report.tumourAnalysis.diseaseExpressionComparator && report.tumourAnalysis.diseaseExpressionComparator.toLowerCase().indexOf(q.toLowerCase()) !== -1) result = true; // Disease
+        if(report.tumourAnalysis && report.tumourAnalysis.normalExpressionComparator && report.tumourAnalysis.normalExpressionComparator.toLowerCase().indexOf(q.toLowerCase()) !== -1) result = true; // Normal
 
         // TC Search TODO: Cleanup to single line using regex. Proof of concept/do they want this?
         if(q.toLowerCase().indexOf('tc>') !== -1) (report.tumourAnalysis.tumourContent > parseInt(_.last(q.split('>')))) ? result = true : null;
@@ -127,7 +133,7 @@ app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$scope', 'ap
       $mdDialog.alert()
         .clickOutsideToClose(true)
         .title('POG Searching Tips')
-        .htmlContent("The search bar can filter the listing of POGs using a number of special terms. <ul><li>Filter by tumour content: <code>tc>50 tc<40 tc=35</code></li><li>Filter by POG: <code>pog544</code></li><li>By tumour type: <code>brca</code></li><li>By ploidy: <code>diploid</code></li><li>By user involved: <code>bpierce</code>, <code>Brandon</code></li> <li>By disease: <code>melanoma</code></li> </ul>")
+        .htmlContent("The search bar can filter the listing of POGs using a number of special terms. <ul><li>Filter by tumour content: <code>tc>50 tc<40 tc=35</code></li><li>Filter by POG: <code>pog544</code></li><li>By ploidy: <code>diploid</code></li><li>By user involved: <code>bpierce</code>, <code>Brandon</code></li> <li>By disease: <code>melanoma</code></li> <li>By comparators: <code>BRCA</code>, <code>breast</code></li></ul>")
         .ok('Got it!')
         .targetEvent($event)
     );
