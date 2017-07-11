@@ -28,7 +28,7 @@ table.print
 
                     div(layout="column").smEvents.indel
                         div(layout="row")
-                            div(flex=60) Number of non-synonymous protein coding SNVs (Truncating)
+                            div(flex=60) Number of protein coding indels (Frameshift)
                             div(flex=40, layout="row", layout-align="center center").count
                                 div.indel {{ms.totalIndel}}
                         img(data-ng-src="data:image/png;base64,{{images['mutSummary.indel'].data}}").bar

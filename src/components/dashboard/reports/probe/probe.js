@@ -1,4 +1,4 @@
-app.controller('controller.dashboard.listing.genomic', ['_', '$q', '$scope', 'api.pog_analysis_report', 'reports', '$mdDialog', 'user', '$userSettings',  (_, $q, $scope, $report, reports, $mdDialog, user, $userSettings) => {
+app.controller('controller.dashboard.reports.probe', ['_', '$q', '$scope', 'api.pog_analysis_report', 'reports', '$mdDialog', 'user', '$userSettings',  (_, $q, $scope, $report, reports, $mdDialog, user, $userSettings) => {
 
   $scope.reports = reports;
   $scope.archived = false;
@@ -14,11 +14,11 @@ app.controller('controller.dashboard.listing.genomic', ['_', '$q', '$scope', 'ap
   ];
 
   $scope.filter ={
-    currentUser: ($userSettings.get('genomicReportListCurrentUser') === undefined) ? true : $userSettings.get('genomicReportListCurrentUser'),
+    currentUser: ($userSettings.get('probeReportListCurrentUser') === undefined) ? true : $userSettings.get('probeReportListCurrentUser'),
     query: null
   };
 
-  if($userSettings.get('genomicReportListCurrentUser') === undefined) $userSettings.save('genomicReportListCurrentUser', true);
+  if($userSettings.get('probeReportListCurrentUser') === undefined) $userSettings.save('probeReportListCurrentUser', true);
 
   $scope.numReports = (state) => {
     return _.filter(reports, {state: state}).length;
@@ -27,20 +27,20 @@ app.controller('controller.dashboard.listing.genomic', ['_', '$q', '$scope', 'ap
   $scope.$watch('filter.currentUser', (newVal, oldVal) => {
     // Ignore onload message
     if(JSON.stringify(newVal) === JSON.stringify(oldVal)) return;
-    $userSettings.save('genomicReportListCurrentUser', newVal);
+    $userSettings.save('probeReportListCurrentUser', newVal);
 
   });
 
   $scope.refreshList = () => {
     $scope.loading = true;
-    $report.all({all: !$scope.filter.currentUser, query: $scope.filter.query, role: $scope.filter.role, archived: $scope.archived, nonproduction: $scope.nonproduction, type: 'genomic'}).then(
+    $report.all({all: !$scope.filter.currentUser, query: $scope.filter.query, role: $scope.filter.role, reviewed: $scope.reviewed, nonproduction: $scope.nonproduction, type: 'probe'}).then(
       (result) => {
         $scope.loading = false;
         $scope.reports = result;
         associateUsers();
       },
       (err) => {
-        console.log('Unable to get reports', err);
+        console.log('Unable to get pogs', err);
       }
     )
   };
@@ -58,7 +58,6 @@ app.controller('controller.dashboard.listing.genomic', ['_', '$q', '$scope', 'ap
   $scope.searchPogs = (state, query) => {
 
     return (report) => {
-
       if(!query) query = "";
 
       // Define Return result

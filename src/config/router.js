@@ -25,7 +25,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
 			    return $q((resolve, reject) => {
 			      $session.init().then(
 			        (user) => {
-			          if(user) $state.go('dashboard.listing');
+			          if(user) $state.go('dashboard.reports');
 			          reject('Already logged in');
               },
               (err) => {
@@ -96,7 +96,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
 			},
       data: {
 			  displayName: 'Dashboard',
-        breadcrumbProxy: 'dashboard.listing'
+        breadcrumbProxy: 'dashboard.reports'
       },
 			resolve: {
 			  user: ['$q', 'api.session', '$state', '$userSettings', ($q, $session, $state, $userSettings) => {
@@ -151,29 +151,41 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     })
 
 		// Dashboard Overview/POG Listing
-		.state('dashboard.listing', {
-			url: '/listing',
-			templateUrl: 'dashboard/listing/listing.html',
-			controller: 'controller.dashboard.listing',
+		.state('dashboard.reports', {
+		  abstract: true,
+			url: '/reports',
+      templateUrl: 'dashboard/reports/reports.html',
       data: {
-			  displayName: "Reports",
-        //breadcrumbProxy: 'dashboard.listing.genomic'
-      },
-      resolve: {
-        pogs: ['$q', 'api.pog', '$userSettings', 'user', ($q, $pog, $userSettings) => {
-          let currentUserOnly = $userSettings.get('pogListCurrentUser');
-          if(currentUserOnly === null || currentUserOnly === undefined || currentUserOnly === true) return $pog.all();
-          if(currentUserOnly === false) return $pog.all({all:true});
-        }]
+        displayName: 'Reports',
+        breadcrumbProxy: 'dashboard.reports.dashboard'
       }
 		})
 
-    .state('dashboard.listing.genomic', {
-      url: '/genomic',
-      templateUrl: 'dashboard/listing/genomic/genomic.html',
-      controller: 'controller.dashboard.listing.genomic',
+    .state('dashboard.reports.dashboard', {
+      url: '/dashboard',
+      templateUrl: 'dashboard/reports/dashboard/dashboard.html',
+      controller: 'controller.dashboard.reports.dashboard',
       data: {
-        displayName: 'Genomic'
+        displayName: 'Listing',
+        breadcrumbProxy: ($state) => {
+          if($state.current.name.indexOf('report.probe') > -1) return 'dashboard.reports.probe';
+          if($state.current.name.indexOf('report.genomic') > -1) return 'dashboard.reports.genomic';
+          return 'dashboard.reports.dashboard';
+        }
+      },
+      resolve: {
+        reports: ['$q', 'api.pog_analysis_report', ($q, $report) => {
+          return $report.all();
+        }]
+      }
+    })
+
+    .state('dashboard.reports.genomic', {
+      url: '/genomic',
+      templateUrl: 'dashboard/reports/genomic/genomic.html',
+      controller: 'controller.dashboard.reports.genomic',
+      data: {
+        displayName: 'Genomic Reports'
       },
       resolve: {
         reports: ['$q', 'api.pog_analysis_report', '$userSettings', 'user', ($q, $report, $userSettings) => {
@@ -183,12 +195,12 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         }]
       }
     })
-    .state('dashboard.listing.probe', {
+    .state('dashboard.reports.probe', {
       url: '/probe',
-      templateUrl: 'dashboard/listing/probe/probe.html',
-      controller: 'controller.dashboard.listing.probe',
+      templateUrl: 'dashboard/reports/probe/probe.html',
+      controller: 'controller.dashboard.reports.probe',
       data: {
-        displayName: 'Probe'
+        displayName: 'Probe Reports'
       },
       resolve: {
         reports: ['$q', 'api.pog_analysis_report', '$userSettings', 'user', ($q, $report, $userSettings) => {
@@ -199,10 +211,10 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       }
     })
 
-    .state('dashboard.pog', {
+    .state('dashboard.reports.pog', {
       data: {
         displayName: '{{pog.POGID}}',
-        breadcrumbProxy: 'dashboard.pog.report.listing'
+        breadcrumbProxy: 'dashboard.reports.pog.report.listing'
       },
       url: '/'+CONFIG.PROJECT.NAME+'/{POG}',
       controller: 'controller.dashboard.pog',
@@ -224,12 +236,12 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       }
     })
 
-    .state('dashboard.pog.report', {
+    .state('dashboard.reports.pog.report', {
       abstract: true,
       url: '/report',
       data: {
         displayName: "Analysis Reports",
-        breadcrumbProxy: 'dashboard.pog.report.listing'
+        breadcrumbProxy: 'dashboard.reports.pog.report.listing'
       },
 			templateUrl: 'dashboard/report/report.html',
       resolve: {
@@ -239,7 +251,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       }
     })
 
-    .state('dashboard.pog.report.listing', {
+    .state('dashboard.reports.pog.report.listing', {
       url: '/listing',
       data: {
         displayName: "Analysis Reports",
@@ -253,11 +265,11 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
      * Probing
      *
      */
-    .state('dashboard.pog.report.probe', {
+    .state('dashboard.reports.pog.report.probe', {
       url: '/{analysis_report}/probe',
       data: {
         displayName: "Probe",
-        breadcrumbProxy: 'dashboard.pog.report.probe.summary'
+        breadcrumbProxy: 'dashboard.reports.pog.report.probe.summary'
       },
       templateUrl: 'dashboard/report/probe/probe.html',
       controller: 'controller.dashboard.report.probe',
@@ -268,7 +280,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       }
     })
 
-    .state('dashboard.pog.report.probe.summary', {
+    .state('dashboard.reports.pog.report.probe.summary', {
       url: '/summary',
       templateUrl: 'dashboard/report/probe/summary/summary.html',
       controller: 'controller.dashboard.report.probe.summary',
@@ -288,7 +300,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       }
     })
 
-    .state('dashboard.pog.report.probe.detailedGenomicAnalysis', {
+    .state('dashboard.reports.pog.report.probe.detailedGenomicAnalysis', {
       url: '/appendices',
       data: {
         displayName: "Appendices"
@@ -308,7 +320,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       }
     })
 
-    .state('dashboard.pog.report.probe.appendices', {
+    .state('dashboard.reports.pog.report.probe.appendices', {
       url: '/appendices',
       data: {
         displayName: "Appendices"
@@ -322,7 +334,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       }
     })
 
-    .state('dashboard.pog.report.probe.meta', {
+    .state('dashboard.reports.pog.report.probe.meta', {
       url: '/meta',
       data: {
         displayName: "Report Meta Information"
@@ -336,11 +348,11 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
      * Genomic
      *
      */
-    .state('dashboard.pog.report.genomic', {
+    .state('dashboard.reports.pog.report.genomic', {
       url: '/{analysis_report}/genomic',
       data: {
         displayName: "Genomic",
-        breadcrumbProxy: 'dashboard.pog.report.genomic.summary'
+        breadcrumbProxy: 'dashboard.reports.pog.report.genomic.summary'
       },
       templateUrl: 'dashboard/report/genomic/genomic.html',
       controller: 'controller.dashboard.report.genomic',
@@ -351,7 +363,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       }
     })
 
-    .state('dashboard.pog.report.genomic.summary', {
+    .state('dashboard.reports.pog.report.genomic.summary', {
       url: '/summary',
       templateUrl: 'dashboard/report/genomic/summary/summary.html',
       controller: 'controller.dashboard.report.genomic.summary',
@@ -384,7 +396,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     })
 
 
-    .state('dashboard.pog.report.genomic.analystComments', {
+    .state('dashboard.reports.pog.report.genomic.analystComments', {
       url: '/analystComments',
       data: {
         displayName: "Analyst Comments"
@@ -398,7 +410,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       }
     })
 
-    .state('dashboard.pog.report.genomic.pathwayAnalysis', {
+    .state('dashboard.reports.pog.report.genomic.pathwayAnalysis', {
       url: '/pathwayAnalysis',
       data: {
         displayName: "Pathway Analysis"
@@ -412,7 +424,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       }
     })
 
-    .state('dashboard.pog.report.genomic.detailedGenomicAnalysis', {
+    .state('dashboard.reports.pog.report.genomic.detailedGenomicAnalysis', {
       url: '/detailedGenomicAnalysis',
       data: {
         displayName: "Detailed Genomic Analysis"
@@ -435,7 +447,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       }
     })
 
-    .state('dashboard.pog.report.genomic.diseaseSpecificAnalysis', {
+    .state('dashboard.reports.pog.report.genomic.diseaseSpecificAnalysis', {
       url: '/diseaseSpecificAnalysis',
       data: {
         displayName: "Disease Specific Analysis"
@@ -449,7 +461,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       }
     })
 
-    .state('dashboard.pog.report.genomic.somaticMutations', {
+    .state('dashboard.reports.pog.report.genomic.somaticMutations', {
       url: '/somaticMutations',
       data: {
         displayName: "Somatic Mutations"
@@ -472,7 +484,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       }
     })
 
-    .state('dashboard.pog.report.genomic.copyNumberAnalyses', {
+    .state('dashboard.reports.pog.report.genomic.copyNumberAnalyses', {
       url: '/copyNumberAnalyses',
       data: {
         displayName: "Copy Number Analyses"
@@ -492,7 +504,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       }
     })
 
-    .state('dashboard.pog.report.genomic.structuralVariation', {
+    .state('dashboard.reports.pog.report.genomic.structuralVariation', {
       url: '/structuralVariation',
       data: {
         displayName: "Structural Variation"
@@ -512,7 +524,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       }
     })
 
-    .state('dashboard.pog.report.genomic.expressionAnalysis', {
+    .state('dashboard.reports.pog.report.genomic.expressionAnalysis', {
       url: '/expressionAnalysis',
       data: {
         displayName: "Expression Analysis"
@@ -538,7 +550,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       }
     })
 
-    .state('dashboard.pog.report.genomic.appendices', {
+    .state('dashboard.reports.pog.report.genomic.appendices', {
       url: '/appendices',
       data: {
         displayName: "Appendices"
@@ -552,7 +564,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       }
     })
 
-    .state('dashboard.pog.report.genomic.meta', {
+    .state('dashboard.reports.pog.report.genomic.meta', {
       url: '/meta',
       data: {
         displayName: "POG Meta Information"
@@ -561,7 +573,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       controller: 'controller.dashboard.report.genomic.meta',
     })
 
-    .state('dashboard.pog.report.genomic.history', {
+    .state('dashboard.reports.pog.report.genomic.history', {
       url: '/history',
       data: {
         displayName: "Data History"
@@ -581,7 +593,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       }
     })
 
-    .state('dashboard.pog.report.genomic.therapeutic', {
+    .state('dashboard.reports.pog.report.genomic.therapeutic', {
       url: '/therapeutic',
       data: {
         displayName: "Potential Therapeutic Targets"
