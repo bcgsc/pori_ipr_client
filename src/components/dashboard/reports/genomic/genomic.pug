@@ -13,12 +13,6 @@ md-content(flex, layout="column").md-padding
                     md-select(ng-model="filter.role", placeholder="Roles", ng-change="refreshList()").text-small
                         md-option(ng-value="null") All
                         md-option(ng-repeat="role in roles", ng-value="role") {{role}}
-                //md-list-item
-                    p Show archived reports
-                    md-switch(ng-model="archived", ng-change="refreshList()", ng-false-value="false", ng-true-value="true").md-primary
-                //md-list-item
-                    p Show non-production/test reports
-                    md-switch(ng-model="nonproduction", ng-change="refreshList()", ng-false-value="false", ng-true-value="true").md-primary
 
                 md-list-item
                     p Show Ready for Analysis
@@ -46,30 +40,6 @@ md-content(flex, layout="column").md-padding
             span
                 md-button(ng-click="showOptions = !showOptions").md-primary.md-icon-button.md-raised
                     md-icon settings
-
-    //div(layout="row", ng-show="pogList.length === 0", layout-align="center center")
-        div(md-whiteframe="1").noPogs No active cases assigned to you.
-
-    //div(ng-repeat="pog in pogList = ( pogs | filter: searchPogs(pogQuery))", flex, md-whiteframe="1").PogList.md-padding
-        h2(layout="row")
-            span(ui-sref="dashboard.pog.report.genomic.summary({POG: '{{pog.POGID}}' })", flex).title {{pog.POGID}}
-            span(flex).text-center {{pog.patientInformation.reportDate}}
-            span(flex) My Roles:
-                span(ng-if="pog.myRoles.length === 0", md-whiteframe="1").role None
-                span(ng-repeat="role in pog.myRoles", md-whiteframe="2").role {{role.role}}
-                    md-tooltip Assigned by {{role.addedBy.firstName}} {{role.addedBy.lastName}} {{role.createdAt | amTimeAgo}}
-
-        div(flex, layout="column")
-            div(flex, layout="row")
-                div(flex)
-                    span Tumour Content:
-                        ipr-tumour-content(tc="{{pog.tumourAnalysis.tumourContent}}", md-whiteframe="1")
-                div(flex)
-                    span Tumour Type:
-                    |  {{pog.patientInformation.tumourType}}
-                div(flex)
-                    span Ploidy Model:
-                    |  {{pog.tumourAnalysis.ploidy}}
 
     div(layout="column", flex).kanban
         div(layout="row", layout-align="space-between").title
