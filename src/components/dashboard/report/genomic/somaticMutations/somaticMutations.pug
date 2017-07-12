@@ -14,16 +14,16 @@ section
                         div(flex=60) Number of non-synonymous protein coding SNVs (Truncating)
                         div(flex=40, layout="row", layout-align="center center").count
                             div.snv {{ms.totalSNV}}
-                    img(data-ng-src="data:image/png;base64,{{images['mutSummary.snv'].data}}")
-                    img(data-ng-src="data:image/png;base64,{{images['mutSummary.barSnv'].data}}")
+                    img(style="width: 90%", data-ng-src="data:image/png;base64,{{images['mutSummary.snv'].data}}")
+                    img(style="width: 90%", data-ng-src="data:image/png;base64,{{images['mutSummary.barSnv'].data}}")
 
                 div(layout="column").smEvents.indel
                     div(layout="row")
                         div(flex=60) Number of protein coding indels (Frameshift)
                         div(flex=40, layout="row", layout-align="center center").count
                             div.indel {{ms.totalIndel}}
-                    img(data-ng-src="data:image/png;base64,{{images['mutSummary.indel'].data}}")
-                    img(data-ng-src="data:image/png;base64,{{images['mutSummary.barIndel'].data}}")
+                    img(style="width: 90%", data-ng-src="data:image/png;base64,{{images['mutSummary.indel'].data}}")
+                    img(style="width: 90%", data-ng-src="data:image/png;base64,{{images['mutSummary.barIndel'].data}}")
 
             h3.title Mutational Spectrum
             ipr-mutation-signature(pog="pog", report="report", mutation-signature="mutationSignature", mutation-summary="ms")

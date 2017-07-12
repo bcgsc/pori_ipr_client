@@ -9,12 +9,13 @@ section
             h3.title Spearman Correlation with Available Expression Datasets
 
             div(layout="row", layout-align="center center").md-padding
-                span(flex=20)
+                span(flex=15, hide-md)
                 span(flex, layout="row", layout-align="start start")
-                    img(data-ng-src="data:image/png;base64,{{images['expression.chart'].data}}")
-                    div(layout="column")
+                    div(flex=50)
+                        img(style="width: 95%", data-ng-src="data:image/png;base64,{{images['expression.chart'].data}}")
+                    div(layout="column", flex=50)
                         div(flex, layout-align="center start")
-                            img(data-ng-src="data:image/png;base64,{{images['expression.legend'].data}}")
+                            img(style="width: 95%", data-ng-src="data:image/png;base64,{{images['expression.legend'].data}}")
                         div(layout="row").expressionDetails
                             div(flex).normal
                                 | Normal Tissue Expression Comparator
@@ -23,7 +24,7 @@ section
                                 | Disease Expression Comparator
                                 span(style="background-color: #{{colourHex(report.tumourAnalysis.tcgaColor)}}") {{report.tumourAnalysis.diseaseExpressionComparator}}
                         span.details Tissue Comparator Details
-                span(flex=20)
+                span(flex=15, hide-md)
 
         div(layout="column", flex)
             h2.title Expression Analysis: Genomic Details
