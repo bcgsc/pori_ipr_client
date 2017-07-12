@@ -1,12 +1,11 @@
 section
-    md-subheader.md-primary Somatic Mutations
+    md-subheader.md-primary Structural Variation
 
     div(layout="column", flex)
 
         div(layout="column", flex).bg-white
 
-            h2.title Small Somatic Mutations
-            h3.title Summary of Somatic Events
+            h2.title Summary of Structural Events
 
             div(layout="row", layout-align="space-around center").margin-bottom-40
                 div(layout="column").smEvents.snv
@@ -33,7 +32,7 @@ section
 
         div(layout="column", flex)
 
-            h2.title Small Mutations: Genomic Details
+            h2.title Structural Variation: Genomic Details
 
             div(ng-repeat="(title, svs) in StrucVars")
                 h3.title {{titleMap[title]}}
