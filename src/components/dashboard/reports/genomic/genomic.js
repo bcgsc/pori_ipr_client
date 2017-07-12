@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$scope', 'api.pog_analysis_report', 'reports', '$mdDialog', 'user', '$userSettings',  (_, $q, $scope, $report, reports, $mdDialog, user, $userSettings) => {
 
-  $scope.reports = reports;
+  $scope.reports = reports = _.orderBy(reports, ['analysis.pog.POGID','createdAt'], ['asc','desc']);
   $scope.archived = false;
   $scope.nonproduction = false;
   $scope.loading = false;
@@ -49,6 +49,7 @@ app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$scope', 'ap
       (result) => {
         $scope.loading = false;
         $scope.reports = reports = result;
+        $scope.reports = reports = _.orderBy(result, ['analysis.pog.POGID','createdAt'], ['asc','desc']);
         associateUsers();
       },
       (err) => {
