@@ -8,6 +8,20 @@ md-dialog-content.iprBox {
   .dataBox {
     margin: 7px 4px;
 
+    .infoBar {
+      background-color: rgb(154, 162, 204);
+      font-size: 12px;
+      padding: 10px;
+
+      span:first-of-type {
+        font-weight: 200;
+      }
+      span:nth-of-type(2) {
+        font-weight: 600;
+        margin-left: 10px;
+      }
+    }
+
     &.noBottomMargin {
       margin-bottom: 0;
     }
