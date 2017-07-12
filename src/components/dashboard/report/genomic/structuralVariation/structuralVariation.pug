@@ -13,14 +13,14 @@ section
                         div(flex=60) Structural Variants (Expressed Fusions)
                         div(flex=40, layout="row", layout-align="center center").count
                             div.sv {{ms.totalSV}}
-                    img(data-ng-src="data:image/png;base64,{{images['mutSummary.sv'].data}}")
+                    img(style="width: 90%", data-ng-src="data:image/png;base64,{{images['mutSummary.sv'].data}}")
 
                 div(layout="column").smEvents.indel
                     div(layout="row")
                         div(flex=60) &nbsp;
                         div(flex=40, layout="row", layout-align="center center").count
                             div &nbsp;
-                    img(data-ng-src="data:image/png;base64,{{images['mutSummary.barSv'].data}}")
+                    img(style="width: 90%", data-ng-src="data:image/png;base64,{{images['mutSummary.barSv'].data}}")
 
             md-tabs(md-dynamic-height=true, md-center-tabs=true).margin-bottom-20
                 md-tab(label="Genome")
