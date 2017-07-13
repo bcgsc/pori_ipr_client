@@ -9,7 +9,7 @@ app.controller('controller.public.login', ['$q', '_', '$scope', 'api.session', '
   $session.$user().then(
     (resp) => {
       if(resp !== null) {
-        $state.go('dashboard.listing');
+        $state.go('dashboard.reports.dashboard');
       }
     },
     (err) => {
@@ -32,7 +32,7 @@ app.controller('controller.public.login', ['$q', '_', '$scope', 'api.session', '
     // Run session login
     $session.login($scope.user.username, $scope.user.password).then(
       (result) => {
-        $state.go('dashboard.listing');
+        $state.go('dashboard.reports.dashboard');
       },
       (error) => {
         // Login failed!
