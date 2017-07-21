@@ -99,13 +99,14 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         breadcrumbProxy: 'dashboard.reports'
       },
 			resolve: {
-			  user: ['$q', 'api.session', '$state', '$userSettings', ($q, $session, $state, $userSettings) => {
+			  user: ['$q', 'api.session', '$state', '$userSettings', 'api.socket', ($q, $session, $state, $userSettings, socket) => {
 			    return $q((resolve, reject) => {
 			      // Attempt session initialization
 			      $session.init().then(
 			        (user) => {
                 // Session init'd, return user
                 $userSettings.init(); // Init settings
+
 			          resolve(user);
 		          },
 		          (err) => {

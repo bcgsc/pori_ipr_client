@@ -11,6 +11,7 @@ const app = angular.module('bcgscIPR', [
 	'ngclipboard',
 	'angular-sortable-view',
 	'ngQuill',
-	'chart.js'
+	'chart.js',
+	'btford.socket-io'
 ]);
 

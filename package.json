@@ -16,6 +16,7 @@
     "angular-moment": "1.0.1",
     "angular-resource": "1.6.1",
     "angular-sanitize": "1.6.2",
+    "angular-socket-io": "^0.7.0",
     "angular-sortable-view": "0.0.15",
     "angular-sticky-plugin": "0.3.0",
     "angular-ui-router": "0.3.2",
