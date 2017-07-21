@@ -16,10 +16,10 @@ app.factory('api.tracking.state', ['_', '$http', '$q', (_, $http, $q) => {
    *
    * @returns {Promise} - Resolves with array of definitions
    */
-  $state.all = () => {
+  $state.all = (params={}) => {
     return $q((resolve, reject) => {
 
-      $http.get(api + '/').then(
+      $http.get(api + '/', {params: params}).then(
         (result) => {
           resolve(result.data);
         },
@@ -31,6 +31,26 @@ app.factory('api.tracking.state', ['_', '$http', '$q', (_, $http, $q) => {
     });
   };
 
+  /**
+   * Get selected states
+   *
+   * @param {object} params - URL parameters to append
+   *
+   */
+  $state.filtered = (params={}) => {
+    return $q((resolve, reject) => {
+
+      $http.get(api + '/state', {params: params}).then(
+        (result) => {
+          resolve(result.data);
+        },
+        (err) => {
+          reject(err);
+        }
+      )
+
+    });
+  };
 
   /**
    * Get get single state

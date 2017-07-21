@@ -21,6 +21,6 @@ md-content(flex).adminSection
             div(flex, layout="row", ng-repeat="g in groups", ng-click="groupDiag($event, g)").row.clickable
                 div(flex).text-capitalize {{g.name}}
                 div(flex=15) {{g.users.length}}
-                div(flex) ??
-                div(flex) {{g.createdAt | amDateFormat:'DD/MM/YYY'}}
+                div(flex) {{g.owner.firstName}} {{g.owner.lastName}}
+                div(flex) {{g.createdAt | amDateFormat:'DD/MM/Y'}}
                     md-tooltip(md-direction="left") {{g.createdAt | amDateFormat:'dddd, MMMM Do YYYY, h:mm:ss a' }}

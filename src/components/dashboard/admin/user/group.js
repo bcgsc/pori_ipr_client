@@ -59,7 +59,7 @@ app.controller('controller.dashboard.admin.users.groups', ['_', '$scope', '$mdSi
 
         if(newGroup) {
           $scope.groups.push(resp.data);
-          $scope.groups = _.sortBy($scope.groups, 'name');
+          $scope.groups = groups = _.sortBy($scope.groups, 'name');
         }
       },
       (err) => {

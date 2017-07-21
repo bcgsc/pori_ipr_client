@@ -18,6 +18,25 @@ md-dialog(flex=50).adminSection
                 md-input-container(flex)
                     input(ng-model="group.name", placeholder="Group Name", required)
 
+            div(flex, layout="row")
+                md-autocomplete(
+                md-input-name="GroupLeader",
+                md-selected-item="group.owner",
+                md-search-text="searchOwnerQuery",
+                md-items="user in searchOwner(searchOwnerQuery)",
+                md-item-text="user.firstName + ' ' + user.lastName",
+                md-floating-label="Group Loader",
+                md-autofocus=true,
+                md-autoselect=true,
+                md-require-match,
+                md-dropdown-position="bottom",
+                required,
+                flex
+                )
+                    md-item-template {{user.firstName}} {{user.lastName}}
+                    div(ng-messages="User", ng-if="form.User.$touched")
+                        div(ng-message="required") A leader must be selected
+
             div(ng-hide="newGroup")
                 h3(style="margin: 0;") Group Members
 

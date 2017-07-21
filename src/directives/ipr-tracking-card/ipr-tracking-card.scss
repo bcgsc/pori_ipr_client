@@ -14,256 +14,93 @@ $stripe-failed: repeating-linear-gradient(
 );
 
 
-.kanban {
+ipr-tracking-card.pog {
 
-  ipr-tracking-card.pog {
+  &.complete > .header { border-left: 7px solid #2bae57; }
+  &.active > .header { border-left: 7px solid #65d1cb; }
+  &.hold > .header { border-left: 7px solid #e9dd4e; }
+  &.pending > .header { border-left: 7px solid #aaaaaa; }
+  &.failed > .header { border-left: 7px solid #df2816; }
 
-    &.complete > .header { border-left: 7px solid #2bae57; }
-    &.active > .header { border-left: 7px solid #65d1cb; }
-    &.hold > .header { border-left: 7px solid #e9dd4e; }
-    &.pending > .header { border-left: 7px solid #aaaaaa; }
-    &.failed > .header { border-left: 7px solid #df2816; }
-
-    .header {
-      .subheader {
-        .priority {
-          font-size: 12.8px;
-          .high {
-            color: red;
-            background-color: white;
-          }
+  .header {
+    .subheader {
+      .priority {
+        font-size: 12.8px;
+        .high {
+          color: red;
+          background-color: white;
         }
       }
     }
+  }
 
-    h1 {
-      padding-right: 0 !important;
+  &.pog {
+    background-color: rgb(255,255,255);
+    margin: 5px 0;
 
-      md-icon {
-        &.warning {
-          background-color: #ff3820;
-        }
-        &.notice {
-          background-color: #d1bb10;
-        }
-
-        color: rgb(255,255,255);
-        padding: 3px;
-        border-radius: 3px;
-        margin-right: 4px;
-        font-size: 18px;
-        min-height: 18px;
-        height: 18px;
-        width: 18px;
-        min-width: 18px;
-      }
-
-      .completion {
-        font-size: 12px;
-
-        span:first-of-type {
-          font-weight: 100;
-          margin-right: 10px;
-        }
-        span:nth-of-type(2) {
-          font-weight: 900;
-        }
-      }
-
+    &:first-of-type {
+      margin-top: 0;
     }
 
-    div.tasks {
-      border-top: 1px solid rgba(0,0,0,0.2);
-      border-bottom: 1px solid rgba(0,0,0,0.2);
-      padding: 5px 0;
+    div.header {
+      background-color: rgb(62, 79, 177);
+      color: rgb(255, 255, 255);
+      padding: 4px 13px 4px 13px;
+      min-height: 57px;
 
-      div {
-        border-bottom: 1px solid rgb(230,230,230);
-        padding: 2px 0;
-        min-height: 15px;
 
-        &:last-of-type { border-bottom: none; }
+      h1 {
+        font-weight: 500;
+        font-size: 1.2em;
+        margin: 0 0 5px 0;
+        padding: 7px 0 0 0;
 
-        &.warning {
-          background: $stripe-failed;
-          color: rgb(255,255,255);
-
-          md-icon {
-            color: rgb(255,255,255);
-          }
-        }
-
-        &.notice {
-          background: $stripe-hold;
-          color: rgb(15, 15, 15);
-
-          md-icon {
-            color: rgb(15,15,15);
-          }
-        }
-
-        md-icon {
-          width: 17px;
-          height: 17px;
-          min-height: 17px;
-          min-width: 17px;
-          font-size: 17px;
-          margin-right: 5px;
-          cursor: pointer;
-
-        }
-
-        img {
+        md-icon.pediatric {
+          color: rgb(255, 255, 255);
           margin-right: 6px;
-          border-radius: 4px;
-          cursor: pointer;
+          background-color: rgb(255, 66, 96);
+          border-radius: 3px;
         }
 
-        div.popover-container {
-          position: relative;
-          width: 1px;
-          height: 1px;
-          float: left;
+        span.priority {
+          margin-right: auto;
+          float: right;
+          width: 37px;
+          height: 13px;
+          padding: 1px;
+          border: 1px solid rgba(255,255,255, 0.5);
+          background: rgba(255,255,255, 0.10);
 
-          div.content {
-            position: absolute;
-            background-color: white;
-            width: 320px;
-            margin-left: -325px;
-            margin-top: -6px;
-            z-index: 100;
-            padding: 0;
-            font-size: 14px;
+          span.pip {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background-color: rgb(255,255,255);
+            margin: 0 1px;
+            border: 1px solid rgba(255,255,255, 0.6);
 
-
-            .header {
-              background-color: rgba(62,79,177, 1);
-              color: rgb(255,255,255);
-              font-size: 18px;
-              padding: 4px 8px;
-            }
-            .body {
-              padding: 5px;
-              font-size: 1.0em;
-
-              .avatar {
-                border: none;
-                img { cursor: auto }
-              }
-
-              .details {
-                > span {
-                  margin-bottom: 5px;
-                }
-              }
-            }
-
+            &.high { background-color: rgb(255, 37, 0); }
+            &.normal { background-color: rgb(0, 220, 16); }
+            &.low { background-color: rgb(255, 188, 0); }
           }
-        }
-
-        span.value {
-          margin-right: 8px;
-        }
-
-        &.stateDetails span:nth-of-type(2) {
-          font-weight: 200;
-          text-align: center;
-          padding-right: 15px;
-          padding-bottom: 5px;
-        }
-
-        span:first-of-type {
-          font-weight: 100;
-          margin-right: 5px;
-          padding-left: 10px;
-          width: 16px;
-          text-align: right;
-        }
-        span:nth-of-type(2) {
-          margin-left: 0;
-          font-weight: 700;
-        }
-        span.status:last-of-type {
-          width: 9px;
-          height: 9px;
-          border: 1px solid rgba(0,0,0,0.4);
-          margin-top: 2px;
-          border-radius: 50%;
-          margin-right: 10px;
-          background-color: rgb(255,255,255);
-
-          &.hold {
-            background-color: rgb(242, 220, 17);
-          }
-          &.active {
-            background-color: rgba(62,79,177, 1);
-          }
-          &.complete {
-            background-color: rgb(46, 204, 113);
-          }
-          &.failed {
-            border-color: rgb(255,255,255);
-            background-color: rgb(204, 0, 6);
-          }
-
         }
       }
+
     }
 
-    div.taskToggle {
-      text-align: center;
-      color: rgba(0,0,0,0.6);
-      transition: 0.5s;
-      min-height: 25px;
-      text-transform: uppercase;
-      font-size: 11px;
-      font-weight: 500;
+    div.details {
+      padding: 4px 10px;
+      min-height: 15px;
 
-      &:hover {
-        div.edit {
-          span { display: inline; }
-          md-icon { display: inline-block; }
-        }
+      &:first-of-type { padding-top: 8px; }
+      &:last-of-type { padding-bottom: 8px; }
+
+      span.low {
+        color: red;
       }
 
-      div.edit {
-        padding-top: 4px;
-
-        span {
-          display: none;
-        }
-
-        md-icon {
-          margin-left: 4px;
-          font-size: 13px;
-          max-height: 13px;
-          min-width: 13px;
-          max-width: 13px;
-          width: 13px;
-          display: none;
-          margin-top: -4px;
-        }
-      }
-
-      md-icon {
-        font-size: 15px;
-        min-height: 15px;
-        height: 15px;
-        color: rgba(0, 0, 0, 0.6);
-      }
-
-      .toggle {
-        md-icon {
-          transition: 0.3s;
-        }
-
-        &:hover {
-          color: rgb(71, 94, 197);
-
-          md-icon {
-            color: rgb(71, 94, 197);
-          }
-        }
+      div:last-of-type {
+        text-transform: capitalize;
       }
     }
 
@@ -304,8 +141,275 @@ $stripe-failed: repeating-linear-gradient(
       }
     }
   }
-}
 
+  h1 {
+    padding-right: 0 !important;
+
+    md-icon {
+      &.warning {
+        background-color: #ff3820;
+      }
+      &.notice {
+        background-color: #d1bb10;
+      }
+
+      color: rgb(255,255,255);
+      padding: 3px;
+      border-radius: 3px;
+      margin-right: 4px;
+      font-size: 18px;
+      min-height: 18px;
+      height: 18px;
+      width: 18px;
+      min-width: 18px;
+    }
+
+    .completion {
+      font-size: 12px;
+
+      span:first-of-type {
+        font-weight: 100;
+        margin-right: 10px;
+      }
+      span:nth-of-type(2) {
+        font-weight: 900;
+      }
+    }
+
+  }
+
+  div.tasks {
+    border-top: 1px solid rgba(0,0,0,0.2);
+    border-bottom: 1px solid rgba(0,0,0,0.2);
+    padding: 5px 0;
+
+    div {
+      border-bottom: 1px solid rgb(230,230,230);
+      padding: 2px 0;
+      min-height: 15px;
+
+      &:last-of-type { border-bottom: none; }
+
+      &.warning {
+        background: $stripe-failed;
+        color: rgb(255,255,255);
+
+        md-icon {
+          color: rgb(255,255,255);
+        }
+      }
+
+      &.notice {
+        background: $stripe-hold;
+        color: rgb(15, 15, 15);
+
+        md-icon {
+          color: rgb(15,15,15);
+        }
+      }
+
+      md-icon {
+        width: 17px;
+        height: 17px;
+        min-height: 17px;
+        min-width: 17px;
+        font-size: 17px;
+        margin-right: 5px;
+        cursor: pointer;
+
+      }
+
+      img {
+        margin-right: 6px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      div.popover-container {
+        position: relative;
+        width: 1px;
+        height: 1px;
+        float: left;
+
+        div.content {
+          position: absolute;
+          background-color: white;
+          width: 320px;
+          margin-left: -325px;
+          margin-top: -6px;
+          z-index: 100;
+          padding: 0;
+          font-size: 14px;
+
+
+          .header {
+            background-color: rgba(62,79,177, 1);
+            color: rgb(255,255,255);
+            font-size: 18px;
+            padding: 4px 8px;
+          }
+          .body {
+            padding: 5px;
+            font-size: 1.0em;
+
+            .avatar {
+              border: none;
+              img { cursor: auto }
+            }
+
+            .details {
+              > span {
+                margin-bottom: 5px;
+              }
+            }
+          }
+
+        }
+      }
+
+      span.value {
+        margin-right: 8px;
+      }
+
+      &.stateDetails span:nth-of-type(2) {
+        font-weight: 200;
+        text-align: center;
+        padding-right: 15px;
+        padding-bottom: 5px;
+      }
+
+      span:first-of-type {
+        font-weight: 100;
+        margin-right: 5px;
+        padding-left: 10px;
+        width: 16px;
+        text-align: right;
+      }
+      span:nth-of-type(2) {
+        margin-left: 0;
+        font-weight: 700;
+      }
+      span.status:last-of-type {
+        width: 9px;
+        height: 9px;
+        border: 1px solid rgba(0,0,0,0.4);
+        margin-top: 2px;
+        border-radius: 50%;
+        margin-right: 10px;
+        background-color: rgb(255,255,255);
+
+        &.hold {
+          background-color: rgb(242, 220, 17);
+        }
+        &.active {
+          background-color: rgba(62,79,177, 1);
+        }
+        &.complete {
+          background-color: rgb(46, 204, 113);
+        }
+        &.failed {
+          border-color: rgb(255,255,255);
+          background-color: rgb(204, 0, 6);
+        }
+
+      }
+    }
+  }
+
+  div.taskToggle {
+    text-align: center;
+    color: rgba(0,0,0,0.6);
+    transition: 0.5s;
+    min-height: 25px;
+    text-transform: uppercase;
+    font-size: 11px;
+    font-weight: 500;
+
+    &:hover {
+      div.edit {
+        span { display: inline; }
+        md-icon { display: inline-block; }
+      }
+    }
+
+    div.edit {
+      padding-top: 4px;
+
+      span {
+        display: none;
+      }
+
+      md-icon {
+        margin-left: 4px;
+        font-size: 13px;
+        max-height: 13px;
+        min-width: 13px;
+        max-width: 13px;
+        width: 13px;
+        display: none;
+        margin-top: -4px;
+      }
+    }
+
+    md-icon {
+      font-size: 15px;
+      min-height: 15px;
+      height: 15px;
+      color: rgba(0, 0, 0, 0.6);
+    }
+
+    .toggle {
+      md-icon {
+        transition: 0.3s;
+      }
+
+      &:hover {
+        color: rgb(71, 94, 197);
+
+        md-icon {
+          color: rgb(71, 94, 197);
+        }
+      }
+    }
+  }
+
+  div {
+    padding: 3px 10px;
+    div {
+      padding: 0;
+      font-size: 0.80em;
+
+      span:first-of-type {
+        font-weight: 100;
+      }
+      span:nth-of-type(2) {
+        font-weight: 700;
+        margin-left: 10px;
+      }
+
+      span md-icon {
+        font-size: 18px;
+        max-height: 20px;
+        height: 20px;
+        max-width: 20px;
+        width: 20px;
+      }
+
+      span.circle {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        border: 1px solid rgb(100,100,100);
+        display: inline-block;
+        margin-bottom: -2px;
+
+        &.active {
+          background-color: rgb(46, 204, 113);
+        }
+      }
+    }
+  }
+}
 md-dialog.tracking-task {
 
   md-dialog-content {

@@ -33,7 +33,21 @@ app.controller('controller.ipr-tracking-card.state',
   };
 
   // Update State
-  $scope.save = (f) => {
+  $scope.updateState = (f) => {
+
+    // Update state settings
+    if($scope.assign.user !== null && $scope.assign.user.ident) $scope.state.assignedTo = $scope.assign.user.ident;
+
+    $state.update($scope.state.ident, $scope.state).then(
+      (result) => {
+        $scope.state = result;
+        $mdDialog.hide({state: $scope.state});
+      },
+      (err) => {
+        $mdToast.show($mdToast.simple().textContent('Unable to save state.'));
+        console.log(err);
+      }
+    )
 
   };
 

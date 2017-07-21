@@ -41,7 +41,8 @@ let files = {
       './node_modules/quill/dist/quill.min.js',
       './node_modules/ng-quill/dist/ng-quill.min.js',
       './node_modules/chart.js/dist/Chart.min.js',
-      './node_modules/angular-chart.js/dist/angular-chart.min.js'
+      './node_modules/angular-chart.js/dist/angular-chart.min.js',
+      './node_modules/angular-socket-io/socket.min.js'
     ],
     
     // Application javascript sources
