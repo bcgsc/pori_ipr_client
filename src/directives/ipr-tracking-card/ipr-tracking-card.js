@@ -5,7 +5,8 @@ app.directive("iprTrackingCard", ['$q', '_', '$mdDialog', '$mdToast', '$timeout'
     restrict: 'E',
     transclude: false,
     scope: {
-      state: '=state'
+      state: '=state',
+      noTasks: '=?noTasks'
     },
     templateUrl: 'ipr-tracking-card/ipr-tracking-card.html',
     link: (scope, element, attr) => {
@@ -22,6 +23,7 @@ app.directive("iprTrackingCard", ['$q', '_', '$mdDialog', '$mdToast', '$timeout'
       scope.showTasks = false;
       scope.error = false; // Default error state
       scope.priority = new Array(analysis.priority);
+      scope.disableTasks = (scope.noTasks !== undefined);
 
       // Check if there are any failed tasks
       let checkStates = () => {
