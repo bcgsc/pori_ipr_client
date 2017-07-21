@@ -1,10 +1,10 @@
 app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMatcherFactoryProvider', ($locationProvider, $urlRouterProvider, $stateProvider, $urlMatcherFactoryProvider) => {
 	// Enable HTML5 mode for URL access
-	$locationProvider.html5Mode(true); 
-	
+	$locationProvider.html5Mode(true);
+
 	// Don't require a perfect URL match (trailing slashes, etc)
 	$urlMatcherFactoryProvider.strictMode(false);
-	
+
 	// If no path could be found, send user to 404 error
 	$urlRouterProvider.otherwise(($injector, $location) => {
 		$injector.get('$state').go('error.404', null, {location: false});
@@ -15,7 +15,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
 	// Master State Provider
 	// All states are defined and configured on this object
 	$stateProvider
-		
+
 		// Default Public Entrance for Interactive-Pog-Report
 		.state('public', {
 			abstract: true,
@@ -36,7 +36,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         }]
       }
 		})
-		
+
 		// Request access account for Interactive-Pog-Report
 		.state('public.request', {
 			url: '/request',
@@ -57,26 +57,26 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
 			url: '/error',
 			templateUrl: 'errors/error.html',
 		})
-		
+
 		// 403 Error - Unauthorized Access
 		.state('error.403', {
 			url: '/403',
 			templateUrl: 'errors/403.html'
 		})
-		
+
 		// 404 Error - Resource Not Found
 		.state('error.404', {
 			url: '/404',
 			templateUrl: 'errors/404.html'
 		})
-		
+
 		// 500 Error - Server/API Error
 		.state('error.500', {
 			url: '/500',
 			templateUrl: 'errors/500.html'
 		})
 
-    
+
 		// Setup Dashboard state
 		.state('dashboard', {
 			abstract: true,
@@ -115,7 +115,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
 		            reject(err);
 	            }
 				);
-			      
+
 		      });
 		    }],
         isAdmin: ['$q', 'api.user', 'user', ($q, $user, user) => {
@@ -1060,6 +1060,32 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       resolve: {
         groups: ['$q', 'api.user', ($q, $user) => {
           return $user.group.all();
+        }],
+        definitions: ['$q', 'api.tracking.definition', ($q, $definition) => {
+          return $definition.all({hidden: true});
+        }]
+      }
+    })
+
+    .state('dashboard.tracking.assignment', {
+      url: '/assignment/:definition',
+      data: {
+        displayName: 'User Task Assignment'
+      },
+      controller: 'controller.dashboard.tracking.assignment',
+      templateUrl: 'dashboard/tracking/assignment/assignment.html',
+      resolve: {
+        definition: ['$q', '$stateParams', 'api.tracking.definition', ($q, $stateParams, $definition) => {
+          return $definition.retrieve($stateParams.definition);
+        }],
+        states: ['$q', 'api.tracking.state', 'definition', ($q, $state, definition) => {
+          return $state.filtered({slug: definition.slug})
+        }],
+        group: ['$q', 'definition', 'api.user', ($q, definition, $user) => {
+          return $user.group.retrieve(definition.group.ident);
+        }],
+        userLoad: ['$q', 'definition', 'api.tracking.definition', ($q, definition, $definition) => {
+          return $definition.userLoad(definition.ident);
         }]
       }
     })
