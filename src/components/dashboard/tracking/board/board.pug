@@ -31,7 +31,9 @@ md-content(flex, layout="column").md-padding.trackingBoard
     div(layout="column", flex).kanban
         div(layout="row", layout-align="space-between").title
 
-            div(layout="column", flex, ng-repeat="definition in definitions") {{definition.name}} ({{definition.group.name || 'N/A' }})
+            div(layout="row", flex, ng-repeat="definition in definitions")
+                span(ui-sref="dashboard.tracking.assignment({definition: definition.ident})").clickable {{definition.name}}&nbsp;
+                | ({{definition.group.name || 'N/A' }})
 
         div(layout="row", flex, layout-align="space-between")
 

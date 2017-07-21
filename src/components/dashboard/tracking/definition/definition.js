@@ -26,12 +26,16 @@ app.controller('controller.dashboard.tracking.definition',
 
     // Validate Form
 
+    // Get Group Ident
+    $scope.entry = angular.copy($scope.editing);
+    $scope.entry.group = $scope.editing.group.ident;
+
     // Updating or Editing
     if($scope.editing.new) {
 
       $scope.editing.ordinal = $scope.definitions.length + 1;
 
-      $definition.create($scope.editing).then(
+      $definition.create($scope.entry).then(
         (result) => {
           $scope.definitions.push(result);
           $scope.editing = {};
@@ -45,7 +49,7 @@ app.controller('controller.dashboard.tracking.definition',
     } else {
 
       // Submit to DB
-      $definition.update($scope.editing.ident, $scope.editing).then(
+      $definition.update($scope.editing.ident, $scope.entry).then(
         (result) => {
 
           // Find existing and replace
