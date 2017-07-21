@@ -6,16 +6,16 @@
  *
  */
 app.factory('api.user', ['_', '$http', '$q', (_, $http, $q) => {
-  
+
   const api = CONFIG.ENDPOINTS.API + '/user';
   let _token = null; // User API token
   let _groups = [];
-  
+
   let $user = {};
   $user._me = null; // Local User Cache
-  
+
   $user.me = () => {
-    
+
     return $q((resolve, reject) => {
       if($user._me) return resolve($user._me);
       $http.get(api + '/me').then(
@@ -28,9 +28,9 @@ app.factory('api.user', ['_', '$http', '$q', (_, $http, $q) => {
           reject(error);
         }
       );
-      
+
     });
-    
+
   };
 
   $user.isAdmin =() => {
@@ -160,6 +160,24 @@ app.factory('api.user', ['_', '$http', '$q', (_, $http, $q) => {
     },
 
     /**
+     * Retrieve group
+     *
+     * @param {string} ident - Group Ident to be looked up
+     */
+    retrieve: (ident) => {
+      return $q((resolve, reject) => {
+        $http.get(api + '/group/' + ident).then(
+          (resp) => {
+            resolve(resp.data);
+          },
+          (err) => {
+            reject(err);
+          }
+        );
+      });
+    },
+
+    /**
      * Create new Group
      * @param name
      * @returns {promise}
@@ -280,8 +298,8 @@ app.factory('api.user', ['_', '$http', '$q', (_, $http, $q) => {
     } // End Member functions
 
   };
-  
-  
+
+
   return $user;
-  
+
 }]);
