@@ -17,12 +17,10 @@ app.factory('api.tracking.definition', ['_', '$http', '$q', (_, $http, $q) => {
    *
    * @returns {Promise} - Resolves with array of definitions
    */
-  $definition.all = (options={params: null}) => {
+  $definition.all = (params=null) => {
     return $q((resolve, reject) => {
 
-      if(!options.params) options.params = null;
-
-      $http.get(api + '/definition', options).then(
+      $http.get(api + '/definition', {params: params}).then(
         (result) => {
           resolve(result.data);
         },
@@ -122,6 +120,28 @@ app.factory('api.tracking.definition', ['_', '$http', '$q', (_, $http, $q) => {
       )
     });
   }
+
+
+
+  /**
+   * User Load Counts
+   *
+   * @param {string} ident - Definition ident
+   */
+  $definition.userLoad = (ident) => {
+    return $q((resolve, reject) => {
+
+      $http.get(api + '/definition/' + ident + '/userload').then(
+        (result) => {
+          resolve(result.data);
+        },
+        (err) => {
+          reject(err);
+        }
+      )
+
+    });
+  };
 
   return $definition;
 

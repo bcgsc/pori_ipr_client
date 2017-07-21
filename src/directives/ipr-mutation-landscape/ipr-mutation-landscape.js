@@ -23,8 +23,6 @@ app.directive("iprMutationSignature", ['$q', '_', '$mdDialog', '$mdToast', ($q, 
       let ms = scope.mutationSummary;
       let mutationSignature = angular.copy(scope.mutationSignature);
 
-      console.log('Starting Scope Mutation Summary', scope.mutationSummary);
-
       // If mode is pick, preload selected sigs:
       if(scope.mode === 'pick') {
         _.forEach(ms.mutationSignature, (v) => {

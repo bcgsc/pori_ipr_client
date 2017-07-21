@@ -29,7 +29,8 @@ app.run(($rootScope) => {
 
   // Mount configuration
   $rootScope.PROJECT = CONFIG.PROJECT;
-  
+  $rootScope.CONFIG = CONFIG;
+
 });
 
 /*

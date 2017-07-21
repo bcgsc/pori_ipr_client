@@ -32,6 +32,24 @@ app.controller('controller.dashboard.user.groups.edit', ['$q', '_', '$scope', '$
     return deferred.promise;
   };
 
+  scope.searchOwner = (searchOwnerText) => {
+    let deferred = $q.defer();
+
+    if(searchOwnerText.length === 0) return [];
+
+    $user.search(searchOwnerText).then(
+      (resp) => {
+        deferred.resolve(resp);
+      },
+      (err) => {
+        console.log(err);
+        deferred.reject();
+      }
+    );
+
+    return deferred.promise;
+  };
+
 
   scope.cancel = () => {
     $mdDialog.cancel({status: false, message: "Could not update this group."});
@@ -88,6 +106,10 @@ app.controller('controller.dashboard.user.groups.edit', ['$q', '_', '$scope', '$
       });
       return;
     }
+
+    scope.group.owner = scope.group.owner.ident;
+
+    console.log('Submitting', scope.group);
 
     // Send updated user to api
     if(!newGroup) {

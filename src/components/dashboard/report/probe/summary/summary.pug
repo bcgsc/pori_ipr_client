@@ -8,7 +8,7 @@ section
             dt(flex="{{detailSize}}", ng-init="detailSize=10") Patient ID:
             dd(flex) {{pog.POGID}}
 
-            dt(flex="{{detailSize}}") Gender:
+            dt(flex="{{detailSize}}") Sex:
             dd(flex) {{report.patientInformation.gender}}
 
             dt(flex="{{detailSize}}") Tumour Sample:
@@ -111,7 +111,7 @@ section
                         div(flex).text-left Emerging Evidence
                     div(layout="row", flex, ng-if="genomicEvents.length === 0").row
                         div(flex) No clinically relevant genomic alterations were found from the analysis.
-                    div(layout="row", flex, ng-repeat="gene in genomicEvents", ng-click="modifyEvent($event, gene)").row
+                    div(layout="row", flex, ng-repeat="gene in genomicEvents", ng-click="modifyEvent($event, gene)").row.clickable
                         div(flex) {{gene.genomicEvent}}
                         div(flex) {{gene.comments}}
                         div(flex) {{gene.approvedThisCancerType}}
