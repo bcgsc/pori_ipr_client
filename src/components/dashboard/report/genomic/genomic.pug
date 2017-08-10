@@ -7,7 +7,7 @@ md-content(flex).md-padding
     div(layout="row", flex).pog-report
         div(flex, ui-view="")
 
-        md-content(flex="20", layout="column", ng-show="showSideBar", ng-init="showSideBar=true").reportSections
+        //md-content(flex="20", layout="column", ng-show="showSideBar", ng-init="showSideBar=true").reportSections
             div
                 md-list(layout-align="start start", id="reportSections")
                     md-subheader Report Sections
@@ -27,5 +27,26 @@ md-content(flex).md-padding
                         ).child {{child.name}}
 
                     md-list-item(ng-click="goToReportSection('history')", ng-class="activeSection({state: 'history'}) ? 'active' : ''").meta History
-                        md-icon(ng-click="openExport()", aria-label="Export Changes").md-secondary archive
-                            md-tooltip Export Changes to JReport
+
+
+        div(flex=20)
+            div.reportMenu
+                h1 Report Sections
+                ul
+                    li
+                        span(ng-click="goToReportSection('summary')", ng-class="activeSection('summary') ? 'active' : ''").clickable Summary
+
+                    li(ng-repeat="section in sections", ng-init='section.showChildren = false')
+                        span(ng-if="section.children.length === 0", ng-click="goToReportSection(section.state)", ng-class="activeSection(section.state) ? 'active' : ''").clickable {{section.name}}
+                        span(ng-if="section.children.length > 0", ng-class="activeSection(section.state) ? 'active' : ''", ng-click="section.showChildren = !section.showChildren").children.clickable {{section.name}}
+
+                            span.drop
+                                md-icon(ng-hide="section.showChildren") arrow_drop_down
+                                md-icon(ng-show="section.showChildren") arrow_drop_up
+
+                        ul(ng-if="section.children.length > 0", ng-show='section.showChildren')
+                            li(ng-repeat="child in section.children")
+                                span(
+                                ng-click="goToReportSection(child.state)",
+                                ng-class="{active: activeSection(child.state), disabled: (child.disabled), clickable: (!child.disabled)}"
+                                ) {{child.name}}

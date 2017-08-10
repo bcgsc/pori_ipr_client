@@ -9,7 +9,7 @@ app.controller('controller.dashboard.report.genomic',
     // State go!
     $window.open($state.href('print.POG.report.genomic',{POG: pog.POGID, analysis_report: report.ident}), '_blank');
   };
-
+  
   $scope.sections = [
     {
       name: 'Analyst Comments',
@@ -34,43 +34,33 @@ app.controller('controller.dashboard.report.genomic',
     },
     {
       name: 'Detailed Genomic Analysis',
-      state: 'detailedGenomicAnalysis',
+      state: null,
       meta: false,
       showChildren: false,
+      category: true,
       children: [
-        { name: 'Targeted Gene Report', state: 'detailedGenomicAnalysis'}
+        { name: 'Knowledgebase', state: 'knowledgebase'},
+        { name: 'DNA Repair', state: null, disabled: true},
+        { name: 'Microbial', state: 'microbial'},
+        { name: 'Spearman', state: 'spearman'},
+        { name: 'HRD', state: 'hrd', disabled: true},
+        { name: 'Disease Specific', state: 'diseaseSpecificAnalysis'},
       ]
     },
     {
-      name: 'Disease Specific Analysis',
-      state: 'diseaseSpecificAnalysis',
+      name: 'Somatic',
+      state: null,
       meta: false,
       showChildren: false,
-      children: []
+      category: true,
+      children: [
+        { name: 'Small Mutations', state: 'smallMutations'},
+        { name: 'Copy Number Variants', state: 'copyNumberAnalyses'},
+        { name: 'Structural Variants', state: 'structuralVariation'},
+      ]
     },
     {
-      name: 'Somatic Mutations',
-      state: 'somaticMutations',
-      meta: false,
-      showChildren: false,
-      children: []
-    },
-    {
-      name: 'Copy Number Analyses',
-      state: 'copyNumberAnalyses',
-      meta: false,
-      showChildren: false,
-      children: []
-    },
-    {
-      name: 'Structural Variation',
-      state: 'structuralVariation',
-      meta: false,
-      showChildren: false,
-      children: []
-    },
-    {
-      name: 'Expression Analysis',
+      name: 'Expression',
       state: 'expressionAnalysis',
       meta: false,
       showChildren: false,
@@ -98,8 +88,8 @@ app.controller('controller.dashboard.report.genomic',
    * @param state
    * @returns {boolean}
    */
-  $scope.activeSection = (section) => {
-    if($state.current.name.indexOf(section.state) > -1) {
+  $scope.activeSection = (state) => {
+    if($state.current.name.indexOf(state) > -1) {
       return true;
     }
     return false;
@@ -130,6 +120,6 @@ app.controller('controller.dashboard.report.genomic',
         // Closed
       }
     );
-  }
+  };
   
 }]);
