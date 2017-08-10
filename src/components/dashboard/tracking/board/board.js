@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.tracking.board',
-['$q', '_', '$scope', 'api.tracking.definition', 'api.tracking.state', 'api.tracking.task', '$mdDialog', '$mdToast', 'states', 'definitions',
-($q, _, $scope, $definition, $state, $task, $mdDialog, $mdToast, states, definitions) => {
+['$q', '_', '$scope', 'api.tracking.definition', 'api.tracking.state', 'api.tracking.task', '$mdDialog', '$mdToast', 'states', 'definitions', 'api.socket',
+($q, _, $scope, $definition, $state, $task, $mdDialog, $mdToast, states, definitions, socket) => {
 
   $scope.definitions = definitions;
   $scope.sortedStates = {};
@@ -8,8 +8,21 @@ app.controller('controller.dashboard.tracking.board',
     hidden: false
   };
 
-  // Sort States
+  socket.on('taskStatusChange', (task) => {
 
+    let s = _.findKey($scope.sortedStates[task.state.slug], (s) => {
+      return (s.ident === task.state.ident);
+    });
+
+    let t = _.findKey($scope.sortedStates[task.state.slug][s].tasks, (t) => {
+      return (t.ident === task.ident);
+    });
+
+    $scope.sortedStates[task.state.slug][s].tasks[t] = task;
+
+  });
+
+  // Sort States
   let sortStates = (statsInput) => {
 
     $scope.sortedStates = {};
