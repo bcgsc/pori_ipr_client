@@ -19,7 +19,7 @@ tr
                     td {{data.pi.constitutionalSample}}
                 tr
                     th Report Date:
-                    td {{data.pi.reportDate}}
+                    td {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
                     th Age at Diagnosis:
                     td {{data.pi.age}}
                     th Biopsy Details:
