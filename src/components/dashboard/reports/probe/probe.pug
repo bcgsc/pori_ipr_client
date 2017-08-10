@@ -47,10 +47,21 @@ md-content(flex, layout="column").md-padding
         div(layout="row", flex, layout-align="space-between")
             md-content(layout="column", flex, ng-show="states.uploaded").column
                 div(ng-show="loading").text-center Loading...
+                div(ng-if="numReports('uploaded') === 0").noWork Wow this lane is empty!
+                    br
+                    | No more work for you. How about a funny quote instead?
+                    ipr-random-quote
                 ipr-report-listing-card(ng-repeat="report in reports | filter: searchPogs('uploaded', pogQuery)", md-whiteframe=2, report="report", pog="report.analysis.pog", state="uploaded" ng-hide="loading").pog
+
 
             md-content(layout="column", flex, ng-show="states.signedoff").column
                 div(ng-show="loading").text-center Loading...
+
+                div(ng-if="numReports('signedoff') === 0").noWork Wow this lane is empty!
+                    br
+                    | No more work for you. How about a funny quote instead?
+                    ipr-random-quote
+
                 ipr-report-listing-card(ng-repeat="report in reports | filter: searchPogs('signedoff', pogQuery)", md-whiteframe=2, report="report", pog="report.analysis.pog", state="signedoff", ng-hide="loading").pog
 
             md-content(layout="column", flex, ng-show="states.reviewed").column

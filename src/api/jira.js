@@ -21,7 +21,6 @@ app.factory('api.jira', ['_', '$http', '$q', 'api.user', (_, $http, $q, $user) =
     /**
      * Create a BCGSC JIRA Ticket
      *
-     * @param {string} auth - a Base64 string of username:password
      * @param {string} project - project ID integer
      * @param {string} type - Ticket type ID
      * @param {string} summary - Ticket Title
@@ -30,7 +29,7 @@ app.factory('api.jira', ['_', '$http', '$q', 'api.user', (_, $http, $q, $user) =
      *
      * @returns promise
      */
-    create: (auth, project, type, summary, description, options={}) => {
+    create: (project, type, summary, description, options={}) => {
 
       let deferred = $q.defer();
 
@@ -108,7 +107,7 @@ app.factory('api.jira', ['_', '$http', '$q', 'api.user', (_, $http, $q, $user) =
      *
      * @returns promise
      */
-    get: (auth, ticket) => {
+    get: (ticket) => {
 
       let deferred = $q.defer();
 

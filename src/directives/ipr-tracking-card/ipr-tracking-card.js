@@ -1,5 +1,4 @@
-app.directive("iprTrackingCard", ['$q', '_', '$mdDialog', '$mdToast', '$timeout', 'api.tracking.state', ($q, _, $mdDialog, $mdToast, $timeout, $state) => {
-
+app.directive("iprTrackingCard", ['$q', '_', '$mdDialog', '$mdToast', '$timeout', 'api.tracking.state', 'api.socket', ($q, _, $mdDialog, $mdToast, $timeout, $state, socket) => {
 
   return {
     restrict: 'E',
@@ -30,6 +29,13 @@ app.directive("iprTrackingCard", ['$q', '_', '$mdDialog', '$mdToast', '$timeout'
         scope.error = (_.find(scope.state.tasks, {status: 'failed'})) ? true : false;
         scope.hold =  (_.find(scope.state.tasks, {status: 'hold'})) ? true : false;
       };
+
+      // Listen for changes to any task in this state
+      socket.on('taskStatusChange', (task) => {
+        if(task.state.ident === scope.state.ident) {
+          checkStates();
+        }
+      });
 
       // Mouse hover
       scope.openUserWindow = (assignee) => {

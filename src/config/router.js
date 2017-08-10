@@ -420,13 +420,13 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       }
     })
 
-    .state('dashboard.reports.pog.report.genomic.detailedGenomicAnalysis', {
-      url: '/detailedGenomicAnalysis',
+    .state('dashboard.reports.pog.report.genomic.knowledgebase', {
+      url: '/knowledgebase',
       data: {
         displayName: "Detailed Genomic Analysis"
       },
-      templateUrl: 'dashboard/report/genomic/detailedGenomicAnalysis/detailedGenomicAnalysis.html',
-      controller: 'controller.dashboard.report.genomic.detailedGenomicAnalysis',
+      templateUrl: 'dashboard/report/genomic/knowledgebase/knowledgebase.html',
+      controller: 'controller.dashboard.report.genomic.knowledgebase',
       resolve: {
         alterations: ['$q', '$stateParams', 'api.detailedGenomicAnalysis.alterations', ($q, $stateParams, $APC) => {
           return $APC.getAll($stateParams.POG, $stateParams.analysis_report);
@@ -457,13 +457,41 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       }
     })
 
-    .state('dashboard.reports.pog.report.genomic.somaticMutations', {
-      url: '/somaticMutations',
+    .state('dashboard.reports.pog.report.genomic.microbial', {
+      url: '/microbial',
+      data: {
+        displayName: "Microbial"
+      },
+      templateUrl: 'dashboard/report/genomic/microbial/microbial.html',
+      controller: 'controller.dashboard.report.genomic.microbial',
+      resolve: {
+        images: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
+          return $image.get($stateParams.POG, $stateParams.analysis_report, 'microbial.circos');
+        }]
+      }
+    })
+    
+    .state('dashboard.reports.pog.report.genomic.spearman', {
+      url: '/spearman',
+      data: {
+        displayName: "Spearman Plot Analysis"
+      },
+      templateUrl: 'dashboard/report/genomic/spearman/spearman.html',
+      controller: 'controller.dashboard.report.genomic.spearman',
+      resolve: {
+        images: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
+          return $image.get($stateParams.POG, $stateParams.analysis_report, 'expression.chart,expression.legend');
+        }]
+      }
+    })
+
+    .state('dashboard.reports.pog.report.genomic.smallMutations', {
+      url: '/smallMutations',
       data: {
         displayName: "Somatic Mutations"
       },
-      templateUrl: 'dashboard/report/genomic/somaticMutations/somaticMutations.html',
-      controller: 'controller.dashboard.report.genomic.somaticMutations',
+      templateUrl: 'dashboard/report/genomic/smallMutations/smallMutations.html',
+      controller: 'controller.dashboard.report.genomic.smallMutations',
       resolve: {
         images: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
           return $image.get($stateParams.POG, $stateParams.analysis_report, 'mutSummary.snv,mutSummary.indel,mutSummary.barSnv,mutSummary.barIndel,mutSignature.corPcors,mutSignature.snvsAllStrelka');
@@ -528,9 +556,6 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       templateUrl: 'dashboard/report/genomic/expressionAnalysis/expressionAnalysis.html',
       controller: 'controller.dashboard.report.genomic.expressionAnalysis',
       resolve: {
-        images: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
-          return $image.get($stateParams.POG, $stateParams.analysis_report, 'expression.chart,expression.legend');
-        }],
         ms: ['$q', '$stateParams', 'api.summary.mutationSummary', ($q, $stateParams, $ms) => {
           return $ms.get($stateParams.POG, $stateParams.analysis_report);
         }],
@@ -578,13 +603,10 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       controller: 'controller.dashboard.report.genomic.history',
       resolve: {
         history: ['$q', '$stateParams', 'api.pogDataHistory', ($q, $stateParams, $history) => {
-          return $history($stateParams.POG).all();
-        }],
-        exports: ['$q', '$stateParams', 'api.pog', ($q, $stateParams, $pog) => {
-          return $pog.export($stateParams.POG).all();
+          return $history($stateParams.POG, $stateParams.analysis_report).all();
         }],
         tags: ['$q', '$stateParams', 'api.pogDataHistory', ($q, $stateParams, $history) => {
-          return $history($stateParams.POG).tag.all();
+          return $history($stateParams.POG, $stateParams.analysis_report).tag.all();
         }]
       }
     })

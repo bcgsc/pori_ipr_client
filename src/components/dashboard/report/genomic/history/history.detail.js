@@ -40,7 +40,7 @@ app.controller('controller.dashboard.report.genomic.history.detail',
 
     let deferred = $q.defer();
 
-    $history(pog.POGID).tag.search(query).then(
+    $history(pog.POGID, report.ident).tag.search(query).then(
       (tags) => {
         deferred.resolve(tags);
       },
@@ -54,7 +54,7 @@ app.controller('controller.dashboard.report.genomic.history.detail',
   // Create new tag on API
   scope.newTag = (newTag) => {
     // Create new Tag
-    $history(pog.POGID).tag.create({tag: newTag.tag}, entry.ident).then(
+    $history(pog.POGID, report.ident).tag.create({tag: newTag.tag}, entry.ident).then(
       (resp) => {
         // Need to find the tag we made, and replace it.
         let found = false;
@@ -78,7 +78,7 @@ app.controller('controller.dashboard.report.genomic.history.detail',
   scope.removeTag = (removed) => {
     let cachedTag = angular.copy(removed);
 
-    $history(pog.POGID).tag.remove(removed.ident).then(
+    $history(pog.POGID, report.ident).tag.remove(removed.ident).then(
       (resp) => {
         let toast = $mdToast.simple()
           .textContent('The tag has been removed.')
@@ -108,7 +108,7 @@ app.controller('controller.dashboard.report.genomic.history.detail',
   // Revert the opened change
   scope.revert = () => {
     // Hit API
-    $history(pog.POGID).revert(entry.ident, scope.action.revert.comment).then(
+    $history(pog.POGID, report.ident).revert(entry.ident, scope.action.revert.comment).then(
       (resp) => {
         // Add to history
         $mdDialog.hide({event: 'revert', data: resp});
@@ -123,7 +123,7 @@ app.controller('controller.dashboard.report.genomic.history.detail',
   // Restore entry
   scope.restore = () => {
     let cached = angular.copy(entry);
-    $history(pog.POGID).restore(entry.ident, scope.action.restore.comment).then(
+    $history(pog.POGID, report.ident).restore(entry.ident, scope.action.restore.comment).then(
       (result) => {
         // Add to history
         $mdDialog.hide({event: 'restore', data: cached});

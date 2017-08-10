@@ -1,4 +1,4 @@
-app.controller('controller.dashboard.report.genomic.detailedGenomicAnalysis', 
+app.controller('controller.dashboard.report.genomic.knowledgebase',
   ['_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', 'api.pog', 'api.detailedGenomicAnalysis.alterations', 'pog', 'report', 'alterations', 'approvedThisCancer', 'approvedOtherCancer', 'targetedGenes',
   (_, $q, $scope, $state, $mdDialog, $mdToast, $pog, $alterations, pog, report, alterations, approvedThisCancer, approvedOtherCancer, targetedGenes) => {
   
