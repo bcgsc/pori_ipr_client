@@ -420,13 +420,13 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       }
     })
 
-    .state('dashboard.reports.pog.report.genomic.detailedGenomicAnalysis', {
-      url: '/detailedGenomicAnalysis',
+    .state('dashboard.reports.pog.report.genomic.knowledgebase', {
+      url: '/knowledgebase',
       data: {
         displayName: "Detailed Genomic Analysis"
       },
-      templateUrl: 'dashboard/report/genomic/detailedGenomicAnalysis/detailedGenomicAnalysis.html',
-      controller: 'controller.dashboard.report.genomic.detailedGenomicAnalysis',
+      templateUrl: 'dashboard/report/genomic/knowledgebase/knowledgebase.html',
+      controller: 'controller.dashboard.report.genomic.knowledgebase',
       resolve: {
         alterations: ['$q', '$stateParams', 'api.detailedGenomicAnalysis.alterations', ($q, $stateParams, $APC) => {
           return $APC.getAll($stateParams.POG, $stateParams.analysis_report);
@@ -578,13 +578,10 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       controller: 'controller.dashboard.report.genomic.history',
       resolve: {
         history: ['$q', '$stateParams', 'api.pogDataHistory', ($q, $stateParams, $history) => {
-          return $history($stateParams.POG).all();
-        }],
-        exports: ['$q', '$stateParams', 'api.pog', ($q, $stateParams, $pog) => {
-          return $pog.export($stateParams.POG).all();
+          return $history($stateParams.POG, $stateParams.analysis_report).all();
         }],
         tags: ['$q', '$stateParams', 'api.pogDataHistory', ($q, $stateParams, $history) => {
-          return $history($stateParams.POG).tag.all();
+          return $history($stateParams.POG, $stateParams.analysis_report).tag.all();
         }]
       }
     })
