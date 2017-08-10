@@ -1,9 +1,8 @@
 app.controller('controller.dashboard.report.genomic.expressionAnalysis',
-  ['_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', 'api.pog', 'pog', 'report', 'ms', 'images', 'outliers', 'drugTargets', 'densityGraphs',
-    (_, $q, $scope, $state, $mdDialog, $mdToast, $pog, pog, report, ms, images, outliers, drugTargets, densityGraphs) => {
+  ['_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', 'api.pog', 'pog', 'report', 'ms', 'outliers', 'drugTargets', 'densityGraphs',
+    (_, $q, $scope, $state, $mdDialog, $mdToast, $pog, pog, report, ms, outliers, drugTargets, densityGraphs) => {
 
       // Load Images into template
-      $scope.images = images;
       $scope.pog = pog;
       $scope.report = report;
       $scope.expOutliers = {};
