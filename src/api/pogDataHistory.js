@@ -17,8 +17,9 @@ app.factory('api.pogDataHistory', ['_', '$http', '$q', (_, $http, $q) => {
    *
    * @params {string} POGID - PogID to be queried against (eg. POG123)
    */
-  $history = (POGID) => {
-    const API = api + '/' + POGID;
+  $history = (POGID, report) => {
+
+    const API = api + '/' + POGID + '/report/' + report;
 
     return {
 
