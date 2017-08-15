@@ -39,7 +39,7 @@ app.controller('controller.dashboard.report.genomic',
       showChildren: false,
       category: true,
       children: [
-        { name: 'Knowledgebase', state: 'knowledgebase'},
+        { name: 'Knowledgebase Matches', state: 'knowledgebase'},
         { name: 'DNA Repair', state: null, disabled: true},
         { name: 'Microbial', state: 'microbial'},
         { name: 'Spearman', state: 'spearman'},
@@ -74,12 +74,19 @@ app.controller('controller.dashboard.report.genomic',
       children: []
     },
     {
+      name: 'History',
+      state: 'history',
+      meta: true,
+      showChildren: false,
+      children: []
+    },
+    {
       name: 'Report Settings',
       state: 'meta',
       meta: true,
       showChildren: false,
       children: []
-    },
+    }
   ];
 
   /**
