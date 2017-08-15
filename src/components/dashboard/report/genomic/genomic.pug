@@ -37,10 +37,12 @@ md-content(flex).md-padding
                         span(ng-click="goToReportSection('summary')", ng-class="activeSection('summary') ? 'active' : ''").clickable Summary
 
                     li(ng-repeat="section in sections", ng-init='section.showChildren = false')
-                        span(ng-if="section.children.length === 0", ng-click="goToReportSection(section.state)", ng-class="activeSection(section.state) ? 'active' : ''").clickable {{section.name}}
-                        span(ng-if="section.children.length > 0", ng-class="activeSection(section.state) ? 'active' : ''", ng-click="section.showChildren = !section.showChildren").children.clickable {{section.name}}
 
-                            span.drop
+                        span(
+                        ng-click="(section.children.length === 0) ? goToReportSection(section.state) : section.showChildren = !section.showChildren",
+                        ng-class="{active: activeSection(section.state), meta: section.meta, children: (section.children.length > 0)}"
+                        ).clickable {{section.name}}
+                            span(ng-if="section.children.length > 0").drop
                                 md-icon(ng-hide="section.showChildren") arrow_drop_down
                                 md-icon(ng-show="section.showChildren") arrow_drop_up
 

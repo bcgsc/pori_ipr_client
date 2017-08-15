@@ -749,6 +749,10 @@ md-dialog-content {
         font-weight: 700;
       }
 
+      &.meta {
+        background-color: rgb(230,230,230);
+      }
+
       &.active {
         background-color: rgb(175, 61, 161);
         color: rgb(255,255,255);
