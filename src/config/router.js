@@ -562,6 +562,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         outliers: ['$q', '$stateParams', 'api.expressionAnalysis.outlier', ($q, $stateParams, $outliers) => {
           return $outliers.all($stateParams.POG, $stateParams.analysis_report);
         }],
+        protein: ['$q', '$stateParams', 'api.expressionAnalysis.protein', ($q, $stateParams, $protein) => {
+          return $protein.all($stateParams.POG, $stateParams.analysis_report);
+        }],
         drugTargets: ['$q', '$stateParams', 'api.expressionAnalysis.drugTarget', ($q, $stateParams, $drugTarget) => {
           return $drugTarget.all($stateParams.POG, $stateParams.analysis_report);
         }],
