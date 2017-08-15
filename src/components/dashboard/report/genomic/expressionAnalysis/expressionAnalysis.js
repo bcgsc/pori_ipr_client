@@ -1,11 +1,12 @@
 app.controller('controller.dashboard.report.genomic.expressionAnalysis',
-  ['_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', 'api.pog', 'pog', 'report', 'ms', 'outliers', 'drugTargets', 'densityGraphs',
-    (_, $q, $scope, $state, $mdDialog, $mdToast, $pog, pog, report, ms, outliers, drugTargets, densityGraphs) => {
+  ['_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', 'api.pog', 'pog', 'report', 'ms', 'outliers', 'protein', 'drugTargets', 'densityGraphs',
+    (_, $q, $scope, $state, $mdDialog, $mdToast, $pog, pog, report, ms, outliers, protein, drugTargets, densityGraphs) => {
 
       // Load Images into template
       $scope.pog = pog;
       $scope.report = report;
       $scope.expOutliers = {};
+      $scope.expProtein = {};
       $scope.drugTargets = drugTargets;
       $scope.densityGraphs = _.chunk(_.values(densityGraphs),2);
 
@@ -14,6 +15,16 @@ app.controller('controller.dashboard.report.genomic.expressionAnalysis',
         nostic: 'RNA Expression Level Outliers of Prognostic or Diagnostic Relevance',
         biological: 'RNA Expression Level Outliers of Biological Relevance',
       };
+      
+      $scope.proteinTitleMap = {
+        clinical: 'Protein Expression Level Outliers of Potential Clinical Relevance',
+        nostic: 'Protein Expression Level Outliers of Prognostic or Diagnostic Relevance',
+        biological: 'Protein Expression Level Outliers of Biological Relevance',
+      };
+      
+      console.log(CONFIG);
+      
+      
 
       // Convert full hex to 6chr
       $scope.colourHex = (hex) => {
@@ -42,26 +53,34 @@ app.controller('controller.dashboard.report.genomic.expressionAnalysis',
       };
 
       // Sort outliers into categories
-      let processOutliers = (outs) => {
+      let processExpression = (input, type) => {
 
-        let outliers = {
+        let expressions = {
           clinical: [],
           nostic: [],
           biological: []
         };
-
+        
+        let typekey = 'outlier';
+        if(type === 'outlier') typekey = 'outlierType';
+        if(type === 'protein') typekey = 'proteinType';
+        
         // Run over mutations and group
-        _.forEach(outs, (row, k) => {
-          if(!(row.outlierType in outliers)) outliers[row.outlierType] = [];
+        _.forEach(input, (row, k) => {
+          if(!(row[typekey] in expressions)) expressions[row[typekey]] = [];
           // Add to type
-          outliers[row.outlierType].push(row);
+          expressions[row[typekey]].push(row);
         });
 
         // Set Small Mutations
-        $scope.expOutliers = outliers;
+  
+        if(type === 'outlier') $scope.expOutliers = expressions;
+        if(type === 'protein') $scope.expProtein = expressions;
+        
       };
-
-      processOutliers(outliers);
+  
+      processExpression(outliers, 'outlier');
+      processExpression(protein, 'protein');
 
     }
   ]

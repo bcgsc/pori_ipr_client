@@ -14,7 +14,7 @@ div(flex, layout="column")
                 div(flex=10) {{pog.tumourAnalysis.diseaseExpressionComparator}} %ile
                 div(flex=5)
             div(ng-if="outliers.length == 0")
-                div.text-center.details No small somatic mutations of this kind were found from the analysis.
+                div.text-center.details No expression outliers of this kind were found from the analysis.
             div(layout="row", flex, ng-repeat="outlier in outliers").row
                 div(flex) {{outlier.gene}}
                 div(flex, md-truncate) {{outlier.location}}

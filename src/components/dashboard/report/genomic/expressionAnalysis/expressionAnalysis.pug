@@ -4,13 +4,20 @@ section
     div(layout="column", flex)
 
         div(layout="column", flex)
-            h2.title Expression Analysis: Genomic Details
+            h2.title Expression Analysis: RNA Details
 
             div(ng-repeat="(title, outliers) in expOutliers")
                 h3.title {{titleMap[title]}}
 
                 ipr-outlier(outliers="outliers", pog="pog")
 
+        div(layout="column", flex, ng-if="CONFIG.ATTRS.name === 'DEVELOPMENT'")
+            h2.title Expression Analysis: Protein Details
+
+            div(ng-repeat="(title, outliers) in expProtein")
+                h3.title {{proteinTitleMap[title]}}
+
+                ipr-outlier(outliers="outliers", pog="pog")
 
             h2.title Drug Targetable High Percentile Genes
 
