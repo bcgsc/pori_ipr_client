@@ -10,9 +10,9 @@ app.controller('controller.dashboard.report.genomic.expressionAnalysis',
       $scope.densityGraphs = _.chunk(_.values(densityGraphs),2);
 
       $scope.titleMap = {
-        clinical: 'Expression Level Outliers of Potential Clinical Relevance',
-        nostic: 'Expression Level Outliers of Prognostic or Diagnostic Relevance',
-        biological: 'Expression Level Outliers of Biological Relevance',
+        clinical: 'RNA Expression Level Outliers of Potential Clinical Relevance',
+        nostic: 'RNA Expression Level Outliers of Prognostic or Diagnostic Relevance',
+        biological: 'RNA Expression Level Outliers of Biological Relevance',
       };
 
       // Convert full hex to 6chr
