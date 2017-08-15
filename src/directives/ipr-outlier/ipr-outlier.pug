@@ -17,7 +17,7 @@ div(flex, layout="column")
                 div.text-center.details No small somatic mutations of this kind were found from the analysis.
             div(layout="row", flex, ng-repeat="outlier in outliers").row
                 div(flex) {{outlier.gene}}
-                div(flex) {{outlier.location}}
+                div(flex, md-truncate) {{outlier.location}}
                 div(flex=10) {{outlier.copyChange}}
                 div(flex=10) {{outlier.lohState}}
                 div(flex=10) {{outlier.cnvState}}

@@ -715,3 +715,74 @@ md-dialog-content {
     }
   }
 }
+
+
+.reportMenu {
+
+  h1 {
+    font-size: 16px;
+    font-weight: 200;
+    color: rgb(100,100,100);
+    background-color: rgb(245,245,245);
+    margin: 0;
+    padding: 7px 5px 8px 15px;
+  }
+
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    span {
+      background-color: rgb(255, 255, 255);
+      display: block;
+      padding: 10px 5px 10px 15px;
+      user-select: none;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.10);
+        transition: box-shadow 0.4s cubic-bezier(0.25,0.8,0.25,1), background-color 0.4s cubic-bezier(0.25,0.8,0.25,1);
+      }
+
+      &.children {
+        font-weight: 700;
+      }
+
+      &.meta {
+        background-color: rgb(230,230,230);
+      }
+
+      &.active {
+        background-color: rgb(175, 61, 161);
+        color: rgb(255,255,255);
+      }
+
+      &.disabled {
+        color: rgb(140,140,140);
+        cursor: not-allowed;
+      }
+
+      > span.drop {
+        display: inline;
+        font-weight: 200;
+        background: none;
+        padding-left: 5px;
+      }
+    }
+
+    li {
+      ul {
+        margin: 0;
+        padding: 0;
+        li {
+          span {
+            padding-left: 25px;
+            background-color: rgb(240,240,240);
+          }
+        }
+      }
+    }
+
+  }
+}

@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.tracking.assignment',
-['$q', '_', '$scope', 'api.tracking.definition', 'api.tracking.state', 'api.tracking.task', '$mdDialog', '$mdToast', 'definition', 'states', 'group', 'userLoad',
-($q, _, $scope, $definition, $state, $task, $mdDialog, $mdToast, definition, states, group, userLoad) => {
+['$q', '_', '$scope', 'api.tracking.definition', 'api.tracking.state', 'api.tracking.task', 'api.jira', '$mdDialog', '$mdToast', 'definition', 'states', 'group', 'userLoad',
+($q, _, $scope, $definition, $state, $task, $jira, $mdDialog, $mdToast, definition, states, group, userLoad) => {
 
   $scope.definition = definition;
   $scope.assign = {};
@@ -35,7 +35,7 @@ app.controller('controller.dashboard.tracking.assignment',
   // Simple get percentage with floor
   $scope.getFloor = (value) => {
     return Math.floor(value);
-  }
+  };
 
   // Submit new assignments for all checked tasks
   $scope.assignUsers = (task) => {
@@ -51,6 +51,7 @@ app.controller('controller.dashboard.tracking.assignment',
     $q.all(promises).then(
       (result) => {
 
+        // Load users, apply and get updated values
         $definition.userLoad(definition.ident).then(
           (ul) => {
             $scope.userLoad = userLoad = ul;
@@ -83,6 +84,11 @@ app.controller('controller.dashboard.tracking.assignment',
             console.log('Unable to load userLoad details');
           }
         );
+
+        // Create JIRA ticket
+        if($scope.assign.jira === null) {
+          //$jira.ticket.create(13713, 3, 'REST API Test Ticket', 'This is a description')
+        }
 
       },
       (err) => {

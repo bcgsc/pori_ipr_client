@@ -1,8 +1,8 @@
 div.header
     h1(layout="row")
-        md-icon(md-whiteframe=2, ng-if="error").warning.clickable error
+        md-icon(md-whiteframe=2, ng-show="error").warning.clickable error
             md-tooltip {{getTaskStateCount('failed')}} task(s) have failed
-        md-icon(md-whiteframe=2, ng-if="hold").notice.clickable watch_later
+        md-icon(md-whiteframe=2, ng-show="hold").notice.clickable watch_later
             md-tooltip {{getTaskStateCount('hold')}} task(s) are being held
         span(flex) {{pog.POGID}}
         //span(layout="row", layout-align="middle space-around").priority.clickable
@@ -64,7 +64,7 @@ div(layout="row", flex, ng-hide="disableTasks").taskToggle
     div(flex)
     div(ng-click="getTasks()").clickable.text-center.toggle
         md-icon {{(showTasks) ? 'arrow_drop_up' : 'arrow_drop_down'}}
-            md-tooltip {{(showTasks) ? 'Hide list of tasks' : 'Show list of tasks'}}
+            md-tooltip(md-delay=500) {{(showTasks) ? 'Hide list of tasks' : 'Show list of tasks'}}
     div(flex, layout="row").edit
         span(flex)
         span(layout="row", ng-click="showState()").clickable
