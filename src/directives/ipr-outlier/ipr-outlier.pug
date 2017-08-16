@@ -10,13 +10,14 @@ div(flex, layout="column")
                 div(flex=10) LOH State
                 div(flex=10) CNV State
                 div(flex) Expression (RPKM)
-                div(flex) Fold Change Vs. {{pog.tumourAnalysis.normalExpressionComparator}}
-                div(flex=10) {{pog.tumourAnalysis.diseaseExpressionComparator}} %ile
+                div(flex) Fold Change Vs. {{report.tumourAnalysis.normalExpressionComparator}}
+                div(flex=10) {{repor.tumourAnalysis.diseaseExpressionComparator}} %ile
                 div(flex=5)
             div(ng-if="outliers.length == 0")
                 div.text-center.details No expression outliers of this kind were found from the analysis.
             div(layout="row", flex, ng-repeat="outlier in outliers").row
-                div(flex) {{outlier.gene}}
+                div(flex)
+                    ipr-gene-viewer(report="report", pog="pog", gene="outlier.gene") {{outlier.gene}}
                 div(flex, md-truncate) {{outlier.location}}
                 div(flex=10) {{outlier.copyChange}}
                 div(flex=10) {{outlier.lohState}}

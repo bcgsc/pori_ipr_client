@@ -11,13 +11,16 @@ div(flex, layout="column")
                 div(flex=5) Sample
                 div(flex) Cytogenic Description
                 div(flex) RPKM 5`/3`
-                div(flex) Fold Change Vs. {{pog.tumourAnalysis.normalExpressionComparator}}
-                div(flex=5) {{pog.tumourAnalysis.diseaseExpressionComparator}} %ile
+                div(flex) Fold Change Vs. {{report.tumourAnalysis.normalExpressionComparator}}
+                div(flex=5) {{report.tumourAnalysis.diseaseExpressionComparator}} %ile
                 div(flex=5) Image
             div(ng-if="svs.length == 0")
                 div.text-center.details.bg-white No gene fusions of this kind were found from the analysis.
             div(layout="row", flex, ng-repeat="sv in svs").row
-                div(flex, md-truncate) {{sv.genes}}
+                div(flex, md-truncate)
+                    ipr-gene-viewer(report="report", pog="pog", gene="sv.genes.split('::')[0]") {{sv.genes.split('::')[0]}}
+                    | ::
+                    ipr-gene-viewer(report="report", pog="pog", gene="sv.genes.split('::')[1]") {{sv.genes.split('::')[1]}}
                 div(flex=5) {{sv.exons}}
                 div(flex=15, md-truncate) {{sv.breakpoint}}
                 div(flex) {{sv.eventType}}

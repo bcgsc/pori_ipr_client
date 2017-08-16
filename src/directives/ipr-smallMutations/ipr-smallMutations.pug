@@ -15,13 +15,14 @@ div(flex, layout="column")
                 div(flex) Ref/Alt DNA
                 div(flex) Ref/Alt RNA
                 div(flex) Expression (RPKM)
-                div(flex) Fold Change Vs. {{pog.tumourAnalysis.normalExpressionComparator}}
-                div(flex) {{pog.tumourAnalysis.diseaseExpressionComparator}} %ile
+                div(flex) Fold Change Vs. {{report.tumourAnalysis.normalExpressionComparator}}
+                div(flex) {{report.tumourAnalysis.diseaseExpressionComparator}} %ile
                 div(flex=5)
             div(ng-if="mutations.length == 0")
                 div.text-center.details No small somatic mutations of this kind were found from the analysis.
             div(layout="row", flex, ng-repeat="mutation in mutations").row
-                div(flex) {{mutation.gene}}
+                div(flex)
+                    ipr-gene-viewer(report="report", pog="pog", gene="mutation.gene") {{mutation.gene}}
                 div(flex=10, md-truncate) {{mutation.transcript}}
                 div(flex) {{mutation.proteinChange}}
                 div(flex, md-truncate) {{mutation.location}}

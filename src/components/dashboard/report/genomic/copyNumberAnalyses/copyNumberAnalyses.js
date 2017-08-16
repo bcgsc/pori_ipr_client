@@ -1,10 +1,11 @@
 app.controller('controller.dashboard.report.genomic.copyNumberAnalyses',
-  ['_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', 'api.pog', 'api.somaticMutations.smallMutations', 'pog', 'ms', 'images', 'cnvs',
-    (_, $q, $scope, $state, $mdDialog, $mdToast, $pog, $smallMutations, pog, ms, images, cnvs) => {
+  ['_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', 'api.pog', 'api.somaticMutations.smallMutations', 'pog', 'report', 'ms', 'images', 'cnvs',
+    (_, $q, $scope, $state, $mdDialog, $mdToast, $pog, $smallMutations, pog, report, ms, images, cnvs) => {
 
       // Load Images into template
       $scope.images = images;
       $scope.pog = pog;
+      $scope.report = report;
       $scope.cnvGroups = {};
 
 

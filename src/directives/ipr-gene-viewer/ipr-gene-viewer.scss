@@ -1,0 +1,20 @@
+md-dialog.geneViewer {
+
+  md-tab-content {
+    padding-top: 15px;
+  }
+
+}
+
+ipr-gene-viewer {
+  cursor: pointer;
+  outline: none;
+  font-weight: 700;
+  text-decoration: underline;
+  color: rgb(67, 98, 184);
+
+  &:hover {
+    text-transform: none;
+    color: rgb(89, 117, 236);
+  }
+}

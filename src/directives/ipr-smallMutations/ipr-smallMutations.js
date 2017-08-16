@@ -6,7 +6,8 @@ app.directive("iprSmallMutations", ['$q', '_', '$mdDialog', ($q, _, $mdDialog) =
     transclude: false,
     scope: {
       mutations: '=mutations',
-      pog: '=pog'
+      pog: '=pog',
+      report: '=report'
     },
     templateUrl: 'ipr-smallMutations/ipr-smallMutations.html',
     link: (scope, element, attr) => {

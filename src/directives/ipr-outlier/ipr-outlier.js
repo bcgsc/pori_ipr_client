@@ -6,11 +6,14 @@ app.directive("iprOutlier", ['$q', '_', ($q, _) => {
     transclude: false,
     scope: {
       outliers: '=outliers',
-      pog: '=pog'
+      pog: '=pog',
+      report: '=report',
+      gv: '=?gv'
     },
     templateUrl: 'ipr-outlier/ipr-outlier.html',
     link: (scope, element, attr) => {
-
+      
+      if(!scope.gv) scope.gv = true;
 
     } // end link
   } // end return

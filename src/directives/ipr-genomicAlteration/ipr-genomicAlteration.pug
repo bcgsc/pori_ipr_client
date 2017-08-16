@@ -1,12 +1,13 @@
 div(layout="column", flex).details.box
-  div.collapse(ng-init="gene.showChildren=false")
+  div(ng-init="gene.showChildren=false").collapse
     md-icon(ng-click="createRow($event, gene)") add
       md-tooltip Add new Knowledge Base entry
     md-icon(ng-click="gene.showChildren=!gene.showChildren") {{((gene.showChildren) ? 'expand_less' : 'expand_more')}}
       md-tooltip Show more entries related to this
   div(layout="row", flex)
     dt(flex="15") Gene: 
-    dd(flex="15") {{gene.gene}}
+    dd(flex="15")
+      ipr-gene-viewer(report="report", pog="pog", gene="gene.gene") {{gene.gene}}
     
     dt(flex="15") Variant: 
     dd(flex="15") {{gene.variant}}

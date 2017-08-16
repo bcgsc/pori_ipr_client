@@ -1,10 +1,11 @@
 app.controller('controller.dashboard.report.genomic.smallMutations',
-['_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', 'api.pog', 'api.somaticMutations.smallMutations', 'api.vardb', 'pog', 'ms', 'images', 'smallMutations', 'mutationSignature',
-(_, $q, $scope, $state, $mdDialog, $mdToast, $pog, $smallMutations, $vardb, pog, ms, images, smallMutations, mutationSignature) => {
+['_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', 'api.pog', 'api.somaticMutations.smallMutations', 'api.vardb', 'pog', 'report', 'ms', 'images', 'smallMutations', 'mutationSignature',
+(_, $q, $scope, $state, $mdDialog, $mdToast, $pog, $smallMutations, $vardb, pog, report, ms, images, smallMutations, mutationSignature) => {
 
   // Load Images into template
   $scope.images = images;
   $scope.pog = pog;
+  $scope.report = report;
   $scope.smallMutations = {};
   $scope.mutationSignature = mutationSignature;
   $scope.ms = ms;

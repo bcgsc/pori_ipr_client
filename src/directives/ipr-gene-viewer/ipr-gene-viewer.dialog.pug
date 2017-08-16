@@ -1,0 +1,84 @@
+md-dialog(layout="column", aria-label="Update Alterations Entry", flex-md=90, flex-xs=100, flex-lg=80, flex=80).geneViewer
+    md-toolbar
+        .md-toolbar-tools
+            h2 Gene Viewer: {{gene}}
+            span(flex)
+            md-button.md-icon-button(ng-click='cancel()')
+                md-icon cancel
+    md-dialog-content(layout-padding)
+
+        p All entries for this gene contained in this report.
+
+        p(ng-show="loading") Loading...
+
+        md-tabs(md-dynamic-height, md-border-bottom, ng-hide="loading")
+            md-tab(label="Meta")
+                p Meta Data
+            md-tab(label="KB Matches ({{data.kbMatches.length}})")
+                div.pog-report
+                    section
+                        div(ng-repeat="(alteration, genes) in alterations")
+                            h3.title {{alteration}}
+
+                            div(ng-if="genes.length == 0")
+                                div(ng-hide="showUnknown").text-center.details None Found.
+
+                            ipr-genomic-alteration(ng-repeat="(i, gene) in genes", samples="samples", gene="gene", pog="pog", trigger="trigger", report="report").container
+
+
+            md-tab(label="Small Mutations ({{data.smallMutations.length}})")
+                div.pog-report
+                    section
+                        ipr-small-mutations(mutations="data.smallMutations", pog="pog", report="report", gv=false)
+
+            md-tab(label="CNV ({{data.copyNumber.length}})")
+                div.pog-report
+                    section
+                        ipr-cnv(cnvs="data.copyNumber", pog="pog", report="report", gv=false)
+
+            md-tab(label="SV ({{data.structuralVariants.length}})")
+                div.pog-report
+                    section
+                        ipr-sv(svs="data.structuralVariants", pog="pog", report="report", gv=false)
+
+            md-tab(label="Exp RNA ({{data.expRNA.length}})")
+                div.pog-report
+                    section
+                        ipr-outlier(outliers="data.expRNA", pog="pog", report="report", gv=false)
+
+            md-tab(label="Exp Protein RNA ({{data.expProtein.length}})")
+                div.pog-report
+                    section
+                        ipr-outlier(outliers="data.expProtein", pog="pog", report="report", gv=false)
+
+            md-tab(label="Exp Drug Target ({{data.expDrugTarget.length}})")
+                div.pog-report
+                    section
+                        div(layout="column", flex).dataBox
+                            div.box
+                                div(layout="row", flex).heading
+                                    div(flex) Gene
+                                    div(flex) LOH
+                                    div(flex) Copy Number
+                                    div(flex) Fold Change Vs. {{report.tumourAnalysis.normalExpressionComparator}}
+                                    div(flex) {{report.tumourAnalysis.diseaseExpressionComparator}} %ile
+                                    div(flex) kIQR
+                                    div(flex=5)
+                                div(ng-if="data.expDrugTarget.length === 0")
+                                    div.row
+                                        div(style="text-align: center") No targets
+                                div(style="max-height: 300px; overflow-y: auto")
+                                    div(layout="row", flex, ng-repeat="target in data.expDrugTarget").row
+                                        div(flex)
+                                            a(href="http://dgidb.genome.wustl.edu/genes/{{target.gene}}", target="_blank") {{target.gene}}
+                                        div(flex) {{target.lohRegion}}
+                                        div(flex) {{target.copy}}
+                                        div(flex) {{target.foldChange}}
+                                        div(flex) {{target.tcgaPerc}}
+                                        div(flex) {{target.kIQR}}
+                                        div(flex=5)
+                                            md-icon(ipr-data-viewer="target").clickable search
+
+            md-tab(label="Exp Density Graph ({{data.expDensityGraph.length}})")
+                div(ng-repeat="img in data.expDensityGraph", style="text-align: center")
+                    img(data-ng-src="data:image/png;base64,{{img.data}}")

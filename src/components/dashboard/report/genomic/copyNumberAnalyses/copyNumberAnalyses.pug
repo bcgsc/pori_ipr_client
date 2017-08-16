@@ -19,7 +19,7 @@ section
             div(ng-repeat="(title, cnvs) in cnvGroups")
                 h3.title {{titleMap[title]}}
 
-                ipr-cnv(cnvs="cnvs", pog="pog")
+                ipr-cnv(cnvs="cnvs", pog="pog", report="report")
 
         div(layout="column", flex).bg-white
             h2.title Copy Number & LOH

@@ -1,10 +1,11 @@
 app.controller('controller.dashboard.report.genomic.structuralVariation',
-  ['_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', 'api.pog', 'pog', 'images', 'svs', 'ms',
-    (_, $q, $scope, $state, $mdDialog, $mdToast, $pog, pog, images, svs, ms) => {
+  ['_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', 'api.pog', 'pog', 'report', 'images', 'svs', 'ms',
+    (_, $q, $scope, $state, $mdDialog, $mdToast, $pog, pog, report, images, svs, ms) => {
 
       // Load Images into template
       $scope.images = images;
       $scope.pog = pog;
+      $scope.report = report;
       $scope.ms = ms;
       $scope.StrucVars = {};
 

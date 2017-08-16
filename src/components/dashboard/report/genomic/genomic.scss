@@ -99,13 +99,13 @@
       }
       
       .collapse {
-        position: absolute;
-        right: 21.5%;
-        margin-top: -5px;
+        margin: 0 0 0 auto;
+        height: 0px;
         
         md-icon {
           cursor: pointer;
           font-size: 1.3em;
+          outline: none;
         }
         
       }
