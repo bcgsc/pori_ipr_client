@@ -740,6 +740,12 @@ md-dialog-content {
       padding: 10px 5px 10px 15px;
       user-select: none;
 
+      > md-icon {
+        float: right;
+        margin-right: 10px;
+        outline: none;
+      }
+
       &:hover {
         background-color: rgba(0, 0, 0, 0.10);
         transition: box-shadow 0.4s cubic-bezier(0.25,0.8,0.25,1), background-color 0.4s cubic-bezier(0.25,0.8,0.25,1);
