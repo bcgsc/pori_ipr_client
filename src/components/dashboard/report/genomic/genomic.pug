@@ -35,6 +35,7 @@ md-content(flex).md-padding
                 ul
                     li
                         span(ng-click="goToReportSection('summary')", ng-class="activeSection('summary') ? 'active' : ''").clickable Summary
+                            md-icon(ng-click="openPrint()", aria-label="Print Summary Section").md-secondary print
 
                     li(ng-repeat="section in sections", ng-init='section.showChildren = false')
 
