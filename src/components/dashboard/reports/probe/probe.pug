@@ -47,7 +47,7 @@ md-content(flex, layout="column").md-padding
         div(layout="row", flex, layout-align="space-between")
             md-content(layout="column", flex, ng-show="states.uploaded").column
                 div(ng-show="loading").text-center Loading...
-                div(ng-if="numReports('uploaded') === 0").noWork Wow this lane is empty!
+                div(ng-show="numReports('uploaded') === 0").noWork Wow this lane is empty!
                     br
                     | No more work for you. How about a funny quote instead?
                     ipr-random-quote
@@ -57,7 +57,7 @@ md-content(flex, layout="column").md-padding
             md-content(layout="column", flex, ng-show="states.signedoff").column
                 div(ng-show="loading").text-center Loading...
 
-                div(ng-if="numReports('signedoff') === 0").noWork Wow this lane is empty!
+                div(ng-show="numReports('signedoff') === 0").noWork Wow this lane is empty!
                     br
                     | No more work for you. How about a funny quote instead?
                     ipr-random-quote

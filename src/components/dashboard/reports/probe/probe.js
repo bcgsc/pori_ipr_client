@@ -49,7 +49,7 @@ app.controller('controller.dashboard.reports.probe', ['_', '$q', '$scope', 'api.
     $report.all({all: !$scope.filter.currentUser, query: $scope.filter.query, role: $scope.filter.role, states: _.join(states, ','), type: 'probe'}).then(
       (result) => {
         $scope.loading = false;
-        $scope.reports = result;
+        $scope.reports = reports = result;
         associateUsers();
       },
       (err) => {
