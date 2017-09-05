@@ -19,6 +19,10 @@ app.controller('knowledgebase.references',
     return (ref.events_expression_expanded.ors.length > 1 || ref.events_expression_expanded.ands.length > 1);
   };
 
+  $scope.threeLetter = (str) => {
+    return str.substring(0,3);
+  } ;
+  
   // Open Filters Modal
   $scope.openFilters = ($event) => {
     $mdDialog.show({

@@ -29,11 +29,13 @@ md-content(layout="column", flex)
 
         div(layout="row").kbTable.header
             div(flex=20) events_expression
-            div(flex=10) type
+            div(flex=5) type
             div(flex=10) relevance
             div(flex=20) context
-            div(flex=20) disease_list
+            div(flex=15) disease_list
             div(flex=10) evidence
+            div(flex=10) Ref
+                md-tooltip Reference
             div(flex=10) status
             div.spacer
 
@@ -83,7 +85,7 @@ md-content(layout="column", flex)
                                         span and
                                     span {{event}}
 
-                div(flex="10") {{ref.type}}
+                div(flex="5") {{threeLetter(ref.type).toUpperCase()}}
                 div(flex="10") {{ref.relevance}}
                 div(flex="20")
 
@@ -100,7 +102,7 @@ md-content(layout="column", flex)
                             ul(ng-init="ref.showCs=false", md-whiteframe=2)
                                 li(ng-repeat="(k, context) in ref.context track by $index") {{context}}
 
-                div(flex="20")
+                div(flex="15")
 
                     div(ng-if="ref.disease_list.length === 1")
                         span {{ref.disease_list[0]}}
@@ -116,6 +118,7 @@ md-content(layout="column", flex)
                                 li(ng-repeat="(k, disease) in ref.disease_list track by $index") {{disease}}
 
                 div(flex="10") {{ref.evidence}}
+                div(flex=10) {{ref.ref_id}}
                 div(flex="10", class="{{ref.status.toLowerCase()}}", layout-align="center start", layout="column").status
                     span {{ref.status}}
 
