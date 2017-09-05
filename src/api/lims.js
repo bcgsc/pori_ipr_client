@@ -49,6 +49,81 @@ app.factory('api.lims', ['_', '$http', '$q', (_, $http, $q) => {
     });
 
   };
+  
+  
+  /**
+   * Get sample information from LIMS
+   *
+   * @param pogs
+   * @returns {*}
+   */
+  $lims.sample = (pogs) => {
+    return $q((resolve, reject) => {
+  
+      // Convert string pogid to array
+      if(typeof pogs === 'string') {
+        pogs = [pogs];
+      }
+  
+      let body = {
+        filters: {
+          op: "in",
+          content: {
+            field: "participant_study_id",
+            value: pogs
+          }
+        }
+      };
+      
+      $http.post('https://lims16.bcgsc.ca/alpha/limsapi/sample', body, {headers: {Authorization: 'Basic YnBpZXJjZTprNHRZcDNScnl+'}}).then(
+        (result) => {
+          resolve(result.data);
+        })
+        .catch((err) => {
+          console.log('Failed to get LIMS sample result', err);
+          reject(err);
+        });
+      
+    
+    });
+  };
+  
+  
+  /**
+   * Get Library information from LIMS
+   *
+   * @param {array} names - Names of libraries to look up
+   * @returns {*}
+   */
+  $lims.library = (names) => {
+    return $q((resolve, reject) => {
+  
+      if(typeof names === 'string') {
+        names = [names];
+      }
+  
+      let body = {
+        filters: {
+          op: "in",
+          content: {
+            field: "name",
+            value: names
+          }
+        }
+      };
+      
+      $http.post('https://lims16.bcgsc.ca/alpha/limsapi/library', body, {headers: {Authorization: 'Basic YnBpZXJjZTprNHRZcDNScnl+'}}).then(
+        (result) => {
+          resolve(result.data);
+        })
+        .catch((err) => {
+          console.log('Failed to get LIMS library result', err);
+          reject(err);
+        });
+      
+    
+    });
+  };
 
 
   return $lims;

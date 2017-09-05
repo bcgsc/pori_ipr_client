@@ -1,0 +1,22 @@
+md-dialog(layout="column", aria-label="Library Details", flex=50).editor
+    md-toolbar
+        .md-toolbar-tools
+            h2 Library Details: {{library.name}}
+            span(flex)
+            md-button.md-icon-button(ng-click='cancel()')
+                md-icon cancel
+    md-dialog-content(layout-padding)
+        div(layout="column")
+
+            div(ng-show="loading", layout="row", layout-align="center center")
+                md-progress-circular(md-mode="indeterminate")
+
+            div(ng-hide="loading", layout="column")
+
+                div(ng-repeat="(key, value) in library", layout="row").libDetails
+                    div(flex=30) {{key}}
+                    div(flex) {{value}}
+
+    md-dialog-actions(layout="row", layout-aligh="end center")
+        span(flex)
+        md-button(ng-click="cancel()").md-primary.md-raised Close
