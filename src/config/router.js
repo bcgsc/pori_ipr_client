@@ -1114,5 +1114,24 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         }]
       }
     })
+    
+    .state('dashboard.biopsy', {
+      url: '/biopsy',
+      data: {
+        displayName: 'Biopsies',
+        breadcrumbProxy: 'dashboard.biopsy.board'
+      },
+      controller: 'controller.dashboard.biopsy',
+      templateUrl: 'dashboard/biopsy/biopsy.html'
+    })
+    
+    .state('dashboard.biopsy.board', {
+      url: '/biopsy',
+      data: {
+        displayName: 'Home'
+      },
+      controller: 'controller.dashboard.biopsy.board',
+      templateUrl: 'dashboard/biopsy/board/board.html'
+    })
 
 }]);
