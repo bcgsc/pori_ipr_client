@@ -1,5 +1,51 @@
-div(flex, layout="column")
+div.padding-left-10.padding-right-10
+    table.material-table
+        thead
+            tr
+                th(colspan=4).no-border
+                th(colspan=3).text-center.no-border Normal
+                th(colspan=3).text-center.no-border.background-light Disease
+                th(colspan=2).text-center.no-border Protein
+            tr
+                th(width="12%") Gene
+                th(width="8%") Type
+                th(width="10%")
+                    span.clickable Expression Class (i)
+                        md-tooltip Based on mRNA
+                th(width="9%") Copy State
+                th(width="7%").text-right FC
+                th(width="7%").text-right Perc
+                th(width="7%").text-right kIQR
+                th(width="7%").text-right.background-light Perc
+                th(width="7%").text-right.background-light kIQR
+                th(width="7%").text-right.background-light QC
+                th(width="7%").text-right Perc
+                th(width="7%").text-right kIQR
+                th(wdith="5%")
+        tbody
+            tr(ng-repeat="outlier in outliers")
+                td
+                    ipr-gene-viewer(report="report", pog="pog", gene="outlier.gene") {{outlier.gene}}
+                td
+                    span(ng-if="outlier.expType === 'rna'") mRNA
+                    span(ng-if="outlier.expType === 'protein'") Protein
 
+                td.text-capitalize {{outlier.expression_class.replace('_', ' ')}}
+                td {{outlier.cnvState}}
+                td.text-right {{outlier.foldChange}}
+                td.text-right {{outlier.tcgaNormPerc}}
+                td.text-right {{outlier.tcgaNormkIQR}}
+                td.text-right.background-light {{outlier.tcgaPerc}}
+                td.text-right.background-light {{outlier.tcgakIQR}}
+                td.text-right.background-light {{outlier.tcgaQC}}
+                td.text-right {{outlier.ptxPerc || '-' }}
+                td.text-right {{outlier.ptxkIQR || '-' }}
+                td.text-center.options
+                    md-icon(ipr-data-viewer="outlier").clickable search
+                        md-tooltip View Details
+
+
+//div(flex, layout="column")
     div(layout="column", flex).dataBox
 
         div.box
@@ -11,7 +57,7 @@ div(flex, layout="column")
                 div(flex=10) CNV State
                 div(flex) Expression (RPKM)
                 div(flex) Fold Change Vs. {{report.tumourAnalysis.normalExpressionComparator}}
-                div(flex=10) {{repor.tumourAnalysis.diseaseExpressionComparator}} %ile
+                div(flex=10) {{report.tumourAnalysis.diseaseExpressionComparator}} %ile
                 div(flex=5)
             div(ng-if="outliers.length == 0")
                 div.text-center.details No expression outliers of this kind were found from the analysis.
@@ -23,8 +69,39 @@ div(flex, layout="column")
                 div(flex=10) {{outlier.lohState}}
                 div(flex=10) {{outlier.cnvState}}
                 div(flex) {{outlier.rpkm}}
-                div(flex) {{outlier.foldChange}}
-                div(flex=10) {{outlier.tcgaPerc}}
+                div(flex, ng-if="type === 'rna'") {{outlier.foldChange}}
+
+                div(flex=10, ng-if="type === 'rna'") {{outlier.tcgaPerc}}
+
+                div(flex, ng-if="type === 'protein'") {{outlier.ptxkIQR}}
+                div(flex=10, ng-if="type === 'protein'") {{outlier.ptxPerc}}
                 div(flex=5).text-center
                     md-icon(ipr-data-viewer="outlier").clickable search
                         md-tooltip View Details
+
+        div(layout="column").material-table
+            div(layout="row").head
+                div(flex) Gene
+                div(flex) Expression Class
+                div(flex) Copy State
+                div(flex) N Fold Change
+                div(flex) N Percentile
+                div(flex) N kIQR
+                div(flex) D Percentile
+                div(flex) D kIQR
+                div(flex) D QC
+                div(flex) P Percentile
+                div(flex) P kIQR
+            div(layout="row", ng-repeat="outlier in outliers").row
+                div(flex)
+                    ipr-gene-viewer(report="report", pog="pog", gene="outlier.gene") {{outlier.gene}}
+                div(flex) -
+                div(flex) {{outlier.cnvState}}
+                div(flex) {{outlier.foldChange}}
+                div(flex) {{outlier.tcgaNormPerc}}
+                div(flex) {{outlier.kIQRNormal || 'N/A'}}
+                div(flex) {{outlier.tcgaPerc || 'N/A' }}
+                div(flex) {{outlier.kIQRNormal || 'N/A' }}
+                div(flex) -
+                div(flex) {{outlier.ptxPerc || 'N/A' }}
+                div(flex) {{outlier.ptxkIQR || 'N/A' }}

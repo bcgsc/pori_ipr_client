@@ -593,6 +593,80 @@
       background-color: white;
     }
   }
+
+  $material-table-row-hover: rgb(238,238,238);
+
+  $analysis-report-section-expression-primary: rgb(84, 100, 211);
+  $analysis-report-section-expression-secondary: rgb(192, 197, 226);
+
+  section.material-section {
+    background-color: rgb(255,255,255);
+
+    &.expression {
+      h1 { background-color: $analysis-report-section-expression-primary; }
+      h2 { background-color: $analysis-report-section-expression-secondary; }
+    }
+
+    h1 {
+      padding: 7px;
+      margin: 0;
+      color: rgb(255,255,255);
+      font-weight: 100;
+      font-size: 1.15em;
+
+      md-icon {
+        color: rgba(255,255,255,0.8);
+      }
+    }
+
+    h2 {
+      color: rgb(0,0,0);
+      margin: 0;
+      font-size: 0.90em;
+      font-weight: 100;
+      padding: 7px;
+
+      md-icon {
+        color: rgba(0,0,0,0.8);
+      }
+    }
+
+    h1, h2 {
+      .minimize {
+        margin: 0 0 0 0;
+        height: 0;
+        display: inline-block;
+        float: right;
+
+        md-icon {
+          font-size: 20px;
+          min-height: 20px;
+          height: 20px;
+          line-height: 20px;
+        }
+      }
+    }
+
+
+    .detail-box {
+      border: 1px solid rgb(210,210,210);
+      margin: 15px;
+
+      > div:nth-of-type(even) {
+        background-color: $material-table-row-hover;
+      }
+      p {
+        margin: 0;
+        padding: 7px;
+        font-size: 0.9em;
+        display: inline-block;
+      }
+
+    }
+
+
+  }
+
 }
 
 .editor {

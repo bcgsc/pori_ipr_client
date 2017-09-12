@@ -17,3 +17,27 @@
   }
 
 }
+
+.density-graphs {
+  ul {
+    list-style: none;
+
+
+    li {
+      padding: 10px 0 0 10px;
+
+      &:hover {
+        background-color: rgb(238,238,238);
+      }
+    }
+
+  }
+
+  md-grid-list {
+    margin: 15px 0;
+
+    md-grid-tile {
+      margin-bottom: 10px;
+    }
+  }
+}

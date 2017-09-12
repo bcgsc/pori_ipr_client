@@ -91,10 +91,25 @@ md-dialog.editor {
 
 .red { color: rgb(223, 40, 22) }
 .green { color: rgb(43, 174, 87) }
+.blue { color: rgb(70, 90, 203) }
 
-.text-center { text-align: center; }
-.text-right { text-align: right; }
-.text-left { text-align: left; }
+.link {
+  color: rgb(70, 90, 203);
+  font-weight: 700;
+  cursor: pointer;
+
+  &:hover, &:visited {
+    text-decoration: underline;
+    color: rgb(79, 101, 232);
+  }
+
+}
+
+.text-bold { font-weight: 700; }
+
+.text-center { text-align: center !important;}
+.text-right { text-align: right !important; }
+.text-left { text-align: left !important; }
 .text-capitalize { text-transform: capitalize; }
 .text-emphasis { font-style: italic; }
 .text-ellipsis { text-overflow: ellipsis; }
@@ -139,6 +154,20 @@ md-dialog.editor {
 
 .padding-none { padding: 0; }
 
+.md-button.medium {
+  min-height: 30px;
+  height: 30px;
+  line-height: 15px;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+md-icon.small {
+  min-height: 18px;
+  height: 18px;
+  font-size: 18px;
+}
+
 span.preformated {
   background-color: rgb(230,230,230);
   padding: 2px;
@@ -167,25 +196,6 @@ span.preformated {
   background-color: rgba(255,255,255,0.6);
 
 }
-/*
-img.loader-spin {
-  -webkit-animation-name:             rotate;
-  -webkit-animation-duration:         2.0s;
-  -webkit-animation-iteration-count:  infinite;
-  -webkit-animation-timing-function:  linear;
-
-  -moz-animation-name:             spin;
-  -moz-animation-duration:         2.0s;
-  -moz-animation-iteration-count:  infinite;
-  -moz-animation-timing-function:  linear;
-}
-
-@-moz-keyframes spin {
-  from { -moz-transform: rotate(0deg); }
-  to { -moz-transform: rotate(360deg); }
-}
-
-*/
 
 img.loader-spin {
   animation-name: spin;
@@ -286,10 +296,194 @@ div.copypaste {
   }
 }
 
+md-input-container.medium {
+  font-size: 13px;
+  margin: 8px;
+
+  button {
+    min-height: 30px;
+    padding: 0;
+    height: 30px;
+    line-height: 30px;
+  }
+}
+
 .noWork {
   text-align: center;
   color: rgba(0,0,0,0.3);
   font-weight: 500;
   margin: auto 0 auto 0;
   line-height: 170%;
+}
+
+div.material-table {
+
+  &.inset {
+    background-color: rgb(245,245,245);
+    padding: 15px;
+
+    div.row:hover {
+      background-color: rgb(215, 215, 215);
+    }
+  }
+
+  div.head {
+    > div {
+
+      &:first-of-type {
+        padding-left: 12px;
+      }
+
+      font-weight: 400;
+      vertical-align: bottom;
+      color: rgba(0,0,0,0.54);
+      font-size: 0.75em;
+      padding: 3px;
+      text-align: left;
+      border-bottom: 1px solid rgb(220,220,220);
+    }
+  }
+  div.row {
+
+    border-bottom: 1px solid rgb(220,220,220);
+
+    &:last-of-type {
+      border-bottom: none;
+    }
+
+    > div {
+      padding: 5px;
+      font-size: 0.85em;
+
+      &:first-of-type {
+        padding-left: 12px;
+      }
+
+      &.options {
+        text-align: center;
+      }
+
+      md-icon {
+        font-size: 18px;
+        max-height: 20px;
+        height: 20px;
+        max-width: 20px;
+        width: 20px;
+      }
+
+      ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+    }
+
+    &:hover {
+      background-color: rgb(238,238,238);
+    }
+
+  }
+
+}
+
+table.material-table {
+  width: 100%;
+  border-spacing: 0;
+  border-collapse: collapse;
+
+  $material-table-background-light: rgb(247,247,247);
+  $material-table-row-hover: rgb(238,238,238);
+  $material-table-border-color: rgb(220,220,220);
+
+  .border-left { border-left: 1px solid $material-table-border-color }
+
+  .background-light { background-color: $material-table-background-light }
+
+  thead {
+
+    tr > th {
+      font-weight: 400;
+      border-bottom: 1px solid $material-table-border-color;
+
+      vertical-align: bottom;
+      color: rgba(0,0,0,0.54);
+      font-size: 0.75em;
+      padding: 10px 7px;
+      text-align: left;
+
+      &:first-of-type { padding-left: 12px; }
+
+      &.button {
+        padding: 0;
+
+        button {
+          height: 30px;
+          min-height: 30px;
+          line-height: 30px;
+          min-width: 55px;
+        }
+      }
+
+    }
+
+    tr th.libraries_head {
+      text-align: center;
+      border-bottom: none;
+    }
+    tr th.no-border {
+      border: none;
+    }
+
+  }
+  tbody {
+    tr {
+
+      border-bottom: 1px solid $material-table-border-color;
+
+      &:last-of-type { border-bottom: none; }
+
+      td {
+        padding: 10px 5px;
+        font-size: 0.85em;
+
+        &:first-of-type {
+          padding-left: 12px;
+        }
+
+        &.options {
+          text-align: center;
+
+          md-icon {
+            font-size: 18px;
+            max-height: 20px;
+            height: 20px;
+            max-width: 20px;
+            width: 20px;
+          }
+        }
+
+      }
+
+      &:hover {
+        background-color: $material-table-row-hover;
+        > .background-light {
+          background-color: $material-table-row-hover;
+        }
+        > .options md-icon {
+          color: rgb(89, 117, 236);
+        }
+      }
+    }
+  }
+  tr.loading {
+
+    &:hover { background: none; }
+
+    span { padding: 10px; }
+
+    md-progress-circular {
+      margin: 0 auto;
+    }
+  }
 }

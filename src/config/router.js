@@ -130,7 +130,6 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
 		            resolve(pogs);
 	            },
 	            (err) => {
-	              console.log('[route.dashboard.pogAll]', err);
 	              reject(err);
               }
 		        );
@@ -553,7 +552,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       data: {
         displayName: "Expression Analysis"
       },
-      templateUrl: 'dashboard/report/genomic/expressionAnalysis/expressionAnalysis.html',
+      templateUrl: 'dashboard/report/genomic/expressionAnalysis/version02/expressionAnalysis.html',
       controller: 'controller.dashboard.report.genomic.expressionAnalysis',
       resolve: {
         ms: ['$q', '$stateParams', 'api.summary.mutationSummary', ($q, $stateParams, $ms) => {
@@ -561,9 +560,6 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         }],
         outliers: ['$q', '$stateParams', 'api.expressionAnalysis.outlier', ($q, $stateParams, $outliers) => {
           return $outliers.all($stateParams.POG, $stateParams.analysis_report);
-        }],
-        protein: ['$q', '$stateParams', 'api.expressionAnalysis.protein', ($q, $stateParams, $protein) => {
-          return $protein.all($stateParams.POG, $stateParams.analysis_report);
         }],
         drugTargets: ['$q', '$stateParams', 'api.expressionAnalysis.drugTarget', ($q, $stateParams, $drugTarget) => {
           return $drugTarget.all($stateParams.POG, $stateParams.analysis_report);
@@ -1131,7 +1127,12 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         displayName: 'Home'
       },
       controller: 'controller.dashboard.biopsy.board',
-      templateUrl: 'dashboard/biopsy/board/board.html'
+      templateUrl: 'dashboard/biopsy/board/board.html',
+      resolve: {
+        analyses: ['$q', 'api.analysis', ($q, $analysis) => {
+          return $analysis.all();
+        }]
+      }
     })
 
 }]);

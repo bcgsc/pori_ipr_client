@@ -8,6 +8,7 @@ app.directive("iprOutlier", ['$q', '_', ($q, _) => {
       outliers: '=outliers',
       pog: '=pog',
       report: '=report',
+      type: '=type',
       gv: '=?gv'
     },
     templateUrl: 'ipr-outlier/ipr-outlier.html',
