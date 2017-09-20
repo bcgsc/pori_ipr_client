@@ -18,6 +18,67 @@
 
 }
 
+.expression.material-section {
+
+  .analysis-report-section {
+
+    .comparators {
+      border: 1px solid rgb(210, 210, 210);
+      margin: 15px;
+
+      > div {
+        border-bottom: none;
+      }
+
+      // First Row
+      > div > div:first-of-type {
+        padding: 7px;
+        background-color: rgb(225, 225, 225);
+        border-right: 1px solid rgb(210, 210, 210);
+        border-bottom: 1px solid rgb(210, 210, 210);
+      }
+
+      // Right most column
+      > div:last-of-type > div {
+        border-right: none;
+
+        // Within right most column, last column
+        > div:last-of-type {
+          border-right: none;
+        }
+      }
+
+      // 2nd row
+      > div div:nth-of-type(2) > div {
+        background-color: rgb(238, 238, 238);
+      }
+
+      // Not first row
+      > div div:not(first-of-type) {
+
+        > div {
+
+          border-right: 1px solid rgb(210, 210, 210);
+          border-bottom: 1px solid rgb(210, 210, 210);
+          padding: 7px;
+          text-align: center;
+        }
+      }
+
+      // Last row
+      > div > div:last-of-type {
+        border-bottom: none;
+        > div {
+          border-bottom: none;
+        }
+      }
+
+    }
+
+  }
+
+}
+
 .density-graphs {
   ul {
     list-style: none;

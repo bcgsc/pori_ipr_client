@@ -13,16 +13,26 @@ div.padding-left-10.padding-right-10
                     span.clickable Expression Class (i)
                         md-tooltip Based on mRNA
                 th(width="9%") Copy State
-                th(width="7%").text-right FC
-                th(width="7%").text-right Perc
+                th(width="7%").text-right
+                    span.clickable FC
+                        md-tooltip Foldchange
+                th(width="7%").text-right
+                    span.clickable Perc
+                        md-tooltip Percentile
                 th(width="7%").text-right kIQR
-                th(width="7%").text-right.background-light Perc
+                th(width="7%").text-right.background-light
+                    span.clickable Perc
+                        md-tooltip Percentile
                 th(width="7%").text-right.background-light kIQR
                 th(width="7%").text-right.background-light QC
-                th(width="7%").text-right Perc
+                th(width="7%").text-right
+                    span.clickable Perc
+                        md-tooltip Percentile
                 th(width="7%").text-right kIQR
                 th(wdith="5%")
         tbody
+            tr(ng-if="outliers.length === 0").no-hover
+                td(colspan=13).text-center No outliers of this type detected.
             tr(ng-repeat="outlier in outliers")
                 td
                     ipr-gene-viewer(report="report", pog="pog", gene="outlier.gene") {{outlier.gene}}
@@ -34,10 +44,10 @@ div.padding-left-10.padding-right-10
                 td {{outlier.cnvState}}
                 td.text-right {{outlier.foldChange}}
                 td.text-right {{outlier.tcgaNormPerc}}
-                td.text-right {{outlier.tcgaNormkIQR}}
+                td.text-right {{outlier.tcgaNormkIQR || '-' }}
                 td.text-right.background-light {{outlier.tcgaPerc}}
                 td.text-right.background-light {{outlier.tcgakIQR}}
-                td.text-right.background-light {{outlier.tcgaQC}}
+                td.text-right.background-light {{outlier.tcgaQC || '-'}}
                 td.text-right {{outlier.ptxPerc || '-' }}
                 td.text-right {{outlier.ptxkIQR || '-' }}
                 td.text-center.options

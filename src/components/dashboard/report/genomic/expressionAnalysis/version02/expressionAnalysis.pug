@@ -45,18 +45,59 @@ section.material-section.expression
                 div(layout="column", flex)
                     h2 Supervised Comparator Plot
                     p Supervised Comparator
+        div.analysis-report-section
+            div(layout="column")
+                h2 Expression Correlation Summary and Comparator Choices
+
+                div(layout="row").comparators
+                    div(layout="column", flex)
+                        div.text-center Normal Expression Comparator
+                        div(layout="row")
+                            div(flex) Data Source
+                            div(flex) Cohort
+                        div(layout="row")
+                            div(flex) Illumina BodyMap
+                            div(flex) {{report.tumourAnalysis.normalExpressionComparator}}
+
+                    div(layout="column", flex)
+                        div.text-center Disease Expression Comparator
+                        div(layout="row")
+                            div(flex) Data Source
+                            div(flex) Cohort
+                        div(layout="row")
+                            div(flex) TCGA
+                            div(flex) {{report.tumourAnalysis.diseaseExpressionComparator}}
+                    div(layout="column", flex)
+                        div.text-center Protein Expression Comparator
+                        div(layout="row")
+                            div(flex) Data Source
+                            div(flex) Cohort
+                        div(layout="row")
+                            div(flex) POG
+                            div(flex) {{getPtxComparator()}}
 
     div.analysis-report-section.margin-top-10
-        h1 Expression Outliers
+        h1 Expression Outlier Summary
+            p.minimize
+                ipr-section-hide(flip-state="expOutSummary", ng-init="expOutSummary=true")
+
+        div(ng-show="expOutSummary")
+
+            div(layout="column", ng-repeat="(key, title) in expSummaryMap")
+                h2 {{title}}
+
+                ipr-outlier(outliers="expOutliers[key]", pog="pog", report="report", type="'rna'").analysis-report-section.margin-bottom-10
+
+    div.analysis-report-section.margin-top-10
+        h1 mRNA Expression Outliers
             p.minimize
                 ipr-section-hide(flip-state="rnaExpOut", ng-init="rnaExpOut=true")
 
         div(ng-show="rnaExpOut")
+            div(layout="column", ng-repeat="(key, title) in mRNAOutliersMap")
+                h2 {{title}}
 
-            div(layout="column", ng-repeat="(title, outliers) in expOutliers")
-                h2 {{titleMap[title]}}
-
-                ipr-outlier(outliers="outliers", pog="pog", report="report", type="'rna'").analysis-report-section.margin-bottom-10
+                ipr-outlier(outliers="expOutliers[key]", pog="pog", report="report", type="'rna'").analysis-report-section.margin-bottom-10
 
     div.analysis-report-section.margin-top-10
         h1 Drug Targetable High Percentile Genes

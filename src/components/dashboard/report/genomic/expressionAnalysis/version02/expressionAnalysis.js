@@ -10,16 +10,28 @@ app.controller('controller.dashboard.report.genomic.expressionAnalysis',
       $scope.drugTargets = drugTargets;
       $scope.densityGraphs = _.chunk(_.values(densityGraphs),2);
       
-      $scope.titleMap = {
+      $scope.expSummaryMap = {
         clinical: 'Expression Level Outliers of Potential Clinical Relevance',
         nostic: 'Expression Level Outliers of Prognostic or Diagnostic Relevance',
         biological: 'Expression Level Outliers of Biological Relevance',
       };
       
-      
+      $scope.mRNAOutliersMap = {
+        upreg_onco: 'Up-Regulated Oncogenes',
+        downreg_tsg: 'Down-Regulated Tumour Suppressor Genes'
+      };
       // Convert full hex to 6chr
       $scope.colourHex = (hex) => {
         return hex.match(/([A-z0-9]{6}$)/)[0];
+      };
+      
+      $scope.getPtxComparator = () => {
+        
+        if(outliers.length === 0) return {comparator: 'N/A', sumSamples: 0};
+        
+        let comparator = (outliers[0].ptxPercCol) ? outliers[0].ptxPercCol.substring(outliers[0].ptxPercCol.lastIndexOf("PTX_POG_")+8, outliers[0].ptxPercCol.lastIndexOf("_percentile")) : "N/A";
+        
+        return comparator;
       };
       
       $scope.searchDrugs = (query) => {
@@ -49,7 +61,9 @@ app.controller('controller.dashboard.report.genomic.expressionAnalysis',
         let expressions = {
           clinical: [],
           nostic: [],
-          biological: []
+          biological: [],
+          upreg_onco: [],
+          downreg_tsg: []
         };
         
         let typekey = 'outlierType';
@@ -62,10 +76,7 @@ app.controller('controller.dashboard.report.genomic.expressionAnalysis',
           expressions[row[typekey]].push(row);
         });
         
-        // Set Small Mutations
-        
-        if(type === 'outlier') $scope.expOutliers = expressions;
-        if(type === 'protein') $scope.expProtein = expressions;
+        $scope.expOutliers = expressions;
         
       };
       

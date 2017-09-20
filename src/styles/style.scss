@@ -316,6 +316,14 @@ md-input-container.medium {
   line-height: 170%;
 }
 
+
+md-toast.request-error {
+  > div.md-toast-content {
+    background-color: rgb(210, 24, 40);
+  }
+}
+
+
 div.material-table {
 
   &.inset {
@@ -467,6 +475,11 @@ table.material-table {
 
       &:hover {
         background-color: $material-table-row-hover;
+
+        &.no-hover {
+          background-color: transparent;
+        }
+
         > .background-light {
           background-color: $material-table-row-hover;
         }
