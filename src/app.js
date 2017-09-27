@@ -15,3 +15,14 @@ const app = angular.module('bcgscIPR', [
 	'btford.socket-io'
 ]);
 
+// Register HTTP Error Handler
+app.run(httpErrorHandler);
+
+
+function httpErrorHandler($rootScope, toastService) {
+  $rootScope.$on( 'httpError', (event, eventData) => {
+    toastService.serverError(eventData.message);
+  });
+}
+
+httpErrorHandler.$inject = ['$rootScope', 'toastService'];
