@@ -8,22 +8,41 @@ section
             h2.title Small Somatic Mutations
             h3.title Summary of Somatic Events
 
-            div(layout="row", layout-align="space-around center").margin-bottom-40
-                div(layout="column").smEvents.snv
-                    div(layout="row")
-                        div(flex=60) Number of non-synonymous protein coding SNVs (Truncating)
-                        div(flex=40, layout="row", layout-align="center center").count
-                            div.snv {{ms.totalSNV}}
-                    img(style="width: 90%", data-ng-src="data:image/png;base64,{{images['mutSummary.snv'].data}}")
-                    img(style="width: 90%", data-ng-src="data:image/png;base64,{{images['mutSummary.barSnv'].data}}")
+            div(layout="row").mutation-summary-images
+                div(layout="column", flex=15).comparator-list
+                    p Available comparators
+                    ul
+                        li(ng-repeat="comp in mutationSummaryImages.comparators track by $index", ng-init="comp.visible=true")
+                            md-checkbox(ng-model="comp.visible", name="{{comp.name}}Checkbox").text-capitalize {{comp.name.split('_').join(' ') || 'All'}}
 
-                div(layout="column").smEvents.indel
-                    div(layout="row")
-                        div(flex=60) Number of protein coding indels (Frameshift)
-                        div(flex=40, layout="row", layout-align="center center").count
-                            div.indel {{ms.totalIndel}}
-                    img(style="width: 90%", data-ng-src="data:image/png;base64,{{images['mutSummary.indel'].data}}")
-                    img(style="width: 90%", data-ng-src="data:image/png;base64,{{images['mutSummary.barIndel'].data}}")
+                div(layout="column", flex)
+
+                    div(layout="row", layout-align="space around")
+                        div(layout="column", flex=45).smEvents.snv
+                            div(layout="row")
+                                div(flex=60) Number of non-synonymous protein coding SNVs (Truncating)
+                                div(flex=40, layout="row", layout-align="center center").count
+                                    div.snv {{ms.totalSNV}}
+
+                        div(layout="column", flex=45).smEvents.indel
+                            div(layout="row")
+                                div(flex=60) Number of protein coding indels (Frameshift)
+                                div(flex=40, layout="row", layout-align="center center").count
+                                    div.indel {{ms.totalIndel}}
+
+                    div(layout="row", layout-align="space around").summary-plots
+                        div(layout="column", flex=45)
+                            div(ng-repeat="comp in mutationSummaryImages.comparators", ng-show="comp.visible")
+                                img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{getMutationSummaryImage('densityPlot', 'snv', comp.name).data}}")
+                                img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{getMutationSummaryImage('snv_indel', 'legend', comp.name).data}}")
+                                img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{getMutationSummaryImage('barplot', 'snv', comp.name).data}}")
+
+                        div(layout="column", flex=45)
+                            div(ng-repeat="comp in mutationSummaryImages.comparators", ng-show="comp.visible")
+                                img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{getMutationSummaryImage('densityPlot', 'indel', comp.name).data}}")
+                                img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{getMutationSummaryImage('snv_indel', 'legend', comp.name).data}}")
+                                img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{getMutationSummaryImage('barplot', 'indel', comp.name).data}}")
+
 
             h3.title Mutational Spectrum
             ipr-mutation-signature(pog="pog", report="report", mutation-signature="mutationSignature", mutation-summary="ms")

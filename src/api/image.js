@@ -57,6 +57,32 @@ app.factory('api.image', ['_', '$http', '$q', (_, $http, $q) => {
     });
 
   };
+  
+  /**
+   * Retrieve Mutation Summary images for this POG
+   *
+   * @param {string} POGID - Patient Identifier
+   * @param {string} report - Analysis Report identifier
+   *
+   * @returns {*}
+   */
+  $image.mutationSummary = (POGID, report) => {
+
+    return $q((resolve, reject) => {
+
+      // Get Graphs
+      $http.get(api + '/' + POGID + '/report/' + report + '/image/mutationSummary').then(
+        (result) => {
+          resolve(result.data);
+        },
+        (error) => {
+          reject(error.status);
+        }
+      )
+
+    });
+
+  };
 
   return $image;
   

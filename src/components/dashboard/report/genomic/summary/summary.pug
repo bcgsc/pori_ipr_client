@@ -106,10 +106,10 @@ section
             div(layout="row").header
                 div(flex).container
                     div(flex).signature.editable
-                        span(ng-if="(data.ms.mutationSignature.length === 0 || data.ms.mutationSignature === null)") Nothing striking
+                        span(ng-if="(data.ta.mutationSignature.length === 0 || data.ta.mutationSignature === null)") Nothing striking
                             md-icon(ng-click="updateMs()") edit
-                        span(ng-if="data.ms.mutationSignature.length > 0")
-                            span(ng-repeat="sig in data.ms.mutationSignature").repeat-comma
+                        span(ng-if="data.ta.mutationSignature.length > 0")
+                            span(ng-repeat="sig in data.ta.mutationSignature").repeat-comma
                                 span(ng-click="toMutations()").listitem
                                     span(ng-if="sig.modifier !== null") {{sig.modifier}}&nbsp;
                                     span {{(sig.associations == '-') ? 'Signature '+sig.signature : sig.associations}}
@@ -122,7 +122,7 @@ section
                         md-button(md-no-ink).md-icon-button
                             md-tooltip(md-direction="bottom") Single Nucleotide Variations
                             md-icon help
-                    div(flex="30").total {{mutationBurdenFilter(data.ms.totalSNV)}}
+                    div(flex="30").total {{data.ms[0].snv}}
 
                 div(layout="row", flex).mutationType
                     div(flex)
@@ -130,7 +130,7 @@ section
                         md-button(md-no-ink).md-icon-button
                             md-tooltip(md-direction="bottom") Insertions and Deletions
                             md-icon help
-                    div(flex="30").total {{mutationBurdenFilter(data.ms.totalIndel)}}
+                    div(flex="30").total {{data.ms[0].indels}}
 
                 div(layout="row", flex).mutationType
                     div(flex)
@@ -138,24 +138,19 @@ section
                         md-button(md-no-ink).md-icon-button
                             md-tooltip(md-direction="bottom") Structural Variants
                             md-icon help
-                    div(flex="30").total {{mutationBurdenFilter(data.ms.totalSV)}}
+                    div(flex="30").total {{data.ms[0].sv}}
 
             div(layout="column").data
-                div(layout="row", flex)
-                    div(flex) Interpreted prevelance
-                    div(flex) {{data.ms.snvReportCategory}}
-                    div(flex) {{data.ms.indelReportCategory}}
-                    div(flex) {{data.ms.svPercentilePOGCategory}}
-                div(layout="row", flex).data
-                    div(flex) Percentile among compendium
-                    div(flex) {{data.ms.snvPercentileTCGA}}
-                    div(flex) {{data.ms.indelPercentileTCGA}}
-                    div(flex) {{data.ms.svPercentilePOG}} (POG)
-                div(layout="row", flex, ng-hide="data.ta.diseaseExpressionComparator === 'average'").data
-                    div(flex) Percentile among {{data.ta.diseaseExpressionComparator}}
-                    div(flex) {{data.ms.snvPercentileDisease}}
-                    div(flex) {{data.ms.indelPercentileDisease}}
+                div(layout="row", flex, ng-repeat="comparator in data.ms")
+                    // Null value for comparator invokes legacy support
+                    // Previous Mutation Summary did not name the comparator in the CSVs - Comparator pulled from tumour analysis in these cases.
+                    div(flex) Percentile among {{comparator.comparator || data.ta.diseaseExpressionComparator }}
+                    div(flex) {{comparator.snv_percentile}}
+                    div(flex) {{comparator.indel_percentile}}
                     div(flex)
+                        span(ng-if="comparator.sv_percentile === null") -
+                        span(ng-if="comparator.sv_percentile !== null").clickable {{ comparator.sv_percentile }} (POG)
+                            md-tooltip Only available with respect to POG
 
     div(layout="column", flex)
 

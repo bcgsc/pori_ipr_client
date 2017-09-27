@@ -12,7 +12,7 @@ div(layout="column", flex).mutationSignature
         div(flex=5)
             span(ng-click="sortMutations('nnls')").sortable NNLS
                 span(ng-show="mutationSort.col == 'nnls'").order {{((mutationSort.order) ? '∨':'∧')}}
-            span(ng-click="toggleNnlsNormalize()").subhead [{{((nnlsNormal) ? 'N' : 'R')}}]
+            span(ng-click="toggleNnlsNormalize()").subhead [{{((nnlsNormal) ? 'N' : 'L')}}]
                 md-tooltip Toggle Normalized Colouring
         div(flex) Probable Associations
         div(flex=10) Additional Features

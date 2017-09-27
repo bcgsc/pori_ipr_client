@@ -10,9 +10,10 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
 		$injector.get('$state').go('error.404', null, {location: false});
 		return $location.path();
 	});
-
-
-	// Master State Provider
+  
+  
+  
+  // Master State Provider
 	// All states are defined and configured on this object
 	$stateProvider
 
@@ -495,6 +496,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         images: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
           return $image.get($stateParams.POG, $stateParams.analysis_report, 'mutSummary.snv,mutSummary.indel,mutSummary.barSnv,mutSummary.barIndel,mutSignature.corPcors,mutSignature.snvsAllStrelka');
         }],
+        mutationSummaryImages: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
+          return $image.mutationSummary($stateParams.POG, $stateParams.analysis_report);
+        }],
         ms: ['$q', '$stateParams', 'api.summary.mutationSummary', ($q, $stateParams, $ms) => {
           return $ms.get($stateParams.POG, $stateParams.analysis_report);
         }],
@@ -536,7 +540,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       controller: 'controller.dashboard.report.genomic.structuralVariation',
       resolve: {
         images: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
-          return $image.get($stateParams.POG, $stateParams.analysis_report, 'mutSummary.barSv,mutSummary.sv,circosSv.genome,circosSv.transcriptome');
+          return $image.get($stateParams.POG, $stateParams.analysis_report, 'mutation_summary.barplot_sv,mutation_summary.density_plot_sv,circosSv.genome,circosSv.transcriptome');
         }],
         ms: ['$q', '$stateParams', 'api.summary.mutationSummary', ($q, $stateParams, $ms) => {
           return $ms.get($stateParams.POG, $stateParams.analysis_report);
