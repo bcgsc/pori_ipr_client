@@ -10,29 +10,29 @@ section.material-section.expression
 
                 div(layout="row", layout-align="space-between")
                     div(layout="column", flex=30).detail-box
-                        div(layout="row")
+                        div(layout="row", flex, layout-align="start center")
                             p(flex=40) Diagnosis:
                             p {{report.patientInformation.tumourType}}
-                        div(layout="row")
+                        div(layout="row", flex, layout-align="start center")
                             p(flex=40) Biopsy Type:
                             p {{report.patientInformation.biopsySite}}
 
                     div(layout="column", flex=30).detail-box
-                        div(layout="row")
+                        div(layout="row", flex, layout-align="start center")
                             p(flex=40) Site of Primary Disease:
                             p N/A
-                        div(layout="row")
+                        div(layout="row", flex, layout-align="start center")
                             p(flex=40) Biopsy Site:
                             p N/A
 
                     div(layout="column", flex=30).detail-box
-                        div(layout="row")
-                            p(flex=40) Tumour Content
+                        div(layout="row", flex, layout-align="start center")
+                            p(flex=40) Tumour Content:
                             p
                                 ipr-tumour-content(tc="{{report.tumourAnalysis.tumourContent}}", md-whiteframe="1")
 
-                        div(layout="row")
-                            p(flex=40) Ploidy Model
+                        div(layout="row", flex, layout-align="start center")
+                            p(flex=40) Ploidy Model:
                             p.text-capitalize {{report.tumourAnalysis.ploidy}}
 
 
