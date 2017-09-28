@@ -1,5 +1,4 @@
 .biopsyBoard {
-
   .biopsies {
     .header {
       border-bottom: 1px solid rgba(0,0,0,0.1);
@@ -27,21 +26,31 @@
         margin: 10px 0;
       }
     }
+
   }
 
 }
 
 .libDetails  {
-  &:nth-of-type(odd) {
-    background-color: rgba(0,0,0,0.05);
+
+  border-bottom: 1px solid rgb(230,230,230);
+
+  &:last-of-type {
+    border-bottom: none;
   }
+
   div {
-    padding: 4px 5px;
+    padding: 6px 5px;
   }
   div:first-of-type {
     font-weight: 200;
     color: rgba(0,0,0,0.7);
     text-align: right;
+    font-size: 0.85em;
+
+    &:after {
+      content: ':'
+    }
   }
   div:nth-of-type(2) {
     font-weight: 600;

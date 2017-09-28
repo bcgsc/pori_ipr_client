@@ -1126,7 +1126,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     })
     
     .state('dashboard.biopsy.board', {
-      url: '/biopsy',
+      url: '/board',
       data: {
         displayName: 'Home'
       },
@@ -1137,6 +1137,15 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
           return $analysis.all();
         }]
       }
+    })
+    
+    .state('dashboard.biopsy.test', {
+      url: '/test',
+      data: {
+        displayName: 'Karens Test Space'
+      },
+      controller: 'controller.dashboard.biopsy.test',
+      templateUrl: 'dashboard/biopsy/biopsy.test.html',
     })
 
 }]);

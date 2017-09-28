@@ -1,37 +1,73 @@
 md-content(flex, layout="column").md-padding.biopsyBoard
 
     h1.md-title(layout="row")
-        span(flex) Biopsy - Sample Search
+        span(flex) Biopsies
 
-    div(layout="row")
-        div(flex)
-        md-input-container(flex=25, layout="row")
-            input(ng-model="biopsy.search", placeholder="Search by POGID")
-        div
-            md-button(ng-click="search()", ng-disabled="searching").md-raised.md-primary Search
-
+    span
+        a(ui-sref="dashboard.biopsy.test") Karen's CORS Testing Tool
     div(layout="column").biopsies
-        div(layout="row", flex).header
-            div(flex=10) POG
-            div(flex=10) Sample Name
-            div(flex=10) Collection Date
-            div(flex=25) Disease
-            div(flex=25) Anatomical Site
-            div(flex=20) Libraries
-        div(layout="row", ng-show="numKeys(pogs) === 0 && !searching").none
-            div(flex) No POG samples found
 
-        div(layout="row", ng-show="searching").loading
-            div(flex, layout="row" layout-align="center center")
-                md-progress-circular(md-mode="indeterminate")
+        table.material-table
+            thead
+                tr
+                    th(colspan=6).button
+                        md-button(ng-click="addBiopsy()").md-primary Add
+                            md-tooltip Add new biopsy
+                    th(colspan=5).button
+                        div(layout="row", layout-align="end start")
+                            form(ng-submit="search()", novalidate, layout="row", flex, ng-show="showSearch")
+                                md-input-container(flex, layout="row").medium
+                                    input(ng-model="filter.search", focus-me="focusSearch", placeholder="Search by POGID")
 
-        div(layout="row", ng-repeat="pog in pogs").row
-            div(flex=10) {{pog.pogid}}
-            div(flex=10) {{pog.sample_name}}
-            div(flex=10) {{pog.date | amDateFormat: 'YYYY-MM-DD'}}
-            div(flex=25) {{pog.disease}}
-            div(flex=25) {{pog.anatomic_site}}
-            div(flex=20)
-                span(ng-repeat="(i, lib) in pog.libraries" ng-click="openLibrary(lib)").clickable  {{lib}}
-                    span(ng-if="i != pog.libraries.length -1") ,
+                            md-button(ng-show="showSearch", ng-click="clearSearch()").md-icon
+                                md-icon cancel
+                                md-tooltip Clear search
 
+                            md-button(ng-hide="showSearch", ng-click="displaySearch()").md-icon
+                                md-icon filter_list
+                                md-tooltip Filter/Search
+                tr
+                    th(width="5%") POG
+                    th(width="15%") Disease
+                    th(width="15%") Biopsy Notes
+                    th(width="10%") Comparators
+                    th(width="10%")
+                        span.clickable Clinspec
+                            md-tooltip Clinical Biopsy Number
+                    th(width="10%")
+                        span.clickable Biop
+                            md-tooltip BioFX Biopsy Number
+                    th(width="7%") Tumour
+                    th(width="7%") Normal
+                    th(width="7%") Transcriptome
+                    th(width="10%") Added
+                    th(width="5%")
+            tbody
+                tr(ng-show="loading").loading
+                    td(colspan="10").text-center
+                        span Loading...
+                        md-progress-circular(md-mode="indeterminate")
+                tr(ng-show="!loading && analyses.length === 0").loading
+                    td(colspan="10").text-center
+                        span No biopsies found on IPR
+                tr(ng-repeat="analysis in analyses")
+                    td.text-bold {{analysis.pog.POGID}}
+                    td {{analysis.disease}}
+                    td {{analysis.biopsy_notes}}
+                    td [Comp.]
+                    td {{analysis.clinical_biopsy}}
+                    td {{analysis.analysis_biopsy || "Pending"}}
+                    td
+                        span(ng-click="openLibrary(analysis.libraries.tumour)").clickable.link {{analysis.libraries.tumour}}
+                        span(ng-if="!analysis.libraries.tumour") N/A
+                    td
+                        span(ng-click="openLibrary(analysis.libraries.normal)").clickable.link {{analysis.libraries.normal}}
+                        span(ng-if="!analysis.libraries.tumour") N/A
+                    td
+                        span(ng-click="openLibrary(analysis.libraries.transcriptome)").clickable.link {{analysis.libraries.transcriptome}}
+                        span(ng-if="!analysis.libraries.transcriptome") N/A
+                    td
+                        span.clickable {{analysis.createdAt | amTimeAgo}}
+                            md-tooltip {{analysis.createdAt | amDateFormat: 'YYYY-MM-DD HH:mm:ss'}}
+                    td.options
+                        md-icon(ng-click="openAnalysis(analysis)").clickable search
