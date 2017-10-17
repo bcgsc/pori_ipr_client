@@ -41,15 +41,10 @@ md-dialog(layout="column", aria-label="Update Alterations Entry", flex-md=90, fl
                     section
                         ipr-sv(svs="data.structuralVariants", pog="pog", report="report", gv=false)
 
-            md-tab(label="Exp RNA ({{data.expRNA.length}})")
+            md-tab(label="Expression Outliers ({{data.expRNA.length}})")
                 div.pog-report
-                    section
+                    section.material-section
                         ipr-outlier(outliers="data.expRNA", pog="pog", report="report", gv=false)
-
-            md-tab(label="Exp Protein RNA ({{data.expProtein.length}})")
-                div.pog-report
-                    section
-                        ipr-outlier(outliers="data.expProtein", pog="pog", report="report", gv=false)
 
             md-tab(label="Exp Drug Target ({{data.expDrugTarget.length}})")
                 div.pog-report
