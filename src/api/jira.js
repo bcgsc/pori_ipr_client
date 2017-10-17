@@ -174,11 +174,48 @@ app.factory('api.jira', ['_', '$http', '$q', 'api.user', (_, $http, $q, $user) =
   };
 
   /**
-   * JIRA Attachments Namespace
+   * JIRA Projects Namespace
    *
    */
-  $jira.attachment = {
-
+  $jira.projects = {
+  
+    /**
+     * Get Project Security Levels available
+     *
+     * @param {string} project - Project key name
+     * @returns {*}
+     */
+    getSecurityLevels: (project) => {
+      return $q((resolve, reject) => {
+        $http.get(api + '/project/' + project + '/securitylevel')
+          .then((response) => {
+            resolve(response.data);
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
+    },
+    
+    /**
+     * Get Project Details
+     *
+     * @param {string} project - Project key name
+     * @returns {*}
+     */
+    getProject: (project) => {
+      return $q((resolve, reject) => {
+        $http.get(api + '/project/' + project)
+          .then((response) => {
+            resolve(response.data);
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
+    }
+    
+    
   };
 
 
