@@ -136,7 +136,10 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
 		        );
 
 	        });
-	      }]
+	      }],
+        projects: ['api.project', ($project) => {
+			    return $project.all();
+        }]
 		  }
 		})
 
@@ -186,8 +189,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       resolve: {
         reports: ['$q', 'api.pog_analysis_report', '$userSettings', 'user', ($q, $report, $userSettings) => {
           let currentUser = $userSettings.get('genomicReportListCurrentUser');
-          if(currentUser === null || currentUser === undefined || currentUser === true) return $report.all({type: 'genomic', states: 'ready,active,presented'});
-          if(currentUser === false) return $report.all({all:true, type: 'genomic', states: 'ready,active,presented'});
+          let project = $userSettings.get('selectedProject') || undefined;
+          if(currentUser === null || currentUser === undefined || currentUser === true) return $report.all({type: 'genomic', states: 'ready,active,presented', project: project});
+          if(currentUser === false) return $report.all({all:true, type: 'genomic', states: 'ready,active,presented', project: project});
         }]
       }
     })
