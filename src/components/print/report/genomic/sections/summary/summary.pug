@@ -100,29 +100,38 @@ tr
                 thead
                     tr
                         th.signature
-                            div(ng-if="data.ms.mutationSignature.length == 0") Nothing striking
-                            div(ng-if="data.ms.mutationSignature.length > 0")
-                                span(ng-repeat="sig in data.ms.mutationSignature").listitem
+                            div(ng-if="data.ta.mutationSignature.length == 0") Nothing striking
+                            div(ng-if="data.ta.mutationSignature.length > 0")
+                                span(ng-repeat="sig in data.ta.mutationSignature").listitem
                                     span(ng-if="sig.modifier !== null") {{sig.modifier}}&nbsp;
                                     span {{(sig.associations == '-') ? 'Signature '+sig.signature : sig.associations}}
                         th SNVs
-                        th.total {{mutationBurdenFilter(data.ms.totalSNV)}}
+                        th.total {{data.ms[0].snv}}
                         th Indels
-                        th.total {{mutationBurdenFilter(data.ms.totalIndel)}}
+                        th.total {{data.ms[0].indels}}
                         th SVs
-                        th.total {{mutationBurdenFilter(data.ms.totalSV)}}
+                        th.total {{data.ms[0].sv}}
                 tbody
-                    tr
+
+                    tr(ng-repeat="comparator in data.ms")
+                        td(width="25%") Percentile among {{comparator.comparator || data.ta.diseaseExpressionComparator }}
+                        td(width="25%", colspan=2) {{comparator.snv_percentile}}
+                        td(width="25%", colspan=2) {{comparator.indel_percentile}}
+                        td(width="25%", colspan=2)
+                            span(ng-if="comparator.sv_percentile === null") -
+                            span(ng-if="comparator.sv_percentile !== null").clickable {{ comparator.sv_percentile }} (POG)
+
+                    //tr
                         td(width="25%").label.text-light Interpreted prevelance
                         td(width="25%", colspan=2) {{(data.ms.snvReportCategory === "na") ? 'na' : data.ms.snvReportCategory}}
                         td(width="25%", colspan=2) {{(data.ms.indelReportCategory === "na") ? 'na' : data.ms.indelReportCategory}}
                         td(width="25%", colspan=2) {{data.ms.svPercentilePOGCategory}}
-                    tr
+                    //tr
                         td.label.text-light Percentile among compendium
                         td(colspan=2) {{data.ms.snvPercentileTCGA}}
                         td(colspan=2) {{data.ms.indelPercentileTCGA}}
                         td(colspan=2) {{data.ms.svPercentilePOG}} (POG)
-                    tr
+                    //tr
                         td.label.text-light Percentile among {{data.ta.diseaseExpressionComparator}}
                         td(colspan=2) {{data.ms.snvPercentileDisease}}
                         td(colspan=2) {{data.ms.indelPercentileDisease}}
