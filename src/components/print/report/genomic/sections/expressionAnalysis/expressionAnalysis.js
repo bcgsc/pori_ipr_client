@@ -8,39 +8,47 @@ app.controller('controller.print.POG.report.genomic.expressionAnalysis',
   $scope.images = images;
   $scope.drugTargets = drugTargets;
   $scope.densityGraphs = [];
+  $scope.expOutliers = {};
 
   // Convert full hex to 6chr
   $scope.colourHex = (hex) => {
     return hex.match(/([A-z0-9]{6}$)/)[0];
   };
-
+  
   $scope.titleMap = {
     clinical: 'Expression Level Outliers of Potential Clinical Relevance',
     nostic: 'Expression Level Outliers of Prognostic or Diagnostic Relevance',
     biological: 'Expression Level Outliers of Biological Relevance',
+    upreg_onco: 'Up-Regulated Oncogenes',
+    downreg_tsg: 'Down-Regulated Tumour Suppressor Genes'
   };
-
+  
   // Sort outliers into categories
-  let processOutliers = (outs) => {
-
-    let outliers = {
+  let processExpression = (input, type) => {
+    
+    let expressions = {
       clinical: [],
       nostic: [],
-      biological: []
+      biological: [],
+      upreg_onco: [],
+      downreg_tsg: []
     };
-
+    
+    let typekey = 'outlierType';
+    if(type === 'outlier') typekey = 'outlierType';
+    
     // Run over mutations and group
-    _.forEach(outs, (row, k) => {
-      if(!(row.outlierType in outliers)) outliers[row.outlierType] = [];
+    _.forEach(input, (row, k) => {
+      if(!(row[typekey] in expressions)) expressions[row[typekey]] = [];
       // Add to type
-      outliers[row.outlierType].push(row);
+      expressions[row[typekey]].push(row);
     });
-
-    // Set Small Mutations
-    $scope.expOutliers = outliers;
+    
+    $scope.expOutliers = expressions;
+    
   };
-
-  processOutliers(outliers);
+  
+  processExpression(outliers, 'outlier');
 
   let i = 0;
 
