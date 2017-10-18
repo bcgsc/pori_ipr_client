@@ -5,30 +5,31 @@ div.padding-left-10.padding-right-10
                 th(colspan=4).no-border
                 th(colspan=3).text-center.no-border Normal
                 th(colspan=3).text-center.no-border.background-light Disease
-                th(colspan=2).text-center.no-border Protein
+                th(colspan=3).text-center.no-border Protein
             tr
                 th(width="12%") Gene
                 th(width="8%") Type
-                th(width="10%")
+                th(width="12%")
                     span.clickable Expression Class (i)
                         md-tooltip Based on mRNA
                 th(width="9%") Copy State
-                th(width="7%").text-right
+                th(width="6%").text-right
                     span.clickable FC
                         md-tooltip Foldchange
-                th(width="7%").text-right
+                th(width="6%").text-right
                     span.clickable Perc
                         md-tooltip Percentile
-                th(width="7%").text-right kIQR
-                th(width="7%").text-right.background-light
+                th(width="6%").text-right kIQR
+                th(width="6%").text-right.background-light
                     span.clickable Perc
                         md-tooltip Percentile
-                th(width="7%").text-right.background-light kIQR
-                th(width="7%").text-right.background-light QC
-                th(width="7%").text-right
+                th(width="6%").text-right.background-light kIQR
+                th(width="6%").text-right.background-light QC
+                th(width="6%").text-right
                     span.clickable Perc
                         md-tooltip Percentile
-                th(width="7%").text-right kIQR
+                th(width="6%").text-right kIQR
+                th(width="6%").text-right QC
                 th(wdith="5%")
         tbody
             tr(ng-if="outliers.length === 0").no-hover
@@ -50,68 +51,8 @@ div.padding-left-10.padding-right-10
                 td.text-right.background-light {{outlier.tcgaQC || '-'}}
                 td.text-right {{outlier.ptxPerc || '-' }}
                 td.text-right {{outlier.ptxkIQR || '-' }}
+                td.text-right {{outlier.ptxQC || '-' }}
                 td.text-center.options
                     md-icon(ipr-data-viewer="outlier").clickable search
                         md-tooltip View Details
 
-
-//div(flex, layout="column")
-    div(layout="column", flex).dataBox
-
-        div.box
-            div(layout="row", flex).heading
-                div(flex) Gene
-                div(flex) Location
-                div(flex=10) Copy Change
-                div(flex=10) LOH State
-                div(flex=10) CNV State
-                div(flex) Expression (RPKM)
-                div(flex) Fold Change Vs. {{report.tumourAnalysis.normalExpressionComparator}}
-                div(flex=10) {{report.tumourAnalysis.diseaseExpressionComparator}} %ile
-                div(flex=5)
-            div(ng-if="outliers.length == 0")
-                div.text-center.details No expression outliers of this kind were found from the analysis.
-            div(layout="row", flex, ng-repeat="outlier in outliers").row
-                div(flex)
-                    ipr-gene-viewer(report="report", pog="pog", gene="outlier.gene") {{outlier.gene}}
-                div(flex, md-truncate) {{outlier.location}}
-                div(flex=10) {{outlier.copyChange}}
-                div(flex=10) {{outlier.lohState}}
-                div(flex=10) {{outlier.cnvState}}
-                div(flex) {{outlier.rpkm}}
-                div(flex, ng-if="type === 'rna'") {{outlier.foldChange}}
-
-                div(flex=10, ng-if="type === 'rna'") {{outlier.tcgaPerc}}
-
-                div(flex, ng-if="type === 'protein'") {{outlier.ptxkIQR}}
-                div(flex=10, ng-if="type === 'protein'") {{outlier.ptxPerc}}
-                div(flex=5).text-center
-                    md-icon(ipr-data-viewer="outlier").clickable search
-                        md-tooltip View Details
-
-        div(layout="column").material-table
-            div(layout="row").head
-                div(flex) Gene
-                div(flex) Expression Class
-                div(flex) Copy State
-                div(flex) N Fold Change
-                div(flex) N Percentile
-                div(flex) N kIQR
-                div(flex) D Percentile
-                div(flex) D kIQR
-                div(flex) D QC
-                div(flex) P Percentile
-                div(flex) P kIQR
-            div(layout="row", ng-repeat="outlier in outliers").row
-                div(flex)
-                    ipr-gene-viewer(report="report", pog="pog", gene="outlier.gene") {{outlier.gene}}
-                div(flex) -
-                div(flex) {{outlier.cnvState}}
-                div(flex) {{outlier.foldChange}}
-                div(flex) {{outlier.tcgaNormPerc}}
-                div(flex) {{outlier.kIQRNormal || 'N/A'}}
-                div(flex) {{outlier.tcgaPerc || 'N/A' }}
-                div(flex) {{outlier.kIQRNormal || 'N/A' }}
-                div(flex) -
-                div(flex) {{outlier.ptxPerc || 'N/A' }}
-                div(flex) {{outlier.ptxkIQR || 'N/A' }}
