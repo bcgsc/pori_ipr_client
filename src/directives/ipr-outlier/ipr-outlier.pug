@@ -29,7 +29,8 @@ div.padding-left-10.padding-right-10
                     span.clickable Perc
                         md-tooltip Percentile
                 th(width="6%").text-right kIQR
-                th(width="6%").text-right QC
+                th(width="6%").clickable.text-right QC
+                    md-tooltip [Total Samples Observed]/[Total patients used for comparison]
                 th(wdith="5%")
         tbody
             tr(ng-if="outliers.length === 0").no-hover
