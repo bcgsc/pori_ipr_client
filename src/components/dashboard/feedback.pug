@@ -36,23 +36,6 @@ md-dialog(layout="column", aria-label="Feedback", ng-cloak, flex=50)
                         label Message
                         textarea(ng-model="feedback.description", md-maxlength="450", rows="5", md-select-on-focus)
 
-            div(layout="column", ng-show="state === 'login'")
-
-                p The login we created for you with JIRA has gone stale, and needs to be renewed.
-                | Because we don't store your JIRA/GIN credentials, we'll need you to renew your login session.
-                | If the authentication is successful, we'll resubmit your feedback.
-
-                div(layout)
-                    md-input-container.md-icon-float(flex)
-                        label Username
-                        input(ng-model="user.username", name="username", type="text", placeholder="Username", required, ng-disabled="login.submitting")
-                        div(ng-show="login.badCredentials").input-error-message The supplied credentials failed to find a match in our records
-
-                div(layout)
-                    md-input-container.md-icon-float(flex)
-                        label Password
-                        input(ng-model="user.password", name="Password", type="password", placeholder="Password", required, ng-disabled="login.submitting")
-
 
             div(layout="column", ng-show="state === 'issue'")
 

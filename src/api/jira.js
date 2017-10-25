@@ -51,9 +51,10 @@ app.factory('api.jira', ['_', '$http', '$q', 'api.user', (_, $http, $q, $user) =
       };
 
       // Are we adding asignee?
-      if(options.assignee) ticket.fields.assignee = {key: options.asignee, name: options.asignee};
+      if(options.assignee) ticket.fields.assignee = {key: options.assignee, name: options.assignee};
+      if(options.components) ticket.fields.components = options.components;
       if(options.parent) ticket.fields.parent = {key: options.parent};
-      if(options.labels) ticket.fields.labels = options.labels; // TODO: Check if array
+      if(options.labels) ticket.fields.labels = _.map(options.labels, (l) => {return l.replace(/\s+/g, '-')});
 
       // Send POST to JIRA
       $http.post(api + '/issue', ticket, {headers: { authorization: undefined}, withCredentials: true}).then(
