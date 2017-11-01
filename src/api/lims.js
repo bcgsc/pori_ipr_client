@@ -15,24 +15,13 @@ app.factory('api.lims', ['_', '$http', '$q', (_, $http, $q) => {
 
     return $q((resolve, reject) => {
 
-      let opts = {
-        params: {
-          search: query,
-          namespace: 'ontology',
-          table: 'disease_ontology'
-        },
-        headers: {}
-      };
-
-
       let req = $http({
         method: 'get',
         headers: {
           'Accept': 'application/json',
-          'Authorization': 'Basic YnBpZXJjZTprNHRZcDNScnl+'
+          'Authorization': undefined
         },
-        url: api + '/dev/elastic_search',
-        params: opts.params
+        url: api + '/alpha/limsapi/elastic/disease_ontology/' + query,
       });
 
       //let = $http.get(api + '/elastic_search', opts)
