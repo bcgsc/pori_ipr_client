@@ -119,7 +119,7 @@ tr
                         td(width="25%", colspan=2) {{comparator.indel_percentile}}
                         td(width="25%", colspan=2)
                             span(ng-if="comparator.sv_percentile === null") -
-                            span(ng-if="comparator.sv_percentile !== null").clickable {{ comparator.sv_percentile }} (POG)
+                            span(ng-if="comparator.sv_percentile !== null && comparator.comparator === 'average'").clickable {{ comparator.sv_percentile }} (POG)
 
                     //tr
                         td(width="25%").label.text-light Interpreted prevelance

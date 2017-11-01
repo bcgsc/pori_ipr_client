@@ -149,7 +149,7 @@ section
                     div(flex) {{comparator.indel_percentile}}
                     div(flex)
                         span(ng-if="comparator.sv_percentile === null") -
-                        span(ng-if="comparator.sv_percentile !== null").clickable {{ comparator.sv_percentile }} (POG)
+                        span(ng-if="comparator.sv_percentile !== null && comparator.comparator === 'average'").clickable {{ comparator.sv_percentile }} (POG)
                             md-tooltip Only available with respect to POG
 
     div(layout="column", flex)
