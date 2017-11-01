@@ -85,9 +85,9 @@ md-dialog(layout="column", aria-label="Library Details", flex=90, flex-gt-lg=70)
                         div(flex=10) {{run.lane}}
                         div(flex=10)
                             span
-                                md-icon(ng-if="run.validation === 'Approved'").green check_circle
-                                md-icon(ng-if="run.validation === 'Rejected'").red cancel
-                            span {{run.validation}}
+                                md-icon(ng-if="run.approval === 'Approved'").green check_circle
+                                md-icon(ng-if="run.approval === 'Rejected'").red cancel
+                            span {{run.approval}}
                         div(flex=15)
                             span
                                 md-icon(ng-if="run.qc_status === 'Passed'").green check_circle
