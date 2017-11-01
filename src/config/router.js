@@ -1074,7 +1074,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       templateUrl: 'dashboard/tracking/board/board.html',
       resolve: {
         states: ['$q', 'api.tracking.state', ($q, $state) => {
-          return $state.all();
+          return $state.all({status: 'pending,active,complete,hold'});
         }]
       }
     })
@@ -1119,6 +1119,24 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       }
     })
     
+    .state('dashboard.tracking.ticket_template', {
+      
+      url: '/definition/:definition/ticket/template',
+      data: {
+        displayName: 'Ticket Templates'
+      },
+      controller: 'controller.dashboard.tracking.ticket_template',
+      templateUrl: 'dashboard/tracking/assignment/assignment.ticket_template.html',
+      resolve: {
+        templates: ['$q', '$stateParams', 'api.tracking.ticket_template', ($q, $stateParams, $template) => {
+          return $template.getDefTasks($stateParams.definition);
+        }],
+        definition: ['$q', '$stateParams', 'api.tracking.definition', ($q, $stateParams, $definition) => {
+          return $definition.retrieve($stateParams.definition);
+        }]
+      }
+    })
+    
     .state('dashboard.biopsy', {
       url: '/biopsy',
       data: {
@@ -1141,15 +1159,6 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
           return $analysis.all();
         }]
       }
-    })
-    
-    .state('dashboard.biopsy.test', {
-      url: '/test',
-      data: {
-        displayName: 'Karens Test Space'
-      },
-      controller: 'controller.dashboard.biopsy.test',
-      templateUrl: 'dashboard/biopsy/biopsy.test.html',
     })
 
 }]);

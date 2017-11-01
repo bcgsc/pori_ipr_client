@@ -5,7 +5,8 @@ app.controller('controller.dashboard.tracking.board',
   $scope.definitions = definitions;
   $scope.sortedStates = {};
   $scope.filter = {
-    hidden: false
+    hidden: false,
+    status: ['complete','active','hold']
   };
 
   socket.on('taskStatusChange', (task) => {

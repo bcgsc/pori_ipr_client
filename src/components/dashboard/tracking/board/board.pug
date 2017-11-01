@@ -12,6 +12,16 @@ md-content(flex, layout="column").md-padding.trackingBoard
                     p Track new POG
                     md-button(ng-click="trackNewPOG($event)").md-raised.md-primary.md-icon-button
                         md-icon add
+
+                md-list-item
+                    p States
+                    md-select(multiple, ng-model="filter.status", ng-change="refreshList()").md-primary
+                        md-option(value="pending") Pending
+                        md-option(value="active") Active
+                        md-option(value="complete") Completed
+                        md-option(value="hold") Hold
+                        md-option(value="failed") Failed
+
                 md-list-item
                     p Update Definitions
                     md-button(ui-sref="^.definition").md-raised.md-primary.md-icon-button
