@@ -35,7 +35,7 @@ md-dialog(layout="column", aria-label="Add Biopsy", flex-md=80, flex-xs=100, fle
                                     div(ng-message="required") A POGID must be entered
 
                         md-input-container(flex)
-                            input(ng-model="patient.clinical_biopsy", name="ClinicalBiopsy", placeholder="clinspec number", required)
+                            input(ng-model="patient.clinical_biopsy", name="ClinicalBiopsy", md-placeholder="clinspec number", required)
                             div(ng-messages="referenceForm.referenceID.$error")
                                 div(ng-message="required") A reference id is required.
                             div.hint Biospecimen biopsy number
@@ -70,7 +70,7 @@ md-dialog(layout="column", aria-label="Add Biopsy", flex-md=80, flex-xs=100, fle
 
                     //div(layout="row")
                         md-input-container(flex)
-                            input(ng-model="patient.disease", name="Disease", placeholder="Disease", required)
+                            input(ng-model="patient.disease", name="Disease", md-placeholder="Disease", required)
                             div(ng-messages="referenceForm.RefTitle.$error")
                                 div(ng-message="required") A reference title is required.
 
@@ -86,7 +86,6 @@ md-dialog(layout="column", aria-label="Add Biopsy", flex-md=80, flex-xs=100, fle
                         md-autoselect=true,
                         md-require-match=true,
                         md-dropdown-position="bottom",
-                        required,
                         flex=60
                         )
                             md-item-template {{disease.text}}
@@ -95,7 +94,7 @@ md-dialog(layout="column", aria-label="Add Biopsy", flex-md=80, flex-xs=100, fle
 
                         md-autocomplete(
                         md-input-name="CancerGroup",
-                        md-selected-item="patient.disease",
+                        md-selected-item="patient.threeLetterCode",
                         md-search-text="cancerGroupQuery",
                         md-items="group in searchGroups(cancerGroupQuery)",
                         md-item-text="group.code",
@@ -113,11 +112,13 @@ md-dialog(layout="column", aria-label="Add Biopsy", flex-md=80, flex-xs=100, fle
 
 
                     div(layout="row")
+                        div(style="padding-right: 40px;")
+                            md-datepicker(ng-model="patient.biopsy_date", md-placeholder="Biopsy Date")
+
                         md-input-container(flex)
                             input(ng-model="patient.biopsy_notes", name="BiopsyNotes", placeholder="Biopsy Notes")
                             div(ng-messages="referenceForm.RefSummary.$error")
                                 div(ng-message="required") A reference summary is required.
-
 
                     div(layout="row")
                         md-input-container(flex)
@@ -156,15 +157,15 @@ md-dialog(layout="column", aria-label="Add Biopsy", flex-md=80, flex-xs=100, fle
 
                         div(layout="row")
                             md-input-container(flex)
-                                input(ng-model="patient.libraries.tumour", placeholder="Tumour library", name="TumourLibrary", ng-required="!patient.tracking")
+                                input(ng-model="patient.libraries.tumour", md-placeholder="Tumour library", name="TumourLibrary", ng-required="!patient.tracking")
                             md-input-container(flex)
-                                input(ng-model="patient.libraries.normal", placeholder="Normal library", name="NormalLibrary", ng-required="!patient.tracking")
+                                input(ng-model="patient.libraries.normal", md-placeholder="Normal library", name="NormalLibrary", ng-required="!patient.tracking")
                             md-input-container(flex)
-                                input(ng-model="patient.libraries.transcriptome", placeholder="Transcriptome library", name="TranscriptomeLibrary", ng-required="!patient.tracking")
+                                input(ng-model="patient.libraries.transcriptome", md-placeholder="Transcriptome library", name="TranscriptomeLibrary", ng-required="!patient.tracking")
 
                         div(layout="row")
                             md-input-container(flex)
-                                input(ng-model="patient.analysis_biopsy", placeholder="BioApps Biopsy/Analysis label", name="AnalyticalBiopsy", ng-required="!patient.tracking")
+                                input(ng-model="patient.analysis_biopsy", md-placeholder="BioApps Biopsy/Analysis label", name="AnalyticalBiopsy", ng-required="!patient.tracking")
                                 div.hint BioApps biopsy number. eg: biop1. Include the biop prefix to the number
 
 
@@ -200,9 +201,16 @@ md-dialog(layout="column", aria-label="Add Biopsy", flex-md=80, flex-xs=100, fle
 
                         div(layout="row")
                             md-input-container(flex)
+                                input(ng-model="patient.comparator_normal.tcga_comparator_biopsy_site", placeholder="TCGA Comparator Biopsy Site", name="TCGAComparatorBiopsySite", ng-required="patient.comparator")
+                            md-input-container(flex)
+                                input(ng-model="patient.comparator_normal.tcga_comparator_primary_site", placeholder="TCGA Comparator Primary Site", name="TCGAComparatorPrimarySite", ng-required="patient.comparator")
+
+                        div(layout="row")
+                            md-input-container(flex)
                                 input(ng-model="patient.comparator_normal.gtex_comparator_biopsy_site", placeholder="GTex Comparator Biopsy Site", name="GTexComparatorBiopsySite", ng-required="patient.comparator")
                             md-input-container(flex)
                                 input(ng-model="patient.comparator_normal.gtex_comparator_primary_site", placeholder="GTex Comparator Primary Site", name="GTexComparatorPrimarySite", ng-required="patient.comparator")
+
                         div(layout="row")
                             md-input-container(flex)
                                 input(ng-model="patient.comparator_normal.normal_comparator_biopsy_site", placeholder="Normal Comparator Biopsy Site", name="NormalComparatorBiopsySite", ng-required="patient.comparator")
