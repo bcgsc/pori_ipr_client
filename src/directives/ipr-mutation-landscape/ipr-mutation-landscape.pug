@@ -1,12 +1,12 @@
 div(layout="column", flex).mutationSignature
 
     div(layout="row", flex).header
-        div(ng-if="mode === 'pick'", style="width:40px;")
-        div(ng-if="mode === 'pick'", style="width:120px;")
+        div(ng-if="mode === 'pick'", style="width:46px;")
+        div(ng-if="mode === 'pick'", style="width:126px;")
         div(flex=10)
             span(ng-click="sortMutations('signature')").sortable Signature
                 span(ng-show="mutationSort.col == 'signature'").order {{((mutationSort.order) ? '∨':'∧')}}
-        div(flex=5)
+        //div(flex=5, ng-hide=true)
             span(ng-click="sortMutations('pearson')").sortable Pearson
                 span(ng-show="mutationSort.col == 'pearson'").order {{((mutationSort.order) ? '∨':'∧')}}
         div(flex=5)
@@ -17,7 +17,7 @@ div(layout="column", flex).mutationSignature
         div(flex) Probable Associations
         div(flex=10) Additional Features
         div(flex=10) # Cancer Types
-        div(flex=40) Significant Cancer Type
+        div(flex=45) Significant Cancer Type
 
     div(layout="row", ng-repeat="row in mutationSignature", flex, ng-class="((isSelectedMutation(row.ident) && mode !== 'pick') ? 'selected' : '')").row
         div(ng-if="mode === 'pick'", style="width:40px;").text-center
@@ -31,9 +31,9 @@ div(layout="column", flex).mutationSignature
         div(flex=10)
             | Signature {{row.signature}}
             md-tooltip(ng-if="isSelectedMutation(row.ident)") This signature has been selected by [analyst.name]
-        div(flex=5, class="sig-{{row.pearsonColour}}").signatureCorrelation {{row.pearson}}
+        //div(flex=5, ng-hide=true, class="sig-{{row.pearsonColour}}").signatureCorrelation {{row.pearson}}
         div(flex=5, class="sig-{{row.nnlsColour}}").signatureCorrelation {{row.nnls}}
         div(flex).text-center {{row.associations}}
         div(flex=10).text-center {{row.features}}
         div(flex=10).text-center {{row.numCancerTypes}}
-        div(flex=40).text-small {{row.cancerTypes}}
+        div(flex=45).text-small {{row.cancerTypes}}
