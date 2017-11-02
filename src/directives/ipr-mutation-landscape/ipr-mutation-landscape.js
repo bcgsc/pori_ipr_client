@@ -13,7 +13,7 @@ app.directive("iprMutationSignature", ['$q', '_', '$mdDialog', '$mdToast', ($q, 
     templateUrl: 'ipr-mutation-landscape/ipr-mutation-landscape.html',
     link: (scope, element, attr) => {
 
-      scope.nnlsNormal = true;
+      scope.nnlsNormal = false;
       scope.mutationSort = {col: "signature", order: true};
       scope.selectedSigs = [];
       scope.modifier = {};

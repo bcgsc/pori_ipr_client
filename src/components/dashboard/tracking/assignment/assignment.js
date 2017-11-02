@@ -87,7 +87,7 @@ app.controller('controller.dashboard.tracking.assignment',
 
         // Create JIRA ticket
         if($scope.assign.jira === null) {
-          //$jira.ticket.create(13713, 3, 'REST API Test Ticket', 'This is a description')
+          //$jira.ticket.create('DEVSU', 'Task', 'REST API Test Ticket', 'This is a description')
         }
 
       },

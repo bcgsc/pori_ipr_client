@@ -10,9 +10,10 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
 		$injector.get('$state').go('error.404', null, {location: false});
 		return $location.path();
 	});
-
-
-	// Master State Provider
+  
+  
+  
+  // Master State Provider
 	// All states are defined and configured on this object
 	$stateProvider
 
@@ -130,13 +131,15 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
 		            resolve(pogs);
 	            },
 	            (err) => {
-	              console.log('[route.dashboard.pogAll]', err);
 	              reject(err);
               }
 		        );
 
 	        });
-	      }]
+	      }],
+        projects: ['api.project', ($project) => {
+			    return $project.all();
+        }]
 		  }
 		})
 
@@ -186,8 +189,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       resolve: {
         reports: ['$q', 'api.pog_analysis_report', '$userSettings', 'user', ($q, $report, $userSettings) => {
           let currentUser = $userSettings.get('genomicReportListCurrentUser');
-          if(currentUser === null || currentUser === undefined || currentUser === true) return $report.all({type: 'genomic', states: 'ready,active,presented'});
-          if(currentUser === false) return $report.all({all:true, type: 'genomic', states: 'ready,active,presented'});
+          let project = $userSettings.get('selectedProject') || undefined;
+          if(currentUser === null || currentUser === undefined || currentUser === true) return $report.all({type: 'genomic', states: 'ready,active,presented', project: project});
+          if(currentUser === false) return $report.all({all:true, type: 'genomic', states: 'ready,active,presented', project: project});
         }]
       }
     })
@@ -496,6 +500,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         images: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
           return $image.get($stateParams.POG, $stateParams.analysis_report, 'mutSummary.snv,mutSummary.indel,mutSummary.barSnv,mutSummary.barIndel,mutSignature.corPcors,mutSignature.snvsAllStrelka');
         }],
+        mutationSummaryImages: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
+          return $image.mutationSummary($stateParams.POG, $stateParams.analysis_report);
+        }],
         ms: ['$q', '$stateParams', 'api.summary.mutationSummary', ($q, $stateParams, $ms) => {
           return $ms.get($stateParams.POG, $stateParams.analysis_report);
         }],
@@ -537,7 +544,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       controller: 'controller.dashboard.report.genomic.structuralVariation',
       resolve: {
         images: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
-          return $image.get($stateParams.POG, $stateParams.analysis_report, 'mutSummary.barSv,mutSummary.sv,circosSv.genome,circosSv.transcriptome');
+          return $image.get($stateParams.POG, $stateParams.analysis_report, 'mutation_summary.barplot_sv,mutation_summary.density_plot_sv,circosSv.genome,circosSv.transcriptome');
         }],
         ms: ['$q', '$stateParams', 'api.summary.mutationSummary', ($q, $stateParams, $ms) => {
           return $ms.get($stateParams.POG, $stateParams.analysis_report);
@@ -553,7 +560,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       data: {
         displayName: "Expression Analysis"
       },
-      templateUrl: 'dashboard/report/genomic/expressionAnalysis/expressionAnalysis.html',
+      templateUrl: 'dashboard/report/genomic/expressionAnalysis/version02/expressionAnalysis.html',
       controller: 'controller.dashboard.report.genomic.expressionAnalysis',
       resolve: {
         ms: ['$q', '$stateParams', 'api.summary.mutationSummary', ($q, $stateParams, $ms) => {
@@ -1067,7 +1074,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       templateUrl: 'dashboard/tracking/board/board.html',
       resolve: {
         states: ['$q', 'api.tracking.state', ($q, $state) => {
-          return $state.all();
+          return $state.all({status: 'pending,active,complete,hold'});
         }]
       }
     })
@@ -1108,6 +1115,48 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         }],
         userLoad: ['$q', 'definition', 'api.tracking.definition', ($q, definition, $definition) => {
           return $definition.userLoad(definition.ident);
+        }]
+      }
+    })
+    
+    .state('dashboard.tracking.ticket_template', {
+      
+      url: '/definition/:definition/ticket/template',
+      data: {
+        displayName: 'Ticket Templates'
+      },
+      controller: 'controller.dashboard.tracking.ticket_template',
+      templateUrl: 'dashboard/tracking/assignment/assignment.ticket_template.html',
+      resolve: {
+        templates: ['$q', '$stateParams', 'api.tracking.ticket_template', ($q, $stateParams, $template) => {
+          return $template.getDefTasks($stateParams.definition);
+        }],
+        definition: ['$q', '$stateParams', 'api.tracking.definition', ($q, $stateParams, $definition) => {
+          return $definition.retrieve($stateParams.definition);
+        }]
+      }
+    })
+    
+    .state('dashboard.biopsy', {
+      url: '/biopsy',
+      data: {
+        displayName: 'Biopsies',
+        breadcrumbProxy: 'dashboard.biopsy.board'
+      },
+      controller: 'controller.dashboard.biopsy',
+      templateUrl: 'dashboard/biopsy/biopsy.html'
+    })
+    
+    .state('dashboard.biopsy.board', {
+      url: '/board',
+      data: {
+        displayName: 'Home'
+      },
+      controller: 'controller.dashboard.biopsy.board',
+      templateUrl: 'dashboard/biopsy/board/board.html',
+      resolve: {
+        analyses: ['$q', 'api.analysis', ($q, $analysis) => {
+          return $analysis.all();
         }]
       }
     })

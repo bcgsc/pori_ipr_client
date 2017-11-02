@@ -6,7 +6,7 @@ section
     div(layout="column", flex).details
         div(layout="row", flex)
             dt(flex="{{detailSize}}", ng-init="detailSize=10") Patient ID:
-            dd(flex) {{pog.POGID}}
+            dd(flex) {{report.patientInformation.POGID}}
 
             dt(flex="{{detailSize}}") Sex:
             dd(flex) {{report.patientInformation.gender}}

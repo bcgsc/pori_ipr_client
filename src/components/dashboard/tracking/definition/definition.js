@@ -28,7 +28,7 @@ app.controller('controller.dashboard.tracking.definition',
 
     // Get Group Ident
     $scope.entry = angular.copy($scope.editing);
-    $scope.entry.group = $scope.editing.group.ident;
+    $scope.entry.group = $scope.editing.group;
 
     // Updating or Editing
     if($scope.editing.new) {
@@ -90,7 +90,6 @@ app.controller('controller.dashboard.tracking.definition',
 
         scope.submit = (f) => {
           // Check Validation
-          console.log('Check validation of form', f);
 
           if(scope.new) $scope.editing.tasks.push(scope.task);
 
@@ -114,8 +113,6 @@ app.controller('controller.dashboard.tracking.definition',
 
     // Array of promises to be watched
     let promises = [];
-
-    console.log('Updated Ordinal trigger', $scope.definitions);
 
     // Loop over entries and set ordinal, then update entry
     _.forEach($scope.definitions, (def, i) => {

@@ -6,7 +6,8 @@ app.directive("iprSv", ['$q', '_', '$mdDialog', '$mdToast', ($q, _, $mdDialog, $
     transclude: false,
     scope: {
       svs: '=svs',
-      pog: '=pog'
+      pog: '=pog',
+      report: '=report'
     },
     templateUrl: 'ipr-sv/ipr-sv.html',
     link: (scope, element, attr) => {

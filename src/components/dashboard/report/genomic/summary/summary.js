@@ -149,8 +149,7 @@ app.controller('controller.dashboard.report.genomic.summary',
       clickOutToClose: false,
       controller: ['scope', (scope) => {
 
-        scope.ms = angular.copy($scope.data.ms); //
-        //scope.mutationSignature = []; // Array of all computed signal correlations
+        scope.ta = angular.copy($scope.data.ta); //
         scope.mutationSignature = $scope.mutationSignature; // Array of all computed signal correlations
 
         scope.cancel = () => {
@@ -160,9 +159,9 @@ app.controller('controller.dashboard.report.genomic.summary',
         scope.update = () => {
 
           // Send updated entry to API
-          $mutationSummary.update($scope.pog.POGID, report.ident, scope.ms).then(
+          $tumourAnalysis.update($scope.pog.POGID, report.ident, scope.ta).then(
             (result) => {
-              $mdDialog.hide({message: 'Entry has been updated', data: scope.ms});
+              $mdDialog.hide({message: 'Entry has been updated', data: scope.ta});
             },
             (error) => {
               alert('Unable to update. See console');
@@ -175,7 +174,7 @@ app.controller('controller.dashboard.report.genomic.summary',
 
     }).then((outcome) => {
       if (outcome) $mdToast.show($mdToast.simple().textContent(outcome.message));
-      $scope.data.ms = outcome.data;
+      $scope.data.ta = outcome.data;
     }, (error) => {
       $mdToast.show($mdToast.simple().textContent(error));
     });
@@ -225,10 +224,6 @@ app.controller('controller.dashboard.report.genomic.summary',
 
 
   $scope.data.gai = _.sortBy(gai, 'type');
-
-  $scope.mutationBurdenFilter = (input) => {
-    return (input === "nan [nan]") ? 'na' : input.replace(/\[[0-9]*\]/g, '');
-  };
 
   /**
    * Add Alteration

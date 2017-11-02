@@ -1,0 +1,228 @@
+md-dialog(layout="column", aria-label="Add Biopsy", flex-md=80, flex-xs=100, flex-lg=70, flex=70).editor
+    md-toolbar
+        .md-toolbar-tools
+            h2 Add Biopsy
+            span(flex)
+            md-button.md-icon-button(ng-click='cancel()')
+                md-icon cancel
+    md-dialog-content(layout-padding).alterationsForm
+        div(label="Patient", ng-show="activeStage === 0")
+            form(name="PatientForm", ng-submit="submit()", novalidate)
+                div(layout="column")
+
+                    div(layout="row")
+                        div(layout="row", flex=50)
+                            md-autocomplete(
+                            md-input-name="POGID",
+                            md-selected-item="patient.POGID",
+                            md-search-text="searchQuery",
+                            md-items="pog in searchPOGs(searchQuery)",
+                            md-item-text="pog.POGID",
+                            md-floating-label="POGID",
+                            md-autofocus=true,
+                            md-autoselect=true,
+                            md-dropdown-position="bottom",
+                            md-require-match=false,
+                            md-selected-item-change="limsSources()",
+                            ng-blur="limsSources()",
+                            md-delay=200,
+                            md-match-case-insensitive=true,
+                            required,
+                            flex
+                            )
+                                md-item-template {{pog.POGID}}
+                                div(ng-messages="PatientForm.POGID", ng-if="patient.POGID.$touched")
+                                    div(ng-message="required") A POGID must be entered
+
+                        md-input-container(flex)
+                            input(ng-model="patient.clinical_biopsy", name="ClinicalBiopsy", md-placeholder="clinspec number", required)
+                            div(ng-messages="referenceForm.referenceID.$error")
+                                div(ng-message="required") A reference id is required.
+                            div.hint Biospecimen biopsy number
+
+                    div(layout="column", ng-show="show_sources", md-whiteframe=2).material-table.inset.margin-bottom-20
+
+                        p Sources found in LIMS for this POGID.
+
+                        div(layout="row").head
+                            div(flex) Source
+                            div(flex) Collection Date
+                            div(flex) Anatomic Site
+                            div(flex=5).text-right
+                                md-icon(ng-click="show_sources=false").small.clickable remove_circle_outline
+                                    md-tooltip Hide LIMS sources search results
+
+                        div(layout="row", ng-show="source_loading").row
+                            div(flex)
+                                md-progress-linear(md-mode="indetermenite")
+
+                        div(layout="row", ng-show="pog_sources.length === 0 && !source_loading").row
+                            div(flex).text-center No sources found for this POG in LIMS
+
+                        div(layout="row", ng-repeat="source in pog_sources").row
+                            div(flex) {{source.original_source_name}}
+                            div(flex)
+                                span.link {{source.sample_collection_time | amTimeAgo}}
+                                    md-tooltip {{source.sample_collection_time | amDateFormat: 'YYYY-MM-DD HH:mm'}}
+                            div(flex) {{source.anatomic_site}}
+                            div(flex=5)
+
+
+                    //div(layout="row")
+                        md-input-container(flex)
+                            input(ng-model="patient.disease", name="Disease", md-placeholder="Disease", required)
+                            div(ng-messages="referenceForm.RefTitle.$error")
+                                div(ng-message="required") A reference title is required.
+
+                    div(layout="row", flex)
+                        md-autocomplete(
+                        md-input-name="Disease",
+                        md-selected-item="patient.disease",
+                        md-search-text="diseaseQuery",
+                        md-items="disease in searchDisease(diseaseQuery)",
+                        md-item-text="disease.text",
+                        md-floating-label="Disease",
+                        md-autofocus=true,
+                        md-autoselect=true,
+                        md-require-match=true,
+                        md-dropdown-position="bottom",
+                        flex=60
+                        )
+                            md-item-template {{disease.text}}
+                            div(ng-messages="Track.Disease", ng-if="form.Disease.$touched")
+                                div(ng-message="required") A disease name must be selected
+
+                        md-autocomplete(
+                        md-input-name="CancerGroup",
+                        md-selected-item="patient.threeLetterCode",
+                        md-search-text="cancerGroupQuery",
+                        md-items="group in searchGroups(cancerGroupQuery)",
+                        md-item-text="group.code",
+                        md-floating-label="Cancer Group (3 Letter Code)",
+                        md-autofocus=true,
+                        md-autoselect=true,
+                        md-require-match=true,
+                        md-dropdown-position="bottom",
+                        required,
+                        flex=60
+                        )
+                            md-item-template {{group.code}}
+                                div(ng-messages="PatientForm.CancerGroup.$error")
+                                    div(ng-message="required") A cancer group must be selected
+
+
+                    div(layout="row")
+                        div(style="padding-right: 40px;")
+                            md-datepicker(ng-model="patient.biopsy_date", md-placeholder="Biopsy Date")
+
+                        md-input-container(flex)
+                            input(ng-model="patient.biopsy_notes", name="BiopsyNotes", placeholder="Biopsy Notes")
+                            div(ng-messages="referenceForm.RefSummary.$error")
+                                div(ng-message="required") A reference summary is required.
+
+                    div(layout="row")
+                        md-input-container(flex)
+                            textarea(ng-model="patient.notes", name="Notes", placeholder="Comments", rows=3, md-maxlength=500)
+                            div(ng-messages="referenceForm.RefSummary.$error")
+                                div(ng-message="required") A reference summary is required.
+
+                    div(layout="row")
+                        md-input-container(flex)
+                            md-checkbox(ng-model="patient.tracking", name="InitTracking") Initialize tracking for this biopsy
+
+                    div(layout="column", ng-hide="patient.tracking")
+
+                        p If tracking is not initialized, library and BioApps biopsy number (analytical biopsy) are required. &nbsp;
+                            span(ng-click="libraryGuess()").link (help me/guess)
+
+                        div(layout="column", ng-show="find_libraries", md-whiteframe=2).material-table.inset.margin-bottom-20
+                            div(layout="row").head
+                                div(flex) Collection Date
+                                div(flex) Tumour
+                                div(flex) Normal
+                                div(flex) Transcriptome
+                                div(flex=5)
+                            div(layout="row", ng-show="libraries_loading")
+                                div(flex)
+                                    md-progress-linear(md-mode="indeterminate")
+                            div(layout="row", ng-repeat="collection in found_libraries track by $index").row
+                                div(flex) {{collection.collection_date | amDateFormat: 'YYYY-MM-DD'}}
+                                div(flex) {{collection.tumour.name}}
+                                div(flex) {{collection.normal.name}}
+                                div(flex) {{collection.transcriptome.name}}
+                                div(flex=5)
+                                    md-icon(ng-click="selectCollection(collection)").clickable.blue add_circle
+                                        md-tooltip Select this set of libraries
+
+
+                        div(layout="row")
+                            md-input-container(flex)
+                                input(ng-model="patient.libraries.tumour", md-placeholder="Tumour library", name="TumourLibrary", ng-required="!patient.tracking")
+                            md-input-container(flex)
+                                input(ng-model="patient.libraries.normal", md-placeholder="Normal library", name="NormalLibrary", ng-required="!patient.tracking")
+                            md-input-container(flex)
+                                input(ng-model="patient.libraries.transcriptome", md-placeholder="Transcriptome library", name="TranscriptomeLibrary", ng-required="!patient.tracking")
+
+                        div(layout="row")
+                            md-input-container(flex)
+                                input(ng-model="patient.analysis_biopsy", md-placeholder="BioApps Biopsy/Analysis label", name="AnalyticalBiopsy", ng-required="!patient.tracking")
+                                div.hint BioApps biopsy number. eg: biop1. Include the biop prefix to the number
+
+
+                    div(layout="row")
+                        md-input-container(flex)
+                            md-checkbox(ng-model="patient.comparators", name="Comparators") Add comparator details
+
+
+                    div(layout="column", ng-show="patient.comparators")
+
+                        p If tracking is not initialized, library and BioApps biopsy number (analytical biopsy) are required. &nbsp;
+                            span(ng-click="comparatorGuess()").link (help me/guess)
+
+                        div(layout="column", ng-show="find_libraries", md-whiteframe=2).material-table.inset.margin-bottom-20
+                            div(layout="row").head
+                                div(flex) Collection Date
+                                div(flex) Tumour
+                                div(flex) Normal
+                                div(flex) Transcriptome
+                                div(flex=5)
+                            div(layout="row", ng-show="libraries_loading")
+                                div(flex)
+                                    md-progress-linear(md-mode="indeterminate")
+                            div(layout="row", ng-repeat="collection in found_libraries track by $index").row
+                                div(flex) {{collection.collection_date | amDateFormat: 'YYYY-MM-DD'}}
+                                div(flex) {{collection.tumour.name}}
+                                div(flex) {{collection.normal.name}}
+                                div(flex) {{collection.transcriptome.name}}
+                                div(flex=5)
+                                    md-icon(ng-click="selectCollection(collection)").clickable.blue add_circle
+                                        md-tooltip Select this set of libraries
+
+
+                        div(layout="row")
+                            md-input-container(flex)
+                                input(ng-model="patient.comparator_normal.tcga_comparator_biopsy_site", placeholder="TCGA Comparator Biopsy Site", name="TCGAComparatorBiopsySite", ng-required="patient.comparator")
+                            md-input-container(flex)
+                                input(ng-model="patient.comparator_normal.tcga_comparator_primary_site", placeholder="TCGA Comparator Primary Site", name="TCGAComparatorPrimarySite", ng-required="patient.comparator")
+
+                        div(layout="row")
+                            md-input-container(flex)
+                                input(ng-model="patient.comparator_normal.gtex_comparator_biopsy_site", placeholder="GTex Comparator Biopsy Site", name="GTexComparatorBiopsySite", ng-required="patient.comparator")
+                            md-input-container(flex)
+                                input(ng-model="patient.comparator_normal.gtex_comparator_primary_site", placeholder="GTex Comparator Primary Site", name="GTexComparatorPrimarySite", ng-required="patient.comparator")
+
+                        div(layout="row")
+                            md-input-container(flex)
+                                input(ng-model="patient.comparator_normal.normal_comparator_biopsy_site", placeholder="Normal Comparator Biopsy Site", name="NormalComparatorBiopsySite", ng-required="patient.comparator")
+                            md-input-container(flex)
+                                input(ng-model="patient.comparator_normal.normal_comparator_primary_site", placeholder="Normal Comparator Primary Site", name="NormalComparatorPrimarySite", ng-required="patient.comparator")
+
+                        div(layout="row")
+                            md-input-container(flex)
+                                input(ng-model="patient.analysis_biopsy", placeholder="BioApps Biopsy/Analysis label", name="AnalyticalBiopsy", ng-required="!patient.tracking")
+                                div.hint BioApps biopsy number. eg: biop1. Include the biop prefix to the number
+
+
+    md-dialog-actions(layout="row", layout-aligh="end center", layout-padding)
+        md-button(ng-click="submit(Patient)").md-raised.md-primary.medium Add Biopsy
+

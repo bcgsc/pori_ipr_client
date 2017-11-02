@@ -21,8 +21,8 @@ app.factory('api.jira', ['_', '$http', '$q', 'api.user', (_, $http, $q, $user) =
     /**
      * Create a BCGSC JIRA Ticket
      *
-     * @param {string} project - project ID integer
-     * @param {string} type - Ticket type ID
+     * @param {string} project - project key (DEVSU, TC, UGNE, SVIA, etc.)
+     * @param {string} type - Ticket type (Task, Sub-task, Bug, etc.)
      * @param {string} summary - Ticket Title
      * @param {string} description - Body/text of ticket
      * @param {object} options - Key-value paired hashmap of other options: parent, assignee, labels, priority
@@ -36,27 +36,28 @@ app.factory('api.jira', ['_', '$http', '$q', 'api.user', (_, $http, $q, $user) =
       let ticket = {
         fields: {
           project: {
-            id: project
+            key: project
           },
           summary: summary,
           issuetype: {
-            id: type,
+            name: type,
             subtask: (options.subtask) ? options.subtask : false
           },
           description: description,
           priority: {
-            id: (options.priority) ? options.priority : 6 // Default priority is medium
+            name: (options.priority) ? options.priority : "Medium" // Default priority is medium
           }
         }
       };
 
       // Are we adding asignee?
-      if(options.assignee) ticket.fields.assignee = {key: options.asignee, name: options.asignee};
+      if(options.assignee) ticket.fields.assignee = {key: options.assignee, name: options.assignee};
+      if(options.components) ticket.fields.components = options.components;
       if(options.parent) ticket.fields.parent = {key: options.parent};
-      if(options.labels) ticket.fields.labels = options.labels; // TODO: Check if array
+      if(options.labels) ticket.fields.labels = _.map(options.labels, (l) => {return l.replace(/\s+/g, '-')});
 
       // Send POST to JIRA
-      $http.post(api + '/issue', ticket).then(
+      $http.post(api + '/issue', ticket, {headers: { authorization: undefined}, withCredentials: true}).then(
         (response) => {
           // Resolve response
           deferred.resolve(response.data);
@@ -155,15 +156,67 @@ app.factory('api.jira', ['_', '$http', '$q', 'api.user', (_, $http, $q, $user) =
       );
 
       return deferred.promise;
+    },
+    
+    current: () => {
+      $q((resolve, reject) => {
+        $http.get('https://www.bcgsc.ca/jira/rest/auth/' + '1/session',  {headers: { authorization: undefined}, withCredentials: true}).then(
+          (response) => {
+            console.log('Current Authentication status', response);
+            resolve(response);
+          },
+          (err) => {
+            console.log('Failed to retrieve authentication status from JIRA', err);
+            reject();
+          }
+        )
+      });
     }
   };
 
   /**
-   * JIRA Attachments Namespace
+   * JIRA Projects Namespace
    *
    */
-  $jira.attachment = {
-
+  $jira.projects = {
+  
+    /**
+     * Get Project Security Levels available
+     *
+     * @param {string} project - Project key name
+     * @returns {*}
+     */
+    getSecurityLevels: (project) => {
+      return $q((resolve, reject) => {
+        $http.get(api + '/project/' + project + '/securitylevel')
+          .then((response) => {
+            resolve(response.data);
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
+    },
+    
+    /**
+     * Get Project Details
+     *
+     * @param {string} project - Project key name
+     * @returns {*}
+     */
+    getProject: (project) => {
+      return $q((resolve, reject) => {
+        $http.get(api + '/project/' + project)
+          .then((response) => {
+            resolve(response.data);
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
+    }
+    
+    
   };
 
 

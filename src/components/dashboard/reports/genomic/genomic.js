@@ -1,9 +1,10 @@
-app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$scope', 'api.pog_analysis_report', 'reports', '$mdDialog', 'user', '$userSettings',  (_, $q, $scope, $report, reports, $mdDialog, user, $userSettings) => {
+app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$scope', 'api.pog_analysis_report', 'reports', '$mdDialog', 'user', '$userSettings', 'projects',  (_, $q, $scope, $report, reports, $mdDialog, user, $userSettings, projects) => {
 
   $scope.reports = reports = _.orderBy(reports, ['analysis.pog.POGID','createdAt'], ['asc','desc']);
   $scope.archived = false;
   $scope.nonproduction = false;
   $scope.loading = false;
+  $scope.selectedProject = ($userSettings.get('selectedProject') === undefined) ? null : $userSettings.get('selectedProject');
 
   $scope.roles = [
     'bioinformatician',
@@ -12,6 +13,8 @@ app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$scope', 'ap
     'admin',
     'clinician'
   ];
+  
+  $scope.projects = projects;
 
   $scope.states = {
     ready: true,
@@ -36,7 +39,11 @@ app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$scope', 'ap
     // Ignore onload message
     if(JSON.stringify(newVal) === JSON.stringify(oldVal)) return;
     $userSettings.save('genomicReportListCurrentUser', newVal);
-
+  });
+  
+  $scope.$watch('selectedProject', (newVal, oldVal) => {
+    if(JSON.stringify(newVal) === JSON.stringify(oldVal)) return;
+    $userSettings.save('selectedProject', newVal);
   });
 
   $scope.refreshList = () => {
@@ -45,7 +52,7 @@ app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$scope', 'ap
       if(v) states.push(k);
     });
     $scope.loading = true;
-    $report.all({all: !$scope.filter.currentUser, query: $scope.filter.query, role: $scope.filter.role, states: _.join(states, ','), type: 'genomic'}).then(
+    $report.all({all: !$scope.filter.currentUser, query: $scope.filter.query, role: $scope.filter.role, states: _.join(states, ','), type: 'genomic', project: $scope.selectedProject }).then(
       (result) => {
         $scope.loading = false;
         $scope.reports = reports = result;

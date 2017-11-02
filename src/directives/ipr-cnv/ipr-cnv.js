@@ -6,7 +6,8 @@ app.directive("iprCnv", ['$q', '_', ($q, _) => {
     transclude: false,
     scope: {
       cnvs: '=cnvs',
-      pog: '=pog'
+      pog: '=pog',
+      report: '=report'
     },
     templateUrl: 'ipr-cnv/ipr-cnv.html',
     link: (scope, element, attr) => {

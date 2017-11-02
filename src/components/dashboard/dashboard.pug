@@ -11,10 +11,20 @@ div(layout='row', flex)
                     md-tooltip(ng-if="!maximized", md-direction="right") Dashboard
                 span(flex, ng-show="maximized") Dashboard
 
+            div(layout="row", ng-if="PROJECT.FEATURE.ANALYSES", ui-sref="dashboard.biopsy.board", ng-class="{active: ($state.current.name === 'dashboard.biopsy' || $state.current.name.indexOf('biopsy') > -1)}")
+                md-icon colorize
+                    md-tooltip(ng-if="!maximized", md-direction="right") Biopsies
+                span(flex, ng-show="maximized") Biopsies
+
+
+
+
             div(layout="row", ng-if="PROJECT.FEATURE.TRACKING", ui-sref="dashboard.tracking.board", ng-class="{active: ($state.current.name === 'dashboard.tracking' || $state.current.name.indexOf('tracking') > -1)}")
                 md-icon my_location
                     md-tooltip(ng-if="!maximized", md-direction="right") Tracking
                 span(flex, ng-show="maximized") Tracking
+
+
 
             div(layout="row", ui-sref="dashboard.reports.dashboard", ng-class="{active: ($state.current.name === 'dashboard.reports' || $state.current.name.indexOf('dashboard.reports') > -1)}")
                 md-icon assignment
@@ -33,6 +43,9 @@ div(layout='row', flex)
                     md-tooltip(ng-if="!maximized", md-direction="right") Probe
                 span(flex, ng-show="maximized") Probe
 
+
+
+
             div(layout="row", ng-if="PROJECT.FEATURE.KNOWLEDGEBASE", ui-sref="dashboard.knowledgebase.dashboard", ng-class="{active: ($state.current.name.indexOf('knowledgebase') > -1)}")
                 md-icon local_library
                     md-tooltip(ng-if="!maximized", md-direction="right") Knowledgebase
@@ -49,6 +62,8 @@ div(layout='row', flex)
                 md-icon(ng-show="!maximized") location_on
                     md-tooltip(ng-if="!maximized", md-direction="right") Events
                 span(flex, ng-show="maximized") Events
+
+
 
             span(flex)
             div(layout="row", layout-align="end center", ng-click="toggle()").minimize

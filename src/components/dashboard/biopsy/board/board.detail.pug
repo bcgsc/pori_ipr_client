@@ -1,0 +1,33 @@
+md-dialog(layout="column", aria-label="Analysis/Biopsy Details", flex=80, flex-gt-xlarge=60).editor
+    md-toolbar
+        .md-toolbar-tools
+            h2 {{analysis.pog.POGID}} Source Details
+            span(flex)
+            md-button.md-icon-button(ng-click='cancel()')
+                md-icon cancel
+    md-dialog-content(layout-padding)
+
+        p All source data available in LIMS regarding this POG case. NOTE: LIMS does not track biopsies independently. If this POG has multiple biopsies, all entries will be included.
+
+        div(ng-if="loading", layout="row", layout-align="center start")
+            md-progress-circular(md-mode="indeterminate")
+
+        div(layout="column", ng-hide="loading").material-table
+            div(layout="row").head
+                div(flex=10) Patient ID
+                div(flex=15) Sample
+                div(flex=25) Disease
+                div(flex=10) Taxonomy
+                div(flex=10) Sex
+                div(flex=30) Anatomic Site
+            div(layout="row", ng-repeat="source in sources").row
+                div(flex=10) {{source.participant_study_id}}
+                div(flex=15) {{source.original_source_name}}
+                div(flex=25) {{source.disease}}
+                div(flex=10) {{source.taxonomy}}
+                div(flex=10) {{source.sex}}
+                div(flex=30) {{source.anatomic_site}}
+
+    md-dialog-actions(layout="row", layout-aligh="end center")
+        span(flex)
+        md-button(ng-click="cancel()").md-primary.md-raised Close

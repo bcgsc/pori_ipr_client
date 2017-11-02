@@ -13,13 +13,14 @@ div(flex, layout="column")
                 div(flex) CNV End
                 div(flex) Size (Mb)
                 div(flex) Expression (RPKM)
-                div(flex) Fold Change Vs. {{pog.tumourAnalysis.normalExpressionComparator}}
-                div(flex) {{pog.tumourAnalysis.diseaseExpressionComparator}} %ile
+                div(flex) Fold Change Vs. {{report.tumourAnalysis.normalExpressionComparator}}
+                div(flex) {{report.tumourAnalysis.diseaseExpressionComparator}} %ile
                 div(flex=5)
             div(ng-if="mutations.length == 0")
                 div.text-center.details No small somatic mutations of this kind were found from the analysis.
             div(layout="row", flex, ng-repeat="cnv in cnvs").row
-                div(flex) {{cnv.gene}}
+                div(flex)
+                    ipr-gene-viewer(report="report", pog="pog", gene="cnv.gene") {{cnv.gene}}
                 div(flex) {{cnv.ploidyCorrCpChange}}
                 div(flex) {{cnv.lohState}}
                 div(flex) {{cnv.cnvState}}
