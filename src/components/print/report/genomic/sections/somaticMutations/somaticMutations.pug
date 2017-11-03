@@ -22,7 +22,13 @@ table.print
                         div(layout="row")
                             div(flex=60) Number of non-synonymous protein coding SNVs (Truncating)
                             div(flex=40, layout="row", layout-align="center center").count
-                                div.snv {{ms.totalSNV}}
+                                div.snv {{ms.snv}} ({{ms.snv_truncating}})
+
+                        div(ng-repeat="comp in mutationSummaryImages.comparators")
+                            img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{getMutationSummaryImage('densityPlot', 'snv', comp.name).data}}")
+                            img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{getMutationSummaryImage('snv_indel', 'legend', comp.name).data}}")
+                            img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{getMutationSummaryImage('barplot', 'snv', comp.name).data}}")
+
                         img(data-ng-src="data:image/png;base64,{{images['mutSummary.snv'].data}}").bar
                         img(data-ng-src="data:image/png;base64,{{images['mutSummary.barSnv'].data}}").bar
 
@@ -30,7 +36,14 @@ table.print
                         div(layout="row")
                             div(flex=60) Number of protein coding indels (Frameshift)
                             div(flex=40, layout="row", layout-align="center center").count
-                                div.indel {{ms.totalIndel}}
+                                div.indel {{ms.indels}} ({{ms.indels_frameshift}})
+
+                        div(ng-repeat="comp in mutationSummaryImages.comparators")
+                            img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{getMutationSummaryImage('densityPlot', 'indel', comp.name).data}}")
+                            img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{getMutationSummaryImage('snv_indel', 'legend', comp.name).data}}")
+                            img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{getMutationSummaryImage('barplot', 'indel', comp.name).data}}")
+
+
                         img(data-ng-src="data:image/png;base64,{{images['mutSummary.indel'].data}}").bar
                         img(data-ng-src="data:image/png;base64,{{images['mutSummary.barIndel'].data}}").bar
 
