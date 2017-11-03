@@ -113,7 +113,7 @@ tr
                         th.total {{data.ms[0].sv}}
                 tbody
 
-                    tr(ng-repeat="comparator in data.ms")
+                    tr(ng-repeat="comparator in data.ms", ng-hide="(comparator.comparator === 'average' && (!comparator.snv_percentile && !comparator.indel_percentile))")
                         td(width="25%") Percentile among {{comparator.comparator || data.ta.diseaseExpressionComparator }}
                         td(width="25%", colspan=2) {{comparator.snv_percentile || 'na'}}
                         td(width="25%", colspan=2) {{comparator.indel_percentile || 'na'}}
