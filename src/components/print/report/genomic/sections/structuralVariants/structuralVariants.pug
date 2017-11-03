@@ -22,15 +22,20 @@ table.print
                         div(layout="row")
                             div(flex=60) Structural Variants (Expressed Fusions)
                             div(flex=40, layout="row", layout-align="center center").count
-                                div.sv {{ms.totalSV}}
-                        img(data-ng-src="data:image/png;base64,{{images['mutSummary.sv'].data}}").bar
+                                div.sv {{ms.sv}} ({{ms.sv_expressed}})
+
+                        div(ng-repeat="comp in mutationSummaryImages.comparators")
+                            img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{getMutationSummaryImage('densityPlot', 'sv', comp.name).data}}")
+                            img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{getMutationSummaryImage('sv', 'legend', comp.name).data}}")
 
                     div(layout="column").smEvents.indel
                         div(layout="row")
                             div(flex=60) &nbsp;
                             div(flex=40, layout="row", layout-align="center center").count
                                 div &nbsp;
-                        img(data-ng-src="data:image/png;base64,{{images['mutSummary.barSv'].data}}").bar
+
+                        div(ng-repeat="comp in mutationSummaryImages.comparators")
+                            img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{getMutationSummaryImage('barplot', 'sv', comp.name).data}}")
 
                 div(layout="row", layout-align="space-around space-around")
                     div(layout="column", layout-align="center center")

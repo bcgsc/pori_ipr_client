@@ -551,6 +551,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         }],
         svs: ['$q', '$stateParams', 'api.structuralVariation.sv', ($q, $stateParams, $sv) => {
           return $sv.all($stateParams.POG, $stateParams.analysis_report);
+        }],
+        mutationSummaryImages: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
+          return $image.mutationSummary($stateParams.POG, $stateParams.analysis_report);
         }]
       }
     })
@@ -834,7 +837,10 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
             }],
             mutationSignature: ['$q', '$stateParams', 'api.somaticMutations.mutationSignature', ($q, $stateParams, $mutationSignature) => {
               return $mutationSignature.all($stateParams.POG, $stateParams.analysis_report);
-            }]
+            }],
+            mutationSummaryImages: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
+              return $image.mutationSummary($stateParams.POG, $stateParams.analysis_report);
+            }],
           }
         },
         "copyNumberAnalysis@print.POG.report.genomic": {
@@ -873,6 +879,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
             }],
             svs: ['$q', '$stateParams', 'api.structuralVariation.sv', ($q, $stateParams, $sv) => {
               return $sv.all($stateParams.POG, $stateParams.analysis_report);
+            }],
+            mutationSummaryImages: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
+              return $image.mutationSummary($stateParams.POG, $stateParams.analysis_report);
             }]
           }
         },

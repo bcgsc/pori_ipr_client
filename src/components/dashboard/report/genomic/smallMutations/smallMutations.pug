@@ -22,13 +22,13 @@ section
                             div(layout="row")
                                 div(flex=60) Number of non-synonymous protein coding SNVs (Truncating)
                                 div(flex=40, layout="row", layout-align="center center").count
-                                    div.snv {{ms.totalSNV}}
+                                    div.snv {{ms.snv}} ({{ms.snv_truncating}})
 
                         div(layout="column", flex=45).smEvents.indel
                             div(layout="row")
                                 div(flex=60) Number of protein coding indels (Frameshift)
                                 div(flex=40, layout="row", layout-align="center center").count
-                                    div.indel {{ms.totalIndel}}
+                                    div.indel {{ms.indels}} ({{ms.indels_frameshift}})
 
                     div(layout="row", layout-align="space around").summary-plots
                         div(layout="column", flex=45)

@@ -8,7 +8,7 @@ app.controller('controller.dashboard.report.genomic.smallMutations',
   $scope.report = report;
   $scope.smallMutations = {};
   $scope.mutationSignature = mutationSignature;
-  $scope.ms = ms;
+  $scope.ms = null;
   $scope.mutationSummaryImages = {};
 
   let processMutations = (muts) => {
@@ -28,6 +28,14 @@ app.controller('controller.dashboard.report.genomic.smallMutations',
 
     // Set Small Mutations
     $scope.smallMutations = mutations;
+  };
+  
+  let pickCompatator = () => {
+    let search = _.find(ms, {comparator: report.tumourAnalysis.diseaseExpressionComparator});
+    
+    if(!search) search = _.find(ms, {comparator: 'average'});
+    
+    $scope.ms = search;
   };
   
   let processMutationSummaryImages = (images) => {
@@ -112,5 +120,6 @@ app.controller('controller.dashboard.report.genomic.smallMutations',
   
   processMutationSummaryImages(mutationSummaryImages);
   processMutations(smallMutations);
+  pickCompatator();
 
 }]);

@@ -115,8 +115,8 @@ tr
 
                     tr(ng-repeat="comparator in data.ms")
                         td(width="25%") Percentile among {{comparator.comparator || data.ta.diseaseExpressionComparator }}
-                        td(width="25%", colspan=2) {{comparator.snv_percentile}}
-                        td(width="25%", colspan=2) {{comparator.indel_percentile}}
+                        td(width="25%", colspan=2) {{comparator.snv_percentile || 'na'}}
+                        td(width="25%", colspan=2) {{comparator.indel_percentile || 'na'}}
                         td(width="25%", colspan=2)
                             span(ng-if="comparator.sv_percentile === null") -
                             span(ng-if="comparator.sv_percentile !== null && comparator.comparator === 'average'").clickable {{ comparator.sv_percentile }} (POG)
