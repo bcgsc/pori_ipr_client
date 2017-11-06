@@ -141,7 +141,7 @@ section
                     div(flex="30").total {{data.ms[0].sv}}
 
             div(layout="column").data
-                div(layout="row", flex, ng-repeat="comparator in data.ms", ng-hide="(comparator.comparator === 'average' && (!comparator.snv_percentile && !comparator.indel_percentile))")
+                div(layout="row", flex, ng-repeat="comparator in data.ms", ng-hide="((comparator.comparator === 'average' || comparator.comparator === null) && (!comparator.snv_percentile && !comparator.indel_percentile))")
                     // Null value for comparator invokes legacy support
                     // Previous Mutation Summary did not name the comparator in the CSVs - Comparator pulled from tumour analysis in these cases.
                     div(flex) Percentile among {{comparator.comparator || data.ta.diseaseExpressionComparator }}
