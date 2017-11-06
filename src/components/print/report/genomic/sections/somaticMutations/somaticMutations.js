@@ -110,7 +110,8 @@ app.controller('controller.print.POG.report.genomic.somaticMutations',
       
       let pieces = img.key.split('.');
       img.comparator = pieces[2] || null;
-      
+      if(!img.comparator) img.comparator = report.tumourAnalysis.diseaseExpressionComparator; // If no comparator found in image, likely legacy and use report setting.
+  
       if(img.comparator && !_.find(sorted.comparators, {name: img.comparator})) sorted.comparators.push({name: img.comparator, visible: false});
       
       if(pieces[1].indexOf('barplot_indel') > -1) sorted.indel.barplot.push(img);

@@ -63,13 +63,12 @@ app.controller('controller.dashboard.report.genomic.structuralVariation',
         sv: null
       }
     };
-
-    console.log(images);
     
     _.forEach(images, (img) => {
   
       let pieces = img.key.split('.');
       img.comparator = pieces[2] || null;
+      if(!img.comparator) img.comparator = report.tumourAnalysis.diseaseExpressionComparator; // If no comparator found in image, likely legacy and use report setting.
   
       if(img.comparator && !_.find(sorted.comparators, {name: img.comparator})) sorted.comparators.push({name: img.comparator, visible: false});
   
@@ -89,9 +88,7 @@ app.controller('controller.dashboard.report.genomic.structuralVariation',
     });
     
     $scope.mutationSummaryImages = sorted;
-  
-    console.log($scope.mutationSummaryImages);
-  
+    
   };
   
   /**
@@ -104,7 +101,15 @@ app.controller('controller.dashboard.report.genomic.structuralVariation',
    * @returns
    */
   $scope.getMutationSummaryImage = (graph, type, comparator=null) => {
-
+    
+    console.log('All images', $scope.mutationSummaryImages);
+    console.log('By Type', $scope.mutationSummaryImages[type]);
+    console.log('By type and graph', $scope.mutationSummaryImages[type][graph]);
+    
+    if(comparator === null) {
+      let img = $scope.mutationSummaryImages[type][graph];
+      if(img && img.length === 1) return img[0];
+    }
     return _.find($scope.mutationSummaryImages[type][graph], {comparator: comparator});
 
   };

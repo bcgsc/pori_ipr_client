@@ -121,22 +121,6 @@ tr
                             span(ng-if="comparator.sv_percentile === null") -
                             span(ng-if="comparator.sv_percentile !== null && comparator.comparator === 'average'").clickable {{ comparator.sv_percentile }} (POG)
 
-                    //tr
-                        td(width="25%").label.text-light Interpreted prevelance
-                        td(width="25%", colspan=2) {{(data.ms.snvReportCategory === "na") ? 'na' : data.ms.snvReportCategory}}
-                        td(width="25%", colspan=2) {{(data.ms.indelReportCategory === "na") ? 'na' : data.ms.indelReportCategory}}
-                        td(width="25%", colspan=2) {{data.ms.svPercentilePOGCategory}}
-                    //tr
-                        td.label.text-light Percentile among compendium
-                        td(colspan=2) {{data.ms.snvPercentileTCGA}}
-                        td(colspan=2) {{data.ms.indelPercentileTCGA}}
-                        td(colspan=2) {{data.ms.svPercentilePOG}} (POG)
-                    //tr
-                        td.label.text-light Percentile among {{data.ta.diseaseExpressionComparator}}
-                        td(colspan=2) {{data.ms.snvPercentileDisease}}
-                        td(colspan=2) {{data.ms.indelPercentileDisease}}
-                        td(colspan=2)
-
         div(layout="row").index-row
             div(flex, style="padding-left: 2mm;").text-xxsmall
             div(flex).text-xxsmall Details in SOMATIC MUTATIONS section
