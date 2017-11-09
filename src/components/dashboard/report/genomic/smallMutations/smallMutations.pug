@@ -13,7 +13,7 @@ section
                     p Available comparators
                     ul
                         li(ng-repeat="comp in mutationSummaryImages.comparators track by $index", ng-init="comp.visible=true")
-                            md-checkbox(ng-model="comp.visible", name="{{comp.name}}Checkbox").text-capitalize {{comp.name.split('_').join(' ') || 'All'}}
+                            md-checkbox(ng-model="comp.visible", name="{{comp.name}}Checkbox").text-uppercase {{comp.name.split('_').join(' ') || 'All'}}
 
                 div(layout="column", flex)
 
