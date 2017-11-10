@@ -70,7 +70,7 @@ app.controller('controller.dashboard.report.genomic.structuralVariation',
       img.comparator = pieces[2] || null;
       if(!img.comparator) img.comparator = report.tumourAnalysis.diseaseExpressionComparator; // If no comparator found in image, likely legacy and use report setting.
   
-      if(img.comparator && !_.find(sorted.comparators, {name: img.comparator})) sorted.comparators.push({name: img.comparator, visible: false});
+      if(img.comparator.toLowerCase() && !_.find(sorted.comparators, {name: img.comparator.toLowerCase()})) sorted.comparators.push({name: img.comparator.toLowerCase(), visible: false});
   
       if(pieces[1].indexOf('barplot_indel') > -1) sorted.indel.barplot.push(img);
       if(pieces[1].indexOf('barplot_snv') > -1) sorted.snv.barplot.push(img);
@@ -102,15 +102,13 @@ app.controller('controller.dashboard.report.genomic.structuralVariation',
    */
   $scope.getMutationSummaryImage = (graph, type, comparator=null) => {
     
-    console.log('All images', $scope.mutationSummaryImages);
-    console.log('By Type', $scope.mutationSummaryImages[type]);
-    console.log('By type and graph', $scope.mutationSummaryImages[type][graph]);
-    
     if(comparator === null) {
       let img = $scope.mutationSummaryImages[type][graph];
       if(img && img.length === 1) return img[0];
     }
-    return _.find($scope.mutationSummaryImages[type][graph], {comparator: comparator});
+    return _.find($scope.mutationSummaryImages[type][graph], (c) => {
+      return (c.comparator.toLowerCase() === comparator.toLowerCase());
+    });
 
   };
   

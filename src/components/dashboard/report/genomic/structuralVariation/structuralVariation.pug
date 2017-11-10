@@ -9,10 +9,7 @@ section
 
             div(layout="row").mutation-summary-images
                 div(layout="column", flex=15).comparator-list
-                    ul
-                        li(ng-if="mutationSummaryImages.comparators.length === 0") All comparators
-                        li(ng-repeat="comp in mutationSummaryImages.comparators track by $index", ng-init="comp.visible=true")
-                            span.text-capitalize {{comp.name.split('_').join(' ') || 'All'}}
+
 
                 div(layout="column", flex)
 
