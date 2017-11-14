@@ -128,7 +128,26 @@ app.factory('api.jira', ['_', '$http', '$q', 'api.user', (_, $http, $q, $user) =
     }
 
   };
-
+  
+  /**
+   * Get JIRA ticket priorities available
+   *
+   * @returns {Promise} - Resolves with array of priorities
+   */
+  $jira.priority = () => {
+    return $q((resolve, reject) => {
+  
+      $http.get(api + '/priority', {headers: { authorization: undefined}, withCredentials: true})
+        .then((response) => {
+          resolve(response.data);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+      
+    });
+  };
+  
   /**
    * JIRA Session Management
    *
@@ -160,7 +179,7 @@ app.factory('api.jira', ['_', '$http', '$q', 'api.user', (_, $http, $q, $user) =
     
     current: () => {
       $q((resolve, reject) => {
-        $http.get('https://www.bcgsc.ca/jira/rest/auth/' + '1/session',  {headers: { authorization: undefined}, withCredentials: true}).then(
+        $http.get('https://www.bcgsc.ca/jira/rest/auth/' + '1/session', {headers: { authorization: undefined}, withCredentials: true}).then(
           (response) => {
             console.log('Current Authentication status', response);
             resolve(response);
@@ -181,6 +200,40 @@ app.factory('api.jira', ['_', '$http', '$q', 'api.user', (_, $http, $q, $user) =
   $jira.projects = {
   
     /**
+     * Get All Projects available on JIRA
+     *
+     * @returns {Promise} - Resolves with array of projects
+     */
+    all: () => {
+      return $q((resolve, reject) => {
+        $http.get(api + '/project', {headers: { authorization: undefined}, withCredentials: true})
+          .then((result) => {
+            resolve(result.data);
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
+    },
+  
+    /**
+     * Get JIRA Project Details
+     *
+     * @returns {Promise} - Resolves with array of projects
+     */
+    get: (project) => {
+      return $q((resolve, reject) => {
+        $http.get(api + '/project/' + project, {headers: { authorization: undefined}, withCredentials: true})
+          .then((result) => {
+            resolve(result.data);
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
+    },
+  
+    /**
      * Get Project Security Levels available
      *
      * @param {string} project - Project key name
@@ -188,25 +241,7 @@ app.factory('api.jira', ['_', '$http', '$q', 'api.user', (_, $http, $q, $user) =
      */
     getSecurityLevels: (project) => {
       return $q((resolve, reject) => {
-        $http.get(api + '/project/' + project + '/securitylevel')
-          .then((response) => {
-            resolve(response.data);
-          })
-          .catch((err) => {
-            reject(err);
-          });
-      });
-    },
-    
-    /**
-     * Get Project Details
-     *
-     * @param {string} project - Project key name
-     * @returns {*}
-     */
-    getProject: (project) => {
-      return $q((resolve, reject) => {
-        $http.get(api + '/project/' + project)
+        $http.get(api + '/project/' + project + '/securitylevel', {headers: { authorization: undefined}, withCredentials: true})
           .then((response) => {
             resolve(response.data);
           })
@@ -215,7 +250,6 @@ app.factory('api.jira', ['_', '$http', '$q', 'api.user', (_, $http, $q, $user) =
           });
       });
     }
-    
     
   };
 
