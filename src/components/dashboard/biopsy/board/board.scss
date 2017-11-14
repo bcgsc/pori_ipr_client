@@ -57,3 +57,11 @@
     color: rgba(0,0,0,1);
   }
 }
+
+.editor {
+  .md-datepicker-input-container {
+    input {
+      width: 190px;
+    }
+  }
+}
