@@ -137,7 +137,7 @@ app.factory('api.tracking.task', ['_', '$http', '$q', (_, $http, $q) => {
    * Revoke a checkin entry
    *
    * @param {string} task - The task ident
-   * @param {string} datestamp - Datestamp key to be removed
+   * @param {string} checkin - Checkin ident string to be removed
    * @returns {Promise} - Resolves with updated task
    */
   $task.revokeCheckin = (task, checkin) => {
