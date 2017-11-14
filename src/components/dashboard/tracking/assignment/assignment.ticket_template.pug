@@ -1,0 +1,115 @@
+md-content(flex, layout="column", layout-fill).md-padding.definitions.assignment
+
+    h1.md-title Manage Ticket Templates for {{definition.name}}
+
+    div(layout="column", flex).editor
+
+        div(layout="row").title
+            span(flex=20) Definitions
+            span(flex) Editor
+
+        div(layout="row", flex, layout-align="space-between")
+
+            md-content(layout="column", flex=20).column.definitionsList
+                div(ng-repeat="template in templates", ng-class="{active: (editing.ident === template.ident)}").def
+                    div(layout="row")
+                        h1(flex, ng-click="selectTemplate(template)") {{template.name}}
+                div(layout="row", ng-click="newTemplate($event, true)").clickable.def
+                    div
+                        md-icon playlist_add
+                    h1(flex, ng-click="newTemplate()") Add new ticket template
+
+
+            div(flex, layout="column", ng-if="editing.name === undefined", layout-align="center center").column.definitionsForm.empty
+                p Select a ticket template to edit
+                p or
+                md-button(ng-click="newTemplate()").md-raised Create a new one
+            div(flex, layout="column", ng-if="editing.name !== undefined").column.definitionsForm
+                div(layout="row", style="border-bottom: 2px solid rgb(220,220,220);")
+                    span
+                        md-button(ng-click="save()").md-raised.md-primary Save
+                    span(flex)
+                    span
+                        md-button(ng-click="removeTemplate()").md-raised.md-warn Remove
+                    span
+                        md-button(ng-click="cancelEditing()").md-raised Cancel
+
+                md-content(layout="row", flex, layout-align="center start")
+                    div(layout="column", flex=95)
+                        form(name="ticketEditor", novalidate, ng-submit="submit(definitionEditor)")
+
+                            div(layout="row")
+                                md-input-container(flex)
+                                    input(ng-model="editing.name", name="Name", placeholder="Template Name", required)
+                                    div(ng-messages="definitionEditor.Name.$error", role="alert", multiple)
+                                        p(ng-message="required") A definition name is required
+
+                            div(layout="row", flex)
+                                md-autocomplete(
+                                md-input-name="Project",
+                                md-selected-item="editing.project",
+                                md-search-text="projectQuery",
+                                md-items="project in searchProjects(projectQuery)",
+                                md-item-text="project.key",
+                                md-floating-label="JIRA Project/Namespace",
+                                md-autofocus=true,
+                                md-autoselect=true,
+                                md-require-match=true,
+                                md-dropdown-position="bottom",
+                                md-selected-item-change="getProject()"
+                                required,
+                                flex
+                                )
+                                    md-item-template {{project.key}} ({{project.name}})
+                                    div(ng-messages="ticketEditor.Project", ng-if="ticketEditor.Project.$touched")
+                                        div(ng-message="required") A project key/namespace must be selected
+
+                            div(layout="row")
+                                md-input-container(flex=50)
+                                    label Ticket Issue Type
+                                    md-select(ng-model="editing.issueType", name="Type", ng-disabled="(editing.project === null || editing.project === undefined)")
+                                        md-option(ng-value="type.name", ng-repeat="type in issueTypes") {{type.name}}
+
+                                md-input-container(flex=50)
+                                    label Ticket Components
+                                    md-select(ng-model="editing.components", name="Components", ng-disabled="(editing.project === null || editing.project === undefined)", multiple=)
+                                        md-option(ng-value="component.name", ng-repeat="component in components") {{component.name}}
+
+
+                            div(layout="row")
+                                md-input-container(flex=50)
+                                    label Ticket Priority
+                                    md-select(ng-model="editing.priority", name="Priority", ng-disabled="(editing.project === null || editing.project === undefined)")
+                                        md-option(ng-value="priority.name", ng-repeat="priority in priorities") {{priority.name}}
+
+                                md-chips(ng-model="editing.tags", flex=50, placeholder="Ticket Tags")
+
+
+                            div(layout="row")
+                                md-input-container
+                                    md-checkbox(ng-model="editing.pog_restricted") Tickets will be POG Restricted
+
+                            div(layout="row")
+                                div(layout="column", flex)
+                                    md-input-container(flex=10)
+                                        input(ng-model="editing.summary", placeholder="Ticket Template Summary/Title", name="Summary")
+
+                                    md-input-container(flex)
+                                        textarea(ng-model="editing.body", name="Body", rows=10, required, placeholder="Ticket Body Template" ipr-ticket-body="")
+
+
+                                div(flex=20)
+                                    div.variables
+                                        h1 Variables available
+                                        ul
+                                            li(ng-repeat="v in variables")
+                                                span(ng-click="insertVar(v.tag)").clickable {{v.name}}
+                                                    md-tooltip(md-direction="right")
+                                                        span(ng-non-bindable) {{
+                                                        span(ng-bind="v.tag")
+                                                        span(ng-non-bindable) }}
+                            div(layout="column")
+                                p(ng-non-bindable) Ticket body templates & summaries/titles can include variables encased in double braces {{variable}}. Basic formulas are possible inside template brackets, include simple math operations on integers. Operations on variables should been contained within parentheses {{(variable*4)}}.
+                                p
+                                    a(href="https://jira.atlassian.com/secure/WikiRendererHelpAction.jspa?section=all", target="_blank") JIRA text formatting
+                                    | &nbsp;is supported, and will be interpreted.
