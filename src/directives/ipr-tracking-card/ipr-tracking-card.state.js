@@ -9,7 +9,8 @@ app.controller('controller.ipr-tracking-card.state',
     'pending',
     'complete',
     'hold',
-    'failed'
+    'failed',
+    'cancelled'
   ];
 
   $scope.cancel = () => {

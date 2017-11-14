@@ -55,7 +55,8 @@ app.controller('controller.ipr-tracking-card.task',
     'active',
     'hold',
     'complete',
-    'failed'
+    'failed',
+    'cancelled'
   ];
 
   // Search Users with auto complete
