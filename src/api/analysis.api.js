@@ -60,6 +60,30 @@ app.factory('api.analysis', ['_', '$http', '$q', (_, $http, $q) => {
     
   };
   
+  
+  /**
+   * Update biopsy analysis entry
+   *
+   * @param {object} data - Updated object payload
+   * @returns {Promise/object} - Resolves with updated entry
+   */
+  $analysis.update = (data) => {
+    return $q((resolve, reject) => {
+      
+      let payload = angular.copy(data);
+      if(payload.analysis && Array.isArray(payload.analysis)) delete payload.analysis;
+      
+      $http.put(api + '/' + data.ident, payload)
+        .then((result) => {
+          resolve(result.data);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+      
+    });
+  };
+  
   return $analysis;
   
 }]);
