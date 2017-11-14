@@ -269,6 +269,7 @@ app.controller('controller.dashboard.biopsy.board.add',
       clinical_biopsy: $scope.patient.clinical_biopsy,
       disease:  (typeof $scope.patient.disease === 'object') ? $scope.patient.disease.text : $scope.patient.disease,
       biopsy_notes: $scope.patient.biopsy_notes,
+      biopsy_date: $scope.patient.biopsy_date,
       tracking: $scope.patient.tracking,
       notes: $scope.patient.notes,
       libraries: null

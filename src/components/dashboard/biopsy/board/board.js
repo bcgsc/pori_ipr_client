@@ -208,7 +208,25 @@ app.controller('controller.dashboard.biopsy.board',
       }]
     })
     
-  }
+  };
+  // Open Source Information
+  $scope.editAnalysis = (analysis) => {
+    
+    $mdDialog.show({
+      templateUrl: 'dashboard/biopsy/board/board.edit.html',
+      controller: 'controller.dashboard.biopsy.board.edit',
+      locals: {
+        analysis: analysis
+      }
+    })
+      .then((result) => {
+        // Find result, and update row
+        let i = _.findIndex(analyses, {ident: result.ident});
+        if(i) analyses[i] = result;
+      
+      });
+    
+  };
   
   
   // Open Source Information
@@ -218,6 +236,9 @@ app.controller('controller.dashboard.biopsy.board',
       templateUrl: 'dashboard/biopsy/board/board.add.html',
       controller: 'controller.dashboard.biopsy.board.add'
     })
+      .then((result) => {
+        if(result.result) $scope.analyses.unshift(result.result);
+      });
     
   }
   
