@@ -1070,6 +1070,10 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       resolve: {
         definitions: ['$q', 'api.tracking.definition', ($q, $definition) => {
           return $definition.all();
+        }],
+        // User object injected to ensure settings have been captured
+        myDefinitions: ['$q', '_', 'api.tracking.definition', 'user', '$userSettings', ($q, _, $definition, user, $userSettings) => {
+          return $definition.all({slug: ($userSettings.get('tracking.definition')) ? _.join($userSettings.get('tracking.definition').slug,',') : undefined});
         }]
       }
     })
@@ -1082,8 +1086,25 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       controller: 'controller.dashboard.tracking.board',
       templateUrl: 'dashboard/tracking/board/board.html',
       resolve: {
-        states: ['$q', 'api.tracking.state', ($q, $state) => {
-          return $state.all({status: 'pending,active,complete,hold'});
+        states: ['$q', '_', 'api.tracking.state', '$userSettings', ($q, _, $state, $userSettings) => {
+          return $state.all({status: ($userSettings.get('tracking.state')) ? _.join($userSettings.get('tracking.state').status, ',') : 'pending,active,hold,failed'});
+        }]
+      }
+    })
+
+    .state('dashboard.tracking.lane', {
+      url: '/board/:slug',
+      data: {
+        displayName: '{{lane.name}}'
+      },
+      controller: 'controller.dashboard.tracking.lane',
+      templateUrl: 'dashboard/tracking/board/board.lane.html',
+      resolve: {
+        lane: ['$q', '$stateParams', 'api.tracking.definition', ($q, $stateParams, $definition) => {
+          return $definition.retrieve($stateParams.slug);
+        }],
+        states: ['$q', '$stateParams', 'api.tracking.state', ($q, $stateParams, $state) => {
+          return $state.filtered({slug: $stateParams.slug});
         }]
       }
     })
