@@ -468,6 +468,13 @@ md-dialog.tracking-task {
         }
       }
 
+      &.cancelled {
+        background-color: #ccc1df;
+        h3 {
+          color: #8116aa;
+        }
+      }
+
       h3 {
         color: rgb(63, 81, 181);
         font-size: 0.8em;

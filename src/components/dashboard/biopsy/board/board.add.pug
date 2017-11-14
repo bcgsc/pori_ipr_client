@@ -45,9 +45,10 @@ md-dialog(layout="column", aria-label="Add Biopsy", flex-md=80, flex-xs=100, fle
                         p Sources found in LIMS for this POGID.
 
                         div(layout="row").head
-                            div(flex) Source
-                            div(flex) Collection Date
+                            div(flex=15) Source
+                            div(flex=20) Collection Date
                             div(flex) Anatomic Site
+                            div(flex=20) Disease Vs. Normal
                             div(flex=5).text-right
                                 md-icon(ng-click="show_sources=false").small.clickable remove_circle_outline
                                     md-tooltip Hide LIMS sources search results
@@ -60,19 +61,13 @@ md-dialog(layout="column", aria-label="Add Biopsy", flex-md=80, flex-xs=100, fle
                             div(flex).text-center No sources found for this POG in LIMS
 
                         div(layout="row", ng-repeat="source in pog_sources").row
-                            div(flex) {{source.original_source_name}}
-                            div(flex)
+                            div(flex=15) {{source.original_source_name}}
+                            div(flex=20)
                                 span.link {{source.sample_collection_time | amTimeAgo}}
                                     md-tooltip {{source.sample_collection_time | amDateFormat: 'YYYY-MM-DD HH:mm'}}
                             div(flex) {{source.anatomic_site}}
+                            div(flex=20) {{source.disease_status}}
                             div(flex=5)
-
-
-                    //div(layout="row")
-                        md-input-container(flex)
-                            input(ng-model="patient.disease", name="Disease", md-placeholder="Disease", required)
-                            div(ng-messages="referenceForm.RefTitle.$error")
-                                div(ng-message="required") A reference title is required.
 
                     div(layout="row", flex)
                         md-autocomplete(
@@ -84,7 +79,7 @@ md-dialog(layout="column", aria-label="Add Biopsy", flex-md=80, flex-xs=100, fle
                         md-floating-label="Disease",
                         md-autofocus=true,
                         md-autoselect=true,
-                        md-require-match=true,
+                        md-require-match=false,
                         md-dropdown-position="bottom",
                         flex=60
                         )
@@ -102,6 +97,7 @@ md-dialog(layout="column", aria-label="Add Biopsy", flex-md=80, flex-xs=100, fle
                         md-autofocus=true,
                         md-autoselect=true,
                         md-require-match=true,
+                        md-select-on-match=true,
                         md-dropdown-position="bottom",
                         required,
                         flex=60
@@ -112,8 +108,9 @@ md-dialog(layout="column", aria-label="Add Biopsy", flex-md=80, flex-xs=100, fle
 
 
                     div(layout="row")
-                        div(style="padding-right: 40px;")
-                            md-datepicker(ng-model="patient.biopsy_date", md-placeholder="Biopsy Date")
+                        md-input-container(style="padding-right: 40px;")
+                            label Biopsy Date
+                            md-datepicker(ng-model="patient.biopsy_date")
 
                         md-input-container(flex)
                             input(ng-model="patient.biopsy_notes", name="BiopsyNotes", placeholder="Biopsy Notes")

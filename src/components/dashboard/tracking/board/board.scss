@@ -1,5 +1,23 @@
 md-content.trackingBoard {
 
+  $complete: #2bae57;
+  $bgComplete: #d3ffd0;
+
+  $active: #65d1cb;
+  $bgActive: #d0f0ff;
+
+  $hold: #e9dd4e;
+  $bgHold: #f7ffd0;
+
+  $pending: #aaaaaa;
+  $bgPending: #ebebeb;
+
+  $failed: #df2816;
+  $bgFailed: #ffd3c9;
+
+  $cancelled: #ab1edf;
+  $bgCancelled: #ccc1df;
+
   .stateDefs {
 
     p {
@@ -18,14 +36,99 @@ md-content.trackingBoard {
       border-radius: 3px;
     }
 
-    p.complete:before { background-color: #2bae57; }
-    p.active:before { background-color: #65d1cb; }
-    p.hold:before { background-color: #e9dd4e; }
-    p.pending:before { background-color: #aaaaaa; }
-    p.failed:before { background-color: #df2816; }
+    p.complete:before { background-color: $complete; }
+    p.active:before { background-color: $active; }
+    p.hold:before { background-color: $hold; }
+    p.pending:before { background-color: $pending; }
+    p.failed:before { background-color: $failed; }
+    p.cancelled:before { background-color: $cancelled; }
+
+  }
+
+  &.trackingLane {
+
+    tr.state {
+      &.complete {
+        > td:first-of-type {
+          border-left: 4px solid $complete;
+        }
+      }
+      &.active {
+        > td:first-of-type {
+          border-left: 4px solid $active;
+        }
+      }
+      &.hold {
+        > td:first-of-type {
+          border-left: 4px solid $hold;
+        }
+      }
+      &.pending {
+        > td:first-of-type {
+          border-left: 4px solid $pending;
+        }
+      }
+      &.failed {
+        > td:first-of-type {
+          border-left: 4px solid $failed;
+        }
+      }
+      &.cancelled {
+        > th:first-of-type {
+          border-left: 4px solid $cancelled;
+        }
+      }
+    }
+
+
+    .task {
+
+      border: 1px solid;
+
+      > .value {
+        min-height: 20px;
+        padding: 2px 4px;
+      }
+
+      &.complete {
+        border-left: 5px solid $complete;
+        background-color: $bgComplete;
+        border-color: $complete;
+      }
+      &.active {
+        border-left: 5px solid $active;
+        background-color: $bgActive;
+        border-color: $active;
+      }
+      &.hold {
+        border-left: 5px solid $hold;
+        background-color: $bgHold;
+        border-color: $hold;
+      }
+      &.pending {
+        border-left: 5px solid $pending;
+        background-color: $bgPending;
+        border-color: $pending;
+      }
+      &.failed {
+        border-left: 5px solid $failed;
+        background-color: $bgFailed;
+        border-color: $failed;
+      }
+      &.cancelled {
+        border-left: 5px solid $cancelled;
+        background-color: $bgCancelled;
+        border-color: $cancelled;
+      }
+    }
 
   }
 
 
+}
 
+md-dialog.lane-checkin {
+  h4 {
+    margin: 5px 0px 10px 0px;
+  }
 }

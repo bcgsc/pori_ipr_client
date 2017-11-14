@@ -1,4 +1,4 @@
-md-dialog(layout="column", aria-label="Library Details", flex=90, flex-gt-lg=70).editor
+md-dialog(layout="column", aria-label="Library Details", flex=95, flex-gt-lg=70).editor
     md-toolbar
         .md-toolbar-tools
             h2 Library Details: {{library.name}}
@@ -85,22 +85,24 @@ md-dialog(layout="column", aria-label="Library Details", flex=90, flex-gt-lg=70)
                         div(flex=10) {{run.lane}}
                         div(flex=10)
                             span
-                                md-icon(ng-if="run.approval === 'Approved'").green check_circle
-                                md-icon(ng-if="run.approval === 'Rejected'").red cancel
+                                md-icon(ng-if="run.approval === 'Approved'").green.small check_circle
+                                md-icon(ng-if="run.approval === 'Rejected'").red.small cancel
                             span {{run.approval}}
+                            md-icon(ng-if="run.approval_datetime").small.margin-left-10.clickable event
+                                md-tooltip {{run.approval_datetime | amDateFormat: 'YYYY-MM-DD HH:mm'}}
+
                         div(flex=15)
                             span
-                                md-icon(ng-if="run.qc_status === 'Passed'").green check_circle
-                                md-icon(ng-if="run.qc_status === 'Failed'").red cancel
+                                md-icon(ng-if="run.qc_status === 'Passed'").green.small check_circle
+                                md-icon(ng-if="run.qc_status === 'Failed'").red.small cancel
                             span {{run.qc_status}}
+                            md-icon(ng-if="run.qc_status_datetime").small.margin-left-10.clickable event
+                                md-tooltip {{run.qc_status_datetime | amDateFormat: 'YYYY-MM-DD HH:mm'}}
+
                         div(flex=10) {{run.library}}
                         div(flex=15)
                             ul
                                 li(ng-repeat="l in run.multiplex_libraries track by $index") {{l}}
-
-            md-tab(label="Protocol Events")
-                p Library protocol events
-
 
     md-dialog-actions(layout="row", layout-aligh="end center")
         span(flex)

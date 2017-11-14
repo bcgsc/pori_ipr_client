@@ -1,0 +1,62 @@
+md-dialog(layout="column", aria-label="Task -{{task.name}}", flex-md=85, flex-xs=100, flex-lg=70, flex=70).lane-checkin.tracking-task
+    md-toolbar
+        .md-toolbar-tools
+            h2 {{task.name}} Check-in
+            span(flex)
+            md-button.md-icon-button(ng-click='cancel()')
+                md-icon cancel
+        div(ng-class="task.status").md-toolbar-subheader
+            h3(flex) Status:
+                span {{task.status}}
+                md-menu(md-position-mode="target-right target")
+                    md-button(aria-label="Open menu with custom trigger" class="md-icon-button" ng-click="$mdMenu.open()")
+                        md-icon(style="display: inline").show arrow_drop_down
+                    md-menu-content(width="4", ng-mouseleave="$mdMenu.close()")
+                        md-menu-item(ng-repeat="state in states")
+                            md-button(ng-click="updateStatus(state)").text-capitalize {{state}}
+    md-dialog-content.background-white
+        div(layout="column").padding-10
+
+            p Update this tasks check-in results and status. Tasks can have more than 1 check-in as a target, eg: One check-in per lane that passes quality control. The number of target check-ins for this task is:&nbsp;
+                strong {{task.checkInsTarget}}
+                | . If the target number of check-ins is reached, the task is automatically marked as complete.
+
+
+            h4 Add Check-in
+            div(layout="column", ng-if="task.checkins.length === task.checkInsTarget")
+                p The target number of check-ins has been reached. No more check-ins are allowed.
+            div(layout="column", ng-if="task.checkins.length < task.checkInsTarget")
+                div(layout="row")
+                    md-input-container(flex)
+                        label(ng-if="task.outcomeType !== 'boolean'") Check-in Value
+                        input(ng-if="task.outcomeType === 'text' || task.outcomeType === 'path'", ng-model="checkin.outcome", flex)
+                        md-datepicker(ng-if="task.outcomeType === 'date'", ng-model="checkin.outcome", ng-init="checkin.outcome = date")
+                        md-switch(ng-if="task.outcomeType === 'boolean'", ng-model="checkin.outcome", ng-init="checkin.outcome=false", ng-true-value="true", ng-false-value="false") Task Result: {{checkin.outcome}}
+
+                    md-input-container(flex=10, layout-align="end end", layout="row")
+                        md-button(ng-click="checkin()").md-raised.md-primary Check-in
+
+
+            h4 Check-in Entries
+            div(layout="column").material-table
+                div(layout="row").head
+                    div(flex) Check-in Date
+                    div(flex) Returned Value
+                    div(flex) User
+                    div(flex=10)
+
+                div(layout="row", ng-repeat="checkin in task.checkins").row
+                    div(flex) {{checkin.createdAt | amDateFormat: 'YYYY-MM-DD HH:mm:ss'}}
+                    div(flex) {{checkin.outcome}}
+                    div(flex) {{checkin.user.firstName}} {{checkin.user.lastName}}
+                    div(flex=10)
+                        md-icon(ng-click="revokeCheckin(checkin)").clickable delete
+                            md-tooltip Remove this check-in.
+            br
+            br
+
+
+            md-dialog-actions(layout="row", layout-aligh="end center")
+                span(flex)
+                md-button(ng-click="close()").md-primary.md-raised Close
+

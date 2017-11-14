@@ -3,7 +3,7 @@ md-content(flex, layout="column").md-padding.biopsyBoard
     h1.md-title(layout="row")
         span(flex) Biopsies
 
-    div(layout="column").biopsies
+    div(layout="column", ipr-scroll-bottom="").biopsies
 
         table.material-table
             thead
@@ -26,9 +26,9 @@ md-content(flex, layout="column").md-padding.biopsyBoard
                                 md-tooltip Filter/Search
                 tr
                     th(width="5%") POG
+                    th(width="7%") Biopsy Date
                     th(width="15%") Disease
-                    th(width="15%") Biopsy Notes
-                    th(width="10%") Comparators
+                    th(width="18%") Biopsy Notes
                     th(width="10%")
                         span.clickable Clinspec
                             md-tooltip Clinical Biopsy Number
@@ -50,9 +50,9 @@ md-content(flex, layout="column").md-padding.biopsyBoard
                         span No biopsies found on IPR
                 tr(ng-repeat="analysis in analyses")
                     td.text-bold {{analysis.pog.POGID}}
+                    td {{analysis.biopsy_date | amDateFormat: 'YYYY-MM-DD' || 'N/A' }}
                     td {{analysis.disease}}
                     td {{analysis.biopsy_notes}}
-                    td [Comp.]
                     td {{analysis.clinical_biopsy}}
                     td {{analysis.analysis_biopsy || "Pending"}}
                     td
@@ -68,4 +68,5 @@ md-content(flex, layout="column").md-padding.biopsyBoard
                         span.clickable {{analysis.createdAt | amTimeAgo}}
                             md-tooltip {{analysis.createdAt | amDateFormat: 'YYYY-MM-DD HH:mm:ss'}}
                     td.options
-                        md-icon(ng-click="openAnalysis(analysis)").clickable search
+                        md-icon(ng-click="editAnalysis(analysis)").clickable edit
+                        md-icon(ng-click="openAnalysis(analysis)").clickable open_in_browser

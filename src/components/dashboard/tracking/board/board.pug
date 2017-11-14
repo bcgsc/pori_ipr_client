@@ -7,25 +7,33 @@ md-content(flex, layout="column").md-padding.trackingBoard
             md-list
                 md-list-item
                     p Show Hidden States
-                    md-switch(ng-model="filter.hidden", ng-change="refreshList()").md-primary
-                md-list-item
+                    md-switch(ng-model="filter.definition.hidden").md-primary
+                //md-list-item
                     p Track new POG
                     md-button(ng-click="trackNewPOG($event)").md-raised.md-primary.md-icon-button
                         md-icon add
 
                 md-list-item
                     p States
-                    md-select(multiple, ng-model="filter.status", ng-change="refreshList()").md-primary
+                    md-select(multiple, ng-model="filter.state.status", aria-label="Select state status filters").md-primary
                         md-option(value="pending") Pending
                         md-option(value="active") Active
                         md-option(value="complete") Completed
                         md-option(value="hold") Hold
                         md-option(value="failed") Failed
+                        md-option(value="cancelled") Cancelled
 
-                md-list-item
-                    p Update Definitions
-                    md-button(ui-sref="^.definition").md-raised.md-primary.md-icon-button
-                        md-icon edit
+                //md-list-item
+                    p Teams/Lanes
+                    md-select(multiple, ng-model="filter.definition.slug", aria-label="Select team lanes to display").md-primary
+                        md-option(ng-value="def.slug", ng-repeat="def in allDefinitions") {{def.name}}
+
+            div(layout="column").padding-left-15.margin-right-15
+                p Teams/Lanes
+                div(style="max-height: 250px; overflow-y:auto; border: 1px solid rgb(210,210,210); padding: 10px;", layout="column")
+                    md-checkbox(ng-repeat="def in allDefinitions", ng-click="toggleDefFilter(def)", ng-checked="filter.definition.slug.indexOf(def.slug) > -1") {{def.name}}
+
+            p {{filter.definition.slug}}
 
     h1.md-title(layout="row")
         span(flex) POG Tracking
@@ -42,18 +50,26 @@ md-content(flex, layout="column").md-padding.trackingBoard
         div(layout="row", layout-align="space-between").title
 
             div(layout="row", flex, ng-repeat="definition in definitions")
+                span.padding-right-5
+                    md-icon(ui-sref="dashboard.tracking.lane({slug: definition.slug})").small.clickable view_list
+                        md-tooltip Lane in table view
                 span(ui-sref="dashboard.tracking.assignment({definition: definition.ident})").clickable {{definition.name}}&nbsp;
                 | ({{definition.group.name || 'N/A' }})
+                span(flex)
 
         div(layout="row", flex, layout-align="space-between")
 
             md-content(layout="column", flex, ng-repeat="definition in definitions").column
-                div(ng-show="loading").text-center Loading...
-                ipr-tracking-card(ng-repeat="state in sortedStates[definition.slug] | filter: searchPogs(state, pogQuery)", md-whiteframe=2, state="state", ng-hide="loading").pog
+                div(ng-show="refreshing").text-center Loading...
+                ipr-tracking-card(ng-repeat="state in sortedStates[definition.slug] | filter: searchPogs(state, pogQuery)", md-whiteframe=2, state="state", ng-hide="refreshing").pog
 
-    div(layout="row").stateDefs
-        p.pending Pending
-        p.active Active
-        p.complete Completed
-        p.hold Hold
-        p.failed Failed
+    div(layout="row")
+        div(layout="row").stateDefs
+            p.pending Pending
+            p.active Active
+            p.complete Completed
+            p.hold Hold
+            p.failed Failed
+            p.cancelled Cancelled
+        span(flex)
+        span(ui-sref="^.definition").text-small.clickable.lt-grey.margin-top-10.padding-right-10 Modify Definitions

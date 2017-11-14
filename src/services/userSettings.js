@@ -21,6 +21,9 @@ app.factory('$userSettings', ['_', '$q', 'api.user', function(_, $q, $user) {
      */
     get: (setting = undefined) => {
       if (setting === undefined) return userSettings;
+      
+      if(userSettings === undefined) return {};
+      
       return userSettings[setting];
     },
 
@@ -33,6 +36,7 @@ app.factory('$userSettings', ['_', '$q', 'api.user', function(_, $q, $user) {
      * @returns {Promise} - Returns the $us.update() promise;
      */
     save: (setting, value) => {
+      if(userSettings === undefined) userSettings = {};
       userSettings[setting] = value;
       return $us.update();
 

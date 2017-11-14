@@ -1,32 +1,113 @@
 md-dialog(layout="column", aria-label="Analysis/Biopsy Details", flex=80, flex-gt-xlarge=60).editor
     md-toolbar
         .md-toolbar-tools
-            h2 {{analysis.pog.POGID}} Source Details
+            h2 {{analysis.pog.POGID}} Biopsy Analysis Details
             span(flex)
             md-button.md-icon-button(ng-click='cancel()')
                 md-icon cancel
     md-dialog-content(layout-padding)
 
-        p All source data available in LIMS regarding this POG case. NOTE: LIMS does not track biopsies independently. If this POG has multiple biopsies, all entries will be included.
+        p Details for this biopsy analysis entry in IPR. Details additional details are synchronized from LIMS and BioApps APIs.
 
-        div(ng-if="loading", layout="row", layout-align="center start")
-            md-progress-circular(md-mode="indeterminate")
+        md-tabs(md-stretch-tabs="auto", md-dynamic-height=true)
+            md-tab(label="Biopsy")
 
-        div(layout="column", ng-hide="loading").material-table
-            div(layout="row").head
-                div(flex=10) Patient ID
-                div(flex=15) Sample
-                div(flex=25) Disease
-                div(flex=10) Taxonomy
-                div(flex=10) Sex
-                div(flex=30) Anatomic Site
-            div(layout="row", ng-repeat="source in sources").row
-                div(flex=10) {{source.participant_study_id}}
-                div(flex=15) {{source.original_source_name}}
-                div(flex=25) {{source.disease}}
-                div(flex=10) {{source.taxonomy}}
-                div(flex=10) {{source.sex}}
-                div(flex=30) {{source.anatomic_site}}
+                div(layout="column")
+
+                    div(ng-show="loading.library", layout="row", layout-align="center center")
+                        md-progress-circular(md-mode="indeterminate")
+
+                    div(ng-hide="loading.library", layout="column")
+
+                        div(layout="row").libDetails
+                            div(flex=30) Biopsy Date
+                            div(flex, ng-if="analysis.biopsy_date") {{analysis.biopsy_date | amDateFormat: 'dddd MMMM Do YYYY'}}
+                            div(flex, ng-if="!analysis.biopsy_date") N/A
+
+                        div(layout="row").libDetails
+                            div(flex=30) Disease
+                                span.clickable &nbsp;(3LC)
+                                    md-tooltip Three Letter (Cancer Group) Code
+                            div(flex) {{analysis.disease}} ({{analysis.threeLetterCode}})
+
+                        div(layout="row").libDetails
+                            div(flex=30) Biopsy Notes
+                            div(flex) {{analysis.biopsy_notes}}
+
+                        div(layout="row").libDetails
+                            div(flex=30) Clinspec #
+                            div(flex) {{analysis.clinical_biopsy}}
+
+                        div(layout="row").libDetails
+                            div(flex=30) Submitted to Onco-Panel
+                            div(flex) {{analysis.onco_panel_submitted || 'Not Submitted'}}
+
+                        div(layout="row").libDetails
+                            div(flex=30) Analysis Biopsy #
+                            div(flex) {{analysis.analysis_biopsy}}
+
+                        div(layout="row").libDetails
+                            div(flex=30) Normal Library
+                            div(flex) {{analysis.libraries.normal}}
+
+                        div(layout="row").libDetails
+                            div(flex=30) Tumour Library
+                            div(flex) {{analysis.libraries.tumour}}
+
+                        div(layout="row").libDetails
+                            div(flex=30) Transcriptome Library
+                            div(flex) {{analysis.libraries.transcriptome}}
+
+                        div(layout="row").libDetails
+                            div(flex=30) Genomic Report Bioinformatics Due
+                            div(flex) N/A
+
+                        div(layout="row").libDetails
+                            div(flex=30) Genomic Report Analysis Due
+                            div(flex, ng-if="!analysis.date_analysis") TBD
+                            div(flex, ng-if="analysis.date_analysis") {{analysis.date_analysis | amDateFormat: 'dddd MMMM Do YYYY'}}
+
+                        div(layout="row").libDetails
+                            div(flex=30) Tumour Panel Presentation Date
+                            div(flex, ng-if="!analysis.date_presentation") TBD
+                            div(flex, ng-if="analysis.date_presentation") {{analysis.date_presentation | amDateFormat: 'dddd MMMM Do YYYY'}}
+
+                        div(layout="row").libDetails
+                            div(flex=30) Notes
+                            div(flex) {{analysis.notes}}
+
+
+
+            md-tab(label="Sources")
+
+                p All source data available in LIMS regarding this POG case. NOTE: LIMS does not track biopsies independently. If this POG has multiple biopsies, all entries will be included.
+
+                div(ng-if="loading", layout="row", layout-align="center start")
+                    md-progress-circular(md-mode="indeterminate")
+
+                div(layout="column", ng-hide="loading").material-table
+                    div(layout="row").head
+                        div(flex=10) Patient ID
+                        div(flex=15) Sample
+                        div(flex=25) Disease
+                        div(flex=10) Taxonomy
+                        div(flex=10) Sex
+                        div(flex=20)
+                            span.clickable [D/N]&nbsp;
+                                md-tooltip Diseased vs. Normal
+                            span Anatomic Site
+                        div(flex=10) Collection Date
+                    div(layout="row", ng-repeat="source in sources").row
+                        div(flex=10) {{source.participant_study_id}}
+                        div(flex=15) {{source.original_source_name}}
+                        div(flex=25) {{source.disease}}
+                        div(flex=10) {{source.taxonomy}}
+                        div(flex=10) {{source.sex}}
+                        div(flex=20)
+                            span.clickable [{{source.disease_status.substring(0,1)}}]&nbsp;
+                                md-tooltip {{source.disease_status}}
+                            span {{source.anatomic_site}}
+                        div(flex=10) {{source.sample_collection_time | amDateFormat: 'YYYY-MM-DD' }}
 
     md-dialog-actions(layout="row", layout-aligh="end center")
         span(flex)

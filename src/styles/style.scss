@@ -92,6 +92,8 @@ md-dialog.editor {
 .red { color: rgb(223, 40, 22) }
 .green { color: rgb(43, 174, 87) }
 .blue { color: rgb(70, 90, 203) }
+.grey { color: rgb(100, 100, 100) }
+.lt-grey { color: rgb(150, 150, 150) }
 
 .link {
   color: rgb(70, 90, 203);
@@ -124,19 +126,27 @@ md-dialog.editor {
 
 .text-red { color: rgba(255,0,0,1); }
 
+.margin-top-5 {margin-top: 5px;}
 .margin-top-10 {margin-top: 10px;}
+.margin-top-15 {margin-top: 15px;}
 .margin-top-20 {margin-top: 20px;}
 .margin-top-30 {margin-top: 30px;}
 .margin-top-40 {margin-top: 40px;}
+.margin-right-5 {margin-right: 5px;}
 .margin-right-10 {margin-right: 10px;}
+.margin-right-15 {margin-right: 15px;}
 .margin-right-20 {margin-right: 20px;}
 .margin-right-30 {margin-right: 30px;}
 .margin-right-40 {margin-right: 40px;}
+.margin-bottom-5 {margin-bottom: 5px;}
 .margin-bottom-10 {margin-bottom: 10px;}
+.margin-bottom-15 {margin-bottom: 15px;}
 .margin-bottom-20 {margin-bottom: 20px;}
 .margin-bottom-30 {margin-bottom: 30px;}
 .margin-bottom-40 {margin-bottom: 40px;}
+.margin-left-5 {margin-left: 5px;}
 .margin-left-10 {margin-left: 10px;}
+.margin-left-15 {margin-left: 15px;}
 .margin-left-20 {margin-left: 20px;}
 .margin-left-30 {margin-left: 30px;}
 .margin-left-40 {margin-left: 40px;}
@@ -150,7 +160,17 @@ md-dialog.editor {
 .padding-left-10 { padding-left: 10px; }
 .padding-left-15 { padding-left: 15px; }
 .padding-left-20 { padding-left: 20px; }
+.padding-top-5 { padding-top: 5px; }
+.padding-top-10 { padding-top: 10px; }
+.padding-top-15 { padding-top: 15px; }
+.padding-top-20 { padding-top: 20px; }
+.padding-bottom-5 { padding-bottom: 5px; }
+.padding-bottom-10 { padding-bottom: 10px; }
+.padding-bottom-15 { padding-bottom: 15px; }
+.padding-bottom-20 { padding-bottom: 20px; }
+.padding-5 { padding: 5px; }
 .padding-10 { padding: 10px; }
+.padding-15 { padding: 15px; }
 .padding-20 { padding: 20px; }
 .padding-30 { padding: 30px; }
 

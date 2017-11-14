@@ -1,14 +1,17 @@
 app.controller('controller.dashboard.tracking.board',
-['$q', '_', '$scope', 'api.tracking.definition', 'api.tracking.state', 'api.tracking.task', '$mdDialog', '$mdToast', 'states', 'definitions', 'api.socket',
-($q, _, $scope, $definition, $state, $task, $mdDialog, $mdToast, states, definitions, socket) => {
+['$q', '_', '$scope', 'api.tracking.definition', 'api.tracking.state', 'api.tracking.task', '$mdDialog', '$mdToast', '$userSettings', 'states', 'definitions', 'myDefinitions', 'api.socket',
+($q, _, $scope, $definition, $state, $task, $mdDialog, $mdToast, $userSettings, states, definitions, myDefinitions, socket) => {
 
-  $scope.definitions = definitions;
+  $scope.allDefinitions = definitions; // All definitions for picking from
+  $scope.definitions = myDefinitions; // Definitions set by user
   $scope.sortedStates = {};
   $scope.filter = {
     hidden: false,
-    status: ['complete','active','hold']
+    state: ($userSettings.get('tracking.state')) ? $userSettings.get('tracking.state') : {status: ['active', 'pending', 'hold', 'failed']},
+    definition: ($userSettings.get('tracking.definition')) ? $userSettings.get('tracking.definition') : {slug: ['projects', 'sequencing', 'bioapps'], hidden: false},
   };
-
+  $scope.refreshing = false;
+  
   socket.on('taskStatusChange', (task) => {
 
     let s = _.findKey($scope.sortedStates[task.state.slug], (s) => {
@@ -24,18 +27,23 @@ app.controller('controller.dashboard.tracking.board',
   });
 
   // Sort States
-  let sortStates = (statsInput) => {
+  let sortStates = (statesInput) => {
 
     $scope.sortedStates = {};
 
-    _.forEach(statsInput, (s) => {
-
+    _.forEach(statesInput, (s) => {
       if(!$scope.sortedStates[s.slug]) $scope.sortedStates[s.slug] = [];
-
       $scope.sortedStates[s.slug].push(s);
-
     });
 
+  };
+  
+  $scope.toggleDefFilter = (def) => {
+    if($scope.filter.definition.slug.indexOf(def.slug) > -1) {
+      $scope.filter.definition.slug.splice($scope.filter.definition.slug.indexOf(def.slug), 1);
+    }else {
+      $scope.filter.definition.slug.push(def.slug);
+    }
   };
 
   $scope.searchPogs = (definition, query) => {
@@ -60,23 +68,41 @@ app.controller('controller.dashboard.tracking.board',
 
     };
   };
-
+  
+  // When the options panel closes, refresh the cases
+  $scope.$watch('showOptions', (newVal, oldVal) => {
+    if(oldVal === true && newVal === false) $scope.refreshList();
+  });
+  
 
   // Refresh Definitions
   $scope.refreshList = () => {
-
     let opts = {
-      params: {
-        hidden: $scope.filter.hidden
-      }
+      hidden: $scope.filter.hidden,
+      slug: _.join($scope.filter.definition.slug, ',')
     };
-
-    console.log('Options', opts);
-
+    
+    $scope.refreshing = true;
+    
     $definition.all(opts).then(
       (result) => {
         $scope.definitions = result;
-        sortStates(states);
+        
+        $userSettings.save('tracking.definition', $scope.filter.definition);
+        
+        $state.all({status: _.join($scope.filter.state.status, ','), slug: _.join($scope.filter.definition.slug, ',')})
+          .then((result) => {
+            sortStates(result);
+            $scope.refreshing = false;
+            
+            $userSettings.save('tracking.state', $scope.filter.state);
+            
+          })
+          .catch((err) => {
+            console.log('Failed to get updated tracking data: ', err);
+            $mdToast.showSimple('Unable to get latest tracking data');
+          });
+        
       },
       (err) => {
         console.log('Failed to get updated definitions', err);

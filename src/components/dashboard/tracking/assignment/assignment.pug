@@ -1,6 +1,9 @@
 md-content(flex, layout="column", layout-fill).md-padding.assignment
 
     h1.md-title Task Assignment - {{definition.name}}
+        span(ui-sref="dashboard.tracking.ticket_template({definition: definition.ident })").options.pull-right.clickable
+            span.text-small Manage Ticket Templates
+            md-icon view_quilt
     h2.subtitle {{group.name}}
 
     p Cases that need user assignts for one or more tasks will appear on the left. Selecting a case will Allow you to assign the tasks to a given user.

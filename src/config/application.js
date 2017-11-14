@@ -33,6 +33,12 @@ app.run(($rootScope) => {
 
 });
 
+app.config(function($mdDateLocaleProvider) {
+  $mdDateLocaleProvider.formatDate = function(date) {
+    return date ? moment(date).format('YYYY-MM-DD') : '';
+  };
+});
+
 /*
 app.factory('httpLoadSpinner', ['$q', '$rootScope', '$injector', ($q, $rootScope, $injector) => {
 
