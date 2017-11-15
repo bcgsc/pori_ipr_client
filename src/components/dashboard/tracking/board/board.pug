@@ -33,8 +33,6 @@ md-content(flex, layout="column").md-padding.trackingBoard
                 div(style="max-height: 250px; overflow-y:auto; border: 1px solid rgb(210,210,210); padding: 10px;", layout="column")
                     md-checkbox(ng-repeat="def in allDefinitions", ng-click="toggleDefFilter(def)", ng-checked="filter.definition.slug.indexOf(def.slug) > -1") {{def.name}}
 
-            p {{filter.definition.slug}}
-
     h1.md-title(layout="row")
         span(flex) POG Tracking
         span(flex, layout="row", layout-align="end end")
