@@ -4,9 +4,7 @@ app.controller('controller.dashboard.user.groups.edit', ['$q', '_', '$scope', '$
   scope.group = editGroup;
   scope.newGroup = newGroup;
   scope.groupDelete = groupDelete;
-
-  console.log('Group Diag', newGroup);
-
+  
   // Creating new user
   if(newGroup) {
     scope.group = {
@@ -108,9 +106,7 @@ app.controller('controller.dashboard.user.groups.edit', ['$q', '_', '$scope', '$
     }
 
     scope.group.owner = scope.group.owner.ident;
-
-    console.log('Submitting', scope.group);
-
+    
     // Send updated user to api
     if(!newGroup) {
       $user.group.update(scope.group.ident, scope.group).then(

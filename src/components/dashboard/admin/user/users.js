@@ -36,9 +36,7 @@ app.controller('controller.dashboard.admin.users',
   };
 
   $scope.groupDiag = ($event, editGroup, newGroup=false) => {
-
-    console.log('Edit Group', editGroup, newGroup);
-
+    
     $mdDialog.show({
       targetEvent: $event,
       templateUrl: 'dashboard/admin/user/group.edit.html',
@@ -54,8 +52,6 @@ app.controller('controller.dashboard.admin.users',
         $mdToast.show($mdToast.simple().textContent('The group has been added'));
 
         if(newGroup) {
-          console.log('Adding new group', resp.data, $scope.groups);
-
           $scope.groups.push(resp.data);
           $scope.groups = _.sortBy($scope.groups, 'name');
         }
