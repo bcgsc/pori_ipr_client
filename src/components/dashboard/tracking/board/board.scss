@@ -124,6 +124,20 @@ md-content.trackingBoard {
 
   }
 
+  .toast-center-loading {
+    background-color: rgba(0,0,0,0.30);
+    border-radius: 4px;
+
+    padding: 3px 9px;
+    margin-bottom: 10px;
+
+    position: absolute;
+    left: 46%;
+    bottom: 0;
+
+    color: white;
+    font-size: 11px;
+  }
 
 }
 
