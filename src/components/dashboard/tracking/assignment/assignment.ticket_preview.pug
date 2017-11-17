@@ -68,6 +68,25 @@ md-dialog(layout="column", aria-label="Ticket Preview", flex-md=85, flex-xs=100,
                             img(src="{{parseStatus(task.status).image}}")
                         td {{task.checkins[0].outcome || '-'}}
 
+            table
+                tbody
+                    tr
+                        td
+                            img(src="{{parseStatus('pending').image}}")
+                            | &nbsp;Pending
+                        td
+                            img(src="{{parseStatus('active').image}}")
+                            | &nbsp;Active
+                        td
+                            img(src="{{parseStatus('complete').image}}")
+                            | &nbsp;Complete
+                        td
+                            img(src="{{parseStatus('failed').image}}")
+                            | &nbsp;Failed
+                        td
+                            img(src="{{parseStatus('hold').image}}")
+                            | &nbsp;Hold
+
 
 
     md-dialog-actions(layout="row", layout-aligh="end center")

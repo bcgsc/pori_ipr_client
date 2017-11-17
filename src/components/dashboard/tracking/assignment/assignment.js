@@ -16,6 +16,7 @@ app.controller('controller.dashboard.tracking.assignment',
   // Click state becomes active
   $scope.selectState = (state) => {
     $scope.assign = state;
+    if(state.jira) $scope.ticket.create = false;
   };
 
   // Cancel editing the selected state
@@ -76,7 +77,16 @@ app.controller('controller.dashboard.tracking.assignment',
                     .then((result) => {
                       $scope.ticket.created = result;
                       $scope.assign.submitting = false;
-                      $scope.assign.jira = result.key;
+                      $scope.assign.jira = {ticket: result.key};
+                      
+                      $state.update($scope.assign.ident, $scope.assign)
+                        .then((result) => {
+                          console.log('Updated state!', result);
+                        })
+                        .catch((err) => {
+                          console.log('Unable to save ticket to state', err);
+                        });
+                      
                     })
                     .catch((err) => {
                       $mdToast.showSimple('Failed to create JIRA ticket!');
@@ -147,7 +157,8 @@ app.controller('controller.dashboard.tracking.assignment',
       response.type = template.issueType;
       response.options = {
         labels: template.tags,
-        components: _.map(template.components, (c) => { return {name: c}})
+        components: _.map(template.components, (c) => { return {name: c}}),
+        security: template.security
       };
       
       // Call API to get extended
@@ -185,6 +196,9 @@ app.controller('controller.dashboard.tracking.assignment',
           });
           
           response.description += "\n\n";
+  
+          response.description += `| ${parseStatus('pending').string} Pending | ${parseStatus('active').string} Active | ${parseStatus('complete').string} Complete | ${parseStatus('failed').string} Failed | ${parseStatus('hold').string} Hold |\n\n`;
+          
           response.description += "{panel:title=Case Notes|borderStyle=solid|borderColor=#ccc|titleBGColor=#f5f5f5|bgColor=#FFFFFF}\n";
           response.description += "None.\n";
           response.description += "{panel}\n\n\n";
@@ -266,7 +280,7 @@ app.controller('controller.dashboard.tracking.assignment',
         response = {string: '(/)', image: 'https://bcgsc.ca/jira/images/icons/emoticons/check.png'};
         break;
       case 'hold':
-        response = {string: '(i)', image: 'https://bcgsc.ca/jira/images/icons/emoticons/warning.png'};
+        response = {string: '(!)', image: 'https://bcgsc.ca/jira/images/icons/emoticons/warning.png'};
         break;
       case 'failed':
       case 'cancelled':

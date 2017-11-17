@@ -35,17 +35,22 @@ md-content(flex, layout="column", layout-fill).md-padding.assignment
                                 md-input-container(flex=15, layout="center start")
                                     md-button(ng-disabled="assign.user === null || assign.user === undefined || assign.submitting", ng-click="assignUsers()").md-primary.md-raised Assign
 
-                            div(ng-if="assign.jira")
-                                p
-                                    a(href="https://www.bcgsc.ca/jira/browse/{{assign.jira}}", target="_blank") Open {{assign.jira}}
+                            div(ng-if="assign.jira", layout="row", layout-align="center center")
+                                div(layout="row", flex=60).jiraTicket
+                                    div(flex=20)
+                                        div.icon
+                                    div(flex).link
+                                        a(href="https://www.bcgsc.ca/jira/browse/{{assign.jira.ticket}}", target="_blank") {{assign.jira.ticket}}
 
                             div(layout="row", ng-show="assign.submitting")
                                 p Assigning Users
                                     span(ng-if="ticket.create") &nbsp;&amp; creating JIRA ticket
                                     | ...
-                            div(layout="row", ng-hide="assign.submitting")
+
+
+                            div(layout="row", ng-hide="assign.submitting || assign.jira")
                                 md-input-container(flex=30)
-                                    md-switch(ng-model="ticket.create") Create JIRA Ticket
+                                    md-switch(ng-model="ticket.create", ng-disabled="assign.jira") Create JIRA Ticket
                                 md-input-container(flex)
                                     label Ticket Template
                                     md-select(ng-model="ticket.template")
@@ -57,10 +62,10 @@ md-content(flex, layout="column", layout-fill).md-padding.assignment
                                 h2 Tasks
                                 div(flex).tasks
                                     div(layout="row").task.no-status
-                                        md-checkbox(ng-model="selectAll", ng-init="selectAll = false", aria-label="Select All", ng-change="selectAllChanged()")
+                                        md-checkbox(ng-model="selectAll", ng-init="selectAll = true", aria-label="Select All", ng-change="selectAllChanged()")
                                         span.int -
-                                        h3(flex) Select All
-                                    div(layout="row", ng-repeat="(i, task) in assign.tasks", class="{{task.status}}").task
+                                        h3(flex) All Tasks
+                                    div(layout="row", ng-repeat="(i, task) in assign.tasks", class="{{task.status}}", ng-hide="selectAll").task
                                         md-checkbox(ng-model="assign.taskSelection[task.ident]", ng-init="assign.taskSelection[task.ident] = false", aria-label="Checkbox 1")
                                         span.int {{i+1}}.
                                         h3(flex, ng-click="assign.taskSelection[task.ident] = !assign.taskSelection[task.ident]") {{task.name}}

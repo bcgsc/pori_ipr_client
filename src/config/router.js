@@ -1086,7 +1086,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       controller: 'controller.dashboard.tracking.board',
       templateUrl: 'dashboard/tracking/board/board.html',
       resolve: {
-        states: ['$q', '_', 'api.tracking.state', '$userSettings', ($q, _, $state, $userSettings) => {
+        states: ['$q', '_', 'api.tracking.state', 'user', '$userSettings', ($q, _, $state, user, $userSettings) => {
           return $state.all({status: ($userSettings.get('tracking.state')) ? _.join($userSettings.get('tracking.state').status, ',') : 'pending,active,hold,failed'});
         }]
       }
