@@ -1,5 +1,7 @@
 md-content(flex, layout="column").md-padding.trackingBoard
 
+    span(ng-show="tracking_loading").toast-center-loading Refreshing Tracking Data
+
     md-sidenav(md-is-open="showOptions", md-whiteframe=4).md-sidenav-right
         md-toolbar
             h1.md-toolbar-tools Options

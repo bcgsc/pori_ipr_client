@@ -54,7 +54,7 @@ app.controller('controller.dashboard.admin.users.groups', ['_', '$scope', '$mdSi
       (resp) => {
         $mdToast.show($mdToast.simple().textContent(resp.message));
         _.forEach($scope.groups, (g,i)=>{
-          if(g.ident == resp.data.ident) $scope.groups[i] = resp.data;
+          if(g.ident === resp.data.ident) $scope.groups[i] = resp.data;
         });
 
         if(newGroup) {

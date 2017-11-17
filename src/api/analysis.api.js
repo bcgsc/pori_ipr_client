@@ -37,6 +37,30 @@ app.factory('api.analysis', ['_', '$http', '$q', (_, $http, $q) => {
     
   };
   
+  /**
+   * Get Extended Analysis data for the provided ident
+   *
+   * @param {object} ident - UUID string to get extended analysis for
+   * @returns {promise} - Resolves with object
+   */
+  $analysis.extended = (ident) => {
+    return $q((resolve, reject) => {
+      
+      // Retrieve from API
+      $http.get(`${api}/extended/${ident}`).then(
+        (result) => {
+          resolve(result.data);
+        },
+        (error) => {
+          // TODO: Better error handling
+          reject(error);
+        }
+      );
+      
+    });
+    
+  };
+  
   
   /**
    * Add a new biopsy entry to API

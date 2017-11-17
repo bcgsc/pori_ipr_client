@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.tracking.board',
-['$q', '_', '$scope', 'api.tracking.definition', 'api.tracking.state', 'api.tracking.task', '$mdDialog', '$mdToast', '$userSettings', 'states', 'definitions', 'myDefinitions', 'api.socket',
-($q, _, $scope, $definition, $state, $task, $mdDialog, $mdToast, $userSettings, states, definitions, myDefinitions, socket) => {
+['$q', '_', '$scope', 'api.tracking.definition', 'api.tracking.state', 'api.tracking.task', '$interval', '$mdDialog', '$mdToast', '$userSettings', 'states', 'definitions', 'myDefinitions', 'api.socket',
+($q, _, $scope, $definition, $state, $task, $interval, $mdDialog, $mdToast, $userSettings, states, definitions, myDefinitions, socket) => {
 
   $scope.allDefinitions = definitions; // All definitions for picking from
   $scope.definitions = myDefinitions; // Definitions set by user
@@ -11,6 +11,7 @@ app.controller('controller.dashboard.tracking.board',
     definition: ($userSettings.get('tracking.definition')) ? $userSettings.get('tracking.definition') : {slug: ['projects', 'sequencing', 'bioapps'], hidden: false},
   };
   $scope.refreshing = false;
+  $scope.tracking_loading = false;
   
   socket.on('taskStatusChange', (task) => {
 
@@ -74,15 +75,20 @@ app.controller('controller.dashboard.tracking.board',
     if(oldVal === true && newVal === false) $scope.refreshList();
   });
   
-
-  // Refresh Definitions
-  $scope.refreshList = () => {
+  
+  /**
+   * Reload tracking data from API
+   *
+   * @param {boolean} ninja - If true, do the update transparently
+   */
+  $scope.refreshList = (ninja=false) => {
     let opts = {
       hidden: $scope.filter.hidden,
       slug: _.join($scope.filter.definition.slug, ',')
     };
     
-    $scope.refreshing = true;
+    if(!ninja) $scope.refreshing = true;
+    $scope.tracking_loading = true;
     
     $definition.all(opts).then(
       (result) => {
@@ -94,6 +100,7 @@ app.controller('controller.dashboard.tracking.board',
           .then((result) => {
             sortStates(result);
             $scope.refreshing = false;
+            $scope.tracking_loading = false;
             
             $userSettings.save('tracking.state', $scope.filter.state);
             
@@ -208,8 +215,11 @@ app.controller('controller.dashboard.tracking.board',
 
   };
 
-
-
   sortStates(states);
+  
+  // Start polling states for updates
+  $interval(() => {
+    $scope.refreshList(true);
+  }, 30000);
 
 }]);
