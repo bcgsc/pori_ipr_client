@@ -75,15 +75,19 @@ app.controller('controller.dashboard.tracking.board',
     if(oldVal === true && newVal === false) $scope.refreshList();
   });
   
-
-  // Refresh Definitions
-  $scope.refreshList = () => {
+  
+  /**
+   * Reload tracking data from API
+   *
+   * @param {boolean} ninja - If true, do the update transparently
+   */
+  $scope.refreshList = (ninja=false) => {
     let opts = {
       hidden: $scope.filter.hidden,
       slug: _.join($scope.filter.definition.slug, ',')
     };
     
-    $scope.refreshing = true;
+    if(!ninja) $scope.refreshing = true;
     $scope.tracking_loading = true;
     
     $definition.all(opts).then(
@@ -215,7 +219,7 @@ app.controller('controller.dashboard.tracking.board',
   
   // Start polling states for updates
   $interval(() => {
-    $scope.refreshList();
+    $scope.refreshList(true);
   }, 30000);
 
 }]);
