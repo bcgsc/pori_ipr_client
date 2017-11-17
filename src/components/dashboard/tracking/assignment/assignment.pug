@@ -4,9 +4,8 @@ md-content(flex, layout="column", layout-fill).md-padding.assignment
         span(ui-sref="dashboard.tracking.ticket_template({definition: definition.ident })").options.pull-right.clickable
             span.text-small Manage Ticket Templates
             md-icon view_quilt
-    h2.subtitle {{group.name}}
 
-    p Cases that need user assignts for one or more tasks will appear on the left. Selecting a case will Allow you to assign the tasks to a given user.
+    p Cases that need user assignts for one or more tasks will appear on the left. Selecting a case will Allow you to assign the tasks to a given user.&nbsp
         | The listing on the bottom right indicates the current workload of all team members.
 
     div(layout="column", flex).editor
@@ -28,13 +27,31 @@ md-content(flex, layout="column", layout-fill).md-padding.assignment
                     div(layout="column", flex=95)
                         form(name="UserAssignment", novalidate)
                             div(layout="row")
-                                h1.md-title {{assign.analysis.pog.POGID}} - {{assign.analysis.name}}
+                                h1.md-title {{assign.analysis.pog.POGID}} - {{assign.analysis.analysis_biopsy || assign.analysis.clinical_biopsy}}
                             div(layout="row")
                                 md-input-container(flex)
                                     md-select(ng-model="assign.user", aria-label="User to assign", required, placeholder="User to assign")
                                         md-option(ng-repeat="user in group.users", ng-value="user.ident") {{user.firstName}} {{user.lastName}}
                                 md-input-container(flex=15, layout="center start")
                                     md-button(ng-disabled="assign.user === null || assign.user === undefined || assign.submitting", ng-click="assignUsers()").md-primary.md-raised Assign
+
+                            div(ng-if="assign.jira")
+                                p
+                                    a(href="https://www.bcgsc.ca/jira/browse/{{assign.jira}}", target="_blank") Open {{assign.jira}}
+
+                            div(layout="row", ng-show="assign.submitting")
+                                p Assigning Users
+                                    span(ng-if="ticket.create") &nbsp;&amp; creating JIRA ticket
+                                    | ...
+                            div(layout="row", ng-hide="assign.submitting")
+                                md-input-container(flex=30)
+                                    md-switch(ng-model="ticket.create") Create JIRA Ticket
+                                md-input-container(flex)
+                                    label Ticket Template
+                                    md-select(ng-model="ticket.template")
+                                        md-option(ng-value="template.ident", ng-repeat="template in ticket_templates") {{template.name}}
+                                md-input-container(flex=15)
+                                    md-button(ng-click="preview_ticket(assign.analysis, assign.tasks)").md-primary.md-raised Preview Ticket
 
                             div(layout="column")
                                 h2 Tasks
