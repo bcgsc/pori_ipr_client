@@ -44,7 +44,7 @@ md-dialog(layout="column", aria-label="Analysis/Biopsy Details", flex=80, flex-g
 
                         div(layout="row").libDetails
                             div(flex=30) Analysis Biopsy #
-                            div(flex) {{analysis.analysis_biopsy}}
+                            div(flex) {{analysis.analysis_biopsy || 'Not yet available'}}
 
                         div(layout="row").libDetails
                             div(flex=30) Normal Library
