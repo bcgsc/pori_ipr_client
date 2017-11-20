@@ -94,15 +94,15 @@ app.controller('controller.dashboard.tracking.board',
       (result) => {
         $scope.definitions = result;
         
-        $userSettings.save('tracking.definition', $scope.filter.definition);
+        if(!ninja) $userSettings.save('tracking.definition', $scope.filter.definition);
         
         $state.all({status: _.join($scope.filter.state.status, ','), slug: _.join($scope.filter.definition.slug, ',')})
           .then((result) => {
             sortStates(result);
             $scope.refreshing = false;
             $scope.tracking_loading = false;
-            
-            $userSettings.save('tracking.state', $scope.filter.state);
+  
+            if(!ninja) $userSettings.save('tracking.state', $scope.filter.state);
             
           })
           .catch((err) => {
