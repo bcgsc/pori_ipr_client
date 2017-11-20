@@ -55,7 +55,7 @@ app.factory('api.jira', ['_', '$http', '$q', 'api.user', (_, $http, $q, $user) =
       if(options.components) ticket.fields.components = options.components;
       if(options.parent) ticket.fields.parent = {key: options.parent};
       if(options.labels) ticket.fields.labels = _.map(options.labels, (l) => {return l.replace(/\s+/g, '-')});
-      if(options.security) ticket.fields.security = {id: options.security};
+      if(options.security) ticket.fields.security = {"name": "POG Restricted"};
 
       // Send POST to JIRA
       $http.post(api + '/issue', ticket, {headers: { authorization: undefined}, withCredentials: true}).then(
