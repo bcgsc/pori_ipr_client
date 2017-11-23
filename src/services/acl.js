@@ -164,8 +164,6 @@ app.service('$acl', ['_', 'api.session', 'api.user', (_, $session, $user) => {
      */
     inGroup: (group) => {
       
-      console.log('Looking for group', user.groups, group, _.find(user.groups, {name: group}));
-      
       return !(!_.find(user.groups, {name: group}));
     }
   }

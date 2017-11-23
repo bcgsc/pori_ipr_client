@@ -193,7 +193,6 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       },
       resolve: {
         reports: ['$q', 'permission', '$acl', 'api.pog_analysis_report', ($q, permission, $acl, $report) => {
-          console.log('In Group Clinician', $acl.inGroup('Clinician'));
           if($acl.inGroup('clinician')) return $report.all({states: 'presented', type: 'genomic', project: 'POG'});
           if(!$acl.inGroup('clinician')) return $report.all({states: 'ready,active'});
         }]
