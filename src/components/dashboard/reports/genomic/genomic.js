@@ -26,6 +26,8 @@ app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$rootScope',
   
   // Clinician Mode Override
   if($rootScope._clinicianMode) {
+    $scope.selectedProject = 'POG';
+    if($userSettings.get('selectedProject') === undefined) $userSettings.save('selectedProject', 'POG');
     $scope.states = {
       ready: false,
       active: false,
