@@ -80,7 +80,7 @@ function httpInterceptors($rootScope, $q) {
       switch (response.status) {
         case 500:
           console.log('500 Error');
-          $rootScope.$broadcast('httpError', {message: 'An unexpected error has occred. Please try again.'});
+          $rootScope.$broadcast('httpError', {message: 'An unexpected error has occurred. Please try again.'});
           break;
       
         case 405:

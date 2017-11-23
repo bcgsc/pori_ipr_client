@@ -4,7 +4,7 @@ section.pathwayAnalysis
     div.md-padding
 
         div.window
-            div.upload
+            div(ng-if="SES_permissionAction('report.edit')").upload
                 md-icon(ng-click="update()") file_upload
 
             div(id="svgContainer")

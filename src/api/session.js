@@ -82,15 +82,16 @@ app.factory('api.session', ['_', '$http', '$q', '$localStorage', 'api.user', 'ap
       $http.defaults.headers.common['Authorization'] = token;
       
       // We've got a session token, lets try and get account details
-      $user.me().then((me) => {
-        // Got a good token, store local
-        $session.store(token, me);
-        resolve(me);
-        
-      }, (error) => {
-        // Problem! Bad token
-        reject(error);
-      });
+      $user.me()
+        .then((me) => {
+          // Got a good token, store local
+          $session.store(token, me);
+          resolve(me);
+        })
+        .catch((err) => {
+          console.log('Failed to retrieve user following session init', err);
+          reject({message: 'Failed to initialize session'});
+        });
       
     });
     

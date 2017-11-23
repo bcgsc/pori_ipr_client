@@ -16,6 +16,7 @@ app.controller('controller.dashboard.report.genomic',
       state: 'analystComments',
       meta: false,
       showChildren: false,
+      clinician: true,
       children: []
     },
     {
@@ -23,6 +24,7 @@ app.controller('controller.dashboard.report.genomic',
       state: 'pathwayAnalysis',
       meta: false,
       showChildren: false,
+      clinician: true,
       children: []
     },
     {
@@ -30,6 +32,7 @@ app.controller('controller.dashboard.report.genomic',
       state: 'therapeutic',
       meta: false,
       showChildren: false,
+      clinician: true,
       children: []
     },
     {
@@ -37,6 +40,7 @@ app.controller('controller.dashboard.report.genomic',
       state: null,
       meta: false,
       showChildren: false,
+      clinician: true,
       category: true,
       children: [
         { name: 'Knowledgebase Matches', state: 'knowledgebase'},
@@ -52,6 +56,7 @@ app.controller('controller.dashboard.report.genomic',
       state: null,
       meta: false,
       showChildren: false,
+      clinician: true,
       category: true,
       children: [
         { name: 'Small Mutations', state: 'smallMutations'},
@@ -64,6 +69,7 @@ app.controller('controller.dashboard.report.genomic',
       state: 'expressionAnalysis',
       meta: false,
       showChildren: false,
+      clinician: true,
       children: []
     },
     {
@@ -71,6 +77,7 @@ app.controller('controller.dashboard.report.genomic',
       state: 'appendices',
       meta: false,
       showChildren: false,
+      clinician: true,
       children: []
     },
     {
@@ -78,6 +85,7 @@ app.controller('controller.dashboard.report.genomic',
       state: 'history',
       meta: true,
       showChildren: false,
+      clinician: false,
       children: []
     },
     {
@@ -85,6 +93,7 @@ app.controller('controller.dashboard.report.genomic',
       state: 'meta',
       meta: true,
       showChildren: false,
+      clinician: false,
       children: []
     }
   ];

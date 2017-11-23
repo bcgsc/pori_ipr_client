@@ -5,33 +5,33 @@ md-content(flex, layout="column").md-padding
             h1.md-toolbar-tools Options
         md-content
             md-list
-                md-list-item
+                md-list-item(ng-show="!_clinicianMode")
                     p Select Project
-                    md-select(ng-model="selectedProject", ng-change="refreshList()")
+                    md-select(ng-model="selectedProject", ng-change="refreshList()", aria-label="Select Project")
                         md-option(ng-value="undefined") All
                         md-option(ng-value="project", ng-repeat="project in projects") {{project}}
                 md-list-item
                     p Show only my reports
                     md-switch(ng-model="filter.currentUser", ng-change="refreshList()", ng-false-value="false", ng-true-value="true").md-primary
-                md-list-item
+                //md-list-item
                     p Filter by my role
                     md-select(ng-model="filter.role", placeholder="Roles", ng-change="refreshList()").text-small
                         md-option(ng-value="null") All
                         md-option(ng-repeat="role in roles", ng-value="role") {{role}}
 
-                md-list-item
+                md-list-item(ng-if="!_clinicianMode")
                     p Show Ready for Analysis
                     md-switch(ng-model="states.ready", ng-change="refreshList()", ng-false-value="false", ng-true-value="true").md-primary
-                md-list-item
+                md-list-item(ng-if="!_clinicianMode")
                     p Show Analysis Underway
                     md-switch(ng-model="states.active", ng-change="refreshList()", ng-false-value="false", ng-true-value="true").md-primary
-                md-list-item
+                md-list-item(ng-if="!_clinicianMode")
                     p Show Review/Presented
                     md-switch(ng-model="states.presented", ng-change="refreshList()", ng-false-value="false", ng-true-value="true").md-primary
-                md-list-item
+                md-list-item(ng-if="!_clinicianMode")
                     p Show Archived
                     md-switch(ng-model="states.archived", ng-change="refreshList()", ng-false-value="false", ng-true-value="true").md-primary
-                md-list-item
+                md-list-item(ng-if="!_clinicianMode")
                     p Show Nonproduction
                     md-switch(ng-model="states.nonproduction", ng-change="refreshList()", ng-false-value="false", ng-true-value="true").md-primary
 

@@ -5,37 +5,72 @@
  * managed through this construct.
  *
  */
-app.factory('api.user', ['_', '$http', '$q', (_, $http, $q) => {
+app.service('api.user', ['_', '$http', '$q', (_, $http, $q) => {
 
   const api = CONFIG.ENDPOINTS.API + '/user';
   let _token = null; // User API token
   let _groups = [];
 
   let $user = {};
-  $user._me = null; // Local User Cache
-
+  $user._me = undefined; // Local User Cache
+  
+  
+  /**
+   * Retrieve the authenticated user object
+   *
+   *
+   * @returns {Promise}
+   */
   $user.me = () => {
-
-    return $q((resolve, reject) => {
-      if($user._me) return resolve($user._me);
-      $http.get(api + '/me').then(
-        (self) => {
-          _groups = self.data.groups;
-          $user._me = self.data;
-          resolve($user._me);
-        },
-        (error) => {
-          reject(error);
-        }
-      );
-
+    
+    return new Promise((resolve, reject) => {
+      
+      if($user._me && $user._me.ident) {
+        return resolve($user._me);
+      }
+      
+      // Detect Promise
+      if($user._me && !$user._me.ident) {
+        $user._me
+          .then((self) => {
+            _groups = self.data.groups;
+            $user._me = self.data;
+            resolve($user._me);
+          })
+          .catch((e) => {
+            console.log('Failed to retrieve user', e);
+          });
+      }
+      
+      // Detect not init'd
+      if($user._me === undefined) {
+        $user._me = $http.get(api + '/me');
+  
+        $user._me
+          .then(
+            (self) => {
+              _groups = self.data.groups;
+              $user._me = self.data;
+              resolve($user._me);
+            },
+            (error) => {
+              reject(error);
+            }
+          );
+      }
+      
     });
-
   };
-
+  
+  
+  /**
+   * Check if user is an admin
+   *
+   * @returns {boolean}
+   */
   $user.isAdmin =() => {
     let aGroups = _.filter(_groups, (g) => {
-      if(g.name == 'superUser' || g.name == 'admin') return g;
+      if(g.name === 'superUser' || g.name === 'admin') return g;
     });
 
     return (aGroups.length > 0)
