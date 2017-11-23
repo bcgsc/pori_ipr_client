@@ -36,6 +36,7 @@ app.controller('controller.dashboard.toolbar',
             })
             .catch((err) => {
               $userSettings.save('holiday_lights', false);
+              $scope.holiday_lights = false;
             });
         }, 2000)
       }
