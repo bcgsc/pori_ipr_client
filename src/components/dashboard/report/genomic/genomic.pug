@@ -7,27 +7,6 @@ md-content(flex).md-padding
     div(layout="row", flex).pog-report
         div(flex, ui-view="")
 
-        //md-content(flex="20", layout="column", ng-show="showSideBar", ng-init="showSideBar=true").reportSections
-            div
-                md-list(layout-align="start start", id="reportSections")
-                    md-subheader Report Sections
-                    md-list-item(ng-click="goToReportSection('summary')", ng-class="activeSection({state: 'summary'}) ? 'active' : ''") Summary
-                        md-icon(ng-click="openPrint()", aria-label="Print Summary Section").md-secondary print
-                    md-list-item(
-                    ng-repeat="section in sections",
-                    ng-click="goToReportSection(section.state)",
-                    ng-class="{active: activeSection(section), meta: section.meta}"
-                    ) {{section.name}}
-
-                        md-list-item(
-                        ng-if="section.children.length > 0",
-                        ng-show="section.showChildren",
-                        ng-repeat="child in section.children",
-                        ng-click="goToReportSection(child.state)"
-                        ).child {{child.name}}
-
-                    md-list-item(ng-click="goToReportSection('history')", ng-class="activeSection({state: 'history'}) ? 'active' : ''").meta History
-
 
         div(flex=20)
             div.reportMenu
@@ -37,7 +16,7 @@ md-content(flex).md-padding
                         span(ng-click="goToReportSection('summary')", ng-class="activeSection('summary') ? 'active' : ''").clickable Summary
                             md-icon(ng-click="openPrint()", aria-label="Print Summary Section").md-secondary print
 
-                    li(ng-repeat="section in sections", ng-init='section.showChildren = false')
+                    li(ng-repeat="section in sections", ng-init='section.showChildren = false', ng-hide="!section.clinician && !SES_permissionAction('report.edit')")
 
                         span(
                         ng-click="(section.children.length === 0) ? goToReportSection(section.state) : section.showChildren = !section.showChildren",

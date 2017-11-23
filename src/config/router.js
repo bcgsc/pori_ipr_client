@@ -100,10 +100,12 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         breadcrumbProxy: 'dashboard.reports'
       },
 			resolve: {
-			  user: ['$q', 'api.session', '$state', '$userSettings', 'api.socket', ($q, $session, $state, $userSettings, socket) => {
+			  user: ['$q', 'api.session', 'api.user', '$state', '$userSettings', 'api.socket', ($q, $session, $user, $state, $userSettings, socket) => {
 			    return $q((resolve, reject) => {
 			      // Attempt session initialization
-			      $session.init().then(
+			      $session.init()
+              .then($user.me())
+              .then(
 			        (user) => {
                 // Session init'd, return user
                 $userSettings.init(); // Init settings
@@ -157,6 +159,23 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       data: {
         displayName: 'Reports',
         breadcrumbProxy: 'dashboard.reports.dashboard'
+      },
+      resolve: {
+		    permission: ['$q', '$acl', '$state', 'user', '$mdToast', ($q, $acl, $state, user, $mdToast) => {
+		      return $q((resolve, reject) => {
+          
+		        // Passing option user to avoid delay problem
+		        if(!$acl.action('report.view', user)) {
+		          $mdToast.showSimple('You are not allowed to view reports');
+		          $state.go('dashboard.home');
+      
+              resolve(false);
+            } else {
+              resolve(true);
+            }
+		        
+          });
+        }]
       }
 		})
 
@@ -173,8 +192,10 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         }
       },
       resolve: {
-        reports: ['$q', 'api.pog_analysis_report', ($q, $report) => {
-          return $report.all({states: 'ready,active'});
+        reports: ['$q', 'permission', '$acl', 'api.pog_analysis_report', ($q, permission, $acl, $report) => {
+          console.log('In Group Clinician', $acl.inGroup('Clinician'));
+          if($acl.inGroup('clinician')) return $report.all({states: 'presented', type: 'genomic', project: 'POG'});
+          if(!$acl.inGroup('clinician')) return $report.all({states: 'ready,active'});
         }]
       }
     })

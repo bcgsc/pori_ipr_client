@@ -4,7 +4,7 @@ section
     div(layout="column").analystComments
 
         div(flex=10)
-            md-button(ng-click="updateComments()").md-icon-button.edit-icon
+            md-button(ng-if="SES_permissionAction('report.edit')", ng-click="updateComments()").md-icon-button.edit-icon
                 md-icon edit
         div(ng-bind-html="commentsHTML || '<h2>Report Draft</h2> <br /> No comments yet.'")
     //div Updated by: [name] on {{analystComments.updatedAt}}
@@ -17,7 +17,7 @@ section
             div(flex=25, layout="column")
                 h5 Author
                 div(flex, layout="row")
-                    span(ng-show="comments.authorSignature.ident === null", layout="row", layout-align="start center", ng-click="sign('author')").clickable
+                    span(ng-if="SES_permissionAction('report.edit')", ng-show="comments.authorSignature.ident === null", layout="row", layout-align="start center", ng-click="sign('author')").clickable
                         md-icon(style="margin-right: 5px;") gesture
                         span Sign
                     span(ng-show="comments.authorSignature.ident") {{comments.authorSignature.firstName}} {{comments.authorSignature.lastName}}
@@ -28,7 +28,7 @@ section
                     span.context {{comments.authorSignedAt | amDateFormat: 'dddd, MMMM Do YYYY HH:mm'}}
             div(flex)
             div(layout="column", layout-align="start start").options
-                div(ng-if="comments.authorSignature.ident")
+                div(ng-if="comments.authorSignature.ident && SES_permissionAction('report.edit')")
                     md-icon(ng-click="revokeSign('author')") remove_circle
                         md-tooltip Remove signing
 
@@ -36,7 +36,7 @@ section
             div(flex=25, layout="column")
                 h5 Reviewer
                 div(flex, layout="row")
-                    span(ng-show="comments.reviewerSignature.ident === null", layout="row", layout-align="start center", ng-click="sign('reviewer')").clickable
+                    span(ng-if="SES_permissionAction('report.edit')", ng-show="comments.reviewerSignature.ident === null", layout="row", layout-align="start center", ng-click="sign('reviewer')").clickable
                         md-icon(style="margin-right: 5px;") gesture
                         span Sign
                     span(ng-show="comments.reviewerSignature.ident") {{comments.reviewerSignature.firstName}} {{comments.reviewerSignature.lastName}}
@@ -46,6 +46,6 @@ section
                     span.context {{comments.reviewerSignedAt | amDateFormat: 'dddd, MMMM Do YYYY HH:mm'}}
             div(flex)
             div(layout="column", layout-align="start start").options
-                div(ng-if="comments.reviewerSignature.ident")
+                div(ng-if="comments.reviewerSignature.ident && SES_permissionAction('report.edit')")
                     md-icon(ng-click="revokeSign('reviewer')") remove_circle
                         md-tooltip Remove signing

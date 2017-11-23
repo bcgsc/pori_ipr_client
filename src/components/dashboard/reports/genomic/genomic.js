@@ -1,4 +1,4 @@
-app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$scope', 'api.pog_analysis_report', 'reports', '$mdDialog', 'user', '$userSettings', 'projects',  (_, $q, $scope, $report, reports, $mdDialog, user, $userSettings, projects) => {
+app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$rootScope', '$scope', 'api.pog_analysis_report', 'reports', '$mdDialog', 'user', '$userSettings', 'projects',  (_, $q, $rootScope, $scope, $report, reports, $mdDialog, user, $userSettings, projects) => {
 
   $scope.reports = reports = _.orderBy(reports, ['analysis.pog.POGID','createdAt'], ['asc','desc']);
   $scope.archived = false;
@@ -23,6 +23,17 @@ app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$scope', 'ap
     archived: false,
     nonproduction: false
   };
+  
+  // Clinician Mode Override
+  if($rootScope._clinicianMode) {
+    $scope.states = {
+      ready: false,
+      active: false,
+      presented: true,
+      archived: false,
+      nonproduction: false
+    }
+  }
 
   $scope.filter ={
     currentUser: ($userSettings.get('genomicReportListCurrentUser') === undefined) ? true : $userSettings.get('genomicReportListCurrentUser'),
