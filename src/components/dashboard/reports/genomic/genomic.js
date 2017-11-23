@@ -30,7 +30,7 @@ app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$rootScope',
       ready: false,
       active: false,
       presented: true,
-      archived: false,
+      archived: true,
       nonproduction: false
     }
   }
