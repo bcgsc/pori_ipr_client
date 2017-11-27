@@ -53,8 +53,6 @@ app.factory('api.session', ['_', '$http', '$q', '$localStorage', 'api.user', 'ap
     $localStorage[localStorageKey] = token; // Set token on client storage for session permanence
     $http.defaults.headers.common['Authorization'] = token; // Set $http header token
     me = user; // Set lib cache
-    
-    return;
   };
   
   /*
@@ -108,21 +106,26 @@ app.factory('api.session', ['_', '$http', '$q', '$localStorage', 'api.user', 'ap
     return $q((resolve, reject) => {
       
       // Make http API call
-      $http.post(api + '/', {username: username, password: password}).then(
-        (resp) => {
+      $http.post(api + '/', {username: username, password: password})
+        .then((resp) => {
           // Successful authentication
           // Check token from header
-          _token =  resp.headers('X-Token'); // Retrieve token from response 
-          $session.store(_token, resp.data); // Store response!
+          _token =  resp.headers('X-Token'); // Retrieve token from response
           
-          // Resolve
-          resolve($session.user());
+          $localStorage[localStorageKey] = _token; // Set token on client storage for session permanence
+          $http.defaults.headers.common['Authorization'] = _token; // Set $http header token
           
-        },
-        (error) => {
+          //$session.store(_token, resp.data); // Store response!
+          
+          $user._me = resp.data;
+          
+          resolve(resp);
+          
+        })
+        .catch((error) => {
+          console.log('Reject login attempt', error);
           reject(error);
-        }
-      );
+        });
       
     });
     

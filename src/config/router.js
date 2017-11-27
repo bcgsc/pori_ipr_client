@@ -24,16 +24,21 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       resolve: {
 			  _: ['$q', 'api.session', '$state', ($q, $session, $state) => {
 			    return $q((resolve, reject) => {
+         
+			      if(!$session.getToken()) return resolve();
+			      
 			      $session.init().then(
 			        (user) => {
-			          if(user) $state.go('dashboard.reports');
+			          if(user) $state.go('dashboard.reports.dashboard');
 			          reject('Already logged in');
               },
               (err) => {
 			          resolve();
               }
             )
+            
           });
+          
         }]
       }
 		})
@@ -104,21 +109,18 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
 			    return $q((resolve, reject) => {
 			      // Attempt session initialization
 			      $session.init()
-              .then($user.me())
-              .then(
-			        (user) => {
+              .then($user.me)
+              .then((user) => {
                 // Session init'd, return user
                 $userSettings.init(); // Init settings
-
-			          resolve(user);
-		          },
-		          (err) => {
+        
+                resolve(user);
+              })
+              .catch((err) => {
 		            // No session, go to login page
 		            $state.go('public.login');
 		            reject(err);
-	            }
-				);
-
+	            });
 		      });
 		    }],
         isAdmin: ['$q', 'api.user', 'user', ($q, $user, user) => {
@@ -211,6 +213,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
           let currentUser = $userSettings.get('genomicReportListCurrentUser');
           let project = $userSettings.get('selectedProject') || undefined;
           if($acl.inGroup('clinician')) return $report.all({type: 'genomic', states: 'presented,archived', project: 'POG'});
+          
           if(currentUser === null || currentUser === undefined || currentUser === true) return $report.all({type: 'genomic', states: 'ready,active,presented', project: project});
           if(currentUser === false) return $report.all({all:true, type: 'genomic', states: 'ready,active,presented', project: project});
         }]

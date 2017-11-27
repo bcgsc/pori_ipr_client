@@ -1,7 +1,12 @@
 app.controller('controller.dashboard',
-  ['_', '$scope', '$state', 'api.pog', 'api.image', '$userSettings', 'user', 'isAdmin',
-    (_, $scope, $state, $pog, $image, $userSettings, user, isAdmin) => {
-
+  ['_', '$scope', '$state', 'api.pog', 'api.image', '$userSettings', 'user', 'isAdmin', '$acl',
+    (_, $scope, $state, $pog, $image, $userSettings, user, isAdmin, $acl) => {
+      
+      $scope.check = {
+        resource: $acl.resource,
+        action: $acl.action,
+      };
+      
       $scope.isAdmin = isAdmin;
       $scope.user = user;
       $scope.$state = $state;
