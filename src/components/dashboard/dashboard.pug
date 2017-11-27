@@ -11,33 +11,32 @@ div(layout='row', flex)
                     md-tooltip(ng-if="!maximized", md-direction="right") Dashboard
                 span(flex, ng-show="maximized") Dashboard
 
-            div(layout="row", ng-if="PROJECT.FEATURE.ANALYSES && SES_permissionResource('analyses')", ui-sref="dashboard.biopsy.board", ng-class="{active: ($state.current.name === 'dashboard.biopsy' || $state.current.name.indexOf('biopsy') > -1)}")
+            div(layout="row", ng-if="PROJECT.FEATURE.ANALYSES && check.resource('analyses')", ui-sref="dashboard.biopsy.board", ng-class="{active: ($state.current.name === 'dashboard.biopsy' || $state.current.name.indexOf('biopsy') > -1)}")
                 md-icon colorize
                     md-tooltip(ng-if="!maximized", md-direction="right") Biopsies
                 span(flex, ng-show="maximized") Biopsies
 
 
 
-
-            div(layout="row", ng-if="PROJECT.FEATURE.TRACKING && SES_permissionResource('tracking')", ui-sref="dashboard.tracking.board", ng-class="{active: ($state.current.name === 'dashboard.tracking' || $state.current.name.indexOf('tracking') > -1)}")
+            div(layout="row", ng-if="PROJECT.FEATURE.TRACKING && check.resource('tracking')", ui-sref="dashboard.tracking.board", ng-class="{active: ($state.current.name === 'dashboard.tracking' || $state.current.name.indexOf('tracking') > -1)}")
                 md-icon my_location
                     md-tooltip(ng-if="!maximized", md-direction="right") Tracking
                 span(flex, ng-show="maximized") Tracking
 
 
 
-            div(layout="row", ng-if="SES_permissionResource('report')" ui-sref="dashboard.reports.dashboard", ng-class="{active: ($state.current.name === 'dashboard.reports' || $state.current.name.indexOf('dashboard.reports') > -1)}")
+            div(layout="row", ng-if="check.resource('report')" ui-sref="dashboard.reports.dashboard", ng-class="{active: ($state.current.name === 'dashboard.reports' || $state.current.name.indexOf('dashboard.reports') > -1)}")
                 md-icon assignment
                     md-tooltip(ng-if="!maximized", md-direction="right") Reports
                 span(flex, ng-show="maximized") Reports
 
-            div(layout="row", ng-if="SES_permissionResource('report')", ui-sref="dashboard.reports.genomic", ng-class="{active: ($state.current.name.indexOf('genomic') > 0)}", ng-show="maximized || (!maximized && ($state.current.name.indexOf('dashboard.reports') > -1 || $state.current.name.indexOf('dashboard.pog') > -1))").submenu
+            div(layout="row", ng-if="check.resource('report')", ui-sref="dashboard.reports.genomic", ng-class="{active: ($state.current.name.indexOf('genomic') > 0)}", ng-show="maximized || (!maximized && ($state.current.name.indexOf('dashboard.reports') > -1 || $state.current.name.indexOf('dashboard.pog') > -1))").submenu
                 md-icon(ng-show="maximized") subdirectory_arrow_right
                 md-icon(ng-show="!maximized") developer_board
                     md-tooltip(ng-if="!maximized", md-direction="right") Genomic
                 span(flex, ng-show="maximized") Genomic
 
-            div(layout="row", ng-if="SES_permissionAction('report.edit')", ui-sref="dashboard.reports.probe", ng-class="{active: ($state.current.name.indexOf('probe') > 0)}", ng-show="maximized || (!maximized && ($state.current.name.indexOf('dashboard.reports') > -1 || $state.current.name.indexOf('dashboard.pog') > -1))").submenu
+            div(layout="row", ng-if="check.action('report.edit')", ui-sref="dashboard.reports.probe", ng-class="{active: ($state.current.name.indexOf('probe') > 0)}", ng-show="maximized || (!maximized && ($state.current.name.indexOf('dashboard.reports') > -1 || $state.current.name.indexOf('dashboard.pog') > -1))").submenu
                 md-icon(ng-show="maximized") subdirectory_arrow_right
                 md-icon(ng-show="!maximized") highlight
                     md-tooltip(ng-if="!maximized", md-direction="right") Probe
@@ -46,18 +45,18 @@ div(layout='row', flex)
 
 
 
-            div(layout="row", ng-if="PROJECT.FEATURE.KNOWLEDGEBASE && SES_permissionResource('knowledgebase')", ui-sref="dashboard.knowledgebase.dashboard", ng-class="{active: ($state.current.name.indexOf('knowledgebase') > -1)}")
+            div(layout="row", ng-if="PROJECT.FEATURE.KNOWLEDGEBASE && check.resource('knowledgebase')", ui-sref="dashboard.knowledgebase.dashboard", ng-class="{active: ($state.current.name.indexOf('knowledgebase') > -1)}")
                 md-icon local_library
                     md-tooltip(ng-if="!maximized", md-direction="right") Knowledgebase
                 span(flex, ng-show="maximized") Knowledgebase
 
-            div(layout="row", ng-if="PROJECT.FEATURE.KNOWLEDGEBASE && SES_permissionResource('knowledgebase')", ui-sref="dashboard.knowledgebase.references", ng-class="{active: ($state.current.name === 'dashboard.knowledgebase.references')}", ng-show="maximized || (!maximized && $state.current.name.indexOf('knowledgebase') > 1)").submenu
+            div(layout="row", ng-if="PROJECT.FEATURE.KNOWLEDGEBASE && check.resource('knowledgebase')", ui-sref="dashboard.knowledgebase.references", ng-class="{active: ($state.current.name === 'dashboard.knowledgebase.references')}", ng-show="maximized || (!maximized && $state.current.name.indexOf('knowledgebase') > 1)").submenu
                 md-icon(ng-show="maximized") subdirectory_arrow_right
                 md-icon(ng-show="!maximized") import_contacts
                     md-tooltip(ng-if="!maximized", md-direction="right") References
                 span(flex, ng-show="maximized") References
 
-            div(layout="row", ng-if="PROJECT.FEATURE.KNOWLEDGEBASE && SES_permissionResource('knowledgebase')", ui-sref="dashboard.knowledgebase.events", ng-class="{active: ($state.current.name === 'dashboard.knowledgebase.events')}", ng-show="maximized || (!maximized && $state.current.name.indexOf('knowledgebase') > 1)").submenu
+            div(layout="row", ng-if="PROJECT.FEATURE.KNOWLEDGEBASE && check.resource('knowledgebase')", ui-sref="dashboard.knowledgebase.events", ng-class="{active: ($state.current.name === 'dashboard.knowledgebase.events')}", ng-show="maximized || (!maximized && $state.current.name.indexOf('knowledgebase') > 1)").submenu
                 md-icon(ng-show="maximized") subdirectory_arrow_right
                 md-icon(ng-show="!maximized") location_on
                     md-tooltip(ng-if="!maximized", md-direction="right") Events

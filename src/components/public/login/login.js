@@ -1,4 +1,4 @@
-app.controller('controller.public.login', ['$q', '_', '$scope', 'api.session', 'api.user', '$state', '$mdToast', ($q, _, $scope, $session, $user, $state, $mdToast) => {
+app.controller('controller.public.login', ['$q', '_', '$scope', 'api.session', 'api.user', '$state', '$acl', '$mdToast', ($q, _, $scope, $session, $user, $state, $acl, $mdToast) => {
   
   $scope.user = {
     username: null,
@@ -21,6 +21,7 @@ app.controller('controller.public.login', ['$q', '_', '$scope', 'api.session', '
     $session.login($scope.user.username, $scope.user.password)
       .then($user.me)
       .then((result) => {
+        $acl.injectUser(result);
         $state.go('dashboard.reports.dashboard');
       })
       .catch((error) => {

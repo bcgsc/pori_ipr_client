@@ -163,8 +163,16 @@ app.service('$acl', ['_', 'api.session', 'api.user', (_, $session, $user) => {
      *
      */
     inGroup: (group) => {
-      
       return !(!_.find(user.groups, {name: group}));
+    },
+  
+    /**
+     * Inject user object to ACL
+     *
+     * @param {object} u - User object
+     */
+    injectUser: (u) => {
+      user = u;
     }
   }
 

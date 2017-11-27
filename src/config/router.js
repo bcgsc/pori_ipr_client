@@ -109,21 +109,18 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
 			    return $q((resolve, reject) => {
 			      // Attempt session initialization
 			      $session.init()
-              .then($user.me())
-              .then(
-			        (user) => {
+              .then($user.me)
+              .then((user) => {
                 // Session init'd, return user
                 $userSettings.init(); // Init settings
-
-			          resolve(user);
-		          },
-		          (err) => {
+        
+                resolve(user);
+              })
+              .catch((err) => {
 		            // No session, go to login page
 		            $state.go('public.login');
 		            reject(err);
-	            }
-				);
-
+	            });
 		      });
 		    }],
         isAdmin: ['$q', 'api.user', 'user', ($q, $user, user) => {
