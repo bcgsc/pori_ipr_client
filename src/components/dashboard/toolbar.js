@@ -11,12 +11,8 @@ app.controller('controller.dashboard.toolbar',
       
       
       $scope.toggleLights = ($ev) => {
-        
         $scope.holiday_lights = !$scope.holiday_lights;
-        
         $userSettings.save('holiday_lights', $scope.holiday_lights);
-        //if($userSettings.get('holiday_lights') === 'on') $userSettings.save('holiday_lights', 'off');
-        //if($userSettings.get('holiday_lights') === 'off') $userSettings.save('holiday_lights', 'on');
         
       };
       
