@@ -7,8 +7,6 @@ app.controller('controller.dashboard',
         action: $acl.action,
       };
       
-      console.log('isAdmin', isAdmin);
-      
       $scope.isAdmin = isAdmin;
       $scope.user = user;
       $scope.$state = $state;
