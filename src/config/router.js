@@ -194,9 +194,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         }
       },
       resolve: {
-        reports: ['$q', 'permission', '$acl', 'api.pog_analysis_report', ($q, permission, $acl, $report) => {
-          if($acl.inGroup('clinician')) return $report.all({states: 'presented', type: 'genomic', project: 'POG'});
-          if(!$acl.inGroup('clinician')) return $report.all({states: 'ready,active'});
+        reports: ['$q', 'permission', '$acl', 'api.pog_analysis_report', '$state', ($q, permission, $acl, $report, $state) => {
+          if($acl.inGroup('clinician')) return $state.go('dashboard.reports.genomic');
+          return $report.all({states: 'ready,active'});
         }]
       }
     })
@@ -209,10 +209,10 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         displayName: 'Genomic Reports'
       },
       resolve: {
-        reports: ['$q', 'permission', '$acl',  'api.pog_analysis_report', '$userSettings', 'user', ($q, permission, $acl, $report, $userSettings) => {
+        reports: ['$q', 'permission', '$acl',  'api.pog_analysis_report', '$userSettings', '$state', 'user', ($q, permission, $acl, $report, $userSettings, $state, user) => {
           let currentUser = $userSettings.get('genomicReportListCurrentUser');
           let project = $userSettings.get('selectedProject') || undefined;
-          if($acl.inGroup('clinician')) return $report.all({type: 'genomic', states: 'presented,archived', project: 'POG'});
+          if($acl.inGroup('clinician')) return $state.go('dashboard.reports.clinician');
           
           if(currentUser === null || currentUser === undefined || currentUser === true) return $report.all({type: 'genomic', states: 'ready,active,presented', project: project});
           if(currentUser === false) return $report.all({all:true, type: 'genomic', states: 'ready,active,presented', project: project});
@@ -231,6 +231,29 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
           let currentUser = $userSettings.get('probeReportListCurrentUser');
           if(currentUser === null || currentUser === undefined || currentUser === true) return $report.all({type: 'probe', states: 'uploaded,signedoff'});
           if(currentUser === false) return $report.all({all:true, type: 'probe', states: 'uploaded,signedoff'});
+        }]
+      }
+    })
+    
+    .state('dashboard.reports.clinician', {
+      url: '/clinician',
+      templateUrl: 'dashboard/reports/clinician/clinician.html',
+      controller: 'controller.dashboard.reports.clinician',
+      data: {
+        displayName: 'Clinician Reports'
+      },
+      resolve: {
+        reports: ['$q', 'api.pog_analysis_report', '$userSettings', 'user', ($q, $report, $userSettings, user) => {
+          let settings = {currentUser: $userSettings.get('genomicReportListCurrentUser')};
+          let opts = {
+            project: 'POG',
+            states: 'ready,active,presented,archived',
+            paginated: true
+          };
+          
+          if(settings.currentUser === false) opts.all = true;
+          
+          return $report.all(opts);
         }]
       }
     })

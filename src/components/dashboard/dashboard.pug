@@ -42,6 +42,12 @@ div(layout='row', flex)
                     md-tooltip(ng-if="!maximized", md-direction="right") Probe
                 span(flex, ng-show="maximized") Probe
 
+            div(layout="row", ui-sref="dashboard.reports.clinician", ng-class="{active: ($state.current.name.indexOf('clinician') > 0)}", ng-show="maximized || (!maximized && ($state.current.name.indexOf('dashboard.reports') > -1 || $state.current.name.indexOf('dashboard.pog') > -1))").submenu
+                md-icon(ng-show="maximized") subdirectory_arrow_right
+                md-icon(ng-show="!maximized") local_hospital
+                    md-tooltip(ng-if="!maximized", md-direction="right") Clinician
+                span(flex, ng-show="maximized") Clinician
+
 
 
 
