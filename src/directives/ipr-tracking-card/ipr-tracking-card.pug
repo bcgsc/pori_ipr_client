@@ -22,7 +22,7 @@ div.header
             span(ng-if="analysis.priority===2") Normal
             span(ng-if="analysis.priority===3").high.ipr-raised High
 
-div(layout="column", ng-show="showTasks").tasks
+div(layout="column", ng-if="showTasks").tasks
     div(ng-show="loadingTasks")
         md-progress-linear(md-mode="indeterminate")
         div.text-center Loading Tasks
