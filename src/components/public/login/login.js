@@ -22,7 +22,12 @@ app.controller('controller.public.login', ['$q', '_', '$scope', 'api.session', '
       .then($user.me)
       .then((result) => {
         $acl.injectUser(result);
-        $state.go('dashboard.reports.dashboard');
+        
+        if($acl.inGroup('clinician')) {
+          $state.go('dashboard.reports.clinician');
+        } else {
+          $state.go('dashboard.reports.dashboard');
+        }
       })
       .catch((error) => {
         if(error.status === 400) return $mdToast.showSimple('Unable to authenticate with the provided credentials');
