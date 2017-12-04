@@ -218,8 +218,8 @@ app.controller('controller.dashboard.tracking.board',
   sortStates(states);
   
   // Start polling states for updates
-  $interval(() => {
+  /*$interval(() => {
     $scope.refreshList(true);
-  }, 30000);
+  }, 30000); */
 
 }]);
