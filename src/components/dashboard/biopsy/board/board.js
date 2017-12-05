@@ -11,7 +11,8 @@ app.controller('controller.dashboard.biopsy.board',
   
   let analysis_query = {
     search: undefined,
-    paginated: true
+    paginated: true,
+    project: 'POG'
   };
   
   $scope.paginate = {
