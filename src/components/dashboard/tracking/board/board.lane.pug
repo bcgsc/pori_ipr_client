@@ -7,11 +7,30 @@ md-content(flex, layout="column").md-padding.trackingBoard.trackingLane
     table.material-table
         thead
             tr
+                th(width="70%")
+                th.button
+                    div(layout="row", layout-align="end start")
+                        md-input-container(flex, layout="row", ng-show="showFilter").medium
+                            input(ng-model="filter.search", focus-me="focusSearch", placeholder="Filter Cases")
+
+                        md-button(ng-show="showFilter", ng-click="showFilter=false;filter.search=null").md-icon
+                            md-icon cancel
+                            md-tooltip Clear search
+
+                        md-button(ng-hide="showFilter", ng-click="displayFilter()").md-icon
+                            md-icon filter_list
+                            md-tooltip Filter Results
+
+    table.material-table
+        thead
+            tr
                 th(width="7%") Case
                 th(ng-repeat="col in cols", width="{{(93/cols.length)}}%") {{col.name}}
 
         tbody
-            tr(ng-repeat="state in states", class="state {{state.status}}")
+            tr(ng-if="states.length === 0")
+                td.text-center No cases waiting for analysis in {{lane.name}}
+            tr(ng-repeat="state in states | filter: filter.search", class="state {{state.status}}")
                 td {{state.analysis.pog.POGID}}
                 td(ng-repeat="col in cols")
                     div(layout="row", class="{{getStateTask(state, col).status}} task")

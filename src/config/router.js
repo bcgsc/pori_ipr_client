@@ -1151,7 +1151,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
           return $definition.retrieve($stateParams.slug);
         }],
         states: ['$q', '$stateParams', 'api.tracking.state', ($q, $stateParams, $state) => {
-          return $state.filtered({slug: $stateParams.slug});
+          return $state.filtered({slug: $stateParams.slug, status: 'active,pending'});
         }]
       }
     })
