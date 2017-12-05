@@ -1188,7 +1188,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
           return $ticket.getDefTasks($stateParams.definition);
         }],
         states: ['$q', 'api.tracking.state', 'definition', ($q, $state, definition) => {
-          return $state.filtered({slug: definition.slug});
+          return $state.filtered({slug: definition.slug, status: 'active,pending'});
         }],
         group: ['$q', 'definition', 'api.user', ($q, definition, $user) => {
           return $user.group.retrieve(definition.group.ident);
