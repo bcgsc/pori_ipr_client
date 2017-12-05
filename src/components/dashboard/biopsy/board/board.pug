@@ -3,7 +3,7 @@ md-content(flex, layout="column").md-padding.biopsyBoard
     h1.md-title(layout="row")
         span(flex) Biopsies
 
-    div(layout="column", ipr-scroll-bottom="").biopsies
+    div.biopsies
 
         table.material-table
             thead
@@ -48,7 +48,7 @@ md-content(flex, layout="column").md-padding.biopsyBoard
                 tr(ng-show="!loading && analyses.length === 0").loading
                     td(colspan="10").text-center
                         span No biopsies found on IPR
-                tr(ng-repeat="analysis in analyses")
+                tr(ng-repeat="analysis in analyses", ng-if="!loading")
                     td.text-bold {{analysis.pog.POGID}}
                     td {{analysis.biopsy_date | amDateFormat: 'YYYY-MM-DD' || 'N/A' }}
                     td {{analysis.disease}}
@@ -70,3 +70,6 @@ md-content(flex, layout="column").md-padding.biopsyBoard
                     td.options
                         md-icon(ng-click="editAnalysis(analysis)").clickable edit
                         md-icon(ng-click="openAnalysis(analysis)").clickable open_in_browser
+
+
+        ipr-paginate(offset="paginate.offset", limit="paginate.limit", total="paginate.total", refresh="refreshAnalyses")

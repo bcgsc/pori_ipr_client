@@ -3,8 +3,15 @@ app.controller('controller.dashboard.tracking.lane',
 ($q, _, $scope, $definition, $state, $task, $socket, $mdDialog, $mdToast, lane, states) => {
   
   $scope.lane = lane;
-  $scope.states = states;
+  $scope.states = _.orderBy(states, ['status', 'analysis.pog.POGID'], ['asc','desc']);
   $scope.cols = [];
+  $scope.showFilter = false;
+  $scope.focusFilter = false;
+  
+  $scope.displayFilter = () => {
+    $scope.showFilter = true;
+    $scope.focusFilter = true;
+  };
   
   // Create Task Columns
   _.forEach(states, (s) => {

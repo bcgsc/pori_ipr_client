@@ -215,7 +215,7 @@ app.controller('controller.dashboard.tracking.board',
 
   };
 
-  sortStates(states);
+  sortStates(_.orderBy(states, ['status', 'analysis.pog.POGID'], ['asc','desc']));
   
   // Start polling states for updates
   /*$interval(() => {

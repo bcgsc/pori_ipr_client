@@ -1151,7 +1151,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
           return $definition.retrieve($stateParams.slug);
         }],
         states: ['$q', '$stateParams', 'api.tracking.state', ($q, $stateParams, $state) => {
-          return $state.filtered({slug: $stateParams.slug});
+          return $state.filtered({slug: $stateParams.slug, status: 'active,pending'});
         }]
       }
     })
@@ -1188,7 +1188,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
           return $ticket.getDefTasks($stateParams.definition);
         }],
         states: ['$q', 'api.tracking.state', 'definition', ($q, $state, definition) => {
-          return $state.filtered({slug: definition.slug});
+          return $state.filtered({slug: definition.slug, status: 'active,pending'});
         }],
         group: ['$q', 'definition', 'api.user', ($q, definition, $user) => {
           return $user.group.retrieve(definition.group.ident);
@@ -1236,7 +1236,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       templateUrl: 'dashboard/biopsy/board/board.html',
       resolve: {
         analyses: ['$q', 'api.analysis', ($q, $analysis) => {
-          return $analysis.all();
+          return $analysis.all({paginated: true, project: 'POG'});
         }]
       }
     })

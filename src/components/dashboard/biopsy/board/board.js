@@ -4,24 +4,34 @@ app.controller('controller.dashboard.biopsy.board',
   
   $scope.pogs = {};
   $scope.searching = false;
-  $scope.analyses = analyses;
+  $scope.analyses = analyses.analysis;
   $scope.loading = false;
   $scope.showSearch = false;
   $scope.focusSearch = false;
   
   let analysis_query = {
     search: undefined,
-    offset: undefined
+    paginated: true
   };
   
-  let refreshAnalyses = () => {
+  $scope.paginate = {
+    offset: 0,
+    limit: 25,
+    total: analyses.total
+  };
+  
+  $scope.refreshAnalyses = () => {
     
     $scope.loading = true;
     
+    analysis_query.limit = $scope.paginate.limit;
+    analysis_query.offset = $scope.paginate.offset;
+    
     $analysis.all(analysis_query)
       .then((results) => {
-      $scope.loading = false;
-        $scope.analyses = results;
+        $scope.loading = false;
+        $scope.analyses = results.analysis;
+        $scope.paginate.total = results.total;
       })
       .catch((err) => {
         $scope.loading = false;
@@ -38,7 +48,7 @@ app.controller('controller.dashboard.biopsy.board',
     
     $scope.filter.search = null;
     analysis_query.search = undefined;
-    if(filterCache !== undefined) refreshAnalyses();
+    if(filterCache !== undefined) $scope.refreshAnalyses();
   };
   
   $scope.displaySearch = () => {
@@ -52,7 +62,7 @@ app.controller('controller.dashboard.biopsy.board',
    */
   $scope.search = () => {
     analysis_query.search = $scope.filter.search;
-    refreshAnalyses();
+    $scope.refreshAnalyses();
   };
   
   /**

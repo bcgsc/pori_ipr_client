@@ -5,7 +5,7 @@ app.controller('controller.dashboard.tracking.assignment',
   $scope.definition = definition;
   $scope.assign = {};
   $scope.group = group;
-  $scope.states = states;
+  $scope.states = _.orderBy(states, ['status', 'analysis.pog.POGID'], ['asc','desc']);
   $scope.userLoad = userLoad;
   $scope.ticket_templates = ticket_templates;
   $scope.ticket = {
