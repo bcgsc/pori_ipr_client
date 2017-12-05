@@ -1236,7 +1236,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       templateUrl: 'dashboard/biopsy/board/board.html',
       resolve: {
         analyses: ['$q', 'api.analysis', ($q, $analysis) => {
-          return $analysis.all();
+          return $analysis.all({paginated: true, project: 'POG'});
         }]
       }
     })
