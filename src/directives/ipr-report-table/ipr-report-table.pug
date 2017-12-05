@@ -21,7 +21,7 @@ div(layout="column")
                 th(width="25%") Disease
                 th(width="20%") Physician
                 th(width="15%") Age
-                th(width="20%") Biopsy Notes
+                th(width="20%") Status
                 th(width="5%")
         tbody
             tr(ng-show="loading").loading
@@ -32,11 +32,12 @@ div(layout="column")
                 td(colspan="6").text-center
                     span No Reports found on IPR
             tr(ng-repeat="report in reports", ng-hide="loading")
-                td {{report.patientInformation.POGID}}
+                td
+                    span(ui-sref="dashboard.reports.pog.report.genomic.summary({POG: report.pog.POGID, analysis_report: report.ident})").link {{report.patientInformation.POGID}}
                 td {{report.patientInformation.tumourType}}
                 td {{report.patientInformation.physician}}
                 td {{report.patientInformation.caseType}}
-                td {{report.analysis.biopsy_notes}}
+                td {{readState(report.state)}}
                 td &nbsp;
 
     //div(layout="row").pagination

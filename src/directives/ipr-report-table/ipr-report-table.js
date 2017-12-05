@@ -60,6 +60,30 @@ app.directive("iprReportTable", ['$q', '_', 'api.pog_analysis_report', ($q, _, $
         scope.paginate.offset = 0;
         scope.refreshReports();
       };
+  
+      scope.readState = (s) => {
+        switch(s) {
+          case 'ready':
+            return 'Ready for Analysis';
+            break;
+      
+          case 'active':
+            return 'Analysis underway';
+            break;
+      
+          case 'presented':
+            return 'Presentation';
+            break;
+      
+          case 'archived':
+            return 'Archived';
+            break;
+      
+          default:
+            return 'N/A';
+            break;
+        }
+      };
       
       /**
        * Call API and refresh reports
@@ -81,6 +105,8 @@ app.directive("iprReportTable", ['$q', '_', 'api.pog_analysis_report', ($q, _, $
         
         if(!scope.filter.bound) opts.all = true;
         if(scope.filter.search) opts.searchText = scope.filter.search;
+        
+        if(scope.clinician) opts.states = 'presented,archived';
         
         $report.all(opts)
           .then((result) => {

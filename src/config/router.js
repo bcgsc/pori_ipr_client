@@ -247,7 +247,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
           let settings = {currentUser: $userSettings.get('genomicReportListCurrentUser')};
           let opts = {
             project: 'POG',
-            states: 'ready,active,presented,archived',
+            states: 'presented,archived',
             paginated: true
           };
           
