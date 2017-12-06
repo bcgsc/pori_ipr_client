@@ -3,8 +3,8 @@ div.padding-left-10.padding-right-10
         thead
             tr
                 th(colspan=4).no-border
-                th(colspan=1).text-center.no-border.background-light Normal
-                th(colspan=2).text-center.no-border Tissue
+                th(colspan=1).text-center.no-border.background-light Tissue
+                th(colspan=2).text-center.no-border Normal
                 th(colspan=3).text-center.no-border.background-light Disease
                 th(colspan=3).text-center.no-border Protein
             tr
@@ -46,7 +46,7 @@ div.padding-left-10.padding-right-10
                 td.text-capitalize {{outlier.expression_class.replace('_', ' ')}}
                 td {{outlier.cnvState}}
                 td.text-right.background-light {{outlier.foldChange}}
-                td.text-right {{outlier.tcgaNormPerc || '-' }}
+                td.text-right {{outlier.tcgaNormPerc }}
                 td.text-right {{outlier.tcgaNormkIQR || '-' }}
                 td.text-right.background-light {{outlier.tcgaPerc}}
                 td.text-right.background-light {{outlier.tcgakIQR}}
