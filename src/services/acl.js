@@ -67,6 +67,10 @@ app.service('$acl', ['_', 'api.session', 'api.user', (_, $session, $user) => {
       allow: ['*'],
       reject: ['clinician']
     },
+    germline: {
+      allow: ['*'],
+      reject: ['clinician']
+    },
     analyses: {
       allow: ['*'],
       reject: ['clinician']

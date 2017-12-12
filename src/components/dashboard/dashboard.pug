@@ -50,6 +50,12 @@ div(layout='row', flex)
 
 
 
+            div(layout="row", ng-if="PROJECT.FEATURE.GERMLINE && check.resource('germline')", ui-sref="dashboard.germline.board", ng-class="{active: ($state.current.name.indexOf('germline') > -1)}")
+                md-icon supervisor_account
+                    md-tooltip(ng-if="!maximized", md-direction="right") Germline
+                span(flex, ng-show="maximized") Germline
+
+
 
             div(layout="row", ng-if="PROJECT.FEATURE.KNOWLEDGEBASE && check.resource('knowledgebase')", ui-sref="dashboard.knowledgebase.dashboard", ng-class="{active: ($state.current.name.indexOf('knowledgebase') > -1)}")
                 md-icon local_library

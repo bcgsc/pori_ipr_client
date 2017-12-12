@@ -1240,5 +1240,43 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         }]
       }
     })
+    
+    .state('dashboard.germline', {
+      url: '/germline',
+      data: {
+        displayName: 'Germline',
+        breadcrumbProxy: 'dashboard.germline.board'
+      },
+      controller: 'controller.dashboard.germline',
+      templateUrl: 'dashboard/germline/germline.html'
+    })
+    
+    .state('dashboard.germline.board', {
+      url: '/board',
+      data: {
+        displayName: 'Reports'
+      },
+      controller: 'controller.dashboard.germline.board',
+      templateUrl: 'dashboard/germline/board/board.html',
+      resolve: {
+        reports: ['api.germline.report', ($report) => {
+          return $report.all({project: 'POG'});
+        }]
+      }
+    })
+    
+    .state('dashboard.germline.report', {
+      url: '/report/patient/:patient/biopsy/:biopsy/report/:report',
+      data: {
+        displayName: 'Reports'
+      },
+      controller: 'controller.dashboard.germline.report',
+      templateUrl: 'dashboard/germline/report/report.html',
+      resolve: {
+        report: ['api.germline.report', '$stateParams', ($report, $stateParams) => {
+          return $report.one($stateParams.patient, $stateParams.biopsy, $stateParams.report);
+        }]
+      }
+    })
 
 }]);
