@@ -1,4 +1,6 @@
-app.controller('controller.dashboard.germline.board', ['$q', '_', '$scope', 'api.germline.report', '$mdDialog', '$mdToast', 'reports', ($q, _, $scope, $report, $mdDialog, $mdToast, reports) => {
+app.controller('controller.dashboard.germline.board',
+['$q', '_', '$scope', '$window', '$timeout', 'api.germline.report', '$mdDialog', '$mdToast', 'reports',
+($q, _, $scope, $window, $timeout, $report, $mdDialog, $mdToast, reports) => {
   
   $scope.reports = reports.reports;
   
@@ -8,9 +10,7 @@ app.controller('controller.dashboard.germline.board', ['$q', '_', '$scope', 'api
   $scope.filter = {
     search: null,
     project: 'POG'
-  }
-  
-  console.log('Reports', $scope.reports);
+  };
   
   $scope.paginate = {
     total: reports.total,
@@ -35,6 +35,29 @@ app.controller('controller.dashboard.germline.board', ['$q', '_', '$scope', 'api
   
   $scope.hasReview = (report, type) => {
     return (_.find(report.reviews, {type: type}) !== undefined) ? true : false;
+  };
+  
+  $scope.unsetExported = (report) => {
+    if(report.exported === false) return;
+    
+    report.exported = false;
+    
+    let report_cache = angular.copy(report);
+    report_cache.biofx_assigned = report.biofx_assigned.ident;
+    
+    $report.update(report_cache.analysis.pog.POGID, report_cache.analysis.analysis_biopsy, report_cache.ident, report_cache)
+      .then((result) => {
+        let i = _.findKey($scope.reports, {ident: report_cache.ident});
+        
+        $scope.reports[i] = result;
+        
+      })
+      .catch((e) => {
+        report.exported = true;
+        $mdToast.showSimple('Failed to update report exported status.');
+        console.log(e);
+      });
+    
   };
   
   
@@ -70,6 +93,25 @@ app.controller('controller.dashboard.germline.board', ['$q', '_', '$scope', 'api
     )
     
   };
+  
+  // Trigger download pipe
+  $scope.getExport = () => {
+    $report.flash_token()
+      .then((token) => {
+        console.log('Opening: ', `${CONFIG.ENDPOINTS.API}/export/germline_small_mutation/batch/download?reviews=biofx,projects&flash_token=${token.token}`);
+        
+        // Open a window for the user with the special url
+        $window.open(`${CONFIG.ENDPOINTS.API}/export/germline_small_mutation/batch/download?reviews=biofx,projects&flash_token=${token.token}`, '_blank');
+        
+        $timeout(() => {
+          $scope.refreshReports();
+        }, 500);
+      })
+      .catch((e) => {
+        $mdToast.showSimple('Failed to retrieve the downloadable export');
+        console.log(e);
+      });
+  }
   
   
 }]);

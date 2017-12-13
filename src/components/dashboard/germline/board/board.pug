@@ -3,12 +3,13 @@ md-content(flex, layout="column").md-padding.biopsyBoard
     h1.md-title(layout="row")
         span(flex) Germline Reports
 
-    div.biopsies
+    div(layout="column").biopsies
 
         table.material-table
             thead
                 tr
                     th(colspan=6).button
+                        md-button(ng-click="getExport()").md-primary.md-raised Download Export
                     th(colspan=5).button
                         div(layout="row", layout-align="end start")
                             form(ng-submit="search()", novalidate, layout="row", flex, ng-show="showSearch")
@@ -26,9 +27,10 @@ md-content(flex, layout="column").md-padding.biopsyBoard
                     th(width="15%") Patient
                     th(width="15%") Biopsy
                     th(width="10%") Version
-                    th(width="20%") BioFX Reviewer
-                    th(width="15%") BioFX Review
+                    th(width="15%") BioFX Reviewer
+                    th(width="10%") BioFX Review
                     th(width="10%") Projects Review
+                    th(width="10%") Exported
                     th(width="15%") Created
 
             tbody
@@ -51,6 +53,9 @@ md-content(flex, layout="column").md-padding.biopsyBoard
                         md-icon {{hasReview(report, 'biofx') ? 'check_box' : 'check_box_outline_blank'}}
                     td
                         md-icon {{hasReview(report, 'projects') ? 'check_box_outline' : 'check_box_outline_blank'}}
-                    td {{report.createdAt | amDateFormat: 'YYYY-MM-DD H:s'}}
+                    td
+                        md-icon(ng-if="report.exported", ng-click="unsetExported(report)").clickable check_box_outline
+                        md-icon(ng-if="!report.exported") check_box_outline_blank
+                    td {{report.createdAt | amDateFormat: 'YYYY-MM-DD H:mm'}}
 
         ipr-paginate(offset="paginate.offset", limit="paginate.limit", total="paginate.total", refresh="refreshReports")

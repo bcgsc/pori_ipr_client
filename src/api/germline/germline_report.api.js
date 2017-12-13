@@ -123,6 +123,24 @@ app.factory('api.germline.report', ['_', '$http', '$q', (_, $http, $q) => {
     });
   };
   
+  /**
+   * Retrieve a flash token to download a report
+   *
+   * @returns {Promise/object} - Resolves with token object
+   */
+  $report.flash_token = () => {
+    return $q((resolve, reject) => {
+      
+      $http.get(`${api}/export/batch/token`)
+        .then((response) => {
+          resolve(response.data);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  };
+  
   return $report;
   
 }]);

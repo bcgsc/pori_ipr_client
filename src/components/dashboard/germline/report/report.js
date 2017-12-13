@@ -91,6 +91,11 @@ app.controller('controller.dashboard.germline.report',
       width: 100,
       show_always: false
     },
+    preferred_transcript: {
+      name: 'Preferred Transcript',
+      width: 150,
+      show_always: true,
+    },
     hgvs_cdna: {
       name: 'HGVS-cDNA',
       width: 100,
@@ -312,7 +317,7 @@ app.controller('controller.dashboard.germline.report',
     
     $review.remove($scope.report.analysis.pog.POGID, $scope.report.analysis.analysis_biopsy, $scope.report.ident, review.ident)
       .then((res) =>{
-        $scope.report.reviews.splice(_.find($scope.report.reviews, {ident: review.ident}, 1));
+        $scope.report.reviews.splice(_.findKey($scope.report.reviews, {ident: review.ident}, 1));
       })
       .catch((e) => {
         console.log('Response: ', e);
