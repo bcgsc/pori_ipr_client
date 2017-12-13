@@ -4,9 +4,9 @@ app.controller('controller.dashboard.pog.report.listing',
 
       $scope.user = user;
       $scope.$state = $state;
-      $scope.reports = reports;
+      $scope.reports = _.sortBy(reports, ['createdAt']).reverse();
       $scope.pog = pog;
-
+      
     }
   ]
 );
