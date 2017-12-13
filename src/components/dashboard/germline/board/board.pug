@@ -54,7 +54,7 @@ md-content(flex, layout="column").md-padding.biopsyBoard
                     td
                         md-icon {{hasReview(report, 'projects') ? 'check_box_outline' : 'check_box_outline_blank'}}
                     td
-                        md-icon(ng-if="report.exported", ng-click="unsetExported(report)").clickable check_box_outline
+                        md-icon(ng-if="report.exported", ng-click="unsetExported(report)").blue.clickable check_box_outline
                         md-icon(ng-if="!report.exported") check_box_outline_blank
                     td {{report.createdAt | amDateFormat: 'YYYY-MM-DD H:mm'}}
 

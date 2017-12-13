@@ -98,8 +98,6 @@ app.controller('controller.dashboard.germline.board',
   $scope.getExport = () => {
     $report.flash_token()
       .then((token) => {
-        console.log('Opening: ', `${CONFIG.ENDPOINTS.API}/export/germline_small_mutation/batch/download?reviews=biofx,projects&flash_token=${token.token}`);
-        
         // Open a window for the user with the special url
         $window.open(`${CONFIG.ENDPOINTS.API}/export/germline_small_mutation/batch/download?reviews=biofx,projects&flash_token=${token.token}`, '_blank');
         

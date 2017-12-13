@@ -27,8 +27,8 @@ md-content(flex, layout="column").md-padding.biopsyBoard.germline_report
                     tr(ng-repeat="variant in report.variants", ng-if="report.variants.length > 0", ng-class="{lowScore: (variant['score'] < 100), strike: variant['hidden']}")
                         td(ng-repeat="(key, col) in columns", ng-hide="!col.show_always && !show_extended")
 
-                            span(ng-if="key == 'patient_history'", ng-click="getHistory($event, 'patient', variant['patient_history'])").clickable {{variant['patient_history']}}
-                            span(ng-if="key == 'family_history'", ng-click="getHistory($event, 'family', variant['family_history'])").clickable {{variant['family_history']}}
+                            span(ng-if="key == 'patient_history'", ng-click="getHistory($event, 'patient', variant['patient_history'])").clickable.blue.text-underline {{variant['patient_history']}}
+                            span(ng-if="key == 'family_history'", ng-click="getHistory($event, 'family', variant['family_history'])").clickable.blue.text-underline {{variant['family_history']}}
 
                             span(ng-if="col.split && (key !== 'patient_history' && key !== 'family_history')", ng-init="split_val = variant[key].split(col.split)")
                                 span(ng-repeat="v in split_val").pill {{v}}

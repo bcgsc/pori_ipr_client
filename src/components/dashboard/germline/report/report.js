@@ -231,8 +231,6 @@ app.controller('controller.dashboard.germline.report',
       clickOutsideToClose: true,
       controller: ['scope', (scope) => {
         
-        console.log('Inputs', input);
-        
         scope.input = input;
         
         scope.cancel = () => {
