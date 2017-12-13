@@ -12,9 +12,6 @@ app.controller('controller.dashboard.germline.report',
   
   $scope.show_extended = false;
   
-  let tcga_comp = report.variants[0].tcga_comp || '[n/a]';
-  let gtex_comp = report.variants[0].gtex_comp || '[n/a]';
-  
   $scope.columns = {
     flagged: {
       name: 'Flagged',
@@ -154,7 +151,7 @@ app.controller('controller.dashboard.germline.report',
       show_always: true
     },
     tcga_comp_average_percentile: {
-      name: `tcga_comp_${tcga_comp}_percentile`,
+      name: `tcga_comp_percentile`,
       width: 100,
       show_always: true
     },
@@ -164,7 +161,7 @@ app.controller('controller.dashboard.germline.report',
       show_always: true
     },
     tcga_comp_norm_percentile: {
-      name: `tcga_comp_${tcga_comp}_norm_percentile`,
+      name: `tcga_comp_norm_percentile`,
       width: 100,
       show_always: true
     },
@@ -174,7 +171,7 @@ app.controller('controller.dashboard.germline.report',
       show_always: true
     },
     tcga_comp_percentile: {
-      name: `tcga_comp_${tcga_comp}_percentile`,
+      name: `tcga_comp_percentile`,
       width: 100,
       show_always: true
     },
@@ -184,7 +181,7 @@ app.controller('controller.dashboard.germline.report',
       show_always: true
     },
     gtex_comp_percentile: {
-      name: `gtex_comp_${gtex_comp}_average_percentile`,
+      name: `gtex_comp_average_percentile`,
       width: 100,
       show_always: true
     },
@@ -199,7 +196,7 @@ app.controller('controller.dashboard.germline.report',
       show_always: true
     },
     fc_bodymap: {
-      name: `fc_${gtex_comp}_bodymap`,
+      name: `fc_bodymap`,
       width: 100,
       show_always: true
     },

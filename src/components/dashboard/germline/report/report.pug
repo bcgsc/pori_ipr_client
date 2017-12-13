@@ -22,7 +22,7 @@ md-content(flex, layout="column").md-padding.biopsyBoard.germline_report
 
                 tbody
                     tr(ng-show="report.variants.length === 0")
-                        td(colspan="10").text-center
+                        td(colspan="10").text-left
                             span No variants detected in this germline report
                     tr(ng-repeat="variant in report.variants", ng-if="report.variants.length > 0", ng-class="{lowScore: (variant['score'] < 100), strike: variant['hidden']}")
                         td(ng-repeat="(key, col) in columns", ng-hide="!col.show_always && !show_extended")
