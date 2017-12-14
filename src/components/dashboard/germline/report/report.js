@@ -145,44 +145,19 @@ app.controller('controller.dashboard.germline.report',
       width: 100,
       show_always: true
     },
-    tcga_comp: {
-      name: 'TCGA Comparator',
-      width: 100,
-      show_always: true
-    },
-    tcga_comp_average_percentile: {
-      name: `tcga_comp_percentile`,
-      width: 100,
-      show_always: true
-    },
-    tcga_comp_average_norm_percentile: {
-      name: 'tcga_comp_average_norm_percentile',
-      width: 100,
-      show_always: true
-    },
     tcga_comp_norm_percentile: {
       name: `tcga_comp_norm_percentile`,
       width: 100,
       show_always: true
     },
-    gtex_comp_average_percentile: {
-      name: `tcga_comp_average_percentile`,
-      width: 100,
-      show_always: true
-    },
     tcga_comp_percentile: {
       name: `tcga_comp_percentile`,
-      width: 100,
-      show_always: true
-    },
-    gtex_comp: {
-      name: 'GTex Comparator',
-      width: 100,
+      width: 200,
       show_always: true
     },
     gtex_comp_percentile: {
       name: `gtex_comp_average_percentile`,
-      width: 100,
+      width: 200,
       show_always: true
     },
     fc_mean_bodymap: {
