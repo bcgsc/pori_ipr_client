@@ -56,7 +56,7 @@ md-content(flex, layout="column", layout-fill).md-padding.assignment
                                     md-select(ng-model="ticket.template")
                                         md-option(ng-value="template.ident", ng-repeat="template in ticket_templates") {{template.name}}
                                 md-input-container(flex=15)
-                                    md-button(ng-click="preview_ticket(assign.analysis, assign.tasks)").md-primary.md-raised Preview Ticket
+                                    md-button(ng-click="preview_ticket(assign.analysis, assign.tasks)").md-primary.md-raised.small Preview Ticket
 
                             div(layout="column")
                                 h2 Tasks

@@ -45,7 +45,6 @@ app.controller('controller.dashboard.tracking.assignment',
   // Submit new assignments for all checked tasks
   $scope.assignUsers = (task) => {
     
-    
     // Lock assign button
     $scope.assign.submitting = true;
 
@@ -104,7 +103,6 @@ app.controller('controller.dashboard.tracking.assignment',
             
             
             $mdToast.show($mdToast.simple().textContent('The selected user has been bound'));
-            $scope.assign.user = null;
             $scope.UserAssignment.$setPristine();
 
             _.forEach(result, (t) => {
@@ -209,6 +207,7 @@ app.controller('controller.dashboard.tracking.assignment',
           resolve(response);
         })
         .catch((err) => {
+          $mdToast.showSimple(`Error: Failed to get necessary details to create ticket ${err.data.message}`);
           console.log('Failed to generate ticket body & template');
           console.log(err);
         })
@@ -246,8 +245,9 @@ app.controller('controller.dashboard.tracking.assignment',
             scope.extended = result;
           })
           .catch((err) => {
-            console.log('Failed to get extended analysis results');
-            console.log(err);
+            $mdToast.showSimple(`Error: Failed to get necessary details to create ticket ${err.data.message}`);
+            $mdDialog.cancel();
+            console.log('Failed to get extended analysis results', err);
           });
         
         // Close Dialog
