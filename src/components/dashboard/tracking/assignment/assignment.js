@@ -45,7 +45,6 @@ app.controller('controller.dashboard.tracking.assignment',
   // Submit new assignments for all checked tasks
   $scope.assignUsers = (task) => {
     
-    
     // Lock assign button
     $scope.assign.submitting = true;
 
@@ -104,7 +103,6 @@ app.controller('controller.dashboard.tracking.assignment',
             
             
             $mdToast.show($mdToast.simple().textContent('The selected user has been bound'));
-            $scope.assign.user = null;
             $scope.UserAssignment.$setPristine();
 
             _.forEach(result, (t) => {
