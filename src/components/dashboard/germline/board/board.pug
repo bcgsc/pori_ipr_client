@@ -1,0 +1,61 @@
+md-content(flex, layout="column").md-padding.biopsyBoard
+
+    h1.md-title(layout="row")
+        span(flex) Germline Reports
+
+    div(layout="column").biopsies
+
+        table.material-table
+            thead
+                tr
+                    th(colspan=6).button
+                        md-button(ng-click="getExport()").md-primary.md-raised Download Export
+                    th(colspan=5).button
+                        div(layout="row", layout-align="end start")
+                            form(ng-submit="search()", novalidate, layout="row", flex, ng-show="showSearch")
+                                md-input-container(flex, layout="row").medium
+                                    input(ng-model="filter.search", focus-me="focusSearch", placeholder="Search by POGID")
+
+                            md-button(ng-show="showSearch", ng-click="clearSearch()").md-icon
+                                md-icon cancel
+                                md-tooltip Clear search
+
+                            md-button(ng-hide="showSearch", ng-click="displaySearch()").md-icon
+                                md-icon filter_list
+                                md-tooltip Filter/Search
+                tr
+                    th(width="15%") Patient
+                    th(width="15%") Biopsy
+                    th(width="10%") Version
+                    th(width="15%") BioFX Reviewer
+                    th(width="10%") BioFX Review
+                    th(width="10%") Projects Review
+                    th(width="10%") Exported
+                    th(width="15%") Created
+
+            tbody
+                tr(ng-show="loading").loading
+                    td(colspan="10").text-center
+                        span Loading...
+                        md-progress-circular(md-mode="indeterminate")
+                tr(ng-show="!loading && analyses.length === 0").loading
+                    td(colspan="10").text-center
+                        span No germline reports found
+                tr(ng-repeat="report in reports", ng-if="!loading")
+                    td.text-bold
+                        span(ui-sref="dashboard.germline.report({patient: report.analysis.pog.POGID, biopsy: report.analysis.analysis_biopsy, report: report.ident})").link {{report.analysis.pog.POGID}}
+                    td {{report.analysis.analysis_biopsy}}
+                    td
+                        span {{report.source_version}}
+                            md-tooltip {{report.source_path}}
+                    td {{report.biofx_assigned.firstName + ' ' + report.biofx_assigned.lastName}}
+                    td
+                        md-icon {{hasReview(report, 'biofx') ? 'check_box' : 'check_box_outline_blank'}}
+                    td
+                        md-icon {{hasReview(report, 'projects') ? 'check_box_outline' : 'check_box_outline_blank'}}
+                    td
+                        md-icon(ng-if="report.exported", ng-click="unsetExported(report)").blue.clickable check_box_outline
+                        md-icon(ng-if="!report.exported") check_box_outline_blank
+                    td {{report.createdAt | amDateFormat: 'YYYY-MM-DD H:mm'}}
+
+        ipr-paginate(offset="paginate.offset", limit="paginate.limit", total="paginate.total", refresh="refreshReports")

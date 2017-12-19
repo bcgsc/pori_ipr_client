@@ -36,7 +36,7 @@ div(layout='row', flex)
                     md-tooltip(ng-if="!maximized", md-direction="right") Genomic
                 span(flex, ng-show="maximized") Genomic
 
-            div(layout="row", ng-if="check.action('report.edit')", ui-sref="dashboard.reports.probe", ng-class="{active: ($state.current.name.indexOf('probe') > 0)}", ng-show="maximized || (!maximized && ($state.current.name.indexOf('dashboard.reports') > -1 || $state.current.name.indexOf('dashboard.pog') > -1))").submenu
+            div(layout="row", ng-if="check.resource('report')", ui-sref="dashboard.reports.probe", ng-class="{active: ($state.current.name.indexOf('probe') > 0)}", ng-show="maximized || (!maximized && ($state.current.name.indexOf('dashboard.reports') > -1 || $state.current.name.indexOf('dashboard.pog') > -1))").submenu
                 md-icon(ng-show="maximized") subdirectory_arrow_right
                 md-icon(ng-show="!maximized") highlight
                     md-tooltip(ng-if="!maximized", md-direction="right") Probe
@@ -48,6 +48,12 @@ div(layout='row', flex)
                     md-tooltip(ng-if="!maximized", md-direction="right") Clinician
                 span(flex, ng-show="maximized") Clinician
 
+
+
+            div(layout="row", ng-if="PROJECT.FEATURE.GERMLINE && check.resource('germline')", ui-sref="dashboard.germline.board", ng-class="{active: ($state.current.name.indexOf('germline') > -1)}")
+                md-icon supervisor_account
+                    md-tooltip(ng-if="!maximized", md-direction="right") Germline
+                span(flex, ng-show="maximized") Germline
 
 
 
