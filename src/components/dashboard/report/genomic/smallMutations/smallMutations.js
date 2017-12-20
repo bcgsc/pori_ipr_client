@@ -79,22 +79,29 @@ app.controller('controller.dashboard.report.genomic.smallMutations',
     
     _.forEach(images, (img) => {
       
+      // If it's an SV image, skip!
+      if(img.filename.indexOf('_sv.') > -1) return;
+      
+      // Explode filename to extract comparator
       let pieces = img.key.split('.');
+      
+      // If no comparator in key, set to null
       img.comparator = pieces[2] || null;
+      
+      // If there's no comparator, and the file isn't an sv image, set the comparator to the value selected from tumour analysis (Backwards compatibility for v4.5.1 and older)
       if(!img.comparator) img.comparator = report.tumourAnalysis.diseaseExpressionComparator; // If no comparator found in image, likely legacy and use report setting.
-  
+      
+      // Legend image
+      if(img.filename.indexOf('legend') > -1 && img.filename.indexOf('snv_indel') > -1) return sorted.legend.snv_indel = img;
+      
+      // Set comparator to lowercase
       if(img.comparator.toLowerCase() && !_.find(sorted.comparators, {name: img.comparator.toLowerCase()})) sorted.comparators.push({name: img.comparator.toLowerCase(), visible: false});
       
-      if(pieces[1].indexOf('barplot_indel') > -1) sorted.indel.barplot.push(img);
-      if(pieces[1].indexOf('barplot_snv') > -1) sorted.snv.barplot.push(img);
-      if(pieces[1].indexOf('barplot_sv') > -1) sorted.sv.barplot.push(img);
+      if(pieces[1].indexOf('barplot_indel') > -1 || pieces[1] === 'bar_indel') sorted.indel.barplot.push(img);
+      if(pieces[1].indexOf('barplot_snv') > -1 || pieces[1] === 'bar_snv') sorted.snv.barplot.push(img);
       
-      if(pieces[1].indexOf('density_plot_indel') > -1) sorted.indel.densityPlot.push(img);
-      if(pieces[1].indexOf('density_plot_snv') > -1) sorted.snv.densityPlot.push(img);
-      if(pieces[1].indexOf('density_plot_sv') > -1) sorted.sv.densityPlot.push(img);
-      
-      if(pieces[1].indexOf('legend_snv_indel') > -1) sorted.legend.snv_indel.push(img);
-      if(pieces[1].indexOf('legend_sv') > -1) sorted.legend.sv = img;
+      if(pieces[1].indexOf('density_plot_indel') > -1 || pieces[1] === 'indel') sorted.indel.densityPlot.push(img);
+      if(pieces[1].indexOf('density_plot_snv') > -1 || pieces[1] === 'snv') sorted.snv.densityPlot.push(img);
       
     });
     

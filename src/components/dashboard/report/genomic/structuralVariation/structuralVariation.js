@@ -26,45 +26,21 @@ app.controller('controller.dashboard.report.genomic.structuralVariation',
   };
 
   let processMutationSummaryImages = (images) => {
-
-    let ssorted = {
-      barplot: {
-        indel: [],
-        snv: [],
-        sv: [],
-      },
-      densityPlot: {
-        indel: [],
-        snv: [],
-        sv: [],
-      },
-      legend: {
-        indel_snv: [],
-        sv: [],
-      }
-    };
-
+    
     let sorted = {
       comparators: [],
-      indel: {
-        barplot: [],
-        densityPlot: [],
-      },
-      snv: {
-        barplot: [],
-        densityPlot: [],
-      },
       sv: {
         barplot: [],
         densityPlot: []
       },
       legend: {
-        snv_indel: [],
         sv: null
       }
     };
     
     _.forEach(images, (img) => {
+      
+      if(img.key.indexOf('sv') === -1) return;
   
       let pieces = img.key.split('.');
       img.comparator = pieces[2] || null;
@@ -72,20 +48,14 @@ app.controller('controller.dashboard.report.genomic.structuralVariation',
   
       if(img.comparator.toLowerCase() && !_.find(sorted.comparators, {name: img.comparator.toLowerCase()})) sorted.comparators.push({name: img.comparator.toLowerCase(), visible: false});
   
-      if(pieces[1].indexOf('barplot_indel') > -1) sorted.indel.barplot.push(img);
-      if(pieces[1].indexOf('barplot_snv') > -1) sorted.snv.barplot.push(img);
+      if(pieces[1].indexOf('barplot_sv') > -1 || pieces[1] === 'bar_sv') sorted.sv.barplot.push(img);
+      if(pieces[1].indexOf('density_plot_sv') > -1 || pieces[1] === 'sv') sorted.sv.densityPlot.push(img);
       
-      if(pieces[1].indexOf('barplot_sv') > -1) sorted.sv.barplot.push(img);
-  
-      if(pieces[1].indexOf('density_plot_indel') > -1) sorted.indel.densityPlot.push(img);
-      if(pieces[1].indexOf('density_plot_snv') > -1) sorted.snv.densityPlot.push(img);
-      
-      if(pieces[1].indexOf('density_plot_sv') > -1) sorted.sv.densityPlot.push(img);
-  
-      if(pieces[1].indexOf('legend_snv_indel') > -1) sorted.legend.snv_indel.push(img);
       if(pieces[1].indexOf('legend_sv') > -1) sorted.legend.sv = img;
   
     });
+    
+    console.log('Sorted Images', sorted);
     
     $scope.mutationSummaryImages = sorted;
     

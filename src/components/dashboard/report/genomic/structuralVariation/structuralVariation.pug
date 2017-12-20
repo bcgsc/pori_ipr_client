@@ -26,11 +26,12 @@ section
                         div(layout="column", flex=45)
                             div(ng-repeat="comp in mutationSummaryImages.comparators")
                                 img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{getMutationSummaryImage('densityPlot', 'sv').data}}")
-                                img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{getMutationSummaryImage('sv', 'legend').data}}")
+                                img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{mutationSummaryImages.legend.sv.data}}")
 
                         div(layout="column", flex=45)
                             div(ng-repeat="comp in mutationSummaryImages.comparators")
                                 img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{getMutationSummaryImage('barplot', 'sv').data}}")
+                                img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{mutationSummaryImages.legend.sv.data}}")
 
 
             md-tabs(md-dynamic-height=true, md-center-tabs=true).margin-bottom-20
