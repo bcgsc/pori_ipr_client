@@ -36,7 +36,7 @@ md-dialog(layout="column", aria-label="Analysis/Biopsy Details", flex=80, flex-g
 
                         div(layout="row").libDetails
                             div(flex=30) Clinspec #
-                            div(flex) {{analysis.clinical_biopsy}}
+                            div(flex) {{analysis.clinical_biopsy || 'TBD' }}
 
                         div(layout="row").libDetails
                             div(flex=30) Submitted to Onco-Panel
@@ -48,15 +48,15 @@ md-dialog(layout="column", aria-label="Analysis/Biopsy Details", flex=80, flex-g
 
                         div(layout="row").libDetails
                             div(flex=30) Normal Library
-                            div(flex) {{analysis.libraries.normal}}
+                            div(flex) {{analysis.libraries.normal || 'TBD' }}
 
                         div(layout="row").libDetails
                             div(flex=30) Tumour Library
-                            div(flex) {{analysis.libraries.tumour}}
+                            div(flex) {{analysis.libraries.tumour || 'TBD' }}
 
                         div(layout="row").libDetails
                             div(flex=30) Transcriptome Library
-                            div(flex) {{analysis.libraries.transcriptome}}
+                            div(flex) {{analysis.libraries.transcriptome || 'TBD' }}
 
                         div(layout="row").libDetails
                             div(flex=30) Genomic Report Bioinformatics Due
@@ -71,6 +71,14 @@ md-dialog(layout="column", aria-label="Analysis/Biopsy Details", flex=80, flex-g
                             div(flex=30) Tumour Panel Presentation Date
                             div(flex, ng-if="!analysis.date_presentation") TBD
                             div(flex, ng-if="analysis.date_presentation") {{analysis.date_presentation | amDateFormat: 'dddd MMMM Do YYYY'}}
+
+                        div(layout="row").libDetails
+                            div(flex=30) Physicians
+                            div(flex).physicians
+                                p(ng-repeat="phys in analysis.physician")
+                                    span {{phys.first_name}}
+                                    span {{phys.last_name}}
+
 
                         div(layout="row").libDetails
                             div(flex=30) Notes

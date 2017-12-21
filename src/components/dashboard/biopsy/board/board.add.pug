@@ -117,6 +117,20 @@ md-dialog(layout="column", aria-label="Add Biopsy", flex-md=80, flex-xs=100, fle
                             div(ng-messages="referenceForm.RefSummary.$error")
                                 div(ng-message="required") A reference summary is required.
 
+                    span Physcians
+                    div(layout="column")
+                        div(layout="row", ng-repeat="i in physicians track by $index", flex)
+                            md-input-container(flex)
+                                input(ng-model="patient.physician[i].first_name", placeholder="First Name", name="PhysFirstName{{i}}")
+                            md-input-container(flex)
+                                input(ng-model="patient.physician[i].last_name", placeholder="Last Name", name="PhysLastName{{i}}")
+                            md-icon(ng-click="removePhysician(i)").clickable remove_circle
+
+                        div(layout="row")
+                            md-button(ng-click="addPhysician()").md-primary.md-raised.small Add Physician
+
+                    br
+                    br
                     div(layout="row")
                         md-input-container(flex)
                             textarea(ng-model="patient.notes", name="Notes", placeholder="Comments", rows=3, md-maxlength=500)
@@ -221,5 +235,5 @@ md-dialog(layout="column", aria-label="Add Biopsy", flex-md=80, flex-xs=100, fle
 
 
     md-dialog-actions(layout="row", layout-aligh="end center", layout-padding)
-        md-button(ng-click="submit(Patient)").md-raised.md-primary.medium Add Biopsy
+        md-button(ng-click="submit(Patient)", ng-disabled="sending").md-raised.md-primary.medium Add Biopsy
 
