@@ -19,10 +19,11 @@ md-content(flex, layout="column", layout-fill).md-padding.definitions
                             md-icon(sv-handle) drag_handle
                         h1(flex, ng-click="selectDefinition(def)") {{def.name}}
 
-                div(layout="row", ng-click="newState($event, true)").clickable.def
-                    div
-                        md-icon playlist_add
-                    h1(flex, ng-click="newDefinition()") Add new state definition
+                div(layout="row", ng-click="newState($event, true)", style="display: block; border-bottom: none;").clickable.def
+                    div(layout="row")
+                        div
+                            md-icon playlist_add
+                        h1(flex, ng-click="newDefinition()") Add new state definition
 
 
             div(flex, layout="column", ng-if="editing.name === undefined", layout-align="center center").column.definitionsForm.empty
