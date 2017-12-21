@@ -1,11 +1,12 @@
 app.controller('controller.dashboard.tracking.definition',
-['$q', '_', '$scope', 'api.tracking.definition', 'api.tracking.state', 'api.tracking.task', '$mdDialog', '$mdToast', 'definitions', 'groups',
-($q, _, $scope, $definition, $state, $task, $mdDialog, $mdToast, definitions, groups) => {
+['$q', '_', '$scope', 'api.tracking.definition', 'api.tracking.state', 'api.tracking.task', '$mdDialog', '$mdToast', 'definitions', 'groups', 'hooks',
+($q, _, $scope, $definition, $state, $task, $mdDialog, $mdToast, definitions, groups, hooks) => {
 
   $scope.definitions = _.sortBy(definitions, 'ordinal');
-
+  
   $scope.editing = {};
   $scope.groups = groups;
+  $scope.hooks = hooks;
 
   $scope.selectDefinition = (definition) => {
     $scope.editing = definition;
@@ -19,6 +20,30 @@ app.controller('controller.dashboard.tracking.definition',
   $scope.cancelEditing = () => {
     $scope.editing = {};
     $mdToast.show($mdToast.simple().textContent('No changes have been saved.'));
+  };
+  
+  $scope.getHooksByState = (state) => {
+    return _.filter($scope.hooks, {state_name: state});
+  };
+  
+  $scope.openHook = (hook) => {
+    
+    $mdDialog.show({
+      templateUrl: 'dashboard/tracking/definition/definition.hook.html',
+      controller: 'controller.dashboard.tracking.definition.hook',
+      locals: {
+        hook: hook,
+        tasks: $scope.editing.tasks,
+        definition: $scope.editing
+      }
+    })
+      .then((h) => {
+        if(!_.find($scope.hooks, {ident: h.ident})) $scope.hooks.push(h);
+      })
+      .catch((e) => {
+        console.log('Hook save Error', e);
+      });
+    
   };
 
   // Save Definitions editor form
