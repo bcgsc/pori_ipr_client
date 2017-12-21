@@ -22,6 +22,11 @@ section.meta
             md-input-container(flex)
                 input(ng-model="report.kbVersion", placeholder="Knowledgebase Version", required, ng-change="checkChange()")
         div(layout="row")
+            md-input-container(flex)
+                input(ng-model="report.expression_matrix", placeholder="Expression Matrix Version", ng-disabled="true", disabled="disabled")
+            md-input-container(flex)
+
+        div(layout="row")
             span(flex)
             span
                 md-button(ng-click="updateSettings()", ng-disabled="!reportSettingsChanged").md-primary.md-raised Update

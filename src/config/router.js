@@ -545,7 +545,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       controller: 'controller.dashboard.report.genomic.smallMutations',
       resolve: {
         images: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
-          return $image.get($stateParams.POG, $stateParams.analysis_report, 'mutSummary.snv,mutSummary.indel,mutSummary.barSnv,mutSummary.barIndel,mutSignature.corPcors,mutSignature.snvsAllStrelka');
+          return $image.get($stateParams.POG, $stateParams.analysis_report, 'mutSignature.corPcors,mutSignature.snvsAllStrelka');
         }],
         mutationSummaryImages: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
           return $image.mutationSummary($stateParams.POG, $stateParams.analysis_report);
@@ -1169,6 +1169,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         }],
         definitions: ['$q', 'api.tracking.definition', ($q, $definition) => {
           return $definition.all({hidden: true});
+        }],
+        hooks: ['$q', 'api.tracking.hook', ($q, $hook) => {
+          return $hook.all();
         }]
       }
     })
