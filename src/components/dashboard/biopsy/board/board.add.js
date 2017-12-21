@@ -17,6 +17,10 @@ app.controller('controller.dashboard.biopsy.board.add',
   $scope.find_libraries = false;
   $scope.found_libraries = [];
   $scope.libraries_loading = false;
+  $scope.physicians = [0];
+  
+  $scope.addPhysician = () => { $scope.physicians.push($scope.physicians.length); console.log('Array: ', $scope.physicians); };
+  $scope.removePhysician = (i) => { $scope.physicians.splice(i,1); };
   
   $scope.events = {
     valid: false,
@@ -263,17 +267,23 @@ app.controller('controller.dashboard.biopsy.board.add',
   // Submit Biopsy Entry
   $scope.submit = (f) => {
     
+    $scope.sending = true;
+    
     // Setup submission object
     let analysis = {
       POGID: ($scope.patient.POGID) ? $scope.patient.POGID.POGID : $scope.searchQuery,
+      project: 'POG',
       clinical_biopsy: $scope.patient.clinical_biopsy,
       disease:  (typeof $scope.patient.disease === 'object') ? $scope.patient.disease.text : $scope.patient.disease,
       biopsy_notes: $scope.patient.biopsy_notes,
       biopsy_date: $scope.patient.biopsy_date,
       tracking: $scope.patient.tracking,
       notes: $scope.patient.notes,
+      physician: [],
       libraries: null
     };
+    
+    _.forEach($scope.patient.physician, (p) => { analysis.physician.push(p) });
     
     // Add libraries and biop if not tracking
     if(!$scope.patient.tracking) {

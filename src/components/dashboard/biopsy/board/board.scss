@@ -35,6 +35,15 @@
 
   border-bottom: 1px solid rgb(230,230,230);
 
+  .physicians {
+    p {
+      margin: 2px 0;
+      span {
+        margin-right: 3px;
+      }
+    }
+  }
+
   &:last-of-type {
     border-bottom: none;
   }
