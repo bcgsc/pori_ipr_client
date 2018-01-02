@@ -4,11 +4,27 @@ app.controller('controller.dashboard.tracking.definition.hook',
   
   $scope.hook = hook;
   $scope.tasks = tasks;
+  $scope.showConfirmDelete = false; // By default do not show the remove confirmation button
+  $scope.new = !(hook.ident);
   
   $scope.hook.target_string = _.join(hook.target, ', ');
   
   $scope.cancel = () => {
-    $mdDialog.cancel();
+    $mdDialog.cancel({event: 'cancel'});
+  };
+  
+  $scope.remove = () => {
+    
+    if(!$scope.hook.ident) $mdDialog.cancel();
+    
+    $hook.remove($scope.hook.ident)
+      .then(() => {
+        $mdDialog.cancel({event: 'remove', hook: $scope.hook, ident: $scope.hook.ident});
+      })
+      .catch((e) => {
+        $mdToast.showSimple('Failed to remove hook.');
+      });
+    
   };
   
   $scope.submit = (f) => {

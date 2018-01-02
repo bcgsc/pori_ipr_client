@@ -31,6 +31,10 @@ md-dialog(layout="column", aria-label="Analysis/Biopsy Details", flex=80, flex-g
                             div(flex) {{analysis.disease}} ({{analysis.threeLetterCode}})
 
                         div(layout="row").libDetails
+                            div(flex=30) Pediatric ID
+                            div(flex) {{analysis.pediatric_id || 'N/A'}}
+
+                        div(layout="row").libDetails
                             div(flex=30) Biopsy Notes
                             div(flex) {{analysis.biopsy_notes}}
 

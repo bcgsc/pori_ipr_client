@@ -41,7 +41,14 @@ app.controller('controller.dashboard.tracking.definition',
         if(!_.find($scope.hooks, {ident: h.ident})) $scope.hooks.push(h);
       })
       .catch((e) => {
-        console.log('Hook save Error', e);
+        if(!e) e = {event: 'cancel'};
+        
+        switch(e.event) {
+          case 'remove':
+            let i = _.findKey($scope.hooks, {ident: e.ident});
+            $scope.hooks.splice(i,1);
+            break;
+        }
       });
     
   };

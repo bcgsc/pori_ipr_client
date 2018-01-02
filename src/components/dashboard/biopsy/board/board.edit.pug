@@ -63,8 +63,10 @@ md-dialog(layout="column", aria-label="Edit Biopsy Analysis", flex-md=80, flex-x
 
 
                     div(layout="row")
-                        div(style="padding-right: 40px;")
-                            md-datepicker(ng-model="patient.biopsy_date", md-placeholder="Biopsy Date")
+                        md-input-container(style="padding-right: 40px;")
+                            label Biopsy Date
+                            md-datepicker(ng-model="patient.biopsy_date")
+
 
                         md-input-container(flex)
                             input(ng-model="patient.biopsy_notes", name="BiopsyNotes", placeholder="Biopsy Notes")

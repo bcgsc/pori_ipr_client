@@ -3,39 +3,11 @@ app.controller('controller.dashboard.toolbar',
     (_, $scope, $mdSidenav, $state, $mdDialog, $mdToast, $timeout, $session, isAdmin, $userSettings) => {
 
       $scope.isAdmin = isAdmin;
-      $scope.holiday_lights = $userSettings.get('holiday_lights');
 
       $scope.toggleMenu = () => {
         $mdSidenav('topLevelNavigation').toggle();
       };
       
-      
-      $scope.toggleLights = ($ev) => {
-        $scope.holiday_lights = !$scope.holiday_lights;
-        $userSettings.save('holiday_lights', $scope.holiday_lights);
-        
-      };
-      
-      if($userSettings.get('holiday_lights') !== true && $userSettings.get('holiday_lights') !== false) {
-        
-        $scope.holiday_lights = true;
-        
-        $timeout(() => {
-          $mdDialog.show($mdDialog.confirm()
-          .title('Holiday Lights')
-          .htmlContent("Happy Holidays! Some festive lights have been added to IPR for the holidays. <br \><br \> Holiday lights can be toggled at any time by clicking your name on the top right, and selecting \"Toggle Lights\"")
-          .ok("Keep them on")
-          .cancel("Turn them off"))
-          
-            .then((response) => {
-              $userSettings.save('holiday_lights', true);
-            })
-            .catch((err) => {
-              $userSettings.save('holiday_lights', false);
-              $scope.holiday_lights = false;
-            });
-        }, 2000)
-      }
 
       // Open Feedback
       $scope.openFeedback = ($event) => {

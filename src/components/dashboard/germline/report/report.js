@@ -160,16 +160,6 @@ app.controller('controller.dashboard.germline.report',
       width: 200,
       show_always: true
     },
-    fc_mean_bodymap: {
-      name: 'fc_mean_bodymap',
-      width: 100,
-      show_always: true
-    },
-    fc_tissue: {
-      name: 'fc_tissue',
-      width: 100,
-      show_always: true
-    },
     fc_bodymap: {
       name: `fc_bodymap`,
       width: 100,
