@@ -40,6 +40,9 @@ md-dialog(layout="column", aria-label="Add Biopsy", flex-md=80, flex-xs=100, fle
                                 div(ng-message="required") A reference id is required.
                             div.hint Biospecimen biopsy number
 
+                        md-input-container(flex)
+                            input(ng-model="patient.pediatric_id", name="PediatricID", md-placeholder="Pediatric ID")
+
                     div(layout="column", ng-show="show_sources", md-whiteframe=2).material-table.inset.margin-bottom-20
 
                         p Sources found in LIMS for this POGID.

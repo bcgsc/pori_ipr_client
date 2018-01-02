@@ -279,6 +279,7 @@ app.controller('controller.dashboard.biopsy.board.add',
       biopsy_date: $scope.patient.biopsy_date,
       tracking: $scope.patient.tracking,
       notes: $scope.patient.notes,
+      pediatric_id: $scope.patient.pediatric_id,
       physician: [],
       libraries: null
     };
