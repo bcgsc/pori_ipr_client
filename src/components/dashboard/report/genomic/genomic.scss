@@ -607,6 +607,11 @@
       h2 { background-color: $analysis-report-section-expression-secondary; }
     }
 
+    &.presentation {
+      h1 { background-color: $analysis-report-section-expression-primary; }
+      h2 { background-color: $analysis-report-section-expression-secondary; }
+    }
+
     h1 {
       padding: 7px;
       margin: 0;
