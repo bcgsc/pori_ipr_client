@@ -628,6 +628,20 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       }
     })
 
+    .state('dashboard.reports.pog.report.genomic.discussion', {
+      url: '/discussion',
+      data: {
+        displayName: "Discussions"
+      },
+      templateUrl: 'dashboard/report/genomic/presentation/discussion/discussion.html',
+      controller: 'controller.dashboard.report.genomic.discussion',
+      resolve: {
+        discussions: ['$q', '$stateParams', 'api.presentation', ($q, $stateParams, $presentation) => {
+          return $presentation.discussion.all($stateParams.POG, $stateParams.analysis_report);
+        }]
+      }
+    })
+
     .state('dashboard.reports.pog.report.genomic.appendices', {
       url: '/appendices',
       data: {
