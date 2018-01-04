@@ -870,6 +870,15 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
             }],
           }
         },
+        "presentationSlide@print.POG.report.genomic": {
+          templateUrl: 'print/report/genomic/sections/presentation/slide.html',
+          controller: 'controller.print.POG.report.genomic.slide',
+          resolve: {
+            slides: ['$q', '$stateParams', 'api.presentation', ($q, $stateParams, $presentation) => {
+              return $presentation.slide.all($stateParams.POG, $stateParams.analysis_report);
+            }]
+          }
+        },
         "dga@print.POG.report.genomic": {
           templateUrl: 'print/report/genomic/sections/dga/dga.html',
           controller: 'controller.print.POG.report.genomic.dga',
