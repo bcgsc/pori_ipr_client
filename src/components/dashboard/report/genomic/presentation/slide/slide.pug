@@ -22,12 +22,15 @@ section.material-section.slide.presentation
 
                 div(layout="column" ng-show="add_step === 'select'").pick-file
 
-                    md-input-container(layout="row").name
-                        input(ng-model="new.name", placeholder="Slide Name")
+                    div(layout="row")
+                        md-input-container(flex).name
+                            input(ng-model="new.name", placeholder="Slide Name", flex)
+                        md-input-container(flex)
+                            input(type="file" nv-file-select="" uploader="uploader", ng-model="new.file", flex, ng-disabled="new.name.length === 0")
+                            span.hint(ng-if="new.name.length === 0")
+                                md-icon.small keyboard_arrow_left
+                                | Slide name must be entered before a file can be selected.
 
-                    md-input-container(layout="row")
-                        span(flex=30) Select the image file to be uploaded
-                        input(type="file" nv-file-select="" uploader="uploader", ng-model="new.file")
                     span Image file formats supported: png, jpeg, gif. Max size: 10MB
 
                 div(layout="column", ng-show="add_step === 'upload'")

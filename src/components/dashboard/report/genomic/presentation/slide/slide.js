@@ -5,7 +5,7 @@ app.controller('controller.dashboard.report.genomic.slide',
   $scope.pog = pog;
   $scope.report = report;
   $scope.slides = slides;
-  $scope.new = { name: null };
+  $scope.new = { name: "" };
   
   
   $scope.add_step = 'select';
@@ -50,6 +50,8 @@ app.controller('controller.dashboard.report.genomic.slide',
     $mdDialog.cancel('Canceled Edit - No changes made.');
   };
   
+  
+  let selectedItem = null;
   let uploader = {};
   
   let setupUploader = () => {
@@ -60,10 +62,14 @@ app.controller('controller.dashboard.report.genomic.slide',
     u.headers['Authorization'] = $session.getToken();
     u.method = 'POST';
     u.alias = "file";    // Name of the file in the POST
+    
+    selectedItem = null;
+    
+    $scope.progress = 0;
+    
     return u;
   };
   
-  let selectedItem;
   
   uploader = setupUploader();
   
@@ -73,9 +79,6 @@ app.controller('controller.dashboard.report.genomic.slide',
     fn: function(item, options) {
       
       uploader.formData = [{name: $scope.new.name}];
-      
-      console.log('Uploader', uploader, $scope.new);
-      
       if(allowedImageFormats.indexOf(item.type) === -1) {
         $mdToast.showSimple('Invalid file format provided. Must be an image of type: ' + _.join(allowedImageFormats, ', '));
         return false;
@@ -115,6 +118,7 @@ app.controller('controller.dashboard.report.genomic.slide',
     // Add to tabs and notify user of great success
     $mdToast.showSimple('The slide was successfully uploaded');
     $scope.slides.push(response);
+    $scope.new.name = "";
     
     $scope.add_step = 'select';
     
