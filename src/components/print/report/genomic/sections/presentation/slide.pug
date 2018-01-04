@@ -1,0 +1,19 @@
+div.pageBreak
+table.print
+    thead
+        tr
+            td.pageHeader.padded.presentation
+                div(layout="row")
+                    div(flex=30) {{pog.POGID}}
+                        br
+                        | {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
+                    div(flex) BCCA Confidential - For Research Purposes Only
+                    div(flex=30)  {{report.patientInformation.tumourType}}
+                h1 Presentation
+                h2 Slides
+    tbody
+        tr(ng-repeat="slide in slides")
+            td.presentation
+                h3 {{slide.name}}
+                div(layout="row", layout-align="space-around")
+                    img(data-ng-src="data:{{slide.object_type}};base64,{{slide.object}}", style="max-height: 470px; max-width: 970px; height: auto; width: auto; display: block;")
