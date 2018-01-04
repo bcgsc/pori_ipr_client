@@ -145,7 +145,7 @@ app.factory('api.presentation', ['_', '$http', '$q', (_, $http, $q) => {
       return $q((resolve, reject) => {
         $http.get(`${api}/${patient}/report/${report}/genomic/presentation/slide`)
           .then((result) => {
-            resolve(reuslt.data);
+            resolve(result.data);
           })
           .catch((e) => {
             reject(e);

@@ -1,0 +1,43 @@
+section.material-section.slide.presentation
+    h1 Presentation Slides
+
+    div(layout="column")
+
+        div.analysis-report-section
+            div(layout="column")
+
+                md-tabs(md-dynamic-height, md-border-bottom)
+                    md-tab(ng-if="slides.length === 0", label="N/A")
+                        md-content
+                            p.text-center No slides uploaded.
+                    md-tab(ng-repeat="slide in slides", label="{{slide.name}}")
+                        md-content.md-padding
+                            h3 {{slide.name}}
+                                md-icon(ng-click="remove(slide)").clickable.small delete
+
+                            img(data-ng-src="{{'data:' + slide.object_type + ';base64,' + slide.object}}", style="max-width: 100%;")
+
+            div(layout="column").add-slide
+                h2 Add new slide
+
+                div(layout="column" ng-show="add_step === 'select'").pick-file
+
+                    md-input-container(layout="row").name
+                        input(ng-model="new.name", placeholder="Slide Name")
+
+                    md-input-container(layout="row")
+                        span(flex=30) Select the image file to be uploaded
+                        input(type="file" nv-file-select="" uploader="uploader", ng-model="new.file")
+                    span Image file formats supported: png, jpeg, gif. Max size: 10MB
+
+                div(layout="column", ng-show="add_step === 'upload'")
+                    p You have selected
+                        code(style="display: inline")  {{filename}}
+                        |  to be uploaded.
+
+                    div(layout="row", layout-align="space-around")
+                        md-progress-circular(md-mode="determinate", value="{{progress}}")
+                div(layout="row")
+                    span(flex)
+                    md-button(ng-click="initiateUpload()", ng-disabled="add_step !== 'upload'").md-primary.md-raised Upload
+                    span(flex)

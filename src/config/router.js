@@ -631,13 +631,27 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     .state('dashboard.reports.pog.report.genomic.discussion', {
       url: '/discussion',
       data: {
-        displayName: "Discussions"
+        displayName: "Presentation Discussion"
       },
       templateUrl: 'dashboard/report/genomic/presentation/discussion/discussion.html',
       controller: 'controller.dashboard.report.genomic.discussion',
       resolve: {
         discussions: ['$q', '$stateParams', 'api.presentation', ($q, $stateParams, $presentation) => {
           return $presentation.discussion.all($stateParams.POG, $stateParams.analysis_report);
+        }]
+      }
+    })
+
+    .state('dashboard.reports.pog.report.genomic.slide', {
+      url: '/slide',
+      data: {
+        displayName: "Presentation Slides"
+      },
+      templateUrl: 'dashboard/report/genomic/presentation/slide/slide.html',
+      controller: 'controller.dashboard.report.genomic.slide',
+      resolve: {
+        slides: ['$q', '$stateParams', 'api.presentation', ($q, $stateParams, $presentation) => {
+          return $presentation.slide.all($stateParams.POG, $stateParams.analysis_report);
         }]
       }
     })
