@@ -60,7 +60,7 @@ md-content(flex, layout="column").md-padding.biopsyBoard
                         span(ng-if="!analysis.libraries.tumour") N/A
                     td
                         span(ng-click="openLibrary(analysis.libraries.normal)").clickable.link {{analysis.libraries.normal}}
-                        span(ng-if="!analysis.libraries.tumour") N/A
+                        span(ng-if="!analysis.libraries.normal") N/A
                     td
                         span(ng-click="openLibrary(analysis.libraries.transcriptome)").clickable.link {{analysis.libraries.transcriptome}}
                         span(ng-if="!analysis.libraries.transcriptome") N/A
