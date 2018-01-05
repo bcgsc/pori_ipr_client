@@ -36,6 +36,17 @@ app.controller('controller.dashboard.report.genomic',
       children: []
     },
     {
+      name: 'Presentation',
+      state: 'presentation',
+      meta: false,
+      showChildren: false,
+      clinician: true,
+      children: [
+        {name: 'Additional Information', state: 'slide'},
+        {name: 'Discussion Notes', state: 'discussion'}
+      ]
+    },
+    {
       name: 'Detailed Genomic Analysis',
       state: null,
       meta: false,
@@ -79,17 +90,6 @@ app.controller('controller.dashboard.report.genomic',
       showChildren: false,
       clinician: true,
       children: []
-    },
-    {
-      name: 'Presentation',
-      state: 'presentation',
-      meta: false,
-      showChildren: false,
-      clinician: true,
-      children: [
-        {name: 'Discussion', state: 'discussion'},
-        {name: 'Slides', state: 'slide'}
-      ]
     },
     {
       name: 'History',
