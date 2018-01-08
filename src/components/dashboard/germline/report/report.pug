@@ -14,17 +14,21 @@ md-content(flex, layout="column").md-padding.biopsyBoard.germline_report
             table.material-table
                 thead
                     tr
+                        th
+                            span(style="min-width: 40px;")
                         th(ng-repeat="(key, val) in columns", ng-hide="!val.show_always && !show_extended")
                             span(ng-class="{'text-underline': (val.tooltip), 'clickable': (val.tooltip)}", style="display: block; min-width: {{val.width}}px") {{val.name}}
                                 md-tooltip(ng-if="val.tooltip") {{val.tooltip}}
-                        th
-                            span(style="min-width: 40px;")
 
                 tbody
                     tr(ng-show="report.variants.length === 0")
                         td(colspan="10").text-left
                             span No variants detected in this germline report
                     tr(ng-repeat="variant in report.variants", ng-if="report.variants.length > 0", ng-class="{lowScore: (variant['score'] < 100), strike: variant['hidden']}")
+                        td.options
+                            md-icon(ng-click="toggleVariantHidden(variant)").clickable strikethrough_s
+                                md-tooltip Striking out a row will exclude it from being exported by Projects.
+
                         td(ng-repeat="(key, col) in columns", ng-hide="!col.show_always && !show_extended")
 
                             span(ng-if="key == 'patient_history'", ng-click="getHistory($event, 'patient', variant['patient_history'])").clickable.blue.text-underline {{variant['patient_history']}}
@@ -36,8 +40,6 @@ md-content(flex, layout="column").md-padding.biopsyBoard.germline_report
                                 span(style="display: block;", ng-if="!col.truncate") {{variant[key] || 'N/A'}}
                                 span(style="display: block;", ng-if="col.truncate")
                                     md-trunctate {{variant[key] || 'N/A'}}
-                        td.options
-                            md-icon(ng-click="toggleVariantHidden(variant)").clickable strikethrough_s
         div.reviews
             h2 Reviews
 

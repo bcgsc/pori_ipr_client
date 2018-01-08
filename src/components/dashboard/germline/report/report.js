@@ -86,7 +86,7 @@ app.controller('controller.dashboard.germline.report',
     zygosity_germline: {
       name: 'Zygosity in germline',
       width: 100,
-      show_always: false
+      show_always: true
     },
     preferred_transcript: {
       name: 'Preferred Transcript',
@@ -96,17 +96,17 @@ app.controller('controller.dashboard.germline.report',
     hgvs_cdna: {
       name: 'HGVS-cDNA',
       width: 100,
-      show_always: false
+      show_always: true
     },
     hgvs_protein: {
       name: 'HGVS-protein',
       width: 100,
-      show_always: false
+      show_always: true
     },
     zygosity_tumour: {
       name: 'Zygosity in tumour',
       width: 100,
-      show_always: false
+      show_always: true
     },
     genomic_variant_reads: {
       name: 'Genomic variant reads ',
@@ -148,22 +148,22 @@ app.controller('controller.dashboard.germline.report',
     tcga_comp_norm_percentile: {
       name: `tcga_comp_norm_percentile`,
       width: 100,
-      show_always: true
+      show_always: false
     },
     tcga_comp_percentile: {
       name: `tcga_comp_percentile`,
       width: 200,
-      show_always: true
+      show_always: false
     },
     gtex_comp_percentile: {
       name: `gtex_comp_average_percentile`,
       width: 200,
-      show_always: true
+      show_always: false
     },
     fc_bodymap: {
       name: `fc_bodymap`,
       width: 100,
-      show_always: true
+      show_always: false
     },
     gene_expression_rpkm: {
       name: 'Gene Expression RPKM',
