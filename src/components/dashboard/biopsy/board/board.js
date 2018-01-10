@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.biopsy.board',
-['$q', '_', '$scope', 'api.lims', 'api.bioapps', 'api.analysis', 'api.pog', '$mdDialog', '$mdToast', 'analyses',
-($q, _, $scope, $lims, $bioapps, $analysis, $pog, $mdDialog, $mdToast, analyses) => {
+['$q', '_', '$scope', 'api.lims', 'api.bioapps', 'api.analysis', 'api.pog', '$mdDialog', '$mdToast', 'analyses', 'comparators',
+($q, _, $scope, $lims, $bioapps, $analysis, $pog, $mdDialog, $mdToast, analyses, comparators) => {
   
   $scope.pogs = {};
   $scope.searching = false;
@@ -248,7 +248,8 @@ app.controller('controller.dashboard.biopsy.board',
       templateUrl: 'dashboard/biopsy/board/board.edit_comparator.html',
       controller: 'controller.dashboard.biopsy.board.edit_comparator',
       locals: {
-        analysis: analysis
+        analysis: analysis,
+        comparators: comparators
       }
     })
       .then((result) => {

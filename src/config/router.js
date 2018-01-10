@@ -1277,6 +1277,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       resolve: {
         analyses: ['$q', 'api.analysis', ($q, $analysis) => {
           return $analysis.all({paginated: true, project: 'POG'});
+        }],
+        comparators: ['$q', 'api.analysis', ($q, $analysis) => {
+          return $analysis.comparators();
         }]
       }
     })

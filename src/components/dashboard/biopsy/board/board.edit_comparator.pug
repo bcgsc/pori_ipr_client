@@ -48,42 +48,24 @@ md-dialog(layout="column", aria-label="Edit Biopsy Comparators", flex-md=80, fle
                                     p {{comp}}
                                     md-icon(ng-click="select_for_analysis(comp)", ng-class="{'for-analysis': (patient.comparator_disease.analysis === comp)}").clickable.small star
                                         md-tooltip Set as comparator for analysis
-                                    md-icon(ng-click="remove_comp(comp)").small delete
+
+                                    md-icon(ng-click="remove_comp(comp)", ng-if="patient.comparator_disease.analysis !== comp").clickable.small delete
+                                    md-icon(ng-if="patient.comparator_disease.analysis === comp").clickable.small.lt-grey delete
+                                        md-tooltip You can not remove the comparator selected for analysis.
 
 
                     div(layout="row")
 
-                        md-autocomplete(
-                        md-input-name="NormalPrimary",
-                        md-selected-item="comparator_search.normal_primary",
-                        md-search-text="comparatorNormalPrimary",
-                        md-items="comp in searchNormalComparators(comparatorNormalPrimary)",
-                        md-item-text="comp",
-                        md-floating-label="Normal Primary Site",
-                        md-autofocus=true,
-                        md-autoselect=true,
-                        md-require-match=false,
-                        md-dropdown-position="bottom",
-                        flex=45
-                        )
-                            md-item-template {{comp}}
+                        md-input-container(flex=50)
+                            label Normal Primary Site
+                            md-select(ng-model="comparator_search.normal_primary")
+                                md-option(ng-value="comp", ng-repeat="comp in comparators.v9.normal.illumina") {{comp}}
 
 
-
-                        md-autocomplete(
-                        md-input-name="NormalBiopsy",
-                        md-selected-item="comparator_search.normal_biopsy",
-                        md-search-text="comparatorNormalBiopsy",
-                        md-items="comp in searchNormalComparators(comparatorNormalBiopsy)",
-                        md-item-text="comp",
-                        md-floating-label="Normal Biopsy Site",
-                        md-autofocus=true,
-                        md-autoselect=true,
-                        md-require-match=false,
-                        md-dropdown-position="bottom",
-                        flex=45
-                        )
-                            md-item-template {{comp}}
+                        md-input-container(flex=50)
+                            label Normal Biopsy Site
+                            md-select(ng-model="comparator_search.normal_biopsy")
+                                md-option(ng-value="comp", ng-repeat="comp in comparators.v9.normal.illumina") {{comp}}
 
                     div(layout="row")
 
@@ -92,32 +74,31 @@ md-dialog(layout="column", aria-label="Edit Biopsy Comparators", flex-md=80, fle
                         md-selected-item="comparator_search.gtex_primary",
                         md-search-text="comparatorGtexPrimary",
                         md-items="comp in searchGtexComparators(comparatorGtexPrimary)",
-                        md-item-text="comp",
+                        md-item-text="comp.code",
                         md-floating-label="Gtex Primary Site",
                         md-autofocus=true,
                         md-autoselect=true,
                         md-require-match=false,
                         md-dropdown-position="bottom",
-                        flex=45
+                        flex=50
                         )
-                            md-item-template {{comp}}
-
+                            md-item-template {{comp.code}}
 
 
                         md-autocomplete(
                         md-input-name="GtexBiopsy",
                         md-selected-item="comparator_search.gtex_biopsy",
                         md-search-text="comparatorGtexBiopsy",
-                        md-items="comp in searchGTexComparators(comparatorGtexBiopsy)",
-                        md-item-text="comp",
+                        md-items="comp in searchGtexComparators(comparatorGtexBiopsy)",
+                        md-item-text="comp.code",
                         md-floating-label="Gtex Biopsy Site",
                         md-autofocus=true,
                         md-autoselect=true,
                         md-require-match=false,
                         md-dropdown-position="bottom",
-                        flex=45
+                        flex=50
                         )
-                            md-item-template {{comp}}
+                            md-item-template {{comp.code}}
 
 
                     div(layout="row")

@@ -74,7 +74,7 @@ md-content(flex, layout="column", layout-fill).md-padding.definitions
                                 md-content(flex, sv-root="tasks", sv-part="editing.tasks").tasks
                                     div(layout="row", ng-repeat="(i, task) in editing.tasks", sv-element).task
                                         span
-                                            md-icon(sv-handle) drag_handle
+                                            md-icon(sv-handle).clickable drag_handle
                                         span.int {{i+1}}.
                                         h3(flex, ng-click="taskEditor($event, task, i)") {{task.name}}
                                     div(layout="row", ng-click="taskEditor($event, true)").clickable.task
