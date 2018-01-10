@@ -108,6 +108,24 @@ app.factory('api.analysis', ['_', '$http', '$q', (_, $http, $q) => {
     });
   };
   
+  /**
+   * Retrieve comparators list from API
+   *
+   * @returns {object} - Resolves with hashmap of comparators
+   */
+  $analysis.comparators = () => {
+    return $q((resolve, reject) => {
+      
+      $http.get(`${api}/comparators`)
+        .then((result) => {
+          resolve(result.data);
+        })
+        .catch((e) => {
+          reject(e);
+        });
+    });
+  };
+  
   return $analysis;
   
 }]);

@@ -1,0 +1,134 @@
+md-dialog(layout="column", aria-label="Edit Biopsy Comparators", flex-md=80, flex-xs=100, flex-lg=70, flex=70).editor
+    md-toolbar
+        .md-toolbar-tools
+            h2 Edit Biopsy Comparators
+            span(flex)
+            md-button.md-icon-button(ng-click='cancel()')
+                md-icon cancel
+    md-dialog-content(layout-padding).alterationsForm
+        div(label="Patient")
+            form(name="PatientForm", ng-submit="submit()", novalidate)
+                div(layout="column")
+
+                    div(layout="row")
+                        md-input-container(layout="row", flex)
+                            input(disabled="disabled", ng-value="patient.pog.POGID", placeholder="Patient ID")
+
+                        md-input-container(flex)
+                            input(ng-model="patient.analysis_biopsy", disabled="disabled", placeholder="BioApps Biopsy/Analysis label", name="AnalyticalBiopsy")
+
+
+                    div(layout="row", flex)
+                        span Disease Comparators
+
+                    div(layout="row", flex)
+                        md-autocomplete(
+                        md-input-name="Disease Comparator",
+                        md-selected-item="comparator_search.entry",
+                        md-search-text="comparatorQuery",
+                        md-items="comp in searchComparators(comparatorQuery)",
+                        md-item-text="comp.code",
+                        md-floating-label="Add Disease Comparator",
+                        md-autofocus=true,
+                        md-autoselect=true,
+                        md-require-match=true,
+                        md-dropdown-position="bottom",
+                        flex=40
+                        )
+                            md-item-template {{comp.code}}
+
+                        div(flex=20)
+                            md-button(ng-click="add_comparator()").md-primary.md-raised →
+
+
+                        div(flex).comparators
+                            md-list(flex, sv-root, sv-part="disease_comparators")
+                                md-list-item(ng-repeat="comp in disease_comparators track by $index", layout="row", sv-element).secondary-button-padding
+                                    md-icon(sv-handle) drag_handle
+                                    p {{comp}}
+                                    md-icon(ng-click="select_for_analysis(comp)", ng-class="{'for-analysis': (patient.comparator_disease.analysis === comp)}").clickable.small star
+                                        md-tooltip Set as comparator for analysis
+                                    md-icon(ng-click="remove_comp(comp)").small delete
+
+
+                    div(layout="row")
+
+                        md-autocomplete(
+                        md-input-name="NormalPrimary",
+                        md-selected-item="comparator_search.normal_primary",
+                        md-search-text="comparatorNormalPrimary",
+                        md-items="comp in searchNormalComparators(comparatorNormalPrimary)",
+                        md-item-text="comp",
+                        md-floating-label="Normal Primary Site",
+                        md-autofocus=true,
+                        md-autoselect=true,
+                        md-require-match=false,
+                        md-dropdown-position="bottom",
+                        flex=45
+                        )
+                            md-item-template {{comp}}
+
+
+
+                        md-autocomplete(
+                        md-input-name="NormalBiopsy",
+                        md-selected-item="comparator_search.normal_biopsy",
+                        md-search-text="comparatorNormalBiopsy",
+                        md-items="comp in searchNormalComparators(comparatorNormalBiopsy)",
+                        md-item-text="comp",
+                        md-floating-label="Normal Biopsy Site",
+                        md-autofocus=true,
+                        md-autoselect=true,
+                        md-require-match=false,
+                        md-dropdown-position="bottom",
+                        flex=45
+                        )
+                            md-item-template {{comp}}
+
+                    div(layout="row")
+
+                        md-autocomplete(
+                        md-input-name="GtexPrimary",
+                        md-selected-item="comparator_search.gtex_primary",
+                        md-search-text="comparatorGtexPrimary",
+                        md-items="comp in searchGtexComparators(comparatorGtexPrimary)",
+                        md-item-text="comp",
+                        md-floating-label="Gtex Primary Site",
+                        md-autofocus=true,
+                        md-autoselect=true,
+                        md-require-match=false,
+                        md-dropdown-position="bottom",
+                        flex=45
+                        )
+                            md-item-template {{comp}}
+
+
+
+                        md-autocomplete(
+                        md-input-name="GtexBiopsy",
+                        md-selected-item="comparator_search.gtex_biopsy",
+                        md-search-text="comparatorGtexBiopsy",
+                        md-items="comp in searchGTexComparators(comparatorGtexBiopsy)",
+                        md-item-text="comp",
+                        md-floating-label="Gtex Biopsy Site",
+                        md-autofocus=true,
+                        md-autoselect=true,
+                        md-require-match=false,
+                        md-dropdown-position="bottom",
+                        flex=45
+                        )
+                            md-item-template {{comp}}
+
+
+                    div(layout="row")
+                        md-input-container(flex, layout="row")
+                            label Tumour Type for Report
+                            input(ng-model="patient.comparator_disease.tumour_type_report", flex)
+
+                        md-input-container(flex, layout="row")
+                            label Tumour Type for Knowledgebase
+                            input(ng-model="patient.comparator_disease.tumour_type_kb", flex)
+
+    md-dialog-actions(layout="row", layout-aligh="end center", layout-padding)
+        md-button(ng-click="save(Patient)").md-raised.md-primary.medium Save Biopsy Analysis
+

@@ -8,6 +8,7 @@ app.controller('controller.dashboard.biopsy.board',
   $scope.loading = false;
   $scope.showSearch = false;
   $scope.focusSearch = false;
+  $scope.active_sheet = 'biopsy';
   
   let analysis_query = {
     search: undefined,
@@ -220,12 +221,32 @@ app.controller('controller.dashboard.biopsy.board',
     })
     
   };
+  
   // Open Source Information
   $scope.editAnalysis = (analysis) => {
     
     $mdDialog.show({
       templateUrl: 'dashboard/biopsy/board/board.edit.html',
       controller: 'controller.dashboard.biopsy.board.edit',
+      locals: {
+        analysis: analysis
+      }
+    })
+      .then((result) => {
+        // Find result, and update row
+        let i = _.findIndex(analyses, {ident: result.ident});
+        if(i) analyses[i] = result;
+      
+      });
+    
+  };
+  
+  // Open Source Information
+  $scope.editComparators = (analysis) => {
+    
+    $mdDialog.show({
+      templateUrl: 'dashboard/biopsy/board/board.edit_comparator.html',
+      controller: 'controller.dashboard.biopsy.board.edit_comparator',
       locals: {
         analysis: analysis
       }

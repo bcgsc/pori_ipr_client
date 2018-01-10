@@ -29,6 +29,25 @@
 
   }
 
+  div.switch {
+
+    > div {
+      text-align: center;
+      border: 1px solid rgb(50, 72, 142);
+      height: 30px;
+      border-radius: 3px;
+
+      > div {
+        padding: 5px;
+        &.active {
+          background-color: rgb(50, 72, 142);
+          color: rgb(255,255,255);
+        }
+      }
+    }
+
+  }
+
 }
 
 .libDetails  {
@@ -71,6 +90,16 @@
   .md-datepicker-input-container {
     input {
       width: 190px;
+    }
+  }
+
+  .comparators {
+    border: 1px solid rgb(224, 224, 224);
+    max-height: 160px;
+    overflow-y: auto;
+
+    md-icon.for-analysis {
+      color: rgb(255, 167, 32);
     }
   }
 }

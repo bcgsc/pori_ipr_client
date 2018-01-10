@@ -89,10 +89,71 @@ md-dialog(layout="column", aria-label="Analysis/Biopsy Details", flex=80, flex-g
                             div(flex) {{analysis.notes}}
 
 
+            md-tab(label="Comparators")
+
+                div(layout="column")
+
+                    div(ng-show="loading.library", layout="row", layout-align="center center")
+                        md-progress-circular(md-mode="indeterminate")
+
+                    div(ng-hide="loading.library", layout="column")
+
+                        div(layout="row").libDetails
+                            div(flex=30) Biopsy Date
+                            div(flex, ng-if="analysis.biopsy_date") {{analysis.biopsy_date | amDateFormat: 'dddd MMMM Do YYYY'}}
+                            div(flex, ng-if="!analysis.biopsy_date") N/A
+
+                        div(layout="row").libDetails
+                            div(flex=30) Disease
+                                span.clickable &nbsp;(3LC)
+                                    md-tooltip Three Letter (Cancer Group) Code
+                            div(flex) {{analysis.disease}} ({{analysis.threeLetterCode}})
+
+                        div(layout="row").libDetails
+                            div(flex=30) Pediatric ID
+                            div(flex) {{analysis.pediatric_id || 'N/A'}}
+
+                        div(layout="row").libDetails
+                            div(flex=30) Biopsy Notes
+                            div(flex) {{analysis.biopsy_notes}}
+
+                        div(layout="row").libDetails
+                            div(flex=30) Analysis Biopsy #
+                            div(flex) {{analysis.analysis_biopsy || 'Not yet available'}}
+
+                        div(layout="row").libDetails
+                            div(flex=30) Tumour Type for Report
+                            div(flex) {{analysis.comparator_disease.tumour_type_report || 'Not yet available'}}
+
+                        div(layout="row").libDetails
+                            div(flex=30) Tumour Type for KnowledgeBase
+                            div(flex) {{analysis.comparator_disease.tumour_type_kb || 'Not yet available'}}
+
+                        div(layout="row").libDetails
+                            div(flex=30) Disease Comparator for Analysis
+                            div(flex) {{analysis.comparator_disease.analysis || 'Not yet available'}}
+
+                        div(layout="row").libDetails
+                            div(flex=30) Disease Comparators
+                            div(flex) {{analysis.comparator_disease.all.join('; ') || 'Not yet available'}}
+
+                        div(layout="row").libDetails
+                            div(flex=30) Normal (Primary Site)
+                            div(flex) {{analysis.comparator_normal.normal_primary.join('; ') || 'Not yet available'}}
+
+                        div(layout="row").libDetails
+                            div(flex=30) Normal (Biopsy Site)
+                            div(flex) {{analysis.comparator_normal.normal_biopsy.join('; ') || 'Not yet available'}}
+
+                        div(layout="row").libDetails
+                            div(flex=30) Gtex Normal (Primary Site)
+                            div(flex) {{analysis.comparator_normal.gtex_primary.join('; ') || 'Not yet available'}}
+
+                        div(layout="row").libDetails
+                            div(flex=30) Gtex Normal (Biopsy Site)
+                            div(flex) {{analysis.comparator_normal.gtex_biopsy.join('; ') || 'Not yet available'}}
 
             md-tab(label="Sources")
-
-                p All source data available in LIMS regarding this POG case. NOTE: LIMS does not track biopsies independently. If this POG has multiple biopsies, all entries will be included.
 
                 div(ng-if="loading", layout="row", layout-align="center start")
                     md-progress-circular(md-mode="indeterminate")
@@ -120,6 +181,7 @@ md-dialog(layout="column", aria-label="Analysis/Biopsy Details", flex=80, flex-g
                                 md-tooltip {{source.disease_status}}
                             span {{source.anatomic_site}}
                         div(flex=10) {{source.sample_collection_time | amDateFormat: 'YYYY-MM-DD' }}
+
 
     md-dialog-actions(layout="row", layout-aligh="end center")
         span(flex)
