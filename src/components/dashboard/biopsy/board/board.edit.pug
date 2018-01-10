@@ -102,27 +102,6 @@ md-dialog(layout="column", aria-label="Edit Biopsy Analysis", flex-md=80, flex-x
                         md-input-container(flex)
                             input(ng-model="patient.libraries.transcriptome", placeholder="Transcriptome library", name="TranscriptomeLibrary", ng-required="!patient.tracking")
 
-
-                    div(layout="column")
-
-                        div(layout="row")
-                            md-input-container(flex)
-                                input(ng-model="patient.comparator_normal.tcga_comparator_biopsy_site", placeholder="TCGA Comparator Biopsy Site", name="TCGAComparatorBiopsySite", ng-required="patient.comparator")
-                            md-input-container(flex)
-                                input(ng-model="patient.comparator_normal.tcga_comparator_primary_site", placeholder="TCGA Comparator Primary Site", name="TCGAComparatorPrimarySite", ng-required="patient.comparator")
-
-                        div(layout="row")
-                            md-input-container(flex)
-                                input(ng-model="patient.comparator_normal.gtex_comparator_biopsy_site", placeholder="GTex Comparator Biopsy Site", name="GTexComparatorBiopsySite", ng-required="patient.comparator")
-                            md-input-container(flex)
-                                input(ng-model="patient.comparator_normal.gtex_comparator_primary_site", placeholder="GTex Comparator Primary Site", name="GTexComparatorPrimarySite", ng-required="patient.comparator")
-
-                        div(layout="row")
-                            md-input-container(flex)
-                                input(ng-model="patient.comparator_normal.normal_comparator_biopsy_site", placeholder="Normal Comparator Biopsy Site", name="NormalComparatorBiopsySite", ng-required="patient.comparator")
-                            md-input-container(flex)
-                                input(ng-model="patient.comparator_normal.normal_comparator_primary_site", placeholder="Normal Comparator Primary Site", name="NormalComparatorPrimarySite", ng-required="patient.comparator")
-
     md-dialog-actions(layout="row", layout-aligh="end center", layout-padding)
         md-button(ng-click="save(Patient)").md-raised.md-primary.medium Save Biopsy Analysis
 
