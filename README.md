@@ -132,11 +132,11 @@ The main source directory contains all of the application logic, templates, and 
 
 * `api` - All application plugin interface definitions
 * `components` - The bulk of the client is contained within components.
-** `dashboard` - Protected behind login authentication, each section/module of the application is located within
+  * `dashboard` - Protected behind login authentication, each section/module of the application is located within
 dashboard.
-** `errors` - The error pages displayed when triggered by 404, 500 errors.
-** `print` - The print template sections for POG reports
-** `public` - The public pages that are visible for visitors that are not logged in.
+  * `errors` - The error pages displayed when triggered by 404, 500 errors.
+  * `print` - The print template sections for POG reports
+  * `public` - The public pages that are visible for visitors that are not logged in.
 * `config` - AngularJS configuration files and route definitions/mappings
 * `directives` - AngularJS directives used throughout the applications (see AngularJS documentation for details)
 * `filters` - AngularJS filters
