@@ -1,17 +1,17 @@
 app.controller('controller.dashboard.germline.report',
-['$q', '_', '$scope', 'api.germline.report', 'api.germline.review', 'api.germline.variant', '$mdDialog', '$mdToast', 'report', 'user',
-($q, _, $scope, $report, $review, $variant, $mdDialog, $mdToast, report, user) => {
-  
+['$q', '_', '$scope', '$state', 'api.germline.report', 'api.germline.review', 'api.germline.variant', '$mdDialog', '$mdToast', 'report', 'user',
+($q, _, $scope, $state, $report, $review, $variant, $mdDialog, $mdToast, report, user) => {
+
   $scope.report = report;
   $scope.user = user;
   $scope.addReview = false;
-  
+
   $scope.hasReview = (report, type) => {
     return (_.find(report.reviews, {type: type}) !== undefined) ? true : false;
   };
-  
+
   $scope.show_extended = false;
-  
+
   $scope.columns = {
     flagged: {
       name: 'Flagged',
@@ -176,37 +176,37 @@ app.controller('controller.dashboard.germline.report',
       show_always: false
     }
   };
-  
+
   $scope.getHistory = ($ev, mode, v) => {
-    
+
     let input = {
       value: v,
       mode: mode
     };
-    
+
     if(mode === 'patient') input.name = input.placeholder = 'Patient History';
     if(mode === 'family') input.name = input.placeholder = 'Family History';
-    
+
     $mdDialog.show({
       templateUrl: 'dashboard/germline/report/report.input.dialog.html',
       targetEvent: $ev,
       clickOutsideToClose: true,
       controller: ['scope', (scope) => {
-        
+
         scope.input = input;
-        
+
         scope.cancel = () => {
           $mdDialog.cancel();
         };
-        
+
         scope.submit = () => {
           $mdDialog.hide(input);
         };
-        
+
       }]
     })
       .then((res) => {
-      
+
         if(mode === 'patient') {
           _.forEach($scope.report.variants, (v, i) => {
             $scope.report.variants[i].patient_history = res.value;
@@ -217,7 +217,7 @@ app.controller('controller.dashboard.germline.report',
             $scope.report.variants[i].family_history = res.value;
           });
         }
-  
+
         $q.all(_.map($scope.report.variants, (v) => {
             return $variant.update($scope.report.analysis.pog.POGID, $scope.report.analysis.analysis_biopsy, $scope.report.ident, v.ident, v);
           }))
@@ -225,24 +225,24 @@ app.controller('controller.dashboard.germline.report',
             console.log('Finished updating rows', result);
             $mdToast.showSimple('Report has been updated.');
           })
-      
-      
+
+
       })
       .catch((err) => {
-      
+
       });
-    
-    
+
+
   };
-  
-  
+
+
   $scope.review = () => {
-    
+
     let data = {
       type: $scope.new.type,
       comment: $scope.new.comment
     };
-    
+
     $review.add($scope.report.analysis.pog.POGID, $scope.report.analysis.analysis_biopsy, $scope.report.ident, data)
       .then((review) => {
         $scope.report.reviews.push(review[0]);
@@ -252,13 +252,13 @@ app.controller('controller.dashboard.germline.report',
       .catch((err) => {
         $mdToast.showSimple('Failed to add the submitted reviewed.');
       })
-    
+
   };
-  
+
   $scope.toggleVariantHidden = (variant) => {
-    
+
     variant.hidden = !variant.hidden;
-    
+
     $variant.update($scope.report.analysis.pog.POGID, $scope.report.analysis.analysis_biopsy, $scope.report.ident, variant.ident, variant)
       .then((result) => {
         // Update report in memory with fresh result from API.
@@ -269,12 +269,12 @@ app.controller('controller.dashboard.germline.report',
         console.log('Hide error', e);
         $mdToast.showSimple('Failed to update variant with visibility change');
       });
-    
+
   };
-  
-  
+
+
   $scope.removeReview = (review) => {
-    
+
     $review.remove($scope.report.analysis.pog.POGID, $scope.report.analysis.analysis_biopsy, $scope.report.ident, review.ident)
       .then((res) =>{
         $scope.report.reviews.splice(_.findKey($scope.report.reviews, {ident: review.ident}, 1));
@@ -284,5 +284,32 @@ app.controller('controller.dashboard.germline.report',
         $mdToast.showSimple('Failed to remove the requested review');
       })
   }
-  
+
+  $scope.removeReport = () => {
+
+    let confirm = $mdDialog.confirm({
+      title: 'Confirm remove',
+      textContent: 'Are you sure you want to remove this germline report?',
+      ok: 'Remove',
+      cancel: 'Cancel'
+    });
+
+    $mdDialog.show(confirm)
+      .then((response) => {
+          console.log('Response:', response);
+          $report.delete($scope.report.analysis.pog.POGID, $scope.report.analysis.analysis_biopsy, $scope.report.ident)
+            .then(() => {
+              $state.go('dashboard.germline.board');
+            })
+            .catch((e) => {
+              $mdToast.showSimple('Something went wrong and the report has not been removed.');
+            });
+      })
+      .catch((e) => {
+        console.log('Error', e);
+        $mdToast.showSimple('No changes were made.');
+      });
+
+  }
+
 }]);

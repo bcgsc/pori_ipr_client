@@ -2,7 +2,9 @@ md-content(flex, layout="column").md-padding.biopsyBoard.germline_report
 
     h1.md-title(layout="row")
         span(flex) Germline Reports
-    h2 {{report.analysis.pog.POGID}} {{ '- ' + report.analysis.libraries.normal || ''}}
+    h2(layout="row") {{report.analysis.pog.POGID}} {{ '- ' + report.analysis.libraries.normal || ''}}
+      span(flex)
+      md-button(ng-click="removeReport()").md-raised.md-primary Remove
 
     p Variants with a strikethrough will not be included in report exports.
 
