@@ -7,7 +7,7 @@ app.controller('controller.dashboard.report.probe.appendices',
       $scope.tcga = tcga;
 
       $scope.hashClean = (i) => {
-        return i.replace('#','');
+        return String(i).replace('#','');
       }
 
     }
