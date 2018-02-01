@@ -21,6 +21,7 @@ ipr-tracking-card.pog {
   &.hold > .header { border-left: 7px solid #e9dd4e; }
   &.pending > .header { border-left: 7px solid #aaaaaa; }
   &.failed > .header { border-left: 7px solid #df2816; }
+  &.cancelled > .header { border-left: 7px solid #ab1edf; }
 
   .header {
     .subheader {
@@ -310,6 +311,9 @@ ipr-tracking-card.pog {
         &.failed {
           border-color: rgb(255,255,255);
           background-color: rgb(204, 0, 6);
+        }
+        &.cancelled {
+          background-color: #ab1edf;
         }
 
       }
