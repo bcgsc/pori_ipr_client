@@ -87,9 +87,7 @@ app.controller('controller.print.POG.report.genomic.structuralVariants',
         sv: null
       }
     };
-    
-    console.log(images);
-    
+        
     _.forEach(images, (img) => {
       
       let pieces = img.key.split('.');

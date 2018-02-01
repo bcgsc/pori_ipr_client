@@ -84,6 +84,29 @@ app.factory('api.image', ['_', '$http', '$q', (_, $http, $q) => {
 
   };
 
+  /*
+   * Get Subtype Plots
+   *
+   *
+   */
+  $image.subtypePlots = (POGID, report) => {
+
+    return $q((resolve, reject) => {
+
+      // Get Graphs
+      $http.get(api + '/' + POGID + '/report/' + report + '/image/subtypePlots').then(
+        (result) => {
+          resolve(result.data);
+        },
+        (error) => {
+          reject(error.status);
+        }
+      )
+
+    });
+
+  };
+
   return $image;
   
 }]);
