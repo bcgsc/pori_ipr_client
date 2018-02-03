@@ -103,6 +103,7 @@ md-content.assignment {
           &.complete { border-left: 5px solid rgb(43, 174, 87); }
           &.hold { border-left: 5px solid rgb(233, 221, 78); }
           &.failed { border-left: 5px solid rgb(223, 40, 22); }
+          &.cancelled {border-left: 5px solid rgb(171, 30, 223); }
           &.no-status { border-left: 5px solid rgb(255,255,255); }
 
           .int {
@@ -163,6 +164,7 @@ md-content.assignment {
     p.hold:before { background-color: #e9dd4e; }
     p.pending:before { background-color: #aaaaaa; }
     p.failed:before { background-color: #df2816; }
+    p.cancelled:before { background-color: #ab1edf; }
 
   }
 
