@@ -5,7 +5,7 @@ app.controller('controller.dashboard.germline.board',
   $scope.reports = reports.reports;
   
   $scope.loading = false;
-  $scope.showSearch = false;
+  $scope.showSearch = true;
   $scope.focusSearch = false;
   $scope.filter = {
     search: null,
@@ -19,7 +19,7 @@ app.controller('controller.dashboard.germline.board',
   };
   
   $scope.clearSearch = () => {
-    $scope.showSearch = false;
+    //$scope.showSearch = false;
     $scope.focusSearch = false;
     
     let filterCache = $scope.filter.search;
@@ -74,18 +74,23 @@ app.controller('controller.dashboard.germline.board',
    */
   $scope.refreshReports = () => {
     
+    // start from first page of paginator if performing search
+    if ($scope.filter.search) $scope.paginate.offset = 0;
+
     let opts = {
-      offset: $scope.paginate.offset,
-      limit: $scope.paginate.limit,
+      //offset: $scope.paginate.offset, // sequelize applies limit and offset to subquery, returning incorrect results
+      //limit: $scope.paginate.limit,
       project: 'POG',
       search: $scope.filter.search
     };
     
-    
     $report.all(opts).then(
       (reports) => {
         $scope.paginate.total = reports.total;
-        $scope.reports = reports.reports;
+        // have to manually extract reports based on limit/offset due to sequelize bug
+        let start = $scope.paginate.offset,
+            finish = $scope.paginate.offset + $scope.paginate.limit;
+        $scope.reports = reports.reports.slice(start, finish);
       },
       (err) => {
         console.log('Failed to get updated definitions', err);
