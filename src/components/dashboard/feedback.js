@@ -31,7 +31,7 @@ app.controller('controller.dashboard.toolbar.feedback', ['$q', '_', 'scope', 'ap
     let title = scope.feedback.type + ': '+scope.feedback.title;
 
     // Send feedback to jira
-    $jira.ticket.create('DEVSU', 'Task', title, scope.feedback.description, {assignee: 'bpierce', components: [ { name: 'IPR WebApp' }], labels: ['Feedback', scope.feedback.type ]}).then(
+    $jira.ticket.create('DEVSU', 'Task', title, scope.feedback.description, {assignee: 'nmartin', components: [ { name: 'IPR WebApp' }], labels: ['Feedback', scope.feedback.type ]}).then(
       (res) => {
         // Response handled
         scope.state = 'issue';

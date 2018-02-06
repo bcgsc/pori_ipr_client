@@ -41,7 +41,7 @@ md-content(flex, layout="column").md-padding.biopsyBoard
                 tr(ng-show="!loading && analyses.length === 0").loading
                     td(colspan="10").text-center
                         span No germline reports found
-                tr(ng-repeat="report in reports", ng-if="!loading")
+                tr(ng-repeat="report in reports | limitTo:paginate.limit", ng-if="!loading")
                     td.text-bold
                         span(ui-sref="dashboard.germline.report({patient: report.analysis.pog.POGID, biopsy: report.analysis.analysis_biopsy, report: report.ident})").link {{report.analysis.pog.POGID}}
                     td {{report.analysis.analysis_biopsy}}
