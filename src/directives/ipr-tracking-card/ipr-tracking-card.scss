@@ -25,12 +25,18 @@ ipr-tracking-card.pog {
 
   .header {
     .subheader {
-      .priority {
+      .priority-header {
         font-size: 12.8px;
         .high {
           color: red;
           background-color: white;
         }
+      }
+      .biopsy-header {
+        font-size: 12.8px;
+      }
+      .completion-header {
+        font-size: 12.8px;
       }
     }
   }
@@ -49,7 +55,6 @@ ipr-tracking-card.pog {
       padding: 4px 13px 4px 13px;
       min-height: 57px;
 
-
       h1 {
         font-weight: 500;
         font-size: 1.2em;
@@ -61,29 +66,6 @@ ipr-tracking-card.pog {
           margin-right: 6px;
           background-color: rgb(255, 66, 96);
           border-radius: 3px;
-        }
-
-        span.priority {
-          margin-right: auto;
-          float: right;
-          width: 37px;
-          height: 13px;
-          padding: 1px;
-          border: 1px solid rgba(255,255,255, 0.5);
-          background: rgba(255,255,255, 0.10);
-
-          span.pip {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background-color: rgb(255,255,255);
-            margin: 0 1px;
-            border: 1px solid rgba(255,255,255, 0.6);
-
-            &.high { background-color: rgb(255, 37, 0); }
-            &.normal { background-color: rgb(0, 220, 16); }
-            &.low { background-color: rgb(255, 188, 0); }
-          }
         }
       }
 
@@ -157,24 +139,14 @@ ipr-tracking-card.pog {
       color: rgb(255,255,255);
       padding: 3px;
       border-radius: 3px;
-      margin-right: 4px;
+      margin-left: 0px;
+      margin-right: 5px;
+      margin-top: 5px;
       font-size: 18px;
       min-height: 18px;
       height: 18px;
       width: 18px;
       min-width: 18px;
-    }
-
-    .completion {
-      font-size: 12px;
-
-      span:first-of-type {
-        font-weight: 100;
-        margin-right: 10px;
-      }
-      span:nth-of-type(2) {
-        font-weight: 900;
-      }
     }
 
   }
