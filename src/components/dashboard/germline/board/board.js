@@ -2,6 +2,8 @@ app.controller('controller.dashboard.germline.board',
 ['$q', '_', '$scope', '$window', '$timeout', 'api.germline.report', '$mdDialog', '$mdToast', 'reports',
 ($q, _, $scope, $window, $timeout, $report, $mdDialog, $mdToast, reports) => {
   
+  // TODO: find way to order reports by POGID on server side -- can't order by left outer joined tables in postgres??
+  reports.reports.sort(function(a,b) {return (a.analysis.pog.POGID < b.analysis.pog.POGID) ? 1 : ((b.analysis.pog.POGID < a.analysis.pog.POGID) ? -1 : 0);} );
   $scope.reports = reports.reports;
   
   $scope.loading = false;
@@ -87,6 +89,8 @@ app.controller('controller.dashboard.germline.board',
     $report.all(opts).then(
       (reports) => {
         $scope.paginate.total = reports.total;
+        // TODO: find way to order reports by POGID on server side -- can't order by left outer joined tables in postgres??
+        reports.reports.sort(function(a,b) {return (a.analysis.pog.POGID < b.analysis.pog.POGID) ? 1 : ((b.analysis.pog.POGID < a.analysis.pog.POGID) ? -1 : 0);} ); 
         // have to manually extract reports based on limit/offset due to sequelize bug
         let start = $scope.paginate.offset,
             finish = $scope.paginate.offset + $scope.paginate.limit;
