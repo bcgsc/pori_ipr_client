@@ -37,8 +37,6 @@ app.controller('controller.dashboard.biopsy.board.edit',
     return $q((resolve, reject) => {
       if(searchText.length === 0) return [];
       
-      console.log('Search Text: ', searchText);
-      
       $lims.diseaseOntology(searchText).then(
         (resp) => { resolve(resp.results); },
         (err) => { console.log(err); reject(); }
@@ -46,10 +44,10 @@ app.controller('controller.dashboard.biopsy.board.edit',
     });
   };
   
-  // Search Users with auto complete
+  // Search Three Letter Code with auto complete
   $scope.searchGroups = (searchText) => {
     return _.filter(threeLetterCodes, (e) => {
-      if(e.code.indexOf(searchText) > -1) return e;
+      if(e.code.indexOf(searchText.toUpperCase()) > -1) return e;
     });
   };
   

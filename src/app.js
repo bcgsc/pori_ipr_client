@@ -12,7 +12,8 @@ const app = angular.module('bcgscIPR', [
 	'angular-sortable-view',
 	'ngQuill',
 	'chart.js',
-	'btford.socket-io'
+	'btford.socket-io',
+	'ngMessages',
 ]);
 
 // Register HTTP Error Handler
