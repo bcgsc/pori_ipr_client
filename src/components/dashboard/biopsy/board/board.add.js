@@ -56,6 +56,9 @@ app.controller('controller.dashboard.biopsy.board.add',
   
   // Close Dialog
   $scope.cancel = () => { $mdDialog.cancel(); };
+
+  // Make Input All Uppercase
+  $scope.toUpperCase = () => { $scope.searchQuery = $scope.searchQuery.toUpperCase(); };
   
   // Search Users with auto complete
   $scope.searchPOGs = (searchText) => {
@@ -75,8 +78,6 @@ app.controller('controller.dashboard.biopsy.board.add',
     return $q((resolve, reject) => {
       if(searchText.length === 0) return [];
       
-      console.log('Search Text: ', searchText);
-      
       $lims.diseaseOntology(searchText).then(
         (resp) => { resolve(resp.results); },
         (err) => { console.log(err); reject(); }
@@ -84,10 +85,10 @@ app.controller('controller.dashboard.biopsy.board.add',
     });
   };
   
-  // Search Users with auto complete
+  // Search Three Letter Code with auto complete
   $scope.searchGroups = (searchText) => {
     return _.filter(threeLetterCodes, (e) => {
-      if(e.code.indexOf(searchText) > -1) return e;
+      if(e.code.indexOf(searchText.toUpperCase()) > -1) return e;
     });
   };
   
@@ -275,6 +276,7 @@ app.controller('controller.dashboard.biopsy.board.add',
       project: 'POG',
       clinical_biopsy: $scope.patient.clinical_biopsy,
       disease:  (typeof $scope.patient.disease === 'object') ? $scope.patient.disease.text : $scope.patient.disease,
+      threeLetterCode: (typeof $scope.patient.threeLetterCode === 'object') ? $scope.patient.threeLetterCode.code : $scope.patient.threeLetterCode,
       biopsy_notes: $scope.patient.biopsy_notes,
       biopsy_date: $scope.patient.biopsy_date,
       tracking: $scope.patient.tracking,
@@ -283,7 +285,7 @@ app.controller('controller.dashboard.biopsy.board.add',
       physician: [],
       libraries: null
     };
-    
+
     _.forEach($scope.patient.physician, (p) => { analysis.physician.push(p) });
     
     // Add libraries and biop if not tracking
