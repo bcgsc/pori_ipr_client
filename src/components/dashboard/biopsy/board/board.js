@@ -64,6 +64,7 @@ app.controller('controller.dashboard.biopsy.board',
    */
   $scope.search = () => {
     analysis_query.search = $scope.filter.search;
+    $scope.paginate.offset = 0; // start from first page of paginator if performing search
     $scope.refreshAnalyses();
   };
   
