@@ -25,6 +25,8 @@ ipr-tracking-card.pog {
 
   .header {
     .subheader {
+      margin-right: 5px;
+      
       .priority-header {
         font-size: 12.8px;
         .high {
@@ -98,7 +100,8 @@ ipr-tracking-card.pog {
         }
         span:nth-of-type(2) {
           font-weight: 700;
-          margin-left: 10px;
+          margin-left: 0px;
+          padding-left: 7px;
         }
 
         span md-icon {
