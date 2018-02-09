@@ -119,13 +119,12 @@ app.controller('controller.dashboard.report.genomic.slide',
     $mdToast.showSimple('The slide was successfully uploaded');
     $scope.slides.push(response);
     $scope.new.name = "";
-    
     $scope.add_step = 'select';
     
-    // Cleanup and create new uploader
+    // Cleanup
     uploader.clearQueue();
-    uploader.destroy();
-    uploader = setupUploader();
+    selectedItem = null;
+    $scope.progress = 0;
     
   };
   
