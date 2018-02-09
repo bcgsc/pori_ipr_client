@@ -1,26 +1,27 @@
 div.header
-    h1(layout="row")
-        md-icon(md-whiteframe=2, ng-show="error").warning.clickable error
-            md-tooltip {{getTaskStateCount('failed')}} task(s) have failed
-        md-icon(md-whiteframe=2, ng-show="hold").notice.clickable watch_later
-            md-tooltip {{getTaskStateCount('hold')}} task(s) are being held
-        span(flex) {{pog.POGID}}
-        //span(layout="row", layout-align="middle space-around").priority.clickable
-        span.completion
-            span Complete
-            span {{ getTaskStateCount('complete') }}/{{state.tasks.length}}
-        //div.priority
-            span Priority
-
-    div(layout="row").subheader
-        span {{analysis.name}}
-            md-tooltip Clinical: {{analysis.clinical_biopsy}} - Bioinformatics: {{analysis.analysis_biopsy}}
-        span(flex)
-        span.priority
-            span Priority
-            span(ng-if="analysis.priority===1") Low
-            span(ng-if="analysis.priority===2") Normal
-            span(ng-if="analysis.priority===3").high.ipr-raised High
+    h1(layout="column", layout-gt-md="row")
+        span(layout="column", flex-gt-md=50)
+            span {{pog.POGID}}
+            span(flex=100)
+                md-icon(md-whiteframe=2, ng-show="error").warning.clickable error
+                    md-tooltip {{getTaskStateCount('failed')}} task(s) have failed
+                md-icon(md-whiteframe=2, ng-show="hold").notice.clickable watch_later
+                    md-tooltip {{getTaskStateCount('hold')}} task(s) are being held
+        div(layout="column").subheader
+            div(layout="row").completion-header
+                span(flex=50) Complete:
+                span(flex=50) {{ getTaskStateCount('complete') }}/{{state.tasks.length}}
+            div(layout="row").priority-header
+                span(flex=50) Priority:
+                span(ng-if="analysis.priority===1", flex=50) Low
+                span(ng-if="analysis.priority===2", flex=50) Normal
+                span(ng-if="analysis.priority===3", flex=50).high.ipr-raised High
+            div(ng-if="analysis.clinical_biopsy", layout="row").biopsy-header
+                span(flex=50) Clinical:
+                span(flex=50) {{analysis.clinical_biopsy}}
+            div(ng-if="analysis.analysis_biopsy", layout="row").biopsy-header
+                span(flex=50) Biofx:
+                span(flex=50) {{analysis.analysis_biopsy}}
 
 div(layout="column", ng-if="showTasks").tasks
     div(ng-show="loadingTasks")

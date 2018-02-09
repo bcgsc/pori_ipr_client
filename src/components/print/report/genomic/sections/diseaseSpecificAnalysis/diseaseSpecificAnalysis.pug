@@ -16,13 +16,11 @@ tbody
             h1 Disease Specific Analysis
             h2 Expression Subtype
 
-            span(ng-if="!images['subtypePlot.molecular'] && !images['subtypePlot.receptorStatus']") Current disease specific analysis is not applicable for this case
-
+            span(ng-if="!hasSubtypePlot") Current disease specific analysis is not applicable for this case
+    tr(ng-repeat="image in subtypePlotImages")
+        td
             div(layout="row", flex, layout-align="center center").md-padding
-                img(data-ng-src="data:image/png;base64,{{images['subtypePlot.molecular'].data}}")
-
-            div(layout="row", flex, layout-align="center center").md-padding
-                img(data-ng-src="data:image/png;base64,{{images['subtypePlot.receptorStatus'].data}}")
+                img(data-ng-src="data:image/png;base64,{{image.data}}")
 
 
 tbody

@@ -503,7 +503,10 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       controller: 'controller.dashboard.report.genomic.diseaseSpecificAnalysis',
       resolve: {
         images: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
-          return $image.get($stateParams.POG, $stateParams.analysis_report, 'subtypePlot.molecular,subtypePlot.receptorStatus,microbial.circos');
+          return $image.get($stateParams.POG, $stateParams.analysis_report, 'microbial.circos');
+        }],
+        subtypePlotImages: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
+          return $image.subtypePlots($stateParams.POG, $stateParams.analysis_report);
         }]
       }
     })
@@ -902,7 +905,10 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
           controller: 'controller.print.POG.report.genomic.diseaseSpecificAnalysis',
           resolve: {
             images: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
-              return $image.get($stateParams.POG, $stateParams.analysis_report, 'subtypePlot.molecular,subtypePlot.receptorStatus,microbial.circos');
+              return $image.get($stateParams.POG, $stateParams.analysis_report, 'microbial.circos');
+            }],
+            subtypePlotImages: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
+              return $image.subtypePlots($stateParams.POG, $stateParams.analysis_report);
             }]
           }
         },
