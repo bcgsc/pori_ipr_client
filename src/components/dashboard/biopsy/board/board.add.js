@@ -58,7 +58,7 @@ app.controller('controller.dashboard.biopsy.board.add',
   $scope.cancel = () => { $mdDialog.cancel(); };
 
   // Make Input All Uppercase
-  $scope.toUpperCase = (input) => { $scope[input] = $scope[input].toUpperCase(); };
+  $scope.toUpperCase = () => { $scope.searchQuery = $scope.searchQuery.toUpperCase(); };
   
   // Search Users with auto complete
   $scope.searchPOGs = (searchText) => {
