@@ -24,7 +24,7 @@ md-dialog(layout="column", aria-label="Add Biopsy", flex-md=80, flex-xs=100, fle
                     ng-blur="limsSources()",
                     md-delay="200",
                     md-match-case-insensitive="true",
-                    md-search-text-change="toUpperCase()"
+                    md-search-text-change="toUpperCase('searchQuery')"
                     required,
                     flex=50
                     )
