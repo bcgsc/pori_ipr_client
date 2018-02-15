@@ -15,14 +15,16 @@ md-dialog(layout="column", aria-label="Edit Biopsy Analysis", flex-md=80, flex-x
                             input(disabled="disabled", ng-value="patient.pog.POGID", placeholder="Patient ID")
 
                     div(layout="row")
+                        // Biospecimen Biopsy Number
                         md-input-container(flex)
-                            input(ng-model="patient.clinical_biopsy", name="ClinicalBiopsy", md-placeholder="clinspec number", required)
-                            div(ng-messages="referenceForm.referenceID.$error")
-                                div(ng-message="required") A reference id is required.
-                            div.hint Biospecimen biopsy number
+                            input(ng-model="patient.clinical_biopsy", name="ClinicalBiopsy", placeholder="Clinical Biopsy Number", required)
+                            div(ng-messages="PatientForm.ClinicalBiopsy.$error")
+                                div(ng-message="required") A clinical biopsy number is required
 
                         md-input-container(flex)
-                            input(ng-model="patient.analysis_biopsy", placeholder="BioApps Biopsy/Analysis label", name="AnalyticalBiopsy", ng-required="!patient.tracking")
+                            input(ng-model="patient.analysis_biopsy", placeholder="Bioinformatics Biopsy Number", name="AnalyticalBiopsy", ng-required="!patient.tracking")
+                            div(ng-messages="PatientForm.AnalyticalBiopsy.$error")
+                                div(ng-message="required") A bioinformatics biopsy number is required
 
                     div(layout="row", flex)
                         //Disease
