@@ -19,7 +19,6 @@ div(layout="column").details
         div(flex) Ensembl Gene
         div(flex) Ensembl Transcript
         div(flex) Exon
-        div(flex) Strand
         div(flex) Breakpoint
     div(flex, layout="row").row
         div(flex) 5`
@@ -31,7 +30,6 @@ div(layout="column").details
             span(ng-if="sv.ntermTranscript")
                 a(href="http://ensembl.org/Homo_sapiens/Gene/Summary?db=core;t={{sv.ntermTranscript}}", target="_blank") {{sv.ntermTranscript}}
         div(flex) {{sv.exons.split(':')[0]}}
-        div(flex)
         div(flex) {{sv.breakpoint.split('|')[0]}}
     div(flex, layout="row").row
         div(flex) 3`
@@ -43,7 +41,6 @@ div(layout="column").details
             span(ng-if="sv.ctermTranscript")
                 a(href="http://ensembl.org/Homo_sapiens/Gene/Summary?db=core;t={{sv.ctermTranscript}}", target="_blank") {{sv.ctermTranscript}}
         div(flex) {{sv.exons.split(':')[1]}}
-        div(flex)
         div(flex) {{sv.breakpoint.split('|')[1]}}
     div(layout="column").description
         p {{sv.svgTitle}}
