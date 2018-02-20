@@ -2,7 +2,7 @@ app.controller('controller.dashboard.biopsy.board.edit',
 ['$scope', '_', '$q', '$mdDialog', '$mdToast', 'api.lims', 'api.bioapps', 'api.analysis', 'api.pog', 'analysis', '$filter',
 ($scope, _, $q, $mdDialog, $mdToast, $lims, $bioapps, $analysis, $pog, analysis, $filter) => {
   
-  $scope.patient = analysis;
+  $scope.patient = angular.copy(analysis);
 
   // If analysis has biopsy number, make analysis biopsy and libraries required fields
   $scope.patient.tracking = true;
