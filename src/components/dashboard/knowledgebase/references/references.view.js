@@ -64,9 +64,10 @@ app.controller('knowledgebase.references.view',
   scope.updateStatus = () => {
 
     // Send status update
-    $kb.references.status(scope.reference, scope.reference.status, scope.update.comments).then(
+    $kb.references.status(scope.reference, scope.update.status, scope.update.comments).then(
       (result) => {
         // Update Result
+        scope.reference.status = scope.update.status;
         scope.reference = $kbUtils.processReferences(result)[0];
 
         // Update History

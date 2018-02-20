@@ -42,7 +42,7 @@ md-dialog(layout="column", aria-label="Knowledgebase Reference Viewer", flex=85)
                         span {{reference.status}}
                         md-icon(ng-show="!reference.createdBy || reference.createdBy.ident !== user.ident", ng-click="editingStatus=!editingStatus") edit
                     span(layout="column", ng-show="editingStatus").updateStatus
-                        md-select(ng-model="reference.status", placeholder="Update Status")
+                        md-select(ng-model="update.status", placeholder="Update Status")
                             md-option(ng-value="status", ng-if="status !== 'NEW'", ng-repeat="status in vocabulary.status track by $index") {{status}}
                         div(layout="row")
                             md-input-container(flex)
