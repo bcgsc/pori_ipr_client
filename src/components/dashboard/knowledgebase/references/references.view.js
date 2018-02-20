@@ -5,6 +5,7 @@ app.controller('knowledgebase.references.view',
   scope.reference = reference;
   scope.history = history;
   scope.vocabulary = vocabulary;
+  scope.update = {};
 
   scope.cancel = () => {
     $mdDialog.hide();
