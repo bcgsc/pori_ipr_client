@@ -12,9 +12,9 @@ md-dialog(layout="column", aria-label="Task Editor", ng-cloak, flex=50).editor
 
                 div(layout="row")
                     md-input-container(flex)
-                        input(name="Name", md-placeholder="Hook Name", ng-model="hook.name", required)
+                        input(name="Name", placeholder="Hook Name", ng-model="hook.name", required)
                         div(ng-messages="Hook.Name", role="alert")
-                            p(ng-message="required") The hook name is requried
+                            p(ng-message="required") The hook name is required
 
                     md-input-container(flex)
                         label Task Name
