@@ -29,6 +29,11 @@ app.controller('controller.dashboard.biopsy.board.edit',
   $scope.$watch('cancerGroupQuery', function (val) {
       $scope.cancerGroupQuery = $filter('uppercase')(val);
   }, true);
+
+  // convert Pediatric ID field to uppercase
+  $scope.$watch('patient.pediatric_id', function (val) {
+      $scope.patient.pediatric_id = $filter('uppercase')(val);
+  }, true);
   
   // Close Dialog
   $scope.cancel = () => { $mdDialog.cancel(); };
@@ -92,6 +97,7 @@ app.controller('controller.dashboard.biopsy.board.edit',
     analysis.date_presentation = $scope.patient.date_presentation;
     analysis.onco_panel_submitted = $scope.patient.onco_panel_submitted;
     analysis.date_analysis = $scope.patient.date_analysis;
+    analysis.pediatric_id = $scope.patient.pediatric_id;
     
     // Add libraries and biop if not tracking
     if(!$scope.patient.tracking) {
