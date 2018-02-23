@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.biopsy.board.add',
-['$scope', '_', '$q', 'api.lims', 'api.bioapps', 'api.analysis', 'api.pog', '$mdDialog', '$mdToast',
-($scope, _, $q, $lims, $bioapps, $analysis, $pog, $mdDialog, $mdToast) => {
+['$scope', '_', '$q', 'api.lims', 'api.bioapps', 'api.analysis', 'api.pog', '$mdDialog', '$mdToast', '$filter',
+($scope, _, $q, $lims, $bioapps, $analysis, $pog, $mdDialog, $mdToast, $filter) => {
   
   $scope.stages = [
     {title: 'Patient', description: 'Meta data about the patient', id: "patient", ordinal: 0},
@@ -19,14 +19,8 @@ app.controller('controller.dashboard.biopsy.board.add',
   $scope.libraries_loading = false;
   $scope.physicians = [0];
   
-  $scope.addPhysician = () => { $scope.physicians.push($scope.physicians.length); console.log('Array: ', $scope.physicians); };
+  $scope.addPhysician = () => { $scope.physicians.push($scope.physicians.length); };
   $scope.removePhysician = (i) => { $scope.physicians.splice(i,1); };
-  
-  $scope.events = {
-    valid: false,
-    dirty: true,
-    pristine: true,
-  };
   
   let threeLetterCodes = [
     {"code": "BRC", "description": "Breast"},
@@ -45,6 +39,7 @@ app.controller('controller.dashboard.biopsy.board.add',
     {"code": "THR", "description": "Thoracic"}
   ];
   
+  // set analysis biopsy field if tracking is disabled
   $scope.$watch('patient.tracking', (newVal, oldVal) => {
     
     if(newVal === false && oldVal === true) {
@@ -53,6 +48,21 @@ app.controller('controller.dashboard.biopsy.board.add',
       $scope.patient.analysis_biopsy = null;
     }
   });
+
+  // convert POG ID field to uppercase
+  $scope.$watch('searchQuery', function (val) {
+      $scope.searchQuery = $filter('uppercase')(val);
+  }, true);
+
+  // convert Pediatric ID field to uppercase
+  $scope.$watch('patient.pediatric_id', function (val) {
+      $scope.patient.pediatric_id = $filter('uppercase')(val);
+  }, true);
+
+  // convert Cancer Group (3 Letter Code) field to uppercase
+  $scope.$watch('cancerGroupQuery', function (val) {
+      $scope.cancerGroupQuery = $filter('uppercase')(val);
+  }, true);
   
   // Close Dialog
   $scope.cancel = () => { $mdDialog.cancel(); };
@@ -75,8 +85,6 @@ app.controller('controller.dashboard.biopsy.board.add',
     return $q((resolve, reject) => {
       if(searchText.length === 0) return [];
       
-      console.log('Search Text: ', searchText);
-      
       $lims.diseaseOntology(searchText).then(
         (resp) => { resolve(resp.results); },
         (err) => { console.log(err); reject(); }
@@ -84,10 +92,10 @@ app.controller('controller.dashboard.biopsy.board.add',
     });
   };
   
-  // Search Users with auto complete
+  // Search Three Letter Code with auto complete
   $scope.searchGroups = (searchText) => {
     return _.filter(threeLetterCodes, (e) => {
-      if(e.code.indexOf(searchText) > -1) return e;
+      if(e.code.indexOf(searchText.toUpperCase()) > -1) return e;
     });
   };
   
@@ -119,30 +127,6 @@ app.controller('controller.dashboard.biopsy.board.add',
       .catch((err) => {
         console.log('Failed to lookup POG sources');
       });
-  };
-  
-  // Move back a stage
-  $scope.lastStage = () => {
-    $scope.activeStage--;
-  };
-  
-  // Move forward a stage
-  $scope.nextStage = () => {
-    let form;
-    // Try to trigger submit...
-    switch ($scope.activeStage) {
-      case 1:
-        form = $scope.referenceForm;
-        break;
-      case 0:
-        form = $scope.matching;
-        break;
-    }
-    
-    form.$setSubmitted();
-    if (form.$valid) {
-      $scope.activeStage++;
-    }
   };
   
   // Attempt to guess library names
@@ -268,6 +252,17 @@ app.controller('controller.dashboard.biopsy.board.add',
   $scope.submit = (f) => {
     
     $scope.sending = true;
+
+    // Touch required fields to invoke validation
+    _.each($scope.PatientForm.$error.required, (field) => {
+      field.$setTouched();
+    });
+
+    // Check if form is valid
+    if(!$scope.PatientForm.$valid) {
+      $scope.sending = false;
+      return; // don't submit invalid form
+    }
     
     // Setup submission object
     let analysis = {
@@ -275,6 +270,7 @@ app.controller('controller.dashboard.biopsy.board.add',
       project: 'POG',
       clinical_biopsy: $scope.patient.clinical_biopsy,
       disease:  (typeof $scope.patient.disease === 'object') ? $scope.patient.disease.text : $scope.patient.disease,
+      threeLetterCode: (typeof $scope.patient.threeLetterCode === 'object') ? $scope.patient.threeLetterCode.code : $scope.patient.threeLetterCode,
       biopsy_notes: $scope.patient.biopsy_notes,
       biopsy_date: $scope.patient.biopsy_date,
       tracking: $scope.patient.tracking,
@@ -283,7 +279,7 @@ app.controller('controller.dashboard.biopsy.board.add',
       physician: [],
       libraries: null
     };
-    
+
     _.forEach($scope.patient.physician, (p) => { analysis.physician.push(p) });
     
     // Add libraries and biop if not tracking
@@ -293,19 +289,14 @@ app.controller('controller.dashboard.biopsy.board.add',
     }
     
     $analysis.add(analysis)
-      .then((result) => {
-        /*
-        $scope.analyses.push(result);
-        
-        $scope.analyses = _.sortBy($scope.analyses, ['createdAt']);
-        $scope.analyses = $scope.analyses.reverse();
-        */
-        
-        $mdDialog.hide({result: result});
-      })
-      .catch((err) => {
-        $mdToast.show($mdToast.simple().textContent('Something went wrong! We were unable to add new biopsy.'));
-      });
+    .then((result) => {
+      $scope.sending = false;
+      $mdDialog.hide({result: result});
+    })
+    .catch((err) => {
+      $scope.sending = false;
+      $mdToast.show($mdToast.simple().textContent('Something went wrong! We were unable to add new biopsy.'));
+    });
     
   }
 

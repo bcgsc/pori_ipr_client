@@ -78,7 +78,9 @@ md-content(flex, layout="column").md-padding.biopsyBoard
                             md-tooltip {{analysis.createdAt | amDateFormat: 'YYYY-MM-DD HH:mm:ss'}}
                     td.options
                         md-icon(ng-click="editAnalysis(analysis)").clickable edit
+                            md-tooltip Edit biopsy
                         md-icon(ng-click="openAnalysis(analysis)").clickable open_in_browser
+                            md-tooltip View biopsy
 
         table(ng-show="active_sheet === 'biofx'").material-table
             thead

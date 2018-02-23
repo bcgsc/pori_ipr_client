@@ -724,7 +724,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     .state('dashboard.admin.users', {
       url: '/users',
       data: {
-        displayName: 'Users & Groups',
+        displayName: 'Permissions',
         breadcrumbProxy: 'dashboard.admin.users.userList'
       },
       controller: 'controller.dashboard.admin.users',

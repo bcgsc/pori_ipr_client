@@ -33,14 +33,14 @@
 
     > div {
       text-align: center;
-      border: 1px solid rgb(50, 72, 142);
+      border: 1px solid rgb(38, 50, 140);
       height: 30px;
       border-radius: 3px;
 
       > div {
         padding: 5px;
         &.active {
-          background-color: rgb(50, 72, 142);
+          background-color: rgb(38, 50, 140);
           color: rgb(255,255,255);
         }
       }

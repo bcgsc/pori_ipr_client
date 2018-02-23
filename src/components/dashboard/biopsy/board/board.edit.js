@@ -1,16 +1,12 @@
 app.controller('controller.dashboard.biopsy.board.edit',
-['$scope', '_', '$q', '$mdDialog', '$mdToast', 'api.lims', 'api.bioapps', 'api.analysis', 'api.pog', 'analysis',
-($scope, _, $q, $mdDialog, $mdToast, $lims, $bioapps, $analysis, $pog, analysis) => {
+['$scope', '_', '$q', '$mdDialog', '$mdToast', 'api.lims', 'api.bioapps', 'api.analysis', 'api.pog', 'analysis', '$filter',
+($scope, _, $q, $mdDialog, $mdToast, $lims, $bioapps, $analysis, $pog, analysis, $filter) => {
   
-  $scope.patient = analysis;
-  
-  console.log('Analysis', analysis);
-  
-  $scope.events = {
-    valid: false,
-    dirty: true,
-    pristine: true,
-  };
+  $scope.patient = angular.copy(analysis);
+
+  // If analysis has biopsy number, make analysis biopsy and libraries required fields
+  $scope.patient.tracking = true;
+  if($scope.patient.analysis_biopsy) { $scope.patient.tracking = false; }
   
   let threeLetterCodes = [
     {"code": "BRC", "description": "Breast"},
@@ -28,6 +24,16 @@ app.controller('controller.dashboard.biopsy.board.edit',
     {"code": "SKN", "description": "Skin"},
     {"code": "THR", "description": "Thoracic"}
   ];
+
+  // convert Cancer Group (3 Letter Code) field to uppercase
+  $scope.$watch('cancerGroupQuery', function (val) {
+      $scope.cancerGroupQuery = $filter('uppercase')(val);
+  }, true);
+
+  // convert Pediatric ID field to uppercase
+  $scope.$watch('patient.pediatric_id', function (val) {
+      $scope.patient.pediatric_id = $filter('uppercase')(val);
+  }, true);
   
   // Close Dialog
   $scope.cancel = () => { $mdDialog.cancel(); };
@@ -37,8 +43,6 @@ app.controller('controller.dashboard.biopsy.board.edit',
     return $q((resolve, reject) => {
       if(searchText.length === 0) return [];
       
-      console.log('Search Text: ', searchText);
-      
       $lims.diseaseOntology(searchText).then(
         (resp) => { resolve(resp.results); },
         (err) => { console.log(err); reject(); }
@@ -46,10 +50,10 @@ app.controller('controller.dashboard.biopsy.board.edit',
     });
   };
   
-  // Search Users with auto complete
+  // Search Three Letter Code with auto complete
   $scope.searchGroups = (searchText) => {
     return _.filter(threeLetterCodes, (e) => {
-      if(e.code.indexOf(searchText) > -1) return e;
+      if(e.code.indexOf(searchText.toUpperCase()) > -1) return e;
     });
   };
   
@@ -58,10 +62,7 @@ app.controller('controller.dashboard.biopsy.board.edit',
    *
    * @param collection
    */
-  $scope.selectCollection = (collection) => {
-    
-    console.log('Collection', collection);
-    
+  $scope.selectCollection = (collection) => {    
     $scope.patient.libraries.normal = collection.normal.name;
     $scope.patient.libraries.tumour = collection.tumour.name;
     $scope.patient.libraries.transcriptome = collection.transcriptome.name;
@@ -69,6 +70,17 @@ app.controller('controller.dashboard.biopsy.board.edit',
   
   // Submit Biopsy Entry
   $scope.save = (f) => {
+
+    // Touch required fields to invoke validation
+    _.each($scope.PatientForm.$error.required, (field) => {
+      field.$setTouched();
+    });
+
+    // Check if form is valid
+    if(!$scope.PatientForm.$valid) {
+      $scope.sending = false;
+      return; // don't submit invalid form
+    }
     
     // Setup submission object
     analysis.priority = $scope.patient.priority;
@@ -85,6 +97,7 @@ app.controller('controller.dashboard.biopsy.board.edit',
     analysis.date_presentation = $scope.patient.date_presentation;
     analysis.onco_panel_submitted = $scope.patient.onco_panel_submitted;
     analysis.date_analysis = $scope.patient.date_analysis;
+    analysis.pediatric_id = $scope.patient.pediatric_id;
     
     // Add libraries and biop if not tracking
     if(!$scope.patient.tracking) {
