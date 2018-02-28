@@ -275,6 +275,11 @@
 
           div {
             padding: 10px 0;
+            border-right: 1px solid rgb(136, 147, 195);
+          }
+
+          div:last-of-type{
+            border-right: 0px;
           }
 
           .bg1 { background-color: rgb(193, 196, 215); }
@@ -317,6 +322,11 @@
             padding: 3px 2px 3px 5px;
             min-height: 20px;
             vertical-align: middle;
+            border-right: 1px solid rgb(136, 147, 195);
+          }
+
+          div:last-of-type {
+            border-right: 0px;
           }
           
           &:nth-of-type(odd) {
