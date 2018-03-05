@@ -1309,7 +1309,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       templateUrl: 'dashboard/germline/board/board.html',
       resolve: {
         reports: ['api.germline.report', ($report) => {
-          return $report.all({project: 'POG'});
+          return $report.all();
         }]
       }
     })
