@@ -24,8 +24,9 @@ md-content(flex, layout="column").md-padding.biopsyBoard
                                 md-icon filter_list
                                 md-tooltip Filter/Search
                 tr
-                    th(width="15%") Patient
-                    th(width="15%") Biopsy
+                    th(width="10%") Patient
+                    th(width="10%") Project
+                    th(width="10%") Biopsy
                     th(width="10%") Version
                     th(width="15%") BioFX Reviewer
                     th(width="10%") BioFX Review
@@ -44,6 +45,7 @@ md-content(flex, layout="column").md-padding.biopsyBoard
                 tr(ng-repeat="report in reports | limitTo:paginate.limit", ng-if="!loading")
                     td.text-bold
                         span(ui-sref="dashboard.germline.report({patient: report.analysis.pog.POGID, biopsy: report.analysis.analysis_biopsy, report: report.ident})").link {{report.analysis.pog.POGID}}
+                    td {{ report.analysis.pog.project }}
                     td {{report.analysis.analysis_biopsy}}
                     td
                         span {{report.source_version}}
