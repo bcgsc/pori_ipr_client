@@ -9,7 +9,6 @@ app.controller('controller.dashboard.germline.board',
   $scope.focusSearch = false;
   $scope.filter = {
     search: null,
-    //project: 'POG'
   };
   
   $scope.paginate = {
@@ -80,7 +79,6 @@ app.controller('controller.dashboard.germline.board',
     let opts = {
       //offset: $scope.paginate.offset, // sequelize applies limit and offset to subquery, returning incorrect results
       //limit: $scope.paginate.limit,
-      //project: 'POG',
       search: $scope.filter.search
     };
     
