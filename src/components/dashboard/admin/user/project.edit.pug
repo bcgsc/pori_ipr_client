@@ -1,0 +1,107 @@
+md-dialog(flex=50).adminSection
+    form(name='form', ng-submit="update(form)", novalidate)
+        md-toolbar
+            div(layout="row").md-toolbar-tools
+                span.close
+                    div(ng-click="cancel()")
+                span(flex)
+                span(flex)
+                    h2 {{(!newProject) ? 'Edit Project' : 'Add Project'}}
+                span(flex)
+                span(flex=5)
+        md-dialog-content(layout="column").content
+
+            p(ng-hide="newProject") Modify a project
+            p(ng-show="newProject") Create a new project
+
+            div(flex, layout="row")
+                md-input-container(flex)
+                    input(ng-model="project.name", name="Project", placeholder="Project Name", required)
+                    div(ng-messages="form.Project.$error")
+                        div(ng-message="required") A project name is required
+
+            div(ng-hide="newProject")
+                h3(style="margin: 0;") Project Members
+
+                div(flex, layout="column")
+                    div(flex, layout="row")
+                        md-autocomplete(
+                        md-input-name="Member",
+                        md-selected-item="member",
+                        md-search-text="searchQuery",
+                        md-items="user in searchUsers(searchQuery)",
+                        md-item-text="user.firstName + ' ' + user.lastName",
+                        md-floating-label="Add User",
+                        md-autofocus=true,
+                        md-autoselect=true,
+                        md-require-match,
+                        md-dropdown-position="bottom",
+                        flex
+                        )
+                            md-item-template {{user.firstName}} {{user.lastName}}
+
+                        div(layout="column", layout-align="center end", style="padding-left: 20px;")
+                            div(ng-click="addUser()").buttonWrap
+                                md-button Add Member
+                    div(flex, layout="column")
+                        md-content(flex, layout="column").diagTable
+                            div(flex, layout="row").header
+                                div(flex=30) Name
+                                div(flex=30) Email
+                                div(flex=30) Username
+                                div
+                            div(ng-show="project.users.length === 0").text-center.margin-top-10.margin-bottom-10 No Members
+                            div(ng-repeat="u in project.users", layout="row").row
+                                div(flex=40).c {{u.firstName}} {{u.lastName}}
+                                div(flex=40).c {{u.email}}
+                                div(flex=40).c {{u.username}}
+                                div
+                                    div(ng-click="removeUser($event, u)").buttonWrap
+                                        md-button Remove
+
+            br
+            div(ng-hide="newProject")
+                h3(style="margin: 0;") Project Samples
+
+                div(flex, layout="column")
+                    div(flex, layout="row")
+                        md-autocomplete(
+                        md-input-name="Sample",
+                        md-selected-item="pog",
+                        md-search-text="searchPOG",
+                        md-items="pog in searchPOGs(searchPOG)",
+                        md-item-text="pog.POGID",
+                        md-floating-label="Add Sample",
+                        md-autofocus=true,
+                        md-autoselect=true,
+                        md-require-match,
+                        md-dropdown-position="bottom",
+                        flex
+                        )
+                            md-item-template {{pog.POGID}}
+
+                        div(layout="column", layout-align="center end", style="padding-left: 20px;")
+                            div(ng-click="addPOG()").buttonWrap
+                                md-button Add Sample
+                    div(flex, layout="column")
+                        md-content(flex, layout="column").diagTable
+                            div(flex, layout="row").header
+                                div(flex=90) POG ID
+                                div
+                            div(ng-show="project.pogs.length === 0").text-center.margin-top-10.margin-bottom-10 No Samples
+                            div(ng-repeat="p in project.pogs", layout="row").row
+                                div(flex=90).c {{p.POGID}}
+                                div
+                                    div(ng-click="removePOG($event, p)").buttonWrap
+                                        md-button Remove
+
+
+
+        md-dialog-actions(layout="row")
+            .buttonWrap
+                md-button(ng-click="cancel()") Cancel
+            div(ng-hide="newProject").buttonWrap.delete
+                md-button(ng-click="projectDelete($event, project)") Remove
+            span(flex)
+            .buttonWrap
+                md-button(type="submit") {{(!newProject) ? 'Save Changes' : 'Add Project'}}

@@ -25,7 +25,7 @@ md-dialog(flex=50).adminSection
                 md-search-text="searchOwnerQuery",
                 md-items="user in searchOwner(searchOwnerQuery)",
                 md-item-text="user.firstName + ' ' + user.lastName",
-                md-floating-label="Group Loader",
+                md-floating-label="Group Leader",
                 md-autofocus=true,
                 md-autoselect=true,
                 md-require-match,
@@ -64,7 +64,7 @@ md-dialog(flex=50).adminSection
                         md-content(flex, layout="column").diagTable
                             div(flex, layout="row").header
                                 div(flex=30) Name
-                                div(flex=20) Email
+                                div(flex=30) Email
                                 div(flex=30) Username
                                 div
                             div(ng-show="group.users.length === 0").text-center.margin-top-10.margin-bottom-10 No Members
@@ -85,4 +85,4 @@ md-dialog(flex=50).adminSection
                 md-button(ng-click="groupDelete($event, group)") Remove
             span(flex)
             .buttonWrap
-                md-button(type="submit") {{(!newUser) ? 'Done' : 'Add Group'}}
+                md-button(type="submit") {{(!newUser) ? 'Save Changes' : 'Add Group'}}

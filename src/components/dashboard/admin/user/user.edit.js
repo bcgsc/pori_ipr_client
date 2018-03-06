@@ -1,9 +1,12 @@
-app.controller('controller.dashboard.user.edit', ['$q', '_', '$scope', '$mdDialog','api.user', 'editUser', 'newUser', 'userDelete', ($q, _, scope, $mdDialog, $user, editUser, newUser, userDelete) => {
+app.controller('controller.dashboard.user.edit',
+['$q', '_', '$scope', '$mdDialog','api.user', 'editUser', 'newUser', 'userDelete', 'projects',
+($q, _, scope, $mdDialog, $user, editUser, newUser, userDelete, projects) => {
 
   // Load User into scope
   scope.user = editUser;
   scope.newUser = newUser;
   scope.userDelete = userDelete;
+  scope.projects = projects;
 
   // Creating new user
   if(newUser) {

@@ -1,10 +1,11 @@
 app.controller('controller.dashboard.admin.users',
-['_', '$scope', '$mdSidenav', '$state', '$mdDialog', '$mdToast', 'api.session', 'api.user', 'isAdmin', 'groups', 'users',
-(_, $scope, $mdSidenav, $state, $mdDialog, $mdToast, $session, $user, isAdmin, groups, users) => {
+['_', '$scope', '$mdSidenav', '$state', '$mdDialog', '$mdToast', 'api.session', 'api.user', 'isAdmin', 'groups', 'users', 'projects',
+(_, $scope, $mdSidenav, $state, $mdDialog, $mdToast, $session, $user, isAdmin, groups, users, projects) => {
 
   let passDelete = () => { return () => {}};
 
   $scope.groups = groups;
+  $scope.projects = projects;
 
   $scope.userDiag = ($event, editUser, newUser=false) => {
     $mdDialog.show({
@@ -14,7 +15,8 @@ app.controller('controller.dashboard.admin.users',
       locals: {
         editUser: angular.copy(editUser),
         newUser: newUser,
-        userDelete: passDelete()
+        userDelete: passDelete(),
+        projects: projects
       },
       controller: 'controller.dashboard.user.edit'
     }).then(
@@ -58,6 +60,39 @@ app.controller('controller.dashboard.admin.users',
       },
       (err) => {
         $mdToast.show($mdToast.simple().textContent('The group has not been updated.'));
+      }
+    );
+
+  };
+
+  $scope.projectDiag = ($event, editProject, newProject=false) => {
+    console.log('event');
+    console.log($event);
+    $mdDialog.show({
+      targetEvent: $event,
+      templateUrl: 'dashboard/admin/user/project.edit.html',
+      clickOutToClose: false,
+      locals: {
+        editProject: angular.copy(editProject),
+        newProject: newProject,
+        projectDelete: passDelete()
+      },
+      controller: 'controller.dashboard.user.project.edit'
+    }).then(
+      (resp) => {
+        $mdToast.show($mdToast.simple().textContent('The project has been added'));
+
+        if(newProject) {
+          console.log('scope before add');
+          console.log($scope.projects);
+          $scope.projects.push(resp.data);
+          $scope.projects = _.sortBy($scope.projects, 'name');
+          console.log('scope after add');
+          console.log($scope.projects);
+        }
+      },
+      (err) => {
+        $mdToast.show($mdToast.simple().textContent('The project has not been updated.'));
       }
     );
 

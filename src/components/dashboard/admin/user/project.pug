@@ -1,0 +1,28 @@
+md-content(flex).adminSection
+    md-toolbar
+        div(layout="row").md-toolbar-tools
+            span.close
+                div(ui-sref="dashboard.listing")
+            span(flex)
+            span(flex)
+                h2 System Projects
+            span(flex)
+            span(flex=5)
+    div.content
+
+        p Projects that users can be assigned to.
+
+        div(flex, layout="column").table
+            div(flex, layout="row").header
+                div(flex) Project
+                div(flex=15) Members
+                div(flex) Samples
+                div(flex) Created
+            div(flex, layout="row", ng-repeat="p in projects", ng-click="projectDiag($event, p)", ng-if="projects.length > 0").row.clickable
+                div(flex).text-capitalize {{p.name}}
+                div(flex=15) {{p.users.length}}
+                div(flex) {{p.pogs.length}}
+                div(flex) {{p.createdAt | amDateFormat:'DD/MM/Y'}}
+                    md-tooltip(md-direction="left") {{p.createdAt | amDateFormat:'dddd, MMMM Do YYYY, h:mm:ss a' }}
+            div(flex, layout="row", ng-if="projects.length < 1").row
+                div(flex) There are no projects currently in IPR

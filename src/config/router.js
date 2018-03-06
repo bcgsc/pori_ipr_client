@@ -735,6 +735,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         }],
         groups: ['$q', 'api.user', ($q, $user) => {
           return $user.group.all();
+        }],
+        projects: ['$q', 'api.project', ($q, $project) => {
+          return $project.getAll();
         }]
       }
     })
@@ -746,6 +749,11 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       },
       controller: 'controller.dashboard.admin.users.userList',
       templateUrl: 'dashboard/admin/user/userList.html',
+      resolve: {
+        projects: ['$q', 'api.project', ($q, $project) => {
+          return $project.all();
+        }]
+      }
     })
 
     .state('dashboard.admin.users.groups', {
@@ -755,6 +763,15 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       },
       controller: 'controller.dashboard.admin.users.groups',
       templateUrl: 'dashboard/admin/user/group.html',
+    })
+
+    .state('dashboard.admin.users.projects', {
+      url: '/projects',
+      data: {
+        displayName: 'Projects'
+      },
+      controller: 'controller.dashboard.admin.users.projects',
+      templateUrl: 'dashboard/admin/user/project.html',
     })
 
     .state('print', {
