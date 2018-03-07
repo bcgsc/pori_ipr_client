@@ -16,9 +16,10 @@ md-dialog(flex=50).adminSection
 
             div(flex, layout="row")
                 md-input-container(flex)
-                    input(ng-model="project.name", name="Project", placeholder="Project Name", required)
+                    input(ng-model="project.name", name="Project", placeholder="Project Name", ng-change="isUniqueProject(project.name)", required)
                     div(ng-messages="form.Project.$error")
                         div(ng-message="required") A project name is required
+                        div(ng-message="unique") Project name is already taken
 
             div(ng-hide="newProject")
                 h3(style="margin: 0;") Project Members

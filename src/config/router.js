@@ -737,7 +737,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
           return $user.group.all();
         }],
         projects: ['$q', 'api.project', ($q, $project) => {
-          return $project.getAll();
+          return $project.all();
         }]
       }
     })
@@ -752,6 +752,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       resolve: {
         projects: ['$q', 'api.project', ($q, $project) => {
           return $project.all();
+        }],
+        groups: ['$q', 'api.user', ($q, $user) => {
+          return $user.group.all();
         }]
       }
     })

@@ -1,20 +1,56 @@
 app.controller('controller.dashboard.user.project.edit', 
 ['$q', '_', '$scope', '$mdDialog','api.project', 'api.user', 'api.pog', 'editProject', 'newProject', 'projectDelete', 
-($q, _, scope, $mdDialog, $project, $user, $pog, editProject, newProject, projectDelete) => {
+($q, _, $scope, $mdDialog, $project, $user, $pog, editProject, newProject, projectDelete) => {
 
-  // Load project into scope
-  scope.project = editProject;
-  scope.newProject = newProject;
-  scope.projectDelete = projectDelete;
+  // Load project into $scope
+  $scope.project = editProject;
+  $scope.oldProject = angular.copy(editProject); // record of old values for project for comparison
+  $scope.newProject = newProject;
+  $scope.projectDelete = projectDelete;
   
   // Creating new project
   if(newProject) {
-    scope.project = {
+    $scope.project = {
       name: '',
     }
   }
 
-  scope.searchUsers = (searchText) => {
+  $scope.isUniqueProject = (searchText) => {
+    let deferred = $q.defer();
+
+    if(searchText === undefined || searchText.length === 0) return;
+
+    $project.all().then(
+      (resp) => {
+        let allProjects = resp.map(function (p) {
+          return p.name.toLowerCase(); // create array of project names
+        });
+
+        // If editing a project, don't check against own name
+        if(!newProject) {
+          _.remove(allProjects, function (p) {
+            return p === $scope.oldProject.name.toLowerCase();
+          });
+        }
+
+        if(allProjects.indexOf(searchText.toLowerCase()) != -1) {
+          $scope.form.Project.$setValidity("unique", false);
+        } else {
+          $scope.form.Project.$setValidity("unique", true);
+        }
+
+        deferred.resolve();
+      },
+      (err) => {
+        console.log(err);
+        deferred.reject();
+      }
+    );
+
+    return deferred.promise;    
+  };
+
+  $scope.searchUsers = (searchText) => {
     let deferred = $q.defer();
 
     if(searchText.length === 0) return [];
@@ -32,7 +68,7 @@ app.controller('controller.dashboard.user.project.edit',
     return deferred.promise;
   };
 
-  scope.searchPOGs = (searchText) => {
+  $scope.searchPOGs = (searchText) => {
     let deferred = $q.defer();
 
     if(searchText.length === 0) return [];
@@ -49,39 +85,39 @@ app.controller('controller.dashboard.user.project.edit',
     return deferred.promise;
   };
 
-  scope.cancel = () => {
+  $scope.cancel = () => {
     $mdDialog.cancel({status: false, message: "Could not update this project."});
   };
 
   // Add user to project
-  scope.addUser = () => {
+  $scope.addUser = () => {
 
-    if(_.find(scope.project.users, {ident: scope.member.ident})) return alert('This user has already been added to the project');
+    if(_.find($scope.project.users, {ident: $scope.member.ident})) return alert('This user has already been added to the project');
 
     // Add user to project
-    $project.user(scope.project.ident).add(scope.member.ident).then(
+    $project.user($scope.project.ident).add($scope.member.ident).then(
       (resp) => {
-        scope.project.users.push(resp);
+        $scope.project.users.push(resp);
 
-        scope.member = null;
-        scope.searchQuery = '';
+        $scope.member = null;
+        $scope.searchQuery = '';
 
       },
       (err) => {
         console.log('Unable to add user to project', err);
       }
-    )
+    );
 
   };
 
   // Remove user from project
-  scope.removeUser = ($event, user) => {
+  $scope.removeUser = ($event, user) => {
 
-    if(confirm('Are you sure you want to remove ' + user.firstName + ' ' + user.lastName + ' from ' + scope.project.name + '?')) {
-      $project.user(scope.project.ident).remove(user.ident).then(
+    if(confirm('Are you sure you want to remove ' + user.firstName + ' ' + user.lastName + ' from ' + $scope.project.name + '?')) {
+      $project.user($scope.project.ident).remove(user.ident).then(
         (resp) => {
           // Remove entry from project list
-          scope.project.users = _.filter(scope.project.users, (u) => {
+          $scope.project.users = _.filter($scope.project.users, (u) => {
             return (u.ident !== user.ident)
           });
         },
@@ -94,17 +130,17 @@ app.controller('controller.dashboard.user.project.edit',
   };
 
   // Add sample to project
-  scope.addPOG = () => {
+  $scope.addPOG = () => {
 
-    if(_.find(scope.project.pogs, {ident: scope.pog.ident})) return alert('This sample has already been added to the project');
+    if(_.find($scope.project.pogs, {ident: $scope.pog.ident})) return alert('This sample has already been added to the project');
 
     // Add user to project
-    $project.pog(scope.project.ident).add(scope.pog.ident).then(
+    $project.pog($scope.project.ident).add($scope.pog.ident).then(
       (resp) => {
-        scope.project.pogs.push(resp);
+        $scope.project.pogs.push(resp);
 
-        scope.pog = null;
-        scope.searchPOG = '';
+        $scope.pog = null;
+        $scope.searchPOG = '';
 
       },
       (err) => {
@@ -115,13 +151,13 @@ app.controller('controller.dashboard.user.project.edit',
   };
 
   // Remove sample from project
-  scope.removePOG = ($event, pog) => {
+  $scope.removePOG = ($event, pog) => {
 
-    if(confirm('Are you sure you want to remove ' + pog.POGID + ' from ' + scope.project.name + '?')) {
-      $project.pog(scope.project.ident).remove(pog.ident).then(
+    if(confirm('Are you sure you want to remove ' + pog.POGID + ' from ' + $scope.project.name + '?')) {
+      $project.pog($scope.project.ident).remove(pog.ident).then(
         (resp) => {
           // Remove entry from project list
-          scope.project.pogs = _.filter(scope.project.pogs, (p) => {
+          $scope.project.pogs = _.filter($scope.project.pogs, (p) => {
             return (p.ident !== pog.ident)
           });
         },
@@ -134,7 +170,7 @@ app.controller('controller.dashboard.user.project.edit',
   };
 
   // Validate form and submit
-  scope.update = (f) => {
+  $scope.update = (f) => {
     // Check for valid inputs by touching each entry
     if(f.$invalid) {
       f.$setDirty();
@@ -146,11 +182,11 @@ app.controller('controller.dashboard.user.project.edit',
       return;
     }
 
-    //scope.project.owner = scope.project.owner.ident;
+    //$scope.project.owner = $scope.project.owner.ident;
     
     // Send updated project to api
     if(!newProject) {
-      $project.update(scope.project).then(
+      $project.update($scope.project).then(
         (project) => {
           // Success
           $mdDialog.hide({status: true, data: project, message: "The project has been updated!"});
@@ -162,7 +198,7 @@ app.controller('controller.dashboard.user.project.edit',
     }
     // Send updated project to api
     if(newProject) {
-      $project.add(scope.project).then(
+      $project.add($scope.project).then(
         (project) => {
           // Success
           $mdDialog.hide({status: true, data: project, message: "The project has been added!", newProject: true});

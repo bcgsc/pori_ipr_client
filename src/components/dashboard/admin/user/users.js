@@ -6,6 +6,7 @@ app.controller('controller.dashboard.admin.users',
 
   $scope.groups = groups;
   $scope.projects = projects;
+  $scope.accessGroup = _.find($scope.groups, function(group) { return group.name === 'Full Project Access' });
 
   $scope.userDiag = ($event, editUser, newUser=false) => {
     $mdDialog.show({
@@ -16,7 +17,8 @@ app.controller('controller.dashboard.admin.users',
         editUser: angular.copy(editUser),
         newUser: newUser,
         userDelete: passDelete(),
-        projects: projects
+        projects: projects,
+        accessGroup: $scope.accessGroup
       },
       controller: 'controller.dashboard.user.edit'
     }).then(
@@ -66,8 +68,6 @@ app.controller('controller.dashboard.admin.users',
   };
 
   $scope.projectDiag = ($event, editProject, newProject=false) => {
-    console.log('event');
-    console.log($event);
     $mdDialog.show({
       targetEvent: $event,
       templateUrl: 'dashboard/admin/user/project.edit.html',
@@ -83,12 +83,8 @@ app.controller('controller.dashboard.admin.users',
         $mdToast.show($mdToast.simple().textContent('The project has been added'));
 
         if(newProject) {
-          console.log('scope before add');
-          console.log($scope.projects);
           $scope.projects.push(resp.data);
           $scope.projects = _.sortBy($scope.projects, 'name');
-          console.log('scope after add');
-          console.log($scope.projects);
         }
       },
       (err) => {
