@@ -21,7 +21,7 @@ app.factory('api.project', ['_', '$http', '$q', (_, $http, $q) => {
    *
    * @returns {promise} - Resolves with array of projects
    */
-   /*
+   
   $project.all = () => {
     return $q((resolve, reject) => {
       
@@ -39,7 +39,7 @@ app.factory('api.project', ['_', '$http', '$q', (_, $http, $q) => {
     });
     
   };
-  */
+  
 
   /**
    * Get All Projects
@@ -48,7 +48,7 @@ app.factory('api.project', ['_', '$http', '$q', (_, $http, $q) => {
    *
    * @returns {promise} - Resolves w/ array of projects
    */
-  $project.all = () => {
+  $project.getAll = () => {
     return $q((resolve, reject) => {
       $http.get(api).then(
         (result) => {
