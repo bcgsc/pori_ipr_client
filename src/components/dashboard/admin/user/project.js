@@ -2,8 +2,6 @@ app.controller('controller.dashboard.admin.users.projects',
 ['_', '$scope', '$mdSidenav', '$state', '$mdDialog', '$mdToast', 'api.session', 'api.project', 'isAdmin', 'projects', 
 (_, $scope, $mdSidenav, $state, $mdDialog, $mdToast, $session, $project, isAdmin, projects) => {
 
-  console.log(projects);
-
   $scope.projects = projects;
 
 

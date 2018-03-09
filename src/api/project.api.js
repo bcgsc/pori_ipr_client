@@ -19,9 +19,9 @@ app.factory('api.project', ['_', '$http', '$q', (_, $http, $q) => {
    *
    * @returns {promise} - Resolves w/ array of projects
    */
-  $project.all = () => {
+  $project.all = (opts={}) => {
     return $q((resolve, reject) => {
-      $http.get(api).then(
+      $http.get(api, {params: opts}).then(
         (result) => {
           resolve(result.data);
         },
