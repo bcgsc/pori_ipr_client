@@ -1,9 +1,26 @@
 app.controller('controller.dashboard.admin.users.projects', 
-['_', '$scope', '$mdSidenav', '$state', '$mdDialog', '$mdToast', 'api.session', 'api.project', 'isAdmin', 'projects', 
-(_, $scope, $mdSidenav, $state, $mdDialog, $mdToast, $session, $project, isAdmin, projects) => {
+['_', '$scope', '$mdSidenav', '$state', '$mdDialog', '$mdToast', 'api.session', 'api.project', 'isAdmin', 'projects', 'groups',
+(_, $scope, $mdSidenav, $state, $mdDialog, $mdToast, $session, $project, isAdmin, projects, groups) => {
 
   $scope.projects = projects;
+  let accessGroup = _.find($scope.groups, function(group) { return group.name === 'Full Project Access' });
+  
+  // getting list of users with full access to display as project members
+  let fullAccessUsers = _.map(accessGroup.users, function(user) {
+    let fullAccessUser = user;
+    fullAccessUser.fullAccess = true; // flag to prevent removal option
+    return fullAccessUser;
+  });
 
+  _.each(projects, function(project) {
+    _.each(fullAccessUsers, function(user) {
+      // adding all access users to each projects list of users
+      // if the user has full access but also belongs to project, dont replace so that we can allow "removal"
+      if(!_.find(project.users, {'ident': user.ident})) {
+        project.users.push(user);
+      }
+    });
+  });
 
   let deleteProject = ($event, project) => {
 
@@ -21,12 +38,8 @@ app.controller('controller.dashboard.admin.users.projects',
         // Remove User
         $project.remove(project).then(
           (res) => {
-            console.log('scope before delete');
-            console.log($scope.projects);
             $scope.projects = _.filter($scope.projects, (p) => {return (p.ident !== tempProject.ident)});
             $mdToast.show($mdToast.simple('The project has been removed'));
-            console.log('scope after delete');
-            console.log($scope.projects);
           },
           (err) => {
             $mdToast.show($mdToast.simple('A technical issue prevented the project from being removed.'));
@@ -53,7 +66,8 @@ app.controller('controller.dashboard.admin.users.projects',
       locals: {
         editProject: angular.copy(editProject),
         newProject: newProject,
-        projectDelete: passDelete()
+        projectDelete: passDelete(),
+        fullAccessUsers: fullAccessUsers
       },
       controller: 'controller.dashboard.user.project.edit'
     }).then(

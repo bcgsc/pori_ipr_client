@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.user.project.edit', 
-['$q', '_', '$scope', '$mdDialog','api.project', 'api.user', 'api.pog', 'editProject', 'newProject', 'projectDelete', 
-($q, _, $scope, $mdDialog, $project, $user, $pog, editProject, newProject, projectDelete) => {
+['$q', '_', '$scope', '$mdDialog','api.project', 'api.user', 'api.pog', 'editProject', 'newProject', 'projectDelete', 'fullAccessUsers',
+($q, _, $scope, $mdDialog, $project, $user, $pog, editProject, newProject, projectDelete, fullAccessUsers) => {
 
   // Load project into $scope
   $scope.project = editProject;
@@ -14,6 +14,8 @@ app.controller('controller.dashboard.user.project.edit',
       name: '',
     }
   }
+
+  $scope.project.users = _.orderBy($scope.project.users, ['firstName']);
 
   $scope.isUniqueProject = (searchText) => {
     let deferred = $q.defer();
@@ -120,6 +122,14 @@ app.controller('controller.dashboard.user.project.edit',
           $scope.project.users = _.filter($scope.project.users, (u) => {
             return (u.ident !== user.ident)
           });
+
+          // If user is in full access group re-add to list with access flag
+          if(_.find(fullAccessUsers, {'ident': user.ident})) {
+            user.fullAccess = true;
+            $scope.project.users.push(user);
+          }
+
+          $scope.project.users = _.orderBy($scope.project.users, ['firstName']);
         },
         (err) => {
           console.log('Unable to remove user from project', err);
@@ -186,7 +196,13 @@ app.controller('controller.dashboard.user.project.edit',
     
     // Send updated project to api
     if(!newProject) {
-      $project.update($scope.project).then(
+
+      let updatedProject = {
+        ident: $scope.project.ident,
+        name: $scope.project.name
+      }
+
+      $project.update(updatedProject).then(
         (project) => {
           // Success
           $mdDialog.hide({status: true, data: project, message: "The project has been updated!"});

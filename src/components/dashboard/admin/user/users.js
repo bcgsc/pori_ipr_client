@@ -75,7 +75,8 @@ app.controller('controller.dashboard.admin.users',
       locals: {
         editProject: angular.copy(editProject),
         newProject: newProject,
-        projectDelete: passDelete()
+        projectDelete: passDelete(),
+        fullAccessUsers: []
       },
       controller: 'controller.dashboard.user.project.edit'
     }).then(

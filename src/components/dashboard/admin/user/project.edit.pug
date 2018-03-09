@@ -57,8 +57,10 @@ md-dialog(flex=50).adminSection
                                 div(flex=40).c {{u.email}}
                                 div(flex=40).c {{u.username}}
                                 div
-                                    div(ng-click="removeUser($event, u)").buttonWrap
+                                    div(ng-click="removeUser($event, u)", ng-if="!u.fullAccess").buttonWrap
                                         md-button Remove
+                                    div(ng-if="u.fullAccess")
+                                        span Full&nbsp;Access&nbsp;
 
             br
             div(ng-hide="newProject")
