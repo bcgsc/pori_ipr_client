@@ -11,35 +11,6 @@ app.factory('api.project', ['_', '$http', '$q', (_, $http, $q) => {
   
   
   let $project = {};
-  
-  
-  /**
-   * TODO: Deprecate
-   * Get All Projects from POG Table
-   *
-   * Retrieve all projects from API that user can access
-   *
-   * @returns {promise} - Resolves with array of projects
-   */
-   
-  $project.all = () => {
-    return $q((resolve, reject) => {
-      
-      // Retrieve from API
-      $http.get(CONFIG.ENDPOINTS.API + '/pogProjects').then(
-        (result) => {
-          resolve(result.data);
-        },
-        (error) => {
-          // TODO: Better error handling
-          reject(error);
-        }
-      );
-      
-    });
-    
-  };
-  
 
   /**
    * Get All Projects
@@ -48,7 +19,7 @@ app.factory('api.project', ['_', '$http', '$q', (_, $http, $q) => {
    *
    * @returns {promise} - Resolves w/ array of projects
    */
-  $project.getAll = () => {
+  $project.all = () => {
     return $q((resolve, reject) => {
       $http.get(api).then(
         (result) => {

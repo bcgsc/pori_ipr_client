@@ -26,7 +26,7 @@ app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$rootScope',
   
   // Clinician Mode Override
   if($rootScope._clinicianMode) {
-    $scope.selectedProject = 'POG';
+    $scope.selectedProject = {name: 'POG'};
     if($userSettings.get('selectedProject') === undefined) $userSettings.save('selectedProject', 'POG');
     $scope.states = {
       ready: false,
@@ -65,7 +65,7 @@ app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$rootScope',
       if(v) states.push(k);
     });
     $scope.loading = true;
-    $report.all({all: !$scope.filter.currentUser, query: $scope.filter.query, role: $scope.filter.role, states: _.join(states, ','), type: 'genomic', project: $scope.selectedProject }).then(
+    $report.all({all: !$scope.filter.currentUser, query: $scope.filter.query, role: $scope.filter.role, states: _.join(states, ','), type: 'genomic', project: $scope.selectedProject.ident }).then(
       (result) => {
         $scope.loading = false;
         $scope.reports = reports = result;

@@ -20,7 +20,7 @@ app.controller('controller.dashboard.user.project.edit',
 
     if(searchText === undefined || searchText.length === 0) return;
 
-    $project.all().then(
+    $project.all({admin: true}).then(
       (resp) => {
         let allProjects = resp.map(function (p) {
           return p.name.toLowerCase(); // create array of project names

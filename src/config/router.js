@@ -211,11 +211,10 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       resolve: {
         reports: ['$q', 'permission', '$acl',  'api.pog_analysis_report', '$userSettings', '$state', 'user', ($q, permission, $acl, $report, $userSettings, $state, user) => {
           let currentUser = $userSettings.get('genomicReportListCurrentUser');
-          let project = $userSettings.get('selectedProject') || undefined;
+          let project = $userSettings.get('selectedProject') || {ident: undefined};
           if($acl.inGroup('clinician')) return $state.go('dashboard.reports.clinician');
-          
-          if(currentUser === null || currentUser === undefined || currentUser === true) return $report.all({type: 'genomic', states: 'ready,active,presented', project: project});
-          if(currentUser === false) return $report.all({all:true, type: 'genomic', states: 'ready,active,presented', project: project});
+          if(currentUser === null || currentUser === undefined || currentUser === true) return $report.all({type: 'genomic', states: 'ready,active,presented', project: project.ident});
+          if(currentUser === false) return $report.all({all:true, type: 'genomic', states: 'ready,active,presented', project: project.ident});
         }]
       }
     })
@@ -737,7 +736,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
           return $user.group.all();
         }],
         projects: ['$q', 'api.project', ($q, $project) => {
-          return $project.all();
+          return $project.all({admin: true});
         }]
       }
     })
@@ -751,7 +750,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       templateUrl: 'dashboard/admin/user/userList.html',
       resolve: {
         projects: ['$q', 'api.project', ($q, $project) => {
-          return $project.all();
+          return $project.all({admin: true});
         }],
         groups: ['$q', 'api.user', ($q, $user) => {
           return $user.group.all();
