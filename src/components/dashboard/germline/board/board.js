@@ -2,7 +2,10 @@ app.controller('controller.dashboard.germline.board',
 ['$q', '_', '$scope', '$window', '$timeout', 'api.germline.report', '$mdDialog', '$mdToast', 'reports',
 ($q, _, $scope, $window, $timeout, $report, $mdDialog, $mdToast, reports) => {
   
-  $scope.reports = reports.reports;
+  $scope.reports = _.sortBy(
+    reports.reports, 
+    [function(report) { return parseInt(report.analysis.pog.POGID.match(/\d+/)[0]) }] // perform natural sorting on POGID
+  ).reverse(); // reverse sort order
   
   $scope.loading = false;
   $scope.showSearch = true;
@@ -88,7 +91,11 @@ app.controller('controller.dashboard.germline.board',
         // have to manually extract reports based on limit/offset due to sequelize bug
         let start = $scope.paginate.offset,
             finish = $scope.paginate.offset + $scope.paginate.limit;
-        $scope.reports = reports.reports.slice(start, finish);
+        let sortedReports = _.sortBy(
+          reports.reports, 
+          [function(report) { return parseInt(report.analysis.pog.POGID.match(/\d+/)[0]) }] // perform natural sorting on POGID
+        ).reverse(); // reverse sort order
+        $scope.reports = sortedReports.slice(start, finish);
       },
       (err) => {
         console.log('Failed to get updated definitions', err);
