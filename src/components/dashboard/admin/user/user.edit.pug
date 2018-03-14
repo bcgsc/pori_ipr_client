@@ -16,12 +16,12 @@ md-dialog(flex=50).adminSection
 
             div(flex, layout="row")
                 md-input-container(flex)
-                    input(ng-model="user.username", placeholder="Username", name="Username", required)
+                    input(ng-model="user.username", placeholder="Username", name="Username", required, ng-disabled="selfEdit")
                     div(ng-messages="form.Username.$error")
                             div(ng-message="required") A username is required
                 md-input-container(flex)
-                    label(name="Authority") Authority
-                    md-select(ng-model="user.type", placeholder="Authority")
+                    label(name="Authority") Authorization
+                    md-select(ng-model="user.type", placeholder="Authority", ng-disabled="selfEdit")
                         md-option(ng-value="'local'") Local DB (IPR)
                         md-option(ng-value="'bcgsc'") BCGSC LDAP
 
@@ -37,12 +37,12 @@ md-dialog(flex=50).adminSection
 
             div(flex, layout="row")
                 md-input-container(flex)
-                    input(ng-model="user.email", type="email", placeholder="Email Address", name="Email", required)
+                    input(ng-model="user.email", type="email", placeholder="Email Address", name="Email", required, ng-disabled="selfEdit")
                     div(ng-messages="form.Email.$error")
                             div(ng-message="required") An email is required
                             div(ng-message="email") Please enter a valid email
 
-            div(flex, layout="row")
+            div(flex, layout="row", ng-if="!selfEdit")
                 md-input-container(flex, ng-show="!allProjectAccess")
                     md-select(ng-model="projectAccess", placeholder="Project Access", name="Access", ng-required="!allProjectAccess", multiple,
                     ng-model-options="{trackBy: '$value.ident'}")
@@ -71,7 +71,7 @@ md-dialog(flex=50).adminSection
         md-dialog-actions(layout="row")
             .buttonWrap
                 md-button(ng-click="cancel()") Cancel
-            div(ng-hide="newUser").buttonWrap.delete
+            div(ng-hide="newUser", ng-if="!selfEdit").buttonWrap.delete
                 md-button(ng-click="userDelete($event, user)") Remove
             span(flex)
             .buttonWrap

@@ -50,7 +50,8 @@ app.controller('controller.dashboard.admin.users.userList',
         newUser: newUser,
         userDelete: passDelete(),
         projects: projects,
-        accessGroup: $scope.accessGroup
+        accessGroup: $scope.accessGroup,
+        selfEdit: false
       },
       controller: 'controller.dashboard.user.edit'
     }).then(

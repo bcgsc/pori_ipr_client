@@ -11,7 +11,7 @@
     
     md-menu-content(width="4")
       md-menu-item
-        md-button Profile
+        md-button(ng-click="userDiag($event, user)") Edit Profile
 
       md-menu-item
         md-button(ng-click="openFeedback($event)") Feedback

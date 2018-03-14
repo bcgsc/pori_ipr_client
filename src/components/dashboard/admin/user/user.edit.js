@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.user.edit',
-['$q', '_', '$scope', '$mdDialog', '$mdToast', 'api.user', 'api.project', 'editUser', 'newUser', 'userDelete', 'projects', 'accessGroup',
-($q, _, $scope, $mdDialog, $mdToast, $user, $project, editUser, newUser, userDelete, projects, accessGroup) => {
+['$q', '_', '$scope', '$mdDialog', '$mdToast', 'api.user', 'api.project', 'editUser', 'newUser', 'userDelete', 'projects', 'accessGroup', 'selfEdit',
+($q, _, $scope, $mdDialog, $mdToast, $user, $project, editUser, newUser, userDelete, projects, accessGroup, selfEdit) => {
 
   // Load User into scope
   $scope.user = editUser;
@@ -10,6 +10,7 @@ app.controller('controller.dashboard.user.edit',
   $scope.projects = projects;
   $scope.projectAccess = $scope.user.projects
   $scope.allProjectAccess = false;
+  $scope.selfEdit = selfEdit;
 
   // check if user has full project access
   if(_.find($scope.user.groups, {ident: accessGroup.ident})) $scope.allProjectAccess = true;
@@ -70,56 +71,58 @@ app.controller('controller.dashboard.user.edit',
 
     // Send updated user to api
     if(!newUser) {
-      // update user/project binding
-      if($scope.allProjectAccess) { // if full access, add to group
-        if(!_.find($scope.oldUser.groups, {name: accessGroup.name})) { // check if user is already part of full access group
-          // add to group
-          $user.group.member(accessGroup.ident).add($scope.user.ident).then(
-            (resp) => {
-            },
-            (err) => {
-              $mdToast.showSimple('User was not given full project access.');
-            }
-          );
-        }
-      } else {
-        // if not full access, bind to/unbind from projects
-        if(_.find($scope.oldUser.groups, {name: accessGroup.name})) { // check if user is part of full access group
-          // remove from group
-          $user.group.member(accessGroup.ident).remove($scope.user.ident).then(
+      // update user/project binding if not self editing
+      if (!selfEdit) {
+        if($scope.allProjectAccess) { // if full access, add to group
+          if(!_.find($scope.oldUser.groups, {name: accessGroup.name})) { // check if user is already part of full access group
+            // add to group
+            $user.group.member(accessGroup.ident).add($scope.user.ident).then(
               (resp) => {
               },
               (err) => {
-                $mdToast.showSimple('User was not removed from full project access.');
+                $mdToast.showSimple('User was not given full project access.');
               }
             );
+          }
+        } else {
+          // if not full access, bind to/unbind from projects
+          if(_.find($scope.oldUser.groups, {name: accessGroup.name})) { // check if user is part of full access group
+            // remove from group
+            $user.group.member(accessGroup.ident).remove($scope.user.ident).then(
+                (resp) => {
+                },
+                (err) => {
+                  $mdToast.showSimple('User was not removed from full project access.');
+                }
+              );
+          }
+
+          // unbind from projects no longer in list
+          let unbind = _.difference($scope.oldUser.projects, $scope.projectAccess);
+          _.each(unbind, function(project) {
+            $project.user(project.ident).remove($scope.user.ident).then(
+              (resp) => {
+              },
+              (err) => {
+                $mdToast.showSimple('User was not removed from project ' + project.name);
+                console.log('Unable to remove user from project', err);
+              }
+            );
+          });
+
+          // bind to new projects in list
+          let bind = _.difference($scope.projectAccess, $scope.oldUser.projects);
+          _.each(bind, function(project) {
+            $project.user(project.ident).add($scope.user.ident).then(
+              (resp) => {
+              },
+              (err) => {
+                $mdToast.showSimple('User was not added to project ' + project.name);
+                console.log('Unable to add user to project', err);
+              }
+            );
+          });
         }
-
-        // unbind from projects no longer in list
-        let unbind = _.difference($scope.oldUser.projects, $scope.projectAccess);
-        _.each(unbind, function(project) {
-          $project.user(project.ident).remove($scope.user.ident).then(
-            (resp) => {
-            },
-            (err) => {
-              $mdToast.showSimple('User was not removed from project ' + project.name);
-              console.log('Unable to remove user from project', err);
-            }
-          );
-        });
-
-        // bind to new projects in list
-        let bind = _.difference($scope.projectAccess, $scope.oldUser.projects);
-        _.each(bind, function(project) {
-          $project.user(project.ident).add($scope.user.ident).then(
-            (resp) => {
-            },
-            (err) => {
-              $mdToast.showSimple('User was not added to project ' + project.name);
-              console.log('Unable to add user to project', err);
-            }
-          );
-        });
       }
       // update user
       $user.update($scope.user).then(

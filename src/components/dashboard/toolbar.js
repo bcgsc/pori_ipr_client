@@ -3,6 +3,7 @@ app.controller('controller.dashboard.toolbar',
     (_, $scope, $mdSidenav, $state, $mdDialog, $mdToast, $timeout, $session, isAdmin, $userSettings) => {
 
       $scope.isAdmin = isAdmin;
+      $scope.user = $session.user();
 
       $scope.toggleMenu = () => {
         $mdSidenav('topLevelNavigation').toggle();
@@ -56,6 +57,35 @@ app.controller('controller.dashboard.toolbar',
         );
 
       }
+
+      // Edit User
+      $scope.userDiag = ($event, editUser, newUser=false) => {
+        $mdDialog.show({
+          targetEvent: $event,
+          templateUrl: 'dashboard/admin/user/user.edit.html',
+          clickOutToClose: false,
+          locals: {
+            editUser: angular.copy(editUser),
+            newUser: newUser,
+            userDelete: {},
+            projects: [],
+            accessGroup: {},
+            selfEdit: true
+          },
+          controller: 'controller.dashboard.user.edit'
+        }).then(
+          (resp) => {
+            $mdToast.show($mdToast.simple().textContent(resp.message));
+            _.forEach($scope.users, (u,i)=>{
+              if(u.ident == resp.data.ident) $scope.users[i] = resp.data;
+            });
+          },
+          (err) => {
+            $mdToast.show($mdToast.simple().textContent('Your user information has not been updated.'));
+          }
+        );
+
+      };
 
     }
   ]
