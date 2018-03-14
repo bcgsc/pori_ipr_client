@@ -72,7 +72,7 @@ md-content(flex, layout="column", layout-fill).md-padding.definitions.assignment
 
                                 md-input-container(flex=50)
                                     label Ticket Components
-                                    md-select(ng-model="editing.components", name="Components", ng-disabled="(editing.project === null || editing.project === undefined)", multiple=)
+                                    md-select(ng-model="editing.components", name="Components", ng-disabled="(editing.project === null || editing.project === undefined)", multiple)
                                         md-option(ng-value="component.name", ng-repeat="component in components") {{component.name}}
 
 
