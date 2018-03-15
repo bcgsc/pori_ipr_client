@@ -2,11 +2,7 @@ app.controller('controller.dashboard.germline.board',
 ['$q', '_', '$scope', '$window', '$timeout', 'api.germline.report', '$mdDialog', '$mdToast', 'reports',
 ($q, _, $scope, $window, $timeout, $report, $mdDialog, $mdToast, reports) => {
   
-  $scope.reports = _.sortBy(
-    reports.reports, 
-    [function(report) { return parseInt(report.analysis.pog.POGID.match(/\d+/)[0]) }] // perform natural sorting on POGID
-  ).reverse(); // reverse sort order
-  
+  $scope.reports = reports.reports
   $scope.loading = false;
   $scope.showSearch = true;
   $scope.focusSearch = false;
@@ -80,22 +76,15 @@ app.controller('controller.dashboard.germline.board',
     if ($scope.filter.search) $scope.paginate.offset = 0;
 
     let opts = {
-      //offset: $scope.paginate.offset, // sequelize applies limit and offset to subquery, returning incorrect results
-      //limit: $scope.paginate.limit,
+      offset: $scope.paginate.offset,
+      limit: $scope.paginate.limit,
       search: $scope.filter.search
     };
     
     $report.all(opts).then(
       (reports) => {
         $scope.paginate.total = reports.total;
-        // have to manually extract reports based on limit/offset due to sequelize bug
-        let start = $scope.paginate.offset,
-            finish = $scope.paginate.offset + $scope.paginate.limit;
-        let sortedReports = _.sortBy(
-          reports.reports, 
-          [function(report) { return parseInt(report.analysis.pog.POGID.match(/\d+/)[0]) }] // perform natural sorting on POGID
-        ).reverse(); // reverse sort order
-        $scope.reports = sortedReports.slice(start, finish);
+        $scope.reports = reports.reports;
       },
       (err) => {
         console.log('Failed to get updated definitions', err);
