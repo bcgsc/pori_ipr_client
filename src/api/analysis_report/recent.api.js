@@ -7,7 +7,7 @@
  * Author: Brandon Pierce <bpierce@bcgsc.ca>
  */
 app.factory('api.recentReports', ['_', '$http', '$q', (_, $http, $q) => {
-  const api = CONFIG.ENDPOINTS.API + '/analysis_reports/recent/report';
+  const api = CONFIG.ENDPOINTS.API + '/analysis_reports/recent';
   
   let $recent = {};
   
@@ -42,7 +42,7 @@ app.factory('api.recentReports', ['_', '$http', '$q', (_, $http, $q) => {
   $recent.addOrUpdate = (report, state) => {
     return $q((resolve, reject) => {
       
-      $http.put(api + '/' + report, {state: state})
+      $http.put(api + '/report/' + report, {state: state})
         .then((result) => {
           resolve(result.data);
         })
@@ -52,19 +52,18 @@ app.factory('api.recentReports', ['_', '$http', '$q', (_, $http, $q) => {
       
     });
   };
-  
-  
-  /**
-   * Remove Recent Report entry
+
+    /**
+   * Remove Recent Report entry (based on recent report ident)
    *
    * @param {string} report - Ident string of analysis report
    *
    * @returns {Promise} - Resolves with nothing
    */
-  $recent.remove = (report) => {
+  $recent.remove = (recentReport) => {
     return $q((resolve, reject) => {
       
-      $http.delete(api + '/' + report)
+      $http.delete(api + '/' + recentReport)
         .then(() => {
           resolve();
         })
