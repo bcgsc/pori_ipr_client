@@ -245,7 +245,6 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         reports: ['$q', 'api.pog_analysis_report', '$userSettings', 'user', ($q, $report, $userSettings, user) => {
           let settings = {currentUser: $userSettings.get('genomicReportListCurrentUser')};
           let opts = {
-            project: 'POG',
             states: 'presented,archived',
             paginated: true
           };
