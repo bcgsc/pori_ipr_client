@@ -18,6 +18,9 @@ md-dialog(layout="column", aria-label="Analysis/Biopsy Details", flex=80, flex-g
                         md-progress-circular(md-mode="indeterminate")
 
                     div(ng-hide="loading.library", layout="column")
+                        div(layout="row").libDetails
+                            div(flex=30) Project(s)
+                            div(flex) {{projects}}
 
                         div(layout="row").libDetails
                             div(flex=30) Biopsy Date

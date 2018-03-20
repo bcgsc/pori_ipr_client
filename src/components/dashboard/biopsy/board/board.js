@@ -190,6 +190,7 @@ app.controller('controller.dashboard.biopsy.board',
         scope.loading = true;
         scope.analysis = analysis;
         scope.sources = [];
+        scope.projects = _.map(_.sortBy(analysis.pog.projects, 'name'), 'name').join(', ');
         
         scope.cancel = () => {
           $mdDialog.cancel();
@@ -202,7 +203,6 @@ app.controller('controller.dashboard.biopsy.board',
             
             if(result.hits === 0) {
               $mdToast.show($mdToast.simple().textContent('Unable to lookup the requested library'));
-              $mdDialog.cancel();
             }
             
             _.forEach(result.results, (s) => {
