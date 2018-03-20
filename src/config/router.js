@@ -1300,10 +1300,13 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       templateUrl: 'dashboard/biopsy/board/board.html',
       resolve: {
         analyses: ['$q', 'api.analysis', ($q, $analysis) => {
-          return $analysis.all({paginated: true, project: 'POG'});
+          return $analysis.all({paginated: true});
         }],
         comparators: ['$q', 'api.analysis', ($q, $analysis) => {
           return $analysis.comparators();
+        }],
+        projects: ['api.project', ($project) => {
+          return $project.all();
         }]
       }
     })

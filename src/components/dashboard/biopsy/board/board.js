@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.biopsy.board',
-['$q', '_', '$scope', 'api.lims', 'api.bioapps', 'api.analysis', 'api.pog', '$mdDialog', '$mdToast', 'analyses', 'comparators',
-($q, _, $scope, $lims, $bioapps, $analysis, $pog, $mdDialog, $mdToast, analyses, comparators) => {
+['$q', '_', '$scope', 'api.lims', 'api.bioapps', 'api.analysis', 'api.pog', '$mdDialog', '$mdToast', 'analyses', 'comparators', 'projects',
+($q, _, $scope, $lims, $bioapps, $analysis, $pog, $mdDialog, $mdToast, analyses, comparators, projects) => {
   
   $scope.pogs = {};
   $scope.searching = false;
@@ -12,8 +12,7 @@ app.controller('controller.dashboard.biopsy.board',
   
   let analysis_query = {
     search: undefined,
-    paginated: true,
-    project: 'POG'
+    paginated: true
   };
   
   $scope.paginate = {
@@ -268,7 +267,10 @@ app.controller('controller.dashboard.biopsy.board',
     
     $mdDialog.show({
       templateUrl: 'dashboard/biopsy/board/board.add.html',
-      controller: 'controller.dashboard.biopsy.board.add'
+      controller: 'controller.dashboard.biopsy.board.add',
+      locals: {
+        projects: projects
+      }
     })
       .then((result) => {
         if(result.result) $scope.analyses.unshift(result.result);

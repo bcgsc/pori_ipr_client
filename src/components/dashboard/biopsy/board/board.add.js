@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.biopsy.board.add',
-['$scope', '_', '$q', 'api.lims', 'api.bioapps', 'api.analysis', 'api.pog', '$mdDialog', '$mdToast', '$filter',
-($scope, _, $q, $lims, $bioapps, $analysis, $pog, $mdDialog, $mdToast, $filter) => {
+['$scope', '_', '$q', 'api.lims', 'api.bioapps', 'api.analysis', 'api.pog', 'api.project', '$mdDialog', '$mdToast', '$filter', 'projects',
+($scope, _, $q, $lims, $bioapps, $analysis, $pog, $project, $mdDialog, $mdToast, $filter, projects) => {
   
   $scope.stages = [
     {title: 'Patient', description: 'Meta data about the patient', id: "patient", ordinal: 0},
@@ -9,6 +9,7 @@ app.controller('controller.dashboard.biopsy.board.add',
   let activeStage = $scope.activeStage = 0;
   
   $scope.patient = { POGID: null, clinical_biopsy: 'clinspec_', tracking: true, comparators: false, libraries: {} };
+  $scope.projects = projects;
   $scope.detail = {};
   $scope.source_loading = false;
   $scope.show_sources = false;
@@ -98,6 +99,35 @@ app.controller('controller.dashboard.biopsy.board.add',
       if(e.code.indexOf(searchText.toUpperCase()) > -1) return e;
     });
   };
+
+  // Performing checks on POG change
+  $scope.checkPOG = () => {
+    // find LIMS sources for POG
+    $scope.limsSources();
+
+    // Check to see if this is the same value
+    if($scope.searchQuery.length === 0) return; // Same value, btfo!
+
+    // check if POG already exists in DB
+    let pogid = ($scope.patient.POGID) ? $scope.patient.POGID.POGID : $scope.searchQuery;
+    $pog.all({pogid: pogid}).then(
+      (resp) => {
+        let existingPOG = resp[0];
+        if (existingPOG) {
+          // POG already in IPR - set projects for display and disable field
+          $scope.patient.projects = existingPOG.projects;
+          $scope.existingPOG = true;
+        } else {
+          // POG not already in IPR - can set projects field
+          $scope.patient.projects = [_.find($scope.projects, {name: 'POG'})];
+          $scope.existingPOG = false;
+        }
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
+  }
   
   // Find LIMS Sources
   $scope.limsSources = () => {
@@ -267,7 +297,6 @@ app.controller('controller.dashboard.biopsy.board.add',
     // Setup submission object
     let analysis = {
       POGID: ($scope.patient.POGID) ? $scope.patient.POGID.POGID : $scope.searchQuery,
-      project: 'POG',
       clinical_biopsy: $scope.patient.clinical_biopsy,
       disease:  (typeof $scope.patient.disease === 'object') ? $scope.patient.disease.text : $scope.patient.disease,
       threeLetterCode: (typeof $scope.patient.threeLetterCode === 'object') ? $scope.patient.threeLetterCode.code : $scope.patient.threeLetterCode,
@@ -290,6 +319,10 @@ app.controller('controller.dashboard.biopsy.board.add',
     
     $analysis.add(analysis)
     .then((result) => {
+
+      // analysis successfully created, bind to projects if this is a new POG
+      if (!$scope.existingPOG) addPOG(result.pog, $scope.patient.projects);
+
       $scope.sending = false;
       $mdDialog.hide({result: result});
     })
@@ -299,5 +332,32 @@ app.controller('controller.dashboard.biopsy.board.add',
     });
     
   }
+
+  /**
+   * Bind POG to project
+   *
+   * @param pog_id (int): POG to bind to projects
+   * @param projects (list): list of projects to bind POG to 
+   */
+  let addPOG = (bindPog, bindProjects) => {
+
+    _.each(bindProjects, (project)=> {
+
+      // Check if project already contains POG
+      if(_.find(project.pogs, {ident: bindPog.ident})) return alert('This sample has already been added to the project');
+
+      // Add pog to project
+      $project.pog(project.ident).add(bindPog.ident).then(
+        (resp) => {
+          // refresh project list
+          $scope.projects = $project.all();
+        },
+        (err) => {
+          console.log('Unable to add sample to project', err);
+        }
+      )
+    });
+
+  };
 
 }]);
