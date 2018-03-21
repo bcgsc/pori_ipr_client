@@ -229,13 +229,19 @@ app.controller('controller.dashboard.biopsy.board',
       templateUrl: 'dashboard/biopsy/board/board.edit.html',
       controller: 'controller.dashboard.biopsy.board.edit',
       locals: {
-        analysis: analysis
+        analysis: analysis,
+        projects: projects
       }
     })
       .then((result) => {
-        // Find result, and update row
-        let i = _.findIndex(analyses, {ident: result.ident});
-        if(i) analyses[i] = result;
+        // update result row and update projects for analyses under same POG
+        _.each($scope.analyses, function(a, i) {
+          if(result.analysis.ident == a.ident) {
+            $scope.analyses[i] = result.analysis; // updating result row
+          } else if(result.analysis.pog_id == a.pog_id) {
+            $scope.analyses[i].pog.projects = result.analysis.pog.projects; // updating projects of rows w/ same POG
+          }
+        })
       
       });
     
@@ -254,8 +260,8 @@ app.controller('controller.dashboard.biopsy.board',
     })
       .then((result) => {
         // Find result, and update row
-        let i = _.findIndex(analyses, {ident: result.ident});
-        if(i) analyses[i] = result;
+        let i = _.findIndex($scope.analyses, {ident: result.ident});
+        if(i) $scope.analyses[i] = result;
       
       });
     

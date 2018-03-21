@@ -1,8 +1,10 @@
 app.controller('controller.dashboard.biopsy.board.edit',
-['$scope', '_', '$q', '$mdDialog', '$mdToast', 'api.lims', 'api.bioapps', 'api.analysis', 'api.pog', 'analysis', '$filter',
-($scope, _, $q, $mdDialog, $mdToast, $lims, $bioapps, $analysis, $pog, analysis, $filter) => {
+['$scope', '_', '$q', '$mdDialog', '$mdToast', 'api.lims', 'api.bioapps', 'api.analysis', 'api.pog', 'api.project', 'analysis', '$filter', 'projects',
+($scope, _, $q, $mdDialog, $mdToast, $lims, $bioapps, $analysis, $pog, $project, analysis, $filter, projects) => {
   
   $scope.patient = angular.copy(analysis);
+  $scope.projects = projects;
+  $scope.patient.projects = $scope.patient.pog.projects
 
   // If analysis has biopsy number, make analysis biopsy and libraries required fields
   $scope.patient.tracking = true;
@@ -107,9 +109,41 @@ app.controller('controller.dashboard.biopsy.board.edit',
     
     $analysis.update(analysis)
       .then((result) => {
+        // Analysis updated, update POG project binding if necessary
+        let oldProjects = analysis.pog.projects;
+
+        // unbind from projects no longer in list
+        let unbind = _.differenceBy(oldProjects, $scope.patient.projects, 'ident');
+        _.each(unbind, function(project) {
+          $project.pog(project.ident).remove(analysis.pog.ident).then(
+            (resp) => {
+            },
+            (err) => {
+              $mdToast.showSimple('Patient was not removed from project ' + project.name);
+              console.log('Unable to remove pog from project', err);
+            }
+          );
+        });
+
+        // bind to new projects in list
+        let bind = _.differenceBy($scope.patient.projects, oldProjects, 'ident');
+        _.each(bind, function(project) {
+          $project.pog(project.ident).add(analysis.pog.ident).then(
+            (resp) => {
+            },
+            (err) => {
+              $mdToast.showSimple('Patient was not added to project ' + project.name);
+              console.log('Unable to add pog to project', err);
+            }
+          );
+        });
+
+        result.pog.projects = $scope.patient.projects;
+
         $mdDialog.hide({analysis: result});
       })
       .catch((err) => {
+        console.log(err);
         $mdToast.show($mdToast.simple().textContent('Something went wrong! We were unable to add new biopsy.'));
       });
     
