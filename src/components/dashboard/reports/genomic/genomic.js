@@ -23,19 +23,6 @@ app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$rootScope',
     archived: false,
     nonproduction: false
   };
-  
-  // Clinician Mode Override
-  if($rootScope._clinicianMode) {
-    $scope.selectedProject = {name: 'POG'};
-    if($userSettings.get('selectedProject') === undefined) $userSettings.save('selectedProject', 'POG');
-    $scope.states = {
-      ready: false,
-      active: false,
-      presented: true,
-      archived: true,
-      nonproduction: false
-    }
-  }
 
   $scope.filter ={
     currentUser: ($userSettings.get('genomicReportListCurrentUser') === undefined) ? true : $userSettings.get('genomicReportListCurrentUser'),
