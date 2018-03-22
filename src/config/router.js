@@ -195,7 +195,11 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       },
       resolve: {
         reports: ['$q', 'permission', '$acl', 'api.pog_analysis_report', '$state', ($q, permission, $acl, $report, $state) => {
-          if($acl.inGroup('clinician')) return $state.go('dashboard.reports.genomic');
+          if($acl.inGroup('clinician')) {
+            return $q((resolve, reject) => {
+              reject('clinicianModeError');
+            })
+          }
           return $report.all({states: 'ready,active'});
         }]
       }
@@ -212,7 +216,11 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         reports: ['$q', 'permission', '$acl',  'api.pog_analysis_report', '$userSettings', '$state', 'user', ($q, permission, $acl, $report, $userSettings, $state, user) => {
           let currentUser = $userSettings.get('genomicReportListCurrentUser');
           let project = $userSettings.get('selectedProject') || {ident: undefined};
-          if($acl.inGroup('clinician')) return $state.go('dashboard.reports.clinician');
+          if($acl.inGroup('clinician')) {
+            return $q((resolve, reject) => {
+              reject('clinicianModeError');
+            })
+          }
           if(currentUser === null || currentUser === undefined || currentUser === true) return $report.all({type: 'genomic', states: 'ready,active,presented', project: project.ident});
           if(currentUser === false) return $report.all({all:true, type: 'genomic', states: 'ready,active,presented', project: project.ident});
         }]

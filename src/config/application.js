@@ -1,5 +1,5 @@
 /* /src/config/application.js */
-app.run(($rootScope) => {
+app.run(($rootScope, $state) => {
   
   
   // On State Change, Show Spinner!
@@ -20,9 +20,15 @@ app.run(($rootScope) => {
 
   });
 
-  $rootScope.$on('$stateChangeError', (event, toState, toParams, fromState, fromParams) => {
+  $rootScope.$on('$stateChangeError', (event, toState, toParams, fromState, fromParams, error) => {
 
-    console.log('State Change Error:', event, toState, toParams);
+    if (error === 'clinicianModeError') {
+      event.preventDefault(); // cancel original state transition
+      $state.go('dashboard.reports.clinician'); // transition to clinician report state
+    } else {
+      console.log('State Change Error:', event, toState, toParams);
+    }
+
     $rootScope.showLoader = false;
 
   });

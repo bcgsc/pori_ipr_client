@@ -30,13 +30,13 @@ div(layout='row', flex)
                     md-tooltip(ng-if="!maximized", md-direction="right") Reports
                 span(flex, ng-show="maximized") Reports
 
-            div(layout="row", ng-if="check.resource('report')", ui-sref="dashboard.reports.genomic", ng-class="{active: ($state.current.name.indexOf('genomic') > 0)}", ng-show="maximized || (!maximized && ($state.current.name.indexOf('dashboard.reports') > -1 || $state.current.name.indexOf('dashboard.pog') > -1))").submenu
+            div(layout="row", ng-if="check.resource('genomic_report')", ui-sref="dashboard.reports.genomic", ng-class="{active: ($state.current.name.indexOf('genomic') > 0)}", ng-show="maximized || (!maximized && ($state.current.name.indexOf('dashboard.reports') > -1 || $state.current.name.indexOf('dashboard.pog') > -1))").submenu
                 md-icon(ng-show="maximized") subdirectory_arrow_right
                 md-icon(ng-show="!maximized") developer_board
                     md-tooltip(ng-if="!maximized", md-direction="right") Genomic
                 span(flex, ng-show="maximized") Genomic
 
-            div(layout="row", ng-if="check.resource('report')", ui-sref="dashboard.reports.probe", ng-class="{active: ($state.current.name.indexOf('probe') > 0)}", ng-show="maximized || (!maximized && ($state.current.name.indexOf('dashboard.reports') > -1 || $state.current.name.indexOf('dashboard.pog') > -1))").submenu
+            div(layout="row", ng-if="check.resource('probe_report')", ui-sref="dashboard.reports.probe", ng-class="{active: ($state.current.name.indexOf('probe') > 0)}", ng-show="maximized || (!maximized && ($state.current.name.indexOf('dashboard.reports') > -1 || $state.current.name.indexOf('dashboard.pog') > -1))").submenu
                 md-icon(ng-show="maximized") subdirectory_arrow_right
                 md-icon(ng-show="!maximized") highlight
                     md-tooltip(ng-if="!maximized", md-direction="right") Probe
