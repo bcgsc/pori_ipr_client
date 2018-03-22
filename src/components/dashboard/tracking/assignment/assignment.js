@@ -158,7 +158,7 @@ app.controller('controller.dashboard.tracking.assignment',
         components: _.map(template.components, (c) => { return {name: c}}),
       };
   
-      if (template.security) response.security = true;
+      if (template.security) response.options.security = true;
       
       // Call API to get extended
       $analysis.extended(analysis.ident)
