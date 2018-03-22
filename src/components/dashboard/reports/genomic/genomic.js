@@ -65,7 +65,7 @@ app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$rootScope',
       if(v) states.push(k);
     });
     $scope.loading = true;
-    $report.all({all: !$scope.filter.currentUser, query: $scope.filter.query, role: $scope.filter.role, states: _.join(states, ','), type: 'genomic', project: $scope.selectedProject.ident }).then(
+    $report.all({all: !$scope.filter.currentUser, query: $scope.filter.query, role: $scope.filter.role, states: _.join(states, ','), type: 'genomic', project: $scope.selectedProject.name }).then(
       (result) => {
         $scope.loading = false;
         $scope.reports = reports = result;

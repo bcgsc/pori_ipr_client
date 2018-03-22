@@ -215,7 +215,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       resolve: {
         reports: ['$q', 'permission', '$acl',  'api.pog_analysis_report', '$userSettings', '$state', 'user', ($q, permission, $acl, $report, $userSettings, $state, user) => {
           let currentUser = $userSettings.get('genomicReportListCurrentUser');
-          let project = $userSettings.get('selectedProject') || {ident: undefined};
+          let project = $userSettings.get('selectedProject') || {name: undefined};
           if($acl.inGroup('clinician')) {
             return $q((resolve, reject) => {
               reject('clinicianModeError');

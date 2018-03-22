@@ -21,7 +21,6 @@ app.directive("iprReportTable", ['$q', '_', 'api.pog_analysis_report', ($q, _, $
       scope.filter = {
         bound: false,
         states: 'ready,active,presented',
-        project: 'POG',
         search: null
       };
   

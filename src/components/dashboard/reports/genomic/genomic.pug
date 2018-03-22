@@ -7,8 +7,8 @@ md-content(flex, layout="column").md-padding
             md-list
                 md-list-item(ng-show="!_clinicianMode")
                     p Select Project
-                    md-select(ng-model="selectedProject", ng-change="refreshList()", aria-label="Select Project")
-                        md-option(ng-value="{ident: undefined}") All
+                    md-select(ng-model="selectedProject", ng-change="refreshList()", aria-label="Select Project", ng-model-options="{trackBy: '$value.name'}")
+                        md-option(ng-value="{name: undefined}") All
                         md-option(ng-value="project", ng-repeat="project in projects") {{project.name}}
                 md-list-item
                     p Show only my reports
