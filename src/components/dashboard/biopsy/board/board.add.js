@@ -110,21 +110,20 @@ app.controller('controller.dashboard.biopsy.board.add',
 
     // check if POG already exists in DB
     let pogid = ($scope.patient.POGID) ? $scope.patient.POGID.POGID : $scope.searchQuery;
-    $pog.all({pogid: pogid}).then(
+    $pog.id(pogid).then(
       (resp) => {
-        let existingPOG = resp[0];
-        if (existingPOG) {
-          // POG already in IPR - set projects for display and disable field
-          $scope.patient.projects = existingPOG.projects;
-          $scope.existingPOG = true;
-        } else {
+        // POG already in IPR - set projects for display and disable field
+        $scope.patient.projects = resp.projects;
+        $scope.existingPOG = true;
+      },
+      (err) => {
+        if (err.status === 404) {
           // POG not already in IPR - can set projects field
           $scope.patient.projects = [_.find($scope.projects, {name: 'POG'})];
           $scope.existingPOG = false;
+        } else {
+          console.log(err);
         }
-      },
-      (err) => {
-        console.log(err);
       }
     );
   }

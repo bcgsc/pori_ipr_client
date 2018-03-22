@@ -78,7 +78,7 @@ app.factory('api.pog', ['_', '$http', '$q', (_, $http, $q) => {
         },
         (error) => {
           // TODO: Better error handling
-          reject();
+          reject(error);
         }
       );
     });

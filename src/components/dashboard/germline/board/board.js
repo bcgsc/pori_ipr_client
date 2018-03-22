@@ -15,7 +15,7 @@ app.controller('controller.dashboard.germline.board',
     offset: 0,
     limit: 25
   };
-  
+
   $scope.clearSearch = () => {
     //$scope.showSearch = false;
     $scope.focusSearch = false;
