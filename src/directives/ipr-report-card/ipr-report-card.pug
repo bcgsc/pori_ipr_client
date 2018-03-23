@@ -14,8 +14,9 @@ div(md-whiteframe=2).pog
     div(layout="row", ng-if="report.type === 'genomic'").details
         div(flex)
             span TC
-            span(ng-class="{low: report.tumourAnalysis.tumourContent < 40, clickable: report.tumourAnalysis.tumourContent < 40}") {{report.tumourAnalysis.tumourContent}}%
+            span(ng-class="{low: report.tumourAnalysis.tumourContent < 40, clickable: report.tumourAnalysis.tumourContent < 40}", ng-if="report.tumourAnalysis.tumourContent !== -1") {{report.tumourAnalysis.tumourContent}}%
                 md-tooltip(ng-if="getTumourContent(pog) < 40") Low tumour content
+            span(ng-if="report.tumourAnalysis.tumourContent === -1") N/A
         div {{report.tumourAnalysis.ploidy}}
     div(layout="row", ng-if="report.type === 'genomic'").details
         div(flex)

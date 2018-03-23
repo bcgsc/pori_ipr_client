@@ -59,7 +59,8 @@ section
                         div(flex) Ploidy Model
                     div(layout="row", flex).content
                         div(flex)
-                            ipr-tumour-content(tc="{{data.ta.tumourContent}}", md-whiteframe="1")
+                            ipr-tumour-content(tc="{{data.ta.tumourContent}}", md-whiteframe="1", ng-if="data.ta.tumourContent !== -1")
+                            span(ng-if="data.ta.tumourContent === -1") N/A
                         div(flex) {{data.ta.ploidy}}
 
             div(layout="column", flex).dataBox
