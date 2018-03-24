@@ -1,4 +1,6 @@
-app.controller('controller.public.login', ['$q', '_', '$scope', 'api.session', 'api.user', '$state', '$acl', '$mdToast', ($q, _, $scope, $session, $user, $state, $acl, $mdToast) => {
+app.controller('controller.public.login', 
+['$q', '_', '$scope', 'api.session', 'api.user', '$state', '$acl', '$mdToast', '$mdDialog', 
+($q, _, $scope, $session, $user, $state, $acl, $mdToast, $mdDialog) => {
   
   $scope.user = {
     username: null,
@@ -33,6 +35,13 @@ app.controller('controller.public.login', ['$q', '_', '$scope', 'api.session', '
         if(error.status === 400) return $mdToast.showSimple('Unable to authenticate with the provided credentials');
         console.log('Error result', error);
       });
+  }
+
+  $scope.requestAccount = () => {
+    $mdDialog.show({
+      templateUrl: 'public/login/requestAccount.html',
+      controller: 'controller.public.requestAccount'
+    });
   }
   
 }]);
