@@ -2,7 +2,7 @@ app.controller('controller.dashboard.germline.board',
 ['$q', '_', '$scope', '$window', '$timeout', 'api.germline.report', '$mdDialog', '$mdToast', 'reports',
 ($q, _, $scope, $window, $timeout, $report, $mdDialog, $mdToast, reports) => {
   
-  $scope.reports = reports.reports
+  $scope.reports = reports.reports;
   $scope.loading = false;
   $scope.showSearch = true;
   $scope.focusSearch = false;
