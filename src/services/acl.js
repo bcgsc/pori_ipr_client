@@ -63,6 +63,14 @@ app.service('$acl', ['_', 'api.session', 'api.user', (_, $session, $user) => {
       allow: ['*'],
       reject: []
     },
+    genomic_report: {
+      allow: ['*'],
+      reject: ['clinician']
+    },
+    probe_report: {
+      allow: ['*'],
+      reject: []
+    },
     knowledgebase: {
       allow: ['*'],
       reject: ['clinician']

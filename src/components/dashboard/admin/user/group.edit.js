@@ -76,7 +76,7 @@ app.controller('controller.dashboard.user.groups.edit', ['$q', '_', '$scope', '$
   // Remove user from group
   scope.removeUser = ($event, user) => {
 
-    if(confirm('Are you sure you want to remove this '+ user.firstName + ' ' + user.lastName +'from '+ scope.group.name +'?')) {
+    if(confirm('Are you sure you want to remove '+ user.firstName + ' ' + user.lastName +' from '+ scope.group.name +'?')) {
       $user.group.member(scope.group.ident).remove(user.ident).then(
         (resp) => {
           // Remove entry from group list

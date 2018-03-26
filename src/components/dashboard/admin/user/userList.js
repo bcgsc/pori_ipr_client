@@ -1,6 +1,9 @@
-app.controller('controller.dashboard.admin.users.userList', ['_', '$scope', '$mdSidenav', '$state', '$mdDialog', '$mdToast', 'api.session', 'api.user', 'isAdmin', 'users', (_, $scope, $mdSidenav, $state, $mdDialog, $mdToast, $session, $user, isAdmin, users) => {
+app.controller('controller.dashboard.admin.users.userList',
+['_', '$scope', '$mdSidenav', '$state', '$mdDialog', '$mdToast', 'api.session', 'api.user', 'isAdmin', 'users', 'projects', 'groups',
+(_, $scope, $mdSidenav, $state, $mdDialog, $mdToast, $session, $user, isAdmin, users, projects, groups) => {
 
   $scope.users = users;
+  $scope.accessGroup = _.find($scope.groups, function(group) { return group.name === 'Full Project Access' });
 
   let deleteUser = ($event, user) => {
 
@@ -45,7 +48,10 @@ app.controller('controller.dashboard.admin.users.userList', ['_', '$scope', '$md
       locals: {
         editUser: angular.copy(editUser),
         newUser: newUser,
-        userDelete: passDelete()
+        userDelete: passDelete(),
+        projects: projects,
+        accessGroup: $scope.accessGroup,
+        selfEdit: false
       },
       controller: 'controller.dashboard.user.edit'
     }).then(

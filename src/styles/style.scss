@@ -194,6 +194,16 @@ md-dialog.editor {
   min-width: 30px;
 }
 
+.md-button.link {
+  cursor: pointer;
+  outline: 0;
+  font-weight: 700;
+  text-decoration: underline;
+  color: #4362b8;
+  text-align: right;
+  background-color: rgb(250, 250, 250);
+}
+
 button.md-button.md-light {
   background-color: transparent;
   md-icon {

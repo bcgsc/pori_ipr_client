@@ -14,7 +14,7 @@ is AngularJS Material.
 
 #### Application Structure
 
-The client is built from source using the Gulp task manager. The tasks are defined in the `guilfile.js` in the
+The client is built from source using the Gulp task manager. The tasks are defined in the `gulpfile.js` in the
 repository root directory. Inside `gulpfile.js` the tasks are described and execute co-linearly.
 
 Tasks:

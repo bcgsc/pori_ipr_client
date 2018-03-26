@@ -16,40 +16,63 @@ md-dialog(flex=50).adminSection
 
             div(flex, layout="row")
                 md-input-container(flex)
-                    input(ng-model="user.username", placeholder="Username", required)
+                    input(ng-model="user.username", placeholder="Username", name="Username", required, ng-disabled="selfEdit")
+                    div(ng-messages="form.Username.$error")
+                            div(ng-message="required") A username is required
                 md-input-container(flex)
-                    label(name="Authority") Authority
-                    md-select(ng-model="user.type", name="Authority", placeholder="Authority")
+                    label(name="Authority") Authorization
+                    md-select(ng-model="user.type", placeholder="Authority", ng-disabled="selfEdit")
                         md-option(ng-value="'local'") Local DB (IPR)
                         md-option(ng-value="'bcgsc'") BCGSC LDAP
 
             div(flex, layout="row")
                 md-input-container(flex)
-                    input(ng-model="user.firstName", placeholder="First Name", required)
+                    input(ng-model="user.firstName", placeholder="First Name", name="FirstName", required)
+                    div(ng-messages="form.FirstName.$error")
+                            div(ng-message="required") A first name is required
                 md-input-container(flex)
-                    input(ng-model="user.lastName", placeholder="Last Name", required)
+                    input(ng-model="user.lastName", placeholder="Last Name", name="LastName", required)
+                    div(ng-messages="form.LastName.$error")
+                            div(ng-message="required") A last name is required
 
             div(flex, layout="row")
                 md-input-container(flex)
-                    input(ng-model="user.email", type="email", placeholder="Email Address")
+                    input(ng-model="user.email", type="email", placeholder="Email Address", name="Email", required, ng-disabled="selfEdit")
+                    div(ng-messages="form.Email.$error")
+                            div(ng-message="required") An email is required
+                            div(ng-message="email") Please enter a valid email
 
-            div(flex, layout="row", ng-show="(user.type === 'local')")
+            div(flex, layout="row", ng-if="!selfEdit")
+                md-input-container(flex, ng-show="!allProjectAccess")
+                    md-select(ng-model="projectAccess", placeholder="Project Access", name="Access", ng-required="!allProjectAccess", multiple,
+                    ng-model-options="{trackBy: '$value.ident'}")
+                        md-option(ng-repeat="p in projects", ng-value="p") {{p.name}}
+                    div(ng-messages="form.Access.$error")
+                            div(ng-message="required") Please select at least one project
                 md-input-container(flex)
-                    input(ng-model="local.newPass", type="password", placeholder="New Password", minlength=6)
-                    div(ng-messages="NewPass")
-                        div(ng-message="minlength") Passwords are required to be at least 6 characters or more.
+                    md-checkbox(ng-model="allProjectAccess") Give user access to all projects
+                        md-tooltip Includes access to all future projects added to IPR
 
-            div(flex, layout="row", ng-show="(user.type === 'local')")
+            div(flex, layout="row", ng-if="(user.type === 'local')")
                 md-input-container(flex)
-                    input(ng-model="local.newPassConfirm", type="password", name="NewPassConfirm", placeholder="Confirm New Password")
-                    div(ng-messages="NewPassConfirm")
-                        div(ng-message="nomatch") The confirmation password does not match.
+                    input(ng-model="local.newPass", type="password", placeholder="New Password", name="NewPass" minlength=8, ng-required="(user.type === 'local')",
+                    ng-change="checkPasswordMatch()")
+                    div(ng-messages="form.NewPass.$error")
+                        div(ng-message="required") Please enter a password
+                        div(ng-message="minlength") Passwords are required to be at least 8 characters or more
+
+            div(flex, layout="row", ng-if="(user.type === 'local')")
+                md-input-container(flex)
+                    input(ng-model="local.newPassConfirm", type="password", name="NewPassConfirm", placeholder="Confirm New Password", ng-required="(user.type === 'local')", ng-change="checkPasswordMatch()")
+                    div(ng-messages="form.NewPassConfirm.$error")
+                        div(ng-message="required") Please confirm your password
+                        div(ng-message="nomatch") The confirmation password does not match
 
         md-dialog-actions(layout="row")
             .buttonWrap
                 md-button(ng-click="cancel()") Cancel
-            div(ng-hide="newUser").buttonWrap.delete
+            div(ng-hide="newUser", ng-if="!selfEdit").buttonWrap.delete
                 md-button(ng-click="userDelete($event, user)") Remove
             span(flex)
             .buttonWrap
-                md-button(type="submit") {{(!newUser) ? 'Update User' : 'Add User'}}
+                md-button(type="submit") {{(!newUser) ? 'Save Changes' : 'Add User'}}

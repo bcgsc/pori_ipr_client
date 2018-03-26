@@ -20,8 +20,8 @@ md-dialog(layout="column", aria-label="Add Biopsy", flex-md=80, flex-xs=100, fle
                     md-autofocus="true",
                     md-autoselect="true",
                     md-dropdown-position="bottom",
-                    md-selected-item-change="limsSources()",
-                    ng-blur="limsSources()",
+                    md-selected-item-change="checkPOG()",
+                    ng-blur="checkPOG()",
                     md-delay="200",
                     md-match-case-insensitive="true",
                     required,
@@ -72,6 +72,14 @@ md-dialog(layout="column", aria-label="Add Biopsy", flex-md=80, flex-xs=100, fle
                         div(flex=5)
 
                 div(layout="row", flex)
+                    // Project
+                    md-input-container(flex=33)
+                        md-select(ng-model="patient.projects", placeholder="Project(s)", name="Project", ng-required="true", multiple,
+                        ng-model-options="{trackBy: '$value.ident'}", ng-disabled="existingPOG")
+                            md-option(ng-repeat="p in projects", ng-value="p", ng-selected="p.name === 'POG'", ng-disabled="p.name === 'POG'") {{p.name}}
+                        div(ng-messages="PatientForm.Project.$error")
+                                div(ng-message="required") Please select at least one project
+
                     // Disease
                     md-autocomplete(
                     md-input-name="Disease",
@@ -82,7 +90,7 @@ md-dialog(layout="column", aria-label="Add Biopsy", flex-md=80, flex-xs=100, fle
                     md-floating-label="Disease",
                     md-autoselect="true",
                     md-dropdown-position="bottom",
-                    flex=60,
+                    flex=33,
                     required
                     )
                         md-item-template {{disease.text}}
@@ -104,7 +112,7 @@ md-dialog(layout="column", aria-label="Add Biopsy", flex-md=80, flex-xs=100, fle
                     md-input-minlength=3,
                     md-input-maxlength=3,
                     required,
-                    flex=60
+                    flex=33
                     )
                         md-item-template {{group.code}}
                         div(ng-messages="PatientForm.CancerGroup.$error")

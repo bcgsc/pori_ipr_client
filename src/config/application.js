@@ -1,5 +1,7 @@
 /* /src/config/application.js */
-app.run(($rootScope) => {
+app.run(
+['$rootScope', '$state', '$location', '$q', 'api.session', 'api.user', '$userSettings',
+($rootScope, $state, $location, $q, $session, $user, $userSettings) => {
   
   
   // On State Change, Show Spinner!
@@ -20,18 +22,54 @@ app.run(($rootScope) => {
 
   });
 
-  $rootScope.$on('$stateChangeError', (event, toState, toParams, fromState, fromParams) => {
+  $rootScope.$on('$stateChangeError', (event, toState, toParams, fromState, fromParams, error) => {
 
-    console.log('State Change Error:', event, toState, toParams);
+    if (error === 'clinicianModeError') {
+      event.preventDefault(); // cancel original state transition
+      $state.go('dashboard.reports.clinician'); // transition to clinician report state
+    } else {
+      console.log('State Change Error:', event, toState, toParams);
+    }
+
     $rootScope.showLoader = false;
 
+  });
+
+  // Redirect to login if route requires auth and you're not logged in
+  $rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
+
+    // require login if not a state name starting w/ 'public'
+    let loginRequired = true,
+        stateType = toState.name.split('.')[0];
+
+    if(stateType === 'public') loginRequired = false;
+
+    if(loginRequired) {
+      return $q((resolve, reject) => {
+        // Attempt session initialization
+        $session.init()
+          .then($user.me)
+          .then((user) => {
+            // Session init'd, return user
+            $userSettings.init(); // Init settings
+            resolve(user);
+          })
+          .catch((err) => {
+            // No session, go to login page
+            $rootScope.returnToState = toState.name; // setting state to return to
+            $rootScope.returnToStateParams = toParams; // setting params of state to return to
+            $state.go('public.login');
+            reject(err);
+          });
+      });
+    }
   });
 
   // Mount configuration
   $rootScope.PROJECT = CONFIG.PROJECT;
   $rootScope.CONFIG = CONFIG;
 
-});
+}]);
 
 app.config(function($mdDateLocaleProvider) {
   $mdDateLocaleProvider.formatDate = function(date) {
