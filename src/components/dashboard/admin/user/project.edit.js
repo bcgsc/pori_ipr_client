@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.user.project.edit', 
-['$q', '_', '$scope', '$mdDialog','api.project', 'api.user', 'api.pog', 'editProject', 'newProject', 'projectDelete', 'fullAccessUsers',
-($q, _, $scope, $mdDialog, $project, $user, $pog, editProject, newProject, projectDelete, fullAccessUsers) => {
+['$q', '_', '$scope', '$mdDialog', '$mdToast', 'api.project', 'api.user', 'api.pog', 'editProject', 'newProject', 'projectDelete', 'fullAccessUsers',
+($q, _, $scope, $mdDialog, $mdToast, $project, $user, $pog, editProject, newProject, projectDelete, fullAccessUsers) => {
 
   // Load project into $scope
   $scope.project = editProject;
@@ -94,7 +94,7 @@ app.controller('controller.dashboard.user.project.edit',
   // Add user to project
   $scope.addUser = () => {
 
-    if(_.find($scope.project.users, {ident: $scope.member.ident})) return alert('This user has already been added to the project');
+    if(_.find($scope.project.users, {ident: $scope.member.ident})) return $mdToast.showSimple('This user has already been added to the project');
 
     // Add user to project
     $project.user($scope.project.ident).add($scope.member.ident).then(
@@ -142,7 +142,7 @@ app.controller('controller.dashboard.user.project.edit',
   // Add sample to project
   $scope.addPOG = () => {
 
-    if(_.find($scope.project.pogs, {ident: $scope.pog.ident})) return alert('This sample has already been added to the project');
+    if(_.find($scope.project.pogs, {ident: $scope.pog.ident})) return $mdToast.showSimple('This sample has already been added to the project');
 
     // Add user to project
     $project.pog($scope.project.ident).add($scope.pog.ident).then(
