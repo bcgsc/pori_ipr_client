@@ -28,11 +28,6 @@ app.run(
         event.preventDefault(); // cancel original state transition
         $state.go('dashboard.reports.clinician'); // transition to clinician report state
         break;
-      case 'projectAccessError':
-        event.preventDefault(); // cancel state transition
-        $state.go('dashboard.home');
-        alert('You do not have permission to access information from this project');
-        break;
       default:
         console.log('State Change Error:', event, toState, toParams);
     }
@@ -72,8 +67,6 @@ app.run(
             resolve();
           })
           .catch((err) => {
-            console.log('CATCHING ERR:');
-            console.log(err);
             switch(err) {
               case 'AuthTokenError':
                 // No session, go to login page
