@@ -74,7 +74,7 @@ app.factory('api.session', ['_', '$http', '$q', '$localStorage', 'api.user', 'ap
       
       // Token exists?
       if(token === false || token === undefined || token === null) {
-        reject('No auth token');
+        reject('AuthTokenError');
       }
       
       $http.defaults.headers.common['Authorization'] = token;

@@ -1,7 +1,7 @@
 /* /src/config/application.js */
 app.run(
-['$rootScope', '$state', '$location', '$q', 'api.session', 'api.user', '$userSettings',
-($rootScope, $state, $location, $q, $session, $user, $userSettings) => {
+['$rootScope', '$state', '$location', '$q', '$acl', 'api.session', 'api.user', 'api.pog', '$userSettings', '_', '$mdToast',
+($rootScope, $state, $location, $q, $acl, $session, $user, $pog, $userSettings, _, $mdToast) => {
   
   
   // On State Change, Show Spinner!
@@ -23,12 +23,18 @@ app.run(
   });
 
   $rootScope.$on('$stateChangeError', (event, toState, toParams, fromState, fromParams, error) => {
-
-    if (error === 'clinicianModeError') {
-      event.preventDefault(); // cancel original state transition
-      $state.go('dashboard.reports.clinician'); // transition to clinician report state
-    } else {
-      console.log('State Change Error:', event, toState, toParams);
+    switch(error) {
+      case 'clinicianModeError':
+        event.preventDefault(); // cancel original state transition
+        $state.go('dashboard.reports.clinician'); // transition to clinician report state
+        break;
+      case 'projectAccessError':
+        event.preventDefault(); // cancel state transition
+        $state.go('dashboard.home');
+        alert('You do not have permission to access information from this project');
+        break;
+      default:
+        console.log('State Change Error:', event, toState, toParams);
     }
 
     $rootScope.showLoader = false;
@@ -52,14 +58,40 @@ app.run(
           .then((user) => {
             // Session init'd, return user
             $userSettings.init(); // Init settings
-            resolve(user);
+
+            // User is logged in - check if accessing individual POG
+            if(toParams.POG) {
+              return $acl.canAccessPOG(toParams.POG);
+            }
+
+            // Not accessing specific case - can go ahead and resolve
+            resolve();
+
+          })
+          .then((hasAccess) =>{
+            resolve();
           })
           .catch((err) => {
-            // No session, go to login page
-            $rootScope.returnToState = toState.name; // setting state to return to
-            $rootScope.returnToStateParams = toParams; // setting params of state to return to
-            $state.go('public.login');
-            reject(err);
+            console.log('CATCHING ERR:');
+            console.log(err);
+            switch(err) {
+              case 'AuthTokenError':
+                // No session, go to login page
+                $rootScope.returnToState = toState.name; // setting state to return to
+                $rootScope.returnToStateParams = toParams; // setting params of state to return to
+                $state.go('public.login');
+                resolve();
+                break;
+              case 'projectAccessError':
+                // Not allowed to access project - return to dashboard
+                $mdToast.showSimple('You do not have access to cases in this project');
+                $state.go('dashboard.home');
+                resolve();
+                break;
+              default:
+                reject(err);
+
+            }
           });
       });
     }
