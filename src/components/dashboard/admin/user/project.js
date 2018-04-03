@@ -38,7 +38,7 @@ app.controller('controller.dashboard.admin.users.projects',
         // Remove User
         $project.remove(project).then(
           (res) => {
-            $scope.projects = _.filter($scope.projects, (p) => {return (p.ident !== tempProject.ident)});
+            $scope.projects = $scope.$parent.projects = _.filter($scope.projects, (p) => {return (p.ident !== tempProject.ident)});
             $mdToast.show($mdToast.simple('The project has been removed'));
           },
           (err) => {
@@ -79,7 +79,7 @@ app.controller('controller.dashboard.admin.users.projects',
 
         if(newProject) {
           $scope.projects.push(resp.data);
-          $scope.projects = projects = _.sortBy($scope.projects, 'name');
+          $scope.projects = $scope.$parent.projects = _.sortBy($scope.projects, 'name');
         }
       },
       (err) => {
