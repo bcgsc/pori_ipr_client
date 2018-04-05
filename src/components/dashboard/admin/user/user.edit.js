@@ -8,7 +8,7 @@ app.controller('controller.dashboard.user.edit',
   $scope.newUser = newUser;
   $scope.userDelete = userDelete;
   $scope.projects = projects;
-  $scope.projectAccess = $scope.user.projects
+  $scope.projectAccess = {projects: $scope.user.projects};
   $scope.allProjectAccess = false;
   $scope.selfEdit = selfEdit;
 
@@ -62,11 +62,8 @@ app.controller('controller.dashboard.user.edit',
       return;
     }
 
-    // If type === local create password entry
-    if($scope.user.type === 'local' && $scope.local.newPass.length > 0) {
+    if($scope.user.type === 'local' && (selfEdit || newUser)) {
       $scope.user.password = $scope.local.newPass;
-    } else {
-      $scope.user.password = '';
     }
 
     // Send updated user to api
@@ -98,7 +95,7 @@ app.controller('controller.dashboard.user.edit',
           }
 
           // unbind from projects no longer in list
-          let unbind = _.difference($scope.oldUser.projects, $scope.projectAccess);
+          let unbind = _.difference($scope.oldUser.projects, $scope.projectAccess.projects);
           _.each(unbind, function(project) {
             $project.user(project.ident).remove($scope.user.ident).then(
               (resp) => {
@@ -111,7 +108,7 @@ app.controller('controller.dashboard.user.edit',
           });
 
           // bind to new projects in list
-          let bind = _.difference($scope.projectAccess, $scope.oldUser.projects);
+          let bind = _.difference($scope.projectAccess.projects, $scope.oldUser.projects);
           _.each(bind, function(project) {
             $project.user(project.ident).add($scope.user.ident).then(
               (resp) => {
@@ -154,7 +151,7 @@ app.controller('controller.dashboard.user.edit',
             );
           } else { // if not full access, bind to projects
             let added = 0;
-            _.each($scope.projectAccess, function(project) {
+            _.each($scope.projectAccess.projects, function(project) {
               $project.user(project.ident).add(user.ident).then(
                 (resp) => {
                 },
