@@ -44,7 +44,7 @@ md-dialog(flex=50).adminSection
 
             div(flex, layout="row", ng-if="!selfEdit")
                 md-input-container(flex, ng-show="!allProjectAccess")
-                    md-select(ng-model="projectAccess", placeholder="Project Access", name="Access", ng-required="!allProjectAccess", multiple,
+                    md-select(ng-model="projectAccess.projects", placeholder="Project Access", ng-required="!allProjectAccess", multiple,
                     ng-model-options="{trackBy: '$value.ident'}")
                         md-option(ng-repeat="p in projects", ng-value="p") {{p.name}}
                     div(ng-messages="form.Access.$error")
@@ -53,7 +53,7 @@ md-dialog(flex=50).adminSection
                     md-checkbox(ng-model="allProjectAccess") Give user access to all projects
                         md-tooltip Includes access to all future projects added to IPR
 
-            div(flex, layout="row", ng-if="(user.type === 'local')")
+            div(flex, layout="row", ng-if="(user.type === 'local' && selfEdit)")
                 md-input-container(flex)
                     input(ng-model="local.newPass", type="password", placeholder="New Password", name="NewPass" minlength=8, ng-required="(user.type === 'local')",
                     ng-change="checkPasswordMatch()")
@@ -61,7 +61,7 @@ md-dialog(flex=50).adminSection
                         div(ng-message="required") Please enter a password
                         div(ng-message="minlength") Passwords are required to be at least 8 characters or more
 
-            div(flex, layout="row", ng-if="(user.type === 'local')")
+            div(flex, layout="row", ng-if="(user.type === 'local' && selfEdit)")
                 md-input-container(flex)
                     input(ng-model="local.newPassConfirm", type="password", name="NewPassConfirm", placeholder="Confirm New Password", ng-required="(user.type === 'local')", ng-change="checkPasswordMatch()")
                     div(ng-messages="form.NewPassConfirm.$error")
