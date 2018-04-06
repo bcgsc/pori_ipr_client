@@ -610,6 +610,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         }],
         mutationSummaryImages: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
           return $image.mutationSummary($stateParams.POG, $stateParams.analysis_report);
+        }],
+        mavisSummary: ['$q', '$stateParams', 'api.mavis', ($q, $stateParams, $mavis) => {
+          return $mavis.all($stateParams.POG, $stateParams.analysis_report);
         }]
       }
     })
