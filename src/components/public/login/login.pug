@@ -6,16 +6,16 @@ md-content(layout="column", flex)
         md-input-container.md-icon-float(flex)
           label Username
           input(ng-model="user.username", name="username", type="text", placeholder="Username", autofocus, required)
-          div(ng-messages="form.Username.$error")
-            p(ng-message="required") Please enter your username
-            p(ng-message="badCredentials") The supplied credentials failed to find a match in our records
+          div(ng-messages="form.username.$error")
+            div(ng-message="required") Please enter your username
+            div(ng-message="badCredentials") The supplied credentials failed to find a match in our records
       
       div(layout)
         md-input-container.md-icon-float(flex)
           label Password
-          input(ng-model="user.password", name="Password", type="password", placeholder="Password", required)
-          div(ng-messages="form.Password.$error")
-            p(ng-message="required") Please enter your password
+          input(ng-model="user.password", name="password", type="password", placeholder="Password", required)
+          div(ng-messages="form.password.$error")
+            div(ng-message="required") Please enter your password
             
       div.error(flex, layout=row, layout-align="center center")
         p(ng-if="errors.credentials") Invalid Username or Password
@@ -24,5 +24,11 @@ md-content(layout="column", flex)
       div(layout)
         button.md-button.md-primary.md-raised(flex, type="submit") Login
         
-      div(layout="column")
-        p Login with your BC GSC GIN credentials. New accounts must be created by BC Genome Sciences Centre IT Systems.
+      div(layout="row")
+        div(layout="column", flex=100)
+        div(layout="column").text-right.margin-top-10
+          md-button(href="http://www.bcgsc.ca/mail_password_form").margin-bottom-10.md-button.small.link Reset Password
+      div(layout="row")
+        div(layout="column", flex=100)
+        div(layout="column").text-right
+          md-button(ng-click='requestAccount()').md-button.small.link Request New Account

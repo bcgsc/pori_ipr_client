@@ -24,7 +24,7 @@ app.directive("iprRecentReports", ['$q', '_', '$rootScope', '$state', '$interval
        */
       scope.remove = (i) => {
         
-        $recent.remove(scope.reports[i].report.ident)
+        $recent.remove(scope.reports[i].ident)
           .then(() => {
             scope.reports.splice(i,1);
           })

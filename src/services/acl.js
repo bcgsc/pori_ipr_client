@@ -1,4 +1,4 @@
-app.service('$acl', ['_', 'api.session', 'api.user', (_, $session, $user) => {
+app.service('$acl', ['$q', '_', 'api.session', 'api.user', 'api.pog', ($q, _, $session, $user, $pog) => {
   
   let user;
   
@@ -60,6 +60,14 @@ app.service('$acl', ['_', 'api.session', 'api.user', (_, $session, $user) => {
   
   const resources = {
     report: {
+      allow: ['*'],
+      reject: []
+    },
+    genomic_report: {
+      allow: ['*'],
+      reject: ['clinician']
+    },
+    probe_report: {
       allow: ['*'],
       reject: []
     },
@@ -168,6 +176,34 @@ app.service('$acl', ['_', 'api.session', 'api.user', (_, $session, $user) => {
      */
     inGroup: (group) => {
       return !(!_.find(user.groups, {name: group}));
+    },
+
+    /**
+     * Can the user access a specified POG (by project)
+     *
+     * @param {string} POGID - POG to be checked for access
+     *
+     */
+    canAccessPOG: (POGID) => {
+      let deferred = $q.defer();
+
+      $pog.id(POGID).then(
+        (pog) => {
+          let access = false;
+          // check if user has individual project access or is part of full access group
+          if(_.intersectionBy(user.projects, pog.projects, 'name').length > 0 || _.find(user.groups, {name: 'Full Project Access'})) {
+            access = true;
+            deferred.resolve();
+          } else {
+            deferred.reject('projectAccessError');
+          }
+        }
+      ).catch(
+        (err) => {
+          deferred.reject({status: e.status, body: e.data});
+      });
+
+      return deferred.promise;
     },
   
     /**

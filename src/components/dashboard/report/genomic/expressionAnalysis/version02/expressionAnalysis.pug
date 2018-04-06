@@ -29,7 +29,8 @@ section.material-section.expression
                         div(layout="row", flex, layout-align="start center")
                             p(flex=40) Tumour Content:
                             p
-                                ipr-tumour-content(tc="{{report.tumourAnalysis.tumourContent}}", md-whiteframe="1")
+                                ipr-tumour-content(tc="{{report.tumourAnalysis.tumourContent}}", md-whiteframe="1", ng-if="report.tumourAnalysis.tumourContent !== -1")
+                                span(ng-if="report.tumourAnalysis.tumourContent === -1") N/A
 
                         div(layout="row", flex, layout-align="start center")
                             p(flex=40) Ploidy Model:

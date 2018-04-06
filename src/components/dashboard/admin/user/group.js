@@ -19,7 +19,7 @@ app.controller('controller.dashboard.admin.users.groups', ['_', '$scope', '$mdSi
         // Remove User
         $user.group.remove(group).then(
           (res) => {
-            $scope.groups = _.filter($scope.groups, (g) => {return (g.ident !== tempGroup.ident)});
+            $scope.groups = $scope.$parent.groups = _.filter($scope.groups, (g) => {return (g.ident !== tempGroup.ident)});
             $mdToast.show($mdToast.simple('The group has been removed'));
           },
           (err) => {
@@ -59,7 +59,7 @@ app.controller('controller.dashboard.admin.users.groups', ['_', '$scope', '$mdSi
 
         if(newGroup) {
           $scope.groups.push(resp.data);
-          $scope.groups = groups = _.sortBy($scope.groups, 'name');
+          $scope.groups = $scope.$parent.groups = _.sortBy($scope.groups, 'name');
         }
       },
       (err) => {

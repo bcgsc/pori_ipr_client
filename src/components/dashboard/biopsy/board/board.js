@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.biopsy.board',
-['$q', '_', '$scope', 'api.lims', 'api.bioapps', 'api.analysis', 'api.pog', '$mdDialog', '$mdToast', 'analyses', 'comparators',
-($q, _, $scope, $lims, $bioapps, $analysis, $pog, $mdDialog, $mdToast, analyses, comparators) => {
+['$q', '_', '$scope', 'api.lims', 'api.bioapps', 'api.analysis', 'api.pog', '$mdDialog', '$mdToast', 'analyses', 'comparators', 'projects',
+($q, _, $scope, $lims, $bioapps, $analysis, $pog, $mdDialog, $mdToast, analyses, comparators, projects) => {
   
   $scope.pogs = {};
   $scope.searching = false;
@@ -12,8 +12,7 @@ app.controller('controller.dashboard.biopsy.board',
   
   let analysis_query = {
     search: undefined,
-    paginated: true,
-    project: 'POG'
+    paginated: true
   };
   
   $scope.paginate = {
@@ -191,6 +190,7 @@ app.controller('controller.dashboard.biopsy.board',
         scope.loading = true;
         scope.analysis = analysis;
         scope.sources = [];
+        scope.projects = _.map(_.sortBy(analysis.pog.projects, 'name'), 'name').join(', ');
         
         scope.cancel = () => {
           $mdDialog.cancel();
@@ -203,7 +203,6 @@ app.controller('controller.dashboard.biopsy.board',
             
             if(result.hits === 0) {
               $mdToast.show($mdToast.simple().textContent('Unable to lookup the requested library'));
-              $mdDialog.cancel();
             }
             
             _.forEach(result.results, (s) => {
@@ -230,13 +229,19 @@ app.controller('controller.dashboard.biopsy.board',
       templateUrl: 'dashboard/biopsy/board/board.edit.html',
       controller: 'controller.dashboard.biopsy.board.edit',
       locals: {
-        analysis: analysis
+        analysis: analysis,
+        projects: projects
       }
     })
       .then((result) => {
-        // Find result, and update row
-        let i = _.findIndex(analyses, {ident: result.ident});
-        if(i) analyses[i] = result;
+        // update result row and update projects for analyses under same POG
+        _.each($scope.analyses, function(a, i) {
+          if(result.analysis.ident == a.ident) {
+            $scope.analyses[i] = result.analysis; // updating result row
+          } else if(result.analysis.pog_id == a.pog_id) {
+            $scope.analyses[i].pog.projects = result.analysis.pog.projects; // updating projects of rows w/ same POG
+          }
+        })
       
       });
     
@@ -255,8 +260,8 @@ app.controller('controller.dashboard.biopsy.board',
     })
       .then((result) => {
         // Find result, and update row
-        let i = _.findIndex(analyses, {ident: result.ident});
-        if(i) analyses[i] = result;
+        let i = _.findIndex($scope.analyses, {ident: result.ident});
+        if(i) $scope.analyses[i] = result;
       
       });
     
@@ -268,7 +273,10 @@ app.controller('controller.dashboard.biopsy.board',
     
     $mdDialog.show({
       templateUrl: 'dashboard/biopsy/board/board.add.html',
-      controller: 'controller.dashboard.biopsy.board.add'
+      controller: 'controller.dashboard.biopsy.board.add',
+      locals: {
+        projects: projects
+      }
     })
       .then((result) => {
         if(result.result) $scope.analyses.unshift(result.result);

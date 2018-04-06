@@ -1,10 +1,12 @@
 app.controller('controller.dashboard.admin.users',
-['_', '$scope', '$mdSidenav', '$state', '$mdDialog', '$mdToast', 'api.session', 'api.user', 'isAdmin', 'groups', 'users',
-(_, $scope, $mdSidenav, $state, $mdDialog, $mdToast, $session, $user, isAdmin, groups, users) => {
+['_', '$scope', '$mdSidenav', '$state', '$mdDialog', '$mdToast', 'api.session', 'api.user', 'isAdmin', 'groups', 'users', 'projects',
+(_, $scope, $mdSidenav, $state, $mdDialog, $mdToast, $session, $user, isAdmin, groups, users, projects) => {
 
   let passDelete = () => { return () => {}};
 
   $scope.groups = groups;
+  $scope.projects = projects;
+  $scope.accessGroup = _.find($scope.groups, function(group) { return group.name === 'Full Project Access' });
 
   $scope.userDiag = ($event, editUser, newUser=false) => {
     $mdDialog.show({
@@ -14,7 +16,10 @@ app.controller('controller.dashboard.admin.users',
       locals: {
         editUser: angular.copy(editUser),
         newUser: newUser,
-        userDelete: passDelete()
+        userDelete: passDelete(),
+        projects: projects,
+        accessGroup: $scope.accessGroup,
+        selfEdit: false
       },
       controller: 'controller.dashboard.user.edit'
     }).then(
@@ -58,6 +63,34 @@ app.controller('controller.dashboard.admin.users',
       },
       (err) => {
         $mdToast.show($mdToast.simple().textContent('The group has not been updated.'));
+      }
+    );
+
+  };
+
+  $scope.projectDiag = ($event, editProject, newProject=false) => {
+    $mdDialog.show({
+      targetEvent: $event,
+      templateUrl: 'dashboard/admin/user/project.edit.html',
+      clickOutToClose: false,
+      locals: {
+        editProject: angular.copy(editProject),
+        newProject: newProject,
+        projectDelete: passDelete(),
+        fullAccessUsers: []
+      },
+      controller: 'controller.dashboard.user.project.edit'
+    }).then(
+      (resp) => {
+        $mdToast.show($mdToast.simple().textContent('The project has been added'));
+
+        if(newProject) {
+          $scope.projects.push(resp.data);
+          $scope.projects = _.sortBy($scope.projects, 'name');
+        }
+      },
+      (err) => {
+        $mdToast.show($mdToast.simple().textContent('The project has not been updated.'));
       }
     );
 

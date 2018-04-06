@@ -8,7 +8,7 @@ div(flex, layout="column")
                 div(flex=5) Exons 5`/3`
                 div(flex=15) Breakpoint
                 div(flex) Event Type
-                div(flex=5) Sample
+                div(flex=5, md-truncate) Sample
                 div(flex) Cytogenic Description
                 div(flex) RPKM 5`/3`
                 div(flex) Fold Change Vs. {{report.tumourAnalysis.normalExpressionComparator}}
@@ -21,14 +21,17 @@ div(flex, layout="column")
                     ipr-gene-viewer(report="report", pog="pog", gene="sv.genes.split('::')[0]") {{sv.genes.split('::')[0]}}
                     | ::
                     ipr-gene-viewer(report="report", pog="pog", gene="sv.genes.split('::')[1]") {{sv.genes.split('::')[1]}}
-                div(flex=5) {{sv.exons}}
-                div(flex=15, md-truncate) {{sv.breakpoint}}
-                div(flex) {{sv.eventType}}
+                div(flex=5, md-truncate) {{sv.exons}}
+                div(flex=15, md-truncate) 
+                    span {{sv.breakpoint.split('|')[0]}}|
+                    wbr
+                    span {{sv.breakpoint.split('|')[0]}}
+                div(flex, md-truncate) {{sv.eventType}}
                 div(flex=5, md-truncate) {{sv.detectedIn}}
-                div(flex) {{sv.conventionalName}}
-                div(flex) {{sv.rpkm}}
-                div(flex) {{sv.foldChange}}
-                div(flex=5) {{sv.tcgaPerc}}
+                div(flex, md-truncate) {{sv.conventionalName}}
+                div(flex, md-truncate) {{sv.rpkm}}
+                div(flex, md-truncate) {{sv.foldChange}}
+                div(flex=5, md-truncate) {{sv.tcgaPerc}}
                 div(flex=5).text-center
                     md-icon(ipr-data-viewer="sv", ipr-hidden="['svg']").clickable search
                         md-tooltip View Details
