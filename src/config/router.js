@@ -221,8 +221,8 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
               reject('clinicianModeError');
             })
           }
-          if(currentUser === null || currentUser === undefined || currentUser === true) return $report.all({type: 'genomic', states: 'ready,active,presented', project: project.ident});
-          if(currentUser === false) return $report.all({all:true, type: 'genomic', states: 'ready,active,presented', project: project.ident});
+          if(currentUser === null || currentUser === undefined || currentUser === true) return $report.all({type: 'genomic', states: 'ready,active,presented', project: project.name});
+          if(currentUser === false) return $report.all({all:true, type: 'genomic', states: 'ready,active,presented', project: project.name});
         }]
       }
     })
