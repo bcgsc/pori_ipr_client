@@ -257,7 +257,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
             paginated: true
           };
           
-          if(settings.currentUser === false) opts.all = true;
+          if(!settings.currentUser) opts.all = true;
           
           return $report.all(opts);
         }]

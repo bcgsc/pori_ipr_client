@@ -30,11 +30,13 @@ md-dialog(layout="column", aria-label="Task Editor", ng-cloak, flex=50).editor
 
                 div(layout="row")
                     md-input-container(flex)
-                        md-select(ng-model="task.outcomeType", aria-label="Response type", placeholder="Task Response/Output", required)
+                        label Task Response/Output
+                        md-select(ng-model="task.outcomeType", placeholder="Task Response/Output", required)
                             md-option(value="text") Plaintext
                             md-option(value="date") Datetime stamp (ISO8601)
                             md-option(value="location") Filesystem location (directory or file)
                             md-option(value="boolean") Boolean
+                            md-option(value="pass/fail/proceed") Pass/Fail/Proceed
 
                     md-input-container(flex)
                         input(name="Checkins", placeholder="Target Checkins", ng-model="task.checkInsTarget", required, type="number", min="1", max="100")
@@ -43,7 +45,8 @@ md-dialog(layout="column", aria-label="Task Editor", ng-cloak, flex=50).editor
 
                 div(layout="row")
                     md-input-container(flex)
-                        md-select(ng-model="task.status", aria-label="Starting Status", required, placeholder="Starting status")
+                        label Starting Status
+                        md-select(ng-model="task.status", placeholder="Starting Status", required)
                             md-option(value="pending") Pending
                             md-option(value="active") Active
                             md-option(value="hold") Hold
