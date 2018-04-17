@@ -250,14 +250,12 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         displayName: 'Clinician Reports'
       },
       resolve: {
-        reports: ['$q', 'api.pog_analysis_report', '$userSettings', 'user', ($q, $report, $userSettings, user) => {
-          let settings = {currentUser: $userSettings.get('genomicReportListCurrentUser')};
+        reports: ['$q', 'api.pog_analysis_report', 'user', ($q, $report, user) => {
           let opts = {
+            all: true,
             states: 'presented,archived',
             paginated: true
           };
-          
-          if(!settings.currentUser) opts.all = true;
           
           return $report.all(opts);
         }]
