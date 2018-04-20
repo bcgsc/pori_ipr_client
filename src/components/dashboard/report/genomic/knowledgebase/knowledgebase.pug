@@ -36,8 +36,9 @@ section.detailedGenomicAnalysis
 
         div(layout="column", flex)
             h2.title Targeted Gene Report - Detected Alterations
-            h3.title The following alterations were detected by the Targeted Gene Report rapid analysis pipline.
-
+            h3.title The following alterations were detected by the Targeted Gene Report rapid analysis pipeline.
+            div(ng-if="targetedGenes.length == 0")
+                div.text-center.details No clinically relevant genomic alterations were found from the analysis.
             div(layout="column", flex, ng-repeat="gene in targetedGenes").details.box
                 div(layout="row", flex)
                     dt(flex="15") Gene:
