@@ -866,6 +866,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
             }],
             mutationSignature: ['$q', '$stateParams', 'api.somaticMutations.mutationSignature', ($q, $stateParams, $mutationSignature) => {
               return $mutationSignature.all($stateParams.POG, $stateParams.analysis_report);
+            }],
+            microbial: ['$q', '$stateParams', 'api.summary.microbial', ($q, $stateParams, $microbial) => {
+              return $microbial.get($stateParams.POG, $stateParams.analysis_report);
             }]
           }
         },
