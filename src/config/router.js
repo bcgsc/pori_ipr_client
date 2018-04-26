@@ -267,7 +267,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         displayName: '{{pog.POGID}}',
         breadcrumbProxy: 'dashboard.reports.pog.report.listing'
       },
-      url: '/'+CONFIG.PROJECT.NAME+'/{POG}',
+      url: '/{POG}',
       controller: 'controller.dashboard.pog',
       templateUrl: 'dashboard/pog/pog.html',
       resolve: {
@@ -279,7 +279,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
                 resolve(pog);
               },
               (err) => {
-                reject('Unable to load pog');
+                reject('Unable to load patient');
               }
             )
           })
@@ -680,7 +680,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     .state('dashboard.reports.pog.report.genomic.meta', {
       url: '/meta',
       data: {
-        displayName: "POG Meta Information"
+        displayName: "Patient Meta Information"
       },
       templateUrl: 'dashboard/report/genomic/meta/meta.html',
       controller: 'controller.dashboard.report.genomic.meta',
@@ -811,7 +811,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     })
 
     .state('print.POG', {
-      url: '/POG/:POG',
+      url: '/:POG',
       abstract: true,
       data: {
         displayName: '{{POG.POGID}}'
@@ -1176,7 +1176,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     .state('dashboard.tracking', {
       url: '/tracking',
       data: {
-        displayName: 'POG Tracking',
+        displayName: 'Tracking',
         breadcrumbProxy: 'dashboard.tracking.board'
       },
       controller: 'controller.dashboard.tracking',
