@@ -221,8 +221,8 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
               reject('clinicianModeError');
             })
           }
-          if(currentUser === null || currentUser === undefined || currentUser === true) return $report.all({type: 'genomic', states: 'ready,active,presented', project: project.ident});
-          if(currentUser === false) return $report.all({all:true, type: 'genomic', states: 'ready,active,presented', project: project.ident});
+          if(currentUser === null || currentUser === undefined || currentUser === true) return $report.all({type: 'genomic', states: 'ready,active,presented', project: project.name});
+          if(currentUser === false) return $report.all({all:true, type: 'genomic', states: 'ready,active,presented', project: project.name});
         }]
       }
     })
@@ -250,14 +250,12 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         displayName: 'Clinician Reports'
       },
       resolve: {
-        reports: ['$q', 'api.pog_analysis_report', '$userSettings', 'user', ($q, $report, $userSettings, user) => {
-          let settings = {currentUser: $userSettings.get('genomicReportListCurrentUser')};
+        reports: ['$q', 'api.pog_analysis_report', 'user', ($q, $report, user) => {
           let opts = {
+            all: true,
             states: 'presented,archived',
             paginated: true
           };
-          
-          if(settings.currentUser === false) opts.all = true;
           
           return $report.all(opts);
         }]

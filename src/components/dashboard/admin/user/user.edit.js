@@ -64,6 +64,8 @@ app.controller('controller.dashboard.user.edit',
 
     if($scope.user.type === 'local' && (selfEdit || newUser)) {
       $scope.user.password = $scope.local.newPass;
+    } else if(newUser) {
+      $scope.user.password = null;
     }
 
     // Send updated user to api
