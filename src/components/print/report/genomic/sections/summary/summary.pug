@@ -71,7 +71,7 @@ tr
                                 span
                                     | {{(data.ta.subtyping || "Not Specified")}}
 
-                div(layout="column", flex=20).dataBox
+                div(layout="column", flex=25).dataBox
                     h4 Microbial Content
 
                     div.inner
@@ -79,8 +79,8 @@ tr
                             div(flex) Species
                             div(flex) Integration
                         div(layout="row", flex).content
-                            div(flex) None
-                            div(flex) None
+                            div(flex) {{data.microbial.species}}
+                            div(flex) {{data.microbial.integrationSite}}
 
             div(layout="row").index-row
                 div(flex, style="padding-left: 2mm;").text-xxsmall For description of method see APPENDIX

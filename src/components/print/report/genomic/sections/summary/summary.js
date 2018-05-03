@@ -1,9 +1,17 @@
 app.controller('controller.print.POG.report.genomic.summary',
-['_', '$scope', 'pog', 'report', 'gai', 'get', 'ms', 'vc', 'pt',
-(_, $scope, pog, report, gai, get, ms, vc, pt) => {
+['_', '$scope', 'pog', 'report', 'gai', 'get', 'ms', 'vc', 'pt', 'microbial',
+(_, $scope, pog, report, gai, get, ms, vc, pt, microbial) => {
 
   // Data
-  $scope.data = {gai: gai, ms: ms, vc: vc, pt: pt, pi: report.patientInformation, ta: report.tumourAnalysis };
+  $scope.data = {
+    gai: gai, 
+    ms: ms, 
+    vc: vc, 
+    pt: pt, 
+    pi: report.patientInformation, 
+    ta: report.tumourAnalysis,
+    microbial: (microbial !== null) ? microbial : {species: "None", integrationSite: "None"}
+  };
 
   $scope.data.get = [];
   $scope.data.get = get;
