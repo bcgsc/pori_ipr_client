@@ -6,14 +6,6 @@ md-content(flex, layout="column").md-padding
         md-content
             md-list
                 md-list-item
-                    p Show only my reports
-                    md-switch(ng-model="filter.currentUser", ng-change="refreshList()", ng-false-value="false", ng-true-value="true").md-primary
-                md-list-item
-                    p Filter by my role
-                    md-select(ng-model="filter.role", placeholder="Roles", ng-change="refreshList()").text-small
-                        md-option(ng-value="null") All
-                        md-option(ng-repeat="role in roles", ng-value="role") {{role}}
-                md-list-item
                     p Show Newly uploaded reports
                     md-switch(ng-model="states.uploaded", ng-change="refreshList()", ng-false-value="false", ng-true-value="true").md-primary
                 md-list-item

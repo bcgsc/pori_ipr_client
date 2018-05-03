@@ -1,4 +1,4 @@
-app.controller('controller.dashboard.reports.probe', ['_', '$q', '$scope', 'api.pog_analysis_report', 'reports', '$mdDialog', 'user', '$userSettings',  (_, $q, $scope, $report, reports, $mdDialog, user, $userSettings) => {
+app.controller('controller.dashboard.reports.probe', ['_', '$q', '$scope', 'api.pog_analysis_report', 'reports', '$mdDialog', 'user',  (_, $q, $scope, $report, reports, $mdDialog, user) => {
 
   $scope.reports = reports;
   $scope.archived = false;
@@ -21,22 +21,12 @@ app.controller('controller.dashboard.reports.probe', ['_', '$q', '$scope', 'api.
   };
 
   $scope.filter ={
-    currentUser: ($userSettings.get('probeReportListCurrentUser') === undefined) ? true : $userSettings.get('probeReportListCurrentUser'),
     query: null
   };
-
-  if($userSettings.get('probeReportListCurrentUser') === undefined) $userSettings.save('probeReportListCurrentUser', true);
 
   $scope.numReports = (state) => {
     return _.filter(reports, {state: state}).length;
   };
-
-  $scope.$watch('filter.currentUser', (newVal, oldVal) => {
-    // Ignore onload message
-    if(JSON.stringify(newVal) === JSON.stringify(oldVal)) return;
-    $userSettings.save('probeReportListCurrentUser', newVal);
-
-  });
 
   $scope.refreshList = () => {
 
@@ -46,7 +36,7 @@ app.controller('controller.dashboard.reports.probe', ['_', '$q', '$scope', 'api.
     });
 
     $scope.loading = true;
-    $report.all({all: !$scope.filter.currentUser, query: $scope.filter.query, role: $scope.filter.role, states: _.join(states, ','), type: 'probe'}).then(
+    $report.all({all: true, query: $scope.filter.query, states: _.join(states, ','), type: 'probe'}).then(
       (result) => {
         $scope.loading = false;
         $scope.reports = reports = result;
