@@ -17,12 +17,12 @@ div(layout="column")
                             md-icon filter_list
                             md-tooltip Filter/Search
             tr
-                th(width="15%") Patient
-                th(width="25%") Disease
+                th(width="10%") Patient
+                th(width="10%") Alternate Identifier
+                th(width="20%") Disease
                 th(width="20%") Physician
-                th(width="15%") Age
+                th(width="10%") Age
                 th(width="20%") Status
-                th(width="5%")
         tbody
             tr(ng-show="loading").loading
                 td(colspan="6").text-center
@@ -34,11 +34,11 @@ div(layout="column")
             tr(ng-repeat="report in reports", ng-hide="loading")
                 td
                     span(ui-sref="dashboard.reports.pog.report.genomic.summary({POG: report.pog.POGID, analysis_report: report.ident})").link {{report.patientInformation.POGID}}
+                td {{report.analysis.pog.alternate_identifier || 'N/A'}}
                 td {{report.patientInformation.tumourType}}
                 td {{report.patientInformation.physician}}
                 td {{report.patientInformation.caseType}}
                 td {{readState(report.state)}}
-                td &nbsp;
 
     //div(layout="row").pagination
         span(flex)
