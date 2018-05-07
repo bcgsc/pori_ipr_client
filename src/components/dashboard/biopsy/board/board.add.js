@@ -305,7 +305,9 @@ app.controller('controller.dashboard.biopsy.board.add',
       notes: $scope.patient.notes,
       pediatric_id: $scope.patient.pediatric_id,
       physician: [],
-      libraries: null
+      libraries: null,
+      alternate_identifier: $scope.patient.alternate_identifier,
+      age_of_consent: $scope.patient.age_of_consent
     };
 
     _.forEach($scope.patient.physician, (p) => { analysis.physician.push(p) });
