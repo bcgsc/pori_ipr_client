@@ -234,10 +234,8 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         displayName: 'Probe Reports'
       },
       resolve: {
-        reports: ['$q', 'api.pog_analysis_report', '$userSettings', 'user', ($q, $report, $userSettings) => {
-          let currentUser = $userSettings.get('probeReportListCurrentUser');
-          if(currentUser === null || currentUser === undefined || currentUser === true) return $report.all({type: 'probe', states: 'uploaded,signedoff'});
-          if(currentUser === false) return $report.all({all:true, type: 'probe', states: 'uploaded,signedoff'});
+        reports: ['$q', 'api.pog_analysis_report', ($q, $report) => {
+          return $report.all({all:true, type: 'probe', states: 'uploaded,signedoff'});
         }]
       }
     })
@@ -267,7 +265,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         displayName: '{{pog.POGID}}',
         breadcrumbProxy: 'dashboard.reports.pog.report.listing'
       },
-      url: '/'+CONFIG.PROJECT.NAME+'/{POG}',
+      url: '/{POG}',
       controller: 'controller.dashboard.pog',
       templateUrl: 'dashboard/pog/pog.html',
       resolve: {
@@ -279,7 +277,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
                 resolve(pog);
               },
               (err) => {
-                reject('Unable to load pog');
+                reject('Unable to load patient');
               }
             )
           })
@@ -608,6 +606,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         }],
         mutationSummaryImages: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
           return $image.mutationSummary($stateParams.POG, $stateParams.analysis_report);
+        }],
+        mavisSummary: ['$q', '$stateParams', 'api.mavis', ($q, $stateParams, $mavis) => {
+          return $mavis.all($stateParams.POG, $stateParams.analysis_report);
         }]
       }
     })
@@ -680,7 +681,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     .state('dashboard.reports.pog.report.genomic.meta', {
       url: '/meta',
       data: {
-        displayName: "POG Meta Information"
+        displayName: "Patient Meta Information"
       },
       templateUrl: 'dashboard/report/genomic/meta/meta.html',
       controller: 'controller.dashboard.report.genomic.meta',
@@ -811,7 +812,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     })
 
     .state('print.POG', {
-      url: '/POG/:POG',
+      url: '/:POG',
       abstract: true,
       data: {
         displayName: '{{POG.POGID}}'
@@ -866,6 +867,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
             }],
             mutationSignature: ['$q', '$stateParams', 'api.somaticMutations.mutationSignature', ($q, $stateParams, $mutationSignature) => {
               return $mutationSignature.all($stateParams.POG, $stateParams.analysis_report);
+            }],
+            microbial: ['$q', '$stateParams', 'api.summary.microbial', ($q, $stateParams, $microbial) => {
+              return $microbial.get($stateParams.POG, $stateParams.analysis_report);
             }]
           }
         },
@@ -1176,7 +1180,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     .state('dashboard.tracking', {
       url: '/tracking',
       data: {
-        displayName: 'POG Tracking',
+        displayName: 'Tracking',
         breadcrumbProxy: 'dashboard.tracking.board'
       },
       controller: 'controller.dashboard.tracking',

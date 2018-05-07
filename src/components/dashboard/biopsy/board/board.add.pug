@@ -16,7 +16,7 @@ md-dialog(layout="column", aria-label="Add Biopsy", flex-md=80, flex-xs=100, fle
                     md-search-text="searchQuery",
                     md-items="pog in searchPOGs(searchQuery)",
                     md-item-text="pog.POGID",
-                    md-floating-label="POGID",
+                    md-floating-label="Patient ID",
                     md-autofocus="true",
                     md-autoselect="true",
                     md-dropdown-position="bottom",
@@ -29,7 +29,7 @@ md-dialog(layout="column", aria-label="Add Biopsy", flex-md=80, flex-xs=100, fle
                     )
                         md-item-template {{pog.POGID}}
                         div(ng-messages="PatientForm.POGID.$error")
-                            div(ng-message="required").md-input-message-animation A POGID must be entered
+                            div(ng-message="required").md-input-message-animation A Patient ID must be entered
 
                     // Biospecimen Biopsy Number
                     md-input-container(flex)
@@ -44,7 +44,7 @@ md-dialog(layout="column", aria-label="Add Biopsy", flex-md=80, flex-xs=100, fle
                 // LIMS Sources for selected POG ID
                 div(layout="column", ng-show="show_sources", md-whiteframe=2).material-table.inset.margin-bottom-20
 
-                    p Sources found in LIMS for this POGID.
+                    p Sources found in LIMS for this patient.
 
                     div(layout="row").head
                         div(flex=15) Source
@@ -60,7 +60,7 @@ md-dialog(layout="column", aria-label="Add Biopsy", flex-md=80, flex-xs=100, fle
                             md-progress-linear(md-mode="indetermenite")
 
                     div(layout="row", ng-show="pog_sources.length === 0 && !source_loading").row
-                        div(flex).text-center No sources found for this POG in LIMS
+                        div(flex).text-center No sources found for this patient in LIMS
 
                     div(layout="row", ng-repeat="source in pog_sources").row
                         div(flex=15) {{source.original_source_name}}

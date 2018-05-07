@@ -19,7 +19,7 @@ md-content(flex, layout="column").md-padding.biopsyBoard
                     div(layout="row", layout-align="end start")
                         form(ng-submit="search()", novalidate, layout="row", flex, ng-show="showSearch")
                             md-input-container(flex, layout="row").medium
-                                input(ng-model="filter.search", focus-me="focusSearch", placeholder="Search by POGID")
+                                input(ng-model="filter.search", focus-me="focusSearch", placeholder="Search by Patient")
 
                         md-button(ng-show="showSearch", ng-click="clearSearch()").md-icon
                             md-icon cancel
@@ -34,7 +34,7 @@ md-content(flex, layout="column").md-padding.biopsyBoard
         table(ng-show="active_sheet === 'biopsy'").material-table
             thead
                 tr
-                    th(width="5%") POG
+                    th(width="5%") Patient
                     th(width="7%") Biopsy Date
                     th(width="15%") Disease
                     th(width="18%") Biopsy Notes

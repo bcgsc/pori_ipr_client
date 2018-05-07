@@ -27,7 +27,7 @@ app.controller('controller.dashboard.report.probe.summary',
         scope.update = () => {
 
           // Send updated entry to API
-          $patientInformation.update($scope.pog.POGID, report.ident, scope.pi).then(
+          $patientInformation.update($scope.pog.POGID, scope.pi).then(
             (result) => {
               $mdDialog.hide({message: 'Entry has been updated', data: scope.pi});
             },
@@ -42,7 +42,8 @@ app.controller('controller.dashboard.report.probe.summary',
 
     }).then((outcome) => {
       if (outcome) $mdToast.show($mdToast.simple().textContent(outcome.message));
-      $scope.data.pi = outcome.data;
+      $scope.pi = outcome.data;
+      $scope.report.patientInformation = $scope.pi;
     }, (error) => {
       $mdToast.show($mdToast.simple().textContent(error));
     });

@@ -1,8 +1,8 @@
 md-content(flex, layout="column", layout-fill).md-padding.definitions
 
-    h1.md-title POG Tracking State Definitions
+    h1.md-title Tracking State Definitions
 
-    p Definitions are used to generate all the states, and their tasks that a POG will pass through as it is tracked across the pipeline. When tracking is initiated, database entries in the tracking system will be generated according to the definitions (templates) stored here. Any changes made to definitions after tracking has been started for a given POG will not apply to it.
+    p Definitions are used to generate all the states, and their tasks that a sample will pass through as it is tracked across the pipeline. When tracking is initiated, database entries in the tracking system will be generated according to the definitions (templates) stored here. Any changes made to definitions after tracking has been started for a given sample will not apply to it.
 
     div(layout="column", flex).editor
 
@@ -66,7 +66,7 @@ md-content(flex, layout="column", layout-fill).md-padding.definitions
 
                             div(layout="row", flex=95).padding-left-10.padding-right-10
                                 md-input-container(flex)
-                                    md-checkbox(ng-model="editing.hidden" aria-label="Hide definition/state") Hide this definition/state. Hidden definitions will not used when a new POG's tracking is created.
+                                    md-checkbox(ng-model="editing.hidden" aria-label="Hide definition/state") Hide this definition/state. Hidden definitions will not used when a new sample's tracking is created.
 
                         md-tab(label="Tasks")
                             div(layout="column").padding-left-10.padding-right-10
