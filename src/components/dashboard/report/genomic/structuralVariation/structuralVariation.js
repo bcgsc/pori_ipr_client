@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.report.genomic.structuralVariation',
-['_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', 'api.pog', 'pog', 'report', 'images', 'svs', 'ms', 'mutationSummaryImages',
-(_, $q, $scope, $state, $mdDialog, $mdToast, $pog, pog, report, images, svs, ms, mutationSummaryImages) => {
+['_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', 'api.pog', 'pog', 'report', 'images', 'svs', 'ms', 'mutationSummaryImages', 'mavisSummary',
+(_, $q, $scope, $state, $mdDialog, $mdToast, $pog, pog, report, images, svs, ms, mutationSummaryImages, mavisSummary) => {
 
   // Load Images into template
   $scope.images = images;
@@ -8,7 +8,6 @@ app.controller('controller.dashboard.report.genomic.structuralVariation',
   $scope.report = report;
   $scope.ms = ms;
   $scope.StrucVars = {};
-  
   
   let pickCompatator = () => {
     let search = _.find(ms, {comparator: report.tumourAnalysis.diseaseExpressionComparator});
@@ -55,8 +54,6 @@ app.controller('controller.dashboard.report.genomic.structuralVariation',
   
     });
     
-    console.log('Sorted Images', sorted);
-    
     $scope.mutationSummaryImages = sorted;
     
   };
@@ -94,9 +91,19 @@ app.controller('controller.dashboard.report.genomic.structuralVariation',
 
     // Run over mutations and group
     _.forEach(structVars, (row, k) => {
-      if(!(row.svVariant in svs)) svs[row.svVariant] = [];
+      // append mavis summary to row if it has a mavis_product_id
+      let sv = row;
+
+      if(row.mavis_product_id) {
+        _.assign(sv, sv, JSON.parse(_.find(mavisSummary, {product_id: sv.mavis_product_id}).summary));
+      }
+
+      // setting fields to omit from details viewer
+      sv = _.omit(sv, ['mavis_product_id']);
+
+      if(!(sv.svVariant in svs)) svs[sv.svVariant] = [];
       // Add to type
-      svs[row.svVariant].push(row);
+      svs[sv.svVariant].push(sv);
     });
 
     // Set Small Mutations
