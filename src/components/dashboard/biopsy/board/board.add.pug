@@ -33,7 +33,7 @@ md-dialog(layout="column", aria-label="Add Biopsy", flex-md=80, flex-xs=100, fle
 
                     // Alternate Identifier
                     md-input-container(flex)
-                        input(ng-model="patient.alternate_identifier", name="AlternateID", placeholder="Alternate Identifier")
+                        input(ng-model="patient.alternate_identifier", name="AlternateID", placeholder="Alternate Identifier", ng-disabled="existingPOG")
 
                     // Biospecimen Biopsy Number
                     md-input-container(flex)
@@ -86,7 +86,7 @@ md-dialog(layout="column", aria-label="Add Biopsy", flex-md=80, flex-xs=100, fle
 
                     // Age of Consent
                     md-input-container(flex)
-                        input(ng-model="patient.age_of_consent", type="number", name="AgeOfConsent", placeholder="Age of Consent", min=1)
+                        input(ng-model="patient.age_of_consent", type="number", name="AgeOfConsent", placeholder="Age of Consent", min=1, ng-disabled="existingPOG")
                         div(ng-messages="PatientForm.AgeOfConsent.$error")
                             div(ng-message="number") Entry must be a number
                             div(ng-message="min") Entry must be a positive integer

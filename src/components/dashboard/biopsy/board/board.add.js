@@ -114,12 +114,16 @@ app.controller('controller.dashboard.biopsy.board.add',
       (resp) => {
         // POG already in IPR - set projects for display and disable field
         $scope.patient.projects = resp.projects;
+        $scope.patient.age_of_consent = resp.age_of_consent;
+        $scope.patient.alternate_identifier = resp.alternate_identifier;
         $scope.existingPOG = true;
       },
       (err) => {
         if (err.status === 404) {
           // POG not already in IPR - can set projects field
           $scope.patient.projects = [_.find($scope.projects, {name: 'POG'})];
+          $scope.patient.age_of_consent = null;
+          $scope.patient.alternate_identifier = null;
           $scope.existingPOG = false;
         } else {
           console.log(err);
@@ -323,6 +327,7 @@ app.controller('controller.dashboard.biopsy.board.add',
 
       // analysis successfully created, bind to projects if this is a new POG
       if (!$scope.existingPOG) addPOG(result.pog, $scope.patient.projects);
+      result.pog.projects = $scope.patient.projects;
 
       $scope.sending = false;
       $mdDialog.hide({result: result});
