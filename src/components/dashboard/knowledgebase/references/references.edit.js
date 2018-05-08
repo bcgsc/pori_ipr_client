@@ -22,11 +22,6 @@ app.controller('knowledgebase.references.edit',
   scope.context.new = '';
   scope.context.all = reference.context;
 
-  console.log(scope.context, reference);
-
-  console.log(scope.reference);
-  console.log('User', $user);
-
   scope.stages = [
     {title: 'Event Statement', description: 'Characterization details', id: "matching", ordinal: 0},
     {title: 'Reference Details', description: 'Specifics about the source', id: "reference", ordinal: 1}

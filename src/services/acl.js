@@ -73,7 +73,7 @@ app.service('$acl', ['$q', '_', 'api.session', 'api.user', 'api.pog', ($q, _, $s
     },
     knowledgebase: {
       allow: ['*'],
-      reject: ['clinician']
+      reject: []
     },
     germline: {
       allow: ['*'],

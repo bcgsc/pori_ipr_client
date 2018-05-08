@@ -6,7 +6,7 @@ md-content(layout="column", flex)
                 h1.title KB.
                     span.subject References
                 span(flex)
-                md-button(ng-click="newReference($event)").md-primary.md-raised.narrowButton New Reference
+                md-button(ng-click="newReference($event)", ng-if="!clinicianMode").md-primary.md-raised.narrowButton New Reference
 
             div(layout="row").filters
                 span
