@@ -39,8 +39,8 @@ div(layout='row', flex)
             div(layout="row", ng-if="check.resource('probe_report')", ui-sref="dashboard.reports.probe", ng-class="{active: ($state.current.name.indexOf('probe') > 0)}", ng-show="maximized || (!maximized && ($state.current.name.indexOf('dashboard.reports') > -1 || $state.current.name.indexOf('dashboard.pog') > -1))").submenu
                 md-icon(ng-show="maximized") subdirectory_arrow_right
                 md-icon(ng-show="!maximized") highlight
-                    md-tooltip(ng-if="!maximized", md-direction="right") Probe
-                span(flex, ng-show="maximized") Probe
+                    md-tooltip(ng-if="!maximized", md-direction="right") Probe (Targeted Gene)
+                span(flex, ng-show="maximized") Probe (Targeted Gene)
 
             div(layout="row", ui-sref="dashboard.reports.clinician", ng-class="{active: ($state.current.name.indexOf('clinician') > 0)}", ng-show="maximized || (!maximized && ($state.current.name.indexOf('dashboard.reports') > -1 || $state.current.name.indexOf('dashboard.pog') > -1))").submenu
                 md-icon(ng-show="maximized") subdirectory_arrow_right

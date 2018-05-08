@@ -50,6 +50,8 @@ app.controller('controller.dashboard.reports.probe', ['_', '$q', '$scope', 'api.
     )
   };
 
+  if (reports.length === 0) $scope.refreshList(); // Refresh list if no reports (in case page loaded through url and not navigation)
+
   let associateUsers = () => {
     // Filter Users For a POG
     _.forEach($scope.reports, (r, i) => {

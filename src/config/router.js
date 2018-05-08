@@ -231,7 +231,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       templateUrl: 'dashboard/reports/probe/probe.html',
       controller: 'controller.dashboard.reports.probe',
       data: {
-        displayName: 'Probe Reports'
+        displayName: 'Probe (Targeted Gene) Reports'
       },
       resolve: {
         reports: ['$q', 'api.pog_analysis_report', '$rootScope', ($q, $report, $rootScope) => {
