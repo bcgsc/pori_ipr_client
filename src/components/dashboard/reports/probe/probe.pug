@@ -19,7 +19,8 @@ md-content(flex, layout="column").md-padding
                     md-switch(ng-model="states.nonproduction", ng-change="refreshList()", ng-false-value="false", ng-true-value="true").md-primary
 
     h1.md-title(layout="row")
-        span(flex) Probe (Targeted Gene) Reports
+        span(flex) Probe (Targeted Gene) Reports 
+            md-icon(ng-click="showProbeDescription()").clickable.blue info
         span(flex, layout="row", layout-align="end end")
             md-input-container.hide-validation-error.pull-right
                 input(placeholder="Search", name="Search", ng-model="pogQuery", size=40).text-small
