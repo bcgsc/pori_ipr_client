@@ -20,6 +20,8 @@ app.controller('controller.dashboard.reports.probe', ['_', '$q', '$scope', 'api.
     nonproduction: false
   };
 
+  if(_.find(user.groups, {name: 'Clinician'})) $scope.states.reviewed = true;
+
   $scope.filter ={
     query: null
   };

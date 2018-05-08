@@ -234,8 +234,10 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         displayName: 'Probe Reports'
       },
       resolve: {
-        reports: ['$q', 'api.pog_analysis_report', ($q, $report) => {
-          return $report.all({all:true, type: 'probe', states: 'uploaded,signedoff'});
+        reports: ['$q', 'api.pog_analysis_report', '$rootScope', ($q, $report, $rootScope) => {
+          let states = 'uploaded,signedoff';
+          if($rootScope._clinicianMode) states = 'uploaded,signedoff,reviewed';
+          return $report.all({all:true, type: 'probe', states: states});
         }]
       }
     })
