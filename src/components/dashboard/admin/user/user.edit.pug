@@ -43,14 +43,14 @@ md-dialog(flex=50).adminSection
                             div(ng-message="email") Please enter a valid email
 
             div(flex, layout="row", ng-if="!selfEdit")
-                md-input-container(flex, ng-show="!allProjectAccess")
-                    md-select(ng-model="projectAccess.projects", placeholder="Project Access", ng-required="!allProjectAccess", multiple,
+                md-input-container(flex, ng-show="!projectAccess.allProjectAccess")
+                    md-select(ng-model="projectAccess.projects", placeholder="Project Access", ng-required="!projectAccess.allProjectAccess", multiple,
                     ng-model-options="{trackBy: '$value.ident'}")
                         md-option(ng-repeat="p in projects", ng-value="p") {{p.name}}
                     div(ng-messages="form.Access.$error")
                             div(ng-message="required") Please select at least one project
                 md-input-container(flex)
-                    md-checkbox(ng-model="allProjectAccess") Give user access to all projects
+                    md-checkbox(ng-model="projectAccess.allProjectAccess") Give user access to all projects
                         md-tooltip Includes access to all future projects added to IPR
 
             div(flex, layout="row", ng-if="(user.type === 'local' && selfEdit) || (user.type === 'local' && newUser)")
