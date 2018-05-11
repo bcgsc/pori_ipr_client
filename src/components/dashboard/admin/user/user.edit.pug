@@ -16,12 +16,12 @@ md-dialog(flex=50).adminSection
 
             div(flex, layout="row")
                 md-input-container(flex)
-                    input(ng-model="user.username", placeholder="Username", name="Username", required, ng-disabled="selfEdit")
+                    input(ng-model="user.username", placeholder="Username", name="Username", required, ng-disabled="(selfEdit || !newUser)")
                     div(ng-messages="form.Username.$error")
                             div(ng-message="required") A username is required
                 md-input-container(flex)
                     label(name="Authority") Authorization
-                    md-select(ng-model="user.type", placeholder="Authority", ng-disabled="selfEdit")
+                    md-select(ng-model="user.type", placeholder="Authority", ng-disabled="(selfEdit || !newUser)")
                         md-option(ng-value="'local'") Local DB (IPR)
                         md-option(ng-value="'bcgsc'") BCGSC LDAP
 
