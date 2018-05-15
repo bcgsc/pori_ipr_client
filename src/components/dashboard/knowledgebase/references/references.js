@@ -3,7 +3,7 @@ app.controller('knowledgebase.references',
 ($rootScope, $q, _, $scope, $sanitize, $mdDialog, $mdToast, $kbUtils, $kb, references, ref_count, vocabulary) => {
 
   $scope.references = [];
-  $scope.clinicianMode = $rootScope._clinicianMode;
+  $scope.externalMode = $rootScope._externalMode;
 
   // Toggle Events Expression Dropper
   $scope.showEvExDropper = (ref) => {
@@ -62,7 +62,7 @@ app.controller('knowledgebase.references',
       locals: {
         reference: reference,
         vocabulary: vocabulary,
-        clinicianMode: $scope.clinicianMode
+        externalMode: $scope.externalMode
       },
       resolve: {
         history: ['$q', 'api.knowledgebase', ($q, $kb) => {

@@ -236,7 +236,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       resolve: {
         reports: ['$q', 'api.pog_analysis_report', '$rootScope', ($q, $report, $rootScope) => {
           let states = 'uploaded,signedoff';
-          if($rootScope._clinicianMode) states = 'uploaded,signedoff,reviewed';
+          if($rootScope._externalMode) states = 'uploaded,signedoff,reviewed';
           return $report.all({all:true, type: 'probe', states: states});
         }]
       }
@@ -1197,9 +1197,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         }],
         permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
           $acl.injectUser(user);
-          if($acl.inGroup('clinician')) {
+          if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
             return $q((resolve, reject) => {
-              reject('clinicianModeError');
+              reject('externalModeError');
             })
           }
         }]
@@ -1219,9 +1219,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         }],
         permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
           $acl.injectUser(user);
-          if($acl.inGroup('clinician')) {
+          if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
             return $q((resolve, reject) => {
-              reject('clinicianModeError');
+              reject('externalModeError');
             })
           }
         }]
@@ -1244,9 +1244,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         }],
         permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
           $acl.injectUser(user);
-          if($acl.inGroup('clinician')) {
+          if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
             return $q((resolve, reject) => {
-              reject('clinicianModeError');
+              reject('externalModeError');
             })
           }
         }]
@@ -1272,9 +1272,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         }],
         permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
           $acl.injectUser(user);
-          if($acl.inGroup('clinician')) {
+          if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
             return $q((resolve, reject) => {
-              reject('clinicianModeError');
+              reject('externalModeError');
             })
           }
         }]
@@ -1306,9 +1306,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         }],
         permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
           $acl.injectUser(user);
-          if($acl.inGroup('clinician')) {
+          if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
             return $q((resolve, reject) => {
-              reject('clinicianModeError');
+              reject('externalModeError');
             })
           }
         }]
@@ -1332,9 +1332,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         }],
         permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
           $acl.injectUser(user);
-          if($acl.inGroup('clinician')) {
+          if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
             return $q((resolve, reject) => {
-              reject('clinicianModeError');
+              reject('externalModeError');
             })
           }
         }]
@@ -1370,9 +1370,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         }],
         permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
           $acl.injectUser(user);
-          if($acl.inGroup('clinician')) {
+          if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
             return $q((resolve, reject) => {
-              reject('clinicianModeError');
+              reject('externalModeError');
             })
           }
         }]
@@ -1402,9 +1402,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         }],
         permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
           $acl.injectUser(user);
-          if($acl.inGroup('clinician')) {
+          if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
             return $q((resolve, reject) => {
-              reject('clinicianModeError');
+              reject('externalModeError');
             })
           }
         }]
@@ -1424,9 +1424,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         }],
         permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
           $acl.injectUser(user);
-          if($acl.inGroup('clinician')) {
+          if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
             return $q((resolve, reject) => {
-              reject('clinicianModeError');
+              reject('externalModeError');
             })
           }
         }]
