@@ -21,7 +21,7 @@ app.service('$acl', ['$q', '_', 'api.session', 'api.user', 'api.pog', ($q, _, $s
       },
       edit: {
         allow: ['admin','analyst','bioinformatician','reviewer'],
-        reject: ['clinician']
+        reject: ['clinician', 'collaborator']
       },
       remove: {
         allow: ['admin'],
@@ -31,11 +31,11 @@ app.service('$acl', ['$q', '_', 'api.session', 'api.user', 'api.pog', ($q, _, $s
     analyses: {
       view: {
         allow: ['*'],
-        reject: ['clinician']
+        reject: ['clinician', 'collaborator']
       },
       edit: {
         allow: ['projects', 'admin'],
-        reject: ['clinician']
+        reject: ['clinician', 'collaborator']
       },
       remove: {
         allow: ['projects', 'admin'],
@@ -45,11 +45,11 @@ app.service('$acl', ['$q', '_', 'api.session', 'api.user', 'api.pog', ($q, _, $s
     tracking: {
       view: {
         allow: ['*'],
-        reject: ['clinician']
+        reject: ['clinician', 'collaborator']
       },
       edit: {
         allow: ['*'],
-        reject: ['clinician']
+        reject: ['clinician', 'collaborator']
       },
       remove: {
         allow: ['projects', 'admin'],
@@ -65,7 +65,7 @@ app.service('$acl', ['$q', '_', 'api.session', 'api.user', 'api.pog', ($q, _, $s
     },
     genomic_report: {
       allow: ['*'],
-      reject: ['clinician']
+      reject: ['clinician', 'collaborator']
     },
     probe_report: {
       allow: ['*'],
@@ -73,19 +73,19 @@ app.service('$acl', ['$q', '_', 'api.session', 'api.user', 'api.pog', ($q, _, $s
     },
     knowledgebase: {
       allow: ['*'],
-      reject: []
+      reject: ['clinician']
     },
     germline: {
       allow: ['*'],
-      reject: ['clinician']
+      reject: ['clinician', 'collaborator']
     },
     analyses: {
       allow: ['*'],
-      reject: ['clinician']
+      reject: ['clinician', 'collaborator']
     },
     tracking: {
       allow: ['*'],
-      reject: ['clinician']
+      reject: ['clinician', 'collaborator']
     },
   };
   

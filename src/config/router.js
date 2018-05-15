@@ -195,9 +195,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       },
       resolve: {
         reports: ['$q', 'permission', '$acl', 'api.pog_analysis_report', '$state', ($q, permission, $acl, $report, $state) => {
-          if($acl.inGroup('clinician')) {
+          if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
             return $q((resolve, reject) => {
-              reject('clinicianModeError');
+              reject('externalModeError');
             })
           }
           return $report.all({states: 'ready,active'});
@@ -216,9 +216,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         reports: ['$q', 'permission', '$acl',  'api.pog_analysis_report', '$userSettings', '$state', 'user', ($q, permission, $acl, $report, $userSettings, $state, user) => {
           let currentUser = $userSettings.get('genomicReportListCurrentUser');
           let project = $userSettings.get('selectedProject') || {name: undefined};
-          if($acl.inGroup('clinician')) {
+          if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
             return $q((resolve, reject) => {
-              reject('clinicianModeError');
+              reject('externalModeError');
             })
           }
           if(currentUser === null || currentUser === undefined || currentUser === true) return $report.all({type: 'genomic', states: 'ready,active,presented', project: project.name});

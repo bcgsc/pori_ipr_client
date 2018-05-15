@@ -5,7 +5,7 @@ md-content(flex, layout="column").md-padding
             h1.md-toolbar-tools Options
         md-content
             md-list
-                md-list-item(ng-show="!_clinicianMode")
+                md-list-item(ng-show="!_externalMode")
                     p Select Project
                     md-select(ng-model="selectedProject", ng-change="refreshList()", aria-label="Select Project", ng-model-options="{trackBy: '$value.name'}")
                         md-option(ng-value="{name: undefined}") All
@@ -14,19 +14,19 @@ md-content(flex, layout="column").md-padding
                     p Show only my reports
                     md-switch(ng-model="filter.currentUser", ng-change="refreshList()", ng-false-value="false", ng-true-value="true").md-primary
 
-                md-list-item(ng-if="!_clinicianMode")
+                md-list-item(ng-if="!_externalMode")
                     p Show Ready for Analysis
                     md-switch(ng-model="states.ready", ng-change="refreshList()", ng-false-value="false", ng-true-value="true").md-primary
-                md-list-item(ng-if="!_clinicianMode")
+                md-list-item(ng-if="!_externalMode")
                     p Show Analysis Underway
                     md-switch(ng-model="states.active", ng-change="refreshList()", ng-false-value="false", ng-true-value="true").md-primary
-                md-list-item(ng-if="!_clinicianMode")
+                md-list-item(ng-if="!_externalMode")
                     p Show Review/Presented
                     md-switch(ng-model="states.presented", ng-change="refreshList()", ng-false-value="false", ng-true-value="true").md-primary
-                md-list-item(ng-if="!_clinicianMode")
+                md-list-item(ng-if="!_externalMode")
                     p Show Archived
                     md-switch(ng-model="states.archived", ng-change="refreshList()", ng-false-value="false", ng-true-value="true").md-primary
-                md-list-item(ng-if="!_clinicianMode")
+                md-list-item(ng-if="!_externalMode")
                     p Show Nonproduction
                     md-switch(ng-model="states.nonproduction", ng-change="refreshList()", ng-false-value="false", ng-true-value="true").md-primary
 

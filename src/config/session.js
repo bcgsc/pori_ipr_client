@@ -26,7 +26,7 @@ app.run(['$rootScope', '$http', '$injector', '$localStorage', 'api.user', '_', (
       
       // Check for Clinician group
       // Temporary logic to hide UI elements.
-      $rootScope._clinicianMode = !(!_.find(_.mapValues(u.groups, (r) => { return {name: r.name.toLowerCase()}}), {'name': 'clinician'}));
+      $rootScope._externalMode = !(!_.find(_.mapValues(u.groups, (r) => { return {name: r.name.toLowerCase()}}), {'name': 'clinician'}) || !_.find(_.mapValues(u.groups, (r) => { return {name: r.name.toLowerCase()}}), {'name': 'collaborator'}));
       
       // TODO: Plugin to API permission system
       
@@ -49,7 +49,7 @@ app.run(['$rootScope', '$http', '$injector', '$localStorage', 'api.user', '_', (
     })
     .catch((err) => {
       // Probably not logged in....
-      $rootScope._clinicianMode = false;
+      $rootScope._externalMode = false;
       console.log('run user error', err);
     });
   
