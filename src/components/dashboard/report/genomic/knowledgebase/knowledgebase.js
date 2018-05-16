@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.report.genomic.knowledgebase',
-  ['_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', 'api.pog', 'api.detailedGenomicAnalysis.alterations', 'pog', 'report', 'alterations', 'approvedThisCancer', 'approvedOtherCancer', 'targetedGenes',
-  (_, $q, $scope, $state, $mdDialog, $mdToast, $pog, $alterations, pog, report, alterations, approvedThisCancer, approvedOtherCancer, targetedGenes) => {
+  ['$rootScope', '_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', 'api.pog', 'api.detailedGenomicAnalysis.alterations', 'pog', 'report', 'alterations', 'approvedThisCancer', 'approvedOtherCancer', 'targetedGenes',
+  ($rootScope, _, $q, $scope, $state, $mdDialog, $mdToast, $pog, $alterations, pog, report, alterations, approvedThisCancer, approvedOtherCancer, targetedGenes) => {
   
   $scope.approvedThisCancer = {};
   $scope.approvedOtherCancer = {};
@@ -11,7 +11,7 @@ app.controller('controller.dashboard.report.genomic.knowledgebase',
   $scope.targetedGenes = targetedGenes;
   $scope.showUnknown = false;
   $scope.disableUnknownButtons = false;
-
+  $scope.canEdit = !$rootScope._externalMode;
 
   // Create new entry...
   $scope.createNewKBEntry = ($event) => {
@@ -20,7 +20,7 @@ app.controller('controller.dashboard.report.genomic.knowledgebase',
 
     $mdDialog.show({
       targetEvent: $event,
-      templateUrl: 'dashboard/report/genomic/detailedGenomicAnalysis/alterations/alterations.edit.html',
+      templateUrl: 'dashboard/report/genomic/knowledgebase/alterations/alterations.edit.html',
       clickOutToClose: false,
       locals: {
         pog: $scope.pog,

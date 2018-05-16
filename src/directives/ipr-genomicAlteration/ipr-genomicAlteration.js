@@ -1,4 +1,4 @@
-app.directive("iprGenomicAlteration", ['$q', '_', '$mdDialog', '$mdToast', ($q, _, $mdDialog, $mdToast) => {
+app.directive("iprGenomicAlteration", ['$q', '_', '$mdDialog', '$mdToast', '$rootScope', ($q, _, $mdDialog, $mdToast, $rootScope) => {
   
   
   return {
@@ -9,10 +9,13 @@ app.directive("iprGenomicAlteration", ['$q', '_', '$mdDialog', '$mdToast', ($q, 
       gene: '=gene',
       pog: '=pog',
       trigger: '=',
-      report: '=report'
+      report: '=report',
     },
     templateUrl: 'ipr-genomicAlteration/ipr-genomicAlteration.html',
     link: (scope, element, attr) => {
+
+      // Edit/Create permissions
+      scope.canEdit = !$rootScope._externalMode;
 
       // Filter reference type
       scope.refType = (ref) => {
@@ -40,7 +43,7 @@ app.directive("iprGenomicAlteration", ['$q', '_', '$mdDialog', '$mdToast', ($q, 
         
         $mdDialog.show({
           targetEvent: $event,
-          templateUrl: 'dashboard/report/genomic/detailedGenomicAnalysis/alterations/alterations.edit.html',
+          templateUrl: 'dashboard/report/genomic/knowledgebase/alterations/alterations.edit.html',
           clickOutToClose: false,
           locals: {
             pog: scope.pog,
@@ -74,10 +77,11 @@ app.directive("iprGenomicAlteration", ['$q', '_', '$mdDialog', '$mdToast', ($q, 
 
         $mdDialog.show({
           targetEvent: $event,
-          templateUrl: 'dashboard/report/genomic/detailedGenomicAnalysis/alterations/alterations.edit.html',
+          templateUrl: 'dashboard/report/genomic/knowledgebase/alterations/alterations.edit.html',
           clickOutToClose: false,
           locals: {
             pog: scope.pog,
+            report: scope.report,
             gene: gene,
             samples: scope.samples,
             rowEvent: 'create'

@@ -24,9 +24,9 @@ app.run(['$rootScope', '$http', '$injector', '$localStorage', 'api.user', '_', (
   $user.me()
     .then((u) => {
       
-      // Check for Clinician group
+      // Check for Clinician or Collaborator group
       // Temporary logic to hide UI elements.
-      $rootScope._externalMode = !(!_.find(_.mapValues(u.groups, (r) => { return {name: r.name.toLowerCase()}}), {'name': 'clinician'}) || !_.find(_.mapValues(u.groups, (r) => { return {name: r.name.toLowerCase()}}), {'name': 'collaborator'}));
+      $rootScope._externalMode = (_.find(_.mapValues(u.groups, (r) => { return {name: r.name.toLowerCase()}}), {'name': 'clinician'}) || _.find(_.mapValues(u.groups, (r) => { return {name: r.name.toLowerCase()}}), {'name': 'collaborator'}));
       
       // TODO: Plugin to API permission system
       

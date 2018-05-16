@@ -1116,6 +1116,14 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       resolve: {
         metrics: ['$q', 'api.knowledgebase', ($q, $kb) => {
           return $kb.metrics();
+        }],
+        permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
+          $acl.injectUser(user);
+          if($acl.inGroup('clinician')) {
+            return $q((resolve, reject) => {
+              reject('externalModeError');
+            })
+          }
         }]
       }
     })
@@ -1147,6 +1155,14 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         }],
         vocabulary: ['$q', 'api.knowledgebase', ($q, $kb) => {
           return $kb.vocabulary();
+        }],
+        permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
+          $acl.injectUser(user);
+          if($acl.inGroup('clinician')) {
+            return $q((resolve, reject) => {
+              reject('externalModeError');
+            })
+          }
         }]
       }
     })
@@ -1174,6 +1190,14 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
             return $kb.events.count($stateParams.filters);
           } else {
             return $kb.events.count();
+          }
+        }],
+        permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
+          $acl.injectUser(user);
+          if($acl.inGroup('clinician')) {
+            return $q((resolve, reject) => {
+              reject('externalModeError');
+            })
           }
         }]
       }

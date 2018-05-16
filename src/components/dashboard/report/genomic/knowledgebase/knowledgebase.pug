@@ -18,7 +18,7 @@ section.detailedGenomicAnalysis
 
 
             h2.title Alterations With Potential Clinical Relevance
-                span(ng-click="createNewKBEntry()").pull-right.addNewVariant.clickable Add new variant
+                span(ng-click="createNewKBEntry()", ng-if="canEdit").pull-right.addNewVariant.clickable Add new variant
 
         div(ng-show="showUnknown").text-center.details
             md-button(ng-click="toggleUnknown()", ng-disabled="disableUnknownButtons").accent.md-raised View Characterized Alterations
