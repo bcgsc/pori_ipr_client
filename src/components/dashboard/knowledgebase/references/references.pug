@@ -3,8 +3,9 @@ md-content(layout="column", flex)
     div(layout="column")
         div.options
             div(layout="row")
-                h1.title KB.
-                    span.subject References
+                h1.title Knowledgebase: References 
+                    md-icon(ng-click="showKBGlossary()").clickable.blue info
+                        md-tooltip(md-direction="right") Knowledgebase Glossary
                 span(flex)
                 md-button(ng-click="newReference($event)", ng-if="!externalMode").md-primary.md-raised.narrowButton New Reference
 

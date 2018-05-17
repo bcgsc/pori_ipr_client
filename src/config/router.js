@@ -1167,6 +1167,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       }
     })
 
+    // Commenting out instead of removing in case we decide to re-include this
+    // Excluding as per Cara Reisle's suggestion
+    /*
     .state('dashboard.knowledgebase.events', {
       url: '/events',
       data: {
@@ -1202,6 +1205,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         }]
       }
     })
+    */
 
     .state('dashboard.tracking', {
       url: '/tracking',

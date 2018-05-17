@@ -1,9 +1,14 @@
 app.controller('knowledgebase.references',
-['$rootScope', '$q', '_', '$scope', '$sanitize', '$mdDialog', '$mdToast', '$kbUtils', 'api.knowledgebase', 'references', 'ref_count', 'vocabulary',
-($rootScope, $q, _, $scope, $sanitize, $mdDialog, $mdToast, $kbUtils, $kb, references, ref_count, vocabulary) => {
+['$rootScope', '$q', '_', '$scope', '$sanitize', '$mdDialog', '$mdToast', '$kbUtils', 'api.knowledgebase', 'references', 'ref_count', 'vocabulary', '$http',
+($rootScope, $q, _, $scope, $sanitize, $mdDialog, $mdToast, $kbUtils, $kb, references, ref_count, vocabulary, $http) => {
 
   $scope.references = [];
   $scope.externalMode = $rootScope._externalMode;
+
+  $http.get('../assets/json/knowledgebaseGlossary.json')
+  .then((glossary) => {
+    $scope.glossary = glossary.data;
+  });
 
   // Toggle Events Expression Dropper
   $scope.showEvExDropper = (ref) => {
@@ -241,6 +246,43 @@ app.controller('knowledgebase.references',
     );
   };
 
+  /**
+   * Open modal for glossary reference
+   *
+   * @param $event
+   */
+  $scope.showKBGlossary = ($event) => {
+
+    let content = "<div class='content knowledgebase'>";
+    content += "\t<div layout='row', class='kbTable header layout-row'>";
+    content += "\t\t<div flex='20' class='flex-20'>term</div>";
+    content += "\t\t<div flex='80' class='flex-80'>definition</div>";
+    content += "\t\t<div class='spacer'></div>";
+    content += "\t</div>";
+    content += "\t<div layout='row', class='kbTable glossary-modal rows flex' flex='flex'>";
+
+    _.each($scope.glossary, function (gloss) {
+      content += "\t\t<div class='rowContainer'>";
+      content += "\t\t\t<div layout='row', class='row layout-row'>";
+      content += "\t\t\t\t<div flex=20 class='flex-20'>" + gloss.term + "</div>";
+      content += "\t\t\t\t<div flex=80 class='flex-80'>" + gloss.definition + "</div>";
+      content += "\t\t\t</div>";
+      content += "\t\t</div>";
+    })
+
+    content += "\t</div>";
+    content += "</div>";
+
+    let alert = $mdDialog.show(
+      $mdDialog.alert()
+        .clickOutsideToClose(true)
+        .title('Knowledgebase Glossary')
+        .htmlContent(content)
+        .ok('Close')
+        .targetEvent($event)
+    );
+
+  };
   // Loop over references and process groups
   $scope.references = $kbUtils.processReferences(references);
 
