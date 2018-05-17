@@ -33,10 +33,22 @@ md-content(flex, layout="column").md-padding
 
     div(layout="column", flex).kanban
         div(layout="row", layout-align="space-between").title
-            div(layout="column", flex, ng-show="states.uploaded") Uploaded ({{numReports('uploaded')}})
-            div(layout="column", flex, ng-show="states.signedoff") Signed-Off ({{numReports('signedoff')}})
-            div(layout="column", flex, ng-show="states.reviewed") Reviewed ({{numReports('reviewed')}})
-            div(layout="column", flex, ng-show="states.nonproduction") Non-Production/Test ({{numReports('nonproduction')}})
+            div(layout="row", flex, ng-show="states.uploaded")
+                span Uploaded ({{numReports('uploaded')}})
+                md-icon.tiny.margin-left-5 info
+                    md-tooltip(md-direction="right") TBD
+            div(layout="row", flex, ng-show="states.signedoff")
+                span Signed-Off ({{numReports('signedoff')}})
+                md-icon.tiny.margin-left-5 info
+                    md-tooltip(md-direction="right") TBD
+            div(layout="row", flex, ng-show="states.reviewed")
+                span Reviewed ({{numReports('reviewed')}})
+                md-icon.tiny.margin-left-5 info
+                    md-tooltip(md-direction="right") TBD
+            div(layout="row", flex, ng-show="states.nonproduction")
+                span Non-Production/Test ({{numReports('nonproduction')}})
+                md-icon.tiny.margin-left-5 info
+                    md-tooltip(md-direction="right") TBD
 
         div(layout="row", flex, layout-align="space-between")
             md-content(layout="column", flex, ng-show="states.uploaded").column
