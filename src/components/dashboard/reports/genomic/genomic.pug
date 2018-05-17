@@ -52,20 +52,25 @@ md-content(flex, layout="column").md-padding
         div(layout="row", flex, layout-align="space-between")
             md-content(layout="column", flex, ng-show="states.ready").column
                 div(ng-show="loading").text-center Loading...
+                div(ng-show="numReports('ready') === 0").noWork No genomic reports ready for analysis found.
                 ipr-report-listing-card(ng-repeat="report in reports | filter: searchPogs('ready', pogQuery)", md-whiteframe=2, report="report", pog="report.analysis.pog", state="ready" ng-hide="loading").pog
 
             md-content(layout="column", flex, ng-show="states.active").column
                 div(ng-show="loading").text-center Loading...
+                div(ng-show="numReports('active') === 0").noWork No genomic reports undergoing analysis found.
                 ipr-report-listing-card(ng-repeat="report in reports | filter: searchPogs('active', pogQuery)", md-whiteframe=2, report="report", pog="report.analysis.pog", state="active", ng-hide="loading").pog
 
             md-content(layout="column", flex, ng-show="states.presented").column
                 div(ng-show="loading").text-center Loading...
+                div(ng-show="numReports('presented') === 0").noWork No presented genomic reports found.
                 ipr-report-listing-card(ng-repeat="report in reports | filter: searchPogs('presented', pogQuery)", md-whiteframe=2, report="report", pog="report.analysis.pog", state="presented", ng-hide="loading").pog
 
             md-content(layout="column", flex, ng-show="states.archived").column
                 div(ng-show="loading").text-center Loading...
+                div(ng-show="numReports('archived') === 0").noWork No archived genomic reports found.
                 ipr-report-listing-card(ng-repeat="report in reports | filter: searchPogs('archived', pogQuery)", md-whiteframe=2, report="report", pog="report.analysis.pog", state="archived", ng-hide="loading").pog
 
             md-content(layout="column", flex, ng-show="states.nonproduction").column
                 div(ng-show="loading").text-center Loading...
+                div(ng-show="numReports('nonproduction') === 0").noWork No non-production genomic reports found.
                 ipr-report-listing-card(ng-repeat="report in reports | filter: searchPogs('nonproduction', pogQuery)", md-whiteframe=2, report="report", pog="report.analysis.pog", state="nonproduction", ng-hide="loading").pog
