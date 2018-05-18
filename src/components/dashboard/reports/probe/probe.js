@@ -117,10 +117,7 @@ app.controller('controller.dashboard.reports.probe', ['_', '$q', '$scope', 'api.
   // Show Dialog with searching tips
   $scope.showFilterTips = ($event) => {
     let content = "The search bar can filter the listing of POGs using a number of special terms. ";
-    content    += "<ul><li>Filter by tumour content: <code>tc>50 tc<40 tc=35</code></li>";
-    content    += "<li>Filter by POG: <code>pog544</code></li><li>By tumour type: <code>brca</code></li>";
-    content    += "<li>By ploidy: <code>diploid</code></li>";
-    content    += "<li>By user involved: <code>bpierce</code>, <code>Brandon</code></li>";
+    content    += "<li>Filter by POG: <code>pog544</code></li>";
     content    += "<li>By disease: <code>melanoma</code></li></ul>";
 
     let alert = $mdDialog.show(

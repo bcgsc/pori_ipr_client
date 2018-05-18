@@ -115,9 +115,9 @@ app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$rootScope',
 
         // Search Users
         _.forEach(report.users, (p) => {
-          if(p.user.firstName.indexOf(q) > -1) result = true;
-          if(p.user.lastName.indexOf(q) > -1) result = true;
-          if(p.user.username.indexOf(q) > -1) result = true;
+          if(p.user.firstName.toLowerCase().indexOf(q.toLowerCase()) > -1) result = true;
+          if(p.user.lastName.toLowerCase().indexOf(q.toLowerCase()) > -1) result = true;
+          if(p.user.username.toLowerCase().indexOf(q.toLowerCase()) > -1) result = true;
         });
 
 
@@ -137,11 +137,21 @@ app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$rootScope',
   // Show Dialog with searching tips
   $scope.showFilterTips = ($event) => {
 
+    let content = "The search bar can filter the listing of POGs using a number of special terms. ";
+    content    += "<ul>";
+    content    += "<li>Filter by tumour content: <code>tc>50 tc<40 tc=35</code></li>";
+    content    += "<li>Filter by POG: <code>pog544</code></li>";
+    content    += "<li>By ploidy: <code>diploid</code></li>";
+    content    += "<li>By user involved: <code>bpierce</code>, <code>Brandon</code></li>";
+    content    += "<li>By disease: <code>melanoma</code></li>";
+    content    += "<li>By comparators: <code>BRCA</code>, <code>breast</code></li>";
+    content    += "</ul>";
+
     let alert = $mdDialog.show(
       $mdDialog.alert()
         .clickOutsideToClose(true)
         .title('POG Searching Tips')
-        .htmlContent("The search bar can filter the listing of POGs using a number of special terms. <ul><li>Filter by tumour content: <code>tc>50 tc<40 tc=35</code></li><li>Filter by POG: <code>pog544</code></li><li>By ploidy: <code>diploid</code></li><li>By user involved: <code>bpierce</code>, <code>Brandon</code></li> <li>By disease: <code>melanoma</code></li> <li>By comparators: <code>BRCA</code>, <code>breast</code></li></ul>")
+        .htmlContent(content)
         .ok('Got it!')
         .targetEvent($event)
     );
