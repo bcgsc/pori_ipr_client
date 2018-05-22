@@ -350,9 +350,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     })
 
     .state('dashboard.reports.pog.report.probe.detailedGenomicAnalysis', {
-      url: '/appendices',
+      url: '/detailedGenomicAnalysis',
       data: {
-        displayName: "Appendices"
+        displayName: "Detailed Genomic Analysis"
       },
       templateUrl: 'dashboard/report/probe/detailedGenomicAnalysis/detailedGenomicAnalysis.html',
       controller: 'controller.dashboard.report.probe.detailedGenomicAnalysis',
