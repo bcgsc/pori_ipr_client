@@ -194,7 +194,8 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         }
       },
       resolve: {
-        reports: ['$q', 'permission', '$acl', 'api.pog_analysis_report', '$state', ($q, permission, $acl, $report, $state) => {
+        reports: ['$q', 'permission', '$acl', 'api.pog_analysis_report', '$state', 'user', ($q, permission, $acl, $report, $state, user) => {
+          $acl.injectUser(user);
           if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
             return $q((resolve, reject) => {
               reject('externalModeError');
@@ -216,6 +217,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         reports: ['$q', 'permission', '$acl',  'api.pog_analysis_report', '$userSettings', '$state', 'user', ($q, permission, $acl, $report, $userSettings, $state, user) => {
           let currentUser = $userSettings.get('genomicReportListCurrentUser');
           let project = $userSettings.get('selectedProject') || {name: undefined};
+          $acl.injectUser(user);
           if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
             return $q((resolve, reject) => {
               reject('externalModeError');
@@ -234,9 +236,10 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         displayName: 'Probe (Targeted Gene) Reports'
       },
       resolve: {
-        reports: ['$q', 'api.pog_analysis_report', '$rootScope', ($q, $report, $rootScope) => {
+        reports: ['$q', 'api.pog_analysis_report', '$acl', 'user', ($q, $report, $acl, user) => {
           let states = 'uploaded,signedoff';
-          if($rootScope._externalMode) states = 'uploaded,signedoff,reviewed';
+          $acl.injectUser(user);
+          if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) states = 'signedoff,reviewed';
           return $report.all({all:true, type: 'probe', states: states});
         }]
       }

@@ -1,4 +1,4 @@
-app.controller('controller.dashboard.reports.probe', ['_', '$q', '$scope', 'api.pog_analysis_report', 'reports', '$mdDialog', 'user',  (_, $q, $scope, $report, reports, $mdDialog, user) => {
+app.controller('controller.dashboard.reports.probe', ['_', '$q', '$scope', 'api.pog_analysis_report', 'reports', '$mdDialog', 'user', '$acl',  (_, $q, $scope, $report, reports, $mdDialog, user, $acl) => {
 
   $scope.reports = reports;
   $scope.archived = false;
@@ -20,7 +20,10 @@ app.controller('controller.dashboard.reports.probe', ['_', '$q', '$scope', 'api.
     nonproduction: false
   };
 
-  if(_.find(user.groups, {name: 'Clinician'})) $scope.states.reviewed = true;
+  if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
+    $scope.states.reviewed = true;
+    $scope.states.uploaded = false;
+  }
 
   $scope.filter ={
     query: null
