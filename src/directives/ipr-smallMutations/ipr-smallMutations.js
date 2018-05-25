@@ -15,7 +15,6 @@ app.directive("iprSmallMutations", ['$q', '_', '$mdDialog', ($q, _, $mdDialog) =
       scope.copyFilter = (copyChange) => {
         let copyChangeDisplay = (copyChange == 'na') ? 'na' : copyChange.match(/(((\+|\-)?)[0-9]{1,2})/g)[0];
         return copyChangeDisplay;
-        //return copyChange.match(/(((\+|\-)?)[0-9]{1,2})/g)[0];
       };
 
 
