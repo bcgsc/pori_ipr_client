@@ -282,8 +282,13 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
             )
           })
         }],
-        reports: ['$q', '$stateParams', 'api.pog_analysis_report', ($q, $stateParams, $report) => {
-          return $report.pog($stateParams.POG).all();
+        reports: ['$q', '$stateParams', 'api.pog_analysis_report', '$acl', 'user', ($q, $stateParams, $report, $acl, user) => {
+          $acl.injectUser(user);
+          let stateFilter = {};
+          if($acl.inGroup('Clinician') || $acl.inGroup('Collaborator')) {
+            stateFilter = {state: 'presented,archived'};
+          }
+          return $report.pog($stateParams.POG).all(stateFilter);
         }]
       }
     })
