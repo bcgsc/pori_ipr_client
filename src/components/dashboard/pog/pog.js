@@ -6,6 +6,10 @@ app.controller('controller.dashboard.pog',
       $scope.$state = $state;
       $scope.reports = _.sortBy(reports, ['createdAt']).reverse();
       $scope.pog = pog;
+
+      $scope.numReports = (type) => {
+        return _.filter(reports, {type: type}).length;
+      };
       
     }
   ]

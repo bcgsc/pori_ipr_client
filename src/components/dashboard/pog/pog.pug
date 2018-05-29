@@ -4,12 +4,14 @@ md-content(ui-view="", flex)
 
     div(layout="column", flex).kanban
         div(layout="row", layout-align="space-between").title
-            div(layout="column", flex) Probe
+            div(layout="column", flex) Probe (Targeted Gene)
             div(layout="column", flex) Genomic
 
         div(layout="row", flex, layout-align="space-between")
             md-content(layout="column", flex).column
+                div(ng-show="numReports('probe') === 0").noWork No probe (targeted gene) reports found for this patient.
                 ipr-report-card(ng-repeat="report in reports | filter: {type: 'probe'}", report="report", pog="pog")
 
             md-content(layout="column", flex).column
+                div(ng-show="numReports('genomic') === 0").noWork No genomic reports found for this patient.
                 ipr-report-card(ng-repeat="report in reports | filter: {type: 'genomic'}", report="report", pog="pog")
