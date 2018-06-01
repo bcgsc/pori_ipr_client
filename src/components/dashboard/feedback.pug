@@ -7,51 +7,16 @@ md-dialog(layout="column", aria-label="Feedback", ng-cloak, flex=50)
                 md-button.md-icon-button(ng-click='cancel()')
                     md-icon cancel
         md-dialog-content(layout-padding)
-
-            //div The form is unfortunately not working at the moment, please send an email directly to:
-                a(href="mailto:nmartin@bcgsc.ca") nmartin@bcgsc.ca
-            div(layout="column", ng-show="state === 'form'")
-                p Feedback is always appreciated!
-                p Filling out this form will automatically create a JIRA sub-task on your behalf in our tracking ticket. You will be notified of changes to this ticket.
-
-                div(layout="row")
-                    md-input-container(flex)
-                        md-select(ng-model="feedback.type", aria-label="Type", required, placeholder="Type")
-                            md-option(ng-value="'Bug Report'") Bug Report
-                            md-option(ng-value="'UI/UX Suggestion'") UI/UX Suggestion
-                            md-option(ng-value="'Workflow'") Workflow
-                            md-option(ng-value="'Spelling Mistake'") Spelling Mistake
-                            md-option(ng-value="'Suggestion'") Suggestion
-                            md-option(ng-value="'Feature Request'") Feature Request
-                            md-option(ng-value="'Other'") Other
-
-                div(layout="row")
-                    md-input-container(flex)
-                        input(ng-model="feedback.title", aria-label="Title", placeholder="Subject", required)
-                        div(ng-messages="Title")
-                            div(ng-message="required") A title is required to send feedback
-
-                div(layout="row")
-                    md-input-container(flex)
-                        label Message
-                        textarea(ng-model="feedback.description", md-maxlength="450", rows="5", md-select-on-focus)
-
-
-            div(layout="column", ng-show="state === 'issue'")
-
-                p Thanks for the feedback! The ticket has been created:
-
-                div(layout="row", layout-align="center center")
-                    div(layout="row", flex=60).jiraTicket
-                        div(flex=20)
-                            div.icon
-                        div(flex).link
-                            a(href="https://www.bcgsc.ca/jira/browse/{{ticket.key}}", target="_blank") {{ticket.key}}
+            div(layout="column")
+                p Feedback is always welcome and appreciated!
+                h3 Before Submitting Feedback
+                p If you run into problems with unexpected insufficient permissions (e.g. you are unable to see or edit things that you normally are able to) please try doing a hard refresh of your browser window using Ctrl-Shift-R.
+                p When submitting feedback or a bug report, please include as much information as possible about your proposal or issue. Screenshots are helpful when possible.
+                h3 Internal Users
+                p Please create a JIRA ticket under the DEVSU (Development Support) Project containing your feedback or bug report.
+                h3 External Users
+                p Please email ipr@bcgsc.ca with your feedback or bug report.
 
 
         md-dialog-actions(layout="row", layout-aligh="end center")
-            md-button(ng-click="cancel()", ng-hide="state === 'issue'").md-primary.md-raised Cancel
-            span(flex)
-            md-button(type="submit", ng-show="state === 'form'", ng-disabled="formSubmitted", ng-init="formSubmitted=false").md-primary.md-raised Send Feedback
-            md-button(ng-click="close()", ng-show="state === 'issue'").md-primary.md-raised Done
-            md-button(ng-click="login()", ng-show="state === 'login'").md-primary.md-raised Authenticate
+            md-button(ng-click="cancel()").md-primary.md-raised Close
