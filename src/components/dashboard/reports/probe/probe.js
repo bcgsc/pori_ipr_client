@@ -135,21 +135,23 @@ app.controller('controller.dashboard.reports.probe', ['_', '$q', '$scope', 'api.
   };
 
   $scope.showProbeDescription = ($event) => {
-    let content = "<h4>The Report:</h4>";
+    let content = "<h4>The Report</h4>";
     content    += "<p>The Targeted Gene Report (TGR) provides results from a rapid analysis pipeline designed to identify ";
     content    += "specific somatic alterations in a select set of cancer-associated genes and gene fusion events. ";
     content    += "This rapid analysis is not a complete description of aberrations present in the tumour genome. ";
     content    += "The absence of a specific mutation in this report is not a guarantee that the mutation is not present in the patient's tumour. ";
     content    += "Germline variants are not included in this report.</p>";
+    content    += "<hr>";
 
-    content    += "<h4>Test Method:</h4>";
+    content    += "<h4>Test Method</h4>";
     content    += "<p>In the TGR, whole genome and whole transcriptome sequence reads are computationally queried to identify events matching ";
     content    += "a specific list of known cancer-related aberrations. A subset of genes is examined for specific events which include, ";
     content    += "but are not limited to, individual gene mutations such as hotspot mutations in KRAS, BRAF and PIK3CA, ";
     content    += "and gene-pair fusions such as BCR-ABL1, EML4-ALK, and CCDC6-RET. ";
     content    += "Genome and transcriptome sequence data are queried for individual gene mutations; only transcriptome data are queried for gene fusion events.</p>";
+    content    += "<hr>";
 
-    content    += "<h4>Reporting of information of Potential Clinical Relevance:</h4>";
+    content    += "<h4>Reporting of information of Potential Clinical Relevance</h4>";
     content    += "<p>The TGR incorporates results from published peer-reviewed studies and other publicly available information through our in-house Knowledgebase - ";
     content    += "a curated database of cancer-associated genes and genomic alterations. ";
     content    += "Reported associations may include those of potential biological, diagnostic, prognostic and therapeutic significance. ";
@@ -157,6 +159,7 @@ app.controller('controller.dashboard.reports.probe', ['_', '$q', '$scope', 'api.
 
     content    += "<p>This report will generally be followed by a final report, "
     content    += "which will provide a more comprehensive description of both previously observed and novel aberrations.</p>";
+    content    += "<hr>";
 
     content    += "<p>The TGR is developed by Canada's Michael Smith Genome Sciences Centre, part of the British Columbia Cancer Agency. ";
     content    += "Contents should be regarded as purely investigational and are intended for research purposes only.</p>";

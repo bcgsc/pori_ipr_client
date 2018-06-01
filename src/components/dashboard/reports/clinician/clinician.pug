@@ -1,7 +1,9 @@
 md-content(flex, layout="column").md-padding.biopsyBoard
 
     h1.md-title(layout="row")
-        span(flex) Genomic Reports for Clinicians
+        span(flex) Genomic Reports for Clinicians 
+            md-icon(ng-click="showGenomicDescription()").clickable.blue info
+                md-tooltip(md-direction="right") About Genomic Reports
 
     div(layout="column").biopsies
 
