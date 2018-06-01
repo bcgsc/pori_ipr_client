@@ -86,6 +86,8 @@ md-dialog(layout="column", aria-label="Modify/Create Reference Entry", flex-md=8
 
                             div.md-input-messages-animation.md-auto-hide
                                 p(ng-show="!events.dirty && !events.valid", style="opacity: 1; margin-top: 0px;").help-block.md-input-message-animation The Events-Expression provided does not satisfy the required format. Please check the provided documentation
+                            p
+                                a(href="https://www.bcgsc.ca/wiki/pages/viewpage.action?spaceKey=genereg&title=Event+Coordinate+Notation", target="_blank") How to format Events-Expression
 
                         //div(style="margin-top:25px")
                         //    md-icon.clickable help_outline
@@ -155,5 +157,5 @@ md-dialog(layout="column", aria-label="Modify/Create Reference Entry", flex-md=8
         md-button(ng-click="lastStage()", ng-show="activeStage > 0").md-raised.md-primary Previous
         span(flex)
         md-button(ng-click="nextStage()", ng-show="activeStage < 1", ng-disabled="!events.valid").md-raised.md-primary Next
-        md-button(ng-click="submit()", ng-show="activeStage === 1", ng-disabled="!events.valid").md-raised.md-primary Done
+        md-button(ng-click="submit()", ng-show="activeStage === 1", ng-disabled="!events.valid || externalMode").md-raised.md-primary Done
 

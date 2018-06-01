@@ -1,6 +1,6 @@
 app.controller('knowledgebase.references.edit',
-['_', '$q', '$scope', '$mdDialog', '$mdToast', 'api.complete', 'api.pubmed', 'api.kb.associations', 'api.knowledgebase', 'api.user', 'action', 'reference', 'vocabulary',
-(_, $q, scope, $mdDialog, $mdToast, $complete, $pubmed, $kbAssoc, $kb, $user, action, reference, vocabulary) => {
+['_', '$q', '$scope', '$mdDialog', '$mdToast', '$acl', 'api.complete', 'api.pubmed', 'api.kb.associations', 'api.knowledgebase', 'api.user', 'action', 'reference', 'vocabulary',
+(_, $q, scope, $mdDialog, $mdToast, $acl, $complete, $pubmed, $kbAssoc, $kb, $user, action, reference, vocabulary) => {
 
   scope.$alterations = $complete.get('alterations');
   scope.disableRefTitle = false;
@@ -11,6 +11,7 @@ app.controller('knowledgebase.references.edit',
   scope.vocabulary = vocabulary;
   scope.user = $user._me;
   scope.action = action;
+  scope.externalMode = $acl.inGroup('clinician') || $acl.inGroup('collaborator');
 
   scope.disease = {};
   scope.disease.all = [];
