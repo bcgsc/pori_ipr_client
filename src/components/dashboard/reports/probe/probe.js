@@ -4,6 +4,7 @@ app.controller('controller.dashboard.reports.probe', ['_', '$q', '$scope', 'api.
   $scope.archived = false;
   $scope.nonproduction = false;
   $scope.loading = false;
+  $scope.externalMode = false;
 
   $scope.roles = [
     'bioinformatician',
@@ -23,6 +24,9 @@ app.controller('controller.dashboard.reports.probe', ['_', '$q', '$scope', 'api.
   if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
     $scope.states.reviewed = true;
     $scope.states.uploaded = false;
+    $scope.states.signedoff = false;
+
+    $scope.externalMode = true;
   }
 
   $scope.filter ={

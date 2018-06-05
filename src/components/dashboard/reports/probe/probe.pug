@@ -1,6 +1,6 @@
 md-content(flex, layout="column").md-padding
 
-    md-sidenav(md-is-open="showOptions", md-whiteframe=4).md-sidenav-right
+    md-sidenav(md-is-open="showOptions", md-whiteframe=4, ng-if="!externalMode").md-sidenav-right
         md-toolbar
             h1.md-toolbar-tools Options
         md-content
