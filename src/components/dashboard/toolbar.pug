@@ -1,7 +1,8 @@
 .md-toolbar-tools
   h2 
     img(src="/assets/images/bcca_logo.png", style="margin-bottom: -5px;")
-    |  BCGSC Integrated Pipeline Reports
+    |  BCGSC Integrated Pipeline Reports 
+    span(ng-if="CONFIG.ATTRS.name !== 'PRODUCTION'") [NON-PRODUCTION ENVIRONMENT: {{CONFIG.ATTRS.name}}]
   span(flex)
   
   md-menu
