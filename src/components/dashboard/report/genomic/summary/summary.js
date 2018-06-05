@@ -40,7 +40,7 @@ app.controller('controller.dashboard.report.genomic.summary',
     }
 
     // Structural Variants
-    if (variant.geneVariant.match(/([A-z0-9]*\:\:[A-z0-9]*\s\(\e([0-9]*|\?)\:\e([0-9]*|\?)\))/g)) {
+    if (variant.geneVariant.match(/(([A-z0-9]*|\?)\:\:([A-z0-9]*|\?)\s\(\e([0-9]*|\?)\:\e([0-9]*|\?)\))/g)) {
       variant.type = "structuralVariant";
       return variant;
     }

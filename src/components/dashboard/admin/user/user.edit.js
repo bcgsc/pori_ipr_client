@@ -8,12 +8,8 @@ app.controller('controller.dashboard.user.edit',
   $scope.newUser = newUser;
   $scope.userDelete = userDelete;
   $scope.projects = projects;
-  $scope.projectAccess = {projects: $scope.user.projects};
-  $scope.allProjectAccess = false;
+  $scope.projectAccess = {projects: $scope.user.projects, allProjectAccess: !!(_.find($scope.user.groups, {ident: accessGroup.ident}))};
   $scope.selfEdit = selfEdit;
-
-  // check if user has full project access
-  if(_.find($scope.user.groups, {ident: accessGroup.ident})) $scope.allProjectAccess = true;
 
   // Creating new user
   if(newUser) {
@@ -72,7 +68,7 @@ app.controller('controller.dashboard.user.edit',
     if(!newUser) {
       // update user/project binding if not self editing
       if (!selfEdit) {
-        if($scope.allProjectAccess) { // if full access, add to group
+        if($scope.projectAccess.allProjectAccess) { // if full access, add to group
           if(!_.find($scope.oldUser.groups, {name: accessGroup.name})) { // check if user is already part of full access group
             // add to group
             $user.group.member(accessGroup.ident).add($scope.user.ident).then(
@@ -142,7 +138,7 @@ app.controller('controller.dashboard.user.edit',
       $user.create($scope.user).then(
         (user) => {
           // create user/project binding
-          if($scope.allProjectAccess) { // if full access, add to group
+          if($scope.projectAccess.allProjectAccess) { // if full access, add to group
             // Add user to group
             $user.group.member(accessGroup.ident).add(user.ident).then(
               (resp) => {
