@@ -26,6 +26,13 @@ app.controller('controller.dashboard.reports.probe', ['_', '$q', '$scope', 'api.
     $scope.states.uploaded = false;
     $scope.states.signedoff = false;
 
+    $scope.reports = reports.reports;
+    $scope.pagination = {
+      offset: 0,
+      limit: 25,
+      total: reports.total
+    };
+
     $scope.externalMode = true;
   }
 
@@ -49,7 +56,6 @@ app.controller('controller.dashboard.reports.probe', ['_', '$q', '$scope', 'api.
       (result) => {
         $scope.loading = false;
         $scope.reports = reports = result;
-        associateUsers();
       },
       (err) => {
         console.log('Unable to get pogs', err);
@@ -58,16 +64,6 @@ app.controller('controller.dashboard.reports.probe', ['_', '$q', '$scope', 'api.
   };
 
   if (reports.length === 0) $scope.refreshList(); // Refresh list if no reports (in case page loaded through url and not navigation)
-
-  let associateUsers = () => {
-    // Filter Users For a POG
-    _.forEach($scope.reports, (r, i) => {
-      // Loop over pogusers
-      $scope.reports[i].myRoles = _.filter(r.users, {user: {ident: user.ident}});
-    });
-  };
-
-  associateUsers();
 
   $scope.searchPogs = (state, query) => {
 
@@ -164,6 +160,17 @@ app.controller('controller.dashboard.reports.probe', ['_', '$q', '$scope', 'api.
     content    += "<p>This report will generally be followed by a final report, "
     content    += "which will provide a more comprehensive description of both previously observed and novel aberrations.</p>";
     content    += "<hr>";
+
+    if($scope.externalMode) {
+      content    += "<h4>Field Descriptions</h4>";
+      content    += "<p>Patient: Study identification code</p>";
+      content    += "<p>Alternate Identifier: Alternative study identifier if enrolled in another genomics study (e.g. COMPARISON or PROFYLE IDs)";
+      content    += "<p>Disease: Primary diagnosis</p>";
+      content    += "<p>Physician: Most responsible clinician for receiving the genomic report</p>";
+      content    += "<p>Age: Status at enrollment</p>";
+      content    += "<p>Status: Status of the report</p>";
+      content    += "<hr>";
+    }
 
     content    += "<p>The TGR is developed by Canada's Michael Smith Genome Sciences Centre, part of the British Columbia Cancer Agency. ";
     content    += "Contents should be regarded as purely investigational and are intended for research purposes only.</p>";

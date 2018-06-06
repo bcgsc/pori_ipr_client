@@ -237,10 +237,19 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       },
       resolve: {
         reports: ['$q', 'api.pog_analysis_report', '$acl', 'user', ($q, $report, $acl, user) => {
-          let states = 'uploaded,signedoff';
+          let opts = {
+            type: 'probe',
+            all: true
+          };
+
+          opts.states = 'uploaded,signedoff';
+
           $acl.injectUser(user);
-          if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) states = 'reviewed';
-          return $report.all({all:true, type: 'probe', states: states});
+          if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
+            opts.states = 'reviewed';
+            opts.paginated = true;
+          }
+          return $report.all(opts);
         }]
       }
     })

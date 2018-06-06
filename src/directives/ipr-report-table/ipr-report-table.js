@@ -6,7 +6,8 @@ app.directive("iprReportTable", ['$q', '_', 'api.pog_analysis_report', ($q, _, $
     scope: {
       reports: '=reports',
       clinician: '=clinician',
-      pagination: '=?pagination'
+      pagination: '=?pagination',
+      type: '=type'
     },
     templateUrl: 'ipr-report-table/ipr-report-table.html',
     link: (scope, element, attr) => {
@@ -61,13 +62,14 @@ app.directive("iprReportTable", ['$q', '_', 'api.pog_analysis_report', ($q, _, $
       };
   
       scope.readState = (s) => {
+        console.log(s);
         switch(s) {
           case 'ready':
             return 'Ready for Analysis';
             break;
       
           case 'active':
-            return 'Analysis underway';
+            return 'Analysis Underway';
             break;
       
           case 'presented':
@@ -76,6 +78,10 @@ app.directive("iprReportTable", ['$q', '_', 'api.pog_analysis_report', ($q, _, $
       
           case 'archived':
             return 'Archived';
+            break;
+
+          case 'reviewed':
+            return 'Reviewed';
             break;
       
           default:
@@ -95,17 +101,21 @@ app.directive("iprReportTable", ['$q', '_', 'api.pog_analysis_report', ($q, _, $
         
         scope.loading = true;
         
-        opts.states = scope.filter.states;
-        opts.project = scope.filter.project;
+        opts.type      = scope.type;
+        opts.states    = scope.filter.states;
+        opts.project   = scope.filter.project;
         opts.paginated = true;
-        opts.offset = scope.paginate.offset;
-        opts.limit = scope.paginate.limit;
+        opts.offset    = scope.paginate.offset;
+        opts.limit     = scope.paginate.limit;
         
         
         if(!scope.filter.bound) opts.all = true;
         if(scope.filter.search) opts.searchText = scope.filter.search;
         
-        if(scope.clinician) opts.states = 'presented,archived';
+        if(scope.clinician) {
+          if(scope.type == 'genomic') opts.states = 'presented,archived';
+          if(scope.type == 'probe') opts.states = 'reviewed';
+        }
         
         $report.all(opts)
           .then((result) => {
