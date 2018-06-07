@@ -19,7 +19,7 @@ md-content(flex, layout="column", ng-if="!externalMode").md-padding
                     md-switch(ng-model="states.nonproduction", ng-change="refreshList()", ng-false-value="false", ng-true-value="true").md-primary
 
     h1.md-title(layout="row")
-        span(flex) Probe (Targeted Gene) Reports {{showOptions}}
+        span(flex) Probe (Targeted Gene) Reports 
             md-icon(ng-click="showProbeDescription()").clickable.blue info
                 md-tooltip(md-direction="right") About Probe (Targeted Gene) Reports
         span(flex, layout="row", layout-align="end end")
@@ -67,7 +67,7 @@ md-content(flex, layout="column", ng-if="!externalMode").md-padding
 md-content(flex, layout="column", ng-if="externalMode").md-padding.biopsyBoard
 
     h1.md-title(layout="row")
-        span(flex) Probe (Targeted Gene) Reports for Clinicians 
+        span(flex) Probe (Targeted Gene) Reports 
             md-icon(ng-click="showProbeDescription()").clickable.blue info
                 md-tooltip(md-direction="right") About Probe (Targeted Gene) Reports
 

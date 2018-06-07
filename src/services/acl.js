@@ -65,7 +65,7 @@ app.service('$acl', ['$q', '_', 'api.session', 'api.user', 'api.pog', ($q, _, $s
     },
     genomic_report: {
       allow: ['*'],
-      reject: ['clinician', 'collaborator']
+      reject: []
     },
     probe_report: {
       allow: ['*'],

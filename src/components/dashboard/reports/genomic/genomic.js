@@ -1,6 +1,8 @@
-app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$rootScope', '$scope', 'api.pog_analysis_report', 'reports', '$mdDialog', 'user', '$userSettings', 'projects',  (_, $q, $rootScope, $scope, $report, reports, $mdDialog, user, $userSettings, projects) => {
+app.controller('controller.dashboard.reports.genomic', 
+  ['_', '$q', '$rootScope', '$scope', 'api.pog_analysis_report', 'reports', '$mdDialog', 'user', '$userSettings', 'projects', '$acl', 
+  (_, $q, $rootScope, $scope, $report, reports, $mdDialog, user, $userSettings, projects, $acl) => {
 
-  $scope.reports = reports = _.orderBy(reports, ['analysis.pog.POGID','createdAt'], ['asc','desc']);
+  $scope.reports = reports;
   $scope.archived = false;
   $scope.nonproduction = false;
   $scope.loading = false;
@@ -23,6 +25,17 @@ app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$rootScope',
     archived: false,
     nonproduction: false
   };
+
+  if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
+    $scope.reports = reports.reports;
+    $scope.pagination = {
+      offset: 0,
+      limit: 25,
+      total: reports.total
+    };
+
+    $scope.externalMode = true;
+  }
 
   $scope.filter ={
     currentUser: ($userSettings.get('genomicReportListCurrentUser') === undefined) ? true : $userSettings.get('genomicReportListCurrentUser'),
@@ -130,7 +143,6 @@ app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$rootScope',
   };
 
   $scope.filterFn = (pogInput) => {
-    console.log(pogInput);
     return true;
   };
 
@@ -204,6 +216,17 @@ app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$rootScope',
     content    += "Associations are listed by the level of evidence for the use of that drug in the context of the observed alteration, ";
     content    += "including those that are approved in this or other cancer types, and those that have early clinical or preclinical evidence.</p>";
     content    += "<hr>";
+
+    if($scope.externalMode) {
+      content    += "<h4>Field Descriptions</h4>";
+      content    += "<p>Patient: Study identification code</p>";
+      content    += "<p>Alternate Identifier: Alternative study identifier if enrolled in another genomics study (e.g. COMPARISON or PROFYLE IDs)";
+      content    += "<p>Disease: Primary diagnosis</p>";
+      content    += "<p>Physician: Most responsible clinician for receiving the genomic report</p>";
+      content    += "<p>Age: Status at enrollment</p>";
+      content    += "<p>Status: Status of the report</p>";
+      content    += "<hr>";
+    }
 
     content    += "<p>The Tumour Genome Analysis report is developed by Canada's Michael Smith Genome Sciences Centre, part of the BC Cancer Agency. ";
     content    += "Contents should be regarded as purely investigational and are intended for research purposes only.</p>";

@@ -62,7 +62,6 @@ app.directive("iprReportTable", ['$q', '_', 'api.pog_analysis_report', ($q, _, $
       };
   
       scope.readState = (s) => {
-        console.log(s);
         switch(s) {
           case 'ready':
             return 'Ready for Analysis';

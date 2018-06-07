@@ -217,14 +217,30 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         reports: ['$q', 'permission', '$acl',  'api.pog_analysis_report', '$userSettings', '$state', 'user', ($q, permission, $acl, $report, $userSettings, $state, user) => {
           let currentUser = $userSettings.get('genomicReportListCurrentUser');
           let project = $userSettings.get('selectedProject') || {name: undefined};
+          
+          let opts = {
+            type: 'genomic' 
+          };
+
+          if(currentUser === null || currentUser === undefined || currentUser === true) {
+            opts.states = 'ready,active,presented';
+            opts.project = project.name;
+          }
+          
+          if(currentUser === false) {
+            opts.all = true;
+            opts.states = 'ready,active,presented';
+            opts.project = project.name;
+          }
+
           $acl.injectUser(user);
           if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
-            return $q((resolve, reject) => {
-              reject('externalModeError');
-            })
+            opts.all = true;
+            opts.states = 'presented,archived';
+            opts.paginated = true;
           }
-          if(currentUser === null || currentUser === undefined || currentUser === true) return $report.all({type: 'genomic', states: 'ready,active,presented', project: project.name});
-          if(currentUser === false) return $report.all({all:true, type: 'genomic', states: 'ready,active,presented', project: project.name});
+
+          return $report.all(opts);
         }]
       }
     })
@@ -249,26 +265,6 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
             opts.states = 'reviewed';
             opts.paginated = true;
           }
-          return $report.all(opts);
-        }]
-      }
-    })
-    
-    .state('dashboard.reports.clinician', {
-      url: '/clinician',
-      templateUrl: 'dashboard/reports/clinician/clinician.html',
-      controller: 'controller.dashboard.reports.clinician',
-      data: {
-        displayName: 'Clinician Reports'
-      },
-      resolve: {
-        reports: ['$q', 'api.pog_analysis_report', 'user', ($q, $report, user) => {
-          let opts = {
-            all: true,
-            states: 'presented,archived',
-            paginated: true
-          };
-          
           return $report.all(opts);
         }]
       }

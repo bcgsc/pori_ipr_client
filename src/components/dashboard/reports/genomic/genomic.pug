@@ -1,11 +1,11 @@
-md-content(flex, layout="column").md-padding
+md-content(flex, layout="column", ng-if="!externalMode").md-padding
 
     md-sidenav(md-is-open="showOptions", md-whiteframe=4).md-sidenav-right
         md-toolbar
             h1.md-toolbar-tools Options
         md-content
             md-list
-                md-list-item(ng-show="!_externalMode")
+                md-list-item
                     p Select Project
                     md-select(ng-model="selectedProject", ng-change="refreshList()", aria-label="Select Project", ng-model-options="{trackBy: '$value.name'}")
                         md-option(ng-value="{name: undefined}") All
@@ -14,24 +14,24 @@ md-content(flex, layout="column").md-padding
                     p Show only my reports
                     md-switch(ng-model="filter.currentUser", ng-change="refreshList()", ng-false-value="false", ng-true-value="true").md-primary
 
-                md-list-item(ng-if="!_externalMode")
+                md-list-item
                     p Show Ready for Analysis
                     md-switch(ng-model="states.ready", ng-change="refreshList()", ng-false-value="false", ng-true-value="true").md-primary
-                md-list-item(ng-if="!_externalMode")
+                md-list-item
                     p Show Analysis Underway
                     md-switch(ng-model="states.active", ng-change="refreshList()", ng-false-value="false", ng-true-value="true").md-primary
-                md-list-item(ng-if="!_externalMode")
+                md-list-item
                     p Show Review/Presented
                     md-switch(ng-model="states.presented", ng-change="refreshList()", ng-false-value="false", ng-true-value="true").md-primary
-                md-list-item(ng-if="!_externalMode")
+                md-list-item
                     p Show Archived
                     md-switch(ng-model="states.archived", ng-change="refreshList()", ng-false-value="false", ng-true-value="true").md-primary
-                md-list-item(ng-if="!_externalMode")
+                md-list-item
                     p Show Nonproduction
                     md-switch(ng-model="states.nonproduction", ng-change="refreshList()", ng-false-value="false", ng-true-value="true").md-primary
 
     h1.md-title(layout="row")
-        span(flex) {{selectedProject.name || 'All' }} Genomic Cases 
+        span(flex) {{selectedProject.name || 'All' }} Genomic Reports 
             md-icon(ng-click="showGenomicDescription()").clickable.blue info
                 md-tooltip(md-direction="right") About Genomic Reports
         span(flex, layout="row", layout-align="end end")
@@ -76,3 +76,14 @@ md-content(flex, layout="column").md-padding
                 div(ng-show="loading").text-center Loading...
                 div(ng-show="numReports('nonproduction') === 0").noWork No non-production genomic reports found.
                 ipr-report-listing-card(ng-repeat="report in reports | filter: searchPogs('nonproduction', pogQuery)", md-whiteframe=2, report="report", pog="report.analysis.pog", state="nonproduction", ng-hide="loading").pog
+
+md-content(flex, layout="column", ng-if="externalMode").md-padding.biopsyBoard
+
+    h1.md-title(layout="row")
+        span(flex) Genomic Reports 
+            md-icon(ng-click="showGenomicDescription()").clickable.blue info
+                md-tooltip(md-direction="right") About Genomic Reports
+
+    div(layout="column").biopsies
+
+        ipr-report-table(reports="reports", clinician="true", pagination="pagination", type="'genomic'")
