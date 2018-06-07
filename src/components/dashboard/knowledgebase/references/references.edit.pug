@@ -75,10 +75,10 @@ md-dialog(layout="column", aria-label="Modify/Create Reference Entry", flex-md=8
                 form(flex='auto', name='matching', ng-submit="validateReportForm(matching)", novalidate)
                     div(layout="row")
                         div(layout-align="center center").kbEntryStatus
-                            md-icon(ng-show="!events.dirty && !events.valid").invalid.clickable sentiment_very_dissatisfied
+                            md-icon(ng-show="!events.dirty && !events.valid").invalid.clickable clear
                                 md-tooltip The Events-Expression provided does not satisfy the required format. Please check the provided documentation
-                            md-icon(ng-show="!events.dirty && events.valid").valid mood
-                            md-icon(ng-show="events.dirty && !events.valid").checking sentiment_neutral
+                            md-icon(ng-show="!events.dirty && events.valid").valid done
+                            md-icon(ng-show="events.dirty && !events.valid").checking autorenew
 
                         md-input-container(flex, ng-class="{ 'md-input-invalid': (!events.dirty && !events.valid) }")
                             label Events-Expression
