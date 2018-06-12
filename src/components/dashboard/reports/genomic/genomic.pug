@@ -7,7 +7,7 @@ md-content(flex, layout="column", ng-if="!externalMode").md-padding
             md-list
                 md-list-item
                     p Select Project
-                    md-select(ng-model="selectedProject", ng-change="refreshList()", aria-label="Select Project", ng-model-options="{trackBy: '$value.name'}")
+                    md-select(ng-model="selectedProject.project", ng-change="refreshList()", aria-label="Select Project", ng-model-options="{trackBy: '$value.name'}")
                         md-option(ng-value="{name: undefined}") All
                         md-option(ng-value="project", ng-repeat="project in projects") {{project.name}}
                 md-list-item
@@ -31,7 +31,7 @@ md-content(flex, layout="column", ng-if="!externalMode").md-padding
                     md-switch(ng-model="states.nonproduction", ng-change="refreshList()", ng-false-value="false", ng-true-value="true").md-primary
 
     h1.md-title(layout="row")
-        span(flex) {{selectedProject.name || 'All' }} Genomic Reports 
+        span(flex) {{selectedProject.project.name || 'All' }} Genomic Reports 
             md-icon(ng-click="showGenomicDescription()").clickable.blue info
                 md-tooltip(md-direction="right") About Genomic Reports
         span(flex, layout="row", layout-align="end end")

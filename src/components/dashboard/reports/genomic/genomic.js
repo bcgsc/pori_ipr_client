@@ -6,7 +6,9 @@ app.controller('controller.dashboard.reports.genomic',
   $scope.archived = false;
   $scope.nonproduction = false;
   $scope.loading = false;
-  $scope.selectedProject = ($userSettings.get('selectedProject') === undefined) ? null : $userSettings.get('selectedProject');
+  $scope.selectedProject = {
+    project: !!$userSettings.get('selectedProject') ? {} : $userSettings.get('selectedProject')
+  }
 
   $scope.roles = [
     'bioinformatician',
@@ -65,7 +67,7 @@ app.controller('controller.dashboard.reports.genomic',
       if(v) states.push(k);
     });
     $scope.loading = true;
-    $report.all({all: !$scope.filter.currentUser, query: $scope.filter.query, role: $scope.filter.role, states: _.join(states, ','), type: 'genomic', project: $scope.selectedProject.name }).then(
+    $report.all({all: !$scope.filter.currentUser, query: $scope.filter.query, role: $scope.filter.role, states: _.join(states, ','), type: 'genomic', project: $scope.selectedProject.project.name }).then(
       (result) => {
         $scope.loading = false;
         $scope.reports = reports = result;
