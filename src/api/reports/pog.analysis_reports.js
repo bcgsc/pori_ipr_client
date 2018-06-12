@@ -158,11 +158,11 @@ app.factory('api.pog_analysis_report', ['_', '$http', '$q', (_, $http, $q) => {
        *
        * @returns {promise} - Resolves with array of reports
        */
-      all: () => {
+      all: (params={}) => {
         return $q((resolve, reject) => {
 
           // Retrieve from API
-          $http.get(api + '/POG/'+ pog +'/reports').then(
+          $http.get(api + '/POG/'+ pog +'/reports', {params: params}).then(
             (reports) => {
               resolve(reports.data);
             },
