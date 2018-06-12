@@ -6,6 +6,8 @@ md-dialog(layout="column", aria-label="Modify/Create Reference Entry", flex-md=8
             md-button.md-icon-button(ng-click='cancel()')
                 md-icon cancel
     md-dialog-content(layout-padding).alterationsForm
+        div(ng-if="externalMode") NOTE: This form has been included as a proof of concept and cannot be submitted
+
         div(layout-align="center center", layout="column")
             ipr-progressor(ipr-stages="stages", ipr-active-stage="activeStage")
 
