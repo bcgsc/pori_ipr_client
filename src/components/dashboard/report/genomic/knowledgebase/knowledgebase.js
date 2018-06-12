@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.report.genomic.knowledgebase',
-  ['$rootScope', '_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', 'api.pog', 'api.detailedGenomicAnalysis.alterations', 'pog', 'report', 'alterations', 'approvedThisCancer', 'approvedOtherCancer', 'targetedGenes',
-  ($rootScope, _, $q, $scope, $state, $mdDialog, $mdToast, $pog, $alterations, pog, report, alterations, approvedThisCancer, approvedOtherCancer, targetedGenes) => {
+  ['$rootScope', '_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', '$acl', 'api.pog', 'api.detailedGenomicAnalysis.alterations', 'pog', 'report', 'alterations', 'approvedThisCancer', 'approvedOtherCancer', 'targetedGenes',
+  ($rootScope, _, $q, $scope, $state, $mdDialog, $mdToast, $acl, $pog, $alterations, pog, report, alterations, approvedThisCancer, approvedOtherCancer, targetedGenes) => {
   
   $scope.approvedThisCancer = {};
   $scope.approvedOtherCancer = {};
@@ -11,7 +11,12 @@ app.controller('controller.dashboard.report.genomic.knowledgebase',
   $scope.targetedGenes = targetedGenes;
   $scope.showUnknown = false;
   $scope.disableUnknownButtons = false;
-  $scope.canEdit = !$rootScope._externalMode;
+
+  // Edit permissions
+  $scope.canEdit = false;
+  if(!$acl.inGroup('clinician') && !$acl.inGroup('collaborator')) {
+    $scope.canEdit = true;
+  }
 
   // Create new entry...
   $scope.createNewKBEntry = ($event) => {

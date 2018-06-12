@@ -35,7 +35,7 @@ app.controller('controller.dashboard.reports.genomic',
       limit: 25,
       total: reports.total
     };
-
+    
     $scope.externalMode = true;
   }
 

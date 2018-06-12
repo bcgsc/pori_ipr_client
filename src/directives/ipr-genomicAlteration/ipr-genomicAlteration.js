@@ -1,4 +1,4 @@
-app.directive("iprGenomicAlteration", ['$q', '_', '$mdDialog', '$mdToast', '$rootScope', ($q, _, $mdDialog, $mdToast, $rootScope) => {
+app.directive("iprGenomicAlteration", ['$q', '_', '$mdDialog', '$mdToast', '$acl', ($q, _, $mdDialog, $mdToast, $acl) => {
   
   
   return {
@@ -14,8 +14,11 @@ app.directive("iprGenomicAlteration", ['$q', '_', '$mdDialog', '$mdToast', '$roo
     templateUrl: 'ipr-genomicAlteration/ipr-genomicAlteration.html',
     link: (scope, element, attr) => {
 
-      // Edit/Create permissions
-      scope.canEdit = !$rootScope._externalMode;
+      // Edit permissions
+      scope.canEdit = false;
+      if(!$acl.inGroup('clinician') && !$acl.inGroup('collaborator')) {
+        scope.canEdit = true;
+      }
 
       // Filter reference type
       scope.refType = (ref) => {
