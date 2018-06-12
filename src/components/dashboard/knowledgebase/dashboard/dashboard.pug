@@ -7,7 +7,8 @@ md-content(layout="column", flex).dashboard
                     md-icon(ng-click="showKBDescription()").clickable.blue info
                         md-tooltip(md-direction="right") About Knowledgebase
                 span(flex)
-                div(layout="row", flex=30)
+                md-button(ui-sref="dashboard.knowledgebase.references").md-primary.md-raised View References
+                //div(layout="row")
                     form(ng-submit="search.go()", layout="row", flex)
                         md-select(ng-model="search.target", style="height: 32px; width: 140px;", aria-label="Search Target", ng-disabled="true").hide-validation-error
                             md-option(ng-value="'references'", ng-selected="true") References
