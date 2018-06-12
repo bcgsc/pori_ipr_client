@@ -64,8 +64,8 @@ tbody
     tr
         td.dga
             h2 Therapies Approved in other Tumour Types
-            span(ng-if="approvedThisCancer.length === 0") No approved therapies were found for other tumour types.
-    tr(ng-repeat="gene in approvedThisCancer")
+            span(ng-if="approvedOtherCancer.length === 0") No approved therapies were found for other tumour types.
+    tr(ng-repeat="gene in approvedOtherCancer")
         td.dga
             div.variant
                 div(layout="column").block

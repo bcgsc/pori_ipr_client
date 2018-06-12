@@ -175,9 +175,7 @@ app.service('$acl', ['$q', '_', 'api.session', 'api.user', 'api.pog', ($q, _, $s
      *
      */
     inGroup: (group) => {
-      return !(!_.find(user.groups, function(userGroup) {
-        return userGroup.name.toLowerCase() == group.toLowerCase();
-      }));
+      return !(!_.find(user.groups, {name: group}));
     },
 
     /**
