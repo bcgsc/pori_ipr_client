@@ -273,7 +273,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     .state('dashboard.reports.pog', {
       data: {
         displayName: '{{pog.POGID}}',
-        breadcrumbProxy: 'dashboard.reports.pog.report.listing'
+        breadcrumbProxy: 'dashboard.reports.pog'
       },
       url: '/{POG}',
       controller: 'controller.dashboard.pog',
@@ -291,6 +291,14 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
               }
             )
           })
+        }],
+        reports: ['$q', '$stateParams', 'api.pog_analysis_report', '$acl', 'user', ($q, $stateParams, $report, $acl, user) => {
+          $acl.injectUser(user);
+          let stateFilter = {};
+          if($acl.inGroup('Clinician') || $acl.inGroup('Collaborator')) {
+            stateFilter = {state: 'presented,archived'};
+          }
+          return $report.pog($stateParams.POG).all(stateFilter);
         }]
       }
     })
@@ -300,25 +308,10 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       url: '/report',
       data: {
         displayName: "Analysis Reports",
-        breadcrumbProxy: 'dashboard.reports.pog.report.listing'
+        breadcrumbProxy: 'dashboard.reports.pog'
       },
 			templateUrl: 'dashboard/report/report.html',
-      resolve: {
-        reports: ['$q', '$stateParams', 'api.pog_analysis_report', ($q, $stateParams, $report) => {
-          return $report.pog($stateParams.POG).all();
-        }]
-      }
     })
-
-    .state('dashboard.reports.pog.report.listing', {
-      url: '/listing',
-      data: {
-        displayName: "Analysis Reports",
-      },
-			templateUrl: 'dashboard/report/listing/listing.html',
-      controller: 'controller.dashboard.pog.report.listing',
-    })
-
 
     /**
      * Probing
