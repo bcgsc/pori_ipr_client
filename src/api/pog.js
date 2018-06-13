@@ -84,6 +84,27 @@ app.factory('api.pog', ['_', '$http', '$q', (_, $http, $q) => {
     });
   }
 
+  /*
+   * Update POG
+   *
+   */
+  $pog.update = (pog) => {
+    
+    return $q((resolve, reject) => {
+      
+      // Call API to update
+      $http.put(api + '/' + pog.POGID, pog).then(
+        (result) => {
+          resolve(result.data);
+        },
+        (error) => {
+          // TODO: Better error handling
+          reject(error);
+        }
+      );
+    });
+  }
+
 
   /*
    * Load a new POG

@@ -25,11 +25,15 @@ md-dialog(layout="column", aria-label="Add Biopsy", flex-md=80, flex-xs=100, fle
                     md-delay="200",
                     md-match-case-insensitive="true",
                     required,
-                    flex=50
+                    flex=25
                     )
                         md-item-template {{pog.POGID}}
                         div(ng-messages="PatientForm.POGID.$error")
-                            div(ng-message="required").md-input-message-animation A Patient ID must be entered
+                            div(ng-message="required").md-input-message-animation A Patient ID is required
+
+                    // Alternate Identifier
+                    md-input-container(flex)
+                        input(ng-model="patient.alternate_identifier", name="AlternateID", placeholder="Alternate Identifier", ng-disabled="existingPOG")
 
                     // Biospecimen Biopsy Number
                     md-input-container(flex)
@@ -73,12 +77,19 @@ md-dialog(layout="column", aria-label="Add Biopsy", flex-md=80, flex-xs=100, fle
 
                 div(layout="row", flex)
                     // Project
-                    md-input-container(flex=33)
+                    md-input-container(flex)
                         md-select(ng-model="patient.projects", placeholder="Project(s)", name="Project", ng-required="true", multiple,
                         ng-model-options="{trackBy: '$value.ident'}", ng-disabled="existingPOG")
                             md-option(ng-repeat="p in projects", ng-value="p", ng-selected="p.name === 'POG'", ng-disabled="p.name === 'POG'") {{p.name}}
                         div(ng-messages="PatientForm.Project.$error")
                                 div(ng-message="required") Please select at least one project
+
+                    // Age of Consent
+                    md-input-container(flex)
+                        input(ng-model="patient.age_of_consent", type="number", name="AgeOfConsent", placeholder="Age of Consent", min=1, ng-disabled="existingPOG")
+                        div(ng-messages="PatientForm.AgeOfConsent.$error")
+                            div(ng-message="number") Entry must be a number
+                            div(ng-message="min") Entry must be a positive integer
 
                     // Disease
                     md-autocomplete(
@@ -90,7 +101,7 @@ md-dialog(layout="column", aria-label="Add Biopsy", flex-md=80, flex-xs=100, fle
                     md-floating-label="Disease",
                     md-autoselect="true",
                     md-dropdown-position="bottom",
-                    flex=33,
+                    flex,
                     required
                     )
                         md-item-template {{disease.text}}
@@ -112,11 +123,11 @@ md-dialog(layout="column", aria-label="Add Biopsy", flex-md=80, flex-xs=100, fle
                     md-input-minlength=3,
                     md-input-maxlength=3,
                     required,
-                    flex=33
+                    flex
                     )
                         md-item-template {{group.code}}
                         div(ng-messages="PatientForm.CancerGroup.$error")
-                            div(ng-message="required").md-input-message-animation A cancer group must be selected
+                            div(ng-message="required").md-input-message-animation A cancer group is required
                             div(ng-message="minlength").md-input-message-animation Entry must be 3 characters long
                             div(ng-message="maxlength").md-input-message-animation Entry must be 3 characters long
                             div(ng-message="md-require-match").md-input-message-animation Please select an existing cancer group

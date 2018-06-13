@@ -35,7 +35,7 @@ app.controller('controller.public.login',
         }
         
         if($acl.inGroup('clinician')) {
-          $state.go('dashboard.reports.clinician');
+          $state.go('dashboard.reports.genomic');
           return;
         } else {
           $state.go('dashboard.reports.dashboard');

@@ -1,11 +1,12 @@
 app.controller('knowledgebase.references.view',
-['$q', '_', '$scope', '$mdDialog', '$mdToast', '$kbUtils', 'api.knowledgebase', 'reference', 'history','vocabulary',
-($q, _, scope, $mdDialog, $mdToast, $kbUtils, $kb, reference, history, vocabulary) => {
+['$q', '_', '$scope', '$mdDialog', '$mdToast', '$kbUtils', 'api.knowledgebase', 'reference', 'history','vocabulary', 'externalMode',
+($q, _, scope, $mdDialog, $mdToast, $kbUtils, $kb, reference, history, vocabulary, externalMode) => {
 
   scope.reference = reference;
   scope.history = history;
   scope.vocabulary = vocabulary;
   scope.update = {};
+  scope.externalMode = externalMode;
 
   scope.cancel = () => {
     $mdDialog.hide();
@@ -13,7 +14,6 @@ app.controller('knowledgebase.references.view',
 
   scope.editingStatus = false;
   scope.toggleEdit = () => {
-    console.log('Triggering');
     scope.editingStatus = !scope.editingStatus;
   };
 
@@ -34,8 +34,6 @@ app.controller('knowledgebase.references.view',
       // Save Filters
       (result) => {
         if(result.status === 'update') {
-
-          console.log('Updated reference', result);
 
           scope.reference = $kbUtils.processReferences(result.data);
           scope.reference = result.data;

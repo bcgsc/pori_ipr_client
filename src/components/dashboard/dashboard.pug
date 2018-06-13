@@ -27,26 +27,20 @@ div(layout='row', flex)
 
             div(layout="row", ng-if="check.resource('report')" ui-sref="dashboard.reports.dashboard", ng-class="{active: ($state.current.name === 'dashboard.reports' || $state.current.name.indexOf('dashboard.reports') > -1)}")
                 md-icon assignment
-                    md-tooltip(ng-if="!maximized", md-direction="right") Reports
+                    md-tooltip(ng-if="!maximized", md-direction="right") Reports Dashboard
                 span(flex, ng-show="maximized") Reports
 
             div(layout="row", ng-if="check.resource('genomic_report')", ui-sref="dashboard.reports.genomic", ng-class="{active: ($state.current.name.indexOf('genomic') > 0)}", ng-show="maximized || (!maximized && ($state.current.name.indexOf('dashboard.reports') > -1 || $state.current.name.indexOf('dashboard.pog') > -1))").submenu
                 md-icon(ng-show="maximized") subdirectory_arrow_right
                 md-icon(ng-show="!maximized") developer_board
-                    md-tooltip(ng-if="!maximized", md-direction="right") Genomic
+                    md-tooltip(ng-if="!maximized", md-direction="right") Genomic Reports
                 span(flex, ng-show="maximized") Genomic
 
             div(layout="row", ng-if="check.resource('probe_report')", ui-sref="dashboard.reports.probe", ng-class="{active: ($state.current.name.indexOf('probe') > 0)}", ng-show="maximized || (!maximized && ($state.current.name.indexOf('dashboard.reports') > -1 || $state.current.name.indexOf('dashboard.pog') > -1))").submenu
                 md-icon(ng-show="maximized") subdirectory_arrow_right
                 md-icon(ng-show="!maximized") highlight
-                    md-tooltip(ng-if="!maximized", md-direction="right") Probe
-                span(flex, ng-show="maximized") Probe
-
-            div(layout="row", ui-sref="dashboard.reports.clinician", ng-class="{active: ($state.current.name.indexOf('clinician') > 0)}", ng-show="maximized || (!maximized && ($state.current.name.indexOf('dashboard.reports') > -1 || $state.current.name.indexOf('dashboard.pog') > -1))").submenu
-                md-icon(ng-show="maximized") subdirectory_arrow_right
-                md-icon(ng-show="!maximized") local_hospital
-                    md-tooltip(ng-if="!maximized", md-direction="right") Clinician
-                span(flex, ng-show="maximized") Clinician
+                    md-tooltip(ng-if="!maximized", md-direction="right") Probe (Targeted Gene) Reports
+                span(flex, ng-show="maximized") Probe (Targeted Gene)
 
 
 
@@ -68,11 +62,12 @@ div(layout='row', flex)
                     md-tooltip(ng-if="!maximized", md-direction="right") References
                 span(flex, ng-show="maximized") References
 
-            div(layout="row", ng-if="PROJECT.FEATURE.KNOWLEDGEBASE && check.resource('knowledgebase')", ui-sref="dashboard.knowledgebase.events", ng-class="{active: ($state.current.name === 'dashboard.knowledgebase.events')}", ng-show="maximized || (!maximized && $state.current.name.indexOf('knowledgebase') > 1)").submenu
-                md-icon(ng-show="maximized") subdirectory_arrow_right
-                md-icon(ng-show="!maximized") location_on
-                    md-tooltip(ng-if="!maximized", md-direction="right") Events
-                span(flex, ng-show="maximized") Events
+            //- Commenting out instead of removing in case we decide to re-include this - excluding as per Cara Reisle's suggestion
+                div(layout="row", ng-if="PROJECT.FEATURE.KNOWLEDGEBASE && check.resource('knowledgebase')", ui-sref="dashboard.knowledgebase.events", ng-class="{active: ($state.current.name === 'dashboard.knowledgebase.events')}", ng-show="maximized || (!maximized && $state.current.name.indexOf('knowledgebase') > 1)").submenu
+                    md-icon(ng-show="maximized") subdirectory_arrow_right
+                    md-icon(ng-show="!maximized") location_on
+                        md-tooltip(ng-if="!maximized", md-direction="right") Events
+                    span(flex, ng-show="maximized") Events
 
 
 

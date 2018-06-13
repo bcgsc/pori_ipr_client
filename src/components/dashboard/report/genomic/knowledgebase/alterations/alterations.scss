@@ -87,6 +87,12 @@ md-dialog-content.alterationsForm {
 
     .valid { color: rgb(43, 167, 20); }
     .invalid { color: rgb(213, 44, 47); }
+    .checking {
+      animation-name: spin;
+      animation-duration: 1.3s;
+      animation-iteration-count: infinite;
+      animation-timing-function: ease-in-out;
+    }
   }
 }
 

@@ -5,6 +5,8 @@ app.controller('controller.dashboard.biopsy.board.edit',
   $scope.patient = angular.copy(analysis);
   $scope.projects = projects;
   $scope.patient.projects = $scope.patient.pog.projects
+  $scope.patient.alternate_identifier = $scope.patient.pog.alternate_identifier;
+  $scope.patient.age_of_consent = $scope.patient.pog.age_of_consent;
 
   // If analysis has biopsy number, make analysis biopsy and libraries required fields
   $scope.patient.tracking = true;
@@ -140,7 +142,23 @@ app.controller('controller.dashboard.biopsy.board.edit',
 
         result.pog.projects = $scope.patient.projects;
 
-        $mdDialog.hide({analysis: result});
+        // update POG alternate id and/or age of consent if necessary
+        if((analysis.pog.alternate_identifier !== $scope.patient.alternate_identifier) || (analysis.pog.age_of_consent !== $scope.patient.age_of_consent)) {
+          let updatePOG = {
+            POGID: analysis.pog.POGID,
+            ident: analysis.pog.ident,
+            alternate_identifier: $scope.patient.alternate_identifier,
+            age_of_consent: $scope.patient.age_of_consent
+          }
+
+          $pog.update(updatePOG).then((pogRes) => {
+              result.pog.alternate_identifier = pogRes.alternate_identifier;
+              result.pog.age_of_consent = pogRes.age_of_consent;
+              $mdDialog.hide({analysis: result});
+          });
+        } else {
+          $mdDialog.hide({analysis: result});
+        }
       })
       .catch((err) => {
         console.log(err);

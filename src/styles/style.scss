@@ -217,6 +217,12 @@ md-icon.small {
   font-size: 18px;
 }
 
+md-icon.tiny {
+  min-height: 1rem;
+  height: 1rem;
+  font-size: 1rem;
+}
+
 span.preformated {
   background-color: rgb(230,230,230);
   padding: 2px;

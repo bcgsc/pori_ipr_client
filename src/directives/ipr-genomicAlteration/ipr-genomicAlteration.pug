@@ -1,6 +1,6 @@
 div(layout="column", flex).details.box
   div(ng-init="gene.showChildren=false").collapse
-    md-icon(ng-click="createRow($event, gene)") add
+    md-icon(ng-click="createRow($event, gene)", ng-if="canEdit") add
       md-tooltip Add new Knowledge Base entry
     md-icon(ng-click="gene.showChildren=!gene.showChildren") {{((gene.showChildren) ? 'expand_less' : 'expand_more')}}
       md-tooltip Show more entries related to this
@@ -56,12 +56,12 @@ div(flex, layout="column", ng-show="gene.showChildren")
           span(ng-if="refType(gene.reference) == 'link'")
             a(href="{{prependLink(gene.reference)}}", target="_blank") Source
           span(ng-if="refType(gene.reference) == 'text'").reference Reference
-            md-icon help
+            md-icon info
             md-tooltip {{gene.reference}}
         div(flex=5).text-center.edit
           md-icon(ipr-data-viewer="gene", ipr-hidden="['children', 'showChildren']") search
             md-tooltip View Details
-          md-icon(ng-click="updateRow($event, gene)") edit
+          md-icon(ng-click="updateRow($event, gene)", ng-if="canEdit") edit
             md-tooltip Modify this entry
       
       div(layout="row", flex, ng-repeat="(i, childGene) in gene.children").row
@@ -77,10 +77,10 @@ div(flex, layout="column", ng-show="gene.showChildren")
           span(ng-if="refType(childGene.reference) == 'link'")
             a(href="{{prependLink(childGene.reference)}}", target="_blank") Source
           span(ng-if="refType(childGene.reference) == 'text'").reference Reference
-            md-icon help
+            md-icon info
             md-tooltip {{childGene.reference}}
         div(flex=5).text-center.edit
           md-icon(ipr-data-viewer="childGene", ipr-hidden="['children']") search
             md-tooltip View Details
-          md-icon(ng-click="updateRow($event, childGene)") edit
+          md-icon(ng-click="updateRow($event, childGene)", ng-if="canEdit") edit
             md-tooltip Modify this entry
