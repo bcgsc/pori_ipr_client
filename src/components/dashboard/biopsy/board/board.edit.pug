@@ -1,7 +1,7 @@
 md-dialog(layout="column", aria-label="Edit Biopsy Analysis", flex-md=80, flex-xs=100, flex-lg=70, flex=70).editor
     md-toolbar
         .md-toolbar-tools
-            h2 Edit Biopsy Analysis
+            h2 Edit Biopsy Analysis: {{patient.pog.POGID}}
             span(flex)
             md-button.md-icon-button(ng-click='cancel()')
                 md-icon cancel
@@ -11,34 +11,34 @@ md-dialog(layout="column", aria-label="Edit Biopsy Analysis", flex-md=80, flex-x
                 div(layout="column")
 
                     div(layout="row")
+                        // POG ID
                         md-input-container(layout="row", flex)
                             input(disabled="disabled", ng-value="patient.pog.POGID", placeholder="Patient ID")
 
-                        // Project
-                        md-input-container(flex=33)
-                            md-select(ng-model="patient.projects", placeholder="Project(s)", name="Project", ng-required="true", multiple,
-                            ng-model-options="{trackBy: '$value.ident'}")
-                                md-option(ng-repeat="p in projects", ng-value="p", ng-disabled="p.name === 'POG'") {{p.name}}
-                            div(ng-messages="PatientForm.Project.$error")
-                                    div(ng-message="required") Please select at least one project
+                        // Alternate Identifier
+                        md-input-container(flex)
+                            input(ng-model="patient.alternate_identifier", name="AlternateID", placeholder="Alternate Identifier")
 
                         // Pediatric ID
                         md-input-container(flex)
                             input(ng-model="patient.pediatric_id", name="PediatricID", placeholder="Pediatric ID")
 
                     div(layout="row")
-                        // Biospecimen Biopsy Number
+                        // Project
                         md-input-container(flex)
-                            input(ng-model="patient.clinical_biopsy", name="ClinicalBiopsy", placeholder="Clinical Biopsy Number", required)
-                            div(ng-messages="PatientForm.ClinicalBiopsy.$error")
-                                div(ng-message="required") A clinical biopsy number is required
+                            md-select(ng-model="patient.projects", placeholder="Project(s)", name="Project", ng-required="true", multiple,
+                            ng-model-options="{trackBy: '$value.ident'}")
+                                md-option(ng-repeat="p in projects", ng-value="p", ng-disabled="p.name === 'POG'") {{p.name}}
+                            div(ng-messages="PatientForm.Project.$error")
+                                    div(ng-message="required") Please select at least one project
 
+                        // Age of Consent
                         md-input-container(flex)
-                            input(ng-model="patient.analysis_biopsy", placeholder="Bioinformatics Biopsy Number", name="AnalyticalBiopsy", ng-required="!patient.tracking")
-                            div(ng-messages="PatientForm.AnalyticalBiopsy.$error")
-                                div(ng-message="required") A bioinformatics biopsy number is required
+                            input(ng-model="patient.age_of_consent", type="number", name="AgeOfConsent", placeholder="Age of Consent", min=1)
+                            div(ng-messages="PatientForm.AgeOfConsent.$error")
+                                div(ng-message="number") Entry must be a number
+                                div(ng-message="min") Entry must be a positive integer
 
-                    div(layout="row", flex)
                         //Disease
                         md-autocomplete(
                         md-input-name="Disease",
@@ -49,7 +49,7 @@ md-dialog(layout="column", aria-label="Edit Biopsy Analysis", flex-md=80, flex-x
                         md-floating-label="Disease",
                         md-autoselect="true",
                         md-dropdown-position="bottom",
-                        flex=60,
+                        flex,
                         required
                         )
                             md-item-template {{disease.text}}
@@ -72,7 +72,7 @@ md-dialog(layout="column", aria-label="Edit Biopsy Analysis", flex-md=80, flex-x
                         md-input-minlength=3,
                         md-input-maxlength=3,
                         required,
-                        flex=60
+                        flex
                         )
                             md-item-template {{group.code}}
                             div(ng-messages="PatientForm.CancerGroup.$error", ng-if="PatientForm.CancerGroup.$touched")
@@ -80,6 +80,19 @@ md-dialog(layout="column", aria-label="Edit Biopsy Analysis", flex-md=80, flex-x
                                 div(ng-message="minlength").md-input-message-animation Entry must be 3 characters long
                                 div(ng-message="maxlength").md-input-message-animation Entry must be 3 characters long
                                 div(ng-message="md-require-match").md-input-message-animation Please select an existing cancer group
+
+                    div(layout="row", flex)
+                        // Biospecimen (Clinical) Biopsy Number
+                        md-input-container(flex)
+                            input(ng-model="patient.clinical_biopsy", name="ClinicalBiopsy", placeholder="Clinical Biopsy Number", required)
+                            div(ng-messages="PatientForm.ClinicalBiopsy.$error")
+                                div(ng-message="required") A clinical biopsy number is required
+
+                        // Bioinformatics Biopsy Number
+                        md-input-container(flex)
+                            input(ng-model="patient.analysis_biopsy", placeholder="Bioinformatics Biopsy Number", name="AnalyticalBiopsy", ng-required="!patient.tracking")
+                            div(ng-messages="PatientForm.AnalyticalBiopsy.$error")
+                                div(ng-message="required") A bioinformatics biopsy number is required
 
 
                     div(layout="row")

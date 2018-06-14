@@ -8,11 +8,11 @@ div(layout="row")
             md-option(ng-value="50") 50
             md-option(ng-value="100") 100
     span.results.text-center Results&nbsp;
-        span {{offset}}
+        span {{offset + 1}}
         | &nbsp;-
         | {{((offset + limit > total) ? total : offset + limit)}} of {{total}}
     span(layout="row", layout-align="center center")
         md-button(ng-click="prevPage()", ng-disabled="(offset-limit < 0)").small
             md-icon keyboard_arrow_left
-        md-button(ng-click="nextPage()", ng-disabled="(offset+limit > total)").small
+        md-button(ng-click="nextPage()", ng-disabled="(offset+limit >= total)").small
             md-icon keyboard_arrow_right

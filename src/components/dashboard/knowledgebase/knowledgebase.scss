@@ -89,6 +89,7 @@ $kb-status-flagged-hlight: rgb(251, 208, 204);
         border: 1px solid rgb(200,200,200);
         border-radius: 5px;
         min-height: 600px;
+        max-height: -webkit-fill-available;
 
         h1 {
           font-size: 1.2em;
@@ -99,6 +100,11 @@ $kb-status-flagged-hlight: rgb(251, 208, 204);
         }
         .content {
           padding: 15px;
+          height: 90%;
+
+          .kbTable.rows {
+            height: 97%;
+          }
         }
 
         .doughnut {
@@ -127,6 +133,10 @@ $kb-status-flagged-hlight: rgb(251, 208, 204);
           width: 20px;
         }
       }
+    }
+
+    &.rows.glossary-modal {
+      max-height: 55vh;
     }
 
     &.rows {

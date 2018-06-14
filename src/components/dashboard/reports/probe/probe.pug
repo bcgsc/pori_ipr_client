@@ -1,6 +1,6 @@
-md-content(flex, layout="column").md-padding
+md-content(flex, layout="column", ng-if="!externalMode").md-padding
 
-    md-sidenav(md-is-open="showOptions", md-whiteframe=4).md-sidenav-right
+    md-sidenav(md-is-open="options.showOptions", md-whiteframe=4, ng-if="!externalMode").md-sidenav-right
         md-toolbar
             h1.md-toolbar-tools Options
         md-content
@@ -19,47 +19,58 @@ md-content(flex, layout="column").md-padding
                     md-switch(ng-model="states.nonproduction", ng-change="refreshList()", ng-false-value="false", ng-true-value="true").md-primary
 
     h1.md-title(layout="row")
-        span(flex) Probe Reports
+        span(flex) Probe (Targeted Gene) Reports 
+            md-icon(ng-click="showProbeDescription()").clickable.blue info
+                md-tooltip(md-direction="right") About Probe (Targeted Gene) Reports
         span(flex, layout="row", layout-align="end end")
             md-input-container.hide-validation-error.pull-right
                 input(placeholder="Search", name="Search", ng-model="pogQuery", size=40).text-small
-                md-icon(ng-click="showFilterTips()").clickable help
+                md-icon(ng-click="showFilterTips()").clickable.blue help
             span(flex=5)
             span
-                md-button(ng-click="showOptions = !showOptions").md-primary.md-icon-button.md-raised
+                md-button(ng-click="options.showOptions = !options.showOptions").md-primary.md-icon-button.md-raised
                     md-icon settings
 
     div(layout="column", flex).kanban
         div(layout="row", layout-align="space-between").title
-            div(layout="column", flex, ng-show="states.uploaded") Uploaded ({{numReports('uploaded')}})
-            div(layout="column", flex, ng-show="states.signedoff") Signed-Off ({{numReports('signedoff')}})
-            div(layout="column", flex, ng-show="states.reviewed") Reviewed ({{numReports('reviewed')}})
-            div(layout="column", flex, ng-show="states.nonproduction") Non-Production/Test ({{numReports('nonproduction')}})
+            div(layout="row", flex, ng-show="states.uploaded")
+                span Uploaded ({{numReports('uploaded')}})
+            div(layout="row", flex, ng-show="states.signedoff")
+                span Signed-Off ({{numReports('signedoff')}})
+            div(layout="row", flex, ng-show="states.reviewed")
+                span Reviewed ({{numReports('reviewed')}})
+            div(layout="row", flex, ng-show="states.nonproduction")
+                span Non-Production/Test ({{numReports('nonproduction')}})
 
         div(layout="row", flex, layout-align="space-between")
             md-content(layout="column", flex, ng-show="states.uploaded").column
                 div(ng-show="loading").text-center Loading...
-                div(ng-show="numReports('uploaded') === 0").noWork Wow this lane is empty!
-                    br
-                    | No more work for you. How about a funny quote instead?
-                    ipr-random-quote
+                div(ng-show="numReports('uploaded') === 0").noWork No uploaded probe (targeted gene) reports found.
                 ipr-report-listing-card(ng-repeat="report in reports | filter: searchPogs('uploaded', pogQuery)", md-whiteframe=2, report="report", pog="report.analysis.pog", state="uploaded" ng-hide="loading").pog
 
 
             md-content(layout="column", flex, ng-show="states.signedoff").column
                 div(ng-show="loading").text-center Loading...
-
-                div(ng-show="numReports('signedoff') === 0").noWork Wow this lane is empty!
-                    br
-                    | No more work for you. How about a funny quote instead?
-                    ipr-random-quote
-
+                div(ng-show="numReports('signedoff') === 0").noWork No signed-off probe (targeted gene) reports found.
                 ipr-report-listing-card(ng-repeat="report in reports | filter: searchPogs('signedoff', pogQuery)", md-whiteframe=2, report="report", pog="report.analysis.pog", state="signedoff", ng-hide="loading").pog
 
             md-content(layout="column", flex, ng-show="states.reviewed").column
                 div(ng-show="loading").text-center Loading...
+                div(ng-show="numReports('reviewed') === 0").noWork No reviewed probe (targeted gene) reports found.
                 ipr-report-listing-card(ng-repeat="report in reports | filter: searchPogs('reviewed', pogQuery)", md-whiteframe=2, report="report", pog="report.analysis.pog", state="reviewed", ng-hide="loading").pog
 
             md-content(layout="column", flex, ng-show="states.nonproduction").column
                 div(ng-show="loading").text-center Loading...
+                div(ng-show="numReports('nonproduction') === 0").noWork No non-production probe (targeted gene) reports found.
                 ipr-report-listing-card(ng-repeat="report in reports | filter: searchPogs('nonproduction', pogQuery)", md-whiteframe=2, report="report", pog="report.analysis.pog", state="nonproduction", ng-hide="loading").pog
+
+md-content(flex, layout="column", ng-if="externalMode").md-padding.biopsyBoard
+
+    h1.md-title(layout="row")
+        span(flex) Probe (Targeted Gene) Reports 
+            md-icon(ng-click="showProbeDescription()").clickable.blue info
+                md-tooltip(md-direction="right") About Probe (Targeted Gene) Reports
+
+    div(layout="column").biopsies
+
+        ipr-report-table(reports="reports", clinician="true", pagination="pagination", type="'probe'")

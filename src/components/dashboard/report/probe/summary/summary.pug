@@ -1,6 +1,6 @@
 section
     md-subheader.md-primary Patient Information
-        span.edit
+        span.edit(ng-if="SES_permissionAction('report.edit')")
             md-icon(ng-click="updatePatient($event)") edit
 
     div(layout="column", flex).details
@@ -8,18 +8,18 @@ section
             dt(flex="{{detailSize}}", ng-init="detailSize=10") Patient ID:
             dd(flex) {{report.patientInformation.POGID}}
 
+            dt(flex="{{detailSize}}") Alternate ID:
+            dd(flex) {{report.pog.alternate_identifier || 'N/A'}}
+
             dt(flex="{{detailSize}}") Sex:
             dd(flex) {{report.patientInformation.gender}}
 
+        div(layout="row", flex)
             dt(flex="{{detailSize}}") Tumour Sample:
             dd(flex) {{report.patientInformation.tumourSample}}
 
-        div(layout="row", flex)
             dt(flex="{{detailSize}}") Tumour Type:
             dd(flex) {{report.patientInformation.tumourType}}
-
-            dt(flex="{{detailSize}}") Case Type:
-            dd(flex) {{report.patientInformation.caseType}}
 
             dt(flex="{{detailSize}}") Constitutional Sample:
             dd(flex) {{report.patientInformation.constitutionalSample}}
@@ -28,8 +28,8 @@ section
             dt(flex="{{detailSize}}") Report Date:
             dd(flex) {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
 
-            dt(flex="{{detailSize}}") Age at Diagnosis:
-            dd(flex) {{report.patientInformation.age}}
+            dt(flex="{{detailSize}}") Case Type:
+            dd(flex) {{report.patientInformation.caseType}}
 
             dt(flex="{{detailSize}}") Biopsy Details:
             dd(flex) {{report.patientInformation.biopsySite}}
@@ -38,9 +38,13 @@ section
             dt(flex="{{detailSize}}") Physician:
             dd(flex) {{report.patientInformation.physician}}
 
-            dt(flex="{{detailSize}}")
-            dd(flex)
+            dt(flex="{{detailSize}}") Age at Diagnosis:
+            dd(flex) {{report.patientInformation.age}}
 
+            dt(flex="{{detailSize}}") Age of Consent:
+            dd(flex) {{report.pog.age_of_consent || 'Not Specified'}}
+
+        div(layout="row", flex)
             dt(flex="{{detailSize}}") Protocol:
             dd(flex) {{report.patientInformation.tumourProtocol}}
 
@@ -111,7 +115,8 @@ section
                         div(flex).text-left Emerging Evidence
                     div(layout="row", flex, ng-if="genomicEvents.length === 0").row
                         div(flex) No clinically relevant genomic alterations were found from the analysis.
-                    div(layout="row", flex, ng-repeat="gene in genomicEvents", ng-click="modifyEvent($event, gene)").row.clickable
+                    div(layout="row", flex, ng-repeat="gene in genomicEvents", ng-click="modifyEvent($event, gene)", ng-if="SES_permissionAction('report.edit')").row.clickable
+                    div(layout="row", flex, ng-repeat="gene in genomicEvents", ng-if="!SES_permissionAction('report.edit')").row
                         div(flex) {{gene.genomicEvent}}
                         div(flex) {{gene.comments}}
                         div(flex) {{gene.approvedThisCancerType}}
@@ -137,7 +142,7 @@ section
             div(flex)
             div(layout="column", layout-align="start start").options
                 div(ng-if="signature.readySignature.ident")
-                    md-icon(ng-click="revokeSign('ready')") remove_circle
+                    md-icon(ng-click="revokeSign('ready')", ng-if="SES_permissionAction('report.edit')") remove_circle
                         md-tooltip Remove signing
 
         div(layout="row", md-whiteframe=1, layout-align="start start").rowCard
@@ -155,5 +160,5 @@ section
             div(flex)
             div(layout="column", layout-align="start start").options
                 div(ng-if="signature.reviewerSignature.ident")
-                    md-icon(ng-click="revokeSign('reviewer')") remove_circle
+                    md-icon(ng-click="revokeSign('reviewer')", ng-if="SES_permissionAction('report.edit')") remove_circle
                         md-tooltip Remove signing

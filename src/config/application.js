@@ -24,9 +24,9 @@ app.run(
 
   $rootScope.$on('$stateChangeError', (event, toState, toParams, fromState, fromParams, error) => {
     switch(error) {
-      case 'clinicianModeError':
+      case 'externalModeError':
         event.preventDefault(); // cancel original state transition
-        $state.go('dashboard.reports.clinician'); // transition to clinician report state
+        $state.go('dashboard.reports.genomic'); // transition to genomic report state
         break;
       default:
         console.log('State Change Error:', event, toState, toParams);

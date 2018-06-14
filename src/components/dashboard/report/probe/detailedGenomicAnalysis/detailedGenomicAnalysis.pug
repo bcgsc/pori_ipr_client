@@ -18,7 +18,7 @@ section.detailedGenomicAnalysis
 
 
             h2.title Alterations With Potential Clinical Relevance
-                span(ng-click="createNewKBEntry()").pull-right.addNewVariant.clickable Add new variant
+                span(ng-click="createNewKBEntry()", ng-if="SES_permissionAction('report.edit')").pull-right.addNewVariant.clickable Add new variant
 
         div(ng-repeat="(alteration, genes) in alterations")
             h3(ng-hide="alteration !== 'unknown' && showUnknown").title {{alteration}}

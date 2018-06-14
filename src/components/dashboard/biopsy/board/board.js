@@ -234,12 +234,14 @@ app.controller('controller.dashboard.biopsy.board',
       }
     })
       .then((result) => {
-        // update result row and update projects for analyses under same POG
+        // update result row and update projects, alt id, and age of consent for analyses under same POG
         _.each($scope.analyses, function(a, i) {
           if(result.analysis.ident == a.ident) {
             $scope.analyses[i] = result.analysis; // updating result row
           } else if(result.analysis.pog_id == a.pog_id) {
             $scope.analyses[i].pog.projects = result.analysis.pog.projects; // updating projects of rows w/ same POG
+            $scope.analyses[i].pog.alternate_identifier = result.analysis.pog.alternate_identifier; // updating alternate identifier of rows w/ same POG
+            $scope.analyses[i].pog.age_of_consent = result.analysis.pog.age_of_consent; // updating age of consent of rows w/ same POG
           }
         })
       

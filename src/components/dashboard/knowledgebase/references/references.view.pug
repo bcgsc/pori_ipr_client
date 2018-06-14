@@ -40,8 +40,8 @@ md-dialog(layout="column", aria-label="Knowledgebase Reference Viewer", flex=85)
                     h5 Status
                     span(class="{{reference.status.toLowerCase()}}", layout-align="center start", layout="column").status
                         span {{reference.status}}
-                        md-icon(ng-show="!reference.createdBy || reference.createdBy.ident !== user.ident", ng-click="editingStatus=!editingStatus") edit
-                    span(layout="column", ng-show="editingStatus").updateStatus
+                        md-icon(ng-show="(!reference.createdBy || reference.createdBy.ident !== user.ident) && !externalMode", ng-click="editingStatus=!editingStatus") edit
+                    span(layout="column", ng-show="editingStatus", ng-if="!externalMode").updateStatus
                         md-select(ng-model="update.status", placeholder="Update Status")
                             md-option(ng-value="status", ng-if="status !== 'NEW'", ng-repeat="status in vocabulary.status track by $index") {{status}}
                         div(layout="row")
@@ -125,7 +125,7 @@ md-dialog(layout="column", aria-label="Knowledgebase Reference Viewer", flex=85)
 
 
         md-dialog-actions(layout="row", layout-aligh="end center", layout-padding)
-            md-button(ng-click="edit()").md-primary.md-raised Edit
+            md-button(ng-click="edit()", ng-if="!externalMode").md-primary.md-raised Edit
             span(flex)
             md-button(ng-click="cancel()").md-primary.md-raised Close
 

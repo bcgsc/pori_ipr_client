@@ -2,7 +2,7 @@ div(layout="column")
     table.material-table
         thead
             tr
-                th(colspan=3) {{filter.project || 'All'}} Genomic Reports
+                th(colspan=3) {{type | titlecase}} Reports
                 th(colspan=3).button
                     div(layout="row", layout-align="end start")
                         form(ng-submit="search()", novalidate, layout="row", flex, ng-show="showSearch")
@@ -17,12 +17,12 @@ div(layout="column")
                             md-icon filter_list
                             md-tooltip Filter/Search
             tr
-                th(width="15%") Patient
-                th(width="25%") Disease
-                th(width="20%") Physician
-                th(width="15%") Age
-                th(width="20%") Status
-                th(width="5%")
+                th(width="10%") Patient 
+                th(width="10%") Alternate Identifier 
+                th(width="20%") Disease 
+                th(width="20%") Physician 
+                th(width="10%") Age 
+                th(width="20%") Status 
         tbody
             tr(ng-show="loading").loading
                 td(colspan="6").text-center
@@ -33,34 +33,13 @@ div(layout="column")
                     span No Reports found on IPR
             tr(ng-repeat="report in reports", ng-hide="loading")
                 td
-                    span(ui-sref="dashboard.reports.pog.report.genomic.summary({POG: report.pog.POGID, analysis_report: report.ident})").link {{report.patientInformation.POGID}}
+                    span(ui-sref="dashboard.reports.pog.report.genomic.summary({POG: report.pog.POGID, analysis_report: report.ident})", ng-if="type == 'genomic'").link {{report.patientInformation.POGID}}
+                    span(ui-sref="dashboard.reports.pog.report.probe.summary({POG: report.pog.POGID, analysis_report: report.ident})", ng-if="type == 'probe'").link {{report.patientInformation.POGID}}
+                td {{report.analysis.pog.alternate_identifier || 'N/A'}}
                 td {{report.patientInformation.tumourType}}
                 td {{report.patientInformation.physician}}
                 td {{report.patientInformation.caseType}}
                 td {{readState(report.state)}}
-                td &nbsp;
-
-    //div(layout="row").pagination
-        span(flex)
-        md-input-container(flex=10)
-            label results per page
-            md-select(ng-model="paginate.limit", ng-change="refreshReports()")
-                md-option(ng-value="10") 10
-                md-option(ng-value="25") 25
-                md-option(ng-value="50") 50
-                md-option(ng-value="100") 100
-        span.results.text-center Results&nbsp;
-            span {{paginate.offset}}
-            //span(ng-click="updateOffset=true", ng-hide="updateOffset", ng-init="updateOffset=false").clickable {{paginate.offset}}
-            //md-input-container(ng-show="updateOffset")
-                input(ng-model="paginate.offset", ng-blur="refreshReports();updateOffset=false")
-            | &nbsp;-
-            | {{((paginate.offset+paginate.limit > paginate.total) ? paginate.total : paginate.offset+paginate.limit)}} of {{paginate.total}}
-        span(layout="row", layout-align="center center")
-            md-button(ng-click="prevPage()", ng-disabled="(paginate.offset-paginate.limit < 0)").small
-                md-icon keyboard_arrow_left
-            md-button(ng-click="nextPage()", ng-disabled="(paginate.offset+paginate.limit > paginate.total)").small
-                md-icon keyboard_arrow_right
 
     ipr-paginate(total="paginate.total", offset="paginate.offset", limit="paginate.limit", refresh="refreshReports")
 

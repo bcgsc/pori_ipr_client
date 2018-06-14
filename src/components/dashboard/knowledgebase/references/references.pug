@@ -3,16 +3,17 @@ md-content(layout="column", flex)
     div(layout="column")
         div.options
             div(layout="row")
-                h1.title KB.
-                    span.subject References
+                h1.title Knowledgebase: References 
+                    md-icon(ng-click="showKBGlossary()").clickable.blue info
+                        md-tooltip(md-direction="right") Knowledgebase Glossary
                 span(flex)
                 md-button(ng-click="newReference($event)").md-primary.md-raised.narrowButton New Reference
 
             div(layout="row").filters
                 span
                     md-button(ng-click="openFilters($event)").md-raised.md-primary.narrowButton Set Filters
-                span(flex=5)
-                div(flex=20, layout-align="center center", layout="row")
+                //span(flex=5)
+                //div(flex=20, layout-align="center center", layout="row")
                     form(ng-submit="search.go()", layout="row", flex)
                         md-input-container(flex).hide-validation-error.pull-right
                             label

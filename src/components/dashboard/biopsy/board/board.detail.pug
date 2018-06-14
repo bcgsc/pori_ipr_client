@@ -1,7 +1,7 @@
 md-dialog(layout="column", aria-label="Analysis/Biopsy Details", flex=80, flex-gt-xlarge=60).editor
     md-toolbar
         .md-toolbar-tools
-            h2 {{analysis.pog.POGID}} Biopsy Analysis Details
+            h2 Biopsy Analysis Details: {{analysis.pog.POGID}}
             span(flex)
             md-button.md-icon-button(ng-click='cancel()')
                 md-icon cancel
@@ -19,8 +19,16 @@ md-dialog(layout="column", aria-label="Analysis/Biopsy Details", flex=80, flex-g
 
                     div(ng-hide="loading.library", layout="column")
                         div(layout="row").libDetails
+                            div(flex=30) Alternate Identifier
+                            div(flex) {{analysis.pog.alternate_identifier || 'N/A'}}
+
+                        div(layout="row").libDetails
                             div(flex=30) Project(s)
                             div(flex) {{projects}}
+
+                        div(layout="row").libDetails
+                            div(flex=30) Age of Consent
+                            div(flex) {{analysis.pog.age_of_consent || 'N/A'}}
 
                         div(layout="row").libDetails
                             div(flex=30) Biopsy Date

@@ -337,17 +337,8 @@
 
           }
 
-
           &:hover {
             background-color: rgb(247,206,170);
-            
-            .edit {
-              md-icon {
-                display: inline;
-              }
-              
-            }
-            
           }
           
           span.reference {
@@ -357,8 +348,8 @@
           .edit {
             
             md-icon {
+              display: inline;
               cursor: pointer;
-              display: none;
               font-size: 1.2em;
               
               &:hover {
