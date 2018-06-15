@@ -116,6 +116,11 @@ section
                     div(layout="row", flex, ng-if="genomicEvents.length === 0").row
                         div(flex) No clinically relevant genomic alterations were found from the analysis.
                     div(layout="row", flex, ng-repeat="gene in genomicEvents", ng-click="modifyEvent($event, gene)", ng-if="SES_permissionAction('report.edit')").row.clickable
+                        div(flex) {{gene.genomicEvent}}
+                        div(flex) {{gene.comments}}
+                        div(flex) {{gene.approvedThisCancerType}}
+                        div(flex) {{gene.approvedOtherCancerType}}
+                        div(flex) {{gene.emergingPreclinicalEvidence}}
                     div(layout="row", flex, ng-repeat="gene in genomicEvents", ng-if="!SES_permissionAction('report.edit')").row
                         div(flex) {{gene.genomicEvent}}
                         div(flex) {{gene.comments}}
