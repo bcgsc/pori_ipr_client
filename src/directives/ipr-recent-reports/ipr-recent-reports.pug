@@ -5,7 +5,7 @@ span(ng-repeat="(i, report) in reports track by $index").tab
         span {{report.report.pog.POGID}}
         md-tooltip(md-delay=200, md-direction="top")
             span(ng-if="report.report.type === 'genomic'") Genomic Report
-            span(ng-if="report.report.type === 'probe'") Probe (Targeted Gene) Report
+            span(ng-if="report.report.type === 'probe'") Targeted Gene Report
             span &nbsp;| Status: &nbsp;
             span(ipr-report-state, state="report.report.state")
             span &nbsp| {{report.report.ident}} | Version {{report.report.reportVersion}} | {{report.report.createdAt | amDateFormat: 'YYYY-MM-DD HH:mm' }}
