@@ -93,7 +93,7 @@ app.controller('controller.dashboard.user.edit',
           }
 
           // unbind from projects no longer in list
-          let unbind = _.difference($scope.oldUser.projects, $scope.projectAccess.projects);
+          let unbind = _.differenceBy($scope.oldUser.projects, $scope.projectAccess.projects, 'name');
           _.each(unbind, function(project) {
             $project.user(project.ident).remove($scope.user.ident).then(
               (resp) => {
@@ -106,7 +106,7 @@ app.controller('controller.dashboard.user.edit',
           });
 
           // bind to new projects in list
-          let bind = _.difference($scope.projectAccess.projects, $scope.oldUser.projects);
+          let bind = _.differenceBy($scope.projectAccess.projects, $scope.oldUser.projects, 'name');
           _.each(bind, function(project) {
             $project.user(project.ident).add($scope.user.ident).then(
               (resp) => {
@@ -122,7 +122,20 @@ app.controller('controller.dashboard.user.edit',
       // update user
       $user.update($scope.user).then(
         (user) => {
-          // Success
+          // Update user projects
+          user.projects = $scope.projectAccess.projects;
+
+          // Update user groups
+          if($scope.projectAccess.allProjectAccess && !_.find(user.groups, {'name': accessGroup.name})) {
+            user.groups.push(accessGroup);
+          }
+          if(!$scope.projectAccess.allProjectAccess && _.find(user.groups, {'name': accessGroup.name})) {
+            _.remove(user.groups, function(group) {
+              return group.name == accessGroup.name;
+            })
+          }
+
+          // Success - return updated user
           $mdDialog.hide({status: true, data: user, message: "User has been updated!"});
         },
         (err) => {
@@ -160,7 +173,16 @@ app.controller('controller.dashboard.user.edit',
               );
             });
           }
-          // Success
+
+          // Add user projects
+          user.projects = $scope.projectAccess.projects;
+
+          // Add user group
+          if($scope.projectAccess.allProjectAccess) {
+            user.groups = [accessGroup];
+          }
+
+          // Success - return newly added user
           $mdDialog.hide({status: true, data: user, message: "User has been added!", useUser: true});
         },
         (err) => {
