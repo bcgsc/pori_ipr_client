@@ -249,7 +249,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       templateUrl: 'dashboard/reports/probe/probe.html',
       controller: 'controller.dashboard.reports.probe',
       data: {
-        displayName: 'Probe (Targeted Gene) Reports'
+        displayName: 'Targeted Gene Reports'
       },
       resolve: {
         reports: ['$q', 'api.pog_analysis_report', '$acl', 'user', ($q, $report, $acl, user) => {
@@ -320,7 +320,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     .state('dashboard.reports.pog.report.probe', {
       url: '/{analysis_report}/probe',
       data: {
-        displayName: "Probe",
+        displayName: "Targeted Gene",
         breadcrumbProxy: 'dashboard.reports.pog.report.probe.summary'
       },
       templateUrl: 'dashboard/report/probe/probe.html',
@@ -1049,7 +1049,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     .state('print.POG.report.probe', {
       url: '/probe',
       data: {
-        displayName: 'Probe Report'
+        displayName: 'Targeted Gene Report'
       },
       views: {
         "": {

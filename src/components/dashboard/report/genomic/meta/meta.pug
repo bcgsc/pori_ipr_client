@@ -8,7 +8,7 @@ section.meta
                 label Report Type
                 md-select(ng-model="report.type", placeholder="Report Type", aria-label="Report Type", ng-disabled="true", required, md-on-close="checkChange()")
                     md-option(ng-value="'genomic'") Genomic Report
-                    md-option(ng-value="'probe'") Probe Report
+                    md-option(ng-value="'probe'") Targeted Gene Report
             md-input-container(flex)
                 label Report State
                 md-select(ng-model="report.state", placeholder="Report State", aria-label="Report State", required, md-on-close="checkChange()")

@@ -178,7 +178,7 @@ app.controller('controller.dashboard.reports.probe', ['_', '$q', '$scope', 'api.
     let alert = $mdDialog.show(
       $mdDialog.alert()
         .clickOutsideToClose(true)
-        .title('About Probe (Targeted Gene) Reports')
+        .title('About Targeted Gene Reports')
         .htmlContent(content)
         .ok('Close')
         .targetEvent($event)
