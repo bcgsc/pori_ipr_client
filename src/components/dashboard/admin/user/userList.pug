@@ -17,10 +17,19 @@ md-content(flex).adminSection
                 div(flex) Username
                 div(flex) Name
                 div(flex) Authority
+                div(flex) Group Access
+                div(flex) Project Access
                 div(flex) Last Activity
+                div(flex) Created
             div(flex, layout="row", ng-repeat="u in users", ng-click="userDiag($event, u)").row.clickable
                 div(flex) {{u.username}}
                 div(flex) {{u.firstName}} {{u.lastName}}
                 div(flex) {{u.type}}
+                div(flex)
+                    li(ng-repeat="group in u.groups") {{group.name}}
+                div(flex)
+                    li(ng-repeat="project in u.projects") {{project.name}}
                 div(flex, ng-bind="(u.lastLogin | amTimeAgo) || 'never'").clickable
                     md-tooltip(md-direction="left", ng-if="u.lastLogin") {{u.lastLogin | amDateFormat:'dddd, MMMM Do YYYY, h:mm:ss a'}}
+                div(flex) {{u.createdAt | amDateFormat:'DD/MM/Y'}}
+                    md-tooltip(md-direction="left") {{u.createdAt | amDateFormat:'dddd, MMMM Do YYYY, h:mm:ss a' }}
