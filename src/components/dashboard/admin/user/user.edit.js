@@ -173,7 +173,16 @@ app.controller('controller.dashboard.user.edit',
               );
             });
           }
-          // Success
+
+          // Add user projects
+          user.projects = $scope.projectAccess.projects;
+
+          // Add user group
+          if($scope.projectAccess.allProjectAccess) {
+            user.groups = [accessGroup];
+          }
+
+          // Success - return newly added user
           $mdDialog.hide({status: true, data: user, message: "User has been added!", useUser: true});
         },
         (err) => {
