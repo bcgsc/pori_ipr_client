@@ -90,9 +90,13 @@ md-dialog(layout="column", aria-label="Analysis/Biopsy Details", flex=80, flex-g
                         div(layout="row").libDetails
                             div(flex=30) Physicians
                             div(flex).physicians
-                                p(ng-repeat="phys in analysis.physician")
+                                p(ng-repeat="phys in analysis.physician", ng-if="analysis.physician.length > 0")
                                     span {{phys.first_name}}
                                     span {{phys.last_name}}
+                                p(ng-if="!analysis.physician || analysis.physician.length == 0")
+                                    span {{analysis.pog.patientInformation.physician}}
+                                p(ng-if="!analysis.physician && !analysis.pog.patientInformation.physician")
+                                    span N/A
 
 
                         div(layout="row").libDetails
