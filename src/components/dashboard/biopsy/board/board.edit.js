@@ -11,6 +11,19 @@ app.controller('controller.dashboard.biopsy.board.edit',
   // If analysis has biopsy number, make analysis biopsy and libraries required fields
   $scope.patient.tracking = true;
   if($scope.patient.analysis_biopsy) { $scope.patient.tracking = false; }
+
+  // Fields to validate
+  $scope.validate = {
+    project: true,
+    disease: !!analysis.disease, // only validate if field has already been filled out
+    cancer_group: !!analysis.threeLetterCode,
+    clinical_biopsy: !!analysis.clinical_biopsy,
+    biofx_biopsy: !!analysis.analysis_biopsy,
+    biopsy_date: !!analysis.biopsy_date,
+    normal_library: !!analysis.libraries.normal,
+    tumour_library: !!analysis.libraries.tumour,
+    transcriptome_library: !!analysis.libraries.transcriptome
+  }
   
   let threeLetterCodes = [
     {"code": "BRC", "description": "Breast"},
@@ -90,14 +103,14 @@ app.controller('controller.dashboard.biopsy.board.edit',
     analysis.priority = $scope.patient.priority;
     analysis.clinical_biopsy = $scope.patient.clinical_biopsy;
     analysis.analysis_biopsy = $scope.patient.analysis_biopsy;
-    analysis.disease = (typeof $scope.patient.disease === 'object') ? $scope.patient.disease.text : $scope.patient.disease;
+    analysis.disease = (typeof $scope.patient.disease === 'object' && $scope.patient.disease) ? $scope.patient.disease.text : $scope.patient.disease;
     analysis.biopsy_notes = $scope.patient.biopsy_notes;
     analysis.biopsy_date = $scope.patient.biopsy_date;
     analysis.notes = $scope.patient.notes;
     analysis.libraries.normal = $scope.patient.libraries.normal;
     analysis.libraries.tumour = $scope.patient.libraries.tumour;
     analysis.libraries.transcriptome = $scope.patient.libraries.transcriptome;
-    analysis.threeLetterCode = (typeof $scope.patient.threeLetterCode === 'object') ? $scope.patient.threeLetterCode.code : $scope.patient.threeLetterCode;
+    analysis.threeLetterCode = (typeof $scope.patient.threeLetterCode === 'object' && $scope.patient.threeLetterCode) ? $scope.patient.threeLetterCode.code : $scope.patient.threeLetterCode;
     analysis.date_presentation = $scope.patient.date_presentation;
     analysis.onco_panel_submitted = $scope.patient.onco_panel_submitted;
     analysis.date_analysis = $scope.patient.date_analysis;
