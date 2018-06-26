@@ -7,7 +7,13 @@ section
 
             h2.title Microbial Integration
 
-            p(ng-if="images['microbial.circos'] === undefined").padding-left-10 Microbial integration circos plots are not applicable for this case
+            p(ng-if="!images['microbial.circos.genome'] && !images['microbial.circos.transcriptome'] && !images['microbial.circos']").padding-left-10 Microbial integration circos plots are not applicable for this case
 
-            div(layout="row", flex, layout-align="center center").md-padding
-                img(data-ng-src="data:image/png;base64,{{images['microbial.circos'].data}}")
+            md-tabs(md-dynamic-height=true, md-center-tabs=true).margin-bottom-20
+                md-tab(label="Genome", ng-if="images['microbial.circos.genome']")
+                    div(layout="column", layout-align="center center")
+                        img(data-ng-src="data:image/svg;base64,{{images['microbial.circos.genome'].data}}")
+                md-tab(label="Transcriptome", ng-if="images['microbial.circos.genome'] || images['microbial.circos']")
+                    div(layout="column", layout-align="center center")
+                        img(data-ng-src="data:image/svg;base64,{{images['microbial.circos.transcriptome'].data}}", ng-if="images['microbial.circos.transcriptome']")
+                        img(data-ng-src="data:image/svg;base64,{{images['microbial.circos'].data}}", ng-if="images['microbial.circos']")
