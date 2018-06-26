@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.report.genomic.microbial',
-['_', '$q', '$scope', 'pog', 'images',
-(_, $q, $scope, $state, pog, images) => {
+['_', '$q', '$scope', 'images',
+(_, $q, $scope, images) => {
   
   // Load Images into template
   $scope.images = images;
