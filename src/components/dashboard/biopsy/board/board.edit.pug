@@ -50,7 +50,7 @@ md-dialog(layout="column", aria-label="Edit Biopsy Analysis", flex-md=80, flex-x
                         md-autoselect="true",
                         md-dropdown-position="bottom",
                         flex,
-                        required
+                        ng-required="validate.disease"
                         )
                             md-item-template {{disease.text}}
                             div(ng-messages="PatientForm.Disease.$error", ng-if="PatientForm.Disease.$touched")
@@ -71,7 +71,7 @@ md-dialog(layout="column", aria-label="Edit Biopsy Analysis", flex-md=80, flex-x
                         md-dropdown-position="bottom",
                         md-input-minlength=3,
                         md-input-maxlength=3,
-                        required,
+                        ng-required="validate.cancer_group",
                         flex
                         )
                             md-item-template {{group.code}}
@@ -84,13 +84,13 @@ md-dialog(layout="column", aria-label="Edit Biopsy Analysis", flex-md=80, flex-x
                     div(layout="row", flex)
                         // Biospecimen (Clinical) Biopsy Number
                         md-input-container(flex)
-                            input(ng-model="patient.clinical_biopsy", name="ClinicalBiopsy", placeholder="Clinical Biopsy Number", required)
+                            input(ng-model="patient.clinical_biopsy", name="ClinicalBiopsy", placeholder="Clinical Biopsy Number", ng-required="validate.clinical_biopsy")
                             div(ng-messages="PatientForm.ClinicalBiopsy.$error")
                                 div(ng-message="required") A clinical biopsy number is required
 
                         // Bioinformatics Biopsy Number
                         md-input-container(flex)
-                            input(ng-model="patient.analysis_biopsy", placeholder="Bioinformatics Biopsy Number", name="AnalyticalBiopsy", ng-required="!patient.tracking")
+                            input(ng-model="patient.analysis_biopsy", placeholder="Bioinformatics Biopsy Number", name="AnalyticalBiopsy", ng-required="validate.biofx_biopsy")
                             div(ng-messages="PatientForm.AnalyticalBiopsy.$error")
                                 div(ng-message="required") A bioinformatics biopsy number is required
 
@@ -99,7 +99,7 @@ md-dialog(layout="column", aria-label="Edit Biopsy Analysis", flex-md=80, flex-x
                         //Biopsy Date
                         md-input-container(style="padding-right: 40px;")
                             label Biopsy Date
-                            md-datepicker(name="BiopsyDate", ng-model="patient.biopsy_date", required)
+                            md-datepicker(name="BiopsyDate", ng-model="patient.biopsy_date", ng-required="validate.biopsy_date")
                             div(ng-messages="PatientForm.BiopsyDate.$error", ng-if="PatientForm.BiopsyDate.$touched")
                                 div(ng-message="required").md-input-message-animation A biopsy date is required
 
@@ -131,15 +131,15 @@ md-dialog(layout="column", aria-label="Edit Biopsy Analysis", flex-md=80, flex-x
 
                     div(layout="row")
                         md-input-container(flex)
-                            input(ng-model="patient.libraries.normal", placeholder="Normal Library", name="NormalLibrary", ng-required="!patient.tracking")
+                            input(ng-model="patient.libraries.normal", placeholder="Normal Library", name="NormalLibrary", ng-required="validate.normal_library")
                             div(ng-messages="PatientForm.NormalLibrary.$error", ng-if="PatientForm.NormalLibrary.$touched")
                                 div(ng-message="required").md-input-message-animation A normal library is required
                         md-input-container(flex)
-                            input(ng-model="patient.libraries.tumour", placeholder="Tumour Library", name="TumourLibrary", ng-required="!patient.tracking")
+                            input(ng-model="patient.libraries.tumour", placeholder="Tumour Library", name="TumourLibrary", ng-required="validate.tumour_library")
                             div(ng-messages="PatientForm.TumourLibrary.$error", ng-if="PatientForm.TumourLibrary.$touched")
                                 div(ng-message="required").md-input-message-animation A tumour library is required
                         md-input-container(flex)
-                            input(ng-model="patient.libraries.transcriptome", placeholder="Transcriptome Library", name="TranscriptomeLibrary", ng-required="!patient.tracking")
+                            input(ng-model="patient.libraries.transcriptome", placeholder="Transcriptome Library", name="TranscriptomeLibrary", ng-required="validate.transcriptome_library")
                             div(ng-messages="PatientForm.TranscriptomeLibrary.$error", ng-if="PatientForm.TranscriptomeLibrary.$touched")
                                 div(ng-message="required").md-input-message-animation A transcriptome library is required
 

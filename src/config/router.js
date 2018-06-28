@@ -525,7 +525,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       controller: 'controller.dashboard.report.genomic.microbial',
       resolve: {
         images: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
-          return $image.get($stateParams.POG, $stateParams.analysis_report, 'microbial.circos');
+          return $image.get($stateParams.POG, $stateParams.analysis_report, 'microbial.circos.transcriptome,microbial.circos.genome,microbial.circos');
         }]
       }
     })
