@@ -14,6 +14,7 @@ md-dialog(layout="column", aria-label="Knowledgebase References Filters", ng-clo
                     div(flex).header
                         div Events Expression
                     div(flex=50).header
+                        div Ref ID
                 div(layout="row")
                     div(flex).row
                         div(layout="column")
@@ -25,6 +26,15 @@ md-dialog(layout="column", aria-label="Knowledgebase References Filters", ng-clo
                             md-input-container(flex)
                                 input(ng-model="new.values.events_expression", ng-keyup="$event.keyCode === 13 ? new.action('events_expression') : null", ng-blur="new.action('events_expression')", placeholder="events expression")
                     div(flex=50)
+                        div(layout="column")
+                            div(ng-repeat="(i, ref_id) in filter.ref_id track by $index", ng-if="filter.ref_id.length > 0").removableFilter
+                                md-icon(ng-click="removeFilterEntry('ref_id', i)") remove_circle
+                                | {{ref_id}}
+
+                        div(layout="column")
+                            md-input-container
+                                // keycode 13 is the enter key
+                                input(ng-model="new.values.ref_id", ng-keyup="$event.keyCode === 13 ? new.action('ref_id') : null", ng-blur="new.action('ref_id')", placeholder="Ref ID")
                 div(layout="row").header
                     div(layout="column", flex) Type
                     div(layout="column", flex) Relevance

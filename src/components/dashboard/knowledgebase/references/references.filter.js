@@ -12,6 +12,7 @@ app.controller('knowledgebase.references.filter',
   if(!scope.filter.context) scope.filter.context = [];
   if(!scope.filter.evidence) scope.filter.evidence = [];
   if(!scope.filter.events_expression) scope.filter.events_expression = [];
+  if(!scope.filter.ref_id) scope.filter.ref_id = [];
 
   // Set Vocab
   scope.vocabulary = vocabulary;
@@ -20,7 +21,8 @@ app.controller('knowledgebase.references.filter',
       disease_list: null,
       context: null,
       evidence: null,
-      events_expression: null
+      events_expression: null,
+      ref_id: null
     }
   };
 
