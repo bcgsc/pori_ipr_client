@@ -7,7 +7,7 @@ app.controller('knowledgebase.references.filter',
   };
 
   // Setup starting place filters
-  scope.filter = filters;
+  scope.filter = angular.copy(filters);
   if(!scope.filter.disease_list) scope.filter.disease_list = [];
   if(!scope.filter.context) scope.filter.context = [];
   if(!scope.filter.evidence) scope.filter.evidence = [];
@@ -40,18 +40,16 @@ app.controller('knowledgebase.references.filter',
   scope.disease = {search: []};
   scope.disease.filter = (query) => {
     let deferred = $q.defer();
-    if(query.length < 3) deferred.resolve([]);
-
-    if(query.length >= 3) {
-      $kb.diseaseOntology(query).then(
-        (entries) => {
-          deferred.resolve(entries);
-        },
-        (err) => {
-          console.log('Unable to search for disease-ontology entries', err);
-        }
-      );
-    }
+    $kb.diseaseOntology(query).then(
+      (entries) => {
+        // remove entries that have already been selected
+        let unselected_entries = _.differenceBy(entries, scope.filter.disease_list);
+        deferred.resolve(unselected_entries);
+      },
+      (err) => {
+        console.log('Unable to search for disease-ontology entries', err);
+      }
+    );
     return deferred.promise;
   };
 
