@@ -7,7 +7,7 @@ app.controller('knowledgebase.references',
 
   $http.get('../assets/json/knowledgebaseGlossary.json')
   .then((glossary) => {
-    $scope.glossary = glossary.data;
+    $scope.glossary = _.sortBy(glossary.data, ['term']);
   });
 
   // Toggle Events Expression Dropper
