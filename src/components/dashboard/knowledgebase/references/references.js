@@ -43,12 +43,10 @@ app.controller('knowledgebase.references',
     }).then(
       // Save Filters
       (filters) => {
-        $paginate.setFilters(filters); // Updated Filters
-        $paginate.updateFilters(); // Refresh Pagination
-      },
-      // Cancel
-      () => {
-
+        if (filters) {
+          $paginate.setFilters(filters); // Updated Filters
+          $paginate.updateFilters(); // Refresh Pagination
+        }
       }
     );
   };
