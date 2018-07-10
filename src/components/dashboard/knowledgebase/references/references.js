@@ -7,7 +7,7 @@ app.controller('knowledgebase.references',
 
   $http.get('../assets/json/knowledgebaseGlossary.json')
   .then((glossary) => {
-    $scope.glossary = glossary.data;
+    $scope.glossary = _.sortBy(glossary.data, ['term']);
   });
 
   // Toggle Events Expression Dropper
@@ -43,12 +43,10 @@ app.controller('knowledgebase.references',
     }).then(
       // Save Filters
       (filters) => {
-        $paginate.setFilters(filters); // Updated Filters
-        $paginate.updateFilters(); // Refresh Pagination
-      },
-      // Cancel
-      () => {
-
+        if (filters) {
+          $paginate.setFilters(filters); // Updated Filters
+          $paginate.updateFilters(); // Refresh Pagination
+        }
       }
     );
   };

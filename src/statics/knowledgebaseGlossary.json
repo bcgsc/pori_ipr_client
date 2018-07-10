@@ -86,5 +86,12 @@
 	{"term": "characteristic-of", "definition": "event(s) which is(are) a hallmark of this disease type"},
 	{"term": "associated-with", "definition": "event(s) is(are) associated with some biological consequence/effect"},
 	{"term": "tumour suppressor", "definition": "a gene whose wildtype product functions to suppress or block the development of cancer"},
-	{"term": "pathogenic", "definition": "event(s) has been shown to cause a specified disease"}
+	{"term": "pathogenic", "definition": "event(s) has been shown to cause a specified disease"},
+	{"term": "toxicity", "definition": "adverse side effect"},
+	{"term": "increased efficacy", "definition": "better response to a drug"},
+	{"term": "decreased efficacy", "definition": "worse response to a drug"},
+	{"term": "increased metabolism PK", "definition": "increased clearance of a drug"},
+	{"term": "decreased metabolism PK", "definition": "decreased clearance of a drug"},
+	{"term": "higher dosage", "definition": "require increased dosage"},
+	{"term": "lower dosage", "definition": "require decreased dosage"}
 ]
