@@ -1,8 +1,10 @@
-app.controller('knowledgebase.dashboard', ['$q', '$scope', '$timeout', '$state', 'metrics', '$mdDialog', '$http', ($q, $scope, $timeout, $state, metrics, $mdDialog, $http) => {
+app.controller('knowledgebase.dashboard', 
+  ['$q', '$scope', '_', '$timeout', '$state', 'metrics', '$mdDialog', '$http', 
+  ($q, $scope, _, $timeout, $state, metrics, $mdDialog, $http) => {
 
   $http.get('../assets/json/knowledgebaseGlossary.json')
   .then((glossary) => {
-    $scope.glossary = glossary.data;
+    $scope.glossary = _.sortBy(glossary.data, ['term']);
   });  
 
   $scope.metrics = metrics;
