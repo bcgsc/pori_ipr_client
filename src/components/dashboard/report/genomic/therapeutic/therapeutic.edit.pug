@@ -29,7 +29,7 @@ md-dialog(layout="column", aria-label="Update Therapeutic Target", flex=85).edit
                         md-item-text="entry",
                         md-select-on-match="'true'",
                         placeholder="New Target",
-                        md-delay=200
+                        md-delay=500
                         )
                             span(md-highlight-text="geneVar.searchText") {{entry}}
                         md-chip-template
@@ -68,6 +68,7 @@ md-dialog(layout="column", aria-label="Update Therapeutic Target", flex=85).edit
                         md-items="entry in geneVar.filter(biomarker[i].searchText)",
                         md-item-text="entry",
                         md-floating-label="Biomarker",
+                        md-delay=500,
                         flex
                         )
                             span(md-highlight-text="biomarker.searchText") {{entry}}
@@ -96,6 +97,7 @@ md-dialog(layout="column", aria-label="Update Therapeutic Target", flex=85).edit
                         md-selected-item-change="newBiomarker()",
                         md-select-on-match,
                         md-select-on-focus,
+                        md-delay=500,
                         flex
                         )
                             span(md-highlight-text="biomarker.searchText") {{entry}}
