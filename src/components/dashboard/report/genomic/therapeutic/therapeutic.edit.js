@@ -89,18 +89,18 @@ app.controller('controller.dashboard.report.genomic.therapeutic.edit',
   // Auto-complete search filter
   scope.geneVar.filter = (query) => {
     let deferred = $q.defer();
-    if(query.length < 3) deferred.resolve([]);
 
-    if(query.length >= 3) {
-      $kb.genevar(query).then(
-        (entries) => {
-          deferred.resolve(entries);
-        },
-        (err) => {
-          console.log('Unable to search for entries', err);
-        }
-      );
-    }
+    $kb.genevar(query).then(
+      (entries) => {
+        let filteredEntries = entries;
+        if(query.length < 3) filteredEntries = _.filter(entries, function(entry){return (entry.length < 3)});
+        deferred.resolve(filteredEntries);
+      },
+      (err) => {
+        console.log('Unable to search for entries', err);
+      }
+    );
+
     return deferred.promise;
   };
 
