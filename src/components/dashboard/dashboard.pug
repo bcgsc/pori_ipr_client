@@ -69,14 +69,6 @@ div(layout='row', flex)
                         md-tooltip(ng-if="!maximized", md-direction="right") Events
                     span(flex, ng-show="maximized") Events
 
-
-
-            span(flex)
-            div(layout="row", layout-align="end center", ng-click="toggle()").minimize
-                md-icon(ng-show="maximized") keyboard_arrow_left
-                md-icon(ng-hide="maximized") keyboard_arrow_right
-                span(ng-show="maximized") Minimize
-
         div(flex, layout='column')
             md-subheader.bread-crumbs
                 ui-breadcrumbs(displayname-property="data.displayName", abstract-proxy-property="data.breadcrumbProxy", template-url="uiBreadcrumbs/uiBreadcrumbs.tpl.html")
