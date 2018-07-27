@@ -69,26 +69,6 @@ app.run(
           })
           .then((hasAccess) =>{
             resolve();
-          })
-          .catch((err) => {
-            switch(err) {
-              case 'AuthTokenError':
-                // No session, go to login page
-                $rootScope.returnToState = toState.name; // setting state to return to
-                $rootScope.returnToStateParams = toParams; // setting params of state to return to
-                $state.go('public.login');
-                resolve();
-                break;
-              case 'projectAccessError':
-                // Not allowed to access project - return to dashboard
-                $mdToast.showSimple('You do not have access to cases in this project');
-                $state.go('dashboard.home');
-                resolve();
-                break;
-              default:
-                reject(err);
-
-            }
           });
       });
     }
