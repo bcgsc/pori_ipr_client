@@ -12,8 +12,7 @@ const app = angular.module('bcgscIPR', [
 	'angular-sortable-view',
 	'ngQuill',
 	'chart.js',
-	'btford.socket-io',
-	'ngMessages',
+	'btford.socket-io'
 ])
 .config(function($mdThemingProvider) {
 	let gscBlueMap = $mdThemingProvider.extendPalette('indigo' , {
