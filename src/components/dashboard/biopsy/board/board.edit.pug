@@ -28,7 +28,7 @@ md-dialog(layout="column", aria-label="Edit Biopsy Analysis", flex-md=80, flex-x
                         md-input-container(flex)
                             md-select(ng-model="patient.projects", placeholder="Project(s)", name="Project", ng-required="true", multiple,
                             ng-model-options="{trackBy: '$value.ident'}")
-                                md-option(ng-repeat="p in projects", ng-value="p", ng-disabled="p.name === 'POG'") {{p.name}}
+                                md-option(ng-repeat="p in projects", ng-value="p") {{p.name}}
                             div(ng-messages="PatientForm.Project.$error")
                                     div(ng-message="required") Please select at least one project
 

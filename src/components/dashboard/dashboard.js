@@ -1,6 +1,6 @@
 app.controller('controller.dashboard',
-  ['_', '$scope', '$state', 'api.pog', 'api.image', '$userSettings', 'user', 'isAdmin', '$acl',
-    (_, $scope, $state, $pog, $image, $userSettings, user, isAdmin, $acl) => {
+  ['_', '$rootScope', '$scope', '$state', 'api.pog', 'api.image', '$userSettings', 'user', 'isAdmin', '$acl', 'toastService',
+    (_, $rootScope, $scope, $state, $pog, $image, $userSettings, user, isAdmin, $acl, toastService) => {
       
       $scope.check = {
         resource: $acl.resource,
@@ -12,10 +12,10 @@ app.controller('controller.dashboard',
       $scope.$state = $state;
 
       $scope.maximized = $userSettings.get('sideBarState');
-      $scope.toggle = () => {
+      $rootScope.$on( 'sidebarToggle', (event, eventData) => {
         $userSettings.save('sideBarState', !$scope.maximized);
         $scope.maximized = !$scope.maximized;
-      }
+      });
 
     }
   ]
