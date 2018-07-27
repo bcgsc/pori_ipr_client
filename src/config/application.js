@@ -1,7 +1,7 @@
 /* /src/config/application.js */
 app.run(
-['$rootScope', '$state', '$location', '$q', '$acl', 'api.session', 'api.user', 'api.pog', '$userSettings', '_', '$mdToast',
-($rootScope, $state, $location, $q, $acl, $session, $user, $pog, $userSettings, _, $mdToast) => {
+['$rootScope', '$state', '$location', '$q', '$acl', 'api.session', 'api.user', 'api.pog', '$userSettings', '_', '$mdToast', '$localStorage',
+($rootScope, $state, $location, $q, $acl, $session, $user, $pog, $userSettings, _, $mdToast, $localStorage) => {
   
   
   // On State Change, Show Spinner!
@@ -30,6 +30,11 @@ app.run(
         break;
       default:
         console.log('State Change Error:', event, toState, toParams);
+        $rootScope.returnToState = toState.name; // setting state to return to
+        $rootScope.returnToStateParams = toParams; // setting params of state to return to
+        event.preventDefault();
+        delete $localStorage['bcgscIprToken']; // transitioning with an invalid token creates an infinite loop, so delete
+        $state.go('public.login');
     }
 
     $rootScope.showLoader = false;
@@ -38,7 +43,6 @@ app.run(
 
   // Redirect to login if route requires auth and you're not logged in
   $rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
-
     // require login if not a state name starting w/ 'public'
     let loginRequired = true,
         stateType = toState.name.split('.')[0];
