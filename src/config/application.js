@@ -69,7 +69,6 @@ app.run(
           })
           .then((hasAccess) =>{
             resolve();
-<<<<<<< HEAD
           })
           .catch((err) => {
             switch(err) {
@@ -89,8 +88,6 @@ app.run(
               default:
                 reject(err);
             }
-=======
->>>>>>> 1fecb29fad7a1a299dc09e2ac8272bcf088879d3
           });
       });
     }
