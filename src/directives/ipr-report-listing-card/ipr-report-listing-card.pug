@@ -8,20 +8,28 @@ div.header
         span(flex, ng-if="report.type === 'probe'", ui-sref="dashboard.reports.pog.report.probe.summary({POG: pog.POGID, analysis_report: report.ident})").clickable {{pog.POGID}}
         span(layout="row").text-small
             ipr-report-state(state="report.state")
+    
     div(layout="row").subheader
-        span {{report.patientInformation.tumourType}}
-        span(flex)
+        span(flex) {{report.patientInformation.tumourType}}
         span
-            span Report
+            span Report:
             span {{report.ident}}
 
+div(layout="row").details
+    div(flex)
+        span Biopsy
+        span {{report.analysis.analysis_biopsy || 'N/A'}}
+    div.clickable {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
+        md-tooltip {{ report.createdAt | amDateFormat: 'YYYY-MM-DD HH:mm:ss' }}
 
 div(layout="row").details
     div(flex)
         span Version
         span {{report.reportVersion}}
-    div.clickable {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
-        md-tooltip {{ report.createdAt | amDateFormat: 'YYYY-MM-DD HH:mm:ss' }}
+    div(flex-md=100, ng-if="report.type === 'genomic'")
+        span Ploidy
+        span {{getPloidy(pog)}}
+    
 
 div(layout="row", ng-if="report.type === 'genomic'").details
     div(flex, flex-md=100)
@@ -29,9 +37,8 @@ div(layout="row", ng-if="report.type === 'genomic'").details
         span(ng-if="getTumourContent(pog) !== -1", ng-class="{low: getTumourContent(pog) < 40, clickable: getTumourContent(pog) < 40}") {{getTumourContent(pog)}}%
             md-tooltip(ng-if="getTumourContent(pog) < 40") Low tumour content
         span(ng-if="getTumourContent(pog) === -1") N/A
-    div(flex-md=100)
-        span Ploidy
-        span {{getPloidy(pog)}}
+
+hr(ng-if="report.type === 'genomic'")
 
 div(layout="row", layout-md="column", ng-if="report.type === 'genomic'").details
     div(flex, flex-md=100)
