@@ -125,7 +125,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
 		    }],
         isAdmin: ['$q', 'api.user', 'user', ($q, $user, user) => {
 			    return $q((resolve, reject) => {
-			      resolve($user.isAdmin());
+			      resolve($user.isAdmin(user.groups));
           });
         }],
 		    pogs: ['$q', 'api.pog', ($q, $pog) => {
