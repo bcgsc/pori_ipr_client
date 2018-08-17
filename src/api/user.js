@@ -9,7 +9,6 @@ app.service('api.user', ['_', '$http', '$q', (_, $http, $q) => {
 
   const api = CONFIG.ENDPOINTS.API + '/user';
   let _token = null; // User API token
-  let _groups = [];
 
   let $user = {};
   $user._me = undefined; // Local User Cache
@@ -33,7 +32,6 @@ app.service('api.user', ['_', '$http', '$q', (_, $http, $q) => {
       if($user._me && !$user._me.ident) {
         $user._me
           .then((self) => {
-            _groups = self.data.groups;
             $user._me = self.data;
             resolve($user._me);
           })
@@ -49,7 +47,6 @@ app.service('api.user', ['_', '$http', '$q', (_, $http, $q) => {
         $user._me
           .then(
             (self) => {
-              _groups = self.data.groups;
               $user._me = self.data;
               resolve($user._me);
             },
@@ -68,8 +65,8 @@ app.service('api.user', ['_', '$http', '$q', (_, $http, $q) => {
    *
    * @returns {boolean}
    */
-  $user.isAdmin =() => {
-    let aGroups = _.filter(_groups, (g) => {
+  $user.isAdmin = (groups) => {
+    let aGroups = _.filter(groups, (g) => {
       if(g.name === 'superUser' || g.name === 'admin') return g;
     });
 
