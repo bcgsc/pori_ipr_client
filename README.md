@@ -145,6 +145,8 @@ A file named `.auth.json` is required at the project's root directory containing
 ```
 Where `admin` is your regular user account and `test` is the user account ending in -ipr. Ex: jdavies-ipr
 
+The account is chosen based on what the access environment variable is set to in cypress.json. Default is `admin`.
+
 Assuming the tests are to be run locally, install build dependencies then start a local instance of IPR.
 Run the command `npm run cypress:open` to start Cypress. From there, click the spec file you wish to run.
 
