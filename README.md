@@ -126,6 +126,29 @@ To force the environment you want, preface the gulp command:
 NODE_ENV=[local|development|test|production] gulp
 ```
 
+#### Running tests with Cypress
+
+End to end tests are run using Cypress and written with Mocha + Chai.
+
+A file named `.auth.json` is required at the project's root directory containing the following structure:
+
+```
+{
+  "admin": {
+    "username": ____,
+    "password": ____
+  },
+  "test" {
+    "username": ____,
+    "password": ____
+}
+```
+Where `admin` is your regular user account and `test` is the user account ending in -ipr. Ex: jdavies-ipr
+
+Assuming the tests are to be run locally, install build dependencies then start a local instance of IPR.
+Run the command `npm run cypress:open` to start Cypress. From there, click the spec file you wish to run.
+
+
 #### Source Structure
 
 The main source directory contains all of the application logic, templates, and static files.
