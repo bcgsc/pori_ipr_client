@@ -130,22 +130,14 @@ NODE_ENV=[local|development|test|production] gulp
 
 End to end tests are run using Cypress and written with Mocha + Chai.
 
-A file named `.auth.json` is required at the project's root directory containing the following structure:
+Exported variables are needed to run the tests. If you are storing `CYPRESS_PASSWORD` in a bash_profile file,
+run `chmod 600 ~/.bash_profile` to make it only available for yourself. Required variables to run all tests are:
 
 ```
-{
-  "admin": {
-    "username": ____,
-    "password": ____
-  },
-  "test" {
-    "username": ____,
-    "password": ____
-}
+CYPRESS_ADMIN  ex. jdavies
+CYPRESS_TEST  ex. jdavies-ipr
+CYPRESS_PASSWORD
 ```
-Where `admin` is your regular user account and `test` is the user account ending in -ipr. Ex: jdavies-ipr
-
-The account is chosen based on what the access environment variable is set to in cypress.json. Default is `admin`.
 
 Assuming the tests are to be run locally, install build dependencies then start a local instance of IPR.
 Run the command `npm run cypress:open` to start Cypress. From there, click the spec file you wish to run.
