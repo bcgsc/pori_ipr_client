@@ -48,6 +48,12 @@ section
             dt(flex="{{detailSize}}") Protocol:
             dd(flex) {{report.patientInformation.tumourProtocol}}
 
+            dt(flex="{{detailSize}}") Biopsy:
+            dd(flex) {{report.analysis.analysis_biopsy || 'N/A'}}
+
+            dt(flex="{{detailSize}}")
+            dd(flex)
+
 section
     md-subheader.md-primary Patient Tumour Analysis Summary
 

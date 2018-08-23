@@ -1,4 +1,6 @@
 .md-toolbar-tools
+  md-icon(ng-click="toggleSidebar()", ng-if="!maximized").clickable.margin-right-15 menu
+  md-icon(ng-click="toggleSidebar()", ng-if="maximized").clickable.margin-right-15 close
   h2 
     img(src="/assets/images/bcca_logo.png", style="margin-bottom: -5px;")
     |  BCGSC Integrated Pipeline Reports 

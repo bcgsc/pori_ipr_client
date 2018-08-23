@@ -3,7 +3,7 @@
 ![Build Status](https://www.bcgsc.ca/bamboo/plugins/servlet/wittified/build-status/IPR-DEVCLIENT)
 
 The Integrated Pipeline Reports (IPR) client is designed to consume API data from IPR's API, as well as
-other BC GSC BioFX APIs. The primary function is the production and management of POG Genomic and Probe reports.
+other BC GSC BioFX APIs. The primary function is the production and management of POG Genomic and Targeted Gene reports.
 
 IPR has grown to include Biopsy and sample tracking for POG as well as Knowledgebase. All of these functions are
 plugged in to a central dashboard framework that allows users to seamlessly switch off between tasks. 
@@ -123,7 +123,7 @@ launch the local dev server.
 
 To force the environment you want, preface the gulp command:
 ```
-NODE_ENV=development gulp
+NODE_ENV=[local|development|test|production] gulp
 ```
 
 #### Source Structure

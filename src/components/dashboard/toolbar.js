@@ -4,11 +4,13 @@ app.controller('controller.dashboard.toolbar',
 
       $scope.isAdmin = isAdmin;
       $scope.user = $session.user();
+      $scope.maximized = $userSettings.get('sideBarState');
 
-      $scope.toggleMenu = () => {
-        $mdSidenav('topLevelNavigation').toggle();
-      };
-      
+      // Toggle sidebar
+      $scope.toggleSidebar = () => {
+        $scope.$emit('sidebarToggle');
+        $scope.maximized = !$scope.maximized;
+      }
 
       // Open Feedback
       $scope.openFeedback = ($event) => {
@@ -27,16 +29,6 @@ app.controller('controller.dashboard.toolbar',
           }
         )
 
-      };
-
-      $scope.loadNewPog = ($event) => {
-
-        $mdDialog.show({
-          targetEvent: $event,
-          templateUrl: 'dashboard/loadPOG.html',
-          clickOutToClose: false,
-          controller: 'controller.dashboard.loadPOG'
-        });
       };
 
       /**

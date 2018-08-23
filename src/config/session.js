@@ -20,6 +20,18 @@ app.run(['$rootScope', '$http', '$injector', '$localStorage', 'api.user', '_', (
   }
   
   let user;
+
+  let $acl = $injector.get('$acl');
+  
+  /**
+   * Global Permission Resource Lookup
+   *
+   * @param {string} r - Resource name
+   * @returns {boolean} - User is allowed to see resource
+   * @private
+   */
+  $rootScope.SES_permissionResource = $acl.resource;
+  $rootScope.SES_permissionAction = $acl.action;
   
   $user.me()
     .then((u) => {
@@ -30,22 +42,7 @@ app.run(['$rootScope', '$http', '$injector', '$localStorage', 'api.user', '_', (
       
       // TODO: Plugin to API permission system
       
-      user = u;
-      
-      let $acl = $injector.get('$acl');
-  
-      /**
-       * Global Permission Resource Lookup
-       *
-       * @param {string} r - Resource name
-       * @returns {boolean} - User is allowed to see resource
-       * @private
-       */
-      $rootScope.SES_permissionResource = $acl.resource;
-  
-  
-      $rootScope.SES_permissionAction = $acl.action;
-      
+      user = u;      
     })
     .catch((err) => {
       // Probably not logged in....
