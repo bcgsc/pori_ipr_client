@@ -139,7 +139,7 @@ CYPRESS_TEST  ex. jdavies-ipr
 CYPRESS_PASSWORD
 ```
 
-Assuming the tests are to be run locally, install build dependencies then start a local instance of IPR.
+Assuming the tests are to be run locally, install build dependencies then start a local instance of IPR with `NODE_ENV=local gulp`.
 Run the command `npm run cypress:open` to start Cypress. From there, click the spec file you wish to run.
 
 
