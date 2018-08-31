@@ -10,6 +10,9 @@ $kb-status-requires-hlight: rgb(253, 246, 206);
 $kb-status-flagged-solid: rgb(207, 0, 15);
 $kb-status-flagged-hlight: rgb(251, 208, 204);
 
+$kb-status-legacy-solid: rgb(50, 50, 50);
+$kb-status-legacy-hlight: rgb(230, 230, 230);
+
 .knowledgebase {
 
   h1.title {
@@ -200,6 +203,11 @@ $kb-status-flagged-hlight: rgb(251, 208, 204);
                 color: $kb-status-requires-solid;
                 border: 1px solid $kb-status-requires-solid;
                 background-color: $kb-status-requires-hlight;
+              }
+              &.legacy span {
+                color: $kb-status-legacy-solid;
+                border: 1px solid $kb-status-legacy-solid;
+                background-color: $kb-status-legacy-hlight;
               }
             }
 
@@ -529,6 +537,11 @@ md-dialog.kbDialog {
         color: $kb-status-requires-solid;
         border: 1px solid $kb-status-requires-solid;
         background-color: $kb-status-requires-hlight;
+      }
+      &.legacy span {
+        color: $kb-status-legacy-solid;
+        border: 1px solid $kb-status-legacy-solid;
+        background-color: $kb-status-legacy-hlight;
       }
     }
 

@@ -43,7 +43,7 @@ md-dialog(layout="column", aria-label="Knowledgebase Reference Viewer", flex=85)
                         md-icon(ng-show="(!reference.createdBy || reference.createdBy.ident !== user.ident) && !externalMode", ng-click="editingStatus=!editingStatus") edit
                     span(layout="column", ng-show="editingStatus", ng-if="!externalMode").updateStatus
                         md-select(ng-model="update.status", placeholder="Update Status")
-                            md-option(ng-value="status", ng-if="status !== 'NEW'", ng-repeat="status in vocabulary.status track by $index") {{status}}
+                            md-option(ng-value="status", ng-if="status !== 'NEW' && status !== 'LEGACY'", ng-repeat="status in vocabulary.status track by $index") {{status}}
                         div(layout="row")
                             md-input-container(flex)
                                 input(ng-model="update.comments", flex, placeholder="Update Comments")
@@ -92,6 +92,17 @@ md-dialog(layout="column", aria-label="Knowledgebase Reference Viewer", flex=85)
                             a(href="https://www.ncbi.nlm.nih.gov/pubmed/?term={{reference.ref_id}}", target="_blank") {{reference.ref_id}}
                                 md-icon open_in_new
                         span(ng-if="reference.id_type !== 'pubmed'") {{reference.ref_id}}
+
+            div(layout="row").rowCard
+                div(flex=50, layout="column")
+                    h5 Created By
+                    span(ng-if="reference.createdBy !== null") {{reference.createdBy.firstName}} {{reference.createdBy.lastName}}
+                    span(ng-if="reference.createdBy == null") N/A
+
+                div(flex=50, layout="column")
+                    h5 Reviewed By
+                    span(ng-if="reference.reviewedBy !== null") {{reference.reviewedBy.firstName}} {{reference.reviewedBy.lastName}}
+                    span(ng-if="reference.reviewedBy == null") N/A
 
             div(layout="row").rowCard
                 div(flex, layout="column")
