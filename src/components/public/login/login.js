@@ -1,28 +1,40 @@
-app.controller('controller.public.login', 
-['$q', '_', '$scope', '$rootScope', 'api.session', 'api.user', '$state', '$acl', '$mdToast', '$mdDialog', 
-($q, _, $scope, $rootScope, $session, $user, $state, $acl, $mdToast, $mdDialog) => {
-  
-  $scope.user = {
-    username: null,
-    password: null
-  };
-  
-  // Login clicked
-  $scope.login = (f) => {
-    if(f.$invalid) {
-      f.$setDirty();
-      angular.forEach(f.$error, (field) => {
-        angular.forEach(field, (errorField) => {
-          errorField.$setTouched();
-        });
-      });
-      return;
-    }
+app.controller('controller.public.login',
+  ['$q', '_', '$scope', '$rootScope', '$http', 'api.session', 'api.user', '$state', '$acl', '$mdToast', '$mdDialog', 'keycloakAuth',
+    ($q, _, $scope, $rootScope, $http, $session, $user, $state, $acl, $mdToast, $mdDialog, keycloakAuth) => {
+      // $session.login();
+      // $scope.user = {
+      //   username: null,
+      //   password: null,
+      // };
 
-    // Run session login
-    $session.login($scope.user.username, $scope.user.password)
-      .then($user.me)
-      .then((result) => {
+      keycloakAuth.setToken()
+        .then((res) => {
+          console.log(res);
+          console.log(keycloakAuth.getToken());
+          $user.me().then((response) => {
+            console.log(response);
+          });
+        });
+      // $user.me().then((res) => {
+      //   console.log(res);
+      // });
+  
+      // Login clicked
+      $scope.login = (f) => {
+        if (f.$invalid) {
+          f.$setDirty();
+          angular.forEach(f.$error, (field) => {
+            angular.forEach(field, (errorField) => {
+              errorField.$setTouched();
+            });
+          });
+          return;
+        }
+
+        // Run session login
+        $session.login($scope.user.username, $scope.user.password)
+          .then($user.me)
+          .then((result) => {
         $acl.injectUser(result);
 
         if($rootScope.returnToState) {
@@ -36,23 +48,22 @@ app.controller('controller.public.login',
         
         if($acl.inGroup('clinician')) {
           $state.go('dashboard.reports.genomic');
-          return;
+          
         } else {
           $state.go('dashboard.reports.dashboard');
-          return;
+          
         }
       })
-      .catch((error) => {
-        if(error.status === 400) return $mdToast.showSimple('Unable to authenticate with the provided credentials');
-        console.log('Error result', error);
-      });
-  }
+          .catch((error) => {
+            if (error.status === 400) return $mdToast.showSimple('Unable to authenticate with the provided credentials');
+            console.log('Error result', error);
+          });
+      };
 
-  $scope.requestAccount = () => {
-    $mdDialog.show({
-      templateUrl: 'public/login/requestAccount.html',
-      controller: 'controller.public.requestAccount'
-    });
-  }
-  
-}]);
+      // $scope.requestAccount = () => {
+      //   $mdDialog.show({
+      //     templateUrl: 'public/login/requestAccount.html',
+      //     controller: 'controller.public.requestAccount',
+      //   });
+      // };
+    }]);
