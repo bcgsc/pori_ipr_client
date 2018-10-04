@@ -9,7 +9,7 @@ app.controller('knowledgebase.references.edit',
   scope.reference.disease_list = _.join(scope.reference.disease_list, ';');
   scope.formAction = (action === 'new') ? 'Create' : 'Modify';
   scope.vocabulary = vocabulary;
-  scope.user = $user._me;
+  scope.user = $user.meObj;
   scope.action = action;
   scope.externalMode = $acl.inGroup('clinician') || $acl.inGroup('collaborator');
 

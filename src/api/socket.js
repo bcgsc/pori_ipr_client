@@ -1,32 +1,31 @@
-app.factory('api.socket', ['socketFactory', '$localStorage', '$q', function (socketFactory, $localStorage, $q) {
+app.factory('api.socket', ['socketFactory', '$localStorage', '$q',
+  (socketFactory, $cookies, $q) => {
+    let _ready = false;
 
-  let _ready = false;
+    const myIoSocket = io.connect(CONFIG.ENDPOINTS.SOCKET);
 
-  let myIoSocket = io.connect(CONFIG.ENDPOINTS.SOCKET);
-
-  let socket = socketFactory({
-    ioSocket: myIoSocket
-  });
-
-  socket.on('connect', function () {
-    socket.emit('authenticate', {token: $localStorage.bcgscIprToken});
-  });
-
-  socket.on('authenticated', (msg) => {
-    _ready = true;
-    console.log('Socket.io successfully authenticated');
-  });
-
-  socket.on('disconnect', function () {
-    console.log('Connection dropped.');
-  });
-
-  socket.ready = function () {
-    return $q(function (resolve, reject) {
-      (_ready) ? resolve() : reject();
+    const socket = socketFactory({
+      ioSocket: myIoSocket,
     });
-  };
 
-  return socket;
+    socket.on('connect', () => {
+      socket.emit('authenticate', { token: $cookies.get('BCGSC_SSO') });
+    });
 
-}]);
+    socket.on('authenticated', () => {
+      _ready = true;
+      console.log('Socket.io successfully authenticated');
+    });
+
+    socket.on('disconnect', () => {
+      console.log('Connection dropped.');
+    });
+
+    socket.ready = () => {
+      return $q((resolve, reject) => {
+        (_ready) ? resolve() : reject();
+      });
+    };
+
+    return socket;
+  }]);

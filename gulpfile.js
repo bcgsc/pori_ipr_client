@@ -45,6 +45,7 @@ let files = {
       './node_modules/angular-socket-io/socket.min.js',
       './node_modules/angular-messages/angular-messages.js',
       './node_modules/keycloak-js/dist/keycloak.min.js',
+      './node_modules/angular-cookies/angular-cookies.min.js',
     ],
     
     // Application javascript sources

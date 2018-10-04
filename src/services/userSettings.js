@@ -10,7 +10,7 @@ app.factory('$userSettings', ['_', '$q', 'api.user', function(_, $q, $user) {
 
   let $us =  {
     init: () => {
-      userSettings = $user._me.settings;
+      userSettings = $user.meObj.settings;
     },
 
     /**
@@ -50,13 +50,13 @@ app.factory('$userSettings', ['_', '$q', 'api.user', function(_, $q, $user) {
     update: () => {
       let deferred = $q.defer();
 
-      let user = $user._me;
+      let user = $user.meObj;
       user.settings = userSettings; // Overwrite previous settings value
       
       $user.update(user).then(
         (result) => {
-          $user._me = result;
-          deferred.resolve($user._me);
+          $user.meObj = result;
+          deferred.resolve($user.meObj);
         },
         (err) => {
           console.log('Failed to update user settings', err);

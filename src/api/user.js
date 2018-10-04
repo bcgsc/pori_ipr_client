@@ -6,12 +6,11 @@
  *
  */
 app.service('api.user', ['_', '$http', '$q', (_, $http, $q) => {
+  const api = `${CONFIG.ENDPOINTS.API}/user`;
+  const _token = null; // User API token
 
-  const api = CONFIG.ENDPOINTS.API + '/user';
-  let _token = null; // User API token
-
-  let $user = {};
-  $user._me = undefined; // Local User Cache
+  const $user = {};
+  $user.meObj = undefined; // Local User Cache
   
   
   /**
@@ -21,41 +20,18 @@ app.service('api.user', ['_', '$http', '$q', (_, $http, $q) => {
    * @returns {Promise}
    */
   $user.me = () => {
-    
-    return new Promise((resolve, reject) => {
-      
-      if($user._me && $user._me.ident) {
-        return resolve($user._me);
+    return $q((resolve, reject) => {
+      // Check for existing user object
+      if (_.isObject($user.meObj)) {
+        resolve($user.meObj);
       }
-      
-      // Detect Promise
-      if($user._me && !$user._me.ident) {
-        $user._me
-          .then((self) => {
-            $user._me = self.data;
-            resolve($user._me);
-          })
-          .catch((e) => {
-            console.log('Failed to retrieve user', e);
-          });
-      }
-      
-      // Detect not init'd
-      if($user._me === undefined) {
-        $user._me = $http.get(api + '/me');
-  
-        $user._me
-          .then(
-            (self) => {
-              $user._me = self.data;
-              resolve($user._me);
-            },
-            (error) => {
-              reject(error);
-            }
-          );
-      }
-      
+      $http.get(`${api}/me`)
+        .then((resp) => {
+          $user.meObj = resp.data;
+          resolve($user.meObj);
+        }).catch((error) => {
+          reject(error);
+        });
     });
   };
   
@@ -66,11 +42,11 @@ app.service('api.user', ['_', '$http', '$q', (_, $http, $q) => {
    * @returns {boolean}
    */
   $user.isAdmin = (groups) => {
-    let aGroups = _.filter(groups, (g) => {
-      if(g.name === 'superUser' || g.name === 'admin') return g;
+    const aGroups = _.filter(groups, (g) => {
+      if (g.name === 'superUser' || g.name === 'admin') return g;
     });
 
-    return (aGroups.length > 0)
+    return (aGroups.length > 0);
   };
 
   /**
@@ -79,8 +55,7 @@ app.service('api.user', ['_', '$http', '$q', (_, $http, $q) => {
    * @returns {promise}
    */
   $user.all = () => {
-
-    let deferred = $q.defer();
+    const deferred = $q.defer();
 
     $http.get(api).then(
       (result) => {
@@ -88,11 +63,10 @@ app.service('api.user', ['_', '$http', '$q', (_, $http, $q) => {
       },
       (err) => {
         deferred.reject(err);
-      }
+      },
     );
 
     return deferred.promise;
-
   };
 
   /**
@@ -102,15 +76,15 @@ app.service('api.user', ['_', '$http', '$q', (_, $http, $q) => {
    * @returns {Function}
    */
   $user.update = (user) => {
-    let deferred = $q.defer();
+    const deferred = $q.defer();
 
-    $http.put(api + '/' + user.ident,user).then(
+    $http.put(`${api}/${user.ident}`, user).then(
       (resp) => {
         deferred.resolve(resp.data);
       },
       (err) => {
         deferred.reject(err);
-      }
+      },
     );
 
     return deferred.promise;
@@ -123,47 +97,46 @@ app.service('api.user', ['_', '$http', '$q', (_, $http, $q) => {
    * @returns {promise}
    */
   $user.create = (user) => {
-    let deferred = $q.defer();
+    const deferred = $q.defer();
 
-    $http.post(api + '/', user).then(
+    $http.post(`${api}/`, user).then(
       (resp) => {
         deferred.resolve(resp.data);
       },
       (err) => {
         deferred.reject(err);
-      }
+      },
     );
 
     return deferred.promise;
   };
 
   $user.search = (query) => {
-    let deferred = $q.defer();
+    const deferred = $q.defer();
 
-    $http.get(api + '/search?query='+query).then(
+    $http.get(`${api}/search?query=${query}`).then(
       (resp) => {
         deferred.resolve(resp.data);
       },
       (err) => {
         deferred.reject(err);
-      }
+      },
     );
 
     return deferred.promise;
   };
 
   $user.delete = (user) => {
-
-    let deferred = $q.defer();
+    const deferred = $q.defer();
 
     // Remove User
-    $http.delete(api + '/' + user.ident).then(
+    $http.delete(`${api}/${user.ident}`).then(
       (resp) => {
         deferred.resolve(resp.data);
       },
       (err) => {
         deferred.reject(err);
-      }
+      },
     );
 
     return deferred.promise;
@@ -177,15 +150,15 @@ app.service('api.user', ['_', '$http', '$q', (_, $http, $q) => {
      * @returns {promise}
      */
     all: () => {
-      let deferred = $q.defer();
+      const deferred = $q.defer();
 
-      $http.get(api + '/group').then(
+      $http.get(`${api}/group`).then(
         (resp) => {
           deferred.resolve(resp.data);
         },
         (err) => {
           deferred.reject(err);
-        }
+        },
       );
 
       return deferred.promise;
@@ -198,13 +171,13 @@ app.service('api.user', ['_', '$http', '$q', (_, $http, $q) => {
      */
     retrieve: (ident) => {
       return $q((resolve, reject) => {
-        $http.get(api + '/group/' + ident).then(
+        $http.get(`${api}/group/${ident}`).then(
           (resp) => {
             resolve(resp.data);
           },
           (err) => {
             reject(err);
-          }
+          },
         );
       });
     },
@@ -215,15 +188,15 @@ app.service('api.user', ['_', '$http', '$q', (_, $http, $q) => {
      * @returns {promise}
      */
     create: (group) => {
-      let deferred = $q.defer();
+      const deferred = $q.defer();
 
-      $http.post(api + '/group', group).then(
+      $http.post(`${api}/group`, group).then(
         (resp) => {
           deferred.resolve(resp.data);
         },
         (err) => {
           deferred.reject(err);
-        }
+        },
       );
 
       return deferred.promise;
@@ -235,15 +208,15 @@ app.service('api.user', ['_', '$http', '$q', (_, $http, $q) => {
      * @returns {promise}
      */
     remove: (group) => {
-      let deferred = $q.defer();
+      const deferred = $q.defer();
 
-      $http.delete(api + '/group/' + group.ident).then(
+      $http.delete(`${api}/group/${group.ident}`).then(
         (resp) => {
           deferred.resolve(resp.data);
         },
         (err) => {
           deferred.reject(err);
-        }
+        },
       );
 
       return deferred.promise;
@@ -256,15 +229,15 @@ app.service('api.user', ['_', '$http', '$q', (_, $http, $q) => {
      * @returns {promise}
      */
     update: (ident, group) => {
-      let deferred = $q.defer();
+      const deferred = $q.defer();
 
-      $http.put(api + '/group/'+ident, group).then(
+      $http.put(`${api}/group/${ident}`, group).then(
         (resp) => {
           deferred.resolve(resp.data);
         },
         (err) => {
           deferred.reject(err);
-        }
+        },
       );
 
       return deferred.promise;
@@ -284,15 +257,15 @@ app.service('api.user', ['_', '$http', '$q', (_, $http, $q) => {
          * @returns {promise}
          */
         add: (user) => {
-          let deferred = $q.defer();
+          const deferred = $q.defer();
 
-          $http.post(api + '/group/'+group+'/member', {user: user}).then(
+          $http.post(`${api}/group/${group}/member`, { user: user }).then(
             (resp) => {
               deferred.resolve(resp.data);
             },
             (err) => {
               deferred.reject(err);
-            }
+            },
           );
 
           return deferred.promise;
@@ -304,34 +277,33 @@ app.service('api.user', ['_', '$http', '$q', (_, $http, $q) => {
          * @returns {promise}
          */
         remove: (user) => {
-          let deferred = $q.defer();
+          const deferred = $q.defer();
 
           $http({
-            url: api + '/group/' + group + '/member',
+            url: `${api}/group/${group}/member`,
             method: 'DELETE',
             data: {
-              user: user
+              user: user,
             },
             headers: {
-              'Content-Type': 'application/json'
-            }
+              'Content-Type': 'application/json',
+            },
           }).then(
             (resp) => {
               deferred.resolve(resp.data);
             },
             (err) => {
               deferred.reject(err);
-            }
+            },
           );
 
           return deferred.promise;
-        }
-      }
-    } // End Member functions
+        },
+      };
+    }, // End Member functions
 
   };
 
 
   return $user;
-
 }]);

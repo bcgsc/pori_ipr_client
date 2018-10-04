@@ -5,9 +5,9 @@
  * managed through this construct.
  *
  */
-app.factory('api.session', ['_', '$http', '$q', '$localStorage', 'api.user', 'api.pog', (_, $http, $q, $localStorage, $user, $pog) => {
+app.factory('api.session', ['_', '$http', '$q', '$cookies', 'api.user', 'api.pog', (_, $http, $q, $cookies, $user, $pog) => {
   
-  const localStorageKey = 'bcgscIprToken';  // Local Storage Token Key
+  const localStorageKey = 'BCGSC_SSO';  // Local Storage Token Key
   const api = CONFIG.ENDPOINTS.API + '/session';   // API Namespace setting
   
   let _token = null,        // User API token
@@ -49,9 +49,8 @@ app.factory('api.session', ['_', '$http', '$q', '$localStorage', 'api.user', 'ap
    *
    */ 
   $session.store = (token, user) => {
-    
-    $localStorage[localStorageKey] = token; // Set token on client storage for session permanence
-    $http.defaults.headers.common['Authorization'] = token; // Set $http header token
+    $cookies.set(localStorageKey, token); // Set token on client storage for session permanence
+    $http.defaults.headers.common.Authorization = token; // Set $http header token
     me = user; // Set lib cache
   };
   
@@ -117,7 +116,7 @@ app.factory('api.session', ['_', '$http', '$q', '$localStorage', 'api.user', 'ap
           
           //$session.store(_token, resp.data); // Store response!
           
-          $user._me = resp.data;
+          $user.meObj = resp.data;
           
           resolve(resp);
           
@@ -157,7 +156,7 @@ app.factory('api.session', ['_', '$http', '$q', '$localStorage', 'api.user', 'ap
           // Local logout
           delete $localStorage[localStorageKey]; // Remove localStorage entry
           me = null; // Reset lib cache
-          $user._me = null; // Reset $user lib cache
+          $user.meObj = null; // Reset $user lib cache
           $user._token = null; // Reset $user lib token
           _token = null; // Reset lib token cache
           delete $http.defaults.headers.common['Authorization']; // Remove authorization token entry

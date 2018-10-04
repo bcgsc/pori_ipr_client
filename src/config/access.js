@@ -67,7 +67,7 @@ function httpInterceptors($rootScope, $q, $injector) {
     request: (config) => {
       const keycloakAuth = $injector.get('keycloakAuth');
       if (keycloakAuth.getToken() !== '') {
-        config.headers.Authentication = keycloakAuth.getToken();
+        config.headers.Authorization = keycloakAuth.getToken();
       }
       return config;
     },

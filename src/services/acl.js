@@ -3,14 +3,14 @@ app.service('$acl', ['$q', '_', 'api.session', 'api.user', 'api.pog', ($q, _, $s
   let user;
   
   // Init session & services
-  $session.init()
-    .then($user.me)
-    .then((u) => {
-      user = u;
-    })
-    .catch((e) => {
-      console.log('acl failed to get user', e);
-    });
+  // $session.init()
+  //   .then($user.me)
+  //   .then((u) => {
+  //     user = u;
+  //   })
+  //   .catch((e) => {
+  //     console.log('acl failed to get user', e);
+  //   });
   
   
   const actions = {
@@ -175,9 +175,9 @@ app.service('$acl', ['$q', '_', 'api.session', 'api.user', 'api.pog', ($q, _, $s
      *
      */
     inGroup: (group) => {
-      return !(!_.find(user.groups, function(userGroup) {
-        return group.toLowerCase() == userGroup.name.toLowerCase();
-      }));
+      return !!_.find(user.groups, (userGroup) => {
+        return group.toLowerCase() === userGroup.name.toLowerCase();
+      });
     },
 
     /**
