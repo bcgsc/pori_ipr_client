@@ -49,7 +49,7 @@ app.factory('api.session', ['_', '$http', '$q', '$cookies', 'api.user', 'api.pog
    *
    */ 
   $session.store = (token, user) => {
-    $cookies.set(localStorageKey, token); // Set token on client storage for session permanence
+    $cookies.put(localStorageKey, token); // Set token on client storage for session permanence
     $http.defaults.headers.common.Authorization = token; // Set $http header token
     me = user; // Set lib cache
   };
@@ -61,37 +61,33 @@ app.factory('api.session', ['_', '$http', '$q', '$cookies', 'api.user', 'api.pog
    *
    */
   $session.init = () => {
-    
     return $q((resolve, reject) => {
-    
       // Are we already initialized?
-      if(initialized === true) resolve(me);
+      if (initialized === true) resolve(me);
       
       // Retrieve token from local storage
-      let token = $localStorage[localStorageKey];
+      const token = $cookies.get(localStorageKey);
       _token = token; // Set local cache.
       
       // Token exists?
-      if(token === false || token === undefined || token === null) {
+      if (token === false || token === undefined || token === null) {
         reject('AuthTokenError');
       }
       
-      $http.defaults.headers.common['Authorization'] = token;
+      $http.defaults.headers.common.Authorization = token;
       
       // We've got a session token, lets try and get account details
       $user.me()
-        .then((me) => {
+        .then((resp) => {
           // Got a good token, store local
-          $session.store(token, me);
-          resolve(me);
+          $session.store(token, resp);
+          resolve(resp);
         })
         .catch((err) => {
           console.log('Failed to retrieve user following session init', err);
-          reject({message: 'Failed to initialize session'});
+          reject({ message: 'Failed to initialize session' });
         });
-      
     });
-    
   };
   
   /*

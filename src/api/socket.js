@@ -1,11 +1,9 @@
-app.factory('api.socket', ['socketFactory', '$localStorage', '$q',
+app.factory('api.socket', ['socketFactory', '$cookies', '$q',
   (socketFactory, $cookies, $q) => {
-    let _ready = false;
-
-    const myIoSocket = io.connect(CONFIG.ENDPOINTS.SOCKET);
+    let ready = false;
 
     const socket = socketFactory({
-      ioSocket: myIoSocket,
+      ioSocket: io.connect(CONFIG.ENDPOINTS.SOCKET),
     });
 
     socket.on('connect', () => {
@@ -13,7 +11,7 @@ app.factory('api.socket', ['socketFactory', '$localStorage', '$q',
     });
 
     socket.on('authenticated', () => {
-      _ready = true;
+      ready = true;
       console.log('Socket.io successfully authenticated');
     });
 
@@ -23,7 +21,10 @@ app.factory('api.socket', ['socketFactory', '$localStorage', '$q',
 
     socket.ready = () => {
       return $q((resolve, reject) => {
-        (_ready) ? resolve() : reject();
+        if (ready) {
+          resolve();
+        }
+        reject();
       });
     };
 
