@@ -1,7 +1,7 @@
 /* /src/config/application.js */
 app.run(
-  ['$rootScope', '$state', '$location', '$q', '$acl', 'api.session', 'api.user', 'api.pog', '$userSettings', '_', '$mdToast', '$localStorage',
-    ($rootScope, $state, $location, $q, $acl, $session, $user, $pog, $userSettings, _, $mdToast, $localStorage) => {
+  ['$rootScope', '$state', '$location', '$q', '$acl', '$cookies', 'api.user', 'api.pog', '$userSettings', '_', '$mdToast', '$localStorage',
+    ($rootScope, $state, $location, $q, $acl, $cookies, $user, $pog, $userSettings, _, $mdToast, $localStorage) => {
       // On State Change, Show Spinner!
       $rootScope.$on('$stateChangeStart', (event, toState, toParams, fromState, fromParams) => {
         $rootScope.showLoader = true;
@@ -30,7 +30,7 @@ app.run(
             $rootScope.returnToState = toState.name; // setting state to return to
             $rootScope.returnToStateParams = toParams; // setting params of state to return to
             event.preventDefault();
-            delete $localStorage.bcgscIprToken; // transitioning with an invalid token creates an infinite loop, so delete
+            $cookies.remove('BCGSC_SSO'); // transitioning with an invalid token creates an infinite loop, so delete
             $state.go('public.login');
         }
 

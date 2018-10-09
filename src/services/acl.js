@@ -1,17 +1,5 @@
-app.service('$acl', ['$q', '_', 'api.session', 'api.user', 'api.pog', ($q, _, $session, $user, $pog) => {
-  
+app.service('$acl', ['$q', '_', 'api.user', 'api.pog', ($q, _, $user, $pog) => {
   let user;
-  
-  // Init session & services
-  // $session.init()
-  //   .then($user.me)
-  //   .then((u) => {
-  //     user = u;
-  //   })
-  //   .catch((e) => {
-  //     console.log('acl failed to get user', e);
-  //   });
-  
   
   const actions = {
     report: {

@@ -1,4 +1,4 @@
-app.controller('controller.dashboard.admin.users.groups', ['_', '$scope', '$mdSidenav', '$state', '$mdDialog', '$mdToast', 'api.session', 'api.user', 'isAdmin', 'groups', (_, $scope, $mdSidenav, $state, $mdDialog, $mdToast, $session, $user, isAdmin, groups) => {
+app.controller('controller.dashboard.admin.users.groups', ['_', '$scope', '$mdSidenav', '$state', '$mdDialog', '$mdToast', 'api.user', 'isAdmin', 'groups', (_, $scope, $mdSidenav, $state, $mdDialog, $mdToast, $user, isAdmin, groups) => {
 
   $scope.groups = groups;
 

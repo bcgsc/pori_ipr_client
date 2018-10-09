@@ -10,7 +10,6 @@ app.factory('api.jira', ['_', '$http', '$q', 'api.user', (_, $http, $q, $user) =
   const api = 'https://www.bcgsc.ca/jira/rest/api/2';
   const apiProxy = CONFIG.ENDPOINTS.API + '/jira';
   let $jira = {};
-  let $session = null;
 
   /**
    * JIRA Ticket Namespace

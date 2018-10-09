@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.report.genomic.pathwayAnalysis',
-  ['_', '$q', '$scope', '$mdDialog', '$mdToast', 'api.pog', 'api.summary.pathwayAnalysis', 'FileUploader', 'api.session', 'pog', 'report', 'pathway',
-    (_, $q, $scope, $mdDialog, $mdToast, $pog, $pathway, FileUploader, $session, pog, report, pathway) => {
+  ['_', '$q', '$scope', '$mdDialog', '$mdToast', 'api.pog', 'api.summary.pathwayAnalysis', 'FileUploader', '$cookies', 'pog', 'report', 'pathway',
+    (_, $q, $scope, $mdDialog, $mdToast, $pog, $pathway, FileUploader, $cookies, pog, report, pathway) => {
 
       $scope.pog = pog;
 
@@ -80,7 +80,7 @@ app.controller('controller.dashboard.report.genomic.pathwayAnalysis',
               url: CONFIG.ENDPOINTS.API + '/POG/' + pog.POGID +  '/report/' + report.ident + '/genomic/summary/pathwayAnalysis',
             });
 
-            uploader.headers['Authorization'] = $session.getToken();
+            uploader.headers['Authorization'] = $cookies.get('BCGSC_SSO');
             uploader.method = 'PUT';
             uploader.alias = "pathway";
 

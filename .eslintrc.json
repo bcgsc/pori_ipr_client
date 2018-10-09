@@ -15,7 +15,10 @@
         "angular": true,
         "app": true,
         "confirm": true,
-        "alert": true
+        "alert": true,
+        "Keycloak": true,
+        "io": true,
+        "CONFIG": true
     },
     "plugins": [
         "cypress"

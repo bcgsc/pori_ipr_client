@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.report.genomic.slide',
-['_', '$q', '$scope', 'pog', 'report', '$mdDialog', '$mdToast', 'api.presentation', 'slides', 'FileUploader', 'api.session',
-(_, $q, $scope, pog, report, $mdDialog, $mdToast, $presentation, slides, FileUploader, $session) => {
+['_', '$q', '$scope', 'pog', 'report', '$mdDialog', '$mdToast', 'api.presentation', 'slides', 'FileUploader', '$cookies',
+(_, $q, $scope, pog, report, $mdDialog, $mdToast, $presentation, slides, FileUploader, $cookies) => {
   
   $scope.pog = pog;
   $scope.report = report;
@@ -59,7 +59,7 @@ app.controller('controller.dashboard.report.genomic.slide',
       url: `${CONFIG.ENDPOINTS.API}/POG/${pog.POGID}/report/${report.ident}/genomic/presentation/slide`
     });
   
-    u.headers['Authorization'] = $session.getToken();
+    u.headers['Authorization'] = $cookies.get('BCGSC_SSO');
     u.method = 'POST';
     u.alias = "file";    // Name of the file in the POST
     

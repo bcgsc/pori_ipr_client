@@ -10,9 +10,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     $injector.get('$state').go('error.404', null, {location: false});
     return $location.path();
   });
-  
-  
-  
+
   // Master State Provider
   // All states are defined and configured on this object
   $stateProvider
@@ -21,26 +19,6 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     .state('public', {
       abstract: true,
       templateUrl: 'public/layout.html',
-      resolve: {
-        _: ['$q', 'api.session', '$state', ($q, $session, $state) => {
-          return $q((resolve, reject) => {
-         
-            if(!$session.getToken()) return resolve();
-            
-            $session.init().then(
-              (user) => {
-                if(user) $state.go('dashboard.reports.dashboard');
-                reject('Already logged in');
-              },
-              (err) => {
-                resolve();
-              }
-            )
-            
-          });
-          
-        }]
-      }
     })
 
     // Request access account for Interactive-Pog-Report
@@ -104,7 +82,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         breadcrumbProxy: 'dashboard.reports',
       },
       resolve: {
-        user: ['$q', 'api.session', 'api.user', '$state', '$userSettings', ($q, $session, $user, $state, $userSettings) => {
+        user: ['$q', 'api.session', 'api.user', '$state', '$userSettings', ($q, $user, $state, $userSettings) => {
           return $q((resolve, reject) => {
             // Attempt session initialization
             $user.me()
@@ -798,27 +776,8 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       templateUrl: 'print/print.html',
       controller: 'controller.print',
       data: {
-        displayName: 'Print'
+        displayName: 'Print',
       },
-      resolve: {
-        user: ['$q', 'api.session', '$state', ($q, $session, $state) => {
-          return $q((resolve, reject) => {
-            // Attempt session initialization
-            $session.init().then(
-              (user) => {
-                // Session init'd, return user
-                resolve(user);
-              },
-              (err) => {
-                // No session, go to login page
-                $state.go('public.login');
-                reject(err);
-              }
-            );
-
-          });
-        }],
-      }
     })
 
     .state('print.POG', {
