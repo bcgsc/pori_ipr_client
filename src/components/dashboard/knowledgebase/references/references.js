@@ -3,7 +3,7 @@ app.controller('knowledgebase.references',
 ($rootScope, $q, _, $scope, $sanitize, $mdDialog, $mdToast, $kbUtils, $kb, references, ref_count, vocabulary, $http) => {
 
   $scope.references = [];
-  $scope.externalMode = $rootScope._externalMode;
+  $scope.externalMode = $rootScope.isExternalMode;
 
   $http.get('../assets/json/knowledgebaseGlossary.json')
   .then((glossary) => {

@@ -80,7 +80,7 @@ app.controller('controller.dashboard.report.genomic.pathwayAnalysis',
               url: CONFIG.ENDPOINTS.API + '/POG/' + pog.POGID +  '/report/' + report.ident + '/genomic/summary/pathwayAnalysis',
             });
 
-            uploader.headers['Authorization'] = $cookies.get('BCGSC_SSO');
+            uploader.headers['Authorization'] = $cookies.get(CONFIG.COOKIES.KEYCLOAK);
             uploader.method = 'PUT';
             uploader.alias = "pathway";
 

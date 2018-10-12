@@ -59,7 +59,7 @@ app.controller('controller.dashboard.report.genomic.slide',
       url: `${CONFIG.ENDPOINTS.API}/POG/${pog.POGID}/report/${report.ident}/genomic/presentation/slide`
     });
   
-    u.headers['Authorization'] = $cookies.get('BCGSC_SSO');
+    u.headers['Authorization'] = $cookies.get(CONFIG.COOKIES.KEYCLOAK);
     u.method = 'POST';
     u.alias = "file";    // Name of the file in the POST
     

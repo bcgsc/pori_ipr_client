@@ -5,7 +5,7 @@ app.controller('controller.dashboard.reports.dashboard', ['_', '$q', '$rootScope
   $scope.currentCases = reports;
   $scope.upstreamCases = [];
   
-  $rootScope.$watch('_externalMode', (newVal, oldVal) => {
+  $rootScope.$watch('isExternalMode', (newVal, oldVal) => {
     if(newVal) $state.go('dashboard.reports.genomic');
   });
 

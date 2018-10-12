@@ -30,7 +30,7 @@ app.run(
             $rootScope.returnToState = toState.name; // setting state to return to
             $rootScope.returnToStateParams = toParams; // setting params of state to return to
             event.preventDefault();
-            $cookies.remove('BCGSC_SSO'); // transitioning with an invalid token creates an infinite loop, so delete
+            $cookies.remove(CONFIG.COOKIES.KEYCLOAK); // transitioning with an invalid token creates an infinite loop, so delete
             $state.go('public.login');
         }
 
@@ -51,9 +51,15 @@ app.run(
           return $q((resolve, reject) => {
             // Attempt session initialization
             $user.me()
-              .then(() => {
+              .then((resp) => {
                 // Session init'd, return user
                 $userSettings.init(); // Init settings
+                // Check if user is internal or external on refresh
+                $rootScope.isExternalMode = _.find(_.mapValues(resp.groups, (r) => { //NEED TO TEST THIS A BIT
+                  return { name: r.name.toLowerCase() };
+                }), { 'name': 'clinician' }) || _.find(_.mapValues(resp.groups, (r) => {
+                  return { name: r.name.toLowerCase() };
+                }), { 'name': 'collaborator' });
 
                 // User is logged in - check if accessing individual POG
                 if (toParams.POG) {
@@ -92,7 +98,7 @@ app.run(
 );
 
 app.config(($mdDateLocaleProvider) => {
-  $mdDateLocaleProvider.formatDate = function(date) {
+  $mdDateLocaleProvider.formatDate = (date) => {
     return date ? moment(date).format('YYYY-MM-DD') : '';
   };
 });

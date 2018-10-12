@@ -23,7 +23,7 @@ function keycloakAuth($user, $q, $cookies, $state, $http) {
       keycloak.init({ onLoad: 'login-required' })
         .then((response) => {
           if (response) {
-            $cookies.put('BCGSC_SSO', keycloak.idToken);
+            $cookies.put(CONFIG.COOKIES.KEYCLOAK, keycloak.idToken);
             resolve(keycloak.idToken);
           }
           reject();
@@ -36,7 +36,7 @@ function keycloakAuth($user, $q, $cookies, $state, $http) {
    * @return {String|undefined} Token string
    */
   function getToken() {
-    return $cookies.get('BCGSC_SSO');
+    return $cookies.get(CONFIG.COOKIES.KEYCLOAK);
   }
 
   /**
@@ -51,13 +51,13 @@ function keycloakAuth($user, $q, $cookies, $state, $http) {
             redirectUri: $state.href('public.login', {}, { absolute: true }),
           })
             .then((resp) => {
-              $cookies.remove('BCGSC_SSO');
+              $cookies.remove(CONFIG.COOKIES.KEYCLOAK);
               delete $http.headers.Authorization;
               resolve(resp);
             });
         })
         .catch((err) => {
-          $cookies.remove('BCGSC_SSO');
+          $cookies.remove(CONFIG.COOKIES.KEYCLOAK);
           delete $http.headers.Authorization;
           $state.go('public.login');
           reject(err);

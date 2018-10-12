@@ -21,10 +21,6 @@ app.service('api.user', ['_', '$http', '$q', (_, $http, $q) => {
    */
   $user.me = () => {
     return $q((resolve, reject) => {
-      // Check for existing user object
-      if (_.isObject($user.meObj)) {
-        resolve($user.meObj);
-      }
       $http.get(`${api}/me`)
         .then((resp) => {
           $user.meObj = resp.data;

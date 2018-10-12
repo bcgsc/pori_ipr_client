@@ -82,7 +82,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         breadcrumbProxy: 'dashboard.reports',
       },
       resolve: {
-        user: ['$q', 'api.session', 'api.user', '$state', '$userSettings', ($q, $user, $state, $userSettings) => {
+        user: ['$q', 'api.user', '$state', '$userSettings', ($q, $user, $state, $userSettings) => {
           return $q((resolve, reject) => {
             // Attempt session initialization
             $user.me()

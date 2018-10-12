@@ -13,7 +13,7 @@ function apiSocket(socketFactory, $cookies, $q) {
   });
 
   socket.on('connect', () => {
-    socket.emit('authenticate', { token: $cookies.get('BCGSC_SSO') });
+    socket.emit('authenticate', { token: $cookies.get(CONFIG.COOKIES.KEYCLOAK) });
   });
 
   socket.on('authenticated', () => {

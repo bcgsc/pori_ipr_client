@@ -2,11 +2,10 @@
 
 /**
  * HTTP Interceptors handler wrapper
- *
- * @param {object} $rootScope - Root scope object
- * @param {object} $q -
- *
- * @returns {{responseError: (function(*=))}}
+ * @param {*} $rootScope {@link https://docs.angularjs.org/api/ng/service/$rootScope}
+ * @param {*} $q {@link https://docs.angularjs.org/api/ng/service/$q}
+ * @param {*} $injector {@link https://docs.angularjs.org/api/auto/service/$injector}
+ * @return {Object} Error response handler
  */
 function httpInterceptors($rootScope, $q, $injector) {
   /**
@@ -52,13 +51,12 @@ function httpInterceptors($rootScope, $q, $injector) {
   };
 }
 
-app.config(['$httpProvider', ($httpProvider) => {
-  // Add Error Interceptors Wrapper
-  $httpProvider.interceptors.push('httpInterceptors');
-}]);
-
-// Create Interceptors Factory
-app.factory('httpInterceptors', httpInterceptors);
-
-// Inject dependencies into wrapper
 httpInterceptors.$inject = ['$rootScope', '$q', '$injector'];
+
+angular
+  .module('bcgscIPR')
+  .factory('httpInterceptors', httpInterceptors)
+  .config(['$httpProvider', ($httpProvider) => {
+    // Add Error Interceptors Wrapper
+    $httpProvider.interceptors.push('httpInterceptors');
+  }]);
