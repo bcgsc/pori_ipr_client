@@ -13,7 +13,7 @@ app.controller('controller.print.POG.report.genomic.somaticMutations',
 
   $scope.copyFilter = (copyChange) => {
     const parsed = _.parseInt(copyChange);
-    if (isNaN(parsed)) {
+    if (Number.isNaN(parsed)) {
       return copyChange;
     }
     return parsed;
