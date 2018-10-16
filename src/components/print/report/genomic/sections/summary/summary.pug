@@ -15,8 +15,8 @@ tr
                     td {{data.pi.tumourType}}
                     th Case Type:
                     td {{data.pi.caseType}}
-                    th Constitutional Sample
-                    td {{data.pi.constitutionalSample}}
+                    th Constitutional Sample:
+                    td {{data.pi.constitutionalSample || 'N/A'}}
                 tr
                     th Report Date:
                     td {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
@@ -25,12 +25,17 @@ tr
                     th Biopsy Details:
                     td {{data.pi.biopsySite}}
                 tr
-                    th Physician:
-                    td {{data.pi.physician}}
+                    th Alternate ID:
+                    td {{report.pog.alternate_identifier || 'N/A'}}
                     th Biopsy:
-                    td {{report.analysis.analysis_biopsy}}
+                    td {{report.analysis.analysis_biopsy || 'N/A'}}
                     th Protocol:
                     td {{data.pi.tumourProtocol}}
+                tr
+                    th Physician:
+                    td {{data.pi.physician}}
+                    th Age of Consent:
+                    td {{report.pog.age_of_consent || 'Not Specified'}}
 tr
     td.report-section
         h1 Patient Tumour Analysis Summary
