@@ -82,19 +82,15 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         breadcrumbProxy: 'dashboard.reports',
       },
       resolve: {
-        user: ['$q', 'api.user', '$state', '$userSettings', ($q, $user, $state, $userSettings) => {
+        user: ['$q', 'api.user', '$state', ($q, $user, $state) => {
           return $q((resolve, reject) => {
-            // Attempt session initialization
             $user.me()
-              .then((user) => {
-                // Session init'd, return user
-                $userSettings.init(); // Init settings
-                resolve(user);
+              .then(() => {
+                resolve($user.meObj);
               })
               .catch((err) => {
-                // No session, go to login page
-                $state.go('public.login');
                 reject(err);
+                $state.go('public.login');
               });
           });
         }],
@@ -777,6 +773,20 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       controller: 'controller.print',
       data: {
         displayName: 'Print',
+      },
+      resolve: {
+        user: ['$q', 'api.user', '$state', ($q, $user, $state) => {
+          return $q((resolve, reject) => {
+            $user.me()
+              .then(() => {
+                resolve($user.meObj);
+              })
+              .catch((err) => {
+                reject(err);
+                $state.go('public.login');
+              });
+          });
+        }],
       },
     })
 

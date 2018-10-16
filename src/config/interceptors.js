@@ -22,17 +22,11 @@ function httpInterceptors($rootScope, $q, $injector) {
       return config;
     },
 
-    responseError: (response) => {
-      console.log('Error triggered', response);
-    
+    responseError: (response) => {    
       switch (response.status) {
         case 500:
           console.log('500 Error');
           $rootScope.$broadcast('httpError', { message: 'An unexpected error has occurred. Please try again.' });
-          break;
-      
-        case 405:
-          console.log('405 error');
           break;
         case 403:
           console.log('Access Denied error');

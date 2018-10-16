@@ -30,7 +30,7 @@ app.run(
             $rootScope.returnToState = toState.name; // setting state to return to
             $rootScope.returnToStateParams = toParams; // setting params of state to return to
             event.preventDefault();
-            $cookies.remove(CONFIG.COOKIES.KEYCLOAK); // transitioning with an invalid token creates an infinite loop, so delete
+            // $cookies.remove(CONFIG.COOKIES.KEYCLOAK); // transitioning with an invalid token creates an infinite loop, so delete
             $state.go('public.login');
         }
 
@@ -55,7 +55,7 @@ app.run(
                 // Session init'd, return user
                 $userSettings.init(); // Init settings
                 // Check if user is internal or external on refresh
-                $rootScope.isExternalMode = _.find(_.mapValues(resp.groups, (r) => { //NEED TO TEST THIS A BIT
+                $rootScope.isExternalMode = _.find(_.mapValues(resp.groups, (r) => {
                   return { name: r.name.toLowerCase() };
                 }), { 'name': 'clinician' }) || _.find(_.mapValues(resp.groups, (r) => {
                   return { name: r.name.toLowerCase() };
@@ -69,11 +69,11 @@ app.run(
                 resolve();
               })
               .catch((err) => {
+                $rootScope.returnToState = toState.name;
+                $rootScope.returnToStateParams = toParams;
                 switch (err) {
                   case 'AuthTokenError':
                     // No session, go to login page
-                    $rootScope.returnToState = toState.name; // setting state to return to
-                    $rootScope.returnToStateParams = toParams;
                     $state.go('public.login');
                     resolve();
                     break;
@@ -84,7 +84,9 @@ app.run(
                     resolve();
                     break;
                   default:
+                    $state.go('public.login');
                     reject(err);
+                    break;
                 }
               });
           });

@@ -47,12 +47,11 @@ function keycloakAuth($user, $q, $cookies, $state, $http) {
     return $q((resolve, reject) => {
       keycloak.init()
         .then(() => {
+          $cookies.remove(CONFIG.COOKIES.KEYCLOAK);
           keycloak.logout({
             redirectUri: $state.href('public.login', {}, { absolute: true }),
           })
             .then((resp) => {
-              $cookies.remove(CONFIG.COOKIES.KEYCLOAK);
-              delete $http.headers.Authorization;
               resolve(resp);
             });
         })
