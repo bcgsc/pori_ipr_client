@@ -82,6 +82,9 @@ app.run(['$rootScope', '$state', '$q', '$acl', '$cookies', 'api.user', 'api.pog'
     // Mount configuration
     $rootScope.PROJECT = CONFIG.PROJECT;
     $rootScope.CONFIG = CONFIG;
+
+    $rootScope.SES_permissionResource = $acl.resource;
+    $rootScope.SES_permissionAction = $acl.action;
   }]);
 
 app.config(($mdDateLocaleProvider) => {

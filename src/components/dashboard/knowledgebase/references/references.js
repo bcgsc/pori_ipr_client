@@ -221,7 +221,8 @@ app.controller('knowledgebase.references', ['$rootScope', '$q', '_', '$scope', '
       locals: {
         action: 'new',
         vocabulary: vocabulary,
-        reference: {}
+        reference: {},
+        isExternalMode: isExternalMode,
       },
       multiple: true,
       clickOutToClose: false,
