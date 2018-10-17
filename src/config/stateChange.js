@@ -61,7 +61,6 @@ app.run(['$rootScope', '$state', '$q', '$acl', '$cookies', 'api.user', 'api.pog'
               resolve();
             })
             .catch((err) => {
-              console.log('in state change start', toState.name);
               $localStorage.returnToState = toState.name;
               $localStorage.returnToStateParams = JSON.stringify(toParams);
               switch (err) {

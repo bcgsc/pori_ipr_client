@@ -21,8 +21,8 @@ function keycloakAuth($q, $cookies, $state, $http) {
     return $q((resolve, reject) => {
       keycloak.init({ onLoad: 'login-required' })
         .then(() => {
-          $cookies.put(CONFIG.COOKIES.KEYCLOAK, keycloak.idToken);
-          resolve(keycloak.idToken);
+          $cookies.put(CONFIG.COOKIES.KEYCLOAK, keycloak.token);
+          resolve(keycloak.token);
         })
         .catch((err) => {
           reject(err);
