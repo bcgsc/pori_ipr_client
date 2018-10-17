@@ -1,7 +1,7 @@
-app.controller('knowledgebase.references.edit',
-['_', '$q', '$scope', '$mdDialog', '$mdToast', '$acl', 'api.complete', 'api.pubmed', 'api.kb.associations', 'api.knowledgebase', 'api.user', 'action', 'reference', 'vocabulary',
-(_, $q, scope, $mdDialog, $mdToast, $acl, $complete, $pubmed, $kbAssoc, $kb, $user, action, reference, vocabulary) => {
-
+app.controller('knowledgebase.references.edit', ['_', '$q', '$scope', '$mdDialog', '$mdToast',
+  '$acl', 'api.complete', 'api.pubmed', 'api.kb.associations', 'api.knowledgebase', 'api.user',
+  'action', 'reference', 'vocabulary', 'isExternalMode', (_, $q, scope, $mdDialog, $mdToast, $acl, $complete,
+    $pubmed, $kbAssoc, $kb, $user, action, reference, vocabulary, isExternalMode) => {
   scope.$alterations = $complete.get('alterations');
   scope.disableRefTitle = false;
   scope.reference = angular.copy(reference);
@@ -11,7 +11,7 @@ app.controller('knowledgebase.references.edit',
   scope.vocabulary = vocabulary;
   scope.user = $user.meObj;
   scope.action = action;
-  scope.externalMode = $acl.inGroup('clinician') || $acl.inGroup('collaborator');
+  scope.externalMode = isExternalMode;
 
   scope.disease = {};
   scope.disease.all = [];

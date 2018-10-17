@@ -82,15 +82,15 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         breadcrumbProxy: 'dashboard.reports',
       },
       resolve: {
-        user: ['$q', 'api.user', '$state', ($q, $user, $state) => {
+        user: ['$q', 'api.user', ($q, $user) => {
           return $q((resolve, reject) => {
             $user.me()
               .then(() => {
                 resolve($user.meObj);
               })
               .catch((err) => {
+                console.log('rejecting...');
                 reject(err);
-                $state.go('public.login');
               });
           });
         }],
@@ -123,6 +123,15 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
               .catch((err) => {
                 reject(err);
               });
+          });
+        }],
+        isExternalMode: ['$q', '$acl', 'user', ($q, $acl, user) => {
+          $acl.injectUser(user);
+          return $q((resolve, reject) => {
+            if ($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
+              resolve(true);
+            }
+            resolve(false);
           });
         }],
       },
@@ -169,22 +178,23 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       data: {
         displayName: 'Listing',
         breadcrumbProxy: ($state) => {
-          if($state.current.name.indexOf('report.probe') > -1) return 'dashboard.reports.probe';
-          if($state.current.name.indexOf('report.genomic') > -1) return 'dashboard.reports.genomic';
+          if ($state.current.name.indexOf('report.probe') > -1) return 'dashboard.reports.probe';
+          if ($state.current.name.indexOf('report.genomic') > -1) return 'dashboard.reports.genomic';
           return 'dashboard.reports.dashboard';
-        }
+        },
       },
       resolve: {
-        reports: ['$q', 'permission', '$acl', 'api.pog_analysis_report', '$state', 'user', ($q, permission, $acl, $report, $state, user) => {
-          $acl.injectUser(user);
-          if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
-            return $q((resolve, reject) => {
-              reject('externalModeError');
-            })
-          }
-          return $report.all({states: 'ready,active'});
-        }]
-      }
+        reports: ['$q', 'permission', '$acl', 'api.pog_analysis_report', '$state', 'user',
+          'isExternalMode', ($q, permission, $acl, $report, $state, user, isExternalMode) => {
+            $acl.injectUser(user);
+            if (isExternalMode) {
+              return $q((resolve, reject) => {
+                reject('externalModeError');
+              });
+            }
+            return $report.all({ states: 'ready,active' });
+          }],
+      },
     })
 
     .state('dashboard.reports.genomic', {
@@ -783,8 +793,16 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
               })
               .catch((err) => {
                 reject(err);
-                $state.go('public.login');
               });
+          });
+        }],
+        isExternalMode: ['$q', '$acl', 'user', ($q, $acl, user) => {
+          $acl.injectUser(user);
+          return $q((resolve, reject) => {
+            if ($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
+              resolve(true);
+            }
+            resolve(false);
           });
         }],
       },
@@ -1096,13 +1114,14 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         }],
         permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
           $acl.injectUser(user);
-          if($acl.inGroup('clinician')) {
-            return $q((resolve, reject) => {
+          return $q((resolve, reject) => {
+            if ($acl.inGroup('clinician')) {
               reject('externalModeError');
-            })
-          }
-        }]
-      }
+            }
+            resolve();
+          });
+        }],
+      },
     })
 
     .state('dashboard.knowledgebase.references', {
@@ -1135,13 +1154,14 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         }],
         permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
           $acl.injectUser(user);
-          if($acl.inGroup('clinician')) {
-            return $q((resolve, reject) => {
+          return $q((resolve, reject) => {
+            if ($acl.inGroup('clinician')) {
               reject('externalModeError');
-            })
-          }
-        }]
-      }
+            }
+            resolve();
+          });
+        }],
+      },
     })
 
     // Commenting out instead of removing in case we decide to re-include this
@@ -1200,15 +1220,17 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         myDefinitions: ['$q', '_', 'api.tracking.definition', 'user', '$userSettings', ($q, _, $definition, user, $userSettings) => {
           return $definition.all({slug: ($userSettings.get('tracking.definition')) ? _.join($userSettings.get('tracking.definition').slug,',') : undefined});
         }],
-        permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
-          $acl.injectUser(user);
-          if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
+        permission: ['$q', '$acl', 'user', 'isExternalMode',
+          ($q, $acl, user, isExternalMode) => {
+            $acl.injectUser(user);
             return $q((resolve, reject) => {
-              reject('externalModeError');
-            })
-          }
-        }]
-      }
+              if (isExternalMode) {
+                reject('externalModeError');
+              }
+              resolve();
+            });
+          }],
+      },
     })
 
     .state('dashboard.tracking.board', {
@@ -1222,15 +1244,17 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         states: ['$q', '_', 'api.tracking.state', 'user', '$userSettings', ($q, _, $state, user, $userSettings) => {
           return $state.all({status: ($userSettings.get('tracking.state')) ? _.join($userSettings.get('tracking.state').status, ',') : 'pending,active,hold,failed'});
         }],
-        permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
-          $acl.injectUser(user);
-          if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
+        permission: ['$q', '$acl', 'user', 'isExternalMode',
+          ($q, $acl, user, isExternalMode) => {
+            $acl.injectUser(user);
             return $q((resolve, reject) => {
-              reject('externalModeError');
-            })
-          }
-        }]
-      }
+              if (isExternalMode) {
+                reject('externalModeError');
+              }
+              resolve();
+            });
+          }],
+      },
     })
 
     .state('dashboard.tracking.lane', {
@@ -1247,15 +1271,17 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         states: ['$q', '$stateParams', 'api.tracking.state', ($q, $stateParams, $state) => {
           return $state.filtered({slug: $stateParams.slug, status: 'active,pending'});
         }],
-        permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
-          $acl.injectUser(user);
-          if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
+        permission: ['$q', '$acl', 'user', 'isExternalMode',
+          ($q, $acl, user, isExternalMode) => {
+            $acl.injectUser(user);
             return $q((resolve, reject) => {
-              reject('externalModeError');
-            })
-          }
-        }]
-      }
+              if (isExternalMode) {
+                reject('externalModeError');
+              }
+              resolve();
+            });
+          }],
+      },
     })
 
     .state('dashboard.tracking.definition', {
@@ -1275,15 +1301,17 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         hooks: ['$q', 'api.tracking.hook', ($q, $hook) => {
           return $hook.all();
         }],
-        permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
-          $acl.injectUser(user);
-          if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
+        permission: ['$q', '$acl', 'user', 'isExternalMode',
+          ($q, $acl, user, isExternalMode) => {
+            $acl.injectUser(user);
             return $q((resolve, reject) => {
-              reject('externalModeError');
-            })
-          }
-        }]
-      }
+              if (isExternalMode) {
+                reject('externalModeError');
+              }
+              resolve();
+            });
+          }],
+      },
     })
 
     .state('dashboard.tracking.assignment', {
@@ -1309,15 +1337,17 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         userLoad: ['$q', 'definition', 'api.tracking.definition', ($q, definition, $definition) => {
           return $definition.userLoad(definition.ident);
         }],
-        permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
-          $acl.injectUser(user);
-          if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
+        permission: ['$q', '$acl', 'user', 'isExternalMode',
+          ($q, $acl, user, isExternalMode) => {
+            $acl.injectUser(user);
             return $q((resolve, reject) => {
-              reject('externalModeError');
-            })
-          }
-        }]
-      }
+              if (isExternalMode) {
+                reject('externalModeError');
+              }
+              resolve();
+            });
+          }],
+      },
     })
     
     .state('dashboard.tracking.ticket_template', {
@@ -1335,15 +1365,17 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         definition: ['$q', '$stateParams', 'api.tracking.definition', ($q, $stateParams, $definition) => {
           return $definition.retrieve($stateParams.definition);
         }],
-        permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
-          $acl.injectUser(user);
-          if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
+        permission: ['$q', '$acl', 'user', 'isExternalMode',
+          ($q, $acl, user, isExternalMode) => {
+            $acl.injectUser(user);
             return $q((resolve, reject) => {
-              reject('externalModeError');
-            })
-          }
-        }]
-      }
+              if (isExternalMode) {
+                reject('externalModeError');
+              }
+              resolve();
+            });
+          }],
+      },
     })
     
     .state('dashboard.biopsy', {
@@ -1373,15 +1405,17 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         projects: ['api.project', ($project) => {
           return $project.all();
         }],
-        permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
-          $acl.injectUser(user);
-          if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
+        permission: ['$q', '$acl', 'user', 'isExternalMode',
+          ($q, $acl, user, isExternalMode) => {
+            $acl.injectUser(user);
             return $q((resolve, reject) => {
-              reject('externalModeError');
-            })
-          }
-        }]
-      }
+              if (isExternalMode) {
+                reject('externalModeError');
+              }
+              resolve();
+            });
+          }],
+      },
     })
     
     .state('dashboard.germline', {
@@ -1405,15 +1439,17 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         reports: ['api.germline.report', ($report) => {
           return $report.all();
         }],
-        permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
-          $acl.injectUser(user);
-          if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
+        permission: ['$q', '$acl', 'user', 'isExternalMode',
+          ($q, $acl, user, isExternalMode) => {
+            $acl.injectUser(user);
             return $q((resolve, reject) => {
-              reject('externalModeError');
-            })
-          }
-        }]
-      }
+              if (isExternalMode) {
+                reject('externalModeError');
+              }
+              resolve();
+            });
+          }],
+      },
     })
     
     .state('dashboard.germline.report', {
@@ -1427,15 +1463,16 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         report: ['api.germline.report', '$stateParams', ($report, $stateParams) => {
           return $report.one($stateParams.patient, $stateParams.biopsy, $stateParams.report);
         }],
-        permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
-          $acl.injectUser(user);
-          if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
+        permission: ['$q', '$acl', 'user', 'isExternalMode',
+          ($q, $acl, user, isExternalMode) => {
+            $acl.injectUser(user);
             return $q((resolve, reject) => {
-              reject('externalModeError');
-            })
-          }
-        }]
-      }
-    })
-
+              if (isExternalMode) {
+                reject('externalModeError');
+              }
+              resolve();
+            });
+          }],
+      },
+    });
 }]);

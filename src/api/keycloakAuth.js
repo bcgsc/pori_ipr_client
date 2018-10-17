@@ -1,13 +1,12 @@
 /**
  * Keycloak authentication factory
- * @param {*} $user - $user factory
  * @param {*} $q {@link https://docs.angularjs.org/api/ng/service/$q}
  * @param {*} $cookies {@link https://docs.angularjs.org/api/ngCookies/service/$cookies}
  * @param {*} $state {@link https://github.com/angular-ui/ui-router/wiki/quick-reference}
  * @param {*} $http {@link https://docs.angularjs.org/api/ng/service/$http}
  * @return {Object} Auth factory
  */
-function keycloakAuth($user, $q, $cookies, $state, $http) {
+function keycloakAuth($q, $cookies, $state, $http) {
   const keycloak = Keycloak({
     'realm': 'CanDIG',
     'clientId': 'IPR',
@@ -21,12 +20,12 @@ function keycloakAuth($user, $q, $cookies, $state, $http) {
   function setToken() {
     return $q((resolve, reject) => {
       keycloak.init({ onLoad: 'login-required' })
-        .then((response) => {
-          if (response) {
-            $cookies.put(CONFIG.COOKIES.KEYCLOAK, keycloak.idToken);
-            resolve(keycloak.idToken);
-          }
-          reject();
+        .then(() => {
+          $cookies.put(CONFIG.COOKIES.KEYCLOAK, keycloak.idToken);
+          resolve(keycloak.idToken);
+        })
+        .catch((err) => {
+          reject(err);
         });
     });
   }
@@ -72,7 +71,7 @@ function keycloakAuth($user, $q, $cookies, $state, $http) {
   return keycloakAuthService;
 }
 
-keycloakAuth.$inject = ['api.user', '$q', '$cookies', '$state', '$http'];
+keycloakAuth.$inject = ['$q', '$cookies', '$state', '$http'];
 
 angular
   .module('bcgscIPR')

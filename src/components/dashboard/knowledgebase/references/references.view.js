@@ -1,12 +1,12 @@
 app.controller('knowledgebase.references.view',
-['$q', '_', '$scope', '$mdDialog', '$mdToast', '$kbUtils', 'api.knowledgebase', 'reference', 'history','vocabulary', 'externalMode',
-($q, _, scope, $mdDialog, $mdToast, $kbUtils, $kb, reference, history, vocabulary, externalMode) => {
+['$q', '_', '$scope', '$mdDialog', '$mdToast', '$kbUtils', 'api.knowledgebase', 'reference', 'history','vocabulary', 'isExternalMode',
+($q, _, scope, $mdDialog, $mdToast, $kbUtils, $kb, reference, history, vocabulary, isExternalMode) => {
 
   scope.reference = reference;
   scope.history = history;
   scope.vocabulary = vocabulary;
   scope.update = {};
-  scope.externalMode = externalMode;
+  scope.externalMode = isExternalMode;
 
   scope.cancel = () => {
     $mdDialog.hide();

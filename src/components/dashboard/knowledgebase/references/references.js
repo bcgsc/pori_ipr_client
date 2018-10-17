@@ -1,9 +1,9 @@
-app.controller('knowledgebase.references',
-['$rootScope', '$q', '_', '$scope', '$sanitize', '$mdDialog', '$mdToast', '$kbUtils', 'api.knowledgebase', 'references', 'ref_count', 'vocabulary', '$http',
-($rootScope, $q, _, $scope, $sanitize, $mdDialog, $mdToast, $kbUtils, $kb, references, ref_count, vocabulary, $http) => {
-
+app.controller('knowledgebase.references', ['$rootScope', '$q', '_', '$scope', '$sanitize',
+  '$mdDialog', '$mdToast', '$kbUtils', 'api.knowledgebase', 'references', 'ref_count', 'vocabulary',
+  '$http', 'isExternalMode', ($rootScope, $q, _, $scope, $sanitize, $mdDialog, $mdToast, $kbUtils,
+    $kb, references, ref_count, vocabulary, $http, isExternalMode) => {
   $scope.references = [];
-  $scope.externalMode = $rootScope.isExternalMode;
+  $scope.externalMode = isExternalMode;
 
   $http.get('../assets/json/knowledgebaseGlossary.json')
   .then((glossary) => {

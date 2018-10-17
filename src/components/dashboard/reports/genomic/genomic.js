@@ -1,11 +1,12 @@
-app.controller('controller.dashboard.reports.genomic', 
-  ['_', '$q', '$rootScope', '$scope', 'api.pog_analysis_report', 'reports', '$mdDialog', 'user', '$userSettings', 'projects', '$acl', 
-  (_, $q, $rootScope, $scope, $report, reports, $mdDialog, user, $userSettings, projects, $acl) => {
-
+app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$rootScope', '$scope',
+  'api.pog_analysis_report', 'reports', '$mdDialog', 'user', '$userSettings', 'projects', '$acl',
+  'isExternalMode', (_, $q, $rootScope, $scope, $report, reports, $mdDialog, user, $userSettings,
+    projects, $acl, isExternalMode) => {
   $scope.reports = reports;
   $scope.archived = false;
   $scope.nonproduction = false;
   $scope.loading = false;
+  $scope.externalMode = isExternalMode;
   $scope.selectedProject = {
     project: !!$userSettings.get('selectedProject') ? {} : $userSettings.get('selectedProject')
   }
@@ -28,15 +29,13 @@ app.controller('controller.dashboard.reports.genomic',
     nonproduction: false
   };
 
-  if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
+  if (isExternalMode) {
     $scope.reports = reports.reports;
     $scope.pagination = {
       offset: 0,
       limit: 25,
       total: reports.total
     };
-    
-    $scope.externalMode = true;
   }
 
   $scope.filter ={
@@ -219,7 +218,7 @@ app.controller('controller.dashboard.reports.genomic',
     content    += "including those that are approved in this or other cancer types, and those that have early clinical or preclinical evidence.</p>";
     content    += "<hr>";
 
-    if($scope.externalMode) {
+    if(isExternalMode) {
       content    += "<h4>Field Descriptions</h4>";
       content    += "<p>Patient: Study identification code</p>";
       content    += "<p>Alternate Identifier: Alternative study identifier if enrolled in another genomics study (e.g. COMPARISON or PROFYLE IDs)";

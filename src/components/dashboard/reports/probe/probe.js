@@ -1,10 +1,11 @@
-app.controller('controller.dashboard.reports.probe', ['_', '$q', '$scope', 'api.pog_analysis_report', 'reports', '$mdDialog', 'user', '$acl',  (_, $q, $scope, $report, reports, $mdDialog, user, $acl) => {
-
+app.controller('controller.dashboard.reports.probe', ['_', '$q', '$scope',
+  'api.pog_analysis_report', 'reports', '$mdDialog', 'user', '$acl', 'isExternalMode',
+  (_, $q, $scope, $report, reports, $mdDialog, user, $acl, isExternalMode) => {
   $scope.reports = reports;
   $scope.archived = false;
   $scope.nonproduction = false;
   $scope.loading = false;
-  $scope.externalMode = false;
+  $scope.externalMode = isExternalMode;
 
   $scope.roles = [
     'bioinformatician',
@@ -21,7 +22,7 @@ app.controller('controller.dashboard.reports.probe', ['_', '$q', '$scope', 'api.
     nonproduction: false
   };
 
-  if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
+  if(isExternalMode) {
     $scope.states.reviewed = true;
     $scope.states.uploaded = false;
     $scope.states.signedoff = false;
@@ -32,8 +33,6 @@ app.controller('controller.dashboard.reports.probe', ['_', '$q', '$scope', 'api.
       limit: 25,
       total: reports.total
     };
-
-    $scope.externalMode = true;
   }
 
   $scope.filter ={
@@ -161,7 +160,7 @@ app.controller('controller.dashboard.reports.probe', ['_', '$q', '$scope', 'api.
     content    += "which will provide a more comprehensive description of both previously observed and novel aberrations.</p>";
     content    += "<hr>";
 
-    if($scope.externalMode) {
+    if(isExternalMode) {
       content    += "<h4>Field Descriptions</h4>";
       content    += "<p>Patient: Study identification code</p>";
       content    += "<p>Alternate Identifier: Alternative study identifier if enrolled in another genomics study (e.g. COMPARISON or PROFYLE IDs)";

@@ -4,21 +4,21 @@
  * @param {*} $user - User info factory
  * @param {*} $acl - Acl factory
  * @param {*} $state {@link https://github.com/angular-ui/ui-router/wiki/quick-reference}
- * @param {*} $rootScope {@link https://docs.angularjs.org/api/ng/service/$rootScope}
  * @param {*} $mdToast {@link https://material.angularjs.org/latest/api/service/$mdToast}
+ * @param {*} $localStorage {@link https://github.com/gsklee/ngStorage}
  * @return {*} None
  */
-function loginRedirect(keycloakAuth, $user, $acl, $state, $rootScope, $mdToast) {
+function loginRedirect(keycloakAuth, $user, $acl, $state, $mdToast, $localStorage) {
   keycloakAuth.setToken()
     .then(() => {
       $user.me()
         .then((response) => {
           $acl.injectUser(response);
-          if ($rootScope.returnToState) {
+          if ($localStorage.returnToState) {
             // navigate to state user was trying to access
-            $state.go($rootScope.returnToState, $rootScope.returnToStateParams);
-            $rootScope.returnToState = undefined;
-            $rootScope.returnToStateParams = undefined;
+            $state.go($localStorage.returnToState, JSON.parse($localStorage.returnToStateParams));
+            $localStorage.returnToState = undefined;
+            $localStorage.returnToStateParams = undefined;
             return;
           }
           if ($acl.inGroup('clinician')) {
@@ -27,12 +27,12 @@ function loginRedirect(keycloakAuth, $user, $acl, $state, $rootScope, $mdToast) 
             $state.go('dashboard.reports.dashboard');
           }
         });
-    }).catch(() => {
+    }).catch((err) => {
       $mdToast.showSimple('Error with login server. Try again later.');
     });
 }
 
-loginRedirect.$inject = ['keycloakAuth', 'api.user', '$acl', '$state', '$rootScope', '$mdToast'];
+loginRedirect.$inject = ['keycloakAuth', 'api.user', '$acl', '$state', '$mdToast', '$localStorage'];
 
 angular
   .module('bcgscIPR')
