@@ -139,7 +139,6 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
 
     .state('dashboard.home', {
       url: '/',
-      templateUrl: 'dashboard/home/home.html',
       controller: 'controller.dashboard.home',
     })
 
