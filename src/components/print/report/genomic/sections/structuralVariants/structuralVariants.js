@@ -10,7 +10,7 @@ app.controller('controller.print.POG.report.genomic.structuralVariants',
   $scope.allVariants = [];
 
   $scope.titleMap = {
-    clinical: 'Gene Fusions of Potential Clinical Relevance with Genome & Transcriptome Support',
+    clinical: 'Gene Fusions of Potential Clinical Relevance',
     nostic: 'Gene Fusions of Prognostic and Diagnostic Relevance',
     biological: 'Gene Fusions with Biological Relevance',
     fusionOmicSupport: 'Gene Fusions with Genome and Transcriptome Support'
