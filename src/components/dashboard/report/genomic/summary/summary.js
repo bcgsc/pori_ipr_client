@@ -14,7 +14,7 @@ app.controller('controller.dashboard.report.genomic.summary',
         pt: pt,
         ta: report.tumourAnalysis,
         pi: report.patientInformation,
-        microbial: (microbial !== null) ? microbial : { species: 'None', integrationSite: 'None' },
+        microbial: microbial || { species: 'None', integrationSite: 'None' },
       };
       $scope.mutationSignature = mutationSignature;
       $scope.mutationMask = null;
@@ -23,10 +23,6 @@ app.controller('controller.dashboard.report.genomic.summary',
         smallMutation: 0,
         expressionOutlier: 0,
         structuralVariant: 0,
-      };
-
-      $scope.toMutations = () => {
-        $state.go('^.somaticMutations');
       };
 
       const variantCategory = (variant) => {
