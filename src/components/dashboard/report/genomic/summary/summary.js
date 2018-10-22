@@ -153,20 +153,20 @@ app.controller('controller.dashboard.report.genomic.summary',
 
             scope.update = () => {
               // Send updated entry to API
-              $tumourAnalysis.update($scope.pog.POGID, report.ident, scope.ta).then(
-                () => {
+              $tumourAnalysis.update($scope.pog.POGID, report.ident, scope.ta)
+                .then(() => {
                   $mdDialog.hide({ message: 'Mutation signature details have been successfully updated', data: scope.ta });
-                },
-                (error) => {
+                })
+                .catch((error) => {
                   $mdToast.showSimple(`Mutation signature details were not updated due to an error: ${error}`);
-                },
-              );
+                });
             }; // End update
           }], // End controller
-        }).then((outcome) => {
-          if (outcome) $mdToast.showSimple(outcome.message);
-          $scope.data.ta = outcome.data;
         })
+          .then((outcome) => {
+            if (outcome) $mdToast.showSimple(outcome.message);
+            $scope.data.ta = outcome.data;
+          })
           .catch((error) => {
             $mdToast.showSimple(error);
           });
@@ -198,12 +198,14 @@ app.controller('controller.dashboard.report.genomic.summary',
             }; // End update
           }], // End controller
 
-        }).then((outcome) => {
-          if (outcome) $mdToast.showSimple(outcome.message);
-          $scope.data.pi = outcome.data;
-        }, (error) => {
-          $mdToast.showSimple(error);
-        });
+        })
+          .then((outcome) => {
+            if (outcome) $mdToast.showSimple(outcome.message);
+            $scope.data.pi = outcome.data;
+          })
+          .catch((error) => {
+            $mdToast.showSimple(error);
+          });
       }; // End edit tumour analysis
 
 
@@ -238,10 +240,10 @@ app.controller('controller.dashboard.report.genomic.summary',
                 });
             }; // End update
           }], // End controller
-
-        }).then((outcome) => {
-          if (outcome) $mdToast.showSimple(outcome.message);
         })
+          .then((outcome) => {
+            if (outcome) $mdToast.showSimple(outcome.message);
+          })
           .catch((error) => {
             $mdToast.showSimple(error);
           });
