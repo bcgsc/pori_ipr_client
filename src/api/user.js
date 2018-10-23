@@ -37,7 +37,9 @@ function apiUser(_, $http) {
    * @return {Boolean} admin bool
    */
   function isAdmin() {
-    return _.includes($user.meObj, 'superUser') || _.includes($user.meObj, 'admin');
+    return $user.meObj.groups.some(({ name }) => {
+      return ['superUser', 'admin'].includes(name);
+    });
   }
 
   /**

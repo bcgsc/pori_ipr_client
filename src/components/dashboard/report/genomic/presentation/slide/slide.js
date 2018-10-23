@@ -54,20 +54,20 @@ app.controller('controller.dashboard.report.genomic.slide',
   let selectedItem = null;
   let uploader = {};
   
-  let setupUploader = () => {
-    let u = $scope.uploader = new FileUploader({
+  const setupUploader = () => {
+    $scope.uploader = new FileUploader({
       url: `${CONFIG.ENDPOINTS.API}/POG/${pog.POGID}/report/${report.ident}/genomic/presentation/slide`
     });
   
-    u.headers['Authorization'] = $cookies.get(CONFIG.COOKIES.KEYCLOAK);
-    u.method = 'POST';
-    u.alias = "file";    // Name of the file in the POST
+    $scope.uploader.headers.Authorization = $cookies.get(CONFIG.COOKIES.KEYCLOAK);
+    $scope.uploader.method = 'POST';
+    $scope.uploader.alias = 'file'; // Name of the file in the POST
     
     selectedItem = null;
     
     $scope.progress = 0;
     
-    return u;
+    return $scope.uploader;
   };
   
   

@@ -39,14 +39,9 @@ app.run(['$rootScope', '$state', '$q', '$acl', '$cookies', 'api.user', 'api.pog'
     // Redirect to login if route requires auth and you're not logged in
     $rootScope.$on('$stateChangeStart', (event, toState, toParams) => {
       // require login if not a state name starting w/ 'public'
-      let loginRequired = true;
       const stateType = toState.name.split('.')[0];
 
-      if (stateType === 'public') {
-        loginRequired = false;
-      }
-
-      if (loginRequired) {
+      if (stateType !== 'public') {
         return $q((resolve, reject) => {
           // Attempt session initialization
           $user.me()
