@@ -1,4 +1,4 @@
-app.controller('controller.dashboard.admin.users.groups', ['_', '$scope', '$mdSidenav', '$state', '$mdDialog', '$mdToast', 'api.user', 'isAdmin', 'groups', (_, $scope, $mdSidenav, $state, $mdDialog, $mdToast, $user, isAdmin, groups) => {
+app.controller('controller.dashboard.admin.users.groups', ['_', '$scope', '$mdSidenav', '$state', '$mdDialog', '$mdToast', 'api.user', 'isAdmin', 'groups', 'api.group', (_, $scope, $mdSidenav, $state, $mdDialog, $mdToast, $user, isAdmin, groups, $group) => {
 
   $scope.groups = groups;
 
@@ -17,7 +17,7 @@ app.controller('controller.dashboard.admin.users.groups', ['_', '$scope', '$mdSi
       () => {
         let tempGroup = angular.copy(group);
         // Remove User
-        $user.group.remove(group).then(
+        $group.remove(group).then(
           (res) => {
             $scope.groups = $scope.$parent.groups = _.filter($scope.groups, (g) => {return (g.ident !== tempGroup.ident)});
             $mdToast.show($mdToast.simple('The group has been removed'));

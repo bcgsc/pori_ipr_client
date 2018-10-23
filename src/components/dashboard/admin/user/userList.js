@@ -19,7 +19,7 @@ app.controller('controller.dashboard.admin.users.userList',
       () => {
         let tempUser = angular.copy(user);
         // Remove User
-        $user.delete(user).then(
+        $user.remove(user).then(
           (res) => {
             $scope.users = _.filter($scope.users, (u) => {return (u.ident !== tempUser.ident)});
             $mdToast.show($mdToast.simple('The user has been removed'));

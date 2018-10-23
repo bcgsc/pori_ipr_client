@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.user.edit',
-['$q', '_', '$scope', '$mdDialog', '$mdToast', 'api.user', 'api.project', 'editUser', 'newUser', 'userDelete', 'projects', 'accessGroup', 'selfEdit',
-($q, _, $scope, $mdDialog, $mdToast, $user, $project, editUser, newUser, userDelete, projects, accessGroup, selfEdit) => {
+['$q', '_', '$scope', '$mdDialog', '$mdToast', 'api.user', 'api.project', 'editUser', 'newUser', 'userDelete', 'projects', 'accessGroup', 'selfEdit', 'api.group',
+($q, _, $scope, $mdDialog, $mdToast, $user, $project, editUser, newUser, userDelete, projects, accessGroup, selfEdit, $group) => {
 
   // Load User into scope
   $scope.user = editUser;
@@ -71,7 +71,7 @@ app.controller('controller.dashboard.user.edit',
         if($scope.projectAccess.allProjectAccess) { // if full access, add to group
           if(!_.find($scope.oldUser.groups, {name: accessGroup.name})) { // check if user is already part of full access group
             // add to group
-            $user.group.member(accessGroup.ident).add($scope.user.ident).then(
+            $group.addUser(accessGroup.ident, $scope.user.ident).then(
               (resp) => {
               },
               (err) => {
@@ -83,7 +83,7 @@ app.controller('controller.dashboard.user.edit',
           // if not full access, bind to/unbind from projects
           if(_.find($scope.oldUser.groups, {name: accessGroup.name})) { // check if user is part of full access group
             // remove from group
-            $user.group.member(accessGroup.ident).remove($scope.user.ident).then(
+            $group.removeUser(accessGroup.ident, $scope.user.ident).then(
                 (resp) => {
                 },
                 (err) => {
@@ -153,7 +153,7 @@ app.controller('controller.dashboard.user.edit',
           // create user/project binding
           if($scope.projectAccess.allProjectAccess) { // if full access, add to group
             // Add user to group
-            $user.group.member(accessGroup.ident).add(user.ident).then(
+            $group.addUser(accessGroup.ident, user.ident).then(
               (resp) => {
               },
               (err) => {

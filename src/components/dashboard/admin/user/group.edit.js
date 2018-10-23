@@ -1,4 +1,4 @@
-app.controller('controller.dashboard.user.groups.edit', ['$q', '_', '$scope', '$mdDialog','api.user', 'editGroup', 'newGroup', 'groupDelete', ($q, _, scope, $mdDialog, $user, editGroup, newGroup, groupDelete) => {
+app.controller('controller.dashboard.user.groups.edit', ['$q', '_', '$scope', '$mdDialog','api.user', 'editGroup', 'newGroup', 'groupDelete', 'api.group', ($q, _, scope, $mdDialog, $user, editGroup, newGroup, groupDelete, $group) => {
 
   // Load User into scope
   scope.group = editGroup;
@@ -58,7 +58,7 @@ app.controller('controller.dashboard.user.groups.edit', ['$q', '_', '$scope', '$
     if(_.find(scope.group.users, {ident: scope.member.ident})) return alert('This user has already been added to the group');
 
     // Add user to group
-    $user.group.member(scope.group.ident).add(scope.member.ident).then(
+    $group.addUser(scope.group.ident, scope.member.ident).then(
       (resp) => {
         scope.group.users.push(resp);
 
@@ -77,7 +77,7 @@ app.controller('controller.dashboard.user.groups.edit', ['$q', '_', '$scope', '$
   scope.removeUser = ($event, user) => {
 
     if(confirm('Are you sure you want to remove '+ user.firstName + ' ' + user.lastName +' from '+ scope.group.name +'?')) {
-      $user.group.member(scope.group.ident).remove(user.ident).then(
+      $group.removeUser(scope.group.ident, user.ident).then(
         (resp) => {
           // Remove entry from group list
           scope.group.users = _.filter(scope.group.users, (u) => {
@@ -109,7 +109,7 @@ app.controller('controller.dashboard.user.groups.edit', ['$q', '_', '$scope', '$
     
     // Send updated user to api
     if(!newGroup) {
-      $user.group.update(scope.group.ident, scope.group).then(
+      $group.update(scope.group.ident, scope.group).then(
         (group) => {
           // Success
           $mdDialog.hide({status: true, data: group, message: "The group has been updated!"});
@@ -121,7 +121,7 @@ app.controller('controller.dashboard.user.groups.edit', ['$q', '_', '$scope', '$
     }
     // Send updated user to api
     if(newGroup) {
-      $user.group.create(scope.group).then(
+      $group.create(scope.group).then(
         (group) => {
           // Success
           $mdDialog.hide({status: true, data: group, message: "The group has been added!", newGroup: true});

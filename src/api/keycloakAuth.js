@@ -17,17 +17,14 @@ function keycloakAuth($q, $cookies, $state, $http) {
    * Login using the keycloak adaptor
    * @return {Promise} Promise to keycloak auth
    */
-  function setToken() {
-    return $q((resolve, reject) => {
-      keycloak.init({ onLoad: 'login-required' })
-        .then(() => {
-          $cookies.put(CONFIG.COOKIES.KEYCLOAK, keycloak.token);
-          resolve(keycloak.token);
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
+  async function setToken() {
+    try {
+      await keycloak.init({ onLoad: 'login-required' });
+      $cookies.put(CONFIG.COOKIES.KEYCLOAK, keycloak.token);
+      return keycloak.token;
+    } catch (err) {
+      return err;
+    }
   }
 
   /**
@@ -42,25 +39,20 @@ function keycloakAuth($q, $cookies, $state, $http) {
    * Logs the user out via Keycloak
    * @return {Promise} Promise for kc logout
    */
-  function logout() {
-    return $q((resolve, reject) => {
-      keycloak.init()
-        .then(() => {
-          $cookies.remove(CONFIG.COOKIES.KEYCLOAK);
-          keycloak.logout({
-            redirectUri: $state.href('public.login', {}, { absolute: true }),
-          })
-            .then((resp) => {
-              resolve(resp);
-            });
-        })
-        .catch((err) => {
-          $cookies.remove(CONFIG.COOKIES.KEYCLOAK);
-          delete $http.headers.Authorization;
-          $state.go('public.login');
-          reject(err);
-        });
-    });
+  async function logout() {
+    try {
+      await keycloak.init();
+      $cookies.remove(CONFIG.COOKIES.KEYCLOAK);
+      const resp = await keycloak.logout({
+        redirectUri: $state.href('public.login', {}, { absolute: true }),
+      });
+      return resp;
+    } catch (err) {
+      $cookies.remove(CONFIG.COOKIES.KEYCLOAK);
+      delete $http.headers.Authorization;
+      $state.go('public.login');
+      return err;
+    }
   }
 
   const keycloakAuthService = {

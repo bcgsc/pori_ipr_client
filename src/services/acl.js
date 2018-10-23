@@ -1,6 +1,4 @@
-app.service('$acl', ['$q', '_', 'api.user', 'api.pog', ($q, _, $user, $pog) => {
-  let user;
-  
+app.service('$acl', ['$q', '_', 'api.user', 'api.pog', ($q, _, $user, $pog) => {  
   const actions = {
     report: {
       view: {
@@ -87,28 +85,25 @@ app.service('$acl', ['$q', '_', 'api.user', 'api.pog', ($q, _, $user, $pog) => {
      *
      * @returns {boolean} - User is allowed to see resource
      */
-    resource: (r, u=null) => {
+    resource: (r) => {
       let permission = false;
       let resource;
       
-      if(u) user = u; // Fix for delayed user init response in construct
-      
       try {
         resource = resources[r];
-      }
-      catch(e) {
+      } catch (e) {
         console.log('Failed to find resource: ', r);
         return false;
       }
   
       // Check Allows first
-      let allows = _.intersection(resource.allow, _.map(_.mapValues(user.groups, (r) => { return {name: r.name.toLowerCase()}}), 'name'));
+      let allows = _.intersection(resource.allow, _.map(_.mapValues($user.meObj.groups, (r) => { return {name: r.name.toLowerCase()}}), 'name'));
       if(resource.allow.indexOf('*') > -1) permission = true;
       if(allows && allows.length > 0) permission = true;
   
   
       // Check Rejections
-      let rejects = _.intersection(resource.reject, _.map(_.mapValues(user.groups, (r) => { return {name: r.name.toLowerCase()}}), 'name'));
+      let rejects = _.intersection(resource.reject, _.map(_.mapValues($user.meObj.groups, (r) => { return {name: r.name.toLowerCase()}}), 'name'));
       if(resource.reject.indexOf('*') > -1) permission = false; // No clue why this would exist, but spec allows
       if(rejects && rejects.length > 0) permission = false;
   
@@ -129,8 +124,6 @@ app.service('$acl', ['$q', '_', 'api.user', 'api.pog', ($q, _, $user, $pog) => {
       let permission = false;
       let action;
       
-      if(u) user = u;
-      
       try {
         action = _.get(actions, a);
         let allow = action.allow;
@@ -143,13 +136,13 @@ app.service('$acl', ['$q', '_', 'api.user', 'api.pog', ($q, _, $user, $pog) => {
       }
       
       // Check Allows first
-      let allows = _.intersection(action.allow, _.map(_.mapValues(user.groups, (r) => { return {name: r.name.toLowerCase()}}), 'name'));
+      let allows = _.intersection(action.allow, _.map(_.mapValues($user.meObj.groups, (r) => { return {name: r.name.toLowerCase()}}), 'name'));
       if(action.allow.indexOf('*') > -1) permission = true;
       if(allows && allows.length > 0) permission = true;
   
   
       // Check Rejections
-      let rejects = _.intersection(action.reject, _.map(_.mapValues(user.groups, (r) => { return {name: r.name.toLowerCase()}}), 'name'));
+      let rejects = _.intersection(action.reject, _.map(_.mapValues($user.meObj.groups, (r) => { return {name: r.name.toLowerCase()}}), 'name'));
       if(action.reject.indexOf('*') > -1) permission = false; // No clue why this would exist, but spec allows
       if(rejects && rejects.length > 0) permission = false;
   
@@ -163,7 +156,8 @@ app.service('$acl', ['$q', '_', 'api.user', 'api.pog', ($q, _, $user, $pog) => {
      *
      */
     inGroup: (group) => {
-      return !!_.find(user.groups, (userGroup) => {
+      // console.log($user.meObj);
+      return !!_.find($user.meObj.groups, (userGroup) => {
         return group.toLowerCase() === userGroup.name.toLowerCase();
       });
     },
@@ -181,7 +175,7 @@ app.service('$acl', ['$q', '_', 'api.user', 'api.pog', ($q, _, $user, $pog) => {
         (pog) => {
           let access = false;
           // check if user has individual project access or is part of full access group
-          if(_.intersectionBy(user.projects, pog.projects, 'name').length > 0 || _.find(user.groups, {name: 'Full Project Access'})) {
+          if(_.intersectionBy($user.meObj.projects, pog.projects, 'name').length > 0 || _.find($user.meObj.groups, {name: 'Full Project Access'})) {
             access = true;
             deferred.resolve();
           } else {
@@ -195,15 +189,6 @@ app.service('$acl', ['$q', '_', 'api.user', 'api.pog', ($q, _, $user, $pog) => {
 
       return deferred.promise;
     },
-  
-    /**
-     * Inject user object to ACL
-     *
-     * @param {object} u - User object
-     */
-    injectUser: (u) => {
-      user = u;
-    }
   }
 
 }]);
