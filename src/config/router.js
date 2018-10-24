@@ -82,10 +82,11 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         breadcrumbProxy: 'dashboard.reports',
       },
       resolve: {
-        user: ['$q', 'api.user', ($q, $user) => {
+        user: ['$q', 'api.user', '$userSettings', ($q, $user, $userSettings) => {
           return $q((resolve, reject) => {
             $user.me()
               .then(() => {
+                $userSettings.init();
                 resolve($user.meObj);
               })
               .catch((err) => {
@@ -94,14 +95,8 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
               });
           });
         }],
-        isAdmin: ['$q', 'api.user', 'user', ($q, $user, user) => {
-          return $q((resolve, reject) => {
-            if ($user.isAdmin()) {
-              resolve(true);
-            } else {
-              resolve(false);
-            }
-          });
+        isAdmin: ['$q', 'api.user', 'user', async ($q, $user, user) => {
+          return $user.isAdmin();
         }],
         pogs: ['$q', 'api.pog', ($q, $pog) => {
           return $q((resolve, reject) => {
@@ -125,13 +120,8 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
               });
           });
         }],
-        isExternalMode: ['$q', '$acl', 'user', ($q, $acl, user) => {
-          return $q((resolve, reject) => {
-            if ($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
-              resolve(true);
-            }
-            resolve(false);
-          });
+        isExternalMode: ['$acl', 'user', async ($acl, user) => {
+          return $acl.isExternalMode();
         }],
       },
     })
@@ -176,8 +166,8 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       data: {
         displayName: 'Listing',
         breadcrumbProxy: ($state) => {
-          if ($state.current.name.indexOf('report.probe') > -1) return 'dashboard.reports.probe';
-          if ($state.current.name.indexOf('report.genomic') > -1) return 'dashboard.reports.genomic';
+          if ($state.current.name.includes('report.probe')) return 'dashboard.reports.probe';
+          if ($state.current.name.includes('report.genomic')) return 'dashboard.reports.genomic';
           return 'dashboard.reports.dashboard';
         },
       },
@@ -186,7 +176,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
           'isExternalMode', ($q, permission, $report, $state, user, isExternalMode) => {
             if (isExternalMode) {
               return $q((resolve, reject) => {
-                reject('externalModeError');
+                reject(new Error('externalModeError'));
               });
             }
             return $report.all({ states: 'ready,active' });
@@ -266,14 +256,10 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       templateUrl: 'dashboard/pog/pog.html',
       resolve: {
         pog: ['_', '$stateParams', 'api.pog', 'user', '$acl', async (_, $stateParams, $pog, user, $acl) => {
-          try {
-            await $acl.canAccessPOG($stateParams.POG);
-            const pogResp = await $pog.id($stateParams.POG);
-            pogResp.myRoles = _.filter(pogResp.POGUsers, { user: { ident: user.ident } });
-            return pogResp;
-          } catch (err) {
-            return new Error('Unable to load patient');
-          }
+          await $acl.canAccessPOG($stateParams.POG);
+          const pogResp = await $pog.id($stateParams.POG);
+          pogResp.myRoles = _.filter(pogResp.POGUsers, { user: { ident: user.ident } });
+          return pogResp;
         }],
         reports: ['$q', '$stateParams', 'api.pog_analysis_report', '$acl', 'user', ($q, $stateParams, $report, $acl, user) => {
           let stateFilter = {};
@@ -776,10 +762,11 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         displayName: 'Print',
       },
       resolve: {
-        user: ['$q', 'api.user', '$state', ($q, $user, $state) => {
+        user: ['$q', 'api.user', '$state', '$userSettings', ($q, $user, $state, $userSettings) => {
           return $q((resolve, reject) => {
             $user.me()
               .then(() => {
+                $userSettings.init();
                 resolve($user.meObj);
               })
               .catch((err) => {
@@ -787,13 +774,8 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
               });
           });
         }],
-        isExternalMode: ['$q', '$acl', 'user', ($q, $acl, user) => {
-          return $q((resolve, reject) => {
-            if ($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
-              resolve(true);
-            }
-            resolve(false);
-          });
+        isExternalMode: ['$acl', 'user', async ($acl, user) => {
+          return $acl.isExternalMode();
         }],
       },
     })
@@ -806,10 +788,11 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       },
       template: '<ui-view \\>',
       resolve: {
-        pog: ['$q', '$stateParams', 'api.pog', ($q, $stateParams, $pog) => {
+        pog: ['$q', '$stateParams', 'api.pog', '$acl', async ($q, $stateParams, $pog, $acl) => {
+          await $acl.canAccessPOG($stateParams.POG);
           return $pog.id($stateParams.POG);
-        }]
-      }
+        }],
+      },
     })
 
     .state('print.POG.report', {
@@ -1105,7 +1088,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
           return $q((resolve, reject) => {
             if ($acl.inGroup('clinician')) {
-              reject('externalModeError');
+              reject(new Error('externalModeError'));
             }
             resolve();
           });
@@ -1144,7 +1127,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
           return $q((resolve, reject) => {
             if ($acl.inGroup('clinician')) {
-              reject('externalModeError');
+              reject(new Error('externalModeError'));
             }
             resolve();
           });
@@ -1183,7 +1166,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
           if($acl.inGroup('clinician')) {
             return $q((resolve, reject) => {
-              reject('externalModeError');
+              reject(new Error('externalModeError'));
             })
           }
         }]
@@ -1211,7 +1194,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
           ($q, user, isExternalMode) => {
             return $q((resolve, reject) => {
               if (isExternalMode) {
-                reject('externalModeError');
+                reject(new Error('externalModeError'));
               }
               resolve();
             });
@@ -1234,7 +1217,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
           ($q, user, isExternalMode) => {
             return $q((resolve, reject) => {
               if (isExternalMode) {
-                reject('externalModeError');
+                reject(new Error('externalModeError'));
               }
               resolve();
             });
@@ -1260,7 +1243,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
           ($q, user, isExternalMode) => {
             return $q((resolve, reject) => {
               if (isExternalMode) {
-                reject('externalModeError');
+                reject(new Error('externalModeError'));
               }
               resolve();
             });
@@ -1289,7 +1272,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
           ($q, user, isExternalMode) => {
             return $q((resolve, reject) => {
               if (isExternalMode) {
-                reject('externalModeError');
+                reject(new Error('externalModeError'));
               }
               resolve();
             });
@@ -1324,7 +1307,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
           ($q, user, isExternalMode) => {
             return $q((resolve, reject) => {
               if (isExternalMode) {
-                reject('externalModeError');
+                reject(new Error('externalModeError'));
               }
               resolve();
             });
@@ -1351,7 +1334,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
           ($q, user, isExternalMode) => {
             return $q((resolve, reject) => {
               if (isExternalMode) {
-                reject('externalModeError');
+                reject(new Error('externalModeError'));
               }
               resolve();
             });
@@ -1390,7 +1373,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
           ($q, user, isExternalMode) => {
             return $q((resolve, reject) => {
               if (isExternalMode) {
-                reject('externalModeError');
+                reject(new Error('externalModeError'));
               }
               resolve();
             });
@@ -1405,7 +1388,17 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         breadcrumbProxy: 'dashboard.germline.board'
       },
       controller: 'controller.dashboard.germline',
-      templateUrl: 'dashboard/germline/germline.html'
+      templateUrl: 'dashboard/germline/germline.html',
+      resolve: {
+        permission: ['$q', 'user', 'isExternalMode', ($q, user, isExternalMode) => {
+          return $q((resolve, reject) => {
+            if (isExternalMode) {
+              reject(new Error('externalModeError'));
+            }
+            resolve();
+          });
+        }],
+      },
     })
     
     .state('dashboard.germline.board', {
@@ -1419,15 +1412,6 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         reports: ['api.germline.report', ($report) => {
           return $report.all();
         }],
-        permission: ['$q', 'user', 'isExternalMode',
-          ($q, user, isExternalMode) => {
-            return $q((resolve, reject) => {
-              if (isExternalMode) {
-                reject('externalModeError');
-              }
-              resolve();
-            });
-          }],
       },
     })
     
@@ -1442,15 +1426,6 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         report: ['api.germline.report', '$stateParams', ($report, $stateParams) => {
           return $report.one($stateParams.patient, $stateParams.biopsy, $stateParams.report);
         }],
-        permission: ['$q', 'user', 'isExternalMode',
-          ($q, user, isExternalMode) => {
-            return $q((resolve, reject) => {
-              if (isExternalMode) {
-                reject('externalModeError');
-              }
-              resolve();
-            });
-          }],
       },
     });
 }]);

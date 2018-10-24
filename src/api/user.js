@@ -36,7 +36,7 @@ function apiUser(_, $http) {
    * Check if user is an admin or superuser
    * @return {Boolean} admin bool
    */
-  function isAdmin() {
+  async function isAdmin() {
     return $user.meObj.groups.some(({ name }) => {
       return ['superUser', 'admin'].includes(name);
     });

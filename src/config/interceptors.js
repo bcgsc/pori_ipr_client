@@ -16,7 +16,7 @@ function httpInterceptors($rootScope, $q, $injector, $timeout) {
   return {
     request: (config) => {
       const keycloakAuth = $injector.get('keycloakAuth');
-      if (keycloakAuth.getToken() !== '') {
+      if (keycloakAuth.getToken()) {
         config.headers.Authorization = keycloakAuth.getToken();
       }
       return config;
@@ -25,7 +25,6 @@ function httpInterceptors($rootScope, $q, $injector, $timeout) {
     responseError: (response) => {
       switch (response.status) {
         case 500:
-          console.log('500 Error');
           $rootScope.$broadcast('httpError', { message: 'An unexpected error has occurred. Please try again.' });
           break;
         case 403:
@@ -35,11 +34,9 @@ function httpInterceptors($rootScope, $q, $injector, $timeout) {
             $timeout(() => { keycloakAuth.logout(); }, 10000);
             break;
           }
-          console.log('Access Denied error');
           $rootScope.$broadcast('httpError', { message: 'You are not authorized to access the requested resource.' });
           break;
         case -1:
-          console.log('API Request failed', response);
           $rootScope.$broadcast('httpError', { message: 'The API server was not able to process the request. See console for details' });
           break;
         default:

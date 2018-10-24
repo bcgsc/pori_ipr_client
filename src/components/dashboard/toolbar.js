@@ -19,30 +19,22 @@ app.controller('controller.dashboard.toolbar', ['_', '$scope', '$mdSidenav', '$s
         templateUrl: 'dashboard/feedback.html',
         targetEvent: $event,
         clickOutsideToClose: false,
-      }).then(
-        (res) => {
-          // Toast!
-        },
-        (cancel) => {
-          // Toast!
-        },
-      );
+      });
     };
 
     /**
      * Log out a user session
      *
      */
-    $scope.userLogout = () => {
-      keycloakAuth.logout()
-        .then((resp) => {
-          // Success from API
-          $mdToast.showSimple('You have been logged out.');
-          $state.go('public.login');
-        })
-        .catch((err) => {
-          $mdToast.showSimple('We were not able to log you out.');
-        });
+    $scope.userLogout = async () => {
+      try {
+        await keycloakAuth.logout();
+        $mdToast.showSimple('You have been logged out.');
+        $state.go('public.login');
+      } catch (err) {
+        $mdToast.showSimple('Error: Could not logout due to connection issue.');
+        $state.go('public.login');
+      }
     };
 
     // Edit User

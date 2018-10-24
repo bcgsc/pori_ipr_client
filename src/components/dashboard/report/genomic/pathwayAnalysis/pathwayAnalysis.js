@@ -77,7 +77,7 @@ app.controller('controller.dashboard.report.genomic.pathwayAnalysis',
 
             let selectedItem;
             let uploader = scope.uploader = new FileUploader({
-              url: CONFIG.ENDPOINTS.API + '/POG/' + pog.POGID +  '/report/' + report.ident + '/genomic/summary/pathwayAnalysis',
+              url: `${CONFIG.ENDPOINTS.API}/POG/${pog.POGID}/report/${report.ident}/genomic/summary/pathwayAnalysis`,
             });
 
             uploader.headers['Authorization'] = $cookies.get(CONFIG.COOKIES.KEYCLOAK);
