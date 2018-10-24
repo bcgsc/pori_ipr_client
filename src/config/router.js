@@ -265,18 +265,15 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       controller: 'controller.dashboard.pog',
       templateUrl: 'dashboard/pog/pog.html',
       resolve: {
-        pog: ['_', '$q', '$stateParams', 'api.pog', 'user', (_, $q, $stateParams, $pog, user) => {
-          return $q((resolve, reject) => {
-            $pog.id($stateParams.POG).then(
-              (pog) => {
-                pog.myRoles = _.filter(pog.POGUsers, {user: {ident: user.ident}});
-                resolve(pog);
-              },
-              (err) => {
-                reject('Unable to load patient');
-              }
-            )
-          })
+        pog: ['_', '$stateParams', 'api.pog', 'user', '$acl', async (_, $stateParams, $pog, user, $acl) => {
+          try {
+            await $acl.canAccessPOG($stateParams.POG);
+            const pogResp = await $pog.id($stateParams.POG);
+            pogResp.myRoles = _.filter(pogResp.POGUsers, { user: { ident: user.ident } });
+            return pogResp;
+          } catch (err) {
+            return new Error('Unable to load patient');
+          }
         }],
         reports: ['$q', '$stateParams', 'api.pog_analysis_report', '$acl', 'user', ($q, $stateParams, $report, $acl, user) => {
           let stateFilter = {};

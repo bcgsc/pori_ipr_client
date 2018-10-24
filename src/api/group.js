@@ -26,7 +26,7 @@ function userGroup($http) {
       const resp = await $http.get(`${api}/group`);
       return resp.data;
     } catch (err) {
-      return err;
+      return Promise.reject(new Error(err));
     }
   }
 
@@ -40,7 +40,7 @@ function userGroup($http) {
       const resp = await $http.get(`${api}/group/${ident}`);
       return resp.data;
     } catch (err) {
-      return err;
+      return Promise.reject(new Error(err));
     }
   }
 
@@ -54,7 +54,7 @@ function userGroup($http) {
       const resp = await $http.post(`${api}/group`, group);
       return resp.data;
     } catch (err) {
-      return err;
+      return Promise.reject(new Error(err));
     }
   }
 
@@ -68,7 +68,7 @@ function userGroup($http) {
       const resp = await $http.delete(`${api}/group/${group.ident}`);
       return resp.data;
     } catch (err) {
-      return err;
+      return Promise.reject(new Error(err));
     }
   }
 
@@ -83,7 +83,7 @@ function userGroup($http) {
       const resp = await $http.put(`${api}/group/${ident}`, group);
       return resp.data;
     } catch (err) {
-      return err;
+      return Promise.reject(new Error(err));
     }
   }
 
@@ -98,7 +98,7 @@ function userGroup($http) {
       const resp = await $http.post(`${api}/group/${group}/member`, { user });
       return resp.data;
     } catch (err) {
-      return err;
+      return Promise.reject(new Error(err));
     }
   }
 
@@ -110,10 +110,13 @@ function userGroup($http) {
    */
   async function removeUser(group, user) {
     try {
-      const resp = await $http.delete(`${api}/group/${group}/member`, { user });
+      const resp = await $http.delete(`${api}/group/${group}/member`, {
+        data: { user },
+        headers: { 'Content-Type': 'application/json' },
+      });
       return resp.data;
     } catch (err) {
-      return err;
+      return Promise.reject(new Error(err));
     }
   }
 }

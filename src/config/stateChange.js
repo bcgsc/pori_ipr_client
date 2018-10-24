@@ -50,25 +50,20 @@ app.run(['$rootScope', '$state', '$q', '$acl', '$cookies', 'api.user', 'api.pog'
               $userSettings.init(); // Init settings
               // User is logged in - check if accessing individual POG
               if (toParams.POG) {
-                resolve($acl.canAccessPOG(toParams.POG));
+                return $acl.canAccessPOG(toParams.POG);
               }
-              // Not accessing specific case - can go ahead and resolve
-              resolve();
+              return true;
+            })
+            .then((resp) => {
+              resolve(resp);
             })
             .catch((err) => {
-              $localStorage.returnToState = toState.name;
-              $localStorage.returnToStateParams = JSON.stringify(toParams);
-              switch (err) {
-                case 'projectAccessError':
-                  // Not allowed to access project - return to dashboard
-                  $mdToast.showSimple('You do not have access to cases in this project');
-                  $state.go('dashboard.home');
-                  resolve();
-                  break;
-                default:
-                  reject(err);
-                  break;
+              if (err === 'projectAccessError') {
+                // Not allowed to access project - return to dashboard
+                $mdToast.showSimple('You do not have access to cases in this project');
+                $state.go('dashboard.home');
               }
+              resolve();
             });
         });
       }

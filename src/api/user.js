@@ -28,7 +28,7 @@ function apiUser(_, $http) {
       $user.meObj = resp.data;
       return $user.meObj;
     } catch (err) {
-      return err;
+      return Promise.reject(new Error(err));
     }
   }
   
@@ -51,7 +51,7 @@ function apiUser(_, $http) {
       const resp = await $http.get(api);
       return resp.data;
     } catch (err) {
-      return err;
+      return Promise.reject(new Error(err));
     }
   }
 
@@ -65,7 +65,7 @@ function apiUser(_, $http) {
       const resp = await $http.put(`${api}/${user.ident}`, user);
       return resp.data;
     } catch (err) {
-      return err;
+      return Promise.reject(new Error(err));
     }
   }
 
@@ -79,7 +79,7 @@ function apiUser(_, $http) {
       const resp = await $http.post(`${api}/`, user);
       return resp.data;
     } catch (err) {
-      return err;
+      return Promise.reject(new Error(err));
     }
   }
 
@@ -93,7 +93,7 @@ function apiUser(_, $http) {
       const resp = await $http.get(`${api}/search`, { params: { query } });
       return resp.data;
     } catch (err) {
-      return err;
+      return Promise.reject(new Error(err));
     }
   }
 
@@ -107,7 +107,7 @@ function apiUser(_, $http) {
       const resp = await $http.delete(`${api}/${user.ident}`);
       return resp.data;
     } catch (err) {
-      return err;
+      return Promise.reject(new Error(err));
     }
   }
 }
