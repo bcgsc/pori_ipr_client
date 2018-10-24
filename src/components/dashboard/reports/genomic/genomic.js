@@ -7,7 +7,7 @@ app.controller('controller.dashboard.reports.genomic',
   $scope.nonproduction = false;
   $scope.loading = false;
   $scope.selectedProject = {
-    project: !!$userSettings.get('selectedProject') ? {} : $userSettings.get('selectedProject')
+    project: $userSettings.get('selectedProject') ? $userSettings.get('selectedProject') : {},
   }
 
   $scope.roles = [
