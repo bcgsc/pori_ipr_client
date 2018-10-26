@@ -27,6 +27,9 @@ function httpInterceptors($rootScope, $q, $injector, $timeout) {
         case 500:
           $rootScope.$broadcast('httpError', { message: 'An unexpected error has occurred. Please try again.' });
           break;
+        case 404:
+          $rootScope.$broadcast('httpError', { message: 'Resource could not be found.' });
+          break;
         case 403:
           if (response.data.message === 'IPR Access Error') {
             const keycloakAuth = $injector.get('keycloakAuth');

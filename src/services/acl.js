@@ -184,7 +184,7 @@ app.service('$acl', ['$q', '_', 'api.user', 'api.pog', ($q, _, $user, $pog) => {
       }
       return Promise.reject(new Error('projectAccessError'));
     } catch (err) {
-      return Promise.reject(new Error({ status: err.status, body: err.data }));
+      return Promise.reject(new Error(err.message));
     }
   }
 

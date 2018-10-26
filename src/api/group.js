@@ -26,7 +26,7 @@ function userGroup($http) {
       const resp = await $http.get(`${api}/group`);
       return resp.data;
     } catch (err) {
-      return Promise.reject(new Error(err));
+      return Promise.reject(new Error(err.message));
     }
   }
 
@@ -40,7 +40,7 @@ function userGroup($http) {
       const resp = await $http.get(`${api}/group/${ident}`);
       return resp.data;
     } catch (err) {
-      return Promise.reject(new Error(err));
+      return Promise.reject(new Error(err.message));
     }
   }
 
@@ -54,7 +54,7 @@ function userGroup($http) {
       const resp = await $http.post(`${api}/group`, group);
       return resp.data;
     } catch (err) {
-      return Promise.reject(new Error(err));
+      return Promise.reject(new Error(err.message));
     }
   }
 
@@ -68,7 +68,7 @@ function userGroup($http) {
       const resp = await $http.delete(`${api}/group/${group.ident}`);
       return resp.data;
     } catch (err) {
-      return Promise.reject(new Error(err));
+      return Promise.reject(new Error(err.message));
     }
   }
 
@@ -83,7 +83,7 @@ function userGroup($http) {
       const resp = await $http.put(`${api}/group/${ident}`, group);
       return resp.data;
     } catch (err) {
-      return Promise.reject(new Error(err));
+      return Promise.reject(new Error(err.message));
     }
   }
 
@@ -98,7 +98,7 @@ function userGroup($http) {
       const resp = await $http.post(`${api}/group/${group}/member`, { user });
       return resp.data;
     } catch (err) {
-      return Promise.reject(new Error(err));
+      return Promise.reject(new Error(err.message));
     }
   }
 
@@ -116,7 +116,7 @@ function userGroup($http) {
       });
       return resp.data;
     } catch (err) {
-      return Promise.reject(new Error(err));
+      return Promise.reject(new Error(err.message));
     }
   }
 }

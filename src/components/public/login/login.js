@@ -15,8 +15,8 @@ function loginRedirect(keycloakAuth, $user, $state, $mdToast, $localStorage) {
       if ($localStorage.returnToState) {
         // navigate to state user was trying to access
         $state.go($localStorage.returnToState, JSON.parse($localStorage.returnToStateParams));
-        $localStorage.returnToState = undefined;
-        $localStorage.returnToStateParams = undefined;
+        delete $localStorage.returnToState;
+        delete $localStorage.returnToStateParams;
       } else {
         $state.go('dashboard.reports.dashboard');
       }

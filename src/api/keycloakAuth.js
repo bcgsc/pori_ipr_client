@@ -10,7 +10,7 @@ function keycloakAuth($q, $cookies, $state, $http) {
   const keycloak = Keycloak({
     'realm': 'CanDIG',
     'clientId': 'IPR',
-    'url': 'http://ga4ghdev01.bcgsc.ca:8080/auth',
+    'url': CONFIG.ENDPOINTS.KEYCLOAK,
   });
 
   /**
