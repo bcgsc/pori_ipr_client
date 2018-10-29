@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.biopsy.board.edit',
-['$scope', '_', '$q', '$mdDialog', '$mdToast', 'api.lims', 'api.bioapps', 'api.analysis', 'api.pog', 'api.project', 'analysis', '$filter', 'projects',
-($scope, _, $q, $mdDialog, $mdToast, $lims, $bioapps, $analysis, $pog, $project, analysis, $filter, projects) => {
+['$scope', '_', '$q', '$mdDialog', '$mdToast', 'api.lims', 'api.bioapps', 'api.analysis', 'api.pog', 'api.project', 'analysis', '$filter', 'projects', '$http', 
+($scope, _, $q, $mdDialog, $mdToast, $lims, $bioapps, $analysis, $pog, $project, analysis, $filter, projects, $http) => {
   
   $scope.patient = angular.copy(analysis);
   $scope.projects = projects;
@@ -25,22 +25,12 @@ app.controller('controller.dashboard.biopsy.board.edit',
     transcriptome_library: !!analysis.libraries.transcriptome
   }
   
-  let threeLetterCodes = [
-    {"code": "BRC", "description": "Breast"},
-    {"code": "CNS", "description": "Central nervous system"},
-    {"code": "GIC", "description": "Gastrointestinal"},
-    {"code": "GUC", "description": "Genitourinary"},
-    {"code": "GYN", "description": "Gynecological"},
-    {"code": "H&N", "description": "Head and neck"},
-    {"code": "HEM", "description": "Hematological"},
-    {"code": "NEU", "description": "Neurological"},
-    {"code": "PAN", "description": "Pancreatic"},
-    {"code": "PRO", "description": "Prostate"},
-    {"code": "PUO", "description": "Primary unknown"},
-    {"code": "SAR", "description": "Sarcoma"},
-    {"code": "SKN", "description": "Skin"},
-    {"code": "THR", "description": "Thoracic"}
-  ];
+  let threeLetterCodes = [];
+
+  $http.get('../assets/json/threeLetterCodes.json')
+  .then((result) => {
+    threeLetterCodes = _.sortBy(result.data, ['code']);
+  });  
 
   // convert Cancer Group (3 Letter Code) field to uppercase
   $scope.$watch('cancerGroupQuery', function (val) {

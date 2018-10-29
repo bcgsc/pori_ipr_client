@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.biopsy.board.add',
-['$scope', '_', '$q', 'api.lims', 'api.bioapps', 'api.analysis', 'api.pog', 'api.project', '$mdDialog', '$mdToast', '$filter', 'projects',
-($scope, _, $q, $lims, $bioapps, $analysis, $pog, $project, $mdDialog, $mdToast, $filter, projects) => {
+['$scope', '_', '$q', 'api.lims', 'api.bioapps', 'api.analysis', 'api.pog', 'api.project', '$mdDialog', '$mdToast', '$filter', 'projects', '$http', 
+($scope, _, $q, $lims, $bioapps, $analysis, $pog, $project, $mdDialog, $mdToast, $filter, projects, $http) => {
   
   $scope.stages = [
     {title: 'Patient', description: 'Meta data about the patient', id: "patient", ordinal: 0},
@@ -23,22 +23,12 @@ app.controller('controller.dashboard.biopsy.board.add',
   $scope.addPhysician = () => { $scope.physicians.push($scope.physicians.length); };
   $scope.removePhysician = (i) => { $scope.physicians.splice(i,1); };
   
-  let threeLetterCodes = [
-    {"code": "BRC", "description": "Breast"},
-    {"code": "CNS", "description": "Central nervous system"},
-    {"code": "GIC", "description": "Gastrointestinal"},
-    {"code": "GUC", "description": "Genitourinary"},
-    {"code": "GYN", "description": "Gynecological"},
-    {"code": "H&N", "description": "Head and neck"},
-    {"code": "HEM", "description": "Hematological"},
-    {"code": "NEU", "description": "Neurological"},
-    {"code": "PAN", "description": "Pancreatic"},
-    {"code": "PRO", "description": "Prostate"},
-    {"code": "PUO", "description": "Primary unknown"},
-    {"code": "SAR", "description": "Sarcoma"},
-    {"code": "SKN", "description": "Skin"},
-    {"code": "THR", "description": "Thoracic"}
-  ];
+  let threeLetterCodes = [];
+
+  $http.get('../assets/json/threeLetterCodes.json')
+  .then((result) => {
+    threeLetterCodes = _.sortBy(result.data, ['code']);
+  });  
   
   // set analysis biopsy field if tracking is disabled
   $scope.$watch('patient.tracking', (newVal, oldVal) => {
