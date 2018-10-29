@@ -13,6 +13,7 @@ const app = angular.module('bcgscIPR', [
   'chart.js',
   'btford.socket-io',
   'ngCookies',
+  'angular-async-await',
 ])
 .config(function($mdThemingProvider) {
   let gscBlueMap = $mdThemingProvider.extendPalette('indigo' , {
