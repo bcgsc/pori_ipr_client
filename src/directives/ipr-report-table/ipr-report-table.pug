@@ -19,10 +19,11 @@ div(layout="column")
             tr
                 th(width="10%") Patient 
                 th(width="10%") Alternate Identifier 
+                th(width="10%") Biopsy Number
                 th(width="20%") Disease 
-                th(width="20%") Physician 
+                th(width="15%") Physician 
                 th(width="10%") Age 
-                th(width="20%") Status 
+                th(width="15%") Status 
         tbody
             tr(ng-show="loading").loading
                 td(colspan="6").text-center
@@ -36,6 +37,7 @@ div(layout="column")
                     span(ui-sref="dashboard.reports.pog.report.genomic.summary({POG: report.pog.POGID, analysis_report: report.ident})", ng-if="type == 'genomic'").link {{report.patientInformation.POGID}}
                     span(ui-sref="dashboard.reports.pog.report.probe.summary({POG: report.pog.POGID, analysis_report: report.ident})", ng-if="type == 'probe'").link {{report.patientInformation.POGID}}
                 td {{report.analysis.pog.alternate_identifier || 'N/A'}}
+                td {{report.analysis.analysis_biopsy || 'N/A'}}
                 td {{report.patientInformation.tumourType}}
                 td {{report.patientInformation.physician}}
                 td {{report.patientInformation.caseType}}
