@@ -1,5 +1,4 @@
-app.directive("iprReportTable", ['$q', '_', 'api.pog_analysis_report', ($q, _, $report) => {
-  
+app.directive('iprReportTable', ['api.pog_analysis_report', '$mdToast', ($report, $mdToast) => {
   return {
     restrict: 'E',
     transclude: false,
@@ -7,22 +6,21 @@ app.directive("iprReportTable", ['$q', '_', 'api.pog_analysis_report', ($q, _, $
       reports: '=reports',
       clinician: '=clinician',
       pagination: '=?pagination',
-      type: '=type'
+      type: '=type',
     },
     templateUrl: 'ipr-report-table/ipr-report-table.html',
-    link: (scope, element, attr) => {
-      
+    link: (scope) => {
       scope.paginate = {
         limit: scope.pagination.limit,
         offset: scope.pagination.offset,
-        total: scope.pagination.total
+        total: scope.pagination.total,
       };
       
       
       scope.filter = {
         bound: false,
         states: 'ready,active,presented',
-        search: null
+        search: null,
       };
   
       scope.loading = false;
@@ -33,10 +31,10 @@ app.directive("iprReportTable", ['$q', '_', 'api.pog_analysis_report', ($q, _, $
         
         scope.paginate.offset = 0;
     
-        let filterCache = scope.filter.search;
+        const filterCache = scope.filter.search;
     
         scope.filter.search = null;
-        if(filterCache !== undefined) scope.refreshReports();
+        if (filterCache !== undefined) scope.refreshReports();
       };
   
       scope.displaySearch = () => {
@@ -62,74 +60,70 @@ app.directive("iprReportTable", ['$q', '_', 'api.pog_analysis_report', ($q, _, $
       };
   
       scope.readState = (s) => {
-        switch(s) {
+        let state;
+        switch (s) {
           case 'ready':
-            return 'Ready for Analysis';
+            state = 'Ready for Analysis';
             break;
-      
           case 'active':
-            return 'Analysis Underway';
+            state = 'Analysis Underway';
             break;
-      
           case 'presented':
-            return 'Presentation';
+            state = 'Presentation';
             break;
-      
           case 'archived':
-            return 'Archived';
+            state = 'Archived';
             break;
-
           case 'reviewed':
-            return 'Reviewed';
+            state = 'Reviewed';
             break;
-      
           default:
-            return 'N/A';
+            state = 'N/A';
             break;
         }
+
+        return state;
       };
       
       /**
        * Call API and refresh reports
        *
        * Makes call to IPR API with filters and pagination
+       *
+       * @returns {undefined}
        */
-      scope.refreshReports = () => {
-        
-        let opts = {};
+      scope.refreshReports = async () => {
+        const opts = {};
         
         scope.loading = true;
         
-        opts.type      = scope.type;
-        opts.states    = scope.filter.states;
-        opts.project   = scope.filter.project;
+        opts.type = scope.type;
+        opts.states = scope.filter.states;
+        opts.project = scope.filter.project;
         opts.paginated = true;
-        opts.offset    = scope.paginate.offset;
-        opts.limit     = scope.paginate.limit;
+        opts.offset = scope.paginate.offset;
+        opts.limit = scope.paginate.limit;
         
         
-        if(!scope.filter.bound) opts.all = true;
-        if(scope.filter.search) opts.searchText = scope.filter.search;
+        if (!scope.filter.bound) opts.all = true;
+        if (scope.filter.search) opts.searchText = scope.filter.search;
         
-        if(scope.clinician) {
-          if(scope.type == 'genomic') opts.states = 'presented,archived';
-          if(scope.type == 'probe') opts.states = 'reviewed';
+        if (scope.clinician) {
+          if (scope.type === 'genomic') opts.states = 'presented,archived';
+          if (scope.type === 'probe') opts.states = 'reviewed';
         }
-        
-        $report.all(opts)
-          .then((result) => {
-            scope.paginate.total = result.total;
-            scope.reports = result.reports;
-            
-            scope.loading = false;
-          })
-          .catch((err) => {
-          
-          });
-        
-      }
-      
-    } // end link
+        try {
+          const reportResults = await $report.all(opts);
+
+          scope.paginate.total = reportResults.total;
+          scope.reports = reportResults.reports;
+              
+          scope.loading = false;
+        } catch (err) {
+          $mdToast.showSimple(`An error occurred when loading reports: ${err.message}`);
+          scope.loading = false;
+        }
+      };
+    }, // end link
   }; // end return
-  
 }]);
