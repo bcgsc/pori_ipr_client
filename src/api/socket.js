@@ -1,32 +1,44 @@
-app.factory('api.socket', ['socketFactory', '$localStorage', '$q', function (socketFactory, $localStorage, $q) {
+/**
+ * Factory for socket connections
+ * @param {*} socketFactory {@link https://github.com/btford/angular-socket-io}
+ * @param {*} $localStorage {@link https://github.com/gsklee/ngStorage}
+ * @param {*} $q {@link https://docs.angularjs.org/api/ng/service/$q}
+ * @return {Object} Socket factory object
+ */
+function apiSocket(socketFactory, $localStorage, $q) {
+  let ready = false;
 
-  let _ready = false;
-
-  let myIoSocket = io.connect(CONFIG.ENDPOINTS.SOCKET);
-
-  let socket = socketFactory({
-    ioSocket: myIoSocket
+  const socket = socketFactory({
+    ioSocket: io.connect(CONFIG.ENDPOINTS.SOCKET),
   });
 
-  socket.on('connect', function () {
-    socket.emit('authenticate', {token: $localStorage.bcgscIprToken});
+  socket.on('connect', () => {
+    socket.emit('authenticate', { token: $localStorage[CONFIG.STORAGE.KEYCLOAK] });
   });
 
-  socket.on('authenticated', (msg) => {
-    _ready = true;
+  socket.on('authenticated', () => {
+    ready = true;
     console.log('Socket.io successfully authenticated');
   });
 
-  socket.on('disconnect', function () {
+  socket.on('disconnect', () => {
     console.log('Connection dropped.');
   });
 
-  socket.ready = function () {
-    return $q(function (resolve, reject) {
-      (_ready) ? resolve() : reject();
+  socket.ready = () => {
+    return $q((resolve, reject) => {
+      if (ready) {
+        resolve();
+      }
+      reject();
     });
   };
 
   return socket;
+}
 
-}]);
+apiSocket.$inject = ['socketFactory', '$localStorage', '$q'];
+
+angular
+  .module('bcgscIPR')
+  .factory('api.socket', apiSocket);

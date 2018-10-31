@@ -1,185 +1,162 @@
 app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMatcherFactoryProvider', ($locationProvider, $urlRouterProvider, $stateProvider, $urlMatcherFactoryProvider) => {
-	// Enable HTML5 mode for URL access
-	$locationProvider.html5Mode(true);
+  // Enable HTML5 mode for URL access
+  $locationProvider.html5Mode(true);
 
-	// Don't require a perfect URL match (trailing slashes, etc)
-	$urlMatcherFactoryProvider.strictMode(false);
+  // Don't require a perfect URL match (trailing slashes, etc)
+  $urlMatcherFactoryProvider.strictMode(false);
 
-	// If no path could be found, send user to 404 error
-	$urlRouterProvider.otherwise(($injector, $location) => {
-		$injector.get('$state').go('error.404', null, {location: false});
-		return $location.path();
-	});
-  
-  
-  
+  // If no path could be found, send user to 404 error
+  $urlRouterProvider.otherwise(($injector, $location) => {
+    $injector.get('$state').go('error.404', null, {location: false});
+    return $location.path();
+  });
+
   // Master State Provider
-	// All states are defined and configured on this object
-	$stateProvider
+  // All states are defined and configured on this object
+  $stateProvider
 
-		// Default Public Entrance for Interactive-Pog-Report
-		.state('public', {
-			abstract: true,
-			templateUrl: 'public/layout.html',
-      resolve: {
-			  _: ['$q', 'api.session', '$state', ($q, $session, $state) => {
-			    return $q((resolve, reject) => {
-         
-			      if(!$session.getToken()) return resolve();
-			      
-			      $session.init().then(
-			        (user) => {
-			          if(user) $state.go('dashboard.reports.dashboard');
-			          reject('Already logged in');
-              },
-              (err) => {
-			          resolve();
-              }
-            )
-            
-          });
-          
-        }]
-      }
-		})
+    // Default Public Entrance for Interactive-Pog-Report
+    .state('public', {
+      abstract: true,
+      templateUrl: 'public/layout.html',
+    })
 
-		// Request access account for Interactive-Pog-Report
-		.state('public.request', {
-			url: '/request',
-			templateUrl: 'public/request/request.html',
-			controller: 'controller.public.request'
-		})
+    // Request access account for Interactive-Pog-Report
+    .state('public.access', {
+      url: '/access',
+      templateUrl: 'public/access/access.html',
+    })
 
-		// Login to App
-		.state('public.login', {
-			url: '/login',
-			templateUrl: 'public/login/login.html',
-			controller: 'controller.public.login'
-		})
+    // Login to App
+    .state('public.login', {
+      url: '/login',
+      controller: 'controller.public.login'
+    })
 
-		// Errors
-		.state('error', {
-			abstract: true,
-			url: '/error',
-			templateUrl: 'errors/error.html',
-		})
+    // Errors
+    .state('error', {
+      abstract: true,
+      url: '/error',
+      templateUrl: 'errors/error.html',
+    })
 
-		// 403 Error - Unauthorized Access
-		.state('error.403', {
-			url: '/403',
-			templateUrl: 'errors/403.html'
-		})
+    // 403 Error - Unauthorized Access
+    .state('error.403', {
+      url: '/403',
+      templateUrl: 'errors/403.html'
+    })
 
-		// 404 Error - Resource Not Found
-		.state('error.404', {
-			url: '/404',
-			templateUrl: 'errors/404.html'
-		})
+    // 404 Error - Resource Not Found
+    .state('error.404', {
+      url: '/404',
+      templateUrl: 'errors/404.html'
+    })
 
-		// 500 Error - Server/API Error
-		.state('error.500', {
-			url: '/500',
-			templateUrl: 'errors/500.html'
-		})
+    // 500 Error - Server/API Error
+    .state('error.500', {
+      url: '/500',
+      templateUrl: 'errors/500.html'
+    })
 
 
-		// Setup Dashboard state
-		.state('dashboard', {
-			abstract: true,
-			views: {
-				"@": {
-					templateUrl: 'dashboard/dashboard.html',
-					controller: 'controller.dashboard'
-				},
-				"toolbar@dashboard": {
-					templateUrl: 'dashboard/toolbar.html',
-					controller: 'controller.dashboard.toolbar'
-				},
-        "adminbar@dashboard": {
-				  templateUrl: 'dashboard/adminbar/adminbar.html',
-          controller: 'controller.dashboard.adminbar'
-        }
-			},
-      data: {
-			  displayName: 'Dashboard',
-        breadcrumbProxy: 'dashboard.reports'
+    // Setup Dashboard state
+    .state('dashboard', {
+      abstract: true,
+      views: {
+        '@': {
+          templateUrl: 'dashboard/dashboard.html',
+          controller: 'controller.dashboard',
+        },
+        'toolbar@dashboard': {
+          templateUrl: 'dashboard/toolbar.html',
+          controller: 'controller.dashboard.toolbar',
+        },
+        'adminbar@dashboard': {
+          templateUrl: 'dashboard/adminbar/adminbar.html',
+          controller: 'controller.dashboard.adminbar',
+        },
       },
-			resolve: {
-			  user: ['$q', 'api.session', 'api.user', '$state', '$userSettings', 'api.socket', ($q, $session, $user, $state, $userSettings, socket) => {
-			    return $q((resolve, reject) => {
-			      // Attempt session initialization
-			      $session.init()
-              .then($user.me)
-              .then((user) => {
-                // Session init'd, return user
-                $userSettings.init(); // Init settings
-        
-                resolve(user);
+      data: {
+        displayName: 'Dashboard',
+        breadcrumbProxy: 'dashboard.reports',
+      },
+      resolve: {
+        user: ['$q', 'api.user', '$userSettings', ($q, $user, $userSettings) => {
+          return $q((resolve, reject) => {
+            $user.me()
+              .then(() => {
+                $userSettings.init();
+                resolve($user.meObj);
               })
               .catch((err) => {
-		            // No session, go to login page
-		            $state.go('public.login');
-		            reject(err);
-	            });
-		      });
-		    }],
-        isAdmin: ['$q', 'api.user', 'user', ($q, $user, user) => {
-			    return $q((resolve, reject) => {
-			      resolve($user.isAdmin(user.groups));
+                console.log('rejecting...');
+                reject(err);
+              });
           });
         }],
-		    pogs: ['$q', 'api.pog', ($q, $pog) => {
-		      return $q((resolve, reject) => {
-		        $pog.all().then(
-		          (pogs) => {
-		            resolve(pogs);
-	            },
-	            (err) => {
-	              reject(err);
-              }
-		        );
-
-	        });
-	      }],
-        projects: ['api.project', ($project) => {
-			    return $project.all();
-        }]
-		  }
-		})
+        isAdmin: ['$q', 'api.user', 'user', async ($q, $user, user) => {
+          return $user.isAdmin();
+        }],
+        pogs: ['$q', 'api.pog', ($q, $pog) => {
+          return $q((resolve, reject) => {
+            $pog.all()
+              .then((pogs) => {
+                resolve(pogs);
+              })
+              .catch((err) => {
+                reject(err);
+              });
+          });
+        }],
+        projects: ['$q', 'api.project', ($q, $project) => {
+          return $q((resolve, reject) => {
+            $project.all()
+              .then((resp) => {
+                resolve(resp);
+              })
+              .catch((err) => {
+                reject(err);
+              });
+          });
+        }],
+        isExternalMode: ['$acl', 'user', async ($acl, user) => {
+          return $acl.isExternalMode();
+        }],
+      },
+    })
 
     .state('dashboard.home', {
       url: '/',
-      templateUrl: 'dashboard/home/home.html',
       controller: 'controller.dashboard.home',
     })
 
-		// Dashboard Overview/POG Listing
-		.state('dashboard.reports', {
-		  abstract: true,
-			url: '/reports',
+    // Dashboard Overview/POG Listing
+    .state('dashboard.reports', {
+      abstract: true,
+      url: '/reports',
       templateUrl: 'dashboard/reports/reports.html',
       data: {
         displayName: 'Reports',
         breadcrumbProxy: 'dashboard.reports.dashboard'
       },
       resolve: {
-		    permission: ['$q', '$acl', '$state', 'user', '$mdToast', ($q, $acl, $state, user, $mdToast) => {
-		      return $q((resolve, reject) => {
+        permission: ['$q', '$acl', '$state', 'user', '$mdToast', ($q, $acl, $state, user, $mdToast) => {
+          return $q((resolve, reject) => {
           
-		        // Passing option user to avoid delay problem
-		        if(!$acl.action('report.view', user)) {
-		          $mdToast.showSimple('You are not allowed to view reports');
-		          $state.go('dashboard.home');
+            // Passing option user to avoid delay problem
+            if(!$acl.action('report.view', user)) {
+              $mdToast.showSimple('You are not allowed to view reports');
+              $state.go('dashboard.home');
       
               resolve(false);
             } else {
               resolve(true);
             }
-		        
+            
           });
         }]
       }
-		})
+    })
 
     .state('dashboard.reports.dashboard', {
       url: '/dashboard',
@@ -188,22 +165,22 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       data: {
         displayName: 'Listing',
         breadcrumbProxy: ($state) => {
-          if($state.current.name.indexOf('report.probe') > -1) return 'dashboard.reports.probe';
-          if($state.current.name.indexOf('report.genomic') > -1) return 'dashboard.reports.genomic';
+          if ($state.current.name.includes('report.probe')) return 'dashboard.reports.probe';
+          if ($state.current.name.includes('report.genomic')) return 'dashboard.reports.genomic';
           return 'dashboard.reports.dashboard';
-        }
+        },
       },
       resolve: {
-        reports: ['$q', 'permission', '$acl', 'api.pog_analysis_report', '$state', 'user', ($q, permission, $acl, $report, $state, user) => {
-          $acl.injectUser(user);
-          if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
-            return $q((resolve, reject) => {
-              reject('externalModeError');
-            })
-          }
-          return $report.all({states: 'ready,active'});
-        }]
-      }
+        reports: ['$q', 'permission', 'api.pog_analysis_report', '$state', 'user',
+          'isExternalMode', ($q, permission, $report, $state, user, isExternalMode) => {
+            if (isExternalMode) {
+              return $q((resolve, reject) => {
+                reject(new Error('externalModeError'));
+              });
+            }
+            return $report.all({ states: 'ready,active' });
+          }],
+      },
     })
 
     .state('dashboard.reports.genomic', {
@@ -233,7 +210,6 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
             opts.project = project.name;
           }
 
-          $acl.injectUser(user);
           if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
             opts.all = true;
             opts.states = 'presented,archived';
@@ -260,7 +236,6 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
 
           opts.states = 'uploaded,signedoff';
 
-          $acl.injectUser(user);
           if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
             opts.states = 'reviewed';
             opts.paginated = true;
@@ -279,21 +254,13 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       controller: 'controller.dashboard.pog',
       templateUrl: 'dashboard/pog/pog.html',
       resolve: {
-        pog: ['_', '$q', '$stateParams', 'api.pog', 'user', (_, $q, $stateParams, $pog, user) => {
-          return $q((resolve, reject) => {
-            $pog.id($stateParams.POG).then(
-              (pog) => {
-                pog.myRoles = _.filter(pog.POGUsers, {user: {ident: user.ident}});
-                resolve(pog);
-              },
-              (err) => {
-                reject('Unable to load patient');
-              }
-            )
-          })
+        pog: ['_', '$stateParams', 'api.pog', 'user', '$acl', async (_, $stateParams, $pog, user, $acl) => {
+          await $acl.canAccessPOG($stateParams.POG);
+          const pogResp = await $pog.id($stateParams.POG);
+          pogResp.myRoles = _.filter(pogResp.POGUsers, { user: { ident: user.ident } });
+          return pogResp;
         }],
         reports: ['$q', '$stateParams', 'api.pog_analysis_report', '$acl', 'user', ($q, $stateParams, $report, $acl, user) => {
-          $acl.injectUser(user);
           let stateFilter = {};
           if($acl.inGroup('Clinician') || $acl.inGroup('Collaborator')) {
             stateFilter = {state: 'presented,archived'};
@@ -307,10 +274,10 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       abstract: true,
       url: '/report',
       data: {
-        displayName: "Analysis Reports",
+        displayName: 'Analysis Reports',
         breadcrumbProxy: 'dashboard.reports.pog'
       },
-			templateUrl: 'dashboard/report/report.html',
+      templateUrl: 'dashboard/report/report.html',
     })
 
     /**
@@ -320,7 +287,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     .state('dashboard.reports.pog.report.probe', {
       url: '/{analysis_report}/probe',
       data: {
-        displayName: "Targeted Gene",
+        displayName: 'Targeted Gene',
         breadcrumbProxy: 'dashboard.reports.pog.report.probe.summary'
       },
       templateUrl: 'dashboard/report/probe/probe.html',
@@ -337,7 +304,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       templateUrl: 'dashboard/report/probe/summary/summary.html',
       controller: 'controller.dashboard.report.probe.summary',
       data: {
-        displayName: "Summary"
+        displayName: 'Summary'
       },
       resolve: {
         testInformation: ['$q', '$stateParams', 'api.probe.testInformation', ($q, $stateParams, $ti) => {
@@ -355,7 +322,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     .state('dashboard.reports.pog.report.probe.detailedGenomicAnalysis', {
       url: '/detailedGenomicAnalysis',
       data: {
-        displayName: "Detailed Genomic Analysis"
+        displayName: 'Detailed Genomic Analysis'
       },
       templateUrl: 'dashboard/report/probe/detailedGenomicAnalysis/detailedGenomicAnalysis.html',
       controller: 'controller.dashboard.report.probe.detailedGenomicAnalysis',
@@ -375,7 +342,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     .state('dashboard.reports.pog.report.probe.appendices', {
       url: '/appendices',
       data: {
-        displayName: "Appendices"
+        displayName: 'Appendices'
       },
       templateUrl: 'dashboard/report/probe/appendices/appendices.html',
       controller: 'controller.dashboard.report.probe.appendices',
@@ -389,7 +356,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     .state('dashboard.reports.pog.report.probe.meta', {
       url: '/meta',
       data: {
-        displayName: "Report Meta Information"
+        displayName: 'Report Meta Information'
       },
       templateUrl: 'dashboard/report/probe/meta/meta.html',
       controller: 'controller.dashboard.report.probe.meta',
@@ -403,7 +370,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     .state('dashboard.reports.pog.report.genomic', {
       url: '/{analysis_report}/genomic',
       data: {
-        displayName: "Genomic",
+        displayName: 'Genomic',
         breadcrumbProxy: 'dashboard.reports.pog.report.genomic.summary'
       },
       templateUrl: 'dashboard/report/genomic/genomic.html',
@@ -420,7 +387,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       templateUrl: 'dashboard/report/genomic/summary/summary.html',
       controller: 'controller.dashboard.report.genomic.summary',
       data: {
-        displayName: "Summary"
+        displayName: 'Summary'
       },
       resolve: {
         gai: ['$q', '$stateParams', 'api.summary.genomicAterationsIdentified', ($q, $stateParams, $gai) => {
@@ -451,7 +418,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     .state('dashboard.reports.pog.report.genomic.analystComments', {
       url: '/analystComments',
       data: {
-        displayName: "Analyst Comments"
+        displayName: 'Analyst Comments'
       },
       templateUrl: 'dashboard/report/genomic/analystComments/analystComments.html',
       controller: 'controller.dashboard.report.genomic.analystComments',
@@ -465,7 +432,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     .state('dashboard.reports.pog.report.genomic.pathwayAnalysis', {
       url: '/pathwayAnalysis',
       data: {
-        displayName: "Pathway Analysis"
+        displayName: 'Pathway Analysis'
       },
       templateUrl: 'dashboard/report/genomic/pathwayAnalysis/pathwayAnalysis.html',
       controller: 'controller.dashboard.report.genomic.pathwayAnalysis',
@@ -479,7 +446,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     .state('dashboard.reports.pog.report.genomic.knowledgebase', {
       url: '/knowledgebase',
       data: {
-        displayName: "Detailed Genomic Analysis"
+        displayName: 'Detailed Genomic Analysis'
       },
       templateUrl: 'dashboard/report/genomic/knowledgebase/knowledgebase.html',
       controller: 'controller.dashboard.report.genomic.knowledgebase',
@@ -493,7 +460,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         approvedOtherCancer: ['$q', '$stateParams', 'api.detailedGenomicAnalysis.alterations', ($q, $stateParams, $APC) => {
           return $APC.getType($stateParams.POG, $stateParams.analysis_report, 'otherCancer');
         }],
-				targetedGenes: ['$q', '$stateParams', 'api.detailedGenomicAnalysis.targetedGenes', ($q, $stateParams, $tg) => {
+        targetedGenes: ['$q', '$stateParams', 'api.detailedGenomicAnalysis.targetedGenes', ($q, $stateParams, $tg) => {
           return $tg.getAll($stateParams.POG, $stateParams.analysis_report);
         }],
       }
@@ -502,7 +469,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     .state('dashboard.reports.pog.report.genomic.diseaseSpecificAnalysis', {
       url: '/diseaseSpecificAnalysis',
       data: {
-        displayName: "Disease Specific Analysis"
+        displayName: 'Disease Specific Analysis'
       },
       templateUrl: 'dashboard/report/genomic/diseaseSpecificAnalysis/diseaseSpecificAnalysis.html',
       controller: 'controller.dashboard.report.genomic.diseaseSpecificAnalysis',
@@ -519,7 +486,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     .state('dashboard.reports.pog.report.genomic.microbial', {
       url: '/microbial',
       data: {
-        displayName: "Microbial"
+        displayName: 'Microbial'
       },
       templateUrl: 'dashboard/report/genomic/microbial/microbial.html',
       controller: 'controller.dashboard.report.genomic.microbial',
@@ -533,7 +500,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     .state('dashboard.reports.pog.report.genomic.spearman', {
       url: '/spearman',
       data: {
-        displayName: "Spearman Plot Analysis"
+        displayName: 'Spearman Plot Analysis'
       },
       templateUrl: 'dashboard/report/genomic/spearman/spearman.html',
       controller: 'controller.dashboard.report.genomic.spearman',
@@ -547,7 +514,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     .state('dashboard.reports.pog.report.genomic.smallMutations', {
       url: '/smallMutations',
       data: {
-        displayName: "Somatic Mutations"
+        displayName: 'Somatic Mutations'
       },
       templateUrl: 'dashboard/report/genomic/smallMutations/smallMutations.html',
       controller: 'controller.dashboard.report.genomic.smallMutations',
@@ -573,7 +540,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     .state('dashboard.reports.pog.report.genomic.copyNumberAnalyses', {
       url: '/copyNumberAnalyses',
       data: {
-        displayName: "Copy Number Analyses"
+        displayName: 'Copy Number Analyses'
       },
       templateUrl: 'dashboard/report/genomic/copyNumberAnalyses/copyNumberAnalyses.html',
       controller: 'controller.dashboard.report.genomic.copyNumberAnalyses',
@@ -593,7 +560,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     .state('dashboard.reports.pog.report.genomic.structuralVariation', {
       url: '/structuralVariation',
       data: {
-        displayName: "Structural Variation"
+        displayName: 'Structural Variation'
       },
       templateUrl: 'dashboard/report/genomic/structuralVariation/structuralVariation.html',
       controller: 'controller.dashboard.report.genomic.structuralVariation',
@@ -619,7 +586,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     .state('dashboard.reports.pog.report.genomic.expressionAnalysis', {
       url: '/expressionAnalysis',
       data: {
-        displayName: "Expression Analysis"
+        displayName: 'Expression Analysis'
       },
       templateUrl: 'dashboard/report/genomic/expressionAnalysis/version02/expressionAnalysis.html',
       controller: 'controller.dashboard.report.genomic.expressionAnalysis',
@@ -642,7 +609,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     .state('dashboard.reports.pog.report.genomic.discussion', {
       url: '/discussion',
       data: {
-        displayName: "Presentation Discussion"
+        displayName: 'Presentation Discussion'
       },
       templateUrl: 'dashboard/report/genomic/presentation/discussion/discussion.html',
       controller: 'controller.dashboard.report.genomic.discussion',
@@ -656,7 +623,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     .state('dashboard.reports.pog.report.genomic.slide', {
       url: '/slide',
       data: {
-        displayName: "Presentation Slides"
+        displayName: 'Presentation Slides'
       },
       templateUrl: 'dashboard/report/genomic/presentation/slide/slide.html',
       controller: 'controller.dashboard.report.genomic.slide',
@@ -670,7 +637,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     .state('dashboard.reports.pog.report.genomic.appendices', {
       url: '/appendices',
       data: {
-        displayName: "Appendices"
+        displayName: 'Appendices'
       },
       templateUrl: 'dashboard/report/genomic/appendices/appendices.html',
       controller: 'controller.dashboard.report.genomic.appendices',
@@ -684,7 +651,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     .state('dashboard.reports.pog.report.genomic.meta', {
       url: '/meta',
       data: {
-        displayName: "Patient Meta Information"
+        displayName: 'Patient Meta Information'
       },
       templateUrl: 'dashboard/report/genomic/meta/meta.html',
       controller: 'controller.dashboard.report.genomic.meta',
@@ -693,7 +660,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     .state('dashboard.reports.pog.report.genomic.history', {
       url: '/history',
       data: {
-        displayName: "Data History"
+        displayName: 'Data History'
       },
       templateUrl: 'dashboard/report/genomic/history/history.html',
       controller: 'controller.dashboard.report.genomic.history',
@@ -710,7 +677,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     .state('dashboard.reports.pog.report.genomic.therapeutic', {
       url: '/therapeutic',
       data: {
-        displayName: "Potential Therapeutic Targets"
+        displayName: 'Potential Therapeutic Targets'
       },
       templateUrl: 'dashboard/report/genomic/therapeutic/therapeutic.html',
       controller: 'controller.dashboard.report.genomic.therapeutic',
@@ -741,8 +708,8 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         users: ['$q', 'api.user', ($q, $user) => {
           return $user.all();
         }],
-        groups: ['$q', 'api.user', ($q, $user) => {
-          return $user.group.all();
+        groups: ['$q', 'api.user', 'api.group', ($q, $user, $group) => {
+          return $group.all();
         }],
         projects: ['$q', 'api.project', ($q, $project) => {
           return $project.all({admin: true});
@@ -761,10 +728,10 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         projects: ['$q', 'api.project', ($q, $project) => {
           return $project.all({admin: true});
         }],
-        groups: ['$q', 'api.user', ($q, $user) => {
-          return $user.group.all();
-        }]
-      }
+        groups: ['api.group', ($group) => {
+          return $group.all();
+        }],
+      },
     })
 
     .state('dashboard.admin.users.groups', {
@@ -791,27 +758,25 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       templateUrl: 'print/print.html',
       controller: 'controller.print',
       data: {
-        displayName: 'Print'
+        displayName: 'Print',
       },
       resolve: {
-        user: ['$q', 'api.session', '$state', ($q, $session, $state) => {
+        user: ['$q', 'api.user', '$state', '$userSettings', ($q, $user, $state, $userSettings) => {
           return $q((resolve, reject) => {
-            // Attempt session initialization
-            $session.init().then(
-              (user) => {
-                // Session init'd, return user
-                resolve(user);
-              },
-              (err) => {
-                // No session, go to login page
-                $state.go('public.login');
+            $user.me()
+              .then(() => {
+                $userSettings.init();
+                resolve($user.meObj);
+              })
+              .catch((err) => {
                 reject(err);
-              }
-            );
-
+              });
           });
         }],
-      }
+        isExternalMode: ['$acl', 'user', async ($acl, user) => {
+          return $acl.isExternalMode();
+        }],
+      },
     })
 
     .state('print.POG', {
@@ -822,10 +787,11 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       },
       template: '<ui-view \\>',
       resolve: {
-        pog: ['$q', '$stateParams', 'api.pog', ($q, $stateParams, $pog) => {
+        pog: ['$q', '$stateParams', 'api.pog', '$acl', async ($q, $stateParams, $pog, $acl) => {
+          await $acl.canAccessPOG($stateParams.POG);
           return $pog.id($stateParams.POG);
-        }]
-      }
+        }],
+      },
     })
 
     .state('print.POG.report', {
@@ -845,11 +811,11 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         displayName: 'Genomic Report'
       },
       views: {
-        "": {
+        '': {
           templateUrl: 'print/report/genomic/genomic.html',
           controller: 'controller.print.POG.report.genomic',
         },
-        "summary@print.POG.report.genomic": {
+        'summary@print.POG.report.genomic': {
           templateUrl: 'print/report/genomic/sections/summary/summary.html',
           controller: 'controller.print.POG.report.genomic.summary',
           resolve: {
@@ -876,7 +842,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
             }]
           }
         },
-        "analystComments@print.POG.report.genomic": {
+        'analystComments@print.POG.report.genomic': {
           templateUrl: 'print/report/genomic/sections/analystComments/analystComments.html',
           controller: 'controller.print.POG.report.genomic.analystComments',
           resolve: {
@@ -885,7 +851,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
             }],
           }
         },
-        "pathwayAnalysis@print.POG.report.genomic": {
+        'pathwayAnalysis@print.POG.report.genomic': {
           templateUrl: 'print/report/genomic/sections/pathwayAnalysis/pathwayAnalysis.html',
           controller: 'controller.print.POG.report.genomic.pathwayAnalysis',
           resolve: {
@@ -894,8 +860,8 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
             }]
           }
         },
-        "pathwayAnalysisLegend@print.POG.report.genomic": { templateUrl: 'print/report/genomic/sections/pathwayAnalysis/pathwayAnalysisLegend.html' },
-        "therapeuticOptions@print.POG.report.genomic": {
+        'pathwayAnalysisLegend@print.POG.report.genomic': { templateUrl: 'print/report/genomic/sections/pathwayAnalysis/pathwayAnalysisLegend.html' },
+        'therapeuticOptions@print.POG.report.genomic': {
           templateUrl: 'print/report/genomic/sections/therapeuticOptions/therapeuticOptions.html',
           controller: 'controller.print.POG.report.genomic.therapeuticOptions',
           resolve: {
@@ -904,7 +870,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
             }],
           }
         },
-        "presentationSlide@print.POG.report.genomic": {
+        'presentationSlide@print.POG.report.genomic': {
           templateUrl: 'print/report/genomic/sections/presentation/slide.html',
           controller: 'controller.print.POG.report.genomic.slide',
           resolve: {
@@ -913,7 +879,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
             }]
           }
         },
-        "dga@print.POG.report.genomic": {
+        'dga@print.POG.report.genomic': {
           templateUrl: 'print/report/genomic/sections/dga/dga.html',
           controller: 'controller.print.POG.report.genomic.dga',
           resolve: {
@@ -931,7 +897,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
             }]
           }
         },
-        "diseaseSpecificAnalysis@print.POG.report.genomic": {
+        'diseaseSpecificAnalysis@print.POG.report.genomic': {
           templateUrl: 'print/report/genomic/sections/diseaseSpecificAnalysis/diseaseSpecificAnalysis.html',
           controller: 'controller.print.POG.report.genomic.diseaseSpecificAnalysis',
           resolve: {
@@ -943,7 +909,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
             }]
           }
         },
-        "somaticMutations@print.POG.report.genomic": {
+        'somaticMutations@print.POG.report.genomic': {
           templateUrl: 'print/report/genomic/sections/somaticMutations/somaticMutations.html',
           controller: 'controller.print.POG.report.genomic.somaticMutations',
           resolve: {
@@ -964,7 +930,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
             }],
           }
         },
-        "copyNumberAnalysis@print.POG.report.genomic": {
+        'copyNumberAnalysis@print.POG.report.genomic': {
           templateUrl: 'print/report/genomic/sections/copyNumberAnalysis/copyNumberAnalysis.html',
           controller: 'controller.print.POG.report.genomic.copyNumberAnalysis',
           resolve: {
@@ -979,7 +945,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
             }]
           }
         },
-        "copyNumberAnalysisCNVLOH@print.POG.report.genomic": {
+        'copyNumberAnalysisCNVLOH@print.POG.report.genomic': {
           templateUrl: 'print/report/genomic/sections/copyNumberAnalysis/copyNumberAnalysisCNVLOH.html',
           controller: 'controller.print.POG.report.genomic.copyNumberAnalysisCNVLOH',
           resolve: {
@@ -988,7 +954,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
             }]
           }
         },
-        "structuralVariants@print.POG.report.genomic": {
+        'structuralVariants@print.POG.report.genomic': {
           templateUrl: 'print/report/genomic/sections/structuralVariants/structuralVariants.html',
           controller: 'controller.print.POG.report.genomic.structuralVariants',
           resolve: {
@@ -1006,7 +972,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
             }]
           }
         },
-        "expressionAnalysis@print.POG.report.genomic": {
+        'expressionAnalysis@print.POG.report.genomic': {
           templateUrl: 'print/report/genomic/sections/expressionAnalysis/expressionAnalysis.html',
           controller: 'controller.print.POG.report.genomic.expressionAnalysis',
           resolve: {
@@ -1027,7 +993,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
             }]
           }
         },
-        "appendices@print.POG.report.genomic": {
+        'appendices@print.POG.report.genomic': {
           templateUrl: 'print/report/genomic/sections/appendices/appendices.html',
           controller: 'controller.print.POG.report.genomic.appendices',
           resolve: {
@@ -1052,11 +1018,11 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         displayName: 'Targeted Gene Report'
       },
       views: {
-        "": {
+        '': {
           templateUrl: 'print/report/probe/probe.html',
           controller: 'controller.print.POG.report.probe',
         },
-        "summary@print.POG.report.probe": {
+        'summary@print.POG.report.probe': {
           templateUrl: 'print/report/probe/sections/summary/summary.html',
           controller: 'controller.print.POG.report.probe.summary',
           resolve: {
@@ -1074,7 +1040,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
             }]
           }
         },
-        "alterations@print.POG.report.probe": {
+        'alterations@print.POG.report.probe': {
           templateUrl: 'print/report/probe/sections/alterations/alterations.html',
           controller: 'controller.print.POG.report.probe.alterations',
           resolve: {
@@ -1089,7 +1055,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
             }]
           }
         },
-        "appendices@print.POG.report.probe": {
+        'appendices@print.POG.report.probe': {
           templateUrl: 'print/report/probe/sections/appendices/appendices.html',
           controller: 'controller.print.POG.report.probe.appendices',
         }
@@ -1110,7 +1076,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     .state('dashboard.knowledgebase.dashboard', {
       url: '/dashboard',
       data: {
-        displayName: "Knowledgebase"
+        displayName: 'Knowledgebase'
       },
       controller: 'knowledgebase.dashboard',
       templateUrl: 'dashboard/knowledgebase/dashboard/dashboard.html',
@@ -1119,20 +1085,20 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
           return $kb.metrics();
         }],
         permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
-          $acl.injectUser(user);
-          if($acl.inGroup('clinician')) {
-            return $q((resolve, reject) => {
-              reject('externalModeError');
-            })
-          }
-        }]
-      }
+          return $q((resolve, reject) => {
+            if ($acl.inGroup('clinician')) {
+              reject(new Error('externalModeError'));
+            }
+            resolve();
+          });
+        }],
+      },
     })
 
     .state('dashboard.knowledgebase.references', {
       url: '/references',
       data: {
-        displayName: "References"
+        displayName: 'References'
       },
       params: {
         filters: null
@@ -1158,14 +1124,14 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
           return $kb.vocabulary();
         }],
         permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
-          $acl.injectUser(user);
-          if($acl.inGroup('clinician')) {
-            return $q((resolve, reject) => {
-              reject('externalModeError');
-            })
-          }
-        }]
-      }
+          return $q((resolve, reject) => {
+            if ($acl.inGroup('clinician')) {
+              reject(new Error('externalModeError'));
+            }
+            resolve();
+          });
+        }],
+      },
     })
 
     // Commenting out instead of removing in case we decide to re-include this
@@ -1174,7 +1140,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     .state('dashboard.knowledgebase.events', {
       url: '/events',
       data: {
-        displayName: "Events"
+        displayName: 'Events'
       },
       params: {
         filters: null
@@ -1197,10 +1163,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
           }
         }],
         permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
-          $acl.injectUser(user);
           if($acl.inGroup('clinician')) {
             return $q((resolve, reject) => {
-              reject('externalModeError');
+              reject(new Error('externalModeError'));
             })
           }
         }]
@@ -1224,15 +1189,16 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         myDefinitions: ['$q', '_', 'api.tracking.definition', 'user', '$userSettings', ($q, _, $definition, user, $userSettings) => {
           return $definition.all({slug: ($userSettings.get('tracking.definition')) ? _.join($userSettings.get('tracking.definition').slug,',') : undefined});
         }],
-        permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
-          $acl.injectUser(user);
-          if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
+        permission: ['$q', 'user', 'isExternalMode',
+          ($q, user, isExternalMode) => {
             return $q((resolve, reject) => {
-              reject('externalModeError');
-            })
-          }
-        }]
-      }
+              if (isExternalMode) {
+                reject(new Error('externalModeError'));
+              }
+              resolve();
+            });
+          }],
+      },
     })
 
     .state('dashboard.tracking.board', {
@@ -1246,15 +1212,16 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         states: ['$q', '_', 'api.tracking.state', 'user', '$userSettings', ($q, _, $state, user, $userSettings) => {
           return $state.all({status: ($userSettings.get('tracking.state')) ? _.join($userSettings.get('tracking.state').status, ',') : 'pending,active,hold,failed'});
         }],
-        permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
-          $acl.injectUser(user);
-          if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
+        permission: ['$q', 'user', 'isExternalMode',
+          ($q, user, isExternalMode) => {
             return $q((resolve, reject) => {
-              reject('externalModeError');
-            })
-          }
-        }]
-      }
+              if (isExternalMode) {
+                reject(new Error('externalModeError'));
+              }
+              resolve();
+            });
+          }],
+      },
     })
 
     .state('dashboard.tracking.lane', {
@@ -1271,15 +1238,16 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         states: ['$q', '$stateParams', 'api.tracking.state', ($q, $stateParams, $state) => {
           return $state.filtered({slug: $stateParams.slug, status: 'active,pending'});
         }],
-        permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
-          $acl.injectUser(user);
-          if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
+        permission: ['$q', 'user', 'isExternalMode',
+          ($q, user, isExternalMode) => {
             return $q((resolve, reject) => {
-              reject('externalModeError');
-            })
-          }
-        }]
-      }
+              if (isExternalMode) {
+                reject(new Error('externalModeError'));
+              }
+              resolve();
+            });
+          }],
+      },
     })
 
     .state('dashboard.tracking.definition', {
@@ -1290,8 +1258,8 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       controller: 'controller.dashboard.tracking.definition',
       templateUrl: 'dashboard/tracking/definition/definition.html',
       resolve: {
-        groups: ['$q', 'api.user', ($q, $user) => {
-          return $user.group.all();
+        groups: ['api.group', ($group) => {
+          return $group.all();
         }],
         definitions: ['$q', 'api.tracking.definition', ($q, $definition) => {
           return $definition.all({hidden: true});
@@ -1299,15 +1267,16 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         hooks: ['$q', 'api.tracking.hook', ($q, $hook) => {
           return $hook.all();
         }],
-        permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
-          $acl.injectUser(user);
-          if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
+        permission: ['$q', 'user', 'isExternalMode',
+          ($q, user, isExternalMode) => {
             return $q((resolve, reject) => {
-              reject('externalModeError');
-            })
-          }
-        }]
-      }
+              if (isExternalMode) {
+                reject(new Error('externalModeError'));
+              }
+              resolve();
+            });
+          }],
+      },
     })
 
     .state('dashboard.tracking.assignment', {
@@ -1327,21 +1296,22 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         states: ['$q', 'api.tracking.state', 'definition', ($q, $state, definition) => {
           return $state.filtered({slug: definition.slug, status: 'active,pending'});
         }],
-        group: ['$q', 'definition', 'api.user', ($q, definition, $user) => {
-          return $user.group.retrieve(definition.group.ident);
+        group: ['definition', 'api.group', (definition, $group) => {
+          return $group.retrieve(definition.group.ident);
         }],
         userLoad: ['$q', 'definition', 'api.tracking.definition', ($q, definition, $definition) => {
           return $definition.userLoad(definition.ident);
         }],
-        permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
-          $acl.injectUser(user);
-          if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
+        permission: ['$q', 'user', 'isExternalMode',
+          ($q, user, isExternalMode) => {
             return $q((resolve, reject) => {
-              reject('externalModeError');
-            })
-          }
-        }]
-      }
+              if (isExternalMode) {
+                reject(new Error('externalModeError'));
+              }
+              resolve();
+            });
+          }],
+      },
     })
     
     .state('dashboard.tracking.ticket_template', {
@@ -1359,15 +1329,16 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         definition: ['$q', '$stateParams', 'api.tracking.definition', ($q, $stateParams, $definition) => {
           return $definition.retrieve($stateParams.definition);
         }],
-        permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
-          $acl.injectUser(user);
-          if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
+        permission: ['$q', 'user', 'isExternalMode',
+          ($q, user, isExternalMode) => {
             return $q((resolve, reject) => {
-              reject('externalModeError');
-            })
-          }
-        }]
-      }
+              if (isExternalMode) {
+                reject(new Error('externalModeError'));
+              }
+              resolve();
+            });
+          }],
+      },
     })
     
     .state('dashboard.biopsy', {
@@ -1397,15 +1368,16 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         projects: ['api.project', ($project) => {
           return $project.all();
         }],
-        permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
-          $acl.injectUser(user);
-          if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
+        permission: ['$q', 'user', 'isExternalMode',
+          ($q, user, isExternalMode) => {
             return $q((resolve, reject) => {
-              reject('externalModeError');
-            })
-          }
-        }]
-      }
+              if (isExternalMode) {
+                reject(new Error('externalModeError'));
+              }
+              resolve();
+            });
+          }],
+      },
     })
     
     .state('dashboard.germline', {
@@ -1415,7 +1387,17 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         breadcrumbProxy: 'dashboard.germline.board'
       },
       controller: 'controller.dashboard.germline',
-      templateUrl: 'dashboard/germline/germline.html'
+      templateUrl: 'dashboard/germline/germline.html',
+      resolve: {
+        permission: ['$q', 'user', 'isExternalMode', ($q, user, isExternalMode) => {
+          return $q((resolve, reject) => {
+            if (isExternalMode) {
+              reject(new Error('externalModeError'));
+            }
+            resolve();
+          });
+        }],
+      },
     })
     
     .state('dashboard.germline.board', {
@@ -1429,15 +1411,7 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         reports: ['api.germline.report', ($report) => {
           return $report.all();
         }],
-        permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
-          $acl.injectUser(user);
-          if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
-            return $q((resolve, reject) => {
-              reject('externalModeError');
-            })
-          }
-        }]
-      }
+      },
     })
     
     .state('dashboard.germline.report', {
@@ -1451,15 +1425,6 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
         report: ['api.germline.report', '$stateParams', ($report, $stateParams) => {
           return $report.one($stateParams.patient, $stateParams.biopsy, $stateParams.report);
         }],
-        permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
-          $acl.injectUser(user);
-          if($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
-            return $q((resolve, reject) => {
-              reject('externalModeError');
-            })
-          }
-        }]
-      }
-    })
-
+      },
+    });
 }]);

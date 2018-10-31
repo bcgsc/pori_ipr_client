@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.admin.users.userList',
-['_', '$scope', '$mdSidenav', '$state', '$mdDialog', '$mdToast', 'api.session', 'api.user', 'isAdmin', 'users', 'projects', 'groups',
-(_, $scope, $mdSidenav, $state, $mdDialog, $mdToast, $session, $user, isAdmin, users, projects, groups) => {
+['_', '$scope', '$mdSidenav', '$state', '$mdDialog', '$mdToast', 'api.user', 'isAdmin', 'users', 'projects', 'groups',
+(_, $scope, $mdSidenav, $state, $mdDialog, $mdToast, $user, isAdmin, users, projects, groups) => {
 
   $scope.users = users;
   $scope.accessGroup = _.find($scope.groups, function(group) { return group.name === 'Full Project Access' });
@@ -19,7 +19,7 @@ app.controller('controller.dashboard.admin.users.userList',
       () => {
         let tempUser = angular.copy(user);
         // Remove User
-        $user.delete(user).then(
+        $user.remove(user).then(
           (res) => {
             $scope.users = _.filter($scope.users, (u) => {return (u.ident !== tempUser.ident)});
             $mdToast.show($mdToast.simple('The user has been removed'));

@@ -1,5 +1,4 @@
 const app = angular.module('bcgscIPR', [
-//	'env',
   'templates',
 	'ngMaterial',
 	'ngResource',
@@ -12,18 +11,19 @@ const app = angular.module('bcgscIPR', [
 	'angular-sortable-view',
 	'ngQuill',
 	'chart.js',
-	'btford.socket-io',
+  'btford.socket-io',
+  'angular-async-await',
 	'ngMessages',
 ])
 .config(function($mdThemingProvider) {
-	let gscBlueMap = $mdThemingProvider.extendPalette('indigo' , {
-		'500': 'rgb(38, 50, 140)'
-	});
+  let gscBlueMap = $mdThemingProvider.extendPalette('indigo' , {
+    '500': 'rgb(38, 50, 140)'
+  });
 
-	$mdThemingProvider.definePalette('gscBlue', gscBlueMap);
+  $mdThemingProvider.definePalette('gscBlue', gscBlueMap);
 
-	$mdThemingProvider.theme('default').primaryPalette('gscBlue');
-	
+  $mdThemingProvider.theme('default').primaryPalette('gscBlue');
+  
 });
 
 // Register HTTP Error Handler
