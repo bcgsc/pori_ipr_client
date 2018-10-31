@@ -12,7 +12,6 @@ const app = angular.module('bcgscIPR', [
   'ngQuill',
   'chart.js',
   'btford.socket-io',
-  'ngCookies',
   'angular-async-await',
 ])
 .config(function($mdThemingProvider) {
