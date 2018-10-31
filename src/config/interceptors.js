@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * HTTP Interceptors handler wrapper
  * @param {*} $rootScope {@link https://docs.angularjs.org/api/ng/service/$rootScope}
@@ -7,7 +5,7 @@
  * @param {*} $injector {@link https://docs.angularjs.org/api/auto/service/$injector}
  * @return {Object} Error response handler
  */
-function httpInterceptors($rootScope, $q, $injector, $timeout) {
+function httpInterceptors($rootScope, $q, $injector) {
   /**
    * Response Error response handler
    *
@@ -32,10 +30,12 @@ function httpInterceptors($rootScope, $q, $injector, $timeout) {
           break;
         case 403:
           if (response.data.message === 'IPR Access Error') {
-            const keycloakAuth = $injector.get('keycloakAuth');
-            $rootScope.$broadcast('httpError', { message: 'IPR Access Error. External users: contact GSC Systems for access. Internal users: create a DEVSU JIRA ticket requesting access' });
-            $timeout(() => { keycloakAuth.logout(); }, 10000);
+            const $state = $injector.get('$state');
+            $state.go('public.access');
             break;
+          } else if (response.data.message === 'Invalid or expired authorization token') {
+            const $state = $injector.get('$state');
+            $state.go('public.login');
           }
           $rootScope.$broadcast('httpError', { message: 'You are not authorized to access the requested resource.' });
           break;
@@ -51,7 +51,7 @@ function httpInterceptors($rootScope, $q, $injector, $timeout) {
   };
 }
 
-httpInterceptors.$inject = ['$rootScope', '$q', '$injector', '$timeout'];
+httpInterceptors.$inject = ['$rootScope', '$q', '$injector'];
 
 angular
   .module('bcgscIPR')

@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.report.genomic.pathwayAnalysis',
-  ['_', '$q', '$scope', '$mdDialog', '$mdToast', 'api.pog', 'api.summary.pathwayAnalysis', 'FileUploader', '$cookies', 'pog', 'report', 'pathway',
-    (_, $q, $scope, $mdDialog, $mdToast, $pog, $pathway, FileUploader, $cookies, pog, report, pathway) => {
+  ['_', '$q', '$scope', '$mdDialog', '$mdToast', 'api.pog', 'api.summary.pathwayAnalysis', 'FileUploader', '$localStorage', 'pog', 'report', 'pathway',
+    (_, $q, $scope, $mdDialog, $mdToast, $pog, $pathway, FileUploader, $localStorage, pog, report, pathway) => {
 
       $scope.pog = pog;
 
@@ -80,7 +80,7 @@ app.controller('controller.dashboard.report.genomic.pathwayAnalysis',
               url: `${CONFIG.ENDPOINTS.API}/POG/${pog.POGID}/report/${report.ident}/genomic/summary/pathwayAnalysis`,
             });
 
-            uploader.headers['Authorization'] = $cookies.get(CONFIG.COOKIES.KEYCLOAK);
+            uploader.headers['Authorization'] = $localStorage[CONFIG.STORAGE.KEYCLOAK];
             uploader.method = 'PUT';
             uploader.alias = "pathway";
 

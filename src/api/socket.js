@@ -1,11 +1,11 @@
 /**
  * Factory for socket connections
  * @param {*} socketFactory {@link https://github.com/btford/angular-socket-io}
- * @param {*} $cookies {@link https://docs.angularjs.org/api/ngCookies/service/$cookies}
+ * @param {*} $localStorage {@link https://github.com/gsklee/ngStorage}
  * @param {*} $q {@link https://docs.angularjs.org/api/ng/service/$q}
  * @return {Object} Socket factory object
  */
-function apiSocket(socketFactory, $cookies, $q) {
+function apiSocket(socketFactory, $localStorage, $q) {
   let ready = false;
 
   const socket = socketFactory({
@@ -13,7 +13,7 @@ function apiSocket(socketFactory, $cookies, $q) {
   });
 
   socket.on('connect', () => {
-    socket.emit('authenticate', { token: $cookies.get(CONFIG.COOKIES.KEYCLOAK) });
+    socket.emit('authenticate', { token: $localStorage[CONFIG.STORAGE.KEYCLOAK] });
   });
 
   socket.on('authenticated', () => {
@@ -37,7 +37,7 @@ function apiSocket(socketFactory, $cookies, $q) {
   return socket;
 }
 
-apiSocket.$inject = ['socketFactory', '$cookies', '$q'];
+apiSocket.$inject = ['socketFactory', '$localStorage', '$q'];
 
 angular
   .module('bcgscIPR')

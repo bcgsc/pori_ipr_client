@@ -21,7 +21,9 @@ function loginRedirect(keycloakAuth, $user, $state, $mdToast, $localStorage) {
         $state.go('dashboard.reports.dashboard');
       }
     } catch (err) {
-      $mdToast.showSimple('Error with login server. Try again later.');
+      if (err.status !== 403) {
+        $mdToast.showSimple('Error with login server. Try again later.');
+      }
     }
   };
 }

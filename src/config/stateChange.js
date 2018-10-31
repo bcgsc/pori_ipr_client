@@ -1,6 +1,6 @@
-app.run(['$rootScope', '$state', '$q', '$acl', '$cookies', 'api.user', 'api.pog',
+app.run(['$rootScope', '$state', '$q', '$acl', 'api.user', 'api.pog',
   '$userSettings', '_', '$mdToast', '$localStorage', ($rootScope, $state, $q, $acl,
-    $cookies, $user, $pog, $userSettings, _, $mdToast, $localStorage) => {
+    $user, $pog, $userSettings, _, $mdToast, $localStorage) => {
     // On State Change, Show Spinner!
     $rootScope.$on('$stateChangeStart', async (event, toState, toParams, fromState, fromParams) => {
       $rootScope.showLoader = true;

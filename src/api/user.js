@@ -23,13 +23,9 @@ function apiUser(_, $http) {
    * @return {Object} User object
    */
   async function me() {
-    try {
-      const resp = await $http.get(`${api}/me`);
-      $user.meObj = resp.data;
-      return $user.meObj;
-    } catch (err) {
-      return Promise.reject(new Error(err.message));
-    }
+    const resp = await $http.get(`${api}/me`);
+    $user.meObj = resp.data;
+    return $user.meObj;
   }
   
   /**
@@ -47,12 +43,8 @@ function apiUser(_, $http) {
    * @return {Promise} all promise
    */
   async function all() {
-    try {
-      const resp = await $http.get(api);
-      return resp.data;
-    } catch (err) {
-      return Promise.reject(new Error(err.message));
-    }
+    const resp = await $http.get(api);
+    return resp.data;
   }
 
   /**
@@ -61,12 +53,8 @@ function apiUser(_, $http) {
    * @return {Promise} update response
    */
   async function update(user) {
-    try {
-      const resp = await $http.put(`${api}/${user.ident}`, user);
-      return resp.data;
-    } catch (err) {
-      return Promise.reject(new Error(err.message));
-    }
+    const resp = await $http.put(`${api}/${user.ident}`, user);
+    return resp.data;
   }
 
   /**
@@ -75,12 +63,8 @@ function apiUser(_, $http) {
    * @returns {Promise} create response
    */
   async function create(user) {
-    try {
-      const resp = await $http.post(`${api}/`, user);
-      return resp.data;
-    } catch (err) {
-      return Promise.reject(new Error(err.message));
-    }
+    const resp = await $http.post(`${api}/`, user);
+    return resp.data;
   }
 
   /**
@@ -89,12 +73,8 @@ function apiUser(_, $http) {
    * @return {Promise} Search results
    */
   async function search(query) {
-    try {
-      const resp = await $http.get(`${api}/search`, { params: { query } });
-      return resp.data;
-    } catch (err) {
-      return Promise.reject(new Error(err.message));
-    }
+    const resp = await $http.get(`${api}/search`, { params: { query } });
+    return resp.data;
   }
 
   /**
@@ -103,12 +83,8 @@ function apiUser(_, $http) {
    * @return {Promise} Removal response
    */
   async function remove(user) {
-    try {
-      const resp = await $http.delete(`${api}/${user.ident}`);
-      return resp.data;
-    } catch (err) {
-      return Promise.reject(new Error(err.message));
-    }
+    const resp = await $http.delete(`${api}/${user.ident}`);
+    return resp.data;
   }
 }
 

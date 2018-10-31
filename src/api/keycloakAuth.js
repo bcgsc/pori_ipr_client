@@ -1,14 +1,14 @@
 /**
  * Keycloak authentication factory
  * @param {*} $q {@link https://docs.angularjs.org/api/ng/service/$q}
- * @param {*} $cookies {@link https://docs.angularjs.org/api/ngCookies/service/$cookies}
+ * @param {*} $localStorage {@link https://github.com/gsklee/ngStorage}
  * @param {*} $state {@link https://github.com/angular-ui/ui-router/wiki/quick-reference}
  * @param {*} $http {@link https://docs.angularjs.org/api/ng/service/$http}
  * @return {Object} Auth factory
  */
-function keycloakAuth($q, $cookies, $state, $http) {
+function keycloakAuth($q, $localStorage, $state, $http) {
   const keycloak = Keycloak({
-    'realm': 'CanDIG',
+    'realm': CONFIG.SSO.REALM,
     'clientId': 'IPR',
     'url': CONFIG.ENDPOINTS.KEYCLOAK,
   });
@@ -20,7 +20,7 @@ function keycloakAuth($q, $cookies, $state, $http) {
   async function setToken() {
     try {
       await keycloak.init({ onLoad: 'login-required' });
-      $cookies.put(CONFIG.COOKIES.KEYCLOAK, keycloak.token);
+      $localStorage[CONFIG.STORAGE.KEYCLOAK] = keycloak.token;
       return keycloak.token;
     } catch (err) {
       return err;
@@ -32,7 +32,7 @@ function keycloakAuth($q, $cookies, $state, $http) {
    * @return {String|undefined} Token string
    */
   function getToken() {
-    return $cookies.get(CONFIG.COOKIES.KEYCLOAK);
+    return $localStorage[CONFIG.STORAGE.KEYCLOAK];
   }
 
   /**
@@ -42,13 +42,13 @@ function keycloakAuth($q, $cookies, $state, $http) {
   async function logout() {
     try {
       await keycloak.init();
-      $cookies.remove(CONFIG.COOKIES.KEYCLOAK);
+      delete $localStorage[CONFIG.STORAGE.KEYCLOAK];
       const resp = await keycloak.logout({
         redirectUri: $state.href('public.login', {}, { absolute: true }),
       });
       return resp;
     } catch (err) {
-      $cookies.remove(CONFIG.COOKIES.KEYCLOAK);
+      delete $localStorage[CONFIG.STORAGE.KEYCLOAK];
       delete $http.headers.Authorization;
       $state.go('public.login');
       return err;
@@ -63,7 +63,7 @@ function keycloakAuth($q, $cookies, $state, $http) {
   return keycloakAuthService;
 }
 
-keycloakAuth.$inject = ['$q', '$cookies', '$state', '$http'];
+keycloakAuth.$inject = ['$q', '$localStorage', '$state', '$http'];
 
 angular
   .module('bcgscIPR')

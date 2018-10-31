@@ -22,10 +22,9 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
     })
 
     // Request access account for Interactive-Pog-Report
-    .state('public.request', {
-      url: '/request',
-      templateUrl: 'public/request/request.html',
-      controller: 'controller.public.request'
+    .state('public.access', {
+      url: '/access',
+      templateUrl: 'public/access/access.html',
     })
 
     // Login to App
