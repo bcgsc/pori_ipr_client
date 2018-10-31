@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.admin.users.projects', 
-['_', '$scope', '$mdSidenav', '$state', '$mdDialog', '$mdToast', 'api.session', 'api.project', 'isAdmin', 'projects', 'groups',
-(_, $scope, $mdSidenav, $state, $mdDialog, $mdToast, $session, $project, isAdmin, projects, groups) => {
+['_', '$scope', '$mdSidenav', '$state', '$mdDialog', '$mdToast', 'api.project', 'isAdmin', 'projects', 'groups',
+(_, $scope, $mdSidenav, $state, $mdDialog, $mdToast, $project, isAdmin, projects, groups) => {
 
   $scope.projects = projects;
   let accessGroup = _.find($scope.groups, function(group) { return group.name === 'Full Project Access' });

@@ -35,7 +35,7 @@ app.controller('controller.dashboard.reports.genomic.detailedGenomicAnalysis.alt
     summary: null,
     update_comments: null,
     comments: null,
-    user: $user._me.username,
+    user: $user.meObj.username,
   };
 
   scope.events = {

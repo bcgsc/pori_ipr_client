@@ -6,7 +6,7 @@ app.controller('knowledgebase.events.edit',
   scope.disableRefTitle = false;
   scope.event = angular.copy(event);
   scope.formAction = (action === 'new') ? 'Create' : 'Modify';
-  scope.user = $user._me;
+  scope.user = $user.meObj;
   scope.action = action;
 
   scope.events = {
