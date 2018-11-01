@@ -14,7 +14,8 @@ function httpInterceptors($rootScope, $q, $injector) {
   return {
     request: (config) => {
       const keycloakAuth = $injector.get('keycloakAuth');
-      if (keycloakAuth.getToken()) {
+      if (keycloakAuth.getToken() && !(config.url.match(/https:\/\/lims16.bcgsc.ca.*/g)
+        || config.url.match(/https:\/\/www.bcgsc.ca\/jira\/rest\/api\/2/g))) {
         config.headers.Authorization = keycloakAuth.getToken();
       }
       return config;
