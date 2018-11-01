@@ -44,6 +44,7 @@ let files = {
       './node_modules/angular-chart.js/dist/angular-chart.min.js',
       './node_modules/angular-socket-io/socket.min.js',
       './node_modules/angular-messages/angular-messages.js',
+      './node_modules/keycloak-js/dist/keycloak.min.js',
     ],
     
     // Application javascript sources
