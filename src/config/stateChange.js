@@ -2,9 +2,9 @@ app.run(['$rootScope', '$state', '$acl', 'api.user', '$userSettings', '_', '$mdT
   '$localStorage', '$interval', 'keycloakAuth', '$mdDialog', ($rootScope, $state, $acl, $user,
     $userSettings, _, $mdToast, $localStorage, $interval, keycloakAuth, $mdDialog) => {
     $interval((async () => {
-      const time = $localStorage.expiry - Date.now() / 1000;
-      const minutes = Math.floor(time / 1000);
-      if (time <= 900000) {
+      const seconds = $localStorage.expiry - (Date.now() / 1000);
+      const minutes = Math.floor(seconds / 60);
+      if (seconds <= 900) {
         try {
           const resp = await $mdDialog.show($mdDialog.confirm()
             .title('Attention, ')
@@ -17,7 +17,7 @@ app.run(['$rootScope', '$state', '$acl', 'api.user', '$userSettings', '_', '$mdT
           }
         } catch (err) { angular.noop(); }
       }
-    }), 30000);
+    }), 300000);
     // On State Change, Show Spinner!
     $rootScope.$on('$stateChangeStart', async (event, toState, toParams, fromState, fromParams) => {
       $rootScope.showLoader = true;
