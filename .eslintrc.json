@@ -15,7 +15,10 @@
         "angular": true,
         "app": true,
         "confirm": true,
-        "alert": true
+        "alert": true,
+        "Keycloak": true,
+        "io": true,
+        "CONFIG": true
     },
     "plugins": [
         "cypress"
@@ -76,6 +79,9 @@
         "require-jsdoc": "warn",
         "no-restricted-globals": "off",
         "no-alert": "off",
-        "prefer-destructuring": "off"
+        "prefer-destructuring": "off",
+        "no-use-before-define": ["error", {
+            "functions": false
+        }]
     }
 }

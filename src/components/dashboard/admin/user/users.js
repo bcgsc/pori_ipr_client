@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.admin.users',
-['_', '$scope', '$mdSidenav', '$state', '$mdDialog', '$mdToast', 'api.session', 'api.user', 'isAdmin', 'groups', 'users', 'projects',
-(_, $scope, $mdSidenav, $state, $mdDialog, $mdToast, $session, $user, isAdmin, groups, users, projects) => {
+['_', '$scope', '$mdSidenav', '$state', '$mdDialog', '$mdToast', 'api.user', 'isAdmin', 'groups', 'users', 'projects',
+(_, $scope, $mdSidenav, $state, $mdDialog, $mdToast, $user, isAdmin, groups, users, projects) => {
 
   let passDelete = () => { return () => {}};
 
