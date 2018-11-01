@@ -1,4 +1,4 @@
-app.directive('iprReportTable', ['api.pog_analysis_report', '$mdToast', ($report, $mdToast) => {
+app.directive('iprReportTable', ['api.pog_analysis_report', '$mdToast', '$async', ($report, $mdToast, $async) => {
   return {
     restrict: 'E',
     transclude: false,
@@ -92,7 +92,7 @@ app.directive('iprReportTable', ['api.pog_analysis_report', '$mdToast', ($report
        *
        * @returns {undefined}
        */
-      scope.refreshReports = async () => {
+      scope.refreshReports = $async(async () => {
         const opts = {};
         
         scope.loading = true;
@@ -123,7 +123,7 @@ app.directive('iprReportTable', ['api.pog_analysis_report', '$mdToast', ($report
           $mdToast.showSimple(`An error occurred when loading reports: ${err.message}`);
           scope.loading = false;
         }
-      };
+      });
     }, // end link
   }; // end return
 }]);
