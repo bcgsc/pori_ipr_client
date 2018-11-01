@@ -120,12 +120,13 @@ md-dialog(layout="column", aria-label="Add Biopsy", flex-md=80, flex-xs=100, fle
                     md-require-match="true",
                     md-select-on-match="true",
                     md-dropdown-position="bottom",
+                    md-min-length=0,
                     md-input-minlength=3,
                     md-input-maxlength=3,
                     required,
                     flex
                     )
-                        md-item-template {{group.code}}
+                        md-item-template {{group.code}} ({{group.description}})
                         div(ng-messages="PatientForm.CancerGroup.$error")
                             div(ng-message="required").md-input-message-animation A cancer group is required
                             div(ng-message="minlength").md-input-message-animation Entry must be 3 characters long

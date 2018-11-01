@@ -69,12 +69,13 @@ md-dialog(layout="column", aria-label="Edit Biopsy Analysis", flex-md=80, flex-x
                         md-require-match="true",
                         md-select-on-match="true",
                         md-dropdown-position="bottom",
+                        md-min-length=0,
                         md-input-minlength=3,
                         md-input-maxlength=3,
                         ng-required="validate.cancer_group",
                         flex
                         )
-                            md-item-template {{group.code}}
+                            md-item-template {{group.code}} ({{group.description}})
                             div(ng-messages="PatientForm.CancerGroup.$error", ng-if="PatientForm.CancerGroup.$touched")
                                 div(ng-message="required").md-input-message-animation A cancer group must be selected
                                 div(ng-message="minlength").md-input-message-animation Entry must be 3 characters long
