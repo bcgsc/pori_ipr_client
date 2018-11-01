@@ -11,7 +11,8 @@ function loginRedirect(keycloakAuth, $user, $state, $mdToast, $localStorage) {
   this.$onInit = async () => {
     try {
       await keycloakAuth.setToken();
-      await $user.me();
+      const resp = await $user.me();
+      $localStorage.expiry = resp.expiry;
       if ($localStorage.returnToState) {
         // navigate to state user was trying to access
         $state.go($localStorage.returnToState, JSON.parse($localStorage.returnToStateParams));
