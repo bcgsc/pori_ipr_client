@@ -32,7 +32,11 @@ function keycloakAuth($q, $localStorage, $state, $http) {
    * @return {String|undefined} Token string
    */
   function getToken() {
-    return $localStorage[CONFIG.STORAGE.KEYCLOAK];
+    try {
+      return $localStorage[CONFIG.STORAGE.KEYCLOAK];
+    } catch (err) {
+      return false;
+    }
   }
 
   /**

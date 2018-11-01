@@ -1,6 +1,23 @@
-app.run(['$rootScope', '$state', '$q', '$acl', 'api.user', 'api.pog',
-  '$userSettings', '_', '$mdToast', '$localStorage', ($rootScope, $state, $q, $acl,
-    $user, $pog, $userSettings, _, $mdToast, $localStorage) => {
+app.run(['$rootScope', '$state', '$acl', 'api.user', '$userSettings', '_', '$mdToast',
+  '$localStorage', '$interval', 'keycloakAuth', '$mdDialog', ($rootScope, $state, $acl, $user,
+    $userSettings, _, $mdToast, $localStorage, $interval, keycloakAuth, $mdDialog) => {
+    $interval((async () => {
+      const time = $localStorage.expiry - Date.now() / 1000;
+      const minutes = Math.floor(time / 1000);
+      if (time <= 900000) {
+        try {
+          const resp = await $mdDialog.show($mdDialog.confirm()
+            .title('Attention, ')
+            .textContent(`Session expiring in ${minutes} minutes.
+    Please click on the button below to re-login.`)
+            .cancel('I will do it soon!')
+            .ok('Re-log now!'));
+          if (resp) {
+            keycloakAuth.logout();
+          }
+        } catch (err) { angular.noop(); }
+      }
+    }), 30000);
     // On State Change, Show Spinner!
     $rootScope.$on('$stateChangeStart', async (event, toState, toParams, fromState, fromParams) => {
       $rootScope.showLoader = true;
@@ -19,7 +36,7 @@ app.run(['$rootScope', '$state', '$q', '$acl', 'api.user', 'api.pog',
           await $userSettings.init();
           return $user.meObj;
         } catch (err) {
-          Promise.reject(new Error(err.message));
+          Promise.reject(err);
           $state.go('public.login');
         }
       }
