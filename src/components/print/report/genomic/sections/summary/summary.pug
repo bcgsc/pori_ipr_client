@@ -6,31 +6,36 @@ tr
                 tr
                     th(width="12%") Patient ID:
                     td(width="15%") {{data.pi.POGID}}
-                    th(width="14%") Sex:
-                    td(width="14%") {{data.pi.gender}}
-                    th(width="15%") Tumour Sample:
-                    td(width="30%") {{data.pi.tumourSample}}
+                    th(width="14%") Alternate ID:
+                    td(width="14%") {{report.pog.alternate_identifier || 'N/A'}}
+                    th(width="15%") Sex:
+                    td(width="30%") {{data.pi.gender}}
                 tr
+                    th Tumour Sample:
+                    td {{data.pi.tumourSample}}
                     th Tumour Type:
                     td {{data.pi.tumourType}}
-                    th Case Type:
-                    td {{data.pi.caseType}}
-                    th Constitutional Sample
-                    td {{data.pi.constitutionalSample}}
+                    th Constitutional Sample:
+                    td {{data.pi.constitutionalSample || 'N/A'}}
                 tr
                     th Report Date:
                     td {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
-                    th Age at Diagnosis:
-                    td {{data.pi.age}}
+                    th Case Type:
+                    td {{data.pi.caseType}}
                     th Biopsy Details:
                     td {{data.pi.biopsySite}}
                 tr
                     th Physician:
                     td {{data.pi.physician}}
-                    th
-                    td
+                    th Age at Diagnosis:
+                    td {{data.pi.age}}
+                    th Age of Consent:
+                    td {{report.pog.age_of_consent || 'Not Specified'}}
+                tr
                     th Protocol:
                     td {{data.pi.tumourProtocol}}
+                    th Biopsy:
+                    td {{report.analysis.analysis_biopsy || 'N/A'}}
 tr
     td.report-section
         h1 Patient Tumour Analysis Summary

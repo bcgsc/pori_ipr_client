@@ -8,7 +8,7 @@ app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$rootScope',
   $scope.loading = false;
   $scope.externalMode = isExternalMode;
   $scope.selectedProject = {
-    project: !!$userSettings.get('selectedProject') ? {} : $userSettings.get('selectedProject')
+    project: $userSettings.get('selectedProject') ? $userSettings.get('selectedProject') : {},
   }
 
   $scope.roles = [
