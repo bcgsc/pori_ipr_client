@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.biopsy.board.add',
-  ['$scope', '_', 'api.lims', 'api.bioapps', 'api.analysis', 'api.pog', 'api.project', '$mdDialog', '$mdToast', '$filter', 'projects', '$http',
-    ($scope, _, $lims, $bioapps, $analysis, $pog, $project, $mdDialog, $mdToast, $filter, projects, $http) => {
+  ['$scope', '_', 'api.lims', 'api.bioapps', 'api.analysis', 'api.pog', 'api.project', '$mdDialog', '$mdToast', '$filter', 'projects', '$http', '$async',
+    ($scope, _, $lims, $bioapps, $analysis, $pog, $project, $mdDialog, $mdToast, $filter, projects, $http, $async) => {
       $scope.stages = [
         {
           title: 'Patient',
@@ -101,13 +101,13 @@ app.controller('controller.dashboard.biopsy.board.add',
       $scope.searchGroups = (searchText) => {
         return _.filter(threeLetterCodes, (e) => {
           let code;
-          if (e.code.indexOf(searchText.toUpperCase()) > -1) code = e;
+          if (e.code.includes(searchText.toUpperCase())) code = e;
           return code;
         });
       };
 
       // Performing checks on POG change
-      $scope.checkPOG = async () => {
+      $scope.checkPOG = $async(async () => {
         // find LIMS sources for POG
         $scope.limsSources();
 
@@ -133,10 +133,10 @@ app.controller('controller.dashboard.biopsy.board.add',
             $scope.existingPOG = false;
           }
         }
-      };
+      });
   
       // Find LIMS Sources
-      $scope.limsSources = async () => {
+      $scope.limsSources = $async(async () => {
         // Check to see if this is the same value
         if ($scope.searchPogcache === $scope.searchQuery || $scope.searchQuery.length === 0) return; // Same value, btfo!
     
@@ -159,10 +159,10 @@ app.controller('controller.dashboard.biopsy.board.add',
         } catch (err) {
           $mdToast.showSimple(`An error occurred while retrieving sources from LIMS: ${err}`);
         }
-      };
+      });
   
       // Attempt to guess library names
-      $scope.libraryGuess = async () => {
+      $scope.libraryGuess = $async(async () => {
         $scope.find_libraries = true;
         $scope.libraries_loading = true;
     
@@ -186,7 +186,7 @@ app.controller('controller.dashboard.biopsy.board.add',
               sample_collection_time: sample.sample_collection_time,
             };
         
-            if (sample.disease_status === 'Diseased' && diseaseLibraries.indexOf(sample.library) === -1) {
+            if (sample.disease_status === 'Diseased' && !diseaseLibraries.includes(sample.library)) {
               diseaseLibraries.push(sample.library);
             }
         
@@ -218,7 +218,7 @@ app.controller('controller.dashboard.biopsy.board.add',
               if (i) {
                 // Types of library strategy mappings
                 if (library.library_strategy === 'WGS') pogs[library.full_name.split('-')[0]][biopsyDate][i].type = 'tumour';
-                if (library.library_strategy.indexOf('RNA') > -1) pogs[library.full_name.split('-')[0]][biopsyDate][i].type = 'transcriptome';
+                if (library.library_strategy.includes('RNA')) pogs[library.full_name.split('-')[0]][biopsyDate][i].type = 'transcriptome';
               }
             });
           });
@@ -243,7 +243,7 @@ app.controller('controller.dashboard.biopsy.board.add',
         } catch (err) {
           $scope.libraries_loading = false;
         }
-      };
+      });
   
       /**
        * Select collection and auto-populate
