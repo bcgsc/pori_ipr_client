@@ -12,7 +12,11 @@ app.controller('controller.print.POG.report.genomic.somaticMutations',
   $scope.ms = null;
 
   $scope.copyFilter = (copyChange) => {
-    return copyChange.match(/(((\+|\-)?)[0-9]{1,2})/g)[0];
+    const parsed = _.parseInt(copyChange);
+    if (Number.isNaN(parsed)) {
+      return copyChange;
+    }
+    return parsed;
   };
 
   let processSignature = (sigs) => {
