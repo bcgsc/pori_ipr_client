@@ -25,7 +25,8 @@ app.controller('knowledgebase.references.view',
       locals: {
         reference: reference,
         action: 'edit',
-        vocabulary: vocabulary
+        vocabulary: vocabulary,
+        isExternalMode: isExternalMode,
       },
       multiple: true,
       clickOutToClose: false,
@@ -82,7 +83,7 @@ app.controller('knowledgebase.references.view',
         $mdToast.show($mdToast.simple({textContent: 'The entry has been updated'}));
       },
       (err) => {
-        console.log('Unable to update reference status');
+        $mdToast.showSimple(`Reference status was not updated: ${err.data.error.message}`);
       }
     )
 

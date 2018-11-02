@@ -65,7 +65,7 @@ app.controller('knowledgebase.references', ['$rootScope', '$q', '_', '$scope', '
       locals: {
         reference: reference,
         vocabulary: vocabulary,
-        externalMode: $scope.externalMode
+        isExternalMode: $scope.externalMode
       },
       resolve: {
         history: ['$q', 'api.knowledgebase', ($q, $kb) => {
