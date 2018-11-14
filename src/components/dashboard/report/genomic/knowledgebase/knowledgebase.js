@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.report.genomic.knowledgebase',
-  ['$rootScope', '_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', '$acl', 'api.pog', 'api.detailedGenomicAnalysis.alterations', 'pog', 'report', 'alterations', 'approvedThisCancer', 'approvedOtherCancer', 'targetedGenes',
-    ($rootScope, _, $q, $scope, $state, $mdDialog, $mdToast, $acl, $pog, $alterations, pog, report, alterations, approvedThisCancer, approvedOtherCancer, targetedGenes) => {
+  ['$rootScope', '_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', '$async', '$acl', 'api.pog', 'api.detailedGenomicAnalysis.alterations', 'pog', 'report', 'alterations', 'approvedThisCancer', 'approvedOtherCancer', 'targetedGenes',
+    ($rootScope, _, $q, $scope, $state, $mdDialog, $mdToast, $async, $acl, $pog, $alterations, pog, report, alterations, approvedThisCancer, approvedOtherCancer, targetedGenes) => {
       $scope.approvedThisCancer = {};
       $scope.approvedOtherCancer = {};
       $scope.pog = pog;
@@ -11,11 +11,17 @@ app.controller('controller.dashboard.report.genomic.knowledgebase',
         prognostic: {},
         diagnostic: {},
         biological: {},
-        unknown: null,
+        unknown: {},
+        novel: {},
       };
       $scope.targetedGenes = targetedGenes;
       $scope.showUnknown = false;
       $scope.disableUnknownButtons = false;
+
+      $scope.loading = false;
+      $scope.showCharacterizedAlterations = true;
+      $scope.showUnknownAlterations = false;
+      $scope.showNovelAlterations = false;
 
       // Edit permissions
       $scope.canEdit = false;
@@ -67,58 +73,51 @@ app.controller('controller.dashboard.report.genomic.knowledgebase',
         });
       };
 
-      // Toggle viewing unknowns state
-      $scope.toggleUnknown = () => {
-        $scope.disableUnknownButtons = true;
+      $scope.showAlterations = $async(async (alterationType) => {
+        // Show loading in progress
+        $scope.loading = true;
 
-        // Show unknowns
-        if (!$scope.showUnknown) {
-          // First dump all alterations
-          $scope.alterations = {
-            therapeutic: {},
-            prognostic: {},
-            diagnostic: {},
-            biological: {},
-            unknown: {},
-          };
+        // reset all sections to to disabled
+        $scope.showCharacterizedAlterations = false;
+        $scope.showUnknownAlterations = false;
+        $scope.showNovelAlterations = false;
 
-          // Load unknowns
-          $alterations.getType(pog.POGID, report.ident, 'unknown').then(
-            (resp) => {
-              groupEntries(resp);
-              $scope.showUnknown = true;
-              $scope.disableUnknownButtons = false;
-            },
-            (err) => {
-              $mdToast.showSimple(`An error occured while loading unknown characterizations: ${err}`);
-            },
-          );
+        // Dump all alterations
+        $scope.alterations = {
+          therapeutic: {},
+          prognostic: {},
+          diagnostic: {},
+          biological: {},
+          unknown: {},
+          novel: {},
+        };
+
+        let alterationEntries;
+        try {
+          switch (alterationType) {
+            case 'unknown':
+              // Load unknown alterations
+              alterationEntries = await $alterations.getType(pog.POGID, report.ident, 'unknown');
+              $scope.showUnknownAlterations = true;
+              break;
+            case 'novel':
+              // Load novel alterations
+              alterationEntries = await $alterations.getType(pog.POGID, report.ident, 'novel');
+              $scope.showNovelAlterations = true;
+              break;
+            default:
+              // Default scenario is to load all characterized alterations
+              alterationEntries = await $alterations.getAll(pog.POGID, report.ident);
+              $scope.showCharacterizedAlterations = true;
+              break;
+          }
+        } catch (err) {
+          $mdToast.showSimple(`An error occured while loading ${alterationType} alterations`);
         }
 
-        // Show All others
-        if ($scope.showUnknown) {
-          // First dump all alterations
-          $scope.alterations = {
-            therapeutic: {},
-            prognostic: {},
-            diagnostic: {},
-            biological: {},
-            unknown: null,
-          };
-
-          // Load unknowns
-          $alterations.getAll(pog.POGID, report.ident).then(
-            (resp) => {
-              groupEntries(resp);
-              $scope.disableUnknownButtons = false;
-              $scope.showUnknown = false;
-            },
-            (err) => {
-              $mdToast.showSimple(`An error occured while loading unknown characterizations: ${err}`);
-            },
-          );
-        }
-      };
+        groupEntries(alterationEntries);
+        $scope.loading = false; // finished loading
+      });
 
       // Resort Groupings
       $scope.trigger = (val) => {
