@@ -1,10 +1,10 @@
 /**
- * 
- * @param {*} _ 
- * @param {*} $q 
- * @param {*} $user 
+ * User settings factory
+ * @param {*} _ {@link https://lodash.com/docs/4.17.5}
+ * @param {*} $user - $user factory
+ * @return {Object} $userSettings
  */
-function $userSettings(_, $q, $user) {
+function $userSettings(_, $user) {
   let userSettings = {};
 
   const $us = {
@@ -62,7 +62,7 @@ function $userSettings(_, $q, $user) {
   return $us;
 }
 
-$userSettings.$inject = ['_', '$q', 'api.user'];
+$userSettings.$inject = ['_', 'api.user'];
 
 angular
   .module('bcgscIPR')
