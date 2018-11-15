@@ -35,7 +35,6 @@ function stateChange($rootScope, $state, $acl, $user, $userSettings, _, $mdToast
   }), 300000);
   // On State Change, Show Spinner!
   $transitions.onStart({ }, async (transition) => {
-    console.log('changing state...', transition.to());
     $rootScope.showLoader = true;
     $rootScope.PROJECT = CONFIG.PROJECT;
     $rootScope.CONFIG = CONFIG;
