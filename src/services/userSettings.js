@@ -1,14 +1,13 @@
 /**
- * User Settings Service
- *
- * Basic functionality for tracking, getting & setting user settings.
- *
+ * 
+ * @param {*} _ 
+ * @param {*} $q 
+ * @param {*} $user 
  */
-app.factory('$userSettings', ['_', '$q', 'api.user', function(_, $q, $user) {
-
+function $userSettings(_, $q, $user) {
   let userSettings = {};
 
-  let $us =  {
+  const $us = {
     init: () => {
       userSettings = $user.meObj.settings;
     },
@@ -22,7 +21,7 @@ app.factory('$userSettings', ['_', '$q', 'api.user', function(_, $q, $user) {
     get: (setting = undefined) => {
       if (setting === undefined) return userSettings;
       
-      if(userSettings === undefined) return {};
+      if (userSettings === undefined) return {};
       
       return userSettings[setting];
     },
@@ -36,10 +35,9 @@ app.factory('$userSettings', ['_', '$q', 'api.user', function(_, $q, $user) {
      * @returns {Promise} - Returns the $us.update() promise;
      */
     save: (setting, value) => {
-      if(userSettings === undefined) userSettings = {};
+      if (userSettings === undefined) userSettings = {};
       userSettings[setting] = value;
       return $us.update();
-
     },
 
     /**
@@ -47,27 +45,25 @@ app.factory('$userSettings', ['_', '$q', 'api.user', function(_, $q, $user) {
      *
      * @returns {Promise} - Returns updated user object
      */
-    update: () => {
-      let deferred = $q.defer();
-
-      let user = $user.meObj;
+    update: async () => {
+      const user = $user.meObj;
       user.settings = userSettings; // Overwrite previous settings value
-      
-      $user.update(user).then(
-        (result) => {
-          $user.meObj = result;
-          deferred.resolve($user.meObj);
-        },
-        (err) => {
-          console.log('Failed to update user settings', err);
-        }
-      );
-
-      return deferred.promise;
-
-    }
+      try {
+        const resp = await $user.update(user);
+        $user.meObj = resp;
+        return $user.meObj;
+      } catch (err) {
+        console.log('Failed to update user settings', err);
+        return Promise.reject(err);
+      }
+    },
   };
 
   return $us;
+}
 
-}]);
+$userSettings.$inject = ['_', '$q', 'api.user'];
+
+angular
+  .module('bcgscIPR')
+  .factory('$userSettings', $userSettings);

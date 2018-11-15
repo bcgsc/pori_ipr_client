@@ -53,12 +53,12 @@ app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$rootScope',
     // Ignore onload message
     if(JSON.stringify(newVal) === JSON.stringify(oldVal)) return;
     $userSettings.save('genomicReportListCurrentUser', newVal);
-  });
+  }, true);
   
   $scope.$watch('selectedProject', (newVal, oldVal) => {
     if(JSON.stringify(newVal) === JSON.stringify(oldVal)) return;
     $userSettings.save('selectedProject', newVal);
-  });
+  }, true);
 
   $scope.refreshList = () => {
     let states = [];
@@ -136,7 +136,6 @@ app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$rootScope',
 
 
       });
-
       return result;
 
     };
