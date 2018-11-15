@@ -1,7 +1,9 @@
 /**
- * 
- * @param {*} $stateProvider 
- * @param {*} UrlService 
+ * Ui router configuration
+ * @param {*} $stateProvider {@link https://ui-router.github.io/ng1/docs/latest/classes/ng1.stateprovider.html}
+ * @param {*} $urlServiceProvider {@link https://ui-router.github.io/ng1/docs/latest/modules/injectables.html#_urlserviceprovider}
+ * @param {*} $locationProvider {@link https://docs.angularjs.org/api/ng/provider/$locationProvider}
+ * @return {*} router
  */
 function router($stateProvider, $urlServiceProvider, $locationProvider) {
   // Enable HTML5 mode for URL access
