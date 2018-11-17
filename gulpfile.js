@@ -20,7 +20,7 @@ let files = {
   js: {
     // Library files sources from dependancies
     libs: [
-      './node_modules/angular/angular.min.js',
+      './node_modules/angular/angular.js',
       './node_modules/angular-ui-router/release/angular-ui-router.min.js',
       './node_modules/angular-material/angular-material.min.js',
       './node_modules/angular-animate/angular-animate.min.js',
@@ -29,7 +29,7 @@ let files = {
       './node_modules/lodash/lodash.js',
       './node_modules/moment/min/moment.min.js',    // Order is important! Moment before Angular Moment
       './node_modules/angular-moment/angular-moment.min.js',
-      './node_modules/ng-storage/ngStorage.min.js',
+      './node_modules/ngstorage/ngStorage.min.js',
       './node_modules/simplemde/dist/simplemde.min.js',
       './node_modules/svg-pan-zoom/dist/svg-pan-zoom.js',
       './node_modules/ng-stickyfill/dist/ng-stickyfill.min.js',
@@ -189,20 +189,11 @@ gulp.task('js', () => {
  * Collect all application specific JS. Concat into single output.
  * Uglify if in production
  *
- */  
+ */
 gulp.task('libs', () => {
   return gulp.src(files.js.libs)
     .pipe(concat('libs.js'))
-    //.pipe(gulpif(env === 'production', uglify()))
-    //.pipe(pako.gzip())
-    .pipe(gulp.dest('./builds/'+configManager.getEnvironment()+'/assets/libs'));
-});
-
-gulp.task('compileASN1', () => {
-  return gulp.src('./node_modules/asn1js/src/asn1.js')
-    .pipe(babel())
-    .pipe(concat('asn1.js'))
-    .pipe(gulp.dest('./src/libs/'));
+    .pipe(gulp.dest(`./builds/${configManager.getEnvironment()}/assets/libs`));
 });
 
 /*
