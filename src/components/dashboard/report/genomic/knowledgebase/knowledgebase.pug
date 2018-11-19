@@ -26,7 +26,9 @@ section.detailedGenomicAnalysis
 
             div(ng-if="showCharacterizedAlterations && !loading")
                 div(ng-repeat="(alteration, genes) in alterations")
-                    h3.title {{alteration}}
+                    h3(ng-if="alteration !== 'unknown' && alteration !== 'novel'").title {{alteration}}
+                    h3(ng-if="alteration === 'unknown'").title Uncharacterized Alterations
+                    h3(ng-if="alteration === 'novel'").title Novel Alterations
 
                     div(ng-if="genes.length === 0 && alteration !== 'unknown' && alteration !== 'novel'")
                         div.text-center.details None Found.
@@ -47,7 +49,8 @@ section.detailedGenomicAnalysis
                     md-button(ng-click="showAlterations('characterized')").accent.md-raised View Characterized Alterations
 
                 div(ng-repeat="(alteration, genes) in alterations")
-                    h3(ng-if="alteration === 'unknown' || alteration === 'novel'").title {{alteration}}
+                    h3(ng-if="alteration === 'unknown'").title Uncharacterized Alterations
+                    h3(ng-if="alteration === 'novel'").title Novel Alterations
 
                     div(ng-if="genes.length === 0 && ((showUnknownAlterations && alteration === 'unknown') || (showNovelAlterations && alteration === 'novel'))")
                         div.text-center.details None Found.
