@@ -230,49 +230,4 @@ div.PogList {
     }
 
   }
-
-  .recent-reports {
-    margin-right: 10px;
-    z-index: 100;
-
-    .tab {
-      background-color: rgba(204, 207, 226, 0.9);
-      border: 1px solid rgba(63, 81, 181, 0.8);
-      border-bottom: none;
-      border-top-left-radius: 3px;
-      border-top-right-radius: 3px;
-      box-shadow: 0 1px 2px 0px rgba(0,0,0,0.7);
-
-      margin-right: 16px;
-      padding: 3px 3px 0 3px;
-
-      color: rgb(63, 81, 181);
-      font-size: 0.9em;
-
-      md-icon {
-        min-height: 15px;
-        height: 15px;
-        min-width: 15px;
-        width: 15px;
-        line-height: 15px;
-        font-size: 15px;
-        color: rgba(63,81,181,0.6);
-        margin: -2px 0 0 5px;
-        
-        position: relative;
-        padding: 0;
-
-        cursor: pointer;
-
-        &.report-type {
-          color: rgba(63,81,181,1.0);
-          margin-right: 6px;
-        }
-
-        &:hover {
-          color: rgba(63,81,181,1.0);
-        }
-      }
-    }
-  }
 }
