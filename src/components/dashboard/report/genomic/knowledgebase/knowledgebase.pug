@@ -32,7 +32,7 @@ section.detailedGenomicAnalysis
             div(ng-if="alteration == 'unknown'", ng-hide="showUnknown")
                 div.text-center.details
                     md-button(ng-click="toggleUnknown()", ng-disabled="disableUnknownButtons").accent.md-raised View Uncharacterized Alterations
-            ipr-genomic-alteration(ng-repeat="(i, gene) in genes", samples="samples", gene="gene", pog="pog", trigger="trigger", report="report").container
+            ipr-genomic-alteration(ng-repeat="(i, gene) in genes track by i", samples="samples", gene="gene", pog="pog", trigger="trigger", report="report").container
 
         div(layout="column", flex)
             h2.title Targeted Gene Report - Detected Alterations

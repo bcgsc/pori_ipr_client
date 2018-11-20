@@ -7,26 +7,26 @@ div(layout="column", flex).details.box
   div(layout="row", flex)
     dt(flex="15") Gene: 
     dd(flex="15")
-      ipr-gene-viewer(report="report", pog="pog", gene="gene.gene") {{gene.gene}}
+      ipr-gene-viewer(report="report", pog="pog", gene="gene.gene") {{::gene.gene}}
     
     dt(flex="15") Variant: 
-    dd(flex="15") {{gene.variant}}
+    dd(flex="15") {{::gene.variant}}
     
     dt(flex="15") Source: 
-    dd(flex="45") {{gene.sample}}
+    dd(flex="45") {{::gene.sample}}
     
   div(layout="row", flex)
     dt(flex="15") Expression: 
-    dd(flex="15") {{gene.expression_tissue_fc}}
+    dd(flex="15") {{::gene.expression_tissue_fc}}
     
     dt(flex="15") Disease Percentile: 
-    dd(flex="15") {{gene.expression_cancer_percentile}}
+    dd(flex="15") {{::gene.expression_cancer_percentile}}
     
     dt(flex="15") Copy Number: 
-    dd(flex="15") {{gene.copyNumber}}
+    dd(flex="15") {{::gene.copyNumber}}
     
     dt(flex="15") Zygosity: 
-    dd(flex="15") {{gene.zygosity}}
+    dd(flex="15") {{::gene.zygosity}}
     
 div(flex, layout="column", ng-if="gene.showChildren")
   
