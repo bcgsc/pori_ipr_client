@@ -26,7 +26,7 @@ section.detailedGenomicAnalysis
 
             div(ng-if="showCharacterizedAlterations && !loading")
                 div(ng-repeat="(alteration, genes) in alterations")
-                    h3(ng-if="alteration !== 'unknown' && alteration !== 'novel'").title {{alteration}}
+                    h3(ng-if="alteration !== 'unknown' && alteration !== 'novel'").title {{alteration | titlecase}} Alterations
                     h3(ng-if="alteration === 'unknown'").title Uncharacterized Alterations
                     h3(ng-if="alteration === 'novel'").title Novel Alterations
 
