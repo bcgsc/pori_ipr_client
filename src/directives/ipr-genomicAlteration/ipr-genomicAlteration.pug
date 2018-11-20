@@ -28,7 +28,7 @@ div(layout="column", flex).details.box
     dt(flex="15") Zygosity: 
     dd(flex="15") {{gene.zygosity}}
     
-div(flex, layout="column", ng-show="gene.showChildren")
+div(flex, layout="column", ng-if="gene.showChildren")
   
   div(layout="column", flex).dataBox
   
