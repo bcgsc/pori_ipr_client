@@ -8,7 +8,7 @@ app.directive("iprGenomicAlteration", ['$q', '_', '$mdDialog', '$mdToast', '$acl
       samples: '<samples',
       gene: '<gene',
       pog: '<pog',
-      trigger: '<',
+      trigger: '=',
       report: '<report',
     },
     templateUrl: 'ipr-genomicAlteration/ipr-genomicAlteration.html',
