@@ -4,13 +4,15 @@ app.controller('controller.dashboard.report.genomic.knowledgebase', ['$rootScope
   'approvedOtherCancer', 'targetedGenes', ($rootScope, _, $q, $scope, $state, $mdDialog, $mdToast,
     $acl, $pog, $alterations, pog, report, alterations, approvedThisCancer, approvedOtherCancer,
     targetedGenes) => {
-    $scope.approvedThisCancer = {};
-    $scope.approvedOtherCancer = {};
+    let showUnknown = false;
+
+    $scope.approvedThisCancer = [];
+    $scope.approvedOtherCancer = [];
     $scope.pog = pog;
     $scope.report = report;
     $scope.samples = [];
     $scope.alterations = {
-      therapeutic: {}, prognostic: {}, diagnostic: {}, biological: {}, unknown: null,
+      therapeutic: [], prognostic: [], diagnostic: [], biological: [], unknown: [],
     };
     $scope.targetedGenes = targetedGenes;
 
@@ -41,45 +43,11 @@ app.controller('controller.dashboard.report.genomic.knowledgebase', ['$rootScope
 
     // Toggle viewing unknowns state
     $scope.toggleUnknown = () => {
+      showUnknown = !showUnknown;
+    };
 
-      $scope.disableUnknownButtons = true;
-
-      // Show unknowns
-      if (!$scope.showUnknown) {
-        // First dump all alterations
-        $scope.alterations = {
-          therapeutic: [], prognostic: [], diagnostic: [], biological: [], unknown: [],
-        };
-
-        // Load unknowns
-        $alterations.getType(pog.POGID, report.ident, 'unknown').then(
-          (resp) => {
-            groupEntries(resp);
-            $scope.showUnknown = true;
-            $scope.disableUnknownButtons = false;
-          },
-          (err) => {
-            console.log('Unable to load unknowns', err);
-          },
-        );
-      }
-
-      // Show All others
-      if ($scope.showUnknown) {
-        // First dump all alterations
-        $scope.alterations = {therapeutic: {}, prognostic: {}, diagnostic: {}, biological: {}, unknown: null};
-
-        // Load unknowns
-        $alterations.getAll(pog.POGID, report.ident).then(
-          (resp) => {
-            groupEntries(resp);
-            $scope.disableUnknownButtons = $scope.showUnknown = false;
-          },
-          (err) => {
-            console.log('Unable to load unknowns', err);
-          },
-        );
-      }
+    $scope.unknown = () => {
+      return showUnknown;
     };
 
     // Resort Groupings
@@ -122,52 +90,58 @@ app.controller('controller.dashboard.report.genomic.knowledgebase', ['$rootScope
       return pmid.match(/^[0-9]{8}/)[0];
     };
 
-    // Group Alterations by type
-    const groupAlterations = (collection, alterations) => {
-      alterations.forEach((row) => {
-        // Modify type
-        // Does grouping exist?
-        if (!(row.gene + '-' + row.variant in collection)) {
+    // Group approved alterations by type
+    const groupAlterations = (collection, approvedAlterations) => {
+      approvedAlterations.forEach((row) => {
+        if (collection.length) {
+          collection.forEach((entry, index) => {
+            if ((entry.gene === row.gene) && (entry.variant === row.variant)) {
+              row.children = [];
+              collection.push(row); // Add row to collection
+            } else {
+              collection[index].children.push(row);
+            }
+          });
+        } else {
           row.children = [];
-          return collection[row.gene + '-' + row.variant] = row; // Add row to collection
+          collection.push(row);
         }
-        
-        if (row.gene + '-' + row.variant in collection) return collection[row.gene + '-' + row.variant].children.push(row);
       });
-      return _.values(collection);
+      return collection;
     };
     
     // Group Entries by Type
-    const groupEntries = (alterations) => {
+    const groupEntries = () => {
       // Process the entries for grouping
       alterations.forEach((row) => {
         // Add to samples if not present
-        if ($scope.samples.indexOf(row.sample) === -1) $scope.samples.push(row.sample);
-        
-        // Grouping
+        if ($scope.samples.includes(row.sample)) {
+          $scope.samples.push(row.sample);
+        }
+        // Create new alteration type if it's not existing
         if (!(Object.prototype.hasOwnProperty.call($scope.alterations, row.alterationType))) {
-          $scope.alterations[row.alterationType] = {};
+          $scope.alterations[row.alterationType] = [];
         }
-
         // Check if it exists already?
-        if (!(row.gene+'-'+row.variant in $scope.alterations[row.alterationType])) {
+        if ($scope.alterations[row.alterationType].length) {
+          const match = $scope.alterations[row.alterationType].findIndex((entry) => {
+            return ((entry.gene === row.gene) && (entry.variant === row.variant));
+          });
+          if (match > -1) {
+            // Categorical entry already exists
+            $scope.alterations[row.alterationType][match].children.push(row);
+          } else {
+            row.children = [];
+            $scope.alterations[row.alterationType].push(row);
+          }
+        } else {
           row.children = [];
-          return $scope.alterations[row.alterationType][row.gene+'-'+row.variant] = row;
+          $scope.alterations[row.alterationType].push(row);
         }
-        
-        // Categorical entry already exists
-        if (row.gene+'-'+row.variant in $scope.alterations[row.alterationType]) {
-          return $scope.alterations[row.alterationType][row.gene+'-'+row.variant]
-            .children[$scope.alterations[row.alterationType][row.gene+'-'+row.variant].children.length] = row;
-        }
-      });
-      
-      _.forEach($scope.alterations, (values, k) => {
-        $scope.alterations[k] = _.values(values);
       });
     };
     // Group Entries
-    groupEntries(alterations);
+    groupEntries();
     // Group Approved
     $scope.approvedThisCancer = groupAlterations($scope.approvedThisCancer, approvedThisCancer);
     $scope.approvedOtherCancer = groupAlterations($scope.approvedOtherCancer, approvedOtherCancer);
