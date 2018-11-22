@@ -74,8 +74,11 @@ app.run(['$rootScope', '$state', '$acl', 'api.user', '$userSettings', '_', '$mdT
     });
   }]);
 
-app.config(($mdDateLocaleProvider) => {
+app.config(['$mdDateLocaleProvider', '$compileProvider', ($mdDateLocaleProvider, $compileProvider) => {
+  if ((CONFIG.ATTRS.name) !== 'LOCAL') {
+    $compileProvider.debugInfoEnabled(false);
+  }
   $mdDateLocaleProvider.formatDate = (date) => {
     return date ? moment(date).format('YYYY-MM-DD') : '';
   };
-});
+}]);
