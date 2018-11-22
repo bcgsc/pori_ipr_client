@@ -15,7 +15,7 @@ section.material-section.slide.presentation
                             h3 {{slide.name}}
                                 md-icon(ng-click="remove(slide)").clickable.small delete
 
-                            img(data-ng-src="{{'data:' + slide.object_type + ';base64,' + slide.object}}", style="max-width: 100%;")
+                            img(data-ng-src="{{'data:' + slide.object_type + ';base64,' + slide.object}}").slide
 
             div(layout="column").add-slide
                 h2 Add new slide
