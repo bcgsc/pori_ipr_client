@@ -8,9 +8,9 @@
  */
 function keycloakAuth($q, $localStorage, $state, $http) {
   const keycloak = Keycloak({
-    'realm': CONFIG.SSO.REALM,
-    'clientId': 'IPR',
-    'url': CONFIG.ENDPOINTS.KEYCLOAK,
+    realm: CONFIG.SSO.REALM,
+    clientId: 'IPR',
+    url: CONFIG.ENDPOINTS.KEYCLOAK,
   });
 
   /**

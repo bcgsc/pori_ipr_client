@@ -5,11 +5,11 @@ app.directive("iprGenomicAlteration", ['$q', '_', '$mdDialog', '$mdToast', '$acl
     restrict: 'E',
     transclude: false,
     scope: {
-      samples: '=samples',
-      gene: '=gene',
-      pog: '=pog',
-      trigger: '=',
-      report: '=report',
+      samples: '<samples',
+      gene: '<gene',
+      pog: '<pog',
+      trigger: '<',
+      report: '<report',
     },
     templateUrl: 'ipr-genomicAlteration/ipr-genomicAlteration.html',
     link: (scope, element, attr) => {

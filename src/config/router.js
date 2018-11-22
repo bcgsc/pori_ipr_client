@@ -451,8 +451,10 @@ app.config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$urlMa
       templateUrl: 'dashboard/report/genomic/knowledgebase/knowledgebase.html',
       controller: 'controller.dashboard.report.genomic.knowledgebase',
       resolve: {
-        alterations: ['$q', '$stateParams', 'api.detailedGenomicAnalysis.alterations', ($q, $stateParams, $APC) => {
-          return $APC.getAll($stateParams.POG, $stateParams.analysis_report);
+        alterations: ['$q', '$stateParams', 'api.detailedGenomicAnalysis.alterations', async ($q, $stateParams, $APC) => {
+          const respAll = await $APC.getAll($stateParams.POG, $stateParams.analysis_report);
+          const respUnknown = await $APC.getType($stateParams.POG, $stateParams.analysis_report, 'unknown');
+          return respAll.concat(respUnknown);
         }],
         approvedThisCancer: ['$q', '$stateParams', 'api.detailedGenomicAnalysis.alterations', ($q, $stateParams, $APC) => {
           return $APC.getType($stateParams.POG, $stateParams.analysis_report, 'thisCancer');
