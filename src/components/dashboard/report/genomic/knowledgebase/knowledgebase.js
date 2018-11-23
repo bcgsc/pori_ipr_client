@@ -138,7 +138,7 @@ app.controller('controller.dashboard.report.genomic.knowledgebase', ['_', '$scop
       return collection;
     };
     
-      // Group Entries by Type
+    // Group Entries by Type
     const groupEntries = () => {
       // Process the entries for grouping
       alterations.forEach((row) => {
