@@ -9,61 +9,42 @@ section.detailedGenomicAnalysis
 
             div(ng-if="approvedThisCancer.length == 0")
                 div.text-center.details None Found.
-            ipr-genomic-alteration(ng-repeat="gene in approvedThisCancer", samples="samples", gene="gene", report="report").container
+            ipr-genomic-alteration(ng-repeat="gene in ::approvedThisCancer track by $index", samples="::samples", gene="::gene", report="::report").container
 
             h2.title Therapies Approved in other tumour types
             div(ng-if="approvedOtherCancer.length == 0")
                 div.text-center.details None Found.
-            ipr-genomic-alteration(ng-repeat="gene in approvedOtherCancer", samples="samples", gene="gene", report="report").container
+            ipr-genomic-alteration(ng-repeat="gene in ::approvedOtherCancer track by $index", samples="::samples", gene="::gene", report="::report").container
 
 
             h2.title Alterations With Potential Clinical Relevance
                 span(ng-click="createNewKBEntry()", ng-if="canEdit").pull-right.addNewVariant.clickable Add new variant
+            
+        div(ng-if="!showCharacterizedAlterations")
+            h3(ng-if="!showCharacterizedAlterations").title Characterized Alterations
+            div.text-center.details
+                md-button(ng-click="showAlterations()").accent.md-raised View Characterized Alterations
 
-            div(ng-if="loading").text-center.margin-bottom-10.margin-top-10
-                span Loading Alterations...
-                md-progress-circular(md-mode="indeterminate").center.margin-top-10
+        div(ng-repeat="(alteration, genes) in ::alterations")
+            h3(ng-if="alteration !== 'unknown' && alteration !== 'novel' && showCharacterizedAlterations").title {{alteration | titlecase}} Alterations
+            h3(ng-if="alteration === 'unknown'").title Uncharacterized Alterations
+            h3(ng-if="alteration === 'novel'").title Novel Alterations
 
-            div(ng-if="showCharacterizedAlterations && !loading")
-                div(ng-repeat="(alteration, genes) in alterations")
-                    h3(ng-if="alteration !== 'unknown' && alteration !== 'novel'").title {{alteration | titlecase}} Alterations
-                    h3(ng-if="alteration === 'unknown'").title Uncharacterized Alterations
-                    h3(ng-if="alteration === 'novel'").title Novel Alterations
+            div(ng-if="genes.length == 0 && showNoneFound(alteration)")
+                div.text-center.details None Found.
+            
+            div(ng-if="alteration !== 'unknown' && alteration !== 'novel' && showCharacterizedAlterations")
+                ipr-genomic-alteration(ng-repeat="($index, gene) in ::genes track by $index", samples="::samples", gene="::gene", pog="::pog", trigger="trigger", report="::report").container
 
-                    div(ng-if="genes.length === 0 && alteration !== 'unknown' && alteration !== 'novel'")
-                        div.text-center.details None Found.
-
-                    div(ng-if="alteration === 'unknown' && !showUnknownAlterations")
-                        div.text-center.details
-                            md-button(ng-click="showAlterations('unknown')").accent.md-raised View Uncharacterized Alterations
-
-                    div(ng-if="alteration === 'novel' && !showNovelAlterations")
-                        div.text-center.details
-                            md-button(ng-click="showAlterations('novel')").accent.md-raised View Novel Alterations
-
-                    ipr-genomic-alteration(ng-if="genes.length > 0", ng-repeat="(i, gene) in genes", samples="samples", gene="gene", pog="pog", trigger="trigger", report="report").container
-
-            div(ng-if="!showCharacterizedAlterations && !loading")
-                h3.title Characterized Alterations
+            div(ng-if="alteration === 'unknown'")
                 div.text-center.details
-                    md-button(ng-click="showAlterations('characterized')").accent.md-raised View Characterized Alterations
+                    md-button(ng-click="showAlterations('unknown')", ng-if="!showUnknownAlterations").accent.md-raised View Uncharacterized Alterations
+                ipr-genomic-alteration(ng-if="showUnknownAlterations" ng-repeat="($index, gene) in ::genes track by $index", samples="::samples", gene="::gene", pog="::pog", trigger="trigger", report="::report").container
 
-                div(ng-repeat="(alteration, genes) in alterations")
-                    h3(ng-if="alteration === 'unknown'").title Uncharacterized Alterations
-                    h3(ng-if="alteration === 'novel'").title Novel Alterations
-
-                    div(ng-if="genes.length === 0 && ((showUnknownAlterations && alteration === 'unknown') || (showNovelAlterations && alteration === 'novel'))")
-                        div.text-center.details None Found.
-
-                    div(ng-if="alteration === 'unknown' && !showUnknownAlterations")
-                        div.text-center.details
-                            md-button(ng-click="showAlterations('unknown')").accent.md-raised View Uncharacterized Alterations
-
-                    div(ng-if="alteration === 'novel' && !showNovelAlterations")
-                        div.text-center.details
-                            md-button(ng-click="showAlterations('novel')").accent.md-raised View Novel Alterations
-
-                    ipr-genomic-alteration(ng-if="genes.length > 0", ng-repeat="(i, gene) in genes", samples="samples", gene="gene", pog="pog", trigger="trigger", report="report").container
+            div(ng-if="alteration === 'novel'")
+                div.text-center.details
+                    md-button(ng-click="showAlterations('novel')", ng-if="!showNovelAlterations").accent.md-raised View Novel Alterations
+                ipr-genomic-alteration(ng-if="showNovelAlterations" ng-repeat="($index, gene) in ::genes track by $index", samples="::samples", gene="::gene", pog="::pog", trigger="trigger", report="::report").container
 
         div(layout="column", flex)
             h2.title Targeted Gene Report - Detected Alterations

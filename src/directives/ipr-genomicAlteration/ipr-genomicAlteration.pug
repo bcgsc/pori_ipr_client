@@ -7,28 +7,28 @@ div(layout="column", flex).details.box
   div(layout="row", flex)
     dt(flex="15") Gene: 
     dd(flex="15")
-      ipr-gene-viewer(report="report", pog="pog", gene="gene.gene") {{gene.gene}}
+      ipr-gene-viewer(report="::report", pog="::pog", gene="::gene.gene") {{::gene.gene}}
     
     dt(flex="15") Variant: 
-    dd(flex="15") {{gene.variant}}
+    dd(flex="15") {{::gene.variant}}
     
     dt(flex="15") Source: 
-    dd(flex="45") {{gene.sample}}
+    dd(flex="45") {{::gene.sample}}
     
   div(layout="row", flex)
     dt(flex="15") Expression: 
-    dd(flex="15") {{gene.expression_tissue_fc}}
+    dd(flex="15") {{::gene.expression_tissue_fc}}
     
     dt(flex="15") Disease Percentile: 
-    dd(flex="15") {{gene.expression_cancer_percentile}}
+    dd(flex="15") {{::gene.expression_cancer_percentile}}
     
     dt(flex="15") Copy Number: 
-    dd(flex="15") {{gene.copyNumber}}
+    dd(flex="15") {{::gene.copyNumber}}
     
     dt(flex="15") Zygosity: 
-    dd(flex="15") {{gene.zygosity}}
+    dd(flex="15") {{::gene.zygosity}}
     
-div(flex, layout="column", ng-show="gene.showChildren")
+div(flex, layout="column", ng-if="gene.showChildren")
   
   div(layout="column", flex).dataBox
   
@@ -44,41 +44,41 @@ div(flex, layout="column", ng-show="gene.showChildren")
         div(flex=5)
         
       div(layout="row", flex).row
-        div(flex) {{gene.kbVariant}}
-        div(flex) {{gene.effect}}
-        div(flex) {{gene.disease}}
-        div(flex) {{gene.association}}
-        div(flex) {{gene.therapeuticContext}}
-        div(flex) {{gene.evidence}}
+        div(flex) {{::gene.kbVariant}}
+        div(flex) {{::gene.effect}}
+        div(flex) {{::gene.disease}}
+        div(flex) {{::gene.association}}
+        div(flex) {{::gene.therapeuticContext}}
+        div(flex) {{::gene.evidence}}
         div(flex)
           span(ng-if="refType(gene.reference) == 'pmid'") 
-            a(href="https://www.ncbi.nlm.nih.gov/pubmed/{{gene.reference}}", target="_blank") {{ cleanPMID(gene.reference) }}
+            a(href="https://www.ncbi.nlm.nih.gov/pubmed/{{gene.reference}}", target="_blank") {{::cleanPMID(gene.reference)}}
           span(ng-if="refType(gene.reference) == 'link'")
             a(href="{{prependLink(gene.reference)}}", target="_blank") Source
           span(ng-if="refType(gene.reference) == 'text'").reference Reference
             md-icon info
-            md-tooltip {{gene.reference}}
+            md-tooltip {{::gene.reference}}
         div(flex=5).text-center.edit
           md-icon(ipr-data-viewer="gene", ipr-hidden="['children', 'showChildren']") search
             md-tooltip View Details
           md-icon(ng-click="updateRow($event, gene)", ng-if="canEdit") edit
             md-tooltip Modify this entry
       
-      div(layout="row", flex, ng-repeat="(i, childGene) in gene.children").row
-        div(flex) {{childGene.kbVariant}}
-        div(flex) {{childGene.effect}}
-        div(flex) {{childGene.disease}}
-        div(flex) {{childGene.association}}
-        div(flex) {{childGene.therapeuticContext}}
-        div(flex) {{childGene.evidence}}
+      div(layout="row", flex, ng-repeat="(i, childGene) in ::gene.children").row
+        div(flex) {{::childGene.kbVariant}}
+        div(flex) {{::childGene.effect}}
+        div(flex) {{::childGene.disease}}
+        div(flex) {{::childGene.association}}
+        div(flex) {{::childGene.therapeuticContext}}
+        div(flex) {{::childGene.evidence}}
         div(flex) 
           span(ng-if="refType(childGene.reference) == 'pmid'") 
-            a(href="https://www.ncbi.nlm.nih.gov/pubmed/{{childGene.reference}}", target="_blank") {{ cleanPMID(childGene.reference) }}
+            a(href="https://www.ncbi.nlm.nih.gov/pubmed/{{childGene.reference}}", target="_blank") {{::cleanPMID(childGene.reference)}}
           span(ng-if="refType(childGene.reference) == 'link'")
             a(href="{{prependLink(childGene.reference)}}", target="_blank") Source
           span(ng-if="refType(childGene.reference) == 'text'").reference Reference
             md-icon info
-            md-tooltip {{childGene.reference}}
+            md-tooltip {{::childGene.reference}}
         div(flex=5).text-center.edit
           md-icon(ipr-data-viewer="childGene", ipr-hidden="['children']") search
             md-tooltip View Details
