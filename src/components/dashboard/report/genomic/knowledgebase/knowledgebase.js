@@ -1,20 +1,21 @@
-app.controller('controller.dashboard.report.genomic.knowledgebase', ['$rootScope', '_', '$q',
-  '$scope', '$state', '$mdDialog', '$mdToast', '$acl', 'api.pog',
-  'api.detailedGenomicAnalysis.alterations', 'pog', 'report', 'alterations', 'approvedThisCancer',
-  'approvedOtherCancer', 'targetedGenes', ($rootScope, _, $q, $scope, $state, $mdDialog, $mdToast,
-    $acl, $pog, $alterations, pog, report, alterations, approvedThisCancer, approvedOtherCancer,
-    targetedGenes) => {
-    let showUnknown = false;
 
+app.controller('controller.dashboard.report.genomic.knowledgebase', ['_', '$scope', '$mdDialog', '$acl', 'pog', 'report', 'alterations',
+  'approvedThisCancer', 'approvedOtherCancer', 'targetedGenes', '$async',
+  (_, $scope, $mdDialog, $acl, pog, report, alterations,
+    approvedThisCancer, approvedOtherCancer, targetedGenes, $async) => {
     $scope.approvedThisCancer = [];
     $scope.approvedOtherCancer = [];
     $scope.pog = pog;
     $scope.report = report;
     $scope.samples = [];
     $scope.alterations = {
-      therapeutic: [], prognostic: [], diagnostic: [], biological: [], unknown: [],
+      therapeutic: [], prognostic: [], diagnostic: [], biological: [], unknown: [], novel: [],
     };
     $scope.targetedGenes = targetedGenes;
+    $scope.loading = false;
+    $scope.showCharacterizedAlterations = true;
+    $scope.showUnknownAlterations = false;
+    $scope.showNovelAlterations = false;
 
     // Edit permissions
     $scope.canEdit = false;
@@ -37,17 +38,45 @@ app.controller('controller.dashboard.report.genomic.knowledgebase', ['$rootScope
           rowEvent: 'new',
           report: report,
         },
-        controller: 'controller.dashboard.reports.genomic.detailedGenomicAnalysis.alterations.edit' // End controller
+        controller: 'controller.dashboard.reports.genomic.detailedGenomicAnalysis.alterations.edit', // End controller
       });
     };
 
-    // Toggle viewing unknowns state
-    $scope.toggleUnknown = () => {
-      showUnknown = !showUnknown;
-    };
+    $scope.showAlterations = $async(async (alterationType) => {
+      $scope.loading = true;
+      // reset all sections to to disabled
+      $scope.showCharacterizedAlterations = false;
+      $scope.showUnknownAlterations = false;
+      $scope.showNovelAlterations = false;
 
-    $scope.unknown = () => {
-      return showUnknown;
+      switch (alterationType) {
+        case 'unknown':
+          $scope.showUnknownAlterations = true;
+          break;
+        case 'novel':
+          $scope.showNovelAlterations = true;
+          break;
+        default:
+          $scope.showCharacterizedAlterations = true;
+          break;
+      }
+      $scope.loading = false;
+    });
+
+    $scope.showNoneFound = (alterationType) => {
+      let showNoneFoundMessage = false;
+      switch (alterationType) {
+        case 'unknown':
+          if ($scope.showUnknownAlterations) showNoneFoundMessage = true;
+          break;
+        case 'novel':
+          if ($scope.showNovelAlterations) showNoneFoundMessage = true;
+          break;
+        default:
+          if ($scope.showCharacterizedAlterations) showNoneFoundMessage = true;
+          break;
+      }
+      return showNoneFoundMessage;
     };
 
     // Resort Groupings
@@ -68,13 +97,12 @@ app.controller('controller.dashboard.report.genomic.knowledgebase', ['$rootScope
         });
       });
     };
-
     // Filter reference type
     $scope.refType = (ref) => {
-      if (ref.match(/^[0-9]{8}\#/)) {
+      if (ref.match(/^[0-9]{8}#/)) {
         return 'pmid';
       }
-      if (ref.match(/^(?:http(?:s)?:\/\/)?(?:[^\.]+\.)?[A-z0-9]*\.[A-z]{2,7}/)) {
+      if (ref.match(/^(?:http(?:s)?:\/\/)?(?:[^.]+\.)?[A-z0-9]*\.[A-z]{2,7}/)) {
         return 'link';
       }
       return 'text';
@@ -82,7 +110,7 @@ app.controller('controller.dashboard.report.genomic.knowledgebase', ['$rootScope
     
     // Prepend a link with http:// if necessary
     $scope.prependLink = (link) => {
-      return (link.indexOf('http://') == -1) ? 'http://' + link : link;
+      return (link.indexOf('http://') === -1) ? `http://${link}` : link;
     };
     
     // Clean up PMIDs
@@ -140,7 +168,7 @@ app.controller('controller.dashboard.report.genomic.knowledgebase', ['$rootScope
         }
       });
     };
-    // Group Entries
+      // Group Entries
     groupEntries();
     // Group Approved
     $scope.approvedThisCancer = groupAlterations($scope.approvedThisCancer, approvedThisCancer);

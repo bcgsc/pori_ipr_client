@@ -82,6 +82,7 @@
         "prefer-destructuring": "off",
         "no-use-before-define": ["error", {
             "functions": false
-        }]
+        }],
+        "indent": ["error", 2, { "SwitchCase": 1 }]
     }
 }
