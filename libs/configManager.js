@@ -1,5 +1,5 @@
-const fs = require('fs'),
-      minimist = require('minimist');
+const fs = require('fs');
+const minimist = require('minimist');
 
 /**
  * Manage Build Environment

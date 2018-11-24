@@ -6,7 +6,6 @@ const app = angular.module('bcgscIPR', [
   'angularMoment',
   'ngStorage',
   'angularFileUpload',
-  'ngclipboard',
   'angular-sortable-view',
   'ngQuill',
   'chart.js',
