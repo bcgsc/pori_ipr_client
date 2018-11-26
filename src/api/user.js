@@ -20,7 +20,8 @@ function apiUser(_, $http) {
   
   /**
    * Retrieves the user object if authenticated
-   * @return {Object} User object
+   * @return {Promise} User object
+   * @throws {ErrorType} Thrown when API call fails
    */
   async function me() {
     const resp = await $http.get(`${api}/me`);
@@ -30,7 +31,8 @@ function apiUser(_, $http) {
   
   /**
    * Check if user is an admin or superuser
-   * @return {Boolean} admin bool
+   * @return {Promise} admin bool
+   * @throws {ErrorType} Thrown when API call fails
    */
   async function isAdmin() {
     return $user.meObj.groups.some(({ name }) => {
@@ -41,6 +43,7 @@ function apiUser(_, $http) {
   /**
    * Get all users (admin)
    * @return {Promise} all promise
+   * @throws {ErrorType} Thrown when API call fails
    */
   async function all() {
     const resp = await $http.get(api);
@@ -51,6 +54,7 @@ function apiUser(_, $http) {
    * Update a user entry
    * @param {Object} user object to update
    * @return {Promise} update response
+   * @throws {ErrorType} Thrown when API call fails
    */
   async function update(user) {
     const resp = await $http.put(`${api}/${user.ident}`, user);
@@ -61,6 +65,7 @@ function apiUser(_, $http) {
    * Create a new user account
    * @param {Object} user object to create
    * @returns {Promise} create response
+   * @throws {ErrorType} Thrown when API call fails
    */
   async function create(user) {
     const resp = await $http.post(`${api}/`, user);
@@ -71,6 +76,7 @@ function apiUser(_, $http) {
    * Search for a user
    * @param {String} query - user to search for
    * @return {Promise} Search results
+   * @throws {ErrorType} Thrown when API call fails
    */
   async function search(query) {
     const resp = await $http.get(`${api}/search`, { params: { query } });
@@ -81,6 +87,7 @@ function apiUser(_, $http) {
    * Remove a user
    * @param {String} user - user to remove
    * @return {Promise} Removal response
+   * @throws {ErrorType} Thrown when API call fails
    */
   async function remove(user) {
     const resp = await $http.delete(`${api}/${user.ident}`);
