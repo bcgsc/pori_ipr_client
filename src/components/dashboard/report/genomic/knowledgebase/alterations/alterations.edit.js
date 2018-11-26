@@ -147,7 +147,7 @@ app.controller('controller.dashboard.reports.genomic.detailedGenomicAnalysis.alt
   // Autocomplete Filter
   let filterFunction = (query) => {
     
-    let lowerCaseQuery = angular.lowercase(query); // Prep input to lowercase
+    let lowerCaseQuery = query.toLowerCase(); // Prep input to lowercase
     
     // Return search function
     return (entry) => {            

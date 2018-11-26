@@ -125,28 +125,5 @@ app.controller('controller.dashboard.report.genomic',
   $scope.goToReportSection = (goto) => {
     
     $state.go('dashboard.reports.pog.report.genomic.' + goto);
-  };
-
-
-  /**
-   * Open export modal
-   *
-   */
-  $scope.openExport = ($event) => {
-    $mdDialog.show({
-      controller: 'controller.dashboard.report.genomic.history.export',
-      templateUrl: 'dashboard/report/genomic/history/history.export.html',
-      targetEvent: $event,
-      locals: {pog: pog},
-      clickOutsideToClose: false,
-    }).then(
-      (result) => {
-        // Result of hidden
-      },
-      () => {
-        // Closed
-      }
-    );
-  };
-  
+  };  
 }]);
