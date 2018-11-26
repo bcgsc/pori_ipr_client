@@ -3,9 +3,9 @@ let scriptVer = '1.3.0';
 let configManager = require('./libs/configManager');
 configManager.detectEnvironment(); // Detect Env.
 
-console.log(('  BCGSC - IPR-Client Build Script '+ scriptVer +'  ').blue.bold.bgWhite);
-console.log("=".repeat(50).dim);
-console.log(("Node Version: " + process.version).yellow);
+console.log(('  BCGSC - IPR-Client Build Script '+ scriptVer +'  ').blue.bold);
+console.log("=".repeat(50).rainbow);
+console.log(("Node Version: " + process.version).green);
 console.log(("Build Environment: " + configManager.getEnvironment()).green, '\n');
 
 
@@ -20,7 +20,7 @@ let files = {
   js: {
     // Library files sources from dependancies
     libs: [
-      './node_modules/angular/angular.min.js',
+      './node_modules/angular/angular.js',
       './node_modules/angular-ui-router/release/angular-ui-router.min.js',
       './node_modules/angular-material/angular-material.min.js',
       './node_modules/angular-animate/angular-animate.min.js',
@@ -29,14 +29,11 @@ let files = {
       './node_modules/lodash/lodash.js',
       './node_modules/moment/min/moment.min.js',    // Order is important! Moment before Angular Moment
       './node_modules/angular-moment/angular-moment.min.js',
-      './node_modules/ng-storage/ngStorage.min.js',
+      './node_modules/ngstorage/ngStorage.min.js',
       './node_modules/simplemde/dist/simplemde.min.js',
       './node_modules/svg-pan-zoom/dist/svg-pan-zoom.js',
-      './node_modules/ng-stickyfill/dist/ng-stickyfill.min.js',
       './node_modules/angular-file-upload/dist/angular-file-upload.min.js',
       './node_modules/angular-sanitize/angular-sanitize.min.js',
-      './node_modules/clipboard/dist/clipboard.min.js',
-      './node_modules/ngclipboard/dist/ngclipboard.min.js',
       './node_modules/angular-sortable-view/src/angular-sortable-view.js',
       './node_modules/quill/dist/quill.min.js',
       './node_modules/ng-quill/dist/ng-quill.min.js',
@@ -112,30 +109,24 @@ let files = {
   ]
 };
 
-let gulp = require('gulp'),
-    fs = require('fs'),
-    connect = require('gulp-connect'),
-    modRewrite = require('connect-modrewrite'),
-    gzip = require('connect-gzip'),
-    concat = require('gulp-concat'),
-    uglify = require('gulp-uglify'),
-    sass = require('gulp-sass'),
-    autoprefixer = require('gulp-autoprefixer'),
-    image = require('gulp-imagemin'),
-    gutil = require('gulp-util'),
-    template = require('gulp-angular-templatecache'),
-    livereload = require('gulp-livereload'),
-    If = require('gulp-if'),
-    cleanCSS = require('gulp-clean-css'),
-    pug = require('gulp-pug'),
-    babel = require('gulp-babel')
-    del = require('del'),
-    sourcemaps = require('gulp-sourcemaps'),
-    pako = require('gulp-pako'),
-    runSequence = require('run-sequence'),
-    minimist = require('minimist'),
-    gulpStylelint = require('gulp-stylelint'),
-    gulpif = require('gulp-if');
+const gulp = require('gulp');
+const fs = require('fs');
+const connect = require('gulp-connect');
+const modRewrite = require('connect-modrewrite');
+const concat = require('gulp-concat');
+const sass = require('gulp-sass');
+const autoprefixer = require('gulp-autoprefixer');
+const log = require('fancy-log');
+const template = require('gulp-angular-templatecache');
+const cleanCSS = require('gulp-clean-css');
+const pug = require('gulp-pug');
+const babel = require('gulp-babel');
+const del = require('del');
+const sourcemaps = require('gulp-sourcemaps');
+const runSequence = require('run-sequence');
+const gulpStylelint = require('gulp-stylelint');
+const gulpif = require('gulp-if');
+const plumber = require('gulp-plumber');
 
 // Gulp task to clean/empty out builds directory 
 gulp.task('clean', () => {
@@ -143,19 +134,13 @@ gulp.task('clean', () => {
 });
 
 
-let env = configManager.detectEnvironment();
+const env = configManager.detectEnvironment();
 
 gulp.task('config', () => {
-
-  // Detect Environment
-  let env = configManager.detectEnvironment();
-
-  // load config
-  let conf = configManager.loadConfig();
-
-  if(!fs.existsSync('./builds')) fs.mkdirSync('./builds/');
-  if(!fs.existsSync('./builds/'+configManager.getEnvironment())) fs.mkdirSync('./builds/'+configManager.getEnvironment());
-  if(!fs.existsSync('./builds/'+configManager.getEnvironment()+'/assets')) fs.mkdirSync('./builds/'+configManager.getEnvironment()+'/assets');
+  configManager.loadConfig();
+  if (!fs.existsSync('./builds')) fs.mkdirSync('./builds/');
+  if (!fs.existsSync('./builds/'+configManager.getEnvironment())) fs.mkdirSync('./builds/'+configManager.getEnvironment());
+  if (!fs.existsSync('./builds/'+configManager.getEnvironment()+'/assets')) fs.mkdirSync('./builds/'+configManager.getEnvironment()+'/assets');
 
   // Write Config
   configManager.writeConfig();
@@ -174,10 +159,10 @@ gulp.task('config', () => {
  */
 gulp.task('js', () => {
   return gulp.src(files.js.app)
+    .pipe(plumber())
     .pipe(gulpif(env === 'development', sourcemaps.init()))
     .pipe(babel())
     .pipe(concat('app.js'))
-   // .pipe(gulpif(env === 'production', uglify()))
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('./builds/'+configManager.getEnvironment()+'/assets/js'))
     .pipe(connect.reload());
@@ -189,20 +174,12 @@ gulp.task('js', () => {
  * Collect all application specific JS. Concat into single output.
  * Uglify if in production
  *
- */  
+ */
 gulp.task('libs', () => {
   return gulp.src(files.js.libs)
+    .pipe(plumber())
     .pipe(concat('libs.js'))
-    //.pipe(gulpif(env === 'production', uglify()))
-    //.pipe(pako.gzip())
-    .pipe(gulp.dest('./builds/'+configManager.getEnvironment()+'/assets/libs'));
-});
-
-gulp.task('compileASN1', () => {
-  return gulp.src('./node_modules/asn1js/src/asn1.js')
-    .pipe(babel())
-    .pipe(concat('asn1.js'))
-    .pipe(gulp.dest('./src/libs/'));
+    .pipe(gulp.dest(`./builds/${configManager.getEnvironment()}/assets/libs`));
 });
 
 /*
@@ -213,8 +190,9 @@ gulp.task('compileASN1', () => {
  */
 gulp.task('pug-index', () => {
   return gulp.src(files.pug.index)
-    .pipe(pug().on('error', gutil.log))
-    .pipe(gulp.dest('./builds/'+configManager.getEnvironment()))
+    .pipe(plumber())
+    .pipe(pug().on('error', log.error))
+    .pipe(gulp.dest(`./builds/${configManager.getEnvironment()}`))
     .pipe(connect.reload());
 });
 
@@ -227,10 +205,10 @@ gulp.task('pug-index', () => {
  */
 gulp.task('pug-templates', () => {
   return gulp.src(files.pug.templates)
-    .pipe(pug().on('error', gutil.log))
-    .pipe(template('templates.js', {standalone: true}).on('error', gutil.log))
-    //.pipe(gulpif(env === 'production', uglify()))
-    .pipe(gulp.dest('./builds/'+configManager.getEnvironment()+'/assets/js'))
+    .pipe(plumber())
+    .pipe(pug().on('error', log.error))
+    .pipe(template('templates.js', { standalone: true }).on('error', log.error))
+    .pipe(gulp.dest(`./builds/${configManager.getEnvironment()}/assets/js`))
     .pipe(connect.reload());
 });
 
@@ -243,13 +221,14 @@ gulp.task('pug-templates', () => {
  */
 gulp.task('sass-components', () => {
   return gulp.src(files.scss.components)
+    .pipe(plumber())
     .pipe(sourcemaps.init())
     .pipe(gulpStylelint({
       reporters: [
         {formatter: 'string', console: true}
       ]
     }))
-    .pipe(sass()).on('error', gutil.log)
+    .pipe(sass()).on('error', log.error)
     .pipe(autoprefixer())
     .pipe(concat('components.css'))
     .pipe(cleanCSS())
@@ -266,13 +245,14 @@ gulp.task('sass-components', () => {
  */
 gulp.task('sass-app', () => {
   return gulp.src(files.scss.app)
+    .pipe(plumber())
     .pipe(sourcemaps.init())
     .pipe(gulpStylelint({
       reporters: [
         {formatter: 'string', console: true}
       ]
     }))
-    .pipe(sass()).on('error', gutil.log)
+    .pipe(sass()).on('error', log.error)
     .pipe(autoprefixer())
     .pipe(concat('app.css'))
     .pipe(cleanCSS())
@@ -289,7 +269,8 @@ gulp.task('sass-app', () => {
  */
 gulp.task('sass-libs', () => {
   return gulp.src(files.scss.libs)
-    .pipe(sass()).on('error', gutil.log)
+    .pipe(plumber())
+    .pipe(sass()).on('error', log.error)
     .pipe(autoprefixer())
     .pipe(concat('libs.css'))
     .pipe(cleanCSS())
@@ -304,8 +285,8 @@ gulp.task('sass-libs', () => {
  *
  */
 gulp.task('images-app', () => {
-  
   return gulp.src(files.images.app)
+    .pipe(plumber())
     .pipe(gulp.dest('./builds/'+configManager.getEnvironment()+'/assets/images'));
 });
 
@@ -316,8 +297,8 @@ gulp.task('images-app', () => {
  *
  */
 gulp.task('json-db', () => {
-
   return gulp.src(files.jsonDB)
+    .pipe(plumber())
     .pipe(gulp.dest('./builds/'+configManager.getEnvironment()+'/assets/json'));
 });
 
@@ -327,9 +308,10 @@ gulp.task('json-db', () => {
  * Move Favicon
  *
  */
-gulp.task('favicon', function () {
-    return gulp.src('./src/statics/favicon.ico')
-        .pipe(gulp.dest('./builds/'+configManager.getEnvironment()));
+gulp.task('favicon', () => {
+  return gulp.src('./src/statics/favicon.ico')
+    .pipe(plumber())
+    .pipe(gulp.dest('./builds/'+configManager.getEnvironment()));
 });
 
 /*
@@ -339,11 +321,11 @@ gulp.task('favicon', function () {
  *
  */
 gulp.task('watch', () => {
-  gulp.watch(files.pug.index, ['pug-index']);
-  gulp.watch(files.pug.templates, ['pug-templates']);
-  gulp.watch(files.scss.app, ['sass-app']);
-  gulp.watch(files.scss.components, ['sass-components']);
-  gulp.watch(files.js.app, ['js']);
+  gulp.watch(files.pug.index);
+  gulp.watch(files.pug.templates);
+  gulp.watch(files.scss.app);
+  gulp.watch(files.scss.components);
+  gulp.watch(files.js.app);
 });
 
 /*
@@ -356,8 +338,7 @@ gulp.task('connect', () => {
 
   return connect.server({
     middleware: () => {
-      let middlewares = [modRewrite(['^[^.]*$ /index.html'])];
-      return middlewares;
+      return [modRewrite(['^[^.]*$ /index.html'])];
     },
     livereload: configManager.getConfig().CONNECT.LIVE_RELOAD || false,
     root: ['builds/'+configManager.getEnvironment()],
@@ -368,12 +349,10 @@ gulp.task('connect', () => {
 
 gulp.task('images', ['images-app']);
 gulp.task('json', ['json-db']);
-gulp.task('pug', ['pug-index','pug-templates']);
-gulp.task('sass', ['sass-app','sass-libs','sass-components']);
-gulp.task('build', ['favicon', 'config', 'pug','libs','js','sass', 'images', 'json']);
-gulp.task('deploy-build', () => { runSequence('clean', 'build')});
-
-//gulp.task('run', runSequence('favicon','pug', 'js', 'sass-app', 'sass-components',['watch', 'connect']));
+gulp.task('pug', ['pug-index', 'pug-templates']);
+gulp.task('sass', ['sass-app', 'sass-libs', 'sass-components']);
+gulp.task('build', ['favicon', 'config', 'pug', 'libs', 'js', 'sass', 'images', 'json']);
+gulp.task('deploy-build', () => { runSequence('clean', 'build'); });
 /*
  * Default Gulp Task
  *
@@ -384,7 +363,7 @@ gulp.task('default', () => {
   runSequence(
     'clean',
     'build',
-    ['watch', 'connect']
+    ['watch', 'connect'],
   );
 });
 
@@ -399,7 +378,6 @@ gulp.task('host', () => {
   runSequence(
     'clean',
     'build',
-    'connect'
+    'connect',
   );
 });
-
