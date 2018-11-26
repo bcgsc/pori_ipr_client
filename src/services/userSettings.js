@@ -43,20 +43,16 @@ function $userSettings(_, $user) {
     /**
      * Updates
      *
-     * @returns {Promise} - Returns updated user object
+     * @return {Promise} - Returns updated user object
+     * @throws {ErrorType} - thrown when updating the user settings fails
      */
     update: async () => {
       const user = $user.meObj;
       user.settings = userSettings; // Overwrite previous settings value
-      try {
-        const resp = await $user.update(user);
-        $user.meObj = resp;
-        return $user.meObj;
-      } catch (err) {
-        console.log('Failed to update user settings', err);
-        return Promise.reject(err);
-      }
-    },
+      const resp = await $user.update(user);
+      $user.meObj = resp;
+      return $user.meObj;
+    }
   };
 
   return $us;
