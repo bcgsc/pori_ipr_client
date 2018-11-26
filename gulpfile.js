@@ -3,9 +3,9 @@ let scriptVer = '1.3.0';
 let configManager = require('./libs/configManager');
 configManager.detectEnvironment(); // Detect Env.
 
-console.log(('  BCGSC - IPR-Client Build Script '+ scriptVer +'  ').blue.bold.bgWhite);
-console.log("=".repeat(50).dim);
-console.log(("Node Version: " + process.version).yellow);
+console.log(('  BCGSC - IPR-Client Build Script '+ scriptVer +'  ').blue.bold);
+console.log("=".repeat(50).rainbow);
+console.log(("Node Version: " + process.version).green);
 console.log(("Build Environment: " + configManager.getEnvironment()).green, '\n');
 
 
