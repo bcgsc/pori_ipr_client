@@ -1,14 +1,13 @@
 /**
- * User Settings Service
- *
- * Basic functionality for tracking, getting & setting user settings.
- *
+ * User settings factory
+ * @param {*} _ {@link https://lodash.com/docs/4.17.5}
+ * @param {*} $user - $user factory
+ * @return {Object} $userSettings
  */
-app.factory('$userSettings', ['_', '$q', 'api.user', function(_, $q, $user) {
-
+function $userSettings(_, $user) {
   let userSettings = {};
 
-  let $us =  {
+  const $us = {
     init: () => {
       userSettings = $user.meObj.settings;
     },
@@ -22,7 +21,7 @@ app.factory('$userSettings', ['_', '$q', 'api.user', function(_, $q, $user) {
     get: (setting = undefined) => {
       if (setting === undefined) return userSettings;
       
-      if(userSettings === undefined) return {};
+      if (userSettings === undefined) return {};
       
       return userSettings[setting];
     },
@@ -36,38 +35,31 @@ app.factory('$userSettings', ['_', '$q', 'api.user', function(_, $q, $user) {
      * @returns {Promise} - Returns the $us.update() promise;
      */
     save: (setting, value) => {
-      if(userSettings === undefined) userSettings = {};
+      if (userSettings === undefined) userSettings = {};
       userSettings[setting] = value;
       return $us.update();
-
     },
 
     /**
      * Updates
      *
-     * @returns {Promise} - Returns updated user object
+     * @return {Promise} - Returns updated user object
+     * @throws {ErrorType} - thrown when updating the user settings fails
      */
-    update: () => {
-      let deferred = $q.defer();
-
-      let user = $user.meObj;
+    update: async () => {
+      const user = $user.meObj;
       user.settings = userSettings; // Overwrite previous settings value
-      
-      $user.update(user).then(
-        (result) => {
-          $user.meObj = result;
-          deferred.resolve($user.meObj);
-        },
-        (err) => {
-          console.log('Failed to update user settings', err);
-        }
-      );
-
-      return deferred.promise;
-
+      const resp = await $user.update(user);
+      $user.meObj = resp;
+      return $user.meObj;
     }
   };
 
   return $us;
+}
 
-}]);
+$userSettings.$inject = ['_', 'api.user'];
+
+angular
+  .module('bcgscIPR')
+  .factory('$userSettings', $userSettings);

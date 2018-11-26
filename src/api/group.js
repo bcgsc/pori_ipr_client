@@ -20,6 +20,7 @@ function userGroup($http) {
   /**
    * Get all groups
    * @return {Promise} All response
+   * @throws {ErrorType} Thrown when API call fails
    */
   async function all() {
     const resp = await $http.get(`${api}/group`);
@@ -30,6 +31,7 @@ function userGroup($http) {
    * Retrieve group
    * @param {String} ident - Group UUID ident
    * @return {Promise} Retrieve response
+   * @throws {ErrorType} Thrown when API call fails
    */
   async function retrieve(ident) {
     const resp = await $http.get(`${api}/group/${ident}`);
@@ -40,6 +42,7 @@ function userGroup($http) {
    * Create new group
    * @param {String} group - Group UUID ident
    * @return {Promise} Group response
+   * @throws {ErrorType} Thrown when API call fails
    */
   async function create(group) {
     const resp = await $http.post(`${api}/group`, group);
@@ -50,6 +53,7 @@ function userGroup($http) {
    * Remove a group
    * @param {String} group - Group UUID ident
    * @return {Promise} Remove response
+   * @throws {ErrorType} Thrown when API call fails
    */
   async function remove(group) {
     const resp = await $http.delete(`${api}/group/${group.ident}`);
@@ -60,7 +64,8 @@ function userGroup($http) {
    * Update a group
    * @param {String} ident - Group UUID ident
    * @param {Object} group - Group object to be updated
-   * @returns {Promise} Update response
+   * @return {Promise} Update response
+   * @throws {ErrorType} Thrown when API call fails
    */
   async function update(ident, group) {
     const resp = await $http.put(`${api}/group/${ident}`, group);
@@ -72,6 +77,7 @@ function userGroup($http) {
    * @param {String} group - Group UUID ident
    * @param {String} user - User UUID ident
    * @return {Promise} Add user response
+   * @throws {ErrorType} Thrown when API call fails
    */
   async function addUser(group, user) {
     const resp = await $http.post(`${api}/group/${group}/member`, { user });
@@ -83,6 +89,7 @@ function userGroup($http) {
    * @param {String} group - Group UUID ident
    * @param {String} user - User UUID ident
    * @return {Promise} Remove user response
+   * @throws {ErrorType} Thrown when API call fails
    */
   async function removeUser(group, user) {
     const resp = await $http.delete(`${api}/group/${group}/member`, {
