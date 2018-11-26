@@ -13,7 +13,6 @@
     "cypress:open": "cypress open"
   },
   "devDependencies": {
-    "@babel/plugin-transform-runtime": "^7.1.0",
     "cypress": "~3.1.2",
     "eslint": "~5.9.0",
     "eslint-config-airbnb": "~17.1.0",
@@ -26,7 +25,6 @@
     "mocha": "~5.2.0"
   },
   "dependencies": {
-    "@babel/core": "^7.1.6",
     "angular": "~1.7.5",
     "angular-animate": "~1.7.5",
     "angular-aria": "~1.7.5",
