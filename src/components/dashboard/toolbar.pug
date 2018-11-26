@@ -8,7 +8,7 @@
   span(flex)
   
   md-menu
-    div(ng-click='$mdOpenMenu()', aria-label='User')
+    div(ng-click='$mdMenu.open()', aria-label='User')
       md-icon person
       md-button.white {{user.firstName}} {{user.lastName}}
     

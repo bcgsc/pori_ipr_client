@@ -1,9 +1,8 @@
 let colors = require('colors');
-let scriptVer = '1.3.0';
 let configManager = require('./libs/configManager');
 configManager.detectEnvironment(); // Detect Env.
 
-console.log(('  BCGSC - IPR-Client Build Script '+ scriptVer +'  ').blue.bold);
+console.log(('  BCGSC - IPR-Client Build Script'  ).blue.bold);
 console.log("=".repeat(50).rainbow);
 console.log(("Node Version: " + process.version).green);
 console.log(("Build Environment: " + configManager.getEnvironment()).green, '\n');
@@ -321,11 +320,11 @@ gulp.task('favicon', () => {
  *
  */
 gulp.task('watch', () => {
-  gulp.watch(files.pug.index);
-  gulp.watch(files.pug.templates);
-  gulp.watch(files.scss.app);
-  gulp.watch(files.scss.components);
-  gulp.watch(files.js.app);
+  gulp.watch(files.pug.index, ['pug-index']);
+  gulp.watch(files.pug.templates, ['pug-templates']);
+  gulp.watch(files.scss.app, ['sass-app']);
+  gulp.watch(files.scss.components, ['sass-components']);
+  gulp.watch(files.js.app, ['js']);
 });
 
 /*
