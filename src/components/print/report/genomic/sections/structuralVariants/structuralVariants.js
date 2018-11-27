@@ -1,11 +1,11 @@
 app.controller('controller.print.POG.report.genomic.structuralVariants',
-['_', '$scope', '$sce', 'pog', 'report', 'images', 'ms', 'svs', 'mutationSummaryImages',
-(_, $scope, $sce, pog, report, images, ms, svs, mutationSummaryImages) => {
+['_', '$scope', '$sce', 'pog', 'report', 'structuralVariantImages', 'ms', 'svs', 'mutationSummaryImages',
+(_, $scope, $sce, pog, report, structuralVariantImages, ms, svs, mutationSummaryImages) => {
 
   // Data
   $scope.report = report;
   $scope.pog = pog;
-  $scope.images = images;
+  $scope.images = structuralVariantImages;
   $scope.ms = ms;
   $scope.allVariants = [];
 

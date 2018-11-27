@@ -37,6 +37,7 @@ function httpInterceptors($rootScope, $q, $injector) {
           } else if (response.data.message === 'Invalid or expired authorization token') {
             const $state = $injector.get('$state');
             $state.go('public.login');
+            break;
           }
           $rootScope.$broadcast('httpError', { message: 'You are not authorized to access the requested resource.' });
           break;
