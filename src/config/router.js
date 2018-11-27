@@ -784,7 +784,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       redirectTo: redirectPOG,
       resolve: {
         pog: ['$transition$', 'api.pog', async ($transition$, $pog) => {
-          return $pog.id($transition$.params().POG);
+          return await $pog.id($transition$.params().POG);
         }],
       },
     })
@@ -1048,8 +1048,8 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
         metrics: ['api.knowledgebase', ($kb) => {
           return $kb.metrics();
         }],
-        permission: ['user', 'isExternalMode', async (user, isExternalMode) => {
-          return isExternalMode;
+        permission: ['isExternalMode', async (isExternalMode) => {
+          return await isExternalMode;
         }],
       },
     })
@@ -1085,8 +1085,8 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
         vocabulary: ['$q', 'api.knowledgebase', ($q, $kb) => {
           return $kb.vocabulary();
         }],
-        permission: ['user', 'isExternalMode', async (user, isExternalMode) => {
-          return isExternalMode;
+        permission: ['isExternalMode', async (isExternalMode) => {
+          return await isExternalMode;
         }],
       },
     })
@@ -1147,8 +1147,8 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
         myDefinitions: ['$q', '_', 'api.tracking.definition', 'user', '$userSettings', ($q, _, $definition, user, $userSettings) => {
           return $definition.all({ slug: ($userSettings.get('tracking.definition')) ? _.join($userSettings.get('tracking.definition').slug, ',') : undefined });
         }],
-        permission: ['user', 'isExternalMode', async (user, isExternalMode) => {
-          return isExternalMode;
+        permission: ['isExternalMode', async (isExternalMode) => {
+          return await isExternalMode;
         }],
       },
     })
@@ -1295,8 +1295,8 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       controller: 'controller.dashboard.germline',
       templateUrl: 'dashboard/germline/germline.html',
       resolve: {
-        permission: ['user', 'isExternalMode', async (user, isExternalMode) => {
-          return isExternalMode;
+        permission: ['isExternalMode', async (isExternalMode) => {
+          return await isExternalMode;
         }],
       },
     })
