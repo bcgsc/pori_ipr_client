@@ -62,12 +62,13 @@ function stateChange($rootScope, $state, $acl, $user, $userSettings, _, $mdToast
     // Transitions among top level states are checked by the router but not for child -> child
     if (transition.from().name.match(/.*(?=\.)/g) === transition.to().name.match(/.*(?=\.)/g)
           && !transition.to().name.match(/^public/g)) {
+            console.log('going');
       try {
         await $user.me();
         await $userSettings.init();
       } catch (err) {
-        Promise.reject(err);
         $state.go('public.login');
+        return false;
       }
     }
     transition.promise.finally(() => {

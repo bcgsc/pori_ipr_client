@@ -144,9 +144,9 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       },
       redirectTo: redirectExternal,
       resolve: {
-        reports: ['permission', 'api.pog_analysis_report', '$state', 'user',
-            'isExternalMode', async (permission, $report, $state, user, isExternalMode) => {
-          return $report.all({ states: 'ready,active' });
+        reports: ['permission', 'api.pog_analysis_report', 'isExternalMode',
+          async (permission, $report, isExternalMode) => {
+          return await $report.all({ states: 'ready,active' });
         }],
       },
     })
