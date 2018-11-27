@@ -688,6 +688,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Administration',
       },
+      redirectTo: redirectAdmin,
       templateUrl: 'dashboard/admin/admin.html',
     })
 
@@ -697,6 +698,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
         displayName: 'Permissions',
         breadcrumbProxy: 'dashboard.admin.users.userList',
       },
+      redirectTo: redirectAdmin,
       controller: 'controller.dashboard.admin.users',
       templateUrl: 'dashboard/admin/user/users.html',
       resolve: {
@@ -717,6 +719,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Users',
       },
+      redirectTo: redirectAdmin,
       controller: 'controller.dashboard.admin.users.userList',
       templateUrl: 'dashboard/admin/user/userList.html',
       resolve: {
@@ -734,6 +737,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Groups',
       },
+      redirectTo: redirectAdmin,
       controller: 'controller.dashboard.admin.users.groups',
       templateUrl: 'dashboard/admin/user/group.html',
     })
@@ -743,6 +747,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Projects',
       },
+      redirectTo: redirectAdmin,
       controller: 'controller.dashboard.admin.users.projects',
       templateUrl: 'dashboard/admin/user/project.html',
     })
@@ -1037,11 +1042,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Knowledgebase',
       },
-      redirectTo: async function(transition) {
-        await transition.injector().getAsync('user');
-        const $acl = await transition.injector().getAsync('$acl');
-        return await $acl.inGroup('clinician') ? 'dashboard.reports.genomic' : false;
-      },
+      redirectTo: redirectClinician,
       controller: 'knowledgebase.dashboard',
       templateUrl: 'dashboard/knowledgebase/dashboard/dashboard.html',
       resolve: {
@@ -1062,11 +1063,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       params: {
         filters: null,
       },
-      redirectTo: async function(transition) {
-        await transition.injector().getAsync('user');
-        const $acl = await transition.injector().getAsync('$acl');
-        return await $acl.inGroup('clinician') ? 'dashboard.reports.genomic' : false;
-      },
+      redirectTo: redirectClinician,
       controller: 'knowledgebase.references',
       templateUrl: 'dashboard/knowledgebase/references/references.html',
       resolve: {
@@ -1164,7 +1161,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       resolve: {
         states: ['_', 'api.tracking.state', 'user', '$userSettings',
           async ( _, $state, user, $userSettings) => {
-          return $state.all({ status: ($userSettings.get('tracking.state'))
+          return await $state.all({ status: ($userSettings.get('tracking.state'))
             ? _.join($userSettings.get('tracking.state').status, ',')
             : 'pending,active,hold,failed' });
         }],
@@ -1347,6 +1344,17 @@ async function redirectPOG(transition) {
   const $transition$ = await transition.injector().getAsync('$transition$');
   console.log($transition$.params().POG);
   return await $acl.canAccessPOG($transition$.params().POG) ? false : 'dashboard.reports.genomic';
+}
+
+async function redirectClinician(transition) {
+  await transition.injector().getAsync('user');
+  const $acl = await transition.injector().getAsync('$acl');
+  return await $acl.inGroup('clinician') ? 'dashboard.reports.genomic' : false;
+}
+
+async function redirectAdmin(transition) {
+  await transition.injector().getAsync('user');
+  return await transition.injector().getAsync('isAdmin') ? false : 'dashboard.reports.genomic';
 }
 
 router.$injector = ['$stateProvider', '$urlServiceProvider', '$locationProvider'];
