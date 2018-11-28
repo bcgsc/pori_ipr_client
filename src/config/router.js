@@ -6,6 +6,50 @@
  * @return {*} router
  */
 function router($stateProvider, $urlServiceProvider, $locationProvider) {
+  /**
+   * Checks for external mode errors and redirectExternal to genomic home page if so
+   * @param {Object} transition object
+   * @return {String | Boolean} Path or redirect false
+   */
+  const redirectExternal = async (transition) => {
+    const isExternalMode = await transition.injector().getAsync('isExternalMode');
+    return isExternalMode ? 'dashboard.reports.genomic' : false;
+  };
+
+  /**
+   * Checks if the user has access to a specific case, based on project access
+   * Redirects if no access
+   * @param {Object} transition object
+   * @return {String | Boolean} Path or redirect false
+   */
+  const redirectPOG = async (transition) => {
+    await transition.injector().getAsync('user');
+    const $acl = await transition.injector().getAsync('$acl');
+    const $transition$ = await transition.injector().getAsync('$transition$');
+    return $acl.canAccessPOG($transition$.params().POG) ? false : 'dashboard.reports.genomic';
+  };
+
+  /**
+   * Checks if the user is a clinician and redirects if so (for knowledgebase)
+   * @param {Object} transition object
+   * @return {String | Boolean} Path or redirect false
+   */
+  const redirectClinician = async (transition) => {
+    await transition.injector().getAsync('user');
+    const $acl = await transition.injector().getAsync('$acl');
+    return $acl.inGroup('clinician') ? 'dashboard.reports.genomic' : false;
+  };
+
+  /**
+   * Checks if the user is an admin and redirects if not
+   * @param {Object} transition object
+   * @return {String | Boolean} Path or redirect false
+   */
+  const redirectAdmin = async (transition) => {
+    await transition.injector().getAsync('user');
+    return transition.injector().getAsync('isAdmin') ? false : 'dashboard.reports.genomic';
+  };
+
   // Enable HTML5 mode for URL access
   $locationProvider.html5Mode(true);
 
@@ -90,16 +134,16 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
           return resp;
         }],
         isAdmin: ['api.user', 'user', async ($user, user) => {
-          return await $user.isAdmin();
+          return $user.isAdmin();
         }],
         pogs: ['api.pog', 'user', async ($pog, user) => {
-          return await $pog.all();
+          return $pog.all();
         }],
         projects: ['api.project', 'user', async ($project, user) => {
-          return await $project.all();
+          return $project.all();
         }],
         isExternalMode: ['$acl', 'user', async ($acl, user) => {
-          return await $acl.isExternalMode();
+          return $acl.isExternalMode();
         }],
       },
     })
@@ -146,8 +190,8 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       resolve: {
         reports: ['permission', 'api.pog_analysis_report', 'isExternalMode',
           async (permission, $report, isExternalMode) => {
-          return await $report.all({ states: 'ready,active' });
-        }],
+            return $report.all({ states: 'ready,active' });
+          }],
       },
     })
 
@@ -161,31 +205,31 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       resolve: {
         reports: ['$acl', 'api.pog_analysis_report', '$userSettings', 'user',
           'isExternalMode', async ($acl, $report, $userSettings, user, isExternalMode) => {
-          const currentUser = $userSettings.get('genomicReportListCurrentUser');
-          const project = $userSettings.get('selectedProject') || { name: undefined };
-          
-          const opts = {
-            type: 'genomic',
-          };
+            const currentUser = $userSettings.get('genomicReportListCurrentUser');
+            const project = $userSettings.get('selectedProject') || { name: undefined };
+            
+            const opts = {
+              type: 'genomic',
+            };
 
-          if (currentUser === null || currentUser === undefined || currentUser === true) {
-            opts.states = 'ready,active,presented';
-            opts.project = project.name;
-          }
-          
-          if (currentUser === false) {
-            opts.all = true;
-            opts.states = 'ready,active,presented';
-            opts.project = project.name;
-          }
+            if (currentUser === null || currentUser === undefined || currentUser === true) {
+              opts.states = 'ready,active,presented';
+              opts.project = project.name;
+            }
+            
+            if (currentUser === false) {
+              opts.all = true;
+              opts.states = 'ready,active,presented';
+              opts.project = project.name;
+            }
 
-          if (isExternalMode) {
-            opts.all = true;
-            opts.states = 'presented,archived';
-            opts.paginated = true;
-          }
-          return await $report.all(opts);
-        }],
+            if (isExternalMode) {
+              opts.all = true;
+              opts.states = 'presented,archived';
+              opts.paginated = true;
+            }
+            return $report.all(opts);
+          }],
       },
     })
     .state('dashboard.reports.probe', {
@@ -198,25 +242,25 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       resolve: {
         reports: ['api.pog_analysis_report', '$acl', 'user', 'isExternalMode',
           async ($report, $acl, user, isExternalMode) => {
-          const opts = {
-            type: 'probe',
-            all: true,
-          };
+            const opts = {
+              type: 'probe',
+              all: true,
+            };
 
-          opts.states = 'uploaded,signedoff';
+            opts.states = 'uploaded,signedoff';
 
-          if (isExternalMode) {
-            opts.states = 'reviewed';
-            opts.paginated = true;
-          }
-          return await $report.all(opts);
-        }],
+            if (isExternalMode) {
+              opts.states = 'reviewed';
+              opts.paginated = true;
+            }
+            return $report.all(opts);
+          }],
       },
     })
 
     .state('dashboard.reports.pog', {
       data: {
-        displayName: '{{pog.POGID}}',
+        displayName: 'Case',
         breadcrumbProxy: 'dashboard.reports.pog',
       },
       url: '/{POG}',
@@ -227,15 +271,17 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
         pog: ['_', '$stateParams', 'api.pog', 'user', async (_, $stateParams, $pog, user) => {
           const pogResp = await $pog.id($stateParams.POG);
           pogResp.myRoles = _.filter(pogResp.POGUsers, { user: { ident: user.ident } });
+          console.log(pogResp.POGID);
           return pogResp;
         }],
-        reports: ['$q', '$stateParams', 'api.pog_analysis_report', '$acl', 'user', ($q, $stateParams, $report, $acl, user) => {
-          let stateFilter = {};
-          if ($acl.inGroup('Clinician') || $acl.inGroup('Collaborator')) {
-            stateFilter = { state: 'presented,archived' };
-          }
-          return $report.pog($stateParams.POG).all(stateFilter);
-        }],
+        reports: ['$stateParams', 'api.pog_analysis_report', '$acl', 'user',
+          async ($stateParams, $report, $acl, user) => {
+            let stateFilter = {};
+            if (await $acl.inGroup('Clinician') || await $acl.inGroup('Collaborator')) {
+              stateFilter = { state: 'presented,archived' };
+            }
+            return $report.pog($stateParams.POG).all(stateFilter);
+          }],
       },
     })
 
@@ -774,7 +820,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
           });
         }],
         isExternalMode: ['$acl', 'user', async ($acl, user) => {
-          return await $acl.isExternalMode();
+          return $acl.isExternalMode();
         }],
       },
     })
@@ -789,7 +835,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       redirectTo: redirectPOG,
       resolve: {
         pog: ['$transition$', 'api.pog', async ($transition$, $pog) => {
-          return await $pog.id($transition$.params().POG);
+          return $pog.id($transition$.params().POG);
         }],
       },
     })
@@ -870,9 +916,6 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
         smallMutations: ['$q', '$stateParams', 'api.somaticMutations.smallMutations', ($q, $stateParams, $smallMuts) => {
           return $smallMuts.all($stateParams.POG, $stateParams.analysis_report);
         }],
-        mutationSignature: ['$q', '$stateParams', 'api.somaticMutations.mutationSignature', ($q, $stateParams, $mutationSignature) => {
-          return $mutationSignature.all($stateParams.POG, $stateParams.analysis_report);
-        }],
         mutationSummaryImages: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
           return $image.mutationSummary($stateParams.POG, $stateParams.analysis_report);
         }],
@@ -890,9 +933,6 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
         }],
         svs: ['$q', '$stateParams', 'api.structuralVariation.sv', ($q, $stateParams, $sv) => {
           return $sv.all($stateParams.POG, $stateParams.analysis_report);
-        }],
-        mutationSummaryImages: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
-          return $image.mutationSummary($stateParams.POG, $stateParams.analysis_report);
         }],
         expressionImages: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
           return $image.get($stateParams.POG, $stateParams.analysis_report, 'expression.chart,expression.legend');
@@ -930,8 +970,8 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
           templateUrl: 'print/report/genomic/sections/pathwayAnalysis/pathwayAnalysis.html',
           controller: 'controller.print.POG.report.genomic.pathwayAnalysis',
         },
-        'pathwayAnalysisLegend@print.POG.report.genomic': { 
-          templateUrl: 'print/report/genomic/sections/pathwayAnalysis/pathwayAnalysisLegend.html' 
+        'pathwayAnalysisLegend@print.POG.report.genomic': {
+          templateUrl: 'print/report/genomic/sections/pathwayAnalysis/pathwayAnalysisLegend.html',
         },
         'therapeuticOptions@print.POG.report.genomic': {
           templateUrl: 'print/report/genomic/sections/therapeuticOptions/therapeuticOptions.html',
@@ -1050,7 +1090,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
           return $kb.metrics();
         }],
         permission: ['isExternalMode', async (isExternalMode) => {
-          return await isExternalMode;
+          return isExternalMode;
         }],
       },
     })
@@ -1083,14 +1123,14 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
           return $kb.vocabulary();
         }],
         permission: ['isExternalMode', async (isExternalMode) => {
-          return await isExternalMode;
+          return isExternalMode;
         }],
       },
     })
 
-    // Commenting out instead of removing in case we decide to re-include this
-    // Excluding as per Cara Reisle's suggestion
-    /*
+  // Commenting out instead of removing in case we decide to re-include this
+  // Excluding as per Cara Reisle's suggestion
+  /*
     .state('dashboard.knowledgebase.events', {
       url: '/events',
       data: {
@@ -1145,7 +1185,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
           return $definition.all({ slug: ($userSettings.get('tracking.definition')) ? _.join($userSettings.get('tracking.definition').slug, ',') : undefined });
         }],
         permission: ['isExternalMode', async (isExternalMode) => {
-          return await isExternalMode;
+          return isExternalMode;
         }],
       },
     })
@@ -1160,11 +1200,13 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       redirectTo: redirectExternal,
       resolve: {
         states: ['_', 'api.tracking.state', 'user', '$userSettings',
-          async ( _, $state, user, $userSettings) => {
-          return await $state.all({ status: ($userSettings.get('tracking.state'))
-            ? _.join($userSettings.get('tracking.state').status, ',')
-            : 'pending,active,hold,failed' });
-        }],
+          async (_, $state, user, $userSettings) => {
+            return $state.all({
+              status: ($userSettings.get('tracking.state'))
+                ? _.join($userSettings.get('tracking.state').status, ',')
+                : 'pending,active,hold,failed',
+            });
+          }],
       },
     })
 
@@ -1293,7 +1335,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       templateUrl: 'dashboard/germline/germline.html',
       resolve: {
         permission: ['isExternalMode', async (isExternalMode) => {
-          return await isExternalMode;
+          return isExternalMode;
         }],
       },
     })
@@ -1327,34 +1369,6 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
         }],
       },
     });
-}
-
-/**
- * Used to check for external mode errors and redirectExternal to genomic home page if so
- * @param {Object} transition object
- */
-async function redirectExternal(transition) {
-  const isExternalMode = await transition.injector().getAsync('isExternalMode');
-  return isExternalMode ? 'dashboard.reports.genomic' : false;
-}
-
-async function redirectPOG(transition) {
-  await transition.injector().getAsync('user');
-  const $acl = await transition.injector().getAsync('$acl');
-  const $transition$ = await transition.injector().getAsync('$transition$');
-  console.log($transition$.params().POG);
-  return await $acl.canAccessPOG($transition$.params().POG) ? false : 'dashboard.reports.genomic';
-}
-
-async function redirectClinician(transition) {
-  await transition.injector().getAsync('user');
-  const $acl = await transition.injector().getAsync('$acl');
-  return await $acl.inGroup('clinician') ? 'dashboard.reports.genomic' : false;
-}
-
-async function redirectAdmin(transition) {
-  await transition.injector().getAsync('user');
-  return await transition.injector().getAsync('isAdmin') ? false : 'dashboard.reports.genomic';
 }
 
 router.$injector = ['$stateProvider', '$urlServiceProvider', '$locationProvider'];
