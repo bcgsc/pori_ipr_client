@@ -1,6 +1,7 @@
 div(layout="column", flex).details.box
   div(ng-init="gene.showChildren=false").collapse
-    md-icon(ng-click="createRow($event, gene)", ng-if="canEdit") add
+    //- TODO: Fix add kb entry
+    //- md-icon(ng-click="createRow($event, gene)", ng-if="canEdit") add
       md-tooltip Add new Knowledge Base entry
     md-icon(ng-click="gene.showChildren=!gene.showChildren") {{((gene.showChildren) ? 'expand_less' : 'expand_more')}}
       md-tooltip Show more entries related to this
