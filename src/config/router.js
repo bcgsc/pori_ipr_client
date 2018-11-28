@@ -271,13 +271,12 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
         pog: ['_', '$stateParams', 'api.pog', 'user', async (_, $stateParams, $pog, user) => {
           const pogResp = await $pog.id($stateParams.POG);
           pogResp.myRoles = _.filter(pogResp.POGUsers, { user: { ident: user.ident } });
-          console.log(pogResp.POGID);
           return pogResp;
         }],
-        reports: ['$stateParams', 'api.pog_analysis_report', '$acl', 'user',
-          async ($stateParams, $report, $acl, user) => {
+        reports: ['$stateParams', 'api.pog_analysis_report', '$acl', 'user', 'isExternalMode',
+          async ($stateParams, $report, $acl, user, isExternalMode) => {
             let stateFilter = {};
-            if (await $acl.inGroup('Clinician') || await $acl.inGroup('Collaborator')) {
+            if (isExternalMode) {
               stateFilter = { state: 'presented,archived' };
             }
             return $report.pog($stateParams.POG).all(stateFilter);
