@@ -16,23 +16,39 @@
  */
 function stateChange($rootScope, $state, $acl, $user, $userSettings, _, $mdToast, $localStorage,
   $interval, keycloakAuth, $mdDialog, $transitions) {
-  $interval((async () => {
-    const seconds = $localStorage.expiry - (Date.now() / 1000);
-    const minutes = Math.floor(seconds / 60);
-    if (seconds <= 900) {
-      try {
-        const resp = await $mdDialog.show($mdDialog.confirm()
-          .title('Attention, ')
-          .textContent(`Session expiring in ${minutes} minutes.
-  Please click on the button below to re-login.`)
-          .cancel('I will do it soon!')
-          .ok('Re-log now!'));
-        if (resp) {
-          keycloakAuth.logout();
-        }
-      } catch (err) { angular.noop(); }
-    }
-  }), 300000);
+    let shownWarn = false;
+    const interval = $interval((async () => {
+      const seconds = $localStorage.expiry - (Date.now() / 1000);
+      const minutes = Math.floor(seconds / 60);
+      if (seconds <= 900 && seconds > 0 && !shownWarn) {
+        shownWarn = true;
+        try {
+          const resp = await $mdDialog.show($mdDialog.confirm()
+            .title('Attention, ')
+            .textContent(`Session expiring in ${minutes} minutes.
+              Please click on the button below to re-login.`)
+            .cancel('I will do it soon!')
+            .ok('Re-log now!'));
+          if (resp) {
+            keycloakAuth.logout();
+          }
+        } catch (err) { angular.noop(); }
+      } else if (seconds <= 0) {
+        try {
+          $interval.cancel(interval);
+          const resp = await $mdDialog.show($mdDialog.confirm()
+            .title('Attention, ')
+            .textContent(`Session has expired.
+              Please click on the button below to re-login.`)
+            .cancel('Close')
+            .ok('Re-log now!'));
+          if (resp) {
+            keycloakAuth.logout();
+          }
+        } catch (err) { angular.noop(); }
+      }
+    }), 300000);
+
   // On State Change, Show Spinner!
   $transitions.onStart({ }, async (transition) => {
     $rootScope.showLoader = true;
@@ -44,42 +60,19 @@ function stateChange($rootScope, $state, $acl, $user, $userSettings, _, $mdToast
 
     // Check for transitions among child states to run auth check
     // Transitions among top level states are checked by the router but not for child -> child
-    if (transition.from().name.match(/.*(?=\.)/g) === transition.to().name.match(/.*(?=\.)/g)) {
+    if (transition.from().name.match(/.*(?=\.)/g) === transition.to().name.match(/.*(?=\.)/g)
+      && !transition.to().name.match(/^public/g)) {
       try {
         await $user.me();
         await $userSettings.init();
       } catch (err) {
-        Promise.reject(err);
         $state.go('public.login');
+        return false;
       }
     }
     transition.promise.finally(() => {
       $rootScope.showLoader = false;
     });
-  });
-
-  $transitions.onError({ }, (transition) => {
-    try { // This try catch can be removed once all rejections return new Error('');
-      switch (transition.error().message) {
-        case 'externalModeError':
-          $state.go('dashboard.reports.genomic'); // transition to genomic report state
-          break;
-        case 'projectAccessError':
-          $mdToast.showSimple('You do not have access to cases in this project');
-          $state.go('dashboard.home');
-          break;
-        default:
-          console.log('State Change Error:', transition.error());
-          $localStorage.returnToState = transition.to().name;
-          $localStorage.returnToStateParams = JSON.stringify(transition.params());
-          $state.go('public.login');
-      }
-    } catch (err) {
-      console.log('State Change Error:', transition.error());
-      $localStorage.returnToState = transition.to().name;
-      $localStorage.returnToStateParams = JSON.stringify(transition.params());
-      $state.go('public.login');
-    }
   });
 }
 

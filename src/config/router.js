@@ -6,6 +6,50 @@
  * @return {*} router
  */
 function router($stateProvider, $urlServiceProvider, $locationProvider) {
+  /**
+   * Checks for external mode errors and redirectExternal to genomic home page if so
+   * @param {Object} transition object
+   * @return {String | Boolean} Path or redirect false
+   */
+  const redirectExternal = async (transition) => {
+    const isExternalMode = await transition.injector().getAsync('isExternalMode');
+    return isExternalMode ? 'dashboard.reports.genomic' : false;
+  };
+
+  /**
+   * Checks if the user has access to a specific case, based on project access
+   * Redirects if no access
+   * @param {Object} transition object
+   * @return {String | Boolean} Path or redirect false
+   */
+  const redirectPOG = async (transition) => {
+    await transition.injector().getAsync('user');
+    const $acl = await transition.injector().getAsync('$acl');
+    const $transition$ = await transition.injector().getAsync('$transition$');
+    return await $acl.canAccessPOG($transition$.params().POG) ? false : 'dashboard.reports.genomic';
+  };
+
+  /**
+   * Checks if the user is a clinician and redirects if so (for knowledgebase)
+   * @param {Object} transition object
+   * @return {String | Boolean} Path or redirect false
+   */
+  const redirectClinician = async (transition) => {
+    await transition.injector().getAsync('user');
+    const $acl = await transition.injector().getAsync('$acl');
+    return await $acl.inGroup('clinician') ? 'dashboard.reports.genomic' : false;
+  };
+
+  /**
+   * Checks if the user is an admin and redirects if not
+   * @param {Object} transition object
+   * @return {String | Boolean} Path or redirect false
+   */
+  const redirectAdmin = async (transition) => {
+    await transition.injector().getAsync('user');
+    return await transition.injector().getAsync('isAdmin') ? false : 'dashboard.reports.genomic';
+  };
+
   // Enable HTML5 mode for URL access
   $locationProvider.html5Mode(true);
 
@@ -84,43 +128,19 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
         breadcrumbProxy: 'dashboard.reports',
       },
       resolve: {
-        user: ['$q', 'api.user', '$userSettings', ($q, $user, $userSettings) => {
-          return $q((resolve, reject) => {
-            $user.me()
-              .then(() => {
-                $userSettings.init();
-                resolve($user.meObj);
-              })
-              .catch((err) => {
-                console.log('rejecting...');
-                reject(err);
-              });
-          });
+        user: ['api.user', '$userSettings', async ($user, $userSettings) => {
+          const resp = await $user.me();
+          $userSettings.init();
+          return resp;
         }],
-        isAdmin: ['$q', 'api.user', 'user', async ($q, $user, user) => {
+        isAdmin: ['api.user', 'user', async ($user, user) => {
           return $user.isAdmin();
         }],
-        pogs: ['$q', 'api.pog', ($q, $pog) => {
-          return $q((resolve, reject) => {
-            $pog.all()
-              .then((pogs) => {
-                resolve(pogs);
-              })
-              .catch((err) => {
-                reject(err);
-              });
-          });
+        pogs: ['api.pog', 'user', async ($pog, user) => {
+          return $pog.all();
         }],
-        projects: ['$q', 'api.project', ($q, $project) => {
-          return $q((resolve, reject) => {
-            $project.all()
-              .then((resp) => {
-                resolve(resp);
-              })
-              .catch((err) => {
-                reject(err);
-              });
-          });
+        projects: ['api.project', 'user', async ($project, user) => {
+          return $project.all();
         }],
         isExternalMode: ['$acl', 'user', async ($acl, user) => {
           return $acl.isExternalMode();
@@ -143,18 +163,13 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
         breadcrumbProxy: 'dashboard.reports.dashboard',
       },
       resolve: {
-        permission: ['$q', '$acl', '$state', 'user', '$mdToast', ($q, $acl, $state, user, $mdToast) => {
-          return $q((resolve, reject) => {
-            // Passing option user to avoid delay problem
-            if (!$acl.action('report.view', user)) {
-              $mdToast.showSimple('You are not allowed to view reports');
-              $state.go('dashboard.home');
-      
-              resolve(false);
-            } else {
-              resolve(true);
-            }
-          });
+        permission: ['$acl', '$state', 'user', '$mdToast', async ($acl, $state, user, $mdToast) => {
+          if (!$acl.action('report.view', user)) {
+            $mdToast.showSimple('You are not allowed to view reports');
+            $state.go('dashboard.home');
+            return false;
+          }
+          return true;
         }],
       },
     })
@@ -171,14 +186,10 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
           return 'dashboard.reports.dashboard';
         },
       },
+      redirectTo: redirectExternal,
       resolve: {
-        reports: ['$q', 'permission', 'api.pog_analysis_report', '$state', 'user',
-          'isExternalMode', ($q, permission, $report, $state, user, isExternalMode) => {
-            if (isExternalMode) {
-              return $q((resolve, reject) => {
-                reject(new Error('externalModeError'));
-              });
-            }
+        reports: ['permission', 'api.pog_analysis_report', 'isExternalMode',
+          async (permission, $report, isExternalMode) => {
             return $report.all({ states: 'ready,active' });
           }],
       },
@@ -192,33 +203,33 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
         displayName: 'Genomic Reports',
       },
       resolve: {
-        reports: ['permission', '$acl', 'api.pog_analysis_report', '$userSettings', 'user', async (permission, $acl, $report, $userSettings, user) => {
-          const currentUser = $userSettings.get('genomicReportListCurrentUser');
-          const project = $userSettings.get('selectedProject') || { name: undefined };
-          
-          const opts = {
-            type: 'genomic',
-          };
+        reports: ['$acl', 'api.pog_analysis_report', '$userSettings', 'user',
+          'isExternalMode', async ($acl, $report, $userSettings, user, isExternalMode) => {
+            const currentUser = $userSettings.get('genomicReportListCurrentUser');
+            const project = $userSettings.get('selectedProject') || { name: undefined };
+            
+            const opts = {
+              type: 'genomic',
+            };
 
-          if (currentUser === null || currentUser === undefined || currentUser === true) {
-            opts.states = 'ready,active,presented';
-            opts.project = project.name;
-          }
-          
-          if (currentUser === false) {
-            opts.all = true;
-            opts.states = 'ready,active,presented';
-            opts.project = project.name;
-          }
+            if (currentUser === null || currentUser === undefined || currentUser === true) {
+              opts.states = 'ready,active,presented';
+              opts.project = project.name;
+            }
+            
+            if (currentUser === false) {
+              opts.all = true;
+              opts.states = 'ready,active,presented';
+              opts.project = project.name;
+            }
 
-          if ($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
-            opts.all = true;
-            opts.states = 'presented,archived';
-            opts.paginated = true;
-          }
-
-          return $report.all(opts);
-        }],
+            if (isExternalMode) {
+              opts.all = true;
+              opts.states = 'presented,archived';
+              opts.paginated = true;
+            }
+            return $report.all(opts);
+          }],
       },
     })
     .state('dashboard.reports.probe', {
@@ -229,45 +240,47 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
         displayName: 'Targeted Gene Reports',
       },
       resolve: {
-        reports: ['api.pog_analysis_report', '$acl', 'user', async ($report, $acl, user) => {
-          const opts = {
-            type: 'probe',
-            all: true,
-          };
+        reports: ['api.pog_analysis_report', '$acl', 'user', 'isExternalMode',
+          async ($report, $acl, user, isExternalMode) => {
+            const opts = {
+              type: 'probe',
+              all: true,
+            };
 
-          opts.states = 'uploaded,signedoff';
+            opts.states = 'uploaded,signedoff';
 
-          if ($acl.inGroup('clinician') || $acl.inGroup('collaborator')) {
-            opts.states = 'reviewed';
-            opts.paginated = true;
-          }
-          return $report.all(opts);
-        }],
+            if (isExternalMode) {
+              opts.states = 'reviewed';
+              opts.paginated = true;
+            }
+            return $report.all(opts);
+          }],
       },
     })
 
     .state('dashboard.reports.pog', {
       data: {
-        displayName: '{{pog.POGID}}',
+        displayName: 'Patient',
         breadcrumbProxy: 'dashboard.reports.pog',
       },
       url: '/{POG}',
       controller: 'controller.dashboard.pog',
       templateUrl: 'dashboard/pog/pog.html',
+      redirectTo: redirectPOG,
       resolve: {
-        pog: ['_', '$stateParams', 'api.pog', 'user', '$acl', async (_, $stateParams, $pog, user, $acl) => {
-          await $acl.canAccessPOG($stateParams.POG);
+        pog: ['_', '$stateParams', 'api.pog', 'user', async (_, $stateParams, $pog, user) => {
           const pogResp = await $pog.id($stateParams.POG);
           pogResp.myRoles = _.filter(pogResp.POGUsers, { user: { ident: user.ident } });
           return pogResp;
         }],
-        reports: ['$q', '$stateParams', 'api.pog_analysis_report', '$acl', 'user', ($q, $stateParams, $report, $acl, user) => {
-          let stateFilter = {};
-          if ($acl.inGroup('Clinician') || $acl.inGroup('Collaborator')) {
-            stateFilter = { state: 'presented,archived' };
-          }
-          return $report.pog($stateParams.POG).all(stateFilter);
-        }],
+        reports: ['$stateParams', 'api.pog_analysis_report', '$acl', 'user', 'isExternalMode',
+          async ($stateParams, $report, $acl, user, isExternalMode) => {
+            let stateFilter = {};
+            if (isExternalMode) {
+              stateFilter = { state: 'presented,archived' };
+            }
+            return $report.pog($stateParams.POG).all(stateFilter);
+          }],
       },
     })
 
@@ -293,6 +306,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       },
       templateUrl: 'dashboard/report/probe/probe.html',
       controller: 'controller.dashboard.report.probe',
+      redirectTo: redirectPOG,
       resolve: {
         report: ['$q', '$stateParams', 'api.pog_analysis_report', ($q, $stateParams, $report) => {
           return $report.pog($stateParams.POG).get($stateParams.analysis_report);
@@ -307,9 +321,10 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Summary',
       },
+      redirectTo: redirectPOG,
       resolve: {
-        testInformation: ['$q', '$stateParams', 'api.probe.testInformation', ($q, $stateParams, $ti) => {
-          return $ti.get($stateParams.POG, $stateParams.analysis_report);
+        testInformation: ['$q', '$transition$', 'api.probe.testInformation', ($q, $transition$, $ti) => {
+          return $ti.get($transition$.params().POG, $transition$.params().analysis_report);
         }],
         genomicEvents: ['$q', '$stateParams', 'api.summary.genomicEventsTherapeutic', ($q, $stateParams, $get) => {
           return $get.all($stateParams.POG, $stateParams.analysis_report);
@@ -325,6 +340,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Detailed Genomic Analysis',
       },
+      redirectTo: redirectPOG,
       templateUrl: 'dashboard/report/probe/detailedGenomicAnalysis/detailedGenomicAnalysis.html',
       controller: 'controller.dashboard.report.probe.detailedGenomicAnalysis',
       resolve: {
@@ -345,6 +361,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Appendices',
       },
+      redirectTo: redirectPOG,
       templateUrl: 'dashboard/report/probe/appendices/appendices.html',
       controller: 'controller.dashboard.report.probe.appendices',
       resolve: {
@@ -359,6 +376,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Report Meta Information',
       },
+      redirectTo: redirectPOG,
       templateUrl: 'dashboard/report/probe/meta/meta.html',
       controller: 'controller.dashboard.report.probe.meta',
     })
@@ -374,6 +392,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
         displayName: 'Genomic',
         breadcrumbProxy: 'dashboard.reports.pog.report.genomic.summary',
       },
+      redirectTo: redirectPOG,
       templateUrl: 'dashboard/report/genomic/genomic.html',
       controller: 'controller.dashboard.report.genomic',
       resolve: {
@@ -390,6 +409,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Summary',
       },
+      redirectTo: redirectPOG,
       resolve: {
         gai: ['$q', '$stateParams', 'api.summary.genomicAterationsIdentified', ($q, $stateParams, $gai) => {
           return $gai.all($stateParams.POG, $stateParams.analysis_report);
@@ -421,6 +441,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Analyst Comments',
       },
+      redirectTo: redirectPOG,
       templateUrl: 'dashboard/report/genomic/analystComments/analystComments.html',
       controller: 'controller.dashboard.report.genomic.analystComments',
       resolve: {
@@ -435,6 +456,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Pathway Analysis',
       },
+      redirectTo: redirectPOG,
       templateUrl: 'dashboard/report/genomic/pathwayAnalysis/pathwayAnalysis.html',
       controller: 'controller.dashboard.report.genomic.pathwayAnalysis',
       resolve: {
@@ -449,6 +471,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Detailed Genomic Analysis',
       },
+      redirectTo: redirectPOG,
       templateUrl: 'dashboard/report/genomic/knowledgebase/knowledgebase.html',
       controller: 'controller.dashboard.report.genomic.knowledgebase',
       resolve: {
@@ -475,6 +498,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Disease Specific Analysis',
       },
+      redirectTo: redirectPOG,
       templateUrl: 'dashboard/report/genomic/diseaseSpecificAnalysis/diseaseSpecificAnalysis.html',
       controller: 'controller.dashboard.report.genomic.diseaseSpecificAnalysis',
       resolve: {
@@ -492,6 +516,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Microbial',
       },
+      redirectTo: redirectPOG,
       templateUrl: 'dashboard/report/genomic/microbial/microbial.html',
       controller: 'controller.dashboard.report.genomic.microbial',
       resolve: {
@@ -506,6 +531,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Spearman Plot Analysis',
       },
+      redirectTo: redirectPOG,
       templateUrl: 'dashboard/report/genomic/spearman/spearman.html',
       controller: 'controller.dashboard.report.genomic.spearman',
       resolve: {
@@ -520,6 +546,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Somatic Mutations',
       },
+      redirectTo: redirectPOG,
       templateUrl: 'dashboard/report/genomic/smallMutations/smallMutations.html',
       controller: 'controller.dashboard.report.genomic.smallMutations',
       resolve: {
@@ -546,6 +573,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Copy Number Analyses',
       },
+      redirectTo: redirectPOG,
       templateUrl: 'dashboard/report/genomic/copyNumberAnalyses/copyNumberAnalyses.html',
       controller: 'controller.dashboard.report.genomic.copyNumberAnalyses',
       resolve: {
@@ -566,6 +594,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Structural Variation',
       },
+      redirectTo: redirectPOG,
       templateUrl: 'dashboard/report/genomic/structuralVariation/structuralVariation.html',
       controller: 'controller.dashboard.report.genomic.structuralVariation',
       resolve: {
@@ -592,6 +621,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Expression Analysis',
       },
+      redirectTo: redirectPOG,
       templateUrl: 'dashboard/report/genomic/expressionAnalysis/version02/expressionAnalysis.html',
       controller: 'controller.dashboard.report.genomic.expressionAnalysis',
       resolve: {
@@ -615,6 +645,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Presentation Discussion',
       },
+      redirectTo: redirectPOG,
       templateUrl: 'dashboard/report/genomic/presentation/discussion/discussion.html',
       controller: 'controller.dashboard.report.genomic.discussion',
       resolve: {
@@ -629,6 +660,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Presentation Slides',
       },
+      redirectTo: redirectPOG,
       templateUrl: 'dashboard/report/genomic/presentation/slide/slide.html',
       controller: 'controller.dashboard.report.genomic.slide',
       resolve: {
@@ -643,6 +675,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Appendices',
       },
+      redirectTo: redirectPOG,
       templateUrl: 'dashboard/report/genomic/appendices/appendices.html',
       controller: 'controller.dashboard.report.genomic.appendices',
       resolve: {
@@ -657,6 +690,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Patient Meta Information',
       },
+      redirectTo: redirectPOG,
       templateUrl: 'dashboard/report/genomic/meta/meta.html',
       controller: 'controller.dashboard.report.genomic.meta',
     })
@@ -666,6 +700,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Data History',
       },
+      redirectTo: redirectPOG,
       templateUrl: 'dashboard/report/genomic/history/history.html',
       controller: 'controller.dashboard.report.genomic.history',
       resolve: {
@@ -683,6 +718,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Potential Therapeutic Targets',
       },
+      redirectTo: redirectPOG,
       templateUrl: 'dashboard/report/genomic/therapeutic/therapeutic.html',
       controller: 'controller.dashboard.report.genomic.therapeutic',
       resolve: {
@@ -697,6 +733,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Administration',
       },
+      redirectTo: redirectAdmin,
       templateUrl: 'dashboard/admin/admin.html',
     })
 
@@ -706,6 +743,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
         displayName: 'Permissions',
         breadcrumbProxy: 'dashboard.admin.users.userList',
       },
+      redirectTo: redirectAdmin,
       controller: 'controller.dashboard.admin.users',
       templateUrl: 'dashboard/admin/user/users.html',
       resolve: {
@@ -726,6 +764,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Users',
       },
+      redirectTo: redirectAdmin,
       controller: 'controller.dashboard.admin.users.userList',
       templateUrl: 'dashboard/admin/user/userList.html',
       resolve: {
@@ -743,6 +782,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Groups',
       },
+      redirectTo: redirectAdmin,
       controller: 'controller.dashboard.admin.users.groups',
       templateUrl: 'dashboard/admin/user/group.html',
     })
@@ -752,6 +792,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Projects',
       },
+      redirectTo: redirectAdmin,
       controller: 'controller.dashboard.admin.users.projects',
       templateUrl: 'dashboard/admin/user/project.html',
     })
@@ -786,14 +827,11 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
     .state('print.POG', {
       url: '/:POG',
       abstract: true,
-      data: {
-        displayName: '{{POG.POGID}}',
-      },
       template: '<ui-view \\>',
+      redirectTo: redirectPOG,
       resolve: {
-        pog: ['$stateParams', 'api.pog', '$acl', async ($stateParams, $pog, $acl) => {
-          await $acl.canAccessPOG($stateParams.POG);
-          return $pog.id($stateParams.POG);
+        pog: ['$transition$', 'api.pog', async ($transition$, $pog) => {
+          return $pog.id($transition$.params().POG);
         }],
       },
     })
@@ -802,6 +840,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       url: '/report/:analysis_report',
       abstract: true,
       template: '<ui-view \\>',
+      redirectTo: redirectPOG,
       resolve: {
         report: ['$q', '$stateParams', 'api.pog_analysis_report', ($q, $stateParams, $report) => {
           return $report.pog($stateParams.POG).get($stateParams.analysis_report);
@@ -811,8 +850,101 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
 
     .state('print.POG.report.genomic', {
       url: '/genomic',
-      data: {
-        displayName: 'Genomic Report',
+      redirectTo: redirectPOG,
+      resolve: {
+        gai: ['$q', '$stateParams', 'api.summary.genomicAterationsIdentified', ($q, $stateParams, $gai) => {
+          return $gai.all($stateParams.POG, $stateParams.analysis_report);
+        }],
+        get: ['$q', '$stateParams', 'api.summary.genomicEventsTherapeutic', ($q, $stateParams, $get) => {
+          return $get.all($stateParams.POG, $stateParams.analysis_report);
+        }],
+        ms: ['$q', '$stateParams', 'api.summary.mutationSummary', ($q, $stateParams, $ms) => {
+          return $ms.get($stateParams.POG, $stateParams.analysis_report);
+        }],
+        vc: ['$q', '$stateParams', 'api.summary.variantCounts', ($q, $stateParams, $vc) => {
+          return $vc.get($stateParams.POG, $stateParams.analysis_report);
+        }],
+        pt: ['$q', '$stateParams', 'api.summary.probeTarget', ($q, $stateParams, $pt) => {
+          return $pt.all($stateParams.POG, $stateParams.analysis_report);
+        }],
+        mutationSignature: ['$q', '$stateParams', 'api.somaticMutations.mutationSignature', ($q, $stateParams, $mutationSignature) => {
+          return $mutationSignature.all($stateParams.POG, $stateParams.analysis_report);
+        }],
+        microbial: ['$q', '$stateParams', 'api.summary.microbial', ($q, $stateParams, $microbial) => {
+          return $microbial.get($stateParams.POG, $stateParams.analysis_report);
+        }],
+        comments: ['$q', '$stateParams', 'api.summary.analystComments', ($q, $stateParams, $comments) => {
+          return $comments.get($stateParams.POG, $stateParams.analysis_report);
+        }],
+        pathway: ['$q', '$stateParams', 'api.summary.pathwayAnalysis', ($q, $stateParams, $pathway) => {
+          return $pathway.get($stateParams.POG, $stateParams.analysis_report);
+        }],
+        therapeutic: ['$q', '$stateParams', 'api.therapeuticOptions', ($q, $stateParams, $therapeutic) => {
+          return $therapeutic.all($stateParams.POG, $stateParams.analysis_report);
+        }],
+        slides: ['$q', '$stateParams', 'api.presentation', ($q, $stateParams, $presentation) => {
+          return $presentation.slide.all($stateParams.POG, $stateParams.analysis_report);
+        }],
+        alterations: ['$q', '$stateParams', 'api.detailedGenomicAnalysis.alterations', ($q, $stateParams, $APC) => {
+          return $APC.getAll($stateParams.POG, $stateParams.analysis_report);
+        }],
+        unknownAlterations: ['$q', '$stateParams', 'api.detailedGenomicAnalysis.alterations', ($q, $stateParams, $APC) => {
+          return $APC.getType($stateParams.POG, $stateParams.analysis_report, 'unknown');
+        }],
+        approvedThisCancer: ['$q', '$stateParams', 'api.detailedGenomicAnalysis.alterations', ($q, $stateParams, $APC) => {
+          return $APC.getType($stateParams.POG, $stateParams.analysis_report, 'thisCancer');
+        }],
+        approvedOtherCancer: ['$q', '$stateParams', 'api.detailedGenomicAnalysis.alterations', ($q, $stateParams, $APC) => {
+          return $APC.getType($stateParams.POG, $stateParams.analysis_report, 'otherCancer');
+        }],
+        diseaseImages: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
+          return $image.get($stateParams.POG, $stateParams.analysis_report, 'microbial.circos');
+        }],
+        subtypePlotImages: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
+          return $image.subtypePlots($stateParams.POG, $stateParams.analysis_report);
+        }],
+        somaticImages: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
+          return $image.get($stateParams.POG, $stateParams.analysis_report, 'mutSummary.snv,mutSummary.indel,mutSummary.barSnv,mutSummary.barIndel,mutSignature.corPcors,mutSignature.snvsAllStrelka');
+        }],
+        smallMutations: ['$q', '$stateParams', 'api.somaticMutations.smallMutations', ($q, $stateParams, $smallMuts) => {
+          return $smallMuts.all($stateParams.POG, $stateParams.analysis_report);
+        }],
+        mutationSummaryImages: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
+          return $image.mutationSummary($stateParams.POG, $stateParams.analysis_report);
+        }],
+        copyNumberAnalysisImages: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
+          return $image.get($stateParams.POG, $stateParams.analysis_report, 'cnvLoh.circos');
+        }],
+        cnvs: ['$q', '$stateParams', 'api.copyNumberAnalyses.cnv', ($q, $stateParams, $cnv) => {
+          return $cnv.all($stateParams.POG, $stateParams.analysis_report);
+        }],
+        cnvlohImages: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
+          return $image.get($stateParams.POG, $stateParams.analysis_report, 'cnv.1,cnv.2,cnv.3,cnv.4,cnv.5,loh.1,loh.2,loh.3,loh.4,loh.5');
+        }],
+        structuralVariantImages: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
+          return $image.get($stateParams.POG, $stateParams.analysis_report, 'mutSummary.barSv,mutSummary.sv,circosSv.genome,circosSv.transcriptome');
+        }],
+        svs: ['$q', '$stateParams', 'api.structuralVariation.sv', ($q, $stateParams, $sv) => {
+          return $sv.all($stateParams.POG, $stateParams.analysis_report);
+        }],
+        expressionImages: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
+          return $image.get($stateParams.POG, $stateParams.analysis_report, 'expression.chart,expression.legend');
+        }],
+        outliers: ['$q', '$stateParams', 'api.expressionAnalysis.outlier', ($q, $stateParams, $outliers) => {
+          return $outliers.all($stateParams.POG, $stateParams.analysis_report);
+        }],
+        drugTargets: ['$q', '$stateParams', 'api.expressionAnalysis.drugTarget', ($q, $stateParams, $drugTarget) => {
+          return $drugTarget.all($stateParams.POG, $stateParams.analysis_report);
+        }],
+        densityGraphs: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
+          return $image.expDensityGraphs($stateParams.POG, $stateParams.analysis_report);
+        }],
+        tcgaAcronyms: ['$q', '$stateParams', 'api.appendices', ($q, $stateParams, $appendices) => {
+          return $appendices.tcga($stateParams.POG, $stateParams.analysis_report);
+        }],
+        targetedGenes: ['$q', '$stateParams', 'api.detailedGenomicAnalysis.targetedGenes', ($q, $stateParams, $tg) => {
+          return $tg.getAll($stateParams.POG, $stateParams.analysis_report);
+        }],
       },
       views: {
         '': {
@@ -822,203 +954,87 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
         'summary@print.POG.report.genomic': {
           templateUrl: 'print/report/genomic/sections/summary/summary.html',
           controller: 'controller.print.POG.report.genomic.summary',
-          resolve: {
-            gai: ['$q', '$stateParams', 'api.summary.genomicAterationsIdentified', ($q, $stateParams, $gai) => {
-              return $gai.all($stateParams.POG, $stateParams.analysis_report);
-            }],
-            get: ['$q', '$stateParams', 'api.summary.genomicEventsTherapeutic', ($q, $stateParams, $get) => {
-              return $get.all($stateParams.POG, $stateParams.analysis_report);
-            }],
-            ms: ['$q', '$stateParams', 'api.summary.mutationSummary', ($q, $stateParams, $ms) => {
-              return $ms.get($stateParams.POG, $stateParams.analysis_report);
-            }],
-            vc: ['$q', '$stateParams', 'api.summary.variantCounts', ($q, $stateParams, $vc) => {
-              return $vc.get($stateParams.POG, $stateParams.analysis_report);
-            }],
-            pt: ['$q', '$stateParams', 'api.summary.probeTarget', ($q, $stateParams, $pt) => {
-              return $pt.all($stateParams.POG, $stateParams.analysis_report);
-            }],
-            mutationSignature: ['$q', '$stateParams', 'api.somaticMutations.mutationSignature', ($q, $stateParams, $mutationSignature) => {
-              return $mutationSignature.all($stateParams.POG, $stateParams.analysis_report);
-            }],
-            microbial: ['$q', '$stateParams', 'api.summary.microbial', ($q, $stateParams, $microbial) => {
-              return $microbial.get($stateParams.POG, $stateParams.analysis_report);
-            }],
-          },
         },
         'analystComments@print.POG.report.genomic': {
           templateUrl: 'print/report/genomic/sections/analystComments/analystComments.html',
           controller: 'controller.print.POG.report.genomic.analystComments',
-          resolve: {
-            comments: ['$q', '$stateParams', 'api.summary.analystComments', ($q, $stateParams, $comments) => {
-              return $comments.get($stateParams.POG, $stateParams.analysis_report);
-            }],
-          },
         },
         'pathwayAnalysis@print.POG.report.genomic': {
           templateUrl: 'print/report/genomic/sections/pathwayAnalysis/pathwayAnalysis.html',
           controller: 'controller.print.POG.report.genomic.pathwayAnalysis',
-          resolve: {
-            pathway: ['$q', '$stateParams', 'api.summary.pathwayAnalysis', ($q, $stateParams, $pathway) => {
-              return $pathway.get($stateParams.POG, $stateParams.analysis_report);
-            }],
-          },
         },
-        'pathwayAnalysisLegend@print.POG.report.genomic': { templateUrl: 'print/report/genomic/sections/pathwayAnalysis/pathwayAnalysisLegend.html' },
+        'pathwayAnalysisLegend@print.POG.report.genomic': {
+          templateUrl: 'print/report/genomic/sections/pathwayAnalysis/pathwayAnalysisLegend.html',
+        },
         'therapeuticOptions@print.POG.report.genomic': {
           templateUrl: 'print/report/genomic/sections/therapeuticOptions/therapeuticOptions.html',
           controller: 'controller.print.POG.report.genomic.therapeuticOptions',
-          resolve: {
-            therapeutic: ['$q', '$stateParams', 'api.therapeuticOptions', ($q, $stateParams, $therapeutic) => {
-              return $therapeutic.all($stateParams.POG, $stateParams.analysis_report);
-            }],
-          },
         },
         'presentationSlide@print.POG.report.genomic': {
           templateUrl: 'print/report/genomic/sections/presentation/slide.html',
           controller: 'controller.print.POG.report.genomic.slide',
-          resolve: {
-            slides: ['$q', '$stateParams', 'api.presentation', ($q, $stateParams, $presentation) => {
-              return $presentation.slide.all($stateParams.POG, $stateParams.analysis_report);
-            }],
-          },
         },
         'dga@print.POG.report.genomic': {
           templateUrl: 'print/report/genomic/sections/dga/dga.html',
           controller: 'controller.print.POG.report.genomic.dga',
-          resolve: {
-            alterations: ['$q', '$stateParams', 'api.detailedGenomicAnalysis.alterations', ($q, $stateParams, $APC) => {
-              return $APC.getAll($stateParams.POG, $stateParams.analysis_report);
-            }],
-            unknownAlterations: ['$q', '$stateParams', 'api.detailedGenomicAnalysis.alterations', ($q, $stateParams, $APC) => {
-              return $APC.getType($stateParams.POG, $stateParams.analysis_report, 'unknown');
-            }],
-            approvedThisCancer: ['$q', '$stateParams', 'api.detailedGenomicAnalysis.alterations', ($q, $stateParams, $APC) => {
-              return $APC.getType($stateParams.POG, $stateParams.analysis_report, 'thisCancer');
-            }],
-            approvedOtherCancer: ['$q', '$stateParams', 'api.detailedGenomicAnalysis.alterations', ($q, $stateParams, $APC) => {
-              return $APC.getType($stateParams.POG, $stateParams.analysis_report, 'otherCancer');
-            }],
-          },
         },
         'diseaseSpecificAnalysis@print.POG.report.genomic': {
           templateUrl: 'print/report/genomic/sections/diseaseSpecificAnalysis/diseaseSpecificAnalysis.html',
           controller: 'controller.print.POG.report.genomic.diseaseSpecificAnalysis',
-          resolve: {
-            images: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
-              return $image.get($stateParams.POG, $stateParams.analysis_report, 'microbial.circos');
-            }],
-            subtypePlotImages: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
-              return $image.subtypePlots($stateParams.POG, $stateParams.analysis_report);
-            }],
-          },
         },
         'somaticMutations@print.POG.report.genomic': {
           templateUrl: 'print/report/genomic/sections/somaticMutations/somaticMutations.html',
           controller: 'controller.print.POG.report.genomic.somaticMutations',
-          resolve: {
-            images: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
-              return $image.get($stateParams.POG, $stateParams.analysis_report, 'mutSummary.snv,mutSummary.indel,mutSummary.barSnv,mutSummary.barIndel,mutSignature.corPcors,mutSignature.snvsAllStrelka');
-            }],
-            ms: ['$q', '$stateParams', 'api.summary.mutationSummary', ($q, $stateParams, $ms) => {
-              return $ms.get($stateParams.POG, $stateParams.analysis_report);
-            }],
-            smallMutations: ['$q', '$stateParams', 'api.somaticMutations.smallMutations', ($q, $stateParams, $smallMuts) => {
-              return $smallMuts.all($stateParams.POG, $stateParams.analysis_report);
-            }],
-            mutationSignature: ['$q', '$stateParams', 'api.somaticMutations.mutationSignature', ($q, $stateParams, $mutationSignature) => {
-              return $mutationSignature.all($stateParams.POG, $stateParams.analysis_report);
-            }],
-            mutationSummaryImages: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
-              return $image.mutationSummary($stateParams.POG, $stateParams.analysis_report);
-            }],
-          },
         },
         'copyNumberAnalysis@print.POG.report.genomic': {
           templateUrl: 'print/report/genomic/sections/copyNumberAnalysis/copyNumberAnalysis.html',
           controller: 'controller.print.POG.report.genomic.copyNumberAnalysis',
-          resolve: {
-            images: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
-              return $image.get($stateParams.POG, $stateParams.analysis_report, 'cnvLoh.circos');
-            }],
-            ms: ['$q', '$stateParams', 'api.summary.mutationSummary', ($q, $stateParams, $ms) => {
-              return $ms.get($stateParams.POG, $stateParams.analysis_report);
-            }],
-            cnvs: ['$q', '$stateParams', 'api.copyNumberAnalyses.cnv', ($q, $stateParams, $cnv) => {
-              return $cnv.all($stateParams.POG, $stateParams.analysis_report);
-            }],
-          },
         },
         'copyNumberAnalysisCNVLOH@print.POG.report.genomic': {
           templateUrl: 'print/report/genomic/sections/copyNumberAnalysis/copyNumberAnalysisCNVLOH.html',
           controller: 'controller.print.POG.report.genomic.copyNumberAnalysisCNVLOH',
-          resolve: {
-            images: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
-              return $image.get($stateParams.POG, $stateParams.analysis_report, 'cnv.1,cnv.2,cnv.3,cnv.4,cnv.5,loh.1,loh.2,loh.3,loh.4,loh.5');
-            }],
-          },
         },
         'structuralVariants@print.POG.report.genomic': {
           templateUrl: 'print/report/genomic/sections/structuralVariants/structuralVariants.html',
           controller: 'controller.print.POG.report.genomic.structuralVariants',
-          resolve: {
-            images: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
-              return $image.get($stateParams.POG, $stateParams.analysis_report, 'mutSummary.barSv,mutSummary.sv,circosSv.genome,circosSv.transcriptome');
-            }],
-            ms: ['$q', '$stateParams', 'api.summary.mutationSummary', ($q, $stateParams, $ms) => {
-              return $ms.get($stateParams.POG, $stateParams.analysis_report);
-            }],
-            svs: ['$q', '$stateParams', 'api.structuralVariation.sv', ($q, $stateParams, $sv) => {
-              return $sv.all($stateParams.POG, $stateParams.analysis_report);
-            }],
-            mutationSummaryImages: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
-              return $image.mutationSummary($stateParams.POG, $stateParams.analysis_report);
-            }],
-          },
         },
         'expressionAnalysis@print.POG.report.genomic': {
           templateUrl: 'print/report/genomic/sections/expressionAnalysis/expressionAnalysis.html',
           controller: 'controller.print.POG.report.genomic.expressionAnalysis',
-          resolve: {
-            images: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
-              return $image.get($stateParams.POG, $stateParams.analysis_report, 'expression.chart,expression.legend');
-            }],
-            ms: ['$q', '$stateParams', 'api.summary.mutationSummary', ($q, $stateParams, $ms) => {
-              return $ms.get($stateParams.POG, $stateParams.analysis_report);
-            }],
-            outliers: ['$q', '$stateParams', 'api.expressionAnalysis.outlier', ($q, $stateParams, $outliers) => {
-              return $outliers.all($stateParams.POG, $stateParams.analysis_report);
-            }],
-            drugTargets: ['$q', '$stateParams', 'api.expressionAnalysis.drugTarget', ($q, $stateParams, $drugTarget) => {
-              return $drugTarget.all($stateParams.POG, $stateParams.analysis_report);
-            }],
-            densityGraphs: ['$q', '$stateParams', 'api.image', ($q, $stateParams, $image) => {
-              return $image.expDensityGraphs($stateParams.POG, $stateParams.analysis_report);
-            }],
-          },
         },
         'appendices@print.POG.report.genomic': {
           templateUrl: 'print/report/genomic/sections/appendices/appendices.html',
           controller: 'controller.print.POG.report.genomic.appendices',
-          resolve: {
-            tcgaAcronyms: ['$q', '$stateParams', 'api.appendices', ($q, $stateParams, $appendices) => {
-              return $appendices.tcga($stateParams.POG, $stateParams.analysis_report);
-            }],
-          },
         },
-      },
-      resolve: {
-        targetedGenes: ['$q', '$stateParams', 'api.detailedGenomicAnalysis.targetedGenes', ($q, $stateParams, $tg) => {
-          return $tg.getAll($stateParams.POG, $stateParams.analysis_report);
-        }],
       },
     })
 
 
     .state('print.POG.report.probe', {
       url: '/probe',
-      data: {
-        displayName: 'Targeted Gene Report',
+      redirectTo: redirectPOG,
+      resolve: {
+        testInformation: ['$q', '$transition$', 'api.probe.testInformation', ($q, $transition$, $ti) => {
+          return $ti.get($transition$.params().POG, $transition$.params().analysis_report);
+        }],
+        genomicEvents: ['$q', '$stateParams', 'api.summary.genomicEventsTherapeutic', ($q, $stateParams, $get) => {
+          return $get.all($stateParams.POG, $stateParams.analysis_report);
+        }],
+        metrics: ['$q', 'api.knowledgebase', ($q, $kb) => {
+          return $kb.metrics();
+        }],
+        signature: ['$q', '$stateParams', 'api.probe.signature', ($q, $stateParams, $signature) => {
+          return $signature.get($stateParams.POG, $stateParams.analysis_report);
+        }],
+        alterations: ['$q', '$stateParams', 'api.probe.alterations', ($q, $stateParams, $alterations) => {
+          return $alterations.getAll($stateParams.POG, $stateParams.analysis_report);
+        }],
+        approvedThisCancer: ['$q', '$stateParams', 'api.probe.alterations', ($q, $stateParams, $alterations) => {
+          return $alterations.getType($stateParams.POG, $stateParams.analysis_report, 'thisCancer');
+        }],
+        approvedOtherCancer: ['$q', '$stateParams', 'api.probe.alterations', ($q, $stateParams, $alterations) => {
+          return $alterations.getType($stateParams.POG, $stateParams.analysis_report, 'otherCancer');
+        }],
       },
       views: {
         '': {
@@ -1028,35 +1044,10 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
         'summary@print.POG.report.probe': {
           templateUrl: 'print/report/probe/sections/summary/summary.html',
           controller: 'controller.print.POG.report.probe.summary',
-          resolve: {
-            testInformation: ['$q', '$stateParams', 'api.probe.testInformation', ($q, $stateParams, $ti) => {
-              return $ti.get($stateParams.POG, $stateParams.analysis_report);
-            }],
-            genomicEvents: ['$q', '$stateParams', 'api.summary.genomicEventsTherapeutic', ($q, $stateParams, $get) => {
-              return $get.all($stateParams.POG, $stateParams.analysis_report);
-            }],
-            metrics: ['$q', 'api.knowledgebase', ($q, $kb) => {
-              return $kb.metrics();
-            }],
-            signature: ['$q', '$stateParams', 'api.probe.signature', ($q, $stateParams, $signature) => {
-              return $signature.get($stateParams.POG, $stateParams.analysis_report);
-            }],
-          },
         },
         'alterations@print.POG.report.probe': {
           templateUrl: 'print/report/probe/sections/alterations/alterations.html',
           controller: 'controller.print.POG.report.probe.alterations',
-          resolve: {
-            alterations: ['$q', '$stateParams', 'api.probe.alterations', ($q, $stateParams, $alterations) => {
-              return $alterations.getAll($stateParams.POG, $stateParams.analysis_report);
-            }],
-            approvedThisCancer: ['$q', '$stateParams', 'api.probe.alterations', ($q, $stateParams, $alterations) => {
-              return $alterations.getType($stateParams.POG, $stateParams.analysis_report, 'thisCancer');
-            }],
-            approvedOtherCancer: ['$q', '$stateParams', 'api.probe.alterations', ($q, $stateParams, $alterations) => {
-              return $alterations.getType($stateParams.POG, $stateParams.analysis_report, 'otherCancer');
-            }],
-          },
         },
         'appendices@print.POG.report.probe': {
           templateUrl: 'print/report/probe/sections/appendices/appendices.html',
@@ -1081,19 +1072,15 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Knowledgebase',
       },
+      redirectTo: redirectClinician,
       controller: 'knowledgebase.dashboard',
       templateUrl: 'dashboard/knowledgebase/dashboard/dashboard.html',
       resolve: {
         metrics: ['api.knowledgebase', ($kb) => {
           return $kb.metrics();
         }],
-        permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
-          return $q((resolve, reject) => {
-            if ($acl.inGroup('clinician')) {
-              reject(new Error('externalModeError'));
-            }
-            resolve();
-          });
+        permission: ['isExternalMode', async (isExternalMode) => {
+          return isExternalMode;
         }],
       },
     })
@@ -1106,6 +1093,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       params: {
         filters: null,
       },
+      redirectTo: redirectClinician,
       controller: 'knowledgebase.references',
       templateUrl: 'dashboard/knowledgebase/references/references.html',
       resolve: {
@@ -1124,20 +1112,15 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
         vocabulary: ['$q', 'api.knowledgebase', ($q, $kb) => {
           return $kb.vocabulary();
         }],
-        permission: ['$q', '$acl', 'user', ($q, $acl, user) => {
-          return $q((resolve, reject) => {
-            if ($acl.inGroup('clinician')) {
-              reject(new Error('externalModeError'));
-            }
-            resolve();
-          });
+        permission: ['isExternalMode', async (isExternalMode) => {
+          return isExternalMode;
         }],
       },
     })
 
-    // Commenting out instead of removing in case we decide to re-include this
-    // Excluding as per Cara Reisle's suggestion
-    /*
+  // Commenting out instead of removing in case we decide to re-include this
+  // Excluding as per Cara Reisle's suggestion
+  /*
     .state('dashboard.knowledgebase.events', {
       url: '/events',
       data: {
@@ -1182,6 +1165,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       },
       controller: 'controller.dashboard.tracking',
       templateUrl: 'dashboard/tracking/tracking.html',
+      redirectTo: redirectExternal,
       resolve: {
         definitions: ['$q', 'api.tracking.definition', ($q, $definition) => {
           return $definition.all();
@@ -1190,15 +1174,9 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
         myDefinitions: ['$q', '_', 'api.tracking.definition', 'user', '$userSettings', ($q, _, $definition, user, $userSettings) => {
           return $definition.all({ slug: ($userSettings.get('tracking.definition')) ? _.join($userSettings.get('tracking.definition').slug, ',') : undefined });
         }],
-        permission: ['$q', 'user', 'isExternalMode',
-          ($q, user, isExternalMode) => {
-            return $q((resolve, reject) => {
-              if (isExternalMode) {
-                reject(new Error('externalModeError'));
-              }
-              resolve();
-            });
-          }],
+        permission: ['isExternalMode', async (isExternalMode) => {
+          return isExternalMode;
+        }],
       },
     })
 
@@ -1209,17 +1187,14 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       },
       controller: 'controller.dashboard.tracking.board',
       templateUrl: 'dashboard/tracking/board/board.html',
+      redirectTo: redirectExternal,
       resolve: {
-        states: ['$q', '_', 'api.tracking.state', 'user', '$userSettings', ($q, _, $state, user, $userSettings) => {
-          return $state.all({ status: ($userSettings.get('tracking.state')) ? _.join($userSettings.get('tracking.state').status, ',') : 'pending,active,hold,failed' });
-        }],
-        permission: ['$q', 'user', 'isExternalMode',
-          ($q, user, isExternalMode) => {
-            return $q((resolve, reject) => {
-              if (isExternalMode) {
-                reject(new Error('externalModeError'));
-              }
-              resolve();
+        states: ['_', 'api.tracking.state', 'user', '$userSettings',
+          async (_, $state, user, $userSettings) => {
+            return $state.all({
+              status: ($userSettings.get('tracking.state'))
+                ? _.join($userSettings.get('tracking.state').status, ',')
+                : 'pending,active,hold,failed',
             });
           }],
       },
@@ -1232,6 +1207,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       },
       controller: 'controller.dashboard.tracking.lane',
       templateUrl: 'dashboard/tracking/board/board.lane.html',
+      redirectTo: redirectExternal,
       resolve: {
         lane: ['$q', '$stateParams', 'api.tracking.definition', ($q, $stateParams, $definition) => {
           return $definition.retrieve($stateParams.slug);
@@ -1239,15 +1215,6 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
         states: ['$q', '$stateParams', 'api.tracking.state', ($q, $stateParams, $state) => {
           return $state.filtered({ slug: $stateParams.slug, status: 'active,pending' });
         }],
-        permission: ['$q', 'user', 'isExternalMode',
-          ($q, user, isExternalMode) => {
-            return $q((resolve, reject) => {
-              if (isExternalMode) {
-                reject(new Error('externalModeError'));
-              }
-              resolve();
-            });
-          }],
       },
     })
 
@@ -1258,6 +1225,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       },
       controller: 'controller.dashboard.tracking.definition',
       templateUrl: 'dashboard/tracking/definition/definition.html',
+      redirectTo: redirectExternal,
       resolve: {
         groups: ['api.group', ($group) => {
           return $group.all();
@@ -1268,15 +1236,6 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
         hooks: ['$q', 'api.tracking.hook', ($q, $hook) => {
           return $hook.all();
         }],
-        permission: ['$q', 'user', 'isExternalMode',
-          ($q, user, isExternalMode) => {
-            return $q((resolve, reject) => {
-              if (isExternalMode) {
-                reject(new Error('externalModeError'));
-              }
-              resolve();
-            });
-          }],
       },
     })
 
@@ -1287,6 +1246,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       },
       controller: 'controller.dashboard.tracking.assignment',
       templateUrl: 'dashboard/tracking/assignment/assignment.html',
+      redirectTo: redirectExternal,
       resolve: {
         definition: ['$q', '$stateParams', 'api.tracking.definition', ($q, $stateParams, $definition) => {
           return $definition.retrieve($stateParams.definition);
@@ -1303,15 +1263,6 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
         userLoad: ['$q', 'definition', 'api.tracking.definition', ($q, definition, $definition) => {
           return $definition.userLoad(definition.ident);
         }],
-        permission: ['$q', 'user', 'isExternalMode',
-          ($q, user, isExternalMode) => {
-            return $q((resolve, reject) => {
-              if (isExternalMode) {
-                reject(new Error('externalModeError'));
-              }
-              resolve();
-            });
-          }],
       },
     })
     
@@ -1323,6 +1274,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       },
       controller: 'controller.dashboard.tracking.ticket_template',
       templateUrl: 'dashboard/tracking/assignment/assignment.ticket_template.html',
+      redirectTo: redirectExternal,
       resolve: {
         templates: ['$q', '$stateParams', 'api.tracking.ticket_template', ($q, $stateParams, $template) => {
           return $template.getDefTasks($stateParams.definition);
@@ -1330,26 +1282,16 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
         definition: ['$q', '$stateParams', 'api.tracking.definition', ($q, $stateParams, $definition) => {
           return $definition.retrieve($stateParams.definition);
         }],
-        permission: ['$q', 'user', 'isExternalMode',
-          ($q, user, isExternalMode) => {
-            return $q((resolve, reject) => {
-              if (isExternalMode) {
-                reject(new Error('externalModeError'));
-              }
-              resolve();
-            });
-          }],
       },
     })
     
     .state('dashboard.biopsy', {
       url: '/biopsy',
+      abstract: true,
       data: {
         displayName: 'Biopsies',
         breadcrumbProxy: 'dashboard.biopsy.board',
       },
-      controller: 'controller.dashboard.biopsy',
-      templateUrl: 'dashboard/biopsy/biopsy.html',
     })
     
     .state('dashboard.biopsy.board', {
@@ -1359,6 +1301,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       },
       controller: 'controller.dashboard.biopsy.board',
       templateUrl: 'dashboard/biopsy/board/board.html',
+      redirectTo: redirectExternal,
       resolve: {
         analyses: ['$q', 'api.analysis', ($q, $analysis) => {
           return $analysis.all({ paginated: true });
@@ -1369,15 +1312,6 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
         projects: ['api.project', ($project) => {
           return $project.all();
         }],
-        permission: ['$q', 'user', 'isExternalMode',
-          ($q, user, isExternalMode) => {
-            return $q((resolve, reject) => {
-              if (isExternalMode) {
-                reject(new Error('externalModeError'));
-              }
-              resolve();
-            });
-          }],
       },
     })
     
@@ -1390,13 +1324,8 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       controller: 'controller.dashboard.germline',
       templateUrl: 'dashboard/germline/germline.html',
       resolve: {
-        permission: ['$q', 'user', 'isExternalMode', ($q, user, isExternalMode) => {
-          return $q((resolve, reject) => {
-            if (isExternalMode) {
-              reject(new Error('externalModeError'));
-            }
-            resolve();
-          });
+        permission: ['isExternalMode', async (isExternalMode) => {
+          return isExternalMode;
         }],
       },
     })
@@ -1406,6 +1335,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Reports',
       },
+      redirectTo: redirectExternal,
       controller: 'controller.dashboard.germline.board',
       templateUrl: 'dashboard/germline/board/board.html',
       resolve: {
@@ -1420,6 +1350,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Reports',
       },
+      redirectTo: redirectExternal || redirectPOG,
       controller: 'controller.dashboard.germline.report',
       templateUrl: 'dashboard/germline/report/report.html',
       resolve: {

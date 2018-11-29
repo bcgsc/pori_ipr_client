@@ -8,9 +8,9 @@
  */
 function keycloakAuth($q, $localStorage, $state, $http) {
   const keycloak = Keycloak({
-    realm: CONFIG.SSO.REALM,
-    clientId: 'IPR',
-    url: CONFIG.ENDPOINTS.KEYCLOAK,
+    'realm': CONFIG.SSO.REALM,
+    'clientId': 'IPR',
+    'url': CONFIG.ENDPOINTS.KEYCLOAK,
   });
 
   /**
@@ -18,7 +18,7 @@ function keycloakAuth($q, $localStorage, $state, $http) {
    * @return {Promise} Promise to keycloak auth
    */
   async function setToken() {
-    await keycloak.init({ onLoad: 'login-required', promiseType: 'native' })
+    await keycloak.init({ onLoad: 'login-required', promiseType: 'native' });
     $localStorage[CONFIG.STORAGE.KEYCLOAK] = keycloak.token;
     return keycloak.token;
   }

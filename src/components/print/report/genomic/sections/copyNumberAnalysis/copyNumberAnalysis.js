@@ -1,12 +1,12 @@
 app.controller('controller.print.POG.report.genomic.copyNumberAnalysis',
-['_', '$scope', '$sce', 'pog', 'report', 'images', 'cnvs', 'ms',
-(_, $scope, $sce, pog, report, images, cnvs, ms) => {
+['_', '$scope', '$sce', 'pog', 'report', 'copyNumberAnalysisImages', 'cnvs', 'ms',
+(_, $scope, $sce, pog, report, copyNumberAnalysisImages, cnvs, ms) => {
 
   // Data
   $scope.report = report;
   $scope.pog = pog;
   $scope.ms = ms;
-  $scope.images = images;
+  $scope.images = copyNumberAnalysisImages;
   $scope.cnvGroups = {};
 
 
