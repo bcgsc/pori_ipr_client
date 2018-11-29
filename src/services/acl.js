@@ -162,7 +162,7 @@ app.service('$acl', ['$q', '_', 'api.user', 'api.pog', ($q, _, $user, $pog) => {
    * @param {string} group - Group to be checked for membership
    *
    */
-  function inGroup(group) {
+  async function inGroup(group) {
     return !!_.find($user.meObj.groups, (userGroup) => {
       return group.toLowerCase() === userGroup.name.toLowerCase();
     });
@@ -175,17 +175,13 @@ app.service('$acl', ['$q', '_', 'api.user', 'api.pog', ($q, _, $user, $pog) => {
    *
    */
   async function canAccessPOG(POGID) {
-    try {
-      const pogResp = await $pog.id(POGID);
-      // check if user has individual project access or is part of full access group
-      if (_.intersectionBy($user.meObj.projects, pogResp.projects, 'name').length > 0
-        || _.find($user.meObj.groups, { name: 'Full Project Access' })) {
-        return true;
-      }
-      return Promise.reject(new Error('projectAccessError'));
-    } catch (err) {
-      return Promise.reject(new Error(err.message));
+    const pogResp = await $pog.id(POGID);
+    // check if user has individual project access or is part of full access group
+    if (_.intersectionBy($user.meObj.projects, pogResp.projects, 'name').length > 0
+      || _.find($user.meObj.groups, { name: 'Full Project Access' })) {
+      return true;
     }
+    return false;
   }
 
   /**
@@ -193,6 +189,6 @@ app.service('$acl', ['$q', '_', 'api.user', 'api.pog', ($q, _, $user, $pog) => {
    * @return {Promise} Is external
    */
   async function isExternalMode() {
-    return inGroup('clinician') || inGroup('collaborator');
+    return await inGroup('clinician') || await inGroup('collaborator');
   }
 }]);

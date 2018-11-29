@@ -1,11 +1,11 @@
 app.controller('controller.print.POG.report.genomic.somaticMutations',
-['_', '$scope', '$sce', 'pog', 'report', 'images', 'ms', 'smallMutations', 'mutationSignature', 'mutationSummaryImages',
-(_, $scope, $sce, pog, report, images, ms, smallMutations, mutationSignature, mutationSummaryImages) => {
+['_', '$scope', '$sce', 'pog', 'report', 'somaticImages', 'ms', 'smallMutations', 'mutationSignature', 'mutationSummaryImages',
+(_, $scope, $sce, pog, report, somaticImages, ms, smallMutations, mutationSignature, mutationSummaryImages) => {
 
   // Data
   $scope.report = report;
   $scope.pog = pog;
-  $scope.images = images;
+  $scope.images = somaticImages;
   $scope.smallMutations = {};
   $scope.mutationSignature = [];
   $scope.nnlsNormal = false;
