@@ -1,11 +1,11 @@
 app.controller('controller.print.POG.report.genomic.expressionAnalysis',
-['_', '$scope', '$sce', 'pog', 'report', 'images', 'outliers', 'drugTargets', 'densityGraphs',
-(_, $scope, $sce, pog, report, images, outliers, drugTargets, densityGraphs) => {
+['_', '$scope', '$sce', 'pog', 'report', 'expressionImages', 'outliers', 'drugTargets', 'densityGraphs',
+(_, $scope, $sce, pog, report, expressionImages, outliers, drugTargets, densityGraphs) => {
 
   // Data
   $scope.report = report;
   $scope.pog = pog;
-  $scope.images = images;
+  $scope.images = expressionImages;
   $scope.drugTargets = drugTargets;
   $scope.densityGraphs = [];
   $scope.expOutliers = {};
