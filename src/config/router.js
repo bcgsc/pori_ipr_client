@@ -26,7 +26,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
     await transition.injector().getAsync('user');
     const $acl = await transition.injector().getAsync('$acl');
     const $transition$ = await transition.injector().getAsync('$transition$');
-    return $acl.canAccessPOG($transition$.params().POG) ? false : 'dashboard.reports.genomic';
+    return await $acl.canAccessPOG($transition$.params().POG) ? false : 'dashboard.reports.genomic';
   };
 
   /**
@@ -37,7 +37,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
   const redirectClinician = async (transition) => {
     await transition.injector().getAsync('user');
     const $acl = await transition.injector().getAsync('$acl');
-    return $acl.inGroup('clinician') ? 'dashboard.reports.genomic' : false;
+    return await $acl.inGroup('clinician') ? 'dashboard.reports.genomic' : false;
   };
 
   /**
@@ -47,7 +47,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
    */
   const redirectAdmin = async (transition) => {
     await transition.injector().getAsync('user');
-    return transition.injector().getAsync('isAdmin') ? false : 'dashboard.reports.genomic';
+    return await transition.injector().getAsync('isAdmin') ? false : 'dashboard.reports.genomic';
   };
 
   // Enable HTML5 mode for URL access
@@ -260,7 +260,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
 
     .state('dashboard.reports.pog', {
       data: {
-        displayName: 'Case',
+        displayName: 'Patient',
         breadcrumbProxy: 'dashboard.reports.pog',
       },
       url: '/{POG}',
@@ -827,9 +827,6 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
     .state('print.POG', {
       url: '/:POG',
       abstract: true,
-      data: {
-        displayName: '{{POG.POGID}}',
-      },
       template: '<ui-view \\>',
       redirectTo: redirectPOG,
       resolve: {
@@ -853,9 +850,6 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
 
     .state('print.POG.report.genomic', {
       url: '/genomic',
-      data: {
-        displayName: 'Genomic Report',
-      },
       redirectTo: redirectPOG,
       resolve: {
         gai: ['$q', '$stateParams', 'api.summary.genomicAterationsIdentified', ($q, $stateParams, $gai) => {
@@ -1018,9 +1012,6 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
 
     .state('print.POG.report.probe', {
       url: '/probe',
-      data: {
-        displayName: 'Targeted Gene Report',
-      },
       redirectTo: redirectPOG,
       resolve: {
         testInformation: ['$q', '$transition$', 'api.probe.testInformation', ($q, $transition$, $ti) => {
