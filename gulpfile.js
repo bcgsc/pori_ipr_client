@@ -21,12 +21,13 @@ let files = {
     libs: [
       './node_modules/angular/angular.min.js',
       './node_modules/@uirouter/angularjs/release/angular-ui-router.min.js',
+      './node_modules/@uirouter/visualizer/_bundles/ui-router-visualizer.min.js',
       './node_modules/angular-material/angular-material.min.js',
       './node_modules/angular-animate/angular-animate.min.js',
       './node_modules/angular-resource/angular-resource.min.js',
       './node_modules/angular-aria/angular-aria.min.js',
       './node_modules/lodash/lodash.js',
-      './node_modules/moment/min/moment.min.js',    // Order is important! Moment before Angular Moment
+      './node_modules/moment/min/moment.min.js', // Order is important! Moment before Angular Moment
       './node_modules/angular-moment/angular-moment.min.js',
       './node_modules/ngstorage/ngStorage.min.js',
       './node_modules/simplemde/dist/simplemde.min.js',
@@ -53,7 +54,8 @@ let files = {
       './src/directives/**/*.js',
       './src/config/*.js',
       './src/components/**/*.js',
-    ]
+      './src/run/**/*.js',
+    ],
   },
   
   // Template files to be compiled into HTML
@@ -70,7 +72,7 @@ let files = {
       './src/statics/**/*.jpg',
       './src/statics/**/*.jpeg',
       './src/statics/**/*.gif',
-      './src/statics/**/*.svg'
+      './src/statics/**/*.svg',
     ],
     
     // Component specific files
@@ -78,12 +80,12 @@ let files = {
       './src/components/**/*.png',
       './src/components/**/*.jpg',
       './src/components/**/*.svg',
-    ]
+    ],
   },
 
   // JSON DBs
   jsonDB: [
-    './src/statics/**/*.json'
+    './src/statics/**/*.json',
   ],
   
   // Stylesheet sources
@@ -94,7 +96,7 @@ let files = {
       './src/styles/libs.scss',
       './node_modules/simplemde/dist/simplemde.min.css',
       './node_modules/quill/dist/quill.bubble.css',
-      './node_modules/quill/dist/quill.snow.css'
+      './node_modules/quill/dist/quill.snow.css',
     ],  // Library sources
   },
   
