@@ -16,38 +16,38 @@
  */
 function stateChange($rootScope, $state, $acl, $user, $userSettings, _, $mdToast, $localStorage,
   $interval, keycloakAuth, $mdDialog, $transitions) {
-    let shownWarn = false;
-    const interval = $interval((async () => {
-      const seconds = $localStorage.expiry - (Date.now() / 1000);
-      const minutes = Math.floor(seconds / 60);
-      if (seconds <= 900 && seconds > 0 && !shownWarn) {
-        shownWarn = true;
-        try {
-          const resp = await $mdDialog.show($mdDialog.confirm()
-            .title('Attention, ')
-            .textContent(`Session expiring in ${minutes} minutes.
-              Please click on the button below to re-login.`)
-            .cancel('I will do it soon!')
-            .ok('Re-log now!'));
-          if (resp) {
-            keycloakAuth.logout();
-          }
-        } catch (err) { angular.noop(); }
-      } else if (seconds <= 0) {
-        try {
-          $interval.cancel(interval);
-          const resp = await $mdDialog.show($mdDialog.confirm()
-            .title('Attention, ')
-            .textContent(`Session has expired.
-              Please click on the button below to re-login.`)
-            .cancel('Close')
-            .ok('Re-log now!'));
-          if (resp) {
-            keycloakAuth.logout();
-          }
-        } catch (err) { angular.noop(); }
-      }
-    }), 300000);
+  let shownWarn = false;
+  const interval = $interval((async () => {
+    const seconds = $localStorage.expiry - (Date.now() / 1000);
+    const minutes = Math.floor(seconds / 60);
+    if (seconds <= 900 && seconds > 0 && !shownWarn) {
+      shownWarn = true;
+      try {
+        const resp = await $mdDialog.show($mdDialog.confirm()
+          .title('Attention, ')
+          .textContent(`Session expiring in ${minutes} minutes.
+            Please click on the button below to re-login.`)
+          .cancel('I will do it soon!')
+          .ok('Re-log now!'));
+        if (resp) {
+          keycloakAuth.logout();
+        }
+      } catch (err) { angular.noop(); }
+    } else if (seconds <= 0) {
+      try {
+        $interval.cancel(interval);
+        const resp = await $mdDialog.show($mdDialog.confirm()
+          .title('Attention, ')
+          .textContent(`Session has expired.
+            Please click on the button below to re-login.`)
+          .cancel('Close')
+          .ok('Re-log now!'));
+        if (resp) {
+          keycloakAuth.logout();
+        }
+      } catch (err) { angular.noop(); }
+    }
+  }), 300000);
 
   // On State Change, Show Spinner!
   $transitions.onStart({ }, async (transition) => {
