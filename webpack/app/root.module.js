@@ -3,12 +3,15 @@ import uiRouter from '@uirouter/angularjs';
 import ComponentsModule from './components/components.module';
 import CommonModule from './common/common.module';
 import Dashboard from './components/report-listings/dashboard/dashboard.module';
+import Navbar from './common/navbar/navbar.module';
+import ServiceModule from './services/services.module';
 import './root.scss';
 
 const AppModule = angular
   .module('root', [
     ComponentsModule,
     CommonModule,
+    ServiceModule,
     uiRouter,
   ])
   .config(($stateProvider, $locationProvider) => {
@@ -23,32 +26,31 @@ const AppModule = angular
           '@': {
             component: Dashboard,
           },
-          'toolbar@dashboard': {
-            templateUrl: 'dashboard/toolbar.html',
-            controller: 'controller.dashboard.toolbar',
+          'navbar@dashboard': {
+            component: Navbar,
           },
-          'adminbar@dashboard': {
-            templateUrl: 'dashboard/adminbar/adminbar.html',
-            controller: 'controller.dashboard.adminbar',
-          },
+          // 'adminbar@dashboard': {
+          //   templateUrl: 'dashboard/adminbar/adminbar.html',
+          //   controller: 'controller.dashboard.adminbar',
+          // },
         },
         data: {
-          displayName: 'Dashboard',
-          breadcrumbProxy: 'dashboard.reports',
+          displayName: 'Root',
+          breadcrumbProxy: 'root.reports',
         },
         resolve: {
-          user: ['api.user', '$userSettings', async ($user, $userSettings) => {
+          user: async (UserService, UserSettingsService) => {
             'ngInject';
 
-            const resp = await $user.me();
-            $userSettings.init();
+            const resp = await UserService.me();
+            UserSettingsService.init();
             return resp;
-          }],
-          isAdmin: ['api.user', 'user', async ($user, user) => {
+          },
+          isAdmin: async (UserService, user) => {
             'ngInject';
 
-            return $user.isAdmin();
-          }],
+            return UserService.isAdmin();
+          },
           pogs: ['api.pog', 'user', async ($pog, user) => {
             'ngInject';
 

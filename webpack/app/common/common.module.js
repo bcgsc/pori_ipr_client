@@ -2,7 +2,7 @@ import angular from 'angular';
 import NavbarModule from './navbar/navbar.module';
 
 const CommonModule = angular
-  .module('app.common', [
+  .module('root.common', [
     NavbarModule,
   ])
   .name;
