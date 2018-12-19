@@ -4,13 +4,11 @@
  * @param {*} $http {@link https://docs.angularjs.org/api/ng/service/$http}
  * @return {Object} $user service object
  */
-class UserService {
-  constructor(_, $http) {
-    'ngInject';
-
-    this._ = _;
+export default class UserService {
+  /* @ngInject */
+  constructor($http) {
     this.$http = $http;
-    this.api = `${CONFIG.ENDPOINTS.API}/user`;
+    this.api = `${CONFIG['jdavies-local'].ENDPOINTS.API}/user`;
     this.meObj = {};
   }
   
@@ -90,5 +88,3 @@ class UserService {
     return resp.data;
   }
 }
-
-export default UserService;

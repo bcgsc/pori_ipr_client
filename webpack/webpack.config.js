@@ -1,10 +1,10 @@
 const path = require('path');
+const webpack = require('webpack');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const AnnotatePlugin = require('ng-annotate-webpack-plugin');
 
 module.exports = {
   module: {
@@ -15,22 +15,35 @@ module.exports = {
             test: /\.pug$/,
             include: path.join(__dirname, 'app'),
             exclude: /node_modules/,
-            loaders: [
-              'pug-loader',
-            ],
+            use: [{
+              loader: 'apply-loader',
+              options: {
+                obj: {},
+              },
+            },
+            {
+              loader: 'pug-loader',
+            }],
+          },
+          {
+            test: /\.(html)$/,
+            use: {
+              loader: 'html-loader',
+            },
           },
           {
             test: /\.js$/,
             exclude: /node_modules/,
-            use: {
+            use: [{
               loader: 'babel-loader',
               options: {
                 babelrc: false,
                 presets: [['@babel/preset-env', {
                   useBuiltIns: 'usage',
                 }]],
+                plugins: ['angularjs-annotate'],
               },
-            },
+            }],
           },
           {
             test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
@@ -50,23 +63,27 @@ module.exports = {
       template: path.join(__dirname, 'app/index.pug'),
       inject: true,
     }),
-    new AnnotatePlugin({
-      add: true,
-    }),
     new CopyWebpackPlugin([{
       from: path.join(__dirname, 'statics/images/*.png'),
       to: 'img/',
       flatten: true,
     }]),
+    new webpack.ProvidePlugin({
+      '_': 'lodash',
+      'CONFIG': path.resolve(__dirname, '../env.json'),
+    }),
     // new BundleAnalyzerPlugin(),
   ],
+  mode: 'development',
+  devtool: 'inline-source-map',
   entry: path.resolve(__dirname, 'app/root.module.js'),
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'app-bundle.js',
+    filename: 'app.bundle.js',
+    publicPath: '/',
   },
   devServer: {
-    contentBase: path.join(__dirname, 'app'),
+    contentBase: path.join(__dirname, 'dist'),
     compress: true,
     port: 3000,
   },

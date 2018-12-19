@@ -1,14 +1,9 @@
 /**
- * User settings factory
- * @param {*} _ {@link https://lodash.com/docs/4.17.5}
- * @param {*} $user - $user factory
- * @return {Object} $userSettings
+ * User settings service
  */
-class UserSettingsService {
-  constructor(_, UserService) {
-    'ngInject';
-
-    this._ = _;
+export default class UserSettingsService {
+  /* @ngInject */
+  constructor(UserService) {
     this.UserService = UserService;
     this.settingsObj = this.UserService.meObj.settings; // this may break stuff if no meObj yet
   }
@@ -56,5 +51,3 @@ class UserSettingsService {
     return this.UserService.meObj;
   }
 }
-
-export default UserSettingsService;

@@ -1,16 +1,11 @@
-/*
- * BCGSC - IPR-Client User API
- *
- * This API factory implements the IPR-API. Calls to and from the API are
- * managed through this construct.
+/**
+ * Pog service for API calls
  */
-class PogService {
-  constructor(_, $http) {
-    'ngInject';
-
-    this._ = _;
+export default class PogService {
+  /* @ngInject */
+  constructor($http) {
     this.$http = $http;
-    this.api = `${CONFIG.ENDPOINTS.API}/POG`;
+    this.api = `${CONFIG['jdavies-local'].ENDPOINTS.API}/POG`;
     this.pogs = [];
   }
   
@@ -62,5 +57,3 @@ class PogService {
     this.pogs = {};
   }
 }
-
-export default PogService;

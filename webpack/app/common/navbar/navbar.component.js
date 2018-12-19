@@ -1,26 +1,22 @@
-import templateUrl from './navbar.pug';
+import template from './navbar.pug';
 
 const NavbarComponent = {
-  templateUrl: templateUrl,
+  template: template,
   controller: class NavbarComponent {
-    constructor(_, $scope, $state, $mdDialog, $mdToast, isAdmin, $userSettings,
-      $user, keycloakAuth) {
-      'ngInject';
-
-      this._ = _;
+    /* @ngInject */
+    constructor($scope, $state, $mdDialog, $mdToast, UserSettingsService, UserService) {
       this.$scope = $scope;
       this.$state = $state;
       this.$mdDialog = $mdDialog;
       this.$mdToast = $mdToast;
-      this.isAdmin = isAdmin;
-      this.$userSettings = $userSettings;
-      this.$user = $user;
-      this.keycloakAuth = keycloakAuth;
+      this.UserSettingsService = UserSettingsService;
+      this.UserService = UserService;
+      // this.keycloakAuth = keycloakAuth;
     }
 
     $onInit() {
-      this.user = this.$user.meObj;
-      this.maximized = this.$userSettings.get('sideBarState');
+      this.user = this.UserService.meObj;
+      this.maximized = this.UserSettingsService.get('sideBarState');
     }
 
     // Toggle sidebar
