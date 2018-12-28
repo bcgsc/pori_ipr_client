@@ -6,7 +6,7 @@
  *
  */
 app.factory('api.pog', ['_', '$http', '$q', (_, $http, $q) => {
-  const api = `${CONFIG.ENDPOINTS.API  }/POG`;
+  const api = `${CONFIG.ENDPOINTS.API}/POG`;
   let _pogs = []; // Local POGS cache by ident
 
   
@@ -24,14 +24,6 @@ app.factory('api.pog', ['_', '$http', '$q', (_, $http, $q) => {
   $pog.all = (opts = {}) => {
     return $q((resolve, reject) => {
       const url = api;
-
-      /*
-      if(opts.all !== false || opts.query !== null || opts.role) {
-        url += '?';
-        if(opts.all !== false) url += 'all=true&';
-        if(opts.query) url += 'query='+opts.query+'&';
-        if(opts.role) url += 'role='+opts.role+'&';
-      } */
 
       // Retrieve from API
       $http.get(url, { params: opts }).then(
@@ -66,7 +58,7 @@ app.factory('api.pog', ['_', '$http', '$q', (_, $http, $q) => {
       if (_pogs[POGID] !== undefined) return resolve(_pogs[POGID]);
       
       // Get result from API
-      $http.get(`${api  }/${  POGID}`).then(
+      $http.get(`${api}/${POGID}`).then(
         (result) => {
           _pogs[result.data.POGID] = result.data;
           resolve(_pogs[result.data.POGID]);
@@ -86,7 +78,7 @@ app.factory('api.pog', ['_', '$http', '$q', (_, $http, $q) => {
   $pog.update = (pog) => {
     return $q((resolve, reject) => {
       // Call API to update
-      $http.put(`${api  }/${  pog.POGID}`, pog).then(
+      $http.put(`${api}/${pog.POGID}`, pog).then(
         (result) => {
           resolve(result.data);
         },
@@ -108,7 +100,7 @@ app.factory('api.pog', ['_', '$http', '$q', (_, $http, $q) => {
       bind: (ident, role) => {
         const deferred = $q.defer();
 
-        $http.post(`${api  }/${  POGID  }/user`, { user: ident, role: role }).then(
+        $http.post(`${api}/${POGID}/user`, { user: ident, role: role }).then(
           (resp) => {
             deferred.resolve(resp.data);
           },
@@ -124,7 +116,7 @@ app.factory('api.pog', ['_', '$http', '$q', (_, $http, $q) => {
         const deferred = $q.defer();
 
         $http({
-          url: `${api  }/${  POGID  }/user`,
+          url: `${api}/${POGID}/user`,
           method: 'DELETE',
           data: {
             user: ident,
@@ -158,7 +150,7 @@ app.factory('api.pog', ['_', '$http', '$q', (_, $http, $q) => {
         const deferred = $q.defer();
 
         // Send request
-        $http.get(`${api  }/${  POGID  }/export/csv`).then(
+        $http.get(`${api}/${POGID}/export/csv`).then(
           (resp) => {
             deferred.resolve(resp.data);
           },
@@ -179,7 +171,7 @@ app.factory('api.pog', ['_', '$http', '$q', (_, $http, $q) => {
         const deferred = $q.defer();
 
         // Send request
-        $http.get(`${api  }/${  POGID  }/export/all`).then(
+        $http.get(`${api}/${POGID}/export/all`).then(
           (resp) => {
             deferred.resolve(resp.data);
           },
