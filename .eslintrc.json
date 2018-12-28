@@ -83,6 +83,7 @@
         "no-use-before-define": ["error", {
             "functions": false
         }],
-        "indent": ["error", 2, { "SwitchCase": 1 }]
+        "indent": ["error", 2, { "SwitchCase": 1 }],
+        "template-curly-spacing": ["error", "never"]
     }
 }
