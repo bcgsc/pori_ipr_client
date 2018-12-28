@@ -32,6 +32,14 @@ module.exports = {
             },
           },
           {
+            test: /\.s?css$/,
+            use: [
+              MiniCssExtractPlugin.loader,
+              'css-loader',
+              'sass-loader',
+            ],
+          },
+          {
             test: /\.js$/,
             exclude: /node_modules/,
             use: [{
@@ -59,6 +67,7 @@ module.exports = {
     ],
   },
   plugins: [
+    new MiniCssExtractPlugin(),
     new HtmlWebpackPlugin({
       template: path.join(__dirname, 'app/index.pug'),
       inject: true,
@@ -72,6 +81,7 @@ module.exports = {
       '_': 'lodash',
       'CONFIG': path.resolve(__dirname, '../env.json'),
     }),
+    new webpack.HotModuleReplacementPlugin(),
     // new BundleAnalyzerPlugin(),
   ],
   mode: 'development',
@@ -86,5 +96,8 @@ module.exports = {
     contentBase: path.join(__dirname, 'dist'),
     compress: true,
     port: 3000,
+    hot: true,
+    publicPath: '/',
+    historyApiFallback: true,
   },
 };

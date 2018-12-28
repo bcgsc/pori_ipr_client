@@ -1,3 +1,5 @@
-<div class="root">
-  <div ui-view></div>
-</div>
+div.root
+  div(ui-view="navbar")
+  div(layout="row")
+    div(ui-view="sidebar")
+    div(ui-view)

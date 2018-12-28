@@ -1,0 +1,78 @@
+@import '../../styles/variables';
+
+.sidebar {
+  background-color: $primary;
+  color: white;
+  padding: 10px 0;
+  transition: width 0.5s ease;
+  height: 100vh; //might need to change this later to allow scrolling, not sure yet
+  div {
+    cursor: pointer;
+    padding: 5px 10px 5px 10px;
+    transition: all 0.2s;
+
+    &.submenu {
+      font-size: 0.8em;
+      padding-left: 17px;
+
+      &.active {
+        background-color: white;
+      }
+
+      span {
+        padding-left: 4px;
+      }
+      md-icon {
+        width: 19px;
+        height: 19px;
+        min-height: 19px;
+        min-width: 19px;
+        font-size: 17px;
+      }
+    }
+
+    &.active {
+      background-color: $white-icon;
+      border-right: 3px solid rgb(200, 200, 200);
+      color: rgb(0,0,0);
+      position: relative;
+      width: calc(100% + 3px);
+
+      md-icon {
+        color: rgb(35, 49, 144);
+      }
+      &:hover {
+        background-color: rgb(214, 243, 255);
+      }
+    }
+
+    md-icon {
+      color: $white-icon;
+      margin: 0;
+      transition: all 0.2s;
+    }
+    span {
+      padding-left: 6px;
+      padding-right: 10px;
+      padding-top: 2px;
+    }
+
+    &:hover {
+      background-color: lighten($primary, 15%);
+    }
+
+    &.minimize {
+      cursor: pointer;
+      outline: none;
+
+      md-icon {
+        transition: all 0s;
+      }
+
+      span {
+        color: white;
+      }
+    }
+  }
+
+}

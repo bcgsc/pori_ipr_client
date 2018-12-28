@@ -1,70 +1,20 @@
-//- div(ui-view="adminbar", layout="row", ng-if="$ctrl.isAdmin").adminBar
-md-toolbar(ui-view="toolbar", layout='row').headerToolbar
+md-content(flex, layout="column").md-padding
 
-div(layout='row', flex)
-  div(flex, layout="row")
+    h1.md-title(layout="row")
+        span(flex) Reports Dashboard
 
-    div(layout="column", ng-cloak).sidebar
+    p Cases ready for analysis, and cases underway will appear in the left column. Cases that are still progressing through the bioinformatics pipeline will populate the right column.
+        |   Cases that have been marked as ready for presentation will not appear on this page.
 
-      div(layout="row", ui-sref="dashboard.reports.dashboard", ng-class="{active: ($state.current.name === 'dashboard')}")
-        md-icon home
-          md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Dashboard
-        span(flex, ng-show="$ctrl.maximized") Dashboard
+    div(layout="column", flex).kanban
+        div(layout="row", layout-align="space-between").title
+            div(layout="column", flex) Upcoming & current cases ({{$ctrl.currentCases.length}})
+            div(layout="column", flex) Upstream cases ({{$ctrl.upstreamCases.length}})
 
-      div(layout="row", ng-if="$ctrl.check.resource('analyses')", ui-sref="dashboard.biopsy.board", ng-class="{active: ($state.current.name === 'dashboard.biopsy' || $state.current.name.indexOf('biopsy') > -1)}")
-        md-icon colorize
-          md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Biopsies
-        span(flex, ng-show="$ctrl.maximized") Biopsies
+        div(layout="row", flex, layout-align="space-between")
+            md-content(layout="column", flex).column
+                report-listing-card(ng-repeat="report in $ctrl.currentCases", md-whiteframe=2, report="$ctrl.report", pog="$ctrl.report.analysis.pog", state="uploaded" ng-hide="loading").pog
 
-
-
-      div(layout="row", ng-if="$ctrl.check.resource('tracking')", ui-sref="dashboard.tracking.board", ng-class="{active: ($state.current.name === 'dashboard.tracking' || $state.current.name.indexOf('tracking') > -1)}")
-        md-icon my_location
-          md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Tracking
-        span(flex, ng-show="$ctrl.maximized") Tracking
-
-
-
-      div(layout="row", ng-if="$ctrl.check.resource('report')" ui-sref="dashboard.reports.dashboard", ng-class="{active: ($state.current.name === 'dashboard.reports' || $state.current.name.indexOf('dashboard.reports') > -1)}")
-        md-icon assignment
-          md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Reports Dashboard
-        span(flex, ng-show="$ctrl.maximized") Reports
-
-      div(layout="row", ng-if="$ctrl.check.resource('genomic_report')", ui-sref="dashboard.reports.genomic", ng-class="{active: ($state.current.name.indexOf('genomic') > 0)}", ng-show="$ctrl.maximized || (!$ctrl.maximized && ($state.current.name.indexOf('dashboard.reports') > -1 || $state.current.name.indexOf('dashboard.pog') > -1))").submenu
-        md-icon(ng-show="$ctrl.maximized") subdirectory_arrow_right
-        md-icon(ng-show="!$ctrl.maximized") developer_board
-          md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Genomic Reports
-        span(flex, ng-show="$ctrl.maximized") Genomic
-
-      div(layout="row", ng-if="$ctrl.check.resource('probe_report')", ui-sref="dashboard.reports.probe", ng-class="{active: ($state.current.name.indexOf('probe') > 0)}", ng-show="$ctrl.maximized || (!$ctrl.maximized && ($state.current.name.indexOf('dashboard.reports') > -1 || $state.current.name.indexOf('dashboard.pog') > -1))").submenu
-        md-icon(ng-show="$ctrl.maximized") subdirectory_arrow_right
-        md-icon(ng-show="!$ctrl.maximized") highlight
-          md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Targeted Gene Reports
-        span(flex, ng-show="$ctrl.maximized") Targeted Gene
-
-
-
-      div(layout="row", ng-if="$ctrl.check.resource('germline')", ui-sref="dashboard.germline.board", ng-class="{active: ($state.current.name.indexOf('germline') > -1)}")
-        md-icon supervisor_account
-          md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Germline
-        span(flex, ng-show="$ctrl.maximized") Germline
-
-
-
-      div(layout="row", ng-if="$ctrl.check.resource('knowledgebase')", ui-sref="dashboard.knowledgebase.dashboard", ng-class="{active: ($state.current.name.indexOf('knowledgebase') > -1)}")
-        md-icon local_library
-          md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Knowledgebase
-        span(flex, ng-show="$ctrl.maximized") Knowledgebase
-
-      div(layout="row", ng-if="$ctrl.check.resource('knowledgebase')", ui-sref="dashboard.knowledgebase.references", ng-class="{active: ($state.current.name === 'dashboard.knowledgebase.references')}", ng-show="$ctrl.maximized || (!$ctrl.maximized && $state.current.name.indexOf('knowledgebase') > 1)").submenu
-        md-icon(ng-show="$ctrl.maximized") subdirectory_arrow_right
-        md-icon(ng-show="!$ctrl.maximized") import_contacts
-          md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") References
-        span(flex, ng-show="$ctrl.maximized") References
-  
-
-    div(flex, layout='column')
-      md-subheader.bread-crumbs
-        ui-breadcrumbs(displayname-property="data.displayName", abstract-proxy-property="data.breadcrumbProxy", template-url="uiBreadcrumbs/uiBreadcrumbs.tpl.html")
-        | {{data}}
-      div(ui-view="", layout="row", flex)
+            md-content(layout="column", flex).column
+                div.text-center No upcoming cases in tracking.
+                report-listing-card(ng-repeat="report in $ctrl.upstreamCases", md-whiteframe=2, report="$ctrl.report", pog="$ctrl.report.analysis.pog", state="signedoff", ng-hide="loading").pog

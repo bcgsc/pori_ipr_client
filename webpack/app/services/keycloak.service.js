@@ -1,4 +1,6 @@
-export default class keycloakAuth {
+import Keycloak from 'keycloak-js';
+
+export default class KeycloakService {
   /* @ngInject */
   constructor($localStorage, $state, $http) {
     this.$localStorage = $localStorage;
@@ -39,7 +41,7 @@ export default class keycloakAuth {
    */
   async logout() {
     try {
-      await this.keycloak.init();
+      await this.keycloak.init({ promiseType: 'native' });
       delete this.$localStorage[CONFIG['jdavies-local'].STORAGE.KEYCLOAK];
       const resp = await this.keycloak.logout({
         redirectUri: this.$state.href('public.login', {}, { absolute: true }),

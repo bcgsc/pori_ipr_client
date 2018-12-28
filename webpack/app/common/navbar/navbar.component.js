@@ -1,22 +1,24 @@
 import template from './navbar.pug';
 
-const NavbarComponent = {
+export default {
   template: template,
   controller: class NavbarComponent {
     /* @ngInject */
-    constructor($scope, $state, $mdDialog, $mdToast, UserSettingsService, UserService) {
+    constructor($scope, $state, $mdDialog, $mdToast, UserSettingsService,
+      UserService, KeycloakService) {
       this.$scope = $scope;
       this.$state = $state;
       this.$mdDialog = $mdDialog;
       this.$mdToast = $mdToast;
       this.UserSettingsService = UserSettingsService;
       this.UserService = UserService;
-      // this.keycloakAuth = keycloakAuth;
+      this.KeycloakService = KeycloakService;
     }
 
-    $onInit() {
-      this.user = this.UserService.meObj;
+    async $onInit() {
+      this.user = await this.UserService.me();
       this.maximized = this.UserSettingsService.get('sideBarState');
+      this.$scope.$digest();
     }
 
     // Toggle sidebar
@@ -37,7 +39,7 @@ const NavbarComponent = {
 
     async userLogout() {
       try {
-        await this.keycloakAuth.logout();
+        await this.KeycloakService.logout();
         this.$mdToast.showSimple('You have been logged out.');
         this.$state.go('public.login');
       } catch (err) {
@@ -75,5 +77,3 @@ const NavbarComponent = {
     }
   },
 };
-
-export default NavbarComponent;

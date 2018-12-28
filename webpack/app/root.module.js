@@ -1,5 +1,8 @@
 import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
+import ngMaterial from 'angular-material';
+import 'ngstorage';
+import 'angular-material/angular-material.css';
 import CommonModule from './common/common.module';
 import ComponentModule from './components/components.module';
 import RootComponent from './root.component';
@@ -10,12 +13,13 @@ import ProjectService from './services/project.service';
 import AclService from './services/acl.service';
 import ReportService from './services/report.service';
 import KeycloakService from './services/keycloak.service';
-import './root.scss';
 
 angular.module('root', [
   uiRouter,
   CommonModule,
   ComponentModule,
+  'ngStorage',
+  ngMaterial,
 ]);
 
 export default angular.module('root')
@@ -41,16 +45,12 @@ export default angular.module('root')
         abstract: true,
         url: '/',
         views: {
-          '@': {
-            component: 'dashboard',
+          'navbar': {
+            component: 'navbar',
           },
-          // 'navbar@root': {
-          //   component: 'navbar',
-          // },
-          // 'adminbar@dashboard': {
-          //   templateUrl: 'dashboard/adminbar/adminbar.html',
-          //   controller: 'controller.dashboard.adminbar',
-          // },
+          'sidebar': {
+            component: 'sidebar',
+          },
         },
         resolve: {
           /* eslint-disable no-shadow */
@@ -58,33 +58,49 @@ export default angular.module('root')
             const resp = UserService.me();
             return resp;
           }],
-          // /* eslint-disable no-shadow */
-          // isAdmin: async (user) => {
-          //   return UserService.isAdmin();
-          // },
-          // /* eslint-disable no-shadow */
-          // pogs: async (user) => {
-          //   return PogService.all();
-          // },
-          // /* eslint-disable no-shadow */
-          // projects: async (user) => {
-          //   return ProjectService.all();
-          // },
-          // /* eslint-disable no-shadow */
-          // isExternalMode: async (user) => {
-          //   return AclService.isExternalMode();
-          // },
+          /* eslint-disable no-shadow */
+          isAdmin: ['user', 'UserService', async (user, UserService) => {
+            return UserService.isAdmin();
+          }],
+          /* eslint-disable no-shadow */
+          pogs: ['user', 'PogService', async (user, PogService) => {
+            return PogService.all();
+          }],
+          /* eslint-disable no-shadow */
+          projects: ['user', 'ProjectService', async (user, ProjectService) => {
+            return ProjectService.all();
+          }],
+          /* eslint-disable no-shadow */
+          isExternalMode: ['user', 'AclService', async (user, AclService) => {
+            return AclService.isExternalMode();
+          }],
         },
       });
   })
-  .run(($transitions) => {
+  .run(($transitions, $log) => {
     'ngInject';
 
     $transitions.onStart({ }, async (transition) => {
-      console.log(transition.to().name);
+      $log.log(transition.to().name);
     });
-    $transitions.onError({ }, async (transition) => {
-      console.log(transition);
+  })
+  .config(($httpProvider) => {
+    'ngInject';
+
+    // Add Error Interceptors Wrapper
+    $httpProvider.interceptors.push(($injector) => {
+      'ngInject';
+
+      return {
+        request: async (config) => {
+          const KeycloakService = $injector.get('KeycloakService');
+          if (await KeycloakService.getToken() && !(config.url.match(/https:\/\/lims16.bcgsc.ca.*/g)
+            || config.url.match(/https:\/\/www.bcgsc.ca\/jira\/rest\/api\/2/g))) {
+            config.headers.Authorization = await KeycloakService.getToken();
+          }
+          return config;
+        },
+      };
     });
   })
   .name;

@@ -2,13 +2,13 @@
   md-icon(ng-click="$ctrl.toggleSidebar()", ng-if="!$ctrl.maximized").clickable.margin-right-15 menu
   md-icon(ng-click="$ctrl.toggleSidebar()", ng-if="$ctrl.maximized").clickable.margin-right-15 close
   h2 
-    img(src="/assets/images/bcca_logo.png", style="margin-bottom: -5px;")
+    img(src="img/bcca_logo.png", style="margin-bottom: -5px;")
     |  BCGSC Integrated Pipeline Reports 
     span(ng-if="CONFIG.ATTRS.name !== 'PRODUCTION'") [NON-PRODUCTION ENVIRONMENT: {{CONFIG.ATTRS.name}}]
   span(flex)
   
   md-menu
-    div(ng-click='$ctrl.$mdMenu.open()', aria-label='User')
+    div(ng-click='$mdMenu.open($event)', aria-label='User')
       md-icon person
       md-button.white {{$ctrl.user.firstName}} {{$ctrl.user.lastName}}
     

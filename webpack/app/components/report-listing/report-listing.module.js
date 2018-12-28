@@ -1,7 +1,7 @@
 import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
 import DashboardModule from './dashboard/dashboard.module';
-import AclService from '../../services/acl.service';
+import './report-listing.scss';
 
 const ReportListingModule = angular
   .module('reportlisting', [
@@ -15,18 +15,17 @@ const ReportListingModule = angular
       .state('root.reportlisting', {
         abstract: true,
         url: 'reports',
-        // resolve: {
-        //   permission: async ($state, user, $mdToast) => {
-        //     'ngInject';
-            
-        //     if (!AclService.action('report.view', user)) {
-        //       $mdToast.showSimple('You are not allowed to view reports');
-        //       $state.go('dashboard.home');
-        //       return false;
-        //     }
-        //     return true;
-        //   },
-        // },
+        resolve: {
+          permission: ['$state', 'user', '$mdToast', 'AclService',
+            async ($state, user, $mdToast, AclService) => {
+              if (await !AclService.checkAction('report.view', user)) {
+                $mdToast.showSimple('You are not allowed to view reports');
+                $state.go('root.home');
+                return false;
+              }
+              return true;
+            }],
+        },
       });
   })
   .name;

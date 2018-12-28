@@ -1,0 +1,67 @@
+//- div(ui-view="adminbar", layout="row", ng-if="$ctrl.isAdmin").adminBar
+//- md-toolbar(ui-view="toolbar", layout='row').headerToolbar
+
+div(layout="column").sidebar
+
+  div(layout="row", ui-sref="root.reports.dashboard", ng-class="{active: ($ctrl.$state.current.name === 'dashboard')}")
+    md-icon home
+      md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Dashboard
+    span(flex, ng-show="$ctrl.maximized") Dashboard
+
+  div(layout="row", ng-if="$ctrl.pageAccess.analyses", ui-sref="root.biopsy.board", ng-class="{active: ($ctrl.$state.current.name === 'root.biopsy' || $ctrl.$state.current.name.indexOf('biopsy') > -1)}")
+    md-icon colorize
+      md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Biopsies
+    span(flex, ng-show="$ctrl.maximized") Biopsies
+
+
+
+  div(layout="row", ng-if="$ctrl.pageAccess.tracking", ui-sref="root.tracking.board", ng-class="{active: ($ctrl.$state.current.name === 'root.tracking' || $ctrl.$state.current.name.indexOf('tracking') > -1)}")
+    md-icon my_location
+      md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Tracking
+    span(flex, ng-show="$ctrl.maximized") Tracking
+
+
+
+  div(layout="row", ng-if="$ctrl.pageAccess.report" ui-sref="root.reports.dashboard", ng-class="{active: ($ctrl.$state.current.name.includes('root.reportlisting.dashboard'))}")
+    md-icon assignment
+      md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Reports Dashboard
+    span(flex, ng-show="$ctrl.maximized") Reports
+
+  div(layout="row", ng-if="$ctrl.pageAccess.genomic_report", ui-sref="root.reports.genomic", ng-class="{active: ($ctrl.$state.current.name.indexOf('genomic') > 0)}", ng-show="$ctrl.maximized || (!$ctrl.maximized && ($ctrl.$state.current.name.indexOf('root.reports') > -1 || $ctrl.$state.current.name.indexOf('root.pog') > -1))").submenu
+    md-icon(ng-show="$ctrl.maximized") subdirectory_arrow_right
+    md-icon(ng-show="!$ctrl.maximized") developer_board
+      md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Genomic Reports
+    span(flex, ng-show="$ctrl.maximized") Genomic
+
+  div(layout="row", ng-if="$ctrl.pageAccess.probe_report", ui-sref="root.reports.probe", ng-class="{active: ($ctrl.$state.current.name.indexOf('probe') > 0)}", ng-show="$ctrl.maximized || (!$ctrl.maximized && ($ctrl.$state.current.name.indexOf('root.reports') > -1 || $ctrl.$state.current.name.indexOf('root.pog') > -1))").submenu
+    md-icon(ng-show="$ctrl.maximized") subdirectory_arrow_right
+    md-icon(ng-show="!$ctrl.maximized") highlight
+      md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Targeted Gene Reports
+    span(flex, ng-show="$ctrl.maximized") Targeted Gene
+
+
+
+  div(layout="row", ng-if="$ctrl.pageAccess.germline", ui-sref="root.germline.board", ng-class="{active: ($ctrl.$state.current.name.indexOf('germline') > -1)}")
+    md-icon supervisor_account
+      md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Germline
+    span(flex, ng-show="$ctrl.maximized") Germline
+
+
+
+  div(layout="row", ng-if="$ctrl.pageAccess.knowledgebase", ui-sref="root.knowledgebase.dashboard", ng-class="{active: ($ctrl.$state.current.name.indexOf('knowledgebase') > -1)}")
+    md-icon local_library
+      md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Knowledgebase
+    span(flex, ng-show="$ctrl.maximized") Knowledgebase
+
+  div(layout="row", ng-if="$ctrl.pageAccess.knowledgebase", ui-sref="root.knowledgebase.references", ng-class="{active: ($ctrl.$state.current.name === 'root.knowledgebase.references')}", ng-show="$ctrl.maximized || (!$ctrl.maximized && $ctrl.$state.current.name.includes('knowledgebase'))").submenu
+    md-icon(ng-show="$ctrl.maximized") subdirectory_arrow_right
+    md-icon(ng-show="!$ctrl.maximized") import_contacts
+      md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") References
+    span(flex, ng-show="$ctrl.maximized") References
+  
+
+    //- div(flex, layout='column')
+    //-   md-subheader.bread-crumbs
+    //-     ui-breadcrumbs(displayname-property="data.displayName", abstract-proxy-property="data.breadcrumbProxy", template-url="uiBreadcrumbs/uiBreadcrumbs.tpl.html")
+    //-     | {{data}}
+      //- div(ui-view="", layout="row", flex)

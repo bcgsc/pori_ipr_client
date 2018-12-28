@@ -44,7 +44,7 @@ export default class UserSettingsService {
    * @throws {ErrorType} - thrown when updating the user settings fails
    */
   async update() {
-    const user = this.UserService.meObj;
+    const user = await this.UserService.me();
     user.settings = this.settingsObj; // Overwrite previous settings value
     const resp = await this.UserService.update(user);
     this.UserService.meObj = resp; // this line might not be needed
