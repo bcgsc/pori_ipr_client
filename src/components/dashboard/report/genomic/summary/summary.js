@@ -290,4 +290,46 @@ app.controller('controller.dashboard.report.genomic.summary',
             $mdToast.showSimple(error);
           });
       };
+      // Display a fullscreen help message
+      $scope.showHelpMessage = ($event) => {
+        $mdDialog.show(
+          $mdDialog.alert()
+            .clickOutsideToClose(true)
+            .title($event.title)
+            .htmlContent($event.content)
+            .ok('Got it!')
+            .targetEvent($event),
+        );
+      };
+      // Help message information
+      $scope.helpMessages = {
+        genomeStatus: {
+          title: 'Genome Status Help',
+          content: '',
+        },
+        tissueComparators: {
+          title: 'Tissue Comparators Help',
+          content: '',
+        },
+        subtyping: {
+          title: 'Subtyping Help',
+          content: '',
+        },
+        microbialContent: {
+          title: 'Microbial Content Help',
+          content: '',
+        },
+        mutationSignature: {
+          title: 'Mutation Signature Help',
+          content: 'This section includes information about a patients mutation signature analysis. Mutation signatures '
+                   + 'are characteristic combinations of mutation types arising from specific mutagenesis (mutation causing processes). '
+                   + 'Deciphering mutational signatures in cancer provides insight into the biological mechanisms involved '
+                   + 'in carcinogenesis (formation of cancer) and normal somatic mutagenesis. Mutational signatures have shown their '
+                   + 'applicability in cancer treatment and cancer prevention.',
+        },
+        mutationBurden: {
+          title: 'Mutation Burden Help',
+          content: '',
+        },
+      };
     }]);
