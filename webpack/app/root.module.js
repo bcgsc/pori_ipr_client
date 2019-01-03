@@ -1,8 +1,11 @@
 import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
+import 'angular-aria';
+import 'angular-animate';
+import ngSanitize from 'angular-sanitize';
 import ngMaterial from 'angular-material';
 import 'ngstorage';
-import 'angular-material/angular-material.css';
+import 'angular-material/angular-material.scss';
 import CommonModule from './common/common.module';
 import ComponentModule from './components/components.module';
 import RootComponent from './root.component';
@@ -13,6 +16,7 @@ import ProjectService from './services/project.service';
 import AclService from './services/acl.service';
 import ReportService from './services/report.service';
 import KeycloakService from './services/keycloak.service';
+import './root.scss';
 
 angular.module('root', [
   uiRouter,
@@ -20,6 +24,7 @@ angular.module('root', [
   ComponentModule,
   'ngStorage',
   ngMaterial,
+  ngSanitize,
 ]);
 
 export default angular.module('root')

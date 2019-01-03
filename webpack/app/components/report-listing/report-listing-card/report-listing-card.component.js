@@ -1,4 +1,5 @@
 import template from './report-listing-card.pug';
+import './report-listing-card.scss';
 
 export default {
   template: template,
@@ -8,7 +9,7 @@ export default {
     state: '@',
   },
   controller: class ReportListingCardComponent {
-    /* ngInject */
+    /* @ngInject */
     constructor($mdDialog, $mdToast, $state) {
       this.$mdDialog = $mdDialog;
       this.$mdToast = $mdToast;
@@ -44,8 +45,10 @@ export default {
      * @return {String} Name or username
      */
     getRoleUser(role, resp) {
-      const user = this.report.users.find({ role });
-
+      const user = _.find(this.report.users, { role: role });
+      if (!user) {
+        return null;
+      }
       switch (resp) {
         case 'name':
           return `${user.user.firstName} ${user.user.lastName}`;

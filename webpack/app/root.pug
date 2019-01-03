@@ -1,5 +1,5 @@
 div.root
   div(ui-view="navbar")
-  div(layout="row")
-    div(ui-view="sidebar")
-    div(ui-view)
+  div(layout="row", flex).container
+    div(ui-view="sidebar" layout="column")
+    div(ui-view, flex).content

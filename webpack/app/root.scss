@@ -1,0 +1,22 @@
+sidebar {
+  height: 100%;
+}
+
+root { 
+  height: 100%;
+  div.root {
+    height: 100%;
+    div.container {
+      height: calc(100% - 64px);
+    }
+  }
+}
+
+html body {
+  height: 100%;
+}
+
+md-content {
+   height: 100%;
+   overflow: auto;
+}

@@ -1,12 +1,14 @@
 import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
 import DashboardModule from './dashboard/dashboard.module';
+import GenomicModule from './genomic/genomic.module';
 import './report-listing.scss';
 
 const ReportListingModule = angular
   .module('reportlisting', [
     uiRouter,
     DashboardModule,
+    GenomicModule,
   ])
   .config(($stateProvider) => {
     'ngInject';

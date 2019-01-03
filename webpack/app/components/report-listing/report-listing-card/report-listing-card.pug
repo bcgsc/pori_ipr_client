@@ -1,47 +1,47 @@
-div(ng-if="report.patientInformation.caseType.toLowerCase() === 'pediatric'").pediatric_flag
-    span Pediatric
+div(ng-if="$ctrl.report.patientInformation.caseType.toLowerCase() === 'pediatric'").pediatric_flag
+  span Pediatric
 div.header
-    h1(layout="row")
-        span(flex, ng-if="report.type === 'genomic'", ui-sref="dashboard.reports.pog.report.genomic.summary({POG: pog.POGID, analysis_report: report.ident})").clickable {{pog.POGID}}
-        span(flex, ng-if="report.type === 'probe'", ui-sref="dashboard.reports.pog.report.probe.summary({POG: pog.POGID, analysis_report: report.ident})").clickable {{pog.POGID}}
-        span(layout="row").text-small
-            ipr-report-state(state="report.state")
-    
-    div(layout="row").subheader
-        span(flex) {{report.patientInformation.tumourType}}
-        span
-            span Report:
-            span {{report.ident}}
+  h1(layout="row")
+    span(flex, ng-if="$ctrl.report.type === 'genomic'", ui-sref="dashboard.reports.pog.report.genomic.summary({POG: $ctrl.pog.POGID, analysis_report: $ctrl.report.ident})").clickable {{$ctrl.pog.POGID}}
+    span(flex, ng-if="$ctrl.report.type === 'probe'", ui-sref="dashboard.reports.pog.report.probe.summary({POG: $ctrl.pog.POGID, analysis_report: $ctrl.report.ident})").clickable {{$ctrl.pog.POGID}}
+    span(layout="row").text-small
+      ipr-report-state(state="$ctrl.report.state")
+  
+  div(layout="row").subheader
+    span(flex) {{$ctrl.report.patientInformation.tumourType}}
+    span
+      span Report:
+      span {{$ctrl.report.ident}}
 
 div(layout="row").details
-    div(flex)
-        span Biopsy
-        span {{report.analysis.analysis_biopsy || 'N/A'}}
-    div.clickable {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
-        md-tooltip {{ report.createdAt | amDateFormat: 'YYYY-MM-DD HH:mm:ss' }}
+  div(flex)
+    span Biopsy
+    span {{$ctrl.report.analysis.analysis_biopsy || 'N/A'}}
+  div.clickable {{$ctrl.report.createdAt | date: 'yyyy-MM-dd'}}
+    md-tooltip {{ $ctrl.report.createdAt | date: 'yyyy-MM-dd hh:mm:ss' }}
 
 div(layout="row").details
-    div(flex)
-        span Version
-        span {{report.reportVersion}}
-    div(flex-md=100, ng-if="report.type === 'genomic'")
-        span Ploidy
-        span {{getPloidy()}}
-    
+  div(flex)
+    span Version
+    span {{$ctrl.report.reportVersion}}
+  div(flex-md=100, ng-if="$ctrl.report.type === 'genomic'")
+    span Ploidy
+    span {{$ctrl.getPloidy()}}
+  
 
-div(layout="row", ng-if="report.type === 'genomic'").details
-    div(flex, flex-md=100)
-        span TC
-        span(ng-if="getTumourContent() !== -1", ng-class="{low: getTumourContent() < 40, clickable: getTumourContent() < 40}") {{getTumourContent()}}%
-            md-tooltip(ng-if="getTumourContent() < 40") Low tumour content
-        span(ng-if="getTumourContent() === -1") N/A
+div(layout="row", ng-if="$ctrl.report.type === 'genomic'").details
+  div(flex, flex-md=100)
+    span TC
+    span(ng-if="$ctrl.getTumourContent() !== -1", ng-class="{low: $ctrl.getTumourContent() < 40, clickable: $ctrl.getTumourContent() < 40}") {{$ctrl.getTumourContent()}}%
+      md-tooltip(ng-if="$ctrl.getTumourContent() < 40") Low tumour content
+    span(ng-if="$ctrl.getTumourContent() === -1") N/A
 
-hr(ng-if="report.type === 'genomic'")
+hr(ng-if="$ctrl.report.type === 'genomic'")
 
-div(layout="row", layout-md="column", ng-if="report.type === 'genomic'").details
-    div(flex, flex-md=100)
-        span Bioinformatics
-        span {{getRoleUser('bioinformatician', 'name') || 'N/A'}}
-    div(flex-md=100)
-        span Analyst
-        span {{getRoleUser('analyst', 'name') || 'N/A'}}
+div(layout="row", layout-md="column", ng-if="$ctrl.report.type === 'genomic'").details
+  div(flex, flex-md=100)
+    span Bioinformatics
+    span {{$ctrl.getRoleUser('bioinformatician', 'name') || 'N/A'}}
+  div(flex-md=100)
+    span Analyst
+    span {{$ctrl.getRoleUser('analyst', 'name') || 'N/A'}}
