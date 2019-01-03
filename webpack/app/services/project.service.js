@@ -1,7 +1,7 @@
 /**
  * Project service for API calls
  */
-export default class ProjectService {
+class ProjectService {
   /* @ngInject */
   constructor($http) {
     this.$http = $http;
@@ -100,3 +100,5 @@ export default class ProjectService {
     return resp.data;
   }
 }
+
+export default ProjectService;

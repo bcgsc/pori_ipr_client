@@ -1,4 +1,4 @@
-export default class AclService {
+class AclService {
   /* @ngInject */
   constructor(UserService, PogService) {
     this.UserService = UserService;
@@ -171,3 +171,5 @@ export default class AclService {
     return this.inGroup('clinician') || this.inGroup('collaborator');
   }
 }
+
+export default AclService;

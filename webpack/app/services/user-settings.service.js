@@ -1,7 +1,7 @@
 /**
  * User settings service
  */
-export default class UserSettingsService {
+class UserSettingsService {
   /* @ngInject */
   constructor(UserService) {
     this.UserService = UserService;
@@ -51,3 +51,5 @@ export default class UserSettingsService {
     return this.UserService.meObj;
   }
 }
+
+export default UserSettingsService;

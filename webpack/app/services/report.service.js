@@ -1,4 +1,4 @@
-export default class ReportService {
+class ReportService {
   /* @ngInject */
   constructor($http) {
     this.$http = $http;
@@ -88,3 +88,5 @@ export default class ReportService {
     return resp.data;
   } // TODO: Differenciate between this member and getReport (was $report.pog().get())
 }
+
+export default ReportService;

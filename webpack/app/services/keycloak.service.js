@@ -1,6 +1,6 @@
 import Keycloak from 'keycloak-js';
 
-export default class KeycloakService {
+class KeycloakService {
   /* @ngInject */
   constructor($localStorage, $state, $http) {
     this.$localStorage = $localStorage;
@@ -55,3 +55,5 @@ export default class KeycloakService {
     }
   }
 }
+
+export default KeycloakService;

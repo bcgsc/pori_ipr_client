@@ -4,7 +4,7 @@
  * @param {*} $http {@link https://docs.angularjs.org/api/ng/service/$http}
  * @return {Object} $user service object
  */
-export default class UserService {
+class UserService {
   /* @ngInject */
   constructor($http) {
     this.$http = $http;
@@ -88,3 +88,5 @@ export default class UserService {
     return resp.data;
   }
 }
+
+export default UserService;

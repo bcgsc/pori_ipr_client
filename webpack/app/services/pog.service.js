@@ -1,7 +1,7 @@
 /**
  * Pog service for API calls
  */
-export default class PogService {
+class PogService {
   /* @ngInject */
   constructor($http) {
     this.$http = $http;
@@ -57,3 +57,5 @@ export default class PogService {
     this.pogs = {};
   }
 }
+
+export default PogService;
