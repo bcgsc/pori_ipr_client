@@ -297,7 +297,7 @@ app.controller('controller.dashboard.report.genomic.summary',
             .clickOutsideToClose(true)
             .title($event.title)
             .htmlContent($event.content)
-            .ok('Got it!')
+            .ok('Close')
             .targetEvent($event),
         );
       };
