@@ -1,10 +1,9 @@
 const path = require('path');
 const webpack = require('webpack');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 module.exports = {
   module: {
@@ -44,13 +43,6 @@ module.exports = {
             exclude: /node_modules/,
             use: [{
               loader: 'babel-loader',
-              options: {
-                babelrc: false,
-                presets: [['@babel/preset-env', {
-                  useBuiltIns: 'usage',
-                }]],
-                plugins: ['angularjs-annotate'],
-              },
             }],
           },
           {
@@ -78,8 +70,8 @@ module.exports = {
       flatten: true,
     }]),
     new webpack.ProvidePlugin({
-      '_': 'lodash',
-      'CONFIG': path.resolve(__dirname, '../env.json'),
+      _: 'lodash',
+      CONFIG: path.resolve(__dirname, '../env.json'),
     }),
     new webpack.HotModuleReplacementPlugin(),
     // new BundleAnalyzerPlugin(),
