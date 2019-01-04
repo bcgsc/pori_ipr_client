@@ -305,51 +305,60 @@ app.controller('controller.dashboard.report.genomic.summary',
       $scope.helpMessages = {
         genomeStatus: {
           title: 'Genome Status Help',
-          content: 'Tumour content and ploidy are determined based on expert review of copy number and allelic ratios'
-                   + ' observed across all chromosomes in the tumour.',
+          content: `Tumour content and ploidy are determined based on expert review of 
+                    copy number and allelic ratios observed across all chromosomes in the tumour.`,
         },
         tissueComparators: {
           title: 'Tissue Comparators Help',
-          content: 'The most appropriate normal tissue and tumour tissues are chosen for expression comparisons based on the'
-                   + ' tumour type and observed correlation with tissue data sets. If no appropriate tissue comparator is'
-                   + ' available, for instance for rare tumours, an average across all tissues is used. Fold change in expression'
-                   + ' is calculated compared to the normal tissue, and percentile expression is calculated compared to all'
-                   + ' tumour samples of that disease type. Outlier expression refers to genes with very high or very low '
-                   + 'expression compared to what is seen in other cancers of that type.',
+          content: `The most appropriate normal tissue and tumour tissues are chosen for 
+                    expression comparisons based on the tumour type and observed correlation
+                    with tissue data sets. If no appropriate tissue comparator is available,
+                    for instance for rare tumours, an average across all tissues is used. Fold
+                    change in expression is calculated compared to the normal tissue, and
+                    percentile expression is calculated compared to all tumour samples of that
+                    disease type. Outlier expression refers to genes with very high or very low
+                    expression compared to what is seen in other cancers of that type.`,
         },
         subtyping: {
           title: 'Subtyping Help',
-          content: 'Recent advances in genome-wide profiling provide an opportunity to investigate global molecular changes'
-                   + ' during the development and progression of cancer. Molecular subtyping is used to categorize cancer into'
-                   + ' homogeneous groups that are considered to harbor similar molecular and clinical characteristics.'
-                   + ' Furthermore, this has helped researchers to identify both actionable targets for drug design as well as'
-                   + ' biomarkers for response prediction.',
+          content: `Recent advances in genome-wide profiling provide an opportunity to investigate
+                    global molecular changes during the development and progression of cancer.
+                    Molecular subtyping is used to categorize cancer into homogeneous groups that
+                    are considered to harbor similar molecular and clinical characteristics.
+                    Furthermore, this has helped researchers to identify both actionable targets
+                    for drug design as well as biomarkers for response prediction.`,
         },
         microbialContent: {
           title: 'Microbial Content Help',
-          content: 'This section includes information about a patients microbial content analysis. Microbial content analysis'
-                   + ' is used because bacterial carcinogenesis have become increasingly important as a possible means of'
-                   + ' cancer prevention. This includes the analysis of colonies of bacteria on the patient to see if they'
-                   + ' influence/have an effect or are causing a patients cancer. Sequences are compared to databases of'
-                   + ' viral, bacterial and fungal sequences in addition to the human genome. The microbial species is reported'
-                   + ' if observed levels are suggestive of microbial presence in the tumour sample. Specific viral integration'
-                   + ' sites are reported if identified in genomic DNA sequence.'
+          content: `This section includes information about a patients microbial content analysis.
+                    Microbial content analysis is used because bacterial carcinogenesis have
+                    become increasingly important as a possible means of cancer prevention. This
+                    includes the analysis of colonies of bacteria on the patient to see if they
+                    influence/have an effect or are causing a patients cancer. Sequences are
+                    compared to databases of viral, bacterial and fungal sequences in addition
+                    to the human genome. The microbial species is reported if observed levels are
+                    suggestive of microbial presence in the tumour sample. Specific viral
+                    integration sites are reported if identified in genomic DNA sequence.`
           ,
         },
         mutationSignature: {
           title: 'Mutation Signature Help',
-          content: 'This section includes information about a patients mutation signature analysis. Mutation signatures '
-                   + 'are characteristic combinations of mutation types arising from specific mutagenesis (mutation causing processes). '
-                   + 'Deciphering mutational signatures in cancer provides insight into the biological mechanisms involved '
-                   + 'in carcinogenesis (formation of cancer) and normal somatic mutagenesis. Mutational signatures have shown their '
-                   + 'applicability in cancer treatment and cancer prevention.',
+          content: `This section includes information about a patients mutation signature analysis.
+                    Mutation signatures are characteristic combinations of mutation types arising
+                    from specific mutagenesis (mutation causing processes). Deciphering mutational
+                    signatures in cancer provides insight into the biological mechanisms involved
+                    in carcinogenesis (formation of cancer) and normal somatic mutagenesis.
+                    Mutational signatures have shown their applicability in cancer treatment and
+                    cancer prevention.`,
         },
         mutationBurden: {
           title: 'Mutation Burden Help',
-          content: 'Mutational burden measures the quantity of mutations found in a tumour. The number of protein coding '
-                   + 'alterations of each type, including both known and novel events, are totaled and compared to other tumours'
-                   + ' of a similar type. For SNVs and indels, this includes data from TCGA, while for structural variants,'
-                   + ' comparisons are only made among POG samples due to differences in how these variants are identified in TCGA.',
+          content: `Mutational burden measures the quantity of mutations found in a tumour.
+                    The number of protein coding alterations of each type, including both known and
+                    novel events, are totaled and compared to other tumours of a similar type. For
+                    SNVs and indels, this includes data from TCGA, while for structural variants,
+                    comparisons are only made among POG samples due to differences in how these
+                    variants are identified in TCGA.`,
         },
       };
     }]);
