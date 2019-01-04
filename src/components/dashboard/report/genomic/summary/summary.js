@@ -291,12 +291,12 @@ app.controller('controller.dashboard.report.genomic.summary',
           });
       };
       // Display a fullscreen help message
-      $scope.showHelpMessage = ($event) => {
+      $scope.showHelpMessage = ($event, message) => {
         $mdDialog.show(
           $mdDialog.alert()
             .clickOutsideToClose(true)
-            .title($event.title)
-            .htmlContent($event.content)
+            .title(message.title)
+            .htmlContent(message.content)
             .ok('Close')
             .targetEvent($event),
         );
