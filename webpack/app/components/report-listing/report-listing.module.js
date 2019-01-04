@@ -2,6 +2,7 @@ import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
 import DashboardModule from './dashboard/dashboard.module';
 import GenomicModule from './genomic/genomic.module';
+import ProbeModule from './probe/probe.module';
 import './report-listing.scss';
 
 const ReportListingModule = angular
@@ -9,6 +10,7 @@ const ReportListingModule = angular
     uiRouter,
     DashboardModule,
     GenomicModule,
+    ProbeModule,
   ])
   .config(($stateProvider) => {
     'ngInject';

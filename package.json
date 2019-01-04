@@ -15,9 +15,9 @@
     "start:dev": "webpack-dev-server --mode development --config ./webpack/webpack.config.js"
   },
   "devDependencies": {
-    "@uirouter/visualizer": "~6.0.2",
     "@babel/core": "~7.1.6",
     "@babel/preset-env": "~7.1.6",
+    "@uirouter/visualizer": "~6.0.2",
     "apply-loader": "~2.0.0",
     "babel-loader": "~8.0.4",
     "babel-plugin-angularjs-annotate": "~0.9.0",

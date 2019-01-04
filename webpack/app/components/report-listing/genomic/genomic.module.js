@@ -1,14 +1,16 @@
 import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
 import GenomicComponent from './genomic.component';
-import ReportListingCardModule from '../report-listing-card/report-listing-card.module';
-import ReportState from '../report-state/report-state.module';
+import ReportListingCardModule from '../../../common/report-listing-card/report-listing-card.module';
+import ReportState from '../../../common/report-state/report-state.module';
+import PaginateModule from '../../../common/paginate/paginate.module';
 import './genomic.scss';
 
 angular.module('genomic', [
   uiRouter,
   ReportListingCardModule,
   ReportState,
+  PaginateModule,
 ]);
 
 export default angular.module('genomic')

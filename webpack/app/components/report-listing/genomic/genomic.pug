@@ -85,5 +85,4 @@ md-content(flex, layout="column", ng-if="$ctrl.isExternalMode").md-padding.biops
         md-tooltip(md-direction="right") About Genomic Reports
 
   div(layout="column").biopsies
-
-    //- ipr-report-table(reports="reports", clinician="true", pagination="pagination", type="'genomic'")
+    report-table(reports="$ctrl.reports", clinician="true", pagination="$ctrl.pagination", type="'genomic'")
