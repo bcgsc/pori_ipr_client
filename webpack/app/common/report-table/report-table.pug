@@ -34,8 +34,8 @@ div(layout="column")
           span No Reports found on IPR
       tr(ng-repeat="report in $ctrl.reports", ng-hide="$ctrl.loading")
         td
-          span(ui-sref="dashboard.reports.pog.report.genomic.summary({POG: report.pog.POGID, analysis_report: report.ident})", ng-if="$ctrl.type == 'genomic'").link {{report.patientInformation.POGID}}
-          span(ui-sref="dashboard.reports.pog.report.probe.summary({POG: report.pog.POGID, analysis_report: report.ident})", ng-if="$ctrl.type == 'probe'").link {{report.patientInformation.POGID}}
+          span(ui-sref="root.reportlisting.pog.report.genomic.summary({POG: report.pog.POGID, analysis_report: report.ident})", ng-if="$ctrl.type == 'genomic'").link {{report.patientInformation.POGID}}
+          span(ui-sref="root.reportlisting.pog.report.probe.summary({POG: report.pog.POGID, analysis_report: report.ident})", ng-if="$ctrl.type == 'probe'").link {{report.patientInformation.POGID}}
         td {{report.analysis.pog.alternate_identifier || 'N/A'}}
         td {{report.analysis.analysis_biopsy || 'N/A'}}
         td {{report.patientInformation.tumourType}}
