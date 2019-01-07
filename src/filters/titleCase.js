@@ -13,4 +13,4 @@ const titleCase = () => {
 
 angular
   .module('bcgscIPR')
-  .filter(titleCase);
+  .filter('titleCase', titleCase);

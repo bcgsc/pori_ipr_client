@@ -2,7 +2,7 @@ div(layout="column")
     table.material-table
         thead
             tr
-                th(colspan=6) {{type | titlecase}} Reports
+                th(colspan=6) {{type | titleCase}} Reports
                 th(colspan=6).button
                     div(layout="row", layout-align="end start")
                         form(ng-submit="search()", novalidate, layout="row", flex, ng-show="showSearch")

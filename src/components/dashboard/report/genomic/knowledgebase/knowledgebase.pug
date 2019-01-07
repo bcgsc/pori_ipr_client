@@ -27,7 +27,7 @@ section.detailedGenomicAnalysis
                 md-button(ng-click="showAlterations()").accent.md-raised View Characterized Alterations
 
         div(ng-repeat="(alteration, genes) in ::alterations")
-            h3(ng-if="alteration !== 'unknown' && alteration !== 'novel' && showCharacterizedAlterations").title {{alteration | titlecase}} Alterations
+            h3(ng-if="alteration !== 'unknown' && alteration !== 'novel' && showCharacterizedAlterations").title {{alteration | titleCase}} Alterations
             h3(ng-if="alteration === 'unknown'").title Uncharacterized Alterations
             h3(ng-if="alteration === 'novel'").title Novel Alterations
 
