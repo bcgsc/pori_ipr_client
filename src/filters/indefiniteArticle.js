@@ -10,4 +10,4 @@ const indefiniteArticle = () => {
 
 angular
   .module('bcgscIPR')
-  .filter(indefiniteArticle);
+  .filter('indefiniteArticle', indefiniteArticle);

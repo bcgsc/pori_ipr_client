@@ -10,4 +10,4 @@ const capitalize = () => {
 
 angular
   .module('bcgscIPR')
-  .filter(capitalize);
+  .filter('capitalize', capitalize);

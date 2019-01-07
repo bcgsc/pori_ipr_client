@@ -1,4 +1,4 @@
-app.directive("iprPogRole", ['$q', '_', '$mdDialog', '$mdToast', 'indefiniteArticleFilter', ($q, _, $mdDialog, $mdToast, indefiniteArticleFilter) => {
+angular.module('bcgscIPR').directive("iprPogRole", ['$q', '_', '$mdDialog', '$mdToast', 'indefiniteArticleFilter', ($q, _, $mdDialog, $mdToast, indefiniteArticleFilter) => {
 
 
   return {

@@ -43,7 +43,7 @@ app.controller('controller.dashboard.report.genomic.analystComments',
       clickOutToClose: false,
       controller: ['$q', '_', '$scope', '$mdDialog', '$timeout', 'api.summary.analystComments', ($q, _, scope, $mdDialog, $timeout, $comments) => {
         
-        scope.analystComments = analystComments;
+        if (analystComments) scope.analystComments = analystComments;
 
         // Cancel Dialog
         scope.cancel = () => {
