@@ -12,7 +12,10 @@
   "scripts": {
     "cypress:open": "cypress open",
     "build": "webpack --mode development --config ./webpack/webpack.config.js",
-    "start:dev": "webpack-dev-server --mode development --config ./webpack/webpack.config.js"
+    "start:local": "webpack-dev-server --config ./webpack/webpack.local.js",
+    "start:dev": "webpack-dev-server --config ./webpack/webpack.dev.js",
+    "start:prod": "webpack-dev-server --config ./webpack/webpack.prod.js",
+    "start:test": "webpack-dev-server --config ./webpack/webpack.test.js"
   },
   "devDependencies": {
     "@babel/core": "~7.1.6",
@@ -42,7 +45,8 @@
     "webpack": "~4.26.1",
     "webpack-bundle-analyzer": "~3.0.3",
     "webpack-cli": "~3.1.2",
-    "webpack-dev-server": "~3.1.10"
+    "webpack-dev-server": "~3.1.10",
+    "webpack-merge": "~4.2.1"
   },
   "dependencies": {
     "@babel/polyfill": "~7.0.0",

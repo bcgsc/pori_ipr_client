@@ -8,7 +8,7 @@ class UserService {
   /* @ngInject */
   constructor($http) {
     this.$http = $http;
-    this.api = `${CONFIG['jdavies-local'].ENDPOINTS.API}/user`;
+    this.api = `${CONFIG.ENDPOINTS.API}/user`;
     this.meObj = {};
   }
   
