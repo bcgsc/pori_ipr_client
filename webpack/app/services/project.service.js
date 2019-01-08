@@ -5,7 +5,7 @@ class ProjectService {
   /* @ngInject */
   constructor($http) {
     this.$http = $http;
-    this.api = `${CONFIG['jdavies-local'].ENDPOINTS.API}/project`;
+    this.api = `${CONFIG.ENDPOINTS.API}/project`;
   }
 
   /**

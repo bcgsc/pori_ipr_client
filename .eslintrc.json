@@ -6,9 +6,6 @@
     "cypress/globals": true
   },
   "parserOptions": {
-    "ecmaFeatures": {
-      "jsx": true
-    },
     "sourceType": "module"
   },
   "globals": {

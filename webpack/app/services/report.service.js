@@ -2,7 +2,7 @@ class ReportService {
   /* @ngInject */
   constructor($http) {
     this.$http = $http;
-    this.api = CONFIG['jdavies-local'].ENDPOINTS.API;
+    this.api = CONFIG.ENDPOINTS.API;
   }
 
   /**

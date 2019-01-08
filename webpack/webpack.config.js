@@ -71,7 +71,6 @@ module.exports = {
     }]),
     new webpack.ProvidePlugin({
       _: 'lodash',
-      CONFIG: path.resolve(__dirname, '../env.json'),
     }),
     new webpack.HotModuleReplacementPlugin(),
     // new BundleAnalyzerPlugin(),
