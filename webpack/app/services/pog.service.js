@@ -5,7 +5,7 @@ class PogService {
   /* @ngInject */
   constructor($http) {
     this.$http = $http;
-    this.api = `${CONFIG['jdavies-local'].ENDPOINTS.API}/POG`;
+    this.api = `${CONFIG.ENDPOINTS.API}/POG`;
     this.pogs = [];
   }
   

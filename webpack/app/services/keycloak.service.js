@@ -7,9 +7,9 @@ class KeycloakService {
     this.$state = $state;
     this.$http = $http;
     this.keycloak = Keycloak({
-      'realm': CONFIG['jdavies-local'].SSO.REALM,
+      'realm': CONFIG.SSO.REALM,
       'clientId': 'IPR',
-      'url': CONFIG['jdavies-local'].ENDPOINTS.KEYCLOAK,
+      'url': CONFIG.ENDPOINTS.KEYCLOAK,
     });
   }
 
@@ -19,7 +19,7 @@ class KeycloakService {
    */
   async setToken() {
     await this.keycloak.init({ onLoad: 'login-required', promiseType: 'native' });
-    this.$localStorage[CONFIG['jdavies-local'].STORAGE.KEYCLOAK] = this.keycloak.token;
+    this.$localStorage[CONFIG.STORAGE.KEYCLOAK] = this.keycloak.token;
     return this.keycloak.token;
   }
 
@@ -29,7 +29,7 @@ class KeycloakService {
    */
   async getToken() {
     try {
-      return this.$localStorage[CONFIG['jdavies-local'].STORAGE.KEYCLOAK];
+      return this.$localStorage[CONFIG.STORAGE.KEYCLOAK];
     } catch (err) {
       return false;
     }
@@ -42,13 +42,13 @@ class KeycloakService {
   async logout() {
     try {
       await this.keycloak.init({ promiseType: 'native' });
-      delete this.$localStorage[CONFIG['jdavies-local'].STORAGE.KEYCLOAK];
+      delete this.$localStorage[CONFIG.STORAGE.KEYCLOAK];
       const resp = await this.keycloak.logout({
         redirectUri: this.$state.href('public.login', {}, { absolute: true }),
       });
       return resp;
     } catch (err) {
-      delete this.$localStorage[CONFIG['jdavies-local'].STORAGE.KEYCLOAK];
+      delete this.$localStorage[CONFIG.STORAGE.KEYCLOAK];
       delete this.$http.headers.Authorization;
       this.$state.go('public.login');
       return err;
