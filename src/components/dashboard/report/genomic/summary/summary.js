@@ -310,14 +310,12 @@ app.controller('controller.dashboard.report.genomic.summary',
         },
         tissueComparators: {
           title: 'Tissue Comparators Help',
-          content: `The most appropriate normal tissue and tumour tissues are chosen for 
+          content: `The most appropriate normal tissue and tumour tissue types are chosen for 
                     expression comparisons based on the tumour type and observed correlation
                     with tissue data sets. If no appropriate tissue comparator is available,
-                    for instance for rare tumours, an average across all tissues is used. Fold
-                    change in expression is calculated compared to the normal tissue, and
-                    percentile expression is calculated compared to all tumour samples of that
-                    disease type. Outlier expression refers to genes with very high or very low
-                    expression compared to what is seen in other cancers of that type.`,
+                    for instance for rare tumours, an average across all tissues is used. Outlier
+                    expression refers to genes with very high or very low expression compared to
+                    what is seen within the cohort(s) selected as comparator(s).`,
         },
         subtyping: {
           title: 'Subtyping Help',
@@ -331,14 +329,13 @@ app.controller('controller.dashboard.report.genomic.summary',
         microbialContent: {
           title: 'Microbial Content Help',
           content: `This section includes information about a patients microbial content analysis.
-                    Microbial content analysis is used because bacterial carcinogenesis have
-                    become increasingly important as a possible means of cancer prevention. This
-                    includes the analysis of colonies of bacteria on the patient to see if they
-                    influence/have an effect or are causing a patients cancer. Sequences are
-                    compared to databases of viral, bacterial and fungal sequences in addition
-                    to the human genome. The microbial species is reported if observed levels are
-                    suggestive of microbial presence in the tumour sample. Specific viral
-                    integration sites are reported if identified in genomic DNA sequence.`
+                    <br><br>When identified, microbial analysis, is often useful is understanding
+                    the biological mechanisms responsible for driving the formation of a particular
+                    tumour.<br><br>Sequences observed with the tumour sample are compared to 
+                    databases of viral, bacterial and fungal sequences in addition to the human
+                    genome. The species is reported if observed levels are suggestive of microbial
+                    presence in the tumour sample. Specific viral integration sites are reported
+                    if identified in genomic DNA sequence.`
           ,
         },
         mutationSignature: {
@@ -355,10 +352,7 @@ app.controller('controller.dashboard.report.genomic.summary',
           title: 'Mutation Burden Help',
           content: `Mutational burden measures the quantity of mutations found in a tumour.
                     The number of protein coding alterations of each type, including both known and
-                    novel events, are totaled and compared to other tumours of a similar type. For
-                    SNVs and indels, this includes data from TCGA, while for structural variants,
-                    comparisons are only made among POG samples due to differences in how these
-                    variants are identified in TCGA.`,
+                    novel events, are totaled and compared to other tumours of a similar type.`,
         },
       };
     }]);
