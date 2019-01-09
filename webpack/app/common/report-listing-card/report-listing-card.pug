@@ -2,8 +2,8 @@ div(ng-if="$ctrl.report.patientInformation.caseType.toLowerCase() === 'pediatric
   span Pediatric
 div.header
   h1(layout="row")
-    span(flex, ng-if="$ctrl.report.type === 'genomic'", ui-sref="dashboard.reports.pog.report.genomic.summary({POG: $ctrl.pog.POGID, analysis_report: $ctrl.report.ident})").clickable {{$ctrl.pog.POGID}}
-    span(flex, ng-if="$ctrl.report.type === 'probe'", ui-sref="dashboard.reports.pog.report.probe.summary({POG: $ctrl.pog.POGID, analysis_report: $ctrl.report.ident})").clickable {{$ctrl.pog.POGID}}
+    span(flex, ng-if="$ctrl.report.type === 'genomic'", ui-sref="root.reportlisting.pog.genomic.summary({POG: $ctrl.pog.POGID, analysis_report: $ctrl.report.ident})").clickable {{$ctrl.pog.POGID}}
+    span(flex, ng-if="$ctrl.report.type === 'probe'", ui-sref="root.reportlisting.pog.probe.summary({POG: $ctrl.pog.POGID, analysis_report: $ctrl.report.ident})").clickable {{$ctrl.pog.POGID}}
     span(layout="row").text-small
       ipr-report-state(state="$ctrl.report.state")
   

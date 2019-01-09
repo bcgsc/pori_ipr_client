@@ -1,9 +1,11 @@
 import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
 import GenomicReportComponent from './genomic-report.component';
+import GenomicSummaryModule from './genomic-summary/genomic-summary.module';
 
 angular.module('genomic.report', [
   uiRouter,
+  GenomicSummaryModule,
 ]);
 
 export default angular.module('genomic.report')
@@ -14,6 +16,7 @@ export default angular.module('genomic.report')
     $stateProvider
       .state('root.reportlisting.pog.genomic', {
         url: '/genomic',
+        abstract: true,
         views: {
           '@': {
             component: 'genomicreport',

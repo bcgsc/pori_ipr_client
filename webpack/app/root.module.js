@@ -16,6 +16,8 @@ import ProjectService from './services/project.service';
 import AclService from './services/acl.service';
 import ReportService from './services/report.service';
 import KeycloakService from './services/keycloak.service';
+import TumourAnalysisService from './services/tumour-analysis.service';
+import PatientInformationService from './services/patient-information.service';
 import TitleCaseFilter from './filters/titlecase.filter';
 import './root.scss';
 
@@ -37,6 +39,8 @@ export default angular.module('root')
   .service('AclService', AclService)
   .service('ReportService', ReportService)
   .service('KeycloakService', KeycloakService)
+  .service('TumourAnalysisService', TumourAnalysisService)
+  .service('PatientInformationService', PatientInformationService)
   .filter('titlecase', TitleCaseFilter)
   .config(($stateProvider, $urlServiceProvider, $locationProvider) => {
     'ngInject';
