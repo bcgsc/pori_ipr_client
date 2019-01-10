@@ -15,6 +15,7 @@ class NavbarComponent {
 
   async $onInit() {
     this.user = await this.UserService.me();
+    this.config = CONFIG.ATTRS.name;
     this.maximized = await this.UserSettingsService.get('sideBarState');
     this.$scope.$digest();
   }
