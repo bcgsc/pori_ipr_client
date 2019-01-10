@@ -1,297 +1,329 @@
+import template from './genomic-summary.pug';
+
+const bindings = {
+  pog: '<',
+  report: '<',
+  genomicAlterations: '<',
+  variantCounts: '<',
+  genomicEvents: '<',
+  mutationSummary: '<',
+  probeTarget: '<',
+  mutationSignature: '<',
+  microbial: '<',
+};
+
 class GenomicSummary {
   /* @ngInject */
   constructor($state, $scope, PogService, TumourAnalysisService, PatientInformationService,
-    MutationSummaryService, GenomicAlterationsService, $mdDialog) {
-
+    MutationSummaryService, GenomicAlterationsService, $mdDialog, $mdToast) {
+      this.$state = $state;
+      this.$scope = $scope;
+      this.PogService = PogService;
+      this.TumourAnalysisService = TumourAnalysisService;
+      this.PatientInformationService = PatientInformationService;
+      this.MutationSummaryService = MutationSummaryService;
+      this.GenomicAlterationsService = GenomicAlterationsService;
+      this.$mdDialog = $mdDialog;
+      this.$mdToast = $mdToast;
   }
-  ['_', '$q', '$state', '$scope', 'api.pog', 'api.summary.tumourAnalysis', 'api.summary.patientInformation', 'api.summary.mutationSummary', 'api.summary.genomicAterationsIdentified', '$mdDialog', '$mdToast', 'pog', 'report', 'gai', 'get', 'ms', 'pt', 'vc', 'mutationSignature', 'microbial',
-      // Determine which interpreted prevalence value will be displayed
-      ms.snvPercentileCategory = (report.tumourAnalysis.diseaseExpressionComparator === 'average') ? ms.snvPercentileTCGACategory : ms.snvPercentileDiseaseCategory;
-      ms.indelPercentileCategory = (report.tumourAnalysis.diseaseExpressionComparator === 'average') ? ms.indelPercentileTCGACategory : ms.indelPercentileDiseaseCategory;
 
-      $scope.pog = pog;
-      $scope.report = report;
-      $scope.data = {
-        get: get,
-        ms: ms,
-        vc: vc,
-        pt: pt,
-        ta: report.tumourAnalysis,
-        pi: report.patientInformation,
-        microbial: microbial || { species: 'None', integrationSite: 'None' },
-      };
-      $scope.mutationSignature = mutationSignature;
-      $scope.mutationMask = null;
-      $scope.variantCounts = {
-        cnv: 0,
-        smallMutation: 0,
-        expressionOutlier: 0,
-        structuralVariant: 0,
-      };
+  $onInit() {
+    // Determine which interpreted prevalence value will be displayed
+    this.mutationSummary.snvPercentileCategory = this.report.tumourAnalysis.diseaseExpressionComparator === 'average'
+      ? ms.snvPercentileTCGACategory
+      : ms.snvPercentileDiseaseCategory;
+    this.mutationSummary.indelPercentileCategory = this.report.tumourAnalysis.diseaseExpressionComparator === 'average'
+      ? ms.indelPercentileTCGACategory
+      : ms.indelPercentileDiseaseCategory;
 
-      const variantCategory = (variant) => {
-        // Small Mutations
-        if (variant.geneVariant.match(/([A-z0-9]*)\s(\([pcg]\.[A-z]*[0-9]*[A-z_0-9>]*\*?\))/g)) {
-          variant.type = 'smallMutation';
-          return variant;
-        }
+    this.patientInformation = this.report.patientInformation;
+    this.tumourAnalysis = this.report.tumourAnalysis;
+    this.microbial = this.microbial || { species: 'None', integrationSite: 'None' };
+    this.mutationMask = null;
 
-        // Structural Variants
-        if (variant.geneVariant.match(/(([A-z0-9]*|\?)::([A-z0-9]*|\?)\s\(e([0-9]*|\?):e([0-9]*|\?)\))/g)) {
-          variant.type = 'structuralVariant';
-          return variant;
-        }
+    this.variantCounts = {
+      cnv: 0,
+      smallMutation: 0,
+      expressionOutlier: 0,
+      structuralVariant: 0,
+    };
+    this.geneVariants = this.processVariants(this.genomicAlterations);
+    this.genomicAlterations = _.sortBy(this.genomicAlterations, 'type');
+  }
 
-        // Expression Outliers
-        if (variant.geneVariant.toLowerCase().indexOf('expression') !== -1) {
-          variant.type = 'expressionOutlier';
-          return variant;
-        }
+  // $scope.data = {
+  //   get: get,
+  //   ms: ms,
+  //   vc: vc,
+  //   pt: pt,
+  //   ta: report.tumourAnalysis,
+  //   pi: report.patientInformation,
+  //   microbial: microbial || { species: 'None', integrationSite: 'None' },
+  // };
+  
+  variantCategory(variant) {
+    // Small Mutations
+    if (variant.geneVariant.match(/([A-z0-9]*)\s(\([pcg]\.[A-z]*[0-9]*[A-z_0-9>]*\*?\))/g)) {
+      variant.type = 'smallMutation';
+      return variant;
+    }
+    // Structural Variants
+    if (variant.geneVariant.match(/(([A-z0-9]*|\?)::([A-z0-9]*|\?)\s\(e([0-9]*|\?):e([0-9]*|\?)\))/g)) {
+      variant.type = 'structuralVariant';
+      return variant;
+    }
+    // Expression Outliers
+    if (variant.geneVariant.toLowerCase().includes('expression')) {
+      variant.type = 'expressionOutlier';
+      return variant;
+    }
+    // Return CNV mutation
+    variant.type = 'cnv';
+    return variant;
+  }
 
-        // Return CNV mutation
-        variant.type = 'cnv';
-        return variant;
-      };
+  // Process variants and create chunks
+  processVariants(variants) {
+    const output = [];
 
-      // Process variants and create chunks
-      const processVariants = (variants) => {
-        const output = [];
+    // Reset counts
+    this.variantCounts = {
+      cnv: 0,
+      smallMutation: 0,
+      expressionOutlier: 0,
+      structuralVariant: 0,
+    };
 
-        // Reset counts
-        $scope.variantCounts = {
-          cnv: 0,
-          smallMutation: 0,
-          expressionOutlier: 0,
-          structuralVariant: 0,
+    variants.forEach((variant, k) => {
+      // Add processed Variant
+      output.push(this.variantCategory(variant));
+
+      // Update counts
+      if (!this.variantCounts[this.genomicAlterations[k].type]) {
+        this.variantCounts[this.genomicAlterations[k].type] = 0;
+      }
+      this.variantCounts[this.genomicAlterations[k].type] += 1;
+    });
+    return output;
+  }
+
+
+  setMutationMask(mask) {
+    if (this.mutationMask === mask) {
+      this.mutationMask = null;
+    } else {
+      this.mutationMask = mask;
+    }
+  }
+
+  mutationFilter(mutation) {
+    return (mutation.type === this.mutationMask || this.mutationMask === null);
+  };
+
+  // Update Tumour Analysis Details
+  updateTa($event) {
+    this.$mdDialog.show({
+      targetEvent: $event,
+      templateUrl: 'dashboard/report/genomic/summary/tumourAnalysis.edit.html',
+      clickOutToClose: false,
+      controller: ['scope', (scope) => {
+        scope.ta = this.data.ta;
+
+        scope.cancel = () => {
+          $mdDialog.cancel('Tumour analysis details were not updated');
         };
 
-        variants.forEach((variant, k) => {
-          // Add processed Variant
-          output.push(variantCategory(variant));
+        scope.update = (f) => {
+          // Check for valid inputs by touching each entry
+          if (f.$invalid) {
+            f.$setDirty();
+            angular.forEach(f.$error, (field) => {
+              angular.forEach(field, (errorField) => {
+                errorField.$setTouched();
+              });
+            });
+            return;
+          }
 
-          // Update counts
-          if (!$scope.variantCounts[gai[k].type]) $scope.variantCounts[gai[k].type] = 0;
-          $scope.variantCounts[gai[k].type] += 1;
-        });
+          // Send updated entry to API
+          $tumourAnalysis.update(pog.POGID, report.ident, scope.ta)
+            .then(() => {
+              $mdDialog.hide('Tumour analysis details have been successfully updated');
+            })
+            .catch((error) => {
+              $mdToast.showSimple(`Tumour analysis details were not updated due to an error: ${error}`);
+            });
+        }; // End update
+      }], // End controller
 
-        return output;
-      };
-      $scope.geneVariants = processVariants(gai);
-
-
-      $scope.setMutationMask = (mask) => {
-        if ($scope.mutationMask === mask) {
-          $scope.mutationMask = null;
-        } else {
-          $scope.mutationMask = mask;
-        }
-      };
-
-      $scope.mutationFilter = (mutation) => {
-        return (mutation.type === $scope.mutationMask || $scope.mutationMask === null);
-      };
-
-      // Update Tumour Analysis Details
-      $scope.updateTa = ($event) => {
-        $mdDialog.show({
-          targetEvent: $event,
-          templateUrl: 'dashboard/report/genomic/summary/tumourAnalysis.edit.html',
-          clickOutToClose: false,
-          controller: ['scope', (scope) => {
-            scope.ta = $scope.data.ta;
-
-            scope.cancel = () => {
-              $mdDialog.cancel('Tumour analysis details were not updated');
-            };
-
-            scope.update = (f) => {
-              // Check for valid inputs by touching each entry
-              if (f.$invalid) {
-                f.$setDirty();
-                angular.forEach(f.$error, (field) => {
-                  angular.forEach(field, (errorField) => {
-                    errorField.$setTouched();
-                  });
-                });
-                return;
-              }
-
-              // Send updated entry to API
-              $tumourAnalysis.update(pog.POGID, report.ident, scope.ta)
-                .then(() => {
-                  $mdDialog.hide('Tumour analysis details have been successfully updated');
-                })
-                .catch((error) => {
-                  $mdToast.showSimple(`Tumour analysis details were not updated due to an error: ${error}`);
-                });
-            }; // End update
-          }], // End controller
-
-        })
-          .then((outcome) => {
-            if (outcome) $mdToast.showSimple(outcome);
-          })
-          .catch((error) => {
-            $mdToast.showSimple(error);
-          });
-      }; // End edit tumour analysis
+    })
+      .then((outcome) => {
+        if (outcome) $mdToast.showSimple(outcome);
+      })
+      .catch((error) => {
+        $mdToast.showSimple(error);
+      });
+  } // End edit tumour analysis
 
 
-      // Update Mutation Signature Details
-      $scope.updateMs = ($event) => {
-        $mdDialog.show({
-          targetEvent: $event,
-          templateUrl: 'dashboard/report/genomic/summary/mutationSignature.edit.html',
-          clickOutToClose: false,
-          controller: ['scope', (scope) => {
-            scope.ta = angular.copy($scope.data.ta); //
-            scope.mutationSignature = $scope.mutationSignature; // Array of all computed signal correlations
+  // Update Mutation Signature Details
+  updateMs($event) {
+    this.$mdDialog.show({
+      targetEvent: $event,
+      templateUrl: 'dashboard/report/genomic/summary/mutationSignature.edit.html',
+      clickOutToClose: false,
+      controller: ['scope', (scope) => {
+        scope.ta = angular.copy(this.data.ta); //
+        scope.mutationSignature = this.mutationSignature; // Array of all computed signal correlations
 
-            scope.cancel = () => {
-              $mdDialog.cancel('Mutation signature details were not updated');
-            };
+        scope.cancel = () => {
+          $mdDialog.cancel('Mutation signature details were not updated');
+        };
 
-            scope.update = () => {
-              // Send updated entry to API
-              $tumourAnalysis.update($scope.pog.POGID, report.ident, scope.ta)
-                .then(() => {
-                  $mdDialog.hide({ message: 'Mutation signature details have been successfully updated', data: scope.ta });
-                })
-                .catch((error) => {
-                  $mdToast.showSimple(`Mutation signature details were not updated due to an error: ${error}`);
-                });
-            }; // End update
-          }], // End controller
-        })
-          .then((outcome) => {
-            if (outcome) $mdToast.showSimple(outcome.message);
-            $scope.data.ta = outcome.data;
-          })
-          .catch((error) => {
-            $mdToast.showSimple(error);
-          });
-      }; // End edit tumour analysis
+        scope.update = () => {
+          // Send updated entry to API
+          $tumourAnalysis.update(this.pog.POGID, report.ident, scope.ta)
+            .then(() => {
+              $mdDialog.hide({ message: 'Mutation signature details have been successfully updated', data: scope.ta });
+            })
+            .catch((error) => {
+              $mdToast.showSimple(`Mutation signature details were not updated due to an error: ${error}`);
+            });
+        }; // End update
+      }], // End controller
+    })
+      .then((outcome) => {
+        if (outcome) $mdToast.showSimple(outcome.message);
+        this.data.ta = outcome.data;
+      })
+      .catch((error) => {
+        $mdToast.showSimple(error);
+      });
+  } // End edit tumour analysis
 
-      // Update Patient Information
-      $scope.updatePatient = ($event) => {
-        $mdDialog.show({
-          targetEvent: $event,
-          templateUrl: 'dashboard/report/genomic/summary/patientInformation.edit.html',
-          clickOutToClose: false,
-          controller: ['scope', (scope) => {
-            scope.pi = angular.copy($scope.data.pi); //
+  // Update Patient Information
+  updatePatient($event) {
+    this.$mdDialog.show({
+      targetEvent: $event,
+      templateUrl: 'dashboard/report/genomic/summary/patientInformation.edit.html',
+      clickOutToClose: false,
+      controller: ['scope', (scope) => {
+        scope.pi = angular.copy(this.data.pi); //
 
-            scope.cancel = () => {
-              $mdDialog.cancel('Patient information was not updated');
-            };
-
-
-            scope.update = () => {
-              // Send updated entry to API
-              $patientInformation.update($scope.pog.POGID, scope.pi)
-                .then(() => {
-                  $mdDialog.hide({ message: 'Patient information has been successfully updated', data: scope.pi });
-                })
-                .catch((error) => {
-                  $mdToast.showSimple(`Patient information was not updated due to an error: ${error}`);
-                });
-            }; // End update
-          }], // End controller
-
-        })
-          .then((outcome) => {
-            if (outcome) $mdToast.showSimple(outcome.message);
-            $scope.data.pi = outcome.data;
-          })
-          .catch((error) => {
-            $mdToast.showSimple(error);
-          });
-      }; // End edit tumour analysis
+        scope.cancel = () => {
+          $mdDialog.cancel('Patient information was not updated');
+        };
 
 
-      $scope.data.gai = _.sortBy(gai, 'type');
+        scope.update = () => {
+          // Send updated entry to API
+          $patientInformation.update(this.pog.POGID, scope.pi)
+            .then(() => {
+              $mdDialog.hide({ message: 'Patient information has been successfully updated', data: scope.pi });
+            })
+            .catch((error) => {
+              $mdToast.showSimple(`Patient information was not updated due to an error: ${error}`);
+            });
+        }; // End update
+      }], // End controller
 
-      $scope.addAlteration = ($event) => {
-        $mdDialog.show({
-          targetEvent: $event,
-          templateUrl: 'dashboard/report/genomic/summary/alteration.add.html',
-          clickOutToClose: false,
-          controller: ['scope', (scope) => {
-            scope.cancel = () => {
-              $mdDialog.cancel('Alteration was not added');
-            };
-
-            // Perform Update/Change
-            scope.add = () => {
-              // Remove entry
-              $gai.create(pog.POGID, report.ident, scope.alteration)
-                .then((resp) => {
-                  // Add to array of alterations
-                  gai.push(resp);
-
-                  // Reprocess variants
-                  $scope.data.gai = processVariants(gai);
-                  $scope.data.gai = _.sortBy(gai, 'type');
-
-                  $mdDialog.hide({ status: true, message: 'Alteration has been successfully added' });
-                })
-                .catch((error) => {
-                  $mdDialog.hide({ status: false, message: `Alteration was not added due to an error: ${error}` });
-                });
-            }; // End update
-          }], // End controller
-        })
-          .then((outcome) => {
-            if (outcome) $mdToast.showSimple(outcome.message);
-          })
-          .catch((error) => {
-            $mdToast.showSimple(error);
-          });
-      };
-
-      $scope.removeAlteration = ($event, alteration) => {
-        const tempAlteration = angular.copy(alteration);
-
-        $mdDialog.show({
-          targetEvent: $event,
-          templateUrl: 'dashboard/report/genomic/summary/alteration.remove.html',
-          clickOutToClose: false,
-          controller: ['scope', (scope) => {
-            scope.alteration = alteration;
-
-            scope.cancel = () => {
-              $mdDialog.cancel('Alteration was not removed');
-            };
-
-            // Perform Update/Change
-            scope.update = (cascade) => {
-              // Remove entry
-              $gai.remove(pog.POGID, report.ident, alteration.ident, scope.comment, cascade)
-                .then(() => {
-                  $scope.data.gai = _.reject($scope.data.gai, (r) => { return (r.ident === alteration.ident); });
-                  gai = _.reject(gai, (r) => { return (r.ident === alteration.ident); });
+    })
+      .then((outcome) => {
+        if (outcome) $mdToast.showSimple(outcome.message);
+        this.data.pi = outcome.data;
+      })
+      .catch((error) => {
+        $mdToast.showSimple(error);
+      });
+  } // End edit tumour analysis
 
 
-                  // Remove from Get
-                  if (cascade) $scope.data.get = _.reject($scope.data.get, (e) => { return (e.genomicEvent === alteration.geneVariant); });
+  addAlteration($event) {
+    this.$mdDialog.show({
+      targetEvent: $event,
+      templateUrl: 'dashboard/report/genomic/summary/alteration.add.html',
+      clickOutToClose: false,
+      controller: ['scope', (scope) => {
+        scope.cancel = () => {
+          $mdDialog.cancel('Alteration was not added');
+        };
 
-                  // Subtract count
-                  $scope.variantCounts[tempAlteration.type] -= 1;
+        // Perform Update/Change
+        scope.add = () => {
+          // Remove entry
+          this.GenomicAlterationsService.create(pog.POGID, report.ident, scope.alteration)
+            .then((resp) => {
+              // Add to array of alterations
+              this.genomicAlterations.push(resp);
 
-                  $mdDialog.hide({ status: true, message: `Successfully removed the ${cascade ? 'alterations' : 'alteration'}` });
-                })
-                .catch((error) => {
-                  $mdDialog.hide({ status: true, message: `Unable to remove the ${cascade ? 'alterations' : 'alteration'} due to an error: ${error}` });
-                });
-            }; // End update
-          }], // End controller
+              // Reprocess variants
+              this.data.gai = processVariants(this.genomicAlterations);
+              this.data.gai = _.sortBy(gai, 'type');
 
-        })
-          .then((outcome) => {
-            if (outcome) $mdToast.showSimple(outcome.message);
-          })
-          .catch((error) => {
-            $mdToast.showSimple(error);
-          });
-      };
-    }]);
+              $mdDialog.hide({ status: true, message: 'Alteration has been successfully added' });
+            })
+            .catch((error) => {
+              $mdDialog.hide({ status: false, message: `Alteration was not added due to an error: ${error}` });
+            });
+        }; // End update
+      }], // End controller
+    })
+      .then((outcome) => {
+        if (outcome) $mdToast.showSimple(outcome.message);
+      })
+      .catch((error) => {
+        $mdToast.showSimple(error);
+      });
+  }
+
+  removeAlteration($event, alteration) {
+    const tempAlteration = angular.copy(alteration);
+
+    this.$mdDialog.show({
+      targetEvent: $event,
+      templateUrl: 'dashboard/report/genomic/summary/alteration.remove.html',
+      clickOutToClose: false,
+      controller: ['scope', (scope) => {
+        scope.alteration = alteration;
+
+        scope.cancel = () => {
+          $mdDialog.cancel('Alteration was not removed');
+        };
+
+        // Perform Update/Change
+        scope.update = (cascade) => {
+          // Remove entry
+          this.GenomicAlterationsService.remove(pog.POGID, report.ident, alteration.ident, scope.comment, cascade)
+            .then(() => {
+              this.data.gai = _.reject(this.data.gai, (r) => { return (r.ident === alteration.ident); });
+              this.genomicAlterations = _.reject(gai, (r) => { return (r.ident === alteration.ident); });
+
+
+              // Remove from Get
+              if (cascade) this.data.get = _.reject(this.data.get, (e) => { return (e.genomicEvent === alteration.geneVariant); });
+
+              // Subtract count
+              this.variantCounts[tempAlteration.type] -= 1;
+
+              $mdDialog.hide({ status: true, message: `Successfully removed the ${cascade ? 'alterations' : 'alteration'}` });
+            })
+            .catch((error) => {
+              $mdDialog.hide({ status: true, message: `Unable to remove the ${cascade ? 'alterations' : 'alteration'} due to an error: ${error}` });
+            });
+        }; // End update
+      }], // End controller
+    })
+      .then((outcome) => {
+        if (outcome) $mdToast.showSimple(outcome.message);
+      })
+      .catch((error) => {
+        $mdToast.showSimple(error);
+      });
+  }
+}
+
+export default {
+  template,
+  bindings,
+  controller: GenomicSummary,
+};

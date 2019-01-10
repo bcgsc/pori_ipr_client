@@ -18,6 +18,8 @@ import ReportService from './services/report.service';
 import KeycloakService from './services/keycloak.service';
 import TumourAnalysisService from './services/tumour-analysis.service';
 import PatientInformationService from './services/patient-information.service';
+import GenomicAlterationsService from './services/genomic-alterations.service';
+import GenomicEventsService from './services/genomic-events.service';
 import TitleCaseFilter from './filters/titlecase.filter';
 import './root.scss';
 
@@ -41,6 +43,8 @@ export default angular.module('root')
   .service('KeycloakService', KeycloakService)
   .service('TumourAnalysisService', TumourAnalysisService)
   .service('PatientInformationService', PatientInformationService)
+  .service('GenomicAlterationsService', GenomicAlterationsService)
+  .service('GenomicEventsService', GenomicEventsService)
   .filter('titlecase', TitleCaseFilter)
   .config(($stateProvider, $urlServiceProvider, $locationProvider) => {
     'ngInject';
