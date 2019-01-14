@@ -7,14 +7,14 @@ class VariantCountsService {
  
   /**
    * Get Variant Counts
-   * @param {String} POGID - PogID of requested resource, eg. POG129
-   * @param {Object} report - report object
+   * @param {String} pogID - PogID of requested resource, eg. POG129
+   * @param {String} report - report ident
    * @return {Promise} API reponse as promise
    * @throws {ErrorType} Thrown when API call fails
    */
-  async get(POGID, report) {
+  async get(pogID, report) {
     const resp = await this.$http.get(
-      `${this.api}/${POGID}/report/${report}/genomic/summary/variantCounts`,
+      `${this.api}/${pogID}/report/${report}/genomic/summary/variantCounts`,
     );
     return resp.data;
   }
@@ -22,16 +22,16 @@ class VariantCountsService {
 
   /**
    * Update Variant Counts
-   * @param {String} POGID - POGID, eg POG129
-   * @param {Object} report - report object
+   * @param {String} pogID - pogID, eg POG129
+   * @param {String} report - report ident
    * @param {Object} analysis - analysis object
    * @return {Promise} API response as promise
    * @throws {ErrorType} Thrown when API call fails
    */
-  async update(POGID, report, analysis) {
+  async update(pogID, report, analysis) {
     const resp = await this.$http.put(
-      `${this.api}/${POGID}/report/${report}/genomic/summary/variantCounts/`,
-      analysis
+      `${this.api}/${pogID}/report/${report}/genomic/summary/variantCounts/`,
+      analysis,
     );
     return resp.data;
   }

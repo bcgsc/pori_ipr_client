@@ -16,10 +16,15 @@ import ProjectService from './services/project.service';
 import AclService from './services/acl.service';
 import ReportService from './services/report.service';
 import KeycloakService from './services/keycloak.service';
-import TumourAnalysisService from './services/tumour-analysis.service';
-import PatientInformationService from './services/patient-information.service';
-import GenomicAlterationsService from './services/genomic-alterations.service';
-import GenomicEventsService from './services/genomic-events.service';
+import TumourAnalysisService from './services/summary/tumour-analysis.service';
+import PatientInformationService from './services/summary/patient-information.service';
+import GenomicAlterationsService from './services/summary/genomic-alterations.service';
+import GenomicEventsService from './services/summary/genomic-events.service';
+import VariantCountsService from './services/summary/variant-counts.service';
+import MutationSummaryService from './services/summary/mutation-summary.service';
+import ProbeTargetService from './services/summary/probe-target.service';
+import MutationSignatureService from './services/summary/mutation-signature.service';
+import MicrobialService from './services/summary/microbial.service';
 import TitleCaseFilter from './filters/titlecase.filter';
 import './root.scss';
 
@@ -45,6 +50,11 @@ export default angular.module('root')
   .service('PatientInformationService', PatientInformationService)
   .service('GenomicAlterationsService', GenomicAlterationsService)
   .service('GenomicEventsService', GenomicEventsService)
+  .service('VariantCountsService', VariantCountsService)
+  .service('MutationSummaryService', MutationSummaryService)
+  .service('ProbeTargetService', ProbeTargetService)
+  .service('MutationSignatureService', MutationSignatureService)
+  .service('MicrobialService', MicrobialService)
   .filter('titlecase', TitleCaseFilter)
   .config(($stateProvider, $urlServiceProvider, $locationProvider) => {
     'ngInject';

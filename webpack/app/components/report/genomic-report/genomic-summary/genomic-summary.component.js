@@ -1,4 +1,5 @@
 import template from './genomic-summary.pug';
+import './genomic-summary.scss';
 
 const bindings = {
   pog: '<',
@@ -12,55 +13,39 @@ const bindings = {
   microbial: '<',
 };
 
-class GenomicSummary {
+class GenomicSummaryComponent {
   /* @ngInject */
   constructor($state, $scope, PogService, TumourAnalysisService, PatientInformationService,
-    MutationSummaryService, GenomicAlterationsService, $mdDialog, $mdToast) {
-      this.$state = $state;
-      this.$scope = $scope;
-      this.PogService = PogService;
-      this.TumourAnalysisService = TumourAnalysisService;
-      this.PatientInformationService = PatientInformationService;
-      this.MutationSummaryService = MutationSummaryService;
-      this.GenomicAlterationsService = GenomicAlterationsService;
-      this.$mdDialog = $mdDialog;
-      this.$mdToast = $mdToast;
+    MutationSummaryService, GenomicAlterationsService, AclService, $mdDialog, $mdToast) {
+    this.$state = $state;
+    this.$scope = $scope;
+    this.PogService = PogService;
+    this.TumourAnalysisService = TumourAnalysisService;
+    this.PatientInformationService = PatientInformationService;
+    this.MutationSummaryService = MutationSummaryService;
+    this.GenomicAlterationsService = GenomicAlterationsService;
+    this.AclService = AclService;
+    this.$mdDialog = $mdDialog;
+    this.$mdToast = $mdToast;
   }
 
-  $onInit() {
-    // Determine which interpreted prevalence value will be displayed
-    this.mutationSummary.snvPercentileCategory = this.report.tumourAnalysis.diseaseExpressionComparator === 'average'
-      ? ms.snvPercentileTCGACategory
-      : ms.snvPercentileDiseaseCategory;
-    this.mutationSummary.indelPercentileCategory = this.report.tumourAnalysis.diseaseExpressionComparator === 'average'
-      ? ms.indelPercentileTCGACategory
-      : ms.indelPercentileDiseaseCategory;
-
-    this.patientInformation = this.report.patientInformation;
-    this.tumourAnalysis = this.report.tumourAnalysis;
-    this.microbial = this.microbial || { species: 'None', integrationSite: 'None' };
-    this.mutationMask = null;
-
+  async $onInit() {
     this.variantCounts = {
       cnv: 0,
       smallMutation: 0,
       expressionOutlier: 0,
       structuralVariant: 0,
+      variantsUnknown: this.variantCounts.variantsUnknown,
     };
-    this.geneVariants = this.processVariants(this.genomicAlterations);
+    this.mutationMask = null;
+    this.patientInformation = this.report.patientInformation;
+    this.tumourAnalysis = this.report.tumourAnalysis;
+    this.microbial = this.microbial || { species: 'None', integrationSite: 'None' };
     this.genomicAlterations = _.sortBy(this.genomicAlterations, 'type');
+    this.geneVariants = this.processVariants(this.genomicAlterations);
   }
 
-  // $scope.data = {
-  //   get: get,
-  //   ms: ms,
-  //   vc: vc,
-  //   pt: pt,
-  //   ta: report.tumourAnalysis,
-  //   pi: report.patientInformation,
-  //   microbial: microbial || { species: 'None', integrationSite: 'None' },
-  // };
-  
+  /* eslint-disable-next-line class-methods-use-this */
   variantCategory(variant) {
     // Small Mutations
     if (variant.geneVariant.match(/([A-z0-9]*)\s(\([pcg]\.[A-z]*[0-9]*[A-z_0-9>]*\*?\))/g)) {
@@ -92,6 +77,7 @@ class GenomicSummary {
       smallMutation: 0,
       expressionOutlier: 0,
       structuralVariant: 0,
+      variantsUnknown: this.variantCounts.variantsUnknown,
     };
 
     variants.forEach((variant, k) => {
@@ -118,7 +104,7 @@ class GenomicSummary {
 
   mutationFilter(mutation) {
     return (mutation.type === this.mutationMask || this.mutationMask === null);
-  };
+  }
 
   // Update Tumour Analysis Details
   updateTa($event) {
@@ -130,7 +116,7 @@ class GenomicSummary {
         scope.ta = this.data.ta;
 
         scope.cancel = () => {
-          $mdDialog.cancel('Tumour analysis details were not updated');
+          this.$mdDialog.cancel('Tumour analysis details were not updated');
         };
 
         scope.update = (f) => {
@@ -325,5 +311,5 @@ class GenomicSummary {
 export default {
   template,
   bindings,
-  controller: GenomicSummary,
+  controller: GenomicSummaryComponent,
 };

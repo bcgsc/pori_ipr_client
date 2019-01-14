@@ -22,6 +22,14 @@ export default angular.module('genomic.report')
             component: 'genomicreport',
           },
         },
+        resolve: {
+          report: ['$transition$', 'ReportService',
+            async ($transition$, ReportService) => {
+              return ReportService.get(
+                $transition$.params().POG, $transition$.params().analysis_report,
+              );
+            }],
+        },
       });
   })
   .name;

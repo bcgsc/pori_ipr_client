@@ -86,13 +86,13 @@ class AclService {
    * @param {String} name - Resource name
    * @return {Promise} Boolean with if user is allowed to see resource
    */
-  async checkResource(name) {
+  checkResource(name) {
     let permission = false;
     let resource;
-    
-    if (Object.prototype.hasOwnProperty.call(this.resources, name)) {
-      resource = this.resources[name];
-    } else {
+
+    try {
+      resource = _.get(this.resources, name);
+    } catch (e) {
       return false;
     }
 
@@ -114,16 +114,15 @@ class AclService {
    * @param {String} name - The action string to be parsed
    * @return {Promise} Boolean with if an action can be performed
    */
-  async checkAction(name) {
+  checkAction(name) {
     let permission = false;
     let action;
-    
-    if (Object.prototype.hasOwnProperty.call(this.actions, name)) {
-      action = this.actions[name];
-    } else {
+
+    try {
+      action = _.get(this.actions, name);
+    } catch (e) {
       return false;
     }
-    
     // Check Allows first
     const allows = _.intersection(action.allow, _.map(_.mapValues(this.UserService.meObj.groups, (r) => { return { name: r.name.toLowerCase() }; }), 'name'));
     if (action.allow.includes('*')) permission = true;
@@ -133,7 +132,6 @@ class AclService {
     const rejects = _.intersection(action.reject, _.map(_.mapValues(this.UserService.meObj.groups, (r) => { return { name: r.name.toLowerCase() }; }), 'name'));
     if (action.reject.includes('*')) permission = false; // No clue why this would exist, but spec allows
     if (rejects && rejects.length > 0) permission = false;
-
     return permission;
   }
 
@@ -150,11 +148,11 @@ class AclService {
 
   /**
    * Can the user access a specified POG (by project)
-   * @param {String} POGID - POG to be checked for access
+   * @param {String} pogID - POG to be checked for access
    * @return {Promise} Boolean with if the user can access a POG
    */
-  async canAccessPOG(POGID) {
-    const resp = await this.PogService.id(POGID);
+  async canAccessPOG(pogID) {
+    const resp = await this.PogService.id(pogID);
     // check if user has individual project access or is part of full access group
     if (_.intersectionBy(this.UserService.meObj.projects, resp.projects, 'name').length > 0
       || _.find(this.UserService.meObj.groups, { name: 'Full Project Access' })) {

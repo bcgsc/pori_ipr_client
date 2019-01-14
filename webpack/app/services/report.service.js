@@ -30,7 +30,7 @@ class ReportService {
 
   /**
    * Update a report entry
-   * @param {Object} report - Report object to be updated
+   * @param {String} report - Report ident
    * @returns {Promise} Result of update report API call
    * @throws {ErrorType} Thrown when API call fails
    */
@@ -67,24 +67,25 @@ class ReportService {
 
   /**
    * Retrieve all report from API that user can access
-   * @param {String} pog - POGID
+   * @param {String} pogID - pogID as String
    * @param {Object} params - Object with params
    * @return {Promise} Resolves with array of reports
    * @throws {ErrorType} Thrown when API call fails
    */
-  async getAllReports(pog, params = {}) {
-    const resp = await this.$http.get(`${this.api}/POG/${pog}/reports`, { params });
+  async getAllReports(pogID, params = {}) {
+    const resp = await this.$http.get(`${this.api}/POG/${pogID}/reports`, { params });
     return resp.data;
   } // TODO: Differenciate between this member and allFiltered (was $report.pog().all())
 
   /**
    * Retrieve one report from the API
+   * @param {String} pogID - pogID as String
    * @param {String} report - The report ident string (4 chars)
    * @return {Promise} Report object
    * @throws {ErrorType} Thrown when API call fails
    */
-  async get(report) {
-    const resp = await this.$http.get(`${this.api}/POG/${pog}/reports/${report}`);
+  async get(pogID, report) {
+    const resp = await this.$http.get(`${this.api}/POG/${pogID}/reports/${report}`);
     return resp.data;
   } // TODO: Differenciate between this member and getReport (was $report.pog().get())
 }

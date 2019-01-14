@@ -20,10 +20,10 @@ const ReportListingModule = angular
         abstract: true,
         url: 'reports',
         resolve: {
-          permission: ['$state', 'user', '$mdToast', 'AclService',
-            async ($state, user, $mdToast, AclService) => {
-              if (await !AclService.checkAction('report.view', user)) {
-                $mdToast.showSimple('You are not allowed to view reports');
+          permission: ['$state', '$mdToast', 'AclService',
+            async ($state, $mdToast, AclService) => {
+              if (!AclService.checkAction('report.view')) {
+                $mdToast.showSimple(AclService.checkAction('report.view'));
                 $state.go('root.home');
                 return false;
               }
