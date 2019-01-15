@@ -95,7 +95,7 @@ md-content
               div(flex).editable
                 span
                   | {{($ctrl.tumourAnalysis.subtyping || "Not Specified")}}
-                  md-icon(ng-click="$ctrl.updateTa()", ng-if="$ctrl.AclService.checkAction('report.edit')") edit
+                  md-icon(ng-click="$ctrl.updateTumourAnalysis($event)", ng-if="$ctrl.AclService.checkAction('report.edit')") edit
 
         div(layout="column", flex).dataBox
           h2.title Microbial Content
@@ -119,14 +119,14 @@ md-content
           div(flex).container
             div(flex).signature.editable
               span(ng-if="($ctrl.tumourAnalysis.mutationSignature.length === 0 || $ctrl.tumourAnalysis.mutationSignature === null)") Nothing striking
-                md-icon(ng-click="$ctrl.updateMs()", ng-if="$ctrl.AclService.checkAction('report.edit')") edit
+                md-icon(ng-click="$ctrl.updateMutationSignature($event)", ng-if="$ctrl.AclService.checkAction('report.edit')") edit
               span(ng-if="$ctrl.tumourAnalysis.mutationSignature.length > 0")
                 span(ng-repeat="sig in $ctrl.tumourAnalysis.mutationSignature track by $index").repeat-comma
                   span.listitem
                     span(ng-if="sig.modifier !== null") {{sig.modifier}}&nbsp;
                     span {{(sig.associations == '-') ? 'Signature '+sig.signature : sig.associations}}
                     md-tooltip Pearson: {{sig.pearson}} | NNLS: {{sig.nnls}} | Cancer Types: {{sig.cancerTypes}}
-                md-icon(ng-click="$ctrl.updateMs()", ng-if="$ctrl.AclService.checkAction('report.edit')") edit
+                md-icon(ng-click="$ctrl.updateMutationSignature($event)", ng-if="$ctrl.AclService.checkAction('report.edit')") edit
 
           div(layout="row", flex).mutationType
             div(flex)

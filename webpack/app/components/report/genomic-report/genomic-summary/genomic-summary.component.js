@@ -1,4 +1,6 @@
 import template from './genomic-summary.pug';
+import tumourTemplate from './tumour-analysis-edit.pug';
+import mutationTemplate from './mutation-signature-edit.pug';
 import './genomic-summary.scss';
 
 const bindings = {
@@ -107,85 +109,87 @@ class GenomicSummaryComponent {
   }
 
   // Update Tumour Analysis Details
-  updateTa($event) {
-    this.$mdDialog.show({
-      targetEvent: $event,
-      templateUrl: 'dashboard/report/genomic/summary/tumourAnalysis.edit.html',
-      clickOutToClose: false,
-      controller: ['scope', (scope) => {
-        scope.ta = this.data.ta;
-
-        scope.cancel = () => {
-          this.$mdDialog.cancel('Tumour analysis details were not updated');
-        };
-
-        scope.update = (f) => {
-          // Check for valid inputs by touching each entry
-          if (f.$invalid) {
-            f.$setDirty();
-            angular.forEach(f.$error, (field) => {
-              angular.forEach(field, (errorField) => {
-                errorField.$setTouched();
+  async updateTumourAnalysis($event) {
+    try {
+      const resp = await this.$mdDialog.show({
+        targetEvent: $event,
+        template: tumourTemplate,
+        clickOutToClose: false,
+        controller: ['scope', (scope) => {
+          scope.tumourAnalysis = this.tumourAnalysis;
+          scope.cancel = () => {
+            this.$mdDialog.cancel('Tumour analysis details were not updated');
+          };
+          scope.update = async (form) => {
+            // Check for valid inputs by touching each entry
+            if (form.$invalid) {
+              form.$setDirty();
+              form.$error.forEach((field) => {
+                field.forEach((errorField) => {
+                  errorField.$setTouched();
+                });
               });
-            });
-            return;
-          }
-
-          // Send updated entry to API
-          $tumourAnalysis.update(pog.POGID, report.ident, scope.ta)
-            .then(() => {
-              $mdDialog.hide('Tumour analysis details have been successfully updated');
-            })
-            .catch((error) => {
-              $mdToast.showSimple(`Tumour analysis details were not updated due to an error: ${error}`);
-            });
-        }; // End update
-      }], // End controller
-
-    })
-      .then((outcome) => {
-        if (outcome) $mdToast.showSimple(outcome);
-      })
-      .catch((error) => {
-        $mdToast.showSimple(error);
+              return;
+            }
+            try {
+              await this.TumourAnalysisService.update(
+                this.pog.POGID, this.report.ident, scope.tumourAnalysis,
+              );
+              this.$mdDialog.hide('Tumour analysis details have been successfully updated');
+            } catch (err) {
+              this.$mdToast.showSimple(
+                `Tumour analysis details were not updated due to an error: ${err}`,
+              );
+            } finally {
+              scope.$digest();
+            }
+          };
+        }],
       });
-  } // End edit tumour analysis
-
+      this.$mdToast.showSimple(resp);
+    } catch (err) {
+      this.$mdToast.showSimple(err);
+    }
+  }
 
   // Update Mutation Signature Details
-  updateMs($event) {
-    this.$mdDialog.show({
-      targetEvent: $event,
-      templateUrl: 'dashboard/report/genomic/summary/mutationSignature.edit.html',
-      clickOutToClose: false,
-      controller: ['scope', (scope) => {
-        scope.ta = angular.copy(this.data.ta); //
-        scope.mutationSignature = this.mutationSignature; // Array of all computed signal correlations
-
-        scope.cancel = () => {
-          $mdDialog.cancel('Mutation signature details were not updated');
-        };
-
-        scope.update = () => {
-          // Send updated entry to API
-          $tumourAnalysis.update(this.pog.POGID, report.ident, scope.ta)
-            .then(() => {
-              $mdDialog.hide({ message: 'Mutation signature details have been successfully updated', data: scope.ta });
-            })
-            .catch((error) => {
-              $mdToast.showSimple(`Mutation signature details were not updated due to an error: ${error}`);
-            });
-        }; // End update
-      }], // End controller
-    })
-      .then((outcome) => {
-        if (outcome) $mdToast.showSimple(outcome.message);
-        this.data.ta = outcome.data;
-      })
-      .catch((error) => {
-        $mdToast.showSimple(error);
+  async updateMutationSignature($event) {
+    try {
+      const resp = await this.$mdDialog.show({
+        targetEvent: $event,
+        template: mutationTemplate,
+        clickOutToClose: false,
+        controller: ['scope', (scope) => {
+          scope.tumourAnalysis = this.tumourAnalysis;
+          scope.mutationSignature = this.mutationSignature;
+          scope.cancel = () => {
+            this.$mdDialog.cancel('Mutation signature details were not updated');
+          };
+          scope.update = async () => {
+            try {
+              await this.TumourAnalysisService.update(
+                this.pog.POGID, this.report.ident, scope.tumourAnalysis,
+              );
+              this.$mdDialog.hide({
+                message: 'Mutation signature details have been successfully updated',
+                data: scope.tumourAnalysis,
+              });
+            } catch (err) {
+              this.$mdToast.showSimple(
+                `Mutation signature details were not updated due to an error: ${err}`,
+              );
+            } finally {
+              scope.$digest();
+            }
+          };
+        }],
       });
-  } // End edit tumour analysis
+      this.$mdToast.showSimple(resp.message);
+      this.tumourAnalysis = resp.data;
+    } catch (err) {
+      this.$mdToast.showSimple(err);
+    }
+  }
 
   // Update Patient Information
   updatePatient($event) {
