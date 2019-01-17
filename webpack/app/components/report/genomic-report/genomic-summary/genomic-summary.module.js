@@ -2,10 +2,12 @@ import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
 import GenomicSummaryComponent from './genomic-summary.component';
 import TumourContentModule from '../../../../common/tumour-content/tumour-content.module';
+import MutationSignatureModule from '../../../../common/mutation-signature/mutation-signature.module';
 
 angular.module('genomic.summary', [
   uiRouter,
   TumourContentModule,
+  MutationSignatureModule,
 ]);
 
 export default angular.module('genomic.summary')
