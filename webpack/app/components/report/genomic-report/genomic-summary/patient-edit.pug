@@ -13,43 +13,43 @@ md-dialog(layout="column", aria-label="Update Patient Information", ng-cloak, fl
 
                 div(layout="row")
                     md-input-container(flex)
-                        input(name="PatientID", placeholder="Patient ID", ng-model="pi.POGID", disabled)
+                        input(name="PatientID", placeholder="Patient ID", ng-model="patientInformation.POGID", disabled)
 
                     md-input-container(flex)
-                        md-select(ng-model="pi.gender", aria-label="Clinical Relevance", required)
+                        md-select(ng-model="patientInformation.gender", aria-label="Clinical Relevance", required)
                             md-option(ng-value="'Male'") Male
                             md-option(ng-value="'Female'") Female
                             md-option(ng-value="'Unspecified'") Unspecified
 
                 div(layout="row")
                     md-input-container(flex)
-                        input(name="TumourSample", placeholder="Tumour Sample", ng-model="pi.tumourSample")
+                        input(name="TumourSample", placeholder="Tumour Sample", ng-model="patientInformation.tumourSample")
 
                     md-input-container(flex)
-                        input(name="TumourType", placeholder="Tumour Type", ng-model="pi.tumourType")
-
-                div(layout="row")
-                    md-input-container(flex)
-                        input(name="ConstitutionalSample", placeholder="Constitutional Sample", ng-model="pi.constitutionalSample", disabled)
-
-                    md-input-container(flex)
-                        input(name="Age", placeholder="Age at Diagnosis", ng-model="pi.age")
+                        input(name="TumourType", placeholder="Tumour Type", ng-model="patientInformation.tumourType")
 
                 div(layout="row")
                     md-input-container(flex)
-                        input(name="BiopsyDetails", placeholder="Biopsy Details", ng-model="pi.biopsySite")
+                        input(name="ConstitutionalSample", placeholder="Constitutional Sample", ng-model="patientInformation.constitutionalSample", disabled)
 
                     md-input-container(flex)
-                        input(name="Physician", placeholder="Physician", ng-model="pi.physician")
+                        input(name="Age", placeholder="Age at Diagnosis", ng-model="patientInformation.age")
 
                 div(layout="row")
                     md-input-container(flex)
-                        input(name="Protocol", placeholder="Protocol", ng-model="pi.tumourProtocol", disabled)
+                        input(name="BiopsyDetails", placeholder="Biopsy Details", ng-model="patientInformation.biopsySite")
+
+                    md-input-container(flex)
+                        input(name="Physician", placeholder="Physician", ng-model="patientInformation.physician")
+
+                div(layout="row")
+                    md-input-container(flex)
+                        input(name="Protocol", placeholder="Protocol", ng-model="patientInformation.tumourProtocol", disabled)
 
                 div(layout="row")
                     md-input-container(flex)
                         label Comment
-                        textarea(ng-model="pi.comment", md-maxlength=150, placeholder="Why are you making this change?", required)
+                        textarea(ng-model="patientInformation.comment", md-maxlength=150, placeholder="Why are you making this change?", required)
 
 
         md-dialog-actions(layout="row", layout-align="end center")

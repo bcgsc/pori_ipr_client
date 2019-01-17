@@ -1,6 +1,7 @@
 import template from './genomic-summary.pug';
 import tumourTemplate from './tumour-analysis-edit.pug';
 import mutationTemplate from './mutation-signature-edit.pug';
+import patientTemplate from './patient-edit.pug';
 import './genomic-summary.scss';
 
 const bindings = {
@@ -192,40 +193,40 @@ class GenomicSummaryComponent {
   }
 
   // Update Patient Information
-  updatePatient($event) {
-    this.$mdDialog.show({
-      targetEvent: $event,
-      templateUrl: 'dashboard/report/genomic/summary/patientInformation.edit.html',
-      clickOutToClose: false,
-      controller: ['scope', (scope) => {
-        scope.pi = angular.copy(this.data.pi); //
-
-        scope.cancel = () => {
-          $mdDialog.cancel('Patient information was not updated');
-        };
-
-
-        scope.update = () => {
-          // Send updated entry to API
-          $patientInformation.update(this.pog.POGID, scope.pi)
-            .then(() => {
-              $mdDialog.hide({ message: 'Patient information has been successfully updated', data: scope.pi });
-            })
-            .catch((error) => {
-              $mdToast.showSimple(`Patient information was not updated due to an error: ${error}`);
-            });
-        }; // End update
-      }], // End controller
-
-    })
-      .then((outcome) => {
-        if (outcome) $mdToast.showSimple(outcome.message);
-        this.data.pi = outcome.data;
-      })
-      .catch((error) => {
-        $mdToast.showSimple(error);
+  async updatePatient($event) {
+    try {
+      const resp = await this.$mdDialog.show({
+        targetEvent: $event,
+        template: patientTemplate,
+        clickOutToClose: false,
+        controller: ['scope', (scope) => {
+          scope.patientInformation = this.patientInformation;
+          scope.cancel = () => {
+            this.$mdDialog.cancel('Patient information was not updated');
+          };
+          scope.update = async () => {
+            try {
+              await this.PatientInformationService.update(this.pog.POGID, scope.patientInformation);
+              this.$mdDialog.hide({
+                message: 'Patient information has been successfully updated',
+                data: scope.patientInformation,
+              });
+            } catch (err) {
+              this.$mdToast.showSimple(
+                `Patient information was not updated due to an error: ${err}`,
+              );
+            } finally {
+              scope.$digest();
+            }
+          };
+        }],
       });
-  } // End edit tumour analysis
+      this.$mdToast.showSimple(resp.message);
+      this.patientInformation = resp.data;
+    } catch (err) {
+      this.$mdToast.showSimple(err);
+    }
+  }
 
 
   addAlteration($event) {
