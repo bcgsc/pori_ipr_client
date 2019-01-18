@@ -1,0 +1,89 @@
+md-content(flex, layout="column", ng-if="!$ctrl.isExternalMode").md-padding
+
+  md-sidenav(md-is-open="$ctrl.showOptions", md-whiteframe=4).md-sidenav-right
+    md-toolbar
+      h1.md-toolbar-tools Options
+    md-content
+      md-list
+        md-list-item
+          p Select Project
+          md-select(ng-model="$ctrl.selectedProject.project", ng-change="$ctrl.refreshList()", aria-label="Select Project", ng-model-options="{trackBy: '$value.name'}")
+            md-option(ng-value="{name: undefined}") All
+            md-option(ng-value="project", ng-repeat="project in $ctrl.projects") {{project.name}}
+        md-list-item
+          p Show only my reports
+          md-switch(ng-model="$ctrl.filter.currentUser", ng-change="$ctrl.refreshList()", ng-false-value="false", ng-true-value="true").md-primary
+
+        md-list-item
+          p Show Ready for Analysis
+          md-switch(ng-model="$ctrl.states.ready", ng-change="$ctrl.refreshList()", ng-false-value="false", ng-true-value="true").md-primary
+        md-list-item
+          p Show Analysis Underway
+          md-switch(ng-model="$ctrl.states.active", ng-change="$ctrl.refreshList()", ng-false-value="false", ng-true-value="true").md-primary
+        md-list-item
+          p Show Review/Presented
+          md-switch(ng-model="$ctrl.states.presented", ng-change="$ctrl.refreshList()", ng-false-value="false", ng-true-value="true").md-primary
+        md-list-item
+          p Show Archived
+          md-switch(ng-model="$ctrl.states.archived", ng-change="$ctrl.refreshList()", ng-false-value="false", ng-true-value="true").md-primary
+        md-list-item
+          p Show Nonproduction
+          md-switch(ng-model="$ctrl.states.nonproduction", ng-change="$ctrl.refreshList()", ng-false-value="false", ng-true-value="true").md-primary
+
+  h1.md-title(layout="row")
+    span(flex) {{$ctrl.selectedProject.project.name || 'All' }} Genomic Reports 
+      md-icon(ng-click="$ctrl.showGenomicDescription()").clickable.blue info
+        md-tooltip(md-direction="right") About Genomic Reports
+    span(flex, layout="row", layout-align="end end")
+      md-input-container.hide-validation-error.pull-right
+        input(placeholder="Search", name="Search", ng-model="$ctrl.pogQuery", size=40).text-small
+        md-icon(ng-click="$ctrl.showFilterTips()").clickable.blue help
+      span(flex=5)
+      span
+        md-button(ng-click="$ctrl.showOptions = !$ctrl.showOptions").md-primary.md-icon-button.md-raised
+          md-icon settings
+
+  div(layout="column", flex).kanban
+    div(layout="row", layout-align="space-between").title
+      div(layout="column", flex, ng-if="$ctrl.states.ready") Ready for Analysis ({{$ctrl.numReports('ready')}})
+      div(layout="column", flex, ng-if="$ctrl.states.active") Analysis Underway ({{$ctrl.numReports('active')}})
+      div(layout="column", flex, ng-if="$ctrl.states.presented") Review/Presented ({{$ctrl.numReports('presented')}})
+      div(layout="column", flex, ng-if="$ctrl.states.archived") Archived ({{$ctrl.numReports('archived')}})
+      div(layout="column", flex, ng-if="$ctrl.states.nonproduction") Non-Production/Test ({{$ctrl.numReports('nonproduction')}})
+
+    div(layout="row", flex, layout-align="space-between")
+      md-content(layout="column", flex, ng-show="$ctrl.states.ready").column
+        div(ng-show="$ctrl.loading").text-center Loading...
+        div(ng-if="$ctrl.numReports('ready') === 0").noWork No genomic reports ready for analysis found.
+        report-listing-card(ng-repeat="report in $ctrl.reports | filter: $ctrl.searchPogs('ready', $ctrl.pogQuery)", md-whiteframe=2, report="report", pog="report.analysis.pog", state="ready" ng-hide="$ctrl.loading").pog
+
+      md-content(layout="column", flex, ng-show="$ctrl.states.active").column
+        div(ng-show="$ctrl.loading").text-center Loading...
+        div(ng-if="$ctrl.numReports('active') === 0").noWork No genomic reports undergoing analysis found.
+        report-listing-card(ng-repeat="report in $ctrl.reports | filter: $ctrl.searchPogs('active', $ctrl.pogQuery)", md-whiteframe=2, report="report", pog="report.analysis.pog", state="active", ng-hide="$ctrl.loading").pog
+
+      md-content(layout="column", flex, ng-show="$ctrl.states.presented").column
+        div(ng-show="$ctrl.loading").text-center Loading...
+        div(ng-if="$ctrl.numReports('presented') === 0").noWork No presented genomic reports found.
+        report-listing-card(ng-repeat="report in $ctrl.reports | filter: $ctrl.searchPogs('presented', $ctrl.pogQuery)", md-whiteframe=2, report="report", pog="report.analysis.pog", state="presented", ng-hide="$ctrl.loading").pog
+
+      md-content(layout="column", flex, ng-show="$ctrl.states.archived").column
+        div(ng-show="$ctrl.loading").text-center Loading...
+        div(ng-if="$ctrl.numReports('archived') === 0").noWork No archived genomic reports found.
+        report-listing-card(ng-repeat="report in $ctrl.reports | filter: $ctrl.searchPogs('archived', $ctrl.pogQuery)", md-whiteframe=2, report="report", pog="report.analysis.pog", state="archived", ng-hide="$ctrl.loading").pog
+
+      md-content(layout="column", flex, ng-show="$ctrl.states.nonproduction").column
+        div(ng-show="$ctrl.loading").text-center Loading...
+        div(ng-if="$ctrl.numReports('nonproduction') === 0").noWork No non-production genomic reports found.
+        report-listing-card(ng-repeat="report in $ctrl.reports | filter: $ctrl.searchPogs('nonproduction', $ctrl.pogQuery)", md-whiteframe=2, report="report", pog="report.analysis.pog", state="nonproduction", ng-hide="$ctrl.loading").pog
+
+md-content(flex, layout="column", ng-if="$ctrl.isExternalMode").md-padding.biopsyBoard
+
+  h1.md-title(layout="row")
+    span(flex) Genomic Reports 
+      md-icon(ng-click="$ctrl.showGenomicDescription()").clickable.blue info
+        md-tooltip(md-direction="right") About Genomic Reports
+
+  div(layout="column").biopsies
+
+    //- ipr-report-table(reports="reports", clinician="true", pagination="pagination", type="'genomic'")

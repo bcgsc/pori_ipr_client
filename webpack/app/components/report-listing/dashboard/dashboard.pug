@@ -1,0 +1,20 @@
+md-content(flex, layout="column").md-padding
+
+  h1.md-title(layout="row")
+    span(flex) Reports Dashboard
+
+  p Cases ready for analysis, and cases underway will appear in the left column. Cases that are still progressing through the bioinformatics pipeline will populate the right column.
+    |   Cases that have been marked as ready for presentation will not appear on this page.
+
+  div(layout="column", flex).kanban
+    div(layout="row", layout-align="space-between").title
+      div(layout="column", flex) Upcoming & current cases ({{$ctrl.currentCases.length}})
+      div(layout="column", flex) Upstream cases ({{$ctrl.upstreamCases.length}})
+
+    div(layout="row", flex, layout-align="space-between")
+      md-content(layout="column", flex).column
+        report-listing-card(ng-repeat="report in $ctrl.currentCases", md-whiteframe=2, report="$ctrl.report", pog="$ctrl.report.analysis.pog", state="uploaded" ng-hide="loading").pog
+
+      md-content(layout="column", flex).column
+        div.text-center No upcoming cases in tracking.
+        report-listing-card(ng-repeat="report in $ctrl.upstreamCases", md-whiteframe=2, report="$ctrl.report", pog="$ctrl.report.analysis.pog", state="signedoff", ng-hide="loading").pog
