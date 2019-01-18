@@ -2,6 +2,8 @@ import template from './genomic-summary.pug';
 import tumourTemplate from './tumour-analysis-edit.pug';
 import mutationTemplate from './mutation-signature-edit.pug';
 import patientTemplate from './patient-edit.pug';
+import addAlterationTemplate from './add-alteration.pug';
+import removeAlterationTemplate from './remove-alteration.pug';
 import './genomic-summary.scss';
 
 const bindings = {
@@ -229,87 +231,102 @@ class GenomicSummaryComponent {
   }
 
 
-  addAlteration($event) {
-    this.$mdDialog.show({
-      targetEvent: $event,
-      templateUrl: 'dashboard/report/genomic/summary/alteration.add.html',
-      clickOutToClose: false,
-      controller: ['scope', (scope) => {
-        scope.cancel = () => {
-          $mdDialog.cancel('Alteration was not added');
-        };
-
-        // Perform Update/Change
-        scope.add = () => {
-          // Remove entry
-          this.GenomicAlterationsService.create(pog.POGID, report.ident, scope.alteration)
-            .then((resp) => {
+  async addAlteration($event) {
+    try {
+      const resp = await this.$mdDialog.show({
+        targetEvent: $event,
+        template: addAlterationTemplate,
+        clickOutToClose: false,
+        controller: ['scope', (scope) => {
+          scope.cancel = () => {
+            this.$mdDialog.cancel('Alteration was not added');
+          };
+          // Perform Update/Change
+          scope.add = async () => {
+            try {
+              // Remove entry
+              const genomicResp = await this.GenomicAlterationsService.create(
+                this.pog.POGID, this.report.ident, scope.alteration,
+              );
               // Add to array of alterations
-              this.genomicAlterations.push(resp);
-
+              this.genomicAlterations.push(genomicResp);
               // Reprocess variants
-              this.data.gai = processVariants(this.genomicAlterations);
-              this.data.gai = _.sortBy(gai, 'type');
-
-              $mdDialog.hide({ status: true, message: 'Alteration has been successfully added' });
-            })
-            .catch((error) => {
-              $mdDialog.hide({ status: false, message: `Alteration was not added due to an error: ${error}` });
-            });
-        }; // End update
-      }], // End controller
-    })
-      .then((outcome) => {
-        if (outcome) $mdToast.showSimple(outcome.message);
-      })
-      .catch((error) => {
-        $mdToast.showSimple(error);
+              this.genomicAlterations = this.processVariants(this.genomicAlterations);
+              this.genomicAlterations = _.sortBy(this.genomicAlterations, 'type');
+              this.$mdDialog.hide({
+                status: true,
+                message: 'Alteration has been successfully added',
+              });
+            } catch (err) {
+              this.$mdDialog.hide({
+                status: false,
+                message: `Alteration was not added due to an error: ${err}`,
+              });
+            } finally {
+              scope.$digest();
+            }
+          };
+        }],
       });
+      this.$mdToast.showSimple(resp.message);
+    } catch (err) {
+      this.$mdToast.showSimple(err);
+    }
   }
 
-  removeAlteration($event, alteration) {
-    const tempAlteration = angular.copy(alteration);
+  async removeAlteration($event, alteration) {
+    try {
+      const resp = await this.$mdDialog.show({
+        targetEvent: $event,
+        template: removeAlterationTemplate,
+        clickOutToClose: false,
+        controller: ['scope', (scope) => {
+          scope.alteration = alteration;
+          scope.cancel = () => {
+            this.$mdDialog.cancel('Alteration was not removed');
+          };
+          // Perform Update/Change
+          scope.update = async (cascade) => {
+            try {
+              await this.GenomicAlterationsService.remove(
+                this.pog.POGID,
+                this.report.ident,
+                alteration.ident,
+                scope.comment,
+                cascade,
+              );
+              this.genomicAlterations = _.reject(this.genomicAlterations, (r) => {
+                return r.ident === alteration.ident;
+              });
 
-    this.$mdDialog.show({
-      targetEvent: $event,
-      templateUrl: 'dashboard/report/genomic/summary/alteration.remove.html',
-      clickOutToClose: false,
-      controller: ['scope', (scope) => {
-        scope.alteration = alteration;
-
-        scope.cancel = () => {
-          $mdDialog.cancel('Alteration was not removed');
-        };
-
-        // Perform Update/Change
-        scope.update = (cascade) => {
-          // Remove entry
-          this.GenomicAlterationsService.remove(pog.POGID, report.ident, alteration.ident, scope.comment, cascade)
-            .then(() => {
-              this.data.gai = _.reject(this.data.gai, (r) => { return (r.ident === alteration.ident); });
-              this.genomicAlterations = _.reject(gai, (r) => { return (r.ident === alteration.ident); });
-
-
-              // Remove from Get
-              if (cascade) this.data.get = _.reject(this.data.get, (e) => { return (e.genomicEvent === alteration.geneVariant); });
+              if (cascade) {
+                this.genomicEvents = _.reject(this.genomicEvents, (e) => {
+                  return e.genomicEvent === alteration.geneVariant;
+                });
+              }
 
               // Subtract count
-              this.variantCounts[tempAlteration.type] -= 1;
+              this.variantCounts[alteration.type] -= 1;
 
-              $mdDialog.hide({ status: true, message: `Successfully removed the ${cascade ? 'alterations' : 'alteration'}` });
-            })
-            .catch((error) => {
-              $mdDialog.hide({ status: true, message: `Unable to remove the ${cascade ? 'alterations' : 'alteration'} due to an error: ${error}` });
-            });
-        }; // End update
-      }], // End controller
-    })
-      .then((outcome) => {
-        if (outcome) $mdToast.showSimple(outcome.message);
-      })
-      .catch((error) => {
-        $mdToast.showSimple(error);
+              this.$mdDialog.hide({
+                status: true,
+                message: `Successfully removed the ${cascade ? 'alterations' : 'alteration'}`,
+              });
+            } catch (err) {
+              this.$mdDialog.hide({
+                status: true,
+                message: `Unable to remove the ${cascade ? 'alterations' : 'alteration'} due to an error: ${err}`,
+              });
+            } finally {
+              scope.$digest();
+            }
+          };
+        }],
       });
+      this.$mdToast.showSimple(resp.message);
+    } catch (err) {
+      this.$mdToast.showSimple(err);
+    }
   }
 }
 

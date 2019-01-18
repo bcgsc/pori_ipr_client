@@ -184,12 +184,12 @@ md-content
           div(flex, ng-click="$ctrl.setMutationMask('expressionOutlier')", ng-class="{active: ($ctrl.mutationMask == 'expressionOutlier')}").clickable Expression Outliers
           div(flex="30") {{$ctrl.variantCounts.expressionOutlier}}
       div(flex).alterations
-        div(ng-repeat="variant in $ctrl.genomicAlterations | filter: $ctrl.mutationFilter.bind($ctrl)", class="{{variant.type}}") {{variant.geneVariant}}
-          span(ng-click="$ctrl.removeAlteration($event, variant)", ng-if="$ctrl.AclService.checkAction('report.edit')",)
+        div(ng-repeat="variant in $ctrl.genomicAlterations | filter: $ctrl.mutationFilter.bind($ctrl)", class="{{variant.type}}", layout="row") {{variant.geneVariant}}
+          span(ng-click="$ctrl.removeAlteration($event, variant)", ng-if="$ctrl.AclService.checkAction('report.edit')")
             md-icon remove_circle
 
-        div(ng-if="$ctrl.AclService.checkAction('report.edit')").add.clickable Add new entry
-          span(ng-click="$ctrl.addAlteration($event)")
+        div(ng-if="$ctrl.AclService.checkAction('report.edit')", ng-click="$ctrl.addAlteration($event)", layout="row").add.clickable Add new entry
+          span
             md-icon add_circle
 
 
