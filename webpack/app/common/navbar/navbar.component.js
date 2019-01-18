@@ -15,14 +15,15 @@ class NavbarComponent {
 
   async $onInit() {
     this.user = await this.UserService.me();
-    this.maximized = this.UserSettingsService.get('sideBarState');
+    this.config = CONFIG.ATTRS.name;
+    this.maximized = await this.UserSettingsService.get('sideBarState');
     this.$scope.$digest();
   }
 
   // Toggle sidebar
   toggleSidebar() {
     this.$scope.$emit('sidebarToggle');
-    this.maximized = !this.$scope.maximized;
+    this.maximized = !this.maximized;
   }
 
   // Open Feedback
