@@ -19,7 +19,7 @@ export default angular.module('genomic.summary')
       .state('root.reportlisting.pog.genomic.summary', {
         url: '/summary',
         views: {
-          '@': {
+          '': {
             component: 'genomicsummary',
           },
         },

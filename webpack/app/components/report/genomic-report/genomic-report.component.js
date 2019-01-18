@@ -1,4 +1,5 @@
 import template from './genomic-report.pug';
+import './genomic-report.scss';
 
 const bindings = {
   pog: '<',

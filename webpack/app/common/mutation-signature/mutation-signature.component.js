@@ -97,8 +97,8 @@ class MutationSignatureComponent {
 
     sigs.forEach((r) => {
       // Round to 3 sigfigs
-      r.pearson = r.pearson.toFixed(3);
-      r.nnls = r.nnls.toFixed(3);
+      r.pearson = parseFloat((r.pearson).toFixed(3));
+      r.nnls = parseFloat((r.nnls).toFixed(3));
 
       // Produced rounded numbers
       r.pearsonColour = Math.round((((r.pearson < 0) ? 0 : r.pearson) * 100) / 5) * 5;
