@@ -1,92 +1,86 @@
-app.controller('controller.dashboard.report.genomic.analystComments', 
-  ['_', '$q', '$scope', '$mdDialog', '$mdToast', '$sce', 'api.pog', 'api.summary.analystComments', 'pog', 'report', 'comments',
-  (_, $q, $scope, $mdDialog, $mdToast, $sce, $pog, $comments, pog, report, analystComments) => {
+import template from './analyst-comments.pug';
+import editTemplate from './analyst-comments-edit.pug';
+import './analyst-comments.scss';
 
-  $scope.pog = pog;
-  $scope.analystComments = (analystComments === null) ?  "" : analystComments.comments;
-  $scope.commentsHTML = $sce.trustAsHtml($scope.analystComments);
-  $scope.comments = analystComments;
+const bindings = {
+  pog: '<',
+  report: '<',
+  analystComments: '<',
+};
 
-
-  // Sign The comments
-  $scope.sign = (role) => {
-
-    // Send signature to API
-    $comments.sign(pog.POGID, report.ident, role).then(
-      (result) => {
-        $scope.comments = result;
-      }
-    )
-  };
-
-  // Sign The comments
-  $scope.revokeSign = (role) => {
-
-    // Send signature to API
-    $comments.revokeSign(pog.POGID, report.ident, role).then(
-      (result) => {
-        $scope.comments = result;
-      }
-    )
-  };
-
-
-    // Editor Update Modal
-  $scope.updateComments = ($event) => {
-    
-    $mdDialog.show({
-      targetEvent: $event,
-      templateUrl: 'dashboard/report/genomic/analystComments/analystComments.edit.html',
-      locals: {
-        pog: pog
-      },
-      clickOutToClose: false,
-      controller: ['$q', '_', '$scope', '$mdDialog', '$timeout', 'api.summary.analystComments', ($q, _, scope, $mdDialog, $timeout, $comments) => {
-        
-        scope.analystComments = analystComments;
-
-        // Cancel Dialog
-        scope.cancel = () => {
-          $mdDialog.cancel('Canceled Edit - No changes made.');
-        };
-        
-        // Update Details
-        scope.update = (f) => {
-          
-          if(f.$invalid) {
-            f.$setDirty();
-            angular.forEach(f.$error, (field) => {
-              angular.forEach(field, (errorField) => {
-                errorField.$setTouched();
-              });
-            });
-            return;
-          }
-          
-          let updatedComment = {'comments': scope.analystComments.comments};
-          
-          $comments.update(pog.POGID, report.ident, updatedComment).then(
-            (result) => {
-              $mdDialog.hide({message: 'Entry has been updated', comment: updatedComment});
-            },
-            (error) => {
-              alert('Unable to update. See console');
-              console.log(error);
-            }
-          );
-          
-        } // End update
-      }]
-    }).then((result) => {
-      // Update current page content
-      $scope.commentsHTML = $sce.trustAsHtml(result.comment.comments);
-      $scope.comments = analystComments = result.comment;
-
-      // Display Message from Hiding
-      $mdToast.show($mdToast.simple().textContent(result.message));
-    }, (error) => {
-      $mdToast.show($mdToast.simple().textContent(error));
-    });
+class AnalystCommentsComponent {
+  /* @ngInject */
+  constructor($scope, $mdDialog, $mdToast, $sce, PogService, AnalystCommentsService, AclService) {
+    this.$scope = $scope;
+    this.$mdDialog = $mdDialog;
+    this.$mdToast = $mdToast;
+    this.$sce = $sce;
+    this.PogService = PogService;
+    this.AnalystCommentsService = AnalystCommentsService;
+    this.AclService = AclService;
   }
-  
-}]);
+
+  // Sign The comments
+  async sign(role) {
+    const resp = await this.AnalystCommentsService.sign(this.pog.POGID, this.report.ident, role);
+    this.analystComments = resp;
+    this.$scope.$digest();
+  }
+
+  // Sign The comments
+  async revokeSign(role) {
+    const resp = await this.AnalystCommentsService.revokeSign(
+      this.pog.POGID, this.report.ident, role,
+    );
+    this.analystComments = resp;
+    this.$scope.$digest();
+  }
+
+  // Editor Update Modal
+  async updateComments($event) {
+    try {
+      const resp = await this.$mdDialog.show({
+        targetEvent: $event,
+        template: editTemplate,
+        clickOutToClose: false,
+        controller: ['scope', (scope) => {
+          scope.analystComments = this.analystComments;
+          // Cancel Dialog
+          scope.cancel = () => {
+            this.$mdDialog.cancel('Canceled Edit - No changes made.');
+          };
+          // Update Details
+          scope.update = async () => {
+            try {
+              await this.AnalystCommentsService.update(
+                this.pog.POGID, this.report.ident, scope.analystComments,
+              );
+              this.$mdDialog.hide({
+                message: 'Entry has been updated',
+                comment: scope.analystComments,
+              });
+            } catch (err) {
+              alert('Unable to update. See console');
+              console.log(err);
+            }
+          };
+        }],
+      });
+      // Update current page content
+      this.analystComments = resp.comment;
+      this.analystComments.comments = resp.comment.comments;
+      // Display Message from Hiding
+      this.$mdToast.show(this.$mdToast.simple().textContent(resp.message));
+    } catch (err) {
+      this.$mdToast.show(this.$mdToast.simple().textContent(err));
+    } finally {
+      this.$scope.$digest();
+    }
+  }
+}
+
+export default {
+  template,
+  bindings,
+  controller: AnalystCommentsComponent,
+};

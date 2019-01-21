@@ -2,10 +2,12 @@ import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
 import GenomicReportComponent from './genomic-report.component';
 import GenomicSummaryModule from './genomic-summary/genomic-summary.module';
+import AnalystCommentsModule from './analyst-comments/analyst-comments.module';
 
 angular.module('genomic.report', [
   uiRouter,
   GenomicSummaryModule,
+  AnalystCommentsModule,
 ]);
 
 export default angular.module('genomic.report')

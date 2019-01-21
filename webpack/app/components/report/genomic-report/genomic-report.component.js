@@ -134,7 +134,7 @@ class GenomicReportComponent {
   }
 
   goToReportSection(goto) {
-    this.$state.go(`dashboard.reports.pog.report.genomic.${goto}`);
+    this.$state.go(`root.reportlisting.pog.genomic.${goto}`);
   }
 }
 
