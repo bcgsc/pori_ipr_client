@@ -74,6 +74,11 @@ function stateChange($rootScope, $state, $acl, $user, $userSettings, _, $mdToast
       $rootScope.showLoader = false;
     });
   });
+
+  $transitions.onError({ }, async (transition) => {
+    $localStorage.returnToStateParams = transition.params();
+    $localStorage.returnToState = transition.to().name;
+  });
 }
 
 stateChange.$inject = ['$rootScope', '$state', '$acl', 'api.user', '$userSettings', '_', '$mdToast',
