@@ -63,6 +63,7 @@
     "lodash": "~4.17.11",
     "minimist": "~1.2.0",
     "moment": "~2.22.2",
+    "natives": "~1.1.6",
     "ng-quill": "~3.8.0",
     "ngstorage": "~0.3.11",
     "pug": "~2.0.3",

@@ -3,75 +3,75 @@ app.service('$acl', ['$q', '_', 'api.user', 'api.pog', ($q, _, $user, $pog) => {
     report: {
       view: {
         allow: ['*'],
-        reject: []
+        reject: [],
       },
       edit: {
-        allow: ['admin','analyst','bioinformatician','reviewer'],
-        reject: ['clinician', 'collaborator']
+        allow: ['admin', 'analyst', 'bioinformatician', 'reviewer'],
+        reject: ['clinician', 'collaborator', 'biopsies'],
       },
       remove: {
         allow: ['admin'],
-        reject: []
-      }
+        reject: [],
+      },
     },
     analyses: {
       view: {
         allow: ['*'],
-        reject: ['clinician', 'collaborator']
+        reject: ['clinician', 'collaborator'],
       },
       edit: {
-        allow: ['projects', 'admin'],
-        reject: ['clinician', 'collaborator']
+        allow: ['projects', 'admin', 'biopsies'],
+        reject: ['clinician', 'collaborator'],
       },
       remove: {
-        allow: ['projects', 'admin'],
-        reject: []
-      }
+        allow: ['projects', 'admin', 'biopsies'],
+        reject: [],
+      },
     },
     tracking: {
       view: {
         allow: ['*'],
-        reject: ['clinician', 'collaborator']
+        reject: ['clinician', 'collaborator', 'biopsies'],
       },
       edit: {
         allow: ['*'],
-        reject: ['clinician', 'collaborator']
+        reject: ['clinician', 'collaborator', 'biopsies'],
       },
       remove: {
         allow: ['projects', 'admin'],
-        reject: []
-      }
-    }
+        reject: [],
+      },
+    },
   };
   
   const resources = {
     report: {
       allow: ['*'],
-      reject: []
+      reject: [],
     },
     genomic_report: {
       allow: ['*'],
-      reject: []
+      reject: [],
     },
     probe_report: {
       allow: ['*'],
-      reject: []
+      reject: [],
     },
     knowledgebase: {
       allow: ['*'],
-      reject: ['clinician']
+      reject: ['clinician', 'biopsies'],
     },
     germline: {
       allow: ['*'],
-      reject: ['clinician', 'collaborator']
+      reject: ['clinician', 'collaborator', 'biopsies'],
     },
     analyses: {
       allow: ['*'],
-      reject: ['clinician', 'collaborator']
+      reject: ['clinician', 'collaborator'],
     },
     tracking: {
       allow: ['*'],
-      reject: ['clinician', 'collaborator']
+      reject: ['clinician', 'collaborator', 'biopsies'],
     },
   };
 
@@ -189,6 +189,7 @@ app.service('$acl', ['$q', '_', 'api.user', 'api.pog', ($q, _, $user, $pog) => {
    * @return {Promise} Is external
    */
   async function isExternalMode() {
-    return await inGroup('clinician') || await inGroup('collaborator');
+    return await inGroup('clinician') || await inGroup('collaborator')
+      || await inGroup('biopsies');
   }
 }]);

@@ -12,7 +12,13 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
    * @return {String | Boolean} Path or redirect false
    */
   const redirectExternal = async (transition) => {
-    const isExternalMode = await transition.injector().getAsync('isExternalMode');
+    const $user = await transition.injector().getAsync('api.user');
+    await $user.me();
+    const $acl = await transition.injector().getAsync('$acl');
+    /* Allow access to biopsy page if in biopsies group */
+    const isExternalMode = transition.to().name.includes('biopsy') && await $acl.inGroup('biopsies')
+      ? false
+      : await transition.injector().getAsync('isExternalMode');
     return isExternalMode ? 'dashboard.reports.genomic' : false;
   };
 
@@ -207,7 +213,6 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
           'isExternalMode', async ($acl, $report, $userSettings, user, isExternalMode) => {
             const currentUser = $userSettings.get('genomicReportListCurrentUser');
             const project = $userSettings.get('selectedProject') || { name: undefined };
-            
             const opts = {
               type: 'genomic',
             };
