@@ -180,8 +180,12 @@
       line-height: 4px;
       overflow: hidden;
     }
+
+    p.title{
+      margin: 0;
+    }
     
-    h2.title {
+    h2.title, div.title {
       font-size: 0.85em;
       font-weight: 500;
       margin: 0;
