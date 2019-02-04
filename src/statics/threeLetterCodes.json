@@ -13,5 +13,6 @@
   {"code": "PUO", "description": "Primary unknown"},
   {"code": "SAR", "description": "Sarcoma"},
   {"code": "SKN", "description": "Skin"},
-  {"code": "THR", "description": "Thoracic"}
+  {"code": "THR", "description": "Thoracic"},
+  {"code": "HPB", "description": "Hepatopancreaticobiliary"}
 ]
