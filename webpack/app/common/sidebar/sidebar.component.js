@@ -2,11 +2,12 @@ import template from './sidebar.pug';
 
 class SidebarComponent {
   /* @ngInject */
-  constructor($rootScope, UserSettingsService, AclService, $state) {
+  constructor($rootScope, UserSettingsService, AclService, $state, $scope) {
     this.$rootScope = $rootScope;
     this.UserSettingsService = UserSettingsService;
     this.AclService = AclService;
     this.$state = $state;
+    this.$scope = $scope;
     this.pageAccess = {};
   }
   

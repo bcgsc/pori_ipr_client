@@ -1,4 +1,5 @@
 import template from './dashboard.pug';
+import './dashboard.scss';
 
 const bindings = {
   reports: '<',
