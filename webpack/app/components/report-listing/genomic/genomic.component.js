@@ -36,9 +36,6 @@ class GenomicComponent {
   }
 
   async $onInit() {
-    this.selectedProject = {
-      project: await this.UserSettingsService.get('selectedProject') ? await this.UserSettingsService.get('selectedProject') : {},
-    };
     if (this.isExternalMode) {
       this.reports = this.reports.reports;
       this.pagination = {
@@ -47,6 +44,10 @@ class GenomicComponent {
         total: this.reports.total,
       };
     }
+
+    this.selectedProject = {
+      project: await this.UserSettingsService.get('selectedProject') ? await this.UserSettingsService.get('selectedProject') : {},
+    };
 
     this.filter = {
       currentUser: (await this.UserSettingsService.get('genomicReportListCurrentUser') === undefined)
@@ -57,16 +58,16 @@ class GenomicComponent {
     if (await this.UserSettingsService.get('genomicReportListCurrentUser') === undefined) {
       await this.UserSettingsService.save('genomicReportListCurrentUser', true);
     }
-
-    this.$scope.$watch('filter.currentUser', async (newVal, oldVal) => {
+    /* eslint-disable-next-line arrow-body-style */
+    this.$scope.$watch(() => this.filter.currentUser, async (newVal, oldVal) => {
       // Ignore onload message
       if (JSON.stringify(newVal) === JSON.stringify(oldVal)) {
         return;
       }
       await this.UserSettingsService.save('genomicReportListCurrentUser', newVal);
     }, true);
-
-    this.$scope.$watch('selectedProject', async (newVal, oldVal) => {
+    /* eslint-disable-next-line arrow-body-style */
+    this.$scope.$watch(() => this.selectedProject, async (newVal, oldVal) => {
       if (JSON.stringify(newVal) === JSON.stringify(oldVal)) {
         return;
       }

@@ -168,7 +168,7 @@ class AclService {
    * @return {Promise} Is external
    */
   async isExternalMode() {
-    return this.inGroup('clinician') || this.inGroup('collaborator');
+    return await this.inGroup('clinician') || this.inGroup('collaborator');
   }
 }
 

@@ -1,7 +1,7 @@
 import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
 import DashboardComponent from './dashboard.component';
-import ReportListingCardModule from '../report-listing-card/report-listing-card.module';
+import ReportListingCardModule from '../../../common/report-listing-card/report-listing-card.module';
 
 angular.module('dashboard', [
   uiRouter,

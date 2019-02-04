@@ -65,7 +65,7 @@ module.exports = {
       inject: true,
     }),
     new CopyWebpackPlugin([{
-      from: path.join(__dirname, 'statics/images/*.png'),
+      from: path.join(__dirname, 'statics/images/*'),
       to: 'img/',
       flatten: true,
     }]),

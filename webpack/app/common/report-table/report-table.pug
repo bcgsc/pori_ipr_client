@@ -1,0 +1,46 @@
+div(layout="column")
+  table.material-table
+    thead
+      tr
+        th(colspan=6) {{$ctrl.type | titlecase}} Reports
+        th(colspan=6).button
+          div(layout="row", layout-align="end start")
+            form(ng-submit="$ctrl.search()", novalidate, layout="row", flex, ng-show="$ctrl.showSearch")
+              md-input-container(flex, layout="row").medium
+                input(ng-model="$ctrl.filter.search", focus-me="$ctrl.focusSearch", ng-blur="$ctrl.search()", placeholder="Search Reports")
+
+            md-button(ng-show="$ctrl.showSearch", ng-click="$ctrl.clearSearch()").md-icon
+              md-icon cancel
+              md-tooltip Clear search
+
+            md-button(ng-hide="$ctrl.showSearch", ng-click="$ctrl.displaySearch()").md-icon
+              md-icon filter_list
+              md-tooltip Filter/Search
+      tr
+        th(width="10%") Patient 
+        th(width="10%") Alternate Identifier 
+        th(width="10%") Biopsy Number
+        th(width="20%") Disease 
+        th(width="15%") Physician 
+        th(width="10%") Age 
+        th(width="15%") Status 
+    tbody
+      tr(ng-show="$ctrl.loading").loading
+        td(colspan="6").text-center
+          md-progress-circular(md-mode="indeterminate")
+          div(style="margin: -30px 0 27px 0; font-size: 0.7em;") Loading
+      tr(ng-show="!$ctrl.loading && $ctrl.reports.length === 0").loading
+        td(colspan="6").text-center
+          span No Reports found on IPR
+      tr(ng-repeat="report in $ctrl.reports", ng-hide="$ctrl.loading")
+        td
+          span(ui-sref="dashboard.reports.pog.report.genomic.summary({POG: report.pog.POGID, analysis_report: report.ident})", ng-if="$ctrl.type == 'genomic'").link {{report.patientInformation.POGID}}
+          span(ui-sref="dashboard.reports.pog.report.probe.summary({POG: report.pog.POGID, analysis_report: report.ident})", ng-if="$ctrl.type == 'probe'").link {{report.patientInformation.POGID}}
+        td {{report.analysis.pog.alternate_identifier || 'N/A'}}
+        td {{report.analysis.analysis_biopsy || 'N/A'}}
+        td {{report.patientInformation.tumourType}}
+        td {{report.patientInformation.physician}}
+        td {{report.patientInformation.caseType}}
+        td {{$ctrl.readState(report.state)}}
+
+  paginate(total="$ctrl.paginate.total", offset="$ctrl.paginate.offset", limit="$ctrl.paginate.limit", refresh="$ctrl.refreshReports()")
