@@ -290,4 +290,69 @@ app.controller('controller.dashboard.report.genomic.summary',
             $mdToast.showSimple(error);
           });
       };
+      // Display a fullscreen help message
+      $scope.showHelpMessage = ($event, message) => {
+        $mdDialog.show(
+          $mdDialog.alert()
+            .clickOutsideToClose(true)
+            .title(message.title)
+            .htmlContent(message.content)
+            .ok('Close')
+            .targetEvent($event),
+        );
+      };
+      // Help message information
+      $scope.helpMessages = {
+        genomeStatus: {
+          title: 'Genome Status Help',
+          content: `Tumour content and ploidy are determined based on expert review of 
+                    copy number and allelic ratios observed across all chromosomes in the tumour.`,
+        },
+        tissueComparators: {
+          title: 'Tissue Comparators Help',
+          content: `The most appropriate normal tissue and tumour tissue types are chosen for 
+                    expression comparisons based on the tumour type and observed correlation
+                    with tissue data sets. If no appropriate tissue comparator is available,
+                    for instance for rare tumours, an average across all tissues is used. Outlier
+                    expression refers to genes with very high or very low expression compared to
+                    what is seen within the cohort(s) selected as comparator(s).`,
+        },
+        subtyping: {
+          title: 'Subtyping Help',
+          content: `Recent advances in genome-wide profiling provide an opportunity to investigate
+                    global molecular changes during the development and progression of cancer.
+                    Molecular subtyping is used to categorize cancer into homogeneous groups that
+                    are considered to harbor similar molecular and clinical characteristics.
+                    Furthermore, this has helped researchers to identify both actionable targets
+                    for drug design as well as biomarkers for response prediction.`,
+        },
+        microbialContent: {
+          title: 'Microbial Content Help',
+          content: `This section includes information about a patients microbial content analysis.
+                    <br><br>When identified, microbial analysis, is often useful is understanding
+                    the biological mechanisms responsible for driving the formation of a particular
+                    tumour.<br><br>Sequences observed with the tumour sample are compared to 
+                    databases of viral, bacterial and fungal sequences in addition to the human
+                    genome. The species is reported if observed levels are suggestive of microbial
+                    presence in the tumour sample. Specific viral integration sites are reported
+                    if identified in genomic DNA sequence.`
+          ,
+        },
+        mutationSignature: {
+          title: 'Mutation Signature Help',
+          content: `This section includes information about a patients mutation signature analysis.
+                    Mutation signatures are characteristic combinations of mutation types arising
+                    from specific mutagenesis (mutation causing processes). Deciphering mutational
+                    signatures in cancer provides insight into the biological mechanisms involved
+                    in carcinogenesis (formation of cancer) and normal somatic mutagenesis.
+                    Mutational signatures have shown their applicability in cancer treatment and
+                    cancer prevention.`,
+        },
+        mutationBurden: {
+          title: 'Mutation Burden Help',
+          content: `Mutational burden measures the quantity of mutations found in a tumour.
+                    The number of protein coding alterations of each type, including both known and
+                    novel events, are totaled and compared to other tumours of a similar type.`,
+        },
+      };
     }]);

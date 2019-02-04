@@ -61,7 +61,9 @@ section
 
         div(layout="row")
             div(layout="column", flex).dataBox
-                h2.title Genome Status
+                div(layout="row", flex).title
+                    p.title Genome Status
+                    md-icon(ng-click="showHelpMessage($event, helpMessages.genomeStatus)").clickable.blue help
 
                 div.box
                     div(layout="row", flex).heading
@@ -74,7 +76,10 @@ section
                         div(flex) {{data.ta.ploidy}}
 
             div(layout="column", flex).dataBox
-                h2.title Tissue Comparators
+                div(layout="row", flex).title
+                    p.title Tissue Comparators
+                    md-icon(ng-click="showHelpMessage($event, helpMessages.tissueComparators)").clickable.blue help
+                
 
                 div.box
                     div(layout="row", flex).heading
@@ -85,7 +90,9 @@ section
                         div(flex) {{data.ta.diseaseExpressionComparator}}
 
             div(layout="column", flex).dataBox
-                h2.title Subtyping
+                div(layout="row", flex).title
+                    p.title Subtyping
+                    md-icon(ng-click="showHelpMessage($event, helpMessages.subtyping)").clickable.blue help
 
                 div.box
                     div(layout="row", flex).heading
@@ -97,7 +104,9 @@ section
                                 md-icon(ng-click="updateTa()", ng-if="SES_permissionAction('report.edit')") edit
 
             div(layout="column", flex).dataBox
-                h2.title Microbial Content
+                div(layout="row", flex).title
+                    p.title Microbial Content
+                    md-icon(ng-click="showHelpMessage($event, helpMessages.microbialContent)").clickable.blue help
 
                 div.box
                     div(layout="row", flex).heading
@@ -110,10 +119,14 @@ section
         div(layout="column").mutationTable
             div(layout="row")
                 div(layout="column", flex=25).signatureTitle
-                    h2.title Mutation Signature
+                    div(layout="row", flex).dataBox.title
+                        p.title Mutation Signature
+                        md-icon(ng-click="showHelpMessage($event, helpMessages.mutationSignature)").clickable.blue help
                 div(layout="column", flex=75)
-                    h2.title Mutation Burden
-                        span (in protein coding genes)
+                    div(layout="row", flex).dataBox.title
+                        p.title Mutation Burden
+                            span (in protein coding genes)
+                        md-icon(ng-click="showHelpMessage($event, helpMessages.mutationBurden)").clickable.blue help
             div(layout="row").header
                 div(flex).container
                     div(flex).signature.editable
