@@ -46,7 +46,21 @@ table.print.pageBreak
 
             img(data-ng-src="data:image/png;base64,{{images['mutSummary.indel'].data}}").bar
             img(data-ng-src="data:image/png;base64,{{images['mutSummary.barIndel'].data}}").bar
-div.print.pageBreak
+
+
+table.print.pageBreak
+  thead
+    tr
+      td.pageHeader.padded
+        div(layout="row")
+          div(flex=30) {{pog.POGID}}
+            br
+            | {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
+          div(flex) BCCA Confidential - For Research Purposes Only
+          div(flex=30)  {{report.patientInformation.tumourType}}
+  tbody
+    tr
+      td
         h2 Mutational Spectrum
 
         div(layout="column", flex).mutationSignature
