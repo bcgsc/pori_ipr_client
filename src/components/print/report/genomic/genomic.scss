@@ -9,12 +9,11 @@ $print_grey_border: rgb(192,192,192);
 }
 
 .pageBreak {
-  page-break-after: always !important;
+  page-break-after: always;
 }
 
 div.print {
   // A4 Page Size
-  //width: 100%; // Prod for printing
   width: 258mm; // Dev width on page
   margin: 0 auto;
 
