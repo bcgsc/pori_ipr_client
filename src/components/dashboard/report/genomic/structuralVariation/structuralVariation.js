@@ -82,8 +82,6 @@ app.controller('controller.dashboard.report.genomic.structuralVariation',
   
   
   let processSvs = (structVars) => {
-    console.log(structVars);
-
     let svs = {
       clinical: [],
       nostic: [],
