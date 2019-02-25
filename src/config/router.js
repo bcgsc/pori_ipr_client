@@ -220,9 +220,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
             if (currentUser) {
               opts.states = 'ready,active,presented';
               opts.project = project.name;
-            }
-            
-            if (!currentUser) {
+            } else {
               opts.all = true;
               opts.states = 'ready,active,presented';
               opts.project = project.name;
