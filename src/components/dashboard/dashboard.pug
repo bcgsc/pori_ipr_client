@@ -62,12 +62,6 @@ div(layout='row', flex)
                 md-tooltip(ng-if="!maximized", md-direction="right") References
                 span(flex, ng-show="maximized") References
 
-            //- Commenting out instead of removing in case we decide to re-include this - excluding as per Cara Reisle's suggestion
-                div(layout="row", ng-if="check.resource('knowledgebase')", ui-sref="dashboard.knowledgebase.events", ng-class="{active: ($state.current.name === 'dashboard.knowledgebase.events')}", ng-show="maximized || (!maximized && $state.current.name.indexOf('knowledgebase') > 1)").submenu
-                    md-icon(ng-show="maximized") subdirectory_arrow_right
-                    md-icon(ng-show="!maximized") location_on
-                        md-tooltip(ng-if="!maximized", md-direction="right") Events
-                    span(flex, ng-show="maximized") Events
 
         div(flex, layout='column')
             md-subheader.bread-crumbs
