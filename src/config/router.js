@@ -217,15 +217,16 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
               type: 'genomic',
             };
 
-            if (currentUser === null || currentUser === undefined || currentUser === true) {
+            if (currentUser) {
               opts.states = 'ready,active,presented';
               opts.project = project.name;
             }
             
-            if (currentUser === false) {
+            if (!currentUser) {
               opts.all = true;
               opts.states = 'ready,active,presented';
               opts.project = project.name;
+              $userSettings.save('genomicReportListCurrentUser', false);
             }
 
             if (isExternalMode) {
