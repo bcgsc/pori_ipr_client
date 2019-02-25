@@ -44,46 +44,40 @@
   color: white;
   padding: 10px 0;
   transition: width 0.5s ease !important;
-  border-right: 3px solid rgb(51, 57, 115);
+  // border-right: 3px solid rgb(51, 57, 115);
 
-  div {
+  a {
+    text-decoration: none;
     cursor: pointer;
     padding: 5px 10px 5px 10px;
     transition: all 0.2s;
 
     &.submenu {
       font-size: 0.8em;
-      padding-left: 17px;
+      padding-left: 15px;
 
       &.active {
-        background-color: rgb(225, 225, 225);
+        background-color: #af3da1; 
+        border-top: 1px solid rgb(38, 50, 140);
+        border-bottom: 1px solid rgb(38, 50, 140);
       }
 
       span {
         padding-left: 4px;
       }
       md-icon {
-        width: 19px;
-        height: 19px;
-        min-height: 19px;
-        min-width: 19px;
-        font-size: 17px;
+        width: 17px;
+        height: 17px;
+        min-height: 17px;
+        min-width: 17px;
+        font-size: 15px;
       }
     }
 
     &.active {
-      background-color: rgb(240,240,240);
-      border-right: 3px solid rgb(200, 200, 200);
-      color: rgb(0,0,0);
+      background-color: #af3da1; 
       position: relative;
       width: calc(100% + 3px);
-
-      md-icon {
-        color: rgb(35, 49, 144);
-      }
-      &:hover {
-        background-color: rgb(214, 243, 255);
-      }
     }
 
     md-icon {
@@ -98,9 +92,8 @@
     }
 
     &:hover {
-      background-color: rgb(70, 89, 210);
-      md-icon {
-        color: rgb(25, 35, 103);
+      &:not(.active) {
+        background-color: lighten(#4659d2, 4%);
       }
     }
 

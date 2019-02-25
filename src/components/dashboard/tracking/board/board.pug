@@ -53,7 +53,7 @@ md-content(flex, layout="column").md-padding.trackingBoard
                 span.padding-right-5
                     md-icon(ui-sref="dashboard.tracking.lane({slug: definition.slug})").small.clickable view_list
                         md-tooltip Lane in table view
-                span(ui-sref="dashboard.tracking.assignment({definition: definition.ident})").clickable {{definition.name}}&nbsp;
+                a(ui-sref="dashboard.tracking.assignment({definition: definition.ident})").clickable.assign {{definition.name}}&nbsp;
                 | ({{definition.group.name || 'N/A' }})
                 span(flex)
 
