@@ -3,11 +3,13 @@ import uiRouter from '@uirouter/angularjs';
 import GenomicReportComponent from './genomic-report.component';
 import GenomicSummaryModule from './genomic-summary/genomic-summary.module';
 import AnalystCommentsModule from './analyst-comments/analyst-comments.module';
+import SlidesModule from './presentation/slides/slides.module';
 
 angular.module('genomic.report', [
   uiRouter,
   GenomicSummaryModule,
   AnalystCommentsModule,
+  SlidesModule,
 ]);
 
 export default angular.module('genomic.report')

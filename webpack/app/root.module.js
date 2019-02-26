@@ -26,6 +26,8 @@ import ProbeTargetService from './services/report/summary/probe-target.service';
 import MutationSignatureService from './services/report/summary/mutation-signature.service';
 import MicrobialService from './services/report/summary/microbial.service';
 import AnalystCommentsService from './services/report/analyst-comments/analyst-comments.service';
+import SlidesService from './services/report/presentation/slides.service';
+import DiscussionService from './services/report/presentation/discussion.service';
 import TitleCaseFilter from './filters/titlecase.filter';
 import './root.scss';
 
@@ -57,6 +59,8 @@ export default angular.module('root')
   .service('MutationSignatureService', MutationSignatureService)
   .service('MicrobialService', MicrobialService)
   .service('AnalystCommentsService', AnalystCommentsService)
+  .service('SlidesService', SlidesService)
+  .service('DiscussionService', DiscussionService)
   .filter('titlecase', TitleCaseFilter)
   .config(($stateProvider, $urlServiceProvider, $locationProvider) => {
     'ngInject';

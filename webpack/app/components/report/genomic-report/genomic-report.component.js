@@ -41,7 +41,7 @@ class GenomicReportComponent {
       },
       {
         name: 'Presentation',
-        state: 'presentation',
+        state: null,
         meta: false,
         showChildren: false,
         clinician: true,
