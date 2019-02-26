@@ -163,8 +163,8 @@ class GenomicSummaryComponent {
         template: mutationTemplate,
         clickOutToClose: false,
         controller: ['scope', (scope) => {
-          scope.tumourAnalysis = this.tumourAnalysis;
-          scope.mutationSignature = this.mutationSignature;
+          scope.tumourAnalysis = angular.copy(this.tumourAnalysis);
+          scope.mutationSignature = angular.copy(this.mutationSignature);
           scope.cancel = () => {
             this.$mdDialog.cancel('Mutation signature details were not updated');
           };
