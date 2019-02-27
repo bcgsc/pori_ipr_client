@@ -1,465 +1,107 @@
-"use strict";
-
-app.factory('api.knowledgebase', ['_', '$http', '$q', (_, $http, $q) => {
-
-  const api = CONFIG.ENDPOINTS.API + '/knowledgebase';
-
-  let $kb = {};
+class KnowledgebaseService {
+  /* @ngInject */
+  constructor($http) {
+    this.$http = $http;
+    this.api = `${CONFIG.ENDPOINTS.API}/knowleddgebase`;
+  }
 
   /**
-   * Get controlled vocabulary JSON arrays
+   * Get controlled vocabulary
    *
-   * @returns {Promise}
+   * @returns {Promise} - result of API call
    */
-  $kb.vocabulary = () => {
-    let deferred = $q.defer();
+  async getVocabulary() {
+    const resp = await this.$http.get(`${this.api}/controlled-vocabulary`);
+    return resp.data;
+  }
 
-    $http.get(api + '/controlled-vocabulary').then(
-      (result) => {
-        deferred.resolve(result.data);
-      },
-      (err) => {
-        deferred.reject(err);
-      }
-    );
-
-    return deferred.promise;
-  };
-
-  $kb.validate = {
-
-    /**
-     * Validate provided KB Events string
-     *
-     * @param {string} input - Input string to be validated against KB Regex
-     * @returns {promise|object} - Resolves with {valid: {input}}
-     */
-    events: (input) => {
-      let deferred = $q.defer();
-
-      $http.post(api + '/validate/events', {events_expression: input}).then(
-        (result) => {
-          deferred.resolve(result.data);
-        },
-        (err) => {
-          deferred.reject(err);
-        }
-      );
-
-      return deferred.promise;
-    }
-
-  };
+  /**
+   * Validate KB event string
+   *
+   * @param {String} input - input string to be validated against KB regex
+   *
+   * @returns {Promise} - resolves w/ {valid: {input}}
+   */
+  async validateEvent(input) {
+    const resp = await this.$http.post(`${this.api}/validate/events`, { events_expression: input });
+    return resp.data;
+  }
 
   /**
    * Check for a gene or variant in KB & HUGO
    *
-   * @param {string} query - Input string to search DB against
-   * @returns {Promise|array} - Resolves an array of text values
+   * @param {String} query - input string to search for
+   *
+   * @returns {Promise} - array of matching text values
    */
-  $kb.genevar = (query) => {
-    let deferred = $q.defer();
-
-    $http.get(api + '/genevar?query=' + query).then(
-      (result) =>{
-        deferred.resolve(result.data);
-      },
-      (err) => {
-        deferred.reject(err);
-      }
-    );
-
-    return deferred.promise;
-  };
+  async getGenevar(query) {
+    const resp = await this.$http.get(`${this.api}/genevar?query=${query}`);
+    return resp.data;
+  }
 
   /**
-   * Get KB Metrics
+   * Get KB metrics
    *
-   * @returns {Promise|object} - Resolves a key-value pair of metric data
+   * @returns {Promise} - object containing key-value pairs of metric data
    */
-  $kb.metrics = () => {
-    let deferred = $q.defer();
-
-    $http.get(api + '/metrics').then(
-      (result) =>{
-        deferred.resolve(result.data);
-      },
-      (err) => {
-        deferred.reject(err);
-      }
-    );
-
-    return deferred.promise;
-  };
+  async getMetrics() {
+    const resp = await this.$http.get(`${this.api}/metrics`);
+    return resp.data;
+  }
 
   /**
-   * Search the disease ontology list
+   * Search disease ontology list
    *
-   * @param {string} query - Input string to search DB against
-   * @returns {Promise|array} - Resolves an array of text values
+   * @param {String} query - input string to search for
+   *
+   * @returns {Promise} - array of matching text values
    */
-  $kb.diseaseOntology = (query) => {
-    let deferred = $q.defer();
-
-    $http.get(api + '/disease-ontology?query=' + query).then(
-      (result) =>{
-        deferred.resolve(result.data);
-      },
-      (err) => {
-        deferred.reject(err);
-      }
-    );
-
-    return deferred.promise;
-  };
+  async getDiseaseOntology(query) {
+    const resp = await this.$http.get(`${this.api}/disease-ontology?query=${query}`);
+    return resp.data;
+  }
 
   /**
-   * Get history for a data entry
+   * Get change history for a data entry
    *
-   * @param {string} type - The type of entry to lookup history for (entry, reference)
-   * @param {string} ident - The UUIDv4 identification string
-   * @returns {Promise} - Resolves with the history array
+   * @param {String} type - type of entry to look up history for (entry, reference, etc.)
+   * @param {String} ident - UUIDv4 identification string
+   *
+   * @returns {Promise} - array of change history events
    */
-  $kb.history = (type, ident) => {
+  async getChangeHistory(type, ident) {
+    const resp = await this.$http.get(`${this.api}/history`, { params: { type, entry: ident } });
+    return resp.data;
+  }
 
-    let deferred = $q.defer();
+  /**
+   * Get KB references w/ pagination
+   *
+   * @param {Number} limit - max number of records to return
+   * @param {Number} offset - pagination start point
+   * @param {Object} filters - query string filter arguments
+   *
+   * @returns {Promise} - collection of references
+   */
+  async getReferences(limit = 100, offset = 0, filters = {}) {
+    const processFilters = {};
 
-    $http.get(api + '/history', {params: { type:type, entry:ident }}).then(
-      (result) =>{
-        deferred.resolve(result.data);
-      },
-      (err) => {
-        deferred.reject(err);
+    // Process Filters
+    _.forEach(filters, (value, filter) => {
+      if (filter === 'search') {
+        processFilters[filter] = value;
+      } else {
+        processFilters[filter] = _.join(value, ',');
       }
-    );
+    });
 
-    return deferred.promise;
+    const opts = { params: processFilters };
+    opts.params.limit = limit;
+    opts.params.offset = offset;
 
-  };
-
-  $kb.references = {
-
-    /**
-     * Get KB References
-     *
-     * Paginated interface
-     *
-     * @param {int} limit - Pagination records requested
-     * @param {int} offset - Pagination start point
-     * @param {object} filters - Query string filter arguments
-     *
-     * @returns {promise|collection} - Resolves with a collection
-     */
-    all: (limit=100, offset=0, filters={}) => {
-      let deferred = $q.defer();
-      let processFilters = {};
-
-      // Process Filters
-      _.forEach(filters, (value, filter) => {
-        if(filter === 'search') return processFilters[filter] = value;
-        processFilters[filter] = _.join(value,',');
-      });
-
-
-      let opts = {params: processFilters};
-      opts.params.limit = limit;
-      opts.params.offset = offset;
-
-      $http.get(api + '/references', opts).then(
-        (result) => {
-          deferred.resolve(result.data);
-        },
-        (err) => {
-          deferred.reject(err);
-        }
-      );
-
-      return deferred.promise;
-    },
-
-    /**
-     * Get the count of references
-     *
-     * Informs pagination
-     *
-     * @returns {promise} - Resolves a key-value pair object with the amount of references
-     */
-    count: (filters={}) => {
-      let deferred = $q.defer();
-      let processFilters = {};
-
-      // Process Filters
-      _.forEach(filters, (value, filter) => {
-        if(filter === 'search') return processFilters[filter] = value;
-        processFilters[filter] = _.join(value,',');
-      });
-
-
-      let params = {params: processFilters};
-
-      $http.get(api + '/references/count', params).then(
-        (result) => {
-          deferred.resolve(result.data);
-        },
-        (err) => {
-          deferred.reject(err);
-        }
-      );
-
-      return deferred.promise;
-    },
-
-
-    /**
-     * Update an existing reference entry
-     *
-     * @param {object} reference - The updated reference object
-     * @returns {Promise} - Resolves with the updated entry
-     */
-    update: (reference) => {
-      let deferred = $q.defer();
-
-      $http.put(api + '/references/' + reference.ident, reference).then(
-        (result) => {
-          deferred.resolve(result.data);
-        },
-        (err) => {
-          deferred.reject(err);
-        }
-      );
-
-      return deferred.promise;
-    },
-
-
-    /**
-     * Update reference status
-     *
-     * @param {object} reference - Reference object
-     * @param {string} status - Status to update reference to
-     * @param {string} comments - Comment to log update with
-     * @returns {Promise} - Resolves with updated object
-     */
-    status: (reference, status, comments) => {
-      let deferred = $q.defer();
-
-      $http.put(api + '/references/' + reference.ident + '/status/' + status, {comments: comments}).then(
-        (result) => {
-          deferred.resolve(result.data);
-        },
-        (err) => {
-          deferred.reject(err);
-        }
-      );
-
-      return deferred.promise;
-    },
-
-    /**
-     * Create a new reference entry
-     *
-     * @param {object} reference - The new reference object
-     * @returns {Promise} - Resolves with the created entry
-     */
-    create: (reference) => {
-      let deferred = $q.defer();
-
-      $http.post(api + '/references', reference).then(
-        (result) => {
-          deferred.resolve(result.data);
-        },
-        (err) => {
-          deferred.reject(err);
-        }
-      );
-
-      return deferred.promise;
-    },
-
-    /**
-     * Remove a reference entry
-     *
-     * @param {string} reference - The ident of the entry to be removed
-     * @returns {Promise} - Resolves with success
-     */
-    remove: (reference) => {
-      let deferred = $q.defer();
-
-      $http.delete(api + '/references/' + reference).then(
-        (result) => {
-          deferred.resolve(result.status);
-        },
-        (err) => {
-          deferred.reject(err);
-        }
-      );
-
-      return deferred.promise;
-    }
-
-
-  };
-
-  $kb.events = {
-
-    /**
-     * Get KB Events
-     *
-     * Paginated interface
-     *
-     * @param {int} limit - Pagination records requested
-     * @param {int} offset - Pagination start point
-     * @param {object} filters - Query string filter arguments
-     *
-     * @returns {Promise|collection} - Resolves with a collection
-     */
-    all: (limit, offset, filters) => {
-      let deferred = $q.defer();
-      let processFilters = {};
-
-      // Process Filters
-      _.forEach(filters, (value, filter) => {
-        if(filter === 'search') return processFilters[filter] = value;
-        processFilters[filter] = _.join(value,',');
-      });
-
-      let opts = {params: processFilters};
-      opts.params.limit = limit;
-      opts.params.offset = offset;
-
-      $http.get(api + '/events', opts).then(
-        (result) => {
-          deferred.resolve(result.data);
-        },
-        (err) => {
-          deferred.reject(err);
-        }
-      );
-
-      return deferred.promise;
-    },
-
-    /**
-     * Get the count of events
-     *
-     * Informs pagination
-     *
-     * @returns {promise} - Resolves a key-value pair object with the amount of events
-     */
-    count: (filters={}) => {
-      let deferred = $q.defer();
-      let processFilters = {};
-
-      // Process Filters
-      _.forEach(filters, (value, filter) => {
-        if(filter === 'search') return processFilters[filter] = value;
-        processFilters[filter] = _.join(value,',');
-      });
-
-
-      let params = {params: processFilters};
-
-      $http.get(api + '/events/count', params).then(
-        (result) => {
-          deferred.resolve(result.data);
-        },
-        (err) => {
-          deferred.reject(err);
-        }
-      );
-
-      return deferred.promise;
-    },
-
-
-    /**
-     * Update an existing event entry
-     *
-     * @param {object} event - The updated event object
-     * @returns {Promise} - Resolves with the updated entry
-     */
-    update: (event) => {
-      let deferred = $q.defer();
-
-      $http.put(api + '/events/' + event.ident, event).then(
-        (result) => {
-          deferred.resolve(result.data);
-        },
-        (err) => {
-          deferred.reject(err);
-        }
-      );
-
-      return deferred.promise;
-    },
-
-
-    /**
-     * Update event status
-     *
-     * @param {object} event - Event object
-     * @param {string} status - Status to update event to
-     * @param {string} comments - Comment to log update with
-     * @returns {Promise} - Resolves with updated object
-     */
-    status: (event, status, comments) => {
-      let deferred = $q.defer();
-
-      $http.put(api + '/events/' + event.ident + '/status/' + status, {comments: comments}).then(
-        (result) => {
-          deferred.resolve(result.data);
-        },
-        (err) => {
-          deferred.reject(err);
-        }
-      );
-
-      return deferred.promise;
-    },
-
-    /**
-     * Create a new event entry
-     *
-     * @param {object} event - The new reference object
-     * @returns {Promise} - Resolves with the created entry
-     */
-    create: (event) => {
-      let deferred = $q.defer();
-
-      $http.post(api + '/events', event).then(
-        (result) => {
-          deferred.resolve(result.data);
-        },
-        (err) => {
-          deferred.reject(err);
-        }
-      );
-
-      return deferred.promise;
-    },
-
-    /**
-     * Remove a event entry
-     *
-     * @param {string} event - The ident of the entry to be removed
-     * @returns {Promise} - Resolves with success
-     */
-    remove: (event) => {
-      let deferred = $q.defer();
-
-      $http.delete(api + '/events/' + event).then(
-        (result) => {
-          deferred.resolve(result.status);
-        },
-        (err) => {
-          deferred.reject(err);
-        }
-      );
-
-      return deferred.promise;
-    }
-
-  };
-
-  return $kb;
-}]);
+    const resp = await this.$http.get(`${this.api}/references`, opts);
+    return resp.data;
+  }
+}
+  
+export default KnowledgebaseService;

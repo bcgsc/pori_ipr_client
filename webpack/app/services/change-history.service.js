@@ -1,206 +1,122 @@
-/*
- * BCGSC - IPR-Client User API
- *
- * This API factory implements the IPR-API. Calls to and from the API are
- * managed through this construct.
- *
- */
-app.factory('api.pogDataHistory', ['_', '$http', '$q', (_, $http, $q) => {
-
-  const api = CONFIG.ENDPOINTS.API + '/POG';
-
-
-  let $history = {};
+class PogChangeHistoryService {
+  /* @ngInject */
+  constructor($http) {
+    this.$http = $http;
+    this.api = `${CONFIG.ENDPOINTS.API}/POG`;
+  }
 
   /**
-   * Setup History Object for Querying
+   * Get all change history events for a patient
    *
-   * @params {string} POGID - PogID to be queried against (eg. POG123)
+   * @param {String} POGID - patient identifier to get info for
+   * @param {String} report - report ident to get info for
+   *
+   * @returns {Promise} - list of all change history events for the specified patient/report combo
    */
-  $history = (POGID, report) => {
+  async getChangeHistory(POGID, report) {
+    const resp = await this.$http.get(`${this.api}/${POGID}/report/${report}/history`);
+    return resp.data;
+  }
 
-    const API = api + '/' + POGID + '/report/' + report;
+  /**
+   * Get detailed info about a specified change history event
+   *
+   * @param {String} POGID - patient identifier to get info for
+   * @param {String} report - report ident to get info for
+   * @param {String} ident - UUID of change history event to get info for
+   *
+   * @returns {Promise} - hashmap of detailed change history event data
+   */
+  async getChangeHistoryDetails(POGID, report, ident) {
+    const resp = await this.$http.get(`${this.api}/${POGID}/report/${report}/history/detail/${ident}`);
+    return resp.data;
+  }
 
-    return {
+  /**
+   * Revert a change history event
+   *
+   * @param {String} POGID - patient identifier to get info for
+   * @param {String} report - report ident to get info for
+   * @param {String} ident - UUID of change history event being reverted
+   * @param {String} comment - reason for reverting change history event
+   *
+   * @returns {Promise} - new change history object
+   */
+  async revertChangeHistory(POGID, report, ident, comment) {
+    const resp = await this.$http.put(`${this.api}/${POGID}/report/${report}/history/revert/${ident}`, { comment });
+    return resp.data;
+  }
 
-      /**
-       * Get list of all history events for a POG
-       *
-       * @returns {promise|array} - Returns a list of all history events for a POG
-       */
-      all: () => {
-        let deferred = $q.defer();
+  /**
+   * Restores a change history deletion event
+   *
+   * @param {String} POGID - patient identifier to get info for
+   * @param {String} report - report ident to get info for
+   * @param {String} ident - UUID of change history event being restored
+   * @param {String} comment - reason for restoring change history event
+   *
+   * @returns {Promise} - result of API call
+   */
+  async restoreChangeHistory(POGID, report, ident, comment) {
+    const resp = await this.$http.put(`${this.api}/${POGID}/report/${report}/history/restore/${ident}`, { comment });
+    return resp.data;
+  }
 
-        $http.get(API + '/history').then(
-          (resp) => {
-            deferred.resolve(resp.data);
-          },
-          (err) => {
-            deferred.reject(err);
-          }
-        );
+  /**
+   * Get all change history tags for a patient
+   *
+   * @param {String} POGID - patient identifier to get tags for
+   * @param {String} report - report ident to get tags for
+   *
+   * @returns {Promise} - array of change history tags
+   */
+  async getChangeHistoryTags(POGID, report) {
+    const resp = await this.$http.get(`${this.api}/${POGID}/report/${report}/history/tag`);
+    return resp.data;
+  }
 
-        return deferred.promise;
-      },
+  /**
+   * Create new change history tag for a patient
+   *
+   * @param {String} POGID - patient identifier to create tag for
+   * @param {String} report - report ident to create tag for
+   * @param {Object} tag - name of tag
+   * @param {String} ident - optional change history UUID string
+   *
+   * @returns {Promise} - new tag object
+   */
+  async createChangeHistoryTag(POGID, report, tag, ident = '') {
+    const resp = await this.$http.post(`${this.api}/${POGID}/report/${report}/history/tag/${ident}`, tag);
+    return resp.data;
+  }
 
-      /**
-       * Get a detailed entry of a history event
-       *
-       * @param {string} ident - UUID of history event
-       * @returns {promise|object} - Resolves with hashmap of detailed version data. Rejects with $http error response
-       */
-      detail: (ident) => {
-        let deferred = $q.defer();
+  /**
+   * Remove a change history tag for a patient
+   *
+   * @param {String} POGID - patient identifier to remove tag from
+   * @param {String} report - report ident to remove tag from
+   * @param {String} ident - change history tag UUID string to remove
+   *
+   * @returns {Promise} - result of API call
+   */
+  async removeChangeHistoryTag(POGID, report, ident) {
+    const resp = await this.$http.delete(`${this.api}/${POGID}/report/${report}/history/tag/${ident}`);
+    return resp.data;
+  }
 
-        $http.get(API + '/history/detail/' +ident).then(
-          (resp) => {
-            deferred.resolve(resp.data);
-          },
-          (err) => {
-            deferred.reject(err);
-          }
-        );
-
-        return deferred.promise;
-      },
-
-      /**
-       * Reverts a change history event from new to previous
-       *
-       * @param {string} ident - UUID of history event
-       * @returns {promise|object} - Returns new history object that defines the change
-       */
-      revert: (ident, comment) => {
-        let deferred = $q.defer();
-
-        $http.put(API + '/history/revert/' +ident, {comment: comment}).then(
-          (resp) => {
-            deferred.resolve(resp.data);
-          },
-          (err) => {
-            deferred.reject(err);
-          }
-        );
-
-        return deferred.promise;
-      },
-
-      /**
-       * Restores a remove history event
-       *
-       * @param {string} ident - UUID of history event
-       * @returns {promise|boolean} - Returns boolean
-       */
-      restore: (ident, comment) => {
-        let deferred = $q.defer();
-
-        $http.put(API + '/history/restore/' +ident, {comment: comment}).then(
-          (resp) => {
-            deferred.resolve(true);
-          },
-          (err) => {
-            deferred.reject(err);
-          }
-        );
-
-        return deferred.promise;
-      },
-
-      /**
-       * All Tag entries
-       *
-       */
-      tag: {
-
-        /**
-         * Get all history tags
-         *
-         * @returns {promise|array} - Resolves with an array of tags associated to any history objects in the POG
-         */
-        all: () => {
-          let deferred = $q.defer();
-
-          $http.get(API + '/history/tag').then(
-            (resp) => {
-              deferred.resolve(resp.data);
-            },
-            (err) => {
-              deferred.reject(err);
-            }
-          );
-
-          return deferred.promise;
-        },
-
-        /**
-         * Create a new tag
-         *
-         * If no history ident string is provided, the API will make one on the HEAD of the history log
-         *
-         * @param {object} tag - Text/name of the tag
-         * @param {string} ident? - Optional history UUID ident string
-         * @returns {promise|object} - Resolves with new tag object
-         */
-        create: (tag, ident="") => {
-          let deferred = $q.defer();
-
-          $http.post(API + '/history/tag/' +ident, tag).then(
-            (resp) => {
-              deferred.resolve(resp.data);
-            },
-            (err) => {
-              deferred.reject(err);
-            }
-          );
-          return deferred.promise;
-        },
-
-        /**
-         * Remove a tag
-         *
-         * If no history ident string is provided, the API will make one on the HEAD of the history log
-         *
-         * @param {string} ident - Tg UUID ident string
-         * @returns {promise|boolean} - Returns boolean
-         */
-        remove: (ident) => {
-          let deferred = $q.defer();
-
-          $http.delete(API + '/history/tag/' +ident).then(
-            (resp) => {
-              deferred.resolve(true);
-            },
-            (err) => {
-              deferred.reject(err);
-            }
-          );
-          return deferred.promise;
-        },
-
-        /**
-         * Search for tags
-         *
-         * @param {string} query - Tg UUID ident string
-         * @returns {promise|array} - Resolves an array of tags
-         */
-        search: (query) => {
-          let deferred = $q.defer();
-
-          $http.get(API + '/history/tag/search/' + query).then(
-            (resp) => {
-              deferred.resolve(resp.data);
-            },
-            (err) => {
-              deferred.reject(err);
-            }
-          );
-
-          return deferred.promise;
-        }
-      }
-    }
-  };
-
-  return $history;
-
-}]);
+  /**
+   * Search for tags for a specified patient
+   *
+   * @param {String} POGID - patient identifier to find tags for
+   * @param {String} report - report ident to find tags for
+   * @param {String} query - tag name to search for
+   *
+   * @returns {Promise} - array of matching change history tags
+   */
+  async searchChangeHistoryTags(POGID, report, query) {
+    const resp = await this.$http.get(`${this.api}/${POGID}/report/${report}/history/tag/search/${query}`);
+    return resp.data;
+  }
+}
+  
+export default PogChangeHistoryService;
