@@ -38,12 +38,11 @@ app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$rootScope',
     };
   }
 
-  $scope.filter = {
-    currentUser: ($userSettings.get('genomicReportListCurrentUser') === undefined) ? true : $userSettings.get('genomicReportListCurrentUser'),
-    query: null
-  };
 
-  if($userSettings.get('genomicReportListCurrentUser') === undefined) $userSettings.save('genomicReportListCurrentUser', true);
+  $scope.filter = {
+    currentUser: $userSettings.get('genomicReportListCurrentUser'),
+    query: null,
+  };
 
   $scope.numReports = (state) => {
     return _.filter(reports, {state: state}).length;
