@@ -1,0 +1,50 @@
+section
+  md-subheader.md-primary.md-no-sticky Analyst Comments
+
+  div(layout="column").analystComments
+
+    div(flex=10)
+      md-button(ng-if="$ctrl.AclService.checkAction('report.edit')", ng-click="$ctrl.updateComments()").md-icon-button.edit-icon
+        md-icon edit
+    div(ng-bind-html="$ctrl.analystComments.comments || '<h2>Report Draft</h2> <br /> No comments yet.'")
+
+  div.smallBottom &nbsp;
+  div(layout="column", ng-show="$ctrl.analystComments !== null").layout-padding.analystSignatures
+    div Signed By
+
+    div(layout="row", md-whiteframe=1, layout-align="start start", ng-click="$ctrl.newEntry($event, 'therapeutic')").rowCard
+      div(flex=25, layout="column")
+        h5 Author
+        div(flex, layout="row")
+          span(ng-if="$ctrl.AclService.checkAction('report.edit')", ng-show="$ctrl.analystComments.authorSignature.ident === null", layout="row", layout-align="start center", ng-click="$ctrl.sign('author')").clickable
+            md-icon(style="margin-right: 5px;") gesture
+            span Sign
+          span(ng-show="$ctrl.analystComments.authorSignature.ident") {{$ctrl.analystComments.authorSignature.firstName}} {{$ctrl.analystComments.authorSignature.lastName}}
+
+      div(flex=25, layout="column")
+        h5 Date
+        div(flex, layout="row")
+          span.context {{$ctrl.analystComments.authorSignedAt | date: "EEEE, MMMM d, y HH:mm"}}
+      div(flex)
+      div(layout="column", layout-align="start start").options
+        div(ng-if="$ctrl.analystComments.authorSignature.ident && $ctrl.AclService.checkAction('report.edit')")
+          md-icon(ng-click="$ctrl.revokeSign('author')") remove_circle
+            md-tooltip Remove signing
+
+    div(layout="row", md-whiteframe=1, layout-align="start start", ng-click="newEntry($event, 'therapeutic')").rowCard
+      div(flex=25, layout="column")
+        h5 Reviewer
+        div(flex, layout="row")
+          span(ng-if="$ctrl.AclService.checkAction('report.edit')", ng-show="$ctrl.analystComments.reviewerSignature.ident === null", layout="row", layout-align="start center", ng-click="$ctrl.sign('reviewer')").clickable
+            md-icon(style="margin-right: 5px;") gesture
+            span Sign
+          span(ng-show="$ctrl.analystComments.reviewerSignature.ident") {{$ctrl.analystComments.reviewerSignature.firstName}} {{$ctrl.analystComments.reviewerSignature.lastName}}
+      div(flex=25, layout="column")
+        h5 Date
+        div(flex, layout="row")
+          span.context {{$ctrl.analystComments.reviewerSignedAt | date: "EEEE, MMMM d, y HH:mm"}}
+      div(flex)
+      div(layout="column", layout-align="start start").options
+        div(ng-if="$ctrl.analystComments.reviewerSignature.ident && $ctrl.AclService.checkAction('report.edit')")
+          md-icon(ng-click="$ctrl.revokeSign('reviewer')") remove_circle
+            md-tooltip Remove signing

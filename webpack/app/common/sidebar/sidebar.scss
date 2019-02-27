@@ -33,7 +33,7 @@
 
     &.active {
       background-color: $secondary;
-      border-right: 3px solid rgb(200, 200, 200);
+      border-right: 3px solid $secondary;
       position: relative;
       width: calc(100% + 3px);
     }

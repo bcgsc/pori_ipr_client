@@ -23,17 +23,17 @@ class PogService {
   
   /**
    * Retrieve one POG from API.
-   * @param {String} POGID - id # of pog
+   * @param {String} pogID - id # of pog
    * @return {Promise} Single pog
    * @throws {ErrorType} Thrown when API call fails
    */
-  async id(POGID) {
+  async id(pogID) {
     // Lookup in cache first
-    if (this.pogs[POGID]) {
-      return this.pogs[POGID];
+    if (this.pogs[pogID]) {
+      return this.pogs[pogID];
     }
     
-    const resp = await this.$http.get(`${this.api}/${POGID}`);
+    const resp = await this.$http.get(`${this.api}/${pogID}`);
     this.pogs[resp.data.POGID] = resp.data;
     return this.pogs[resp.data.POGID];
   }
