@@ -45,6 +45,13 @@ md-content.trackingBoard {
 
   }
 
+  a {
+    &.assign {
+      text-decoration: none;
+      color: inherit;
+    }
+  }
+
   &.trackingLane {
 
     tr.state {
