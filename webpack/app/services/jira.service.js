@@ -2,8 +2,7 @@ class JiraService {
   /* @ngInject */
   constructor($http) {
     this.$http = $http;
-    this.api = 'https://www.bcgsc.ca/jira/rest/api/2';
-    this.apiProxy = `${CONFIG.ENDPOINTS.API}/jira`;
+    this.api = CONFIG.ENDPOINTS.JIRA;
   }
 
   /**
@@ -45,7 +44,11 @@ class JiraService {
     if (options.security) ticket.fields.security = { 'name': 'POG Restricted' };
 
     // Send POST to JIRA
-    const resp = await this.$http.post(`${this.api}/issue`, ticket, { headers: { authorization: undefined }, withCredentials: true });
+    const resp = await this.$http.post(`${this.api}/issue`, ticket,
+      {
+        headers: { authorization: undefined },
+        withCredentials: true,
+      });
     return resp.data;
   }
 
@@ -60,7 +63,7 @@ class JiraService {
    */
   async addSubtask(ticket, title, description) {
     // add subtask
-    const resp = await this.$http.post(`${this.apiProxy}/subtask`, { title, ticket, description });
+    const resp = await this.$http.post(`${this.api}/jira/subtask`, { title, ticket, description });
     return resp.data;
   }
 
@@ -77,35 +80,16 @@ class JiraService {
   }
 
   /**
-   * Create a new JIRA session
-   *
-   * @param {String} username - JIRA username
-   * @param {String} password - JIRA Password
-   *
-   * @returns {Promise} - result of API call
-   */
-  async createNewSession(username, password) {
-    const resp = await this.$http.post(`${this.api}/session`, { username, password });
-    return resp.data;
-  }
-
-  /**
-   * Get current JIRA session
-   *
-   * @returns {Promise} - result of API call
-   */
-  async getCurrentSession() {
-    const resp = await this.$http.get('https://www.bcgsc.ca/jira/rest/auth/1/session', { headers: { authorization: undefined }, withCredentials: true });
-    return resp;
-  }
-
-  /**
    * Get available JIRA ticket priorities
    *
    * @returns {Promise} - array of priorities
    */
   async getPriorities() {
-    const resp = await this.$http.get(`${this.api}/priority`, { headers: { authorization: undefined }, withCredentials: true });
+    const resp = await this.$http.get(`${this.api}/priority`,
+      {
+        headers: { authorization: undefined },
+        withCredentials: true,
+      });
     return resp.data;
   }
 
@@ -115,7 +99,11 @@ class JiraService {
    * @returns {Promies} - array of projects
    */
   async getProjects() {
-    const resp = await this.$http.get(`${this.api}/project`, { headers: { authorization: undefined }, withCredentials: true });
+    const resp = await this.$http.get(`${this.api}/project`,
+      {
+        headers: { authorization: undefined },
+        withCredentials: true,
+      });
     return resp.data;
   }
 
@@ -127,7 +115,11 @@ class JiraService {
    * @returns {Promise} - result of API call
    */
   async getProjectDetails(project) {
-    const resp = await this.$http.get(`${this.api}/project/${project}`, { headers: { authorization: undefined }, withCredentials: true });
+    const resp = await this.$http.get(`${this.api}/project/${project}`,
+      {
+        headers: { authorization: undefined },
+        withCredentials: true,
+      });
     return resp.data;
   }
 
@@ -139,7 +131,11 @@ class JiraService {
    * @returns {Promise} - result of API call
    */
   async getSecurityLevels(project) {
-    const resp = await this.$http.get(`${this.api}/project/${project}/securitylevel`, { headers: { authorization: undefined }, withCredentials: true });
+    const resp = await this.$http.get(`${this.api}/project/${project}/securitylevel`,
+      {
+        headers: { authorization: undefined },
+        withCredentials: true,
+      });
     return resp.data;
   }
 }
