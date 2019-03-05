@@ -12,8 +12,8 @@ class JiraService {
    * @param {String} type - Ticket type (Task, Sub-task, Bug, etc.)
    * @param {String} summary - Ticket Title
    * @param {String} description - Body/text of ticket
-   * @param {Object} options - Key-value paired hashmap of options: parent, assignee, labels, priority
-   *
+   * @param {Object} options - Key-value paired hashmap of options:
+   * parent, assignee, labels, priority
    * @returns {Promise} - Result of API call
    */
   async createTicket(project, type, summary, description, options = {}) {
@@ -38,10 +38,20 @@ class JiraService {
     if (options.assignee) {
       ticket.fields.assignee = { key: options.assignee, name: options.assignee };
     }
-    if (options.components) ticket.fields.components = options.components;
-    if (options.parent) ticket.fields.parent = { key: options.parent };
-    if (options.labels) ticket.fields.labels = _.map(options.labels, (l) => { return l.replace(/\s+/g, '-'); });
-    if (options.security) ticket.fields.security = { 'name': 'POG Restricted' };
+    if (options.components) {
+      ticket.fields.components = options.components;
+    }
+    if (options.parent) {
+      ticket.fields.parent = { key: options.parent };
+    }
+    if (options.labels) {
+      ticket.fields.labels = options.labels.map((label) => {
+        return label.replace(/\s+/g, '-');
+      });
+    }
+    if (options.security) {
+      ticket.fields.security = { 'name': 'POG Restricted' };
+    }
 
     // Send POST to JIRA
     const resp = await this.$http.post(`${this.api}/issue`, ticket,
