@@ -2,7 +2,7 @@ class Service {
   /* @ngInject */
   constructor($http) {
     this.$http = $http;
-    this.api = 'https://lims16.bcgsc.ca/alpha/limsapi';
+    this.api = CONFIG.ENDPOINTS.LIMS;
   }
 
   /**
@@ -13,7 +13,10 @@ class Service {
    * @returns {Promise} - result of API call
    */
   async getDiseaseOntology(query) {
-    const resp = await this.$http.get(`${this.api}/elastic/disease_ontology/${query}`, { headers: { 'Accept': 'application/json', 'Authorization': undefined } });
+    const resp = await this.$http.get(`${this.api}/elastic/disease_ontology/${query}`,
+      {
+        headers: { 'Accept': 'application/json', 'Authorization': undefined },
+      });
     return resp.data;
   }
 
@@ -40,7 +43,11 @@ class Service {
       },
     };
     
-    const resp = await this.$http.post(`${this.api}/sample`, body, { headers: { Authorization: 'Basic YnBpZXJjZTprNHRZcDNScnl+' } });
+    const resp = await this.$http.post(`${this.api}/sample`,
+      body,
+      {
+        headers: { Authorization: 'Basic YnBpZXJjZTprNHRZcDNScnl+' },
+      });
     return resp.data;
   }
 
@@ -67,7 +74,11 @@ class Service {
       },
     };
     
-    const resp = await this.$http.post(`${this.api}/source`, body, { headers: { Authorization: 'Basic YnBpZXJjZTprNHRZcDNScnl+' } });
+    const resp = await this.$http.post(`${this.api}/source`,
+      body,
+      {
+        headers: { Authorization: 'Basic YnBpZXJjZTprNHRZcDNScnl+' },
+      });
     return resp.data;
   }
 
@@ -94,7 +105,11 @@ class Service {
       },
     };
     
-    const resp = await this.$http.post(`${this.api}/library`, body, { headers: { Authorization: 'Basic YnBpZXJjZTprNHRZcDNScnl+' } });
+    const resp = await this.$http.post(`${this.api}/library`,
+      body,
+      {
+        headers: { Authorization: 'Basic YnBpZXJjZTprNHRZcDNScnl+' },
+      });
     return resp.data;
   }
 
@@ -133,7 +148,11 @@ class Service {
       },
     };
     
-    const resp = await this.$http.post(`${this.api}/illumina_run`, body, { headers: { Authorization: 'Basic YnBpZXJjZTprNHRZcDNScnl+' } });
+    const resp = await this.$http.post(`${this.api}/illumina_run`,
+      body,
+      {
+        headers: { Authorization: 'Basic YnBpZXJjZTprNHRZcDNScnl+' },
+      });
     return resp.data;
   }
 }
