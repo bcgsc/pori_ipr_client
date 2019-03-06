@@ -49,7 +49,9 @@ class GenomicSlidesComponent {
     try {
       await this.$mdDialog.show(confirm);
       await this.SlidesService.remove(this.pog.POGID, this.report.ident, slide.ident);
-      this.slides.splice(_.findKey(this.slides, { ident: slide.ident }), 1);
+      this.slides = this.slides.filter((entry) => {
+        return entry.ident !== slide.ident;
+      });
     } catch (err) {
       this.$mdToast.showSimple('No changes were made');
     } finally {
@@ -104,6 +106,7 @@ class GenomicSlidesComponent {
       this.uploader.clearQueue();
       this.selectedItem = null;
       this.progress = 0;
+      this.$scope.$digest();
     };
 
     // Sync filter
@@ -113,7 +116,7 @@ class GenomicSlidesComponent {
         this.uploader.formData = [{ name: this.new.name }];
         if (this.allowedImageFormats.includes(item.type)) {
           this.$mdToast.showSimple(
-            `Invalid file format provided. Must be an image of type: ${_.join(this.allowedImageFormats, ', ')}`,
+            `Invalid file format provided. Must be an image of type: ${this.allowedImageFormats.join(',')}`,
           );
           return false;
         }

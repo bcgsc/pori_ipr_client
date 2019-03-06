@@ -61,11 +61,15 @@ class ProbeComponent {
   async refreshList() {
     this.loading = true;
     const states = [];
-    _.forEach(this.states, (v, k) => {
-      if (v) {
-        states.push(k);
+
+    Object.entries(this.states).forEach((entries) => {
+      const key = entries[0];
+      const value = entries[1];
+      if (value) {
+        states.push(key);
       }
     });
+
     const opts = {
       all: !this.filter.currentUser,
       query: this.filter.query,
@@ -132,22 +136,28 @@ class ProbeComponent {
         }
         // TC Search TODO: Cleanup to single line using regex. Proof of concept/do they want this?
         if (q.toLowerCase().includes('tc>')
-          && report.tumourAnalysis.tumourContent > parseInt(_.last(q.split('>')), 10)) {
+          && report.tumourAnalysis.tumourContent > parseInt(q.split('>').slice(-1).pop(), 10)) {
           result = true;
         }
         if (q.toLowerCase().includes('tc<')
-          && report.tumourAnalysis.tumourContent < parseInt(_.last(q.split('<')), 10)) {
+          && report.tumourAnalysis.tumourContent < parseInt(q.split('<').slice(-1).pop(), 10)) {
           result = true;
         }
         if (q.toLowerCase().includes('tc=')
-          && report.tumourAnalysis.tumourContent === parseInt(_.last(q.split('=')), 10)) {
+          && report.tumourAnalysis.tumourContent === parseInt(q.split('=').slice(-1).pop(), 10)) {
           result = true;
         }
         // Search Users
         report.users.forEach((p) => {
-          if (p.user.firstName.toLowerCase().includes(q.toLowerCase())) result = true;
-          if (p.user.lastName.toLowerCase().includes(q.toLowerCase())) result = true;
-          if (p.user.username.toLowerCase().includes(q.toLowerCase())) result = true;
+          if (p.user.firstName.toLowerCase().includes(q.toLowerCase())) {
+            result = true;
+          }
+          if (p.user.lastName.toLowerCase().includes(q.toLowerCase())) {
+            result = true;
+          }
+          if (p.user.username.toLowerCase().includes(q.toLowerCase())) {
+            result = true;
+          }
         });
       });
       return result;

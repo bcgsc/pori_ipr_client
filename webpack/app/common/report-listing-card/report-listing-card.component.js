@@ -44,7 +44,9 @@ class ReportListingCardComponent {
    * @return {String} Name or username
    */
   getRoleUser(role, resp) {
-    const user = _.find(this.report.users, { role });
+    const user = this.report.users.find((entry) => {
+      return entry.role === role;
+    });
     if (!user) {
       return null;
     }

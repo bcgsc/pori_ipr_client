@@ -37,7 +37,9 @@ class MutationSignatureComponent {
   addToSelection(signature) {
     // Remove from Selected Signatures
     if (this.selectedSigs.includes(signature.ident)) {
-      _.pull(this.selectedSigs, signature.ident);
+      this.selectedSigs = this.selectedSigs.filter((sig) => {
+        return sig !== signature.ident;
+      });
     } else {
       this.selectedSigs.push(signature.ident);
     }
@@ -49,7 +51,9 @@ class MutationSignatureComponent {
     this.mutationSummary.mutationSignature = [];
     // Rebuild!
     this.selectedSigs.forEach((s) => {
-      const seek = _.find(this.mutationSignature, { ident: s });
+      const seek = this.mutationSignature.find((sig) => {
+        return sig.ident === s;
+      });
       // Found a seek
       if (seek) {
         // Check for modifier
@@ -76,7 +80,7 @@ class MutationSignatureComponent {
 
   // Check if the current mutation is a selected one.
   isSelectedMutation(ident) {
-    const found = _.find(this.mutationSummary.mutationSignature, (m) => {
+    const found = this.mutationSummary.mutationSignature.find((m) => {
       return m.ident === ident;
     });
     return found !== undefined;
