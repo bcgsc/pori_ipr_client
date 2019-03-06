@@ -93,7 +93,7 @@ class KnowledgebaseService {
       if (filter === 'search') {
         processFilters[filter] = value;
       } else {
-        processFilters[filter] = value.join();
+        processFilters[filter] = value.join(',');
       }
     });
 
