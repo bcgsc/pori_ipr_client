@@ -87,9 +87,7 @@ class KnowledgebaseService {
     const processFilters = {};
 
     // Process Filters
-    Object.entries(filters).forEach((keyvals) => {
-      const filter = keyvals[0];
-      const value = keyvals[1];
+    Object.entries(filters).forEach(([filter, value]) => {
       if (filter === 'search') {
         processFilters[filter] = value;
       } else {

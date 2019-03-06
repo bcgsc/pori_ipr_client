@@ -62,9 +62,7 @@ class ProbeComponent {
     this.loading = true;
     const states = [];
 
-    Object.entries(this.states).forEach((entries) => {
-      const key = entries[0];
-      const value = entries[1];
+    Object.entries(this.states).forEach(([key, value]) => {
       if (value) {
         states.push(key);
       }
