@@ -1,4 +1,4 @@
-class Service {
+class LimsService {
   /* @ngInject */
   constructor($http) {
     this.$http = $http;
@@ -157,4 +157,4 @@ class Service {
   }
 }
   
-export default Service;
+export default LimsService;

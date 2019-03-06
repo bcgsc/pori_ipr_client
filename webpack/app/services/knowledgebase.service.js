@@ -2,7 +2,7 @@ class KnowledgebaseService {
   /* @ngInject */
   constructor($http) {
     this.$http = $http;
-    this.api = `${CONFIG.ENDPOINTS.API}/knowleddgebase`;
+    this.api = `${CONFIG.ENDPOINTS.API}/knowledgebase`;
   }
 
   /**
@@ -35,7 +35,7 @@ class KnowledgebaseService {
    * @returns {Promise} - array of matching text values
    */
   async getGenevar(query) {
-    const resp = await this.$http.get(`${this.api}/genevar?query=${query}`);
+    const resp = await this.$http.get(`${this.api}/genevar`, { params: { query } });
     return resp.data;
   }
 
@@ -57,7 +57,7 @@ class KnowledgebaseService {
    * @returns {Promise} - array of matching text values
    */
   async getDiseaseOntology(query) {
-    const resp = await this.$http.get(`${this.api}/disease-ontology?query=${query}`);
+    const resp = await this.$http.get(`${this.api}/disease-ontology`, { params: { query } });
     return resp.data;
   }
 
@@ -87,11 +87,13 @@ class KnowledgebaseService {
     const processFilters = {};
 
     // Process Filters
-    _.forEach(filters, (value, filter) => {
+    Object.entries(filters).forEach((keyvals) => {
+      const filter = keyvals[0];
+      const value = keyvals[1];
       if (filter === 'search') {
         processFilters[filter] = value;
       } else {
-        processFilters[filter] = _.join(value, ',');
+        processFilters[filter] = value.join();
       }
     });
 

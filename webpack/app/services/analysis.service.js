@@ -2,7 +2,7 @@ class AnalysisService {
   /* @ngInject */
   constructor($http) {
     this.$http = $http;
-    this.api = CONFIG.ENDPOINTS.API;
+    this.api = `${CONFIG.ENDPOINTS.API}/analysis`;
   }
 
   /**
@@ -13,7 +13,7 @@ class AnalysisService {
     */
   async getAllAnalyses(params = {}) {
     const opts = { params };
-    const resp = await this.$http.get(`${this.api}/analysis`, opts);
+    const resp = await this.$http.get(this.api, opts);
     return resp.data;
   }
   
@@ -24,7 +24,7 @@ class AnalysisService {
     * @throws {ErrorType} Thrown when API call fails
     */
   async getExtendedAnalysis(ident) {
-    const resp = await this.$http.get(`${this.api}/analysis/extended/${ident}`);
+    const resp = await this.$http.get(`${this.api}/extended/${ident}`);
     return resp.data;
   }
   
@@ -35,7 +35,7 @@ class AnalysisService {
     * @throws {ErrorType} Thrown when API call fails
     */
   async addAnalysis(analysis) {
-    const resp = await this.$http.post(`${this.api}/analysis`, analysis);
+    const resp = await this.$http.post(this.api, analysis);
     return resp.data;
   }
 
@@ -47,9 +47,11 @@ class AnalysisService {
     */
   async updateAnalysis(analysis) {
     const payload = angular.copy(analysis);
-    if (payload.analysis && Array.isArray(payload.analysis)) delete payload.analysis;
+    if (payload.analysis && Array.isArray(payload.analysis)) {
+      delete payload.analysis;
+    }
 
-    const resp = await this.$http.put(`${this.api}/analysis/${analysis.ident}`, analysis);
+    const resp = await this.$http.put(`${this.api}/${analysis.ident}`, analysis);
     return resp.data;
   }
 
@@ -59,7 +61,7 @@ class AnalysisService {
     * @throws {ErrorType} Thrown when API call fails
     */
   async getComparators() {
-    const resp = await this.$http.get(`${this.api}/analysis/comparators`);
+    const resp = await this.$http.get(`${this.api}/comparators`);
     return resp.data;
   }
 }
