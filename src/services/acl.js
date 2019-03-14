@@ -6,7 +6,7 @@ app.service('$acl', ['$q', '_', 'api.user', 'api.pog', ($q, _, $user, $pog) => {
         reject: [],
       },
       edit: {
-        allow: ['admin', 'analyst', 'bioinformatician', 'reviewer'],
+        allow: ['admin', 'analyst', 'bioinformatician', 'reviewer', 'external analyst'],
         reject: ['clinician', 'collaborator', 'biopsies'],
       },
       remove: {
@@ -17,25 +17,25 @@ app.service('$acl', ['$q', '_', 'api.user', 'api.pog', ($q, _, $user, $pog) => {
     analyses: {
       view: {
         allow: ['*'],
-        reject: ['clinician', 'collaborator'],
+        reject: ['clinician', 'collaborator', 'external analyst'],
       },
       edit: {
         allow: ['projects', 'admin', 'biopsies'],
-        reject: ['clinician', 'collaborator'],
+        reject: ['clinician', 'collaborator', 'external analyst'],
       },
       remove: {
-        allow: ['projects', 'admin', 'biopsies'],
+        allow: ['projects', 'admin', 'biopsies', 'external analyst'],
         reject: [],
       },
     },
     tracking: {
       view: {
         allow: ['*'],
-        reject: ['clinician', 'collaborator', 'biopsies'],
+        reject: ['clinician', 'collaborator', 'biopsies', 'external analyst'],
       },
       edit: {
         allow: ['*'],
-        reject: ['clinician', 'collaborator', 'biopsies'],
+        reject: ['clinician', 'collaborator', 'biopsies', 'external analyst'],
       },
       remove: {
         allow: ['projects', 'admin'],
@@ -59,19 +59,19 @@ app.service('$acl', ['$q', '_', 'api.user', 'api.pog', ($q, _, $user, $pog) => {
     },
     knowledgebase: {
       allow: ['*'],
-      reject: ['clinician', 'biopsies'],
+      reject: ['clinician', 'biopsies', 'external analyst'],
     },
     germline: {
       allow: ['*'],
-      reject: ['clinician', 'collaborator', 'biopsies'],
+      reject: ['clinician', 'collaborator', 'biopsies', 'external analyst'],
     },
     analyses: {
       allow: ['*'],
-      reject: ['clinician', 'collaborator'],
+      reject: ['clinician', 'collaborator', 'external analyst'],
     },
     tracking: {
       allow: ['*'],
-      reject: ['clinician', 'collaborator', 'biopsies'],
+      reject: ['clinician', 'collaborator', 'biopsies', 'external analyst'],
     },
   };
 

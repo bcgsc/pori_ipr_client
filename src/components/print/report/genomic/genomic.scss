@@ -12,6 +12,19 @@ $print_grey_border: rgb(192,192,192);
   page-break-after: always;
 }
 
+div.print {
+  // A4 Page Size
+  width: 258mm; // Dev width on page
+  margin: 0 auto;
+
+  font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+  font-size: 13pt;
+
+  // Remove spacing
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
 table.print {
 
   // A4 Page Size
