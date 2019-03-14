@@ -56,7 +56,7 @@ md-dialog(layout="column", aria-label="Task -{{task.name}}", flex-md=80, flex-xs
                         span(ng-if="task.outcomeType === 'text'") {{ checkin.outcome }}
                         span(ng-if="task.outcomeType === 'location'", layout="row")
                             ipr-copypaste(text="checkin.outcome", flex=90)
-                        span(ng-if="task.outcomeType === 'pass/fail/proceed'") {{ checkin.outcome.replace('-', ' - ') | titleCase }}
+                        span(ng-if="task.outcomeType === 'pass/fail/proceed/oncopanel'") {{ checkin.outcome.replace('-', ' - ') | titleCase }}
 
                     span(flex) {{checkin.user.firstName}} {{checkin.user.lastName}}
                     span

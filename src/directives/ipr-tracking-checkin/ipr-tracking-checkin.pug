@@ -17,13 +17,14 @@ div(layout="column")
         md-input-container(flex)
             md-checkbox(ng-model="outcome.value", aria-label="Outcome", ng-true-value="true", ng-false-value="false") True/False outcome
 
-    div(ng-if="type === 'pass/fail/proceed'", layout="row")
+    div(ng-if="type === 'pass/fail/proceed/oncopanel'", layout="row")
         md-input-container(flex)
             label Result
             md-select(ng-model="outcome.value", placeholder="Outcome", required)
                 md-option(value="pass") Pass
                 md-option(value="fail") Fail
                 md-option(value="fail-proceed") Fail - Proceed
+                md-option(value="oncopanel") Oncopanel
 
     div(layout="row")
         span(flex)

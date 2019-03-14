@@ -37,7 +37,7 @@ div(layout="column", ng-if="showTasks").tasks
         span(ng-if="task.outcomeType === 'boolean' && task.checkins.length === 1", md-truncate).value
             md-icon(ng-class="{green: task.checkins[0].outcome, red: !task.checkins[0].outcome}") {{(task.checkins[0].outcome) ? 'check_circle' : 'cancel' }}
                 md-tooltip Outcome: {{task.checkins[0].outcome || 'false' }}
-        span(ng-if="task.outcomeType === 'pass/fail/proceed' && task.checkins.length === 1").value {{ task.checkins[0].outcome.replace('-', ' - ') | titleCase }}
+        span(ng-if="task.outcomeType === 'pass/fail/proceed/oncopanel' && task.checkins.length === 1").value {{ task.checkins[0].outcome.replace('-', ' - ') | titleCase }}
 
         span.assignedTo
             md-icon(ng-show="!task.assignedTo.username") person

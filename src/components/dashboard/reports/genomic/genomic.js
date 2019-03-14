@@ -38,12 +38,11 @@ app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$rootScope',
     };
   }
 
-  $scope.filter = {
-    currentUser: ($userSettings.get('genomicReportListCurrentUser') === undefined) ? true : $userSettings.get('genomicReportListCurrentUser'),
-    query: null
-  };
 
-  if($userSettings.get('genomicReportListCurrentUser') === undefined) $userSettings.save('genomicReportListCurrentUser', true);
+  $scope.filter = {
+    currentUser: $userSettings.get('genomicReportListCurrentUser'),
+    query: null,
+  };
 
   $scope.numReports = (state) => {
     return _.filter(reports, {state: state}).length;
@@ -71,6 +70,7 @@ app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$rootScope',
         $scope.loading = false;
         $scope.reports = reports = result;
         $scope.reports = reports = _.orderBy(result, ['analysis.pog.POGID','createdAt'], ['asc','desc']);
+        $userSettings.save('selectedProject', { name: $userSettings.get('selectedProject').project.name });
         associateUsers();
       },
       (err) => {

@@ -21,7 +21,8 @@ app.controller('controller.dashboard.report.genomic.structuralVariation',
     clinical: 'Gene Fusions of Potential Clinical Relevance',
     nostic: 'Gene Fusions of Prognostic and Diagnostic Relevance',
     biological: 'Gene Fusions with Biological Relevance',
-    fusionOmicSupport: 'Gene Fusions with Genome and Transcriptome Support'
+    fusionOmicSupport: 'Gene Fusions with Genome and Transcriptome Support',
+    uncharacterized: 'Uncharacterized Gene Fusions',
   };
 
   let processMutationSummaryImages = (images) => {
@@ -81,12 +82,12 @@ app.controller('controller.dashboard.report.genomic.structuralVariation',
   
   
   let processSvs = (structVars) => {
-
     let svs = {
       clinical: [],
       nostic: [],
       biological: [],
-      fusionOmicSupport: []
+      fusionOmicSupport: [],
+      uncharacterized: [],
     };
 
     // Run over mutations and group
