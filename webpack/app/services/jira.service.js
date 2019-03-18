@@ -1,259 +1,153 @@
-/*
- * BCGSC - IPR-Client BCGSC JIRA API
- *
- * This API factory implements the IPR-API. Calls to and from the BCGSC JIRA API are
- * managed through this factory.
- *
- */
-app.factory('api.jira', ['_', '$http', '$q', 'api.user', (_, $http, $q, $user) => {
-
-  const api = 'https://www.bcgsc.ca/jira/rest/api/2';
-  const apiProxy = CONFIG.ENDPOINTS.API + '/jira';
-  let $jira = {};
+class JiraService {
+  /* @ngInject */
+  constructor($http) {
+    this.$http = $http;
+    this.api = CONFIG.ENDPOINTS.JIRA;
+  }
 
   /**
-   * JIRA Ticket Namespace
+   * Create a BCGSC JIRA Ticket
    *
+   * @param {String} project - project key (DEVSU, TC, UGNE, SVIA, etc.)
+   * @param {String} type - Ticket type (Task, Sub-task, Bug, etc.)
+   * @param {String} summary - Ticket Title
+   * @param {String} description - Body/text of ticket
+   * @param {Object} options - Key-value paired hashmap of options:
+   * parent, assignee, labels, priority
+   * @returns {Promise} - Result of API call
    */
-  $jira.ticket = {
-
-    /**
-     * Create a BCGSC JIRA Ticket
-     *
-     * @param {string} project - project key (DEVSU, TC, UGNE, SVIA, etc.)
-     * @param {string} type - Ticket type (Task, Sub-task, Bug, etc.)
-     * @param {string} summary - Ticket Title
-     * @param {string} description - Body/text of ticket
-     * @param {object} options - Key-value paired hashmap of other options: parent, assignee, labels, priority
-     *
-     * @returns promise
-     */
-    create: (project, type, summary, description, options={}) => {
-
-      let deferred = $q.defer();
-
-      let ticket = {
-        fields: {
-          project: {
-            key: project
-          },
-          summary: summary,
-          issuetype: {
-            name: type,
-            subtask: (options.subtask) ? options.subtask : false
-          },
-          description: description,
-          priority: {
-            name: (options.priority) ? options.priority : "Medium" // Default priority is medium
-          }
-        }
-      };
-
-      // Are we adding asignee?
-      if(options.assignee) ticket.fields.assignee = {key: options.assignee, name: options.assignee};
-      if(options.components) ticket.fields.components = options.components;
-      if(options.parent) ticket.fields.parent = {key: options.parent};
-      if(options.labels) ticket.fields.labels = _.map(options.labels, (l) => {return l.replace(/\s+/g, '-')});
-      if(options.security) ticket.fields.security = {"name": "POG Restricted"};
-
-      // Send POST to JIRA
-      $http.post(api + '/issue', ticket, {headers: { authorization: undefined}, withCredentials: true}).then(
-        (response) => {
-          // Resolve response
-          deferred.resolve(response.data);
+  async createTicket(project, type, summary, description, options = {}) {
+    const ticket = {
+      fields: {
+        project: {
+          key: project,
         },
-        (error) => {
-          // Reject
-          deferred.reject({status: error.status, body: error.data});
-        }
-      );
-
-      return deferred.promise;
-    },
-
-    /**
-     * Add subtask to existing ticket
-     *
-     *
-     * @param {string} ticket
-     * @param {string} title
-     * @param {string} description
-     * @returns {{resolve, reject, promise}|*|Deferred}
-     */
-    subtask: (ticket, title, description) => {
-
-      let deferred = $q.defer();
-
-      // Try to create ticket
-      $http.post(apiProxy + '/subtask', {title: title, ticket: ticket, description: description}).then(
-        (resp) => {
-          deferred.resolve(resp.data);
+        summary,
+        issuetype: {
+          name: type,
+          subtask: (options.subtask) ? options.subtask : false,
         },
-        (err) => {
-          // After testing, we'll check response header to see if user needs to login to JIRA first.
-          console.log('JIRA Sub-task create error', err);
-          deferred.reject(err);
-        }
-      );
-
-
-      return deferred.promise;
-    },
-
-    /**
-     * Get a ticket from JIRA
-     *
-     * @param {string} auth - a Base64 string of username:password
-     * @param {string} ticket - JIRA ticket ID
-     *
-     * @returns promise
-     */
-    get: (ticket) => {
-
-      let deferred = $q.defer();
-
-      // Send POST to JIRA
-      $http.get(api + '/issue/' + ticket).then(
-        (response) => {
-          // Resolve response
-          deferred.resolve(response.data);
+        description,
+        priority: {
+          name: (options.priority) ? options.priority : 'Medium', // Default priority is medium
         },
-        (error) => {
-          // Reject
-          deferred.reject({status: error.status, body: error.data});
-        }
-      );
+      },
+    };
 
-      return deferred.promise;
+    // Are we adding asignee?
+    if (options.assignee) {
+      ticket.fields.assignee = { key: options.assignee, name: options.assignee };
     }
-
-  };
-  
-  /**
-   * Get JIRA ticket priorities available
-   *
-   * @returns {Promise} - Resolves with array of priorities
-   */
-  $jira.priority = () => {
-    return $q((resolve, reject) => {
-  
-      $http.get(api + '/priority', {headers: { authorization: undefined}, withCredentials: true})
-        .then((response) => {
-          resolve(response.data);
-        })
-        .catch((err) => {
-          reject(err);
-        });
-      
-    });
-  };
-  
-  /**
-   * JIRA Session Management
-   *
-   */
-  $jira.session = {
-    /**
-     * Attempt a login session on the BCGSC JIRA server
-     *
-     * @param {string} username - JIRA Username
-     * @param {string} password - JIRA Password
-     * @returns {*|promise|Promise}
-     */
-    login: (username, password) => {
-
-      let deferred = $q.defer();
-
-      $http.post(api + '/session', {username: username, password: password}).then(
-        (response) => {
-          // TODO: Store the cookie on user table
-          deferred.resolve(response.data);
-        },
-        (error) => {
-          deferred.reject({status: error.status, body: error.data});
-        }
-      );
-
-      return deferred.promise;
-    },
-    
-    current: () => {
-      $q((resolve, reject) => {
-        $http.get('https://www.bcgsc.ca/jira/rest/auth/' + '1/session', {headers: { authorization: undefined}, withCredentials: true}).then(
-          (response) => {
-            console.log('Current Authentication status', response);
-            resolve(response);
-          },
-          (err) => {
-            console.log('Failed to retrieve authentication status from JIRA', err);
-            reject();
-          }
-        )
+    if (options.components) {
+      ticket.fields.components = options.components;
+    }
+    if (options.parent) {
+      ticket.fields.parent = { key: options.parent };
+    }
+    if (options.labels) {
+      ticket.fields.labels = options.labels.map((label) => {
+        return label.replace(/\s+/g, '-');
       });
     }
-  };
+    if (options.security) {
+      ticket.fields.security = { 'name': 'POG Restricted' };
+    }
+
+    // Send POST to JIRA
+    const resp = await this.$http.post(`${this.api}/issue`, ticket,
+      {
+        headers: { authorization: undefined },
+        withCredentials: true,
+      });
+    return resp.data;
+  }
 
   /**
-   * JIRA Projects Namespace
+   * Add subtask to existing ticket in JIRA
    *
+   * @param {String} ticket - JIRA ticket ID to add subtask to
+   * @param {String} title - subtask ticket title
+   * @param {String} description - subtask ticket description
+   *
+   * @returns {Promise} - Result of API call
    */
-  $jira.projects = {
-  
-    /**
-     * Get All Projects available on JIRA
-     *
-     * @returns {Promise} - Resolves with array of projects
-     */
-    all: () => {
-      return $q((resolve, reject) => {
-        $http.get(api + '/project', {headers: { authorization: undefined}, withCredentials: true})
-          .then((result) => {
-            resolve(result.data);
-          })
-          .catch((err) => {
-            reject(err);
-          });
-      });
-    },
-  
-    /**
-     * Get JIRA Project Details
-     *
-     * @returns {Promise} - Resolves with array of projects
-     */
-    get: (project) => {
-      return $q((resolve, reject) => {
-        $http.get(api + '/project/' + project, {headers: { authorization: undefined}, withCredentials: true})
-          .then((result) => {
-            resolve(result.data);
-          })
-          .catch((err) => {
-            reject(err);
-          });
-      });
-    },
-  
-    /**
-     * Get Project Security Levels available
-     *
-     * @param {string} project - Project key name
-     * @returns {*}
-     */
-    getSecurityLevels: (project) => {
-      return $q((resolve, reject) => {
-        $http.get(api + '/project/' + project + '/securitylevel', {headers: { authorization: undefined}, withCredentials: true})
-          .then((response) => {
-            resolve(response.data);
-          })
-          .catch((err) => {
-            reject(err);
-          });
-      });
-    }
-    
-  };
+  async addSubtask(ticket, title, description) {
+    // add subtask
+    const resp = await this.$http.post(`${this.api}/jira/subtask`, { title, ticket, description });
+    return resp.data;
+  }
 
+  /**
+   * Get a ticket from JIRA
+   *
+   * @param {String} ticket - JIRA ticket ID
+   *
+   * @returns {Promise} - Result of API call
+   */
+  async getTicket(ticket) {
+    const resp = await this.$http.get(`${this.api}/issue/${ticket}`);
+    return resp.data;
+  }
 
-  return $jira;
+  /**
+   * Get available JIRA ticket priorities
+   *
+   * @returns {Promise} - array of priorities
+   */
+  async getPriorities() {
+    const resp = await this.$http.get(`${this.api}/priority`,
+      {
+        headers: { authorization: undefined },
+        withCredentials: true,
+      });
+    return resp.data;
+  }
 
-}]);
+  /**
+   * Get available JIRA projects
+   *
+   * @returns {Promies} - array of projects
+   */
+  async getProjects() {
+    const resp = await this.$http.get(`${this.api}/project`,
+      {
+        headers: { authorization: undefined },
+        withCredentials: true,
+      });
+    return resp.data;
+  }
+
+  /**
+   * Get details for a specified JIRA project
+   *
+   * @param {String} project - project key name
+   *
+   * @returns {Promise} - result of API call
+   */
+  async getProjectDetails(project) {
+    const resp = await this.$http.get(`${this.api}/project/${project}`,
+      {
+        headers: { authorization: undefined },
+        withCredentials: true,
+      });
+    return resp.data;
+  }
+
+  /**
+   * Get available security levels for a specified JIRA project
+   *
+   * @param {String} project - project key name
+   *
+   * @returns {Promise} - result of API call
+   */
+  async getSecurityLevels(project) {
+    const resp = await this.$http.get(`${this.api}/project/${project}/securitylevel`,
+      {
+        headers: { authorization: undefined },
+        withCredentials: true,
+      });
+    return resp.data;
+  }
+}
+  
+export default JiraService;

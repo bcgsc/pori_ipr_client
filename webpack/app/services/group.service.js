@@ -1,29 +1,17 @@
-/**
- * API calls relating to user groups
- * @param {*} $http {@link https://docs.angularjs.org/api/ng/service/$http}
- * @return {Object} $group service object
- */
-function userGroup($http) {
-  const api = `${CONFIG.ENDPOINTS.API}/user`;
-
-  const $groups = {
-    all,
-    retrieve,
-    create,
-    remove,
-    update,
-    addUser,
-    removeUser,
-  };
-  return $groups;
-
+class GroupService {
+  /* @ngInject */
+  constructor($http) {
+    this.$http = $http;
+    this.api = `${CONFIG.ENDPOINTS.API}/user/group`;
+  }
+  
   /**
-   * Get all groups
+   * Retrieve all groups
    * @return {Promise} All response
    * @throws {ErrorType} Thrown when API call fails
    */
-  async function all() {
-    const resp = await $http.get(`${api}/group`);
+  async all() {
+    const resp = await this.$http.get(this.api);
     return resp.data;
   }
 
@@ -33,8 +21,8 @@ function userGroup($http) {
    * @return {Promise} Retrieve response
    * @throws {ErrorType} Thrown when API call fails
    */
-  async function retrieve(ident) {
-    const resp = await $http.get(`${api}/group/${ident}`);
+  async retrieve(ident) {
+    const resp = await this.$http.get(`${this.api}/${ident}`);
     return resp.data;
   }
 
@@ -44,8 +32,8 @@ function userGroup($http) {
    * @return {Promise} Group response
    * @throws {ErrorType} Thrown when API call fails
    */
-  async function create(group) {
-    const resp = await $http.post(`${api}/group`, group);
+  async create(group) {
+    const resp = await this.$http.post(this.api, group);
     return resp.data;
   }
 
@@ -55,8 +43,8 @@ function userGroup($http) {
    * @return {Promise} Remove response
    * @throws {ErrorType} Thrown when API call fails
    */
-  async function remove(group) {
-    const resp = await $http.delete(`${api}/group/${group.ident}`);
+  async remove(group) {
+    const resp = await this.$http.delete(`${this.api}/${group.ident}`);
     return resp.data;
   }
 
@@ -67,8 +55,8 @@ function userGroup($http) {
    * @return {Promise} Update response
    * @throws {ErrorType} Thrown when API call fails
    */
-  async function update(ident, group) {
-    const resp = await $http.put(`${api}/group/${ident}`, group);
+  async update(ident, group) {
+    const resp = await this.$http.put(`${this.api}/${ident}`, group);
     return resp.data;
   }
 
@@ -79,8 +67,8 @@ function userGroup($http) {
    * @return {Promise} Add user response
    * @throws {ErrorType} Thrown when API call fails
    */
-  async function addUser(group, user) {
-    const resp = await $http.post(`${api}/group/${group}/member`, { user });
+  async addUser(group, user) {
+    const resp = await this.$http.post(`${this.api}/${group}/member`, { user });
     return resp.data;
   }
 
@@ -91,17 +79,13 @@ function userGroup($http) {
    * @return {Promise} Remove user response
    * @throws {ErrorType} Thrown when API call fails
    */
-  async function removeUser(group, user) {
-    const resp = await $http.delete(`${api}/group/${group}/member`, {
+  async removeUser(group, user) {
+    const resp = await this.$http.delete(`${this.api}/${group}/member`, {
       data: { user },
       headers: { 'Content-Type': 'application/json' },
     });
     return resp.data;
   }
 }
-
-userGroup.$inject = ['$http'];
-
-angular
-  .module('bcgscIPR')
-  .service('api.group', userGroup);
+    
+export default GroupService;

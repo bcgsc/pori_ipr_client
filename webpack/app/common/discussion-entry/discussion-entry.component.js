@@ -1,64 +1,73 @@
-app.directive("iprDiscussionEntry", ['$q', '_', '$mdToast', 'api.presentation', ($q, _, $mdToast, $presentation) => {
+import template from './discussion-entry.pug';
+import './discussion-entry.scss';
+
+const bindings = {
+  patient: '<',
+  report: '<',
+  entry: '<',
+  user: '<',
+};
+
+class DiscussionEntryComponent {
+  /* @ngInject */
+  constructor($mdToast, DiscussionService, $scope) {
+    this.$mdToast = $mdToast;
+    this.DiscussionService = DiscussionService;
+    this.$scope = $scope;
+  }
   
-  return {
-    restrict: 'E',
-    scope: {
-      patient: '=patient',
-      report: '=report',
-      entry: '=entry',
-      user: '=user'
-    },
-    templateUrl: 'ipr-discussion-entry/ipr-discussion-entry.html',
-    link: ($scope, element, attr) => {
-    
-      $scope.editing = false; // Editing mode
-      $scope.entryCache = null; // Editing Cache
-      $scope.removed = false; // Entry removed
+  $onInit() {
+    console.log(this.entry.createdAt);
+    this.editing = false;
+    this.entryCache = null;
+    this.removed = false;
+  }
       
-      // Canceling edit / restoring previous state
-      $scope.cancelEdit = () => {
-        $scope.entry.body = $scope.entryCache;
-        $scope.entryCache = null;
-        $scope.editing = false;
-      };
-      
-      // Enable editing mode
-      $scope.edit = () => {
-        $scope.entryCache = angular.copy($scope.entry.body);
-        $scope.editing = true;
-      };
-      
-      // Trigger save
-      $scope.save = (f) => {
-        
-        $presentation.discussion.update($scope.patient.POGID, $scope.report.ident, $scope.entry.ident, {body: $scope.entry.body})
-          .then((result) => {
-            $scope.entry = result;
-            $scope.editing = false;
-            $scope.entryCache = null;
-          })
-          .catch((e) => {
-            $mdToast.showSimple('Unable to save the updated entry');
-          });
-        
-      };
-      
-      // Remove entry
-      $scope.remove = () => {
-      
-        $presentation.discussion.remove($scope.patient.POGID, $scope.report.ident, $scope.entry.ident)
-          .then((result) => {
-            $scope.removed = true;
-            $scope.entry.body = null;
-            $scope.editing = false;
-          })
-          .catch((e) => {
-            $scope.editing = false;
-          })
-      
-      }
-    
-    },
-  } // end return
+  // Canceling edit / restoring previous state
+  cancelEdit() {
+    this.entry.body = this.entryCache;
+    this.entryCache = null;
+    this.editing = false;
+  }
   
-}]);
+  // Enable editing mode
+  edit() {
+    this.entryCache = angular.copy(this.entry.body);
+    this.editing = true;
+  }
+  
+  // Trigger save
+  async save() {
+    try {
+      const resp = await this.DiscussionService.update(
+        this.patient.POGID, this.report.ident, this.entry.ident, { body: this.entry.body },
+      );
+      this.entry = resp;
+      this.editing = false;
+      this.entryCache = null;
+      this.$scope.$digest();
+    } catch (err) {
+      this.$mdToast.showSimple('Unable to save the updated entry');
+    }
+  }
+  
+  // Remove entry
+  async remove() {
+    try {
+      await this.DiscussionService.remove(this.patient.POGID, this.report.ident, this.entry.ident);
+      this.removed = true;
+      this.entry.body = null;
+      this.editing = false;
+    } catch (err) {
+      this.editing = false;
+    } finally {
+      this.$scope.$digest();
+    }
+  }
+}
+
+export default {
+  template,
+  bindings,
+  controller: DiscussionEntryComponent,
+};

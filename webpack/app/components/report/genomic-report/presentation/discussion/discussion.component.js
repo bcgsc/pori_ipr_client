@@ -1,31 +1,42 @@
-app.controller('controller.dashboard.report.genomic.discussion',
-['_', '$q', '$scope', 'pog', 'report', '$mdDialog', '$mdToast', 'api.presentation', 'discussions', 'user',
-(_, $q, $scope, pog, report, $mdDialog, $mdToast, $presentation, discussions, user) => {
+import template from './discussion.pug';
+import './discussion.scss';
+
+const bindings = {
+  pog: '<',
+  report: '<',
+  discussions: '<',
+  user: '<',
+};
+
+class DiscussionComponent {
+  /* @ngInject */
+  constructor($scope, $mdDialog, $mdToast, DiscussionService) {
+    this.$scope = $scope;
+    this.$mdDialog = $mdDialog;
+    this.$mdToast = $mdToast;
+    this.DiscussionService = DiscussionService;
+  }
+
+  $onInit() {
+    this.new = { body: null };
+  }
   
-  $scope.pog = pog;
-  $scope.report = report;
-  $scope.discussions = discussions;
-  $scope.new = { body: null };
-  $scope.user = user;
-  
-  $scope.add = (f) => {
-    
-    console.log($scope.new);
-    
-    let data = {
-      body: $scope.new.body
+  async add() {
+    const data = {
+      body: this.new.body,
     };
-    
-    $presentation.discussion.create(pog.POGID, report.ident, data)
-      .then((result) => {
-        $scope.discussions.push(result);
-        $scope.new.body = null;
-      })
-      .catch((e) => {
-        $mdToast.showSimple('Unable to add new discussion entry');
-      });
-    
-  };
-  
-  
-}]);
+    try {
+      const resp = await this.DiscussionService.create(this.pog.POGID, this.report.ident, data);
+      this.discussions.push(resp);
+      this.new.body = null;
+    } catch (err) {
+      this.$mdToast.showSimple('Unable to add new discussion entry');
+    }
+  }
+}
+
+export default {
+  template,
+  bindings,
+  controller: DiscussionComponent,
+};
