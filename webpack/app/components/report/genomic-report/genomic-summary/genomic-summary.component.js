@@ -295,13 +295,13 @@ class GenomicSummaryComponent {
                 scope.comment,
                 cascade,
               );
-              this.genomicAlterations = _.reject(this.genomicAlterations, (r) => {
-                return r.ident === alteration.ident;
+              this.genomicAlterations = this.genomicAlterations.filter((r) => {
+                return r.ident !== alteration.ident;
               });
 
               if (cascade) {
-                this.genomicEvents = _.reject(this.genomicEvents, (e) => {
-                  return e.genomicEvent === alteration.geneVariant;
+                this.genomicEvents = this.genomicEvents.filter((e) => {
+                  return e.genomicEvent !== alteration.geneVariant;
                 });
               }
 

@@ -26,7 +26,15 @@ import ProbeTargetService from './services/report/summary/probe-target.service';
 import MutationSignatureService from './services/report/summary/mutation-signature.service';
 import MicrobialService from './services/report/summary/microbial.service';
 import AnalystCommentsService from './services/report/analyst-comments/analyst-comments.service';
+import SlidesService from './services/report/presentation/slides.service';
+import DiscussionService from './services/report/presentation/discussion.service';
 import TitleCaseFilter from './filters/titlecase.filter';
+import AnalysisService from './services/analysis.service';
+import GroupService from './services/group.service';
+import JiraService from './services/jira.service';
+import KnowledgebaseService from './services/knowledgebase.service';
+import LimsService from './services/lims.service';
+import ChangeHistoryService from './services/change-history.service';
 import './root.scss';
 
 angular.module('root', [
@@ -57,6 +65,14 @@ export default angular.module('root')
   .service('MutationSignatureService', MutationSignatureService)
   .service('MicrobialService', MicrobialService)
   .service('AnalystCommentsService', AnalystCommentsService)
+  .service('SlidesService', SlidesService)
+  .service('DiscussionService', DiscussionService)
+  .service('AnalysisService', AnalysisService)
+  .service('GroupService', GroupService)
+  .service('JiraService', JiraService)
+  .service('KnowledgebaseService', KnowledgebaseService)
+  .service('LimsService', LimsService)
+  .service('ChangeHistoryService', ChangeHistoryService)
   .filter('titlecase', TitleCaseFilter)
   .config(($stateProvider, $urlServiceProvider, $locationProvider) => {
     'ngInject';

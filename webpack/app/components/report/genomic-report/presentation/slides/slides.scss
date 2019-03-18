@@ -1,11 +1,22 @@
-section.material-section.slide {
+section.material-section.slide.presentation {
 
-  .analysis-report-section {
+  div.analysis-report-section {
 
     h3 {
       md-icon {
         float: right;
       }
+    }
+
+    md-content > p {
+      text-align: center;
+    }
+
+    span.hint {
+      font-size: 0.75em;
+      color: rgb(130,130,130);
+      padding: 4px;
+      display: inline-block;
     }
 
     .slide {
@@ -42,7 +53,5 @@ section.material-section.slide {
       font-style: italic;
       margin: 25px 0 0 0;
     }
-
   }
-
 }
