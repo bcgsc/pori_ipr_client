@@ -1,3 +1,7 @@
+import {
+  get, intersection, intersectionBy, find, map, mapValues,
+} from 'lodash-es';
+
 class AclService {
   /* @ngInject */
   constructor(UserService, PogService) {
@@ -91,20 +95,28 @@ class AclService {
     let resource;
 
     try {
-      resource = _.get(this.resources, name);
+      resource = get(this.resources, name);
     } catch (e) {
       return false;
     }
 
     // Check Allows first
-    const allows = _.intersection(resource.allow, _.map(_.mapValues(this.UserService.meObj.groups, (r) => { return { name: r.name.toLowerCase() }; }), 'name'));
-    if (resource.allow.includes('*')) permission = true;
-    if (allows && allows.length > 0) permission = true;
+    const allows = intersection(resource.allow, map(mapValues(this.UserService.meObj.groups, (r) => { return { name: r.name.toLowerCase() }; }), 'name'));
+    if (resource.allow.includes('*')) {
+      permission = true;
+    }
+    if (allows && allows.length > 0) {
+      permission = true;
+    }
 
     // Check Rejections
-    const rejects = _.intersection(resource.reject, _.map(_.mapValues(this.UserService.meObj.groups, (r) => { return { name: r.name.toLowerCase() }; }), 'name'));
-    if (resource.reject.includes('*')) permission = false; // No clue why this would exist, but spec allows
-    if (rejects && rejects.length > 0) permission = false;
+    const rejects = intersection(resource.reject, map(mapValues(this.UserService.meObj.groups, (r) => { return { name: r.name.toLowerCase() }; }), 'name'));
+    if (resource.reject.includes('*')) {
+      permission = false; // No clue why this would exist, but spec allows
+    }
+    if (rejects && rejects.length > 0) {
+      permission = false;
+    }
 
     return permission;
   }
@@ -119,19 +131,27 @@ class AclService {
     let action;
 
     try {
-      action = _.get(this.actions, name);
+      action = get(this.actions, name);
     } catch (e) {
       return false;
     }
     // Check Allows first
-    const allows = _.intersection(action.allow, _.map(_.mapValues(this.UserService.meObj.groups, (r) => { return { name: r.name.toLowerCase() }; }), 'name'));
-    if (action.allow.includes('*')) permission = true;
-    if (allows && allows.length > 0) permission = true;
+    const allows = intersection(action.allow, map(mapValues(this.UserService.meObj.groups, (r) => { return { name: r.name.toLowerCase() }; }), 'name'));
+    if (action.allow.includes('*')) {
+      permission = true;
+    }
+    if (allows && allows.length > 0) {
+      permission = true;
+    }
 
     // Check Rejections
-    const rejects = _.intersection(action.reject, _.map(_.mapValues(this.UserService.meObj.groups, (r) => { return { name: r.name.toLowerCase() }; }), 'name'));
-    if (action.reject.includes('*')) permission = false; // No clue why this would exist, but spec allows
-    if (rejects && rejects.length > 0) permission = false;
+    const rejects = intersection(action.reject, map(mapValues(this.UserService.meObj.groups, (r) => { return { name: r.name.toLowerCase() }; }), 'name'));
+    if (action.reject.includes('*')) {
+      permission = false; // No clue why this would exist, but spec allows
+    }
+    if (rejects && rejects.length > 0) {
+      permission = false;
+    }
     return permission;
   }
 
@@ -141,7 +161,7 @@ class AclService {
    * @return {Promise} Boolean with if the user is in a group
    */
   async inGroup(group) {
-    return !!_.find(this.UserService.meObj.groups, (userGroup) => {
+    return !!find(this.UserService.meObj.groups, (userGroup) => {
       return group.toLowerCase() === userGroup.name.toLowerCase();
     });
   }
@@ -154,8 +174,8 @@ class AclService {
   async canAccessPOG(pogID) {
     const resp = await this.PogService.id(pogID);
     // check if user has individual project access or is part of full access group
-    if (_.intersectionBy(this.UserService.meObj.projects, resp.projects, 'name').length > 0
-      || _.find(this.UserService.meObj.groups, { name: 'Full Project Access' })) {
+    if (intersectionBy(this.UserService.meObj.projects, resp.projects, 'name').length > 0
+      || find(this.UserService.meObj.groups, { name: 'Full Project Access' })) {
       return true;
     }
     return false;

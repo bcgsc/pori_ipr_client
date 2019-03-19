@@ -1,3 +1,4 @@
+import { sortBy } from 'lodash-es';
 import template from './mutation-signature.pug';
 import './mutation-signature.scss';
 
@@ -110,7 +111,7 @@ class MutationSignatureComponent {
 
       this.mutationSignature.push(r);
     });
-    this.mutationSignature = _.sortBy(this.mutationSignature, this.mutationSort.col);
+    this.mutationSignature = sortBy(this.mutationSignature, this.mutationSort.col);
     if (!this.mutationSort.order) {
       this.mutationSignature.reverse();
     }

@@ -68,7 +68,7 @@
     "angular-sortable-view": "~0.0.17",
     "chart.js": "~2.7.3",
     "keycloak-js": "~4.6.0",
-    "lodash": "~4.17.11",
+    "lodash-es": "~4.17.11",
     "minimist": "~1.2.0",
     "moment": "~2.22.2",
     "ng-quill": "~3.8.0",

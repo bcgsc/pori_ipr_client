@@ -1,3 +1,5 @@
+import { sortBy } from 'lodash-es';
+
 class TherapeuticEditController {
   /* @ngInject */
   constructor($scope, $mdDialog, $mdToast, TherapeuticService, KnowledgebaseService,
@@ -45,7 +47,7 @@ class TherapeuticEditController {
       { entry: 'wildtype', description: 'N/A' },
     ];
 
-    this.bioMarkerContexts = _.sortBy(this.bioMarkerContexts, 'entry');
+    this.bioMarkerContexts = sortBy(this.bioMarkerContexts, 'entry');
 
     this.new = {
       biomarkerContextValue: null,
@@ -103,7 +105,7 @@ class TherapeuticEditController {
   async varFilter(query) {
     let filteredEntries = await this.KnowledgebaseService.getGenevar(query);
     if (query.length < 3) {
-      filteredEntries = _.filter(this.entries, (entry) => {
+      filteredEntries = this.entries.filter((entry) => {
         return (entry.length < 3);
       });
     }
@@ -120,8 +122,8 @@ class TherapeuticEditController {
     const newTherapeutic = angular.copy(this.entry);
     // De-objectify targets
     const targets = [];
-    _.forEach(this.entry.target, (v) => {
-      targets.push(v.geneVar);
+    this.entry.target.forEach((value) => {
+      targets.push(value.geneVar);
     });
     newTherapeutic.target = targets;
 
