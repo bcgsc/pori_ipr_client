@@ -29,25 +29,25 @@ class TherapeuticComponent {
     this.rowOptions = [];
     // Sort into groups
     this.groupTherapeutics = () => {
-      _.forEach(this.therapeutic, (v) => {
-        if (v.type === 'therapeutic') {
+      this.therapeutic.forEach((value) => {
+        if (value.type === 'therapeutic') {
           const targets = [];
-          _.forEach(v.target, (e) => {
-            targets.push((angular.isObject(e)) ? e : { geneVar: e });
+          Object.values(value.target).forEach((type) => {
+            targets.push((angular.isObject(type)) ? type : { geneVar: type });
           });
-          v.target = targets;
-          this.therapeuticGrouped.therapeutic.push(v);
+          value.target = targets;
+          this.therapeuticGrouped.therapeutic.push(value);
         }
-        if (v.type === 'chemoresistance') {
-          this.therapeuticGrouped.chemoresistance.push(v);
+        if (value.type === 'chemoresistance') {
+          this.therapeuticGrouped.chemoresistance.push(value);
         }
       });
     };
 
     this.cleanTargets = (targets) => {
       const newTargets = [];
-      _.forEach(targets, (e) => {
-        newTargets.push((angular.isObject(e)) ? e : { geneVar: e });
+      Object.values(targets).forEach((type) => {
+        newTargets.push((angular.isObject(type)) ? type : { geneVar: type });
       });
       return newTargets;
     };
@@ -79,9 +79,9 @@ class TherapeuticComponent {
           data.target = this.cleanTargets(data.target);
         }
         // Loop over entries in type, find matching ident, and replace
-        _.forEach(this.therapeuticGrouped[data.type], (e, i) => {
-          if (e.ident === data.ident) {
-            this.therapeuticGrouped[data.type][i] = e;
+        Object.entries(this.therapeuticGrouped[data.type]).forEach(([value, key]) => {
+          if (value.ident === data.ident) {
+            this.therapeuticGrouped[data.type][key] = value;
           }
         });
         this.$mdToast.show(this.$mdToast.simple({ textContent: 'Changes saved' }));
@@ -89,8 +89,8 @@ class TherapeuticComponent {
       // Removing an entry
       if (resp.status === 'deleted') {
         const { data } = resp;
-        _.remove(this.therapeuticGrouped[data.type], (e) => {
-          return (e.ident === data.ident);
+        this.therapeuticGrouped[data.type] = this.therapeuticGrouped[data.type].filter((type) => {
+          return (type.ident !== data.ident);
         });
         this.$mdToast.show(this.$mdToast.simple({ textContent: 'The entry has been removed' }));
       }
@@ -137,9 +137,11 @@ class TherapeuticComponent {
     const updates = [];
 
     // Update Each Entry
-    _.forEach($partTo, (e, i) => {
-      e.rank = i;
-      updates.push(this.TherapeuticService.update(this.pog.POGID, this.report.ident, e.ident, e));
+    $partTo.forEach((entry, index) => {
+      entry.rank = index;
+      updates.push(
+        this.TherapeuticService.update(this.pog.POGID, this.report.ident, entry.ident, entry),
+      );
     });
 
     try {
