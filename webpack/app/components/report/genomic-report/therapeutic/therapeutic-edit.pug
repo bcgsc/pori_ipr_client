@@ -36,7 +36,7 @@ md-dialog(layout="column", aria-label="Update Therapeutic Target", flex=85).edit
         md-selected-item="$ctrl.entry.targetContext",
         md-require-match=false,
         md-search-text="$ctrl.searchTextPathway",
-        md-items="entry in $ctrl.targetFilter($ctrl.searchText)",
+        md-items="entry in []",
         md-item-text="entry",
         md-floating-label="Pathway/Context"
         flex

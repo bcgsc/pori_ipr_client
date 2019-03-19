@@ -112,11 +112,6 @@ class TherapeuticEditController {
     return filteredEntries;
   }
 
-  /* eslint-disable class-methods-use-this */
-  async targetFilter(query) {
-    return [];
-  }
-
   // Check, clean, and prepare save object
   async save() {
     const newTherapeutic = angular.copy(this.entry);
