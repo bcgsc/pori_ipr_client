@@ -119,13 +119,12 @@ app.controller('controller.dashboard.report.genomic.therapeutic',
 
   // Order updated
   $scope.updateSorting = ($item, $partFrom, $partTo, $indexFrom, $indexTo) => {
-
-    console.log('Item', $item);
-    console.log('partFrom', $partFrom);
-    console.log('partTo', $partTo);
-    console.log('indexFrom', $indexFrom);
-    console.log('indexTo', $indexTo);
-
+    if (!canEdit) {
+      $mdToast.show($mdToast.simple().textContent(
+        'Unable to save the updated order: missing report edit permissions.',
+      ).hideDelay(5000));
+      return null;
+    }
     // Loop over each and update their positions
     let updates = [];
 
