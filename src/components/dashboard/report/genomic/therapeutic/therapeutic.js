@@ -1,7 +1,8 @@
 app.controller('controller.dashboard.report.genomic.therapeutic',
-['_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', 'api.pog', 'pog', 'report', 'api.therapeuticOptions', 'therapeutic',
-(_, $q, $scope, $state, $mdDialog, $mdToast, $pog, pog, report, $therapeutic, therapeutic) => {
+['_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', 'api.pog', 'canEdit', 'pog', 'report', 'api.therapeuticOptions', 'therapeutic',
+(_, $q, $scope, $state, $mdDialog, $mdToast, $pog, canEdit, pog, report, $therapeutic, therapeutic) => {
 
+  $scope.canEdit = canEdit;
   $scope.therapeutic = {
     therapeutic: [],
     chemoresistance: []

@@ -28,11 +28,11 @@ section.therapeuticTargets
                     span.line-break-preserve {{th.notes}}
                 div(layout="column", layout-align="start start").options
                     div
-                        md-icon(ng-if="SES_permissionAction('report.edit')", ng-click="edit($event, th)") edit
+                        md-icon(ng-if="canEdit", ng-click="edit($event, th)") edit
                     div
-                        md-icon(ng-if="SES_permissionAction('report.edit')", sv-handle) drag_handle
+                        md-icon(ng-if="canEdit", sv-handle) drag_handle
 
-            div(ng-if="SES_permissionAction('report.edit')", layout="row", md-whiteframe=1, layout-align="center center", ng-click="newEntry($event, 'therapeutic')").rowCard.clickable.new
+            div(ng-if="canEdit", layout="row", md-whiteframe=1, layout-align="center center", ng-click="newEntry($event, 'therapeutic')").rowCard.clickable.new
                 div New Entry
 
         h2(style="margin-top: 15px;").title Potential Chemoresistance
@@ -55,8 +55,8 @@ section.therapeuticTargets
                     span.line-break-preserve {{ch.notes}}
                 div(layout="column", layout-align="start start").options
                     div
-                        md-icon(ng-if="SES_permissionAction('report.edit')", ng-click="edit($event, ch)") edit
+                        md-icon(ng-if="canEdit", ng-click="edit($event, ch)") edit
                     div
-                        md-icon(ng-if="SES_permissionAction('report.edit')", sv-handle) drag_handle
-        div(ng-if="SES_permissionAction('report.edit')", layout="row", md-whiteframe=1, layout-align="center center", ng-click="newEntry($event, 'chemoresistance')").rowCard.clickable.new
+                        md-icon(ng-if="canEdit", sv-handle) drag_handle
+        div(ng-if="canEdit", layout="row", md-whiteframe=1, layout-align="center center", ng-click="newEntry($event, 'chemoresistance')").rowCard.clickable.new
             div New Entry
