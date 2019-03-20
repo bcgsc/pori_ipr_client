@@ -1,6 +1,6 @@
 section
     md-subheader.md-primary Patient Information
-        span(ng-if="SES_permissionAction('report.edit')").edit
+        span(ng-if="canEdit").edit
             md-icon(ng-click="updatePatient($event)") edit
 
     div(layout="column", flex).details

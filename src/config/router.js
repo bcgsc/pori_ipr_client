@@ -170,7 +170,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       },
       resolve: {
         permission: ['$acl', '$state', 'user', '$mdToast', async ($acl, $state, user, $mdToast) => {
-          if (!$acl.action('report.view', user)) {
+          if (!$acl.action('report.view')) {
             $mdToast.showSimple('You are not allowed to view reports');
             $state.go('dashboard.home');
             return false;
@@ -224,7 +224,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
               opts.all = true;
               opts.states = 'ready,active,presented';
               opts.project = project.name;
-              $userSettings.save('genomicReportListCurrentUser', false);
+              await $userSettings.save('genomicReportListCurrentUser', false);
             }
 
             if (isExternalMode) {
@@ -315,6 +315,9 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
         report: ['$q', '$stateParams', 'api.pog_analysis_report', ($q, $stateParams, $report) => {
           return $report.pog($stateParams.POG).get($stateParams.analysis_report);
         }],
+        canEdit: ['report', '$acl', 'user', async (report, $acl, user) => {
+          return $acl.action('report.edit', user, report.users);
+        }],
       },
     })
 
@@ -402,6 +405,9 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       resolve: {
         report: ['$q', '$stateParams', 'api.pog_analysis_report', ($q, $stateParams, $report) => {
           return $report.pog($stateParams.POG).get($stateParams.analysis_report);
+        }],
+        canEdit: ['report', '$acl', 'user', async (report, $acl, user) => {
+          return $acl.action('report.edit', user, report.users);
         }],
       },
     })
