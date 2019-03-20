@@ -55,9 +55,6 @@ function stateChange($rootScope, $state, $acl, $user, $userSettings, _, $mdToast
     $rootScope.PROJECT = CONFIG.PROJECT;
     $rootScope.CONFIG = CONFIG;
 
-    $rootScope.SES_permissionResource = $acl.resource;
-    $rootScope.SES_permissionAction = $acl.action;
-
     // Check for transitions among child states to run auth check
     // Transitions among top level states are checked by the router but not for child -> child
     if (transition.from().name.match(/.*(?=\.)/g) === transition.to().name.match(/.*(?=\.)/g)
