@@ -4,7 +4,6 @@ app.controller('controller.dashboard',
       
       $scope.check = {
         resource: $acl.resource,
-        action: $acl.action,
       };
       
       $scope.isAdmin = isAdmin;

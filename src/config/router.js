@@ -23,6 +23,20 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
   };
 
   /**
+   * Checks if the given user has permissions to edit reports. Used for meta routes
+   * @param {Object} transition object
+   * @return {String | Boolean} Path or redirect false
+   */
+  const redirectEdit = async (transition) => {
+    const $user = await transition.injector().getAsync('api.user');
+    const user = await $user.me();
+    const $acl = await transition.injector().getAsync('$acl');
+    const report = await transition.injector().getAsync('report');
+    const canEdit = await $acl.action('report.edit', user, report.users);
+    return canEdit ? false : 'dashboard.reports.genomic';
+  };
+
+  /**
    * Checks if the user has access to a specific case, based on project access
    * Redirects if no access
    * @param {Object} transition object
@@ -170,7 +184,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       },
       resolve: {
         permission: ['$acl', '$state', 'user', '$mdToast', async ($acl, $state, user, $mdToast) => {
-          if (!$acl.action('report.view')) {
+          if (!$acl.action('report.view', user)) {
             $mdToast.showSimple('You are not allowed to view reports');
             $state.go('dashboard.home');
             return false;
@@ -383,7 +397,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Report Meta Information',
       },
-      redirectTo: redirectPOG,
+      redirectTo: (redirectPOG && redirectEdit),
       templateUrl: 'dashboard/report/probe/meta/meta.html',
       controller: 'controller.dashboard.report.probe.meta',
     })
@@ -700,7 +714,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Patient Meta Information',
       },
-      redirectTo: redirectPOG,
+      redirectTo: (redirectPOG && redirectEdit),
       templateUrl: 'dashboard/report/genomic/meta/meta.html',
       controller: 'controller.dashboard.report.genomic.meta',
     })
@@ -710,7 +724,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Data History',
       },
-      redirectTo: redirectPOG,
+      redirectTo: (redirectPOG && redirectEdit),
       templateUrl: 'dashboard/report/genomic/history/history.html',
       controller: 'controller.dashboard.report.genomic.history',
       resolve: {
