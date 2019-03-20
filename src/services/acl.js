@@ -5,14 +5,6 @@ app.service('$acl', ['$q', '_', 'api.user', 'api.pog', 'api.pog_analysis_report'
         allow: ['*'],
         reject: [],
       },
-      edit: {
-        allow: ['admin', 'analyst', 'bioinformatician', 'reviewer'],
-        reject: ['clinician', 'collaborator', 'biopsies'],
-      },
-      remove: {
-        allow: ['admin'],
-        reject: [],
-      },
     },
     analyses: {
       view: {
