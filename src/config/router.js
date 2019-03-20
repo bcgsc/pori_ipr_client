@@ -458,9 +458,6 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
         comments: ['$q', '$stateParams', 'api.summary.analystComments', ($q, $stateParams, $comments) => {
           return $comments.get($stateParams.POG, $stateParams.analysis_report);
         }],
-        canEdit: ['report', '$acl', 'user', async (report, $acl, user) => {
-          return $acl.action('report.edit', user, report.users);
-        }],
       },
     })
 
@@ -475,9 +472,6 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       resolve: {
         pathway: ['$q', '$stateParams', 'api.summary.pathwayAnalysis', ($q, $stateParams, $pathway) => {
           return $pathway.get($stateParams.POG, $stateParams.analysis_report);
-        }],
-        canEdit: ['report', '$acl', 'user', async (report, $acl, user) => {
-          return $acl.action('report.edit', user, report.users);
         }],
       },
     })
@@ -740,9 +734,6 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       resolve: {
         therapeutic: ['$q', '$stateParams', 'api.therapeuticOptions', ($q, $stateParams, $therapeutic) => {
           return $therapeutic.all($stateParams.POG, $stateParams.analysis_report);
-        }],
-        canEdit: ['report', '$acl', 'user', async (report, $acl, user) => {
-          return $acl.action('report.edit', user, report.users);
         }],
       },
     })
