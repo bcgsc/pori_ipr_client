@@ -476,6 +476,9 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
         pathway: ['$q', '$stateParams', 'api.summary.pathwayAnalysis', ($q, $stateParams, $pathway) => {
           return $pathway.get($stateParams.POG, $stateParams.analysis_report);
         }],
+        canEdit: ['report', '$acl', 'user', async (report, $acl, user) => {
+          return $acl.action('report.edit', user, report.users);
+        }],
       },
     })
 

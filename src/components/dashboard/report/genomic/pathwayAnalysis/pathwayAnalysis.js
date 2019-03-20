@@ -1,7 +1,8 @@
 app.controller('controller.dashboard.report.genomic.pathwayAnalysis',
-  ['_', '$q', '$scope', '$mdDialog', '$mdToast', 'api.pog', 'api.summary.pathwayAnalysis', 'FileUploader', '$localStorage', 'pog', 'report', 'pathway',
-    (_, $q, $scope, $mdDialog, $mdToast, $pog, $pathway, FileUploader, $localStorage, pog, report, pathway) => {
+  ['_', '$q', '$scope', '$mdDialog', '$mdToast', 'api.pog', 'api.summary.pathwayAnalysis', 'FileUploader', '$localStorage', 'canEdit', 'pog', 'report', 'pathway',
+    (_, $q, $scope, $mdDialog, $mdToast, $pog, $pathway, FileUploader, $localStorage, canEdit, pog, report, pathway) => {
 
+      $scope.canEdit = canEdit;
       $scope.pog = pog;
 
       let processSVG = (svg) => {
