@@ -458,6 +458,9 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
         comments: ['$q', '$stateParams', 'api.summary.analystComments', ($q, $stateParams, $comments) => {
           return $comments.get($stateParams.POG, $stateParams.analysis_report);
         }],
+        canEdit: ['report', '$acl', 'user', async (report, $acl, user) => {
+          return $acl.action('report.edit', user, report.users);
+        }],
       },
     })
 

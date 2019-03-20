@@ -101,7 +101,7 @@ section
                         div(flex).editable
                             span
                                 | {{(data.ta.subtyping || "Not Specified")}}
-                                md-icon(ng-click="updateTa()", ng-if="SES_permissionAction('report.edit')") edit
+                                md-icon(ng-click="updateTa()", ng-if="canEdit") edit
 
             div(layout="column", flex).dataBox
                 div(layout="row", flex).title
@@ -131,14 +131,14 @@ section
                 div(flex).container
                     div(flex).signature.editable
                         span(ng-if="(data.ta.mutationSignature.length === 0 || data.ta.mutationSignature === null)") Nothing striking
-                            md-icon(ng-click="updateMs()", ng-if="SES_permissionAction('report.edit')") edit
+                            md-icon(ng-click="updateMs()", ng-if="canEdit") edit
                         span(ng-if="data.ta.mutationSignature.length > 0")
                             span(ng-repeat="sig in data.ta.mutationSignature").repeat-comma
                                 span.listitem
                                     span(ng-if="sig.modifier !== null") {{sig.modifier}}&nbsp;
                                     span {{(sig.associations == '-') ? 'Signature '+sig.signature : sig.associations}}
                                     md-tooltip Pearson: {{sig.pearson}} | NNLS: {{sig.nnls}} | Cancer Types: {{sig.cancerTypes}}
-                            md-icon(ng-click="updateMs()", ng-if="SES_permissionAction('report.edit')") edit
+                            md-icon(ng-click="updateMs()", ng-if="canEdit") edit
 
                 div(layout="row", flex).mutationType
                     div(flex)
@@ -197,10 +197,10 @@ section
                 div(flex="30") {{variantCounts.expressionOutlier}}
         div(flex).alterations
             div(ng-repeat="variant in data.gai | filter: mutationFilter", class="{{variant.type}}") {{variant.geneVariant}}
-                span(ng-click="removeAlteration($event, variant)", ng-if="SES_permissionAction('report.edit')",)
+                span(ng-click="removeAlteration($event, variant)", ng-if="canEdit",)
                     md-icon remove_circle
 
-            div(ng-if="SES_permissionAction('report.edit')").add.clickable Add new entry
+            div(ng-if="canEdit").add.clickable Add new entry
                 span(ng-click="addAlteration($event)")
                     md-icon add_circle
 
