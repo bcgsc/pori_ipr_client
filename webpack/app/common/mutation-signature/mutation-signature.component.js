@@ -1,4 +1,4 @@
-import { sortBy } from 'lodash-es';
+import sortBy from 'lodash.sortby';
 import template from './mutation-signature.pug';
 import './mutation-signature.scss';
 

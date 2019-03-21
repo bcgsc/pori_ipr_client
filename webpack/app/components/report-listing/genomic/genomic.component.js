@@ -1,4 +1,4 @@
-import { orderBy } from 'lodash-es';
+import orderBy from 'lodash.orderby';
 import template from './genomic.pug';
 
 const bindings = {

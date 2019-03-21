@@ -5,6 +5,7 @@
   "main": "src/app.js",
   "keywords": [],
   "license": "GPL-3.0",
+  "sideEffects": false,
   "engines": {
     "node": "~8.11.2",
     "npm": "~3.10.10"
@@ -68,7 +69,9 @@
     "angular-sortable-view": "~0.0.17",
     "chart.js": "~2.7.3",
     "keycloak-js": "~4.6.0",
-    "lodash-es": "~4.17.11",
+    "lodash.get": "~4.4.2",
+    "lodash.orderby": "~4.6.0",
+    "lodash.sortby": "~4.7.0",
     "minimist": "~1.2.0",
     "moment": "~2.22.2",
     "ng-quill": "~3.8.0",

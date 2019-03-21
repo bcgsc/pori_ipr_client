@@ -1,4 +1,4 @@
-import { sortBy } from 'lodash-es';
+import sortBy from 'lodash.sortby';
 import template from './genomic-summary.pug';
 import tumourTemplate from './tumour-analysis-edit.pug';
 import mutationTemplate from './mutation-signature-edit.pug';
