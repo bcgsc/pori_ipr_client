@@ -1,7 +1,8 @@
 app.controller('controller.dashboard.report.probe.summary',
-['_', '$q', '$state', '$scope', 'api.pog', '$mdDialog', '$mdToast', 'pog', 'report', 'testInformation', 'genomicEvents', 'api.probe.signature', 'api.summary.patientInformation', 'api.summary.genomicEventsTherapeutic', 'signature',
-(_, $q, $state, $scope, $pog, $mdDialog, $mdToast, pog, report, testInformation, genomicEvents, $signature, $patientInformation, $get, signature) => {
+['_', '$q', '$state', '$scope', 'api.pog', '$mdDialog', '$mdToast', 'canEdit', 'pog', 'report', 'testInformation', 'genomicEvents', 'api.probe.signature', 'api.summary.patientInformation', 'api.summary.genomicEventsTherapeutic', 'signature',
+(_, $q, $state, $scope, $pog, $mdDialog, $mdToast, canEdit, pog, report, testInformation, genomicEvents, $signature, $patientInformation, $get, signature) => {
 
+  $scope.canEdit = canEdit;
   $scope.pog = pog;
   $scope.pi = pog.patientInformation;
   $scope.report = report;

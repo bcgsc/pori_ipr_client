@@ -1,7 +1,8 @@
 app.controller('controller.dashboard.report.genomic.analystComments', 
-  ['_', '$q', '$scope', '$mdDialog', '$mdToast', '$sce', 'api.pog', 'api.summary.analystComments', 'pog', 'report', 'comments',
-  (_, $q, $scope, $mdDialog, $mdToast, $sce, $pog, $comments, pog, report, analystComments) => {
+  ['_', '$q', '$scope', '$mdDialog', '$mdToast', '$sce', 'api.pog', 'api.summary.analystComments', 'canEdit', 'pog', 'report', 'comments',
+  (_, $q, $scope, $mdDialog, $mdToast, $sce, $pog, $comments, canEdit, pog, report, analystComments) => {
 
+  $scope.canEdit = canEdit;
   $scope.pog = pog;
   $scope.analystComments = (analystComments === null) ?  "" : analystComments.comments;
   $scope.commentsHTML = $sce.trustAsHtml($scope.analystComments);

@@ -1,16 +1,8 @@
-app.service('$acl', ['$q', '_', 'api.user', 'api.pog', ($q, _, $user, $pog) => {  
+app.service('$acl', ['$q', '_', 'api.user', 'api.pog', 'api.pog_analysis_report', ($q, _, $user, $pog, $report) => {  
   const actions = {
     report: {
       view: {
         allow: ['*'],
-        reject: [],
-      },
-      edit: {
-        allow: ['admin', 'analyst', 'bioinformatician', 'reviewer', 'external analyst'],
-        reject: ['clinician', 'collaborator', 'biopsies'],
-      },
-      remove: {
-        allow: ['admin'],
         reject: [],
       },
     },
@@ -88,7 +80,6 @@ app.service('$acl', ['$q', '_', 'api.user', 'api.pog', ($q, _, $user, $pog) => {
    * Global Permission Resource Lookup
    *
    * @param {string} r - Resource name
-   * @param {object} u - User object to override late user values from init promise
    *
    * @returns {boolean} - User is allowed to see resource
    */
@@ -127,33 +118,46 @@ app.service('$acl', ['$q', '_', 'api.user', 'api.pog', ($q, _, $user, $pog) => {
    *
    * @returns {boolean}
    */
-  function action(a, u=null) {
-    let permission = false;
-    let action;
-    
-    try {
-      action = _.get(actions, a);
-      let allow = action.allow;
-      let reject = action.reject;
+  async function action(a, user, userList = null) {
+    /* Regular permission lookup */
+    if (a !== 'report.edit') {
+      let permission = false;
+      let action;
+      
+      try {
+        action = _.get(actions, a);
+        let allow = action.allow;
+        let reject = action.reject;
+      } catch (e) {
+        console.log('Failed to find action: ', a, e);
+        return false;
+      }
+      
+      // Check Allows first
+      let allows = _.intersection(action.allow, _.map(_.mapValues(user.groups, (r) => { return {name: r.name.toLowerCase()}}), 'name'));
+      if(action.allow.indexOf('*') > -1) permission = true;
+      if(allows && allows.length > 0) permission = true;
+
+
+      // Check Rejections
+      let rejects = _.intersection(action.reject, _.map(_.mapValues(user.groups, (r) => { return {name: r.name.toLowerCase()}}), 'name'));
+      if(action.reject.indexOf('*') > -1) permission = false; // No clue why this would exist, but spec allows
+      if(rejects && rejects.length > 0) permission = false;
+
+      return permission;
     }
-    catch(e) {
-      console.log('Failed to find action: ', a, e);
-      return false;
-  
+    /* Report edit lookup on report by report basis */
+    /* Must have been added to the report in order to edit it */
+    if (a === 'report.edit' && userList !== null) {
+      /* Override lookup if admin or report manager */
+      if (await inGroup('admin') || await inGroup('manager')) {
+        return true;
+      }
+      return userList.some((entry) => {
+        return entry.user_id === user.id;
+      });
     }
-    
-    // Check Allows first
-    let allows = _.intersection(action.allow, _.map(_.mapValues($user.meObj.groups, (r) => { return {name: r.name.toLowerCase()}}), 'name'));
-    if(action.allow.indexOf('*') > -1) permission = true;
-    if(allows && allows.length > 0) permission = true;
-
-
-    // Check Rejections
-    let rejects = _.intersection(action.reject, _.map(_.mapValues($user.meObj.groups, (r) => { return {name: r.name.toLowerCase()}}), 'name'));
-    if(action.reject.indexOf('*') > -1) permission = false; // No clue why this would exist, but spec allows
-    if(rejects && rejects.length > 0) permission = false;
-
-    return permission;
+    return false;
   }
 
   /**

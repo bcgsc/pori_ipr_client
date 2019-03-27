@@ -1,7 +1,8 @@
 app.controller('controller.dashboard.report.probe',
-['_', '$q', '$scope', '$state', '$timeout', '$window', 'api.pog', 'pog', 'report',
-(_, $q, $scope, $state, $timeout, $window, $pog, pog, report) => {
+['_', '$q', '$scope', '$state', '$timeout', '$window', 'api.pog', 'canEdit', 'pog', 'report',
+(_, $q, $scope, $state, $timeout, $window, $pog, canEdit, pog, report) => {
 
+  $scope.canEdit = canEdit;
   $scope.pog = pog;
 
   $scope.openPrint = () => {
