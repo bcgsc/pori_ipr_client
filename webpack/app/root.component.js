@@ -1,8 +1,15 @@
 
 import template from './root.pug';
 
-const RootComponent = {
-  template,
-};
+class RootComponent {
+  /* @ngInject */
+  constructor($rootScope) {
+    this.$rootScope = $rootScope;
+    this.$rootScope.showLoader = false;
+  }
+}
 
-export default RootComponent;
+export default {
+  template,
+  controller: RootComponent,
+};

@@ -1,133 +1,84 @@
-/*
- * BCGSC - IPR-Client User API
- *
- * This API factory implements the IPR-API. Calls to and from the API are
- * managed through this construct.
- *
- */
-app.factory('api.therapeuticOptions', ['_', '$http', '$q', (_, $http, $q) => {
-
-  const api = CONFIG.ENDPOINTS.API + '/POG';
-
-
-  let $therapeutic = {};
+class TherapeuticOptionsService {
+  /* @ngInject */
+  constructor($http) {
+    this.$http = $http;
+    this.api = `${CONFIG.ENDPOINTS.API}/POG`;
+  }
 
   /**
-   * Get all POG therapeutic targets
-   *
-   * @params {string} POGID - PogID to be queried against (eg. POG123)
+   * Get all therapeutic targets
+   * @param {String} pogID - POGID this entry will be related to
+   * @param {String} report - report ident
+   * @return {Promise} - Resolves with the new data entry
    */
-  $therapeutic.all = (POGID, report) => {
-    let deferred = $q.defer();
-
-    $http.get(api + '/' + POGID + '/report/' + report + '/genomic/therapeuticTargets').then(
-      (resp) => {
-        deferred.resolve(resp.data);
-      },
-      (err) => {
-        deferred.reject(err);
-      }
+  async all(pogID, report) {
+    const { data } = await this.$http.get(
+      `${this.api}/${pogID}/report/${report}/genomic/therapeuticTargets`,
     );
-
-    return deferred.promise;
-  };
+    return data;
+  }
 
   /**
    * Create a new Therapeutic Target Entry
    *
-   * @param {string} POGID - POGID this entry will be related to
-   * @param {object} entry - The therapeutic target entry to be created
-   * @returns {Function|promise} - Resolves with the new data entry
+   * @param {String} pogID - POGID this entry will be related to
+   * @param {String} report - report ident
+   * @param {Object} entry - The therapeutic target entry to be created
+   * @return {Promise} - Resolves with the new data entry
    */
-  $therapeutic.create = (POGID, report, entry) => {
-    let deferred = $q.defer();
-
-    $http.post(api + '/' + POGID + '/report/' + report + '/genomic/therapeuticTargets', entry).then(
-      (resp) => {
-        deferred.resolve(resp.data);
-      },
-      (err) => {
-        deferred.reject(err);
-      }
+  async create(pogID, report, entry) {
+    const { data } = await this.$http.post(
+      `${this.api}/${pogID}/report/${report}/genomic/therapeuticTargets`,
+      entry,
     );
-    return deferred.promise;
-  };
+    return data;
+  }
 
   /**
-   * Get all POG therapeutic targets
-   *
-   * @params {string} POGID - PogID to be queried against (eg. POG123)
+   * Retrieve therapeutic target entry
+   * @param {String} pogID - PogID to be queried against (eg. POG123)
+   * @param {String} report - report ident
+   * @param {String} ident - UUID of entry
+   * @returns {Promise} - Resolves with object of entry
    */
-  $therapeutic.one = (POGID, report) => {
+  async retrieve(pogID, report, ident) {
+    const { data } = await this.$http.get(
+      `${this.api}/${pogID}/report/${report}/genomic/therapeuticTargets/${ident}`,
+    );
+    return data;
+  }
 
-    let API = api + '/' + POGID + '/report/' + report + '/genomic/therapeuticTargets';
+  /**
+   * Update a single therapeutic target entry
+   *
+   * @param {String} pogID - PogID to be queried against (eg. POG123)
+   * @param {String} report - report ident
+   * @param {String} ident - UUID of entry
+   * @param {Object} entry - Object of entry to be created
+   * @returns {Promise} - Resolves with object of entry
+   */
+  async update(pogID, report, ident, entry) {
+    const { data } = await this.$http.put(
+      `${this.api}/${pogID}/report/${report}/genomic/therapeuticTargets/${ident}`,
+      entry,
+    );
+    return data;
+  }
 
-    return {
+  /**
+   * Remove therapeutic target entry
+   *
+   * @param {String} pogID - PogID to be queried against (eg. POG123)
+   * @param {String} report - report ident
+   * @param {String} ident - UUID of entry
+   * @returns {Promise} - Resolves with object of entry
+   */
+  async remove(pogID, report, ident) {
+    const { data } = await this.$http.delete(
+      `${this.api}/${pogID}/report/${report}/genomic/therapeuticTargets/${ident}`,
+    );
+    return data;
+  }
+}
 
-      /**
-       * Retrieve therapeutic target entry
-       *
-       * @param {string} ident - UUID of entry
-       * @returns {Function|promise} - Resolves with object of entry
-       */
-      retrieve: (ident) => {
-        let deferred = $q.defer();
-
-        $http.get(API + '/' + ident ).then(
-          (resp) => {
-            deferred.resolve(resp.data);
-          },
-          (err) => {
-            deferred.reject(err);
-          }
-        );
-        return deferred.promise;
-      },
-
-
-      /**
-       * Update a single therapeutic target entry
-       *
-       * @param {string} ident - UUID of entry
-       * @param {object} entry - Object of entry to be created
-       * @returns {Function|promise} - Resolves with object of entry
-       */
-      update: (ident, entry) => {
-        let deferred = $q.defer();
-
-        $http.put(API + '/' + ident, entry).then(
-          (resp) => {
-            deferred.resolve(resp.data);
-          },
-          (err) => {
-            deferred.reject(err);
-          }
-        );
-        return deferred.promise;
-      },
-
-      /**
-       * Remove therapeutic target entry
-       *
-       * @param {string} ident - UUID of entry
-       * @returns {Function|promise} - Resolves with object of entry
-       */
-      remove: (ident) => {
-        let deferred = $q.defer();
-        $http.delete(API + '/' + ident).then(
-          (resp) => {
-            deferred.resolve(resp.data);
-          },
-          (err) => {
-            deferred.reject(err);
-          }
-        );
-        return deferred.promise;
-      }
-
-    }
-  };
-
-  return $therapeutic;
-
-}]);
+export default TherapeuticOptionsService;

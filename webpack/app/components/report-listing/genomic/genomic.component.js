@@ -1,3 +1,4 @@
+import orderBy from 'lodash.orderby';
 import template from './genomic.pug';
 
 const bindings = {
@@ -99,7 +100,7 @@ class GenomicComponent {
     };
     const resp = await this.ReportService.allFiltered(opts);
     this.loading = false;
-    this.reports = _.orderBy(resp, ['analysis.pog.POGID', 'createdAt'], ['asc', 'desc']);
+    this.reports = orderBy(resp, ['analysis.pog.POGID', 'createdAt'], ['asc', 'desc']);
     // Filter Users For a POG
     this.reports.forEach((r, i) => {
       // Loop over pogusers

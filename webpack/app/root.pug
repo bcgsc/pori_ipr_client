@@ -1,4 +1,7 @@
 div.root
+  div(layout="row" layout-align="center center", ng-if="$root.showLoader", id="page-loading", ng-cloak)
+    div
+      img(src="img/spinlogo.png").loader-spin
   div(ui-view="navbar")
   div(layout="row", flex).container
     div(ui-view="sidebar" layout="column")

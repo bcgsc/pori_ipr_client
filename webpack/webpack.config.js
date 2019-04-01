@@ -69,9 +69,6 @@ module.exports = {
       to: 'img/',
       flatten: true,
     }]),
-    new webpack.ProvidePlugin({
-      _: 'lodash',
-    }),
     new webpack.HotModuleReplacementPlugin(),
     // new BundleAnalyzerPlugin(),
   ],
