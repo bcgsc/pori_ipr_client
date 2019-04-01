@@ -6,6 +6,7 @@ import ngSanitize from 'angular-sanitize';
 import ngMaterial from 'angular-material';
 import 'ngstorage';
 import 'angular-material/angular-material.scss';
+import 'angular-sortable-view';
 import CommonModule from './common/common.module';
 import ComponentModule from './components/components.module';
 import RootComponent from './root.component';
@@ -28,13 +29,14 @@ import MicrobialService from './services/report/summary/microbial.service';
 import AnalystCommentsService from './services/report/analyst-comments/analyst-comments.service';
 import SlidesService from './services/report/presentation/slides.service';
 import DiscussionService from './services/report/presentation/discussion.service';
-import TitleCaseFilter from './filters/titlecase.filter';
 import AnalysisService from './services/analysis.service';
 import GroupService from './services/group.service';
 import JiraService from './services/jira.service';
 import KnowledgebaseService from './services/knowledgebase.service';
 import LimsService from './services/lims.service';
 import ChangeHistoryService from './services/change-history.service';
+import TherapeuticService from './services/report/therapeutic-options.service';
+import TitleCaseFilter from './filters/titlecase.filter';
 import './root.scss';
 
 angular.module('root', [
@@ -73,6 +75,7 @@ export default angular.module('root')
   .service('KnowledgebaseService', KnowledgebaseService)
   .service('LimsService', LimsService)
   .service('ChangeHistoryService', ChangeHistoryService)
+  .service('TherapeuticService', TherapeuticService)
   .filter('titlecase', TitleCaseFilter)
   .config(($stateProvider, $urlServiceProvider, $locationProvider) => {
     'ngInject';
@@ -120,11 +123,16 @@ export default angular.module('root')
         },
       });
   })
-  .run(($transitions, $log) => {
+  .run(($transitions, $log, $rootScope) => {
     'ngInject';
 
     $transitions.onStart({ }, async (transition) => {
+      $rootScope.showLoader = true;
       $log.log(transition.to().name);
+
+      transition.promise.finally(() => {
+        $rootScope.showLoader = false;
+      });
     });
   })
   .config(($httpProvider) => {

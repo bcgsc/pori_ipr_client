@@ -1,15 +1,18 @@
 @import '../../styles/variables';
 
 .md-toolbar-tools {
-  padding: 0 10px;
   background-color: $primary;
-  color: white;
+  color: $white;
+  padding: 0 10px;
+
   md-icon {
     color: $white-icon;
+
     &.clickable {
       cursor: pointer;
       outline: 0;
     }
+
     &.margin-right-15 {
       margin-right: 15px;
     }

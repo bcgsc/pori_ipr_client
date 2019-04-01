@@ -1,3 +1,4 @@
+import sortBy from 'lodash.sortby';
 import template from './genomic-summary.pug';
 import tumourTemplate from './tumour-analysis-edit.pug';
 import mutationTemplate from './mutation-signature-edit.pug';
@@ -46,7 +47,7 @@ class GenomicSummaryComponent {
     this.patientInformation = this.report.patientInformation;
     this.tumourAnalysis = this.report.tumourAnalysis;
     this.microbial = this.microbial || { species: 'None', integrationSite: 'None' };
-    this.genomicAlterations = _.sortBy(this.genomicAlterations, 'type');
+    this.genomicAlterations = sortBy(this.genomicAlterations, 'type');
     this.geneVariants = this.processVariants(this.genomicAlterations);
   }
 
@@ -252,7 +253,7 @@ class GenomicSummaryComponent {
               this.genomicAlterations.push(genomicResp);
               // Reprocess variants
               this.genomicAlterations = this.processVariants(this.genomicAlterations);
-              this.genomicAlterations = _.sortBy(this.genomicAlterations, 'type');
+              this.genomicAlterations = sortBy(this.genomicAlterations, 'type');
               this.$mdDialog.hide({
                 status: true,
                 message: 'Alteration has been successfully added',

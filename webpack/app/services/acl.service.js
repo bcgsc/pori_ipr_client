@@ -1,3 +1,5 @@
+import get from 'lodash.get';
+
 class AclService {
   /* @ngInject */
   constructor(UserService, PogService) {
@@ -91,20 +93,38 @@ class AclService {
     let resource;
 
     try {
-      resource = _.get(this.resources, name);
+      resource = get(this.resources, name);
     } catch (e) {
       return false;
     }
 
-    // Check Allows first
-    const allows = _.intersection(resource.allow, _.map(_.mapValues(this.UserService.meObj.groups, (r) => { return { name: r.name.toLowerCase() }; }), 'name'));
-    if (resource.allow.includes('*')) permission = true;
-    if (allows && allows.length > 0) permission = true;
+    /* Pull out the user's groups into an array */
+    const userGroups = [];
+    this.UserService.meObj.groups.forEach((entry) => {
+      userGroups.push(entry.name.toLowerCase());
+    });
 
-    // Check Rejections
-    const rejects = _.intersection(resource.reject, _.map(_.mapValues(this.UserService.meObj.groups, (r) => { return { name: r.name.toLowerCase() }; }), 'name'));
-    if (resource.reject.includes('*')) permission = false; // No clue why this would exist, but spec allows
-    if (rejects && rejects.length > 0) permission = false;
+    /* Get intersection of arrays, check allows first */
+    const allowsIntersection = userGroups.filter((userGroup) => {
+      return resource.allow.includes(userGroup);
+    });
+
+    if (resource.allow.includes('*')) {
+      permission = true;
+    }
+    if (allowsIntersection && allowsIntersection.length > 0) {
+      permission = true;
+    }
+
+    /* Get intersection of arrays, check rejects now */
+    const rejectsIntersection = userGroups.filter((userGroup) => {
+      return resource.reject.includes(userGroup);
+    });
+
+    /* Rejects takes priority over allows */
+    if (rejectsIntersection && rejectsIntersection.length > 0) {
+      permission = false;
+    }
 
     return permission;
   }
@@ -119,19 +139,39 @@ class AclService {
     let action;
 
     try {
-      action = _.get(this.actions, name);
+      action = get(this.actions, name);
     } catch (e) {
       return false;
     }
-    // Check Allows first
-    const allows = _.intersection(action.allow, _.map(_.mapValues(this.UserService.meObj.groups, (r) => { return { name: r.name.toLowerCase() }; }), 'name'));
-    if (action.allow.includes('*')) permission = true;
-    if (allows && allows.length > 0) permission = true;
 
-    // Check Rejections
-    const rejects = _.intersection(action.reject, _.map(_.mapValues(this.UserService.meObj.groups, (r) => { return { name: r.name.toLowerCase() }; }), 'name'));
-    if (action.reject.includes('*')) permission = false; // No clue why this would exist, but spec allows
-    if (rejects && rejects.length > 0) permission = false;
+    /* Pull out the user's groups into an array */
+    const userGroups = [];
+    this.UserService.meObj.groups.forEach((entry) => {
+      userGroups.push(entry.name.toLowerCase());
+    });
+
+    /* Get intersection of arrays, check allows first */
+    const allowsIntersection = userGroups.filter((userGroup) => {
+      return action.allow.includes(userGroup);
+    });
+
+    if (action.allow.includes('*')) {
+      permission = true;
+    }
+    if (allowsIntersection && allowsIntersection.length > 0) {
+      permission = true;
+    }
+
+    /* Get intersection of arrays, check rejects now */
+    const rejectsIntersection = userGroups.filter((userGroup) => {
+      return action.reject.includes(userGroup);
+    });
+
+    /* Rejects takes priority over allows */
+    if (rejectsIntersection && rejectsIntersection.length > 0) {
+      permission = false;
+    }
+
     return permission;
   }
 
@@ -141,7 +181,7 @@ class AclService {
    * @return {Promise} Boolean with if the user is in a group
    */
   async inGroup(group) {
-    return !!_.find(this.UserService.meObj.groups, (userGroup) => {
+    return this.UserService.meObj.groups.some((userGroup) => {
       return group.toLowerCase() === userGroup.name.toLowerCase();
     });
   }
@@ -153,9 +193,19 @@ class AclService {
    */
   async canAccessPOG(pogID) {
     const resp = await this.PogService.id(pogID);
-    // check if user has individual project access or is part of full access group
-    if (_.intersectionBy(this.UserService.meObj.projects, resp.projects, 'name').length > 0
-      || _.find(this.UserService.meObj.groups, { name: 'Full Project Access' })) {
+
+    /* Check for intersection between user's projects and project needed for access */
+    const projects = [];
+    resp.projects.forEach((entry) => {
+      projects.push(entry.name);
+    });
+    const intersection = this.UserService.meObj.projects.filter((userProject) => {
+      return projects.includes(userProject);
+    });
+
+    /* Check if user has individual project access or is part of full access group */
+    /* Intersection array will be empty if part of full access group */
+    if (intersection.length > 0 || await this.inGroup('Full Project Access')) {
       return true;
     }
     return false;
@@ -166,7 +216,8 @@ class AclService {
    * @return {Promise} Is external
    */
   async isExternalMode() {
-    return await this.inGroup('clinician') || this.inGroup('collaborator');
+    /* eslint-disable no-return-await */
+    return (await this.inGroup('clinician') || await this.inGroup('collaborator'));
   }
 }
 
