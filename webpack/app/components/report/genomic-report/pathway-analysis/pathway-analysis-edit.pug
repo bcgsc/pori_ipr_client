@@ -1,0 +1,28 @@
+md-dialog(layout="column", aria-label="Update Pathway Analysis", ng-cloak, flex=55).pathway.edit
+    md-toolbar
+        .md-toolbar-tools
+            h2 Update Pathway Analysis
+            span(flex)
+            md-button.md-icon-button(ng-click='cancel()')
+                md-icon cancel
+    md-dialog-content(layout-padding)
+
+        div(layout="column" ng-show="process=='select'")
+            p A new pathway SVG image is required to update the pathway analysis
+
+            input(type="file" nv-file-select="" uploader="uploader")
+            br
+
+            div(uploader="uploader", nv-file-over="").dropZone Drag and Drop SVG here
+
+        div(layout="column", ng-show="process=='upload'")
+            p You have selected
+                code(style="display: inline")  {{filename}}
+                |  to be uploaded.
+
+            div(layout="row", layout-align="space-around")
+                md-progress-circular(md-mode="determinate", value="{{progress}}")
+
+
+    md-dialog-actions(layout="row", layout-aligh="end center")
+        md-button(ng-click="initiateUpload()", ng-show="process=='upload'", ng-disabled="startedUpload", ng-init="startedUpload=false").md-primary.md-raised Start Upload
