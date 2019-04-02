@@ -36,6 +36,7 @@ import KnowledgebaseService from './services/knowledgebase.service';
 import LimsService from './services/lims.service';
 import ChangeHistoryService from './services/change-history.service';
 import TherapeuticService from './services/report/therapeutic-options.service';
+import PathwayAnalysisService from './services/report/pathway-analysis/pathway-analysis.service';
 import TitleCaseFilter from './filters/titlecase.filter';
 import './root.scss';
 
@@ -76,6 +77,7 @@ export default angular.module('root')
   .service('LimsService', LimsService)
   .service('ChangeHistoryService', ChangeHistoryService)
   .service('TherapeuticService', TherapeuticService)
+  .service('PathwayAnalysisService', PathwayAnalysisService)
   .filter('titlecase', TitleCaseFilter)
   .config(($stateProvider, $urlServiceProvider, $locationProvider) => {
     'ngInject';
