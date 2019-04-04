@@ -1,0 +1,98 @@
+md-content(flex, layout="column", layout-fill).md-padding.assignment
+
+    h1.md-title Task Assignment - {{definition.name}}
+        span(ui-sref="dashboard.tracking.ticket_template({definition: definition.ident })").options.pull-right.clickable
+            span.text-small Manage Ticket Templates
+            md-icon view_quilt
+
+    p Cases that need user assignts for one or more tasks will appear on the left. Selecting a case will Allow you to assign the tasks to a given user.&nbsp
+        | The listing on the bottom right indicates the current workload of all team members.
+
+    div(layout="column", flex).editor
+
+        div(layout="row").title
+            span(flex=35) Cases
+            span(flex) Assignment
+
+        div(layout="row", flex, layout-align="space-between")
+
+            md-content(layout="column", flex=35).column.caseList
+                ipr-tracking-card(ng-repeat="state in states", state="state", ng-hide="loading", no-tasks, ng-click="selectState(state)", ng-class="{selected: (state.ident === assign.ident)}").pog.clickable
+
+
+            div(layout="column", flex).column
+                md-content(layout="row", flex=60, ng-show="assign.ident", layout-align="center start").assignmentForm
+
+
+                    div(layout="column", flex=95)
+                        form(name="UserAssignment", novalidate)
+                            div(layout="row")
+                                h1.md-title {{assign.analysis.pog.POGID}} - {{assign.analysis.analysis_biopsy || assign.analysis.clinical_biopsy}}
+                            div(layout="row")
+                                md-input-container(flex)
+                                    md-select(ng-model="assign.user", aria-label="User to assign", required, placeholder="User to assign")
+                                        md-option(ng-repeat="user in group.users", ng-value="user.ident") {{user.firstName}} {{user.lastName}}
+                                md-input-container(flex=15, layout="center start")
+                                    md-button(ng-disabled="assign.user === null || assign.user === undefined || assign.submitting", ng-click="assignUsers()").md-primary.md-raised Assign
+
+                            div(ng-if="assign.jira", layout="row", layout-align="center center")
+                                div(layout="row", flex=60).jiraTicket
+                                    div(flex=20)
+                                        div.icon
+                                    div(flex).link
+                                        a(href="https://www.bcgsc.ca/jira/browse/{{assign.jira.ticket}}", target="_blank") {{assign.jira.ticket}}
+
+                            div(layout="row", ng-show="assign.submitting")
+                                p Assigning Users
+                                    span(ng-if="ticket.create") &nbsp;&amp; creating JIRA ticket
+                                    | ...
+
+
+                            div(layout="row", ng-hide="assign.submitting || assign.jira")
+                                md-input-container(flex=30)
+                                    md-switch(ng-model="ticket.create", ng-disabled="assign.jira") Create JIRA Ticket
+                                md-input-container(flex)
+                                    label Ticket Template
+                                    md-select(ng-model="ticket.template")
+                                        md-option(ng-value="template.ident", ng-repeat="template in ticket_templates") {{template.name}}
+                                md-input-container(flex=15)
+                                    md-button(ng-click="preview_ticket(assign.analysis, assign.tasks)").md-primary.md-raised.small Preview Ticket
+
+                            div(layout="column")
+                                h2 Tasks
+                                div(flex).tasks
+                                    div(layout="row").task.no-status
+                                        md-checkbox(ng-model="selectAll", ng-init="selectAll = true", aria-label="Select All", ng-change="selectAllChanged()")
+                                        span.int -
+                                        h3(flex) All Tasks
+                                    div(layout="row", ng-repeat="(i, task) in assign.tasks", class="{{task.status}}", ng-hide="selectAll").task
+                                        md-checkbox(ng-model="assign.taskSelection[task.ident]", ng-init="assign.taskSelection[task.ident] = false", aria-label="Checkbox 1")
+                                        span.int {{i+1}}.
+                                        h3(flex, ng-click="assign.taskSelection[task.ident] = !assign.taskSelection[task.ident]") {{task.name}}
+                                        div(ng-if="task.assignedTo.username", layout-align="start center", layout="row").assignedTo
+                                            span {{task.assignedTo.firstName}} {{task.assignedTo.lastName}}
+                                            img( ng-src="https://www.bcgsc.ca/jira/secure/useravatar?size=small&ownerId={{task.assignedTo.username}}", style="max-width: 24px; max-height: 24px;")
+                                    div(layout="row", ng-if="assign.tasks.length === 0").task
+                                        span No tasks to assign.
+
+
+                md-content(layout="column", flex=60, ng-show="!assign.ident").assignmentForm.empty
+                    p Select a case from the left to assign team members.
+
+                md-content(layout="column", flex=40).teamStatus
+                    h1.md-title Team Members
+                    ul.teamList
+                        li(ng-repeat="entry in userLoad.users", layout="row")
+                            div {{entry.user.firstName}} {{entry.user.lastName}}
+                            div(flex)
+                            div(flex=40, ng-class="{zero: (entry.user.assignedTasks === 0)}").workload
+                                div(style="width: {{(entry.user.assignedTasks/userLoad.state.tasks)*100}}%") {{getFloor((entry.user.assignedTasks/userLoad.state.tasks)*100)}}%
+                    p Values are calculated as the % share of all pending or active tasks across all incomplete cases ({{userLoad.state.tasks}}).
+
+
+    div(layout="row").stateDefs
+        p.pending Pending
+        p.active Active
+        p.complete Completed
+        p.hold Hold
+        p.failed Failed

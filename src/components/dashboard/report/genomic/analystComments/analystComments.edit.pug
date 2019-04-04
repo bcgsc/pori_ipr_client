@@ -1,4 +1,4 @@
-md-dialog(layout="column", aria-label="Update Analyst Comments", ng-cloak, flex=80).editor
+md-dialog(layout="column", aria-label="Update Analyst Comments", flex=80).editor
   form(flex='auto', name='form', ng-submit="update(form)")
     md-toolbar
       .md-toolbar-tools
@@ -7,8 +7,8 @@ md-dialog(layout="column", aria-label="Update Analyst Comments", ng-cloak, flex=
         md-button.md-icon-button(ng-click='cancel()')
           md-icon cancel
     md-dialog-content(layout-padding)
-      textarea(id="markup-editor")
-      
+      //textarea(id="markup-editor")
+      ng-quill-editor(ng-model="analystComments.comments")
       
     md-dialog-actions(layout="row", layout-aligh="end center", layout-padding) 
       md-button(type="submit").md-primary Update Comments

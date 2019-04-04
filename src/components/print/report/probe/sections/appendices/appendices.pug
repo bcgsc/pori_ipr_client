@@ -1,0 +1,67 @@
+table(style="margin-top: 3mm").print
+    thead
+        tr
+            td.pageHeader
+                div(layout="row")
+                    div(flex=30) {{pog.POGID}}
+                        br
+                        | {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
+                    div(flex) BCCA Confidential - For Research Purposes Only
+                    div(flex=30)  {{report.patientInformation.tumourType}}
+    tr
+        td.report-section
+            h2 Sequencing Protocol Information
+            table.detailedData
+                tr.header
+                    th(style="width: 10%") Type
+                    th(style="width: 10%") Sample Name
+                    th(style="width: 10%") Input (ng)
+                    th(style="width: 10%") Library Construction Protocol
+                    th(style="width: 10%") Library
+                    th(style="width: 10%") Lab QC
+                    th(style="width: 10%") Sequencing QC
+                    th(style="width: 10%") % Duplicates
+                    th(style="width: 10%") Total Coverage
+                    th(style="width: 10%") # Records
+                tr(ng-repeat="qc in report.seqQC")
+                    td {{qc['Sample']}}
+                    td {{qc['Sample Name']}}
+                    td {{qc['Input_ng']}}
+                    td {{qc['Protocol']}}
+                    td {{qc['Library']}}
+                    td {{qc['labQC']}}
+                    td {{qc['bioQC']}}
+                    td {{qc['Duplicate_Reads_Perc']}}
+                    td {{qc['Coverage']}}
+                    td {{qc['Reads']}}
+    tr
+        td.report-section
+            h2 Test Summary
+
+            P ABOUT THE TEST
+            p The Report: The Targeted Gene Report (TGR) provides results from a rapid analysis pipeline designed to identify specific somatic alterations in a select set of cancer-associated genes and gene fusion events. This rapid analysis is not a complete description of aberrations present in the tumour genome. The absence of a specific mutation in this report is not a guarantee that the mutation is not present in the patient's tumour. Germline variants are not included in this report.
+
+            p Test Method: In the TGR, whole genome and whole transcriptome sequence reads are computationally queried to identify events matching a specific list of known cancer-related aberrations. A subset of genes is examined for specific events which include, but are not limited to, individual gene mutations such as hotspot mutations in KRAS, BRAF and PIK3CA, and gene-pair fusions such as BCR-ABL1, EML4-ALK, and CCDC6-RET. Genome and transcriptome sequence data are queried for individual gene mutations; only transcriptome data are queried for gene fusion events.
+            p Reporting of information of Potential Clinical Relevance: The TGR incorporates results from published peer-reviewed studies and other publicly available information through our in-house Knowledgebase - a curated database of cancer-associated genes and genomic alterations. Reported associations may include those of potential biological, diagnostic, prognostic and therapeutic significance. Therapeutic associations of potential clinical benefit (or potential lack of clinical benefit) are derived from public data and are not independently verified.
+            p This report will generally be followed by a final report, which will provide a more comprehensive description of both previously observed and novel aberrations.
+            p The TGR is developed by Canada's Michael Smith Genome Sciences Centre, part of the British Columbia Cancer Agency. Contents should be regarded as purely investigational and are intended for research purposes only.
+
+
+
+
+div.pageBreak
+table(style="margin-top: 3mm").print
+    thead
+        tr
+            td.pageHeader
+                div(layout="row")
+                    div(flex=30) {{pog.POGID}}
+                        br
+                        | {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
+                    div(flex) BCCA Confidential - For Research Purposes Only
+                    div(flex=30)  {{report.patientInformation.tumourType}}
+                h2 Genomic Report {{report.reportVersion || 'N/A'}}/ KB {{report.kbVersion || 'N/A'}} / Genome Ref hg19
+    tbody
+        tr(ng-repeat="c in config track by $index", ng-if="c.length > 1")
+            td.appendices.config
+                span.config {{c}}

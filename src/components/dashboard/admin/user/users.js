@@ -1,8 +1,12 @@
-app.controller('controller.dashboard.admin.users', ['_', '$scope', '$mdSidenav', '$state', '$mdDialog', '$mdToast', 'api.session', 'api.user', 'isAdmin', 'groups', (_, $scope, $mdSidenav, $state, $mdDialog, $mdToast, $session, $user, isAdmin, groups) => {
+app.controller('controller.dashboard.admin.users',
+['_', '$scope', '$mdSidenav', '$state', '$mdDialog', '$mdToast', 'api.user', 'isAdmin', 'groups', 'users', 'projects',
+(_, $scope, $mdSidenav, $state, $mdDialog, $mdToast, $user, isAdmin, groups, users, projects) => {
 
   let passDelete = () => { return () => {}};
 
   $scope.groups = groups;
+  $scope.projects = projects;
+  $scope.accessGroup = _.find($scope.groups, function(group) { return group.name === 'Full Project Access' });
 
   $scope.userDiag = ($event, editUser, newUser=false) => {
     $mdDialog.show({
@@ -12,7 +16,10 @@ app.controller('controller.dashboard.admin.users', ['_', '$scope', '$mdSidenav',
       locals: {
         editUser: angular.copy(editUser),
         newUser: newUser,
-        userDelete: passDelete()
+        userDelete: passDelete(),
+        projects: projects,
+        accessGroup: $scope.accessGroup,
+        selfEdit: false
       },
       controller: 'controller.dashboard.user.edit'
     }).then(
@@ -23,8 +30,7 @@ app.controller('controller.dashboard.admin.users', ['_', '$scope', '$mdSidenav',
         });
 
         if(newUser) {
-          $scope.users.push(resp.data);
-          $scope.users = _.sortBy($scope.users, 'username');
+          users.push(resp.data);
         }
       },
       (err) => {
@@ -35,9 +41,7 @@ app.controller('controller.dashboard.admin.users', ['_', '$scope', '$mdSidenav',
   };
 
   $scope.groupDiag = ($event, editGroup, newGroup=false) => {
-
-    console.log('Edit Group', editGroup, newGroup);
-
+    
     $mdDialog.show({
       targetEvent: $event,
       templateUrl: 'dashboard/admin/user/group.edit.html',
@@ -53,14 +57,40 @@ app.controller('controller.dashboard.admin.users', ['_', '$scope', '$mdSidenav',
         $mdToast.show($mdToast.simple().textContent('The group has been added'));
 
         if(newGroup) {
-          console.log('Adding new group', resp.data, $scope.groups);
-
           $scope.groups.push(resp.data);
           $scope.groups = _.sortBy($scope.groups, 'name');
         }
       },
       (err) => {
         $mdToast.show($mdToast.simple().textContent('The group has not been updated.'));
+      }
+    );
+
+  };
+
+  $scope.projectDiag = ($event, editProject, newProject=false) => {
+    $mdDialog.show({
+      targetEvent: $event,
+      templateUrl: 'dashboard/admin/user/project.edit.html',
+      clickOutToClose: false,
+      locals: {
+        editProject: angular.copy(editProject),
+        newProject: newProject,
+        projectDelete: passDelete(),
+        fullAccessUsers: []
+      },
+      controller: 'controller.dashboard.user.project.edit'
+    }).then(
+      (resp) => {
+        $mdToast.show($mdToast.simple().textContent('The project has been added'));
+
+        if(newProject) {
+          $scope.projects.push(resp.data);
+          $scope.projects = _.sortBy($scope.projects, 'name');
+        }
+      },
+      (err) => {
+        $mdToast.show($mdToast.simple().textContent('The project has not been updated.'));
       }
     );
 

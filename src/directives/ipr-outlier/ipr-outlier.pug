@@ -1,25 +1,60 @@
-div(flex, layout="column")
+div.padding-left-10.padding-right-10
+    table.material-table
+        thead
+            tr
+                th(colspan=4).no-border
+                th(colspan=1).text-center.no-border.background-light Tissue
+                th(colspan=2).text-center.no-border Normal
+                th(colspan=3).text-center.no-border.background-light Disease
+                th(colspan=3).text-center.no-border Protein
+            tr
+                th(width="12%") Gene
+                th(width="8%") Type
+                th(width="12%")
+                    span.clickable Expression Class (i)
+                        md-tooltip Based on mRNA
+                th(width="9%") Copy State
+                th(width="6%").text-right.background-light
+                    span.clickable FC
+                        md-tooltip Foldchange
+                th(width="6%").text-right
+                    span.clickable Perc
+                        md-tooltip Percentile
+                th(width="6%").text-right kIQR
+                th(width="6%").text-right.background-light
+                    span.clickable Perc
+                        md-tooltip Percentile
+                th(width="6%").text-right.background-light kIQR
+                th(width="6%").text-right.background-light QC
+                th(width="6%").text-right
+                    span.clickable Perc
+                        md-tooltip Percentile
+                th(width="6%").text-right kIQR
+                th(width="6%").clickable.text-right QC
+                    md-tooltip [Total Samples Observed]/[Total patients used for comparison]
+                th(wdith="5%")
+        tbody
+            tr(ng-if="outliers.length === 0").no-hover
+                td(colspan=13).text-center No outliers of this type detected.
+            tr(ng-repeat="outlier in outliers")
+                td
+                    ipr-gene-viewer(report="report", pog="pog", gene="outlier.gene") {{outlier.gene}}
+                td
+                    span(ng-if="outlier.expType === 'rna'") mRNA
+                    span(ng-if="outlier.expType === 'protein'") Protein
 
-    div(layout="column", flex).dataBox
+                td.text-capitalize {{outlier.expression_class.replace('_', ' ')}}
+                td {{outlier.cnvState}}
+                td.text-right.background-light {{outlier.foldChange}}
+                td.text-right {{outlier.tcgaNormPerc }}
+                td.text-right {{outlier.tcgaNormkIQR || '-' }}
+                td.text-right.background-light {{outlier.tcgaPerc}}
+                td.text-right.background-light {{outlier.tcgakIQR}}
+                td.text-right.background-light {{outlier.tcgaQC || '-'}}
+                td.text-right {{outlier.ptxPerc || '-' }}
+                td.text-right {{outlier.ptxkIQR || '-' }}
+                td.text-right {{outlier.ptxQC || '-' }}
+                td.text-center.options
+                    md-icon(ipr-data-viewer="outlier").clickable search
+                        md-tooltip View Details
 
-        div.box
-            div(layout="row", flex).heading
-                div(flex) Gene
-                div(flex) Location
-                div(flex=10) Copy Change
-                div(flex=10) LOH State
-                div(flex=10) CNV State
-                div(flex) Expression (RPKM)
-                div(flex) Fold Change Vs. {{pog.tumourAnalysis.normalExpressionComparator}}
-                div(flex=10) {{pog.tumourAnalysis.diseaseExpressionComparator}} %ile
-            div(ng-if="outliers.length == 0")
-                div.text-center.details No small somatic mutations of this kind were found from the analysis.
-            div(layout="row", flex, ng-repeat="outlier in outliers").row
-                div(flex) {{outlier.gene}}
-                div(flex) {{outlier.location}}
-                div(flex=10) {{outlier.copyChange}}
-                div(flex=10) {{outlier.lohState}}
-                div(flex=10) {{outlier.cnvState}}
-                div(flex) {{outlier.rpkm}}
-                div(flex) {{outlier.foldChange}}
-                div(flex=10) {{outlier.tcgaPerc}}

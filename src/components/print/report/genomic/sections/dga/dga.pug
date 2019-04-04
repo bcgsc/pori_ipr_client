@@ -1,0 +1,386 @@
+thead
+    tr
+        td.pageHeader.padded
+            div(layout="row")
+                div(flex=30) {{pog.POGID}}
+                    br
+                    | {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
+                div(flex) BCCA Confidential - For Research Purposes Only
+                div(flex=30)  {{report.patientInformation.tumourType}}
+tbody
+    tr
+        td
+            div(layout="row").sectionHeader
+                h1.blue Detailed Genomic Analysis
+                p(flex) This section summarizes the genomic events detected in the tumour.Details of events reported to be associated with therapeutic, biological, prognostic and diagnostic evidence are imported from the GSC-knowledgebase. Genomic events of uncertain significance in known cancer-related genes are listed at this end of the section.
+    tr
+        td.dga
+            h2 Therapies Approved in this Tumour Type
+            span(ng-if="approvedThisCancer.length === 0") No approved therapies were found for this tumour type.
+    tr(ng-repeat="gene in approvedThisCancer")
+        td.dga
+            div.variant
+                div(layout="column").block
+                    div(layout="row")
+                        div(flex=25)
+                            span Gene
+                            span {{gene.gene}}
+                        div(flex=25)
+                            span Variant
+                            span {{gene.variant}}
+                        div(flex)
+                            span Source
+                            span {{gene.sample}}
+                    div(layout="row")
+                        div(flex)
+                            span Expression
+                            span {{gene.expression_tissue_fc}}
+                        div(flex)
+                            span Disease Percentile
+                            span {{gene.expression_cancer_percentile}}
+                        div(flex)
+                            span Copy Number
+                            span {{gene.copyNumber}}
+                        div(flex)
+                            span Zygosity
+                            span {{gene.zygosity}}
+                table
+                    tr.header
+                        th Known Variant
+                        th Effect
+                        th Cancer Type
+                        th Association
+                        th Therapeutic Context
+                        th Evidence
+                        th Reference (PMID)
+                    tr
+                        td(width="14%") {{gene.kbVariant}}
+                        td(width="14%") {{gene.effect}}
+                        td(width="14%") {{gene.disease}}
+                        td(width="14%") {{gene.association}}
+                        td() {{gene.therapeuticContext}}
+                        td(width="14%") {{gene.evidence}}
+                        td(width="14%") {{gene.reference}}
+    tr
+        td.dga
+            h2 Therapies Approved in other Tumour Types
+            span(ng-if="approvedOtherCancer.length === 0") No approved therapies were found for other tumour types.
+    tr(ng-repeat="gene in approvedOtherCancer")
+        td.dga
+            div.variant
+                div(layout="column").block
+                    div(layout="row")
+                        div(flex=25)
+                            span Gene
+                            span {{gene.gene}}
+                        div(flex=25)
+                            span Variant
+                            span {{gene.variant}}
+                        div(flex)
+                            span Source
+                            span {{gene.sample}}
+                    div(layout="row")
+                        div(flex)
+                            span Expression
+                            span {{gene.expression_tissue_fc}}
+                        div(flex)
+                            span Disease Percentile
+                            span {{gene.expression_cancer_percentile}}
+                        div(flex)
+                            span Copy Number
+                            span {{gene.copyNumber}}
+                        div(flex)
+                            span Zygosity
+                            span {{gene.zygosity}}
+                table
+                    tr.header
+                        th Known Variant
+                        th Effect
+                        th Cancer Type
+                        th Association
+                        th Therapeutic Context
+                        th Evidence
+                        th Reference (PMID)
+                    tr
+                        td(width="14%") {{gene.kbVariant}}
+                        td(width="14%") {{gene.effect}}
+                        td(width="14%") {{gene.disease}}
+                        td(width="14%") {{gene.association}}
+                        td() {{gene.therapeuticContext}}
+                        td(width="14%") {{gene.evidence}}
+                        td(width="14%") {{gene.reference}}
+
+
+
+    tr
+        td.dga
+            h2 Alterations with Potential Clinical Relevance
+            h3 Known Alterations with Therapeutic Relevance
+
+    tr(ng-repeat="gene in alterations.therapeutic")
+        td.dga
+            div.variant
+                div(layout="column").block
+                    div(layout="row")
+                        div(flex=25)
+                            span Gene
+                            span {{gene.gene}}
+                        div(flex=25)
+                            span Variant
+                            span {{gene.variant}}
+                        div(flex)
+                            span Source
+                            span {{gene.sample}}
+                    div(layout="row")
+                        div(flex)
+                            span Expression
+                            span {{gene.expression_tissue_fc}}
+                        div(flex)
+                            span Disease Percentile
+                            span {{gene.expression_cancer_percentile}}
+                        div(flex)
+                            span Copy Number
+                            span {{gene.copyNumber}}
+                        div(flex)
+                            span Zygosity
+                            span {{gene.zygosity}}
+                table
+                    tr.header
+                        th Known Variant
+                        th Effect
+                        th Cancer Type
+                        th Association
+                        th Therapeutic Context
+                        th Evidence
+                        th Reference (PMID)
+                    tr
+                        td(width="14%") {{gene.kbVariant}}
+                        td(width="14%") {{gene.effect}}
+                        td(width="14%") {{gene.disease}}
+                        td(width="14%") {{gene.association}}
+                        td() {{gene.therapeuticContext}}
+                        td(width="14%") {{gene.evidence}}
+                        td(width="14%") {{gene.reference}}
+                    tr(ng-repeat="child in gene.children")
+                        td(width="14%") {{child.kbVariant}}
+                        td(width="14%") {{child.effect}}
+                        td(width="14%") {{child.disease}}
+                        td(width="14%") {{child.association}}
+                        td() {{child.therapeuticContext}}
+                        td(width="14%") {{child.evidence}}
+                        td(width="14%") {{child.reference}}
+    tr
+        td.dga
+            h3 Known Alterations with Prognostic Relevance
+    tr(ng-repeat="gene in alterations.prognostic")
+        td.dga
+            div.variant
+                div(layout="column").block
+                    div(layout="row")
+                        div(flex=25)
+                            span Gene
+                            span {{gene.gene}}
+                        div(flex=25)
+                            span Variant
+                            span {{gene.variant}}
+                        div(flex)
+                            span Source
+                            span {{gene.sample}}
+                    div(layout="row")
+                        div(flex)
+                            span Expression
+                            span {{gene.expression_tissue_fc}}
+                        div(flex)
+                            span Disease Percentile
+                            span {{gene.expression_cancer_percentile}}
+                        div(flex)
+                            span Copy Number
+                            span {{gene.copyNumber}}
+                        div(flex)
+                            span Zygosity
+                            span {{gene.zygosity}}
+                table
+                    tr.header
+                        th Known Variant
+                        th Effect
+                        th Cancer Type
+                        th Association
+                        th Therapeutic Context
+                        th Evidence
+                        th Reference (PMID)
+                    tr
+                        td(width="14%") {{gene.kbVariant}}
+                        td(width="14%") {{gene.effect}}
+                        td(width="14%") {{gene.disease}}
+                        td(width="14%") {{gene.association}}
+                        td() {{gene.therapeuticContext}}
+                        td(width="14%") {{gene.evidence}}
+                        td(width="14%") {{gene.reference}}
+                    tr(ng-repeat="child in gene.children")
+                        td(width="14%") {{child.kbVariant}}
+                        td(width="14%") {{child.effect}}
+                        td(width="14%") {{child.disease}}
+                        td(width="14%") {{child.association}}
+                        td() {{child.therapeuticContext}}
+                        td(width="14%") {{child.evidence}}
+                        td(width="14%") {{child.reference}}
+    tr
+        td.dga
+            h3 Known Alterations with Diagnostic Relevance
+    tr(ng-repeat="gene in alterations.diagnostic")
+        td.dga
+            div.variant
+                div(layout="column").block
+                    div(layout="row")
+                        div(flex=25)
+                            span Gene
+                            span {{gene.gene}}
+                        div(flex=25)
+                            span Variant
+                            span {{gene.variant}}
+                        div(flex)
+                            span Source
+                            span {{gene.sample}}
+                    div(layout="row")
+                        div(flex)
+                            span Expression
+                            span {{gene.expression_tissue_fc}}
+                        div(flex)
+                            span Disease Percentile
+                            span {{gene.expression_cancer_percentile}}
+                        div(flex)
+                            span Copy Number
+                            span {{gene.copyNumber}}
+                        div(flex)
+                            span Zygosity
+                            span {{gene.zygosity}}
+                table
+                    tr.header
+                        th Known Variant
+                        th Effect
+                        th Cancer Type
+                        th Association
+                        th Therapeutic Context
+                        th Evidence
+                        th Reference (PMID)
+                    tr
+                        td(width="14%") {{gene.kbVariant}}
+                        td(width="14%") {{gene.effect}}
+                        td(width="14%") {{gene.disease}}
+                        td(width="14%") {{gene.association}}
+                        td() {{gene.therapeuticContext}}
+                        td(width="14%") {{gene.evidence}}
+                        td(width="14%") {{gene.reference}}
+                    tr(ng-repeat="child in gene.children")
+                        td(width="14%") {{child.kbVariant}}
+                        td(width="14%") {{child.effect}}
+                        td(width="14%") {{child.disease}}
+                        td(width="14%") {{child.association}}
+                        td() {{child.therapeuticContext}}
+                        td(width="14%") {{child.evidence}}
+                        td(width="14%") {{child.reference}}
+    tr
+        td.dga
+            h3 Known Alterations with Biological Relevance
+    tr(ng-repeat="gene in alterations.biological")
+        td.dga
+            div.variant
+                div(layout="column").block
+                    div(layout="row")
+                        div(flex=25)
+                            span Gene
+                            span {{gene.gene}}
+                        div(flex=25)
+                            span Variant
+                            span {{gene.variant}}
+                        div(flex)
+                            span Source
+                            span {{gene.sample}}
+                    div(layout="row")
+                        div(flex)
+                            span Expression
+                            span {{gene.expression_tissue_fc}}
+                        div(flex)
+                            span Disease Percentile
+                            span {{gene.expression_cancer_percentile}}
+                        div(flex)
+                            span Copy Number
+                            span {{gene.copyNumber}}
+                        div(flex)
+                            span Zygosity
+                            span {{gene.zygosity}}
+                table
+                    tr.header
+                        th Known Variant
+                        th Effect
+                        th Cancer Type
+                        th Association
+                        th Therapeutic Context
+                        th Evidence
+                        th Reference (PMID)
+                    tr
+                        td(width="14%") {{gene.kbVariant}}
+                        td(width="14%") {{gene.effect}}
+                        td(width="14%") {{gene.disease}}
+                        td(width="14%") {{gene.association}}
+                        td() {{gene.therapeuticContext}}
+                        td(width="14%") {{gene.evidence}}
+                        td(width="14%") {{gene.reference}}
+                    tr(ng-repeat="child in gene.children")
+                        td(width="14%") {{child.kbVariant}}
+                        td(width="14%") {{child.effect}}
+                        td(width="14%") {{child.disease}}
+                        td(width="14%") {{child.association}}
+                        td() {{child.therapeuticContext}}
+                        td(width="14%") {{child.evidence}}
+                        td(width="14%") {{child.reference}}
+    tr
+        td.dga
+            h2 Uncharacterized Alterations
+
+    tr(ng-repeat="gene in alterations.unknown")
+        td.dga
+            div.variant
+                div(layout="column").block
+                    div(layout="row")
+                        div(flex=25)
+                            span Gene
+                            span {{gene.gene}}
+                        div(flex=25)
+                            span Variant
+                            span {{gene.variant}}
+                        div(flex)
+                            span Source
+                            span {{gene.sample}}
+                    div(layout="row")
+                        div(flex)
+                            span Expression
+                            span {{gene.expression_tissue_fc}}
+                        div(flex)
+                            span Disease Percentile
+                            span {{gene.expression_cancer_percentile}}
+                        div(flex)
+                            span Copy Number
+                            span {{gene.copyNumber}}
+                        div(flex)
+                            span Zygosity
+                            span {{gene.zygosity}}
+    tr
+        td.dga
+            h2 Targeted Gene Report - Detected Alterations
+            p(ng-if="targetedGenes.length === 0") No significant results were found from the analysis.
+
+    tr(ng-repeat="gene in targetedGenes")
+        td.dga
+            div.variant
+                div(layout="column").block
+                    div(layout="row")
+                        div(flex=25)
+                            span Gene
+                            span {{gene.gene}}
+                        div(flex=25)
+                            span Variant
+                            span {{gene.variant}}
+                        div(flex)
+                            span Source
+                            span {{gene.sample}}

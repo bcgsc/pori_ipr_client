@@ -1,27 +1,38 @@
 section
-    md-subheader.md-primary Somatic Mutations
+    md-subheader.md-primary Structural Variation
 
     div(layout="column", flex)
 
         div(layout="column", flex).bg-white
 
-            h2.title Small Somatic Mutations
-            h3.title Summary of Somatic Events
+            h2.title Summary of Structural Events
 
-            div(layout="row", layout-align="space-around center").margin-bottom-40
-                div(layout="column").smEvents.snv
-                    div(layout="row")
-                        div(flex=60) Structural Variants (Expressed Fusions)
-                        div(flex=40, layout="row", layout-align="center center").count
-                            div.sv {{ms.totalSV}}
-                    img(data-ng-src="data:image/png;base64,{{images['mutSummary.sv'].data}}")
+            div(layout="row").mutation-summary-images
+                div(layout="column", flex=15).comparator-list
 
-                div(layout="column").smEvents.indel
-                    div(layout="row")
-                        div(flex=60) &nbsp;
-                        div(flex=40, layout="row", layout-align="center center").count
-                            div &nbsp;
-                    img(data-ng-src="data:image/png;base64,{{images['mutSummary.barSv'].data}}")
+
+                div(layout="column", flex)
+
+                    div(layout="row", layout-align="space around")
+                        div(layout="column", flex=45).smEvents.sv
+                            div(layout="row")
+                                div(flex=60) Structural Variants (Expressed Fusions)
+                                div(flex=40, layout="row", layout-align="center center").count
+                                    div.sv {{ms.sv || 'na'}} ({{ms.sv_expressed || 'na'}})
+
+                        div(layout="column", flex=45).smEvents.indel
+
+                    div(layout="row", layout-align="space around").summary-plots
+                        div(layout="column", flex=45)
+                            div(ng-repeat="comp in mutationSummaryImages.comparators")
+                                img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{getMutationSummaryImage('densityPlot', 'sv').data}}")
+                                img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{mutationSummaryImages.legend.sv.data}}")
+
+                        div(layout="column", flex=45)
+                            div(ng-repeat="comp in mutationSummaryImages.comparators")
+                                img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{getMutationSummaryImage('barplot', 'sv').data}}")
+                                img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{mutationSummaryImages.legend.sv.data}}")
+
 
             md-tabs(md-dynamic-height=true, md-center-tabs=true).margin-bottom-20
                 md-tab(label="Genome")
@@ -33,9 +44,9 @@ section
 
         div(layout="column", flex)
 
-            h2.title Small Mutations: Genomic Details
+            h2.title Structural Variation: Genomic Details
 
             div(ng-repeat="(title, svs) in StrucVars")
                 h3.title {{titleMap[title]}}
 
-                ipr-sv(svs="svs", pog="pog")
+                ipr-sv(svs="svs", pog="pog", report="report", mavis="mavis")

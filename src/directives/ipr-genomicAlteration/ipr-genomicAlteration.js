@@ -1,17 +1,24 @@
-app.directive("iprGenomicAlteration", ['$q', '_', '$mdDialog', '$mdToast', ($q, _, $mdDialog, $mdToast) => {
+app.directive("iprGenomicAlteration", ['$q', '_', '$mdDialog', '$mdToast', '$acl', ($q, _, $mdDialog, $mdToast, $acl) => {
   
   
   return {
     restrict: 'E',
     transclude: false,
     scope: {
-      samples: '=samples',
-      gene: '=gene',
-      pog: '=pog',
-      trigger: '='
+      samples: '<samples',
+      gene: '<gene',
+      pog: '<pog',
+      trigger: '=',
+      report: '<report',
     },
     templateUrl: 'ipr-genomicAlteration/ipr-genomicAlteration.html',
     link: (scope, element, attr) => {
+
+      // Edit permissions
+      scope.canEdit = false;
+      if(!$acl.inGroup('clinician') && !$acl.inGroup('collaborator')) {
+        scope.canEdit = true;
+      }
 
       // Filter reference type
       scope.refType = (ref) => {
@@ -39,10 +46,11 @@ app.directive("iprGenomicAlteration", ['$q', '_', '$mdDialog', '$mdToast', ($q, 
         
         $mdDialog.show({
           targetEvent: $event,
-          templateUrl: 'dashboard/report/genomic/detailedGenomicAnalysis/alterations/alterations.edit.html',
+          templateUrl: 'dashboard/report/genomic/knowledgebase/alterations/alterations.edit.html',
           clickOutToClose: false,
           locals: {
             pog: scope.pog,
+            report: scope.report,
             gene: row,
             samples: scope.samples,
             rowEvent: 'update',
@@ -51,21 +59,33 @@ app.directive("iprGenomicAlteration", ['$q', '_', '$mdDialog', '$mdToast', ($q, 
          
         }).then((outcome) => {
           if(outcome) $mdToast.show($mdToast.simple().textContent(outcome));
-          scope.trigger(true);
-        }, (error) => {
-          $mdToast.show($mdToast.simple().textContent(error));
-        });
+            scope.trigger(true);
+          },
+          (error) => {
+            $mdToast.show($mdToast.simple().textContent('No changes have been made'));
+          }
+        );
       };
       
       // Create new entry...
-      scope.createRow = ($event, section) => {
+      scope.createRow = ($event, init) => {
+
+        let gene = angular.copy(init);
+        delete gene.reference;
+        delete gene.evidence;
+        delete gene.therapeuticContext;
+        delete gene.effect;
+        delete gene.association;
+        delete gene.disease;
+
         $mdDialog.show({
           targetEvent: $event,
-          templateUrl: 'dashboard/report/genomic/detailedGenomicAnalysis/alterations/alterations.edit.html',
+          templateUrl: 'dashboard/report/genomic/knowledgebase/alterations/alterations.edit.html',
           clickOutToClose: false,
           locals: {
             pog: scope.pog,
-            gene: null,
+            report: scope.report,
+            gene: gene,
             samples: scope.samples,
             rowEvent: 'create'
           },

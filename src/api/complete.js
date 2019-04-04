@@ -34,7 +34,8 @@ app.factory('api.complete', ['_', function (_) {
         "not specified": "Not Specified",
         "pre-clinical": "Pre-Clinical",
         "reported": "Reported",
-        "retrospective-clinical": "Retrospective-Clinical"
+        "retrospective-clinical": "Retrospective-Clinical",
+        "curated": "Curated"
       },
       disease: [
         "acute lymphocytic leukemia",
@@ -263,6 +264,8 @@ app.factory('api.complete', ['_', function (_) {
         "inferred sensitivity",
         "inhibits-pathway",
         "less-effective-than",
+        "likely gain-of-function",
+        "likely oncogenic",
         "loss-of-function",
         "minimal resistance",
         "minimal sensitivity",
@@ -315,6 +318,31 @@ app.factory('api.complete', ['_', function (_) {
         "pubmed",
         "url"
       ]
+    },
+    knowledgebase: {
+
+      sampleType: [
+        "caenorhabditis elegans",
+        "chicken",
+        "drosophila melanogaster",
+        "hamster",
+        "human cell-line",
+        "human patient",
+        "human patient-cells",
+        "human patient-xenograft",
+        "mouse",
+        "rat",
+        "saccharomyces cerevisiae",
+        "saccharomyces pombe"
+      ],
+      preClinicalModel: [
+        "dominant negative",
+        "inhibitor",
+        "knockout",
+        "mutant",
+        "RNAi"
+      ]
+
     }
   };
 

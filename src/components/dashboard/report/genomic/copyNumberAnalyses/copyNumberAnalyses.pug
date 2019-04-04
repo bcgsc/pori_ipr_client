@@ -10,7 +10,8 @@ section
 
             div(layout="row", layout-align="space-around center").margin-bottom-40.margin-top-30
                 div(layout="column").smEvents.snv
-                    img(data-ng-src="data:image/png;base64,{{images['cnvLoh.circos'].data}}")
+                    div(style="max-width: 100%")
+                        img(style="width: 90%", data-ng-src="data:image/png;base64,{{images['cnvLoh.circos'].data}}")
 
         div(layout="column", flex)
             h2.title Copy Number Variants: Genomic Details
@@ -18,7 +19,7 @@ section
             div(ng-repeat="(title, cnvs) in cnvGroups")
                 h3.title {{titleMap[title]}}
 
-                ipr-cnv(cnvs="cnvs", pog="pog")
+                ipr-cnv(cnvs="cnvs", pog="pog", report="report")
 
         div(layout="column", flex).bg-white
             h2.title Copy Number & LOH

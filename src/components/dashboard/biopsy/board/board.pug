@@ -1,0 +1,125 @@
+md-content(flex, layout="column").md-padding.biopsyBoard
+
+    h1.md-title(layout="row")
+        span(flex) Biopsies
+
+    div(layout="row", layout-align="center").switch
+        div(flex=40, layout="row")
+            div(flex=50, ng-click="active_sheet = 'biopsy'", ng-class="{active: (active_sheet === 'biopsy')}").clickable Biopsy Tracking
+            div(flex=50, ng-click="active_sheet = 'biofx'", ng-class="{active: (active_sheet === 'biofx')}").clickable Bioinformatics Tracking
+
+    table(style="margin: 20px 0 10px 0;").material-table
+        thead
+            tr
+                th(width="20%").button
+                    md-button(ng-click="addBiopsy()").md-primary Add
+                        md-tooltip Add new biopsy
+                th(width="60%")
+                th(width="20%").button
+                    div(layout="row", layout-align="end start")
+                        form(ng-submit="search()", novalidate, layout="row", flex, ng-show="showSearch")
+                            md-input-container(flex, layout="row").medium
+                                input(ng-model="filter.search", focus-me="focusSearch", placeholder="Search by Patient")
+
+                        md-button(ng-show="showSearch", ng-click="clearSearch()").md-icon
+                            md-icon cancel
+                            md-tooltip Clear search
+
+                        md-button(ng-hide="showSearch", ng-click="displaySearch()").md-icon
+                            md-icon filter_list
+                            md-tooltip Filter/Search
+
+    div(layout="column").biopsies
+
+        table(ng-show="active_sheet === 'biopsy'").material-table
+            thead
+                tr
+                    th(width="5%") Patient
+                    th(width="7%") Biopsy Date
+                    th(width="15%") Disease
+                    th(width="18%") Biopsy Notes
+                    th(width="10%")
+                        span.clickable Clinspec
+                            md-tooltip Clinical Biopsy Number
+                    th(width="10%")
+                        span.clickable Biop
+                            md-tooltip BioFX Biopsy Number
+                    th(width="7%") Tumour
+                    th(width="7%") Normal
+                    th(width="7%") Transcriptome
+                    th(width="10%") Added
+                    th(width="5%")
+            tbody
+                tr(ng-show="loading").loading
+                    td(colspan="10").text-center
+                        span Loading...
+                        md-progress-circular(md-mode="indeterminate")
+                tr(ng-show="!loading && analyses.length === 0").loading
+                    td(colspan="10").text-center
+                        span No biopsies found on IPR
+                tr(ng-repeat="analysis in analyses", ng-if="!loading")
+                    td.text-bold {{analysis.pog.POGID}}
+                    td {{analysis.biopsy_date | amDateFormat: 'YYYY-MM-DD' || 'N/A' }}
+                    td {{analysis.disease}}
+                    td {{analysis.biopsy_notes}}
+                    td {{analysis.clinical_biopsy}}
+                    td {{analysis.analysis_biopsy || "Pending"}}
+                    td
+                        span(ng-click="openLibrary(analysis.libraries.tumour)").clickable.link {{analysis.libraries.tumour}}
+                        span(ng-if="!analysis.libraries.tumour") N/A
+                    td
+                        span(ng-click="openLibrary(analysis.libraries.normal)").clickable.link {{analysis.libraries.normal}}
+                        span(ng-if="!analysis.libraries.normal") N/A
+                    td
+                        span(ng-click="openLibrary(analysis.libraries.transcriptome)").clickable.link {{analysis.libraries.transcriptome}}
+                        span(ng-if="!analysis.libraries.transcriptome") N/A
+                    td
+                        span.clickable {{analysis.createdAt | amTimeAgo}}
+                            md-tooltip {{analysis.createdAt | amDateFormat: 'YYYY-MM-DD HH:mm:ss'}}
+                    td.options
+                        md-icon(ng-click="editAnalysis(analysis)").clickable edit
+                            md-tooltip Edit biopsy
+                        md-icon(ng-click="openAnalysis(analysis)").clickable open_in_browser
+                            md-tooltip View biopsy
+
+        table(ng-show="active_sheet === 'biofx'").material-table
+            thead
+                tr
+                    th(width="5%") Patient
+                    th(width="7%") Biopsy Date
+                    th(width="7%") Biopsy
+                    th(width="5%")
+                        span.clickable Ped ID
+                            md-tooltip Pediatric Case ID
+                    th
+                        span.clickable Dx
+                            md-tooltip Diagnosis
+                    th Tumour Type (Report)
+                    th Tumour Type (KB)
+                    th Disease Comparator (Analysis)
+                    th Disease Comparators
+                    th Normal Comparator (Primary)
+                    th Normal Comparator (Bx site)
+                    th GTEX Normal (Primary)
+                    th GTEX Normal (Bx site)
+                    th(width="5%")
+            tbody
+                tr(ng-repeat="analysis in analyses")
+                    td.text-bold {{analysis.pog.POGID}}
+                    td {{analysis.biopsy_date | amDateFormat: 'YYYY-MM-DD' || 'N/A' }}
+                    td {{analysis.analysis_biopsy || "Pending"}}
+                    td {{analysis.pediatric_id || 'N/A'}}
+                    td {{analysis.disease}}
+                    td {{analysis.comparator_disease.tumour_type_report}}
+                    td {{analysis.comparator_disease.tumour_type_kb}}
+                    td {{analysis.comparator_disease.analysis}}
+                    td {{analysis.comparator_disease.all.join('; ')}}
+                    td {{analysis.comparator_normal.normal_primary.join('; ')}}
+                    td {{analysis.comparator_normal.normal_biopsy.join('; ')}}
+                    td {{analysis.comparator_normal.gtex_primary.join('; ')}}
+                    td {{analysis.comparator_normal.gtex_biopsy.join('; ')}}
+                    td.options
+                        md-icon(ng-click="editComparators(analysis)").clickable edit
+                        md-icon(ng-click="openAnalysis(analysis)").clickable open_in_browser
+
+        ipr-paginate(offset="paginate.offset", limit="paginate.limit", total="paginate.total", refresh="refreshAnalyses")

@@ -1,0 +1,74 @@
+div.header
+    h1(layout="column", layout-gt-md="row")
+        span(layout="column", flex-gt-md=50)
+            span {{pog.POGID}}
+            span(flex=100)
+                md-icon(md-whiteframe=2, ng-show="error").warning.clickable error
+                    md-tooltip {{getTaskStateCount('failed')}} task(s) have failed
+                md-icon(md-whiteframe=2, ng-show="hold").notice.clickable watch_later
+                    md-tooltip {{getTaskStateCount('hold')}} task(s) are being held
+        div(layout="column").subheader
+            div(layout="row").completion-header
+                span(flex=50) Complete:
+                span(flex=50) {{ getTaskStateCount('complete') }}/{{state.tasks.length}}
+            div(layout="row").priority-header
+                span(flex=50) Priority:
+                span(ng-if="analysis.priority===1", flex=50) Low
+                span(ng-if="analysis.priority===2", flex=50) Normal
+                span(ng-if="analysis.priority===3", flex=50).high.ipr-raised High
+            div(ng-if="analysis.clinical_biopsy", layout="row").biopsy-header
+                span(flex=50) Clinical:
+                span(flex=50) {{analysis.clinical_biopsy}}
+            div(ng-if="analysis.analysis_biopsy", layout="row").biopsy-header
+                span(flex=50) Biofx:
+                span(flex=50) {{analysis.analysis_biopsy}}
+
+div(layout="column", ng-if="showTasks").tasks
+    div(ng-show="loadingTasks")
+        md-progress-linear(md-mode="indeterminate")
+        div.text-center Loading Tasks
+
+    div(layout="row", ng-repeat="(i, task) in state.tasks", ng-class="{warning: (task.status === 'failed' ), notice: (task.status === 'hold' )}")
+        span {{i+1}}.
+        span(flex, md-truncate, ng-click="showTask($event, task)").clickable {{task.name}}
+
+        span(ng-if="task.outcomeType === 'date' && task.checkins.length === 1").value {{ task.checkins[0].outcome | amDateFormat: 'YYYY-MM-DD' }}
+        span(ng-if="task.outcomeType === 'text' && task.checkins.length === 1", md-truncate).value {{ task.checkins[0].outcome }}
+        span(ng-if="task.outcomeType === 'boolean' && task.checkins.length === 1", md-truncate).value
+            md-icon(ng-class="{green: task.checkins[0].outcome, red: !task.checkins[0].outcome}") {{(task.checkins[0].outcome) ? 'check_circle' : 'cancel' }}
+                md-tooltip Outcome: {{task.checkins[0].outcome || 'false' }}
+        span(ng-if="task.outcomeType === 'pass/fail/proceed/oncopanel' && task.checkins.length === 1").value {{ task.checkins[0].outcome.replace('-', ' - ') | titleCase }}
+
+        span.assignedTo
+            md-icon(ng-show="!task.assignedTo.username") person
+                md-tooltip Assign a user
+
+            img(ng-src="https://www.bcgsc.ca/jira/secure/useravatar?size=xsmall&ownerId={{task.assignedTo.username}}", ng-if="task.assignedTo.username", style="min-width: 16px; min-height: 16px;" ng-mouseenter="openUserWindow(task.assignedTo)", ng-mouseleave="closeUserWindow(task.assignedTo)")
+
+            div(ng-show="task.assignedTo.show").popover-container
+                div(ng-mouseenter="keepUserWindow(task.assignedTo)", ng-mouseleave="unKeepUserWindow(task.assignedTo)", md-whiteframe="4").content
+                    div.header {{task.assignedTo.firstName}} {{task.assignedTo.lastName}}
+                    div(layout="row").body
+                        div.avatar
+                            img(ng-if="task.assignedTo.username", ng-src="https://www.bcgsc.ca/jira/secure/useravatar?size=medium&ownerId={{task.assignedTo.username}}")
+                        div(flex, layout="column").details
+                            span
+                                a(href="mailto: {{task.assignedTo.firstName}} {{task.assignedTo.lastName}} <{{task.assignedTo.email}}>?subject={{pog.POGID}} {{task.name}}") {{task.assignedTo.email}}
+                            span
+                                span Last online
+                                span {{ task.assignedTo.lastLogin | amDateFormat: 'dddd, MMMM Do YYYY, h:mm:ss a' }}
+        span.status(ng-class="task.status").clickable &nbsp;
+            md-tooltip Status: {{task.status}}
+
+
+
+div(layout="row", flex, ng-hide="disableTasks").taskToggle
+    div(flex)
+    div(ng-click="getTasks()").clickable.text-center.toggle
+        md-icon {{(showTasks) ? 'arrow_drop_up' : 'arrow_drop_down'}}
+            md-tooltip(md-delay=500) {{(showTasks) ? 'Hide list of tasks' : 'Show list of tasks'}}
+    div(flex, layout="row").edit
+        span(flex)
+        span(layout="row", ng-click="showState()").clickable
+            span(flex).text-right settings
+            md-icon edit

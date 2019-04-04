@@ -1,0 +1,48 @@
+section.material-section.slide {
+
+  .analysis-report-section {
+
+    h3 {
+      md-icon {
+        float: right;
+      }
+    }
+
+    .slide {
+      max-height: 75vh;
+    }
+
+    .add-slide {
+      margin: 10px 20px 0 20px;
+      padding-bottom: 30px;
+
+      textarea {
+        border: 1px solid rgba(0,0,0,0.2);
+        background-color: rgba(0,0,0,0.03);
+        padding: 5px;
+      }
+
+      md-input-container {
+        margin: 8px 0 4px 0;
+
+        &.name {
+          margin-top: 20px;
+        }
+      }
+
+    }
+
+    .edit-entry {
+      margin: 10px;
+    }
+
+    .edited {
+      font-size: 11px;
+      color: rgba(0,0,0,0.5);
+      font-style: italic;
+      margin: 25px 0 0 0;
+    }
+
+  }
+
+}

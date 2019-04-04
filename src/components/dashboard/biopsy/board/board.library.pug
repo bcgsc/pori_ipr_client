@@ -1,0 +1,109 @@
+md-dialog(layout="column", aria-label="Library Details", flex=95, flex-gt-lg=70).editor
+    md-toolbar
+        .md-toolbar-tools
+            h2 Library Details: {{library.name}}
+            span(flex)
+            md-button.md-icon-button(ng-click='cancel()')
+                md-icon cancel
+    md-dialog-content(layout-padding)
+
+        p Library details available in LIMS are displayed below.
+
+        md-tabs(md-stretch-tabs="auto", md-dynamic-height=true)
+            md-tab(label="Library Details")
+
+                div(layout="column")
+
+                    div(ng-show="loading.library", layout="row", layout-align="center center")
+                        md-progress-circular(md-mode="indeterminate")
+
+                    div(ng-hide="loading.library", layout="column")
+
+                        div(layout="row").libDetails
+                            div(flex=30) Status
+                            div(flex) {{library.status}}
+
+                        div(layout="row").libDetails
+                            div(flex=30) Library Type
+                            div(flex) {{library.type}}
+
+                        div(layout="row").libDetails
+                            div(flex=30) Source Name
+                            div(flex) {{library.full_name}}
+
+                        div(layout="row").libDetails
+                            div(flex=30) Library Name
+                            div(flex) {{library.name}}
+
+                        div(layout="row").libDetails
+                            div(flex=30) Sequencing Strategy
+                            div(flex) {{library.library_strategy}}
+
+                        div(layout="row").libDetails
+                            div(flex=30) Appeared in LIMS
+                            div(flex) {{library.created | amDateFormat: 'YYYY-MM-DD HH:mm'}}
+
+                        div(layout="row").libDetails
+                            div(flex=30) Description
+                            div(flex) {{library.description}}
+
+                        div(layout="row").libDetails
+                            div(flex=30) Pool
+                            div(flex, layout="row")
+                                span(flex=30, ng-show="loading.illumina", style="height: 6px; overflow: hidden; margin-top: 5px;")
+                                    md-progress-linear(md-mode="indeterminate")
+                                span(ng-hide="loading.illumina") {{ getPoolName(illumina) }}
+
+            md-tab(label="Illumina Run")
+
+                br
+
+                div(layout="column").material-table
+                    div(layout="row").head
+                        div(flex=10) Status
+                        div(flex=10) Type
+                        div(flex=10) Sequencer
+                        div(flex=10) Flowcell
+                        div(flex=10) Lane
+                        div(flex=10) Validation
+                        div(flex=15) QC Status
+                        div(flex=10) Library
+                            span.text-small (pool)
+                        div(flex=15) Multiplex Libraries
+
+                    div(ng-show="loading.illumina", layout="row", layout-align="center center")
+                        md-progress-linear(md-mode="indeterminate")
+
+                    div(ng-show="!loading.illumina && illumina.length === 0", layout="row")
+                        div(flex).text-center No Illumina run data available yet.
+
+                    div(ng-hide="loading.illumina", layout="row", ng-repeat="run in illumina").row
+                        div(flex=10) {{run.status}}
+                        div(flex=10) {{run.type}}
+                        div(flex=10) {{run.sequencer}}
+                        div(flex=10) {{run.flowcell}}
+                        div(flex=10) {{run.lane}}
+                        div(flex=10)
+                            span
+                                md-icon(ng-if="run.approval === 'Approved'").green.small check_circle
+                                md-icon(ng-if="run.approval === 'Rejected'").red.small cancel
+                            span {{run.approval}}
+                            md-icon(ng-if="run.approval_datetime").small.margin-left-10.clickable event
+                                md-tooltip {{run.approval_datetime | amDateFormat: 'YYYY-MM-DD HH:mm'}}
+
+                        div(flex=15)
+                            span
+                                md-icon(ng-if="run.qc_status === 'Passed'").green.small check_circle
+                                md-icon(ng-if="run.qc_status === 'Failed'").red.small cancel
+                            span {{run.qc_status}}
+                            md-icon(ng-if="run.qc_status_datetime").small.margin-left-10.clickable event
+                                md-tooltip {{run.qc_status_datetime | amDateFormat: 'YYYY-MM-DD HH:mm'}}
+
+                        div(flex=10) {{run.library}}
+                        div(flex=15)
+                            ul
+                                li(ng-repeat="l in run.multiplex_libraries track by $index") {{l}}
+
+    md-dialog-actions(layout="row", layout-aligh="end center")
+        span(flex)
+        md-button(ng-click="cancel()").md-primary.md-raised Close

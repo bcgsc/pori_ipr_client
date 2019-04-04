@@ -1,0 +1,253 @@
+table.print.pageBreak
+  thead
+    tr
+      td.pageHeader.padded
+        div(layout="row")
+          div(flex=30) {{pog.POGID}}
+            br
+            | {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
+          div(flex) BCCA Confidential - For Research Purposes Only
+          div(flex=30)  {{report.patientInformation.tumourType}}
+  tbody
+    tr
+      td.somaticMutations
+        div(layout="row").sectionHeader
+          h1.blue Somatic Mutations
+          p(flex) This section provides information for the somatic mutations described in the DETAILED GENOMIC ANALYSIS section, including SNVs and INDELs. Mutational burden analysis and mutation signature results are also reported in this section. Look in this section for details about mutation position, the sample in which mutations are detected, copy number and expression metrics.
+        h1 Small Somatic Mutations
+        h2 Summary of Somatic Events
+
+        div(layout="row", layout-align="space-around center")
+          div(layout="column").smEvents.snv
+            div(layout="row")
+              div(flex=60) Number of non-synonymous protein coding SNVs (Truncating)
+              div(flex=40, layout="row", layout-align="center center").count
+                div.snv {{ms.snv}} ({{ms.snv_truncating}})
+
+            div(ng-repeat="comp in mutationSummaryImages.comparators")
+              img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{getMutationSummaryImage('densityPlot', 'snv', comp.name).data}}")
+              img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{getMutationSummaryImage('snv_indel', 'legend', comp.name).data}}")
+              img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{getMutationSummaryImage('barplot', 'snv', comp.name).data}}")
+
+            img(data-ng-src="data:image/png;base64,{{images['mutSummary.snv'].data}}").bar
+            img(data-ng-src="data:image/png;base64,{{images['mutSummary.barSnv'].data}}").bar
+
+          div(layout="column").smEvents.indel
+            div(layout="row")
+              div(flex=60) Number of protein coding indels (Frameshift)
+              div(flex=40, layout="row", layout-align="center center").count
+                div.indel {{ms.indels}} ({{ms.indels_frameshift}})
+
+            div(ng-repeat="comp in mutationSummaryImages.comparators")
+              img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{getMutationSummaryImage('densityPlot', 'indel', comp.name).data}}")
+              img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{getMutationSummaryImage('snv_indel', 'legend', comp.name).data}}")
+              img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{getMutationSummaryImage('barplot', 'indel', comp.name).data}}")
+
+
+            img(data-ng-src="data:image/png;base64,{{images['mutSummary.indel'].data}}").bar
+            img(data-ng-src="data:image/png;base64,{{images['mutSummary.barIndel'].data}}").bar
+
+
+table.print.pageBreak
+  thead
+    tr
+      td.pageHeader.padded
+        div(layout="row")
+          div(flex=30) {{pog.POGID}}
+            br
+            | {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
+          div(flex) BCCA Confidential - For Research Purposes Only
+          div(flex=30)  {{report.patientInformation.tumourType}}
+  tbody
+    tr
+      td
+        h2 Mutational Spectrum
+
+        div(layout="column", flex).mutationSignature
+          div(layout="row", flex).pageHeader.padded
+            div(flex=10) Signature
+            //div(flex=5) Pearson
+            div(flex=5) NNLS
+            div(flex) Probable Associations
+            div(flex=10) Additional Features
+            div(flex=10) # Cancer Types
+            div(flex=50) Significant Cancer Type
+          div(layout="row", ng-repeat="row in mutationSignature", flex).row
+            div(flex=10)
+              | Signature {{row.signature}}
+              md-tooltip(ng-if="isSelectedMutation(row.ident)") This signature has been selected by [analyst.name]
+            //div(flex=5, class="sig-{{row.pearsonColour}}").signatureCorrelation {{row.pearson}}
+            div(flex=5, class="sig-{{row.nnlsColour}}").signatureCorrelation {{row.nnls}}
+            div(flex).text-center {{row.associations}}
+            div(flex=10).text-center {{row.features}}
+            div(flex=10).text-center {{row.numCancerTypes}}
+            div(flex=50).text-small {{row.cancerTypes}}
+
+table.print
+  thead
+    tr
+      td(style="padding-top: 5mm").pageHeader.padded
+        div(layout="row")
+          div(flex=30) {{pog.POGID}}
+            br
+            | {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
+          div(flex) BCCA Confidential - For Research Purposes Only
+          div(flex=30)  {{report.patientInformation.tumourType}}
+        h1 Small Somatic Mutations
+  tbody
+    tr
+      td.somaticMutations
+        div(layout="column", layout-align="center center")
+          div
+            img(data-ng-src="data:image/png;base64,{{images['mutSignature.snvsAllStrelka'].data}}")
+    tr
+      td.somaticMutations
+        h2 Small Mutations: Genomic Details
+        h3 Variants of Potential Clinical Relevance
+    tr
+      td.somaticMutations
+        div(ng-if="smallMutations.clinical.length == 0").detailedDataAbsent No somatic small mutations of clinical relevance were found from the analysis.
+
+        table(ng-if="smallMutations.clinical.length > 0").detailedData
+          tr.header
+            th Gene
+            th Transcript
+            th Protein Change
+            th Location
+            th Zygosity
+            th Ref/Alt
+            th Copy Change
+            th LOH State
+            th Ref/Alt DNA
+            th Ref/Alt RNA
+            th Expression (RPKM)
+            th Fold Change vs. {{report.tumourAnalysis.normalExpressionComparator}}
+            th {{report.tumourAnalysis.diseaseExpressionComparator}} %ile
+          tr(ng-repeat="mutation in smallMutations.clinical")
+            td(style="width: 7%") {{mutation.gene}}
+            td(style="width: 15%") {{mutation.transcript}}
+            td(style="width: 6%") {{mutation.proteinChange}}
+            td(style="width: 10%") {{mutation.location}}
+            td(style="width: 6%") {{mutation.zygosity}}
+            td(style="width: 8%") {{mutation.refAlt}}
+            td(style="width: 7%") {{copyFilter(mutation.ploidyCorrCpChange)}}
+            td(style="width: 7%") {{mutation.lohState}}
+            td(style="width: 7%") {{mutation.tumourReads}}
+            td(style="width: 7%") {{mutation.RNAReads}}
+            td(style="width: 7%") {{mutation.expressionRpkm}}
+            td {{mutation.foldChange}}
+            td(style="width: 5%") {{mutation.TCGAPerc || 'na'}}
+    tr
+      td.somaticMutations
+        h3 Variants of Prognostic or Diagnostic Relevance
+    tr
+      td.somaticMutations
+        div(ng-if="smallMutations.nostic.length == 0").detailedDataAbsent No somatic small mutations of prognostic or diagnostic relevance were found from the analysis.
+
+        table(ng-if="smallMutations.nostic.length > 0").detailedData
+          tr.header
+            th Gene
+            th Transcript
+            th Protein Change
+            th Location
+            th Zygosity
+            th Ref/Alt
+            th Copy Change
+            th LOH State
+            th Ref/Alt DNA
+            th Ref/Alt RNA
+            th Expression (RPKM)
+            th Fold Change vs. {{report.tumourAnalysis.normalExpressionComparator}}
+            th {{report.tumourAnalysis.diseaseExpressionComparator}} %ile
+          tr(ng-repeat="mutation in smallMutations.nostic")
+            td(style="width: 7%") {{mutation.gene}}
+            td(style="width: 15%") {{mutation.transcript}}
+            td(style="width: 6%") {{mutation.proteinChange}}
+            td(style="width: 10%") {{mutation.location}}
+            td(style="width: 6%") {{mutation.zygosity}}
+            td(style="width: 8%") {{mutation.refAlt}}
+            td(style="width: 7%") {{copyFilter(mutation.ploidyCorrCpChange)}}
+            td(style="width: 7%") {{mutation.lohState}}
+            td(style="width: 7%") {{mutation.tumourReads}}
+            td(style="width: 7%") {{mutation.RNAReads}}
+            td(style="width: 7%") {{mutation.expressionRpkm}}
+            td(style="width: 7%") {{mutation.foldChange}}
+            td(style="width: 5%") {{mutation.TCGAPerc || 'na'}}
+    tr
+      td.somaticMutations
+        h3 Variants of Biological Relevance
+    tr
+      td.somaticMutations
+
+        div(ng-if="smallMutations.biological.length == 0").detailedDataAbsent No somatic small mutations of biological relevance were found from the analysis.
+
+        table(ng-if="smallMutations.biological.length > 0").detailedData
+          tr.header
+            th Gene
+            th Transcript
+            th Protein Change
+            th Location
+            th Zygosity
+            th Ref/Alt
+            th Copy Change
+            th LOH State
+            th Ref/Alt DNA
+            th Ref/Alt RNA
+            th Expression (RPKM)
+            th Fold Change vs. {{report.tumourAnalysis.normalExpressionComparator}}
+            th {{report.tumourAnalysis.diseaseExpressionComparator}} %ile
+          tr(ng-repeat="mutation in smallMutations.biological")
+            td(style="width: 7%") {{mutation.gene}}
+            td(style="width: 15%") {{mutation.transcript}}
+            td(style="width: 6%") {{mutation.proteinChange}}
+            td(style="width: 10%") {{mutation.location}}
+            td(style="width: 6%") {{mutation.zygosity}}
+            td(style="width: 8%") {{mutation.refAlt}}
+            td(style="width: 7%") {{copyFilter(mutation.ploidyCorrCpChange)}}
+            td(style="width: 7%") {{mutation.lohState}}
+            td(style="width: 7%") {{mutation.tumourReads}}
+            td(style="width: 7%") {{mutation.RNAReads}}
+            td(style="width: 7%") {{mutation.expressionRpkm}}
+            td {{mutation.foldChange}}
+            td(style="width: 5%") {{mutation.TCGAPerc || 'na'}}
+    tr
+      td.somaticMutations
+        h3 Variants of Unknown Significance in known cancer-related genes
+    tr
+      td.somaticMutations
+
+        div(ng-if="smallMutations.unknown.length == 0").detailedDataAbsent No somatic small mutations of unknown relevance were found from the analysis.
+
+        table(ng-if="smallMutations.unknown.length > 0").detailedData
+          tr.header
+            th(style="width: 7%") Gene
+            th(style="width: 15%") Transcript
+            th(style="width: 6%") Protein Change
+            th(style="width: 10%") Location
+            th(style="width: 6%") Zygosity
+            th(style="width: 8%") Ref/Alt
+            th(style="width: 7%") Copy Change
+            th(style="width: 7%") LOH State
+            th(style="width: 7%") Ref/Alt DNA
+            th(style="width: 7%") Ref/Alt RNA
+            th(style="width: 7%") Expression (RPKM)
+            th Fold Change vs. {{report.tumourAnalysis.normalExpressionComparator}}
+            th(style="width: 5%") {{report.tumourAnalysis.diseaseExpressionComparator}} %ile
+
+    tr(ng-repeat="mutation in smallMutations.unknown")
+      td
+        table.detailedData
+          tr
+            td(style="width: 7%") {{mutation.gene}}
+            td(style="width: 15%") {{mutation.transcript}}
+            td(style="width: 6%") {{mutation.proteinChange}}
+            td(style="width: 10%") {{mutation.location}}
+            td(style="width: 6%") {{mutation.zygosity}}
+            td(style="width: 8%") {{mutation.refAlt}}
+            td(style="width: 7%") {{copyFilter(mutation.ploidyCorrCpChange)}}
+            td(style="width: 7%") {{mutation.lohState}}
+            td(style="width: 7%") {{mutation.tumourReads}}
+            td(style="width: 7%") {{mutation.RNAReads}}
+            td(style="width: 7%") {{mutation.expressionRpkm}}
+            td {{mutation.foldChange}}
+            td(style="width: 5%") {{mutation.TCGAPerc || 'na'}}

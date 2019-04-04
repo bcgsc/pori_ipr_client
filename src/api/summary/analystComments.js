@@ -18,11 +18,11 @@ app.factory('api.summary.analystComments', ['_', '$http', '$q', (_, $http, $q) =
    * Retrieve anaylist comments for this POG
    *
    */
-  $ac.get = (POGID) => {
+  $ac.get = (POGID, report) => {
     return $q((resolve, reject) => {
       
       // Retrieve from API
-      $http.get(api + '/' + POGID + '/summary/analystComments').then(
+      $http.get(api + '/' + POGID + '/report/' + report + '/genomic/summary/analystComments').then(
         (result) => {
           // Return to requestee
           resolve(result.data);
@@ -35,7 +35,7 @@ app.factory('api.summary.analystComments', ['_', '$http', '$q', (_, $http, $q) =
       
     });
     
-  }
+  };
   
   
   /*
@@ -45,12 +45,12 @@ app.factory('api.summary.analystComments', ['_', '$http', '$q', (_, $http, $q) =
    * @param string summary - Text body of summary
    *
    */
-  $ac.update = (POGID, summary) => {
+  $ac.update = (POGID, report, summary) => {
     
     return $q((resolve, reject) => {
       
       // Get result from API
-      $http.put(api + '/' + POGID + '/summary/analystComments', summary).then(
+      $http.put(api + '/' + POGID + '/report/' + report + '/genomic/summary/analystComments', summary).then(
         (result) => {
           resolve(result.data);
         },
@@ -60,8 +60,54 @@ app.factory('api.summary.analystComments', ['_', '$http', '$q', (_, $http, $q) =
         }
       );
     });
-  }
-  
+  };
+
+  /**
+   * Sign Analyst Comments
+   *
+   * @param {string} POGID
+   * @param {string} report - Report unique identifier
+   * @param {string} role - The role to sign for
+   *
+   */
+  $ac.sign = (POGID, report, role) => {
+
+    return $q((resolve, reject) => {
+
+      $http.put(api + '/' + POGID + '/report/' + report + '/genomic/summary/analystComments/sign/' + role, {}).then(
+        (result) => {
+          resolve(result.data);
+        },
+        (err) => {
+          reject(err);
+        }
+      );
+    });
+  };
+
+  /**
+   * Revoke Analyst Comments Signature
+   *
+   * @param {string} POGID
+   * @param {string} report - Report unique identifier
+   * @param {string} role - The role to sign for
+   *
+   */
+  $ac.revokeSign = (POGID, report, role) => {
+
+    return $q((resolve, reject) => {
+
+      $http.put(api + '/' + POGID + '/report/' + report + '/genomic/summary/analystComments/sign/revoke/' + role, {}).then(
+        (result) => {
+          resolve(result.data);
+        },
+        (err) => {
+          reject(err);
+        }
+      );
+    });
+  };
+
   return $ac;
   
 }]);

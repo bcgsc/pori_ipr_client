@@ -2,26 +2,25 @@
  * uiBreadcrumbs automatic breadcrumbs directive for AngularJS & Angular ui-router.
  *
  * https://github.com/michaelbromley/angularUtils/tree/master/src/directives/uiBreadcrumbs
- *
- * Copyright 2014 Michael Bromley <michael@michaelbromley.co.uk>
  */
 
-app.directive('uiBreadcrumbs', ['$interpolate', '$state', function($interpolate, $state) {
+app.directive('uiBreadcrumbs', ['$interpolate', '$state', '$transitions', ($interpolate, $state, $transitions) => {
   return {
     restrict: 'E',
-    templateUrl: function(elem, attrs) {
+    templateUrl: (elem, attrs) => {
       return attrs.templateUrl || templateUrl;
     },
     scope: {
       displaynameProperty: '@',
-      abstractProxyProperty: '@?'
+      abstractProxyProperty: '@?',
     },
-    link: function(scope) {
+    link: (scope) => {
+      scope.dataProxy = scope.abstractProxyProperty.split('.')[1];
       scope.breadcrumbs = [];
       if ($state.$current.name !== '') {
         updateBreadcrumbsArray();
       }
-      scope.$on('$stateChangeSuccess', function() {
+      $transitions.onSuccess({ }, () => {
         updateBreadcrumbsArray();
       });
 
@@ -30,20 +29,27 @@ app.directive('uiBreadcrumbs', ['$interpolate', '$state', function($interpolate,
        * array of breadcrumbs that can be used in an ng-repeat in the template.
        */
       function updateBreadcrumbsArray() {
-        var workingState;
-        var displayName;
-        var breadcrumbs = [];
-        var currentState = $state.$current;
+        let workingState;
+        let displayName;
+        const breadcrumbs = [];
+        let currentState = $state.$current;
 
-        while(currentState && currentState.name !== '') {
+        while (currentState && currentState.name !== '') {
           workingState = getWorkingState(currentState);
           if (workingState) {
             displayName = getDisplayName(workingState);
 
             if (displayName !== false && !stateAlreadyInBreadcrumbs(workingState, breadcrumbs)) {
+              let proxyState = workingState.data[scope.dataProxy];
+
+              // If the proxy state is a function, pass in $state and receive string back
+              if (workingState.data && workingState.data[scope.dataProxy] && typeof workingState.data[scope.dataProxy] === 'function') {
+                proxyState = workingState.data[scope.dataProxy]($state);
+              }
+
               breadcrumbs.push({
                 displayName: displayName,
-                route: (workingState.data && workingState.data.stateProxy) ? workingState.data.stateProxy : workingState.name
+                route: (workingState.data && workingState.data[scope.dataProxy]) ? proxyState : workingState.name,
               });
             }
           }
@@ -61,8 +67,8 @@ app.directive('uiBreadcrumbs', ['$interpolate', '$state', function($interpolate,
        * @returns {*}
        */
       function getWorkingState(currentState) {
-        var proxyStateName;
-        var workingState = currentState;
+        let proxyStateName;
+        let workingState = currentState;
         if (currentState.abstract === true) {
           if (typeof scope.abstractProxyProperty !== 'undefined') {
             proxyStateName = getObjectValue(scope.abstractProxyProperty, currentState);
@@ -89,26 +95,22 @@ app.directive('uiBreadcrumbs', ['$interpolate', '$state', function($interpolate,
        * @returns {*}
        */
       function getDisplayName(currentState) {
-        var interpolationContext;
-        var propertyReference;
-        var displayName;
-
         if (!scope.displaynameProperty) {
           // if the displayname-property attribute was not specified, default to the state's name
           return currentState.name;
         }
-        propertyReference = getObjectValue(scope.displaynameProperty, currentState);
+        const propertyReference = getObjectValue(scope.displaynameProperty, currentState);
 
         if (propertyReference === false) {
           return false;
-        } else if (typeof propertyReference === 'undefined') {
-          return currentState.name;
-        } else {
-          // use the $interpolate service to handle any bindings in the propertyReference string.
-          interpolationContext =  (typeof currentState.locals !== 'undefined') ? currentState.locals.globals : currentState;
-          displayName = $interpolate(propertyReference)(interpolationContext);
-          return displayName;
         }
+        if (typeof propertyReference === 'undefined') {
+          return currentState.name;
+        }
+        // use the $interpolate service to handle any bindings in the propertyReference string.
+        const interpolationContext =  (typeof currentState.locals !== 'undefined') ? currentState.locals.globals : currentState;
+        const displayName = $interpolate(propertyReference)(interpolationContext);
+        return displayName;
       }
 
       /**
@@ -120,13 +122,17 @@ app.directive('uiBreadcrumbs', ['$interpolate', '$state', function($interpolate,
        * @returns {*}
        */
       function getObjectValue(objectPath, context) {
-        var i;
-        var propertyArray = objectPath.split('.');
-        var propertyReference = context;
+        let i;
+        const propertyArray = objectPath.split('.');
+        let propertyReference = context;
 
-        for (i = 0; i < propertyArray.length; i ++) {
+        for (i = 0; i < propertyArray.length; i += 1) {
           if (angular.isDefined(propertyReference[propertyArray[i]])) {
             propertyReference = propertyReference[propertyArray[i]];
+
+            if (typeof propertyReference === 'function') {
+              propertyReference = propertyReference($state);
+            }
           } else {
             // if the specified property was not found, default to the state's name
             return undefined;
@@ -143,15 +149,15 @@ app.directive('uiBreadcrumbs', ['$interpolate', '$state', function($interpolate,
        * @returns {boolean}
        */
       function stateAlreadyInBreadcrumbs(state, breadcrumbs) {
-        var i;
-        var alreadyUsed = false;
-        for(i = 0; i < breadcrumbs.length; i++) {
+        let i;
+        let alreadyUsed = false;
+        for (i = 0; i < breadcrumbs.length; i += 1) {
           if (breadcrumbs[i].route === state.name) {
             alreadyUsed = true;
           }
         }
         return alreadyUsed;
       }
-    }
+    },
   };
 }]);

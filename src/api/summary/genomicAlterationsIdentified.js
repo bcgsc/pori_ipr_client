@@ -17,11 +17,11 @@ app.factory('api.summary.genomicAterationsIdentified', ['_', '$http', '$q', (_, 
    * Retrieve all POGs from API that user can access
    *
    */
-  $gai.all = (POGID) => {
+  $gai.all = (POGID, report) => {
     return $q((resolve, reject) => {
       
       // Retrieve from API
-      $http.get(api + '/' + POGID + '/summary/genomicAlterationsIdentified').then(
+      $http.get(api + '/' + POGID + '/report/' + report + '/genomic/summary/genomicAlterationsIdentified').then(
         (result) => {
         
           resolve(result.data);
@@ -34,7 +34,7 @@ app.factory('api.summary.genomicAterationsIdentified', ['_', '$http', '$q', (_, 
       
     });
     
-  }
+  };
   
   /*
    * Get an Identified Genomic Alteration
@@ -43,12 +43,12 @@ app.factory('api.summary.genomicAterationsIdentified', ['_', '$http', '$q', (_, 
    * @param string ident - UUID4 identity string for entry
    *
    */
-  $gai.id = (POGID, ident) => {
+  $gai.id = (POGID, report, ident) => {
     
     return $q((resolve, reject) => {
       
       // Get result from API
-      $http.get(api + '/' + POGID + '/summary/genomicAlterationsIdentified/' + ident).then(
+      $http.get(api + '/' + POGID + '/report/' + report + '/genomic/summary/genomicAlterationsIdentified/' + ident).then(
         (result) => {
 
           resolve(result.data);
@@ -59,7 +59,7 @@ app.factory('api.summary.genomicAterationsIdentified', ['_', '$http', '$q', (_, 
         }
       );
     });
-  }
+  };
   
   /*
    * Update an Identified Genomic Alteration
@@ -68,7 +68,7 @@ app.factory('api.summary.genomicAterationsIdentified', ['_', '$http', '$q', (_, 
    * @param string ident - UUID4 identity string for entry
    *
    */
-  $gai.update = (POGID, ident, gai) => {
+  $gai.update = (POGID, report, ident, gai) => {
     
     return $q((resolve, reject) => {
       
@@ -76,7 +76,7 @@ app.factory('api.summary.genomicAterationsIdentified', ['_', '$http', '$q', (_, 
       if(_gai[ident] !== undefined) return resolve(_gai[ident]);
       
       // Get result from API
-      $http.put(api + '/' + POGID + '/summary/genomicAlterationsIdentified/' + ident, gai).then(
+      $http.put(api + '/' + POGID + '/report/' + report + '/genomic/summary/genomicAlterationsIdentified/' + ident, gai).then(
         (result) => {
         
           resolve(result.data);
@@ -87,7 +87,32 @@ app.factory('api.summary.genomicAterationsIdentified', ['_', '$http', '$q', (_, 
         }
       );
     });
-  }
+  };
+
+  /*
+   * Create an Identified Genomic Alteration
+   *
+   * @param string POGID - POGID, eg POG129
+   * @param string ident - UUID4 identity string for entry
+   *
+   */
+  $gai.create = (POGID, report, alteration) => {
+
+    return $q((resolve, reject) => {
+
+      // Get result from API
+      $http.post(api + '/' + POGID + '/report/' + report + '/genomic/summary/genomicAlterationsIdentified/', alteration).then(
+        (result) => {
+
+          resolve(result.data);
+        },
+        (error) => {
+          // TODO: Better error handling
+          reject();
+        }
+      );
+    });
+  };
   
   /*
    * Remove an Identified Genomic Alteration
@@ -96,12 +121,12 @@ app.factory('api.summary.genomicAterationsIdentified', ['_', '$http', '$q', (_, 
    * @param string ident - UUID4 identity string for entry
    *
    */
-  $gai.remove = (POGID, ident, cascade=false) => {
+  $gai.remove = (POGID, report, ident, comment, cascade=false) => {
     
     return $q((resolve, reject) => {
       
       // Get result from API
-      $http.delete(api + '/' + POGID + '/summary/genomicAlterationsIdentified/' + ident + ((cascade) ? '?cascade=true' : '')).then(
+      $http.delete(api + '/' + POGID + '/report/' + report + '/genomic/summary/genomicAlterationsIdentified/' + ident + ((cascade) ? '?cascade=true' : ''), {data: {comment: comment}, headers: {'Content-Type': 'application/json'}}).then(
         (result) => {
           resolve(true);
         },
@@ -111,7 +136,7 @@ app.factory('api.summary.genomicAterationsIdentified', ['_', '$http', '$q', (_, 
         }
       );
     });
-  }
+  };
   
   return $gai;
   

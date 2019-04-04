@@ -1,3 +1,6 @@
 node_modules/*
 builds/*
 .idea/*
+.*DS_Store
+.auth.json
+.vscode/*

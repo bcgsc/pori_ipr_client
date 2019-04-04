@@ -1,0 +1,47 @@
+md-content(layout="column", flex).dashboard
+
+    div(layout="column")
+        div.options
+            div(layout="row")
+                h1.title Knowledgebase: Dashboard 
+                    md-icon(ng-click="showKBDescription()").clickable.blue info
+                        md-tooltip(md-direction="right") About Knowledgebase
+                span(flex)
+                md-button(ui-sref="dashboard.knowledgebase.references").md-primary.md-raised View References
+                //div(layout="row")
+                    form(ng-submit="search.go()", layout="row", flex)
+                        md-select(ng-model="search.target", style="height: 32px; width: 140px;", aria-label="Search Target", ng-disabled="true").hide-validation-error
+                            md-option(ng-value="'references'", ng-selected="true") References
+                            //md-option(ng-value="'events'") Events
+                        md-input-container(flex).hide-validation-error.pull-right
+                            label
+                            input(placeholder="Search", ng-model="search.query")
+
+    div(layout="row").section
+        div(flex=50).widget
+            h1(ui-sref="dashboard.knowledgebase.references").clickable References
+            div.content
+                p There are currently {{totals.ref}} articles described in Knowledgebase for matching.
+
+                div.doughnut
+                    canvas(id="references", class="chart chart-doughnut", chart-data="doughnut.references.data", chart-labels="doughnut.references.labels", chart-colors="doughnut.references.colors", chart-options="doughnut.references.options" width=400, height=400)
+        div(flex=50).widget
+            h1 Glossary
+            div.content
+                div(layout="row").kbTable.header
+                    div(flex=20) term
+                    div(flex=80) definition
+                    div.spacer
+                div(flex).kbTable.rows
+                    div(ng-repeat="gloss in glossary").rowContainer
+                        div(layout="row").row
+                            div(flex=20) {{gloss.term}}
+                            div(flex=80) {{gloss.definition}}
+        //- Commenting out instead of removing in case we decide to re-include this - excluding as per Cara Reisle's suggestion
+            div(flex).widget
+                h1(ui-sref="dashboard.knowledgebase.events").clickable Events
+                div.content
+                    p There are currently {{totals.ev}} events listed in Knowledgebase for reference mappings.
+
+                    div.doughnut
+                        canvas(id="events", class="chart chart-doughnut", chart-data="doughnut.events.data", chart-labels="doughnut.events.labels", chart-colors="doughnut.events.colors", chart-options="doughnut.events.options" width=400, height=400)

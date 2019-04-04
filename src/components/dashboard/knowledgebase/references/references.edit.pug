@@ -1,0 +1,163 @@
+md-dialog(layout="column", aria-label="Modify/Create Reference Entry", flex-md=80, flex-xs=100, flex-lg=60, flex=60).kbDialog
+    md-toolbar
+        .md-toolbar-tools
+            h2 {{formAction}} Reference Entry
+            span(flex)
+            md-button.md-icon-button(ng-click='cancel()')
+                md-icon cancel
+    md-dialog-content(layout-padding).alterationsForm
+        div(ng-if="externalMode") NOTE: This form has been included as a proof of concept and cannot be submitted
+
+        div(layout-align="center center", layout="column")
+            ipr-progressor(ipr-stages="stages", ipr-active-stage="activeStage")
+
+        div(label="Reference Details", ng-show="activeStage === 1")
+
+            div(layout="column")
+
+                form(flex='auto', name='referenceForm', ng-submit="validateReportForm(referenceForm)", novalidate)
+
+                    div(layout="row")
+                        md-input-container(flex)
+                            label Evidence
+                            md-select(ng-model="reference.evidence", name="referenceEvidence", aria-label="Evidence", required)
+                                md-option(ng-repeat="(k, val) in $alterations.evidence", ng-value="k", placeholder="Evidence") {{val}}
+                            div(ng-messages="referenceForm.referenceEvidence.$error")
+                                div(ng-message="required") Reference evidence is required.
+
+                    div(layout="row")
+                        md-input-container(flex=30)
+                            md-select(ng-model="reference.id_type", name="referenceType", aria-label="Reference Type", required)
+                                md-option(ng-repeat="refType in $alterations.referenceTypes", ng-value="refType", placeholder="Ref Type") {{refType}}
+                            div(ng-messages="referenceForm.referenceType.$error")
+                                div(ng-message="required") Reference type is required.
+
+                        md-input-container(flex)
+                            input(ng-model="reference.ref_id", name="referenceID", placeholder="Reference ID", ng-change="checkPMID()", required)
+                            div(ng-messages="referenceForm.referenceID.$error")
+                                div(ng-message="required") A reference id is required.
+
+                    div(layout="row")
+                        md-input-container(flex)
+                            input(ng-model="reference.id_title", name="RefTitle", placeholder="Reference Title", ng-disabled="disableRefTitle", required)
+                            md-progress-linear(md-mode="indeterminate", ng-show="refLoading", ng-init="refLoading=false")
+                            div(ng-messages="referenceForm.RefTitle.$error")
+                                div(ng-message="required") A reference title is required.
+
+                    div(layout="row")
+                        md-input-container(flex)
+                            textarea(ng-model="reference.summary", name="RefSummary", placeholder="Reference Summary", rows=3, required)
+                            div(ng-messages="referenceForm.RefSummary.$error")
+                                div(ng-message="required") A reference summary is required.
+                            span.text-xsmall.text-grey Quote or summary of relevant portions of the reference as applies to the current statement
+
+                    div(layout="row")
+                        md-checkbox(ng-init="sampleInfo = false", ng-model="sampleInfo") This reference has a sample information
+
+                    div(layout="row", ng-show="sampleInfo")
+                        md-input-container(flex=70)
+                            label Sample Type
+                            md-select(ng-model="reference.sample_type", name="kbSampleType", placeholder="Sample Type")
+                                md-option(ng-value="null") N/A
+                                md-option(ng-repeat="type in $knowledgebase.sampleType", ng-value="type") {{type}}
+
+                        md-input-container(flex)
+                            input(ng-model="reference.sample_size", name="kbSampleSize", placeholder="Sample Size", type="number", step=1, min=0)
+
+                    div(layout="row", ng-show="sampleInfo")
+                        md-input-container(flex)
+                            label Pre-Clinical Model
+                            md-select(ng-model="reference.pre_clinical_model", name="kbPreClinicalModel", placeholder="Pre-Clinical Model")
+                                md-option(ng-value="null") N/A
+                                md-option(ng-repeat="model in $knowledgebase.preClinicalModel", ng-value="model") {{model}}
+
+
+        div(label="Event Criteria", ng-show="activeStage === 0")
+            div(layout="column")
+                form(flex='auto', name='matching', ng-submit="validateReportForm(matching)", novalidate)
+                    div(layout="row")
+                        div(layout-align="center center").kbEntryStatus
+                            md-icon(ng-show="!events.dirty && !events.valid").invalid.clickable clear
+                                md-tooltip The Events-Expression provided does not satisfy the required format. Please check the provided documentation
+                            md-icon(ng-show="!events.dirty && events.valid").valid done
+                            md-icon(ng-show="events.dirty && !events.valid").checking autorenew
+
+                        md-input-container(flex, ng-class="{ 'md-input-invalid': (!events.dirty && !events.valid) }")
+                            label Events-Expression
+                            input(ng-model="reference.events_expression", name="kbEventsExpression", placeholder="Events-Expression", required, ng-disabled="(events.dirty === true)", ng-blur="validateKBEvents()")
+
+                            div.md-input-messages-animation.md-auto-hide
+                                p(ng-show="!events.dirty && !events.valid", style="opacity: 1; margin-top: 0px;").help-block.md-input-message-animation The Events-Expression provided does not satisfy the required format. Please check the provided documentation
+                            p
+                                a(href="https://www.bcgsc.ca/wiki/pages/viewpage.action?spaceKey=genereg&title=Event+Coordinate+Notation", target="_blank") How to format Events-Expression
+
+                        //div(style="margin-top:25px")
+                        //    md-icon.clickable help_outline
+
+
+
+                    h4 Context
+                    div(layout="row")
+                        md-input-container(flex=50)
+                            input(ng-model="context.new", name="newContext", placeholder="Add Context", ng-blur="context.add(context.new)", ng-keyup="$event.keyCode == 13 && context.add(context.new)")
+                        div(flex, layout="column").diseaseList
+                            span(ng-repeat="(i, disEntry) in context.all track by $index", layout="row")
+                                span(ng-click="context.remove(i)").clickable
+                                    md-icon remove_circle
+                                span  {{disEntry}}
+
+
+                    div(layout="row")
+                        md-input-container(flex=30)
+                            md-select(ng-model="reference.type", placeholder="Type")
+                                md-option(ng-value="type", ng-repeat="type in vocabulary.type track by $index") {{type}}
+
+                        md-input-container(flex)
+                            md-select(ng-model="reference.relevance", placeholder="Relevance")
+                                md-option(ng-value="relevance", ng-repeat="relevance in vocabulary.relevance track by $index") {{relevance}}
+
+                    h4 Disease List
+
+                    div(layout="row")
+                        md-autocomplete(
+                        md-selected-item="disease.new",
+                        md-search-text="disease.newSearchText",
+                        md-items="entry in disease.filter(disease.newSearchText)",
+                        md-item-text="entry",
+                        md-select-on-match="'true'",
+                        placeholder="Add Disease",
+                        md-floating-label="Add Disease",
+                        md-selected-item-change="disease.add(disease.new)",
+                        md-dropdown-position="bottom",
+                        md-require-match=true
+                        flex=40
+                        )
+                            span(md-highlight-text="disease.searchText") {{entry}}
+
+                        div(flex, layout="column").diseaseList
+                            span(ng-repeat="(i, disEntry) in disease.all track by $index", layout="row")
+                                span(ng-click="disease.remove(i)").clickable
+                                    md-icon remove_circle
+                                span  {{disEntry}}
+
+                    //div(layout="row", ng-if="action !== 'new'")
+                        md-input-container(flex)
+                            label Status
+                            md-select(ng-model="reference.status", ng-disabled="user.ident === reference.createdBy.ident", required)
+                                md-option(ng-value="status", ng-repeat="status in vocabulary.status track by $index") {{status}}
+                            span(ng-if="user.ident === reference.createdBy.ident").text-xsmall.text-grey An entry's author may not change the status.
+
+
+                    div(layout="row")
+                        md-input-container(flex)
+                            label Entry Comments
+                            textarea(rows=2, md-maxlength=250, ng-model="reference.comments")
+                            span.text-xsmall.text-grey Notes about this entry for other analysts.
+
+
+    md-dialog-actions(layout="row", layout-aligh="end center", layout-padding)
+        md-button(ng-click="lastStage()", ng-show="activeStage > 0").md-raised.md-primary Previous
+        span(flex)
+        md-button(ng-click="nextStage()", ng-show="activeStage < 1", ng-disabled="!events.valid").md-raised.md-primary Next
+        md-button(ng-click="submit()", ng-show="activeStage === 1", ng-disabled="!events.valid || externalMode").md-raised.md-primary Done
+

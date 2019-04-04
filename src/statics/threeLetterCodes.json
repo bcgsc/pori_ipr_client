@@ -1,0 +1,18 @@
+[
+  {"code": "BRC", "description": "Breast"},
+  {"code": "CNS", "description": "Central nervous system"},
+  {"code": "GIC", "description": "Gastrointestinal"},
+  {"code": "GUC", "description": "Genitourinary"},
+  {"code": "GYN", "description": "Gynecological"},
+  {"code": "H&N", "description": "Head and neck"},
+  {"code": "HEM", "description": "Hematological"},
+  {"code": "NEU", "description": "Neurological"},
+  {"code": "OTH", "description": "Other"},
+  {"code": "PAN", "description": "Pancreatic"},
+  {"code": "PRO", "description": "Prostate"},
+  {"code": "PUO", "description": "Primary unknown"},
+  {"code": "SAR", "description": "Sarcoma"},
+  {"code": "SKN", "description": "Skin"},
+  {"code": "THR", "description": "Thoracic"},
+  {"code": "HPB", "description": "Hepatopancreaticobiliary"}
+]

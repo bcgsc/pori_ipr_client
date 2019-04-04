@@ -1,0 +1,65 @@
+section.therapeuticTargets {
+
+  h2.title {
+    margin-bottom: 7px;
+  }
+
+  .rowCard {
+
+    .markers {
+      .entry {
+        font-weight: 500;
+      }
+      .context {
+        font-weight: 100;
+        padding-left: 10px;
+
+        &:first-of-type {
+          padding-left: 0;
+          font-weight: 500;
+        }
+      }
+    }
+
+  }
+
+}
+
+.therapeuticTargets.editor {
+
+  label.title {
+    color: rgba(0,0,0,0.54);
+    font-size: 12px;
+    display: inline-block;
+  }
+
+  .biomarkers {
+    background-color: rgb(240,240,240);
+    padding: 10px 20px;
+
+    md-icon {
+      cursor: pointer;
+    }
+
+    h3 {
+      font-weight: 100;
+      font-size: 1.2em;
+      margin: 0;
+      padding: 2px 12px;
+      top: -22px;
+      background-color: rgb(220,220,220);
+      display: inline-block;
+      position: relative;
+    }
+
+    .marker {
+      padding: 0 10px;
+      background-color: rgb(230,230,230);
+      margin-bottom: 5px;
+
+      .contexts {
+        padding-bottom: 20px;
+      }
+    }
+  }
+}

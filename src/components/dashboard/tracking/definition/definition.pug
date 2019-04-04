@@ -1,0 +1,95 @@
+md-content(flex, layout="column", layout-fill).md-padding.definitions
+
+    h1.md-title Tracking State Definitions
+
+    p Definitions are used to generate all the states, and their tasks that a sample will pass through as it is tracked across the pipeline. When tracking is initiated, database entries in the tracking system will be generated according to the definitions (templates) stored here. Any changes made to definitions after tracking has been started for a given sample will not apply to it.
+
+    div(layout="column", flex).editor
+
+        div(layout="row").title
+            span(flex=35) Definitions
+            span(flex) Editor
+
+        div(layout="row", flex, layout-align="space-between")
+
+            md-content(layout="column", flex=35, sv-root="definitions", sv-part="definitions", sv-on-sort="updateOrdinal()").column.definitionsList
+                div(ng-repeat="def in definitions", ng-class="{active: (editing.ident === def.ident)}", sv-element).def
+                    div(layout="row")
+                        div
+                            md-icon(sv-handle) drag_handle
+                        h1(flex, ng-click="selectDefinition(def)") {{def.name}}
+
+                div(layout="row", ng-click="newState($event, true)", style="display: block; border-bottom: none;").clickable.def
+                    div(layout="row")
+                        div
+                            md-icon playlist_add
+                        h1(flex, ng-click="newDefinition()") Add new state definition
+
+
+            div(flex, layout="column", ng-if="editing.name === undefined", layout-align="center center").column.definitionsForm.empty
+                p Select a state definition from those available on the left
+                p or
+                md-button(ng-click="newDefinition()").md-raised Create a new one
+            div(flex, layout="column", ng-if="editing.name !== undefined").column.definitionsForm
+                div(layout="row", style="border-bottom: 2px solid rgb(220,220,220);")
+                    span
+                        md-button(ng-click="save()").md-raised.md-primary Save
+                    span(flex)
+                    span
+                        md-button(ng-click="cancelEditing()").md-raised Cancel
+                div(flex, layout="row")
+                    md-tabs(flex).md-border-bottom
+                        md-tab(label="Details", layout="column", layout-align="center center")
+                            div(layout="row", flex=95).padding-left-10.padding-right-10
+                                md-input-container(flex)
+                                    input(ng-model="editing.name", name="Name", placeholder="Definition Name", required)
+                                    div(ng-messages="definitionEditor.Name.$error", role="alert", multiple)
+                                        p(ng-message="required") A definition name is required
+                                md-input-container(flex)
+                                    input(ng-model="editing.slug", name="Slug", placeholder="Definition Slug", required)
+                                    div(ng-messages="definitionEditor.Slug.$error", role="alert", multiple)
+                                        p(ng-message="required") A definition slug is required
+                                        p(ng-message="format") Slugs may only contain a-z, dashes (-) and underscores (_)
+                                //md-input-container
+                                //    md-icon.clickable help
+
+                            div(layout="row", flex=95).padding-left-10.padding-right-10
+                                md-input-container(flex)
+                                    md-select(ng-model="editing.group.ident", aria-label="Lead Group/Team", required, placeholder="Lead Group/Team")
+                                        md-option(ng-repeat="group in groups", ng-value="group.ident") {{group.name}}
+
+                            div(layout="row", flex=95).padding-left-10.padding-right-10
+                                md-input-container(flex)
+                                    textarea(ng-model="editing.description", name="Description", required, placeholder="State Description", md-maxlength="500")
+                                    div(ng-messages="definitionEditor.Description.$error", role="alert", multiple)
+                                        p(ng-message="maxlength") A maximum of 500 characters is allowed for descriptions
+
+                            div(layout="row", flex=95).padding-left-10.padding-right-10
+                                md-input-container(flex)
+                                    md-checkbox(ng-model="editing.hidden" aria-label="Hide definition/state") Hide this definition/state. Hidden definitions will not used when a new sample's tracking is created.
+
+                        md-tab(label="Tasks")
+                            div(layout="column").padding-left-10.padding-right-10
+                                h2 Tasks
+                                md-content(flex, sv-root="tasks", sv-part="editing.tasks").tasks
+                                    div(layout="row", ng-repeat="(i, task) in editing.tasks", sv-element).task
+                                        span
+                                            md-icon(sv-handle).clickable drag_handle
+                                        span.int {{i+1}}.
+                                        h3(flex, ng-click="taskEditor($event, task, i)") {{task.name}}
+                                    div(layout="row", ng-click="taskEditor($event, true)").clickable.task
+                                        md-icon playlist_add
+                                        span(flex) Add New Task
+                        md-tab(label="Hooks")
+                            div(layout="column").padding-left-10.padding-right-10
+                                h2 Hooks for this state
+                                div.hook-list
+                                    div(ng-repeat="hook in getHooksByState(editing.slug)", md-whiteframe=2, ng-click="openHook(hook)").hook
+                                        h3 {{hook.name}}
+                                            span(ng-if="hook.task_name") task: {{hook.task_name}}
+                                        span.subheader {{hook.action}}:&nbsp;
+                                            span(ng-repeat="(i, target) in hook.target") {{target}}{{(hook.target[i+1]) ? ', ' : ''}}
+                                        span.subheader on status: {{hook.status}}
+
+                                    div(ng-click="openHook({})").hook.add
+                                        h3 Add new hook

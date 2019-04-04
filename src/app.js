@@ -1,14 +1,15 @@
 const app = angular.module('bcgscIPR', [
-//	'env',
   'templates',
-	'ngMaterial',
-	'ngResource',
-	'ngSanitize',
-	'ui.router',
-	'angularMoment',
-	'ngStorage',
-	'hc.marked',
-  'stickyfill',
-	'angularFileUpload'
+  'ngMaterial',
+  'ngSanitize',
+  'ui.router',
+  'angularMoment',
+  'ngStorage',
+  'angularFileUpload',
+  'angular-sortable-view',
+  'ngQuill',
+  'chart.js',
+  'btford.socket-io',
+  'angular-async-await',
+  'ngMessages',
 ]);
-

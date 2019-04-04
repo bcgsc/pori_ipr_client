@@ -1,0 +1,148 @@
+section.material-section.expression
+    h1 Expression Analysis
+        p.minimize
+            ipr-section-hide(flip-state="showExpAna", ng-init="showExpAna=true")
+    div(layout="column", ng-show="showExpAna")
+
+        div.analysis-report-section
+            div(layout="column")
+                h2 Tissue Sites
+
+                div(layout="row", layout-align="space-between")
+                    div(layout="column", flex=30).detail-box
+                        div(layout="row", flex, layout-align="start center")
+                            p(flex=40) Diagnosis:
+                            p {{report.patientInformation.tumourType}}
+                        div(layout="row", flex, layout-align="start center")
+                            p(flex=40) Biopsy Type:
+                            p {{report.patientInformation.biopsySite}}
+
+                    div(layout="column", flex=30).detail-box
+                        div(layout="row", flex, layout-align="start center")
+                            p(flex=40) Site of Primary Disease:
+                            p N/A
+                        div(layout="row", flex, layout-align="start center")
+                            p(flex=40) Biopsy Site:
+                            p N/A
+
+                    div(layout="column", flex=30).detail-box
+                        div(layout="row", flex, layout-align="start center")
+                            p(flex=40) Tumour Content:
+                            p
+                                ipr-tumour-content(tc="{{report.tumourAnalysis.tumourContent}}", md-whiteframe="1", ng-if="report.tumourAnalysis.tumourContent !== -1")
+                                span(ng-if="report.tumourAnalysis.tumourContent === -1") N/A
+
+                        div(layout="row", flex, layout-align="start center")
+                            p(flex=40) Ploidy Model:
+                            p.text-capitalize {{report.tumourAnalysis.ploidy}}
+
+
+            //div(layout="row", flex).margin-top-10
+
+                div(layout="column", flex)
+                    h2 Spearman Correlation
+                    p Spearman
+
+                div(layout="column", flex)
+                    h2 Supervised Comparator Plot
+                    p Supervised Comparator
+        div.analysis-report-section
+            div(layout="column")
+                h2 Expression Correlation Summary and Comparator Choices
+
+                div(layout="row").comparators
+                    div(layout="column", flex)
+                        div.text-center Tissue Comparator
+                        div(layout="row")
+                            div(flex) Data Source
+                            div(flex) Cohort
+                        div(layout="row")
+                            div(flex) Illumina BodyMap
+                            div(flex) {{report.tumourAnalysis.normalExpressionComparator}}
+
+                    div(layout="column", flex)
+                        div.text-center Disease Expression Comparator
+                        div(layout="row")
+                            div(flex) Data Source
+                            div(flex) Cohort
+                        div(layout="row")
+                            div(flex) TCGA
+                            div(flex) {{report.tumourAnalysis.diseaseExpressionComparator}}
+                    div(layout="column", flex)
+                        div.text-center Protein Expression Comparator
+                        div(layout="row")
+                            div(flex) Data Source
+                            div(flex) Cohort
+                        div(layout="row")
+                            div(flex) POG
+                            div(flex) {{getPtxComparator()}}
+
+    div.analysis-report-section.margin-top-10
+        h1 Expression Outlier Summary
+            p.minimize
+                ipr-section-hide(flip-state="expOutSummary", ng-init="expOutSummary=true")
+
+        div(ng-show="expOutSummary")
+
+            div(layout="column", ng-repeat="(key, title) in expSummaryMap")
+                h2 {{title}}
+
+                ipr-outlier(outliers="expOutliers[key]", pog="pog", report="report", type="'rna'").analysis-report-section.margin-bottom-10
+
+    div.analysis-report-section.margin-top-10
+        h1 mRNA Expression Outliers
+            p.minimize
+                ipr-section-hide(flip-state="rnaExpOut", ng-init="rnaExpOut=true")
+
+        div(ng-show="rnaExpOut")
+            div(layout="column", ng-repeat="(key, title) in mRNAOutliersMap")
+                h2 {{title}}
+
+                ipr-outlier(outliers="expOutliers[key]", pog="pog", report="report", type="'rna'").analysis-report-section.margin-bottom-10
+
+    div.analysis-report-section.margin-top-10
+        h1 Drug Targetable High Percentile Genes
+            p.minimize
+                ipr-section-hide(flip-state="highDrugTarget", ng-init="highDrugTarget=false")
+
+        div(ng-show="highDrugTarget")
+            div.padding-left-10.padding-right-10
+                table.material-table
+                    thead
+                        tr
+                            th(width="20%") Gene
+                            th(width="15%") LOH
+                            th(width="15%").text-right Copy Number
+                            th(width="15%").text-right Fold Changes Vs {{report.tumourAnalysis.normalExpressionComparator}}
+                            th(width="15%").text-right {{report.tumourAnalysis.diseaseExpressionComparator}} %ile
+                            th(width="15%").text-right kIQR
+                            th(wdith="5%")
+                    tbody(style="max-height: 400px; overflow-y: auto;")
+                        tr(ng-repeat="target in drugTargetList = (drugTargets | filter: searchDrugs(drugQuery))")
+                            td
+                                ipr-gene-viewer(report="report", pog="pog", gene="target.gene") {{target.gene}}
+                            td {{target.lohRegion}}
+                            td.text-right {{target.copy}}
+                            td.text-right {{target.foldChange}}
+                            td.text-right {{target.tcgaPerc}}
+                            td.text-right {{target.kIQR}}
+                            td.text-center.options
+                                md-icon(ipr-data-viewer="target").clickable search
+                                    md-tooltip View Details
+
+    div.analysis-report-section.margin-top-10.margin-bottom-20
+        h1 Expression Density Graphs
+            p.minimize
+                ipr-section-hide(flip-state="expDensGraph", ng-init="expDensGraph=true")
+
+        div(ng-show="expDensGraph")
+
+            div(layout="row").density-graphs
+                div(layout="column", flex=20)
+                    ul
+                        li(ng-repeat="(i,r) in densityGraphs track by $index", ng-init="r.show=false")
+                            md-checkbox(ng-model="r.show", name="{{i}}Checkbox") {{i}}
+
+                md-grid-list(md-cols=2, md-row-height=450, md-gutter=10, flex)
+                    md-grid-tile(md-colspan=1, ng-if="r.show", ng-repeat="(i,r) in densityGraphs track by $index", ng-cloak)
+                        img(data-ng-src="data:image/png;base64,{{r.data}}")

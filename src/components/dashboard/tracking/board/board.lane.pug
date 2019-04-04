@@ -1,0 +1,78 @@
+md-content(flex, layout="column").md-padding.trackingBoard.trackingLane
+
+    h1.md-title(layout="row")
+        span(flex) {{lane.name}} Cases
+
+
+    table.material-table
+        thead
+            tr
+                th(width="70%")
+                th.button
+                    div(layout="row", layout-align="end start")
+                        md-input-container(flex, layout="row", ng-show="showFilter").medium
+                            input(ng-model="filter.search", focus-me="focusSearch", placeholder="Filter Cases")
+
+                        md-button(ng-show="showFilter", ng-click="showFilter=false;filter.search=null").md-icon
+                            md-icon cancel
+                            md-tooltip Clear search
+
+                        md-button(ng-hide="showFilter", ng-click="displayFilter()").md-icon
+                            md-icon filter_list
+                            md-tooltip Filter Results
+
+    table.material-table
+        thead
+            tr
+                th(width="7%") Case
+                th(ng-repeat="col in cols", width="{{(93/cols.length)}}%") {{col.name}}
+
+        tbody
+            tr(ng-if="states.length === 0")
+                td.text-center No cases waiting for analysis in {{lane.name}}
+            tr(ng-repeat="state in states | filter: filter.search", class="state {{state.status}}")
+                td {{state.analysis.pog.POGID}}
+                td(ng-repeat="col in cols")
+                    div(layout="row", class="{{getStateTask(state, col).status}} task")
+
+                        div(ng-if="getStateTask(state, col).outcomeType === 'text'", layout="row", layout-align="center center", flex, ng-click="editValue(state, getStateTask(state, col))").value.text.clickable
+                            span(ng-if="getStateTask(state, col).status === 'complete'") {{getStateTask(state, col).checkins[0].outcome}}
+                            span(ng-if="getStateTask(state, col).status === 'pending'")
+                                md-icon.small access_time
+                            span(ng-if="getStateTask(state, col).status === 'active'")
+                                md-icon.small timelapse
+                            span(ng-if="getStateTask(state, col).status === 'hold'") HOLD
+                            span(ng-if="getStateTask(state, col).status === 'failed'") Failed
+                            span(ng-if="getStateTask(state, col).status === 'cancelled'") Cancelled
+
+                        div(ng-if="getStateTask(state, col).outcomeType === 'boolean'", layout="row", layout-align="center center", flex, ng-click="editValue(state, getStateTask(state, col))").value.text.clickable
+                            span(ng-if="getStateTask(state, col).status === 'complete'")
+                                md-icon(ng-class="{green: getStateTask(state, col).checkins[0].outcome, red: !getStateTask(state, col).checkins[0].outcome}").small {{(getStateTask(state, col).checkins[0].outcome) ? 'check_circle' : 'cancel' }}
+                            span(ng-if="getStateTask(state, col).status === 'pending'")
+                                md-icon.small access_time
+                            span(ng-if="getStateTask(state, col).status === 'active'")
+                                md-icon.small timelapse
+                            span(ng-if="getStateTask(state, col).status === 'hold'") HOLD
+                            span(ng-if="getStateTask(state, col).status === 'failed'") Failed
+                            span(ng-if="getStateTask(state, col).status === 'cancelled'") Cancelled
+
+                        div(ng-if="getStateTask(state, col).outcomeType === 'date'", layout="row", layout-align="center center", flex, ng-click="editValue(state, getStateTask(state, col))").value.text.clickable
+                            span(ng-if="getStateTask(state, col).status === 'complete'") {{getStateTask(state, col).checkins[0].outcome | amDateFormat: 'YYYY-MM-DD HH:ss'}}
+                            span(ng-if="getStateTask(state, col).status === 'pending'")
+                                md-icon.small access_time
+                            span(ng-if="getStateTask(state, col).status === 'active'")
+                                md-icon.small timelapse
+                            span(ng-if="getStateTask(state, col).status === 'hold'") HOLD
+                            span(ng-if="getStateTask(state, col).status === 'failed'") Failed
+                            span(ng-if="getStateTask(state, col).status === 'cancelled'") Cancelled
+
+                        //div(flex) {{getStateTask(state, col).outcomeType}}
+                        //div(flex) {{getStateTask(state, col).checkins[0].outcome}}
+
+    div(layout="row").stateDefs
+        p.pending Pending
+        p.active Active
+        p.complete Completed
+        p.hold Hold
+        p.failed Failed
+        p.cancelled Cancelled

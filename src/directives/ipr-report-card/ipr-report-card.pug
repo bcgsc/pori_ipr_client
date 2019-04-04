@@ -1,0 +1,34 @@
+div(md-whiteframe=2).pog
+    div.header
+        h1(layout="row", ng-click="goToReport(report)").clickable
+            span(flex).clickable {{report.pog.POGID}}
+            span(layout="row", layout-align="middle space-around")
+                span(ipr-report-state, state="report.state")
+            //span(layout="row", layout-align="middle space-around", ng-hide="true").priority
+                span(ng-repeat="pip in [1,2]").pip.normal &nbsp;
+                md-tooltip Priority: Normal
+        div(layout="row").subheader
+            span(flex) {{report.patientInformation.tumourType}}
+            span(flex).text-right Report: {{report.ident}}
+
+    div(layout="row", ng-if="report.type === 'genomic'").details
+        div(flex)
+            span TC
+            span(ng-class="{low: report.tumourAnalysis.tumourContent < 40, clickable: report.tumourAnalysis.tumourContent < 40}", ng-if="report.tumourAnalysis.tumourContent !== -1") {{report.tumourAnalysis.tumourContent}}%
+                md-tooltip(ng-if="getTumourContent(pog) < 40") Low tumour content
+            span(ng-if="report.tumourAnalysis.tumourContent === -1") N/A
+        div {{report.tumourAnalysis.ploidy}}
+    div(layout="row", ng-if="report.type === 'genomic'").details
+        div(flex)
+            span Role
+            span.text-capitalize {{(pog.myRoles.length === 0) ? 'None' : pog.myRoles[0].role}}
+                md-tooltip Assigned by {{role.addedBy.firstName}} {{role.addedBy.lastName}} {{role.createdAt | amTimeAgo}}
+        div.clickable {{report.createdAt | amDateFormat: 'YYYY/MM/DD' }}
+            md-tooltip {{report.createdAt | amDateFormat: 'YYYY/MM/DD HH:mm:ss' }}
+
+    div(layout="row", ng-if="report.type === 'probe'").details
+        div(flex)
+            span Report version
+            span {{report.reportVersion || 'N/A'}}
+        div.clickable {{report.createdAt | amDateFormat: 'YYYY/MM/DD' }}
+            md-tooltip {{report.createdAt | amDateFormat: 'YYYY/MM/DD HH:mm:ss' }}

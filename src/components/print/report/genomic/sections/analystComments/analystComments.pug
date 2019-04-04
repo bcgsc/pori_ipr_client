@@ -1,0 +1,22 @@
+thead
+    tr
+        td.pageHeader
+            div(layout="row")
+                div(flex=30) {{pog.POGID}}
+                    br
+                    | {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
+                div(flex) BCCA Confidential - For Research Purposes Only
+                div(flex=30)  {{report.patientInformation.tumourType}}
+            h1 Analyst Comments
+tbody
+    tr(ng-repeat="(i, paragraph)  in analystParagraphs track by $index", ng-class="{first: (i === 0)}").analystComments
+        td(ng-bind-html="paragraph").report-section
+    tr.analystComments.last
+        td
+            div(layout="row", layout-align="space-around", layout-wrap).signatureBox
+                div(flex=45) Author Review:&nbsp;
+                    span(ng-if="comments.authorSignature.ident") {{comments.authorSignature.firstName.substring(0,1)}}{{comments.authorSignature.lastName.substring(0,1)}} {{comments.authorSignedAt | amDateFormat: 'YYYY/MM/DD HH:mm'}}
+                    span(ng-if="comments.authorSignature.ident === null").text-red NOT REVIEWED
+                div(flex=45) Reviewer:&nbsp;
+                    span(ng-if="comments.reviewerSignature.ident") {{comments.reviewerSignature.firstName.substring(0,1)}}{{comments.reviewerSignature.lastName.substring(0,1)}} {{comments.reviewerSignedAt | amDateFormat: 'YYYY/MM/DD HH:mm'}}
+                    span(ng-if="comments.reviewerSignature.ident === null").text-red NOT REVIEWED

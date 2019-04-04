@@ -13,10 +13,10 @@ md-dialog(layout="column", aria-label="Update Patient Information", ng-cloak, fl
 
                 div(layout="row")
                     md-input-container(flex)
-                        input(name="PatiendID", placeholder="Patient ID", ng-model="pi.POGID", disabled)
+                        input(name="PatientID", placeholder="Patient ID", ng-model="pi.POGID", disabled)
 
                     md-input-container(flex)
-                        md-select(ng-model="pi.gender", aria-label"Clinical Relevance", required)
+                        md-select(ng-model="pi.gender", aria-label="Clinical Relevance", required)
                             md-option(ng-value="'Male'") Male
                             md-option(ng-value="'Female'") Female
                             md-option(ng-value="'Unspecified'") Unspecified
@@ -46,6 +46,11 @@ md-dialog(layout="column", aria-label="Update Patient Information", ng-cloak, fl
                     md-input-container(flex)
                         input(name="Protocol", placeholder="Protocol", ng-model="pi.tumourProtocol", disabled)
 
+                div(layout="row")
+                    md-input-container(flex)
+                        label Comment
+                        textarea(ng-model="pi.comment", md-maxlength=150, placeholder="Why are you making this change?", required)
 
-        md-dialog-actions(layout="row", layout-aligh="end center")
+
+        md-dialog-actions(layout="row", layout-align="end center")
             md-button(type="submit").md-primary.md-raised Update Patient Information

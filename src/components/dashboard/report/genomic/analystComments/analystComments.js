@@ -1,13 +1,37 @@
 app.controller('controller.dashboard.report.genomic.analystComments', 
-  ['_', '$q', '$scope', '$mdDialog', '$mdToast', 'api.pog', 'pog', 'comments', 
-  (_, $q, $scope, $mdDialog, $mdToast, $pog, pog, analystComments) => {
-  
-  console.log('Analyst Comments Loaded');
-  
+  ['_', '$q', '$scope', '$mdDialog', '$mdToast', '$sce', 'api.pog', 'api.summary.analystComments', 'pog', 'report', 'comments',
+  (_, $q, $scope, $mdDialog, $mdToast, $sce, $pog, $comments, pog, report, analystComments) => {
+
   $scope.pog = pog;
-  $scope.analystComments = (analystComments || "");
-  
-  // Editor Update Modal
+  $scope.analystComments = (analystComments === null) ?  "" : analystComments.comments;
+  $scope.commentsHTML = $sce.trustAsHtml($scope.analystComments);
+  $scope.comments = analystComments;
+
+
+  // Sign The comments
+  $scope.sign = (role) => {
+
+    // Send signature to API
+    $comments.sign(pog.POGID, report.ident, role).then(
+      (result) => {
+        $scope.comments = result;
+      }
+    )
+  };
+
+  // Sign The comments
+  $scope.revokeSign = (role) => {
+
+    // Send signature to API
+    $comments.revokeSign(pog.POGID, report.ident, role).then(
+      (result) => {
+        $scope.comments = result;
+      }
+    )
+  };
+
+
+    // Editor Update Modal
   $scope.updateComments = ($event) => {
     
     $mdDialog.show({
@@ -19,24 +43,12 @@ app.controller('controller.dashboard.report.genomic.analystComments',
       clickOutToClose: false,
       controller: ['$q', '_', '$scope', '$mdDialog', '$timeout', 'api.summary.analystComments', ($q, _, scope, $mdDialog, $timeout, $comments) => {
         
-        let simplemde = {};
-        
-        // Create Editor
-        $timeout(() => {
-          simplemde = new SimpleMDE({ element: document.getElementById("markup-editor") } );
-          
-          // Load in current value
-          simplemde.value($scope.analystComments.comments);
-          
-          console.log('Simple MDE', simplemde);
-        }, 10);
-        
-        
+        if (analystComments) scope.analystComments = analystComments;
+
         // Cancel Dialog
         scope.cancel = () => {
           $mdDialog.cancel('Canceled Edit - No changes made.');
-        }
-        
+        };
         
         // Update Details
         scope.update = (f) => {
@@ -51,11 +63,9 @@ app.controller('controller.dashboard.report.genomic.analystComments',
             return;
           }
           
-          let updatedComment = {'comments': simplemde.value()}
+          let updatedComment = {'comments': scope.analystComments.comments};
           
-          console.log('Updating value with: ', updatedComment);
-          
-          $comments.update(pog.POGID, updatedComment).then(
+          $comments.update(pog.POGID, report.ident, updatedComment).then(
             (result) => {
               $mdDialog.hide({message: 'Entry has been updated', comment: updatedComment});
             },
@@ -69,8 +79,9 @@ app.controller('controller.dashboard.report.genomic.analystComments',
       }]
     }).then((result) => {
       // Update current page content
-      $scope.analystComments = result.comment;
-      
+      $scope.commentsHTML = $sce.trustAsHtml(result.comment.comments);
+      $scope.comments = analystComments = result.comment;
+
       // Display Message from Hiding
       $mdToast.show($mdToast.simple().textContent(result.message));
     }, (error) => {

@@ -1,0 +1,102 @@
+md-dialog(layout="column", aria-label="Task -{{task.name}}", flex-md=80, flex-xs=100, flex-lg=80, flex=60).tracking-task
+    md-toolbar
+        .md-toolbar-tools
+            h2 {{pog.POGID}} - {{task.name}}
+            span(flex)
+            md-button.md-icon-button(ng-click='cancel()')
+                md-icon cancel
+        div(ng-class="task.status").md-toolbar-subheader
+            h3(flex) Status:
+                span {{task.status}}
+                md-menu
+                    md-button(aria-label="Open menu with custom trigger" class="md-icon-button" ng-click="$mdMenu.open()")
+                        md-icon edit
+                    md-menu-content(width="4" ng-mouseleave="$mdMenu.close()")
+                        md-menu-item(ng-repeat="state in states")
+                            md-button(ng-click="updateStatus(state)").text-capitalize {{state}}
+    md-dialog-content.iprBox
+
+        div(layout="column", md-whiteframe=2).detail
+            div Description
+            div {{task.description}}
+
+        div(layout="row")
+            div(layout="column", flex)
+                div(md-whiteframe=2).detail
+                    div Expected Outcome Type
+                    div {{task.outcomeType}}
+
+            div(layout="column", flex)
+                div(md-whiteframe=2).detail
+                    div Check-ins
+                    div(layout="row")
+                        span(flex) {{task.checkins.length}}/{{task.checkInsTarget}}
+                        span
+                            md-icon(ng-if="task.checkIns === task.checkInsTarget").disabled library_add
+                            md-icon(ng-if="task.checkIns !== task.checkInsTarget", ng-click="toggleCheckIn()").checkIn.clickable library_add
+
+        div(layout="column", md-whiteframe=2, ng-show="addCheckin").detail
+            div Check-in
+            div
+                ipr-tracking-checkin(task="task", state="state")
+
+        div(layout="column", md-whiteframe=2).detail
+            div Checkins
+            div(layout="column").table
+                span(ng-if="task.checkins.length === 0") None
+                div(layout="row", ng-if="task.checkins.length > 0").header
+                    span(flex=20) Date
+                    span(flex=50) Payload
+                    span User
+                div(ng-repeat="checkin in task.checkins", layout="row", layout-align="start center").row
+                    span(flex=20) {{ checkin.createdAt | amDateFormat: 'YYYY-MM-DD HH:mm:ss' }}
+                    span(flex=50)
+                        span(ng-if="task.outcomeType === 'date'") {{ checkin.outcome | amDateFormat: 'YYYY-MM-DD' }}
+                        span(ng-if="task.outcomeType === 'boolean'") Outcome: {{ checkin.outcome || 'false' }}
+                        span(ng-if="task.outcomeType === 'text'") {{ checkin.outcome }}
+                        span(ng-if="task.outcomeType === 'location'", layout="row")
+                            ipr-copypaste(text="checkin.outcome", flex=90)
+                        span(ng-if="task.outcomeType === 'pass/fail/proceed/oncopanel'") {{ checkin.outcome.replace('-', ' - ') | titleCase }}
+
+                    span(flex) {{checkin.user.firstName}} {{checkin.user.lastName}}
+                    span
+                        md-icon(ng-click="removeCheckin(checkin)").clickable delete
+
+
+        div(layout="column", md-whiteframe=2).detail
+            div(layout="row")
+                span(flex) Assigned To
+                md-icon(ng-click="showAssignUser=!showAssignUser", ng-class="{'md-icon-active': showAssignUser}").clickable group_add
+            div(layout="row", ng-if="!task.assignedTo.username").assignedTo
+                span No user assigned to this task.
+            div(layout="row", ng-if="task.assignedTo.username", ng-hide="showAssignUser").assignedTo
+                span
+                    img(ng-src="https://www.bcgsc.ca/jira/secure/useravatar?size=xlarge&ownerId={{task.assignedTo.username}}")
+                div(flex, layout="column").content
+                    h1 {{task.assignedTo.firstName}} {{task.assignedTo.lastName}}
+                    div
+                        a(href="mailto: {{task.assignedTo.firstName}} {{task.assignedTo.lastName}} <{{task.assignedTo.email}}>?subject={{pog.POGID}} {{task.name}}") {{task.assignedTo.email}}
+                    div
+                        span Last online
+                        span {{ task.assignedTo.lastLogin | amDateFormat: 'dddd, MMMM Do YYYY, h:mm:ss a' }}
+            div(layout="row", ng-show="showAssignUser")
+                md-autocomplete(
+                md-input-name="User",
+                md-selected-item="assign.user",
+                md-search-text="searchQuery",
+                md-items="user in searchUsers(searchQuery)",
+                md-item-text="user.firstName + ' ' + user.lastName",
+                md-floating-label="User",
+                md-autofocus=true,
+                md-autoselect=true,
+                md-require-match,
+                md-dropdown-position="bottom",
+                required,
+                flex
+                )
+                    md-item-template {{user.firstName}} {{user.lastName}}
+                    div(ng-messages="User", ng-if="form.User.$touched")
+                        div(ng-message="required") A user must be selected
+                span
+                    md-button(ng-click="assignUser()").md-raised.md-primary Assign
+

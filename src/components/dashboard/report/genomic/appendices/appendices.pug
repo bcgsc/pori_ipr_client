@@ -18,7 +18,7 @@ section.appendices
                         div(flex) Primary Site
                         div(flex=30) Biopsy Site
                         div(flex) Pathology Estimated Tumour Content
-                    div(layout="row", flex, ng-repeat="sample in pog.sampleInfo").row
+                    div(layout="row", flex, ng-repeat="sample in report.sampleInfo").row
                         div(flex) {{sample['Sample']}}
                         div(flex) {{sample['Sample Name']}}
                         div(flex) {{sample['Collection Date']}}
@@ -41,7 +41,7 @@ section.appendices
                         div(flex) % Duplicates
                         div(flex) Total Coverage
                         div(flex) # Reads
-                    div(layout="row", flex, ng-repeat="qc in pog.seqQC").row
+                    div(layout="row", flex, ng-repeat="qc in report.seqQC").row
                         div(flex) {{qc['Sample']}}
                         div(flex) {{qc['Sample Name']}}
                         div(flex) {{qc['Input_ng']}}
@@ -63,12 +63,16 @@ section.appendices
                         div(flex) Data Source
                         div(flex) Tumour Count
                         div(flex) Normal Count
-                    div(layout="row", flex, ng-repeat="t in tcga").row
-                        div(flex=30) {{t['Code Name']}}
-                        div(flex=30) {{t['Full Name']}}
-                        div(flex) {{t['Data Source']}}
-                        div(flex) {{hashClean(t['Tumour Count'])}}
-                        div(flex) {{hashClean(t['Normal Count'])}}
+                    div(layout="row", layout-align="start end").search
+                        md-input-container(flex=40)
+                            input(placeholder="Search", name="AcroSearch", ng-model="acroQuery")
+                    div(style="max-height: 300px; overflow-y: auto")
+                        div(layout="row", flex, ng-repeat="t in tcga | filter: acroQuery").row
+                            div(flex=30) {{t['Code Name']}}
+                            div(flex=30) {{t['Full Name']}}
+                            div(flex) {{t['Data Source']}}
+                            div(flex) {{hashClean(t['Tumour Count'])}}
+                            div(flex) {{hashClean(t['Normal Count'])}}
 
             h2.title Appendix C
             h3.title Report Overview
@@ -105,8 +109,8 @@ section.appendices
                     |  The subset of alterations with specific therapeutic associations are identified using the Genome Sciences Centre's expert curated Knowledgebase, which integrates information from sources including cancer databases, drug databases, clinical tests, and the literature. Associations are listed by the level of evidence for the use of that drug in the context of the observed alteration, including those that are approved in this or other cancer types, and those that have early clinical or preclinical evidence.
 
             h2.title Appendix D
-            h3.title Genomic Report v/KB v.Genome Ref hg19
+            h3.title Genomic Report {{report.reportVersion || 'N/A'}}/ KB {{report.kbVersion || 'N/A'}}
 
-            pre.tcga {{pog.config}}
+            pre(style="max-height: 300px; overflow-y: auto").tcga {{report.config}}
 
 

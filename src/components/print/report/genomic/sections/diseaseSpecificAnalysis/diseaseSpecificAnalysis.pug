@@ -1,0 +1,34 @@
+thead
+    tr
+        td.pageHeader.padded
+            div(layout="row")
+                div(flex=30) {{pog.POGID}}
+                    br
+                    | {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
+                div(flex) BCCA Confidential - For Research Purposes Only
+                div(flex=30)  {{report.patientInformation.tumourType}}
+tbody
+    tr
+        td
+            div(layout="row").sectionHeader
+                h1.blue Disease Specific Analysis
+                p(flex) This section provides details of results from disease-specific analyses routinely run as part of the POG analysis pipeline. The results of ad-hoc analysis requests or emerging analyses that are not part of the analysis pipeline will also be included in this section where available.
+            h1 Disease Specific Analysis
+            h2 Expression Subtype
+
+            span(ng-if="!hasSubtypePlot") Current disease specific analysis is not applicable for this case
+    tr(ng-repeat="image in subtypePlotImages")
+        td
+            div(layout="row", flex, layout-align="center center").md-padding
+                img(data-ng-src="data:image/png;base64,{{image.data}}")
+
+
+tbody
+    tr
+        td
+            h2.title Microbial Integration
+
+            p(ng-if="!images['microbial.circos']").padding-left-10 Microbial integration circos plots are not applicable for this case
+
+            div(layout="row", flex, layout-align="center center").md-padding
+                img(data-ng-src="data:image/png;base64,{{images['microbial.circos'].data}}")

@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.report.genomic.pathwayAnalysis',
-  ['_', '$q', '$scope', '$mdDialog', '$mdToast', 'api.pog', 'api.summary.pathwayAnalysis', 'FileUploader', 'api.session', 'pog', 'pathway',
-    (_, $q, $scope, $mdDialog, $mdToast, $pog, $pathway, FileUploader, $session, pog, pathway) => {
+  ['_', '$q', '$scope', '$mdDialog', '$mdToast', 'api.pog', 'api.summary.pathwayAnalysis', 'FileUploader', '$localStorage', 'pog', 'report', 'pathway',
+    (_, $q, $scope, $mdDialog, $mdToast, $pog, $pathway, FileUploader, $localStorage, pog, report, pathway) => {
 
       $scope.pog = pog;
 
@@ -77,10 +77,10 @@ app.controller('controller.dashboard.report.genomic.pathwayAnalysis',
 
             let selectedItem;
             let uploader = scope.uploader = new FileUploader({
-              url: CONFIG.ENDPOINTS.API + '/POG/' + pog.POGID + '/summary/pathwayAnalysis',
+              url: `${CONFIG.ENDPOINTS.API}/POG/${pog.POGID}/report/${report.ident}/genomic/summary/pathwayAnalysis`,
             });
 
-            uploader.headers['Authorization'] = $session.getToken();
+            uploader.headers['Authorization'] = $localStorage[CONFIG.STORAGE.KEYCLOAK];
             uploader.method = 'PUT';
             uploader.alias = "pathway";
 

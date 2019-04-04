@@ -18,11 +18,11 @@ app.factory('api.summary.genomicEventsTherapeutic', ['_', '$http', '$q', (_, $ht
    * Retrieve all POGs from API that user can access
    *
    */
-  $get.all = (POGID) => {
+  $get.all = (POGID, report) => {
     return $q((resolve, reject) => {
       
       // Retrieve from API
-      $http.get(api + '/' + POGID + '/summary/genomicEventsTherapeutic').then(
+      $http.get(api + '/' + POGID + '/report/' + report + '/genomic/summary/genomicEventsTherapeutic').then(
         (result) => {
           // Load into cache
           
@@ -45,12 +45,12 @@ app.factory('api.summary.genomicEventsTherapeutic', ['_', '$http', '$q', (_, $ht
    * @param string ident - UUID4 identity string for entry
    *
    */
-  $get.id = (POGID, ident) => {
+  $get.id = (POGID, report, ident) => {
     
     return $q((resolve, reject) => {
             
       // Get result from API
-      $http.get(api + '/' + POGID + '/summary/genomicEventsTherapeutic/' + ident).then(
+      $http.get(api + '/' + POGID + '/report/' + report + '/genomic/summary/genomicEventsTherapeutic/' + ident).then(
         (result) => {
           resolve(result.data);
         },
@@ -69,12 +69,12 @@ app.factory('api.summary.genomicEventsTherapeutic', ['_', '$http', '$q', (_, $ht
    * @param string ident - UUID4 identity string for entry
    *
    */
-  $get.update = (POGID, ident, get) => {
+  $get.update = (POGID, report, ident, get) => {
     
     return $q((resolve, reject) => {
       
       // Get result from API
-      $http.put(api + '/' + POGID + '/summary/genomicEventsTherapeutic/' + ident, get).then(
+      $http.put(api + '/' + POGID + '/report/' + report + '/genomic/summary/genomicEventsTherapeutic/' + ident, get).then(
         (result) => {
 
           resolve(result.data);
@@ -94,12 +94,12 @@ app.factory('api.summary.genomicEventsTherapeutic', ['_', '$http', '$q', (_, $ht
    * @param string ident - UUID4 identity string for entry
    *
    */
-  $get.remove = (POGID, ident) => {
+  $get.remove = (POGID, report, ident) => {
     
     return $q((resolve, reject) => {
       
       // Get result from API
-      $http.delete(api + '/' + POGID + '/summary/genomicEventsTherapeutic/' + ident).then(
+      $http.delete(api + '/' + POGID + '/report/' + report + '/genomic/summary/genomicEventsTherapeutic/' + ident).then(
         (result) => {
           resolve(true);
         },

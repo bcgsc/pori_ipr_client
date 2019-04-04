@@ -1,11 +1,10 @@
 let colors = require('colors');
-let scriptVer = '1.2.0';
 let configManager = require('./libs/configManager');
 configManager.detectEnvironment(); // Detect Env.
 
-console.log(('  BCGSC - IPR-Client Build Script '+ scriptVer +'  ').blue.bold.bgWhite);
-console.log("=".repeat(50).dim);
-console.log(("Node Version: " + process.version).yellow);
+console.log(('  BCGSC - IPR-Client Build Script'  ).blue.bold);
+console.log("=".repeat(50).rainbow);
+console.log(("Node Version: " + process.version).green);
 console.log(("Build Environment: " + configManager.getEnvironment()).green, '\n');
 
 
@@ -21,22 +20,28 @@ let files = {
     // Library files sources from dependancies
     libs: [
       './node_modules/angular/angular.min.js',
-      './node_modules/angular-ui-router/release/angular-ui-router.min.js',
+      './node_modules/@uirouter/angularjs/release/angular-ui-router.min.js',
+      './node_modules/@uirouter/visualizer/_bundles/ui-router-visualizer.min.js',
       './node_modules/angular-material/angular-material.min.js',
       './node_modules/angular-animate/angular-animate.min.js',
       './node_modules/angular-resource/angular-resource.min.js',
       './node_modules/angular-aria/angular-aria.min.js',
       './node_modules/lodash/lodash.js',
-      './node_modules/moment/min/moment.min.js',    // Order is important! Moment before Angular Moment
+      './node_modules/moment/min/moment.min.js', // Order is important! Moment before Angular Moment
       './node_modules/angular-moment/angular-moment.min.js',
-      './node_modules/ng-storage/ngStorage.min.js',
+      './node_modules/ngstorage/ngStorage.min.js',
       './node_modules/simplemde/dist/simplemde.min.js',
-      './node_modules/marked/marked.min.js',
-      './node_modules/angular-marked/dist/angular-marked.min.js',
       './node_modules/svg-pan-zoom/dist/svg-pan-zoom.js',
-      './node_modules/ng-stickyfill/dist/ng-stickyfill.min.js',
       './node_modules/angular-file-upload/dist/angular-file-upload.min.js',
       './node_modules/angular-sanitize/angular-sanitize.min.js',
+      './node_modules/angular-sortable-view/src/angular-sortable-view.js',
+      './node_modules/quill/dist/quill.min.js',
+      './node_modules/ng-quill/dist/ng-quill.min.js',
+      './node_modules/chart.js/dist/Chart.min.js',
+      './node_modules/angular-chart.js/dist/angular-chart.min.js',
+      './node_modules/angular-socket-io/socket.min.js',
+      './node_modules/angular-messages/angular-messages.js',
+      './node_modules/keycloak-js/dist/keycloak.min.js',
     ],
     
     // Application javascript sources
@@ -49,7 +54,8 @@ let files = {
       './src/directives/**/*.js',
       './src/config/*.js',
       './src/components/**/*.js',
-    ]
+      './src/run/**/*.js',
+    ],
   },
   
   // Template files to be compiled into HTML
@@ -66,7 +72,7 @@ let files = {
       './src/statics/**/*.jpg',
       './src/statics/**/*.jpeg',
       './src/statics/**/*.gif',
-      './src/statics/**/*.svg'
+      './src/statics/**/*.svg',
     ],
     
     // Component specific files
@@ -74,14 +80,24 @@ let files = {
       './src/components/**/*.png',
       './src/components/**/*.jpg',
       './src/components/**/*.svg',
-    ]
+    ],
   },
+
+  // JSON DBs
+  jsonDB: [
+    './src/statics/**/*.json',
+  ],
   
   // Stylesheet sources
   scss: {
     app: ['./src/styles/style.scss', './src/styles/ie.scss'],                             // Application wide
     components: ['./src/directives/**/*.scss', './src/components/**/*.scss'],             // Component specific
-    libs: ['./src/styles/libs.scss', './node_modules/simplemde/dist/simplemde.min.css'],  // Library sources
+    libs: [
+      './src/styles/libs.scss',
+      './node_modules/simplemde/dist/simplemde.min.css',
+      './node_modules/quill/dist/quill.bubble.css',
+      './node_modules/quill/dist/quill.snow.css',
+    ],  // Library sources
   },
   
   // Output locations for generated files
@@ -94,29 +110,24 @@ let files = {
   ]
 };
 
-let gulp = require('gulp'),
-    fs = require('fs'),
-    connect = require('gulp-connect'),
-    modRewrite = require('connect-modrewrite'),
-    gzip = require('connect-gzip'),
-    concat = require('gulp-concat'),
-    uglify = require('gulp-uglify'),
-    sass = require('gulp-sass'),
-    autoprefixer = require('gulp-autoprefixer'),
-    image = require('gulp-imagemin'),
-    gutil = require('gulp-util'),
-    template = require('gulp-angular-templatecache'),
-    livereload = require('gulp-livereload'),
-    If = require('gulp-if'),
-    cleanCSS = require('gulp-clean-css'),
-    pug = require('gulp-pug'),
-    babel = require('gulp-babel')
-    del = require('del'),
-    sourcemaps = require('gulp-sourcemaps'),
-    pako = require('gulp-pako'),
-    runSequence = require('run-sequence'),
-    minimist = require('minimist'),
-    gulpStylelint = require('gulp-stylelint');
+const gulp = require('gulp');
+const fs = require('fs');
+const connect = require('gulp-connect');
+const modRewrite = require('connect-modrewrite');
+const concat = require('gulp-concat');
+const sass = require('gulp-sass');
+const autoprefixer = require('gulp-autoprefixer');
+const log = require('fancy-log');
+const template = require('gulp-angular-templatecache');
+const cleanCSS = require('gulp-clean-css');
+const pug = require('gulp-pug');
+const babel = require('gulp-babel');
+const del = require('del');
+const sourcemaps = require('gulp-sourcemaps');
+const runSequence = require('run-sequence');
+const gulpStylelint = require('gulp-stylelint');
+const gulpif = require('gulp-if');
+const plumber = require('gulp-plumber');
 
 // Gulp task to clean/empty out builds directory 
 gulp.task('clean', () => {
@@ -124,17 +135,13 @@ gulp.task('clean', () => {
 });
 
 
+const env = configManager.detectEnvironment();
+
 gulp.task('config', () => {
-
-  // Detect Environment
-  let env = configManager.detectEnvironment();
-
-  // load config
-  let conf = configManager.loadConfig();
-
-  if(!fs.existsSync('./builds')) fs.mkdirSync('./builds/');
-  if(!fs.existsSync('./builds/'+configManager.getEnvironment())) fs.mkdirSync('./builds/'+configManager.getEnvironment());
-  if(!fs.existsSync('./builds/'+configManager.getEnvironment()+'/assets')) fs.mkdirSync('./builds/'+configManager.getEnvironment()+'/assets');
+  configManager.loadConfig();
+  if (!fs.existsSync('./builds')) fs.mkdirSync('./builds/');
+  if (!fs.existsSync('./builds/'+configManager.getEnvironment())) fs.mkdirSync('./builds/'+configManager.getEnvironment());
+  if (!fs.existsSync('./builds/'+configManager.getEnvironment()+'/assets')) fs.mkdirSync('./builds/'+configManager.getEnvironment()+'/assets');
 
   // Write Config
   configManager.writeConfig();
@@ -153,10 +160,10 @@ gulp.task('config', () => {
  */
 gulp.task('js', () => {
   return gulp.src(files.js.app)
-    .pipe(sourcemaps.init())
+    .pipe(plumber())
+    .pipe(gulpif(env === 'development', sourcemaps.init()))
     .pipe(babel())
     .pipe(concat('app.js'))
-    //.pipe(If(config.env.production, uglify()))
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('./builds/'+configManager.getEnvironment()+'/assets/js'))
     .pipe(connect.reload());
@@ -168,20 +175,12 @@ gulp.task('js', () => {
  * Collect all application specific JS. Concat into single output.
  * Uglify if in production
  *
- */  
+ */
 gulp.task('libs', () => {
   return gulp.src(files.js.libs)
+    .pipe(plumber())
     .pipe(concat('libs.js'))
-    //.pipe(If(config.env.production, uglify()))
-    //.pipe(pako.gzip())
-    .pipe(gulp.dest('./builds/'+configManager.getEnvironment()+'/assets/libs'));
-});
-
-gulp.task('compileASN1', () => {
-  return gulp.src('./node_modules/asn1js/src/asn1.js')
-    .pipe(babel())
-    .pipe(concat('asn1.js'))
-    .pipe(gulp.dest('./src/libs/'));
+    .pipe(gulp.dest(`./builds/${configManager.getEnvironment()}/assets/libs`));
 });
 
 /*
@@ -192,8 +191,9 @@ gulp.task('compileASN1', () => {
  */
 gulp.task('pug-index', () => {
   return gulp.src(files.pug.index)
-    .pipe(pug().on('error', gutil.log))
-    .pipe(gulp.dest('./builds/'+configManager.getEnvironment()))
+    .pipe(plumber())
+    .pipe(pug().on('error', log.error))
+    .pipe(gulp.dest(`./builds/${configManager.getEnvironment()}`))
     .pipe(connect.reload());
 });
 
@@ -206,10 +206,10 @@ gulp.task('pug-index', () => {
  */
 gulp.task('pug-templates', () => {
   return gulp.src(files.pug.templates)
-    .pipe(pug().on('error', gutil.log))
-    .pipe(template('templates.js', {standalone: true}).on('error', gutil.log))
-    //.pipe(If(config.env.production, uglify()))
-    .pipe(gulp.dest('./builds/'+configManager.getEnvironment()+'/assets/js'))
+    .pipe(plumber())
+    .pipe(pug().on('error', log.error))
+    .pipe(template('templates.js', { standalone: true }).on('error', log.error))
+    .pipe(gulp.dest(`./builds/${configManager.getEnvironment()}/assets/js`))
     .pipe(connect.reload());
 });
 
@@ -222,13 +222,14 @@ gulp.task('pug-templates', () => {
  */
 gulp.task('sass-components', () => {
   return gulp.src(files.scss.components)
+    .pipe(plumber())
     .pipe(sourcemaps.init())
     .pipe(gulpStylelint({
       reporters: [
         {formatter: 'string', console: true}
       ]
     }))
-    .pipe(sass()).on('error', gutil.log)
+    .pipe(sass()).on('error', log.error)
     .pipe(autoprefixer())
     .pipe(concat('components.css'))
     .pipe(cleanCSS())
@@ -245,13 +246,14 @@ gulp.task('sass-components', () => {
  */
 gulp.task('sass-app', () => {
   return gulp.src(files.scss.app)
+    .pipe(plumber())
     .pipe(sourcemaps.init())
     .pipe(gulpStylelint({
       reporters: [
         {formatter: 'string', console: true}
       ]
     }))
-    .pipe(sass()).on('error', gutil.log)
+    .pipe(sass()).on('error', log.error)
     .pipe(autoprefixer())
     .pipe(concat('app.css'))
     .pipe(cleanCSS())
@@ -268,7 +270,8 @@ gulp.task('sass-app', () => {
  */
 gulp.task('sass-libs', () => {
   return gulp.src(files.scss.libs)
-    .pipe(sass()).on('error', gutil.log)
+    .pipe(plumber())
+    .pipe(sass()).on('error', log.error)
     .pipe(autoprefixer())
     .pipe(concat('libs.css'))
     .pipe(cleanCSS())
@@ -283,9 +286,21 @@ gulp.task('sass-libs', () => {
  *
  */
 gulp.task('images-app', () => {
-  
   return gulp.src(files.images.app)
+    .pipe(plumber())
     .pipe(gulp.dest('./builds/'+configManager.getEnvironment()+'/assets/images'));
+});
+
+/*
+ * Application Static JSON DBs
+ *
+ * Collect application static json DB files and copy
+ *
+ */
+gulp.task('json-db', () => {
+  return gulp.src(files.jsonDB)
+    .pipe(plumber())
+    .pipe(gulp.dest('./builds/'+configManager.getEnvironment()+'/assets/json'));
 });
 
 /*
@@ -294,9 +309,10 @@ gulp.task('images-app', () => {
  * Move Favicon
  *
  */
-gulp.task('favicon', function () {
-    return gulp.src('./src/statics/favicon.ico')
-        .pipe(gulp.dest('./builds/'+configManager.getEnvironment()));
+gulp.task('favicon', () => {
+  return gulp.src('./src/statics/favicon.ico')
+    .pipe(plumber())
+    .pipe(gulp.dest('./builds/'+configManager.getEnvironment()));
 });
 
 /*
@@ -323,8 +339,7 @@ gulp.task('connect', () => {
 
   return connect.server({
     middleware: () => {
-      let middlewares = [modRewrite(['^[^.]*$ /index.html'])];
-      return middlewares;
+      return [modRewrite(['^[^.]*$ /index.html'])];
     },
     livereload: configManager.getConfig().CONNECT.LIVE_RELOAD || false,
     root: ['builds/'+configManager.getEnvironment()],
@@ -334,11 +349,11 @@ gulp.task('connect', () => {
 });
 
 gulp.task('images', ['images-app']);
-gulp.task('pug', ['pug-index','pug-templates']);
-gulp.task('sass', ['sass-app','sass-libs','sass-components']);
-gulp.task('build', ['favicon', 'config', 'pug','libs','js','sass', 'images']);
-
-//gulp.task('run', runSequence('favicon','pug', 'js', 'sass-app', 'sass-components',['watch', 'connect']));
+gulp.task('json', ['json-db']);
+gulp.task('pug', ['pug-index', 'pug-templates']);
+gulp.task('sass', ['sass-app', 'sass-libs', 'sass-components']);
+gulp.task('build', ['favicon', 'config', 'pug', 'libs', 'js', 'sass', 'images', 'json']);
+gulp.task('deploy-build', () => { runSequence('clean', 'build'); });
 /*
  * Default Gulp Task
  *
@@ -349,7 +364,7 @@ gulp.task('default', () => {
   runSequence(
     'clean',
     'build',
-    ['watch', 'connect']
+    ['watch', 'connect'],
   );
 });
 
@@ -364,7 +379,6 @@ gulp.task('host', () => {
   runSequence(
     'clean',
     'build',
-    'connect'
+    'connect',
   );
 });
-

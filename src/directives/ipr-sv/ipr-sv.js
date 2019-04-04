@@ -6,7 +6,8 @@ app.directive("iprSv", ['$q', '_', '$mdDialog', '$mdToast', ($q, _, $mdDialog, $
     transclude: false,
     scope: {
       svs: '=svs',
-      pog: '=pog'
+      pog: '=pog',
+      report: '=report'
     },
     templateUrl: 'ipr-sv/ipr-sv.html',
     link: (scope, element, attr) => {
@@ -22,18 +23,17 @@ app.directive("iprSv", ['$q', '_', '$mdDialog', '$mdToast', ($q, _, $mdDialog, $
             // Close Modal
             $_scope.cancel = () => {
               $mdDialog.cancel();
-            }
+            };
 
             // Extract Ensembl Name from String
             $_scope.ensemblName = (input) => {
               return _.first(input.match(/(ENS[A-z0-9]*)/));
-            }
+            };
 
             // Create SVG DOM element from String
             $_scope.svg = new DOMParser().parseFromString(sv.svg, 'application/xml');
 
             let xmlSVG = $_scope.svg.getElementsByTagName('svg')[0];
-            console.log($_scope.svg.getElementsByTagName('svg')[0]);
             xmlSVG.id="fusionDiagram";
 
 

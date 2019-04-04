@@ -10,3 +10,19 @@
     
   }
 }
+
+
+.ql-editor {
+  p {
+    margin: 8px 0 !important;
+
+  }
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.analystSignatures {
+  span:first-of-type {
+    margin-right: 10px;
+  }
+}

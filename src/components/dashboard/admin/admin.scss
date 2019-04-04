@@ -78,8 +78,6 @@ md-menu-content.adminBar {
   border: 1px solid rgb(0, 0, 0);
   box-shadow: 2px 1px 0 0 rgba(0, 0, 0, 0.9);
   margin: 15px;
-  font-smooth: never;
-  -webkit-font-smoothing: none;
 
   md-toolbar {
     margin: 0;
@@ -203,6 +201,10 @@ md-menu-content.adminBar {
     &:active {
       box-shadow: none;
     }
+  }
+
+  md-checkbox {
+    margin-left: 15px !important;
   }
 
   .md-button {

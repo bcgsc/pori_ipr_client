@@ -1,48 +1,58 @@
 section
     md-subheader.md-primary Patient Information
-        span.edit
+        span(ng-if="SES_permissionAction('report.edit')").edit
             md-icon(ng-click="updatePatient($event)") edit
 
     div(layout="column", flex).details
         div(layout="row", flex)
             dt(flex="{{detailSize}}", ng-init="detailSize=10") Patient ID:
-            dd(flex) {{pog.POGID}}
+            dd(flex) {{report.patientInformation.POGID}}
 
-            dt(flex="{{detailSize}}") Gender:
-            dd(flex) {{data.pi.gender}}
+            dt(flex="{{detailSize}}") Alternate ID:
+            dd(flex) {{report.pog.alternate_identifier || 'N/A'}}
 
-            dt(flex="{{detailSize}}") Tumour Sample:
-            dd(flex) {{data.pi.tumourSample}}
+            dt(flex="{{detailSize}}") Sex:
+            dd(flex) {{report.patientInformation.gender}}
 
         div(layout="row", flex)
-            dt(flex="{{detailSize}}") Tumour Type:
-            dd(flex) {{data.pi.tumourType}}
+            dt(flex="{{detailSize}}") Tumour Sample:
+            dd(flex) {{report.patientInformation.tumourSample}}
 
-            dt(flex="{{detailSize}}") Case Type:
-            dd(flex) {{data.pi.caseType}}
+            dt(flex="{{detailSize}}") Tumour Type:
+            dd(flex) {{report.patientInformation.tumourType}}
 
             dt(flex="{{detailSize}}") Constitutional Sample:
-            dd(flex) {{data.pi.constitutionalSample}}
+            dd(flex) {{report.patientInformation.constitutionalSample}}
 
         div(layout="row", flex)
             dt(flex="{{detailSize}}") Report Date:
-            dd(flex) N/A
+            dd(flex) {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
 
-            dt(flex="{{detailSize}}") Age at Diagnosis:
-            dd(flex) {{data.pi.age}}
+            dt(flex="{{detailSize}}") Case Type:
+            dd(flex) {{report.patientInformation.caseType}}
 
             dt(flex="{{detailSize}}") Biopsy Details:
-            dd(flex) {{data.pi.biopsySite}}
+            dd(flex) {{report.patientInformation.biopsySite}}
 
         div(layout="row", flex)
             dt(flex="{{detailSize}}") Physician:
-            dd(flex) {{data.pi.physician}}
+            dd(flex) {{report.patientInformation.physician}}
+
+            dt(flex="{{detailSize}}") Age at Diagnosis:
+            dd(flex) {{report.patientInformation.age}}
+
+            dt(flex="{{detailSize}}") Age of Consent:
+            dd(flex) {{report.pog.age_of_consent || 'Not Specified'}}
+
+        div(layout="row", flex)
+            dt(flex="{{detailSize}}") Protocol:
+            dd(flex) {{report.patientInformation.tumourProtocol}}
+
+            dt(flex="{{detailSize}}") Biopsy:
+            dd(flex) {{report.analysis.analysis_biopsy || 'N/A'}}
 
             dt(flex="{{detailSize}}")
             dd(flex)
-
-            dt(flex="{{detailSize}}") Protocol:
-            dd(flex) {{data.pi.tumourProtocol}}
 
 section
     md-subheader.md-primary Patient Tumour Analysis Summary
@@ -51,7 +61,9 @@ section
 
         div(layout="row")
             div(layout="column", flex).dataBox
-                h2.title Genome Status
+                div(layout="row", flex).title
+                    p.title Genome Status
+                    md-icon(ng-click="showHelpMessage($event, helpMessages.genomeStatus)").clickable.blue help
 
                 div.box
                     div(layout="row", flex).heading
@@ -59,11 +71,15 @@ section
                         div(flex) Ploidy Model
                     div(layout="row", flex).content
                         div(flex)
-                            ipr-tumour-content(tc="{{data.ta.tumourContent}}", md-whiteframe="1")
+                            ipr-tumour-content(tc="{{data.ta.tumourContent}}", md-whiteframe="1", ng-if="data.ta.tumourContent !== -1")
+                            span(ng-if="data.ta.tumourContent === -1") N/A
                         div(flex) {{data.ta.ploidy}}
 
             div(layout="column", flex).dataBox
-                h2.title Tissue Comparators
+                div(layout="row", flex).title
+                    p.title Tissue Comparators
+                    md-icon(ng-click="showHelpMessage($event, helpMessages.tissueComparators)").clickable.blue help
+                
 
                 div.box
                     div(layout="row", flex).heading
@@ -74,7 +90,9 @@ section
                         div(flex) {{data.ta.diseaseExpressionComparator}}
 
             div(layout="column", flex).dataBox
-                h2.title Subtyping
+                div(layout="row", flex).title
+                    p.title Subtyping
+                    md-icon(ng-click="showHelpMessage($event, helpMessages.subtyping)").clickable.blue help
 
                 div.box
                     div(layout="row", flex).heading
@@ -83,78 +101,80 @@ section
                         div(flex).editable
                             span
                                 | {{(data.ta.subtyping || "Not Specified")}}
-                                md-icon(ng-click="updateTa()") edit
+                                md-icon(ng-click="updateTa()", ng-if="SES_permissionAction('report.edit')") edit
 
             div(layout="column", flex).dataBox
-                h2.title Microbial Content
+                div(layout="row", flex).title
+                    p.title Microbial Content
+                    md-icon(ng-click="showHelpMessage($event, helpMessages.microbialContent)").clickable.blue help
 
                 div.box
                     div(layout="row", flex).heading
                         div(flex) Species
                         div(flex) Integration
                     div(layout="row", flex).content
-                        div(flex) None
-                        div(flex) None
-
-        div(layout="row")
-            div(layout="column", flex="25").dataBox.noBottomMargin
-                h2.title Mutation Signature
-            div(layout="column", flex="75").dataBox.noBottomMargin
-                h2.title Mutation Burden
-                    span (in protein coding genes)
+                        div(flex) {{data.microbial.species}}
+                        div(flex) {{data.microbial.integrationSite}}
 
         div(layout="column").mutationTable
+            div(layout="row")
+                div(layout="column", flex=25).signatureTitle
+                    div(layout="row", flex).dataBox.title
+                        p.title Mutation Signature
+                        md-icon(ng-click="showHelpMessage($event, helpMessages.mutationSignature)").clickable.blue help
+                div(layout="column", flex=75)
+                    div(layout="row", flex).dataBox.title
+                        p.title Mutation Burden
+                            span (in protein coding genes)
+                        md-icon(ng-click="showHelpMessage($event, helpMessages.mutationBurden)").clickable.blue help
             div(layout="row").header
                 div(flex).container
                     div(flex).signature.editable
-                        span(ng-if="data.ms.mutationSignature.length == 0") Not Specified
-                            md-icon(ng-click="updateMs()") edit
-                        span(ng-if="data.ms.mutationSignature.length > 0")
-                            span(ng-repeat="sig in data.ms.mutationSignature")
-                                span(ng-click="toMutations()").listitem {{sig.associations}}
+                        span(ng-if="(data.ta.mutationSignature.length === 0 || data.ta.mutationSignature === null)") Nothing striking
+                            md-icon(ng-click="updateMs()", ng-if="SES_permissionAction('report.edit')") edit
+                        span(ng-if="data.ta.mutationSignature.length > 0")
+                            span(ng-repeat="sig in data.ta.mutationSignature").repeat-comma
+                                span.listitem
+                                    span(ng-if="sig.modifier !== null") {{sig.modifier}}&nbsp;
+                                    span {{(sig.associations == '-') ? 'Signature '+sig.signature : sig.associations}}
                                     md-tooltip Pearson: {{sig.pearson}} | NNLS: {{sig.nnls}} | Cancer Types: {{sig.cancerTypes}}
-                            md-icon(ng-click="updateMs()") edit
+                            md-icon(ng-click="updateMs()", ng-if="SES_permissionAction('report.edit')") edit
 
                 div(layout="row", flex).mutationType
                     div(flex)
                         | SNVs
                         md-button(md-no-ink).md-icon-button
                             md-tooltip(md-direction="bottom") Single Nucleotide Variations
-                            md-icon help
-                    div(flex="30").total {{mutationBurdenFilter(data.ms.totalSNV)}}
+                            md-icon info
+                    div(flex="30").total {{data.ms[0].snv}}
 
                 div(layout="row", flex).mutationType
                     div(flex)
                         | Indels
                         md-button(md-no-ink).md-icon-button
                             md-tooltip(md-direction="bottom") Insertions and Deletions
-                            md-icon help
-                    div(flex="30").total {{mutationBurdenFilter(data.ms.totalIndel)}}
+                            md-icon info
+                    div(flex="30").total {{data.ms[0].indels}}
 
                 div(layout="row", flex).mutationType
                     div(flex)
                         | SVs
                         md-button(md-no-ink).md-icon-button
                             md-tooltip(md-direction="bottom") Structural Variants
-                            md-icon help
-                    div(flex="30").total {{mutationBurdenFilter(data.ms.totalSV)}}
+                            md-icon info
+                    div(flex="30").total {{data.ms[0].sv}}
 
             div(layout="column").data
-                div(layout="row", flex)
-                    div(flex) Interpreted prevelance
-                    div(flex) {{(data.ms.snvPercentileDiseaseCategory === "na") ? 'LOW' : data.ms.snvPercentileDiseaseCategory}}
-                    div(flex) {{(data.ms.indelPercentileDiseaseCategory === "na") ? 'LOW' : data.ms.indelPercentileDiseaseCategory}}
-                    div(flex) {{data.ms.svPercentilePOGCategory}}
-                div(layout="row", flex).data
-                    div(flex) Percentile among compendium
-                    div(flex) {{data.ms.snvPercentileTCGA}}
-                    div(flex) {{data.ms.indelPercentileTCGA}}
-                    div(flex) {{data.ms.svPercentilePOG}} (POG)
-                div(layout="row", flex).data
-                    div(flex) Percentile among {{data.ta.diseaseExpressionComparator}}
-                    div(flex) {{data.ms.snvPercentileDisease}}
-                    div(flex) {{data.ms.indelPercentileDisease}}
+                div(layout="row", flex, ng-repeat="comparator in data.ms", ng-hide="((comparator.comparator === 'average' || comparator.comparator === null) && (!comparator.snv_percentile && !comparator.indel_percentile))")
+                    // Null value for comparator invokes legacy support
+                    // Previous Mutation Summary did not name the comparator in the CSVs - Comparator pulled from tumour analysis in these cases.
+                    div(flex) Percentile among {{comparator.comparator || data.ta.diseaseExpressionComparator }}
+                    div(flex) {{comparator.snv_percentile || 'na'}}
+                    div(flex) {{comparator.indel_percentile || 'na'}}
                     div(flex)
+                        span(ng-if="comparator.sv_percentile === null") -
+                        span(ng-if="comparator.sv_percentile !== null && comparator.comparator === 'average'").clickable {{ comparator.sv_percentile }} (POG)
+                            md-tooltip Only available with respect to POG
 
     div(layout="column", flex)
 
@@ -164,22 +184,30 @@ section
 
         div(layout="row").keyAlterationsIdentified
             div(layout="row", flex).header.sm
-                div(flex) Small Mutations
-                div(flex="30") {{data.vc.smallMutations}}
+                div(flex, ng-click="setMutationMask('smallMutation')", ng-class="{active: (mutationMask == 'smallMutation')}").clickable Small Mutations
+                div(flex="30") {{variantCounts.smallMutation}}
             div(layout="row", flex).header.cnv
-                div(flex) Copy Number Variants
-                div(flex="30") {{data.vc.CNVs}}
+                div(flex, ng-click="setMutationMask('cnv')", ng-class="{active: (mutationMask == 'cnv')}").clickable Copy Number Variants
+                div(flex="30") {{variantCounts.cnv}}
             div(layout="row", flex).header.sv
-                div(flex) Structural Variants
-                div(flex="30") {{data.vc.SVs}}
+                div(flex, ng-click="setMutationMask('structuralVariant')", ng-class="{active: (mutationMask == 'structuralVariant')}").clickable Structural Variants
+                div(flex="30") {{variantCounts.structuralVariant}}
             div(layout="row", flex).header.outliers
-                div(flex) Expression Outliers
-                div(flex="30") {{data.vc.expressionOutliers}}
+                div(flex, ng-click="setMutationMask('expressionOutlier')", ng-class="{active: (mutationMask == 'expressionOutlier')}").clickable Expression Outliers
+                div(flex="30") {{variantCounts.expressionOutlier}}
         div(flex).alterations
-            div(ng-repeat="variant in data.gai", class="{{variant.type}}") {{variant.geneVariant}}
-                span(ng-click="removeAlteration($event, variant)")
+            div(ng-repeat="variant in data.gai | filter: mutationFilter", class="{{variant.type}}") {{variant.geneVariant}}
+                span(ng-click="removeAlteration($event, variant)", ng-if="SES_permissionAction('report.edit')",)
                     md-icon remove_circle
+
+            div(ng-if="SES_permissionAction('report.edit')").add.clickable Add new entry
+                span(ng-click="addAlteration($event)")
+                    md-icon add_circle
+
+
         div(flex, layout="row", layout-align="end end").keyAlterationsIdentified.margin-bottom-10
+            div(flex=10, ng-click="setMutationMask(null)", ng-show="mutationMask !== null").margin-bottom-10.text-small.clickable View all
+            span(flex)
             div(flex=25, layout="row").header.vus
                 div(flex) Variants of unknown significance
                 div(flex=30) {{data.vc.variantsUnknown}}

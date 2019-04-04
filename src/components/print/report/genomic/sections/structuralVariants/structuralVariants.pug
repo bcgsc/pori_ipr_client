@@ -1,0 +1,84 @@
+table.print
+    thead
+        tr
+            td.pageHeader.padded
+                div(layout="row")
+                    div(flex=30) {{pog.POGID}}
+                        br
+                        | {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
+                    div(flex) BCCA Confidential - For Research Purposes Only
+                    div(flex=30)  {{report.patientInformation.tumourType}}
+    tbody
+        tr
+            td.structuralVariants
+                div(layout="row").sectionHeader
+                    h1.blue Structural Variation
+                    p(flex) This section provides details of structural variations detected from de novo assembly of the tumour genome and transcriptome. Look in this section for details of the potentially relevant large-scale genomic rearrangements including gene fusions, duplications and deletions.
+                h1 Structural Variation
+                h2 Summary of Structural Events
+
+                div(layout="row", layout-align="space-around center").margin-bottom-40
+                    div(layout="column").smEvents.snv
+                        div(layout="row")
+                            div(flex=60) Structural Variants (Expressed Fusions)
+                            div(flex=40, layout="row", layout-align="center center").count
+                                div.sv {{ms.sv}} ({{ms.sv_expressed}})
+
+                        div(ng-repeat="comp in mutationSummaryImages.comparators")
+                            img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{getMutationSummaryImage('densityPlot', 'sv', comp.name).data}}")
+                            img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{getMutationSummaryImage('sv', 'legend', comp.name).data}}")
+
+                    div(layout="column").smEvents.indel
+                        div(layout="row")
+                            div(flex=60) &nbsp;
+                            div(flex=40, layout="row", layout-align="center center").count
+                                div &nbsp;
+
+                        div(ng-repeat="comp in mutationSummaryImages.comparators")
+                            img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{getMutationSummaryImage('barplot', 'sv', comp.name).data}}")
+
+                div(layout="row", layout-align="space-around space-around")
+                    div(layout="column", layout-align="center center")
+                        img(data-ng-src="data:image/svg;base64,{{images['circosSv.genome'].data}}").circos
+                    div(layout="column", layout-align="center center")
+                        img(data-ng-src="data:image/svg;base64,{{images['circosSv.transcriptome'].data}}").circos
+                h1 Structural Variation: Genomic Details
+    tbody(ng-repeat="(k, group) in StrucVars")
+        tr
+            td.copyNumberAnalysis
+                h2 {{titleMap[k]}}
+                table.detailedData
+                    tr.header
+                        th(style="width: 12%") Genes 5`::3`
+                        th(style="width: 14%") Exons 5`/3`
+                        th(style="width: 12%") Breakpoint
+                        th(style="width: 12%") Event Type
+                        th(style="width: 8%") Sample
+                        th(style="width: 14%") Cyogenic Description
+                        th(style="width: 12%") RPKM 5`/3`
+                        th(style="width: 12%") Fold Change vs. {{report.tumourAnalysis.normalExpressionComparator}} 5`/3`
+                        th(style="width: 12%") {{report.tumourAnalysis.diseaseExpressionComparator}} %ile 5`/3`
+                    tr(ng-if="group.length === 0")
+                        td(colspan=13) No relevant results were found from the analysis.
+        tr(ng-repeat="sv in group")
+            td
+                table.detailedData
+                    tr
+                        td(style="width: 12%") {{sv.genes}}
+                        td(style="width: 14%") {{sv.exons}}
+                        td(style="width: 12%") {{sv.breakpoint}}
+                        td(style="width: 12%") {{sv.eventType}}
+                        td(style="width: 8%") {{sv.detectedIn}}
+                        td(style="width: 14%") {{sv.conventionalName}}
+                        td(style="width: 12%") {{sv.rpkm}}
+                        td(style="width: 12%") {{sv.foldChange}}
+                        td(style="width: 12%") {{sv.tcgaPerc}}
+    tbody(style="page-break-before: always").structuralVariant
+        tr
+            td
+                h1 Structural Variation
+                h2 Gene Fusion Figures
+
+        tr(ng-repeat="sv in allVariants", ng-if="sv.svg")
+            td
+                ipr-print-diagram(sv="sv", pog="pog", report="report")

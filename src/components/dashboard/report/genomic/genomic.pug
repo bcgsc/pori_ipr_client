@@ -1,27 +1,34 @@
 md-content(flex).md-padding
     md-toolbar
         div.md-toolbar-tools
-            span(flex)
-            h2(flex).text-center.md-hue-3 {{pog.POGID}}
-            span(flex)
+            span(flex).text-left {{report.patientInformation.tumourType}}
+            h2(flex).text-center.md-hue-3 {{pog.POGID}} Genomic Report
+            span(flex, ipr-report-state, state="report.state").text-right
     div(layout="row", flex).pog-report
         div(flex, ui-view="")
 
-        md-content(flex="20", layout="column", ng-show="showSideBar", ng-init="showSideBar=true").reportSections
-            div
-                md-list(layout-align="start start")
-                    md-subheader Report Sections
-                    md-list-item(ng-click="goToReportSection('summary')", ng-class="activeSection({state: 'summary'}) ? 'active' : ''") Summary
-                        md-icon(ng-click="openPrint()", aria-label="Print Summary Section").md-secondary print
-                    md-list-item(
-                    ng-repeat="section in sections",
-                    ng-click="goToReportSection(section.state)",
-                    ng-class="{active: activeSection(section), meta: section.meta}"
-                    ) {{section.name}}
 
-                        md-list-item(
-                        ng-if="section.children.length > 0",
-                        ng-show="section.showChildren",
-                        ng-repeat="child in section.children",
-                        ng-click="goToReportSection(child.state)"
-                        ).child {{child.name}}
+        div(flex=20)
+            div.reportMenu
+                h1 Report Sections
+                ul
+                    li
+                        span(ng-click="goToReportSection('summary')", ng-class="activeSection('summary') ? 'active' : ''").clickable Summary
+                            md-icon(ng-click="openPrint()", aria-label="Print Summary Section").md-secondary print
+
+                    li(ng-repeat="section in sections", ng-init='section.showChildren = false', ng-hide="!section.clinician && !SES_permissionAction('report.edit')")
+
+                        span(
+                        ng-click="(section.children.length === 0) ? goToReportSection(section.state) : section.showChildren = !section.showChildren",
+                        ng-class="{active: activeSection(section.state), meta: section.meta, children: (section.children.length > 0)}"
+                        ).clickable {{section.name}}
+                            span(ng-if="section.children.length > 0").drop
+                                md-icon(ng-hide="section.showChildren") arrow_drop_down
+                                md-icon(ng-show="section.showChildren") arrow_drop_up
+
+                        ul(ng-if="section.children.length > 0", ng-show='section.showChildren')
+                            li(ng-repeat="child in section.children")
+                                span(
+                                ng-click="goToReportSection(child.state)",
+                                ng-class="{active: activeSection(child.state), disabled: (child.disabled), clickable: (!child.disabled)}"
+                                ) {{child.name}}

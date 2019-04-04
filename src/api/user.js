@@ -1,288 +1,102 @@
-/*
- * BCGSC - IPR-Client User API
- *
- * This API factory implements the IPR-API. Calls to and from the API are
- * managed through this construct.
- *
+/**
+ * All API calls relating to user object
+ * @param {*} _ {@link https://lodash.com/docs/4.17.10}
+ * @param {*} $http {@link https://docs.angularjs.org/api/ng/service/$http}
+ * @return {Object} $user service object
  */
-app.factory('api.user', ['_', '$http', '$q', (_, $http, $q) => {
-  
-  const api = CONFIG.ENDPOINTS.API + '/user';
-  let _me = null; // Local user cache
-  let _token = null; // User API token
-  let _groups = [];
-  
-  let $user = {};
+function apiUser(_, $http) {
+  const api = `${CONFIG.ENDPOINTS.API}/user`;
 
-  
-  $user.me = () => {
-    
-    return $q((resolve, reject) => {
-      if(_me) return resolve(_me);
-      $http.get(api + '/me').then(
-        (self) => {
-          _me = self.data;
-          _groups = self.data.groups;
-          resolve(_me);
-        },
-        (error) => {
-          reject(error);
-        }
-      );
-      
-    });
-    
+  const $user = {
+    me,
+    isAdmin,
+    all,
+    update,
+    create,
+    search,
+    remove,
   };
-
-  $user.isAdmin =() => {
-    let aGroups = _.filter(_groups, (g) => {
-      if(g.name == 'superUser' || g.name == 'admin') return g;
+  return $user;
+  
+  /**
+   * Retrieves the user object if authenticated
+   * @return {Promise} User object
+   * @throws {ErrorType} Thrown when API call fails
+   */
+  async function me() {
+    const resp = await $http.get(`${api}/me`);
+    $user.meObj = resp.data;
+    return $user.meObj;
+  }
+  
+  /**
+   * Check if user is an admin or superuser
+   * @return {Promise} admin bool
+   * @throws {ErrorType} Thrown when API call fails
+   */
+  async function isAdmin() {
+    return $user.meObj.groups.some(({ name }) => {
+      return ['superUser', 'admin'].includes(name);
     });
-
-    return (aGroups.length > 0)
-  };
+  }
 
   /**
    * Get all users (admin)
-   *
-   * @returns {promise}
+   * @return {Promise} all promise
+   * @throws {ErrorType} Thrown when API call fails
    */
-  $user.all = () => {
-
-    let deferred = $q.defer();
-
-    $http.get(api).then(
-      (result) => {
-        deferred.resolve(result.data);
-      },
-      (err) => {
-        deferred.reject(err);
-      }
-    );
-
-    return deferred.promise;
-
-  };
+  async function all() {
+    const resp = await $http.get(api);
+    return resp.data;
+  }
 
   /**
    * Update a user entry
-   *
-   * @param user
-   * @returns {Function}
+   * @param {Object} user object to update
+   * @return {Promise} update response
+   * @throws {ErrorType} Thrown when API call fails
    */
-  $user.update = (user) => {
-    let deferred = $q.defer();
-
-    $http.put(api + '/' + user.ident,user).then(
-      (resp) => {
-        deferred.resolve(resp.data);
-      },
-      (err) => {
-        deferred.reject(err);
-      }
-    );
-
-    return deferred.promise;
-  };
+  async function update(user) {
+    const resp = await $http.put(`${api}/${user.ident}`, user);
+    return resp.data;
+  }
 
   /**
    * Create a new user account
-   *
-   * @param user
-   * @returns {promise}
+   * @param {Object} user object to create
+   * @returns {Promise} create response
+   * @throws {ErrorType} Thrown when API call fails
    */
-  $user.create = (user) => {
-    let deferred = $q.defer();
+  async function create(user) {
+    const resp = await $http.post(`${api}/`, user);
+    return resp.data;
+  }
 
-    $http.post(api + '/', user).then(
-      (resp) => {
-        deferred.resolve(resp.data);
-      },
-      (err) => {
-        deferred.reject(err);
-      }
-    );
+  /**
+   * Search for a user
+   * @param {String} query - user to search for
+   * @return {Promise} Search results
+   * @throws {ErrorType} Thrown when API call fails
+   */
+  async function search(query) {
+    const resp = await $http.get(`${api}/search`, { params: { query } });
+    return resp.data;
+  }
 
-    return deferred.promise;
-  };
+  /**
+   * Remove a user
+   * @param {String} user - user to remove
+   * @return {Promise} Removal response
+   * @throws {ErrorType} Thrown when API call fails
+   */
+  async function remove(user) {
+    const resp = await $http.delete(`${api}/${user.ident}`);
+    return resp.data;
+  }
+}
 
-  $user.search = (query) => {
-    let deferred = $q.defer();
+apiUser.$inject = ['_', '$http'];
 
-    $http.get(api + '/search?query='+query).then(
-      (resp) => {
-        deferred.resolve(resp.data);
-      },
-      (err) => {
-        deferred.reject(err);
-      }
-    );
-
-    return deferred.promise;
-  };
-
-  $user.delete = (user) => {
-
-    let deferred = $q.defer();
-
-    // Remove User
-    $http.delete(api + '/' + user.ident).then(
-      (resp) => {
-        deferred.resolve(resp.data);
-      },
-      (err) => {
-        deferred.reject(err);
-      }
-    );
-
-    return deferred.promise;
-  };
-
-  /* Group Functions */
-  $user.group = {
-
-    /**
-     * Get all groups
-     * @returns {promise}
-     */
-    all: () => {
-      let deferred = $q.defer();
-
-      $http.get(api + '/group').then(
-        (resp) => {
-          deferred.resolve(resp.data);
-        },
-        (err) => {
-          deferred.reject(err);
-        }
-      );
-
-      return deferred.promise;
-    },
-
-    /**
-     * Create new Group
-     * @param name
-     * @returns {promise}
-     */
-    create: (group) => {
-      let deferred = $q.defer();
-
-      $http.post(api + '/group', group).then(
-        (resp) => {
-          deferred.resolve(resp.data);
-        },
-        (err) => {
-          deferred.reject(err);
-        }
-      );
-
-      return deferred.promise;
-    },
-
-    /**
-     * Remove a group
-     * @param {string} ident - Group UUID Ident
-     * @returns {promise}
-     */
-    remove: (group) => {
-      let deferred = $q.defer();
-
-      $http.delete(api + '/group/' + group.ident).then(
-        (resp) => {
-          deferred.resolve(resp.data);
-        },
-        (err) => {
-          deferred.reject(err);
-        }
-      );
-
-      return deferred.promise;
-    },
-
-    /**
-     * Update a group
-     * @param {string} ident - Group UUID Ident
-     * @param {object} group - Group object to be updated
-     * @returns {promise}
-     */
-    update: (ident, group) => {
-      let deferred = $q.defer();
-
-      $http.put(api + '/group/'+ident, group).then(
-        (resp) => {
-          deferred.resolve(resp.data);
-        },
-        (err) => {
-          deferred.reject(err);
-        }
-      );
-
-      return deferred.promise;
-    },
-
-    /**
-     * Group membership functions
-     * @param {string} group - Group UUID Ident
-     * @returns {{add: (function()), remove: (function())}}
-     */
-    member: (group) => {
-      return {
-
-        /**
-         * Add a user to a group
-         * @param {string} user - User UUID ident
-         * @returns {promise}
-         */
-        add: (user) => {
-          let deferred = $q.defer();
-
-          $http.post(api + '/group/'+group+'/member', {user: user}).then(
-            (resp) => {
-              deferred.resolve(resp.data);
-            },
-            (err) => {
-              deferred.reject(err);
-            }
-          );
-
-          return deferred.promise;
-        },
-
-        /**
-         * Remove a user from a group
-         * @param {string} user - User UUID ident
-         * @returns {promise}
-         */
-        remove: (user) => {
-          let deferred = $q.defer();
-
-          $http({
-            url: api + '/group/' + group + '/member',
-            method: 'DELETE',
-            data: {
-              user: user
-            },
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          }).then(
-            (resp) => {
-              deferred.resolve(resp.data);
-            },
-            (err) => {
-              deferred.reject(err);
-            }
-          );
-
-          return deferred.promise;
-        }
-      }
-    } // End Member functions
-
-  };
-  
-  
-  return $user;
-  
-}]);
+angular
+  .module('bcgscIPR')
+  .service('api.user', apiUser);

@@ -1,15 +1,65 @@
-div(layout="column").page
-    div(layout="row", flex).pageHeader
-        div {{pog.POGID}}
-        div {{pog.patientInformation.reportDate}}
-        div {{pog.patientInformation.tumourType}}
+table.print
+    thead
+        tr
+            td.pageHeader
+                div(layout="row")
+                    div(flex=30) {{pog.POGID}}
+                        br
+                        | {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
+                    div(flex) BCCA Confidential - For Research Purposes Only
+                    div(flex=30)  {{report.patientInformation.tumourType}}
+    tbody
+        tr
+            td.reportHeader
+                div(layout="row")
+                    div(flex=50)
+                        img(src="/assets/images/print_logo.png", width="100%")
+                    div(flex=50, layout-align="start end")
+                        div(flex, layout="column").text-right
+                            span Tumour Genome Analysis
+                            span.text-small Whole genome; Transcriptome; Somatic
+                div(layout="row").version
+                    div(flex=50) Report version: {{report.reportVersion || 'N/A'}}
+                    div(flex=50).text-right Knowledgebase version: {{report.kbVersion || 'N/A'}}
 
-    // Summary Section
-    section(ui-view="summary").summary
+                div(flex).pogid.text-center {{pog.POGID}}
+    tbody(ui-view="summary")
 
-    div(layout="row", flex).pageFooter
-        div Tumour Content - {{pog.tumourAnalysis.tumourContent}}%
-            br
-            | Ploidy Model - {{data.ta.ploidy}}
-        div BCCA Confidential - For Research Purposes Only
-        div
+div.pageBreak
+table(ui-view="analystComments").print
+
+div.pageBreak
+table(ui-view="pathwayAnalysis").print
+
+div.pageBreak
+table(ui-view="pathwayAnalysisLegend").print
+
+div.pageBreak
+table(style="margin-top: 1mm", ui-view="therapeuticOptions").print
+
+div.pageBreak
+table(ui-view="presentationSlide").print
+
+div.pageBreak
+table(style="margin-top: 3mm", ui-view="dga").print
+
+div.pageBreak
+table(ui-view="diseaseSpecificAnalysis").print
+
+div.pageBreak
+section(ui-view="somaticMutations")
+
+div.pageBreak
+table(style="margin-top: 3mm", ui-view="copyNumberAnalysis").print
+
+div.pageBreak
+table(style="margin-top: 3mm", ui-view="copyNumberAnalysisCNVLOH").print
+
+div.pageBreak
+table(style="margin-top: 3mm", ui-view="structuralVariants").print
+
+div.pageBreak
+section(style="margin-top: 3mm", ui-view="expressionAnalysis")
+
+div.pageBreak
+section(style="margin-top: 3mm", ui-view="appendices").print

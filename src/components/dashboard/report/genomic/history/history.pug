@@ -1,0 +1,44 @@
+section.dataHistory
+    md-subheader.md-primary Data History
+
+    div(layout="column", flex)
+
+        div(layout="column", flex)
+
+            h2.title History Viewer
+
+            div(layout="column", flex).dataBox
+                div.box
+                    div(layout="row", flex).heading
+                        div(flex) Data Section
+                        div(flex) Event
+                        div(flex=10) Previous
+                        div(flex=10) New
+                        div(flex) Comment
+                        div(flex=10) User
+                        div(flex) Tags
+                        div(flex=10) Date
+                    div(layout="row", flex, ng-show="history.length == 0").row
+                        div(flex).text-center No History Events
+                    div(layout="row", flex, ng-repeat="h in history").row
+                        div(flex, ng-if="h.key") CSV Data Export
+                        div(flex, ng-if="h.key").historyType.export
+                            span export
+                        div(flex=20, ng-if="h.key")
+
+                        div(flex, ng-click="detail($event, h)", ng-if="!h.key").clickable.link {{h.model}}
+                        div(flex, ng-class="[h.type]", ng-if="!h.key").historyType
+                            span {{h.type}}
+
+                        div(flex=10, ng-if="!h.key").text-center {{h.previous}}
+                        div(flex=10, ng-if="!h.key").text-center {{h.new || 'none'}}
+                        div(flex).text-elipsis {{h.comment || 'none'}}
+                        div(flex=10) {{h.user.firstName}} {{h.user.lastName}}
+                        div(flex, ng-if="!h.key").tags
+                            span(ng-repeat="t in h.tags").pill {{t.tag}}
+                            span(ng-if="h.tags.length === 0").text-emphasis none
+                        div(flex, ng-if="h.key").tags
+                            span.pill.export CSV-Export
+                        div(flex=10)
+                            span.clickable {{h.createdAt | amTimeAgo}}
+                                md-tooltip {{h.createdAt | amDateFormat: 'DD/MM/YYYY HH:mm:ss'}}

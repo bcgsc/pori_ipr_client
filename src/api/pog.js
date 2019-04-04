@@ -6,25 +6,27 @@
  *
  */
 app.factory('api.pog', ['_', '$http', '$q', (_, $http, $q) => {
-  
-  const api = CONFIG.ENDPOINTS.API + '/POG';
-  let _pogs = [] // Local POGS cache by ident
+  const api = `${CONFIG.ENDPOINTS.API}/POG`;
+  let _pogs = []; // Local POGS cache by ident
 
   
-  let $pog = {};
+  const $pog = {};
   
   
-  /*
-   * Get All POGS
+  /**
+   * Get All POGs
    *
    * Retrieve all POGs from API that user can access
    *
+   * @param {object} opts - Options block
+   * @returns {promise} - Resolves with array of POGs
    */
-  $pog.all = () => {
+  $pog.all = (opts = {}) => {
     return $q((resolve, reject) => {
-      
+      const url = api;
+
       // Retrieve from API
-      $http.get(api).then(
+      $http.get(url, { params: opts }).then(
         (result) => {
           // Empty Cache
           _pogs = [];
@@ -39,12 +41,10 @@ app.factory('api.pog', ['_', '$http', '$q', (_, $http, $q) => {
         (error) => {
           // TODO: Better error handling
           reject(error);
-        }
+        },
       );
-      
     });
-    
-  }
+  };
   
   /*
    * Get one POG
@@ -53,122 +53,137 @@ app.factory('api.pog', ['_', '$http', '$q', (_, $http, $q) => {
    *
    */
   $pog.id = (POGID) => {
-    
     return $q((resolve, reject) => {
-      
       // Lookup in cache first
-      if(_pogs[POGID] !== undefined) return resolve(_pogs[POGID]);
+      if (_pogs[POGID] !== undefined) return resolve(_pogs[POGID]);
       
       // Get result from API
-      $http.get(api + '/' + POGID).then(
+      $http.get(`${api}/${POGID}`).then(
         (result) => {
           _pogs[result.data.POGID] = result.data;
           resolve(_pogs[result.data.POGID]);
         },
         (error) => {
           // TODO: Better error handling
-          reject();
-        }
+          reject(error);
+        },
       );
     });
-  }
-
+  };
 
   /*
-   * Load a new POG
-   *
-   * Load a new POG into the API from sources
-   *
-   * @param string POGID
+   * Update POG
    *
    */
-  $pog.load = (POGID) => {
-
-    let deferred = $q.defer();
-
-
-    // Custom data stream from API for loading
-    let xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = (stateChange) => {
-
-      // On data drip
-      if (xhttp.readyState === 3) {
-        deferred.notify(xhttp.responseText);
-      }
-
-      // Wait until readyState === 4 (request finished)
-      if (xhttp.readyState === 4) {
-
-        if (xhttp.status >= 200 && xhttp.status < 400) {
-
-          deferred.resolve(xhttp.responseText);
-
-        } else {
-          reject(xhttp);
-        }
-
-      }
-    }
-
-    xhttp.open('GET', api + '/' + POGID + '/loadPog', true);
-    xhttp.send();
-
-
-    return deferred;
+  $pog.update = (pog) => {
+    return $q((resolve, reject) => {
+      // Call API to update
+      $http.put(`${api}/${pog.POGID}`, pog).then(
+        (result) => {
+          resolve(result.data);
+        },
+        (error) => {
+          // TODO: Better error handling
+          reject(error);
+        },
+      );
+    });
   };
 
   // Empty out cache
   $pog.destroy = () => {
-
     _pogs = {};
-
   };
 
   $pog.user = (POGID) => {
     return {
       bind: (ident, role) => {
+        const deferred = $q.defer();
 
-        let deferred = $q.defer();
-
-        $http.post(api + '/' + POGID + '/user', {user: ident, role: role}).then(
+        $http.post(`${api}/${POGID}/user`, { user: ident, role: role }).then(
           (resp) => {
             deferred.resolve(resp.data);
           },
           (err) => {
             deferred.reject(err);
-          }
+          },
         );
 
         return deferred.promise;
       },
 
       unbind: (ident, role) => {
-        let deferred = $q.defer();
+        const deferred = $q.defer();
 
         $http({
-          url: api + '/' + POGID + '/user',
+          url: `${api}/${POGID}/user`,
           method: 'DELETE',
           data: {
             user: ident,
-            role: role
+            role: role,
           },
           headers: {
-            'Content-Type': 'application/json'
-          }
+            'Content-Type': 'application/json',
+          },
         }).then(
           (resp) => {
             deferred.resolve(resp.data);
           },
           (err) => {
             deferred.reject(err);
-          }
+          },
         );
 
         return deferred.promise;
-      }
-    }
+      },
+    };
   };
-  
+
+  $pog.export = (POGID) => {
+    return {
+
+      /**
+       * Run export
+       * @returns {promise} - Resolves the export return
+       */
+      csv: () => {
+        const deferred = $q.defer();
+
+        // Send request
+        $http.get(`${api}/${POGID}/export/csv`).then(
+          (resp) => {
+            deferred.resolve(resp.data);
+          },
+          (err) => {
+            deferred.reject(err);
+          },
+        );
+
+        return deferred.promise;
+      },
+
+      /**
+       * Get all pog export entries
+       *
+       * @returns {promise} - Resolves with array of pog export events
+       */
+      all: () => {
+        const deferred = $q.defer();
+
+        // Send request
+        $http.get(`${api}/${POGID}/export/all`).then(
+          (resp) => {
+            deferred.resolve(resp.data);
+          },
+          (err) => {
+            deferred.reject(err);
+          },
+        );
+
+        return deferred.promise;
+      },
+    };
+  };
+
   return $pog;
-  
 }]);
