@@ -6,6 +6,7 @@ import AnalystCommentsModule from './analyst-comments/analyst-comments.module';
 import SlidesModule from './presentation/slides/slides.module';
 import DiscussionModule from './presentation/discussion/discussion.module';
 import TherapeuticModule from './therapeutic/therapeutic.module';
+import PathwayAnalysisModule from './pathway-analysis/pathway-analysis.module';
 
 angular.module('genomic.report', [
   uiRouter,
@@ -14,6 +15,7 @@ angular.module('genomic.report', [
   SlidesModule,
   DiscussionModule,
   TherapeuticModule,
+  PathwayAnalysisModule,
 ]);
 
 export default angular.module('genomic.report')
