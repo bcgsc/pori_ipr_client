@@ -1,11 +1,11 @@
 section.pathwayAnalysis
-    md-subheader.md-primary Pathway Analysis
+  md-subheader.md-primary.md-no-sticky Pathway Analysis
 
-    div.md-padding
+  div.md-padding
 
-        div.window
-            div(ng-if="SES_permissionAction('report.edit')").upload
-                md-icon(ng-click="update()") file_upload
+    div.window
+      div(ng-if="$ctrl.AclService.checkAction('report.edit')").upload
+        md-icon(ng-click="$ctrl.update()") file_upload
 
-            div(id="svgContainer")
-                div(id="svgImage")
+      div(id="svgContainer")
+        div(id="svgImage")
