@@ -5,11 +5,10 @@
  * managed through this construct.
  *
  */
-app.factory('api.lims', ['_', '$http', '$q', (_, $http, $q) => {
+app.factory('api.lims', ['$http', '$q', ($http, $q) => {
+  const api = 'https://lims16.bcgsc.ca/beta/limsapi';
 
-  const api = 'https://lims16.bcgsc.ca';
-
-  let $lims = {};
+  const $lims = {};
 
   $lims.diseaseOntology = (query) => {
 
@@ -84,35 +83,27 @@ app.factory('api.lims', ['_', '$http', '$q', (_, $http, $q) => {
    * @param pogs
    * @returns {*}
    */
-  $lims.source = (pogs) => {
-    return $q((resolve, reject) => {
-  
-      // Convert string pogid to array
-      if(typeof pogs === 'string') {
-        pogs = [pogs];
-      }
-  
-      let body = {
-        filters: {
-          op: "in",
-          content: {
-            field: "participant_study_id",
-            value: pogs
-          }
-        }
-      };
-      
-      $http.post('https://lims16.bcgsc.ca/alpha/limsapi/source', body, {headers: {Authorization: 'Basic YnBpZXJjZTprNHRZcDNScnl+'}}).then(
-        (result) => {
-          resolve(result.data);
-        })
-        .catch((err) => {
-          console.log('Failed to get LIMS sample result', err);
-          reject(err);
-        });
-      
+  $lims.source = async (pogs) => {
+    // Convert string pogid to array
+    if (typeof pogs === 'string') {
+      pogs = [pogs];
+    }
+    console.log(pogs);
+
+    const body = {
+      filters: {
+        op: 'in',
+        content: {
+          field: 'participantStudyId',
+          value: pogs,
+        },
+      },
+    };
     
-    });
+    const { data } = await $http.post(
+      `${api}/biological-metadata/search`, body, { headers: { Authorization: 'Basic YnBpZXJjZTprNHRZcDNScnl+' } },
+    );
+    return data;
   };
   
   
