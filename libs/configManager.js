@@ -33,7 +33,7 @@ let configManager = {
 
     if (process.env.NODE_ENV !== undefined && process.env.NODE_ENV !== null) {
       // Check if it's an allowed environment setting
-      if (['production', 'development', 'local'].includes(process.env.NODE_ENV)) {
+      if (!['production', 'development', 'local'].includes(process.env.NODE_ENV)) {
         throw new Error('Invalid environment setting');
       }
 
