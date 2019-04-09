@@ -13,7 +13,10 @@ class Service {
    * @returns {Promise} - result of API call
    */
   async getDiseaseOntology(query) {
-    const { data } = await this.$http.get(`${this.api}/elastic/disease_ontology/${query}`, { headers: { 'Accept': 'application/json', 'Authorization': undefined } });
+    const { data } = await this.$http.get(
+      `${this.api}/elastic/disease_ontology/${query}`,
+      { headers: { 'Accept': 'application/json', 'Authorization': undefined } },
+    );
     return data;
   }
 
@@ -40,7 +43,9 @@ class Service {
       },
     };
     
-    const { data } = await this.$http.post(`${this.api}/sample`, body, { headers: { Authorization: 'Basic YnBpZXJjZTprNHRZcDNScnl+' } });
+    const { data } = await this.$http.post(
+      `${this.api}/sample`, body, { headers: { Authorization: 'Basic YnBpZXJjZTprNHRZcDNScnl+' } },
+    );
     return data;
   }
 
@@ -67,7 +72,9 @@ class Service {
       },
     };
     
-    const { data } = await this.$http.post(`${this.api}/source`, body, { headers: { Authorization: 'Basic YnBpZXJjZTprNHRZcDNScnl+' } });
+    const { data } = await this.$http.post(
+      `${this.api}/source`, body, { headers: { Authorization: 'Basic YnBpZXJjZTprNHRZcDNScnl+' } },
+    );
     return data;
   }
 
@@ -94,7 +101,9 @@ class Service {
       },
     };
     
-    const { data } = await this.$http.post(`${this.api}/library`, body, { headers: { Authorization: 'Basic YnBpZXJjZTprNHRZcDNScnl+' } });
+    const { data } = await this.$http.post(
+      `${this.api}/library`, body, { headers: { Authorization: 'Basic YnBpZXJjZTprNHRZcDNScnl+' } },
+    );
     return data;
   }
 
@@ -133,7 +142,11 @@ class Service {
       },
     };
     
-    const { data } = await this.$http.post(`${this.api}/illumina_run`, body, { headers: { Authorization: 'Basic YnBpZXJjZTprNHRZcDNScnl+' } });
+    const { data } = await this.$http.post(
+      `${this.api}/illumina_run`,
+      body,
+      { headers: { Authorization: 'Basic YnBpZXJjZTprNHRZcDNScnl+' } },
+    );
     return data;
   }
 }

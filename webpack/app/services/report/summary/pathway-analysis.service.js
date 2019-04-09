@@ -14,7 +14,9 @@ class PathwayAnalysisService {
    * @returns {Promise} - result of API call
    */
   async retrieve(POGID, report) {
-    const { data } = await this.$http.get(`${this.api}/${POGID}/report/${report}/genomic/summary/pathwayAnalysis`);
+    const { data } = await this.$http.get(
+      `${this.api}/${POGID}/report/${report}/genomic/summary/pathwayAnalysis`,
+    );
     return data;
   }
 
@@ -28,7 +30,10 @@ class PathwayAnalysisService {
    * @returns {Promise} - result of API call
    */
   async update(POGID, report, summary) {
-    const { data } = await this.$http.put(`${this.api}/${POGID}/report/${report}/genomic/summary/pathwayAnalysis`, summary);
+    const { data } = await this.$http.put(
+      `${this.api}/${POGID}/report/${report}/genomic/summary/pathwayAnalysis`,
+      summary,
+    );
     return data;
   }
 }

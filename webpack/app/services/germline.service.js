@@ -41,7 +41,10 @@ class GermlineService {
    * @returns {Promise} - result of API call
    */
   async getReport(patient, biopsy, report, params = {}) {
-    const { data } = await this.$http.get(`${this.api}/patient/${patient}/biopsy/${biopsy}/report/${report}`, { params });
+    const { data } = await this.$http.get(
+      `${this.api}/patient/${patient}/biopsy/${biopsy}/report/${report}`,
+      { params },
+    );
     return data;
   }
 
@@ -57,7 +60,11 @@ class GermlineService {
    * @returns {Promise/array} - result of API call
    */
   async updateReport(patient, biopsy, report, payload, params = {}) {
-    const { data } = await this.$http.put(`${this.api}/patient/${patient}/biopsy/${biopsy}/report/${report}`, payload, { params });
+    const { data } = await this.$http.put(
+      `${this.api}/patient/${patient}/biopsy/${biopsy}/report/${report}`,
+      payload,
+      { params },
+    );
     return data;
   }
 
@@ -71,7 +78,9 @@ class GermlineService {
    * @returns {Promise/array} - result of API call
    */
   async deleteReport(patient, biopsy, report) {
-    const { data } = await this.$http.delete(`${this.api}/patient/${patient}/biopsy/${biopsy}/report/${report}`);
+    const { data } = await this.$http.delete(
+      `${this.api}/patient/${patient}/biopsy/${biopsy}/report/${report}`,
+    );
     return data;
   }
 
@@ -95,7 +104,10 @@ class GermlineService {
    * @returns {Promise} - created review object
    */
   async addReview(patient, biopsy, report, payload) {
-    const { data } = await this.$http.put(`${this.api}/patient/${patient}/biopsy/${biopsy}/report/${report}/review`, payload);
+    const { data } = await this.$http.put(
+      `${this.api}/patient/${patient}/biopsy/${biopsy}/report/${report}/review`,
+      payload,
+    );
     return data;
   }
 
@@ -108,7 +120,9 @@ class GermlineService {
    * @returns {Promise} - result of API call
    */
   async removeReview(patient, biopsy, report) {
-    const { data } = await this.$http.delete(`${this.api}/patient/${patient}/biopsy/${biopsy}/report/${report}/review`);
+    const { data } = await this.$http.delete(
+      `${this.api}/patient/${patient}/biopsy/${biopsy}/report/${report}/review`,
+    );
     return data;
   }
 
@@ -122,7 +136,9 @@ class GermlineService {
    * @returns {Promise} - variant object
    */
   async getVariant(patient, biopsy, report, variant) {
-    const resp = this.$http.get(`${this.api}/patient/${patient}/biopsy/${biopsy}/report/${report}/variant/${variant}`);
+    const resp = this.$http.get(
+      `${this.api}/patient/${patient}/biopsy/${biopsy}/report/${report}/variant/${variant}`,
+    );
     return resp;
   }
 
@@ -136,8 +152,11 @@ class GermlineService {
    *
    * @returns {Promise} - variant object
    */
-  async updateVariant(patient, biopsy, report, variant) {
-    const { data } = this.$http.put(`${this.api}/patient/${patient}/biopsy/${biopsy}/report/${report}/variant/${variant}`, payload);
+  async updateVariant(patient, biopsy, report, variant, payload) {
+    const { data } = this.$http.put(
+      `${this.api}/patient/${patient}/biopsy/${biopsy}/report/${report}/variant/${variant}`,
+      payload,
+    );
     return data;
   }
 }

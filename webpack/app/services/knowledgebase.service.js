@@ -23,7 +23,10 @@ class KnowledgebaseService {
    * @returns {Promise} - resolves w/ {valid: {input}}
    */
   async validateEvent(input) {
-    const { data } = await this.$http.post(`${this.api}/validate/events`, { events_expression: input });
+    const { data } = await this.$http.post(
+      `${this.api}/validate/events`,
+      { events_expression: input },
+    );
     return data;
   }
 
@@ -57,7 +60,7 @@ class KnowledgebaseService {
    * @returns {Promise} - array of matching text values
    */
   async getDiseaseOntology(query) {
-    const { data } = await this.$http.get(`${this.api}/disease-ontology?query=${query}`);
+    const { data } = await this.$http.get(`${this.api}/disease-ontology`, { params: { query } });
     return data;
   }
 
@@ -70,7 +73,10 @@ class KnowledgebaseService {
    * @returns {Promise} - array of change history events
    */
   async getChangeHistory(type, ident) {
-    const { data } = await this.$http.get(`${this.api}/history`, { params: { type, entry: ident } });
+    const { data } = await this.$http.get(
+      `${this.api}/history`,
+      { params: { type, entry: ident } },
+    );
     return data;
   }
 
