@@ -1,8 +1,11 @@
-app.controller('controller.dashboard.report.genomic.microbial',
-['_', '$q', '$scope', 'images',
-(_, $q, $scope, images) => {
-  
-  // Load Images into template
-  $scope.images = images;
- 
-}]);
+import template from './microbial.pug';
+import './microbial.scss';
+
+const bindings = {
+  images: '<',
+};
+
+export default {
+  template,
+  bindings,
+};

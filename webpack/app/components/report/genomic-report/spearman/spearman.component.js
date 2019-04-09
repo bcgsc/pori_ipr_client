@@ -1,13 +1,22 @@
-app.controller('controller.dashboard.report.genomic.spearman',
-['_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', 'api.pog', 'pog', 'images',
-(_, $q, $scope, $state, $mdDialog, $mdToast, $pog, pog, images) => {
-  
-  // Load Images into template
-  $scope.images = images;
+import template from './spearman.pug';
+import './spearman.scss';
 
-  // Convert full hex to 6chr
-  $scope.colourHex = (hex) => {
-    return hex.match(/([A-z0-9]{6}$)/)[0];
-  };
-  
-}]);
+const bindings = {
+  images: '<',
+  report: '<',
+};
+
+class SpearmanComponet {
+  $onInit() {
+    // Convert full hex to 6chr
+    this.colourHex = (hex) => {
+      return hex.match(/([A-z0-9]{6}$)/)[0];
+    };
+  }
+}
+
+export default {
+  template,
+  bindings,
+  controller: SpearmanComponet,
+};
