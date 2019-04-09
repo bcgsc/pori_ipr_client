@@ -13,8 +13,8 @@ class ReportService {
    */
   async allFiltered(params = {}) {
     const opts = { params };
-    const resp = await this.$http.get(`${this.api}/reports`, opts);
-    return resp.data;
+    const { data } = await this.$http.get(`${this.api}/reports`, opts);
+    return data;
   } // TODO: Differenciate between this member and getAllReports (was $report.all())
 
   /**
@@ -24,8 +24,8 @@ class ReportService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async getReport(report) {
-    const resp = await this.$http.get(`${this.api}/reports/${report}`);
-    return resp.data;
+    const { data } = await this.$http.get(`${this.api}/reports/${report}`);
+    return data;
   } // TODO: Differenciate between this member and getPogReport (was $report.get())
 
   /**
@@ -35,8 +35,8 @@ class ReportService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async updateReport(report) {
-    const resp = await this.$http.put(`${this.api}/reports/${report.ident}`, report);
-    return resp.data;
+    const { data } = await this.$http.put(`${this.api}/reports/${report.ident}`, report);
+    return data;
   }
 
   /**
@@ -48,8 +48,8 @@ class ReportService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async bindUser(report, user, role) {
-    const resp = await this.$http.post(`${this.api}/reports/${report}/user`, { user, role });
-    return resp.data;
+    const { data } = await this.$http.post(`${this.api}/reports/${report}/user`, { user, role });
+    return data;
   }
 
   /**
@@ -61,8 +61,8 @@ class ReportService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async unbindUser(report, user, role) {
-    const resp = await this.$http.delete(`${this.api}/reports/${report}/user`, { user, role });
-    return resp.data;
+    const { data } = await this.$http.delete(`${this.api}/reports/${report}/user`, { user, role });
+    return data;
   }
 
   /**
@@ -73,8 +73,8 @@ class ReportService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async getAllReports(pogID, params = {}) {
-    const resp = await this.$http.get(`${this.api}/POG/${pogID}/reports`, { params });
-    return resp.data;
+    const { data } = await this.$http.get(`${this.api}/POG/${pogID}/reports`, { params });
+    return data;
   } // TODO: Differenciate between this member and allFiltered (was $report.pog().all())
 
   /**
@@ -85,8 +85,8 @@ class ReportService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async get(pogID, report) {
-    const resp = await this.$http.get(`${this.api}/POG/${pogID}/reports/${report}`);
-    return resp.data;
+    const { data } = await this.$http.get(`${this.api}/POG/${pogID}/reports/${report}`);
+    return data;
   } // TODO: Differenciate between this member and getReport (was $report.pog().get())
 }
 

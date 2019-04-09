@@ -1,3 +1,9 @@
+/**
+ * All API calls relating to user object
+ * @param {*} _ {@link https://lodash.com/docs/4.17.10}
+ * @param {*} $http {@link https://docs.angularjs.org/api/ng/service/$http}
+ * @return {Object} $user service object
+ */
 class UserService {
   /* @ngInject */
   constructor($http) {
@@ -34,8 +40,8 @@ class UserService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async all() {
-    const resp = await this.$http.get(this.api);
-    return resp.data;
+    const { data } = await this.$http.get(this.api);
+    return data;
   }
 
   /**
@@ -45,8 +51,8 @@ class UserService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async update(user) {
-    const resp = await this.$http.put(`${this.api}/${user.ident}`, user);
-    return resp.data;
+    const { data } = await this.$http.put(`${this.api}/${user.ident}`, user);
+    return data;
   }
 
   /**
@@ -56,8 +62,8 @@ class UserService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async create(user) {
-    const resp = await this.$http.post(`${this.api}/`, user);
-    return resp.data;
+    const { data } = await this.$http.post(`${this.api}/`, user);
+    return data;
   }
 
   /**
@@ -67,8 +73,8 @@ class UserService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async search(query) {
-    const resp = await this.$http.get(`${this.api}/search`, { params: { query } });
-    return resp.data;
+    const { data } = await this.$http.get(`${this.api}/search`, { params: { query } });
+    return data;
   }
 
   /**
@@ -78,8 +84,8 @@ class UserService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async remove(user) {
-    const resp = await this.$http.delete(`${this.api}/${user.ident}`);
-    return resp.data;
+    const { data } = await this.$http.delete(`${this.api}/${user.ident}`);
+    return data;
   }
 }
 

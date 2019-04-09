@@ -11,8 +11,8 @@ class KnowledgebaseService {
    * @returns {Promise} - result of API call
    */
   async getVocabulary() {
-    const resp = await this.$http.get(`${this.api}/controlled-vocabulary`);
-    return resp.data;
+    const { data } = await this.$http.get(`${this.api}/controlled-vocabulary`);
+    return data;
   }
 
   /**
@@ -23,8 +23,8 @@ class KnowledgebaseService {
    * @returns {Promise} - resolves w/ {valid: {input}}
    */
   async validateEvent(input) {
-    const resp = await this.$http.post(`${this.api}/validate/events`, { events_expression: input });
-    return resp.data;
+    const { data } = await this.$http.post(`${this.api}/validate/events`, { events_expression: input });
+    return data;
   }
 
   /**
@@ -35,8 +35,8 @@ class KnowledgebaseService {
    * @returns {Promise} - array of matching text values
    */
   async getGenevar(query) {
-    const resp = await this.$http.get(`${this.api}/genevar`, { params: { query } });
-    return resp.data;
+    const { data } = await this.$http.get(`${this.api}/genevar?query=${query}`);
+    return data;
   }
 
   /**
@@ -45,8 +45,8 @@ class KnowledgebaseService {
    * @returns {Promise} - object containing key-value pairs of metric data
    */
   async getMetrics() {
-    const resp = await this.$http.get(`${this.api}/metrics`);
-    return resp.data;
+    const { data } = await this.$http.get(`${this.api}/metrics`);
+    return data;
   }
 
   /**
@@ -57,8 +57,8 @@ class KnowledgebaseService {
    * @returns {Promise} - array of matching text values
    */
   async getDiseaseOntology(query) {
-    const resp = await this.$http.get(`${this.api}/disease-ontology`, { params: { query } });
-    return resp.data;
+    const { data } = await this.$http.get(`${this.api}/disease-ontology?query=${query}`);
+    return data;
   }
 
   /**
@@ -70,8 +70,8 @@ class KnowledgebaseService {
    * @returns {Promise} - array of change history events
    */
   async getChangeHistory(type, ident) {
-    const resp = await this.$http.get(`${this.api}/history`, { params: { type, entry: ident } });
-    return resp.data;
+    const { data } = await this.$http.get(`${this.api}/history`, { params: { type, entry: ident } });
+    return data;
   }
 
   /**
@@ -87,11 +87,11 @@ class KnowledgebaseService {
     const processFilters = {};
 
     // Process Filters
-    Object.entries(filters).forEach(([filter, value]) => {
+    _.forEach(filters, (value, filter) => {
       if (filter === 'search') {
         processFilters[filter] = value;
       } else {
-        processFilters[filter] = value.join(',');
+        processFilters[filter] = _.join(value, ',');
       }
     });
 
@@ -99,8 +99,8 @@ class KnowledgebaseService {
     opts.params.limit = limit;
     opts.params.offset = offset;
 
-    const resp = await this.$http.get(`${this.api}/references`, opts);
-    return resp.data;
+    const { data } = await this.$http.get(`${this.api}/references`, opts);
+    return data;
   }
 }
   

@@ -1,112 +1,66 @@
-/*
- * BCGSC - IPR-Client User API
- *
- * This API factory implements the IPR-API. Calls to and from the API are
- * managed through this construct.
- *
- */
-app.factory('api.image', ['_', '$http', '$q', (_, $http, $q) => {
+class ImageService {
+  /* @ngInject */
+  constructor($http) {
+    this.$http = $http;
+    this.api = `${CONFIG.ENDPOINTS.API}/POG`;
+  }
   
-  const api = CONFIG.ENDPOINTS.API + '/POG';
-  
-  let $image = {};
-  
-  
-  /*
-   * Get one Image
-   *
+  /**
    * Retrieve one image from API.
-   *
+   * @param {String} pogID - pogID as string ex: POG960
+   * @param {String} report - Analysis report ident
+   * @param {String} key - key
+   * @return {Promise} API response data
+   * @throws {ErrorType} Thrown when API call fails
    */
-  $image.get = (POGID, report, key) => {
-    
-    return $q((resolve, reject) => {
+  async get(pogID, report, key) {
+    const { data } = await this.$http.get(
+      `${this.api}/${pogID}/report/${report}/image/retrieve/${key}`,
+    );
+    return data;
+  }
 
-      // Get result from API
-      $http.get(api + '/' + POGID + '/report/' + report + '/image/retrieve/' + key).then(
-        (result) => {
-          resolve(result.data);
-        },
-        (error) => {
-          // TODO: Better error handling
-          reject();
-        }
-      );
-    });
-  };
-
-  /*
+  /**
    * Get Density Graphs
-   *
-   *
+   * @param {String} pogID - pogID as string ex: POG960
+   * @param {String} report - Analysis report ident
+   * @return {Promise} API response data
+   * @throws {ErrorType} Thrown when API call fails
    */
-  $image.expDensityGraphs = (POGID, report) => {
-
-    return $q((resolve, reject) => {
-
-      // Get Graphs
-      $http.get(api + '/' + POGID + '/report/' + report + '/image/expressionDensityGraphs').then(
-        (result) => {
-          resolve(result.data);
-        },
-        (error) => {
-          reject(error.status);
-        }
-      )
-
-    });
-
-  };
+  async expDensityGraphs(pogID, report) {
+    const { data } = await this.$http.get(
+      `${this.api}/${pogID}/report/${report}/image/expressionDensityGraphs`,
+    );
+    return data;
+  }
   
   /**
    * Retrieve Mutation Summary images for this POG
-   *
-   * @param {string} POGID - Patient Identifier
-   * @param {string} report - Analysis Report identifier
-   *
-   * @returns {*}
+   * @param {String} pogID - pogID as string ex: POG960
+   * @param {String} report - Analysis report ident
+   * @return {Promise} API response data
+   * @throws {ErrorType} Thrown when API call fails
    */
-  $image.mutationSummary = (POGID, report) => {
+  async mutationSummary(pogID, report) {
+    const { data } = await this.$http.get(
+      `${this.api}/${pogID}/report/${report}/image/mutationSummary`,
+    );
+    return data;
+  }
 
-    return $q((resolve, reject) => {
-
-      // Get Graphs
-      $http.get(api + '/' + POGID + '/report/' + report + '/image/mutationSummary').then(
-        (result) => {
-          resolve(result.data);
-        },
-        (error) => {
-          reject(error.status);
-        }
-      )
-
-    });
-
-  };
-
-  /*
+  /**
    * Get Subtype Plots
-   *
-   *
+   * @param {String} pogID - pogID as string ex: POG960
+   * @param {String} report - Analysis report ident
+   * @return {Promise} API response data
+   * @throws {ErrorType} Thrown when API call fails
    */
-  $image.subtypePlots = (POGID, report) => {
+  async subtypePlots(pogID, report) {
+    const { data } = await this.$http.get(
+      `${this.api}/${pogID}/report/${report}/image/subtypePlots`,
+    );
+    return data;
+  }
+}
 
-    return $q((resolve, reject) => {
-
-      // Get Graphs
-      $http.get(api + '/' + POGID + '/report/' + report + '/image/subtypePlots').then(
-        (result) => {
-          resolve(result.data);
-        },
-        (error) => {
-          reject(error.status);
-        }
-      )
-
-    });
-
-  };
-
-  return $image;
-  
-}]);
+export default ImageService;

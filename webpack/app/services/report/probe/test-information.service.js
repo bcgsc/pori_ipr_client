@@ -1,40 +1,22 @@
-/*
- * BCGSC - IPR-Client User API
- *
- * This API factory implements the IPR-API. Calls to and from the API are
- * managed through this construct.
- *
- */
-app.factory('api.probe.testInformation', ['_', '$http', '$q', (_, $http, $q) => {
+class ProbeTestInformationService {
+  /* @ngInject */
+  constructor($http) {
+    this.$http = $http;
+    this.api = `${CONFIG.ENDPOINTS.API}/POG`;
+  }
 
-  const api = CONFIG.ENDPOINTS.API + '/POG';
-
-  let $testInformation = {};
-
-
-  /*
-   * Get one Image
+  /**
+   * Retrieve test information for a report
    *
-   * Retrieve one image from API.
+   * @param {String} POGID - patient identifier
+   * @param {String} report - report ident
    *
+   * @returns {Promise} - result of API call
    */
-  $testInformation.get = (POGID, report) => {
-
-    return $q((resolve, reject) => {
-
-      // Get result from API
-      $http.get(api + '/' + POGID + '/report/' + report + '/probe/testInformation').then(
-        (result) => {
-          resolve(result.data);
-        },
-        (error) => {
-          // TODO: Better error handling
-          reject();
-        }
-      );
-    });
-  };
-
-  return $testInformation;
-
-}]);
+  async retrieve(POGID, report) {
+    const { data } = await this.$http.get(`${this.api}/${POGID}/report/${report}/probe/testInformation`);
+    return data;
+  }
+}
+  
+export default ProbeTestInformationService;
