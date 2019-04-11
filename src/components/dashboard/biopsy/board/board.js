@@ -102,7 +102,7 @@ app.controller('controller.dashboard.biopsy.board',
           return pool;
         };
         
-        $lims.library(lib).then(
+        $lims.libraries(lib).then(
           (result) => {
             
             if(result.hits === 0) {
@@ -150,17 +150,17 @@ app.controller('controller.dashboard.biopsy.board',
           $mdDialog.cancel();
         };
         
-        $lims.source(analysis.pog.POGID).then(
+        $lims.biologicalMetadata(analysis.pog.POGID).then(
           (result) => {
             
             let sources = {};
             
-            if(result.hits === 0) {
+            if (result.meta.count === 0) {
               $mdToast.show($mdToast.simple().textContent('Unable to lookup the requested library'));
             }
             
             _.forEach(result.results, (s) => {
-              sources[s.original_source_name] = s;
+              sources[s.originalSourceName] = s;
             });
             
             scope.sources = _.values(sources);

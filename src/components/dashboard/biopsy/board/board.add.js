@@ -145,12 +145,12 @@ app.controller('controller.dashboard.biopsy.board.add',
         $scope.pog_sources = [];
 
         try {
-          const limsSources = await $lims.source($scope.searchQuery);
+          const limsSources = await $lims.biologicalMetadata($scope.searchQuery);
 
           const sources = {};
         
           _.forEach(limsSources.results, (s) => {
-            sources[s.original_source_name] = s;
+            sources[s.originalSourceName] = s;
           });
       
           $scope.source_loading = false;
@@ -172,29 +172,35 @@ app.controller('controller.dashboard.biopsy.board.add',
         let pogid = ($scope.patient.POGID) ? $scope.patient.POGID.POGID : $scope.searchQuery;
 
         try {
-          const limsSamples = await $lims.sample([pogid]);
+          const limsSamples = await $lims.biologicalMetadata([pogid]);
 
           _.forEach(limsSamples.results, (sample) => {
-            pogid = sample.participant_study_id;
-            const datestamp = sample.sample_collection_time.substring(0, 10);
+            pogid = sample.participantStudyId;
+            const datestamp = sample.sampleCollectionTimes[0];
         
             const library = {
-              name: sample.library,
-              type: (sample.disease_status === 'Normal') ? 'normal' : null,
-              source: sample.original_source_name,
-              disease: sample.disease,
-              sample_collection_time: sample.sample_collection_time,
+              name: sample.originalSourceName,
+              type: (sample.diseaseStatus === 'Normal') ? 'normal' : null,
+              source: sample.originalSourceName,
+              disease: sample.diseaseName,
+              sample_collection_time: sample.sampleCollectionTimes[0],
             };
         
-            if (sample.disease_status === 'Diseased' && !diseaseLibraries.includes(sample.library)) {
-              diseaseLibraries.push(sample.library);
+            if (sample.diseaseStatus === 'Diseased'
+              && !diseaseLibraries.includes(sample.originalSourceName)
+            ) {
+              diseaseLibraries.push(sample.originalSourceName);
             }
         
             // Check if pog has been seen yet in this cycle
-            if (!pogs[pogid]) pogs[pogid] = {};
+            if (!pogs[pogid]) {
+              pogs[pogid] = {};
+            }
         
             // Check if this biopsy event date
-            if (!pogs[pogid][datestamp]) pogs[pogid][datestamp] = [];
+            if (!pogs[pogid][datestamp]) {
+              pogs[pogid][datestamp] = [];
+            }
         
             // Has this library name been listed yet?
             if (!_.find(pogs[pogid][datestamp], { name: library.name })) {
@@ -202,12 +208,12 @@ app.controller('controller.dashboard.biopsy.board.add',
             }
           });
 
-          const limsLibraries = await $lims.library(diseaseLibraries);
+          const limsLibraries = await $lims.libraries(diseaseLibraries);
 
           // Loop over found libraries
           _.forEach(limsLibraries.results, (library) => {
             // Grab associated POG biopsies
-            const pog = pogs[library.full_name.split('-')[0]];
+            const pog = pogs[library.originalSourceName.split('-')[0]];
 
             // Loop over biopsies
             _.forEach(pog, (libraries, biopsyDate) => {
@@ -215,10 +221,14 @@ app.controller('controller.dashboard.biopsy.board.add',
               const i = _.findKey(libraries, { name: library.name });
 
               // If the index is valid, store the updated data
-              if (i) {
+              if (i !== null) {
                 // Types of library strategy mappings
-                if (library.library_strategy === 'WGS') pogs[library.full_name.split('-')[0]][biopsyDate][i].type = 'tumour';
-                if (library.library_strategy.includes('RNA')) pogs[library.full_name.split('-')[0]][biopsyDate][i].type = 'transcriptome';
+                if (library.libraryStrategyName.includes('WGS')) {
+                  pogs[library.originalSourceName.split('-')[0]][biopsyDate][i].type = 'tumour';
+                }
+                if (library.libraryStrategyName.includes('RNA-Seq')) {
+                  pogs[library.originalSourceName.split('-')[0]][biopsyDate][i].type = 'transcriptome';
+                }
               }
             });
           });
