@@ -96,7 +96,7 @@ md-dialog(layout="column", aria-label="Library Details", flex=95, flex-gt-lg=70)
                                 md-icon(ng-if="run.qcStatus === 'Passed'").green.small check_circle
                                 md-icon(ng-if="run.qcStatus === 'Failed'").red.small cancel
                             span {{run.qcStatus}}
-                            md-icon(ng-if="run.qcStatus_datetime").small.margin-left-10.clickable event
+                            md-icon(ng-if="run.qcStatusDatetime").small.margin-left-10.clickable event
                                 md-tooltip {{run.qcStatusDatetime | amDateFormat: 'YYYY-MM-DD HH:mm'}}
 
                         div(flex=10) {{run.libraryName}}
