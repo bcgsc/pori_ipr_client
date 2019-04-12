@@ -5,8 +5,8 @@
  * managed through this construct.
  *
  */
-app.factory('api.lims', ['$http', '$q', ($http, $q) => {
-  const api = 'https://lims16.bcgsc.ca/api_test/limsapi';
+app.factory('api.lims', ['$http', ($http) => {
+  const api = CONFIG.ENDPOINTS.LIMS;
 
   const $lims = {};
 
