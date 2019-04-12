@@ -14,10 +14,10 @@ md-dialog(layout="column", aria-label="Library Details", flex=95, flex-gt-lg=70)
 
                 div(layout="column")
 
-                    div(ng-show="loading.library", layout="row", layout-align="center center")
+                    div(ng-if="loading.library", layout="row", layout-align="center center")
                         md-progress-circular(md-mode="indeterminate")
 
-                    div(ng-hide="loading.library", layout="column")
+                    div(ng-if="!loading.library", layout="column")
 
                         div(layout="row").libDetails
                             div(flex=30) Status
@@ -25,11 +25,11 @@ md-dialog(layout="column", aria-label="Library Details", flex=95, flex-gt-lg=70)
 
                         div(layout="row").libDetails
                             div(flex=30) Library Type
-                            div(flex) {{library.type}}
+                            div(flex) {{library.nucleicAcidType}}
 
                         div(layout="row").libDetails
                             div(flex=30) Source Name
-                            div(flex) {{library.full_name}}
+                            div(flex) {{library.originalSourceName}}
 
                         div(layout="row").libDetails
                             div(flex=30) Library Name
@@ -37,7 +37,7 @@ md-dialog(layout="column", aria-label="Library Details", flex=95, flex-gt-lg=70)
 
                         div(layout="row").libDetails
                             div(flex=30) Sequencing Strategy
-                            div(flex) {{library.library_strategy}}
+                            div(flex) {{library.libraryStrategyName[0]}}
 
                         div(layout="row").libDetails
                             div(flex=30) Appeared in LIMS
@@ -50,9 +50,9 @@ md-dialog(layout="column", aria-label="Library Details", flex=95, flex-gt-lg=70)
                         div(layout="row").libDetails
                             div(flex=30) Pool
                             div(flex, layout="row")
-                                span(flex=30, ng-show="loading.illumina", style="height: 6px; overflow: hidden; margin-top: 5px;")
+                                span(flex=30, ng-if="loading.illumina", style="height: 6px; overflow: hidden; margin-top: 5px;")
                                     md-progress-linear(md-mode="indeterminate")
-                                span(ng-hide="loading.illumina") {{ getPoolName(illumina) }}
+                                span(ng-if="!loading.illumina") {{poolName}}
 
             md-tab(label="Illumina Run")
 
@@ -80,8 +80,8 @@ md-dialog(layout="column", aria-label="Library Details", flex=95, flex-gt-lg=70)
                     div(ng-hide="loading.illumina", layout="row", ng-repeat="run in illumina").row
                         div(flex=10) {{run.status}}
                         div(flex=10) {{run.type}}
-                        div(flex=10) {{run.sequencer}}
-                        div(flex=10) {{run.flowcell}}
+                        div(flex=10) {{run.sequencerName}}
+                        div(flex=10) {{run.flowcellId}}
                         div(flex=10) {{run.lane}}
                         div(flex=10)
                             span
@@ -89,20 +89,20 @@ md-dialog(layout="column", aria-label="Library Details", flex=95, flex-gt-lg=70)
                                 md-icon(ng-if="run.approval === 'Rejected'").red.small cancel
                             span {{run.approval}}
                             md-icon(ng-if="run.approval_datetime").small.margin-left-10.clickable event
-                                md-tooltip {{run.approval_datetime | amDateFormat: 'YYYY-MM-DD HH:mm'}}
+                                md-tooltip {{run.approvalDatetime | amDateFormat: 'YYYY-MM-DD HH:mm'}}
 
                         div(flex=15)
                             span
-                                md-icon(ng-if="run.qc_status === 'Passed'").green.small check_circle
-                                md-icon(ng-if="run.qc_status === 'Failed'").red.small cancel
-                            span {{run.qc_status}}
-                            md-icon(ng-if="run.qc_status_datetime").small.margin-left-10.clickable event
-                                md-tooltip {{run.qc_status_datetime | amDateFormat: 'YYYY-MM-DD HH:mm'}}
+                                md-icon(ng-if="run.qcStatus === 'Passed'").green.small check_circle
+                                md-icon(ng-if="run.qcStatus === 'Failed'").red.small cancel
+                            span {{run.qcStatus}}
+                            md-icon(ng-if="run.qcStatus_datetime").small.margin-left-10.clickable event
+                                md-tooltip {{run.qcStatusDatetime | amDateFormat: 'YYYY-MM-DD HH:mm'}}
 
-                        div(flex=10) {{run.library}}
+                        div(flex=10) {{run.libraryName}}
                         div(flex=15)
                             ul
-                                li(ng-repeat="l in run.multiplex_libraries track by $index") {{l}}
+                                li(ng-repeat="l in run.multiplexLibraryNames track by $index") {{l}}
 
     md-dialog-actions(layout="row", layout-aligh="end center")
         span(flex)

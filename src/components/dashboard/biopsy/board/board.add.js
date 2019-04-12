@@ -138,7 +138,9 @@ app.controller('controller.dashboard.biopsy.board.add',
       // Find LIMS Sources
       $scope.limsSources = $async(async () => {
         // Check to see if this is the same value
-        if ($scope.searchPogcache === $scope.searchQuery || $scope.searchQuery.length === 0) return; // Same value, btfo!
+        if ($scope.searchPogcache === $scope.searchQuery || $scope.searchQuery.length === 0) {
+          return; // Same value, btfo!
+        }
     
         $scope.source_loading = true;
         $scope.show_sources = true;
@@ -149,7 +151,7 @@ app.controller('controller.dashboard.biopsy.board.add',
 
           const sources = {};
         
-          _.forEach(limsSources.results, (s) => {
+          limsSources.results.forEach((s) => {
             sources[s.originalSourceName] = s;
           });
       
