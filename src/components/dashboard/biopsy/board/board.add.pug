@@ -189,10 +189,10 @@ md-dialog(layout="column", aria-label="Add Biopsy", flex-md=80, flex-xs=100, fle
                             div(flex)
                                 md-progress-linear(md-mode="indeterminate")
                         div(layout="row", ng-repeat="collection in found_libraries track by $index").row
-                            div(flex) {{collection.collection_date | amDateFormat: 'YYYY-MM-DD'}}
-                            div(flex) {{collection.tumour.name}}
-                            div(flex) {{collection.normal.name}}
-                            div(flex) {{collection.transcriptome.name}}
+                            div(flex) {{collection.date | amDateFormat: 'YYYY-MM-DD'}}
+                            div(flex) {{collection.tumour}}
+                            div(flex) {{collection.normal}}
+                            div(flex) {{collection.transcriptome}}
                             div(flex=5)
                                 md-icon(ng-click="selectCollection(collection)").clickable.blue add_circle
                                     md-tooltip Select this set of libraries
@@ -241,10 +241,10 @@ md-dialog(layout="column", aria-label="Add Biopsy", flex-md=80, flex-xs=100, fle
                             div(flex)
                                 md-progress-linear(md-mode="indeterminate")
                         div(layout="row", ng-repeat="collection in found_libraries track by $index").row
-                            div(flex) {{collection.collection_date | amDateFormat: 'YYYY-MM-DD'}}
-                            div(flex) {{collection.tumour.name}}
-                            div(flex) {{collection.normal.name}}
-                            div(flex) {{collection.transcriptome.name}}
+                            div(flex) {{collection.date | amDateFormat: 'YYYY-MM-DD'}}
+                            div(flex) {{collection.tumour}}
+                            div(flex) {{collection.normal}}
+                            div(flex) {{collection.transcriptome}}
                             div(flex=5)
                                 md-icon(ng-click="selectCollection(collection)").clickable.blue add_circle
                                     md-tooltip Select this set of libraries

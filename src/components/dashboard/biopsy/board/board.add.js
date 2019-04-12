@@ -165,92 +165,78 @@ app.controller('controller.dashboard.biopsy.board.add',
       $scope.libraryGuess = $async(async () => {
         $scope.find_libraries = true;
         $scope.libraries_loading = true;
-    
-        const diseaseLibraries = [];
-        const pogs = {};
-    
-        let pogid = ($scope.patient.POGID) ? $scope.patient.POGID.POGID : $scope.searchQuery;
+
+        const patientID = $scope.patient.POGID ? $scope.patient.POGID.POGID : $scope.searchQuery;
 
         try {
-          const limsSamples = await $lims.biologicalMetadata([pogid]);
+          const limsBioData = await $lims.biologicalMetadata([patientID]);
+          const libraryDiseaseDate = {};
+          const librariesByDate = {};
 
-          _.forEach(limsSamples.results, (sample) => {
-            pogid = sample.participantStudyId;
-            const datestamp = sample.sampleCollectionTimes[0];
-        
-            const library = {
-              name: sample.originalSourceName,
-              type: (sample.diseaseStatus === 'Normal') ? 'normal' : null,
-              source: sample.originalSourceName,
-              disease: sample.diseaseName,
-              sample_collection_time: sample.sampleCollectionTimes[0],
+          limsBioData.results.forEach((entry) => {
+            libraryDiseaseDate[entry.originalSourceName] = {
+              date: entry.sampleCollectionTimes[0],
+              diseaseStatus: entry.diseaseStatus,
             };
-        
-            if (sample.diseaseStatus === 'Diseased'
-              && !diseaseLibraries.includes(sample.originalSourceName)
-            ) {
-              diseaseLibraries.push(sample.originalSourceName);
-            }
-        
-            // Check if pog has been seen yet in this cycle
-            if (!pogs[pogid]) {
-              pogs[pogid] = {};
-            }
-        
-            // Check if this biopsy event date
-            if (!pogs[pogid][datestamp]) {
-              pogs[pogid][datestamp] = [];
-            }
-        
-            // Has this library name been listed yet?
-            if (!_.find(pogs[pogid][datestamp], { name: library.name })) {
-              pogs[pogid][datestamp].push(library);
+          });
+
+          const limsLibraries = await $lims.libraries(Object.keys(libraryDiseaseDate));
+
+          Object.entries(libraryDiseaseDate).forEach(([originalSourceName, dateStatus]) => {
+            const entryMatch = limsLibraries.results.filter((entry) => {
+              return entry.originalSourceName === originalSourceName;
+            });
+
+            if (entryMatch.length > 0) {
+              entryMatch.forEach((entry) => {
+                if (!Object.prototype.hasOwnProperty.call(librariesByDate, dateStatus.date)) {
+                  librariesByDate[dateStatus.date] = [];
+                }
+
+                /* Add the type to entries since LIMS doesn't provide this */
+                let type = null;
+                if (entry.libraryStrategyName.includes('WGS')
+                  && dateStatus.diseaseStatus.toLowerCase() === 'diseased') {
+                  type = 'tumour';
+                } else if (entry.libraryStrategyName.includes('RNA-Seq')
+                  && dateStatus.diseaseStatus.toLowerCase() === 'diseased') {
+                  type = 'transcriptome';
+                } else {
+                  type = 'normal';
+                }
+
+                librariesByDate[dateStatus.date].push({
+                  library: entry.uri,
+                  type,
+                });
+              });
             }
           });
 
-          const limsLibraries = await $lims.libraries(diseaseLibraries);
+          let results = {
+            normal: null,
+            tumour: null,
+            transcriptome: null,
+            date: null,
+          };
 
-          // Loop over found libraries
-          _.forEach(limsLibraries.results, (library) => {
-            // Grab associated POG biopsies
-            const pog = pogs[library.originalSourceName.split('-')[0]];
-
-            // Loop over biopsies
-            _.forEach(pog, (libraries, biopsyDate) => {
-              // The index key of the library we're looking for
-              const i = _.findKey(libraries, { name: library.name });
-
-              // If the index is valid, store the updated data
-              if (i !== null) {
-                // Types of library strategy mappings
-                if (library.libraryStrategyName.includes('WGS')) {
-                  pogs[library.originalSourceName.split('-')[0]][biopsyDate][i].type = 'tumour';
-                }
-                if (library.libraryStrategyName.includes('RNA-Seq')) {
-                  pogs[library.originalSourceName.split('-')[0]][biopsyDate][i].type = 'transcriptome';
-                }
-              }
+          Object.entries(librariesByDate).forEach(([date, libs]) => {
+            Object.values(libs).forEach((lib) => {
+              results[lib.type] = lib.library;
             });
-          });
-
-          // Did we find anything?
-          if (!pogs[pogid]) throw new Error('No libraries found');
-
-          const pogLibs = pogs[pogid];
-      
-          // Organize into object
-          _.forEach(pogLibs, (libs, date) => {
-            const normal = _.find(libs, { type: 'normal' });
-            const tumour = _.find(libs, { type: 'tumour' });
-            const transcriptome = _.find(libs, { type: 'transcriptome' });
-        
-            $scope.found_libraries.push({
-              collection_date: date, normal: normal, tumour: tumour, transcriptome: transcriptome,
-            });
+            results.date = date;
+            $scope.found_libraries.push(results);
+            results = {
+              normal: null,
+              tumour: null,
+              transcriptome: null,
+              date: null,
+            };
           });
       
           $scope.libraries_loading = false;
         } catch (err) {
+          $mdToast.showSimple('Could not retrieve library info: ', err);
           $scope.libraries_loading = false;
         }
       });
@@ -263,9 +249,9 @@ app.controller('controller.dashboard.biopsy.board.add',
        * @returns {undefined}
        */
       $scope.selectCollection = (collection) => {
-        $scope.patient.libraries.normal = collection.normal.name;
-        $scope.patient.libraries.tumour = collection.tumour.name;
-        $scope.patient.libraries.transcriptome = collection.transcriptome.name;
+        $scope.patient.libraries.normal = collection.normal;
+        $scope.patient.libraries.tumour = collection.tumour;
+        $scope.patient.libraries.transcriptome = collection.transcriptome;
       };
 
       /**
