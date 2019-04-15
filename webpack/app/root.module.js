@@ -35,9 +35,7 @@ import SlidesService from './services/report/presentation/slides.service';
 import DiscussionService from './services/report/presentation/discussion.service';
 import AnalysisService from './services/analysis.service';
 import GroupService from './services/group.service';
-import JiraService from './services/jira.service';
 import KnowledgebaseService from './services/knowledgebase.service';
-import LimsService from './services/lims.service';
 import ChangeHistoryService from './services/change-history.service';
 import TherapeuticService from './services/report/therapeutic-options.service';
 import PubmedService from './services/pubmed.service';
@@ -79,9 +77,7 @@ export default angular.module('root')
   .service('DiscussionService', DiscussionService)
   .service('AnalysisService', AnalysisService)
   .service('GroupService', GroupService)
-  .service('JiraService', JiraService)
   .service('KnowledgebaseService', KnowledgebaseService)
-  .service('LimsService', LimsService)
   .service('ChangeHistoryService', ChangeHistoryService)
   .service('TherapeuticService', TherapeuticService)
   .service('PathwayAnalysisService', PathwayAnalysisService)
@@ -160,8 +156,7 @@ export default angular.module('root')
       return {
         request: async (config) => {
           const KeycloakService = $injector.get('KeycloakService');
-          if (await KeycloakService.getToken() && !(config.url.match(/https:\/\/lims16.bcgsc.ca.*/g)
-            || config.url.match(/https:\/\/www.bcgsc.ca\/jira\/rest\/api\/2/g))) {
+          if (await KeycloakService.getToken()) {
             config.headers.Authorization = await KeycloakService.getToken();
           }
           return config;
