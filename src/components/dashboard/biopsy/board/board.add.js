@@ -112,7 +112,7 @@ app.controller('controller.dashboard.biopsy.board.add',
         $scope.limsSources();
 
         // Check to see if this is the same value
-        if ($scope.searchQuery.length === 0) return; // Same value, btfo!
+        if ($scope.searchQuery.length === 0) return; // Same value
 
         // check if POG already exists in DB
         const pogid = ($scope.patient.POGID) ? $scope.patient.POGID.POGID : $scope.searchQuery;
@@ -139,7 +139,7 @@ app.controller('controller.dashboard.biopsy.board.add',
       $scope.limsSources = $async(async () => {
         // Check to see if this is the same value
         if ($scope.searchPogcache === $scope.searchQuery || $scope.searchQuery.length === 0) {
-          return; // Same value, btfo!
+          return; // Same value
         }
     
         $scope.source_loading = true;
