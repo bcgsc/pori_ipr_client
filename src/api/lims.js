@@ -7,6 +7,7 @@
  */
 app.factory('api.lims', ['$http', ($http) => {
   const api = CONFIG.ENDPOINTS.LIMS;
+  const Authorization = 'Basic YnBpZXJjZTprNHRZcDNScnl+';
 
   const $lims = {};
 
@@ -41,7 +42,7 @@ app.factory('api.lims', ['$http', ($http) => {
     const { data } = await $http.post(
       `${api}/biological-metadata/search`,
       body,
-      { headers: { Authorization: 'Basic YnBpZXJjZTprNHRZcDNScnl+' } },
+      { headers: { Authorization } },
     );
     return data;
   };
@@ -71,7 +72,7 @@ app.factory('api.lims', ['$http', ($http) => {
     const { data } = await $http.post(
       `${api}/libraries/search`,
       body,
-      { headers: { Authorization: 'Basic YnBpZXJjZTprNHRZcDNScnl+' } },
+      { headers: { Authorization } },
     );
     return data;
   };
@@ -113,7 +114,7 @@ app.factory('api.lims', ['$http', ($http) => {
     const { data } = await $http.post(
       `${api}/sequencer-runs/search`,
       body,
-      { headers: { Authorization: 'Basic YnBpZXJjZTprNHRZcDNScnl+' } },
+      { headers: { Authorization } },
     );
     return data;
   };
