@@ -93,11 +93,11 @@ class KnowledgebaseService {
     const processFilters = {};
 
     // Process Filters
-    _.forEach(filters, (value, filter) => {
+    Object.entries(filters).forEach(([filter, value]) => {
       if (filter === 'search') {
         processFilters[filter] = value;
       } else {
-        processFilters[filter] = _.join(value, ',');
+        processFilters[filter] = value.join(',');
       }
     });
 

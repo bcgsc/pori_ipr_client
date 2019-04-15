@@ -6,7 +6,7 @@ const bindings = {
   report: '<',
 };
 
-class SpearmanComponet {
+class SpearmanComponent {
   $onInit() {
     // Convert full hex to 6chr
     this.colourHex = (hex) => {
@@ -18,5 +18,5 @@ class SpearmanComponet {
 export default {
   template,
   bindings,
-  controller: SpearmanComponet,
+  controller: SpearmanComponent,
 };
