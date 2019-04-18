@@ -26,8 +26,11 @@ class GermlineService {
    * @returns {Promise} - resolves with array of reports
    */
   async getReportForBiopsy(patient, biopsy, params = {}) {
-    const resp = await this.$http.get(`${this.api}/patient/${patient}/biopsy/${biopsy}`, { params });
-    return resp;
+    const { data } = await this.$http.get(
+      `${this.api}/patient/${patient}/biopsy/${biopsy}`,
+      { params },
+    );
+    return data;
   }
 
   /**
@@ -136,10 +139,10 @@ class GermlineService {
    * @returns {Promise} - variant object
    */
   async getVariant(patient, biopsy, report, variant) {
-    const resp = this.$http.get(
+    const { data } = await this.$http.get(
       `${this.api}/patient/${patient}/biopsy/${biopsy}/report/${report}/variant/${variant}`,
     );
-    return resp;
+    return data;
   }
 
   /**
@@ -153,7 +156,7 @@ class GermlineService {
    * @returns {Promise} - variant object
    */
   async updateVariant(patient, biopsy, report, variant, payload) {
-    const { data } = this.$http.put(
+    const { data } = await this.$http.put(
       `${this.api}/patient/${patient}/biopsy/${biopsy}/report/${report}/variant/${variant}`,
       payload,
     );
