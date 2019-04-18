@@ -71,7 +71,7 @@
         }],
         "no-undef": "warn",
         "arrow-body-style": ["error", "always"],
-        "object-shorthand": ["error", "consistent"],
+        "object-shorthand": ["error", "always"],
         "quote-props": ["error", "consistent"],
         "no-underscore-dangle": ["warn"],
         "no-param-reassign": "off",
