@@ -1,146 +1,167 @@
-/**
- * BCGSC - IPR-Client Tracking State Definition API
- *
- * This API factory implements the IPR-API. Calls to and from the API are
- * managed through this construct.
- *
- * Author: Brandon Pierce <bpierce@bcgsc.ca>
- */
+class GermlineService {
+  /* @ngInject */
+  constructor($http) {
+    this.$http = $http;
+    this.api = `${CONFIG.ENDPOINTS.API}/germline_small_mutation`;
+  }
 
-app.factory('api.germline.report', ['_', '$http', '$q', (_, $http, $q) => {
-  const api = CONFIG.ENDPOINTS.API + '/germline_small_mutation';
-  
-  let $report = {};
-  
   /**
-   * Get all small mutation reports
+   * Retrieves all small mutation reports
    *
-   * @returns {Promise} - Resolves with object of {total: int, reports: [{collection},{},...]}
+   * @param {Object} params - parameters to include in query
+   * @returns {Promise} - resolves with object of {total: int, reports: [{collection},{},...]}
    */
-  $report.all = (params={}) => {
-    return $q((resolve, reject) => {
-      
-      $http.get(`${api}`, {params: params})
-        .then((result) => {
-          resolve(result.data);
-        })
-        .catch((err) => {
-          reject(err);
-        });
-      
-    });
-  };
-  
+  async getAllReports(params = {}) {
+    const { data } = await this.$http.get(this.api, { params });
+    return data;
+  }
+
   /**
-   * Get all reports for a biopsy
+   * Retrieve all reports for a given biopsy
    *
-   * @param {string} patient - Patient ID (POG1234)
-   * @param {string} biopsy - Biopsy name (biop1)
-   * @param {object} params - Parameters to pass
+   * @param {String} patient - patient identifier
+   * @param {String} biopsy - biopsy number
+   * @param {Object} params - parameters to include in query
    *
-   * @returns {Promise/array} - Resolves with array of reports
+   * @returns {Promise} - resolves with array of reports
    */
-  $report.biopsy = (patient, biopsy, params={}) => {
-    return $q((resolve, reject) => {
-      
-      $http.get(`${api}/patient/${patient}/biopsy/${biopsy}`, {params: params})
-        .then((reports) => {
-          resolve(reports);
-        })
-        .catch((err) => {
-          reject(err);
-        });
-      
-    });
-  };
-  
-  
+  async getReportForBiopsy(patient, biopsy, params = {}) {
+    const { data } = await this.$http.get(
+      `${this.api}/patient/${patient}/biopsy/${biopsy}`,
+      { params },
+    );
+    return data;
+  }
+
   /**
-   * Get a single report
+   * Retrieves a single report
    *
-   * @param {string} patient - Patient ID (POG1234)
-   * @param {string} biopsy - Biopsy name (biop1)
-   * @param {string} report - Report UUID
-   * @param {object} params - Parameters to pass
+   * @param {String} patient - patient identifier
+   * @param {String} biopsy - biopsy number
+   * @param {String} report - report uuid
+   * @param {Object} params - parameters to include in query
    *
-   * @returns {Promise/array} - Resolves with array of reports
+   * @returns {Promise} - result of API call
    */
-  $report.one = (patient, biopsy, report, params={}) => {
-    return $q((resolve, reject) => {
-      $http.get(`${api}/patient/${patient}/biopsy/${biopsy}/report/${report}`, {params: params})
-        .then((report) => {
-          resolve(report.data);
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
-  };
-  
-  
+  async getReport(patient, biopsy, report, params = {}) {
+    const { data } = await this.$http.get(
+      `${this.api}/patient/${patient}/biopsy/${biopsy}/report/${report}`,
+      { params },
+    );
+    return data;
+  }
+
   /**
-   * Update a single report
+   * Update a report
    *
-   * @param {string} patient - Patient ID (POG1234)
-   * @param {string} biopsy - Biopsy name (biop1)
-   * @param {string} report - Report UUID
-   * @param {object} data - Updated report data payload
-   * @param {object} params - Parameters to pass
+   * @param {String} patient - patient identifier
+   * @param {String} biopsy - biopsy number
+   * @param {String} report - report uuid
+   * @param {Object} payload - updated report data payload
+   * @param {Object} params - parameters to include in query
    *
-   * @returns {Promise/array} - Resolves with array of reports
+   * @returns {Promise/array} - result of API call
    */
-  $report.update = (patient, biopsy, report, data, params={}) => {
-    return $q((resolve, reject) => {
-      $http.put(`${api}/patient/${patient}/biopsy/${biopsy}/report/${report}`, data, {params: params})
-        .then((report) => {
-          resolve(report.data);
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
-  };
-  
-  
+  async updateReport(patient, biopsy, report, payload, params = {}) {
+    const { data } = await this.$http.put(
+      `${this.api}/patient/${patient}/biopsy/${biopsy}/report/${report}`,
+      payload,
+      { params },
+    );
+    return data;
+  }
+
   /**
    * Delete a report
    *
-   * @param {string} patient - Patient ID (POG1234)
-   * @param {string} biopsy - Biopsy name (biop1)
-   * @param {string} report - Report UUID
+   * @param {String} patient - patient identifier
+   * @param {String} biopsy - biopsy number
+   * @param {String} report - report uuid
    *
-   * @returns {Promise/array} - Resolves with array of reports
+   * @returns {Promise/array} - result of API call
    */
-  $report.delete = (patient, biopsy, report) => {
-    return $q((resolve, reject) => {
-      $http.delete(`${api}/patient/${patient}/biopsy/${biopsy}/report/${report}`)
-        .then(() => {
-          resolve();
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
-  };
-  
+  async deleteReport(patient, biopsy, report) {
+    const { data } = await this.$http.delete(
+      `${this.api}/patient/${patient}/biopsy/${biopsy}/report/${report}`,
+    );
+    return data;
+  }
+
   /**
    * Retrieve a flash token to download a report
    *
-   * @returns {Promise/object} - Resolves with token object
+   * @returns {Promise} - token object
    */
-  $report.flash_token = () => {
-    return $q((resolve, reject) => {
-      
-      $http.get(`${api}/export/batch/token`)
-        .then((response) => {
-          resolve(response.data);
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
-  };
+  async getFlashToken() {
+    const { data } = await this.$http.get(`${this.api}/export/batch/token`);
+    return data;
+  }
+
+  /** Add review to a report
+   *
+   * @param {String} patient - patient identifier
+   * @param {String} biopsy - biopsy name
+   * @param {String} report - report uuid
+   * @param {Object} payload - review body payload
+   *
+   * @returns {Promise} - created review object
+   */
+  async addReview(patient, biopsy, report, payload) {
+    const { data } = await this.$http.put(
+      `${this.api}/patient/${patient}/biopsy/${biopsy}/report/${report}/review`,
+      payload,
+    );
+    return data;
+  }
+
+  /** Remove review from a report
+   *
+   * @param {String} patient - patient identifier
+   * @param {String} biopsy - biopsy name
+   * @param {String} report - report uuid
+   *
+   * @returns {Promise} - result of API call
+   */
+  async removeReview(patient, biopsy, report) {
+    const { data } = await this.$http.delete(
+      `${this.api}/patient/${patient}/biopsy/${biopsy}/report/${report}/review`,
+    );
+    return data;
+  }
+
+  /**
+   * Get a variant
+   * @param {String} patient - patient identifier
+   * @param {String} biopsy - biopsy name
+   * @param {String} report - report uuid
+   * @param {String} variant - variant uuid
+   *
+   * @returns {Promise} - variant object
+   */
+  async getVariant(patient, biopsy, report, variant) {
+    const { data } = await this.$http.get(
+      `${this.api}/patient/${patient}/biopsy/${biopsy}/report/${report}/variant/${variant}`,
+    );
+    return data;
+  }
+
+  /**
+   * Update a variant
+   * @param {String} patient - patient identifier
+   * @param {String} biopsy - biopsy name
+   * @param {String} report - report uuid
+   * @param {String} variant - variant uuid
+   * @param {Object} payload - variant body payload
+   *
+   * @returns {Promise} - variant object
+   */
+  async updateVariant(patient, biopsy, report, variant, payload) {
+    const { data } = await this.$http.put(
+      `${this.api}/patient/${patient}/biopsy/${biopsy}/report/${report}/variant/${variant}`,
+      payload,
+    );
+    return data;
+  }
+}
   
-  return $report;
-  
-}]);
+export default GermlineService;

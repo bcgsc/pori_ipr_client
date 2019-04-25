@@ -2,7 +2,7 @@ class AnalysisService {
   /* @ngInject */
   constructor($http) {
     this.$http = $http;
-    this.api = `${CONFIG.ENDPOINTS.API}/analysis`;
+    this.api = CONFIG.ENDPOINTS.API;
   }
 
   /**
@@ -13,8 +13,8 @@ class AnalysisService {
     */
   async getAllAnalyses(params = {}) {
     const opts = { params };
-    const resp = await this.$http.get(this.api, opts);
-    return resp.data;
+    const { data } = await this.$http.get(`${this.api}/analysis`, opts);
+    return data;
   }
   
   /**
@@ -24,8 +24,8 @@ class AnalysisService {
     * @throws {ErrorType} Thrown when API call fails
     */
   async getExtendedAnalysis(ident) {
-    const resp = await this.$http.get(`${this.api}/extended/${ident}`);
-    return resp.data;
+    const { data } = await this.$http.get(`${this.api}/analysis/extended/${ident}`);
+    return data;
   }
   
   /**
@@ -35,8 +35,8 @@ class AnalysisService {
     * @throws {ErrorType} Thrown when API call fails
     */
   async addAnalysis(analysis) {
-    const resp = await this.$http.post(this.api, analysis);
-    return resp.data;
+    const { data } = await this.$http.post(`${this.api}/analysis`, analysis);
+    return data;
   }
 
   /**
@@ -47,12 +47,10 @@ class AnalysisService {
     */
   async updateAnalysis(analysis) {
     const payload = angular.copy(analysis);
-    if (payload.analysis && Array.isArray(payload.analysis)) {
-      delete payload.analysis;
-    }
+    if (payload.analysis && Array.isArray(payload.analysis)) delete payload.analysis;
 
-    const resp = await this.$http.put(`${this.api}/${analysis.ident}`, analysis);
-    return resp.data;
+    const { data } = await this.$http.put(`${this.api}/analysis/${analysis.ident}`, analysis);
+    return data;
   }
 
   /**
@@ -61,8 +59,8 @@ class AnalysisService {
     * @throws {ErrorType} Thrown when API call fails
     */
   async getComparators() {
-    const resp = await this.$http.get(`${this.api}/comparators`);
-    return resp.data;
+    const { data } = await this.$http.get(`${this.api}/analysis/comparators`);
+    return data;
   }
 }
   

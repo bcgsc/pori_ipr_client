@@ -16,8 +16,8 @@ class PogService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async all(opts = {}) {
-    const resp = await this.$http.get(this.api, { params: opts });
-    this.pogs = resp.data;
+    const { data } = await this.$http.get(this.api, { params: opts });
+    this.pogs = data;
     return this.pogs;
   }
   
@@ -33,9 +33,9 @@ class PogService {
       return this.pogs[pogID];
     }
     
-    const resp = await this.$http.get(`${this.api}/${pogID}`);
-    this.pogs[resp.data.POGID] = resp.data;
-    return this.pogs[resp.data.POGID];
+    const { data } = await this.$http.get(`${this.api}/${pogID}`);
+    this.pogs[data.POGID] = data;
+    return this.pogs[data.POGID];
   }
 
   /**
@@ -45,8 +45,8 @@ class PogService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async update(pog) {
-    const resp = await this.$http.put(`${this.api}/${pog.POGID}`, pog);
-    return resp.data;
+    const { data } = await this.$http.put(`${this.api}/${pog.POGID}`, pog);
+    return data;
   }
 
   /**

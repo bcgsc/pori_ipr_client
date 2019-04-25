@@ -26,17 +26,21 @@ import MutationSummaryService from './services/report/summary/mutation-summary.s
 import ProbeTargetService from './services/report/summary/probe-target.service';
 import MutationSignatureService from './services/report/summary/mutation-signature.service';
 import MicrobialService from './services/report/summary/microbial.service';
+import PathwayAnalysisService from './services/report/summary/pathway-analysis.service';
 import AnalystCommentsService from './services/report/analyst-comments/analyst-comments.service';
+import ProbeAlterationService from './services/report/probe/alteration.service';
+import ProbeSignatureService from './services/report/probe/signature.service';
+import ProbeTestInformationService from './services/report/probe/test-information.service';
 import SlidesService from './services/report/presentation/slides.service';
 import DiscussionService from './services/report/presentation/discussion.service';
 import AnalysisService from './services/analysis.service';
 import GroupService from './services/group.service';
-import JiraService from './services/jira.service';
 import KnowledgebaseService from './services/knowledgebase.service';
-import LimsService from './services/lims.service';
 import ChangeHistoryService from './services/change-history.service';
 import TherapeuticService from './services/report/therapeutic-options.service';
-import PathwayAnalysisService from './services/report/pathway-analysis/pathway-analysis.service';
+import PubmedService from './services/pubmed.service';
+import GermlineService from './services/germline.service';
+import ImageService from './services/report/image.service';
 import TitleCaseFilter from './filters/titlecase.filter';
 import './root.scss';
 
@@ -67,17 +71,22 @@ export default angular.module('root')
   .service('ProbeTargetService', ProbeTargetService)
   .service('MutationSignatureService', MutationSignatureService)
   .service('MicrobialService', MicrobialService)
+  .service('PathwayAnalysisService', PathwayAnalysisService)
   .service('AnalystCommentsService', AnalystCommentsService)
   .service('SlidesService', SlidesService)
   .service('DiscussionService', DiscussionService)
   .service('AnalysisService', AnalysisService)
   .service('GroupService', GroupService)
-  .service('JiraService', JiraService)
   .service('KnowledgebaseService', KnowledgebaseService)
-  .service('LimsService', LimsService)
   .service('ChangeHistoryService', ChangeHistoryService)
   .service('TherapeuticService', TherapeuticService)
   .service('PathwayAnalysisService', PathwayAnalysisService)
+  .service('PubmedService', PubmedService)
+  .service('GermlineService', GermlineService)
+  .service('ProbeAlterationService', ProbeAlterationService)
+  .service('ProbeSignatureService', ProbeSignatureService)
+  .service('ProbeTestInformationService', ProbeTestInformationService)
+  .service('ImageService', ImageService)
   .filter('titlecase', TitleCaseFilter)
   .config(($stateProvider, $urlServiceProvider, $locationProvider) => {
     'ngInject';
@@ -147,8 +156,7 @@ export default angular.module('root')
       return {
         request: async (config) => {
           const KeycloakService = $injector.get('KeycloakService');
-          if (await KeycloakService.getToken() && !(config.url.match(/https:\/\/lims16.bcgsc.ca.*/g)
-            || config.url.match(/https:\/\/www.bcgsc.ca\/jira\/rest\/api\/2/g))) {
+          if (await KeycloakService.getToken()) {
             config.headers.Authorization = await KeycloakService.getToken();
           }
           return config;

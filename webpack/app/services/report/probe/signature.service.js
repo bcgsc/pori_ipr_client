@@ -1,85 +1,56 @@
-/*
- * BCGSC - IPR-Client User API
- *
- * This API factory implements the IPR-API. Calls to and from the API are
- * managed through this construct.
- *
- */
-app.factory('api.probe.signature', ['_', '$http', '$q', (_, $http, $q) => {
-
-  const api = CONFIG.ENDPOINTS.API + '/POG';
-
-  let $signature = {};
-
+class ProbeSignatureService {
+  /* @ngInject */
+  constructor($http) {
+    this.$http = $http;
+    this.api = `${CONFIG.ENDPOINTS.API}/POG`;
+  }
 
   /**
-   * Get Probe Signature Details
+   * Retrieve probe signature details
    *
-   * Retrieve probe sign-off details
+   * @param {String} patient - patient identifier
+   * @param {String} report - report ident
    *
+   * @returns {Promise} - result of API call
    */
-  $signature.get = (POGID, report) => {
-
-    return $q((resolve, reject) => {
-
-      // Get result from API
-      $http.get(api + '/' + POGID + '/report/' + report + '/probe/signature').then(
-        (result) => {
-          resolve(result.data);
-        },
-        (error) => {
-          reject(error);
-        }
-      );
-    });
-  };
+  async retrieve(patient, report) {
+    const { data } = this.$http.get(`${this.api}/${patient}/report/${report}/probe/signature`);
+    return data;
+  }
 
   /**
-   * Sign the probe report
+   * Sign probe report
    *
-   * @param {string} POGID - POGID
-   * @param {string} report - Report Ident string
-   * @param {string} role - Report signing role
-   * @returns {Promise|object}
+   * @param {String} patient - patient identifier
+   * @param {String} report - report ident
+   * @param {String} role - role to sign with
+   *
+   * @returns {Promise} - result of API call
    */
-  $signature.sign = (POGID, report, role) => {
-    return $q((resolve, reject) => {
-
-      $http.put(api + '/' + POGID + '/report/' + report + '/probe/signature/' + role, {}).then(
-        (result) => {
-          resolve(result.data);
-        },
-        (err) => {
-          reject(err);
-        }
-      )
-
-    });
-  };
+  async sign(patient, report, role) {
+    const { data } = this.$http.put(
+      `${this.api}/${patient}/report/${report}/probe/signature/${role}`,
+      {},
+    );
+    return data;
+  }
 
   /**
-   * Revoke a probe report signature
+   * Revoke signature from probe report
    *
-   * @param {string} POGID - POGID
-   * @param {string} report - Report Ident string
-   * @param {string} role - Report signing role
-   * @returns {Promise|object}
+   * @param {String} patient - patient identifier
+   * @param {String} report - report ident
+   * @param {String} role - role to revoke signature of
+   *
+   * @returns {Promise} - result of API call
    */
-  $signature.revoke = (POGID, report, role) => {
-    return $q((resolve, reject) => {
-
-      $http.put(api + '/' + POGID + '/report/' + report + '/probe/signature/revoke/' + role, {}).then(
-        (result) => {
-          resolve(result.data);
-        },
-        (err) => {
-          reject(err);
-        }
-      )
-
-    });
-  };
-
-  return $signature;
-
-}]);
+  async revoke(patient, report, role) {
+    const { data } = this.$http.put(
+      `${this.api}/${patient}/report/${report}/probe/signature/revoke/${role}`,
+      {},
+    );
+    return data;
+  }
+}
+  
+export default ProbeSignatureService;

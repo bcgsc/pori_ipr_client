@@ -1,13 +1,13 @@
 section
-    md-subheader.md-primary Disease Specific Analysis
+  md-subheader.md-no-sticky.md-primary Disease Specific Analysis
 
-    div(layout="column", flex)
+  div(layout="column", flex)
 
-        div(layout="column", flex).bg-white
+    div(layout="column", flex).bg-white
 
-            h2.title Expression Subtype        
+      h2.title Expression Subtype        
 
-            p(ng-if="!hasSubtypePlot").padding-left-10 Current disease specific analysis is not applicable for this case
+      p(ng-if="!$ctrl.hasSubtypePlot").padding-left-10 Current disease specific analysis is not applicable for this case
 
-            div(layout="row", flex, layout-align="center center", ng-repeat="image in subtypePlotImages").md-padding
-                img(data-ng-src="data:image/png;base64,{{image.data}}")
+      div(layout="row", flex, layout-align="center center", ng-repeat="image in $ctrl.subtypePlotImages").md-padding
+        img(data-ng-src="data:image/png;base64,{{image.data}}")

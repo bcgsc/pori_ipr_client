@@ -1,14 +1,20 @@
-app.controller('controller.dashboard.report.genomic.diseaseSpecificAnalysis',
-  ['_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', 'api.pog', 'pog', 'images', 'subtypePlotImages',
-    (_, $q, $scope, $state, $mdDialog, $mdToast, $pog, pog, images, subtypePlotImages) => {
+import template from './disease-specific-analysis.pug';
 
-      // Load Images into template
-      $scope.images = images;
+const bindings = {
+  pog: '<',
+  images: '<',
+  subtypePlotImages: '<',
+};
 
-      // Load Subtype Plot Images into template
-      $scope.subtypePlotImages = subtypePlotImages;
-      $scope.hasSubtypePlot = !(Object.keys(subtypePlotImages).length === 0);
+class DiseaseSpecificAnalysisComponent {
+  $onInit() {
+    // Load Subtype Plot Images into template
+    this.hasSubtypePlot = !(Object.keys(this.subtypePlotImages).length === 0);
+  }
+}
 
-    }
-  ]
-);
+export default {
+  template,
+  bindings,
+  controller: DiseaseSpecificAnalysisComponent,
+};
