@@ -5,76 +5,15 @@
  * managed through this construct.
  *
  */
-app.factory('api.lims', ['_', '$http', '$q', (_, $http, $q) => {
+app.factory('api.lims', ['$http', ($http) => {
+  const api = CONFIG.ENDPOINTS.LIMS;
+  const Authorization = 'Basic YnBpZXJjZTprNHRZcDNScnl+';
 
-  const api = 'https://lims16.bcgsc.ca';
+  const $lims = {};
 
-  let $lims = {};
-
-  $lims.diseaseOntology = (query) => {
-
-    return $q((resolve, reject) => {
-
-      let req = $http({
-        method: 'get',
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': undefined
-        },
-        url: api + '/alpha/limsapi/elastic/disease_ontology/' + query,
-      });
-
-      //let = $http.get(api + '/elastic_search', opts)
-
-      req.then(
-        (result) => {
-          resolve(result.data);
-        },
-        (err) => {
-          reject(err);
-        }
-      )
-
-    });
-
-  };
-  
-  
-  /**
-   * Get sample information from LIMS
-   *
-   * @param pogs
-   * @returns {*}
-   */
-  $lims.sample = (pogs) => {
-    return $q((resolve, reject) => {
-  
-      // Convert string pogid to array
-      if(typeof pogs === 'string') {
-        pogs = [pogs];
-      }
-  
-      let body = {
-        filters: {
-          op: "in",
-          content: {
-            field: "participant_study_id",
-            value: pogs
-          }
-        }
-      };
-      
-      $http.post('https://lims16.bcgsc.ca/alpha/limsapi/sample', body, {headers: {Authorization: 'Basic YnBpZXJjZTprNHRZcDNScnl+'}}).then(
-        (result) => {
-          resolve(result.data);
-        })
-        .catch((err) => {
-          console.log('Failed to get LIMS sample result', err);
-          reject(err);
-        });
-      
-    
-    });
+  $lims.diseaseOntology = async (query) => {
+    const { data } = await $http.get(`${api}/elastic/disease_ontology/${query}`);
+    return data;
   };
   
   
@@ -84,35 +23,28 @@ app.factory('api.lims', ['_', '$http', '$q', (_, $http, $q) => {
    * @param pogs
    * @returns {*}
    */
-  $lims.source = (pogs) => {
-    return $q((resolve, reject) => {
-  
-      // Convert string pogid to array
-      if(typeof pogs === 'string') {
-        pogs = [pogs];
-      }
-  
-      let body = {
-        filters: {
-          op: "in",
-          content: {
-            field: "participant_study_id",
-            value: pogs
-          }
-        }
-      };
-      
-      $http.post('https://lims16.bcgsc.ca/alpha/limsapi/source', body, {headers: {Authorization: 'Basic YnBpZXJjZTprNHRZcDNScnl+'}}).then(
-        (result) => {
-          resolve(result.data);
-        })
-        .catch((err) => {
-          console.log('Failed to get LIMS sample result', err);
-          reject(err);
-        });
-      
+  $lims.biologicalMetadata = async (pogs, field = 'participantStudyID') => {
+    // Convert string pogid to array
+    if (typeof pogs === 'string') {
+      pogs = [pogs];
+    }
+
+    const body = {
+      filters: {
+        op: 'in',
+        content: {
+          field,
+          value: pogs,
+        },
+      },
+    };
     
-    });
+    const { data } = await $http.post(
+      `${api}/biological-metadata/search`,
+      body,
+      { headers: { Authorization } },
+    );
+    return data;
   };
   
   
@@ -122,34 +54,27 @@ app.factory('api.lims', ['_', '$http', '$q', (_, $http, $q) => {
    * @param {array} names - Names of libraries to look up
    * @returns {*}
    */
-  $lims.library = (names) => {
-    return $q((resolve, reject) => {
-  
-      if(typeof names === 'string') {
-        names = [names];
-      }
-  
-      let body = {
-        filters: {
-          op: "in",
-          content: {
-            field: "name",
-            value: names
-          }
-        }
-      };
-      
-      $http.post('https://lims16.bcgsc.ca/alpha/limsapi/library', body, {headers: {Authorization: 'Basic YnBpZXJjZTprNHRZcDNScnl+'}}).then(
-        (result) => {
-          resolve(result.data);
-        })
-        .catch((err) => {
-          console.log('Failed to get LIMS library result', err);
-          reject(err);
-        });
-      
+  $lims.libraries = async (names, field = 'originalSourceName') => {
+    if (typeof names === 'string') {
+      names = [names];
+    }
+
+    const body = {
+      filters: {
+        op: 'in',
+        content: {
+          field,
+          value: names,
+        },
+      },
+    };
     
-    });
+    const { data } = await $http.post(
+      `${api}/libraries/search`,
+      body,
+      { headers: { Authorization } },
+    );
+    return data;
   };
   
   
@@ -159,49 +84,40 @@ app.factory('api.lims', ['_', '$http', '$q', (_, $http, $q) => {
    * @param {array} libraries - Libraries to look up
    * @returns {*}
    */
-  $lims.illumina_run = (libraries) => {
-    return $q((resolve, reject) => {
-  
-      if(typeof names === 'string') {
-        libraries = [libraries];
-      }
-  
-      let body = {
-        filters: {
-          op: "or",
-          content: [
-            {
-              op: "in",
-              content: {
-                field: "library",
-                value: libraries
-              }
+  $lims.sequencerRuns = async (libraries) => {
+    if (typeof names === 'string') {
+      libraries = [libraries];
+    }
+
+    const body = {
+      filters: {
+        op: 'or',
+        content: [
+          {
+            op: 'in',
+            content: {
+              field: 'libraryName',
+              value: libraries,
             },
-            {
-              op: "in",
-              content: {
-                field: "multiplex_library",
-                value: libraries
-              }
-            }
-          ]
-        }
-      };
-      
-      $http.post('https://lims16.bcgsc.ca/alpha/limsapi/illumina_run', body, {headers: {Authorization: 'Basic YnBpZXJjZTprNHRZcDNScnl+'}}).then(
-        (result) => {
-          resolve(result.data);
-        })
-        .catch((err) => {
-          console.log('Failed to get LIMS Illumina run result', err);
-          reject(err);
-        });
-      
+          },
+          {
+            op: 'in',
+            content: {
+              field: 'multiplexLibraryName',
+              value: libraries,
+            },
+          },
+        ],
+      },
+    };
     
-    });
+    const { data } = await $http.post(
+      `${api}/sequencer-runs/search`,
+      body,
+      { headers: { Authorization } },
+    );
+    return data;
   };
 
-
   return $lims;
-
 }]);
