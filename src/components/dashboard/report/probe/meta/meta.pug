@@ -31,4 +31,14 @@ section.meta
             span
                 md-button(ng-click="updateSettings()", ng-disabled="!reportSettingsChanged").md-primary.md-raised Update
         div(layout="row")
-    br
+    h2.title User Associations
+    div(ng-repeat="role in roles")
+        md-subheader.md-primary {{role}}s
+
+        div(layout="row", flex, layout-align="start center").roleList
+            ipr-pog-role(role="u", ng-repeat="u in report.users | filter: roleFilter(role)", remove="remove()")
+
+            div(layout="column", layout-align="center center", ng-click="addUser($event, role)").add
+                span.icon
+                    md-icon add
+                span Add New
