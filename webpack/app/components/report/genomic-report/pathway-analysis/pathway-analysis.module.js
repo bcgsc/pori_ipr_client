@@ -23,7 +23,7 @@ export default angular.module('pathway')
         resolve: {
           pathway: ['$transition$', 'PathwayAnalysisService',
             async ($transition$, PathwayAnalysisService) => {
-              return PathwayAnalysisService.get(
+              return PathwayAnalysisService.retrieve(
                 $transition$.params().POG, $transition$.params().analysis_report,
               );
             }],
