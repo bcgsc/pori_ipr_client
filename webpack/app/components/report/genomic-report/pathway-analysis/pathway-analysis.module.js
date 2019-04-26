@@ -18,7 +18,7 @@ export default angular.module('pathway')
         views: {
           '': {
             component: 'pathway',
-          }
+          },
         },
         resolve: {
           pathway: ['$transition$', 'PathwayAnalysisService',
