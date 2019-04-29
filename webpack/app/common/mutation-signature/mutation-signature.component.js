@@ -97,7 +97,9 @@ class MutationSignatureComponent {
     let nnlsMax = (this.nnlsNormal) ? 0 : 1;
 
     sigs.forEach((r) => {
-      if (r.nnls > nnlsMax) nnlsMax = r.nnls;
+      if (r.nnls > nnlsMax) {
+        nnlsMax = r.nnls;
+      }
     });
 
     sigs.forEach((r) => {

@@ -1,94 +1,119 @@
-app.directive("iprSmallMutations", ['$q', '_', '$mdDialog', ($q, _, $mdDialog) => {
+import template from './small-mutation-variants.pug';
+import dataTemplate from './data-viewer.pug';
+import vardbTemplate from './vardb-libraries.pug';
+import './data-viewer.scss';
 
+const bindings = {
+  mutations: '<',
+  pog: '<',
+  report: '<',
+};
 
-  return {
-    restrict: 'E',
-    transclude: false,
-    scope: {
-      mutations: '=mutations',
-      pog: '=pog',
-      report: '=report'
-    },
-    templateUrl: 'ipr-smallMutations/ipr-smallMutations.html',
-    link: (scope, element, attr) => {
+class SmallMutationVariantsComponent {
+  /* @ngInject */
+  constructor($mdDialog) {
+    this.$mdDialog = $mdDialog;
+  }
 
-      scope.copyFilter = (copyChange) => {
-        let copyChangeDisplay = (copyChange == 'na') ? 'na' : copyChange.match(/(((\+|\-)?)[0-9]{1,2})/g)[0];
-        return copyChangeDisplay;
-      };
+  /* eslint-disable-next-line class-methods-use-this */
+  copyFilter(copyChange) {
+    if (copyChange) {
+      return (copyChange === 'na') ? 'na' : copyChange.match(/(((\+|-)?)[0-9]{1,2})/g)[0];
+    }
+    return null;
+  }
 
+  openDialog($event, $index) {
+    this.$mdDialog.show({
+      clickOutsideToClose: true,
+      targetEvent: $event,
+      template: dataTemplate,
+      controller: ['$scope', ($scope) => {
+        // Ignored columns
+        const ignored = ['ident', 'id', 'pog_id'];
 
-      scope.vardbVarLib = ($event, mutation) => {
+        $scope.mutations = _.omit(this.mutations[$index], ignored);
 
-        let variant = {
-          chromosome: mutation.location.split(':')[0],
-          position: mutation.location.split(':')[1],
-          ref: mutation.refAlt.split('>')[0],
-          alt: mutation.refAlt.split('>')[1],
+        $scope.cancel = () => {
+          this.$mdDialog.cancel();
         };
+      }],
+    });
+  }
 
-        // Prepare mutation for VarDB Lookup=
-        $mdDialog.show({
-          targetEvent: $event,
-          clickOutsideToClose: true,
-          locals: {
-            variant: variant,
-            mutation: mutation
-          },
-          templateUrl: 'ipr-smallMutations/vardb-libraries.html',
-          controller: ['scope', '$mdDialog', '$timeout', 'api.vardb', 'variant', 'mutation', ($scope, $mdDialog, $timeout, $vardb, variant, mutation) => {
+  // Currently broken, fix later when vardb is integrated. DONT JUST REMOVE THIS
+  // vardbVarLib($event, mutation) {
+  //   const variant = {
+  //     chromosome: mutation.location.split(':')[0],
+  //     position: mutation.location.split(':')[1],
+  //     ref: mutation.refAlt.split('>')[0],
+  //     alt: mutation.refAlt.split('>')[1],
+  //   };
 
-            $scope.libraries = [];
-            $scope.loading = true;
-            $scope.mutation = mutation;
-            $scope.step = 0;
+  //   // Prepare mutation for VarDB Lookup=
+  //   this.$mdDialog.show({
+  //     targetEvent: $event,
+  //     clickOutsideToClose: true,
+  //     locals: {
+  //       variant,
+  //       mutation,
+  //     },
+  //     template: vardbTemplate,
+  //     controller: ['scope', '$mdDialog', '$timeout', 'api.vardb', 'variant', 'mutation', ($this, $mdDialog, $timeout, $vardb, variant, mutation) => {
 
-            // Find libraries with alternate base
-            $vardb.variantLibraries(variant.chromosome, variant.position, variant.ref, variant.alt).then(
-              (vardbLibs) => {
-                // Create response object
-                let response = {
-                  libraries: [],
-                  total: vardbLibs.total_pog_libraries
-                };
+  //       $this.libraries = [];
+  //       $this.loading = true;
+  //       $this.mutation = mutation;
+  //       $this.step = 0;
 
-                $scope.step = 1;
-                $timeout(() => { $scope.step = 2}, 1000);
+  //       // Find libraries with alternate base
+  //       $vardb.variantLibraries(variant.chromosome, variant.position, variant.ref, variant.alt).then(
+  //         (vardbLibs) => {
+  //           // Create response object
+  //           let response = {
+  //             libraries: [],
+  //             total: vardbLibs.total_pog_libraries
+  //           };
 
-                // Get Library Meta Data
-                $vardb.libraryMeta(vardbLibs.libraries).then(
-                  (meta) => {
-                    response.libraries = meta;
+  //           $this.step = 1;
+  //           $timeout(() => { $this.step = 2}, 1000);
 
-                    $scope.loading = false;
-                    $scope.libraries = response.libraries;
+  //           // Get Library Meta Data
+  //           $vardb.libraryMeta(vardbLibs.libraries).then(
+  //             (meta) => {
+  //               response.libraries = meta;
 
-                    console.log('Libraries', $scope.libraries);
-                    console.log('libraries', vardbLibs);
+  //               $this.loading = false;
+  //               $this.libraries = response.libraries;
 
-
-                  },
-                  (err) => {
-                    console.log('Unable to get POG libraries', err);
-                  }
-                )
-
-              },
-              (err) => {
-                console.log('Unable to get libaries with variant', err);
-              }
-            );
+  //               console.log('Libraries', $this.libraries);
+  //               console.log('libraries', vardbLibs);
 
 
-            $scope.cancel = () => {
-              $mdDialog.hide();
-            };
+  //             },
+  //             (err) => {
+  //               console.log('Unable to get POG libraries', err);
+  //             }
+  //           )
 
-          }]
-        });
-      };
+  //         },
+  //         (err) => {
+  //           console.log('Unable to get libaries with variant', err);
+  //         }
+  //       );
 
-    } // end link
-  } // end return
 
-}]);
+  //       $this.cancel = () => {
+  //         $mdDialog.hide();
+  //       };
+
+  //     }]
+  //   });
+  // };
+}
+
+export default {
+  template,
+  bindings,
+  controller: SmallMutationVariantsComponent,
+};

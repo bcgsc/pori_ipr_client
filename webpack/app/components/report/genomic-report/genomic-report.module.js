@@ -9,7 +9,8 @@ import TherapeuticModule from './therapeutic/therapeutic.module';
 import PathwayAnalysisModule from './pathway-analysis/pathway-analysis.module';
 import MicrobialModule from './microbial/microbial.module';
 import SpearmanModule from './spearman/spearman.module';
-import DiseaseSpecificAnalysis from './disease-specific-analysis/disease-specific-analysis.module';
+import DiseaseSpecificAnalysisModule from './disease-specific-analysis/disease-specific-analysis.module';
+import SmallMutationsModule from './small-mutations/small-mutations.module';
 
 angular.module('genomic.report', [
   uiRouter,
@@ -21,7 +22,8 @@ angular.module('genomic.report', [
   PathwayAnalysisModule,
   MicrobialModule,
   SpearmanModule,
-  DiseaseSpecificAnalysis,
+  DiseaseSpecificAnalysisModule,
+  SmallMutationsModule,
 ]);
 
 export default angular.module('genomic.report')

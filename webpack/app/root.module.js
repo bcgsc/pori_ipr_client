@@ -26,7 +26,7 @@ import MutationSummaryService from './services/report/summary/mutation-summary.s
 import ProbeTargetService from './services/report/summary/probe-target.service';
 import MutationSignatureService from './services/report/summary/mutation-signature.service';
 import MicrobialService from './services/report/summary/microbial.service';
-import PathwayAnalysisService from './services/report/summary/pathway-analysis.service';
+import PathwayAnalysisService from './services/report/pathway-analysis/pathway-analysis.service';
 import AnalystCommentsService from './services/report/analyst-comments/analyst-comments.service';
 import ProbeAlterationService from './services/report/probe/alteration.service';
 import ProbeSignatureService from './services/report/probe/signature.service';
@@ -41,6 +41,7 @@ import TherapeuticService from './services/report/therapeutic-options.service';
 import PubmedService from './services/pubmed.service';
 import GermlineService from './services/germline.service';
 import ImageService from './services/report/image.service';
+import SmallMutationsService from './services/report/somatic/small-mutations.service';
 import TitleCaseFilter from './filters/titlecase.filter';
 import './root.scss';
 
@@ -87,6 +88,7 @@ export default angular.module('root')
   .service('ProbeSignatureService', ProbeSignatureService)
   .service('ProbeTestInformationService', ProbeTestInformationService)
   .service('ImageService', ImageService)
+  .service('SmallMutationsService', SmallMutationsService)
   .filter('titlecase', TitleCaseFilter)
   .config(($stateProvider, $urlServiceProvider, $locationProvider) => {
     'ngInject';
