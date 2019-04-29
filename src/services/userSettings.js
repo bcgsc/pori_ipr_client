@@ -47,12 +47,10 @@ function $userSettings(_, $user) {
      * @throws {ErrorType} - thrown when updating the user settings fails
      */
     update: async () => {
-      const user = $user.meObj;
+      const user = await $user.me();
       user.settings = userSettings; // Overwrite previous settings value
-      const resp = await $user.update(user);
-      $user.meObj = resp;
-      return $user.meObj;
-    }
+      return $user.update(user);
+    },
   };
 
   return $us;
