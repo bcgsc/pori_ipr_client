@@ -23,6 +23,20 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
   };
 
   /**
+   * Checks if the given user has permissions to edit reports. Used for meta routes
+   * @param {Object} transition object
+   * @return {String | Boolean} Path or redirect false
+   */
+  const redirectEdit = async (transition) => {
+    const $user = await transition.injector().getAsync('api.user');
+    const user = await $user.me();
+    const $acl = await transition.injector().getAsync('$acl');
+    const report = await transition.injector().getAsync('report');
+    const canEdit = await $acl.action('report.edit', user, report.users);
+    return canEdit ? false : 'dashboard.reports.genomic';
+  };
+
+  /**
    * Checks if the user has access to a specific case, based on project access
    * Redirects if no access
    * @param {Object} transition object
@@ -224,7 +238,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
               opts.all = true;
               opts.states = 'ready,active,presented';
               opts.project = project.name;
-              $userSettings.save('genomicReportListCurrentUser', false);
+              await $userSettings.save('genomicReportListCurrentUser', false);
             }
 
             if (isExternalMode) {
@@ -315,6 +329,9 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
         report: ['$q', '$stateParams', 'api.pog_analysis_report', ($q, $stateParams, $report) => {
           return $report.pog($stateParams.POG).get($stateParams.analysis_report);
         }],
+        canEdit: ['report', '$acl', 'user', async (report, $acl, user) => {
+          return $acl.action('report.edit', user, report.users);
+        }],
       },
     })
 
@@ -380,7 +397,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Report Meta Information',
       },
-      redirectTo: redirectPOG,
+      redirectTo: (redirectPOG && redirectEdit),
       templateUrl: 'dashboard/report/probe/meta/meta.html',
       controller: 'controller.dashboard.report.probe.meta',
     })
@@ -402,6 +419,9 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       resolve: {
         report: ['$q', '$stateParams', 'api.pog_analysis_report', ($q, $stateParams, $report) => {
           return $report.pog($stateParams.POG).get($stateParams.analysis_report);
+        }],
+        canEdit: ['report', '$acl', 'user', async (report, $acl, user) => {
+          return $acl.action('report.edit', user, report.users);
         }],
       },
     })
@@ -694,7 +714,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Patient Meta Information',
       },
-      redirectTo: redirectPOG,
+      redirectTo: (redirectPOG && redirectEdit),
       templateUrl: 'dashboard/report/genomic/meta/meta.html',
       controller: 'controller.dashboard.report.genomic.meta',
     })
@@ -704,7 +724,7 @@ function router($stateProvider, $urlServiceProvider, $locationProvider) {
       data: {
         displayName: 'Data History',
       },
-      redirectTo: redirectPOG,
+      redirectTo: (redirectPOG && redirectEdit),
       templateUrl: 'dashboard/report/genomic/history/history.html',
       controller: 'controller.dashboard.report.genomic.history',
       resolve: {

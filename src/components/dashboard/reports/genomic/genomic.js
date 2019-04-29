@@ -65,12 +65,21 @@ app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$rootScope',
       if(v) states.push(k);
     });
     $scope.loading = true;
-    $report.all({all: !$scope.filter.currentUser, query: $scope.filter.query, role: $scope.filter.role, states: _.join(states, ','), type: 'genomic', project: $scope.selectedProject.project.name }).then(
+    $report.all({
+      all: !$scope.filter.currentUser,
+      query: $scope.filter.query,
+      role: $scope.filter.role,
+      states: _.join(states, ','),
+      type: 'genomic',
+      project: $scope.selectedProject.project.name || null,
+    }).then(
       (result) => {
         $scope.loading = false;
         $scope.reports = reports = result;
         $scope.reports = reports = _.orderBy(result, ['analysis.pog.POGID','createdAt'], ['asc','desc']);
-        $userSettings.save('selectedProject', { name: $userSettings.get('selectedProject').project.name });
+        $userSettings.save('selectedProject', {
+          name: $scope.selectedProject.project.name || null,
+        });
         associateUsers();
       },
       (err) => {

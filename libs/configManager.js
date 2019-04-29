@@ -29,11 +29,13 @@ let configManager = {
     let args = {env: null};
 
     // Override?
-    if(override !== null && override !== undefined) return configManager.setEnvironment(override);
+    if (override !== null && override !== undefined) return configManager.setEnvironment(override);
 
-    if(process.env.NODE_ENV !== undefined && process.env.NODE_ENV !== null) {
+    if (process.env.NODE_ENV !== undefined && process.env.NODE_ENV !== null) {
       // Check if it's an allowed environment setting
-      if(['production', 'development', 'test', 'staging', 'local', 'jdavies-local'].indexOf(process.env.NODE_ENV) === -1) throw new Error('Invalid environment setting');
+      if (!['production', 'development', 'local'].includes(process.env.NODE_ENV)) {
+        throw new Error('Invalid environment setting');
+      }
 
       // Set env from process.env
       return configManager.setEnvironment(process.env.NODE_ENV);

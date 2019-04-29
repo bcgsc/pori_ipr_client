@@ -15,4 +15,4 @@ md-content(flex).md-padding
                         md-icon(ng-click="openPrint()", aria-label="Print Summary Section").md-secondary print
                     md-list-item(ui-sref="dashboard.reports.pog.report.probe.detailedGenomicAnalysis", ng-class="activeSection({state: 'detailedGenomicAnalysis'}) ? 'active' : ''") Detailed Genomic Analysis
                     md-list-item(ui-sref="dashboard.reports.pog.report.probe.appendices", ng-class="activeSection({state: 'appendices'}) ? 'active' : ''") Appendices
-                    md-list-item(ui-sref="dashboard.reports.pog.report.probe.meta", ng-class="activeSection({state: 'meta'}) ? 'active' : ''", ng-if="SES_permissionAction('report.edit')").meta Report Settings
+                    md-list-item(ui-sref="dashboard.reports.pog.report.probe.meta", ng-class="activeSection({state: 'meta'}) ? 'active' : ''", ng-if="canEdit").meta Report Settings

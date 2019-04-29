@@ -1,7 +1,8 @@
 app.controller('controller.dashboard.report.genomic', 
-  ['_', '$q', '$scope', '$state', '$timeout', '$window', 'api.pog', 'pog', 'report', '$mdDialog', '$mdToast',
-  (_, $q, $scope, $state, $timeout, $window, $pog, pog, report, $mdDialog, $mdToast) => {
+  ['_', '$q', '$scope', '$state', '$timeout', '$window', 'api.pog', 'canEdit', 'pog', 'report', '$mdDialog', '$mdToast',
+  (_, $q, $scope, $state, $timeout, $window, $pog, canEdit, pog, report, $mdDialog, $mdToast) => {
 
+  $scope.canEdit = canEdit;
   $scope.pog = pog;
   $scope.report = report;
 
