@@ -7,7 +7,7 @@
  */
 app.factory('api.lims', ['_', '$http', '$q', (_, $http, $q) => {
 
-  const api = 'https://lims16.bcgsc.ca';
+  const api = 'https://lims16.bcgsc.ca/prod/limsapi';
 
   let $lims = {};
 
@@ -21,7 +21,7 @@ app.factory('api.lims', ['_', '$http', '$q', (_, $http, $q) => {
           'Accept': 'application/json',
           'Authorization': undefined
         },
-        url: api + '/alpha/limsapi/elastic/disease_ontology/' + query,
+        url: `${api}/elastic/disease_ontology/${query}`,
       });
 
       //let = $http.get(api + '/elastic_search', opts)
@@ -64,7 +64,7 @@ app.factory('api.lims', ['_', '$http', '$q', (_, $http, $q) => {
         }
       };
       
-      $http.post('https://lims16.bcgsc.ca/alpha/limsapi/sample', body, {headers: {Authorization: 'Basic YnBpZXJjZTprNHRZcDNScnl+'}}).then(
+      $http.post(`${api}/sample`, body, {headers: {Authorization: 'Basic YnBpZXJjZTprNHRZcDNScnl+'}}).then(
         (result) => {
           resolve(result.data);
         })
@@ -102,7 +102,7 @@ app.factory('api.lims', ['_', '$http', '$q', (_, $http, $q) => {
         }
       };
       
-      $http.post('https://lims16.bcgsc.ca/alpha/limsapi/source', body, {headers: {Authorization: 'Basic YnBpZXJjZTprNHRZcDNScnl+'}}).then(
+      $http.post(`${api}/source`, body, {headers: {Authorization: 'Basic YnBpZXJjZTprNHRZcDNScnl+'}}).then(
         (result) => {
           resolve(result.data);
         })
@@ -139,7 +139,7 @@ app.factory('api.lims', ['_', '$http', '$q', (_, $http, $q) => {
         }
       };
       
-      $http.post('https://lims16.bcgsc.ca/alpha/limsapi/library', body, {headers: {Authorization: 'Basic YnBpZXJjZTprNHRZcDNScnl+'}}).then(
+      $http.post(`${api}/library`, body, {headers: {Authorization: 'Basic YnBpZXJjZTprNHRZcDNScnl+'}}).then(
         (result) => {
           resolve(result.data);
         })
@@ -188,7 +188,7 @@ app.factory('api.lims', ['_', '$http', '$q', (_, $http, $q) => {
         }
       };
       
-      $http.post('https://lims16.bcgsc.ca/alpha/limsapi/illumina_run', body, {headers: {Authorization: 'Basic YnBpZXJjZTprNHRZcDNScnl+'}}).then(
+      $http.post(`${api}/illumina_run`, body, {headers: {Authorization: 'Basic YnBpZXJjZTprNHRZcDNScnl+'}}).then(
         (result) => {
           resolve(result.data);
         })
