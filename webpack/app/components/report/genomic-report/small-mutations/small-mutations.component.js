@@ -50,12 +50,14 @@ class SmallMutationsComponent {
   }
   
   pickCompatator() {
-    let search = _.find(this.mutationSummary, {
-      comparator: this.report.tumourAnalysis.diseaseExpressionComparator,
+    let search = this.mutationSummary.find((entry) => {
+      return entry.comparator === this.report.tumourAnalysis.diseaseExpressionComparator;
     });
-    
+
     if (!search) {
-      search = _.find(this.mutationSummary, { comparator: 'average' });
+      search = this.mutationSummary.find((entry) => {
+        return entry.comparator === 'average';
+      });
     }
     
     this.mutationSummary = search;
@@ -81,8 +83,7 @@ class SmallMutationsComponent {
         sv: null,
       },
     };
-    
-    _.forEach(images, (img) => {
+    Object.values(images).forEach((img) => {
       // If it's an SV image, skip!
       if (img.filename.includes('_sv.')) {
         return;
@@ -93,7 +94,9 @@ class SmallMutationsComponent {
       // If no comparator in key, set to null
       img.comparator = pieces[2] || null;
       
-      // If there's no comparator, and the file isn't an sv image, set the comparator to the value selected from tumour analysis (Backwards compatibility for v4.5.1 and older)
+      /* If there's no comparator and the file isn't an sv image: */
+      /* set the comparator to the value selected from tumour analysis */
+      /* (Backwards compatibility for v4.5.1 and older) */
       if (!img.comparator) {
         // If no comparator found in image, likely legacy and use report setting.
         img.comparator = this.report.tumourAnalysis.diseaseExpressionComparator;
@@ -105,8 +108,8 @@ class SmallMutationsComponent {
       }
       
       // Set comparator to lowercase
-      if (img.comparator.toLowerCase() && !_.find(sorted.comparators, {
-        name: img.comparator.toLowerCase(),
+      if (img.comparator.toLowerCase() && !sorted.comparators.find((entry) => {
+        return entry.name === img.comparator.toLowerCase();
       })) {
         sorted.comparators.push({ name: img.comparator.toLowerCase(), visible: false });
       }
@@ -131,15 +134,13 @@ class SmallMutationsComponent {
   
   /**
    * Retrieve specific mutation summary image
-   *
    * @param {string} graph - The type of graph image to be retrieved (barplot, density graph, legend)
    * @param {string} type - The type of analysis (snv, indel, sv)
    * @param {string} comparator - OPTIONAL The comparator to be picked
-   *
-   * @returns
+   * @return {String} Image data
    */
   getMutationSummaryImage(graph, type, comparator = null) {
-    return _.find(this.mutationSummaryImages[type][graph], (c) => {
+    return this.mutationSummaryImages[type][graph].find((c) => {
       return (c.comparator.toLowerCase() === comparator.toLowerCase());
     });
   }

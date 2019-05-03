@@ -58,12 +58,15 @@ class MutationSignatureComponent {
       // Found a seek
       if (seek) {
         // Check for modifier
-        if (this.modifier[seek.ident]) seek.modifier = this.modifier[seek.ident];
+        if (this.modifier[seek.ident]) {
+          seek.modifier = this.modifier[seek.ident];
+        }
         this.mutationSummary.mutationSignature.push(seek);
       }
     });
   }
 
+  /* eslint-disable consistent-return */
   sortMutations(col) {
     // Is this a valid column?
     if (!['signature', 'nnls', 'pearson'].includes(col)) {
@@ -77,14 +80,6 @@ class MutationSignatureComponent {
       this.mutationSort.order = true;
     }
     this.processSignature(angular.copy(this.mutationSignature));
-  }
-
-  // Check if the current mutation is a selected one.
-  isSelectedMutation(ident) {
-    const found = this.mutationSummary.mutationSignature.find((m) => {
-      return m.ident === ident;
-    });
-    return found !== undefined;
   }
 
   toggleNnlsNormalize() {

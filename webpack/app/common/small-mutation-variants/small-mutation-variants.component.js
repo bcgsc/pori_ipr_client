@@ -28,10 +28,11 @@ class SmallMutationVariantsComponent {
       targetEvent: $event,
       template: dataTemplate,
       controller: ['$scope', ($scope) => {
-        // Ignored columns
-        const ignored = ['ident', 'id', 'pog_id'];
-
-        $scope.mutations = _.omit(this.mutations[$index], ignored);
+        $scope.mutations = this.mutations[$index];
+        /* ident, id, and pog_id are ignored columns */
+        delete $scope.mutations.ident;
+        delete $scope.mutations.id;
+        delete $scope.mutations.pog_id;
 
         $scope.cancel = () => {
           this.$mdDialog.cancel();
