@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.biopsy.board.add',
-  ['$scope', '_', 'api.lims', 'api.bioapps', 'api.analysis', 'api.pog', 'api.project', '$mdDialog', '$mdToast', '$filter', 'projects', '$http', '$async',
-    ($scope, _, $lims, $bioapps, $analysis, $pog, $project, $mdDialog, $mdToast, $filter, projects, $http, $async) => {
+  ['$scope', '_', 'api.lims', 'api.analysis', 'api.pog', 'api.project', '$mdDialog', '$mdToast', '$filter', 'projects', '$http', '$async',
+    ($scope, _, $lims, $analysis, $pog, $project, $mdDialog, $mdToast, $filter, projects, $http, $async) => {
       $scope.stages = [
         {
           title: 'Patient',

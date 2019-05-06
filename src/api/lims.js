@@ -6,13 +6,12 @@
  *
  */
 app.factory('api.lims', ['$http', ($http) => {
-  const api = CONFIG.ENDPOINTS.LIMS;
-  const Authorization = 'Basic YnBpZXJjZTprNHRZcDNScnl+';
+  const api = CONFIG.ENDPOINTS.API;
 
   const $lims = {};
 
   $lims.diseaseOntology = async (query) => {
-    const { data } = await $http.get(`${api}/elastic/disease_ontology/${query}`);
+    const { data } = await $http.get(`${api}/lims/disease-ontology/${query}`);
     return data;
   };
   
@@ -40,9 +39,8 @@ app.factory('api.lims', ['$http', ($http) => {
     };
     
     const { data } = await $http.post(
-      `${api}/biological-metadata/search`,
+      `${api}/lims/biologicalMetadata`,
       body,
-      { headers: { Authorization } },
     );
     return data;
   };
@@ -70,9 +68,8 @@ app.factory('api.lims', ['$http', ($http) => {
     };
     
     const { data } = await $http.post(
-      `${api}/libraries/search`,
+      `${api}/lims/library`,
       body,
-      { headers: { Authorization } },
     );
     return data;
   };
@@ -112,9 +109,8 @@ app.factory('api.lims', ['$http', ($http) => {
     };
     
     const { data } = await $http.post(
-      `${api}/sequencer-runs/search`,
+      `${api}/lims/sequencer-run`,
       body,
-      { headers: { Authorization } },
     );
     return data;
   };

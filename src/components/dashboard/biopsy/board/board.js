@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.biopsy.board',
-['$q', '_', '$scope', 'api.lims', 'api.bioapps', 'api.analysis', 'api.pog', '$mdDialog', '$mdToast', 'analyses', 'comparators', 'projects', '$async',
-($q, _, $scope, $lims, $bioapps, $analysis, $pog, $mdDialog, $mdToast, analyses, comparators, projects, $async) => {
+['$q', '_', '$scope', 'api.lims', 'api.analysis', 'api.pog', '$mdDialog', '$mdToast', 'analyses', 'comparators', 'projects', '$async',
+($q, _, $scope, $lims, $analysis, $pog, $mdDialog, $mdToast, analyses, comparators, projects, $async) => {
   
   $scope.pogs = {};
   $scope.searching = false;
