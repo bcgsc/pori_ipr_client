@@ -1,94 +1,49 @@
-app.directive("iprSmallMutations", ['$q', '_', '$mdDialog', ($q, _, $mdDialog) => {
+import template from './small-mutation-variants.pug';
+import dataTemplate from './data-viewer.pug';
+import './data-viewer.scss';
 
+const bindings = {
+  mutations: '<',
+  pog: '<',
+  report: '<',
+};
 
-  return {
-    restrict: 'E',
-    transclude: false,
-    scope: {
-      mutations: '=mutations',
-      pog: '=pog',
-      report: '=report'
-    },
-    templateUrl: 'ipr-smallMutations/ipr-smallMutations.html',
-    link: (scope, element, attr) => {
+class SmallMutationVariantsComponent {
+  /* @ngInject */
+  constructor($mdDialog) {
+    this.$mdDialog = $mdDialog;
+  }
 
-      scope.copyFilter = (copyChange) => {
-        let copyChangeDisplay = (copyChange == 'na') ? 'na' : copyChange.match(/(((\+|\-)?)[0-9]{1,2})/g)[0];
-        return copyChangeDisplay;
-      };
+  /* eslint-disable-next-line class-methods-use-this */
+  copyFilter(copyChange) {
+    if (copyChange) {
+      return (copyChange === 'na') ? 'na' : copyChange.match(/(((\+|-)?)[0-9]{1,2})/g)[0];
+    }
+    return null;
+  }
 
+  openDialog($event, $index) {
+    this.$mdDialog.show({
+      clickOutsideToClose: true,
+      targetEvent: $event,
+      template: dataTemplate,
+      controller: ['$scope', ($scope) => {
+        $scope.mutations = this.mutations[$index];
+        /* ident, id, and pog_id are ignored columns */
+        delete $scope.mutations.ident;
+        delete $scope.mutations.id;
+        delete $scope.mutations.pog_id;
 
-      scope.vardbVarLib = ($event, mutation) => {
-
-        let variant = {
-          chromosome: mutation.location.split(':')[0],
-          position: mutation.location.split(':')[1],
-          ref: mutation.refAlt.split('>')[0],
-          alt: mutation.refAlt.split('>')[1],
+        $scope.cancel = () => {
+          this.$mdDialog.cancel();
         };
+      }],
+    });
+  }
+}
 
-        // Prepare mutation for VarDB Lookup=
-        $mdDialog.show({
-          targetEvent: $event,
-          clickOutsideToClose: true,
-          locals: {
-            variant: variant,
-            mutation: mutation
-          },
-          templateUrl: 'ipr-smallMutations/vardb-libraries.html',
-          controller: ['scope', '$mdDialog', '$timeout', 'api.vardb', 'variant', 'mutation', ($scope, $mdDialog, $timeout, $vardb, variant, mutation) => {
-
-            $scope.libraries = [];
-            $scope.loading = true;
-            $scope.mutation = mutation;
-            $scope.step = 0;
-
-            // Find libraries with alternate base
-            $vardb.variantLibraries(variant.chromosome, variant.position, variant.ref, variant.alt).then(
-              (vardbLibs) => {
-                // Create response object
-                let response = {
-                  libraries: [],
-                  total: vardbLibs.total_pog_libraries
-                };
-
-                $scope.step = 1;
-                $timeout(() => { $scope.step = 2}, 1000);
-
-                // Get Library Meta Data
-                $vardb.libraryMeta(vardbLibs.libraries).then(
-                  (meta) => {
-                    response.libraries = meta;
-
-                    $scope.loading = false;
-                    $scope.libraries = response.libraries;
-
-                    console.log('Libraries', $scope.libraries);
-                    console.log('libraries', vardbLibs);
-
-
-                  },
-                  (err) => {
-                    console.log('Unable to get POG libraries', err);
-                  }
-                )
-
-              },
-              (err) => {
-                console.log('Unable to get libaries with variant', err);
-              }
-            );
-
-
-            $scope.cancel = () => {
-              $mdDialog.hide();
-            };
-
-          }]
-        });
-      };
-
-    } // end link
-  } // end return
-
-}]);
+export default {
+  template,
+  bindings,
+  controller: SmallMutationVariantsComponent,
+};
