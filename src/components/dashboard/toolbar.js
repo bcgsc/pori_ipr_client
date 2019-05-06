@@ -1,10 +1,11 @@
 app.controller('controller.dashboard.toolbar', ['_', '$scope', '$mdSidenav', '$state', '$mdDialog',
-  '$mdToast', '$timeout', 'isAdmin', '$userSettings', 'api.user', 'keycloakAuth', (_, $scope,
-    $mdSidenav, $state, $mdDialog, $mdToast, $timeout, isAdmin, $userSettings, $user,
-    keycloakAuth) => {
+  '$mdToast', '$timeout', 'isAdmin', '$userSettings', 'api.user', 'keycloakAuth', 'version',
+  (_, $scope, $mdSidenav, $state, $mdDialog, $mdToast, $timeout, isAdmin, $userSettings, $user,
+    keycloakAuth, version) => {
     $scope.isAdmin = isAdmin;
     $scope.user = $user.meObj;
     $scope.maximized = $userSettings.get('sideBarState');
+    $scope.version = version;
 
     // Toggle sidebar
     $scope.toggleSidebar = () => {
