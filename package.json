@@ -22,6 +22,8 @@
     "eslint-plugin-import": "~2.14.0",
     "eslint-plugin-jsx-a11y": "~6.1.2",
     "eslint-plugin-react": "~7.11.1",
+    "gulp-ng-constant": "~1.2.0",
+    "gulp-rename": "~1.4.0",
     "mocha": "~5.2.0"
   },
   "dependencies": {
