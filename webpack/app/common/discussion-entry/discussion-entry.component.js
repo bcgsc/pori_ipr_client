@@ -17,7 +17,6 @@ class DiscussionEntryComponent {
   }
   
   $onInit() {
-    console.log(this.entry.createdAt);
     this.editing = false;
     this.entryCache = null;
     this.removed = false;

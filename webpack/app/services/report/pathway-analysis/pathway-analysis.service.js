@@ -5,28 +5,37 @@ class PathwayAnalysisService {
     this.api = `${CONFIG.ENDPOINTS.API}/POG`;
   }
 
-  async get(pogID, report) {
+  /**
+   * Retrieves pathway analysis for report
+   *
+   * @param {String} POGID  - patient identifier
+   * @param {String} report - report ident
+   *
+   * @returns {Promise} - result of API call
+   */
+  async retrieve(POGID, report) {
     const { data } = await this.$http.get(
-      `${this.api}/${pogID}/report/${report}/genomic/summary/pathwayAnalysis`,
+      `${this.api}/${POGID}/report/${report}/genomic/summary/pathwayAnalysis`,
     );
     return data;
   }
 
-
-  /*
-   * Update Pathway Analysis for this POG
+  /**
+   * Updates pathway analysis for report
    *
-   * @param string POGID - POGID, eg POG129
-   * @param string XMLbody - text string of SVG
+   * @param {String} POGID  - patient identifier
+   * @param {String} report - report ident
+   * @param {Object} summary - object payload
    *
+   * @returns {Promise} - result of API call
    */
-  async update(pogID, report, summary) {
+  async update(POGID, report, summary) {
     const { data } = await this.$http.put(
-      `${this.api}/${pogID}/report/${report}/genomic/summary/pathwayAnalysis`,
+      `${this.api}/${POGID}/report/${report}/genomic/summary/pathwayAnalysis`,
       summary,
     );
     return data;
   }
 }
-
+  
 export default PathwayAnalysisService;

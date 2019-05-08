@@ -1,0 +1,42 @@
+div(flex, layout="column")
+
+  div(layout="column", flex).dataBox
+
+    div.box
+      div(layout="row", flex).heading
+        div(flex) Gene
+        div(flex=10) Transcript
+        div(flex) Protein Change
+        div(flex) Location
+        div(flex) Zygosity
+        div(flex) Ref/Alt
+        div(flex) Copy Change
+        div(flex) LOH State
+        div(flex) Ref/Alt DNA
+        div(flex) Ref/Alt RNA
+        div(flex) Expression (RPKM)
+        div(flex) Fold Change Vs. {{$ctrl.report.tumourAnalysis.normalExpressionComparator}}
+        div(flex) {{$ctrl.report.tumourAnalysis.diseaseExpressionComparator}} %ile
+        div(flex=5)
+      div(ng-if="$ctrl.mutations.length == 0")
+        div.text-center.details No small somatic mutations of this kind were found from the analysis.
+      div(layout="row", flex, ng-repeat="mutation in $ctrl.mutations track by $index").row
+        div(flex)
+          ipr-gene-viewer(report="$ctrl.report", pog="$ctrl.pog", gene="mutation.gene") {{mutation.gene}}
+        div(flex=10, md-truncate) {{mutation.transcript}}
+        div(flex) {{mutation.proteinChange}}
+        div(flex, md-truncate) {{mutation.location}}
+        div(flex) {{mutation.zygosity}}
+        div(flex md-truncate) {{mutation.refAlt}}
+        div(flex) {{$ctrl.copyFilter(mutation.ploidyCorrCpChange)}}
+        div(flex) {{mutation.lohState}}
+        div(flex) {{mutation.tumourReads}}
+        div(flex) {{mutation.RNAReads}}
+        div(flex) {{mutation.expressionRpkm}}
+        div(flex) {{mutation.foldChange}}
+        div(flex) {{mutation.TCGAPerc}}
+        div(flex=5).text-center
+          md-icon(ng-click="$ctrl.openDialog($event, $index)").clickable search
+            md-tooltip View Details
+          //- md-icon(ng-click="vardbVarLib($event, mutation)").clickable track_changes
+          //-   md-tooltip Lookup Variant in VarDB

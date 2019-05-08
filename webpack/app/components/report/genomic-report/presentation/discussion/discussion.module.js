@@ -1,11 +1,9 @@
 import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
 import DiscussionComponent from './discussion.component';
-import DiscussionEntryModule from '../../../../../common/discussion-entry/discussion-entry.module';
 
 angular.module('discussion', [
   uiRouter,
-  DiscussionEntryModule,
 ]);
 
 export default angular.module('discussion')
