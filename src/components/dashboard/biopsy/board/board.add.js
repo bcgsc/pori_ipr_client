@@ -153,12 +153,12 @@ app.controller('controller.dashboard.biopsy.board.add',
         
           limsSources.results.forEach((s) => {
             sources[s.originalSourceName] = s;
-            sources[s.originalSourceName].sampleCollectionTimes = sources[s.originalSourceName]
-              .sampleCollectionTimes.find((time) => {
-                return time !== null;
-              });
+            sources[s.originalSourceName].sampleCollectionTimes = Math.min(
+              ...sources[s.originalSourceName].sampleCollectionTimes
+                .filter(entry => entry !== null)
+                .map(date => new Date(date)),
+            );
           });
-
       
           $scope.source_loading = false;
           $scope.pog_sources = _.values(sources);
@@ -182,9 +182,9 @@ app.controller('controller.dashboard.biopsy.board.add',
 
           limsBioData.results.forEach((entry) => {
             libraryDiseaseDate[entry.originalSourceName] = {
-              date: entry.sampleCollectionTimes.find((time) => {
-                return time !== null;
-              }).split(' ')[0],
+              date: Math.min(entry.sampleCollectionTimes
+                .filter(time => time !== null)
+                .map(date => new Date(date))),
               diseaseStatus: entry.diseaseStatus,
             };
           });
@@ -337,7 +337,7 @@ app.controller('controller.dashboard.biopsy.board.add',
             result.pog.projects = $scope.patient.projects;
 
             $scope.sending = false;
-            $mdDialog.hide({ result: result });
+            $mdDialog.hide({ result });
           })
           .catch((err) => {
             $scope.sending = false;
