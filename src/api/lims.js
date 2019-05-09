@@ -23,19 +23,9 @@ app.factory('api.lims', ['$http', ($http) => {
    * @returns {*}
    */
   $lims.biologicalMetadata = async (patientIds, searchField = 'participantStudyId') => {
-    // Convert string pogid to array
-    if (typeof patientIds === 'string') {
-      patientIds = [patientIds];
-    }
-
-    const body = {
-      patientIds,
-      searchField,
-    };
-    
     const { data } = await $http.post(
       `${api}/lims/biological-metadata`,
-      body,
+      { patientIds, searchField },
     );
     return data;
   };
@@ -48,18 +38,9 @@ app.factory('api.lims', ['$http', ($http) => {
    * @returns {*}
    */
   $lims.libraries = async (libraries, searchField = 'originalSourceName') => {
-    if (typeof names === 'string') {
-      libraries = [libraries];
-    }
-
-    const body = {
-      libraries,
-      searchField,
-    };
-    
     const { data } = await $http.post(
       `${api}/lims/library`,
-      body,
+      { libraries, searchField },
     );
     return data;
   };
@@ -72,15 +53,9 @@ app.factory('api.lims', ['$http', ($http) => {
    * @returns {*}
    */
   $lims.sequencerRuns = async (libraries) => {
-    if (typeof names === 'string') {
-      libraries = [libraries];
-    }
-
-    const body = { libraries };
-    
     const { data } = await $http.post(
       `${api}/lims/sequencer-run`,
-      body,
+      { libraries },
     );
     return data;
   };

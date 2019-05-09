@@ -14,6 +14,8 @@ app.controller('controller.dashboard.biopsy.board',
     search: undefined,
     paginated: true
   };
+
+  const HIDE_DELAY = 5000;
   
   $scope.paginate = {
     offset: 0,
@@ -95,7 +97,7 @@ app.controller('controller.dashboard.biopsy.board',
           if (libs.meta.total === 0) {
             return $mdToast.show($mdToast.simple(
               'Libary data is not yet available in LIMS.',
-            ).hideDelay(5000));
+            ).hideDelay(HIDE_DELAY));
           }
           const bioMetadata = await $lims.biologicalMetadata(
             libs.results[0].originalSourceName, 'originalSourceName',
@@ -104,7 +106,7 @@ app.controller('controller.dashboard.biopsy.board',
           if (bioMetadata.meta.total === 0) {
             return $mdToast.show($mdToast.simple(
               'Libary data is not yet available in LIMS.',
-            ).hideDelay(5000));
+            ).hideDelay(HIDE_DELAY));
           }
           
           scope.loading.library = false;
@@ -114,7 +116,7 @@ app.controller('controller.dashboard.biopsy.board',
           if (seqRuns.meta.total === 0) {
             return $mdToast.show($mdToast.simple(
               'Illumina run data not available yet',
-            ).hideDelay(5000));
+            ).hideDelay(HIDE_DELAY));
           }
           scope.illumina = seqRuns.results;
           scope.poolName = '';
@@ -132,7 +134,7 @@ app.controller('controller.dashboard.biopsy.board',
         } catch (err) {
           $mdToast.show($mdToast.simple(
             'Libary data is not yet available in LIMS.',
-          ).hideDelay(5000));
+          ).hideDelay(HIDE_DELAY));
         } finally {
           scope.loading.library = false;
           scope.loading.illumina = false;
