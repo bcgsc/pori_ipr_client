@@ -126,7 +126,7 @@ app.controller('controller.dashboard.biopsy.board',
           });
           
           if (!scope.poolName) {
-            scope.poolNmae = 'N/A';
+            scope.poolName = 'N/A';
           }
           scope.loading.illumina = false;
         } catch (err) {
