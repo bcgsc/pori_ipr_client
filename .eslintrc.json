@@ -70,7 +70,7 @@
             "ignoreStrings": true
         }],
         "no-undef": "warn",
-        "arrow-body-style": ["error", "always"],
+        "arrow-body-style": ["error", "as-needed"],
         "object-shorthand": ["error", "always"],
         "quote-props": ["error", "consistent"],
         "no-underscore-dangle": ["warn"],

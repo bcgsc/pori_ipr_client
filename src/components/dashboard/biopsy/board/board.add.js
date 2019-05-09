@@ -182,9 +182,9 @@ app.controller('controller.dashboard.biopsy.board.add',
 
           limsBioData.results.forEach((entry) => {
             libraryDiseaseDate[entry.originalSourceName] = {
-              date: Math.min(entry.sampleCollectionTimes
+              date: Math.min(...entry.sampleCollectionTimes
                 .filter(time => time !== null)
-                .map(date => new Date(date))),
+                .map(date => new Date(date.split(' ')[0]))),
               diseaseStatus: entry.diseaseStatus,
             };
           });
