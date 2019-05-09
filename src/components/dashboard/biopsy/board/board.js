@@ -89,39 +89,55 @@ app.controller('controller.dashboard.biopsy.board',
         scope.cancel = () => {
           $mdDialog.cancel();
         };
-        
-        
-        const libs = await $lims.libraries(lib, 'uri')
-        const bioMetadata = await $lims.biologicalMetadata(
-          libs.results[0].originalSourceName, 'originalSourceName'
-        );
 
-        if (libs.meta.total === 0 || bioMetadata.meta.total === 0) {
-          $mdToast.showSimple(
-            'Unable to lookup the requested library data in LIMS. It may not be available yet.',
-          );
-        }
-        
-        scope.loading.library = false;
-        scope.library = libs.results[0];
-        
-        const seqRuns = await $lims.sequencerRuns([lib]);
-        if (seqRuns.meta.total === 0) {
-          $mdToast.showSimple('Illumina run data not available yet');
-        }
-        scope.illumina = seqRuns.results;
-        scope.poolName = '';
-        
-        scope.illumina.forEach((r) => {
-          if (r.libraryName.includes('IX')) {
-            scope.poolName = r.libraryName;
+        try { 
+          const libs = await $lims.libraries(lib, 'uri');
+          if (libs.meta.total === 0) {
+            return $mdToast.show($mdToast.simple(
+              'Libary data is not yet available in LIMS.',
+            ).hideDelay(5000));
           }
-        });
-        
-        if (!scope.poolName) {
-          scope.poolNmae = 'N/A';
+          const bioMetadata = await $lims.biologicalMetadata(
+            libs.results[0].originalSourceName, 'originalSourceName',
+          );
+
+          if (bioMetadata.meta.total === 0) {
+            return $mdToast.show($mdToast.simple(
+              'Libary data is not yet available in LIMS.',
+            ).hideDelay(5000));
+          }
+          
+          scope.loading.library = false;
+          scope.library = libs.results[0];
+          
+          const seqRuns = await $lims.sequencerRuns([lib]);
+          if (seqRuns.meta.total === 0) {
+            return $mdToast.show($mdToast.simple(
+              'Illumina run data not available yet',
+            ).hideDelay(5000));
+          }
+          scope.illumina = seqRuns.results;
+          scope.poolName = '';
+          
+          scope.illumina.forEach((r) => {
+            if (r.libraryName.includes('IX')) {
+              scope.poolName = r.libraryName;
+            }
+          });
+          
+          if (!scope.poolName) {
+            scope.poolNmae = 'N/A';
+          }
+          scope.loading.illumina = false;
+        } catch (err) {
+          $mdToast.show($mdToast.simple(
+            'Libary data is not yet available in LIMS.',
+          ).hideDelay(5000));
+        } finally {
+          scope.loading.library = false;
+          scope.loading.illumina = false;
+          $scope.$digest();
         }
-        scope.loading.illumina = false;
       })]
     })
     

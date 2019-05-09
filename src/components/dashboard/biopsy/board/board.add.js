@@ -153,7 +153,12 @@ app.controller('controller.dashboard.biopsy.board.add',
         
           limsSources.results.forEach((s) => {
             sources[s.originalSourceName] = s;
+            sources[s.originalSourceName].sampleCollectionTimes = sources[s.originalSourceName]
+              .sampleCollectionTimes.find((time) => {
+                return time !== null;
+              });
           });
+
       
           $scope.source_loading = false;
           $scope.pog_sources = _.values(sources);
@@ -177,7 +182,9 @@ app.controller('controller.dashboard.biopsy.board.add',
 
           limsBioData.results.forEach((entry) => {
             libraryDiseaseDate[entry.originalSourceName] = {
-              date: entry.sampleCollectionTimes[0],
+              date: entry.sampleCollectionTimes.find((time) => {
+                return time !== null;
+              }).split(' ')[0],
               diseaseStatus: entry.diseaseStatus,
             };
           });
