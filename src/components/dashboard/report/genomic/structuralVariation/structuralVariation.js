@@ -95,7 +95,7 @@ app.controller('controller.dashboard.report.genomic.structuralVariation',
       // append mavis summary to row if it has a mavis_product_id
       let sv = row;
 
-      if(row.mavis_product_id) {
+      if(row.mavis_product_id && mavisSummary.length) {
         _.assign(sv, sv, JSON.parse(_.find(mavisSummary, {product_id: sv.mavis_product_id}).summary));
       }
 
