@@ -22,24 +22,19 @@ app.factory('api.lims', ['$http', ($http) => {
    * @param pogs
    * @returns {*}
    */
-  $lims.biologicalMetadata = async (pogs, field = 'participantStudyID') => {
+  $lims.biologicalMetadata = async (patientIds, searchField = 'participantStudyId') => {
     // Convert string pogid to array
-    if (typeof pogs === 'string') {
-      pogs = [pogs];
+    if (typeof patientIds === 'string') {
+      patientIds = [patientIds];
     }
 
     const body = {
-      filters: {
-        op: 'in',
-        content: {
-          field,
-          value: pogs,
-        },
-      },
+      patientIds,
+      searchField,
     };
     
     const { data } = await $http.post(
-      `${api}/lims/biologicalMetadata`,
+      `${api}/lims/biological-metadata`,
       body,
     );
     return data;
@@ -52,19 +47,14 @@ app.factory('api.lims', ['$http', ($http) => {
    * @param {array} names - Names of libraries to look up
    * @returns {*}
    */
-  $lims.libraries = async (names, field = 'originalSourceName') => {
+  $lims.libraries = async (libraries, searchField = 'originalSourceName') => {
     if (typeof names === 'string') {
-      names = [names];
+      libraries = [libraries];
     }
 
     const body = {
-      filters: {
-        op: 'in',
-        content: {
-          field,
-          value: names,
-        },
-      },
+      libraries,
+      searchField,
     };
     
     const { data } = await $http.post(
@@ -86,27 +76,7 @@ app.factory('api.lims', ['$http', ($http) => {
       libraries = [libraries];
     }
 
-    const body = {
-      filters: {
-        op: 'or',
-        content: [
-          {
-            op: 'in',
-            content: {
-              field: 'libraryName',
-              value: libraries,
-            },
-          },
-          {
-            op: 'in',
-            content: {
-              field: 'multiplexLibraryName',
-              value: libraries,
-            },
-          },
-        ],
-      },
-    };
+    const body = { libraries };
     
     const { data } = await $http.post(
       `${api}/lims/sequencer-run`,
