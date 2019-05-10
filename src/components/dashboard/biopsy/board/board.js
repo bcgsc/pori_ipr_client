@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.biopsy.board',
-['$q', '_', '$scope', 'api.lims', 'api.bioapps', 'api.analysis', 'api.pog', '$mdDialog', '$mdToast', 'analyses', 'comparators', 'projects', '$async',
-($q, _, $scope, $lims, $bioapps, $analysis, $pog, $mdDialog, $mdToast, analyses, comparators, projects, $async) => {
+['$q', '_', '$scope', 'api.lims', 'api.analysis', 'api.pog', '$mdDialog', '$mdToast', 'analyses', 'comparators', 'projects', '$async',
+($q, _, $scope, $lims, $analysis, $pog, $mdDialog, $mdToast, analyses, comparators, projects, $async) => {
   
   $scope.pogs = {};
   $scope.searching = false;
@@ -14,6 +14,8 @@ app.controller('controller.dashboard.biopsy.board',
     search: undefined,
     paginated: true
   };
+
+  const HIDE_DELAY = 5000;
   
   $scope.paginate = {
     offset: 0,
@@ -89,39 +91,55 @@ app.controller('controller.dashboard.biopsy.board',
         scope.cancel = () => {
           $mdDialog.cancel();
         };
-        
-        
-        const libs = await $lims.libraries(lib, 'uri')
-        const bioMetadata = await $lims.biologicalMetadata(
-          libs.results[0].originalSourceName, 'originalSourceName'
-        );
 
-        if (libs.meta.total === 0 || bioMetadata.meta.total === 0) {
-          $mdToast.showSimple(
-            'Unable to lookup the requested library data in LIMS. It may not be available yet.',
-          );
-        }
-        
-        scope.loading.library = false;
-        scope.library = libs.results[0];
-        
-        const seqRuns = await $lims.sequencerRuns([lib]);
-        if (seqRuns.meta.total === 0) {
-          $mdToast.showSimple('Illumina run data not available yet');
-        }
-        scope.illumina = seqRuns.results;
-        scope.poolName = '';
-        
-        scope.illumina.forEach((r) => {
-          if (r.libraryName.includes('IX')) {
-            scope.poolName = r.libraryName;
+        try { 
+          const libs = await $lims.libraries(lib, 'uri');
+          if (libs.meta.total === 0) {
+            return $mdToast.show($mdToast.simple(
+              'Libary data is not yet available in LIMS.',
+            ).hideDelay(HIDE_DELAY));
           }
-        });
-        
-        if (!scope.poolName) {
-          scope.poolNmae = 'N/A';
+          const bioMetadata = await $lims.biologicalMetadata(
+            libs.results[0].originalSourceName, 'originalSourceName',
+          );
+
+          if (bioMetadata.meta.total === 0) {
+            return $mdToast.show($mdToast.simple(
+              'Libary data is not yet available in LIMS.',
+            ).hideDelay(HIDE_DELAY));
+          }
+          
+          scope.loading.library = false;
+          scope.library = libs.results[0];
+          
+          const seqRuns = await $lims.sequencerRuns([lib]);
+          if (seqRuns.meta.total === 0) {
+            return $mdToast.show($mdToast.simple(
+              'Illumina run data not available yet',
+            ).hideDelay(HIDE_DELAY));
+          }
+          scope.illumina = seqRuns.results;
+          scope.poolName = '';
+          
+          scope.illumina.forEach((r) => {
+            if (r.libraryName.includes('IX')) {
+              scope.poolName = r.libraryName;
+            }
+          });
+          
+          if (!scope.poolName) {
+            scope.poolName = 'N/A';
+          }
+          scope.loading.illumina = false;
+        } catch (err) {
+          $mdToast.show($mdToast.simple(
+            'Libary data is not yet available in LIMS.',
+          ).hideDelay(HIDE_DELAY));
+        } finally {
+          scope.loading.library = false;
+          scope.loading.illumina = false;
+          $scope.$digest();
         }
-        scope.loading.illumina = false;
       })]
     })
     

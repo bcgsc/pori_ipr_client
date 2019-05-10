@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.biopsy.board.add',
-  ['$scope', '_', 'api.lims', 'api.bioapps', 'api.analysis', 'api.pog', 'api.project', '$mdDialog', '$mdToast', '$filter', 'projects', '$http', '$async',
-    ($scope, _, $lims, $bioapps, $analysis, $pog, $project, $mdDialog, $mdToast, $filter, projects, $http, $async) => {
+  ['$scope', '_', 'api.lims', 'api.analysis', 'api.pog', 'api.project', '$mdDialog', '$mdToast', '$filter', 'projects', '$http', '$async',
+    ($scope, _, $lims, $analysis, $pog, $project, $mdDialog, $mdToast, $filter, projects, $http, $async) => {
       $scope.stages = [
         {
           title: 'Patient',
@@ -153,6 +153,11 @@ app.controller('controller.dashboard.biopsy.board.add',
         
           limsSources.results.forEach((s) => {
             sources[s.originalSourceName] = s;
+            sources[s.originalSourceName].sampleCollectionTimes = Math.min(
+              ...sources[s.originalSourceName].sampleCollectionTimes
+                .filter(entry => entry !== null)
+                .map(date => new Date(date)),
+            );
           });
       
           $scope.source_loading = false;
@@ -177,7 +182,9 @@ app.controller('controller.dashboard.biopsy.board.add',
 
           limsBioData.results.forEach((entry) => {
             libraryDiseaseDate[entry.originalSourceName] = {
-              date: entry.sampleCollectionTimes[0],
+              date: Math.min(...entry.sampleCollectionTimes
+                .filter(time => time !== null)
+                .map(date => new Date(date.split(' ')[0]))),
               diseaseStatus: entry.diseaseStatus,
             };
           });
@@ -330,7 +337,7 @@ app.controller('controller.dashboard.biopsy.board.add',
             result.pog.projects = $scope.patient.projects;
 
             $scope.sending = false;
-            $mdDialog.hide({ result: result });
+            $mdDialog.hide({ result });
           })
           .catch((err) => {
             $scope.sending = false;

@@ -61,18 +61,18 @@ md-dialog(layout="column", aria-label="Add Biopsy", flex-md=80, flex-xs=100, fle
 
                     div(layout="row", ng-show="source_loading").row
                         div(flex)
-                            md-progress-linear(md-mode="indetermenite")
+                            md-progress-linear(md-mode="indeterminate")
 
-                    div(layout="row", ng-show="pog_sources.length === 0 && !source_loading").row
+                    div(layout="row", ng-if="pog_sources.length === 0 && !source_loading").row
                         div(flex).text-center No sources found for this patient in LIMS
 
                     div(layout="row", ng-repeat="source in pog_sources").row
-                        div(flex=15) {{source.original_source_name}}
+                        div(flex=15) {{source.originalSourceName}}
                         div(flex=20)
-                            span.link {{source.sample_collection_time | amTimeAgo}}
-                                md-tooltip {{source.sample_collection_time | amDateFormat: 'YYYY-MM-DD HH:mm'}}
-                        div(flex) {{source.anatomic_site}}
-                        div(flex=20) {{source.disease_status}}
+                            span.link {{source.sampleCollectionTimes | amTimeAgo}}
+                                md-tooltip {{source.sampleCollectionTimes | amDateFormat: 'YYYY-MM-DD HH:mm'}}
+                        div(flex) {{source.anatomicSite}}
+                        div(flex=20) {{source.diseaseStatus}}
                         div(flex=5)
 
                 div(layout="row", flex)

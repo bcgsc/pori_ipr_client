@@ -6,13 +6,12 @@
  *
  */
 app.factory('api.lims', ['$http', ($http) => {
-  const api = CONFIG.ENDPOINTS.LIMS;
-  const Authorization = 'Basic YnBpZXJjZTprNHRZcDNScnl+';
+  const api = CONFIG.ENDPOINTS.API;
 
   const $lims = {};
 
   $lims.diseaseOntology = async (query) => {
-    const { data } = await $http.get(`${api}/elastic/disease_ontology/${query}`);
+    const { data } = await $http.get(`${api}/lims/disease-ontology/${query}`);
     return data;
   };
   
@@ -23,26 +22,10 @@ app.factory('api.lims', ['$http', ($http) => {
    * @param pogs
    * @returns {*}
    */
-  $lims.biologicalMetadata = async (pogs, field = 'participantStudyID') => {
-    // Convert string pogid to array
-    if (typeof pogs === 'string') {
-      pogs = [pogs];
-    }
-
-    const body = {
-      filters: {
-        op: 'in',
-        content: {
-          field,
-          value: pogs,
-        },
-      },
-    };
-    
+  $lims.biologicalMetadata = async (patientIds, searchField = 'participantStudyId') => {
     const { data } = await $http.post(
-      `${api}/biological-metadata/search`,
-      body,
-      { headers: { Authorization } },
+      `${api}/lims/biological-metadata`,
+      { patientIds, searchField },
     );
     return data;
   };
@@ -54,25 +37,10 @@ app.factory('api.lims', ['$http', ($http) => {
    * @param {array} names - Names of libraries to look up
    * @returns {*}
    */
-  $lims.libraries = async (names, field = 'originalSourceName') => {
-    if (typeof names === 'string') {
-      names = [names];
-    }
-
-    const body = {
-      filters: {
-        op: 'in',
-        content: {
-          field,
-          value: names,
-        },
-      },
-    };
-    
+  $lims.libraries = async (libraries, searchField = 'originalSourceName') => {
     const { data } = await $http.post(
-      `${api}/libraries/search`,
-      body,
-      { headers: { Authorization } },
+      `${api}/lims/library`,
+      { libraries, searchField },
     );
     return data;
   };
@@ -85,36 +53,9 @@ app.factory('api.lims', ['$http', ($http) => {
    * @returns {*}
    */
   $lims.sequencerRuns = async (libraries) => {
-    if (typeof names === 'string') {
-      libraries = [libraries];
-    }
-
-    const body = {
-      filters: {
-        op: 'or',
-        content: [
-          {
-            op: 'in',
-            content: {
-              field: 'libraryName',
-              value: libraries,
-            },
-          },
-          {
-            op: 'in',
-            content: {
-              field: 'multiplexLibraryName',
-              value: libraries,
-            },
-          },
-        ],
-      },
-    };
-    
     const { data } = await $http.post(
-      `${api}/sequencer-runs/search`,
-      body,
-      { headers: { Authorization } },
+      `${api}/lims/sequencer-run`,
+      { libraries },
     );
     return data;
   };
