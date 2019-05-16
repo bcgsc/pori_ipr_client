@@ -1,5 +1,6 @@
 let colors = require('colors');
 let configManager = require('./libs/configManager');
+
 configManager.detectEnvironment(); // Detect Env.
 
 console.log(('  BCGSC - IPR-Client Build Script'  ).blue.bold);
@@ -128,8 +129,11 @@ const runSequence = require('run-sequence');
 const gulpStylelint = require('gulp-stylelint');
 const gulpif = require('gulp-if');
 const plumber = require('gulp-plumber');
+const ngConstant = require('gulp-ng-constant');
+const rename = require('gulp-rename');
+const version = require('./package.json').version;
 
-// Gulp task to clean/empty out builds directory 
+// Gulp task to clean/empty out builds directory
 gulp.task('clean', () => {
   return del(['./builds/'+configManager.getEnvironment()]);
 });
@@ -145,8 +149,27 @@ gulp.task('config', () => {
 
   // Write Config
   configManager.writeConfig();
-
   return true;
+});
+
+/*
+ * Add Version Constant to App
+ *
+ * Get the version number from package.json and make an angular module
+ * with this information
+ *
+ */
+gulp.task('constants', () => {
+  return ngConstant({
+    name: 'bcgscIPR',
+    constants: { version },
+    stream: true,
+    wrap: false,
+    deps: false,
+    indent: 2,
+  })
+    .pipe(rename('constants.js'))
+    .pipe(gulp.dest('./src/config/'));
 });
 
 
@@ -363,7 +386,8 @@ gulp.task('deploy-build', () => { runSequence('clean', 'build'); });
 gulp.task('default', () => {
   runSequence(
     'clean',
-    'build',
+    'constants',
+    ['build'],
     ['watch', 'connect'],
   );
 });

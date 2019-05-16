@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.biopsy.board.edit',
-  ['$scope', '_', '$mdDialog', '$mdToast', 'api.lims', 'api.bioapps', 'api.analysis', 'api.pog', 'api.project', 'analysis', '$filter', 'projects', '$http',
-    ($scope, _, $mdDialog, $mdToast, $lims, $bioapps, $analysis, $pog, $project, analysis, $filter, projects, $http) => {
+  ['$scope', '_', '$mdDialog', '$mdToast', 'api.lims', 'api.analysis', 'api.pog', 'api.project', 'analysis', '$filter', 'projects', '$http',
+    ($scope, _, $mdDialog, $mdToast, $lims, $analysis, $pog, $project, analysis, $filter, projects, $http) => {
       $scope.patient = angular.copy(analysis);
       $scope.projects = projects;
       $scope.patient.projects = $scope.patient.pog.projects;

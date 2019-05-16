@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.biopsy.board',
-['$q', '_', '$scope', 'api.lims', 'api.bioapps', 'api.analysis', 'api.pog', '$mdDialog', '$mdToast', 'analyses', 'comparators', 'projects',
-($q, _, $scope, $lims, $bioapps, $analysis, $pog, $mdDialog, $mdToast, analyses, comparators, projects) => {
+['$q', '_', '$scope', 'api.lims', 'api.analysis', 'api.pog', '$mdDialog', '$mdToast', 'analyses', 'comparators', 'projects', '$async',
+($q, _, $scope, $lims, $analysis, $pog, $mdDialog, $mdToast, analyses, comparators, projects, $async) => {
   
   $scope.pogs = {};
   $scope.searching = false;
@@ -14,6 +14,8 @@ app.controller('controller.dashboard.biopsy.board',
     search: undefined,
     paginated: true
   };
+
+  const HIDE_DELAY = 5000;
   
   $scope.paginate = {
     offset: 0,
@@ -80,7 +82,7 @@ app.controller('controller.dashboard.biopsy.board',
     
     $mdDialog.show({
       templateUrl: 'dashboard/biopsy/board/board.library.html',
-      controller: ['$scope', (scope) => {
+      controller: ['$scope', $async(async (scope) => {
         
         scope.loading = {library: true, illumina: true};
         scope.library = {name: lib};
@@ -89,46 +91,56 @@ app.controller('controller.dashboard.biopsy.board',
         scope.cancel = () => {
           $mdDialog.cancel();
         };
-        
-        scope.getPoolName = () => {
-          let pool = null;
+
+        try { 
+          const libs = await $lims.libraries(lib, 'uri');
+          if (libs.meta.total === 0) {
+            return $mdToast.show($mdToast.simple(
+              'Libary data is not yet available in LIMS.',
+            ).hideDelay(HIDE_DELAY));
+          }
+          const bioMetadata = await $lims.biologicalMetadata(
+            libs.results[0].originalSourceName, 'originalSourceName',
+          );
+
+          if (bioMetadata.meta.total === 0) {
+            return $mdToast.show($mdToast.simple(
+              'Libary data is not yet available in LIMS.',
+            ).hideDelay(HIDE_DELAY));
+          }
           
-          _.forEach(scope.illumina, (r) => {
-            if(r.library.indexOf('IX') > -1) pool = r.library;
-          });
+          scope.loading.library = false;
+          scope.library = libs.results[0];
           
-          if(!pool) return "N/A";
+          const seqRuns = await $lims.sequencerRuns([lib]);
+          if (seqRuns.meta.total === 0) {
+            return $mdToast.show($mdToast.simple(
+              'Illumina run data not available yet',
+            ).hideDelay(HIDE_DELAY));
+          }
+          scope.illumina = seqRuns.results;
+          scope.poolName = '';
           
-          return pool;
-        };
-        
-        $lims.library(lib).then(
-          (result) => {
-            
-            if(result.hits === 0) {
-              $mdToast.show($mdToast.simple().textContent('Unable to lookup the requested library data in LIMS'));
+          scope.illumina.forEach((r) => {
+            if (r.libraryName.includes('IX')) {
+              scope.poolName = r.libraryName;
             }
-            
-            scope.loading.library = false;
-            scope.library = result.results[0];
-          })
-          .catch((err) => {
-            console.log('Err querying library', err);
           });
-        
-        $lims.illumina_run([lib])
-          .then((result) => {
-            if(result.hits === 0) {
-              $mdToast.show($mdToast.simple().textContent('Illumina run data not available yet'));
-            }
-            scope.loading.illumina = false;
-            scope.illumina = result.results;
-          })
-          .catch((err) => {
-            console.log('Err querying library', err);
-          });
-        
-      }]
+          
+          if (!scope.poolName) {
+            scope.poolName = 'N/A';
+          }
+          scope.loading.illumina = false;
+        } catch (err) {
+          $mdToast.show($mdToast.simple(
+            'Libary data is not yet available in LIMS.',
+          ).hideDelay(HIDE_DELAY));
+        } finally {
+          scope.loading.library = false;
+          scope.loading.illumina = false;
+          $scope.$digest();
+        }
+      })]
     })
     
   };
@@ -150,17 +162,17 @@ app.controller('controller.dashboard.biopsy.board',
           $mdDialog.cancel();
         };
         
-        $lims.source(analysis.pog.POGID).then(
+        $lims.biologicalMetadata(analysis.pog.POGID).then(
           (result) => {
             
             let sources = {};
             
-            if(result.hits === 0) {
+            if (result.meta.count === 0) {
               $mdToast.show($mdToast.simple().textContent('Unable to lookup the requested library'));
             }
             
             _.forEach(result.results, (s) => {
-              sources[s.original_source_name] = s;
+              sources[s.originalSourceName] = s;
             });
             
             scope.sources = _.values(sources);
