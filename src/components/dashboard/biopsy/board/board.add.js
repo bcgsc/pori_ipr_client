@@ -126,6 +126,7 @@ app.controller('controller.dashboard.biopsy.board.add',
           $scope.existingPOG = true;
         } catch (err) {
           if (err.status === 404) {
+            $mdToast.hide();
             // POG not already in IPR - can set projects field
             $scope.patient.projects = [_.find($scope.projects, { name: 'POG' })];
             $scope.patient.age_of_consent = null;
@@ -303,6 +304,10 @@ app.controller('controller.dashboard.biopsy.board.add',
         if (!$scope.PatientForm.$valid) {
           $scope.sending = false;
           return; // don't submit invalid form
+        }
+
+        if (!$scope.patient.disease) {
+          $scope.patient.disease = $scope.diseaseQuery;
         }
     
         // Setup submission object
