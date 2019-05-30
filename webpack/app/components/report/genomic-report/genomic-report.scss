@@ -821,45 +821,41 @@ md-dialog-content {
     padding: 0;
 
     span {
-      background-color: rgb(255, 255, 255);
-      display: block;
-      padding: 10px 5px 10px 15px;
-      user-select: none;
+      &.inline {
+        background-color: rgb(255, 255, 255);
+        display: flex;
+        padding: 10px 5px 10px 15px;
+        user-select: none;
 
-      > md-icon {
-        float: right;
-        margin-right: 10px;
-        outline: none;
-      }
+        > md-icon {
+          margin-right: 10px;
+          outline: none;
+        }
 
-      &:hover {
-        background-color: rgba(0, 0, 0, 0.10);
-        transition: box-shadow 0.4s cubic-bezier(0.25,0.8,0.25,1), background-color 0.4s cubic-bezier(0.25,0.8,0.25,1);
-      }
+        &:hover {
+          background-color: rgba(0, 0, 0, 0.10);
+          transition: box-shadow 0.4s cubic-bezier(0.25,0.8,0.25,1), background-color 0.4s cubic-bezier(0.25,0.8,0.25,1);
+        }
 
-      &.children {
-        font-weight: 700;
-      }
+        &.meta {
+          &:not(:hover) {
+            background-color: rgb(230,230,230);
+          }
+        }
 
-      &.meta {
-        background-color: rgb(230,230,230);
-      }
+        &.children {
+          font-weight: 700;
+        }
 
-      &.active {
-        background-color: rgb(175, 61, 161);
-        color: rgb(255,255,255);
-      }
+        &.active {
+          background-color: rgb(175, 61, 161);
+          color: rgb(255,255,255);
+        }
 
-      &.disabled {
-        color: rgb(140,140,140);
-        cursor: not-allowed;
-      }
-
-      > span.drop {
-        display: inline;
-        font-weight: 200;
-        background: none;
-        padding-left: 5px;
+        &.disabled {
+          color: rgb(140,140,140);
+          cursor: not-allowed;
+        }
       }
     }
 
@@ -868,9 +864,24 @@ md-dialog-content {
         margin: 0;
         padding: 0;
         li {
-          span {
-            padding-left: 25px;
-            background-color: rgb(240,240,240);
+          display: flex;
+          background-color: rgb(240,240,240);
+          padding: 10px 5px 10px 15px;
+          padding-left: 25px;
+
+          &:hover {
+            background-color: rgba(0, 0, 0, 0.10);
+            transition: box-shadow 0.4s cubic-bezier(0.25,0.8,0.25,1), background-color 0.4s cubic-bezier(0.25,0.8,0.25,1);
+          }
+
+          &.active {
+            background-color: rgb(175, 61, 161);
+            color: rgb(255,255,255);
+          }
+
+          &.disabled {
+            color: rgb(140,140,140);
+            cursor: not-allowed;
           }
         }
       }
