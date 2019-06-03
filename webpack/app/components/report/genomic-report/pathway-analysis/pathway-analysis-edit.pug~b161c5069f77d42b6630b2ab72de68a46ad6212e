@@ -24,5 +24,5 @@ md-dialog(layout="column", aria-label="Update Pathway Analysis", ng-cloak, flex=
                 md-progress-circular(md-mode="determinate", value="{{progress}}")
 
 
-    md-dialog-actions(layout="row", layout-align="end center")
+    md-dialog-actions(layout="row", layout-aligh="end center")
         md-button(ng-click="initiateUpload()", ng-show="process=='upload'", ng-disabled="startedUpload", ng-init="startedUpload=false").md-primary.md-raised Start Upload

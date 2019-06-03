@@ -1,22 +1,14 @@
-app.directive("iprOutlier", ['$q', '_', ($q, _) => {
+import template from './list-outliers.pug';
+import './list-outliers.scss';
 
+const bindings = {
+  outliers: '<',
+  pog: '<',
+  report: '<',
+  type: '<',
+};
 
-  return {
-    restrict: 'E',
-    transclude: false,
-    scope: {
-      outliers: '=outliers',
-      pog: '=pog',
-      report: '=report',
-      type: '=type',
-      gv: '=?gv'
-    },
-    templateUrl: 'ipr-outlier/ipr-outlier.html',
-    link: (scope, element, attr) => {
-      
-      if(!scope.gv) scope.gv = true;
-
-    } // end link
-  } // end return
-
-}]);
+export default {
+  template,
+  bindings,
+};

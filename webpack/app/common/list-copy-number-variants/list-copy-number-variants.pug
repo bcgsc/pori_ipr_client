@@ -1,0 +1,40 @@
+div(flex, layout="column")
+
+  div(layout="column", flex).dataBox
+
+    div.box
+      div(layout="row", flex).heading
+        div(flex) Gene
+        div(flex) Copy Change
+        div(flex) LOH State
+        div(flex) CNV State
+        div(flex) Chr:band
+        div(flex) CNV Start
+        div(flex) CNV End
+        div(flex) Size (Mb)
+        div(flex) Expression (RPKM)
+        div(flex) Fold Change Vs. {{$ctrl.report.tumourAnalysis.normalExpressionComparator}}
+        div(flex) {{$ctrl.report.tumourAnalysis.diseaseExpressionComparator}} %ile
+        div(flex=5)
+      div(ng-if="$ctrl.cnvs.length == 0")
+        div.text-center.details.bg-white No small somatic mutations of this kind were found from the analysis.
+      div(layout="row", flex, ng-repeat="cnv in $ctrl.cnvs").row
+        div(ng-click="$ctrl.geneClicked = true; $ctrl.geneIndex = $index", flex).clickable.underlined
+         | {{cnv.gene}}
+        gene-viewer(ng-if="$ctrl.geneClicked", ng-init="$ctrl.geneClicked = false",
+          report="$ctrl.report", pog="$ctrl.pog", gene="$ctrl.cnvs[$ctrl.geneIndex].gene")
+        div(flex) {{cnv.ploidyCorrCpChange}}
+        div(flex) {{cnv.lohState}}
+        div(flex) {{cnv.cnvState}}
+        div(flex) {{cnv.chromosomeBand}}
+        div(flex) {{cnv.start}}
+        div(flex) {{cnv.end}}
+        div(flex) {{cnv.size}}
+        div(flex) {{cnv.expressionRpkm}}
+        div(flex) {{cnv.foldChange}}
+        div(flex) {{cnv.tcgaPerc}}
+        div(flex=5).text-center
+          md-icon(ng-click="$ctrl.detailClicked = true; $ctrl.detailIndex = $index").clickable search
+            md-tooltip View Details
+        detail-viewer(ng-if="$ctrl.detailClicked", ng-init="$ctrl.detailClicked = false",
+          mutations="$ctrl.cnvs", index="$ctrl.detailIndex")

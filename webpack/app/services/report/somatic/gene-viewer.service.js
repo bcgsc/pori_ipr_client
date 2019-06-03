@@ -1,33 +1,16 @@
-/*
- * BCGSC - IPR-Client User API
- *
- * This API factory implements the IPR-API. Calls to and from the API are
- * managed through this construct.
- *
- */
-app.factory('api.geneViewer', ['_', '$http', '$q', (_, $http, $q) => {
+class GeneViewerService {
+  /* @ngInject */
+  constructor($http) {
+    this.$http = $http;
+    this.api = `${CONFIG.ENDPOINTS.API}/POG`;
+  }
   
-  const api = CONFIG.ENDPOINTS.API + '/POG';
-  
-  let $gv = {};
-  
-  $gv.get = (pog, report, gene) => {
-    return $q((resolve, reject) => {
-      // Get result from API
-      $http.get(api + '/' + pog + '/report/' + report + '/geneviewer/' + gene).then(
-        (result) => {
-          resolve(result.data);
-        },
-        (error) => {
-          // TODO: Better error handling
-          reject();
-        }
-      );
-    });
-  
-  };
-  
-  
-  return $gv;
-  
-}]);
+  async get(pog, report, gene) {
+    const { data } = await this.$http.get(
+      `${this.api}/${pog}/report/${report}/geneviewer/${gene}`,
+    );
+    return data;
+  }
+}
+
+export default GeneViewerService;

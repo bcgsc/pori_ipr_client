@@ -1,65 +1,64 @@
-app.directive("iprSv", ['$q', '_', '$mdDialog', '$mdToast', ($q, _, $mdDialog, $mdToast) => {
+import * as svgPanZoom from 'svg-pan-zoom';
+import template from './list-structural-variants.pug';
+import detailTemplate from './list-structural-variants-detail.pug';
+import './list-structural-variants.scss';
 
+const bindings = {
+  svs: '<',
+  pog: '<',
+  report: '<',
+};
 
-  return {
-    restrict: 'E',
-    transclude: false,
-    scope: {
-      svs: '=svs',
-      pog: '=pog',
-      report: '=report'
-    },
-    templateUrl: 'ipr-sv/ipr-sv.html',
-    link: (scope, element, attr) => {
+class ListStructuralVariantsComponent {
+  /* @ngInject */
+  constructor($mdDialog, $mdToast) {
+    this.$mdDialog = $mdDialog;
+    this.$mdToast = $mdToast;
+  }
 
-      scope.svDetails = ($event, sv) => {
+  svDetails($event, sv) {
+    this.$mdDialog.show({
+      targetEvent: $event,
+      template: detailTemplate,
+      onComplete: async ($scope) => {
+        /* Needed in order to get the element after the dialog has initialized */
+        /* This is due to the DOM not being rendered right away */
+        /* Note: $mdDialog has no other function with $onInit capabilities */
+        const svgImage = document.getElementById('svgImage');
 
-        $mdDialog.show({
-          targetEvent: $event,
-          templateUrl: 'ipr-sv/ipr-sv.detail.html',
-          controller: ['$q', 'scope', ($q, $_scope) => {
-            $_scope.sv = sv;
+        // Create SVG DOM element from String
+        $scope.svg = new DOMParser().parseFromString(sv.svg, 'application/xml');
 
-            // Close Modal
-            $_scope.cancel = () => {
-              $mdDialog.cancel();
-            };
+        svgImage.appendChild(
+          svgImage.ownerDocument.importNode($scope.svg.documentElement, true),
+        );
 
-            // Extract Ensembl Name from String
-            $_scope.ensemblName = (input) => {
-              return _.first(input.match(/(ENS[A-z0-9]*)/));
-            };
-
-            // Create SVG DOM element from String
-            $_scope.svg = new DOMParser().parseFromString(sv.svg, 'application/xml');
-
-            let xmlSVG = $_scope.svg.getElementsByTagName('svg')[0];
-            xmlSVG.id="fusionDiagram";
-
-
-            // Load in SVG after delay.
-            setTimeout(() => {
-              let svgImage = document.getElementById('svgImage');
-
-              svgImage.appendChild(
-                svgImage.ownerDocument.importNode($_scope.svg.documentElement, true)
-              );
-              let panzoom = svgPanZoom('#fusionDiagram', {
-                preventMouseEventsDefault: true,
-                enableControlIcons: true,
-              });
-              panzoom.resize();
-              panzoom.fit();
-              panzoom.center();
-            },500);
-
-          }],
-          clickOutToClose: false
+        const panzoom = await svgPanZoom('#fusionDiagram', {
+          preventMouseEventsDefault: true,
+          enableControlIcons: true,
         });
+        panzoom.resize();
+        panzoom.fit();
+        panzoom.center();
+      },
+      controller: ['scope', ($scope) => {
+        $scope.sv = sv;
+        $scope.cancel = () => {
+          this.$mdDialog.cancel();
+        };
 
-      }
+        // Extract Ensembl Name from String
+        $scope.ensemblName = (input) => {
+          return input.match(/(ENS[A-z0-9]*)/)[0];
+        };
+      }],
+      clickOutToClose: true,
+    });
+  }
+}
 
-    } // end link
-  } // end return
-
-}]);
+export default {
+  template,
+  bindings,
+  controller: ListStructuralVariantsComponent,
+};
