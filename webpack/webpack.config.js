@@ -70,7 +70,7 @@ module.exports = {
       flatten: true,
     }]),
     new webpack.HotModuleReplacementPlugin(),
-    new BundleAnalyzerPlugin({ openAnalyzer: false }),
+    // new BundleAnalyzerPlugin({ openAnalyzer: false }),
   ],
   mode: 'development',
   devtool: 'inline-source-map',
