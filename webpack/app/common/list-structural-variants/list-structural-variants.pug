@@ -43,4 +43,4 @@ div(flex, layout="column")
           span(ng-if="sv.svg").reference
             md-icon(ng-click="$ctrl.svDetails($event, sv)") open_in_new
         detail-viewer(ng-if="$ctrl.detailClicked", ng-init="$ctrl.detailClicked = false",
-          mutations="$ctrl.svs", index="$ctrl.detailIndex")
+          rows="$ctrl.svs", index="$ctrl.detailIndex")

@@ -68,7 +68,7 @@ md-dialog(layout="column", aria-label="Update Alterations Entry", flex-md=90, fl
                       md-icon(ng-click="detail.clicked = true; detail.index = $index").clickable search
                         md-tooltip View Details
                     detail-viewer(ng-if="detail.clicked", ng-init="detail.clicked = false",
-                      mutations="data.expDrugTarget", index="detail.index")
+                      rows="data.expDrugTarget", index="detail.index")
 
       md-tab(label="Exp Density Graph ({{data.expDensityGraph.length}})")
         div(ng-repeat="img in data.expDensityGraph").text-center

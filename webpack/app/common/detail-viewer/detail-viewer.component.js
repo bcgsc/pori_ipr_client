@@ -3,7 +3,7 @@ import template from './detail-viewer.pug';
 import './detail-viewer.scss';
 
 const bindings = {
-  mutations: '<',
+  rows: '<',
   index: '<',
 };
 
@@ -25,7 +25,7 @@ class DataViewerComponent {
         // Ignored columns
         const ignored = ['ident', 'id', 'pog_id'];
 
-        $scope.mutations = omit(this.mutations[this.index], ignored);
+        $scope.rows = omit(this.rows[this.index], ignored);
 
         $scope.cancel = () => {
           this.$mdDialog.cancel();

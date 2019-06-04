@@ -37,4 +37,4 @@ div(flex, layout="column")
           md-icon(ng-click="$ctrl.detailClicked = true; $ctrl.detailIndex = $index").clickable search
             md-tooltip View Details
         detail-viewer(ng-if="$ctrl.detailClicked", ng-init="$ctrl.detailClicked = false",
-          mutations="$ctrl.cnvs", index="$ctrl.detailIndex")
+          rows="$ctrl.cnvs", index="$ctrl.detailIndex")

@@ -60,5 +60,5 @@ div.padding-left-10.padding-right-10
           md-icon(ng-click="$ctrl.detailClicked = true; $ctrl.detailIndex = $index").clickable search
             md-tooltip View Details
         detail-viewer(ng-if="$ctrl.detailClicked", ng-init="$ctrl.detailClicked = false",
-          mutations="$ctrl.outliers", index="$ctrl.detailIndex")
+          rows="$ctrl.outliers", index="$ctrl.detailIndex")
 
