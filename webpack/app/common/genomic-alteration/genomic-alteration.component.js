@@ -1,99 +1,46 @@
-app.directive("iprGenomicAlteration", ['$q', '_', '$mdDialog', '$mdToast', '$acl', ($q, _, $mdDialog, $mdToast, $acl) => {
+import template from './genomic-alteration.pug';
+
+const bindings = {
+  samples: '<',
+  gene: '<',
+  pog: '<',
+  report: '<',
+};
+
+class GenomicAlterationComponent {
+  /* @ngInject */
+  constructor($scope, AclService) {
+    this.$scope = $scope;
+    this.AclService = AclService;
+  }
+
+  /* eslint-disable class-methods-use-this */
+  // Filter reference type
+  refType(ref) {
+    if (ref.match(/^[0-9]{8}#/)) {
+      return 'pmid';
+    }
+    if (ref.match(/^(?:http(?:s)?:\/\/)?(?:[^.]+\.)?[A-z0-9]*\.[A-z]{2,7}/)) {
+      return 'link';
+    }
+    return 'text';
+  }
   
+  /* eslint-disable class-methods-use-this */
+  // Prepend a link with http:// if necessary
+  prependLink(link) {
+    return (!link.includes('http://')) ? `http://${link}` : link;
+  }
   
-  return {
-    restrict: 'E',
-    transclude: false,
-    scope: {
-      samples: '<samples',
-      gene: '<gene',
-      pog: '<pog',
-      trigger: '=',
-      report: '<report',
-    },
-    templateUrl: 'ipr-genomicAlteration/ipr-genomicAlteration.html',
-    link: (scope, element, attr) => {
-
-      // Edit permissions
-      scope.canEdit = false;
-      if(!$acl.inGroup('clinician') && !$acl.inGroup('collaborator')) {
-        scope.canEdit = true;
-      }
-
-      // Filter reference type
-      scope.refType = (ref) => {
-        if(ref.match(/^[0-9]{8}\#/)) {
-          return 'pmid';
-        }
-        if(ref.match(/^(?:http(?:s)?:\/\/)?(?:[^\.]+\.)?[A-z0-9]*\.[A-z]{2,7}/)) {
-          return 'link';
-        } 
-        return 'text';
-      };
-      
-      // Prepend a link with http:// if necessary
-      scope.prependLink = (link) => {
-        return (link.indexOf('http://') == -1) ? 'http://' + link : link;
-      };
-      
-      // Clean up PMIDs
-      scope.cleanPMID = (pmid) => {
-        return pmid.match(/^[0-9]{8}/)[0];
-      };
-      
-      // Update entry icon clicked
-      scope.updateRow = ($event, row) => {
-        
-        $mdDialog.show({
-          targetEvent: $event,
-          templateUrl: 'dashboard/report/genomic/knowledgebase/alterations/alterations.edit.html',
-          clickOutToClose: false,
-          locals: {
-            pog: scope.pog,
-            report: scope.report,
-            gene: row,
-            samples: scope.samples,
-            rowEvent: 'update',
-          },
-          controller: 'controller.dashboard.reports.genomic.detailedGenomicAnalysis.alterations.edit' // End controller
-         
-        }).then((outcome) => {
-          if(outcome) $mdToast.show($mdToast.simple().textContent(outcome));
-            scope.trigger(true);
-          },
-          (error) => {
-            $mdToast.show($mdToast.simple().textContent('No changes have been made'));
-          }
-        );
-      };
-      
-      // Create new entry...
-      scope.createRow = ($event, init) => {
-
-        let gene = angular.copy(init);
-        delete gene.reference;
-        delete gene.evidence;
-        delete gene.therapeuticContext;
-        delete gene.effect;
-        delete gene.association;
-        delete gene.disease;
-
-        $mdDialog.show({
-          targetEvent: $event,
-          templateUrl: 'dashboard/report/genomic/knowledgebase/alterations/alterations.edit.html',
-          clickOutToClose: false,
-          locals: {
-            pog: scope.pog,
-            report: scope.report,
-            gene: gene,
-            samples: scope.samples,
-            rowEvent: 'create'
-          },
-          controller: 'controller.dashboard.reports.genomic.detailedGenomicAnalysis.alterations.edit' // End controller
-        });
-      }
-      
-    } // end link
-  }; // end return
-  
-}]);
+  /* eslint-disable class-methods-use-this */
+  // Clean up PMIDs
+  cleanPMID(pmid) {
+    return pmid.match(/^[0-9]{8}/)[0];
+  }
+}
+    
+export default {
+  template,
+  bindings,
+  controller: GenomicAlterationComponent,
+};

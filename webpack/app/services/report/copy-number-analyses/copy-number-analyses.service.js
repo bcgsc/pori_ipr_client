@@ -1,71 +1,55 @@
-/*
- * BCGSC - IPR-Client User API
- *
- * This API factory implements the IPR-API. Calls to and from the API are
- * managed through this construct.
- *
- */
-app.factory('api.copyNumberAnalyses.cnv', ['_', '$http', '$q', (_, $http, $q) => {
+class CopyNumberAnalyses {
+  /* @ngInject */
+  constructor($http) {
+    this.$http = $http;
+    this.api = `${CONFIG.ENDPOINTS.API}/POG`;
+  }
 
-  const api = CONFIG.ENDPOINTS.API + '/POG';
-
-  let $cnv = {};
-
-
-  $cnv.all = (pog, report) => {
-
-    let deferred = $q.defer();
-
-    $http.get(api + '/' + pog + '/report/'+ report +'/genomic/copyNumberAnalyses/cnv').then(
-      (resp) => {
-        // Successful authentication
-        deferred.resolve(resp.data);
-      },
-      (error) => {
-        deferred.reject('Unable to retrieve');
-      }
+  /**
+   * Get all copy number analyses for a given report
+   * @param {String} patient - patient as String eg: POG103
+   * @param {String} report - report ident
+   * @return {Promise} API response data
+   * @throws {ErrorType} Thrown when API call fails
+   */
+  async all(patient, report) {
+    const { data } = await this.$http.get(
+      `${this.api}/${patient}/report/${report}/genomic/copyNumberAnalyses/cnv`,
     );
+    return data;
+  }
 
-    return deferred.promise;
-
-  };
-
-  $cnv.one = (pog, report, ident) => {
-    return {
-      update: (data) => {
-        let deferred = $q.defer();
-
-        $http.put(api + '/' + pog + '/report/'+ report +'/genomic/copyNumberAnalyses/cnv/' + ident, data).then(
-          (resp) => {
-            deferred.resolve(resp.data);
-          },
-          (error) => {
-            console.log('Unable to update CNV', error);
-            deferred.reject('Unable to update');
-          }
-        );
-
-        return deferred.promise;
-      }
-    }
-  };
-
-  // Get alterations by specific type
-  $cnv.getType = (pog, report, type) => {
-    let deferred = $q.defer();
-
-    $http.get(api + '/'  + pog + '/report/'+ report +'/genomic/copyNumberAnalyses/cnv/' + type).then(
-      (resp) => {
-        deferred.resolve(resp.data);
-      },
-      (error) => {
-        deferred.reject('Unable to retrieve the requested cnv', error);
-      }
+  /**
+   * Update a single copy number analysis
+   * @param {String} patient - patient as String eg: POG103
+   * @param {String} report - report ident
+   * @param {String} ident - ident String
+   * @param {Object} payload - payload object to be updated
+   * @return {Promise} API response data
+   * @throws {ErrorType} Thrown when API call fails
+   */
+  async updateOne(patient, report, ident, payload) {
+    const { data } = await this.$http.put(
+      `${this.api}/${patient}/report/${report}/genomic/copyNumberAnalyses/cnv/${ident}`,
+      payload,
     );
+    return data;
+  }
 
-    return deferred.promise;
-  };
+  /**
+   * Get alterations by specific type
+   * @param {String} patient - patient as String eg: POG103
+   * @param {String} report - report ident
+   * @param {String} type - type of alteration
+   * @return {Promise} API response data
+   * @throws {ErrorType} Thrown when API call fails
+   */
+  async getType(patient, report, type) {
+    const { data } = await this.$http.get(
+      `${this.api}/${patient}/report/${report}/genomic/copyNumberAnalyses/cnv/${type}`,
+    );
+    return data;
+  }
+}
 
-  return $cnv;
-
-}]);
+export default CopyNumberAnalyses;

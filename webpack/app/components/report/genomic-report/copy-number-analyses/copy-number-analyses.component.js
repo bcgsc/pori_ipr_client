@@ -1,50 +1,54 @@
-app.controller('controller.dashboard.report.genomic.copyNumberAnalyses',
-  ['_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', 'api.pog', 'api.somaticMutations.smallMutations', 'pog', 'report', 'ms', 'images', 'cnvs',
-    (_, $q, $scope, $state, $mdDialog, $mdToast, $pog, $smallMutations, pog, report, ms, images, cnvs) => {
+import template from './copy-number-analyses.pug';
+import './copy-number-analyses.scss';
 
-      // Load Images into template
-      $scope.images = images;
-      $scope.pog = pog;
-      $scope.report = report;
-      $scope.cnvGroups = {};
+const bindings = {
+  pog: '<',
+  report: '<',
+  mutationSummary: '<',
+  images: '<',
+  cnvs: '<',
+};
 
+class CopyNumberAnalyses {
+  /* @ngInject */
+  constructor(PogService, SmallMutationsService) {
+    this.PogService = PogService;
+    this.SmallMutationsService = SmallMutationsService;
+  }
 
-      $scope.titleMap = {
-        clinical: 'CNVs of Potential Clinical Relevance',
-        nostic: 'CNVs of Prognostic or Diagnostic Relevance',
-        biological: 'CNVs of Biological Relevance',
-        commonAmplified: 'Commonly Amplified Oncogenes with Copy Gains',
-        homodTumourSupress: 'Homozygously Deleted Tumour Suppresors',
-        highlyExpOncoGain: 'Highly Expressed Oncogenes with Copy Gains',
-        lowlyExpTSloss: 'Lowly Expressed Tumour Suppressors with Copy Losses'
-      };
+  $onInit() {
+    this.cnvGroups = {
+      clinical: [],
+      nostic: [],
+      biological: [],
+      commonAmplified: [],
+      homodTumourSupress: [],
+      highlyExpOncoGain: [],
+      lowlyExpTSloss: [],
+    };
 
-      let processCNV = (cnvs) => {
+    this.titleMap = {
+      clinical: 'CNVs of Potential Clinical Relevance',
+      nostic: 'CNVs of Prognostic or Diagnostic Relevance',
+      biological: 'CNVs of Biological Relevance',
+      commonAmplified: 'Commonly Amplified Oncogenes with Copy Gains',
+      homodTumourSupress: 'Homozygously Deleted Tumour Suppresors',
+      highlyExpOncoGain: 'Highly Expressed Oncogenes with Copy Gains',
+      lowlyExpTSloss: 'Lowly Expressed Tumour Suppressors with Copy Losses',
+    };
 
-        let container = {
-          clinical: [],
-          nostic: [],
-          biological: [],
-          commonAmplified: [],
-          homodTumourSupress: [],
-          highlyExpOncoGain: [],
-          lowlyExpTSloss: []
-        };
+    Object.values(this.cnvs).forEach((row) => {
+      if (!Object.prototype.hasOwnProperty.call(this.cnvGroups, row.cnvVariant)) {
+        this.cnvGroups[row.cnvVariant] = [];
+      }
+      // Add row to type
+      this.cnvGroups[row.cnvVariant].push(row);
+    });
+  }
+}
 
-        // Run over mutations and group
-        _.forEach(cnvs, (row, k) => {
-          if(!(row.cnvVariant in container)) container[row.cnvVariant] = [];
-          // Add to type
-          container[row.cnvVariant].push(row);
-        });
-
-        // Set Small Mutations
-        $scope.cnvGroups = container;
-      };
-
-      processCNV(cnvs);
-
-
-    }
-  ]
-);
+export default {
+  template,
+  bindings,
+  controller: CopyNumberAnalyses,
+};

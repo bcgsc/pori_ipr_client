@@ -61,10 +61,8 @@ class GenomicReportComponent {
         category: true,
         children: [
           { name: 'Knowledgebase Matches', state: 'knowledgebase' },
-          { name: 'DNA Repair', state: null, disabled: true },
           { name: 'Microbial', state: 'microbial' },
           { name: 'Spearman', state: 'spearman' },
-          { name: 'HRD', state: 'hrd', disabled: true },
           { name: 'Disease Specific', state: 'diseaseSpecificAnalysis' },
         ],
       },
@@ -77,7 +75,7 @@ class GenomicReportComponent {
         category: true,
         children: [
           { name: 'Small Mutations', state: 'smallMutations' },
-          { name: 'Copy Number Variants', state: 'copyNumberAnalyses' },
+          { name: 'Copy Number Analyses', state: 'copyNumberAnalyses' },
           { name: 'Structural Variants', state: 'structuralVariation' },
         ],
       },

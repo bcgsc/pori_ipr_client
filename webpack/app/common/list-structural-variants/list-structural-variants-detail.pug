@@ -1,63 +1,63 @@
 md-dialog(layout="column", aria-label="Structural Variant Details", flex-md=80, flex-xs=100, flex-lg=80)
-    md-toolbar
-        .md-toolbar-tools
-            h2 {{formAction}} Structural Variant Details
-            span(flex)
-            md-button.md-icon-button(ng-click='cancel()')
-                md-icon cancel
-    md-dialog-content(layout-padding).iprBox
-        div(height="300px")
-            div(id="svgImage")
+  md-toolbar
+    .md-toolbar-tools
+      h2 {{formAction}} Structural Variant Details
+      span(flex)
+      md-button.md-icon-button(ng-click='cancel()')
+        md-icon cancel
+  md-dialog-content(layout-padding).iprBox
+    div(height="300px")
+      div(id="svgImage")
 
-        div(flex, layout="column").dataBox
+    div(flex, layout="column").dataBox
 
-            div(flex, layout="row", layout-align="space around").infoBar
-                div(flex)
-                    span Gene
-                    span(flex) {{sv.name}}
-                div(flex)
-                    span Type
-                    span {{sv.eventType}}
-                div(flex)
-                    span Predicted
-                    span(ng-if="sv.frame === 'OUT'") Out of frame
-                    span(ng-if="sv.frame === 'IN'") in frame
-                    span(ng-if="sv.frame === 'UNDET'") Not determined
-                    span(ng-if="sv.frame === null") N/A
+      div(flex, layout="row", layout-align="space around").infoBar
+        div(flex)
+          span Gene
+          span(flex) {{sv.name}}
+        div(flex)
+          span Type
+          span {{sv.eventType}}
+        div(flex)
+          span Predicted
+          span(ng-if="sv.frame === 'OUT'") Out of frame
+          span(ng-if="sv.frame === 'IN'") in frame
+          span(ng-if="sv.frame === 'UNDET'") Not determined
+          span(ng-if="sv.frame === null") N/A
 
-            div.box
-                div(flex, layout="row").heading
-                    div(flex) Position
-                    div(flex) HGNC Gene
-                    div(flex) Ensembl Gene
-                    div(flex) Ensembl Transcript
-                    div(flex) Exon
-                    div(flex) Breakpoint
-                div(flex, layout="row").row
-                    div(flex) 5`
-                    div(flex) {{sv.name.split('::')[0]}}
-                    div(flex, md-truncate)
-                        span(ng-if="sv.ctermGene")
-                            a(href="http://ensembl.org/Homo_sapiens/Gene/Summary?db=core;g={{ensemblName(sv.ntermGene)}}", target="_blank") {{ensemblName(sv.ntermGene)}}
-                    div(flex, md-truncate)
-                        span(ng-if="sv.ntermTranscript")
-                            a(href="http://ensembl.org/Homo_sapiens/Gene/Summary?db=core;t={{sv.ntermTranscript}}", target="_blank") {{sv.ntermTranscript}}
-                    div(flex) {{sv.exons.split(':')[0]}}
-                    div(flex, md-truncate) {{sv.breakpoint.split('|')[0]}}
-                div(flex, layout="row").row
-                    div(flex) 3`
-                    div(flex) {{sv.name.split('::')[1]}}
-                    div(flex, md-truncate)
-                        span(ng-if="sv.ctermGene")
-                            a(href="http://ensembl.org/Homo_sapiens/Gene/Summary?db=core;g={{ensemblName(sv.ctermGene)}}", target="_blank") {{ensemblName(sv.ctermGene)}}
-                    div(flex, md-truncate)
-                        span(ng-if="sv.ctermTranscript")
-                            a(href="http://ensembl.org/Homo_sapiens/Gene/Summary?db=core;t={{sv.ctermTranscript}}", target="_blank") {{sv.ctermTranscript}}
-                    div(flex) {{sv.exons.split(':')[1]}}
-                    div(flex, md-truncate) {{sv.breakpoint.split('|')[1]}}
+      div.box
+        div(flex, layout="row").heading
+          div(flex) Position
+          div(flex) HGNC Gene
+          div(flex) Ensembl Gene
+          div(flex) Ensembl Transcript
+          div(flex) Exon
+          div(flex) Breakpoint
+        div(flex, layout="row").row
+          div(flex) 5`
+          div(flex) {{sv.name.split('::')[0]}}
+          div(flex, md-truncate)
+            span(ng-if="sv.ctermGene")
+              a(href="http://ensembl.org/Homo_sapiens/Gene/Summary?db=core;g={{ensemblName(sv.ntermGene)}}", target="_blank") {{ensemblName(sv.ntermGene)}}
+          div(flex, md-truncate)
+            span(ng-if="sv.ntermTranscript")
+              a(href="http://ensembl.org/Homo_sapiens/Gene/Summary?db=core;t={{sv.ntermTranscript}}", target="_blank") {{sv.ntermTranscript}}
+          div(flex) {{sv.exons.split(':')[0]}}
+          div(flex, md-truncate) {{sv.breakpoint.split('|')[0]}}
+        div(flex, layout="row").row
+          div(flex) 3`
+          div(flex) {{sv.name.split('::')[1]}}
+          div(flex, md-truncate)
+            span(ng-if="sv.ctermGene")
+              a(href="http://ensembl.org/Homo_sapiens/Gene/Summary?db=core;g={{ensemblName(sv.ctermGene)}}", target="_blank") {{ensemblName(sv.ctermGene)}}
+          div(flex, md-truncate)
+            span(ng-if="sv.ctermTranscript")
+              a(href="http://ensembl.org/Homo_sapiens/Gene/Summary?db=core;t={{sv.ctermTranscript}}", target="_blank") {{sv.ctermTranscript}}
+          div(flex) {{sv.exons.split(':')[1]}}
+          div(flex, md-truncate) {{sv.breakpoint.split('|')[1]}}
 
-        div(flex).md-padding {{sv.svgTitle}}
+    div(flex).md-padding {{sv.svgTitle}}
 
-    md-dialog-actions(layout="row", layout-aligh="end center", layout-padding)
-        md-button(ng-click="cancel()").md-primary Close
+  md-dialog-actions(layout="row", layout-align="end center", layout-padding)
+    md-button(ng-click="cancel()").md-primary Close
 
