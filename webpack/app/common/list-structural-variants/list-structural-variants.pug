@@ -15,16 +15,15 @@ div(flex, layout="column")
         div(flex=5) Image
       div(ng-if="$ctrl.svs.length == 0")
         div.text-center.details.bg-white No gene fusions of this kind were found from the analysis.
-      div(layout="row", flex, ng-repeat="sv in $ctrl.svs").row
+      div(layout="row", flex, ng-repeat="sv in $ctrl.svs track by $index").row
         div(flex)
-          span(ng-click="$ctrl.firstGeneClicked = true; $ctrl.geneIndex = $index").clickable.underlined
-          | {{sv.genes.split('::')[0]}}::
-          span(ng-click="$ctrl.secondGeneClicked = true; $ctrl.geneIndex = $index").clickable.underlined
-          | {{sv.genes.split('::')[1]}}
+          span(ng-click="$ctrl.firstGeneClicked = true; $ctrl.geneIndex = $index").clickable.underlined {{sv.genes.split('::')[0]}}
+          |::
+          span(ng-click="$ctrl.secondGeneClicked = true; $ctrl.geneIndex = $index").clickable.underlined {{sv.genes.split('::')[1]}}
           gene-viewer(ng-if="$ctrl.firstGeneClicked", ng-init="$ctrl.firstGeneClicked = false",
-            report="$ctrl.report", pog="$ctrl.pog", gene="svs[$ctrl.geneIndex].genes.split('::')[0]")
+            report="$ctrl.report", pog="$ctrl.pog", gene="$ctrl.svs[$ctrl.geneIndex].genes.split('::')[0]")
           gene-viewer(ng-if="$ctrl.secondGeneClicked", ng-init="$ctrl.secondGeneClicked = false",
-            report="$ctrl.report", pog="$ctrl.pog", gene="svs[$ctrl.geneIndex].genes.split('::')[1]")
+            report="$ctrl.report", pog="$ctrl.pog", gene="$ctrl.svs[$ctrl.geneIndex].genes.split('::')[1]")
         div(flex=5, md-truncate) {{sv.exons}}
         div(flex=15, md-truncate) 
           span(ng-if="sv.breakpoint.split('|')[1]") {{sv.breakpoint.split('|')[0]}}|

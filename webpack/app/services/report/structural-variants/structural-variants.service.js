@@ -1,71 +1,55 @@
-/*
- * BCGSC - IPR-Client User API
- *
- * This API factory implements the IPR-API. Calls to and from the API are
- * managed through this construct.
- *
- */
-app.factory('api.structuralVariation.sv', ['_', '$http', '$q', (_, $http, $q) => {
+class StructuralVariantsService {
+  /* @ngInject */
+  constructor($http) {
+    this.$http = $http;
+    this.api = `${CONFIG.ENDPOINTS.API}/POG`;
+  }
 
-  const api = CONFIG.ENDPOINTS.API + '/POG';
-
-  let $sv = {};
-
-
-  $sv.all = (pog, report) => {
-
-    let deferred = $q.defer();
-
-    $http.get(api + '/' + pog + '/report/' + report+ '/genomic/structuralVariation/sv').then(
-      (resp) => {
-        // Successful authentication
-        deferred.resolve(resp.data);
-      },
-      (error) => {
-        deferred.reject('Unable to retrieve');
-      }
+  /**
+   * Get all structural variants
+   * @param {String} patient - patient ID
+   * @param {String} report - report ID
+   * @return {Promise} API response data
+   * @throws {ErrorType} Thrown when API call fails
+   */
+  async all(patient, report) {
+    const { data } = await this.$http.get(
+      `${this.api}/${patient}/report/${report}/genomic/structuralVariation/sv`,
     );
-
-    return deferred.promise;
-
-  };
-
-  $sv.one = (pog, report, ident) => {
-    return {
-      update: (data) => {
-        let deferred = $q.defer();
-
-        $http.put(api + '/' + pog + '/report/' + report+ '/genomic/structuralVariation/sv/' + ident, data).then(
-          (resp) => {
-            deferred.resolve(resp.data);
-          },
-          (error) => {
-            console.log('Unable to update APC', error);
-            deferred.reject('Unable to update');
-          }
-        );
-
-        return deferred.promise;
-      }
-    }
-  };
-
-  // Get alterations by specific type
-  $sv.getType = (pog, report, type) => {
-    let deferred = $q.defer();
-
-    $http.get(api + '/'  + pog + '/report/' + report+ '/genomic/structuralVariation/sv/' + type).then(
-      (resp) => {
-        deferred.resolve(resp.data);
-      },
-      (error) => {
-        deferred.reject('Unable to retrieve requested structural variation', error);
-      }
+    return data;
+  }
+  
+  /**
+   * Update a single structural variant entry
+   * @param {String} patient - patient ID
+   * @param {String} report - report ID
+   * @param {String} ident - ident String
+   * @param {Object} payload - Object to be updated
+   * @return {Promise} API response data
+   * @throws {ErrorType} Thrown when API call fails
+   */
+  async updateOne(patient, report, ident, payload) {
+    const { data } = await this.$http.put(
+      `${this.api}/${patient}/report/${report}/genomic/structuralVariation/sv/${ident}`,
+      payload,
     );
+    return data;
+  }
 
-    return deferred.promise;
-  };
+  /**
+   * Get structural variants by specific type
+   * @param {String} patient - patient ID
+   * @param {String} report - report ID
+   * @param {String} type - type as String
+   * @return {Promise} API response data
+   * @throws {ErrorType} Thrown when API call fails
+   */
+  async getType(patient, report, type) {
+    const { data } = await this.$http.get(
+      `${this.api}/${patient}/report/${report}/genomic/structuralVariation/sv/${type}`,
+    );
+    return data;
+  }
+}
 
-  return $sv;
-
-}]);
+export default StructuralVariantsService;

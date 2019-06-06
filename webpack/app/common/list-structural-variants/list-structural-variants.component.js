@@ -25,10 +25,9 @@ class ListStructuralVariantsComponent {
         /* This is due to the DOM not being rendered right away */
         /* Note: $mdDialog has no other function with $onInit capabilities */
         const svgImage = document.getElementById('svgImage');
-
         // Create SVG DOM element from String
         $scope.svg = new DOMParser().parseFromString(sv.svg, 'application/xml');
-
+        $scope.svg.children[0].id = 'fusionDiagram';
         svgImage.appendChild(
           svgImage.ownerDocument.importNode($scope.svg.documentElement, true),
         );

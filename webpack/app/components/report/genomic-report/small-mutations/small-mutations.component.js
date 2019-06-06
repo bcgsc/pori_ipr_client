@@ -25,7 +25,7 @@ class SmallMutationsComponent {
   $onInit() {
     this.processMutationSummaryImages(this.mutationSummaryImages);
     this.processMutations(this.smallMutations);
-    this.pickCompatator();
+    this.pickComparator();
   }
 
   processMutations(muts) {
@@ -49,7 +49,7 @@ class SmallMutationsComponent {
     this.smallMutations = mutations;
   }
   
-  pickCompatator() {
+  pickComparator() {
     let search = this.mutationSummary.find((entry) => {
       return entry.comparator === this.report.tumourAnalysis.diseaseExpressionComparator;
     });

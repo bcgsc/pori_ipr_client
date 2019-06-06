@@ -1,35 +1,23 @@
-/*
- * BCGSC - IPR-Client User API
- *
- * This API factory implements the IPR-API. Calls to and from the API are
- * managed through this construct.
- *
- */
-app.factory('api.mavis', ['_', '$http', '$q', (_, $http, $q) => {
+class MavisService {
+  /* @ngInject */
+  constructor($http) {
+    this.$http = $http;
+    this.api = `${CONFIG.ENDPOINTS.API}/POG`;
+  }
 
-  const api = CONFIG.ENDPOINTS.API + '/POG';
-
-  let $mavis = {};
-
-
-  $mavis.all = (pog, report) => {
-
-    let deferred = $q.defer();
-
-    $http.get(api + '/' + pog + '/report/' + report+ '/genomic/mavis').then(
-      (resp) => {
-        // Successful authentication
-        deferred.resolve(resp.data);
-      },
-      (error) => {
-        deferred.reject('Unable to retrieve');
-      }
+  /**
+   * Get all Mavis results
+   * @param {String} patient - patient ID
+   * @param {String} report - report ID
+   * @return {Promise} API response data
+   * @throws {ErrorType} Thrown when API call fails
+   */
+  async all(patient, report) {
+    const { data } = await this.$http.get(
+      `${this.api}/${patient}/report/${report}/genomic/mavis`,
     );
+    return data;
+  }
+}
 
-    return deferred.promise;
-
-  };
-
-  return $mavis;
-
-}]);
+export default MavisService;
