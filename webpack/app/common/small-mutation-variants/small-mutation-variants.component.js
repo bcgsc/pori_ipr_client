@@ -1,6 +1,5 @@
 import template from './small-mutation-variants.pug';
-import dataTemplate from './data-viewer.pug';
-import './data-viewer.scss';
+import './small-mutation-variants.scss';
 
 const bindings = {
   mutations: '<',
@@ -12,6 +11,7 @@ class SmallMutationVariantsComponent {
   /* @ngInject */
   constructor($mdDialog) {
     this.$mdDialog = $mdDialog;
+    this.clicked = false;
   }
 
   /* eslint-disable-next-line class-methods-use-this */
@@ -20,25 +20,6 @@ class SmallMutationVariantsComponent {
       return (copyChange === 'na') ? 'na' : copyChange.match(/(((\+|-)?)[0-9]{1,2})/g)[0];
     }
     return null;
-  }
-
-  openDialog($event, $index) {
-    this.$mdDialog.show({
-      clickOutsideToClose: true,
-      targetEvent: $event,
-      template: dataTemplate,
-      controller: ['$scope', ($scope) => {
-        $scope.mutations = this.mutations[$index];
-        /* ident, id, and pog_id are ignored columns */
-        delete $scope.mutations.ident;
-        delete $scope.mutations.id;
-        delete $scope.mutations.pog_id;
-
-        $scope.cancel = () => {
-          this.$mdDialog.cancel();
-        };
-      }],
-    });
   }
 }
 

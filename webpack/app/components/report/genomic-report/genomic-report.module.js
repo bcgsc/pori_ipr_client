@@ -11,6 +11,7 @@ import MicrobialModule from './microbial/microbial.module';
 import SpearmanModule from './spearman/spearman.module';
 import DiseaseSpecificAnalysisModule from './disease-specific-analysis/disease-specific-analysis.module';
 import SmallMutationsModule from './small-mutations/small-mutations.module';
+import CopyNumberAnalysesModule from './copy-number-analyses/copy-number-analyses.module';
 
 angular.module('genomic.report', [
   uiRouter,
@@ -24,6 +25,7 @@ angular.module('genomic.report', [
   SpearmanModule,
   DiseaseSpecificAnalysisModule,
   SmallMutationsModule,
+  CopyNumberAnalysesModule,
 ]);
 
 export default angular.module('genomic.report')

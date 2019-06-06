@@ -1,0 +1,81 @@
+div(layout="column", flex).details.box
+  div(ng-init="$ctrl.gene.showChildren=false").collapse
+    md-icon(ng-click="$ctrl.gene.showChildren=!$ctrl.gene.showChildren") {{(($ctrl.gene.showChildren) ? 'expand_less' : 'expand_more')}}
+      md-tooltip Show more entries related to this
+  div(layout="row", flex)
+    dt(flex="10") Gene:
+    dd(flex="10", ng-click="$ctrl.geneClicked = true") {{::$ctrl.gene.gene}}
+      gene-viewer(ng-if="$ctrl.geneClicked", ng-init="$ctrl.geneClicked = false",
+        report="::$ctrl.report", pog="::$ctrl.pog", gene="::$ctrl.gene.gene")
+    
+    dt(flex="10") Variant: 
+    dd(flex="20") {{::$ctrl.gene.variant}}
+    
+    dt(flex="10") Source: 
+    dd(flex="60") {{::$ctrl.gene.sample}}
+    
+  div(layout="row", flex)
+    dt(flex="15") Expression: 
+    dd(flex="15") {{::$ctrl.gene.expression_tissue_fc}}
+    
+    dt(flex="15") Disease Percentile: 
+    dd(flex="15") {{::$ctrl.gene.expression_cancer_percentile}}
+    
+    dt(flex="15") Copy Number: 
+    dd(flex="15") {{::$ctrl.gene.copyNumber}}
+    
+    dt(flex="15") Zygosity: 
+    dd(flex="15") {{::$ctrl.gene.zygosity}}
+    
+div(flex, layout="column", ng-if="$ctrl.gene.showChildren")
+  
+  div(layout="column", flex).dataBox
+  
+    div.box
+      div(layout="row", flex).heading
+        div(flex=15) Known Variant
+        div(flex) Effect
+        div(flex) Cancer Type
+        div(flex) Association
+        div(flex) Therapeutic Context
+        div(flex) Evidence
+        div(flex) Reference (PIMID)
+        div(flex=5)
+        
+      div(layout="row", flex).row
+        div(flex=15) {{::$ctrl.gene.kbVariant}}
+        div(flex) {{::$ctrl.gene.effect}}
+        div(flex) {{::$ctrl.gene.disease}}
+        div(flex) {{::$ctrl.gene.association}}
+        div(flex) {{::$ctrl.gene.therapeuticContext}}
+        div(flex) {{::$ctrl.gene.evidence}}
+        div(flex)
+          span(ng-if="$ctrl.refType($ctrl.gene.reference) == 'pmid'") 
+            a(href="https://www.ncbi.nlm.nih.gov/pubmed/{{$ctrl.gene.reference}}", target="_blank") {{::$ctrl.cleanPMID($ctrl.gene.reference)}}
+          span(ng-if="$ctrl.refType($ctrl.gene.reference) == 'link'")
+            a(href="{{$ctrl.prependLink($ctrl.gene.reference)}}", target="_blank") Source
+          span(ng-if="$ctrl.refType($ctrl.gene.reference) == 'text'").reference Reference
+            md-icon info
+            md-tooltip {{::$ctrl.gene.reference}}
+        div(flex=5).text-center.edit
+          md-icon(data-viewer="$ctrl.gene") search
+            md-tooltip View Details
+      
+      div(layout="row", flex, ng-repeat="(i, childGene) in ::$ctrl.gene.children").row
+        div(flex=15) {{::childGene.kbVariant}}
+        div(flex) {{::childGene.effect}}
+        div(flex) {{::childGene.disease}}
+        div(flex) {{::childGene.association}}
+        div(flex) {{::childGene.therapeuticContext}}
+        div(flex) {{::childGene.evidence}}
+        div(flex) 
+          span(ng-if="$ctrl.refType(childGene.reference) == 'pmid'") 
+            a(href="https://www.ncbi.nlm.nih.gov/pubmed/{{childGene.reference}}", target="_blank") {{::$ctrl.cleanPMID(childGene.reference)}}
+          span(ng-if="$ctrl.refType(childGene.reference) == 'link'")
+            a(href="{{$ctrl.prependLink(childGene.reference)}}", target="_blank") Source
+          span(ng-if="$ctrl.refType(childGene.reference) == 'text'").reference Reference
+            md-icon info
+            md-tooltip {{::childGene.reference}}
+        div(flex=5).text-center.edit
+          md-icon(data-viewer="childGene") search
+            md-tooltip View Details

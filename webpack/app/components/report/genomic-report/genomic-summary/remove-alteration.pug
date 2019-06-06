@@ -9,7 +9,7 @@ md-dialog(layout="column", aria-label="Remove Alteration", ng-cloak, flex=55).ed
             label Comment
             textarea(ng-model="comment", placeholder="Why are you removing this entry?", md-maxlength=150, flex)
 
-    md-dialog-actions(layout="row", layout-aligh="end center")
+    md-dialog-actions(layout="row", layout-align="end center")
         md-button(ng-click="cancel()").md-primary Cancel
         span(flex)
         md-button(ng-click="update(false)").md-primary.md-raised Remove only this entry
