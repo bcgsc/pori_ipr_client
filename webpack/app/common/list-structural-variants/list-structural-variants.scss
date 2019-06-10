@@ -1,3 +1,24 @@
+@import '../../styles/variables';
+
+.text-center {
+  text-align: center;
+}
+
+.bg-white {
+  background-color: $white;
+}
+
+.clickable {
+  cursor: pointer;
+  outline: 0;
+}
+
+.underlined {
+  color: $underline;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
 md-dialog-content.iprBox {
 
   svg {
