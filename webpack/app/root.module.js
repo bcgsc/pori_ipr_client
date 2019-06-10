@@ -44,6 +44,8 @@ import ImageService from './services/report/image.service';
 import SmallMutationsService from './services/report/somatic/small-mutations.service';
 import GeneViewerService from './services/report/somatic/gene-viewer.service';
 import CopyNumberAnalysesService from './services/report/copy-number-analyses/copy-number-analyses.service';
+import StructuralVariantService from './services/report/structural-variants/structural-variants.service';
+import MavisService from './services/report/structural-variants/mavis.service';
 import TitleCaseFilter from './filters/titlecase.filter';
 import './root.scss';
 
@@ -93,6 +95,8 @@ export default angular.module('root')
   .service('SmallMutationsService', SmallMutationsService)
   .service('GeneViewerService', GeneViewerService)
   .service('CopyNumberAnalysesService', CopyNumberAnalysesService)
+  .service('StructuralVariantsService', StructuralVariantService)
+  .service('MavisService', MavisService)
   .filter('titlecase', TitleCaseFilter)
   .config(($stateProvider, $urlServiceProvider, $locationProvider) => {
     'ngInject';

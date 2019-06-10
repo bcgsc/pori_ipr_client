@@ -12,6 +12,7 @@ import SpearmanModule from './spearman/spearman.module';
 import DiseaseSpecificAnalysisModule from './disease-specific-analysis/disease-specific-analysis.module';
 import SmallMutationsModule from './small-mutations/small-mutations.module';
 import CopyNumberAnalysesModule from './copy-number-analyses/copy-number-analyses.module';
+import StructuralVariantsModule from './structural-variants/structural-variants.module';
 
 angular.module('genomic.report', [
   uiRouter,
@@ -26,6 +27,7 @@ angular.module('genomic.report', [
   DiseaseSpecificAnalysisModule,
   SmallMutationsModule,
   CopyNumberAnalysesModule,
+  StructuralVariantsModule,
 ]);
 
 export default angular.module('genomic.report')
