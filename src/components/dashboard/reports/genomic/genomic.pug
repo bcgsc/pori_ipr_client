@@ -54,7 +54,7 @@ md-content(flex, layout="column", ng-if="!externalMode").md-padding
         div(layout="row", flex, layout-align="space-between")
             md-content(layout="column", flex, ng-show="states.ready").column
                 div(ng-show="loading").text-center Loading...
-                div(ng-show="numReports('ready') === 0").noWork No genomic reports ready for analysis found.
+                div(ng-if="numReports('ready') === 0").noWork No genomic reports ready for analysis found.
                 ipr-report-listing-card(ng-repeat="report in reports | filter: searchPogs('ready', pogQuery)", md-whiteframe=2, report="report", pog="report.analysis.pog", state="ready" ng-hide="loading").pog
 
             md-content(layout="column", flex, ng-show="states.active").column
