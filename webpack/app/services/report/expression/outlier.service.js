@@ -1,71 +1,52 @@
-/*
- * BCGSC - IPR-Client User API
- *
- * This API factory implements the IPR-API. Calls to and from the API are
- * managed through this construct.
- *
- */
-app.factory('api.expressionAnalysis.outlier', ['_', '$http', '$q', (_, $http, $q) => {
+class OutlierService {
+  /* @ngInject */
+  constructor($http) {
+    this.$http = $http;
+    this.api = `${CONFIG.ENDPOINTS.API}/POG`;
+  }
 
-  const api = CONFIG.ENDPOINTS.API + '/POG';
-
-  let $outlier = {};
-
-
-  $outlier.all = (pog, report) => {
-
-    let deferred = $q.defer();
-
-    $http.get(api + '/' + pog + '/report/'+ report +'/genomic/expressionAnalysis/outlier').then(
-      (resp) => {
-        // Successful authentication
-        deferred.resolve(resp.data);
-      },
-      (error) => {
-        deferred.reject('Unable to retrieve');
-      }
+  /**
+   * Get all outliers
+   * @param {String} patient - patient ID as String
+   * @param {String} report - report ident
+   * @return {Promise} - API response data
+*/
+  async all(patient, report) {
+    const { data } = await this.$http.get(
+      `${this.api}/${patient}/report/${report}/genomic/expressionAnalysis/outlier`,
     );
+    return data;
+  }
 
-    return deferred.promise;
-
-  };
-
-  $outlier.one = (pog, report, ident) => {
-    return {
-      update: (data) => {
-        let deferred = $q.defer();
-
-        $http.put(api + '/' + pog + '/report/'+ report +'/genomic/expressionAnalysis/outlier/' + ident, data).then(
-          (resp) => {
-            deferred.resolve(resp.data);
-          },
-          (error) => {
-            console.log('Unable to update APC', error);
-            deferred.reject('Unable to update');
-          }
-        );
-
-        return deferred.promise;
-      }
-    }
-  };
-
-  // Get alterations by specific type
-  $outlier.getType = (pog, report, type) => {
-    let deferred = $q.defer();
-
-    $http.get(api + '/'  + pog + '/report/'+ report +'/genomic/expressionAnalysis/outlier/' + type).then(
-      (resp) => {
-        deferred.resolve(resp.data);
-      },
-      (error) => {
-        deferred.reject('Unable to retrieve requested alterations', error);
-      }
+  /**
+   * Update a single case
+   * @param {String} patient - patient ID as String
+   * @param {String} report - report ident
+   * @param {String} ident - outlier ID
+   * @param {Object} payload - object to update existing
+   * @return {Promise} - API response data
+   */
+  async updateOne(patient, report, ident, payload) {
+    const { data } = await this.$http.put(
+      `${this.api}/${patient}/report/${report}/genomic/expressionAnalysis/outlier/${ident}`,
+      payload,
     );
+    return data;
+  }
 
-    return deferred.promise;
-  };
+  /**
+   * Get the outlier type
+   * @param {String} patient - patient ID as String
+   * @param {String} report - report ident
+   * @param {String} type - type
+   * @return {Promise} - API response data
+   */
+  async getType(patient, report, type) {
+    const { data } = await this.$http.get(
+      `${this.api}/${patient}/report/${report}/genomic/expressionAnalysis/outlier/${type}`,
+    );
+    return data;
+  }
+}
 
-  return $outlier;
-
-}]);
+export default OutlierService;

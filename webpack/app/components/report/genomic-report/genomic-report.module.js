@@ -13,6 +13,7 @@ import DiseaseSpecificAnalysisModule from './disease-specific-analysis/disease-s
 import SmallMutationsModule from './small-mutations/small-mutations.module';
 import CopyNumberAnalysesModule from './copy-number-analyses/copy-number-analyses.module';
 import StructuralVariantsModule from './structural-variants/structural-variants.module';
+import ExpressionAnalysisModule from './expression/expression-analysis.module';
 
 angular.module('genomic.report', [
   uiRouter,
@@ -28,6 +29,7 @@ angular.module('genomic.report', [
   SmallMutationsModule,
   CopyNumberAnalysesModule,
   StructuralVariantsModule,
+  ExpressionAnalysisModule,
 ]);
 
 export default angular.module('genomic.report')
