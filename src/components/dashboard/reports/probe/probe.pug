@@ -24,7 +24,7 @@ md-content(flex, layout="column", ng-if="!externalMode").md-padding
                 md-tooltip(md-direction="right") About Targeted Gene Reports
         span(flex, layout="row", layout-align="end end")
             md-input-container.hide-validation-error.pull-right
-                input(placeholder="Search", name="Search", ng-model="pogQuery", size=40).text-small
+                input(placeholder="Search", name="Search", ng-model="pogQuery", ng-model-options="{debounce: 320}", size=40).text-small
                 md-icon(ng-click="showFilterTips()").clickable.blue help
             span(flex=5)
             span
