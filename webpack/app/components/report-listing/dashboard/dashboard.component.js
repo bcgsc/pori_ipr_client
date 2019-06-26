@@ -7,7 +7,7 @@ const bindings = {
 
 class DashboardComponent {
   $onInit() {
-    this.reports = this.reports.sort();
+    this.reports = this.reports.reports.sort();
     this.currentCases = this.reports;
     this.upstreamCases = [];
   }
