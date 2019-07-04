@@ -14,9 +14,16 @@ class LoginRedirect {
     this.$localStorage.expiry = resp.expiry;
     if (this.$localStorage.returnToState) {
       // navigate to state user was trying to access
-      this.$state.go(
-        this.$localStorage.returnToState, JSON.parse(this.$localStorage.returnToStateParams),
-      );
+      if (!Object.is(this.$localStorage.returnToStateParams, { '#': null })) {
+        console.log('is');
+        this.$state.go(
+          this.$localStorage.returnToState, JSON.parse(this.$localStorage.returnToStateParams),
+        );
+      } else {
+        this.$state.go(
+          this.$localStorage.returnToState,
+        );
+      }
       delete this.$localStorage.returnToState;
       delete this.$localStorage.returnToStateParams;
     } else {
