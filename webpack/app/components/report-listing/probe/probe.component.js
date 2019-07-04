@@ -35,12 +35,12 @@ class ProbeComponent {
   }
 
   async $onInit() {
+    this.reports = this.reports.reports;
     if (this.isExternalMode) {
       this.states.reviewed = true;
       this.states.uploaded = false;
       this.states.signedoff = false;
 
-      this.reports = this.reports;
       this.pagination = {
         offset: 0,
         limit: 25,

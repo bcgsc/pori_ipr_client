@@ -1,40 +1,22 @@
-/*
- * BCGSC - IPR-Client User API
- *
- * This API factory implements the IPR-API. Calls to and from the API are
- * managed through this construct.
- *
- */
-app.factory('api.appendices', ['_', '$http', '$q', (_, $http, $q) => {
+class AppendicesService {
+  /* @ngInject */
+  constructor($http) {
+    this.$http = $http;
+    this.api = `${CONFIG.ENDPOINTS.API}/POG`;
+  }
 
-  const api = CONFIG.ENDPOINTS.API + '/POG';
-
-  let $appendices = {};
-
-
-  /*
-   * Get one Image
-   *
-   * Retrieve one image from API.
-   *
+  /**
+   * Get TCGA appendices
+   * @param {String} patient - patient id as String ie: POG123
+   * @param {String} report - report ident
+   * @return {Promise} API response data
    */
-  $appendices.tcga = (POGID, report) => {
+  async tcga(patient, report) {
+    const { data } = await this.$http.get(
+      `${this.api}/${patient}/report/${report}/genomic/appendices/tcga`,
+    );
+    return data;
+  }
+}
 
-    return $q((resolve, reject) => {
-
-      // Get result from API
-      $http.get(api + '/' + POGID + '/report/' + report + '/genomic/appendices/tcga').then(
-        (result) => {
-          resolve(result.data);
-        },
-        (error) => {
-          // TODO: Better error handling
-          reject();
-        }
-      );
-    });
-  };
-
-  return $appendices;
-
-}]);
+export default AppendicesService;

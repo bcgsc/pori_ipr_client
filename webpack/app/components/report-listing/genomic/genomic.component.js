@@ -37,8 +37,8 @@ class GenomicComponent {
   }
 
   async $onInit() {
+    this.reports = this.reports.reports;
     if (this.isExternalMode) {
-      this.reports = this.reports.reports;
       this.pagination = {
         offset: 0,
         limit: 25,
