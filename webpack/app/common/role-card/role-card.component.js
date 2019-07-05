@@ -1,40 +1,43 @@
-app.directive("iprPogRole", ['$q', '_', '$mdDialog', '$mdToast', 'indefiniteArticleFilter', ($q, _, $mdDialog, $mdToast, indefiniteArticleFilter) => {
+import template from './role-card.pug';
+import './role-card.scss';
 
+const bindings = {
+  role: '<',
+  removeEntry: '&',
+};
 
-  return {
-    restrict: 'E',
-    transclude: false,
-    scope: {
-      role: '=role',
-      removeEntry: '=remove'
-    },
-    templateUrl: 'ipr-pog-role/ipr-pog-role.html',
-    link: (scope, element, attr) => {
+class RoleCardComponent {
+  /* @ngInject */
+  constructor($mdDialog, $mdToast, indefiniteArticleFilter) {
+    this.$mdDialog = $mdDialog;
+    this.$mdToast = $mdToast;
+    this.indefiniteArticleFilter = indefiniteArticleFilter;
+  }
 
-      scope.remove = ($event) => {
+  async remove($event) {
+    const confirm = this.$mdDialog.confirm()
+      .title('Are you sure you want to remove this user?')
+      .textContent(
+        `Are you sure you want to remove ${this.role.user.firstName} ${this.role.user.lastName} as ${this.indefiniteArticleFilter(this.role.role)} ${this.role.role}?`,
+      )
+      .ariaLabel('Confirm remove user')
+      .targetEvent($event)
+      .ok('Confirm')
+      .cancel('Cancel');
 
-        let confirm = $mdDialog.confirm()
-          .title('Are you sure you want to remove this user?')
-          .textContent('Are you sure you want to remove '+scope.role.user.firstName + ' ' + scope.role.user.lastName + ' as ' + indefiniteArticleFilter(scope.role.role) + ' ' + scope.role.role + '?')
-          .ariaLabel('Confirm remove user')
-          .targetEvent($event)
-          .ok('Confirm')
-          .cancel('Cancel');
+    await this.$mdDialog.show(confirm);
+    const role = angular.copy(this.role);
+    this.$mdToast.show(this.$mdToast.simple().textContent(
+      `${role.user.firstName} ${role.user.lastName} has been removed as ${this.indefiniteArticleFilter(this.role.role)} ${role.role}.`,
+    ));
+    /* This syntax is really weird, but if anyone is interested: */
+    /* Read about '&' binding for components in angularjs for why we pass an object back */
+    this.removeEntry({ entry: this.role });
+  }
+}
 
-          $mdDialog.show(confirm).then(
-            () => {
-              let role = angular.copy(scope.role);
-              $mdToast.show($mdToast.simple().textContent(role.user.firstName + ' ' + role.user.lastName + ' has been removed as ' + indefiniteArticleFilter(scope.role.role) + ' ' + role.role + '.'));
-              // Remove Entry
-              scope.removeEntry(scope.role);
-            },
-            () => {
-              $mdToast.show($mdToast.simple().textContent('No changes were made.'));
-            }
-          );
-      }
-
-    } // end link
-  }; // end return
-
-}]);
+export default {
+  template,
+  bindings,
+  controller: RoleCardComponent,
+};

@@ -49,6 +49,7 @@ import MavisService from './services/report/structural-variants/mavis.service';
 import DrugTargetService from './services/report/expression/drug-target.service';
 import OutlierService from './services/report/expression/outlier.service';
 import AppendicesService from './services/report/appendices/appendices.service';
+import IndefiniteArticleFilter from './filters/indefinite-article.filter';
 import TitleCaseFilter from './filters/titlecase.filter';
 import './root.scss';
 
@@ -103,6 +104,7 @@ export default angular.module('root')
   .service('DrugTargetService', DrugTargetService)
   .service('OutlierService', OutlierService)
   .service('AppendicesService', AppendicesService)
+  .filter('indefiniteArticle', IndefiniteArticleFilter)
   .filter('titlecase', TitleCaseFilter)
   .config(($stateProvider, $urlServiceProvider, $locationProvider) => {
     'ngInject';
