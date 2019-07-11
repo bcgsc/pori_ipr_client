@@ -11,14 +11,14 @@ div(layout='row', flex)
                 md-tooltip(ng-if="!maximized", md-direction="right") Dashboard
                 span(flex, ng-show="maximized") Dashboard
 
-            a(layout="row", ng-if="check.resource('analyses')", ui-sref="dashboard.biopsy.board", ng-class="{active: ($state.current.name === 'dashboard.biopsy' || $state.current.name.indexOf('biopsy') > -1)}")
+            a(layout="row", ng-if="check.resource('analyses')", target="_blank", href="https://ipr-tracking.bcgsc.ca/biopsy/board", ng-class="{active: ($state.current.name === 'dashboard.biopsy' || $state.current.name.indexOf('biopsy') > -1)}")
                 md-icon colorize
                 md-tooltip(ng-if="!maximized", md-direction="right") Biopsies
                 span(flex, ng-show="maximized") Biopsies
 
 
 
-            a(layout="row", ng-if="check.resource('tracking')", ui-sref="dashboard.tracking.board", ng-class="{active: ($state.current.name === 'dashboard.tracking' || $state.current.name.indexOf('tracking') > -1)}")
+            a(layout="row", ng-if="check.resource('tracking')", target="_blank", href="https://ipr-tracking.bcgs.ca/tracking/board", ui-sref="dashboard.tracking.board", ng-class="{active: ($state.current.name === 'dashboard.tracking' || $state.current.name.indexOf('tracking') > -1)}")
                 md-icon my_location
                 md-tooltip(ng-if="!maximized", md-direction="right") Tracking
                 span(flex, ng-show="maximized") Tracking

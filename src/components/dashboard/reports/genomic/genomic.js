@@ -2,7 +2,7 @@ app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$rootScope',
   'api.pog_analysis_report', 'reports', '$mdDialog', 'user', '$userSettings', 'projects', '$acl',
   'isExternalMode', (_, $q, $rootScope, $scope, $report, reports, $mdDialog, user, $userSettings,
     projects, $acl, isExternalMode) => {
-  $scope.reports = reports;
+  $scope.reports = reports.reports;
   $scope.archived = false;
   $scope.nonproduction = false;
   $scope.loading = false;
@@ -30,7 +30,6 @@ app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$rootScope',
   };
 
   if (isExternalMode) {
-    $scope.reports = reports.reports;
     $scope.pagination = {
       offset: 0,
       limit: 25,
@@ -45,7 +44,7 @@ app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$rootScope',
   };
 
   $scope.numReports = (state) => {
-    return _.filter(reports, {state: state}).length;
+    return _.filter($scope.reports, {state: state}).length;
   };
 
   $scope.$watch('filter.currentUser', (newVal, oldVal) => {
