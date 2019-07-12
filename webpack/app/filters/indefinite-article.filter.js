@@ -8,6 +8,4 @@ const indefiniteArticle = () => {
   };
 };
 
-angular
-  .module('bcgscIPR')
-  .filter(indefiniteArticle);
+export default indefiniteArticle;
