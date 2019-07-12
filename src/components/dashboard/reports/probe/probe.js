@@ -1,7 +1,7 @@
 app.controller('controller.dashboard.reports.probe', ['_', '$q', '$scope',
   'api.pog_analysis_report', 'reports', '$mdDialog', 'user', '$acl', 'isExternalMode',
   (_, $q, $scope, $report, reports, $mdDialog, user, $acl, isExternalMode) => {
-  $scope.reports = reports;
+  $scope.reports = reports.reports;
   $scope.archived = false;
   $scope.nonproduction = false;
   $scope.loading = false;
@@ -27,7 +27,6 @@ app.controller('controller.dashboard.reports.probe', ['_', '$q', '$scope',
     $scope.states.uploaded = false;
     $scope.states.signedoff = false;
 
-    $scope.reports = reports.reports;
     $scope.pagination = {
       offset: 0,
       limit: 25,
@@ -40,7 +39,7 @@ app.controller('controller.dashboard.reports.probe', ['_', '$q', '$scope',
   };
 
   $scope.numReports = (state) => {
-    return _.filter(reports, {state: state}).length;
+    return _.filter($scope.reports, {state: state}).length;
   };
 
   $scope.refreshList = () => {
