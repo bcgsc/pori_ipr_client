@@ -53,7 +53,7 @@ app.controller('controller.dashboard.reports.probe', ['_', '$q', '$scope',
     $report.all({all: true, query: $scope.filter.query, states: _.join(states, ','), type: 'probe'}).then(
       (result) => {
         $scope.loading = false;
-        $scope.reports = reports = result;
+        $scope.reports = reports = result.reports;
       },
       (err) => {
         console.log('Unable to get pogs', err);
