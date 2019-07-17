@@ -74,8 +74,7 @@ app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$rootScope',
     }).then(
       (result) => {
         $scope.loading = false;
-        $scope.reports = reports = result;
-        $scope.reports = reports = _.orderBy(result, ['analysis.pog.POGID','createdAt'], ['asc','desc']);
+        $scope.reports = reports = _.orderBy(result.reports, ['analysis.pog.POGID','createdAt'], ['asc','desc']);
         $userSettings.save('selectedProject', {
           name: $scope.selectedProject.project.name || null,
         });
