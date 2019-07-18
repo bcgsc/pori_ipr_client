@@ -13,6 +13,7 @@
   "scripts": {
     "cypress:open": "cypress open",
     "build": "webpack --mode development --config ./webpack/webpack.config.js",
+    "start": "npm run start:dev",
     "start:local": "webpack-dev-server --config ./webpack/webpack.local.js",
     "start:dev": "webpack-dev-server --config ./webpack/webpack.dev.js",
     "start:prod": "webpack-dev-server --config ./webpack/webpack.prod.js",

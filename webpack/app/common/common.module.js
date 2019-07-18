@@ -15,6 +15,7 @@ import GeneViewerModule from './gene-viewer/gene-viewer.module';
 import ListCopyNumberVariantsModule from './list-copy-number-variants/list-copy-number-variants.module';
 import ListStructuralVariantsModule from './list-structural-variants/list-structural-variants.module';
 import ListOutliersModule from './list-outliers/list-outliers.module';
+import RoleCardModule from './role-card/role-card.module';
 
 const CommonModule = angular
   .module('root.common', [
@@ -34,6 +35,7 @@ const CommonModule = angular
     ListCopyNumberVariantsModule,
     ListStructuralVariantsModule,
     ListOutliersModule,
+    RoleCardModule,
   ])
   .name;
 

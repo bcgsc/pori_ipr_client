@@ -99,15 +99,8 @@ class GenomicComponent {
       project: this.selectedProject.project.name,
     };
     const resp = await this.ReportService.allFiltered(opts);
+    this.reports = orderBy(resp.reports, ['analysis.pog.POGID', 'createdAt'], ['asc', 'desc']);
     this.loading = false;
-    this.reports = orderBy(resp, ['analysis.pog.POGID', 'createdAt'], ['asc', 'desc']);
-    // Filter Users For a POG
-    this.reports.forEach((r, i) => {
-      // Loop over pogusers
-      this.reports[i].myRoles = r.users.filter((user) => {
-        return user.ident === this.user.ident;
-      });
-    });
     this.$scope.$digest();
   }
 

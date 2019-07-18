@@ -61,7 +61,15 @@ class ReportService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async unbindUser(report, user, role) {
-    const { data } = await this.$http.delete(`${this.api}/reports/${report}/user`, { user, role });
+    const { data } = await this.$http.delete(`${this.api}/reports/${report}/user`,
+      {
+        data: {
+          user, role,
+        },
+        headers: {
+          'Content-type': 'application/json',
+        },
+      });
     return data;
   }
 

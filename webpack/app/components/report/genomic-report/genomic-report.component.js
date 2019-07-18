@@ -105,7 +105,7 @@ class GenomicReportComponent {
       },
       {
         name: 'Report Settings',
-        state: 'meta',
+        state: 'reportSettings',
         meta: true,
         showChildren: false,
         clinician: false,

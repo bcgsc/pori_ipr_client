@@ -15,6 +15,7 @@ import CopyNumberAnalysesModule from './copy-number-analyses/copy-number-analyse
 import StructuralVariantsModule from './structural-variants/structural-variants.module';
 import ExpressionAnalysisModule from './expression/expression-analysis.module';
 import AppendicesModule from './appendices/appendices.module';
+import ReportSettingsModule from './report-settings/report-settings.module';
 
 angular.module('genomic.report', [
   uiRouter,
@@ -32,6 +33,7 @@ angular.module('genomic.report', [
   StructuralVariantsModule,
   ExpressionAnalysisModule,
   AppendicesModule,
+  ReportSettingsModule,
 ]);
 
 export default angular.module('genomic.report')
