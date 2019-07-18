@@ -1,4 +1,5 @@
 import template from './genomic-alteration.pug';
+import './genomic-alteration.scss';
 
 const bindings = {
   samples: '<',

@@ -14,7 +14,9 @@ class ProbeSignatureService {
    * @returns {Promise} - result of API call
    */
   async retrieve(patient, report) {
-    const { data } = this.$http.get(`${this.api}/${patient}/report/${report}/probe/signature`);
+    const { data } = await this.$http.get(
+      `${this.api}/${patient}/report/${report}/probe/signature`,
+    );
     return data;
   }
 
@@ -28,7 +30,7 @@ class ProbeSignatureService {
    * @returns {Promise} - result of API call
    */
   async sign(patient, report, role) {
-    const { data } = this.$http.put(
+    const { data } = await this.$http.put(
       `${this.api}/${patient}/report/${report}/probe/signature/${role}`,
       {},
     );
@@ -45,7 +47,7 @@ class ProbeSignatureService {
    * @returns {Promise} - result of API call
    */
   async revoke(patient, report, role) {
-    const { data } = this.$http.put(
+    const { data } = await this.$http.put(
       `${this.api}/${patient}/report/${report}/probe/signature/revoke/${role}`,
       {},
     );

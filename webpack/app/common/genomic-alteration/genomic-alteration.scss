@@ -1,0 +1,12 @@
+@import '../../styles/variables';
+
+.clickable {
+  cursor: pointer;
+  outline: 0;
+}
+
+.underlined {
+  color: $underline;
+  font-weight: 700;
+  text-decoration: underline;
+}
