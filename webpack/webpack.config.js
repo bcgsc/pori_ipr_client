@@ -3,6 +3,7 @@ const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const DashboardPlugin = require('webpack-dashboard/plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 module.exports = {
@@ -70,6 +71,7 @@ module.exports = {
       flatten: true,
     }]),
     new webpack.HotModuleReplacementPlugin(),
+    new DashboardPlugin({ port: 3000 }),
     // new BundleAnalyzerPlugin({ openAnalyzer: false }),
   ],
   mode: 'development',

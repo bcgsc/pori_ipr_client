@@ -7,7 +7,6 @@ class GermlineService {
 
   /**
    * Retrieves all small mutation reports
-   *
    * @param {Object} params - parameters to include in query
    * @returns {Promise} - resolves with object of {total: int, reports: [{collection},{},...]}
    */
@@ -18,11 +17,9 @@ class GermlineService {
 
   /**
    * Retrieve all reports for a given biopsy
-   *
    * @param {String} patient - patient identifier
    * @param {String} biopsy - biopsy number
    * @param {Object} params - parameters to include in query
-   *
    * @returns {Promise} - resolves with array of reports
    */
   async getReportForBiopsy(patient, biopsy, params = {}) {
@@ -35,12 +32,10 @@ class GermlineService {
 
   /**
    * Retrieves a single report
-   *
    * @param {String} patient - patient identifier
    * @param {String} biopsy - biopsy number
    * @param {String} report - report uuid
    * @param {Object} params - parameters to include in query
-   *
    * @returns {Promise} - result of API call
    */
   async getReport(patient, biopsy, report, params = {}) {
@@ -53,13 +48,11 @@ class GermlineService {
 
   /**
    * Update a report
-   *
    * @param {String} patient - patient identifier
    * @param {String} biopsy - biopsy number
    * @param {String} report - report uuid
    * @param {Object} payload - updated report data payload
    * @param {Object} params - parameters to include in query
-   *
    * @returns {Promise/array} - result of API call
    */
   async updateReport(patient, biopsy, report, payload, params = {}) {
@@ -73,11 +66,9 @@ class GermlineService {
 
   /**
    * Delete a report
-   *
    * @param {String} patient - patient identifier
    * @param {String} biopsy - biopsy number
    * @param {String} report - report uuid
-   *
    * @returns {Promise/array} - result of API call
    */
   async deleteReport(patient, biopsy, report) {
@@ -89,7 +80,6 @@ class GermlineService {
 
   /**
    * Retrieve a flash token to download a report
-   *
    * @returns {Promise} - token object
    */
   async getFlashToken() {
@@ -97,13 +87,12 @@ class GermlineService {
     return data;
   }
 
-  /** Add review to a report
-   *
+  /**
+   * Add review to a report
    * @param {String} patient - patient identifier
    * @param {String} biopsy - biopsy name
    * @param {String} report - report uuid
    * @param {Object} payload - review body payload
-   *
    * @returns {Promise} - created review object
    */
   async addReview(patient, biopsy, report, payload) {
@@ -114,17 +103,17 @@ class GermlineService {
     return data;
   }
 
-  /** Remove review from a report
-   *
+  /**
+   * Remove review from a report
    * @param {String} patient - patient identifier
    * @param {String} biopsy - biopsy name
    * @param {String} report - report uuid
-   *
+   * @param {String} review - ident of the review to remove
    * @returns {Promise} - result of API call
    */
-  async removeReview(patient, biopsy, report) {
+  async removeReview(patient, biopsy, report, review) {
     const { data } = await this.$http.delete(
-      `${this.api}/patient/${patient}/biopsy/${biopsy}/report/${report}/review`,
+      `${this.api}/patient/${patient}/biopsy/${biopsy}/report/${report}/review/${review}`,
     );
     return data;
   }
@@ -135,7 +124,6 @@ class GermlineService {
    * @param {String} biopsy - biopsy name
    * @param {String} report - report uuid
    * @param {String} variant - variant uuid
-   *
    * @returns {Promise} - variant object
    */
   async getVariant(patient, biopsy, report, variant) {
@@ -152,7 +140,6 @@ class GermlineService {
    * @param {String} report - report uuid
    * @param {String} variant - variant uuid
    * @param {Object} payload - variant body payload
-   *
    * @returns {Promise} - variant object
    */
   async updateVariant(patient, biopsy, report, variant, payload) {

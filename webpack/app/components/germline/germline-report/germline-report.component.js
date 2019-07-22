@@ -1,315 +1,338 @@
-app.controller('controller.dashboard.germline.report',
-['$q', '_', '$scope', '$state', 'api.germline.report', 'api.germline.review', 'api.germline.variant', '$mdDialog', '$mdToast', 'report', 'user',
-($q, _, $scope, $state, $report, $review, $variant, $mdDialog, $mdToast, report, user) => {
+import template from './germline-report.pug';
+import inputTemplate from './germline-report-input.pug';
+import './germline-report.scss';
 
-  $scope.report = report;
-  $scope.user = user;
-  $scope.addReview = false;
+const bindings = {
+  user: '<',
+  report: '<',
+};
 
-  $scope.hasReview = (report, type) => {
-    return (_.find(report.reviews, {type: type}) !== undefined) ? true : false;
-  };
-
-  $scope.show_extended = false;
-
-  $scope.columns = {
-    flagged: {
-      name: 'Flagged',
-      width: 100,
-      show_always: true,
-      split: ','
-    },
-    clinvar: {
-      name: 'ClinVar',
-      width: 100,
-    },
-    cgl_category: {
-      name: 'CGL Category',
-      width: 100,
-      show_always: false
-    },
-    gmaf: {
-      name: 'GMAF',
-      width: 100,
-      show_always: true
-    },
-    transcript: {
-      name: 'Trancript',
-      width: 100,
-      show_always: true
-    },
-    gene: {
-      name: 'Gene',
-      width: 100,
-      show_always: true
-    },
-    variant: {
-      name: 'Variant',
-      width: 100,
-      show_always: true
-    },
-    impact: {
-      name: 'Impact',
-      width: 100,
-      show_always: true
-    },
-    chromosome: {
-      name: 'Chr',
-      width: 40,
-      show_always: true
-    },
-    position: {
-      name: 'Pos',
-      width: 100,
-      show_always: true
-    },
-    dbSNP: {
-      name: 'dbSNP',
-      width: 100,
-      show_always: true
-    },
-    reference: {
-      name: 'Ref',
-      width: 40,
-      show_always: true
-    },
-    alteration: {
-      name: 'Alt',
-      width: 40,
-      show_always: true
-    },
-    score: {
-      name: 'Score',
-      width: 50,
-      show_always: true
-    },
-    zygosity_germline: {
-      name: 'Zygosity in germline',
-      width: 100,
-      show_always: true
-    },
-    preferred_transcript: {
-      name: 'Preferred Transcript',
-      width: 150,
-      show_always: true,
-    },
-    hgvs_cdna: {
-      name: 'HGVS-cDNA',
-      width: 100,
-      show_always: true
-    },
-    hgvs_protein: {
-      name: 'HGVS-protein',
-      width: 100,
-      show_always: true
-    },
-    zygosity_tumour: {
-      name: 'Zygosity in tumour',
-      width: 100,
-      show_always: true
-    },
-    genomic_variant_reads: {
-      name: 'Genomic variant reads ',
-      tooltip: '(alt/total)',
-      width: 120,
-      show_always: false
-    },
-    rna_variant_reads: {
-      name: 'RNA variant reads',
-      tooltip: '(alt/total)',
-      width: 120,
-      show_always: false
-    },
-    gene_somatic_abberation: {
-      name: 'Gene somatic aberration?',
-      width: 100,
-      show_always: false
-    },
-    notes: {
-      name: 'Notes',
-      width: 100,
-      show_always: true
-    },
-    type: {
-      name: 'Type',
-      width: 100,
-      show_always: true
-    },
-    patient_history: {
-      name: 'Patient History',
-      width: 100,
-      show_always: true,
-    },
-    family_history: {
-      name: 'Family History',
-      width: 100,
-      show_always: true
-    },
-    tcga_comp_norm_percentile: {
-      name: `tcga_comp_norm_percentile`,
-      width: 100,
-      show_always: false
-    },
-    tcga_comp_percentile: {
-      name: `tcga_comp_percentile`,
-      width: 200,
-      show_always: false
-    },
-    gtex_comp_percentile: {
-      name: `gtex_comp_average_percentile`,
-      width: 200,
-      show_always: false
-    },
-    fc_bodymap: {
-      name: `fc_bodymap`,
-      width: 100,
-      show_always: false
-    },
-    gene_expression_rpkm: {
-      name: 'Gene Expression RPKM',
-      width: 100,
-      show_always: true
-    },
-    additional_info: {
-      name: 'Additional Info',
-      width: 100,
-      show_always: false
-    }
-  };
-
-  $scope.getHistory = ($ev, mode, v) => {
-
-    let input = {
-      value: v,
-      mode: mode
-    };
-
-    if(mode === 'patient') input.name = input.placeholder = 'Patient History';
-    if(mode === 'family') input.name = input.placeholder = 'Family History';
-
-    $mdDialog.show({
-      templateUrl: 'dashboard/germline/report/report.input.dialog.html',
-      targetEvent: $ev,
-      clickOutsideToClose: true,
-      controller: ['scope', (scope) => {
-
-        scope.input = input;
-
-        scope.cancel = () => {
-          $mdDialog.cancel();
-        };
-
-        scope.submit = () => {
-          $mdDialog.hide(input);
-        };
-
-      }]
-    })
-      .then((res) => {
-
-        if(mode === 'patient') {
-          _.forEach($scope.report.variants, (v, i) => {
-            $scope.report.variants[i].patient_history = res.value;
-          });
-        }
-        if(mode === 'family') {
-          _.forEach($scope.report.variants, (v, i) => {
-            $scope.report.variants[i].family_history = res.value;
-          });
-        }
-
-        $q.all(_.map($scope.report.variants, (v) => {
-            return $variant.update($scope.report.analysis.pog.POGID, $scope.report.analysis.analysis_biopsy, $scope.report.ident, v.ident, v);
-          }))
-          .then((result) => {
-            console.log('Finished updating rows', result);
-            $mdToast.showSimple('Report has been updated.');
-          })
-
-
-      })
-      .catch((err) => {
-
-      });
-
-
-  };
-
-
-  $scope.review = () => {
-
-    let data = {
-      type: $scope.new.type,
-      comment: $scope.new.comment
-    };
-
-    $review.add($scope.report.analysis.pog.POGID, $scope.report.analysis.analysis_biopsy, $scope.report.ident, data)
-      .then((review) => {
-        $scope.report.reviews.push(review[0]);
-        $mdToast.showSimple('The review has been added.');
-        $scope.addReview = false;
-      })
-      .catch((err) => {
-        $mdToast.showSimple('Failed to add the submitted reviewed.');
-      })
-
-  };
-
-  $scope.toggleVariantHidden = (variant) => {
-
-    variant.hidden = !variant.hidden;
-
-    $variant.update($scope.report.analysis.pog.POGID, $scope.report.analysis.analysis_biopsy, $scope.report.ident, variant.ident, variant)
-      .then((result) => {
-        // Update report in memory with fresh result from API.
-        let i = _.find($scope.report.variants, {ident: result.ident});
-        $scope.report.variants[i] = result;
-      })
-      .catch((e) => {
-        console.log('Hide error', e);
-        $mdToast.showSimple('Failed to update variant with visibility change');
-      });
-
-  };
-
-
-  $scope.removeReview = (review) => {
-
-    $review.remove($scope.report.analysis.pog.POGID, $scope.report.analysis.analysis_biopsy, $scope.report.ident, review.ident)
-      .then((res) =>{
-        $scope.report.reviews.splice(_.findKey($scope.report.reviews, {ident: review.ident}, 1));
-      })
-      .catch((e) => {
-        console.log('Response: ', e);
-        $mdToast.showSimple('Failed to remove the requested review');
-      })
+class GermlineReportComponent {
+  /* @ngInject */
+  constructor($scope, $state, GermlineService, $mdDialog, $mdToast) {
+    this.$scope = $scope;
+    this.$state = $state;
+    this.GermlineService = GermlineService;
+    this.$mdDialog = $mdDialog;
+    this.$mdToast = $mdToast;
   }
 
-  $scope.removeReport = () => {
+  $onInit() {
+    this.addReview = false;
+    this.showExtended = false;
+    this.columns = {
+      flagged: {
+        name: 'Flagged',
+        width: 100,
+        showAlways: true,
+        split: ',',
+      },
+      clinvar: {
+        name: 'ClinVar',
+        width: 100,
+      },
+      cgl_category: {
+        name: 'CGL Category',
+        width: 100,
+        showAlways: false,
+      },
+      gmaf: {
+        name: 'GMAF',
+        width: 100,
+        showAlways: true,
+      },
+      transcript: {
+        name: 'Trancript',
+        width: 100,
+        showAlways: true,
+      },
+      gene: {
+        name: 'Gene',
+        width: 100,
+        showAlways: true,
+      },
+      variant: {
+        name: 'Variant',
+        width: 100,
+        showAlways: true,
+      },
+      impact: {
+        name: 'Impact',
+        width: 100,
+        showAlways: true,
+      },
+      chromosome: {
+        name: 'Chr',
+        width: 40,
+        showAlways: true,
+      },
+      position: {
+        name: 'Pos',
+        width: 100,
+        showAlways: true,
+      },
+      dbSNP: {
+        name: 'dbSNP',
+        width: 100,
+        showAlways: true,
+      },
+      reference: {
+        name: 'Ref',
+        width: 40,
+        showAlways: true,
+      },
+      alteration: {
+        name: 'Alt',
+        width: 40,
+        showAlways: true,
+      },
+      score: {
+        name: 'Score',
+        width: 50,
+        showAlways: true,
+      },
+      zygosity_germline: {
+        name: 'Zygosity in germline',
+        width: 100,
+        showAlways: true,
+      },
+      preferred_transcript: {
+        name: 'Preferred Transcript',
+        width: 150,
+        showAlways: true,
+      },
+      hgvs_cdna: {
+        name: 'HGVS-cDNA',
+        width: 100,
+        showAlways: true,
+      },
+      hgvs_protein: {
+        name: 'HGVS-protein',
+        width: 100,
+        showAlways: true,
+      },
+      zygosity_tumour: {
+        name: 'Zygosity in tumour',
+        width: 100,
+        showAlways: true,
+      },
+      genomic_variant_reads: {
+        name: 'Genomic variant reads ',
+        tooltip: '(alt/total)',
+        width: 120,
+        showAlways: false,
+      },
+      rna_variant_reads: {
+        name: 'RNA variant reads',
+        tooltip: '(alt/total)',
+        width: 120,
+        showAlways: false,
+      },
+      gene_somatic_abberation: {
+        name: 'Gene somatic aberration?',
+        width: 100,
+        showAlways: false,
+      },
+      notes: {
+        name: 'Notes',
+        width: 100,
+        showAlways: true,
+      },
+      type: {
+        name: 'Type',
+        width: 100,
+        showAlways: true,
+      },
+      patient_history: {
+        name: 'Patient History',
+        width: 100,
+        showAlways: true,
+      },
+      family_history: {
+        name: 'Family History',
+        width: 100,
+        showAlways: true,
+      },
+      tcga_comp_norm_percentile: {
+        name: 'tcga_comp_norm_percentile',
+        width: 100,
+        showAlways: false,
+      },
+      tcga_comp_percentile: {
+        name: 'tcga_comp_percentile',
+        width: 200,
+        showAlways: false,
+      },
+      gtex_comp_percentile: {
+        name: 'gtex_comp_average_percentile',
+        width: 200,
+        showAlways: false,
+      },
+      fc_bodymap: {
+        name: 'fc_bodymap',
+        width: 100,
+        showAlways: false,
+      },
+      gene_expression_rpkm: {
+        name: 'Gene Expression RPKM',
+        width: 100,
+        showAlways: true,
+      },
+      additional_info: {
+        name: 'Additional Info',
+        width: 100,
+        showAlways: false,
+      },
+    };
+  }
 
-    let confirm = $mdDialog.confirm({
+  /* eslint-disable class-methods-use-this */
+  hasReview(report, type) {
+    return report.reviews.find(review => review.type === type);
+  }
+
+
+  async getHistory($event, mode, v) {
+    const input = {
+      value: v,
+      mode,
+    };
+
+    if (mode === 'patient') {
+      input.name = 'Patient History';
+      input.placeholder = 'Patient History';
+    }
+    if (mode === 'family') {
+      input.name = 'Patient History';
+      input.placeholder = 'Family History';
+    }
+
+    const resp = await this.$mdDialog.show({
+      template: inputTemplate,
+      targetEvent: $event,
+      clickOutsideToClose: true,
+      controller: ['scope', async (scope) => {
+        scope.input = input;
+
+        scope.cancel = async () => {
+          await this.$mdDialog.cancel();
+        };
+
+        scope.submit = async () => {
+          await this.$mdDialog.hide(input);
+        };
+      }],
+    });
+
+    if (mode === 'patient') {
+      this.report.variants.forEach((variant) => {
+        variant.patient_history = resp.value;
+      });
+    }
+    if (mode === 'family') {
+      this.report.variants.forEach((variant) => {
+        variant.family_history = resp.value;
+      });
+    }
+
+    await Promise.all(
+      this.report.variants.map(variant => this.GermlineService.updateVariant(
+        this.report.analysis.pog.POGID,
+        this.report.analysis.analysis_biopsy,
+        this.report.ident,
+        variant.ident,
+        variant,
+      )),
+    );
+    this.$mdToast.showSimple('Report has been updated.');
+  }
+
+  async review() {
+    const data = {
+      type: this.new.type,
+      comment: this.new.comment,
+    };
+
+    try {
+      const review = await this.GermlineService.addReview(
+        this.report.analysis.pog.POGID,
+        this.report.analysis.analysis_biopsy,
+        this.report.ident,
+        data,
+      );
+      this.report.reviews.push(review[0]);
+      this.$mdToast.showSimple('The review has been added.');
+      this.addReview = false;
+    } catch (err) {
+      this.$mdToast.showSimple('Failed to add the submitted reviewed.');
+    }
+  }
+
+  async toggleVariantHidden(variant) {
+    variant.hidden = !variant.hidden;
+
+    try {
+      const result = await this.GermlineService.updateVariant(
+        this.report.analysis.pog.POGID,
+        this.report.analysis.analysis_biopsy,
+        this.report.ident,
+        variant.ident,
+        variant,
+      );
+      // Update report in memory with fresh result from API.
+      const i = this.report.variants.findIndex(v => v.ident === result.ident);
+      this.report.variants[i] = result;
+    } catch (err) {
+      this.$mdToast.showSimple('Failed to update variant with visibility change');
+    }
+  }
+
+
+  async removeReview(review) {
+    try {
+      await this.GermlineService.removeReview(
+        this.report.analysis.pog.POGID,
+        this.report.analysis.analysis_biopsy,
+        this.report.ident,
+        review.ident,
+      );
+      this.report.reviews.splice(
+        this.report.reviews.findIndex(rev => rev.ident === review.ident), 1,
+      );
+      this.$scope.$digest();
+    } catch (err) {
+      this.$mdToast.showSimple('Failed to remove the requested review');
+    }
+  }
+
+  async removeReport() {
+    const confirm = this.$mdDialog.confirm({
       title: 'Confirm remove',
       textContent: 'Are you sure you want to remove this germline report?',
       ok: 'Remove',
-      cancel: 'Cancel'
+      cancel: 'Cancel',
     });
 
-    $mdDialog.show(confirm)
-      .then((response) => {
-          console.log('Response:', response);
-          $report.delete($scope.report.analysis.pog.POGID, $scope.report.analysis.analysis_biopsy, $scope.report.ident)
-            .then(() => {
-              $state.go('dashboard.germline.board');
-            })
-            .catch((e) => {
-              $mdToast.showSimple('Something went wrong and the report has not been removed.');
-            });
-      })
-      .catch((e) => {
-        console.log('Error', e);
-        $mdToast.showSimple('No changes were made.');
-      });
-
+    try {
+      const response = await this.$mdDialog.show(confirm);
+      if (!response) {
+        this.$mdToast.showSimple('No changes were made.');
+        return;
+      }
+      await this.GermlineService.deleteReport(
+        this.report.analysis.pog.POGID,
+        this.report.analysis.analysis_biopsy,
+        this.report.ident,
+      );
+      this.$state.go('root.germline.board');
+    } catch (err) {
+      this.$mdToast.showSimple('Something went wrong and the report has NOT been removed.');
+    }
   }
+}
 
-}]);
+export default {
+  template,
+  bindings,
+  controller: GermlineReportComponent,
+};
