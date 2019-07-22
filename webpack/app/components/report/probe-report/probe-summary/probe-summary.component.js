@@ -1,120 +1,134 @@
-app.controller('controller.dashboard.report.probe.summary',
-['_', '$q', '$state', '$scope', 'api.pog', '$mdDialog', '$mdToast', 'pog', 'report', 'testInformation', 'genomicEvents', 'api.probe.signature', 'api.summary.patientInformation', 'api.summary.genomicEventsTherapeutic', 'signature',
-(_, $q, $state, $scope, $pog, $mdDialog, $mdToast, pog, report, testInformation, genomicEvents, $signature, $patientInformation, $get, signature) => {
+import template from './probe-summary.pug';
+import patientTemplate from '../../genomic-report/genomic-summary/patient-edit.pug';
+import eventTemplate from './probe-summary-events.pug';
 
-  $scope.pog = pog;
-  $scope.pi = pog.patientInformation;
-  $scope.report = report;
-  $scope.testInformation = testInformation;
-  $scope.genomicEvents = genomicEvents;
-  $scope.signature = signature;
+const bindings = {
+  pog: '<',
+  report: '<',
+  testInformation: '<',
+  genomicEvents: '<',
+  signature: '<',
+};
 
-  // Update Patient Information
-  $scope.updatePatient = ($event) => {
+class ProbeSummaryComponent {
+  /* @ngInject */
+  constructor($scope, PogService, $mdDialog, $mdToast, ProbeSignatureService,
+    PatientInformationService, GenomicEventsService, AclService) {
+    this.$scope = $scope;
+    this.PogService = PogService;
+    this.$mdDialog = $mdDialog;
+    this.$mdToast = $mdToast;
+    this.ProbeSignatureService = ProbeSignatureService;
+    this.PatientInformationService = PatientInformationService;
+    this.GenomicEventsService = GenomicEventsService;
+    this.AclService = AclService;
+  }
 
-    $mdDialog.show({
-      targetEvent: $event,
-      templateUrl: 'dashboard/report/genomic/summary/patientInformation.edit.html',
-      clickOutToClose: false,
-      controller: ['scope', (scope) => {
-
-        scope.pi = angular.copy($scope.report.patientInformation); //
-
-        scope.cancel = () => {
-          $mdDialog.cancel('No changes were saved.');
-        };
-
-        scope.update = () => {
-
-          // Send updated entry to API
-          $patientInformation.update($scope.pog.POGID, scope.pi).then(
-            (result) => {
-              $mdDialog.hide({message: 'Entry has been updated', data: scope.pi});
-            },
-            (error) => {
-              alert('Unable to update. See console');
-              console.log(error);
-            }
-          );
-
-        }; // End update
-      }] // End controller
-
-    }).then((outcome) => {
-      if (outcome) $mdToast.show($mdToast.simple().textContent(outcome.message));
-      $scope.pi = outcome.data;
-      $scope.report.patientInformation = $scope.pi;
-    }, (error) => {
-      $mdToast.show($mdToast.simple().textContent(error));
-    });
-
-  }; // End edit tumour analysis
-
-
-  // Sign The comments
-  $scope.sign = (role) => {
-
-    // Send signature to API
-    $signature.sign(pog.POGID, report.ident, role).then(
-      (result) => {
-        $scope.signature = result;
-      }
-    )
-  };
-
-  // Sign The comments
-  $scope.revokeSign = (role) => {
-
-    // Send signature to API
-    $signature.revoke(pog.POGID, report.ident, role).then(
-      (result) => {
-        $scope.signature = result;
-      }
-    )
-  };
-
-
+  $onInit() {
+    this.patientInformation = this.report.patientInformation;
+  }
 
   // Update Patient Information
-  $scope.modifyEvent = ($event, event) => {
+  async updatePatient($event) {
+    try {
+      const resp = await this.$mdDialog.show({
+        targetEvent: $event,
+        template: patientTemplate,
+        clickOutToClose: true,
+        controller: ['scope', (scope) => {
+          scope.patientInformation = angular.copy(this.patientInformation);
 
-    $mdDialog.show({
-      targetEvent: $event,
-      templateUrl: 'dashboard/report/probe/summary/summary.events.html',
-      clickOutToClose: false,
-      controller: ['scope', (scope) => {
+          scope.cancel = () => {
+            this.$mdDialog.cancel('No changes were saved.');
+          };
 
-        scope.event = angular.copy(event);
-
-        scope.cancel = () => {
-          $mdDialog.cancel('No changes were saved.');
-        };
-
-        scope.update = () => {
-
-          // Send updated entry to API
-          $get.update($scope.pog.POGID, report.ident, event.ident, scope.event).then(
-            (result) => {
-              $mdDialog.hide({message: 'Entry has been updated', data: result});
-            },
-            (error) => {
-              alert('Unable to update. See console');
-              console.log(error);
-            }
-          );
-
-        }; // End update
-      }] // End controller
-
-    }).then((outcome) => {
-      if (outcome) $mdToast.show($mdToast.simple().textContent(outcome.message));
-      _.forEach($scope.genomicEvents, (e, i) => {
-        if(e.ident === outcome.data.ident) $scope.genomicEvents[i] = outcome.data;
+          scope.update = async () => {
+            await this.PatientInformationService.update(
+              this.pog.POGID,
+              scope.patientInformation,
+            );
+            this.$mdDialog.hide({
+              message: 'Entry has been updated',
+              data: scope.patientInformation,
+            });
+          };
+        }],
       });
-    }, (error) => {
-      $mdToast.show($mdToast.simple().textContent('No changes were saved.'));
-    });
+      if (resp) {
+        this.$mdToast.show(this.$mdToast.simple().textContent(resp.message));
+      }
+      this.patientInformation = resp.data;
+      this.report.patientInformation = this.patientInformation;
+    } catch (err) {
+      this.$mdToast.show(this.$mdToast.simple().textContent(err));
+    }
+  }
 
-  }; // End edit tumour analysis
+  // Sign The comments
+  async sign(role) {
+    try {
+      const resp = await this.ProbeSignatureService.sign(
+        this.pog.POGID, this.report.ident, role,
+      );
+      this.signature = resp;
+      this.$scope.$digest();
+    } catch (err) {
+      this.$mdToast.showSimple('Unable to sign. Error: ', err);
+    }
+  }
 
-}]);
+  // Unsign The comments
+  async revokeSign(role) {
+    try {
+      const resp = await this.ProbeSignatureService.revoke(
+        this.pog.POGID, this.report.ident, role,
+      );
+      this.signature = resp;
+      this.$scope.$digest();
+    } catch (err) {
+      this.$mdToast.showSimple('Unable to revoke. Error: ', err);
+    }
+  }
+
+  // Update Patient Information
+  async modifyEvent($event, event) {
+    try {
+      const resp = await this.$mdDialog.show({
+        targetEvent: $event,
+        template: eventTemplate,
+        clickOutToClose: false,
+        controller: ['scope', (scope) => {
+          scope.event = angular.copy(event);
+
+          scope.cancel = () => {
+            this.$mdDialog.cancel('No changes were saved.');
+          };
+
+          scope.update = async () => {
+            const data = await this.GenomicEventsService.update(
+              this.pog.POGID, this.report.ident, event.ident, scope.event,
+            );
+            this.$mdDialog.hide({ message: 'Entry has been updated', data });
+          };
+        }],
+      });
+      if (resp) {
+        this.$mdToast.show(this.$mdToast.simple().textContent(resp.message));
+      }
+      Object.entries(this.genomicEvents).forEach(([index, entry]) => {
+        if (entry.ident === resp.data.ident) {
+          this.genomicEvents[index] = resp.data;
+        }
+      });
+      this.$scope.$digest();
+    } catch (err) {
+      this.$mdToast.show(this.$mdToast.simple().textContent('No changes were saved.'));
+    }
+  }
+}
+
+export default {
+  template,
+  bindings,
+  controller: ProbeSummaryComponent,
+};

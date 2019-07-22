@@ -1,137 +1,139 @@
-app.controller('controller.dashboard.report.probe.detailedGenomicAnalysis',
-  ['_', '$q', '$scope', '$state', '$mdDialog', '$mdToast', 'api.pog', 'api.probe.alterations', 'pog', 'report', 'alterations', 'approvedThisCancer', 'approvedOtherCancer',
-    (_, $q, $scope, $state, $mdDialog, $mdToast, $pog, $alterations, pog, report, alterations, approvedThisCancer, approvedOtherCancer) => {
+import template from './probe-detailed-genomic-analysis.pug';
 
-      $scope.approvedThisCancer = {};
-      $scope.approvedOtherCancer = {};
-      $scope.pog = pog;
-      $scope.report = report;
-      $scope.samples = [];
-      $scope.alterations = {therapeutic: {}, prognostic: {}, diagnostic: {}, biological: {}};
+const bindings = {
+  pog: '<',
+  report: '<',
+  alterations: '<',
+  approvedThisCancer: '<',
+  approvedOtherCancer: '<',
+};
 
-      // Create new entry...
-      $scope.createNewKBEntry = ($event) => {
+class DetailedGenomicAnalysisComponent {
+  /* @ngInject */
+  constructor($scope, $mdDialog, $mdToast, PogService, ProbeAlterationService) {
+    this.$scope = $scope;
+    this.$mdDialog = $mdDialog;
+    this.$mdToast = $mdToast;
+    this.PogService = PogService;
+    this.ProbeAlterationService = ProbeAlterationService;
+  }
 
-        let gene = {};
+  $onInit() {
+    this.samples = [];
+    this.alterationsGrouped = {
+      therapeutic: [], prognostic: [], diagnostic: [], biological: [],
+    };
 
-        $mdDialog.show({
-          targetEvent: $event,
-          templateUrl: 'dashboard/report/genomic/detailedGenomicAnalysis/alterations/alterations.edit.html',
-          clickOutToClose: false,
-          locals: {
-            pog: $scope.pog,
-            gene: gene,
-            samples: $scope.samples,
-            rowEvent: 'new',
-            report: report
-          },
-          controller: 'controller.dashboard.reports.genomic.detailedGenomicAnalysis.alterations.edit' // End controller
-        });
-      };
+    // Group Entries
+    this.groupEntries(this.alterations);
+    // Group Approved
+    this.approvedThisCancer = this.groupAlterations(
+      this.approvedThisCancer,
+      [],
+    );
+    this.approvedOtherCancer = this.groupAlterations(
+      this.approvedOtherCancer,
+      [],
+    );
+  }
 
-      // Resort Groupings
-      $scope.trigger = (val) => {
-        if(val === false) return;
 
-        // Loop over defined alterations
-        _.forEach($scope.alterations, (v, k) => {
-          // Loop over alterion type
-          _.forEach(v, (row, rowID) => {
-            // Is there a mismatch?
-            if(row && row.alterationType !== k) {
+  createNewKBEntry($event) {
+    const gene = {};
 
-              // Move to new alteration
-              $scope.alterations[row.alterationType].unshift(row);
+    this.$mdDialog.show({
+      targetEvent: $event,
+      templateUrl: 'dashboard/report/genomic/knowledgebase/alterations/alterations.edit.html',
+      clickOutToClose: false,
+      locals: {
+        pog: this.pog,
+        gene,
+        samples: this.samples,
+        rowEvent: 'new',
+        report: this.report,
+      },
+      controller: 'controller.dashboard.reports.genomic.detailedGenomicAnalysis.alterations.edit', // End controller
+    });
+  }
 
-              $scope.alterations[k].splice(rowID,1);
-            }
+  /* eslint-disable class-methods-use-this */
+  // Filter reference type
+  refType(ref) {
+    if (ref.match(/^[0-9]{8}#/)) {
+      return 'pmid';
+    }
+    if (ref.match(/^(?:http(?:s)?:\/\/)?(?:[^.]+\.)?[A-z0-9]*\.[A-z]{2,7}/)) {
+      return 'link';
+    }
+    return 'text';
+  }
 
-          });
 
-        });
+  // Prepend a link with http:// if necessary
+  prependLink(link) {
+    return (!link.includes('http://')) ? `http://${link}` : link;
+  }
+  
+  // Clean up PMIDs
+  cleanPMID(pmid) {
+    return pmid.match(/^[0-9]{8}/)[0];
+  }
 
-      };
-
-      // Filter reference type
-      $scope.refType = (ref) => {
-        if(ref.match(/^[0-9]{8}\#/)) {
-          return 'pmid';
-        }
-        if(ref.match(/^(?:http(?:s)?:\/\/)?(?:[^\.]+\.)?[A-z0-9]*\.[A-z]{2,7}/)) {
-          return 'link';
-        }
-        return 'text';
-      };
-
-      // Prepend a link with http:// if necessary
-      $scope.prependLink = (link) => {
-        return (link.indexOf('http://') == -1) ? 'http://' + link : link;
-      };
-
-      // Clean up PMIDs
-      $scope.cleanPMID = (pmid) => {
-        return pmid.match(/^[0-9]{8}/)[0];
-      };
-
-      // Group Alterations by type
-      let groupAlterations = (collection, alterations) => {
-
-        alterations.forEach((row) => {
-
-          // Modify type
-
-          // Does grouping exist?
-          if(!(row.gene + '-' + row.variant in collection)) {
+  // Group approved alterations by type
+  groupAlterations(collection, approvedAlterations) {
+    approvedAlterations.forEach((row) => {
+      if (collection.length) {
+        collection.forEach((entry, index) => {
+          if ((entry.gene === row.gene) && (entry.variant === row.variant)) {
             row.children = [];
-            return collection[row.gene + '-' + row.variant] = row; // Add row to collection
+            collection.push(row); // Add row to collection
+          } else {
+            collection[index].children.push(row);
           }
-
-          if(row.gene + '-' + row.variant in collection) return collection[row.gene + '-' + row.variant].children.push(row);
-
         });
-
-        return _.values(collection);
-
-      };
-
-      // Group Entries by Type
-      let groupEntries = (alterations) => {
-        // Process the entries for grouping
-        alterations.forEach((row) => {
-
-          // Add to samples if not present
-          if($scope.samples.indexOf(row.sample) === -1) $scope.samples.push(row.sample);
-
-          // Grouping
-          if(!(row.alterationType in $scope.alterations)) $scope.alterations[row.alterationType] = {};
-
-
-          // Check if it exists already?
-          if(!(row.gene+'-'+row.variant in $scope.alterations[row.alterationType])) {
-            row.children = [];
-            return $scope.alterations[row.alterationType][row.gene+'-'+row.variant] = row;
-          }
-
+      } else {
+        row.children = [];
+        collection.push(row);
+      }
+    });
+    return collection;
+  }
+  
+  // Group Entries by Type
+  groupEntries(alterations) {
+    // Process the entries for grouping
+    alterations.forEach((row) => {
+      // Add to samples if not present
+      if (this.samples.includes(row.sample)) {
+        this.samples.push(row.sample);
+      }
+      // Create new alteration type if it's not existing
+      if (!(Object.prototype.hasOwnProperty.call(this.alterationsGrouped, row.alterationType))) {
+        this.alterationsGrouped[row.alterationType] = [];
+      }
+      // Check if it exists already?
+      if (this.alterationsGrouped[row.alterationType].length) {
+        /* eslint-disable-next-line arrow-body-style */
+        const match = this.alterationsGrouped[row.alterationType].findIndex((entry) => {
+          return ((entry.gene === row.gene) && (entry.variant === row.variant));
+        });
+        if (match > -1) {
           // Categorical entry already exists
-          if(row.gene+'-'+row.variant in $scope.alterations[row.alterationType]) {
-            return $scope.alterations[row.alterationType][row.gene+'-'+row.variant]
-              .children[$scope.alterations[row.alterationType][row.gene+'-'+row.variant].children.length] = row;
-          }
+          this.alterationsGrouped[row.alterationType][match].children.push(row);
+        } else {
+          row.children = [];
+          this.alterationsGrouped[row.alterationType].push(row);
+        }
+      } else {
+        row.children = [];
+        this.alterationsGrouped[row.alterationType].push(row);
+      }
+    });
+  }
+}
 
-        });
-
-        _.forEach($scope.alterations, (values, k) => {
-          $scope.alterations[k] = _.values(values);
-          //console.log('Iteree: ', k, values, _.values(values));
-        });
-
-      };
-
-      // Group Entries
-      groupEntries(alterations);
-
-      // Group Approved
-      $scope.approvedThisCancer = groupAlterations($scope.approvedThisCancer, approvedThisCancer);
-      $scope.approvedOtherCancer = groupAlterations($scope.approvedOtherCancer, approvedOtherCancer);
-
-    }]);
+export default {
+  template,
+  bindings,
+  controller: DetailedGenomicAnalysisComponent,
+};

@@ -1,175 +1,175 @@
 section
-    md-subheader.md-primary Patient Information
-        span.edit(ng-if="SES_permissionAction('report.edit')")
-            md-icon(ng-click="updatePatient($event)") edit
+  md-subheader.md-primary Patient Information
+    span.edit(ng-if="$ctrl.AclService.checkAction('report.edit')")
+      md-icon(ng-click="$ctrl.updatePatient($event)") edit
 
-    div(layout="column", flex).details
-        div(layout="row", flex)
-            dt(flex="{{detailSize}}", ng-init="detailSize=10") Patient ID:
-            dd(flex) {{report.patientInformation.POGID}}
+  div(layout="column", flex).details
+    div(layout="row", flex)
+      dt(flex="{{$ctrl.detailSize}}", ng-init="$ctrl.detailSize=10") Patient ID:
+      dd(flex) {{$ctrl.report.patientInformation.POGID}}
 
-            dt(flex="{{detailSize}}") Alternate ID:
-            dd(flex) {{report.pog.alternate_identifier || 'N/A'}}
+      dt(flex="{{$ctrl.detailSize}}") Alternate ID:
+      dd(flex) {{$ctrl.report.pog.alternate_identifier || 'N/A'}}
 
-            dt(flex="{{detailSize}}") Sex:
-            dd(flex) {{report.patientInformation.gender}}
+      dt(flex="{{$ctrl.detailSize}}") Sex:
+      dd(flex) {{$ctrl.report.patientInformation.gender}}
 
-        div(layout="row", flex)
-            dt(flex="{{detailSize}}") Tumour Sample:
-            dd(flex) {{report.patientInformation.tumourSample}}
+    div(layout="row", flex)
+      dt(flex="{{$ctrl.detailSize}}") Tumour Sample:
+      dd(flex) {{$ctrl.report.patientInformation.tumourSample}}
 
-            dt(flex="{{detailSize}}") Tumour Type:
-            dd(flex) {{report.patientInformation.tumourType}}
+      dt(flex="{{$ctrl.detailSize}}") Tumour Type:
+      dd(flex) {{$ctrl.report.patientInformation.tumourType}}
 
-            dt(flex="{{detailSize}}") Constitutional Sample:
-            dd(flex) {{report.patientInformation.constitutionalSample}}
+      dt(flex="{{$ctrl.detailSize}}") Constitutional Sample:
+      dd(flex) {{$ctrl.report.patientInformation.constitutionalSample}}
 
-        div(layout="row", flex)
-            dt(flex="{{detailSize}}") Report Date:
-            dd(flex) {{report.createdAt | amDateFormat: 'YYYY/MM/DD'}}
+    div(layout="row", flex)
+      dt(flex="{{$ctrl.detailSize}}") Report Date:
+      dd(flex) {{$ctrl.report.createdAt | date: 'yyyy-MM-dd'}}
 
-            dt(flex="{{detailSize}}") Case Type:
-            dd(flex) {{report.patientInformation.caseType}}
+      dt(flex="{{$ctrl.detailSize}}") Case Type:
+      dd(flex) {{$ctrl.report.patientInformation.caseType}}
 
-            dt(flex="{{detailSize}}") Biopsy Details:
-            dd(flex) {{report.patientInformation.biopsySite}}
+      dt(flex="{{$ctrl.detailSize}}") Biopsy Details:
+      dd(flex) {{$ctrl.report.patientInformation.biopsySite}}
 
-        div(layout="row", flex)
-            dt(flex="{{detailSize}}") Physician:
-            dd(flex) {{report.patientInformation.physician}}
+    div(layout="row", flex)
+      dt(flex="{{$ctrl.detailSize}}") Physician:
+      dd(flex) {{$ctrl.report.patientInformation.physician}}
 
-            dt(flex="{{detailSize}}") Age at Diagnosis:
-            dd(flex) {{report.patientInformation.age}}
+      dt(flex="{{$ctrl.detailSize}}") Age at Diagnosis:
+      dd(flex) {{$ctrl.report.patientInformation.age}}
 
-            dt(flex="{{detailSize}}") Age of Consent:
-            dd(flex) {{report.pog.age_of_consent || 'Not Specified'}}
+      dt(flex="{{$ctrl.detailSize}}") Age of Consent:
+      dd(flex) {{$ctrl.report.pog.age_of_consent || 'Not Specified'}}
 
-        div(layout="row", flex)
-            dt(flex="{{detailSize}}") Protocol:
-            dd(flex) {{report.patientInformation.tumourProtocol}}
+    div(layout="row", flex)
+      dt(flex="{{$ctrl.detailSize}}") Protocol:
+      dd(flex) {{$ctrl.report.patientInformation.tumourProtocol}}
 
-            dt(flex="{{detailSize}}") Biopsy:
-            dd(flex) {{report.analysis.analysis_biopsy || 'N/A'}}
+      dt(flex="{{$ctrl.detailSize}}") Biopsy:
+      dd(flex) {{$ctrl.report.analysis.analysis_biopsy || 'N/A'}}
 
-            dt(flex="{{detailSize}}")
-            dd(flex)
+      dt(flex="{{$ctrl.detailSize}}")
+      dd(flex)
 
 section
+  div(layout="row")
+    div(layout="column", flex).dataBox
+      h2.title Sample Information
+      div.box
+        div(layout="row", flex).heading
+          div(flex) Sample
+          div(flex) Sample Name
+          div(flex) Collection Date
+          div(flex) Primary Site
+          div(flex=20) Biopsy Site
+          div(flex) Pathology Estimated Tumour Content
+        div(layout="row", flex, ng-repeat="sample in $ctrl.report.sampleInfo track by $index").row
+          div(flex) {{sample['Sample']}}
+          div(flex) {{sample['Sample Name']}}
+          div(flex) {{sample['Collection Date']}}
+          div(flex) {{sample['Primary Site']}}
+          div(flex=20) {{sample['Biopsy Site']}}
+          div(flex) {{sample['Patho TC']}}
+
+  div(layout="row")
+    div(layout="column", flex).dataBox
+      h2.title Test Information
+
+      div(layout="row", flex).horizontalBox
+        div(layout="column", flex)
+          div(layout="row").row
+            span(flex=40) Variant Probe Version
+            span {{$ctrl.testInformation.snpProbe}}
+          div(layout="row").row
+            span(flex=40) Fusion Probe Version
+            span {{$ctrl.testInformation.fusionProbe}}
+          div(layout="row").row
+            span(flex=40) Knowledgebase Version
+            span {{$ctrl.testInformation.kbVersion}}
+        div(layout="column", flex)
+          div(layout="row").row
+            span(flex=40) # Genes Screened
+            span {{$ctrl.testInformation.snpGenes}}
+          div(layout="row").row
+            span(flex=40) # Variants Screen
+            span {{$ctrl.testInformation.snpVars}}
+          div(layout="row").row
+            span(flex=40) # Fusion Genes Screened
+            span {{$ctrl.testInformation.fusionGenes}}
+          div(layout="row").row
+            span(flex=40) # Fusion Variants Screened
+            span {{$ctrl.testInformation.fusionVars}}
+
+
+section
+  md-subheader.md-primary Genomic Events with Potential Therapeutic Association
+
+  div(layout="column", flex)
+
     div(layout="row")
-        div(layout="column", flex).dataBox
-            h2.title Sample Information
-            div.box
-                div(layout="row", flex).heading
-                    div(flex) Sample
-                    div(flex) Sample Name
-                    div(flex) Collection Date
-                    div(flex) Primary Site
-                    div(flex=20) Biopsy Site
-                    div(flex) Pathology Estimated Tumour Content
-                div(layout="row", flex, ng-repeat="sample in report.sampleInfo").row
-                    div(flex) {{sample['Sample']}}
-                    div(flex) {{sample['Sample Name']}}
-                    div(flex) {{sample['Collection Date']}}
-                    div(flex) {{sample['Primary Site']}}
-                    div(flex=20) {{sample['Biopsy Site']}}
-                    div(flex) {{sample['Patho TC']}}
+      div(layout="column", flex).dataBox
 
-    div(layout="row")
-        div(layout="column", flex).dataBox
-            h2.title Test Information
-
-            div(layout="row", flex).horizontalBox
-                div(layout="column", flex)
-                    div(layout="row").row
-                        span(flex=40) Variant Probe Version
-                        span {{testInformation.snpProbe}}
-                    div(layout="row").row
-                        span(flex=40) Fusion Probe Version
-                        span {{testInformation.fusionProbe}}
-                    div(layout="row").row
-                        span(flex=40) Knowledgebase Version
-                        span {{testInformation.kbVersion}}
-                div(layout="column", flex)
-                    div(layout="row").row
-                        span(flex=40) # Genes Screened
-                        span {{testInformation.snpGenes}}
-                    div(layout="row").row
-                        span(flex=40) # Variants Screen
-                        span {{testInformation.snpVars}}
-                    div(layout="row").row
-                        span(flex=40) # Fusion Genes Screened
-                        span {{testInformation.fusionGenes}}
-                    div(layout="row").row
-                        span(flex=40) # Fusion Variants Screened
-                        span {{testInformation.fusionVars}}
-
+        div.box
+          div(layout="row", flex).heading
+            div(flex).text-left Genomic Events
+            div(flex).text-left Comments
+            div(flex).text-left Approved in this cancer type
+            div(flex).text-left Approved in other cancer type
+            div(flex).text-left Emerging Evidence
+          div(layout="row", flex, ng-if="$ctrl.genomicEvents.length === 0").row
+            div(flex) No clinically relevant genomic alterations were found from the analysis.
+          div(layout="row", flex, ng-repeat="gene in $ctrl.genomicEvents", ng-click="$ctrl.modifyEvent($event, gene)", ng-if="$ctrl.AclService.checkAction('report.edit')").row.clickable
+            div(flex) {{gene.genomicEvent}}
+            div(flex) {{gene.comments}}
+            div(flex) {{gene.approvedThisCancerType}}
+            div(flex) {{gene.approvedOtherCancerType}}
+            div(flex) {{gene.emergingPreclinicalEvidence}}
+          div(layout="row", flex, ng-repeat="gene in $ctrl.genomicEvents", ng-if="!$ctrl.AclService.checkAction('report.edit')").row
+            div(flex) {{gene.genomicEvent}}
+            div(flex) {{gene.comments}}
+            div(flex) {{gene.approvedThisCancerType}}
+            div(flex) {{gene.approvedOtherCancerType}}
+            div(flex) {{gene.emergingPreclinicalEvidence}}
 
 section
-    md-subheader.md-primary Genomic Events with Potential Therapeutic Association
+  md-subheader.md-primary Review
+  div(layout="column").layout-padding
+    div(layout="row", md-whiteframe=1, layout-align="start start").rowCard
+      div(flex=25, layout="column")
+        h5 Ready
+        div(flex, layout="row")
+          span(ng-if="$ctrl.signature === null || $ctrl.signature.readySignature.ident === null", layout="row", layout-align="start center", ng-click="$ctrl.sign('ready')").clickable
+            md-icon(style="margin-right: 5px;") gesture
+            span Sign
+          span(ng-if="$ctrl.signature.readySignature.ident") {{$ctrl.signature.readySignature.firstName}} {{$ctrl.signature.readySignature.lastName}}
 
-    div(layout="column", flex)
+      div(flex=25, layout="column")
+        h5 Date
+        div(flex, layout="row")
+          span.context {{$ctrl.signature.readySignedAt | date: 'EEEE, MMMM d, y HH:mm'}}
+      div(flex)
+      div(layout="column", layout-align="start start").options
+        div(ng-if="$ctrl.signature.readySignature.ident")
+          md-icon(ng-click="$ctrl.revokeSign('ready')", ng-if="$ctrl.AclService.checkAction('report.edit')") remove_circle
+            md-tooltip Remove signing
 
-        div(layout="row")
-            div(layout="column", flex).dataBox
-
-                div.box
-                    div(layout="row", flex).heading
-                        div(flex).text-left Genomic Events
-                        div(flex).text-left Comments
-                        div(flex).text-left Approved in this cancer type
-                        div(flex).text-left Approved in other cancer type
-                        div(flex).text-left Emerging Evidence
-                    div(layout="row", flex, ng-if="genomicEvents.length === 0").row
-                        div(flex) No clinically relevant genomic alterations were found from the analysis.
-                    div(layout="row", flex, ng-repeat="gene in genomicEvents", ng-click="modifyEvent($event, gene)", ng-if="SES_permissionAction('report.edit')").row.clickable
-                        div(flex) {{gene.genomicEvent}}
-                        div(flex) {{gene.comments}}
-                        div(flex) {{gene.approvedThisCancerType}}
-                        div(flex) {{gene.approvedOtherCancerType}}
-                        div(flex) {{gene.emergingPreclinicalEvidence}}
-                    div(layout="row", flex, ng-repeat="gene in genomicEvents", ng-if="!SES_permissionAction('report.edit')").row
-                        div(flex) {{gene.genomicEvent}}
-                        div(flex) {{gene.comments}}
-                        div(flex) {{gene.approvedThisCancerType}}
-                        div(flex) {{gene.approvedOtherCancerType}}
-                        div(flex) {{gene.emergingPreclinicalEvidence}}
-
-section
-    md-subheader.md-primary Review
-    div(layout="column").layout-padding
-        div(layout="row", md-whiteframe=1, layout-align="start start").rowCard
-            div(flex=25, layout="column")
-                h5 Ready
-                div(flex, layout="row")
-                    span(ng-show="signature === null || signature.readySignature.ident === null", layout="row", layout-align="start center", ng-click="sign('ready')").clickable
-                        md-icon(style="margin-right: 5px;") gesture
-                        span Sign
-                    span(ng-show="signature.readySignature.ident") {{signature.readySignature.firstName}} {{signature.readySignature.lastName}}
-
-            div(flex=25, layout="column")
-                h5 Date
-                div(flex, layout="row")
-                    span.context {{signature.readySignedAt | amDateFormat: 'dddd, MMMM Do YYYY HH:mm'}}
-            div(flex)
-            div(layout="column", layout-align="start start").options
-                div(ng-if="signature.readySignature.ident")
-                    md-icon(ng-click="revokeSign('ready')", ng-if="SES_permissionAction('report.edit')") remove_circle
-                        md-tooltip Remove signing
-
-        div(layout="row", md-whiteframe=1, layout-align="start start").rowCard
-            div(flex=25, layout="column")
-                h5 Reviewer
-                div(flex, layout="row")
-                    span(ng-show="signature === null || signature.reviewerSignature.ident === null", layout="row", layout-align="start center", ng-click="sign('reviewer')").clickable
-                        md-icon(style="margin-right: 5px;") gesture
-                        span Sign
-                    span(ng-show="signature.reviewerSignature.ident") {{signature.reviewerSignature.firstName}} {{signature.reviewerSignature.lastName}}
-            div(flex=25, layout="column")
-                h5 Date
-                div(flex, layout="row")
-                    span.context {{signature.reviewerSignedAt | amDateFormat: 'dddd, MMMM Do YYYY HH:mm'}}
-            div(flex)
-            div(layout="column", layout-align="start start").options
-                div(ng-if="signature.reviewerSignature.ident")
-                    md-icon(ng-click="revokeSign('reviewer')", ng-if="SES_permissionAction('report.edit')") remove_circle
-                        md-tooltip Remove signing
+    div(layout="row", md-whiteframe=1, layout-align="start start").rowCard
+      div(flex=25, layout="column")
+        h5 Reviewer
+        div(flex, layout="row")
+          span(ng-if="$ctrl.signature === null || $ctrl.signature.reviewerSignature.ident === null", layout="row", layout-align="start center", ng-click="$ctrl.sign('reviewer')").clickable
+            md-icon(style="margin-right: 5px;") gesture
+            span Sign
+          span(ng-if="$ctrl.signature.reviewerSignature.ident") {{$ctrl.signature.reviewerSignature.firstName}} {{$ctrl.signature.reviewerSignature.lastName}}
+      div(flex=25, layout="column")
+        h5 Date
+        div(flex, layout="row")
+          span.context {{$ctrl.signature.reviewerSignedAt | date: 'EEEE, MMMM d, y HH:mm'}}
+      div(flex)
+      div(layout="column", layout-align="start start").options
+        div(ng-if="$ctrl.signature.reviewerSignature.ident")
+          md-icon(ng-click="$ctrl.revokeSign('reviewer')", ng-if="$ctrl.AclService.checkAction('report.edit')") remove_circle
+            md-tooltip Remove signing
