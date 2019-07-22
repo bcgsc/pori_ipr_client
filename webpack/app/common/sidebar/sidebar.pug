@@ -26,18 +26,7 @@ div(layout="column").sidebar
     span(flex, ng-show="$ctrl.maximized") Targeted Gene
 
 
-  div(layout="row", ng-if="$ctrl.pageAccess.germline", ui-sref="root.germline.board", ng-class="{active: ($ctrl.$state.current.name.indexOf('germline') > -1)}")
+  div(layout="row", ng-if="$ctrl.pageAccess.germline", ui-sref="root.germline.board", ng-class="{active: ($ctrl.$state.current.name.includes('germline') > -1)}")
     md-icon supervisor_account
       md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Germline
     span(flex, ng-show="$ctrl.maximized") Germline
-
-  div(layout="row", ng-if="$ctrl.pageAccess.knowledgebase", ui-sref="root.knowledgebase.dashboard", ng-class="{active: ($ctrl.$state.current.name.indexOf('knowledgebase') > -1)}")
-    md-icon local_library
-      md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Knowledgebase
-    span(flex, ng-show="$ctrl.maximized") Knowledgebase
-
-  div(layout="row", ng-if="$ctrl.pageAccess.knowledgebase", ui-sref="root.knowledgebase.references", ng-class="{active: ($ctrl.$state.current.name === 'root.knowledgebase.references')}", ng-show="$ctrl.maximized || (!$ctrl.maximized && $ctrl.$state.current.name.includes('knowledgebase'))").submenu
-    md-icon(ng-show="$ctrl.maximized") subdirectory_arrow_right
-    md-icon(ng-show="!$ctrl.maximized") import_contacts
-      md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") References
-    span(flex, ng-show="$ctrl.maximized") References
