@@ -1,0 +1,18 @@
+md-content(flex).md-padding
+  md-toolbar
+    div.md-toolbar-tools
+      span(flex)
+      h2(flex).text-center.md-hue-3 {{$ctrl.pog.POGID}} Targeted Gene Report
+      span(flex)
+  div(layout="row", flex).pog-report
+    div(flex, ui-view="")
+
+    md-content(flex="20", layout="column").reportSections
+      div
+        md-list(layout-align="start start", id="reportSections")
+          md-subheader Report Sections
+          md-list-item(ui-sref="root.reportlisting.pog.probe.summary", ng-class="$ctrl.activeSection('summary') ? 'active' : ''") Summary
+            md-icon(ng-click="$ctrl.openPrint()", aria-label="Print Summary Section").md-secondary print
+          md-list-item(ui-sref="root.reportlisting.pog.probe.detailedGenomicAnalysis", ng-class="$ctrl.activeSection('detailedGenomicAnalysis') ? 'active' : ''") Detailed Genomic Analysis
+          md-list-item(ui-sref="root.reportlisting.pog.probe.appendices", ng-class="$ctrl.activeSection('appendices') ? 'active' : ''") Appendices
+          md-list-item(ui-sref="root.reportlisting.pog.probe.reportSettings", ng-class="$ctrl.activeSection('meta') ? 'active' : ''", ng-if="$ctrl.AclService.checkAction('report.edit')").meta Report Settings

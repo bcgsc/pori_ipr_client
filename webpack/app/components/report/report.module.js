@@ -1,10 +1,12 @@
 import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
 import GenomicModule from './genomic-report/genomic-report.module';
+import ProbeModule from './probe-report/probe-report.module';
 
 angular.module('report', [
   uiRouter,
   GenomicModule,
+  ProbeModule,
 ]);
 
 export default angular.module('report')

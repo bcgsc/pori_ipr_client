@@ -1,10 +1,7 @@
 div(layout="column", flex).details.box
-  div(ng-init="$ctrl.gene.showChildren=false").collapse
-    md-icon(ng-click="$ctrl.gene.showChildren=!$ctrl.gene.showChildren") {{(($ctrl.gene.showChildren) ? 'expand_less' : 'expand_more')}}
-      md-tooltip Show more entries related to this
   div(layout="row", flex)
     dt(flex="10") Gene:
-    dd(flex="10", ng-click="$ctrl.geneClicked = true") {{::$ctrl.gene.gene}}
+    dd(flex="10", ng-click="$ctrl.geneClicked = true").clickable.underlined {{::$ctrl.gene.gene}}
       gene-viewer(ng-if="$ctrl.geneClicked", ng-init="$ctrl.geneClicked = false",
         report="::$ctrl.report", pog="::$ctrl.pog", gene="::$ctrl.gene.gene")
     
@@ -13,6 +10,9 @@ div(layout="column", flex).details.box
     
     dt(flex="10") Source: 
     dd(flex="60") {{::$ctrl.gene.sample}}
+
+    md-icon(ng-click="$ctrl.gene.showChildren=!$ctrl.gene.showChildren").hover {{(($ctrl.gene.showChildren) ? 'expand_less' : 'expand_more')}}
+      md-tooltip Show more entries related to this
     
   div(layout="row", flex)
     dt(flex="15") Expression: 
@@ -58,10 +58,12 @@ div(flex, layout="column", ng-if="$ctrl.gene.showChildren")
             md-icon info
             md-tooltip {{::$ctrl.gene.reference}}
         div(flex=5).text-center.edit
-          md-icon(data-viewer="$ctrl.gene") search
+          md-icon(ng-click="$ctrl.detailClicked = true").clickable search
             md-tooltip View Details
+        detail-viewer(ng-if="$ctrl.detailClicked", ng-init="$ctrl.detailClicked = false",
+          mutations="[$ctrl.gene]", index="0")
       
-      div(layout="row", flex, ng-repeat="(i, childGene) in ::$ctrl.gene.children").row
+      div(layout="row", flex, ng-repeat="(i, childGene) in ::$ctrl.gene.children track by $index").row
         div(flex=15) {{::childGene.kbVariant}}
         div(flex) {{::childGene.effect}}
         div(flex) {{::childGene.disease}}
@@ -77,5 +79,7 @@ div(flex, layout="column", ng-if="$ctrl.gene.showChildren")
             md-icon info
             md-tooltip {{::childGene.reference}}
         div(flex=5).text-center.edit
-          md-icon(data-viewer="childGene") search
+          md-icon(ng-click="$ctrl.detailClicked = true; $ctrl.detailIndex = $index").clickable search
             md-tooltip View Details
+        detail-viewer(ng-if="$ctrl.detailClicked", ng-init="$ctrl.detailClicked = false",
+          mutations="$ctrl.gene.children", index="$ctrl.detailIndex")

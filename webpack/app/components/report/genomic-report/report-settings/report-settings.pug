@@ -31,8 +31,8 @@ section.meta
       span(flex)
       span
         md-button(ng-click="$ctrl.updateSettings()", ng-disabled="!$ctrl.reportSettingsChanged").md-primary.md-raised Update
-  h2.title User Associations
-  div(ng-repeat="role in $ctrl.roles track by $index")
+  h2(ng-if="$ctrl.showBindings").title User Associations
+  div(ng-repeat="role in $ctrl.roles track by $index", ng-if="$ctrl.showBindings")
     md-subheader.md-primary {{role}}s
 
     div(layout="row", flex, layout-align="start center").roleList

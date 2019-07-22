@@ -5,11 +5,13 @@ import './report-settings.scss';
 const bindings = {
   pog: '<',
   report: '<',
+  showBindings: '<',
 };
 
 class ReportSettingsComponent {
   /* @ngInject */
-  constructor($mdDialog, $mdToast, PogService, ReportService, indefiniteArticleFilter) {
+  constructor($scope, $mdDialog, $mdToast, PogService, ReportService, indefiniteArticleFilter) {
+    this.$scope = $scope;
     this.$mdDialog = $mdDialog;
     this.$mdToast = $mdToast;
     this.PogService = PogService;
@@ -113,8 +115,9 @@ class ReportSettingsComponent {
     this.reportSettingsChanged = false;
 
     // Send updated settings to API
-    const resp = await this.ReportService.update(this.report);
+    const resp = await this.ReportService.updateReport(this.report);
     this.report = resp;
+    this.$scope.$digest();
 
     this.$mdToast.show(this.$mdToast.simple().textContent('Report settings have been updated.'));
   }

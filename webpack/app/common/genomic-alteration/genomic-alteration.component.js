@@ -1,4 +1,5 @@
 import template from './genomic-alteration.pug';
+import './genomic-alteration.scss';
 
 const bindings = {
   samples: '<',
@@ -12,6 +13,10 @@ class GenomicAlterationComponent {
   constructor($scope, AclService) {
     this.$scope = $scope;
     this.AclService = AclService;
+  }
+
+  $onInit() {
+    this.gene.showChildren = false;
   }
 
   /* eslint-disable class-methods-use-this */

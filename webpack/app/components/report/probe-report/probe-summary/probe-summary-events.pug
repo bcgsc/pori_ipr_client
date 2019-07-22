@@ -1,0 +1,32 @@
+md-dialog(layout="column", aria-label="Update Event Details", ng-cloak, flex=45).editor
+    form(flex='auto', name='form', ng-submit="update(form)")
+        md-toolbar
+            .md-toolbar-tools
+                h2 Update Event Details
+                span(flex)
+                md-button.md-icon-button(ng-click='cancel()')
+                    md-icon cancel
+        md-dialog-content(layout-padding)
+
+            div(layout="column")
+
+                div(layout="row")
+                    md-input-container(flex)
+                        input(name="Event", placeholder="Genomic Events", ng-model="event.genomicEvent")
+                div(layout="row")
+                    md-input-container(flex)
+                        input(name="Comment", placeholder="Comments", ng-model="event.comments")
+                div(layout="row")
+                    md-input-container(flex)
+                        input(name="ApprovedThis", placeholder="Approved in this cancer type", ng-model="event.approvedThisCancerType")
+                div(layout="row")
+                    md-input-container(flex)
+                        input(name="ApprovedOther", placeholder="Approved in other cancer type", ng-model="event.approvedOtherCancerType")
+                div(layout="row")
+                    md-input-container(flex)
+                        input(name="Evidence", placeholder="Emerging Evidence", ng-model="event.emergingPreclinicalEvidence")
+
+
+        md-dialog-actions(layout="row", layout-aligh="end center", layout-padding)
+            md-button(type="submit").md-primary Update Event
+
