@@ -18,7 +18,7 @@ div(layout='row', flex)
 
 
 
-            a(layout="row", ng-if="check.resource('tracking')", target="_blank", href="https://ipr-tracking.bcgs.ca/tracking/board", ui-sref="dashboard.tracking.board", ng-class="{active: ($state.current.name === 'dashboard.tracking' || $state.current.name.indexOf('tracking') > -1)}")
+            a(layout="row", ng-if="check.resource('tracking')", target="_blank", href="https://ipr-tracking.bcgsc.ca/tracking/board", ng-class="{active: ($state.current.name === 'dashboard.tracking' || $state.current.name.indexOf('tracking') > -1)}")
                 md-icon my_location
                 md-tooltip(ng-if="!maximized", md-direction="right") Tracking
                 span(flex, ng-show="maximized") Tracking
