@@ -5,16 +5,16 @@ section.detailedGenomicAnalysis
 
     div(layout="column", flex)
 
-      h2.title Therapries Approved in this Tumour Type
+      h2.title Therapies Approved in this Tumour Type
 
       div(ng-if="$ctrl.approvedThisCancer.length == 0")
         div.text-center.details None Found.
-      genomic-alteration(ng-repeat="gene in $ctrl.approvedThisCancer track by $index", samples="$ctrl.samples", gene="gene", report="$ctrl.report").container
+      genomic-alteration(ng-repeat="gene in $ctrl.approvedThisCancer track by $index", samples="$ctrl.samples", gene="gene", pog="$ctrl.pog", report="$ctrl.report").container
 
-      h2.title Therapries Approved in other tumour types
+      h2.title Therapies Approved in other tumour types
       div(ng-if="$ctrl.approvedOtherCancer.length == 0")
         div.text-center.details None Found.
-      genomic-alteration(ng-repeat="gene in $ctrl.approvedOtherCancer track by $index", samples="$ctrl.samples", gene="gene", report="$ctrl.report").container
+      genomic-alteration(ng-repeat="gene in $ctrl.approvedOtherCancer track by $index", samples="$ctrl.samples", gene="gene", pog="$ctrl.pog", report="$ctrl.report").container
 
 
       h2.title Alterations With Potential Clinical Relevance
