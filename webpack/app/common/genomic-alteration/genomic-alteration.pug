@@ -1,7 +1,4 @@
 div(layout="column", flex).details.box
-  div(ng-init="$ctrl.gene.showChildren=false").collapse
-    md-icon(ng-click="$ctrl.gene.showChildren=!$ctrl.gene.showChildren") {{(($ctrl.gene.showChildren) ? 'expand_less' : 'expand_more')}}
-      md-tooltip Show more entries related to this
   div(layout="row", flex)
     dt(flex="10") Gene:
     dd(flex="10", ng-click="$ctrl.geneClicked = true").clickable.underlined {{::$ctrl.gene.gene}}
@@ -13,6 +10,9 @@ div(layout="column", flex).details.box
     
     dt(flex="10") Source: 
     dd(flex="60") {{::$ctrl.gene.sample}}
+
+    md-icon(ng-click="$ctrl.gene.showChildren=!$ctrl.gene.showChildren").hover {{(($ctrl.gene.showChildren) ? 'expand_less' : 'expand_more')}}
+      md-tooltip Show more entries related to this
     
   div(layout="row", flex)
     dt(flex="15") Expression: 

@@ -15,6 +15,10 @@ class GenomicAlterationComponent {
     this.AclService = AclService;
   }
 
+  $onInit() {
+    this.gene.showChildren = false;
+  }
+
   /* eslint-disable class-methods-use-this */
   // Filter reference type
   refType(ref) {
