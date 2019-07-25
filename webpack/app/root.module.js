@@ -129,9 +129,14 @@ export default angular.module('root')
         },
         resolve: {
           /* eslint-disable no-shadow */
-          user: ['UserService', async (UserService) => {
-            const resp = UserService.me();
-            return resp;
+          user: ['UserService', '$state', async (UserService, $state) => {
+            try {
+              const resp = await UserService.me();
+              return resp;
+            } catch (err) {
+              $state.go('public.login');
+              return err;
+            }
           }],
           /* eslint-disable no-shadow */
           isAdmin: ['user', 'UserService', async (user, UserService) => {
