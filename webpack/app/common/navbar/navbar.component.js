@@ -2,13 +2,11 @@ import template from './navbar.pug';
 
 class NavbarComponent {
   /* @ngInject */
-  constructor($scope, $state, $mdDialog, $mdToast, UserSettingsService,
-    UserService, KeycloakService) {
+  constructor($scope, $state, $mdDialog, $mdToast, UserService, KeycloakService) {
     this.$scope = $scope;
     this.$state = $state;
     this.$mdDialog = $mdDialog;
     this.$mdToast = $mdToast;
-    this.UserSettingsService = UserSettingsService;
     this.UserService = UserService;
     this.KeycloakService = KeycloakService;
   }
@@ -16,7 +14,7 @@ class NavbarComponent {
   async $onInit() {
     this.user = await this.UserService.me();
     this.config = CONFIG.ATTRS.name;
-    this.maximized = await this.UserSettingsService.get('sideBarState');
+    this.maximized = await this.UserService.getSetting('sideBarState');
     this.$scope.$digest();
   }
 

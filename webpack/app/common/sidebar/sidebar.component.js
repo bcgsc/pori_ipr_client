@@ -2,9 +2,9 @@ import template from './sidebar.pug';
 
 class SidebarComponent {
   /* @ngInject */
-  constructor($rootScope, UserSettingsService, AclService, $state, $scope) {
+  constructor($rootScope, UserService, AclService, $state, $scope) {
     this.$rootScope = $rootScope;
-    this.UserSettingsService = UserSettingsService;
+    this.UserService = UserService;
     this.AclService = AclService;
     this.$state = $state;
     this.$scope = $scope;
@@ -14,12 +14,15 @@ class SidebarComponent {
   async $onInit() {
     const pages = ['analyses', 'tracking', 'report', 'genomic_report',
       'probe_report', 'germline', 'knowledgebase'];
+
     pages.forEach(async (page) => {
       this.pageAccess[page] = await this.AclService.checkResource(page);
     });
-    this.maximized = await this.UserSettingsService.get('sideBarState');
+
+    this.maximized = await this.UserService.getSetting('sideBarState');
+
     this.$rootScope.$on('sidebarToggle', async () => {
-      await this.UserSettingsService.save('sideBarState', !this.maximized);
+      await this.UserService.saveSetting('sideBarState', !this.maximized);
       this.maximized = !this.maximized;
       this.$rootScope.$digest();
     });

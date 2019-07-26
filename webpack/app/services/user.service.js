@@ -63,6 +63,18 @@ class UserService {
   }
 
   /**
+   * Save a setting value through the API
+   * @param {String} settingName - Name of setting to update
+   * @param {*} newValue - New setting value
+   * @return {Promise<Object>} Updated user
+   */
+  async saveSetting(settingName, newValue) {
+    const user = await this.me();
+    user.settings[settingName] = newValue;
+    return this.update(user);
+  }
+
+  /**
    * Create a new user account
    * @param {Object} user object to create
    * @returns {Promise} create response
