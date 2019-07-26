@@ -9,7 +9,6 @@ class UserService {
   constructor($http) {
     this.$http = $http;
     this.api = `${CONFIG.ENDPOINTS.API}/user`;
-    this.meObj = {};
   }
   
   /**
@@ -18,9 +17,8 @@ class UserService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async me() {
-    const resp = await this.$http.get(`${this.api}/me`);
-    this.meObj = resp.data;
-    return this.meObj;
+    const { data } = await this.$http.get(`${this.api}/me`);
+    return data;
   }
   
   /**
@@ -29,9 +27,8 @@ class UserService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async isAdmin() {
-    return this.meObj.groups.some(({ name }) => {
-      return ['superUser', 'admin'].includes(name);
-    });
+    const user = await this.me();
+    return user.groups.some(({ name }) => ['superUser', 'admin'].includes(name));
   }
 
   /**
@@ -53,6 +50,16 @@ class UserService {
   async update(user) {
     const { data } = await this.$http.put(`${this.api}/${user.ident}`, user);
     return data;
+  }
+  
+  /**
+   * Get a setting based on the name
+   * @param {String} settingName name of setting
+   * @return {Promise<String>} Setting value
+   */
+  async getSetting(settingName) {
+    const user = await this.me();
+    return user.settings[settingName];
   }
 
   /**
