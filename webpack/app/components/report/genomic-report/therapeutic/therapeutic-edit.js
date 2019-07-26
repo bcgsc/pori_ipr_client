@@ -2,11 +2,10 @@ import sortBy from 'lodash.sortby';
 
 class TherapeuticEditController {
   /* @ngInject */
-  constructor($scope, $mdDialog, $mdToast, TherapeuticService, KnowledgebaseService,
+  constructor($scope, $mdDialog, TherapeuticService, KnowledgebaseService,
     pog, report, entry, newEntry) {
     this.$scope = $scope;
     this.$mdDialog = $mdDialog;
-    this.$mdToast = $mdToast;
     this.TherapeuticService = TherapeuticService;
     this.KnowledgebaseService = KnowledgebaseService;
     this.pog = pog;

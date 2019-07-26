@@ -12,16 +12,15 @@ const bindings = {
 
 class MutationSignatureComponent {
   /* @ngInject */
-  constructor($mdDialog, $mdToast) {
+  constructor($mdDialog) {
     this.$mdDialog = $mdDialog;
-    this.$mdToast = $mdToast;
+  }
+
+  $onInit() {
     this.nnlsNormal = false;
     this.mutationSort = { col: 'signature', order: true };
     this.selectedSigs = [];
     this.modifier = {};
-  }
-
-  $onInit() {
     this.mode = this.mode || 'normal';
     // If mode is pick, preload selected sigs:
     if (this.mode === 'pick') {
