@@ -48,7 +48,7 @@ class GenomicComponent {
     }
 
     this.selectedProject = {
-      project: await this.UserService.getSetting('selectedProject') ? await this.UserService.get('selectedProject') : {},
+      project: await this.UserService.getSetting('selectedProject') ? await this.UserService.getSetting('selectedProject') : {},
     };
 
     this.filter = {
