@@ -52,8 +52,7 @@ class GenomicComponent {
     };
 
     this.filter = {
-      currentUser: (await this.UserService.getSetting('genomicReportListCurrentUser') === undefined)
-        ? true : await this.UserService.getSetting('genomicReportListCurrentUser'),
+      currentUser: await this.UserService.getSetting('genomicReportListCurrentUser'),
       query: null,
     };
 
