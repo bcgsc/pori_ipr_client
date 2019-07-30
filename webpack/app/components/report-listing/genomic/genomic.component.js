@@ -56,9 +56,6 @@ class GenomicComponent {
       query: null,
     };
 
-    if (await this.UserService.getSetting('genomicReportListCurrentUser') === undefined) {
-      await this.UserService.saveSetting('genomicReportListCurrentUser', true);
-    }
     /* eslint-disable-next-line arrow-body-style */
     this.$scope.$watch(() => this.filter.currentUser, async (newVal, oldVal) => {
       // Ignore onload message
