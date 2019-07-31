@@ -30,7 +30,7 @@ class LoginRedirect {
         this.$state.go('root.reportlisting.dashboard');
       }
     } catch (err) {
-      console.log(err);
+      console.error(err);
       this.$mdToast.show(
         this.$mdToast.simple('No response from the server. Please try again later').hideDelay(7000),
       );
