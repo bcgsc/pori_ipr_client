@@ -9,9 +9,8 @@ const bindings = {
 
 class ReportListingCardComponent {
   /* @ngInject */
-  constructor($mdDialog, $mdToast, $state) {
+  constructor($mdDialog, $state) {
     this.$mdDialog = $mdDialog;
-    this.$mdToast = $mdToast;
     this.$state = $state;
   }
 

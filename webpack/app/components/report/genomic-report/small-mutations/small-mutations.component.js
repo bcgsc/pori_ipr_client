@@ -13,11 +13,10 @@ const bindings = {
 
 class SmallMutationsComponent {
   /* @ngInject */
-  constructor($scope, $state, $mdDialog, $mdToast, PogService, SmallMutationsService) {
+  constructor($scope, $state, $mdDialog, PogService, SmallMutationsService) {
     this.$scope = $scope;
     this.$state = $state;
     this.$mdDialog = $mdDialog;
-    this.$mdToast = $mdToast;
     this.PogService = PogService;
     this.SmallMutationsService = SmallMutationsService;
   }

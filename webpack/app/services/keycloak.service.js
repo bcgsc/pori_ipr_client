@@ -18,7 +18,12 @@ class KeycloakService {
    * @return {Promise} Promise to keycloak auth
    */
   async setToken() {
-    await this.keycloak.init({ onLoad: 'login-required', promiseType: 'native' });
+    const init = new Promise((resolve, reject) => {
+      const prom = this.keycloak.init({ onLoad: 'login-required' }); // setting promiseType = native does not work for later functions inside the closure
+      prom.success(resolve);
+      prom.error(reject);
+    });
+    await init;
     this.$localStorage[CONFIG.STORAGE.KEYCLOAK] = this.keycloak.token;
     return this.keycloak.token;
   }

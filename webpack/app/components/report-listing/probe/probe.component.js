@@ -9,12 +9,11 @@ const bindings = {
 
 class ProbeComponent {
   /* @ngInject */
-  constructor($rootScope, $scope, ReportService, $mdDialog, UserSettingsService, AclService) {
+  constructor($rootScope, $scope, ReportService, $mdDialog, AclService) {
     this.$rootScope = $rootScope;
     this.$scope = $scope;
     this.ReportService = ReportService;
     this.$mdDialog = $mdDialog;
-    this.UserSettingsService = UserSettingsService;
     this.AclService = AclService;
     this.archived = false;
     this.nonproduction = false;

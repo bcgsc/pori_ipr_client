@@ -88,7 +88,7 @@ class AclService {
    * @param {String} name - Resource name
    * @return {Promise} Boolean with if user is allowed to see resource
    */
-  checkResource(name) {
+  async checkResource(name) {
     let permission = false;
     let resource;
 
@@ -100,7 +100,8 @@ class AclService {
 
     /* Pull out the user's groups into an array */
     const userGroups = [];
-    this.UserService.meObj.groups.forEach((entry) => {
+    const user = await this.UserService.me();
+    user.groups.forEach((entry) => {
       userGroups.push(entry.name.toLowerCase());
     });
 
@@ -134,7 +135,7 @@ class AclService {
    * @param {String} name - The action string to be parsed
    * @return {Promise} Boolean with if an action can be performed
    */
-  checkAction(name) {
+  async checkAction(name) {
     let permission = false;
     let action;
 
@@ -146,7 +147,8 @@ class AclService {
 
     /* Pull out the user's groups into an array */
     const userGroups = [];
-    this.UserService.meObj.groups.forEach((entry) => {
+    const user = await this.UserService.me();
+    user.groups.forEach((entry) => {
       userGroups.push(entry.name.toLowerCase());
     });
 
@@ -181,9 +183,8 @@ class AclService {
    * @return {Promise} Boolean with if the user is in a group
    */
   async inGroup(group) {
-    return this.UserService.meObj.groups.some((userGroup) => {
-      return group.toLowerCase() === userGroup.name.toLowerCase();
-    });
+    const user = await this.UserService.me();
+    return user.groups.some(userGroup => group.toLowerCase() === userGroup.name.toLowerCase());
   }
 
   /**
@@ -199,9 +200,9 @@ class AclService {
     resp.projects.forEach((entry) => {
       projects.push(entry.name);
     });
-    const intersection = this.UserService.meObj.projects.filter((userProject) => {
-      return projects.includes(userProject);
-    });
+
+    const user = await this.UserService.me();
+    const intersection = user.projects.filter(userProject => projects.includes(userProject));
 
     /* Check if user has individual project access or is part of full access group */
     /* Intersection array will be empty if part of full access group */

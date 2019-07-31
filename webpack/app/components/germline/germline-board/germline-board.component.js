@@ -6,11 +6,12 @@ const bindings = {
 
 class GermlineBoardComponent {
   /* @ngInject */
-  constructor(GermlineService, $window, $timeout, $scope) {
+  constructor(GermlineService, $window, $timeout, $scope, $mdToast) {
     this.GermlineService = GermlineService;
     this.$window = $window;
     this.$timeout = $timeout;
     this.$scope = $scope;
+    this.$mdToast = $mdToast;
   }
 
   $onInit() {

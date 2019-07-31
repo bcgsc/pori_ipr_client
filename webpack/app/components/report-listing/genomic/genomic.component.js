@@ -10,13 +10,16 @@ const bindings = {
 
 class GenomicComponent {
   /* @ngInject */
-  constructor($rootScope, $scope, ReportService, $mdDialog, UserSettingsService, AclService) {
+  constructor($rootScope, $scope, ReportService, $mdDialog, UserService, AclService) {
     this.$rootScope = $rootScope;
     this.$scope = $scope;
     this.ReportService = ReportService;
     this.$mdDialog = $mdDialog;
-    this.UserSettingsService = UserSettingsService;
+    this.UserService = UserService;
     this.AclService = AclService;
+  }
+
+  async $onInit() {
     this.archived = false;
     this.nonproduction = false;
     this.loading = false;
@@ -34,10 +37,8 @@ class GenomicComponent {
       archived: false,
       nonproduction: false,
     };
-  }
-
-  async $onInit() {
     this.reports = this.reports.reports;
+
     if (this.isExternalMode) {
       this.pagination = {
         offset: 0,
@@ -47,32 +48,28 @@ class GenomicComponent {
     }
 
     this.selectedProject = {
-      project: await this.UserSettingsService.get('selectedProject') ? await this.UserSettingsService.get('selectedProject') : {},
+      project: (await this.UserService.getSetting('selectedProject')) || {},
     };
 
     this.filter = {
-      currentUser: (await this.UserSettingsService.get('genomicReportListCurrentUser') === undefined)
-        ? true : await this.UserSettingsService.get('genomicReportListCurrentUser'),
+      currentUser: await this.UserService.getSetting('genomicReportListCurrentUser'),
       query: null,
     };
 
-    if (await this.UserSettingsService.get('genomicReportListCurrentUser') === undefined) {
-      await this.UserSettingsService.save('genomicReportListCurrentUser', true);
-    }
     /* eslint-disable-next-line arrow-body-style */
     this.$scope.$watch(() => this.filter.currentUser, async (newVal, oldVal) => {
       // Ignore onload message
       if (JSON.stringify(newVal) === JSON.stringify(oldVal)) {
         return;
       }
-      await this.UserSettingsService.save('genomicReportListCurrentUser', newVal);
+      await this.UserService.saveSetting('genomicReportListCurrentUser', newVal);
     }, true);
     /* eslint-disable-next-line arrow-body-style */
     this.$scope.$watch(() => this.selectedProject, async (newVal, oldVal) => {
       if (JSON.stringify(newVal) === JSON.stringify(oldVal)) {
         return;
       }
-      await this.UserSettingsService.save('selectedProject', newVal);
+      await this.UserService.saveSetting('selectedProject', newVal);
     }, true);
   }
 

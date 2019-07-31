@@ -9,24 +9,31 @@ class LoginRedirect {
   }
 
   async $onInit() {
-    await this.KeycloakService.setToken();
-    const resp = await this.UserService.me();
-    this.$localStorage.expiry = resp.expiry;
-    if (this.$localStorage.returnToState) {
-      // navigate to state user was trying to access
-      if (!Object.is(this.$localStorage.returnToStateParams, { '#': null })) {
-        this.$state.go(
-          this.$localStorage.returnToState, this.$localStorage.returnToStateParams,
-        );
+    try {
+      await this.KeycloakService.setToken();
+      const resp = await this.UserService.me();
+      this.$localStorage.expiry = resp.expiry;
+      if (this.$localStorage.returnToState) {
+        // navigate to state user was trying to access
+        if (!Object.is(this.$localStorage.returnToStateParams, { '#': null })) {
+          this.$state.go(
+            this.$localStorage.returnToState, this.$localStorage.returnToStateParams,
+          );
+        } else {
+          this.$state.go(
+            this.$localStorage.returnToState,
+          );
+        }
+        delete this.$localStorage.returnToState;
+        delete this.$localStorage.returnToStateParams;
       } else {
-        this.$state.go(
-          this.$localStorage.returnToState,
-        );
+        this.$state.go('root.reportlisting.dashboard');
       }
-      delete this.$localStorage.returnToState;
-      delete this.$localStorage.returnToStateParams;
-    } else {
-      this.$state.go('root.reportlisting.dashboard');
+    } catch (err) {
+      console.error(err);
+      this.$mdToast.show(
+        this.$mdToast.simple('No response from the server. Please try again later').hideDelay(7000),
+      );
     }
   }
 }

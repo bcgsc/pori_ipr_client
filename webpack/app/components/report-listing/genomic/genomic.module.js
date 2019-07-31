@@ -27,10 +27,10 @@ export default angular.module('genomic')
           },
         },
         resolve: {
-          reports: ['ReportService', 'UserSettingsService', 'user', 'isExternalMode',
-            async (ReportService, UserSettingsService, user, isExternalMode) => {
-              const currentUser = UserSettingsService.get('genomicReportListCurrentUser');
-              const project = UserSettingsService.get('selectedProject') || { name: undefined };
+          reports: ['ReportService', 'UserService', 'isExternalMode',
+            async (ReportService, UserService, isExternalMode) => {
+              const currentUser = await UserService.getSetting('genomicReportListCurrentUser');
+              const project = await UserService.getSetting('selectedProject') || { name: undefined };
               
               const opts = {
                 type: 'genomic',

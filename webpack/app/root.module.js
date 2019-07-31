@@ -11,7 +11,6 @@ import CommonModule from './common/common.module';
 import ComponentModule from './components/components.module';
 import RootComponent from './root.component';
 import UserService from './services/user.service';
-import UserSettingsService from './services/user-settings.service';
 import PogService from './services/pog.service';
 import ProjectService from './services/project.service';
 import AclService from './services/acl.service';
@@ -65,7 +64,6 @@ angular.module('root', [
 export default angular.module('root')
   .component('root', RootComponent)
   .service('UserService', UserService)
-  .service('UserSettingsService', UserSettingsService)
   .service('PogService', PogService)
   .service('ProjectService', ProjectService)
   .service('AclService', AclService)
@@ -129,9 +127,14 @@ export default angular.module('root')
         },
         resolve: {
           /* eslint-disable no-shadow */
-          user: ['UserService', async (UserService) => {
-            const resp = UserService.me();
-            return resp;
+          user: ['UserService', '$state', async (UserService, $state) => {
+            try {
+              const resp = await UserService.me();
+              return resp;
+            } catch (err) {
+              $state.go('public.login');
+              return err;
+            }
           }],
           /* eslint-disable no-shadow */
           isAdmin: ['user', 'UserService', async (user, UserService) => {
