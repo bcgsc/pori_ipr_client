@@ -14,22 +14,17 @@ export default angular.module('disease')
     $stateProvider
       .state('root.reportlisting.pog.genomic.diseaseSpecificAnalysis', {
         url: '/diseaseSpecificAnalysis',
-        views: {
-          '': {
-            component: 'disease',
-          },
-        },
+        component: 'disease',
         resolve: {
-          images: ['$transition$', 'ImageService', ($transition$, ImageService) => {
-            return ImageService.get(
-              $transition$.params().POG, $transition$.params().analysis_report, 'microbial.circos',
-            );
-          }],
-          subtypePlotImages: ['$transition$', 'ImageService', ($transition$, ImageService) => {
-            return ImageService.subtypePlots(
-              $transition$.params().POG, $transition$.params().analysis_report,
-            );
-          }],
+          images: ['$transition$', 'ImageService', ($transition$, ImageService) => ImageService.get(
+            $transition$.params().POG,
+            $transition$.params().analysis_report,
+            'microbial.circos',
+          )],
+          subtypePlotImages: ['$transition$', 'ImageService', ($transition$, ImageService) => ImageService.subtypePlots(
+            $transition$.params().POG,
+            $transition$.params().analysis_report,
+          )],
         },
       });
   })

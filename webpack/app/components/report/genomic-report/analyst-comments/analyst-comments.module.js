@@ -20,18 +20,13 @@ export default angular.module('comments')
     $stateProvider
       .state('root.reportlisting.pog.genomic.analystComments', {
         url: '/analystComments',
-        views: {
-          '': {
-            component: 'analyst',
-          },
-        },
+        component: 'analyst',
         resolve: {
           analystComments: ['$transition$', 'AnalystCommentsService',
-            async ($transition$, AnalystCommentsService) => {
-              return AnalystCommentsService.get(
-                $transition$.params().POG, $transition$.params().analysis_report,
-              );
-            }],
+            async ($transition$, AnalystCommentsService) => AnalystCommentsService.get(
+              $transition$.params().POG,
+              $transition$.params().analysis_report,
+            )],
         },
       });
   })

@@ -14,15 +14,9 @@ export default angular.module('reportsettings')
     $stateProvider
       .state('root.reportlisting.pog.probe.reportSettings', {
         url: '/reportSettings',
-        views: {
-          '': {
-            component: 'probereportsettings',
-          },
-        },
+        component: 'probereportsettings',
         resolve: {
-          showBindings: () => {
-            return false;
-          },
+          showBindings: () => false,
         },
       });
   })

@@ -14,33 +14,23 @@ export default angular.module('probe.summary')
     $stateProvider
       .state('root.reportlisting.pog.probe.summary', {
         url: '/summary',
-        views: {
-          '': {
-            component: 'probesummary',
-          },
-        },
+        component: 'probesummary',
         resolve: {
           testInformation: ['$transition$', 'ProbeTestInformationService',
-            async ($transition$, ProbeTestInformationService) => {
-              return ProbeTestInformationService.retrieve(
-                $transition$.params().POG,
-                $transition$.params().analysis_report,
-              );
-            }],
+            async ($transition$, ProbeTestInformationService) => ProbeTestInformationService.retrieve(
+              $transition$.params().POG,
+              $transition$.params().analysis_report,
+            )],
           genomicEvents: ['$transition$', 'GenomicEventsService',
-            async ($transition$, GenomicEventsService) => {
-              return GenomicEventsService.all(
-                $transition$.params().POG,
-                $transition$.params().analysis_report,
-              );
-            }],
+            async ($transition$, GenomicEventsService) => GenomicEventsService.all(
+              $transition$.params().POG,
+              $transition$.params().analysis_report,
+            )],
           signature: ['$transition$', 'ProbeSignatureService',
-            async ($transition$, ProbeSignatureService) => {
-              return ProbeSignatureService.retrieve(
-                $transition$.params().POG,
-                $transition$.params().analysis_report,
-              );
-            }],
+            async ($transition$, ProbeSignatureService) => ProbeSignatureService.retrieve(
+              $transition$.params().POG,
+              $transition$.params().analysis_report,
+            )],
         },
       });
   })

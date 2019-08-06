@@ -15,18 +15,13 @@ export default angular.module('pathway')
     $stateProvider
       .state('root.reportlisting.pog.genomic.pathwayAnalysis', {
         url: '/pathwayAnalysis',
-        views: {
-          '': {
-            component: 'pathway',
-          },
-        },
+        component: 'pathway',
         resolve: {
           pathway: ['$transition$', 'PathwayAnalysisService',
-            async ($transition$, PathwayAnalysisService) => {
-              return PathwayAnalysisService.retrieve(
-                $transition$.params().POG, $transition$.params().analysis_report,
-              );
-            }],
+            async ($transition$, PathwayAnalysisService) => PathwayAnalysisService.retrieve(
+              $transition$.params().POG,
+              $transition$.params().analysis_report,
+            )],
         },
       });
   })

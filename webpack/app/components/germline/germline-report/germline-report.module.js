@@ -11,11 +11,7 @@ export default angular.module('germlinereport')
     $stateProvider
       .state('root.germline.report', {
         url: '/report/patient/:patient/biopsy/:biopsy/report/:report',
-        views: {
-          '@': {
-            component: 'germlinereport',
-          },
-        },
+        component: 'germlinereport',
         resolve: {
           report: ['GermlineService', '$transition$', async (GermlineService, $transition$) => GermlineService.getReport(
             $transition$.params().patient,

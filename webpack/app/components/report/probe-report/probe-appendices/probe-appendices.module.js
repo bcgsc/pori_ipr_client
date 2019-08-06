@@ -14,19 +14,13 @@ export default angular.module('probe.appendices')
     $stateProvider
       .state('root.reportlisting.pog.probe.appendices', {
         url: '/appendices',
-        views: {
-          '': {
-            component: 'probeappendices',
-          },
-        },
+        component: 'probeappendices',
         resolve: {
           tcgaAcronyms: ['$transition$', 'AppendicesService',
-            async ($transition$, AppendicesService) => {
-              return AppendicesService.tcga(
-                $transition$.params().POG,
-                $transition$.params().analysis_report,
-              );
-            }],
+            async ($transition$, AppendicesService) => AppendicesService.tcga(
+              $transition$.params().POG,
+              $transition$.params().analysis_report,
+            )],
         },
       });
   })

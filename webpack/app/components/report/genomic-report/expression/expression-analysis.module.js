@@ -14,40 +14,28 @@ export default angular.module('expression')
     $stateProvider
       .state('root.reportlisting.pog.genomic.expressionAnalysis', {
         url: '/expressionAnalysis',
-        views: {
-          '': {
-            component: 'expression',
-          },
-        },
+        component: 'expression',
         resolve: {
           mutationSummary: ['$transition$', 'MutationSummaryService',
-            async ($transition$, MutationSummaryService) => {
-              return MutationSummaryService.get(
-                $transition$.params().POG,
-                $transition$.params().analysis_report,
-              );
-            }],
+            async ($transition$, MutationSummaryService) => MutationSummaryService.get(
+              $transition$.params().POG,
+              $transition$.params().analysis_report,
+            )],
           outliers: ['$transition$', 'OutlierService',
-            async ($transition$, OutlierService) => {
-              return OutlierService.all(
-                $transition$.params().POG,
-                $transition$.params().analysis_report,
-              );
-            }],
+            async ($transition$, OutlierService) => OutlierService.all(
+              $transition$.params().POG,
+              $transition$.params().analysis_report,
+            )],
           drugTargets: ['$transition$', 'DrugTargetService',
-            async ($transition$, DrugTargetService) => {
-              return DrugTargetService.all(
-                $transition$.params().POG,
-                $transition$.params().analysis_report,
-              );
-            }],
+            async ($transition$, DrugTargetService) => DrugTargetService.all(
+              $transition$.params().POG,
+              $transition$.params().analysis_report,
+            )],
           densityGraphs: ['$transition$', 'ImageService',
-            async ($transition$, ImageService) => {
-              return ImageService.expDensityGraphs(
-                $transition$.params().POG,
-                $transition$.params().analysis_report,
-              );
-            }],
+            async ($transition$, ImageService) => ImageService.expDensityGraphs(
+              $transition$.params().POG,
+              $transition$.params().analysis_report,
+            )],
         },
       });
   })

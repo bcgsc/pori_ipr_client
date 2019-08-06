@@ -14,34 +14,24 @@ export default angular.module('copynumberanalyses')
     $stateProvider
       .state('root.reportlisting.pog.genomic.copyNumberAnalyses', {
         url: '/copyNumberAnalyses',
-        views: {
-          '': {
-            component: 'copynumberanalyses',
-          },
-        },
+        component: 'copynumberanalyses',
         resolve: {
           images: ['$transition$', 'ImageService',
-            async ($transition$, ImageService) => {
-              return ImageService.get(
-                $transition$.params().POG,
-                $transition$.params().analysis_report,
-                'cnvLoh.circos,cnv.1,cnv.2,cnv.3,cnv.4,cnv.5,loh.1,loh.2,loh.3,loh.4,loh.5',
-              );
-            }],
+            async ($transition$, ImageService) => ImageService.get(
+              $transition$.params().POG,
+              $transition$.params().analysis_report,
+              'cnvLoh.circos,cnv.1,cnv.2,cnv.3,cnv.4,cnv.5,loh.1,loh.2,loh.3,loh.4,loh.5',
+            )],
           mutationSummary: ['$transition$', 'MutationSummaryService',
-            async ($transition$, MutationSummaryService) => {
-              return MutationSummaryService.get(
-                $transition$.params().POG,
-                $transition$.params().analysis_report,
-              );
-            }],
+            async ($transition$, MutationSummaryService) => MutationSummaryService.get(
+              $transition$.params().POG,
+              $transition$.params().analysis_report,
+            )],
           cnvs: ['$transition$', 'CopyNumberAnalysesService',
-            async ($transition$, CopyNumberAnalysesService) => {
-              return CopyNumberAnalysesService.all(
-                $transition$.params().POG,
-                $transition$.params().analysis_report,
-              );
-            }],
+            async ($transition$, CopyNumberAnalysesService) => CopyNumberAnalysesService.all(
+              $transition$.params().POG,
+              $transition$.params().analysis_report,
+            )],
         },
       });
   })

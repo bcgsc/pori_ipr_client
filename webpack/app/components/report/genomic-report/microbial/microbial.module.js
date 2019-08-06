@@ -14,20 +14,14 @@ export default angular.module('microbial')
     $stateProvider
       .state('root.reportlisting.pog.genomic.microbial', {
         url: '/microbial',
-        views: {
-          '': {
-            component: 'microbial',
-          },
-        },
+        component: 'microbial',
         resolve: {
           images: ['$transition$', 'ImageService',
-            async ($transition$, ImageService) => {
-              return ImageService.get(
-                $transition$.params().POG,
-                $transition$.params().analysis_report,
-                'microbial.circos.transcriptome,microbial.circos.genome,microbial.circos',
-              );
-            }],
+            async ($transition$, ImageService) => ImageService.get(
+              $transition$.params().POG,
+              $transition$.params().analysis_report,
+              'microbial.circos.transcriptome,microbial.circos.genome,microbial.circos',
+            )],
         },
       });
   })

@@ -115,16 +115,8 @@ export default angular.module('root')
 
     $stateProvider
       .state('root', {
-        abstract: true,
         url: '/',
-        views: {
-          'navbar': {
-            component: 'navbar',
-          },
-          'sidebar': {
-            component: 'sidebar',
-          },
-        },
+        component: 'root',
         resolve: {
           /* eslint-disable no-shadow */
           user: ['UserService', '$state', async (UserService, $state) => {
@@ -137,21 +129,13 @@ export default angular.module('root')
             }
           }],
           /* eslint-disable no-shadow */
-          isAdmin: ['user', 'UserService', async (user, UserService) => {
-            return UserService.isAdmin();
-          }],
+          isAdmin: ['UserService', async UserService => UserService.isAdmin()],
           /* eslint-disable no-shadow */
-          pogs: ['user', 'PogService', async (user, PogService) => {
-            return PogService.all();
-          }],
+          pogs: ['PogService', async PogService => PogService.all()],
           /* eslint-disable no-shadow */
-          projects: ['user', 'ProjectService', async (user, ProjectService) => {
-            return ProjectService.all();
-          }],
+          projects: ['ProjectService', async ProjectService => ProjectService.all()],
           /* eslint-disable no-shadow */
-          isExternalMode: ['user', 'AclService', async (user, AclService) => {
-            return AclService.isExternalMode();
-          }],
+          isExternalMode: ['AclService', async AclService => AclService.isExternalMode()],
         },
       });
   })

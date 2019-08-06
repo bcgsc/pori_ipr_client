@@ -14,11 +14,7 @@ export default angular.module('probe.detailedgenomicanalysis')
     $stateProvider
       .state('root.reportlisting.pog.probe.detailedGenomicAnalysis', {
         url: '/detailedGenomicAnalysis',
-        views: {
-          '': {
-            component: 'detailedgenomicanalysis',
-          },
-        },
+        component: 'detailedgenomicanalysis',
         resolve: {
           alterations: ['$transition$', 'ProbeAlterationService',
             async ($transition$, ProbeAlterationService) => ProbeAlterationService.getAll(

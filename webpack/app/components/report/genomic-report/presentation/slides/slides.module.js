@@ -16,15 +16,12 @@ export default angular.module('slides')
     $stateProvider
       .state('root.reportlisting.pog.genomic.slide', {
         url: '/slide',
-        views: {
-          '': {
-            component: 'slides',
-          },
-        },
+        component: 'slides',
         resolve: {
-          slides: ['$transition$', 'SlidesService', ($transition$, SlidesService) => {
-            return SlidesService.all($transition$.params().POG, $transition$.params().analysis_report);
-          }],
+          slides: ['$transition$', 'SlidesService', ($transition$, SlidesService) => SlidesService.all(
+            $transition$.params().POG,
+            $transition$.params().analysis_report,
+          )],
         },
       });
   })

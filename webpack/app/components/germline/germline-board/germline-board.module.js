@@ -11,11 +11,7 @@ export default angular.module('germlineboard')
     $stateProvider
       .state('root.germline.board', {
         url: '/board',
-        views: {
-          '@': {
-            component: 'germlineboard',
-          },
-        },
+        component: 'germlineboard',
         resolve: {
           reports: ['GermlineService', async GermlineService => GermlineService.getAllReports()],
         },

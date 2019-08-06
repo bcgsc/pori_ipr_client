@@ -45,18 +45,13 @@ export default angular.module('genomic.report')
       .state('root.reportlisting.pog.genomic', {
         url: '/genomic',
         abstract: true,
-        views: {
-          '@': {
-            component: 'genomicreport',
-          },
-        },
+        component: 'genomicreport',
         resolve: {
           report: ['$transition$', 'ReportService',
-            async ($transition$, ReportService) => {
-              return ReportService.get(
-                $transition$.params().POG, $transition$.params().analysis_report,
-              );
-            }],
+            async ($transition$, ReportService) => ReportService.get(
+              $transition$.params().POG,
+              $transition$.params().analysis_report,
+            )],
         },
       });
   })
