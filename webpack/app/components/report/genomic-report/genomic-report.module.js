@@ -52,6 +52,7 @@ export default angular.module('genomic.report')
               $transition$.params().POG,
               $transition$.params().analysis_report,
             )],
+          reportEdit: ['AclService', async AclService => AclService.checkAction('report.edit')],
         },
       });
   })

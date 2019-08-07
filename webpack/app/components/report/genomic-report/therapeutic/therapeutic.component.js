@@ -6,6 +6,7 @@ import './therapeutic.scss';
 const bindings = {
   pog: '<',
   report: '<',
+  reportEdit: '<',
   therapeutic: '<',
 };
 

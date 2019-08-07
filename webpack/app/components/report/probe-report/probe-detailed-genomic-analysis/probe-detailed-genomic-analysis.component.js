@@ -3,6 +3,7 @@ import template from './probe-detailed-genomic-analysis.pug';
 const bindings = {
   pog: '<',
   report: '<',
+  reportEdit: '<',
   alterations: '<',
   approvedThisCancer: '<',
   approvedOtherCancer: '<',

@@ -4,6 +4,7 @@ import './probe-report.scss';
 const bindings = {
   pog: '<',
   report: '<',
+  reportEdit: '<',
 };
 
 class ProbeComponent {

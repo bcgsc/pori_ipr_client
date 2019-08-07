@@ -5,6 +5,7 @@ import eventTemplate from './probe-summary-events.pug';
 const bindings = {
   pog: '<',
   report: '<',
+  reportEdit: '<',
   testInformation: '<',
   genomicEvents: '<',
   signature: '<',

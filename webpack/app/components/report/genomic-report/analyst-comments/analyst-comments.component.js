@@ -5,6 +5,7 @@ import './analyst-comments.scss';
 const bindings = {
   pog: '<',
   report: '<',
+  reportEdit: '<',
   analystComments: '<',
 };
 

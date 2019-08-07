@@ -22,8 +22,8 @@ const ReportListingModule = angular
         resolve: {
           permission: ['$state', '$mdToast', 'AclService',
             async ($state, $mdToast, AclService) => {
-              if (!AclService.checkAction('report.view')) {
-                $mdToast.showSimple(AclService.checkAction('report.view'));
+              if (!(await AclService.checkAction('report.view'))) {
+                $mdToast.showSimple('You do not have permissions to view reports');
                 $state.go('root.home');
                 return false;
               }

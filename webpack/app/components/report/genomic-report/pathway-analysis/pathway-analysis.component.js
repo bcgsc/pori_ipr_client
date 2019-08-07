@@ -6,6 +6,7 @@ import './pathway-analysis.scss';
 const bindings = {
   pog: '<',
   report: '<',
+  reportEdit: '<',
   pathway: '<',
 };
 

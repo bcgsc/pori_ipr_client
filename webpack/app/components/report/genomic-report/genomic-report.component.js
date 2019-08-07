@@ -4,6 +4,7 @@ import './genomic-report.scss';
 const bindings = {
   pog: '<',
   report: '<',
+  reportEdit: '<',
 };
 
 class GenomicReportComponent {

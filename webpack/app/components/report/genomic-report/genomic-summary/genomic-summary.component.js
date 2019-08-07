@@ -10,6 +10,7 @@ import './genomic-summary.scss';
 const bindings = {
   pog: '<',
   report: '<',
+  reportEdit: '<',
   genomicAlterations: '<',
   variantCounts: '<',
   genomicEvents: '<',
