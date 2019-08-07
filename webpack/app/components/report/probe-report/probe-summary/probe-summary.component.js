@@ -14,7 +14,7 @@ const bindings = {
 class ProbeSummaryComponent {
   /* @ngInject */
   constructor($scope, PogService, $mdDialog, $mdToast, ProbeSignatureService,
-    PatientInformationService, GenomicEventsService, AclService) {
+    PatientInformationService, GenomicEventsService) {
     this.$scope = $scope;
     this.PogService = PogService;
     this.$mdDialog = $mdDialog;
@@ -22,7 +22,6 @@ class ProbeSummaryComponent {
     this.ProbeSignatureService = ProbeSignatureService;
     this.PatientInformationService = PatientInformationService;
     this.GenomicEventsService = GenomicEventsService;
-    this.AclService = AclService;
   }
 
   $onInit() {

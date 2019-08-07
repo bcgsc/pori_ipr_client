@@ -12,14 +12,13 @@ const bindings = {
 
 class PathwayAnalysisComponent {
   /* @ngInject */
-  constructor($scope, $mdDialog, $mdToast, PogService, FileUploader, $localStorage, AclService) {
+  constructor($scope, $mdDialog, $mdToast, PogService, FileUploader, $localStorage) {
     this.$scope = $scope;
     this.$mdDialog = $mdDialog;
     this.$mdToast = $mdToast;
     this.PogService = PogService;
     this.FileUploader = FileUploader;
     this.$localStorage = $localStorage;
-    this.AclService = AclService;
   }
 
   $onInit() {

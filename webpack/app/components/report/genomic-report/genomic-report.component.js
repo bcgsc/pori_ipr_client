@@ -9,10 +9,9 @@ const bindings = {
 
 class GenomicReportComponent {
   /* @ngInject */
-  constructor($state, $window, AclService) {
+  constructor($state, $window) {
     this.$state = $state;
     this.$window = $window;
-    this.AclService = AclService;
   }
 
   $onInit() {

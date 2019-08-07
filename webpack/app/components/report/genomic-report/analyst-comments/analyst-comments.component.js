@@ -11,14 +11,13 @@ const bindings = {
 
 class AnalystCommentsComponent {
   /* @ngInject */
-  constructor($scope, $mdDialog, $mdToast, $sce, PogService, AnalystCommentsService, AclService) {
+  constructor($scope, $mdDialog, $mdToast, $sce, PogService, AnalystCommentsService) {
     this.$scope = $scope;
     this.$mdDialog = $mdDialog;
     this.$mdToast = $mdToast;
     this.$sce = $sce;
     this.PogService = PogService;
     this.AnalystCommentsService = AnalystCommentsService;
-    this.AclService = AclService;
   }
 
   // Sign The comments

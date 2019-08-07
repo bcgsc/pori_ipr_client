@@ -9,11 +9,10 @@ const bindings = {
 
 class ProbeComponent {
   /* @ngInject */
-  constructor($state, $window, PogService, AclService) {
+  constructor($state, $window, PogService) {
     this.$state = $state;
     this.$window = $window;
     this.PogService = PogService;
-    this.AclService = AclService;
   }
 
   openPrint() {
