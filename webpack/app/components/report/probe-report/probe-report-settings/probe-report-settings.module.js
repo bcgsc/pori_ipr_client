@@ -1,12 +1,12 @@
 import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
-import ReportSettingsComponent from '../../genomic-report/report-settings/report-settings.component'; 
+import ReportSettingsComponent from '../../genomic-report/report-settings/report-settings.component';
 
-angular.module('reportsettings', [
+angular.module('probe.reportsettings', [
   uiRouter,
 ]);
 
-export default angular.module('reportsettings')
+export default angular.module('probe.reportsettings')
   .component('probereportsettings', ReportSettingsComponent)
   .config(($stateProvider) => {
     'ngInject';

@@ -5,6 +5,7 @@ import './report-settings.scss';
 const bindings = {
   pog: '<',
   report: '<',
+  reportSettings: '<',
   showBindings: '<',
 };
 
@@ -36,9 +37,7 @@ class ReportSettingsComponent {
 
   /* eslint-disable class-methods-use-this */
   roleFilter(filter) {
-    return (puser) => {
-      return (puser.role === filter);
-    };
+    return puser => (puser.role === filter);
   }
 
   // Update Patient Information
