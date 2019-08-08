@@ -13,7 +13,7 @@ module.exports = {
         oneOf: [
           {
             test: /\.pug$/,
-            include: path.join(__dirname, 'app'),
+            include: path.join(__dirname, '../app'),
             exclude: /node_modules/,
             use: [{
               loader: 'apply-loader',
@@ -62,11 +62,11 @@ module.exports = {
   plugins: [
     new MiniCssExtractPlugin(),
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, 'app/index.pug'),
+      template: path.join(__dirname, '../app/index.pug'),
       inject: true,
     }),
     new CopyWebpackPlugin([{
-      from: path.join(__dirname, 'statics/images/*'),
+      from: path.join(__dirname, '../statics/images/*'),
       to: 'img/',
       flatten: true,
     }]),
@@ -76,14 +76,14 @@ module.exports = {
   ],
   mode: 'development',
   devtool: 'inline-source-map',
-  entry: path.resolve(__dirname, 'app/root.module.js'),
+  entry: path.resolve(__dirname, '../app/root.module.js'),
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, '../dist'),
     filename: 'app.bundle.js',
     publicPath: '/',
   },
   devServer: {
-    contentBase: path.join(__dirname, 'dist'),
+    contentBase: path.join(__dirname, '../dist'),
     compress: true,
     port: 3000,
     hot: true,

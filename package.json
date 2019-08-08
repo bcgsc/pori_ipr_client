@@ -12,12 +12,12 @@
   },
   "scripts": {
     "cypress:open": "cypress open",
-    "build": "webpack --mode development --config ./webpack/webpack.config.js",
+    "build": "webpack --mode development --config ./webpack/webpack/webpack.config.js",
     "start": "npm run start:dev",
-    "start:local": "webpack-dev-server --config ./webpack/webpack.local.js",
-    "start:dev": "webpack-dev-server --config ./webpack/webpack.dev.js",
-    "start:prod": "webpack-dev-server --config ./webpack/webpack.prod.js",
-    "start:test": "webpack-dev-server --config ./webpack/webpack.test.js"
+    "start:local": "webpack-dev-server --config ./webpack/webpack/webpack.local.js",
+    "start:dev": "webpack-dev-server --config ./webpack/webpack/webpack.dev.js",
+    "start:prod": "webpack-dev-server --config ./webpack/webpack/webpack.prod.js",
+    "start:test": "webpack-dev-server --config ./webpack/webpack/webpack.test.js"
   },
   "devDependencies": {
     "@babel/core": "~7.1.6",
