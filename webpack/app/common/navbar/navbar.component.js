@@ -11,9 +11,11 @@ class NavbarComponent {
     this.KeycloakService = KeycloakService;
   }
 
+  // CONFIG and VERSION are injected with webpack
   async $onInit() {
     this.user = await this.UserService.me();
     this.config = CONFIG.ATTRS.name;
+    this.version = VERSION;
     this.maximized = await this.UserService.getSetting('sideBarState');
     this.$scope.$digest();
   }
