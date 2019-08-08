@@ -4,6 +4,7 @@ div(flex).md-toolbar-tools
   h2 
     img(src="img/bcca_logo.png", style="margin-bottom: -5px;")
     |  BCGSC Integrated Pipeline Reports 
+    span.navbar__version v{{$ctrl.version}} &nbsp
     span(ng-if="$ctrl.config !== 'PRODUCTION'") [NON-PRODUCTION ENVIRONMENT: {{$ctrl.config}}]
   span(flex)
   
