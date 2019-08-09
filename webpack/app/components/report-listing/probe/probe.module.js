@@ -22,11 +22,7 @@ export default angular.module('probe')
     $stateProvider
       .state('root.reportlisting.probe', {
         url: '/probe',
-        views: {
-          '@': {
-            component: 'probe',
-          },
-        },
+        component: 'probe',
         resolve: {
           reports: ['ReportService', 'isExternalMode', async (ReportService, isExternalMode) => {
             const opts = {

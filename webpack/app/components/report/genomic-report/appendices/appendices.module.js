@@ -14,19 +14,13 @@ export default angular.module('appendices')
     $stateProvider
       .state('root.reportlisting.pog.genomic.appendices', {
         url: '/appendices',
-        views: {
-          '': {
-            component: 'appendices',
-          },
-        },
+        component: 'appendices',
         resolve: {
           tcgaAcronyms: ['$transition$', 'AppendicesService',
-            async ($transition$, AppendicesService) => {
-              return AppendicesService.tcga(
-                $transition$.params().POG,
-                $transition$.params().analysis_report,
-              );
-            }],
+            async ($transition$, AppendicesService) => AppendicesService.tcga(
+              $transition$.params().POG,
+              $transition$.params().analysis_report,
+            )],
         },
       });
   })

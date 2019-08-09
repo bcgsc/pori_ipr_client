@@ -4,14 +4,14 @@ import './genomic-report.scss';
 const bindings = {
   pog: '<',
   report: '<',
+  reportEdit: '<',
 };
 
 class GenomicReportComponent {
   /* @ngInject */
-  constructor($state, $window, AclService) {
+  constructor($state, $window) {
     this.$state = $state;
     this.$window = $window;
-    this.AclService = AclService;
   }
 
   $onInit() {
@@ -96,14 +96,6 @@ class GenomicReportComponent {
         children: [],
       },
       {
-        name: 'History',
-        state: 'history',
-        meta: true,
-        showChildren: false,
-        clinician: false,
-        children: [],
-      },
-      {
         name: 'Report Settings',
         state: 'reportSettings',
         meta: true,
@@ -145,9 +137,7 @@ class GenomicReportComponent {
       // Show subsection if child state is active
       this.sectionIndex = this.sections.findIndex((section, index) => {
         if (section.children.length > 0) {
-          return (section.children.some((child) => {
-            return child.state === state;
-          }) ? index : -1) !== -1;
+          return (section.children.some(child => child.state === state) ? index : -1) !== -1;
         }
         return false;
       });

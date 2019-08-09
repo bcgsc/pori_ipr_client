@@ -1,6 +1,6 @@
 section
   md-subheader.md-primary Patient Information
-    span.edit(ng-if="$ctrl.AclService.checkAction('report.edit')")
+    span.edit(ng-if="$ctrl.reportEdit")
       md-icon(ng-click="$ctrl.updatePatient($event)") edit
 
   div(layout="column", flex).details
@@ -121,13 +121,13 @@ section
             div(flex).text-left Emerging Evidence
           div(layout="row", flex, ng-if="$ctrl.genomicEvents.length === 0").row
             div(flex) No clinically relevant genomic alterations were found from the analysis.
-          div(layout="row", flex, ng-repeat="gene in $ctrl.genomicEvents", ng-click="$ctrl.modifyEvent($event, gene)", ng-if="$ctrl.AclService.checkAction('report.edit')").row.clickable
+          div(layout="row", flex, ng-repeat="gene in $ctrl.genomicEvents", ng-click="$ctrl.modifyEvent($event, gene)", ng-if="$ctrl.reportEdit").row.clickable
             div(flex) {{gene.genomicEvent}}
             div(flex) {{gene.comments}}
             div(flex) {{gene.approvedThisCancerType}}
             div(flex) {{gene.approvedOtherCancerType}}
             div(flex) {{gene.emergingPreclinicalEvidence}}
-          div(layout="row", flex, ng-repeat="gene in $ctrl.genomicEvents", ng-if="!$ctrl.AclService.checkAction('report.edit')").row
+          div(layout="row", flex, ng-repeat="gene in $ctrl.genomicEvents", ng-if="!$ctrl.reportEdit").row
             div(flex) {{gene.genomicEvent}}
             div(flex) {{gene.comments}}
             div(flex) {{gene.approvedThisCancerType}}
@@ -153,7 +153,7 @@ section
       div(flex)
       div(layout="column", layout-align="start start").options
         div(ng-if="$ctrl.signature.readySignature.ident")
-          md-icon(ng-click="$ctrl.revokeSign('ready')", ng-if="$ctrl.AclService.checkAction('report.edit')") remove_circle
+          md-icon(ng-click="$ctrl.revokeSign('ready')", ng-if="$ctrl.reportEdit") remove_circle
             md-tooltip Remove signing
 
     div(layout="row", md-whiteframe=1, layout-align="start start").rowCard
@@ -171,5 +171,5 @@ section
       div(flex)
       div(layout="column", layout-align="start start").options
         div(ng-if="$ctrl.signature.reviewerSignature.ident")
-          md-icon(ng-click="$ctrl.revokeSign('reviewer')", ng-if="$ctrl.AclService.checkAction('report.edit')") remove_circle
+          md-icon(ng-click="$ctrl.revokeSign('reviewer')", ng-if="$ctrl.reportEdit") remove_circle
             md-tooltip Remove signing

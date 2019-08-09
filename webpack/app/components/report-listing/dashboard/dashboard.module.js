@@ -16,15 +16,11 @@ export default angular.module('dashboard')
     $stateProvider
       .state('root.reportlisting.dashboard', {
         url: '/dashboard',
-        views: {
-          '@': {
-            component: 'dashboard',
-          },
-        },
+        component: 'dashboard',
         resolve: {
-          reports: ['ReportService', async (ReportService) => {
-            return ReportService.allFiltered({ states: 'ready,active' });
-          }],
+          reports: ['ReportService', async ReportService => ReportService.allFiltered({
+            states: 'ready,active',
+          })],
         },
       });
   })

@@ -6,19 +6,19 @@ import './therapeutic.scss';
 const bindings = {
   pog: '<',
   report: '<',
+  reportEdit: '<',
   therapeutic: '<',
 };
 
 class TherapeuticComponent {
   /* @ngInject */
-  constructor($scope, $state, $mdDialog, $mdToast, PogService, TherapeuticService, AclService) {
+  constructor($scope, $state, $mdDialog, $mdToast, PogService, TherapeuticService) {
     this.$scope = $scope;
     this.$state = $state;
     this.$mdDialog = $mdDialog;
     this.$mdToast = $mdToast;
     this.PogService = PogService;
     this.TherapeuticService = TherapeuticService;
-    this.AclService = AclService;
   }
 
   $onInit() {

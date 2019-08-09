@@ -14,17 +14,12 @@ export default angular.module('discussion')
     $stateProvider
       .state('root.reportlisting.pog.genomic.discussion', {
         url: '/discussion',
-        views: {
-          '': {
-            component: 'discussion',
-          },
-        },
+        component: 'discussion',
         resolve: {
-          discussions: ['$transition$', 'DiscussionService', ($transition$, DiscussionService) => {
-            return DiscussionService.all(
-              $transition$.params().POG, $transition$.params().analysis_report,
-            );
-          }],
+          discussions: ['$transition$', 'DiscussionService', ($transition$, DiscussionService) => DiscussionService.all(
+            $transition$.params().POG,
+            $transition$.params().analysis_report,
+          )],
         },
       });
   })

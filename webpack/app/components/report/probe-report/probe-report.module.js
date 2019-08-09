@@ -23,18 +23,14 @@ export default angular.module('probe.report')
       .state('root.reportlisting.pog.probe', {
         url: '/probe',
         abstract: true,
-        views: {
-          '@': {
-            component: 'probereport',
-          },
-        },
+        component: 'probereport',
         resolve: {
           report: ['$transition$', 'ReportService',
-            async ($transition$, ReportService) => {
-              return ReportService.get(
-                $transition$.params().POG, $transition$.params().analysis_report,
-              );
-            }],
+            async ($transition$, ReportService) => ReportService.get(
+              $transition$.params().POG,
+              $transition$.params().analysis_report,
+            )],
+          reportEdit: ['AclService', async AclService => AclService.checkAction('report.edit')],
         },
       });
   })

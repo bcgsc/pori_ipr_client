@@ -10,13 +10,12 @@ const bindings = {
 
 class GenomicComponent {
   /* @ngInject */
-  constructor($rootScope, $scope, ReportService, $mdDialog, UserService, AclService) {
+  constructor($rootScope, $scope, ReportService, $mdDialog, UserService) {
     this.$rootScope = $rootScope;
     this.$scope = $scope;
     this.ReportService = ReportService;
     this.$mdDialog = $mdDialog;
     this.UserService = UserService;
-    this.AclService = AclService;
   }
 
   async $onInit() {

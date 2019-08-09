@@ -16,18 +16,13 @@ export default angular.module('therapeutic')
     $stateProvider
       .state('root.reportlisting.pog.genomic.therapeutic', {
         url: '/therapeutic',
-        views: {
-          '': {
-            component: 'therapeutic',
-          },
-        },
+        component: 'therapeutic',
         resolve: {
           therapeutic: ['$transition$', 'TherapeuticService',
-            async ($transition$, TherapeuticService) => {
-              return TherapeuticService.all(
-                $transition$.params().POG, $transition$.params().analysis_report,
-              );
-            }],
+            async ($transition$, TherapeuticService) => TherapeuticService.all(
+              $transition$.params().POG,
+              $transition$.params().analysis_report,
+            )],
         },
       });
   })

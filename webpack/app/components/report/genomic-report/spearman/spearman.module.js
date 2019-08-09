@@ -14,20 +14,14 @@ export default angular.module('spearman')
     $stateProvider
       .state('root.reportlisting.pog.genomic.spearman', {
         url: '/spearman',
-        views: {
-          '': {
-            component: 'spearman',
-          },
-        },
+        component: 'spearman',
         resolve: {
           images: ['$transition$', 'ImageService',
-            async ($transition$, ImageService) => {
-              return ImageService.get(
-                $transition$.params().POG,
-                $transition$.params().analysis_report,
-                'expression.chart,expression.legend',
-              );
-            }],
+            async ($transition$, ImageService) => ImageService.get(
+              $transition$.params().POG,
+              $transition$.params().analysis_report,
+              'expression.chart,expression.legend',
+            )],
         },
       });
   })

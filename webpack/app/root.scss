@@ -2,13 +2,11 @@ sidebar {
   height: 100%;
 }
 
-root { 
+ui-view {
   height: 100%;
-  div.root {
-    height: 100%;
-    div.container {
-      height: calc(100% - 64px);
-    }
+
+  .container {
+    height: calc(100% - 64px);
   }
 }
 

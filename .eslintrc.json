@@ -15,7 +15,8 @@
     "alert": true,
     "Keycloak": true,
     "io": true,
-    "CONFIG": true
+    "CONFIG": true,
+    "VERSION": true
   },
   "plugins": [
     "cypress"

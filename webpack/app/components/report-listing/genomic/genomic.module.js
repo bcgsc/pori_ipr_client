@@ -21,11 +21,7 @@ export default angular.module('genomic')
     $stateProvider
       .state('root.reportlisting.genomic', {
         url: '/genomic',
-        views: {
-          '@': {
-            component: 'genomic',
-          },
-        },
+        component: 'genomic',
         resolve: {
           reports: ['ReportService', 'UserService', 'isExternalMode',
             async (ReportService, UserService, isExternalMode) => {

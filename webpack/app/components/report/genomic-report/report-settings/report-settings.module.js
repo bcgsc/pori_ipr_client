@@ -14,15 +14,9 @@ export default angular.module('reportsettings')
     $stateProvider
       .state('root.reportlisting.pog.genomic.reportSettings', {
         url: '/reportSettings',
-        views: {
-          '': {
-            component: 'reportsettings',
-          },
-        },
+        component: 'reportsettings',
         resolve: {
-          showBindings: () => {
-            return true;
-          },
+          showBindings: () => true,
         },
       });
   })

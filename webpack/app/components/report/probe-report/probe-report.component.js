@@ -4,15 +4,15 @@ import './probe-report.scss';
 const bindings = {
   pog: '<',
   report: '<',
+  reportEdit: '<',
 };
 
 class ProbeComponent {
   /* @ngInject */
-  constructor($state, $window, PogService, AclService) {
+  constructor($state, $window, PogService) {
     this.$state = $state;
     this.$window = $window;
     this.PogService = PogService;
-    this.AclService = AclService;
   }
 
   openPrint() {

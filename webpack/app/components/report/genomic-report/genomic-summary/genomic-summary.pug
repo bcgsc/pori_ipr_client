@@ -1,7 +1,7 @@
 md-content 
   section
     md-subheader.md-primary Patient Information
-      span(ng-if="$ctrl.AclService.checkAction('report.edit')").edit
+      span(ng-if="$ctrl.reportEdit").edit
         md-icon(ng-click="$ctrl.updatePatient($event)") edit
 
     div(layout="column", flex).details
@@ -95,7 +95,7 @@ md-content
               div(flex).editable
                 span
                   | {{($ctrl.tumourAnalysis.subtyping || "Not Specified")}}
-                  md-icon(ng-click="$ctrl.updateTumourAnalysis($event)", ng-if="$ctrl.AclService.checkAction('report.edit')") edit
+                  md-icon(ng-click="$ctrl.updateTumourAnalysis($event)", ng-if="$ctrl.reportEdit") edit
 
         div(layout="column", flex).dataBox
           h2.title Microbial Content
@@ -119,14 +119,14 @@ md-content
           div(flex).container
             div(flex).signature.editable
               span(ng-if="($ctrl.tumourAnalysis.mutationSignature.length === 0 || $ctrl.tumourAnalysis.mutationSignature === null)") Nothing striking
-                md-icon(ng-click="$ctrl.updateMutationSignature($event)", ng-if="$ctrl.AclService.checkAction('report.edit')") edit
+                md-icon(ng-click="$ctrl.updateMutationSignature($event)", ng-if="$ctrl.reportEdit") edit
               span(ng-if="$ctrl.tumourAnalysis.mutationSignature.length > 0")
                 span(ng-repeat="sig in $ctrl.tumourAnalysis.mutationSignature track by $index").repeat-comma
                   span.listitem
                     span(ng-if="sig.modifier !== null") {{sig.modifier}}&nbsp;
                     span {{(sig.associations == '-') ? 'Signature '+sig.signature : sig.associations}}
                     md-tooltip Pearson: {{sig.pearson}} | NNLS: {{sig.nnls}} | Cancer Types: {{sig.cancerTypes}}
-                md-icon(ng-click="$ctrl.updateMutationSignature($event)", ng-if="$ctrl.AclService.checkAction('report.edit')") edit
+                md-icon(ng-click="$ctrl.updateMutationSignature($event)", ng-if="$ctrl.reportEdit") edit
 
           div(layout="row", flex).mutationType
             div(flex)
@@ -185,10 +185,10 @@ md-content
           div(flex="30") {{$ctrl.variantCounts.expressionOutlier}}
       div(flex).alterations
         div(ng-repeat="variant in $ctrl.genomicAlterations | filter: $ctrl.mutationFilter.bind($ctrl)", class="{{variant.type}}", layout="row") {{variant.geneVariant}}
-          span(ng-click="$ctrl.removeAlteration($event, variant)", ng-if="$ctrl.AclService.checkAction('report.edit')")
+          span(ng-click="$ctrl.removeAlteration($event, variant)", ng-if="$ctrl.reportEdit")
             md-icon remove_circle
 
-        div(ng-if="$ctrl.AclService.checkAction('report.edit')", ng-click="$ctrl.addAlteration($event)", layout="row").add.clickable Add new entry
+        div(ng-if="$ctrl.reportEdit", ng-click="$ctrl.addAlteration($event)", layout="row").add.clickable Add new entry
           span
             md-icon add_circle
 

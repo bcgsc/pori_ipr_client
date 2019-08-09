@@ -4,7 +4,7 @@ section.pathwayAnalysis
   div.md-padding
 
     div.window
-      div(ng-if="$ctrl.AclService.checkAction('report.edit')").upload
+      div(ng-if="$ctrl.reportEdit").upload
         md-icon(ng-click="$ctrl.update()") file_upload
 
       div(id="svgContainer")

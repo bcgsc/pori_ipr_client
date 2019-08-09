@@ -10,9 +10,8 @@ const bindings = {
 
 class GenomicAlterationComponent {
   /* @ngInject */
-  constructor($scope, AclService) {
+  constructor($scope) {
     this.$scope = $scope;
-    this.AclService = AclService;
   }
 
   $onInit() {
