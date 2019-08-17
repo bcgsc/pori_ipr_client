@@ -69,6 +69,7 @@
     "angular-sortable-view": "~0.0.17",
     "chart.js": "~2.7.3",
     "keycloak-js": "~4.6.0",
+    "lodash.differenceby": "~4.8.0",
     "lodash.get": "~4.4.2",
     "lodash.omit": "~4.5.0",
     "lodash.orderby": "~4.6.0",

@@ -72,7 +72,7 @@ class ProjectService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async removeUser(project, user) {
-    const { data } = await this.$http.delete(`${this.api}/${project}/user`, { user });
+    const { data } = await this.$http.delete(`${this.api}/${project}/user`, { data: { user } });
     return data;
   }
 
@@ -96,7 +96,7 @@ class ProjectService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async removePog(project, pog) {
-    const { data } = await this.$http.delete(`${this.api}/${project}/pog`, { pog });
+    const { data } = await this.$http.delete(`${this.api}/${project}/pog`, { data: { pog } });
     return data;
   }
 }

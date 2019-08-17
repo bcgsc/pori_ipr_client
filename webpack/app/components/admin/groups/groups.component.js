@@ -1,69 +1,91 @@
-app.controller('controller.dashboard.admin.users.groups', ['_', '$scope', '$mdSidenav', '$state',
-  '$mdDialog', '$mdToast', 'api.user', 'isAdmin', 'groups', 'api.group', '$async', (_, $scope, $mdSidenav,
-    $state, $mdDialog, $mdToast, $user, isAdmin, groups, $group, $async) => {
-    $scope.groups = groups;
+import sortBy from 'lodash.sortby';
+import template from './groups.pug';
 
-    const deleteGroup = ($event, group) => {
-      const confirm = $mdDialog.confirm()
-        .title('Are you sure you want to remove '  + group.name + '?')
-        .htmlContent('Are you sure you want to remove the group <strong>' + group.name + '</strong>?<br /><br />This will <em>not</em> affect access to any other BC GSC services.')
+const bindings = {
+  groups: '<',
+};
+
+class GroupsComponent {
+  /* @ngInject */
+  constructor($scope, $mdDialog, $mdToast, UserService, GroupService) {
+    this.$scope = $scope;
+    this.$mdDialog = $mdDialog;
+    this.$mdToast = $mdToast;
+    this.UserService = UserService;
+    this.GroupService = GroupService;
+  }
+
+  async $onInit() {
+    this.deleteGroup = async ($event, group) => {
+      const confirm = this.$mdDialog.confirm()
+        .title(`Are you sure you want to remove ${group.name}?`)
+        .htmlContent(`Are you sure you want to remove the group <strong>${group.name}</strong>?<br/><br/>This will <em>not</em> affect access to any other BC GSC services.`)
         .ariaLabel('Remove Group?')
         .targetEvent($event)
         .ok('Remove Group')
         .cancel('Cancel');
 
-      $mdDialog.show(confirm).then(
-        $async(async () => {
-          const tempGroup = angular.copy(group);
-          try {
-            // Remove User
-            await $group.remove(group);
-            $scope.groups = _.filter($scope.groups, (g) => {
-              return (g.ident !== tempGroup.ident);
-            });
-            $scope.$parent.groups = $scope.groups;
-            $mdToast.show($mdToast.simple('The group has been removed'));
-          } catch (err) {
-            $mdToast.show($mdToast.simple('A technical issue prevented the group from being removed.'));
-          }
-        }),
-      );
+      const resp = await this.$mdDialog.show(confirm);
+      if (resp) {
+        const tempGroup = angular.copy(group);
+        try {
+          // Remove User
+          await this.GroupService.remove(group);
+          this.groups = this.groups.filter(g => g.ident !== tempGroup.ident);
+          this.$scope.$parent.groups = this.groups;
+          this.$mdToast.show(this.$mdToast.simple('The group has been removed'));
+        } catch (err) {
+          this.$mdToast.show(this.$mdToast.simple('A technical issue prevented the group from being removed.'));
+        }
+      }
     };
 
-    // Function to pass into
-    const passDelete = () => {
-      $mdDialog.hide(); // Hide any displayed dialog;
-      return deleteGroup;
+    this.passDelete = () => {
+      this.$mdDialog.hide(); // Hide any displayed dialog;
+      return this.deleteGroup;
     };
+  }
 
-    $scope.groupDiag = ($event, editGroup, newGroup = false) => {
-      $mdDialog.show({
+  async groupDiag($event, editGroup, newGroup = false) {
+    try {
+      const resp = await this.$mdDialog.show({
         targetEvent: $event,
-        templateUrl: 'dashboard/admin/user/group.edit.html',
-        clickOutToClose: false,
+        template: '<groups-edit class="adminSection" flex edit-group="editGroup" new-group="newGroup" group-delete="groupDelete($event, group)"></groups-edit>',
+        clickOutsideToClose: true,
         locals: {
           editGroup: angular.copy(editGroup),
-          newGroup: newGroup,
-          groupDelete: passDelete()
+          newGroup,
+          groupDelete: this.passDelete(),
         },
-        controller: 'controller.dashboard.user.groups.edit'
-      }).then(
-        (resp) => {
-          $mdToast.show($mdToast.simple().textContent(resp.message));
-          _.forEach($scope.groups, (g,i)=>{
-            if(g.ident === resp.data.ident) $scope.groups[i] = resp.data;
-          });
+        /* eslint-disable no-shadow */
+        controller: ($scope, editGroup, newGroup, groupDelete) => {
+          'ngInject';
 
-          if(newGroup) {
-            $scope.groups.push(resp.data);
-            $scope.groups = $scope.$parent.groups = _.sortBy($scope.groups, 'name');
-          }
+          $scope.editGroup = editGroup;
+          $scope.newGroup = newGroup;
+          $scope.groupDelete = groupDelete;
         },
-        (err) => {
-          $mdToast.show($mdToast.simple().textContent('The group has not been updated.'));
+      });
+      this.$mdToast.show(this.$mdToast.simple().textContent(resp.message));
+      this.groups.forEach((g, i) => {
+        if (g.ident === resp.data.ident) {
+          this.groups[i] = resp.data;
         }
-      );
+      });
 
-    };
-}]);
+      if (newGroup) {
+        this.groups.push(resp.data);
+        this.groups = sortBy(this.groups, 'name');
+        this.$scope.$parent.groups = this.groups;
+      }
+    } catch (err) {
+      this.$mdToast.show(this.$mdToast.simple().textContent('The group has not been updated.'));
+    }
+  }
+}
 
+export default {
+  template,
+  bindings,
+  controller: GroupsComponent,
+};

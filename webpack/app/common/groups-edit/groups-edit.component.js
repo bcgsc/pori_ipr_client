@@ -1,128 +1,119 @@
-app.controller('controller.dashboard.user.groups.edit', ['$q', '_', '$scope', '$mdDialog',
-  'api.user', 'editGroup', 'newGroup', 'groupDelete', 'api.group', '$async', ($q, _, scope,
-    $mdDialog, $user, editGroup, newGroup, groupDelete, $group, $async) => {
-    // Load User into scope
-    scope.group = editGroup;
-    scope.newGroup = newGroup;
-    scope.groupDelete = groupDelete;
-    
+import template from './groups-edit.pug';
+
+const bindings = {
+  editGroup: '<',
+  newGroup: '<',
+  groupDelete: '&',
+};
+
+class GroupsEditComponent {
+  /* @ngInject */
+  constructor($scope, $mdDialog, UserService, GroupService) {
+    this.$scope = $scope;
+    this.$mdDialog = $mdDialog;
+    this.UserService = UserService;
+    this.GroupService = GroupService;
+  }
+
+  $onInit() {
     // Creating new user
-    if (newGroup) {
-      scope.group = {
+    if (this.newGroup) {
+      this.editGroup = {
         name: '',
-      }
+      };
+    }
+  }
+
+  async searchUsers(searchText) {
+    if (!searchText) {
+      return [];
     }
 
-    scope.searchUsers = (searchText) => {
-      let deferred = $q.defer();
+    return this.UserService.search(searchText);
+  }
 
-      if (searchText.length === 0) return [];
+  async searchOwner(searchOwnerText) {
+    if (!searchOwnerText) {
+      return [];
+    }
 
-      $user.search(searchText).then(
-        (resp) => {
-          deferred.resolve(resp);
-        },
-        (err) => {
-          console.log(err);
-          deferred.reject();
-        }
-      );
+    return this.UserService.search(searchOwnerText);
+  }
 
-      return deferred.promise;
-    };
+  cancel() {
+    this.$mdDialog.cancel({ status: false, message: 'Could not update this group.' });
+  }
 
-    scope.searchOwner = (searchOwnerText) => {
-      let deferred = $q.defer();
+  /* eslint-disable consistent-return */
+  async addUser() {
+    if (this.editGroup.users.find(group => group.ident === this.member.ident)) {
+      return alert('This user has already been added to the group');
+    }
+    try {
+      // Add user to group
+      const resp = await this.GroupService.addUser(this.editGroup.ident, this.member.ident);
+      this.editGroup.users.push(resp);
+      this.member = null;
+      this.searchQuery = '';
+      this.$scope.$digest();
+    } catch (err) {
+      console.log('Unable to add user', err);
+    }
+  }
 
-      if (searchOwnerText.length === 0) return [];
-
-      $user.search(searchOwnerText).then(
-        (resp) => {
-          deferred.resolve(resp);
-        },
-        (err) => {
-          console.log(err);
-          deferred.reject();
-        }
-      );
-
-      return deferred.promise;
-    };
-
-
-    scope.cancel = () => {
-      $mdDialog.cancel({status: false, message: "Could not update this group."});
-    };
-
-    scope.addUser = $async(async () => {
-      if (_.find(scope.group.users, { ident: scope.member.ident })) {
-        return alert('This user has already been added to the group');
-      }
+  // Remove user from group
+  async removeUser(user) {
+    if (confirm(`Are you sure you want to remove '${user.firstName} ${user.lastName} from ${this.group.name}?`)) {
       try {
-        // Add user to group
-        const resp = await $group.addUser(scope.group.ident, scope.member.ident);
-        scope.group.users.push(resp);
-        scope.member = null;
-        scope.searchQuery = '';
+        await this.GroupService.removeUser(this.group.ident, user.ident);
+        // Remove entry from group list
+        this.group.users = this.group.users.filter(u => u.ident !== user.ident);
       } catch (err) {
-        console.log('Unable to add user', err);
+        console.log('Unable to remove user from group', err);
       }
-    });
+    }
+  }
 
-    // Remove user from group
-    scope.removeUser = $async(async ($event, user) => {
-      if (confirm(`Are you sure you want to remove '${user.firstName} ${user.lastName} from ${scope.group.name}?`)) {
-        try {
-          await $group.removeUser(scope.group.ident, user.ident);
-          // Remove entry from group list
-          scope.group.users = _.filter(scope.group.users, (u) => {
-            return (u.ident !== user.ident);
-          });
-        } catch (err) {
-          console.log('Unable to remove user from group', err);
-        }
-      }
-    });
-
-    // Validate form and submit
-    scope.update = (f) => {
-      // Check for valid inputs by touching each entry
-      if (f.$invalid) {
-        f.$setDirty();
-        angular.forEach(f.$error, (field) => {
-          angular.forEach(field, (errorField) => {
-            errorField.$setTouched();
-          });
+  // Validate form and submit
+  async update(form) {
+    // Check for valid inputs by touching each entry
+    if (form.$invalid) {
+      form.$setDirty();
+      form.$error.forEach((field) => {
+        field.forEach((errorField) => {
+          errorField.$setTouched();
         });
-        return;
-      }
+      });
+      return;
+    }
 
-      scope.group.owner = scope.group.owner.ident;
-      
-      // Send updated user to api
-      if(!newGroup) {
-        $group.update(scope.group.ident, scope.group).then(
-          (group) => {
-            // Success
-            $mdDialog.hide({status: true, data: group, message: "The group has been updated!"});
-          },
-          (err) => {
-            $mdDialog.cancel({status: false, message: "Could not update this group."});
-          }
-        )
+    this.editGroup.owner = this.editGroup.owner.ident;
+    
+    // Send updated user to api
+    if (!this.newGroup) {
+      try {
+        const group = await this.GroupService.update(this.editGroup.ident, this.editGroup);
+        this.$mdDialog.hide({ status: true, data: group, message: 'The group has been updated!' });
+      } catch (err) {
+        this.$mdDialog.cancel({ status: false, message: 'Could not update this group.' });
       }
-      // Send updated user to api
-      if (newGroup) {
-        $group.create(scope.group).then(
-          (group) => {
-            // Success
-            $mdDialog.hide({status: true, data: group, message: "The group has been added!", newGroup: true});
-          },
-          (err) => {
-            $mdDialog.cancel({status: false, message: "Could not update this group."});
-          }
-        )
+    }
+    // Send updated user to api
+    if (this.newGroup) {
+      try {
+        const group = await this.GroupService.create(this.editGroup);
+        this.$mdDialog.hide({
+          status: true, data: group, message: 'The group has been added!', newGroup: true,
+        });
+      } catch (err) {
+        this.$mdDialog.cancel({ status: false, message: 'Could not update this group.' });
       }
+    }
+  }
+}
 
-    };
-  }]);
+export default {
+  template,
+  bindings,
+  controller: GroupsEditComponent,
+};

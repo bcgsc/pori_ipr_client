@@ -1,230 +1,176 @@
-app.controller('controller.dashboard.user.project.edit', 
-['$q', '_', '$scope', '$mdDialog', '$mdToast', 'api.project', 'api.user', 'api.pog', 'editProject', 'newProject', 'projectDelete', 'fullAccessUsers',
-($q, _, $scope, $mdDialog, $mdToast, $project, $user, $pog, editProject, newProject, projectDelete, fullAccessUsers) => {
+import orderBy from 'lodash.orderby';
+import template from './projects-edit.pug';
 
-  // Load project into $scope
-  $scope.project = editProject;
-  $scope.oldProject = angular.copy(editProject); // record of old values for project for comparison
-  $scope.newProject = newProject;
-  $scope.projectDelete = projectDelete;
-  
-  // Creating new project
-  if(newProject) {
-    $scope.project = {
-      name: '',
+const bindings = {
+  editProject: '<',
+  newProject: '<',
+  projectDelete: '<',
+  fullAccessUsers: '<',
+};
+
+class ProjectsEditComponent {
+  /* @ngInject */
+  constructor($scope, $mdDialog, $mdToast, ProjectService, UserService, PogService) {
+    this.$scope = $scope;
+    this.$mdDialog = $mdDialog;
+    this.$mdToast = $mdToast;
+    this.ProjectService = ProjectService;
+    this.UserService = UserService;
+    this.PogService = PogService;
+  }
+
+  $onInit() {
+    this.oldProject = angular.copy(this.editProject); // record of old values for project for comparison
+    
+    // Creating new project
+    if (this.newProject) {
+      this.editProject = {
+        name: '',
+      };
+    }
+
+    this.editProject.users = orderBy(this.editProject.users, ['firstName']);
+  }
+
+  async isUniqueProject(searchText) {
+    if (!searchText) {
+      return;
+    }
+
+    const resp = await this.ProjectService.all({ admin: true });
+    const allProjects = resp.map(proj => proj.name.toLowerCase());
+
+    // If editing a project, don't check against own name
+    if (!this.newProject) {
+      allProjects.filter(p => p === this.oldProject.name.toLowerCase());
+    }
+
+    if (allProjects.includes(searchText.toLowerCase())) {
+      this.form.Project.$setValidity('unique', false);
+    } else {
+      this.form.Project.$setValidity('unique', true);
     }
   }
 
-  $scope.project.users = _.orderBy($scope.project.users, ['firstName']);
+  async searchUsers(searchText) {
+    if (!searchText) {
+      return [];
+    }
 
-  $scope.isUniqueProject = (searchText) => {
-    let deferred = $q.defer();
+    return this.UserService.search(searchText);
+  }
 
-    if(searchText === undefined || searchText.length === 0) return;
+  async searchPOGs(searchText) {
+    if (!searchText) {
+      return [];
+    }
+    return this.PogService.all({ query: searchText, all: true });
+  }
 
-    $project.all({admin: true}).then(
-      (resp) => {
-        let allProjects = resp.map(function (p) {
-          return p.name.toLowerCase(); // create array of project names
-        });
-
-        // If editing a project, don't check against own name
-        if(!newProject) {
-          _.remove(allProjects, function (p) {
-            return p === $scope.oldProject.name.toLowerCase();
-          });
-        }
-
-        if(allProjects.indexOf(searchText.toLowerCase()) != -1) {
-          $scope.form.Project.$setValidity("unique", false);
-        } else {
-          $scope.form.Project.$setValidity("unique", true);
-        }
-
-        deferred.resolve();
-      },
-      (err) => {
-        console.log(err);
-        deferred.reject();
-      }
-    );
-
-    return deferred.promise;    
-  };
-
-  $scope.searchUsers = (searchText) => {
-    let deferred = $q.defer();
-
-    if(searchText.length === 0) return [];
-
-    $user.search(searchText).then(
-      (resp) => {
-        deferred.resolve(resp);
-      },
-      (err) => {
-        console.log(err);
-        deferred.reject();
-      }
-    );
-
-    return deferred.promise;
-  };
-
-  $scope.searchPOGs = (searchText) => {
-    let deferred = $q.defer();
-
-    if(searchText.length === 0) return [];
-    $pog.all({query: searchText, all: true}).then(
-      (resp) => {
-        deferred.resolve(resp);
-      },
-      (err) => {
-        console.log(err);
-        deferred.reject();
-      }
-    );
-
-    return deferred.promise;
-  };
-
-  $scope.cancel = () => {
-    $mdDialog.cancel({status: false, message: "Could not update this project."});
-  };
+  cancel() {
+    this.$mdDialog.cancel({ status: false, message: 'Could not update this project.' });
+  }
 
   // Add user to project
-  $scope.addUser = () => {
-
-    if(_.find($scope.project.users, {ident: $scope.member.ident})) return $mdToast.showSimple('This user has already been added to the project');
+  async addUser() {
+    if (this.editProject.users.find(user => user.ident === this.member.ident)) {
+      return this.$mdToast.showSimple('This user has already been added to the project');
+    }
 
     // Add user to project
-    $project.user($scope.project.ident).add($scope.member.ident).then(
-      (resp) => {
-        $scope.project.users.push(resp);
+    const resp = await this.ProjectService.addUser(this.editProject.ident, this.member.ident);
+    this.editProject.users.push(resp);
 
-        $scope.member = null;
-        $scope.searchQuery = '';
-
-      },
-      (err) => {
-        console.log('Unable to add user to project', err);
-      }
-    );
-
-  };
+    this.member = null;
+    this.searchQuery = '';
+    this.$scope.$digest();
+  }
 
   // Remove user from project
-  $scope.removeUser = ($event, user) => {
+  async removeUser(user) {
+    if (confirm(`Are you sure you want to remove ${user.firstName} ${user.lastName} from ${this.editProject.name}?`)) {
+      await this.ProjectService.removeUser(this.editProject.ident, user.ident);
+      // Remove entry from project list
+      this.editProject.users = this.editProject.users.filter(u => u.ident !== user.ident);
 
-    if(confirm('Are you sure you want to remove ' + user.firstName + ' ' + user.lastName + ' from ' + $scope.project.name + '?')) {
-      $project.user($scope.project.ident).remove(user.ident).then(
-        (resp) => {
-          // Remove entry from project list
-          $scope.project.users = _.filter($scope.project.users, (u) => {
-            return (u.ident !== user.ident)
-          });
+      // If user is in full access group re-add to list with access flag
+      if (this.fullAccessUsers.find(u => u.ident === user.ident)) {
+        user.fullAccess = true;
+        this.editProject.users.push(user);
+      }
 
-          // If user is in full access group re-add to list with access flag
-          if(_.find(fullAccessUsers, {'ident': user.ident})) {
-            user.fullAccess = true;
-            $scope.project.users.push(user);
-          }
-
-          $scope.project.users = _.orderBy($scope.project.users, ['firstName']);
-        },
-        (err) => {
-          console.log('Unable to remove user from project', err);
-        }
-      );
+      this.editProject.users = orderBy(this.editProject.users, ['firstName']);
+      this.$scope.$digest();
     }
-
-  };
+  }
 
   // Add sample to project
-  $scope.addPOG = () => {
-
-    if(_.find($scope.project.pogs, {ident: $scope.pog.ident})) return $mdToast.showSimple('This sample has already been added to the project');
-
-    // Add user to project
-    $project.pog($scope.project.ident).add($scope.pog.ident).then(
-      (resp) => {
-        $scope.project.pogs.push(resp);
-
-        $scope.pog = null;
-        $scope.searchPOG = '';
-
-      },
-      (err) => {
-        console.log('Unable to add sample to project', err);
-      }
-    )
-
-  };
-
-  // Remove sample from project
-  $scope.removePOG = ($event, pog) => {
-
-    if(confirm('Are you sure you want to remove ' + pog.POGID + ' from ' + $scope.project.name + '?')) {
-      $project.pog($scope.project.ident).remove(pog.ident).then(
-        (resp) => {
-          // Remove entry from project list
-          $scope.project.pogs = _.filter($scope.project.pogs, (p) => {
-            return (p.ident !== pog.ident)
-          });
-        },
-        (err) => {
-          console.log('Unable to remove sample from project', err);
-        }
-      );
+  async addPOG() {
+    if (this.editProject.pogs.find(projPog => projPog.ident === this.pog.ident)) {
+      return this.$mdToast.showSimple('This sample has already been added to the project');
     }
 
-  };
+    // Add user to project
+    const resp = await this.ProjectService.addPog(this.editProject.ident, this.pog.ident);
+    this.editProject.pogs.push(resp);
+
+    this.pog = null;
+    this.searchPOG = '';
+    this.$scope.$digest();
+  }
+
+  // Remove sample from project
+  async removePOG(pog) {
+    if (confirm(`Are you sure you want to remove ${pog.POGID} from ${this.editProject.name}?`)) {
+      await this.ProjectService.removePog(this.editProject.ident, pog.ident);
+      // Remove entry from project list
+      this.editProject.pogs = this.editProject.pogs.filter(p => p.ident !== pog.ident);
+      this.$scope.$digest();
+    }
+  }
 
   // Validate form and submit
-  $scope.update = (f) => {
+  async update(form) {
     // Check for valid inputs by touching each entry
-    if(f.$invalid) {
-      f.$setDirty();
-      angular.forEach(f.$error, (field) => {
-        angular.forEach(field, (errorField) => {
+    if (form.$invalid) {
+      form.$setDirty();
+      form.$error.forEach((field) => {
+        field.forEach((errorField) => {
           errorField.$setTouched();
         });
       });
       return;
     }
-
-    //$scope.project.owner = $scope.project.owner.ident;
     
     // Send updated project to api
-    if(!newProject) {
-
-      let updatedProject = {
-        ident: $scope.project.ident,
-        name: $scope.project.name
+    if (!this.newProject) {
+      const updatedProject = {
+        ident: this.editProject.ident,
+        name: this.editProject.name,
+      };
+      try {
+        const project = await this.ProjectService.update(updatedProject);
+        this.$mdDialog.hide({ status: true, data: project, message: 'The project has been updated!' });
+      } catch (err) {
+        this.$mdDialog.cancel({ status: false, message: 'Could not update this project.' });
       }
-
-      $project.update(updatedProject).then(
-        (project) => {
-          // Success
-          $mdDialog.hide({status: true, data: project, message: "The project has been updated!"});
-        },
-        (err) => {
-          $mdDialog.cancel({status: false, message: "Could not update this project."});
-        }
-      )
     }
     // Send updated project to api
-    if(newProject) {
-      $project.add($scope.project).then(
-        (project) => {
-          // Success
-          $mdDialog.hide({status: true, data: project, message: "The project has been added!", newProject: true});
-        },
-        (err) => {
-          $mdDialog.cancel({status: false, message: "Could not add new project."});
-        }
-      )
+    if (this.newProject) {
+      try {
+        const project = await this.ProjectService.add(this.editProject);
+        this.$mdDialog.hide({
+          status: true, data: project, message: 'The project has been added!', newProject: true,
+        });
+      } catch (err) {
+        this.$mdDialog.cancel({ status: false, message: 'Could not add new project.' });
+      }
     }
+  }
+}
 
-  };
-
-}]);
+export default {
+  template,
+  bindings,
+  controller: ProjectsEditComponent,
+};

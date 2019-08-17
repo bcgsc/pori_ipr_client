@@ -1,18 +1,25 @@
-div(flex, layout="row")
-    div(ui-view="", flex)
+div(layout="row" layout-align="center center", ng-if="$root.showLoader", id="page-loading", ng-cloak)
+  div
+    img(src="img/spinlogo.png").loader-spin
+div(layout="column", flex).topbar
+  adminbar
+  navbar
+div(layout="row", flex).container
+  sidebar
+  ui-view(flex)
 
-    md-content(flex-gt-sm=20, flex=25, layout-align="start start").adminSection
-        md-toolbar
-            div(layout="row").md-toolbar-tools
-                span(flex)
-                span(flex)
-                    h2 Tools
-                span(flex)
-        div.content.side
-            ul
-                li(ui-sref="dashboard.admin.users.userList") Users
-                li(ng-click="userDiag($event, {}, true)") Add User
-                li(ui-sref="dashboard.admin.users.groups") Groups
-                li(ng-click="groupDiag($event, {}, true)") Add Group
-                li(ui-sref="dashboard.admin.users.projects") Projects
-                li(ng-click="projectDiag($event, {}, true)") Add Project
+  md-content(flex-gt-sm=20, flex=25, layout-align="start start").adminSection
+    md-toolbar
+      div(layout="row").md-toolbar-tools
+        span(flex)
+        span(flex)
+          h2 Tools
+        span(flex)
+    div.content.side
+      ul
+        li(ui-sref="admin.userList") Users
+        li(ng-click="userDiag($event, {}, true)") Add User
+        li(ui-sref="admin.groups") Groups
+        li(ng-click="groupDiag($event, {}, true)") Add Group
+        li(ui-sref="admin.projects") Projects
+        li(ng-click="projectDiag($event, {}, true)") Add Project
