@@ -1,13 +1,13 @@
 import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
 import AdminComponent from './admin.component';
-import UserListModule from './user-list/user-list.module';
+import UsersModule from './users/users.module';
 import ProjectModule from './projects/projects.module';
 import GroupsModule from './groups/groups.module';
 
 angular.module('admin', [
   uiRouter,
-  UserListModule,
+  UsersModule,
   ProjectModule,
   GroupsModule,
 ]);

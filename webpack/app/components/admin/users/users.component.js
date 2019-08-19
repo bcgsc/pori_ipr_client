@@ -1,5 +1,5 @@
 import sortBy from 'lodash.sortby';
-import template from './user-list.pug';
+import template from './users.pug';
 
 const bindings = {
   users: '<',
@@ -7,7 +7,7 @@ const bindings = {
   groups: '<',
 };
 
-class UserListComponent {
+class UsersComponent {
   /* @ngInject */
   constructor($scope, $mdDialog, $mdToast, UserService) {
     this.$scope = $scope;
@@ -93,5 +93,5 @@ class UserListComponent {
 export default {
   template,
   bindings,
-  controller: UserListComponent,
+  controller: UsersComponent,
 };
