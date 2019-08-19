@@ -10,7 +10,7 @@ const bindings = {
   selfGroup: '<',
 };
 
-class UserEditComponent {
+class UsersEditComponent {
   /* @ngInject */
   constructor($scope, $mdDialog, $mdToast, UserService, ProjectService, GroupService) {
     this.$scope = $scope;
@@ -173,5 +173,5 @@ class UserEditComponent {
 export default {
   template,
   bindings,
-  controller: UserEditComponent,
+  controller: UsersEditComponent,
 };
