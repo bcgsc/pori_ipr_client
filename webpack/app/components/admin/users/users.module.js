@@ -2,7 +2,7 @@ import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
 import UsersComponent from './users.component';
 
-angular.module('admin.userList', [
+angular.module('admin.users', [
   uiRouter,
 ]);
 

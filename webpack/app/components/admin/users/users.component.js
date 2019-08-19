@@ -51,7 +51,7 @@ class UsersComponent {
     try {
       const resp = await this.$mdDialog.show({
         targetEvent: $event,
-        template: '<user-edit edit-user="editUser" new-user="newUser" user-delete="userDelete" projects="projects" access-group="accessGroup" self-edit="selfEdit"></user-edit>',
+        template: '<users-edit edit-user="editUser" new-user="newUser" user-delete="userDelete" projects="projects" access-group="accessGroup" self-edit="selfEdit"></user-edit>',
         clickOutsideToClose: true,
         locals: {
           editUser: angular.copy(editUser),
