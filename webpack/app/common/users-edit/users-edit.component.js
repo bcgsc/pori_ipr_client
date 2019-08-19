@@ -1,56 +1,54 @@
-app.controller('controller.dashboard.user.edit',
-['$q', '_', '$scope', '$mdDialog', '$mdToast', 'api.user', 'api.project', 'editUser', 'newUser', 'userDelete', 'projects', 'accessGroup', 'selfEdit', 'api.group',
-($q, _, $scope, $mdDialog, $mdToast, $user, $project, editUser, newUser, userDelete, projects, accessGroup, selfEdit, $group) => {
+import differenceBy from 'lodash.differenceby';
+import template from './users-edit.pug';
 
-  // Load User into scope
-  $scope.user = editUser;
-  $scope.oldUser = angular.copy(editUser); // record of old user values for comparison
-  $scope.newUser = newUser;
-  $scope.userDelete = userDelete;
-  $scope.projects = projects;
-  $scope.projectAccess = {projects: $scope.user.projects, allProjectAccess: !!(_.find($scope.user.groups, {ident: accessGroup.ident}))};
-  $scope.selfEdit = selfEdit;
+const bindings = {
+  editUser: '<',
+  newUser: '<',
+  userDelete: '<',
+  projects: '<',
+  accessGroup: '<',
+  selfGroup: '<',
+};
 
-  // Creating new user
-  if(newUser) {
-    $scope.user = {
-      username: '',
-      type: 'bcgsc',
-      firstName: '',
-      lastName: ''
-    }
+class UserEditComponent {
+  /* @ngInject */
+  constructor($scope, $mdDialog, $mdToast, UserService, ProjectService, GroupService) {
+    this.$scope = $scope;
+    this.$mdDialog = $mdDialog;
+    this.$mdToast = $mdToast;
+    this.UserService = UserService;
+    this.ProjectService = ProjectService;
+    this.GroupService = GroupService;
   }
 
-  // Setup default user fields
-  $scope.local = {
-    newPass: '',
-    newPassConfirm : '',
-  };
+  $onInit() {
+    this.projectAccess = {
+      projects: this.editUser.projects,
+      allProjectAccess: !!(this.editUser.groups.find(group => group.ident === this.accessGroup.ident)),
+    };
 
-  $scope.checkPasswordMatch = () => {
-    if($scope.local.newPassConfirm === undefined) {
-      $scope.form.NewPassConfirm.$setValidity("nomatch", true);
-      return;
-    }
-
-    if($scope.local.newPass !== $scope.local.newPassConfirm) {
-      $scope.form.NewPassConfirm.$setValidity("nomatch", false);
+    // Creating new user
+    if (this.newUser) {
+      this.user = {
+        username: '',
+        type: 'bcgsc',
+        firstName: '',
+        lastName: '',
+      };
     } else {
-      $scope.form.NewPassConfirm.$setValidity("nomatch", true);
+      this.user = this.editUser;
     }
-    return;
   }
 
-  $scope.cancel = () => {
-    $mdDialog.cancel({status: false, message: "Could not update this user."});
-  };
+  cancel() {
+    this.$mdDialog.cancel({ status: false, message: 'Could not update this user.' });
+  }
 
-  // Validate form and submit
-  $scope.update = (f) => {
+  async update(form) {
     // Check for valid inputs by touching each entry
-    if(f.$invalid) {
-      f.$setDirty();
-      angular.forEach(f.$error, (field) => {
+    if (form.$invalid) {
+      form.$setDirty();
+      angular.forEach(form.$error, (field) => {
         angular.forEach(field, (errorField) => {
           errorField.$setTouched();
         });
@@ -58,138 +56,122 @@ app.controller('controller.dashboard.user.edit',
       return;
     }
 
-    if($scope.user.type === 'local' && (selfEdit || newUser)) {
-      $scope.user.password = $scope.local.newPass;
-    } else if(newUser) {
-      $scope.user.password = null;
-    }
-
     // Send updated user to api
-    if(!newUser) {
+    if (!this.newUser) {
       // update user/project binding if not self editing
-      if (!selfEdit) {
-        if($scope.projectAccess.allProjectAccess) { // if full access, add to group
-          if(!_.find($scope.oldUser.groups, {name: accessGroup.name})) { // check if user is already part of full access group
+      if (!this.selfEdit) {
+        if (this.projectAccess.allProjectAccess) { // if full access, add to group
+          // check if user is already part of full access group
+          if (!this.user.groups.find(group => group.name === this.accessGroup.name)) {
             // add to group
-            $group.addUser(accessGroup.ident, $scope.user.ident).then(
-              (resp) => {
-              },
-              (err) => {
-                $mdToast.showSimple('User was not given full project access.');
-              }
-            );
+            try {
+              await this.GroupService.addUser(this.accessGroup.ident, this.user.ident);
+            } catch (err) {
+              this.$mdToast.showSimple('User was not given full project access.');
+            }
           }
         } else {
           // if not full access, bind to/unbind from projects
-          if(_.find($scope.oldUser.groups, {name: accessGroup.name})) { // check if user is part of full access group
+          // check if user is part of full access group
+          if (this.user.groups.find(group => group.name === this.accessGroup.name)) {
             // remove from group
-            $group.removeUser(accessGroup.ident, $scope.user.ident).then(
-                (resp) => {
-                },
-                (err) => {
-                  $mdToast.showSimple('User was not removed from full project access.');
-                }
-              );
+            try {
+              await this.GroupService.removeUser(this.accessGroup.ident, this.user.ident);
+            } catch (err) {
+              this.$mdToast.showSimple('User was not removed from full project access.');
+            }
           }
 
           // unbind from projects no longer in list
-          let unbind = _.differenceBy($scope.oldUser.projects, $scope.projectAccess.projects, 'name');
-          _.each(unbind, function(project) {
-            $project.user(project.ident).remove($scope.user.ident).then(
-              (resp) => {
-              },
-              (err) => {
-                $mdToast.showSimple('User was not removed from project ' + project.name);
-                console.log('Unable to remove user from project', err);
-              }
-            );
+          const unbind = differenceBy(this.user.projects, this.projectAccess.projects, 'name');
+          unbind.forEach(async (project) => {
+            try {
+              await this.ProjectService.removeUser(project.ident, this.user.ident);
+            } catch (err) {
+              this.$mdToast.showSimple(`User was not removed from project ${project.name}`);
+              console.error('Unable to remove user from project', err);
+            }
           });
 
           // bind to new projects in list
-          let bind = _.differenceBy($scope.projectAccess.projects, $scope.oldUser.projects, 'name');
-          _.each(bind, function(project) {
-            $project.user(project.ident).add($scope.user.ident).then(
-              (resp) => {
-              },
-              (err) => {
-                $mdToast.showSimple('User was not added to project ' + project.name);
-                console.log('Unable to add user to project', err);
-              }
-            );
+          const bind = differenceBy(this.projectAccess.projects, this.user.projects, 'name');
+          bind.forEach(async (project) => {
+            try {
+              await this.ProjectService.addUser(project.ident, this.user.ident);
+            } catch (err) {
+              this.$mdToast.showSimple(`User was not added to project ${project.name}`);
+              console.error('Unable to add user to project', err);
+            }
           });
         }
       }
       // update user
-      $user.update($scope.user).then(
-        (user) => {
-          // Update user projects
-          user.projects = $scope.projectAccess.projects;
+      try {
+        await this.UserService.update(this.user);
+        // Update user projects
+        this.user.projects = this.projectAccess.projects;
 
-          // Update user groups
-          if($scope.projectAccess.allProjectAccess && !_.find(user.groups, {'name': accessGroup.name})) {
-            user.groups.push(accessGroup);
-          }
-          if(!$scope.projectAccess.allProjectAccess && _.find(user.groups, {'name': accessGroup.name})) {
-            _.remove(user.groups, function(group) {
-              return group.name == accessGroup.name;
-            })
-          }
-
-          // Success - return updated user
-          $mdDialog.hide({status: true, data: user, message: "User has been updated!"});
-        },
-        (err) => {
-          $mdDialog.cancel({status: false, message: "Could not update this user."});
+        // Update user groups
+        if (this.projectAccess.allProjectAccess
+          && !this.user.groups.find(group => group.name === this.accessGroup.name)
+        ) {
+          this.user.groups.push(this.accessGroup);
         }
-      );
+        if (!this.projectAccess.allProjectAccess
+          && this.user.groups.find(group => group.name === this.accessGroup.name)
+        ) {
+          this.user.groups.filter(group => group.name === this.accessGroup.name);
+        }
+
+        // Success - return updated user
+        this.$mdDialog.hide({ status: true, data: this.user, message: 'User has been updated!' });
+      } catch (err) {
+        this.$mdDialog.cancel({ status: false, message: 'Could not update this user.' });
+      }
       return;
     }
 
     // Send new user to api
-    if(newUser) {
+    if (this.newUser) {
       // create user
-      $user.create($scope.user).then(
-        (user) => {
-          // create user/project binding
-          if($scope.projectAccess.allProjectAccess) { // if full access, add to group
-            // Add user to group
-            $group.addUser(accessGroup.ident, user.ident).then(
-              (resp) => {
-              },
-              (err) => {
-                $mdToast.showSimple('User was not given full project access.');
-              }
-            );
-          } else { // if not full access, bind to projects
-            let added = 0;
-            _.each($scope.projectAccess.projects, function(project) {
-              $project.user(project.ident).add(user.ident).then(
-                (resp) => {
-                },
-                (err) => {
-                  $mdToast.showSimple('User was not added to project ' + project.name);
-                  console.log('Unable to add user to project', err);
-                }
-              );
-            });
-          }
-
-          // Add user projects
-          user.projects = $scope.projectAccess.projects;
-
-          // Add user group
-          if($scope.projectAccess.allProjectAccess) {
-            user.groups = [accessGroup];
-          }
-
-          // Success - return newly added user
-          $mdDialog.hide({status: true, data: user, message: "User has been added!", useUser: true});
-        },
-        (err) => {
-          $mdDialog.cancel({status: false, message: "Could not update this user."});
+      const user = await this.UserService.create(this.user);
+      // create user/project binding
+      if (this.projectAccess.allProjectAccess) { // if full access, add to group
+        // Add user to group
+        try {
+          await this.GroupService.addUser(this.accessGroup.ident, user.ident);
+        } catch (err) {
+          this.$mdToast.showSimple('User was not given full project access.');
         }
-      )
-    }
-  };
+      } else { // if not full access, bind to projects
+        this.projectAccess.projects.forEach(async (project) => {
+          try {
+            await this.ProjectService.addUser(project.ident, user.ident);
+          } catch (err) {
+            this.$mdToast.showSimple(`User was not added to project ${project.name}`);
+            console.error('Unable to add user to project', err);
+          }
+        });
+      }
 
-}]);
+      // Add user projects
+      user.projects = this.projectAccess.projects;
+
+      // Add user group
+      if (this.projectAccess.allProjectAccess) {
+        user.groups = [this.accessGroup];
+      }
+
+      // Success - return newly added user
+      this.$mdDialog.hide({
+        status: true, data: user, message: 'User has been added!', useUser: true,
+      });
+    }
+  }
+}
+
+export default {
+  template,
+  bindings,
+  controller: UserEditComponent,
+};

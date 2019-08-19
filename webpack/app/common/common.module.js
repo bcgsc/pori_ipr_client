@@ -17,7 +17,7 @@ import ListStructuralVariantsModule from './list-structural-variants/list-struct
 import ListOutliersModule from './list-outliers/list-outliers.module';
 import RoleCardModule from './role-card/role-card.module';
 import AdminbarModule from './adminbar/adminbar.module';
-import UserEditModule from './user-edit/user-edit.module';
+import UsersEditModule from './users-edit/users-edit.module';
 import ProjectsEditModule from './projects-edit/projects-edit.module';
 import GroupsEditModule from './groups-edit/groups-edit.module';
 
@@ -41,7 +41,7 @@ const CommonModule = angular
     ListOutliersModule,
     RoleCardModule,
     AdminbarModule,
-    UserEditModule,
+    UsersEditModule,
     ProjectsEditModule,
     GroupsEditModule,
   ])
