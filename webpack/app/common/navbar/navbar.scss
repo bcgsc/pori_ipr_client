@@ -5,9 +5,11 @@
   color: $white;
   padding: 0 10px;
 
-  md-icon {
-    color: $white-icon;
+  > .md-button:first-child {
+    margin-left: -2px;
+  }
 
+  md-icon {
     &.clickable {
       cursor: pointer;
       outline: 0;
@@ -19,6 +21,40 @@
   }
 }
 
-.navbar__version {
-  font-size: 14px;
+.navbar {
+  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+  height: 56px;
+  min-height: 56px;
+  z-index: 99;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  &#{&} {
+    transition-duration: .3s;
+    transition-property: left, width;
+    transition-timing-function: ease;
+  }
+  
+  &--open {
+    left: 240px;
+    width: calc(100% - 240px);
+  }
+
+  &__title {
+    margin-left: 17px;
+    font-weight: 400;
+  }
+
+  &__button {
+    padding: 8px 0;
+  }
+
+  &__icon {
+    color: $white;
+  }
+
+  &__version {
+    font-size: 12px;
+  }
 }

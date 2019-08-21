@@ -1,32 +1,45 @@
-//- div(ui-view="adminbar", layout="row", ng-if="$ctrl.isAdmin").adminBar
-//- md-toolbar(ui-view="toolbar", layout='row').headerToolbar
+div(layout="column", ng-class="{'sidebar--open': $ctrl.maximized}").sidebar
+  div(layout="row").sidebar__button-row
+    md-button(ng-click="$ctrl.toggleNavbar()").md-icon-button
+      md-icon chevron_left
+  md-divider
+  a(layout="row", ui-sref="root.reports.dashboard",
+    ng-class="{'sidebar__row--active': $ctrl.$state.current.name.includes('home')}"
+  ).sidebar__row
+    md-icon.sidebar__icon home
+    md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Home
+    span(ng-class="{'sidebar__text--visible': $ctrl.maximized}").sidebar__text Home
 
-div(layout="column").sidebar
+  a(layout="row", ng-if="$ctrl.pageAccess.report" ui-sref="root.reportlisting.dashboard",
+    ng-class="{'sidebar__row--active': $ctrl.$state.current.name.includes('dashboard')}"
+  ).sidebar__row
+    md-icon.sidebar__icon assignment
+    md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Reports Dashboard
+    span(ng-class="{'sidebar__text--visible': $ctrl.maximized}").sidebar__text Reports Dashboard
 
-  div(layout="row", ui-sref="root.reports.dashboard", ng-class="{active: ($ctrl.$state.current.name === 'dashboard')}")
-    md-icon home
-      md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Dashboard
-    span(flex, ng-show="$ctrl.maximized") Dashboard
+  a(layout="row", ng-if="$ctrl.pageAccess.genomic_report", ui-sref="root.reportlisting.genomic",
+    ng-class="{'sidebar__row--active': $ctrl.$state.current.name.includes('genomic')}"
+  ).sidebar__row
+    md-icon.sidebar__icon developer_board
+    md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Genomic Reports
+    span(ng-class="{'sidebar__text--visible': $ctrl.maximized}").sidebar__text Genomic Reports
 
-  div(layout="row", ng-if="$ctrl.pageAccess.report" ui-sref="root.reportlisting.dashboard", ng-class="{active: ($ctrl.$state.current.name.includes('root.reportlisting.dashboard'))}")
-    md-icon assignment
-      md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Reports Dashboard
-    span(flex, ng-show="$ctrl.maximized") Reports
+  a(layout="row", ng-if="$ctrl.pageAccess.probe_report", ui-sref="root.reportlisting.probe",
+    ng-class="{'sidebar__row--active': $ctrl.$state.current.name.includes('probe'), 'sidebar__row--open': $ctrl.maximized}"
+  ).sidebar__row
+    md-icon.sidebar__icon highlight
+    md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Targeted Gene Reports
+    span(ng-class="{'sidebar__text--visible': $ctrl.maximized}").sidebar__text Targeted Gene Reports
 
-  div(layout="row", ng-if="$ctrl.pageAccess.genomic_report && ($ctrl.maximized || (!$ctrl.maximized && ($ctrl.$state.current.name.includes('root.reportlisting') || $ctrl.$state.current.name.includes('root.pog'))))", ui-sref="root.reportlisting.genomic", ng-class="{active: ($ctrl.$state.current.name.includes('genomic'))}").submenu
-    md-icon(ng-show="$ctrl.maximized") subdirectory_arrow_right
-    md-icon(ng-show="!$ctrl.maximized") developer_board
-      md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Genomic Reports
-    span(flex, ng-show="$ctrl.maximized") Genomic
+  a(layout="row", ng-if="$ctrl.pageAccess.germline", ui-sref="root.germline.board",
+    ng-class="{'sidebar__row--active': $ctrl.$state.current.name.includes('germline')}"
+  ).sidebar__row
+    md-icon.sidebar__icon supervisor_account
+    md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Germline
+    span(ng-class="{'sidebar__text--visible': $ctrl.maximized}").sidebar__text Germline
 
-  div(layout="row", ng-if="$ctrl.pageAccess.probe_report && ($ctrl.maximized || (!$ctrl.maximized && ($ctrl.$state.current.name.includes('root.reportlisting') || $ctrl.$state.current.name.includes('root.pog'))))", ui-sref="root.reportlisting.probe", ng-class="{active: ($ctrl.$state.current.name.includes('probe'))}").submenu
-    md-icon(ng-show="$ctrl.maximized") subdirectory_arrow_right
-    md-icon(ng-show="!$ctrl.maximized") highlight
-      md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Targeted Gene Reports
-    span(flex, ng-show="$ctrl.maximized") Targeted Gene
-
-
-  div(layout="row", ng-if="$ctrl.pageAccess.germline", ui-sref="root.germline.board", ng-class="{active: ($ctrl.$state.current.name.includes('germline'))}")
-    md-icon supervisor_account
-      md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Germline
-    span(flex, ng-show="$ctrl.maximized") Germline
+  span(flex)
+  md-divider
+  div(layout="row").sidebar__logos
+    img(src="img/bcca_logo.png").sidebar__image-logo
+    img(src="img/sidebarlogo.png").sidebar__image-text

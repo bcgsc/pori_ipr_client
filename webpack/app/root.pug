@@ -2,8 +2,8 @@ div(layout="row" layout-align="center center", ng-if="$root.showLoader", id="pag
   div
     img(src="img/spinlogo.png").loader-spin
 div(layout="column", flex).topbar
-  adminbar(ng-if="$ctrl.isAdmin")
+  //- adminbar(ng-if="$ctrl.isAdmin")
   navbar
 div(layout="row", flex).container
   sidebar
-  ui-view(flex).content
+  ui-view(flex, ng-class="{'main--sidebaropen': ($ctrl.maximized)}").main

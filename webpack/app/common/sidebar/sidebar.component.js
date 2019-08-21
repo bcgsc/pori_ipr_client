@@ -19,13 +19,16 @@ class SidebarComponent {
       this.pageAccess[page] = await this.AclService.checkResource(page);
     });
 
-    this.maximized = await this.UserService.getSetting('sideBarState');
+    this.maximized = this.UserService.getSidebarState();
 
-    this.$rootScope.$on('sidebarToggle', async () => {
-      await this.UserService.saveSetting('sideBarState', !this.maximized);
-      this.maximized = !this.maximized;
-      this.$rootScope.$digest();
+    this.$rootScope.$on('sidebarToggle', () => {
+      this.maximized = this.UserService.getSidebarState();
     });
+  }
+
+  toggleNavbar() {
+    this.maximized = this.UserService.toggleSidebar();
+    this.$rootScope.$emit('navbarToggle');
   }
 }
 

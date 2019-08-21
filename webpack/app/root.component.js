@@ -7,12 +7,22 @@ const bindings = {
 
 class RootComponent {
   /* @ngInject */
-  constructor($rootScope) {
+  constructor($rootScope, UserService) {
     this.$rootScope = $rootScope;
+    this.UserService = UserService;
   }
 
   async $onInit() {
+    this.maximized = this.UserService.getSidebarState();
     this.$rootScope.showLoader = false;
+
+    this.$rootScope.$on('sidebarToggle', () => {
+      this.maximized = this.UserService.getSidebarState();
+    });
+
+    this.$rootScope.$on('navbarToggle', () => {
+      this.maximized = this.UserService.getSidebarState();
+    });
   }
 }
 

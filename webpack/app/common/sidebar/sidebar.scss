@@ -1,70 +1,78 @@
 @import '../../styles/variables';
 
 .sidebar {
-  background-color: $primary;
-  color: white;
-  padding: 10px 0;
-  transition: width 0.5s ease;
   height: 100%;
-  div {
+  left: 0;
+  position: fixed;
+  top: 0;
+  z-index: 97;
+  background-color: $white-background;
+  color: $medium-emphasis;
+  margin: 0;
+  padding: 0;
+  transition-duration: 0.3s;
+  transition-property: width;
+  width: 55px;
+  border-right: 1px solid $black-12;
+
+  &--open {
+    width: 240px;
+  }
+
+  &__row {
     cursor: pointer;
-    padding: 5px 10px 5px 10px;
-    transition: all 0.2s;
+    padding: 11px 0;
+    text-decoration: none;
+    color: inherit;
+    transition-duration: 0.35s;
+    transition-property: background-color;
 
-    &.submenu {
-      font-size: 0.8em;
-      padding-left: 17px;
-
-      &.active {
-        background-color: $secondary;
-      }
-
-      span {
-        padding-left: 4px;
-      }
-      md-icon {
-        width: 19px;
-        height: 19px;
-        min-height: 19px;
-        min-width: 19px;
-        font-size: 17px;
-      }
+    &--active {
+      background-color: darken($white-background, 8);
     }
 
-    &.active {
-      background-color: $secondary;
-      border-right: 3px solid $secondary;
-      position: relative;
-      width: calc(100% + 3px);
-    }
-
-    md-icon {
-      color: $white-icon;
-      margin: 0;
-      transition: all 0.2s;
-    }
-    span {
-      padding-left: 6px;
-      padding-right: 10px;
-      padding-top: 2px;
-    }
-
-    &:not(.active):hover {
-      background-color: lighten($primary, 15%);
-    }
-
-    &.minimize {
-      cursor: pointer;
-      outline: none;
-
-      md-icon {
-        transition: all 0s;
-      }
-
-      span {
-        color: white;
-      }
+    &:hover {
+      background-color: darken($white-background, 8);
     }
   }
 
+  &__image-logo {
+    height: 25px;
+    padding: 15.5px 0;
+    margin: 0 15px;
+  }
+
+  &__image-text {
+    height: 35px;
+    padding: 7px 0;
+    margin: 0 5px;
+  }
+
+  &__icon {
+    margin: 0 15.5px;
+  }
+
+  &__text {
+    text-decoration: none;
+    min-width: 180px;
+    line-height: 1.6;
+    visibility: hidden;
+    transition-duration: 0.3s;
+    transition-property: visibility;
+    z-index: 101;
+
+    &--visible {
+      visibility: visible;
+      transition-duration: 0.01s;
+    }
+  }
+  
+  &__button-row {
+    padding: 8px 0;
+    text-decoration: none;
+  }
+
+  &__logos {
+    height: 56px;
+  }
 }
