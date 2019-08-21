@@ -3,6 +3,7 @@
 #########################
 # File Options
 files:
+  merge-default-rules: false
   include: 'sass/**/*.s+(a|c)ss'
 # Rule Configuration
 rules:
@@ -39,4 +40,6 @@ rules:
         - content
   class-name-format:
     - 1
-    - convention: hyphenated_BEM
+    - 
+      convention: hyphenatedbem
+      allow-leading-underscore: true
