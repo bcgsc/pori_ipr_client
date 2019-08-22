@@ -25,7 +25,7 @@ div(layout="column", ng-class="{'sidebar--open': $ctrl.maximized}").sidebar
     span(ng-class="{'sidebar__text--visible': $ctrl.maximized}").sidebar__text Genomic Reports
 
   a(layout="row", ng-if="$ctrl.pageAccess.probe_report", ui-sref="root.reportlisting.probe",
-    ng-class="{'sidebar__row--active': $ctrl.$state.current.name.includes('probe'), 'sidebar__row--open': $ctrl.maximized}"
+    ng-class="{'sidebar__row--active': $ctrl.$state.current.name.includes('probe')}"
   ).sidebar__row
     md-icon.sidebar__icon highlight
     md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Targeted Gene Reports
