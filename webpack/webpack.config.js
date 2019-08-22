@@ -5,7 +5,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const DashboardPlugin = require('webpack-dashboard/plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-const packageFile = require('../../package.json');
+const packageFile = require('../package.json');
 
 module.exports = {
   module: {
