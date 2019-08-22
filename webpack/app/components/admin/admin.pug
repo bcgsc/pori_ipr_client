@@ -2,11 +2,10 @@ div(layout="row" layout-align="center center", ng-if="$root.showLoader", id="pag
   div
     img(src="img/spinlogo.png").loader-spin
 div(layout="column", flex).topbar
-  adminbar
   navbar
 div(layout="row", flex).container
-  sidebar
-  ui-view(flex)
+  sidebar(is-admin="$ctrl.isAdmin")
+  ui-view(flex).main
 
   md-content(flex-gt-sm=20, flex=25, layout-align="start start").adminSection
     md-toolbar
