@@ -2,7 +2,7 @@
 
 .main {
   margin: 56px 0 0 56px;
-  transition-duration: 0.3s;
+  transition-duration: .3s;
   transition-property: margin;
   z-index: 98;
 
@@ -24,8 +24,8 @@ html body {
 }
 
 md-content {
-   height: 100%;
-   overflow: auto;
+  height: 100%;
+  overflow: auto;
 }
 
 #page-loading {

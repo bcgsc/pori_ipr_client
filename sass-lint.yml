@@ -1,10 +1,7 @@
-#########################
-## Sample Sass Lint File
-#########################
 # File Options
 files:
   merge-default-rules: false
-  include: 'sass/**/*.s+(a|c)ss'
+  include: 'webpack/**/*.s+(a|c)ss'
 # Rule Configuration
 rules:
   extends-before-mixins: 2
@@ -16,30 +13,19 @@ rules:
       exclude:
         - breakpoint
         - mq
-
+  class-name-format:
+    - 1
+    - convention: hyphenatedbem
   no-warn: 1
   no-debug: 1
   no-ids: 2
   no-important: 2
   hex-notation:
     - 2
-    -
-      style: uppercase
+    - style: uppercase
   indentation:
     - 2
-    -
-      size: 2
+    - size: 2
   property-sort-order:
     - 1
-    - smacss
-  variable-for-property:
-    - 2
-    -
-      properties:
-        - margin
-        - content
-  class-name-format:
-    - 1
-    - 
-      convention: hyphenatedbem
-      allow-leading-underscore: true
+    - order: smacss
