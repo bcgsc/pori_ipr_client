@@ -10,44 +10,41 @@ import 'angular-sortable-view';
 import CommonModule from './common/common.module';
 import ComponentModule from './components/components.module';
 import RootComponent from './root.component';
-import UserService from './services/user.service';
-import PogService from './services/pog.service';
-import ProjectService from './services/project.service';
-import AclService from './services/acl.service';
-import ReportService from './services/report.service';
-import KeycloakService from './services/keycloak.service';
-import TumourAnalysisService from './services/report/summary/tumour-analysis.service';
-import PatientInformationService from './services/report/summary/patient-information.service';
-import GenomicAlterationsService from './services/report/summary/genomic-alterations.service';
-import GenomicEventsService from './services/report/summary/genomic-events.service';
-import VariantCountsService from './services/report/summary/variant-counts.service';
-import MutationSummaryService from './services/report/summary/mutation-summary.service';
-import ProbeTargetService from './services/report/summary/probe-target.service';
-import MutationSignatureService from './services/report/summary/mutation-signature.service';
-import MicrobialService from './services/report/summary/microbial.service';
-import PathwayAnalysisService from './services/report/pathway-analysis/pathway-analysis.service';
-import AnalystCommentsService from './services/report/analyst-comments/analyst-comments.service';
-import ProbeAlterationService from './services/report/probe/alteration.service';
-import ProbeSignatureService from './services/report/probe/signature.service';
-import ProbeTestInformationService from './services/report/probe/test-information.service';
-import SlidesService from './services/report/presentation/slides.service';
-import DiscussionService from './services/report/presentation/discussion.service';
-import AnalysisService from './services/analysis.service';
-import GroupService from './services/group.service';
-import KnowledgebaseService from './services/knowledgebase.service';
-import ChangeHistoryService from './services/change-history.service';
-import TherapeuticService from './services/report/therapeutic-options.service';
-import PubmedService from './services/pubmed.service';
-import GermlineService from './services/germline.service';
-import ImageService from './services/report/image.service';
-import SmallMutationsService from './services/report/somatic/small-mutations.service';
-import GeneViewerService from './services/report/somatic/gene-viewer.service';
-import CopyNumberAnalysesService from './services/report/copy-number-analyses/copy-number-analyses.service';
-import StructuralVariantService from './services/report/structural-variants/structural-variants.service';
-import MavisService from './services/report/structural-variants/mavis.service';
-import DrugTargetService from './services/report/expression/drug-target.service';
-import OutlierService from './services/report/expression/outlier.service';
-import AppendicesService from './services/report/appendices/appendices.service';
+import UserService from './services/management/user.service';
+import PogService from './services/reports/pog.service';
+import ProjectService from './services/management/project.service';
+import AclService from './services/management/acl.service';
+import ReportService from './services/reports/report.service';
+import KeycloakService from './services/management/keycloak.service';
+import TumourAnalysisService from './services/reports/summary/tumour-analysis.service';
+import PatientInformationService from './services/reports/summary/patient-information.service';
+import GenomicAlterationsService from './services/reports/summary/genomic-alterations.service';
+import GenomicEventsService from './services/reports/summary/genomic-events.service';
+import VariantCountsService from './services/reports/summary/variant-counts.service';
+import MutationSummaryService from './services/reports/summary/mutation-summary.service';
+import ProbeTargetService from './services/reports/summary/probe-target.service';
+import MutationSignatureService from './services/reports/summary/mutation-signature.service';
+import MicrobialService from './services/reports/summary/microbial.service';
+import PathwayAnalysisService from './services/reports/pathway-analysis/pathway-analysis.service';
+import AnalystCommentsService from './services/reports/analyst-comments/analyst-comments.service';
+import ProbeAlterationService from './services/reports/probe/alteration.service';
+import ProbeSignatureService from './services/reports/probe/signature.service';
+import ProbeTestInformationService from './services/reports/probe/test-information.service';
+import SlidesService from './services/reports/presentation/slides.service';
+import DiscussionService from './services/reports/presentation/discussion.service';
+import GroupService from './services/management/group.service';
+import KnowledgebaseService from './services/reports/knowledgebase.service';
+import TherapeuticService from './services/reports/therapeutic/therapeutic-options.service';
+import GermlineService from './services/reports/germline.service';
+import ImageService from './services/reports/image.service';
+import SmallMutationsService from './services/reports/somatic/small-mutations.service';
+import GeneViewerService from './services/reports/somatic/gene-viewer.service';
+import CopyNumberAnalysesService from './services/reports/copy-number-analyses/copy-number-analyses.service';
+import StructuralVariantService from './services/reports/structural-variants/structural-variants.service';
+import MavisService from './services/reports/structural-variants/mavis.service';
+import DrugTargetService from './services/reports/expression/drug-target.service';
+import OutlierService from './services/reports/expression/outlier.service';
+import AppendicesService from './services/reports/appendices/appendices.service';
 import IndefiniteArticleFilter from './filters/indefinite-article.filter';
 import TitleCaseFilter from './filters/titlecase.filter';
 import './root.scss';
@@ -82,13 +79,10 @@ export default angular.module('root')
   .service('AnalystCommentsService', AnalystCommentsService)
   .service('SlidesService', SlidesService)
   .service('DiscussionService', DiscussionService)
-  .service('AnalysisService', AnalysisService)
   .service('GroupService', GroupService)
   .service('KnowledgebaseService', KnowledgebaseService)
-  .service('ChangeHistoryService', ChangeHistoryService)
   .service('TherapeuticService', TherapeuticService)
   .service('PathwayAnalysisService', PathwayAnalysisService)
-  .service('PubmedService', PubmedService)
   .service('GermlineService', GermlineService)
   .service('ProbeAlterationService', ProbeAlterationService)
   .service('ProbeSignatureService', ProbeSignatureService)
