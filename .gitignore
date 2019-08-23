@@ -3,4 +3,4 @@ builds/*
 .idea/*
 .*DS_Store
 .vscode/*
-*/dist/*
+dist/*

@@ -1,6 +1,5 @@
 const path = require('path');
 const webpack = require('webpack');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const DashboardPlugin = require('webpack-dashboard/plugin');
@@ -33,9 +32,10 @@ module.exports = {
             },
           },
           {
-            test: /\.s?css$/,
+            test: /\.s?css$/i,
+            sideEffects: true,
             use: [
-              MiniCssExtractPlugin.loader,
+              'style-loader',
               'css-loader',
               'sass-loader',
             ],
@@ -61,7 +61,6 @@ module.exports = {
     ],
   },
   plugins: [
-    new MiniCssExtractPlugin(),
     new HtmlWebpackPlugin({
       template: path.join(__dirname, '../app/index.pug'),
       inject: true,
