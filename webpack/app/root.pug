@@ -2,6 +2,7 @@ div(layout="row" layout-align="center center", ng-if="$root.showLoader", id="pag
   div
     img(src="img/spinlogo.png").loader-spin
 div(layout="column", flex).topbar
+  adminbar(ng-if="$ctrl.isAdmin")
   navbar
 div(layout="row", flex).container
   sidebar

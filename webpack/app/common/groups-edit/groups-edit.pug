@@ -1,0 +1,88 @@
+div(flex).adminSection
+  form(name='form', ng-submit="$ctrl.update(form)", novalidate)
+    md-toolbar
+      div(layout="row").md-toolbar-tools
+        span.close
+          div(ng-click="$ctrl.cancel()")
+        span(flex)
+        span(flex)
+          h2 {{(!$ctrl.newGroup) ? 'Edit Group' : 'Add Group'}}
+        span(flex)
+        span(flex=5)
+    md-dialog-content(layout="column").content
+
+      p(ng-if="!$ctrl.newGroup") Modify a permission group
+      p(ng-if="$ctrl.newGroup") Create a new permission group
+
+      div(flex, layout="row")
+        md-input-container(flex)
+          input(ng-model="$ctrl.editGroup.name", placeholder="Group Name", required)
+
+      div(flex, layout="row")
+        md-autocomplete(
+        md-input-name="GroupLeader",
+        md-selected-item="$ctrl.editGroup.owner",
+        md-search-text="$ctrl.searchOwnerQuery",
+        md-items="user in $ctrl.searchOwner($ctrl.searchOwnerQuery)",
+        md-item-text="user.firstName + ' ' + user.lastName",
+        md-floating-label="Group Leader",
+        md-autofocus=true,
+        md-autoselect=true,
+        md-require-match,
+        md-dropdown-position="bottom",
+        required,
+        flex
+        )
+          md-item-template {{user.firstName}} {{user.lastName}}
+          div(ng-messages="User", ng-if="form.User.$touched")
+            div(ng-message="required") A leader must be selected
+
+      div(ng-if="!$ctrl.newGroup")
+        h3(style="margin: 0;") Group Members
+
+        div(flex, layout="column")
+          div(flex, layout="row")
+            md-autocomplete(
+            md-input-name="Member",
+            md-selected-item="$ctrl.member",
+            md-search-text="$ctrl.searchQuery",
+            md-items="user in $ctrl.searchUsers($ctrl.searchQuery)",
+            md-item-text="user.firstName + ' ' + user.lastName",
+            md-floating-label="Add user",
+            md-autofocus=true,
+            md-autoselect=true,
+            md-require-match,
+            md-dropdown-position="bottom",
+            flex
+            )
+              md-item-template {{user.firstName}} {{user.lastName}}
+
+            div(layout="column", layout-align="center end", style="padding-left: 20px;")
+              div(ng-click="$ctrl.addUser()").buttonWrap
+                md-button Add Member
+          div(flex, layout="column")
+            md-content(flex, layout="column").diagTable
+              div(flex, layout="row").header
+                div(flex=30) Name
+                div(flex=30) Email
+                div(flex=30) Username
+                div
+              div(ng-if="!$ctrl.editGroup.users").text-center.margin-top-10.margin-bottom-10 No Members
+              div(ng-repeat="u in $ctrl.editGroup.users", layout="row").row
+                div(flex=40).c {{u.firstName}} {{u.lastName}}
+                div(flex=40).c {{u.email}}
+                div(flex=40).c {{u.username}}
+                div
+                  div(ng-click="$ctrl.removeUser(u)").buttonWrap
+                    md-button Remove
+
+
+
+    md-dialog-actions(layout="row")
+      div.buttonWrap
+        md-button(ng-click="$ctrl.cancel()") Cancel
+      div(ng-if="!$ctrl.newGroup").buttonWrap.delete
+        md-button(ng-click="$ctrl.groupDelete({ $event: $event, group: $ctrl.editGroup });") Remove
+      span(flex)
+      div.buttonWrap
+        md-button(type="submit") {{(!$ctrl.newUser) ? 'Save Changes' : 'Add Group'}}

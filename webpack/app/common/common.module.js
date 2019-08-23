@@ -16,6 +16,10 @@ import ListCopyNumberVariantsModule from './list-copy-number-variants/list-copy-
 import ListStructuralVariantsModule from './list-structural-variants/list-structural-variants.module';
 import ListOutliersModule from './list-outliers/list-outliers.module';
 import RoleCardModule from './role-card/role-card.module';
+import AdminbarModule from './adminbar/adminbar.module';
+import UsersEditModule from './users-edit/users-edit.module';
+import ProjectsEditModule from './projects-edit/projects-edit.module';
+import GroupsEditModule from './groups-edit/groups-edit.module';
 
 const CommonModule = angular
   .module('root.common', [
@@ -36,6 +40,10 @@ const CommonModule = angular
     ListStructuralVariantsModule,
     ListOutliersModule,
     RoleCardModule,
+    AdminbarModule,
+    UsersEditModule,
+    ProjectsEditModule,
+    GroupsEditModule,
   ])
   .name;
 

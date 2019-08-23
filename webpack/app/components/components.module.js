@@ -4,6 +4,7 @@ import ReportListingModule from './report-listing/report-listing.module';
 import ReportModule from './report/report.module';
 import PublicModule from './public/public.module';
 import GermlineModule from './germline/germline.module';
+import AdminModule from './admin/admin.module';
 
 const ComponentsModule = angular
   .module('root.components', [
@@ -12,6 +13,7 @@ const ComponentsModule = angular
     ReportModule,
     PublicModule,
     GermlineModule,
+    AdminModule,
   ])
   .name;
 
