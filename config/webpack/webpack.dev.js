@@ -1,7 +1,7 @@
 const webpack = require('webpack');
 const merge = require('webpack-merge');
 const common = require('./webpack.config.js');
-const CONFIG = require('../env.json').development;
+const CONFIG = require('../../env.json').development;
 
 const devConfig = {
   mode: 'development',

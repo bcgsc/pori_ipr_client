@@ -27,7 +27,7 @@ class LoginRedirect {
         delete this.$localStorage.returnToState;
         delete this.$localStorage.returnToStateParams;
       } else {
-        this.$state.go('root.reportlisting.dashboard');
+        this.$state.go('root.home');
       }
     } catch (err) {
       console.error(err);

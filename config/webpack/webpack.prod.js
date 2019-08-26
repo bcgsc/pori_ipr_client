@@ -3,7 +3,7 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const webpack = require('webpack');
 const merge = require('webpack-merge');
 const common = require('./webpack.config.js');
-const CONFIG = require('../env.json').production;
+const CONFIG = require('../../env.json').production;
 
 const prodConfig = {
   module: {

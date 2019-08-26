@@ -12,7 +12,7 @@ export default angular.module('public')
     'ngInject';
 
     $stateProvider
-      .state('/public', {
+      .state('public', {
         abstract: true,
       });
   })
