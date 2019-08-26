@@ -13,7 +13,7 @@
   border-right: 1px solid $black-12;
   background-color: $white-background;
   color: $medium-emphasis;
-  z-index: 97;
+  z-index: 5;
 
   &--open {
     width: 240px;
@@ -59,7 +59,7 @@
     line-height: 1.6;
     text-decoration: none;
     visibility: hidden;
-    z-index: 101;
+    z-index: 9;
 
     &--visible {
       transition-duration: .01s;
