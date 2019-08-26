@@ -1,6 +1,6 @@
 @import './styles/variables';
 
-.main {
+.main__content {
   margin: 56px 0 0 56px;
   transition-duration: .3s;
   transition-property: margin;
@@ -11,12 +11,8 @@
   }
 }
 
-ui-view {
-  height: 100%;
-
-  .container {
-    height: calc(100% - 64px);
-  }
+.main__view {
+  height: 100vh;
 }
 
 html body {
