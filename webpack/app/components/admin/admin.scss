@@ -1,69 +1,7 @@
-adminbar {
-
-  background-color: rgb(222,222,222);
-  color: rgb(0,0,0);
-  border-bottom: 1px solid rgb(0,0,0);
-  font-size: 13px;
-  font-family: monospace;
-  margin: 0;
-
-  div.inner {
-    border-bottom: 1px solid rgb(156,156,156);
-    padding: 5px;
-
-    .adminbar__paragraph {
-      margin: 0 15px 0 0;
-    }
-  }
-
-  .adminbar__button {
-    padding: 0;
-    margin: 0 15px 0 0;
-    height: 15px;
-    line-height: 15px;
-    font-size: 13px;
-    min-height: inherit;
-    min-width: inherit;
-    text-transform: none;
-  }
-}
-
-md-menu-content.adminBar {
-  background-color: rgb(222,222,222);
-  padding: 4px 0 !important;
-  margin: 5px 0 0 0;
-  min-width: 210px !important;
-  border-left: 1px solid rgb(0,0,0);
-  box-shadow: 2px 1px 0 0 rgba(0,0,0,0.9);
-
-  md-menu-item {
-    margin: 0 !important;
-    padding: 0 !important;
-    line-height: 17px !important;
-    height: 17px !important;
-    min-height: 17px !important;
-
-    .md-button {
-      margin: 0;
-      padding: 2px 0 2px 25px !important;
-      line-height: 15px !important;
-      height: 17px !important;
-      min-height: 17px !important;
-
-      span {
-        font-size: 11px !important;
-        font-weight: 900;
-      }
-    }
-  }
-
-}
-
 .adminContainer {
-
   background-color: rgb(200, 200, 200);
-
 }
+
 .adminSection {
 
   border-radius: 0;
@@ -247,4 +185,8 @@ div.adminSection md-content.diagTable {
   div.row:nth-of-type(odd) {
     background-color: rgb(210,210,210);
   }
+}
+
+.admin {
+  height: 100%;
 }

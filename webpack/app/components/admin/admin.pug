@@ -1,13 +1,7 @@
-div(layout="row" layout-align="center center", ng-if="$root.showLoader", id="page-loading", ng-cloak)
-  div
-    img(src="img/spinlogo.png").loader-spin
-div(layout="column", flex).topbar
-  navbar
-div(layout="row", flex).container
-  sidebar(is-admin="$ctrl.isAdmin")
-  ui-view(flex).main
+div(layout="row").admin
+  ui-view(flex)
 
-  md-content(flex-gt-sm=20, flex=25, layout-align="start start").adminSection
+  md-content(flex-gt-sm=20, flex=25).adminSection
     md-toolbar
       div(layout="row").md-toolbar-tools
         span(flex)
@@ -16,9 +10,9 @@ div(layout="row", flex).container
         span(flex)
     div.content.side
       ul
-        li(ui-sref="admin.userList") Users
+        li(ui-sref="root.admin.users") Users
         li(ng-click="$ctrl.userDiag($event, {}, true)") Add User
-        li(ui-sref="admin.groups") Groups
+        li(ui-sref="root.admin.groups") Groups
         li(ng-click="$ctrl.groupDiag($event, {}, true)") Add Group
-        li(ui-sref="admin.projects") Projects
+        li(ui-sref="root.admin.projects") Projects
         li(ng-click="$ctrl.projectDiag($event, {}, true)") Add Project

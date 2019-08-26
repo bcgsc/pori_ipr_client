@@ -5,5 +5,5 @@ div(layout="column", flex).topbar
   navbar
 div(layout="row", flex).main__view
   sidebar(is-admin="$ctrl.isAdmin")
-  div(flex, ng-class="{'main--sidebaropen': ($ctrl.maximized)}").main__content
+  div(flex, ng-class="{'main__content--sidebaropen': ($ctrl.maximized)}").main__content
     ui-view
