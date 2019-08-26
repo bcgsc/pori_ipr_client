@@ -1,7 +1,10 @@
 import angular from 'angular';
+import uiRouter from '@uirouter/angularjs';
 import GermlineBoardComponent from './germline-board.component';
 
-angular.module('germlineboard', []);
+angular.module('germlineboard', [
+  uiRouter,
+]);
 
 export default angular.module('germlineboard')
   .component('germlineboard', GermlineBoardComponent)
