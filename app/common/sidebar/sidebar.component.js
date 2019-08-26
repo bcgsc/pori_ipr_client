@@ -1,5 +1,9 @@
 import template from './sidebar.pug';
 
+const bindings = {
+  isAdmin: '<',
+};
+
 class SidebarComponent {
   /* @ngInject */
   constructor($rootScope, UserService, AclService, $state, $scope) {
@@ -34,5 +38,6 @@ class SidebarComponent {
 
 export default {
   template,
+  bindings,
   controller: SidebarComponent,
 };

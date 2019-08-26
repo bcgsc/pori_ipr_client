@@ -12,7 +12,7 @@ export default angular.module('admin.users')
     'ngInject';
 
     $stateProvider
-      .state('admin.users', {
+      .state('root.admin.users', {
         url: '/users',
         component: 'users',
       });

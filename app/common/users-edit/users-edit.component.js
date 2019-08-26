@@ -22,11 +22,6 @@ class UsersEditComponent {
   }
 
   $onInit() {
-    this.projectAccess = {
-      projects: this.editUser.projects,
-      allProjectAccess: !!(this.editUser.groups.find(group => group.ident === this.accessGroup.ident)),
-    };
-
     // Creating new user
     if (this.newUser) {
       this.user = {
@@ -34,8 +29,13 @@ class UsersEditComponent {
         type: 'bcgsc',
         firstName: '',
         lastName: '',
+        password: '',
       };
     } else {
+      this.projectAccess = {
+        projects: this.editUser.projects,
+        allProjectAccess: !!(this.editUser.groups.find(group => group.ident === this.accessGroup.ident)),
+      };
       this.user = this.editUser;
     }
   }

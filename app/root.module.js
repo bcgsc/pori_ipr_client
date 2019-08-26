@@ -109,7 +109,6 @@ export default angular.module('root')
 
     $stateProvider
       .state('root', {
-        url: '/',
         component: 'root',
         resolve: {
           /* eslint-disable no-shadow */

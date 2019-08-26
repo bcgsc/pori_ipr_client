@@ -1,10 +1,12 @@
 import sortBy from 'lodash.sortby';
 import template from './admin.pug';
+import './admin.scss';
 
 const bindings = {
   groups: '<',
   users: '<',
   projects: '<',
+  isAdmin: '<',
 };
 
 class AdminComponent {
@@ -23,7 +25,7 @@ class AdminComponent {
     try {
       const resp = await this.$mdDialog.show({
         targetEvent: $event,
-        templateUrl: 'dashboard/admin/user/user.edit.html',
+        template: '<users-edit edit-user="editUser" new-user="newUser" user-delete="userDelete" projects="projects" access-group="accessGroup" self-edit="selfEdit"></user-edit>',
         clickOutToClose: false,
         locals: {
           editUser: angular.copy(editUser),
@@ -33,7 +35,17 @@ class AdminComponent {
           accessGroup: this.accessGroup,
           selfEdit: false,
         },
-        controller: 'controller.dashboard.user.edit',
+        /* eslint-disable no-shadow */
+        controller: ($scope, editUser, newUser, userDelete, projects, accessGroup, selfEdit) => {
+          'ngInject';
+
+          $scope.editUser = editUser;
+          $scope.newUser = newUser;
+          $scope.userDelete = userDelete;
+          $scope.projects = projects;
+          $scope.accessGroup = accessGroup;
+          $scope.selfEdit = selfEdit;
+        },
       });
       this.$mdToast.show(this.$mdToast.simple().textContent(resp.message));
       this.users.forEach((u, i) => {
@@ -54,14 +66,21 @@ class AdminComponent {
     try {
       const resp = await this.$mdDialog.show({
         targetEvent: $event,
-        templateUrl: 'dashboard/admin/user/group.edit.html',
+        template: '<groups-edit class="adminSection" flex edit-group="editGroup" new-group="newGroup" group-delete="groupDelete($event, group)"></groups-edit>',
         clickOutToClose: false,
         locals: {
           editGroup: angular.copy(editGroup),
           newGroup,
           groupDelete: () => {},
         },
-        controller: 'controller.dashboard.user.groups.edit',
+        /* eslint-disable no-shadow */
+        controller: ($scope, editGroup, newGroup, groupDelete) => {
+          'ngInject';
+
+          $scope.editGroup = editGroup;
+          $scope.newGroup = newGroup;
+          $scope.groupDelete = groupDelete;
+        },
       });
 
       this.$mdToast.show(this.$mdToast.simple().textContent('The group has been added'));
@@ -79,7 +98,7 @@ class AdminComponent {
     try {
       const resp = await this.$mdDialog.show({
         targetEvent: $event,
-        templateUrl: 'dashboard/admin/user/project.edit.html',
+        template: '<projects-edit edit-project="editProject" new-project="newProject" project-delete="projectDelete" full-access-users="fullAccessUsers"> </projects-edit>',
         clickOutToClose: false,
         locals: {
           editProject: angular.copy(editProject),
@@ -87,7 +106,15 @@ class AdminComponent {
           projectDelete: () => {},
           fullAccessUsers: [],
         },
-        controller: 'controller.dashboard.user.project.edit',
+        /* eslint-disable no-shadow */
+        controller: ($scope, editProject, newProject, projectDelete, fullAccessUsers) => {
+          'ngInject';
+
+          $scope.editProject = editProject;
+          $scope.newProject = newProject;
+          $scope.projectDelete = projectDelete;
+          $scope.fullAccessUsers = fullAccessUsers;
+        },
       });
       this.$mdToast.show(this.$mdToast.simple().textContent('The project has been added'));
 

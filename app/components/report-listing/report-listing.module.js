@@ -5,20 +5,19 @@ import GenomicModule from './genomic/genomic.module';
 import ProbeModule from './probe/probe.module';
 import './report-listing.scss';
 
-const ReportListingModule = angular
-  .module('reportlisting', [
-    uiRouter,
-    DashboardModule,
-    GenomicModule,
-    ProbeModule,
-  ])
+export default angular.module('reportlisting', [
+  uiRouter,
+  DashboardModule,
+  GenomicModule,
+  ProbeModule,
+])
   .config(($stateProvider) => {
     'ngInject';
 
     $stateProvider
       .state('root.reportlisting', {
         abstract: true,
-        url: 'reports',
+        url: '/reports',
         resolve: {
           permission: ['$state', '$mdToast', 'AclService',
             async ($state, $mdToast, AclService) => {
@@ -33,5 +32,3 @@ const ReportListingModule = angular
       });
   })
   .name;
-
-export default ReportListingModule;

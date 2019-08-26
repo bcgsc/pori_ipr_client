@@ -12,7 +12,7 @@ export default angular.module('admin.groups')
     'ngInject';
 
     $stateProvider
-      .state('admin.groups', {
+      .state('root.admin.groups', {
         url: '/groups',
         component: 'groups',
       });

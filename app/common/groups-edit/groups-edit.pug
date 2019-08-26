@@ -24,7 +24,7 @@ div(flex).adminSection
         md-selected-item="$ctrl.editGroup.owner",
         md-search-text="$ctrl.searchOwnerQuery",
         md-items="user in $ctrl.searchOwner($ctrl.searchOwnerQuery)",
-        md-item-text="$ctrl.user.firstName + ' ' + $ctrl.user.lastName",
+        md-item-text="user.firstName + ' ' + user.lastName",
         md-floating-label="Group Leader",
         md-autofocus=true,
         md-autoselect=true,
@@ -33,7 +33,7 @@ div(flex).adminSection
         required,
         flex
         )
-          md-item-template {{$ctrl.user.firstName}} {{$ctrl.user.lastName}}
+          md-item-template {{user.firstName}} {{user.lastName}}
           div(ng-messages="User", ng-if="form.User.$touched")
             div(ng-message="required") A leader must be selected
 

@@ -6,15 +6,12 @@ import PublicModule from './public/public.module';
 import GermlineModule from './germline/germline.module';
 import AdminModule from './admin/admin.module';
 
-const ComponentsModule = angular
-  .module('root.components', [
-    HomeModule,
-    ReportListingModule,
-    ReportModule,
-    PublicModule,
-    GermlineModule,
-    AdminModule,
-  ])
+export default angular.module('root.components', [
+  HomeModule,
+  ReportListingModule,
+  ReportModule,
+  PublicModule,
+  GermlineModule,
+  AdminModule,
+])
   .name;
-
-export default ComponentsModule;
