@@ -31,6 +31,9 @@ class LoginRedirect {
       }
     } catch (err) {
       console.error(err);
+      if (err.data.message === 'IPR Access Error') {
+        return this.$state.go('public.access');
+      }
       this.$mdToast.show(
         this.$mdToast.simple('No response from the server. Please try again later').hideDelay(7000),
       );
