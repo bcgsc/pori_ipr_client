@@ -1,6 +1,4 @@
 import angular from 'angular';
-import NavbarModule from './navbar/navbar.module';
-import SidebarModule from './sidebar/sidebar.module';
 import DiscussionEntryModule from './discussion-entry/discussion-entry.module';
 import MutationSignatureModule from './mutation-signature/mutation-signature.module';
 import PaginateModule from './paginate/paginate.module';
@@ -20,29 +18,24 @@ import UsersEditModule from './users-edit/users-edit.module';
 import ProjectsEditModule from './projects-edit/projects-edit.module';
 import GroupsEditModule from './groups-edit/groups-edit.module';
 
-const CommonModule = angular
-  .module('root.common', [
-    NavbarModule,
-    SidebarModule,
-    DiscussionEntryModule,
-    MutationSignatureModule,
-    PaginateModule,
-    ReportListingCardModule,
-    ReportStateModule,
-    ReportTableModule,
-    TumourContentModule,
-    SmallMutationVariantsModule,
-    GenomicAlterationModule,
-    DetailViewerModule,
-    GeneViewerModule,
-    ListCopyNumberVariantsModule,
-    ListStructuralVariantsModule,
-    ListOutliersModule,
-    RoleCardModule,
-    UsersEditModule,
-    ProjectsEditModule,
-    GroupsEditModule,
-  ])
+export default angular.module('root.common', [
+  DiscussionEntryModule,
+  MutationSignatureModule,
+  PaginateModule,
+  ReportListingCardModule,
+  ReportStateModule,
+  ReportTableModule,
+  TumourContentModule,
+  SmallMutationVariantsModule,
+  GenomicAlterationModule,
+  DetailViewerModule,
+  GeneViewerModule,
+  ListCopyNumberVariantsModule,
+  ListStructuralVariantsModule,
+  ListOutliersModule,
+  RoleCardModule,
+  UsersEditModule,
+  ProjectsEditModule,
+  GroupsEditModule,
+])
   .name;
-
-export default CommonModule;

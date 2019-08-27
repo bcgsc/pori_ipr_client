@@ -5,6 +5,7 @@ import ReportModule from './report/report.module';
 import PublicModule from './public/public.module';
 import GermlineModule from './germline/germline.module';
 import AdminModule from './admin/admin.module';
+import LayoutModule from './layout/layout.module';
 
 export default angular.module('root.components', [
   HomeModule,
@@ -13,5 +14,6 @@ export default angular.module('root.components', [
   PublicModule,
   GermlineModule,
   AdminModule,
+  LayoutModule,
 ])
   .name;
