@@ -63,6 +63,7 @@ md-content
       div(layout="row")
         div(layout="column", flex).dataBox
           h2.title Genome Status
+            md-icon(ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.genomeStatus)").clickable.blue help
 
           div.box
             div(layout="row", flex).heading
@@ -76,6 +77,7 @@ md-content
 
         div(layout="column", flex).dataBox
           h2.title Tissue Comparators
+            md-icon(ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.tissueComparators)").clickable.blue help
 
           div.box
             div(layout="row", flex).heading
@@ -87,6 +89,7 @@ md-content
 
         div(layout="column", flex).dataBox
           h2.title Subtyping
+            md-icon(ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.subtyping)").clickable.blue help
 
           div.box
             div(layout="row", flex).heading
@@ -99,6 +102,7 @@ md-content
 
         div(layout="column", flex).dataBox
           h2.title Microbial Content
+            md-icon(ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.microbialContent)").clickable.blue help
 
           div.box
             div(layout="row", flex).heading
@@ -112,9 +116,11 @@ md-content
         div(layout="row")
           div(layout="column", flex=25).signatureTitle
             h2.title Mutation Signature
+              md-icon(ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.mutationSignature)").clickable.blue.help help
           div(layout="column", flex=75)
             h2.title Mutation Burden
               span (in protein coding genes)
+              md-icon(ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.mutationBurden)").clickable.blue.help help
         div(layout="row").header
           div(flex).container
             div(flex).signature.editable
