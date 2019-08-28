@@ -5,7 +5,7 @@
   // ! Uncomment this to enable the sidebar transition
   // transition-duration: .3s;
   // transition-property: margin;
-  z-index: 6;
+  z-index: $content-z-index;
 
   &--sidebaropen {
     margin: 56px 0 0 240px;
