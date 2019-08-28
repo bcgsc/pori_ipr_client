@@ -1,0 +1,67 @@
+genomicsummary(
+  pog="$ctrl.pog",
+  report="$ctrl.report",
+  genomic-alterations="$ctrl.genomicAlterations",
+  variant-counts="$ctrl.variantCounts",
+  genomic-events="$ctrl.genomicEvents",
+  mutation-summary="$ctrl.mutationSummary",
+  probe-target="$ctrl.probeTarget",
+  mutation-signature="$ctrl.mutationSignature",
+  microbial="$ctrl.microbial"
+)
+
+therapeutic(
+  pog="$ctrl.pog",
+  report="$ctrl.report",
+  therapeutic="$ctrl.therapeutic"
+)
+
+analyst(analyst-comments="$ctrl.analystComments")
+
+pathway(
+  pathway="$ctrl.pathway",
+  print="true"
+)
+
+smallmutations(
+  pog="$ctrl.pog",
+  report="$ctrl.report",
+  images="$ctrl.smallMutationImages",
+  mutation-summary-images="$ctrl.mutationSummaryImages",
+  mutation-summary="$ctrl.mutationSummary",
+  small-mutations="$ctrl.smallMutations",
+  mutation-signature="$ctrl.mutationSignature"
+)
+
+copynumberanalyses(
+  pog="$ctrl.pog",
+  report="$ctrl.report",
+  images="$ctrl.copyNumberAnalysesImages",
+  mutation-summary="$ctrl.mutationSummary",
+  cnvs="$ctrl.cnvs"
+)
+
+structuralvariants(
+  pog="$ctrl.pog",
+  report="$ctrl.report",
+  images="$ctrl.structuralVariantsImages",
+  mutation-summary="$ctrl.mutationSummary",
+  structural-variants="$ctrl.structuralVariants",
+  mutation-summary-images="$ctrl.mutationSummaryImages",
+  mavis-summary="$ctrl.mavisSummary"
+)
+
+expression(
+  pog="$ctrl.pog",
+  report="$ctrl.report",
+  mutation-summary="$ctrl.mutationSummary",
+  outliers="$ctrl.outliers",
+  drug-targets="$ctrl.drugTargets",
+  density-graphs="$ctrl.densityGraphs"
+)
+
+appendices(
+  pog="$ctrl.pog",
+  report="$ctrl.report",
+  tcga-acronyms="$ctrl.tcgaAcronyms"
+)

@@ -17,17 +17,7 @@ export default angular.module('report')
       .state('root.reportlisting.pog', {
         url: '/:POG/report/:analysis_report',
         resolve: {
-          pog: ['$transition$', 'PogService', async ($transition$, PogService) => {
-            return PogService.id($transition$.params().POG);
-          }],
-          reports: ['$transition$', 'ReportService', 'isExternalMode',
-            async ($transition$, ReportService, isExternalMode) => {
-              let stateFilter = {};
-              if (isExternalMode) {
-                stateFilter = { state: 'presented,archived' };
-              }
-              return ReportService.getAllReports($transition$.params().POG, stateFilter);
-            }],
+          pog: ['$transition$', 'PogService', async ($transition$, PogService) => PogService.id($transition$.params().POG)],
         },
       });
   })

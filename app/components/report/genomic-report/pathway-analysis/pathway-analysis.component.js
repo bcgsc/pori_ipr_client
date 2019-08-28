@@ -8,6 +8,7 @@ const bindings = {
   report: '<',
   reportEdit: '<',
   pathway: '<',
+  print: '<',
 };
 
 class PathwayAnalysisComponent {
@@ -56,12 +57,16 @@ class PathwayAnalysisComponent {
     
     const panZoom = await svgPanZoom('#pathway', {
       preventMouseEventsDefault: true,
-      enableControlIcons: true,
-      controlIconsEnabled: true,
+      enableControlIcons: !this.print,
+      controlIconsEnabled: !this.print,
     });
     panZoom.resize();
     panZoom.fit();
     panZoom.center();
+    // print report cuts off unless it's zoomed out
+    if (this.print) {
+      panZoom.zoomBy(0.8);
+    }
   }
 
   /**

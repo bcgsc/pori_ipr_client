@@ -108,8 +108,8 @@ class GenomicReportComponent {
 
   openPrint() {
     // State go!
-    this.$window.open(this.$state.href('print.POG.report.genomic', {
-      POG: this.pog.POGID, analysis_report: this.report.ident,
+    this.$window.open(this.$state.href('print.genomic', {
+      pog: this.pog.POGID, report: this.report.ident,
     }), '_blank');
   }
 

@@ -8,5 +8,23 @@ section.appendices {
     margin: 20px;
     border: 1px solid rgb(80,80,80);
     overflow-x: scroll;
+    max-height: 300px;
+    overflow-y: auto;
+
+    @media print {
+      max-height: inherit;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+  }
+
+  .scrollable {
+    max-height: 300px;
+    overflow-y: auto;
+
+    @media print {
+      max-height: inherit;
+    }
   }
 }
