@@ -13,7 +13,6 @@ const bindings = {
   reportEdit: '<',
   genomicAlterations: '<',
   variantCounts: '<',
-  genomicEvents: '<',
   mutationSummary: '<',
   probeTarget: '<',
   mutationSignature: '<',

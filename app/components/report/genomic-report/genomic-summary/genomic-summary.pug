@@ -205,23 +205,3 @@ md-content
         div(flex=25, layout="row").header.vus
           div(flex) Variants of unknown significance
           div(flex=30) {{$ctrl.variantCounts.variantsUnknown}}
-
-  section
-    md-subheader.md-primary Genomic Events with Potential Therapeutic Association
-
-    div(layout="column", flex)
-
-      div(layout="row")
-        div(layout="column", flex).dataBox
-
-          div.box
-            div(layout="row", flex).heading
-              div(flex) Genomic Events
-              div(flex) Approved in this cancer type
-              div(flex) Approved in other cancer type
-              div(flex) Emerging Evidence
-            div(layout="row", flex, ng-repeat="gene in $ctrl.genomicEvents track by $index").row
-              div(flex) {{gene.genomicEvent}}
-              div(flex) {{gene.approvedThisCancerType}}
-              div(flex) {{gene.approvedOtherCancerType}}
-              div(flex) {{gene.emergingPreclinicalEvidence}}

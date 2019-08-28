@@ -1,6 +1,5 @@
 import template from './probe-summary.pug';
 import patientTemplate from '../../genomic-report/genomic-summary/patient-edit.pug';
-import eventTemplate from './probe-summary-events.pug';
 
 const bindings = {
   pog: '<',
@@ -14,14 +13,13 @@ const bindings = {
 class ProbeSummaryComponent {
   /* @ngInject */
   constructor($scope, PogService, $mdDialog, $mdToast, ProbeSignatureService,
-    PatientInformationService, GenomicEventsService) {
+    PatientInformationService) {
     this.$scope = $scope;
     this.PogService = PogService;
     this.$mdDialog = $mdDialog;
     this.$mdToast = $mdToast;
     this.ProbeSignatureService = ProbeSignatureService;
     this.PatientInformationService = PatientInformationService;
-    this.GenomicEventsService = GenomicEventsService;
   }
 
   $onInit() {
@@ -87,42 +85,6 @@ class ProbeSummaryComponent {
       this.$scope.$digest();
     } catch (err) {
       this.$mdToast.showSimple('Unable to revoke. Error: ', err);
-    }
-  }
-
-  // Update Patient Information
-  async modifyEvent($event, event) {
-    try {
-      const resp = await this.$mdDialog.show({
-        targetEvent: $event,
-        template: eventTemplate,
-        clickOutToClose: false,
-        controller: ['scope', (scope) => {
-          scope.event = angular.copy(event);
-
-          scope.cancel = () => {
-            this.$mdDialog.cancel('No changes were saved.');
-          };
-
-          scope.update = async () => {
-            const data = await this.GenomicEventsService.update(
-              this.pog.POGID, this.report.ident, event.ident, scope.event,
-            );
-            this.$mdDialog.hide({ message: 'Entry has been updated', data });
-          };
-        }],
-      });
-      if (resp) {
-        this.$mdToast.show(this.$mdToast.simple().textContent(resp.message));
-      }
-      Object.entries(this.genomicEvents).forEach(([index, entry]) => {
-        if (entry.ident === resp.data.ident) {
-          this.genomicEvents[index] = resp.data;
-        }
-      });
-      this.$scope.$digest();
-    } catch (err) {
-      this.$mdToast.show(this.$mdToast.simple().textContent('No changes were saved.'));
     }
   }
 }
