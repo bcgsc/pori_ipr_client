@@ -2,8 +2,9 @@
 
 .main__content {
   margin: 56px 0 0 56px;
-  transition-duration: .3s;
-  transition-property: margin;
+  // ! Uncomment this to enable the sidebar transition
+  // transition-duration: .3s;
+  // transition-property: margin;
   z-index: 6;
 
   &--sidebaropen {
