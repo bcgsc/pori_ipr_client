@@ -6,16 +6,21 @@ genomicsummary(
   mutation-summary="$ctrl.mutationSummary",
   probe-target="$ctrl.probeTarget",
   mutation-signature="$ctrl.mutationSignature",
-  microbial="$ctrl.microbial"
+  microbial="$ctrl.microbial",
+  print="true"
 )
 
 therapeutic(
   pog="$ctrl.pog",
   report="$ctrl.report",
-  therapeutic="$ctrl.therapeutic"
+  therapeutic="$ctrl.therapeutic",
+  print="true"
 )
 
-analyst(analyst-comments="$ctrl.analystComments")
+analyst(
+  analyst-comments="$ctrl.analystComments",
+  print="true"
+)
 
 pathway(
   pathway="$ctrl.pathway",
@@ -29,7 +34,8 @@ smallmutations(
   mutation-summary-images="$ctrl.mutationSummaryImages",
   mutation-summary="$ctrl.mutationSummary",
   small-mutations="$ctrl.smallMutations",
-  mutation-signature="$ctrl.mutationSignature"
+  mutation-signature="$ctrl.mutationSignature",
+  print="true"
 )
 
 copynumberanalyses(
@@ -37,7 +43,8 @@ copynumberanalyses(
   report="$ctrl.report",
   images="$ctrl.copyNumberAnalysesImages",
   mutation-summary="$ctrl.mutationSummary",
-  cnvs="$ctrl.cnvs"
+  cnvs="$ctrl.cnvs",
+  print="true"
 )
 
 structuralvariants(
@@ -47,7 +54,8 @@ structuralvariants(
   mutation-summary="$ctrl.mutationSummary",
   structural-variants="$ctrl.structuralVariants",
   mutation-summary-images="$ctrl.mutationSummaryImages",
-  mavis-summary="$ctrl.mavisSummary"
+  mavis-summary="$ctrl.mavisSummary",
+  print="true"
 )
 
 expression(
@@ -56,11 +64,13 @@ expression(
   mutation-summary="$ctrl.mutationSummary",
   outliers="$ctrl.outliers",
   drug-targets="$ctrl.drugTargets",
-  density-graphs="$ctrl.densityGraphs"
+  density-graphs="$ctrl.densityGraphs",
+  print="true"
 )
 
 appendices(
   pog="$ctrl.pog",
   report="$ctrl.report",
-  tcga-acronyms="$ctrl.tcgaAcronyms"
+  tcga-acronyms="$ctrl.tcgaAcronyms",
+  print="true"
 )

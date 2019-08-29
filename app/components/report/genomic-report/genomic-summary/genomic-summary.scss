@@ -3,6 +3,10 @@ section {
   margin-bottom: 10px;
   background: rgb(220,220,220);
 
+  @media print {
+    background: #FAFAFA;
+  }
+
   .md-subheader {
     background: rgb(204,207,226);
     

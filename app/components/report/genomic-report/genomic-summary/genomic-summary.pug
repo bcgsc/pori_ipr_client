@@ -1,6 +1,6 @@
 md-content 
   section
-    md-subheader.md-primary Patient Information
+    md-subheader.md-primary.md-no-sticky Patient Information
       span(ng-if="$ctrl.reportEdit").edit
         md-icon(ng-click="$ctrl.updatePatient($event)") edit
 
@@ -56,7 +56,7 @@ md-content
         dd(flex)
 
   section
-    md-subheader.md-primary Patient Tumour Analysis Summary
+    md-subheader.md-primary.md-no-sticky Patient Tumour Analysis Summary
 
     div(layout="column", flex)
 
@@ -200,7 +200,7 @@ md-content
 
 
       div(flex, layout="row", layout-align="end end").keyAlterationsIdentified.margin-bottom-10
-        div(flex=10, ng-click="$ctrl.setMutationMask(null)", ng-show="$ctrl.mutationMask !== null").margin-bottom-10.text-small.clickable View all
+        div(flex=10, ng-click="$ctrl.setMutationMask(null)", ng-if="$ctrl.mutationMask").margin-bottom-10.text-small.clickable View all
         span(flex)
         div(flex=25, layout="row").header.vus
           div(flex) Variants of unknown significance
