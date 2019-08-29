@@ -1,7 +1,7 @@
 import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
 import DashboardModule from './dashboard/dashboard.module';
-import GenomicModule from './genomic/genomic.module';
+import GenomicModule from './genomic/genomic-react/genomic';
 import ProbeModule from './probe/probe.module';
 import './report-listing.scss';
 
