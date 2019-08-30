@@ -1,16 +1,12 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { react2angular } from 'react2angular';
 import angular from 'angular';
 
 class GenomicComponent extends Component {
   static propTypes = {
-    reports: PropTypes.object,
+    reports: PropTypes.object.isRequired,
   };
-
-  constructor(props) {
-    super(props);
-  }
 
   componentDidMount() {
     const { reports } = this.props;
@@ -22,7 +18,7 @@ class GenomicComponent extends Component {
       <div>
         React
       </div>
-    )
+    );
   }
 }
 
