@@ -13,6 +13,9 @@ app.controller('knowledgebase.references.filter',
   if(!scope.filter.evidence) scope.filter.evidence = [];
   if(!scope.filter.events_expression) scope.filter.events_expression = [];
   if(!scope.filter.ref_id) scope.filter.ref_id = [];
+  if (!scope.filter.ident) {
+    scope.filter.ident = [];
+  }
 
   // Set Vocab
   scope.vocabulary = vocabulary;
@@ -22,7 +25,8 @@ app.controller('knowledgebase.references.filter',
       context: null,
       evidence: null,
       events_expression: null,
-      ref_id: null
+      ref_id: null,
+      ident: null,
     }
   };
 
@@ -69,6 +73,9 @@ app.controller('knowledgebase.references.filter',
   };
 
   scope.save = () => {
+    if (scope.new.values.ident.length) {
+      scope.filter.ident.push(scope.new.values.ident);
+    }
     $mdDialog.hide(scope.filter);
   }
 
