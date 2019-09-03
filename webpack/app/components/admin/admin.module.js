@@ -18,7 +18,7 @@ export default angular.module('admin')
     'ngInject';
 
     $stateProvider
-      .state('admin', {
+      .state('root.admin', {
         url: '/admin',
         component: 'admin',
         resolve: {

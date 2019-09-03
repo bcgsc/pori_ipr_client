@@ -2,8 +2,9 @@ import template from './navbar.pug';
 
 class NavbarComponent {
   /* @ngInject */
-  constructor($scope, $state, $mdDialog, $mdToast, UserService, KeycloakService) {
+  constructor($scope, $rootScope, $state, $mdDialog, $mdToast, UserService, KeycloakService) {
     this.$scope = $scope;
+    this.$rootScope = $rootScope;
     this.$state = $state;
     this.$mdDialog = $mdDialog;
     this.$mdToast = $mdToast;
@@ -18,12 +19,16 @@ class NavbarComponent {
     this.version = VERSION;
     this.maximized = await this.UserService.getSetting('sideBarState');
     this.$scope.$digest();
+
+    this.$rootScope.$on('navbarToggle', () => {
+      this.maximized = this.UserService.getSidebarState();
+    });
   }
 
   // Toggle sidebar
   toggleSidebar() {
-    this.$scope.$emit('sidebarToggle');
-    this.maximized = !this.maximized;
+    this.maximized = this.UserService.toggleSidebar();
+    this.$rootScope.$emit('sidebarToggle');
   }
 
   // Open Feedback

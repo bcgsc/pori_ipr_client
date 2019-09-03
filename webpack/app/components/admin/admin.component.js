@@ -1,10 +1,12 @@
 import sortBy from 'lodash.sortby';
 import template from './admin.pug';
+import './admin.scss';
 
 const bindings = {
   groups: '<',
   users: '<',
   projects: '<',
+  isAdmin: '<',
 };
 
 class AdminComponent {

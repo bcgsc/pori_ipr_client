@@ -12,7 +12,7 @@ export default angular.module('admin.projects')
     'ngInject';
 
     $stateProvider
-      .state('admin.projects', {
+      .state('root.admin.projects', {
         url: '/projects',
         component: 'projects',
       });

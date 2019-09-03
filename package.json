@@ -6,6 +6,7 @@
   "keywords": [],
   "license": "GPL-3.0",
   "sideEffects": false,
+  "sasslintConfig": "sass-lint.yml",
   "engines": {
     "node": "~8.11.2",
     "npm": "~3.10.10"
@@ -45,7 +46,7 @@
     "mocha": "~5.2.0",
     "node-sass": "~4.11.0",
     "pug-loader": "~2.4.0",
-    "sass-lint": "~1.12.1",
+    "sass-lint": "~1.13.1",
     "sass-loader": "~7.1.0",
     "url-loader": "~1.1.2",
     "webpack-bundle-analyzer": "~3.3.2",

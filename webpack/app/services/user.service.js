@@ -9,6 +9,7 @@ class UserService {
   constructor($http) {
     this.$http = $http;
     this.api = `${CONFIG.ENDPOINTS.API}/user`;
+    this.sidebarOpen = false;
   }
   
   /**
@@ -105,6 +106,23 @@ class UserService {
   async remove(user) {
     const { data } = await this.$http.delete(`${this.api}/${user.ident}`);
     return data;
+  }
+
+  /**
+   * Toggle the sidebar state
+   * @return {Boolean} State of sidebar after toggle
+   */
+  toggleSidebar() {
+    this.sidebarOpen = !this.sidebarOpen;
+    return this.sidebarOpen;
+  }
+
+  /**
+   * Return the sidebar state
+   * @return {Boolean} State of sidebar
+   */
+  getSidebarState() {
+    return this.sidebarOpen;
   }
 }
 

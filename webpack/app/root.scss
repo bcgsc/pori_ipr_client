@@ -1,13 +1,19 @@
-sidebar {
-  height: 100%;
+@import './styles/variables';
+
+.main__content {
+  margin: 56px 0 0 56px;
+  // ! Uncomment this to enable the sidebar transition
+  // transition-duration: .3s;
+  // transition-property: margin;
+  z-index: $content-z-index;
+
+  &--sidebaropen {
+    margin: 56px 0 0 240px;
+  }
 }
 
-ui-view {
-  height: 100%;
-
-  .container {
-    height: calc(100% - 64px);
-  }
+.main__view {
+  height: 100vh;
 }
 
 html body {
@@ -15,8 +21,8 @@ html body {
 }
 
 md-content {
-   height: 100%;
-   overflow: auto;
+  height: 100%;
+  overflow: auto;
 }
 
 #page-loading {
@@ -33,7 +39,12 @@ img.loader-spin {
   animation-iteration-count: infinite;
   animation-timing-function: ease-in-out;
 }
+
 @keyframes spin {
-  from { transform: rotate(0deg) }
-  to { transform: rotate(360deg) }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }

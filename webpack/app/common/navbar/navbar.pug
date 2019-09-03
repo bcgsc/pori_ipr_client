@@ -1,24 +1,21 @@
-div(flex).md-toolbar-tools
-  md-icon(ng-click="$ctrl.toggleSidebar()", ng-if="!$ctrl.maximized").clickable.margin-right-15 menu
-  md-icon(ng-click="$ctrl.toggleSidebar()", ng-if="$ctrl.maximized").clickable.margin-right-15 close
-  h2 
-    img(src="img/bcca_logo.png", style="margin-bottom: -5px;")
-    |  BCGSC Integrated Pipeline Reports 
-    span.navbar__version v{{$ctrl.version}} &nbsp
-    span(ng-if="$ctrl.config !== 'PRODUCTION'") [NON-PRODUCTION ENVIRONMENT: {{$ctrl.config}}]
-  span(flex)
-  
-  md-menu
-    div(ng-click='$mdMenu.open($event)', aria-label='User')
-      md-icon person
-      md-button.white {{$ctrl.user.firstName}} {{$ctrl.user.lastName}}
-    
-    md-menu-content(width="4")
-      md-menu-item
-        md-button(ng-click="$ctrl.userDiag($event, $ctrl.user)") Edit Profile
+md-toolbar(ng-class="{'navbar--open': $ctrl.maximized}").navbar
+  div.md-toolbar-tools
+    md-button(ng-click="$ctrl.toggleSidebar()", ng-if="!$ctrl.maximized").md-icon-button.navbar__button
+      md-icon.navbar__icon menu
+    h2(flex).navbar__title
+      |  BCGSC Integrated Pipeline Reports 
+      span.navbar__version v{{$ctrl.version}} &nbsp
+      span(ng-if="$ctrl.config !== 'PRODUCTION'") [NON-PRODUCTION ENVIRONMENT: {{$ctrl.config}}]
 
-      md-menu-item
-        md-button(ng-click="$ctrl.openFeedback($event)") Feedback
-      md-menu-divider
-      md-menu-item(ng-click="$ctrl.userLogout()")
-        md-button Logout
+    md-menu
+      md-button(ng-click='$mdMenu.open($event)', aria-label='User')
+        md-icon person
+        span {{$ctrl.user.firstName}} {{$ctrl.user.lastName}}
+      md-menu-content(width="4")
+        md-menu-item
+          md-button(ng-click="$ctrl.userDiag($event, $ctrl.user)") Edit Profile
+        md-menu-item
+          md-button(ng-click="$ctrl.openFeedback($event)") Feedback
+        md-menu-divider
+        md-menu-item(ng-click="$ctrl.userLogout()")
+          md-button Logout

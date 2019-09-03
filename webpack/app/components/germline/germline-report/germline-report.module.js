@@ -1,7 +1,10 @@
 import angular from 'angular';
+import uiRouter from '@uirouter/angularjs';
 import GermlineReportComponent from './germline-report.component';
 
-angular.module('germlinereport', []);
+angular.module('germlinereport', [
+  uiRouter,
+]);
 
 export default angular.module('germlinereport')
   .component('germlinereport', GermlineReportComponent)
