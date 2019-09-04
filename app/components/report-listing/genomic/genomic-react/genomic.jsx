@@ -1,39 +1,83 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 import { react2angular } from 'react2angular';
+import PropTypes from 'prop-types';
 import angular from 'angular';
+import { AgGridReact } from 'ag-grid-react';
+import startCase from 'lodash.startcase';
+import axios from 'axios';
 
-class GenomicComponent extends Component {
-  static propTypes = {
-    reports: PropTypes.object.isRequired,
+import 'ag-grid-community/dist/styles/ag-grid.css';
+import 'ag-grid-community/dist/styles/ag-theme-material.css';
+
+import './genomic.scss';
+
+/**
+ * @param {*} rowData Row data to display in table
+ * @return {*} JSX
+ */
+function ReportsTableComponent({ rowData, $state }) {
+  const [gridApi, setGridApi] = useState(null);
+
+  const columnDefs = Object.keys(rowData[0]).map(key => ({
+    headerName: startCase(key),
+    field: key,
+    width: 230,
+  }));
+
+  // enable natural sorting for the Patient ID column and make it the default
+  const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+  const patientCol = columnDefs.findIndex(col => col.field === 'patientID');
+  columnDefs[patientCol].comparator = collator.compare;
+  columnDefs[patientCol].sort = 'desc';
+
+  const onGridReady = (params) => {
+    setGridApi(params.api);
   };
 
-  componentDidMount() {
-    const { reports } = this.props;
-    console.log(reports);
-  }
+  const onSelectionChanged = () => {
+    const selectedRow = gridApi.getSelectedRows();
+    $state.go('root.reportlisting.pog.genomic.summary', { POG: selectedRow[0].patientID, analysis_report: selectedRow[0].identifier });
+  };
 
-  render() {
-    return (
-      <div>
-        React
-      </div>
-    );
-  }
+  const defaultColDef = {
+    sortable: true,
+    resizable: true,
+    filter: true,
+  };
+
+  return (
+    <div className="ag-theme-material reports-table__container">
+      <AgGridReact
+        columnDefs={columnDefs}
+        rowData={rowData}
+        defaultColDef={defaultColDef}
+        pagination
+        paginationAutoPageSize
+        rowSelection="single"
+        onSelectionChanged={onSelectionChanged}
+        onGridReady={onGridReady}
+      />
+    </div>
+  );
 }
+
+ReportsTableComponent.propTypes = {
+  rowData: PropTypes.array.isRequired,
+  $state: PropTypes.object.isRequired,
+};
 
 export default angular
   .module('genomic', [])
-  .component('genomic', react2angular(GenomicComponent))
+  .component('reportsTable', react2angular(ReportsTableComponent, ['rowData'], ['$state']))
   .config(($stateProvider) => {
     'ngInject';
 
     $stateProvider
       .state('root.reportlisting.genomic', {
         url: '/genomic',
-        component: 'genomic',
+        component: 'reportsTable',
         resolve: {
-          reports: ['ReportService', 'UserService', 'isExternalMode',
+          rowData: ['ReportService', 'UserService', 'isExternalMode',
             async (ReportService, UserService, isExternalMode) => {
               const currentUser = await UserService.getSetting('genomicReportListCurrentUser');
               const project = await UserService.getSetting('selectedProject') || { name: undefined };
@@ -56,7 +100,18 @@ export default angular
                 opts.states = 'presented,archived';
                 opts.paginated = true;
               }
-              return ReportService.allFiltered(opts);
+              const { reports } = await ReportService.allFiltered(opts);
+
+              return reports.map(report => ({
+                patientID: report.pog.POGID,
+                analysisBiopsy: report.analysis.analysis_biopsy,
+                tumourType: report.patientInformation.tumourType,
+                physician: report.patientInformation.physician,
+                state: report.state,
+                caseType: report.patientInformation.caseType,
+                identifier: report.ident,
+                alternateIdentifier: report.analysis.pog.alternate_identifier || 'N/A',
+              }));
             }],
         },
       });
