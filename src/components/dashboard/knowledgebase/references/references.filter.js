@@ -73,7 +73,7 @@ app.controller('knowledgebase.references.filter',
   };
 
   scope.save = () => {
-    if (scope.new.values.ident.length) {
+    if (scope.new.values.ident && scope.new.values.ident.length) {
       scope.filter.ident.push(scope.new.values.ident);
     }
     $mdDialog.hide(scope.filter);
