@@ -42,8 +42,8 @@ app.factory('api.germline.report', ['_', '$http', '$q', (_, $http, $q) => {
    */
   $report.biopsy = (patient, biopsy, params={}) => {
     return $q((resolve, reject) => {
-      
-      $http.get(`${api}/patient/${patient}/biopsy/${biopsy}`, {params: params})
+
+      $http.get(`${api}/patient/${patient}/biopsy/${biopsy || 'biop1'}`, {params: params})
         .then((reports) => {
           resolve(reports);
         })
@@ -67,7 +67,7 @@ app.factory('api.germline.report', ['_', '$http', '$q', (_, $http, $q) => {
    */
   $report.one = (patient, biopsy, report, params={}) => {
     return $q((resolve, reject) => {
-      $http.get(`${api}/patient/${patient}/biopsy/${biopsy}/report/${report}`, {params: params})
+      $http.get(`${api}/patient/${patient}/biopsy/${biopsy || 'biop1'}/report/${report}`, {params: params})
         .then((report) => {
           resolve(report.data);
         })
@@ -91,7 +91,7 @@ app.factory('api.germline.report', ['_', '$http', '$q', (_, $http, $q) => {
    */
   $report.update = (patient, biopsy, report, data, params={}) => {
     return $q((resolve, reject) => {
-      $http.put(`${api}/patient/${patient}/biopsy/${biopsy}/report/${report}`, data, {params: params})
+      $http.put(`${api}/patient/${patient}/biopsy/${biopsy || 'biop1'}/report/${report}`, data, {params: params})
         .then((report) => {
           resolve(report.data);
         })
@@ -113,7 +113,7 @@ app.factory('api.germline.report', ['_', '$http', '$q', (_, $http, $q) => {
    */
   $report.delete = (patient, biopsy, report) => {
     return $q((resolve, reject) => {
-      $http.delete(`${api}/patient/${patient}/biopsy/${biopsy}/report/${report}`)
+      $http.delete(`${api}/patient/${patient}/biopsy/${biopsy || 'biop1'}/report/${report}`)
         .then(() => {
           resolve();
         })
