@@ -136,9 +136,11 @@ app.controller('controller.dashboard.reports.genomic', ['_', '$q', '$rootScope',
 
         // Search Users
         _.forEach(report.users, (p) => {
-          if(p.user.firstName.toLowerCase().indexOf(q.toLowerCase()) > -1) result = true;
-          if(p.user.lastName.toLowerCase().indexOf(q.toLowerCase()) > -1) result = true;
-          if(p.user.username.toLowerCase().indexOf(q.toLowerCase()) > -1) result = true;
+          if (p.user) {
+            if(p.user.firstName.toLowerCase().indexOf(q.toLowerCase()) > -1) result = true;
+            if(p.user.lastName.toLowerCase().indexOf(q.toLowerCase()) > -1) result = true;
+            if(p.user.username.toLowerCase().indexOf(q.toLowerCase()) > -1) result = true;
+          }
         });
 
 

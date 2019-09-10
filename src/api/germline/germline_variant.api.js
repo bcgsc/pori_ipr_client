@@ -24,8 +24,8 @@ app.factory('api.germline.variant', ['_', '$http', '$q', (_, $http, $q) => {
    */
   $variant.one = (patient, biopsy, report, variant) => {
     return $q((resolve, reject) => {
-      
-      $http.get(`${api}/patient/${patient}/biopsy/${biopsy}/report/${report}/variant/${variant}`)
+
+      $http.get(`${api}/patient/${patient}/biopsy/${biopsy || 'biop1'}/report/${report}/variant/${variant}`)
         .then((variant) => {
           resolve(variant);
         })
@@ -49,8 +49,8 @@ app.factory('api.germline.variant', ['_', '$http', '$q', (_, $http, $q) => {
    */
   $variant.update = (patient, biopsy, report, variant, data) => {
     return $q((resolve, reject) => {
-      
-      $http.put(`${api}/patient/${patient}/biopsy/${biopsy}/report/${report}/variant/${variant}`, data)
+
+      $http.put(`${api}/patient/${patient}/biopsy/${biopsy || 'biop1'}/report/${report}/variant/${variant}`, data)
         .then((response) => {
           resolve(response.data);
         })

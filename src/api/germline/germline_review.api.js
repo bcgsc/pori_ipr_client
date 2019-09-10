@@ -24,8 +24,8 @@ app.factory('api.germline.review', ['_', '$http', '$q', (_, $http, $q) => {
    */
   $review.add = (patient, biopsy, report, data) => {
     return $q((resolve, reject) => {
-      
-      $http.put(`${api}/patient/${patient}/biopsy/${biopsy}/report/${report}/review`, data)
+
+      $http.put(`${api}/patient/${patient}/biopsy/${biopsy || 'biop1'}/report/${report}/review`, data)
         .then((review) => {
           resolve(review.data);
         })
@@ -49,8 +49,8 @@ app.factory('api.germline.review', ['_', '$http', '$q', (_, $http, $q) => {
    */
   $review.remove = (patient, biopsy, report, review, data) => {
     return $q((resolve, reject) => {
-      
-      $http.delete(`${api}/patient/${patient}/biopsy/${biopsy}/report/${report}/review/${review}`, data)
+
+      $http.delete(`${api}/patient/${patient}/biopsy/${biopsy || 'biop1'}/report/${report}/review/${review}`, data)
         .then(() => {
           resolve();
         })
