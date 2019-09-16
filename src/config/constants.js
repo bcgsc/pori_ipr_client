@@ -1,5 +1,1 @@
-angular.module("bcgscIPR")
-
-.constant("version", "2.5.0")
-
-;
+angular.module("bcgscIPR").constant("version", "2.6.3");
