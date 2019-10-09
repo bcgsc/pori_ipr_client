@@ -1,15 +1,10 @@
 import angular from 'angular';
-import uiRouter from '@uirouter/angularjs';
-import DashboardModule from './dashboard/dashboard.module';
-import GenomicModule from './genomic/genomic-react/genomic';
-import ProbeModule from './probe/probe.module';
-import './report-listing.scss';
+import genomicModule from './genomic/genomic.module';
+import probeModule from './probe/probe.module';
 
 export default angular.module('reportlisting', [
-  uiRouter,
-  DashboardModule,
-  GenomicModule,
-  ProbeModule,
+  genomicModule,
+  probeModule,
 ])
   .config(($stateProvider) => {
     'ngInject';

@@ -1,30 +1,19 @@
 import angular from 'angular';
-import uiRouter from '@uirouter/angularjs';
-import ProbeComponent from './probe.component';
-import ReportListingCardModule from '../../../common/report-listing-card/report-listing-card.module';
-import ReportStateModule from '../../../common/report-state/report-state.module';
-import ReportTableModule from '../../../common/report-table/report-table.module';
-import PaginateModule from '../../../common/paginate/paginate.module';
+import { react2angular } from 'react2angular';
 
-angular.module('probe', [
-  uiRouter,
-  ReportListingCardModule,
-  ReportStateModule,
-  ReportTableModule,
-  PaginateModule,
-]);
+import reportsTable from '../reports-table';
 
-export default angular.module('probe')
-  .component('probe', ProbeComponent)
+export default angular.module('probe', [])
+  .component('probeReportsTable', react2angular(reportsTable, ['rowData', 'reportType'], ['$state']))
   .config(($stateProvider) => {
     'ngInject';
 
     $stateProvider
       .state('root.reportlisting.probe', {
         url: '/probe',
-        component: 'probe',
+        component: 'probeReportsTable',
         resolve: {
-          reports: ['ReportService', 'isExternalMode', async (ReportService, isExternalMode) => {
+          rowData: ['ReportService', 'isExternalMode', async (ReportService, isExternalMode) => {
             const opts = {
               type: 'probe',
               all: true,
@@ -36,8 +25,22 @@ export default angular.module('probe')
               opts.states = 'reviewed';
               opts.paginated = true;
             }
-            return ReportService.allFiltered(opts);
+            let { reports } = await ReportService.allFiltered(opts);
+
+            reports = reports.filter(r => r.patientInformation);
+
+            return reports.map(report => ({
+              patientID: report.pog.POGID,
+              analysisBiopsy: report.analysis.analysis_biopsy,
+              tumourType: report.patientInformation.tumourType,
+              physician: report.patientInformation.physician,
+              state: report.state,
+              caseType: report.patientInformation.caseType,
+              identifier: report.ident,
+              alternateIdentifier: report.analysis.pog.alternate_identifier || 'N/A',
+            }));
           }],
+          reportType: () => 'probe',
         },
       });
   })
