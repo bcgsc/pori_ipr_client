@@ -31,6 +31,7 @@ export default angular.module('genomic', [])
               }
               let { reports } = await ReportService.allFiltered(opts);
 
+              // Remove Dustin's test reports that are missing the patient info section
               reports = reports.filter(r => r.patientInformation);
 
               return reports.map(report => ({
