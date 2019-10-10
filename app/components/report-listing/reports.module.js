@@ -1,17 +1,17 @@
 import angular from 'angular';
 import { react2angular } from 'react2angular';
 
-import reportsTable from '../reports-table/reports-table';
+import reportsTable from './reports-table/reports-table';
 
 export default angular.module('genomic', [])
-  .component('genomicReportsTable', react2angular(reportsTable, ['rowData', 'columnDefs'], ['$state']))
+  .component('reportsTable', react2angular(reportsTable, ['rowData', 'columnDefs'], ['$state']))
   .config(($stateProvider) => {
     'ngInject';
 
     $stateProvider
-      .state('root.reportlisting.genomic', {
-        url: '/genomic',
-        component: 'genomicReportsTable',
+      .state('root.reportlisting.reports', {
+        url: '/reports',
+        component: 'reportsTable',
         resolve: {
           rowData: ['ReportService', 'UserService', 'isExternalMode',
             async (ReportService, UserService, isExternalMode) => {

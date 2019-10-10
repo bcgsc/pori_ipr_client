@@ -11,7 +11,7 @@ const HomeModule = angular
     $stateProvider
       .state('root.home', {
         url: '/',
-        redirectTo: 'root.reportlisting.genomic',
+        template: '<div>Placeholder page</div>',
       });
   })
   .name;
