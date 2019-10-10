@@ -8,7 +8,7 @@ import 'ag-grid-community/dist/styles/ag-theme-material.css';
 import './reports-table.scss';
 
 /**
- * @param {*} rowData Row data to display in table
+ * @param {Object} rowData Row data to display in table
  * @return {*} JSX
  */
 function ReportsTableComponent({ rowData, columnDefs, $state }) {
@@ -20,11 +20,13 @@ function ReportsTableComponent({ rowData, columnDefs, $state }) {
 
   const onSelectionChanged = () => {
     const selectedRow = gridApi.getSelectedRows();
-    let { reportType } = selectedRow[0];
+    const [{ patientID, identifier }] = selectedRow;
+    let [{ reportType }] = selectedRow;
+
     // Convert displayed report type (Genomic, Targeted gene) back to the API values
     reportType = reportType === 'Genomic' ? 'genomic' : 'probe';
     $state.go(`root.reportlisting.pog.${reportType}.summary`, {
-      POG: selectedRow[0].patientID, analysis_report: selectedRow[0].identifier,
+      POG: patientID, analysis_report: identifier,
     });
   };
 
