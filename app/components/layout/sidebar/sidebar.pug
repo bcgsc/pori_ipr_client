@@ -1,0 +1,67 @@
+div(layout="column", ng-class="{'sidebar--open': $ctrl.maximized}").sidebar
+  div(layout="row").sidebar__button-row
+    md-button(ng-click="$ctrl.toggleNavbar()").md-icon-button
+      md-icon chevron_left
+  md-divider
+  a(layout="row", ui-sref="root.reports.dashboard",
+    ng-class="{'sidebar__row--active': $ctrl.$state.current.name.includes('home')}"
+  ).sidebar__row
+    md-icon.sidebar__icon home
+    md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Home
+    span(ng-class="{'sidebar__text--visible': $ctrl.maximized}").sidebar__text Home
+
+  a(layout="row", ng-if="$ctrl.pageAccess.report" ui-sref="root.reportlisting.dashboard",
+    ng-class="{'sidebar__row--active': $ctrl.$state.current.name.includes('dashboard')}"
+  ).sidebar__row
+    md-icon.sidebar__icon assignment
+    md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Reports Dashboard
+    span(ng-class="{'sidebar__text--visible': $ctrl.maximized}").sidebar__text Reports Dashboard
+
+  a(layout="row", ng-if="$ctrl.pageAccess.genomic_report", ui-sref="root.reportlisting.genomic",
+    ng-class="{'sidebar__row--active': $ctrl.$state.current.name.includes('genomic')}"
+  ).sidebar__row
+    md-icon.sidebar__icon developer_board
+    md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Genomic Reports
+    span(ng-class="{'sidebar__text--visible': $ctrl.maximized}").sidebar__text Genomic Reports
+
+  a(layout="row", ng-if="$ctrl.pageAccess.probe_report", ui-sref="root.reportlisting.probe",
+    ng-class="{'sidebar__row--active': $ctrl.$state.current.name.includes('probe')}"
+  ).sidebar__row
+    md-icon.sidebar__icon highlight
+    md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Targeted Gene Reports
+    span(ng-class="{'sidebar__text--visible': $ctrl.maximized}").sidebar__text Targeted Gene Reports
+
+  a(layout="row", ng-if="$ctrl.pageAccess.germline", ui-sref="root.germline.board",
+    ng-class="{'sidebar__row--active': $ctrl.$state.current.name.includes('germline')}"
+  ).sidebar__row
+    md-icon.sidebar__icon supervisor_account
+    md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Germline
+    span(ng-class="{'sidebar__text--visible': $ctrl.maximized}").sidebar__text Germline
+
+
+  a(layout="row", ng-if="$ctrl.isAdmin", ui-sref="root.admin.users",
+      ng-class="{'sidebar__row--active': $ctrl.$state.current.name.includes('users')}"
+    ).sidebar__row
+    md-icon.sidebar__icon insert_emoticon
+    md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Users
+    span(ng-class="{'sidebar__text--visible': $ctrl.maximized}").sidebar__text Users
+
+  a(layout="row", ng-if="$ctrl.isAdmin", ui-sref="root.admin.groups",
+      ng-class="{'sidebar__row--active': $ctrl.$state.current.name.includes('groups')}"
+    ).sidebar__row
+    md-icon.sidebar__icon emoji_transportation
+    md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Groups
+    span(ng-class="{'sidebar__text--visible': $ctrl.maximized}").sidebar__text Groups
+
+  a(layout="row", ng-if="$ctrl.isAdmin", ui-sref="root.admin.projects",
+      ng-class="{'sidebar__row--active': $ctrl.$state.current.name.includes('projects')}"
+    ).sidebar__row
+    md-icon.sidebar__icon folder_special
+    md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Projects
+    span(ng-class="{'sidebar__text--visible': $ctrl.maximized}").sidebar__text Projects
+
+  span(flex)
+  md-divider
+  div(layout="row").sidebar__logos
+    img(src="img/bcca_logo.png").sidebar__image-logo
+    img(src="img/sidebarlogo.png").sidebar__image-text
