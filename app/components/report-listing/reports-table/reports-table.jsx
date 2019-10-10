@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 import { AgGridReact } from 'ag-grid-react';
 
@@ -12,14 +12,14 @@ import './reports-table.scss';
  * @return {*} JSX
  */
 function ReportsTableComponent({ rowData, columnDefs, $state }) {
-  const [gridApi, setGridApi] = useState(null);
+  const gridApi = useRef();
 
   const onGridReady = (params) => {
-    setGridApi(params.api);
+    gridApi.current = params.api;
   };
 
   const onSelectionChanged = () => {
-    const selectedRow = gridApi.getSelectedRows();
+    const selectedRow = gridApi.current.getSelectedRows();
     const [{ patientID, identifier }] = selectedRow;
     let [{ reportType }] = selectedRow;
 
