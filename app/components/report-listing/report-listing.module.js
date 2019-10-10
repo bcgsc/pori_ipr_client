@@ -1,10 +1,8 @@
 import angular from 'angular';
 import genomicModule from './genomic/genomic.module';
-import probeModule from './probe/probe.module';
 
 export default angular.module('reportlisting', [
   genomicModule,
-  probeModule,
 ])
   .config(($stateProvider) => {
     'ngInject';
