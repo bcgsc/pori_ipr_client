@@ -34,14 +34,16 @@ export default angular.module('genomic', [])
               // Remove Dustin's test reports that are missing the patient info section
               reports = reports.filter(r => r.patientInformation);
 
+              console.log(reports.filter(r => r.pog.projects.length > 1));
+
               return reports.map(report => ({
                 patientID: report.pog.POGID,
                 analysisBiopsy: report.analysis.analysis_biopsy,
                 tumourType: report.patientInformation.tumourType,
                 reportType: report.type === 'genomic' ? 'Genomic' : 'Targeted Gene',
-                physician: report.patientInformation.physician,
                 state: report.state,
                 caseType: report.patientInformation.caseType,
+                project: report.pog.projects.map(project => project.name).sort().join(', '),
                 reportID: report.ident,
                 alternateIdentifier: report.analysis.pog.alternate_identifier || 'N/A',
               }));
@@ -69,16 +71,16 @@ export default angular.module('genomic', [])
               field: 'reportType',
             },
             {
-              headerName: 'Physician',
-              field: 'physician',
-            },
-            {
               headerName: 'State',
               field: 'state',
             },
             {
               headerName: 'Case Type',
               field: 'caseType',
+            },
+            {
+              headerName: 'Project',
+              field: 'project',
             },
             {
               headerName: 'Report ID',
