@@ -44,7 +44,6 @@ function ReportsTableComponent({ rowData, columnDefs, $state }) {
         defaultColDef={defaultColDef}
         pagination
         paginationAutoPageSize
-        floatingFilter
         rowSelection="single"
         onSelectionChanged={onSelectionChanged}
         onGridReady={onGridReady}
