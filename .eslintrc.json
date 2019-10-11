@@ -85,7 +85,5 @@
     }],
     "indent": ["error", 2, { "SwitchCase": 1 }],
     "template-curly-spacing": ["error", "never"],
-    "import/no-named-as-default": 0,
-    "react/forbid-prop-types": 0
   }
 }
