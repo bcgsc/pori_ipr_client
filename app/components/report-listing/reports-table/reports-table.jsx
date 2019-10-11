@@ -20,13 +20,13 @@ function ReportsTableComponent({ rowData, columnDefs, $state }) {
 
   const onSelectionChanged = () => {
     const selectedRow = gridApi.current.getSelectedRows();
-    const [{ patientID, identifier }] = selectedRow;
+    const [{ patientID, reportID }] = selectedRow;
     let [{ reportType }] = selectedRow;
 
     // Convert displayed report type (Genomic, Targeted gene) back to the API values
     reportType = reportType === 'Genomic' ? 'genomic' : 'probe';
     $state.go(`root.reportlisting.pog.${reportType}.summary`, {
-      POG: patientID, analysis_report: identifier,
+      POG: patientID, analysis_report: reportID,
     });
   };
 
