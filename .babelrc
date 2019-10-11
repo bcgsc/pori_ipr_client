@@ -1,6 +1,10 @@
 {
   "presets": [["@babel/preset-env", {
     "useBuiltIns": "usage"
-  }]],
-  "plugins": ["angularjs-annotate"]
+  }],
+  "@babel/preset-react"],
+  "plugins": [
+    "angularjs-annotate",
+    "@babel/plugin-proposal-class-properties"
+  ]
 }
