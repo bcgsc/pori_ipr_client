@@ -42,7 +42,7 @@ export default angular.module('genomic', [])
                 physician: report.patientInformation.physician,
                 state: report.state,
                 caseType: report.patientInformation.caseType,
-                identifier: report.ident,
+                reportID: report.ident,
                 alternateIdentifier: report.analysis.pog.alternate_identifier || 'N/A',
               }));
             }],
@@ -81,8 +81,8 @@ export default angular.module('genomic', [])
               field: 'caseType',
             },
             {
-              headerName: 'Identifier',
-              field: 'identifier',
+              headerName: 'Report ID',
+              field: 'reportID',
             },
             {
               headerName: 'Alternate Identifier',
