@@ -124,9 +124,13 @@ class StructuralVariantsComponent {
       // append mavis summary to row if it has a mavis_product_id
       const sv = row;
       if (row.mavis_product_id) {
-        sv.summary = this.mavisSummary.find((entry) => {
-          return entry.product_id === sv.mavis_product_id;
-        }).summary;
+        try {
+          sv.summary = this.mavisSummary.find((entry) => {
+            return entry.product_id === sv.mavis_product_id;
+          }).summary;
+        } catch (err) {
+          console.info('No matching Mavis summary was found.');
+        }
       }
 
       // Setting fields to omit from details viewer

@@ -1,3 +1,6 @@
-div(layout="row", layout-align="center center").print
-  img(src="img/print_logo.png")
+div(layout="column", layout-align="center center").print
+  div(layout="row" layout-align="space-between center")
+    img(src="img/gsclogo.png").print__logo
+    h2 {{$ctrl.pog.POGID}}
+    div test
   ui-view
