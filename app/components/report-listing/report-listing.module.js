@@ -15,7 +15,7 @@ export default angular.module('reportlisting', [
             async ($state, $mdToast, AclService) => {
               if (!(await AclService.checkAction('report.view'))) {
                 $mdToast.showSimple('You do not have permissions to view reports');
-                $state.go('root.home');
+                $state.go('public.login');
                 return false;
               }
               return true;

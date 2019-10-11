@@ -3,12 +3,6 @@ div(layout="column", ng-class="{'sidebar--open': $ctrl.maximized}").sidebar
     md-button(ng-click="$ctrl.toggleNavbar()").md-icon-button
       md-icon chevron_left
   md-divider
-  a(layout="row", ui-sref="root.home",
-    ng-class="{'sidebar__row--active': $ctrl.$state.current.name.includes('home')}"
-  ).sidebar__row
-    md-icon.sidebar__icon home
-    md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Home
-    span(ng-class="{'sidebar__text--visible': $ctrl.maximized}").sidebar__text Home
 
   a(layout="row", ng-if="$ctrl.pageAccess.genomic_report || $ctrl.pageAccess.probe_report", ui-sref="root.reportlisting.reports",
     ng-class="{'sidebar__row--active': $ctrl.$state.current.name.includes('reportlisting')}"
