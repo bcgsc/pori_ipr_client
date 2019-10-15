@@ -1,6 +1,8 @@
 div(layout="column", layout-align="center center").print
-  div(layout="row" layout-align="space-between center")
+  div(layout="row" layout-align="space-between center").print__title
+    span.print__title-patient {{$ctrl.pog.POGID}}
+    div(layout="column", layout-align="space-between start")
+      div.print__info {{$ctrl.report.analysis.analysis_biopsy | titlecase}}
+      div.print__info {{$ctrl.report.patientInformation.tumourType | titlecase}}
     img(src="img/gsclogo.png").print__logo
-    h2 {{$ctrl.pog.POGID}}
-    div test
   ui-view

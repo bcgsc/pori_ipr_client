@@ -43,8 +43,8 @@ class GenomicSummaryComponent {
       structuralVariant: 0,
       variantsUnknown: this.variantCounts.variantsUnknown,
     };
+    this.studyName = this.pog.projects.map(p => p.name).join(', ');
     this.mutationMask = null;
-    this.patientInformation = this.report.patientInformation;
     this.tumourAnalysis = this.report.tumourAnalysis;
     this.microbial = this.microbial || { species: 'None', integrationSite: 'None' };
     this.genomicAlterations = sortBy(this.genomicAlterations, 'type');

@@ -6,6 +6,7 @@ const bindings = {
   report: '<',
 };
 
+
 export default {
   template,
   bindings,

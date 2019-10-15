@@ -5,6 +5,17 @@
 
   &__logo {
     max-width: 30%;
-    padding: 15px 0;
+    padding: 0 0 20px;
+  }
+
+  &__title-patient {
+    font-size: 68px;
+    font-weight: lighter;
+  }
+
+  &__info {
+    font-size: 18px;
+    // padding: 0 0 8px;
+    line-height: 36px;
   }
 }
