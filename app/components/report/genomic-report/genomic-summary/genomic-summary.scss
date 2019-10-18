@@ -9,635 +9,630 @@
   }
 }
 
-.summary-info {
-  @media print {
+@media print {
+  .summary-info {
     background-color: $white-background;
-  }
 
-  &__details {
-    @media print {
+    &__details {
       margin: 6px 0 20px;
     }
-  }
 
-  &__details-row {
-    @media print {
+    &__details-row {
       padding: 8px 0;
     }
-  }
 
-  &__header {
-    @media print {
+    &__header {
       @include print-header;
+    }
+
+    &__value {
+      font-size: $large-body-font-size;
+      font-weight: $medium-weight;
+      padding: 0 12px 0 0;
+    }
+
+    &__key {
+      font-size: $caption-font-size;
+      font-weight: $light-weight;
     }
   }
 
-  &__value {
-    font-size: $large-body-font-size;
-    font-weight: $medium-weight;
-    padding: 0 12px 0 0;
-  }
-
-  &__key {
-    font-size: $caption-font-size;
-    font-weight: $light-weight;
-  }
-}
-
-.summary-tumour {
-  &__header {
-    @media print {
+  .summary-tumour {
+    &__header {
       @include print-header;
     }
-  }
-
-  &__divider {
-    @media print {
+  
+    &__divider {
       // See issue here: https://github.com/angular/material/issues/8586
       border-top-width: 1px !important;
     }
   }
 }
 
-// .summary {
-//   margin-bottom: 10px;
-//   background: rgb(220, 220, 220);
-
-//   // .md-subheader {
-//   //   background: rgb(204,207,226);
-
-//   //   .md-subheader-inner {
-//   //     padding: 10px;
-//   //     margin: 0;
-
-//   //     .md-subheader-content {
-//   //       font-size: 1.2em;
-//   //       color: rgb(50, 50, 50);
-//   //     }
-//   //   }
-
-//     span.edit {
-//       margin-left: 10px;
-//       cursor: pointer;
-//       md-icon {
-//         font-size: 1.2em;
-//         display: none;
-//         margin: 0;
-//         padding: 0;
-//         min-height: inherit;
-//         height: 10px;
-//         line-height: 0.2;
-//       }
-//     }
-
-//     &:hover {
-//       span.edit {
-//         md-icon {
-//           display: inline-block;
-//         }
-//       }
-//     }
-//   }
-
-//   .details {
-//     padding: 15px;
-//     font-size: 0.9em;
-
-//     div {
-//       margin: 3px 0;
-//       padding: 0 4px;
-
-//       dt {
-//         text-align: right;
-//         color: rgb(100, 100, 100);
-//         font-size: 1em;
-//         margin: 0;
-//         padding: 0;
-//         font-weight: 200;
-//       }
-
-//       dd {
-//         font-weight: 500;
-//         margin: 0;
-//         font-size: 1.2em;
-//       }
-//     }
-
-//     &.box {
-//       background-color: rgb(235, 235, 235);
-//       margin: 8px 0 0 0;
-//     }
-
-//     .collapse {
-//       margin: 0 0 0 auto;
-//       height: 0;
-
-//       md-icon {
-//         cursor: pointer;
-//         font-size: 1.3em;
-//         outline: none;
-//       }
-//     }
-//   }
-
-//   div.editable {
-//     md-icon {
-//       cursor: pointer;
-//       display: none;
-//       position: absolute;
-//       float: right;
-//       font-size: 1.25em;
-//       line-height: inherit;
-//       height: 18px;
-//       width: 18px;
-//       min-height: 18px;
-//       min-width: 18px;
-//       margin-left: 5px;
-//       margin-top: -2px;
-//     }
-//   }
-
-//   div.editable:hover {
-//     md-icon {
-//       font-size: 1.25em;
-//       display: inline-block;
-//     }
-//   }
-
-// .summary-tumour {
-//   .analystComments {
-//     margin: 7px 4px 7px 4px;
-//     padding: 20px;
-//     background-color: rgb(235, 235, 235);
-
-//     table {
-//       border: 1px solid rgb(170, 170, 170);
-//       border-collapse: collapse;
-//       th,
-//       td {
-//         border: 1px solid rgb(170, 170, 170);
-//         padding: 4px;
-//       }
-//       th {
-//         padding: 7px 5px 5px 5px;
-//       }
-//     }
-
-//     code {
-//       background-color: rgb(210, 210, 210);
-//       padding: 0.3mm;
-//       display: inline-block;
-//       color: rgb(30, 30, 30);
-//     }
-
-//     pre {
-//       background-color: rgb(210, 210, 210);
-//       -webkit-border-radius: 5px;
-//       -moz-border-radius: 5px;
-//       border-radius: 5px;
-//       border: 1px solid rgb(170, 170, 170);
-//       padding: 0.5mm;
-
-//       code {
-//         margin: 0.2mm;
-//       }
-//     }
-//   }
-//   .smallBottom {
-//     height: 4px;
-//     line-height: 4px;
-//     overflow: hidden;
-//   }
-
-//   h2.title {
-//     font-size: 0.85em;
-//     font-weight: 500;
-//     margin: 0;
-//     padding: 5px 2px 5px 7px;
-//     text-transform: uppercase;
-//     background-color: rgb(154, 162, 204);
-
-//     span {
-//       font-size: 0.75em;
-//       margin-left: 6px;
-//       text-transform: lowercase;
-//     }
-//   }
-
-//   h3.title {
-//     font-size: 0.75em;
-//     font-weight: 500;
-//     margin: 0;
-//     padding: 5px 2px 5px 7px;
-//     text-transform: uppercase;
-//     background-color: rgb(178, 183, 204);
-
-//     span {
-//       font-size: 0.75em;
-//       margin-left: 6px;
-//       text-transform: lowercase;
-//     }
-//   }
-
-//   .dataBox {
-//     margin: 7px 4px;
-
-//     md-icon {
-//       vertical-align: middle;
-//       margin-left: 5px;
-//       font-size: 1.2em;
-//       height: auto;
-//       width: auto;
-//       min-height: 0;
-//       min-width: 0;
-//     }
-
-//     &.noBottomMargin {
-//       margin-bottom: 0;
-//     }
-
-//     //  Add columns to the databox
-//     &.columns {
-//       div.row {
-//         padding: 0 !important;
-//         div {
-//           border-right: 1px solid rgb(154, 162, 204);
-//           padding: 6px 2px 6px 5px;
-
-//           &:last-of-type {
-//             border-right: none;
-//           }
-//         }
-//       }
-//       div.heading {
-//         padding: 0 !important;
-//         div {
-//           padding: 15px 0;
-//           border-right: 1px solid rgb(154, 162, 204);
-
-//           &:last-of-type {
-//             border-right: none;
-//           }
-//         }
-//       }
-//     }
-
-//     div.horizontalBox {
-//       font-weight: 100;
-//       font-size: 0.9em;
-//       padding: 15px;
-
-//       .row {
-//         margin: 5px 0;
-//         span:last-of-type {
-//           font-weight: 700;
-//         }
-//       }
-//     }
-
-//     div.box {
-//       background-color: rgb(180, 180, 180);
-
-//       div.heading {
-//         font-weight: 100;
-//         font-size: 0.8em;
-//         text-align: center;
-//         background-color: rgb(204, 207, 226);
-
-//         div {
-//           padding: 10px 0;
-//           border-right: 1px solid rgb(136, 147, 195);
-//         }
-
-//         div:last-of-type {
-//           border-right: 0px;
-//         }
-
-//         .bg1 {
-//           background-color: rgb(193, 196, 215);
-//         }
-//         .bg2 {
-//           background-color: rgb(178, 181, 200);
-//         }
-//       }
-
-//       div.search {
-//         background-color: rgb(235, 235, 235);
-
-//         md-input-container {
-//           margin: 10px 0 0 10px;
-//           padding: 0;
-//           height: 34px;
-//           font-size: 0.9em;
-//         }
-//       }
-
-//       div.content {
-//         font-weight: 600;
-//         font-size: 0.9em;
-//         text-align: center;
-//         padding: 20px 0;
-//         background-color: rgb(235, 235, 235);
-
-//         div {
-//           padding: 0 5px;
-//         }
-//       }
-//       div.row {
-//         background-color: rgb(235, 235, 235);
-//         font-weight: 300;
-//         font-size: 0.85em;
-
-//         .bg1 {
-//           background-color: rgb(225, 225, 225);
-//         }
-//         .bg2 {
-//           background-color: rgb(215, 215, 215);
-//         }
-
-//         div {
-//           padding: 3px 2px 3px 5px;
-//           min-height: 20px;
-//           vertical-align: middle;
-//           border-right: 1px solid rgb(136, 147, 195);
-//         }
-
-//         div:last-of-type {
-//           border-right: 0px;
-//         }
-
-//         &:nth-of-type(odd) {
-//           background-color: rgb(205, 205, 205);
-
-//           .bg1 {
-//             background-color: rgb(195, 195, 195);
-//           }
-//           .bg2 {
-//             background-color: rgb(185, 185, 185);
-//           }
-//         }
-
-//         &:hover {
-//           background-color: rgb(247, 206, 170);
-//         }
-
-//         span.reference {
-//           cursor: pointer;
-//         }
-
-//         .edit {
-//           md-icon {
-//             display: inline;
-//             cursor: pointer;
-//             font-size: 1.2em;
-
-//             &:hover {
-//               color: rgb(63, 81, 181);
-//             }
-//           }
-//         }
-//       }
-//     }
-//   }
-//   .mutationTable {
-//     background-color: rgb(235, 235, 235);
-//     margin: 0px 4px 7px 4px;
-
-//     .signatureTitle {
-//       padding-right: 6px;
-//     }
-
-//     md-icon.help {
-//       font-size: 1.2em;
-//       margin: 0 0 2px 5px;
-//       height: auto;
-//       width: auto;
-//       min-width: 0;
-//       min-height: 0;
-//     }
-
-//     .header {
-//       .container {
-//         .signature {
-//           text-align: center;
-//           padding: 15px 0;
-//           font-size: 0.9em;
-//           background-color: rgb(190, 190, 190);
-//           box-sizing: border-box;
-//           border-right: 6px solid rgb(220, 220, 220);
-//           border-bottom: 8px solid rgb(220, 220, 220);
-
-//           span.listitem {
-//             cursor: pointer;
-//             margin-right: 5px;
-//           }
-//         }
-//       }
-
-//       .mutationType {
-//         font-weight: 100;
-//         font-size: 0.9em;
-//         text-align: center;
-//         background-color: rgb(204, 207, 226);
-
-//         div {
-//           padding: 15px 0;
-
-//           button {
-//             margin: 0;
-//             padding: 0;
-//             width: auto;
-//             height: 18px;
-//             min-height: inherit;
-//             line-height: initial;
-
-//             md-icon {
-//               width: auto;
-//               height: 18px;
-//               font-size: 1em;
-//             }
-//           }
-//         }
-
-//         .total {
-//           background-color: rgb(144, 147, 166);
-//           font-weight: 600;
-//           color: rgb(255, 255, 255);
-//         }
-//       }
-//     }
-
-//     .data {
-//       div {
-//         div:first-of-type {
-//           text-align: left;
-//         }
-//         div:nth-of-type(3) {
-//           background-color: rgb(225, 225, 225);
-//         }
-//         div {
-//           padding: 5px 0 5px 5px;
-//           text-align: center;
-//         }
-//       }
-//     }
-//   }
-
-//   .keyAlterationsIdentified {
-//     margin: 0 4px 0px 4px;
-
-//     div.header {
-//       div {
-//         padding: 15px 0;
-//         font-size: 0.8em;
-
-//         &.active:before {
-//           content: "» ";
-//           font-weight: 500;
-//         }
-//       }
-//       div:first-of-type {
-//         padding-left: 10px;
-//       }
-//       div:nth-of-type(2) {
-//         text-align: center;
-//         font-weight: 600;
-//       }
-//     }
-
-//     div.sm {
-//       background-color: rgb(179, 187, 232);
-
-//       div:nth-of-type(2) {
-//         color: #ffffff;
-//         background-color: rgb(63, 81, 181);
-//       }
-//     }
-
-//     div.cnv {
-//       background-color: rgb(178, 214, 171);
-
-//       div:nth-of-type(2) {
-//         color: #ffffff;
-//         background-color: rgb(19, 165, 44);
-//       }
-//     }
-
-//     div.sv {
-//       background-color: rgb(212, 179, 232);
-
-//       div:nth-of-type(2) {
-//         color: #ffffff;
-//         background-color: rgb(141, 63, 181);
-//       }
-//     }
-
-//     div.outliers {
-//       background-color: rgb(247, 206, 170);
-
-//       div:nth-of-type(2) {
-//         color: #ffffff;
-//         background-color: rgb(193, 101, 20);
-//       }
-//     }
-
-//     div.vus {
-//       background-color: rgb(200, 200, 200);
-
-//       div:nth-of-type(2) {
-//         color: #ffffff;
-//         background-color: rgb(155, 155, 155);
-//       }
-//     }
-//   }
-
-//   div.alterations {
-//     margin: 0 4px 7px 4px;
-//     padding: 20px 0;
-//     background-color: rgb(235, 235, 235);
-
-//     div {
-//       display: none;
-//       width: 275px !important;
-//       border-radius: 4px;
-//       margin: 4px;
-//       font-size: 0.9em;
-//       padding: 4px 8px;
-
-//       &.animate-show-hide.ng-hide-remove {
-//         transition: all linear 0.5s;
-//       }
-
-//       &.smallMutation {
-//         background-color: rgb(179, 187, 232);
-//         md-icon {
-//           color: rgb(63, 81, 181);
-//         }
-//       }
-//       &.cnv {
-//         background-color: rgb(178, 214, 171);
-//         md-icon {
-//           color: rgb(19, 165, 44);
-//         }
-//       }
-//       &.structuralVariant {
-//         background-color: rgb(212, 179, 232);
-//         md-icon {
-//           color: rgb(141, 63, 181);
-//         }
-//       }
-//       &.expressionOutlier {
-//         background-color: rgb(247, 206, 170);
-//         md-icon {
-//           color: rgb(193, 101, 20);
-//         }
-//       }
-//       &.add {
-//         opacity: 0.5;
-//         background-color: rgba(0, 0, 0, 0.1);
-//         md-icon {
-//           color: rgba(0, 0, 0, 0.25);
-//         }
-//         &:hover {
-//           opacity: 1;
-//         }
-//       }
-
-//       span {
-//         display: none;
-//         float: right;
-//         md-icon {
-//           font-size: 1.2em;
-//           height: 12px;
-//           min-height: inherit;
-//           padding: 0;
-//           margin: 0 -10px 0 0;
-//           line-height: 0.8;
-//           cursor: pointer;
-//         }
-//       }
-
-//       &:hover {
-//         span {
-//           display: inline-block;
-//         }
-//       }
-//     }
-//   }
-
-//   .inlineSettings {
-//     margin: 10px;
-//     padding: 20px;
-//     background-color: white;
-//   }
-//   .repeat-comma {
-//     span.listitem:after {
-//       content: ",";
-//     }
-//   }
-//   .repeat-comma:last-of-type {
-//     span.listitem:after {
-//       content: "";
-//     }
-//   }
-// }
+
+
+@media screen {
+  .summary {
+    margin-bottom: 10px;
+    background: rgb(220, 220, 220);
+
+    .md-subheader {
+      background: rgb(204,207,226);
+
+      .md-subheader-inner {
+        padding: 10px;
+        margin: 0;
+
+        .md-subheader-content {
+          font-size: 1.2em;
+          color: rgb(50, 50, 50);
+        }
+      }
+
+      span.edit {
+        margin-left: 10px;
+        cursor: pointer;
+        md-icon {
+          font-size: 1.2em;
+          display: none;
+          margin: 0;
+          padding: 0;
+          min-height: inherit;
+          height: 10px;
+          line-height: 0.2;
+        }
+      }
+
+      &:hover {
+        span.edit {
+          md-icon {
+            display: inline-block;
+          }
+        }
+      }
+    }
+
+    .details {
+      padding: 15px;
+      font-size: 0.9em;
+
+      div {
+        margin: 3px 0;
+        padding: 0 4px;
+
+        dt {
+          text-align: right;
+          color: rgb(100, 100, 100);
+          font-size: 1em;
+          margin: 0;
+          padding: 0;
+          font-weight: 200;
+        }
+
+        dd {
+          font-weight: 500;
+          margin: 0;
+          font-size: 1.2em;
+        }
+      }
+
+      &.box {
+        background-color: rgb(235, 235, 235);
+        margin: 8px 0 0 0;
+      }
+
+      .collapse {
+        margin: 0 0 0 auto;
+        height: 0;
+
+        md-icon {
+          cursor: pointer;
+          font-size: 1.3em;
+          outline: none;
+        }
+      }
+    }
+
+    div.editable {
+      md-icon {
+        cursor: pointer;
+        display: none;
+        position: absolute;
+        float: right;
+        font-size: 1.25em;
+        line-height: inherit;
+        height: 18px;
+        width: 18px;
+        min-height: 18px;
+        min-width: 18px;
+        margin-left: 5px;
+        margin-top: -2px;
+      }
+    }
+
+    div.editable:hover {
+      md-icon {
+        font-size: 1.25em;
+        display: inline-block;
+      }
+    }
+  }
+
+  .summary-tumour {
+    .analystComments {
+      margin: 7px 4px 7px 4px;
+      padding: 20px;
+      background-color: rgb(235, 235, 235);
+
+      table {
+        border: 1px solid rgb(170, 170, 170);
+        border-collapse: collapse;
+        th,
+        td {
+          border: 1px solid rgb(170, 170, 170);
+          padding: 4px;
+        }
+        th {
+          padding: 7px 5px 5px 5px;
+        }
+      }
+
+      code {
+        background-color: rgb(210, 210, 210);
+        padding: 0.3mm;
+        display: inline-block;
+        color: rgb(30, 30, 30);
+      }
+
+      pre {
+        background-color: rgb(210, 210, 210);
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+        border: 1px solid rgb(170, 170, 170);
+        padding: 0.5mm;
+
+        code {
+          margin: 0.2mm;
+        }
+      }
+    }
+    .smallBottom {
+      height: 4px;
+      line-height: 4px;
+      overflow: hidden;
+    }
+
+    h2.title {
+      font-size: 0.85em;
+      font-weight: 500;
+      margin: 0;
+      padding: 5px 2px 5px 7px;
+      text-transform: uppercase;
+      background-color: rgb(154, 162, 204);
+
+      span {
+        font-size: 0.75em;
+        margin-left: 6px;
+        text-transform: lowercase;
+      }
+    }
+
+    h3.title {
+      font-size: 0.75em;
+      font-weight: 500;
+      margin: 0;
+      padding: 5px 2px 5px 7px;
+      text-transform: uppercase;
+      background-color: rgb(178, 183, 204);
+
+      span {
+        font-size: 0.75em;
+        margin-left: 6px;
+        text-transform: lowercase;
+      }
+    }
+
+    .dataBox {
+      margin: 7px 4px;
+
+      md-icon {
+        vertical-align: middle;
+        margin-left: 5px;
+        font-size: 1.2em;
+        height: auto;
+        width: auto;
+        min-height: 0;
+        min-width: 0;
+      }
+
+      &.noBottomMargin {
+        margin-bottom: 0;
+      }
+
+      //  Add columns to the databox
+      &.columns {
+        div.row {
+          padding: 0 !important;
+          div {
+            border-right: 1px solid rgb(154, 162, 204);
+            padding: 6px 2px 6px 5px;
+
+            &:last-of-type {
+              border-right: none;
+            }
+          }
+        }
+        div.heading {
+          padding: 0 !important;
+          div {
+            padding: 15px 0;
+            border-right: 1px solid rgb(154, 162, 204);
+
+            &:last-of-type {
+              border-right: none;
+            }
+          }
+        }
+      }
+
+      div.horizontalBox {
+        font-weight: 100;
+        font-size: 0.9em;
+        padding: 15px;
+
+        .row {
+          margin: 5px 0;
+          span:last-of-type {
+            font-weight: 700;
+          }
+        }
+      }
+
+      div.box {
+        background-color: rgb(180, 180, 180);
+
+        div.heading {
+          font-weight: 100;
+          font-size: 0.8em;
+          text-align: center;
+          background-color: rgb(204, 207, 226);
+
+          div {
+            padding: 10px 0;
+            border-right: 1px solid rgb(136, 147, 195);
+          }
+
+          div:last-of-type {
+            border-right: 0px;
+          }
+
+          .bg1 {
+            background-color: rgb(193, 196, 215);
+          }
+          .bg2 {
+            background-color: rgb(178, 181, 200);
+          }
+        }
+
+        div.search {
+          background-color: rgb(235, 235, 235);
+
+          md-input-container {
+            margin: 10px 0 0 10px;
+            padding: 0;
+            height: 34px;
+            font-size: 0.9em;
+          }
+        }
+
+        div.content {
+          font-weight: 600;
+          font-size: 0.9em;
+          text-align: center;
+          padding: 20px 0;
+          background-color: rgb(235, 235, 235);
+
+          div {
+            padding: 0 5px;
+          }
+        }
+        div.row {
+          background-color: rgb(235, 235, 235);
+          font-weight: 300;
+          font-size: 0.85em;
+
+          .bg1 {
+            background-color: rgb(225, 225, 225);
+          }
+          .bg2 {
+            background-color: rgb(215, 215, 215);
+          }
+
+          div {
+            padding: 3px 2px 3px 5px;
+            min-height: 20px;
+            vertical-align: middle;
+            border-right: 1px solid rgb(136, 147, 195);
+          }
+
+          div:last-of-type {
+            border-right: 0px;
+          }
+
+          &:nth-of-type(odd) {
+            background-color: rgb(205, 205, 205);
+
+            .bg1 {
+              background-color: rgb(195, 195, 195);
+            }
+            .bg2 {
+              background-color: rgb(185, 185, 185);
+            }
+          }
+
+          &:hover {
+            background-color: rgb(247, 206, 170);
+          }
+
+          span.reference {
+            cursor: pointer;
+          }
+
+          .edit {
+            md-icon {
+              display: inline;
+              cursor: pointer;
+              font-size: 1.2em;
+
+              &:hover {
+                color: rgb(63, 81, 181);
+              }
+            }
+          }
+        }
+      }
+    }
+    .mutationTable {
+      background-color: rgb(235, 235, 235);
+      margin: 0px 4px 7px 4px;
+
+      .signatureTitle {
+        padding-right: 6px;
+      }
+
+      md-icon.help {
+        font-size: 1.2em;
+        margin: 0 0 2px 5px;
+        height: auto;
+        width: auto;
+        min-width: 0;
+        min-height: 0;
+      }
+
+      .header {
+        .container {
+          .signature {
+            text-align: center;
+            padding: 15px 0;
+            font-size: 0.9em;
+            background-color: rgb(190, 190, 190);
+            box-sizing: border-box;
+            border-right: 6px solid rgb(220, 220, 220);
+            border-bottom: 8px solid rgb(220, 220, 220);
+
+            span.listitem {
+              cursor: pointer;
+              margin-right: 5px;
+            }
+          }
+        }
+
+        .mutationType {
+          font-weight: 100;
+          font-size: 0.9em;
+          text-align: center;
+          background-color: rgb(204, 207, 226);
+
+          div {
+            padding: 15px 0;
+
+            button {
+              margin: 0;
+              padding: 0;
+              width: auto;
+              height: 18px;
+              min-height: inherit;
+              line-height: initial;
+
+              md-icon {
+                width: auto;
+                height: 18px;
+                font-size: 1em;
+              }
+            }
+          }
+
+          .total {
+            background-color: rgb(144, 147, 166);
+            font-weight: 600;
+            color: rgb(255, 255, 255);
+          }
+        }
+      }
+
+      .data {
+        div {
+          div:first-of-type {
+            text-align: left;
+          }
+          div:nth-of-type(3) {
+            background-color: rgb(225, 225, 225);
+          }
+          div {
+            padding: 5px 0 5px 5px;
+            text-align: center;
+          }
+        }
+      }
+    }
+
+    .keyAlterationsIdentified {
+      margin: 0 4px 0px 4px;
+
+      div.header {
+        div {
+          padding: 15px 0;
+          font-size: 0.8em;
+
+          &.active:before {
+            content: "» ";
+            font-weight: 500;
+          }
+        }
+        div:first-of-type {
+          padding-left: 10px;
+        }
+        div:nth-of-type(2) {
+          text-align: center;
+          font-weight: 600;
+        }
+      }
+
+      div.sm {
+        background-color: rgb(179, 187, 232);
+
+        div:nth-of-type(2) {
+          color: #ffffff;
+          background-color: rgb(63, 81, 181);
+        }
+      }
+
+      div.cnv {
+        background-color: rgb(178, 214, 171);
+
+        div:nth-of-type(2) {
+          color: #ffffff;
+          background-color: rgb(19, 165, 44);
+        }
+      }
+
+      div.sv {
+        background-color: rgb(212, 179, 232);
+
+        div:nth-of-type(2) {
+          color: #ffffff;
+          background-color: rgb(141, 63, 181);
+        }
+      }
+
+      div.outliers {
+        background-color: rgb(247, 206, 170);
+
+        div:nth-of-type(2) {
+          color: #ffffff;
+          background-color: rgb(193, 101, 20);
+        }
+      }
+
+      div.vus {
+        background-color: rgb(200, 200, 200);
+
+        div:nth-of-type(2) {
+          color: #ffffff;
+          background-color: rgb(155, 155, 155);
+        }
+      }
+    }
+
+    div.alterations {
+      margin: 0 4px 7px 4px;
+      padding: 20px 0;
+      background-color: rgb(235, 235, 235);
+
+      div {
+        display: none;
+        width: 275px !important;
+        border-radius: 4px;
+        margin: 4px;
+        font-size: 0.9em;
+        padding: 4px 8px;
+
+        &.animate-show-hide.ng-hide-remove {
+          transition: all linear 0.5s;
+        }
+
+        &.smallMutation {
+          background-color: rgb(179, 187, 232);
+          md-icon {
+            color: rgb(63, 81, 181);
+          }
+        }
+        &.cnv {
+          background-color: rgb(178, 214, 171);
+          md-icon {
+            color: rgb(19, 165, 44);
+          }
+        }
+        &.structuralVariant {
+          background-color: rgb(212, 179, 232);
+          md-icon {
+            color: rgb(141, 63, 181);
+          }
+        }
+        &.expressionOutlier {
+          background-color: rgb(247, 206, 170);
+          md-icon {
+            color: rgb(193, 101, 20);
+          }
+        }
+        &.add {
+          opacity: 0.5;
+          background-color: rgba(0, 0, 0, 0.1);
+          md-icon {
+            color: rgba(0, 0, 0, 0.25);
+          }
+          &:hover {
+            opacity: 1;
+          }
+        }
+
+        span {
+          display: none;
+          float: right;
+          md-icon {
+            font-size: 1.2em;
+            height: 12px;
+            min-height: inherit;
+            padding: 0;
+            margin: 0 -10px 0 0;
+            line-height: 0.8;
+            cursor: pointer;
+          }
+        }
+
+        &:hover {
+          span {
+            display: inline-block;
+          }
+        }
+      }
+    }
+
+    .inlineSettings {
+      margin: 10px;
+      padding: 20px;
+      background-color: white;
+    }
+    .repeat-comma {
+      span.listitem:after {
+        content: ",";
+      }
+    }
+    .repeat-comma:last-of-type {
+      span.listitem:after {
+        content: "";
+      }
+    }
+  }
+}

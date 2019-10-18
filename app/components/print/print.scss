@@ -1,21 +1,41 @@
 .print {
+  font-family: Arial, Helvetica, sans-serif;
   margin: 0 auto;
-  padding: 30px 0 0;
+  padding-top: 1mm;
   width: 258mm;
 
+  &__top-info {
+    color: #330099;
+    font-weight: 700;
+
+    &--right-align {
+      text-align: right;
+    }
+  }
+
+  &__mid-info {
+    padding: 3mm 0 0;
+
+    &--large-text {
+      font-size: 13pt;
+    }
+
+    &--small-text {
+      font-size: 10pt;
+    }
+
+    &--right-align {
+      text-align: right;
+    }
+  }
+
+  &__bottom-info {
+    font-size: 10pt;
+    font-weight: 700;
+    padding: 4mm 0 0;
+  }
+
   &__logo {
-    max-width: 30%;
-    padding: 0 0 20px;
-  }
-
-  &__title-patient {
-    font-size: 68px;
-    font-weight: lighter;
-  }
-
-  &__info {
-    font-size: 18px;
-    // padding: 0 0 8px;
-    line-height: 36px;
+    max-width: 50%;
   }
 }

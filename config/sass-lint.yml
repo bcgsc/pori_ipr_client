@@ -15,7 +15,8 @@ rules:
         - mq
   class-name-format:
     - 1
-    - convention: hyphenatedbem
+    -
+      convention: hyphenatedbem
   no-warn: 1
   no-debug: 1
   no-ids: 2

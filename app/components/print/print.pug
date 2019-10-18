@@ -1,8 +1,16 @@
-div(layout="column", layout-align="center center").print
-  div(layout="row" layout-align="space-between center").print__title
-    span.print__title-patient {{$ctrl.pog.POGID}}
-    div(layout="column", layout-align="space-between start")
-      div.print__info {{$ctrl.report.analysis.analysis_biopsy | titlecase}}
-      div.print__info {{$ctrl.report.patientInformation.tumourType | titlecase}}
-    img(src="img/gsclogo.png").print__logo
+div(layout="column").print
+  div(layout="row", layout-align="space-between start").print__top-info
+    div(layout="column", flex=30)
+      span {{$ctrl.pog.POGID}}
+      span {{$ctrl.report.createdAt | date: 'yyyy/MM/dd'}}
+    span BCCA Confidential - For Research Purposes Only
+    span(flex=30).print__top-info--right-align {{$ctrl.report.patientInformation.tumourType | titlecase}}
+  div(layout="row", layout-align="space-between start").print__mid-info
+    img(src="img/print_logo.png").print__logo
+    div(layout="column")
+      span.print__mid-info--large-text.print__mid-info--right-align Tumour Genome Analysis
+      span.print__mid-info--small-text Whole genome; Transcriptome; Somatic
+  div(layout="row", layout-align="space-between center").print__bottom-info
+    span Report version: {{$ctrl.report.reportVersion}}
+    span Knowledgebase version: {{$ctrl.report.kbVersion}}
   ui-view
