@@ -1,3 +1,5 @@
+@import '../../styles/variables';
+
 .print {
   font-family: Arial, Helvetica, sans-serif;
   margin: 0 auto;
@@ -37,5 +39,16 @@
 
   &__logo {
     max-width: 50%;
+  }
+
+  &__header {
+    background-color: #756bb1;
+    border: 1mm solid silver;
+    color: $white;
+    font-size: 16pt;
+    font-weight: 500;
+    margin: 2mm 0;
+    padding: 1mm;
+    text-align: center;
   }
 }

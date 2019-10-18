@@ -13,4 +13,5 @@ div(layout="column").print
   div(layout="row", layout-align="space-between center").print__bottom-info
     span Report version: {{$ctrl.report.reportVersion}}
     span Knowledgebase version: {{$ctrl.report.kbVersion}}
+  div.print__header {{$ctrl.pog.POGID}}
   ui-view

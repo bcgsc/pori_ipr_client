@@ -1,90 +1,69 @@
 md-content 
-  section.summary-info
-    md-subheader(ng-class="{'summary-info__header': $ctrl.print}").md-no-sticky Patient Information
+  section.patient-info
+    md-subheader.md-no-sticky.patient-info__header Patient Information
       span(ng-if="$ctrl.reportEdit").edit
         md-icon(ng-click="$ctrl.updatePatient($event)") edit
-    md-divider(ng-if="$ctrl.print")
 
-    div(layout="column", ng-class="{'summary-info__details': $ctrl.print}", flex).details
-      div(layout="row", layout-align="space-between center" ng-if="!$ctrl.print", flex)
-        div(layout="column", layout-align="start start", flex)
-          span.summary-info__key Patient ID:
-          span.summary-info__value {{$ctrl.report.patientInformation.POGID}}
+    div(layout="column", flex).details.patient-info__details
+      div(layout="row", flex).patient-info__description-container
+        dt(flex="{{$ctrl.detailSize}}", ng-init="$ctrl.detailSize=10").patient-info__description-term Patient ID:
+        dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.POGID}}
 
-        div(layout="column", layout-align="start start", flex)
-          span.summary-info__key Tumour Sample:
-          span.summary-info__value {{$ctrl.report.patientInformation.tumourSample}}
+        dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Alternate ID:
+        dd(flex).patient-info__description-details {{$ctrl.report.pog.alternate_identifier || 'N/A'}}
 
-        div(layout="column", layout-align="start start", flex)
-          span.summary-info__key Tumour Type:
-          span.summary-info__value {{$ctrl.report.patientInformation.tumourType}}
+        dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Sex:
+        dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.gender}}
 
-        div(layout="column", layout-align="center start", flex)
-          span.summary-info__key Biopsy:
-          span.summary-info__value {{$ctrl.report.analysis.analysis_biopsy || 'N/A'}}
+      div(layout="row", flex).patient-info__description-container
+        dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Tumour Sample:
+        dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.tumourSample}}
 
-      div(layout="row", layout-align="space-between center", ng-class="{'summary-info__details-row': $ctrl.print}", flex)
-        div(layout="column", layout-align="center start", flex)
-          span.summary-info__key Alternate ID
-          span.summary-info__value {{$ctrl.report.pog.alternate_identifier || 'N/A'}}
+        dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Tumour Type:
+        dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.tumourType}}
 
-        div(layout="column", layout-align="center start", flex)
-          span.summary-info__key Sex
-          span.summary-info__value {{$ctrl.report.patientInformation.gender}}
+        dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Constitutional Sample:
+        dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.constitutionalSample}}
 
-        div(layout="column", layout-align="center start", flex)
-          span.summary-info__key Biopsy Site
-          span.summary-info__value {{$ctrl.report.patientInformation.biopsySite}}
+      div(layout="row", flex).patient-info__description-container
+        dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Report Date:
+        dd(flex).patient-info__description-details {{$ctrl.report.createdAt | date: 'yyyy-MM-dd'}}
 
-        div(layout="column", layout-align="center start", flex)
-          span.summary-info__key Case Type
-          span.summary-info__value {{$ctrl.report.patientInformation.caseType}}
+        dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Case Type:
+        dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.caseType}}
 
-      div(layout="row", layout-align="space-between center", ng-class="{'summary-info__details-row': $ctrl.print}", flex)
-        div(layout="column", layout-align="center start", flex)
-          span.summary-info__key Report Date
-          span.summary-info__value {{$ctrl.report.createdAt | date: 'yyyy-MM-dd'}}
-          
-        div(layout="column", layout-align="center start", flex)
-          span.summary-info__key Study Name
-          span.summary-info__value {{$ctrl.studyName}}
+        dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Biopsy Details:
+        dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.biopsySite}}
 
-        div(layout="column", layout-align="center start", flex)
-          span.summary-info__key Physician
-          span.summary-info__value {{$ctrl.report.patientInformation.physician}}
+      div(layout="row", flex).patient-info__description-container
+        dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Physician:
+        dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.physician}}
 
-        div(layout="column", layout-align="center start", flex)
-          span.summary-info__key Age of Consent
-          span.summary-info__value {{$ctrl.report.pog.age_of_consent || 'Not Specified'}}
+        dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Age at Diagnosis:
+        dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.age}}
 
-      div(layout="row", layout-align="space-between center", ng-class="{'summary-info__details-row': $ctrl.print}", ng-if="!$ctrl.print", flex)
-        div(layout="column", layout-align="center start", flex)
-          span.summary-info__key Age at Diagnosis:
-          span.summary-info__value {{$ctrl.report.patientInformation.age}}
+        dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Age of Consent:
+        dd(flex).patient-info__description-details {{$ctrl.report.pog.age_of_consent || 'Not Specified'}}
 
-        div(layout="column", layout-align="center start", flex) 
-          span.summary-info__key Constitutional Sample:
-          span.summary-info__value {{$ctrl.report.patientInformation.constitutionalSample}}
+      div(layout="row", flex).patient-info__description-container
+        dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Protocol:
+        dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.tumourProtocol}}
 
-        div(layout="column", layout-align="center start", flex)
-          span.summary-info__key Protocol:
-          span.summary-info__value {{$ctrl.report.patientInformation.tumourProtocol}}
-        
-        div(layout="column", layout-align="center start", flex)
+        dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Biopsy:
+        dd(flex).patient-info__description-details {{$ctrl.report.analysis.analysis_biopsy || 'N/A'}}
 
+        dt(flex="{{$ctrl.detailSize}}").patient-info__description-term
+        dd(flex).patient-info__description-details
 
-  section.summary-tumour
-    md-subheader(ng-class="{'summary-tumour__header': $ctrl.print}").md-no-sticky Tumour Analysis Summary
-    md-divider(ng-if="$ctrl.print")
+  section
+    md-subheader.md-no-sticky.tumour-analysis__header Patient Tumour Analysis Summary
 
-    div(layout="column", ng-if="!$ctrl.print", flex)
+    div(layout="column", flex)
+
       div(layout="row")
         div(layout="column", flex).dataBox
           h2.title Genome Status
-            md-icon(
-              ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.genomeStatus)",
-              ng-if="!$ctrl.print"
-            ).clickable.blue help
+            md-icon(ng-if="!$ctrl.print", ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.genomeStatus)").clickable.blue help
 
           div.box
             div(layout="row", flex).heading
@@ -92,21 +71,13 @@ md-content
               div(flex) Ploidy Model
             div(layout="row", flex).content
               div(flex)
-                tumour-content(
-                  tc="$ctrl.tumourAnalysis.tumourContent",
-                  md-whiteframe="1",
-                  ng-if="$ctrl.tumourAnalysis.tumourContent !== -1 && !$ctrl.print",
-                )
-                span(ng-if="$ctrl.tumourAnalysis.tumourContent !== -1 && $ctrl.print") {{$ctrl.tumourAnalysis.tumourContent}}%
+                tumour-content(tc="$ctrl.tumourAnalysis.tumourContent", md-whiteframe="1", ng-if="$ctrl.tumourAnalysis.tumourContent !== -1")
                 span(ng-if="$ctrl.tumourAnalysis.tumourContent === -1") N/A
               div(flex) {{$ctrl.tumourAnalysis.ploidy}}
 
         div(layout="column", flex).dataBox
           h2.title Tissue Comparators
-            md-icon(
-              ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.tissueComparators)",
-              ng-if="!$ctrl.print"
-            ).clickable.blue help
+            md-icon(ng-if="!$ctrl.print", ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.tissueComparators)").clickable.blue help
 
           div.box
             div(layout="row", flex).heading
@@ -118,10 +89,7 @@ md-content
 
         div(layout="column", flex).dataBox
           h2.title Subtyping
-            md-icon(
-              ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.subtyping)",
-              ng-if="!$ctrl.print"
-            ).clickable.blue help
+            md-icon(ng-if="!$ctrl.print", ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.subtyping)").clickable.blue help
 
           div.box
             div(layout="row", flex).heading
@@ -130,14 +98,11 @@ md-content
               div(flex).editable
                 span
                   | {{($ctrl.tumourAnalysis.subtyping || "Not Specified")}}
-                  md-icon(ng-click="$ctrl.updateTumourAnalysis($event)", ng-if="$ctrl.reportEdit") edit
+                  md-icon(ng-click="$ctrl.updateTumourAnalysis($event)", ng-if="$ctrl.reportEdit && !$ctrl.print") edit
 
         div(layout="column", flex).dataBox
           h2.title Microbial Content
-            md-icon(
-              ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.microbialContent)",
-              ng-if="!$ctrl.print"
-            ).clickable.blue help
+            md-icon(ng-if="!$ctrl.print", ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.microbialContent)").clickable.blue help
 
           div.box
             div(layout="row", flex).heading
@@ -151,34 +116,28 @@ md-content
         div(layout="row")
           div(layout="column", flex=25).signatureTitle
             h2.title Mutation Signature
-              md-icon(
-                ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.mutationSignature)",
-                ng-if="!$ctrl.print"
-              ).clickable.blue.help help
+              md-icon(ng-if="!$ctrl.print", ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.mutationSignature)").clickable.blue.help help
           div(layout="column", flex=75)
             h2.title Mutation Burden
               span (in protein coding genes)
-              md-icon(
-                ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.mutationBurden)",
-                ng-if="!$ctrl.print"
-              ).clickable.blue.help help
+              md-icon(ng-if="!$ctrl.print", ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.mutationBurden)").clickable.blue.help help
         div(layout="row").header
           div(flex).container
             div(flex).signature.editable
               span(ng-if="($ctrl.tumourAnalysis.mutationSignature.length === 0 || $ctrl.tumourAnalysis.mutationSignature === null)") Nothing striking
-                md-icon(ng-click="$ctrl.updateMutationSignature($event)", ng-if="$ctrl.reportEdit") edit
+                md-icon(ng-click="$ctrl.updateMutationSignature($event)", ng-if="$ctrl.reportEdit && !$ctrl.print") edit
               span(ng-if="$ctrl.tumourAnalysis.mutationSignature.length > 0")
                 span(ng-repeat="sig in $ctrl.tumourAnalysis.mutationSignature track by $index").repeat-comma
                   span.listitem
                     span(ng-if="sig.modifier !== null") {{sig.modifier}}&nbsp;
                     span {{(sig.associations == '-') ? 'Signature '+sig.signature : sig.associations}}
                     md-tooltip Pearson: {{sig.pearson}} | NNLS: {{sig.nnls}} | Cancer Types: {{sig.cancerTypes}}
-                md-icon(ng-click="$ctrl.updateMutationSignature($event)", ng-if="$ctrl.reportEdit") edit
+                md-icon(ng-click="$ctrl.updateMutationSignature($event)", ng-if="$ctrl.reportEdit && !$ctrl.print") edit
 
           div(layout="row", flex).mutationType
             div(flex)
               | SNVs
-              md-button(md-no-ink, ng-if="!$ctrl.print").md-icon-button
+              md-button(ng-if="!$ctrl.print", md-no-ink).md-icon-button
                 md-tooltip(md-direction="bottom") Single Nucleotide Variations
                 md-icon info
             div(flex="30").total {{$ctrl.mutationSummary[0].snv}}
@@ -186,7 +145,7 @@ md-content
           div(layout="row", flex).mutationType
             div(flex)
               | Indels
-              md-button(md-no-ink, ng-if="!$ctrl.print").md-icon-button
+              md-button(ng-if="!$ctrl.print", md-no-ink).md-icon-button
                 md-tooltip(md-direction="bottom") Insertions and Deletions
                 md-icon info
             div(flex="30").total {{$ctrl.mutationSummary[0].indels}}
@@ -194,7 +153,7 @@ md-content
           div(layout="row", flex).mutationType
             div(flex)
               | SVs
-              md-button(md-no-ink, ng-if="!$ctrl.print").md-icon-button
+              md-button(ng-if="!$ctrl.print", md-no-ink).md-icon-button
                 md-tooltip(md-direction="bottom") Structural Variants
                 md-icon info
             div(flex="30").total {{$ctrl.mutationSummary[0].sv}}
@@ -210,61 +169,39 @@ md-content
               span(ng-if="comparator.sv_percentile === null") -
               span(ng-if="comparator.sv_percentile !== null && comparator.comparator === 'average'").clickable {{ comparator.sv_percentile }} (POG)
                 md-tooltip Only available with respect to POG
-    div(ng-if="$ctrl.print")
-      br
-      div(layout="row", flex)
-        p(flex) Tumour Content:
-        p(ng-if="$ctrl.tumourAnalysis.tumourContent !== -1", flex) {{$ctrl.tumourAnalysis.tumourContent}}%
-        p(ng-if="$ctrl.tumourAnalysis.tumourContent === -1", flex) N/A
-        span(flex=10)
-        p(flex) Mutation Signature:
-        div(flex)
-          p(ng-if="($ctrl.tumourAnalysis.mutationSignature.length === 0 || !$ctrl.tumourAnalysis.mutationSignature)") Nothing striking
-          span(ng-if="$ctrl.tumourAnalysis.mutationSignature.length > 0 && $ctrl.tumourAnalysis.mutationSignature")
-            span(ng-repeat="sig in $ctrl.tumourAnalysis.mutationSignature track by $index")
-              p(ng-if="sig.modifier") {{sig.modifier}}&nbsp;
-              p {{(sig.associations == '-') ? 'Signature '+sig.signature : sig.associations}}
-      
+
+    div(layout="column", flex)
+
       div(layout="row")
-        md-divider(flex=45).summary-tumour__divider
-        span(flex=10)
-        md-divider(flex=45).summary-tumour__divider
+        div(layout="column", flex).dataBox.noBottomMargin
+          h2.title Key Genomic and Transcriptomic Alterations Identified
 
-      div(layout="row", flex)
-        p(flex) Subtype:
-        p(flex) {{($ctrl.tumourAnalysis.subtyping || "Not Specified")}}
-        span(flex=10)
-        p(flex) Microbial Species:
-        p(flex) {{$ctrl.microbial.species}}
+      div(layout="row").keyAlterationsIdentified
+        div(layout="row", flex).header.sm
+          div(flex, ng-click="$ctrl.setMutationMask('smallMutation')", ng-class="{active: ($ctrl.mutationMask == 'smallMutation')}").clickable Small Mutations
+          div(flex="30") {{$ctrl.variantCounts.smallMutation}}
+        div(layout="row", flex).header.cnv
+          div(flex, ng-click="$ctrl.setMutationMask('cnv')", ng-class="{active: ($ctrl.mutationMask == 'cnv')}").clickable Copy Number Variants
+          div(flex="30") {{$ctrl.variantCounts.cnv}}
+        div(layout="row", flex).header.sv
+          div(flex, ng-click="$ctrl.setMutationMask('structuralVariant')", ng-class="{active: ($ctrl.mutationMask == 'structuralVariant')}").clickable Structural Variants
+          div(flex="30") {{$ctrl.variantCounts.structuralVariant}}
+        div(layout="row", flex).header.outliers
+          div(flex, ng-click="$ctrl.setMutationMask('expressionOutlier')", ng-class="{active: ($ctrl.mutationMask == 'expressionOutlier')}").clickable Expression Outliers
+          div(flex="30") {{$ctrl.variantCounts.expressionOutlier}}
+      div(flex).alterations
+        div(ng-repeat="variant in $ctrl.genomicAlterations | filter: $ctrl.mutationFilter.bind($ctrl)", class="{{variant.type}}", layout="row") {{variant.geneVariant}}
+          span(ng-click="$ctrl.removeAlteration($event, variant)", ng-if="$ctrl.reportEdit")
+            md-icon remove_circle
 
-    md-subheader(ng-class="{'summary-tumour__header': $ctrl.print}").md-no-sticky Key Genomic and Transcriptomic Alterations Identified
-    md-divider(ng-if="$ctrl.print")
-    div(layout="row").keyAlterationsIdentified
-      div(layout="row", flex).header.sm
-        div(flex, ng-click="$ctrl.setMutationMask('smallMutation')", ng-class="{active: ($ctrl.mutationMask == 'smallMutation')}").clickable Small Mutations
-        div(flex="30") {{$ctrl.variantCounts.smallMutation}}
-      div(layout="row", flex).header.cnv
-        div(flex, ng-click="$ctrl.setMutationMask('cnv')", ng-class="{active: ($ctrl.mutationMask == 'cnv')}").clickable Copy Number Variants
-        div(flex="30") {{$ctrl.variantCounts.cnv}}
-      div(layout="row", flex).header.sv
-        div(flex, ng-click="$ctrl.setMutationMask('structuralVariant')", ng-class="{active: ($ctrl.mutationMask == 'structuralVariant')}").clickable Structural Variants
-        div(flex="30") {{$ctrl.variantCounts.structuralVariant}}
-      div(layout="row", flex).header.outliers
-        div(flex, ng-click="$ctrl.setMutationMask('expressionOutlier')", ng-class="{active: ($ctrl.mutationMask == 'expressionOutlier')}").clickable Expression Outliers
-        div(flex="30") {{$ctrl.variantCounts.expressionOutlier}}
-    div(flex).alterations
-      div(ng-repeat="variant in $ctrl.genomicAlterations | filter: $ctrl.mutationFilter.bind($ctrl)", class="{{variant.type}}", layout="row") {{variant.geneVariant}}
-        span(ng-click="$ctrl.removeAlteration($event, variant)", ng-if="$ctrl.reportEdit")
-          md-icon remove_circle
-
-      div(ng-if="$ctrl.reportEdit", ng-click="$ctrl.addAlteration($event)", layout="row").add.clickable Add new entry
-        span
-          md-icon add_circle
+        div(ng-if="$ctrl.reportEdit", ng-click="$ctrl.addAlteration($event)", layout="row").add.clickable Add new entry
+          span
+            md-icon add_circle
 
 
-    div(flex, layout="row", layout-align="end end").keyAlterationsIdentified.margin-bottom-10
-      div(flex=10, ng-click="$ctrl.setMutationMask(null)", ng-if="$ctrl.mutationMask").margin-bottom-10.text-small.clickable View all
-      span(flex)
-      div(flex=25, layout="row").header.vus
-        div(flex) Variants of unknown significance
-        div(flex=30) {{$ctrl.variantCounts.variantsUnknown}}
+      div(flex, layout="row", layout-align="end end").keyAlterationsIdentified.margin-bottom-10
+        div(flex=10, ng-click="$ctrl.setMutationMask(null)", ng-if="$ctrl.mutationMask").margin-bottom-10.text-small.clickable View all
+        span(flex)
+        div(flex=25, layout="row").header.vus
+          div(flex) Variants of unknown significance
+          div(flex=30) {{$ctrl.variantCounts.variantsUnknown}}

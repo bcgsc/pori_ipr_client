@@ -1,56 +1,56 @@
 @import "../../../../styles/variables";
 
 @mixin print-header {
-  color: $print-title-text;
-  font-size: $header-font-size;
+  background-color: #bcbddc;
+  color: black;
+  font-size: 14pt;
+  font-weight: 700;
+  margin: 2mm 0 1mm;
+  padding: 1.5mm 1mm;
+  text-transform: uppercase;
 
   > .md-subheader-inner {
-    padding: 16px 0 8px;
+    // Override angularjs material library
+    padding: 0 !important;
   }
 }
 
 @media print {
-  .summary-info {
-    background-color: $white-background;
-
-    &__details {
-      margin: 6px 0 20px;
-    }
-
-    &__details-row {
-      padding: 8px 0;
-    }
-
+  .patient-info {
     &__header {
       @include print-header;
     }
 
-    &__value {
-      font-size: $large-body-font-size;
-      font-weight: $medium-weight;
-      padding: 0 12px 0 0;
+    &__details {
+      font-size: 9pt;
+      padding: 1mm;
     }
 
-    &__key {
-      font-size: $caption-font-size;
-      font-weight: $light-weight;
+    &__description-container {
+      margin: .5mm 0;
+    }
+
+    &__description-term {
+      font-weight: 100;
+      text-align: right;
+    }
+
+    &__description-details {
+      font-weight: 600;
+      margin: 0 1.5mm;
     }
   }
 
-  .summary-tumour {
+  .tumour-analysis {
     &__header {
       @include print-header;
-    }
-  
-    &__divider {
-      // See issue here: https://github.com/angular/material/issues/8586
-      border-top-width: 1px !important;
     }
   }
 }
 
 
 
+// old Brandon scss - beware changing things as they may have side effects
 @media screen {
   .summary {
     margin-bottom: 10px;
