@@ -1,4 +1,4 @@
-@import "../../../../styles/variables";
+@import '../../../../styles/variables';
 
 @mixin print-header {
   background-color: #bcbddc;
@@ -13,6 +13,24 @@
     // Override angularjs material library
     padding: 0 !important;
   }
+}
+
+@mixin coloured-table-category {
+  border-bottom: .1mm solid grey;
+  border-right: .1mm solid grey;
+  border-top: .1mm solid grey;
+  font-size: 10pt;
+  padding: 2mm 0 2mm 1mm;
+}
+
+@mixin coloured-table-total {
+  border-bottom: .1mm solid grey;
+  border-top: .1mm solid grey;
+  color: $white;
+  font-size: 12pt;
+  font-weight: 600;
+  padding: 2mm 0;
+  text-align: center;
 }
 
 @media print {
@@ -78,9 +96,15 @@
       padding: 2mm 0;
       text-align: center;
     }
+  }
 
+  .details {
     &--extra-small-text {
       font-size: 7pt;
+    }
+
+    &--align-center {
+      text-align: center;
     }
   }
 
@@ -91,31 +115,128 @@
     &__signature {
       background-color: #b4b4b4;
       border: .5mm solid #6e6e6e;
-      font-size: 11pt;
+      font-size: 10pt;
       font-weight: 300;
       margin: 0 1mm 1mm 0;
-      padding: 1mm 0;
+      padding: 1.4mm 0;
     }
 
     &__type {
       background-color: #c0e8fc;
-      padding: 2mm 0;
+      border-left: .1mm solid grey;
+      border-top: .1mm solid grey;
       font-size: 11pt;
       font-weight: 300;
-      border-top: .1mm solid grey;
-      border-left: .1mm solid grey;
+      padding: 2mm 0;
 
       &--dark {
-        color: $white;
         background-color: #5284b1;
+        color: $white;
+        font-size: 12pt;
       }
     }
 
     &__data {
-      display: table-row;
       background-color: #dcdcdc;
-      font-size: 10pt;
       border: .1mm solid grey;
+      display: table-row;
+      font-size: 10pt;
+    }
+
+    &__data-row {
+      border-left: .1mm solid grey;
+      padding: 1mm;
+    }
+
+    &--align-left {
+      text-align: left;
+    }
+  }
+
+  .alterations {
+    &__box {
+      &:first-child {
+        border-left: .4mm solid grey;
+      }
+
+      &:last-child {
+        border-right: .4mm solid grey;
+      }
+    }
+
+    &__header {
+      margin: 0 0 2mm;
+    }
+
+    &__category {
+      &--blue {
+        @include coloured-table-category;
+        background-color: #b3bbe8;
+      }
+
+      &--green {
+        @include coloured-table-category;
+        background-color: #b2d6ab;
+      }
+
+      &--purple {
+        @include coloured-table-category;
+        background-color: #d4b3e8;
+      }
+
+      &--orange {
+        @include coloured-table-category;
+        background-color: #f7ceaa;
+      }
+    }
+
+    &__total {
+      &--blue {
+        @include coloured-table-total;
+        background-color: #3f51b5;
+      }
+
+      &--green {
+        @include coloured-table-total;
+        background-color: #13a52c;
+      }
+
+      &--purple {
+        @include coloured-table-total;
+        background-color: #8d3fb5;
+      }
+
+      &--orange {
+        @include coloured-table-total;
+        background-color: #c16514;
+      }
+    }
+
+    &__list {
+      background-color: #ebebeb;
+      border: .5mm solid grey;
+      padding: 1mm;
+    }
+
+    &__variant {
+      display: inline-block;
+      font-size: 10pt;
+      width: 20%;
+    }
+
+    &__additional-text {
+      font-size: 10pt;
+      padding: 0 1mm 0 0;
+    }
+
+    &__additional-total {
+      background-color: #afafaf;
+      border: .5mm solid grey;
+      border-top: 0;
+      font-size: 12pt;
+      font-weight: 600;
+      padding: .5mm 8mm 0;
+      text-align: center;
     }
   }
 }
@@ -617,7 +738,7 @@
       }
     }
 
-    div.alterations {
+    div.alts {
       margin: 0 4px 7px 4px;
       padding: 20px 0;
       background-color: rgb(235, 235, 235);
