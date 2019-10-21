@@ -45,6 +45,78 @@
     &__header {
       @include print-header;
     }
+
+    &__subheader {
+      font-size: 13pt;
+      font-weight: 600;
+      margin: 1mm 0;
+      padding: 0;
+      text-transform: uppercase;
+
+      &--small {
+        font-size: 9pt;
+      }
+    }
+
+    &__full-box {
+      margin: 0 .5mm;
+    }
+
+    &__box {
+      border: 1px solid #6e6e6e;
+    }
+
+    &__box-header {
+      background-color: #b4b4b4;
+      font-size: 9pt;
+      padding: 2mm 0;
+      text-align: center;
+    }
+
+    &__box-content {
+      font-size: 9pt;
+      padding: 2mm 0;
+      text-align: center;
+    }
+
+    &--extra-small-text {
+      font-size: 7pt;
+    }
+  }
+
+  .mutation-table {
+    border-collapse: collapse;
+    text-align: center;
+
+    &__signature {
+      background-color: #b4b4b4;
+      border: .5mm solid #6e6e6e;
+      font-size: 11pt;
+      font-weight: 300;
+      margin: 0 1mm 1mm 0;
+      padding: 1mm 0;
+    }
+
+    &__type {
+      background-color: #c0e8fc;
+      padding: 2mm 0;
+      font-size: 11pt;
+      font-weight: 300;
+      border-top: .1mm solid grey;
+      border-left: .1mm solid grey;
+
+      &--dark {
+        color: $white;
+        background-color: #5284b1;
+      }
+    }
+
+    &__data {
+      display: table-row;
+      background-color: #dcdcdc;
+      font-size: 10pt;
+      border: .1mm solid grey;
+    }
   }
 }
 
