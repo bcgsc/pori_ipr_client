@@ -1,12 +1,12 @@
 @import '../../../../styles/variables';
 
 @mixin print-header {
+  margin: 2mm 0 1mm;
+  padding: 1.5mm 1mm;
   background-color: #bcbddc;
   color: black;
   font-size: 14pt;
   font-weight: 700;
-  margin: 2mm 0 1mm;
-  padding: 1.5mm 1mm;
   text-transform: uppercase;
 
   > .md-subheader-inner {
@@ -16,20 +16,20 @@
 }
 
 @mixin coloured-table-category {
-  border-bottom: .1mm solid grey;
-  border-right: .1mm solid grey;
-  border-top: .1mm solid grey;
-  font-size: 10pt;
   padding: 2mm 0 2mm 1mm;
+  border-top: .1mm solid grey;
+  border-right: .1mm solid grey;
+  border-bottom: .1mm solid grey;
+  font-size: 10pt;
 }
 
 @mixin coloured-table-total {
-  border-bottom: .1mm solid grey;
+  padding: 2mm 0;
   border-top: .1mm solid grey;
+  border-bottom: .1mm solid grey;
   color: $white;
   font-size: 12pt;
   font-weight: 600;
-  padding: 2mm 0;
   text-align: center;
 }
 
@@ -40,8 +40,8 @@
     }
 
     &__details {
-      font-size: 9pt;
       padding: 1mm;
+      font-size: 9pt;
     }
 
     &__description-container {
@@ -54,8 +54,8 @@
     }
 
     &__description-details {
-      font-weight: 600;
       margin: 0 1.5mm;
+      font-weight: 600;
     }
   }
 
@@ -65,10 +65,10 @@
     }
 
     &__subheader {
-      font-size: 13pt;
-      font-weight: 600;
       margin: 1mm 0;
       padding: 0;
+      font-size: 13pt;
+      font-weight: 600;
       text-transform: uppercase;
 
       &--small {
@@ -85,15 +85,15 @@
     }
 
     &__box-header {
+      padding: 2mm 0;
       background-color: #b4b4b4;
       font-size: 9pt;
-      padding: 2mm 0;
       text-align: center;
     }
 
     &__box-content {
-      font-size: 9pt;
       padding: 2mm 0;
+      font-size: 9pt;
       text-align: center;
     }
   }
@@ -109,25 +109,25 @@
   }
 
   .mutation-table {
-    border-collapse: collapse;
     text-align: center;
+    border-collapse: collapse;
 
     &__signature {
-      background-color: #b4b4b4;
-      border: .5mm solid #6e6e6e;
-      font-size: 10pt;
-      font-weight: 300;
       margin: 0 1mm 1mm 0;
       padding: 1.4mm 0;
+      border: .5mm solid #6e6e6e;
+      background-color: #b4b4b4;
+      font-size: 10pt;
+      font-weight: 300;
     }
 
     &__type {
-      background-color: #c0e8fc;
-      border-left: .1mm solid grey;
+      padding: 2mm 0;
       border-top: .1mm solid grey;
+      border-left: .1mm solid grey;
+      background-color: #c0e8fc;
       font-size: 11pt;
       font-weight: 300;
-      padding: 2mm 0;
 
       &--dark {
         background-color: #5284b1;
@@ -137,15 +137,15 @@
     }
 
     &__data {
-      background-color: #dcdcdc;
-      border: .1mm solid grey;
       display: table-row;
+      border: .1mm solid grey;
+      background-color: #dcdcdc;
       font-size: 10pt;
     }
 
     &__data-row {
-      border-left: .1mm solid grey;
       padding: 1mm;
+      border-left: .1mm solid grey;
     }
 
     &--align-left {
@@ -213,29 +213,29 @@
     }
 
     &__list {
-      background-color: #ebebeb;
-      border: .5mm solid grey;
       padding: 1mm;
+      border: .5mm solid grey;
+      background-color: #ebebeb;
     }
 
     &__variant {
       display: inline-block;
-      font-size: 10pt;
       width: 20%;
+      font-size: 10pt;
     }
 
     &__additional-text {
-      font-size: 10pt;
       padding: 0 1mm 0 0;
+      font-size: 10pt;
     }
 
     &__additional-total {
-      background-color: #afafaf;
+      padding: .5mm 8mm 0;
       border: .5mm solid grey;
       border-top: 0;
+      background-color: #afafaf;
       font-size: 12pt;
       font-weight: 600;
-      padding: .5mm 8mm 0;
       text-align: center;
     }
   }
