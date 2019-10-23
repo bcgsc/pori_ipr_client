@@ -10,8 +10,19 @@ genomicsummary(
   print="true"
 )
 
+br
+
+print-header(pog="$ctrl.pog", report="$ctrl.report")
+
 analyst(
   analyst-comments="$ctrl.analystComments",
+  print="true"
+)
+
+print-header(pog="$ctrl.pog", report="$ctrl.report")
+
+pathway(
+  pathway="$ctrl.pathway",
   print="true"
 )
 
@@ -19,10 +30,5 @@ therapeutic(
   pog="$ctrl.pog",
   report="$ctrl.report",
   therapeutic="$ctrl.therapeutic",
-  print="true"
-)
-
-pathway(
-  pathway="$ctrl.pathway",
   print="true"
 )

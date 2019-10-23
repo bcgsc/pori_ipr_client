@@ -4,6 +4,7 @@ import './analyst-comments.scss';
 
 const bindings = {
   pog: '<',
+  print: '<',
   report: '<',
   reportEdit: '<',
   analystComments: '<',
@@ -18,6 +19,10 @@ class AnalystCommentsComponent {
     this.$sce = $sce;
     this.PogService = PogService;
     this.AnalystCommentsService = AnalystCommentsService;
+  }
+
+  $onInit () {
+    console.log(this.analystComments);
   }
 
   // Sign The comments

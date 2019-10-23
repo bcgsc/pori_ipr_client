@@ -3,11 +3,13 @@ import uiRouter from '@uirouter/angularjs';
 import PrintComponent from './print.component';
 import GenomicPrintModule from './genomic-print/genomic-print.module';
 import ProbePrintModule from './probe-print/probe-print.module';
+import PrintHeaderModule from './print-header/print-header.module';
 
 angular.module('print', [
   uiRouter,
   GenomicPrintModule,
   ProbePrintModule,
+  PrintHeaderModule,
 ]);
 
 export default angular.module('print')

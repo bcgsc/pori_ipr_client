@@ -1,15 +1,19 @@
-section
-  md-subheader.md-primary.md-no-sticky Analyst Comments
+section.analyst
+  md-subheader.analyst__header.md-no-sticky Analyst Comments
 
-  div(layout="column").analystComments
+  div(layout="column").analystComments.analyst__comments
 
     div(flex=10)
       md-button(ng-if="$ctrl.reportEdit", ng-click="$ctrl.updateComments()").md-icon-button.edit-icon
         md-icon edit
     div(ng-bind-html="$ctrl.analystComments.comments || '<h2>Report Draft</h2> <br /> No comments yet.'")
+    div(ng-if="$ctrl.print", layout="row", layout-align="space-around center").analyst__review-box
+      div Author Review: {{$ctrl.analystComments.authorSignature.firstName[0]}}{{$ctrl.analystComments.authorSignature.lastName[0]}} {{$ctrl.analystComments.authorSignedAt | date: 'yy/MM/dd HH:mm'}}
+      div Reviewer: {{$ctrl.analystComments.reviewerSignature.firstName[0]}}{{$ctrl.analystComments.reviewerSignature.lastName[0]}} {{$ctrl.analystComments.reviewerSignedAt | date: 'yy/MM/dd HH:mm'}}
+
 
   div.smallBottom &nbsp;
-  div(layout="column", ng-show="$ctrl.analystComments !== null").layout-padding.analystSignatures
+  div(layout="column", ng-if="$ctrl.analystComments !== null && !$ctrl.print").layout-padding.analystSignatures
     div Signed By
 
     div(layout="row", md-whiteframe=1, layout-align="start start", ng-click="$ctrl.newEntry($event, 'therapeutic')").rowCard

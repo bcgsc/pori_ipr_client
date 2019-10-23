@@ -49,23 +49,20 @@ class PathwayAnalysisComponent {
     // Extract SVG element from within XML wrapper.
     const xmlSVG = this.pathway.getElementsByTagName('svg')[0];
     xmlSVG.id = 'pathway'; // Set ID that we can grapple.
-    xmlSVG.style = 'width: 100%; height: 800px;';
 
     svgImage.appendChild(
       svgImage.ownerDocument.importNode(this.pathway.documentElement, true),
     );
     
-    const panZoom = await svgPanZoom('#pathway', {
-      preventMouseEventsDefault: true,
-      enableControlIcons: !this.print,
-      controlIconsEnabled: !this.print,
-    });
-    panZoom.resize();
-    panZoom.fit();
-    panZoom.center();
-    // print report cuts off unless it's zoomed out
-    if (this.print) {
-      panZoom.zoomBy(0.8);
+    if (!this.print) {
+      const panZoom = await svgPanZoom('#pathway', {
+        preventMouseEventsDefault: true,
+        enableControlIcons: true,
+        controlIconsEnabled: true,
+      });
+      panZoom.resize();
+      panZoom.fit();
+      panZoom.center();
     }
   }
 
