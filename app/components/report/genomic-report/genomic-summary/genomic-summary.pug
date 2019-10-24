@@ -169,7 +169,7 @@ md-content
               md-button(ng-if="!$ctrl.print", md-no-ink).md-icon-button
                 md-tooltip(md-direction="bottom") Structural Variants
                 md-icon info
-            div(flex="30").total.mutation-table__type.mutation-table__type--dark {{$ctrl.mutationSummary[0].sv}}
+            div(flex="30").total.mutation-table__type.mutation-table__type--dark.mutation-table__type--right-border {{$ctrl.mutationSummary[0].sv}}
 
         div(layout="column").data.mutation-table__data
           div(layout="row", flex, ng-repeat="comparator in $ctrl.mutationSummary track by $index", ng-hide="((comparator.comparator === 'average' || comparator.comparator === null) && (!comparator.snv_percentile && !comparator.indel_percentile))")

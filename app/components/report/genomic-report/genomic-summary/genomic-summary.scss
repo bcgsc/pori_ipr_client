@@ -134,6 +134,10 @@
         color: $white;
         font-size: 12pt;
       }
+
+      &--right-border {
+        border-right: .1mm solid grey;
+      }
     }
 
     &__data {
