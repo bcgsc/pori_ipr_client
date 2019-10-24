@@ -15,7 +15,7 @@ export default angular.module('genomic', [])
         component: 'reportsTable',
         resolve: {
           rowData: ['ReportService', 'isExternalMode',
-            async (ReportService, isExternalMode) => {              
+            async (ReportService, isExternalMode) => {
               const opts = {};
 
               opts.all = true;
@@ -29,19 +29,27 @@ export default angular.module('genomic', [])
               // Remove Dustin's test reports that are missing the patient info section
               reports = reports.filter(r => r.patientInformation);
 
-              return reports.map(report => ({
-                patientID: report.pog.POGID,
-                analysisBiopsy: report.analysis.analysis_biopsy,
-                reportType: report.type === 'genomic' ? 'Genomic' : 'Targeted Gene',
-                state: report.state,
-                caseType: report.patientInformation.caseType,
-                project: report.pog.projects.map(project => project.name).sort().join(', '),
-                tumourType: report.patientInformation.tumourType,
-                reportID: report.ident,
-                date: report.createdAt,
-              }));
+              return reports.map(report => {
+                const [analyst] = report.users
+                  .filter(u => u.role === 'analyst' && !u.deletedAt)
+                  .map(u => u.user);
+                
+                return {
+                  patientID: report.pog.POGID,
+                  analysisBiopsy: report.analysis.analysis_biopsy,
+                  reportType: report.type === 'genomic' ? 'Genomic' : 'Targeted Gene',
+                  state: report.state,
+                  caseType: report.patientInformation.caseType,
+                  project: report.pog.projects.map(project => project.name).sort().join(', '),
+                  physician: report.patientInformation.physician,
+                  analyst: analyst ? `${analyst.firstName} ${analyst.lastName}` : null,
+                  tumourType: report.patientInformation.tumourType,
+                  reportID: report.ident,
+                  date: report.createdAt,
+                };
+              });
             }],
-          columnDefs: () => {
+          columnDefs: ['isExternalMode', async (isExternalMode) => {
             // enable natural sorting for the Patient ID column and make it the default
             const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
 
@@ -91,8 +99,21 @@ export default angular.module('genomic', [])
               cellRenderer: dateCellRenderer,
             }];
 
+            // Show physician to external users, analyst to internal
+            if (isExternalMode) {
+              defs.push({
+                headerName: 'Physician',
+                field: 'physician',
+              });
+            } else {
+              defs.push({
+                headerName: 'Analyst',
+                field: 'analyst',
+              });
+            }
+
             return defs;
-          },
+          }],
         },
       });
   })
