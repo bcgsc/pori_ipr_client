@@ -124,6 +124,11 @@ export default angular.module('print.genomic')
               $transition$.params().pog,
               $transition$.params().report,
             )],
+          slides: ['$transition$', 'SlidesService',
+            async ($transition$, SlidesService) => SlidesService.all(
+              $transition$.params().pog,
+              $transition$.params().report,
+            )],
         },
       });
   })

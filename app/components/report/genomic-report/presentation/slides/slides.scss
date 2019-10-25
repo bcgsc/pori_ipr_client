@@ -1,57 +1,101 @@
-section.material-section.slide.presentation {
+@mixin print-header {
+  margin: 2mm 0 1mm;
+  padding: 1.5mm 1mm;
+  background-color: #bcbddc;
+  color: black;
+  font-size: 14pt;
+  font-weight: 700;
+  text-transform: uppercase;
 
-  div.analysis-report-section {
+  > .md-subheader-inner {
+    // Override angularjs material library
+    padding: 0 !important;
+  }
+}
 
-    h3 {
-      md-icon {
-        float: right;
-      }
+@media print {
+  .print-slide {
+    &__header {
+      @include print-header;
     }
 
-    md-content > p {
-      text-align: center;
+    &__container {
+      width: 100%;
     }
 
-    span.hint {
-      font-size: 0.75em;
-      color: rgb(130,130,130);
-      padding: 4px;
-      display: inline-block;
+    &__image {
+      max-width: 970px;
+      max-height: 470px;
     }
 
-    .slide {
-      max-height: 75vh;
+    &__name {
+      width: 100%;
+      margin: 2mm 0;
+      padding: 1mm;
+      background-color: #efdaf4;
+      font-size: 12pt;
+      font-weight: 700;
+      text-transform: uppercase;
     }
+  }
+}
 
-    .add-slide {
-      margin: 10px 20px 0 20px;
-      padding-bottom: 30px;
+@media screen {
+  section.material-section.slide.presentation {
 
-      textarea {
-        border: 1px solid rgba(0,0,0,0.2);
-        background-color: rgba(0,0,0,0.03);
-        padding: 5px;
-      }
+    div.analysis-report-section {
 
-      md-input-container {
-        margin: 8px 0 4px 0;
-
-        &.name {
-          margin-top: 20px;
+      h3 {
+        md-icon {
+          float: right;
         }
       }
 
-    }
+      md-content > p {
+        text-align: center;
+      }
 
-    .edit-entry {
-      margin: 10px;
-    }
+      span.hint {
+        font-size: 0.75em;
+        color: rgb(130,130,130);
+        padding: 4px;
+        display: inline-block;
+      }
 
-    .edited {
-      font-size: 11px;
-      color: rgba(0,0,0,0.5);
-      font-style: italic;
-      margin: 25px 0 0 0;
+      .slide {
+        max-height: 75vh;
+      }
+
+      .add-slide {
+        margin: 10px 20px 0 20px;
+        padding-bottom: 30px;
+
+        textarea {
+          border: 1px solid rgba(0,0,0,0.2);
+          background-color: rgba(0,0,0,0.03);
+          padding: 5px;
+        }
+
+        md-input-container {
+          margin: 8px 0 4px 0;
+
+          &.name {
+            margin-top: 20px;
+          }
+        }
+
+      }
+
+      .edit-entry {
+        margin: 10px;
+      }
+
+      .edited {
+        font-size: 11px;
+        color: rgba(0,0,0,0.5);
+        font-style: italic;
+        margin: 25px 0 0 0;
+      }
     }
   }
 }

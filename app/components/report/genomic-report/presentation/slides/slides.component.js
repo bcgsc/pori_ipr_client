@@ -5,7 +5,7 @@ const bindings = {
   pog: '<',
   report: '<',
   slides: '<',
-  $transition$: '<',
+  print: '<',
 };
 
 class GenomicSlidesComponent {
@@ -22,6 +22,7 @@ class GenomicSlidesComponent {
   }
 
   $onInit() {
+    console.log(this.slides);
     this.new = { name: '' };
     this.addStep = 'select';
     this.progress = 0;
@@ -97,7 +98,7 @@ class GenomicSlidesComponent {
       // Add to tabs and notify user of great success
       this.$mdToast.showSimple('The slide was successfully uploaded');
       this.slides = await this.SlidesService.all(
-        this.$transition$.params().POG, this.$transition$.params().analysis_report,
+        this.pog.POGID, this.report.ident,
       );
       this.new.name = '';
       this.addStep = 'select';

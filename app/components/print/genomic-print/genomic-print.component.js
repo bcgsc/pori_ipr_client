@@ -25,6 +25,7 @@ const bindings = {
   drugTargets: '<',
   densityGraphs: '<',
   tcgaAcronyms: '<',
+  slides: '<',
 };
 
 export default {
