@@ -151,13 +151,8 @@ export default angular.module('root')
 
     $mdThemingProvider.definePalette('printGrey', printGrey);
 
-    $mdThemingProvider.theme('print')
-      .primaryPalette('blue')
-      .accentPalette('teal')
-      .warnPalette('red')
+    $mdThemingProvider.theme('default')
       .backgroundPalette('printGrey');
-
-    $mdThemingProvider.generateThemesOnDemand(true);
   })
   .config(($httpProvider) => {
     'ngInject';
