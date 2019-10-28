@@ -142,6 +142,23 @@ export default angular.module('root')
       });
     });
   })
+  .config(($mdThemingProvider) => {
+    'ngInject';
+
+    const printGrey = $mdThemingProvider.extendPalette('grey', {
+      '50': '#FFFFFF',
+    });
+
+    $mdThemingProvider.definePalette('printGrey', printGrey);
+
+    $mdThemingProvider.theme('print')
+      .primaryPalette('blue')
+      .accentPalette('teal')
+      .warnPalette('red')
+      .backgroundPalette('printGrey');
+
+    $mdThemingProvider.generateThemesOnDemand(true);
+  })
   .config(($httpProvider) => {
     'ngInject';
 
