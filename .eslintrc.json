@@ -5,6 +5,7 @@
     "node": true,
     "cypress/globals": true
   },
+  "parser": "babel-eslint",
   "parserOptions": {
     "sourceType": "module"
   },
@@ -19,6 +20,7 @@
     "VERSION": true
   },
   "plugins": [
+    "babel",
     "cypress"
   ],
   "rules": {
@@ -77,11 +79,11 @@
     "require-jsdoc": "warn",
     "no-restricted-globals": "warn",
     "no-alert": "off",
-    "prefer-destructuring": "off",
+    "prefer-destructuring": ["error", {"object": true, "array": true}],
     "no-use-before-define": ["error", {
         "functions": false
     }],
     "indent": ["error", 2, { "SwitchCase": 1 }],
-    "template-curly-spacing": ["error", "never"]
+    "template-curly-spacing": ["error", "never"],
   }
 }

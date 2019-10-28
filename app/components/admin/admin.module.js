@@ -40,7 +40,7 @@ export default angular.module('admin')
             try {
               const resp = await UserService.isAdmin();
               if (!resp) {
-                $state.go('root.home');
+                $state.go('root.reportlisting.reports');
               }
               return resp;
             } catch (err) {

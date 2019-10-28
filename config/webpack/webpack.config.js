@@ -3,6 +3,7 @@ const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const DashboardPlugin = require('webpack-dashboard/plugin');
+const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const packageFile = require('../../package.json');
 
@@ -41,7 +42,7 @@ module.exports = {
             ],
           },
           {
-            test: /\.js$/,
+            test: /\.jsx?$/,
             exclude: /node_modules/,
             use: [{
               loader: 'babel-loader',
@@ -60,6 +61,9 @@ module.exports = {
       },
     ],
   },
+  resolve: {
+    extensions: ['.js', '.jsx'],
+  },
   plugins: [
     new HtmlWebpackPlugin({
       template: path.join(__dirname, '../../app/index.pug'),
@@ -75,6 +79,7 @@ module.exports = {
     new webpack.DefinePlugin({
       VERSION: JSON.stringify(packageFile.version),
     }),
+    new MomentLocalesPlugin(),
     // new BundleAnalyzerPlugin({ openAnalyzer: false }),
   ],
   mode: 'development',

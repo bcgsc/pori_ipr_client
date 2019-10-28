@@ -105,7 +105,7 @@ export default angular.module('root')
     // Don't require a perfect URL match (trailing slashes, etc)
     $urlServiceProvider.config.strictMode(false);
     // If no path could be found, send user to 404 error
-    $urlServiceProvider.rules.otherwise({ state: 'root.reportlisting.dashboard' });
+    $urlServiceProvider.rules.otherwise({ state: 'root.reportlisting.reports' });
 
     $stateProvider
       .state('root', {

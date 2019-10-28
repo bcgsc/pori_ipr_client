@@ -8,9 +8,8 @@
   height: 100%;
   margin: 0;
   padding: 0;
-  // ! Uncomment this to enable the sidebar transition
-  // transition-duration: .3s;
-  // transition-property: width;
+  transition-duration: .3s;
+  transition-property: width;
   border-right: 1px solid $black-12;
   background-color: $white-background;
   color: $medium-emphasis;
