@@ -22,14 +22,19 @@
     }
 
     &__container {
-      background-color: $white-background;
+      background-color: $white;
+    }
+
+    &__legend {
+      width: 70%;
+      margin: 2mm 0;
     }
   }
 
   #pathway {
-    width: 115%;
+    width: 115.6%;
     height: auto;
-    margin: -14mm 0 -13mm -19.3mm;
+    margin: -14mm 0 -13mm -20mm;
   }
 }
 

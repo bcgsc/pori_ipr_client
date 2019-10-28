@@ -20,12 +20,16 @@
     }
 
     &__container {
+      display: block;
       width: 100%;
+      page-break-inside: avoid;
     }
 
     &__image {
+      display: block;
       max-width: 970px;
       max-height: 470px;
+      margin: auto;
     }
 
     &__name {
