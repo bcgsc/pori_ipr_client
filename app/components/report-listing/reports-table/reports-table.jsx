@@ -16,6 +16,7 @@ function ReportsTableComponent({ rowData, columnDefs, $state }) {
 
   const onGridReady = (params) => {
     gridApi.current = params.api;
+    gridApi.current.sizeColumnsToFit();
   };
 
   const onSelectionChanged = () => {

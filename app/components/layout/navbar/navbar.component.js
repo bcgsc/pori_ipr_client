@@ -17,7 +17,7 @@ class NavbarComponent {
     this.user = await this.UserService.me();
     this.config = CONFIG.ATTRS.name;
     this.version = VERSION;
-    this.maximized = await this.UserService.getSetting('sideBarState');
+    this.maximized = this.UserService.getSidebarState();
     this.$scope.$digest();
 
     this.$rootScope.$on('navbarToggle', () => {
