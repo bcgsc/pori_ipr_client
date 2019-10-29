@@ -26,11 +26,6 @@ export default angular.module('genomic.summary')
               $transition$.params().POG,
               $transition$.params().analysis_report,
             )],
-          genomicEvents: ['$transition$', 'GenomicEventsService',
-            async ($transition$, GenomicEventsService) => GenomicEventsService.all(
-              $transition$.params().POG,
-              $transition$.params().analysis_report,
-            )],
           mutationSummary: ['$transition$', 'MutationSummaryService',
             async ($transition$, MutationSummaryService) => MutationSummaryService.get(
               $transition$.params().POG,

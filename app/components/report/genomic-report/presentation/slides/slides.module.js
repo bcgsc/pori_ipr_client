@@ -18,10 +18,11 @@ export default angular.module('slides')
         url: '/slide',
         component: 'slides',
         resolve: {
-          slides: ['$transition$', 'SlidesService', ($transition$, SlidesService) => SlidesService.all(
-            $transition$.params().POG,
-            $transition$.params().analysis_report,
-          )],
+          slides: ['$transition$', 'SlidesService',
+            async ($transition$, SlidesService) => SlidesService.all(
+              $transition$.params().POG,
+              $transition$.params().analysis_report,
+            )],
         },
       });
   })

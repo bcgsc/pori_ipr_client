@@ -1,11 +1,13 @@
-section.pathwayAnalysis
-  md-subheader.md-primary.md-no-sticky Pathway Analysis
+section.pathwayAnalysis.pathway
+  md-subheader.md-no-sticky.pathway__header Pathway Analysis
 
-  div.md-padding
+  div.pathway__container
 
-    div.window
+    div(layout="row").window
       div(ng-if="$ctrl.reportEdit").upload
         md-icon(ng-click="$ctrl.update()") file_upload
 
-      div(id="svgContainer")
-        div(id="svgImage")
+      div(id="svgImage")
+
+  div(layout="row", layout-align="center center")
+    img(src="img/pathway_legend.png", ng-if="$ctrl.print").pathway__legend

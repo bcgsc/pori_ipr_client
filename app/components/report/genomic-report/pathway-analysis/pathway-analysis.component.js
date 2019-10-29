@@ -8,6 +8,7 @@ const bindings = {
   report: '<',
   reportEdit: '<',
   pathway: '<',
+  print: '<',
 };
 
 class PathwayAnalysisComponent {
@@ -48,20 +49,22 @@ class PathwayAnalysisComponent {
     // Extract SVG element from within XML wrapper.
     const xmlSVG = this.pathway.getElementsByTagName('svg')[0];
     xmlSVG.id = 'pathway'; // Set ID that we can grapple.
-    xmlSVG.style = 'width: 100%; height: 800px;';
+    xmlSVG.setAttribute('viewBox', '0 0 1052 744');
 
     svgImage.appendChild(
       svgImage.ownerDocument.importNode(this.pathway.documentElement, true),
     );
     
-    const panZoom = await svgPanZoom('#pathway', {
-      preventMouseEventsDefault: true,
-      enableControlIcons: true,
-      controlIconsEnabled: true,
-    });
-    panZoom.resize();
-    panZoom.fit();
-    panZoom.center();
+    if (!this.print) {
+      const panZoom = await svgPanZoom('#pathway', {
+        preventMouseEventsDefault: true,
+        enableControlIcons: true,
+        controlIconsEnabled: true,
+      });
+      panZoom.resize();
+      panZoom.fit();
+      panZoom.center();
+    }
   }
 
   /**

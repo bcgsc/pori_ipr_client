@@ -1,8 +1,6 @@
-# File Options
 files:
   merge-default-rules: false
-  include: 'webpack/**/*.s+(a|c)ss'
-# Rule Configuration
+  include: 'app/**/*.s+(a|c)ss'
 rules:
   extends-before-mixins: 2
   extends-before-declarations: 2
@@ -15,17 +13,21 @@ rules:
         - mq
   class-name-format:
     - 1
-    - convention: hyphenatedbem
+    -
+      convention: hyphenatedbem
   no-warn: 1
   no-debug: 1
   no-ids: 2
   no-important: 2
   hex-notation:
     - 2
-    - style: uppercase
+    - 
+      style: lowercase
   indentation:
     - 2
-    - size: 2
+    - 
+      size: 2
   property-sort-order:
     - 1
-    - order: smacss
+    - 
+      order: smacss

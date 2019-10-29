@@ -1,7 +1,7 @@
 section.material-section.slide.presentation
-  h1 Additional Information
+  h1(ng-if="!$ctrl.print") Additional Information
 
-  div(layout="column")
+  div(ng-if="!$ctrl.print", layout="column")
 
     div.analysis-report-section
       div(layout="column")
@@ -44,3 +44,10 @@ section.material-section.slide.presentation
           span(flex)
           md-button(ng-click="$ctrl.initiateUpload()", ng-disabled="$ctrl.addStep !== 'upload'").md-primary.md-raised Upload
           span(flex)
+
+
+  md-subheader(ng-if="$ctrl.print").print-slide__header.md-no-sticky Slides
+  div(layout="column", layout-align="space-around center")
+    div(ng-repeat="slide in ::$ctrl.slides track by $index", layout="column", layout-align="space-around center").print-slide__container
+      h3.print-slide__name {{::slide.name}}
+      img(data-ng-src="data:{{::slide.object_type}};base64,{{::slide.object}}").print-slide__image

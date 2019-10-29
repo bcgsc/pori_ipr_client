@@ -19,7 +19,6 @@ import KeycloakService from './services/management/keycloak.service';
 import TumourAnalysisService from './services/reports/summary/tumour-analysis.service';
 import PatientInformationService from './services/reports/summary/patient-information.service';
 import GenomicAlterationsService from './services/reports/summary/genomic-alterations.service';
-import GenomicEventsService from './services/reports/summary/genomic-events.service';
 import VariantCountsService from './services/reports/summary/variant-counts.service';
 import MutationSummaryService from './services/reports/summary/mutation-summary.service';
 import ProbeTargetService from './services/reports/summary/probe-target.service';
@@ -69,7 +68,6 @@ export default angular.module('root')
   .service('TumourAnalysisService', TumourAnalysisService)
   .service('PatientInformationService', PatientInformationService)
   .service('GenomicAlterationsService', GenomicAlterationsService)
-  .service('GenomicEventsService', GenomicEventsService)
   .service('VariantCountsService', VariantCountsService)
   .service('MutationSummaryService', MutationSummaryService)
   .service('ProbeTargetService', ProbeTargetService)
@@ -143,6 +141,18 @@ export default angular.module('root')
         $rootScope.showLoader = false;
       });
     });
+  })
+  .config(($mdThemingProvider) => {
+    'ngInject';
+
+    const printGrey = $mdThemingProvider.extendPalette('grey', {
+      '50': '#FFFFFF',
+    });
+
+    $mdThemingProvider.definePalette('printGrey', printGrey);
+
+    $mdThemingProvider.theme('default')
+      .backgroundPalette('printGrey');
   })
   .config(($httpProvider) => {
     'ngInject';

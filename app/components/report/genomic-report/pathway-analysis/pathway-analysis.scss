@@ -1,36 +1,77 @@
-section.pathwayAnalysis {
+@import '../../../../styles/variables';
 
-  .upload {
-    padding: 10px 0 0 10px;
+@mixin print-header {
+  margin: 2mm 0 1mm;
+  padding: 1.5mm 1mm;
+  background-color: #bcbddc;
+  color: black;
+  font-size: 14pt;
+  font-weight: 700;
+  text-transform: uppercase;
 
-    md-icon {
-      position: absolute;
-      cursor: pointer;
-      background-color: rgb(255,255,255);
+  > .md-subheader-inner {
+    // Override angularjs material library
+    padding: 0 !important;
+  }
+}
 
-      &:hover {
-        color: rgb(63,81,181);
-      }
+@media print {
+  .pathway {
+    &__header {
+      @include print-header;
+    }
+
+    &__container {
+      background-color: $white;
+    }
+
+    &__legend {
+      width: 70%;
+      margin: 2mm 0;
     }
   }
 
-  .window {
-    min-height: 400px;
-    width: 100%;
-    background-color: rgb(255,255,255);
+  #pathway {
+    width: 115.6%;
+    height: auto;
+    margin: -14mm 0 -13mm -20mm;
   }
-
-
 }
 
-md-dialog.pathway.edit {
+@media screen {
+  section.pathwayAnalysis {
+    .upload {
+      padding: 10px 0 0 10px;
 
-  div.dropZone {
-    background-color: rgb(245,245,245);
-    border: 2px solid rgb(235,235,235);
-    color: rgb(140,140,140);
-    padding: 25px 15px;
-    text-align: center;
+      md-icon {
+        position: absolute;
+        background-color: rgb(255,255,255);
+        cursor: pointer;
+
+        &:hover {
+          color: rgb(63,81,181);
+        }
+      }
+    }
+
+    .window {
+      min-height: 400px;
+      background-color: rgb(255,255,255);
+    }
+
+    #pathway {
+      width: 100%;
+      height: 800px;
+    }
   }
 
+  md-dialog.pathway.edit {
+    div.dropZone {
+      padding: 25px 15px;
+      border: 2px solid rgb(235,235,235);
+      background-color: rgb(245,245,245);
+      color: rgb(140,140,140);
+      text-align: center;
+    }
+  }
 }

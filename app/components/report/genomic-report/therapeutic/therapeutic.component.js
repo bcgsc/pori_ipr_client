@@ -8,6 +8,7 @@ const bindings = {
   report: '<',
   reportEdit: '<',
   therapeutic: '<',
+  print: '<',
 };
 
 class TherapeuticComponent {
