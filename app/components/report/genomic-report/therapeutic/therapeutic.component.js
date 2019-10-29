@@ -23,6 +23,7 @@ class TherapeuticComponent {
   }
 
   $onInit() {
+    console.log(this.print);
     this.therapeuticGrouped = {
       therapeutic: [],
       chemoresistance: [],

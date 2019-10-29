@@ -1,6 +1,8 @@
 import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
+import { react2angular } from 'react2angular';
 import GenomicPrintComponent from './genomic-print.component';
+import TherapeuticReactComponent from '../../report/genomic-report/therapeutic/therapeutic';
 
 angular.module('print.genomic', [
   uiRouter,
@@ -8,6 +10,7 @@ angular.module('print.genomic', [
 
 export default angular.module('print.genomic')
   .component('genomicprint', GenomicPrintComponent)
+  .component('therapeuticReact', react2angular(TherapeuticReactComponent))
   .config(($stateProvider) => {
     'ngInject';
 
@@ -129,6 +132,14 @@ export default angular.module('print.genomic')
               $transition$.params().pog,
               $transition$.params().report,
             )],
+          therapeuticRowData: ['$transition$', 'TherapeuticService',
+            async ($transition$, TherapeuticService) => TherapeuticService.all(
+              $transition$.params().pog,
+              $transition$.params().report,
+            )],
+          therapeuticColumnDefs: ['therapeuticRowData',
+            async (therapeuticRowData) => Object.keys(therapeuticRowData.shift())
+          ],
         },
       });
   })

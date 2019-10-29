@@ -26,6 +26,8 @@ const bindings = {
   densityGraphs: '<',
   tcgaAcronyms: '<',
   slides: '<',
+  therapeuticRowData: '<',
+  therapeuticColumnDefs: '<',
 };
 
 export default {
