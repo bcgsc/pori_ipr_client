@@ -5,12 +5,13 @@ import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-material.css';
 
+import './therapeutic.scss';
+
 /**
  * @param {Object} rowData Row data to display in table
  * @return {*} JSX
  */
 function TherapeuticTableComponent({ therapeuticRowData, therapeuticColumnDefs }) {
-  console.log(therapeuticRowData);
   const gridApi = useRef();
 
   const onGridReady = (params) => {
@@ -24,14 +25,16 @@ function TherapeuticTableComponent({ therapeuticRowData, therapeuticColumnDefs }
     filter: false,
   };
 
+  const domLayout = 'autoHeight';
+
   return (
-    <div className="ag-theme-material reports-table__container">
+    <div className="ag-theme-material therapeutic-table__container">
       <AgGridReact
         columnDefs={therapeuticColumnDefs}
         rowData={therapeuticRowData}
-        pagination={false}
         defaultColDef={defaultColDef}
         onGridReady={onGridReady}
+        domLayout={domLayout}
       />
     </div>
   );

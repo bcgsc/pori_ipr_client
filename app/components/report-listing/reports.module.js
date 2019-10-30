@@ -29,7 +29,7 @@ export default angular.module('genomic', [])
               // Remove Dustin's test reports that are missing the patient info section
               reports = reports.filter(r => r.patientInformation);
 
-              return reports.map(report => {
+              return reports.map((report) => {
                 const [analyst] = report.users
                   .filter(u => u.role === 'analyst' && !u.deletedAt)
                   .map(u => u.user);
