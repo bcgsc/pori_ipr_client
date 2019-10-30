@@ -22,7 +22,6 @@ class GenomicSlidesComponent {
   }
 
   $onInit() {
-    console.log(this.slides);
     this.new = { name: '' };
     this.addStep = 'select';
     this.progress = 0;
