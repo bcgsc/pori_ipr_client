@@ -65,17 +65,20 @@ function TherapeuticTableComponent({ therapeuticRowData }) {
           headerName: `${col.charAt(0).toUpperCase()}${col.slice(1)}`,
           field: col,
           cellRenderer: (params) => {
-            const gui = document.createElement('div');
+            const gui = document.createElement('span');
             gui.innerHTML = params.data[col].join('</br>');
             return gui;
           },
           autoHeight: true,
+          cellClass: 'cell-wrap-text',
         });
       } else {
         therapeuticColDefs.push({
           // Split the only header with 2 words
           headerName: col === 'targetContext' ? 'Target Context' : `${col.charAt(0).toUpperCase()}${col.slice(1)}`,
           field: col,
+          autoHeight: true,
+          cellClass: 'cell-wrap-text',
         });
       }
     });
@@ -90,16 +93,19 @@ function TherapeuticTableComponent({ therapeuticRowData }) {
           headerName: `${col.charAt(0).toUpperCase()}${col.slice(1)}`,
           field: col,
           cellRenderer: (params) => {
-            const gui = document.createElement('div');
+            const gui = document.createElement('span');
             gui.innerHTML = params.data.biomarker.join('</br>');
             return gui;
           },
           autoHeight: true,
+          cellClass: 'cell-wrap-text',
         });
       } else {
         chemoresistanceColDefs.push({
           headerName: `${col.charAt(0).toUpperCase()}${col.slice(1)}`,
           field: col,
+          autoHeight: true,
+          cellClass: 'cell-wrap-text',
         });
       }
     });
