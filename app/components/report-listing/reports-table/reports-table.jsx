@@ -54,9 +54,9 @@ function ReportsTableComponent({ rowData, columnDefs, $state }) {
 }
 
 ReportsTableComponent.propTypes = {
-  rowData: PropTypes.array.isRequired,
-  columnDefs: PropTypes.array.isRequired,
-  $state: PropTypes.object.isRequired,
+  rowData: PropTypes.arrayOf(PropTypes.object).isRequired,
+  columnDefs: PropTypes.arrayOf(PropTypes.object).isRequired,
+  $state: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 export default ReportsTableComponent;

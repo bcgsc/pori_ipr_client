@@ -133,31 +133,10 @@ export default angular.module('print.genomic')
               $transition$.params().report,
             )],
           therapeuticRowData: ['$transition$', 'TherapeuticService',
-            async ($transition$, TherapeuticService) => {
-              const rowData = await TherapeuticService.all(
-                $transition$.params().pog,
-                $transition$.params().report,
-              );
-              const rows = rowData.map(({
-                createdAt, ident, rank, resistance, targetContext, type, updatedAt, ...keepRow
-              }) => keepRow);
-
-              return rows.map((row) => {
-                row.target = row.target.map(({ geneVar }) => geneVar).join(', ');
-                return row;
-              });
-            }],
-          therapeuticColumnDefs: ['therapeuticRowData', async (therapeuticRowData) => {
-            const columnNames = Object.keys(therapeuticRowData[0]);
-            const columns = [];
-            columnNames.forEach((col) => {
-              columns.push({
-                headerName: col,
-                field: col,
-              });
-            });
-            return columns;
-          }],
+            async ($transition$, TherapeuticService) => TherapeuticService.all(
+              $transition$.params().pog,
+              $transition$.params().report,
+            )],
         },
       });
   })
