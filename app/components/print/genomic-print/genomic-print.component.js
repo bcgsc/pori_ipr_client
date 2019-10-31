@@ -27,7 +27,6 @@ const bindings = {
   tcgaAcronyms: '<',
   slides: '<',
   therapeuticRowData: '<',
-  therapeuticColumnDefs: '<',
 };
 
 export default {
