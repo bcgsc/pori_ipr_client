@@ -33,6 +33,11 @@ function TherapeuticTableComponent(props) {
     filter: false,
   };
 
+  const overlayNoRowsTemplate = emptyText => (
+    `<span>No ${emptyText} was found</span>`
+  );
+  
+
   const domLayout = 'autoHeight';
 
   if (therapeuticRowData.length) {
@@ -124,6 +129,7 @@ function TherapeuticTableComponent(props) {
           rowData={therapeuticRowData}
           defaultColDef={defaultColDef}
           onGridReady={onGridReady}
+          overlayNoRowsTemplate={overlayNoRowsTemplate('therapeutic options data')}
           domLayout={domLayout}
         />
       </div>
@@ -134,6 +140,7 @@ function TherapeuticTableComponent(props) {
           rowData={chemoresistanceRowData}
           defaultColDef={defaultColDef}
           onGridReady={onGridReady}
+          overlayNoRowsTemplate={overlayNoRowsTemplate('chemoresistance data')}
           domLayout={domLayout}
         />
       </div>
