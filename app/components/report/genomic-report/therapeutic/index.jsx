@@ -8,10 +8,14 @@ import 'ag-grid-community/dist/styles/ag-theme-material.css';
 import './therapeutic.scss';
 
 /**
- * @param {Object} rowData Row data to display in table
+ * @param {object} props props
+ * @property {array} therapeuticRowData therapeutic and chemoresistance row data
  * @return {*} JSX
  */
-function TherapeuticTableComponent({ therapeuticRowData }) {
+function TherapeuticTableComponent(props) {
+  let {
+    therapeuticRowData,
+  } = props;
   let chemoresistanceRowData;
   const therapeuticColDefs = [];
   const chemoresistanceColDefs = [];

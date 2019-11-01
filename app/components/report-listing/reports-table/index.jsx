@@ -5,13 +5,22 @@ import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-material.css';
 
-import './reports-table.scss';
+import './index.scss';
 
 /**
- * @param {Object} rowData Row data to display in table
+ * @param {object} props props
+ * @property {array} props.rowData table row data
+ * @property {array} props.columnDefs column definitions for ag-grid
+ * @property {object} props.$state angularjs state service
  * @return {*} JSX
  */
-function ReportsTableComponent({ rowData, columnDefs, $state }) {
+function ReportsTableComponent(props) {
+  const {
+    rowData,
+    columnDefs,
+    $state,
+  } = props;
+
   const gridApi = useRef();
 
   const onGridReady = (params) => {

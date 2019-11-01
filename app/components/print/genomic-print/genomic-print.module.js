@@ -2,7 +2,7 @@ import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
 import { react2angular } from 'react2angular';
 import GenomicPrintComponent from './genomic-print.component';
-import TherapeuticReactComponent from '../../report/genomic-report/therapeutic/therapeutic';
+import TherapeuticReactComponent from '../../report/genomic-report/therapeutic';
 
 angular.module('print.genomic', [
   uiRouter,
