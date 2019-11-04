@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 import { AgGridReact } from 'ag-grid-react';
+import omit from 'lodash.omit';
 
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-material.css';
@@ -16,9 +17,10 @@ function TherapeuticTableComponent(props) {
   let {
     therapeuticRowData,
   } = props;
-  let chemoresistanceRowData;
-  const therapeuticColDefs = [];
-  const chemoresistanceColDefs = [];
+
+  let chemoresistanceRowData = [];
+  let therapeuticColDefs = [];
+  let chemoresistanceColDefs = [];
 
   const gridApi = useRef();
 
@@ -37,8 +39,44 @@ function TherapeuticTableComponent(props) {
     `<span>No ${emptyText} was found</span>`
   );
   
-
   const domLayout = 'autoHeight';
+
+  const filterRows = (rowData, type, omitFields) => {
+    rowData = rowData.filter(
+      row => row.type === type,
+    );
+    return omit(rowData, omitFields);
+  };
+
+  const makeColDefs = (columnNames, breakCols) => {
+    const returnColDefs = [];
+
+    columnNames.forEach((col) => {
+      if (breakCols.includes(col)) {
+        returnColDefs.push({
+          headerName: `${col.charAt(0).toUpperCase()}${col.slice(1)}`,
+          field: col,
+          cellRenderer: (params) => {
+            const gui = document.createElement('span');
+            gui.innerHTML = params.data[col].join('</br>');
+            return gui;
+          },
+          autoHeight: true,
+          cellClass: 'cell-wrap-text',
+        });
+      } else {
+        returnColDefs.push({
+          // Split the only header with 2 words
+          headerName: col === 'targetContext' ? 'Target Context' : `${col.charAt(0).toUpperCase()}${col.slice(1)}`,
+          field: col,
+          autoHeight: true,
+          cellClass: 'cell-wrap-text',
+        });
+      }
+    });
+    
+    return returnColDefs;
+  };
 
   if (therapeuticRowData.length) {
     // target and biomarker are objects and need to be strings to be displayed w/ag-grid
@@ -52,72 +90,40 @@ function TherapeuticTableComponent(props) {
       return row;
     });
 
-    // Chemoresistance table data setup
-    chemoresistanceRowData = therapeuticRowData.filter(
-      row => row.type === 'chemoresistance',
-    ).map(({
-      createdAt, ident, rank, target, targetContext, type, updatedAt, ...keepRow
-    }) => keepRow);
+    chemoresistanceRowData = filterRows(
+      therapeuticRowData,
+      'chemoresistance',
+      [
+        'createdAt',
+        'ident',
+        'rank',
+        'resistance',
+        'type',
+        'updatedAt',
+      ],
+    );
 
-    // Therapeutic table data setup
-    therapeuticRowData = therapeuticRowData.filter(
-      row => row.type === 'therapeutic',
-    ).map(({
-      createdAt, ident, rank, resistance, type, updatedAt, ...keepRow
-    }) => keepRow);
+    therapeuticRowData = filterRows(
+      therapeuticRowData,
+      'therapeutic',
+      [
+        'createdAt',
+        'ident',
+        'rank',
+        'target',
+        'targetContext',
+        'type',
+        'updatedAt',
+      ],
+    );
 
-    const therapeuticColumnNames = Object.keys(therapeuticRowData[0]);
-
-    therapeuticColumnNames.forEach((col) => {
-      if (col === 'biomarker' || col === 'target') {
-        therapeuticColDefs.push({
-          headerName: `${col.charAt(0).toUpperCase()}${col.slice(1)}`,
-          field: col,
-          cellRenderer: (params) => {
-            const gui = document.createElement('span');
-            gui.innerHTML = params.data[col].join('</br>');
-            return gui;
-          },
-          autoHeight: true,
-          cellClass: 'cell-wrap-text',
-        });
-      } else {
-        therapeuticColDefs.push({
-          // Split the only header with 2 words
-          headerName: col === 'targetContext' ? 'Target Context' : `${col.charAt(0).toUpperCase()}${col.slice(1)}`,
-          field: col,
-          autoHeight: true,
-          cellClass: 'cell-wrap-text',
-        });
-      }
-    });
+    const therapeuticColNames = Object.keys(therapeuticRowData[0]);
+    therapeuticColDefs = makeColDefs(therapeuticColNames, ['biomarker', 'target']);
   }
 
   if (chemoresistanceRowData.length) {
-    const chemoresistanceColumnNames = Object.keys(chemoresistanceRowData[0]);
-
-    chemoresistanceColumnNames.forEach((col) => {
-      if (col === 'biomarker') {
-        chemoresistanceColDefs.push({
-          headerName: `${col.charAt(0).toUpperCase()}${col.slice(1)}`,
-          field: col,
-          cellRenderer: (params) => {
-            const gui = document.createElement('span');
-            gui.innerHTML = params.data.biomarker.join('</br>');
-            return gui;
-          },
-          autoHeight: true,
-          cellClass: 'cell-wrap-text',
-        });
-      } else {
-        chemoresistanceColDefs.push({
-          headerName: `${col.charAt(0).toUpperCase()}${col.slice(1)}`,
-          field: col,
-          autoHeight: true,
-          cellClass: 'cell-wrap-text',
-        });
-      }
-    });
+    const chemoresistanceColNames = Object.keys(chemoresistanceRowData[0]);
+    chemoresistanceColDefs = makeColDefs(chemoresistanceColNames, ['biomarker']);
   }
 
   return (
