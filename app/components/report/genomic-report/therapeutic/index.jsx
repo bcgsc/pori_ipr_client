@@ -41,12 +41,8 @@ function TherapeuticTableComponent(props) {
   
   const domLayout = 'autoHeight';
 
-  const filterRows = (rowData, type, omitFields) => {
-    rowData = rowData.filter(
-      row => row.type === type,
-    );
-    return omit(rowData, omitFields);
-  };
+  const filterRows = (rowData, type, omitFields) => rowData.filter(row => row.type === type)
+    .map(row => omit(row, omitFields));
 
   const makeColDefs = (columnNames, breakCols) => {
     const returnColDefs = [];
@@ -97,7 +93,8 @@ function TherapeuticTableComponent(props) {
         'createdAt',
         'ident',
         'rank',
-        'resistance',
+        'target',
+        'targetContext',
         'type',
         'updatedAt',
       ],
@@ -110,8 +107,7 @@ function TherapeuticTableComponent(props) {
         'createdAt',
         'ident',
         'rank',
-        'target',
-        'targetContext',
+        'resistance',
         'type',
         'updatedAt',
       ],
