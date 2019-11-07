@@ -58,7 +58,7 @@ function TherapeuticTableComponent(props) {
             return gui;
           },
           autoHeight: true,
-          cellClass: 'cell-wrap-text',
+          cellClass: ['cell-wrap-text', 'cell-line-height'],
         });
       } else {
         returnColDefs.push({
@@ -66,7 +66,7 @@ function TherapeuticTableComponent(props) {
           headerName: col === 'targetContext' ? 'Target Context' : `${col.charAt(0).toUpperCase()}${col.slice(1)}`,
           field: col,
           autoHeight: true,
-          cellClass: 'cell-wrap-text',
+          cellClass: ['cell-wrap-text', 'cell-line-height'],
         });
       }
     });
