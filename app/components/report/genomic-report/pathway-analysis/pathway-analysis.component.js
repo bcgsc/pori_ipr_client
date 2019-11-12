@@ -47,9 +47,9 @@ class PathwayAnalysisComponent {
     this.pathway = new DOMParser().parseFromString(svg, 'application/xml');
 
     // Extract SVG element from within XML wrapper.
-    const xmlSVG = this.pathway.getElementsByTagName('svg')[0];
+    const [xmlSVG] = this.pathway.getElementsByTagName('svg');
     xmlSVG.id = 'pathway'; // Set ID that we can grapple.
-    xmlSVG.setAttribute('viewBox', '0 0 1052 744');
+    xmlSVG.setAttribute('viewBox', '40 40 975 693');
 
     svgImage.appendChild(
       svgImage.ownerDocument.importNode(this.pathway.documentElement, true),
