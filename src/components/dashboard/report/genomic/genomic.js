@@ -1,4 +1,4 @@
-app.controller('controller.dashboard.report.genomic', 
+app.controller('controller.dashboard.report.genomic',
   ['_', '$q', '$scope', '$state', '$timeout', '$window', 'api.pog', 'canEdit', 'pog', 'report', '$mdDialog', '$mdToast',
   (_, $q, $scope, $state, $timeout, $window, $pog, canEdit, pog, report, $mdDialog, $mdToast) => {
 
@@ -10,7 +10,7 @@ app.controller('controller.dashboard.report.genomic',
     // State go!
     $window.open($state.href('print.POG.report.genomic',{POG: pog.POGID, analysis_report: report.ident}), '_blank');
   };
-  
+
   $scope.sections = [
     {
       name: 'Analyst Comments',
@@ -93,14 +93,6 @@ app.controller('controller.dashboard.report.genomic',
       children: []
     },
     {
-      name: 'History',
-      state: 'history',
-      meta: true,
-      showChildren: false,
-      clinician: false,
-      children: []
-    },
-    {
       name: 'Report Settings',
       state: 'meta',
       meta: true,
@@ -124,7 +116,7 @@ app.controller('controller.dashboard.report.genomic',
   };
 
   $scope.goToReportSection = (goto) => {
-    
+
     $state.go('dashboard.reports.pog.report.genomic.' + goto);
-  };  
+  };
 }]);
