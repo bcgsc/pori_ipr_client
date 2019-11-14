@@ -1,58 +1,57 @@
 section.therapeutic-targets
   div(layout="column", flex)
+    md-subheader.md-no-sticky Therapeutic Targets
+    div(sv-root, sv-part="vm.therapeuticGrouped.therapeutic", sv-on-sort="vm.updateSorting($partTo)")
+      div(layout="row", md-whiteframe=1, ng-repeat="th in vm.therapeuticGrouped.therapeutic track by $index", sv-element).row-card
+        div(flex=25, layout="column")
+          h5 Drug Target
+          div(flex, layout="row")
+          span(ng-if="th.target.length !== 0")
+            div(ng-repeat="target in th.target") {{target.geneVar}}
+          span.context {{th.targetContext}}
 
-  h2.title Potential Therapeutic Targets
-  div(sv-root, sv-part="vm.therapeuticGrouped.therapeutic", sv-on-sort="vm.updateSorting($partTo)")
-    div(layout="row", md-whiteframe=1, ng-repeat="th in vm.therapeuticGrouped.therapeutic track by $index", sv-element).row-card
-      div(flex=25, layout="column")
-        h5 Drug Target
-        div(flex, layout="row")
-        span(ng-if="th.target.length !== 0")
-          div(ng-repeat="target in th.target") {{target.geneVar}}
-        span.context {{th.targetContext}}
+        div(flex=30, layout="column")
+          h5 Biomarker
+          div(layout="column").markers
+          div(ng-repeat="marker in th.biomarker", layout="row")
+            div(ng-if="marker.entry").entry {{marker.entry}}
+            div(layout="column").context
+            span(ng-repeat="c in marker.context") {{c}}
 
-      div(flex=30, layout="column")
-        h5 Biomarker
-        div(layout="column").markers
-        div(ng-repeat="marker in th.biomarker", layout="row")
-          div(ng-if="marker.entry").entry {{marker.entry}}
-          div(layout="column").context
-          span(ng-repeat="c in marker.context") {{c}}
+        div(flex)
+          h5 Notes
+          span.line-break-preserve {{th.notes}}
+        div(layout="column", layout-align="start start").options
+          div
+          md-icon(ng-if="vm.reportEdit", ng-click="vm.edit($event, th)") edit
+          div
+          md-icon(ng-if="vm.reportEdit", sv-handle) drag_handle
 
-      div(flex)
-        h5 Notes
-        span.line-break-preserve {{th.notes}}
-      div(layout="column", layout-align="start start").options
-        div
-        md-icon(ng-if="vm.reportEdit", ng-click="vm.edit($event, th)") edit
-        div
-        md-icon(ng-if="vm.reportEdit", sv-handle) drag_handle
+      div(ng-if="vm.reportEdit", layout="row", md-whiteframe=1, layout-align="center center", ng-click="vm.newEntry($event, 'therapeutic')").rowCard.clickable.new
+        div New Entry
 
-    div(ng-if="vm.reportEdit", layout="row", md-whiteframe=1, layout-align="center center", ng-click="vm.newEntry($event, 'therapeutic')").rowCard.clickable.new
-      div New Entry
+    md-subheader.md-no-sticky Potential Chemoresistance
+    div(sv-root, sv-part="vm.therapeuticGrouped.chemoresistance", sv-on-sort="vm.updateSorting($partTo)")
+      div(layout="row", md-whiteframe=1, ng-repeat="ch in vm.therapeuticGrouped.chemoresistance track by $index", sv-element).row-card
+        div(flex=25, layout="column")
+          h5 Resistance To
+          div(flex, layout="row")
+          span {{ch.resistance}}
 
-  h2(style="margin-top: 15px;").title Potential Chemoresistance
-  div(sv-root, sv-part="vm.therapeuticGrouped.chemoresistance", sv-on-sort="vm.updateSorting($partTo)")
-    div(layout="row", md-whiteframe=1, ng-repeat="ch in vm.therapeuticGrouped.chemoresistance track by $index", sv-element).row-card
-      div(flex=25, layout="column")
-        h5 Resistance To
-        div(flex, layout="row")
-        span {{ch.resistance}}
-
-      div(flex=30, layout="column")
-        h5 Biomarker
-        div(layout="column").markers
-        div(ng-repeat="marker in ch.biomarker", layout="row")
-          div(ng-if="marker.entry").entry {{marker.entry}}
-          div(layout="column").context
-          span(ng-repeat="c in marker.context") {{c}}
-      div(flex)
-        h5 Notes
-        span.line-break-preserve {{ch.notes}}
-      div(layout="column", layout-align="start start").options
-        div
-        md-icon(ng-if="vm.reportEdit", ng-click="vm.edit($event, ch)") edit
-        div
-        md-icon(ng-if="vm.reportEdit", sv-handle) drag_handle
-    div(ng-if="vm.reportEdit", layout="row", md-whiteframe=1, layout-align="center center", ng-click="vm.newEntry($event, 'chemoresistance')").row-card.clickable.new
-      div New Entry
+        div(flex=30, layout="column")
+          h5 Biomarker
+          div(layout="column").markers
+          div(ng-repeat="marker in ch.biomarker", layout="row")
+            div(ng-if="marker.entry").entry {{marker.entry}}
+            div(layout="column").context
+            span(ng-repeat="c in marker.context") {{c}}
+        div(flex)
+          h5 Notes
+          span.line-break-preserve {{ch.notes}}
+        div(layout="column", layout-align="start start").options
+          div
+          md-icon(ng-if="vm.reportEdit", ng-click="vm.edit($event, ch)") edit
+          div
+          md-icon(ng-if="vm.reportEdit", sv-handle) drag_handle
+      div(ng-if="vm.reportEdit", layout="row", md-whiteframe=1, layout-align="center center", ng-click="vm.newEntry($event, 'chemoresistance')").row-card.clickable.new
+        div New Entry

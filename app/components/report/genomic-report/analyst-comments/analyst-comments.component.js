@@ -21,10 +21,6 @@ class AnalystCommentsComponent {
     this.AnalystCommentsService = AnalystCommentsService;
   }
 
-  $onInit () {
-    console.log(this.analystComments);
-  }
-
   // Sign The comments
   async sign(role) {
     const resp = await this.AnalystCommentsService.sign(this.pog.POGID, this.report.ident, role);

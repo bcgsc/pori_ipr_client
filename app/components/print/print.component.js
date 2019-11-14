@@ -8,14 +8,20 @@ const bindings = {
 
 class PrintComponent {
   /* @ngInject */
-  constructor($window) {
+  constructor($window, $timeout) {
     this.$window = $window;
+    this.$timeout = $timeout;
   }
 
   $onInit() {
     // This looks odd but it's the only way to simulate a postLink lifecycle method
     // Where all the template is bound to variables
-    angular.element(() => this.$window.print());
+    angular.element(
+      this.$timeout(
+        () => this.$window.print(),
+        1000,
+      ),
+    );
   }
 }
 

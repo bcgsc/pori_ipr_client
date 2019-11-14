@@ -1,5 +1,39 @@
 @import '../../../../styles/variables';
 
+@mixin print-header {
+  margin: 2mm 0 1mm;
+  padding: 1.5mm 1mm;
+  background-color: #bcbddc;
+  color: black;
+  font-size: 14pt;
+  font-weight: 700;
+  text-transform: uppercase;
+
+  > .md-subheader-inner {
+    // Override angularjs material library
+    padding: 0 !important;
+  }
+}
+
+.cell-wrap-text {
+  white-space: normal;
+}
+
+.cell-line-height {
+  line-height: 26px !important;
+}
+
+.therapeutic-table {
+  &__container {
+    width: 100%;
+    padding: 1mm 0 6mm;
+  }
+
+  &__title {
+    @include print-header;
+  }
+}
+
 .therapeutic-targets {
   .title {
     margin-bottom: 7px !important;

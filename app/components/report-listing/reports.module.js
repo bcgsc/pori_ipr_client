@@ -2,7 +2,7 @@ import angular from 'angular';
 import { react2angular } from 'react2angular';
 import moment from 'moment';
 
-import reportsTable from './reports-table/reports-table';
+import reportsTable from './reports-table';
 
 export default angular.module('genomic', [])
   .component('reportsTable', react2angular(reportsTable, ['rowData', 'columnDefs'], ['$state']))
@@ -29,7 +29,7 @@ export default angular.module('genomic', [])
               // Remove Dustin's test reports that are missing the patient info section
               reports = reports.filter(r => r.patientInformation);
 
-              return reports.map(report => {
+              return reports.map((report) => {
                 const [analyst] = report.users
                   .filter(u => u.role === 'analyst' && !u.deletedAt)
                   .map(u => u.user);

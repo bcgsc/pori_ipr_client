@@ -7,7 +7,7 @@ genomicsummary(
   probe-target="$ctrl.probeTarget",
   mutation-signature="$ctrl.mutationSignature",
   microbial="$ctrl.microbial",
-  print="true"
+  print="true",
 )
 
 br
@@ -25,16 +25,13 @@ pathway(
   pathway="$ctrl.pathway",
   pog="$ctrl.pog",
   report="$ctrl.report",
-  print="true"
+  print="true",
 )
 
 print-header(pog="$ctrl.pog", report="$ctrl.report")
 
-therapeutic(
-  pog="$ctrl.pog",
-  report="$ctrl.report",
-  therapeutic="$ctrl.therapeutic",
-  print="true"
+therapeutic-react(
+  therapeutic-row-data="$ctrl.therapeuticRowData",
 )
 
 print-header(pog="$ctrl.pog", report="$ctrl.report")
