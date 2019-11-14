@@ -3,20 +3,24 @@ div(layout="column", flex).details.box
     //- TODO: Fix add kb entry
     //- md-icon(ng-click="createRow($event, gene)", ng-if="canEdit") add
       md-tooltip Add new Knowledge Base entry
-    md-icon(ng-click="gene.showChildren=!gene.showChildren") {{((gene.showChildren) ? 'expand_less' : 'expand_more')}}
-      md-tooltip Show more entries related to this
-  div(layout="row", flex)
+  div(layout="row", flex, layout-align="space-between center")
     dt(flex="15") Gene: 
-    dd(flex="15")
+    dd(flex="5")
       ipr-gene-viewer(report="::report", pog="::pog", gene="::gene.gene") {{::gene.gene}}
     
     dt(flex="15") Variant: 
-    dd(flex="15") {{::gene.variant}}
+    dd(flex="30") {{::gene.variant}}
     
     dt(flex="15") Source: 
     dd(flex="45") {{::gene.sample}}
+
+    md-icon(
+      ng-click="gene.showChildren=!gene.showChildren"
+      style="cursor: pointer;"
+    ) {{((gene.showChildren) ? 'expand_less' : 'expand_more')}}
+      md-tooltip Show more entries related to this
     
-  div(layout="row", flex)
+  div(layout="row", flex, layout-align="space-between center")
     dt(flex="15") Expression: 
     dd(flex="15") {{::gene.expression_tissue_fc}}
     
