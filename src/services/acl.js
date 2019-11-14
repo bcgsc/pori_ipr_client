@@ -9,11 +9,11 @@ app.service('$acl', ['$q', '_', 'api.user', 'api.pog', 'api.pog_analysis_report'
     analyses: {
       view: {
         allow: ['*'],
-        reject: ['clinician', 'collaborator', 'external analyst'],
+        reject: ['clinician', 'collaborator', 'external analyst', 'demo'],
       },
       edit: {
         allow: ['projects', 'admin', 'biopsies'],
-        reject: ['clinician', 'collaborator', 'external analyst'],
+        reject: ['clinician', 'collaborator', 'external analyst', 'demo'],
       },
       remove: {
         allow: ['projects', 'admin', 'biopsies', 'external analyst'],
@@ -23,11 +23,11 @@ app.service('$acl', ['$q', '_', 'api.user', 'api.pog', 'api.pog_analysis_report'
     tracking: {
       view: {
         allow: ['*'],
-        reject: ['clinician', 'collaborator', 'biopsies', 'external analyst'],
+        reject: ['clinician', 'collaborator', 'biopsies', 'external analyst', 'demo'],
       },
       edit: {
         allow: ['*'],
-        reject: ['clinician', 'collaborator', 'biopsies', 'external analyst'],
+        reject: ['clinician', 'collaborator', 'biopsies', 'external analyst', 'demo'],
       },
       remove: {
         allow: ['projects', 'admin'],
@@ -51,19 +51,19 @@ app.service('$acl', ['$q', '_', 'api.user', 'api.pog', 'api.pog_analysis_report'
     },
     knowledgebase: {
       allow: ['*'],
-      reject: ['clinician', 'biopsies', 'external analyst'],
+      reject: ['clinician', 'biopsies', 'external analyst', 'demo'],
     },
     germline: {
       allow: ['*'],
-      reject: ['clinician', 'collaborator', 'biopsies', 'external analyst'],
+      reject: ['clinician', 'collaborator', 'biopsies', 'external analyst', 'demo'],
     },
     analyses: {
       allow: ['*'],
-      reject: ['clinician', 'collaborator', 'external analyst'],
+      reject: ['clinician', 'collaborator', 'external analyst', 'demo'],
     },
     tracking: {
       allow: ['*'],
-      reject: ['clinician', 'collaborator', 'biopsies', 'external analyst'],
+      reject: ['clinician', 'collaborator', 'biopsies', 'external analyst', 'demo'],
     },
   };
 
@@ -95,13 +95,13 @@ app.service('$acl', ['$q', '_', 'api.user', 'api.pog', 'api.pog_analysis_report'
     }
 
     // Check Allows first
-    let allows = _.intersection(resource.allow, _.map(_.mapValues($user.meObj.groups, (r) => { return {name: r.name.toLowerCase()}}), 'name'));
+    let allows = _.intersection(resource.allow, _.map(_.mapValues($user.meObj.groups, (res) => { return {name: res.name.toLowerCase()}}), 'name'));
     if(resource.allow.indexOf('*') > -1) permission = true;
     if(allows && allows.length > 0) permission = true;
 
 
     // Check Rejections
-    let rejects = _.intersection(resource.reject, _.map(_.mapValues($user.meObj.groups, (r) => { return {name: r.name.toLowerCase()}}), 'name'));
+    let rejects = _.intersection(resource.reject, _.map(_.mapValues($user.meObj.groups, (res) => { return {name: res.name.toLowerCase()}}), 'name'));
     if(resource.reject.indexOf('*') > -1) permission = false; // No clue why this would exist, but spec allows
     if(rejects && rejects.length > 0) permission = false;
 
