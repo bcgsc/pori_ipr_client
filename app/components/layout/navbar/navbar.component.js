@@ -1,4 +1,6 @@
 import template from './navbar.pug';
+import feedbackTemplate from './feedback/feedback.pug';
+import feedbackController from './feedback/feedback';
 
 class NavbarComponent {
   /* @ngInject */
@@ -34,10 +36,10 @@ class NavbarComponent {
   // Open Feedback
   async openFeedback($event) {
     await this.$mdDialog.show({
-      controller: 'controller.dashboard.toolbar.feedback',
-      templateUrl: 'dashboard/feedback.html',
+      controller: feedbackController,
+      template: feedbackTemplate,
       targetEvent: $event,
-      clickOutsideToClose: false,
+      clickOutsideToClose: true,
     });
   }
 
