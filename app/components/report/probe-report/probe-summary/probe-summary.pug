@@ -1,5 +1,5 @@
 section
-  md-subheader.md-primary Patient Information
+  md-subheader.md-primary.md-no-sticky Patient Information
     span.edit(ng-if="$ctrl.reportEdit")
       md-icon(ng-click="$ctrl.updatePatient($event)") edit
 
@@ -102,37 +102,6 @@ section
           div(layout="row").row
             span(flex=40) # Fusion Variants Screened
             span {{$ctrl.testInformation.fusionVars}}
-
-
-section
-  md-subheader.md-primary Genomic Events with Potential Therapeutic Association
-
-  div(layout="column", flex)
-
-    div(layout="row")
-      div(layout="column", flex).dataBox
-
-        div.box
-          div(layout="row", flex).heading
-            div(flex).text-left Genomic Events
-            div(flex).text-left Comments
-            div(flex).text-left Approved in this cancer type
-            div(flex).text-left Approved in other cancer type
-            div(flex).text-left Emerging Evidence
-          div(layout="row", flex, ng-if="$ctrl.genomicEvents.length === 0").row
-            div(flex) No clinically relevant genomic alterations were found from the analysis.
-          div(layout="row", flex, ng-repeat="gene in $ctrl.genomicEvents", ng-click="$ctrl.modifyEvent($event, gene)", ng-if="$ctrl.reportEdit").row.clickable
-            div(flex) {{gene.genomicEvent}}
-            div(flex) {{gene.comments}}
-            div(flex) {{gene.approvedThisCancerType}}
-            div(flex) {{gene.approvedOtherCancerType}}
-            div(flex) {{gene.emergingPreclinicalEvidence}}
-          div(layout="row", flex, ng-repeat="gene in $ctrl.genomicEvents", ng-if="!$ctrl.reportEdit").row
-            div(flex) {{gene.genomicEvent}}
-            div(flex) {{gene.comments}}
-            div(flex) {{gene.approvedThisCancerType}}
-            div(flex) {{gene.approvedOtherCancerType}}
-            div(flex) {{gene.emergingPreclinicalEvidence}}
 
 section
   md-subheader.md-primary Review

@@ -5,7 +5,6 @@ const bindings = {
   report: '<',
   genomicAlterations: '<',
   variantCounts: '<',
-  genomicEvents: '<',
   mutationSummary: '<',
   probeTarget: '<',
   mutationSignature: '<',

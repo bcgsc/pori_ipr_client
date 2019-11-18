@@ -353,12 +353,6 @@ class GenomicSummaryComponent {
                 return r.ident !== alteration.ident;
               });
 
-              if (cascade) {
-                this.genomicEvents = this.genomicEvents.filter((e) => {
-                  return e.genomicEvent !== alteration.geneVariant;
-                });
-              }
-
               // Subtract count
               this.variantCounts[alteration.type] -= 1;
 

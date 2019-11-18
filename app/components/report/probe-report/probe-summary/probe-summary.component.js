@@ -6,8 +6,8 @@ const bindings = {
   report: '<',
   reportEdit: '<',
   testInformation: '<',
-  genomicEvents: '<',
   signature: '<',
+  print: '<',
 };
 
 class ProbeSummaryComponent {
