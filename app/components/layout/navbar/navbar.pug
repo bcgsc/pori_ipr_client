@@ -13,8 +13,6 @@ md-toolbar(ng-class="{'navbar--open': $ctrl.maximized}").navbar
         span {{$ctrl.user.firstName}} {{$ctrl.user.lastName}}
       md-menu-content(width="4")
         md-menu-item
-          md-button(ng-click="$ctrl.userDiag($event, $ctrl.user)") Edit Profile
-        md-menu-item
           md-button(ng-click="$ctrl.openFeedback($event)") Feedback
         md-menu-divider
         md-menu-item(ng-click="$ctrl.userLogout()")
