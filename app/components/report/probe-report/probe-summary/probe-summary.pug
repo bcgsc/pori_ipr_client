@@ -1,72 +1,72 @@
-section
-  md-subheader.md-primary.md-no-sticky Patient Information
+section.patient-info
+  md-subheader.md-no-sticky.print-title Patient Information
     span.edit(ng-if="$ctrl.reportEdit")
       md-icon(ng-click="$ctrl.updatePatient($event)") edit
 
-  div(layout="column", flex).details
-    div(layout="row", flex)
-      dt(flex="{{$ctrl.detailSize}}", ng-init="$ctrl.detailSize=10") Patient ID:
-      dd(flex) {{$ctrl.report.patientInformation.POGID}}
+  div(layout="column", flex).details.patient-info__details
+    div(layout="row", flex).patient-info__description-container
+      dt(flex="{{$ctrl.detailSize}}", ng-init="$ctrl.detailSize=10").patient-info__description-term Patient ID:
+      dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.POGID}}
 
-      dt(flex="{{$ctrl.detailSize}}") Alternate ID:
-      dd(flex) {{$ctrl.report.pog.alternate_identifier || 'N/A'}}
+      dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Alternate ID:
+      dd(flex).patient-info__description-details {{$ctrl.report.pog.alternate_identifier || 'N/A'}}
 
-      dt(flex="{{$ctrl.detailSize}}") Sex:
-      dd(flex) {{$ctrl.report.patientInformation.gender}}
+      dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Sex:
+      dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.gender}}
 
-    div(layout="row", flex)
-      dt(flex="{{$ctrl.detailSize}}") Tumour Sample:
-      dd(flex) {{$ctrl.report.patientInformation.tumourSample}}
+    div(layout="row", flex).patient-info__description-container
+      dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Tumour Sample:
+      dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.tumourSample}}
 
-      dt(flex="{{$ctrl.detailSize}}") Tumour Type:
-      dd(flex) {{$ctrl.report.patientInformation.tumourType}}
+      dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Tumour Type:
+      dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.tumourType}}
 
-      dt(flex="{{$ctrl.detailSize}}") Constitutional Sample:
-      dd(flex) {{$ctrl.report.patientInformation.constitutionalSample}}
+      dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Constitutional Sample:
+      dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.constitutionalSample}}
 
-    div(layout="row", flex)
-      dt(flex="{{$ctrl.detailSize}}") Report Date:
-      dd(flex) {{$ctrl.report.createdAt | date: 'yyyy-MM-dd'}}
+    div(layout="row", flex).patient-info__description-container
+      dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Report Date:
+      dd(flex).patient-info__description-details {{$ctrl.report.createdAt | date: 'yyyy-MM-dd'}}
 
-      dt(flex="{{$ctrl.detailSize}}") Case Type:
-      dd(flex) {{$ctrl.report.patientInformation.caseType}}
+      dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Case Type:
+      dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.caseType}}
 
-      dt(flex="{{$ctrl.detailSize}}") Biopsy Details:
-      dd(flex) {{$ctrl.report.patientInformation.biopsySite}}
+      dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Biopsy Details:
+      dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.biopsySite}}
 
-    div(layout="row", flex)
-      dt(flex="{{$ctrl.detailSize}}") Physician:
-      dd(flex) {{$ctrl.report.patientInformation.physician}}
+    div(layout="row", flex).patient-info__description-container
+      dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Physician:
+      dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.physician}}
 
-      dt(flex="{{$ctrl.detailSize}}") Age at Diagnosis:
-      dd(flex) {{$ctrl.report.patientInformation.age}}
+      dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Age at Diagnosis:
+      dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.age}}
 
-      dt(flex="{{$ctrl.detailSize}}") Age of Consent:
-      dd(flex) {{$ctrl.report.pog.age_of_consent || 'Not Specified'}}
+      dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Age of Consent:
+      dd(flex).patient-info__description-details {{$ctrl.report.pog.age_of_consent || 'Not Specified'}}
 
-    div(layout="row", flex)
-      dt(flex="{{$ctrl.detailSize}}") Protocol:
-      dd(flex) {{$ctrl.report.patientInformation.tumourProtocol}}
+    div(layout="row", flex).patient-info__description-container
+      dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Protocol:
+      dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.tumourProtocol}}
 
-      dt(flex="{{$ctrl.detailSize}}") Biopsy:
-      dd(flex) {{$ctrl.report.analysis.analysis_biopsy || 'N/A'}}
+      dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Biopsy:
+      dd(flex).patient-info__description-details {{$ctrl.report.analysis.analysis_biopsy || 'N/A'}}
 
       dt(flex="{{$ctrl.detailSize}}")
       dd(flex)
 
-section
+section.sample-info
   div(layout="row")
     div(layout="column", flex).dataBox
-      h2.title Sample Information
+      h2.title.print-title Sample Information
       div.box
-        div(layout="row", flex).heading
+        div(layout="row", layout-align="space-around center", flex).heading.sample-info__table-header
           div(flex) Sample
           div(flex) Sample Name
           div(flex) Collection Date
           div(flex) Primary Site
           div(flex=20) Biopsy Site
           div(flex) Pathology Estimated Tumour Content
-        div(layout="row", flex, ng-repeat="sample in $ctrl.report.sampleInfo track by $index").row
+        div(layout="row", flex, ng-repeat="sample in $ctrl.report.sampleInfo track by $index").row.sample-info__table-row
           div(flex) {{sample['Sample']}}
           div(flex) {{sample['Sample Name']}}
           div(flex) {{sample['Collection Date']}}
@@ -74,11 +74,11 @@ section
           div(flex=20) {{sample['Biopsy Site']}}
           div(flex) {{sample['Patho TC']}}
 
+section.test-info
   div(layout="row")
     div(layout="column", flex).dataBox
-      h2.title Test Information
-
-      div(layout="row", flex).horizontalBox
+      h2.title.print-title Test Information
+      div(layout="row", ng-if="!$ctrl.print", flex).horizontalBox.test-info__box
         div(layout="column", flex)
           div(layout="row").row
             span(flex=40) Variant Probe Version
@@ -102,8 +102,42 @@ section
           div(layout="row").row
             span(flex=40) # Fusion Variants Screened
             span {{$ctrl.testInformation.fusionVars}}
+      
+      div(layout="row", ng-if="$ctrl.print", flex).test-info__box
+        div(layout="column", flex=50)
+          div(layout="row").test-info__header
+            span.test-info__value Variant Probe Version &nbsp
+            span(flex=50).test-info__value v{{$ctrl.testInformation.snpProbe}}
+          div(layout="row")
+            span(flex=50).test-info__key Genes Screened
+            span(flex=50).test-info__value {{$ctrl.testInformation.snpGenes}}
+          div(layout="row")
+            span(flex=50).test-info__key Variants Screened
+            span(flex=50).test-info__value {{$ctrl.testInformation.snpVars}}
+        div(layout="column", flex=50)
+          div(layout="row").test-info__header
+            span.test-info__value Fusion Probe Version &nbsp
+            span(flex=50).test-info__value v{{$ctrl.testInformation.fusionProbe}}
+          div(layout="row")
+            span(flex=50).test-info__key Fusion Genes Screened
+            span(flex=50).test-info__value {{$ctrl.testInformation.fusionGenes}}
+          div(layout="row")
+            span(flex=50).test-info__key Fusion Variants Screened
+            span(flex=50).test-info__value {{$ctrl.testInformation.fusionVars}}
+      div(layout="row", ng-if="$ctrl.print", flex)
+        div(layout="column", flex=50)
+          div(layout="row").test-info__header
+            span.test-info__value KB Version &nbsp
+            span(flex=50).test-info__value {{$ctrl.testInformation.kbVersion}}
+          //- TODO replace with KB Metrics API endpoint
+          div(layout="row")
+            span(flex=50).test-info__key References
+            span(flex=50).test-info__value 20525
+          div(layout="row")
+            span(flex=50).test-info__key Characterized Events
+            span(flex=50).test-info__value 8588
 
-section
+section(ng-if="!$ctrl.print")
   md-subheader.md-primary Review
   div(layout="column").layout-padding
     div(layout="row", md-whiteframe=1, layout-align="start start").rowCard
@@ -142,3 +176,8 @@ section
         div(ng-if="$ctrl.signature.reviewerSignature.ident")
           md-icon(ng-click="$ctrl.revokeSign('reviewer')", ng-if="$ctrl.reportEdit") remove_circle
             md-tooltip Remove signing
+
+section(ng-if="$ctrl.print").review
+  div(layout="row", layout-align="space-around center").review__box
+    span Manual Review: {{$ctrl.signature.readySignature.firstName || 'Not yet reviewed'}}  {{$ctrl.signature.readySignature.lastName}}
+    span Date: {{$ctrl.signature.readySignedAt | date: 'yyyy-MM-dd' || 'N/A'}}
