@@ -5,6 +5,9 @@ const bindings = {
   report: '<',
   testInformation: '<',
   signature: '<',
+  alterations: '<',
+  approvedThisCancer: '<',
+  approvedOtherCancer: '<',
 };
 
 export default {

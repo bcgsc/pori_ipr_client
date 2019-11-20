@@ -1,29 +1,48 @@
 section.detailedGenomicAnalysis
-  md-subheader.md-primary.md-no-sticky Detailed Genomic Analysis
+  md-subheader(ng-if="!$ctrl.print").md-no-sticky Detailed Genomic Analysis
 
   div(layout="column", flex)
 
     div(layout="column", flex)
 
-      h2.title Therapies Approved in this Tumour Type
+      h2.title.print-subtitle Therapies Approved in this Tumour Type
 
       div(ng-if="$ctrl.approvedThisCancer.length == 0")
-        div.text-center.details None Found.
-      genomic-alteration(ng-repeat="gene in $ctrl.approvedThisCancer track by $index", samples="$ctrl.samples", gene="gene", pog="$ctrl.pog", report="$ctrl.report").container
+        div.text-center.details.dga__none-found No approved therapies were found for this tumour type.
+      genomic-alteration(
+        ng-repeat="gene in $ctrl.approvedThisCancer track by $index",
+        samples="$ctrl.samples",
+        gene="gene",
+        pog="$ctrl.pog",
+        report="$ctrl.report",
+      ).container
 
-      h2.title Therapies Approved in other tumour types
+      h2.title.print-subtitle Therapies Approved in other tumour types
       div(ng-if="$ctrl.approvedOtherCancer.length == 0")
-        div.text-center.details None Found.
-      genomic-alteration(ng-repeat="gene in $ctrl.approvedOtherCancer track by $index", samples="$ctrl.samples", gene="gene", pog="$ctrl.pog", report="$ctrl.report").container
+        div.text-center.details.dga__none-found No approved therapies were found for other tumour types.
+      genomic-alteration(
+        ng-repeat="gene in $ctrl.approvedOtherCancer track by $index",
+        samples="$ctrl.samples",
+        gene="gene",
+        pog="$ctrl.pog",
+        report="$ctrl.report",
+      ).container
 
 
-      h2.title Alterations With Potential Clinical Relevance
-        span(ng-click="$ctrl.createNewKBEntry()", ng-if="$ctrl.reportEdit").pull-right.addNewVariant.clickable Add new variant
+      h2.title.print-subtitle Alterations With Potential Clinical Relevance
 
     div(ng-repeat="(alteration, genes) in $ctrl.alterationsGrouped")
-      h3(ng-if="alteration === 'unknown' || !$ctrl.showUnknown").title {{alteration}}
+      h3(ng-if="alteration === 'unknown' || !$ctrl.showUnknown").title.print-subtitle.print-subtitle--pink 
+        | Known alterations with {{alteration}} relevance
 
       div(ng-if="genes.length == 0 && alteration !== 'unknown'")
-        div(ng-if="!$ctrl.showUnknown").text-center.details None Found.
+        div(ng-if="!$ctrl.showUnknown").text-center.details.dga__none-found No alterations with {{alteration}} relevance were found from the analysis.
 
-      genomic-alteration(ng-repeat="(i, gene) in genes track by $index", samples="$ctrl.samples", gene="gene", pog="$ctrl.pog", report="$ctrl.report").container
+      genomic-alteration(
+        ng-repeat="(i, gene) in genes track by $index",
+        samples="$ctrl.samples",
+        gene="gene",
+        pog="$ctrl.pog",
+        report="$ctrl.report",
+        print="$ctrl.print",
+      ).container

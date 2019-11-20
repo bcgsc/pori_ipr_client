@@ -1,0 +1,32 @@
+@import '../../../../styles/variables';
+
+@mixin print-subheader {
+  margin: 1mm 0;
+  padding: 1mm;
+  background-color: #d3d4f4;
+  color: black;
+  font-size: 13pt;
+  font-weight: 700;
+  text-transform: uppercase;
+
+  > .md-subheader-inner {
+    // Override angularjs material library
+    padding: 0 !important;
+  }
+}
+
+@media print {
+  .print-subtitle {
+    @include print-subheader;
+
+    &--pink {
+      background-color: #efdaf4;
+    }
+  }
+
+  .dga {
+    &__none-found {
+      margin: 5mm 0;
+    }
+  }
+}

@@ -26,6 +26,23 @@ export default angular.module('print.probe')
               $transition$.params().pog,
               $transition$.params().report,
             )],
+          alterations: ['$transition$', 'ProbeAlterationService',
+            async ($transition$, ProbeAlterationService) => ProbeAlterationService.getAll(
+              $transition$.params().pog,
+              $transition$.params().report,
+            )],
+          approvedThisCancer: ['$transition$', 'ProbeAlterationService',
+            async ($transition$, ProbeAlterationService) => ProbeAlterationService.getType(
+              $transition$.params().pog,
+              $transition$.params().report,
+              'thisCancer',
+            )],
+          approvedOtherCancer: ['$transition$', 'ProbeAlterationService',
+            async ($transition$, ProbeAlterationService) => ProbeAlterationService.getType(
+              $transition$.params().pog,
+              $transition$.params().report,
+              'otherCancer',
+            )],
         },
       });
   })

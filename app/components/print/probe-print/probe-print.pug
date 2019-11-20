@@ -6,3 +6,17 @@ probe-summary(
   report-edit="false",
   print="true",
 )
+
+print-header(
+  pog="$ctrl.pog",
+  report="$ctrl.report",
+)
+
+detailed-genomic-analysis(
+  pog="$ctrl.pog",
+  report="$ctrl.report",
+  alterations="$ctrl.alterations",
+  approved-this-cancer="$ctrl.approvedThisCancer",
+  approved-other-cancer="$ctrl.approvedOtherCancer",
+  print="true",
+)

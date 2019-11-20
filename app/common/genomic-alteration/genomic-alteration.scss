@@ -1,17 +1,55 @@
 @import '../../styles/variables';
 
-.clickable {
-  cursor: pointer;
-  outline: 0;
+@media screen {
+  .clickable {
+    outline: 0;
+    cursor: pointer;
+  }
+
+  .underlined {
+    color: $underline;
+    font-weight: 700;
+    text-decoration: underline;
+  }
+
+  .hover {
+    outline: none;
+    cursor: pointer;
+  }
 }
 
-.underlined {
-  color: $underline;
-  font-weight: 700;
-  text-decoration: underline;
-}
+@media print {
+  .alteration {
+    &__box {
+      margin: 2mm 0;
+      padding: 2mm;
+      border: .5mm solid #c4c5e0;
+      background-color: $print-box-background;
+      font-size: 11pt;
+    }
 
-.hover {
-  cursor: pointer;
-  outline: none;
+    &__row {
+      &:first-of-type {
+        margin-bottom: 2mm;
+      }
+    }
+
+    &__definition {
+      margin: 0 1mm;
+    }
+
+    &__details {
+      &__header {
+        background-color: $print-box-background;
+        font-size: 10pt;
+        font-weight: 700;
+        text-align: left;
+      }
+
+      &__row {
+        padding: 1mm;
+        font-size: 10pt;
+      }
+    }
+  }
 }
