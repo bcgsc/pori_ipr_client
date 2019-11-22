@@ -7,20 +7,21 @@ angular.module('probe.appendices', [
 ]);
 
 export default angular.module('probe.appendices')
-  .component('probeappendices', AppendicesComponent)
+  .component('probeAppendices', AppendicesComponent)
   .config(($stateProvider) => {
     'ngInject';
 
     $stateProvider
       .state('root.reportlisting.pog.probe.appendices', {
         url: '/appendices',
-        component: 'probeappendices',
+        component: 'probeAppendices',
         resolve: {
           tcgaAcronyms: ['$transition$', 'AppendicesService',
             async ($transition$, AppendicesService) => AppendicesService.tcga(
               $transition$.params().POG,
               $transition$.params().analysis_report,
             )],
+          probe: () => true,
         },
       });
   })

@@ -43,6 +43,11 @@ export default angular.module('print.probe')
               $transition$.params().report,
               'otherCancer',
             )],
+          tcgaAcronyms: ['$transition$', 'AppendicesService',
+            async ($transition$, AppendicesService) => AppendicesService.tcga(
+              $transition$.params().pog,
+              $transition$.params().report,
+            )],
         },
       });
   })

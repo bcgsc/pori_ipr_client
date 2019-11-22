@@ -8,6 +8,7 @@ const bindings = {
   alterations: '<',
   approvedThisCancer: '<',
   approvedOtherCancer: '<',
+  tcgaAcronyms: '<',
 };
 
 export default {
