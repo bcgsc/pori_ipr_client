@@ -1,4 +1,6 @@
 import template from './navbar.pug';
+import feedbackTemplate from './feedback/feedback.pug';
+import feedbackController from './feedback/feedback';
 
 class NavbarComponent {
   /* @ngInject */
@@ -34,10 +36,10 @@ class NavbarComponent {
   // Open Feedback
   async openFeedback($event) {
     await this.$mdDialog.show({
-      controller: 'controller.dashboard.toolbar.feedback',
-      templateUrl: 'dashboard/feedback.html',
+      controller: feedbackController,
+      template: feedbackTemplate,
       targetEvent: $event,
-      clickOutsideToClose: false,
+      clickOutsideToClose: true,
     });
   }
 
@@ -49,34 +51,6 @@ class NavbarComponent {
     } catch (err) {
       this.$mdToast.showSimple('Error: Could not logout due to connection issue.');
       this.$state.go('public.login');
-    }
-  }
-
-  // Edit User
-  async userDiag($event, editUser, newUser = false) {
-    try {
-      const resp = await this.$mdDialog.show({
-        targetEvent: $event,
-        templateUrl: 'dashboard/admin/user/user.edit.html', // fix url
-        clickOutToClose: false,
-        locals: {
-          editUser: angular.copy(editUser),
-          newUser,
-          userDelete: {},
-          projects: [],
-          accessGroup: {},
-          selfEdit: true,
-        },
-        controller: 'controller.dashboard.user.edit', // fix controller
-      });
-      this.$mdToast.show(this.$mdToast.simple().textContent(resp.message));
-      this.users.forEach((u, i) => {
-        if (u.ident === resp.data.ident) this.users[i] = resp.data;
-      });
-    } catch (err) {
-      this.$mdToast.show(this.$mdToast.simple().textContent(
-        'Your user information has not been updated.',
-      ));
     }
   }
 }
