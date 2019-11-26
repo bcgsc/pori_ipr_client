@@ -1,6 +1,6 @@
 md-content 
   section.patient-info
-    md-subheader.md-no-sticky.patient-info__header Patient Information
+    md-subheader.md-no-sticky.print-title Patient Information
       span(ng-if="$ctrl.reportEdit").edit
         md-icon(ng-click="$ctrl.updatePatient($event)") edit
 
@@ -56,14 +56,14 @@ md-content
         dd(flex).patient-info__description-details
 
   section.tumour-analysis
-    md-subheader.md-no-sticky.tumour-analysis__header Patient Tumour Analysis Summary
+    md-subheader.md-no-sticky.print-title Tumour Analysis Summary
 
     div(layout="column", flex)
 
       div(layout="row")
         div(layout="column", flex).dataBox.tumour-analysis__full-box
           h2.title.tumour-analysis__subheader Genome Status
-            md-icon(ng-if="!$ctrl.print", ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.genomeStatus)").clickable.blue help
+            md-icon(ng-if="!$ctrl.print", ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.genomeStatus)").tumour-analysis__icon help
 
           div.box.tumour-analysis__box
             div(layout="row", flex).heading.tumour-analysis__box-header
@@ -82,7 +82,7 @@ md-content
 
         div(layout="column", flex).dataBox.tumour-analysis__full-box
           h2.title.tumour-analysis__subheader Tissue Comparators
-            md-icon(ng-if="!$ctrl.print", ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.tissueComparators)").clickable.blue help
+            md-icon(ng-if="!$ctrl.print", ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.tissueComparators)").tumour-analysis__icon help
 
           div.box.tumour-analysis__box
             div(layout="row", flex).heading.tumour-analysis__box-header
@@ -94,7 +94,7 @@ md-content
 
         div(layout="column", flex).dataBox.tumour-analysis__full-box
           h2.title.tumour-analysis__subheader Subtyping
-            md-icon(ng-if="!$ctrl.print", ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.subtyping)").clickable.blue help
+            md-icon(ng-if="!$ctrl.print", ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.subtyping)").tumour-analysis__icon help
 
           div.box.tumour-analysis__box
             div(layout="row", flex).heading.tumour-analysis__box-header
@@ -107,7 +107,7 @@ md-content
 
         div(layout="column", flex).dataBox.tumour-analysis__full-box
           h2.title.tumour-analysis__subheader Microbial Content
-            md-icon(ng-if="!$ctrl.print", ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.microbialContent)").clickable.blue help
+            md-icon(ng-if="!$ctrl.print", ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.microbialContent)").tumour-analysis__icon help
 
           div.box.tumour-analysis__box
             div(layout="row", flex).heading.tumour-analysis__box-header
@@ -127,11 +127,15 @@ md-content
         div(layout="row")
           div(layout="column", flex=25).signatureTitle.mutation-table--align-left
             h2.title.tumour-analysis__subheader Mutation Signature
-              md-icon(ng-if="!$ctrl.print", ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.mutationSignature)").clickable.blue.help help
+              md-icon(
+                ng-if="!$ctrl.print",
+                ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.mutationSignature)",
+                style="margin-left: 5px;"
+              ).tumour-analysis__icon help
           div(layout="column", flex=75).mutation-table--align-left
             h2.title.tumour-analysis__subheader Mutation Burden 
               span.tumour-analysis__subheader--small (in protein coding genes)
-              md-icon(ng-if="!$ctrl.print", ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.mutationBurden)").clickable.blue.help help
+              md-icon(ng-if="!$ctrl.print", ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.mutationBurden)").tumour-analysis__icon help
 
         div(layout="row").header
           div(flex).container
@@ -196,7 +200,7 @@ md-content
         div(layout="column", flex).dataBox.noBottomMargin
           h2.title.tumour-analysis__subheader Key Genomic and Transcriptomic Alterations Identified
 
-      div(layout="row").keyAlterationsIdentified.alterations__header
+      div(layout="row").keyAlterationsIdentified.print-title
         div(layout="row", flex).header.sm.alterations__box
           div(
             flex,

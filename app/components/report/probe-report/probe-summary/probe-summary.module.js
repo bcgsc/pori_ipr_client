@@ -7,14 +7,14 @@ angular.module('probe.summary', [
 ]);
 
 export default angular.module('probe.summary')
-  .component('probesummary', ProbeSummaryComponent)
+  .component('probeSummary', ProbeSummaryComponent)
   .config(($stateProvider) => {
     'ngInject';
 
     $stateProvider
       .state('root.reportlisting.pog.probe.summary', {
         url: '/summary',
-        component: 'probesummary',
+        component: 'probeSummary',
         resolve: {
           testInformation: ['$transition$', 'ProbeTestInformationService',
             async ($transition$, ProbeTestInformationService) => ProbeTestInformationService.retrieve(

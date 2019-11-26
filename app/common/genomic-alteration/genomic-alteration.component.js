@@ -6,6 +6,7 @@ const bindings = {
   gene: '<',
   pog: '<',
   report: '<',
+  print: '<',
 };
 
 class GenomicAlterationComponent {

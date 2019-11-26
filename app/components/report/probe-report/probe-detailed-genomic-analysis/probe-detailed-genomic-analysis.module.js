@@ -7,14 +7,14 @@ angular.module('probe.detailedgenomicanalysis', [
 ]);
 
 export default angular.module('probe.detailedgenomicanalysis')
-  .component('detailedgenomicanalysis', DetailedGenomicAnalysisComponent)
+  .component('detailedGenomicAnalysis', DetailedGenomicAnalysisComponent)
   .config(($stateProvider) => {
     'ngInject';
 
     $stateProvider
       .state('root.reportlisting.pog.probe.detailedGenomicAnalysis', {
         url: '/detailedGenomicAnalysis',
-        component: 'detailedgenomicanalysis',
+        component: 'detailedGenomicAnalysis',
         resolve: {
           alterations: ['$transition$', 'ProbeAlterationService',
             async ($transition$, ProbeAlterationService) => ProbeAlterationService.getAll(

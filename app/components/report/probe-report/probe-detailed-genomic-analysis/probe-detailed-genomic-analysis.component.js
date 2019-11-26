@@ -1,4 +1,5 @@
 import template from './probe-detailed-genomic-analysis.pug';
+import './probe-detailed-genomic-analysis.scss';
 
 const bindings = {
   pog: '<',
@@ -7,6 +8,7 @@ const bindings = {
   alterations: '<',
   approvedThisCancer: '<',
   approvedOtherCancer: '<',
+  print: '<',
 };
 
 class DetailedGenomicAnalysisComponent {
@@ -36,25 +38,6 @@ class DetailedGenomicAnalysisComponent {
       this.approvedOtherCancer,
       [],
     );
-  }
-
-
-  createNewKBEntry($event) {
-    const gene = {};
-
-    this.$mdDialog.show({
-      targetEvent: $event,
-      templateUrl: 'dashboard/report/genomic/knowledgebase/alterations/alterations.edit.html',
-      clickOutToClose: false,
-      locals: {
-        pog: this.pog,
-        gene,
-        samples: this.samples,
-        rowEvent: 'new',
-        report: this.report,
-      },
-      controller: 'controller.dashboard.reports.genomic.detailedGenomicAnalysis.alterations.edit', // End controller
-    });
   }
 
   /* eslint-disable class-methods-use-this */

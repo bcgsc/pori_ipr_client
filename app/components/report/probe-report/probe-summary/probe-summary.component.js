@@ -1,13 +1,14 @@
 import template from './probe-summary.pug';
 import patientTemplate from '../../genomic-report/genomic-summary/patient-edit.pug';
+import '../../genomic-report/genomic-summary/genomic-summary.scss';
 
 const bindings = {
   pog: '<',
   report: '<',
   reportEdit: '<',
   testInformation: '<',
-  genomicEvents: '<',
   signature: '<',
+  print: '<',
 };
 
 class ProbeSummaryComponent {

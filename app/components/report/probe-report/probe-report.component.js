@@ -16,9 +16,9 @@ class ProbeComponent {
   }
 
   openPrint() {
-    this.$window.open(this.$state.href('print.POG.report.probe', {
-      POG: this.pog.POGID,
-      analysis_report: this.report.ident,
+    this.$window.open(this.$state.href('print.probe', {
+      pog: this.pog.POGID,
+      report: this.report.ident,
     }), '_blank');
   }
 
