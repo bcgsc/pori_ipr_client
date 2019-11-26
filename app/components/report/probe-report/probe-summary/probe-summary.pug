@@ -137,6 +137,12 @@ section.test-info
             span(flex=50).test-info__key Characterized Events
             span(flex=50).test-info__value 8588
 
+section.events
+  md-subheader.md-no-sticky Genomic Events
+  div(layout="row")
+    div(ng-repeat="event in $ctrl.genomicEvents")
+      div.md-whiteframe-1dp.events__event {{event.genomicEvent}}
+
 section(ng-if="!$ctrl.print")
   md-subheader.md-primary Review
   div(layout="column").layout-padding

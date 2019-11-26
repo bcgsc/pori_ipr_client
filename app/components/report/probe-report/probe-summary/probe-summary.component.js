@@ -8,6 +8,7 @@ const bindings = {
   reportEdit: '<',
   testInformation: '<',
   signature: '<',
+  genomicEvents: '<',
   print: '<',
 };
 
