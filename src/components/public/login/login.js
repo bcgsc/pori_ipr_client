@@ -31,12 +31,18 @@ function loginRedirect(keycloakAuth, $user, $state, $mdToast, $localStorage) {
         $state.go('dashboard.reports.dashboard');
       }
     } catch (err) {
-      if (err.status !== 403) {
-        $mdToast.showSimple('Error with login server. Try again later.');
-      } else {
+      try {
+        if (err.status !== 403) {
+          $mdToast.showSimple('Error with login server. Try again later.');
+        } else {
+          delete $localStorage.returnToState;
+          delete $localStorage.returnToStateParams;
+          await keycloakAuth.logout();
+        }
+      } catch (e) {
         delete $localStorage.returnToState;
         delete $localStorage.returnToStateParams;
-        keycloakAuth.logout();
+        await keycloakAuth.logout();
       }
     }
   };
