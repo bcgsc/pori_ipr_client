@@ -37,12 +37,12 @@ function loginRedirect(keycloakAuth, $user, $state, $mdToast, $localStorage) {
         } else {
           delete $localStorage.returnToState;
           delete $localStorage.returnToStateParams;
-          keycloakAuth.logout();
+          await keycloakAuth.logout();
         }
       } catch (e) {
         delete $localStorage.returnToState;
         delete $localStorage.returnToStateParams;
-        keycloakAuth.logout();
+        await keycloakAuth.logout();
       }
     }
   };
