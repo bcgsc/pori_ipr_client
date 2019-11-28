@@ -375,7 +375,7 @@ gulp.task('images', ['images-app']);
 gulp.task('json', ['json-db']);
 gulp.task('pug', ['pug-index', 'pug-templates']);
 gulp.task('sass', ['sass-app', 'sass-libs', 'sass-components']);
-gulp.task('build', ['favicon', 'config', 'pug', 'libs', 'js', 'sass', 'images', 'json']);
+gulp.task('build', ['favicon', 'config', 'constants', 'pug', 'libs', 'js', 'sass', 'images', 'json']);
 gulp.task('deploy-build', () => { runSequence('clean', 'build'); });
 /*
  * Default Gulp Task
