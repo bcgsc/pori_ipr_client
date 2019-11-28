@@ -1,4 +1,4 @@
-class ProbeAlterationService {
+class AlterationService {
   /* @ngInject */
   constructor($http) {
     this.$http = $http;
@@ -10,11 +10,14 @@ class ProbeAlterationService {
    *
    * @param {String} patient - patient identifier
    * @param {String} report - report ident
+   * @param {String} type - report type eg. genomic
    *
    * @returns {Promise} - result of API call
    */
-  async getAll(patient, report) {
-    const { data } = await this.$http.get(`${this.api}/${patient}/report/${report}/probe/alterations`);
+  async getAll(patient, report, type) {
+    const { data } = await this.$http.get(
+      `${this.api}/${patient}/report/${report}/${type}/detailedGenomicAnalysis/alterations`,
+    );
     return data;
   }
 
@@ -23,14 +26,15 @@ class ProbeAlterationService {
    *
    * @param {String} patient - patient identifier
    * @param {String} report - report ident
+   * @param {String} type - report type eg. genomic
    * @param {String} ident - alteration uuid
    * @param {Object} payload - alteration object payload
    *
    * @returns {Promise} - result of API call
    */
-  async update(patient, report, ident, payload) {
+  async update(patient, report, type, ident, payload) {
     const { data } = await this.$http.put(
-      `${this.api}/${patient}/report/${report}/probe/alterations/${ident}`,
+      `${this.api}/${patient}/report/${report}/${type}/detailedGenomicAnalysis/alterations/${ident}`,
       payload,
     );
     return data;
@@ -41,14 +45,15 @@ class ProbeAlterationService {
    *
    * @param {String} patient - patient identifier
    * @param {String} report - report ident
+   * @param {String} type - report type eg. genomic
    * @param {String} ident - alteration uuid
    * @param {Object} payload - alteration object payload
    *
    * @returns {Promise} - result of API call
    */
-  async create(patient, report, ident, payload) {
+  async create(patient, report, type, ident, payload) {
     const { data } = await this.$http.post(
-      `${this.api}/${patient}/report/${report}/probe/alterations/${ident}`,
+      `${this.api}/${patient}/report/${report}/${type}/detailedGenomicAnalysis/alterations/${ident}`,
       payload,
     );
     return data;
@@ -59,16 +64,17 @@ class ProbeAlterationService {
    *
    * @param {String} patient - patient identifier
    * @param {String} report - report ident
-   * @param {String} type - alteration type
+   * @param {String} type - report type eg. genomic
+   * @param {String} alterationType - alteration type
    *
    * @returns {Promise} - result of API call
    */
-  async getType(patient, report, type) {
+  async getType(patient, report, type, alterationType) {
     const { data } = await this.$http.get(
-      `${this.api}/${patient}/report/${report}/probe/alterations/${type}`,
+      `${this.api}/${patient}/report/${report}/${type}/detailedGenomicAnalysis/alterations/${alterationType}`,
     );
     return data;
   }
 }
   
-export default ProbeAlterationService;
+export default AlterationService;

@@ -13,12 +13,11 @@ const bindings = {
 
 class DetailedGenomicAnalysisComponent {
   /* @ngInject */
-  constructor($scope, $mdDialog, $mdToast, PogService, ProbeAlterationService) {
+  constructor($scope, $mdDialog, $mdToast, PogService) {
     this.$scope = $scope;
     this.$mdDialog = $mdDialog;
     this.$mdToast = $mdToast;
     this.PogService = PogService;
-    this.ProbeAlterationService = ProbeAlterationService;
   }
 
   $onInit() {

@@ -26,7 +26,8 @@ import MutationSignatureService from './services/reports/summary/mutation-signat
 import MicrobialService from './services/reports/summary/microbial.service';
 import PathwayAnalysisService from './services/reports/pathway-analysis/pathway-analysis.service';
 import AnalystCommentsService from './services/reports/analyst-comments/analyst-comments.service';
-import ProbeAlterationService from './services/reports/probe/alteration.service';
+import AlterationService from './services/reports/alteration.service';
+import TargetedGenesService from './services/reports/kbmatches/targeted-genes.service';
 import ProbeSignatureService from './services/reports/probe/signature.service';
 import ProbeTestInformationService from './services/reports/probe/test-information.service';
 import SlidesService from './services/reports/presentation/slides.service';
@@ -83,7 +84,8 @@ export default angular.module('root')
   .service('TherapeuticService', TherapeuticService)
   .service('PathwayAnalysisService', PathwayAnalysisService)
   .service('GermlineService', GermlineService)
-  .service('ProbeAlterationService', ProbeAlterationService)
+  .service('AlterationService', AlterationService)
+  .service('TargetedGenesService', TargetedGenesService)
   .service('ProbeSignatureService', ProbeSignatureService)
   .service('ProbeTestInformationService', ProbeTestInformationService)
   .service('ImageService', ImageService)
