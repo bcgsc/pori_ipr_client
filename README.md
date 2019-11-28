@@ -6,9 +6,9 @@ The Integrated Pipeline Reports (IPR) client is designed to consume API data fro
 other BC GSC BioFX APIs. The primary function is the production and management of POG Genomic and Targeted Gene reports.
 
 IPR has grown to include Biopsy and sample tracking for POG as well as Knowledgebase. All of these functions are
-plugged in to a central dashboard framework that allows users to seamlessly switch off between tasks. 
+plugged in to a central dashboard framework that allows users to seamlessly switch off between tasks.
 
-The client utilized AngularJS 1.6 web framework. The routing is handled by the ui-router module, and the UI library 
+The client utilized AngularJS 1.6 web framework. The routing is handled by the ui-router module, and the UI library
 is AngularJS Material.
 
 
@@ -18,13 +18,13 @@ The client is built from source using the Gulp task manager. The tasks are defin
 repository root directory. Inside `gulpfile.js` the tasks are described and execute co-linearly.
 
 Tasks:
-* `clean` - Removes any previous build directory files 
+* `clean` - Removes any previous build directory files
 * `favicon` - Copies the favicon file into the build directory
 * `config` - Runs a series of functions to determine the current build environment, and loads configuration
 files accordingly.
 * `pug` - Parent task for all pug related tasks:
  * `pug-index` - Renders the index.pug source file into the index.html file and copies it to the build directory
- * `pug-templates` - Globs all .pug files in the source directory, compiles them into HTML and places them as strings 
+ * `pug-templates` - Globs all .pug files in the source directory, compiles them into HTML and places them as strings
  in the `templates.js` folder. These strings are called and interpreted by AngularJS when required by the client.
 * `sass` - Parent task for all SASS/css tasks:
  * `sass-app` - Renders all SASS rules for global application styles into a minified css file
@@ -37,18 +37,18 @@ files accordingly.
 
 #### Building the client
 
-The client must be built via gulp before it can be run locally or deployed. Builds are environment dependent. 
-Different configurations are used based on if the environment is: local, development, testing, or production. 
+The client must be built via gulp before it can be run locally or deployed. Builds are environment dependent.
+Different configurations are used based on if the environment is: local, development, testing, or production.
 
-Local environment will map API's to the machine's IP address and is meant to be used in parallel with a locally 
+Local environment will map API's to the machine's IP address and is meant to be used in parallel with a locally
 running API server. After starting, the local web server will watch for changes on any files in the src and rebuild
 the affected areas, then trigger the client (if open in browser) to reload.
 
-The development environment maps API calls to the dev-ipr.bcgsc.ca:8081 API server that uses the separate development
+The development environment maps API calls to the [iprdev-api](https://iprdev-api.bcgsc.ca/api/1.0/spec) API server that uses the separate development
 database. This client is built automatically by the Bamboo CI server upon merging or committing/pushing to development
-branch on the Bitbucket server. 
+branch on the Bitbucket server.
 
-The production environment maps API calls to the ipr.bcgsc.ca:8001 API server and uses the production database. This 
+The production environment maps API calls to the ipr.bcgsc.ca:8001 API server and uses the production database. This
 is built automatically by the Bamboo CI upon approving a PR merge onto the production branch.
 
 Before building the client, the npm dependencies need to be installed:

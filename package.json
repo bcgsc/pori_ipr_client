@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "ipr-client",
-  "version": "2.6.3",
+  "version": "2.6.4",
   "main": "src/app.js",
   "keywords": [],
   "license": "GPL-3.0",
@@ -10,6 +10,7 @@
     "npm": "~3.10.10"
   },
   "scripts": {
+    "start": "NODE_ENV=development gulp",
     "cypress:open": "cypress open"
   },
   "devDependencies": {
