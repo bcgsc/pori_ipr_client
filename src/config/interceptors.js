@@ -22,6 +22,7 @@ function httpInterceptors($rootScope, $q, $injector) {
     },
 
     responseError: (response) => {
+      const tokenRegex = /invalid.*/gi;
       switch (response.status) {
         case 500:
           $rootScope.$broadcast('httpError', { message: 'An unexpected error has occurred. Please try again.' });
@@ -34,8 +35,7 @@ function httpInterceptors($rootScope, $q, $injector) {
             const $state = $injector.get('$state');
             $state.go('public.access');
             break;
-          } else if (['Invalid or expired authorization token', 'Invalid authorization token']
-            .includes(response.data.message)) {
+          } else if (response.data.message.match(tokenRegex)) {
             const $state = $injector.get('$state');
             $state.go('public.login');
             break;
