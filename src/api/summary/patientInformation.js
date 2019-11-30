@@ -36,11 +36,12 @@ app.factory('api.summary.patientInformation', ['_', '$http', '$q', (_, $http, $q
     
   };
 
-  $pi.update = (POGID, pi) => {
-
+  $pi.update = (POGID, ident, pi) => {
     return $q((resolve, reject) => {
-
-      $http.put(api + '/' + POGID + '/patientInformation', pi).then(
+      $http.put(
+        `${api}/${POGID}/report/${ident}/patientInformation`,
+        pi,
+      ).then(
         (result) => {
           // All done!
           resolve(result.data);
@@ -49,9 +50,7 @@ app.factory('api.summary.patientInformation', ['_', '$http', '$q', (_, $http, $q
           reject(error);
         }
       );
-
     });
-
   };
   
   return $pi;

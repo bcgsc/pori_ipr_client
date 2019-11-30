@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.report.genomic.summary',
-  ['_', '$q', '$state', '$scope', 'canEdit', 'api.pog', 'api.summary.tumourAnalysis', 'api.summary.patientInformation', 'api.summary.mutationSummary', 'api.summary.genomicAterationsIdentified', '$mdDialog', '$mdToast', 'pog', 'report', 'gai', 'get', 'ms', 'pt', 'vc', 'mutationSignature', 'microbial',
-    (_, $q, $state, $scope, canEdit, $pog, $tumourAnalysis, $patientInformation, $mutationSummary, $gai, $mdDialog, $mdToast, pog, report, gai, get, ms, pt, vc, mutationSignature, microbial) => {
+  ['_', '$q', '$state', '$scope', 'canEdit', 'api.pog', 'api.summary.tumourAnalysis', 'api.summary.patientInformation', 'api.summary.mutationSummary', 'api.summary.genomicAterationsIdentified', '$mdDialog', '$mdToast', 'pog', 'report', 'gai', 'get', 'ms', 'pt', 'vc', 'mutationSignature', 'microbial', 'api.analysis',
+    (_, $q, $state, $scope, canEdit, $pog, $tumourAnalysis, $patientInformation, $mutationSummary, $gai, $mdDialog, $mdToast, pog, report, gai, get, ms, pt, vc, mutationSignature, microbial, AnalysisService) => {
       // Determine which interpreted prevalence value will be displayed
       ms.snvPercentileCategory = (report.tumourAnalysis.diseaseExpressionComparator === 'average') ? ms.snvPercentileTCGACategory : ms.snvPercentileDiseaseCategory;
       ms.indelPercentileCategory = (report.tumourAnalysis.diseaseExpressionComparator === 'average') ? ms.indelPercentileTCGACategory : ms.indelPercentileDiseaseCategory;
@@ -15,6 +15,7 @@ app.controller('controller.dashboard.report.genomic.summary',
         pt: pt,
         ta: report.tumourAnalysis,
         pi: report.patientInformation,
+        analysis: report.analysis,
         microbial: microbial || { species: 'None', integrationSite: 'None' },
       };
       $scope.mutationSignature = mutationSignature;
@@ -177,28 +178,58 @@ app.controller('controller.dashboard.report.genomic.summary',
           clickOutToClose: false,
           controller: ['scope', (scope) => {
             scope.pi = angular.copy($scope.data.pi); //
+            scope.analysis = angular.copy($scope.data.analysis);
 
             scope.cancel = () => {
               $mdDialog.cancel('Patient information was not updated');
             };
 
 
-            scope.update = () => {
-              // Send updated entry to API
-              $patientInformation.update($scope.pog.POGID, scope.pi)
-                .then(() => {
-                  $mdDialog.hide({ message: 'Patient information has been successfully updated', data: scope.pi });
+            scope.update = (form) => {
+              const promises = [];
+              if (form.Biopsy.$dirty) {
+                // update analysis
+                promises.push(AnalysisService.update(scope.analysis));
+              }
+
+              // this will always be dirty due to the required comment field
+              promises.push($patientInformation.update(
+                $scope.pog.POGID,
+                $scope.report.ident,
+                scope.pi,
+              ));
+
+              $q.all(promises)
+                .then(([analysis, patientInformation]) => {
+                  $mdDialog.hide({
+                    message: 'Patient information has been successfully updated',
+                    analysis,
+                    patientInformation,
+                  });
                 })
                 .catch((error) => {
-                  $mdToast.showSimple(`Patient information was not updated due to an error: ${error}`);
+                  $mdToast.showSimple(
+                    `Patient information was not updated due to an error: ${error}`,
+                  );
                 });
             }; // End update
           }], // End controller
 
         })
           .then((outcome) => {
-            if (outcome) $mdToast.showSimple(outcome.message);
-            $scope.data.pi = outcome.data;
+            if (outcome) {
+              $mdToast.showSimple(outcome.message);
+
+              if (outcome.analysis) {
+                $scope.data.analysis = outcome.analysis;
+                $scope.report.analysis = outcome.analysis;
+              }
+
+              if (outcome.patientInformation) {
+                $scope.data.pi = outcome.patientInformation;
+                $scope.report.patientInformation = outcome.patientInformation;
+              }
+            }
           })
           .catch((error) => {
             $mdToast.showSimple(error);
