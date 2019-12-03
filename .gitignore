@@ -4,3 +4,4 @@ builds/*
 .*DS_Store
 .auth.json
 .vscode/*
+src/config/constants.js
