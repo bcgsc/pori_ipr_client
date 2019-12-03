@@ -1,0 +1,16 @@
+@import '../../../../styles/variables';
+
+.reports-table {
+  &__container {
+    margin: 16px 0;
+  }
+}
+
+.kb-matches {
+  &__header {
+    margin: 12px 0;
+    padding: 8px;
+    background-color: $primary;
+    color: $white;
+  }
+}

@@ -8,7 +8,8 @@ angular.module('kbmatches', [
 ]);
 
 export default angular.module('kbmatches')
-  .component('kbMatches', react2angular(KbMatchesComponent, ['rowData', 'columnDefs']))
+  .component('kbMatches', react2angular(KbMatchesComponent,
+    ['alterations', 'novelAlterations', 'unknownAlterations', 'approvedThisCancer', 'approvedOtherCancer', 'targetedGenes']))
   .config(($stateProvider) => {
     'ngInject';
 
@@ -17,26 +18,29 @@ export default angular.module('kbmatches')
         url: '/kbmatches',
         component: 'kbMatches',
         resolve: {
-          alterations: ['$transition$', 'AlterationService', async ($transition$, AlterationService) => {
-            const respAll = await AlterationService.getAll(
+          alterations: ['$transition$', 'AlterationService',
+            async ($transition$, AlterationService) => AlterationService.getAll(
               $transition$.params().POG,
               $transition$.params().analysis_report,
               'genomic',
-            );
-            const respUnknown = await AlterationService.getType(
-              $transition$.params().POG,
-              $transition$.params().analysis_report,
-              'genomic',
-              'unknown',
-            );
-            const respNovel = await AlterationService.getType(
+            ),
+          ],
+          novelAlterations: ['$transition$', 'AlterationService',
+            async ($transition$, AlterationService) => AlterationService.getAll(
               $transition$.params().POG,
               $transition$.params().analysis_report,
               'genomic',
               'novel',
-            );
-            return respAll.concat(respUnknown, respNovel);
-          }],
+            ),
+          ],
+          unknownAlterations: ['$transition$', 'AlterationService',
+            async ($transition$, AlterationService) => AlterationService.getAll(
+              $transition$.params().POG,
+              $transition$.params().analysis_report,
+              'genomic',
+              'unknown',
+            ),
+          ],
           approvedThisCancer: ['$transition$', 'AlterationService',
             async ($transition$, AlterationService) => AlterationService.getType(
               $transition$.params().POG,
@@ -59,19 +63,6 @@ export default angular.module('kbmatches')
               $transition$.params().analysis_report,
             ),
           ],
-          rowData: () => ([{
-            col1: 'test',
-            col2: 'tost',
-          }]),
-          columnDefs: () => ([{
-            headerName: 'headerone',
-            field: 'col1',
-            autoHeight: true,
-          },
-          {
-            headerName: 'headertwo',
-            field: 'col2',
-          }]),
         },
       });
   })
