@@ -1,7 +1,10 @@
 import React, { useRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { AgGridReact } from 'ag-grid-react';
-import Button from '@material-ui/core/Button';
+import {
+  Button,
+  Typography,
+} from '@material-ui/core';
 import startCase from 'lodash.startcase';
 
 import 'ag-grid-community/dist/styles/ag-grid.css';
@@ -32,72 +35,36 @@ function ReportsTableComponent(props) {
   const [groupedAlterations, setGroupedAlterations] = useState({});
   const [groupedApprovedThisCancer, setGroupedApprovedThisCancer] = useState([]);
   const [groupedApprovedOtherCancer, setGroupedApprovedOtherCancer] = useState([]);
+  const [groupedUnknownAlterations, setGroupedUnknownAlterations] = useState([]);
+  const [groupedNovelAlterations, setGroupedNovelAlterations] = useState([]);
 
-  /**
-   * 
-   * @param {*} approvedAlterations 
-   */
-  const groupApprovedAlterations = (approvedAlterations) => {
-    const collection = [];
-    approvedAlterations.forEach((row) => {
-      if (collection.length) {
-        collection.forEach((entry, index) => {
-          if ((entry.gene === row.gene) && (entry.variant === row.variant)) {
-            collection[index].children.push(row);
-          } else {
-            row.children = [];
-            collection.push(row); // Add row to collection
-          }
-        });
-      } else {
-        row.children = [];
-        collection.push(row);
-      }
-    });
-    return collection;
-  };
+  const coalesceEntries = entries => [...new Set(entries)];
   
-  /**
-   * 
-   * @param {*} entries 
-   */
-  const groupEntries = (entries) => {
+  const groupCategories = (entries) => {
     const grouped = {};
-    // Process the entries for grouping
     entries.forEach((row) => {
-      // Create new alteration type if it's not existing
       if (!(Object.prototype.hasOwnProperty.call(grouped, row.alterationType))) {
-        grouped[row.alterationType] = [];
+        grouped[row.alterationType] = new Set();
       }
-      // Check if it exists already?
-      if (grouped[row.alterationType].length) {
-        const match = grouped[row.alterationType].findIndex(
-          entry => (entry.gene === row.gene) && (entry.variant === row.variant),
-        );
-        if (match > -1) {
-          // Categorical entry already exists
-          grouped[row.alterationType][match].children.push(row);
-        } else {
-          row.children = [];
-          grouped[row.alterationType].push(row);
-        }
-      } else {
-        row.children = [];
-        grouped[row.alterationType].push(row);
-      }
+      grouped[row.alterationType].add(row);
     });
+    Object.entries(grouped).map(group => [...group]);
     return grouped;
   };
 
   useEffect(() => {
-    setGroupedAlterations(groupEntries(alterations));
-    setGroupedApprovedThisCancer(groupApprovedAlterations(approvedThisCancer));
-    setGroupedApprovedOtherCancer(groupApprovedAlterations(approvedOtherCancer));
+    setGroupedAlterations(groupCategories(alterations));
+    setGroupedApprovedThisCancer(coalesceEntries(approvedThisCancer));
+    setGroupedApprovedOtherCancer(coalesceEntries(approvedOtherCancer));
+    // setGroupedUnknownAlterations(coalesceEntries(unknownAlterations));
+    // setGroupedNovelAlterations(coalesceEntries(novelAlterations));
   }, []);
 
   const onGridReady = (params) => {
     gridApi.current = params.api;
     gridApi.current.sizeColumnsToFit();
+
+    window.addEventListener('resize', () => params.api.sizeColumnsToFit());
   };
 
   const defaultColDef = {
@@ -137,14 +104,31 @@ function ReportsTableComponent(props) {
   {
     headerName: '',
     field: '',
+    cellStyle: { overflow: 'visible' },
     cellRendererFramework: () => (<Button variant="outlined" size="small">Details</Button>),
   }];
 
+  const targetedColDefs = [{
+    headerName: 'Gene',
+    field: 'gene',
+  },
+  {
+    headerName: 'Variant',
+    field: 'variant',
+  },
+  {
+    headerName: 'Source',
+    field: 'sample',
+  }];
+    
   const domLayout = 'autoHeight';
 
   return (
     <div>
-      <div className="ag-theme-material reports-table__container">
+      <Typography variant="h6" className="kb-matches__header">
+        Therapies Approved In This Cancer Type
+      </Typography>
+      <div className="ag-theme-material kb-matches__container">
         <AgGridReact
           columnDefs={colDefs}
           rowData={groupedApprovedThisCancer}
@@ -153,7 +137,10 @@ function ReportsTableComponent(props) {
           domLayout={domLayout}
         />
       </div>
-      <div className="ag-theme-material reports-table__container">
+      <Typography variant="h6" className="kb-matches__header">
+        Therapies Approved In Other Cancer Types
+      </Typography>
+      <div className="ag-theme-material kb-matches__container">
         <AgGridReact
           columnDefs={colDefs}
           rowData={groupedApprovedOtherCancer}
@@ -164,60 +151,92 @@ function ReportsTableComponent(props) {
       </div>
       {Object.entries(groupedAlterations).map(([key, alterationByType]) => (
         <div key={key}>
-          <div className="kb-matches__header">
+          <Typography variant="h6" className="kb-matches__header">
             {`${startCase(key)} `}
             Alterations
-          </div>
-          <div className="ag-theme-material reports-table__container">
+          </Typography>
+          <div className="ag-theme-material kb-matches__container">
             <AgGridReact
               columnDefs={colDefs}
               rowData={alterationByType}
               defaultColDef={defaultColDef}
               onGridReady={onGridReady}
               domLayout={domLayout}
+              sideBar
             />
           </div>
         </div>
       ))}
-      <Button variant="contained" color="primary" onClick={() => setShowUnknownAlterations(!showUnknownAlterations)}>
-        {showUnknownAlterations ? 'Hide ' : 'Show '}
-        Uncharacterized Alterations
-      </Button>
-      {showUnknownAlterations && (
-        <div className="ag-theme-material reports-table__container">
-          <AgGridReact
-            columnDefs={colDefs}
-            rowData={unknownAlterations}
-            defaultColDef={defaultColDef}
-            onGridReady={onGridReady}
-            domLayout={domLayout}
-          />
-        </div>
-      )}
-      <Button variant="contained" color="primary" onClick={() => setShowNovelAlterations(!showNovelAlterations)}>
-        {showNovelAlterations ? 'Hide ' : 'Show '}
-        Alterations For Review
-      </Button>
-      {showNovelAlterations && (
-        <div className="ag-theme-material reports-table__container">
-          <AgGridReact
-            columnDefs={colDefs}
-            rowData={novelAlterations}
-            defaultColDef={defaultColDef}
-            onGridReady={onGridReady}
-            domLayout={domLayout}
-          />
-        </div>
-      )}
-      <div className="ag-theme-material reports-table__container">
+      <Typography variant="h6" className="kb-matches__header">
+        Targeted Gene Report - Detected Alterations
+      </Typography>
+      <div className="ag-theme-material kb-matches__container">
         <AgGridReact
-          columnDefs={colDefs}
+          columnDefs={targetedColDefs}
           rowData={targetedGenes}
           defaultColDef={defaultColDef}
           onGridReady={onGridReady}
           domLayout={domLayout}
         />
       </div>
+      <div className="kb-matches__button-container">
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            setShowUnknownAlterations(prevVal => !prevVal);
+            setGroupedUnknownAlterations(coalesceEntries(unknownAlterations));
+          }}
+          classes={{ root: 'kb-matches__button' }}
+        >
+          {showUnknownAlterations ? 'Hide ' : 'Show '}
+          Uncharacterized Alterations
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            setShowNovelAlterations(prevVal => !prevVal);
+            setGroupedNovelAlterations(coalesceEntries(novelAlterations));
+          }}
+          className="kb-matches__button"
+        >
+          {showNovelAlterations ? 'Hide ' : 'Show '}
+          Alterations For Review
+        </Button>
+      </div>
+      {showUnknownAlterations && (
+        <div>
+          <Typography variant="h6" className="kb-matches__header">
+            Uncharacterized Alterations
+          </Typography>
+          <div className="ag-theme-material kb-matches__container">
+            <AgGridReact
+              columnDefs={colDefs}
+              rowData={groupedUnknownAlterations}
+              defaultColDef={defaultColDef}
+              onGridReady={onGridReady}
+              domLayout={domLayout}
+            />
+          </div>
+        </div>
+      )}
+      {showNovelAlterations && (
+        <div>
+          <Typography variant="h6" className="kb-matches__header">
+            Alterations For Review
+          </Typography>
+          <div className="ag-theme-material kb-matches__container">
+            <AgGridReact
+              columnDefs={colDefs}
+              rowData={groupedNovelAlterations}
+              defaultColDef={defaultColDef}
+              onGridReady={onGridReady}
+              domLayout={domLayout}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
