@@ -2,11 +2,17 @@
 
 .kb-matches {
   &__header {
+    display: inline-block;
     padding: 8px;
   }
 
   &__container {
     margin: 8px 0;
+  }
+
+  &__header-container {
+    display: flex;
+    justify-content: space-between;
   }
 
   &__button-container {
