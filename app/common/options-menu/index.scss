@@ -6,4 +6,9 @@
   &__content {
     padding: 0 8px;
   }
+
+  &__footer {
+    display: flex;
+    justify-content: center;
+  }
 }

@@ -12,10 +12,7 @@ import {
   IconButton,
 } from '@material-ui/core';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
-import startCase from 'lodash.startcase';
 import OptionsMenu from '../../../../common/options-menu';
-import TableManager from './tableManager';
-import { colDefs, targetedColDefs } from './colDefs';
 
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-material.css';
@@ -31,75 +28,29 @@ import './index.scss';
  */
 function ReportsTableComponent(props) {
   const {
-    alterations,
-    novelAlterations,
-    unknownAlterations,
-    approvedThisCancer,
-    approvedOtherCancer,
-    targetedGenes,
+    rowData,
+    columnDefs,
+    title,
   } = props;
 
+  const gridApi = useRef();
+  const columnApi = useRef();
   const optionsMenuOnClose = useRef();
 
   const setOptionsMenuOnClose = (ref) => {
     optionsMenuOnClose.current = ref;
   };
 
-  const [columnDefs, setColumnDefs] = useState(colDefs);
   const [moreIconEl, setMoreIconEl] = useState(null);
   const [showPopover, setShowPopover] = useState(false);
-  const [showUnknownAlterations, setShowUnknownAlterations] = useState(false);
-  const [showNovelAlterations, setShowNovelAlterations] = useState(false);
-  const [groupedAlterations, setGroupedAlterations] = useState({});
-  const [groupedApprovedThisCancer, setGroupedApprovedThisCancer] = useState([]);
-  const [groupedApprovedOtherCancer, setGroupedApprovedOtherCancer] = useState([]);
-  const [groupedUnknownAlterations, setGroupedUnknownAlterations] = useState([]);
-  const [groupedNovelAlterations, setGroupedNovelAlterations] = useState([]);
 
-  const coalesceEntries = entries => [...new Set(entries)];
-  
-  const groupCategories = (entries) => {
-    const grouped = {};
-    entries.forEach((row) => {
-      if (!(Object.prototype.hasOwnProperty.call(grouped, row.alterationType))) {
-        grouped[row.alterationType] = new Set([row]);
-      } else {
-        grouped[row.alterationType].add(row);
-      }
-    });
-    Object.entries(grouped).map(group => [...group]);
-    return grouped;
+  const onGridReady = (params) => {
+    gridApi.current = params.api;
+    columnApi.current = params.columnApi;
+
+    gridApi.current.sizeColumnsToFit();
+    window.addEventListener('resize', () => gridApi.current.sizeColumnsToFit());
   };
-
-  useEffect(() => {
-    setGroupedAlterations(groupCategories(alterations));
-    setGroupedApprovedThisCancer(coalesceEntries(approvedThisCancer));
-    setGroupedApprovedOtherCancer(coalesceEntries(approvedOtherCancer));
-  }, []);
-
-  const tables = [
-    // ...Object.keys(groupedAlterations),
-    'biological',
-    'therapeutic',
-    'prognostic',
-    'diagnostic',
-    'novel',
-    'unknown',
-    'thisCancer',
-    'otherCancer',
-    'targeted',
-  ];
-
-  const [tableManager, setTableManager] = useState(new TableManager(tables));
-
-  const initTables = (params, table) => {
-    tableManager.setTableProp(table, 'gridApi', params.api);
-    tableManager.setTableProp(table, 'columnApi', params.columnApi);
-    tableManager.getTableProp(table, 'gridApi').sizeColumnsToFit();
-
-    window.addEventListener('resize', () => tableManager.getTableProp(table, 'gridApi').sizeColumnsToFit());
-  };
-
 
   const defaultColDef = {
     sortable: true,
@@ -109,7 +60,7 @@ function ReportsTableComponent(props) {
     
   const domLayout = 'autoHeight';
 
-  const renderOptionsMenu = (table) => {
+  const renderOptionsMenu = () => {
     const result = (
       <Popover
         anchorEl={moreIconEl}
@@ -122,11 +73,10 @@ function ReportsTableComponent(props) {
           horizontal: 'right',
         }}
         onClose={() => {
-          const colApi = tableManager.getTableProp(table, 'columnApi');
-          console.log(tableManager.getTables());
           const { visibleCols, hiddenCols } = optionsMenuOnClose.current();
-          colApi.setColumnsVisible(visibleCols, true);
-          colApi.setColumnsVisible(hiddenCols, false);
+          columnApi.current.setColumnsVisible(visibleCols, true);
+          columnApi.current.setColumnsVisible(hiddenCols, false);
+          gridApi.current.sizeColumnsToFit();
 
           setShowPopover(prevVal => !prevVal);
           setMoreIconEl(null);
@@ -136,7 +86,7 @@ function ReportsTableComponent(props) {
         <OptionsMenu
           className="data-view__options-menu"
           label="Configure Visible Columns"
-          columns={columnDefs}
+          columns={columnApi.current.getAllColumns()}
           onClose={setOptionsMenuOnClose}
         />
       </Popover>
@@ -146,7 +96,7 @@ function ReportsTableComponent(props) {
 
   return (
     <div>
-      <Typography variant="h6" className="kb-matches__header">
+      {/* <Typography variant="h6" className="kb-matches__header">
         Therapies Approved In This Cancer Type
       </Typography>
       <div className="ag-theme-material kb-matches__container">
@@ -157,10 +107,10 @@ function ReportsTableComponent(props) {
           onGridReady={params => initTables(params, 'thisCancer')}
           domLayout={domLayout}
         />
-      </div>
+      </div> */}
       <div className="kb-matches__header-container">
         <Typography variant="h6" className="kb-matches__header">
-          Therapies Approved In Other Cancer Types
+          {title}
         </Typography>
         <IconButton
           onClick={({ currentTarget }) => {
@@ -173,17 +123,17 @@ function ReportsTableComponent(props) {
       </div>
       <div className="ag-theme-material kb-matches__container">
         {showPopover
-          && renderOptionsMenu('otherCancer')
+          && renderOptionsMenu()
         }
         <AgGridReact
           columnDefs={columnDefs}
-          rowData={groupedApprovedOtherCancer}
+          rowData={rowData}
           defaultColDef={defaultColDef}
-          onGridReady={params => initTables(params, 'otherCancer')}
+          onGridReady={onGridReady}
           domLayout={domLayout}
         />
       </div>
-      {Object.entries(groupedAlterations).map(([key, alterationByType]) => (
+      {/* {Object.entries(groupedAlterations).map(([key, alterationByType]) => (
         <div key={key}>
           <div>
             <Typography variant="h6" className="kb-matches__header">
@@ -271,18 +221,15 @@ function ReportsTableComponent(props) {
             />
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }
 
 ReportsTableComponent.propTypes = {
-  alterations: PropTypes.arrayOf(PropTypes.object).isRequired,
-  novelAlterations: PropTypes.arrayOf(PropTypes.object).isRequired,
-  unknownAlterations: PropTypes.arrayOf(PropTypes.object).isRequired,
-  approvedThisCancer: PropTypes.arrayOf(PropTypes.object).isRequired,
-  approvedOtherCancer: PropTypes.arrayOf(PropTypes.object).isRequired,
-  targetedGenes: PropTypes.arrayOf(PropTypes.object).isRequired,
+  columnDefs: PropTypes.arrayOf(PropTypes.object).isRequired,
+  rowData: PropTypes.arrayOf(PropTypes.object).isRequired,
+  title: PropTypes.string.isRequired,
 };
 
 export default ReportsTableComponent;

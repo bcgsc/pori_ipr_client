@@ -1,4 +1,4 @@
-const colDefs = [{
+const columnDefs = [{
   headerName: 'Gene',
   field: 'gene',
   colId: 'gene',
@@ -65,7 +65,7 @@ const colDefs = [{
   hide: true,
 }];
 
-const targetedColDefs = [{
+const targetedColumnDefs = [{
   headerName: 'Gene',
   field: 'gene',
   hide: false,
@@ -82,6 +82,6 @@ const targetedColDefs = [{
 }];
 
 export {
-  colDefs,
-  targetedColDefs,
+  columnDefs,
+  targetedColumnDefs,
 };
