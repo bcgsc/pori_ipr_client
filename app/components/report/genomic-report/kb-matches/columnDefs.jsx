@@ -12,9 +12,15 @@ const columnDefs = [{
 },
 {
   headerName: 'Cancer Type',
-  field: 'disease',
   colId: 'disease',
   hide: false,
+  valueGetter: (params) => {
+    if (params.data.disease.size > 1) {
+      console.log(params.data.disease);
+      return [...params.data.disease].join(', ');
+    }
+    return params.data.disease;
+  },
 },
 {
   headerName: 'Disease Percentile',
@@ -62,6 +68,36 @@ const columnDefs = [{
   headerName: 'Copy Number',
   field: 'copyNumber',
   colId: 'copyNumber',
+  hide: true,
+},
+{
+  headerName: 'Effect',
+  field: 'effect',
+  colId: 'effect',
+  hide: true,
+},
+{
+  headerName: 'Evidence',
+  field: 'evidence',
+  colId: 'evidence',
+  hide: true,
+},
+{
+  headerName: 'Matched Cancer',
+  field: 'matched_cancer',
+  colId: 'matched_cancer',
+  hide: true,
+},
+{
+  headerName: 'Sample',
+  field: 'sample',
+  colId: 'sample',
+  hide: true,
+},
+{
+  headerName: 'Zygosity',
+  field: 'zygosity',
+  colId: 'zygosity',
   hide: true,
 }];
 

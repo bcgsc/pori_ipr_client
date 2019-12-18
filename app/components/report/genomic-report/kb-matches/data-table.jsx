@@ -1,12 +1,11 @@
 import React, {
   useRef,
-  useEffect,
   useState,
+  useEffect,
 } from 'react';
 import PropTypes from 'prop-types';
 import { AgGridReact } from 'ag-grid-react';
 import {
-  Button,
   Typography,
   Popover,
   IconButton,
@@ -31,6 +30,11 @@ function ReportsTableComponent(props) {
     rowData,
     columnDefs,
     title,
+    visibleCols,
+    hiddenCols,
+    setVisibleCols,
+    setHiddenCols,
+    searchText,
   } = props;
 
   const gridApi = useRef();
@@ -44,12 +48,26 @@ function ReportsTableComponent(props) {
   const [moreIconEl, setMoreIconEl] = useState(null);
   const [showPopover, setShowPopover] = useState(false);
 
+  useEffect(() => {
+    if (columnApi.current) {
+      columnApi.current.setColumnsVisible(visibleCols, true);
+      columnApi.current.setColumnsVisible(hiddenCols, false);
+    }
+  }, [visibleCols, hiddenCols]);
+
+  useEffect(() => {
+    if (gridApi.current) {
+      gridApi.current.setQuickFilter(searchText);
+    }
+  }, [searchText]);
+
   const onGridReady = (params) => {
     gridApi.current = params.api;
     columnApi.current = params.columnApi;
 
-    gridApi.current.sizeColumnsToFit();
-    window.addEventListener('resize', () => gridApi.current.sizeColumnsToFit());
+    columnApi.current.setColumnsVisible(visibleCols, true);
+    columnApi.current.setColumnsVisible(hiddenCols, false);
+    columnApi.current.autoSizeColumns(visibleCols);
   };
 
   const defaultColDef = {
@@ -73,10 +91,14 @@ function ReportsTableComponent(props) {
           horizontal: 'right',
         }}
         onClose={() => {
-          const { visibleCols, hiddenCols } = optionsMenuOnClose.current();
-          columnApi.current.setColumnsVisible(visibleCols, true);
-          columnApi.current.setColumnsVisible(hiddenCols, false);
-          gridApi.current.sizeColumnsToFit();
+          const {
+            visibleCols: returnedVisibleCols,
+            hiddenCols: returnedHiddenCols,
+          } = optionsMenuOnClose.current();
+
+          setVisibleCols(returnedVisibleCols);
+          setHiddenCols(returnedHiddenCols);
+          columnApi.current.autoSizeColumns(returnedVisibleCols);
 
           setShowPopover(prevVal => !prevVal);
           setMoreIconEl(null);
@@ -96,18 +118,6 @@ function ReportsTableComponent(props) {
 
   return (
     <div>
-      {/* <Typography variant="h6" className="kb-matches__header">
-        Therapies Approved In This Cancer Type
-      </Typography>
-      <div className="ag-theme-material kb-matches__container">
-        <AgGridReact
-          columnDefs={columnDefs}
-          rowData={groupedApprovedThisCancer}
-          defaultColDef={defaultColDef}
-          onGridReady={params => initTables(params, 'thisCancer')}
-          domLayout={domLayout}
-        />
-      </div> */}
       <div className="kb-matches__header-container">
         <Typography variant="h6" className="kb-matches__header">
           {title}
@@ -131,97 +141,10 @@ function ReportsTableComponent(props) {
           defaultColDef={defaultColDef}
           onGridReady={onGridReady}
           domLayout={domLayout}
+          skipHeaderOnAutoSize
+          autoSizePadding="0"
         />
       </div>
-      {/* {Object.entries(groupedAlterations).map(([key, alterationByType]) => (
-        <div key={key}>
-          <div>
-            <Typography variant="h6" className="kb-matches__header">
-              {`${startCase(key)} `}
-              Alterations
-            </Typography>
-          </div>
-          <div className="ag-theme-material kb-matches__container">
-            <AgGridReact
-              columnDefs={columnDefs}
-              rowData={alterationByType}
-              defaultColDef={defaultColDef}
-              onGridReady={params => initTables(params, key)}
-              domLayout={domLayout}
-            />
-          </div>
-        </div>
-      ))}
-      <Typography variant="h6" className="kb-matches__header">
-        Targeted Gene Report - Detected Alterations
-      </Typography>
-      <div className="ag-theme-material kb-matches__container">
-        <AgGridReact
-          columnDefs={targetedColDefs}
-          rowData={targetedGenes}
-          defaultColDef={defaultColDef}
-          onGridReady={params => initTables(params, 'targeted')}
-          domLayout={domLayout}
-        />
-      </div>
-      <div className="kb-matches__button-container">
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => {
-            setShowUnknownAlterations(prevVal => !prevVal);
-            setGroupedUnknownAlterations(coalesceEntries(unknownAlterations));
-          }}
-          classes={{ root: 'kb-matches__button' }}
-        >
-          {showUnknownAlterations ? 'Hide ' : 'Show '}
-          Uncharacterized Alterations
-        </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => {
-            setShowNovelAlterations(prevVal => !prevVal);
-            setGroupedNovelAlterations(coalesceEntries(novelAlterations));
-          }}
-          className="kb-matches__button"
-        >
-          {showNovelAlterations ? 'Hide ' : 'Show '}
-          Alterations For Review
-        </Button>
-      </div>
-      {showUnknownAlterations && (
-        <div>
-          <Typography variant="h6" className="kb-matches__header">
-            Uncharacterized Alterations
-          </Typography>
-          <div className="ag-theme-material kb-matches__container">
-            <AgGridReact
-              columnDefs={columnDefs}
-              rowData={groupedUnknownAlterations}
-              defaultColDef={defaultColDef}
-              onGridReady={params => initTables(params, 'unknown')}
-              domLayout={domLayout}
-            />
-          </div>
-        </div>
-      )}
-      {showNovelAlterations && (
-        <div>
-          <Typography variant="h6" className="kb-matches__header">
-            Alterations For Review
-          </Typography>
-          <div className="ag-theme-material kb-matches__container">
-            <AgGridReact
-              columnDefs={columnDefs}
-              rowData={groupedNovelAlterations}
-              defaultColDef={defaultColDef}
-              onGridReady={params => initTables(params, 'novel')}
-              domLayout={domLayout}
-            />
-          </div>
-        </div>
-      )} */}
     </div>
   );
 }
@@ -230,6 +153,11 @@ ReportsTableComponent.propTypes = {
   columnDefs: PropTypes.arrayOf(PropTypes.object).isRequired,
   rowData: PropTypes.arrayOf(PropTypes.object).isRequired,
   title: PropTypes.string.isRequired,
+  visibleCols: PropTypes.arrayOf(PropTypes.string).isRequired,
+  hiddenCols: PropTypes.arrayOf(PropTypes.string).isRequired,
+  setVisibleCols: PropTypes.func.isRequired,
+  setHiddenCols: PropTypes.func.isRequired,
+  searchText: PropTypes.string.isRequired,
 };
 
 export default ReportsTableComponent;
