@@ -47,12 +47,10 @@ function KBMatches(props) {
 
   const [searchText, setSearchText] = useState('');
 
-  const [groupedAlterations, setGroupedAlterations] = useState({
-    therapeutic: [],
-    diagnostic: [],
-    prognostic: [],
-    biological: [],
-  });
+  const [groupedTherapeutic, setGroupedTherapeutic] = useState([]);
+  const [groupedDiagnostic, setGroupedDiagnostic] = useState([]);
+  const [groupedPrognostic, setGroupedPrognostic] = useState([]);
+  const [groupedBiological, setGroupedBiological] = useState([]);
   const [groupedApprovedThisCancer, setGroupedApprovedThisCancer] = useState([]);
   const [groupedApprovedOtherCancer, setGroupedApprovedOtherCancer] = useState([]);
   const [groupedUnknownAlterations, setGroupedUnknownAlterations] = useState([]);
@@ -86,8 +84,8 @@ function KBMatches(props) {
       const {
         ident, updatedAt, createdAt, ...row
       } = entry;
-      const { relevance, context, variant } = row;
-      return `${relevance}${delimiter}${context}${delimiter}${variant}`;
+      const { gene, context, variant } = row;
+      return `${gene}${delimiter}${context}${delimiter}${variant}`;
     };
 
     const buckets = {};
@@ -95,10 +93,12 @@ function KBMatches(props) {
     entries.forEach((entry) => {
       const key = bucketKey(entry);
       if (!buckets[key]) {
-        buckets[key] = { ...entry, disease: new Set(entry.disease), pmid: new Set(entry.pmid) };
+        buckets[key] = {
+          ...entry, disease: new Set([entry.disease]), reference: new Set([entry.reference]),
+        };
       } else {
         buckets[key].disease.add(entry.disease);
-        buckets[key].pmid.add(entry.pmid);
+        buckets[key].reference.add(entry.reference);
       }
     });
     console.log(Object.values(buckets));
@@ -125,7 +125,12 @@ function KBMatches(props) {
   };
 
   useEffect(() => {
-    setGroupedAlterations(groupCategories(alterations));
+    const categories = groupCategories(alterations);
+    setGroupedTherapeutic(coalesceEntries(categories.therapeutic));
+    setGroupedDiagnostic(coalesceEntries(categories.diagnostic));
+    setGroupedPrognostic(coalesceEntries(categories.prognostic));
+    setGroupedBiological(coalesceEntries(categories.biological));
+
     setGroupedApprovedThisCancer(coalesceEntries(approvedThisCancer));
     setGroupedApprovedOtherCancer(coalesceEntries(approvedOtherCancer));
     setGroupedUnknownAlterations(coalesceEntries(unknownAlterations));
@@ -186,7 +191,7 @@ function KBMatches(props) {
 
       <DataTable
         columnDefs={columnDefs}
-        rowData={groupedAlterations.therapeutic || []}
+        rowData={groupedTherapeutic || []}
         title="Therapeutic Alterations"
         visibleCols={visibleCols}
         hiddenCols={hiddenCols}
@@ -197,7 +202,7 @@ function KBMatches(props) {
 
       <DataTable
         columnDefs={columnDefs}
-        rowData={groupedAlterations.diagnostic || []}
+        rowData={groupedDiagnostic || []}
         title="Diagnostic Alterations"
         visibleCols={visibleCols}
         hiddenCols={hiddenCols}
@@ -208,7 +213,7 @@ function KBMatches(props) {
 
       <DataTable
         columnDefs={columnDefs}
-        rowData={groupedAlterations.prognostic || []}
+        rowData={groupedPrognostic || []}
         title="Prognostic Alterations"
         visibleCols={visibleCols}
         hiddenCols={hiddenCols}
@@ -219,7 +224,7 @@ function KBMatches(props) {
       
       <DataTable
         columnDefs={columnDefs}
-        rowData={groupedAlterations.biological || []}
+        rowData={groupedBiological || []}
         title="Biological alterations"
         visibleCols={visibleCols}
         hiddenCols={hiddenCols}

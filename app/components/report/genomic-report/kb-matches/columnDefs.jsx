@@ -15,8 +15,7 @@ const columnDefs = [{
   colId: 'disease',
   hide: false,
   valueGetter: (params) => {
-    if (params.data.disease.size > 1) {
-      console.log(params.data.disease);
+    if (typeof params.data.disease === 'object') {
       return [...params.data.disease].join(', ');
     }
     return params.data.disease;
@@ -42,9 +41,14 @@ const columnDefs = [{
 },
 {
   headerName: 'PMID',
-  field: 'reference',
   colId: 'reference',
   hide: false,
+  valueGetter: (params) => {
+    if (typeof params.data.reference === 'object') {
+      return [...params.data.reference].join(' ');
+    }
+    return params.data.reference;
+  },
 },
 {
   headerName: 'LOH Region',
