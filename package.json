@@ -16,7 +16,8 @@
     "start": "npm run start:dev",
     "start:local": "webpack-dev-server --config ./config/webpack/webpack.local.js",
     "start:dev": "webpack-dev-server --config ./config/webpack/webpack.dev.js",
-    "start:prod": "webpack-dev-server --config ./config/webpack/webpack.prod.js"
+    "start:prod": "webpack-dev-server --config ./config/webpack/webpack.prod.js",
+    "start:staging": "webpack-dev-server --config ./config/webpack/webpack.staging.js"
   },
   "devDependencies": {
     "@babel/core": "~7.1.6",
