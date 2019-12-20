@@ -115,6 +115,19 @@ function ReportsTableComponent(props) {
     );
     return result;
   };
+  
+  const getRowHeight = (params) => {
+    const DEFAULT_LINE_HEIGHT = 46;
+    const DEFAULT_ROW_HEIGHT = 50;
+    try {
+      const upperVal = params.data.disease.size > params.data.reference.size
+        ? params.data.disease.size
+        : params.data.reference.size;
+      return upperVal * DEFAULT_LINE_HEIGHT;
+    } catch (err) {
+      return DEFAULT_ROW_HEIGHT;
+    }
+  };
 
   return (
     <div>
@@ -143,6 +156,7 @@ function ReportsTableComponent(props) {
           domLayout={domLayout}
           skipHeaderOnAutoSize
           autoSizePadding="0"
+          getRowHeight={getRowHeight}
         />
       </div>
     </div>

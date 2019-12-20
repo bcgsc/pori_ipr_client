@@ -59,26 +59,6 @@ function KBMatches(props) {
   const [showUnknown, setShowUnknown] = useState(false);
   const [showNovel, setShowNovel] = useState(false);
 
- // const coalesceEntries = entries => [...new Set(
- //   entries.map(({
- //     ident, updatedAt, createdAt, zygosity, ...keepAttrs
- //   }) => keepAttrs),
- // )];
- // const coalesceEntries = (entries) => {
- //   const returnedEntries = [];
- //   entries.forEach((entry) => {
- //     if (returnedEntries.length > 0) {
- //       returnedEntries.forEach((innerVal) => {
- //         if (JSON.stringify(innerVal) !== JSON.stringify(entry)) {
- //           returnedEntries.push(entry);
- //         }
- //       });
- //     } else {
- //       returnedEntries.push(entry);
- //     }
- //   });
- //   return returnedEntries;
- // }
   const coalesceEntries = (entries) => {
     const bucketKey = (entry, delimiter = '||') => {
       const {
@@ -101,7 +81,6 @@ function KBMatches(props) {
         buckets[key].reference.add(entry.reference);
       }
     });
-    console.log(Object.values(buckets));
     return Object.values(buckets);
   };
 

@@ -1,3 +1,5 @@
+import React from 'react';
+
 const columnDefs = [{
   headerName: 'Gene',
   field: 'gene',
@@ -14,12 +16,16 @@ const columnDefs = [{
   headerName: 'Cancer Type',
   colId: 'disease',
   hide: false,
-  valueGetter: (params) => {
-    if (typeof params.data.disease === 'object') {
-      return [...params.data.disease].join(', ');
-    }
-    return params.data.disease;
-  },
+  cellRendererFramework: params => (
+    <>
+      {[...params.data.disease].map(val => (
+        <div key={val}>
+          {val}
+          <br />
+        </div>
+      ))}
+    </>
+  ),
 },
 {
   headerName: 'Disease Percentile',
@@ -43,12 +49,16 @@ const columnDefs = [{
   headerName: 'PMID',
   colId: 'reference',
   hide: false,
-  valueGetter: (params) => {
-    if (typeof params.data.reference === 'object') {
-      return [...params.data.reference].join(' ');
-    }
-    return params.data.reference;
-  },
+  cellRendererFramework: params => (
+    <>
+      {[...params.data.reference].map(val => (
+        <div key={val}>
+          {val}
+          <br />
+        </div>
+      ))}
+    </>
+  ),
 },
 {
   headerName: 'LOH Region',
