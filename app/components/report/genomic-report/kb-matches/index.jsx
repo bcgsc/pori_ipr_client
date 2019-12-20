@@ -31,11 +31,11 @@ function KBMatches(props) {
 
   const [visibleCols, setVisibleCols] = useState(
     localStorage.getItem('visibleColsKb').split(',')
-    || columnDefs.filter(c => !c.hide).map(c => c.colId),
+    || columnDefs.filter(c => !c.hide).map(c => c.field),
   );
   const [hiddenCols, setHiddenCols] = useState(
     localStorage.getItem('hiddenColsKb').split(',')
-    || columnDefs.filter(c => c.hide).map(c => c.colId),
+    || columnDefs.filter(c => c.hide).map(c => c.field),
   );
   
   const handleVisibleColsChange = (change) => {
