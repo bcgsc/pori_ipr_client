@@ -6,47 +6,46 @@ class GenomicEventsService {
   }
   
   /**
-   * Get Genomic Events with Therapeutic Association
-   * Retrieve all POGs from API that user can access
-   * @param {String} pogID - pogID as String
+   * Get Genomic Events with Therapeutic Association for a given patient ID
+   * @param {String} patient - patient as String
    * @param {String} report - report ident
    * @return {Promise} API response data
    * @throws {ErrorType} Thrown when API call fails
    */
-  async all(pogID, report) {
+  async all(patient, report) {
     const resp = await this.$http.get(
-      `${this.api}/${pogID}/report/${report}/genomic/summary/genomicEventsTherapeutic`,
+      `${this.api}/${patient}/report/${report}/genomic/summary/genomicEventsTherapeutic`,
     );
     return resp.data;
   }
   
   /**
    * Get a Genomic Event with Therapeutic Association
-   * @param {String} pogID - pogID, eg POG129
+   * @param {String} patient - patient, eg POG129
    * @param {String} report - report ident
    * @param {String} ident - UUID4 identity string for entry
    * @return {Promise} API reponse data
    * @throws {ErrorType} Thrown when API call fails
    */
-  async id(pogID, report, ident) {
+  async id(patient, report, ident) {
     const resp = await this.$http.get(
-      `${this.api}/${pogID}/report/${report}/genomic/summary/genomicEventsTherapeutic/${ident}`,
+      `${this.api}/${patient}/report/${report}/genomic/summary/genomicEventsTherapeutic/${ident}`,
     );
     return resp.data;
   }
   
   /**
    * Update a Genomic Event with Therapeutic Association
-   * @param {String} pogID - pogID, eg POG129
+   * @param {String} patient - patient, eg POG129
    * @param {String} report - report ident
    * @param {String} ident - UUID4 identity string for entry
    * @param {*} get - Genomic Events
    * @return {promise} API response data
    * @throws {ErrorType} Thrown when API call fails
    */
-  async update(pogID, report, ident, get) {
+  async update(patient, report, ident, get) {
     const resp = await this.$http.put(
-      `${this.api}/${pogID}/report/${report}/genomic/summary/genomicEventsTherapeutic/${ident}`,
+      `${this.api}/${patient}/report/${report}/genomic/summary/genomicEventsTherapeutic/${ident}`,
       get,
     );
     return resp.data;
@@ -54,15 +53,15 @@ class GenomicEventsService {
   
   /**
    * Remove a Genomic Event with Therapeutic Association
-   * @param {String} pogID - pogID, eg POG129
+   * @param {String} patient - patient, eg POG129
    * @param {String} report - report ident
    * @param {String} ident - UUID4 identity string for entry
    * @return {Promise} API response data
    * @throws {ErrorType} Thrown when API call fails
    */
-  async remove(pogID, report, ident) {
+  async remove(patient, report, ident) {
     const resp = await this.$http.delete(
-      `${this.api}/${pogID}/report/${report}/genomic/summary/genomicEventsTherapeutic/${ident}`,
+      `${this.api}/${patient}/report/${report}/genomic/summary/genomicEventsTherapeutic/${ident}`,
     );
     return resp.data;
   }
