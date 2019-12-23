@@ -3,7 +3,7 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const webpack = require('webpack');
 const merge = require('webpack-merge');
 const common = require('./webpack.config.js');
-const CONFIG = require('../../env.json').production;
+const { production } = require('../../env.json');
 
 const prodConfig = {
   module: {
@@ -17,7 +17,7 @@ const prodConfig = {
   mode: 'production',
   plugins: [
     new webpack.DefinePlugin({
-      CONFIG: JSON.stringify(CONFIG),
+      CONFIG: JSON.stringify(production),
     }),
   ],
   optimization: {
