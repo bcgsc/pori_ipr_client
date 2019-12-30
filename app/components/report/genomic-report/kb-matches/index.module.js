@@ -1,23 +1,37 @@
 import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
 import { react2angular } from 'react2angular';
-import KbMatchesComponent from './index';
+import KBMatchesView from '../../../../views/kb-matches-view';
+import KBMatchesComponent from './index';
 
 angular.module('kbmatches', [
   uiRouter,
 ]);
 
 export default angular.module('kbmatches')
-  .component('kbMatches', react2angular(KbMatchesComponent,
-    ['alterations', 'novelAlterations', 'unknownAlterations', 'approvedThisCancer', 'approvedOtherCancer', 'targetedGenes']))
+  .component('kbMatchesAngularComponent', react2angular(
+    KBMatchesView,
+    [
+      'alterations',
+      'novel',
+      'unknown',
+      'thisCancer',
+      'otherCancer',
+      'targetedGenes',
+      'kbMatchesComponent',
+    ],
+  ))
   .config(($stateProvider) => {
     'ngInject';
 
     $stateProvider
       .state('root.reportlisting.pog.genomic.kbmatches', {
         url: '/kbmatches',
-        component: 'kbMatches',
+        component: 'kbMatchesAngularComponent',
         resolve: {
+          // This is REQUIRED to be lower camel case for injections apparently
+          // But React requires components to be PascalCase. Reassign in component.
+          kbMatchesComponent: [() => KBMatchesComponent],
           alterations: ['$transition$', 'AlterationService',
             async ($transition$, AlterationService) => AlterationService.getAll(
               $transition$.params().POG,
@@ -25,7 +39,7 @@ export default angular.module('kbmatches')
               'genomic',
             ),
           ],
-          novelAlterations: ['$transition$', 'AlterationService',
+          novel: ['$transition$', 'AlterationService',
             async ($transition$, AlterationService) => AlterationService.getAll(
               $transition$.params().POG,
               $transition$.params().analysis_report,
@@ -33,7 +47,7 @@ export default angular.module('kbmatches')
               'novel',
             ),
           ],
-          unknownAlterations: ['$transition$', 'AlterationService',
+          unknown: ['$transition$', 'AlterationService',
             async ($transition$, AlterationService) => AlterationService.getAll(
               $transition$.params().POG,
               $transition$.params().analysis_report,
@@ -41,7 +55,7 @@ export default angular.module('kbmatches')
               'unknown',
             ),
           ],
-          approvedThisCancer: ['$transition$', 'AlterationService',
+          thisCancer: ['$transition$', 'AlterationService',
             async ($transition$, AlterationService) => AlterationService.getType(
               $transition$.params().POG,
               $transition$.params().analysis_report,
@@ -49,7 +63,7 @@ export default angular.module('kbmatches')
               'thisCancer',
             ),
           ],
-          approvedOtherCancer: ['$transition$', 'AlterationService',
+          otherCancer: ['$transition$', 'AlterationService',
             async ($transition$, AlterationService) => AlterationService.getType(
               $transition$.params().POG,
               $transition$.params().analysis_report,

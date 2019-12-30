@@ -165,13 +165,17 @@ function ReportsTableComponent(props) {
 
 ReportsTableComponent.propTypes = {
   columnDefs: PropTypes.arrayOf(PropTypes.object).isRequired,
-  rowData: PropTypes.arrayOf(PropTypes.object).isRequired,
+  rowData: PropTypes.arrayOf(PropTypes.object),
   title: PropTypes.string.isRequired,
   visibleCols: PropTypes.arrayOf(PropTypes.string).isRequired,
   hiddenCols: PropTypes.arrayOf(PropTypes.string).isRequired,
   setVisibleCols: PropTypes.func.isRequired,
   setHiddenCols: PropTypes.func.isRequired,
   searchText: PropTypes.string.isRequired,
+};
+
+ReportsTableComponent.defaultProps = {
+  rowData: [],
 };
 
 export default ReportsTableComponent;
