@@ -11,29 +11,27 @@ import DataTable from './data-table';
 
 /**
  * @param {*} props props
- * @param {array} novelAlterations novel alterations array
- * @param {array} unknownAlterations unknown alterations array
- * @param {array} approvedThisCancer this cancer array
- * @param {array} approvedOtherCancer other cancer array
- * @param {array} targetedGenes targeted genes array
+ * @param {object} tableData table data for all tables
+ * @param {object} hiddenTableData table data for all tables hidden by default
+ * @param {func} setHiddenTableData function passed to set hidden tables
+ * @param {array} syncedColumnDefs column definitions to by synced across tables
  * @returns {*} JSX
  */
 function KBMatches(props) {
   const {
-    rowData,
-    hiddenRowData,
-    setHiddenRowData,
+    tableData,
+    hiddenTableData,
+    setHiddenTableData,
+    syncedColumnDefs,
   } = props;
-
-  const [thisHiddenRowData, setThisHiddenRowData] = useState(hiddenRowData.current);
 
   const [visibleCols, setVisibleCols] = useState(
     localStorage.getItem('visibleColsKb').split(',')
-    || columnDefs.filter(c => !c.hide).map(c => c.field),
+    || syncedColumnDefs.filter(c => !c.hide).map(c => c.field),
   );
   const [hiddenCols, setHiddenCols] = useState(
     localStorage.getItem('hiddenColsKb').split(',')
-    || columnDefs.filter(c => c.hide).map(c => c.field),
+    || syncedColumnDefs.filter(c => c.hide).map(c => c.field),
   );
   
   const handleVisibleColsChange = (change) => {
@@ -45,9 +43,6 @@ function KBMatches(props) {
 
   const [searchText, setSearchText] = useState('');
 
-  const [showUnknown, setShowUnknown] = useState(false);
-  const [showNovel, setShowNovel] = useState(false);
-
   useEffect(() => {
     localStorage.setItem('visibleColsKb', visibleCols);
     localStorage.setItem('hiddenColsKb', hiddenCols);
@@ -55,11 +50,11 @@ function KBMatches(props) {
 
   const handleSearch = event => setSearchText(event.target.value);
 
-  const handleShowTables = (key, row) => {
-    row.show = !row.show;
-    const thisHiddenRowDataCopy = Object.assign({}, thisHiddenRowData);
-    thisHiddenRowDataCopy[key] = row;
-    setThisHiddenRowData(thisHiddenRowDataCopy);
+  const handleShowTables = (key, table) => {
+    table.show = !table.show;
+    const hiddenTableDataCopy = Object.assign({}, hiddenTableData);
+    hiddenTableDataCopy[key] = table;
+    setHiddenTableData(hiddenTableDataCopy);
   };
 
   return (
@@ -86,12 +81,12 @@ function KBMatches(props) {
       </div>
 
       <div>
-        {Object.values(rowData).map(row => (
-          <div key={row.title}>
+        {Object.values(tableData).map(table => (
+          <div key={table.title}>
             <DataTable
-              columnDefs={row.columnDefs}
-              rowData={row.rowData || []}
-              title={row.title}
+              columnDefs={table.columnDefs}
+              rowData={table.rowData || []}
+              title={table.title}
               visibleCols={visibleCols}
               hiddenCols={hiddenCols}
               setVisibleCols={handleVisibleColsChange}
@@ -103,27 +98,27 @@ function KBMatches(props) {
       </div>
 
       <div className="kb-matches__button-container">
-        {Object.entries(thisHiddenRowData).map(([key, row]) => (
+        {Object.entries(hiddenTableData.current).map(([key, table]) => (
           <Button
-            onClick={() => handleShowTables(key, row)}
+            onClick={() => handleShowTables(key, table)}
             color="primary"
             variant="outlined"
-            key={row.title}
+            key={table.title}
           >
-            {row.show ? 'Hide ' : 'Show '}
-            {row.title}
+            {table.show ? 'Hide ' : 'Show '}
+            {table.title}
           </Button>
         ))}
       </div>
 
-      {Object.values(thisHiddenRowData).map(row => (
-        <div key={row.title}>
-          {row.show
+      {Object.values(hiddenTableData.current).map(table => (
+        <div key={table.title}>
+          {table.show
             && (
               <DataTable
-                columnDefs={row.columnDefs}
-                rowData={row.rowData || []}
-                title={row.title}
+                columnDefs={table.columnDefs}
+                rowData={table.rowData || []}
+                title={table.title}
                 visibleCols={visibleCols}
                 hiddenCols={hiddenCols}
                 setVisibleCols={handleVisibleColsChange}
@@ -139,18 +134,19 @@ function KBMatches(props) {
 }
 
 KBMatches.propTypes = {
-  rowData: PropTypes.shape({
+  tableData: PropTypes.shape({
     title: PropTypes.string,
-    rowData: PropTypes.array,
+    tableData: PropTypes.array,
     columnDefs: PropTypes.object,
   }).isRequired,
-  hiddenRowData: PropTypes.shape({
+  hiddenTableData: PropTypes.shape({
     title: PropTypes.string,
-    rowData: PropTypes.array,
+    tableData: PropTypes.array,
     columnDefs: PropTypes.object,
     show: PropTypes.bool,
   }).isRequired,
-  setHiddenRowData: PropTypes.func,
+  setHiddenTableData: PropTypes.func,
+  syncedColumnDefs: PropTypes.arrayOf(PropTypes.object),
 };
 
 export default KBMatches;

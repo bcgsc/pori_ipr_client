@@ -1,7 +1,18 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { columnDefs, targetedColumnDefs } from './columnDefs';
 
+/**
+ * @param {*} props props
+ * @param {array} alterations all ungrouped alteration data
+ * @param {array} novel novel alterations
+ * @param {array} unknown unknown alterations
+ * @param {array} thisCancer therapies approved for this cancer type
+ * @param {array} otherCancer therapies approved for other cancer types
+ * @param {array} targetedGenes genes found in the targeted gene report
+ * @param {func} kbMatchesComponent react component to mutate
+ * @returns {*} JSX
+ */
 function KBMatchesView(props) {
   const {
     alterations,
@@ -52,7 +63,7 @@ function KBMatchesView(props) {
     return [...grouped];
   };
 
-  const [rowData, setRowData] = useState({
+  const [tableData, setTableData] = useState({
     thisCancer: {
       title: 'Therapies Approved In This Cancer Type',
       rowData: coalesceEntries(thisCancer),
@@ -90,7 +101,7 @@ function KBMatchesView(props) {
     },
   });
 
-  const hiddenRowData = useRef({
+  const hiddenTableData = useRef({
     novel: {
       title: 'Alterations For Review',
       rowData: coalesceEntries(novel),
@@ -105,15 +116,16 @@ function KBMatchesView(props) {
     },
   });
 
-  const setHiddenRowData = (ref) => {
-    hiddenRowData.current = ref;
+  const setHiddenTableData = (ref) => {
+    hiddenTableData.current = ref;
   };
 
   return (
     <KbMatchesComponent
-      rowData={rowData}
-      hiddenRowData={hiddenRowData}
-      setHiddenRowData={setHiddenRowData}
+      tableData={tableData}
+      hiddenTableData={hiddenTableData}
+      setHiddenTableData={setHiddenTableData}
+      syncedColumnDefs={columnDefs}
     />
   );
 }
