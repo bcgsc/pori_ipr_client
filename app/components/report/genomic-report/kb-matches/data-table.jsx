@@ -79,6 +79,20 @@ function ReportsTableComponent(props) {
   const domLayout = 'autoHeight';
 
   const renderOptionsMenu = () => {
+    const popoverCloseHandler = () => {
+      const {
+        visibleCols: returnedVisibleCols,
+        hiddenCols: returnedHiddenCols,
+      } = optionsMenuOnClose.current();
+
+      setVisibleCols(returnedVisibleCols);
+      setHiddenCols(returnedHiddenCols);
+      columnApi.current.autoSizeColumns(returnedVisibleCols);
+
+      setShowPopover(prevVal => !prevVal);
+      setMoreIconEl(null);
+    };
+
     const result = (
       <Popover
         anchorEl={moreIconEl}
@@ -90,19 +104,7 @@ function ReportsTableComponent(props) {
           vertical: 'center',
           horizontal: 'right',
         }}
-        onClose={() => {
-          const {
-            visibleCols: returnedVisibleCols,
-            hiddenCols: returnedHiddenCols,
-          } = optionsMenuOnClose.current();
-
-          setVisibleCols(returnedVisibleCols);
-          setHiddenCols(returnedHiddenCols);
-          columnApi.current.autoSizeColumns(returnedVisibleCols);
-
-          setShowPopover(prevVal => !prevVal);
-          setMoreIconEl(null);
-        }}
+        onClose={() => popoverCloseHandler()}
         open={Boolean(moreIconEl)}
       >
         <OptionsMenu
