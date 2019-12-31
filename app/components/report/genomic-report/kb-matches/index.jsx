@@ -28,11 +28,11 @@ function KBMatches(props) {
   const [thisHiddenTableData, setThisHiddenTableData] = useState(hiddenTableData.current);
 
   const [visibleCols, setVisibleCols] = useState(
-    localStorage.getItem('visibleColsKb').split(',')
+    (localStorage.getItem('visibleColsKb') || '').split(',')
     || syncedColumnDefs.filter(c => !c.hide).map(c => c.field),
   );
   const [hiddenCols, setHiddenCols] = useState(
-    localStorage.getItem('hiddenColsKb').split(',')
+    (localStorage.getItem('hiddenColsKb') || '').split(',')
     || syncedColumnDefs.filter(c => c.hide).map(c => c.field),
   );
   
