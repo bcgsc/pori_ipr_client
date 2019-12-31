@@ -28,25 +28,27 @@ function OptionsMenu(props) {
     Object.values(columns).filter(c => !c.visible).map(c => c.colId),
   );
 
+
+  const removeFromList = (list, colId, update) => {
+    const index = list.indexOf(colId);
+    const listCopy = [...list];
+    listCopy.splice(index, 1);
+    setHiddenCols(listCopy);
+  };
+
+  const addToList = (list, colId, update) => {
+    const visibleColsCopy = [...visibleCols];
+    visibleColsCopy.push(colId);
+    setVisibleCols(visibleColsCopy);
+  };
+
   const handleChange = (event, colId) => {
-    if (visibleCols.includes(colId)) {
-      const index = visibleCols.indexOf(colId);
-      const visibleColsCopy = [...visibleCols];
-      visibleColsCopy.splice(index, 1);
-      setVisibleCols(visibleColsCopy);
-
-      const hiddenColsCopy = [...hiddenCols];
-      hiddenColsCopy.push(colId);
-      setHiddenCols(hiddenColsCopy);
+    if (event.target.checked) {
+      addToList(visibleCols, colId, setVisibleCols);
+      removeFromList(hiddenCols, colId, setHiddenCols);
     } else {
-      const index = hiddenCols.indexOf(colId);
-      const hiddenColsCopy = [...hiddenCols];
-      hiddenColsCopy.splice(index, 1);
-      setHiddenCols(hiddenColsCopy);
-
-      const visibleColsCopy = [...visibleCols];
-      visibleColsCopy.push(colId);
-      setVisibleCols(visibleColsCopy);
+      addToList(hiddenCols, colId, setHiddenCols);
+      removeFromList(visibleCols, colId, setVisibleCols);
     }
   };
 
