@@ -20,9 +20,9 @@ import './index.scss';
 
 /**
  * @param {object} props props
- * @property {array} props.rowData table row data
- * @property {array} props.columnDefs column definitions for ag-grid
- * @property {object} props.$state angularjs state service
+ * @param {array} props.rowData table row data
+ * @param {array} props.columnDefs column definitions for ag-grid
+ * @param {object} props.$state angularjs state service
  * @return {*} JSX
  */
 function ReportsTableComponent(props) {
