@@ -25,6 +25,8 @@ function KBMatches(props) {
     syncedColumnDefs,
   } = props;
 
+  const [thisHiddenTableData, setThisHiddenTableData] = useState(hiddenTableData.current);
+
   const [visibleCols, setVisibleCols] = useState(
     localStorage.getItem('visibleColsKb').split(',')
     || syncedColumnDefs.filter(c => !c.hide).map(c => c.field),
@@ -52,9 +54,9 @@ function KBMatches(props) {
 
   const handleShowTables = (key, table) => {
     table.show = !table.show;
-    const hiddenTableDataCopy = Object.assign({}, hiddenTableData);
-    hiddenTableDataCopy[key] = table;
-    setHiddenTableData(hiddenTableDataCopy);
+    const thisHiddenTableDataCopy = Object.assign({}, thisHiddenTableData);
+    thisHiddenTableDataCopy[key] = table;
+    setThisHiddenTableData(thisHiddenTableDataCopy);
   };
 
   return (
@@ -98,7 +100,7 @@ function KBMatches(props) {
       </div>
 
       <div className="kb-matches__button-container">
-        {Object.entries(hiddenTableData.current).map(([key, table]) => (
+        {Object.entries(thisHiddenTableData).map(([key, table]) => (
           <Button
             onClick={() => handleShowTables(key, table)}
             color="primary"
@@ -111,7 +113,7 @@ function KBMatches(props) {
         ))}
       </div>
 
-      {Object.values(hiddenTableData.current).map(table => (
+      {Object.values(thisHiddenTableData).map(table => (
         <div key={table.title}>
           {table.show
             && (
