@@ -4,9 +4,8 @@ import {
   Button,
   TextField,
   InputAdornment,
-  IconButton,
 } from '@material-ui/core';
-import SearchIcon from '@material-ui/icons/Search';
+import FilterListIcon from '@material-ui/icons/FilterList';
 import DataTable from './data-table';
 
 /**
@@ -63,19 +62,16 @@ function KBMatches(props) {
     <>
       <div className="kb-matches__search">
         <TextField
-          label="Quick Search"
+          label="Filter Table Text"
           type="text"
           variant="outlined"
           size="small"
-          fullWidth
           value={searchText}
           onChange={handleSearch}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
-                <IconButton>
-                  <SearchIcon />
-                </IconButton>
+                <FilterListIcon color="action" />
               </InputAdornment>
             ),
           }}
