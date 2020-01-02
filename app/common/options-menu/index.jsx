@@ -28,27 +28,13 @@ function OptionsMenu(props) {
     Object.values(columns).filter(c => !c.visible).map(c => c.colId),
   );
 
-
-  const removeFromList = (list, colId, update) => {
-    const index = list.indexOf(colId);
-    const listCopy = [...list];
-    listCopy.splice(index, 1);
-    setHiddenCols(listCopy);
-  };
-
-  const addToList = (list, colId, update) => {
-    const visibleColsCopy = [...visibleCols];
-    visibleColsCopy.push(colId);
-    setVisibleCols(visibleColsCopy);
-  };
-
   const handleChange = (event, colId) => {
     if (event.target.checked) {
-      addToList(visibleCols, colId, setVisibleCols);
-      removeFromList(hiddenCols, colId, setHiddenCols);
+      setHiddenCols(hiddenCols.filter((col => col !== colId)));
+      setVisibleCols(visibleCols.concat(colId));
     } else {
-      addToList(hiddenCols, colId, setHiddenCols);
-      removeFromList(visibleCols, colId, setVisibleCols);
+      setVisibleCols(visibleCols.filter((col => col !== colId)));
+      setHiddenCols(hiddenCols.concat(colId));
     }
   };
 
