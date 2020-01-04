@@ -1,6 +1,3 @@
-import React from 'react';
-import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
-
 const columnDefs = [{
   headerName: 'Gene',
   field: 'gene',

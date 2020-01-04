@@ -96,29 +96,40 @@ function ReportsTableComponent(props) {
 
   const [numRowsVisible, setNumRowsVisible] = useState(2);
 
-  const cellRendererFunc = (column, isExpanded, isLink) => {
+  const expandRow = (cellParams, length) => {
+    const DEFAULT_LINE_HEIGHT = 46;
+    const rowNode = gridApi.current.getDisplayedRowAtIndex(
+      cellParams.rowIndex,
+    );
+
+    // numRowsVisible Effect hook adjusts visible array entries
+    setNumRowsVisible(length);
+    rowNode.setRowHeight(length * DEFAULT_LINE_HEIGHT);
+    gridApi.current.onRowHeightChanged();
+  };
+
+  const cellRendererFunc = (field, isExpanded, isLink) => {
     if (isLink) {
       if (isExpanded) {
         return (cellParams) => {
-          const columnArray = [...cellParams.data[column]].sort();
+          const columnArray = [...cellParams.data[field]].sort();
           return renderLinkArray(columnArray);
         };
       }
       return (cellParams) => {
-        const columnArray = [...cellParams.data[column]].sort();
+        const columnArray = [...cellParams.data[field]].sort();
         return renderLinkArray(columnArray);
       };
     }
 
     if (isExpanded) {
       return (cellParams) => {
-        const columnArray = [...cellParams.data[column]].sort();
+        const columnArray = [...cellParams.data[field]].sort();
         return renderStringArray(columnArray);
       };
     }
     return (cellParams) => {
-      const DEFAULT_LINE_HEIGHT = 46;
-      const columnArray = [...cellParams.data[column]].sort();
+      const columnArray = [...cellParams.data[field]].sort();
 
       return (
         <div>
@@ -131,15 +142,7 @@ function ReportsTableComponent(props) {
                   {index === 1 && columnArray.length > 2 && (
                     <MoreHorizIcon
                       color="action"
-                      onClick={() => {
-                        const rowNode = gridApi.current.getDisplayedRowAtIndex(
-                          cellParams.rowIndex,
-                        );
-                        rowNode.setRowHeight(columnArray.length * DEFAULT_LINE_HEIGHT);
-                        // numRowsVisible Effect hook adjusts visible array entries
-                        setNumRowsVisible(columnArray.length);
-                        gridApi.current.onRowHeightChanged();
-                      }}
+                      onClick={() => expandRow(cellParams, columnArray.length)}
                     />
                   )}
                   <br />
@@ -164,9 +167,9 @@ function ReportsTableComponent(props) {
 
     if (numRowsVisible > 2 && arrayColumnsIndeces.length) {
       arrayColumnsIndeces.forEach((index) => {
-        const column = columnDefs[index].field;
+        const { field } = columnDefs[index];
         columnDefs[index].cellRendererFramework = cellRendererFunc(
-          column,
+          field,
           true,
           false,
         );
@@ -176,9 +179,9 @@ function ReportsTableComponent(props) {
 
     if (numRowsVisible > 2 && arrayLinkColumnsIndeces.length) {
       arrayLinkColumnsIndeces.forEach((index) => {
-        const column = columnDefs[index].field;
+        const { field } = columnDefs[index];
         columnDefs[index].cellRendererFramework = cellRendererFunc(
-          column,
+          field,
           true,
           true,
         );
@@ -203,9 +206,9 @@ function ReportsTableComponent(props) {
 
     if (arrayColumnsIndeces.length) {
       arrayColumnsIndeces.forEach((index) => {
-        const column = columnDefs[index].field;
+        const { field } = columnDefs[index];
         columnDefs[index].cellRendererFramework = cellRendererFunc(
-          column,
+          field,
           numRowsVisible > 2,
           false,
         );
@@ -222,9 +225,9 @@ function ReportsTableComponent(props) {
 
     if (arrayLinkColumnsIndeces.length) {
       arrayLinkColumnsIndeces.forEach((index) => {
-        const column = columnDefs[index].field;
+        const { field } = columnDefs[index];
         columnDefs[index].cellRendererFramework = cellRendererFunc(
-          column,
+          field,
           numRowsVisible > 2,
           true,
         );
