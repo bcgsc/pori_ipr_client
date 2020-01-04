@@ -12,7 +12,6 @@ import DataTable from './data-table';
  * @param {*} props props
  * @param {object} tableData table data for all tables
  * @param {object} hiddenTableData table data for all tables hidden by default
- * @param {func} setHiddenTableData function passed to set hidden tables
  * @param {array} syncedColumnDefs column definitions to by synced across tables
  * @returns {*} JSX
  */
@@ -20,7 +19,6 @@ function KBMatches(props) {
   const {
     tableData,
     hiddenTableData,
-    setHiddenTableData,
     syncedColumnDefs,
   } = props;
 
@@ -34,6 +32,9 @@ function KBMatches(props) {
     (localStorage.getItem('hiddenColsKb') || '').split(',')
     || syncedColumnDefs.filter(c => c.hide).map(c => c.field),
   );
+
+  const [arrayColumns] = useState(['disease']);
+  const [arrayLinkColumns] = useState(['reference']);
   
   const handleVisibleColsChange = (change) => {
     setVisibleCols(change);
@@ -83,6 +84,8 @@ function KBMatches(props) {
           <div key={table.title}>
             <DataTable
               columnDefs={table.columnDefs}
+              arrayColumns={arrayColumns}
+              arrayLinkColumns={arrayLinkColumns}
               rowData={table.rowData || []}
               title={table.title}
               visibleCols={visibleCols}
@@ -143,7 +146,6 @@ KBMatches.propTypes = {
     columnDefs: PropTypes.object,
     show: PropTypes.bool,
   }).isRequired,
-  setHiddenTableData: PropTypes.func,
   syncedColumnDefs: PropTypes.arrayOf(PropTypes.object),
 };
 

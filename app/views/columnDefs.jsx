@@ -1,4 +1,5 @@
 import React from 'react';
+import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 
 const columnDefs = [{
   headerName: 'Gene',
@@ -20,22 +21,6 @@ const columnDefs = [{
       return diseaseString;
     }
     return params.data.disease;
-  },
-  cellRendererFramework: (params) => {
-    let diseaseString = params.data.disease;
-    if (typeof diseaseString === 'object') {
-      diseaseString = [...params.data.disease].sort().toString();
-    }
-    return (
-      <>
-        {diseaseString.split(',').map(val => (
-          <div key={val}>
-            {val}
-            <br />
-          </div>
-        ))}
-      </>
-    );
   },
 },
 {
@@ -63,31 +48,6 @@ const columnDefs = [{
       return referenceString;
     }
     return params.data.reference;
-  },
-  cellRendererFramework: (params) => {
-    let referenceString = params.data.reference;
-    if (typeof referenceString === 'object') {
-      referenceString = [...params.data.reference].sort().toString();
-    }
-    return (
-      <>
-        {referenceString.split(',').map(val => (
-          <div key={val}>
-            <a
-              href={(val.replace('#', '').match(/^\d+$/))
-                ? `https://ncbi.nlm.nih.gov/pubmed/${val.replace('#', '')}`
-                : `http://${val.replace('#', '')}`
-              }
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              {val.replace('#', '')}
-            </a>
-            <br />
-          </div>
-        ))}
-      </>
-    );
   },
 },
 {

@@ -29,6 +29,8 @@ function ReportsTableComponent(props) {
   const {
     rowData,
     columnDefs,
+    arrayColumns,
+    arrayLinkColumns,
     title,
     visibleCols,
     hiddenCols,
@@ -61,6 +63,130 @@ function ReportsTableComponent(props) {
     }
   }, [searchText]);
 
+  const renderLinkArray = list => (
+    <>
+      {list.map(val => (
+        <div key={val}>
+          <a
+            href={(val.replace('#', '').match(/^\d+$/))
+              ? `https://ncbi.nlm.nih.gov/pubmed/${val.replace('#', '')}`
+              : `http://${val.replace('#', '')}`
+            }
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            {val.replace('#', '')}
+          </a>
+          <br />
+        </div>
+      ))}
+    </>
+  );
+
+  const renderStringArray = list => (
+    <>
+      {list.map(val => (
+        <div key={val}>
+          {val}
+          <br />
+        </div>
+      ))}
+    </>
+  );
+
+  const [numRowsVisible, setNumRowsVisible] = useState(2);
+
+  const cellRendererFunc = (column, isExpanded, isLink) => {
+    if (isLink) {
+      if (isExpanded) {
+        return (cellParams) => {
+          const columnArray = [...cellParams.data[column]].sort();
+          return renderLinkArray(columnArray);
+        };
+      }
+      return (cellParams) => {
+        const columnArray = [...cellParams.data[column]].sort();
+        return renderLinkArray(columnArray);
+      };
+    }
+
+    if (isExpanded) {
+      return (cellParams) => {
+        const columnArray = [...cellParams.data[column]].sort();
+        return renderStringArray(columnArray);
+      };
+    }
+    return (cellParams) => {
+      const DEFAULT_LINE_HEIGHT = 46;
+      const columnArray = [...cellParams.data[column]].sort();
+
+      return (
+        <div>
+          {/* Show initial 2 rows and button */}
+          {columnArray.map((val, index) => (
+            <div key={val}>
+              {index < numRowsVisible && (
+                <div key={val} className="table__list-cell">
+                  {val}
+                  {index === 1 && columnArray.length > 2 && (
+                    <MoreHorizIcon
+                      color="action"
+                      onClick={() => {
+                        const rowNode = gridApi.current.getDisplayedRowAtIndex(
+                          cellParams.rowIndex,
+                        );
+                        rowNode.setRowHeight(columnArray.length * DEFAULT_LINE_HEIGHT);
+                        // numRowsVisible Effect hook adjusts visible array entries
+                        setNumRowsVisible(columnArray.length);
+                        gridApi.current.onRowHeightChanged();
+                      }}
+                    />
+                  )}
+                  <br />
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      );
+    };
+  };
+
+
+  useEffect(() => {
+    const arrayColumnsIndeces = arrayColumns.map(
+      col => columnDefs.findIndex(c => c.field === col),
+    ).filter(index => index !== -1);
+
+    const arrayLinkColumnsIndeces = arrayLinkColumns.map(
+      col => columnDefs.findIndex(c => c.field === col),
+    ).filter(index => index !== -1);
+
+    if (numRowsVisible > 2 && arrayColumnsIndeces.length) {
+      arrayColumnsIndeces.forEach((index) => {
+        const column = columnDefs[index].field;
+        columnDefs[index].cellRendererFramework = cellRendererFunc(
+          column,
+          true,
+          false,
+        );
+        gridApi.current.setColumnDefs(columnDefs);
+      });
+    }
+
+    if (numRowsVisible > 2 && arrayLinkColumnsIndeces.length) {
+      arrayLinkColumnsIndeces.forEach((index) => {
+        const column = columnDefs[index].field;
+        columnDefs[index].cellRendererFramework = cellRendererFunc(
+          column,
+          true,
+          true,
+        );
+        gridApi.current.setColumnDefs(columnDefs);
+      });
+    }
+  }, [numRowsVisible]);
+
   const onGridReady = (params) => {
     gridApi.current = params.api;
     columnApi.current = params.columnApi;
@@ -68,6 +194,43 @@ function ReportsTableComponent(props) {
     columnApi.current.setColumnsVisible(visibleCols, true);
     columnApi.current.setColumnsVisible(hiddenCols, false);
     columnApi.current.autoSizeColumns(visibleCols);
+
+    // Add custom renderer to columns with array<string> data type
+    // Denoted with inclusion in arrayColumns
+    const arrayColumnsIndeces = arrayColumns.map(
+      col => columnDefs.findIndex(c => c.field === col),
+    ).filter(index => index !== -1);
+
+    if (arrayColumnsIndeces.length) {
+      arrayColumnsIndeces.forEach((index) => {
+        const column = columnDefs[index].field;
+        columnDefs[index].cellRendererFramework = cellRendererFunc(
+          column,
+          numRowsVisible > 2,
+          false,
+        );
+        gridApi.current.setColumnDefs(columnDefs);
+      });
+    }
+
+    // Add custom renderer to columns with array<string> data type
+    // AND the need for the contents to be a link
+    // Denoted with inclusion in arrayLinkColumns
+    const arrayLinkColumnsIndeces = arrayLinkColumns.map(
+      col => columnDefs.findIndex(c => c.field === col),
+    ).filter(index => index !== -1);
+
+    if (arrayLinkColumnsIndeces.length) {
+      arrayLinkColumnsIndeces.forEach((index) => {
+        const column = columnDefs[index].field;
+        columnDefs[index].cellRendererFramework = cellRendererFunc(
+          column,
+          numRowsVisible > 2,
+          true,
+        );
+        gridApi.current.setColumnDefs(columnDefs);
+      });
+    }
   };
 
   const defaultColDef = {
@@ -122,9 +285,13 @@ function ReportsTableComponent(props) {
     const DEFAULT_LINE_HEIGHT = 46;
     const DEFAULT_ROW_HEIGHT = 50;
     try {
-      const upperVal = params.data.disease.size > params.data.reference.size
+      let upperVal = params.data.disease.size > params.data.reference.size
         ? params.data.disease.size
         : params.data.reference.size;
+      // Hide more values by default. Only show 2 rows
+      if (upperVal > 2) {
+        upperVal = 2;
+      }
       return upperVal * DEFAULT_LINE_HEIGHT;
     } catch (err) {
       return DEFAULT_ROW_HEIGHT;
@@ -167,6 +334,8 @@ function ReportsTableComponent(props) {
 
 ReportsTableComponent.propTypes = {
   columnDefs: PropTypes.arrayOf(PropTypes.object).isRequired,
+  arrayColumns: PropTypes.arrayOf(PropTypes.string),
+  arrayLinkColumns: PropTypes.arrayOf(PropTypes.string),
   rowData: PropTypes.arrayOf(PropTypes.object),
   title: PropTypes.string.isRequired,
   visibleCols: PropTypes.arrayOf(PropTypes.string).isRequired,
@@ -178,6 +347,8 @@ ReportsTableComponent.propTypes = {
 
 ReportsTableComponent.defaultProps = {
   rowData: [],
+  arrayColumns: [],
+  arrayLinkColumns: [],
 };
 
 export default ReportsTableComponent;

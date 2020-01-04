@@ -79,16 +79,12 @@ function KBMatchesView(props) {
       show: false,
     },
   });
-
-  const setHiddenTableData = (ref) => {
-    hiddenTableData.current = ref;
-  };
+  
 
   return (
     <KbMatchesComponent
       tableData={tableData}
       hiddenTableData={hiddenTableData}
-      setHiddenTableData={setHiddenTableData}
       syncedColumnDefs={columnDefs}
     />
   );
@@ -105,4 +101,3 @@ KBMatchesView.propTypes = {
 };
 
 export default KBMatchesView;
-
