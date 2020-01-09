@@ -49,6 +49,7 @@ import GenomicEventsService from './services/reports/summary/genomic-events.serv
 import IndefiniteArticleFilter from './filters/indefinite-article.filter';
 import TitleCaseFilter from './filters/titlecase.filter';
 import './root.scss';
+import './styles/ag-grid.scss';
 
 angular.module('root', [
   uiRouter,

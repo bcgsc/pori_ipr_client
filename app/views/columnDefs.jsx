@@ -1,7 +1,12 @@
 const columnDefs = [{
+  hide: false,
+  width: 50,
+},
+{
   headerName: 'Gene',
   field: 'gene',
   hide: false,
+  cellClass: ['table__padding--none'],
 },
 {
   headerName: 'Known Variant',
@@ -94,6 +99,10 @@ const columnDefs = [{
 }];
 
 const targetedColumnDefs = [{
+  hide: false,
+  width: 35,
+},
+{
   headerName: 'Gene',
   field: 'gene',
   hide: false,
