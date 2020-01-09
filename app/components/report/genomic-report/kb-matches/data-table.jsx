@@ -87,9 +87,10 @@ function ReportsTableComponent(props) {
     );
 
     setRowExpandedStatus((prevVal) => {
-      const rowExpandedStatusIndex = prevVal.findIndex(val => val.row === cellParams.rowIndex);
-      prevVal[rowExpandedStatusIndex].status = !prevVal[rowExpandedStatusIndex].status;
-      return [...prevVal]; // Must return different reference for effect hook to run
+      const updateVal = [...prevVal];
+      const rowExpandedStatusIndex = updateVal.findIndex(val => val.row === cellParams.rowIndex);
+      updateVal[rowExpandedStatusIndex].status = !updateVal[rowExpandedStatusIndex].status;
+      return updateVal;
     });
 
     const expand = rowExpandedStatus.find(
@@ -211,18 +212,20 @@ function ReportsTableComponent(props) {
     if (arrayColumns.length && gridApi.current) {
       arrayColumns.forEach((col) => {
         setStateColumnDefs((prevVal) => {
-          prevVal[col.index].cellRendererFramework = cellRendererFunc(
+          const updateVal = [...prevVal];
+          updateVal[col.index].cellRendererFramework = cellRendererFunc(
             col.field,
             col.isLink,
           );
-          return [...prevVal];
+          return updateVal;
         });
       });
 
       // Update row icon
       setStateColumnDefs((prevVal) => {
-        prevVal[0].cellRendererFramework = renderExpandArrow;
-        return [...prevVal];
+        const updateVal = [...prevVal];
+        updateVal[0].cellRendererFramework = renderExpandArrow;
+        return updateVal;
       });
       gridApi.current.setColumnDefs(stateColumnDefs);
     }
@@ -242,22 +245,24 @@ function ReportsTableComponent(props) {
     if (arrayColumns.length) {
       arrayColumns.forEach((col) => {
         setStateColumnDefs((prevVal) => {
-          prevVal[col.index].cellRendererFramework = cellRendererFunc(
+          const updateVal = [...prevVal];
+          updateVal[col.index].cellRendererFramework = cellRendererFunc(
             col.field,
             col.isLink,
           );
-          return [...prevVal];
+          return updateVal;
         });
       });
 
       // Add custom renderer to first column to control expanded rows
       setStateColumnDefs((prevVal) => {
-        prevVal[0].cellRendererFramework = renderExpandArrow;
-        prevVal[0].cellClass = 'table__expand-cell';
-        prevVal[0].onCellClicked = (cellParams) => {
+        const updateVal = [...prevVal];
+        updateVal[0].cellRendererFramework = renderExpandArrow;
+        updateVal[0].cellClass = 'table__expand-cell';
+        updateVal[0].onCellClicked = (cellParams) => {
           toggleRowExpand(cellParams);
         };
-        return [...prevVal];
+        return updateVal;
       });
 
       gridApi.current.setColumnDefs(stateColumnDefs);
