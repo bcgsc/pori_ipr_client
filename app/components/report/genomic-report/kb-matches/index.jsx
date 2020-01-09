@@ -33,8 +33,16 @@ function KBMatches(props) {
     || syncedColumnDefs.filter(c => c.hide).map(c => c.field),
   );
 
-  const [arrayColumns] = useState(['disease']);
-  const [arrayLinkColumns] = useState(['reference']);
+  const [arrayColumns] = useState([
+    {
+      field: 'disease',
+      isLink: false,
+    },
+    {
+      field: 'reference',
+      isLink: true,
+    },
+  ]);
   
   const handleVisibleColsChange = (change) => {
     setVisibleCols(change);
@@ -59,6 +67,19 @@ function KBMatches(props) {
     setThisHiddenTableData(thisHiddenTableDataCopy);
   };
 
+  // Have to do this on a table by table basis to account for different table's column defs
+  const arrayColumnDefsIntersection = (tableColumnDef, arrayCols) => {
+    const intersection = arrayCols.filter(col => (
+      tableColumnDef.findIndex(c => c.field === col.field) > -1
+    ));
+
+    return intersection.map(col => ({
+      field: col.field,
+      index: tableColumnDef.findIndex(c => c.field === col.field),
+      isLink: col.isLink,
+    }));
+  };
+
   return (
     <>
       <div className="kb-matches__search">
@@ -81,20 +102,18 @@ function KBMatches(props) {
 
       <div>
         {Object.values(tableData).map(table => (
-          <div key={table.title}>
-            <DataTable
-              columnDefs={table.columnDefs}
-              arrayColumns={arrayColumns}
-              arrayLinkColumns={arrayLinkColumns}
-              rowData={table.rowData || []}
-              title={table.title}
-              visibleCols={visibleCols}
-              hiddenCols={hiddenCols}
-              setVisibleCols={handleVisibleColsChange}
-              setHiddenCols={handleHiddenColsChange}
-              searchText={searchText}
-            />
-          </div>
+          <DataTable
+            key={table.title}
+            columnDefs={table.columnDefs}
+            arrayColumns={arrayColumnDefsIntersection(table.columnDefs, arrayColumns)}
+            rowData={table.rowData || []}
+            title={table.title}
+            visibleCols={visibleCols}
+            hiddenCols={hiddenCols}
+            setVisibleCols={handleVisibleColsChange}
+            setHiddenCols={handleHiddenColsChange}
+            searchText={searchText}
+          />
         ))}
       </div>
 

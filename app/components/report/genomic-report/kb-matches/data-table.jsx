@@ -1,7 +1,5 @@
 import React, {
-  useRef,
-  useState,
-  useEffect,
+  useRef, useState, useEffect,
 } from 'react';
 import PropTypes from 'prop-types';
 import { AgGridReact } from 'ag-grid-react';
@@ -11,6 +9,8 @@ import {
   IconButton,
 } from '@material-ui/core';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import OptionsMenu from '../../../../common/options-menu';
 
 import 'ag-grid-community/dist/styles/ag-grid.css';
@@ -30,7 +30,6 @@ function ReportsTableComponent(props) {
     rowData,
     columnDefs,
     arrayColumns,
-    arrayLinkColumns,
     title,
     visibleCols,
     hiddenCols,
@@ -47,6 +46,23 @@ function ReportsTableComponent(props) {
     optionsMenuOnClose.current = ref;
   };
 
+  const [arrayRows] = useState(
+    rowData.reduce((accumulator, row, index) => {
+      if (arrayColumns.some(col => [...row[col.field]].length > 1)) {
+        accumulator.push(index);
+      }
+      return accumulator;
+    }, []),
+  );
+
+  const [rowExpandedStatus, setRowExpandedStatus] = useState(
+    arrayRows.map(row => ({
+      row,
+      status: false,
+    })),
+  );
+
+  const [stateColumnDefs, setStateColumnDefs] = useState(columnDefs);
   const [moreIconEl, setMoreIconEl] = useState(null);
   const [showPopover, setShowPopover] = useState(false);
 
@@ -63,132 +79,155 @@ function ReportsTableComponent(props) {
     }
   }, [searchText]);
 
-  const renderLinkArray = list => (
-    <>
-      {list.map(val => (
-        <div key={val}>
-          <a
-            href={(val.replace('#', '').match(/^\d+$/))
-              ? `https://ncbi.nlm.nih.gov/pubmed/${val.replace('#', '')}`
-              : `http://${val.replace('#', '')}`
-            }
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            {val.replace('#', '')}
-          </a>
-          <br />
-        </div>
-      ))}
-    </>
-  );
-
-  const renderStringArray = list => (
-    <>
-      {list.map(val => (
-        <div key={val}>
-          {val}
-          <br />
-        </div>
-      ))}
-    </>
-  );
-
-  const [numRowsVisible, setNumRowsVisible] = useState(2);
-
-  const expandRow = (cellParams, length) => {
+  const toggleRowExpand = (cellParams) => {
     const DEFAULT_LINE_HEIGHT = 46;
+
     const rowNode = gridApi.current.getDisplayedRowAtIndex(
       cellParams.rowIndex,
     );
 
-    // numRowsVisible Effect hook adjusts visible array entries
-    setNumRowsVisible(length);
-    rowNode.setRowHeight(length * DEFAULT_LINE_HEIGHT);
+    setRowExpandedStatus((prevVal) => {
+      const rowExpandedStatusIndex = prevVal.findIndex(val => val.row === cellParams.rowIndex);
+      prevVal[rowExpandedStatusIndex].status = !prevVal[rowExpandedStatusIndex].status;
+      return [...prevVal]; // Must return different reference for effect hook to run
+    });
+
+    const expand = rowExpandedStatus.find(
+      val => val.row === cellParams.rowIndex,
+    ).status;
+
+    if (expand) {
+      // Expand all hidden rows, so take the max amount of rows
+      const arrayLengths = arrayColumns.map(col => [...cellParams.data[col.field]].length);
+      const upperRows = Math.max(...arrayLengths);
+      rowNode.setRowHeight(upperRows * DEFAULT_LINE_HEIGHT);
+    } else {
+      // Minimize, set back to default height
+      rowNode.setRowHeight(DEFAULT_LINE_HEIGHT);
+    }
+
     gridApi.current.onRowHeightChanged();
   };
 
-  const cellRendererFunc = (field, isExpanded, isLink) => {
+  const cellRendererFunc = (field, isLink) => {
     if (isLink) {
-      if (isExpanded) {
-        return (cellParams) => {
-          const columnArray = [...cellParams.data[field]].sort();
-          return renderLinkArray(columnArray);
-        };
-      }
       return (cellParams) => {
         const columnArray = [...cellParams.data[field]].sort();
-        return renderLinkArray(columnArray);
+        const [currentRowStatus] = rowExpandedStatus.filter(r => (
+          r.row === cellParams.rowIndex
+        )).map(r => r.status);
+
+        return (
+          <>
+            {/* Show single row if current row is not expanded */}
+            {columnArray.map((val, index) => (
+              <div key={val}>
+                {currentRowStatus && (
+                  <div key={val}>
+                    <a
+                      href={(val.replace('#', '').match(/^\d+$/))
+                        ? `https://ncbi.nlm.nih.gov/pubmed/${val.replace('#', '')}`
+                        : `http://${val.replace('#', '')}`
+                      }
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      {val.replace('#', '')}
+                    </a>
+                    <br />
+                  </div>
+                )}
+                {!currentRowStatus && (index < 1) && (
+                  <div key={val}>
+                    {val}
+                  </div>
+                )}
+              </div>
+            ))}
+          </>
+        );
       };
     }
 
-    if (isExpanded) {
-      return (cellParams) => {
-        const columnArray = [...cellParams.data[field]].sort();
-        return renderStringArray(columnArray);
-      };
-    }
     return (cellParams) => {
       const columnArray = [...cellParams.data[field]].sort();
+      const [currentRowStatus] = rowExpandedStatus.filter(r => (
+        r.row === cellParams.rowIndex
+      )).map(r => r.status);
 
       return (
-        <div>
-          {/* Show initial 2 rows and button */}
+        <>
+          {/* Show single row if current row is not expanded */}
           {columnArray.map((val, index) => (
             <div key={val}>
-              {index < numRowsVisible && (
-                <div key={val} className="table__list-cell">
+              {currentRowStatus && (
+                <div key={val}>
                   {val}
-                  {index === 1 && columnArray.length > 2 && (
-                    <MoreHorizIcon
-                      color="action"
-                      onClick={() => expandRow(cellParams, columnArray.length)}
-                    />
-                  )}
                   <br />
+                </div>
+              )}
+              {!currentRowStatus && (index < 1) && (
+                <div key={val}>
+                  {val}
                 </div>
               )}
             </div>
           ))}
-        </div>
+        </>
       );
     };
   };
 
+  const renderExpandArrow = (cellParams) => {
+    const [currentRowStatus] = rowExpandedStatus.filter(r => (
+      r.row === cellParams.rowIndex
+    )).map(r => r.status);
+    const arrayLengths = arrayColumns.map(col => (
+      [...cellParams.data[col.field]].length
+    ));
+    const upperRows = Math.max(...arrayLengths);
+
+    if (currentRowStatus && upperRows > 1) {
+      return (
+        <ExpandLessIcon
+          color="action"
+        />
+      );
+    }
+    if (!currentRowStatus && upperRows > 1) {
+      return (
+        <ExpandMoreIcon
+          color="action"
+        />
+      );
+    }
+    // Only a single entry, don't return an expansion icon
+    return (
+      <div />
+    );
+  };
 
   useEffect(() => {
-    const arrayColumnsIndeces = arrayColumns.map(
-      col => columnDefs.findIndex(c => c.field === col),
-    ).filter(index => index !== -1);
-
-    const arrayLinkColumnsIndeces = arrayLinkColumns.map(
-      col => columnDefs.findIndex(c => c.field === col),
-    ).filter(index => index !== -1);
-
-    if (numRowsVisible > 2 && arrayColumnsIndeces.length) {
-      arrayColumnsIndeces.forEach((index) => {
-        const { field } = columnDefs[index];
-        columnDefs[index].cellRendererFramework = cellRendererFunc(
-          field,
-          true,
-          false,
-        );
-        gridApi.current.setColumnDefs(columnDefs);
+    if (arrayColumns.length && gridApi.current) {
+      arrayColumns.forEach((col) => {
+        setStateColumnDefs((prevVal) => {
+          prevVal[col.index].cellRendererFramework = cellRendererFunc(
+            col.field,
+            col.isLink,
+          );
+          return [...prevVal];
+        });
       });
-    }
 
-    if (numRowsVisible > 2 && arrayLinkColumnsIndeces.length) {
-      arrayLinkColumnsIndeces.forEach((index) => {
-        const { field } = columnDefs[index];
-        columnDefs[index].cellRendererFramework = cellRendererFunc(
-          field,
-          true,
-          true,
-        );
-        gridApi.current.setColumnDefs(columnDefs);
+      // Update row icon
+      setStateColumnDefs((prevVal) => {
+        prevVal[0].cellRendererFramework = renderExpandArrow;
+        return [...prevVal];
       });
+      gridApi.current.setColumnDefs(stateColumnDefs);
     }
-  }, [numRowsVisible]);
+  }, [rowExpandedStatus]);
+
 
   const onGridReady = (params) => {
     gridApi.current = params.api;
@@ -198,41 +237,30 @@ function ReportsTableComponent(props) {
     columnApi.current.setColumnsVisible(hiddenCols, false);
     columnApi.current.autoSizeColumns(visibleCols);
 
-    // Add custom renderer to columns with array<string> data type
+    // Add custom renderer and click handler to columns with array<string> data type
     // Denoted with inclusion in arrayColumns
-    const arrayColumnsIndeces = arrayColumns.map(
-      col => columnDefs.findIndex(c => c.field === col),
-    ).filter(index => index !== -1);
-
-    if (arrayColumnsIndeces.length) {
-      arrayColumnsIndeces.forEach((index) => {
-        const { field } = columnDefs[index];
-        columnDefs[index].cellRendererFramework = cellRendererFunc(
-          field,
-          numRowsVisible > 2,
-          false,
-        );
-        gridApi.current.setColumnDefs(columnDefs);
+    if (arrayColumns.length) {
+      arrayColumns.forEach((col) => {
+        setStateColumnDefs((prevVal) => {
+          prevVal[col.index].cellRendererFramework = cellRendererFunc(
+            col.field,
+            col.isLink,
+          );
+          return [...prevVal];
+        });
       });
-    }
 
-    // Add custom renderer to columns with array<string> data type
-    // AND the need for the contents to be a link
-    // Denoted with inclusion in arrayLinkColumns
-    const arrayLinkColumnsIndeces = arrayLinkColumns.map(
-      col => columnDefs.findIndex(c => c.field === col),
-    ).filter(index => index !== -1);
-
-    if (arrayLinkColumnsIndeces.length) {
-      arrayLinkColumnsIndeces.forEach((index) => {
-        const { field } = columnDefs[index];
-        columnDefs[index].cellRendererFramework = cellRendererFunc(
-          field,
-          numRowsVisible > 2,
-          true,
-        );
-        gridApi.current.setColumnDefs(columnDefs);
+      // Add custom renderer to first column to control expanded rows
+      setStateColumnDefs((prevVal) => {
+        prevVal[0].cellRendererFramework = renderExpandArrow;
+        prevVal[0].cellClass = 'table__expand-cell';
+        prevVal[0].onCellClicked = (cellParams) => {
+          toggleRowExpand(cellParams);
+        };
+        return [...prevVal];
       });
+
+      gridApi.current.setColumnDefs(stateColumnDefs);
     }
   };
 
@@ -284,23 +312,6 @@ function ReportsTableComponent(props) {
     return result;
   };
   
-  const getRowHeight = (params) => {
-    const DEFAULT_LINE_HEIGHT = 46;
-    const DEFAULT_ROW_HEIGHT = 50;
-    try {
-      let upperVal = params.data.disease.size > params.data.reference.size
-        ? params.data.disease.size
-        : params.data.reference.size;
-      // Hide more values by default. Only show 2 rows
-      if (upperVal > 2) {
-        upperVal = 2;
-      }
-      return upperVal * DEFAULT_LINE_HEIGHT;
-    } catch (err) {
-      return DEFAULT_ROW_HEIGHT;
-    }
-  };
-
   return (
     <div>
       <div className="kb-matches__header-container">
@@ -321,14 +332,13 @@ function ReportsTableComponent(props) {
           && renderOptionsMenu()
         }
         <AgGridReact
-          columnDefs={columnDefs}
+          columnDefs={stateColumnDefs}
           rowData={rowData}
           defaultColDef={defaultColDef}
           onGridReady={onGridReady}
           domLayout={domLayout}
           skipHeaderOnAutoSize
           autoSizePadding="0"
-          getRowHeight={getRowHeight}
         />
       </div>
     </div>
@@ -337,8 +347,7 @@ function ReportsTableComponent(props) {
 
 ReportsTableComponent.propTypes = {
   columnDefs: PropTypes.arrayOf(PropTypes.object).isRequired,
-  arrayColumns: PropTypes.arrayOf(PropTypes.string),
-  arrayLinkColumns: PropTypes.arrayOf(PropTypes.string),
+  arrayColumns: PropTypes.arrayOf(PropTypes.object),
   rowData: PropTypes.arrayOf(PropTypes.object),
   title: PropTypes.string.isRequired,
   visibleCols: PropTypes.arrayOf(PropTypes.string).isRequired,
@@ -351,7 +360,6 @@ ReportsTableComponent.propTypes = {
 ReportsTableComponent.defaultProps = {
   rowData: [],
   arrayColumns: [],
-  arrayLinkColumns: [],
 };
 
 export default ReportsTableComponent;
