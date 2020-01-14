@@ -1,8 +1,6 @@
+import ArrayCell from '../common/arrayCell';
+
 const columnDefs = [{
-  hide: false,
-  width: 50,
-},
-{
   headerName: 'Gene',
   field: 'gene',
   hide: false,
@@ -17,6 +15,7 @@ const columnDefs = [{
   headerName: 'Cancer Type',
   field: 'disease',
   hide: false,
+  cellRendererFramework: ArrayCell('disease', false),
   valueGetter: (params) => {
     if (typeof params.data.disease === 'object') {
       const diseaseString = [...params.data.disease].sort().toString();
@@ -44,6 +43,7 @@ const columnDefs = [{
   headerName: 'PMID',
   field: 'reference',
   hide: false,
+  cellRendererFramework: ArrayCell('reference', true),
   valueGetter: (params) => {
     if (typeof params.data.reference === 'object') {
       const referenceString = [...params.data.reference].sort().toString();
