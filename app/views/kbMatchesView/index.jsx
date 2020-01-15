@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { coalesceEntries, extractCategories } from './alteration-reduction';
-import { columnDefs, targetedColumnDefs } from './columnDefs';
+import { coalesceEntries, extractCategories } from './AlterationReduction';
+import { columnDefs, targetedColumnDefs } from './ColumnDefs';
 
 /**
  * @param {*} props props

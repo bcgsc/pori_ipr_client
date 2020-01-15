@@ -1,10 +1,10 @@
-import ArrayCell from '../../common/ArrayCell';
+import ArrayCell from './ArrayCell';
 
 const columnDefs = [{
   headerName: 'Gene',
   field: 'gene',
   hide: false,
-  cellClass: ['table__padding--none'],
+  cellClass: ['data-table__padding--none'],
 },
 {
   headerName: 'Known Variant',
@@ -90,7 +90,7 @@ const columnDefs = [{
 {
   headerName: 'Sample',
   field: 'sample',
-  hide: true,
+  hide: false,
 },
 {
   headerName: 'Zygosity',
@@ -99,10 +99,6 @@ const columnDefs = [{
 }];
 
 const targetedColumnDefs = [{
-  hide: false,
-  width: 35,
-},
-{
   headerName: 'Gene',
   field: 'gene',
   hide: false,

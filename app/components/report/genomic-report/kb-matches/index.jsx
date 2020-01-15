@@ -8,6 +8,8 @@ import {
 import FilterListIcon from '@material-ui/icons/FilterList';
 import DataTable from '../../../../common/DataTable';
 
+import './kb-matches.scss';
+
 /**
  * @param {*} props props
  * @param {object} tableData table data for all tables
