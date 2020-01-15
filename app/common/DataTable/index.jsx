@@ -9,12 +9,12 @@ import {
   IconButton,
 } from '@material-ui/core';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
-import OptionsMenu from '../../../../common/options-menu';
+import OptionsMenu from '../options-menu';
 
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-material.css';
 
-import './index.scss';
+import './DataTable.scss';
 
 /**
  * @param {object} props props
@@ -134,8 +134,8 @@ function ReportsTableComponent(props) {
   
   return (
     <div>
-      <div className="kb-matches__header-container">
-        <Typography variant="h6" className="kb-matches__header">
+      <div className="data-table__header-container">
+        <Typography variant="h6" className="data-table__header">
           {title}
         </Typography>
         <IconButton
@@ -147,7 +147,7 @@ function ReportsTableComponent(props) {
           <MoreHorizIcon />
         </IconButton>
       </div>
-      <div className="ag-theme-material kb-matches__container">
+      <div className="ag-theme-material data-table__container">
         {showPopover
           && renderOptionsMenu()
         }

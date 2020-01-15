@@ -1,20 +1,6 @@
 @import '../../../../styles/variables';
 
 .kb-matches {
-  &__header {
-    display: inline-block;
-    padding: 8px;
-  }
-
-  &__container {
-    margin: 8px 0;
-  }
-
-  &__header-container {
-    display: flex;
-    justify-content: space-between;
-  }
-
   &__button-container {
     display: flex;
     justify-content: space-around;
@@ -25,11 +11,3 @@
     padding: 8px;
   }
 }
-
-
-.table {
-  &__expand-cell {
-    margin: 7px 0 0;
-  }
-}
-

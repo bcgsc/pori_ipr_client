@@ -1,4 +1,4 @@
-import ArrayCell from '../common/arrayCell';
+import ArrayCell from '../../common/ArrayCell';
 
 const columnDefs = [{
   headerName: 'Gene',
