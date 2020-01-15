@@ -4,7 +4,6 @@ const columnDefs = [{
   headerName: 'Gene',
   field: 'gene',
   hide: false,
-  cellClass: ['data-table__padding--none'],
 },
 {
   headerName: 'Known Variant',
