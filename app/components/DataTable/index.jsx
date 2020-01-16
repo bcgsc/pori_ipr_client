@@ -9,7 +9,8 @@ import {
   IconButton,
 } from '@material-ui/core';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
-import OptionsMenu from '../OptionsMenu';
+import OptionsMenu from '../../common/OptionsMenu';
+import DetailDialog from '../../common/DetailDialog';
 
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-material.css';
@@ -55,6 +56,10 @@ function ReportsTableComponent(props) {
 
   const [moreIconEl, setMoreIconEl] = useState(null);
   const [showPopover, setShowPopover] = useState(false);
+  const [showDetailDialog, setShowDetailDialog] = useState({
+    show: false,
+    data: {},
+  });
 
   useEffect(() => {
     if (columnApi.current) {

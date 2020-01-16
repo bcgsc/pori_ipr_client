@@ -6,7 +6,7 @@ import {
   InputAdornment,
 } from '@material-ui/core';
 import FilterListIcon from '@material-ui/icons/FilterList';
-import DataTable from '../../../../common/DataTable';
+import DataTable from '../../../DataTable';
 
 import './kb-matches.scss';
 
