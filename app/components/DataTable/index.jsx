@@ -5,8 +5,8 @@ import PropTypes from 'prop-types';
 import { AgGridReact } from 'ag-grid-react';
 import {
   Typography,
-  Popover,
   IconButton,
+  Dialog,
 } from '@material-ui/core';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import OptionsMenu from '../../common/OptionsMenu';
@@ -51,7 +51,6 @@ function ReportsTableComponent(props) {
     optionsMenuOnClose.current = ref;
   };
 
-  const [moreIconEl, setMoreIconEl] = useState(null);
   const [showPopover, setShowPopover] = useState(false);
   const [showDetailDialog, setShowDetailDialog] = useState(false);
   const [selectedRow, setSelectedRow] = useState({});
@@ -113,22 +112,12 @@ function ReportsTableComponent(props) {
       columnApi.current.autoSizeColumns(returnedVisibleCols);
 
       setShowPopover(prevVal => !prevVal);
-      setMoreIconEl(null);
     };
 
     const result = (
-      <Popover
-        anchorEl={moreIconEl}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        transformOrigin={{
-          vertical: 'center',
-          horizontal: 'right',
-        }}
+      <Dialog
         onClose={() => popoverCloseHandler()}
-        open={Boolean(moreIconEl)}
+        open
       >
         <OptionsMenu
           className="data-view__options-menu"
@@ -136,7 +125,7 @@ function ReportsTableComponent(props) {
           columns={columnApi.current.getAllColumns()}
           onClose={setOptionsMenuOnClose}
         />
-      </Popover>
+      </Dialog>
     );
     return result;
   };
@@ -148,10 +137,7 @@ function ReportsTableComponent(props) {
           {title}
         </Typography>
         <IconButton
-          onClick={({ currentTarget }) => {
-            setShowPopover(prevVal => !prevVal);
-            setMoreIconEl(currentTarget);
-          }}
+          onClick={() => setShowPopover(prevVal => !prevVal)}
         >
           <MoreHorizIcon />
         </IconButton>
