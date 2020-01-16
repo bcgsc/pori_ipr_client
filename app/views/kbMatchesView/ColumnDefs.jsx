@@ -62,11 +62,6 @@ const columnDefs = [{
   hide: true,
 },
 {
-  headerName: 'Approved Therapy',
-  field: 'approvedTherapy',
-  hide: true,
-},
-{
   headerName: 'Copy Number',
   field: 'copyNumber',
   hide: true,
