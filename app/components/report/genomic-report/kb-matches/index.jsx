@@ -37,16 +37,9 @@ function KBMatches(props) {
       : syncedColumnDefs.filter(c => c.hide).map(c => c.field),
   );
 
-  const [arrayColumns] = useState([
-    {
-      field: 'disease',
-      isLink: false,
-    },
-    {
-      field: 'reference',
-      isLink: true,
-    },
-  ]);
+  const [arrayColumns] = useState(['disease', 'reference']);
+
+  const [filterText, setFilterText] = useState('');
   
   const handleVisibleColsChange = (change) => {
     setVisibleCols(change);
@@ -55,14 +48,13 @@ function KBMatches(props) {
     setHiddenCols(change);
   };
 
-  const [searchText, setSearchText] = useState('');
 
   useEffect(() => {
     localStorage.setItem('visibleColsKb', visibleCols);
     localStorage.setItem('hiddenColsKb', hiddenCols);
   }, [visibleCols, hiddenCols]);
 
-  const handleSearch = event => setSearchText(event.target.value);
+  const handleFilter = event => setFilterText(event.target.value);
 
   const handleShowTables = (key, table) => {
     table.show = !table.show;
@@ -71,29 +63,16 @@ function KBMatches(props) {
     setThisHiddenTableData(thisHiddenTableDataCopy);
   };
 
-  // Have to do this on a table by table basis to account for different table's column defs
-  const arrayColumnDefsIntersection = (tableColumnDef, arrayCols) => {
-    const intersection = arrayCols.filter(col => (
-      tableColumnDef.findIndex(c => c.field === col.field) > -1
-    ));
-
-    return intersection.map(col => ({
-      field: col.field,
-      index: tableColumnDef.findIndex(c => c.field === col.field),
-      isLink: col.isLink,
-    }));
-  };
-
   return (
     <>
-      <div className="kb-matches__search">
+      <div className="kb-matches__filter">
         <TextField
           label="Filter Table Text"
           type="text"
           variant="outlined"
           size="small"
-          value={searchText}
-          onChange={handleSearch}
+          value={filterText}
+          onChange={handleFilter}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
@@ -109,14 +88,14 @@ function KBMatches(props) {
           <DataTable
             key={table.title}
             columnDefs={table.columnDefs}
-            arrayColumns={arrayColumnDefsIntersection(table.columnDefs, arrayColumns)}
+            arrayColumns={arrayColumns}
             rowData={table.rowData || []}
             title={table.title}
             visibleCols={visibleCols}
             hiddenCols={hiddenCols}
             setVisibleCols={handleVisibleColsChange}
             setHiddenCols={handleHiddenColsChange}
-            searchText={searchText}
+            filterText={filterText}
           />
         ))}
       </div>
@@ -147,7 +126,7 @@ function KBMatches(props) {
                 hiddenCols={hiddenCols}
                 setVisibleCols={handleVisibleColsChange}
                 setHiddenCols={handleHiddenColsChange}
-                searchText={searchText}
+                filterText={filterText}
               />
             )
           }

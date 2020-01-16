@@ -21,7 +21,13 @@ import './DataTable.scss';
  * @param {object} props props
  * @param {array} props.rowData table row data
  * @param {array} props.columnDefs column definitions for ag-grid
- * @param {object} props.$state angularjs state service
+ * @param {array} props.arrayColumns list of columns containing array data
+ * @param {string} props.title table title
+ * @param {array} props.visibleCols list of current visible columns
+ * @param {array} props.hiddenCols list of current hidden columns
+ * @param {func} props.setVisibleCols function to update visible cols across tables
+ * @param {func} props.setHiddenCols function to update hidden cols across tables
+ * @param {string} props.filterText text to filter the table on
  * @return {*} JSX
  */
 function ReportsTableComponent(props) {
@@ -34,7 +40,7 @@ function ReportsTableComponent(props) {
     hiddenCols,
     setVisibleCols,
     setHiddenCols,
-    searchText,
+    filterText,
   } = props;
 
   const gridApi = useRef();
@@ -45,21 +51,10 @@ function ReportsTableComponent(props) {
     optionsMenuOnClose.current = ref;
   };
 
-  const [arrayRows] = useState(
-    rowData.reduce((accumulator, row, index) => {
-      if (arrayColumns.some(col => [...row[col.field]].length > 1)) {
-        accumulator.push(index);
-      }
-      return accumulator;
-    }, []),
-  );
-
   const [moreIconEl, setMoreIconEl] = useState(null);
   const [showPopover, setShowPopover] = useState(false);
-  const [showDetailDialog, setShowDetailDialog] = useState({
-    show: false,
-    data: {},
-  });
+  const [showDetailDialog, setShowDetailDialog] = useState(false);
+  const [selectedRow, setSelectedRow] = useState({});
 
   useEffect(() => {
     if (columnApi.current) {
@@ -70,9 +65,9 @@ function ReportsTableComponent(props) {
 
   useEffect(() => {
     if (gridApi.current) {
-      gridApi.current.setQuickFilter(searchText);
+      gridApi.current.setQuickFilter(filterText);
     }
-  }, [searchText]);
+  }, [filterText]);
 
   const onGridReady = (params) => {
     gridApi.current = params.api;
@@ -84,9 +79,18 @@ function ReportsTableComponent(props) {
   };
 
   const onRowClicked = (event) => {
-    if (arrayRows.includes(event.rowIndex)) {
-      console.log('good row');
-    }
+    const propagateObject = Object.entries(event.data).reduce((accumulator, [key, value]) => {
+      if (visibleCols.includes(key)) {
+        accumulator[key] = value;
+      }
+      return accumulator;
+    }, {});
+    setSelectedRow(propagateObject);
+    setShowDetailDialog(true);
+  };
+
+  const handleDetailClose = () => {
+    setShowDetailDialog(false);
   };
 
   const defaultColDef = {
@@ -156,6 +160,12 @@ function ReportsTableComponent(props) {
         {showPopover
           && renderOptionsMenu()
         }
+        <DetailDialog
+          open={showDetailDialog}
+          selectedRow={selectedRow}
+          onClose={handleDetailClose}
+          arrayColumns={arrayColumns}
+        />
         <AgGridReact
           columnDefs={columnDefs}
           rowData={rowData}
@@ -173,14 +183,14 @@ function ReportsTableComponent(props) {
 
 ReportsTableComponent.propTypes = {
   columnDefs: PropTypes.arrayOf(PropTypes.object).isRequired,
-  arrayColumns: PropTypes.arrayOf(PropTypes.object),
+  arrayColumns: PropTypes.arrayOf(PropTypes.string),
   rowData: PropTypes.arrayOf(PropTypes.object),
   title: PropTypes.string.isRequired,
   visibleCols: PropTypes.arrayOf(PropTypes.string).isRequired,
   hiddenCols: PropTypes.arrayOf(PropTypes.string).isRequired,
   setVisibleCols: PropTypes.func.isRequired,
   setHiddenCols: PropTypes.func.isRequired,
-  searchText: PropTypes.string.isRequired,
+  filterText: PropTypes.string.isRequired,
 };
 
 ReportsTableComponent.defaultProps = {
