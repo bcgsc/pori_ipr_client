@@ -8,8 +8,10 @@ import './index.scss';
 
 /**
  * @param {object} props props
- * @property {array} props.options options array
- * @property {string} props.className optional class name
+ * @param {string} props.className optional class name
+ * @param {string} props.label label for dialog
+ * @param {array} props.columns list of column definition objects
+ * @param {func} props.onClose callback function to execute on close
  * @return {*} JSX
  */
 function OptionsMenu(props) {
@@ -21,11 +23,11 @@ function OptionsMenu(props) {
   } = props;
 
   const [visibleCols, setVisibleCols] = useState(
-    Object.values(columns).filter(c => c.visible).map(c => c.colId),
+    columns.filter(c => c.visible).map(c => c.colId),
   );
 
   const [hiddenCols, setHiddenCols] = useState(
-    Object.values(columns).filter(c => !c.visible).map(c => c.colId),
+    columns.filter(c => !c.visible).map(c => c.colId),
   );
 
   const handleChange = (event, colId) => {
