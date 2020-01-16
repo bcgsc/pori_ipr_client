@@ -1,8 +1,8 @@
 import React from 'react';
 
-const renderArrayCell = (field, isLink) => {
+const RenderArrayCell = (field, isLink) => {
   if (isLink) {
-    return (cellParams) => {
+    return function ArrayCell(cellParams) {
       const cellData = [...cellParams.data[field]].sort();
       const firstVal = cellData[0].replace('#', '');
 
@@ -28,7 +28,7 @@ const renderArrayCell = (field, isLink) => {
     };
   }
 
-  return (cellParams) => {
+  return function ArrayCell(cellParams) {
     const cellData = [...cellParams.data[field]].sort();
     const firstVal = cellData[0].replace('#', '');
 
@@ -45,4 +45,4 @@ const renderArrayCell = (field, isLink) => {
   };
 };
 
-export default renderArrayCell;
+export default RenderArrayCell;
