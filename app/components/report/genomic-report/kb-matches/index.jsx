@@ -7,6 +7,7 @@ import {
 } from '@material-ui/core';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import DataTable from '../../../DataTable';
+import { columnDefs, targetedColumnDefs } from './ColumnDefs';
 
 import './kb-matches.scss';
 
@@ -19,9 +20,9 @@ import './kb-matches.scss';
  */
 function KBMatches(props) {
   const {
-    tableData,
+    syncedTableData,
+    unsyncedTableData,
     hiddenTableData,
-    syncedColumnDefs,
   } = props;
 
   const [thisHiddenTableData, setThisHiddenTableData] = useState(hiddenTableData.current);
@@ -29,12 +30,12 @@ function KBMatches(props) {
   const [visibleCols, setVisibleCols] = useState(
     localStorage.getItem('visibleColsKb') !== ''
       ? localStorage.getItem('visibleColsKb').split(',')
-      : syncedColumnDefs.filter(c => !c.hide).map(c => c.field),
+      : columnDefs.filter(c => !c.hide).map(c => c.field),
   );
   const [hiddenCols, setHiddenCols] = useState(
     localStorage.getItem('hiddenColsKb') !== ''
       ? localStorage.getItem('hiddenColsKb').split(',')
-      : syncedColumnDefs.filter(c => c.hide).map(c => c.field),
+      : columnDefs.filter(c => c.hide).map(c => c.field),
   );
 
   const [arrayColumns] = useState(['disease', 'reference']);
@@ -84,10 +85,10 @@ function KBMatches(props) {
       </div>
 
       <div>
-        {Object.values(tableData).map(table => (
+        {Object.values(syncedTableData).map(table => (
           <DataTable
             key={table.title}
-            columnDefs={table.columnDefs}
+            columnDefs={columnDefs}
             arrayColumns={arrayColumns}
             rowData={table.rowData || []}
             title={table.title}
@@ -98,6 +99,33 @@ function KBMatches(props) {
             filterText={filterText}
           />
         ))}
+      </div>
+
+
+      <div>
+        {Object.values(syncedTableData).map(table => (
+          <DataTable
+            key={table.title}
+            columnDefs={columnDefs}
+            arrayColumns={arrayColumns}
+            rowData={table.rowData || []}
+            title={table.title}
+            visibleCols={visibleCols}
+            hiddenCols={hiddenCols}
+            setVisibleCols={handleVisibleColsChange}
+            setHiddenCols={handleHiddenColsChange}
+            filterText={filterText}
+          />
+        ))}
+      </div>
+
+      <div>
+        <DataTable
+          columnDefs={targetedColumnDefs}
+          rowData={unsyncedTableData.rowData || []}
+          title={unsyncedTableData.title}
+          filterText={filterText}
+        />
       </div>
 
       <div className="kb-matches__button-container">
@@ -137,18 +165,40 @@ function KBMatches(props) {
 }
 
 KBMatches.propTypes = {
-  tableData: PropTypes.shape({
+  syncedTableData: PropTypes.shape(
+    PropTypes.objectOf({
+      title: PropTypes.string,
+      rowData: PropTypes.array,
+    }),
+  ),
+  unsyncedTableData: PropTypes.shape({
     title: PropTypes.string,
-    tableData: PropTypes.array,
-    columnDefs: PropTypes.object,
-  }).isRequired,
-  hiddenTableData: PropTypes.shape({
-    title: PropTypes.string,
-    tableData: PropTypes.array,
-    columnDefs: PropTypes.object,
-    show: PropTypes.bool,
-  }).isRequired,
-  syncedColumnDefs: PropTypes.arrayOf(PropTypes.object),
+    rowData: PropTypes.array,
+  }),
+  hiddenTableData: PropTypes.shape(
+    PropTypes.objectOf(
+      PropTypes.objectOf({
+        title: PropTypes.string,
+        rowData: PropTypes.array,
+      }),
+    ),
+  ),
+};
+
+KBMatches.defaultProps = {
+  syncedTableData: {
+    table: {
+      title: '',
+      rowData: [],
+    },
+  },
+  unsyncedTableData: {},
+  hiddenTableData: {
+    table: {
+      title: '',
+      rowData: [],
+    },
+  },
 };
 
 export default KBMatches;

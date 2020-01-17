@@ -30,7 +30,7 @@ import './DataTable.scss';
  * @param {string} props.filterText text to filter the table on
  * @return {*} JSX
  */
-function ReportsTableComponent(props) {
+function DataTable(props) {
   const {
     rowData,
     columnDefs,
@@ -78,8 +78,9 @@ function ReportsTableComponent(props) {
   };
 
   const onRowClicked = (event) => {
+    const definedCols = columnApi.current.getAllColumns().map(col => col.colId);
     const propagateObject = Object.entries(event.data).reduce((accumulator, [key, value]) => {
-      if (visibleCols.includes(key)) {
+      if (definedCols.includes(key)) {
         accumulator[key] = value;
       }
       return accumulator;
@@ -131,16 +132,18 @@ function ReportsTableComponent(props) {
   };
   
   return (
-    <div>
+    <div className="data-table--padded">
       <div className="data-table__header-container">
         <Typography variant="h6" className="data-table__header">
           {title}
         </Typography>
-        <IconButton
-          onClick={() => setShowPopover(prevVal => !prevVal)}
-        >
-          <MoreHorizIcon />
-        </IconButton>
+        {visibleCols.length > 0 && hiddenCols.length > 0 && (
+          <IconButton
+            onClick={() => setShowPopover(prevVal => !prevVal)}
+          >
+            <MoreHorizIcon />
+          </IconButton>
+        )}
       </div>
       <div className="ag-theme-material data-table__container">
         {showPopover
@@ -167,21 +170,25 @@ function ReportsTableComponent(props) {
   );
 }
 
-ReportsTableComponent.propTypes = {
+DataTable.propTypes = {
   columnDefs: PropTypes.arrayOf(PropTypes.object).isRequired,
   arrayColumns: PropTypes.arrayOf(PropTypes.string),
   rowData: PropTypes.arrayOf(PropTypes.object),
   title: PropTypes.string.isRequired,
-  visibleCols: PropTypes.arrayOf(PropTypes.string).isRequired,
-  hiddenCols: PropTypes.arrayOf(PropTypes.string).isRequired,
-  setVisibleCols: PropTypes.func.isRequired,
-  setHiddenCols: PropTypes.func.isRequired,
+  visibleCols: PropTypes.arrayOf(PropTypes.string),
+  hiddenCols: PropTypes.arrayOf(PropTypes.string),
+  setVisibleCols: PropTypes.func,
+  setHiddenCols: PropTypes.func,
   filterText: PropTypes.string.isRequired,
 };
 
-ReportsTableComponent.defaultProps = {
+DataTable.defaultProps = {
   rowData: [],
   arrayColumns: [],
+  visibleCols: [],
+  hiddenCols: [],
+  setVisibleCols: () => {},
+  setHiddenCols: () => {},
 };
 
-export default ReportsTableComponent;
+export default DataTable;

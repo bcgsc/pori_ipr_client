@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { columnDefs, targetedColumnDefs } from './ColumnDefs';
 
 const coalesceEntries = (entries) => {
   const bucketKey = (entry, delimiter = '||') => {
@@ -63,55 +62,47 @@ function KBMatchesView(props) {
 
   const KbMatchesComponent = kbMatchesComponent;
 
-  const [tableData] = useState({
+  const [syncedTableData] = useState({
     thisCancer: {
       title: 'Therapies Approved In This Cancer Type',
       rowData: coalesceEntries(thisCancer),
-      columnDefs,
     },
     otherCancer: {
       title: 'Therapies Approved In Other Cancer Type',
       rowData: coalesceEntries(otherCancer),
-      columnDefs,
     },
     therapeutic: {
       title: 'Therapeutic Alterations',
       rowData: extractCategories(coalesceEntries(alterations), 'therapeutic'),
-      columnDefs,
     },
     diagnostic: {
       title: 'Diagnostic Alterations',
       rowData: extractCategories(coalesceEntries(alterations), 'diagnostic'),
-      columnDefs,
     },
     prognostic: {
       title: 'Prognostic Alterations',
       rowData: extractCategories(coalesceEntries(alterations), 'prognostic'),
-      columnDefs,
     },
     biological: {
       title: 'Biological Alterations',
       rowData: extractCategories(coalesceEntries(alterations), 'biological'),
-      columnDefs,
     },
-    targetedGenes: {
-      title: 'Detected Alterations From Targeted Gene Report',
-      rowData: targetedGenes,
-      columnDefs: targetedColumnDefs,
-    },
+  });
+
+  const [unsyncedTableData] = useState({
+    title: 'Detected Alterations From Targeted Gene Report',
+    rowData: targetedGenes,
   });
 
   const hiddenTableData = useRef({
     novel: {
       title: 'Alterations For Review',
       rowData: coalesceEntries(novel),
-      columnDefs,
       show: false,
     },
     unknown: {
       title: 'Uncharacterized Alterations',
       rowData: coalesceEntries(unknown),
-      columnDefs,
       show: false,
     },
   });
@@ -119,9 +110,9 @@ function KBMatchesView(props) {
 
   return (
     <KbMatchesComponent
-      tableData={tableData}
+      syncedTableData={syncedTableData}
+      unsyncedTableData={unsyncedTableData}
       hiddenTableData={hiddenTableData}
-      syncedColumnDefs={columnDefs}
     />
   );
 }
