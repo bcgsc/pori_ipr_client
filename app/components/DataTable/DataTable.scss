@@ -1,4 +1,8 @@
 .data-table {
+  &--padded {
+    padding: 16px 0;
+  }
+
   &__expand-cell {
     margin: 7px 0 0;
   }
