@@ -8,6 +8,7 @@ angular.module('kbmatches', [
   uiRouter,
 ]);
 
+// TODO Make this a proper HOC - DEVSU-810
 export default angular.module('kbmatches')
   .component('kbMatchesAngularComponent', react2angular(
     KBMatchesView,
