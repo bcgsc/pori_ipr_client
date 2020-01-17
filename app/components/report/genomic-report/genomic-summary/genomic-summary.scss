@@ -303,18 +303,6 @@
 
 
 @media screen {
-  .events {
-    &__event {
-      margin: 8px 16px;
-      padding: 10px;
-      background-color: white;
-
-      &:first-of-type {
-        margin: 8px 10px 8px 28px;
-      }
-    }
-  }
-
   .tumour-analysis {
     &__icon {
       width: auto;
