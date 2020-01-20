@@ -9,7 +9,7 @@ import FilterListIcon from '@material-ui/icons/FilterList';
 import DataTable from '../../../DataTable';
 import { columnDefs, targetedColumnDefs } from './ColumnDefs';
 
-import './kb-matches.scss';
+import './index.scss';
 
 const VISIBLE = 'visibleColsKb';
 const HIDDEN = 'hiddenColsKb';

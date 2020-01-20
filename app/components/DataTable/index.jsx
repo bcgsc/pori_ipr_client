@@ -15,7 +15,7 @@ import DetailDialog from '../../common/DetailDialog';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-material.css';
 
-import './DataTable.scss';
+import './index.scss';
 
 /**
  * @param {object} props props

@@ -6,7 +6,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 
-import './DetailDialog.scss';
+import './index.scss';
 
 /**
  * @param {object} props props
