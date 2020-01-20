@@ -3,10 +3,7 @@ import PropTypes from 'prop-types';
 
 const coalesceEntries = (entries) => {
   const bucketKey = (entry, delimiter = '||') => {
-    const {
-      ident, updatedAt, createdAt, ...row
-    } = entry;
-    const { gene, context, variant } = row;
+    const { gene, context, variant } = entry;
     return `${gene}${delimiter}${context}${delimiter}${variant}`;
   };
 
