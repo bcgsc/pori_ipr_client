@@ -1,5 +1,6 @@
 import template from './report-settings.pug';
 import addTemplate from './role-add.pug';
+import deleteTemplate from './report-delete.pug';
 import './report-settings.scss';
 
 const bindings = {
@@ -119,6 +120,33 @@ class ReportSettingsComponent {
     this.$scope.$digest();
 
     this.$mdToast.show(this.$mdToast.simple().textContent('Report settings have been updated.'));
+  }
+
+  async deleteReport($event) {
+    try {
+      const outcome = await this.$mdDialog.show({
+        targetEvent: $event,
+        template: deleteTemplate,
+        clickOutToClose: true,
+        controller: ['scope', (scope) => {
+          scope.report = this.report;
+
+          scope.cancel = () => {
+            this.$mdDialog.cancel();
+          };
+
+          scope.delete = (input) => {
+            if (input === this.report.ident) {
+              console.log('deleted');
+            } else {
+              console.log('err');
+            }
+          };
+        }],
+      });
+    } catch (err) {
+
+    }
   }
 }
 

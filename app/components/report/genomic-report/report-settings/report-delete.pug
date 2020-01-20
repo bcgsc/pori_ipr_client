@@ -1,0 +1,22 @@
+md-dialog(layout="column", aria-label="User Role", ng-cloak, flex=30)
+  md-toolbar.md-toolbar-tools
+    h2 Delete Report
+    span(flex)
+    md-button.md-icon-button(ng-click="cancel()")
+      md-icon cancel
+  md-dialog-content(layout-padding)
+
+    div(layout="column")
+      p Are you sure you wish to delete this report:
+      p Patient: {{report.pog.POGID}}
+      p Report Ident: {{report.ident}}
+
+      p Please type the report ident to confirm deletion:
+
+      md-input-container
+        label Report Ident
+        input(ng-model="confirmText", required)
+      
+  md-dialog-actions(layout="row", layout-align="end center")
+    md-button(ng-click="cancel()").md-primary Cancel
+    md-button(type="submit", ng-click="delete(confirmText)").md-warn.md-raised Delete
