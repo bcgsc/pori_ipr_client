@@ -44,7 +44,7 @@ function DetailDialog(props) {
                 <>
                   {[...value].sort().map((val, i) => (
                     <React.Fragment key={val}>
-                      {val.replace('#', '')}
+                      {val.replace(/#$/, '')}
                       {i < value.size - 1 && ', '}
                     </React.Fragment>
                   ))}

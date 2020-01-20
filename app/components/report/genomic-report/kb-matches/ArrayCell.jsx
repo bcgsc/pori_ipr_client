@@ -4,7 +4,7 @@ const RenderArrayCell = (field, isLink) => {
   if (isLink) {
     return function ArrayCell(cellParams) {
       const cellData = [...cellParams.data[field]].sort();
-      const firstVal = cellData[0].replace('#', '');
+      const firstVal = cellData[0].replace(/#$/, '');
 
       return (
         <div>
@@ -30,7 +30,7 @@ const RenderArrayCell = (field, isLink) => {
 
   return function ArrayCell(cellParams) {
     const cellData = [...cellParams.data[field]].sort();
-    const firstVal = cellData[0].replace('#', '');
+    const firstVal = cellData[0].replace(/#$/, '');
 
     return (
       <div>
