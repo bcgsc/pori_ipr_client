@@ -11,6 +11,9 @@ import { columnDefs, targetedColumnDefs } from './ColumnDefs';
 
 import './kb-matches.scss';
 
+const VISIBLE = 'visibleColsKb';
+const HIDDEN = 'hiddenColsKb';
+
 /**
  * @param {*} props props
  * @param {object} tableData table data for all tables
@@ -28,13 +31,13 @@ function KBMatches(props) {
   const [thisHiddenTableData, setThisHiddenTableData] = useState(hiddenTableData.current);
 
   const [visibleCols, setVisibleCols] = useState(
-    localStorage.getItem('visibleColsKb') !== ''
-      ? localStorage.getItem('visibleColsKb').split(',')
+    localStorage.getItem(VISIBLE)
+      ? localStorage.getItem(VISIBLE).split(',')
       : columnDefs.filter(c => !c.hide).map(c => c.field),
   );
   const [hiddenCols, setHiddenCols] = useState(
-    localStorage.getItem('hiddenColsKb') !== ''
-      ? localStorage.getItem('hiddenColsKb').split(',')
+    localStorage.getItem(HIDDEN)
+      ? localStorage.getItem(HIDDEN).split(',')
       : columnDefs.filter(c => c.hide).map(c => c.field),
   );
 
