@@ -137,11 +137,24 @@ section.test-info
             span(flex=50).test-info__key Characterized Events
             span(flex=50).test-info__value 8588
 
-section.events
-  md-subheader.md-no-sticky Genomic Events
-  div(layout="row")
-    div(ng-repeat="event in $ctrl.genomicEvents")
-      div.md-whiteframe-1dp.events__event {{event.genomicEvent}}
+section
+  md-subheader.md-primary Genomic Events with Potential Therapeutic Association
+
+  div(layout="column", flex)
+    div(layout="row")
+      div(layout="column", flex).dataBox
+        div.box
+          div(layout="row", flex).heading
+            div(flex, style="padding: 10px 5px; margin: 7px 0").text-left Genomic Events
+            div(flex, style="padding: 10px 5px; margin: 7px 0").text-left Comments
+          div(layout="row", flex, ng-if="$ctrl.genomicEvents.length === 0").row
+            div(flex) No clinically relevant genomic alterations were found from the analysis.
+          div(layout="row", flex, ng-repeat="gene in $ctrl.genomicEvents", ng-click="$ctrl.modifyEvent($event, gene)", ng-if="$ctrl.reportEdit", style="cursor: pointer").row
+            div(flex) {{gene.genomicEvent}}
+            div(flex) {{gene.comments}}
+          div(layout="row", flex, ng-repeat="gene in $ctrl.genomicEvents", ng-if="!$ctrl.reportEdit").row
+            div(flex) {{gene.genomicEvent}}
+            div(flex) {{gene.comments}}
 
 section(ng-if="!$ctrl.print")
   md-subheader.md-primary Review
