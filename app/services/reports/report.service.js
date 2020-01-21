@@ -40,6 +40,16 @@ class ReportService {
   }
 
   /**
+   * Delete a report entry (note: this endpoint does not return data if successful)
+   * @param {String} report - Report ident
+   * @returns {Promise} Result of delete report API call
+   * @throws {ErrorType} Thrown when API call fails
+   */
+  async deleteReport(report) {
+    return this.$http.delete(`${this.api}/reports/${report.ident}`, report);
+  }
+
+  /**
    * Bind a user to a report
    * @param {String} report - Report Ident
    * @param {String} user - User Ident (or username)

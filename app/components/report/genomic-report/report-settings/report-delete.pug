@@ -1,22 +1,25 @@
-md-dialog(layout="column", aria-label="User Role", ng-cloak, flex=30)
-  md-toolbar.md-toolbar-tools
-    h2 Delete Report
-    span(flex)
-    md-button.md-icon-button(ng-click="cancel()")
-      md-icon cancel
-  md-dialog-content(layout-padding)
+md-dialog(layout="column", aria-label="User Role", ng-cloak, flex=35)
+  form(name="form", ng-submit="delete(form)")
+    md-toolbar.md-toolbar-tools
+      h2 Delete Report
+      span(flex)
+      md-button.md-icon-button(ng-click="cancel()")
+        md-icon cancel
+    md-dialog-content(layout-padding)
 
-    div(layout="column")
-      p Are you sure you wish to delete this report:
-      p Patient: {{report.pog.POGID}}
-      p Report Ident: {{report.ident}}
+      div(layout="column")
+        p Are you sure you want to delete this report?
+        ul.delete-report__list
+          li.delete-report__list-elem Patient: {{report.pog.POGID}}
+          li.delete-report__list-elem Report Ident: {{report.ident}}
 
-      p Please type the report ident to confirm deletion:
+        p Please type the Report Ident to confirm deletion:
 
-      md-input-container
-        label Report Ident
-        input(ng-model="confirmText", required)
-      
-  md-dialog-actions(layout="row", layout-align="end center")
-    md-button(ng-click="cancel()").md-primary Cancel
-    md-button(type="submit", ng-click="delete(confirmText)").md-warn.md-raised Delete
+        md-input-container
+          label Report Ident
+          input(ng-model="confirmText", required)
+          span(ng-if="form.$error.invalid").delete-report__invalid Fields do not match
+        
+    md-dialog-actions(layout="row", layout-align="end center")
+      md-button(ng-click="cancel()").md-primary Cancel
+      md-button(type="submit").md-warn.md-raised Delete

@@ -12,8 +12,9 @@ const bindings = {
 
 class ReportSettingsComponent {
   /* @ngInject */
-  constructor($scope, $mdDialog, $mdToast, PogService, ReportService, indefiniteArticleFilter) {
+  constructor($scope, $state, $mdDialog, $mdToast, PogService, ReportService, indefiniteArticleFilter) {
     this.$scope = $scope;
+    this.$state = $state;
     this.$mdDialog = $mdDialog;
     this.$mdToast = $mdToast;
     this.PogService = PogService;
@@ -130,22 +131,32 @@ class ReportSettingsComponent {
         clickOutToClose: true,
         controller: ['scope', (scope) => {
           scope.report = this.report;
+          scope.confirmText = '';
 
           scope.cancel = () => {
-            this.$mdDialog.cancel();
+            this.$mdDialog.hide();
           };
 
-          scope.delete = (input) => {
-            if (input === this.report.ident) {
-              console.log('deleted');
+          scope.delete = async (form) => {
+            if (scope.confirmText.toLowerCase() === this.report.ident.toLowerCase()) {
+              form.$error.invalid = false;
+              const resp = await this.ReportService.deleteReport(this.report);
+              this.$mdDialog.hide({ data: resp.data, status: resp.status });
             } else {
-              console.log('err');
+              form.$error.invalid = true;
             }
           };
         }],
       });
-    } catch (err) {
 
+      if (outcome.status === 204) {
+        this.$mdToast.show(this.$mdToast.simple().textContent('Report Deleted'));
+        this.$state.go('root.reportlisting.reports');
+      } else {
+        this.$mdToast.show(this.$mdToast.simple().textContent(`Delete Error: ${outcome.data}`));
+      }
+    } catch (err) {
+      this.$mdToast.show(this.$mdToast.simple().textContent('Report not deleted due to an error'));
     }
   }
 }

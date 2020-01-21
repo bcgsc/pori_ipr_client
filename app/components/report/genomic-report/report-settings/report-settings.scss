@@ -1,3 +1,20 @@
+@media screen {
+  .delete-report {
+    &__invalid {
+      color: red;
+      font-size: 11px;
+    }
+
+    &__list {
+      list-style-type: none;
+    }
+
+    &__list-elem {
+      padding: 4px 0;
+    }
+  }
+}
+
 section.meta {
   .md-subheader-content span {
     text-transform: capitalize;
