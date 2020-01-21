@@ -138,12 +138,16 @@ class ReportSettingsComponent {
           };
 
           scope.delete = async (form) => {
-            if (scope.confirmText.toLowerCase() === this.report.ident.toLowerCase()) {
-              form.$error.invalid = false;
-              const resp = await this.ReportService.deleteReport(this.report);
-              this.$mdDialog.hide({ data: resp.data, status: resp.status });
-            } else {
-              form.$error.invalid = true;
+            try {
+              if (scope.confirmText.toLowerCase() === this.report.ident.toLowerCase()) {
+                form.$error.invalid = false;
+                const resp = await this.ReportService.deleteReport(this.report);
+                this.$mdDialog.hide({ data: resp.data, status: resp.status });
+              } else {
+                form.$error.invalid = true;
+              }
+            } catch (err) {
+              this.$mdDialog.cancel(err);
             }
           };
         }],
@@ -156,7 +160,15 @@ class ReportSettingsComponent {
         this.$mdToast.show(this.$mdToast.simple().textContent(`Delete Error: ${outcome.data}`));
       }
     } catch (err) {
-      this.$mdToast.show(this.$mdToast.simple().textContent('Report not deleted due to an error'));
+      if (err.status === 403) {
+        this.$mdToast.show(
+          this.$mdToast.simple().textContent('You do not have permission to delete reports'),
+        );
+      } else {
+        this.$mdToast.show(
+          this.$mdToast.simple().textContent(`Report not deleted: ${err.data.message}`),
+        );
+      }
     }
   }
 }
