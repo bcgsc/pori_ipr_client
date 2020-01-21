@@ -63,11 +63,11 @@ class GroupsEditComponent {
 
   // Remove user from group
   async removeUser(user) {
-    if (confirm(`Are you sure you want to remove '${user.firstName} ${user.lastName} from ${this.group.name}?`)) {
+    if (confirm(`Are you sure you want to remove '${user.firstName} ${user.lastName} from ${this.editGroup.name}?`)) {
       try {
-        await this.GroupService.removeUser(this.group.ident, user.ident);
+        await this.GroupService.removeUser(this.editGroup.ident, user.ident);
         // Remove entry from group list
-        this.group.users = this.group.users.filter(u => u.ident !== user.ident);
+        this.editGroup.users = this.editGroup.users.filter(u => u.ident !== user.ident);
       } catch (err) {
         console.log('Unable to remove user from group', err);
       }
