@@ -26,6 +26,11 @@ export default angular.module('probe.summary')
               $transition$.params().POG,
               $transition$.params().analysis_report,
             )],
+          genomicEvents: ['$transition$', 'GenomicEventsService',
+            async ($transition$, GenomicEventsService) => GenomicEventsService.all(
+              $transition$.params().POG,
+              $transition$.params().analysis_report,
+            )],
         },
       });
   })

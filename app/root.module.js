@@ -44,6 +44,7 @@ import MavisService from './services/reports/structural-variants/mavis.service';
 import DrugTargetService from './services/reports/expression/drug-target.service';
 import OutlierService from './services/reports/expression/outlier.service';
 import AppendicesService from './services/reports/appendices/appendices.service';
+import GenomicEventsService from './services/reports/summary/genomic-events.service';
 import IndefiniteArticleFilter from './filters/indefinite-article.filter';
 import TitleCaseFilter from './filters/titlecase.filter';
 import './root.scss';
@@ -94,6 +95,7 @@ export default angular.module('root')
   .service('DrugTargetService', DrugTargetService)
   .service('OutlierService', OutlierService)
   .service('AppendicesService', AppendicesService)
+  .service('GenomicEventsService', GenomicEventsService)
   .filter('indefiniteArticle', IndefiniteArticleFilter)
   .filter('titlecase', TitleCaseFilter)
   .config(($stateProvider, $urlServiceProvider, $locationProvider) => {
