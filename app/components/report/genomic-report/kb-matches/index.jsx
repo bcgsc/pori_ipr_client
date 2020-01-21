@@ -104,24 +104,6 @@ function KBMatches(props) {
         ))}
       </div>
 
-
-      <div>
-        {Object.values(syncedTableData).map(table => (
-          <DataTable
-            key={table.title}
-            columnDefs={columnDefs}
-            arrayColumns={arrayColumns}
-            rowData={table.rowData || []}
-            title={table.title}
-            visibleCols={visibleCols}
-            hiddenCols={hiddenCols}
-            setVisibleCols={handleVisibleColsChange}
-            setHiddenCols={handleHiddenColsChange}
-            filterText={filterText}
-          />
-        ))}
-      </div>
-
       <div>
         <DataTable
           columnDefs={targetedColumnDefs}
