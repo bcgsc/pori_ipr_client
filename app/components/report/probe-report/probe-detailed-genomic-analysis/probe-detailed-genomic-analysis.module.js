@@ -16,21 +16,24 @@ export default angular.module('probe.detailedgenomicanalysis')
         url: '/detailedGenomicAnalysis',
         component: 'detailedGenomicAnalysis',
         resolve: {
-          alterations: ['$transition$', 'ProbeAlterationService',
-            async ($transition$, ProbeAlterationService) => ProbeAlterationService.getAll(
+          alterations: ['$transition$', 'AlterationService',
+            async ($transition$, AlterationService) => AlterationService.getAll(
               $transition$.params().POG,
               $transition$.params().analysis_report,
+              'probe',
             )],
-          approvedThisCancer: ['$transition$', 'ProbeAlterationService',
-            async ($transition$, ProbeAlterationService) => ProbeAlterationService.getType(
+          approvedThisCancer: ['$transition$', 'AlterationService',
+            async ($transition$, AlterationService) => AlterationService.getType(
               $transition$.params().POG,
               $transition$.params().analysis_report,
+              'probe',
               'thisCancer',
             )],
-          approvedOtherCancer: ['$transition$', 'ProbeAlterationService',
-            async ($transition$, ProbeAlterationService) => ProbeAlterationService.getType(
+          approvedOtherCancer: ['$transition$', 'AlterationService',
+            async ($transition$, AlterationService) => AlterationService.getType(
               $transition$.params().POG,
               $transition$.params().analysis_report,
+              'probe',
               'otherCancer',
             )],
         },

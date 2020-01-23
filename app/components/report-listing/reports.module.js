@@ -19,7 +19,7 @@ export default angular.module('genomic', [])
               const opts = {};
 
               opts.all = true;
-              opts.states = 'ready,active,presented,uploaded,signedoff';
+              opts.states = 'ready,active,presented,uploaded,signedoff,archived';
 
               if (isExternalMode) {
                 opts.states = 'presented,archived';

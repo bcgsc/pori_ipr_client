@@ -60,7 +60,7 @@ class GenomicReportComponent {
         clinician: true,
         category: true,
         children: [
-          { name: 'Knowledgebase Matches', state: 'knowledgebase' },
+          { name: 'Knowledgebase Matches', state: 'kbmatches' },
           { name: 'Microbial', state: 'microbial' },
           { name: 'Spearman', state: 'spearman' },
           { name: 'Disease Specific', state: 'diseaseSpecificAnalysis' },

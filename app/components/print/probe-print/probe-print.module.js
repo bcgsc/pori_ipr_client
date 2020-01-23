@@ -26,21 +26,24 @@ export default angular.module('print.probe')
               $transition$.params().pog,
               $transition$.params().report,
             )],
-          alterations: ['$transition$', 'ProbeAlterationService',
-            async ($transition$, ProbeAlterationService) => ProbeAlterationService.getAll(
+          alterations: ['$transition$', 'AlterationService',
+            async ($transition$, AlterationService) => AlterationService.getAll(
               $transition$.params().pog,
               $transition$.params().report,
+              'probe',
             )],
-          approvedThisCancer: ['$transition$', 'ProbeAlterationService',
-            async ($transition$, ProbeAlterationService) => ProbeAlterationService.getType(
+          approvedThisCancer: ['$transition$', 'AlterationService',
+            async ($transition$, AlterationService) => AlterationService.getType(
               $transition$.params().pog,
               $transition$.params().report,
+              'probe',
               'thisCancer',
             )],
-          approvedOtherCancer: ['$transition$', 'ProbeAlterationService',
-            async ($transition$, ProbeAlterationService) => ProbeAlterationService.getType(
+          approvedOtherCancer: ['$transition$', 'AlterationService',
+            async ($transition$, AlterationService) => AlterationService.getType(
               $transition$.params().pog,
               $transition$.params().report,
+              'probe',
               'otherCancer',
             )],
           tcgaAcronyms: ['$transition$', 'AppendicesService',

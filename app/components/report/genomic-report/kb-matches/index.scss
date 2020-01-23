@@ -1,0 +1,13 @@
+@import '../../../../styles/variables';
+
+.kb-matches {
+  &__button-container {
+    display: flex;
+    justify-content: space-around;
+    margin: 8px 0;
+  }
+
+  &__filter {
+    padding: 8px 8px 0;
+  }
+}
