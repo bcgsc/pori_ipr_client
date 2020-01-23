@@ -28,6 +28,8 @@ section.meta
       md-input-container(flex)
 
     div(layout="row")
+      span
+        md-button(ng-click="$ctrl.deleteReport($event)").md-warn Delete Report
       span(flex)
       span
         md-button(ng-click="$ctrl.updateSettings()", ng-disabled="!$ctrl.reportSettingsChanged").md-primary.md-raised Update

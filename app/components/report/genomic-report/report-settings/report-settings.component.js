@@ -1,5 +1,6 @@
 import template from './report-settings.pug';
 import addTemplate from './role-add.pug';
+import deleteTemplate from './report-delete.pug';
 import './report-settings.scss';
 
 const bindings = {
@@ -11,8 +12,9 @@ const bindings = {
 
 class ReportSettingsComponent {
   /* @ngInject */
-  constructor($scope, $mdDialog, $mdToast, PogService, ReportService, indefiniteArticleFilter) {
+  constructor($scope, $state, $mdDialog, $mdToast, PogService, ReportService, indefiniteArticleFilter) {
     this.$scope = $scope;
+    this.$state = $state;
     this.$mdDialog = $mdDialog;
     this.$mdToast = $mdToast;
     this.PogService = PogService;
@@ -119,6 +121,55 @@ class ReportSettingsComponent {
     this.$scope.$digest();
 
     this.$mdToast.show(this.$mdToast.simple().textContent('Report settings have been updated.'));
+  }
+
+  async deleteReport($event) {
+    try {
+      const outcome = await this.$mdDialog.show({
+        targetEvent: $event,
+        template: deleteTemplate,
+        clickOutToClose: true,
+        controller: ['scope', (scope) => {
+          scope.report = this.report;
+          scope.confirmText = '';
+
+          scope.cancel = () => {
+            this.$mdDialog.hide();
+          };
+
+          scope.delete = async (form) => {
+            try {
+              if (scope.confirmText.toLowerCase() === this.report.ident.toLowerCase()) {
+                form.$error.invalid = false;
+                const resp = await this.ReportService.deleteReport(this.report);
+                this.$mdDialog.hide({ data: resp.data, status: resp.status });
+              } else {
+                form.$error.invalid = true;
+              }
+            } catch (err) {
+              this.$mdDialog.cancel(err);
+            }
+          };
+        }],
+      });
+
+      if (outcome.status === 204) {
+        this.$mdToast.show(this.$mdToast.simple().textContent('Report Deleted'));
+        this.$state.go('root.reportlisting.reports');
+      } else {
+        this.$mdToast.show(this.$mdToast.simple().textContent(`Delete Error: ${outcome.data}`));
+      }
+    } catch (err) {
+      if (err.status === 403) {
+        this.$mdToast.show(
+          this.$mdToast.simple().textContent('You do not have permission to delete reports'),
+        );
+      } else {
+        this.$mdToast.show(
+          this.$mdToast.simple().textContent(`Report not deleted: ${err.data.message}`),
+        );
+      }
+    }
   }
 }
 
