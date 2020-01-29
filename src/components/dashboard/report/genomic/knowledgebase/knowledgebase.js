@@ -120,19 +120,16 @@ app.controller('controller.dashboard.report.genomic.knowledgebase', ['_', '$scop
 
     // Group approved alterations by type
     const groupAlterations = (collection, approvedAlterations) => {
-      approvedAlterations.forEach((row) => {
-        if (collection.length) {
-          collection.forEach((entry, index) => {
-            if ((entry.gene === row.gene) && (entry.variant === row.variant)) {
-              row.children = [];
-              collection.push(row); // Add row to collection
-            } else {
-              collection[index].children.push(row);
-            }
-          });
+      approvedAlterations.forEach((current) => {
+        const matchIndex = collection
+          .findIndex(row => (row.variant === current.variant && row.gene === current.gene));
+
+        if (matchIndex < 0) {
+          // new entry, no matches
+          current.children = [];
+          collection.push(current);
         } else {
-          row.children = [];
-          collection.push(row);
+          collection[matchIndex].children.push(current);
         }
       });
       return collection;
