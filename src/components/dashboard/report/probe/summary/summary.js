@@ -1,6 +1,6 @@
 app.controller('controller.dashboard.report.probe.summary',
-['_', '$q', '$state', '$scope', 'api.pog', '$mdDialog', '$mdToast', 'canEdit', 'pog', 'report', 'testInformation', 'genomicEvents', 'api.probe.signature', 'api.summary.patientInformation', 'api.summary.genomicEventsTherapeutic', 'signature',
-(_, $q, $state, $scope, $pog, $mdDialog, $mdToast, canEdit, pog, report, testInformation, genomicEvents, $signature, $patientInformation, $get, signature) => {
+['_', '$q', '$state', '$scope', 'api.pog', '$mdDialog', '$mdToast', 'canEdit', 'pog', 'report', 'testInformation', 'genomicEvents', 'api.probe.signature', 'api.summary.patientInformation', 'api.summary.genomicEventsTherapeutic', 'signature', 'api.analysis',
+(_, $q, $state, $scope, $pog, $mdDialog, $mdToast, canEdit, pog, report, testInformation, genomicEvents, $signature, $patientInformation, $get, signature, AnalysisService) => {
 
   $scope.canEdit = canEdit;
   $scope.pog = pog;
@@ -12,43 +12,68 @@ app.controller('controller.dashboard.report.probe.summary',
 
   // Update Patient Information
   $scope.updatePatient = ($event) => {
-
     $mdDialog.show({
       targetEvent: $event,
       templateUrl: 'dashboard/report/genomic/summary/patientInformation.edit.html',
       clickOutToClose: false,
       controller: ['scope', (scope) => {
-
-        scope.pi = angular.copy($scope.report.patientInformation); //
+        scope.pi = angular.copy($scope.pi); //
+        scope.analysis = angular.copy($scope.report.analysis);
 
         scope.cancel = () => {
-          $mdDialog.cancel('No changes were saved.');
+          $mdDialog.cancel('Patient information was not updated');
         };
 
-        scope.update = () => {
+        scope.update = (form) => {
+          const promises = [];
+          if (form.Biopsy.$dirty) {
+            // update analysis
+            promises.push(AnalysisService.update(scope.analysis));
+          }
 
-          // Send updated entry to API
-          $patientInformation.update($scope.pog.POGID, scope.pi).then(
-            (result) => {
-              $mdDialog.hide({message: 'Entry has been updated', data: scope.pi});
-            },
-            (error) => {
-              alert('Unable to update. See console');
-              console.log(error);
-            }
-          );
 
+          // this will always be dirty due to the required comment field
+          promises.push($patientInformation.update(
+            $scope.pog.POGID,
+            $scope.report.ident,
+            scope.pi,
+          ));
+
+          $q.all(promises)
+            .then(([analysis, patientInformation]) => {
+              $mdDialog.hide({
+                message: 'Patient information has been successfully updated',
+                analysis,
+                patientInformation,
+              });
+            })
+            .catch((error) => {
+              $mdToast.showSimple(
+                `Patient information was not updated due to an error: ${error}`,
+              );
+            });
         }; // End update
-      }] // End controller
+      }], // End controller
 
-    }).then((outcome) => {
-      if (outcome) $mdToast.show($mdToast.simple().textContent(outcome.message));
-      $scope.pi = outcome.data;
-      $scope.report.patientInformation = $scope.pi;
-    }, (error) => {
-      $mdToast.show($mdToast.simple().textContent(error));
-    });
+    })
+      .then((outcome) => {
+        if (outcome) {
+          $mdToast.showSimple(outcome.message);
 
+          if (outcome.analysis) {
+            $scope.data.analysis = outcome.analysis;
+            $scope.report.analysis = outcome.analysis;
+          }
+
+          if (outcome.patientInformation) {
+            $scope.data.pi = outcome.patientInformation;
+            $scope.report.patientInformation = outcome.patientInformation;
+          }
+        }
+      })
+      .catch((error) => {
+        $mdToast.showSimple(error);
+      });
   }; // End edit tumour analysis
 
 
