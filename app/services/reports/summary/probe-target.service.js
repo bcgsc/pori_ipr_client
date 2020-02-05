@@ -14,11 +14,11 @@ class ProbeTargetService {
    */
   async all(pogID, report) {
     const resp = await this.$http.get(
-      `${this.api}/${pogID}/report/${report}/genomic/summary/probeTarget`,
+      `${this.api}/${pogID}/report/${report}/genomic/summary/probeResults`,
     );
     return resp.data;
   }
-  
+
   /**
    * Get a Probe Target
    * @param {String} pogID - POGID, eg POG129
@@ -29,11 +29,11 @@ class ProbeTargetService {
    */
   async id(pogID, report, ident) {
     const resp = await this.$http.get(
-      `${this.api}/${pogID}/report/${report}/genomic/summary/probeTarget/${ident}`,
+      `${this.api}/${pogID}/report/${report}/genomic/summary/probeResults/${ident}`,
     );
     return resp.data;
   }
-  
+
   /**
    * Update a Probe Target
    * @param {String} pogID - POGID, eg POG129
@@ -45,12 +45,12 @@ class ProbeTargetService {
    */
   async update(pogID, report, ident, gai) {
     const resp = await this.$http.put(
-      `${this.api}/${pogID}/report/${report}/genomic/summary/probeTarget/${ident}`,
+      `${this.api}/${pogID}/report/${report}/genomic/summary/probeResults/${ident}`,
       gai,
     );
     return resp.data;
   }
-  
+
   /**
    * Remove a Probe Target
    * @param {String} pogID - POGID, eg POG129
@@ -61,7 +61,7 @@ class ProbeTargetService {
    */
   async remove(pogID, report, ident) {
     const resp = await this.$http.delete(
-      `${this.api}/${pogID}/report/${report}/genomic/summary/probeTarget/${ident}`,
+      `${this.api}/${pogID}/report/${report}/genomic/summary/probeResults/${ident}`,
     );
     return resp.data;
   }
