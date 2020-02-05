@@ -5,6 +5,14 @@ class AlterationService {
     this.api = `${CONFIG.ENDPOINTS.API}/POG`;
   }
 
+  baseUrl(patient, report, type) {
+    return `${this.api}/${patient}/report/${report}/${type}${
+      type === 'genomic'
+        ? '/detailedGenomicAnalysis'
+        : ''
+    }/alterations`;
+  }
+
   /**
    * Retrieve all probe alterations for report
    *
@@ -15,9 +23,7 @@ class AlterationService {
    * @returns {Promise} - result of API call
    */
   async getAll(patient, report, type) {
-    const { data } = await this.$http.get(
-      `${this.api}/${patient}/report/${report}/${type}/detailedGenomicAnalysis/alterations`,
-    );
+    const { data } = await this.$http.get(this.baseUrl(patient, report, type));
     return data;
   }
 
@@ -34,7 +40,7 @@ class AlterationService {
    */
   async update(patient, report, type, ident, payload) {
     const { data } = await this.$http.put(
-      `${this.api}/${patient}/report/${report}/${type}/detailedGenomicAnalysis/alterations/${ident}`,
+      `${this.baseUrl(patient, report, type)}/${ident}`,
       payload,
     );
     return data;
@@ -53,12 +59,12 @@ class AlterationService {
    */
   async create(patient, report, type, ident, payload) {
     const { data } = await this.$http.post(
-      `${this.api}/${patient}/report/${report}/${type}/detailedGenomicAnalysis/alterations/${ident}`,
+      `${this.baseUrl(patient, report, type)}/${ident}`,
       payload,
     );
     return data;
   }
-  
+
   /**
    * Retrieve all probe alterations for report by type
    *
@@ -71,10 +77,10 @@ class AlterationService {
    */
   async getType(patient, report, type, alterationType) {
     const { data } = await this.$http.get(
-      `${this.api}/${patient}/report/${report}/${type}/detailedGenomicAnalysis/alterations/${alterationType}`,
+      `${this.baseUrl(patient, report, type)}/${alterationType}`,
     );
     return data;
   }
 }
-  
+
 export default AlterationService;
