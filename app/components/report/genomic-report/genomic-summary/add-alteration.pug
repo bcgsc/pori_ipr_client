@@ -1,0 +1,21 @@
+md-dialog(layout="column", aria-label="Add Key Alteration", ng-cloak, flex=55).editor
+    form(flex='auto', name='form', ng-submit="add(form)")
+        md-toolbar
+            .md-toolbar-tools
+                h2 Add Key Alteration
+                span(flex)
+                md-button.md-icon-button(ng-click='cancel()')
+                    md-icon cancel
+        md-dialog-content(layout-padding)
+
+            div(layout="column")
+                p Please attempt to follow the standard formatting when creating key genomic alterations.
+
+                div(layout="row")
+                    md-input-container(flex)
+                        input(name="Alteration", placeholder="Gene name (alteration)", ng-model="alteration.geneVariant")
+
+
+        md-dialog-actions(layout="row", layout-align="end center", layout-padding)
+            md-button(type="submit").md-primary Add Alteration
+

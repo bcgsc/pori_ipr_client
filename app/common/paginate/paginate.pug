@@ -1,0 +1,18 @@
+div(layout="row")
+  span(flex)
+  md-input-container(flex=10)
+    label results per page
+    md-select(ng-model="$ctrl.limit")
+      md-option(ng-value="10") 10
+      md-option(ng-value="25") 25
+      md-option(ng-value="50") 50
+      md-option(ng-value="100") 100
+  span.results.text-center Results&nbsp;
+    span {{$ctrl.offset + 1}}
+    | &nbsp;-
+    | {{(($ctrl.offset + $ctrl.limit > $ctrl.total) ? $ctrl.total : $ctrl.offset + $ctrl.limit)}} of {{$ctrl.total}}
+  span(layout="row", layout-align="center center")
+    md-button(ng-click="$ctrl.prevPage()", ng-disabled="($ctrl.offset - $ctrl.limit < 0)").small
+      md-icon keyboard_arrow_left
+    md-button(ng-click="$ctrl.nextPage()", ng-disabled="($ctrl.offset + $ctrl.limit >= $ctrl.total)").small
+      md-icon keyboard_arrow_right

@@ -1,0 +1,64 @@
+import Keycloak from 'keycloak-js';
+
+class KeycloakService {
+  /* @ngInject */
+  constructor($localStorage, $state, $http) {
+    this.$localStorage = $localStorage;
+    this.$state = $state;
+    this.$http = $http;
+    this.keycloak = Keycloak({
+      'realm': CONFIG.SSO.REALM,
+      'clientId': 'IPR',
+      'url': CONFIG.ENDPOINTS.KEYCLOAK,
+    });
+  }
+
+  /**
+   * Login using the keycloak adaptor
+   * @return {Promise} Promise to keycloak auth
+   */
+  async setToken() {
+    const init = new Promise((resolve, reject) => {
+      const prom = this.keycloak.init({ onLoad: 'login-required' }); // setting promiseType = native does not work for later functions inside the closure
+      prom.success(resolve);
+      prom.error(reject);
+    });
+    await init;
+    this.$localStorage[CONFIG.STORAGE.KEYCLOAK] = this.keycloak.token;
+    return this.keycloak.token;
+  }
+
+  /**
+   * Returns the token that has been set
+   * @return {String|undefined} Token string
+   */
+  async getToken() {
+    try {
+      return this.$localStorage[CONFIG.STORAGE.KEYCLOAK];
+    } catch (err) {
+      return false;
+    }
+  }
+
+  /**
+   * Logs the user out via Keycloak
+   * @return {Promise} Promise for kc logout
+   */
+  async logout() {
+    try {
+      await this.keycloak.init({ promiseType: 'native' });
+      delete this.$localStorage[CONFIG.STORAGE.KEYCLOAK];
+      const resp = await this.keycloak.logout({
+        redirectUri: this.$state.href('public.login', {}, { absolute: true }),
+      });
+      return resp;
+    } catch (err) {
+      delete this.$localStorage[CONFIG.STORAGE.KEYCLOAK];
+      delete this.$http.headers.Authorization;
+      this.$state.go('public.login');
+      return err;
+    }
+  }
+}
+
+export default KeycloakService;

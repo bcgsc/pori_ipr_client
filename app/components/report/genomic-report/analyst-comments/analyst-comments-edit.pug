@@ -1,0 +1,12 @@
+md-dialog(layout="column", aria-label="Update Analyst Comments", flex=80).editor
+  md-toolbar
+    .md-toolbar-tools
+      h2 Update Analyst Comments
+      span(flex)
+      md-button.md-icon-button(ng-click='cancel()')
+        md-icon cancel
+  md-dialog-content(layout-padding)
+    ng-quill-editor(ng-model="analystComments.comments")
+    
+  md-dialog-actions(layout="row", layout-align="end center", layout-padding) 
+    md-button(ng-click="update()").md-primary Update Comments

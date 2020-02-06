@@ -1,0 +1,18 @@
+section.material-section.discussion.presentation
+  h1 Tumour Board Discussion Notes
+
+  div(layout="column")
+    div.analysis-report-section
+      div(layout="column")
+
+        discussion-entry(patient="$ctrl.pog", report="$ctrl.report", entry="discussion", user="$ctrl.user", ng-repeat="discussion in $ctrl.discussions").discussion
+
+        div.add-discussion
+          form(name="DiscussionEntry", ng-submit="$ctrl.add(DiscussionEntry)")
+            div(layout="column")
+              md-input-container(flex)
+                label Comment/Reply
+                textarea(ng-model="$ctrl.new.body", rows="4", flex)
+              div(layout="row")
+                span(flex)
+                md-button(type="submit").md-primary.md-raised Add

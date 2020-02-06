@@ -1,0 +1,72 @@
+@import '../../../../styles/variables';
+
+@mixin print-header {
+  background-color: #bcbddc;
+  color: black;
+  font-size: 14pt;
+  font-weight: 700;
+  margin: 2mm 0 1mm;
+  padding: 1.5mm 1mm;
+  text-transform: uppercase;
+
+  > .md-subheader-inner {
+    // Override angularjs material library
+    padding: 0 !important;
+  }
+}
+
+@media print {
+  .analyst {
+    &__header {
+      @include print-header;
+    }
+
+    &__comments {
+      border: .1mm solid grey;
+
+      // Use * rule since the analyst input could have any tag and no classes
+      & > * {
+        padding: 0 3mm;
+      }
+    }
+
+    &__review-box {
+      margin: 4mm 0 0;
+      padding: 2mm;
+      border: .1mm solid grey;
+      font-size: 11pt;
+    }
+  }
+}
+
+
+@media screen {
+  .analystComments {
+    
+    .edit-icon {
+      position: absolute;
+      right: 21%;
+      
+      md-icon {
+        font-size: 1.4em;
+      }
+      
+    }
+  }
+
+
+  .ql-editor {
+    p {
+      margin: 8px 0 !important;
+
+    }
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
+  .analystSignatures {
+    span:first-of-type {
+      margin-right: 10px;
+    }
+  }
+}

@@ -1,4 +1,10 @@
 {
-  "presets": ["es2015"],
-  "plugins": ["transform-es2015-template-literals"]
+  "presets": [["@babel/preset-env", {
+    "useBuiltIns": "usage"
+  }],
+  "@babel/preset-react"],
+  "plugins": [
+    "angularjs-annotate",
+    "@babel/plugin-proposal-class-properties"
+  ]
 }

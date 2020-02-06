@@ -1,0 +1,113 @@
+md-dialog(layout="column", aria-label="Update Therapeutic Target").editor.therapeutic-targets
+  form(flex='auto', name='form')
+  md-toolbar.md-toolbar-tools
+    h2 Update Therapeutic Target
+    span(flex)
+    md-button.md-icon-button(ng-click='$ctrl.cancel()')
+      md-icon cancel
+  md-dialog-content(layout-padding)
+
+    div(layout="column", flex)
+    label(ng-if="$ctrl.type === 'therapeutic'").title Drug Target
+    div(layout="row", flex, style="margin-bottom: 15px;", ng-if="$ctrl.type === 'therapeutic'")
+      md-chips(
+        ng-model="$ctrl.entry.target",
+        md-autocomplete-snap,
+        md-require-match="false",
+        md-transform-chip="$ctrl.transformChip($chip)",
+        md-removable="'true'",
+        md-add-on-blur=true
+        flex
+      )
+        md-autocomplete(
+          md-selected-item="$ctrl.selectedItem",
+          md-search-text="$ctrl.searchTextTarget",
+          md-items="entry in $ctrl.varFilter($ctrl.searchTextTarget)",
+          md-select-on-match="'true'",
+          placeholder="New Target",
+          md-delay=500
+        )
+          span(md-highlight-text="$ctrl.searchText") {{entry}}
+        md-chip-template
+          strong {{$chip.geneVar}}
+
+    div(layout="row", flex, ng-if="$ctrl.type === 'therapeutic'")
+      md-autocomplete(
+        md-selected-item="$ctrl.entry.targetContext",
+        md-require-match=false,
+        md-search-text="$ctrl.searchTextPathway",
+        md-items="entry in []",
+        md-item-text="entry",
+        md-floating-label="Pathway/Context"
+        flex
+      )
+        span(md-highlight-text="geneTarget.searchTextPathway") {{entry}}
+
+    div(layout="row", flex, ng-if="$ctrl.type === 'chemoresistance'")
+      md-input-container(flex)
+        input(ng-model="$ctrl.entry.resistance", name="Resistance", placeholder="Resistance To")
+
+    div.biomarkers
+      h3 Biomarkers
+      div(layout="row", flex, ng-repeat="marker in $ctrl.entry.biomarker track by $index").marker
+        div(style="padding-top: 10px;")
+          md-icon(ng-click="$ctrl.removeBiomarker($index)") delete
+          md-tooltip Remove biomarker entry
+        md-autocomplete(
+          md-input-name="biomarker",
+          md-selected-item="$ctrl.entry.biomarker[$index].entry",
+          md-search-text="$ctrl.biomarker[$index].searchText",
+          md-items="entry in $ctrl.varFilter($ctrl.biomarker[$index].searchText)",
+          md-item-text="entry",
+          md-floating-label="Biomarker",
+          md-delay=500,
+          flex
+        )
+          span(md-highlight-text="$ctrl.biomarker.searchText") {{entry}}
+        div(layout="column", flex).contents
+          div(ng-repeat="entered in marker.context track by $index" layout="row", flex)
+            md-select(ng-model="$ctrl.entry.biomarker[$parent.$index].context[$index]", flex, aria-label="Biomarker context")
+              md-option(ng-repeat="context in $ctrl.bioMarkerContexts track by $index", ng-value="context.entry") {{context.entry}}
+                span.option-description {{context.description}}
+            md-icon(ng-click="$ctrl.removeBiomarkerContext($parent.$index, $index)") delete
+              md-tooltip Remove biomarker context entry
+
+          div(flex, layout="row")
+            md-select(ng-model="$ctrl.new.biomarkerContextValue", flex, ng-change="$ctrl.newBiomarkerContext($index)", placeholder="New Value", aria-label="Biomarker context")
+              md-option(ng-repeat="context in $ctrl.bioMarkerContexts track by $index", ng-value="context.entry") {{context.entry}}
+                span.option-description {{context.description}}
+            md-icon.no-click playlist_add
+
+      div(layout="row", flex).marker
+      md-autocomplete(
+        md-input-name="biomarker",
+        md-selected-item="$ctrl.new.biomarkerValue",
+        md-search-text="$ctrl.new.biomarker.searchText",
+        md-items="entry in $ctrl.varFilter($ctrl.new.biomarker.searchText)",
+        md-item-text="entry",
+        md-floating-label="New Biomarker Entry",
+        md-selected-item-change="$ctrl.newBiomarker()",
+        md-select-on-match,
+        md-select-on-focus,
+        md-delay=500,
+        flex
+      )
+        span(md-highlight-text="$ctrl.biomarker.searchText") {{entry}}
+      div(flex, layout="row")
+        md-select(ng-model="$ctrl.new.biomarkerContextValue", flex, ng-change="$ctrl.newBiomarkerContext(null)", placeholder="New Value")
+          md-option(ng-repeat="context in $ctrl.bioMarkerContexts track by $index", ng-value="context.entry") {{context.entry}}
+            span.option-description {{context.description}}
+
+    md-input-container(layout="row").md-block
+      textarea(ng-model="$ctrl.entry.notes", name="Notes", placeholder="Entry Notes", rows=1, md-maxlength=150)
+
+    md-input-container(layout="row").md-block
+      input(ng-model="$ctrl.entry.comment", placeholder="Changelog Comment")
+
+
+  md-dialog-actions(layout="row")
+    md-button(ng-click="$ctrl.cancel()").md-raised  Cancel
+    md-button(ng-click="$ctrl.showConfirm = true", ng-disabled="$ctrl.showConfirm", ng-show="$ctrl.create").md-primary.md-raised.md-warn  Delete
+    md-button(ng-show="$ctrl.showConfirm", ng-click="$ctrl.remove()", ng-init="$ctrl.showConfirm = false").md-primary.md-raised.md-warn  Confirm Delete
+    span(flex)
+    md-button(ng-click="$ctrl.save()").md-primary.md-raised  Save

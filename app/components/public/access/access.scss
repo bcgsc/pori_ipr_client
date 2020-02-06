@@ -1,0 +1,13 @@
+.access {
+  padding: 10px 0;
+
+  &__container {
+    padding: 10px;
+
+    &__header {
+      margin: 0;
+      min-width: 117px;
+      padding: 10px;
+    }
+  }
+}

@@ -1,0 +1,34 @@
+probe-summary(
+  pog="$ctrl.pog",
+  report="$ctrl.report",
+  test-information="$ctrl.testInformation",
+  signature="$ctrl.signature",
+  report-edit="false",
+  print="true",
+)
+
+print-header(
+  pog="$ctrl.pog",
+  report="$ctrl.report",
+)
+
+detailed-genomic-analysis(
+  pog="$ctrl.pog",
+  report="$ctrl.report",
+  alterations="$ctrl.alterations",
+  approved-this-cancer="$ctrl.approvedThisCancer",
+  approved-other-cancer="$ctrl.approvedOtherCancer",
+  print="true",
+)
+
+print-header(
+  pog="$ctrl.pog",
+  report="$ctrl.report",
+)
+
+probe-appendices(
+  pog="$ctrl.pog",
+  report="$ctrl.report",
+  print="true",
+  probe="true",
+)

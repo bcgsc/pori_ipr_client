@@ -1,0 +1,916 @@
+@import '../../../../styles/variables';
+
+@mixin print-header {
+  margin: 2mm 0 1mm;
+  padding: 1.5mm 1mm;
+  background-color: #bcbddc;
+  color: black;
+  font-size: 14pt;
+  font-weight: 700;
+  text-transform: uppercase;
+
+  > .md-subheader-inner {
+    // Override angularjs material library
+    padding: 0 !important;
+  }
+}
+
+@mixin coloured-table-category {
+  padding: 2mm 0 2mm 1mm;
+  border-top: .1mm solid grey;
+  border-right: .1mm solid grey;
+  border-bottom: .1mm solid grey;
+  font-size: 10pt;
+}
+
+@mixin coloured-table-total {
+  padding: 2mm 0;
+  border-top: .1mm solid grey;
+  border-bottom: .1mm solid grey;
+  color: $white;
+  font-size: 12pt;
+  font-weight: 600;
+  text-align: center;
+}
+
+@media print {
+  .print-title {
+    @include print-header;
+  }
+
+  .patient-info {
+    &__header {
+      @include print-header;
+    }
+
+    &__details {
+      padding: 1mm;
+      font-size: 9pt;
+    }
+
+    &__description-container {
+      margin: .5mm 0;
+    }
+
+    &__description-term {
+      font-weight: 100;
+      text-align: right;
+    }
+
+    &__description-details {
+      margin: 0 1.5mm;
+      font-weight: 600;
+    }
+  }
+
+  .tumour-analysis {
+    &__header {
+      @include print-header;
+    }
+
+    &__subheader {
+      margin: 1mm 0;
+      padding: 0;
+      font-size: 13pt;
+      font-weight: 600;
+      text-transform: uppercase;
+
+      &--small {
+        font-size: 9pt;
+      }
+    }
+
+    &__full-box {
+      margin: 0 .5mm;
+    }
+
+    &__box {
+      border: 1px solid #6e6e6e;
+    }
+
+    &__box-header {
+      padding: 2mm 0;
+      background-color: #b4b4b4;
+      font-size: 9pt;
+      text-align: center;
+    }
+
+    &__box-content {
+      padding: 2mm 0;
+      font-size: 9pt;
+      text-align: center;
+    }
+  }
+
+  .details {
+    &--extra-small-text {
+      font-size: 7pt;
+    }
+
+    &--align-center {
+      text-align: center;
+    }
+  }
+
+  .mutation-table {
+    text-align: center;
+    border-collapse: collapse;
+
+    &__signature {
+      margin: 0 1mm 1mm 0;
+      padding: 1.4mm 0;
+      border: .5mm solid #6e6e6e;
+      background-color: #b4b4b4;
+      font-size: 10pt;
+      font-weight: 300;
+    }
+
+    &__type {
+      padding: 2mm 0;
+      border-top: .1mm solid grey;
+      border-left: .1mm solid grey;
+      background-color: #c0e8fc;
+      font-size: 11pt;
+      font-weight: 300;
+
+      &--dark {
+        background-color: #5284b1;
+        color: $white;
+        font-size: 12pt;
+      }
+
+      &--right-border {
+        border-right: .1mm solid grey;
+      }
+    }
+
+    &__data {
+      display: table-row;
+      border: .1mm solid grey;
+      background-color: #dcdcdc;
+      font-size: 10pt;
+    }
+
+    &__data-row {
+      padding: 1mm;
+      border-left: .1mm solid grey;
+    }
+
+    &--align-left {
+      text-align: left;
+    }
+  }
+
+  .alterations {
+    &__box {
+      &:first-child {
+        border-left: .4mm solid grey;
+      }
+
+      &:last-child {
+        border-right: .4mm solid grey;
+      }
+    }
+
+    &__header {
+      margin: 0 0 2mm;
+    }
+
+    &__category {
+      &--blue {
+        @include coloured-table-category;
+        background-color: #b3bbe8;
+      }
+
+      &--green {
+        @include coloured-table-category;
+        background-color: #b2d6ab;
+      }
+
+      &--purple {
+        @include coloured-table-category;
+        background-color: #d4b3e8;
+      }
+
+      &--orange {
+        @include coloured-table-category;
+        background-color: #f7ceaa;
+      }
+    }
+
+    &__total {
+      &--blue {
+        @include coloured-table-total;
+        background-color: #3f51b5;
+      }
+
+      &--green {
+        @include coloured-table-total;
+        background-color: #13a52c;
+      }
+
+      &--purple {
+        @include coloured-table-total;
+        background-color: #8d3fb5;
+      }
+
+      &--orange {
+        @include coloured-table-total;
+        background-color: #c16514;
+      }
+    }
+
+    &__list {
+      padding: 1mm;
+      border: .5mm solid grey;
+      background-color: #ebebeb;
+    }
+
+    &__variant {
+      display: inline-block;
+      width: 20%;
+      font-size: 10pt;
+    }
+
+    &__additional-text {
+      padding: 0 1mm 0 0;
+      font-size: 10pt;
+    }
+
+    &__additional-total {
+      padding: .5mm 8mm 0;
+      border: .5mm solid grey;
+      border-top: 0;
+      background-color: #afafaf;
+      font-size: 12pt;
+      font-weight: 600;
+      text-align: center;
+    }
+  }
+
+  .sample-info {
+    &__table-header {
+      padding: 1mm 0;
+      border-bottom: 1px solid black;
+      font-size: 9pt;
+      font-weight: 700;
+    }
+
+    &__table-row {
+      padding: 1mm 0;
+      font-size: 9pt;
+      font-weight: 100;
+    }
+  }
+
+  .test-info {
+    &__header {
+      margin-right: 2mm;
+      border-bottom: 1px solid black;
+      font-size: 9pt;
+      font-weight: 700;
+      text-align: left;
+    }
+
+    &__box {
+      padding: 1mm 0;
+    }
+
+    &__key {
+      padding: 1mm 0;
+      font-size: 9pt;
+      font-weight: 100;
+    }
+
+    &__value {
+      padding: 1mm 0;
+      font-size: 9pt;
+      font-weight: 700;
+    }
+  }
+
+  .review {
+    &__box {
+      width: 50%;
+      margin: 2mm auto;
+      padding: 1mm 0;
+      border: 1px solid black;
+      font-size: 11pt;
+    }
+  }
+}
+
+
+
+@media screen {
+  .tumour-analysis {
+    &__icon {
+      width: auto;
+      min-width: 0;
+      height: auto;
+      min-height: 0;
+      color: $blue-icon;
+      font-size: 1.2em;
+      cursor: pointer;
+    }
+
+    &__subheader {
+      &--small {
+        margin-right: 5px;
+      }
+    }
+  }
+
+  // old Brandon scss - beware changing things as they may have side effects
+  .summary {
+    margin-bottom: 10px;
+    background: rgb(220, 220, 220);
+
+    .md-subheader {
+      background: rgb(204,207,226);
+
+      .md-subheader-inner {
+        padding: 10px;
+        margin: 0;
+
+        .md-subheader-content {
+          font-size: 1.2em;
+          color: rgb(50, 50, 50);
+        }
+      }
+
+      span.edit {
+        margin-left: 10px;
+        cursor: pointer;
+        md-icon {
+          font-size: 1.2em;
+          display: none;
+          margin: 0;
+          padding: 0;
+          min-height: inherit;
+          height: 10px;
+          line-height: 0.2;
+        }
+      }
+
+      &:hover {
+        span.edit {
+          md-icon {
+            display: inline-block;
+          }
+        }
+      }
+    }
+
+    .details {
+      padding: 15px;
+      font-size: 0.9em;
+
+      div {
+        margin: 3px 0;
+        padding: 0 4px;
+
+        dt {
+          text-align: right;
+          color: rgb(100, 100, 100);
+          font-size: 1em;
+          margin: 0;
+          padding: 0;
+          font-weight: 200;
+        }
+
+        dd {
+          font-weight: 500;
+          margin: 0;
+          font-size: 1.2em;
+        }
+      }
+
+      &.box {
+        background-color: rgb(235, 235, 235);
+        margin: 8px 0 0 0;
+      }
+
+      .collapse {
+        margin: 0 0 0 auto;
+        height: 0;
+
+        md-icon {
+          cursor: pointer;
+          font-size: 1.3em;
+          outline: none;
+        }
+      }
+    }
+
+    div.editable {
+      md-icon {
+        cursor: pointer;
+        display: none;
+        position: absolute;
+        float: right;
+        font-size: 1.25em;
+        line-height: inherit;
+        height: 18px;
+        width: 18px;
+        min-height: 18px;
+        min-width: 18px;
+        margin-left: 5px;
+        margin-top: -2px;
+      }
+    }
+
+    div.editable:hover {
+      md-icon {
+        font-size: 1.25em;
+        display: inline-block;
+      }
+    }
+  }
+
+  .summary-tumour {
+    .analystComments {
+      margin: 7px 4px 7px 4px;
+      padding: 20px;
+      background-color: rgb(235, 235, 235);
+
+      table {
+        border: 1px solid rgb(170, 170, 170);
+        border-collapse: collapse;
+        th,
+        td {
+          border: 1px solid rgb(170, 170, 170);
+          padding: 4px;
+        }
+        th {
+          padding: 7px 5px 5px 5px;
+        }
+      }
+
+      code {
+        background-color: rgb(210, 210, 210);
+        padding: 0.3mm;
+        display: inline-block;
+        color: rgb(30, 30, 30);
+      }
+
+      pre {
+        background-color: rgb(210, 210, 210);
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+        border: 1px solid rgb(170, 170, 170);
+        padding: 0.5mm;
+
+        code {
+          margin: 0.2mm;
+        }
+      }
+    }
+    .smallBottom {
+      height: 4px;
+      line-height: 4px;
+      overflow: hidden;
+    }
+
+    h2.title {
+      font-size: 0.85em;
+      font-weight: 500;
+      margin: 0;
+      padding: 5px 2px 5px 7px;
+      text-transform: uppercase;
+      background-color: rgb(154, 162, 204);
+
+      span {
+        font-size: 0.75em;
+        margin-left: 6px;
+        text-transform: lowercase;
+      }
+
+      .blue {
+        color: blue !important;
+      }
+
+      .help {
+        font-size: 1.2em;
+      }
+    }
+
+    h3.title {
+      font-size: 0.75em;
+      font-weight: 500;
+      margin: 0;
+      padding: 5px 2px 5px 7px;
+      text-transform: uppercase;
+      background-color: rgb(178, 183, 204);
+
+      span {
+        font-size: 0.75em;
+        margin-left: 6px;
+        text-transform: lowercase;
+      }
+    }
+
+    .dataBox {
+      margin: 7px 4px;
+
+      md-icon {
+        vertical-align: middle;
+        margin-left: 5px;
+        font-size: 1.2em;
+        height: auto;
+        width: auto;
+        min-height: 0;
+        min-width: 0;
+      }
+
+      &.noBottomMargin {
+        margin-bottom: 0;
+      }
+
+      //  Add columns to the databox
+      &.columns {
+        div.row {
+          padding: 0 !important;
+          div {
+            border-right: 1px solid rgb(154, 162, 204);
+            padding: 6px 2px 6px 5px;
+
+            &:last-of-type {
+              border-right: none;
+            }
+          }
+        }
+        div.heading {
+          padding: 0 !important;
+          div {
+            padding: 15px 0;
+            border-right: 1px solid rgb(154, 162, 204);
+
+            &:last-of-type {
+              border-right: none;
+            }
+          }
+        }
+      }
+
+      div.horizontalBox {
+        font-weight: 100;
+        font-size: 0.9em;
+        padding: 15px;
+
+        .row {
+          margin: 5px 0;
+          span:last-of-type {
+            font-weight: 700;
+          }
+        }
+      }
+
+      div.box {
+        background-color: rgb(180, 180, 180);
+
+        div.heading {
+          font-weight: 100;
+          font-size: 0.8em;
+          text-align: center;
+          background-color: rgb(204, 207, 226);
+
+          div {
+            padding: 10px 0;
+            border-right: 1px solid rgb(136, 147, 195);
+          }
+
+          div:last-of-type {
+            border-right: 0px;
+          }
+
+          .bg1 {
+            background-color: rgb(193, 196, 215);
+          }
+          .bg2 {
+            background-color: rgb(178, 181, 200);
+          }
+        }
+
+        div.search {
+          background-color: rgb(235, 235, 235);
+
+          md-input-container {
+            margin: 10px 0 0 10px;
+            padding: 0;
+            height: 34px;
+            font-size: 0.9em;
+          }
+        }
+
+        div.content {
+          font-weight: 600;
+          font-size: 0.9em;
+          text-align: center;
+          padding: 20px 0;
+          background-color: rgb(235, 235, 235);
+
+          div {
+            padding: 0 5px;
+          }
+        }
+        div.row {
+          background-color: rgb(235, 235, 235);
+          font-weight: 300;
+          font-size: 0.85em;
+
+          .bg1 {
+            background-color: rgb(225, 225, 225);
+          }
+          .bg2 {
+            background-color: rgb(215, 215, 215);
+          }
+
+          div {
+            padding: 3px 2px 3px 5px;
+            min-height: 20px;
+            vertical-align: middle;
+            border-right: 1px solid rgb(136, 147, 195);
+          }
+
+          div:last-of-type {
+            border-right: 0px;
+          }
+
+          &:nth-of-type(odd) {
+            background-color: rgb(205, 205, 205);
+
+            .bg1 {
+              background-color: rgb(195, 195, 195);
+            }
+            .bg2 {
+              background-color: rgb(185, 185, 185);
+            }
+          }
+
+          &:hover {
+            background-color: rgb(247, 206, 170);
+          }
+
+          span.reference {
+            cursor: pointer;
+          }
+
+          .edit {
+            md-icon {
+              display: inline;
+              cursor: pointer;
+              font-size: 1.2em;
+
+              &:hover {
+                color: rgb(63, 81, 181);
+              }
+            }
+          }
+        }
+      }
+    }
+    .mutationTable {
+      background-color: rgb(235, 235, 235);
+      margin: 0px 4px 7px 4px;
+
+      .signatureTitle {
+        padding-right: 6px;
+      }
+
+      md-icon.help {
+        font-size: 1.2em;
+        margin: 0 0 2px 5px;
+        height: auto;
+        width: auto;
+        min-width: 0;
+        min-height: 0;
+      }
+
+      .header {
+        .container {
+          .signature {
+            text-align: center;
+            padding: 15px 0;
+            font-size: 0.9em;
+            background-color: rgb(190, 190, 190);
+            box-sizing: border-box;
+            border-right: 6px solid rgb(220, 220, 220);
+            border-bottom: 8px solid rgb(220, 220, 220);
+
+            span.listitem {
+              cursor: pointer;
+              margin-right: 5px;
+            }
+          }
+        }
+
+        .mutationType {
+          font-weight: 100;
+          font-size: 0.9em;
+          text-align: center;
+          background-color: rgb(204, 207, 226);
+
+          div {
+            padding: 15px 0;
+
+            button {
+              margin: 0;
+              padding: 0;
+              width: auto;
+              height: 18px;
+              min-height: inherit;
+              line-height: initial;
+
+              md-icon {
+                width: auto;
+                height: 18px;
+                font-size: 1em;
+              }
+            }
+          }
+
+          .total {
+            background-color: rgb(144, 147, 166);
+            font-weight: 600;
+            color: rgb(255, 255, 255);
+          }
+        }
+      }
+
+      .data {
+        div {
+          div:first-of-type {
+            text-align: left;
+          }
+          div:nth-of-type(3) {
+            background-color: rgb(225, 225, 225);
+          }
+          div {
+            padding: 5px 0 5px 5px;
+            text-align: center;
+          }
+        }
+      }
+    }
+
+    .keyAlterationsIdentified {
+      margin: 0 4px 0px 4px;
+
+      div.header {
+        div {
+          padding: 15px 0;
+          font-size: 0.8em;
+
+          &.active:before {
+            content: "» ";
+            font-weight: 500;
+          }
+        }
+        div:first-of-type {
+          padding-left: 10px;
+        }
+        div:nth-of-type(2) {
+          text-align: center;
+          font-weight: 600;
+        }
+      }
+
+      div.sm {
+        background-color: rgb(179, 187, 232);
+
+        div:nth-of-type(2) {
+          color: #ffffff;
+          background-color: rgb(63, 81, 181);
+        }
+      }
+
+      div.cnv {
+        background-color: rgb(178, 214, 171);
+
+        div:nth-of-type(2) {
+          color: #ffffff;
+          background-color: rgb(19, 165, 44);
+        }
+      }
+
+      div.sv {
+        background-color: rgb(212, 179, 232);
+
+        div:nth-of-type(2) {
+          color: #ffffff;
+          background-color: rgb(141, 63, 181);
+        }
+      }
+
+      div.outliers {
+        background-color: rgb(247, 206, 170);
+
+        div:nth-of-type(2) {
+          color: #ffffff;
+          background-color: rgb(193, 101, 20);
+        }
+      }
+
+      div.vus {
+        background-color: rgb(200, 200, 200);
+
+        div:nth-of-type(2) {
+          color: #ffffff;
+          background-color: rgb(155, 155, 155);
+        }
+      }
+    }
+
+    div.alts {
+      margin: 0 4px 7px 4px;
+      padding: 20px 0;
+      background-color: rgb(235, 235, 235);
+
+      div {
+        display: none;
+        width: 275px !important;
+        border-radius: 4px;
+        margin: 4px;
+        font-size: 0.9em;
+        padding: 4px 8px;
+
+        &.animate-show-hide.ng-hide-remove {
+          transition: all linear 0.5s;
+        }
+
+        &.smallMutation {
+          background-color: rgb(179, 187, 232);
+          md-icon {
+            color: rgb(63, 81, 181);
+          }
+        }
+        &.cnv {
+          background-color: rgb(178, 214, 171);
+          md-icon {
+            color: rgb(19, 165, 44);
+          }
+        }
+        &.structuralVariant {
+          background-color: rgb(212, 179, 232);
+          md-icon {
+            color: rgb(141, 63, 181);
+          }
+        }
+        &.expressionOutlier {
+          background-color: rgb(247, 206, 170);
+          md-icon {
+            color: rgb(193, 101, 20);
+          }
+        }
+        &.add {
+          opacity: 0.5;
+          background-color: rgba(0, 0, 0, 0.1);
+          md-icon {
+            color: rgba(0, 0, 0, 0.25);
+          }
+          &:hover {
+            opacity: 1;
+          }
+        }
+
+        span {
+          display: none;
+          float: right;
+          md-icon {
+            font-size: 1.2em;
+            height: 12px;
+            min-height: inherit;
+            padding: 0;
+            margin: 0 -10px 0 0;
+            line-height: 0.8;
+            cursor: pointer;
+          }
+        }
+
+        &:hover {
+          span {
+            display: inline-block;
+          }
+        }
+      }
+    }
+
+    .inlineSettings {
+      margin: 10px;
+      padding: 20px;
+      background-color: white;
+    }
+    .repeat-comma {
+      span.listitem:after {
+        content: ",";
+      }
+    }
+    .repeat-comma:last-of-type {
+      span.listitem:after {
+        content: "";
+      }
+    }
+  }
+}
