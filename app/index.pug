@@ -9,10 +9,11 @@ html(lang='en', ng-app='root', ng-strict-di)
     meta(http-equiv="pragma" content="no-cache")
 
     title BCGSC IPR
-    link(rel='icon', href='img/favicon.ico')
+    link(href="img/favicon.icon", rel="icon")
+    link(href="https://fonts.gstatic.com", rel="preconnect", crossorigin)
+    link(href="https://fonts.googleapis.com", rel="preconnect", crossorigin)
     link(href="https://fonts.googleapis.com/icon?family=Material+Icons", rel="stylesheet", type="text/css")
-    link(href="https://fonts.googleapis.com/css?family=Roboto:400,300", rel="stylesheet", type="text/css")
+    link(href="https://fonts.googleapis.com/css?family=Roboto:400,300&display=swap", rel="stylesheet", type="text/css")
     base(href="/")
   body(layout="column")
     ui-view
-    script(src='https://ipr-api.bcgsc.ca/socket.io/socket.io.js')
