@@ -161,7 +161,6 @@ function DataTable(props) {
           defaultColDef={defaultColDef}
           onGridReady={onGridReady}
           domLayout={domLayout}
-          skipHeaderOnAutoSize
           autoSizePadding="0"
           onRowClicked={onRowClicked}
         />
