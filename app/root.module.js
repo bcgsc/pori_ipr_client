@@ -8,8 +8,8 @@ import ocLazyLoad from 'oclazyload';
 import 'ngstorage';
 import 'angular-material/angular-material.scss';
 import 'angular-sortable-view';
-import CommonModule from './components/common.module';
-import ComponentModule from './views/components.module';
+import ComponentsModule from './components/components.module';
+import ViewsModule from './views/views.module';
 import RootComponent from './root.component';
 import UserService from './services/management/user.service';
 import PogService from './services/reports/pog.service';
@@ -54,8 +54,8 @@ import './styles/ag-grid.scss';
 
 angular.module('root', [
   uiRouter,
-  CommonModule,
-  ComponentModule,
+  ComponentsModule,
+  ViewsModule,
   'ngStorage',
   ngMaterial,
   ocLazyLoad,
