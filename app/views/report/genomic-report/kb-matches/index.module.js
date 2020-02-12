@@ -1,7 +1,7 @@
 import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
 import { react2angular } from 'react2angular';
-import KBMatchesView from '../../../../views/kbMatchesView';
+import KBMatchesView from './kbMatchesView';
 import KBMatchesComponent from './index';
 
 angular.module('kbmatches', [

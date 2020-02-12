@@ -4,11 +4,12 @@ import 'angular-aria';
 import 'angular-animate';
 import ngSanitize from 'angular-sanitize';
 import ngMaterial from 'angular-material';
+import ocLazyLoad from 'oclazyload';
 import 'ngstorage';
 import 'angular-material/angular-material.scss';
 import 'angular-sortable-view';
-import CommonModule from './common/common.module';
-import ComponentModule from './components/components.module';
+import CommonModule from './components/common.module';
+import ComponentModule from './views/components.module';
 import RootComponent from './root.component';
 import UserService from './services/management/user.service';
 import PogService from './services/reports/pog.service';
@@ -57,6 +58,7 @@ angular.module('root', [
   ComponentModule,
   'ngStorage',
   ngMaterial,
+  ocLazyLoad,
   ngSanitize,
 ]);
 
