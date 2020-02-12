@@ -13,7 +13,7 @@ section
                 md-tab(label="Genome", ng-if="images['microbial.circos.genome']")
                     div(layout="column", layout-align="center center")
                         img(data-ng-src="data:image/svg;base64,{{images['microbial.circos.genome'].data}}")
-                md-tab(label="Transcriptome", ng-if="images['microbial.circos.genome'] || images['microbial.circos']")
+                md-tab(label="Transcriptome", ng-if="images['microbial.circos.transcriptome'] || images['microbial.circos']")
                     div(layout="column", layout-align="center center")
                         img(data-ng-src="data:image/svg;base64,{{images['microbial.circos.transcriptome'].data}}", ng-if="images['microbial.circos.transcriptome']")
                         img(data-ng-src="data:image/svg;base64,{{images['microbial.circos'].data}}", ng-if="images['microbial.circos']")
