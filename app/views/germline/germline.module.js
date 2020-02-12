@@ -14,13 +14,9 @@ export default angular.module('germline')
     'ngInject';
 
     $stateProvider
-      .state('root.germline.**', {
+      .state('root.germline', {
         absract: true,
         url: '/germline',
-        lazyLoad: async ($transition$) => {
-          const ocLazyLoad = $transition$.injector().get('$ocLazyLoad');
-          // await import()
-        },
       });
   })
   .name;

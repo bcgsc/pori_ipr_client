@@ -9,8 +9,8 @@ import {
   Dialog,
 } from '@material-ui/core';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
-import OptionsMenu from '../../components/OptionsMenu';
-import DetailDialog from '../../components/DetailDialog';
+import OptionsMenu from '../OptionsMenu';
+import DetailDialog from '../DetailDialog';
 
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-material.css';
