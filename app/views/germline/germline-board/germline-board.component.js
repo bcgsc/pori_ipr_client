@@ -1,10 +1,10 @@
-import template from './germline.pug';
+import template from './germline-board.pug';
 
 const bindings = {
   reports: '<',
 };
 
-class GermlineComponent {
+class GermlineBoardComponent {
   /* @ngInject */
   constructor(GermlineService, $window, $timeout, $scope, $mdToast) {
     this.GermlineService = GermlineService;
@@ -124,5 +124,5 @@ class GermlineComponent {
 export default {
   template,
   bindings,
-  controller: GermlineComponent,
+  controller: GermlineBoardComponent,
 };

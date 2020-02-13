@@ -1,19 +1,21 @@
 import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
-import GermlineComponent from './germline.component';
+import GermlineBoardComponent from './germline-board/germline-board.component';
 import GermlineReportComponent from './germline-report/germline-report.component';
-import { germlineState, reportState } from './germline.states';
+import { germline, board, report } from './lazy';
 
 angular.module('germline', [
   uiRouter,
 ]);
 
 export default angular.module('germline')
-  .component('germline', GermlineComponent)
+  .component('germlineboard', GermlineBoardComponent)
   .component('germlinereport', GermlineReportComponent)
-  .config(($stateRegistryProvider) => {
+  .config(($stateProvider) => {
     'ngInject';
 
-    $stateRegistryProvider.register(germlineState);
-    $stateRegistryProvider.register(reportState);
-  });
+    $stateProvider.state(germline);
+    $stateProvider.state(board);
+    $stateProvider.state(report);
+  })
+  .name;

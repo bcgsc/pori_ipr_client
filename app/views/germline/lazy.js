@@ -1,17 +1,22 @@
-export const germlineState = {
-  name: 'germline',
-  parent: 'root',
-  url: '/germline',
-  component: 'germline',
+import * as eager from './eager';
+
+
+export const germline = {
+  ...eager.germline,
+  abstract: true,
+  lazyLoad: undefined,
+};
+
+export const board = {
+  ...eager.board,
+  component: 'germlineboard',
   resolve: {
     reports: ['GermlineService', async GermlineService => GermlineService.getAllReports()],
   },
 };
 
-export const reportState = {
-  name: 'report',
-  parent: 'root.germline',
-  url: '/report/patient/:patient/biopsy/:biopsy/report/:report',
+export const report = {
+  ...eager.report,
   component: 'germlinereport',
   resolve: {
     report: ['GermlineService', '$transition$', async (GermlineService, $transition$) => GermlineService.getReport(

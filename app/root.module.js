@@ -4,7 +4,6 @@ import 'angular-aria';
 import 'angular-animate';
 import ngSanitize from 'angular-sanitize';
 import ngMaterial from 'angular-material';
-import ocLazyLoad from 'oclazyload';
 import { Visualizer } from '@uirouter/visualizer';
 import 'ngstorage';
 import 'angular-material/angular-material.scss';
@@ -59,7 +58,6 @@ angular.module('root', [
   ViewsModule,
   'ngStorage',
   ngMaterial,
-  ocLazyLoad,
   ngSanitize,
 ]);
 
