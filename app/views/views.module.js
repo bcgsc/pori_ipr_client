@@ -5,7 +5,7 @@ import PublicModule from './public/public.module';
 import AdminModule from './admin/admin.module';
 import LayoutModule from './layout/layout.module';
 import PrintModule from './print/print.module';
-import * as eagerGermlineStates from './germline/eager';
+import eagerGermlineStates from './germline/eager';
 
 angular.module('root.views', [
   ReportListingModule,

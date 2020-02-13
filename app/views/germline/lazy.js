@@ -1,13 +1,12 @@
-import * as eager from './eager';
+import eager from './eager';
 
-
-export const germline = {
+const germline = {
   ...eager.germline,
   abstract: true,
   lazyLoad: undefined,
 };
 
-export const board = {
+const board = {
   ...eager.board,
   component: 'germlineboard',
   resolve: {
@@ -15,7 +14,7 @@ export const board = {
   },
 };
 
-export const report = {
+const report = {
   ...eager.report,
   component: 'germlinereport',
   resolve: {
@@ -25,4 +24,10 @@ export const report = {
       $transition$.params().report,
     )],
   },
+};
+
+export default {
+  germline,
+  board,
+  report,
 };

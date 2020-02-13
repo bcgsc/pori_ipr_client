@@ -1,4 +1,4 @@
-export const germline = {
+const germline = {
   name: 'root.germline',
   url: '/germline',
   lazyLoad: async ($transition$) => {
@@ -8,12 +8,18 @@ export const germline = {
   },
 };
 
-export const board = {
+const board = {
   name: 'root.germline.board',
   url: '/board',
 };
 
-export const report = {
+const report = {
   name: 'root.germline.report',
   url: '/report/patient/:patient/biopsy/:biopsy/report/:report',
+};
+
+export default {
+  germline,
+  board,
+  report,
 };
