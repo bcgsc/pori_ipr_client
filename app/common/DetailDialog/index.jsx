@@ -28,13 +28,15 @@ function DetailDialog(props) {
     onClose(value);
   };
 
+  const { compare } = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+
   return (
     <Dialog onClose={handleClose} open={open}>
       <DialogTitle>
         Detailed View
       </DialogTitle>
       <DialogContent>
-        {Object.entries(selectedRow).map(([key, value], index) => (
+        {Object.entries(selectedRow).sort(compare).map(([key, value], index) => (
           <React.Fragment key={key}>
             {index > 0 && <Divider />}
             <Typography className="detail-dialog__row">
