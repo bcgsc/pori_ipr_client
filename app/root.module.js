@@ -127,8 +127,6 @@ export default angular.module('root')
           /* eslint-disable no-shadow */
           isAdmin: ['UserService', async UserService => UserService.isAdmin()],
           /* eslint-disable no-shadow */
-          pogs: ['PogService', async PogService => PogService.all()],
-          /* eslint-disable no-shadow */
           projects: ['ProjectService', async ProjectService => ProjectService.all()],
           /* eslint-disable no-shadow */
           isExternalMode: ['AclService', async AclService => AclService.isExternalMode()],

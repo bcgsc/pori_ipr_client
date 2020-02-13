@@ -16,11 +16,11 @@ class SidebarComponent {
   }
   
   async $onInit() {
-    const pages = ['analyses', 'tracking', 'report', 'genomic_report',
-      'probe_report', 'germline', 'knowledgebase'];
+    const pages = ['report', 'germline'];
 
     pages.forEach(async (page) => {
       this.pageAccess[page] = await this.AclService.checkResource(page);
+      this.$scope.$digest();
     });
 
     this.maximized = this.UserService.getSidebarState();

@@ -11,6 +11,11 @@ const columnDefs = [{
   hide: false,
 },
 {
+  headerName: 'Observed Variant',
+  field: 'variant',
+  hide: false,
+},
+{
   headerName: 'Cancer Type',
   field: 'disease',
   hide: false,

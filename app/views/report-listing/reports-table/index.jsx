@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { AgGridReact } from 'ag-grid-react';
 
@@ -16,16 +16,50 @@ import './index.scss';
  */
 function ReportsTableComponent(props) {
   const {
-    rowData,
     columnDefs,
+    isExternalMode,
     $state,
+    ReportService,
   } = props;
 
   const gridApi = useRef();
 
-  const onGridReady = (params) => {
+  const [rowData, setRowData] = useState();
+
+  const onGridReady = async (params) => {
     gridApi.current = params.api;
     gridApi.current.sizeColumnsToFit();
+
+    const opts = {
+      all: true,
+      states: 'ready,active,presented,uploaded,signedoff,archived',
+    };
+
+    if (isExternalMode) {
+      opts.states = 'presented,archived';
+    }
+
+    const { reports } = await ReportService.allFiltered(opts);
+
+    setRowData(reports.map((report) => {
+      const [analyst] = report.users
+        .filter(u => u.role === 'analyst' && !u.deletedAt)
+        .map(u => u.user);
+      
+      return {
+        patientID: report.pog.POGID,
+        analysisBiopsy: report.analysis.analysis_biopsy,
+        reportType: report.type === 'genomic' ? 'Genomic' : 'Targeted Gene',
+        state: report.state,
+        caseType: report.patientInformation.caseType,
+        project: report.pog.projects.map(project => project.name).sort().join(', '),
+        physician: report.patientInformation.physician,
+        analyst: analyst ? `${analyst.firstName} ${analyst.lastName}` : null,
+        tumourType: report.patientInformation.tumourType,
+        reportID: report.ident,
+        date: report.createdAt,
+      };
+    }));
   };
 
   const onSelectionChanged = () => {
@@ -63,9 +97,10 @@ function ReportsTableComponent(props) {
 }
 
 ReportsTableComponent.propTypes = {
-  rowData: PropTypes.arrayOf(PropTypes.object).isRequired,
   columnDefs: PropTypes.arrayOf(PropTypes.object).isRequired,
+  isExternalMode: PropTypes.bool.isRequired,
   $state: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  ReportService: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
 
 export default ReportsTableComponent;
