@@ -4,7 +4,6 @@ import 'angular-aria';
 import 'angular-animate';
 import ngSanitize from 'angular-sanitize';
 import ngMaterial from 'angular-material';
-import { Visualizer } from '@uirouter/visualizer';
 import 'ngstorage';
 import 'angular-material/angular-material.scss';
 import 'angular-sortable-view';
@@ -147,23 +146,6 @@ export default angular.module('root')
         $rootScope.showLoader = false;
       });
     });
-  })
-  .run(($uiRouter) => {
-    'ngInject';
-
-    const options = {
-      stateVisualizer: {
-        node: {
-          classes(node) {
-            return Object.entries(node.views || {}).some(routeView => routeView[1] && routeView[1].$type === 'ng1')
-              ? 'is-ng1'
-              : '';
-          },
-        },
-      },
-    };
-
-    const vis = $uiRouter.plugin(Visualizer, options);
   })
   .config(($mdThemingProvider) => {
     'ngInject';
