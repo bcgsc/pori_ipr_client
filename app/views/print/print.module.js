@@ -1,44 +1,23 @@
 import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
 import PrintComponent from './print.component';
-import GenomicPrintModule from './genomic-print/genomic-print.module';
-import ProbePrintModule from './probe-print/probe-print.module';
-import PrintHeaderModule from './print-header/print-header.module';
+import GenomicPrintComponent from './genomic-print/genomic-print.component';
+import ProbePrintComponent from './probe-print/probe-print.component';
+import PrintHeaderComponent from './print-header/print-header.component';
+import lazy from './lazy';
 
 angular.module('print', [
   uiRouter,
-  GenomicPrintModule,
-  ProbePrintModule,
-  PrintHeaderModule,
 ]);
 
 export default angular.module('print')
   .component('print', PrintComponent)
+  .component('genomicprint', GenomicPrintComponent)
+  .component('probeprint', ProbePrintComponent)
+  .component('printheader', PrintHeaderComponent)
   .config(($stateProvider) => {
     'ngInject';
 
-    $stateProvider
-      .state('print', {
-        url: '/print/:pog/report/:report',
-        component: 'print',
-        abstract: true,
-        resolve: {
-          pog: ['$transition$', 'PogService', async ($transition$, PogService) => PogService.id($transition$.params().pog)],
-          report: ['$transition$', 'ReportService',
-            async ($transition$, ReportService) => ReportService.get(
-              $transition$.params().pog,
-              $transition$.params().report,
-            )],
-          user: ['UserService', '$state', async (UserService, $state) => {
-            try {
-              const resp = await UserService.me();
-              return resp;
-            } catch (err) {
-              $state.go('public.login');
-              return err;
-            }
-          }],
-        },
-      });
+    Object.values(lazy).forEach(state => $stateProvider.state(state));
   })
   .name;
