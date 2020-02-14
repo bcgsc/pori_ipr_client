@@ -5,6 +5,7 @@
   "@babel/preset-react"],
   "plugins": [
     "angularjs-annotate",
-    "@babel/plugin-proposal-class-properties"
+    "@babel/plugin-proposal-class-properties",
+    "@babel/plugin-syntax-dynamic-import"
   ]
 }

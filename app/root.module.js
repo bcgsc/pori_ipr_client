@@ -7,8 +7,8 @@ import ngMaterial from 'angular-material';
 import 'ngstorage';
 import 'angular-material/angular-material.scss';
 import 'angular-sortable-view';
-import CommonModule from './common/common.module';
-import ComponentModule from './components/components.module';
+import ComponentsModule from './components/components.module';
+import ViewsModule from './views/views.module';
 import RootComponent from './root.component';
 import UserService from './services/management/user.service';
 import PogService from './services/reports/pog.service';
@@ -53,8 +53,8 @@ import './styles/ag-grid.scss';
 
 angular.module('root', [
   uiRouter,
-  CommonModule,
-  ComponentModule,
+  ComponentsModule,
+  ViewsModule,
   'ngStorage',
   ngMaterial,
   ngSanitize,
