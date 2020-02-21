@@ -50,7 +50,7 @@ Exported variables are needed to run the tests. If you are storing `CYPRESS_PASS
 run `chmod 600 ~/.bash_profile` to make it only available for yourself. Required variables to run all tests are:
 
 ```Vim
-CYPRESS_ADMIN  ex. jdavies
+CYPRESS_ADMIN  ex. adavies
 CYPRESS_TEST  ex. ipr-test
 CYPRESS_PASSWORD
 ```

@@ -39,7 +39,10 @@ function ReportsTableComponent(props) {
       opts.states = 'presented,archived';
     }
 
-    const { reports } = await ReportService.allFiltered(opts);
+    let { reports } = await ReportService.allFiltered(opts);
+
+    // Remove test reports that are missing the patient info section
+    reports = reports.filter(r => r.patientInformation);
 
     setRowData(reports.map((report) => {
       const [analyst] = report.users
