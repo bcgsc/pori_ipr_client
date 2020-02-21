@@ -1,37 +1,26 @@
 import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
 import ProbeReportComponent from './probe-report.component';
-import ProbeSummaryModule from './probe-summary/probe-summary.module';
-import DetailedGenomicAnalysisModule from './probe-detailed-genomic-analysis/probe-detailed-genomic-analysis.module';
-import ProbeAppendicesModule from './probe-appendices/probe-appendices.module';
-import ProbeReportSettingsModule from './probe-report-settings/probe-report-settings.module';
+import ProbeSummaryComponent from './probe-summary/probe-summary.component';
+import DetailedGenomicAnalysisComponent from './probe-detailed-genomic-analysis/probe-detailed-genomic-analysis.component';
+import ProbeAppendicesComponent from '../genomic-report/appendices/appendices.component';
+import ProbeReportSettingsComponent from '../genomic-report/report-settings/report-settings.component';
+
+import lazy from './lazy';
 
 angular.module('probe.report', [
   uiRouter,
-  ProbeSummaryModule,
-  DetailedGenomicAnalysisModule,
-  ProbeAppendicesModule,
-  ProbeReportSettingsModule,
 ]);
 
 export default angular.module('probe.report')
   .component('probereport', ProbeReportComponent)
+  .component('probesummary', ProbeSummaryComponent)
+  .component('detailedGenomicAnalysis', DetailedGenomicAnalysisComponent)
+  .component('probeappendices', ProbeAppendicesComponent)
+  .component('probesettings', ProbeReportSettingsComponent)
   .config(($stateProvider) => {
     'ngInject';
 
-    $stateProvider
-      .state('root.reportlisting.pog.probe', {
-        url: '/probe',
-        abstract: true,
-        component: 'probereport',
-        resolve: {
-          report: ['$transition$', 'ReportService',
-            async ($transition$, ReportService) => ReportService.get(
-              $transition$.params().POG,
-              $transition$.params().analysis_report,
-            )],
-          reportEdit: ['AclService', async AclService => AclService.checkAction('report.edit')],
-        },
-      });
+    Object.values(lazy).forEach(state => $stateProvider.state(state));
   })
   .name;

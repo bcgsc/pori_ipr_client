@@ -1,11 +1,10 @@
 import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
-import ProbeModule from './probe-report/probe-report.module';
+import eagerProbeReportStates from './probe-report/eager';
 import eagerGenomicReportStates from './genomic-report/eager';
 
 angular.module('report', [
   uiRouter,
-  ProbeModule,
 ]);
 
 export default angular.module('report')
@@ -22,5 +21,6 @@ export default angular.module('report')
       });
 
     Object.values(eagerGenomicReportStates).forEach(state => $stateProvider.state(state));
+    Object.values(eagerProbeReportStates).forEach(state => $stateProvider.state(state));
   })
   .name;

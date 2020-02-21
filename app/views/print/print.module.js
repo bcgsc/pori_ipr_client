@@ -1,6 +1,7 @@
 import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
 import { react2angular } from 'react2angular';
+import 'angular-file-upload';
 
 import PrintComponent from './print.component';
 import GenomicPrintComponent from './genomic-print/genomic-print.component';
@@ -21,6 +22,7 @@ import lazy from './lazy';
 
 angular.module('print', [
   uiRouter,
+  'angularFileUpload',
 ]);
 
 export default angular.module('print')
