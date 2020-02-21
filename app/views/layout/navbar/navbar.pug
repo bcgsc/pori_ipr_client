@@ -1,6 +1,6 @@
 md-toolbar(ng-class="{'navbar--open': $ctrl.maximized}").navbar
   div.md-toolbar-tools
-    md-button(ng-click="$ctrl.toggleSidebar()", ng-if="!$ctrl.maximized").md-icon-button.navbar__button
+    md-button(ng-click="$ctrl.toggleSidebar()", ng-if="!$ctrl.maximized").md-icon-button.navbar__menu
       md-icon.navbar__icon menu
     h2(flex).navbar__title
       |  BCGSC Integrated Pipeline Reports 
@@ -8,8 +8,8 @@ md-toolbar(ng-class="{'navbar--open': $ctrl.maximized}").navbar
       span(ng-if="$ctrl.config !== 'PRODUCTION'") [NON-PRODUCTION ENVIRONMENT: {{$ctrl.config}}]
 
     md-menu
-      md-button(ng-click='$mdMenu.open($event)', aria-label='User')
-        md-icon person
+      md-button(ng-click='$mdMenu.open($event)', aria-label='User').navbar__user
+        md-icon.navbar__person person
         span {{$ctrl.user.firstName}} {{$ctrl.user.lastName}}
       md-menu-content(width="4")
         md-menu-item

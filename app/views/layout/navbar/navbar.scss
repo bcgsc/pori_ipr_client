@@ -46,7 +46,7 @@
     font-weight: 400;
   }
 
-  &__button {
+  &__menu {
     padding: 8px 0;
   }
 
@@ -56,5 +56,13 @@
 
   &__version {
     font-size: 12px;
+  }
+
+  &__person {
+    margin: 0 8px 2px 0;
+  }
+
+  &__user {
+    padding: 0 12px;
   }
 }
