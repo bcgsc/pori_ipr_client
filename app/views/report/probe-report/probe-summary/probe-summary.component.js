@@ -2,6 +2,7 @@ import template from './probe-summary.pug';
 import patientTemplate from '../../genomic-report/genomic-summary/patient-edit.pug';
 import eventsTemplate from './events-edit.pug';
 import '../../genomic-report/genomic-summary/genomic-summary.scss';
+import '../../genomic-report/genomic-report.scss';
 
 const bindings = {
   pog: '<',

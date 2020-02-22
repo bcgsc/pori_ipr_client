@@ -1,12 +1,10 @@
 import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
-import GenomicModule from './genomic-report/genomic-report.module';
-import ProbeModule from './probe-report/probe-report.module';
+import eagerProbeReportStates from './probe-report/eager';
+import eagerGenomicReportStates from './genomic-report/eager';
 
 angular.module('report', [
   uiRouter,
-  GenomicModule,
-  ProbeModule,
 ]);
 
 export default angular.module('report')
@@ -16,9 +14,13 @@ export default angular.module('report')
     $stateProvider
       .state('root.reportlisting.pog', {
         url: '/:POG/report/:analysis_report',
+        abstract: true,
         resolve: {
           pog: ['$transition$', 'PogService', async ($transition$, PogService) => PogService.id($transition$.params().POG)],
         },
       });
+
+    Object.values(eagerGenomicReportStates).forEach(state => $stateProvider.state(state));
+    Object.values(eagerProbeReportStates).forEach(state => $stateProvider.state(state));
   })
   .name;
