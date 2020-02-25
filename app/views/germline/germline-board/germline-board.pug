@@ -44,10 +44,10 @@ md-content(flex, layout="column").md-padding.biopsyBoard
             span No germline reports found
         tr(ng-repeat="report in $ctrl.reports track by $index | limitTo:$ctrl.paginate.limit", ng-if="!$ctrl.loading")
           td.text-bold
-            a(ui-sref="root.germline.report({patient: report.analysis.pog.POGID, biopsy: report.analysis.analysis_biopsy, report: report.ident})").link {{report.analysis.pog.POGID}}
-          td 
-            span(ng-repeat="project in report.analysis.pog.projects") {{ $index==0 ? project.name : ', ' + project.name }}
-          td {{report.analysis.analysis_biopsy}}
+            a(ui-sref="root.germline.report({patient: report.patientId, biopsy: report.biopsyName, report: report.ident})").link {{report.patientId}}
+          td
+            span(ng-repeat="project in report.projects") {{ $index==0 ? project.name : ', ' + project.name }}
+          td {{report.biopsyName}}
           td
             span {{report.source_version}}
               md-tooltip {{report.source_path}}
