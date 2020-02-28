@@ -98,6 +98,7 @@ function KBMatches(props) {
             setVisibleCols={handleVisibleColsChange}
             setHiddenCols={handleHiddenColsChange}
             filterText={filterText}
+            edit={false}
           />
         ))}
       </div>
@@ -108,6 +109,7 @@ function KBMatches(props) {
           rowData={unsyncedTableData.rowData || []}
           title={unsyncedTableData.title}
           filterText={filterText}
+          edit={false}
         />
       </div>
 
@@ -136,6 +138,7 @@ function KBMatches(props) {
                 setVisibleCols={handleVisibleColsChange}
                 setHiddenCols={handleHiddenColsChange}
                 filterText={filterText}
+                edit={false}
               />
             </ExpansionPanelDetails>
           </ExpansionPanel>

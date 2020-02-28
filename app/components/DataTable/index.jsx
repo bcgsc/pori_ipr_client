@@ -28,6 +28,8 @@ import './index.scss';
  * @param {func} props.setVisibleCols function to update visible cols across tables
  * @param {func} props.setHiddenCols function to update hidden cols across tables
  * @param {string} props.filterText text to filter the table on
+ * @param {bool} props.editable can rows be edited?
+ * @param {object} props.EditPopup Edit Popup component
  * @return {*} JSX
  */
 function DataTable(props) {
@@ -41,6 +43,8 @@ function DataTable(props) {
     setVisibleCols,
     setHiddenCols,
     filterText,
+    editable,
+    EditPopup,
   } = props;
 
   const gridApi = useRef();
@@ -97,6 +101,8 @@ function DataTable(props) {
     sortable: true,
     resizable: true,
     filter: true,
+    editable,
+    cellEditor: 'EditPopup',
   };
     
   const domLayout = 'autoHeight';
@@ -162,7 +168,11 @@ function DataTable(props) {
           onGridReady={onGridReady}
           domLayout={domLayout}
           autoSizePadding="0"
-          onRowClicked={onRowClicked}
+          onRowClicked={!editable && onRowClicked}
+          editType="fullRow"
+          frameworkComponents={{
+            EditPopup,
+          }}
         />
       </div>
     </div>
@@ -178,7 +188,9 @@ DataTable.propTypes = {
   hiddenCols: PropTypes.arrayOf(PropTypes.string),
   setVisibleCols: PropTypes.func,
   setHiddenCols: PropTypes.func,
-  filterText: PropTypes.string.isRequired,
+  filterText: PropTypes.string,
+  editable: PropTypes.bool,
+  EditPopup: PropTypes.func,
 };
 
 DataTable.defaultProps = {
@@ -189,6 +201,9 @@ DataTable.defaultProps = {
   hiddenCols: [],
   setVisibleCols: () => {},
   setHiddenCols: () => {},
+  filterText: '',
+  editable: false,
+  EditPopup: () => {},
 };
 
 export default DataTable;

@@ -72,7 +72,7 @@ const therapeutic = {
   ...eager.therapeutic,
   component: 'therapeutic',
   resolve: {
-    therapeutic: ['$transition$', 'TherapeuticService',
+    therapeuticTargets: ['$transition$', 'TherapeuticService',
       async ($transition$, TherapeuticService) => TherapeuticService.all(
         $transition$.params().analysis_report,
       )],

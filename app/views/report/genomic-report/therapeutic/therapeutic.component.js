@@ -1,6 +1,6 @@
 import template from './therapeutic.pug';
-import editTemplate from './therapeutic-edit.pug';
-import editController from './therapeutic-edit';
+import editTemplate from './components/EditDialog/therapeutic-edit.pug';
+import editController from './components/EditDialog/therapeutic-edit';
 import './therapeutic.scss';
 
 const bindings = {
