@@ -50,12 +50,12 @@ function ReportsTableComponent(props) {
         .map(u => u.user);
       
       return {
-        patientID: report.pog.POGID,
-        analysisBiopsy: report.analysis.analysis_biopsy,
+        patientID: report.patientId,
+        analysisBiopsy: report.biopsyName,
         reportType: report.type === 'genomic' ? 'Genomic' : 'Targeted Gene',
         state: report.state,
-        caseType: report.patientInformation.caseType,
-        project: report.pog.projects.map(project => project.name).sort().join(', '),
+        caseType: report.type,
+        project: report.projects.map(project => project.name).sort().join(', '),
         physician: report.patientInformation.physician,
         analyst: analyst ? `${analyst.firstName} ${analyst.lastName}` : null,
         tumourType: report.patientInformation.tumourType,

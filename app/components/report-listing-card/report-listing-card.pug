@@ -1,4 +1,4 @@
-div(ng-if="$ctrl.report.patientInformation.caseType.toLowerCase() === 'pediatric'").pediatric_flag
+div(ng-if="$ctrl.report.type.toLowerCase() === 'pediatric'").pediatric_flag
   span Pediatric
 div.header
   h1(layout="row")
@@ -16,7 +16,7 @@ div.header
 div(layout="row").details
   div(flex)
     span Biopsy
-    span {{$ctrl.report.analysis.analysis_biopsy || 'N/A'}}
+    span {{$ctrl.report.biopsyName || 'N/A'}}
   div.clickable {{$ctrl.report.createdAt | date: 'yyyy-MM-dd'}}
     md-tooltip {{ $ctrl.report.createdAt | date: 'yyyy-MM-dd hh:mm:ss' }}
 
