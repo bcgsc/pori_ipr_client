@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Button,
   TextField,
   InputAdornment,
+  ExpansionPanel,
+  ExpansionPanelSummary,
+  Typography,
+  ExpansionPanelDetails,
 } from '@material-ui/core';
-import FilterListIcon from '@material-ui/icons/FilterList';
+import {
+  FilterList,
+  ExpandMore,
+} from '@material-ui/icons';
 import DataTable from '../../../../components/DataTable';
 import { columnDefs, targetedColumnDefs } from './ColumnDefs';
 
@@ -52,20 +58,12 @@ function KBMatches(props) {
     setHiddenCols(change);
   };
 
-
   useEffect(() => {
     localStorage.setItem('visibleColsKb', visibleCols);
     localStorage.setItem('hiddenColsKb', hiddenCols);
   }, [visibleCols, hiddenCols]);
 
   const handleFilter = event => setFilterText(event.target.value);
-
-  const handleShowTables = (key, table) => {
-    table.show = !table.show;
-    const thisHiddenTableDataCopy = Object.assign({}, thisHiddenTableData);
-    thisHiddenTableDataCopy[key] = table;
-    setThisHiddenTableData(thisHiddenTableDataCopy);
-  };
 
   return (
     <>
@@ -80,7 +78,7 @@ function KBMatches(props) {
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
-                <FilterListIcon color="action" />
+                <FilterList color="action" />
               </InputAdornment>
             ),
           }}
@@ -113,38 +111,39 @@ function KBMatches(props) {
         />
       </div>
 
-      <div className="kb-matches__button-container">
-        {Object.entries(thisHiddenTableData).map(([key, table]) => (
-          <Button
-            onClick={() => handleShowTables(key, table)}
-            color="primary"
-            variant="outlined"
-            key={table.title}
+      <div className="expansion-panel">
+        <ExpansionPanel
+          TransitionProps={{ unmountOnExit: true }}
+          elevation={0}
+        >
+          <ExpansionPanelSummary
+            expandIcon={<ExpandMore />}
+            classes={{ root: 'expansion-panel__summary' }}
           >
-            {table.show ? 'Hide ' : 'Show '}
-            {table.title}
-          </Button>
-        ))}
+            <Typography variant="h6">
+              Alterations for Review and Uncharacterized Alterations
+            </Typography>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails
+            classes={{ root: 'expansion-panel__details' }}
+          >
+            {Object.values(thisHiddenTableData).map(table => (
+              <React.Fragment key={table.title}>
+                <DataTable
+                  columnDefs={columnDefs}
+                  rowData={table.rowData || []}
+                  title={table.title}
+                  visibleCols={visibleCols}
+                  hiddenCols={hiddenCols}
+                  setVisibleCols={handleVisibleColsChange}
+                  setHiddenCols={handleHiddenColsChange}
+                  filterText={filterText}
+                />
+              </React.Fragment>
+            ))}
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
       </div>
-
-      {Object.values(thisHiddenTableData).map(table => (
-        <div key={table.title}>
-          {table.show
-            && (
-              <DataTable
-                columnDefs={table.columnDefs}
-                rowData={table.rowData || []}
-                title={table.title}
-                visibleCols={visibleCols}
-                hiddenCols={hiddenCols}
-                setVisibleCols={handleVisibleColsChange}
-                setHiddenCols={handleHiddenColsChange}
-                filterText={filterText}
-              />
-            )
-          }
-        </div>
-      ))}
     </>
   );
 }
