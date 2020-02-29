@@ -81,7 +81,11 @@ function DataTable(props) {
     columnApi.current.autoSizeColumns(visibleCols);
   };
 
-  const onRowClicked = (event) => {
+  const rowClickedEdit = (event) => {
+
+  };
+
+  const rowClickedDetail = (event) => {
     const definedCols = columnApi.current.getAllColumns().map(col => col.colId);
     const propagateObject = Object.entries(event.data).reduce((accumulator, [key, value]) => {
       if (definedCols.includes(key)) {
@@ -102,7 +106,6 @@ function DataTable(props) {
     resizable: true,
     filter: true,
     editable,
-    cellEditor: 'EditPopup',
   };
     
   const domLayout = 'autoHeight';
@@ -168,7 +171,7 @@ function DataTable(props) {
           onGridReady={onGridReady}
           domLayout={domLayout}
           autoSizePadding="0"
-          onRowClicked={!editable && onRowClicked}
+          onRowClicked={editable ? rowClickedEdit : rowClickedDetail}
           editType="fullRow"
           frameworkComponents={{
             EditPopup,
