@@ -7,9 +7,8 @@ const print = {
   resolve: {
     pog: ['$transition$', 'PogService', async ($transition$, PogService) => PogService.id($transition$.params().pog)],
     report: ['$transition$', 'ReportService',
-      async ($transition$, ReportService) => ReportService.get(
-        $transition$.params().pog,
-        $transition$.params().report,
+      async ($transition$, ReportService) => ReportService.getReport(
+        $transition$.params().analysis_report,
       )],
     user: ['UserService', '$state', async (UserService, $state) => {
       try {

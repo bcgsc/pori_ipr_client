@@ -6,8 +6,7 @@ const probe = {
   component: 'probereport',
   resolve: {
     report: ['$transition$', 'ReportService',
-      async ($transition$, ReportService) => ReportService.get(
-        $transition$.params().POG,
+      async ($transition$, ReportService) => ReportService.getReport(
         $transition$.params().analysis_report,
       )],
     reportEdit: ['AclService', async AclService => AclService.checkAction('report.edit')],

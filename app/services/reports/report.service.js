@@ -2,7 +2,7 @@ class ReportService {
   /* @ngInject */
   constructor($http) {
     this.$http = $http;
-    this.api = CONFIG.ENDPOINTS.API;
+    this.api = `${CONFIG.ENDPOINTS.API}/reports`;
   }
 
   /**
@@ -13,40 +13,40 @@ class ReportService {
    */
   async allFiltered(params = {}) {
     const opts = { params };
-    const { data } = await this.$http.get(`${this.api}/reports`, opts);
+    const { data } = await this.$http.get(`${this.api}`, opts);
     return data;
   } // TODO: Differenciate between this member and getAllReports (was $report.all())
 
   /**
    * Retrieve one report from API.
-   * @param {String} report - The report ident string (4 chars)
+   * @param {String} report - The report ident string (5 chars)
    * @return {Promise} Report details
    * @throws {ErrorType} Thrown when API call fails
    */
   async getReport(report) {
-    const { data } = await this.$http.get(`${this.api}/reports/${report}`);
+    const { data } = await this.$http.get(`${this.api}/${report}`);
     return data;
   } // TODO: Differenciate between this member and getPogReport (was $report.get())
 
   /**
    * Update a report entry
-   * @param {String} report - Report ident
+   * @param {String} report - Report object
    * @returns {Promise} Result of update report API call
    * @throws {ErrorType} Thrown when API call fails
    */
   async updateReport(report) {
-    const { data } = await this.$http.put(`${this.api}/reports/${report.ident}`, report);
+    const { data } = await this.$http.put(`${this.api}/${report.ident}`, report);
     return data;
   }
 
   /**
    * Delete a report entry (note: this endpoint does not return data if successful)
-   * @param {String} report - Report ident
+   * @param {Object} report - Report object
    * @returns {Promise} Result of delete report API call
    * @throws {ErrorType} Thrown when API call fails
    */
   async deleteReport(report) {
-    return this.$http.delete(`${this.api}/reports/${report.ident}`, report);
+    return this.$http.delete(`${this.api}/${report.ident}`, report);
   }
 
   /**
@@ -82,30 +82,6 @@ class ReportService {
       });
     return data;
   }
-
-  /**
-   * Retrieve all report from API that user can access
-   * @param {String} pogID - pogID as String
-   * @param {Object} params - Object with params
-   * @return {Promise} Resolves with array of reports
-   * @throws {ErrorType} Thrown when API call fails
-   */
-  async getAllReports(pogID, params = {}) {
-    const { data } = await this.$http.get(`${this.api}/POG/${pogID}/reports`, { params });
-    return data;
-  } // TODO: Differenciate between this member and allFiltered (was $report.pog().all())
-
-  /**
-   * Retrieve one report from the API
-   * @param {String} pogID - pogID as String
-   * @param {String} report - The report ident string (4 chars)
-   * @return {Promise} Report object
-   * @throws {ErrorType} Thrown when API call fails
-   */
-  async get(pogID, report) {
-    const { data } = await this.$http.get(`${this.api}/POG/${pogID}/reports/${report}`);
-    return data;
-  } // TODO: Differenciate between this member and getReport (was $report.pog().get())
 }
 
 export default ReportService;
