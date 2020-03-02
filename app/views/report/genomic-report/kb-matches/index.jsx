@@ -111,39 +111,36 @@ function KBMatches(props) {
         />
       </div>
 
-      <div className="expansion-panel">
-        <ExpansionPanel
-          TransitionProps={{ unmountOnExit: true }}
-          elevation={0}
-        >
-          <ExpansionPanelSummary
-            expandIcon={<ExpandMore />}
-            classes={{ root: 'expansion-panel__summary' }}
+      {Object.values(thisHiddenTableData).map(table => (
+        <div className="expansion-panel" key={table.title}>
+          <ExpansionPanel
+            TransitionProps={{ unmountOnExit: true }}
+            elevation={0}
           >
-            <Typography variant="h6">
-              Alterations for Review and Uncharacterized Alterations
-            </Typography>
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails
-            classes={{ root: 'expansion-panel__details' }}
-          >
-            {Object.values(thisHiddenTableData).map(table => (
-              <React.Fragment key={table.title}>
-                <DataTable
-                  columnDefs={columnDefs}
-                  rowData={table.rowData || []}
-                  title={table.title}
-                  visibleCols={visibleCols}
-                  hiddenCols={hiddenCols}
-                  setVisibleCols={handleVisibleColsChange}
-                  setHiddenCols={handleHiddenColsChange}
-                  filterText={filterText}
-                />
-              </React.Fragment>
-            ))}
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
-      </div>
+            <ExpansionPanelSummary
+              expandIcon={<ExpandMore />}
+              classes={{ root: 'expansion-panel__summary' }}
+            >
+              <Typography variant="h6">
+                {table.title}
+              </Typography>
+            </ExpansionPanelSummary>
+            <ExpansionPanelDetails
+              classes={{ root: 'expansion-panel__details' }}
+            >
+              <DataTable
+                columnDefs={columnDefs}
+                rowData={table.rowData || []}
+                visibleCols={visibleCols}
+                hiddenCols={hiddenCols}
+                setVisibleCols={handleVisibleColsChange}
+                setHiddenCols={handleHiddenColsChange}
+                filterText={filterText}
+              />
+            </ExpansionPanelDetails>
+          </ExpansionPanel>
+        </div>
+      ))}
     </>
   );
 }

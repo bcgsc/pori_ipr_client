@@ -127,7 +127,7 @@ const kbMatches = {
       ),
     ],
     novel: ['$transition$', 'AlterationService',
-      async ($transition$, AlterationService) => AlterationService.getAll(
+      async ($transition$, AlterationService) => AlterationService.getType(
         $transition$.params().POG,
         $transition$.params().analysis_report,
         'genomic',
@@ -135,7 +135,7 @@ const kbMatches = {
       ),
     ],
     unknown: ['$transition$', 'AlterationService',
-      async ($transition$, AlterationService) => AlterationService.getAll(
+      async ($transition$, AlterationService) => AlterationService.getType(
         $transition$.params().POG,
         $transition$.params().analysis_report,
         'genomic',

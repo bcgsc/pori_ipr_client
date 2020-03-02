@@ -173,7 +173,7 @@ DataTable.propTypes = {
   columnDefs: PropTypes.arrayOf(PropTypes.object).isRequired,
   arrayColumns: PropTypes.arrayOf(PropTypes.string),
   rowData: PropTypes.arrayOf(PropTypes.object),
-  title: PropTypes.string.isRequired,
+  title: PropTypes.string,
   visibleCols: PropTypes.arrayOf(PropTypes.string),
   hiddenCols: PropTypes.arrayOf(PropTypes.string),
   setVisibleCols: PropTypes.func,
@@ -184,6 +184,7 @@ DataTable.propTypes = {
 DataTable.defaultProps = {
   rowData: [],
   arrayColumns: [],
+  title: '',
   visibleCols: [],
   hiddenCols: [],
   setVisibleCols: () => {},
