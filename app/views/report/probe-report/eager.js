@@ -1,30 +1,30 @@
 const probe = {
-  name: 'root.reportlisting.pog.probe',
-  url: '/probe',
+  name: 'root.reportlisting.probe',
+  url: '/:analysis_report/probe',
   lazyLoad: async ($transition$) => {
     const mod = await import('./probe-report.module');
-    $transition$.router.stateRegistry.deregister('root.reportlisting.pog.probe');
+    $transition$.router.stateRegistry.deregister('root.reportlisting.probe');
     return $transition$.injector().native.loadNewModules([mod.default]);
   },
 };
 
 const summary = {
-  name: 'root.reportlisting.pog.probe.summary',
+  name: 'root.reportlisting.probe.summary',
   url: '/summary',
 };
 
 const detailedGenomicAnalysis = {
-  name: 'root.reportlisting.pog.probe.detailedGenomicAnalysis',
+  name: 'root.reportlisting.probe.detailedGenomicAnalysis',
   url: '/detailedGenomicAnalysis',
 };
 
 const appendices = {
-  name: 'root.reportlisting.pog.probe.appendices',
+  name: 'root.reportlisting.probe.appendices',
   url: '/appendices',
 };
 
 const settings = {
-  name: 'root.reportlisting.pog.probe.reportSettings',
+  name: 'root.reportlisting.probe.reportSettings',
   url: '/reportSettings',
 };
 
