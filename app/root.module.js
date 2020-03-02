@@ -163,8 +163,8 @@ export default angular.module('root')
     $httpProvider.interceptors.push(($injector) => {
       'ngInject';
 
-      const tokenRegex = /invalid.*/gi;
-      const accessRegex = /.*access.*/gi;
+      const invalidExpiredRegex = /(invalid)|(expired)/gi;
+      const accessRegex = /access/gi;
 
       return {
         request: async (config) => {
@@ -180,7 +180,7 @@ export default angular.module('root')
               if (response.data.message.match(accessRegex)) {
                 const $state = $injector.get('$state');
                 $state.go('public.access');
-              } else if (response.data.message.match(tokenRegex)) {
+              } else if (response.data.message.match(invalidExpiredRegex)) {
                 const $state = $injector.get('$state');
                 $state.go('public.login');
               }
