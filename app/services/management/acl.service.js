@@ -2,9 +2,8 @@ import get from 'lodash.get';
 
 class AclService {
   /* @ngInject */
-  constructor(UserService, PogService) {
+  constructor(UserService) {
     this.UserService = UserService;
-    this.PogService = PogService;
 
     this.actions = { // Move this out to some sort of constants file eventually
       report: {
@@ -106,9 +105,7 @@ class AclService {
     });
 
     /* Get intersection of arrays, check allows first */
-    const allowsIntersection = userGroups.filter((userGroup) => {
-      return resource.allow.includes(userGroup);
-    });
+    const allowsIntersection = userGroups.filter(userGroup => resource.allow.includes(userGroup));
 
     if (resource.allow.includes('*')) {
       permission = true;
@@ -118,9 +115,7 @@ class AclService {
     }
 
     /* Get intersection of arrays, check rejects now */
-    const rejectsIntersection = userGroups.filter((userGroup) => {
-      return resource.reject.includes(userGroup);
-    });
+    const rejectsIntersection = userGroups.filter(userGroup => resource.reject.includes(userGroup));
 
     /* Rejects takes priority over allows */
     if (rejectsIntersection && rejectsIntersection.length > 0) {
@@ -153,9 +148,7 @@ class AclService {
     });
 
     /* Get intersection of arrays, check allows first */
-    const allowsIntersection = userGroups.filter((userGroup) => {
-      return action.allow.includes(userGroup);
-    });
+    const allowsIntersection = userGroups.filter(userGroup => action.allow.includes(userGroup));
 
     if (action.allow.includes('*')) {
       permission = true;
@@ -165,9 +158,7 @@ class AclService {
     }
 
     /* Get intersection of arrays, check rejects now */
-    const rejectsIntersection = userGroups.filter((userGroup) => {
-      return action.reject.includes(userGroup);
-    });
+    const rejectsIntersection = userGroups.filter(userGroup => action.reject.includes(userGroup));
 
     /* Rejects takes priority over allows */
     if (rejectsIntersection && rejectsIntersection.length > 0) {
@@ -185,31 +176,6 @@ class AclService {
   async inGroup(group) {
     const user = await this.UserService.me();
     return user.groups.some(userGroup => group.toLowerCase() === userGroup.name.toLowerCase());
-  }
-
-  /**
-   * Can the user access a specified POG (by project)
-   * @param {String} pogID - POG to be checked for access
-   * @return {Promise} Boolean with if the user can access a POG
-   */
-  async canAccessPOG(pogID) {
-    const resp = await this.PogService.id(pogID);
-
-    /* Check for intersection between user's projects and project needed for access */
-    const projects = [];
-    resp.projects.forEach((entry) => {
-      projects.push(entry.name);
-    });
-
-    const user = await this.UserService.me();
-    const intersection = user.projects.filter(userProject => projects.includes(userProject));
-
-    /* Check if user has individual project access or is part of full access group */
-    /* Intersection array will be empty if part of full access group */
-    if (intersection.length > 0 || await this.inGroup('Full Project Access')) {
-      return true;
-    }
-    return false;
   }
 
   /**

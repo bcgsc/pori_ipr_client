@@ -58,7 +58,7 @@ class ReportService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async bindUser(report, user, role) {
-    const { data } = await this.$http.post(`${this.api}/reports/${report}/user`, { user, role });
+    const { data } = await this.$http.post(`${this.api}/${report}/user`, { user, role });
     return data;
   }
 
@@ -71,7 +71,7 @@ class ReportService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async unbindUser(report, user, role) {
-    const { data } = await this.$http.delete(`${this.api}/reports/${report}/user`,
+    const { data } = await this.$http.delete(`${this.api}/${report}/user`,
       {
         data: {
           user, role,

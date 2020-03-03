@@ -2,29 +2,29 @@ class PatientInformationService {
   /* @ngInject */
   constructor($http) {
     this.$http = $http;
-    this.api = `${CONFIG.ENDPOINTS.API}/POG`;
+    this.api = `${CONFIG.ENDPOINTS.API}/reports`;
   }
 
   /**
    * Get Patient Information for POG
-   * @param {String} pogID - pogID as String
+   * @param {String} reportId - report ident
    * @return {Promise} API response data
    * @throws {ErrorType} Thrown when API call fails
    */
-  async get(pogID) {
-    const resp = await this.$http.get(`${this.api}/${pogID}/patientInformation`);
+  async get(reportId) {
+    const resp = await this.$http.get(`${this.api}/${reportId}/patient-information`);
     return resp.data;
   }
 
   /**
    * Update patient information
-   * @param {String} pogID - pogID as String
+   * @param {String} reportId - report ident
    * @param {Object} pi - Patient info object
    * @return {Promise} API response data
    * @throws {ErrorType} Thrown when API call fails
    */
-  async update(pogID, pi) {
-    const resp = await this.$http.put(`${this.api}/${pogID}/patientInformation`, pi);
+  async update(reportId, pi) {
+    const resp = await this.$http.put(`${this.api}/${reportId}/patient-information`, pi);
     return resp.data;
   }
 }

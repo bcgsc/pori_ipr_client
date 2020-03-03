@@ -2,20 +2,19 @@ class DiscussionService {
   /* @ngInject */
   constructor($http) {
     this.$http = $http;
-    this.api = `${CONFIG.ENDPOINTS.API}/POG`;
+    this.api = `${CONFIG.ENDPOINTS.API}/reports`;
   }
 
   /**
    * Get All Discussion notes
    *
-   * @param {string} patient - Patient ID
    * @param {string} report - Report Ident
    *
    * @returns {Promise} - Resolves with all entries
    */
-  async all(patient, report) {
+  async all(report) {
     const { data } = await this.$http.get(
-      `${this.api}/${patient}/report/${report}/genomic/presentation/discussion`,
+      `${this.api}/${report}/genomic/presentation/discussion`,
     );
     return data;
   }
@@ -23,15 +22,14 @@ class DiscussionService {
   /**
    * Create new discussion entry
    *
-   * @param {string} patient - Patient ID
    * @param {string} report - Report Ident
    * @param {object} entry - New entry data object
    *
    * @returns {Promise} - Resolves with new entry
    */
-  async create(patient, report, entry) {
+  async create(report, entry) {
     const { data } = await this.$http.post(
-      `${this.api}/${patient}/report/${report}/genomic/presentation/discussion`, entry,
+      `${this.api}/${report}/genomic/presentation/discussion`, entry,
     );
     return data;
   }
@@ -39,15 +37,14 @@ class DiscussionService {
   /**
    * Get a discussion entry
    *
-   * @param {string} patient - Patient ID
    * @param {string} report - Report Ident
    * @param {string} ident - Report ident string
    *
    * @returns {Promise} - Resolves with updated entry
    */
-  async get(patient, report, ident) {
+  async get(report, ident) {
     const { data } = await this.$http.get(
-      `${this.api}/${patient}/report/${report}/genomic/presentation/discussion/${ident}`,
+      `${this.api}/${report}/genomic/presentation/discussion/${ident}`,
     );
     return data;
   }
@@ -55,16 +52,15 @@ class DiscussionService {
   /**
    * Update an existing discussion entry
    *
-   * @param {string} patient - Patient ID
    * @param {string} report - Report Ident
    * @param {string} ident - Report ident string
    * @param {object} entry - data object of entry
    *
    * @returns {Promise} - Resolves with updated entry
    */
-  async update(patient, report, ident, entry) {
+  async update(report, ident, entry) {
     const { data } = await this.$http.put(
-      `${this.api}/${patient}/report/${report}/genomic/presentation/discussion/${ident}`, entry,
+      `${this.api}/${report}/genomic/presentation/discussion/${ident}`, entry,
     );
     return data;
   }
@@ -72,15 +68,14 @@ class DiscussionService {
   /**
    * Remove an existing discussion entry
    *
-   * @param {string} patient - Patient ID
    * @param {string} report - Report Ident
    * @param {string} ident - Report ident string
    *
    * @returns {Promise} - Resolves with updated entry
    */
-  async remove(patient, report, ident) {
+  async remove(report, ident) {
     const { data } = await this.$http.delete(
-      `${this.api}/${patient}/report/${report}/genomic/presentation/discussion/${ident}`,
+      `${this.api}/${report}/genomic/presentation/discussion/${ident}`,
     );
     return data;
   }

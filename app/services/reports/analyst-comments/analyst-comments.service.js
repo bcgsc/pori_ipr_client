@@ -2,34 +2,32 @@ class AnalystCommentsService {
   /* @ngInject */
   constructor($http) {
     this.$http = $http;
-    this.api = `${CONFIG.ENDPOINTS.API}/POG`;
+    this.api = `${CONFIG.ENDPOINTS.API}/reports`;
   }
-  
+
   /**
-   * Retrieve anaylist comments for this POG
-   * @param {String} pogID - pogID as String eg: POG103
+   * Retrieve anaylist comments for this report
    * @param {String} report - report ident
    * @return {Promise} API response data
    * @throws {ErrorType} Thrown when API call fails
    */
-  async get(pogID, report) {
+  async get(report) {
     const { data } = await this.$http.get(
-      `${this.api}/${pogID}/report/${report}/genomic/summary/analystComments`,
+      `${this.api}/${report}/genomic/summary/analyst-comments`,
     );
     return data;
   }
-  
+
   /**
    * Update an Analyst comment
-   * @param {String} pogID - pogID as String eg: POG103
    * @param {String} report - report ident
    * @param {String} summary - Text body of summary
    * @return {Promise} API response data
    * @throws {ErrorType} Thrown when API call fails
    */
-  async update(pogID, report, summary) {
+  async update(report, summary) {
     const { data } = await this.$http.put(
-      `${this.api}/${pogID}/report/${report}/genomic/summary/analystComments`, summary,
+      `${this.api}/${report}/genomic/summary/analyst-comments`, summary,
     );
     return data;
   }
@@ -37,30 +35,28 @@ class AnalystCommentsService {
   /**
    * Sign Analyst Comments
    *
-   * @param {String} pogID - pogID as String eg: POG103
    * @param {String} report - Report unique identifier
    * @param {String} role - The role to sign for
    * @return {Promise} API response data
    * @throws {ErrorType} Thrown when API call fails
    */
-  async sign(pogID, report, role) {
+  async sign(report, role) {
     const { data } = await this.$http.put(
-      `${this.api}/${pogID}/report/${report}/genomic/summary/analystComments/sign/${role}`, {},
+      `${this.api}/${report}/genomic/summary/analyst-comments/sign/${role}`, {},
     );
     return data;
   }
 
   /**
    * Revoke Analyst Comments Signature
-   * @param {String} pogID - pogID as String eg: POG103
    * @param {String} report - Report unique identifier
    * @param {String} role - The role to sign for
    * @return {Promise} API response data
    * @throws {ErrorType} Thrown when API call fails
    */
-  async revokeSign(pogID, report, role) {
+  async revokeSign(report, role) {
     const { data } = await this.$http.put(
-      `${this.api}/${pogID}/report/${report}/genomic/summary/analystComments/sign/revoke/${role}`,
+      `${this.api}/${report}/genomic/summary/analyst-comments/sign/revoke/${role}`,
       {},
     );
     return data;
