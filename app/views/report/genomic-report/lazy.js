@@ -110,14 +110,12 @@ const kbMatches = {
     kbMatchesComponent: [() => KBMatchesComponent],
     alterations: ['$transition$', 'AlterationService',
       async ($transition$, AlterationService) => AlterationService.getAll(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
         'genomic',
       ),
     ],
     novel: ['$transition$', 'AlterationService',
       async ($transition$, AlterationService) => AlterationService.getAll(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
         'genomic',
         'novel',
@@ -125,7 +123,6 @@ const kbMatches = {
     ],
     unknown: ['$transition$', 'AlterationService',
       async ($transition$, AlterationService) => AlterationService.getAll(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
         'genomic',
         'unknown',
@@ -133,7 +130,6 @@ const kbMatches = {
     ],
     thisCancer: ['$transition$', 'AlterationService',
       async ($transition$, AlterationService) => AlterationService.getType(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
         'genomic',
         'thisCancer',
@@ -141,7 +137,6 @@ const kbMatches = {
     ],
     otherCancer: ['$transition$', 'AlterationService',
       async ($transition$, AlterationService) => AlterationService.getType(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
         'genomic',
         'otherCancer',
@@ -149,7 +144,6 @@ const kbMatches = {
     ],
     targetedGenes: ['$transition$', 'TargetedGenesService',
       async ($transition$, TargetedGenesService) => TargetedGenesService.getAll(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
       ),
     ],

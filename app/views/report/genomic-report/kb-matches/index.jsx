@@ -44,7 +44,7 @@ function KBMatches(props) {
   const [arrayColumns] = useState(['disease', 'reference']);
 
   const [filterText, setFilterText] = useState('');
-  
+
   const handleVisibleColsChange = (change) => {
     setVisibleCols(change);
   };
@@ -150,8 +150,8 @@ function KBMatches(props) {
 }
 
 KBMatches.propTypes = {
-  syncedTableData: PropTypes.shape(
-    PropTypes.objectOf({
+  syncedTableData: PropTypes.objectOf(
+    PropTypes.shape({
       title: PropTypes.string,
       rowData: PropTypes.array,
     }),
@@ -160,9 +160,9 @@ KBMatches.propTypes = {
     title: PropTypes.string,
     rowData: PropTypes.array,
   }),
-  hiddenTableData: PropTypes.shape(
+  hiddenTableData: PropTypes.objectOf(
     PropTypes.objectOf(
-      PropTypes.objectOf({
+      PropTypes.shape({
         title: PropTypes.string,
         rowData: PropTypes.array,
       }),
