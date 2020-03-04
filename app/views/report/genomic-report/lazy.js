@@ -96,7 +96,6 @@ const discussion = {
   component: 'discussion',
   resolve: {
     discussions: ['$transition$', 'DiscussionService', ($transition$, DiscussionService) => DiscussionService.all(
-      $transition$.params().POG,
       $transition$.params().analysis_report,
     )],
   },
