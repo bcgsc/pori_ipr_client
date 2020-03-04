@@ -52,7 +52,6 @@ const analystComments = {
   resolve: {
     analystComments: ['$transition$', 'AnalystCommentsService',
       async ($transition$, AnalystCommentsService) => AnalystCommentsService.get(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
       )],
   },
