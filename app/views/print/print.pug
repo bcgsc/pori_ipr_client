@@ -1,5 +1,5 @@
 div(layout="column").print
-  print-header(pog="$ctrl.pog", report="$ctrl.report")
+  print-header(report="$ctrl.report")
   div(layout="row", layout-align="space-between start").print__mid-info
     img(ng-src="img/print_logo.png").print__logo
     div(layout="column")
@@ -8,5 +8,5 @@ div(layout="column").print
   div(layout="row", layout-align="space-between center").print__bottom-info
     span Report version: {{$ctrl.report.reportVersion}}
     span Knowledgebase version: {{$ctrl.report.kbVersion}}
-  div.print__title {{$ctrl.pog.POGID}}
+  div.print__title {{$ctrl.report.patientId}}
   ui-view

@@ -70,7 +70,6 @@ const pathwayAnalysis = {
   resolve: {
     pathway: ['$transition$', 'PathwayAnalysisService',
       async ($transition$, PathwayAnalysisService) => PathwayAnalysisService.retrieve(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
       )],
   },

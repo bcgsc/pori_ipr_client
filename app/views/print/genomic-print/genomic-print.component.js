@@ -1,7 +1,6 @@
 import template from './genomic-print.pug';
 
 const bindings = {
-  pog: '<',
   report: '<',
   genomicAlterations: '<',
   variantCounts: '<',

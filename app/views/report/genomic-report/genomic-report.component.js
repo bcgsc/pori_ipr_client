@@ -2,7 +2,6 @@ import template from './genomic-report.pug';
 import './genomic-report.scss';
 
 const bindings = {
-  pog: '<',
   report: '<',
   reportEdit: '<',
 };
@@ -109,23 +108,19 @@ class GenomicReportComponent {
   openPrint() {
     // State go!
     this.$window.open(this.$state.href('print.genomic', {
-      pog: this.pog.POGID, report: this.report.ident,
+      report: this.report.ident,
     }), '_blank');
   }
 
   isChildOf(parent, child) {
-    const parentIndex = this.sections.findIndex((section) => {
-      return section.state === parent;
-    });
+    const parentIndex = this.sections.findIndex(section => section.state === parent);
 
     if (parentIndex !== -1 && this.sections[parentIndex].children.length > 0) {
-      return this.sections[parentIndex].children.some((childSection) => {
-        return childSection.state === child;
-      });
+      return this.sections[parentIndex].children.some(childSection => childSection.state === child);
     }
     return false;
   }
-  
+
   /**
    * Check if the provided state is the current one
    * Also expand parent section if needed
@@ -159,7 +154,7 @@ class GenomicReportComponent {
     ) {
       this.sections[this.sectionIndex].showChildren = false;
     }
-    this.$state.go(`root.reportlisting.pog.genomic.${goto}`);
+    this.$state.go(`root.reportlisting.genomic.${goto}`);
   }
 }
 

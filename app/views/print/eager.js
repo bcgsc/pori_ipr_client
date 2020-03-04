@@ -1,6 +1,6 @@
 const print = {
   name: 'print',
-  url: '/print/:pog/report/:report',
+  url: '/print/report/:report',
   lazyLoad: async ($transition$) => {
     const mod = await import('./print.module');
     $transition$.router.stateRegistry.deregister('print');
