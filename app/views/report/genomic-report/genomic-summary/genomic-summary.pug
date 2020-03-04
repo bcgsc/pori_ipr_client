@@ -1,4 +1,4 @@
-md-content 
+md-content
   section.patient-info
     md-subheader.md-no-sticky.print-title Patient Information
       span(ng-if="$ctrl.reportEdit").edit
@@ -7,10 +7,10 @@ md-content
     div(layout="column", flex).details.patient-info__details
       div(layout="row", flex).patient-info__description-container
         dt(flex="{{$ctrl.detailSize}}", ng-init="$ctrl.detailSize=10").patient-info__description-term Patient ID:
-        dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.POGID}}
+        dd(flex).patient-info__description-details {{$ctrl.report.patientId}}
 
         dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Alternate ID:
-        dd(flex).patient-info__description-details {{$ctrl.report.pog.alternate_identifier || 'N/A'}}
+        dd(flex).patient-info__description-details {{$ctrl.report.alternateIdentifier || 'N/A'}}
 
         dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Sex:
         dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.gender}}
@@ -43,14 +43,14 @@ md-content
         dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.age}}
 
         dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Age of Consent:
-        dd(flex).patient-info__description-details {{$ctrl.report.pog.age_of_consent || 'Not Specified'}}
+        dd(flex).patient-info__description-details {{$ctrl.report.ageOfConsent || 'Not Specified'}}
 
       div(layout="row", flex).patient-info__description-container
         dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Protocol:
         dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.tumourProtocol}}
 
         dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Biopsy:
-        dd(flex).patient-info__description-details {{$ctrl.report.analysis.analysis_biopsy || 'N/A'}}
+        dd(flex).patient-info__description-details {{$ctrl.report.biopsyName || 'N/A'}}
 
         dt(flex="{{$ctrl.detailSize}}").patient-info__description-term
         dd(flex).patient-info__description-details
@@ -133,7 +133,7 @@ md-content
                 style="margin-left: 5px;"
               ).tumour-analysis__icon help
           div(layout="column", flex=75).mutation-table--align-left
-            h2.title.tumour-analysis__subheader Mutation Burden 
+            h2.title.tumour-analysis__subheader Mutation Burden
               span.tumour-analysis__subheader--small (in protein coding genes)
               md-icon(ng-if="!$ctrl.print", ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.mutationBurden)").tumour-analysis__icon help
 
@@ -142,7 +142,7 @@ md-content
             div(flex).signature.editable.mutation-table__signature
               span(ng-if="($ctrl.tumourAnalysis.mutationSignature.length === 0 || $ctrl.tumourAnalysis.mutationSignature === null)") Nothing striking
                 md-icon(ng-click="$ctrl.updateMutationSignature($event)", ng-if="$ctrl.reportEdit && !$ctrl.print") edit
-                
+
               span(ng-if="$ctrl.tumourAnalysis.mutationSignature.length > 0")
                 span(ng-repeat="sig in $ctrl.tumourAnalysis.mutationSignature track by $index").repeat-comma
                   span.listitem

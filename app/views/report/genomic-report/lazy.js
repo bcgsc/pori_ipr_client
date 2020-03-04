@@ -21,32 +21,26 @@ const summary = {
   resolve: {
     genomicAlterations: ['$transition$', 'GenomicAlterationsService',
       async ($transition$, GenomicAlterationsService) => GenomicAlterationsService.all(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
       )],
     variantCounts: ['$transition$', 'VariantCountsService',
       async ($transition$, VariantCountsService) => VariantCountsService.get(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
       )],
     mutationSummary: ['$transition$', 'MutationSummaryService',
       async ($transition$, MutationSummaryService) => MutationSummaryService.get(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
       )],
     probeTarget: ['$transition$', 'ProbeTargetService',
       async ($transition$, ProbeTargetService) => ProbeTargetService.all(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
       )],
     mutationSignature: ['$transition$', 'MutationSignatureService',
       async ($transition$, MutationSignatureService) => MutationSignatureService.all(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
       )],
     microbial: ['$transition$', 'MicrobialService',
       async ($transition$, MicrobialService) => MicrobialService.get(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
       )],
   },
