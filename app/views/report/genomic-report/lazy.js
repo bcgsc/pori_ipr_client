@@ -86,7 +86,6 @@ const slides = {
   resolve: {
     slides: ['$transition$', 'SlidesService',
       async ($transition$, SlidesService) => SlidesService.all(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
       )],
   },
