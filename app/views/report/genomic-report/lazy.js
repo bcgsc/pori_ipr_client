@@ -270,22 +270,18 @@ const expression = {
   resolve: {
     mutationSummary: ['$transition$', 'MutationSummaryService',
       async ($transition$, MutationSummaryService) => MutationSummaryService.get(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
       )],
     outliers: ['$transition$', 'OutlierService',
       async ($transition$, OutlierService) => OutlierService.all(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
       )],
     drugTargets: ['$transition$', 'DrugTargetService',
       async ($transition$, DrugTargetService) => DrugTargetService.all(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
       )],
     densityGraphs: ['$transition$', 'ImageService',
       async ($transition$, ImageService) => ImageService.expDensityGraphs(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
       )],
   },
