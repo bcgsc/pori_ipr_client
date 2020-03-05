@@ -24,6 +24,9 @@ import './index.scss';
  * @param {array} props.arrayColumns list of columns containing array data
  * @param {string} props.title table title
  * @param {string} props.filterText text to filter the table on
+ * @param {array} props.visibleColumns array of column ids that are visible
+ * @param {func} props.syncVisibleColumns function to propagate visible column changes
+ * @param {bool} props.canToggleColumns can visible/hidden columns be toggled
  * @return {*} JSX
  */
 function DataTable(props) {
