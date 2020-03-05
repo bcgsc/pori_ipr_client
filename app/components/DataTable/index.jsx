@@ -74,7 +74,20 @@ function DataTable(props) {
 
     columnApi.current.setColumnsVisible(visibleCols, true);
     columnApi.current.setColumnsVisible(hiddenCols, false);
-    columnApi.current.autoSizeColumns(visibleCols);
+
+    const allCols = columnApi.current.getAllColumns().map(col => col.colId);
+    columnApi.current.autoSizeColumns(allCols);
+  };
+
+  const onGridSizeChanged = (params) => {
+    const MEDIUM_SCREEN_WIDTH_LOWER = 992;
+
+    if (params.clientWidth >= MEDIUM_SCREEN_WIDTH_LOWER) {
+      gridApi.current.sizeColumnsToFit();
+    } else {
+      const allCols = columnApi.current.getAllColumns().map(col => col.colId);
+      columnApi.current.autoSizeColumns(allCols);
+    }
   };
 
   const onRowClicked = (event) => {
