@@ -2,7 +2,6 @@ import template from './structural-variants.pug';
 import './structural-variants.scss';
 
 const bindings = {
-  pog: '<',
   report: '<',
   images: '<',
   structuralVariants: '<',
@@ -13,8 +12,7 @@ const bindings = {
 
 class StructuralVariantsComponent {
   /* @ngInject */
-  constructor(PogService) {
-    this.PogService = PogService;
+  constructor() {
     this.firstGeneClicked = false;
     this.secondGeneClicked = false;
   }
@@ -32,18 +30,14 @@ class StructuralVariantsComponent {
     this.processMutationSummaryImages(this.mutationSummaryImages);
   }
 
-  
+
   pickComparator() {
-    let search = this.mutationSummary.find((entry) => {
-      return entry.comparator === this.report.tumourAnalysis.diseaseExpressionComparator;
-    });
-    
+    let search = this.mutationSummary.find(entry => entry.comparator === this.report.tumourAnalysis.diseaseExpressionComparator);
+
     if (!search) {
-      search = this.mutationSummary.find((entry) => {
-        return entry.comparator === 'average';
-      });
+      search = this.mutationSummary.find(entry => entry.comparator === 'average');
     }
-    
+
     this.mutationSummary = search;
   }
 
@@ -59,24 +53,24 @@ class StructuralVariantsComponent {
         sv: null,
       },
     };
-    
+
     Object.values(images).forEach((img) => {
       if (!img.key.includes('sv')) {
         return;
       }
-  
+
       const pieces = img.key.split('.');
       img.comparator = pieces[2] || null;
       if (!img.comparator) {
         // If no comparator found in image, likely legacy and use report setting.
         img.comparator = this.report.tumourAnalysis.diseaseExpressionComparator;
       }
-  
+
       if (img.comparator.toLowerCase()
         && !sorted.comparators.some(comp => comp.name === img.comparator.toLowerCase())) {
         sorted.comparators.push({ name: img.comparator.toLowerCase(), visible: false });
       }
-  
+
       if (pieces[1].includes('barplot_sv') || pieces[1] === 'bar_sv') {
         sorted.sv.barplot.push(img);
       }
@@ -89,7 +83,7 @@ class StructuralVariantsComponent {
     });
     this.mutationSummaryImages = sorted;
   }
-  
+
   /**
    * Retrieve specific mutation summary image
    *
@@ -106,12 +100,10 @@ class StructuralVariantsComponent {
         return img[0];
       }
     }
-    return this.mutationSummaryImages[type][graph].find((entry) => {
-      return (entry.comparator.toLowerCase() === comparator.toLowerCase());
-    });
+    return this.mutationSummaryImages[type][graph].find(entry => (entry.comparator.toLowerCase() === comparator.toLowerCase()));
   }
-  
-  
+
+
   processSvs(structVars) {
     const svs = {
       clinical: [],
@@ -125,9 +117,7 @@ class StructuralVariantsComponent {
       const sv = row;
       if (row.mavis_product_id) {
         try {
-          sv.summary = this.mavisSummary.find((entry) => {
-            return entry.product_id === sv.mavis_product_id;
-          }).summary;
+          sv.summary = this.mavisSummary.find(entry => entry.product_id === sv.mavis_product_id).summary;
         } catch (err) {
           console.info('No matching Mavis summary was found.');
         }

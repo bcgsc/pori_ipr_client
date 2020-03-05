@@ -242,28 +242,23 @@ const structuralVariants = {
   resolve: {
     images: ['$transition$', 'ImageService',
       async ($transition$, ImageService) => ImageService.get(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
         'mutation_summary.barplot_sv,mutation_summary.density_plot_sv,circosSv.genome,circosSv.transcriptome',
       )],
     mutationSummary: ['$transition$', 'MutationSummaryService',
       async ($transition$, MutationSummaryService) => MutationSummaryService.get(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
       )],
     structuralVariants: ['$transition$', 'StructuralVariantsService',
       async ($transition$, StructuralVariantsService) => StructuralVariantsService.all(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
       )],
     mutationSummaryImages: ['$transition$', 'ImageService',
       async ($transition$, ImageService) => ImageService.mutationSummary(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
       )],
     mavisSummary: ['$transition$', 'MavisService',
       async ($transition$, MavisService) => MavisService.all(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
       )],
   },
