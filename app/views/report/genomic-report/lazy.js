@@ -156,7 +156,6 @@ const microbial = {
   resolve: {
     images: ['$transition$', 'ImageService',
       async ($transition$, ImageService) => ImageService.get(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
         'microbial.circos.transcriptome,microbial.circos.genome,microbial.circos',
       )],
