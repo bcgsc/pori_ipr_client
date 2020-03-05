@@ -6,11 +6,7 @@ class AlterationService {
   }
 
   baseUrl(report, type) {
-    return `${this.api}/${report}/${type}${
-      type === 'genomic'
-        ? '/detailed-genomic-analysis'
-        : ''
-    }/alterations`;
+    return `${this.api}/${report}/${type}/detailed-genomic-analysis/alterations`;
   }
 
   /**
