@@ -293,7 +293,6 @@ const appendices = {
   resolve: {
     tcgaAcronyms: ['$transition$', 'AppendicesService',
       async ($transition$, AppendicesService) => AppendicesService.tcga(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
       )],
   },

@@ -2,7 +2,6 @@ import template from './appendices.pug';
 import './appendices.scss';
 
 const bindings = {
-  pog: '<',
   report: '<',
   tcgaAcronyms: '<',
   print: '<',
