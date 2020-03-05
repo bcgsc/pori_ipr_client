@@ -18,7 +18,7 @@ import DiseaseSpecificAnalysisComponent from './disease-specific-analysis/diseas
 import SmallMutationsComponent from './small-mutations/small-mutations.component';
 import CopyNumberAnalysesComponent from './copy-number-analyses/copy-number-analyses.component';
 import StructuralVariantsComponent from './structural-variants/structural-variants.component';
-import ExpressionAnalysisComponent from './expression/expression-analysis.component';
+import ExpressionAnalysisComponent from './expression';
 import AppendicesComponent from './appendices/appendices.component';
 import ReportSettingsComponent from './report-settings/report-settings.component';
 import lazy from './lazy';
@@ -57,7 +57,12 @@ export default angular.module('genomic.report')
   .component('smallMutations', SmallMutationsComponent)
   .component('copyNumber', CopyNumberAnalysesComponent)
   .component('structuralVariants', StructuralVariantsComponent)
-  .component('expression', ExpressionAnalysisComponent)
+  .component('expression', react2angular(ExpressionAnalysisComponent, [
+    'mutationSummary',
+    'outliers',
+    'drugTargets',
+    'densityGraphs',
+  ]))
   .component('appendices', AppendicesComponent)
   .component('settings', ReportSettingsComponent)
   .config(($stateProvider) => {

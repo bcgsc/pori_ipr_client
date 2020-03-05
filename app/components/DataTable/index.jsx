@@ -148,7 +148,7 @@ function DataTable(props) {
         <Typography variant="h6" className="data-table__header">
           {title}
         </Typography>
-        {visibleCols.length > 0 && hiddenCols.length > 0 && (
+        {(visibleCols.length > 0 || hiddenCols.length) > 0 && (
           <IconButton
             onClick={() => setShowPopover(prevVal => !prevVal)}
           >
@@ -190,7 +190,7 @@ DataTable.propTypes = {
   hiddenCols: PropTypes.arrayOf(PropTypes.string),
   setVisibleCols: PropTypes.func,
   setHiddenCols: PropTypes.func,
-  filterText: PropTypes.string.isRequired,
+  filterText: PropTypes.string,
 };
 
 DataTable.defaultProps = {
@@ -201,6 +201,7 @@ DataTable.defaultProps = {
   hiddenCols: [],
   setVisibleCols: () => {},
   setHiddenCols: () => {},
+  filterText: '',
 };
 
 export default DataTable;
