@@ -168,7 +168,6 @@ const spearman = {
   resolve: {
     images: ['$transition$', 'ImageService',
       async ($transition$, ImageService) => ImageService.get(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
         'expression.chart,expression.legend',
       )],
