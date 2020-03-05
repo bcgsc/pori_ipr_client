@@ -2,7 +2,6 @@ import template from './copy-number-analyses.pug';
 import './copy-number-analyses.scss';
 
 const bindings = {
-  pog: '<',
   report: '<',
   mutationSummary: '<',
   images: '<',
@@ -11,8 +10,7 @@ const bindings = {
 
 class CopyNumberAnalyses {
   /* @ngInject */
-  constructor(PogService, SmallMutationsService) {
-    this.PogService = PogService;
+  constructor(SmallMutationsService) {
     this.SmallMutationsService = SmallMutationsService;
   }
 
