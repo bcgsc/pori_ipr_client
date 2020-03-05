@@ -1,6 +1,6 @@
 const probe = {
   name: 'root.reportlisting.probe',
-  url: '/:analysis_report/probe',
+  url: '/report/:analysis_report/probe',
   lazyLoad: async ($transition$) => {
     const mod = await import('./probe-report.module');
     $transition$.router.stateRegistry.deregister('root.reportlisting.probe');
