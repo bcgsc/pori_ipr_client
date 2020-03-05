@@ -2,7 +2,6 @@ import template from './probe-detailed-genomic-analysis.pug';
 import './probe-detailed-genomic-analysis.scss';
 
 const bindings = {
-  pog: '<',
   report: '<',
   reportEdit: '<',
   alterations: '<',
@@ -13,11 +12,10 @@ const bindings = {
 
 class DetailedGenomicAnalysisComponent {
   /* @ngInject */
-  constructor($scope, $mdDialog, $mdToast, PogService) {
+  constructor($scope, $mdDialog, $mdToast) {
     this.$scope = $scope;
     this.$mdDialog = $mdDialog;
     this.$mdToast = $mdToast;
-    this.PogService = PogService;
   }
 
   $onInit() {
@@ -56,7 +54,7 @@ class DetailedGenomicAnalysisComponent {
   prependLink(link) {
     return (!link.includes('http://')) ? `http://${link}` : link;
   }
-  
+
   // Clean up PMIDs
   cleanPMID(pmid) {
     return pmid.match(/^[0-9]{8}/)[0];
@@ -81,7 +79,7 @@ class DetailedGenomicAnalysisComponent {
     });
     return collection;
   }
-  
+
   // Group Entries by Type
   groupEntries(alterations) {
     // Process the entries for grouping

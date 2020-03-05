@@ -39,20 +39,17 @@ const detailedGenomicAnalysis = {
   resolve: {
     alterations: ['$transition$', 'AlterationService',
       async ($transition$, AlterationService) => AlterationService.getAll(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
         'probe',
       )],
     approvedThisCancer: ['$transition$', 'AlterationService',
       async ($transition$, AlterationService) => AlterationService.getType(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
         'probe',
         'thisCancer',
       )],
     approvedOtherCancer: ['$transition$', 'AlterationService',
       async ($transition$, AlterationService) => AlterationService.getType(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
         'probe',
         'otherCancer',
@@ -66,7 +63,6 @@ const appendices = {
   resolve: {
     tcgaAcronyms: ['$transition$', 'AppendicesService',
       async ($transition$, AppendicesService) => AppendicesService.tcga(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
       )],
     probe: () => true,
