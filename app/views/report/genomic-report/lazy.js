@@ -179,12 +179,10 @@ const diseaseSpecific = {
   component: 'diseaseSpecific',
   resolve: {
     images: ['$transition$', 'ImageService', ($transition$, ImageService) => ImageService.get(
-      $transition$.params().POG,
       $transition$.params().analysis_report,
       'microbial.circos',
     )],
     subtypePlotImages: ['$transition$', 'ImageService', ($transition$, ImageService) => ImageService.subtypePlots(
-      $transition$.params().POG,
       $transition$.params().analysis_report,
     )],
   },
