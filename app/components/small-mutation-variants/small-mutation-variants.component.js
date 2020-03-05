@@ -3,7 +3,6 @@ import './small-mutation-variants.scss';
 
 const bindings = {
   mutations: '<',
-  pog: '<',
   report: '<',
 };
 

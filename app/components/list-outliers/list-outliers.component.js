@@ -3,7 +3,6 @@ import './list-outliers.scss';
 
 const bindings = {
   outliers: '<',
-  pog: '<',
   report: '<',
   type: '<',
 };

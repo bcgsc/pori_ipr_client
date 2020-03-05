@@ -194,28 +194,23 @@ const smallMutations = {
   resolve: {
     images: ['$transition$', 'ImageService',
       async ($transition$, ImageService) => ImageService.get(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
         'mutSignature.corPcors,mutSignature.snvsAllStrelka',
       )],
     mutationSummaryImages: ['$transition$', 'ImageService',
       async ($transition$, ImageService) => ImageService.mutationSummary(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
       )],
     mutationSummary: ['$transition$', 'MutationSummaryService',
       async ($transition$, MutationSummaryService) => MutationSummaryService.get(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
       )],
     smallMutations: ['$transition$', 'SmallMutationsService',
       async ($transition$, SmallMutationsService) => SmallMutationsService.all(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
       )],
     mutationSignature: ['$transition$', 'MutationSignatureService',
       async ($transition$, MutationSignatureService) => MutationSignatureService.all(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
       )],
   },

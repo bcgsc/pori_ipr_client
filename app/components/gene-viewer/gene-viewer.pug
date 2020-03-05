@@ -21,23 +21,23 @@ md-dialog(layout="column", aria-label="Update Alterations Entry", flex-md=90, fl
               div(ng-if="genes.length == 0")
                 div(ng-hide="showUnknown").text-center.details None Found.
 
-              genomic-alteration(ng-repeat="(i, gene) in genes track by $index", samples="samples", gene="gene", pog="pog", report="report").container
+              genomic-alteration(ng-repeat="(i, gene) in genes track by $index", samples="samples", gene="gene", report="report").container
 
 
       md-tab(label="Small Mutations ({{data.smallMutations.length}})")
         div.pog-report
           section
-            small-mutation-variants(mutations="data.smallMutations", pog="pog", report="report")
+            small-mutation-variants(mutations="data.smallMutations", report="report")
 
       md-tab(label="CNV ({{data.copyNumber.length}})")
         div.pog-report
           section
-            list-copy-number-variants(cnvs="data.copyNumber", pog="pog", report="report")
+            list-copy-number-variants(cnvs="data.copyNumber", report="report")
 
       md-tab(label="Expression Outliers ({{data.expRNA.length}})")
         div.pog-report
           section.material-section
-            list-outliers(outliers="data.expRNA", pog="pog", report="report")
+            list-outliers(outliers="data.expRNA", report="report")
 
       md-tab(label="Exp Drug Target ({{data.expDrugTarget.length}})")
         div.pog-report
