@@ -72,9 +72,9 @@ function KBMatches(props) {
           label="Filter Table Text"
           type="text"
           variant="outlined"
-          size="small"
           value={filterText}
           onChange={handleFilter}
+          margin="dense"
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">

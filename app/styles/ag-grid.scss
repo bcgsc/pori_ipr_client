@@ -1,8 +1,4 @@
-// Override ag-grid defaults as the default 23px padding is way too much
-.ag-cell {
-  padding: 0 8px !important;
-}
+$grid-size: 6px;
 
-.ag-header-cell {
-  padding: 0 8px !important;
-}
+@import '~ag-grid-community/src/styles/ag-grid.scss';
+@import '~ag-grid-community/src/styles/ag-theme-material/sass/ag-theme-material.scss';

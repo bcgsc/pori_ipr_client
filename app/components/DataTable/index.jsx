@@ -12,10 +12,8 @@ import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import OptionsMenu from '../OptionsMenu';
 import DetailDialog from '../DetailDialog';
 
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-material.css';
-
 import './index.scss';
+
 
 /**
  * @param {object} props props
@@ -176,6 +174,7 @@ function DataTable(props) {
           domLayout={domLayout}
           autoSizePadding="0"
           onRowClicked={onRowClicked}
+          onGridSizeChanged={onGridSizeChanged}
         />
       </div>
     </div>
