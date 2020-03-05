@@ -20,17 +20,14 @@ const summary = {
   resolve: {
     testInformation: ['$transition$', 'ProbeTestInformationService',
       async ($transition$, ProbeTestInformationService) => ProbeTestInformationService.retrieve(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
       )],
     signature: ['$transition$', 'ProbeSignatureService',
       async ($transition$, ProbeSignatureService) => ProbeSignatureService.retrieve(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
       )],
     genomicEvents: ['$transition$', 'GenomicEventsService',
       async ($transition$, GenomicEventsService) => GenomicEventsService.all(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
       )],
   },
