@@ -160,9 +160,11 @@ export default angular.module('root')
   .config(($httpProvider) => {
     'ngInject';
 
-    // Add Error Interceptors Wrapper
     $httpProvider.interceptors.push(($injector) => {
       'ngInject';
+
+      const invalidExpiredRegex = /(invalid)|(expired)/gi;
+      const accessRegex = /access/gi;
 
       return {
         request: async (config) => {
@@ -171,6 +173,21 @@ export default angular.module('root')
             config.headers.Authorization = await KeycloakService.getToken();
           }
           return config;
+        },
+        responseError: (response) => {
+          switch (response.status) {
+            case 403:
+              if (response.data.message.match(accessRegex)) {
+                const $state = $injector.get('$state');
+                $state.go('public.access');
+              } else if (response.data.message.match(invalidExpiredRegex)) {
+                const $state = $injector.get('$state');
+                $state.go('public.login');
+              }
+              break;
+            default:
+              break;
+          }
         },
       };
     });

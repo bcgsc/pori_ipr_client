@@ -28,6 +28,7 @@ class DiscussionComponent {
       const resp = await this.DiscussionService.create(this.report.ident, data);
       this.discussions.push(resp);
       this.new.body = null;
+      this.$scope.$digest();
     } catch (err) {
       this.$mdToast.showSimple('Unable to add new discussion entry');
     }

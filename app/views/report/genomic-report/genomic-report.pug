@@ -16,12 +16,13 @@ md-content(flex).layout-fill
             span(ng-click="$ctrl.goToReportSection('summary')", ng-class="$ctrl.activeSection('summary') ? 'active' : ''").clickable.inline Summary
               md-icon(ng-click="$ctrl.openPrint()", aria-label="Print Summary Section").md-secondary print
 
-          li(ng-repeat="section in $ctrl.sections track by $index", ng-init='section.showChildren = false', ng-if="!section.clinician || $ctrl.reportEdit")
+          li(ng-repeat="section in $ctrl.sections track by $index", ng-init="section.showChildren = false")
 
             span(
               ng-click="(section.children.length === 0) ? $ctrl.goToReportSection(section.state) : section.showChildren = !section.showChildren",
               ng-class="{active: $ctrl.activeSection(section.state), meta: section.meta, children: (section.children.length > 0)}",
               layout="row"
+              ng-if="$ctrl.reportEdit || section.clinician"
             ).clickable.inline
               span.expand {{section.name}}
               md-icon(ng-if="!section.showChildren && section.children.length > 0") arrow_drop_down

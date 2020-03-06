@@ -34,50 +34,14 @@ class AclService {
           reject: [],
         },
       },
-      tracking: {
-        view: {
-          allow: ['*'],
-          reject: ['clinician', 'collaborator'],
-        },
-        edit: {
-          allow: ['*'],
-          reject: ['clinician', 'collaborator'],
-        },
-        remove: {
-          allow: ['projects', 'admin'],
-          reject: [],
-        },
-      },
     };
 
     this.resources = {
       report: {
         allow: ['*'],
-        reject: [],
-      },
-      genomic_report: {
-        allow: ['*'],
-        reject: [],
-      },
-      probe_report: {
-        allow: ['*'],
-        reject: [],
-      },
-      knowledgebase: {
-        allow: ['*'],
-        reject: ['clinician'],
       },
       germline: {
-        allow: ['*'],
-        reject: ['clinician', 'collaborator'],
-      },
-      analyses: {
-        allow: ['*'],
-        reject: ['clinician', 'collaborator'],
-      },
-      tracking: {
-        allow: ['*'],
-        reject: ['clinician', 'collaborator'],
+        allow: ['admin', 'analyst', 'bioinformatician'],
       },
     };
   }
@@ -88,7 +52,6 @@ class AclService {
    * @return {Promise} Boolean with if user is allowed to see resource
    */
   async checkResource(name) {
-    let permission = false;
     let resource;
 
     try {
@@ -97,32 +60,12 @@ class AclService {
       return false;
     }
 
-    /* Pull out the user's groups into an array */
-    const userGroups = [];
-    const user = await this.UserService.me();
-    user.groups.forEach((entry) => {
-      userGroups.push(entry.name.toLowerCase());
-    });
-
-    /* Get intersection of arrays, check allows first */
-    const allowsIntersection = userGroups.filter(userGroup => resource.allow.includes(userGroup));
-
     if (resource.allow.includes('*')) {
-      permission = true;
-    }
-    if (allowsIntersection && allowsIntersection.length > 0) {
-      permission = true;
+      return true;
     }
 
-    /* Get intersection of arrays, check rejects now */
-    const rejectsIntersection = userGroups.filter(userGroup => resource.reject.includes(userGroup));
-
-    /* Rejects takes priority over allows */
-    if (rejectsIntersection && rejectsIntersection.length > 0) {
-      permission = false;
-    }
-
-    return permission;
+    const user = await this.UserService.me();
+    return user.groups.some(entry => resource.allow.includes(entry.name));
   }
 
   /**

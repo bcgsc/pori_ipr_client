@@ -4,6 +4,13 @@ const germline = {
   ...eager.germline,
   abstract: true,
   lazyLoad: undefined,
+  resolve: {
+    permissionCheck: ['AclService', '$state', async (AclService, $state) => {
+      if (!await AclService.checkResource('germline')) {
+        $state.go('root.reportlisting.reports');
+      }
+    }],
+  },
 };
 
 const board = {

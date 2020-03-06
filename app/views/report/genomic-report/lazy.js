@@ -302,6 +302,11 @@ const settings = {
   ...eager.settings,
   component: 'settings',
   resolve: {
+    permissionCheck: ['reportEdit', '$state', (reportEdit, $state) => {
+      if (!reportEdit) {
+        $state.go('root.reportlisting.reports');
+      }
+    }],
     showBindings: () => true,
   },
 };
