@@ -276,10 +276,6 @@ const expression = {
       async ($transition$, OutlierService) => OutlierService.all(
         $transition$.params().analysis_report,
       )],
-    drugTargets: ['$transition$', 'DrugTargetService',
-      async ($transition$, DrugTargetService) => DrugTargetService.all(
-        $transition$.params().analysis_report,
-      )],
     densityGraphs: ['$transition$', 'ImageService',
       async ($transition$, ImageService) => ImageService.expDensityGraphs(
         $transition$.params().analysis_report,

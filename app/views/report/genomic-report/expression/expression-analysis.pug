@@ -92,37 +92,3 @@ section.material-section.expression
         h2 {{title}}
 
         list-outliers(outliers="$ctrl.expOutliers[key]", report="$ctrl.report", type="'rna'").analysis-report-section.margin-bottom-10
-
-  div.analysis-report-section.margin-top-10
-    h1 Drug Targetable High Percentile Genes
-      p.minimize
-          md-icon(ng-click="$ctrl.showSection.drugTargetable = !$ctrl.showSection.drugTargetable", ng-if="$ctrl.showSection.drugTargetable").clickable keyboard_arrow_up
-          md-icon(ng-click="$ctrl.showSection.drugTargetable = !$ctrl.showSection.drugTargetable", ng-if="!$ctrl.showSection.drugTargetable").clickable keyboard_arrow_down
-
-    div(ng-show="$ctrl.showSection.drugTargetable")
-      div.padding-left-10.padding-right-10
-        table.material-table
-          thead
-            tr
-              th(width="20%") Gene
-              th(width="15%") LOH
-              th(width="15%").text-right Copy Number
-              th(width="15%").text-right Fold Changes Vs {{$ctrl.report.tumourAnalysis.normalExpressionComparator}}
-              th(width="15%").text-right {{$ctrl.report.tumourAnalysis.diseaseExpressionComparator}} %ile
-              th(width="15%").text-right kIQR
-              th(wdith="5%")
-          tbody(style="max-height: 400px; overflow-y: auto;")
-            tr(ng-repeat="target in drugTargetList = ($ctrl.drugTargets | filter: $ctrl.searchDrugs(drugQuery)) track by $index")
-              td(ng-click="$ctrl.geneClicked = true; $ctrl.gene = target.gene", flex).clickable.underlined {{target.gene}}
-                gene-viewer(ng-if="$ctrl.geneClicked", ng-init="$ctrl.geneClicked = false",
-                  report="$ctrl.report", gene="$ctrl.gene")
-              td {{target.lohRegion}}
-              td.text-right {{target.copy}}
-              td.text-right {{target.foldChange}}
-              td.text-right {{target.tcgaPerc}}
-              td.text-right {{target.kIQR}}
-              td.text-center.options
-                md-icon(ng-click="$ctrl.detailClicked = true; $ctrl.detailIndex = $index").clickable search
-                  md-tooltip View Details
-                detail-viewer(ng-if="$ctrl.detailClicked", ng-init="$ctrl.detailClicked = false",
-                  mutations="$ctrl.drugTargets | filter: $ctrl.searchDrugs(drugQuery)", index="$ctrl.detailIndex")
