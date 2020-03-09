@@ -1,6 +1,7 @@
 import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
 import { react2angular } from 'react2angular';
+import 'ng-quill';
 import 'angular-file-upload';
 import 'angular-sortable-view';
 import GenomicReportComponent from './genomic-report.component';
@@ -21,11 +22,13 @@ import ExpressionAnalysisComponent from './expression/expression-analysis.compon
 import AppendicesComponent from './appendices/appendices.component';
 import ReportSettingsComponent from './report-settings/report-settings.component';
 import lazy from './lazy';
+import 'quill/dist/quill.snow.css';
 
 angular.module('genomic.report', [
   uiRouter,
   'angularFileUpload',
   'angular-sortable-view',
+  'ngQuill',
 ]);
 
 export default angular.module('genomic.report')
