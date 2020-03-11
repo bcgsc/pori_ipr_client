@@ -13,7 +13,7 @@ class ProbeTargetService {
    */
   async all(report) {
     const resp = await this.$http.get(
-      `${this.api}/${report}/genomic/summary/probe-results`,
+      `${this.api}/${report}/summary/probe-results`,
     );
     return resp.data;
   }
@@ -27,7 +27,7 @@ class ProbeTargetService {
    */
   async id(report, ident) {
     const resp = await this.$http.get(
-      `${this.api}/${report}/genomic/summary/probe-results/${ident}`,
+      `${this.api}/${report}/summary/probe-results/${ident}`,
     );
     return resp.data;
   }
@@ -42,7 +42,7 @@ class ProbeTargetService {
    */
   async update(report, ident, gai) {
     const resp = await this.$http.put(
-      `${this.api}/${report}/genomic/summary/probe-results/${ident}`,
+      `${this.api}/${report}/summary/probe-results/${ident}`,
       gai,
     );
     return resp.data;
@@ -57,7 +57,7 @@ class ProbeTargetService {
    */
   async remove(report, ident) {
     const resp = await this.$http.delete(
-      `${this.api}/${report}/genomic/summary/probe-results/${ident}`,
+      `${this.api}/${report}/summary/probe-results/${ident}`,
     );
     return resp.data;
   }

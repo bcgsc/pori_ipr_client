@@ -13,7 +13,7 @@ class GenomicAterationsService {
    */
   async all(reportId) {
     const resp = await this.$http.get(
-      `${this.api}/${reportId}/genomic/summary/genomic-alterations-identified`,
+      `${this.api}/${reportId}/summary/genomic-alterations-identified`,
     );
     return resp.data;
   }
@@ -27,7 +27,7 @@ class GenomicAterationsService {
    */
   async id(reportId, ident) {
     const resp = await this.$http.get(
-      `${this.api}/${reportId}/genomic/summary/genomic-alterations-identified/${ident}`,
+      `${this.api}/${reportId}/summary/genomic-alterations-identified/${ident}`,
     );
     return resp.data;
   }
@@ -42,7 +42,7 @@ class GenomicAterationsService {
    */
   async update(reportId, ident, gai) {
     const resp = await this.$http.put(
-      `${this.api}/${reportId}/genomic/summary/genomic-alterations-identified/${ident}`,
+      `${this.api}/${reportId}/summary/genomic-alterations-identified/${ident}`,
       gai,
     );
     return resp.data;
@@ -57,7 +57,7 @@ class GenomicAterationsService {
    */
   async create(reportId, alteration) {
     const resp = await this.$http.post(
-      `${this.api}/${reportId}/genomic/summary/genomic-alterations-identified/`,
+      `${this.api}/${reportId}/summary/genomic-alterations-identified/`,
       alteration,
     );
     return resp.data;
@@ -74,7 +74,7 @@ class GenomicAterationsService {
    */
   async remove(reportId, ident, comment, cascade = false) {
     await this.$http.delete(
-      `${this.api}/${reportId}/genomic/summary/genomic-alterations-identified/${ident}`,
+      `${this.api}/${reportId}/summary/genomic-alterations-identified/${ident}`,
       {
         data: {
           comment,

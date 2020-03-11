@@ -97,7 +97,7 @@ class PathwayAnalysisComponent {
 
           let selectedItem;
           $scope.uploader = new this.FileUploader({
-            url: `${CONFIG.ENDPOINTS.API}/reports/${this.report.ident}/genomic/summary/pathway-analysis`,
+            url: `${CONFIG.ENDPOINTS.API}/reports/${this.report.ident}/summary/pathway-analysis`,
           });
 
           $scope.uploader.headers.Authorization = this.$localStorage[CONFIG.STORAGE.KEYCLOAK];

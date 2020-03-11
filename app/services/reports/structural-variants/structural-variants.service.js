@@ -13,7 +13,7 @@ class StructuralVariantsService {
    */
   async all(report) {
     const { data } = await this.$http.get(
-      `${this.api}/${report}/genomic/structural-variation/sv`,
+      `${this.api}/${report}/structural-variation/sv`,
     );
     return data;
   }
@@ -28,7 +28,7 @@ class StructuralVariantsService {
    */
   async updateOne(report, ident, payload) {
     const { data } = await this.$http.put(
-      `${this.api}/${report}/genomic/structural-variation/sv/${ident}`,
+      `${this.api}/${report}/structural-variation/sv/${ident}`,
       payload,
     );
     return data;
@@ -43,7 +43,7 @@ class StructuralVariantsService {
    */
   async getType(report, type) {
     const { data } = await this.$http.get(
-      `${this.api}/${report}/genomic/structural-variation/sv/${type}`,
+      `${this.api}/${report}/structural-variation/sv/${type}`,
     );
     return data;
   }

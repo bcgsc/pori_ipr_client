@@ -12,7 +12,7 @@ class PathwayAnalysisService {
    */
   async retrieve(report) {
     const { data } = await this.$http.get(
-      `${this.api}/${report}/genomic/summary/pathway-analysis`,
+      `${this.api}/${report}/summary/pathway-analysis`,
     );
     return data;
   }
@@ -26,7 +26,7 @@ class PathwayAnalysisService {
    */
   async update(report, summary) {
     const { data } = await this.$http.put(
-      `${this.api}/${report}/genomic/summary/pathway-analysis`,
+      `${this.api}/${report}/summary/pathway-analysis`,
       summary,
     );
     return data;

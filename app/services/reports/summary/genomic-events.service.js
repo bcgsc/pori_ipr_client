@@ -13,7 +13,7 @@ class GenomicEventsService {
    */
   async all(reportId) {
     const resp = await this.$http.get(
-      `${this.api}/${reportId}/genomic/summary/genomic-events-therapeutic`,
+      `${this.api}/${reportId}/summary/genomic-events-therapeutic`,
     );
     return resp.data;
   }
@@ -27,7 +27,7 @@ class GenomicEventsService {
    */
   async id(reportId, ident) {
     const resp = await this.$http.get(
-      `${this.api}/${reportId}/genomic/summary/genomic-events-therapeutic/${ident}`,
+      `${this.api}/${reportId}/summary/genomic-events-therapeutic/${ident}`,
     );
     return resp.data;
   }
@@ -42,7 +42,7 @@ class GenomicEventsService {
    */
   async update(reportId, ident, get) {
     const resp = await this.$http.put(
-      `${this.api}/${reportId}/genomic/summary/genomic-events-therapeutic/${ident}`,
+      `${this.api}/${reportId}/summary/genomic-events-therapeutic/${ident}`,
       get,
     );
     return resp.data;
@@ -57,7 +57,7 @@ class GenomicEventsService {
    */
   async remove(reportId, ident) {
     const resp = await this.$http.delete(
-      `${this.api}/${reportId}/genomic/summary/genomic-events-therapeutic/${ident}`,
+      `${this.api}/${reportId}/summary/genomic-events-therapeutic/${ident}`,
     );
     return resp.data;
   }

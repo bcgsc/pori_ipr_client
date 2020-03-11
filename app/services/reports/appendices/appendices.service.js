@@ -12,7 +12,7 @@ class AppendicesService {
    */
   async tcga(report) {
     const { data } = await this.$http.get(
-      `${this.api}/${report}/genomic/appendices/tcga`,
+      `${this.api}/${report}/appendices/tcga`,
     );
     return data;
   }

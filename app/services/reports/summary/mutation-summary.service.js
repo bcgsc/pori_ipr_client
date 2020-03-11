@@ -13,7 +13,7 @@ class MutationSummaryService {
    */
   async get(report) {
     const resp = await this.$http.get(
-      `${this.api}/${report}/genomic/summary/mutation-summary`,
+      `${this.api}/${report}/summary/mutation-summary`,
     );
     return resp.data;
   }
@@ -27,7 +27,7 @@ class MutationSummaryService {
    */
   async update(report, summary) {
     const resp = await this.$http.put(
-      `${this.api}/${report}/genomic/summary/mutation-summary`, summary,
+      `${this.api}/${report}/summary/mutation-summary`, summary,
     );
     return resp.data;
   }

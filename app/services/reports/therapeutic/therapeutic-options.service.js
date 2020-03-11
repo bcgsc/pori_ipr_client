@@ -12,7 +12,7 @@ class TherapeuticOptionsService {
    */
   async all(report) {
     const { data } = await this.$http.get(
-      `${this.api}/${report}/genomic/therapeutic-targets`,
+      `${this.api}/${report}/therapeutic-targets`,
     );
     return data;
   }
@@ -25,7 +25,7 @@ class TherapeuticOptionsService {
    */
   async create(report, entry) {
     const { data } = await this.$http.post(
-      `${this.api}/${report}/genomic/therapeutic-targets`,
+      `${this.api}/${report}/therapeutic-targets`,
       entry,
     );
     return data;
@@ -39,7 +39,7 @@ class TherapeuticOptionsService {
    */
   async retrieve(report, ident) {
     const { data } = await this.$http.get(
-      `${this.api}/${report}/genomic/therapeutic-targets/${ident}`,
+      `${this.api}/${report}/therapeutic-targets/${ident}`,
     );
     return data;
   }
@@ -53,7 +53,7 @@ class TherapeuticOptionsService {
    */
   async update(report, ident, entry) {
     const { data } = await this.$http.put(
-      `${this.api}/${report}/genomic/therapeutic-targets/${ident}`,
+      `${this.api}/${report}/therapeutic-targets/${ident}`,
       entry,
     );
     return data;
@@ -67,7 +67,7 @@ class TherapeuticOptionsService {
    */
   async remove(report, ident) {
     const { data } = await this.$http.delete(
-      `${this.api}/${report}/genomic/therapeutic-targets/${ident}`,
+      `${this.api}/${report}/therapeutic-targets/${ident}`,
     );
     return data;
   }

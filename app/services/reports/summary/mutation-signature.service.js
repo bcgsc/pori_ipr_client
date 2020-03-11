@@ -13,7 +13,7 @@ class MutationSignatureService {
    */
   async all(report) {
     const resp = await this.$http.get(
-      `${this.api}/${report}/genomic/somatic-mutations/mutation-signature`,
+      `${this.api}/${report}/somatic-mutations/mutation-signature`,
     );
     return resp.data;
   }

@@ -13,7 +13,7 @@ class VariantCountsService {
    */
   async get(report) {
     const resp = await this.$http.get(
-      `${this.api}/${report}/genomic/summary/variant-counts`,
+      `${this.api}/${report}/summary/variant-counts`,
     );
     return resp.data;
   }
@@ -28,7 +28,7 @@ class VariantCountsService {
    */
   async update(report, analysis) {
     const resp = await this.$http.put(
-      `${this.api}/${report}/genomic/summary/variant-counts/`,
+      `${this.api}/${report}/summary/variant-counts/`,
       analysis,
     );
     return resp.data;

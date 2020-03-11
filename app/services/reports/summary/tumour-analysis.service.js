@@ -12,7 +12,7 @@ class TumourAnalysisService {
    */
   async get(report) {
     const resp = await this.$http.get(
-      `${this.api}/${report}/genomic/summary/tumour-analysis`,
+      `${this.api}/${report}/summary/tumour-analysis`,
     );
     return resp.data;
   }
@@ -25,7 +25,7 @@ class TumourAnalysisService {
    */
   async update(report, analysis) {
     const resp = await this.$http.put(
-      `${this.api}/${report}/genomic/summary/tumour-analysis/`, analysis,
+      `${this.api}/${report}/summary/tumour-analysis/`, analysis,
     );
     return resp.data;
   }

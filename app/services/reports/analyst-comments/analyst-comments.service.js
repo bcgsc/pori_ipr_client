@@ -13,7 +13,7 @@ class AnalystCommentsService {
    */
   async get(report) {
     const { data } = await this.$http.get(
-      `${this.api}/${report}/genomic/summary/analyst-comments`,
+      `${this.api}/${report}/summary/analyst-comments`,
     );
     return data;
   }
@@ -27,7 +27,7 @@ class AnalystCommentsService {
    */
   async update(report, summary) {
     const { data } = await this.$http.put(
-      `${this.api}/${report}/genomic/summary/analyst-comments`, summary,
+      `${this.api}/${report}/summary/analyst-comments`, summary,
     );
     return data;
   }
@@ -42,7 +42,7 @@ class AnalystCommentsService {
    */
   async sign(report, role) {
     const { data } = await this.$http.put(
-      `${this.api}/${report}/genomic/summary/analyst-comments/sign/${role}`, {},
+      `${this.api}/${report}/summary/analyst-comments/sign/${role}`, {},
     );
     return data;
   }
@@ -56,7 +56,7 @@ class AnalystCommentsService {
    */
   async revokeSign(report, role) {
     const { data } = await this.$http.put(
-      `${this.api}/${report}/genomic/summary/analyst-comments/sign/revoke/${role}`,
+      `${this.api}/${report}/summary/analyst-comments/sign/revoke/${role}`,
       {},
     );
     return data;

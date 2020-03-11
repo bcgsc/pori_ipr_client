@@ -13,7 +13,7 @@ class MavisService {
    */
   async all(report) {
     const { data } = await this.$http.get(
-      `${this.api}/${report}/genomic/mavis`,
+      `${this.api}/${report}/mavis`,
     );
     return data;
   }

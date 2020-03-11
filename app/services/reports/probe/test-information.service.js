@@ -14,7 +14,7 @@ class ProbeTestInformationService {
    */
   async retrieve(report) {
     const { data } = await this.$http.get(
-      `${this.api}/${report}/probe/probe-test-information`,
+      `${this.api}/${report}/probe-test-information`,
     );
     return data;
   }

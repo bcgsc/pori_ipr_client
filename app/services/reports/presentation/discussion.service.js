@@ -14,7 +14,7 @@ class DiscussionService {
    */
   async all(report) {
     const { data } = await this.$http.get(
-      `${this.api}/${report}/genomic/presentation/discussion`,
+      `${this.api}/${report}/presentation/discussion`,
     );
     return data;
   }
@@ -29,7 +29,7 @@ class DiscussionService {
    */
   async create(report, entry) {
     const { data } = await this.$http.post(
-      `${this.api}/${report}/genomic/presentation/discussion`, entry,
+      `${this.api}/${report}/presentation/discussion`, entry,
     );
     return data;
   }
@@ -44,7 +44,7 @@ class DiscussionService {
    */
   async get(report, ident) {
     const { data } = await this.$http.get(
-      `${this.api}/${report}/genomic/presentation/discussion/${ident}`,
+      `${this.api}/${report}/presentation/discussion/${ident}`,
     );
     return data;
   }
@@ -60,7 +60,7 @@ class DiscussionService {
    */
   async update(report, ident, entry) {
     const { data } = await this.$http.put(
-      `${this.api}/${report}/genomic/presentation/discussion/${ident}`, entry,
+      `${this.api}/${report}/presentation/discussion/${ident}`, entry,
     );
     return data;
   }
@@ -75,7 +75,7 @@ class DiscussionService {
    */
   async remove(report, ident) {
     const { data } = await this.$http.delete(
-      `${this.api}/${report}/genomic/presentation/discussion/${ident}`,
+      `${this.api}/${report}/presentation/discussion/${ident}`,
     );
     return data;
   }

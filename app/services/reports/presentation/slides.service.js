@@ -12,7 +12,7 @@ class SlidesService {
    */
   async all(report) {
     const { data } = await this.$http.get(
-      `${this.api}/${report}/genomic/presentation/slide`,
+      `${this.api}/${report}/presentation/slide`,
     );
     return data;
   }
@@ -27,7 +27,7 @@ class SlidesService {
    */
   async get(report, ident) {
     const { data } = await this.$http.get(
-      `${this.api}/${report}/genomic/presentation/slide/${ident}`,
+      `${this.api}/${report}/presentation/slide/${ident}`,
     );
     return data;
   }
@@ -42,7 +42,7 @@ class SlidesService {
    */
   async remove(report, ident) {
     const { data } = await this.$http.delete(
-      `${this.api}/${report}/genomic/presentation/slide/${ident}`,
+      `${this.api}/${report}/presentation/slide/${ident}`,
     );
     return data;
   }

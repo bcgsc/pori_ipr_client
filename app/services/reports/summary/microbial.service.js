@@ -13,7 +13,7 @@ class MicrobialService {
    */
   async get(report) {
     this.$http.get(
-      `${this.api}/${report}/genomic/summary/microbial`,
+      `${this.api}/${report}/summary/microbial`,
     );
   }
 }

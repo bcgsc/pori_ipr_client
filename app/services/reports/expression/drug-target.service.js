@@ -12,7 +12,7 @@ class DrugTargetService {
    */
   async all(report) {
     const { data } = await this.$http.get(
-      `${this.api}/${report}/genomic/expression-analysis/drug-target`,
+      `${this.api}/${report}/expression-analysis/drug-target`,
     );
     return data;
   }
@@ -26,7 +26,7 @@ class DrugTargetService {
    */
   async updateOne(report, ident, payload) {
     const { data } = await this.$http.put(
-      `${this.api}/${report}/genomic/expression-analysis/drug-target/${ident}`,
+      `${this.api}/${report}/expression-analysis/drug-target/${ident}`,
       payload,
     );
     return data;
@@ -40,7 +40,7 @@ class DrugTargetService {
    */
   async getType(report, type) {
     const { data } = await this.$http.get(
-      `${this.api}/${report}/genomic/expression-analysis/drug-target/${type}`,
+      `${this.api}/${report}/expression-analysis/drug-target/${type}`,
     );
     return data;
   }

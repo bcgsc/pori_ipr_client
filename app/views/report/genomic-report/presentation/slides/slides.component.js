@@ -64,7 +64,7 @@ class GenomicSlidesComponent {
 
   setupUploader() {
     this.uploader = new this.FileUploader({
-      url: `${CONFIG.ENDPOINTS.API}/reports/${this.report.ident}/genomic/presentation/slide`,
+      url: `${CONFIG.ENDPOINTS.API}/reports/${this.report.ident}/presentation/slide`,
     });
 
     this.uploader.headers.Authorization = this.$localStorage[CONFIG.STORAGE.KEYCLOAK];
