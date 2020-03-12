@@ -74,7 +74,6 @@ const therapeutic = {
   resolve: {
     therapeutic: ['$transition$', 'TherapeuticService',
       async ($transition$, TherapeuticService) => TherapeuticService.all(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
       )],
   },
@@ -114,13 +113,13 @@ const kbMatches = {
       ),
     ],
     novel: ['$transition$', 'AlterationService',
-      async ($transition$, AlterationService) => AlterationService.getAll(
+      async ($transition$, AlterationService) => AlterationService.getType(
         $transition$.params().analysis_report,
         'novel',
       ),
     ],
     unknown: ['$transition$', 'AlterationService',
-      async ($transition$, AlterationService) => AlterationService.getAll(
+      async ($transition$, AlterationService) => AlterationService.getType(
         $transition$.params().analysis_report,
         'unknown',
       ),
