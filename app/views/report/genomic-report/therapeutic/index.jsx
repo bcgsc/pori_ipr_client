@@ -33,7 +33,8 @@ function TherapeuticView(props) {
         columnDefs={columnDefs}
         rowData={therapeuticData}
         editable={reportEdit && !print}
-        EditPopup={EditDialog}
+        EditDialog={EditDialog}
+        addable={reportEdit && !print}
       />
 
       <DataTable
@@ -41,7 +42,8 @@ function TherapeuticView(props) {
         columnDefs={columnDefs}
         rowData={chemoresistanceData}
         editable={reportEdit && !print}
-        EditPopup={EditDialog}
+        EditDialog={EditDialog}
+        addable={reportEdit && !print}
       />
     </>
   );

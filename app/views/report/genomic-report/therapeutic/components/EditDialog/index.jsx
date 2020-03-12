@@ -1,80 +1,88 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import TextField from '@material-ui/core/TextField';
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import kbAutocomplete from '../../../../../../services/reports/kbAutocomplete';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  TextField,
+} from '@material-ui/core';
+import AutocompleteHandler from '../AutocompleteHandler';
 
 /**
  * 
  */
 function EditDialog(props) {
   const {
-    value,
+    editData,
+    open,
+    toggleOpen,
     stopEditing,
-    colDef: { field },
   } = props;
 
-  // const []
-  const [options, setOptions] = useState([]);
-  const [loading, setLoading] = useState(false);
-  
-  const onChange = async (event) => {
-    if (event.target.value.length > 2) {
-      setLoading(true);
-
-      const token = localStorage.getItem(`ngStorage-${CONFIG.STORAGE.KEYCLOAK}`);
-      const autocompleted = await kbAutocomplete(token, 'variant', event.target.value);
-
-      setOptions(autocompleted);
-      setLoading(false);
-    }
-  };
-
-  // useEffect(() => {
-  //   if (loading) {
-  //     // api call here
-  //     const getData = async () => {
-  //       const token = localStorage.getItem(`ngStorage-${CONFIG.STORAGE.KEYCLOAK}`);
-  //       const autocompleted = await kbAutocomplete(token, 'variant', value);
-  //       console.log(autocompleted);
-  //       setOptions(autocompleted);
-  //     };
-  //     getData();
-  //   }
-    
-  //   return () => {
-  //     setLoading(false);
-  //   };
-  // }, [loading]);
+  const dialogTitle = Object.keys(editData).length > 0 ? 'Edit Row' : 'Add Row';
 
   return (
-    <Autocomplete
-      value={value}
-      options={options}
-      getOptionLabel={option => option.displayName || option}
-      renderInput={params => (
-        <TextField
-          {...params}
-          onChange={onChange}
-          InputProps={{
-            ...params.InputProps,
-            endAdornment: (
-              <React.Fragment>
-                {loading ? <CircularProgress color="inherit" size={20} /> : null}
-              </React.Fragment>
-            ),
-          }}
-        />
-      )}
-    />
+    <Dialog open={open} maxWidth="sm" fullWidth>
+      <DialogTitle>{dialogTitle}</DialogTitle>
+      <DialogContent>
+        <form>
+          <div className="edit__row">
+            <FormControl fullWidth>
+              <AutocompleteHandler
+                defaultValue={editData.variant}
+                type="variant"
+                label="Gene and Variant"
+              />
+              <AutocompleteHandler
+                defaultValue={editData.therapy}
+                type="therapy"
+                label="Therapy"
+              />
+              <AutocompleteHandler
+                defaultValue={editData.context}
+                type="context"
+                label="Context"
+              />
+              <AutocompleteHandler
+                defaultValue={editData.evidence}
+                type="evidence"
+                label="Evidence Label"
+              />
+              <TextField
+                label="Notes"
+                variant="outlined"
+                margin="normal"
+                multiline
+              />
+            </FormControl>
+          </div>
+        </form>
+        <DialogActions>
+          <Button color="primary" onClick={toggleOpen}>
+            Cancel
+          </Button>
+          <Button color="primary" onClick={toggleOpen}>
+            Save
+          </Button>
+        </DialogActions>
+      </DialogContent>
+    </Dialog>
   );
 }
 
 EditDialog.propTypes = {
-  value: PropTypes.string.isRequired,
+  editData: PropTypes.objectOf(PropTypes.any),
+  open: PropTypes.bool.isRequired,
+  toggleOpen: PropTypes.func.isRequired,
+  stopEditing: PropTypes.func,
 };
 
-EditDialog.prototype.isPopup = true;
+EditDialog.defaultProps = {
+  editData: {},
+  stopEditing: () => {},
+};
 
 export default EditDialog;
