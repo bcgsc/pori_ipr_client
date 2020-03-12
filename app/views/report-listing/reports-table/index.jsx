@@ -48,7 +48,7 @@ function ReportsTableComponent(props) {
       const [analyst] = report.users
         .filter(u => u.role === 'analyst' && !u.deletedAt)
         .map(u => u.user);
-      
+
       return {
         patientID: report.patientId,
         analysisBiopsy: report.biopsyName,
@@ -67,13 +67,13 @@ function ReportsTableComponent(props) {
 
   const onSelectionChanged = () => {
     const selectedRow = gridApi.current.getSelectedRows();
-    const [{ patientID, reportID }] = selectedRow;
+    const [{ reportID }] = selectedRow;
     let [{ reportType }] = selectedRow;
 
     // Convert displayed report type (Genomic, Targeted gene) back to the API values
     reportType = reportType === 'Genomic' ? 'genomic' : 'probe';
-    $state.go(`root.reportlisting.pog.${reportType}.summary`, {
-      POG: patientID, analysis_report: reportID,
+    $state.go(`root.reportlisting.${reportType}.summary`, {
+      analysis_report: reportID,
     });
   };
 
