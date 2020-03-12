@@ -54,7 +54,7 @@ function ReportsTableComponent(props) {
         analysisBiopsy: report.biopsyName,
         reportType: report.type === 'genomic' ? 'Genomic' : 'Targeted Gene',
         state: report.state,
-        caseType: report.type,
+        caseType: report.patientInformation.caseType,
         project: report.projects.map(project => project.name).sort().join(', '),
         physician: report.patientInformation.physician,
         analyst: analyst ? `${analyst.firstName} ${analyst.lastName}` : null,

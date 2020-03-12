@@ -1,12 +1,12 @@
-div(ng-if="$ctrl.report.type.toLowerCase() === 'pediatric'").pediatric_flag
+div(ng-if="$ctrl.report.patientInformation.caseType.toLowerCase() === 'pediatric'").pediatric_flag
   span Pediatric
 div.header
   h1(layout="row")
-    span(flex, ng-if="$ctrl.report.type === 'genomic'", ui-sref="root.reportlisting.pog.genomic.summary({POG: $ctrl.pog.POGID, analysis_report: $ctrl.report.ident})").clickable {{$ctrl.pog.POGID}}
-    span(flex, ng-if="$ctrl.report.type === 'probe'", ui-sref="root.reportlisting.pog.probe.summary({POG: $ctrl.pog.POGID, analysis_report: $ctrl.report.ident})").clickable {{$ctrl.pog.POGID}}
+    span(flex, ng-if="$ctrl.report.type === 'genomic'", ui-sref="root.reportlisting.genomic.summary({analysis_report: $ctrl.report.ident})").clickable {{$ctrl.report.patientId}}
+    span(flex, ng-if="$ctrl.report.type === 'probe'", ui-sref="root.reportlisting.probe.summary({analysis_report: $ctrl.report.ident})").clickable {{$ctrl.report.patientId}}
     span(layout="row").text-small
       report-state(state="$ctrl.report.state")
-  
+
   div(layout="row").subheader
     span(flex) {{$ctrl.report.patientInformation.tumourType}}
     span
@@ -27,7 +27,7 @@ div(layout="row", layout-align="space around center").details
   div(ng-if="$ctrl.report.type === 'genomic'")
     span Ploidy
     span {{$ctrl.getPloidy()}}
-  
+
 
 div(layout="row", ng-if="$ctrl.report.type === 'genomic'").details
   div(flex)

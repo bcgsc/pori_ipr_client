@@ -291,7 +291,6 @@ class GermlineReportComponent {
   async removeReview(review) {
     try {
       await this.GermlineService.removeReview(
-        this.report.analysis.pog.POGID,
         this.report.biopsyName,
         this.report.ident,
         review.ident,

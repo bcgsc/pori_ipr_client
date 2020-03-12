@@ -30,7 +30,7 @@ md-content
         dd(flex).patient-info__description-details {{$ctrl.report.createdAt | date: 'yyyy-MM-dd'}}
 
         dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Case Type:
-        dd(flex).patient-info__description-details {{$ctrl.report.type}}
+        dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.caseType}}
 
         dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Biopsy Details:
         dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.biopsySite}}
