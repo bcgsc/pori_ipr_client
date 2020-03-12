@@ -5,20 +5,19 @@ class AlterationService {
     this.api = `${CONFIG.ENDPOINTS.API}/reports`;
   }
 
-  baseUrl(report, type) {
-    return `${this.api}/${report}/${type}/detailed-genomic-analysis/alterations`;
+  baseUrl(report) {
+    return `${this.api}/${report}/detailed-genomic-analysis/alterations`;
   }
 
   /**
    * Retrieve all probe alterations for report
    *
    * @param {String} report - report ident
-   * @param {String} type - report type eg. genomic
    *
    * @returns {Promise} - result of API call
    */
-  async getAll(report, type) {
-    const { data } = await this.$http.get(this.baseUrl(report, type));
+  async getAll(report) {
+    const { data } = await this.$http.get(this.baseUrl(report));
     return data;
   }
 
@@ -26,15 +25,14 @@ class AlterationService {
    * Update probe alteration for report
    *
    * @param {String} report - report ident
-   * @param {String} type - report type eg. genomic
    * @param {String} ident - alteration uuid
    * @param {Object} payload - alteration object payload
    *
    * @returns {Promise} - result of API call
    */
-  async update(report, type, ident, payload) {
+  async update(report, ident, payload) {
     const { data } = await this.$http.put(
-      `${this.baseUrl(report, type)}/${ident}`,
+      `${this.baseUrl(report)}/${ident}`,
       payload,
     );
     return data;
@@ -44,15 +42,14 @@ class AlterationService {
    * Create new probe alteration for report
    *
    * @param {String} report - report ident
-   * @param {String} type - report type eg. genomic
    * @param {String} ident - alteration uuid
    * @param {Object} payload - alteration object payload
    *
    * @returns {Promise} - result of API call
    */
-  async create(report, type, ident, payload) {
+  async create(report, ident, payload) {
     const { data } = await this.$http.post(
-      `${this.baseUrl(report, type)}/${ident}`,
+      `${this.baseUrl(report)}/${ident}`,
       payload,
     );
     return data;
@@ -62,14 +59,13 @@ class AlterationService {
    * Retrieve all probe alterations for report by type
    *
    * @param {String} report - report ident
-   * @param {String} type - report type eg. genomic
    * @param {String} alterationType - alteration type
    *
    * @returns {Promise} - result of API call
    */
-  async getType(report, type, alterationType) {
+  async getType(report, alterationType) {
     const { data } = await this.$http.get(
-      `${this.baseUrl(report, type)}/${alterationType}`,
+      `${this.baseUrl(report)}/${alterationType}`,
     );
     return data;
   }

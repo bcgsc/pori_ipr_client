@@ -40,18 +40,15 @@ const detailedGenomicAnalysis = {
     alterations: ['$transition$', 'AlterationService',
       async ($transition$, AlterationService) => AlterationService.getAll(
         $transition$.params().analysis_report,
-        'probe',
       )],
     approvedThisCancer: ['$transition$', 'AlterationService',
       async ($transition$, AlterationService) => AlterationService.getType(
         $transition$.params().analysis_report,
-        'probe',
         'thisCancer',
       )],
     approvedOtherCancer: ['$transition$', 'AlterationService',
       async ($transition$, AlterationService) => AlterationService.getType(
         $transition$.params().analysis_report,
-        'probe',
         'otherCancer',
       )],
   },
