@@ -84,7 +84,7 @@ class ProjectService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async addReport(project, report) {
-    const { data } = await this.$http.post(`${this.api}/${project}`, { report });
+    const { data } = await this.$http.post(`${this.api}/${project}/reports`, { report });
     return data;
   }
 
@@ -96,7 +96,7 @@ class ProjectService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async removeReport(project, report) {
-    const { data } = await this.$http.delete(`${this.api}/${project}`, { data: { report } });
+    const { data } = await this.$http.delete(`${this.api}/${project}/reports`, { data: { report } });
     return data;
   }
 }
