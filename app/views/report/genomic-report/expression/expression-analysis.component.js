@@ -5,7 +5,6 @@ const bindings = {
   report: '<',
   mutationSummary: '<',
   outliers: '<',
-  drugTargets: '<',
   densityGraphs: '<',
 };
 
