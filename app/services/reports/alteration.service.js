@@ -6,7 +6,7 @@ class AlterationService {
   }
 
   baseUrl(report) {
-    return `${this.api}/${report}/detailed-genomic-analysis/alterations`;
+    return `${this.api}/${report}/kb-matches`;
   }
 
   /**
@@ -23,6 +23,7 @@ class AlterationService {
 
   /**
    * Update probe alteration for report
+   * Not actually used anywhere anymore
    *
    * @param {String} report - report ident
    * @param {String} ident - alteration uuid
