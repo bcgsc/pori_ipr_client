@@ -2,33 +2,30 @@ class TherapeuticOptionsService {
   /* @ngInject */
   constructor($http) {
     this.$http = $http;
-    this.api = `${CONFIG.ENDPOINTS.API}/POG`;
+    this.api = `${CONFIG.ENDPOINTS.API}/reports`;
   }
 
   /**
    * Get all therapeutic targets
-   * @param {String} pogID - POGID this entry will be related to
    * @param {String} report - report ident
    * @return {Promise} - Resolves with the new data entry
    */
-  async all(pogID, report) {
+  async all(report) {
     const { data } = await this.$http.get(
-      `${this.api}/${pogID}/report/${report}/genomic/therapeuticTargets`,
+      `${this.api}/${report}/therapeutic-targets`,
     );
     return data;
   }
 
   /**
    * Create a new Therapeutic Target Entry
-   *
-   * @param {String} pogID - POGID this entry will be related to
    * @param {String} report - report ident
    * @param {Object} entry - The therapeutic target entry to be created
    * @return {Promise} - Resolves with the new data entry
    */
-  async create(pogID, report, entry) {
+  async create(report, entry) {
     const { data } = await this.$http.post(
-      `${this.api}/${pogID}/report/${report}/genomic/therapeuticTargets`,
+      `${this.api}/${report}/therapeutic-targets`,
       entry,
     );
     return data;
@@ -36,30 +33,27 @@ class TherapeuticOptionsService {
 
   /**
    * Retrieve therapeutic target entry
-   * @param {String} pogID - PogID to be queried against (eg. POG123)
    * @param {String} report - report ident
    * @param {String} ident - UUID of entry
    * @returns {Promise} - Resolves with object of entry
    */
-  async retrieve(pogID, report, ident) {
+  async retrieve(report, ident) {
     const { data } = await this.$http.get(
-      `${this.api}/${pogID}/report/${report}/genomic/therapeuticTargets/${ident}`,
+      `${this.api}/${report}/therapeutic-targets/${ident}`,
     );
     return data;
   }
 
   /**
    * Update a single therapeutic target entry
-   *
-   * @param {String} pogID - PogID to be queried against (eg. POG123)
    * @param {String} report - report ident
    * @param {String} ident - UUID of entry
    * @param {Object} entry - Object of entry to be created
    * @returns {Promise} - Resolves with object of entry
    */
-  async update(pogID, report, ident, entry) {
+  async update(report, ident, entry) {
     const { data } = await this.$http.put(
-      `${this.api}/${pogID}/report/${report}/genomic/therapeuticTargets/${ident}`,
+      `${this.api}/${report}/therapeutic-targets/${ident}`,
       entry,
     );
     return data;
@@ -67,15 +61,13 @@ class TherapeuticOptionsService {
 
   /**
    * Remove therapeutic target entry
-   *
-   * @param {String} pogID - PogID to be queried against (eg. POG123)
    * @param {String} report - report ident
    * @param {String} ident - UUID of entry
    * @returns {Promise} - Resolves with object of entry
    */
-  async remove(pogID, report, ident) {
+  async remove(report, ident) {
     const { data } = await this.$http.delete(
-      `${this.api}/${pogID}/report/${report}/genomic/therapeuticTargets/${ident}`,
+      `${this.api}/${report}/therapeutic-targets/${ident}`,
     );
     return data;
   }

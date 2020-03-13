@@ -2,7 +2,6 @@ import template from './expression-analysis.pug';
 import './expression-analysis.scss';
 
 const bindings = {
-  pog: '<',
   report: '<',
   mutationSummary: '<',
   outliers: '<',
@@ -21,13 +20,13 @@ class ExpressionAnalysisComponent {
     this.expOutliers = {};
     /* can remove next line when API returns array */
     this.densityGraphs = Object.values(this.densityGraphs);
-    
+
     this.expSummaryMap = {
       clinical: 'Expression Level Outliers of Potential Clinical Relevance',
       nostic: 'Expression Level Outliers of Prognostic or Diagnostic Relevance',
       biological: 'Expression Level Outliers of Biological Relevance',
     };
-    
+
     this.mRNAOutliersMap = {
       upreg_onco: 'Up-Regulated Oncogenes',
       downreg_tsg: 'Down-Regulated Tumour Suppressor Genes',
@@ -43,12 +42,12 @@ class ExpressionAnalysisComponent {
   colourHex(hex) {
     return hex.match(/([A-z0-9]{6}$)/)[0];
   }
-  
+
   getPtxComparator() {
     if (!this.outliers.length) {
       return { comparator: 'N/A', sumSamples: 0 };
     }
-    
+
     let comparator;
     if (this.outliers[0].ptxPercCol) {
       /* Get part of substring. Ex: PTX_POG_OV_percentile returns OV */
@@ -61,7 +60,7 @@ class ExpressionAnalysisComponent {
     }
     return comparator;
   }
-  
+
   searchDrugs(query) {
     return (drug) => {
       if (!query) {
@@ -70,14 +69,14 @@ class ExpressionAnalysisComponent {
       // Rever to false return
       let result = false;
       const names = [drug.gene, drug.lohRegion, drug.drugOptions].join().toLowerCase();
-      
+
       if (names.includes(query.toLowerCase())) {
         result = true;
       }
       return result;
     };
   }
-      
+
   // Sort outliers into categories
   processExpression(input) {
     const expressions = {
@@ -87,7 +86,7 @@ class ExpressionAnalysisComponent {
       upreg_onco: [],
       downreg_tsg: [],
     };
-    
+
     const typekey = 'outlierType';
 
     // Run over mutations and group
@@ -98,18 +97,18 @@ class ExpressionAnalysisComponent {
       // Add to type
       expressions[row[typekey]].push(row);
     });
-    
+
     this.expOutliers = expressions;
   }
-  
+
   processGraphs() {
     const graphs = {};
-    
+
     this.densityGraphs.forEach((graph) => {
       const gene = graph.filename.split('.')[0];
       graphs[gene] = graph;
     });
-    
+
     this.densityGraphs = graphs;
   }
 }

@@ -17,13 +17,13 @@ div(layout="column")
               md-icon filter_list
               md-tooltip Filter/Search
       tr
-        th(width="10%") Patient 
-        th(width="10%") Alternate Identifier 
+        th(width="10%") Patient
+        th(width="10%") Alternate Identifier
         th(width="10%") Biopsy Number
-        th(width="20%") Disease 
-        th(width="15%") Physician 
-        th(width="10%") Age 
-        th(width="15%") Status 
+        th(width="20%") Disease
+        th(width="15%") Physician
+        th(width="10%") Age
+        th(width="15%") Status
     tbody
       tr(ng-show="$ctrl.loading").loading
         td(colspan="6").text-center
@@ -34,10 +34,10 @@ div(layout="column")
           span No Reports found on IPR
       tr(ng-repeat="report in $ctrl.reports", ng-hide="$ctrl.loading")
         td
-          span(ui-sref="root.reportlisting.pog.report.genomic.summary({POG: report.pog.POGID, analysis_report: report.ident})", ng-if="$ctrl.type == 'genomic'").link {{report.patientInformation.POGID}}
-          span(ui-sref="root.reportlisting.pog.report.probe.summary({POG: report.pog.POGID, analysis_report: report.ident})", ng-if="$ctrl.type == 'probe'").link {{report.patientInformation.POGID}}
+          span(ui-sref="root.reportlisting.report.genomic.summary({analysis_report: report.ident})", ng-if="$ctrl.type == 'genomic'").link {{report.patientInformation.POGID}}
+          span(ui-sref="root.reportlisting.report.probe.summary({analysis_report: report.ident})", ng-if="$ctrl.type == 'probe'").link {{report.patientInformation.POGID}}
         td {{report.analysis.pog.alternate_identifier || 'N/A'}}
-        td {{report.analysis.analysis_biopsy || 'N/A'}}
+        td {{report.biopsyName || 'N/A'}}
         td {{report.patientInformation.tumourType}}
         td {{report.patientInformation.physician}}
         td {{report.patientInformation.caseType}}

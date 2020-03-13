@@ -29,7 +29,7 @@ class ProjectService {
     const { data } = await this.$http.post(this.api, payload);
     return data;
   }
-    
+
   /**
    * Remove a project
    * @param {Object} project - Project object to delete
@@ -77,26 +77,26 @@ class ProjectService {
   }
 
   /**
-   * Add a pog to a project
+   * Add a report to a project
    * @param {String} project - Project UUID Ident
-   * @param {String} pog - POG UUID ident
-   * @return {Promise} Add pog response data
+   * @param {String} report - report ident
+   * @return {Promise} Add report response data
    * @throws {ErrorType} Thrown when API call fails
    */
-  async addPog(project, pog) {
-    const { data } = await this.$http.post(`${this.api}/${project}/pog`, { pog });
+  async addReport(project, report) {
+    const { data } = await this.$http.post(`${this.api}/${project}/reports`, { report });
     return data;
   }
 
   /**
-   * Remove a pog from a project
+   * Remove a report from a project
    * @param {String} project - Project UUID Ident
-   * @param {String} pog - POG UUID ident
-   * @return {Promise} Remove pog response data
+   * @param {String} report - report ident
+   * @return {Promise} Remove report response data
    * @throws {ErrorType} Thrown when API call fails
    */
-  async removePog(project, pog) {
-    const { data } = await this.$http.delete(`${this.api}/${project}/pog`, { data: { pog } });
+  async removeReport(project, report) {
+    const { data } = await this.$http.delete(`${this.api}/${project}/reports`, { data: { report } });
     return data;
   }
 }

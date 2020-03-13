@@ -2,19 +2,18 @@ class MicrobialService {
   /* @ngInject */
   constructor($http) {
     this.$http = $http;
-    this.api = `${CONFIG.ENDPOINTS.API}/POG`;
+    this.api = `${CONFIG.ENDPOINTS.API}/reports`;
   }
-  
+
   /**
    * Get Microbial Content
-   * @param {String} pogID - PogID of requested resource, eg. POG129
    * @param {String} report - Report ID
    * @return {Promise} API response data
    * @throws {ErrorType} Thrown when API call fails
    */
-  async get(pogID, report) {
+  async get(report) {
     this.$http.get(
-      `${this.api}/${pogID}/report/${report}/genomic/summary/microbial`,
+      `${this.api}/${report}/summary/microbial`,
     );
   }
 }

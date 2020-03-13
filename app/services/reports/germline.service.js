@@ -2,7 +2,7 @@ class GermlineService {
   /* @ngInject */
   constructor($http) {
     this.$http = $http;
-    this.api = `${CONFIG.ENDPOINTS.API}/germline_small_mutation`;
+    this.api = `${CONFIG.ENDPOINTS.API}/germline-small-mutation`;
   }
 
   /**
@@ -150,5 +150,5 @@ class GermlineService {
     return data;
   }
 }
-  
+
 export default GermlineService;

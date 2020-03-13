@@ -2,50 +2,47 @@ class ProbeTargetService {
   /* @ngInject */
   constructor($http) {
     this.$http = $http;
-    this.api = `${CONFIG.ENDPOINTS.API}/POG`;
+    this.api = `${CONFIG.ENDPOINTS.API}/reports`;
   }
 
   /**
    * Retrieve all Probe Targets for this POG
-   * @param {String} pogID - POGID associated with these resource
    * @param {String} report - report ident
    * @return {Promise} API response
    * @throws {ErrorType} Thrown when API call fails
    */
-  async all(pogID, report) {
+  async all(report) {
     const resp = await this.$http.get(
-      `${this.api}/${pogID}/report/${report}/genomic/summary/probeResults`,
+      `${this.api}/${report}/summary/probe-results`,
     );
     return resp.data;
   }
 
   /**
    * Get a Probe Target
-   * @param {String} pogID - POGID, eg POG129
    * @param {String} report - report ident
    * @param {String} ident - UUID4 identity string for entry
    * @return {Promise} API response
    * @throws {ErrorType} Thrown when API call fails
    */
-  async id(pogID, report, ident) {
+  async id(report, ident) {
     const resp = await this.$http.get(
-      `${this.api}/${pogID}/report/${report}/genomic/summary/probeResults/${ident}`,
+      `${this.api}/${report}/summary/probe-results/${ident}`,
     );
     return resp.data;
   }
 
   /**
    * Update a Probe Target
-   * @param {String} pogID - POGID, eg POG129
    * @param {String} report - report ident
    * @param {String} ident - UUID4 identity string for entry
    * @param {*} gai - Genomic Alterations Identified
    * @return {Promise} API response
    * @throws {ErrorType} Thrown when API call fails
    */
-  async update(pogID, report, ident, gai) {
+  async update(report, ident, gai) {
     const resp = await this.$http.put(
-      `${this.api}/${pogID}/report/${report}/genomic/summary/probeResults/${ident}`,
+      `${this.api}/${report}/summary/probe-results/${ident}`,
       gai,
     );
     return resp.data;
@@ -53,15 +50,14 @@ class ProbeTargetService {
 
   /**
    * Remove a Probe Target
-   * @param {String} pogID - POGID, eg POG129
    * @param {String} report - report ident
    * @param {String} ident - UUID4 identity string for entry
    * @return {Promise} API response
    * @throws {ErrorType} Thrown when API call fails
    */
-  async remove(pogID, report, ident) {
+  async remove(report, ident) {
     const resp = await this.$http.delete(
-      `${this.api}/${pogID}/report/${report}/genomic/summary/probeResults/${ident}`,
+      `${this.api}/${report}/summary/probe-results/${ident}`,
     );
     return resp.data;
   }

@@ -2,62 +2,58 @@ class ImageService {
   /* @ngInject */
   constructor($http) {
     this.$http = $http;
-    this.api = `${CONFIG.ENDPOINTS.API}/POG`;
+    this.api = `${CONFIG.ENDPOINTS.API}/reports`;
   }
-  
+
   /**
    * Retrieve one image from API.
-   * @param {String} pogID - pogID as string ex: POG960
    * @param {String} report - Analysis report ident
    * @param {String} key - key
    * @return {Promise} API response data
    * @throws {ErrorType} Thrown when API call fails
    */
-  async get(pogID, report, key) {
+  async get(report, key) {
     const { data } = await this.$http.get(
-      `${this.api}/${pogID}/report/${report}/image/retrieve/${key}`,
+      `${this.api}/${report}/image/retrieve/${key}`,
     );
     return data;
   }
 
   /**
    * Get Density Graphs
-   * @param {String} pogID - pogID as string ex: POG960
    * @param {String} report - Analysis report ident
    * @return {Promise} API response data
    * @throws {ErrorType} Thrown when API call fails
    */
-  async expDensityGraphs(pogID, report) {
+  async expDensityGraphs(report) {
     const { data } = await this.$http.get(
-      `${this.api}/${pogID}/report/${report}/image/expressionDensityGraphs`,
+      `${this.api}/${report}/image/expression-density-graphs`,
     );
     return data;
   }
-  
+
   /**
-   * Retrieve Mutation Summary images for this POG
-   * @param {String} pogID - pogID as string ex: POG960
+   * Retrieve Mutation Summary images for this report
    * @param {String} report - Analysis report ident
    * @return {Promise} API response data
    * @throws {ErrorType} Thrown when API call fails
    */
-  async mutationSummary(pogID, report) {
+  async mutationSummary(report) {
     const { data } = await this.$http.get(
-      `${this.api}/${pogID}/report/${report}/image/mutationSummary`,
+      `${this.api}/${report}/image/mutation-summary`,
     );
     return data;
   }
 
   /**
    * Get Subtype Plots
-   * @param {String} pogID - pogID as string ex: POG960
    * @param {String} report - Analysis report ident
    * @return {Promise} API response data
    * @throws {ErrorType} Thrown when API call fails
    */
-  async subtypePlots(pogID, report) {
+  async subtypePlots(report) {
     const { data } = await this.$http.get(
-      `${this.api}/${pogID}/report/${report}/image/subtypePlots`,
+      `${this.api}/${report}/image/subtype-plots`,
     );
     return data;
   }

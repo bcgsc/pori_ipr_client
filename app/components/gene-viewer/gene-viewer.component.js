@@ -3,7 +3,6 @@ import './gene-viewer.scss';
 
 const bindings = {
   report: '<',
-  pog: '<',
   gene: '<',
 };
 
@@ -31,14 +30,13 @@ class GeneViewerComponent {
         };
         $scope.loading = true;
         $scope.report = this.report;
-        $scope.pog = this.pog;
         $scope.gene = this.gene;
         $scope.samples = [];
         $scope.alterations = {
           therapeutic: [], prognostic: [], diagnostic: [], biological: [], unknown: [],
         };
         $scope.data = await this.GeneViewerService.get(
-          $scope.pog.POGID, $scope.report.ident, $scope.gene,
+          $scope.report.ident, $scope.gene,
         );
 
         $scope.groupEntries = (alterations) => {
@@ -54,9 +52,7 @@ class GeneViewerComponent {
             }
             // Check if it exists already?
             if ($scope.alterations[row.alterationType].length) {
-              const match = $scope.alterations[row.alterationType].findIndex((entry) => {
-                return ((entry.gene === row.gene) && (entry.variant === row.variant));
-              });
+              const match = $scope.alterations[row.alterationType].findIndex(entry => ((entry.gene === row.gene) && (entry.variant === row.variant)));
               if (match > -1) {
                 // Categorical entry already exists
                 $scope.alterations[row.alterationType][match].children.push(row);

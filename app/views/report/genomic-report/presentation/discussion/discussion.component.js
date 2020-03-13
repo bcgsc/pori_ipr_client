@@ -2,7 +2,6 @@ import template from './discussion.pug';
 import './discussion.scss';
 
 const bindings = {
-  pog: '<',
   report: '<',
   discussions: '<',
   user: '<',
@@ -20,13 +19,13 @@ class DiscussionComponent {
   $onInit() {
     this.new = { body: null };
   }
-  
+
   async add() {
     const data = {
       body: this.new.body,
     };
     try {
-      const resp = await this.DiscussionService.create(this.pog.POGID, this.report.ident, data);
+      const resp = await this.DiscussionService.create(this.report.ident, data);
       this.discussions.push(resp);
       this.new.body = null;
       this.$scope.$digest();

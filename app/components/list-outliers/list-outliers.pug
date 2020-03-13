@@ -40,7 +40,7 @@ div.padding-left-10.padding-right-10
         td(ng-click="$ctrl.geneClicked = true; $ctrl.geneIndex = $index", flex).clickable.underlined
          | {{outlier.gene}}
         gene-viewer(ng-if="$ctrl.geneClicked", ng-init="$ctrl.geneClicked = false",
-          report="$ctrl.report", pog="$ctrl.pog", gene="$ctrl.outliers[$ctrl.geneIndex].gene")
+          report="$ctrl.report", gene="$ctrl.outliers[$ctrl.geneIndex].gene")
         td
           span(ng-if="outlier.expType === 'rna'") mRNA
           span(ng-if="outlier.expType === 'protein'") Protein
@@ -61,4 +61,3 @@ div.padding-left-10.padding-right-10
             md-tooltip View Details
         detail-viewer(ng-if="$ctrl.detailClicked", ng-init="$ctrl.detailClicked = false",
           rows="$ctrl.outliers", index="$ctrl.detailIndex")
-

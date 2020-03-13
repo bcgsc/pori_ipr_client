@@ -26,7 +26,7 @@ section.material-section.slide.presentation
             md-input-container(flex).name
               input(ng-model="$ctrl.new.name", placeholder="Slide Name", flex)
             md-input-container(flex)
-              input(type="file" nv-file-select="" uploader="$ctrl.uploader", ng-model="$ctrl.new.file", flex, ng-disabled="$ctrl.new.name.length === 0")
+              input(aria-label="Slide Upload" type="file" nv-file-select="" uploader="$ctrl.uploader", ng-model="$ctrl.new.file", flex, ng-disabled="$ctrl.new.name.length === 0")
               span.hint(ng-if="$ctrl.new.name.length === 0")
                 md-icon.small keyboard_arrow_left
                 | Slide name must be entered before a file can be selected.

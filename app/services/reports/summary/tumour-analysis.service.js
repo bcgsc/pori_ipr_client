@@ -2,32 +2,30 @@ class TumourAnalysisService {
   /* @ngInject */
   constructor($http) {
     this.$http = $http;
-    this.api = `${CONFIG.ENDPOINTS.API}/POG`;
+    this.api = `${CONFIG.ENDPOINTS.API}/reports`;
   }
-  
+
   /**
-   * @param {String} pogID - pogID as string
    * @param {String} report - analysis_report string
    * @return {Promise} API response data
    * @throws {ErrorType} Thrown when API call fails
    */
-  async get(pogID, report) {
+  async get(report) {
     const resp = await this.$http.get(
-      `${this.api}/${pogID}/report/${report}/genomic/summary/tumourAnalysis`,
+      `${this.api}/${report}/summary/tumour-analysis`,
     );
     return resp.data;
   }
-  
+
   /**
-   * @param {String} pogID - pogID as string
    * @param {String} report - analysis_report string
    * @param {Object} analysis - analysis object
    * @return {Promise} API response data
    * @throws {ErrorType} Thrown when API call fails
    */
-  async update(pogID, report, analysis) {
+  async update(report, analysis) {
     const resp = await this.$http.put(
-      `${this.api}/${pogID}/report/${report}/genomic/summary/tumourAnalysis/`, analysis,
+      `${this.api}/${report}/summary/tumour-analysis/`, analysis,
     );
     return resp.data;
   }

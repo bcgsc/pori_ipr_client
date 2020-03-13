@@ -2,22 +2,19 @@ import template from './probe-report.pug';
 import './probe-report.scss';
 
 const bindings = {
-  pog: '<',
   report: '<',
   reportEdit: '<',
 };
 
 class ProbeComponent {
   /* @ngInject */
-  constructor($state, $window, PogService) {
+  constructor($state, $window) {
     this.$state = $state;
     this.$window = $window;
-    this.PogService = PogService;
   }
 
   openPrint() {
     this.$window.open(this.$state.href('print.probe', {
-      pog: this.pog.POGID,
       report: this.report.ident,
     }), '_blank');
   }

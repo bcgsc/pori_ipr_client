@@ -2,33 +2,31 @@ class SmallMutationsService {
   /* @ngInject */
   constructor($http) {
     this.$http = $http;
-    this.api = `${CONFIG.ENDPOINTS.API}/POG`;
+    this.api = `${CONFIG.ENDPOINTS.API}/reports`;
   }
 
   /**
    * Get all small mutations
-   * @param {String} pog - pog as a String ex: POG123
    * @param {String} report - report ident
    * @return {Promise} API response data
    */
-  async all(pog, report) {
+  async all(report) {
     const { data } = await this.$http.get(
-      `${this.api}/${pog}/report/${report}/genomic/somaticMutations/smallMutations`,
+      `${this.api}/${report}/somatic-mutations/small-mutations`,
     );
     return data;
   }
 
   /**
    * Update mutations
-   * @param {String} pog - pog as a String ex: POG123
    * @param {String} report - report ident
    * @param {String} ident - UUID ident
    * @param {*} payload - Update data
    * @return {Promise} API response data
    */
-  async update(pog, report, ident, payload) {
+  async update(report, ident, payload) {
     const { data } = await this.$http.put(
-      `${this.api}/${pog}/report/${report}/genomic/somaticMutations/smallMutations/${ident}`,
+      `${this.api}/${report}/somatic-mutations/small-mutations/${ident}`,
       payload,
     );
     return data;
@@ -36,14 +34,13 @@ class SmallMutationsService {
 
   /**
    * Get alterations by specific type
-   * @param {String} pog - pog as a String ex: POG123
    * @param {String} report - report ident
    * @param {String} type - type to retrieve
    * @return {Promise} API response data
    */
-  async getType(pog, report, type) {
+  async getType(report, type) {
     const { data } = await this.$http.get(
-      `${this.api}/${pog}/report/${report}/genomic/somaticMutations/smallMutations/${type}`,
+      `${this.api}/${report}/somatic-mutations/small-mutations/${type}`,
     );
     return data;
   }

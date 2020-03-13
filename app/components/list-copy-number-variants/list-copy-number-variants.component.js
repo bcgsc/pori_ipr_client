@@ -2,7 +2,6 @@ import template from './list-copy-number-variants.pug';
 
 const bindings = {
   cnvs: '<',
-  pog: '<',
   report: '<',
 };
 

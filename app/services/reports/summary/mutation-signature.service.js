@@ -2,19 +2,18 @@ class MutationSignatureService {
   /* @ngInject */
   constructor($http) {
     this.$http = $http;
-    this.api = `${CONFIG.ENDPOINTS.API}/POG`;
+    this.api = `${CONFIG.ENDPOINTS.API}/reports`;
   }
 
   /**
    * Retrieves all mutation signatures for a given pogID
-   * @param {String} pogID - ID as String
    * @param {String} report - report ident String
    * @return {Promise} API response data
    * @throws {ErrorType} Thrown when API call fails
    */
-  async all(pogID, report) {
+  async all(report) {
     const resp = await this.$http.get(
-      `${this.api}/${pogID}/report/${report}/genomic/somaticMutations/mutationSignature`,
+      `${this.api}/${report}/somatic-mutations/mutation-signature`,
     );
     return resp.data;
   }

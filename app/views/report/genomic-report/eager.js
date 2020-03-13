@@ -1,90 +1,90 @@
 const genomic = {
-  name: 'root.reportlisting.pog.genomic',
-  url: '/genomic',
+  name: 'root.reportlisting.genomic',
+  url: '/report/:analysis_report/genomic',
   lazyLoad: async ($transition$) => {
     const mod = await import('./genomic-report.module');
-    $transition$.router.stateRegistry.deregister('root.reportlisting.pog.genomic');
+    $transition$.router.stateRegistry.deregister('root.reportlisting.genomic');
     return $transition$.injector().native.loadNewModules([mod.default]);
   },
 };
 
 const summary = {
-  name: 'root.reportlisting.pog.genomic.summary',
+  name: 'root.reportlisting.genomic.summary',
   url: '/summary',
 };
 
 const analystComments = {
-  name: 'root.reportlisting.pog.genomic.analystComments',
+  name: 'root.reportlisting.genomic.analystComments',
   url: '/analystComments',
 };
 
 const pathwayAnalysis = {
-  name: 'root.reportlisting.pog.genomic.pathwayAnalysis',
+  name: 'root.reportlisting.genomic.pathwayAnalysis',
   url: '/pathwayAnalysis',
 };
 
 const therapeutic = {
-  name: 'root.reportlisting.pog.genomic.therapeutic',
+  name: 'root.reportlisting.genomic.therapeutic',
   url: '/therapeutic',
 };
 
 const slides = {
-  name: 'root.reportlisting.pog.genomic.slide',
+  name: 'root.reportlisting.genomic.slide',
   url: '/slide',
 };
 
 const discussion = {
-  name: 'root.reportlisting.pog.genomic.discussion',
+  name: 'root.reportlisting.genomic.discussion',
   url: '/discussion',
 };
 
 const kbMatches = {
-  name: 'root.reportlisting.pog.genomic.kbmatches',
+  name: 'root.reportlisting.genomic.kbmatches',
   url: '/kbmatches',
 };
 
 const microbial = {
-  name: 'root.reportlisting.pog.genomic.microbial',
+  name: 'root.reportlisting.genomic.microbial',
   url: '/microbial',
 };
 
 const spearman = {
-  name: 'root.reportlisting.pog.genomic.spearman',
+  name: 'root.reportlisting.genomic.spearman',
   url: '/spearman',
 };
 
 const diseaseSpecific = {
-  name: 'root.reportlisting.pog.genomic.diseaseSpecificAnalysis',
+  name: 'root.reportlisting.genomic.diseaseSpecificAnalysis',
   url: '/diseaseSpecificAnalysis',
 };
 
 const smallMutations = {
-  name: 'root.reportlisting.pog.genomic.smallMutations',
+  name: 'root.reportlisting.genomic.smallMutations',
   url: '/smallMutations',
 };
 
 const copyNumber = {
-  name: 'root.reportlisting.pog.genomic.copyNumberAnalyses',
+  name: 'root.reportlisting.genomic.copyNumberAnalyses',
   url: '/copyNumberAnalyses',
 };
 
 const structuralVariants = {
-  name: 'root.reportlisting.pog.genomic.structuralVariation',
+  name: 'root.reportlisting.genomic.structuralVariation',
   url: '/structuralVariation',
 };
 
 const expression = {
-  name: 'root.reportlisting.pog.genomic.expressionAnalysis',
+  name: 'root.reportlisting.genomic.expressionAnalysis',
   url: '/expressionAnalysis',
 };
 
 const appendices = {
-  name: 'root.reportlisting.pog.genomic.appendices',
+  name: 'root.reportlisting.genomic.appendices',
   url: '/appendices',
 };
 
 const settings = {
-  name: 'root.reportlisting.pog.genomic.reportSettings',
+  name: 'root.reportlisting.genomic.reportSettings',
   url: '/reportSettings',
 };
 

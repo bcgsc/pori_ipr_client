@@ -10,7 +10,7 @@ md-dialog(layout="column", aria-label="User Role", ng-cloak, flex=35)
       div(layout="column")
         p Are you sure you want to delete this report?
         ul.delete-report__list
-          li.delete-report__list-elem Patient: {{report.pog.POGID}}
+          li.delete-report__list-elem Patient: {{report.patientId}}
           li.delete-report__list-elem Report Ident: {{report.ident}}
 
         p Please type the Report Ident to confirm deletion:
@@ -19,7 +19,7 @@ md-dialog(layout="column", aria-label="User Role", ng-cloak, flex=35)
           label Report Ident
           input(ng-model="confirmText", required)
           span(ng-if="form.$error.invalid").delete-report__invalid Fields do not match
-        
+
     md-dialog-actions(layout="row", layout-align="end center")
       md-button(ng-click="cancel()").md-primary Cancel
       md-button(type="submit").md-warn.md-raised Delete

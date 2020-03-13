@@ -237,8 +237,8 @@ class GermlineReportComponent {
 
     await Promise.all(
       this.report.variants.map(variant => this.GermlineService.updateVariant(
-        this.report.analysis.pog.POGID,
-        this.report.analysis.analysis_biopsy,
+        this.report.patientId,
+        this.report.biopsyName,
         this.report.ident,
         variant.ident,
         variant,
@@ -255,8 +255,8 @@ class GermlineReportComponent {
 
     try {
       const review = await this.GermlineService.addReview(
-        this.report.analysis.pog.POGID,
-        this.report.analysis.analysis_biopsy,
+        this.report.patientId,
+        this.report.biopsyName,
         this.report.ident,
         data,
       );
@@ -273,8 +273,8 @@ class GermlineReportComponent {
 
     try {
       const result = await this.GermlineService.updateVariant(
-        this.report.analysis.pog.POGID,
-        this.report.analysis.analysis_biopsy,
+        this.report.patientId,
+        this.report.biopsyName,
         this.report.ident,
         variant.ident,
         variant,
@@ -291,8 +291,8 @@ class GermlineReportComponent {
   async removeReview(review) {
     try {
       await this.GermlineService.removeReview(
-        this.report.analysis.pog.POGID,
-        this.report.analysis.analysis_biopsy,
+        this.report.patientId,
+        this.report.biopsyName,
         this.report.ident,
         review.ident,
       );
@@ -320,8 +320,8 @@ class GermlineReportComponent {
         return;
       }
       await this.GermlineService.deleteReport(
-        this.report.analysis.pog.POGID,
-        this.report.analysis.analysis_biopsy,
+        this.report.patientId,
+        this.report.biopsyName,
         this.report.ident,
       );
       this.$state.go('root.germline.board');

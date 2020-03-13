@@ -49,4 +49,4 @@ section
       div(ng-repeat="(title, svs) in $ctrl.StrucVars track by $index")
         h3.title {{$ctrl.titleMap[title]}}
 
-        list-structural-variants(svs="svs", pog="$ctrl.pog", report="$ctrl.report", mavis="$ctrl.mavis")
+        list-structural-variants(svs="svs", report="$ctrl.report", mavis="$ctrl.mavis")

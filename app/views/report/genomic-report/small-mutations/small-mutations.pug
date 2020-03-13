@@ -48,7 +48,7 @@ section
 
 
       h3.title Mutational Spectrum
-      mutation-signature(pog="$ctrl.pog", report="$ctrl.report", mutation-signature="$ctrl.mutationSignature", mutation-summary="$ctrl.mutationSummary")
+      mutation-signature(report="$ctrl.report", mutation-signature="$ctrl.mutationSignature", mutation-summary="$ctrl.mutationSummary")
 
       div(layout="column", layout-align="center center")
         div
@@ -63,4 +63,4 @@ section
         h3(ng-if="title === 'clinical'").title Variants of Clinical Relevance
         h3(ng-if="title === 'nostic'").title Variants of Prognostic or Diagnostic Relevance
 
-        small-mutation-variants(mutations="smallMutation", pog="$ctrl.pog", report="$ctrl.report")
+        small-mutation-variants(mutations="smallMutation", report="$ctrl.report")

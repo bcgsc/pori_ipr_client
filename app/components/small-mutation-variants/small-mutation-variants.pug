@@ -24,7 +24,7 @@ div(flex, layout="column")
         div(ng-click="$ctrl.geneClicked = true; $ctrl.geneIndex = $index", flex).clickable.underlined
          | {{mutation.gene}}
         gene-viewer(ng-if="$ctrl.geneClicked", ng-init="$ctrl.geneClicked = false",
-          report="$ctrl.report", pog="$ctrl.pog", gene="$ctrl.mutations[$ctrl.geneIndex].gene")
+          report="$ctrl.report", gene="$ctrl.mutations[$ctrl.geneIndex].gene")
         div(flex=15, md-truncate) {{mutation.transcript}}
         div(flex) {{mutation.proteinChange}}
         div(flex, md-truncate) {{mutation.location}}

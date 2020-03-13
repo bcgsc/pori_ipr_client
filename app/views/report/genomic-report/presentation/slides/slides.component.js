@@ -2,7 +2,6 @@ import template from './slides.pug';
 import './slides.scss';
 
 const bindings = {
-  pog: '<',
   report: '<',
   slides: '<',
   print: '<',
@@ -38,7 +37,7 @@ class GenomicSlidesComponent {
     this.selectedItem = null;
     this.uploader = this.setupUploader();
   }
-  
+
   // Remove a slide entry
   async remove(slide) {
     const confirm = this.$mdDialog.confirm()
@@ -48,10 +47,8 @@ class GenomicSlidesComponent {
 
     try {
       await this.$mdDialog.show(confirm);
-      await this.SlidesService.remove(this.pog.POGID, this.report.ident, slide.ident);
-      this.slides = this.slides.filter((entry) => {
-        return entry.ident !== slide.ident;
-      });
+      await this.SlidesService.remove(this.report.ident, slide.ident);
+      this.slides = this.slides.filter(entry => entry.ident !== slide.ident);
     } catch (err) {
       this.$mdToast.showSimple('No changes were made');
     } finally {
@@ -67,7 +64,7 @@ class GenomicSlidesComponent {
 
   setupUploader() {
     this.uploader = new this.FileUploader({
-      url: `${CONFIG.ENDPOINTS.API}/POG/${this.pog.POGID}/report/${this.report.ident}/genomic/presentation/slide`,
+      url: `${CONFIG.ENDPOINTS.API}/reports/${this.report.ident}/presentation/slide`,
     });
 
     this.uploader.headers.Authorization = this.$localStorage[CONFIG.STORAGE.KEYCLOAK];
@@ -97,7 +94,7 @@ class GenomicSlidesComponent {
       // Add to tabs and notify user of great success
       this.$mdToast.showSimple('The slide was successfully uploaded');
       this.slides = await this.SlidesService.all(
-        this.pog.POGID, this.report.ident,
+        this.report.ident,
       );
       this.new.name = '';
       this.addStep = 'select';

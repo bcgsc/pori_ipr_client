@@ -3,7 +3,6 @@ import editTemplate from './analyst-comments-edit.pug';
 import './analyst-comments.scss';
 
 const bindings = {
-  pog: '<',
   print: '<',
   report: '<',
   reportEdit: '<',
@@ -12,18 +11,17 @@ const bindings = {
 
 class AnalystCommentsComponent {
   /* @ngInject */
-  constructor($scope, $mdDialog, $mdToast, $sce, PogService, AnalystCommentsService) {
+  constructor($scope, $mdDialog, $mdToast, $sce, AnalystCommentsService) {
     this.$scope = $scope;
     this.$mdDialog = $mdDialog;
     this.$mdToast = $mdToast;
     this.$sce = $sce;
-    this.PogService = PogService;
     this.AnalystCommentsService = AnalystCommentsService;
   }
 
   // Sign The comments
   async sign(role) {
-    const resp = await this.AnalystCommentsService.sign(this.pog.POGID, this.report.ident, role);
+    const resp = await this.AnalystCommentsService.sign(this.report.ident, role);
     this.analystComments = resp;
     this.$scope.$digest();
   }
@@ -31,7 +29,7 @@ class AnalystCommentsComponent {
   // Sign The comments
   async revokeSign(role) {
     const resp = await this.AnalystCommentsService.revokeSign(
-      this.pog.POGID, this.report.ident, role,
+      this.report.ident, role,
     );
     this.analystComments = resp;
     this.$scope.$digest();
@@ -54,7 +52,7 @@ class AnalystCommentsComponent {
           scope.update = async () => {
             try {
               await this.AnalystCommentsService.update(
-                this.pog.POGID, this.report.ident, scope.analystComments,
+                this.report.ident, scope.analystComments,
               );
               this.$mdDialog.hide({
                 message: 'Entry has been updated',

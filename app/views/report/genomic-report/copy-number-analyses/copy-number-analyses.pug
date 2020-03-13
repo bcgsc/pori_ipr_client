@@ -19,7 +19,7 @@ section
       div(ng-repeat="(title, cnvs) in $ctrl.cnvGroups track by $index")
         h3.title {{$ctrl.titleMap[title]}}
 
-        list-copy-number-variants(cnvs="cnvs", pog="$ctrl.pog", report="$ctrl.report")
+        list-copy-number-variants(cnvs="cnvs", report="$ctrl.report")
 
     div(layout="column", flex).bg-white
       h2.title Copy Number & LOH

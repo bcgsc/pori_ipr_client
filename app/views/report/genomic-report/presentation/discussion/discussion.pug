@@ -5,7 +5,7 @@ section.material-section.discussion.presentation
     div.analysis-report-section
       div(layout="column")
 
-        discussion-entry(patient="$ctrl.pog", report="$ctrl.report", entry="discussion", user="$ctrl.user", ng-repeat="discussion in $ctrl.discussions").discussion
+        discussion-entry(report="$ctrl.report", entry="discussion", user="$ctrl.user", ng-repeat="discussion in $ctrl.discussions").discussion
 
         div.add-discussion
           form(name="DiscussionEntry", ng-submit="$ctrl.add(DiscussionEntry)")
