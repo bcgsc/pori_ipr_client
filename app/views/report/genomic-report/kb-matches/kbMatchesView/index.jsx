@@ -25,9 +25,9 @@ const coalesceEntries = (entries) => {
 
 const extractCategories = (entries, category) => {
   const grouped = new Set();
-  
+
   entries.forEach((row) => {
-    if (row.alterationType === category) {
+    if (row.category === category) {
       grouped.add(row);
     }
   });
@@ -103,7 +103,7 @@ function KBMatchesView(props) {
       show: false,
     },
   });
-  
+
 
   return (
     <KbMatchesComponent

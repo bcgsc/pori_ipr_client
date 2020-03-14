@@ -62,8 +62,8 @@ const columnDefs = [{
   hide: true,
 },
 {
-  headerName: 'Alteration Type',
-  field: 'alterationType',
+  headerName: 'Category',
+  field: 'category',
   hide: true,
 },
 {

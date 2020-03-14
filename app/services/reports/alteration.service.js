@@ -60,13 +60,13 @@ class AlterationService {
    * Retrieve all probe alterations for report by type
    *
    * @param {String} report - report ident
-   * @param {String} alterationType - alteration type
+   * @param {String} category - alteration type
    *
    * @returns {Promise} - result of API call
    */
-  async getType(report, alterationType) {
+  async getType(report, category) {
     const { data } = await this.$http.get(
-      `${this.baseUrl(report)}/${alterationType}`,
+      `${this.baseUrl(report)}/${category}`,
     );
     return data;
   }

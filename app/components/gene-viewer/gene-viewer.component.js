@@ -46,23 +46,23 @@ class GeneViewerComponent {
             if (!$scope.samples.includes(row.sample)) {
               $scope.samples.push(row.sample);
             }
-            // Create new alteration type if it's not existing
-            if (!(Object.prototype.hasOwnProperty.call($scope.alterations, row.alterationType))) {
-              $scope.alterations[row.alterationType] = [];
+            // Create new category(alteration type) if it's not existing
+            if (!(Object.prototype.hasOwnProperty.call($scope.alterations, row.category))) {
+              $scope.alterations[row.category] = [];
             }
             // Check if it exists already?
-            if ($scope.alterations[row.alterationType].length) {
-              const match = $scope.alterations[row.alterationType].findIndex(entry => ((entry.gene === row.gene) && (entry.variant === row.variant)));
+            if ($scope.alterations[row.category].length) {
+              const match = $scope.alterations[row.category].findIndex(entry => ((entry.gene === row.gene) && (entry.variant === row.variant)));
               if (match > -1) {
                 // Categorical entry already exists
-                $scope.alterations[row.alterationType][match].children.push(row);
+                $scope.alterations[row.category][match].children.push(row);
               } else {
                 row.children = [];
-                $scope.alterations[row.alterationType].push(row);
+                $scope.alterations[row.category].push(row);
               }
             } else {
               row.children = [];
-              $scope.alterations[row.alterationType].push(row);
+              $scope.alterations[row.category].push(row);
             }
           });
           $scope.loading = false;
