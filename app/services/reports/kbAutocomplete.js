@@ -1,4 +1,7 @@
-const kbAutocomplete = async (authToken, targetType, keyword) => {
+import getLocalToken from '../management/token';
+
+const kbAutocomplete = async (targetType, keyword) => {
+  const authToken = getLocalToken();
   if (!authToken) {
     return [];
   }
