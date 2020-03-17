@@ -9,6 +9,7 @@ import {
   Dialog,
 } from '@material-ui/core';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import OptionsMenu from '../OptionsMenu';
 import DetailDialog from '../DetailDialog';
 
@@ -29,7 +30,7 @@ import './index.scss';
  * @param {func} props.setHiddenCols function to update hidden cols across tables
  * @param {string} props.filterText text to filter the table on
  * @param {bool} props.editable can rows be edited?
- * @param {object} props.EditPopup Edit Popup component
+ * @param {object} props.EditDialog Edit Dialog component
  * @return {*} JSX
  */
 function DataTable(props) {
@@ -44,7 +45,8 @@ function DataTable(props) {
     setHiddenCols,
     filterText,
     editable,
-    EditPopup,
+    EditDialog,
+    addable,
   } = props;
 
   const gridApi = useRef();
@@ -56,6 +58,7 @@ function DataTable(props) {
   };
 
   const [showPopover, setShowPopover] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
   const [showDetailDialog, setShowDetailDialog] = useState(false);
   const [selectedRow, setSelectedRow] = useState({});
 
@@ -81,8 +84,18 @@ function DataTable(props) {
     columnApi.current.autoSizeColumns(visibleCols);
   };
 
-  const rowClickedEdit = (event) => {
+  const rowEditStart = (editRowNode) => {
+    setSelectedRow(editRowNode);
+    setShowEditDialog(true);
+  };
 
+  const handleRowEditClose = (editData) => {
+    setShowEditDialog(false);
+    if (editData) {
+      console.log(editData);
+      selectedRow.node.setData(editData);
+    }
+    setSelectedRow({});
   };
 
   const rowClickedDetail = (event) => {
@@ -105,7 +118,8 @@ function DataTable(props) {
     sortable: true,
     resizable: true,
     filter: true,
-    editable,
+    editable: false,
+    onCellDoubleClicked: editable ? rowEditStart : () => {},
   };
     
   const domLayout = 'autoHeight';
@@ -139,6 +153,14 @@ function DataTable(props) {
     );
     return result;
   };
+
+  const renderAddRow = () => (
+    <IconButton
+      onClick={() => setShowEditDialog(true)}
+    >
+      <AddCircleOutlineIcon />
+    </IconButton>
+  );
   
   return (
     <div className="data-table--padded">
@@ -146,6 +168,12 @@ function DataTable(props) {
         <Typography variant="h6" className="data-table__header">
           {title}
         </Typography>
+        {addable && renderAddRow()}
+        <EditDialog
+          open={showEditDialog}
+          close={handleRowEditClose}
+          editData={selectedRow.data}
+        />
         {visibleCols.length > 0 && hiddenCols.length > 0 && (
           <IconButton
             onClick={() => setShowPopover(prevVal => !prevVal)}
@@ -171,10 +199,11 @@ function DataTable(props) {
           onGridReady={onGridReady}
           domLayout={domLayout}
           autoSizePadding="0"
-          onRowClicked={editable ? rowClickedEdit : rowClickedDetail}
+          onRowClicked={!editable ? rowClickedDetail : null}
           editType="fullRow"
+          // onRowEditingStarted={onRowEditingStarted}
           frameworkComponents={{
-            EditPopup,
+            EditDialog,
           }}
         />
       </div>
@@ -193,7 +222,8 @@ DataTable.propTypes = {
   setHiddenCols: PropTypes.func,
   filterText: PropTypes.string,
   editable: PropTypes.bool,
-  EditPopup: PropTypes.func,
+  EditDialog: PropTypes.func,
+  addable: PropTypes.bool,
 };
 
 DataTable.defaultProps = {
@@ -206,7 +236,8 @@ DataTable.defaultProps = {
   setHiddenCols: () => {},
   filterText: '',
   editable: false,
-  EditPopup: () => {},
+  EditDialog: () => null,
+  addable: false,
 };
 
 export default DataTable;

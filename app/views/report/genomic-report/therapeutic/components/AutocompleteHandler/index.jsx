@@ -16,6 +16,7 @@ function AutocompleteHandler(props) {
     type,
     label,
     required,
+    onChange,
   } = props;
 
   const [options, setOptions] = useState([]);
@@ -43,6 +44,7 @@ function AutocompleteHandler(props) {
 
   const onAutocompleteChange = (event, val) => {
     setValue(val);
+    onChange(val, type);
   };
 
   return (
@@ -81,11 +83,13 @@ AutocompleteHandler.propTypes = {
   type: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
   required: PropTypes.bool,
+  onChange: PropTypes.func,
 };
 
 AutocompleteHandler.defaultProps = {
   defaultValue: '',
   required: false,
+  onChange: () => {},
 };
 
 export default AutocompleteHandler;
