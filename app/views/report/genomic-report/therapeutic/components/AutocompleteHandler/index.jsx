@@ -8,7 +8,14 @@ import {
 import kbAutocomplete from '../../../../../../services/reports/kbAutocomplete';
 
 /**
- * 
+ * @param {object} props props
+ * @param {string} defaultValue default text in input box
+ * @param {string} type type used for API autocomplete
+ * @param {string} label text box label text
+ * @param {bool} required is this field required
+ * @param {func} onChange callback when value is selected
+ * @param {string} error form error text
+ * @return {*} JSX
  */
 function AutocompleteHandler(props) {
   const {
@@ -17,6 +24,7 @@ function AutocompleteHandler(props) {
     label,
     required,
     onChange,
+    error,
   } = props;
 
   const [options, setOptions] = useState([]);
@@ -34,8 +42,7 @@ function AutocompleteHandler(props) {
       setOptions([]);
       setLoading(true);
 
-      const token = localStorage.getItem(`ngStorage-${CONFIG.STORAGE.KEYCLOAK}`);
-      const autocompleted = await kbAutocomplete(token, type, event.target.value);
+      const autocompleted = await kbAutocomplete(type, event.target.value);
 
       setOptions(autocompleted);
       setLoading(false);
@@ -64,6 +71,8 @@ function AutocompleteHandler(props) {
           margin="normal"
           required={required}
           onChange={onInputChange}
+          error={!!error}
+          helperText={error}
           InputProps={{
             ...params.InputProps,
             endAdornment: (

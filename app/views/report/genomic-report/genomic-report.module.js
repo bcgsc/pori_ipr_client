@@ -40,6 +40,7 @@ export default angular.module('genomic.report')
     'therapeuticTargets',
     'reportEdit',
     'print',
+    'report',
   ]))
   .component('slides', SlidesComponent)
   .component('discussion', DiscussionComponent)

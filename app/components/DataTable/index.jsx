@@ -31,6 +31,8 @@ import './index.scss';
  * @param {string} props.filterText text to filter the table on
  * @param {bool} props.editable can rows be edited?
  * @param {object} props.EditDialog Edit Dialog component
+ * @param {string} props.reportIdent Ident of report (used for editing api calls)
+ * @param {string} props.tableType type of table used for therapeutic targets
  * @return {*} JSX
  */
 function DataTable(props) {
@@ -47,6 +49,8 @@ function DataTable(props) {
     editable,
     EditDialog,
     addable,
+    reportIdent,
+    tableType,
   } = props;
 
   const gridApi = useRef();
@@ -89,11 +93,12 @@ function DataTable(props) {
     setShowEditDialog(true);
   };
 
-  const handleRowEditClose = (editData) => {
+  const handleRowEditClose = (editedData) => {
     setShowEditDialog(false);
-    if (editData) {
-      console.log(editData);
-      selectedRow.node.setData(editData);
+    if (editedData && selectedRow.node) {
+      selectedRow.node.setData(editedData);
+    } else if (editedData) {
+      gridApi.current.updateRowData({ add: [editedData] });
     }
     setSelectedRow({});
   };
@@ -173,6 +178,8 @@ function DataTable(props) {
           open={showEditDialog}
           close={handleRowEditClose}
           editData={selectedRow.data}
+          reportIdent={reportIdent}
+          tableType={tableType}
         />
         {visibleCols.length > 0 && hiddenCols.length > 0 && (
           <IconButton
@@ -201,7 +208,6 @@ function DataTable(props) {
           autoSizePadding="0"
           onRowClicked={!editable ? rowClickedDetail : null}
           editType="fullRow"
-          // onRowEditingStarted={onRowEditingStarted}
           frameworkComponents={{
             EditDialog,
           }}
@@ -224,6 +230,8 @@ DataTable.propTypes = {
   editable: PropTypes.bool,
   EditDialog: PropTypes.func,
   addable: PropTypes.bool,
+  reportIdent: PropTypes.string,
+  tableType: PropTypes.string,
 };
 
 DataTable.defaultProps = {
@@ -238,6 +246,8 @@ DataTable.defaultProps = {
   editable: false,
   EditDialog: () => null,
   addable: false,
+  reportIdent: '',
+  tableType: '',
 };
 
 export default DataTable;

@@ -1,6 +1,6 @@
 import getLocalToken from '../management/token';
 
-const therapeuticAdd = async (reportIdent, entry) => {
+export const therapeuticAdd = async (reportIdent, entry) => {
   const authToken = getLocalToken();
   if (!authToken) {
     return [];
@@ -13,7 +13,7 @@ const therapeuticAdd = async (reportIdent, entry) => {
       'Accept': 'application/json',
       'Authorization': authToken,
     },
-    body: entry,
+    body: JSON.stringify(entry),
   };
 
   const response = await fetch(
@@ -27,7 +27,7 @@ const therapeuticAdd = async (reportIdent, entry) => {
   }
 };
 
-const therapeuticUpdate = async (reportIdent, entryIdent, entry) => {
+export const therapeuticUpdate = async (reportIdent, entryIdent, entry) => {
   const authToken = getLocalToken();
   if (!authToken) {
     return [];
@@ -40,7 +40,7 @@ const therapeuticUpdate = async (reportIdent, entryIdent, entry) => {
       'Accept': 'application/json',
       'Authorization': authToken,
     },
-    body: entry,
+    body: JSON.stringify(entry),
   };
 
   const response = await fetch(
@@ -52,9 +52,4 @@ const therapeuticUpdate = async (reportIdent, entryIdent, entry) => {
     const { result } = await response.json();
     return result;
   }
-};
-
-export default {
-  therapeuticAdd,
-  therapeuticUpdate,
 };

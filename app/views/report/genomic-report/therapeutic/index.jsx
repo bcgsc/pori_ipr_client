@@ -9,6 +9,7 @@ import columnDefs from './ColumnDefs';
  * @param {bool} props.reportEdit can user edit report?
  * @param {array} props.therapeuticTargets therapeutic and chemoresistance row data
  * @param {bool} props.print is this the print version?
+ * @param {report} props.report report object
  * @return {*} JSX
  */
 function TherapeuticView(props) {
@@ -16,13 +17,14 @@ function TherapeuticView(props) {
     reportEdit,
     therapeuticTargets,
     print,
+    report,
   } = props;
 
-  const [therapeuticData, setTherapeuticData] = useState(therapeuticTargets.filter(
+  const [therapeuticData] = useState(therapeuticTargets.filter(
     target => target.type === 'therapeutic',
   ));
 
-  const [chemoresistanceData, setChemoresistanceData] = useState(therapeuticTargets.filter(
+  const [chemoresistanceData] = useState(therapeuticTargets.filter(
     target => target.type === 'chemoresistance',
   ));
 
@@ -35,6 +37,8 @@ function TherapeuticView(props) {
         editable={reportEdit && !print}
         EditDialog={EditDialog}
         addable={reportEdit && !print}
+        reportIdent={report.ident}
+        tableType="therapeutic"
       />
 
       <DataTable
@@ -44,6 +48,8 @@ function TherapeuticView(props) {
         editable={reportEdit && !print}
         EditDialog={EditDialog}
         addable={reportEdit && !print}
+        reportIdent={report.ident}
+        tableType="chemoresistance"
       />
     </>
   );
@@ -53,6 +59,7 @@ TherapeuticView.propTypes = {
   reportEdit: PropTypes.bool.isRequired,
   therapeuticTargets: PropTypes.arrayOf(PropTypes.object),
   print: PropTypes.bool.isRequired,
+  report: PropTypes.objectOf(PropTypes.any).isRequired,
 };
 
 TherapeuticView.defaultProps = {
