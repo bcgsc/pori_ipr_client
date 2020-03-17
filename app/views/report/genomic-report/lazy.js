@@ -11,6 +11,7 @@ const genomic = {
         $transition$.params().analysis_report,
       )],
     reportEdit: ['AclService', async AclService => AclService.checkAction('report.edit')],
+    print: () => false,
   },
   lazyLoad: undefined,
 };
