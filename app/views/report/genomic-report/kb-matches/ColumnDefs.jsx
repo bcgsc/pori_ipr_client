@@ -35,7 +35,7 @@ const columnDefs = [{
 },
 {
   headerName: 'Association',
-  field: 'association',
+  field: 'relevance',
   hide: false,
 },
 {
@@ -83,7 +83,7 @@ const columnDefs = [{
 },
 {
   headerName: 'Matched Cancer',
-  field: 'matched_cancer',
+  field: 'matchedCancer',
   hide: true,
 },
 {
