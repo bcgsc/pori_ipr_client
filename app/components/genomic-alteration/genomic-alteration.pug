@@ -50,7 +50,7 @@ div.alteration
           div(flex) {{::$ctrl.gene.disease}}
           div(flex) {{::$ctrl.gene.relevance}}
           div(flex) {{::$ctrl.gene.context}}
-          div(flex) {{::$ctrl.gene.evidence}}
+          div(flex) {{::$ctrl.gene.evidenceLevel}}
           div(flex)
             span(ng-if="$ctrl.refType($ctrl.gene.reference) == 'pmid'")
               a(href="https://www.ncbi.nlm.nih.gov/pubmed/{{$ctrl.gene.reference}}", target="_blank") {{::$ctrl.cleanPMID($ctrl.gene.reference)}}
@@ -70,7 +70,7 @@ div.alteration
           div(flex) {{::childGene.disease}}
           div(flex) {{::childGene.relevance}}
           div(flex) {{::childGene.context}}
-          div(flex) {{::childGene.evidence}}
+          div(flex) {{::childGene.evidenceLevel}}
           div(flex)
             span(ng-if="$ctrl.refType(childGene.reference) == 'pmid'")
               a(href="https://www.ncbi.nlm.nih.gov/pubmed/{{childGene.reference}}", target="_blank") {{::$ctrl.cleanPMID(childGene.reference)}}

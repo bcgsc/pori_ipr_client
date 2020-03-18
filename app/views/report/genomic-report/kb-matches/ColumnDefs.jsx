@@ -78,7 +78,7 @@ const columnDefs = [{
 },
 {
   headerName: 'Evidence',
-  field: 'evidence',
+  field: 'evidenceLevel',
   hide: true,
 },
 {
