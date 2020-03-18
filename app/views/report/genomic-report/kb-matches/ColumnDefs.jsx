@@ -94,7 +94,7 @@ const columnDefs = [{
 
 const targetedColumnDefs = [{
   headerName: 'Gene',
-  field: 'gene',
+  field: 'gene.name',
   hide: false,
 },
 {
