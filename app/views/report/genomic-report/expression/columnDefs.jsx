@@ -15,18 +15,14 @@ const columnDefs = [{
   field: 'cnvState',
   hide: false,
 }, {
-  headerName: 'Tissue',
+  headerName: 'Normal Tissue',
   children: [
     { headerName: 'FC', field: 'foldChange', hide: false },
-  ],
-}, {
-  headerName: 'Normal',
-  children: [
     { headerName: 'Perc', field: 'tcgaNormPerc', hide: false },
     { headerName: 'kIQR', field: 'tcgaNormkIQR', hide: false },
   ],
 }, {
-  headerName: 'Disease',
+  headerName: 'Disease Tissue',
   children: [
     { headerName: 'Perc', field: 'tcgaPerc', hide: false },
     { headerName: 'kIQR', field: 'tcgakIQR', hide: false },
