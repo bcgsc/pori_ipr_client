@@ -7,7 +7,7 @@ class TargetedGenesService {
 
   async getAll(report) {
     const { data } = await this.$http.get(
-      `${this.api}/${report}/detailed-genomic-analysis/targeted-genes`,
+      `${this.api}/${report}/probe-results`,
     );
     return data;
   }

@@ -6,7 +6,7 @@ class AlterationService {
   }
 
   baseUrl(report) {
-    return `${this.api}/${report}/detailed-genomic-analysis/alterations`;
+    return `${this.api}/${report}/kb-matches`;
   }
 
   /**
@@ -23,6 +23,7 @@ class AlterationService {
 
   /**
    * Update probe alteration for report
+   * Not actually used anywhere anymore
    *
    * @param {String} report - report ident
    * @param {String} ident - alteration uuid
@@ -59,13 +60,13 @@ class AlterationService {
    * Retrieve all probe alterations for report by type
    *
    * @param {String} report - report ident
-   * @param {String} alterationType - alteration type
+   * @param {String} category - alteration type
    *
    * @returns {Promise} - result of API call
    */
-  async getType(report, alterationType) {
+  async getType(report, category) {
     const { data } = await this.$http.get(
-      `${this.baseUrl(report)}/${alterationType}`,
+      `${this.baseUrl(report)}/${category}`,
     );
     return data;
   }
