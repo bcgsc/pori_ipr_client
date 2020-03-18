@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 
 const coalesceEntries = (entries) => {
   const bucketKey = (entry, delimiter = '||') => {
-    const { gene, therapeuticContext, variant } = entry;
-    return `${gene}${delimiter}${therapeuticContext}${delimiter}${variant}`;
+    const { gene, context, variant } = entry;
+    return `${gene}${delimiter}${context}${delimiter}${variant}`;
   };
 
   const buckets = {};

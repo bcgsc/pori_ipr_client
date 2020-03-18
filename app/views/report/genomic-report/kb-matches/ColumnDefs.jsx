@@ -30,7 +30,7 @@ const columnDefs = [{
 },
 {
   headerName: 'Disease Percentile',
-  field: 'expression_cancer_percentile',
+  field: 'expressionCancerPercentile',
   hide: false,
 },
 {
@@ -40,7 +40,7 @@ const columnDefs = [{
 },
 {
   headerName: 'Context',
-  field: 'therapeuticContext',
+  field: 'context',
   hide: false,
 },
 {

@@ -19,10 +19,10 @@ div.alteration
     div(layout="row", flex).alteration__row
       div(layout="row", flex=25)
         dt Expression:
-        dd.alteration__definition {{::$ctrl.gene.expression_tissue_fc}}
+        dd.alteration__definition {{::$ctrl.gene.expressionTissueFc}}
       div(layout="row", flex=25)
         dt Disease Percentile:
-        dd.alteration__definition {{::$ctrl.gene.expression_cancer_percentile}}
+        dd.alteration__definition {{::$ctrl.gene.expressionCancerPercentile}}
       div(layout="row", flex=25)
         dt Copy Number:
         dd.alteration__definition {{::$ctrl.gene.copyNumber}}
@@ -49,7 +49,7 @@ div.alteration
           div(flex) {{::$ctrl.gene.effect}}
           div(flex) {{::$ctrl.gene.disease}}
           div(flex) {{::$ctrl.gene.association}}
-          div(flex) {{::$ctrl.gene.therapeuticContext}}
+          div(flex) {{::$ctrl.gene.context}}
           div(flex) {{::$ctrl.gene.evidence}}
           div(flex)
             span(ng-if="$ctrl.refType($ctrl.gene.reference) == 'pmid'")
@@ -69,7 +69,7 @@ div.alteration
           div(flex) {{::childGene.effect}}
           div(flex) {{::childGene.disease}}
           div(flex) {{::childGene.association}}
-          div(flex) {{::childGene.therapeuticContext}}
+          div(flex) {{::childGene.context}}
           div(flex) {{::childGene.evidence}}
           div(flex)
             span(ng-if="$ctrl.refType(childGene.reference) == 'pmid'")
