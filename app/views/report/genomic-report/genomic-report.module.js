@@ -40,24 +40,11 @@ export default angular.module('genomic.report')
   .component('therapeutic', TherapeuticComponent)
   .component('slides', SlidesComponent)
   .component('discussion', DiscussionComponent)
-  .component('kbMatchesAngularComponent', react2angular(
-    KBMatchesView,
-    [
-      'alterations',
-      'novel',
-      'unknown',
-      'thisCancer',
-      'otherCancer',
-      'targetedGenes',
-      'kbMatchesComponent',
-    ],
-  ))
+  .component('kbMatchesAngularComponent', react2angular(KBMatchesView))
   .component('microbial', MicrobialComponent)
   .component('spearman', SpearmanComponent)
   .component('diseaseSpecific', DiseaseSpecificAnalysisComponent)
-  .component('smallMutations', react2angular(SmallMutationsComponent, [
-    'smallMutations',
-  ]))
+  .component('smallMutations', react2angular(SmallMutationsComponent))
   .component('copyNumber', CopyNumberAnalysesComponent)
   .component('structuralVariants', StructuralVariantsComponent)
   .component('expressionReact', react2angular(ExpressionAnalysisComponent))
