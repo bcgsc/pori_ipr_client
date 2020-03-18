@@ -1,6 +1,6 @@
 const columnDefs = [{
   headerName: 'Gene',
-  field: 'gene',
+  field: 'gene.name',
   hide: false,
 }, {
   headerName: 'Type',
