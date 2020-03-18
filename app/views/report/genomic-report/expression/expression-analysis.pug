@@ -77,9 +77,7 @@ section.material-section.expression
     div(ng-if="$ctrl.showSection.outlierSummary")
 
       div(layout="column", ng-repeat="(key, title) in $ctrl.expSummaryMap track by $index")
-        h2 {{title}}
-
-        list-outliers(outliers="$ctrl.expOutliers[key]", report="$ctrl.report", type="'rna'").analysis-report-section.margin-bottom-10
+        expression-react(outliers="$ctrl.expOutliers[key]", title="title")
 
   div.analysis-report-section.margin-top-10
     h1 mRNA Expression Outliers
@@ -89,6 +87,4 @@ section.material-section.expression
 
     div(ng-show="$ctrl.showSection.mrnaOutliers")
       div(layout="column", ng-repeat="(key, title) in $ctrl.mRNAOutliersMap track by $index")
-        h2 {{title}}
-
-        list-outliers(outliers="$ctrl.expOutliers[key]", report="$ctrl.report", type="'rna'").analysis-report-section.margin-bottom-10
+        expression-react(outliers="$ctrl.expOutliers[key]", title="title")

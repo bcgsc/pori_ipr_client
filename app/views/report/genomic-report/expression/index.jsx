@@ -6,11 +6,13 @@ import columnDefs from './columnDefs';
 /**
  * @param {object} props props
  * @param {array} props.outliers list of outlier data
+ * @param {string} props.title title of table
  * @return {*} JSX
  */
 function Expression(props) {
   const {
     outliers,
+    title,
   } = props;
 
   const [visibleCols, setVisibleCols] = useState(
@@ -33,7 +35,7 @@ function Expression(props) {
     <DataTable
       columnDefs={columnDefs}
       rowData={outliers}
-      title="Expression Outliers Unsorted Example"
+      title={title}
       visibleCols={visibleCols}
       hiddenCols={hiddenCols}
       setVisibleCols={handleVisibleColsChange}
@@ -44,6 +46,7 @@ function Expression(props) {
 
 Expression.propTypes = {
   outliers: PropTypes.arrayOf(PropTypes.object),
+  title: PropTypes.string.isRequired,
 };
 
 Expression.defaultProps = {
