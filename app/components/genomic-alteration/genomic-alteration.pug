@@ -36,7 +36,6 @@ div.alteration
 
         div(layout="row", flex).heading.alteration__details__header
           div(flex=15) Known Variant
-          div(flex) Effect
           div(flex) Cancer Type
           div(flex) Association
           div(flex) Therapeutic Context
@@ -46,7 +45,6 @@ div.alteration
 
         div(layout="row", flex).row.alteration__details__row
           div(flex=15) {{::$ctrl.gene.kbVariant}}
-          div(flex) {{::$ctrl.gene.effect}}
           div(flex) {{::$ctrl.gene.disease}}
           div(flex) {{::$ctrl.gene.relevance}}
           div(flex) {{::$ctrl.gene.context}}
@@ -66,7 +64,6 @@ div.alteration
 
         div(layout="row", flex, ng-repeat="(i, childGene) in ::$ctrl.gene.children track by $index").row.alteration__details__row
           div(flex=15) {{::childGene.kbVariant}}
-          div(flex) {{::childGene.effect}}
           div(flex) {{::childGene.disease}}
           div(flex) {{::childGene.relevance}}
           div(flex) {{::childGene.context}}

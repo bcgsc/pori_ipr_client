@@ -72,11 +72,6 @@ const columnDefs = [{
   hide: true,
 },
 {
-  headerName: 'Effect',
-  field: 'effect',
-  hide: true,
-},
-{
   headerName: 'Evidence',
   field: 'evidenceLevel',
   hide: true,
