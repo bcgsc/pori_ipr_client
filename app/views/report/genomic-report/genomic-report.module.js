@@ -15,7 +15,7 @@ import KBMatchesView from './kb-matches/kbMatchesView';
 import MicrobialComponent from './microbial/microbial.component';
 import SpearmanComponent from './spearman/spearman.component';
 import DiseaseSpecificAnalysisComponent from './disease-specific-analysis/disease-specific-analysis.component';
-import SmallMutationsComponent from './small-mutations/small-mutations.component';
+import SmallMutationsComponent from './small-mutations';
 import CopyNumberAnalysesComponent from './copy-number-analyses/copy-number-analyses.component';
 import StructuralVariantsComponent from './structural-variants/structural-variants.component';
 import ExpressionAnalysisComponent from './expression';
@@ -54,7 +54,9 @@ export default angular.module('genomic.report')
   .component('microbial', MicrobialComponent)
   .component('spearman', SpearmanComponent)
   .component('diseaseSpecific', DiseaseSpecificAnalysisComponent)
-  .component('smallMutations', SmallMutationsComponent)
+  .component('smallMutations', react2angular(SmallMutationsComponent, [
+    'smallMutations',
+  ]))
   .component('copyNumber', CopyNumberAnalysesComponent)
   .component('structuralVariants', StructuralVariantsComponent)
   .component('expression', react2angular(ExpressionAnalysisComponent, [
