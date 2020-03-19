@@ -59,7 +59,7 @@ function DataTable(props) {
 
   // Triggers when syncVisibleColumns is called
   useEffect(() => {
-    if (columnApi.current) {
+    if (columnApi.current && visibleColumns.length) {
       const allCols = columnApi.current.getAllColumns().map(col => col.colId);
       const hiddenColumns = allCols.filter(col => !visibleColumns.includes(col));
       columnApi.current.setColumnsVisible(visibleColumns, true);
