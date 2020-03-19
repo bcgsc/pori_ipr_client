@@ -1,4 +1,5 @@
 import template from './copy-number-analyses.pug';
+import columnDefs, { setHeaderName } from './columnDefs';
 import './copy-number-analyses.scss';
 
 const bindings = {
@@ -15,6 +16,8 @@ class CopyNumberAnalyses {
   }
 
   $onInit() {
+    setHeaderName(this.report.tumourAnalysis.diseaseExpressionComparator);
+    this.columnDefs = columnDefs;
     this.cnvGroups = {
       clinical: [],
       nostic: [],
@@ -36,11 +39,13 @@ class CopyNumberAnalyses {
     };
 
     Object.values(this.cnvs).forEach((row) => {
-      if (!Object.prototype.hasOwnProperty.call(this.cnvGroups, row.cnvVariant)) {
-        this.cnvGroups[row.cnvVariant] = [];
+      if (row.cnvVariant) {
+        if (!Object.prototype.hasOwnProperty.call(this.cnvGroups, row.cnvVariant)) {
+          this.cnvGroups[row.cnvVariant] = [];
+        }
+        // Add row to type
+        this.cnvGroups[row.cnvVariant].push(row);
       }
-      // Add row to type
-      this.cnvGroups[row.cnvVariant].push(row);
     });
   }
 }
