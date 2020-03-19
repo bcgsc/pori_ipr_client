@@ -7,16 +7,17 @@ const kbAutocomplete = async (targetType, keyword) => {
   }
 
   const options = {
-    method: 'GET',
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
       'Authorization': authToken,
     },
+    body: JSON.stringify({ keyword }),
   };
 
   const response = await fetch(
-    `${CONFIG.ENDPOINTS.API}/graphkb/${targetType}?keyword=${keyword}`,
+    `${CONFIG.ENDPOINTS.API}/graphkb/${targetType}`,
     options,
   );
 
