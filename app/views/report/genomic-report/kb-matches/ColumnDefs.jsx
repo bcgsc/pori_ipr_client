@@ -30,17 +30,17 @@ const columnDefs = [{
 },
 {
   headerName: 'Disease Percentile',
-  field: 'expression_cancer_percentile',
+  field: 'expressionCancerPercentile',
   hide: false,
 },
 {
   headerName: 'Association',
-  field: 'association',
+  field: 'relevance',
   hide: false,
 },
 {
   headerName: 'Context',
-  field: 'therapeuticContext',
+  field: 'context',
   hide: false,
 },
 {
@@ -62,8 +62,8 @@ const columnDefs = [{
   hide: true,
 },
 {
-  headerName: 'Alteration Type',
-  field: 'alterationType',
+  headerName: 'Category',
+  field: 'category',
   hide: true,
 },
 {
@@ -72,18 +72,13 @@ const columnDefs = [{
   hide: true,
 },
 {
-  headerName: 'Effect',
-  field: 'effect',
-  hide: true,
-},
-{
   headerName: 'Evidence',
-  field: 'evidence',
+  field: 'evidenceLevel',
   hide: true,
 },
 {
   headerName: 'Matched Cancer',
-  field: 'matched_cancer',
+  field: 'matchedCancer',
   hide: true,
 },
 {
@@ -99,7 +94,7 @@ const columnDefs = [{
 
 const targetedColumnDefs = [{
   headerName: 'Gene',
-  field: 'gene',
+  field: 'gene.name',
   hide: false,
 },
 {

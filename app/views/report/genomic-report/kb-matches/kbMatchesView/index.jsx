@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 
 const coalesceEntries = (entries) => {
   const bucketKey = (entry, delimiter = '||') => {
-    const { gene, therapeuticContext, variant } = entry;
-    return `${gene}${delimiter}${therapeuticContext}${delimiter}${variant}`;
+    const { gene, context, variant } = entry;
+    return `${gene}${delimiter}${context}${delimiter}${variant}`;
   };
 
   const buckets = {};
@@ -25,9 +25,9 @@ const coalesceEntries = (entries) => {
 
 const extractCategories = (entries, category) => {
   const grouped = new Set();
-  
+
   entries.forEach((row) => {
-    if (row.alterationType === category) {
+    if (row.category === category) {
       grouped.add(row);
     }
   });
@@ -103,7 +103,7 @@ function KBMatchesView(props) {
       show: false,
     },
   });
-  
+
 
   return (
     <KbMatchesComponent
