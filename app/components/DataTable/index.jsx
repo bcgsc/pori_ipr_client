@@ -24,15 +24,14 @@ import './index.scss';
  * @param {array} props.columnDefs column definitions for ag-grid
  * @param {array} props.arrayColumns list of columns containing array data
  * @param {string} props.title table title
- * @param {array} props.visibleCols list of current visible columns
- * @param {array} props.hiddenCols list of current hidden columns
- * @param {func} props.setVisibleCols function to update visible cols across tables
- * @param {func} props.setHiddenCols function to update hidden cols across tables
  * @param {string} props.filterText text to filter the table on
  * @param {bool} props.editable can rows be edited?
  * @param {object} props.EditDialog Edit Dialog component
  * @param {string} props.reportIdent Ident of report (used for editing api calls)
  * @param {string} props.tableType type of table used for therapeutic targets
+ * @param {array} props.visibleColumns array of column ids that are visible
+ * @param {func} props.syncVisibleColumns function to propagate visible column changes
+ * @param {bool} props.canToggleColumns can visible/hidden columns be toggled
  * @return {*} JSX
  */
 function DataTable(props) {
@@ -41,16 +40,15 @@ function DataTable(props) {
     columnDefs,
     arrayColumns,
     title,
-    visibleCols,
-    hiddenCols,
-    setVisibleCols,
-    setHiddenCols,
     filterText,
     editable,
     EditDialog,
     addable,
     reportIdent,
     tableType,
+    visibleColumns,
+    syncVisibleColumns,
+    canToggleColumns,
   } = props;
 
   const gridApi = useRef();
@@ -67,25 +65,50 @@ function DataTable(props) {
   const [selectedRow, setSelectedRow] = useState({});
 
   useEffect(() => {
-    if (columnApi.current) {
-      columnApi.current.setColumnsVisible(visibleCols, true);
-      columnApi.current.setColumnsVisible(hiddenCols, false);
-    }
-  }, [visibleCols, hiddenCols]);
-
-  useEffect(() => {
     if (gridApi.current) {
       gridApi.current.setQuickFilter(filterText);
     }
   }, [filterText]);
 
+  // Triggers when syncVisibleColumns is called
+  useEffect(() => {
+    if (columnApi.current) {
+      const allCols = columnApi.current.getAllColumns().map(col => col.colId);
+      const hiddenColumns = allCols.filter(col => !visibleColumns.includes(col));
+      columnApi.current.setColumnsVisible(visibleColumns, true);
+      columnApi.current.setColumnsVisible(hiddenColumns, false);
+    }
+  }, [visibleColumns]);
+
+  const getColumnVisibility = () => {
+    const visibleColumnIds = columnApi.current.getAllDisplayedColumns()
+      .map(col => col.colId);
+
+    const hiddenColumnIds = columnApi.current.getAllColumns()
+      .filter(col => !col.visible)
+      .map(col => col.colId);
+
+    return {
+      visibleColumnIds,
+      hiddenColumnIds,
+    };
+  };
+
   const onGridReady = (params) => {
     gridApi.current = params.api;
     columnApi.current = params.columnApi;
 
-    columnApi.current.setColumnsVisible(visibleCols, true);
-    columnApi.current.setColumnsVisible(hiddenCols, false);
-    columnApi.current.autoSizeColumns(visibleCols);
+    if (syncVisibleColumns) {
+      const hiddenColumns = columnApi.current.getAllColumns()
+        .map(col => col.colId)
+        .filter(col => !visibleColumns.includes(col));
+
+      columnApi.current.setColumnsVisible(visibleColumns, true);
+      columnApi.current.setColumnsVisible(hiddenColumns, false);
+    }
+
+    const { visibleColumnIds } = getColumnVisibility();
+    columnApi.current.autoSizeColumns(visibleColumnIds);
   };
 
   const rowEditStart = (editRowNode) => {
@@ -136,10 +159,14 @@ function DataTable(props) {
         hiddenCols: returnedHiddenCols,
       } = optionsMenuOnClose.current();
 
-      setVisibleCols(returnedVisibleCols);
-      setHiddenCols(returnedHiddenCols);
-      columnApi.current.autoSizeColumns(returnedVisibleCols);
+      columnApi.current.setColumnsVisible(returnedVisibleCols, true);
+      columnApi.current.setColumnsVisible(returnedHiddenCols, false);
 
+      columnApi.current.autoSizeColumns(returnedVisibleCols);
+      
+      if (syncVisibleColumns) {
+        syncVisibleColumns(returnedVisibleCols);
+      }
       setShowPopover(prevVal => !prevVal);
     };
 
@@ -181,7 +208,7 @@ function DataTable(props) {
           reportIdent={reportIdent}
           tableType={tableType}
         />
-        {visibleCols.length > 0 && hiddenCols.length > 0 && (
+        {canToggleColumns && (
           <IconButton
             onClick={() => setShowPopover(prevVal => !prevVal)}
           >
@@ -222,32 +249,30 @@ DataTable.propTypes = {
   arrayColumns: PropTypes.arrayOf(PropTypes.string),
   rowData: PropTypes.arrayOf(PropTypes.object),
   title: PropTypes.string,
-  visibleCols: PropTypes.arrayOf(PropTypes.string),
-  hiddenCols: PropTypes.arrayOf(PropTypes.string),
-  setVisibleCols: PropTypes.func,
-  setHiddenCols: PropTypes.func,
   filterText: PropTypes.string,
   editable: PropTypes.bool,
   EditDialog: PropTypes.func,
   addable: PropTypes.bool,
   reportIdent: PropTypes.string,
   tableType: PropTypes.string,
+  visibleColumns: PropTypes.arrayOf(PropTypes.string),
+  syncVisibleColumns: PropTypes.func,
+  canToggleColumns: PropTypes.bool,
 };
 
 DataTable.defaultProps = {
   rowData: [],
   arrayColumns: [],
   title: '',
-  visibleCols: [],
-  hiddenCols: [],
-  setVisibleCols: () => {},
-  setHiddenCols: () => {},
   filterText: '',
   editable: false,
   EditDialog: () => null,
   addable: false,
   reportIdent: '',
   tableType: '',
+  visibleColumns: [],
+  syncVisibleColumns: null,
+  canToggleColumns: false,
 };
 
 export default DataTable;

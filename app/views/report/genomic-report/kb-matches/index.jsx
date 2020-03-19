@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   TextField,
@@ -18,7 +18,6 @@ import { columnDefs, targetedColumnDefs } from './ColumnDefs';
 import './index.scss';
 
 const VISIBLE = 'visibleColsKb';
-const HIDDEN = 'hiddenColsKb';
 
 /**
  * @param {*} props props
@@ -36,34 +35,22 @@ function KBMatches(props) {
 
   const [thisHiddenTableData, setThisHiddenTableData] = useState(hiddenTableData.current);
 
-  const [visibleCols, setVisibleCols] = useState(
+  const [visibleColumns, setVisibleColumns] = useState(
     localStorage.getItem(VISIBLE)
       ? localStorage.getItem(VISIBLE).split(',')
       : columnDefs.filter(c => !c.hide).map(c => c.field),
-  );
-  const [hiddenCols, setHiddenCols] = useState(
-    localStorage.getItem(HIDDEN)
-      ? localStorage.getItem(HIDDEN).split(',')
-      : columnDefs.filter(c => c.hide).map(c => c.field),
   );
 
   const [arrayColumns] = useState(['disease', 'reference']);
 
   const [filterText, setFilterText] = useState('');
-
-  const handleVisibleColsChange = (change) => {
-    setVisibleCols(change);
-  };
-  const handleHiddenColsChange = (change) => {
-    setHiddenCols(change);
-  };
-
-  useEffect(() => {
-    localStorage.setItem('visibleColsKb', visibleCols);
-    localStorage.setItem('hiddenColsKb', hiddenCols);
-  }, [visibleCols, hiddenCols]);
-
+  
   const handleFilter = event => setFilterText(event.target.value);
+
+  const syncVisibleColumns = (visible) => {
+    setVisibleColumns(visible);
+    localStorage.setItem('visibleColsKb', visible);
+  };
 
   return (
     <>
@@ -93,12 +80,11 @@ function KBMatches(props) {
             arrayColumns={arrayColumns}
             rowData={table.rowData || []}
             title={table.title}
-            visibleCols={visibleCols}
-            hiddenCols={hiddenCols}
-            setVisibleCols={handleVisibleColsChange}
-            setHiddenCols={handleHiddenColsChange}
+            visibleColumns={visibleColumns}
+            syncVisibleColumns={syncVisibleColumns}
             filterText={filterText}
             edit={false}
+            canToggleColumns
           />
         ))}
       </div>
@@ -133,12 +119,10 @@ function KBMatches(props) {
               <DataTable
                 columnDefs={columnDefs}
                 rowData={table.rowData || []}
-                visibleCols={visibleCols}
-                hiddenCols={hiddenCols}
-                setVisibleCols={handleVisibleColsChange}
-                setHiddenCols={handleHiddenColsChange}
+                title={table.title}
                 filterText={filterText}
                 edit={false}
+                canToggleColumns
               />
             </ExpansionPanelDetails>
           </ExpansionPanel>
