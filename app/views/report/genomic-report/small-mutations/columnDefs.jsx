@@ -25,7 +25,10 @@ const columnDefs = [{
 }, {
   headerName: 'Copy Change',
   colId: 'copyChange',
-  valueGetter: params => (params.data.ploidyCorrCpChange === 'na' ? 'na' : params.data.ploidyCorrCpChange.match(/(((\+|-)?)[0-9]{1,2})/g)[0]),
+  valueGetter: params => (
+    params.data.ploidyCorrCpChange === 'na' || !params.data.ploidyCorrCpChange
+      ? 'na'
+      : params.data.ploidyCorrCpChange.match(/(((\+|-)?)[0-9]{1,2})/g)[0]),
   hide: false,
 }, {
   headerName: 'LOH State',

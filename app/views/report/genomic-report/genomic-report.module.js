@@ -15,13 +15,14 @@ import KBMatchesView from './kb-matches/kbMatchesView';
 import MicrobialComponent from './microbial/microbial.component';
 import SpearmanComponent from './spearman/spearman.component';
 import DiseaseSpecificAnalysisComponent from './disease-specific-analysis/disease-specific-analysis.component';
-import SmallMutationsComponent from './small-mutations';
+import SmallMutationsComponent from './small-mutations/small-mutations.component';
 import CopyNumberAnalysesComponent from './copy-number-analyses/copy-number-analyses.component';
 import StructuralVariantsComponent from './structural-variants/structural-variants.component';
 import ExpressionAnalysisAngularComponent from './expression/expression-analysis.component';
 import ExpressionAnalysisComponent from './expression';
 import AppendicesComponent from './appendices/appendices.component';
 import ReportSettingsComponent from './report-settings/report-settings.component';
+import ReactTable from '../../../components/DataTable';
 import lazy from './lazy';
 import 'quill/dist/quill.snow.css';
 
@@ -34,6 +35,7 @@ angular.module('genomic.report', [
 
 export default angular.module('genomic.report')
   .component('genomicreport', GenomicReportComponent)
+  .component('reactTable', react2angular(ReactTable))
   .component('summary', SummaryComponent)
   .component('analystComments', AnalystCommentsComponent)
   .component('pathwayAnalysis', PathwayAnalysisComponent)
@@ -44,7 +46,7 @@ export default angular.module('genomic.report')
   .component('microbial', MicrobialComponent)
   .component('spearman', SpearmanComponent)
   .component('diseaseSpecific', DiseaseSpecificAnalysisComponent)
-  .component('smallMutations', react2angular(SmallMutationsComponent))
+  .component('smallMutations', SmallMutationsComponent)
   .component('copyNumber', CopyNumberAnalysesComponent)
   .component('structuralVariants', StructuralVariantsComponent)
   .component('expressionReact', react2angular(ExpressionAnalysisComponent))
