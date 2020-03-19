@@ -103,12 +103,26 @@ function EditDialog(props) {
     close(combinedData);
   };
 
-  const onAutocompleteValueSelected = (selectedValue, label) => {
+  const onAutocompleteValueSelected = (selectedValue, typeName) => {
     if (selectedValue) {
-      setNewData({
-        ...newData,
-        [label]: selectedValue.displayName,
-      });
+      if (typeName === 'variant') {
+        setNewData({
+          ...newData,
+          gene: selectedValue.reference2
+            ? `${selectedValue.reference1.displayName}, ${selectedValue.reference2.displayName}`
+            : selectedValue.reference1.displayName,
+          variant: selectedValue['@class'].toLowerCase() === 'positionalvariant'
+            ? selectedValue.displayName.split(':').slice(1).join()
+            : selectedValue.type.displayName,
+          variantGraphkbId: selectedValue['@rid'],
+        });
+      } else {
+        setNewData({
+          ...newData,
+          [typeName]: selectedValue.displayName,
+          [`${typeName}GraphkbId`]: selectedValue['@rid'],
+        });
+      }
     }
   };
 
@@ -120,21 +134,15 @@ function EditDialog(props) {
           noValidate
           onSubmit={onSubmit}
         >
-          {/* <FormControl fullWidth>
-            <AutocompleteHandler
-              defaultValue={editData.gene}
-              type="gene"
-              label="Gene"
-              onChange={onAutocompleteValueSelected}
-              required
-              error={errors.gene}
-            />
-          </FormControl> */}
           <FormControl fullWidth>
             <AutocompleteHandler
-              defaultValue={editData.variant}
+              defaultValue={
+                editData.variant && editData.gene
+                  ? `${editData.gene} ${editData.variant}`
+                  : ''
+              }
               type="variant"
-              label="Variant"
+              label="Gene and Variant"
               onChange={onAutocompleteValueSelected}
               required
               error={errors.variant}
