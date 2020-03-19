@@ -38,11 +38,16 @@ function AutocompleteHandler(props) {
   }, [defaultValue]);
   
   const onInputChange = async (event) => {
-    if (event.target.value.length > 2) {
+    let queryString = event.target.value;
+
+    if (queryString.length > 2) {
       setOptions([]);
       setLoading(true);
 
-      const autocompleted = await kbAutocomplete(type, event.target.value);
+      // Find all query strings that are 3 characters or longer. Needed for KB API to process
+      queryString = queryString.split(' ').filter(str => str.length > 2).join(' ');
+
+      const autocompleted = await kbAutocomplete(type, queryString);
 
       setOptions(autocompleted);
       setLoading(false);
