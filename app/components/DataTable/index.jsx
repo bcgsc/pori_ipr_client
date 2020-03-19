@@ -23,11 +23,10 @@ import './index.scss';
  * @param {array} props.columnDefs column definitions for ag-grid
  * @param {array} props.arrayColumns list of columns containing array data
  * @param {string} props.title table title
- * @param {array} props.visibleCols list of current visible columns
- * @param {array} props.hiddenCols list of current hidden columns
- * @param {func} props.setVisibleCols function to update visible cols across tables
- * @param {func} props.setHiddenCols function to update hidden cols across tables
  * @param {string} props.filterText text to filter the table on
+ * @param {array} props.visibleColumns array of column ids that are visible
+ * @param {func} props.syncVisibleColumns function to propagate visible column changes
+ * @param {bool} props.canToggleColumns can visible/hidden columns be toggled
  * @return {*} JSX
  */
 function DataTable(props) {
@@ -36,11 +35,10 @@ function DataTable(props) {
     columnDefs,
     arrayColumns,
     title,
-    visibleCols,
-    hiddenCols,
-    setVisibleCols,
-    setHiddenCols,
     filterText,
+    visibleColumns,
+    syncVisibleColumns,
+    canToggleColumns,
   } = props;
 
   const gridApi = useRef();
@@ -56,26 +54,52 @@ function DataTable(props) {
   const [selectedRow, setSelectedRow] = useState({});
 
   useEffect(() => {
-    if (columnApi.current) {
-      columnApi.current.setColumnsVisible(visibleCols, true);
-      columnApi.current.setColumnsVisible(hiddenCols, false);
-    }
-  }, [visibleCols, hiddenCols]);
-
-  useEffect(() => {
     if (gridApi.current) {
       gridApi.current.setQuickFilter(filterText);
     }
   }, [filterText]);
 
+  // Triggers when syncVisibleColumns is called
+  useEffect(() => {
+    if (columnApi.current) {
+      const allCols = columnApi.current.getAllColumns().map(col => col.colId);
+      const hiddenColumns = allCols.filter(col => !visibleColumns.includes(col));
+      columnApi.current.setColumnsVisible(visibleColumns, true);
+      columnApi.current.setColumnsVisible(hiddenColumns, false);
+    }
+  }, [visibleColumns]);
+
+  const getColumnVisibility = () => {
+    const visibleColumnIds = columnApi.current.getAllDisplayedColumns()
+      .map(col => col.colId);
+
+    const hiddenColumnIds = columnApi.current.getAllColumns()
+      .filter(col => !col.visible)
+      .map(col => col.colId);
+
+    return {
+      visibleColumnIds,
+      hiddenColumnIds,
+    };
+  };
+
   const onGridReady = (params) => {
     gridApi.current = params.api;
     columnApi.current = params.columnApi;
 
-    columnApi.current.setColumnsVisible(visibleCols, true);
-    columnApi.current.setColumnsVisible(hiddenCols, false);
-    columnApi.current.autoSizeColumns(visibleCols);
+    if (syncVisibleColumns) {
+      const hiddenColumns = columnApi.current.getAllColumns()
+        .map(col => col.colId)
+        .filter(col => !visibleColumns.includes(col));
+
+      columnApi.current.setColumnsVisible(visibleColumns, true);
+      columnApi.current.setColumnsVisible(hiddenColumns, false);
+    }
+
+    const { visibleColumnIds } = getColumnVisibility();
+    columnApi.current.autoSizeColumns(visibleColumnIds);
   };
+
 
   const onRowClicked = (event) => {
     const definedCols = columnApi.current.getAllColumns().map(col => col.colId);
@@ -108,10 +132,14 @@ function DataTable(props) {
         hiddenCols: returnedHiddenCols,
       } = optionsMenuOnClose.current();
 
-      setVisibleCols(returnedVisibleCols);
-      setHiddenCols(returnedHiddenCols);
-      columnApi.current.autoSizeColumns(returnedVisibleCols);
+      columnApi.current.setColumnsVisible(returnedVisibleCols, true);
+      columnApi.current.setColumnsVisible(returnedHiddenCols, false);
 
+      columnApi.current.autoSizeColumns(returnedVisibleCols);
+      
+      if (syncVisibleColumns) {
+        syncVisibleColumns(returnedVisibleCols);
+      }
       setShowPopover(prevVal => !prevVal);
     };
 
@@ -137,7 +165,7 @@ function DataTable(props) {
         <Typography variant="h6" className="data-table__header">
           {title}
         </Typography>
-        {visibleCols.length > 0 && hiddenCols.length > 0 && (
+        {canToggleColumns && (
           <IconButton
             onClick={() => setShowPopover(prevVal => !prevVal)}
           >
@@ -173,22 +201,19 @@ DataTable.propTypes = {
   columnDefs: PropTypes.arrayOf(PropTypes.object).isRequired,
   arrayColumns: PropTypes.arrayOf(PropTypes.string),
   rowData: PropTypes.arrayOf(PropTypes.object),
-  title: PropTypes.string,
-  visibleCols: PropTypes.arrayOf(PropTypes.string),
-  hiddenCols: PropTypes.arrayOf(PropTypes.string),
-  setVisibleCols: PropTypes.func,
-  setHiddenCols: PropTypes.func,
+  title: PropTypes.string.isRequired,
   filterText: PropTypes.string.isRequired,
+  visibleColumns: PropTypes.arrayOf(PropTypes.string),
+  syncVisibleColumns: PropTypes.func,
+  canToggleColumns: PropTypes.bool,
 };
 
 DataTable.defaultProps = {
   rowData: [],
   arrayColumns: [],
-  title: '',
-  visibleCols: [],
-  hiddenCols: [],
-  setVisibleCols: () => {},
-  setHiddenCols: () => {},
+  visibleColumns: [],
+  syncVisibleColumns: null,
+  canToggleColumns: false,
 };
 
 export default DataTable;
