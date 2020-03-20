@@ -42,11 +42,10 @@ section
           div(layout="column", layout-align="center center")
             img(data-ng-src="data:image/svg;base64,{{$ctrl.images['circosSv.transcriptome'].data}}")
 
-    div(layout="column", flex)
+    div(layout="column", flex).bg-white
 
       h2.title Structural Variation: Genomic Details
 
       div(ng-repeat="(title, svs) in $ctrl.StrucVars track by $index")
-        h3.title {{$ctrl.titleMap[title]}}
-
-        list-structural-variants(svs="svs", report="$ctrl.report", mavis="$ctrl.mavis")
+        react-table(column-defs="$ctrl.columnDefs", row-data="svs", title="$ctrl.titleMap[title]")
+        //- list-structural-variants(svs="svs", report="$ctrl.report", mavis="$ctrl.mavis")
