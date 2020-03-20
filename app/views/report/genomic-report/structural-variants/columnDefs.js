@@ -1,51 +1,51 @@
 const columnDefs = [{
-  headerName: 'Gene',
-  field: 'gene.name',
+  valueGetter: params => 'test',
+  width: 50,
   hide: false,
 }, {
-  headerName: 'Copy Change',
-  field: 'ploidyCorrCpChange',
+  headerName: 'Genes 5`::3`',
+  colId: 'genes',
+  valueGetter: params => `${params.data.gene1.name} :: ${params.data.gene2.name}`,
   hide: false,
 }, {
-  headerName: 'LOH State',
-  field: 'lohState',
+  headerName: 'Exons 5`/3`',
+  colId: 'exons',
+  valueGetter: params => `${params.data.exon1}:${params.data.exon2}`,
   hide: false,
 }, {
-  headerName: 'CNV State',
-  field: 'cnvState',
+  headerName: 'Breakpoint',
+  field: 'breakpoint',
   hide: false,
 }, {
-  headerName: 'Chr:band',
-  field: 'chromosomeBand',
+  headerName: 'Event Type',
+  field: 'eventType',
   hide: false,
 }, {
-  headerName: 'CNV Start',
-  field: 'start',
+  headerName: 'Sample',
+  field: 'detectedIn',
   hide: false,
 }, {
-  headerName: 'CNV End',
-  field: 'end',
+  headerName: 'Cytogenic Description',
+  field: 'conventionalName',
   hide: false,
 }, {
-  headerName: 'Size (Mb)',
-  field: 'size',
+  headerName: 'RPKM 5`/3`',
+  colId: 'rpkm',
+  valueGetter: params => `${params.data.gene1.outlier.rpkm}/${params.data.gene2.outlier.rpkm}`,
   hide: false,
 }, {
-  headerName: 'Expression (RPKM)',
-  field: 'expressionRpkm',
+  colId: 'foldChange',
+  valueGetter: params => `${params.data.gene1.outlier.foldChange}/${params.data.gene2.outlier.foldChange}`,
   hide: false,
 }, {
-  headerName: 'Fold Change vs Average',
-  field: 'foldChange',
-  hide: false,
-}, {
-  field: 'tcgaPerc',
+  colId: 'tcgaPerc',
+  valueGetter: params => `${params.data.gene1.outlier.tcgaPerc}/${params.data.gene2.outlier.tcgaPerc}`,
   hide: false,
 }];
 
-export const setHeaderName = (header) => {
-  const index = columnDefs.findIndex(obj => obj.field === 'tcgaPerc');
-  columnDefs[index].headerName = `${header} %ile`;
+export const setHeaderName = (header, colId) => {
+  const index = columnDefs.findIndex(obj => obj.colId === colId);
+  columnDefs[index].headerName = header;
 };
 
 export default columnDefs;
