@@ -1,5 +1,5 @@
 import template from './structural-variants.pug';
-import columnDefs from './columnDefs';
+import columnDefs, { setHeaderName } from './columnDefs';
 import './structural-variants.scss';
 
 const bindings = {
@@ -19,6 +19,8 @@ class StructuralVariantsComponent {
   }
 
   $onInit() {
+    setHeaderName(`${this.report.tumourAnalysis.diseaseExpressionComparator} %ile`, 'tcgaPerc');
+    setHeaderName(`Fold Change vs ${this.report.tumourAnalysis.normalExpressionComparator}`, 'foldChange');
     this.columnDefs = columnDefs;
     this.StrucVars = {};
     this.titleMap = {

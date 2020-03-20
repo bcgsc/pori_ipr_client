@@ -35,17 +35,18 @@ const columnDefs = [{
   field: 'expressionRpkm',
   hide: false,
 }, {
-  headerName: 'Fold Change vs Average',
+  colId: 'foldChange',
   field: 'foldChange',
   hide: false,
 }, {
+  colId: 'tcgaPerc',
   field: 'tcgaPerc',
   hide: false,
 }];
 
-export const setHeaderName = (header) => {
-  const index = columnDefs.findIndex(obj => obj.field === 'tcgaPerc');
-  columnDefs[index].headerName = `${header} %ile`;
+export const setHeaderName = (header, colId) => {
+  const index = columnDefs.findIndex(obj => obj.colId === colId);
+  columnDefs[index].headerName = header;
 };
 
 export default columnDefs;

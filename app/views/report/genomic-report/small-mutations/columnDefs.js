@@ -24,15 +24,11 @@ const columnDefs = [{
   hide: false,
 }, {
   headerName: 'Copy Change',
-  colId: 'copyChange',
-  valueGetter: params => (
-    params.data.ploidyCorrCpChange === 'na' || !params.data.ploidyCorrCpChange
-      ? 'na'
-      : params.data.ploidyCorrCpChange.match(/(((\+|-)?)[0-9]{1,2})/g)[0]),
+  field: 'gene.cnv.ploidyCorrCpChange',
   hide: false,
 }, {
   headerName: 'LOH State',
-  field: 'lohState',
+  field: 'gene.cnv.lohState',
   hide: false,
 }, {
   headerName: 'Ref/Alt DNA',
@@ -40,20 +36,25 @@ const columnDefs = [{
   hide: false,
 }, {
   headerName: 'Ref/Alt RNA',
-  field: 'RNAReads',
+  field: 'rnaReads',
   hide: false,
 }, {
   headerName: 'Expression (RPKM)',
-  field: 'expressionRpkm',
+  field: 'gene.outlier.rpkm',
   hide: false,
 }, {
-  headerName: 'Fold Change vs Average',
-  field: 'foldChange',
+  colId: 'foldChange',
+  field: 'gene.outlier.foldChange',
   hide: false,
 }, {
-  headerName: 'SARC %ile',
-  field: 'TCGAPerc',
+  colId: 'tcgaPerc',
+  field: 'gene.outlier.tcgaPerc',
   hide: false,
 }];
+
+export const setHeaderName = (header, colId) => {
+  const index = columnDefs.findIndex(obj => obj.colId === colId);
+  columnDefs[index].headerName = header;
+};
 
 export default columnDefs;
