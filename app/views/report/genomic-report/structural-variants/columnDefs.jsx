@@ -3,7 +3,6 @@ import { Launch } from '@material-ui/icons';
 import { IconButton } from '@material-ui/core';
 
 const columnDefs = [{
-  valueGetter: params => 'test',
   cellRendererFramework: function cellRendererFramework(params) {
     if (params.data.svg) {
       return (
@@ -14,7 +13,6 @@ const columnDefs = [{
     }
     return null;
   },
-  width: 50,
   hide: false,
 }, {
   headerName: 'Genes 5`::3`',
