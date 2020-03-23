@@ -83,6 +83,7 @@ function KBMatches(props) {
             visibleColumns={visibleColumns}
             syncVisibleColumns={syncVisibleColumns}
             filterText={filterText}
+            edit={false}
             canToggleColumns
           />
         ))}
@@ -94,6 +95,7 @@ function KBMatches(props) {
           rowData={unsyncedTableData.rowData || []}
           title={unsyncedTableData.title}
           filterText={filterText}
+          edit={false}
         />
       </div>
 
@@ -119,6 +121,7 @@ function KBMatches(props) {
                 rowData={table.rowData || []}
                 title={table.title}
                 filterText={filterText}
+                edit={false}
                 canToggleColumns
               />
             </ExpansionPanelDetails>

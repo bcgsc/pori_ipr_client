@@ -12,7 +12,7 @@ class SmallMutationsService {
    */
   async all(report) {
     const { data } = await this.$http.get(
-      `${this.api}/${report}/somatic-mutations/small-mutations`,
+      `${this.api}/${report}/small-mutations`,
     );
     return data;
   }
@@ -26,7 +26,7 @@ class SmallMutationsService {
    */
   async update(report, ident, payload) {
     const { data } = await this.$http.put(
-      `${this.api}/${report}/somatic-mutations/small-mutations/${ident}`,
+      `${this.api}/${report}/small-mutations/${ident}`,
       payload,
     );
     return data;
@@ -40,7 +40,7 @@ class SmallMutationsService {
    */
   async getType(report, type) {
     const { data } = await this.$http.get(
-      `${this.api}/${report}/somatic-mutations/small-mutations/${type}`,
+      `${this.api}/${report}/small-mutations/${type}`,
     );
     return data;
   }

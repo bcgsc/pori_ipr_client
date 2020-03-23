@@ -9,6 +9,7 @@ import {
   Dialog,
 } from '@material-ui/core';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import OptionsMenu from '../OptionsMenu';
 import DetailDialog from '../DetailDialog';
 
@@ -24,6 +25,10 @@ import './index.scss';
  * @param {array} props.arrayColumns list of columns containing array data
  * @param {string} props.title table title
  * @param {string} props.filterText text to filter the table on
+ * @param {bool} props.editable can rows be edited?
+ * @param {object} props.EditDialog Edit Dialog component
+ * @param {string} props.reportIdent Ident of report (used for editing api calls)
+ * @param {string} props.tableType type of table used for therapeutic targets
  * @param {array} props.visibleColumns array of column ids that are visible
  * @param {func} props.syncVisibleColumns function to propagate visible column changes
  * @param {bool} props.canToggleColumns can visible/hidden columns be toggled
@@ -36,6 +41,11 @@ function DataTable(props) {
     arrayColumns,
     title,
     filterText,
+    editable,
+    EditDialog,
+    addable,
+    reportIdent,
+    tableType,
     visibleColumns,
     syncVisibleColumns,
     canToggleColumns,
@@ -50,6 +60,7 @@ function DataTable(props) {
   };
 
   const [showPopover, setShowPopover] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
   const [showDetailDialog, setShowDetailDialog] = useState(false);
   const [selectedRow, setSelectedRow] = useState({});
 
@@ -100,8 +111,22 @@ function DataTable(props) {
     columnApi.current.autoSizeColumns(visibleColumnIds);
   };
 
+  const rowEditStart = (editRowNode) => {
+    setSelectedRow(editRowNode);
+    setShowEditDialog(true);
+  };
 
-  const onRowClicked = (event) => {
+  const handleRowEditClose = (editedData) => {
+    setShowEditDialog(false);
+    if (editedData && selectedRow.node) {
+      selectedRow.node.setData(editedData);
+    } else if (editedData) {
+      gridApi.current.updateRowData({ add: [editedData] });
+    }
+    setSelectedRow({});
+  };
+
+  const rowClickedDetail = (event) => {
     const definedCols = columnApi.current.getAllColumns().map(col => col.colId);
     const propagateObject = Object.entries(event.data).reduce((accumulator, [key, value]) => {
       if (definedCols.includes(key)) {
@@ -121,6 +146,8 @@ function DataTable(props) {
     sortable: true,
     resizable: true,
     filter: true,
+    editable: false,
+    onCellDoubleClicked: editable ? rowEditStart : () => {},
   };
     
   const domLayout = 'autoHeight';
@@ -158,6 +185,14 @@ function DataTable(props) {
     );
     return result;
   };
+
+  const renderAddRow = () => (
+    <IconButton
+      onClick={() => setShowEditDialog(true)}
+    >
+      <AddCircleOutlineIcon />
+    </IconButton>
+  );
   
   return (
     <div className="data-table--padded">
@@ -165,6 +200,14 @@ function DataTable(props) {
         <Typography variant="h6" className="data-table__header">
           {title}
         </Typography>
+        {addable && renderAddRow()}
+        <EditDialog
+          open={showEditDialog}
+          close={handleRowEditClose}
+          editData={selectedRow.data}
+          reportIdent={reportIdent}
+          tableType={tableType}
+        />
         {canToggleColumns && (
           <IconButton
             onClick={() => setShowPopover(prevVal => !prevVal)}
@@ -190,7 +233,11 @@ function DataTable(props) {
           onGridReady={onGridReady}
           domLayout={domLayout}
           autoSizePadding="0"
-          onRowClicked={onRowClicked}
+          onRowClicked={!editable ? rowClickedDetail : null}
+          editType="fullRow"
+          frameworkComponents={{
+            EditDialog,
+          }}
         />
       </div>
     </div>
@@ -201,8 +248,13 @@ DataTable.propTypes = {
   columnDefs: PropTypes.arrayOf(PropTypes.object).isRequired,
   arrayColumns: PropTypes.arrayOf(PropTypes.string),
   rowData: PropTypes.arrayOf(PropTypes.object),
-  title: PropTypes.string.isRequired,
-  filterText: PropTypes.string.isRequired,
+  title: PropTypes.string,
+  filterText: PropTypes.string,
+  editable: PropTypes.bool,
+  EditDialog: PropTypes.func,
+  addable: PropTypes.bool,
+  reportIdent: PropTypes.string,
+  tableType: PropTypes.string,
   visibleColumns: PropTypes.arrayOf(PropTypes.string),
   syncVisibleColumns: PropTypes.func,
   canToggleColumns: PropTypes.bool,
@@ -211,6 +263,13 @@ DataTable.propTypes = {
 DataTable.defaultProps = {
   rowData: [],
   arrayColumns: [],
+  title: '',
+  filterText: '',
+  editable: false,
+  EditDialog: () => null,
+  addable: false,
+  reportIdent: '',
+  tableType: '',
   visibleColumns: [],
   syncVisibleColumns: null,
   canToggleColumns: false,
