@@ -115,6 +115,7 @@ class StructuralVariantsComponent {
       nostic: [],
       biological: [],
       fusionOmicSupport: [],
+      uncharacterized: [],
     };
     // Run over mutations and group
     Object.values(structVars).forEach((row) => {
