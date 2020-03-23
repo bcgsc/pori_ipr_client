@@ -8,7 +8,7 @@ import GenomicReportComponent from './genomic-report.component';
 import SummaryComponent from './genomic-summary/genomic-summary.component';
 import AnalystCommentsComponent from './analyst-comments/analyst-comments.component';
 import PathwayAnalysisComponent from './pathway-analysis/pathway-analysis.component';
-import TherapeuticComponent from './therapeutic/therapeutic.component';
+import TherapeuticComponent from './therapeutic';
 import SlidesComponent from './presentation/slides/slides.component';
 import DiscussionComponent from './presentation/discussion/discussion.component';
 import KBMatchesView from './kb-matches/kbMatchesView';
@@ -39,7 +39,12 @@ export default angular.module('genomic.report')
   .component('summary', SummaryComponent)
   .component('analystComments', AnalystCommentsComponent)
   .component('pathwayAnalysis', PathwayAnalysisComponent)
-  .component('therapeutic', TherapeuticComponent)
+  .component('therapeutic', react2angular(TherapeuticComponent, [
+    'therapeuticTargets',
+    'reportEdit',
+    'print',
+    'report',
+  ]))
   .component('slides', SlidesComponent)
   .component('discussion', DiscussionComponent)
   .component('kbMatchesAngularComponent', react2angular(KBMatchesView))

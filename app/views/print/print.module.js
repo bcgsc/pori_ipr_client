@@ -11,7 +11,7 @@ import PrintHeaderComponent from './print-header/print-header.component';
 import GenomicSummaryComponent from '../report/genomic-report/genomic-summary/genomic-summary.component';
 import AnalystCommentsComponent from '../report/genomic-report/analyst-comments/analyst-comments.component';
 import PathwayAnalysisComponent from '../report/genomic-report/pathway-analysis/pathway-analysis.component';
-import TherapeuticReactComponent from '../report/genomic-report/therapeutic';
+import TherapeuticReactComponent from '../report/genomic-report/therapeutic/components/PrintTables';
 import SlidesComponent from '../report/genomic-report/presentation/slides/slides.component';
 
 import ProbeSummaryComponent from '../report/probe-report/probe-summary/probe-summary.component';

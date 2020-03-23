@@ -11,6 +11,7 @@ const genomic = {
         $transition$.params().analysis_report,
       )],
     reportEdit: ['AclService', async AclService => AclService.checkAction('report.edit')],
+    print: () => false,
   },
   lazyLoad: undefined,
 };
@@ -72,7 +73,7 @@ const therapeutic = {
   ...eager.therapeutic,
   component: 'therapeutic',
   resolve: {
-    therapeutic: ['$transition$', 'TherapeuticService',
+    therapeuticTargets: ['$transition$', 'TherapeuticService',
       async ($transition$, TherapeuticService) => TherapeuticService.all(
         $transition$.params().analysis_report,
       )],
