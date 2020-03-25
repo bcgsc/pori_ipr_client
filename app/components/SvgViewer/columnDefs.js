@@ -8,8 +8,8 @@ const columnDefs = [{
 }, {
   colId: 'ensemblHeader',
   children: [
-    { headerName: 'Ensembl Gene', field: 'ensemblGene' },
-    { headerName: 'Ensembl Transcript', field: 'ensemblTranscript' },
+    { headerName: 'Ensembl Gene', field: 'ensemblGene', cellRenderer: 'LinkCellRenderer' },
+    { headerName: 'Ensembl Transcript', field: 'ensemblTranscript', cellRenderer: 'LinkCellRenderer' },
   ],
 }, {
   colId: 'predictedHeader',

@@ -13,6 +13,7 @@ import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import OptionsMenu from '../OptionsMenu';
 import DetailDialog from '../DetailDialog';
 import SvgViewer from '../SvgViewer';
+import LinkCellRenderer from './components/LinkCellRenderer';
 
 import './index.scss';
 
@@ -268,6 +269,7 @@ function DataTable(props) {
           editType="fullRow"
           frameworkComponents={{
             EditDialog,
+            LinkCellRenderer,
           }}
         />
       </div>
