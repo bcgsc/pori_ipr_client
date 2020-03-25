@@ -7,7 +7,7 @@ const columnDefs = [{
   field: 'expType',
   hide: false,
 }, {
-  headerName: 'Expression Class (i)',
+  headerName: 'Expression Class',
   field: 'expression_class',
   hide: false,
 }, {

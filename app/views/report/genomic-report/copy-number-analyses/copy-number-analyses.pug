@@ -17,7 +17,7 @@ section
       h2.title Copy Number Variants: Genomic Details
 
       div(ng-repeat="(title, cnvs) in $ctrl.cnvGroups track by $index")
-        react-table(column-defs="$ctrl.columnDefs", row-data="cnvs", title="$ctrl.titleMap[title]")
+        react-table(column-defs="$ctrl.columnDefs", row-data="cnvs", title-text="$ctrl.titleMap[title]")
 
     div(layout="column", flex).bg-white
       h2.title Copy Number & LOH
