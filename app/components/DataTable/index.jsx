@@ -21,7 +21,7 @@ import './index.scss';
  * @param {array} props.rowData table row data
  * @param {array} props.columnDefs column definitions for ag-grid
  * @param {array} props.arrayColumns list of columns containing array data
- * @param {string} props.title table title
+ * @param {string} props.titleText table title
  * @param {string} props.filterText text to filter the table on
  * @param {bool} props.editable can rows be edited?
  * @param {object} props.EditDialog Edit Dialog component
@@ -37,7 +37,7 @@ function DataTable(props) {
     rowData,
     columnDefs,
     arrayColumns,
-    title,
+    titleText,
     filterText,
     editable,
     EditDialog,
@@ -207,7 +207,7 @@ function DataTable(props) {
     <div className="data-table--padded">
       <div className="data-table__header-container">
         <Typography variant="h6" className="data-table__header">
-          {title}
+          {titleText}
         </Typography>
         {addable && renderAddRow()}
         <EditDialog
@@ -258,7 +258,7 @@ DataTable.propTypes = {
   columnDefs: PropTypes.arrayOf(PropTypes.object).isRequired,
   arrayColumns: PropTypes.arrayOf(PropTypes.string),
   rowData: PropTypes.arrayOf(PropTypes.object),
-  title: PropTypes.string,
+  titleText: PropTypes.string,
   filterText: PropTypes.string,
   editable: PropTypes.bool,
   EditDialog: PropTypes.func,
@@ -274,7 +274,7 @@ DataTable.defaultProps = {
   rowData: [],
   filterText: '',
   arrayColumns: [],
-  title: '',
+  titleText: '',
   editable: false,
   EditDialog: () => null,
   addable: false,
