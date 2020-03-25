@@ -12,6 +12,7 @@ import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import OptionsMenu from '../OptionsMenu';
 import DetailDialog from '../DetailDialog';
+import SvgViewer from '../SvgViewer';
 
 import './index.scss';
 
@@ -61,6 +62,7 @@ function DataTable(props) {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showDetailDialog, setShowDetailDialog] = useState(false);
   const [selectedRow, setSelectedRow] = useState({});
+  const [isSvg, setIsSvg] = useState(false);
 
   useEffect(() => {
     if (gridApi.current) {
@@ -136,13 +138,19 @@ function DataTable(props) {
   };
 
   const rowClickedDetail = (event) => {
-    const definedCols = columnApi.current.getAllColumns().map(col => col.colId);
     const propagateObject = Object.entries(event.data).reduce((accumulator, [key, value]) => {
-      if (definedCols.includes(key)) {
+      if (typeof value !== 'object') {
         accumulator[key] = value;
       }
       return accumulator;
     }, {});
+
+    if (propagateObject.svg) {
+      setIsSvg(true);
+    } else {
+      setIsSvg(false);
+    }
+
     setSelectedRow(propagateObject);
     setShowDetailDialog(true);
   };
@@ -229,12 +237,23 @@ function DataTable(props) {
         {showPopover
           && renderOptionsMenu()
         }
-        <DetailDialog
-          open={showDetailDialog}
-          selectedRow={selectedRow}
-          onClose={handleDetailClose}
-          arrayColumns={arrayColumns}
-        />
+        {!isSvg
+          ? (
+            <DetailDialog
+              open={showDetailDialog}
+              selectedRow={selectedRow}
+              onClose={handleDetailClose}
+              arrayColumns={arrayColumns}
+            />
+          )
+          : (
+            <SvgViewer
+              open={showDetailDialog}
+              selectedRow={selectedRow}
+              onClose={handleDetailClose}
+            />
+          )
+        }
         <AgGridReact
           columnDefs={columnDefs}
           rowData={rowData}
