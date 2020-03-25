@@ -31,6 +31,7 @@ import './index.scss';
  * @param {array} props.visibleColumns array of column ids that are visible
  * @param {func} props.syncVisibleColumns function to propagate visible column changes
  * @param {bool} props.canToggleColumns can visible/hidden columns be toggled
+ * @param {bool} props.canViewDetails can the detail dialog be shown
  * @return {*} JSX
  */
 function DataTable(props) {
@@ -48,6 +49,7 @@ function DataTable(props) {
     visibleColumns,
     syncVisibleColumns,
     canToggleColumns,
+    canViewDetails,
   } = props;
 
   const gridApi = useRef();
@@ -139,7 +141,7 @@ function DataTable(props) {
 
   const rowClickedDetail = (event) => {
     const propagateObject = Object.entries(event.data).reduce((accumulator, [key, value]) => {
-      if (typeof value !== 'object') {
+      if (typeof value !== 'object' || event.data.svg) {
         accumulator[key] = value;
       }
       return accumulator;
@@ -262,7 +264,7 @@ function DataTable(props) {
           domLayout={domLayout}
           autoSizePadding="0"
           onGridSizeChanged={onGridSizeChanged}
-          onRowClicked={!editable ? rowClickedDetail : null}
+          onRowClicked={(!editable && canViewDetails) ? rowClickedDetail : null}
           editType="fullRow"
           frameworkComponents={{
             EditDialog,
@@ -287,6 +289,7 @@ DataTable.propTypes = {
   visibleColumns: PropTypes.arrayOf(PropTypes.string),
   syncVisibleColumns: PropTypes.func,
   canToggleColumns: PropTypes.bool,
+  canViewDetails: PropTypes.bool,
 };
 
 DataTable.defaultProps = {
@@ -302,6 +305,7 @@ DataTable.defaultProps = {
   visibleColumns: [],
   syncVisibleColumns: null,
   canToggleColumns: false,
+  canViewDetails: true,
 };
 
 export default DataTable;

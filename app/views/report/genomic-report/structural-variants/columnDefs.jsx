@@ -3,6 +3,7 @@ import { Launch } from '@material-ui/icons';
 import { IconButton } from '@material-ui/core';
 
 const columnDefs = [{
+  headerName: 'Image',
   cellRendererFramework: function cellRendererFramework(params) {
     if (params.data.svg) {
       return (
