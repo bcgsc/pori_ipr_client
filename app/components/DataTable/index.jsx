@@ -12,7 +12,7 @@ import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import OptionsMenu from '../OptionsMenu';
 import DetailDialog from '../DetailDialog';
-import SvgViewer from '../SvgViewer';
+import SvgViewer from './components/SvgViewer';
 import LinkCellRenderer from './components/LinkCellRenderer';
 
 import './index.scss';

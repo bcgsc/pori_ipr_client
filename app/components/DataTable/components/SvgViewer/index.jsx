@@ -13,7 +13,7 @@ import { HighlightOff } from '@material-ui/icons';
 import { UncontrolledReactSVGPanZoom } from 'react-svg-pan-zoom';
 import InlineSVG from 'svg-inline-react';
 import { AutoSizer } from 'react-virtualized';
-import DataTable from '../DataTable';
+import DataTable from '../..';
 import columnDefs, { setHeaderName } from './columnDefs';
 
 import './index.scss';
