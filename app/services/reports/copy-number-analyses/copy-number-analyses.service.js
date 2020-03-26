@@ -13,7 +13,7 @@ class CopyNumberAnalyses {
    */
   async all(report) {
     const { data } = await this.$http.get(
-      `${this.api}/${report}/copy-number-analyses/cnv`,
+      `${this.api}/${report}/copy-variants`,
     );
     return data;
   }
@@ -28,7 +28,7 @@ class CopyNumberAnalyses {
    */
   async updateOne(report, ident, payload) {
     const { data } = await this.$http.put(
-      `${this.api}/${report}/copy-number-analyses/cnv/${ident}`,
+      `${this.api}/${report}/copy-variants/${ident}`,
       payload,
     );
     return data;
@@ -43,7 +43,7 @@ class CopyNumberAnalyses {
    */
   async getType(report, type) {
     const { data } = await this.$http.get(
-      `${this.api}/${report}/copy-number-analyses/cnv/${type}`,
+      `${this.api}/${report}/copy-variants/${type}`,
     );
     return data;
   }
