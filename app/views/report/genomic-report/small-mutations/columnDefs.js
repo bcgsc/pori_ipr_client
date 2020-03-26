@@ -24,11 +24,11 @@ const columnDefs = [{
   hide: false,
 }, {
   headerName: 'Copy Change',
-  field: 'gene.cnv.ploidyCorrCpChange',
+  field: 'gene.copyVariants.ploidyCorrCpChange',
   hide: false,
 }, {
   headerName: 'LOH State',
-  field: 'gene.cnv.lohState',
+  field: 'gene.copyVariants.lohState',
   hide: false,
 }, {
   headerName: 'Ref/Alt DNA',
@@ -40,15 +40,15 @@ const columnDefs = [{
   hide: false,
 }, {
   headerName: 'Expression (RPKM)',
-  field: 'gene.outlier.rpkm',
+  field: 'gene.expressionVariants.rpkm',
   hide: false,
 }, {
   colId: 'foldChange',
-  field: 'gene.outlier.foldChange',
+  field: 'gene.expressionVariants.foldChange',
   hide: false,
 }, {
   colId: 'tcgaPerc',
-  field: 'gene.outlier.tcgaPerc',
+  field: 'gene.expressionVariants.tcgaPerc',
   hide: false,
 }];
 
