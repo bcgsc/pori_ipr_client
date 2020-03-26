@@ -202,6 +202,20 @@ function DataTable(props) {
       <AddCircleOutlineIcon />
     </IconButton>
   );
+
+  // AG-Grid has a bug where column groups aren't accounted for when calculating overlay placement
+  const CustomNoRowsOverlay = () => {
+    const isParentHeaders = columnDefs.some(col => col.children);
+
+    if (isParentHeaders) {
+      return (
+        <div style={{ margin: '49px 0 0 0' }}>No rows to show</div>
+      );
+    }
+    return (
+      <div>No rows to show</div>
+    );
+  };
   
   return (
     <div className="data-table--padded">
@@ -247,7 +261,9 @@ function DataTable(props) {
           editType="fullRow"
           frameworkComponents={{
             EditDialog,
+            CustomNoRowsOverlay,
           }}
+          noRowsOverlayComponent="CustomNoRowsOverlay"
         />
       </div>
     </div>
