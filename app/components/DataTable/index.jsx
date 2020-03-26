@@ -14,6 +14,7 @@ import OptionsMenu from '../OptionsMenu';
 import DetailDialog from '../DetailDialog';
 import SvgViewer from './components/SvgViewer';
 import LinkCellRenderer from './components/LinkCellRenderer';
+import GeneCellRenderer from './components/GeneCellRenderer';
 
 import './index.scss';
 
@@ -285,6 +286,7 @@ function DataTable(props) {
             EditDialog,
             LinkCellRenderer,
             CustomNoRowsOverlay,
+            GeneCellRenderer,
           }}
           noRowsOverlayComponent="CustomNoRowsOverlay"
         />
