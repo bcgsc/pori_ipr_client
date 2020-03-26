@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import GeneViewer from '../GeneViewer';
 
+import './index.scss';
+
 /**
  * @param {object} params params
  * @param {string} params.value display text
- * @param {string} props.link target link
  * @return {*} JSX
  */
 function GeneCellRenderer(params) {
@@ -16,9 +17,15 @@ function GeneCellRenderer(params) {
 
   return (
     <>
-      <a onClick={setShowGeneViewer}>
+      <span
+        tabIndex={0}
+        role="button"
+        onClick={setShowGeneViewer}
+        onKeyDown={setShowGeneViewer}
+        className="gene__text"
+      >
         {value}
-      </a>
+      </span>
       <GeneViewer
         open={showGeneViewer}
       />
