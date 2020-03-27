@@ -1,11 +1,6 @@
 import template from './expression-analysis.pug';
 import './expression-analysis.scss';
-
-const EXPLEVEL = {
-  OVEREXPRESSED: "overexpressed",
-  OUT_HIGH: "outlier_high",
-  OUT_LOW: "outlier_low",
-}
+import { EXPLEVEL } from '../consts';
 
 const bindings = {
   report: '<',
