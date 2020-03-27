@@ -11,6 +11,7 @@ import {
 } from '@material-ui/core';
 import { HighlightOff } from '@material-ui/icons';
 import DataTable from '../..';
+import geneViewerApi from '../../../../services/reports/geneViewer';
 
 /**
  * @param {object} props props
@@ -22,13 +23,26 @@ import DataTable from '../..';
 function GeneViewer(props) {
   const {
     onClose,
-    selectedRow,
     open,
+    gene,
+    reportId,
   } = props;
+  
+  const [geneData, setGeneData] = useState();
 
   const handleClose = (value) => {
     onClose(value);
   };
+
+  useEffect(() => {
+    if (open) {
+      const api = async () => {
+        const resp = await geneViewerApi(gene, reportId);
+        setGeneData(resp);
+      };
+      api();
+    }
+  }, [open]);
 
   return (
     <Dialog
@@ -61,7 +75,8 @@ function GeneViewer(props) {
 
 GeneViewer.propTypes = {
   onClose: PropTypes.func.isRequired,
-  selectedRow: PropTypes.objectOf(PropTypes.any).isRequired,
+  gene: PropTypes.any.isRequired,
+  reportId: PropTypes.string.isRequired,
   open: PropTypes.bool.isRequired,
 };
 

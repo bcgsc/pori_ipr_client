@@ -11,6 +11,7 @@ import './index.scss';
 function GeneCellRenderer(params) {
   const {
     value,
+    context: { reportId },
   } = params;
 
   const [showGeneViewer, setShowGeneViewer] = useState(false);
@@ -20,15 +21,19 @@ function GeneCellRenderer(params) {
       <span
         tabIndex={0}
         role="button"
-        onClick={setShowGeneViewer}
-        onKeyDown={setShowGeneViewer}
+        onClick={() => setShowGeneViewer(prevVal => !prevVal)}
+        onKeyDown={() => setShowGeneViewer(prevVal => !prevVal)}
         className="gene__text"
       >
         {value}
       </span>
-      <GeneViewer
-        open={showGeneViewer}
-      />
+      {showGeneViewer && (
+        <GeneViewer
+          open={showGeneViewer}
+          gene={value}
+          reportId={reportId}
+        />
+      )}
     </>
   );
 }
