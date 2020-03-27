@@ -54,13 +54,8 @@ section
         div
           img(data-ng-src="data:image/png;base64,{{$ctrl.images['mutSignature.snvsAllStrelka'].data}}")
 
-    div(layout="column", flex)
+    div(layout="column", flex).bg-white
       h2.title Small Mutations: Genomic Details
 
       div(ng-repeat="(title, smallMutation) in $ctrl.smallMutations")
-        h3(ng-if="title === 'biological'").title Variants of Biological Relevance
-        h3(ng-if="title === 'unknown'").title Variants of Unknown Significance in Known Cancer-Related Genes
-        h3(ng-if="title === 'clinical'").title Variants of Clinical Relevance
-        h3(ng-if="title === 'nostic'").title Variants of Prognostic or Diagnostic Relevance
-
-        small-mutation-variants(mutations="smallMutation", report="$ctrl.report")
+        react-table(column-defs="$ctrl.columnDefs", row-data="smallMutation", title-text="$ctrl.getTableTitle(title)")

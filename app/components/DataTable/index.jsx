@@ -13,17 +13,15 @@ import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import OptionsMenu from '../OptionsMenu';
 import DetailDialog from '../DetailDialog';
 
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-material.css';
-
 import './index.scss';
+
 
 /**
  * @param {object} props props
  * @param {array} props.rowData table row data
  * @param {array} props.columnDefs column definitions for ag-grid
  * @param {array} props.arrayColumns list of columns containing array data
- * @param {string} props.title table title
+ * @param {string} props.titleText table title
  * @param {string} props.filterText text to filter the table on
  * @param {bool} props.editable can rows be edited?
  * @param {object} props.EditDialog Edit Dialog component
@@ -39,7 +37,7 @@ function DataTable(props) {
     rowData,
     columnDefs,
     arrayColumns,
-    title,
+    titleText,
     filterText,
     editable,
     EditDialog,
@@ -72,7 +70,7 @@ function DataTable(props) {
 
   // Triggers when syncVisibleColumns is called
   useEffect(() => {
-    if (columnApi.current) {
+    if (columnApi.current && visibleColumns.length) {
       const allCols = columnApi.current.getAllColumns().map(col => col.colId);
       const hiddenColumns = allCols.filter(col => !visibleColumns.includes(col));
       columnApi.current.setColumnsVisible(visibleColumns, true);
@@ -109,6 +107,17 @@ function DataTable(props) {
 
     const { visibleColumnIds } = getColumnVisibility();
     columnApi.current.autoSizeColumns(visibleColumnIds);
+  };
+
+  const onGridSizeChanged = (params) => {
+    const MEDIUM_SCREEN_WIDTH_LOWER = 992;
+
+    if (params.clientWidth >= MEDIUM_SCREEN_WIDTH_LOWER) {
+      gridApi.current.sizeColumnsToFit();
+    } else {
+      const allCols = columnApi.current.getAllColumns().map(col => col.colId);
+      columnApi.current.autoSizeColumns(allCols);
+    }
   };
 
   const rowEditStart = (editRowNode) => {
@@ -193,12 +202,26 @@ function DataTable(props) {
       <AddCircleOutlineIcon />
     </IconButton>
   );
+
+  // AG-Grid has a bug where column groups aren't accounted for when calculating overlay placement
+  const CustomNoRowsOverlay = () => {
+    const isParentHeaders = columnDefs.some(col => col.children);
+
+    if (isParentHeaders) {
+      return (
+        <div style={{ margin: '49px 0 0 0' }}>No rows to show</div>
+      );
+    }
+    return (
+      <div>No rows to show</div>
+    );
+  };
   
   return (
     <div className="data-table--padded">
       <div className="data-table__header-container">
         <Typography variant="h6" className="data-table__header">
-          {title}
+          {titleText}
         </Typography>
         {addable && renderAddRow()}
         <EditDialog
@@ -233,11 +256,14 @@ function DataTable(props) {
           onGridReady={onGridReady}
           domLayout={domLayout}
           autoSizePadding="0"
+          onGridSizeChanged={onGridSizeChanged}
           onRowClicked={!editable ? rowClickedDetail : null}
           editType="fullRow"
           frameworkComponents={{
             EditDialog,
+            CustomNoRowsOverlay,
           }}
+          noRowsOverlayComponent="CustomNoRowsOverlay"
         />
       </div>
     </div>
@@ -248,7 +274,7 @@ DataTable.propTypes = {
   columnDefs: PropTypes.arrayOf(PropTypes.object).isRequired,
   arrayColumns: PropTypes.arrayOf(PropTypes.string),
   rowData: PropTypes.arrayOf(PropTypes.object),
-  title: PropTypes.string,
+  titleText: PropTypes.string,
   filterText: PropTypes.string,
   editable: PropTypes.bool,
   EditDialog: PropTypes.func,
@@ -262,9 +288,9 @@ DataTable.propTypes = {
 
 DataTable.defaultProps = {
   rowData: [],
-  arrayColumns: [],
-  title: '',
   filterText: '',
+  arrayColumns: [],
+  titleText: '',
   editable: false,
   EditDialog: () => null,
   addable: false,

@@ -1,4 +1,5 @@
 import template from './structural-variants.pug';
+import columnDefs, { setHeaderName } from './columnDefs';
 import './structural-variants.scss';
 
 const bindings = {
@@ -18,12 +19,16 @@ class StructuralVariantsComponent {
   }
 
   $onInit() {
+    setHeaderName(`${this.report.tumourAnalysis.diseaseExpressionComparator} %ile`, 'tcgaPerc');
+    setHeaderName(`Fold Change vs ${this.report.tumourAnalysis.normalExpressionComparator}`, 'foldChange');
+    this.columnDefs = columnDefs;
     this.StrucVars = {};
     this.titleMap = {
       clinical: 'Gene Fusions of Potential Clinical Relevance',
       nostic: 'Gene Fusions of Prognostic and Diagnostic Relevance',
       biological: 'Gene Fusions with Biological Relevance',
       fusionOmicSupport: 'Gene Fusions with Genome and Transcriptome Support',
+      uncharacterized: 'Uncharacterized Gene Fusions',
     };
     this.processSvs(this.structuralVariants);
     this.pickComparator();
@@ -110,27 +115,30 @@ class StructuralVariantsComponent {
       nostic: [],
       biological: [],
       fusionOmicSupport: [],
+      uncharacterized: [],
     };
     // Run over mutations and group
     Object.values(structVars).forEach((row) => {
-      // append mavis summary to row if it has a mavis_product_id
-      const sv = row;
-      if (row.mavis_product_id) {
-        try {
-          sv.summary = this.mavisSummary.find(entry => entry.product_id === sv.mavis_product_id).summary;
-        } catch (err) {
-          console.info('No matching Mavis summary was found.');
+      if (row.svVariant) {
+        // append mavis summary to row if it has a mavis_product_id
+        const sv = row;
+        if (row.mavis_product_id) {
+          try {
+            sv.summary = this.mavisSummary.find(entry => entry.product_id === sv.mavis_product_id).summary;
+          } catch (err) {
+            console.info('No matching Mavis summary was found.');
+          }
         }
-      }
 
-      // Setting fields to omit from details viewer
-      delete sv.mavis_product_id;
+        // Setting fields to omit from details viewer
+        delete sv.mavis_product_id;
 
-      if (!(sv.svVariant in svs)) {
-        svs[sv.svVariant] = [];
+        if (!(sv.svVariant in svs)) {
+          svs[sv.svVariant] = [];
+        }
+        // Add to type
+        svs[sv.svVariant].push(sv);
       }
-      // Add to type
-      svs[sv.svVariant].push(sv);
     });
 
     // Set Small Mutations

@@ -12,7 +12,7 @@ class OutlierService {
 */
   async all(report) {
     const { data } = await this.$http.get(
-      `${this.api}/${report}/expression-analysis/outlier`,
+      `${this.api}/${report}/expression-variants`,
     );
     return data;
   }
@@ -26,7 +26,7 @@ class OutlierService {
    */
   async updateOne(report, ident, payload) {
     const { data } = await this.$http.put(
-      `${this.api}/${report}/expression-analysis/outlier/${ident}`,
+      `${this.api}/${report}/expression-variants/${ident}`,
       payload,
     );
     return data;
@@ -40,7 +40,7 @@ class OutlierService {
    */
   async getType(report, type) {
     const { data } = await this.$http.get(
-      `${this.api}/${report}/expression-analysis/outlier/${type}`,
+      `${this.api}/${report}/expression-variants/${type}`,
     );
     return data;
   }

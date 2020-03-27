@@ -23,12 +23,13 @@ function ReportsTableComponent(props) {
   } = props;
 
   const gridApi = useRef();
+  const columnApi = useRef();
 
   const [rowData, setRowData] = useState();
 
   const onGridReady = async (params) => {
     gridApi.current = params.api;
-    gridApi.current.sizeColumnsToFit();
+    columnApi.current = params.columnApi;
 
     const opts = {
       all: true,
@@ -63,6 +64,20 @@ function ReportsTableComponent(props) {
         date: report.createdAt,
       };
     }));
+
+    const allCols = columnApi.current.getAllColumns().map(col => col.colId);
+    columnApi.current.autoSizeColumns(allCols);
+  };
+
+  const onGridSizeChanged = (params) => {
+    const MEDIUM_SCREEN_WIDTH_LOWER = 992;
+
+    if (params.clientWidth >= MEDIUM_SCREEN_WIDTH_LOWER) {
+      gridApi.current.sizeColumnsToFit();
+    } else {
+      const allCols = columnApi.current.getAllColumns().map(col => col.colId);
+      columnApi.current.autoSizeColumns(allCols);
+    }
   };
 
   const onSelectionChanged = () => {
@@ -94,6 +109,7 @@ function ReportsTableComponent(props) {
         rowSelection="single"
         onSelectionChanged={onSelectionChanged}
         onGridReady={onGridReady}
+        onGridSizeChanged={onGridSizeChanged}
       />
     </div>
   );

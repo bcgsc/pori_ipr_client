@@ -31,7 +31,7 @@ function TherapeuticView(props) {
   return (
     <>
       <DataTable
-        title="Potential Therapeutic Targets"
+        titleText="Potential Therapeutic Targets"
         columnDefs={columnDefs}
         rowData={therapeuticData}
         editable={reportEdit && !print}
@@ -42,7 +42,7 @@ function TherapeuticView(props) {
       />
 
       <DataTable
-        title="Potential Chemoresistance"
+        titleText="Potential Chemoresistance"
         columnDefs={columnDefs}
         rowData={chemoresistanceData}
         editable={reportEdit && !print}

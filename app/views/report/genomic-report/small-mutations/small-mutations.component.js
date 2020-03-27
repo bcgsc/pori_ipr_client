@@ -1,4 +1,5 @@
 import template from './small-mutations.pug';
+import columnDefs, { setHeaderName } from './columnDefs';
 import './small-mutations.scss';
 
 const bindings = {
@@ -20,6 +21,9 @@ class SmallMutationsComponent {
   }
 
   $onInit() {
+    this.columnDefs = columnDefs;
+    setHeaderName(`${this.report.tumourAnalysis.diseaseExpressionComparator} %ile`, 'tcgaPerc');
+    setHeaderName(`Fold Change vs ${this.report.tumourAnalysis.normalExpressionComparator}`, 'foldChange');
     this.processMutationSummaryImages(this.mutationSummaryImages);
     this.processMutations(this.smallMutations);
     this.pickComparator();
@@ -132,6 +136,22 @@ class SmallMutationsComponent {
    */
   getMutationSummaryImage(graph, type, comparator = null) {
     return this.mutationSummaryImages[type][graph].find(c => (c.comparator.toLowerCase() === comparator.toLowerCase()));
+  }
+
+  /* eslint-disable class-methods-use-this */
+  getTableTitle(table) {
+    switch (table) {
+      case 'biological':
+        return 'Variants of Biological Relevance';
+      case 'unknown':
+        return 'Variants of Unknown Significance in Known Cancer-Related Genes';
+      case 'clinical':
+        return 'Variants of Clinical Relevance';
+      case 'nostic':
+        return 'Variants of Prognostic or Diagnostic Relevance';
+      default:
+        return 'Other Variants';
+    }
   }
 }
 

@@ -61,44 +61,44 @@ function KBMatchesView(props) {
 
   const [syncedTableData] = useState({
     thisCancer: {
-      title: 'Therapies Approved In This Cancer Type',
+      titleText: 'Therapies Approved In This Cancer Type',
       rowData: coalesceEntries(thisCancer),
     },
     otherCancer: {
-      title: 'Therapies Approved In Other Cancer Type',
+      titleText: 'Therapies Approved In Other Cancer Type',
       rowData: coalesceEntries(otherCancer),
     },
     therapeutic: {
-      title: 'Therapeutic Alterations',
+      titleText: 'Therapeutic Alterations',
       rowData: extractCategories(coalesceEntries(alterations), 'therapeutic'),
     },
     diagnostic: {
-      title: 'Diagnostic Alterations',
+      titleText: 'Diagnostic Alterations',
       rowData: extractCategories(coalesceEntries(alterations), 'diagnostic'),
     },
     prognostic: {
-      title: 'Prognostic Alterations',
+      titleText: 'Prognostic Alterations',
       rowData: extractCategories(coalesceEntries(alterations), 'prognostic'),
     },
     biological: {
-      title: 'Biological Alterations',
+      titleText: 'Biological Alterations',
       rowData: extractCategories(coalesceEntries(alterations), 'biological'),
     },
   });
 
   const [unsyncedTableData] = useState({
-    title: 'Detected Alterations From Targeted Gene Report',
+    titleText: 'Detected Alterations From Targeted Gene Report',
     rowData: targetedGenes,
   });
 
   const hiddenTableData = useRef({
     novel: {
-      title: 'Alterations For Review',
+      titleText: 'Alterations For Review',
       rowData: coalesceEntries(novel),
       show: false,
     },
     unknown: {
-      title: 'Uncharacterized Alterations',
+      titleText: 'Uncharacterized Alterations',
       rowData: coalesceEntries(unknown),
       show: false,
     },

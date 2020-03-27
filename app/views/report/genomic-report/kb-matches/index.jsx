@@ -13,7 +13,7 @@ import {
   ExpandMore,
 } from '@material-ui/icons';
 import DataTable from '../../../../components/DataTable';
-import { columnDefs, targetedColumnDefs } from './ColumnDefs';
+import { columnDefs, targetedColumnDefs } from './columnDefs';
 
 import './index.scss';
 
@@ -59,9 +59,9 @@ function KBMatches(props) {
           label="Filter Table Text"
           type="text"
           variant="outlined"
-          size="small"
           value={filterText}
           onChange={handleFilter}
+          margin="dense"
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
@@ -75,11 +75,11 @@ function KBMatches(props) {
       <div>
         {Object.values(syncedTableData).map(table => (
           <DataTable
-            key={table.title}
+            key={table.titleText}
             columnDefs={columnDefs}
             arrayColumns={arrayColumns}
             rowData={table.rowData || []}
-            title={table.title}
+            titleText={table.titleText}
             visibleColumns={visibleColumns}
             syncVisibleColumns={syncVisibleColumns}
             filterText={filterText}
@@ -93,14 +93,14 @@ function KBMatches(props) {
         <DataTable
           columnDefs={targetedColumnDefs}
           rowData={unsyncedTableData.rowData || []}
-          title={unsyncedTableData.title}
+          titleText={unsyncedTableData.titleText}
           filterText={filterText}
           edit={false}
         />
       </div>
 
       {Object.values(thisHiddenTableData).map(table => (
-        <div className="expansion-panel" key={table.title}>
+        <div className="expansion-panel" key={table.titleText}>
           <ExpansionPanel
             TransitionProps={{ unmountOnExit: true }}
             elevation={0}
@@ -110,7 +110,7 @@ function KBMatches(props) {
               classes={{ root: 'expansion-panel__summary' }}
             >
               <Typography variant="h6">
-                {table.title}
+                {table.titleText}
               </Typography>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails
@@ -119,7 +119,7 @@ function KBMatches(props) {
               <DataTable
                 columnDefs={columnDefs}
                 rowData={table.rowData || []}
-                title={table.title}
+                titleText={table.titleText}
                 filterText={filterText}
                 edit={false}
                 canToggleColumns
@@ -135,18 +135,18 @@ function KBMatches(props) {
 KBMatches.propTypes = {
   syncedTableData: PropTypes.objectOf(
     PropTypes.shape({
-      title: PropTypes.string,
+      titleText: PropTypes.string,
       rowData: PropTypes.array,
     }),
   ),
   unsyncedTableData: PropTypes.shape({
-    title: PropTypes.string,
+    titleText: PropTypes.string,
     rowData: PropTypes.array,
   }),
   hiddenTableData: PropTypes.objectOf(
     PropTypes.objectOf(
       PropTypes.shape({
-        title: PropTypes.string,
+        titleText: PropTypes.string,
         rowData: PropTypes.array,
       }),
     ),
@@ -156,14 +156,14 @@ KBMatches.propTypes = {
 KBMatches.defaultProps = {
   syncedTableData: {
     table: {
-      title: '',
+      titleText: '',
       rowData: [],
     },
   },
   unsyncedTableData: {},
   hiddenTableData: {
     table: {
-      title: '',
+      titleText: '',
       rowData: [],
     },
   },
