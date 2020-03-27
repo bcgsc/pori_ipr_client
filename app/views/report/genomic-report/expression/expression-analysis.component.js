@@ -1,6 +1,12 @@
 import template from './expression-analysis.pug';
 import './expression-analysis.scss';
 
+const EXPLEVEL = {
+  OVEREXPRESSED: "overexpressed",
+  OUT_HIGH: "outlier_high",
+  OUT_LOW: "outlier_low",
+}
+
 const bindings = {
   report: '<',
   mutationSummary: '<',
@@ -76,27 +82,37 @@ class ExpressionAnalysisComponent {
     };
   }
 
+  /**
+   * Returns 1 if up-regulated, -1 if down-regulated, 0 for no difference between reference 
+   * @param {string|null} exp expression level as a string
+   */
+  getRegLevel(exp) {
+    if (!exp) { return 0 };
+    if (exp === EXPLEVEL.OUT_HIGH || exp === EXPLEVEL.OVEREXPRESSED) { return 1 }
+    return -1;
+  }
+
   // Sort outliers into categories
   processExpression(input) {
     const expressions = {
       clinical: [],
       nostic: [],
       biological: [],
-      upreg_onco: [],
-      downreg_tsg: [],
+      upreg_onco: [],     //  Check for expression_class (str) and gene.oncogene (bool)
+      downreg_tsg: [],    //  Check for expression_class (str) and gene.tumourSuppressor (bool)
     };
-
-    const typekey = 'outlierType';
 
     // Run over mutations and group
     input.forEach((row) => {
-      if (!Object.prototype.hasOwnProperty.call(expressions, row[typekey])) {
-        expressions[row[typekey]] = [];
+      let { tumourSuppressor, oncogene } = row.gene;
+      if (tumourSuppressor && this.getRegLevel(row.expression_class) === -1) {
+        expressions.downreg_tsg.push(row);
       }
-      // Add to type
-      expressions[row[typekey]].push(row);
+      if (oncogene && this.getRegLevel(row.expression_class) === 1) {
+        expressions.upreg_onco.push(row);
+      }
+      // TODO: clinical, nostic, and biological to come 
     });
-
     this.expOutliers = expressions;
   }
 
