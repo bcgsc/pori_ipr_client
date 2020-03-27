@@ -51,6 +51,10 @@ const columnDefs = [{
   colId: 'tcgaPerc',
   field: 'gene.outlier.tcgaPerc',
   hide: false,
+}, {
+  headerName: 'Actions',
+  cellRenderer: 'ActionCellRenderer',
+  pinned: 'right',
 }];
 
 export const setHeaderName = (header, colId) => {

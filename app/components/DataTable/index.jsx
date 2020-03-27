@@ -15,6 +15,7 @@ import DetailDialog from '../DetailDialog';
 import SvgViewer from './components/SvgViewer';
 import LinkCellRenderer from './components/LinkCellRenderer';
 import GeneCellRenderer from './components/GeneCellRenderer';
+import ActionCellRenderer from './components/ActionCellRenderer';
 
 import './index.scss';
 
@@ -282,11 +283,15 @@ function DataTable(props) {
           onGridSizeChanged={onGridSizeChanged}
           onRowClicked={(!editable && canViewDetails) ? rowClickedDetail : null}
           editType="fullRow"
+          context={{
+            editable,
+          }}
           frameworkComponents={{
             EditDialog,
             LinkCellRenderer,
-            CustomNoRowsOverlay,
             GeneCellRenderer,
+            ActionCellRenderer,
+            CustomNoRowsOverlay,
           }}
           noRowsOverlayComponent="CustomNoRowsOverlay"
         />

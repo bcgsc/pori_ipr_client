@@ -35,6 +35,10 @@ const columnDefs = [{
     { headerName: 'kIQR', field: 'ptxkIQR', hide: true },
     { headerName: 'QC', field: 'ptxQC', hide: true },
   ],
+}, {
+  headerName: 'Actions',
+  cellRenderer: 'ActionCellRenderer',
+  pinned: 'right',
 }];
 
 export default columnDefs;

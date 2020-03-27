@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import DataTable from '../../../../components/DataTable';
 import EditDialog from './components/EditDialog';
-import columnDefs from './ColumnDefs';
+import columnDefs from './columnDefs';
 
 /**
  * @param {object} props props
