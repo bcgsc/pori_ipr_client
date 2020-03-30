@@ -100,9 +100,6 @@ function SvgViewer(props) {
           <Typography variant="h6" align="center">
             Structural Variant Details
           </Typography>
-          <IconButton onClick={handleClose}>
-            <HighlightOff />
-          </IconButton>
         </span>
       </DialogTitle>
       <DialogContent>
