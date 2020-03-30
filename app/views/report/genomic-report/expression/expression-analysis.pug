@@ -77,7 +77,7 @@ section.material-section.expression
     div(ng-if="$ctrl.showSection.outlierSummary")
 
       div(layout="column", ng-repeat="(key, title) in $ctrl.expSummaryMap track by $index")
-        expression-react(outliers="$ctrl.expOutliers[key]", title-text="title")
+        expression-react(outliers="$ctrl.expOutliers[key]", title-text="title", report-id="$ctrl.report.ident")
 
   div.analysis-report-section.margin-top-10
     h1 mRNA Expression Outliers
