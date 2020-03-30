@@ -32,6 +32,7 @@ function GeneCellRenderer(params) {
           open={showGeneViewer}
           gene={value}
           reportId={reportId}
+          onClose={() => setShowGeneViewer(false)}
         />
       )}
     </>

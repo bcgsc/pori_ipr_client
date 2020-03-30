@@ -8,6 +8,9 @@ import {
   Typography,
   IconButton,
   Button,
+  TabPanel,
+  Tabs,
+  Tab,
 } from '@material-ui/core';
 import { HighlightOff } from '@material-ui/icons';
 import DataTable from '../..';
@@ -29,10 +32,7 @@ function GeneViewer(props) {
   } = props;
   
   const [geneData, setGeneData] = useState();
-
-  const handleClose = (value) => {
-    onClose(value);
-  };
+  const [tabValue, setTabValue] = useState(0);
 
   useEffect(() => {
     if (open) {
@@ -43,6 +43,14 @@ function GeneViewer(props) {
       api();
     }
   }, [open]);
+
+  const handleClose = (value) => {
+    onClose(value);
+  };
+
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
+  };
 
   return (
     <Dialog
@@ -62,7 +70,14 @@ function GeneViewer(props) {
         </span>
       </DialogTitle>
       <DialogContent>
-        test
+        <Tabs
+          value={tabValue}
+          onChange={handleTabChange}
+          indicatorColor="primary"
+          textColor="primary"
+        >
+          <Tab label="Meta" />
+        </Tabs>
       </DialogContent>
       <DialogActions>
         <Button color="primary" onClick={handleClose}>
