@@ -1,18 +1,20 @@
+@import '../../../styles/variables';
+
 .pog-report {
 
   button.accent {
-    background-color: rgb(175, 61, 161);
+    background-color: $secondary;
     color: white;
 
     &.md-raised:hover {
-      background-color: rgb(202, 110, 196);
+      background-color: lighten($secondary, 10%);
     }
   }
 
   .reportSections {
     div {
       md-list-item.active {
-        background-color: rgb(175, 61, 161);
+        background-color: $secondary;
         color: white;
       }
       md-list-item.meta {
@@ -20,7 +22,7 @@
         color: rgb(90,90,90);
 
         &.active {
-          background-color: rgb(175, 61, 161);
+          background-color: $secondary;
           color: white;
         }
       }
@@ -600,7 +602,7 @@
   $material-table-row-hover: rgb(238,238,238);
 
   $analysis-report-section-expression-primary: rgb(84, 100, 211);
-  $analysis-report-section-expression-secondary: rgb(192, 197, 226);
+  $analysis-report-section-expression-secondary: $secondary;
 
   section.material-section {
     background-color: rgb(255,255,255);
@@ -848,7 +850,7 @@ md-dialog-content {
         }
 
         &.active {
-          background-color: rgb(175, 61, 161);
+          background-color: $secondary;
           color: rgb(255,255,255);
         }
 
@@ -875,7 +877,7 @@ md-dialog-content {
           }
 
           &.active {
-            background-color: rgb(175, 61, 161);
+            background-color: $secondary;
             color: rgb(255,255,255);
           }
 
