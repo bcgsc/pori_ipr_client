@@ -12,6 +12,8 @@ import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import OptionsMenu from '../OptionsMenu';
 import DetailDialog from '../DetailDialog';
+import SvgViewer from '../SvgViewer';
+import LinkCellRenderer from './components/LinkCellRenderer';
 
 import './index.scss';
 
@@ -30,6 +32,7 @@ import './index.scss';
  * @param {array} props.visibleColumns array of column ids that are visible
  * @param {func} props.syncVisibleColumns function to propagate visible column changes
  * @param {bool} props.canToggleColumns can visible/hidden columns be toggled
+ * @param {bool} props.canViewDetails can the detail dialog be shown
  * @return {*} JSX
  */
 function DataTable(props) {
@@ -47,6 +50,7 @@ function DataTable(props) {
     visibleColumns,
     syncVisibleColumns,
     canToggleColumns,
+    canViewDetails,
   } = props;
 
   const gridApi = useRef();
@@ -61,6 +65,7 @@ function DataTable(props) {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showDetailDialog, setShowDetailDialog] = useState(false);
   const [selectedRow, setSelectedRow] = useState({});
+  const [isSvg, setIsSvg] = useState(false);
 
   useEffect(() => {
     if (gridApi.current) {
@@ -136,13 +141,19 @@ function DataTable(props) {
   };
 
   const rowClickedDetail = (event) => {
-    const definedCols = columnApi.current.getAllColumns().map(col => col.colId);
     const propagateObject = Object.entries(event.data).reduce((accumulator, [key, value]) => {
-      if (definedCols.includes(key)) {
+      if (typeof value !== 'object' || event.data.svg) {
         accumulator[key] = value;
       }
       return accumulator;
     }, {});
+
+    if (propagateObject.svg) {
+      setIsSvg(true);
+    } else {
+      setIsSvg(false);
+    }
+
     setSelectedRow(propagateObject);
     setShowDetailDialog(true);
   };
@@ -243,12 +254,23 @@ function DataTable(props) {
         {showPopover
           && renderOptionsMenu()
         }
-        <DetailDialog
-          open={showDetailDialog}
-          selectedRow={selectedRow}
-          onClose={handleDetailClose}
-          arrayColumns={arrayColumns}
-        />
+        {!isSvg
+          ? (
+            <DetailDialog
+              open={showDetailDialog}
+              selectedRow={selectedRow}
+              onClose={handleDetailClose}
+              arrayColumns={arrayColumns}
+            />
+          )
+          : (
+            <SvgViewer
+              open={showDetailDialog}
+              selectedRow={selectedRow}
+              onClose={handleDetailClose}
+            />
+          )
+        }
         <AgGridReact
           columnDefs={columnDefs}
           rowData={rowData}
@@ -257,10 +279,11 @@ function DataTable(props) {
           domLayout={domLayout}
           autoSizePadding="0"
           onGridSizeChanged={onGridSizeChanged}
-          onRowClicked={!editable ? rowClickedDetail : null}
+          onRowClicked={(!editable && canViewDetails) ? rowClickedDetail : null}
           editType="fullRow"
           frameworkComponents={{
             EditDialog,
+            LinkCellRenderer,
             CustomNoRowsOverlay,
           }}
           noRowsOverlayComponent="CustomNoRowsOverlay"
@@ -284,6 +307,7 @@ DataTable.propTypes = {
   visibleColumns: PropTypes.arrayOf(PropTypes.string),
   syncVisibleColumns: PropTypes.func,
   canToggleColumns: PropTypes.bool,
+  canViewDetails: PropTypes.bool,
 };
 
 DataTable.defaultProps = {
@@ -299,6 +323,7 @@ DataTable.defaultProps = {
   visibleColumns: [],
   syncVisibleColumns: null,
   canToggleColumns: false,
+  canViewDetails: true,
 };
 
 export default DataTable;

@@ -3,6 +3,7 @@ import { Launch } from '@material-ui/icons';
 import { IconButton } from '@material-ui/core';
 
 const columnDefs = [{
+  headerName: 'Image',
   cellRendererFramework: function cellRendererFramework(params) {
     if (params.data.svg) {
       return (
@@ -43,15 +44,15 @@ const columnDefs = [{
 }, {
   headerName: 'RPKM 5`/3`',
   colId: 'rpkm',
-  valueGetter: params => `${params.data.gene1.outlier.rpkm}/${params.data.gene2.outlier.rpkm}`,
+  valueGetter: params => `${params.data.gene1.expressionVariants.rpkm}/${params.data.gene2.expressionVariants.rpkm}`,
   hide: false,
 }, {
   colId: 'foldChange',
-  valueGetter: params => `${params.data.gene1.outlier.foldChange}/${params.data.gene2.outlier.foldChange}`,
+  valueGetter: params => `${params.data.gene1.expressionVariants.foldChange}/${params.data.gene2.expressionVariants.foldChange}`,
   hide: false,
 }, {
   colId: 'tcgaPerc',
-  valueGetter: params => `${params.data.gene1.outlier.tcgaPerc}/${params.data.gene2.outlier.tcgaPerc}`,
+  valueGetter: params => `${params.data.gene1.expressionVariants.tcgaPerc}/${params.data.gene2.expressionVariants.tcgaPerc}`,
   hide: false,
 }];
 
