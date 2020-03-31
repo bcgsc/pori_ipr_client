@@ -103,13 +103,13 @@ class GenomicSummaryComponent {
 
   /* eslint-disable-next-line class-methods-use-this */
   variantCategory(variant) {
-    // Small Mutations
-    if (variant.geneVariant.match(/([A-z0-9]*)\s(\([pcg]\.[A-z]*[0-9]*[A-z_0-9>]*\*?\))/g)) {
+    // small mutations
+    if (/:[pgc]\./.exec(variant.geneVariant)) {
       variant.type = 'smallMutation';
       return variant;
     }
     // Structural Variants
-    if (variant.geneVariant.match(/(([A-z0-9]*|\?)::([A-z0-9]*|\?)\s\(e([0-9]*|\?):e([0-9]*|\?)\))/g)) {
+    if (variant.geneVariant.includes('::') || variant.geneVariant.includes('fusion')) {
       variant.type = 'structuralVariant';
       return variant;
     }
@@ -118,7 +118,6 @@ class GenomicSummaryComponent {
       variant.type = 'expressionOutlier';
       return variant;
     }
-    // Return CNV mutation
     variant.type = 'cnv';
     return variant;
   }
