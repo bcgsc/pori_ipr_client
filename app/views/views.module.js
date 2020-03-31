@@ -7,6 +7,7 @@ import eagerAdminStates from './admin/eager';
 import eagerPrintStates from './print/eager';
 import eagerGenomicStates from './report/genomic-report/eager';
 import eagerProbeStates from './report/probe-report/eager';
+import eagerTermsStates from './terms/eager';
 
 angular.module('root.views', [
   ReportListingModule,
@@ -24,5 +25,6 @@ export default angular.module('root.views')
     Object.values(eagerPrintStates).forEach(state => $stateProvider.state(state));
     Object.values(eagerGenomicStates).forEach(state => $stateProvider.state(state));
     Object.values(eagerProbeStates).forEach(state => $stateProvider.state(state));
+    Object.values(eagerTermsStates).forEach(state => $stateProvider.state(state));
   })
   .name;
