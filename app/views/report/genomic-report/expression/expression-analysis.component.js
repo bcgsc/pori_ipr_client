@@ -1,6 +1,6 @@
 import template from './expression-analysis.pug';
 import './expression-analysis.scss';
-import { EXPLEVEL } from '../consts';
+import { EXPLEVEL } from '../constants';
 
 const bindings = {
   report: '<',
@@ -77,16 +77,6 @@ class ExpressionAnalysisComponent {
     };
   }
 
-  /**
-   * Returns 1 if up-regulated, -1 if down-regulated, 0 for no difference between reference 
-   * @param {string|null} exp expression level as a string
-   */
-  getRegLevel(exp) {
-    if (!exp) { return 0 };
-    if (exp === EXPLEVEL.OUT_HIGH || exp === EXPLEVEL.OVEREXPRESSED) { return 1 }
-    return -1;
-  }
-
   // Sort outliers into categories
   processExpression(input) {
     const expressions = {
@@ -99,11 +89,11 @@ class ExpressionAnalysisComponent {
 
     // Run over mutations and group
     input.forEach((row) => {
-      let { tumourSuppressor, oncogene } = row.gene;
-      if (tumourSuppressor && this.getRegLevel(row.expression_class) === -1) {
+      let { gene: { tumourSuppressor, oncogene }, expression_class: expLvl } = row;
+      if (tumourSuppressor && expLvl === EXPLEVEL.OUT_LOW) {
         expressions.downreg_tsg.push(row);
       }
-      if (oncogene && this.getRegLevel(row.expression_class) === 1) {
+      if (oncogene && EXPLEVEL.UP.includes(expLvl)) {
         expressions.upreg_onco.push(row);
       }
       // TODO: clinical, nostic, and biological to come 

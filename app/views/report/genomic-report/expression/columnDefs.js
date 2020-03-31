@@ -3,16 +3,12 @@ const columnDefs = [{
   field: 'gene.name',
   hide: false,
 }, {
-  headerName: 'Type',
-  field: 'expType',
-  hide: false,
-}, {
   headerName: 'Expression Class',
   field: 'expression_class',
   hide: false,
 }, {
   headerName: 'Copy State',
-  field: 'cnvState',
+  field: 'gene.copyVariants.cnvState',
   hide: false,
 }, {
   headerName: 'Normal Tissue',

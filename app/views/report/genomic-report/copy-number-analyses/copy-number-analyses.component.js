@@ -1,7 +1,7 @@
 import template from './copy-number-analyses.pug';
 import columnDefs, { setHeaderName } from './columnDefs';
 import './copy-number-analyses.scss';
-import { CNVSTATE, EXPLEVEL } from '../consts';
+import { CNVSTATE, EXPLEVEL } from '../constants';
 
 const bindings = {
   report: '<',
@@ -43,7 +43,7 @@ class CopyNumberAnalyses {
     Object.values(this.cnvs).forEach((row) => {
       let { 
         gene: { tumourSuppressor, oncogene, 
-          expressionVariants: { expression_class }
+          expressionVariants: { expression_class: expLvl }
         }, 
         cnvState, 
       } = row; // Get the flags for this cnv
@@ -54,7 +54,7 @@ class CopyNumberAnalyses {
           this.cnvGroups.homodTumourSupress.push(row);
         }
         // low exp, copy loss
-        if (cnvState === CNVSTATE.LOSS && expression_class === EXPLEVEL.OUT_LOW) {
+        if (cnvState === CNVSTATE.LOSS && expLvl === EXPLEVEL.OUT_LOW) {
           this.cnvGroups.lowlyExpTSloss.push(row);
         }
       }
@@ -69,7 +69,7 @@ class CopyNumberAnalyses {
         // Highly expressed + Copy gains?
         if (
           cnvState === CNVSTATE.GAIN &&
-          (expression_class === EXPLEVEL.OUT_HIGH || expression_class === EXPLEVEL.OVEREXPRESSED)
+          (EXPLEVEL.UP.includes(expLvl))
         ) {
           this.cnvGroups.highlyExpOncoGain.push(row);
         }
