@@ -109,32 +109,33 @@ const kbMatches = {
     // But React requires components to be PascalCase. Reassign in component.
     kbMatchesComponent: [() => KBMatchesComponent],
     alterations: ['$transition$', 'AlterationService',
-      async ($transition$, AlterationService) => AlterationService.getAll(
+      async ($transition$, AlterationService) => AlterationService.getType(
         $transition$.params().analysis_report,
+        { approvedTherapy: false, category: 'therapeutic,biological,diagnostic,prognostic' },
       ),
     ],
     novel: ['$transition$', 'AlterationService',
       async ($transition$, AlterationService) => AlterationService.getType(
         $transition$.params().analysis_report,
-        'novel',
+        { category: 'novel' },
       ),
     ],
     unknown: ['$transition$', 'AlterationService',
       async ($transition$, AlterationService) => AlterationService.getType(
         $transition$.params().analysis_report,
-        'unknown',
+        { category: 'unknown' },
       ),
     ],
     thisCancer: ['$transition$', 'AlterationService',
       async ($transition$, AlterationService) => AlterationService.getType(
         $transition$.params().analysis_report,
-        'thisCancer',
+        { matchedCancer: true, approvedTherapy: true, category: 'therapeutic' },
       ),
     ],
     otherCancer: ['$transition$', 'AlterationService',
       async ($transition$, AlterationService) => AlterationService.getType(
         $transition$.params().analysis_report,
-        'otherCancer',
+        { matchedCancer: false, approvedTherapy: true, category: 'therapeutic' },
       ),
     ],
     targetedGenes: ['$transition$', 'TargetedGenesService',
