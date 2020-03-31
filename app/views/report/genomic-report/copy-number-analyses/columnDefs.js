@@ -48,6 +48,8 @@ const columnDefs = [{
   colId: 'action',
   cellRenderer: 'ActionCellRenderer',
   pinned: 'right',
+  sortable: false,
+  suppressMenu: true,
 }];
 
 export const setHeaderName = (header, colId) => {

@@ -97,6 +97,8 @@ const columnDefs = [{
   cellRenderer: 'ActionCellRenderer',
   pinned: 'right',
   hide: false,
+  sortable: false,
+  suppressMenu: true,
 }];
 
 const targetedColumnDefs = [{

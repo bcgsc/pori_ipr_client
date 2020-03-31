@@ -31,6 +31,8 @@ const columnDefs = [{
   headerName: 'Actions',
   cellRenderer: 'ActionCellRenderer',
   pinned: 'right',
+  sortable: false,
+  suppressMenu: true,
 }];
 
 export default columnDefs;
