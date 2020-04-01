@@ -1,6 +1,7 @@
 import template from './copy-number-analyses.pug';
 import columnDefs, { setHeaderName } from './columnDefs';
 import './copy-number-analyses.scss';
+import { CNVSTATE, EXPLEVEL } from '../constants';
 
 const bindings = {
   report: '<',
@@ -40,13 +41,41 @@ class CopyNumberAnalyses {
     };
 
     Object.values(this.cnvs).forEach((row) => {
-      if (row.cnvVariant) {
-        if (!Object.prototype.hasOwnProperty.call(this.cnvGroups, row.cnvVariant)) {
-          this.cnvGroups[row.cnvVariant] = [];
+      let { 
+        gene: { tumourSuppressor, oncogene, 
+          expressionVariants: { expression_class: expLvl }
+        }, 
+        cnvState, 
+      } = row; // Get the flags for this cnv
+
+      if (tumourSuppressor) {
+        // homod?
+        if (cnvState === CNVSTATE.HOMLOSS) {
+          this.cnvGroups.homodTumourSupress.push(row);
         }
-        // Add row to type
-        this.cnvGroups[row.cnvVariant].push(row);
+        // low exp, copy loss
+        if (cnvState === CNVSTATE.LOSS && expLvl === EXPLEVEL.OUT_LOW) {
+          this.cnvGroups.lowlyExpTSloss.push(row);
+        }
       }
+
+      if (oncogene) {
+        // Common amplified + Copy gains?
+        if (
+          cnvState === CNVSTATE.AMP
+        ) {
+          this.cnvGroups.commonAmplified.push(row);
+        }
+        // Highly expressed + Copy gains?
+        if (
+          cnvState === CNVSTATE.GAIN &&
+          (EXPLEVEL.UP.includes(expLvl))
+        ) {
+          this.cnvGroups.highlyExpOncoGain.push(row);
+        }
+      }
+
+      // TODO: Clinical, nostic, biological
     });
   }
 }
