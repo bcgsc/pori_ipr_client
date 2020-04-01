@@ -2,6 +2,7 @@ import ArrayCell from './ArrayCell';
 
 const columnDefs = [{
   headerName: 'Gene',
+  cellRenderer: 'GeneCellRenderer',
   field: 'gene',
   hide: false,
 },
@@ -17,7 +18,7 @@ const columnDefs = [{
 },
 {
   headerName: 'Cancer Type',
-  field: 'disease',
+  colId: 'disease',
   hide: false,
   cellRendererFramework: ArrayCell('disease', false),
   valueGetter: (params) => {
@@ -45,7 +46,7 @@ const columnDefs = [{
 },
 {
   headerName: 'PMID',
-  field: 'reference',
+  colId: 'reference',
   hide: false,
   cellRendererFramework: ArrayCell('reference', true),
   valueGetter: (params) => {
@@ -90,6 +91,14 @@ const columnDefs = [{
   headerName: 'Zygosity',
   field: 'zygosity',
   hide: true,
+}, {
+  headerName: 'Actions',
+  colId: 'Actions',
+  cellRenderer: 'ActionCellRenderer',
+  pinned: 'right',
+  hide: false,
+  sortable: false,
+  suppressMenu: true,
 }];
 
 const targetedColumnDefs = [{

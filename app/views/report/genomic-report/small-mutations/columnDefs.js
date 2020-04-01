@@ -2,6 +2,7 @@ const columnDefs = [{
   headerName: 'Gene',
   field: 'gene.name',
   hide: false,
+  cellRenderer: 'GeneCellRenderer',
 }, {
   headerName: 'Transcript',
   field: 'transcript',
@@ -50,6 +51,12 @@ const columnDefs = [{
   colId: 'tcgaPerc',
   field: 'gene.expressionVariants.tcgaPerc',
   hide: false,
+}, {
+  headerName: 'Actions',
+  cellRenderer: 'ActionCellRenderer',
+  pinned: 'right',
+  sortable: false,
+  suppressMenu: true,
 }];
 
 export const setHeaderName = (header, colId) => {

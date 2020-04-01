@@ -11,9 +11,9 @@ import {
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import OptionsMenu from '../OptionsMenu';
-import DetailDialog from '../DetailDialog';
-import SvgViewer from '../SvgViewer';
 import LinkCellRenderer from './components/LinkCellRenderer';
+import GeneCellRenderer from './components/GeneCellRenderer';
+import ActionCellRenderer from './components/ActionCellRenderer';
 
 import './index.scss';
 
@@ -27,7 +27,7 @@ import './index.scss';
  * @param {string} props.filterText text to filter the table on
  * @param {bool} props.editable can rows be edited?
  * @param {object} props.EditDialog Edit Dialog component
- * @param {string} props.reportIdent Ident of report (used for editing api calls)
+ * @param {string} props.reportId Ident of report (used for editing api calls)
  * @param {string} props.tableType type of table used for therapeutic targets
  * @param {array} props.visibleColumns array of column ids that are visible
  * @param {func} props.syncVisibleColumns function to propagate visible column changes
@@ -45,7 +45,7 @@ function DataTable(props) {
     editable,
     EditDialog,
     addable,
-    reportIdent,
+    reportId,
     tableType,
     visibleColumns,
     syncVisibleColumns,
@@ -63,9 +63,7 @@ function DataTable(props) {
 
   const [showPopover, setShowPopover] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
-  const [showDetailDialog, setShowDetailDialog] = useState(false);
   const [selectedRow, setSelectedRow] = useState({});
-  const [isSvg, setIsSvg] = useState(false);
 
   useEffect(() => {
     if (gridApi.current) {
@@ -125,11 +123,6 @@ function DataTable(props) {
     }
   };
 
-  const rowEditStart = (editRowNode) => {
-    setSelectedRow(editRowNode);
-    setShowEditDialog(true);
-  };
-
   const handleRowEditClose = (editedData) => {
     setShowEditDialog(false);
     if (editedData && selectedRow.node) {
@@ -140,34 +133,11 @@ function DataTable(props) {
     setSelectedRow({});
   };
 
-  const rowClickedDetail = (event) => {
-    const propagateObject = Object.entries(event.data).reduce((accumulator, [key, value]) => {
-      if (typeof value !== 'object' || event.data.svg) {
-        accumulator[key] = value;
-      }
-      return accumulator;
-    }, {});
-
-    if (propagateObject.svg) {
-      setIsSvg(true);
-    } else {
-      setIsSvg(false);
-    }
-
-    setSelectedRow(propagateObject);
-    setShowDetailDialog(true);
-  };
-
-  const handleDetailClose = () => {
-    setShowDetailDialog(false);
-  };
-
   const defaultColDef = {
     sortable: true,
     resizable: true,
     filter: true,
     editable: false,
-    onCellDoubleClicked: editable ? rowEditStart : () => {},
   };
     
   const domLayout = 'autoHeight';
@@ -239,7 +209,7 @@ function DataTable(props) {
           open={showEditDialog}
           close={handleRowEditClose}
           editData={selectedRow.data}
-          reportIdent={reportIdent}
+          reportId={reportId}
           tableType={tableType}
         />
         {canToggleColumns && (
@@ -254,23 +224,6 @@ function DataTable(props) {
         {showPopover
           && renderOptionsMenu()
         }
-        {!isSvg
-          ? (
-            <DetailDialog
-              open={showDetailDialog}
-              selectedRow={selectedRow}
-              onClose={handleDetailClose}
-              arrayColumns={arrayColumns}
-            />
-          )
-          : (
-            <SvgViewer
-              open={showDetailDialog}
-              selectedRow={selectedRow}
-              onClose={handleDetailClose}
-            />
-          )
-        }
         <AgGridReact
           columnDefs={columnDefs}
           rowData={rowData}
@@ -279,11 +232,20 @@ function DataTable(props) {
           domLayout={domLayout}
           autoSizePadding="0"
           onGridSizeChanged={onGridSizeChanged}
-          onRowClicked={(!editable && canViewDetails) ? rowClickedDetail : null}
           editType="fullRow"
+          context={{
+            editable,
+            canViewDetails,
+            EditDialog,
+            reportId,
+            tableType,
+            arrayColumns,
+          }}
           frameworkComponents={{
             EditDialog,
             LinkCellRenderer,
+            GeneCellRenderer,
+            ActionCellRenderer,
             CustomNoRowsOverlay,
           }}
           noRowsOverlayComponent="CustomNoRowsOverlay"
@@ -302,7 +264,7 @@ DataTable.propTypes = {
   editable: PropTypes.bool,
   EditDialog: PropTypes.func,
   addable: PropTypes.bool,
-  reportIdent: PropTypes.string,
+  reportId: PropTypes.string.isRequired,
   tableType: PropTypes.string,
   visibleColumns: PropTypes.arrayOf(PropTypes.string),
   syncVisibleColumns: PropTypes.func,
@@ -318,7 +280,6 @@ DataTable.defaultProps = {
   editable: false,
   EditDialog: () => null,
   addable: false,
-  reportIdent: '',
   tableType: '',
   visibleColumns: [],
   syncVisibleColumns: null,

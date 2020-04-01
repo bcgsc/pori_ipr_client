@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import DataTable from '../../../../components/DataTable';
 import EditDialog from './components/EditDialog';
-import columnDefs from './ColumnDefs';
+import columnDefs from './columnDefs';
 
 /**
  * @param {object} props props
@@ -37,7 +37,7 @@ function TherapeuticView(props) {
         editable={reportEdit && !print}
         EditDialog={EditDialog}
         addable={reportEdit && !print}
-        reportIdent={report.ident}
+        reportId={report.ident}
         tableType="therapeutic"
       />
 
@@ -48,7 +48,7 @@ function TherapeuticView(props) {
         editable={reportEdit && !print}
         EditDialog={EditDialog}
         addable={reportEdit && !print}
-        reportIdent={report.ident}
+        reportId={report.ident}
         tableType="chemoresistance"
       />
     </>

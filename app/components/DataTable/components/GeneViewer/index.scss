@@ -1,0 +1,14 @@
+.dialog {
+  &__title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.tab {
+  &--center {
+    text-align: center;
+    margin: 12px 0 0;
+  }
+}
