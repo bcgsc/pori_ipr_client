@@ -6,10 +6,8 @@ import {
   DialogContent,
   DialogActions,
   Typography,
-  IconButton,
   Button,
 } from '@material-ui/core';
-import { HighlightOff } from '@material-ui/icons';
 import { UncontrolledReactSVGPanZoom } from 'react-svg-pan-zoom';
 import InlineSVG from 'svg-inline-react';
 import { AutoSizer } from 'react-virtualized';
