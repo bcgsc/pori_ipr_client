@@ -65,15 +65,14 @@ function ActionCellRenderer(params) {
   return (
     <>
       {canViewDetails && (
-        <Tooltip title="View Details">
-          <IconButton
-            size="small"
-            aria-label="View Details"
-            onClick={detailClick}
-          >
-            <LibraryBooks />
-          </IconButton>
-        </Tooltip>
+        <IconButton
+          size="small"
+          aria-label="View Details"
+          onClick={detailClick}
+          title="View Details"
+        >
+          <LibraryBooks />
+        </IconButton>
       )}
       {showDetailDialog && (
         <DetailDialog
@@ -84,15 +83,14 @@ function ActionCellRenderer(params) {
         />
       )}
       {editable && (
-        <Tooltip title="Edit">
-          <IconButton
-            size="small"
-            aria-label="Edit"
-            onClick={() => setShowEditDialog(prevVal => !prevVal)}
-          >
-            <Edit />
-          </IconButton>
-        </Tooltip>
+        <IconButton
+          size="small"
+          aria-label="Edit"
+          onClick={() => setShowEditDialog(prevVal => !prevVal)}
+          title="Edit"
+        >
+          <Edit />
+        </IconButton>
       )}
       {showEditDialog && (
         <EditDialog
@@ -104,15 +102,14 @@ function ActionCellRenderer(params) {
         />
       )}
       {data.svg && (
-        <Tooltip title="Fusion Diagrams">
-          <IconButton
-            size="small"
-            aria-label="View Fusion Diagram"
-            onClick={() => setShowSvgViewer(prevVal => !prevVal)}
-          >
-            <Photo />
-          </IconButton>
-        </Tooltip>
+        <IconButton
+          size="small"
+          aria-label="View Fusion Diagram"
+          onClick={() => setShowSvgViewer(prevVal => !prevVal)}
+          title="View Fusion Diagram"
+        >
+          <Photo />
+        </IconButton>
       )}
       {showSvgViewer && (
         <SvgViewer
