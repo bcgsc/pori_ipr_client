@@ -57,6 +57,19 @@ module.exports = {
               name: 'img/[name].[hash:8].[ext]',
             },
           },
+          {
+            test: /\.woff(2)?$/,
+            use: [
+              {
+                loader: 'url-loader',
+                options: {
+                  limit: 10000,
+                  name: 'font/[hash].[ext]',
+                  mimetype: 'application/font-woff',
+                },
+              },
+            ],
+          },
         ],
       },
     ],

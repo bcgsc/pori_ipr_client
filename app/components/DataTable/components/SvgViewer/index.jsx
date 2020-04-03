@@ -6,10 +6,8 @@ import {
   DialogContent,
   DialogActions,
   Typography,
-  IconButton,
   Button,
 } from '@material-ui/core';
-import { HighlightOff } from '@material-ui/icons';
 import { UncontrolledReactSVGPanZoom } from 'react-svg-pan-zoom';
 import InlineSVG from 'svg-inline-react';
 import { AutoSizer } from 'react-virtualized';
@@ -97,7 +95,7 @@ function SvgViewer(props) {
     >
       <DialogTitle>
         <span className="dialog__title">
-          <Typography variant="h6" align="center">
+          <Typography variant="h5" align="center">
             Structural Variant Details
           </Typography>
         </span>

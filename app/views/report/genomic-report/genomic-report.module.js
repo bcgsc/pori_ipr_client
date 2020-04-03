@@ -39,12 +39,7 @@ export default angular.module('genomic.report')
   .component('summary', SummaryComponent)
   .component('analystComments', AnalystCommentsComponent)
   .component('pathwayAnalysis', PathwayAnalysisComponent)
-  .component('therapeutic', react2angular(TherapeuticComponent, [
-    'therapeuticTargets',
-    'reportEdit',
-    'print',
-    'report',
-  ]))
+  .component('therapeutic', react2angular(TherapeuticComponent))
   .component('slides', SlidesComponent)
   .component('discussion', DiscussionComponent)
   .component('kbMatchesAngularComponent', react2angular(KBMatchesView))

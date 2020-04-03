@@ -112,17 +112,6 @@ function DataTable(props) {
     columnApi.current.autoSizeColumns(visibleColumnIds);
   };
 
-  const onGridSizeChanged = (params) => {
-    const MEDIUM_SCREEN_WIDTH_LOWER = 992;
-
-    if (params.clientWidth >= MEDIUM_SCREEN_WIDTH_LOWER) {
-      gridApi.current.sizeColumnsToFit();
-    } else {
-      const allCols = columnApi.current.getAllColumns().map(col => col.colId);
-      columnApi.current.autoSizeColumns(allCols);
-    }
-  };
-
   const handleRowEditClose = (editedData) => {
     setShowEditDialog(false);
     if (editedData && selectedRow.node) {
@@ -201,7 +190,7 @@ function DataTable(props) {
   return (
     <div className="data-table--padded">
       <div className="data-table__header-container">
-        <Typography variant="h6" className="data-table__header">
+        <Typography variant="h5" className="data-table__header">
           {titleText}
         </Typography>
         {addable && renderAddRow()}
@@ -231,7 +220,6 @@ function DataTable(props) {
           onGridReady={onGridReady}
           domLayout={domLayout}
           autoSizePadding="0"
-          onGridSizeChanged={onGridSizeChanged}
           editType="fullRow"
           context={{
             editable,
@@ -249,6 +237,8 @@ function DataTable(props) {
             CustomNoRowsOverlay,
           }}
           noRowsOverlayComponent="CustomNoRowsOverlay"
+          suppressAnimationFrame
+          suppressColumnVirtualisation
         />
       </div>
     </div>
