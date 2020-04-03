@@ -20,7 +20,7 @@ const Terms = () => {
   sectionData.forEach((sectionDatum) => {
     const section = (
       <div key={sectionDatum.id}>
-        <Typography id={sectionDatum.id} variant="h6">
+        <Typography id={sectionDatum.id} variant="h5">
           {sectionDatum.label}
         </Typography>
         <Typography paragraph>
