@@ -190,7 +190,7 @@ function DataTable(props) {
   return (
     <div className="data-table--padded">
       <div className="data-table__header-container">
-        <Typography variant="h6" className="data-table__header">
+        <Typography variant="h5" className="data-table__header">
           {titleText}
         </Typography>
         {addable && renderAddRow()}

@@ -95,7 +95,7 @@ function SvgViewer(props) {
     >
       <DialogTitle>
         <span className="dialog__title">
-          <Typography variant="h6" align="center">
+          <Typography variant="h5" align="center">
             Structural Variant Details
           </Typography>
         </span>

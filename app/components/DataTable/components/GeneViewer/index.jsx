@@ -67,7 +67,7 @@ function GeneViewer(props) {
     >
       <DialogTitle>
         <span className="dialog__title">
-          <Typography variant="h6" align="center">
+          <Typography variant="h5" align="center">
             Gene Viewer
           </Typography>
         </span>
