@@ -2,8 +2,17 @@ import ArrayCell from './ArrayCell';
 
 const columnDefs = [{
   headerName: 'Gene',
-  field: 'gene',
+  cellRenderer: 'GeneCellRenderer',
+  colId: 'gene',
   hide: false,
+  valueGetter: (params) => {
+    const { data: { variant } } = params;
+
+    if (variant.gene) {
+      return variant.gene.name;
+    }
+    return `${variant.gene1.name}, ${variant.gene2.name}`;
+  },
 },
 {
   headerName: 'Known Variant',
@@ -14,10 +23,32 @@ const columnDefs = [{
   headerName: 'Observed Variant',
   field: 'variant',
   hide: false,
+  valueGetter: (params) => {
+    const { data: { variant, variantType } } = params;
+
+    if (variantType === 'cnv') {
+      return `${variant.gene.name} ${variant.cnvState}`;
+    }
+    if (variantType === 'sv') {
+      return `(${
+        variant.gene1.name || '?'
+      },${
+        variant.gene2.name || '?'
+      }):fusion(e.${
+        variant.exon1 || '?'
+      },e.${
+        variant.exon2 || '?'
+      })`;
+    }
+    if (variantType === 'mut') {
+      return `${variant.gene.name}:${variant.proteinChange}`;
+    }
+    return `${variant.gene.name} ${variant.expression_class}`;
+  },
 },
 {
   headerName: 'Cancer Type',
-  field: 'disease',
+  colId: 'disease',
   hide: false,
   cellRendererFramework: ArrayCell('disease', false),
   valueGetter: (params) => {
@@ -30,8 +61,18 @@ const columnDefs = [{
 },
 {
   headerName: 'Disease Percentile',
-  field: 'expressionCancerPercentile',
-  hide: false,
+  colId: 'diseasePercentile',
+  hide: true,
+  valueGetter: (params) => {
+    const { data: { variant, variantType } } = params;
+    if (variantType === 'exp') {
+      return variant.tcgaPerc;
+    }
+    if (variantType === 'sv') {
+      return `${variant.gene1.expressionVariants.tcgaPerc} / ${variant.gene2.expressionVariants.tcgaPerc}`;
+    }
+    return `${variant.gene.expressionVariants.tcgaPerc}`;
+  },
 },
 {
   headerName: 'Association',
@@ -45,7 +86,7 @@ const columnDefs = [{
 },
 {
   headerName: 'PMID',
-  field: 'reference',
+  colId: 'reference',
   hide: false,
   cellRendererFramework: ArrayCell('reference', true),
   valueGetter: (params) => {
@@ -60,6 +101,16 @@ const columnDefs = [{
   headerName: 'LOH Region',
   field: 'LOHRegion',
   hide: true,
+  valueGetter: (params) => {
+    const { data: { variant, variantType } } = params;
+    if (variantType === 'cnv') {
+      return variant.lohState;
+    }
+    if (variantType === 'sv') {
+      return `${variant.gene1.copyVariants.lohState} / ${variant.gene2.copyVariants.lohState}`;
+    }
+    return `${variant.gene.copyVariants.lohState}`;
+  },
 },
 {
   headerName: 'Category',
@@ -68,13 +119,23 @@ const columnDefs = [{
 },
 {
   headerName: 'Copy Number',
-  field: 'copyNumber',
+  colId: 'copyNumber',
   hide: true,
+  valueGetter: (params) => {
+    const { data: { variant, variantType } } = params;
+    if (variantType === 'cnv') {
+      return variant.ploidyCorrCpChange;
+    }
+    if (variantType === 'sv') {
+      return `${variant.gene1.copyVariants.ploidyCorrCpChange} / ${variant.gene2.copyVariants.ploidyCorrCpChange}`;
+    }
+    return `${variant.gene.copyVariants.ploidyCorrCpChange}`;
+  },
 },
 {
   headerName: 'Evidence',
   field: 'evidenceLevel',
-  hide: true,
+  hide: false,
 },
 {
   headerName: 'Matched Cancer',
@@ -88,8 +149,20 @@ const columnDefs = [{
 },
 {
   headerName: 'Zygosity',
-  field: 'zygosity',
+  colId: 'zygosity',
   hide: true,
+  valueGetter: (params) => {
+    const { data: { variant } } = params;
+    return variant.zygosity;
+  },
+}, {
+  headerName: 'Actions',
+  colId: 'Actions',
+  cellRenderer: 'ActionCellRenderer',
+  pinned: 'right',
+  hide: false,
+  sortable: false,
+  suppressMenu: true,
 }];
 
 const targetedColumnDefs = [{

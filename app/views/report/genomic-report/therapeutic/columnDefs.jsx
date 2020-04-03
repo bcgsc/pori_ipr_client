@@ -2,6 +2,7 @@ const columnDefs = [{
   headerName: 'Gene',
   field: 'gene',
   hide: false,
+  cellRenderer: 'GeneCellRenderer',
 }, {
   headerName: 'Variant',
   field: 'variant',
@@ -26,6 +27,12 @@ const columnDefs = [{
   field: 'rank',
   hide: true,
   sort: 'asc',
+}, {
+  headerName: 'Actions',
+  cellRenderer: 'ActionCellRenderer',
+  pinned: 'right',
+  sortable: false,
+  suppressMenu: true,
 }];
 
 export default columnDefs;

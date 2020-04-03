@@ -47,4 +47,4 @@ section
       h2.title Structural Variation: Genomic Details
 
       div(ng-repeat="(title, svs) in $ctrl.StrucVars track by $index")
-        react-table(column-defs="$ctrl.columnDefs", row-data="svs", title-text="$ctrl.titleMap[title]")
+        react-table(column-defs="$ctrl.columnDefs", row-data="svs", title-text="$ctrl.titleMap[title]", report-id="$ctrl.report.ident")

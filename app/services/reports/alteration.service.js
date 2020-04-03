@@ -64,9 +64,10 @@ class AlterationService {
    *
    * @returns {Promise} - result of API call
    */
-  async getType(report, category) {
+  async getType(report, { category, matchedCancer, approvedTherapy }) {
     const { data } = await this.$http.get(
-      `${this.baseUrl(report)}/${category}`,
+      `${this.baseUrl(report)}`,
+      { params: { category, matchedCancer, approvedTherapy } },
     );
     return data;
   }

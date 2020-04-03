@@ -1,5 +1,6 @@
 const columnDefs = [{
   headerName: 'Gene',
+  cellRenderer: 'GeneCellRenderer',
   field: 'gene.name',
   hide: false,
 }, {
@@ -32,16 +33,23 @@ const columnDefs = [{
   hide: false,
 }, {
   headerName: 'Expression (RPKM)',
-  field: 'expressionRpkm',
+  field: 'gene.expressionVariants.rpkm',
   hide: false,
 }, {
   colId: 'foldChange',
-  field: 'foldChange',
+    field: 'gene.expressionVariants.foldChange',
   hide: false,
 }, {
   colId: 'tcgaPerc',
-  field: 'tcgaPerc',
+  field: 'gene.expressionVariants.tcgaPerc',
   hide: false,
+}, {
+  headerName: 'Action',
+  colId: 'action',
+  cellRenderer: 'ActionCellRenderer',
+  pinned: 'right',
+  sortable: false,
+  suppressMenu: true,
 }];
 
 export const setHeaderName = (header, colId) => {

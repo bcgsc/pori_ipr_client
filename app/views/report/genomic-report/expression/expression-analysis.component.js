@@ -1,5 +1,6 @@
 import template from './expression-analysis.pug';
 import './expression-analysis.scss';
+import { EXPLEVEL } from '../constants';
 
 const bindings = {
   report: '<',
@@ -82,21 +83,21 @@ class ExpressionAnalysisComponent {
       clinical: [],
       nostic: [],
       biological: [],
-      upreg_onco: [],
-      downreg_tsg: [],
+      upreg_onco: [],     //  Check for expression_class (str) and gene.oncogene (bool)
+      downreg_tsg: [],    //  Check for expression_class (str) and gene.tumourSuppressor (bool)
     };
-
-    const typekey = 'outlierType';
 
     // Run over mutations and group
     input.forEach((row) => {
-      if (!Object.prototype.hasOwnProperty.call(expressions, row[typekey])) {
-        expressions[row[typekey]] = [];
+      let { gene: { tumourSuppressor, oncogene }, expression_class: expLvl } = row;
+      if (tumourSuppressor && expLvl === EXPLEVEL.OUT_LOW) {
+        expressions.downreg_tsg.push(row);
       }
-      // Add to type
-      expressions[row[typekey]].push(row);
+      if (oncogene && EXPLEVEL.UP.includes(expLvl)) {
+        expressions.upreg_onco.push(row);
+      }
+      // TODO: clinical, nostic, and biological to come 
     });
-
     this.expOutliers = expressions;
   }
 

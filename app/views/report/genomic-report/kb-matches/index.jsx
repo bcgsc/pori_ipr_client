@@ -109,7 +109,7 @@ function KBMatches(props) {
               expandIcon={<ExpandMore />}
               classes={{ root: 'expansion-panel__summary' }}
             >
-              <Typography variant="h6">
+              <Typography variant="h5">
                 {table.titleText}
               </Typography>
             </ExpansionPanelSummary>

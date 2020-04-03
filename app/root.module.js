@@ -5,6 +5,7 @@ import 'angular-animate';
 import ngSanitize from 'angular-sanitize';
 import ngMaterial from 'angular-material';
 import 'ngstorage';
+import 'typeface-roboto';
 import 'angular-material/angular-material.scss';
 import 'angular-sortable-view';
 import ComponentsModule from './components/components.module';

@@ -1,10 +1,7 @@
 const columnDefs = [{
   headerName: 'Gene',
   field: 'gene.name',
-  hide: false,
-}, {
-  headerName: 'Type',
-  field: 'expType',
+  cellRenderer: 'GeneCellRenderer',
   hide: false,
 }, {
   headerName: 'Expression Class',
@@ -12,7 +9,7 @@ const columnDefs = [{
   hide: false,
 }, {
   headerName: 'Copy State',
-  field: 'cnvState',
+  field: 'gene.copyVariants.cnvState',
   hide: false,
 }, {
   headerName: 'Normal Tissue',
@@ -35,6 +32,12 @@ const columnDefs = [{
     { headerName: 'kIQR', field: 'ptxkIQR', hide: true },
     { headerName: 'QC', field: 'ptxQC', hide: true },
   ],
+}, {
+  headerName: 'Actions',
+  cellRenderer: 'ActionCellRenderer',
+  pinned: 'right',
+  sortable: false,
+  suppressMenu: true,
 }];
 
 export default columnDefs;

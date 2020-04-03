@@ -26,7 +26,7 @@ function EditDialog(props) {
     editData,
     open,
     close,
-    reportIdent,
+    reportId,
     tableType,
   } = props;
 
@@ -82,7 +82,7 @@ function EditDialog(props) {
       }
 
       await therapeuticUpdate(
-        reportIdent,
+        reportId,
         editData.ident,
         combinedData,
       );
@@ -96,7 +96,7 @@ function EditDialog(props) {
       }
 
       await therapeuticAdd(
-        reportIdent,
+        reportId,
         combinedData,
       );
     }
@@ -203,7 +203,7 @@ EditDialog.propTypes = {
   editData: PropTypes.objectOf(PropTypes.any),
   open: PropTypes.bool.isRequired,
   close: PropTypes.func.isRequired,
-  reportIdent: PropTypes.string.isRequired,
+  reportId: PropTypes.string.isRequired,
   tableType: PropTypes.string.isRequired,
 };
 
