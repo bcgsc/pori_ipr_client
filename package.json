@@ -47,6 +47,7 @@
     "eslint-plugin-jsx-a11y": "~6.1.2",
     "eslint-plugin-react": "~7.11.1",
     "exports-loader": "~0.7.0",
+    "file-loader": "~6.0.0",
     "html-loader": "~0.5.5",
     "html-webpack-plugin": "~3.2.0",
     "mocha": "~5.2.0",
@@ -106,6 +107,7 @@
     "react2angular": "~4.0.6",
     "svg-inline-react": "~3.2.0",
     "svg-pan-zoom": "~3.6.0",
+    "typeface-roboto": "0.0.75",
     "uglifyjs-webpack-plugin": "~2.1.2",
     "webpack": "~4.29.6",
     "webpack-merge": "~4.2.1"
