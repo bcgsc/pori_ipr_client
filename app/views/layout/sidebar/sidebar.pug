@@ -14,7 +14,7 @@ div(layout="column", ng-class="{'sidebar--open': $ctrl.maximized}").sidebar
   a(layout="row", ng-if="$ctrl.pageAccess.germline", ui-sref="root.germline.board",
     ng-class="{'sidebar__row--active': $ctrl.$state.current.name.includes('germline')}"
   ).sidebar__row
-    md-icon.sidebar__icon supervisor_account
+    img(src="img/germline_icon.svg").sidebar__icon--custom
     md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Germline
     span(ng-class="{'sidebar__text--visible': $ctrl.maximized}").sidebar__text Germline
 
