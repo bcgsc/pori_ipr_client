@@ -18,25 +18,30 @@ div(layout="column", ng-class="{'sidebar--open': $ctrl.maximized}").sidebar
     md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Germline
     span(ng-class="{'sidebar__text--visible': $ctrl.maximized}").sidebar__text Germline
 
+  a(layout="row", href="https://graphkb.bcgsc.ca", target="_blank" rel="noopener noreferrer").sidebar__row
+    md-icon.sidebar__icon menu_book
+    md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Graph Knowledgebase
+    span(ng-class="{'sidebar__text--visible': $ctrl.maximized}").sidebar__text Graph Knowledgebase
+
 
   a(layout="row", ng-if="$ctrl.isAdmin", ui-sref="root.admin.users",
       ng-class="{'sidebar__row--active': $ctrl.$state.current.name.includes('users')}"
     ).sidebar__row
-    md-icon.sidebar__icon insert_emoticon
+    md-icon.sidebar__icon person
     md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Users
     span(ng-class="{'sidebar__text--visible': $ctrl.maximized}").sidebar__text Users
 
   a(layout="row", ng-if="$ctrl.isAdmin", ui-sref="root.admin.groups",
       ng-class="{'sidebar__row--active': $ctrl.$state.current.name.includes('groups')}"
     ).sidebar__row
-    md-icon.sidebar__icon emoji_transportation
+    md-icon.sidebar__icon supervisor_account
     md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Groups
     span(ng-class="{'sidebar__text--visible': $ctrl.maximized}").sidebar__text Groups
 
   a(layout="row", ng-if="$ctrl.isAdmin", ui-sref="root.admin.projects",
       ng-class="{'sidebar__row--active': $ctrl.$state.current.name.includes('projects')}"
     ).sidebar__row
-    md-icon.sidebar__icon folder_special
+    md-icon.sidebar__icon folder_shared
     md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Projects
     span(ng-class="{'sidebar__text--visible': $ctrl.maximized}").sidebar__text Projects
 
