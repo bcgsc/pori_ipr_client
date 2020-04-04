@@ -38,13 +38,31 @@ class SmallMutationsComponent {
     };
 
     // Run over mutations and group
-    Object.values(muts).forEach((row) => {
-      if (!(row.mutationType in mutations)) {
-        mutations[row.mutationType] = [];
+    const mutationRows = Object.values(muts);
+    let row;
+    for (let i = 0; i < mutationRows.length; i++) {
+      row = mutationRows[i];
+
+      // Therapeutic? => clinical
+      if (row.kbMatches.some(m => m.category === 'therapeutic')) {
+        mutations.clinical.push(row);
+        continue;
       }
-      // Add to type
-      mutations[row.mutationType].push(row);
-    });
+
+      // Diagnostic || Prognostic? => nostic
+      if (row.kbMatches.some(m => m.category === 'diagnostic' || m.category === 'prognostic')) {
+        mutations.nostic.push(row);
+        continue;
+      }
+
+      // Biological ? => Biological
+      if (row.kbMatches.some(m => m.category === 'biological')) {
+        mutations.biological.push(row);
+        continue;
+      }
+      // Unknown
+      mutations.unknown.push(row);
+    }
 
     // Set Small Mutations
     this.smallMutations = mutations;
