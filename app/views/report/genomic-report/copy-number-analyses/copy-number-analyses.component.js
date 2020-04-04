@@ -40,12 +40,17 @@ class CopyNumberAnalyses {
       lowlyExpTSloss: 'Lowly Expressed Tumour Suppressors with Copy Losses',
     };
 
-    Object.values(this.cnvs).forEach((row) => {
-      let { 
-        gene: { tumourSuppressor, oncogene, 
+    let cnvRows = Object.values(this.cnvs);
+    let row;
+    for (let i = 0; i < cnvRows.length; i++) {
+      row = cnvRows[i];
+      let {
+        gene: { 
+          tumourSuppressor, 
+          oncogene,
           expressionVariants: { expression_class: expLvl }
-        }, 
-        cnvState, 
+        },
+        cnvState,
       } = row; // Get the flags for this cnv
 
       if (tumourSuppressor) {
@@ -75,8 +80,25 @@ class CopyNumberAnalyses {
         }
       }
 
-      // TODO: Clinical, nostic, biological
-    });
+      // KB-matches 
+      // Therapeutic? => clinical
+      if (row.kbMatches.some(m => m.category === 'therapeutic')) {
+        this.cnvGroups.clinical.push(row);
+        continue;
+      }
+
+      // Diagnostic || Prognostic? => nostic
+      if (row.kbMatches.some(m => m.category === 'diagnostic' || m.category === 'prognostic')) {
+        this.cnvGroups.nostic.push(row);
+        continue;
+      }
+
+      // Biological ? => Biological
+      if (row.kbMatches.some(m => m.category === 'biological')) {
+        this.cnvGroups.biological.push(row);
+        continue;
+      }
+    }
   }
 }
 
