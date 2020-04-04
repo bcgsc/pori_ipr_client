@@ -117,29 +117,38 @@ class StructuralVariantsComponent {
       fusionOmicSupport: [],
       uncharacterized: [],
     };
+
     // Run over mutations and group
-    Object.values(structVars).forEach((row) => {
-      if (row.svVariant) {
-        // append mavis summary to row if it has a mavis_product_id
-        const sv = row;
-        if (row.mavis_product_id) {
-          try {
-            sv.summary = this.mavisSummary.find(entry => entry.product_id === sv.mavis_product_id).summary;
-          } catch (err) {
-            console.info('No matching Mavis summary was found.');
-          }
-        }
-
-        // Setting fields to omit from details viewer
-        delete sv.mavis_product_id;
-
-        if (!(sv.svVariant in svs)) {
-          svs[sv.svVariant] = [];
-        }
-        // Add to type
-        svs[sv.svVariant].push(sv);
+    const svRows = Object.values(structVars);
+    let row;
+    for (let i = 0; i < svRows.length; i++) {
+      row = svRows[i];
+      // Therapeutic? => clinical
+      if (row.kbMatches.some(m => m.category === 'therapeutic')) {
+        svs.clinical.push(row);
+        continue;
       }
-    });
+
+      // Diagnostic || Prognostic? => nostic
+      if (row.kbMatches.some(m => m.category === 'diagnostic' || m.category === 'prognostic')) {
+        svs.nostic.push(row);
+        continue;
+      }
+
+      // Biological ? => Biological
+      if (row.kbMatches.some(m => m.category === 'biological')) {
+        svs.biological.push(row);
+        continue;
+      }
+
+      // fusionOmicSupport? (check sv.omicSupport) => fusionOmicSupport
+      if (row.omnicSupport) {
+        svs.fusionOmicSupport.push(row);
+        continue;
+      }
+      // Unknown
+      svs.uncharacterized.push(row);
+    }
 
     // Set Small Mutations
     this.StrucVars = svs;
