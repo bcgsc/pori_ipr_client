@@ -197,61 +197,78 @@ function DataTable(props) {
   
   return (
     <div className="data-table--padded">
-      <div className="data-table__header-container">
-        <Typography variant="h5" className="data-table__header">
-          {titleText}
-        </Typography>
-        {addable && renderAddRow()}
-        <EditDialog
-          open={showEditDialog}
-          close={handleRowEditClose}
-          editData={selectedRow.data}
-          reportId={reportId}
-          tableType={tableType}
-        />
-        {canToggleColumns && (
-          <IconButton
-            onClick={() => setShowPopover(prevVal => !prevVal)}
+      {rowData.length ? (
+        <>
+          <div className="data-table__header-container">
+            <Typography variant="h5" className="data-table__header">
+              {titleText}
+            </Typography>
+            {addable && renderAddRow()}
+            <EditDialog
+              open={showEditDialog}
+              close={handleRowEditClose}
+              editData={selectedRow.data}
+              reportId={reportId}
+              tableType={tableType}
+            />
+            {canToggleColumns && (
+              <IconButton
+                onClick={() => setShowPopover(prevVal => !prevVal)}
+              >
+                <MoreHorizIcon />
+              </IconButton>
+            )}
+          </div>
+          <div
+            className="ag-theme-material data-table__container"
+            ref={gridDiv}
           >
-            <MoreHorizIcon />
-          </IconButton>
-        )}
-      </div>
-      <div
-        className="ag-theme-material data-table__container"
-        ref={gridDiv}
-      >
-        {showPopover
-          && renderOptionsMenu()
-        }
-        <AgGridReact
-          columnDefs={columnDefs}
-          rowData={rowData}
-          defaultColDef={defaultColDef}
-          onGridReady={onGridReady}
-          domLayout={domLayout}
-          autoSizePadding="0"
-          editType="fullRow"
-          context={{
-            editable,
-            canViewDetails,
-            EditDialog,
-            reportId,
-            tableType,
-            arrayColumns,
-          }}
-          frameworkComponents={{
-            EditDialog,
-            LinkCellRenderer,
-            GeneCellRenderer,
-            ActionCellRenderer,
-            CustomNoRowsOverlay,
-          }}
-          noRowsOverlayComponent="CustomNoRowsOverlay"
-          suppressAnimationFrame
-          suppressColumnVirtualisation
-        />
-      </div>
+            {showPopover
+              && renderOptionsMenu()
+            }
+            <AgGridReact
+              columnDefs={columnDefs}
+              rowData={rowData}
+              defaultColDef={defaultColDef}
+              onGridReady={onGridReady}
+              domLayout={domLayout}
+              autoSizePadding="0"
+              editType="fullRow"
+              context={{
+                editable,
+                canViewDetails,
+                EditDialog,
+                reportId,
+                tableType,
+                arrayColumns,
+              }}
+              frameworkComponents={{
+                EditDialog,
+                LinkCellRenderer,
+                GeneCellRenderer,
+                ActionCellRenderer,
+                CustomNoRowsOverlay,
+              }}
+              noRowsOverlayComponent="CustomNoRowsOverlay"
+              suppressAnimationFrame
+              suppressColumnVirtualisation
+            />
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="data-table__header-container">
+            <Typography variant="h5" className="data-table__header">
+              {titleText}
+            </Typography>
+          </div>
+          <div className="data-table__container">
+            <Typography variant="body1" align="center">
+              No data to display
+            </Typography>
+          </div>
+        </>
+      )}
     </div>
   );
 }
