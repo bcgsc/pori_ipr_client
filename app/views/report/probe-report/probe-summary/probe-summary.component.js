@@ -9,20 +9,20 @@ const bindings = {
   reportEdit: '<',
   testInformation: '<',
   signature: '<',
-  genomicEvents: '<',
+  targetedGenes: '<',
   print: '<',
 };
 
 class ProbeSummaryComponent {
   /* @ngInject */
   constructor($scope, $mdDialog, $mdToast, ProbeSignatureService,
-    PatientInformationService, GenomicEventsService) {
+    PatientInformationService, TargetedGenesService) {
     this.$scope = $scope;
     this.$mdDialog = $mdDialog;
     this.$mdToast = $mdToast;
     this.ProbeSignatureService = ProbeSignatureService;
     this.PatientInformationService = PatientInformationService;
-    this.GenomicEventsService = GenomicEventsService;
+    this.TargetedGenesService = TargetedGenesService;
   }
 
   $onInit() {
@@ -78,7 +78,7 @@ class ProbeSummaryComponent {
           };
 
           scope.update = async () => {
-            await this.GenomicEventsService.update(
+            await this.TargetedGenesService.update(
               this.report.ident,
               scope.event.ident,
               scope.event,
@@ -93,9 +93,9 @@ class ProbeSummaryComponent {
 
       if (resp) {
         this.$mdToast.show(this.$mdToast.simple().textContent(resp.message));
-        this.genomicEvents.forEach((ev, index) => {
+        this.targetedGenes.forEach((ev, index) => {
           if (ev.ident === resp.data.ident) {
-            this.genomicEvents[index] = resp.data;
+            this.targetedGenes[index] = resp.data;
           }
         });
       }
