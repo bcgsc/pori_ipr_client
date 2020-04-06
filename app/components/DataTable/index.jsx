@@ -17,6 +17,8 @@ import ActionCellRenderer from './components/ActionCellRenderer';
 
 import './index.scss';
 
+const MAX_VISIBLE_ROWS = 12;
+const MAX_TABLE_HEIGHT = '500px';
 
 /**
  * @param {object} props props
@@ -53,9 +55,12 @@ function DataTable(props) {
     canViewDetails,
   } = props;
 
+  const domLayout = 'autoHeight';
+
   const gridApi = useRef();
   const columnApi = useRef();
   const optionsMenuOnClose = useRef();
+  const gridDiv = useRef();
 
   const setOptionsMenuOnClose = (ref) => {
     optionsMenuOnClose.current = ref;
@@ -108,6 +113,11 @@ function DataTable(props) {
       columnApi.current.setColumnsVisible(hiddenColumns, false);
     }
 
+    if (rowData.length >= MAX_VISIBLE_ROWS) {
+      gridDiv.current.style.height = MAX_TABLE_HEIGHT;
+      gridApi.current.setDomLayout('normal');
+    }
+
     const { visibleColumnIds } = getColumnVisibility();
     columnApi.current.autoSizeColumns(visibleColumnIds);
   };
@@ -129,8 +139,6 @@ function DataTable(props) {
     editable: false,
   };
     
-  const domLayout = 'autoHeight';
-
   const renderOptionsMenu = () => {
     const popoverCloseHandler = () => {
       const {
@@ -173,74 +181,79 @@ function DataTable(props) {
     </IconButton>
   );
 
-  // AG-Grid has a bug where column groups aren't accounted for when calculating overlay placement
-  const CustomNoRowsOverlay = () => {
-    const isParentHeaders = columnDefs.some(col => col.children);
-
-    if (isParentHeaders) {
-      return (
-        <div style={{ margin: '49px 0 0 0' }}>No rows to show</div>
-      );
-    }
-    return (
-      <div>No rows to show</div>
-    );
-  };
-  
   return (
     <div className="data-table--padded">
-      <div className="data-table__header-container">
-        <Typography variant="h5" className="data-table__header">
-          {titleText}
-        </Typography>
-        {addable && renderAddRow()}
-        <EditDialog
-          open={showEditDialog}
-          close={handleRowEditClose}
-          editData={selectedRow.data}
-          reportId={reportId}
-          tableType={tableType}
-        />
-        {canToggleColumns && (
-          <IconButton
-            onClick={() => setShowPopover(prevVal => !prevVal)}
+      {rowData.length ? (
+        <>
+          <div className="data-table__header-container">
+            <Typography variant="h5" className="data-table__header">
+              {titleText}
+            </Typography>
+            {addable && renderAddRow()}
+            <EditDialog
+              open={showEditDialog}
+              close={handleRowEditClose}
+              editData={selectedRow.data}
+              reportId={reportId}
+              tableType={tableType}
+            />
+            {canToggleColumns && (
+              <IconButton
+                onClick={() => setShowPopover(prevVal => !prevVal)}
+              >
+                <MoreHorizIcon />
+              </IconButton>
+            )}
+          </div>
+          <div
+            className="ag-theme-material data-table__container"
+            ref={gridDiv}
           >
-            <MoreHorizIcon />
-          </IconButton>
-        )}
-      </div>
-      <div className="ag-theme-material data-table__container">
-        {showPopover
-          && renderOptionsMenu()
-        }
-        <AgGridReact
-          columnDefs={columnDefs}
-          rowData={rowData}
-          defaultColDef={defaultColDef}
-          onGridReady={onGridReady}
-          domLayout={domLayout}
-          autoSizePadding="0"
-          editType="fullRow"
-          context={{
-            editable,
-            canViewDetails,
-            EditDialog,
-            reportId,
-            tableType,
-            arrayColumns,
-          }}
-          frameworkComponents={{
-            EditDialog,
-            LinkCellRenderer,
-            GeneCellRenderer,
-            ActionCellRenderer,
-            CustomNoRowsOverlay,
-          }}
-          noRowsOverlayComponent="CustomNoRowsOverlay"
-          suppressAnimationFrame
-          suppressColumnVirtualisation
-        />
-      </div>
+            {showPopover
+              && renderOptionsMenu()
+            }
+            <AgGridReact
+              columnDefs={columnDefs}
+              rowData={rowData}
+              defaultColDef={defaultColDef}
+              onGridReady={onGridReady}
+              domLayout={domLayout}
+              pagination
+              autoSizePadding="0"
+              editType="fullRow"
+              context={{
+                editable,
+                canViewDetails,
+                EditDialog,
+                reportId,
+                tableType,
+                arrayColumns,
+              }}
+              frameworkComponents={{
+                EditDialog,
+                LinkCellRenderer,
+                GeneCellRenderer,
+                ActionCellRenderer,
+              }}
+              suppressAnimationFrame
+              suppressColumnVirtualisation
+            />
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="data-table__header-container">
+            <Typography variant="h5" className="data-table__header">
+              {titleText}
+            </Typography>
+          </div>
+          <div className="data-table__container">
+            <Typography variant="body1" align="center">
+              No data to display
+            </Typography>
+          </div>
+        </>
+      )}
     </div>
   );
 }
