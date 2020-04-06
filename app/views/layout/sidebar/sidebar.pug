@@ -18,17 +18,17 @@ div(layout="column", ng-class="{'sidebar--open': $ctrl.maximized}").sidebar
     md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Germline
     span(ng-class="{'sidebar__text--visible': $ctrl.maximized}").sidebar__text Germline
 
+  a(layout="row", href="https://graphkb.bcgsc.ca", target="_blank" rel="noopener noreferrer").sidebar__row
+    md-icon.sidebar__icon menu_book
+    md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Graph Knowledgebase
+    span(ng-class="{'sidebar__text--visible': $ctrl.maximized}").sidebar__text Graph Knowledgebase
+
   a(layout="row", ui-sref="root.terms",
     ng-class="{'sidebar__row--active': $ctrl.$state.current.name.includes('terms')}"
   ).sidebar__row
     md-icon.sidebar__icon help_outline
     md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Terms of Use
     span(ng-class="{'sidebar__text--visible': $ctrl.maximized}").sidebar__text Terms of Use
-
-  a(layout="row", href="https://graphkb.bcgsc.ca", target="_blank" rel="noopener noreferrer").sidebar__row
-    md-icon.sidebar__icon menu_book
-    md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Graph Knowledgebase
-    span(ng-class="{'sidebar__text--visible': $ctrl.maximized}").sidebar__text Graph Knowledgebase
 
 
   a(layout="row", ng-if="$ctrl.isAdmin", ui-sref="root.admin.users",
