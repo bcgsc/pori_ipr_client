@@ -40,15 +40,12 @@ class CopyNumberAnalyses {
       lowlyExpTSloss: 'Lowly Expressed Tumour Suppressors with Copy Losses',
     };
 
-    let cnvRows = Object.values(this.cnvs);
-    let row;
-    for (let i = 0; i < cnvRows.length; i++) {
-      row = cnvRows[i];
-      let {
-        gene: { 
-          tumourSuppressor, 
+    for (const row of Object.values(this.cnvs)) {
+      const {
+        gene: {
+          tumourSuppressor,
           oncogene,
-          expressionVariants: { expression_class: expLvl }
+          expressionVariants: { expression_class: expressionClass },
         },
         cnvState,
       } = row; // Get the flags for this cnv
@@ -59,7 +56,7 @@ class CopyNumberAnalyses {
           this.cnvGroups.homodTumourSupress.push(row);
         }
         // low exp, copy loss
-        if (cnvState === CNVSTATE.LOSS && expLvl === EXPLEVEL.OUT_LOW) {
+        if (cnvState === CNVSTATE.LOSS && expressionClass === EXPLEVEL.OUT_LOW) {
           this.cnvGroups.lowlyExpTSloss.push(row);
         }
       }
@@ -73,30 +70,27 @@ class CopyNumberAnalyses {
         }
         // Highly expressed + Copy gains?
         if (
-          cnvState === CNVSTATE.GAIN &&
-          (EXPLEVEL.UP.includes(expLvl))
+          cnvState === CNVSTATE.GAIN
+          && (EXPLEVEL.UP.includes(expressionClass))
         ) {
           this.cnvGroups.highlyExpOncoGain.push(row);
         }
       }
 
-      // KB-matches 
+      // KB-matches
       // Therapeutic? => clinical
       if (row.kbMatches.some(m => m.category === 'therapeutic')) {
         this.cnvGroups.clinical.push(row);
-        continue;
       }
 
       // Diagnostic || Prognostic? => nostic
       if (row.kbMatches.some(m => m.category === 'diagnostic' || m.category === 'prognostic')) {
         this.cnvGroups.nostic.push(row);
-        continue;
       }
 
       // Biological ? => Biological
       if (row.kbMatches.some(m => m.category === 'biological')) {
         this.cnvGroups.biological.push(row);
-        continue;
       }
     }
   }

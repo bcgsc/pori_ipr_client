@@ -119,10 +119,8 @@ class StructuralVariantsComponent {
     };
 
     // Run over mutations and group
-    const svRows = Object.values(structVars);
-    let row;
-    for (let i = 0; i < svRows.length; i++) {
-      row = svRows[i];
+    for (const row of Object.values(structVars)) {
+      /* eslint-disable no-continue */
       // Therapeutic? => clinical
       if (row.kbMatches.some(m => m.category === 'therapeutic')) {
         svs.clinical.push(row);

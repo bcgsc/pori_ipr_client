@@ -38,27 +38,20 @@ class SmallMutationsComponent {
     };
 
     // Run over mutations and group
-    const mutationRows = Object.values(muts);
-    let row;
-    for (let i = 0; i < mutationRows.length; i++) {
-      row = mutationRows[i];
-
+    for (const row of Object.values(muts)) {
       // Therapeutic? => clinical
       if (row.kbMatches.some(m => m.category === 'therapeutic')) {
         mutations.clinical.push(row);
-        continue;
       }
 
       // Diagnostic || Prognostic? => nostic
       if (row.kbMatches.some(m => m.category === 'diagnostic' || m.category === 'prognostic')) {
         mutations.nostic.push(row);
-        continue;
       }
 
       // Biological ? => Biological
       if (row.kbMatches.some(m => m.category === 'biological')) {
         mutations.biological.push(row);
-        continue;
       }
       // Unknown
       mutations.unknown.push(row);
