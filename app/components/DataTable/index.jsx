@@ -218,6 +218,7 @@ function DataTable(props) {
               defaultColDef={defaultColDef}
               onGridReady={onGridReady}
               domLayout={domLayout}
+              pagination
               autoSizePadding="0"
               editType="fullRow"
               context={{
