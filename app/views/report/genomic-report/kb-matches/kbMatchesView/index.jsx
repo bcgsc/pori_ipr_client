@@ -27,6 +27,11 @@ const coalesceEntries = (entries) => {
       buckets[key].reference.add(entry.reference);
     }
   });
+
+  Object.values(buckets).forEach((val) => {
+    val.disease = [...val.disease];
+    val.reference = [...val.reference];
+  });
   return Object.values(buckets);
 };
 
