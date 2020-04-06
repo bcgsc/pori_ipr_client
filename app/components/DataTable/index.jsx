@@ -17,6 +17,8 @@ import ActionCellRenderer from './components/ActionCellRenderer';
 
 import './index.scss';
 
+const MAX_VISIBLE_ROWS = 12;
+const MAX_TABLE_HEIGHT = '500px';
 
 /**
  * @param {object} props props
@@ -53,9 +55,12 @@ function DataTable(props) {
     canViewDetails,
   } = props;
 
+  const domLayout = 'autoHeight';
+
   const gridApi = useRef();
   const columnApi = useRef();
   const optionsMenuOnClose = useRef();
+  const gridDiv = useRef();
 
   const setOptionsMenuOnClose = (ref) => {
     optionsMenuOnClose.current = ref;
@@ -108,6 +113,11 @@ function DataTable(props) {
       columnApi.current.setColumnsVisible(hiddenColumns, false);
     }
 
+    if (rowData.length >= MAX_VISIBLE_ROWS) {
+      gridDiv.current.style.height = MAX_TABLE_HEIGHT;
+      gridApi.current.setDomLayout('normal');
+    }
+
     const { visibleColumnIds } = getColumnVisibility();
     columnApi.current.autoSizeColumns(visibleColumnIds);
   };
@@ -129,8 +139,6 @@ function DataTable(props) {
     editable: false,
   };
     
-  const domLayout = 'autoHeight';
-
   const renderOptionsMenu = () => {
     const popoverCloseHandler = () => {
       const {
@@ -209,7 +217,10 @@ function DataTable(props) {
           </IconButton>
         )}
       </div>
-      <div className="ag-theme-material data-table__container">
+      <div
+        className="ag-theme-material data-table__container"
+        ref={gridDiv}
+      >
         {showPopover
           && renderOptionsMenu()
         }
