@@ -120,32 +120,34 @@ class StructuralVariantsComponent {
 
     // Run over mutations and group
     for (const row of Object.values(structVars)) {
-      /* eslint-disable no-continue */
+      let uncharacterized = true;
       // Therapeutic? => clinical
       if (row.kbMatches.some(m => m.category === 'therapeutic')) {
         svs.clinical.push(row);
-        continue;
+        uncharacterized = false;
       }
 
       // Diagnostic || Prognostic? => nostic
       if (row.kbMatches.some(m => m.category === 'diagnostic' || m.category === 'prognostic')) {
         svs.nostic.push(row);
-        continue;
+        uncharacterized = false;
       }
 
       // Biological ? => Biological
       if (row.kbMatches.some(m => m.category === 'biological')) {
         svs.biological.push(row);
-        continue;
+        uncharacterized = false;
       }
 
       // fusionOmicSupport? (check sv.omicSupport) => fusionOmicSupport
       if (row.omnicSupport) {
         svs.fusionOmicSupport.push(row);
-        continue;
+        uncharacterized = false;
       }
       // Unknown
-      svs.uncharacterized.push(row);
+      if (uncharacterized) {
+        svs.uncharacterized.push(row);
+      }
     }
 
     // Set Small Mutations
