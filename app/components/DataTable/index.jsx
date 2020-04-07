@@ -141,11 +141,10 @@ function DataTable(props) {
     const popoverCloseHandler = () => {
       const {
         visibleCols: returnedVisibleCols,
-        hiddenCols: returnedHiddenCols,
       } = optionsMenuOnClose.current();
+      returnedVisibleCols.push('Actions');
 
       columnApi.current.setColumnsVisible(returnedVisibleCols, true);
-      columnApi.current.setColumnsVisible(returnedHiddenCols, false);
 
       columnApi.current.autoSizeColumns(returnedVisibleCols);
       
@@ -164,6 +163,7 @@ function DataTable(props) {
           className="data-view__options-menu"
           label="Configure Visible Columns"
           columns={columnApi.current.getAllColumns()
+            .filter(col => col.colId !== 'Actions')
             .map(col => ({ col, name: columnApi.current.getDisplayNameForColumn(col) }))
           }
           onClose={setOptionsMenuOnClose}

@@ -26,28 +26,21 @@ function OptionsMenu(props) {
     columns.filter(c => c.col.visible),
   );
 
-  const [hiddenCols, setHiddenCols] = useState(
-    columns.filter(c => !c.col.visible),
-  );
-
   const handleChange = (event, changedRow) => {
     if (event.target.checked) {
-      setHiddenCols(hiddenCols.filter((col => col.name !== changedRow.name)));
       setVisibleCols(visibleCols.concat(changedRow));
     } else {
       setVisibleCols(visibleCols.filter((col => col.name !== changedRow.name)));
-      setHiddenCols(hiddenCols.concat(changedRow));
     }
   };
 
   const updateOnClose = () => ({
-    hiddenCols: hiddenCols.map(col => col.col.colId),
     visibleCols: visibleCols.map(col => col.col.colId),
   });
 
   useEffect(() => {
     onClose(updateOnClose);
-  }, [hiddenCols, visibleCols]);
+  }, [visibleCols]);
 
   return (
     <MenuList className={`options-menu ${className || ''}`}>
