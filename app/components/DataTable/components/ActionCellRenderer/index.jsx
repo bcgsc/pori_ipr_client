@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  IconButton, Tooltip,
+  IconButton,
 } from '@material-ui/core';
 import {
   Edit,
@@ -30,20 +30,11 @@ function ActionCellRenderer(params) {
     node,
   } = params;
 
-  const [detailData, setDetailData] = useState({});
   const [showDetailDialog, setShowDetailDialog] = useState(false);
   const [showSvgViewer, setShowSvgViewer] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
 
   const detailClick = () => {
-    const propagateObject = Object.entries(data).reduce((accumulator, [key, value]) => {
-      if (typeof value !== 'object') {
-        accumulator[key] = value;
-      }
-      return accumulator;
-    }, {});
-
-    setDetailData(propagateObject);
     setShowDetailDialog(true);
   };
 
@@ -77,7 +68,7 @@ function ActionCellRenderer(params) {
       {showDetailDialog && (
         <DetailDialog
           open={showDetailDialog}
-          selectedRow={detailData}
+          selectedRow={data}
           onClose={handleDetailClose}
           arrayColumns={arrayColumns}
         />
