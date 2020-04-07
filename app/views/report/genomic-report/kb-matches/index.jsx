@@ -24,6 +24,7 @@ const VISIBLE = 'visibleColsKb';
  * @param {object} tableData table data for all tables
  * @param {object} hiddenTableData table data for all tables hidden by default
  * @param {array} syncedColumnDefs column definitions to by synced across tables
+ * @param {string} reportId report ident string
  * @returns {*} JSX
  */
 function KBMatches(props) {
@@ -31,6 +32,7 @@ function KBMatches(props) {
     syncedTableData,
     unsyncedTableData,
     hiddenTableData,
+    reportId,
   } = props;
 
   const [thisHiddenTableData, setThisHiddenTableData] = useState(hiddenTableData.current);
@@ -40,8 +42,6 @@ function KBMatches(props) {
       ? localStorage.getItem(VISIBLE).split(',')
       : columnDefs.filter(c => !c.hide).map(c => c.field),
   );
-
-  const [arrayColumns] = useState(['disease', 'reference']);
 
   const [filterText, setFilterText] = useState('');
   
@@ -77,7 +77,6 @@ function KBMatches(props) {
           <DataTable
             key={table.titleText}
             columnDefs={columnDefs}
-            arrayColumns={arrayColumns}
             rowData={table.rowData || []}
             titleText={table.titleText}
             visibleColumns={visibleColumns}
@@ -85,6 +84,7 @@ function KBMatches(props) {
             filterText={filterText}
             edit={false}
             canToggleColumns
+            reportId={reportId}
           />
         ))}
       </div>
@@ -96,6 +96,7 @@ function KBMatches(props) {
           titleText={unsyncedTableData.titleText}
           filterText={filterText}
           edit={false}
+          reportId={reportId}
         />
       </div>
 
@@ -123,6 +124,7 @@ function KBMatches(props) {
                 filterText={filterText}
                 edit={false}
                 canToggleColumns
+                reportId={reportId}
               />
             </ExpansionPanelDetails>
           </ExpansionPanel>
@@ -151,6 +153,7 @@ KBMatches.propTypes = {
       }),
     ),
   ),
+  reportId: PropTypes.string.isRequired,
 };
 
 KBMatches.defaultProps = {

@@ -1,4 +1,4 @@
-import ArrayCell from './ArrayCell';
+import ArrayCell from '../../../../components/DataTable/components/ArrayCellRenderer';
 
 const columnDefs = [{
   headerName: 'Gene',
