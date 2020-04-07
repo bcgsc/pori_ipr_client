@@ -29,86 +29,89 @@ function DetailDialog(props) {
     onClose(value);
   };
 
-  const printRow = rows => Object.entries(rows).sort(compare).map(([key, value]) => {
-    if (key === 'ident') {
-      return null;
-    }
+  const printRow = rows => Object.entries(rows)
+    .sort(compare)
+    .map(([key, value], index, rowEntries) => {
+      if (key === 'ident') {
+        return null;
+      }
 
-    if (Array.isArray(value)) {
-      return (
-        <>
-          <div className="detail-dialog__row">
-            <Typography variant="subtitle2" display="inline">
-              {`${key}:  [`}
-            </Typography>
-          </div>
-          {value.length ? (
-            <>
-              <div className="detail-dialog__inner-row">
-                {value.map((arrVal => (
-                  <React.Fragment key={arrVal}>
-                    {typeof arrVal === 'object' && arrVal !== null
-                      ? (
-                        <>
-                          <Divider />
-                          {printRow(arrVal)}
-                        </>
-                      )
-                      : (
-                        <Typography variant="body1">
-                          {arrVal || 'null'}
-                        </Typography>
-                      )}
-                  </React.Fragment>
-                )))}
-              </div>
-            </>
-          ) : null}
-          <div className="detail-dialog__row">
-            <Typography variant="subtitle2" display="inline">
-              {']'}
-            </Typography>
-          </div>
-          <Divider />
-        </>
-      );
-    }
+      if (Array.isArray(value)) {
+        return (
+          <React.Fragment key={key}>
+            <div className="detail-dialog__row">
+              <Typography variant="subtitle2" display="inline">
+                {`${key}:  [`}
+              </Typography>
+            </div>
+            {value.length ? (
+              <>
+                <div className="detail-dialog__inner-row">
+                  {value.map(((arrVal, innerIndex) => (
+                    // eslint-disable-next-line react/no-array-index-key
+                    <React.Fragment key={innerIndex}>
+                      {typeof arrVal === 'object' && arrVal !== null
+                        ? (
+                          <>
+                            <Divider />
+                            {printRow(arrVal)}
+                          </>
+                        )
+                        : (
+                          <Typography variant="body1">
+                            {arrVal || 'null'}
+                          </Typography>
+                        )}
+                    </React.Fragment>
+                  )))}
+                </div>
+              </>
+            ) : null}
+            <div className="detail-dialog__row">
+              <Typography variant="subtitle2" display="inline">
+                {']'}
+              </Typography>
+            </div>
+            <Divider />
+          </React.Fragment>
+        );
+      }
 
-    if (typeof value === 'object' && value !== null) {
+      if (typeof value === 'object' && value !== null) {
+        return (
+          <React.Fragment key={key}>
+            <div className="detail-dialog__row">
+              <Typography variant="subtitle2">
+                {`${key}:  {`}
+              </Typography>
+            </div>
+            <div className="detail-dialog__inner-row">
+              {printRow(value)}
+            </div>
+            <div className="detail-dialog__row">
+              <Typography variant="subtitle2">
+                {'}'}
+              </Typography>
+            </div>
+            <Divider />
+          </React.Fragment>
+        );
+      }
+
       return (
         <React.Fragment key={key}>
           <div className="detail-dialog__row">
-            <Typography variant="subtitle2">
-              {`${key}:  {`}
+            <Typography variant="subtitle2" display="inline">
+              {`${key}: `}
+            </Typography>
+            <Typography variant="body1" display="inline">
+              {`${value}` || 'null'}
             </Typography>
           </div>
-          <div className="detail-dialog__inner-row">
-            <Divider />
-            {printRow(value)}
-          </div>
-          <div className="detail-dialog__row">
-            <Typography variant="subtitle2">
-              {'}'}
-            </Typography>
-          </div>
+          {index !== rowEntries.length - 1 && <Divider />}
         </React.Fragment>
       );
-    }
-
-    return (
-      <React.Fragment key={key}>
-        <div className="detail-dialog__row">
-          <Typography variant="subtitle2" display="inline">
-            {`${key}: `}
-          </Typography>
-          <Typography variant="body1" display="inline">
-            {`${value}` || 'null'}
-          </Typography>
-        </div>
-        <Divider />
-      </React.Fragment>
-    );
-  });
+    });
 
 
   return (
