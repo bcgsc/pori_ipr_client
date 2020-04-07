@@ -8,6 +8,8 @@ import Divider from '@material-ui/core/Divider';
 
 import './index.scss';
 
+const { compare } = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+
 /**
  * @param {object} props props
  * @param {func} props.onClose callback function to run on close
@@ -21,14 +23,93 @@ function DetailDialog(props) {
     onClose,
     selectedRow,
     open,
-    arrayColumns,
   } = props;
 
   const handleClose = (value) => {
     onClose(value);
   };
 
-  const { compare } = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+  const printRow = rows => Object.entries(rows).sort(compare).map(([key, value]) => {
+    if (key === 'ident') {
+      return null;
+    }
+
+    if (Array.isArray(value)) {
+      return (
+        <>
+          <div className="detail-dialog__row">
+            <Typography variant="subtitle2" display="inline">
+              {`${key}:  [`}
+            </Typography>
+          </div>
+          {value.length ? (
+            <>
+              <div className="detail-dialog__inner-row">
+                {value.map((arrVal => (
+                  <React.Fragment key={arrVal}>
+                    {typeof arrVal === 'object' && arrVal !== null
+                      ? (
+                        <>
+                          <Divider />
+                          {printRow(arrVal)}
+                        </>
+                      )
+                      : (
+                        <Typography variant="body1">
+                          {arrVal || 'null'}
+                        </Typography>
+                      )}
+                  </React.Fragment>
+                )))}
+              </div>
+            </>
+          ) : null}
+          <div className="detail-dialog__row">
+            <Typography variant="subtitle2" display="inline">
+              {']'}
+            </Typography>
+          </div>
+          <Divider />
+        </>
+      );
+    }
+
+    if (typeof value === 'object' && value !== null) {
+      return (
+        <React.Fragment key={key}>
+          <div className="detail-dialog__row">
+            <Typography variant="subtitle2">
+              {`${key}:  {`}
+            </Typography>
+          </div>
+          <div className="detail-dialog__inner-row">
+            <Divider />
+            {printRow(value)}
+          </div>
+          <div className="detail-dialog__row">
+            <Typography variant="subtitle2">
+              {'}'}
+            </Typography>
+          </div>
+        </React.Fragment>
+      );
+    }
+
+    return (
+      <React.Fragment key={key}>
+        <div className="detail-dialog__row">
+          <Typography variant="subtitle2" display="inline">
+            {`${key}: `}
+          </Typography>
+          <Typography variant="body1" display="inline">
+            {`${value}` || 'null'}
+          </Typography>
+        </div>
+        <Divider />
+      </React.Fragment>
+    );
+  });
+
 
   return (
     <Dialog onClose={handleClose} open={open}>
@@ -36,30 +117,7 @@ function DetailDialog(props) {
         Detailed View
       </DialogTitle>
       <DialogContent>
-        {Object.entries(selectedRow).sort(compare).map(([key, value], index) => (
-          <React.Fragment key={key}>
-            {index > 0 && <Divider />}
-            <Typography className="detail-dialog__row">
-              {key}
-              {': '}
-              {arrayColumns.includes(key) && (
-                <>
-                  {[...value].sort().map((val, i) => (
-                    <React.Fragment key={val}>
-                      {val.replace(/#$/, '')}
-                      {i < value.size - 1 && ', '}
-                    </React.Fragment>
-                  ))}
-                </>
-              )}
-              {!arrayColumns.includes(key) && (
-                <>
-                  {value}
-                </>
-              )}
-            </Typography>
-          </React.Fragment>
-        ))}
+        {printRow(selectedRow)}
       </DialogContent>
     </Dialog>
   );
@@ -69,11 +127,6 @@ DetailDialog.propTypes = {
   onClose: PropTypes.func.isRequired,
   selectedRow: PropTypes.objectOf(PropTypes.any).isRequired,
   open: PropTypes.bool.isRequired,
-  arrayColumns: PropTypes.arrayOf(PropTypes.string),
-};
-
-DetailDialog.defaultProps = {
-  arrayColumns: [],
 };
 
 export default DetailDialog;
