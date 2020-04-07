@@ -41,8 +41,6 @@ function KBMatches(props) {
       : columnDefs.filter(c => !c.hide).map(c => c.field),
   );
 
-  const [arrayColumns] = useState(['disease', 'reference']);
-
   const [filterText, setFilterText] = useState('');
   
   const handleFilter = event => setFilterText(event.target.value);
@@ -77,7 +75,6 @@ function KBMatches(props) {
           <DataTable
             key={table.titleText}
             columnDefs={columnDefs}
-            arrayColumns={arrayColumns}
             rowData={table.rowData || []}
             titleText={table.titleText}
             visibleColumns={visibleColumns}

@@ -24,7 +24,6 @@ const MAX_TABLE_HEIGHT = '500px';
  * @param {object} props props
  * @param {array} props.rowData table row data
  * @param {array} props.columnDefs column definitions for ag-grid
- * @param {array} props.arrayColumns list of columns containing array data
  * @param {string} props.titleText table title
  * @param {string} props.filterText text to filter the table on
  * @param {bool} props.editable can rows be edited?
@@ -41,7 +40,6 @@ function DataTable(props) {
   const {
     rowData,
     columnDefs,
-    arrayColumns,
     titleText,
     filterText,
     editable,
@@ -227,7 +225,6 @@ function DataTable(props) {
                 EditDialog,
                 reportId,
                 tableType,
-                arrayColumns,
               }}
               frameworkComponents={{
                 EditDialog,
@@ -260,7 +257,6 @@ function DataTable(props) {
 
 DataTable.propTypes = {
   columnDefs: PropTypes.arrayOf(PropTypes.object).isRequired,
-  arrayColumns: PropTypes.arrayOf(PropTypes.string),
   rowData: PropTypes.arrayOf(PropTypes.object),
   titleText: PropTypes.string,
   filterText: PropTypes.string,
@@ -278,7 +274,6 @@ DataTable.propTypes = {
 DataTable.defaultProps = {
   rowData: [],
   filterText: '',
-  arrayColumns: [],
   titleText: '',
   editable: false,
   EditDialog: () => null,
