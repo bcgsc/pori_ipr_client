@@ -1,5 +1,4 @@
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const webpack = require('webpack');
 const merge = require('webpack-merge');
 const common = require('./webpack.config.js');
@@ -19,17 +18,8 @@ const prodConfig = {
     new webpack.DefinePlugin({
       CONFIG: JSON.stringify(production),
     }),
+    new OptimizeCSSAssetsPlugin({}),
   ],
-  optimization: {
-    minimizer: [
-      new UglifyJsPlugin({
-        cache: true,
-        parallel: true,
-        sourceMap: true,
-      }),
-      new OptimizeCSSAssetsPlugin({}),
-    ],
-  },
   resolve: {
     alias: {
       angular: 'angular/angular.min.js',

@@ -109,7 +109,7 @@ module.exports = {
     port: 3000,
     host: '0.0.0.0',
     hot: true,
-    allowedHosts: [ '.phage.bcgsc.ca' ],
+    allowedHosts: ['.phage.bcgsc.ca'],
     publicPath: '/',
     historyApiFallback: true,
   },
