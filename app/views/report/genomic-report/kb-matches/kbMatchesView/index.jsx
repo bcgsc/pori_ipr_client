@@ -56,6 +56,7 @@ const extractCategories = (entries, category) => {
  * @param {array} otherCancer therapies approved for other cancer types
  * @param {array} targetedGenes genes found in the targeted gene report
  * @param {func} kbMatchesComponent react component to mutate
+ * @param {object} report report object
  * @returns {*} JSX
  */
 function KBMatchesView(props) {
@@ -67,6 +68,7 @@ function KBMatchesView(props) {
     otherCancer,
     targetedGenes,
     kbMatchesComponent,
+    report,
   } = props;
 
   const KbMatchesComponent = kbMatchesComponent;
@@ -122,6 +124,7 @@ function KBMatchesView(props) {
       syncedTableData={syncedTableData}
       unsyncedTableData={unsyncedTableData}
       hiddenTableData={hiddenTableData}
+      reportId={report.ident}
     />
   );
 }
@@ -134,6 +137,7 @@ KBMatchesView.propTypes = {
   otherCancer: PropTypes.arrayOf(PropTypes.object).isRequired,
   targetedGenes: PropTypes.arrayOf(PropTypes.object).isRequired,
   kbMatchesComponent: PropTypes.func.isRequired,
+  report: PropTypes.objectOf(PropTypes.any).isRequired,
 };
 
 export default KBMatchesView;
