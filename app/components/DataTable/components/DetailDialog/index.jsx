@@ -32,7 +32,7 @@ function DetailDialog(props) {
   const printRow = rows => Object.entries(rows)
     .sort(compare)
     .map(([key, value], index, rowEntries) => {
-      if (key === 'ident') {
+      if (key === 'ident' || value === null) {
         return null;
       }
 
@@ -58,7 +58,7 @@ function DetailDialog(props) {
                           </>
                         )
                         : (
-                          <Typography variant="body1">
+                          <Typography variant="body2">
                             {arrVal || 'null'}
                           </Typography>
                         )}
@@ -104,7 +104,7 @@ function DetailDialog(props) {
             <Typography variant="subtitle2" display="inline">
               {`${key}: `}
             </Typography>
-            <Typography variant="body1" display="inline">
+            <Typography variant="body2" display="inline">
               {`${value}` || 'null'}
             </Typography>
           </div>
