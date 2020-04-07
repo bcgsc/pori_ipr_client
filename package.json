@@ -13,7 +13,7 @@
   "scripts": {
     "cypress:open": "cypress open",
     "build": "npm run build:prod",
-    "build:prod": "webpack --mode production --config ./config/webpack/webpack.config.js",
+    "build:prod": "webpack --mode production --config ./config/webpack/webpack.prod.js",
     "build:dev": "webpack --mode production --config ./config/webpack/webpack.dev.js",
     "build:staging": "webpack --mode production --config ./config/webpack/webpack.staging.js",
     "start": "npm run start:dev",
