@@ -165,7 +165,9 @@ function DataTable(props) {
         <OptionsMenu
           className="data-view__options-menu"
           label="Configure Visible Columns"
-          columns={columnApi.current.getAllColumns()}
+          columns={columnApi.current.getAllColumns()
+            .map(col => ({ col, name: columnApi.current.getDisplayNameForColumn(col) }))
+          }
           onClose={setOptionsMenuOnClose}
         />
       </Dialog>

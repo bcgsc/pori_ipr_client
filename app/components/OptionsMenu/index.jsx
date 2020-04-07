@@ -23,24 +23,27 @@ function OptionsMenu(props) {
   } = props;
 
   const [visibleCols, setVisibleCols] = useState(
-    columns.filter(c => c.visible).map(c => c.colId),
+    columns.filter(c => c.col.visible),
   );
 
   const [hiddenCols, setHiddenCols] = useState(
-    columns.filter(c => !c.visible).map(c => c.colId),
+    columns.filter(c => !c.col.visible),
   );
 
-  const handleChange = (event, colId) => {
+  const handleChange = (event, changedRow) => {
     if (event.target.checked) {
-      setHiddenCols(hiddenCols.filter((col => col !== colId)));
-      setVisibleCols(visibleCols.concat(colId));
+      setHiddenCols(hiddenCols.filter((col => col.name !== changedRow.name)));
+      setVisibleCols(visibleCols.concat(changedRow));
     } else {
-      setVisibleCols(visibleCols.filter((col => col !== colId)));
-      setHiddenCols(hiddenCols.concat(colId));
+      setVisibleCols(visibleCols.filter((col => col.name !== changedRow.name)));
+      setHiddenCols(hiddenCols.concat(changedRow));
     }
   };
 
-  const updateOnClose = () => ({ hiddenCols, visibleCols });
+  const updateOnClose = () => ({
+    hiddenCols: hiddenCols.map(col => col.col.colId),
+    visibleCols: visibleCols.map(col => col.col.colId),
+  });
 
   useEffect(() => {
     onClose(updateOnClose);
@@ -52,14 +55,14 @@ function OptionsMenu(props) {
         {label}
       </div>
       {columns.map(row => (
-        <div key={row.colId}>
+        <div key={row.name}>
           <div className="options-menu__content">
             <Checkbox
               color="primary"
-              checked={visibleCols.includes(row.colId)}
-              onChange={event => handleChange(event, row.colId)}
+              checked={visibleCols.some(col => row.name === col.name)}
+              onChange={event => handleChange(event, row)}
             />
-            {row.colId}
+            {row.name}
           </div>
         </div>
       ))
