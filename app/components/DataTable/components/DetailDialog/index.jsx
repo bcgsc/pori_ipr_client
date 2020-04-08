@@ -15,7 +15,7 @@ const { compare } = new Intl.Collator(undefined, { numeric: true, sensitivity: '
  * @param {func} props.onClose callback function to run on close
  * @param {object} props.selectedRow row data for selected row
  * @param {bool} props.open is the dialog open
- * @param {array} props.arrayColumns list of columns containing array data
+ * @param {object} props.columnMapping mapping object for displayed col names
  * @return {*} jsx
  */
 function DetailDialog(props) {
@@ -23,6 +23,7 @@ function DetailDialog(props) {
     onClose,
     selectedRow,
     open,
+    columnMapping,
   } = props;
 
   const handleClose = (value) => {
@@ -41,7 +42,7 @@ function DetailDialog(props) {
           <React.Fragment key={key}>
             <div className="detail-dialog__row">
               <Typography variant="subtitle2" display="inline">
-                {`${key}:  [`}
+                {`${columnMapping[key] || key}:  [`}
               </Typography>
             </div>
             {value.length ? (
@@ -82,7 +83,7 @@ function DetailDialog(props) {
           <React.Fragment key={key}>
             <div className="detail-dialog__row">
               <Typography variant="subtitle2">
-                {`${key}:  {`}
+                {`${columnMapping[key] || key}:  {`}
               </Typography>
             </div>
             <div className="detail-dialog__inner-row">
@@ -102,7 +103,7 @@ function DetailDialog(props) {
         <React.Fragment key={key}>
           <div className="detail-dialog__row">
             <Typography variant="subtitle2" display="inline">
-              {`${key}: `}
+              {`${columnMapping[key] || key}: `}
             </Typography>
             <Typography variant="body2" display="inline">
               {`${value}` || 'null'}
@@ -130,6 +131,11 @@ DetailDialog.propTypes = {
   onClose: PropTypes.func.isRequired,
   selectedRow: PropTypes.objectOf(PropTypes.any).isRequired,
   open: PropTypes.bool.isRequired,
+  columnMapping: PropTypes.objectOf(PropTypes.string),
+};
+
+DetailDialog.defaultProps = {
+  columnMapping: {},
 };
 
 export default DetailDialog;
