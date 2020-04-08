@@ -10,7 +10,7 @@ import {
 } from '@material-ui/core';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import OptionsMenu from '../OptionsMenu';
+import OptionsMenu from './components/OptionsMenu';
 import LinkCellRenderer from './components/LinkCellRenderer';
 import GeneCellRenderer from './components/GeneCellRenderer';
 import ActionCellRenderer from './components/ActionCellRenderer';
@@ -192,7 +192,9 @@ function DataTable(props) {
             <Typography variant="h5" className="data-table__header">
               {titleText}
             </Typography>
-            {addable && renderAddRow()}
+            {addable
+              && renderAddRow()
+            }
             <EditDialog
               open={showEditDialog}
               close={handleRowEditClose}
