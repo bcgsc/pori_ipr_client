@@ -2,7 +2,7 @@ const admin = {
   name: 'root.admin',
   url: '/admin',
   lazyLoad: async ($transition$) => {
-    const mod = await import('./admin.module');
+    const mod = await import(/* webpackChunkName: "admin" */ './admin.module');
     $transition$.router.stateRegistry.deregister('root.admin');
     return $transition$.injector().native.loadNewModules([mod.default]);
   },

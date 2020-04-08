@@ -2,7 +2,7 @@ const probe = {
   name: 'root.reportlisting.probe',
   url: '/report/:analysis_report/probe',
   lazyLoad: async ($transition$) => {
-    const mod = await import('./probe-report.module');
+    const mod = await import(/* webpackChunkName: "probe-report" */ './probe-report.module');
     $transition$.router.stateRegistry.deregister('root.reportlisting.probe');
     return $transition$.injector().native.loadNewModules([mod.default]);
   },

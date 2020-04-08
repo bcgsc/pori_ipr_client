@@ -2,7 +2,7 @@ const genomic = {
   name: 'root.reportlisting.genomic',
   url: '/report/:analysis_report/genomic',
   lazyLoad: async ($transition$) => {
-    const mod = await import('./genomic-report.module');
+    const mod = await import(/* webpackChunkName: "genomic-report" */ './genomic-report.module');
     $transition$.router.stateRegistry.deregister('root.reportlisting.genomic');
     return $transition$.injector().native.loadNewModules([mod.default]);
   },

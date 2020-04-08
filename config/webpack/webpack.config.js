@@ -51,9 +51,8 @@ module.exports = {
           {
             test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
             exclude: /node_modules/,
-            loader: 'url-loader',
+            loader: 'file-loader',
             options: {
-              limit: 10000,
               name: 'img/[name].[hash:8].[ext]',
             },
           },
@@ -61,11 +60,9 @@ module.exports = {
             test: /\.woff(2)?$/,
             use: [
               {
-                loader: 'url-loader',
+                loader: 'file-loader',
                 options: {
-                  limit: 10000,
                   name: 'font/[hash].[ext]',
-                  mimetype: 'application/font-woff',
                 },
               },
             ],
@@ -93,14 +90,19 @@ module.exports = {
       VERSION: JSON.stringify(packageFile.version),
     }),
     new MomentLocalesPlugin(),
-    // new BundleAnalyzerPlugin({ openAnalyzer: false }),
+    new BundleAnalyzerPlugin({ defaultSizes: 'gzip' }),
   ],
+  optimization: {
+    splitChunks: {
+      chunks: 'all',
+    },
+  },
   mode: 'development',
   devtool: 'inline-source-map',
   entry: path.resolve(__dirname, '../../app/root.module.js'),
   output: {
     path: path.resolve(__dirname, '../../dist'),
-    filename: 'app.bundle.js',
+    filename: '[name].bundle.js',
     publicPath: '/',
   },
   devServer: {
