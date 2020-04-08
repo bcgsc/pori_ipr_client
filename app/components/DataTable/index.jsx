@@ -164,7 +164,10 @@ function DataTable(props) {
           label="Configure Visible Columns"
           columns={columnApi.current.getAllColumns()
             .filter(col => col.colId !== 'Actions')
-            .map(col => ({ col, name: columnApi.current.getDisplayNameForColumn(col) }))
+            .map((col) => {
+              col.name = columnApi.current.getDisplayNameForColumn(col);
+              return col;
+            })
           }
           onClose={setOptionsMenuOnClose}
         />

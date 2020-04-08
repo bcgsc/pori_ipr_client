@@ -23,7 +23,7 @@ function OptionsMenu(props) {
   } = props;
 
   const [visibleCols, setVisibleCols] = useState(
-    columns.filter(c => c.col.visible),
+    columns.filter(c => c.visible),
   );
 
   const handleChange = (event, changedRow) => {
@@ -35,7 +35,7 @@ function OptionsMenu(props) {
   };
 
   const updateOnClose = () => ({
-    visibleCols: visibleCols.map(col => col.col.colId),
+    visibleCols: visibleCols.map(col => col.colId),
   });
 
   useEffect(() => {
