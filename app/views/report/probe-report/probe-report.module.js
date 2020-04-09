@@ -1,5 +1,5 @@
 import angular from 'angular';
-import uiRouter from '@uirouter/angularjs';
+import uiRouter from '@uirouter/angularjs/lib-esm';
 import ProbeReportComponent from './probe-report.component';
 import ProbeSummaryComponent from './probe-summary/probe-summary.component';
 import DetailedGenomicAnalysisComponent from './probe-detailed-genomic-analysis/probe-detailed-genomic-analysis.component';

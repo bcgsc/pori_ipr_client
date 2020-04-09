@@ -1,5 +1,5 @@
 import angular from 'angular';
-import uiRouter from '@uirouter/angularjs';
+import uiRouter from '@uirouter/angularjs/lib-esm';
 import AccessComponent from './access.component';
 
 angular.module('access', [

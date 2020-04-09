@@ -1,5 +1,5 @@
 import angular from 'angular';
-import uiRouter from '@uirouter/angularjs';
+import uiRouter from '@uirouter/angularjs/lib-esm';
 import AdminComponent from './admin.component';
 import UsersComponent from './users/users.component';
 import ProjectsComponent from './projects/projects.component';

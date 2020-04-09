@@ -1,5 +1,5 @@
 import angular from 'angular';
-import uiRouter from '@uirouter/angularjs';
+import uiRouter from '@uirouter/angularjs/lib-esm';
 import 'angular-aria';
 import 'angular-animate';
 import ngSanitize from 'angular-sanitize';
@@ -49,6 +49,8 @@ import AppendicesService from './services/reports/appendices/appendices.service'
 import GenomicEventsService from './services/reports/summary/genomic-events.service';
 import IndefiniteArticleFilter from './filters/indefinite-article.filter';
 import TitleCaseFilter from './filters/titlecase.filter';
+import 'ag-grid-community/dist/styles/ag-grid.css';
+import 'ag-grid-community/dist/styles/ag-theme-material.css';
 import './root.scss';
 import './styles/ag-grid.scss';
 
