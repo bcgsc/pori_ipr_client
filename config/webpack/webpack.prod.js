@@ -14,6 +14,7 @@ const prodConfig = {
     ],
   },
   mode: 'production',
+  devtool: 'none',
   optimization: {
     usedExports: true,
   },
