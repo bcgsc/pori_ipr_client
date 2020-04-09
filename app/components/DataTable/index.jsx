@@ -181,7 +181,7 @@ function DataTable(props) {
 
   return (
     <div className="data-table--padded">
-      {rowData.length ? (
+      {rowData.length || editable ? (
         <>
           <div className="data-table__header-container">
             <Typography variant="h5" className="data-table__header">
