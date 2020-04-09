@@ -10,7 +10,7 @@ import {
 } from '@material-ui/core';
 import { UncontrolledReactSVGPanZoom } from 'react-svg-pan-zoom';
 import InlineSVG from 'svg-inline-react';
-import { AutoSizer } from 'react-virtualized';
+import { AutoSizer } from 'react-virtualized/dist/es';
 import DataTable from '../..';
 import columnDefs, { setHeaderName } from './columnDefs';
 
