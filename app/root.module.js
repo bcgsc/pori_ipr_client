@@ -1,5 +1,5 @@
 import angular from 'angular';
-import uiRouter from '@uirouter/angularjs/lib-esm';
+import uiRouter from '@uirouter/angularjs';
 import 'angular-aria';
 import 'angular-animate';
 import ngSanitize from 'angular-sanitize';

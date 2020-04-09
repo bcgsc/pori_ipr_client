@@ -1,5 +1,5 @@
 import angular from 'angular';
-import uiRouter from '@uirouter/angularjs/lib-esm';
+import uiRouter from '@uirouter/angularjs';
 import { react2angular } from 'react2angular';
 import TermsComponent from './index';
 import lazy from './lazy';
