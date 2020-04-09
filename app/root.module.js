@@ -1,12 +1,12 @@
 import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
-import 'angular-aria';
-import 'angular-animate';
-import ngSanitize from 'angular-sanitize';
-import ngMaterial from 'angular-material';
+import 'angular-aria/angular-aria.min';
+import 'angular-animate/angular-animate.min';
+import 'angular-sanitize/angular-sanitize.min';
+import 'angular-material/angular-material.min';
 import 'ngstorage';
 import 'typeface-roboto';
-import 'angular-material/angular-material.scss';
+import 'angular-material/angular-material.min.css';
 import 'angular-sortable-view';
 import ComponentsModule from './components/components.module';
 import ViewsModule from './views/views.module';
@@ -59,8 +59,8 @@ angular.module('root', [
   ComponentsModule,
   ViewsModule,
   'ngStorage',
-  ngMaterial,
-  ngSanitize,
+  'ngMaterial',
+  'ngSanitize',
 ]);
 
 export default angular.module('root')
