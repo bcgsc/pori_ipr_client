@@ -90,7 +90,10 @@ module.exports = {
       VERSION: JSON.stringify(packageFile.version),
     }),
     new MomentLocalesPlugin(),
-    new BundleAnalyzerPlugin({ defaultSizes: 'gzip' }),
+    new BundleAnalyzerPlugin({
+      defaultSizes: 'gzip',
+      excludeAssets: '.*\.hot-update\.js',
+    }),
   ],
   optimization: {
     splitChunks: {
