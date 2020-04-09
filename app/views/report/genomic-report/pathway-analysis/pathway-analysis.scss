@@ -17,6 +17,7 @@
 
 @media print {
   .pathway {
+    page-break-before: always;
     page-break-after: always;
 
     &__header {
@@ -25,7 +26,6 @@
 
     &__container {
       background-color: $white;
-      page-break-before: always;
       page-break-after: always;
     }
 

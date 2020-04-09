@@ -101,10 +101,6 @@ const genomic = {
       async ($transition$, OutlierService) => OutlierService.all(
         $transition$.params().report,
       )],
-    drugTargets: ['$transition$', 'DrugTargetService',
-      async ($transition$, DrugTargetService) => DrugTargetService.all(
-        $transition$.params().report,
-      )],
     densityGraphs: ['$transition$', 'ImageService',
       async ($transition$, ImageService) => ImageService.expDensityGraphs(
         $transition$.params().report,

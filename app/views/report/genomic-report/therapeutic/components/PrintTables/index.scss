@@ -27,6 +27,10 @@
   &__container {
     width: 100%;
     padding: 1mm 0 6mm;
+
+    .ag-body-viewport {
+      width: 258mm;
+    }
   }
 
   &__title {
