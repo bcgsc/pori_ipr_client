@@ -1,4 +1,4 @@
 $grid-size: 6px;
 $cell-horizontal-padding: $grid-size * 1.5;
 
-@import '~ag-grid-community/dist/styles/ag-theme-material/sass/ag-theme-material.scss';
+@import '~@ag-grid-community/core/dist/styles/ag-theme-material/sass/legacy/ag-theme-material-v22-compat';
