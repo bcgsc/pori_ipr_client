@@ -48,11 +48,17 @@ function TherapeuticTableComponent(props) {
     const returnColDefs = [];
 
     columnNames.forEach((col) => {
+      // Custom widths for columns
       returnColDefs.push({
-        // Split the only header with 2 words
         headerName: `${col.charAt(0).toUpperCase()}${col.slice(1)}`,
         field: col,
         autoHeight: true,
+        flex: col === 'notes' ? 1 : null,
+        maxWidth: (() => {
+          if (col === 'notes') { return null; }
+          if (col === 'therapy') { return 180; }
+          return 110;
+        })(),
         cellClass: ['cell-wrap-text', 'cell-line-height'],
       });
     });
@@ -99,12 +105,12 @@ function TherapeuticTableComponent(props) {
     );
 
     const therapeuticColNames = Object.keys(therapeuticRowData[0]);
-    therapeuticColDefs = makeColDefs(therapeuticColNames, ['']);
+    therapeuticColDefs = makeColDefs(therapeuticColNames);
   }
 
   if (chemoresistanceRowData.length) {
     const chemoresistanceColNames = Object.keys(chemoresistanceRowData[0]);
-    chemoresistanceColDefs = makeColDefs(chemoresistanceColNames, ['']);
+    chemoresistanceColDefs = makeColDefs(chemoresistanceColNames);
   }
 
   return (
