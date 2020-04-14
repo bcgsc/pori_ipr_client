@@ -10,7 +10,7 @@ import {
 } from '@material-ui/core';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import OptionsMenu from '../OptionsMenu';
+import ColumnPicker from './components/ColumnPicker';
 import LinkCellRenderer from './components/LinkCellRenderer';
 import GeneCellRenderer from './components/GeneCellRenderer';
 import ActionCellRenderer from './components/ActionCellRenderer';
@@ -57,11 +57,11 @@ function DataTable(props) {
 
   const gridApi = useRef();
   const columnApi = useRef();
-  const optionsMenuOnClose = useRef();
+  const ColumnPickerOnClose = useRef();
   const gridDiv = useRef();
 
-  const setOptionsMenuOnClose = (ref) => {
-    optionsMenuOnClose.current = ref;
+  const setColumnPickerOnClose = (ref) => {
+    ColumnPickerOnClose.current = ref;
   };
 
   const [showPopover, setShowPopover] = useState(false);
@@ -137,15 +137,14 @@ function DataTable(props) {
     editable: false,
   };
     
-  const renderOptionsMenu = () => {
+  const renderColumnPicker = () => {
     const popoverCloseHandler = () => {
       const {
         visibleCols: returnedVisibleCols,
-        hiddenCols: returnedHiddenCols,
-      } = optionsMenuOnClose.current();
+      } = ColumnPickerOnClose.current();
+      returnedVisibleCols.push('Actions');
 
       columnApi.current.setColumnsVisible(returnedVisibleCols, true);
-      columnApi.current.setColumnsVisible(returnedHiddenCols, false);
 
       columnApi.current.autoSizeColumns(returnedVisibleCols);
       
@@ -160,11 +159,17 @@ function DataTable(props) {
         onClose={() => popoverCloseHandler()}
         open
       >
-        <OptionsMenu
+        <ColumnPicker
           className="data-view__options-menu"
           label="Configure Visible Columns"
-          columns={columnApi.current.getAllColumns()}
-          onClose={setOptionsMenuOnClose}
+          columns={columnApi.current.getAllColumns()
+            .filter(col => col.colId !== 'Actions')
+            .map((col) => {
+              col.name = columnApi.current.getDisplayNameForColumn(col);
+              return col;
+            })
+          }
+          onClose={setColumnPickerOnClose}
         />
       </Dialog>
     );
@@ -187,7 +192,9 @@ function DataTable(props) {
             <Typography variant="h5" className="data-table__header">
               {titleText}
             </Typography>
-            {addable && renderAddRow()}
+            {addable
+              && renderAddRow()
+            }
             <EditDialog
               open={showEditDialog}
               close={handleRowEditClose}
@@ -208,7 +215,7 @@ function DataTable(props) {
             ref={gridDiv}
           >
             {showPopover
-              && renderOptionsMenu()
+              && renderColumnPicker()
             }
             <AgGridReact
               columnDefs={columnDefs}
