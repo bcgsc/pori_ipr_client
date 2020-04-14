@@ -33,6 +33,7 @@ md-content {
 }
 
 img.loader-spin {
+  height: 50px;
   animation-name: spin;
   animation-duration: 1.3s;
   animation-iteration-count: infinite;
