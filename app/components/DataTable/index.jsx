@@ -234,6 +234,7 @@ function DataTable(props) {
               }}
               suppressAnimationFrame
               suppressColumnVirtualisation
+              disableStaticMarkup // See https://github.com/ag-grid/ag-grid/issues/3727
             />
           </div>
         </>
