@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   IconButton,
 } from '@material-ui/core';
@@ -25,14 +25,26 @@ function ActionCellRenderer(params) {
       EditDialog,
       reportIdent,
       tableType,
-      arrayColumns,
     },
     node,
+    columnApi,
   } = params;
 
   const [showDetailDialog, setShowDetailDialog] = useState(false);
   const [showSvgViewer, setShowSvgViewer] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
+  const [columnMapping, setColumnMapping] = useState({});
+
+  useEffect(() => {
+    if (showDetailDialog) {
+      setColumnMapping(
+        columnApi.getAllColumns().reduce((accumulator, current) => {
+          accumulator[current.colId] = columnApi.getDisplayNameForColumn(current);
+          return accumulator;
+        }, {}),
+      );
+    }
+  }, [showDetailDialog]);
 
   const detailClick = () => {
     setShowDetailDialog(true);
@@ -70,7 +82,7 @@ function ActionCellRenderer(params) {
           open={showDetailDialog}
           selectedRow={data}
           onClose={handleDetailClose}
-          arrayColumns={arrayColumns}
+          columnMapping={columnMapping}
         />
       )}
       {editable && (
