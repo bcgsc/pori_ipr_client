@@ -1,13 +1,15 @@
 import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
-import 'angular-aria';
-import 'angular-animate';
-import ngSanitize from 'angular-sanitize';
-import ngMaterial from 'angular-material';
+import 'angular-aria/angular-aria.min';
+import 'angular-animate/angular-animate.min';
+import 'angular-sanitize/angular-sanitize.min';
+import 'angular-material/angular-material.min';
 import 'ngstorage';
 import 'typeface-roboto';
-import 'angular-material/angular-material.scss';
+import 'angular-material/angular-material.min.css';
 import 'angular-sortable-view';
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import ComponentsModule from './components/components.module';
 import ViewsModule from './views/views.module';
 import RootComponent from './root.component';
@@ -49,6 +51,8 @@ import AppendicesService from './services/reports/appendices/appendices.service'
 import GenomicEventsService from './services/reports/summary/genomic-events.service';
 import IndefiniteArticleFilter from './filters/indefinite-article.filter';
 import TitleCaseFilter from './filters/titlecase.filter';
+import '@ag-grid-community/core/dist/styles/ag-grid.min.css';
+import '@ag-grid-community/core/dist/styles/ag-theme-material.min.css';
 import './root.scss';
 import './styles/ag-grid.scss';
 
@@ -57,8 +61,8 @@ angular.module('root', [
   ComponentsModule,
   ViewsModule,
   'ngStorage',
-  ngMaterial,
-  ngSanitize,
+  'ngMaterial',
+  'ngSanitize',
 ]);
 
 export default angular.module('root')
@@ -194,3 +198,7 @@ export default angular.module('root')
     });
   })
   .name;
+
+ModuleRegistry.registerModules([
+  ClientSideRowModelModule,
+]);

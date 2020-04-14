@@ -2,7 +2,7 @@ import React, {
   useRef, useState, useEffect,
 } from 'react';
 import PropTypes from 'prop-types';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridReact } from '@ag-grid-community/react';
 import {
   Typography,
   IconButton,

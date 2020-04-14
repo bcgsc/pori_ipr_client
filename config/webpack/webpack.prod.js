@@ -14,6 +14,10 @@ const prodConfig = {
     ],
   },
   mode: 'production',
+  devtool: 'none',
+  optimization: {
+    usedExports: true,
+  },
   plugins: [
     new webpack.DefinePlugin({
       CONFIG: JSON.stringify(production),
