@@ -10,7 +10,7 @@ import {
 } from '@material-ui/core';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import OptionsMenu from './components/OptionsMenu';
+import ColumnPicker from './components/ColumnPicker';
 import LinkCellRenderer from './components/LinkCellRenderer';
 import GeneCellRenderer from './components/GeneCellRenderer';
 import ActionCellRenderer from './components/ActionCellRenderer';
@@ -57,11 +57,11 @@ function DataTable(props) {
 
   const gridApi = useRef();
   const columnApi = useRef();
-  const optionsMenuOnClose = useRef();
+  const ColumnPickerOnClose = useRef();
   const gridDiv = useRef();
 
-  const setOptionsMenuOnClose = (ref) => {
-    optionsMenuOnClose.current = ref;
+  const setColumnPickerOnClose = (ref) => {
+    ColumnPickerOnClose.current = ref;
   };
 
   const [showPopover, setShowPopover] = useState(false);
@@ -137,11 +137,11 @@ function DataTable(props) {
     editable: false,
   };
     
-  const renderOptionsMenu = () => {
+  const renderColumnPicker = () => {
     const popoverCloseHandler = () => {
       const {
         visibleCols: returnedVisibleCols,
-      } = optionsMenuOnClose.current();
+      } = ColumnPickerOnClose.current();
       returnedVisibleCols.push('Actions');
 
       columnApi.current.setColumnsVisible(returnedVisibleCols, true);
@@ -159,7 +159,7 @@ function DataTable(props) {
         onClose={() => popoverCloseHandler()}
         open
       >
-        <OptionsMenu
+        <ColumnPicker
           className="data-view__options-menu"
           label="Configure Visible Columns"
           columns={columnApi.current.getAllColumns()
@@ -169,7 +169,7 @@ function DataTable(props) {
               return col;
             })
           }
-          onClose={setOptionsMenuOnClose}
+          onClose={setColumnPickerOnClose}
         />
       </Dialog>
     );
@@ -215,7 +215,7 @@ function DataTable(props) {
             ref={gridDiv}
           >
             {showPopover
-              && renderOptionsMenu()
+              && renderColumnPicker()
             }
             <AgGridReact
               columnDefs={columnDefs}

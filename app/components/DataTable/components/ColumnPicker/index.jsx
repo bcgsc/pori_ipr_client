@@ -14,7 +14,7 @@ import './index.scss';
  * @param {func} props.onClose callback function to execute on close
  * @return {*} JSX
  */
-function OptionsMenu(props) {
+function ColumnPicker(props) {
   const {
     className,
     label,
@@ -64,7 +64,7 @@ function OptionsMenu(props) {
   );
 }
 
-OptionsMenu.propTypes = {
+ColumnPicker.propTypes = {
   label: PropTypes.string.isRequired,
   columns: PropTypes.arrayOf(
     PropTypes.object,
@@ -73,10 +73,10 @@ OptionsMenu.propTypes = {
   onClose: PropTypes.func,
 };
 
-OptionsMenu.defaultProps = {
+ColumnPicker.defaultProps = {
   className: '',
   onClose: () => {},
 };
 
 
-export default OptionsMenu;
+export default ColumnPicker;
