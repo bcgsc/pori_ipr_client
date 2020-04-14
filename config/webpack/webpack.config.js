@@ -83,7 +83,12 @@ module.exports = {
       from: path.join(__dirname, '../../statics/images/*'),
       to: 'img/',
       flatten: true,
-    }]),
+    },
+    {
+      from: path.join(__dirname, '../../statics/favicon/*'),
+      flatten: true,
+    },
+    ]),
     new webpack.HotModuleReplacementPlugin(),
     new DashboardPlugin({ port: 3000 }),
     new webpack.DefinePlugin({
