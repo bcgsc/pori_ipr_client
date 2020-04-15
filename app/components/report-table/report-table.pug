@@ -38,7 +38,7 @@ div(layout="column")
           span(ui-sref="root.reportlisting.report.probe.summary({analysis_report: report.ident})", ng-if="$ctrl.type == 'probe'").link {{report.patientInformation.POGID}}
         td {{report.analysis.pog.alternate_identifier || 'N/A'}}
         td {{report.biopsyName || 'N/A'}}
-        td {{report.patientInformation.disease}}
+        td {{report.patientInformation.diagnosis}}
         td {{report.patientInformation.physician}}
         td {{report.patientInformation.caseType}}
         td {{$ctrl.readState(report.state)}}
