@@ -1,7 +1,7 @@
 md-content(flex).layout-fill
   md-toolbar
     div.md-toolbar-tools
-      span(flex).text-left {{$ctrl.report.patientInformation.tumourType}}
+      span(flex).text-left {{$ctrl.report.patientInformation.disease}}
       h2(flex).text-center.md-hue-3 {{$ctrl.report.patientId}} Genomic Report
       report-state(flex, state="$ctrl.report.state").text-right
   div(layout="row", flex).pog-report

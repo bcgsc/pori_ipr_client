@@ -3,4 +3,4 @@ div(layout="row", layout-align="space-between start").print-header
     span {{$ctrl.report.patientId}}
     span {{$ctrl.report.createdAt | date: 'yyyy/MM/dd'}}
   span BCCA Confidential - For Research Purposes Only
-  span(flex=30).print-header--right-align {{$ctrl.report.patientInformation.tumourType | titlecase}}
+  span(flex=30).print-header--right-align {{$ctrl.report.patientInformation.disease | titlecase}}

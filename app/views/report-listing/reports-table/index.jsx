@@ -57,7 +57,7 @@ function ReportsTableComponent(props) {
         project: report.projects.map(project => project.name).sort().join(', '),
         physician: report.patientInformation.physician,
         analyst: analyst ? `${analyst.firstName} ${analyst.lastName}` : null,
-        tumourType: report.patientInformation.tumourType,
+        tumourType: report.patientInformation.disease,
         reportID: report.ident,
         date: report.createdAt,
       };
