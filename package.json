@@ -29,7 +29,7 @@
     "@babel/plugin-syntax-dynamic-import": "~7.8.3",
     "@babel/preset-env": "~7.9.5",
     "@babel/preset-react": "~7.0.0",
-    "acorn": "~6.0.5",
+    "acorn": "~7.1.1",
     "apply-loader": "~2.0.0",
     "babel-eslint": "~10.0.3",
     "babel-loader": "~8.0.4",
@@ -38,7 +38,6 @@
     "clean-webpack-plugin": "~1.0.0",
     "copy-webpack-plugin": "~4.6.0",
     "css-loader": "~2.0.1",
-    "cypress": "~3.4.1",
     "eslint": "~5.12.0",
     "eslint-config-airbnb": "~17.1.0",
     "eslint-config-airbnb-base": "~13.1.0",
@@ -94,7 +93,7 @@
     "lodash.orderby": "~4.6.0",
     "lodash.sortby": "~4.7.0",
     "lodash.startcase": "~4.4.0",
-    "minimist": "~1.2.0",
+    "minimist": "~1.2.5",
     "moment": "~2.24.0",
     "ng-quill": "~3.8.0",
     "ngstorage": "~0.3.11",
@@ -110,8 +109,7 @@
     "svg-inline-react": "~3.2.0",
     "svg-pan-zoom": "~3.6.0",
     "typeface-roboto": "0.0.75",
-    "uglifyjs-webpack-plugin": "~2.1.2",
-    "webpack": "~4.29.6",
+    "webpack": "~4.28.4",
     "webpack-merge": "~4.2.1"
   }
 }
