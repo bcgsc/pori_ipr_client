@@ -124,7 +124,7 @@ function KBMatchesView(props) {
       syncedTableData={syncedTableData}
       unsyncedTableData={unsyncedTableData}
       hiddenTableData={hiddenTableData}
-      reportId={report.ident}
+      reportIdent={report.ident}
     />
   );
 }

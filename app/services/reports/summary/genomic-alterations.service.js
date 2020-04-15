@@ -7,42 +7,42 @@ class GenomicAterationsService {
 
   /**
    * Retrieve all genomic alterations from a report that a user can access
-   * @param {String} reportId - report ident
+   * @param {String} reportIdent - report ident
    * @return {Promise} API response
    * @throws {ErrorType} Thrown when API call fails
    */
-  async all(reportId) {
+  async all(reportIdent) {
     const resp = await this.$http.get(
-      `${this.api}/${reportId}/summary/genomic-alterations-identified`,
+      `${this.api}/${reportIdent}/summary/genomic-alterations-identified`,
     );
     return resp.data;
   }
 
   /**
    * Get an Identified Genomic Alteration
-   * @param {String} reportId - report ident
+   * @param {String} reportIdent - report ident
    * @param {String} ident - genomic alterations UUID
    * @return {Promise} API respoinse
    * @throws {ErrorType} Thrown when API call fails
    */
-  async id(reportId, ident) {
+  async id(reportIdent, ident) {
     const resp = await this.$http.get(
-      `${this.api}/${reportId}/summary/genomic-alterations-identified/${ident}`,
+      `${this.api}/${reportIdent}/summary/genomic-alterations-identified/${ident}`,
     );
     return resp.data;
   }
 
   /**
    * Update an Identified Genomic Alteration
-   * @param {String} reportId - report ident
+   * @param {String} reportIdent - report ident
    * @param {String} ident - genomic alterations UUID
    * @param {*} gai - Genomic Alterations Identified
    * @return {Promise} API respoinse
    * @throws {ErrorType} Thrown when API call fails
    */
-  async update(reportId, ident, gai) {
+  async update(reportIdent, ident, gai) {
     const resp = await this.$http.put(
-      `${this.api}/${reportId}/summary/genomic-alterations-identified/${ident}`,
+      `${this.api}/${reportIdent}/summary/genomic-alterations-identified/${ident}`,
       gai,
     );
     return resp.data;
@@ -50,14 +50,14 @@ class GenomicAterationsService {
 
   /**
    * Create an Identified Genomic Alteration
-   * @param {String} reportId - report ident
+   * @param {String} reportIdent - report ident
    * @param {*} alteration - alteration
    * @return {Promise} API respoinse
    * @throws {ErrorType} Thrown when API call fails
    */
-  async create(reportId, alteration) {
+  async create(reportIdent, alteration) {
     const resp = await this.$http.post(
-      `${this.api}/${reportId}/summary/genomic-alterations-identified/`,
+      `${this.api}/${reportIdent}/summary/genomic-alterations-identified/`,
       alteration,
     );
     return resp.data;
@@ -65,16 +65,16 @@ class GenomicAterationsService {
 
   /**
    * Remove an Identified Genomic Alteration
-   * @param {String} reportId - report ident
+   * @param {String} reportIdent - report ident
    * @param {String} ident - genomic alterations UUID
    * @param {String} comment - comment
    * @param {Boolean} cascade - cascade
    * @return {Promise} API respoinse
    * @throws {ErrorType} Thrown when API call fails
    */
-  async remove(reportId, ident, comment, cascade = false) {
+  async remove(reportIdent, ident, comment, cascade = false) {
     await this.$http.delete(
-      `${this.api}/${reportId}/summary/genomic-alterations-identified/${ident}`,
+      `${this.api}/${reportIdent}/summary/genomic-alterations-identified/${ident}`,
       {
         data: {
           comment,

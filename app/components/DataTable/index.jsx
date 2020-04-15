@@ -28,7 +28,7 @@ const MAX_TABLE_HEIGHT = '500px';
  * @param {string} props.filterText text to filter the table on
  * @param {bool} props.editable can rows be edited?
  * @param {object} props.EditDialog Edit Dialog component
- * @param {string} props.reportId Ident of report (used for editing api calls)
+ * @param {string} props.reportIdent Ident of report (used for editing api calls)
  * @param {string} props.tableType type of table used for therapeutic targets
  * @param {array} props.visibleColumns array of column ids that are visible
  * @param {func} props.syncVisibleColumns function to propagate visible column changes
@@ -45,7 +45,7 @@ function DataTable(props) {
     editable,
     EditDialog,
     addable,
-    reportId,
+    reportIdent,
     tableType,
     visibleColumns,
     syncVisibleColumns,
@@ -199,7 +199,7 @@ function DataTable(props) {
               open={showEditDialog}
               close={handleRowEditClose}
               editData={selectedRow.data}
-              reportId={reportId}
+              reportIdent={reportIdent}
               tableType={tableType}
             />
             {canToggleColumns && (
@@ -230,7 +230,7 @@ function DataTable(props) {
                 editable,
                 canViewDetails,
                 EditDialog,
-                reportId,
+                reportIdent,
                 tableType,
               }}
               frameworkComponents={{
@@ -271,7 +271,7 @@ DataTable.propTypes = {
   editable: PropTypes.bool,
   EditDialog: PropTypes.func,
   addable: PropTypes.bool,
-  reportId: PropTypes.string.isRequired,
+  reportIdent: PropTypes.string.isRequired,
   tableType: PropTypes.string,
   visibleColumns: PropTypes.arrayOf(PropTypes.string),
   syncVisibleColumns: PropTypes.func,

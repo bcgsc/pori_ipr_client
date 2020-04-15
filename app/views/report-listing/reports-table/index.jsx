@@ -58,7 +58,7 @@ function ReportsTableComponent(props) {
         physician: report.patientInformation.physician,
         analyst: analyst ? `${analyst.firstName} ${analyst.lastName}` : null,
         tumourType: report.patientInformation.tumourType,
-        reportID: report.ident,
+        reportIdent: report.ident,
         date: report.createdAt,
       };
     }));
@@ -80,13 +80,13 @@ function ReportsTableComponent(props) {
 
   const onSelectionChanged = () => {
     const selectedRow = gridApi.current.getSelectedRows();
-    const [{ reportID }] = selectedRow;
+    const [{ reportIdent }] = selectedRow;
     let [{ reportType }] = selectedRow;
 
     // Convert displayed report type (Genomic, Targeted gene) back to the API values
     reportType = reportType === 'Genomic' ? 'genomic' : 'probe';
     $state.go(`root.reportlisting.${reportType}.summary`, {
-      analysis_report: reportID,
+      analysis_report: reportIdent,
     });
   };
 
