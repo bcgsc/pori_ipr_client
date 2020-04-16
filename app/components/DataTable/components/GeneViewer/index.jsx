@@ -25,7 +25,7 @@ import './index.scss';
  * @param {object} props props
  * @param {func} props.onClose parent close handler
  * @param {string} props.gene gene name
- * @param {string} props.reportId current report ID for API calls
+ * @param {string} props.reportIdent current report ID for API calls
  * @param {bool} props.open is open?
  * @return {*} JSX
  */
@@ -34,7 +34,7 @@ function GeneViewer(props) {
     onClose,
     open,
     gene,
-    reportId,
+    reportIdent,
   } = props;
   
   const [geneData, setGeneData] = useState();
@@ -43,7 +43,7 @@ function GeneViewer(props) {
   useEffect(() => {
     if (open) {
       const api = async () => {
-        const resp = await geneViewerApi(gene, reportId);
+        const resp = await geneViewerApi(gene, reportIdent);
         setGeneData(resp);
       };
       api();
@@ -91,28 +91,28 @@ function GeneViewer(props) {
               <DataTable
                 rowData={geneData.kbMatches}
                 columnDefs={columnDefs}
-                reportId={reportId}
+                reportIdent={reportIdent}
               />
             )}
             {tabValue === 1 && (
               <DataTable
                 rowData={geneData.smallMutations}
                 columnDefs={smallMutationsColumnDefs}
-                reportId={reportId}
+                reportIdent={reportIdent}
               />
             )}
             {tabValue === 2 && (
               <DataTable
                 rowData={geneData.copyNumber}
                 columnDefs={copyNumberColumnDefs}
-                reportId={reportId}
+                reportIdent={reportIdent}
               />
             )}
             {tabValue === 3 && (
               <DataTable
                 rowData={geneData.expRNA}
                 columnDefs={expressionColumnDefs}
-                reportId={reportId}
+                reportIdent={reportIdent}
               />
             )}
             {tabValue === 4 && (
@@ -130,7 +130,7 @@ function GeneViewer(props) {
               <DataTable
                 rowData={geneData.structuralVariants}
                 columnDefs={structuralVariantsColumnDefs}
-                reportId={reportId}
+                reportIdent={reportIdent}
               />
             )}
           </>
@@ -148,7 +148,7 @@ function GeneViewer(props) {
 GeneViewer.propTypes = {
   onClose: PropTypes.func.isRequired,
   gene: PropTypes.string.isRequired,
-  reportId: PropTypes.string.isRequired,
+  reportIdent: PropTypes.string.isRequired,
   open: PropTypes.bool.isRequired,
 };
 

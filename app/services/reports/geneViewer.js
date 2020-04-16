@@ -1,6 +1,6 @@
 import getLocalToken from '../management/token';
 
-const geneViewer = async (gene, reportId) => {
+const geneViewer = async (gene, reportIdent) => {
   const authToken = getLocalToken();
   if (!authToken) {
     return [];
@@ -16,7 +16,7 @@ const geneViewer = async (gene, reportId) => {
   };
 
   const response = await fetch(
-    `${CONFIG.ENDPOINTS.API}/reports/${reportId}/gene-viewer/${gene}`,
+    `${CONFIG.ENDPOINTS.API}/reports/${reportIdent}/gene-viewer/${gene}`,
     options,
   );
 

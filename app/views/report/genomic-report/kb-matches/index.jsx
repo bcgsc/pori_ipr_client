@@ -24,7 +24,7 @@ const VISIBLE = 'visibleColsKb';
  * @param {object} tableData table data for all tables
  * @param {object} hiddenTableData table data for all tables hidden by default
  * @param {array} syncedColumnDefs column definitions to by synced across tables
- * @param {string} reportId report ident string
+ * @param {string} reportIdent report ident string
  * @returns {*} JSX
  */
 function KBMatches(props) {
@@ -32,7 +32,7 @@ function KBMatches(props) {
     syncedTableData,
     unsyncedTableData,
     hiddenTableData,
-    reportId,
+    reportIdent,
   } = props;
 
   const [thisHiddenTableData, setThisHiddenTableData] = useState(hiddenTableData.current);
@@ -84,7 +84,7 @@ function KBMatches(props) {
             filterText={filterText}
             edit={false}
             canToggleColumns
-            reportId={reportId}
+            reportIdent={reportIdent}
           />
         ))}
       </div>
@@ -96,7 +96,7 @@ function KBMatches(props) {
           titleText={unsyncedTableData.titleText}
           filterText={filterText}
           edit={false}
-          reportId={reportId}
+          reportIdent={reportIdent}
         />
       </div>
 
@@ -124,7 +124,7 @@ function KBMatches(props) {
                 filterText={filterText}
                 edit={false}
                 canToggleColumns
-                reportId={reportId}
+                reportIdent={reportIdent}
               />
             </ExpansionPanelDetails>
           </ExpansionPanel>
@@ -153,7 +153,7 @@ KBMatches.propTypes = {
       }),
     ),
   ),
-  reportId: PropTypes.string.isRequired,
+  reportIdent: PropTypes.string.isRequired,
 };
 
 KBMatches.defaultProps = {

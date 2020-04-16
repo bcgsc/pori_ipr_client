@@ -37,7 +37,7 @@ function TherapeuticView(props) {
         editable={reportEdit && !print}
         EditDialog={EditDialog}
         addable={reportEdit && !print}
-        reportId={report.ident}
+        reportIdent={report.ident}
         tableType="therapeutic"
       />
 
@@ -48,7 +48,7 @@ function TherapeuticView(props) {
         editable={reportEdit && !print}
         EditDialog={EditDialog}
         addable={reportEdit && !print}
-        reportId={report.ident}
+        reportIdent={report.ident}
         tableType="chemoresistance"
       />
     </>

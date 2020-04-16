@@ -7,14 +7,14 @@ import columnDefs from './columnDefs';
  * @param {object} props props
  * @param {array} props.outliers list of outlier data
  * @param {string} props.titleText title of table
- * @param {string} props.reportId current report ID
+ * @param {string} props.reportIdent current report ID
  * @return {*} JSX
  */
 function Expression(props) {
   const {
     outliers,
     titleText,
-    reportId,
+    reportIdent,
   } = props;
 
   const [visibleCols, setVisibleCols] = useState(
@@ -42,7 +42,7 @@ function Expression(props) {
       hiddenCols={hiddenCols}
       setVisibleCols={handleVisibleColsChange}
       setHiddenCols={handleHiddenColsChange}
-      reportId={reportId}
+      reportIdent={reportIdent}
     />
   );
 }
@@ -50,7 +50,7 @@ function Expression(props) {
 Expression.propTypes = {
   outliers: PropTypes.arrayOf(PropTypes.object),
   titleText: PropTypes.string.isRequired,
-  reportId: PropTypes.string.isRequired,
+  reportIdent: PropTypes.string.isRequired,
 };
 
 Expression.defaultProps = {
