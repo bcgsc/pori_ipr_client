@@ -174,6 +174,7 @@ function EditDialog(props) {
               type="evidence"
               label="Evidence Level"
               onChange={onAutocompleteValueSelected}
+              minCharacters={1}
             />
           </FormControl>
           <FormControl fullWidth>
