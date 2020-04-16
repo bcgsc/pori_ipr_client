@@ -15,6 +15,7 @@ import kbAutocomplete from '../../../../../../services/reports/kbAutocomplete';
  * @param {bool} required is this field required
  * @param {func} onChange callback when value is selected
  * @param {string} error form error text
+ * @param {number} minCharacters minimum amount of characters to hit API endpoint
  * @return {*} JSX
  */
 function AutocompleteHandler(props) {
@@ -25,6 +26,7 @@ function AutocompleteHandler(props) {
     required,
     onChange,
     error,
+    minCharacters,
   } = props;
 
   const [options, setOptions] = useState([]);
@@ -40,12 +42,13 @@ function AutocompleteHandler(props) {
   const onInputChange = async (event) => {
     let queryString = event.target.value;
 
-    if (queryString.length > 2) {
+    if (queryString.length >= minCharacters) {
       setOptions([]);
       setLoading(true);
 
-      // Find all query strings that are 3 characters or longer. Needed for KB API to process
-      queryString = queryString.split(' ').filter(str => str.length > 2).join(' ');
+      // Find all query strings that are 3 characters or longer.
+      // Needed for KB API to process multiple words
+      queryString = queryString.split(' ').filter(str => str.length >= minCharacters).join(' ');
 
       const autocompleted = await kbAutocomplete(type, queryString);
 
@@ -67,7 +70,7 @@ function AutocompleteHandler(props) {
       options={options}
       getOptionLabel={option => option.displayName || option}
       value={value}
-      noOptionsText="Input 3 characters for autocomplete"
+      noOptionsText={`Input ${minCharacters} character${minCharacters > 1 ? 's' : ''} for autocomplete`}
       renderInput={params => (
         <TextField
           {...params}
@@ -98,12 +101,14 @@ AutocompleteHandler.propTypes = {
   label: PropTypes.string.isRequired,
   required: PropTypes.bool,
   onChange: PropTypes.func,
+  minCharacters: PropTypes.number,
 };
 
 AutocompleteHandler.defaultProps = {
   defaultValue: '',
   required: false,
   onChange: () => {},
+  minCharacters: 3,
 };
 
 export default AutocompleteHandler;
