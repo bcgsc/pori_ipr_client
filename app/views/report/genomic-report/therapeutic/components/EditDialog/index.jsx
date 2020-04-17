@@ -95,12 +95,13 @@ function EditDialog(props) {
         return;
       }
 
-      await therapeuticAdd(
+      const returnedData = await therapeuticAdd(
         reportIdent,
         combinedData,
       );
+
+      close(returnedData);
     }
-    close(combinedData);
   };
 
   const onAutocompleteValueSelected = (selectedValue, typeName) => {

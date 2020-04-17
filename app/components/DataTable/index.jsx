@@ -219,6 +219,7 @@ function DataTable(props) {
   const renderAddRow = () => (
     <IconButton
       onClick={() => setShowEditDialog(true)}
+      title="Add Row"
     >
       <AddCircleOutlineIcon />
     </IconButton>
@@ -232,26 +233,32 @@ function DataTable(props) {
             <Typography variant="h5" className="data-table__header">
               {titleText}
             </Typography>
-            {addable
-              && renderAddRow()
-            }
+            <div>
+              {addable
+                && renderAddRow()
+              }
+              {canToggleColumns && (
+                <IconButton
+                  onClick={() => setShowPopover(prevVal => !prevVal)}
+                >
+                  <MoreHorizIcon />
+                </IconButton>
+              )}
+              {canReorder && (
+                <Switch
+                  checked={showReorder}
+                  onChange={toggleReorder}
+                  color="primary"
+                  title="Toggle Reordering"
+                />
+              )}
+            </div>
             <EditDialog
               open={showEditDialog}
               close={handleRowEditClose}
               editData={selectedRow.data}
               reportIdent={reportIdent}
               tableType={tableType}
-            />
-            {canToggleColumns && (
-              <IconButton
-                onClick={() => setShowPopover(prevVal => !prevVal)}
-              >
-                <MoreHorizIcon />
-              </IconButton>
-            )}
-            <Switch
-              checked={showReorder}
-              onChange={toggleReorder}
             />
           </div>
           <div

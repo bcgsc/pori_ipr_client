@@ -22,8 +22,7 @@ export const therapeuticAdd = async (reportIdent, entry) => {
   );
 
   if (response.ok) {
-    const { result } = await response.json();
-    return result;
+    return response.json();
   }
 };
 
