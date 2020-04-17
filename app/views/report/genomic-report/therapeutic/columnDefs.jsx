@@ -1,4 +1,12 @@
 const columnDefs = [{
+  colId: 'drag',
+  rowDrag: true,
+  rowDragText: params => params.rowNode.data.gene,
+  hide: true,
+  pinned: 'left',
+  suppressMenu: true,
+  width: 40,
+}, {
   headerName: 'Gene',
   field: 'gene',
   hide: false,
@@ -24,6 +32,7 @@ const columnDefs = [{
   field: 'notes',
   hide: false,
 }, {
+  colId: 'rank',
   field: 'rank',
   hide: true,
   sort: 'asc',

@@ -7,6 +7,7 @@ import {
   Typography,
   IconButton,
   Dialog,
+  Switch,
 } from '@material-ui/core';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
@@ -51,6 +52,9 @@ function DataTable(props) {
     syncVisibleColumns,
     canToggleColumns,
     canViewDetails,
+    paginated,
+    canReorder,
+    rowUpdateAPICall,
   } = props;
 
   const domLayout = 'autoHeight';
@@ -67,6 +71,7 @@ function DataTable(props) {
   const [showPopover, setShowPopover] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [selectedRow, setSelectedRow] = useState({});
+  const [showReorder, setShowReorder] = useState(false);
 
   useEffect(() => {
     if (gridApi.current) {
@@ -120,6 +125,41 @@ function DataTable(props) {
     columnApi.current.autoSizeColumns(visibleColumnIds);
   };
 
+  const toggleReorder = () => {
+    if (!showReorder) {
+      columnDefs.forEach((col) => {
+        col.sortable = false;
+        col.filter = false;
+      });
+      gridApi.current.setSortModel([{ colId: 'rank', sort: 'asc' }]);
+      gridApi.current.setColumnDefs(columnDefs);
+
+      columnApi.current.setColumnVisible('drag', true);
+      setShowReorder(true);
+    } else {
+      columnDefs.forEach((col) => {
+        col.sortable = true;
+        col.filter = true;
+      });
+      gridApi.current.setColumnDefs(columnDefs);
+
+      columnApi.current.setColumnVisible('drag', false);
+      setShowReorder(false);
+    }
+  };
+
+  const onRowDragEnd = async (event) => {
+    const newData = event.node.data;
+    newData.rank = event.overIndex;
+    await rowUpdateAPICall(
+      reportIdent,
+      event.node.data.ident,
+      newData,
+    );
+    event.node.setData(newData);
+    gridApi.current.onSortChanged();
+  };
+
   const handleRowEditClose = (editedData) => {
     setShowEditDialog(false);
     if (editedData && selectedRow.node) {
@@ -131,9 +171,9 @@ function DataTable(props) {
   };
 
   const defaultColDef = {
-    sortable: true,
+    sortable: !showReorder,
     resizable: true,
-    filter: true,
+    filter: !showReorder,
     editable: false,
   };
     
@@ -209,6 +249,10 @@ function DataTable(props) {
                 <MoreHorizIcon />
               </IconButton>
             )}
+            <Switch
+              checked={showReorder}
+              onChange={toggleReorder}
+            />
           </div>
           <div
             className="ag-theme-material data-table__container"
@@ -223,8 +267,10 @@ function DataTable(props) {
               defaultColDef={defaultColDef}
               onGridReady={onGridReady}
               domLayout={domLayout}
-              pagination
+              pagination={paginated}
               autoSizePadding="0"
+              deltaRowDataMode={canReorder}
+              onRowDragEnd={canReorder ? onRowDragEnd : null}
               editType="fullRow"
               context={{
                 editable,
