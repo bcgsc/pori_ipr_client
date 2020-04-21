@@ -223,15 +223,18 @@ class GermlineReportComponent {
         };
       }],
     });
+    const updatedVariant = {};
 
     if (mode === 'patient') {
       this.report.variants.forEach((variant) => {
         variant.patient_history = resp.value;
+        updatedVariant.patient_history = resp.value;
       });
     }
     if (mode === 'family') {
       this.report.variants.forEach((variant) => {
         variant.family_history = resp.value;
+        updatedVariant.family_history = resp.value;
       });
     }
 
@@ -239,7 +242,7 @@ class GermlineReportComponent {
       this.report.variants.map(variant => this.GermlineService.updateVariant(
         this.report.ident,
         variant.ident,
-        variant,
+        updatedVariant,
       )),
     );
     this.$mdToast.showSimple('Report has been updated.');
@@ -268,7 +271,7 @@ class GermlineReportComponent {
       const result = await this.GermlineService.updateVariant(
         this.report.ident,
         variant.ident,
-        variant,
+        { hidden: variant.hidden },
       );
       // Update report in memory with fresh result from API.
       const i = this.report.variants.findIndex(v => v.ident === result.ident);
