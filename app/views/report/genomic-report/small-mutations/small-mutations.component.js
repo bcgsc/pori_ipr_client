@@ -22,7 +22,7 @@ class SmallMutationsComponent {
 
   $onInit() {
     this.columnDefs = columnDefs;
-    setHeaderName(`${this.report.tumourAnalysis.diseaseExpressionComparator} %ile`, 'tcgaPerc');
+    setHeaderName(`${this.report.tumourAnalysis.diseaseExpressionComparator || ''} %ile`, 'tcgaPerc');
     setHeaderName(`Fold Change vs ${this.report.tumourAnalysis.normalExpressionComparator}`, 'foldChange');
     this.processMutationSummaryImages(this.mutationSummaryImages);
     this.processMutations(this.smallMutations);
@@ -113,7 +113,7 @@ class SmallMutationsComponent {
       /* (Backwards compatibility for v4.5.1 and older) */
       if (!img.comparator) {
         // If no comparator found in image, likely legacy and use report setting.
-        img.comparator = this.report.tumourAnalysis.diseaseExpressionComparator;
+        img.comparator = this.report.tumourAnalysis.diseaseExpressionComparator || '';
       }
 
       if (img.filename.includes('legend') && img.filename.includes('snv_indel')) {
