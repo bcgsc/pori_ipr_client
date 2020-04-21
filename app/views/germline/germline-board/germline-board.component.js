@@ -109,13 +109,17 @@ class GermlineBoardComponent {
    */
   async getExport() {
     try {
+      const date = new Date();
+      const dateString = date.toLocaleDateString().replace(/\//g, '-');
+      const timeString = date.toLocaleTimeString([], { hour12: false }).replace(/:/g, '-');
+
       const exportData = await this.GermlineService.export();
       const blob = new Blob([exportData], { type: 'text/plain' });
       const url = URL.createObjectURL(blob);
 
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'germline_export';
+      a.download = `germline_export_${dateString}_${timeString}`;
 
       const clickHandler = () => {
         setTimeout(() => {
