@@ -237,8 +237,6 @@ class GermlineReportComponent {
 
     await Promise.all(
       this.report.variants.map(variant => this.GermlineService.updateVariant(
-        this.report.patientId,
-        this.report.biopsyName,
         this.report.ident,
         variant.ident,
         variant,
@@ -254,12 +252,7 @@ class GermlineReportComponent {
     };
 
     try {
-      const review = await this.GermlineService.addReview(
-        this.report.patientId,
-        this.report.biopsyName,
-        this.report.ident,
-        data,
-      );
+      const review = await this.GermlineService.addReview(this.report.ident, data);
       this.report.reviews.push(review[0]);
       this.$mdToast.showSimple('The review has been added.');
       this.addReview = false;
@@ -273,8 +266,6 @@ class GermlineReportComponent {
 
     try {
       const result = await this.GermlineService.updateVariant(
-        this.report.patientId,
-        this.report.biopsyName,
         this.report.ident,
         variant.ident,
         variant,
@@ -290,12 +281,7 @@ class GermlineReportComponent {
 
   async removeReview(review) {
     try {
-      await this.GermlineService.removeReview(
-        this.report.patientId,
-        this.report.biopsyName,
-        this.report.ident,
-        review.ident,
-      );
+      await this.GermlineService.removeReview(this.report.ident, review.ident);
       this.report.reviews.splice(
         this.report.reviews.findIndex(rev => rev.ident === review.ident), 1,
       );
@@ -319,11 +305,7 @@ class GermlineReportComponent {
         this.$mdToast.showSimple('No changes were made.');
         return;
       }
-      await this.GermlineService.deleteReport(
-        this.report.patientId,
-        this.report.biopsyName,
-        this.report.ident,
-      );
+      await this.GermlineService.deleteReport(this.report.ident);
       this.$state.go('root.germline.board');
     } catch (err) {
       this.$mdToast.showSimple('Something went wrong and the report has NOT been removed.');

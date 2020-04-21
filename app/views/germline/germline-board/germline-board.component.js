@@ -61,8 +61,7 @@ class GermlineBoardComponent {
       const reportCache = angular.copy(report);
       reportCache.biofx_assigned = report.biofx_assigned.ident;
 
-      const result = await this.GermlineService.updateReport(reportCache.patientId,
-        reportCache.biopsyName, reportCache.ident, reportCache);
+      const result = await this.GermlineService.updateReport(reportCache.ident, reportCache);
       const i = this.reports.findIndex(rep => rep.ident === reportCache.ident);
 
       this.reports[i] = result;
@@ -94,7 +93,7 @@ class GermlineBoardComponent {
     const opts = {
       offset: this.paginate.offset,
       limit: this.paginate.limit,
-      search: this.filter.search,
+      patientId: this.filter.search,
     };
 
     const reports = await this.GermlineService.getAllReports(opts);
@@ -109,7 +108,7 @@ class GermlineBoardComponent {
     try {
       const token = await this.GermlineService.getFlashToken();
       // Open a window for the user with the special url
-      this.$window.open(`${CONFIG.ENDPOINTS.API}/export/germline_small_mutation/batch/download?reviews=biofx,projects&flash_token=${token.token}`, '_blank');
+      this.$window.open(`${CONFIG.ENDPOINTS.API}/export/germline-small-mutation-reports/batch/download?reviews=biofx,projects&flash_token=${token.token}`, '_blank, noopener, noreferrer');
 
       this.$timeout(() => {
         this.refreshReports();
