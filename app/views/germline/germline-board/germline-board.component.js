@@ -103,16 +103,31 @@ class GermlineBoardComponent {
     this.$scope.$digest();
   }
 
-  // Trigger download pipe
+  /**
+   * The download attribute doesn't work properly when href is cross-site.
+   * This function gets the data first, then simulates a click and serves the content via blob
+   */
   async getExport() {
     try {
-      const token = await this.GermlineService.getFlashToken();
-      // Open a window for the user with the special url
-      this.$window.open(`${CONFIG.ENDPOINTS.API}/export/germline-small-mutation-reports/batch/download?reviews=biofx,projects&flash_token=${token.token}`, '_blank, noopener, noreferrer');
+      const exportData = await this.GermlineService.export();
+      const blob = new Blob([exportData], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
 
-      this.$timeout(() => {
-        this.refreshReports();
-      }, 500);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'germline_export';
+
+      const clickHandler = () => {
+        setTimeout(() => {
+          URL.revokeObjectURL(url);
+          this.removeEventListener('click', clickHandler);
+          this.refreshReports();
+        }, 150);
+      };
+
+      a.addEventListener('click', clickHandler, false);
+
+      a.click();
     } catch (err) {
       this.$mdToast.showSimple('Failed to retrieve the downloadable export');
     }

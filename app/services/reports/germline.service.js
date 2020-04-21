@@ -2,6 +2,7 @@ class GermlineService {
   /* @ngInject */
   constructor($http) {
     this.$http = $http;
+    this.baseApi = CONFIG.ENDPOINTS.API;
     this.api = `${CONFIG.ENDPOINTS.API}/germline-small-mutation-reports`;
   }
 
@@ -53,12 +54,11 @@ class GermlineService {
     return data;
   }
 
-  /**
-   * Retrieve a flash token to download a report
-   * @returns {Promise} - token object
-   */
-  async getFlashToken() {
-    const { data } = await this.$http.get(`${this.api}/export/batch/token`);
+  async export(opts = { reviews: 'biofx,projects' }) {
+    const { data } = await this.$http.get(
+      `${this.baseApi}/export/germline-small-mutation-reports/batch/download`,
+      { params: opts },
+    );
     return data;
   }
 
