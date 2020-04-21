@@ -2,7 +2,7 @@ md-dialog(layout="column", aria-label="Input Editor", ng-cloak, flex=55).editor
   form(flex='auto', name='form', ng-submit="submit(form)")
     md-toolbar
       .md-toolbar-tools
-        h2 {{input.name}}
+        h2 {{input.placeholder}}
         span(flex)
         md-button.md-icon-button(ng-click='cancel()')
           md-icon cancel
