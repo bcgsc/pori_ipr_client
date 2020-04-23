@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import DataTable from '../../../../components/DataTable';
 import EditDialog from './components/EditDialog';
 import columnDefs from './columnDefs';
-import { therapeuticUpdate } from '../../../../services/reports/therapeutic';
+import { therapeuticUpdateTable } from '../../../../services/reports/therapeutic';
 
 /**
  * @param {object} props props
@@ -42,7 +42,7 @@ function TherapeuticView(props) {
         tableType="therapeutic"
         paginated={false}
         canReorder={reportEdit && !print}
-        rowUpdateAPICall={therapeuticUpdate}
+        rowUpdateAPICall={therapeuticUpdateTable}
       />
 
       <DataTable
@@ -56,7 +56,7 @@ function TherapeuticView(props) {
         tableType="chemoresistance"
         paginated={false}
         canReorder={reportEdit && !print}
-        rowUpdateAPICall={therapeuticUpdate}
+        rowUpdateAPICall={therapeuticUpdateTable}
       />
     </>
   );

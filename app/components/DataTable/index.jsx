@@ -149,15 +149,29 @@ function DataTable(props) {
   };
 
   const onRowDragEnd = async (event) => {
-    const newData = event.node.data;
+    const oldRank = event.node.data.rank;
+    const newRank = event.overIndex;
+
+    const newData = rowData.map((row) => {
+      if (row.rank === oldRank) {
+        row.rank = newRank;
+        return row;
+      }
+
+      if (row.rank > oldRank && row.rank <= newRank) {
+        row.rank -= 1;
+      } else if (row.rank < oldRank && row.rank > newRank) {
+        row.rank += 1;
+      }
+      return row;
+    });
     newData.rank = event.overIndex;
-    await rowUpdateAPICall(
+    const updatedRows = await rowUpdateAPICall(
       reportIdent,
-      event.node.data.ident,
       newData,
     );
-    event.node.setData(newData);
-    gridApi.current.onSortChanged();
+
+    gridApi.current.updateRowData({ update: updatedRows });
   };
 
   const handleRowEditClose = (editedData) => {
