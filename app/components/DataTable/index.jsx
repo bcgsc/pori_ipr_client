@@ -8,6 +8,7 @@ import {
   IconButton,
   Dialog,
   Switch,
+  Snackbar,
 } from '@material-ui/core';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
@@ -35,6 +36,9 @@ const MAX_TABLE_HEIGHT = '500px';
  * @param {func} props.syncVisibleColumns function to propagate visible column changes
  * @param {bool} props.canToggleColumns can visible/hidden columns be toggled
  * @param {bool} props.canViewDetails can the detail dialog be shown
+ * @param {bool} props.paginated should the table be paginated
+ * @param {bool} props.canReorder can the rows be reordered
+ * @param {func} props.rowUpdateAPICall API call for reordering rows
  * @return {*} JSX
  */
 function DataTable(props) {
@@ -72,6 +76,8 @@ function DataTable(props) {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [selectedRow, setSelectedRow] = useState({});
   const [showReorder, setShowReorder] = useState(false);
+  const [showSnackbar, setShowSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
   useEffect(() => {
     if (gridApi.current) {
@@ -88,6 +94,14 @@ function DataTable(props) {
       columnApi.current.setColumnsVisible(hiddenColumns, false);
     }
   }, [visibleColumns]);
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setShowSnackbar(false);
+  };
 
   const getColumnVisibility = () => {
     const visibleColumnIds = columnApi.current.getAllDisplayedColumns()
@@ -149,29 +163,36 @@ function DataTable(props) {
   };
 
   const onRowDragEnd = async (event) => {
-    const oldRank = event.node.data.rank;
-    const newRank = event.overIndex;
+    try {
+      const oldRank = event.node.data.rank;
+      const newRank = event.overIndex;
 
-    const newData = rowData.map((row) => {
-      if (row.rank === oldRank) {
-        row.rank = newRank;
+      const newData = rowData.map((row) => {
+        if (row.rank === oldRank) {
+          row.rank = newRank;
+          return row;
+        }
+
+        if (row.rank > oldRank && row.rank <= newRank) {
+          row.rank -= 1;
+        } else if (row.rank < oldRank && row.rank > newRank) {
+          row.rank += 1;
+        }
         return row;
-      }
+      });
+      newData.rank = event.overIndex;
+      const updatedRows = await rowUpdateAPICall(
+        reportIdent,
+        newData,
+      );
 
-      if (row.rank > oldRank && row.rank <= newRank) {
-        row.rank -= 1;
-      } else if (row.rank < oldRank && row.rank > newRank) {
-        row.rank += 1;
-      }
-      return row;
-    });
-    newData.rank = event.overIndex;
-    const updatedRows = await rowUpdateAPICall(
-      reportIdent,
-      newData,
-    );
-
-    gridApi.current.updateRowData({ update: updatedRows });
+      gridApi.current.updateRowData({ update: updatedRows });
+      setShowSnackbar(true);
+      setSnackbarMessage('Row update success');
+    } catch (err) {
+      setShowSnackbar(true);
+      setSnackbarMessage(`Rows were not updated: ${err}`);
+    }
   };
 
   const handleRowEditClose = (editedData) => {
@@ -230,15 +251,6 @@ function DataTable(props) {
     return result;
   };
 
-  const renderAddRow = () => (
-    <IconButton
-      onClick={() => setShowEditDialog(true)}
-      title="Add Row"
-    >
-      <AddCircleOutlineIcon />
-    </IconButton>
-  );
-
   return (
     <div className="data-table--padded">
       {rowData.length || editable ? (
@@ -248,9 +260,19 @@ function DataTable(props) {
               {titleText}
             </Typography>
             <div>
-              {addable
-                && renderAddRow()
-              }
+              {addable && (
+                <>
+                  <Typography display="inline">
+                    Add Row
+                  </Typography>
+                  <IconButton
+                    onClick={() => setShowEditDialog(true)}
+                    title="Add Row"
+                  >
+                    <AddCircleOutlineIcon />
+                  </IconButton>
+                </>
+              )}
               {canToggleColumns && (
                 <IconButton
                   onClick={() => setShowPopover(prevVal => !prevVal)}
@@ -259,12 +281,27 @@ function DataTable(props) {
                 </IconButton>
               )}
               {canReorder && (
-                <Switch
-                  checked={showReorder}
-                  onChange={toggleReorder}
-                  color="primary"
-                  title="Toggle Reordering"
-                />
+                <>
+                  <Typography display="inline">
+                    Toggle Reordering
+                  </Typography>
+                  <Switch
+                    checked={showReorder}
+                    onChange={toggleReorder}
+                    color="primary"
+                    title="Toggle Reordering"
+                  />
+                  <Snackbar
+                    anchorOrigin={{
+                      vertical: 'bottom',
+                      horizontal: 'left',
+                    }}
+                    open={showSnackbar}
+                    autoHideDuration={2000}
+                    message={snackbarMessage}
+                    onClose={handleSnackbarClose}
+                  />
+                </>
               )}
             </div>
             <EditDialog
@@ -344,6 +381,9 @@ DataTable.propTypes = {
   syncVisibleColumns: PropTypes.func,
   canToggleColumns: PropTypes.bool,
   canViewDetails: PropTypes.bool,
+  paginated: PropTypes.bool,
+  canReorder: PropTypes.bool,
+  rowUpdateAPICall: PropTypes.func,
 };
 
 DataTable.defaultProps = {
@@ -358,6 +398,9 @@ DataTable.defaultProps = {
   syncVisibleColumns: null,
   canToggleColumns: false,
   canViewDetails: true,
+  paginated: true,
+  canReorder: false,
+  rowUpdateAPICall: () => {},
 };
 
 export default DataTable;
