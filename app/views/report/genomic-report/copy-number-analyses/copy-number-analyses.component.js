@@ -17,7 +17,7 @@ class CopyNumberAnalyses {
   }
 
   $onInit() {
-    setHeaderName(`${this.report.tumourAnalysis.diseaseExpressionComparator} %ile`, 'tcgaPerc');
+    setHeaderName(`${this.report.tumourAnalysis.diseaseExpressionComparator || ''} %ile`, 'tcgaPerc');
     setHeaderName(`Fold Change vs ${this.report.tumourAnalysis.normalExpressionComparator}`, 'foldChange');
     this.columnDefs = columnDefs;
     this.cnvGroups = {

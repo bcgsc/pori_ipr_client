@@ -26,8 +26,6 @@ const report = {
   component: 'germlinereport',
   resolve: {
     report: ['GermlineService', '$transition$', async (GermlineService, $transition$) => GermlineService.getReport(
-      $transition$.params().patient,
-      $transition$.params().biopsy,
       $transition$.params().report,
     )],
   },

@@ -61,8 +61,7 @@ class GermlineBoardComponent {
       const reportCache = angular.copy(report);
       reportCache.biofx_assigned = report.biofx_assigned.ident;
 
-      const result = await this.GermlineService.updateReport(reportCache.patientId,
-        reportCache.biopsyName, reportCache.ident, reportCache);
+      const result = await this.GermlineService.updateReport(reportCache.ident, reportCache);
       const i = this.reports.findIndex(rep => rep.ident === reportCache.ident);
 
       this.reports[i] = result;
@@ -94,7 +93,7 @@ class GermlineBoardComponent {
     const opts = {
       offset: this.paginate.offset,
       limit: this.paginate.limit,
-      search: this.filter.search,
+      patientId: this.filter.search,
     };
 
     const reports = await this.GermlineService.getAllReports(opts);
@@ -104,16 +103,35 @@ class GermlineBoardComponent {
     this.$scope.$digest();
   }
 
-  // Trigger download pipe
+  /**
+   * The download attribute doesn't work properly when href is cross-site.
+   * This function gets the data first, then simulates a click and serves the content via blob
+   */
   async getExport() {
     try {
-      const token = await this.GermlineService.getFlashToken();
-      // Open a window for the user with the special url
-      this.$window.open(`${CONFIG.ENDPOINTS.API}/export/germline_small_mutation/batch/download?reviews=biofx,projects&flash_token=${token.token}`, '_blank');
+      const date = new Date();
+      const dateString = date.toLocaleDateString().replace(/\//g, '-');
+      const timeString = date.toLocaleTimeString([], { hour12: false }).replace(/:/g, '-');
 
-      this.$timeout(() => {
-        this.refreshReports();
-      }, 500);
+      const exportData = await this.GermlineService.export();
+      const blob = new Blob([exportData], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `germline_export_${dateString}_${timeString}`;
+
+      const clickHandler = () => {
+        setTimeout(() => {
+          URL.revokeObjectURL(url);
+          this.removeEventListener('click', clickHandler);
+          this.refreshReports();
+        }, 150);
+      };
+
+      a.addEventListener('click', clickHandler, false);
+
+      a.click();
     } catch (err) {
       this.$mdToast.showSimple('Failed to retrieve the downloadable export');
     }
