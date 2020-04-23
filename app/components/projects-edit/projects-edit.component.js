@@ -60,7 +60,7 @@ class ProjectsEditComponent {
     return this.UserService.search(searchText);
   }
 
-  async searchPOGs(searchText) {
+  async searchReports(searchText) {
     if (!searchText) {
       return [];
     }
@@ -105,26 +105,26 @@ class ProjectsEditComponent {
   }
 
   // Add sample to project
-  async addPOG() {
-    if (this.editProject.pogs.find(projPog => projPog.ident === this.pog.ident)) {
+  async addReport() {
+    if (this.editProject.reports.find(proj => proj.ident === this.report.ident)) {
       return this.$mdToast.showSimple('This sample has already been added to the project');
     }
 
     // Add user to project
-    const resp = await this.ProjectService.addPog(this.editProject.ident, this.pog.ident);
-    this.editProject.pogs.push(resp);
+    const resp = await this.ProjectService.addReport(this.editProject.ident, this.report.ident);
+    this.editProject.reports.push(resp);
 
-    this.pog = null;
-    this.searchPOG = '';
+    this.report = null;
+    this.searchReport = '';
     this.$scope.$digest();
   }
 
   // Remove sample from project
-  async removePOG(pog) {
-    if (confirm(`Are you sure you want to remove ${pog.POGID} from ${this.editProject.name}?`)) {
-      await this.ProjectService.removePog(this.editProject.ident, pog.ident);
+  async removeReport(report) {
+    if (confirm(`Are you sure you want to remove ${report.patientId} from ${this.editProject.name}?`)) {
+      await this.ProjectService.removeReport(this.editProject.ident, report.ident);
       // Remove entry from project list
-      this.editProject.pogs = this.editProject.pogs.filter(p => p.ident !== pog.ident);
+      this.editProject.reports = this.editProject.reports.filter(r => r.ident !== report.ident);
       this.$scope.$digest();
     }
   }

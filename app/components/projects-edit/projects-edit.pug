@@ -70,32 +70,31 @@ div(flex).adminSection
           div(flex, layout="row")
             md-autocomplete(
             md-input-name="Sample",
-            md-selected-item="$ctrl.pog",
-            md-search-text="$ctrl.searchPOG",
-            md-items="pog in $ctrl.searchPOGs($ctrl.searchPOG)",
-            md-item-text="$ctrl.pog.POGID",
+            md-selected-item="$ctrl.report",
+            md-search-text="$ctrl.searchReport",
+            md-items="report in $ctrl.searchReports($ctrl.searchReport)",
+            md-item-text="$ctrl.report.patientId",
             md-floating-label="Add Sample",
-            md-autofocus=true,
             md-autoselect=true,
             md-require-match,
             md-dropdown-position="bottom",
             flex
             )
-              md-item-template {{$ctrl.pog.POGID}}
+              md-item-template {{$ctrl.report.patientId}}
 
             div(layout="column", layout-align="center end", style="padding-left: 20px;")
-              div(ng-click="$ctrl.addPOG()").buttonWrap
+              div(ng-click="$ctrl.addReport()").buttonWrap
                 md-button Add Sample
           div(flex, layout="column")
             md-content(flex, layout="column").diagTable
               div(flex, layout="row").header
                 div(flex=90) Patient ID
                 div
-              div(ng-if="$ctrl.editProject.pogs.length === 0").text-center.margin-top-10.margin-bottom-10 No Samples
-              div(ng-repeat="p in $ctrl.editProject.pogs", layout="row").row
-                div(flex=90).c {{p.POGID}}
+              div(ng-if="$ctrl.editProject.reports.length === 0").text-center.margin-top-10.margin-bottom-10 No Samples
+              div(ng-repeat="r in $ctrl.editProject.reports", layout="row").row
+                div(flex=90).c {{r.patientId}}
                 div
-                  div(ng-click="$ctrl.removePOG(p)").buttonWrap
+                  div(ng-click="$ctrl.removeReport(r)").buttonWrap
                     md-button Remove
 
 
