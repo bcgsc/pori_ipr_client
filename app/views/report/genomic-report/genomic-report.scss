@@ -54,9 +54,9 @@
       span.edit {
         margin-left: 10px;
         cursor: pointer;
+        display: inline-block;
         md-icon {
           font-size: 1.2em;
-          display: none;
           margin: 0;
           padding: 0;
           min-height: inherit;
@@ -64,15 +64,6 @@
           line-height: 0.2;
         }
       }
-
-      &:hover {
-        span.edit {
-          md-icon {
-            display: inline-block;
-          }
-        }
-      }
-      
     }
     
     .details {
@@ -119,9 +110,8 @@
     div.editable {
       md-icon {
         cursor: pointer;
-        display: none;
+        display: inline-block;
         position: absolute;
-        float: right;
         font-size: 1.25em;
         line-height: inherit;
         height: 18px;
@@ -130,13 +120,6 @@
         min-width: 18px;
         margin-left: 5px;
         margin-top: -2px;
-      }
-    }
-
-    div.editable:hover {
-      md-icon {
-        font-size: 1.25em;
-        display: inline-block;
       }
     }
 
@@ -824,14 +807,19 @@ md-dialog-content {
 
     span {
       &.inline {
-        background-color: rgb(255, 255, 255);
+        background-color: $white;
         display: flex;
         padding: 10px 5px 10px 15px;
         user-select: none;
 
+        > span {
+          margin: auto 0;
+        }
+
         > md-icon {
           margin-right: 10px;
           outline: none;
+          color: $white;
         }
 
         &:hover {

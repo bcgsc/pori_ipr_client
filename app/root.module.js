@@ -55,6 +55,7 @@ import '@ag-grid-community/core/dist/styles/ag-grid.min.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-material.min.css';
 import './root.scss';
 import './styles/ag-grid.scss';
+import theme from './styles/_theme.scss';
 
 angular.module('root', [
   uiRouter,
@@ -154,13 +155,19 @@ export default angular.module('root')
     'ngInject';
 
     const printGrey = $mdThemingProvider.extendPalette('grey', {
-      '50': '#FFFFFF',
+      50: '#FFFFFF',
+    });
+
+    const gscGreen = $mdThemingProvider.extendPalette('green', {
+      A200: theme.secondaryMain,
     });
 
     $mdThemingProvider.definePalette('printGrey', printGrey);
+    $mdThemingProvider.definePalette('gscGreen', gscGreen);
 
     $mdThemingProvider.theme('default')
-      .backgroundPalette('printGrey');
+      .backgroundPalette('printGrey')
+      .accentPalette('gscGreen');
   })
   .config(($httpProvider) => {
     'ngInject';

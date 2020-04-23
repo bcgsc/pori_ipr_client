@@ -51,7 +51,7 @@ md-dialog(layout="column", aria-label="Update Patient Information", ng-cloak, fl
             label Comment
             textarea(
               ng-model="patientInformation.comment",
-              md-maxlength=250,
+              md-maxlength=150,
               placeholder="Why are you making this change?",
               required
               md-autofocus
@@ -60,4 +60,4 @@ md-dialog(layout="column", aria-label="Update Patient Information", ng-cloak, fl
 
     md-dialog-actions(layout="row", layout-align="end center")
       md-button(ng-click="cancel()") Cancel
-      md-button(type="submit") Submit
+      md-button(type="submit").md-accent Submit
