@@ -17,5 +17,6 @@ md-dialog(layout="column", aria-label="Add Key Alteration", ng-cloak, flex=55).e
 
 
         md-dialog-actions(layout="row", layout-align="end center", layout-padding)
-            md-button(type="submit").md-primary Add Alteration
+            md-button(ng-click="cancel()") Cancel
+            md-button(type="submit").md-accent Add Alteration
 
