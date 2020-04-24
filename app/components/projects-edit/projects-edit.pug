@@ -69,18 +69,18 @@ div(flex).adminSection
         div(flex, layout="column")
           div(flex, layout="row")
             md-autocomplete(
-            md-input-name="Sample",
-            md-selected-item="$ctrl.report",
-            md-search-text="$ctrl.searchReport",
-            md-items="report in $ctrl.searchReports($ctrl.searchReport)",
-            md-item-text="$ctrl.report.patientId",
-            md-floating-label="Add Sample",
-            md-autoselect=true,
-            md-require-match,
-            md-dropdown-position="bottom",
-            flex
+              md-input-name="Sample",
+              md-search-text="$ctrl.searchReport",
+              md-items="report in $ctrl.searchReports($ctrl.searchReport)",
+              md-selected-item="$ctrl.report",
+              md-item-text="report.patientId",
+              md-floating-label="Add Sample",
+              md-autoselect=true,
+              md-require-match,
+              md-dropdown-position="bottom",
+              flex
             )
-              md-item-template {{$ctrl.report.patientId}}
+              md-item-template {{report.patientId}}
 
             div(layout="column", layout-align="center end", style="padding-left: 20px;")
               div(ng-click="$ctrl.addReport()").buttonWrap
@@ -91,7 +91,7 @@ div(flex).adminSection
                 div(flex=90) Patient ID
                 div
               div(ng-if="$ctrl.editProject.reports.length === 0").text-center.margin-top-10.margin-bottom-10 No Samples
-              div(ng-repeat="r in $ctrl.editProject.reports", layout="row").row
+              div(ng-repeat="r in $ctrl.editProject.reports track by $index", layout="row").row
                 div(flex=90).c {{r.patientId}}
                 div
                   div(ng-click="$ctrl.removeReport(r)").buttonWrap

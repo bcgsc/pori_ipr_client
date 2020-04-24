@@ -16,7 +16,7 @@ md-content(flex).adminSection
         div(flex=15) Members
         div(flex) Samples
         div(flex) Created
-      div(flex, layout="row", ng-repeat="p in $ctrl.projects", ng-click="$ctrl.projectDiag($event, p)", ng-if="$ctrl.projects.length > 0").row.clickable
+      div(flex, layout="row", ng-repeat="p in $ctrl.projects track by $index", ng-click="$ctrl.projectDiag($event, p)", ng-if="$ctrl.projects.length > 0").row.clickable
         div(flex).text-capitalize {{p.name}}
         div(flex=15) {{p.users.length}}
         div(flex) {{p.reports.length}}

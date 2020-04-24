@@ -10,13 +10,13 @@ const bindings = {
 
 class ProjectsEditComponent {
   /* @ngInject */
-  constructor($scope, $mdDialog, $mdToast, ProjectService, UserService, PogService) {
+  constructor($scope, $mdDialog, $mdToast, ProjectService, UserService, ReportService) {
     this.$scope = $scope;
     this.$mdDialog = $mdDialog;
     this.$mdToast = $mdToast;
     this.ProjectService = ProjectService;
     this.UserService = UserService;
-    this.PogService = PogService;
+    this.ReportService = ReportService;
   }
 
   $onInit() {
@@ -64,7 +64,8 @@ class ProjectsEditComponent {
     if (!searchText) {
       return [];
     }
-    return this.PogService.all({ query: searchText, all: true });
+    const { reports } = await this.ReportService.allFiltered({ searchText, all: true });
+    return reports;
   }
 
   cancel() {
@@ -106,13 +107,13 @@ class ProjectsEditComponent {
 
   // Add sample to project
   async addReport() {
-    if (this.editProject.reports.find(proj => proj.ident === this.report.ident)) {
+    if (this.editProject.reports.find(report => report.ident === this.report.ident)) {
       return this.$mdToast.showSimple('This sample has already been added to the project');
     }
 
-    // Add user to project
-    const resp = await this.ProjectService.addReport(this.editProject.ident, this.report.ident);
-    this.editProject.reports.push(resp);
+    // Add report to project
+    await this.ProjectService.addReport(this.editProject.ident, this.report.ident);
+    this.editProject.reports.push(this.report);
 
     this.report = null;
     this.searchReport = '';
@@ -150,7 +151,11 @@ class ProjectsEditComponent {
       };
       try {
         const project = await this.ProjectService.update(updatedProject);
-        this.$mdDialog.hide({ status: true, data: project, message: 'The project has been updated!' });
+        this.$mdDialog.hide({
+          status: true,
+          data: { ...this.editProject, ...project, users: this.editProject.users },
+          message: 'The project has been updated!',
+        });
       } catch (err) {
         this.$mdDialog.cancel({ status: false, message: 'Could not update this project.' });
       }
@@ -160,7 +165,7 @@ class ProjectsEditComponent {
       try {
         const project = await this.ProjectService.add(this.editProject);
         this.$mdDialog.hide({
-          status: true, data: project, message: 'The project has been added!', newProject: true,
+          status: true, data: { ...this.editProject, ...project }, message: 'The project has been added!', newProject: true,
         });
       } catch (err) {
         this.$mdDialog.cancel({ status: false, message: 'Could not add new project.' });
