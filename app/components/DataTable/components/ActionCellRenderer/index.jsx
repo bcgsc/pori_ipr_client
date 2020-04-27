@@ -28,6 +28,7 @@ function ActionCellRenderer(params) {
     },
     node,
     columnApi,
+    api,
   } = params;
 
   const [showDetailDialog, setShowDetailDialog] = useState(false);
@@ -102,6 +103,7 @@ function ActionCellRenderer(params) {
           editData={data}
           reportIdent={reportIdent}
           tableType={tableType}
+          addIndex={api.getDisplayedRowCount()}
         />
       )}
       {data.svg && (

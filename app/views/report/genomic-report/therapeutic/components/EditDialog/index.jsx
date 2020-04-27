@@ -19,6 +19,7 @@ import { therapeuticAdd, therapeuticUpdate } from '../../../../../../services/re
  * @param {func} props.close onClose function
  * @param {string} props.reportIdent ident of current report
  * @param {string} props.tableType therapeutic | chemoresistant
+ * @param {number} props.addIndex index of table to add new row to
  * @return {*} JSX
  */
 function EditDialog(props) {
@@ -28,6 +29,7 @@ function EditDialog(props) {
     close,
     reportIdent,
     tableType,
+    addIndex,
   } = props;
 
   const dialogTitle = Object.keys(editData).length > 0 ? 'Edit Row' : 'Add Row';
@@ -89,7 +91,7 @@ function EditDialog(props) {
 
       close(combinedData);
     } else {
-      combinedData = { type: tableType, ...newData };
+      combinedData = { type: tableType, rank: addIndex, ...newData };
 
       if (isMissingFields(combinedData)) {
         return;
@@ -207,10 +209,12 @@ EditDialog.propTypes = {
   close: PropTypes.func.isRequired,
   reportIdent: PropTypes.string.isRequired,
   tableType: PropTypes.string.isRequired,
+  addIndex: PropTypes.number,
 };
 
 EditDialog.defaultProps = {
   editData: {},
+  addIndex: 999,
 };
 
 export default EditDialog;
