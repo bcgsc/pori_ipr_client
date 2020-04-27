@@ -5,14 +5,29 @@ section.appendices
     div(layout="column", flex)
       div(ng-if="!$ctrl.print")
         h2.title Appendix A
-        react-table(column-defs="$ctrl.sampleInformationColumnDefs", row-data="$ctrl.report.sampleInfo", title-text="'Sample Information'")
+        react-table(
+          column-defs="$ctrl.sampleInformationColumnDefs",
+          row-data="$ctrl.report.sampleInfo",
+          title-text="'Sample Information'",
+          report-ident="$ctrl.report.ident"
+        )
 
       div
-        react-table(column-defs="$ctrl.sequencingProtocolInformationColumnDefs", row-data="$ctrl.report.seqQC", title-text="'Sequencing Protocol Information'")
+        react-table(
+          column-defs="$ctrl.sequencingProtocolInformationColumnDefs",
+          row-data="$ctrl.report.seqQC",
+          title-text="'Sequencing Protocol Information'",
+          report-ident="$ctrl.report.ident"
+        )
 
     div(layout="column", ng-if="!$ctrl.print", flex)
       h2.title Appendix B
-      react-table(column-defs="$ctrl.tcgaAcronymsColumnDefs", row-data="$ctrl.tcgaAcronyms", title-text="'TCGA Acronyms'")
+      react-table(
+        column-defs="$ctrl.tcgaAcronymsColumnDefs",
+        row-data="$ctrl.tcgaAcronyms",
+        title-text="'TCGA Acronyms'",
+        report-ident="$ctrl.report.ident"
+      )
 
     div(layout="column", ng-if="!$ctrl.probe", flex)
       h2.title Appendix C
