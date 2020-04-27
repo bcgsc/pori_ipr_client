@@ -266,7 +266,7 @@ function DataTable(props) {
             </Typography>
             <div>
               {addable && (
-                <>
+                <span className="data-table__action">
                   <Typography display="inline">
                     Add Row
                   </Typography>
@@ -276,25 +276,27 @@ function DataTable(props) {
                   >
                     <AddCircleOutlineIcon />
                   </IconButton>
-                </>
+                </span>
               )}
               {canToggleColumns && (
-                <IconButton
-                  onClick={() => setShowPopover(prevVal => !prevVal)}
-                >
-                  <MoreHorizIcon />
-                </IconButton>
+                <span className="data-table__action">
+                  <IconButton
+                    onClick={() => setShowPopover(prevVal => !prevVal)}
+                  >
+                    <MoreHorizIcon />
+                  </IconButton>
+                </span>
               )}
               {canReorder && (
-                <>
+                <span className="data-table__action">
                   <Typography display="inline">
-                    Toggle Reordering
+                    Reorder Rows
                   </Typography>
                   <Switch
                     checked={showReorder}
                     onChange={toggleReorder}
                     color="primary"
-                    title="Toggle Reordering"
+                    title="Reorder Rows"
                   />
                   <Snackbar
                     anchorOrigin={{
@@ -306,7 +308,7 @@ function DataTable(props) {
                     message={snackbarMessage}
                     onClose={handleSnackbarClose}
                   />
-                </>
+                </span>
               )}
             </div>
             <EditDialog
