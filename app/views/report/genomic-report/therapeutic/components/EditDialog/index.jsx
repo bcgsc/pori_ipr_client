@@ -129,6 +129,13 @@ function EditDialog(props) {
     }
   };
 
+  const onNotesChange = (event) => {
+    setNewData({
+      ...newData,
+      notes: event.target.value,
+    });
+  };
+
   return (
     <Dialog open={open} maxWidth="sm" fullWidth>
       <DialogTitle>{dialogTitle}</DialogTitle>
@@ -185,7 +192,8 @@ function EditDialog(props) {
               label="Notes"
               variant="outlined"
               margin="normal"
-              value={editData.notes || undefined}
+              value={newData.notes || undefined}
+              onChange={onNotesChange}
               multiline
             />
           </FormControl>
@@ -214,7 +222,7 @@ EditDialog.propTypes = {
 
 EditDialog.defaultProps = {
   editData: {},
-  addIndex: 999,
+  addIndex: 0,
 };
 
 export default EditDialog;

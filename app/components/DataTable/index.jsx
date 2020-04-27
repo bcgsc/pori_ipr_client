@@ -79,6 +79,7 @@ function DataTable(props) {
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarDuration, setSnackbarDuration] = useState(2000);
+  const [tableLength, setTableLength] = useState(rowData.length);
 
   useEffect(() => {
     if (gridApi.current) {
@@ -204,6 +205,7 @@ function DataTable(props) {
       selectedRow.node.setData(editedData);
     } else if (editedData) {
       gridApi.current.updateRowData({ add: [editedData] });
+      setTableLength(gridApi.current.getDisplayedRowCount());
     }
     setSelectedRow({});
   };
@@ -313,6 +315,7 @@ function DataTable(props) {
               editData={selectedRow.data}
               reportIdent={reportIdent}
               tableType={tableType}
+              addIndex={tableLength}
             />
           </div>
           <div
