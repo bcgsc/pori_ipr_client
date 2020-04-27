@@ -78,6 +78,7 @@ function DataTable(props) {
   const [showReorder, setShowReorder] = useState(false);
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarDuration, setSnackbarDuration] = useState(2000);
 
   useEffect(() => {
     if (gridApi.current) {
@@ -187,9 +188,11 @@ function DataTable(props) {
       );
 
       gridApi.current.updateRowData({ update: updatedRows });
+      setSnackbarDuration(2000);
       setShowSnackbar(true);
       setSnackbarMessage('Row update success');
     } catch (err) {
+      setSnackbarDuration(5000);
       setShowSnackbar(true);
       setSnackbarMessage(`Rows were not updated: ${err}`);
     }
@@ -297,7 +300,7 @@ function DataTable(props) {
                       horizontal: 'left',
                     }}
                     open={showSnackbar}
-                    autoHideDuration={2000}
+                    autoHideDuration={snackbarDuration}
                     message={snackbarMessage}
                     onClose={handleSnackbarClose}
                   />

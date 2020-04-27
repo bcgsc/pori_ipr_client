@@ -78,4 +78,6 @@ export const therapeuticUpdateTable = async (reportIdent, entry) => {
     const { result } = await response.json();
     return result;
   }
+
+  throw new Error(`${response.status} ${response.statusText}`);
 };
