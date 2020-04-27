@@ -68,6 +68,7 @@ class GroupsEditComponent {
         await this.GroupService.removeUser(this.editGroup.ident, user.ident);
         // Remove entry from group list
         this.editGroup.users = this.editGroup.users.filter(u => u.ident !== user.ident);
+        this.$scope.$digest();
       } catch (err) {
         console.log('Unable to remove user from group', err);
       }
