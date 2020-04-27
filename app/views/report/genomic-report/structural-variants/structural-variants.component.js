@@ -19,7 +19,7 @@ class StructuralVariantsComponent {
   }
 
   $onInit() {
-    setHeaderName(`${this.report.tumourAnalysis.diseaseExpressionComparator} %ile`, 'tcgaPerc');
+    setHeaderName(`${this.report.tumourAnalysis.diseaseExpressionComparator || ''} %ile`, 'tcgaPerc');
     setHeaderName(`Fold Change vs ${this.report.tumourAnalysis.normalExpressionComparator}`, 'foldChange');
     this.columnDefs = columnDefs;
     this.StrucVars = {};
@@ -68,7 +68,7 @@ class StructuralVariantsComponent {
       img.comparator = pieces[2] || null;
       if (!img.comparator) {
         // If no comparator found in image, likely legacy and use report setting.
-        img.comparator = this.report.tumourAnalysis.diseaseExpressionComparator;
+        img.comparator = this.report.tumourAnalysis.diseaseExpressionComparator || '';
       }
 
       if (img.comparator.toLowerCase()
