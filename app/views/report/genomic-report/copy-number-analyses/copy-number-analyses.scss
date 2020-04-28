@@ -3,7 +3,12 @@
     width: 1000px;
     margin: 0 auto;
 
+    &:first-of-type {
+      width: 918px;
+    }
+
     div {
+      margin: 0 auto;
       margin-top: 20px;
       span {
         text-align: center;
