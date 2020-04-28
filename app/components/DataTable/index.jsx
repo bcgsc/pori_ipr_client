@@ -166,6 +166,7 @@ function DataTable(props) {
 
   const onRowDragEnd = async (event) => {
     try {
+      setShowSnackbar(false);
       const oldRank = event.node.data.rank;
       const newRank = event.overIndex;
 
@@ -177,7 +178,7 @@ function DataTable(props) {
 
         if (row.rank > oldRank && row.rank <= newRank) {
           row.rank -= 1;
-        } else if (row.rank < oldRank && row.rank > newRank) {
+        } else if (row.rank < oldRank && row.rank >= newRank) {
           row.rank += 1;
         }
         return row;
