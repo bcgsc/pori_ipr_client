@@ -3,12 +3,12 @@ section
 
   div(layout="column", flex)
 
-    div(layout="column", flex).bg-white
+    div(layout="column", ng-if="$ctrl.images['cnvLoh.circos']", flex).bg-white
 
       h2.title Copy Number and LOH
       h3.title Summary of Copy Number Events
 
-      div(layout="row", ng-if="$ctrl.images['cnvLoh.circos']", layout-align="space-around center").margin-bottom-40.margin-top-30
+      div(layout="row", layout-align="space-around center").margin-bottom-40.margin-top-30
         div(layout="column").smEvents.snv
           div(style="max-width: 100%")
             img(style="width: 90%", data-ng-src="data:image/png;base64,{{$ctrl.images['cnvLoh.circos'].data}}")
