@@ -1,4 +1,5 @@
 @import '../../styles/variables';
+@import '../../styles/theme';
 
 .text-center {
   text-align: center;
@@ -58,13 +59,11 @@ md-dialog-content.iprBox {
     }
 
     div.box {
-      background-color: rgb(180, 180, 180);
-
       div.heading {
         font-weight: 100;
         font-size: 0.8em;
         text-align: center;
-        background-color: rgb(204, 207, 226);
+        background-color: $palette__primary--light;
 
         div {
           border-right: 1px solid rgb(136, 147, 195);
@@ -81,14 +80,12 @@ md-dialog-content.iprBox {
         font-size: 0.9em;
         text-align: center;
         padding: 20px 0;
-        background-color: rgb(235, 235, 235);
 
         div {
           padding: 0 5px;
         }
       }
       div.row {
-        background-color: rgb(235, 235, 235);
         font-weight: 300;
         font-size: 0.85em;
 

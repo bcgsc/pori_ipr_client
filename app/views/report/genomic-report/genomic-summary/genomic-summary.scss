@@ -1,4 +1,5 @@
 @import '../../../../styles/variables';
+@import '../../../../styles/theme';
 
 @mixin print-header {
   margin: 2mm 0 1mm;
@@ -90,7 +91,6 @@
 
     &__box-header {
       padding: 2mm 0;
-      background-color: #b4b4b4;
       font-size: 9pt;
       text-align: center;
     }
@@ -120,7 +120,6 @@
       margin: 0 1mm 1mm 0;
       padding: 1.4mm 0;
       border: .5mm solid #6e6e6e;
-      background-color: #b4b4b4;
       font-size: 10pt;
       font-weight: 300;
     }
@@ -324,10 +323,9 @@
   // old Brandon scss - beware changing things as they may have side effects
   .summary {
     margin-bottom: 10px;
-    background: rgb(220, 220, 220);
 
     .md-subheader {
-      background: rgb(204,207,226);
+      background: $palette__primary--light;
 
       .md-subheader-inner {
         padding: 10px;
@@ -379,7 +377,6 @@
       }
 
       &.box {
-        background-color: rgb(235, 235, 235);
         margin: 8px 0 0 0;
       }
 
@@ -416,7 +413,6 @@
     .analystComments {
       margin: 7px 4px 7px 4px;
       padding: 20px;
-      background-color: rgb(235, 235, 235);
 
       table {
         border: 1px solid rgb(170, 170, 170);
@@ -552,13 +548,11 @@
       }
 
       div.box {
-        background-color: rgb(180, 180, 180);
-
         div.heading {
           font-weight: 100;
           font-size: 0.8em;
           text-align: center;
-          background-color: rgb(204, 207, 226);
+          background-color: $palette__primary--light
 
           div {
             padding: 10px 0;
@@ -578,8 +572,6 @@
         }
 
         div.search {
-          background-color: rgb(235, 235, 235);
-
           md-input-container {
             margin: 10px 0 0 10px;
             padding: 0;
@@ -593,14 +585,12 @@
           font-size: 0.9em;
           text-align: center;
           padding: 20px 0;
-          background-color: rgb(235, 235, 235);
 
           div {
             padding: 0 5px;
           }
         }
         div.row {
-          background-color: rgb(235, 235, 235);
           font-weight: 300;
           font-size: 0.85em;
 
@@ -656,7 +646,6 @@
       }
     }
     .mutationTable {
-      background-color: rgb(235, 235, 235);
       margin: 0px 4px 7px 4px;
 
       .signatureTitle {
@@ -694,7 +683,7 @@
           font-weight: 100;
           font-size: 0.9em;
           text-align: center;
-          background-color: rgb(204, 207, 226);
+          background-color: $palette__primary--light;
 
           div {
             padding: 15px 0;
@@ -810,7 +799,6 @@
     div.alts {
       margin: 0 4px 7px 4px;
       padding: 20px 0;
-      background-color: rgb(235, 235, 235);
 
       div {
         display: none;

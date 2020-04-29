@@ -1,4 +1,5 @@
 @import '../../../styles/variables';
+@import '../../../styles/theme';
 
 .pog-report {
 
@@ -37,7 +38,7 @@
     margin-bottom: 10px;
     
     .md-subheader {
-      background: rgb(204,207,226);
+      background: $palette__primary--light;
       
       .md-subheader-inner {
         padding: 10px;
@@ -66,7 +67,6 @@
     }
     
     .details {
-      background: rgb(220,220,220);
       padding: 15px;
       font-size: 0.9em;
       
@@ -89,7 +89,6 @@
       }
       
       &.box {
-        background-color: rgb(235,235,235);
         margin: 8px 0 0 0;
       }
       
@@ -126,7 +125,6 @@
     .analystComments {
       margin: 7px 4px 7px 4px;
       padding: 20px;
-      background-color: rgb(235,235,235);
 
       table {
         border: 1px solid rgb(170,170,170);
@@ -252,13 +250,11 @@
       }
 
       div.box {
-        background-color: rgb(180,180,180);
-
         div.heading {
           font-weight: 100;
           font-size: 0.8em;
           text-align: center;
-          background-color: rgb(204,207,226);
+          background-color: $palette__primary--light;
 
           div {
             padding: 10px 0;
@@ -275,8 +271,6 @@
         }
 
         div.search {
-          background-color: rgb(235,235,235);
-
           md-input-container {
             margin: 10px 0 0 10px;
             padding: 0;
@@ -290,15 +284,12 @@
           font-size: 0.9em;
           text-align: center;
           padding: 20px 0;
-          background-color: rgb(235,235,235);
-
           
           div {
             padding: 0 5px;
           }
         }
         div.row {
-          background-color: rgb(235,235,235);
           font-weight: 300;
           font-size: 0.85em;
 
@@ -351,7 +342,6 @@
     }
     
     .mutationTable {
-      background-color: rgb(235,235,235);
       margin: 0px 4px 7px 4px;
 
       .signatureTitle {
@@ -365,7 +355,7 @@
             text-align: center;
             padding: 15px 0;
             font-size: 0.9em;
-            background-color: rgb(190,190,190);
+            background-color: $palette__primary--light;
             box-sizing: border-box;
             border-right: 6px solid rgb(220,220,220);
             border-bottom: 8px solid rgb(220,220,220);
@@ -381,7 +371,7 @@
           font-weight: 100;
           font-size: 0.9em;
           text-align: center;
-          background-color: rgb(204,207,226);
+          background-color: $palette__primary--light;
           
           div {
             padding: 15px 0;
@@ -504,7 +494,6 @@
     .alts {
       margin: 0 4px 7px 4px;
       padding: 20px 0;
-      background-color: rgb(235,235,235);
       
       div {
         display: inline-block;
@@ -819,7 +808,8 @@ md-dialog-content {
         > md-icon {
           margin-right: 10px;
           outline: none;
-          color: $white;
+          color: $palette__common--black;
+          opacity: $icon-opacity;
         }
 
         &:hover {
@@ -840,6 +830,11 @@ md-dialog-content {
         &.active {
           background-color: $secondary;
           color: rgb(255,255,255);
+
+          > md-icon {
+            color: $palette__common--white;
+            opacity: 1;
+          }
         }
 
         &.disabled {
