@@ -115,9 +115,13 @@ function DataTable(props) {
       gridDiv.current.style.height = MAX_TABLE_HEIGHT;
       gridApi.current.setDomLayout('normal');
     }
+  };
 
-    const { visibleColumnIds } = getColumnVisibility();
-    columnApi.current.autoSizeColumns(visibleColumnIds);
+  const onFirstDataRendered = () => {
+    if (columnApi.current) {
+      const { visibleColumnIds } = getColumnVisibility();
+      columnApi.current.autoSizeColumns(visibleColumnIds);
+    }
   };
 
   const handleRowEditClose = (editedData) => {
@@ -242,6 +246,7 @@ function DataTable(props) {
               suppressAnimationFrame
               suppressColumnVirtualisation
               disableStaticMarkup // See https://github.com/ag-grid/ag-grid/issues/3727
+              onFirstDataRendered={onFirstDataRendered}
             />
           </div>
         </>
