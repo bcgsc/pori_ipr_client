@@ -9,7 +9,7 @@ const columnDefs = [{
   headerName: 'Exons 5`/3`',
   colId: 'exons',
   valueGetter: params => (params.data.exon1 && params.data.exon2
-    ? `${params.data.exon1}/${params.data.exon2}`
+    ? `${params.data.exon1}:${params.data.exon2}`
     : (params.data.exon1 || params.data.exon2)),
   hide: false,
 }, {
