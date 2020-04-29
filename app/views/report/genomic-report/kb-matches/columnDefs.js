@@ -173,6 +173,7 @@ const columnDefs = [{
 const targetedColumnDefs = [{
   headerName: 'Gene',
   field: 'gene.name',
+  cellRenderer: 'GeneCellRenderer',
   hide: false,
 },
 {

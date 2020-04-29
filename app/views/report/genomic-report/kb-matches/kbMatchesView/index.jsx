@@ -20,7 +20,7 @@ const coalesceEntries = (entries) => {
     const key = bucketKey(entry);
     if (!buckets[key]) {
       buckets[key] = {
-        ...entry, disease: new Set([entry.disease]), reference: new Set([entry.reference]),
+        ...entry, disease: new Set([entry.disease]), reference: new Set(entry.reference.split(';')),
       };
     } else {
       buckets[key].disease.add(entry.disease);

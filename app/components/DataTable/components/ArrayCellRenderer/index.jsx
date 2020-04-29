@@ -1,14 +1,16 @@
 import React from 'react';
+import './index.scss';
 
 const RenderArrayCell = (field, isLink) => {
   if (isLink) {
     return function ArrayCell(cellParams) {
-      const cellData = [...cellParams.data[field]].sort();
+      const cellData = cellParams.data[field].sort();
       const firstVal = cellData[0].replace(/(pmid:)|(#)/, '');
 
       return (
         <div>
           <a
+            className="array-cell__link"
             href={(firstVal.match(/^\d+$/))
               ? `https://ncbi.nlm.nih.gov/pubmed/${firstVal}`
               : `http://${firstVal}`
