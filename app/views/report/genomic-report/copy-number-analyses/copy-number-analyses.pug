@@ -3,7 +3,7 @@ section
 
   div(layout="column", flex)
 
-    div(layout="column", flex).bg-white
+    div(layout="column", ng-if="$ctrl.images['cnvLoh.circos']", flex).bg-white
 
       h2.title Copy Number and LOH
       h3.title Summary of Copy Number Events
@@ -23,9 +23,9 @@ section
       h2.title Copy Number & LOH
 
       div(layout="column", layout-align="center start").cnvloh
-        div(layout="column").container
+        div(ng-if="$ctrl.images['cnv.1'].data || $ctrl.images['loh.1'].data").container
           div(layout="row")
-            span(flex)
+            span(flex="15")
             span(flex) Chr 1
             span(flex) Chr 2
             span(flex) Chr 3
@@ -33,6 +33,7 @@ section
           img(data-ng-src="data:image/png;base64,{{$ctrl.images['cnv.1'].data}}")
           img(data-ng-src="data:image/png;base64,{{$ctrl.images['loh.1'].data}}")
 
+        div(ng-if="$ctrl.images['cnv.2'].data || $ctrl.images['loh.2'].data").container
           div(layout="row")
             span(flex) Chr 5
             span(flex) Chr 6
@@ -42,6 +43,7 @@ section
           img(data-ng-src="data:image/png;base64,{{$ctrl.images['cnv.2'].data}}")
           img(data-ng-src="data:image/png;base64,{{$ctrl.images['loh.2'].data}}")
 
+        div(ng-if="$ctrl.images['cnv.3'].data || $ctrl.images['loh.3'].data").container
           div(layout="row")
             span(flex) Chr 10
             span(flex) Chr 11
@@ -51,6 +53,7 @@ section
           img(data-ng-src="data:image/png;base64,{{$ctrl.images['cnv.3'].data}}")
           img(data-ng-src="data:image/png;base64,{{$ctrl.images['loh.3'].data}}")
 
+        div(ng-if="$ctrl.images['cnv.4'].data || $ctrl.images['loh.4'].data").container
           div(layout="row")
             span(flex) Chr 15
             span(flex) Chr 16
@@ -60,6 +63,7 @@ section
           img(data-ng-src="data:image/png;base64,{{$ctrl.images['cnv.4'].data}}")
           img(data-ng-src="data:image/png;base64,{{$ctrl.images['loh.4'].data}}")
 
+        div(ng-if="$ctrl.images['cnv.5'].data || $ctrl.images['loh.5'].data").container
           div(layout="row")
             span(flex) Chr 20
             span(flex) Chr 21

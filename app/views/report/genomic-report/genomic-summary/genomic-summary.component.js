@@ -44,8 +44,7 @@ class GenomicSummaryComponent {
     this.mutationMask = null;
     this.tumourAnalysis = this.report.tumourAnalysis;
     this.microbial = this.microbial || { species: 'None', integrationSite: 'None' };
-    this.genomicAlterations = sortBy(this.genomicAlterations, 'type');
-    this.geneVariants = this.processVariants(this.genomicAlterations);
+    this.genomicAlterations = sortBy(this.processVariants(this.genomicAlterations), ['type', 'geneVariant']);
     this.helpMessages = {
       genomeStatus: {
         title: 'Genome Status Help',
