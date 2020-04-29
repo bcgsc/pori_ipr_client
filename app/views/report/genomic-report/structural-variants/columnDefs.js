@@ -1,7 +1,14 @@
 const columnDefs = [{
   headerName: 'Genes 5`::3`',
   colId: 'genes',
-  valueGetter: params => `${params.data.gene1.name} :: ${params.data.gene2.name}`,
+  cellRenderer: 'GeneCellRenderer',
+  valueGetter: (params) => {
+    const { data } = params;
+
+    return data.gene1.name && data.gene2.name
+      ? `${data.gene1.name}, ${data.gene2.name}`
+      : data.gene1.name || data.gene2.name;
+  },
   hide: false,
 }, {
   headerName: 'Exons 5`/3`',
