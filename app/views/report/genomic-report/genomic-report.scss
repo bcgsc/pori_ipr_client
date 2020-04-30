@@ -78,7 +78,7 @@
           color: rgb(100,100,100);
           font-size: 0.9em;
           margin: 0;
-          padding: 0;
+          padding: 1px 0 0;
         }
         
         dd {
@@ -203,7 +203,6 @@
       md-icon {
         vertical-align: middle;
         margin-left: 5px;
-        font-size: 1.2em;
         height: auto;
         width: auto;
         min-height: 0;
@@ -345,7 +344,7 @@
       margin: 0px 4px 7px 4px;
 
       .signatureTitle {
-        padding-right: 6px;
+        padding-right: 8px;
       }
       
       .header {
@@ -357,8 +356,8 @@
             font-size: 0.9em;
             background-color: $palette__primary--light;
             box-sizing: border-box;
-            border-right: 6px solid rgb(220,220,220);
-            border-bottom: 8px solid rgb(220,220,220);
+            margin: 0 8px 0 0;
+            border-bottom: 1px solid $palette__primary--light;
 
             span.listitem {
               cursor: pointer;
@@ -404,16 +403,16 @@
       .data {
         
         div {
-          div:first-of-type {
-            text-align: left;
-          }
-          div:nth-of-type(3) {
-            background-color: rgb(225,225,225);
-          }
           div {
-            padding: 5px 0 5px 5px;
+            padding: 20px 0 8px 5px;
             text-align: center;
+
+            &:not(:first-of-type) {
+              font-weight: 600;
+              font-size: .9em;
+            }
           }
+          
         }
         
       }
