@@ -740,6 +740,7 @@ md-dialog-content {
 
     span {
       &.inline {
+        height: 44px;
         background-color: $white;
         display: flex;
         padding: 10px 5px 10px 15px;
