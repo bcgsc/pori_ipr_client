@@ -56,6 +56,8 @@ function TherapeuticTableComponent(props) {
           if (col === 'therapy') { return 180; }
           return 110;
         })(),
+        hide: col === 'rank',
+        sort: col === 'rank' ? 'asc' : null,
         cellClass: ['cell-wrap-text', 'cell-line-height'],
       });
     });

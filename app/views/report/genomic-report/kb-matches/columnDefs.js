@@ -16,12 +16,13 @@ const columnDefs = [{
 },
 {
   headerName: 'Known Variant',
+  colId: 'kbVariant',
   field: 'kbVariant',
   hide: false,
 },
 {
   headerName: 'Observed Variant',
-  field: 'variant',
+  colId: 'variant',
   hide: false,
   valueGetter: (params) => {
     const { data: { variant, variantType } } = params;
@@ -76,11 +77,13 @@ const columnDefs = [{
 },
 {
   headerName: 'Association',
+  colId: 'relevance',
   field: 'relevance',
   hide: false,
 },
 {
   headerName: 'Context',
+  colId: 'context',
   field: 'context',
   hide: false,
 },
@@ -99,7 +102,7 @@ const columnDefs = [{
 },
 {
   headerName: 'LOH Region',
-  field: 'LOHRegion',
+  colId: 'LOHRegion',
   hide: true,
   valueGetter: (params) => {
     const { data: { variant, variantType } } = params;
@@ -114,6 +117,7 @@ const columnDefs = [{
 },
 {
   headerName: 'Category',
+  colId: 'category',
   field: 'category',
   hide: true,
 },
@@ -134,6 +138,7 @@ const columnDefs = [{
 },
 {
   headerName: 'Evidence',
+  colId: 'evidenceLevel',
   field: 'evidenceLevel',
   hide: false,
 },
@@ -168,6 +173,7 @@ const columnDefs = [{
 const targetedColumnDefs = [{
   headerName: 'Gene',
   field: 'gene.name',
+  cellRenderer: 'GeneCellRenderer',
   hide: false,
 },
 {

@@ -6,6 +6,7 @@ import {
   Edit,
   Photo,
   LibraryBooks,
+  OpenInNew,
 } from '@material-ui/icons';
 import DetailDialog from '../DetailDialog';
 import SvgViewer from '../SvgViewer';
@@ -77,6 +78,20 @@ function ActionCellRenderer(params) {
           <LibraryBooks />
         </IconButton>
       )}
+      {data.kbStatementId && data.kbStatementId.match(/^#?-?\d+:-?\d+$/)
+        ? (
+          <IconButton
+            size="small"
+            aria-label="Open in GraphKB"
+            title="Open in GraphKB"
+            href={`${CONFIG.ENDPOINTS.GRAPHKB}/view/Statement/${data.kbStatementId.replace('#', '')}`}
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            <OpenInNew />
+          </IconButton>
+        ) : null
+      }
       {showDetailDialog && (
         <DetailDialog
           open={showDetailDialog}
