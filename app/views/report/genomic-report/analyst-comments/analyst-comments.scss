@@ -19,6 +19,7 @@
   .analyst {
     &__header {
       @include print-header;
+      page-break-before: always;
     }
 
     &__comments {

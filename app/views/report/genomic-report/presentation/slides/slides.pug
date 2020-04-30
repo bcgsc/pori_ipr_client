@@ -26,7 +26,7 @@ section.material-section.slide.presentation
             md-input-container(flex).name
               input(ng-model="$ctrl.new.name", placeholder="Slide Name", flex)
             md-input-container(flex)
-              input(type="file" nv-file-select="" uploader="$ctrl.uploader", ng-model="$ctrl.new.file", flex, ng-disabled="$ctrl.new.name.length === 0")
+              input(aria-label="Slide Upload" type="file" nv-file-select="" uploader="$ctrl.uploader", ng-model="$ctrl.new.file", flex, ng-disabled="$ctrl.new.name.length === 0")
               span.hint(ng-if="$ctrl.new.name.length === 0")
                 md-icon.small keyboard_arrow_left
                 | Slide name must be entered before a file can be selected.
@@ -47,7 +47,7 @@ section.material-section.slide.presentation
 
 
   md-subheader(ng-if="$ctrl.print").print-slide__header.md-no-sticky Slides
-  div(layout="column", layout-align="space-around center")
+  div(ng-if="$ctrl.print" layout="column", layout-align="space-around center")
     div(ng-repeat="slide in ::$ctrl.slides track by $index", layout="column", layout-align="space-around center").print-slide__container
       h3.print-slide__name {{::slide.name}}
       img(data-ng-src="data:{{::slide.object_type}};base64,{{::slide.object}}").print-slide__image

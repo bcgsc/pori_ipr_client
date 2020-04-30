@@ -4,7 +4,6 @@ import './genomic-alteration.scss';
 const bindings = {
   samples: '<',
   gene: '<',
-  pog: '<',
   report: '<',
   print: '<',
 };
@@ -30,20 +29,20 @@ class GenomicAlterationComponent {
     }
     return 'text';
   }
-  
+
   /* eslint-disable class-methods-use-this */
   // Prepend a link with http:// if necessary
   prependLink(link) {
     return (!link.includes('http://')) ? `http://${link}` : link;
   }
-  
+
   /* eslint-disable class-methods-use-this */
   // Clean up PMIDs
   cleanPMID(pmid) {
     return pmid.match(/^[0-9]{8}/)[0];
   }
 }
-    
+
 export default {
   template,
   bindings,

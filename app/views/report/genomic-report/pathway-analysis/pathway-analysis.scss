@@ -17,12 +17,16 @@
 
 @media print {
   .pathway {
+    page-break-before: always;
+    page-break-after: always;
+
     &__header {
       @include print-header;
     }
 
     &__container {
       background-color: $white;
+      page-break-after: always;
     }
 
     &__legend {
@@ -34,7 +38,12 @@
 
   #pathway {
     width: 100%;
-    height: 100%;
+    height: calc(100vh - 164px);
+  }
+
+  #svgImage {
+    display: flex;
+    flex-grow: 1;
   }
 }
 
@@ -61,7 +70,12 @@
 
     #pathway {
       width: 100%;
-      height: 800px;
+      height: calc(100vh - 164px);
+    }
+
+    #svgImage {
+      display: flex;
+      flex-grow: 1;
     }
   }
 

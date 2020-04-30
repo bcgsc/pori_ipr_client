@@ -8,7 +8,6 @@ import removeAlterationTemplate from './remove-alteration.pug';
 import './genomic-summary.scss';
 
 const bindings = {
-  pog: '<',
   print: '<',
   report: '<',
   reportEdit: '<',
@@ -22,11 +21,10 @@ const bindings = {
 
 class GenomicSummaryComponent {
   /* @ngInject */
-  constructor($state, $scope, PogService, TumourAnalysisService, PatientInformationService,
+  constructor($state, $scope, TumourAnalysisService, PatientInformationService,
     MutationSummaryService, GenomicAlterationsService, $mdDialog, $mdToast) {
     this.$state = $state;
     this.$scope = $scope;
-    this.PogService = PogService;
     this.TumourAnalysisService = TumourAnalysisService;
     this.PatientInformationService = PatientInformationService;
     this.MutationSummaryService = MutationSummaryService;
@@ -43,21 +41,19 @@ class GenomicSummaryComponent {
       structuralVariant: 0,
       variantsUnknown: this.variantCounts.variantsUnknown,
     };
-    this.studyName = this.pog.projects.map(p => p.name).join(', ');
     this.mutationMask = null;
     this.tumourAnalysis = this.report.tumourAnalysis;
     this.microbial = this.microbial || { species: 'None', integrationSite: 'None' };
-    this.genomicAlterations = sortBy(this.genomicAlterations, 'type');
-    this.geneVariants = this.processVariants(this.genomicAlterations);
+    this.genomicAlterations = sortBy(this.processVariants(this.genomicAlterations), ['type', 'geneVariant']);
     this.helpMessages = {
       genomeStatus: {
         title: 'Genome Status Help',
-        content: `Tumour content and ploidy are determined based on expert review of 
+        content: `Tumour content and ploidy are determined based on expert review of
                   copy number and allelic ratios observed across all chromosomes in the tumour.`,
       },
       tissueComparators: {
         title: 'Tissue Comparators Help',
-        content: `The most appropriate normal tissue and tumour tissue types are chosen for 
+        content: `The most appropriate normal tissue and tumour tissue types are chosen for
                   expression comparisons based on the tumour type and observed correlation
                   with tissue data sets. If no appropriate tissue comparator is available,
                   for instance for rare tumours, an average across all tissues is used. Outlier
@@ -78,7 +74,7 @@ class GenomicSummaryComponent {
         content: `This section includes information about a patients microbial content analysis.
                   <br><br>When identified, microbial analysis, is often useful is understanding
                   the biological mechanisms responsible for driving the formation of a particular
-                  tumour.<br><br>Sequences observed with the tumour sample are compared to 
+                  tumour.<br><br>Sequences observed with the tumour sample are compared to
                   databases of viral, bacterial and fungal sequences in addition to the human
                   genome. The species is reported if observed levels are suggestive of microbial
                   presence in the tumour sample. Specific viral integration sites are reported
@@ -106,13 +102,13 @@ class GenomicSummaryComponent {
 
   /* eslint-disable-next-line class-methods-use-this */
   variantCategory(variant) {
-    // Small Mutations
-    if (variant.geneVariant.match(/([A-z0-9]*)\s(\([pcg]\.[A-z]*[0-9]*[A-z_0-9>]*\*?\))/g)) {
+    // small mutations
+    if (/:[pgc]\./.exec(variant.geneVariant)) {
       variant.type = 'smallMutation';
       return variant;
     }
     // Structural Variants
-    if (variant.geneVariant.match(/(([A-z0-9]*|\?)::([A-z0-9]*|\?)\s\(e([0-9]*|\?):e([0-9]*|\?)\))/g)) {
+    if (variant.geneVariant.includes('::') || variant.geneVariant.includes('fusion')) {
       variant.type = 'structuralVariant';
       return variant;
     }
@@ -121,7 +117,6 @@ class GenomicSummaryComponent {
       variant.type = 'expressionOutlier';
       return variant;
     }
-    // Return CNV mutation
     variant.type = 'cnv';
     return variant;
   }
@@ -190,7 +185,7 @@ class GenomicSummaryComponent {
             }
             try {
               await this.TumourAnalysisService.update(
-                this.pog.POGID, this.report.ident, scope.tumourAnalysis,
+                this.report.ident, scope.tumourAnalysis,
               );
               this.$mdDialog.hide('Tumour analysis details have been successfully updated');
             } catch (err) {
@@ -225,7 +220,7 @@ class GenomicSummaryComponent {
           scope.update = async () => {
             try {
               await this.TumourAnalysisService.update(
-                this.pog.POGID, this.report.ident, scope.tumourAnalysis,
+                this.report.ident, scope.tumourAnalysis,
               );
               this.$mdDialog.hide({
                 message: 'Mutation signature details have been successfully updated',
@@ -256,29 +251,32 @@ class GenomicSummaryComponent {
         template: patientTemplate,
         clickOutToClose: false,
         controller: ['scope', (scope) => {
-          scope.patientInformation = this.patientInformation;
+          scope.patientId = this.report.patientId;
+          scope.patientInformation = { ...this.report.patientInformation };
           scope.cancel = () => {
             this.$mdDialog.cancel('Patient information was not updated');
           };
           scope.update = async () => {
             try {
-              await this.PatientInformationService.update(this.pog.POGID, scope.patientInformation);
+              const response = await this.PatientInformationService.update(
+                this.report.ident,
+                scope.patientInformation,
+              );
               this.$mdDialog.hide({
                 message: 'Patient information has been successfully updated',
-                data: scope.patientInformation,
+                data: response,
               });
             } catch (err) {
               this.$mdToast.showSimple(
                 `Patient information was not updated due to an error: ${err}`,
               );
-            } finally {
-              scope.$digest();
             }
           };
         }],
       });
       this.$mdToast.showSimple(resp.message);
-      this.patientInformation = resp.data;
+      this.report.patientInformation = resp.data;
+      this.$scope.$digest();
     } catch (err) {
       this.$mdToast.showSimple(err);
     }
@@ -300,7 +298,7 @@ class GenomicSummaryComponent {
             try {
               // Remove entry
               const genomicResp = await this.GenomicAlterationsService.create(
-                this.pog.POGID, this.report.ident, scope.alteration,
+                this.report.ident, scope.alteration,
               );
               // Add to array of alterations
               this.genomicAlterations.push(genomicResp);
@@ -343,15 +341,12 @@ class GenomicSummaryComponent {
           scope.update = async (cascade) => {
             try {
               await this.GenomicAlterationsService.remove(
-                this.pog.POGID,
                 this.report.ident,
                 alteration.ident,
                 scope.comment,
                 cascade,
               );
-              this.genomicAlterations = this.genomicAlterations.filter((r) => {
-                return r.ident !== alteration.ident;
-              });
+              this.genomicAlterations = this.genomicAlterations.filter(r => r.ident !== alteration.ident);
 
               // Subtract count
               this.variantCounts[alteration.type] -= 1;
@@ -386,7 +381,7 @@ class GenomicSummaryComponent {
         .ok('Close')
         .targetEvent($event),
     );
-  };
+  }
 }
 
 export default {

@@ -1,80 +1,33 @@
 section.appendices
   md-subheader(ng-if="!$ctrl.print").md-no-sticky Appendices
-
   div(layout="column", flex)
 
     div(layout="column", flex)
       div(ng-if="!$ctrl.print")
         h2.title Appendix A
-        h3.title Sample Information
-
-
-        div(layout="column", flex).dataBox.appendices__table
-          div.box
-            div(layout="row", flex).heading.appendices__header
-              div(flex).appendices__cell Sample
-              div(flex).appendices__cell Sample Name
-              div(flex).appendices__cell Collection Date
-              div(flex).appendices__cell Primary Site
-              div(flex=30).appendices__cell Biopsy Site
-              div(flex).appendices__cell Pathology Estimated Tumour Content
-            div(layout="row", flex, ng-repeat="sample in $ctrl.report.sampleInfo track by $index").row
-              div(flex) {{sample['Sample']}}
-              div(flex) {{sample['Sample Name']}}
-              div(flex) {{sample['Collection Date']}}
-              div(flex) {{sample['Primary Site']}}
-              div(flex=30) {{sample['Biopsy Site']}}
-              div(flex) {{sample['Patho TC']}}
+        react-table(
+          column-defs="$ctrl.sampleInformationColumnDefs",
+          row-data="$ctrl.report.sampleInfo",
+          title-text="'Sample Information'",
+          report-ident="$ctrl.report.ident"
+        )
 
       div
-        h3.title.print-subtitle Sequencing Protocol Information
-
-        div(layout="column", flex).dataBox.appendices__table
-          div.box
-            div(layout="row", flex).heading.appendices__header
-              div(flex).appendices__cell Type
-              div(flex).appendices__cell Sample Name
-              div(flex).appendices__cell Input (ng)
-              div(flex).appendices__cell Library Construction Protocol
-              div(flex).appendices__cell Library
-              div(flex).appendices__cell Lab QC
-              div(flex).appendices__cell Sequencing QC
-              div(flex).appendices__cell % Duplicates
-              div(flex).appendices__cell Total Coverage
-              div(flex).appendices__cell # Reads
-            div(layout="row", flex, ng-repeat="qc in $ctrl.report.seqQC track by $index").row.appendices__row
-              div(flex) {{qc['Sample']}}
-              div(flex) {{qc['Sample Name']}}
-              div(flex) {{qc['Input_ng']}}
-              div(flex) {{qc['Protocol']}}
-              div(flex) {{qc['Library']}}
-              div(flex) {{qc['labQC']}}
-              div(flex) {{qc['bioQC']}}
-              div(flex) {{qc['Duplicate_Reads_Perc']}}
-              div(flex) {{qc['Coverage']}}
-              div(flex) {{qc['Reads']}}
+        react-table(
+          column-defs="$ctrl.sequencingProtocolInformationColumnDefs",
+          row-data="$ctrl.report.seqQC",
+          title-text="'Sequencing Protocol Information'",
+          report-ident="$ctrl.report.ident"
+        )
 
     div(layout="column", ng-if="!$ctrl.print", flex)
       h2.title Appendix B
-      h3.title TCGA Acronyms
-      div(layout="column", flex).dataBox
-        div.box
-          div(layout="row", flex).heading
-            div(flex=30) Code Name
-            div(flex=30) Full Name
-            div(flex) Data Source
-            div(flex) Tumour Count
-            div(flex) Normal Count
-          div(layout="row", layout-align="start end").search
-            md-input-container(flex=40)
-              input(placeholder="Search", name="AcroSearch", ng-model="$ctrl.acroQuery")
-          div.scrollable
-            div(layout="row", flex, ng-repeat="t in $ctrl.tcgaAcronyms | filter: $ctrl.acroQuery").row
-              div(flex=30) {{t['Code Name']}}
-              div(flex=30) {{t['Full Name']}}
-              div(flex) {{t['Data Source']}}
-              div(flex) {{t['Tumour Count']}}
-              div(flex) {{t['Normal Count']}}
+      react-table(
+        column-defs="$ctrl.tcgaAcronymsColumnDefs",
+        row-data="$ctrl.tcgaAcronyms",
+        title-text="'TCGA Acronyms'",
+        report-ident="$ctrl.report.ident"
+      )
 
     div(layout="column", ng-if="!$ctrl.probe", flex)
       h2.title Appendix C
@@ -124,7 +77,6 @@ section.appendices
 
 print-header(
   ng-if="$ctrl.print",
-  pog="$ctrl.pog",
   report="$ctrl.report",
 )
 

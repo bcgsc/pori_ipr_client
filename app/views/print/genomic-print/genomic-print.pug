@@ -1,5 +1,4 @@
 genomicsummary(
-  pog="$ctrl.pog",
   report="$ctrl.report",
   genomic-alterations="$ctrl.genomicAlterations",
   variant-counts="$ctrl.variantCounts",
@@ -12,32 +11,31 @@ genomicsummary(
 
 br
 
-print-header(pog="$ctrl.pog", report="$ctrl.report")
+print-header(report="$ctrl.report")
 
 analyst(
   analyst-comments="$ctrl.analystComments",
   print="true"
 )
 
-print-header(pog="$ctrl.pog", report="$ctrl.report")
+print-header(report="$ctrl.report")
 
 pathway(
   pathway="$ctrl.pathway",
-  pog="$ctrl.pog",
   report="$ctrl.report",
   print="true",
 )
 
-print-header(pog="$ctrl.pog", report="$ctrl.report")
+print-header(report="$ctrl.report")
 
 therapeutic-react(
   therapeutic-row-data="$ctrl.therapeuticRowData",
+  print="true"
 )
 
-print-header(pog="$ctrl.pog", report="$ctrl.report")
+print-header(report="$ctrl.report")
 
 slides(
-  pog="$ctrl.pog",
   report="$ctrl.report",
   slides="$ctrl.slides",
   print="true",

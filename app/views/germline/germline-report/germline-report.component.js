@@ -223,25 +223,26 @@ class GermlineReportComponent {
         };
       }],
     });
+    const updatedVariant = {};
 
     if (mode === 'patient') {
       this.report.variants.forEach((variant) => {
         variant.patient_history = resp.value;
+        updatedVariant.patient_history = resp.value;
       });
     }
     if (mode === 'family') {
       this.report.variants.forEach((variant) => {
         variant.family_history = resp.value;
+        updatedVariant.family_history = resp.value;
       });
     }
 
     await Promise.all(
       this.report.variants.map(variant => this.GermlineService.updateVariant(
-        this.report.analysis.pog.POGID,
-        this.report.analysis.analysis_biopsy,
         this.report.ident,
         variant.ident,
-        variant,
+        updatedVariant,
       )),
     );
     this.$mdToast.showSimple('Report has been updated.');
@@ -254,12 +255,7 @@ class GermlineReportComponent {
     };
 
     try {
-      const review = await this.GermlineService.addReview(
-        this.report.analysis.pog.POGID,
-        this.report.analysis.analysis_biopsy,
-        this.report.ident,
-        data,
-      );
+      const review = await this.GermlineService.addReview(this.report.ident, data);
       this.report.reviews.push(review[0]);
       this.$mdToast.showSimple('The review has been added.');
       this.addReview = false;
@@ -273,11 +269,9 @@ class GermlineReportComponent {
 
     try {
       const result = await this.GermlineService.updateVariant(
-        this.report.analysis.pog.POGID,
-        this.report.analysis.analysis_biopsy,
         this.report.ident,
         variant.ident,
-        variant,
+        { hidden: variant.hidden },
       );
       // Update report in memory with fresh result from API.
       const i = this.report.variants.findIndex(v => v.ident === result.ident);
@@ -290,12 +284,7 @@ class GermlineReportComponent {
 
   async removeReview(review) {
     try {
-      await this.GermlineService.removeReview(
-        this.report.analysis.pog.POGID,
-        this.report.analysis.analysis_biopsy,
-        this.report.ident,
-        review.ident,
-      );
+      await this.GermlineService.removeReview(this.report.ident, review.ident);
       this.report.reviews.splice(
         this.report.reviews.findIndex(rev => rev.ident === review.ident), 1,
       );
@@ -319,11 +308,7 @@ class GermlineReportComponent {
         this.$mdToast.showSimple('No changes were made.');
         return;
       }
-      await this.GermlineService.deleteReport(
-        this.report.analysis.pog.POGID,
-        this.report.analysis.analysis_biopsy,
-        this.report.ident,
-      );
+      await this.GermlineService.deleteReport(this.report.ident);
       this.$state.go('root.germline.board');
     } catch (err) {
       this.$mdToast.showSimple('Something went wrong and the report has NOT been removed.');

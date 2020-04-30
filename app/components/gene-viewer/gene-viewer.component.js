@@ -3,7 +3,6 @@ import './gene-viewer.scss';
 
 const bindings = {
   report: '<',
-  pog: '<',
   gene: '<',
 };
 
@@ -31,14 +30,13 @@ class GeneViewerComponent {
         };
         $scope.loading = true;
         $scope.report = this.report;
-        $scope.pog = this.pog;
         $scope.gene = this.gene;
         $scope.samples = [];
         $scope.alterations = {
           therapeutic: [], prognostic: [], diagnostic: [], biological: [], unknown: [],
         };
         $scope.data = await this.GeneViewerService.get(
-          $scope.pog.POGID, $scope.report.ident, $scope.gene,
+          $scope.report.ident, $scope.gene,
         );
 
         $scope.groupEntries = (alterations) => {
@@ -48,25 +46,23 @@ class GeneViewerComponent {
             if (!$scope.samples.includes(row.sample)) {
               $scope.samples.push(row.sample);
             }
-            // Create new alteration type if it's not existing
-            if (!(Object.prototype.hasOwnProperty.call($scope.alterations, row.alterationType))) {
-              $scope.alterations[row.alterationType] = [];
+            // Create new category(alteration type) if it's not existing
+            if (!(Object.prototype.hasOwnProperty.call($scope.alterations, row.category))) {
+              $scope.alterations[row.category] = [];
             }
             // Check if it exists already?
-            if ($scope.alterations[row.alterationType].length) {
-              const match = $scope.alterations[row.alterationType].findIndex((entry) => {
-                return ((entry.gene === row.gene) && (entry.variant === row.variant));
-              });
+            if ($scope.alterations[row.category].length) {
+              const match = $scope.alterations[row.category].findIndex(entry => ((entry.gene === row.gene) && (entry.variant === row.variant)));
               if (match > -1) {
                 // Categorical entry already exists
-                $scope.alterations[row.alterationType][match].children.push(row);
+                $scope.alterations[row.category][match].children.push(row);
               } else {
                 row.children = [];
-                $scope.alterations[row.alterationType].push(row);
+                $scope.alterations[row.category].push(row);
               }
             } else {
               row.children = [];
-              $scope.alterations[row.alterationType].push(row);
+              $scope.alterations[row.category].push(row);
             }
           });
           $scope.loading = false;

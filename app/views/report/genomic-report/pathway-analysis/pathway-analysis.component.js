@@ -45,16 +45,20 @@ class PathwayAnalysisComponent {
 
     // Create SVG DOM element from String
     this.pathway = new DOMParser().parseFromString(svg, 'application/xml');
+    const {
+      width: { baseVal: { value: svgVW } },
+      height: { baseVal: { value: svgVH } },
+    } = this.pathway.firstElementChild;
 
     // Extract SVG element from within XML wrapper.
     const [xmlSVG] = this.pathway.getElementsByTagName('svg');
     xmlSVG.id = 'pathway'; // Set ID that we can grapple.
-    xmlSVG.setAttribute('viewBox', '40 40 975 693');
+    xmlSVG.setAttribute('viewBox', `0 0 ${svgVW} ${svgVH}`);
 
     svgImage.appendChild(
       svgImage.ownerDocument.importNode(this.pathway.documentElement, true),
     );
-    
+
     if (!this.print) {
       const panZoom = await svgPanZoom('#pathway', {
         preventMouseEventsDefault: true,
@@ -93,7 +97,7 @@ class PathwayAnalysisComponent {
 
           let selectedItem;
           $scope.uploader = new this.FileUploader({
-            url: `${CONFIG.ENDPOINTS.API}/POG/${this.pog.POGID}/report/${this.report.ident}/genomic/summary/pathwayAnalysis`,
+            url: `${CONFIG.ENDPOINTS.API}/reports/${this.report.ident}/summary/pathway-analysis`,
           });
 
           $scope.uploader.headers.Authorization = this.$localStorage[CONFIG.STORAGE.KEYCLOAK];

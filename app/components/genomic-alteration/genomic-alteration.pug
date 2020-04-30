@@ -5,54 +5,52 @@ div.alteration
         dt Gene:
         dd(ng-click="$ctrl.geneClicked = true").clickable.underlined.alteration__definition {{::$ctrl.gene.gene}}
           gene-viewer(ng-if="$ctrl.geneClicked", ng-init="$ctrl.geneClicked = false",
-            report="::$ctrl.report", pog="::$ctrl.pog", gene="::$ctrl.gene.gene")
+            report="::$ctrl.report", gene="::$ctrl.gene.gene")
       div(layout="row", flex=25)
-        dt Variant: 
+        dt Variant:
         dd.alteration__definition {{::$ctrl.gene.variant}}
       div(layout="row", flex=50)
-        dt Source: 
+        dt Source:
         dd.alteration__definition {{::$ctrl.gene.sample}}
       div(layout="row")
         md-icon(ng-click="$ctrl.gene.showChildren=!$ctrl.gene.showChildren", ng-if="!$ctrl.print").hover {{(($ctrl.gene.showChildren) ? 'expand_less' : 'expand_more')}}
           md-tooltip Show more entries related to this
-      
+
     div(layout="row", flex).alteration__row
       div(layout="row", flex=25)
-        dt Expression: 
-        dd.alteration__definition {{::$ctrl.gene.expression_tissue_fc}}
+        dt Expression:
+        dd.alteration__definition {{::$ctrl.gene.expressionTissueFc}}
       div(layout="row", flex=25)
-        dt Disease Percentile: 
-        dd.alteration__definition {{::$ctrl.gene.expression_cancer_percentile}}
+        dt Disease Percentile:
+        dd.alteration__definition {{::$ctrl.gene.expressionCancerPercentile}}
       div(layout="row", flex=25)
-        dt Copy Number: 
+        dt Copy Number:
         dd.alteration__definition {{::$ctrl.gene.copyNumber}}
       div(layout="row", flex=25)
-        dt Zygosity: 
+        dt Zygosity:
         dd.alteration__definition {{::$ctrl.gene.zygosity}}
-      
+
   div(flex, layout="column", ng-if="$ctrl.gene.showChildren || $ctrl.print").alteration__details
     div(layout="column", flex).dataBox
       div.box
 
         div(layout="row", flex).heading.alteration__details__header
           div(flex=15) Known Variant
-          div(flex) Effect
           div(flex) Cancer Type
           div(flex) Association
           div(flex) Therapeutic Context
           div(flex) Evidence
           div(flex) Reference (PIMID)
           div(flex=5, ng-if="!$ctrl.print")
-          
+
         div(layout="row", flex).row.alteration__details__row
           div(flex=15) {{::$ctrl.gene.kbVariant}}
-          div(flex) {{::$ctrl.gene.effect}}
           div(flex) {{::$ctrl.gene.disease}}
-          div(flex) {{::$ctrl.gene.association}}
-          div(flex) {{::$ctrl.gene.therapeuticContext}}
-          div(flex) {{::$ctrl.gene.evidence}}
+          div(flex) {{::$ctrl.gene.relevance}}
+          div(flex) {{::$ctrl.gene.context}}
+          div(flex) {{::$ctrl.gene.evidenceLevel}}
           div(flex)
-            span(ng-if="$ctrl.refType($ctrl.gene.reference) == 'pmid'") 
+            span(ng-if="$ctrl.refType($ctrl.gene.reference) == 'pmid'")
               a(href="https://www.ncbi.nlm.nih.gov/pubmed/{{$ctrl.gene.reference}}", target="_blank") {{::$ctrl.cleanPMID($ctrl.gene.reference)}}
             span(ng-if="$ctrl.refType($ctrl.gene.reference) == 'link'")
               a(href="{{$ctrl.prependLink($ctrl.gene.reference)}}", target="_blank", ng-if="!$ctrl.print") Source
@@ -63,16 +61,15 @@ div.alteration
               md-tooltip View Details
           detail-viewer(ng-if="$ctrl.detailClicked", ng-init="$ctrl.detailClicked = false",
             mutations="[$ctrl.gene]", index="0")
-        
+
         div(layout="row", flex, ng-repeat="(i, childGene) in ::$ctrl.gene.children track by $index").row.alteration__details__row
           div(flex=15) {{::childGene.kbVariant}}
-          div(flex) {{::childGene.effect}}
           div(flex) {{::childGene.disease}}
-          div(flex) {{::childGene.association}}
-          div(flex) {{::childGene.therapeuticContext}}
-          div(flex) {{::childGene.evidence}}
-          div(flex) 
-            span(ng-if="$ctrl.refType(childGene.reference) == 'pmid'") 
+          div(flex) {{::childGene.relevance}}
+          div(flex) {{::childGene.context}}
+          div(flex) {{::childGene.evidenceLevel}}
+          div(flex)
+            span(ng-if="$ctrl.refType(childGene.reference) == 'pmid'")
               a(href="https://www.ncbi.nlm.nih.gov/pubmed/{{childGene.reference}}", target="_blank") {{::$ctrl.cleanPMID(childGene.reference)}}
             span(ng-if="$ctrl.refType(childGene.reference) == 'link'")
               a(href="{{$ctrl.prependLink(childGene.reference)}}", target="_blank", ng-if="!$ctrl.print") Source

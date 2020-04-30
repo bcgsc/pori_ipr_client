@@ -6,8 +6,7 @@ const probe = {
   component: 'probereport',
   resolve: {
     report: ['$transition$', 'ReportService',
-      async ($transition$, ReportService) => ReportService.get(
-        $transition$.params().POG,
+      async ($transition$, ReportService) => ReportService.getReport(
         $transition$.params().analysis_report,
       )],
     reportEdit: ['AclService', async AclService => AclService.checkAction('report.edit')],
@@ -21,17 +20,14 @@ const summary = {
   resolve: {
     testInformation: ['$transition$', 'ProbeTestInformationService',
       async ($transition$, ProbeTestInformationService) => ProbeTestInformationService.retrieve(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
       )],
     signature: ['$transition$', 'ProbeSignatureService',
       async ($transition$, ProbeSignatureService) => ProbeSignatureService.retrieve(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
       )],
     genomicEvents: ['$transition$', 'GenomicEventsService',
       async ($transition$, GenomicEventsService) => GenomicEventsService.all(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
       )],
   },
@@ -43,22 +39,16 @@ const detailedGenomicAnalysis = {
   resolve: {
     alterations: ['$transition$', 'AlterationService',
       async ($transition$, AlterationService) => AlterationService.getAll(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
-        'probe',
       )],
     approvedThisCancer: ['$transition$', 'AlterationService',
       async ($transition$, AlterationService) => AlterationService.getType(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
-        'probe',
         'thisCancer',
       )],
     approvedOtherCancer: ['$transition$', 'AlterationService',
       async ($transition$, AlterationService) => AlterationService.getType(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
-        'probe',
         'otherCancer',
       )],
   },
@@ -70,7 +60,6 @@ const appendices = {
   resolve: {
     tcgaAcronyms: ['$transition$', 'AppendicesService',
       async ($transition$, AppendicesService) => AppendicesService.tcga(
-        $transition$.params().POG,
         $transition$.params().analysis_report,
       )],
     probe: () => true,

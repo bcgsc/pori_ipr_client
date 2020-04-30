@@ -4,7 +4,6 @@ import deleteTemplate from './report-delete.pug';
 import './report-settings.scss';
 
 const bindings = {
-  pog: '<',
   report: '<',
   reportSettings: '<',
   showBindings: '<',
@@ -12,12 +11,11 @@ const bindings = {
 
 class ReportSettingsComponent {
   /* @ngInject */
-  constructor($scope, $state, $mdDialog, $mdToast, PogService, ReportService, indefiniteArticleFilter) {
+  constructor($scope, $state, $mdDialog, $mdToast, ReportService, indefiniteArticleFilter) {
     this.$scope = $scope;
     this.$state = $state;
     this.$mdDialog = $mdDialog;
     this.$mdToast = $mdToast;
-    this.PogService = PogService;
     this.ReportService = ReportService;
     this.indefiniteArticleFilter = indefiniteArticleFilter;
   }

@@ -29,7 +29,12 @@ class UsersComponent {
         .cancel('Cancel');
   
       try {
-        await this.$mdDialog.show(confirm);
+        try {
+          this.$mdDialog.hide();
+          await this.$mdDialog.show(confirm);
+        } catch (e) {
+          return this.$mdToast.show(this.$mdToast.simple('The user has not been removed'));
+        }
         const tempUser = angular.copy(user);
         // Remove User
         await this.UserService.remove(user);
@@ -40,11 +45,7 @@ class UsersComponent {
       }
     };
   
-    this.passDelete = () => {
-      // Hide any displayed dialog;
-      this.$mdDialog.hide();
-      return deleteUser;
-    };
+    this.passDelete = () => deleteUser;
   }
 
   async userDiag($event, editUser, newUser = false) {
@@ -73,16 +74,23 @@ class UsersComponent {
           $scope.selfEdit = selfEdit;
         },
       });
-      this.$mdToast.show(this.$mdToast.simple().textContent(resp.message));
-      this.users.forEach((u, i) => {
-        if (u.ident === resp.data.ident) {
-          this.users[i] = resp.data;
-        }
-      });
 
-      if (newUser) {
-        this.users.push(resp.data);
-        this.users = sortBy(this.users, 'username');
+      if (resp) {
+        if (resp.message) {
+          this.$mdToast.show(this.$mdToast.simple().textContent(resp.message));
+        }
+        if (resp.data) {
+          this.users.forEach((u, i) => {
+            if (u.ident === resp.data.ident) {
+              this.users[i] = resp.data;
+            }
+          });
+
+          if (newUser) {
+            this.users.push(resp.data);
+            this.users = sortBy(this.users, 'username');
+          }
+        }
       }
     } catch (err) {
       this.$mdToast.show(this.$mdToast.simple().textContent('The user has not been updated.'));

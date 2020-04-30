@@ -51,11 +51,21 @@ module.exports = {
           {
             test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
             exclude: /node_modules/,
-            loader: 'url-loader',
+            loader: 'file-loader',
             options: {
-              limit: 10000,
               name: 'img/[name].[hash:8].[ext]',
             },
+          },
+          {
+            test: /\.woff(2)?$/,
+            use: [
+              {
+                loader: 'file-loader',
+                options: {
+                  name: 'font/[hash].[ext]',
+                },
+              },
+            ],
           },
         ],
       },
@@ -73,21 +83,34 @@ module.exports = {
       from: path.join(__dirname, '../../statics/images/*'),
       to: 'img/',
       flatten: true,
-    }]),
+    },
+    {
+      from: path.join(__dirname, '../../statics/favicon/*'),
+      flatten: true,
+    },
+    ]),
     new webpack.HotModuleReplacementPlugin(),
     new DashboardPlugin({ port: 3000 }),
     new webpack.DefinePlugin({
       VERSION: JSON.stringify(packageFile.version),
     }),
     new MomentLocalesPlugin(),
-    // new BundleAnalyzerPlugin({ openAnalyzer: false }),
+    // new BundleAnalyzerPlugin({
+    //   defaultSizes: 'gzip',
+    //   excludeAssets: '.*\.hot-update\.js',
+    // }),
   ],
+  optimization: {
+    splitChunks: {
+      chunks: 'all',
+    },
+  },
   mode: 'development',
   devtool: 'inline-source-map',
   entry: path.resolve(__dirname, '../../app/root.module.js'),
   output: {
     path: path.resolve(__dirname, '../../dist'),
-    filename: 'app.bundle.js',
+    filename: '[name].bundle.js',
     publicPath: '/',
   },
   devServer: {
@@ -96,7 +119,7 @@ module.exports = {
     port: 3000,
     host: '0.0.0.0',
     hot: true,
-    allowedHosts: [ '.phage.bcgsc.ca' ],
+    allowedHosts: ['.phage.bcgsc.ca'],
     publicPath: '/',
     historyApiFallback: true,
   },

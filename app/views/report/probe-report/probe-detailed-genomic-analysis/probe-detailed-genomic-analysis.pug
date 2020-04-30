@@ -13,7 +13,6 @@ section.detailedGenomicAnalysis
         ng-repeat="gene in $ctrl.approvedThisCancer track by $index",
         samples="$ctrl.samples",
         gene="gene",
-        pog="$ctrl.pog",
         report="$ctrl.report",
       ).container
 
@@ -24,7 +23,6 @@ section.detailedGenomicAnalysis
         ng-repeat="gene in $ctrl.approvedOtherCancer track by $index",
         samples="$ctrl.samples",
         gene="gene",
-        pog="$ctrl.pog",
         report="$ctrl.report",
       ).container
 
@@ -32,7 +30,7 @@ section.detailedGenomicAnalysis
       h2.title.print-subtitle Alterations With Potential Clinical Relevance
 
     div(ng-repeat="(alteration, genes) in $ctrl.alterationsGrouped")
-      h3(ng-if="alteration === 'unknown' || !$ctrl.showUnknown").title.print-subtitle.print-subtitle--pink 
+      h3(ng-if="alteration === 'unknown' || !$ctrl.showUnknown").title.print-subtitle.print-subtitle--pink
         | Known alterations with {{alteration}} relevance
 
       div(ng-if="genes.length == 0 && alteration !== 'unknown'")
@@ -42,7 +40,6 @@ section.detailedGenomicAnalysis
         ng-repeat="(i, gene) in genes track by $index",
         samples="$ctrl.samples",
         gene="gene",
-        pog="$ctrl.pog",
         report="$ctrl.report",
         print="$ctrl.print",
       ).container

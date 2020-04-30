@@ -1,6 +1,5 @@
 /**
  * All API calls relating to user object
- * @param {*} _ {@link https://lodash.com/docs/4.17.10}
  * @param {*} $http {@link https://docs.angularjs.org/api/ng/service/$http}
  * @return {Object} $user service object
  */

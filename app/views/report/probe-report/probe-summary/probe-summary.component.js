@@ -5,7 +5,6 @@ import '../../genomic-report/genomic-summary/genomic-summary.scss';
 import '../../genomic-report/genomic-report.scss';
 
 const bindings = {
-  pog: '<',
   report: '<',
   reportEdit: '<',
   testInformation: '<',
@@ -16,10 +15,9 @@ const bindings = {
 
 class ProbeSummaryComponent {
   /* @ngInject */
-  constructor($scope, PogService, $mdDialog, $mdToast, ProbeSignatureService,
+  constructor($scope, $mdDialog, $mdToast, ProbeSignatureService,
     PatientInformationService, GenomicEventsService) {
     this.$scope = $scope;
-    this.PogService = PogService;
     this.$mdDialog = $mdDialog;
     this.$mdToast = $mdToast;
     this.ProbeSignatureService = ProbeSignatureService;
@@ -47,7 +45,6 @@ class ProbeSummaryComponent {
 
           scope.update = async () => {
             await this.PatientInformationService.update(
-              this.pog.POGID,
               scope.patientInformation,
             );
             this.$mdDialog.hide({
@@ -82,7 +79,6 @@ class ProbeSummaryComponent {
 
           scope.update = async () => {
             await this.GenomicEventsService.update(
-              this.pog.POGID,
               this.report.ident,
               scope.event.ident,
               scope.event,
@@ -112,7 +108,7 @@ class ProbeSummaryComponent {
   async sign(role) {
     try {
       const resp = await this.ProbeSignatureService.sign(
-        this.pog.POGID, this.report.ident, role,
+        this.report.ident, role,
       );
       this.signature = resp;
       this.$scope.$digest();
@@ -125,7 +121,7 @@ class ProbeSummaryComponent {
   async revokeSign(role) {
     try {
       const resp = await this.ProbeSignatureService.revoke(
-        this.pog.POGID, this.report.ident, role,
+        this.report.ident, role,
       );
       this.signature = resp;
       this.$scope.$digest();

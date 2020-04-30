@@ -2,12 +2,12 @@ class GeneViewerService {
   /* @ngInject */
   constructor($http) {
     this.$http = $http;
-    this.api = `${CONFIG.ENDPOINTS.API}/POG`;
+    this.api = `${CONFIG.ENDPOINTS.API}/reports`;
   }
-  
-  async get(pog, report, gene) {
+
+  async get(report, gene) {
     const { data } = await this.$http.get(
-      `${this.api}/${pog}/report/${report}/geneviewer/${gene}`,
+      `${this.api}/${report}/gene-viewer/${gene}`,
     );
     return data;
   }

@@ -5,7 +5,6 @@ import './list-structural-variants.scss';
 
 const bindings = {
   svs: '<',
-  pog: '<',
   report: '<',
 };
 
@@ -47,9 +46,7 @@ class ListStructuralVariantsComponent {
         };
 
         // Extract Ensembl Name from String
-        $scope.ensemblName = (input) => {
-          return input.match(/(ENS[A-z0-9]*)/)[0];
-        };
+        $scope.ensemblName = input => input.match(/(ENS[A-z0-9]*)/)[0];
       }],
       clickOutToClose: true,
     });

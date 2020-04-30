@@ -55,7 +55,7 @@ export default angular.module('genomic', [])
             },
             {
               headerName: 'Report ID',
-              field: 'reportID',
+              field: 'reportIdent',
             },
             {
               headerName: 'Date Created',

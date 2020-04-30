@@ -3,7 +3,6 @@ import template from './mutation-signature.pug';
 import './mutation-signature.scss';
 
 const bindings = {
-  pog: '<',
   report: '<',
   mutationSummary: '<',
   mutationSignature: '<',
@@ -31,15 +30,13 @@ class MutationSignatureComponent {
     }
     this.processSignature(angular.copy(this.mutationSignature));
   }
-      
+
 
   // For pick mode, adds to selected Sigs
   addToSelection(signature) {
     // Remove from Selected Signatures
     if (this.selectedSigs.includes(signature.ident)) {
-      this.selectedSigs = this.selectedSigs.filter((sig) => {
-        return sig !== signature.ident;
-      });
+      this.selectedSigs = this.selectedSigs.filter((sig) => sig !== signature.ident);
     } else {
       this.selectedSigs.push(signature.ident);
     }
@@ -51,9 +48,7 @@ class MutationSignatureComponent {
     this.mutationSummary.mutationSignature = [];
     // Rebuild!
     this.selectedSigs.forEach((s) => {
-      const seek = this.mutationSignature.find((sig) => {
-        return sig.ident === s;
-      });
+      const seek = this.mutationSignature.find((sig) => sig.ident === s);
       // Found a seek
       if (seek) {
         // Check for modifier

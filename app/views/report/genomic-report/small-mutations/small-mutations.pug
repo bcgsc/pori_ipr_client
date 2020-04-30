@@ -48,19 +48,14 @@ section
 
 
       h3.title Mutational Spectrum
-      mutation-signature(pog="$ctrl.pog", report="$ctrl.report", mutation-signature="$ctrl.mutationSignature", mutation-summary="$ctrl.mutationSummary")
+      mutation-signature(report="$ctrl.report", mutation-signature="$ctrl.mutationSignature", mutation-summary="$ctrl.mutationSummary")
 
       div(layout="column", layout-align="center center")
         div
           img(data-ng-src="data:image/png;base64,{{$ctrl.images['mutSignature.snvsAllStrelka'].data}}")
 
-    div(layout="column", flex)
+    div(layout="column", flex).bg-white
       h2.title Small Mutations: Genomic Details
 
       div(ng-repeat="(title, smallMutation) in $ctrl.smallMutations")
-        h3(ng-if="title === 'biological'").title Variants of Biological Relevance
-        h3(ng-if="title === 'unknown'").title Variants of Unknown Significance in Known Cancer-Related Genes
-        h3(ng-if="title === 'clinical'").title Variants of Clinical Relevance
-        h3(ng-if="title === 'nostic'").title Variants of Prognostic or Diagnostic Relevance
-
-        small-mutation-variants(mutations="smallMutation", pog="$ctrl.pog", report="$ctrl.report")
+        react-table(column-defs="$ctrl.columnDefs", row-data="smallMutation", title-text="$ctrl.titleMap[title] || 'Other Variants'", report-id="$ctrl.report.ident")

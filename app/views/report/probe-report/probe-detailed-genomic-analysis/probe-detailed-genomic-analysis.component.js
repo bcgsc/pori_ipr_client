@@ -2,7 +2,6 @@ import template from './probe-detailed-genomic-analysis.pug';
 import './probe-detailed-genomic-analysis.scss';
 
 const bindings = {
-  pog: '<',
   report: '<',
   reportEdit: '<',
   alterations: '<',
@@ -13,11 +12,10 @@ const bindings = {
 
 class DetailedGenomicAnalysisComponent {
   /* @ngInject */
-  constructor($scope, $mdDialog, $mdToast, PogService) {
+  constructor($scope, $mdDialog, $mdToast) {
     this.$scope = $scope;
     this.$mdDialog = $mdDialog;
     this.$mdToast = $mdToast;
-    this.PogService = PogService;
   }
 
   $onInit() {
@@ -56,7 +54,7 @@ class DetailedGenomicAnalysisComponent {
   prependLink(link) {
     return (!link.includes('http://')) ? `http://${link}` : link;
   }
-  
+
   // Clean up PMIDs
   cleanPMID(pmid) {
     return pmid.match(/^[0-9]{8}/)[0];
@@ -81,7 +79,7 @@ class DetailedGenomicAnalysisComponent {
     });
     return collection;
   }
-  
+
   // Group Entries by Type
   groupEntries(alterations) {
     // Process the entries for grouping
@@ -90,26 +88,26 @@ class DetailedGenomicAnalysisComponent {
       if (this.samples.includes(row.sample)) {
         this.samples.push(row.sample);
       }
-      // Create new alteration type if it's not existing
-      if (!(Object.prototype.hasOwnProperty.call(this.alterationsGrouped, row.alterationType))) {
-        this.alterationsGrouped[row.alterationType] = [];
+      // Create new category(alteration type) if it's not existing
+      if (!(Object.prototype.hasOwnProperty.call(this.alterationsGrouped, row.category))) {
+        this.alterationsGrouped[row.category] = [];
       }
       // Check if it exists already?
-      if (this.alterationsGrouped[row.alterationType].length) {
+      if (this.alterationsGrouped[row.category].length) {
         /* eslint-disable-next-line arrow-body-style */
-        const match = this.alterationsGrouped[row.alterationType].findIndex((entry) => {
+        const match = this.alterationsGrouped[row.category].findIndex((entry) => {
           return ((entry.gene === row.gene) && (entry.variant === row.variant));
         });
         if (match > -1) {
           // Categorical entry already exists
-          this.alterationsGrouped[row.alterationType][match].children.push(row);
+          this.alterationsGrouped[row.category][match].children.push(row);
         } else {
           row.children = [];
-          this.alterationsGrouped[row.alterationType].push(row);
+          this.alterationsGrouped[row.category].push(row);
         }
       } else {
         row.children = [];
-        this.alterationsGrouped[row.alterationType].push(row);
+        this.alterationsGrouped[row.category].push(row);
       }
     });
   }

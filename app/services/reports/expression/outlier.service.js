@@ -2,33 +2,31 @@ class OutlierService {
   /* @ngInject */
   constructor($http) {
     this.$http = $http;
-    this.api = `${CONFIG.ENDPOINTS.API}/POG`;
+    this.api = `${CONFIG.ENDPOINTS.API}/reports`;
   }
 
   /**
    * Get all outliers
-   * @param {String} patient - patient ID as String
    * @param {String} report - report ident
    * @return {Promise} - API response data
 */
-  async all(patient, report) {
+  async all(report) {
     const { data } = await this.$http.get(
-      `${this.api}/${patient}/report/${report}/genomic/expressionAnalysis/outlier`,
+      `${this.api}/${report}/expression-variants`,
     );
     return data;
   }
 
   /**
    * Update a single case
-   * @param {String} patient - patient ID as String
    * @param {String} report - report ident
    * @param {String} ident - outlier ID
    * @param {Object} payload - object to update existing
    * @return {Promise} - API response data
    */
-  async updateOne(patient, report, ident, payload) {
+  async updateOne(report, ident, payload) {
     const { data } = await this.$http.put(
-      `${this.api}/${patient}/report/${report}/genomic/expressionAnalysis/outlier/${ident}`,
+      `${this.api}/${report}/expression-variants/${ident}`,
       payload,
     );
     return data;
@@ -36,14 +34,13 @@ class OutlierService {
 
   /**
    * Get the outlier type
-   * @param {String} patient - patient ID as String
    * @param {String} report - report ident
    * @param {String} type - type
    * @return {Promise} - API response data
    */
-  async getType(patient, report, type) {
+  async getType(report, type) {
     const { data } = await this.$http.get(
-      `${this.api}/${patient}/report/${report}/genomic/expressionAnalysis/outlier/${type}`,
+      `${this.api}/${report}/expression-variants/${type}`,
     );
     return data;
   }

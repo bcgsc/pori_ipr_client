@@ -1,8 +1,8 @@
 import template from './structural-variants.pug';
+import columnDefs, { setHeaderName } from './columnDefs';
 import './structural-variants.scss';
 
 const bindings = {
-  pog: '<',
   report: '<',
   images: '<',
   structuralVariants: '<',
@@ -13,37 +13,36 @@ const bindings = {
 
 class StructuralVariantsComponent {
   /* @ngInject */
-  constructor(PogService) {
-    this.PogService = PogService;
+  constructor() {
     this.firstGeneClicked = false;
     this.secondGeneClicked = false;
   }
 
   $onInit() {
+    setHeaderName(`${this.report.tumourAnalysis.diseaseExpressionComparator || ''} %ile`, 'tcgaPerc');
+    setHeaderName(`Fold Change vs ${this.report.tumourAnalysis.normalExpressionComparator}`, 'foldChange');
+    this.columnDefs = columnDefs;
     this.StrucVars = {};
     this.titleMap = {
       clinical: 'Gene Fusions of Potential Clinical Relevance',
       nostic: 'Gene Fusions of Prognostic and Diagnostic Relevance',
       biological: 'Gene Fusions with Biological Relevance',
       fusionOmicSupport: 'Gene Fusions with Genome and Transcriptome Support',
+      uncharacterized: 'Uncharacterized Gene Fusions',
     };
     this.processSvs(this.structuralVariants);
     this.pickComparator();
     this.processMutationSummaryImages(this.mutationSummaryImages);
   }
 
-  
+
   pickComparator() {
-    let search = this.mutationSummary.find((entry) => {
-      return entry.comparator === this.report.tumourAnalysis.diseaseExpressionComparator;
-    });
-    
+    let search = this.mutationSummary.find(entry => entry.comparator === this.report.tumourAnalysis.diseaseExpressionComparator);
+
     if (!search) {
-      search = this.mutationSummary.find((entry) => {
-        return entry.comparator === 'average';
-      });
+      search = this.mutationSummary.find(entry => entry.comparator === 'average');
     }
-    
+
     this.mutationSummary = search;
   }
 
@@ -59,24 +58,24 @@ class StructuralVariantsComponent {
         sv: null,
       },
     };
-    
+
     Object.values(images).forEach((img) => {
       if (!img.key.includes('sv')) {
         return;
       }
-  
+
       const pieces = img.key.split('.');
       img.comparator = pieces[2] || null;
       if (!img.comparator) {
         // If no comparator found in image, likely legacy and use report setting.
-        img.comparator = this.report.tumourAnalysis.diseaseExpressionComparator;
+        img.comparator = this.report.tumourAnalysis.diseaseExpressionComparator || '';
       }
-  
+
       if (img.comparator.toLowerCase()
         && !sorted.comparators.some(comp => comp.name === img.comparator.toLowerCase())) {
         sorted.comparators.push({ name: img.comparator.toLowerCase(), visible: false });
       }
-  
+
       if (pieces[1].includes('barplot_sv') || pieces[1] === 'bar_sv') {
         sorted.sv.barplot.push(img);
       }
@@ -89,7 +88,7 @@ class StructuralVariantsComponent {
     });
     this.mutationSummaryImages = sorted;
   }
-  
+
   /**
    * Retrieve specific mutation summary image
    *
@@ -106,42 +105,50 @@ class StructuralVariantsComponent {
         return img[0];
       }
     }
-    return this.mutationSummaryImages[type][graph].find((entry) => {
-      return (entry.comparator.toLowerCase() === comparator.toLowerCase());
-    });
+    return this.mutationSummaryImages[type][graph].find(entry => (entry.comparator.toLowerCase() === comparator.toLowerCase()));
   }
-  
-  
+
+
   processSvs(structVars) {
     const svs = {
       clinical: [],
       nostic: [],
       biological: [],
       fusionOmicSupport: [],
+      uncharacterized: [],
     };
+
     // Run over mutations and group
-    Object.values(structVars).forEach((row) => {
-      // append mavis summary to row if it has a mavis_product_id
-      const sv = row;
-      if (row.mavis_product_id) {
-        try {
-          sv.summary = this.mavisSummary.find((entry) => {
-            return entry.product_id === sv.mavis_product_id;
-          }).summary;
-        } catch (err) {
-          console.info('No matching Mavis summary was found.');
-        }
+    for (const row of Object.values(structVars)) {
+      let uncharacterized = true;
+      // Therapeutic? => clinical
+      if (row.kbMatches.some(m => m.category === 'therapeutic')) {
+        svs.clinical.push(row);
+        uncharacterized = false;
       }
 
-      // Setting fields to omit from details viewer
-      delete sv.mavis_product_id;
-
-      if (!(sv.svVariant in svs)) {
-        svs[sv.svVariant] = [];
+      // Diagnostic || Prognostic? => nostic
+      if (row.kbMatches.some(m => m.category === 'diagnostic' || m.category === 'prognostic')) {
+        svs.nostic.push(row);
+        uncharacterized = false;
       }
-      // Add to type
-      svs[sv.svVariant].push(sv);
-    });
+
+      // Biological ? => Biological
+      if (row.kbMatches.some(m => m.category === 'biological')) {
+        svs.biological.push(row);
+        uncharacterized = false;
+      }
+
+      // fusionOmicSupport? (check sv.omicSupport) => fusionOmicSupport
+      if (row.omnicSupport) {
+        svs.fusionOmicSupport.push(row);
+        uncharacterized = false;
+      }
+      // Unknown
+      if (uncharacterized) {
+        svs.uncharacterized.push(row);
+      }
+    }
 
     // Set Small Mutations
     this.StrucVars = svs;

@@ -22,7 +22,7 @@ div(flex, layout="column")
         div(ng-click="$ctrl.geneClicked = true; $ctrl.geneIndex = $index", flex).clickable.underlined
          | {{cnv.gene}}
         gene-viewer(ng-if="$ctrl.geneClicked", ng-init="$ctrl.geneClicked = false",
-          report="$ctrl.report", pog="$ctrl.pog", gene="$ctrl.cnvs[$ctrl.geneIndex].gene")
+          report="$ctrl.report", gene="$ctrl.cnvs[$ctrl.geneIndex].gene")
         div(flex) {{cnv.ploidyCorrCpChange}}
         div(flex) {{cnv.lohState}}
         div(flex) {{cnv.cnvState}}

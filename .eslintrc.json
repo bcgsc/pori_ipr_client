@@ -88,6 +88,12 @@
         "functions": false
     }],
     "indent": ["error", 2, { "SwitchCase": 1 }],
-    "template-curly-spacing": ["error", "never"]
+    "template-curly-spacing": ["error", "never"],
+    "no-restricted-syntax": [
+      "error",
+      "ForInStatement",
+      "LabeledStatement",
+      "WithStatement"
+    ]
   }
 }

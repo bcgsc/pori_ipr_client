@@ -6,10 +6,10 @@ section.patient-info
   div(layout="column", flex).details.patient-info__details
     div(layout="row", flex).patient-info__description-container
       dt(flex="{{$ctrl.detailSize}}", ng-init="$ctrl.detailSize=10").patient-info__description-term Patient ID:
-      dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.POGID}}
+      dd(flex).patient-info__description-details {{$ctrl.report.patientId}}
 
       dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Alternate ID:
-      dd(flex).patient-info__description-details {{$ctrl.report.pog.alternate_identifier || 'N/A'}}
+      dd(flex).patient-info__description-details {{$ctrl.report.alternateIdentifier || 'N/A'}}
 
       dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Sex:
       dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.gender}}
@@ -19,7 +19,7 @@ section.patient-info
       dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.tumourSample}}
 
       dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Tumour Type:
-      dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.tumourType}}
+      dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.diagnosis}}
 
       dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Constitutional Sample:
       dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.constitutionalSample}}
@@ -42,14 +42,14 @@ section.patient-info
       dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.age}}
 
       dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Age of Consent:
-      dd(flex).patient-info__description-details {{$ctrl.report.pog.age_of_consent || 'Not Specified'}}
+      dd(flex).patient-info__description-details {{$ctrl.report.ageOfConsent || 'Not Specified'}}
 
     div(layout="row", flex).patient-info__description-container
       dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Protocol:
       dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.tumourProtocol}}
 
       dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Biopsy:
-      dd(flex).patient-info__description-details {{$ctrl.report.analysis.analysis_biopsy || 'N/A'}}
+      dd(flex).patient-info__description-details {{$ctrl.report.biopsyName || 'N/A'}}
 
       dt(flex="{{$ctrl.detailSize}}")
       dd(flex)
@@ -102,7 +102,7 @@ section.test-info
           div(layout="row").row
             span(flex=40) # Fusion Variants Screened
             span {{$ctrl.testInformation.fusionVars}}
-      
+
       div(layout="row", ng-if="$ctrl.print", flex).test-info__box
         div(layout="column", flex=50)
           div(layout="row").test-info__header

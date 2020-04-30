@@ -1,9 +1,6 @@
 import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { AgGridReact } from 'ag-grid-react';
-
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-material.css';
+import { AgGridReact } from '@ag-grid-community/react';
 
 import './index.scss';
 
@@ -23,12 +20,13 @@ function ReportsTableComponent(props) {
   } = props;
 
   const gridApi = useRef();
+  const columnApi = useRef();
 
   const [rowData, setRowData] = useState();
 
   const onGridReady = async (params) => {
     gridApi.current = params.api;
-    gridApi.current.sizeColumnsToFit();
+    columnApi.current = params.columnApi;
 
     const opts = {
       all: true,
@@ -41,39 +39,54 @@ function ReportsTableComponent(props) {
 
     let { reports } = await ReportService.allFiltered(opts);
 
-    // Remove test reports that are missing the patient info section
-    reports = reports.filter(r => r.patientInformation);
-
     setRowData(reports.map((report) => {
       const [analyst] = report.users
         .filter(u => u.role === 'analyst' && !u.deletedAt)
         .map(u => u.user);
-      
+
+      if (!report.patientInformation) {
+        report.patientInformation = {};
+      }
+
       return {
-        patientID: report.pog.POGID,
-        analysisBiopsy: report.analysis.analysis_biopsy,
+        patientID: report.patientId,
+        analysisBiopsy: report.biopsyName,
         reportType: report.type === 'genomic' ? 'Genomic' : 'Targeted Gene',
         state: report.state,
         caseType: report.patientInformation.caseType,
-        project: report.pog.projects.map(project => project.name).sort().join(', '),
+        project: report.projects.map(project => project.name).sort().join(', '),
         physician: report.patientInformation.physician,
         analyst: analyst ? `${analyst.firstName} ${analyst.lastName}` : null,
-        tumourType: report.patientInformation.tumourType,
-        reportID: report.ident,
+        reportIdent: report.ident,
+        tumourType: report.patientInformation.diagnosis,
         date: report.createdAt,
       };
     }));
+
+    const allCols = columnApi.current.getAllColumns().map(col => col.colId);
+    columnApi.current.autoSizeColumns(allCols);
+  };
+
+  const onGridSizeChanged = (params) => {
+    const MEDIUM_SCREEN_WIDTH_LOWER = 992;
+
+    if (params.clientWidth >= MEDIUM_SCREEN_WIDTH_LOWER) {
+      gridApi.current.sizeColumnsToFit();
+    } else {
+      const allCols = columnApi.current.getAllColumns().map(col => col.colId);
+      columnApi.current.autoSizeColumns(allCols);
+    }
   };
 
   const onSelectionChanged = () => {
     const selectedRow = gridApi.current.getSelectedRows();
-    const [{ patientID, reportID }] = selectedRow;
+    const [{ reportIdent }] = selectedRow;
     let [{ reportType }] = selectedRow;
 
     // Convert displayed report type (Genomic, Targeted gene) back to the API values
     reportType = reportType === 'Genomic' ? 'genomic' : 'probe';
-    $state.go(`root.reportlisting.pog.${reportType}.summary`, {
-      POG: patientID, analysis_report: reportID,
+    $state.go(`root.reportlisting.${reportType}.summary`, {
+      analysis_report: reportIdent,
     });
   };
 
@@ -94,6 +107,7 @@ function ReportsTableComponent(props) {
         rowSelection="single"
         onSelectionChanged={onSelectionChanged}
         onGridReady={onGridReady}
+        onGridSizeChanged={onGridSizeChanged}
       />
     </div>
   );

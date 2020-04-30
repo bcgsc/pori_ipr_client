@@ -2,12 +2,12 @@ class TargetedGenesService {
   /* @ngInject */
   constructor($http) {
     this.$http = $http;
-    this.api = `${CONFIG.ENDPOINTS.API}/POG`;
+    this.api = `${CONFIG.ENDPOINTS.API}/reports`;
   }
 
-  async getAll(pog, report) {
+  async getAll(report) {
     const { data } = await this.$http.get(
-      `${this.api}/${pog}/report/${report}/genomic/detailedGenomicAnalysis/targetedGenes`,
+      `${this.api}/${report}/probe-results`,
     );
     return data;
   }

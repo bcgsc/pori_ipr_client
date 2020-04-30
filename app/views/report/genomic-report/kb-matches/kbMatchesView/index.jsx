@@ -3,8 +3,15 @@ import PropTypes from 'prop-types';
 
 const coalesceEntries = (entries) => {
   const bucketKey = (entry, delimiter = '||') => {
-    const { gene, therapeuticContext, variant } = entry;
-    return `${gene}${delimiter}${therapeuticContext}${delimiter}${variant}`;
+    if (entry.variant.gene1) {
+      const {
+        context,
+        variant: { name: variantName, gene1: { name: gene1Name }, gene2: { name: gene2Name } },
+      } = entry;
+      return `${gene1Name}${delimiter}${gene2Name}${delimiter}${context}${delimiter}${variantName}`;
+    }
+    const { context, variant: { name: variantName, gene: { name: geneName } } } = entry;
+    return `${geneName}${delimiter}${context}${delimiter}${variantName}`;
   };
 
   const buckets = {};
@@ -13,21 +20,26 @@ const coalesceEntries = (entries) => {
     const key = bucketKey(entry);
     if (!buckets[key]) {
       buckets[key] = {
-        ...entry, disease: new Set([entry.disease]), reference: new Set([entry.reference]),
+        ...entry, disease: new Set([entry.disease]), reference: new Set(entry.reference.split(';')),
       };
     } else {
       buckets[key].disease.add(entry.disease);
       buckets[key].reference.add(entry.reference);
     }
   });
+
+  Object.values(buckets).forEach((val) => {
+    val.disease = [...val.disease];
+    val.reference = [...val.reference];
+  });
   return Object.values(buckets);
 };
 
 const extractCategories = (entries, category) => {
   const grouped = new Set();
-  
+
   entries.forEach((row) => {
-    if (row.alterationType === category) {
+    if (row.category === category) {
       grouped.add(row);
     }
   });
@@ -44,6 +56,7 @@ const extractCategories = (entries, category) => {
  * @param {array} otherCancer therapies approved for other cancer types
  * @param {array} targetedGenes genes found in the targeted gene report
  * @param {func} kbMatchesComponent react component to mutate
+ * @param {object} report report object
  * @returns {*} JSX
  */
 function KBMatchesView(props) {
@@ -55,61 +68,63 @@ function KBMatchesView(props) {
     otherCancer,
     targetedGenes,
     kbMatchesComponent,
+    report,
   } = props;
 
   const KbMatchesComponent = kbMatchesComponent;
 
   const [syncedTableData] = useState({
     thisCancer: {
-      title: 'Therapies Approved In This Cancer Type',
+      titleText: 'Therapies Approved In This Cancer Type',
       rowData: coalesceEntries(thisCancer),
     },
     otherCancer: {
-      title: 'Therapies Approved In Other Cancer Type',
+      titleText: 'Therapies Approved In Other Cancer Type',
       rowData: coalesceEntries(otherCancer),
     },
     therapeutic: {
-      title: 'Therapeutic Alterations',
+      titleText: 'Therapeutic Alterations',
       rowData: extractCategories(coalesceEntries(alterations), 'therapeutic'),
     },
     diagnostic: {
-      title: 'Diagnostic Alterations',
+      titleText: 'Diagnostic Alterations',
       rowData: extractCategories(coalesceEntries(alterations), 'diagnostic'),
     },
     prognostic: {
-      title: 'Prognostic Alterations',
+      titleText: 'Prognostic Alterations',
       rowData: extractCategories(coalesceEntries(alterations), 'prognostic'),
     },
     biological: {
-      title: 'Biological Alterations',
+      titleText: 'Biological Alterations',
       rowData: extractCategories(coalesceEntries(alterations), 'biological'),
     },
   });
 
   const [unsyncedTableData] = useState({
-    title: 'Detected Alterations From Targeted Gene Report',
+    titleText: 'Detected Alterations From Targeted Gene Report',
     rowData: targetedGenes,
   });
 
   const hiddenTableData = useRef({
     novel: {
-      title: 'Alterations For Review',
+      titleText: 'Alterations For Review',
       rowData: coalesceEntries(novel),
       show: false,
     },
     unknown: {
-      title: 'Uncharacterized Alterations',
+      titleText: 'Uncharacterized Alterations',
       rowData: coalesceEntries(unknown),
       show: false,
     },
   });
-  
+
 
   return (
     <KbMatchesComponent
       syncedTableData={syncedTableData}
       unsyncedTableData={unsyncedTableData}
       hiddenTableData={hiddenTableData}
+      reportIdent={report.ident}
     />
   );
 }
@@ -122,6 +137,7 @@ KBMatchesView.propTypes = {
   otherCancer: PropTypes.arrayOf(PropTypes.object).isRequired,
   targetedGenes: PropTypes.arrayOf(PropTypes.object).isRequired,
   kbMatchesComponent: PropTypes.func.isRequired,
+  report: PropTypes.objectOf(PropTypes.any).isRequired,
 };
 
 export default KBMatchesView;
