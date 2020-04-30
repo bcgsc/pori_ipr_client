@@ -7,7 +7,7 @@ section
 
       h2.title Microbial Integration
 
-      p(ng-if="!$ctrl.images['microbial.circos.genome'] && !$ctrl.images['microbial.circos.transcriptome'] && !$ctrlimages['microbial.circos']").padding-left-10 Microbial integration circos plots are not applicable for this case
+      p(ng-if="!$ctrl.images['microbial.circos.genome'] && !$ctrl.images['microbial.circos.transcriptome'] && !$ctrlimages['microbial.circos']").microbial__none Microbial integration circos plots are not applicable for this case
 
       md-tabs(md-dynamic-height=true, md-center-tabs=true).margin-bottom-20
         md-tab(label="Genome", ng-if="$ctrl.images['microbial.circos.genome']")
