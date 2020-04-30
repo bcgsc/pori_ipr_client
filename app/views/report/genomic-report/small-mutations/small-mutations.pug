@@ -6,7 +6,7 @@ section
     div(layout="column", flex).bg-white
 
       h2.title Small Somatic Mutations
-      h3.title Summary of Somatic Events
+      h2.title Summary of Somatic Events
 
       div(layout="row").mutation-summary-images
         div(layout="column", flex=15).comparator-list
@@ -47,7 +47,7 @@ section
                 img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{$ctrl.mutationSummaryImages.legend.snv_indel.data}}")
 
 
-      h3.title Mutational Spectrum
+      h2.title Mutational Spectrum
       mutation-signature(report="$ctrl.report", mutation-signature="$ctrl.mutationSignature", mutation-summary="$ctrl.mutationSummary")
 
       div(layout="column", layout-align="center center")
