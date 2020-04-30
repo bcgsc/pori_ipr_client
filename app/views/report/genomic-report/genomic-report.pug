@@ -29,7 +29,7 @@ md-content(flex).layout-fill
               md-icon(ng-if="!section.showChildren && section.children.length > 0") arrow_drop_down
               md-icon(ng-if="section.showChildren || section.children.length < 0") arrow_drop_up
 
-            ul(ng-if="section.children.length > 0 && section.showChildren")
+            ul(ng-show="section.children.length > 0 && section.showChildren")
               li(ng-repeat="child in section.children", ng-click="$ctrl.goToReportSection(child.state)"
                 ng-class="{active: $ctrl.activeSection(child.state), disabled: (child.disabled), clickable: (!child.disabled)}"
               )
