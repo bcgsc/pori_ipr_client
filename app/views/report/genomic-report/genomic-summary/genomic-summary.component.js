@@ -103,7 +103,7 @@ class GenomicSummaryComponent {
   /* eslint-disable-next-line class-methods-use-this */
   variantCategory(variant) {
     // small mutations
-    if (/:[pgc]\./.exec(variant.geneVariant)) {
+    if (/[:(][gcp]\./.exec(variant.geneVariant)) {
       variant.type = 'smallMutation';
       return variant;
     }
