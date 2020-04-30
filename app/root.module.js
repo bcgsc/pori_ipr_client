@@ -160,6 +160,8 @@ export default angular.module('root')
 
     const gscGreen = $mdThemingProvider.extendPalette('green', {
       A200: theme.secondaryMain,
+      A700: theme.secondaryLight,
+      contrastDefaultColor: 'light',
     });
 
     $mdThemingProvider.definePalette('printGrey', printGrey);
