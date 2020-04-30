@@ -42,6 +42,19 @@
 
 
 @media screen {
+  .analyst {
+     &__edit {
+       padding: 0;
+       margin: 0;
+       float: right;
+     }
+
+     &__comments {
+       margin: 16px;
+       padding: 4px 8px;
+     }
+  }
+
   .analystComments {
     
     .edit-icon {
