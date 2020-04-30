@@ -54,6 +54,16 @@ const columnDefs = [{
   ),
   hide: false,
 }, {
+  headerName: 'Oncogene',
+  colId: 'oncogene',
+  valueGetter: params => (params.data.gene1.oncogene || params.data.gene2.oncogene),
+  hide: true,
+}, {
+  headerName: 'Tumour Suppressor',
+  colId: 'tumourSuppressor',
+  valueGetter: params => (params.data.gene1.tumourSuppressor || params.data.gene2.tumourSuppressor),
+  hide: true,
+}, {
   headerName: 'Actions',
   cellRenderer: 'ActionCellRenderer',
   pinned: 'right',
