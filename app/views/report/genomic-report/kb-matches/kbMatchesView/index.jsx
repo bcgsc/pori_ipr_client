@@ -105,7 +105,7 @@ function KBMatchesView(props) {
 
   const hiddenTableData = useRef({
     unknown: {
-      titleText: 'Uncharacterized Alterations',
+      titleText: 'Other Alterations',
       rowData: coalesceEntries(unknown),
       show: false,
     },
