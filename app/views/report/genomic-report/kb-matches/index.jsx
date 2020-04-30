@@ -40,7 +40,7 @@ function KBMatches(props) {
   const [visibleColumns, setVisibleColumns] = useState(
     localStorage.getItem(VISIBLE)
       ? localStorage.getItem(VISIBLE).split(',')
-      : columnDefs.filter(c => !c.hide).map(c => c.field),
+      : columnDefs.filter(c => !c.hide).map(c => c.colId),
   );
 
   const [filterText, setFilterText] = useState('');
