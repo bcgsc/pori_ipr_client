@@ -1,4 +1,4 @@
-h2 {{$ctrl.entry.user.firstName}} {{$ctrl.entry.user.lastName}}
+h2.title {{$ctrl.entry.user.firstName}} {{$ctrl.entry.user.lastName}}
   md-icon(ng-if="$ctrl.entry.user.username === $ctrl.user.username && !$ctrl.removed", ng-click="$ctrl.edit()").small.clickable edit
   span(am-time-ago="$ctrl.entry.createdAt").clickable 
     md-tooltip {{$ctrl.entry.createdAt | date: 'EEEE, MMMM d, y HH:mm'}}
@@ -16,4 +16,4 @@ div(ng-if="$ctrl.editing").edit-entry
         md-button(ng-click="$ctrl.remove()").md-raised.md-warn Remove
         span(flex)
         md-button(ng-click="$ctrl.cancelEdit()").md-seconary.md-raised Cancel
-        md-button(type="submit").md-primary.md-raised Save
+        md-button(type="submit").md-accent.md-raised Save
