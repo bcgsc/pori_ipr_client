@@ -770,7 +770,7 @@ md-dialog-content {
         }
 
         &.active {
-          background-color: $secondary;
+          background-color: $palette__primary--main;
           color: rgb(255,255,255);
 
           > md-icon {
@@ -802,7 +802,7 @@ md-dialog-content {
           }
 
           &.active {
-            background-color: $secondary;
+            background-color: $palette__primary--main;
             color: rgb(255,255,255);
           }
 
