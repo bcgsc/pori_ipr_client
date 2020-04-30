@@ -720,6 +720,8 @@ md-dialog-content {
 
 
 .reportMenu {
+  height: 100%;
+  border-left: 1px solid $black-12;
 
   h1 {
     font-size: 16px;
@@ -814,5 +816,15 @@ md-dialog-content {
       }
     }
 
+  }
+}
+
+.report-menu {
+  &__container {
+    height: calc(100vh - 56px);
+    position: sticky;
+    top: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 }
