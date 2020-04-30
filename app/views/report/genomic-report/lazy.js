@@ -114,16 +114,10 @@ const kbMatches = {
         { approvedTherapy: false, category: 'therapeutic,biological,diagnostic,prognostic' },
       ),
     ],
-    novel: ['$transition$', 'AlterationService',
-      async ($transition$, AlterationService) => AlterationService.getType(
-        $transition$.params().analysis_report,
-        { category: 'novel' },
-      ),
-    ],
     unknown: ['$transition$', 'AlterationService',
       async ($transition$, AlterationService) => AlterationService.getType(
         $transition$.params().analysis_report,
-        { category: 'unknown' },
+        { category: 'unknown,novel' },
       ),
     ],
     thisCancer: ['$transition$', 'AlterationService',
