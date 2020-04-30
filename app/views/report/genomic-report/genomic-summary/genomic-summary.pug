@@ -244,10 +244,6 @@ md-content
 
       div(flex, ng-if="!$ctrl.print", layout="row", layout-align="end end").keyAlterationsIdentified.margin-bottom-10
         div(flex=10, ng-click="$ctrl.setMutationMask(null)", ng-if="$ctrl.mutationMask").margin-bottom-10.text-small.clickable View all
-        span(flex)
-        div(flex=25, layout="row").header.vus
-          div(flex) Variants of unknown significance
-          div(flex=30) {{$ctrl.variantCounts.variantsUnknown}}
 
       div(flex, ng-if="$ctrl.print", layout="row", layout-align="end end")
         div(layout="row")

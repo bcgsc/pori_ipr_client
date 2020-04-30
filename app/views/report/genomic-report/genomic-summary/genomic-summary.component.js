@@ -39,7 +39,6 @@ class GenomicSummaryComponent {
       smallMutation: 0,
       expressionOutlier: 0,
       structuralVariant: 0,
-      variantsUnknown: this.variantCounts.variantsUnknown,
     };
     this.mutationMask = null;
     this.tumourAnalysis = this.report.tumourAnalysis;
@@ -131,7 +130,6 @@ class GenomicSummaryComponent {
       smallMutation: 0,
       expressionOutlier: 0,
       structuralVariant: 0,
-      variantsUnknown: this.variantCounts.variantsUnknown,
     };
 
     variants.forEach((variant, k) => {
