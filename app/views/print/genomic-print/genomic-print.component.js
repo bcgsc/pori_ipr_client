@@ -20,7 +20,6 @@ const bindings = {
   structuralVariants: '<',
   mavisSummary: '<',
   outliers: '<',
-  drugTargets: '<',
   densityGraphs: '<',
   tcgaAcronyms: '<',
   slides: '<',

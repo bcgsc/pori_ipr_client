@@ -1,9 +1,6 @@
 import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { AgGridReact } from 'ag-grid-react';
-
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-material.css';
+import { AgGridReact } from '@ag-grid-community/react';
 
 import './index.scss';
 
@@ -42,13 +39,14 @@ function ReportsTableComponent(props) {
 
     let { reports } = await ReportService.allFiltered(opts);
 
-    // Remove test reports that are missing the patient info section
-    reports = reports.filter(r => r.patientInformation);
-
     setRowData(reports.map((report) => {
       const [analyst] = report.users
         .filter(u => u.role === 'analyst' && !u.deletedAt)
         .map(u => u.user);
+
+      if (!report.patientInformation) {
+        report.patientInformation = {};
+      }
 
       return {
         patientID: report.patientId,
@@ -59,8 +57,8 @@ function ReportsTableComponent(props) {
         project: report.projects.map(project => project.name).sort().join(', '),
         physician: report.patientInformation.physician,
         analyst: analyst ? `${analyst.firstName} ${analyst.lastName}` : null,
-        tumourType: report.patientInformation.tumourType,
-        reportID: report.ident,
+        reportIdent: report.ident,
+        tumourType: report.patientInformation.diagnosis,
         date: report.createdAt,
       };
     }));
@@ -82,13 +80,13 @@ function ReportsTableComponent(props) {
 
   const onSelectionChanged = () => {
     const selectedRow = gridApi.current.getSelectedRows();
-    const [{ reportID }] = selectedRow;
+    const [{ reportIdent }] = selectedRow;
     let [{ reportType }] = selectedRow;
 
     // Convert displayed report type (Genomic, Targeted gene) back to the API values
     reportType = reportType === 'Genomic' ? 'genomic' : 'probe';
     $state.go(`root.reportlisting.${reportType}.summary`, {
-      analysis_report: reportID,
+      analysis_report: reportIdent,
     });
   };
 

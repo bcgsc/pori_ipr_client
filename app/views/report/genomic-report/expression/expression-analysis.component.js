@@ -83,21 +83,37 @@ class ExpressionAnalysisComponent {
       clinical: [],
       nostic: [],
       biological: [],
-      upreg_onco: [],     //  Check for expression_class (str) and gene.oncogene (bool)
-      downreg_tsg: [],    //  Check for expression_class (str) and gene.tumourSuppressor (bool)
+      upreg_onco: [], //  Check for expression_class (str) and gene.oncogene (bool)
+      downreg_tsg: [], //  Check for expression_class (str) and gene.tumourSuppressor (bool)
     };
 
     // Run over mutations and group
-    input.forEach((row) => {
-      let { gene: { tumourSuppressor, oncogene }, expression_class: expLvl } = row;
-      if (tumourSuppressor && expLvl === EXPLEVEL.OUT_LOW) {
+    for (const row of input) {
+      const { gene: { tumourSuppressor, oncogene }, expression_class: expressionClass } = row;
+      if (tumourSuppressor && expressionClass === EXPLEVEL.OUT_LOW) {
         expressions.downreg_tsg.push(row);
       }
-      if (oncogene && EXPLEVEL.UP.includes(expLvl)) {
+      if (oncogene && EXPLEVEL.UP.includes(expressionClass)) {
         expressions.upreg_onco.push(row);
       }
-      // TODO: clinical, nostic, and biological to come 
-    });
+
+      // KB matches
+      // Therapeutic? => clinical
+      if (row.kbMatches.some(m => m.category === 'therapeutic')) {
+        expressions.clinical.push(row);
+      }
+
+      // Diagnostic || Prognostic? => nostic
+      if (row.kbMatches.some(m => m.category === 'diagnostic' || m.category === 'prognostic')) {
+        expressions.nostic.push(row);
+      }
+
+      // Biological ? => Biological
+      if (row.kbMatches.some(m => m.category === 'biological')) {
+        expressions.biological.push(row);
+      }
+    }
+
     this.expOutliers = expressions;
   }
 

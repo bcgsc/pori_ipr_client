@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  IconButton, Tooltip,
+  IconButton,
 } from '@material-ui/core';
 import {
   Edit,
   Photo,
   LibraryBooks,
+  OpenInNew,
 } from '@material-ui/icons';
 import DetailDialog from '../DetailDialog';
 import SvgViewer from '../SvgViewer';
@@ -25,25 +26,28 @@ function ActionCellRenderer(params) {
       EditDialog,
       reportIdent,
       tableType,
-      arrayColumns,
     },
     node,
+    columnApi,
   } = params;
 
-  const [detailData, setDetailData] = useState({});
   const [showDetailDialog, setShowDetailDialog] = useState(false);
   const [showSvgViewer, setShowSvgViewer] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
+  const [columnMapping, setColumnMapping] = useState({});
+
+  useEffect(() => {
+    if (showDetailDialog) {
+      setColumnMapping(
+        columnApi.getAllColumns().reduce((accumulator, current) => {
+          accumulator[current.colId] = columnApi.getDisplayNameForColumn(current);
+          return accumulator;
+        }, {}),
+      );
+    }
+  }, [showDetailDialog]);
 
   const detailClick = () => {
-    const propagateObject = Object.entries(data).reduce((accumulator, [key, value]) => {
-      if (typeof value !== 'object') {
-        accumulator[key] = value;
-      }
-      return accumulator;
-    }, {});
-
-    setDetailData(propagateObject);
     setShowDetailDialog(true);
   };
 
@@ -74,12 +78,26 @@ function ActionCellRenderer(params) {
           <LibraryBooks />
         </IconButton>
       )}
+      {data.kbStatementId && data.kbStatementId.match(/^#?-?\d+:-?\d+$/)
+        ? (
+          <IconButton
+            size="small"
+            aria-label="Open in GraphKB"
+            title="Open in GraphKB"
+            href={`${CONFIG.ENDPOINTS.GRAPHKB}/view/Statement/${data.kbStatementId.replace('#', '')}`}
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            <OpenInNew />
+          </IconButton>
+        ) : null
+      }
       {showDetailDialog && (
         <DetailDialog
           open={showDetailDialog}
-          selectedRow={detailData}
+          selectedRow={data}
           onClose={handleDetailClose}
-          arrayColumns={arrayColumns}
+          columnMapping={columnMapping}
         />
       )}
       {editable && (

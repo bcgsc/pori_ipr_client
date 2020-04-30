@@ -2,7 +2,7 @@ md-content(flex, layout="column").md-padding.biopsyBoard.germline_report
 
   h1.md-title Germline Reports
   div(layout="row")
-    h2(layout="row").header--center {{$ctrl.report.patientId}} {{ '- ' + $ctrl.report.analysis.libraries.normal || 'DummyNormalLibName'}}
+    h2(layout="row").header--center {{$ctrl.report.patientId}} {{ '- ' + $ctrl.report.normalLibrary || 'DummyNormalLibName'}}
     span(flex)
     md-button(ng-click="$ctrl.removeReport()").md-raised.md-primary Remove
 

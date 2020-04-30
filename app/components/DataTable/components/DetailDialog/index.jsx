@@ -8,12 +8,14 @@ import Divider from '@material-ui/core/Divider';
 
 import './index.scss';
 
+const { compare } = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+
 /**
  * @param {object} props props
  * @param {func} props.onClose callback function to run on close
  * @param {object} props.selectedRow row data for selected row
  * @param {bool} props.open is the dialog open
- * @param {array} props.arrayColumns list of columns containing array data
+ * @param {object} props.columnMapping mapping object for displayed col names
  * @return {*} jsx
  */
 function DetailDialog(props) {
@@ -21,14 +23,97 @@ function DetailDialog(props) {
     onClose,
     selectedRow,
     open,
-    arrayColumns,
+    columnMapping,
   } = props;
 
   const handleClose = (value) => {
     onClose(value);
   };
 
-  const { compare } = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+  const printRow = rows => Object.entries(rows)
+    .sort(compare)
+    .map(([key, value], index, rowEntries) => {
+      if (key === 'ident' || value === null) {
+        return null;
+      }
+
+      if (Array.isArray(value)) {
+        return (
+          <React.Fragment key={key}>
+            <div className="detail-dialog__row">
+              <Typography variant="subtitle2" display="inline">
+                {`${columnMapping[key] || key}:  [`}
+              </Typography>
+            </div>
+            {value.length ? (
+              <>
+                <div className="detail-dialog__inner-row">
+                  {value.map(((arrVal, innerIndex) => (
+                    // eslint-disable-next-line react/no-array-index-key
+                    <React.Fragment key={innerIndex}>
+                      {typeof arrVal === 'object' && arrVal !== null
+                        ? (
+                          <>
+                            <Divider />
+                            {printRow(arrVal)}
+                          </>
+                        )
+                        : (
+                          <Typography variant="body2">
+                            {arrVal || 'null'}
+                          </Typography>
+                        )}
+                    </React.Fragment>
+                  )))}
+                </div>
+              </>
+            ) : null}
+            <div className="detail-dialog__row">
+              <Typography variant="subtitle2" display="inline">
+                {']'}
+              </Typography>
+            </div>
+            <Divider />
+          </React.Fragment>
+        );
+      }
+
+      if (typeof value === 'object' && value !== null) {
+        return (
+          <React.Fragment key={key}>
+            <div className="detail-dialog__row">
+              <Typography variant="subtitle2">
+                {`${columnMapping[key] || key}:  {`}
+              </Typography>
+            </div>
+            <div className="detail-dialog__inner-row">
+              {printRow(value)}
+            </div>
+            <div className="detail-dialog__row">
+              <Typography variant="subtitle2">
+                {'}'}
+              </Typography>
+            </div>
+            <Divider />
+          </React.Fragment>
+        );
+      }
+
+      return (
+        <React.Fragment key={key}>
+          <div className="detail-dialog__row">
+            <Typography variant="subtitle2" display="inline">
+              {`${columnMapping[key] || key}: `}
+            </Typography>
+            <Typography variant="body2" display="inline">
+              {`${value}` || 'null'}
+            </Typography>
+          </div>
+          {index !== rowEntries.length - 1 && <Divider />}
+        </React.Fragment>
+      );
+    });
+
 
   return (
     <Dialog onClose={handleClose} open={open}>
@@ -36,30 +121,7 @@ function DetailDialog(props) {
         Detailed View
       </DialogTitle>
       <DialogContent>
-        {Object.entries(selectedRow).sort(compare).map(([key, value], index) => (
-          <React.Fragment key={key}>
-            {index > 0 && <Divider />}
-            <Typography className="detail-dialog__row">
-              {key}
-              {': '}
-              {arrayColumns.includes(key) && (
-                <>
-                  {[...value].sort().map((val, i) => (
-                    <React.Fragment key={val}>
-                      {val.replace(/#$/, '')}
-                      {i < value.size - 1 && ', '}
-                    </React.Fragment>
-                  ))}
-                </>
-              )}
-              {!arrayColumns.includes(key) && (
-                <>
-                  {value}
-                </>
-              )}
-            </Typography>
-          </React.Fragment>
-        ))}
+        {printRow(selectedRow)}
       </DialogContent>
     </Dialog>
   );
@@ -69,11 +131,11 @@ DetailDialog.propTypes = {
   onClose: PropTypes.func.isRequired,
   selectedRow: PropTypes.objectOf(PropTypes.any).isRequired,
   open: PropTypes.bool.isRequired,
-  arrayColumns: PropTypes.arrayOf(PropTypes.string),
+  columnMapping: PropTypes.objectOf(PropTypes.string),
 };
 
 DetailDialog.defaultProps = {
-  arrayColumns: [],
+  columnMapping: {},
 };
 
 export default DetailDialog;

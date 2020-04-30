@@ -35,7 +35,6 @@
   section {
 
     margin-bottom: 10px;
-    background: rgb(220,220,220);
     
     .md-subheader {
       background: rgb(204,207,226);
@@ -54,9 +53,9 @@
       span.edit {
         margin-left: 10px;
         cursor: pointer;
+        display: inline-block;
         md-icon {
           font-size: 1.2em;
-          display: none;
           margin: 0;
           padding: 0;
           min-height: inherit;
@@ -64,18 +63,10 @@
           line-height: 0.2;
         }
       }
-
-      &:hover {
-        span.edit {
-          md-icon {
-            display: inline-block;
-          }
-        }
-      }
-      
     }
     
     .details {
+      background: rgb(220,220,220);
       padding: 15px;
       font-size: 0.9em;
       
@@ -119,9 +110,8 @@
     div.editable {
       md-icon {
         cursor: pointer;
-        display: none;
+        display: inline-block;
         position: absolute;
-        float: right;
         font-size: 1.25em;
         line-height: inherit;
         height: 18px;
@@ -130,13 +120,6 @@
         min-width: 18px;
         margin-left: 5px;
         margin-top: -2px;
-      }
-    }
-
-    div.editable:hover {
-      md-icon {
-        font-size: 1.25em;
-        display: inline-block;
       }
     }
 
@@ -189,7 +172,7 @@
       font-size: 0.85em;
       font-weight: 500;
       margin: 0;
-      padding: 5px 2px 5px 7px;
+      padding: 5px 2px 5px 16px;
       text-transform: uppercase;
       background-color: rgb(154,162,204);
       
@@ -205,7 +188,7 @@
       font-size: 0.75em;
       font-weight: 500;
       margin: 0;
-      padding: 5px 2px 5px 7px;
+      padding: 5px 2px 5px 16px;
       text-transform: uppercase;
       background-color: rgb(178, 183, 204);
 
@@ -824,14 +807,19 @@ md-dialog-content {
 
     span {
       &.inline {
-        background-color: rgb(255, 255, 255);
+        background-color: $white;
         display: flex;
         padding: 10px 5px 10px 15px;
         user-select: none;
 
+        > span {
+          margin: auto 0;
+        }
+
         > md-icon {
           margin-right: 10px;
           outline: none;
+          color: $white;
         }
 
         &:hover {

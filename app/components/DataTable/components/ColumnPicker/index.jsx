@@ -14,7 +14,7 @@ import './index.scss';
  * @param {func} props.onClose callback function to execute on close
  * @return {*} JSX
  */
-function OptionsMenu(props) {
+function ColumnPicker(props) {
   const {
     className,
     label,
@@ -23,28 +23,24 @@ function OptionsMenu(props) {
   } = props;
 
   const [visibleCols, setVisibleCols] = useState(
-    columns.filter(c => c.visible).map(c => c.colId),
+    columns.filter(c => c.visible),
   );
 
-  const [hiddenCols, setHiddenCols] = useState(
-    columns.filter(c => !c.visible).map(c => c.colId),
-  );
-
-  const handleChange = (event, colId) => {
+  const handleChange = (event, changedRow) => {
     if (event.target.checked) {
-      setHiddenCols(hiddenCols.filter((col => col !== colId)));
-      setVisibleCols(visibleCols.concat(colId));
+      setVisibleCols(visibleCols.concat(changedRow));
     } else {
-      setVisibleCols(visibleCols.filter((col => col !== colId)));
-      setHiddenCols(hiddenCols.concat(colId));
+      setVisibleCols(visibleCols.filter((col => col.name !== changedRow.name)));
     }
   };
 
-  const updateOnClose = () => ({ hiddenCols, visibleCols });
+  const updateOnClose = () => ({
+    visibleCols: visibleCols.map(col => col.colId),
+  });
 
   useEffect(() => {
     onClose(updateOnClose);
-  }, [hiddenCols, visibleCols]);
+  }, [visibleCols]);
 
   return (
     <MenuList className={`options-menu ${className || ''}`}>
@@ -52,14 +48,14 @@ function OptionsMenu(props) {
         {label}
       </div>
       {columns.map(row => (
-        <div key={row.colId}>
+        <div key={row.name}>
           <div className="options-menu__content">
             <Checkbox
               color="primary"
-              checked={visibleCols.includes(row.colId)}
-              onChange={event => handleChange(event, row.colId)}
+              checked={visibleCols.some(col => row.name === col.name)}
+              onChange={event => handleChange(event, row)}
             />
-            {row.colId}
+            {row.name}
           </div>
         </div>
       ))
@@ -68,7 +64,7 @@ function OptionsMenu(props) {
   );
 }
 
-OptionsMenu.propTypes = {
+ColumnPicker.propTypes = {
   label: PropTypes.string.isRequired,
   columns: PropTypes.arrayOf(
     PropTypes.object,
@@ -77,10 +73,10 @@ OptionsMenu.propTypes = {
   onClose: PropTypes.func,
 };
 
-OptionsMenu.defaultProps = {
+ColumnPicker.defaultProps = {
   className: '',
   onClose: () => {},
 };
 
 
-export default OptionsMenu;
+export default ColumnPicker;

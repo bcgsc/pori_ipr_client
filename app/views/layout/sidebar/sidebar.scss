@@ -42,18 +42,11 @@
     padding: 15.5px 0;
   }
 
-  &__image-text {
-    height: 35px;
-    margin: 0 5px;
-    padding: 7px 0;
-  }
-
   &__icon {
     margin: 0 15.5px;
 
     &--custom {
       height: 20px;
-      width: 20px;
       padding: 2px;
       margin: 0 15px;
       opacity: .54;
@@ -61,18 +54,29 @@
   }
 
   &__text {
+    color: $black-80;
     min-width: 180px;
-    transition-duration: .3s;
-    transition-property: visibility;
     line-height: 1.6;
     text-decoration: none;
-    visibility: hidden;
-    z-index: $sidebar-hidden-text-z-index;
+
+    &--transition {
+      transition-duration: .3s;
+      transition-property: visibility;
+      visibility: hidden;
+      z-index: $sidebar-hidden-text-z-index;
+    }
 
     &--visible {
       transition-duration: .01s;
       visibility: visible;
     }
+  }
+
+  &__organization-text {
+    color: $black-80;
+    min-width: 180px;
+    font-size: 14px;
+    margin: auto 0;
   }
 
   &__button-row {

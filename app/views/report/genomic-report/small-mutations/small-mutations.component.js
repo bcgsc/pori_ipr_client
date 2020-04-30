@@ -21,8 +21,14 @@ class SmallMutationsComponent {
   }
 
   $onInit() {
+    this.titleMap = {
+      biological: 'Variants of Biological Relevance',
+      unknown: 'Variants of Unknown Significance in Known Cancer-Related Genes',
+      clinical: 'Variants of Clinical Relevance',
+      nostic: 'Variants of Prognostic or Diagnostic Relevance',
+    };
     this.columnDefs = columnDefs;
-    setHeaderName(`${this.report.tumourAnalysis.diseaseExpressionComparator} %ile`, 'tcgaPerc');
+    setHeaderName(`${this.report.tumourAnalysis.diseaseExpressionComparator || ''} %ile`, 'tcgaPerc');
     setHeaderName(`Fold Change vs ${this.report.tumourAnalysis.normalExpressionComparator}`, 'foldChange');
     this.processMutationSummaryImages(this.mutationSummaryImages);
     this.processMutations(this.smallMutations);
@@ -38,13 +44,30 @@ class SmallMutationsComponent {
     };
 
     // Run over mutations and group
-    Object.values(muts).forEach((row) => {
-      if (!(row.mutationType in mutations)) {
-        mutations[row.mutationType] = [];
+    for (const row of Object.values(muts)) {
+      let unknown = true;
+      // Therapeutic? => clinical
+      if (row.kbMatches.some(m => m.category === 'therapeutic')) {
+        mutations.clinical.push(row);
+        unknown = false;
       }
-      // Add to type
-      mutations[row.mutationType].push(row);
-    });
+
+      // Diagnostic || Prognostic? => nostic
+      if (row.kbMatches.some(m => (m.category === 'diagnostic' || m.category === 'prognostic'))) {
+        mutations.nostic.push(row);
+        unknown = false;
+      }
+
+      // Biological ? => Biological
+      if (row.kbMatches.some(m => m.category === 'biological')) {
+        mutations.biological.push(row);
+        unknown = false;
+      }
+      // Unknown
+      if (unknown) {
+        mutations.unknown.push(row);
+      }
+    }
 
     // Set Small Mutations
     this.smallMutations = mutations;
@@ -96,7 +119,7 @@ class SmallMutationsComponent {
       /* (Backwards compatibility for v4.5.1 and older) */
       if (!img.comparator) {
         // If no comparator found in image, likely legacy and use report setting.
-        img.comparator = this.report.tumourAnalysis.diseaseExpressionComparator;
+        img.comparator = this.report.tumourAnalysis.diseaseExpressionComparator || '';
       }
 
       if (img.filename.includes('legend') && img.filename.includes('snv_indel')) {
@@ -136,22 +159,6 @@ class SmallMutationsComponent {
    */
   getMutationSummaryImage(graph, type, comparator = null) {
     return this.mutationSummaryImages[type][graph].find(c => (c.comparator.toLowerCase() === comparator.toLowerCase()));
-  }
-
-  /* eslint-disable class-methods-use-this */
-  getTableTitle(table) {
-    switch (table) {
-      case 'biological':
-        return 'Variants of Biological Relevance';
-      case 'unknown':
-        return 'Variants of Unknown Significance in Known Cancer-Related Genes';
-      case 'clinical':
-        return 'Variants of Clinical Relevance';
-      case 'nostic':
-        return 'Variants of Prognostic or Diagnostic Relevance';
-      default:
-        return 'Other Variants';
-    }
   }
 }
 

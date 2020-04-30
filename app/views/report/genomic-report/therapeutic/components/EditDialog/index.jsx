@@ -26,7 +26,7 @@ function EditDialog(props) {
     editData,
     open,
     close,
-    reportId,
+    reportIdent,
     tableType,
   } = props;
 
@@ -82,7 +82,7 @@ function EditDialog(props) {
       }
 
       await therapeuticUpdate(
-        reportId,
+        reportIdent,
         editData.ident,
         combinedData,
       );
@@ -96,7 +96,7 @@ function EditDialog(props) {
       }
 
       await therapeuticAdd(
-        reportId,
+        reportIdent,
         combinedData,
       );
     }
@@ -171,9 +171,10 @@ function EditDialog(props) {
           <FormControl fullWidth>
             <AutocompleteHandler
               defaultValue={editData.evidenceLevel}
-              type="evidence"
+              type="evidenceLevel"
               label="Evidence Level"
               onChange={onAutocompleteValueSelected}
+              minCharacters={1}
             />
           </FormControl>
           <FormControl fullWidth>
@@ -203,7 +204,7 @@ EditDialog.propTypes = {
   editData: PropTypes.objectOf(PropTypes.any),
   open: PropTypes.bool.isRequired,
   close: PropTypes.func.isRequired,
-  reportId: PropTypes.string.isRequired,
+  reportIdent: PropTypes.string.isRequired,
   tableType: PropTypes.string.isRequired,
 };
 

@@ -2,7 +2,7 @@ import React, {
   useRef, useState, useEffect,
 } from 'react';
 import PropTypes from 'prop-types';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridReact } from '@ag-grid-community/react';
 import {
   Typography,
   IconButton,
@@ -10,24 +10,25 @@ import {
 } from '@material-ui/core';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import OptionsMenu from '../OptionsMenu';
+import ColumnPicker from './components/ColumnPicker';
 import LinkCellRenderer from './components/LinkCellRenderer';
 import GeneCellRenderer from './components/GeneCellRenderer';
 import ActionCellRenderer from './components/ActionCellRenderer';
 
 import './index.scss';
 
+const MAX_VISIBLE_ROWS = 12;
+const MAX_TABLE_HEIGHT = '500px';
 
 /**
  * @param {object} props props
  * @param {array} props.rowData table row data
  * @param {array} props.columnDefs column definitions for ag-grid
- * @param {array} props.arrayColumns list of columns containing array data
  * @param {string} props.titleText table title
  * @param {string} props.filterText text to filter the table on
  * @param {bool} props.editable can rows be edited?
  * @param {object} props.EditDialog Edit Dialog component
- * @param {string} props.reportId Ident of report (used for editing api calls)
+ * @param {string} props.reportIdent Ident of report (used for editing api calls)
  * @param {string} props.tableType type of table used for therapeutic targets
  * @param {array} props.visibleColumns array of column ids that are visible
  * @param {func} props.syncVisibleColumns function to propagate visible column changes
@@ -39,13 +40,12 @@ function DataTable(props) {
   const {
     rowData,
     columnDefs,
-    arrayColumns,
     titleText,
     filterText,
     editable,
     EditDialog,
     addable,
-    reportId,
+    reportIdent,
     tableType,
     visibleColumns,
     syncVisibleColumns,
@@ -53,12 +53,15 @@ function DataTable(props) {
     canViewDetails,
   } = props;
 
+  const domLayout = 'autoHeight';
+
   const gridApi = useRef();
   const columnApi = useRef();
-  const optionsMenuOnClose = useRef();
+  const ColumnPickerOnClose = useRef();
+  const gridDiv = useRef();
 
-  const setOptionsMenuOnClose = (ref) => {
-    optionsMenuOnClose.current = ref;
+  const setColumnPickerOnClose = (ref) => {
+    ColumnPickerOnClose.current = ref;
   };
 
   const [showPopover, setShowPopover] = useState(false);
@@ -108,6 +111,11 @@ function DataTable(props) {
       columnApi.current.setColumnsVisible(hiddenColumns, false);
     }
 
+    if (rowData.length >= MAX_VISIBLE_ROWS) {
+      gridDiv.current.style.height = MAX_TABLE_HEIGHT;
+      gridApi.current.setDomLayout('normal');
+    }
+
     const { visibleColumnIds } = getColumnVisibility();
     columnApi.current.autoSizeColumns(visibleColumnIds);
   };
@@ -129,17 +137,14 @@ function DataTable(props) {
     editable: false,
   };
     
-  const domLayout = 'autoHeight';
-
-  const renderOptionsMenu = () => {
+  const renderColumnPicker = () => {
     const popoverCloseHandler = () => {
       const {
         visibleCols: returnedVisibleCols,
-        hiddenCols: returnedHiddenCols,
-      } = optionsMenuOnClose.current();
+      } = ColumnPickerOnClose.current();
+      returnedVisibleCols.push('Actions');
 
       columnApi.current.setColumnsVisible(returnedVisibleCols, true);
-      columnApi.current.setColumnsVisible(returnedHiddenCols, false);
 
       columnApi.current.autoSizeColumns(returnedVisibleCols);
       
@@ -154,11 +159,17 @@ function DataTable(props) {
         onClose={() => popoverCloseHandler()}
         open
       >
-        <OptionsMenu
+        <ColumnPicker
           className="data-view__options-menu"
           label="Configure Visible Columns"
-          columns={columnApi.current.getAllColumns()}
-          onClose={setOptionsMenuOnClose}
+          columns={columnApi.current.getAllColumns()
+            .filter(col => col.colId !== 'Actions')
+            .map((col) => {
+              col.name = columnApi.current.getDisplayNameForColumn(col);
+              return col;
+            })
+          }
+          onClose={setColumnPickerOnClose}
         />
       </Dialog>
     );
@@ -173,88 +184,94 @@ function DataTable(props) {
     </IconButton>
   );
 
-  // AG-Grid has a bug where column groups aren't accounted for when calculating overlay placement
-  const CustomNoRowsOverlay = () => {
-    const isParentHeaders = columnDefs.some(col => col.children);
-
-    if (isParentHeaders) {
-      return (
-        <div style={{ margin: '49px 0 0 0' }}>No rows to show</div>
-      );
-    }
-    return (
-      <div>No rows to show</div>
-    );
-  };
-  
   return (
     <div className="data-table--padded">
-      <div className="data-table__header-container">
-        <Typography variant="h5" className="data-table__header">
-          {titleText}
-        </Typography>
-        {addable && renderAddRow()}
-        <EditDialog
-          open={showEditDialog}
-          close={handleRowEditClose}
-          editData={selectedRow.data}
-          reportId={reportId}
-          tableType={tableType}
-        />
-        {canToggleColumns && (
-          <IconButton
-            onClick={() => setShowPopover(prevVal => !prevVal)}
+      {rowData.length || editable ? (
+        <>
+          <div className="data-table__header-container">
+            <Typography variant="h5" className="data-table__header">
+              {titleText}
+            </Typography>
+            {addable
+              && renderAddRow()
+            }
+            <EditDialog
+              open={showEditDialog}
+              close={handleRowEditClose}
+              editData={selectedRow.data}
+              reportIdent={reportIdent}
+              tableType={tableType}
+            />
+            {canToggleColumns && (
+              <IconButton
+                onClick={() => setShowPopover(prevVal => !prevVal)}
+              >
+                <MoreHorizIcon />
+              </IconButton>
+            )}
+          </div>
+          <div
+            className="ag-theme-material data-table__container"
+            ref={gridDiv}
           >
-            <MoreHorizIcon />
-          </IconButton>
-        )}
-      </div>
-      <div className="ag-theme-material data-table__container">
-        {showPopover
-          && renderOptionsMenu()
-        }
-        <AgGridReact
-          columnDefs={columnDefs}
-          rowData={rowData}
-          defaultColDef={defaultColDef}
-          onGridReady={onGridReady}
-          domLayout={domLayout}
-          autoSizePadding="0"
-          editType="fullRow"
-          context={{
-            editable,
-            canViewDetails,
-            EditDialog,
-            reportId,
-            tableType,
-            arrayColumns,
-          }}
-          frameworkComponents={{
-            EditDialog,
-            LinkCellRenderer,
-            GeneCellRenderer,
-            ActionCellRenderer,
-            CustomNoRowsOverlay,
-          }}
-          noRowsOverlayComponent="CustomNoRowsOverlay"
-          suppressAnimationFrame
-          suppressColumnVirtualisation
-        />
-      </div>
+            {showPopover
+              && renderColumnPicker()
+            }
+            <AgGridReact
+              columnDefs={columnDefs}
+              rowData={rowData}
+              defaultColDef={defaultColDef}
+              onGridReady={onGridReady}
+              domLayout={domLayout}
+              pagination
+              autoSizePadding="0"
+              editType="fullRow"
+              context={{
+                editable,
+                canViewDetails,
+                EditDialog,
+                reportIdent,
+                tableType,
+              }}
+              frameworkComponents={{
+                EditDialog,
+                LinkCellRenderer,
+                GeneCellRenderer,
+                ActionCellRenderer,
+              }}
+              suppressAnimationFrame
+              suppressColumnVirtualisation
+              disableStaticMarkup // See https://github.com/ag-grid/ag-grid/issues/3727
+            />
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="data-table__header-container">
+            <Typography variant="h5" className="data-table__header">
+              {titleText}
+            </Typography>
+          </div>
+          <div className="data-table__container">
+            <Typography variant="body1" align="center">
+              No data to display
+            </Typography>
+          </div>
+        </>
+      )}
     </div>
   );
 }
 
 DataTable.propTypes = {
   columnDefs: PropTypes.arrayOf(PropTypes.object).isRequired,
-  arrayColumns: PropTypes.arrayOf(PropTypes.string),
   rowData: PropTypes.arrayOf(PropTypes.object),
   titleText: PropTypes.string,
   filterText: PropTypes.string,
   editable: PropTypes.bool,
   EditDialog: PropTypes.func,
   addable: PropTypes.bool,
-  reportId: PropTypes.string.isRequired,
+  reportIdent: PropTypes.string.isRequired,
   tableType: PropTypes.string,
   visibleColumns: PropTypes.arrayOf(PropTypes.string),
   syncVisibleColumns: PropTypes.func,
@@ -265,7 +282,6 @@ DataTable.propTypes = {
 DataTable.defaultProps = {
   rowData: [],
   filterText: '',
-  arrayColumns: [],
   titleText: '',
   editable: false,
   EditDialog: () => null,

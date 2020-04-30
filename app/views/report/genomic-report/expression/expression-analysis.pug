@@ -13,7 +13,7 @@ section.material-section.expression
           div(layout="column", flex=30).detail-box
             div(layout="row", flex, layout-align="start center")
               p(flex=40) Diagnosis:
-              p {{$ctrl.report.patientInformation.tumourType}}
+              p {{$ctrl.report.patientInformation.diagnosis}}
             div(layout="row", flex, layout-align="start center")
               p(flex=40) Biopsy Type:
               p {{$ctrl.report.patientInformation.biopsySite}}
@@ -77,7 +77,7 @@ section.material-section.expression
     div(ng-if="$ctrl.showSection.outlierSummary")
 
       div(layout="column", ng-repeat="(key, title) in $ctrl.expSummaryMap track by $index")
-        expression-react(outliers="$ctrl.expOutliers[key]", title-text="title", report-id="$ctrl.report.ident")
+        expression-react(outliers="$ctrl.expOutliers[key]", title-text="title", report-ident="$ctrl.report.ident")
 
   div.analysis-report-section.margin-top-10
     h1 mRNA Expression Outliers
@@ -87,4 +87,4 @@ section.material-section.expression
 
     div(ng-show="$ctrl.showSection.mrnaOutliers")
       div(layout="column", ng-repeat="(key, title) in $ctrl.mRNAOutliersMap track by $index")
-        expression-react(outliers="$ctrl.expOutliers[key]", title-text="title", report-id="$ctrl.report.ident")
+        expression-react(outliers="$ctrl.expOutliers[key]", title-text="title", report-ident="$ctrl.report.ident")

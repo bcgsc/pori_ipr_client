@@ -2,7 +2,7 @@ const print = {
   name: 'print',
   url: '/print/report/:report',
   lazyLoad: async ($transition$) => {
-    const mod = await import('./print.module');
+    const mod = await import(/* webpackChunkName: "print" */ './print.module');
     $transition$.router.stateRegistry.deregister('print');
     return $transition$.injector().native.loadNewModules([mod.default]);
   },

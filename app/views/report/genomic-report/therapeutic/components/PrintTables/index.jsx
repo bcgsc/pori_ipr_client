@@ -1,21 +1,20 @@
 import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridReact } from '@ag-grid-community/react';
 import omit from 'lodash.omit';
-
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-material.css';
 
 import './index.scss';
 
 /**
  * @param {object} props props
  * @property {array} therapeuticRowData therapeutic and chemoresistance row data
+ * @property {bool} print is this used on the print page
  * @return {*} JSX
  */
 function TherapeuticTableComponent(props) {
   let {
     therapeuticRowData,
+    print,
   } = props;
 
   let chemoresistanceRowData = [];
@@ -38,54 +37,35 @@ function TherapeuticTableComponent(props) {
   const overlayNoRowsTemplate = emptyText => (
     `<span>No ${emptyText} was found</span>`
   );
-  
-  const domLayout = 'autoHeight';
 
   const filterRows = (rowData, type, omitFields) => rowData.filter(row => row.type === type)
     .map(row => omit(row, omitFields));
 
-  const makeColDefs = (columnNames, breakCols) => {
+  const makeColDefs = (columnNames) => {
     const returnColDefs = [];
 
     columnNames.forEach((col) => {
-      if (breakCols.includes(col)) {
-        returnColDefs.push({
-          headerName: `${col.charAt(0).toUpperCase()}${col.slice(1)}`,
-          field: col,
-          cellRenderer: (params) => {
-            const gui = document.createElement('span');
-            gui.innerHTML = params.data[col].join('</br>');
-            return gui;
-          },
-          autoHeight: true,
-          cellClass: ['cell-wrap-text', 'cell-line-height'],
-        });
-      } else {
-        returnColDefs.push({
-          // Split the only header with 2 words
-          headerName: col === 'targetContext' ? 'Target Context' : `${col.charAt(0).toUpperCase()}${col.slice(1)}`,
-          field: col,
-          autoHeight: true,
-          cellClass: ['cell-wrap-text', 'cell-line-height'],
-        });
-      }
+      // Custom widths for columns
+      returnColDefs.push({
+        headerName: `${col.charAt(0).toUpperCase()}${col.slice(1)}`,
+        field: col,
+        autoHeight: true,
+        flex: col === 'notes' ? 1 : null,
+        maxWidth: (() => {
+          if (col === 'notes') { return null; }
+          if (col === 'therapy') { return 180; }
+          return 110;
+        })(),
+        hide: col === 'rank',
+        sort: col === 'rank' ? 'asc' : null,
+        cellClass: ['cell-wrap-text', 'cell-line-height'],
+      });
     });
-    
     return returnColDefs;
   };
 
   if (therapeuticRowData.length) {
     // target and biomarker are objects and need to be strings to be displayed w/ag-grid
-    therapeuticRowData = therapeuticRowData.map((row) => {
-      if (row.target.every(target => typeof target === 'object')) {
-        row.target = row.target.map(({ geneVar }) => geneVar);
-      }
-      row.biomarker = row.biomarker.map(({
-        entry, context,
-      }) => [entry, context].join(': '));
-      return row;
-    });
-
     chemoresistanceRowData = filterRows(
       therapeuticRowData,
       'chemoresistance',
@@ -97,6 +77,11 @@ function TherapeuticTableComponent(props) {
         'targetContext',
         'type',
         'updatedAt',
+        'geneGraphkbId',
+        'variantGraphkbId',
+        'therapyGraphkbId',
+        'contextGraphkbId',
+        'evidenceLevelGraphkbId',
       ],
     );
 
@@ -110,16 +95,21 @@ function TherapeuticTableComponent(props) {
         'resistance',
         'type',
         'updatedAt',
+        'geneGraphkbId',
+        'variantGraphkbId',
+        'therapyGraphkbId',
+        'contextGraphkbId',
+        'evidenceLevelGraphkbId',
       ],
     );
 
     const therapeuticColNames = Object.keys(therapeuticRowData[0]);
-    therapeuticColDefs = makeColDefs(therapeuticColNames, ['biomarker', 'target']);
+    therapeuticColDefs = makeColDefs(therapeuticColNames);
   }
 
   if (chemoresistanceRowData.length) {
     const chemoresistanceColNames = Object.keys(chemoresistanceRowData[0]);
-    chemoresistanceColDefs = makeColDefs(chemoresistanceColNames, ['biomarker']);
+    chemoresistanceColDefs = makeColDefs(chemoresistanceColNames);
   }
 
   return (
@@ -132,7 +122,7 @@ function TherapeuticTableComponent(props) {
           defaultColDef={defaultColDef}
           onGridReady={onGridReady}
           overlayNoRowsTemplate={overlayNoRowsTemplate('therapeutic options data')}
-          domLayout={domLayout}
+          domLayout={print ? 'print' : 'autoHeight'}
         />
       </div>
       <div className="therapeutic-table__title">Potential Chemoresistance</div>
@@ -143,7 +133,7 @@ function TherapeuticTableComponent(props) {
           defaultColDef={defaultColDef}
           onGridReady={onGridReady}
           overlayNoRowsTemplate={overlayNoRowsTemplate('chemoresistance data')}
-          domLayout={domLayout}
+          domLayout={print ? 'print' : 'autoHeight'}
         />
       </div>
     </div>
@@ -152,6 +142,11 @@ function TherapeuticTableComponent(props) {
 
 TherapeuticTableComponent.propTypes = {
   therapeuticRowData: PropTypes.arrayOf(PropTypes.object).isRequired,
+  print: PropTypes.bool,
+};
+
+TherapeuticTableComponent.defaultProps = {
+  print: false,
 };
 
 export default TherapeuticTableComponent;

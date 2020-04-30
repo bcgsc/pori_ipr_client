@@ -44,8 +44,7 @@ class GenomicSummaryComponent {
     this.mutationMask = null;
     this.tumourAnalysis = this.report.tumourAnalysis;
     this.microbial = this.microbial || { species: 'None', integrationSite: 'None' };
-    this.genomicAlterations = sortBy(this.genomicAlterations, 'type');
-    this.geneVariants = this.processVariants(this.genomicAlterations);
+    this.genomicAlterations = sortBy(this.processVariants(this.genomicAlterations), ['type', 'geneVariant']);
     this.helpMessages = {
       genomeStatus: {
         title: 'Genome Status Help',
@@ -252,29 +251,32 @@ class GenomicSummaryComponent {
         template: patientTemplate,
         clickOutToClose: false,
         controller: ['scope', (scope) => {
-          scope.patientInformation = this.patientInformation;
+          scope.patientId = this.report.patientId;
+          scope.patientInformation = { ...this.report.patientInformation };
           scope.cancel = () => {
             this.$mdDialog.cancel('Patient information was not updated');
           };
           scope.update = async () => {
             try {
-              await this.PatientInformationService.update(this.report.ident, scope.patientInformation);
+              const response = await this.PatientInformationService.update(
+                this.report.ident,
+                scope.patientInformation,
+              );
               this.$mdDialog.hide({
                 message: 'Patient information has been successfully updated',
-                data: scope.patientInformation,
+                data: response,
               });
             } catch (err) {
               this.$mdToast.showSimple(
                 `Patient information was not updated due to an error: ${err}`,
               );
-            } finally {
-              scope.$digest();
             }
           };
         }],
       });
       this.$mdToast.showSimple(resp.message);
-      this.patientInformation = resp.data;
+      this.report.patientInformation = resp.data;
+      this.$scope.$digest();
     } catch (err) {
       this.$mdToast.showSimple(err);
     }

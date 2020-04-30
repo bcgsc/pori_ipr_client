@@ -17,7 +17,7 @@ class CopyNumberAnalyses {
   }
 
   $onInit() {
-    setHeaderName(`${this.report.tumourAnalysis.diseaseExpressionComparator} %ile`, 'tcgaPerc');
+    setHeaderName(`${this.report.tumourAnalysis.diseaseExpressionComparator || ''} %ile`, 'tcgaPerc');
     setHeaderName(`Fold Change vs ${this.report.tumourAnalysis.normalExpressionComparator}`, 'foldChange');
     this.columnDefs = columnDefs;
     this.cnvGroups = {
@@ -40,12 +40,14 @@ class CopyNumberAnalyses {
       lowlyExpTSloss: 'Lowly Expressed Tumour Suppressors with Copy Losses',
     };
 
-    Object.values(this.cnvs).forEach((row) => {
-      let { 
-        gene: { tumourSuppressor, oncogene, 
-          expressionVariants: { expression_class: expLvl }
-        }, 
-        cnvState, 
+    for (const row of Object.values(this.cnvs)) {
+      const {
+        gene: {
+          tumourSuppressor,
+          oncogene,
+          expressionVariants: { expression_class: expressionClass },
+        },
+        cnvState,
       } = row; // Get the flags for this cnv
 
       if (tumourSuppressor) {
@@ -54,7 +56,7 @@ class CopyNumberAnalyses {
           this.cnvGroups.homodTumourSupress.push(row);
         }
         // low exp, copy loss
-        if (cnvState === CNVSTATE.LOSS && expLvl === EXPLEVEL.OUT_LOW) {
+        if (cnvState === CNVSTATE.LOSS && expressionClass === EXPLEVEL.OUT_LOW) {
           this.cnvGroups.lowlyExpTSloss.push(row);
         }
       }
@@ -68,15 +70,29 @@ class CopyNumberAnalyses {
         }
         // Highly expressed + Copy gains?
         if (
-          cnvState === CNVSTATE.GAIN &&
-          (EXPLEVEL.UP.includes(expLvl))
+          cnvState === CNVSTATE.GAIN
+          && (EXPLEVEL.UP.includes(expressionClass))
         ) {
           this.cnvGroups.highlyExpOncoGain.push(row);
         }
       }
 
-      // TODO: Clinical, nostic, biological
-    });
+      // KB-matches
+      // Therapeutic? => clinical
+      if (row.kbMatches.some(m => m.category === 'therapeutic')) {
+        this.cnvGroups.clinical.push(row);
+      }
+
+      // Diagnostic || Prognostic? => nostic
+      if (row.kbMatches.some(m => m.category === 'diagnostic' || m.category === 'prognostic')) {
+        this.cnvGroups.nostic.push(row);
+      }
+
+      // Biological ? => Biological
+      if (row.kbMatches.some(m => m.category === 'biological')) {
+        this.cnvGroups.biological.push(row);
+      }
+    }
   }
 }
 

@@ -11,7 +11,7 @@ import './index.scss';
 function GeneCellRenderer(params) {
   const {
     value,
-    context: { reportId },
+    context: { reportIdent },
   } = params;
 
   const [showGeneViewer, setShowGeneViewer] = useState(false);
@@ -31,7 +31,7 @@ function GeneCellRenderer(params) {
         <GeneViewer
           open={showGeneViewer}
           gene={value}
-          reportId={reportId}
+          reportIdent={reportIdent}
           onClose={() => setShowGeneViewer(false)}
         />
       )}
