@@ -18,7 +18,7 @@ md-content(flex)
               layout="row"
             ).clickable.inline
               span Summary
-              md-icon
+              md-icon(ng-click="$ctrl.openPrint()", aria-label="Print Summary Section") print
           li
             span(
               ui-sref="root.reportlisting.probe.detailedGenomicAnalysis",

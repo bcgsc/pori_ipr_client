@@ -19,7 +19,7 @@ md-content(flex).layout-fill
               layout="row"
             ).clickable.inline
               span Summary
-              md-icon(ng-click="$ctrl.openPrint()", aria-label="Print Summary Section").md-accent print
+              md-icon(ng-click="$ctrl.openPrint()", aria-label="Print Summary Section") print
 
           li(ng-repeat="section in $ctrl.sections track by $index", ng-init="section.showChildren = false")
 
