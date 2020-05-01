@@ -33,6 +33,7 @@ function KBMatches(props) {
     unsyncedTableData,
     hiddenTableData,
     reportIdent,
+    isProbe,
   } = props;
 
   const [thisHiddenTableData, setThisHiddenTableData] = useState(hiddenTableData.current);
@@ -97,16 +98,18 @@ function KBMatches(props) {
         ))}
       </div>
 
-      <div>
-        <DataTable
-          columnDefs={targetedColumnDefs}
-          rowData={unsyncedTableData.rowData || []}
-          titleText={unsyncedTableData.titleText}
-          filterText={filterText}
-          edit={false}
-          reportIdent={reportIdent}
-        />
-      </div>
+      {isProbe ? null : (
+        <div>
+          <DataTable
+            columnDefs={targetedColumnDefs}
+            rowData={unsyncedTableData.rowData || []}
+            titleText={unsyncedTableData.titleText}
+            filterText={filterText}
+            edit={false}
+            reportIdent={reportIdent}
+          />
+        </div>
+      )}
 
       {Object.values(thisHiddenTableData).map(table => (
         <div className="expansion-panel" key={table.titleText}>
@@ -128,7 +131,6 @@ function KBMatches(props) {
               <DataTable
                 columnDefs={columnDefs}
                 rowData={table.rowData || []}
-                titleText={table.titleText}
                 filterText={filterText}
                 edit={false}
                 canToggleColumns

@@ -49,13 +49,14 @@ const extractCategories = (entries, category) => {
 
 /**
  * @param {*} props props
- * @param {array} alterations all ungrouped alteration data
- * @param {array} unknown unknown alterations
- * @param {array} thisCancer therapies approved for this cancer type
- * @param {array} otherCancer therapies approved for other cancer types
- * @param {array} targetedGenes genes found in the targeted gene report
- * @param {func} kbMatchesComponent react component to mutate
- * @param {object} report report object
+ * @param {array} props.alterations all ungrouped alteration data
+ * @param {array} props.unknown unknown alterations
+ * @param {array} props.thisCancer therapies approved for this cancer type
+ * @param {array} props.otherCancer therapies approved for other cancer types
+ * @param {array} props.targetedGenes genes found in the targeted gene report
+ * @param {func} props.kbMatchesComponent react component to mutate
+ * @param {object} props.report report object
+ * @param {bool} props.isProbe is this a probe report
  * @returns {*} JSX
  */
 function KBMatchesView(props) {
@@ -67,6 +68,7 @@ function KBMatchesView(props) {
     targetedGenes,
     kbMatchesComponent,
     report,
+    isProbe,
   } = props;
 
   const KbMatchesComponent = kbMatchesComponent;
@@ -98,7 +100,7 @@ function KBMatchesView(props) {
     },
   });
 
-  const [unsyncedTableData] = useState({
+  const [unsyncedTableData] = useState(isProbe ? {} : {
     titleText: 'Detected Alterations From Targeted Gene Report',
     rowData: targetedGenes,
   });
@@ -118,6 +120,7 @@ function KBMatchesView(props) {
       unsyncedTableData={unsyncedTableData}
       hiddenTableData={hiddenTableData}
       reportIdent={report.ident}
+      isProbe
     />
   );
 }
@@ -127,9 +130,15 @@ KBMatchesView.propTypes = {
   unknown: PropTypes.arrayOf(PropTypes.object).isRequired,
   thisCancer: PropTypes.arrayOf(PropTypes.object).isRequired,
   otherCancer: PropTypes.arrayOf(PropTypes.object).isRequired,
-  targetedGenes: PropTypes.arrayOf(PropTypes.object).isRequired,
+  targetedGenes: PropTypes.arrayOf(PropTypes.object),
   kbMatchesComponent: PropTypes.func.isRequired,
   report: PropTypes.objectOf(PropTypes.any).isRequired,
+  isProbe: PropTypes.bool,
+};
+
+KBMatchesView.defaultProps = {
+  targetedGenes: [],
+  isProbe: false,
 };
 
 export default KBMatchesView;
