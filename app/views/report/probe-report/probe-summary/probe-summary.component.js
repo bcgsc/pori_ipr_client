@@ -79,20 +79,27 @@ class ProbeSummaryComponent {
           };
 
           scope.update = async () => {
-            await this.TargetedGenesService.update(
-              this.report.ident,
-              scope.event.ident,
-              { comments: scope.event.comments },
-            );
-            await this.GeneService.update(
-              this.report.ident,
-              event.gene.name,
-              scope.event.gene,
-            );
-            this.$mdDialog.hide({
-              message: 'Entry has been updated',
-              data: scope.event,
-            });
+            try {
+              await this.TargetedGenesService.update(
+                this.report.ident,
+                scope.event.ident,
+                { comments: scope.event.comments },
+              );
+              await this.GeneService.update(
+                this.report.ident,
+                event.gene.name,
+                scope.event.gene,
+              );
+              this.$mdDialog.hide({
+                message: 'Entry has been updated',
+                data: scope.event,
+              });
+            } catch (err) {
+              this.$mdDialog.cancel({
+                message: `An error has occured: ${err}`,
+                data: null,
+              });
+            }
           };
         }],
       });
@@ -106,7 +113,7 @@ class ProbeSummaryComponent {
         });
       }
     } catch (err) {
-      this.$mdToast.show(this.$mdToast.simple().textContent('No changes were saved.'));
+      this.$mdToast.show(this.$mdToast.simple().textContent(err.message || 'Error: changes were not saved'));
     }
   }
 
