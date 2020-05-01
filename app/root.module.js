@@ -30,7 +30,7 @@ import MicrobialService from './services/reports/summary/microbial.service';
 import PathwayAnalysisService from './services/reports/pathway-analysis/pathway-analysis.service';
 import AnalystCommentsService from './services/reports/analyst-comments/analyst-comments.service';
 import AlterationService from './services/reports/alteration.service';
-import TargetedGenesService from './services/reports/kbmatches/targeted-genes.service';
+import TargetedGenesService from './services/reports/probe/targeted-genes.service';
 import ProbeSignatureService from './services/reports/probe/signature.service';
 import ProbeTestInformationService from './services/reports/probe/test-information.service';
 import SlidesService from './services/reports/presentation/slides.service';
@@ -49,6 +49,7 @@ import DrugTargetService from './services/reports/expression/drug-target.service
 import OutlierService from './services/reports/expression/outlier.service';
 import AppendicesService from './services/reports/appendices/appendices.service';
 import GenomicEventsService from './services/reports/summary/genomic-events.service';
+import GeneService from './services/reports/probe/gene.service';
 import IndefiniteArticleFilter from './filters/indefinite-article.filter';
 import TitleCaseFilter from './filters/titlecase.filter';
 import '@ag-grid-community/core/dist/styles/ag-grid.min.css';
@@ -105,6 +106,7 @@ export default angular.module('root')
   .service('OutlierService', OutlierService)
   .service('AppendicesService', AppendicesService)
   .service('GenomicEventsService', GenomicEventsService)
+  .service('GeneService', GeneService)
   .filter('indefiniteArticle', IndefiniteArticleFilter)
   .filter('titlecase', TitleCaseFilter)
   .config(($stateProvider, $urlServiceProvider, $locationProvider) => {

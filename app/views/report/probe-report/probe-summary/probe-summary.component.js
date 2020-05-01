@@ -9,20 +9,21 @@ const bindings = {
   reportEdit: '<',
   testInformation: '<',
   signature: '<',
-  targetedGenes: '<',
+  probeResults: '<',
   print: '<',
 };
 
 class ProbeSummaryComponent {
   /* @ngInject */
   constructor($scope, $mdDialog, $mdToast, ProbeSignatureService,
-    PatientInformationService, TargetedGenesService) {
+    PatientInformationService, TargetedGenesService, GeneService) {
     this.$scope = $scope;
     this.$mdDialog = $mdDialog;
     this.$mdToast = $mdToast;
     this.ProbeSignatureService = ProbeSignatureService;
     this.PatientInformationService = PatientInformationService;
     this.TargetedGenesService = TargetedGenesService;
+    this.GeneService = GeneService;
   }
 
   $onInit() {
@@ -81,7 +82,12 @@ class ProbeSummaryComponent {
             await this.TargetedGenesService.update(
               this.report.ident,
               scope.event.ident,
-              scope.event,
+              { comments: scope.event.comments },
+            );
+            await this.GeneService.update(
+              this.report.ident,
+              event.gene.name,
+              scope.event.gene,
             );
             this.$mdDialog.hide({
               message: 'Entry has been updated',
@@ -93,9 +99,9 @@ class ProbeSummaryComponent {
 
       if (resp) {
         this.$mdToast.show(this.$mdToast.simple().textContent(resp.message));
-        this.targetedGenes.forEach((ev, index) => {
+        this.probeResults.forEach((ev, index) => {
           if (ev.ident === resp.data.ident) {
-            this.targetedGenes[index] = resp.data;
+            this.probeResults[index] = resp.data;
           }
         });
       }

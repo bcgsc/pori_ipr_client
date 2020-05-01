@@ -147,12 +147,12 @@ section
           div(layout="row", flex).heading
             div(flex, style="padding: 10px 5px; margin: 7px 0").text-left Genomic Events
             div(flex, style="padding: 10px 5px; margin: 7px 0").text-left Comments
-          div(layout="row", flex, ng-if="$ctrl.targetedGenes.length === 0").row
+          div(layout="row", flex, ng-if="$ctrl.probeResults.length === 0").row
             div(flex) No clinically relevant genomic alterations were found from the analysis.
-          div(layout="row", flex, ng-repeat="gene in $ctrl.targetedGenes", ng-click="$ctrl.modifyEvent($event, gene)", ng-if="$ctrl.reportEdit", style="cursor: pointer").row
+          div(layout="row", flex, ng-repeat="gene in $ctrl.probeResults", ng-click="$ctrl.modifyEvent($event, gene)", ng-if="$ctrl.reportEdit", style="cursor: pointer").row
             div(flex) {{gene.gene.name}} ({{gene.variant}})
             div(flex) {{gene.comments}}
-          div(layout="row", flex, ng-repeat="gene in $ctrl.targetedGenes", ng-if="!$ctrl.reportEdit").row
+          div(layout="row", flex, ng-repeat="gene in $ctrl.probeResults", ng-if="!$ctrl.reportEdit").row
             div(flex) {{gene.gene.name}} ({{gene.variant}})
             div(flex) {{gene.comments}}
 
