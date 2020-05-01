@@ -18,11 +18,11 @@ function GeneCellRenderer(params) {
 
   return (
     <>
-      {value.split(' :: ').map((val, index) => (
+      {value.split(/\s::\s|,\s/).map((val, index) => (
         <React.Fragment key={index}>
           {index > 0 && (
             <span>
-              {' :: '}
+              {value.includes(' :: ') ? ' :: ' : ', '}
             </span>
           )}
           <span
