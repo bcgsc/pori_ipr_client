@@ -1,4 +1,4 @@
-class GenesService {
+class GeneService {
   /* @ngInject */
   constructor($http) {
     this.$http = $http;
@@ -14,4 +14,4 @@ class GenesService {
   }
 }
 
-export default GenesService;
+export default GeneService;
