@@ -58,4 +58,10 @@ section
       h2.title Small Mutations: Genomic Details
 
       div(ng-repeat="(title, smallMutation) in $ctrl.smallMutations")
-        react-table(column-defs="$ctrl.columnDefs", row-data="smallMutation", title-text="$ctrl.titleMap[title] || 'Other Variants'", report-id="$ctrl.report.ident")
+        react-table(
+          column-defs="$ctrl.columnDefs",
+          row-data="smallMutation",
+          title-text="$ctrl.titleMap[title] || 'Other Variants'",
+          report-id="$ctrl.report.ident"
+          can-toggle-columns="true"
+        )

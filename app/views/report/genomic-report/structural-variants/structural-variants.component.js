@@ -28,7 +28,7 @@ class StructuralVariantsComponent {
       nostic: 'Gene Fusions of Prognostic and Diagnostic Relevance',
       biological: 'Gene Fusions with Biological Relevance',
       fusionOmicSupport: 'Gene Fusions with Genome and Transcriptome Support',
-      uncharacterized: 'Uncharacterized Gene Fusions',
+      uncharacterized: 'Structural Variants of Unknown Significance',
     };
     this.processSvs(this.structuralVariants);
     this.pickComparator();

@@ -23,7 +23,7 @@ class SmallMutationsComponent {
   $onInit() {
     this.titleMap = {
       biological: 'Variants of Biological Relevance',
-      unknown: 'Variants of Unknown Significance in Known Cancer-Related Genes',
+      unknown: 'Variants of Unknown Significance',
       clinical: 'Variants of Clinical Relevance',
       nostic: 'Variants of Prognostic or Diagnostic Relevance',
     };
