@@ -26,10 +26,11 @@ const summary = {
       async ($transition$, ProbeSignatureService) => ProbeSignatureService.retrieve(
         $transition$.params().analysis_report,
       )],
-    genomicEvents: ['$transition$', 'GenomicEventsService',
-      async ($transition$, GenomicEventsService) => GenomicEventsService.all(
+    probeResults: ['$transition$', 'TargetedGenesService',
+      async ($transition$, TargetedGenesService) => TargetedGenesService.getAll(
         $transition$.params().analysis_report,
-      )],
+      ),
+    ],
   },
 };
 

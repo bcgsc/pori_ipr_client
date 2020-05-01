@@ -9,20 +9,21 @@ const bindings = {
   reportEdit: '<',
   testInformation: '<',
   signature: '<',
-  genomicEvents: '<',
+  probeResults: '<',
   print: '<',
 };
 
 class ProbeSummaryComponent {
   /* @ngInject */
   constructor($scope, $mdDialog, $mdToast, ProbeSignatureService,
-    PatientInformationService, GenomicEventsService) {
+    PatientInformationService, TargetedGenesService, GeneService) {
     this.$scope = $scope;
     this.$mdDialog = $mdDialog;
     this.$mdToast = $mdToast;
     this.ProbeSignatureService = ProbeSignatureService;
     this.PatientInformationService = PatientInformationService;
-    this.GenomicEventsService = GenomicEventsService;
+    this.TargetedGenesService = TargetedGenesService;
+    this.GeneService = GeneService;
   }
 
   $onInit() {
@@ -78,29 +79,41 @@ class ProbeSummaryComponent {
           };
 
           scope.update = async () => {
-            await this.GenomicEventsService.update(
-              this.report.ident,
-              scope.event.ident,
-              scope.event,
-            );
-            this.$mdDialog.hide({
-              message: 'Entry has been updated',
-              data: scope.event,
-            });
+            try {
+              await this.TargetedGenesService.update(
+                this.report.ident,
+                scope.event.ident,
+                { comments: scope.event.comments },
+              );
+              await this.GeneService.update(
+                this.report.ident,
+                event.gene.name,
+                scope.event.gene,
+              );
+              this.$mdDialog.hide({
+                message: 'Entry has been updated',
+                data: scope.event,
+              });
+            } catch (err) {
+              this.$mdDialog.cancel({
+                message: `An error has occured: ${err}`,
+                data: null,
+              });
+            }
           };
         }],
       });
 
       if (resp) {
         this.$mdToast.show(this.$mdToast.simple().textContent(resp.message));
-        this.genomicEvents.forEach((ev, index) => {
+        this.probeResults.forEach((ev, index) => {
           if (ev.ident === resp.data.ident) {
-            this.genomicEvents[index] = resp.data;
+            this.probeResults[index] = resp.data;
           }
         });
       }
     } catch (err) {
-      this.$mdToast.show(this.$mdToast.simple().textContent('No changes were saved.'));
+      this.$mdToast.show(this.$mdToast.simple().textContent(err.message || 'Error: changes were not saved'));
     }
   }
 

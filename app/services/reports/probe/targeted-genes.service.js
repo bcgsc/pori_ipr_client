@@ -11,6 +11,14 @@ class TargetedGenesService {
     );
     return data;
   }
+
+  async update(report, eventId, comments) {
+    const data = await this.$http.put(
+      `${this.api}/${report}/probe-results/${eventId}`,
+      comments,
+    );
+    return data;
+  }
 }
 
 export default TargetedGenesService;
