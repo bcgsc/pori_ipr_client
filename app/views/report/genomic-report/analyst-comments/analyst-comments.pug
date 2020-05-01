@@ -3,7 +3,7 @@ section.analyst
 
   div(layout="column").analystComments.analyst__comments.layout-padding
     span.analyst__edit
-      md-button(ng-if="$ctrl.reportEdit", ng-click="$ctrl.updateComments()").md-icon-button.edit-icon
+      md-button(ng-if="$ctrl.reportEdit", ng-click="$ctrl.updateComments()").md-fab.md-mini.edit-icon
         md-icon edit
     div(ng-bind-html="$ctrl.analystComments.comments || '<h2>Report Draft</h2> <br /> No comments yet.'")
     div(ng-if="$ctrl.print", layout="row", layout-align="space-around center").analyst__review-box
