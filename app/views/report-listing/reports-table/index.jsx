@@ -37,7 +37,7 @@ function ReportsTableComponent(props) {
       opts.states = 'presented,archived';
     }
 
-    let { reports } = await ReportService.allFiltered(opts);
+    const { reports } = await ReportService.allFiltered(opts);
 
     setRowData(reports.map((report) => {
       const [analyst] = report.users

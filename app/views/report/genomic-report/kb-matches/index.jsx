@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
   TextField,
@@ -42,6 +42,14 @@ function KBMatches(props) {
       ? localStorage.getItem(VISIBLE).split(',')
       : columnDefs.filter(c => !c.hide).map(c => c.colId),
   );
+
+  useEffect(() => {
+    if (Array.isArray(visibleColumns)) {
+      if (!visibleColumns.includes('Actions')) {
+        visibleColumns.push('Actions');
+      }
+    }
+  }, [visibleColumns]);
 
   const [filterText, setFilterText] = useState('');
   
