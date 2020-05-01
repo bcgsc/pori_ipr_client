@@ -13,7 +13,7 @@ class TargetedGenesService {
   }
 
   async update(report, eventId, comments) {
-    const { data } = await this.$http.put(
+    const data = await this.$http.put(
       `${this.api}/${report}/probe-results/${eventId}`,
       comments,
     );
