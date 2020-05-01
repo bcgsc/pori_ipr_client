@@ -6,11 +6,10 @@ class GeneService {
   }
 
   async update(report, geneName, gene) {
-    const { data } = await this.$http.put(
+    return this.$http.put(
       `${this.api}/${report}/genes/${geneName}`,
       gene,
     );
-    return data;
   }
 }
 
