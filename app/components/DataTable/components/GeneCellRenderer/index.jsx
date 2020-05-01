@@ -18,23 +18,34 @@ function GeneCellRenderer(params) {
 
   return (
     <>
-      <span
-        tabIndex={0}
-        role="button"
-        onClick={() => setShowGeneViewer(prevVal => !prevVal)}
-        onKeyDown={() => setShowGeneViewer(prevVal => !prevVal)}
-        className="gene__text"
-      >
-        {value}
-      </span>
-      {showGeneViewer && (
-        <GeneViewer
-          open={showGeneViewer}
-          gene={value}
-          reportIdent={reportIdent}
-          onClose={() => setShowGeneViewer(false)}
-        />
-      )}
+      {value.split(/\s::\s|,\s/).map((val, index) => (
+        <React.Fragment key={index}>
+          {index > 0 && (
+            <span>
+              {value.includes(' :: ') ? ' :: ' : ', '}
+            </span>
+          )}
+          <span
+            tabIndex={0}
+            role="button"
+            onClick={() => setShowGeneViewer(val)}
+            onKeyDown={() => setShowGeneViewer(val)}
+            className="gene__text"
+          >
+            {val}
+          </span>
+          <>
+            {showGeneViewer && (
+              <GeneViewer
+                open={showGeneViewer === val}
+                gene={val}
+                reportIdent={reportIdent}
+                onClose={() => setShowGeneViewer(false)}
+              />
+            )}
+          </>
+        </React.Fragment>
+      ))}
     </>
   );
 }

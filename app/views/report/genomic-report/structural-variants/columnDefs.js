@@ -1,6 +1,7 @@
 const columnDefs = [{
   headerName: 'Genes 5`::3`',
   colId: 'genes',
+  cellRenderer: 'GeneCellRenderer',
   valueGetter: params => (params.data.gene1.name && params.data.gene2.name
     ? `${params.data.gene1.name} :: ${params.data.gene2.name}`
     : (params.data.gene1.name || params.data.gene2.name)),

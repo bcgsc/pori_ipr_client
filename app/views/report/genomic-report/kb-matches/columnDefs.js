@@ -11,7 +11,9 @@ const columnDefs = [{
     if (variant.gene) {
       return variant.gene.name;
     }
-    return `${variant.gene1.name}, ${variant.gene2.name}`;
+    return variant.gene1.name && variant.gene2.name
+      ? `${variant.gene1.name}, ${variant.gene2.name}`
+      : variant.gene1.name || variant.gene2.name;
   },
 },
 {
