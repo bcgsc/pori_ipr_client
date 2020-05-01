@@ -57,6 +57,16 @@ const columnDefs = [{
   pinned: 'right',
   sortable: false,
   suppressMenu: true,
+}, {
+  headerName: 'Oncogene',
+  colId: 'oncogene',
+  field: 'gene.oncogene',
+  hide: true,
+}, {
+  headerName: 'Tumour Suppressor',
+  colId: 'tumourSuppressor',
+  field: 'gene.tumourSuppressor',
+  hide: true,
 }];
 
 export const setHeaderName = (header, colId) => {
