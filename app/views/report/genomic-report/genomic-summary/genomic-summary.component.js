@@ -39,7 +39,6 @@ class GenomicSummaryComponent {
       smallMutation: 0,
       expressionOutlier: 0,
       structuralVariant: 0,
-      variantsUnknown: this.variantCounts.variantsUnknown,
     };
     this.mutationMask = null;
     this.tumourAnalysis = this.report.tumourAnalysis;
@@ -103,7 +102,7 @@ class GenomicSummaryComponent {
   /* eslint-disable-next-line class-methods-use-this */
   variantCategory(variant) {
     // small mutations
-    if (/:[pgc]\./.exec(variant.geneVariant)) {
+    if (/[:(][gcp]\./.exec(variant.geneVariant)) {
       variant.type = 'smallMutation';
       return variant;
     }
@@ -131,7 +130,6 @@ class GenomicSummaryComponent {
       smallMutation: 0,
       expressionOutlier: 0,
       structuralVariant: 0,
-      variantsUnknown: this.variantCounts.variantsUnknown,
     };
 
     variants.forEach((variant, k) => {

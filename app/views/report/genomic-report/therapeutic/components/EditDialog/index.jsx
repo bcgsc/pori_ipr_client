@@ -19,6 +19,7 @@ import { therapeuticAdd, therapeuticUpdate } from '../../../../../../services/re
  * @param {func} props.close onClose function
  * @param {string} props.reportIdent ident of current report
  * @param {string} props.tableType therapeutic | chemoresistant
+ * @param {number} props.addIndex index of table to add new row to
  * @return {*} JSX
  */
 function EditDialog(props) {
@@ -28,6 +29,7 @@ function EditDialog(props) {
     close,
     reportIdent,
     tableType,
+    addIndex,
   } = props;
 
   const dialogTitle = Object.keys(editData).length > 0 ? 'Edit Row' : 'Add Row';
@@ -89,18 +91,19 @@ function EditDialog(props) {
 
       close(combinedData);
     } else {
-      combinedData = { type: tableType, ...newData };
+      combinedData = { type: tableType, rank: addIndex, ...newData };
 
       if (isMissingFields(combinedData)) {
         return;
       }
 
-      await therapeuticAdd(
+      const returnedData = await therapeuticAdd(
         reportIdent,
         combinedData,
       );
+
+      close(returnedData);
     }
-    close(combinedData);
   };
 
   const onAutocompleteValueSelected = (selectedValue, typeName) => {
@@ -124,6 +127,13 @@ function EditDialog(props) {
         });
       }
     }
+  };
+
+  const onNotesChange = (event) => {
+    setNewData({
+      ...newData,
+      notes: event.target.value,
+    });
   };
 
   return (
@@ -182,7 +192,8 @@ function EditDialog(props) {
               label="Notes"
               variant="outlined"
               margin="normal"
-              value={editData.notes || undefined}
+              value={newData.notes || undefined}
+              onChange={onNotesChange}
               multiline
             />
           </FormControl>
@@ -206,10 +217,12 @@ EditDialog.propTypes = {
   close: PropTypes.func.isRequired,
   reportIdent: PropTypes.string.isRequired,
   tableType: PropTypes.string.isRequired,
+  addIndex: PropTypes.number,
 };
 
 EditDialog.defaultProps = {
   editData: {},
+  addIndex: 0,
 };
 
 export default EditDialog;

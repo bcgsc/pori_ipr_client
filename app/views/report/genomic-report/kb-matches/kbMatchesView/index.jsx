@@ -20,7 +20,7 @@ const coalesceEntries = (entries) => {
     const key = bucketKey(entry);
     if (!buckets[key]) {
       buckets[key] = {
-        ...entry, disease: new Set([entry.disease]), reference: new Set([entry.reference]),
+        ...entry, disease: new Set([entry.disease]), reference: new Set(entry.reference.split(';')),
       };
     } else {
       buckets[key].disease.add(entry.disease);
@@ -50,7 +50,6 @@ const extractCategories = (entries, category) => {
 /**
  * @param {*} props props
  * @param {array} alterations all ungrouped alteration data
- * @param {array} novel novel alterations
  * @param {array} unknown unknown alterations
  * @param {array} thisCancer therapies approved for this cancer type
  * @param {array} otherCancer therapies approved for other cancer types
@@ -62,7 +61,6 @@ const extractCategories = (entries, category) => {
 function KBMatchesView(props) {
   const {
     alterations,
-    novel,
     unknown,
     thisCancer,
     otherCancer,
@@ -106,13 +104,8 @@ function KBMatchesView(props) {
   });
 
   const hiddenTableData = useRef({
-    novel: {
-      titleText: 'Alterations For Review',
-      rowData: coalesceEntries(novel),
-      show: false,
-    },
     unknown: {
-      titleText: 'Uncharacterized Alterations',
+      titleText: 'Other Alterations',
       rowData: coalesceEntries(unknown),
       show: false,
     },
@@ -131,7 +124,6 @@ function KBMatchesView(props) {
 
 KBMatchesView.propTypes = {
   alterations: PropTypes.arrayOf(PropTypes.object).isRequired,
-  novel: PropTypes.arrayOf(PropTypes.object).isRequired,
   unknown: PropTypes.arrayOf(PropTypes.object).isRequired,
   thisCancer: PropTypes.arrayOf(PropTypes.object).isRequired,
   otherCancer: PropTypes.arrayOf(PropTypes.object).isRequired,

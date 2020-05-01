@@ -2,18 +2,16 @@ const columnDefs = [{
   headerName: 'Genes 5`::3`',
   colId: 'genes',
   cellRenderer: 'GeneCellRenderer',
-  valueGetter: (params) => {
-    const { data } = params;
-
-    return data.gene1.name && data.gene2.name
-      ? `${data.gene1.name}, ${data.gene2.name}`
-      : data.gene1.name || data.gene2.name;
-  },
+  valueGetter: params => (params.data.gene1.name && params.data.gene2.name
+    ? `${params.data.gene1.name} :: ${params.data.gene2.name}`
+    : (params.data.gene1.name || params.data.gene2.name)),
   hide: false,
 }, {
   headerName: 'Exons 5`/3`',
   colId: 'exons',
-  valueGetter: params => `${params.data.exon1}:${params.data.exon2}`,
+  valueGetter: params => (params.data.exon1 && params.data.exon2
+    ? `${params.data.exon1}:${params.data.exon2}`
+    : (params.data.exon1 || params.data.exon2)),
   hide: false,
 }, {
   headerName: 'Breakpoint',
@@ -34,15 +32,27 @@ const columnDefs = [{
 }, {
   headerName: 'RPKM 5`/3`',
   colId: 'rpkm',
-  valueGetter: params => `${params.data.gene1.expressionVariants.rpkm}/${params.data.gene2.expressionVariants.rpkm}`,
+  valueGetter: params => (
+    params.data.gene1.expressionVariants.rpkm && params.data.gene2.expressionVariants.rpkm
+      ? `${params.data.gene1.expressionVariants.rpkm}/${params.data.gene2.expressionVariants.rpkm}`
+      : (params.data.gene1.expressionVariants.rpkm || params.data.gene2.expressionVariants.rpkm)
+  ),
   hide: false,
 }, {
   colId: 'foldChange',
-  valueGetter: params => `${params.data.gene1.expressionVariants.foldChange}/${params.data.gene2.expressionVariants.foldChange}`,
+  valueGetter: params => (
+    params.data.gene1.expressionVariants.foldChange && params.data.gene2.expressionVariants.foldChange
+      ? `${params.data.gene1.expressionVariants.foldChange}/${params.data.gene2.expressionVariants.foldChange}`
+      : (params.data.gene1.expressionVariants.foldChange || params.data.gene2.expressionVariants.foldChange)
+  ),
   hide: false,
 }, {
   colId: 'tcgaPerc',
-  valueGetter: params => `${params.data.gene1.expressionVariants.tcgaPerc}/${params.data.gene2.expressionVariants.tcgaPerc}`,
+  valueGetter: params => (
+    params.data.gene1.expressionVariants.tcgaPerc && params.data.gene2.expressionVariants.tcgaPerc
+      ? `${params.data.gene1.expressionVariants.tcgaPerc}/${params.data.gene2.expressionVariants.tcgaPerc}`
+      : (params.data.gene1.expressionVariants.tcgaPerc || params.data.gene2.expressionVariants.tcgaPerc)
+  ),
   hide: false,
 }, {
   headerName: 'Actions',

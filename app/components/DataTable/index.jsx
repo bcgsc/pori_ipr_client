@@ -7,6 +7,8 @@ import {
   Typography,
   IconButton,
   Dialog,
+  Switch,
+  Snackbar,
 } from '@material-ui/core';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
@@ -34,6 +36,9 @@ const MAX_TABLE_HEIGHT = '500px';
  * @param {func} props.syncVisibleColumns function to propagate visible column changes
  * @param {bool} props.canToggleColumns can visible/hidden columns be toggled
  * @param {bool} props.canViewDetails can the detail dialog be shown
+ * @param {bool} props.paginated should the table be paginated
+ * @param {bool} props.canReorder can the rows be reordered
+ * @param {func} props.rowUpdateAPICall API call for reordering rows
  * @return {*} JSX
  */
 function DataTable(props) {
@@ -51,6 +56,9 @@ function DataTable(props) {
     syncVisibleColumns,
     canToggleColumns,
     canViewDetails,
+    paginated,
+    canReorder,
+    rowUpdateAPICall,
   } = props;
 
   const domLayout = 'autoHeight';
@@ -67,6 +75,11 @@ function DataTable(props) {
   const [showPopover, setShowPopover] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [selectedRow, setSelectedRow] = useState({});
+  const [showReorder, setShowReorder] = useState(false);
+  const [showSnackbar, setShowSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarDuration, setSnackbarDuration] = useState(2000);
+  const [tableLength, setTableLength] = useState(rowData.length);
 
   useEffect(() => {
     if (gridApi.current) {
@@ -83,6 +96,14 @@ function DataTable(props) {
       columnApi.current.setColumnsVisible(hiddenColumns, false);
     }
   }, [visibleColumns]);
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setShowSnackbar(false);
+  };
 
   const getColumnVisibility = () => {
     const visibleColumnIds = columnApi.current.getAllDisplayedColumns()
@@ -124,20 +145,80 @@ function DataTable(props) {
     }
   };
 
+  const toggleReorder = () => {
+    if (!showReorder) {
+      columnDefs.forEach((col) => {
+        col.sortable = false;
+        col.filter = false;
+      });
+      gridApi.current.setSortModel([{ colId: 'rank', sort: 'asc' }]);
+      gridApi.current.setColumnDefs(columnDefs);
+
+      columnApi.current.setColumnVisible('drag', true);
+      setShowReorder(true);
+    } else {
+      columnDefs.forEach((col) => {
+        col.sortable = true;
+        col.filter = true;
+      });
+      gridApi.current.setColumnDefs(columnDefs);
+
+      columnApi.current.setColumnVisible('drag', false);
+      setShowReorder(false);
+    }
+  };
+
+  const onRowDragEnd = async (event) => {
+    try {
+      setShowSnackbar(false);
+      const oldRank = event.node.data.rank;
+      const newRank = event.overIndex;
+
+      const newData = rowData.map((row) => {
+        if (row.rank === oldRank) {
+          row.rank = newRank;
+          return row;
+        }
+
+        if (row.rank > oldRank && row.rank <= newRank) {
+          row.rank -= 1;
+        } else if (row.rank < oldRank && row.rank >= newRank) {
+          row.rank += 1;
+        }
+        return row;
+      });
+      newData.rank = event.overIndex;
+      const updatedRows = await rowUpdateAPICall(
+        reportIdent,
+        newData,
+      );
+
+      gridApi.current.updateRowData({ update: updatedRows });
+      setSnackbarDuration(2000);
+      setShowSnackbar(true);
+      setSnackbarMessage('Row update success');
+    } catch (err) {
+      setSnackbarDuration(5000);
+      setShowSnackbar(true);
+      setSnackbarMessage(`Rows were not updated: ${err}`);
+    }
+  };
+
   const handleRowEditClose = (editedData) => {
     setShowEditDialog(false);
     if (editedData && selectedRow.node) {
       selectedRow.node.setData(editedData);
     } else if (editedData) {
       gridApi.current.updateRowData({ add: [editedData] });
+      setTableLength(gridApi.current.getDisplayedRowCount());
     }
     setSelectedRow({});
   };
 
   const defaultColDef = {
-    sortable: true,
+    sortable: !showReorder,
     resizable: true,
-    filter: true,
+    filter: !showReorder,
     editable: false,
   };
     
@@ -180,14 +261,6 @@ function DataTable(props) {
     return result;
   };
 
-  const renderAddRow = () => (
-    <IconButton
-      onClick={() => setShowEditDialog(true)}
-    >
-      <AddCircleOutlineIcon />
-    </IconButton>
-  );
-
   return (
     <div className="data-table--padded">
       {rowData.length || editable ? (
@@ -196,23 +269,61 @@ function DataTable(props) {
             <Typography variant="h5" className="data-table__header">
               {titleText}
             </Typography>
-            {addable
-              && renderAddRow()
-            }
+            <div>
+              {addable && (
+                <span className="data-table__action">
+                  <Typography display="inline">
+                    Add Row
+                  </Typography>
+                  <IconButton
+                    onClick={() => setShowEditDialog(true)}
+                    title="Add Row"
+                  >
+                    <AddCircleOutlineIcon />
+                  </IconButton>
+                </span>
+              )}
+              {canToggleColumns && (
+                <span className="data-table__action">
+                  <IconButton
+                    onClick={() => setShowPopover(prevVal => !prevVal)}
+                  >
+                    <MoreHorizIcon />
+                  </IconButton>
+                </span>
+              )}
+              {canReorder && (
+                <span className="data-table__action">
+                  <Typography display="inline">
+                    Reorder Rows
+                  </Typography>
+                  <Switch
+                    checked={showReorder}
+                    onChange={toggleReorder}
+                    color="primary"
+                    title="Reorder Rows"
+                  />
+                  <Snackbar
+                    anchorOrigin={{
+                      vertical: 'bottom',
+                      horizontal: 'left',
+                    }}
+                    open={showSnackbar}
+                    autoHideDuration={snackbarDuration}
+                    message={snackbarMessage}
+                    onClose={handleSnackbarClose}
+                  />
+                </span>
+              )}
+            </div>
             <EditDialog
               open={showEditDialog}
               close={handleRowEditClose}
               editData={selectedRow.data}
               reportIdent={reportIdent}
               tableType={tableType}
+              addIndex={tableLength}
             />
-            {canToggleColumns && (
-              <IconButton
-                onClick={() => setShowPopover(prevVal => !prevVal)}
-              >
-                <MoreHorizIcon />
-              </IconButton>
-            )}
           </div>
           <div
             className="ag-theme-material data-table__container"
@@ -227,8 +338,10 @@ function DataTable(props) {
               defaultColDef={defaultColDef}
               onGridReady={onGridReady}
               domLayout={domLayout}
-              pagination
+              pagination={paginated}
               autoSizePadding="0"
+              deltaRowDataMode={canReorder}
+              onRowDragEnd={canReorder ? onRowDragEnd : null}
               editType="fullRow"
               context={{
                 editable,
@@ -282,6 +395,9 @@ DataTable.propTypes = {
   syncVisibleColumns: PropTypes.func,
   canToggleColumns: PropTypes.bool,
   canViewDetails: PropTypes.bool,
+  paginated: PropTypes.bool,
+  canReorder: PropTypes.bool,
+  rowUpdateAPICall: PropTypes.func,
 };
 
 DataTable.defaultProps = {
@@ -296,6 +412,9 @@ DataTable.defaultProps = {
   syncVisibleColumns: null,
   canToggleColumns: false,
   canViewDetails: true,
+  paginated: true,
+  canReorder: false,
+  rowUpdateAPICall: () => {},
 };
 
 export default DataTable;

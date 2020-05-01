@@ -22,8 +22,7 @@ export const therapeuticAdd = async (reportIdent, entry) => {
   );
 
   if (response.ok) {
-    const { result } = await response.json();
-    return result;
+    return response.json();
   }
 };
 
@@ -52,4 +51,33 @@ export const therapeuticUpdate = async (reportIdent, entryIdent, entry) => {
     const { result } = await response.json();
     return result;
   }
+};
+
+export const therapeuticUpdateTable = async (reportIdent, entry) => {
+  const authToken = getLocalToken();
+  if (!authToken) {
+    return [];
+  }
+
+  const options = {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': authToken,
+    },
+    body: JSON.stringify(entry),
+  };
+
+  const response = await fetch(
+    `${CONFIG.ENDPOINTS.API}/reports/${reportIdent}/therapeutic-targets`,
+    options,
+  );
+
+  if (response.ok) {
+    const { result } = await response.json();
+    return result;
+  }
+
+  throw new Error(`${response.status} ${response.statusText}`);
 };
