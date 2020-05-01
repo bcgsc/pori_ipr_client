@@ -228,8 +228,12 @@ function DataTable(props) {
         visibleCols: returnedVisibleCols,
       } = ColumnPickerOnClose.current();
       returnedVisibleCols.push('Actions');
+      const returnedHiddenCols = columnApi.current.getAllColumns()
+        .map(col => col.colId)
+        .filter(col => !returnedVisibleCols.includes(col));
 
       columnApi.current.setColumnsVisible(returnedVisibleCols, true);
+      columnApi.current.setColumnsVisible(returnedHiddenCols, false);
 
       columnApi.current.autoSizeColumns(returnedVisibleCols);
       
