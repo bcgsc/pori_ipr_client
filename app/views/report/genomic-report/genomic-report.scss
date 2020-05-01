@@ -822,10 +822,21 @@ md-dialog-content {
 
 .report-menu {
   &__container {
-    height: calc(100vh - 56px);
+    height: calc(100vh - 120px);
     position: sticky;
     top: 0;
     overflow-y: auto;
     overflow-x: hidden;
+  }
+}
+
+.report {
+  &__container {
+    overflow: hidden;
+  }
+
+  &__content {
+    overflow-y: auto;
+    height: calc(100vh - 120px)
   }
 }

@@ -1,11 +1,11 @@
-md-content(flex).layout-fill
+md-content(flex).layout-fill.report__container
   md-toolbar
     div.md-toolbar-tools
       span(flex).text-left {{$ctrl.report.patientInformation.diagnosis}}
       h2(flex).text-center.md-hue-3 {{$ctrl.report.patientId}} Genomic Report
       report-state(flex, state="$ctrl.report.state").text-right
   div(layout="row", flex).pog-report
-    div(flex, ui-view="")
+    div(flex, ui-view="").report__content
 
 
     div(flex=15).report-menu__container
