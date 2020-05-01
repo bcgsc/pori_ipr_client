@@ -112,7 +112,10 @@ class GenomicSummaryComponent {
       return variant;
     }
     // Expression Outliers
-    if (variant.geneVariant.toLowerCase().includes('expression')) {
+    if (variant.geneVariant.toLowerCase().includes('express')
+      || variant.geneVariant.toLowerCase().includes('outlier')
+      || variant.geneVariant.toLowerCase().includes('percentile')
+    ) {
       variant.type = 'expressionOutlier';
       return variant;
     }
