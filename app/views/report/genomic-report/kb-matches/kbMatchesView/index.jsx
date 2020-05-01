@@ -100,7 +100,7 @@ function KBMatchesView(props) {
     },
   });
 
-  const [unsyncedTableData] = useState(isProbe ? {} : {
+  const [unsyncedTableData] = useState({
     titleText: 'Detected Alterations From Targeted Gene Report',
     rowData: targetedGenes,
   });
