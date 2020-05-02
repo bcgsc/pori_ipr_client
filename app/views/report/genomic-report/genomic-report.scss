@@ -1,4 +1,5 @@
 @import '../../../styles/variables';
+@import '../../../styles/theme';
 
 .pog-report {
 
@@ -37,7 +38,7 @@
     margin-bottom: 10px;
     
     .md-subheader {
-      background: rgb(204,207,226);
+      background: $palette__primary--light;
       
       .md-subheader-inner {
         padding: 10px;
@@ -66,7 +67,6 @@
     }
     
     .details {
-      background: rgb(220,220,220);
       padding: 15px;
       font-size: 0.9em;
       
@@ -78,7 +78,7 @@
           color: rgb(100,100,100);
           font-size: 0.9em;
           margin: 0;
-          padding: 0;
+          padding: 1px 0 0;
         }
         
         dd {
@@ -89,7 +89,6 @@
       }
       
       &.box {
-        background-color: rgb(235,235,235);
         margin: 8px 0 0 0;
       }
       
@@ -124,10 +123,6 @@
     }
 
     .analystComments {
-      margin: 7px 4px 7px 4px;
-      padding: 20px;
-      background-color: rgb(235,235,235);
-
       table {
         border: 1px solid rgb(170,170,170);
         border-collapse: collapse;
@@ -205,7 +200,6 @@
       md-icon {
         vertical-align: middle;
         margin-left: 5px;
-        font-size: 1.2em;
         height: auto;
         width: auto;
         min-height: 0;
@@ -252,13 +246,11 @@
       }
 
       div.box {
-        background-color: rgb(180,180,180);
-
         div.heading {
           font-weight: 100;
           font-size: 0.8em;
           text-align: center;
-          background-color: rgb(204,207,226);
+          background-color: $palette__primary--light;
 
           div {
             padding: 10px 0;
@@ -275,8 +267,6 @@
         }
 
         div.search {
-          background-color: rgb(235,235,235);
-
           md-input-container {
             margin: 10px 0 0 10px;
             padding: 0;
@@ -290,15 +280,12 @@
           font-size: 0.9em;
           text-align: center;
           padding: 20px 0;
-          background-color: rgb(235,235,235);
-
           
           div {
             padding: 0 5px;
           }
         }
         div.row {
-          background-color: rgb(235,235,235);
           font-weight: 300;
           font-size: 0.85em;
 
@@ -351,11 +338,10 @@
     }
     
     .mutationTable {
-      background-color: rgb(235,235,235);
       margin: 0px 4px 7px 4px;
 
       .signatureTitle {
-        padding-right: 6px;
+        padding-right: 8px;
       }
       
       .header {
@@ -365,10 +351,10 @@
             text-align: center;
             padding: 15px 0;
             font-size: 0.9em;
-            background-color: rgb(190,190,190);
+            background-color: $palette__primary--light;
             box-sizing: border-box;
-            border-right: 6px solid rgb(220,220,220);
-            border-bottom: 8px solid rgb(220,220,220);
+            margin: 0 8px 0 0;
+            border-bottom: 1px solid $palette__primary--light;
 
             span.listitem {
               cursor: pointer;
@@ -381,7 +367,7 @@
           font-weight: 100;
           font-size: 0.9em;
           text-align: center;
-          background-color: rgb(204,207,226);
+          background-color: $palette__primary--light;
           
           div {
             padding: 15px 0;
@@ -414,16 +400,16 @@
       .data {
         
         div {
-          div:first-of-type {
-            text-align: left;
-          }
-          div:nth-of-type(3) {
-            background-color: rgb(225,225,225);
-          }
           div {
-            padding: 5px 0 5px 5px;
+            padding: 20px 0 8px 5px;
             text-align: center;
+
+            &:not(:first-of-type) {
+              font-weight: 600;
+              font-size: .9em;
+            }
           }
+          
         }
         
       }
@@ -504,7 +490,6 @@
     .alts {
       margin: 0 4px 7px 4px;
       padding: 20px 0;
-      background-color: rgb(235,235,235);
       
       div {
         display: inline-block;
@@ -584,62 +569,8 @@
 
   $material-table-row-hover: rgb(238,238,238);
 
-  $analysis-report-section-expression-primary: rgb(84, 100, 211);
-  $analysis-report-section-expression-secondary: rgb(192, 197, 226);
-
   section.material-section {
     background-color: rgb(255,255,255);
-
-    &.expression {
-      h1 { background-color: $analysis-report-section-expression-primary; }
-      h2 { background-color: $analysis-report-section-expression-secondary; }
-    }
-
-    &.presentation {
-      h1 { background-color: $analysis-report-section-expression-primary; }
-      h2 { background-color: $analysis-report-section-expression-secondary; }
-    }
-
-    h1 {
-      padding: 7px;
-      margin: 0;
-      color: rgb(255,255,255);
-      font-weight: 100;
-      font-size: 1.15em;
-
-      md-icon {
-        color: rgba(255,255,255,0.8);
-      }
-    }
-
-    h2 {
-      color: rgb(0,0,0);
-      margin: 0;
-      font-size: 0.90em;
-      font-weight: 100;
-      padding: 7px;
-
-      md-icon {
-        color: rgba(0,0,0,0.8);
-      }
-    }
-
-    h1, h2 {
-      .minimize {
-        margin: 0 0 0 0;
-        height: 0;
-        display: inline-block;
-        float: right;
-
-        md-icon {
-          font-size: 20px;
-          min-height: 20px;
-          height: 20px;
-          line-height: 20px;
-        }
-      }
-    }
-
 
     .detail-box {
       border: 1px solid rgb(210,210,210);
@@ -789,6 +720,8 @@ md-dialog-content {
 
 
 .reportMenu {
+  height: 100%;
+  border-left: 1px solid $black-20;
 
   h1 {
     font-size: 16px;
@@ -807,19 +740,21 @@ md-dialog-content {
 
     span {
       &.inline {
+        height: 44px;
         background-color: $white;
         display: flex;
         padding: 10px 5px 10px 15px;
         user-select: none;
 
         > span {
-          margin: auto 0;
+          margin: auto 8px auto 0;
         }
 
         > md-icon {
           margin-right: 10px;
           outline: none;
-          color: $white;
+          color: $palette__common--black;
+          opacity: $icon-opacity;
         }
 
         &:hover {
@@ -838,8 +773,13 @@ md-dialog-content {
         }
 
         &.active {
-          background-color: $secondary;
+          background-color: $palette__primary--main;
           color: rgb(255,255,255);
+
+          > md-icon {
+            color: $palette__common--white;
+            opacity: 1;
+          }
         }
 
         &.disabled {
@@ -865,7 +805,7 @@ md-dialog-content {
           }
 
           &.active {
-            background-color: $secondary;
+            background-color: $palette__primary--main;
             color: rgb(255,255,255);
           }
 
@@ -877,5 +817,26 @@ md-dialog-content {
       }
     }
 
+  }
+}
+
+.report-menu {
+  &__container {
+    height: calc(100vh - 120px);
+    position: sticky;
+    top: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+}
+
+.report {
+  &__container {
+    overflow: hidden;
+  }
+
+  &__content {
+    overflow-y: auto;
+    height: calc(100vh - 120px)
   }
 }

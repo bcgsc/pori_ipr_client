@@ -1,13 +1,10 @@
 section.material-section.expression
-  h1 Expression Analysis
-    p.minimize
-      md-icon(ng-click="$ctrl.showSection.analysis = !$ctrl.showSection.analysis", ng-if="$ctrl.showSection.analysis").clickable keyboard_arrow_up
-      md-icon(ng-click="$ctrl.showSection.analysis = !$ctrl.showSection.analysis", ng-if="!$ctrl.showSection.analysis").clickable keyboard_arrow_down
+  md-subheader.md-no-sticky Expression Analysis
   div(layout="column", ng-if="$ctrl.showSection.analysis")
 
     div.analysis-report-section
       div(layout="column")
-        h2 Tissue Sites
+        h2.title Tissue Sites
 
         div(layout="row", layout-align="space-between")
           div(layout="column", flex=30).detail-box
@@ -39,7 +36,7 @@ section.material-section.expression
 
     div.analysis-report-section
       div(layout="column")
-        h2 Expression Correlation Summary and Comparator Choices
+        h2.title Expression Correlation Summary and Comparator Choices
 
         div(layout="row").comparators
           div(layout="column", flex)
@@ -69,22 +66,14 @@ section.material-section.expression
               div(flex) {{$ctrl.ptxComparator}}
 
   div.analysis-report-section.margin-top-10
-    h1 Expression Outlier Summary
-      p.minimize
-        md-icon(ng-click="$ctrl.showSection.outlierSummary = !$ctrl.showSection.outlierSummary", ng-if="$ctrl.showSection.outlierSummary").clickable keyboard_arrow_up
-        md-icon(ng-click="$ctrl.showSection.outlierSummary = !$ctrl.showSection.outlierSummary", ng-if="!$ctrl.showSection.outlierSummary").clickable keyboard_arrow_down
-
+    md-subheader.md-no-sticky Expression Outlier Summary
     div(ng-if="$ctrl.showSection.outlierSummary")
 
       div(layout="column", ng-repeat="(key, title) in $ctrl.expSummaryMap track by $index")
         expression-react(outliers="$ctrl.expOutliers[key]", title-text="title", report-ident="$ctrl.report.ident")
 
   div.analysis-report-section.margin-top-10
-    h1 mRNA Expression Outliers
-      p.minimize
-          md-icon(ng-click="$ctrl.showSection.mrnaOutliers = !$ctrl.showSection.mrnaOutliers", ng-if="$ctrl.showSection.mrnaOutliers").clickable keyboard_arrow_up
-          md-icon(ng-click="$ctrl.showSection.mrnaOutliers = !$ctrl.showSection.mrnaOutliers", ng-if="!$ctrl.showSection.mrnaOutliers").clickable keyboard_arrow_down
-
-    div(ng-show="$ctrl.showSection.mrnaOutliers")
+    md-subheader.md-no-sticky mRNA Expression Outliers
+    div(ng-if="$ctrl.showSection.mrnaOutliers")
       div(layout="column", ng-repeat="(key, title) in $ctrl.mRNAOutliersMap track by $index")
         expression-react(outliers="$ctrl.expOutliers[key]", title-text="title", report-ident="$ctrl.report.ident")

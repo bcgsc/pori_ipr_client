@@ -4,7 +4,7 @@ md-content(flex, layout="column").md-padding.biopsyBoard.germline_report
   div(layout="row")
     h2(layout="row").header--center {{$ctrl.report.patientId}} {{ '- ' + $ctrl.report.normalLibrary || 'DummyNormalLibName'}}
     span(flex)
-    md-button(ng-click="$ctrl.removeReport()").md-raised.md-primary Remove
+    md-button(ng-click="$ctrl.removeReport()").md-raised.md-accent Remove
 
   div(ng-if="!$ctrl.report.variants.length", layout="row", layout-align="center center").content__container
     span No variants detected in this germline report
@@ -70,7 +70,7 @@ md-content(flex, layout="column").md-padding.biopsyBoard.germline_report
               md-option(value="biofx") biofx
               md-option(value="projects") projects
           td.text-right
-            md-button(ng-click="$ctrl.review()").md-raised.md-primary Add Review
+            md-button(ng-click="$ctrl.review()").md-raised.md-accent Add Review
           td
         tr
           td(colspan="5").text-center

@@ -1,4 +1,5 @@
 import template from './disease-specific-analysis.pug';
+import './disease-specific-analysis.scss';
 
 const bindings = {
   pog: '<',

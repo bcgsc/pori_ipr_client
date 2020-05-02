@@ -1,4 +1,5 @@
 @import '../../../../styles/variables';
+@import '../../../../styles/theme';
 
 @mixin print-header {
   background-color: #bcbddc;
@@ -42,16 +43,37 @@
 
 
 @media screen {
+  .analyst {
+     &__edit {
+       padding: 0;
+       margin: 0;
+       float: right;
+     }
+
+     &__comments {
+       margin: 16px;
+       padding: 4px 8px;
+     }
+  }
+
   .analystComments {
     
-    .edit-icon {
+    .analyst__edit {
       position: absolute;
-      right: 21%;
-      
-      md-icon {
-        font-size: 1.4em;
+      right: 284px;
+
+      .edit-icon {
+        background-color: $palette__common--white;
+
+        &:not([disabled]):hover {
+          background-color: darken($palette__common--white, 8%);
+        }
+
+        md-icon {
+          color: $palette__common--black;
+          opacity: $icon-opacity;
+        }
       }
-      
     }
   }
 

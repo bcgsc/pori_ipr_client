@@ -1,10 +1,9 @@
 section.analyst
   md-subheader.analyst__header.md-no-sticky Analyst Comments
 
-  div(layout="column").analystComments.analyst__comments
-
-    div(flex=10)
-      md-button(ng-if="$ctrl.reportEdit", ng-click="$ctrl.updateComments()").md-icon-button.edit-icon
+  div(layout="column").analystComments.analyst__comments.layout-padding
+    span.analyst__edit
+      md-button(ng-if="$ctrl.reportEdit", ng-click="$ctrl.updateComments()").md-fab.md-mini.edit-icon
         md-icon edit
     div(ng-bind-html="$ctrl.analystComments.comments || '<h2>Report Draft</h2> <br /> No comments yet.'")
     div(ng-if="$ctrl.print", layout="row", layout-align="space-around center").analyst__review-box
@@ -16,7 +15,7 @@ section.analyst
   div(layout="column", ng-if="$ctrl.analystComments !== null && !$ctrl.print").layout-padding.analystSignatures
     div Signed By
 
-    div(layout="row", md-whiteframe=1, layout-align="start start", ng-click="$ctrl.newEntry($event, 'therapeutic')").rowCard
+    div(layout="row", md-whiteframe=4, layout-align="start start", ng-click="$ctrl.newEntry($event, 'therapeutic')").rowCard
       div(flex=25, layout="column")
         h5 Author
         div(flex, layout="row")
@@ -35,7 +34,7 @@ section.analyst
           md-icon(ng-click="$ctrl.revokeSign('author')") remove_circle
             md-tooltip Remove signing
 
-    div(layout="row", md-whiteframe=1, layout-align="start start", ng-click="newEntry($event, 'therapeutic')").rowCard
+    div(layout="row", md-whiteframe=4, layout-align="start start", ng-click="newEntry($event, 'therapeutic')").rowCard
       div(flex=25, layout="column")
         h5 Reviewer
         div(flex, layout="row")

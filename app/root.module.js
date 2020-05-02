@@ -162,12 +162,21 @@ export default angular.module('root')
 
     const gscGreen = $mdThemingProvider.extendPalette('green', {
       A200: theme.secondaryMain,
+      A700: theme.secondaryLight,
+      contrastDefaultColor: 'light',
+    });
+
+    const gscBlue = $mdThemingProvider.extendPalette('indigo', {
+      default: theme.primaryMain,
+      100: theme.primaryLight,
     });
 
     $mdThemingProvider.definePalette('printGrey', printGrey);
     $mdThemingProvider.definePalette('gscGreen', gscGreen);
+    $mdThemingProvider.definePalette('gscBlue', gscBlue);
 
     $mdThemingProvider.theme('default')
+      .primaryPalette('gscBlue')
       .backgroundPalette('printGrey')
       .accentPalette('gscGreen');
   })

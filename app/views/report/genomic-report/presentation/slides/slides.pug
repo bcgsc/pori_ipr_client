@@ -1,5 +1,5 @@
 section.material-section.slide.presentation
-  h1(ng-if="!$ctrl.print") Additional Information
+  md-subheader(ng-if="!$ctrl.print").md-no-sticky Additional Information
 
   div(ng-if="!$ctrl.print", layout="column")
 
@@ -18,7 +18,7 @@ section.material-section.slide.presentation
               img(data-ng-src="data:{{slide.object_type}};base64,{{slide.object}}").slide
 
       div(layout="column").add-slide
-        h2 Add new slide
+        h2.title Add new slide
 
         div(layout="column" ng-show="$ctrl.addStep === 'select'").pick-file
 
@@ -42,7 +42,7 @@ section.material-section.slide.presentation
             md-progress-circular(md-mode="determinate", value="$ctrl.progress")
         div(layout="row")
           span(flex)
-          md-button(ng-click="$ctrl.initiateUpload()", ng-disabled="$ctrl.addStep !== 'upload'").md-primary.md-raised Upload
+          md-button(ng-click="$ctrl.initiateUpload()", ng-disabled="$ctrl.addStep !== 'upload'").md-accent.md-raised Upload
           span(flex)
 
 

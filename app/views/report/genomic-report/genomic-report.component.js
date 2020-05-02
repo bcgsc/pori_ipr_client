@@ -130,9 +130,9 @@ class GenomicReportComponent {
   activeSection(state) {
     if (this.$state.current.name.includes(state)) {
       // Show subsection if child state is active
-      this.sectionIndex = this.sections.findIndex((section, index) => {
+      this.sectionIndex = this.sections.findIndex((section) => {
         if (section.children.length > 0) {
-          return (section.children.some(child => child.state === state) ? index : -1) !== -1;
+          return section.children.some(child => child.state === state);
         }
         return false;
       });

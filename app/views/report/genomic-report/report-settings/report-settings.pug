@@ -1,6 +1,6 @@
 
 section.meta
-  h2.title Settings
+  md-subheader.md-no-sticky Settings
 
   div(layout="column").inlineSettings
     div(layout="row")
@@ -32,10 +32,10 @@ section.meta
         md-button(ng-click="$ctrl.deleteReport($event)").md-warn Delete Report
       span(flex)
       span
-        md-button(ng-click="$ctrl.updateSettings()", ng-disabled="!$ctrl.reportSettingsChanged").md-primary.md-raised Update
-  h2(ng-if="$ctrl.showBindings").title User Associations
+        md-button(ng-click="$ctrl.updateSettings()", ng-disabled="!$ctrl.reportSettingsChanged").md-accent.md-raised Update
+  md-subheader(ng-if="$ctrl.showBindings").md-no-sticky User Associations
   div(ng-repeat="role in $ctrl.roles track by $index", ng-if="$ctrl.showBindings")
-    md-subheader.md-primary {{role}}s
+    h2.title {{role}}s
 
     div(layout="row", flex, layout-align="start center").roleList
       role-card(role="u", ng-repeat="u in $ctrl.report.users | filter: $ctrl.roleFilter(role)", remove-entry="$ctrl.removeEntry(entry)")
