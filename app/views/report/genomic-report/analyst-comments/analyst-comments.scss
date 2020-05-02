@@ -58,18 +58,21 @@
 
   .analystComments {
     
-    .edit-icon {
+    .analyst__edit {
       position: absolute;
-      right: 16%;
-      background-color: $palette__common--white;
+      right: 284px;
 
-      &:hover {
-        background-color: darken($palette__common--white, 8%);
-      }
+      .edit-icon {
+        background-color: $palette__common--white;
 
-      md-icon {
-        color: $palette__common--black;
-        opacity: $icon-opacity;
+        &:not([disabled]):hover {
+          background-color: darken($palette__common--white, 8%);
+        }
+
+        md-icon {
+          color: $palette__common--black;
+          opacity: $icon-opacity;
+        }
       }
     }
   }
