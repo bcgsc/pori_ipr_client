@@ -1,4 +1,5 @@
 import eager from './eager';
+import KBMatchesComponent from '../genomic-report/kb-matches/index';
 
 const probe = {
   ...eager.probe,
@@ -38,20 +39,34 @@ const detailedGenomicAnalysis = {
   ...eager.detailedGenomicAnalysis,
   component: 'detailedGenomicAnalysis',
   resolve: {
+    // This is REQUIRED to be lower camel case for injections apparently
+    // But React requires components to be PascalCase. Reassign in component.
+    kbMatchesComponent: [() => KBMatchesComponent],
     alterations: ['$transition$', 'AlterationService',
-      async ($transition$, AlterationService) => AlterationService.getAll(
-        $transition$.params().analysis_report,
-      )],
-    approvedThisCancer: ['$transition$', 'AlterationService',
       async ($transition$, AlterationService) => AlterationService.getType(
         $transition$.params().analysis_report,
-        'thisCancer',
-      )],
-    approvedOtherCancer: ['$transition$', 'AlterationService',
+        { approvedTherapy: false, category: 'therapeutic,biological,diagnostic,prognostic' },
+      ),
+    ],
+    unknown: ['$transition$', 'AlterationService',
       async ($transition$, AlterationService) => AlterationService.getType(
         $transition$.params().analysis_report,
-        'otherCancer',
-      )],
+        { category: 'unknown,novel' },
+      ),
+    ],
+    thisCancer: ['$transition$', 'AlterationService',
+      async ($transition$, AlterationService) => AlterationService.getType(
+        $transition$.params().analysis_report,
+        { matchedCancer: true, approvedTherapy: true, category: 'therapeutic' },
+      ),
+    ],
+    otherCancer: ['$transition$', 'AlterationService',
+      async ($transition$, AlterationService) => AlterationService.getType(
+        $transition$.params().analysis_report,
+        { matchedCancer: false, approvedTherapy: true, category: 'therapeutic' },
+      ),
+    ],
+    isProbe: () => true,
   },
 };
 
