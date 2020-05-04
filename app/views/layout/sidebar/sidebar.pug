@@ -1,0 +1,59 @@
+div(layout="column", ng-class="{'sidebar--open': $ctrl.maximized}").sidebar
+  div(layout="row").sidebar__button-row
+    md-button(ng-click="$ctrl.toggleNavbar()").md-icon-button
+      md-icon chevron_left
+  md-divider
+
+  a(layout="row", ng-if="$ctrl.pageAccess.report", ui-sref="root.reportlisting.reports",
+    ng-class="{'sidebar__row--active': $ctrl.$state.current.name.includes('reportlisting')}"
+  ).sidebar__row
+    md-icon.sidebar__icon assignment
+    md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Reports
+    span(ng-class="{'sidebar__text--visible': $ctrl.maximized}").sidebar__text.sidebar__text--transition Reports
+
+  a(layout="row", ng-if="$ctrl.pageAccess.germline", ui-sref="root.germline.board",
+    ng-class="{'sidebar__row--active': $ctrl.$state.current.name.includes('germline')}"
+  ).sidebar__row
+    img(src="img/germline_icon.svg").sidebar__icon--custom
+    md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Germline
+    span(ng-class="{'sidebar__text--visible': $ctrl.maximized}").sidebar__text.sidebar__text--transition Germline
+
+  a(layout="row", href="https://graphkb.bcgsc.ca", target="_blank" rel="noopener noreferrer").sidebar__row
+    md-icon.sidebar__icon menu_book
+    md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Graph Knowledgebase
+    span(ng-class="{'sidebar__text--visible': $ctrl.maximized}").sidebar__text.sidebar__text--transition Graph Knowledgebase
+
+  a(layout="row", ui-sref="root.terms",
+    ng-class="{'sidebar__row--active': $ctrl.$state.current.name.includes('terms')}"
+  ).sidebar__row
+    md-icon.sidebar__icon help_outline
+    md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Terms of Use
+    span(ng-class="{'sidebar__text--visible': $ctrl.maximized}").sidebar__text.sidebar__text--transition Terms of Use
+
+
+  a(layout="row", ng-if="$ctrl.isAdmin", ui-sref="root.admin.users",
+      ng-class="{'sidebar__row--active': $ctrl.$state.current.name.includes('users')}"
+    ).sidebar__row
+    md-icon.sidebar__icon person
+    md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Users
+    span(ng-class="{'sidebar__text--visible': $ctrl.maximized}").sidebar__text.sidebar__text--transition Users
+
+  a(layout="row", ng-if="$ctrl.isAdmin", ui-sref="root.admin.groups",
+      ng-class="{'sidebar__row--active': $ctrl.$state.current.name.includes('groups')}"
+    ).sidebar__row
+    md-icon.sidebar__icon supervisor_account
+    md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Groups
+    span(ng-class="{'sidebar__text--visible': $ctrl.maximized}").sidebar__text.sidebar__text--transition Groups
+
+  a(layout="row", ng-if="$ctrl.isAdmin", ui-sref="root.admin.projects",
+      ng-class="{'sidebar__row--active': $ctrl.$state.current.name.includes('projects')}"
+    ).sidebar__row
+    md-icon.sidebar__icon folder_shared
+    md-tooltip(ng-if="!$ctrl.maximized", md-direction="right") Projects
+    span(ng-class="{'sidebar__text--visible': $ctrl.maximized}").sidebar__text.sidebar__text--transition Projects
+
+  span(flex)
+  md-divider
+  div(layout="row").sidebar__logos
+    img(src="img/gsclogo.svg").sidebar__image-logo
+    span(ng-class="{'sidebar__text--visible': $ctrl.maximized}").sidebar__organization-text.sidebar__text--transition Genome Sciences Centre

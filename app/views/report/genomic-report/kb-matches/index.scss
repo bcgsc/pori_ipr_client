@@ -1,0 +1,26 @@
+@import '../../../../styles/variables';
+
+.kb-matches {
+  &__button-container {
+    display: flex;
+    justify-content: space-around;
+    margin: 8px 0;
+  }
+
+  &__filter {
+    padding: 20px 12px 0;
+  }
+
+}
+
+.expansion-panel {
+  margin: 12px 0 20px;
+
+  .expansion-panel__summary {
+    padding: 0 12px;
+  }
+
+  .expansion-panel__details {
+    display: block;
+  }
+}

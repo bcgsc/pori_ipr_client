@@ -1,0 +1,44 @@
+div(flex, layout="column")
+
+  div(layout="column", flex).dataBox
+
+    div.box
+      div(layout="row", flex).heading
+        div(flex) Gene
+        div(flex=15) Transcript
+        div(flex) Protein Change
+        div(flex) Location
+        div(flex) Zygosity
+        div(flex) Ref/Alt
+        div(flex) Copy Change
+        div(flex) LOH State
+        div(flex) Ref/Alt DNA
+        div(flex) Ref/Alt RNA
+        div(flex) Expression (RPKM)
+        div(flex) Fold Change Vs. {{$ctrl.report.tumourAnalysis.normalExpressionComparator}}
+        div(flex) {{$ctrl.report.tumourAnalysis.diseaseExpressionComparator}} %ile
+        div(flex=5)
+      div(ng-if="$ctrl.mutations.length == 0")
+        div.text-center.details No small somatic mutations of this kind were found from the analysis.
+      div(layout="row", flex, ng-repeat="mutation in $ctrl.mutations").row
+        div(ng-click="$ctrl.geneClicked = true; $ctrl.geneIndex = $index", flex).clickable.underlined
+         | {{mutation.gene}}
+        gene-viewer(ng-if="$ctrl.geneClicked", ng-init="$ctrl.geneClicked = false",
+          report="$ctrl.report", gene="$ctrl.mutations[$ctrl.geneIndex].gene")
+        div(flex=15, md-truncate) {{mutation.transcript}}
+        div(flex) {{mutation.proteinChange}}
+        div(flex, md-truncate) {{mutation.location}}
+        div(flex) {{mutation.zygosity}}
+        div(flex md-truncate) {{mutation.refAlt}}
+        div(flex) {{$ctrl.copyFilter(mutation.ploidyCorrCpChange)}}
+        div(flex) {{mutation.lohState}}
+        div(flex) {{mutation.tumourReads}}
+        div(flex) {{mutation.RNAReads}}
+        div(flex) {{mutation.expressionRpkm}}
+        div(flex) {{mutation.foldChange}}
+        div(flex) {{mutation.TCGAPerc}}
+        div(flex=5).text-center
+          md-icon(ng-click="$ctrl.detailClicked = true; $ctrl.detailIndex = $index").clickable search
+            md-tooltip View Details
+        detail-viewer(ng-if="$ctrl.detailClicked", ng-init="$ctrl.detailClicked = false",
+          rows="$ctrl.mutations", index="$ctrl.detailIndex")

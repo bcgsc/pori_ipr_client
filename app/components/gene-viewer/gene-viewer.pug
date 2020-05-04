@@ -1,0 +1,75 @@
+md-dialog(layout="column", aria-label="Update Alterations Entry", flex-md=90, flex-xs=100, flex-lg=80, flex=80).geneViewer
+  md-toolbar
+    .md-toolbar-tools
+      h2 Gene Viewer: {{gene}}
+      span(flex)
+      md-button.md-icon-button(ng-click='cancel()')
+        md-icon cancel
+  md-dialog-content(layout-padding)
+
+    p All entries for {{gene}} contained in this report.
+
+    p(ng-if="loading") Loading...
+
+    md-tabs(md-dynamic-height, md-border-bottom, ng-if="!loading")
+      md-tab(label="KB Matches ({{data.kbMatches.length}})")
+        div.pog-report
+          section
+            div(ng-repeat="(alteration, genes) in alterations track by $index")
+              h3.title {{alteration}}
+
+              div(ng-if="genes.length == 0")
+                div(ng-hide="showUnknown").text-center.details None Found.
+
+              genomic-alteration(ng-repeat="(i, gene) in genes track by $index", samples="samples", gene="gene", report="report").container
+
+
+      md-tab(label="Small Mutations ({{data.smallMutations.length}})")
+        div.pog-report
+          section
+            small-mutation-variants(mutations="data.smallMutations", report="report")
+
+      md-tab(label="CNV ({{data.copyNumber.length}})")
+        div.pog-report
+          section
+            list-copy-number-variants(cnvs="data.copyNumber", report="report")
+
+      md-tab(label="Expression Outliers ({{data.expRNA.length}})")
+        div.pog-report
+          section.material-section
+            list-outliers(outliers="data.expRNA", report="report")
+
+      md-tab(label="Exp Drug Target ({{data.expDrugTarget.length}})")
+        div.pog-report
+          section
+            div(layout="column", flex).dataBox
+              div.box
+                div(layout="row", flex).heading
+                  div(flex) Gene
+                  div(flex) LOH
+                  div(flex) Copy Number
+                  div(flex) Fold Change Vs. {{report.tumourAnalysis.normalExpressionComparator}}
+                  div(flex) {{report.tumourAnalysis.diseaseExpressionComparator}} %ile
+                  div(flex) kIQR
+                  div(flex=5)
+                div(ng-if="data.expDrugTarget.length === 0")
+                  div.row
+                    div.bg-white.text-center No targets
+                div.scroll
+                  div(layout="row", flex, ng-repeat="target in data.expDrugTarget track by $index").row
+                    div(flex)
+                      a(href="http://dgidb.genome.wustl.edu/genes/{{target.gene}}", target="_blank") {{target.gene}}
+                    div(flex) {{target.lohRegion}}
+                    div(flex) {{target.copy}}
+                    div(flex) {{target.foldChange}}
+                    div(flex) {{target.tcgaPerc}}
+                    div(flex) {{target.kIQR}}
+                    div(flex=5)
+                      md-icon(ng-click="detail.clicked = true; detail.index = $index").clickable search
+                        md-tooltip View Details
+                    detail-viewer(ng-if="detail.clicked", ng-init="detail.clicked = false",
+                      rows="data.expDrugTarget", index="detail.index")
+
+      md-tab(label="Exp Density Graph ({{data.expDensityGraph.length}})")
+        div(ng-repeat="img in data.expDensityGraph").text-center
+          img(data-ng-src="data:image/png;base64,{{img.data}}")

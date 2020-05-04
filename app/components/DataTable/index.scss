@@ -1,0 +1,27 @@
+.data-table {
+  &--padded {
+    padding: 16px 8px;
+  }
+
+  &__expand-cell {
+    margin: 7px 0 0;
+  }
+
+  &__header {
+    display: inline-block;
+    padding: 8px;
+  }
+
+  &__container {
+    margin: 8px 0;
+  }
+
+  &__header-container {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &__action {
+    margin: 0 8px;
+  }
+}

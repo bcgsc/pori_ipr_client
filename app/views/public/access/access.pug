@@ -1,0 +1,30 @@
+md-toolbar
+  div.md-toolbar-tools
+    h2 BCGSC Integrated Pipeline Reports
+    span(flex)
+    md-menu
+      md-button(ng-click='$mdMenu.open($event)', aria-label='User')
+        md-icon person
+        span No Access
+      md-menu-content(width="4")
+        md-menu-item(ng-click="$ctrl.logout()")
+          md-button Logout
+
+md-content(layout="column", layout-align="center center", flex).access
+  div(layout="column", layout-align="space-around start").access__container
+    div(layout="row", flex) Error: User missing IPR access
+    div(layout="row", flex, layout-align="space-around center")
+      span(layout="row", flex, layout-align="center center")
+        h3.access__header External users:&nbsp
+        div Contact either your supervisor or ipr@bcgsc.ca requesting access
+    div(layout="row", flex, layout-align="space-around center") 
+      span(layout="row", flex, layout-align="center center")
+        h3 Internal users:&nbsp
+        div Create a DEVSU JIRA ticket requesting access
+    br
+    div(layout="row", flex) For both, please include:
+    ul()
+      li() First and last names
+      li() Email address
+      li() Intent of use
+      li() Role and project access (Optional) 

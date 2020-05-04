@@ -1,0 +1,192 @@
+.adminContainer {
+  background-color: rgb(200, 200, 200);
+}
+
+.adminSection {
+
+  border-radius: 0;
+  background-color: rgb(238, 238, 238);
+  border: 1px solid rgb(0, 0, 0);
+  box-shadow: 2px 1px 0 0 rgba(0, 0, 0, 0.9);
+
+  md-toolbar {
+    margin: 0;
+    padding: 1px 5px;
+    color: rgb(0, 0, 0);
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    background-color: rgb(179, 179, 179);
+    background-image: url('/img/admin_title.png');
+    background-repeat: repeat-x;
+
+    div.md-toolbar-tools {
+      margin: 0;
+      padding: 0;
+      color: rgb(0, 0, 0);
+      height: auto;
+      min-height: 0;
+      max-height: none;
+      font-size: 14px;
+      background-image: url('/img/admin_title.png');
+
+      span.close {
+        background-color: rgb(189, 189, 189);
+        height: 14px;
+        padding: 1px 5px 0 5px;
+        div {
+          height: 10px;
+          width: 10px;
+          border: 1px solid rgb(0, 0, 0);
+          background-color: rgb(165, 165, 165);
+          cursor: pointer;
+          color: black;
+
+          &:hover {
+            background-color: rgb(210, 210, 210);
+          }
+        }
+      }
+
+      h2 {
+        padding: 0 10px;
+        margin: 0;
+        width: auto;
+        text-align: center;
+        font-weight: 400;
+        background-color: rgb(189, 189, 189);
+      }
+    }
+
+  }
+
+  .content {
+    padding: 8px 20px;
+    margin: 0;
+    font-family: monospace;
+
+    p {
+      padding: 0;
+      margin: 10px 0;
+    }
+
+    .table {
+
+      div {
+        padding: 2px;
+      }
+
+      .header {
+        font-weight: 600;
+        border-bottom: 1px solid rgb(0,0,0);
+      }
+      .row {
+        margin: 2px 0;
+
+        &:nth-of-type(odd) {
+          background-color: rgb(218, 218, 218);
+        }
+
+        &:hover {
+          background: url('/img/adminrowbg.png');
+        }
+      }
+
+    }
+
+  }
+
+  .content.side {
+    ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+
+      li {
+        font-weight: 600;
+        margin: 2px;
+        padding: 2px 2px 2px 5px;
+        cursor: pointer;
+
+        &:hover {
+          background-color: rgb(210,210,210);
+        }
+      }
+    }
+  }
+
+
+  .buttonWrap {
+    border: 1px solid black;
+    border-radius: 3px;
+    box-shadow: 1px 1px 0 0 rgba(0, 0, 0, 0.5);
+    margin: 0 5px;
+
+    &.delete {
+      .md-button {
+        background-color: rgb(196, 48, 69);
+        color: white;
+      }
+    }
+
+    &:active {
+      box-shadow: none;
+    }
+  }
+
+  md-checkbox {
+    margin-left: 15px !important;
+  }
+
+  .md-button {
+    background-color: rgb(224,224,224);
+    font-weight: 600;
+    margin: 0;
+    padding: 0 0 2px 0;
+    line-height: inherit;
+    height: inherit;
+    min-height: initial;
+    border-top: 1px solid rgb(240,240,240);
+    border-right: 1px solid rgb(200,200,200);
+    border-bottom: 1px solid rgb(240,200,200);
+    border-left: 1px solid rgb(240,240,240);
+    border-radius: 3px;
+
+    span {
+      margin: 0;
+      padding: 2px 15px;
+      font-size: 12px;
+      text-transform: none;
+      font-family: monospace;
+    }
+
+  }
+}
+
+div.adminSection md-content.diagTable {
+  background-color: rgb(225,225,225);
+  outline: 1px solid rgb(100,100,100);
+
+  div.header {
+    font-weight: 600;
+    border-bottom: 1px solid black;
+
+    div {
+      padding: 9px 6px;
+    }
+  }
+  div.row {
+    margin: 2px 0;
+    div.c {
+      padding: 4px 6px;
+    }
+  }
+
+  div.row:nth-of-type(odd) {
+    background-color: rgb(210,210,210);
+  }
+}
+
+.admin {
+  height: 100%;
+}

@@ -1,0 +1,95 @@
+@import '../../../../styles/variables';
+@import '../../../../styles/theme';
+
+@mixin print-header {
+  background-color: #bcbddc;
+  color: black;
+  font-size: 14pt;
+  font-weight: 700;
+  margin: 2mm 0 1mm;
+  padding: 1.5mm 1mm;
+  text-transform: uppercase;
+
+  > .md-subheader-inner {
+    // Override angularjs material library
+    padding: 0 !important;
+  }
+}
+
+@media print {
+  .analyst {
+    &__header {
+      @include print-header;
+      page-break-before: always;
+    }
+
+    &__comments {
+      border: .1mm solid grey;
+
+      // Use * rule since the analyst input could have any tag and no classes
+      & > * {
+        padding: 0 3mm;
+      }
+    }
+
+    &__review-box {
+      margin: 4mm 0 0;
+      padding: 2mm;
+      border: .1mm solid grey;
+      font-size: 11pt;
+    }
+  }
+}
+
+
+@media screen {
+  .analyst {
+     &__edit {
+       padding: 0;
+       margin: 0;
+       float: right;
+     }
+
+     &__comments {
+       margin: 16px;
+       padding: 4px 8px;
+     }
+  }
+
+  .analystComments {
+    
+    .analyst__edit {
+      position: absolute;
+      right: 284px;
+
+      .edit-icon {
+        background-color: $palette__common--white;
+
+        &:not([disabled]):hover {
+          background-color: darken($palette__common--white, 8%);
+        }
+
+        md-icon {
+          color: $palette__common--black;
+          opacity: $icon-opacity;
+        }
+      }
+    }
+  }
+
+
+  .ql-editor {
+    p {
+      margin: 8px 0 !important;
+
+    }
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
+  .analystSignatures {
+    span:first-of-type {
+      margin-right: 10px;
+    }
+  }
+}

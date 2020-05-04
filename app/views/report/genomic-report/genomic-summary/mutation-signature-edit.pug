@@ -1,0 +1,25 @@
+md-dialog(layout="column", aria-label="Update Mutation Signature Details", ng-cloak, flex=85).editor
+  form(flex='auto', name='form', ng-submit="update(form)")
+    md-toolbar
+      .md-toolbar-tools
+        h2 Update Mutation Signature Details
+        span(flex)
+        md-button.md-icon-button(ng-click="cancel()")
+          md-icon cancel
+
+    md-dialog-content(layout-padding)
+      mutation-signature(pog="pog", report="report", mutation-summary="tumourAnalysis", mutation-signature="mutationSignature", mode="'pick'")
+
+    md-dialog-actions(layout="row", layout-align="end center", layout-padding)
+      div(layout="row", flex=60, layout-padding).margin-top-10
+        md-input-container(flex)
+          textarea(
+            ng-model="mutationSignature.comment",
+            md-maxlength=150,
+            placeholder="Why are you making this change?",
+            required,
+            md-autofocus
+          )
+      span(flex)
+      md-button(ng-click="cancel()") Cancel
+      md-button(type="submit").md-accent Submit

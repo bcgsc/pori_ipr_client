@@ -1,4 +1,23 @@
 {
-  "presets": ["es2015"],
-  "plugins": ["transform-es2015-template-literals"]
+  "presets": [["@babel/preset-env", {
+    "useBuiltIns": "usage",
+    "modules": false,
+    "corejs": 2
+  }],
+  "@babel/preset-react"],
+  "plugins": [
+    "angularjs-annotate",
+    "@babel/plugin-proposal-class-properties",
+    "@babel/plugin-syntax-dynamic-import",
+    ["transform-imports", {
+      "@material-ui/core": {
+        "transform": "@material-ui/core/esm/${member}",
+        "preventFullImport": true
+      },
+      "@material-ui/icons": {
+        "transform": "@material-ui/icons/esm/${member}",
+        "preventFullImport": true
+      }
+    }]
+  ]
 }

@@ -1,0 +1,19 @@
+h2.title {{$ctrl.entry.user.firstName}} {{$ctrl.entry.user.lastName}}
+  md-icon(ng-if="$ctrl.entry.user.username === $ctrl.user.username && !$ctrl.removed", ng-click="$ctrl.edit()").small.clickable edit
+  span(am-time-ago="$ctrl.entry.createdAt").clickable 
+    md-tooltip {{$ctrl.entry.createdAt | date: 'EEEE, MMMM d, y HH:mm'}}
+div(ng-if="!$ctrl.editing").body {{$ctrl.entry.body}}
+  p(ng-if="$ctrl.removed").italic This entry has been removed.
+  p(ng-if="$ctrl.entry.createdAt !== $ctrl.entry.updatedAt").edited Edited on {{$ctrl.entry.updatedAt | date: 'EEEE, MMMM d, y HH:mm' }}
+
+div(ng-if="$ctrl.editing").edit-entry
+  form(name="EditEntry", ng-submit="$ctrl.save(EditEntry)")
+    div(layout="column")
+      md-input-container(flex)
+        label Comment/Reply
+        textarea(ng-model="$ctrl.entry.body", rows="4", flex)
+      div(layout="row")
+        md-button(ng-click="$ctrl.remove()").md-raised.md-warn Remove
+        span(flex)
+        md-button(ng-click="$ctrl.cancelEdit()").md-seconary.md-raised Cancel
+        md-button(type="submit").md-accent.md-raised Save

@@ -1,0 +1,23 @@
+section
+  md-subheader.md-no-sticky.md-primary Spearman Plot Analysis
+
+  div(layout="column", flex)
+
+    div(layout="column", flex).bg-white
+      h2.title Spearman Correlation with Available Expression Datasets
+
+      div(layout="row", layout-align="center center").md-padding
+        span(layout="row").spearman__container
+          div.layout-margin
+            img(data-ng-src="data:image/png;base64,{{$ctrl.images['expression.chart'].data}}")
+          div(layout="column").layout-margin
+            div(flex, layout-align="center start")
+              img(data-ng-src="data:image/png;base64,{{$ctrl.images['expression.legend'].data}}")
+            div(layout="row").expressionDetails
+              div(flex).normal
+                | Normal Tissue Expression Comparator
+                span(style="background-color: #{{$ctrl.colourHex($ctrl.report.tumourAnalysis.tcgaColor)}}") {{$ctrl.report.tumourAnalysis.normalExpressionComparator}}
+              div(flex).disease
+                | Disease Expression Comparator
+                span(style="background-color: #{{$ctrl.colourHex($ctrl.report.tumourAnalysis.tcgaColor)}}") {{$ctrl.report.tumourAnalysis.diseaseExpressionComparator}}
+            span.details Tissue Comparator Details

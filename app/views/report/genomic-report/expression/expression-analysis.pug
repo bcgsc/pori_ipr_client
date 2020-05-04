@@ -1,0 +1,79 @@
+section.material-section.expression
+  md-subheader.md-no-sticky Expression Analysis
+  div(layout="column", ng-if="$ctrl.showSection.analysis")
+
+    div.analysis-report-section
+      div(layout="column")
+        h2.title Tissue Sites
+
+        div(layout="row", layout-align="space-between")
+          div(layout="column", flex=30).detail-box
+            div(layout="row", flex, layout-align="start center")
+              p(flex=40) Diagnosis:
+              p {{$ctrl.report.patientInformation.diagnosis}}
+            div(layout="row", flex, layout-align="start center")
+              p(flex=40) Biopsy Type:
+              p {{$ctrl.report.patientInformation.biopsySite}}
+
+          div(layout="column", flex=30).detail-box
+            div(layout="row", flex, layout-align="start center")
+              p(flex=55) Site of Primary Disease:
+              p N/A
+            div(layout="row", flex, layout-align="start center")
+              p(flex=55) Biopsy Site:
+              p N/A
+
+          div(layout="column", flex=30).detail-box
+            div(layout="row", flex, layout-align="start center")
+              p(flex=40) Tumour Content:
+              p
+                tumour-content(tc="$ctrl.report.tumourAnalysis.tumourContent", md-whiteframe="1", ng-if="$ctrl.report.tumourAnalysis.tumourContent !== -1")
+                span(ng-if="$ctrl.report.tumourAnalysis.tumourContent === -1") N/A
+
+            div(layout="row", flex, layout-align="start center")
+              p(flex=40) Ploidy Model:
+              p.text-capitalize {{$ctrl.report.tumourAnalysis.ploidy}}
+
+    div.analysis-report-section
+      div(layout="column")
+        h2.title Expression Correlation Summary and Comparator Choices
+
+        div(layout="row").comparators
+          div(layout="column", flex)
+            div.text-center Tissue Comparator
+            div(layout="row")
+              div(flex) Data Source
+              div(flex) Cohort
+            div(layout="row")
+              div(flex) Illumina BodyMap
+              div(flex) {{$ctrl.report.tumourAnalysis.normalExpressionComparator}}
+
+          div(layout="column", flex)
+            div.text-center Disease Expression Comparator
+            div(layout="row")
+              div(flex) Data Source
+              div(flex) Cohort
+            div(layout="row")
+              div(flex) TCGA
+              div(flex) {{$ctrl.report.tumourAnalysis.diseaseExpressionComparator}}
+          div(layout="column", flex)
+            div.text-center Protein Expression Comparator
+            div(layout="row")
+              div(flex) Data Source
+              div(flex) Cohort
+            div(layout="row")
+              div(flex) POG
+              div(flex) {{$ctrl.ptxComparator}}
+
+  div.analysis-report-section.margin-top-10
+    md-subheader.md-no-sticky Expression Outlier Summary
+    div(ng-if="$ctrl.showSection.outlierSummary")
+
+      div(layout="column", ng-repeat="(key, title) in $ctrl.expSummaryMap track by $index")
+        expression-react(outliers="$ctrl.expOutliers[key]", title-text="title", report-ident="$ctrl.report.ident")
+
+  div.analysis-report-section.margin-top-10
+    md-subheader.md-no-sticky mRNA Expression Outliers
+    div(ng-if="$ctrl.showSection.mrnaOutliers")
+      div(layout="column", ng-repeat="(key, title) in $ctrl.mRNAOutliersMap track by $index")
+        expression-react(outliers="$ctrl.expOutliers[key]", title-text="title", report-ident="$ctrl.report.ident")

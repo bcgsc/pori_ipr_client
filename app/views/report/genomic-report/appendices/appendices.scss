@@ -1,0 +1,87 @@
+@mixin print-subheader {
+  margin: 1mm 0;
+  padding: 1mm;
+  background-color: #d3d4f4;
+  color: black;
+  font-size: 13pt;
+  font-weight: 700;
+  text-transform: uppercase;
+
+  > .md-subheader-inner {
+    // Override angularjs material library
+    padding: 0 !important;
+  }
+}
+
+@media print {
+  .print-subtitle {
+    @include print-subheader;
+  }
+
+
+  .appendices {
+    &__header {
+      align-items: center;
+      padding: 1mm 0;
+      border-bottom: .1mm solid black;
+      font-size: 9pt;
+      font-weight: 700;
+    }
+
+    &__row {
+      padding: 1mm 0;
+      font-size: 9pt;
+      font-weight: 100;
+    }
+  }
+
+  .test-summary {
+    &__container {
+      font-size: 13pt;
+    }
+  }
+
+  .config {
+    &__table {
+      margin: 2mm 0;
+      border-collapse: collapse;
+      border-spacing: 0;
+    }
+
+    &__row {
+      margin: 0;
+      padding: .5mm 0;
+      font-family: monospace;
+      font-size: 7pt;
+    }
+  }
+}
+
+
+@media screen {
+  .test-summary {
+    &__container {
+      padding: 0 10px;
+    }
+  }
+
+  section.appendices {
+    .tcga {
+      font-family: monospace;
+      font-size: 0.75em;
+      line-height: 140%;
+      padding: 10px;
+      background-color: rgb(190,190,190);
+      margin: 20px;
+      border: 1px solid rgb(80,80,80);
+      overflow-x: scroll;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .scrollable {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+  }
+}

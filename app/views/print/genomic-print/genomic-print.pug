@@ -1,0 +1,42 @@
+genomicsummary(
+  report="$ctrl.report",
+  genomic-alterations="$ctrl.genomicAlterations",
+  variant-counts="$ctrl.variantCounts",
+  mutation-summary="$ctrl.mutationSummary",
+  probe-target="$ctrl.probeTarget",
+  mutation-signature="$ctrl.mutationSignature",
+  microbial="$ctrl.microbial",
+  print="true",
+)
+
+br
+
+print-header(report="$ctrl.report")
+
+analyst(
+  analyst-comments="$ctrl.analystComments",
+  print="true"
+)
+
+print-header(report="$ctrl.report")
+
+pathway(
+  pathway="$ctrl.pathway",
+  report="$ctrl.report",
+  print="true",
+)
+
+print-header(report="$ctrl.report")
+
+therapeutic-react(
+  therapeutic-row-data="$ctrl.therapeuticRowData",
+  print="true"
+)
+
+print-header(report="$ctrl.report")
+
+slides(
+  report="$ctrl.report",
+  slides="$ctrl.slides",
+  print="true",
+)
