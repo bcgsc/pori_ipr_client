@@ -31,11 +31,11 @@ Local environment will map API's to the machine's IP address and is meant to be 
 running API server. After starting, the local web server will watch for changes on any files in the app and rebuild
 the affected areas, then trigger the client (if open in browser) to reload.
 
-The development environment maps API calls to the iprdev-api.bcgsc.ca:8080 API server that uses the separate development
+The development environment maps API calls to the iprdev-api.bcgsc.ca API server that uses the separate development
 database. This client is built automatically by the Bamboo CI server upon merging or committing/pushing to development
 branch on the Bitbucket server.
 
-The production environment maps API calls to the ipr-api.bcgsc.ca:8080 API server and uses the production database. This
+The production environment maps API calls to the ipr-api.bcgsc.ca API server and uses the production database. This
 is built automatically by the Bamboo CI upon approving a PR merge onto the production branch.
 
 Other build options include `npm run build`. This will create the static files in the dist directory, but not
