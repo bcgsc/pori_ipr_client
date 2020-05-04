@@ -15,10 +15,8 @@ import { BrowserRouter } from 'react-router-dom';
 import angular from 'angular';
 import { angular2react } from 'angular2react';
 
-import rootComponent from './root.component';
 import rootModule from './root.module';
 import * as cssTheme from './styles/_theme.scss';
-import MainView from './views/MainView';
 
 const theme = createMuiTheme({
   direction: 'ltr',
@@ -69,16 +67,17 @@ const jss = create({
   insertionPoint: 'jss-insertion-point',
 });
 
+const AngularjsUiView = { template: '<ui-view></ui-view>' };
+
 let $injector;
 angular
-  .module('injectorModule', [])
+  .module('root')
   .run(['$injector', (_$injector) => { $injector = _$injector; }])
-  .component('angularjsRoot', rootComponent);
+  .component('uiview', AngularjsUiView);
 
-angular.bootstrap(document.getElementById('router'), ['injectorModule', rootModule]);
+angular.bootstrap(document, ['root']);
 
-const AngularjsRoot = angular2react('angularjsRoot', rootComponent, $injector);
-
+const AngularjsRoot = angular2react('uiview', AngularjsUiView, $injector);
 
 /**
  * Entry point to application. Handles routing, app theme, and logged in state.
@@ -90,8 +89,8 @@ function App() {
       <JssProvider generateClassName={generateClassName} jss={jss}>
         <MuiThemeProvider theme={theme}>
           <SnackbarProvider anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
-            <BrowserRouter id="router">
-              <AngularjsRoot isAdmin={false} user={{}} />
+            <BrowserRouter>
+              <AngularjsRoot />
             </BrowserRouter>
           </SnackbarProvider>
         </MuiThemeProvider>
