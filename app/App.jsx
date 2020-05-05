@@ -2,7 +2,7 @@
  * @module /App
  */
 import { SnackbarContextProvider as SnackbarProvider } from '@bcgsc/react-snackbar-provider';
-import { CssBaseline } from '@material-ui/core';
+import { ScopedCssBaseline } from '@material-ui/core';
 import {
   createMuiTheme,
   MuiThemeProvider,
@@ -67,6 +67,7 @@ const jss = create({
   insertionPoint: 'jss-insertion-point',
 });
 
+// AngularJS bootstrapping and injection...
 const AngularjsUiView = { template: '<ui-view></ui-view>' };
 
 let $injector;
@@ -85,11 +86,13 @@ const AngularjsRoot = angular2react('uiview', AngularjsUiView, $injector);
 function App() {
   return (
     <StylesProvider injectFirst>
-      <CssBaseline />
       <JssProvider generateClassName={generateClassName} jss={jss}>
         <MuiThemeProvider theme={theme}>
           <SnackbarProvider anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
             <BrowserRouter>
+              <ScopedCssBaseline>
+                {/* this is where the top level react routing will go */}
+              </ScopedCssBaseline>
               <AngularjsRoot />
             </BrowserRouter>
           </SnackbarProvider>

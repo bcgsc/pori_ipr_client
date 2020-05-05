@@ -5,7 +5,6 @@ import 'angular-animate/angular-animate.min';
 import 'angular-sanitize/angular-sanitize.min';
 import 'angular-material/angular-material.min';
 import 'ngstorage';
-import 'typeface-roboto';
 import 'angular-material/angular-material.min.css';
 import 'angular-sortable-view';
 import { ModuleRegistry } from '@ag-grid-community/core';
