@@ -12,25 +12,11 @@ class AclService {
           reject: [],
         },
         edit: {
-          allow: ['admin', 'analyst', 'bioinformatician', 'reviewer'],
+          allow: ['admin', 'analyst', 'bioinformatician', 'manager'],
           reject: ['clinician', 'collaborator'],
         },
         remove: {
-          allow: ['admin'],
-          reject: [],
-        },
-      },
-      analyses: {
-        view: {
-          allow: ['*'],
-          reject: ['clinician', 'collaborator'],
-        },
-        edit: {
-          allow: ['projects', 'admin'],
-          reject: ['clinician', 'collaborator'],
-        },
-        remove: {
-          allow: ['projects', 'admin'],
+          allow: ['admin', 'manager'],
           reject: [],
         },
       },
@@ -41,7 +27,7 @@ class AclService {
         allow: ['*'],
       },
       germline: {
-        allow: ['admin', 'analyst', 'bioinformatician'],
+        allow: ['admin', 'analyst', 'bioinformatician', 'projects', 'manager'],
       },
     };
   }
@@ -65,7 +51,7 @@ class AclService {
     }
 
     const user = await this.UserService.me();
-    return user.groups.some(entry => resource.allow.includes(entry.name));
+    return user.groups.some(entry => resource.allow.includes(entry.name.toLowerCase()));
   }
 
   /**
@@ -91,7 +77,7 @@ class AclService {
     });
 
     /* Get intersection of arrays, check allows first */
-    const allowsIntersection = userGroups.filter(userGroup => action.allow.includes(userGroup));
+    const allowsIntersection = userGroups.filter(userGroup => action.allow.includes(userGroup.toLowerCase()));
 
     if (action.allow.includes('*')) {
       permission = true;
@@ -101,7 +87,7 @@ class AclService {
     }
 
     /* Get intersection of arrays, check rejects now */
-    const rejectsIntersection = userGroups.filter(userGroup => action.reject.includes(userGroup));
+    const rejectsIntersection = userGroups.filter(userGroup => action.reject.includes(userGroup.toLowerCase()));
 
     /* Rejects takes priority over allows */
     if (rejectsIntersection && rejectsIntersection.length > 0) {
