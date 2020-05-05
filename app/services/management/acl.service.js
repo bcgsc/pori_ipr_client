@@ -27,7 +27,7 @@ class AclService {
         allow: ['*'],
       },
       germline: {
-        allow: ['admin', 'analyst', 'bioinformatician', 'projects'],
+        allow: ['admin', 'analyst', 'bioinformatician', 'projects', 'manager'],
       },
     };
   }
