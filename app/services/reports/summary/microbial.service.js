@@ -12,9 +12,10 @@ class MicrobialService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async get(report) {
-    this.$http.get(
+    const { data } = await this.$http.get(
       `${this.api}/${report}/summary/microbial`,
     );
+    return data;
   }
 }
 
