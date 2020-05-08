@@ -53,6 +53,10 @@
      &__comments {
        margin: 16px;
        padding: 4px 8px;
+
+       img {
+         max-width: 100%;
+       }
      }
   }
 
