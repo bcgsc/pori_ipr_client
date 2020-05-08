@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { Autocomplete } from '@material-ui/lab';
 import {
@@ -38,8 +38,8 @@ function AutocompleteHandler(props) {
       setValue(defaultValue);
     }
   }, [defaultValue]);
-  
-  const onInputChange = async (event) => {
+
+  const handleInputChange = async (event) => {
     let queryString = event.target.value;
 
     if (queryString.length >= minCharacters) {
@@ -57,16 +57,16 @@ function AutocompleteHandler(props) {
     }
   };
 
-  const onAutocompleteChange = (event, val) => {
+  const handleAutocompleteChange = useCallback((event, val) => {
     setValue(val);
     onChange(val, type);
-  };
+  }, [onChange]);
 
   return (
     <Autocomplete
       autoHighlight
       disableOpenOnFocus
-      onChange={onAutocompleteChange}
+      onChange={handleAutocompleteChange}
       options={options}
       getOptionLabel={option => option.displayName || option}
       value={value}
@@ -78,7 +78,7 @@ function AutocompleteHandler(props) {
           variant="outlined"
           margin="normal"
           required={required}
-          onChange={onInputChange}
+          onChange={handleInputChange}
           error={!!error}
           helperText={error}
           InputProps={{
@@ -107,7 +107,7 @@ AutocompleteHandler.propTypes = {
 AutocompleteHandler.defaultProps = {
   defaultValue: '',
   required: false,
-  onChange: () => {},
+  onChange: () => { },
   minCharacters: 3,
 };
 
