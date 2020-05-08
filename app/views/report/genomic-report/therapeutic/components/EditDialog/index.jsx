@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, {
+  useState, useEffect, useCallback, useReducer,
+} from 'react';
 import PropTypes from 'prop-types';
 import {
   Button,
@@ -26,113 +28,101 @@ function EditDialog(props) {
   const {
     editData,
     open,
-    close,
+    close: onClose, // TODO: alias to std-naming until prop name can be changed
     reportIdent,
     tableType,
     addIndex,
   } = props;
 
-  const dialogTitle = Object.keys(editData).length > 0 ? 'Edit Row' : 'Add Row';
-  
-  const [newData, setNewData] = useState({
-    variant: editData.variant,
-    context: editData.context,
-    therapy: editData.therapy,
-    evidence: editData.evidence,
-    notes: editData.notes,
-  });
+  const [newData, setNewData] = useReducer((state, action) => {
+    const { type: actionType, payload } = action;
+
+    if (actionType === 'replace') {
+      return { ...payload };
+    }
+    return { ...state, ...payload };
+  }, editData || {});
+
+  const dialogTitle = newData.ident ? 'Edit Row' : 'Add Row';
+
   const [requiredFields] = useState(['variant', 'context', 'therapy']);
-  const [errors, setErrors] = useState({});
-  
+  const [errors, setErrors] = useState(null);
+  const [isDirty, setIsDirty] = useState(false);
+
   useEffect(() => {
     if (editData) {
-      setNewData({
-        variant: editData.variant,
-        context: editData.context,
-        therapy: editData.therapy,
-        evidence: editData.evidence,
-        notes: editData.notes,
-      });
+      setNewData({ type: 'replace', payload: editData });
     }
   }, [editData]);
 
-  const isMissingFields = (combinedData) => {
-    const missing = requiredFields.filter(field => !combinedData[field]);
+  useEffect(() => {
+    const missing = requiredFields.filter(field => !newData[field]);
 
     if (missing.length) {
       setErrors(missing.reduce((acc, curr) => {
         acc[curr] = `${curr} is required`;
         return acc;
       }, {}));
-      return true;
+    } else {
+      setErrors(null);
     }
-    return false;
-  };
+  }, [newData]);
 
-  const onSubmit = async (event) => {
-    event.preventDefault();
-    let combinedData;
-
-    if (Object.keys(editData).length) {
-      combinedData = {
-        ...editData,
-        ...newData,
-      };
-
-      if (isMissingFields(combinedData)) {
-        return;
-      }
-
+  const handleSubmit = useCallback(async () => {
+    const combinedData = { type: tableType, ...newData };
+    if (newData.ident) { // existing option
       await therapeuticUpdate(
         reportIdent,
         editData.ident,
-        combinedData,
+        { type: tableType, ...newData },
       );
-
-      close(combinedData);
+      setIsDirty(false);
+      onClose(combinedData);
     } else {
-      combinedData = { type: tableType, rank: addIndex, ...newData };
-
-      if (isMissingFields(combinedData)) {
-        return;
-      }
+      combinedData.rank = addIndex;
 
       const returnedData = await therapeuticAdd(
         reportIdent,
         combinedData,
       );
-
-      close(returnedData);
+      setNewData({ type: 'replace', payload: {} });
+      setIsDirty(false);
+      onClose(returnedData);
     }
-  };
+  }, [onClose, newData]);
 
-  const onAutocompleteValueSelected = (selectedValue, typeName) => {
+  const handleAutocompleteValueSelected = (selectedValue, typeName) => {
+    setIsDirty(true);
     if (selectedValue) {
       if (typeName === 'variant') {
         setNewData({
-          ...newData,
-          gene: selectedValue.reference2
-            ? `${selectedValue.reference1.displayName}, ${selectedValue.reference2.displayName}`
-            : selectedValue.reference1.displayName,
-          variant: selectedValue['@class'].toLowerCase() === 'positionalvariant'
-            ? selectedValue.displayName.split(':').slice(1).join()
-            : selectedValue.type.displayName,
-          variantGraphkbId: selectedValue['@rid'],
+          payload: {
+            gene: selectedValue.reference1 && selectedValue.reference2
+              ? `${selectedValue.reference1.displayName}, ${selectedValue.reference2.displayName}`
+              : selectedValue.reference1.displayName || selectedValue.reference2.displayName,
+            variant: selectedValue['@class'].toLowerCase() === 'positionalvariant'
+              ? selectedValue.displayName.split(':').slice(1).join()
+              : selectedValue.type.displayName,
+            variantGraphkbId: selectedValue['@rid'],
+          },
         });
       } else {
         setNewData({
-          ...newData,
-          [typeName]: selectedValue.displayName,
-          [`${typeName}GraphkbId`]: selectedValue['@rid'],
+          payload: {
+            [typeName]: selectedValue.displayName,
+            [`${typeName}GraphkbId`]: selectedValue['@rid'],
+          },
         });
       }
     }
   };
 
-  const onNotesChange = (event) => {
+  const handleNotesChange = (event) => {
+    setIsDirty(true);
     setNewData({
-      ...newData,
-      notes: event.target.value,
+      payload: {
+        notes: event.target.value,
+      },
     });
   };
 
@@ -140,72 +130,67 @@ function EditDialog(props) {
     <Dialog open={open} maxWidth="sm" fullWidth>
       <DialogTitle>{dialogTitle}</DialogTitle>
       <DialogContent>
-        <form
-          noValidate
-          onSubmit={onSubmit}
-        >
-          <FormControl fullWidth>
-            <AutocompleteHandler
-              defaultValue={
-                editData.variant && editData.gene
-                  ? `${editData.gene} ${editData.variant}`
-                  : ''
-              }
-              type="variant"
-              label="Gene and Variant"
-              onChange={onAutocompleteValueSelected}
-              required
-              error={errors.variant}
-            />
-          </FormControl>
-          <FormControl fullWidth>
-            <AutocompleteHandler
-              defaultValue={editData.therapy}
-              type="therapy"
-              label="Therapy"
-              onChange={onAutocompleteValueSelected}
-              required
-              error={errors.therapy}
-            />
-          </FormControl>
-          <FormControl fullWidth>
-            <AutocompleteHandler
-              defaultValue={editData.context}
-              type="context"
-              label="Context"
-              onChange={onAutocompleteValueSelected}
-              required
-              error={errors.context}
-            />
-          </FormControl>
-          <FormControl fullWidth>
-            <AutocompleteHandler
-              defaultValue={editData.evidenceLevel}
-              type="evidenceLevel"
-              label="Evidence Level"
-              onChange={onAutocompleteValueSelected}
-              minCharacters={1}
-            />
-          </FormControl>
-          <FormControl fullWidth>
-            <TextField
-              label="Notes"
-              variant="outlined"
-              margin="normal"
-              value={newData.notes || undefined}
-              onChange={onNotesChange}
-              multiline
-            />
-          </FormControl>
-          <DialogActions>
-            <Button color="primary" onClick={() => close()}>
-              Cancel
-            </Button>
-            <Button color="primary" type="submit">
-              Save
-            </Button>
-          </DialogActions>
-        </form>
+        <FormControl fullWidth>
+          <AutocompleteHandler
+            defaultValue={
+              newData.variant && newData.gene
+                ? `${newData.gene} ${newData.variant}`
+                : ''
+            }
+            type="variant"
+            label="Gene and Variant"
+            onChange={handleAutocompleteValueSelected}
+            required
+            error={errors && isDirty && errors.variant}
+          />
+        </FormControl>
+        <FormControl fullWidth>
+          <AutocompleteHandler
+            defaultValue={newData.therapy}
+            type="therapy"
+            label="Therapy"
+            onChange={handleAutocompleteValueSelected}
+            required
+            error={errors && isDirty && errors.therapy}
+          />
+        </FormControl>
+        <FormControl fullWidth>
+          <AutocompleteHandler
+            defaultValue={newData.context}
+            type="context"
+            label="Context"
+            onChange={handleAutocompleteValueSelected}
+            required
+            error={errors && isDirty && errors.context}
+          />
+        </FormControl>
+        <FormControl fullWidth>
+          <AutocompleteHandler
+            defaultValue={newData.evidenceLevel}
+            type="evidenceLevel"
+            label="Evidence Level"
+            onChange={handleAutocompleteValueSelected}
+            minCharacters={1}
+          />
+        </FormControl>
+        <FormControl fullWidth>
+          <TextField
+            label="Notes"
+            variant="outlined"
+            margin="normal"
+            value={newData.notes || undefined}
+            onChange={handleNotesChange}
+            multiline
+          />
+        </FormControl>
+        <DialogActions>
+          <Button color="primary" onClick={() => onClose()}>
+            Cancel
+          </Button>
+          <Button color="primary" onClick={() => handleSubmit(newData)} disabled={Boolean(errors || !isDirty)}>
+            Save
+          </Button>
+        </DialogActions>
       </DialogContent>
     </Dialog>
   );
