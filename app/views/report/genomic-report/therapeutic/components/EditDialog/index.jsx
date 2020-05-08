@@ -50,9 +50,7 @@ function EditDialog(props) {
   const [isDirty, setIsDirty] = useState(false);
 
   useEffect(() => {
-    if (editData) {
-      setNewData({ type: 'replace', payload: editData });
-    }
+    setNewData({ type: 'replace', payload: editData || {} });
   }, [editData]);
 
   useEffect(() => {
@@ -68,28 +66,48 @@ function EditDialog(props) {
     }
   }, [newData]);
 
+
   const handleSubmit = useCallback(async () => {
     const combinedData = { type: tableType, ...newData };
-    if (newData.ident) { // existing option
-      await therapeuticUpdate(
-        reportIdent,
-        editData.ident,
-        { type: tableType, ...newData },
-      );
-      setIsDirty(false);
-      onClose(combinedData);
-    } else {
-      combinedData.rank = addIndex;
 
-      const returnedData = await therapeuticAdd(
-        reportIdent,
-        combinedData,
-      );
-      setNewData({ type: 'replace', payload: {} });
-      setIsDirty(false);
-      onClose(returnedData);
+    try {
+      if (newData.ident) { // existing option
+        await therapeuticUpdate(
+          reportIdent,
+          editData.ident,
+          combinedData,
+        );
+        setIsDirty(false);
+        onClose(combinedData);
+      } else {
+        combinedData.rank = addIndex;
+
+        const returnedData = await therapeuticAdd(
+          reportIdent,
+          combinedData,
+        );
+        setNewData({ type: 'replace', payload: {} });
+        setIsDirty(false);
+        onClose(returnedData);
+      }
+    } catch (err) {
+      console.error(err); // TODO: send to snackbar
     }
-  }, [onClose, newData]);
+  }, [reportIdent, onClose, newData]);
+
+  const handleDelete = useCallback(async () => {
+    try {
+      await therapeuticDelete(
+        reportIdent,
+        newData.ident,
+      );
+      console.log('handleDelete. trigger onClose');
+      onClose(null);
+      console.log('post call onClose');
+    } catch (err) {
+      console.error('error', err); // TODO: send to snackbar
+    }
+  }, [onClose, newData.ident, reportIdent]);
 
   const handleAutocompleteValueSelected = (selectedValue, typeName) => {
     setIsDirty(true);
@@ -184,10 +202,17 @@ function EditDialog(props) {
           />
         </FormControl>
         <DialogActions>
+          {
+            newData.ident && (
+              <Button color="primary" onClick={handleDelete}>
+                Delete
+              </Button>
+            )
+          }
           <Button color="primary" onClick={() => onClose()}>
             Cancel
           </Button>
-          <Button color="primary" onClick={() => handleSubmit(newData)} disabled={Boolean(errors || !isDirty)}>
+          <Button color="primary" onClick={handleSubmit} disabled={Boolean(errors || !isDirty)}>
             Save
           </Button>
         </DialogActions>

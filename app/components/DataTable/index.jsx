@@ -1,5 +1,5 @@
 import React, {
-  useRef, useState, useEffect,
+  useRef, useState, useEffect, useCallback,
 } from 'react';
 import PropTypes from 'prop-types';
 import { AgGridReact } from '@ag-grid-community/react';
@@ -198,6 +198,30 @@ function DataTable(props) {
       setShowSnackbar(true);
       setSnackbarMessage('Row update success');
     } catch (err) {
+      console.error(err);
+      setSnackbarDuration(5000);
+      setShowSnackbar(true);
+      setSnackbarMessage(`Rows were not updated: ${err}`);
+    }
+  };
+
+  const normalizeRowRanks = async (deletedRank) => {
+    const rerankedData = [];
+    gridApi.current.forEachNode((node) => {
+      if (node.data.rank !== deletedRank) {
+        rerankedData.push(node.data);
+      }
+    });
+    rerankedData.sort((row1, row2) => row1.rank - row2.rank);
+    rerankedData.forEach((row, index) => { row.rank = index; });
+    try {
+      const updatedRows = await rowUpdateAPICall(
+        reportIdent,
+        rerankedData,
+      );
+      gridApi.current.setRowData(updatedRows);
+    } catch (err) {
+      console.error(err);
       setSnackbarDuration(5000);
       setShowSnackbar(true);
       setSnackbarMessage(`Rows were not updated: ${err}`);
@@ -210,6 +234,10 @@ function DataTable(props) {
       selectedRow.node.setData(editedData);
     } else if (editedData) {
       gridApi.current.updateRowData({ add: [editedData] });
+      setTableLength(gridApi.current.getDisplayedRowCount());
+    } else if (editedData === null) {
+      // sending back null indicates the row was deleted
+      normalizeRowRanks(selectedRow.node.data.rank);
       setTableLength(gridApi.current.getDisplayedRowCount());
     }
     setSelectedRow({});
