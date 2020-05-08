@@ -51,7 +51,7 @@ function EditDialog(props) {
 
   useEffect(() => {
     if (editData) {
-      setNewData({ actionType: 'replace', payload: editData });
+      setNewData({ type: 'replace', payload: editData });
     }
   }, [editData]);
 
@@ -76,7 +76,7 @@ function EditDialog(props) {
         editData.ident,
         { type: tableType, ...newData },
       );
-
+      setIsDirty(false);
       onClose(combinedData);
     } else {
       combinedData.rank = addIndex;
@@ -85,7 +85,8 @@ function EditDialog(props) {
         reportIdent,
         combinedData,
       );
-
+      setNewData({ type: 'replace', payload: {} });
+      setIsDirty(false);
       onClose(returnedData);
     }
   }, [onClose, newData]);
