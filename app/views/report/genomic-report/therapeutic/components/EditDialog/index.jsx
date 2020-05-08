@@ -12,13 +12,13 @@ import {
   TextField,
 } from '@material-ui/core';
 import AutocompleteHandler from '../AutocompleteHandler';
-import { therapeuticAdd, therapeuticUpdate } from '../../../../../../services/reports/therapeutic';
+import { therapeuticAdd, therapeuticUpdate, therapeuticDelete } from '../../../../../../services/reports/therapeutic';
 
 /**
  * @param {object} props props
  * @param {object} props.editData data passed to edit
  * @param {bool} props.open is the dialog open
- * @param {func} props.close onClose function
+ * @param {func} props.onClose onClose function
  * @param {string} props.reportIdent ident of current report
  * @param {string} props.tableType therapeutic | chemoresistant
  * @param {number} props.addIndex index of table to add new row to
@@ -28,7 +28,7 @@ function EditDialog(props) {
   const {
     editData,
     open,
-    close: onClose, // TODO: alias to std-naming until prop name can be changed
+    onClose, // TODO: alias to std-naming until prop name can be changed
     reportIdent,
     tableType,
     addIndex,
@@ -199,7 +199,7 @@ function EditDialog(props) {
 EditDialog.propTypes = {
   editData: PropTypes.objectOf(PropTypes.any),
   open: PropTypes.bool.isRequired,
-  close: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
   reportIdent: PropTypes.string.isRequired,
   tableType: PropTypes.string.isRequired,
   addIndex: PropTypes.number,

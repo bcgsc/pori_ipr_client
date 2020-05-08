@@ -265,6 +265,19 @@ function DataTable(props) {
     return result;
   };
 
+  const RowActionCellRenderer = (row) => {
+    const handleEdit = useCallback(() => {
+      setShowEditDialog(true);
+      setSelectedRow(row);
+    }, [row.node]);
+    return (
+      <ActionCellRenderer
+        onEdit={handleEdit}
+        {...row}
+      />
+    );
+  };
+
   return (
     <div className="data-table--padded">
       {rowData.length || editable ? (
@@ -322,7 +335,7 @@ function DataTable(props) {
             </div>
             <EditDialog
               open={showEditDialog}
-              close={handleRowEditClose}
+              onClose={handleRowEditClose}
               editData={selectedRow.data}
               reportIdent={reportIdent}
               tableType={tableType}
@@ -345,6 +358,7 @@ function DataTable(props) {
               pagination={paginated}
               autoSizePadding="0"
               deltaRowDataMode={canReorder}
+              getRowNodeId={data => data.ident}
               onRowDragEnd={canReorder ? onRowDragEnd : null}
               editType="fullRow"
               context={{
@@ -358,7 +372,7 @@ function DataTable(props) {
                 EditDialog,
                 LinkCellRenderer,
                 GeneCellRenderer,
-                ActionCellRenderer,
+                ActionCellRenderer: RowActionCellRenderer,
               }}
               suppressAnimationFrame
               suppressColumnVirtualisation
