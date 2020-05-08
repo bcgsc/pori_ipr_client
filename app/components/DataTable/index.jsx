@@ -174,10 +174,11 @@ function DataTable(props) {
       const oldRank = event.node.data.rank;
       const newRank = event.overIndex;
 
-      const newData = rowData.map((row) => {
+      const newData = [];
+      gridApi.current.forEachNode(({ data: row }) => {
         if (row.rank === oldRank) {
           row.rank = newRank;
-          return row;
+          return newData.push(row);
         }
 
         if (row.rank > oldRank && row.rank <= newRank) {
@@ -185,7 +186,7 @@ function DataTable(props) {
         } else if (row.rank < oldRank && row.rank >= newRank) {
           row.rank += 1;
         }
-        return row;
+        return newData.push(row);
       });
       newData.rank = event.overIndex;
       const updatedRows = await rowUpdateAPICall(
@@ -233,6 +234,7 @@ function DataTable(props) {
     if (editedData && selectedRow.node) {
       selectedRow.node.setData(editedData);
     } else if (editedData) {
+      editedData.rank = tableLength;
       gridApi.current.updateRowData({ add: [editedData] });
       setTableLength(gridApi.current.getDisplayedRowCount());
     } else if (editedData === null) {
