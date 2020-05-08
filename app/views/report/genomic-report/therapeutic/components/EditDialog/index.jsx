@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, {
+  useState, useEffect, useCallback, useReducer,
+} from 'react';
 import PropTypes from 'prop-types';
 import {
   Button,
@@ -34,25 +36,20 @@ function EditDialog(props) {
 
   const dialogTitle = Object.keys(editData).length > 0 ? 'Edit Row' : 'Add Row';
 
-  const [newData, setNewData] = useState({
-    variant: editData.variant,
-    context: editData.context,
-    therapy: editData.therapy,
-    evidence: editData.evidence,
-    notes: editData.notes,
-  });
+  const [newData, setNewData] = useReducer((state, action) => {
+    const { type: actionType, payload } = action;
+
+    if (actionType === 'replace') {
+      return { ...payload };
+    }
+    return { ...state, ...payload };
+  }, editData || {});
   const [requiredFields] = useState(['variant', 'context', 'therapy']);
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (editData) {
-      setNewData({
-        variant: editData.variant,
-        context: editData.context,
-        therapy: editData.therapy,
-        evidence: editData.evidence,
-        notes: editData.notes,
-      });
+      setNewData({ actionType: 'replace', payload: editData });
     }
   }, [editData]);
 
@@ -69,20 +66,13 @@ function EditDialog(props) {
     return false;
   };
 
-  const handleSubmit = useCallback(async (event) => {
-    event.preventDefault();
-    let combinedData;
-
-    if (Object.keys(editData).length) {
-      combinedData = {
-        ...editData,
-        ...newData,
-      };
-
-      if (isMissingFields(combinedData)) {
-        return;
-      }
-
+  const handleSubmit = useCallback(async () => {
+    const combinedData = { type: tableType, ...newData };
+    if (isMissingFields(combinedData)) {
+      console.error('missing fields, cannot submit');
+      return;
+    }
+    if (newData.ident) { // existing option
       await therapeuticUpdate(
         reportIdent,
         editData.ident,
@@ -91,11 +81,7 @@ function EditDialog(props) {
 
       onClose(combinedData);
     } else {
-      combinedData = { type: tableType, rank: addIndex, ...newData };
-
-      if (isMissingFields(combinedData)) {
-        return;
-      }
+      combinedData.rank = addIndex;
 
       const returnedData = await therapeuticAdd(
         reportIdent,
@@ -104,26 +90,28 @@ function EditDialog(props) {
 
       onClose(returnedData);
     }
-  }, [onClose]);
+  }, [onClose, newData]);
 
   const handleAutocompleteValueSelected = (selectedValue, typeName) => {
     if (selectedValue) {
       if (typeName === 'variant') {
         setNewData({
-          ...newData,
-          gene: selectedValue.reference2
-            ? `${selectedValue.reference1.displayName}, ${selectedValue.reference2.displayName}`
-            : selectedValue.reference1.displayName,
-          variant: selectedValue['@class'].toLowerCase() === 'positionalvariant'
-            ? selectedValue.displayName.split(':').slice(1).join()
-            : selectedValue.type.displayName,
-          variantGraphkbId: selectedValue['@rid'],
+          payload: {
+            gene: selectedValue.reference2
+              ? `${selectedValue.reference1.displayName}, ${selectedValue.reference2.displayName}`
+              : selectedValue.reference1.displayName,
+            variant: selectedValue['@class'].toLowerCase() === 'positionalvariant'
+              ? selectedValue.displayName.split(':').slice(1).join()
+              : selectedValue.type.displayName,
+            variantGraphkbId: selectedValue['@rid'],
+          },
         });
       } else {
         setNewData({
-          ...newData,
-          [typeName]: selectedValue.displayName,
-          [`${typeName}GraphkbId`]: selectedValue['@rid'],
+          payload: {
+            [typeName]: selectedValue.displayName,
+            [`${typeName}GraphkbId`]: selectedValue['@rid'],
+          },
         });
       }
     }
@@ -131,8 +119,9 @@ function EditDialog(props) {
 
   const handleNotesChange = (event) => {
     setNewData({
-      ...newData,
-      notes: event.target.value,
+      payload: {
+        notes: event.target.value,
+      },
     });
   };
 
@@ -143,8 +132,8 @@ function EditDialog(props) {
         <FormControl fullWidth>
           <AutocompleteHandler
             defaultValue={
-              editData.variant && editData.gene
-                ? `${editData.gene} ${editData.variant}`
+              newData.variant && newData.gene
+                ? `${newData.gene} ${newData.variant}`
                 : ''
             }
             type="variant"
@@ -156,7 +145,7 @@ function EditDialog(props) {
         </FormControl>
         <FormControl fullWidth>
           <AutocompleteHandler
-            defaultValue={editData.therapy}
+            defaultValue={newData.therapy}
             type="therapy"
             label="Therapy"
             onChange={handleAutocompleteValueSelected}
@@ -166,7 +155,7 @@ function EditDialog(props) {
         </FormControl>
         <FormControl fullWidth>
           <AutocompleteHandler
-            defaultValue={editData.context}
+            defaultValue={newData.context}
             type="context"
             label="Context"
             onChange={handleAutocompleteValueSelected}
@@ -176,7 +165,7 @@ function EditDialog(props) {
         </FormControl>
         <FormControl fullWidth>
           <AutocompleteHandler
-            defaultValue={editData.evidenceLevel}
+            defaultValue={newData.evidenceLevel}
             type="evidenceLevel"
             label="Evidence Level"
             onChange={handleAutocompleteValueSelected}
