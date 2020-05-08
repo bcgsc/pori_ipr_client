@@ -1,3 +1,5 @@
+import './index.scss';
+
 import React, {
   useState, useEffect, useCallback, useReducer,
 } from 'react';
@@ -145,7 +147,7 @@ function EditDialog(props) {
   };
 
   return (
-    <Dialog open={open} maxWidth="sm" fullWidth>
+    <Dialog open={open} maxWidth="sm" fullWidth className="edit-dialog">
       <DialogTitle>{dialogTitle}</DialogTitle>
       <DialogContent>
         <FormControl fullWidth>
@@ -201,10 +203,10 @@ function EditDialog(props) {
             multiline
           />
         </FormControl>
-        <DialogActions>
+        <DialogActions className="edit-dialog__actions">
           {
             newData.ident && (
-              <Button color="primary" onClick={handleDelete}>
+              <Button color="primary" onClick={handleDelete} className="edit-dialog__actions--delete">
                 Delete
               </Button>
             )
