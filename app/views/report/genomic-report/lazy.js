@@ -56,6 +56,32 @@ const analystComments = {
         $transition$.params().analysis_report,
       )],
   },
+  lazyLoad: async ($transition$) => {
+    const mod = await import(/* webpackChunkName: "quill" */ 'ng-quill/dist/ng-quill.min');
+    await import(/* webpackChunkName: "quill" */ 'quill/dist/quill.snow.css');
+    await $transition$.injector().native.loadNewModules([mod.default]);
+    const ngQuillConfig = await $transition$.injector().native.get('ngQuillConfig');
+    ngQuillConfig.modules.toolbar = [
+      ['bold', 'italic', 'underline', 'strike'],
+      ['blockquote', 'code-block'],
+
+      [{ 'header': 1 }, { 'header': 2 }],
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+      [{ 'script': 'sub' }, { 'script': 'super' }],
+      [{ 'indent': '-1' }, { 'indent': '+1' }],
+
+      [{ 'size': ['small', false, 'large', 'huge'] }],
+      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+
+      [{ 'color': [] }, { 'background': [] }],
+      [{ 'align': [] }],
+
+      ['clean'],
+
+      ['image'],
+    ];
+    return true;
+  },
 };
 
 const pathwayAnalysis = {

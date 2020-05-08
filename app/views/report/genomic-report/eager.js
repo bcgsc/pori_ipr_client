@@ -16,11 +16,6 @@ const summary = {
 const analystComments = {
   name: 'root.reportlisting.genomic.analystComments',
   url: '/analystComments',
-  lazyLoad: async ($transition$) => {
-    const mod = await import(/* webpackChunkName: "quill" */ 'ng-quill/dist/ng-quill.min');
-    await import(/* webpackChunkName: "quill" */ 'quill/dist/quill.snow.css');
-    return $transition$.injector().native.loadNewModules([mod.default]);
-  },
 };
 
 const pathwayAnalysis = {
