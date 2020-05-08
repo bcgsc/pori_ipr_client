@@ -91,7 +91,7 @@ function App() {
           <SnackbarProvider anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
             <BrowserRouter>
               <ScopedCssBaseline>
-                {/* this is where the top level react routing will go */}
+                {/* TODO DEVSU-1065 this is where the top level react routing will go */}
               </ScopedCssBaseline>
               <AngularjsRoot />
             </BrowserRouter>
