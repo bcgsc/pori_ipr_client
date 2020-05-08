@@ -5,7 +5,7 @@ section.analyst
     span.analyst__edit
       md-button(ng-if="$ctrl.reportEdit", ng-click="$ctrl.updateComments()").md-fab.md-mini.edit-icon
         md-icon edit
-    div(ng-bind-html="$ctrl.analystComments.comments || '<h2>Report Draft</h2> <br /> No comments yet.'")
+    div(ng-bind-html="$ctrl.$sce.trustAsHtml($ctrl.analystComments.comments) || '<h2>Report Draft</h2> <br /> No comments yet.'")
     div(ng-if="$ctrl.print", layout="row", layout-align="space-around center").analyst__review-box
       div Author Review: {{$ctrl.analystComments.authorSignature.firstName[0]}}{{$ctrl.analystComments.authorSignature.lastName[0]}} {{$ctrl.analystComments.authorSignedAt | date: 'yy/MM/dd HH:mm'}}
       div Reviewer: {{$ctrl.analystComments.reviewerSignature.firstName[0]}}{{$ctrl.analystComments.reviewerSignature.lastName[0]}} {{$ctrl.analystComments.reviewerSignedAt | date: 'yy/MM/dd HH:mm'}}
