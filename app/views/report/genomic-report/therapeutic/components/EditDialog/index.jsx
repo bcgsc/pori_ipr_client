@@ -96,9 +96,9 @@ function EditDialog(props) {
       if (typeName === 'variant') {
         setNewData({
           payload: {
-            gene: selectedValue.reference2
+            gene: selectedValue.reference1 && selectedValue.reference2
               ? `${selectedValue.reference1.displayName}, ${selectedValue.reference2.displayName}`
-              : selectedValue.reference1.displayName,
+              : selectedValue.reference1.displayName || selectedValue.reference2.displayName,
             variant: selectedValue['@class'].toLowerCase() === 'positionalvariant'
               ? selectedValue.displayName.split(':').slice(1).join()
               : selectedValue.type.displayName,
