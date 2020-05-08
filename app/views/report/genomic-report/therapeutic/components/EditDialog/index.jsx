@@ -45,7 +45,8 @@ function EditDialog(props) {
     return { ...state, ...payload };
   }, editData || {});
   const [requiredFields] = useState(['variant', 'context', 'therapy']);
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState(null);
+  const [isDirty, setIsDirty] = useState(false);
 
   useEffect(() => {
     if (editData) {
@@ -53,30 +54,26 @@ function EditDialog(props) {
     }
   }, [editData]);
 
-  const isMissingFields = (combinedData) => {
-    const missing = requiredFields.filter(field => !combinedData[field]);
+  useEffect(() => {
+    const missing = requiredFields.filter(field => !newData[field]);
 
     if (missing.length) {
       setErrors(missing.reduce((acc, curr) => {
         acc[curr] = `${curr} is required`;
         return acc;
       }, {}));
-      return true;
+    } else {
+      setErrors(null);
     }
-    return false;
-  };
+  }, [newData]);
 
   const handleSubmit = useCallback(async () => {
     const combinedData = { type: tableType, ...newData };
-    if (isMissingFields(combinedData)) {
-      console.error('missing fields, cannot submit');
-      return;
-    }
     if (newData.ident) { // existing option
       await therapeuticUpdate(
         reportIdent,
         editData.ident,
-        combinedData,
+        { type: tableType, ...newData },
       );
 
       onClose(combinedData);
@@ -93,6 +90,7 @@ function EditDialog(props) {
   }, [onClose, newData]);
 
   const handleAutocompleteValueSelected = (selectedValue, typeName) => {
+    setIsDirty(true);
     if (selectedValue) {
       if (typeName === 'variant') {
         setNewData({
@@ -118,6 +116,7 @@ function EditDialog(props) {
   };
 
   const handleNotesChange = (event) => {
+    setIsDirty(true);
     setNewData({
       payload: {
         notes: event.target.value,
@@ -140,7 +139,7 @@ function EditDialog(props) {
             label="Gene and Variant"
             onChange={handleAutocompleteValueSelected}
             required
-            error={errors.variant}
+            error={errors && isDirty && errors.variant}
           />
         </FormControl>
         <FormControl fullWidth>
@@ -150,7 +149,7 @@ function EditDialog(props) {
             label="Therapy"
             onChange={handleAutocompleteValueSelected}
             required
-            error={errors.therapy}
+            error={errors && isDirty && errors.therapy}
           />
         </FormControl>
         <FormControl fullWidth>
@@ -160,7 +159,7 @@ function EditDialog(props) {
             label="Context"
             onChange={handleAutocompleteValueSelected}
             required
-            error={errors.context}
+            error={errors && isDirty && errors.context}
           />
         </FormControl>
         <FormControl fullWidth>
@@ -186,7 +185,7 @@ function EditDialog(props) {
           <Button color="primary" onClick={() => onClose()}>
             Cancel
           </Button>
-          <Button color="primary" onClick={() => handleSubmit(newData)}>
+          <Button color="primary" onClick={() => handleSubmit(newData)} disabled={Boolean(errors || !isDirty)}>
             Save
           </Button>
         </DialogActions>
