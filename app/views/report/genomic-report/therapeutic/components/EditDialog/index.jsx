@@ -140,72 +140,67 @@ function EditDialog(props) {
     <Dialog open={open} maxWidth="sm" fullWidth>
       <DialogTitle>{dialogTitle}</DialogTitle>
       <DialogContent>
-        <form
-          noValidate
-          onSubmit={onSubmit}
-        >
-          <FormControl fullWidth>
-            <AutocompleteHandler
-              defaultValue={
-                editData.variant && editData.gene
-                  ? `${editData.gene} ${editData.variant}`
-                  : ''
-              }
-              type="variant"
-              label="Gene and Variant"
-              onChange={handleAutocompleteValueSelected}
-              required
-              error={errors.variant}
-            />
-          </FormControl>
-          <FormControl fullWidth>
-            <AutocompleteHandler
-              defaultValue={editData.therapy}
-              type="therapy"
-              label="Therapy"
-              onChange={handleAutocompleteValueSelected}
-              required
-              error={errors.therapy}
-            />
-          </FormControl>
-          <FormControl fullWidth>
-            <AutocompleteHandler
-              defaultValue={editData.context}
-              type="context"
-              label="Context"
-              onChange={handleAutocompleteValueSelected}
-              required
-              error={errors.context}
-            />
-          </FormControl>
-          <FormControl fullWidth>
-            <AutocompleteHandler
-              defaultValue={editData.evidenceLevel}
-              type="evidenceLevel"
-              label="Evidence Level"
-              onChange={handleAutocompleteValueSelected}
-              minCharacters={1}
-            />
-          </FormControl>
-          <FormControl fullWidth>
-            <TextField
-              label="Notes"
-              variant="outlined"
-              margin="normal"
-              value={newData.notes || undefined}
-              onChange={handleNotesChange}
-              multiline
-            />
-          </FormControl>
-          <DialogActions>
-            <Button color="primary" onClick={() => onClose()}>
-              Cancel
-            </Button>
-            <Button color="primary" type="submit">
-              Save
-            </Button>
-          </DialogActions>
-        </form>
+        <FormControl fullWidth>
+          <AutocompleteHandler
+            defaultValue={
+              editData.variant && editData.gene
+                ? `${editData.gene} ${editData.variant}`
+                : ''
+            }
+            type="variant"
+            label="Gene and Variant"
+            onChange={handleAutocompleteValueSelected}
+            required
+            error={errors.variant}
+          />
+        </FormControl>
+        <FormControl fullWidth>
+          <AutocompleteHandler
+            defaultValue={editData.therapy}
+            type="therapy"
+            label="Therapy"
+            onChange={handleAutocompleteValueSelected}
+            required
+            error={errors.therapy}
+          />
+        </FormControl>
+        <FormControl fullWidth>
+          <AutocompleteHandler
+            defaultValue={editData.context}
+            type="context"
+            label="Context"
+            onChange={handleAutocompleteValueSelected}
+            required
+            error={errors.context}
+          />
+        </FormControl>
+        <FormControl fullWidth>
+          <AutocompleteHandler
+            defaultValue={editData.evidenceLevel}
+            type="evidenceLevel"
+            label="Evidence Level"
+            onChange={handleAutocompleteValueSelected}
+            minCharacters={1}
+          />
+        </FormControl>
+        <FormControl fullWidth>
+          <TextField
+            label="Notes"
+            variant="outlined"
+            margin="normal"
+            value={newData.notes || undefined}
+            onChange={handleNotesChange}
+            multiline
+          />
+        </FormControl>
+        <DialogActions>
+          <Button color="primary" onClick={() => onClose()}>
+            Cancel
+          </Button>
+          <Button color="primary" onClick={() => handleSubmit(newData)}>
+            Save
+          </Button>
+        </DialogActions>
       </DialogContent>
     </Dialog>
   );
