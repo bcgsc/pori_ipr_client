@@ -34,8 +34,6 @@ function EditDialog(props) {
     addIndex,
   } = props;
 
-  const dialogTitle = Object.keys(editData).length > 0 ? 'Edit Row' : 'Add Row';
-
   const [newData, setNewData] = useReducer((state, action) => {
     const { type: actionType, payload } = action;
 
@@ -44,6 +42,9 @@ function EditDialog(props) {
     }
     return { ...state, ...payload };
   }, editData || {});
+
+  const dialogTitle = newData.ident ? 'Edit Row' : 'Add Row';
+
   const [requiredFields] = useState(['variant', 'context', 'therapy']);
   const [errors, setErrors] = useState(null);
   const [isDirty, setIsDirty] = useState(false);
