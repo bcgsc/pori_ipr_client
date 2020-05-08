@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import {
   Button,
@@ -26,14 +26,14 @@ function EditDialog(props) {
   const {
     editData,
     open,
-    close,
+    close: onClose, // TODO: alias to std-naming until prop name can be changed
     reportIdent,
     tableType,
     addIndex,
   } = props;
 
   const dialogTitle = Object.keys(editData).length > 0 ? 'Edit Row' : 'Add Row';
-  
+
   const [newData, setNewData] = useState({
     variant: editData.variant,
     context: editData.context,
@@ -43,7 +43,7 @@ function EditDialog(props) {
   });
   const [requiredFields] = useState(['variant', 'context', 'therapy']);
   const [errors, setErrors] = useState({});
-  
+
   useEffect(() => {
     if (editData) {
       setNewData({
@@ -69,7 +69,7 @@ function EditDialog(props) {
     return false;
   };
 
-  const onSubmit = async (event) => {
+  const handleSubmit = useCallback(async (event) => {
     event.preventDefault();
     let combinedData;
 
@@ -89,7 +89,7 @@ function EditDialog(props) {
         combinedData,
       );
 
-      close(combinedData);
+      onClose(combinedData);
     } else {
       combinedData = { type: tableType, rank: addIndex, ...newData };
 
@@ -102,11 +102,11 @@ function EditDialog(props) {
         combinedData,
       );
 
-      close(returnedData);
+      onClose(returnedData);
     }
-  };
+  }, [onClose]);
 
-  const onAutocompleteValueSelected = (selectedValue, typeName) => {
+  const handleAutocompleteValueSelected = (selectedValue, typeName) => {
     if (selectedValue) {
       if (typeName === 'variant') {
         setNewData({
@@ -129,7 +129,7 @@ function EditDialog(props) {
     }
   };
 
-  const onNotesChange = (event) => {
+  const handleNotesChange = (event) => {
     setNewData({
       ...newData,
       notes: event.target.value,
@@ -153,7 +153,7 @@ function EditDialog(props) {
               }
               type="variant"
               label="Gene and Variant"
-              onChange={onAutocompleteValueSelected}
+              onChange={handleAutocompleteValueSelected}
               required
               error={errors.variant}
             />
@@ -163,7 +163,7 @@ function EditDialog(props) {
               defaultValue={editData.therapy}
               type="therapy"
               label="Therapy"
-              onChange={onAutocompleteValueSelected}
+              onChange={handleAutocompleteValueSelected}
               required
               error={errors.therapy}
             />
@@ -173,7 +173,7 @@ function EditDialog(props) {
               defaultValue={editData.context}
               type="context"
               label="Context"
-              onChange={onAutocompleteValueSelected}
+              onChange={handleAutocompleteValueSelected}
               required
               error={errors.context}
             />
@@ -183,7 +183,7 @@ function EditDialog(props) {
               defaultValue={editData.evidenceLevel}
               type="evidenceLevel"
               label="Evidence Level"
-              onChange={onAutocompleteValueSelected}
+              onChange={handleAutocompleteValueSelected}
               minCharacters={1}
             />
           </FormControl>
@@ -193,12 +193,12 @@ function EditDialog(props) {
               variant="outlined"
               margin="normal"
               value={newData.notes || undefined}
-              onChange={onNotesChange}
+              onChange={handleNotesChange}
               multiline
             />
           </FormControl>
           <DialogActions>
-            <Button color="primary" onClick={() => close()}>
+            <Button color="primary" onClick={() => onClose()}>
               Cancel
             </Button>
             <Button color="primary" type="submit">
