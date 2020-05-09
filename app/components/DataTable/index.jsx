@@ -1,5 +1,5 @@
 import React, {
-  useRef, useState, useEffect,
+  useRef, useState, useEffect, useCallback,
 } from 'react';
 import PropTypes from 'prop-types';
 import { AgGridReact } from '@ag-grid-community/react';
@@ -174,10 +174,11 @@ function DataTable(props) {
       const oldRank = event.node.data.rank;
       const newRank = event.overIndex;
 
-      const newData = rowData.map((row) => {
+      const newData = [];
+      gridApi.current.forEachNode(({ data: row }) => {
         if (row.rank === oldRank) {
           row.rank = newRank;
-          return row;
+          return newData.push(row);
         }
 
         if (row.rank > oldRank && row.rank <= newRank) {
@@ -185,7 +186,7 @@ function DataTable(props) {
         } else if (row.rank < oldRank && row.rank >= newRank) {
           row.rank += 1;
         }
-        return row;
+        return newData.push(row);
       });
       newData.rank = event.overIndex;
       const updatedRows = await rowUpdateAPICall(
@@ -198,6 +199,30 @@ function DataTable(props) {
       setShowSnackbar(true);
       setSnackbarMessage('Row update success');
     } catch (err) {
+      console.error(err);
+      setSnackbarDuration(5000);
+      setShowSnackbar(true);
+      setSnackbarMessage(`Rows were not updated: ${err}`);
+    }
+  };
+
+  const normalizeRowRanks = async (deletedRank) => {
+    const rerankedData = [];
+    gridApi.current.forEachNode((node) => {
+      if (node.data.rank !== deletedRank) {
+        rerankedData.push(node.data);
+      }
+    });
+    rerankedData.sort((row1, row2) => row1.rank - row2.rank);
+    rerankedData.forEach((row, index) => { row.rank = index; });
+    try {
+      const updatedRows = await rowUpdateAPICall(
+        reportIdent,
+        rerankedData,
+      );
+      gridApi.current.setRowData(updatedRows);
+    } catch (err) {
+      console.error(err);
       setSnackbarDuration(5000);
       setShowSnackbar(true);
       setSnackbarMessage(`Rows were not updated: ${err}`);
@@ -209,7 +234,12 @@ function DataTable(props) {
     if (editedData && selectedRow.node) {
       selectedRow.node.setData(editedData);
     } else if (editedData) {
+      editedData.rank = tableLength;
       gridApi.current.updateRowData({ add: [editedData] });
+      setTableLength(gridApi.current.getDisplayedRowCount());
+    } else if (editedData === null) {
+      // sending back null indicates the row was deleted
+      normalizeRowRanks(selectedRow.node.data.rank);
       setTableLength(gridApi.current.getDisplayedRowCount());
     }
     setSelectedRow({});
@@ -263,6 +293,19 @@ function DataTable(props) {
       </Dialog>
     );
     return result;
+  };
+
+  const RowActionCellRenderer = (row) => {
+    const handleEdit = useCallback(() => {
+      setShowEditDialog(true);
+      setSelectedRow(row);
+    }, [row.node]);
+    return (
+      <ActionCellRenderer
+        onEdit={handleEdit}
+        {...row}
+      />
+    );
   };
 
   return (
@@ -322,7 +365,7 @@ function DataTable(props) {
             </div>
             <EditDialog
               open={showEditDialog}
-              close={handleRowEditClose}
+              onClose={handleRowEditClose}
               editData={selectedRow.data}
               reportIdent={reportIdent}
               tableType={tableType}
@@ -345,6 +388,7 @@ function DataTable(props) {
               pagination={paginated}
               autoSizePadding="0"
               deltaRowDataMode={canReorder}
+              getRowNodeId={data => data.ident}
               onRowDragEnd={canReorder ? onRowDragEnd : null}
               editType="fullRow"
               context={{
@@ -358,7 +402,7 @@ function DataTable(props) {
                 EditDialog,
                 LinkCellRenderer,
                 GeneCellRenderer,
-                ActionCellRenderer,
+                ActionCellRenderer: RowActionCellRenderer,
               }}
               suppressAnimationFrame
               suppressColumnVirtualisation

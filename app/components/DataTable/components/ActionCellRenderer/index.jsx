@@ -15,6 +15,7 @@ import SvgViewer from '../SvgViewer';
  * @param {object} params params
  * @param {string} params.value display text
  * @param {string} props.link target link
+ * @param {function} props.onEdit handler which is trigger on the user clicking the edit icon for this row
  * @return {*} JSX
  */
 function ActionCellRenderer(params) {
@@ -23,17 +24,13 @@ function ActionCellRenderer(params) {
     context: {
       editable,
       canViewDetails,
-      EditDialog,
-      reportIdent,
-      tableType,
     },
-    node,
     columnApi,
+    onEdit,
   } = params;
 
   const [showDetailDialog, setShowDetailDialog] = useState(false);
   const [showSvgViewer, setShowSvgViewer] = useState(false);
-  const [showEditDialog, setShowEditDialog] = useState(false);
   const [columnMapping, setColumnMapping] = useState({});
 
   useEffect(() => {
@@ -57,13 +54,6 @@ function ActionCellRenderer(params) {
 
   const handleSvgViewerClose = () => {
     setShowSvgViewer(false);
-  };
-
-  const handleRowEditClose = (editedData) => {
-    setShowEditDialog(false);
-    if (editedData && node) {
-      node.setData(editedData);
-    }
   };
 
   return (
@@ -104,20 +94,11 @@ function ActionCellRenderer(params) {
         <IconButton
           size="small"
           aria-label="Edit"
-          onClick={() => setShowEditDialog(prevVal => !prevVal)}
+          onClick={onEdit}
           title="Edit"
         >
           <Edit />
         </IconButton>
-      )}
-      {showEditDialog && (
-        <EditDialog
-          open={showEditDialog}
-          close={handleRowEditClose}
-          editData={data}
-          reportIdent={reportIdent}
-          tableType={tableType}
-        />
       )}
       {data.svg && (
         <IconButton
