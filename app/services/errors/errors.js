@@ -13,7 +13,7 @@ class ErrorMixin extends Error {
     this.content = content;
     this.name = this.constructor.name;
 
-    if (Error.captureStackTraceError) {
+    if (Error.captureStackTraceError && CONFIG.ATTRS.name !== 'PRODUCTION') {
       Error.captureStackTrace(this);
     }
   }
