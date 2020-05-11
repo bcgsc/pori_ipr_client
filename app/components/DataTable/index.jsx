@@ -28,7 +28,7 @@ const MAX_TABLE_HEIGHT = '500px';
  * @param {array} props.columnDefs column definitions for ag-grid
  * @param {string} props.titleText table title
  * @param {string} props.filterText text to filter the table on
- * @param {bool} props.editable can rows be edited?
+ * @param {bool} props.canEdit can rows be edited?
  * @param {object} props.EditDialog Edit Dialog component
  * @param {string} props.reportIdent Ident of report (used for editing api calls)
  * @param {string} props.tableType type of table used for therapeutic targets
@@ -36,7 +36,7 @@ const MAX_TABLE_HEIGHT = '500px';
  * @param {func} props.syncVisibleColumns function to propagate visible column changes
  * @param {bool} props.canToggleColumns can visible/hidden columns be toggled
  * @param {bool} props.canViewDetails can the detail dialog be shown
- * @param {bool} props.paginated should the table be paginated
+ * @param {bool} props.isPaginated should the table be paginated
  * @param {bool} props.canReorder can the rows be reordered
  * @param {func} props.rowUpdateAPICall API call for reordering rows
  * @return {*} JSX
@@ -47,16 +47,16 @@ function DataTable(props) {
     columnDefs,
     titleText,
     filterText,
-    editable,
+    canEdit,
     EditDialog,
-    addable,
+    canAdd,
     reportIdent,
     tableType,
     visibleColumns,
     syncVisibleColumns,
     canToggleColumns,
     canViewDetails,
-    paginated,
+    isPaginated,
     canReorder,
     rowUpdateAPICall,
   } = props;
@@ -310,14 +310,14 @@ function DataTable(props) {
 
   return (
     <div className="data-table--padded">
-      {rowData.length || editable ? (
+      {rowData.length || canEdit ? (
         <>
           <div className="data-table__header-container">
             <Typography variant="h5" className="data-table__header">
               {titleText}
             </Typography>
             <div>
-              {addable && (
+              {canAdd && (
                 <span className="data-table__action">
                   <Typography display="inline">
                     Add Row
@@ -385,14 +385,14 @@ function DataTable(props) {
               defaultColDef={defaultColDef}
               onGridReady={onGridReady}
               domLayout={domLayout}
-              pagination={paginated}
+              pagination={isPaginated}
               autoSizePadding="0"
               deltaRowDataMode={canReorder}
               getRowNodeId={data => data.ident}
               onRowDragEnd={canReorder ? onRowDragEnd : null}
               editType="fullRow"
               context={{
-                editable,
+                canEdit,
                 canViewDetails,
                 EditDialog,
                 reportIdent,
@@ -434,16 +434,16 @@ DataTable.propTypes = {
   rowData: PropTypes.arrayOf(PropTypes.object),
   titleText: PropTypes.string,
   filterText: PropTypes.string,
-  editable: PropTypes.bool,
+  canEdit: PropTypes.bool,
   EditDialog: PropTypes.func,
-  addable: PropTypes.bool,
+  canAdd: PropTypes.bool,
   reportIdent: PropTypes.string.isRequired,
   tableType: PropTypes.string,
   visibleColumns: PropTypes.arrayOf(PropTypes.string),
   syncVisibleColumns: PropTypes.func,
   canToggleColumns: PropTypes.bool,
   canViewDetails: PropTypes.bool,
-  paginated: PropTypes.bool,
+  isPaginated: PropTypes.bool,
   canReorder: PropTypes.bool,
   rowUpdateAPICall: PropTypes.func,
 };
@@ -452,15 +452,15 @@ DataTable.defaultProps = {
   rowData: [],
   filterText: '',
   titleText: '',
-  editable: false,
+  canEdit: false,
   EditDialog: () => null,
-  addable: false,
+  canAdd: false,
   tableType: '',
   visibleColumns: [],
   syncVisibleColumns: null,
   canToggleColumns: false,
   canViewDetails: true,
-  paginated: true,
+  isPaginated: true,
   canReorder: false,
   rowUpdateAPICall: () => {},
 };
