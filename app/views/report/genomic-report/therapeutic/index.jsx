@@ -44,6 +44,7 @@ function TherapeuticView(props) {
         canReorder={reportEdit && !print}
         rowUpdateAPICall={therapeuticUpdateTable}
         canExport
+        patientId={report.patientId}
       />
 
       <DataTable
@@ -59,6 +60,7 @@ function TherapeuticView(props) {
         canReorder={reportEdit && !print}
         rowUpdateAPICall={therapeuticUpdateTable}
         canExport
+        patientId={report.patientId}
       />
     </>
   );

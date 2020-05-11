@@ -41,6 +41,7 @@ const MAX_TABLE_HEIGHT = '500px';
  * @param {bool} props.canReorder can the rows be reordered
  * @param {func} props.rowUpdateAPICall API call for reordering rows
  * @param {bool} props.canExport can table data be exported to csv
+ * @param {string} props.patientId patient identifer as readable string
  * @return {*} JSX
  */
 function DataTable(props) {
@@ -62,6 +63,7 @@ function DataTable(props) {
     canReorder,
     rowUpdateAPICall,
     canExport,
+    patientId,
   } = props;
 
   const domLayout = 'autoHeight';
@@ -321,7 +323,7 @@ function DataTable(props) {
       columnKeys: columnApi.current.getAllDisplayedColumns()
         .map(col => col.colId)
         .filter(col => col === 'Actions'),
-      fileName: `ipr_${titleText.split(' ').join('_')}_${dateString}_${timeString}`,
+      fileName: `ipr_${patientId}_${titleText.split(' ').join('_')}_${dateString}_${timeString}`,
     });
   };
 
@@ -477,6 +479,7 @@ DataTable.propTypes = {
   canReorder: PropTypes.bool,
   rowUpdateAPICall: PropTypes.func,
   canExport: PropTypes.bool,
+  patientId: PropTypes.string,
 };
 
 DataTable.defaultProps = {
@@ -495,6 +498,7 @@ DataTable.defaultProps = {
   canReorder: false,
   rowUpdateAPICall: () => {},
   canExport: false,
+  patientId: '',
 };
 
 export default DataTable;
