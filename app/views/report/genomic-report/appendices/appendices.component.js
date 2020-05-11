@@ -7,6 +7,7 @@ const bindings = {
   tcgaAcronyms: '<',
   print: '<',
   probe: '<',
+  appendices: '<',
 };
 
 class AppendicesComponent {
@@ -14,7 +15,11 @@ class AppendicesComponent {
     this.sampleInformationColumnDefs = columnDefs.sampleInformationColumnDefs;
     this.sequencingProtocolInformationColumnDefs = columnDefs.sequencingProtocolInformationColumnDefs;
     this.tcgaAcronymsColumnDefs = columnDefs.tcgaAcronymsColumnDefs;
-    this.config = this.report.config.split('\n');
+
+    this.configSplit = this.appendices.config.split('\n');
+    this.config = this.appendices.config;
+    this.seqQC = this.appendices.seqQC;
+    this.sampleInfo = this.appendices.sampleInfo;
   }
 }
 
