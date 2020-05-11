@@ -12,6 +12,7 @@ import {
 } from '@material-ui/core';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+import GetAppIcon from '@material-ui/icons/GetApp';
 import ColumnPicker from './components/ColumnPicker';
 import LinkCellRenderer from './components/LinkCellRenderer';
 import GeneCellRenderer from './components/GeneCellRenderer';
@@ -39,6 +40,7 @@ const MAX_TABLE_HEIGHT = '500px';
  * @param {bool} props.isPaginated should the table be paginated
  * @param {bool} props.canReorder can the rows be reordered
  * @param {func} props.rowUpdateAPICall API call for reordering rows
+ * @param {bool} props.canExport can table data be exported to csv
  * @return {*} JSX
  */
 function DataTable(props) {
@@ -59,6 +61,7 @@ function DataTable(props) {
     isPaginated,
     canReorder,
     rowUpdateAPICall,
+    canExport,
   } = props;
 
   const domLayout = 'autoHeight';
@@ -308,6 +311,20 @@ function DataTable(props) {
     );
   };
 
+  const handleCSVExport = () => {
+    const date = new Date();
+    const dateString = date.toLocaleDateString().replace(/\//g, '-');
+    const timeString = date.toLocaleTimeString([], { hour12: false }).replace(/:/g, '-');
+
+    gridApi.current.exportDataAsCsv({
+      suppressQuotes: true,
+      columnKeys: columnApi.current.getAllDisplayedColumns()
+        .map(col => col.colId)
+        .filter(col => col === 'Actions'),
+      fileName: `ipr_${titleText.split(' ').join('_')}_${dateString}_${timeString}`,
+    });
+  };
+
   return (
     <div className="data-table--padded">
       {rowData.length || canEdit ? (
@@ -336,6 +353,19 @@ function DataTable(props) {
                     onClick={() => setShowPopover(prevVal => !prevVal)}
                   >
                     <MoreHorizIcon />
+                  </IconButton>
+                </span>
+              )}
+              {canExport && (
+                <span className="data-table__action">
+                  <Typography display="inline">
+                    Export to CSV
+                  </Typography>
+                  <IconButton
+                    onClick={handleCSVExport}
+                    title="Export to CSV"
+                  >
+                    <GetAppIcon />
                   </IconButton>
                 </span>
               )}
@@ -446,6 +476,7 @@ DataTable.propTypes = {
   isPaginated: PropTypes.bool,
   canReorder: PropTypes.bool,
   rowUpdateAPICall: PropTypes.func,
+  canExport: PropTypes.bool,
 };
 
 DataTable.defaultProps = {
@@ -463,6 +494,7 @@ DataTable.defaultProps = {
   isPaginated: true,
   canReorder: false,
   rowUpdateAPICall: () => {},
+  canExport: false,
 };
 
 export default DataTable;
