@@ -110,6 +110,7 @@ module.exports = {
   entry: path.resolve(__dirname, '../../app/root.module.js'),
   output: {
     path: path.resolve(__dirname, '../../dist'),
+    chunkFilename: '[id].[chunkhash].chunk.js',
     filename: '[name].bundle.js',
     publicPath: '/',
   },
