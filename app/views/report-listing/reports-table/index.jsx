@@ -30,7 +30,7 @@ function ReportsTableComponent(props) {
 
     const opts = {
       all: true,
-      states: 'ready,active,presented,uploaded,signedoff,archived',
+      states: 'ready,active,presented,uploaded,signedoff,archived,reviewed',
     };
 
     if (isExternalMode) {
