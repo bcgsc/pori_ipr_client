@@ -3,6 +3,7 @@ const columnDefs = [{
   field: 'gene.name',
   hide: false,
   cellRenderer: 'GeneCellRenderer',
+  cellRendererParams: { link: true },
 }, {
   headerName: 'Transcript',
   field: 'transcript',
