@@ -21,6 +21,13 @@ import structuralVariantsColumnDefs from '../../../../views/report/genomic-repor
 
 import './index.scss';
 
+// Don't show gene viewer link when in gene viewer
+columnDefs[0].cellRenderer = undefined;
+smallMutationsColumnDefs[0].cellRenderer = undefined;
+copyNumberColumnDefs[0].cellRenderer = undefined;
+expressionColumnDefs[0].cellRenderer = undefined;
+structuralVariantsColumnDefs[0].cellRenderer = undefined;
+
 /**
  * @param {object} props props
  * @param {func} props.onClose parent close handler
