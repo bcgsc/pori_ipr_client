@@ -37,12 +37,37 @@ const columnDefs = [{
   hide: false,
 }, {
   colId: 'foldChange',
-    field: 'gene.expressionVariants.foldChange',
+  field: 'gene.expressionVariants.foldChange',
   hide: false,
 }, {
   colId: 'tcgaPerc',
   field: 'gene.expressionVariants.tcgaPerc',
   hide: false,
+}, {
+  headerName: 'Oncogene',
+  colId: 'oncogene',
+  field: 'gene.oncogene',
+  hide: true,
+}, {
+  headerName: 'Tumour Suppressor',
+  colId: 'tumourSuppressor',
+  field: 'gene.tumourSuppressor',
+  hide: true,
+}, {
+  headerName: 'Cancer Related',
+  colId: 'cancerRelated',
+  field: 'gene.cancerRelated',
+  hide: true,
+}, {
+  headerName: 'Drug Targetable',
+  colId: 'drugTargetable',
+  field: 'gene.drugTargetable',
+  hide: true,
+}, {
+  headerName: 'Known Fusion Partner',
+  colId: 'knownFusionPartner',
+  field: 'gene.knownFusionPartner',
+  hide: true,
 }, {
   headerName: 'Action',
   colId: 'action',
