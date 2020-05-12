@@ -237,6 +237,9 @@ function DataTable(props) {
       editedData.rank = tableLength;
       gridApi.current.updateRowData({ add: [editedData] });
       setTableLength(gridApi.current.getDisplayedRowCount());
+
+      const { visibleColumnIds } = getColumnVisibility();
+      columnApi.current.autoSizeColumns(visibleColumnIds);
     } else if (editedData === null) {
       // sending back null indicates the row was deleted
       normalizeRowRanks(selectedRow.node.data.rank);
