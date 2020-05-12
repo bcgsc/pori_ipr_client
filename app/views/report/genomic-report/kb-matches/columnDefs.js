@@ -3,6 +3,7 @@ import ArrayCell from '../../../../components/DataTable/components/ArrayCellRend
 const columnDefs = [{
   headerName: 'Gene',
   cellRenderer: 'GeneCellRenderer',
+  cellRendererParams: { link: true },
   colId: 'gene',
   hide: false,
   valueGetter: (params) => {
