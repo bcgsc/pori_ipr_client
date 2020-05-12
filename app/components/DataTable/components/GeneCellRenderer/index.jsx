@@ -18,7 +18,7 @@ function GeneCellRenderer(params) {
 
   return (
     <>
-      {value && value.split(/\s::\s|,\s/).map((val, index) => (
+      {value && value.split(/\s*::\s*|,\s/).map((val, index) => (
         <React.Fragment key={index}>
           {index > 0 && (
             <span>
