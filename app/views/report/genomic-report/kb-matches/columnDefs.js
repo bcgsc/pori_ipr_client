@@ -21,11 +21,13 @@ const columnDefs = [{
   colId: 'kbVariant',
   field: 'kbVariant',
   hide: false,
+  maxWidth: 300,
 },
 {
   headerName: 'Observed Variant',
   colId: 'variant',
   hide: false,
+  maxWidth: 300,
   valueGetter: (params) => {
     const { data: { variant, variantType } } = params;
 
