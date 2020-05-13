@@ -12,10 +12,8 @@ import { create } from 'jss';
 import React from 'react';
 import { JssProvider } from 'react-jss';
 import { BrowserRouter } from 'react-router-dom';
-import angular from 'angular';
-import { angular2react } from 'angular2react';
 
-import rootModule from './root.module';
+import AngularjsRoot from './root.module';
 import * as cssTheme from './styles/_theme.scss';
 
 const theme = createMuiTheme({
@@ -59,26 +57,12 @@ const theme = createMuiTheme({
   },
 });
 
-
 const generateClassName = createGenerateClassName();
 const jss = create({
   ...jssPreset(),
   // We define a custom insertion point that JSS will look for injecting the styles in the DOM.
   insertionPoint: 'jss-insertion-point',
 });
-
-// AngularJS bootstrapping and injection...
-const AngularjsUiView = { template: '<ui-view></ui-view>' };
-
-let $injector;
-angular
-  .module('root')
-  .run(['$injector', (_$injector) => { $injector = _$injector; }])
-  .component('uiview', AngularjsUiView);
-
-angular.bootstrap(document, ['root']);
-
-const AngularjsRoot = angular2react('uiview', AngularjsUiView, $injector);
 
 /**
  * Entry point to application. Handles routing, app theme, and logged in state.
