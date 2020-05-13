@@ -24,10 +24,6 @@ const summary = {
       async ($transition$, GenomicAlterationsService) => GenomicAlterationsService.all(
         $transition$.params().analysis_report,
       )],
-    variantCounts: ['$transition$', 'VariantCountsService',
-      async ($transition$, VariantCountsService) => VariantCountsService.get(
-        $transition$.params().analysis_report,
-      )],
     mutationSummary: ['$transition$', 'MutationSummaryService',
       async ($transition$, MutationSummaryService) => MutationSummaryService.get(
         $transition$.params().analysis_report,

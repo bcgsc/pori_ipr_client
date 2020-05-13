@@ -22,7 +22,6 @@ import KeycloakService from './services/management/keycloak.service';
 import TumourAnalysisService from './services/reports/summary/tumour-analysis.service';
 import PatientInformationService from './services/reports/summary/patient-information.service';
 import GenomicAlterationsService from './services/reports/summary/genomic-alterations.service';
-import VariantCountsService from './services/reports/summary/variant-counts.service';
 import MutationSummaryService from './services/reports/summary/mutation-summary.service';
 import ProbeTargetService from './services/reports/summary/probe-target.service';
 import MutationSignatureService from './services/reports/summary/mutation-signature.service';
@@ -82,7 +81,6 @@ const rootModule = angular.module('root')
   .service('TumourAnalysisService', TumourAnalysisService)
   .service('PatientInformationService', PatientInformationService)
   .service('GenomicAlterationsService', GenomicAlterationsService)
-  .service('VariantCountsService', VariantCountsService)
   .service('MutationSummaryService', MutationSummaryService)
   .service('ProbeTargetService', ProbeTargetService)
   .service('MutationSignatureService', MutationSignatureService)

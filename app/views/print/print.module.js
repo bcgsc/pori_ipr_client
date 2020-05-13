@@ -20,21 +20,36 @@ import ProbeAppendicesComponent from '../report/genomic-report/appendices/append
 
 import lazy from './lazy';
 
-angular.module('print', [
+angular.module('print.genomic', [
   uiRouter,
   'angularFileUpload',
 ]);
 
-export default angular.module('print')
+angular.module('print.probe', [
+  uiRouter,
+  'angularFileUpload',
+]);
+
+export const genomicPrint = angular.module('print.genomic')
   .component('print', PrintComponent)
   .component('genomicprint', GenomicPrintComponent)
-  .component('probeprint', ProbePrintComponent)
   .component('printheader', PrintHeaderComponent)
   .component('genomicsummary', GenomicSummaryComponent)
   .component('analyst', AnalystCommentsComponent)
   .component('pathway', PathwayAnalysisComponent)
   .component('therapeuticReact', react2angular(TherapeuticReactComponent))
   .component('slides', SlidesComponent)
+  .config(($stateProvider) => {
+    'ngInject';
+
+    Object.values(lazy).forEach(state => $stateProvider.state(state));
+  })
+  .name;
+
+export const probePrint = angular.module('print.probe')
+  .component('print', PrintComponent)
+  .component('probeprint', ProbePrintComponent)
+  .component('printheader', PrintHeaderComponent)
   .component('probeSummary', ProbeSummaryComponent)
   .component('detailedGenomicAnalysis', ProbeDetailedGenomicAnalysisComponent)
   .component('probeAppendices', ProbeAppendicesComponent)
