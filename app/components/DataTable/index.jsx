@@ -17,6 +17,7 @@ import ColumnPicker from './components/ColumnPicker';
 import LinkCellRenderer from './components/LinkCellRenderer';
 import GeneCellRenderer from './components/GeneCellRenderer';
 import ActionCellRenderer from './components/ActionCellRenderer';
+import getDate from '../../services/utils/date';
 
 import './index.scss';
 
@@ -314,16 +315,14 @@ function DataTable(props) {
   };
 
   const handleCSVExport = () => {
-    const date = new Date();
-    const dateString = date.toLocaleDateString().replace(/\//g, '-');
-    const timeString = date.toLocaleTimeString([], { hour12: false }).replace(/:/g, '-');
+    const date = getDate();
 
     gridApi.current.exportDataAsCsv({
       suppressQuotes: true,
       columnKeys: columnApi.current.getAllDisplayedColumns()
         .map(col => col.colId)
         .filter(col => col === 'Actions'),
-      fileName: `ipr_${patientId}_${titleText.split(' ').join('_')}_${dateString}_${timeString}`,
+      fileName: `ipr_${patientId}_${reportIdent}_${titleText.split(' ').join('_')}_${date}`,
     });
   };
 
