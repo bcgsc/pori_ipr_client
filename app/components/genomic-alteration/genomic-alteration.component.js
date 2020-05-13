@@ -18,6 +18,29 @@ class GenomicAlterationComponent {
     this.gene.showChildren = false;
   }
 
+  getObservedVariant() {
+    const { variant, variantType } = this.gene;
+
+    if (variantType === 'cnv') {
+      return `${variant.gene.name} ${variant.cnvState}`;
+    }
+    if (variantType === 'sv') {
+      return `(${
+        variant.gene1.name || '?'
+      },${
+        variant.gene2.name || '?'
+      }):fusion(e.${
+        variant.exon1 || '?'
+      },e.${
+        variant.exon2 || '?'
+      })`;
+    }
+    if (variantType === 'mut') {
+      return `${variant.gene.name}:${variant.proteinChange}`;
+    }
+    return `${variant.gene.name} ${variant.expression_class}`;
+  }
+
   /* eslint-disable class-methods-use-this */
   // Filter reference type
   refType(ref) {
