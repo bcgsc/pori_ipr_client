@@ -73,11 +73,6 @@ const columnDefs = [{
   field: 'gene.cancerRelated',
   hide: true,
 }, {
-  headerName: 'Drug Targetable',
-  colId: 'drugTargetable',
-  field: 'gene.drugTargetable',
-  hide: true,
-}, {
   headerName: 'Known Fusion Partner',
   colId: 'knownFusionPartner',
   field: 'gene.knownFusionParter',

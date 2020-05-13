@@ -196,17 +196,6 @@ const columnDefs = [{
   },
   hide: true,
 }, {
-  headerName: 'Drug Targetable',
-  colId: 'drugTargetable',
-  valueGetter: (params) => {
-    const { data: { variant, variantType } } = params;
-    if (variantType === 'sv') {
-      return `${variant.gene1.drugTargetable} / ${variant.gene2.drugTargetable}`;
-    }
-    return `${variant.gene.drugTargetable}`;
-  },
-  hide: true,
-}, {
   headerName: 'Known Fusion Partner',
   colId: 'knownFusionPartner',
   valueGetter: (params) => {

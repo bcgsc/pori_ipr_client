@@ -74,11 +74,6 @@ const columnDefs = [{
   valueGetter: params => `${params.data.gene1.cancerRelated}/${params.data.gene2.cancerRelated}`,
   hide: true,
 }, {
-  headerName: 'Drug Targetable',
-  colId: 'drugTargetable',
-  valueGetter: params => `${params.data.gene1.drugTargetable}/${params.data.gene2.drugTargetable}`,
-  hide: true,
-}, {
   headerName: 'Known Fusion Partner',
   colId: 'knownFusionPartner',
   valueGetter: params => `${params.data.gene1.knownFusionPartner}/${params.data.gene2.knownFusionPartner}`,
