@@ -168,9 +168,9 @@ const columnDefs = [{
   valueGetter: (params) => {
     const { data: { variant, variantType } } = params;
     if (variantType === 'sv') {
-      return `${variant.gene1.oncogene} / ${variant.gene2.oncogene}`;
+      return variant.gene1.oncogene || variant.gene2.oncogene;
     }
-    return `${variant.gene.oncogene}`;
+    return variant.gene.oncogene;
   },
   hide: true,
 }, {
@@ -179,9 +179,9 @@ const columnDefs = [{
   valueGetter: (params) => {
     const { data: { variant, variantType } } = params;
     if (variantType === 'sv') {
-      return `${variant.gene1.tumourSuppressor} / ${variant.gene2.tumourSuppressor}`;
+      return variant.gene1.tumourSuppressor || variant.gene2.tumourSuppressor;
     }
-    return `${variant.gene.tumourSuppressor}`;
+    return variant.gene.tumourSuppressor;
   },
   hide: true,
 }, {
@@ -190,9 +190,9 @@ const columnDefs = [{
   valueGetter: (params) => {
     const { data: { variant, variantType } } = params;
     if (variantType === 'sv') {
-      return `${variant.gene1.cancerRelated} / ${variant.gene2.cancerRelated}`;
+      return variant.gene1.cancerRelated || variant.gene2.cancerRelated;
     }
-    return `${variant.gene.cancerRelated}`;
+    return variant.gene.cancerRelated;
   },
   hide: true,
 }, {
@@ -201,7 +201,7 @@ const columnDefs = [{
   valueGetter: (params) => {
     const { data: { variant, variantType } } = params;
     if (variantType === 'sv') {
-      return `${variant.gene1.knownFusionPartner} / ${variant.gene2.knownFusionPartner}`;
+      return variant.gene1.knownFusionPartner || variant.gene2.knownFusionPartner;
     }
     return `${variant.gene.knownFusionPartner}`;
   },
