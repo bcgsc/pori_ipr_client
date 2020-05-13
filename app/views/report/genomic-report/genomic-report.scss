@@ -840,3 +840,17 @@ md-dialog-content {
     height: calc(100vh - 120px)
   }
 }
+
+.alterations {
+  &__variant {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &:hover {
+      white-space: normal;
+      overflow: auto;
+      text-overflow: clip;
+    }
+  }
+}
