@@ -1,5 +1,6 @@
 import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
+import { angular2react } from 'angular2react';
 import 'angular-aria/angular-aria.min';
 import 'angular-animate/angular-animate.min';
 import 'angular-sanitize/angular-sanitize.min';
@@ -57,6 +58,9 @@ import './root.scss';
 import './styles/ag-grid.scss';
 import theme from './styles/_theme.scss';
 
+const AngularjsUiView = { template: '<ui-view></ui-view>' };
+let $injector;
+
 angular.module('root', [
   uiRouter,
   ComponentsModule,
@@ -66,8 +70,9 @@ angular.module('root', [
   'ngSanitize',
 ]);
 
-export default angular.module('root')
+const rootModule = angular.module('root')
   .component('root', RootComponent)
+  .component('uiview', AngularjsUiView)
   .service('UserService', UserService)
   .service('PogService', PogService)
   .service('ProjectService', ProjectService)
@@ -140,18 +145,6 @@ export default angular.module('root')
         },
       });
   })
-  .run(($transitions, $log, $rootScope) => {
-    'ngInject';
-
-    $transitions.onStart({ }, async (transition) => {
-      $rootScope.showLoader = true;
-      $log.log(transition.to().name);
-
-      transition.promise.finally(() => {
-        $rootScope.showLoader = false;
-      });
-    });
-  })
   .config(($mdThemingProvider) => {
     'ngInject';
 
@@ -214,8 +207,26 @@ export default angular.module('root')
       };
     });
   })
+  .run(($transitions, $log, $rootScope) => {
+    'ngInject';
+
+    $transitions.onStart({ }, async (transition) => {
+      $rootScope.showLoader = true;
+      $log.log(transition.to().name);
+
+      transition.promise.finally(() => {
+        $rootScope.showLoader = false;
+      });
+    });
+  })
+  .run(['$injector', (_$injector) => { $injector = _$injector; }])
   .name;
 
 ModuleRegistry.registerModules([
   ClientSideRowModelModule,
 ]);
+
+angular.bootstrap(document, [rootModule]);
+
+const AngularjsRoot = angular2react('uiview', AngularjsUiView, $injector);
+export default AngularjsRoot;
