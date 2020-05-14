@@ -19,6 +19,10 @@ html body {
   height: 100%;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 md-content {
   height: 100%;
   overflow: auto;
