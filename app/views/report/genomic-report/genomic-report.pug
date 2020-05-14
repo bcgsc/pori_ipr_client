@@ -10,7 +10,7 @@ md-content(flex).layout-fill.report__container
 
     div.report-menu__container
       div.reportMenu
-        h1 Report Sections
+        div.report-menu__title Report Sections
         ul
           li
             span(
@@ -25,15 +25,13 @@ md-content(flex).layout-fill.report__container
 
             span(
               ng-click="(section.children.length === 0) ? $ctrl.goToReportSection(section.state) : section.showChildren = !section.showChildren",
-              ng-class="{active: $ctrl.activeSection(section.state), meta: section.meta, children: (section.children.length > 0)}",
+              ng-class="{active: $ctrl.activeSection(section.state), children: (section.children.length > 0)}",
               layout="row"
               ng-if="$ctrl.reportEdit || section.clinician"
-            ).clickable.inline
-              span.expand {{section.name}}
-              md-icon(ng-if="!section.showChildren && section.children.length > 0") arrow_drop_down
-              md-icon(ng-if="section.showChildren || section.children.length < 0") arrow_drop_up
+            ).inline
+              span {{section.name}}
 
-            ul(ng-show="section.children.length > 0 && section.showChildren")
+            ul(ng-show="section.children.length > 0")
               li(ng-repeat="child in section.children", ng-click="$ctrl.goToReportSection(child.state)"
                 ng-class="{active: $ctrl.activeSection(child.state), disabled: (child.disabled), clickable: (!child.disabled)}"
               )
