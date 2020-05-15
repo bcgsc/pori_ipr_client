@@ -35,28 +35,32 @@ function TherapeuticView(props) {
         titleText="Potential Therapeutic Targets"
         columnDefs={columnDefs}
         rowData={therapeuticData}
-        editable={reportEdit && !print}
+        canEdit={reportEdit && !print}
         EditDialog={EditDialog}
-        addable={reportEdit && !print}
+        canAdd={reportEdit && !print}
         reportIdent={report.ident}
         tableType="therapeutic"
-        paginated={false}
+        isPaginated={false}
         canReorder={reportEdit && !print}
         rowUpdateAPICall={therapeuticUpdateTable}
+        canExport
+        patientId={report.patientId}
       />
 
       <DataTable
         titleText="Potential Chemoresistance"
         columnDefs={columnDefs}
         rowData={chemoresistanceData}
-        editable={reportEdit && !print}
+        canEdit={reportEdit && !print}
         EditDialog={EditDialog}
-        addable={reportEdit && !print}
+        canAdd={reportEdit && !print}
         reportIdent={report.ident}
         tableType="chemoresistance"
-        paginated={false}
+        isPaginated={false}
         canReorder={reportEdit && !print}
         rowUpdateAPICall={therapeuticUpdateTable}
+        canExport
+        patientId={report.patientId}
       />
     </>
   );

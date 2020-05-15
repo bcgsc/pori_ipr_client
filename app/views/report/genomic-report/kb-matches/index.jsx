@@ -91,7 +91,6 @@ function KBMatches(props) {
             visibleColumns={visibleColumns}
             syncVisibleColumns={syncVisibleColumns}
             filterText={filterText}
-            edit={false}
             canToggleColumns
             reportIdent={reportIdent}
           />
@@ -105,7 +104,6 @@ function KBMatches(props) {
             rowData={unsyncedTableData.rowData || []}
             titleText={unsyncedTableData.titleText}
             filterText={filterText}
-            edit={false}
             reportIdent={reportIdent}
           />
         </div>

@@ -10,6 +10,7 @@ import 'angular-material/angular-material.min.css';
 import 'angular-sortable-view';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { CsvExportModule } from '@ag-grid-community/csv-export';
 import ComponentsModule from './components/components.module';
 import ViewsModule from './views/views.module';
 import RootComponent from './root.component';
@@ -222,6 +223,7 @@ const rootModule = angular.module('root')
 
 ModuleRegistry.registerModules([
   ClientSideRowModelModule,
+  CsvExportModule,
 ]);
 
 angular.bootstrap(document, [rootModule]);
