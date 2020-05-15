@@ -3,6 +3,7 @@ const columnDefs = [{
   field: 'gene.name',
   hide: false,
   cellRenderer: 'GeneCellRenderer',
+  cellRendererParams: { link: true },
 }, {
   headerName: 'Transcript',
   field: 'transcript',
@@ -66,6 +67,16 @@ const columnDefs = [{
   headerName: 'Tumour Suppressor',
   colId: 'tumourSuppressor',
   field: 'gene.tumourSuppressor',
+  hide: true,
+}, {
+  headerName: 'Cancer Related',
+  colId: 'cancerRelated',
+  field: 'gene.cancerRelated',
+  hide: true,
+}, {
+  headerName: 'Known Fusion Partner',
+  colId: 'knownFusionPartner',
+  field: 'gene.knownFusionParter',
   hide: true,
 }];
 

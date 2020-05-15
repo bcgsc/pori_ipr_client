@@ -76,7 +76,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, '../../app/index.pug'),
+      template: path.join(__dirname, '../../statics/index.html'),
       inject: true,
     }),
     new CopyWebpackPlugin([{
@@ -107,10 +107,10 @@ module.exports = {
   },
   mode: 'development',
   devtool: 'inline-source-map',
-  entry: path.resolve(__dirname, '../../app/root.module.js'),
+  entry: path.resolve(__dirname, '../../app/index.jsx'),
   output: {
     path: path.resolve(__dirname, '../../dist'),
-    chunkFilename: '[id].[chunkhash].chunk.js',
+    chunkFilename: '[name].[chunkhash].chunk.js',
     filename: '[name].bundle.js',
     publicPath: '/',
   },

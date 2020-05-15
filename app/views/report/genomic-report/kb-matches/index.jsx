@@ -108,35 +108,6 @@ function KBMatches(props) {
           />
         </div>
       )}
-
-      {Object.values(thisHiddenTableData).map(table => (
-        <div className="expansion-panel" key={table.titleText}>
-          <ExpansionPanel
-            TransitionProps={{ unmountOnExit: true }}
-            elevation={0}
-          >
-            <ExpansionPanelSummary
-              expandIcon={<ExpandMore />}
-              classes={{ root: 'expansion-panel__summary' }}
-            >
-              <Typography variant="h5">
-                {table.titleText}
-              </Typography>
-            </ExpansionPanelSummary>
-            <ExpansionPanelDetails
-              classes={{ root: 'expansion-panel__details' }}
-            >
-              <DataTable
-                columnDefs={columnDefs}
-                rowData={table.rowData || []}
-                filterText={filterText}
-                canToggleColumns
-                reportIdent={reportIdent}
-              />
-            </ExpansionPanelDetails>
-          </ExpansionPanel>
-        </div>
-      ))}
     </>
   );
 }

@@ -79,8 +79,6 @@
     "quote-props": ["error", "consistent"],
     "no-underscore-dangle": ["warn"],
     "no-param-reassign": "off",
-    "valid-jsdoc": "warn",
-    "require-jsdoc": "warn",
     "no-restricted-globals": "warn",
     "no-alert": "off",
     "prefer-destructuring": ["error", {"object": true, "array": true}],

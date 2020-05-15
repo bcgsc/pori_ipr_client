@@ -21,6 +21,7 @@ import structuralVariantsColumnDefs from '../../../../views/report/genomic-repor
 
 import './index.scss';
 
+
 /**
  * @param {object} props props
  * @param {func} props.onClose parent close handler
@@ -46,11 +47,22 @@ function GeneViewer(props) {
         const resp = await geneViewerApi(gene, reportIdent);
         setGeneData(resp);
       };
+      // Don't show gene viewer link when in gene viewer
+      columnDefs[0].cellRendererParams = { link: false };
+      smallMutationsColumnDefs[0].cellRendererParams = { link: false };
+      copyNumberColumnDefs[0].cellRendererParams = { link: false };
+      expressionColumnDefs[0].cellRendererParams = { link: false };
+      structuralVariantsColumnDefs[0].cellRendererParams = { link: false };
       api();
     }
   }, [open]);
 
   const handleClose = (value) => {
+    columnDefs[0].cellRendererParams = { link: true };
+    smallMutationsColumnDefs[0].cellRendererParams = { link: true };
+    copyNumberColumnDefs[0].cellRendererParams = { link: true };
+    expressionColumnDefs[0].cellRendererParams = { link: true };
+    structuralVariantsColumnDefs[0].cellRendererParams = { link: true };
     onClose(value);
   };
 
