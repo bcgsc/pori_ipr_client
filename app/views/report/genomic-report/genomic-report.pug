@@ -1,12 +1,21 @@
 md-content(flex).layout-fill.report__container
   div(layout="row").pog-report
-    md-toolbar(style="clear: both; padding: 8px;").md-menu-toolbar
-      div.md-toolbar-tools
-        span(flex).text-left {{$ctrl.report.patientInformation.diagnosis}}
-        h2(flex).text-center.md-hue-3 {{$ctrl.report.patientId}} Genomic Report
-        report-state(flex, state="$ctrl.report.state").text-right
+    div(flex, layout="column")
+      report-toolbar(
+        diagnosis="$ctrl.report.patientInformation.diagnosis",
+        patient-id="$ctrl.report.patientId",
+        type="'Genomic'",
+        state="$ctrl.report.state"
+      )
+      md-divider
 
       div(flex, ui-view="").report__content
+    //- md-toolbar(style="clear: both; padding: 8px;").md-menu-toolbar
+    //-   div.md-toolbar-tools
+    //-     span(flex).text-left {{$ctrl.report.patientInformation.diagnosis}}
+    //-     h2(flex).text-center.md-hue-3 {{$ctrl.report.patientId}} Genomic Report
+    //-     report-state(flex, state="$ctrl.report.state").text-right
+
 
     div.report-menu__container
       div.reportMenu
