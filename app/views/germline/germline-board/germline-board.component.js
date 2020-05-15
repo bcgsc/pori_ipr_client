@@ -1,4 +1,5 @@
 import template from './germline-board.pug';
+import getDate from '../../../services/utils/date';
 
 const bindings = {
   reports: '<',
@@ -109,9 +110,7 @@ class GermlineBoardComponent {
    */
   async getExport() {
     try {
-      const date = new Date();
-      const dateString = date.toLocaleDateString().replace(/\//g, '-');
-      const timeString = date.toLocaleTimeString([], { hour12: false }).replace(/:/g, '-');
+      const date = getDate();
 
       const exportData = await this.GermlineService.export();
       const blob = new Blob([exportData], { type: 'text/plain' });
@@ -119,7 +118,7 @@ class GermlineBoardComponent {
 
       const a = document.createElement('a');
       a.href = url;
-      a.download = `germline_export_${dateString}_${timeString}`;
+      a.download = `germline_export_${date}`;
 
       const clickHandler = () => {
         setTimeout(() => {
