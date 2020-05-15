@@ -2,7 +2,7 @@ import getLocalToken from '../management/token';
 import errorHandler from '../errors/errorHandler';
 import { AuthenticationError } from '../errors/errors';
 
-const geneViewer = async (gene, reportIdent) => {
+const appendices = async (reportIdent) => {
   const authToken = getLocalToken();
   if (!authToken) {
     return new AuthenticationError('missing authentication token');
@@ -18,7 +18,7 @@ const geneViewer = async (gene, reportIdent) => {
   };
 
   const response = await fetch(
-    `${CONFIG.ENDPOINTS.API}/reports/${reportIdent}/gene-viewer/${gene}`,
+    `${CONFIG.ENDPOINTS.API}/reports/${reportIdent}/appendices`,
     options,
   );
 
@@ -28,4 +28,4 @@ const geneViewer = async (gene, reportIdent) => {
   return errorHandler(response);
 };
 
-export default geneViewer;
+export default appendices;
