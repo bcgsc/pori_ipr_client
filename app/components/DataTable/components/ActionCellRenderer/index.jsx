@@ -22,7 +22,7 @@ function ActionCellRenderer(params) {
   const {
     data,
     context: {
-      editable,
+      canEdit,
       canViewDetails,
     },
     columnApi,
@@ -90,7 +90,7 @@ function ActionCellRenderer(params) {
           columnMapping={columnMapping}
         />
       )}
-      {editable && (
+      {canEdit && (
         <IconButton
           size="small"
           aria-label="Edit"

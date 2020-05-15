@@ -19,7 +19,6 @@ const print = {
       }
     }],
   },
-  lazyLoad: undefined,
 };
 
 const genomic = {
@@ -28,10 +27,6 @@ const genomic = {
   resolve: {
     genomicAlterations: ['$transition$', 'GenomicAlterationsService',
       async ($transition$, GenomicAlterationsService) => GenomicAlterationsService.all(
-        $transition$.params().report,
-      )],
-    variantCounts: ['$transition$', 'VariantCountsService',
-      async ($transition$, VariantCountsService) => VariantCountsService.get(
         $transition$.params().report,
       )],
     mutationSummary: ['$transition$', 'MutationSummaryService',
@@ -118,6 +113,7 @@ const genomic = {
         $transition$.params().report,
       )],
   },
+  lazyLoad: undefined,
 };
 
 const probe = {
@@ -151,6 +147,7 @@ const probe = {
         $transition$.params().report,
       )],
   },
+  lazyLoad: undefined,
 };
 
 export default {

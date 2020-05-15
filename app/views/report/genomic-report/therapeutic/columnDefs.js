@@ -11,6 +11,7 @@ const columnDefs = [{
   field: 'gene',
   hide: false,
   cellRenderer: 'GeneCellRenderer',
+  cellRendererParams: { link: true },
 }, {
   headerName: 'Variant',
   field: 'variant',

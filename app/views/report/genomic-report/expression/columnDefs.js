@@ -2,6 +2,7 @@ const columnDefs = [{
   headerName: 'Gene',
   field: 'gene.name',
   cellRenderer: 'GeneCellRenderer',
+  cellRendererParams: { link: true },
   hide: false,
 }, {
   headerName: 'Expression Class',

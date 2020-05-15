@@ -1,15 +1,16 @@
 import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
+import { angular2react } from 'angular2react';
 import 'angular-aria/angular-aria.min';
 import 'angular-animate/angular-animate.min';
 import 'angular-sanitize/angular-sanitize.min';
 import 'angular-material/angular-material.min';
 import 'ngstorage';
-import 'typeface-roboto';
 import 'angular-material/angular-material.min.css';
 import 'angular-sortable-view';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { CsvExportModule } from '@ag-grid-community/csv-export';
 import ComponentsModule from './components/components.module';
 import ViewsModule from './views/views.module';
 import RootComponent from './root.component';
@@ -22,7 +23,6 @@ import KeycloakService from './services/management/keycloak.service';
 import TumourAnalysisService from './services/reports/summary/tumour-analysis.service';
 import PatientInformationService from './services/reports/summary/patient-information.service';
 import GenomicAlterationsService from './services/reports/summary/genomic-alterations.service';
-import VariantCountsService from './services/reports/summary/variant-counts.service';
 import MutationSummaryService from './services/reports/summary/mutation-summary.service';
 import ProbeTargetService from './services/reports/summary/probe-target.service';
 import MutationSignatureService from './services/reports/summary/mutation-signature.service';
@@ -58,6 +58,9 @@ import './root.scss';
 import './styles/ag-grid.scss';
 import theme from './styles/_theme.scss';
 
+const AngularjsUiView = { template: '<ui-view></ui-view>' };
+let $injector;
+
 angular.module('root', [
   uiRouter,
   ComponentsModule,
@@ -67,8 +70,9 @@ angular.module('root', [
   'ngSanitize',
 ]);
 
-export default angular.module('root')
+const rootModule = angular.module('root')
   .component('root', RootComponent)
+  .component('uiview', AngularjsUiView)
   .service('UserService', UserService)
   .service('PogService', PogService)
   .service('ProjectService', ProjectService)
@@ -78,7 +82,6 @@ export default angular.module('root')
   .service('TumourAnalysisService', TumourAnalysisService)
   .service('PatientInformationService', PatientInformationService)
   .service('GenomicAlterationsService', GenomicAlterationsService)
-  .service('VariantCountsService', VariantCountsService)
   .service('MutationSummaryService', MutationSummaryService)
   .service('ProbeTargetService', ProbeTargetService)
   .service('MutationSignatureService', MutationSignatureService)
@@ -140,18 +143,6 @@ export default angular.module('root')
           isExternalMode: ['AclService', async AclService => AclService.isExternalMode()],
         },
       });
-  })
-  .run(($transitions, $log, $rootScope) => {
-    'ngInject';
-
-    $transitions.onStart({ }, async (transition) => {
-      $rootScope.showLoader = true;
-      $log.log(transition.to().name);
-
-      transition.promise.finally(() => {
-        $rootScope.showLoader = false;
-      });
-    });
   })
   .config(($mdThemingProvider) => {
     'ngInject';
@@ -215,8 +206,27 @@ export default angular.module('root')
       };
     });
   })
+  .run(($transitions, $log, $rootScope) => {
+    'ngInject';
+
+    $transitions.onStart({ }, async (transition) => {
+      $rootScope.showLoader = true;
+      $log.log(transition.to().name);
+
+      transition.promise.finally(() => {
+        $rootScope.showLoader = false;
+      });
+    });
+  })
+  .run(['$injector', (_$injector) => { $injector = _$injector; }])
   .name;
 
 ModuleRegistry.registerModules([
   ClientSideRowModelModule,
+  CsvExportModule,
 ]);
+
+angular.bootstrap(document, [rootModule]);
+
+const AngularjsRoot = angular2react('uiview', AngularjsUiView, $injector);
+export default AngularjsRoot;

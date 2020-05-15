@@ -7,7 +7,7 @@ section.appendices
         h2.title Appendix A
         react-table(
           column-defs="$ctrl.sampleInformationColumnDefs",
-          row-data="$ctrl.report.sampleInfo",
+          row-data="$ctrl.sampleInfo",
           title-text="'Sample Information'",
           report-ident="$ctrl.report.ident"
         )
@@ -15,7 +15,7 @@ section.appendices
       div
         react-table(
           column-defs="$ctrl.sequencingProtocolInformationColumnDefs",
-          row-data="$ctrl.report.seqQC",
+          row-data="$ctrl.seqQC",
           title-text="'Sequencing Protocol Information'",
           report-ident="$ctrl.report.ident"
         )
@@ -86,7 +86,7 @@ section.appendices
       h2(ng-if="!$ctrl.print").title Appendix D
       h3.title.print-subtitle Genomic Report {{$ctrl.report.reportVersion || 'N/A'}}/ KB {{$ctrl.report.kbVersion || 'N/A'}}
 
-      pre(ng-if="!$ctrl.print").tcga {{$ctrl.report.config}}
+      pre(ng-if="!$ctrl.print").tcga {{$ctrl.config}}
       table.config__table
-        tr(ng-if="$ctrl.print", ng-repeat="configRow in $ctrl.config track by $index")
+        tr(ng-if="$ctrl.print", ng-repeat="configRow in $ctrl.configSplit track by $index")
           td.config__row {{configRow}}
