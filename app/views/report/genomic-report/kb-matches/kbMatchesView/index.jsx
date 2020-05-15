@@ -134,6 +134,10 @@ function KBMatchesView(props) {
       titleText: 'Biological Alterations',
       rowData: extractCategories(coalesceEntries(alterations), 'biological'),
     },
+    unknown: {
+      titleText: 'Other Alterations',
+      rowData: coalesceEntries(unknown),
+    },
   });
 
   const [unsyncedTableData] = useState({
@@ -141,22 +145,12 @@ function KBMatchesView(props) {
     rowData: targetedGenes,
   });
 
-  const hiddenTableData = useRef({
-    unknown: {
-      titleText: 'Other Alterations',
-      rowData: coalesceEntries(unknown),
-      show: false,
-    },
-  });
-
-
   return (
     <KbMatchesComponent
       syncedTableData={syncedTableData}
       unsyncedTableData={unsyncedTableData}
-      hiddenTableData={hiddenTableData}
       reportIdent={report.ident}
-      isProbe
+      isProbe={isProbe}
     />
   );
 }
