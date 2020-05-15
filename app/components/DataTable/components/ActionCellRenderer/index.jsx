@@ -68,7 +68,7 @@ function ActionCellRenderer(params) {
           <LibraryBooks />
         </IconButton>
       )}
-      {data.kbStatementId && data.kbStatementId.match(/^#?-?\d+:-?\d+$/)
+      {data.kbStatementId && !Array.isArray(data.kbStatementId) && data.kbStatementId.match(/^#?-?\d+:-?\d+$/)
         ? (
           <IconButton
             size="small"
@@ -80,6 +80,13 @@ function ActionCellRenderer(params) {
           >
             <OpenInNew />
           </IconButton>
+        ) : null
+      }
+      {Array.isArray(data.kbStatementId) && data.kbStatementId.some(statement => statement.match(/^#?-?\d+:-?\d+$/))
+        ? (
+          <div>
+            test
+          </div>
         ) : null
       }
       {showDetailDialog && (
