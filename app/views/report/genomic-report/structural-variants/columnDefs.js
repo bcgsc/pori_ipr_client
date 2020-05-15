@@ -2,6 +2,7 @@ const columnDefs = [{
   headerName: 'Genes 5`::3`',
   colId: 'genes',
   cellRenderer: 'GeneCellRenderer',
+  cellRendererParams: { link: true },
   valueGetter: params => (params.data.gene1.name && params.data.gene2.name
     ? `${params.data.gene1.name} :: ${params.data.gene2.name}`
     : (params.data.gene1.name || params.data.gene2.name)),
@@ -15,18 +16,22 @@ const columnDefs = [{
   hide: false,
 }, {
   headerName: 'Breakpoint',
+  colId: 'breakpoint',
   field: 'breakpoint',
   hide: false,
 }, {
   headerName: 'Event Type',
+  colId: 'eventType',
   field: 'eventType',
   hide: false,
 }, {
   headerName: 'Sample',
+  colId: 'detectedIn',
   field: 'detectedIn',
   hide: false,
 }, {
   headerName: 'Cytogenic Description',
+  colId: 'conventionalName',
   field: 'conventionalName',
   hide: false,
 }, {
@@ -63,6 +68,16 @@ const columnDefs = [{
   headerName: 'Tumour Suppressor',
   colId: 'tumourSuppressor',
   valueGetter: params => (params.data.gene1.tumourSuppressor || params.data.gene2.tumourSuppressor),
+  hide: true,
+}, {
+  headerName: 'Cancer Related',
+  colId: 'cancerRelated',
+  valueGetter: params => (params.data.gene1.cancerRelated || params.data.gene2.cancerRelated),
+  hide: true,
+}, {
+  headerName: 'Known Fusion Partner',
+  colId: 'knownFusionPartner',
+  valueGetter: params => (params.data.gene1.knownFusionPartner || params.data.gene2.knownFusionPartner),
   hide: true,
 }, {
   headerName: 'Actions',

@@ -1,5 +1,6 @@
 import eager from './eager';
 import KBMatchesComponent from './kb-matches/index';
+import appendicesCall from '../../../services/reports/appendices';
 
 const genomic = {
   ...eager.genomic,
@@ -22,10 +23,6 @@ const summary = {
   resolve: {
     genomicAlterations: ['$transition$', 'GenomicAlterationsService',
       async ($transition$, GenomicAlterationsService) => GenomicAlterationsService.all(
-        $transition$.params().analysis_report,
-      )],
-    variantCounts: ['$transition$', 'VariantCountsService',
-      async ($transition$, VariantCountsService) => VariantCountsService.get(
         $transition$.params().analysis_report,
       )],
     mutationSummary: ['$transition$', 'MutationSummaryService',
@@ -307,6 +304,9 @@ const appendices = {
       async ($transition$, AppendicesService) => AppendicesService.tcga(
         $transition$.params().analysis_report,
       )],
+    appendices: ['$transition$',
+      async $transition$ => appendicesCall($transition$.params().analysis_report),
+    ],
   },
 };
 

@@ -3,6 +3,7 @@ import ArrayCell from '../../../../components/DataTable/components/ArrayCellRend
 const columnDefs = [{
   headerName: 'Gene',
   cellRenderer: 'GeneCellRenderer',
+  cellRendererParams: { link: true },
   colId: 'gene',
   hide: false,
   valueGetter: (params) => {
@@ -21,11 +22,13 @@ const columnDefs = [{
   colId: 'kbVariant',
   field: 'kbVariant',
   hide: false,
+  maxWidth: 300,
 },
 {
   headerName: 'Observed Variant',
   colId: 'variant',
   hide: false,
+  maxWidth: 300,
   valueGetter: (params) => {
     const { data: { variant, variantType } } = params;
 
@@ -162,6 +165,50 @@ const columnDefs = [{
     const { data: { variant } } = params;
     return variant.zygosity;
   },
+}, {
+  headerName: 'Oncogene',
+  colId: 'oncogene',
+  valueGetter: (params) => {
+    const { data: { variant, variantType } } = params;
+    if (variantType === 'sv') {
+      return variant.gene1.oncogene || variant.gene2.oncogene;
+    }
+    return variant.gene.oncogene;
+  },
+  hide: true,
+}, {
+  headerName: 'Tumour Suppressor',
+  colId: 'tumourSuppressor',
+  valueGetter: (params) => {
+    const { data: { variant, variantType } } = params;
+    if (variantType === 'sv') {
+      return variant.gene1.tumourSuppressor || variant.gene2.tumourSuppressor;
+    }
+    return variant.gene.tumourSuppressor;
+  },
+  hide: true,
+}, {
+  headerName: 'Cancer Related',
+  colId: 'cancerRelated',
+  valueGetter: (params) => {
+    const { data: { variant, variantType } } = params;
+    if (variantType === 'sv') {
+      return variant.gene1.cancerRelated || variant.gene2.cancerRelated;
+    }
+    return variant.gene.cancerRelated;
+  },
+  hide: true,
+}, {
+  headerName: 'Known Fusion Partner',
+  colId: 'knownFusionPartner',
+  valueGetter: (params) => {
+    const { data: { variant, variantType } } = params;
+    if (variantType === 'sv') {
+      return variant.gene1.knownFusionPartner || variant.gene2.knownFusionPartner;
+    }
+    return `${variant.gene.knownFusionPartner}`;
+  },
+  hide: true,
 }, {
   headerName: 'Actions',
   colId: 'Actions',

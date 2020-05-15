@@ -1,6 +1,6 @@
 # IPR Client
 
-![Build Status](https://www.bcgsc.ca/bamboo/plugins/servlet/wittified/build-status/IPR-DEVCLIENT56)
+![Build Status](https://www.bcgsc.ca/bamboo/plugins/servlet/wittified/build-status/IPR-IPRWP117)
 
 The Integrated Pipeline Reports (IPR) client is designed to consume API data from IPR's API, as well as
 LIMS and Bioapps APIs. The primary function is the production and management of POG Genomic and Targeted Gene reports.

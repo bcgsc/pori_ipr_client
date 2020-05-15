@@ -91,7 +91,6 @@ function KBMatches(props) {
             visibleColumns={visibleColumns}
             syncVisibleColumns={syncVisibleColumns}
             filterText={filterText}
-            edit={false}
             canToggleColumns
             reportIdent={reportIdent}
           />
@@ -105,41 +104,10 @@ function KBMatches(props) {
             rowData={unsyncedTableData.rowData || []}
             titleText={unsyncedTableData.titleText}
             filterText={filterText}
-            edit={false}
             reportIdent={reportIdent}
           />
         </div>
       )}
-
-      {Object.values(thisHiddenTableData).map(table => (
-        <div className="expansion-panel" key={table.titleText}>
-          <ExpansionPanel
-            TransitionProps={{ unmountOnExit: true }}
-            elevation={0}
-          >
-            <ExpansionPanelSummary
-              expandIcon={<ExpandMore />}
-              classes={{ root: 'expansion-panel__summary' }}
-            >
-              <Typography variant="h5">
-                {table.titleText}
-              </Typography>
-            </ExpansionPanelSummary>
-            <ExpansionPanelDetails
-              classes={{ root: 'expansion-panel__details' }}
-            >
-              <DataTable
-                columnDefs={columnDefs}
-                rowData={table.rowData || []}
-                filterText={filterText}
-                edit={false}
-                canToggleColumns
-                reportIdent={reportIdent}
-              />
-            </ExpansionPanelDetails>
-          </ExpansionPanel>
-        </div>
-      ))}
     </>
   );
 }
