@@ -820,6 +820,8 @@ md-dialog-content {
 .report-menu {
   &__container {
     height: calc(100vh - 120px);
+    width: 250px;
+    float: right;
     position: sticky;
     top: 0;
     overflow-y: auto;
