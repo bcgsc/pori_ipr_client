@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import {
   IconButton,
+  Menu,
+  MenuItem,
 } from '@material-ui/core';
 import {
   Edit,
@@ -10,6 +12,8 @@ import {
 } from '@material-ui/icons';
 import DetailDialog from '../DetailDialog';
 import SvgViewer from '../SvgViewer';
+
+import './index.scss';
 
 /**
  * @param {object} params params
@@ -32,6 +36,7 @@ function ActionCellRenderer(params) {
   const [showDetailDialog, setShowDetailDialog] = useState(false);
   const [showSvgViewer, setShowSvgViewer] = useState(false);
   const [columnMapping, setColumnMapping] = useState({});
+  const [anchorEl, setAnchorEl] = useState(null);
 
   useEffect(() => {
     if (showDetailDialog) {
@@ -56,6 +61,14 @@ function ActionCellRenderer(params) {
     setShowSvgViewer(false);
   };
 
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
     <>
       {canViewDetails && (
@@ -68,7 +81,7 @@ function ActionCellRenderer(params) {
           <LibraryBooks />
         </IconButton>
       )}
-      {data.kbStatementId && data.kbStatementId.match(/^#?-?\d+:-?\d+$/)
+      {(data.kbStatementId && !Array.isArray(data.kbStatementId) && data.kbStatementId.match(/^#?-?\d+:-?\d+$/))
         ? (
           <IconButton
             size="small"
@@ -80,6 +93,41 @@ function ActionCellRenderer(params) {
           >
             <OpenInNew />
           </IconButton>
+        ) : null
+      }
+      {(data.kbStatementId && Array.isArray(data.kbStatementId) && data.kbStatementId.some(statement => statement.match(/^#?-?\d+:-?\d+$/)))
+        ? (
+          <>
+            <IconButton
+              size="small"
+              aria-label="Open in GraphKB"
+              title="Open in GraphKB"
+              onClick={handleMenuOpen}
+            >
+              <OpenInNew />
+            </IconButton>
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleMenuClose}
+            >
+              {data.kbStatementId.filter(statement => statement.match(/^#?-?\d+:-?\d+$/)).map(statement => (
+                <MenuItem
+                  key={statement}
+                  onClick={handleMenuClose}
+                >
+                  <a
+                    className="action-cell-kb-statement__link"
+                    href={`${CONFIG.ENDPOINTS.GRAPHKB}/view/Statement/${statement.replace('#', '')}`}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                  >
+                    {statement}
+                  </a>
+                </MenuItem>
+              ))}
+            </Menu>
+          </>
         ) : null
       }
       {showDetailDialog && (
