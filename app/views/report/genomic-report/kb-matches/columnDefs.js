@@ -21,6 +21,7 @@ const columnDefs = [{
   headerName: 'Known Variant',
   colId: 'kbVariant',
   field: 'kbVariant',
+  cellRendererFramework: ArrayCell('kbVariant', false),
   hide: false,
   maxWidth: 300,
 },
@@ -49,7 +50,7 @@ const columnDefs = [{
     if (variantType === 'mut') {
       return `${variant.gene.name}:${variant.proteinChange}`;
     }
-    return `${variant.gene.name} ${variant.expression_class}`;
+    return `${variant.gene.name} ${variant.expressionState}`;
   },
 },
 {
@@ -84,12 +85,14 @@ const columnDefs = [{
   headerName: 'Association',
   colId: 'relevance',
   field: 'relevance',
+  cellRendererFramework: ArrayCell('relevance', false),
   hide: false,
 },
 {
   headerName: 'Context',
   colId: 'context',
   field: 'context',
+  cellRendererFramework: ArrayCell('context', false),
   hide: false,
 },
 {
@@ -124,6 +127,7 @@ const columnDefs = [{
   headerName: 'Category',
   colId: 'category',
   field: 'category',
+  cellRendererFramework: ArrayCell('category', false),
   hide: true,
 },
 {
@@ -145,16 +149,19 @@ const columnDefs = [{
   headerName: 'Evidence',
   colId: 'evidenceLevel',
   field: 'evidenceLevel',
+  cellRendererFramework: ArrayCell('evidenceLevel', false),
   hide: false,
 },
 {
   headerName: 'Matched Cancer',
   field: 'matchedCancer',
+  cellRendererFramework: ArrayCell('matchedCancer', false),
   hide: true,
 },
 {
   headerName: 'Sample',
   field: 'sample',
+  cellRendererFramework: ArrayCell('sample', false),
   hide: false,
 },
 {
