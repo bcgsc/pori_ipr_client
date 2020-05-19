@@ -19,16 +19,13 @@ function ReportToolbar(props) {
       <Typography display="inline" variant="h6">
         {diagnosis}
       </Typography>
-      <Typography display="inline" variant="h4">
+      <Typography display="inline" variant="h6">
         {patientId}
         {` ${type} Report`}
       </Typography>
       <Typography display="inline" variant="h6">
         {state}
       </Typography>
-      <span>
-        {' '}
-      </span>
     </span>
   );
 }

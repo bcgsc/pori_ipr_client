@@ -720,7 +720,6 @@ md-dialog-content {
 
 
 .reportMenu {
-  height: 100%;
   width: 100%;
 
   ul {
@@ -731,12 +730,10 @@ md-dialog-content {
     span {
       &.inline {
         height: 36px;
-        background-color: $white;
+        background-color: $palette__common--white;
         display: flex;
-        padding: 10px 0 10px 10px;
-        border-left: 4px solid transparent;
-        transition: border .1s;
-        margin: 0 0 0 8px;
+        padding: 10px 0 10px 20px;
+        transition: background-color $transition-fast;
         user-select: none;
 
         > span {
@@ -754,7 +751,7 @@ md-dialog-content {
 
         &:hover {
           &:not(.children) {
-            border-left: 4px solid $palette__primary--main;
+            background-color: $black-10;
           }
         }
 
@@ -772,7 +769,8 @@ md-dialog-content {
         }
 
         &.active {
-          border-left: 4px solid $palette__primary--main;
+          font-weight: 500;
+          background-color: $black-10;
         }
 
         &.disabled {
@@ -788,11 +786,8 @@ md-dialog-content {
         padding: 0;
         li {
           display: flex;
-          padding: 10px 0 10px 10px;
-          padding-left: 25px;
-          border-left: 4px solid transparent;
-          margin: 0 0 0 8px;
-          transition: border .2s;
+          padding: 10px 0 10px 35px;
+          transition: background-color $transition-fast;
           user-select: none;
 
           &:focus {
@@ -800,11 +795,12 @@ md-dialog-content {
           }
 
           &:hover {
-            border-left: 4px solid $palette__primary--main;
+            background-color: $black-10;
           }
 
           &.active {
-            border-left: 4px solid $palette__primary--main;
+            font-weight: 500;
+            background-color: $black-10;
           }
 
           &.disabled {
@@ -820,23 +816,26 @@ md-dialog-content {
 
 .report-menu {
   &__container {
-    height: calc(100vh - 120px);
-    width: 280px;
+    height: calc(100vh - 56px);
+    width: 270px;
     float: right;
     position: sticky;
-    top: 0;
+    top: 0px;
     overflow-y: auto;
     overflow-x: hidden;
     font-size: $typography__font-size--h6;
-    // margin: 72px 0 0 4px;
+    border-left: 1px solid $black-12;
+
+    &--center {
+      margin: 14px 0 0 0;
+    }
   }
 
   &__title {
     font-size: $typography__font-size--h6;
     font-weight: 500;
-    padding: 10px 5px 10px 10px;
-    border-left: 4px solid transparent;
-    margin: 0 0 0 8px;
+    padding: 8px 16px;
+    margin: 4px;
     user-select: none;
   }
 }

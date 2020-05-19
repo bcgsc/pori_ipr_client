@@ -1,10 +1,12 @@
+@import '../../styles/theme';
+
 .report {
   &__header {
     padding: 12px 24px 12px 14px;
-    margin: 4px 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background-color: $palette__common--white;
     border-bottom: 1px solid rgba(0,0,0,.12);
   }
 }

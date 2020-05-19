@@ -21,7 +21,7 @@
 
   &__row {
     padding: 11px 0;
-    transition-duration: .35s;
+    transition-duration: $transition-fast;
     transition-property: background-color;
     color: inherit;
     text-decoration: none;

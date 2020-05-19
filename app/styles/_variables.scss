@@ -6,6 +6,7 @@ $white-background: #fafafa;
 $white: #fff;
 $medium-emphasis: rgba(0, 0, 0, .6);
 $black-03: rgba(0, 0, 0, .03);
+$black-10: rgba(0, 0, 0, .12);
 $black-12: rgba(0, 0, 0, .12);
 $black-15: rgba(0, 0, 0, .15);
 $black-20: rgba(0, 0, 0, .2);
@@ -29,12 +30,14 @@ $header-font-size: 1.6em;
 $caption-font-size: .8em;
 $large-body-font-size: 1.2em;
 
-$breakpoint-xl: 1400px;
-$breakpoint-lg: 1024px;
+$breakpoint-xl: 1200px;
+$breakpoint-lg: 992px;
 $breakpoint-med: 768px;
-$breakpoint-mobile: 425px;
+$breakpoint-sm: 600px;
 
 $default-spacing: 20px;
 
 $readable-max: 700px;
 $readable-min: 300px;
+
+$transition-fast: 0.2s;
