@@ -5,12 +5,16 @@ md-content(flex).layout-fill.report__container
         diagnosis="$ctrl.report.patientInformation.diagnosis",
         patient-id="$ctrl.report.patientId",
         type="'Genomic'",
-        state="$ctrl.report.state"
+        state="$ctrl.report.state",
+        is-visible="$ctrl.isVisible",
+        toggle-is-visible="$ctrl.toggleIsVisible"
       )
 
       div(flex, ui-view="").report__content
 
-    div.report-menu__container
+    div(
+      ng-class="$ctrl.isVisible ? 'report-menu__container--visible' : 'report-menu__container--hidden'"
+    ).report-menu__container
       div.reportMenu.report-menu__container--center
         div.report-menu__title Report Sections
         ul

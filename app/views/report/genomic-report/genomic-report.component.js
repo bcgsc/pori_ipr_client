@@ -8,9 +8,13 @@ const bindings = {
 
 class GenomicReportComponent {
   /* @ngInject */
-  constructor($state, $window) {
+  constructor($state, $window, $scope) {
     this.$state = $state;
     this.$window = $window;
+    this.$scope = $scope;
+    this.isVisible = true;
+    // this must be an arrow function to pass the context correctly to react
+    this.toggleIsVisible = () => { this.isVisible = !this.isVisible; this.$scope.$digest(); };
   }
 
   $onInit() {

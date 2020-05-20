@@ -817,7 +817,6 @@ md-dialog-content {
 .report-menu {
   &__container {
     height: calc(100vh - 56px);
-    width: 270px;
     float: right;
     position: sticky;
     top: 0px;
@@ -825,6 +824,15 @@ md-dialog-content {
     overflow-x: hidden;
     font-size: $typography__font-size--h6;
     border-left: 1px solid $black-12;
+    transition: width $transition-fast;
+
+    &--visible {
+      width: 270px;
+    }
+
+    &--hidden {
+      width: 0;
+    }
 
     &--center {
       margin: 14px 0 0 0;
