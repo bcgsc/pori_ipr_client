@@ -21,7 +21,7 @@ function ReportToolbar(props) {
 
   return (
     <span className="report__header">
-      <Typography display="inline" variant="h6">
+      <Typography display="inline" variant="h6" className="report__header--min-width">
         {diagnosis}
       </Typography>
       <Typography display="inline" variant="h6">

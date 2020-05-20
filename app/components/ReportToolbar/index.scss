@@ -9,5 +9,9 @@
     align-items: center;
     background-color: $palette__common--white;
     border-bottom: 1px solid $black-12;
+
+    &--min-width {
+      min-width: 300px;
+    }
   }
 }
