@@ -14,7 +14,10 @@ class GenomicReportComponent {
     this.$scope = $scope;
     this.isVisible = true;
     // this must be an arrow function to pass the context correctly to react
-    this.toggleIsVisible = () => { this.isVisible = !this.isVisible; this.$scope.$digest(); };
+    this.toggleIsVisible = () => {
+      this.isVisible = !this.isVisible;
+      this.$scope.$digest();
+    };
   }
 
   $onInit() {

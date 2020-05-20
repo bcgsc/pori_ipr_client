@@ -1,5 +1,5 @@
-import template from './probe-report.pug';
-import './probe-report.scss';
+import template from '../genomic-report/genomic-report.pug';
+import '../genomic-report/genomic-report.scss';
 
 const bindings = {
   report: '<',
@@ -8,9 +8,45 @@ const bindings = {
 
 class ProbeComponent {
   /* @ngInject */
-  constructor($state, $window) {
+  constructor($state, $window, $scope) {
     this.$state = $state;
     this.$window = $window;
+    this.$scope = $scope;
+    this.isVisible = true;
+    // this must be an arrow function to pass the context correctly to react
+    this.toggleIsVisible = () => {
+      this.isVisible = !this.isVisible;
+      this.$scope.$digest();
+    };
+  }
+
+  $onInit() {
+    this.sections = [
+      {
+        name: 'Detailed Genomic Analysis',
+        state: 'detailedGenomicAnalysis',
+        meta: false,
+        showChildren: false,
+        clinician: true,
+        children: [],
+      },
+      {
+        name: 'Appendices',
+        state: 'appendices',
+        meta: false,
+        showChildren: false,
+        clinician: true,
+        children: [],
+      },
+      {
+        name: 'Report Settings',
+        state: 'reportSettings',
+        meta: true,
+        showChildren: false,
+        clinician: false,
+        children: [],
+      },
+    ];
   }
 
   openPrint() {
