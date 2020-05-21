@@ -6,15 +6,17 @@ import './index.scss';
 
 /**
  * @param {object} props props
- * @property {array} props.rowData table row data
- * @property {array} props.columnDefs column definitions for ag-grid
- * @property {object} props.$state angularjs state service
+ * @param {array} props.columnDefs column definitions for ag-grid
+ * @param {object} props.$state angularjs state service
+ * @param {bool} props.isExternalMode is external mode user
+ * @param {bool} props.isAdmin is admin user
  * @return {*} JSX
  */
 function ReportsTableComponent(props) {
   const {
     columnDefs,
     isExternalMode,
+    isAdmin,
     $state,
     ReportService,
   } = props;
@@ -32,6 +34,10 @@ function ReportsTableComponent(props) {
       all: true,
       states: 'ready,active,presented,uploaded,signedoff,archived,reviewed',
     };
+
+    if (isAdmin) {
+      opts.states = 'ready,active,presented,uploaded,signedoff,archived,reviewed,nonproduction';
+    }
 
     if (isExternalMode) {
       opts.states = 'presented,archived';
@@ -116,6 +122,7 @@ function ReportsTableComponent(props) {
 ReportsTableComponent.propTypes = {
   columnDefs: PropTypes.arrayOf(PropTypes.object).isRequired,
   isExternalMode: PropTypes.bool.isRequired,
+  isAdmin: PropTypes.bool.isRequired,
   $state: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   ReportService: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
 };
