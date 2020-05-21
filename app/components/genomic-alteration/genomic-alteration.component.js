@@ -38,7 +38,7 @@ class GenomicAlterationComponent {
     if (variantType === 'mut') {
       return `${variant.gene.name}:${variant.proteinChange}`;
     }
-    return `${variant.gene.name} ${variant.expression_class}`;
+    return `${variant.gene.name} ${variant.expressionState}`;
   }
 
   /* eslint-disable class-methods-use-this */

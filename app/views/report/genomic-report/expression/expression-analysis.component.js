@@ -83,17 +83,17 @@ class ExpressionAnalysisComponent {
       clinical: [],
       nostic: [],
       biological: [],
-      upreg_onco: [], //  Check for expression_class (str) and gene.oncogene (bool)
-      downreg_tsg: [], //  Check for expression_class (str) and gene.tumourSuppressor (bool)
+      upreg_onco: [], //  Check for expressionState (str) and gene.oncogene (bool)
+      downreg_tsg: [], //  Check for expressionState (str) and gene.tumourSuppressor (bool)
     };
 
     // Run over mutations and group
     for (const row of input) {
-      const { gene: { tumourSuppressor, oncogene }, expression_class: expressionClass } = row;
-      if (tumourSuppressor && expressionClass === EXPLEVEL.OUT_LOW) {
+      const { gene: { tumourSuppressor, oncogene }, expressionState } = row;
+      if (tumourSuppressor && expressionState === EXPLEVEL.OUT_LOW) {
         expressions.downreg_tsg.push(row);
       }
-      if (oncogene && EXPLEVEL.UP.includes(expressionClass)) {
+      if (oncogene && EXPLEVEL.UP.includes(expressionState)) {
         expressions.upreg_onco.push(row);
       }
 

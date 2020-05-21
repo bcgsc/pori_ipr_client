@@ -45,7 +45,7 @@ div.padding-left-10.padding-right-10
           span(ng-if="outlier.expType === 'rna'") mRNA
           span(ng-if="outlier.expType === 'protein'") Protein
 
-        td.text-capitalize {{outlier.expression_class.replace('_', ' ')}}
+        td.text-capitalize {{outlier.expressionState.replace('_', ' ')}}
         td {{outlier.cnvState}}
         td.text-right.background-light {{outlier.foldChange}}
         td.text-right {{outlier.tcgaNormPerc }}
