@@ -5,7 +5,7 @@ import moment from 'moment';
 import reportsTable from './reports-table';
 
 export default angular.module('genomic', [])
-  .component('reportsTable', react2angular(reportsTable, ['columnDefs', 'isExternalMode'], ['$state', 'ReportService']))
+  .component('reportsTable', react2angular(reportsTable, ['columnDefs', 'isExternalMode', 'isAdmin'], ['$state', 'ReportService']))
   .config(($stateProvider) => {
     'ngInject';
 
