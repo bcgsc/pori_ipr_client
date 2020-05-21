@@ -6,7 +6,7 @@ const columnDefs = [{
   hide: false,
 }, {
   headerName: 'Expression Class',
-  field: 'expression_class',
+  field: 'expressionState',
   hide: false,
 }, {
   headerName: 'Copy State',
