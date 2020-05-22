@@ -21,6 +21,7 @@ const columnDefs = [{
   headerName: 'Known Variant',
   colId: 'kbVariant',
   field: 'kbVariant',
+  cellRendererFramework: ArrayCell('kbVariant', false),
   hide: false,
   maxWidth: 300,
 },
@@ -55,15 +56,9 @@ const columnDefs = [{
 {
   headerName: 'Cancer Type',
   colId: 'disease',
+  field: 'disease',
   hide: false,
   cellRendererFramework: ArrayCell('disease', false),
-  valueGetter: (params) => {
-    if (typeof params.data.disease === 'object') {
-      const diseaseString = [...params.data.disease].sort().toString();
-      return diseaseString;
-    }
-    return params.data.disease;
-  },
 },
 {
   headerName: 'Disease Percentile',
@@ -84,26 +79,22 @@ const columnDefs = [{
   headerName: 'Association',
   colId: 'relevance',
   field: 'relevance',
+  cellRendererFramework: ArrayCell('relevance', false),
   hide: false,
 },
 {
   headerName: 'Context',
   colId: 'context',
   field: 'context',
+  cellRendererFramework: ArrayCell('context', false),
   hide: false,
 },
 {
   headerName: 'PMID',
   colId: 'reference',
+  field: 'reference',
   hide: false,
   cellRendererFramework: ArrayCell('reference', true),
-  valueGetter: (params) => {
-    if (typeof params.data.reference === 'object') {
-      const referenceString = [...params.data.reference].sort().toString();
-      return referenceString;
-    }
-    return params.data.reference;
-  },
 },
 {
   headerName: 'LOH Region',
@@ -124,6 +115,7 @@ const columnDefs = [{
   headerName: 'Category',
   colId: 'category',
   field: 'category',
+  cellRendererFramework: ArrayCell('category', false),
   hide: true,
 },
 {
@@ -145,16 +137,19 @@ const columnDefs = [{
   headerName: 'Evidence',
   colId: 'evidenceLevel',
   field: 'evidenceLevel',
+  cellRendererFramework: ArrayCell('evidenceLevel', false),
   hide: false,
 },
 {
   headerName: 'Matched Cancer',
   field: 'matchedCancer',
+  cellRendererFramework: ArrayCell('matchedCancer', false),
   hide: true,
 },
 {
   headerName: 'Sample',
   field: 'sample',
+  cellRendererFramework: ArrayCell('sample', false),
   hide: false,
 },
 {
