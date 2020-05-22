@@ -55,11 +55,12 @@ class GermlineService {
   }
 
   async export(opts = { reviews: 'biofx,projects' }) {
-    const { data } = await this.$http.get(
+    const response = await this.$http.get(
       `${this.baseApi}/export/germline-small-mutation-reports/batch/download`,
       { params: opts },
     );
-    return data;
+    console.log(response);
+    return response;
   }
 
   /**
