@@ -2,7 +2,7 @@ import getLocalToken from '../management/token';
 import errorHandler from '../errors/errorHandler';
 import { AuthenticationError } from '../errors/errors';
 
-export default async () => {
+const germlineDownload = async () => {
   const authToken = getLocalToken();
   if (!authToken) {
     throw new AuthenticationError('missing authentication token');
@@ -24,14 +24,17 @@ export default async () => {
   );
 
   if (response.ok) {
-    const blob = response.blob();
-    let filenameHeader = response.headers.get('Content-Disposition');
-    if (!filenameHeader) {
-      // throw new Error('unable to get excel file from server');
-      filenameHeader = 'germline.xlxs';
-    }
+    const blob = await response.blob();
+    const filenameHeader = response.headers.get('Content-Disposition');
 
-    return { filenameHeader, blob };
+    if (!filenameHeader) {
+      throw new Error('unable to get excel file from server');
+    }
+    const [_, filename = 'germline_export.xlsx'] = filenameHeader.match(/filename=(.+)/) || [];
+
+    return { filename, blob };
   }
   return errorHandler(response);
 };
+
+export default germlineDownload;

@@ -111,17 +111,17 @@ class GermlineBoardComponent {
    */
   async getExport() {
     try {
-      const { fileName, blob } = await germlineDownload();
+      const { filename, blob } = await germlineDownload();
       const url = URL.createObjectURL(blob);
 
       const a = document.createElement('a');
       a.href = url;
-      a.download = fileName;
+      a.download = filename;
 
       const clickHandler = () => {
         setTimeout(() => {
           URL.revokeObjectURL(url);
-          this.removeEventListener('click', clickHandler);
+          a.removeEventListener('click', clickHandler);
           this.refreshReports();
         }, 150);
       };
@@ -130,7 +130,6 @@ class GermlineBoardComponent {
 
       a.click();
     } catch (err) {
-      console.log(err);
       this.$mdToast.showSimple('Failed to retrieve the downloadable export');
     }
   }
