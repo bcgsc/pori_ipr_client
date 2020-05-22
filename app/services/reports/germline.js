@@ -12,9 +12,7 @@ const germlineDownload = async () => {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json; charset=UTF-8',
-      'X-Requested-With': 'XMLHttpRequest',
       'Authorization': authToken,
-      'credentials': 'same-origin',
     },
   };
 
