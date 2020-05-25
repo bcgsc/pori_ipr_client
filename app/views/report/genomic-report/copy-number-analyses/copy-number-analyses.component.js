@@ -90,10 +90,6 @@ class CopyNumberAnalyses {
       if (row.kbMatches.some(m => m.category === 'biological')) {
         this.cnvGroups.biological.push(row);
       }
-
-      if (cnvState && !['Gain', 'copy gain', 'Loss', 'copy loss', 'Hom Loss', 'Neutral', 'Amp', 'amplification', 'deep deletion'].includes(cnvState)) {
-        console.log(cnvState, oncogene, tumourSuppressor);
-      }
     }
   }
 }
