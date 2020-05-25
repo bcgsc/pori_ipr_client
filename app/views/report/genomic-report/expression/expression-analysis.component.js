@@ -17,7 +17,6 @@ class ExpressionAnalysisComponent {
       mrnaOutliers: true,
       drugTargetable: false,
     };
-    this.expOutliers = {};
     /* can remove next line when API returns array */
     this.densityGraphs = Object.values(this.densityGraphs);
 
@@ -33,8 +32,7 @@ class ExpressionAnalysisComponent {
     };
 
     this.ptxComparator = this.getPtxComparator();
-    this.processExpression(this.outliers, 'outlier');
-    this.getPtxComparator();
+    this.expOutliers = this.processExpression(this.outliers);
   }
 
   /* eslint-disable class-methods-use-this */
@@ -89,11 +87,15 @@ class ExpressionAnalysisComponent {
 
     // Run over mutations and group
     for (const row of input) {
-      const { gene: { tumourSuppressor, oncogene }, expressionState } = row;
-      if (tumourSuppressor && expressionState === EXPLEVEL.OUT_LOW) {
+      const { gene: { tumourSuppressor, oncogene } } = row;
+      let { expressionState } = row;
+      expressionState = expressionState.toLowerCase();
+
+      if (tumourSuppressor && EXPLEVEL.OUT_LOW.includes(expressionState)) {
         expressions.downreg_tsg.push(row);
       }
-      if (oncogene && EXPLEVEL.UP.includes(expressionState)) {
+
+      if (oncogene && EXPLEVEL.OUT_HIGH.includes(expressionState)) {
         expressions.upreg_onco.push(row);
       }
 
@@ -114,7 +116,7 @@ class ExpressionAnalysisComponent {
       }
     }
 
-    this.expOutliers = expressions;
+    return expressions;
   }
 
   processGraphs() {
