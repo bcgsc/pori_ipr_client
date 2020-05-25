@@ -84,16 +84,24 @@ function ReportsTableComponent(props) {
     }
   };
 
-  const onSelectionChanged = () => {
+  const onRowClicked = ({ event }) => {
     const selectedRow = gridApi.current.getSelectedRows();
     const [{ reportIdent }] = selectedRow;
     let [{ reportType }] = selectedRow;
 
     // Convert displayed report type (Genomic, Targeted gene) back to the API values
     reportType = reportType === 'Genomic' ? 'genomic' : 'probe';
-    $state.go(`root.reportlisting.${reportType}.summary`, {
-      analysis_report: reportIdent,
-    });
+    if (event.ctrlKey) {
+      const url = $state.href(`root.reportlisting.${reportType}.summary`, {
+        analysis_report: reportIdent,
+      });
+
+      window.open(url, '_blank');
+    } else {
+      $state.go(`root.reportlisting.${reportType}.summary`, {
+        analysis_report: reportIdent,
+      });
+    }
   };
 
   const defaultColDef = {
@@ -111,8 +119,8 @@ function ReportsTableComponent(props) {
         pagination
         paginationAutoPageSize
         rowSelection="single"
-        onSelectionChanged={onSelectionChanged}
         onGridReady={onGridReady}
+        onRowClicked={onRowClicked}
         onGridSizeChanged={onGridSizeChanged}
       />
     </div>
