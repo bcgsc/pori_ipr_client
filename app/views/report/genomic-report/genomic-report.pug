@@ -18,10 +18,9 @@ md-content(flex).layout-fill.report__container
       ng-class="$ctrl.isVisible ? 'report-menu__container--visible' : 'report-menu__container--hidden'"
     ).report-menu__container
       div.reportMenu.report-menu__container--center
-        div.report-menu__button-container
+        div.report-menu__title
           md-button(ng-click="$ctrl.toggleIsVisible()").md-icon-button.report-menu__close-button
             md-icon chevron_right
-        div.report-menu__title
           span Report Sections
         ul
           li

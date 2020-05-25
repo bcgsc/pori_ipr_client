@@ -834,15 +834,9 @@ md-dialog-content {
     }
   }
 
-  &__button-container {
-    padding: 4px;
-    margin: 4px 0 0;
-  }
-
   &__title {
     font-size: $typography__font-size--h6;
     font-weight: 500;
-    padding: 8px 16px;
     margin: 4px;
     user-select: none;
   }
@@ -856,6 +850,10 @@ md-dialog-content {
 
   &__close-button {
     min-width: 24px;
+
+    &#{&} {
+      margin: 0;
+    }
   }
 }
 
