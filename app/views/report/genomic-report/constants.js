@@ -1,10 +1,6 @@
 const EXPLEVEL = {
-  OVEREXPRESSED: ['overexpressed'],
-  OUT_HIGH: ['outlier_high', 'increased rna expression', 'high_percentile'],
+  OUT_HIGH: ['overexpressed', 'outlier_high', 'increased rna expression', 'high_percentile'],
   OUT_LOW: ['outlier_low', 'decreased rna expression', 'low_percentile'],
-  get UP() {
-    return [...this.OVEREXPRESSED, ...this.OUT_HIGH];
-  },
 };
 
 const CNVSTATE = {

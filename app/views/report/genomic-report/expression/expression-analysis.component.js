@@ -95,7 +95,7 @@ class ExpressionAnalysisComponent {
         expressions.downreg_tsg.push(row);
       }
 
-      if (oncogene && EXPLEVEL.UP.includes(expressionState)) {
+      if (oncogene && EXPLEVEL.OUT_HIGH.includes(expressionState)) {
         expressions.upreg_onco.push(row);
       }
 

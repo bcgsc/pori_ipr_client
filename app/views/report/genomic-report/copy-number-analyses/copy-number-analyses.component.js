@@ -70,7 +70,7 @@ class CopyNumberAnalyses {
           this.cnvGroups.commonAmplified.push(row);
         }
         // Highly expressed + Copy gains?
-        if (CNVSTATE.GAIN.includes(cnvState) && EXPLEVEL.UP.includes(expressionState)) {
+        if (CNVSTATE.GAIN.includes(cnvState) && EXPLEVEL.OUT_HIGH.includes(expressionState)) {
           this.cnvGroups.highlyExpOncoGain.push(row);
         }
       }
