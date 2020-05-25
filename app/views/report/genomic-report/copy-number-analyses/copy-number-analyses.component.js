@@ -45,7 +45,7 @@ class CopyNumberAnalyses {
         gene: {
           tumourSuppressor,
           oncogene,
-          expressionVariants: { expression_class: expressionClass },
+          expressionVariants: { expressionState },
         },
         cnvState,
       } = row; // Get the flags for this cnv
@@ -56,7 +56,7 @@ class CopyNumberAnalyses {
           this.cnvGroups.homodTumourSupress.push(row);
         }
         // low exp, copy loss
-        if (cnvState === CNVSTATE.LOSS && expressionClass === EXPLEVEL.OUT_LOW) {
+        if (cnvState === CNVSTATE.LOSS && expressionState === EXPLEVEL.OUT_LOW) {
           this.cnvGroups.lowlyExpTSloss.push(row);
         }
       }
@@ -71,7 +71,7 @@ class CopyNumberAnalyses {
         // Highly expressed + Copy gains?
         if (
           cnvState === CNVSTATE.GAIN
-          && (EXPLEVEL.UP.includes(expressionClass))
+          && (EXPLEVEL.UP.includes(expressionState))
         ) {
           this.cnvGroups.highlyExpOncoGain.push(row);
         }

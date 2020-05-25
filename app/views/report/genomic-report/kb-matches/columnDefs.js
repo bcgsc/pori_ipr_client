@@ -56,15 +56,9 @@ const columnDefs = [{
 {
   headerName: 'Cancer Type',
   colId: 'disease',
+  field: 'disease',
   hide: false,
   cellRendererFramework: ArrayCell('disease', false),
-  valueGetter: (params) => {
-    if (typeof params.data.disease === 'object') {
-      const diseaseString = [...params.data.disease].sort().toString();
-      return diseaseString;
-    }
-    return params.data.disease;
-  },
 },
 {
   headerName: 'Disease Percentile',
@@ -98,15 +92,9 @@ const columnDefs = [{
 {
   headerName: 'PMID',
   colId: 'reference',
+  field: 'reference',
   hide: false,
   cellRendererFramework: ArrayCell('reference', true),
-  valueGetter: (params) => {
-    if (typeof params.data.reference === 'object') {
-      const referenceString = [...params.data.reference].sort().toString();
-      return referenceString;
-    }
-    return params.data.reference;
-  },
 },
 {
   headerName: 'LOH Region',

@@ -1,5 +1,6 @@
 import template from './germline-board.pug';
 import getDate from '../../../services/utils/date';
+import germlineDownload from '../../../services/reports/germline';
 
 const bindings = {
   reports: '<',
@@ -110,20 +111,17 @@ class GermlineBoardComponent {
    */
   async getExport() {
     try {
-      const date = getDate();
-
-      const exportData = await this.GermlineService.export();
-      const blob = new Blob([exportData], { type: 'text/plain' });
+      const { filename, blob } = await germlineDownload();
       const url = URL.createObjectURL(blob);
 
       const a = document.createElement('a');
       a.href = url;
-      a.download = `germline_export_${date}`;
+      a.download = filename;
 
       const clickHandler = () => {
         setTimeout(() => {
           URL.revokeObjectURL(url);
-          this.removeEventListener('click', clickHandler);
+          a.removeEventListener('click', clickHandler);
           this.refreshReports();
         }, 150);
       };
