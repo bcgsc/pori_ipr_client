@@ -546,7 +546,7 @@
             height: 12px;
             min-height: inherit;
             padding: 0;
-            margin: 0 -10px 0 0;
+            margin: 0 -4px 0 0;
             line-height: 0.8;
             cursor: pointer;
           }
@@ -555,6 +555,7 @@
         &:hover {
           span {
             display: inline-block;
+            overflow: hidden;
           }
         }
       }
@@ -646,7 +647,6 @@ md-dialog-content {
 
     .header {
       color: rgba(0,0,0, 0.54);
-      //background-color: rgba(0,0,0,0.08);
     }
 
     .header, .row {
@@ -824,7 +824,6 @@ md-dialog-content {
     overflow-x: hidden;
     font-size: $typography__font-size--h6;
     border-left: 1px solid $black-12;
-    transition: width $transition-fast;
 
     &--visible {
       width: 270px;
@@ -833,10 +832,11 @@ md-dialog-content {
     &--hidden {
       width: 0;
     }
+  }
 
-    &--center {
-      margin: 14px 0 0 0;
-    }
+  &__button-container {
+    padding: 4px;
+    margin: 4px 0 0;
   }
 
   &__title {
@@ -845,6 +845,17 @@ md-dialog-content {
     padding: 8px 16px;
     margin: 4px;
     user-select: none;
+  }
+
+  &__open-button {
+    z-index: $content-z-index;
+    position: fixed;
+    right: 60px;
+    top: 90px;
+  }
+
+  &__close-button {
+    min-width: 24px;
   }
 }
 

@@ -2,10 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
   Typography,
-  IconButton,
 } from '@material-ui/core';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 
 import './index.scss';
 
@@ -15,8 +12,6 @@ function ReportToolbar(props) {
     patientId,
     type,
     state,
-    isVisible,
-    toggleIsVisible,
   } = props;
 
   return (
@@ -31,19 +26,6 @@ function ReportToolbar(props) {
       <Typography display="inline" variant="h6">
         {state}
       </Typography>
-      <IconButton
-        onClick={toggleIsVisible}
-      >
-        {isVisible ? (
-          <ChevronRightIcon
-            title="Show Report Sections"
-          />
-        ) : (
-          <ChevronLeftIcon
-            title="Show Report Sections"
-          />
-        )}
-      </IconButton>
     </span>
   );
 }
@@ -53,8 +35,6 @@ ReportToolbar.propTypes = {
   patientId: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
   state: PropTypes.string.isRequired,
-  isVisible: PropTypes.bool.isRequired,
-  toggleIsVisible: PropTypes.func.isRequired,
 };
 
 ReportToolbar.defaultProps = {

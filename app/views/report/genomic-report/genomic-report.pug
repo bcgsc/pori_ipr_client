@@ -9,6 +9,8 @@ md-content(flex).layout-fill.report__container
         is-visible="$ctrl.isVisible",
         toggle-is-visible="$ctrl.toggleIsVisible"
       )
+      md-button(ng-if="!$ctrl.isVisible", ng-click="$ctrl.toggleIsVisible()").md-raised.md-icon-button.report-menu__open-button
+        md-icon chevron_left
 
       div(flex, ui-view="").report__content
 
@@ -16,7 +18,11 @@ md-content(flex).layout-fill.report__container
       ng-class="$ctrl.isVisible ? 'report-menu__container--visible' : 'report-menu__container--hidden'"
     ).report-menu__container
       div.reportMenu.report-menu__container--center
-        div.report-menu__title Report Sections
+        div.report-menu__button-container
+          md-button(ng-click="$ctrl.toggleIsVisible()").md-icon-button.report-menu__close-button
+            md-icon chevron_right
+        div.report-menu__title
+          span Report Sections
         ul
           li
             span(
