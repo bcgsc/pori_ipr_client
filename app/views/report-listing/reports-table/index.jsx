@@ -91,7 +91,7 @@ function ReportsTableComponent(props) {
 
     // Convert displayed report type (Genomic, Targeted gene) back to the API values
     reportType = reportType === 'Genomic' ? 'genomic' : 'probe';
-    if (event.ctrlKey) {
+    if (event.ctrlKey || event.metaKey) {
       const url = $state.href(`root.reportlisting.${reportType}.summary`, {
         analysis_report: reportIdent,
       });
