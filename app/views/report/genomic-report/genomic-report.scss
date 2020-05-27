@@ -746,7 +746,7 @@ md-dialog-content {
           opacity: $icon-opacity;
           padding: 0 0 8px;
           margin-right: 10px;
-          margin-top: -2px;
+          margin-top: -4px;
         }
 
         &:hover {
@@ -837,7 +837,7 @@ md-dialog-content {
   &__title {
     font-size: $typography__font-size--h6;
     font-weight: 500;
-    margin: 4px;
+    margin: 8px 4px;
     user-select: none;
   }
 
