@@ -13,5 +13,9 @@
     &--min-width {
       min-width: 300px;
     }
+
+    > * {
+      flex-grow: 1;
+    }
   }
 }
