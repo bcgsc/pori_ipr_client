@@ -10,11 +10,20 @@
     background-color: $palette__common--white;
     border-bottom: 1px solid $black-12;
 
-    &--min-width {
-      min-width: 300px;
+    &--text-align-left {
+      text-align: left;
+    }
+
+    &--text-align-right {
+      text-align: right;
+    }
+
+    &--text-align-center {
+      text-align: center;
     }
 
     > * {
+      flex-basis: 0;
       flex-grow: 1;
     }
   }
