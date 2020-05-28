@@ -85,7 +85,7 @@ const columnDefs = [{
   valueGetter: params => (params.data.gene1.knownSmallMutation || params.data.gene2.knownSmallMutation),
   hide: true,
 }, {
-  headerName: 'Therapeutic Associated',
+  headerName: 'Therapeutic Associated Gene',
   colId: 'therapeuticAssociated',
   valueGetter: params => (params.data.gene1.therapeuticAssociated || params.data.gene2.therapeuticAssociated),
   hide: true,

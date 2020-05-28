@@ -194,7 +194,7 @@ const columnDefs = [{
   valueGetter: params => getGeneProp(params, 'knownSmallMutation'),
   hide: true,
 }, {
-  headerName: 'Therapeutic Associated',
+  headerName: 'Therapeutic Associated Gene',
   colId: 'therapeuticAssociated',
   valueGetter: params => getGeneProp(params, 'therapeuticAssociated'),
   hide: true,

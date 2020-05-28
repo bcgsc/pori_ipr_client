@@ -69,7 +69,7 @@ const columnDefs = [{
   field: 'gene.knownSmallMutation',
   hide: true,
 }, {
-  headerName: 'Therapeutic Associated',
+  headerName: 'Therapeutic Associated Gene',
   colId: 'therapeuticAssociated',
   field: 'gene.therapeuticAssociated',
   hide: true,
