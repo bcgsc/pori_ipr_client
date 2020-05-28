@@ -80,6 +80,16 @@ const columnDefs = [{
   valueGetter: params => (params.data.gene1.knownFusionPartner || params.data.gene2.knownFusionPartner || false),
   hide: true,
 }, {
+  headerName: 'Known Small Mutation',
+  colId: 'knownSmallMutation',
+  valueGetter: params => (params.data.gene1.knownSmallMutation || params.data.gene2.knownSmallMutation),
+  hide: true,
+}, {
+  headerName: 'Therapeutic Associated',
+  colId: 'therapeuticAssociated',
+  valueGetter: params => (params.data.gene1.therapeuticAssociated || params.data.gene2.therapeuticAssociated),
+  hide: true,
+}, {
   headerName: 'Actions',
   cellRenderer: 'ActionCellRenderer',
   pinned: 'right',

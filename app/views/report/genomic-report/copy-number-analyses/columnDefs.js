@@ -64,6 +64,16 @@ const columnDefs = [{
   valueGetter: 'data.gene.knownFusionPartner || false',
   hide: true,
 }, {
+  headerName: 'Known Small Mutation',
+  colId: 'knownSmallMutation',
+  field: 'gene.knownSmallMutation',
+  hide: true,
+}, {
+  headerName: 'Therapeutic Associated',
+  colId: 'therapeuticAssociated',
+  field: 'gene.therapeuticAssociated',
+  hide: true,
+}, {
   headerName: 'Action',
   colId: 'action',
   cellRenderer: 'ActionCellRenderer',
