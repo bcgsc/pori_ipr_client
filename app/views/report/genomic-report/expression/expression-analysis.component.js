@@ -123,7 +123,7 @@ class ExpressionAnalysisComponent {
     const graphs = {};
 
     this.densityGraphs.forEach((graph) => {
-      const gene = graph.filename.split('.')[0];
+      const [gene] = graph.filename.split('.');
       graphs[gene] = graph;
     });
 
