@@ -90,6 +90,11 @@ const columnDefs = [{
   valueGetter: params => (params.data.gene1.therapeuticAssociated || params.data.gene2.therapeuticAssociated || false),
   hide: true,
 }, {
+  headerName: 'High Quality',
+  colId: 'highQuality',
+  valueGetter: 'data.highQuality || false',
+  hide: true,
+}, {
   headerName: 'Actions',
   cellRenderer: 'ActionCellRenderer',
   pinned: 'right',
