@@ -205,6 +205,28 @@ const columnDefs = [{
   },
   hide: true,
 }, {
+  headerName: 'Known Small Mutation',
+  colId: 'knownSmallMutation',
+  valueGetter: (params) => {
+    const { data: { variant, variantType } } = params;
+    if (variantType === 'sv') {
+      return variant.gene1.knownSmallMutation || variant.gene2.knownSmallMutation;
+    }
+    return `${variant.gene.knownSmallMutation}`;
+  },
+  hide: true,
+}, {
+  headerName: 'Therapeutic Associated',
+  colId: 'therapeuticAssociated',
+  valueGetter: (params) => {
+    const { data: { variant, variantType } } = params;
+    if (variantType === 'sv') {
+      return variant.gene1.therapeuticAssociated || variant.gene2.therapeuticAssociated;
+    }
+    return `${variant.gene.therapeuticAssociated}`;
+  },
+  hide: true,
+}, {
   headerName: 'Actions',
   colId: 'Actions',
   cellRenderer: 'ActionCellRenderer',

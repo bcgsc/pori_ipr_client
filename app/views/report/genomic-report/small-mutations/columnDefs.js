@@ -76,7 +76,17 @@ const columnDefs = [{
 }, {
   headerName: 'Known Fusion Partner',
   colId: 'knownFusionPartner',
-  field: 'gene.knownFusionParter',
+  field: 'gene.knownFusionPartner',
+  hide: true,
+}, {
+  headerName: 'Known Small Mutation',
+  colId: 'knownSmallMutation',
+  field: 'gene.knownSmallMutation',
+  hide: true,
+}, {
+  headerName: 'Therapeutic Associated',
+  colId: 'therapeuticAssociated',
+  field: 'gene.therapeuticAssociated',
   hide: true,
 }];
 
