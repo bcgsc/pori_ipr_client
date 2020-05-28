@@ -61,21 +61,6 @@ const columnDefs = [{
   cellRendererFramework: ArrayCell('disease', false),
 },
 {
-  headerName: 'Disease Percentile',
-  colId: 'diseasePercentile',
-  hide: true,
-  valueGetter: (params) => {
-    const { data: { variant, variantType } } = params;
-    if (variantType === 'exp') {
-      return variant.tcgaPerc;
-    }
-    if (variantType === 'sv') {
-      return `${variant.gene1.expressionVariants.tcgaPerc} / ${variant.gene2.expressionVariants.tcgaPerc}`;
-    }
-    return `${variant.gene.expressionVariants.tcgaPerc}`;
-  },
-},
-{
   headerName: 'Association',
   colId: 'relevance',
   field: 'relevance',
@@ -97,41 +82,11 @@ const columnDefs = [{
   cellRendererFramework: ArrayCell('reference', true),
 },
 {
-  headerName: 'LOH Region',
-  colId: 'LOHRegion',
-  hide: true,
-  valueGetter: (params) => {
-    const { data: { variant, variantType } } = params;
-    if (variantType === 'cnv') {
-      return variant.lohState;
-    }
-    if (variantType === 'sv') {
-      return `${variant.gene1.copyVariants.lohState} / ${variant.gene2.copyVariants.lohState}`;
-    }
-    return `${variant.gene.copyVariants.lohState}`;
-  },
-},
-{
   headerName: 'Category',
   colId: 'category',
   field: 'category',
   cellRendererFramework: ArrayCell('category', false),
   hide: true,
-},
-{
-  headerName: 'Copy Number',
-  colId: 'copyNumber',
-  hide: true,
-  valueGetter: (params) => {
-    const { data: { variant, variantType } } = params;
-    if (variantType === 'cnv') {
-      return variant.ploidyCorrCpChange;
-    }
-    if (variantType === 'sv') {
-      return `${variant.gene1.copyVariants.ploidyCorrCpChange} / ${variant.gene2.copyVariants.ploidyCorrCpChange}`;
-    }
-    return `${variant.gene.copyVariants.ploidyCorrCpChange}`;
-  },
 },
 {
   headerName: 'Evidence',
