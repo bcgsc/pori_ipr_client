@@ -82,12 +82,12 @@ const columnDefs = [{
 }, {
   headerName: 'Known Small Mutation',
   colId: 'knownSmallMutation',
-  valueGetter: params => (params.data.gene1.knownSmallMutation || params.data.gene2.knownSmallMutation),
+  valueGetter: params => (params.data.gene1.knownSmallMutation || params.data.gene2.knownSmallMutation || false),
   hide: true,
 }, {
   headerName: 'Therapeutic Associated',
   colId: 'therapeuticAssociated',
-  valueGetter: params => (params.data.gene1.therapeuticAssociated || params.data.gene2.therapeuticAssociated),
+  valueGetter: params => (params.data.gene1.therapeuticAssociated || params.data.gene2.therapeuticAssociated || false),
   hide: true,
 }, {
   headerName: 'Actions',

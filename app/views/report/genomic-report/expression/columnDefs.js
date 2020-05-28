@@ -36,32 +36,32 @@ const columnDefs = [{
 }, {
   headerName: 'Oncogene',
   colId: 'oncogene',
-  field: 'gene.oncogene',
+  valueGetter: 'data.gene.oncogene || false',
   hide: true,
 }, {
   headerName: 'Tumour Suppressor',
   colId: 'tumourSuppressor',
-  field: 'gene.tumourSuppressor',
+  valueGetter: 'data.gene.tumourSuppressor || false',
   hide: true,
 }, {
   headerName: 'Cancer Related',
   colId: 'cancerRelated',
-  field: 'gene.cancerRelated',
+  valueGetter: 'data.gene.cancerRelated || false',
   hide: true,
 }, {
   headerName: 'Known Fusion Partner',
   colId: 'knownFusionPartner',
-  field: 'gene.knownFusionPartner',
+  valueGetter: 'data.gene.knownFusionPartner || false',
   hide: true,
 }, {
   headerName: 'Known Small Mutation',
   colId: 'knownSmallMutation',
-  field: 'gene.knownSmallMutation',
+  valueGetter: 'data.gene.knownSmallMutation || false',
   hide: true,
 }, {
   headerName: 'Therapeutic Associated',
   colId: 'therapeuticAssociated',
-  field: 'gene.therapeuticAssociated',
+  valueGetter: 'data.gene.therapeuticAssociated || false',
   hide: true,
 }, {
   headerName: 'Actions',

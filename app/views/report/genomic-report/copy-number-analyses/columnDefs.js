@@ -66,12 +66,12 @@ const columnDefs = [{
 }, {
   headerName: 'Known Small Mutation',
   colId: 'knownSmallMutation',
-  field: 'gene.knownSmallMutation',
+  valueGetter: 'data.gene.knownSmallMutation || false',
   hide: true,
 }, {
   headerName: 'Therapeutic Associated',
   colId: 'therapeuticAssociated',
-  field: 'gene.therapeuticAssociated',
+  valueGetter: 'data.gene.therapeuticAssociated || false',
   hide: true,
 }, {
   headerName: 'Action',
