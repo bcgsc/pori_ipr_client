@@ -62,22 +62,22 @@ const columnDefs = [{
 }, {
   headerName: 'Oncogene',
   colId: 'oncogene',
-  valueGetter: params => (params.data.gene1.oncogene || params.data.gene2.oncogene),
+  valueGetter: params => (params.data.gene1.oncogene || params.data.gene2.oncogene || false),
   hide: true,
 }, {
   headerName: 'Tumour Suppressor',
   colId: 'tumourSuppressor',
-  valueGetter: params => (params.data.gene1.tumourSuppressor || params.data.gene2.tumourSuppressor),
+  valueGetter: params => (params.data.gene1.tumourSuppressor || params.data.gene2.tumourSuppressor || false),
   hide: true,
 }, {
   headerName: 'Cancer Related',
   colId: 'cancerRelated',
-  valueGetter: params => (params.data.gene1.cancerRelated || params.data.gene2.cancerRelated),
+  valueGetter: params => (params.data.gene1.cancerRelated || params.data.gene2.cancerRelated || false),
   hide: true,
 }, {
   headerName: 'Known Fusion Partner',
   colId: 'knownFusionPartner',
-  valueGetter: params => (params.data.gene1.knownFusionPartner || params.data.gene2.knownFusionPartner),
+  valueGetter: params => (params.data.gene1.knownFusionPartner || params.data.gene2.knownFusionPartner || false),
   hide: true,
 }, {
   headerName: 'Actions',
