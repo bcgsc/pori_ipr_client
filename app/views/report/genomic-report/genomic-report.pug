@@ -9,7 +9,7 @@ md-content(flex).layout-fill.report__container
         is-visible="$ctrl.isVisible",
         toggle-is-visible="$ctrl.toggleIsVisible"
       )
-      md-button(ng-if="!$ctrl.isVisible", ng-click="$ctrl.toggleIsVisible()").md-raised.md-icon-button.report-menu__open-button
+      md-button(ng-if="!$ctrl.isVisible", ng-click="$ctrl.toggleIsVisible()").md-fab.md-mini.report-menu__open-button
         md-icon chevron_left
 
       div(flex, ui-view="").report__content
