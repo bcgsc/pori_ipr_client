@@ -21,7 +21,7 @@ import getDate from '../../services/utils/date';
 
 import './index.scss';
 
-const MAX_VISIBLE_ROWS = 12;
+const MAX_VISIBLE_ROWS = 11;
 const MAX_TABLE_HEIGHT = '500px';
 
 /**
@@ -141,6 +141,9 @@ function DataTable(props) {
     if (rowData.length >= MAX_VISIBLE_ROWS) {
       gridDiv.current.style.height = MAX_TABLE_HEIGHT;
       gridApi.current.setDomLayout('normal');
+      gridApi.current.paginationSetPageSize(MAX_VISIBLE_ROWS);
+    } else {
+      gridApi.current.paginationSetPageSize(rowData.length);
     }
   };
 
