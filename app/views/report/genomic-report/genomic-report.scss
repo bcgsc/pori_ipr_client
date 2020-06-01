@@ -2,6 +2,7 @@
 @import '../../../styles/theme';
 
 .pog-report {
+  height: 100%;
 
   button.accent {
     background-color: $secondary;
@@ -814,6 +815,17 @@ md-dialog-content {
   }
 }
 
+.report {
+  &__content {
+    height: calc(100vh - 56px - 57px);
+    overflow: auto;
+  }
+
+  &__container {
+    overflow: hidden;
+  }
+}
+
 .report-menu {
   &__container {
     height: calc(100vh - 56px);
@@ -844,8 +856,8 @@ md-dialog-content {
   &__open-button {
     z-index: 21 !important; // .md-button sets 20 with !important...
     position: fixed;
-    right: 60px;
-    top: 90px;
+    right: 54px;
+    top: 136px;
   }
 
   &__close-button {
