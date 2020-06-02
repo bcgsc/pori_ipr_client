@@ -141,9 +141,6 @@ function DataTable(props) {
     if (rowData.length >= MAX_VISIBLE_ROWS) {
       gridDiv.current.style.height = MAX_TABLE_HEIGHT;
       gridApi.current.setDomLayout('normal');
-      gridApi.current.paginationSetPageSize(MAX_VISIBLE_ROWS);
-    } else {
-      gridApi.current.paginationSetPageSize(rowData.length);
     }
   };
 
@@ -423,6 +420,7 @@ function DataTable(props) {
               onGridReady={onGridReady}
               domLayout={domLayout}
               pagination={isPaginated}
+              paginationPageSize={MAX_VISIBLE_ROWS}
               autoSizePadding="0"
               deltaRowDataMode={canReorder}
               getRowNodeId={data => data.ident}
