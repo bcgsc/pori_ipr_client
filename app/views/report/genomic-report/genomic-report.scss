@@ -772,6 +772,7 @@ md-dialog-content {
         &.active {
           font-weight: 500;
           background-color: $black-10;
+          color: $palette__secondary--main;
         }
 
         &.disabled {
@@ -802,6 +803,7 @@ md-dialog-content {
           &.active {
             font-weight: 500;
             background-color: $black-10;
+            color: $palette__secondary--main;
           }
 
           &.disabled {
@@ -849,7 +851,8 @@ md-dialog-content {
   &__title {
     font-size: $typography__font-size--h6;
     font-weight: 700;
-    margin: 8px 4px;
+    margin: 10px 4px 9px;
+    padding: 10px 20px;
     user-select: none;
   }
 

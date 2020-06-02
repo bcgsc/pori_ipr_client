@@ -2,7 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
   Typography,
+  IconButton,
 } from '@material-ui/core';
+import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
+import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 
 import './index.scss';
 
@@ -12,6 +15,8 @@ function ReportToolbar(props) {
     patientId,
     type,
     state,
+    isVisible,
+    toggleIsVisible,
   } = props;
 
   return (
@@ -26,6 +31,15 @@ function ReportToolbar(props) {
       <Typography display="inline" variant="h6" className="report__header--text-align-right">
         {state}
       </Typography>
+      <IconButton onClick={toggleIsVisible} title={`${isVisible ? 'Close' : 'Open'} Sidebar`}>
+        {isVisible
+          ? (
+            <KeyboardArrowRightIcon />
+          )
+          : (
+            <KeyboardArrowLeftIcon />
+          )}
+      </IconButton>
     </span>
   );
 }
@@ -35,6 +49,8 @@ ReportToolbar.propTypes = {
   patientId: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
   state: PropTypes.string.isRequired,
+  isVisible: PropTypes.bool.isRequired,
+  toggleIsVisible: PropTypes.func.isRequired,
 };
 
 ReportToolbar.defaultProps = {

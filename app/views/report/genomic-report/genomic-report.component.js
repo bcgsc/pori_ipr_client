@@ -13,6 +13,10 @@ class GenomicReportComponent {
     this.$window = $window;
     this.$scope = $scope;
     this.isVisible = true;
+    this.toggleIsVisible = () => {
+      this.isVisible = !this.isVisible;
+      this.$scope.$digest();
+    };
   }
 
   $onInit() {
@@ -112,10 +116,6 @@ class GenomicReportComponent {
         children: [],
       },
     ];
-  }
-
-  toggleIsVisible() {
-    this.isVisible = !this.isVisible;
   }
 
   openPrint() {
