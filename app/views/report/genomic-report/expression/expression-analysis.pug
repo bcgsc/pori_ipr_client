@@ -42,15 +42,15 @@ section.material-section.expression
           div(layout="column", flex)
             div.text-center Tissue Comparator
             div(layout="row")
-              div(flex) Cohort {{$ctrl.report.tumourAnalysis.normalExpressionComparator}}
+              div(flex) GTEX {{$ctrl.report.tumourAnalysis.normalExpressionComparator}}
           div(layout="column", flex)
             div.text-center Disease Expression Comparator
             div(layout="row")
-              div(flex) Cohort {{$ctrl.report.tumourAnalysis.diseaseExpressionComparator}}
+              div(flex) TCGA {{$ctrl.report.tumourAnalysis.diseaseExpressionComparator}}
           div(layout="column", flex)
             div.text-center Protein Expression Comparator
             div(layout="row")
-              div(flex) Cohort {{$ctrl.ptxComparator}}
+              div(flex) POG {{$ctrl.ptxComparator}}
 
   div.analysis-report-section.margin-top-10
     md-subheader.md-no-sticky Expression Outlier Summary
