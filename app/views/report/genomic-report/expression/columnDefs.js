@@ -15,9 +15,8 @@ const columnDefs = [{
 }, {
   headerName: 'Normal Tissue',
   children: [
-    { headerName: 'FC', field: 'foldChange', hide: false },
-    { headerName: 'Perc', field: 'tcgaNormPerc', hide: false },
-    { headerName: 'kIQR', field: 'tcgaNormkIQR', hide: false },
+    { headerName: 'Perc', field: 'gtexPerc', hide: false },
+    { headerName: 'kIQR', field: 'gtexkIQR', hide: false },
   ],
 }, {
   headerName: 'Disease Tissue',
