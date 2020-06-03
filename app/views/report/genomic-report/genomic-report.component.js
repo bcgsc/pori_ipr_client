@@ -8,9 +8,15 @@ const bindings = {
 
 class GenomicReportComponent {
   /* @ngInject */
-  constructor($state, $window) {
+  constructor($state, $window, $scope) {
     this.$state = $state;
     this.$window = $window;
+    this.$scope = $scope;
+    this.isVisible = true;
+    this.toggleIsVisible = () => {
+      this.isVisible = !this.isVisible;
+      this.$scope.$digest();
+    };
   }
 
   $onInit() {
@@ -41,6 +47,14 @@ class GenomicReportComponent {
         children: [],
       },
       {
+        name: 'Knowledgebase Matches',
+        state: 'kbmatches',
+        meta: false,
+        showChildren: false,
+        clinician: true,
+        children: [],
+      },
+      {
         name: 'Presentation',
         state: 'presentation',
         meta: false,
@@ -59,7 +73,6 @@ class GenomicReportComponent {
         clinician: true,
         category: true,
         children: [
-          { name: 'Knowledgebase Matches', state: 'kbmatches' },
           { name: 'Microbial', state: 'microbial' },
           { name: 'Spearman', state: 'spearman' },
           { name: 'Disease Specific', state: 'diseaseSpecificAnalysis' },

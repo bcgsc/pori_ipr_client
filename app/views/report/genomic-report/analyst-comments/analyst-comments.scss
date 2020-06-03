@@ -44,27 +44,11 @@
 
 @media screen {
   .analyst {
-     &__edit {
-       padding: 0;
-       margin: 0;
-       float: right;
-     }
-
-     &__comments {
-       margin: 16px;
-       padding: 4px 8px;
-
-       img {
-         max-width: 100%;
-       }
-     }
-  }
-
-  .analystComments {
-    
-    .analyst__edit {
-      position: absolute;
-      right: 284px;
+    &__edit {
+      padding: 0;
+      margin: 0 0 -24px;
+      display: flex;
+      justify-content: flex-end;
 
       .edit-icon {
         background-color: $palette__common--white;
@@ -79,8 +63,16 @@
         }
       }
     }
-  }
 
+    &__comments {
+       margin: 16px;
+       padding: 4px 8px;
+
+       img {
+         max-width: 100%;
+       }
+    }
+  }
 
   .ql-editor {
     p {
