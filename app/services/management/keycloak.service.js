@@ -18,12 +18,7 @@ class KeycloakService {
    * @return {Promise} Promise to keycloak auth
    */
   async setToken() {
-    const init = new Promise((resolve, reject) => {
-      const prom = this.keycloak.init({ onLoad: 'login-required' }); // setting promiseType = native does not work for later functions inside the closure
-      prom.success(resolve);
-      prom.error(reject);
-    });
-    await init;
+    await this.keycloak.init({ onLoad: 'login-required' });
     this.$localStorage[CONFIG.STORAGE.KEYCLOAK] = this.keycloak.token;
     return this.keycloak.token;
   }
@@ -46,12 +41,11 @@ class KeycloakService {
    */
   async logout() {
     try {
-      await this.keycloak.init({ promiseType: 'native' });
+      await this.keycloak.init();
       delete this.$localStorage[CONFIG.STORAGE.KEYCLOAK];
-      const resp = await this.keycloak.logout({
+      await this.keycloak.logout({
         redirectUri: this.$state.href('public.login', {}, { absolute: true }),
       });
-      return resp;
     } catch (err) {
       delete this.$localStorage[CONFIG.STORAGE.KEYCLOAK];
       delete this.$http.headers.Authorization;
