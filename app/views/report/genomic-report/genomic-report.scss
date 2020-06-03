@@ -2,6 +2,7 @@
 @import '../../../styles/theme';
 
 .pog-report {
+  height: 100%;
 
   button.accent {
     background-color: $secondary;
@@ -546,7 +547,7 @@
             height: 12px;
             min-height: inherit;
             padding: 0;
-            margin: 0 -10px 0 0;
+            margin: 0 -4px 0 0;
             line-height: 0.8;
             cursor: pointer;
           }
@@ -555,6 +556,7 @@
         &:hover {
           span {
             display: inline-block;
+            overflow: hidden;
           }
         }
       }
@@ -646,7 +648,6 @@ md-dialog-content {
 
     .header {
       color: rgba(0,0,0, 0.54);
-      //background-color: rgba(0,0,0,0.08);
     }
 
     .header, .row {
@@ -720,18 +721,7 @@ md-dialog-content {
 
 
 .reportMenu {
-  height: 100%;
-  border-left: 1px solid $black-20;
-
-  h1 {
-    font-size: 16px;
-    font-weight: 200;
-    color: rgb(100,100,100);
-    background-color: rgb(245,245,245);
-    margin: 0;
-    padding: 7px 5px 8px 15px;
-  }
-
+  width: 100%;
 
   ul {
     list-style: none;
@@ -740,10 +730,11 @@ md-dialog-content {
 
     span {
       &.inline {
-        height: 44px;
-        background-color: $white;
+        height: 36px;
+        background-color: $palette__common--white;
         display: flex;
-        padding: 10px 5px 10px 15px;
+        padding: 10px 0 10px 20px;
+        transition: background-color $transition-fast;
         user-select: none;
 
         > span {
@@ -751,21 +742,27 @@ md-dialog-content {
         }
 
         > md-icon {
-          margin-right: 10px;
           outline: none;
           color: $palette__common--black;
           opacity: $icon-opacity;
+          padding: 0 0 8px;
+          margin-right: 10px;
+          margin-top: -4px;
         }
 
         &:hover {
-          background-color: rgba(0, 0, 0, 0.10);
-          transition: box-shadow 0.4s cubic-bezier(0.25,0.8,0.25,1), background-color 0.4s cubic-bezier(0.25,0.8,0.25,1);
+          &:not(.children) {
+            background-color: $black-10;
+          }
         }
 
-        &.meta {
-          &:not(.active) {
-            background-color: rgb(230,230,230);
-          }
+        &:focus {
+          outline: none;
+        }
+
+
+        &:not(.children) {
+          cursor: pointer;
         }
 
         &.children {
@@ -773,13 +770,9 @@ md-dialog-content {
         }
 
         &.active {
-          background-color: $palette__primary--main;
-          color: rgb(255,255,255);
-
-          > md-icon {
-            color: $palette__common--white;
-            opacity: 1;
-          }
+          font-weight: 500;
+          background-color: $black-10;
+          color: $palette__secondary--main;
         }
 
         &.disabled {
@@ -795,18 +788,22 @@ md-dialog-content {
         padding: 0;
         li {
           display: flex;
-          background-color: rgb(240,240,240);
-          padding: 10px 5px 10px 15px;
-          padding-left: 25px;
+          padding: 10px 0 10px 35px;
+          transition: background-color $transition-fast;
+          user-select: none;
+
+          &:focus {
+            outline: none;
+          }
 
           &:hover {
-            background-color: rgba(0, 0, 0, 0.10);
-            transition: box-shadow 0.4s cubic-bezier(0.25,0.8,0.25,1), background-color 0.4s cubic-bezier(0.25,0.8,0.25,1);
+            background-color: $black-10;
           }
 
           &.active {
-            background-color: $palette__primary--main;
-            color: rgb(255,255,255);
+            font-weight: 500;
+            background-color: $black-10;
+            color: $palette__secondary--main;
           }
 
           &.disabled {
@@ -820,24 +817,58 @@ md-dialog-content {
   }
 }
 
-.report-menu {
-  &__container {
-    height: calc(100vh - 120px);
-    position: sticky;
-    top: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
-  }
-}
-
 .report {
+  &__content {
+    height: calc(100vh - 56px - 57px);
+    overflow: auto;
+  }
+
   &__container {
     overflow: hidden;
   }
+}
 
-  &__content {
+.report-menu {
+  &__container {
+    height: calc(100vh - 56px);
+    float: right;
+    position: sticky;
+    top: 0px;
     overflow-y: auto;
-    height: calc(100vh - 120px)
+    overflow-x: hidden;
+    font-size: $typography__font-size--h6;
+    border-left: 1px solid $black-12;
+
+    &--visible {
+      width: 270px;
+    }
+
+    &--hidden {
+      width: 0;
+    }
+  }
+
+  &__title {
+    font-size: $typography__font-size--h6;
+    font-weight: 700;
+    margin: 10px 4px 9px;
+    padding: 10px 20px;
+    user-select: none;
+  }
+
+  &__open-button {
+    z-index: 21 !important; // .md-button sets 20 with !important...
+    position: fixed;
+    right: 54px;
+    top: 136px;
+  }
+
+  &__close-button {
+    min-width: 24px;
+
+    &#{&} {
+      margin: 0;
+    }
   }
 }
 

@@ -27,7 +27,6 @@ class StructuralVariantsComponent {
       clinical: 'Gene Fusions of Potential Clinical Relevance',
       nostic: 'Gene Fusions of Prognostic and Diagnostic Relevance',
       biological: 'Gene Fusions with Biological Relevance',
-      fusionOmicSupport: 'Gene Fusions with Genome and Transcriptome Support',
       uncharacterized: 'Structural Variants of Unknown Significance',
     };
     this.processSvs(this.structuralVariants);
@@ -114,7 +113,6 @@ class StructuralVariantsComponent {
       clinical: [],
       nostic: [],
       biological: [],
-      fusionOmicSupport: [],
       uncharacterized: [],
     };
 
@@ -139,11 +137,6 @@ class StructuralVariantsComponent {
         uncharacterized = false;
       }
 
-      // fusionOmicSupport? (check sv.omicSupport) => fusionOmicSupport
-      if (row.omnicSupport) {
-        svs.fusionOmicSupport.push(row);
-        uncharacterized = false;
-      }
       // Unknown
       if (uncharacterized) {
         svs.uncharacterized.push(row);

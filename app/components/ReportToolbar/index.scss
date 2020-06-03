@@ -1,0 +1,30 @@
+@import '../../styles/theme';
+@import '../../styles/variables';
+
+.report {
+  &__header {
+    padding: 4px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: $palette__common--white;
+    border-bottom: 1px solid $black-12;
+
+    &--text-align-left {
+      text-align: left;
+    }
+
+    &--text-align-right {
+      text-align: right;
+    }
+
+    &--text-align-center {
+      text-align: center;
+    }
+
+    > * {
+      flex-basis: 0;
+      flex-grow: 1;
+    }
+  }
+}

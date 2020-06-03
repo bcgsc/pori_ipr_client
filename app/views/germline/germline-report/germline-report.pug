@@ -35,7 +35,7 @@ md-content(flex, layout="column").md-padding.biopsyBoard.germline_report
               span(ng-if="key == 'family_history'", ng-click="$ctrl.getHistory($event, 'family', variant['family_history'])").clickable.blue.text-underline {{variant['family_history']}}
 
               span(ng-if="col.split && (key !== 'patient_history' && key !== 'family_history')", ng-init="$ctrl.splitVal = variant[key].split(col.split)")
-                span(ng-repeat="v in $ctrl.splitVal track by $index").pill {{v}}
+                span(ng-repeat="v in $ctrl.splitVal track by $index").pill {{v}}&nbsp
               span(ng-if="!col.split && (key !== 'patient_history' && key !== 'family_history')")
                 span(style="display: block;", ng-if="!col.truncate") {{variant[key] || 'N/A'}}
                 span(style="display: block;", ng-if="col.truncate")

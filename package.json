@@ -96,7 +96,7 @@
     "angular2react": "~3.0.2",
     "chart.js": "~2.7.3",
     "jss": "~10.1.1",
-    "keycloak-js": "~4.6.0",
+    "keycloak-js": "~10.0.1",
     "lodash.differenceby": "~4.8.0",
     "lodash.get": "~4.4.2",
     "lodash.omit": "~4.5.0",
