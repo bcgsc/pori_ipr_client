@@ -15,6 +15,8 @@ module.exports = {
     'json',
     'json-summary',
   ],
+  setupFilesAfterEnv: ['<rootDir>/config/jest/setup.js'],
+  testEnvironment: 'jest-environment-jsdom-fourteen',
   testRegex: 'app.*__tests__.*.jsx?$',
   testURL: 'http://0.0.0.0',
   transform: {
@@ -25,7 +27,6 @@ module.exports = {
   transformIgnorePatterns: [
     '<rootDir>/node_modules/(?!@material-ui|@testing-library).+(js|jsx)$',
   ],
-  setupFilesAfterEnv: ['<rootDir>/config/jest/setup.js', '@testing-library/jest-dom/extend-expect'],
   moduleNameMapper: {
     '@/(.*)$': '<rootDir>/app/$1',
   },
