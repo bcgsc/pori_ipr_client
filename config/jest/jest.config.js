@@ -25,7 +25,7 @@ module.exports = {
   transformIgnorePatterns: [
     '<rootDir>/node_modules/(?!@material-ui|@testing-library).+(js|jsx)$',
   ],
-  setupFilesAfterEnv: ['<rootDir>/config/jest/setup.js'],
+  setupFilesAfterEnv: ['<rootDir>/config/jest/setup.js', '@testing-library/jest-dom/extend-expect'],
   moduleNameMapper: {
     '@/(.*)$': '<rootDir>/app/$1',
   },
