@@ -43,6 +43,7 @@ function Expression(props) {
       setVisibleCols={handleVisibleColsChange}
       setHiddenCols={handleHiddenColsChange}
       reportIdent={reportIdent}
+      canToggleColumns
     />
   );
 }

@@ -34,6 +34,36 @@ const columnDefs = [{
     { headerName: 'QC', field: 'ptxQC', hide: true },
   ],
 }, {
+  headerName: 'Oncogene',
+  colId: 'oncogene',
+  field: 'gene.oncogene',
+  hide: true,
+}, {
+  headerName: 'Tumour Suppressor',
+  colId: 'tumourSuppressor',
+  field: 'gene.tumourSuppressor',
+  hide: true,
+}, {
+  headerName: 'Cancer Related',
+  colId: 'cancerRelated',
+  field: 'gene.cancerRelated',
+  hide: true,
+}, {
+  headerName: 'Known Fusion Partner',
+  colId: 'knownFusionPartner',
+  field: 'gene.knownFusionPartner',
+  hide: true,
+}, {
+  headerName: 'Known Small Mutation',
+  colId: 'knownSmallMutation',
+  field: 'gene.knownSmallMutation',
+  hide: true,
+}, {
+  headerName: 'Therapeutic Associated Gene',
+  colId: 'therapeuticAssociated',
+  field: 'gene.therapeuticAssociated',
+  hide: true,
+}, {
   headerName: 'Actions',
   cellRenderer: 'ActionCellRenderer',
   pinned: 'right',
