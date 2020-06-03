@@ -25,6 +25,7 @@ module.exports = {
   transformIgnorePatterns: [
     '<rootDir>/node_modules/(?!@material-ui|@testing-library).+(js|jsx)$',
   ],
+  setupFilesAfterEnv: ['<rootDir>/config/jest/setup.js'],
   moduleNameMapper: {
     '@/(.*)$': '<rootDir>/app/$1',
   },
