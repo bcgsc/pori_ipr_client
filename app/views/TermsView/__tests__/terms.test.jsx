@@ -1,11 +1,12 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
 
 import Terms from '..';
 
-test('Header is in document', async () => {
-  const { getByText } = render(<Terms />);
+describe('Terms Component', () => {
+  test('Header text is in the document', async () => {
+    const { getByText } = render(<Terms />);
 
-  expect(getByText('IPR Terms of Use')).toBeInTheDocument();
+    expect(getByText('IPR Terms of Use')).toBeInTheDocument();
+  });
 });
