@@ -7,7 +7,7 @@ import eagerAdminStates from './admin/eager';
 import eagerPrintStates from './print/eager';
 import eagerGenomicStates from './report/genomic-report/eager';
 import eagerProbeStates from './report/probe-report/eager';
-import eagerTermsStates from './terms/eager';
+import eagerTermsStates from './TermsView/eager';
 
 angular.module('root.views', [
   ReportListingModule,
