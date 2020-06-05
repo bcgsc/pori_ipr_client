@@ -1,3 +1,5 @@
+import { $http } from 'ngimport';
+
 /**
  * All API calls relating to user object
  * @param {*} $http {@link https://docs.angularjs.org/api/ng/service/$http}
@@ -5,8 +7,7 @@
  */
 class UserService {
   /* @ngInject */
-  constructor($http) {
-    this.$http = $http;
+  constructor() {
     this.api = `${CONFIG.ENDPOINTS.API}/user`;
     this.sidebarOpen = false;
   }
@@ -17,7 +18,7 @@ class UserService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async me() {
-    const { data } = await this.$http.get(`${this.api}/me`);
+    const { data } = await $http.get(`${this.api}/me`);
     return data;
   }
   
@@ -37,7 +38,7 @@ class UserService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async all() {
-    const { data } = await this.$http.get(this.api);
+    const { data } = await $http.get(this.api);
     return data;
   }
 
@@ -48,7 +49,7 @@ class UserService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async update(user) {
-    const { data } = await this.$http.put(`${this.api}/${user.ident}`, user);
+    const { data } = await $http.put(`${this.api}/${user.ident}`, user);
     return data;
   }
   
@@ -81,7 +82,7 @@ class UserService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async create(user) {
-    const { data } = await this.$http.post(`${this.api}/`, user);
+    const { data } = await $http.post(`${this.api}/`, user);
     return data;
   }
 
@@ -92,7 +93,7 @@ class UserService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async search(query) {
-    const { data } = await this.$http.get(`${this.api}/search`, { params: { query } });
+    const { data } = await $http.get(`${this.api}/search`, { params: { query } });
     return data;
   }
 
@@ -103,7 +104,7 @@ class UserService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async remove(user) {
-    const { data } = await this.$http.delete(`${this.api}/${user.ident}`);
+    const { data } = await $http.delete(`${this.api}/${user.ident}`);
     return data;
   }
 
@@ -126,3 +127,18 @@ class UserService {
 }
 
 export default UserService;
+
+const api = `${CONFIG.ENDPOINTS.API}/user`;
+let sidebarOpen = false;
+
+export const getCurrentUser = async () => {
+  const { data } = await $http.get(`${api}/me`);
+  return data;
+};
+
+export const getSidebarState = () => sidebarOpen;
+
+export const toggleSidebarState = () => {
+  sidebarOpen = !sidebarOpen;
+  return sidebarOpen;
+};

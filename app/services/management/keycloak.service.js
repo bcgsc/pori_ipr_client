@@ -1,4 +1,6 @@
 import Keycloak from 'keycloak-js';
+import { StateService as $state } from '@uirouter/angularjs';
+import { $http } from 'ngimport';
 
 class KeycloakService {
   /* @ngInject */
@@ -56,3 +58,38 @@ class KeycloakService {
 }
 
 export default KeycloakService;
+
+const keycloak = Keycloak({
+  'realm': CONFIG.SSO.REALM,
+  'clientId': 'IPR',
+  'url': CONFIG.ENDPOINTS.KEYCLOAK,
+});
+
+export const login = async () => {
+  await keycloak.init({ onLoad: 'login-required' });
+  localStorage[CONFIG.STORAGE.KEYCLOAK] = keycloak.token;
+  return keycloak.token;
+};
+
+export const logout = async () => {
+  try {
+    await keycloak.init();
+    delete localStorage[CONFIG.STORAGE.KEYCLOAK];
+    await keycloak.logout({
+      redirectUri: $state.href('public.login', {}, { absolute: true }),
+    });
+  } catch (err) {
+    delete localStorage[CONFIG.STORAGE.KEYCLOAK];
+    delete $http.headers.Authorization;
+    $state.go('public.login');
+    return err;
+  }
+};
+
+export const getToken = async () => {
+  try {
+    return localStorage[CONFIG.STORAGE.KEYCLOAK];
+  } catch (err) {
+    return false;
+  }
+};

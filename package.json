@@ -107,6 +107,7 @@
     "minimist": "~1.2.5",
     "moment": "~2.24.0",
     "ng-quill": "~3.8.0",
+    "ngimport": "~1.0.0",
     "ngstorage": "~0.3.11",
     "optimize-css-assets-webpack-plugin": "~5.0.3",
     "prop-types": "~15.7.2",

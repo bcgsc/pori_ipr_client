@@ -1,7 +1,6 @@
 import angular from 'angular';
 import ReportListingModule from './report-listing/report-listing.module';
 import PublicModule from './public/public.module';
-import LayoutModule from './layout/layout.module';
 import eagerGermlineStates from './germline/eager';
 import eagerAdminStates from './admin/eager';
 import eagerPrintStates from './print/eager';
@@ -12,7 +11,6 @@ import eagerTermsStates from './TermsView/eager';
 angular.module('root.views', [
   ReportListingModule,
   PublicModule,
-  LayoutModule,
 ]);
 
 // Declare future states to be lazy loaded
