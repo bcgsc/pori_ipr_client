@@ -106,7 +106,6 @@ const columnDefs = [{
 {
   headerName: 'Matched Cancer',
   field: 'matchedCancer',
-  cellRendererFramework: ArrayCell('matchedCancer', false),
   hide: true,
 },
 {
