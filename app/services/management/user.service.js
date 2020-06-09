@@ -132,8 +132,17 @@ const api = `${CONFIG.ENDPOINTS.API}/user`;
 let sidebarOpen = false;
 
 export const getCurrentUser = async () => {
-  const { data } = await $http.get(`${api}/me`);
-  return data;
+  try {
+    const resp = await $http.get(`${api}/me`);
+    return resp;
+  } catch (err) {
+    return null;
+  }
+};
+
+export const isAdmin = async () => {
+  const user = await getCurrentUser();
+  return user.groups.some(({ name }) => name === 'admin');
 };
 
 export const getSidebarState = () => sidebarOpen;

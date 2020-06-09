@@ -1,5 +1,5 @@
 import angular from 'angular';
-import ReportListingModule from './report-listing/report-listing.module';
+import ReportListingModule from './ReportListingView/report-listing.module';
 import PublicModule from './public/public.module';
 import eagerGermlineStates from './germline/eager';
 import eagerAdminStates from './admin/eager';

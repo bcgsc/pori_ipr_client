@@ -2,7 +2,7 @@ import angular from 'angular';
 import { react2angular } from 'react2angular';
 import moment from 'moment';
 
-import reportsTable from './reports-table';
+import reportsTable from '.';
 
 export default angular.module('genomic', [])
   .component('reportsTable', react2angular(reportsTable, ['columnDefs', 'isExternalMode', 'isAdmin'], ['$state', 'ReportService']))

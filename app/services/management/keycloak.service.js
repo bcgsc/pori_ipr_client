@@ -1,63 +1,7 @@
 import Keycloak from 'keycloak-js';
+import * as jwt from 'jsonwebtoken';
 import { StateService as $state } from '@uirouter/angularjs';
 import { $http } from 'ngimport';
-
-class KeycloakService {
-  /* @ngInject */
-  constructor($localStorage, $state, $http) {
-    this.$localStorage = $localStorage;
-    this.$state = $state;
-    this.$http = $http;
-    this.keycloak = Keycloak({
-      'realm': CONFIG.SSO.REALM,
-      'clientId': 'IPR',
-      'url': CONFIG.ENDPOINTS.KEYCLOAK,
-    });
-  }
-
-  /**
-   * Login using the keycloak adaptor
-   * @return {Promise} Promise to keycloak auth
-   */
-  async setToken() {
-    await this.keycloak.init({ onLoad: 'login-required' });
-    this.$localStorage[CONFIG.STORAGE.KEYCLOAK] = this.keycloak.token;
-    return this.keycloak.token;
-  }
-
-  /**
-   * Returns the token that has been set
-   * @return {String|undefined} Token string
-   */
-  async getToken() {
-    try {
-      return this.$localStorage[CONFIG.STORAGE.KEYCLOAK];
-    } catch (err) {
-      return false;
-    }
-  }
-
-  /**
-   * Logs the user out via Keycloak
-   * @return {Promise} Promise for kc logout
-   */
-  async logout() {
-    try {
-      await this.keycloak.init();
-      delete this.$localStorage[CONFIG.STORAGE.KEYCLOAK];
-      await this.keycloak.logout({
-        redirectUri: this.$state.href('public.login', {}, { absolute: true }),
-      });
-    } catch (err) {
-      delete this.$localStorage[CONFIG.STORAGE.KEYCLOAK];
-      delete this.$http.headers.Authorization;
-      this.$state.go('public.login');
-      return err;
-    }
-  }
-}
-
-export default KeycloakService;
 
 const keycloak = Keycloak({
   'realm': CONFIG.SSO.REALM,
@@ -65,31 +9,92 @@ const keycloak = Keycloak({
   'url': CONFIG.ENDPOINTS.KEYCLOAK,
 });
 
-export const login = async () => {
-  await keycloak.init({ onLoad: 'login-required' });
-  localStorage[CONFIG.STORAGE.KEYCLOAK] = keycloak.token;
-  return keycloak.token;
+const getReferrerUri = () => localStorage.getItem(CONFIG.STORAGE.REFERRER);
+
+const setReferrerUri = (uri) => {
+  if (uri === null) {
+    localStorage.removeItem(CONFIG.STORAGE.REFERRER);
+  } else {
+    localStorage.setItem(CONFIG.STORAGE.REFERRER, uri);
+  }
 };
 
-export const logout = async () => {
+/**
+ * Checks expiry date on JWT token and compares with current time.
+ */
+const isExpired = (token) => {
+  try {
+    const expiry = jwt.decode(token).exp;
+    return !Number.isNaN(expiry) && (expiry * 1000) < (new Date()).getTime();
+  } catch (err) {
+    return false;
+  }
+};
+
+/**
+ * Checks that the token is formatted properly and can be decoded
+ */
+const validToken = (token) => {
+  try {
+    const decoded = jwt.decode(token);
+    return !!decoded;
+  } catch (err) {
+    return false;
+  }
+};
+
+/**
+ * Returns true if the user has been sucessfully authenticated and the token is valid
+ */
+const isAuthenticated = ({ authenticationToken }) => {
+  const token = authenticationToken || keycloak.token;
+
+  if (token) {
+    // check that the token is not expired
+    return Boolean(validToken(token) && !isExpired(token));
+  }
+  return false;
+};
+
+const login = async (referrerUri = null) => {
+  setReferrerUri(referrerUri);
+
+  const init = new Promise((resolve, reject) => {
+    const prom = keycloak.init({ onLoad: 'login-required' }); // setting promiseType = native does not work for later functions inside the closure
+    prom.success(resolve);
+    prom.error(reject);
+  });
+  await init;
+};
+
+const logout = async () => {
   try {
     await keycloak.init();
     delete localStorage[CONFIG.STORAGE.KEYCLOAK];
     await keycloak.logout({
-      redirectUri: $state.href('public.login', {}, { absolute: true }),
+      redirectUri: window.location.uri,
     });
   } catch (err) {
     delete localStorage[CONFIG.STORAGE.KEYCLOAK];
     delete $http.headers.Authorization;
-    $state.go('public.login');
     return err;
   }
 };
 
-export const getToken = async () => {
+const getToken = async () => {
   try {
     return localStorage[CONFIG.STORAGE.KEYCLOAK];
   } catch (err) {
     return false;
   }
+};
+
+export {
+  isAuthenticated,
+  login,
+  logout,
+  getToken,
+  keycloak,
+  getReferrerUri,
+  setReferrerUri,
 };

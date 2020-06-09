@@ -2,6 +2,8 @@ import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { AgGridReact } from '@ag-grid-community/react';
 
+import columnDefs from './columnDefs';
+
 import './index.scss';
 
 /**
@@ -14,7 +16,6 @@ import './index.scss';
  */
 function ReportsTableComponent(props) {
   const {
-    columnDefs,
     isExternalMode,
     isAdmin,
     $state,

@@ -1,5 +1,4 @@
 import angular from 'angular';
-import uiRouter from '@uirouter/angularjs';
 import 'angular-aria/angular-aria.min';
 import 'angular-animate/angular-animate.min';
 import 'angular-sanitize/angular-sanitize.min';
@@ -17,15 +16,12 @@ import 'ngimport';
 
 import { NavBarComponent } from '@/components/NavBar/navbar.component';
 import { SidebarComponent } from '@/components/Sidebar/sidebar.component';
-import ComponentsModule from './components/components.module';
-import ViewsModule from './views/views.module';
 import RootComponent from './root.component';
 import UserService from './services/management/user.service';
 import PogService from './services/reports/pog.service';
 import ProjectService from './services/management/project.service';
 import AclService from './services/management/acl.service';
 import ReportService from './services/reports/report.service';
-import KeycloakService from './services/management/keycloak.service';
 import TumourAnalysisService from './services/reports/summary/tumour-analysis.service';
 import PatientInformationService from './services/reports/summary/patient-information.service';
 import GenomicAlterationsService from './services/reports/summary/genomic-alterations.service';
@@ -65,9 +61,6 @@ import './styles/ag-grid.scss';
 import theme from './styles/_theme.scss';
 
 angular.module('root', [
-  uiRouter,
-  ComponentsModule,
-  ViewsModule,
   'ngStorage',
   'ngMaterial',
   'ngSanitize',
@@ -83,7 +76,6 @@ const rootModule = angular.module('root')
   .service('ProjectService', ProjectService)
   .service('AclService', AclService)
   .service('ReportService', ReportService)
-  .service('KeycloakService', KeycloakService)
   .service('TumourAnalysisService', TumourAnalysisService)
   .service('PatientInformationService', PatientInformationService)
   .service('GenomicAlterationsService', GenomicAlterationsService)
@@ -117,56 +109,11 @@ const rootModule = angular.module('root')
   .service('GeneService', GeneService)
   .filter('indefiniteArticle', IndefiniteArticleFilter)
   .filter('titlecase', TitleCaseFilter)
-  // .config(($stateProvider, $urlServiceProvider, $locationProvider) => {
-  //   'ngInject';
+  .config(($locationProvider) => {
+    'ngInject';
 
-  //   $locationProvider.html5Mode(true);
-  //   // Don't require a perfect URL match (trailing slashes, etc)
-  //   $urlServiceProvider.config.strictMode(false);
-  //   // If no path could be found, send user to 404 error
-  //   $urlServiceProvider.rules.otherwise({ state: 'root.reportlisting.reports' });
-
-  //   $stateProvider
-  //     .state('root', {
-  //       component: 'root',
-  //       resolve: {
-  //         /* eslint-disable no-shadow */
-  //         user: ['UserService', '$transition$', '$state', async (UserService, $transition$, $state) => {
-  //           try {
-  //             const user = await UserService.me();
-  //             return user;
-  //           } catch (err) {
-  //             $transition$.abort();
-  //             $state.go('public.login');
-  //           }
-  //         }],
-  //         /* eslint-disable no-shadow */
-  //         isAdmin: ['UserService', async (UserService) => {
-  //           try {
-  //             return UserService.isAdmin();
-  //           } catch (err) {
-  //             return false;
-  //           }
-  //         }],
-  //         /* eslint-disable no-shadow */
-  //         projects: ['ProjectService', async (ProjectService) => {
-  //           try {
-  //             return ProjectService.all();
-  //           } catch (err) {
-  //             return [{}];
-  //           }
-  //         }],
-  //         /* eslint-disable no-shadow */
-  //         isExternalMode: ['AclService', async (AclService) => {
-  //           try {
-  //             return AclService.isExternalMode();
-  //           } catch (err) {
-  //             return true;
-  //           }
-  //         }],
-  //       },
-  //     });
-  // })
+    $locationProvider.html5Mode(true);
+  })
   .config(($mdThemingProvider) => {
     'ngInject';
 
@@ -193,56 +140,6 @@ const rootModule = angular.module('root')
       .primaryPalette('gscBlue')
       .backgroundPalette('printGrey')
       .accentPalette('gscGreen');
-  })
-  .config(($httpProvider) => {
-    'ngInject';
-
-    $httpProvider.interceptors.push(($injector) => {
-      'ngInject';
-
-      const accessRegex = /access/gi;
-
-      return {
-        request: async (config) => {
-          const KeycloakService = $injector.get('KeycloakService');
-          const token = await KeycloakService.getToken();
-          if (token) {
-            config.headers.Authorization = token;
-          }
-          return config;
-        },
-        responseError: (response) => {
-          switch (response.status) {
-            case 403:
-              if (response.data.message.match(accessRegex)) {
-                const $state = $injector.get('$state');
-                $state.go('public.access');
-              }
-              break;
-            default:
-              break;
-          }
-        },
-      };
-    });
-  })
-  .run(($transitions, $rootScope, $sessionStorage) => {
-    'ngInject';
-
-    $transitions.onStart({ }, async (transition) => {
-      $rootScope.showLoader = true;
-
-      transition.promise.finally(() => {
-        $rootScope.showLoader = false;
-      });
-    });
-
-    $transitions.onError({
-      to: state => state.name !== 'public.login',
-    }, async (transition) => {
-      $sessionStorage.returnToState = transition.to().name;
-      $sessionStorage.returnParams = transition.params();
-    });
   })
   .run(['$injector', ($injector) => {
     lazyInjector.$injector = $injector;
