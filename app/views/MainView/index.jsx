@@ -77,7 +77,7 @@ const Main = () => {
           user={user}
           admin={admin}
         />
-        <section className={`main__content--${sidebarMaximized ? 'maximized' : ''}`}>
+        <section className={`main__content ${sidebarMaximized ? 'main__content--maximized' : ''}`}>
           <Suspense fallback={(<CircularProgress color="secondary" />)}>
             <Switch>
               <Route component={LoginView} path="/login" />

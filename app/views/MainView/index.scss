@@ -9,7 +9,7 @@
     transition-property: margin;
     z-index: $content-z-index;
 
-    &--sidebaropen {
+    &--maximized {
       margin: 56px 0 0 240px;
     }
   }
