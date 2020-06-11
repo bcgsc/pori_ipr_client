@@ -7,19 +7,17 @@ import {
 } from 'react-router-dom';
 
 import SecurityContext from '@/components/SecurityContext';
-import { isAuthenticated } from '@/services/management/keycloak.service';
-import { isAdmin } from '@/services/management/user.service';
+import { isAuthenticated } from '@/services/management/auth';
 
 /**
  * @returns {Route} a route component which checks authorization on render or redirects to login
  */
 const AuthenticatedRoute = ({
-  component: Component, admin, ...rest
+  component: Component, admin, adminRequired, ...rest
 }) => {
   const { autheticationToken } = useContext(SecurityContext);
 
   const authOk = isAuthenticated({ autheticationToken });
-  // const adminOk = isAdmin({ autheticationToken });
 
   let ChildComponent;
 
@@ -34,7 +32,7 @@ const AuthenticatedRoute = ({
         />
       );
     };
-  } else if (admin) {
+  } else if (admin && adminRequired) {
     ChildComponent = () => (
       <Redirect to="/" />
     );
@@ -44,6 +42,7 @@ const AuthenticatedRoute = ({
   return (
     <Route
       {...rest}
+      admin={admin}
       render={props => (<ChildComponent {...props} />)}
     />
   );

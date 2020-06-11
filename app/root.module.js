@@ -16,8 +16,6 @@ import 'ngimport';
 
 import { NavBarComponent } from '@/components/NavBar/navbar.component';
 import { SidebarComponent } from '@/components/Sidebar/sidebar.component';
-import RootComponent from './root.component';
-import UserService from './services/management/user.service';
 import PogService from './services/reports/pog.service';
 import ProjectService from './services/management/project.service';
 import AclService from './services/management/acl.service';
@@ -68,10 +66,8 @@ angular.module('root', [
 ]);
 
 const rootModule = angular.module('root')
-  .component('root', RootComponent)
   .component('navBar', NavBarComponent)
   .component('sidebar', SidebarComponent)
-  .service('UserService', UserService)
   .service('PogService', PogService)
   .service('ProjectService', ProjectService)
   .service('AclService', AclService)
@@ -109,12 +105,12 @@ const rootModule = angular.module('root')
   .service('GeneService', GeneService)
   .filter('indefiniteArticle', IndefiniteArticleFilter)
   .filter('titlecase', TitleCaseFilter)
-  .config(($locationProvider) => {
+  .config(['$locationProvider', ($locationProvider) => {
     'ngInject';
 
     $locationProvider.html5Mode(true);
-  })
-  .config(($mdThemingProvider) => {
+  }])
+  .config(['$mdThemingProvider', ($mdThemingProvider) => {
     'ngInject';
 
     const printGrey = $mdThemingProvider.extendPalette('grey', {
@@ -140,7 +136,7 @@ const rootModule = angular.module('root')
       .primaryPalette('gscBlue')
       .backgroundPalette('printGrey')
       .accentPalette('gscGreen');
-  })
+  }])
   .run(['$injector', ($injector) => {
     lazyInjector.$injector = $injector;
     ReactBootstrap();
@@ -152,4 +148,4 @@ ModuleRegistry.registerModules([
   CsvExportModule,
 ]);
 
-angular.bootstrap(document, [rootModule]);
+angular.bootstrap(document.createElement('div'), [rootModule], { strictDi: true });

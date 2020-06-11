@@ -5,32 +5,31 @@ import { StateService as $state } from '@uirouter/angularjs';
 import { $mdDialog, $mdToast } from 'angular-material';
 
 import lazyInjector from '@/lazyInjector';
-import {
-  getCurrentUser,
-  getSidebarState,
-  toggleSidebarState,
-} from '@/services/management/user.service';
-import { logout } from '@/services/management/keycloak.service';
+import { logout } from '@/services/management/auth';
 import template from './navbar.pug';
 import feedbackTemplate from './feedback/feedback.pug';
 import feedbackController from './feedback/feedback';
 
+import './navbar.scss';
+
+const bindings = {
+  user: '<',
+};
+
 class NavBar {
   // CONFIG and VERSION are injected with webpack
   async $onInit() {
-    this.user = await getCurrentUser();
     this.config = CONFIG.ATTRS.name;
     this.version = VERSION;
-    this.maximized = getSidebarState();
-    $rootScope.$digest();
+    this.maximized = false;
 
     $rootScope.$on('navbarToggle', () => {
-      this.maximized = getSidebarState();
+      this.maximized = !this.maximized;
     });
   }
 
   toggleSidebar() {
-    this.maximized = toggleSidebarState();
+    this.maximized = !this.maximized;
     $rootScope.$emit('sidebarToggle');
   }
 
@@ -55,6 +54,6 @@ class NavBar {
   }
 }
 
-export const NavBarComponent = { template, controller: NavBar };
+export const NavBarComponent = { template, bindings, controller: NavBar };
 
 export default angular2react('navBar', NavBarComponent, lazyInjector.$injector);

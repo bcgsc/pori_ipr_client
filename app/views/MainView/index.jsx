@@ -9,6 +9,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import { CircularProgress } from '@material-ui/core';
 import { $httpProvider } from 'ngimport';
 
+import { getUser } from '@/services/management/auth';
 import AuthenticatedRoute from '@/components/AuthenticatedRoute';
 import SecurityContext from '@/components/SecurityContext';
 import NavBar from '@/components/NavBar/navbar.component';
@@ -23,48 +24,53 @@ const ReportListingView = lazy(() => import('@/views/ReportListingView'));
  */
 const Main = () => {
   const [authorizationToken, setAuthorizationToken] = useState('');
+  const [user, setUser] = useState({ firstName: 'Not', lastName: 'logged in' });
+  const [admin, setAdmin] = useState(false);
 
   useEffect(() => {
-    const interceptor = {
-      request: (fetchUrl, fetchConfig) => {
-        if (fetchUrl.startsWith(CONFIG.ENDPOINTS.API)) {
-          const newConfig = { ...fetchConfig };
+    if (authorizationToken) {
+      const interceptor = {
+        request: (fetchUrl, fetchConfig) => {
+          if (fetchUrl.startsWith(CONFIG.ENDPOINTS.API)) {
+            const newConfig = { ...fetchConfig };
 
-          if (!newConfig.headers) {
-            newConfig.headers = {};
+            if (!newConfig.headers) {
+              newConfig.headers = {};
+            }
+            newConfig.headers.Authorization = authorizationToken;
+            return [fetchUrl, newConfig];
           }
-          newConfig.headers.Authorization = authorizationToken;
-          return [fetchUrl, newConfig];
-        }
-        return [fetchUrl, fetchConfig];
-      },
-    };
+          return [fetchUrl, fetchConfig];
+        },
+      };
 
-    const angularInterceptor = {
-      request: async (config) => {
-        if (authorizationToken) {
-          config.headers.Authorization = authorizationToken;
-        }
-        return config;
-      },
-    };
+      $httpProvider.defaults.headers.common.Authorization = authorizationToken;
 
-    $httpProvider.interceptors.push(angularInterceptor);
-    const unregister = fetchIntercept.register(interceptor);
-    return unregister;
+      const unregister = fetchIntercept.register(interceptor);
+
+      const asyncUser = async () => {
+        const { user: userResp, admin: adminResp } = await getUser();
+        setUser(userResp);
+        setAdmin(adminResp);
+      };
+
+      asyncUser();
+
+      return unregister;
+    }
   }, [authorizationToken]);
 
   return (
     <SecurityContext.Provider value={{ authorizationToken, setAuthorizationToken }}>
       <div>
-        <NavBar />
+        <NavBar user={user} />
         <Sidebar />
         <section>
           <Suspense fallback={(<CircularProgress color="secondary" />)}>
             <Switch>
               <Route component={LoginView} path="/login" />
               <Route component={TermsView} path="/terms" />
-              <AuthenticatedRoute component={ReportListingView} path="/report-listing" />
+              <AuthenticatedRoute admin={admin} component={ReportListingView} path="/report-listing" />
             </Switch>
           </Suspense>
         </section>

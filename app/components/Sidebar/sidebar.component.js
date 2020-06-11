@@ -1,49 +1,44 @@
 /* eslint-disable class-methods-use-this */
 import { angular2react } from 'angular2react';
 import { $rootScope } from 'ngimport';
-import { StateService as $state } from '@uirouter/angularjs';
-import { $mdDialog, $mdToast } from 'angular-material';
 
 import lazyInjector from '@/lazyInjector';
-import {
-  getCurrentUser,
-  getSidebarState,
-  toggleSidebarState,
-} from '@/services/management/user.service';
 import template from './sidebar.pug';
 
+import './sidebar.scss';
+
 const bindings = {
-  isAdmin: '<',
+  admin: '<',
 };
 
 class Sidebar {
-  /* @ngInject */
-  constructor(AclService) {
-    this.AclService = AclService;
+  constructor() {
+    // this.AclService = AclService;
     this.pageAccess = {};
   }
   
   async $onInit() {
     const pages = ['report', 'germline'];
 
-    pages.forEach(async (page) => {
-      this.pageAccess[page] = await this.AclService.checkResource(page);
-      $rootScope.$digest();
-    });
+    // pages.forEach(async (page) => {
+    //   this.pageAccess[page] = await this.AclService.checkResource(page);
+    //   $rootScope.$digest();
+    // });
 
-    this.maximized = getSidebarState();
+    this.maximized = false;
 
     $rootScope.$on('sidebarToggle', () => {
-      this.maximized = getSidebarState();
+      this.maximized = !this.maximized;
     });
   }
 
   toggleNavbar() {
-    this.maximized = toggleSidebarState();
+    this.maximized = !this.maximized;
     $rootScope.$emit('navbarToggle');
   }
 }
 
 export const SidebarComponent = { template, bindings, controller: Sidebar };
+const reactComponent = angular2react('sidebar', SidebarComponent, lazyInjector.$injector);
 
-export default angular2react('sidebar', Sidebar, lazyInjector.$injector);
+export default reactComponent;

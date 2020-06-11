@@ -1,7 +1,8 @@
 import Keycloak from 'keycloak-js';
 import * as jwt from 'jsonwebtoken';
-import { StateService as $state } from '@uirouter/angularjs';
 import { $http } from 'ngimport';
+
+const externalGroups = ['clinician', 'collaborator', 'external analyst'];
 
 const keycloak = Keycloak({
   'realm': CONFIG.SSO.REALM,
@@ -46,14 +47,47 @@ const validToken = (token) => {
 /**
  * Returns true if the user has been sucessfully authenticated and the token is valid
  */
-const isAuthenticated = ({ authenticationToken }) => {
-  const token = authenticationToken || keycloak.token;
+const isAuthenticated = ({ authorizationToken }) => {
+  const token = authorizationToken || keycloak.token;
 
   if (token) {
     // check that the token is not expired
     return Boolean(validToken(token) && !isExpired(token));
   }
   return false;
+};
+
+/**
+ * Primarily used for display when logged in
+ */
+const getUsername = ({ authorizationToken }) => {
+  if (authorizationToken) {
+    return jwt.decode(authorizationToken).preferred_username;
+  }
+  return null;
+};
+
+/**
+ * Gets the user object from the api
+ */
+const getUser = async () => {
+  try {
+    const resp = await $http.get(`${CONFIG.ENDPOINTS.API}/user/me`);
+    return { user: resp.data, admin: resp.data.groups.some(({ name }) => name === 'admin') };
+  } catch (err) {
+    return null;
+  }
+};
+
+const isExternalMode = ({ authorizationToken }) => {
+  try {
+    return Boolean(
+      getUser({ authorizationToken }).groups
+        .find(group => externalGroups.includes(group.name.toLowerCase())),
+    );
+  } catch (err) {
+    return false;
+  }
 };
 
 const login = async (referrerUri = null) => {
@@ -97,4 +131,7 @@ export {
   keycloak,
   getReferrerUri,
   setReferrerUri,
+  getUser,
+  getUsername,
+  isExternalMode,
 };

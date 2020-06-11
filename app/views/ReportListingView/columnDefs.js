@@ -2,7 +2,13 @@ const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'bas
 
 const dateCellRenderer = (params) => {
   const gui = document.createElement('span');
-  gui.innerHTML = new Date(params.value).format();
+  const date = new Date(params.value);
+  const formattedDate = new Intl.DateTimeFormat('en-ca', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(date);
+  gui.innerHTML = formattedDate;
   return gui;
 };
 

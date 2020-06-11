@@ -3,7 +3,7 @@ import React, { useContext, useEffect } from 'react';
 import SecurityContext from '@/components/SecurityContext';
 import {
   login, isAuthenticated, getReferrerUri, keycloak,
-} from '@/services/management/keycloak.service';
+} from '@/services/management/auth';
 
 const Login = (props) => {
   const {
