@@ -14,7 +14,7 @@ section.meta
         md-select(ng-model="$ctrl.report.state", placeholder="Report State", aria-label="Report State", required, md-on-close="$ctrl.checkChange()")
           md-option(ng-value="'ready'") Ready for analysis
           md-option(ng-value="'active'") Analysis underway
-          md-option(ng-value="'presented'") Review/Presentation
+          md-option(ng-value="'reviewed'") Reviewed
           md-option(ng-value="'archived'") Archived
           md-option(ng-value="'nonproduction'") Non-Production
     div(layout="row")
