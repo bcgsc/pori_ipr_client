@@ -1,40 +1,35 @@
-/* eslint-disable class-methods-use-this */
 import { angular2react } from 'angular2react';
-import { $rootScope } from 'ngimport';
 
 import lazyInjector from '@/lazyInjector';
 import template from './sidebar.pug';
+import AclService from '@/services/management/acl.service';
 
 import './sidebar.scss';
 
 const bindings = {
+  user: '<',
   admin: '<',
+  sidebarMaximized: '<',
+  setSidebarMaximized: '<',
 };
 
 class Sidebar {
   constructor() {
-    // this.AclService = AclService;
+    this.AclService = new AclService();
     this.pageAccess = {};
-  }
-  
-  async $onInit() {
-    const pages = ['report', 'germline'];
-
-    // pages.forEach(async (page) => {
-    //   this.pageAccess[page] = await this.AclService.checkResource(page);
-    //   $rootScope.$digest();
-    // });
-
-    this.maximized = false;
-
-    $rootScope.$on('sidebarToggle', () => {
-      this.maximized = !this.maximized;
-    });
+    this.pages = ['report', 'germline'];
   }
 
-  toggleNavbar() {
-    this.maximized = !this.maximized;
-    $rootScope.$emit('navbarToggle');
+  async $onChanges(changes) {
+    if (changes.user && !changes.user.isFirstChange()) {
+      this.pages.forEach(async (page) => {
+        this.pageAccess[page] = await this.AclService.checkResource(page, this.user);
+      });
+    }
+  }
+
+  toggleSidebar() {
+    this.setSidebarMaximized(!this.sidebarMaximized);
   }
 }
 

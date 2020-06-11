@@ -1,6 +1,6 @@
 /* eslint-disable react/display-name */
 import { PropTypes } from 'prop-types';
-import React, { useContext } from 'react';
+import React from 'react';
 import {
   Redirect,
   Route,
@@ -15,9 +15,7 @@ import { isAuthenticated } from '@/services/management/auth';
 const AuthenticatedRoute = ({
   component: Component, admin, adminRequired, ...rest
 }) => {
-  const { autheticationToken } = useContext(SecurityContext);
-
-  const authOk = isAuthenticated({ autheticationToken });
+  const authOk = isAuthenticated(SecurityContext);
 
   let ChildComponent;
 
@@ -42,8 +40,7 @@ const AuthenticatedRoute = ({
   return (
     <Route
       {...rest}
-      admin={admin}
-      render={props => (<ChildComponent {...props} />)}
+      render={props => (<ChildComponent admin={admin} {...props} />)}
     />
   );
 };

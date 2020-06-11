@@ -54,7 +54,7 @@ import IndefiniteArticleFilter from './filters/indefinite-article.filter';
 import TitleCaseFilter from './filters/titlecase.filter';
 import '@ag-grid-community/core/dist/styles/ag-grid.min.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-material.min.css';
-import './root.scss';
+// import './root.scss';
 import './styles/ag-grid.scss';
 import theme from './styles/_theme.scss';
 

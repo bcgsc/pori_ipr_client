@@ -5,7 +5,7 @@ import React, {
   useEffect,
 } from 'react';
 import fetchIntercept from 'fetch-intercept';
-import { Redirect, Route, Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import { CircularProgress } from '@material-ui/core';
 import { $httpProvider } from 'ngimport';
 
@@ -14,6 +14,8 @@ import AuthenticatedRoute from '@/components/AuthenticatedRoute';
 import SecurityContext from '@/components/SecurityContext';
 import NavBar from '@/components/NavBar/navbar.component';
 import Sidebar from '@/components/Sidebar/sidebar.component';
+
+import './index.scss';
 
 const LoginView = lazy(() => import('@/views/LoginView'));
 const TermsView = lazy(() => import('@/views/TermsView'));
@@ -26,6 +28,7 @@ const Main = () => {
   const [authorizationToken, setAuthorizationToken] = useState('');
   const [user, setUser] = useState({ firstName: 'Not', lastName: 'logged in' });
   const [admin, setAdmin] = useState(false);
+  const [sidebarMaximized, setSidebarMaximized] = useState(false);
 
   useEffect(() => {
     if (authorizationToken) {
@@ -63,9 +66,18 @@ const Main = () => {
   return (
     <SecurityContext.Provider value={{ authorizationToken, setAuthorizationToken }}>
       <div>
-        <NavBar user={user} />
-        <Sidebar />
-        <section>
+        <NavBar
+          sidebarMaximized={sidebarMaximized}
+          setSidebarMaximized={setSidebarMaximized}
+          user={user}
+        />
+        <Sidebar
+          sidebarMaximized={sidebarMaximized}
+          setSidebarMaximized={setSidebarMaximized}
+          user={user}
+          admin={admin}
+        />
+        <section className={`main__content--${sidebarMaximized ? 'maximized' : ''}`}>
           <Suspense fallback={(<CircularProgress color="secondary" />)}>
             <Switch>
               <Route component={LoginView} path="/login" />

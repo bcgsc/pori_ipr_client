@@ -15,7 +15,7 @@
   color: $medium-emphasis;
   z-index: $sidebar-z-index;
 
-  &--open {
+  &--maximized {
     width: 240px;
   }
 
@@ -60,14 +60,13 @@
     text-decoration: none;
 
     &--transition {
-      transition-duration: .3s;
-      transition-property: visibility;
       visibility: hidden;
       z-index: $sidebar-hidden-text-z-index;
     }
 
     &--visible {
-      transition-duration: .01s;
+      transition-duration: .3s;
+      transition-property: visibility;
       visibility: visible;
     }
   }
