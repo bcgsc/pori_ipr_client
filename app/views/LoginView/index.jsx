@@ -24,8 +24,9 @@ const Login = (props) => {
   useEffect(() => {
     if (!isAuthenticated(SecurityContext)) {
       const auth = async () => {
-        await login();
+        await login(from);
         setAuthorizationToken(keycloak.token);
+        history.push(from);
       };
 
       try {
