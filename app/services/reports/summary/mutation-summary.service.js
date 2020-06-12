@@ -1,7 +1,7 @@
+import { $http } from 'ngimport';
+
 class MutationSummaryService {
-  /* @ngInject */
-  constructor($http) {
-    this.$http = $http;
+  constructor() {
     this.api = `${CONFIG.ENDPOINTS.API}/reports`;
   }
 
@@ -12,7 +12,7 @@ class MutationSummaryService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async get(report) {
-    const resp = await this.$http.get(
+    const resp = await $http.get(
       `${this.api}/${report}/summary/mutation-summary`,
     );
     return resp.data;
@@ -26,7 +26,7 @@ class MutationSummaryService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async update(report, summary) {
-    const resp = await this.$http.put(
+    const resp = await $http.put(
       `${this.api}/${report}/summary/mutation-summary`, summary,
     );
     return resp.data;

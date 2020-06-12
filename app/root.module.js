@@ -14,8 +14,10 @@ import ReactBootstrap from './index';
 import lazyInjector from './lazyInjector';
 import 'ngimport';
 
-import { NavBarComponent } from '@/components/NavBar/navbar.component';
-import { SidebarComponent } from '@/components/Sidebar/sidebar.component';
+import { NavBarComponent } from '@/components/NavBar';
+import { SidebarComponent } from '@/components/Sidebar';
+import { GenomicSummaryComponent } from '@/views/ReportView/components/GenomicSummary';
+
 import PogService from './services/reports/pog.service';
 import ProjectService from './services/management/project.service';
 import AclService from './services/management/acl.service';
@@ -68,6 +70,7 @@ angular.module('root', [
 const rootModule = angular.module('root')
   .component('navBar', NavBarComponent)
   .component('sidebar', SidebarComponent)
+  .component('genomicSummary', GenomicSummaryComponent)
   .service('PogService', PogService)
   .service('ProjectService', ProjectService)
   .service('AclService', AclService)

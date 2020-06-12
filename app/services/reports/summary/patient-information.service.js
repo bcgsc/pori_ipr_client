@@ -1,7 +1,7 @@
+import { $http } from 'ngimport';
+
 class PatientInformationService {
-  /* @ngInject */
-  constructor($http) {
-    this.$http = $http;
+  constructor() {
     this.api = `${CONFIG.ENDPOINTS.API}/reports`;
   }
 
@@ -12,7 +12,7 @@ class PatientInformationService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async get(reportIdent) {
-    const resp = await this.$http.get(`${this.api}/${reportIdent}/patient-information`);
+    const resp = await $http.get(`${this.api}/${reportIdent}/patient-information`);
     return resp.data;
   }
 
@@ -24,7 +24,7 @@ class PatientInformationService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async update(reportIdent, pi) {
-    const resp = await this.$http.put(`${this.api}/${reportIdent}/patient-information`, pi);
+    const resp = await $http.put(`${this.api}/${reportIdent}/patient-information`, pi);
     return resp.data;
   }
 }

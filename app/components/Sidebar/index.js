@@ -1,4 +1,5 @@
 import { angular2react } from 'angular2react';
+import { $rootScope } from 'ngimport';
 
 import lazyInjector from '@/lazyInjector';
 import template from './sidebar.pug';
@@ -24,6 +25,7 @@ class Sidebar {
     if (changes.user && !changes.user.isFirstChange()) {
       this.pages.forEach(async (page) => {
         this.pageAccess[page] = await this.AclService.checkResource(page, this.user);
+        $rootScope.$digest();
       });
     }
   }
