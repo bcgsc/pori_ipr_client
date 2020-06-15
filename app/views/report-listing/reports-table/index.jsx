@@ -32,15 +32,15 @@ function ReportsTableComponent(props) {
 
     const opts = {
       all: true,
-      states: 'ready,active,presented,uploaded,signedoff,archived,reviewed',
+      states: 'ready,active,uploaded,signedoff,archived,reviewed',
     };
 
     if (isAdmin) {
-      opts.states = 'ready,active,presented,uploaded,signedoff,archived,reviewed,nonproduction';
+      opts.states = 'ready,active,uploaded,signedoff,archived,reviewed,nonproduction';
     }
 
     if (isExternalMode) {
-      opts.states = 'presented,archived';
+      opts.states = 'reviewed,archived';
     }
 
     const { reports } = await ReportService.allFiltered(opts);
