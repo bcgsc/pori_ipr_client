@@ -1,16 +1,21 @@
-md-content(flex).layout-fill.report__container
-  md-toolbar
-    div.md-toolbar-tools
-      span(flex).text-left {{$ctrl.report.patientInformation.diagnosis}}
-      h2(flex).text-center.md-hue-3 {{$ctrl.report.patientId}} Genomic Report
-      report-state(flex, state="$ctrl.report.state").text-right
-  div(layout="row", flex).pog-report
-    div(flex, ui-view="").report__content
+md-content(flex).report__container
+  div(layout="row").pog-report
+    div(flex, layout="column")
+      report-toolbar(
+        diagnosis="$ctrl.report.patientInformation.diagnosis",
+        patient-id="$ctrl.report.patientId",
+        type="'Genomic'",
+        state="$ctrl.report.state",
+        is-visible="$ctrl.isVisible",
+        toggle-is-visible="$ctrl.toggleIsVisible"
+      )
+      div(flex, ui-view="").report__content
 
-
-    div.report-menu__container
-      div.reportMenu
-        h1 Report Sections
+    div(
+      ng-class="$ctrl.isVisible ? 'report-menu__container--visible' : 'report-menu__container--hidden'"
+    ).report-menu__container
+      div.reportMenu.report-menu__container--center
+        div.report-menu__title Report Sections
         ul
           li
             span(
@@ -25,15 +30,13 @@ md-content(flex).layout-fill.report__container
 
             span(
               ng-click="(section.children.length === 0) ? $ctrl.goToReportSection(section.state) : section.showChildren = !section.showChildren",
-              ng-class="{active: $ctrl.activeSection(section.state), meta: section.meta, children: (section.children.length > 0)}",
+              ng-class="{active: $ctrl.activeSection(section.state), children: (section.children.length > 0)}",
               layout="row"
               ng-if="$ctrl.reportEdit || section.clinician"
-            ).clickable.inline
-              span.expand {{section.name}}
-              md-icon(ng-if="!section.showChildren && section.children.length > 0") arrow_drop_down
-              md-icon(ng-if="section.showChildren || section.children.length < 0") arrow_drop_up
+            ).inline
+              span {{section.name}}
 
-            ul(ng-show="section.children.length > 0 && section.showChildren")
+            ul(ng-show="section.children.length > 0")
               li(ng-repeat="child in section.children", ng-click="$ctrl.goToReportSection(child.state)"
                 ng-class="{active: $ctrl.activeSection(child.state), disabled: (child.disabled), clickable: (!child.disabled)}"
               )

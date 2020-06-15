@@ -22,6 +22,7 @@ import ExpressionAnalysisComponent from './expression';
 import AppendicesComponent from './appendices/appendices.component';
 import ReportSettingsComponent from './report-settings/report-settings.component';
 import ReactTable from '../../../components/DataTable';
+import ReportToolbar from '../../../components/ReportToolbar';
 import lazy from './lazy';
 
 angular.module('genomic.report', [
@@ -33,6 +34,7 @@ angular.module('genomic.report', [
 export default angular.module('genomic.report')
   .component('genomicreport', GenomicReportComponent)
   .component('reactTable', react2angular(ReactTable))
+  .component('reportToolbar', react2angular(ReportToolbar))
   .component('summary', SummaryComponent)
   .component('analystComments', AnalystCommentsComponent)
   .component('pathwayAnalysis', PathwayAnalysisComponent)

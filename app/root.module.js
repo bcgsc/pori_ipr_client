@@ -126,21 +126,39 @@ const rootModule = angular.module('root')
         component: 'root',
         resolve: {
           /* eslint-disable no-shadow */
-          user: ['UserService', '$state', async (UserService, $state) => {
+          user: ['UserService', '$transition$', '$state', async (UserService, $transition$, $state) => {
             try {
-              const resp = await UserService.me();
-              return resp;
+              const user = await UserService.me();
+              return user;
             } catch (err) {
+              $transition$.abort();
               $state.go('public.login');
-              return err;
             }
           }],
           /* eslint-disable no-shadow */
-          isAdmin: ['UserService', async UserService => UserService.isAdmin()],
+          isAdmin: ['UserService', async (UserService) => {
+            try {
+              return UserService.isAdmin();
+            } catch (err) {
+              return false;
+            }
+          }],
           /* eslint-disable no-shadow */
-          projects: ['ProjectService', async ProjectService => ProjectService.all()],
+          projects: ['ProjectService', async (ProjectService) => {
+            try {
+              return ProjectService.all();
+            } catch (err) {
+              return [{}];
+            }
+          }],
           /* eslint-disable no-shadow */
-          isExternalMode: ['AclService', async AclService => AclService.isExternalMode()],
+          isExternalMode: ['AclService', async (AclService) => {
+            try {
+              return AclService.isExternalMode();
+            } catch (err) {
+              return true;
+            }
+          }],
         },
       });
   })
@@ -177,14 +195,14 @@ const rootModule = angular.module('root')
     $httpProvider.interceptors.push(($injector) => {
       'ngInject';
 
-      const invalidExpiredRegex = /(invalid)|(expired)/gi;
       const accessRegex = /access/gi;
 
       return {
         request: async (config) => {
           const KeycloakService = $injector.get('KeycloakService');
-          if (await KeycloakService.getToken()) {
-            config.headers.Authorization = await KeycloakService.getToken();
+          const token = await KeycloakService.getToken();
+          if (token) {
+            config.headers.Authorization = token;
           }
           return config;
         },
@@ -194,9 +212,6 @@ const rootModule = angular.module('root')
               if (response.data.message.match(accessRegex)) {
                 const $state = $injector.get('$state');
                 $state.go('public.access');
-              } else if (response.data.message.match(invalidExpiredRegex)) {
-                const $state = $injector.get('$state');
-                $state.go('public.login');
               }
               break;
             default:
@@ -206,16 +221,22 @@ const rootModule = angular.module('root')
       };
     });
   })
-  .run(($transitions, $log, $rootScope) => {
+  .run(($transitions, $rootScope, $sessionStorage) => {
     'ngInject';
 
     $transitions.onStart({ }, async (transition) => {
       $rootScope.showLoader = true;
-      $log.log(transition.to().name);
 
       transition.promise.finally(() => {
         $rootScope.showLoader = false;
       });
+    });
+
+    $transitions.onError({
+      to: state => state.name !== 'public.login',
+    }, async (transition) => {
+      $sessionStorage.returnToState = transition.to().name;
+      $sessionStorage.returnParams = transition.params();
     });
   })
   .run(['$injector', (_$injector) => { $injector = _$injector; }])

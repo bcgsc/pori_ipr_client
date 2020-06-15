@@ -48,11 +48,6 @@
         }
       }
 
-      // 2nd row
-      > div div:nth-of-type(2) > div {
-        background-color: rgb(238, 238, 238);
-      }
-
       // Not first row
       > div div:not(first-of-type) {
 

@@ -21,7 +21,7 @@ import getDate from '../../services/utils/date';
 
 import './index.scss';
 
-const MAX_VISIBLE_ROWS = 12;
+const MAX_VISIBLE_ROWS = 11;
 const MAX_TABLE_HEIGHT = '500px';
 
 /**
@@ -420,6 +420,7 @@ function DataTable(props) {
               onGridReady={onGridReady}
               domLayout={domLayout}
               pagination={isPaginated}
+              paginationPageSize={MAX_VISIBLE_ROWS}
               autoSizePadding="0"
               deltaRowDataMode={canReorder}
               getRowNodeId={data => data.ident}

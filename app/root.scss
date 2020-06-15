@@ -1,4 +1,5 @@
 @import './styles/variables';
+@import './styles/theme';
 
 .main__content {
   margin: 56px 0 0 56px;
@@ -17,6 +18,27 @@
 
 html body {
   height: 100%;
+}
+
+* {
+  box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: $black-20 $palette__common--white;
+
+  &::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $palette__common--white;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: $black-20;
+    border-radius: 20px;
+    border: 3px solid $palette__common--white;
+  }
 }
 
 md-content {
