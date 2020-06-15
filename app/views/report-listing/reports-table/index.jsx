@@ -32,15 +32,15 @@ function ReportsTableComponent(props) {
 
     const opts = {
       all: true,
-      states: 'ready,active,presented,uploaded,signedoff,archived,reviewed',
+      states: 'ready,active,uploaded,signedoff,archived,reviewed',
     };
 
     if (isAdmin) {
-      opts.states = 'ready,active,presented,uploaded,signedoff,archived,reviewed,nonproduction';
+      opts.states = 'ready,active,uploaded,signedoff,archived,reviewed,nonproduction';
     }
 
     if (isExternalMode) {
-      opts.states = 'presented,archived';
+      opts.states = 'reviewed,archived';
     }
 
     const { reports } = await ReportService.allFiltered(opts);
@@ -84,16 +84,24 @@ function ReportsTableComponent(props) {
     }
   };
 
-  const onSelectionChanged = () => {
+  const onRowClicked = ({ event }) => {
     const selectedRow = gridApi.current.getSelectedRows();
     const [{ reportIdent }] = selectedRow;
     let [{ reportType }] = selectedRow;
 
     // Convert displayed report type (Genomic, Targeted gene) back to the API values
     reportType = reportType === 'Genomic' ? 'genomic' : 'probe';
-    $state.go(`root.reportlisting.${reportType}.summary`, {
-      analysis_report: reportIdent,
-    });
+    if (event.ctrlKey || event.metaKey) {
+      const url = $state.href(`root.reportlisting.${reportType}.summary`, {
+        analysis_report: reportIdent,
+      });
+
+      window.open(url, '_blank');
+    } else {
+      $state.go(`root.reportlisting.${reportType}.summary`, {
+        analysis_report: reportIdent,
+      });
+    }
   };
 
   const defaultColDef = {
@@ -111,8 +119,8 @@ function ReportsTableComponent(props) {
         pagination
         paginationAutoPageSize
         rowSelection="single"
-        onSelectionChanged={onSelectionChanged}
         onGridReady={onGridReady}
+        onRowClicked={onRowClicked}
         onGridSizeChanged={onGridSizeChanged}
       />
     </div>

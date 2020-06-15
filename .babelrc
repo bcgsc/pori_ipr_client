@@ -8,16 +8,67 @@
   "plugins": [
     "angularjs-annotate",
     "@babel/plugin-proposal-class-properties",
-    "@babel/plugin-syntax-dynamic-import",
-    ["transform-imports", {
-      "@material-ui/core": {
-        "transform": "@material-ui/core/esm/${member}",
-        "preventFullImport": true
-      },
-      "@material-ui/icons": {
-        "transform": "@material-ui/icons/esm/${member}",
-        "preventFullImport": true
-      }
-    }]
-  ]
+    "@babel/plugin-syntax-dynamic-import"
+  ],
+  "env": {
+    "test": {
+      "plugins": ["@babel/plugin-transform-modules-commonjs"]
+    },
+    "production": {
+      "plugins": [
+        ["transform-imports", {
+          "@material-ui/core": {
+            "transform": "@material-ui/core/esm/${member}",
+            "preventFullImport": true
+          },
+          "@material-ui/icons": {
+            "transform": "@material-ui/icons/esm/${member}",
+            "preventFullImport": true
+          }
+        }]
+      ]
+    },
+    "staging": {
+      "plugins": [
+        ["transform-imports", {
+          "@material-ui/core": {
+            "transform": "@material-ui/core/esm/${member}",
+            "preventFullImport": true
+          },
+          "@material-ui/icons": {
+            "transform": "@material-ui/icons/esm/${member}",
+            "preventFullImport": true
+          }
+        }]
+      ]
+    },
+    "development": {
+      "plugins": [
+        ["transform-imports", {
+          "@material-ui/core": {
+            "transform": "@material-ui/core/esm/${member}",
+            "preventFullImport": true
+          },
+          "@material-ui/icons": {
+            "transform": "@material-ui/icons/esm/${member}",
+            "preventFullImport": true
+          }
+        }]
+      ]
+    },
+    "local": {
+      "plugins": [
+        ["transform-imports", {
+          "@material-ui/core": {
+            "transform": "@material-ui/core/esm/${member}",
+            "preventFullImport": true
+          },
+          "@material-ui/icons": {
+            "transform": "@material-ui/icons/esm/${member}",
+            "preventFullImport": true
+          }
+        }]
+      ]
+    }
+  }
 }

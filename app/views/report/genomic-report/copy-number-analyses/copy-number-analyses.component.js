@@ -47,32 +47,30 @@ class CopyNumberAnalyses {
           oncogene,
           expressionVariants: { expressionState },
         },
-        cnvState,
       } = row; // Get the flags for this cnv
+
+      let { cnvState } = row;
+
+      cnvState = cnvState.toLowerCase();
 
       if (tumourSuppressor) {
         // homod?
-        if (cnvState === CNVSTATE.HOMLOSS) {
+        if (CNVSTATE.HOMLOSS.includes(cnvState)) {
           this.cnvGroups.homodTumourSupress.push(row);
         }
         // low exp, copy loss
-        if (cnvState === CNVSTATE.LOSS && expressionState === EXPLEVEL.OUT_LOW) {
+        if (CNVSTATE.LOSS.includes(cnvState) && EXPLEVEL.OUT_LOW.includes(cnvState)) {
           this.cnvGroups.lowlyExpTSloss.push(row);
         }
       }
 
       if (oncogene) {
         // Common amplified + Copy gains?
-        if (
-          cnvState === CNVSTATE.AMP
-        ) {
+        if (CNVSTATE.AMP.includes(cnvState)) {
           this.cnvGroups.commonAmplified.push(row);
         }
         // Highly expressed + Copy gains?
-        if (
-          cnvState === CNVSTATE.GAIN
-          && (EXPLEVEL.UP.includes(expressionState))
-        ) {
+        if (CNVSTATE.GAIN.includes(cnvState) && EXPLEVEL.OUT_HIGH.includes(expressionState)) {
           this.cnvGroups.highlyExpOncoGain.push(row);
         }
       }

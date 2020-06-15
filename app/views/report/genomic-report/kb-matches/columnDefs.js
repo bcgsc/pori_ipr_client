@@ -1,5 +1,13 @@
 import ArrayCell from '../../../../components/DataTable/components/ArrayCellRenderer';
 
+const getGeneProp = (params, property) => {
+  const { data: { variant, variantType } } = params;
+  if (variantType === 'sv') {
+    return variant.gene1[property] || variant.gene2[property] || false;
+  }
+  return variant.gene[property] || false;
+};
+
 const columnDefs = [{
   headerName: 'Gene',
   cellRenderer: 'GeneCellRenderer',
@@ -61,21 +69,6 @@ const columnDefs = [{
   cellRendererFramework: ArrayCell('disease', false),
 },
 {
-  headerName: 'Disease Percentile',
-  colId: 'diseasePercentile',
-  hide: true,
-  valueGetter: (params) => {
-    const { data: { variant, variantType } } = params;
-    if (variantType === 'exp') {
-      return variant.tcgaPerc;
-    }
-    if (variantType === 'sv') {
-      return `${variant.gene1.expressionVariants.tcgaPerc} / ${variant.gene2.expressionVariants.tcgaPerc}`;
-    }
-    return `${variant.gene.expressionVariants.tcgaPerc}`;
-  },
-},
-{
   headerName: 'Association',
   colId: 'relevance',
   field: 'relevance',
@@ -97,41 +90,11 @@ const columnDefs = [{
   cellRendererFramework: ArrayCell('reference', true),
 },
 {
-  headerName: 'LOH Region',
-  colId: 'LOHRegion',
-  hide: true,
-  valueGetter: (params) => {
-    const { data: { variant, variantType } } = params;
-    if (variantType === 'cnv') {
-      return variant.lohState;
-    }
-    if (variantType === 'sv') {
-      return `${variant.gene1.copyVariants.lohState} / ${variant.gene2.copyVariants.lohState}`;
-    }
-    return `${variant.gene.copyVariants.lohState}`;
-  },
-},
-{
   headerName: 'Category',
   colId: 'category',
   field: 'category',
   cellRendererFramework: ArrayCell('category', false),
   hide: true,
-},
-{
-  headerName: 'Copy Number',
-  colId: 'copyNumber',
-  hide: true,
-  valueGetter: (params) => {
-    const { data: { variant, variantType } } = params;
-    if (variantType === 'cnv') {
-      return variant.ploidyCorrCpChange;
-    }
-    if (variantType === 'sv') {
-      return `${variant.gene1.copyVariants.ploidyCorrCpChange} / ${variant.gene2.copyVariants.ploidyCorrCpChange}`;
-    }
-    return `${variant.gene.copyVariants.ploidyCorrCpChange}`;
-  },
 },
 {
   headerName: 'Evidence',
@@ -163,46 +126,32 @@ const columnDefs = [{
 }, {
   headerName: 'Oncogene',
   colId: 'oncogene',
-  valueGetter: (params) => {
-    const { data: { variant, variantType } } = params;
-    if (variantType === 'sv') {
-      return variant.gene1.oncogene || variant.gene2.oncogene;
-    }
-    return variant.gene.oncogene;
-  },
+  valueGetter: params => getGeneProp(params, 'oncogene'),
   hide: true,
 }, {
   headerName: 'Tumour Suppressor',
   colId: 'tumourSuppressor',
-  valueGetter: (params) => {
-    const { data: { variant, variantType } } = params;
-    if (variantType === 'sv') {
-      return variant.gene1.tumourSuppressor || variant.gene2.tumourSuppressor;
-    }
-    return variant.gene.tumourSuppressor;
-  },
+  valueGetter: params => getGeneProp(params, 'tumourSuppressor'),
   hide: true,
 }, {
   headerName: 'Cancer Related',
   colId: 'cancerRelated',
-  valueGetter: (params) => {
-    const { data: { variant, variantType } } = params;
-    if (variantType === 'sv') {
-      return variant.gene1.cancerRelated || variant.gene2.cancerRelated;
-    }
-    return variant.gene.cancerRelated;
-  },
+  valueGetter: params => getGeneProp(params, 'cancerRelated'),
   hide: true,
 }, {
   headerName: 'Known Fusion Partner',
   colId: 'knownFusionPartner',
-  valueGetter: (params) => {
-    const { data: { variant, variantType } } = params;
-    if (variantType === 'sv') {
-      return variant.gene1.knownFusionPartner || variant.gene2.knownFusionPartner;
-    }
-    return `${variant.gene.knownFusionPartner}`;
-  },
+  valueGetter: params => getGeneProp(params, 'knownFusionPartner'),
+  hide: true,
+}, {
+  headerName: 'Known Small Mutation',
+  colId: 'knownSmallMutation',
+  valueGetter: params => getGeneProp(params, 'knownSmallMutation'),
+  hide: true,
+}, {
+  headerName: 'Therapeutic Associated Gene',
+  colId: 'therapeuticAssociated',
+  valueGetter: params => getGeneProp(params, 'therapeuticAssociated'),
   hide: true,
 }, {
   headerName: 'Actions',

@@ -40,11 +40,15 @@ const RenderArrayCell = (field, isLink) => {
   return function ArrayCell(cellParams) {
     if (Array.isArray(cellParams.data[field])) {
       const cellData = cellParams.data[field].sort();
-      const firstVal = cellData[0] && cellData[0].replace(/#$/, '');
+      const [firstVal] = cellData;
+
+      if (typeof firstVal === 'string') {
+        cellData[0].replace(/#$/, '');
+      }
 
       return (
         <div>
-          {firstVal}
+          {`${firstVal}`}
           {cellData.length > 1 && (
             <>
               …
@@ -55,7 +59,7 @@ const RenderArrayCell = (field, isLink) => {
     }
     return (
       <div>
-        {cellParams.data[field]}
+        {`${cellParams.data[field]}`}
       </div>
     );
   };

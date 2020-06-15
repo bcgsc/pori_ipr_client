@@ -47,7 +47,6 @@ class NavbarComponent {
     try {
       await this.KeycloakService.logout();
       this.$mdToast.showSimple('You have been logged out.');
-      this.$state.go('public.login');
     } catch (err) {
       this.$mdToast.showSimple('Error: Could not logout due to connection issue.');
       this.$state.go('public.login');
