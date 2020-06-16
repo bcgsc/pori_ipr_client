@@ -1,4 +1,3 @@
-import { $mdDialog, $mdToast } from 'angular-material';
 import { $sce, $rootScope } from 'ngimport';
 import { angular2react } from 'angular2react';
 
@@ -16,10 +15,11 @@ const bindings = {
 };
 
 class AnalystComments {
-  constructor() {
+  constructor($mdDialog, $mdToast) {
     this.$sce = $sce;
+    this.$mdToast = $mdToast;
+    this.$mdDialog = $mdDialog;
   }
-
 
   async $onChanges(changes) {
     if (changes.report && !changes.report.isFirstChange()) {
@@ -47,7 +47,7 @@ class AnalystComments {
   // Editor Update Modal
   async updateComments($event) {
     try {
-      const resp = await $mdDialog.show({
+      const resp = await this.$mdDialog.show({
         targetEvent: $event,
         template: editTemplate,
         clickOutToClose: false,
@@ -63,7 +63,7 @@ class AnalystComments {
               await AnalystCommentsService.update(
                 this.report.ident, scope.analystComments,
               );
-              $mdDialog.hide({
+              this.$mdDialog.hide({
                 message: 'Entry has been updated',
                 comment: scope.analystComments,
               });
@@ -78,14 +78,14 @@ class AnalystComments {
       this.analystComments = resp.comment;
       this.analystComments.comments = resp.comment.comments;
       // Display Message from Hiding
-      $mdToast.show($mdToast.simple().textContent(resp.message));
+      this.$mdToast.show(this.$mdToast.simple().textContent(resp.message));
     } catch (err) {
-      $mdToast.show($mdToast.simple().textContent(err));
-    } finally {
-      $rootScope.$digest();
+      this.$mdToast.show(this.$mdToast.simple().textContent(err));
     }
   }
 }
+
+AnalystComments.$inject = ['$mdDialog', '$mdToast'];
 
 export const AnalystCommentsComponent = {
   template,

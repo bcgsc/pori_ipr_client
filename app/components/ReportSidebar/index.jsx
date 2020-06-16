@@ -8,7 +8,12 @@ import './index.scss';
 const ReportSidebar = (props) => {
   const {
     sections,
+    isSidebarVisible,
   } = props;
+
+  if (!isSidebarVisible) {
+    return null;
+  }
 
   return (
     <div className="report-sidebar">

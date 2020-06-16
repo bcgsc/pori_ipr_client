@@ -15,8 +15,8 @@ function ReportToolbar(props) {
     patientId,
     type,
     state,
-    isVisible,
-    toggleIsVisible,
+    isSidebarVisible,
+    setIsSidebarVisible,
   } = props;
 
   return (
@@ -31,8 +31,12 @@ function ReportToolbar(props) {
       <Typography display="inline" variant="h6" className="report__header--text-align-right">
         {state}
       </Typography>
-      <IconButton onClick={toggleIsVisible} title={`${isVisible ? 'Close' : 'Open'} Sidebar`}>
-        {isVisible
+      <IconButton
+        onClick={() => setIsSidebarVisible(!isSidebarVisible)}
+        title={`${isSidebarVisible ? 'Close' : 'Open'} Sidebar`}
+        className="report__header--max-width"
+      >
+        {isSidebarVisible
           ? (
             <KeyboardArrowRightIcon />
           )
@@ -49,8 +53,8 @@ ReportToolbar.propTypes = {
   patientId: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
   state: PropTypes.string.isRequired,
-  isVisible: PropTypes.bool.isRequired,
-  toggleIsVisible: PropTypes.func.isRequired,
+  isSidebarVisible: PropTypes.bool.isRequired,
+  setIsSidebarVisible: PropTypes.func.isRequired,
 };
 
 ReportToolbar.defaultProps = {

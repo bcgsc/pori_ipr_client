@@ -1,35 +1,42 @@
+import { $rootScope } from 'ngimport';
+import { angular2react } from 'angular2react';
+
+import toastCreator from '@/services/utils/toastCreator';
+import PathwayService from '@/services/reports/pathway.service';
+import lazyInjector from '@/lazyInjector';
 import * as svgPanZoom from 'svg-pan-zoom';
 import template from './pathway-analysis.pug';
 import editTemplate from './pathway-analysis-edit.pug';
-import './pathway-analysis.scss';
+
+import './index.scss';
 
 const bindings = {
-  pog: '<',
   report: '<',
   reportEdit: '<',
   pathway: '<',
   print: '<',
+  token: '<',
 };
 
-class PathwayAnalysisComponent {
-  /* @ngInject */
-  constructor($scope, $mdDialog, $mdToast, PogService, FileUploader, $localStorage) {
-    this.$scope = $scope;
+class PathwayAnalysis {
+  constructor($mdDialog, $mdToast, FileUploader) {
     this.$mdDialog = $mdDialog;
     this.$mdToast = $mdToast;
-    this.PogService = PogService;
     this.FileUploader = FileUploader;
-    this.$localStorage = $localStorage;
   }
 
-  $onInit() {
-    // Show a message if pathway isn't created yet.
-    if (this.pathway) {
-      this.processSVG(this.pathway.pathway);
-    } else {
-      this.processSVG(
-        '<?xml version="1.0" encoding="UTF-8"?><svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" xml:space="preserve" width="400"><text x="0" y="0" fill="rgb(210,210,210)">Pathway not yet analyzed.</text></svg>',
-      );
+  async $onChanges(changes) {
+    if (changes.report && !changes.report.isFirstChange()) {
+      this.pathway = await PathwayService.get(this.report.ident);
+      // Show a message if pathway isn't created yet.
+      if (this.pathway) {
+        this.processSVG(this.pathway.pathway);
+      } else {
+        this.processSVG(
+          '<?xml version="1.0" encoding="UTF-8"?><svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" xml:space="preserve" width="400"><text x="0" y="0" fill="rgb(210,210,210)">Pathway not yet analyzed.</text></svg>',
+        );
+      }
+      $rootScope.$digest();
     }
   }
 
@@ -81,10 +88,8 @@ class PathwayAnalysisComponent {
       const resp = await this.$mdDialog.show({
         targetEvent: $event,
         template: editTemplate,
-        locals: {
-          pog: this.pog,
-        },
-        clickOutToClose: false,
+        clickOutToClose: true,
+        parent: angular.element(document.body),
         controller: ['$scope', ($scope) => {
           $scope.process = 'select';
           $scope.progress = 0;
@@ -100,7 +105,7 @@ class PathwayAnalysisComponent {
             url: `${CONFIG.ENDPOINTS.API}/reports/${this.report.ident}/summary/pathway-analysis`,
           });
 
-          $scope.uploader.headers.Authorization = this.$localStorage[CONFIG.STORAGE.KEYCLOAK];
+          $scope.uploader.headers.Authorization = this.token;
           $scope.uploader.method = 'PUT';
           $scope.uploader.alias = 'pathway';
 
@@ -138,19 +143,22 @@ class PathwayAnalysisComponent {
           };
         }],
       });
-      this.$mdToast.show(this.$mdToast.simple().textContent(resp.message));
+      this.$mdToast.show(toastCreator(resp.message));
       // Update current page content
       this.pathway = resp.data.pathway;
       this.processSVG(resp.data.pathway);
-      // Display Message from Hiding
     } catch (err) {
-      this.$mdToast.show(this.$mdToast.simple().textContent(err));
+      this.$mdToast.show(toastCreator(err));
     }
   }
 }
 
-export default {
+PathwayAnalysis.$inject = ['$mdDialog', '$mdToast', 'FileUploader'];
+
+export const PathwayAnalysisComponent = {
   template,
   bindings,
-  controller: PathwayAnalysisComponent,
+  controller: PathwayAnalysis,
 };
+
+export default angular2react('pathwayAnalysis', PathwayAnalysisComponent, lazyInjector.$injector);

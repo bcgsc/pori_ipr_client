@@ -1,8 +1,14 @@
-import React, { lazy, useEffect, useState } from 'react';
+import React, {
+  lazy,
+  useEffect,
+  useState,
+  useCallback,
+} from 'react';
 import {
   Switch, Route, useRouteMatch, useParams,
 } from 'react-router-dom';
 
+import SecurityContext from '@/components/SecurityContext';
 import ReportToolbar from '@/components/ReportToolbar';
 import ReportSidebar from '@/components/ReportSidebar';
 import ReportService from '@/services/reports/report.service';
@@ -12,12 +18,14 @@ import './index.scss';
 
 const GenomicSummary = lazy(() => import('./components/GenomicSummary'));
 const AnalystComments = lazy(() => import('./components/AnalystComments'));
+const PathwayAnalysis = lazy(() => import('./components/PathwayAnalysis'));
 
 
 const ReportView = () => {
   const match = useRouteMatch();
   const params = useParams();
   const [report, setReport] = useState();
+  const [isSidebarVisible, setIsSidebarVisible] = useState(true);
 
   useEffect(() => {
     if (!report) {
@@ -39,8 +47,8 @@ const ReportView = () => {
             patientId={report.patientId}
             type={report.type}
             state={report.state}
-            isVisible
-            toggleIsVisible={() => {}}
+            isSidebarVisible={isSidebarVisible}
+            setIsSidebarVisible={setIsSidebarVisible}
           />
         )}
         <div className="report__content">
@@ -57,10 +65,26 @@ const ReportView = () => {
               )}
               path={`${match.path}/analyst-comments`}
             />
+            <SecurityContext.Consumer>
+              {value => (
+                <Route
+                  render={routeProps => (
+                    <PathwayAnalysis
+                      {...routeProps}
+                      print={false}
+                      report={report}
+                      reportEdit
+                      token={value.authorizationToken}
+                    />
+                  )}
+                  path={`${match.path}/pathway-analysis`}
+                />
+              )}
+            </SecurityContext.Consumer>
           </Switch>
         </div>
       </div>
-      <ReportSidebar sections={sections} ident={params.ident} />
+      <ReportSidebar sections={sections} isSidebarVisible={isSidebarVisible} />
     </div>
   );
 };
