@@ -1,7 +1,7 @@
+import { $http } from 'ngimport';
+
 class MicrobialService {
-  /* @ngInject */
-  constructor($http) {
-    this.$http = $http;
+  constructor() {
     this.api = `${CONFIG.ENDPOINTS.API}/reports`;
   }
 
@@ -12,11 +12,11 @@ class MicrobialService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async get(report) {
-    const { data } = await this.$http.get(
+    const { data } = await $http.get(
       `${this.api}/${report}/summary/microbial`,
     );
     return data;
   }
 }
 
-export default MicrobialService;
+export default new MicrobialService();

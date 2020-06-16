@@ -1,0 +1,47 @@
+@import '../../styles/variables';
+@import '../../styles/theme';
+
+.report-sidebar {
+  height: calc(100vh - 56px);
+  float: right;
+  position: sticky;
+  top: 0px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  font-size: $typography__font-size--h6;
+  border-left: 1px solid $black-12;
+  width: 270px;
+
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  &__list-title {
+    font-size: $typography__font-size--h6;
+    font-weight: 700;
+    margin: 10px 4px 9px 0;
+    padding: 10px 20px;
+    user-select: none;
+  }
+
+  &__list-item {
+    padding: 10px 0 10px 20px;
+
+    &--indented {
+      padding: 10px 0 10px 35px;
+    }
+
+    &--bold {
+      &#{&} {
+        font-weight: 700;
+      }
+    }
+  }
+
+  &__list-link {
+    text-decoration: none;
+    color: $black-80;
+  }
+}

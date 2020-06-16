@@ -4,6 +4,7 @@
   &__content {
     height: calc(100vh - 56px);
     margin: 56px 0 0 55px;
+    background-color: $white;
 
     transition-duration: .3s;
     transition-property: margin;

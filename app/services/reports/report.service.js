@@ -85,4 +85,4 @@ class ReportService {
   }
 }
 
-export default ReportService;
+export default new ReportService();

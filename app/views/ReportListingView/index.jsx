@@ -44,8 +44,7 @@ function ReportsTableComponent(props) {
       opts.states = 'reviewed,archived';
     }
 
-    const reportService = new ReportService();
-    const { reports } = await reportService.allFiltered(opts);
+    const { reports } = await ReportService.allFiltered(opts);
 
     setRowData(reports.map((report) => {
       const [analyst] = report.users

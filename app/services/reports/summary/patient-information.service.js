@@ -29,4 +29,4 @@ class PatientInformationService {
   }
 }
 
-export default PatientInformationService;
+export default new PatientInformationService();

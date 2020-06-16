@@ -1,7 +1,7 @@
+import { $http } from 'ngimport';
+
 class ProbeTargetService {
-  /* @ngInject */
-  constructor($http) {
-    this.$http = $http;
+  constructor() {
     this.api = `${CONFIG.ENDPOINTS.API}/reports`;
   }
 
@@ -12,7 +12,7 @@ class ProbeTargetService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async all(report) {
-    const resp = await this.$http.get(
+    const resp = await $http.get(
       `${this.api}/${report}/probe-results`,
     );
     return resp.data;
@@ -26,7 +26,7 @@ class ProbeTargetService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async id(report, ident) {
-    const resp = await this.$http.get(
+    const resp = await $http.get(
       `${this.api}/${report}/probe-results/${ident}`,
     );
     return resp.data;
@@ -41,7 +41,7 @@ class ProbeTargetService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async update(report, ident, gai) {
-    const resp = await this.$http.put(
+    const resp = await $http.put(
       `${this.api}/${report}/probe-results/${ident}`,
       gai,
     );
@@ -56,11 +56,11 @@ class ProbeTargetService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async remove(report, ident) {
-    const resp = await this.$http.delete(
+    const resp = await $http.delete(
       `${this.api}/${report}/probe-results/${ident}`,
     );
     return resp.data;
   }
 }
 
-export default ProbeTargetService;
+export default new ProbeTargetService();

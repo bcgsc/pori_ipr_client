@@ -1,44 +1,53 @@
+import { $mdDialog, $mdToast } from 'angular-material';
+import { $sce, $rootScope } from 'ngimport';
+import { angular2react } from 'angular2react';
+
+import lazyInjector from '@/lazyInjector';
+import AnalystCommentsService from '@/services/reports/analyst-comments/analyst-comments.service';
 import template from './analyst-comments.pug';
 import editTemplate from './analyst-comments-edit.pug';
-import './analyst-comments.scss';
+
+import './index.scss';
 
 const bindings = {
   print: '<',
   report: '<',
   reportEdit: '<',
-  analystComments: '<',
 };
 
-class AnalystCommentsComponent {
-  /* @ngInject */
-  constructor($scope, $mdDialog, $mdToast, $sce, AnalystCommentsService) {
-    this.$scope = $scope;
-    this.$mdDialog = $mdDialog;
-    this.$mdToast = $mdToast;
+class AnalystComments {
+  constructor() {
     this.$sce = $sce;
-    this.AnalystCommentsService = AnalystCommentsService;
+  }
+
+
+  async $onChanges(changes) {
+    if (changes.report && !changes.report.isFirstChange()) {
+      this.analystComments = await AnalystCommentsService.get(this.report.ident);
+      $rootScope.$digest();
+    }
   }
 
   // Sign The comments
   async sign(role) {
-    const resp = await this.AnalystCommentsService.sign(this.report.ident, role);
+    const resp = await AnalystCommentsService.sign(this.report.ident, role);
     this.analystComments = resp;
-    this.$scope.$digest();
+    $rootScope.$digest();
   }
 
   // Sign The comments
   async revokeSign(role) {
-    const resp = await this.AnalystCommentsService.revokeSign(
+    const resp = await AnalystCommentsService.revokeSign(
       this.report.ident, role,
     );
     this.analystComments = resp;
-    this.$scope.$digest();
+    $rootScope.$digest();
   }
 
   // Editor Update Modal
   async updateComments($event) {
     try {
-      const resp = await this.$mdDialog.show({
+      const resp = await $mdDialog.show({
         targetEvent: $event,
         template: editTemplate,
         clickOutToClose: false,
@@ -51,10 +60,10 @@ class AnalystCommentsComponent {
           // Update Details
           scope.update = async () => {
             try {
-              await this.AnalystCommentsService.update(
+              await AnalystCommentsService.update(
                 this.report.ident, scope.analystComments,
               );
-              this.$mdDialog.hide({
+              $mdDialog.hide({
                 message: 'Entry has been updated',
                 comment: scope.analystComments,
               });
@@ -69,17 +78,19 @@ class AnalystCommentsComponent {
       this.analystComments = resp.comment;
       this.analystComments.comments = resp.comment.comments;
       // Display Message from Hiding
-      this.$mdToast.show(this.$mdToast.simple().textContent(resp.message));
+      $mdToast.show($mdToast.simple().textContent(resp.message));
     } catch (err) {
-      this.$mdToast.show(this.$mdToast.simple().textContent(err));
+      $mdToast.show($mdToast.simple().textContent(err));
     } finally {
-      this.$scope.$digest();
+      $rootScope.$digest();
     }
   }
 }
 
-export default {
+export const AnalystCommentsComponent = {
   template,
   bindings,
-  controller: AnalystCommentsComponent,
+  controller: AnalystComments,
 };
+
+export default angular2react('analystComments', AnalystCommentsComponent, lazyInjector.$injector);

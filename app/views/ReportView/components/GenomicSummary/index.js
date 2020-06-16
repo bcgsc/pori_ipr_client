@@ -1,28 +1,28 @@
 import { angular2react } from 'angular2react';
 import sortBy from 'lodash.sortby';
 import { $mdDialog, $mdToast } from 'angular-material';
+import { $rootScope } from 'ngimport';
 
 import lazyInjector from '@/lazyInjector';
 import TumourAnalysisService from '@/services/reports/summary/tumour-analysis.service';
 import PatientInformationService from '@/services/reports/summary/patient-information.service';
 import GenomicAlterationsService from '@/services/reports/summary/genomic-alterations.service';
+import MutationSummaryService from '@/services/reports/summary/mutation-summary.service';
+import MutationSignatureService from '@/services/reports/summary/mutation-signature.service';
+import ProbeTargetService from '@/services/reports/summary/probe-target.service';
+import MicrobialService from '@/services/reports/summary/microbial.service';
 import template from './genomic-summary.pug';
 import tumourTemplate from './tumour-analysis-edit.pug';
 import mutationTemplate from './mutation-signature-edit.pug';
 import patientTemplate from './patient-edit.pug';
 import addAlterationTemplate from './add-alteration.pug';
 import removeAlterationTemplate from './remove-alteration.pug';
-import './genomic-summary.scss';
+import './index.scss';
 
 const bindings = {
   print: '<',
   report: '<',
   reportEdit: '<',
-  genomicAlterations: '<',
-  mutationSummary: '<',
-  probeTarget: '<',
-  mutationSignature: '<',
-  microbial: '<',
 };
 
 class GenomicSummary {
@@ -34,9 +34,6 @@ class GenomicSummary {
       structuralVariant: 0,
     };
     this.mutationMask = null;
-    this.tumourAnalysis = this.report.tumourAnalysis;
-    this.microbial = this.microbial || { species: 'None', integrationSite: 'None' };
-    this.genomicAlterations = sortBy(this.processVariants(this.genomicAlterations), ['type', 'geneVariant']);
     this.helpMessages = {
       genomeStatus: {
         title: 'Genome Status Help',
@@ -90,6 +87,29 @@ class GenomicSummary {
                   novel events, are totaled and compared to other tumours of a similar type.`,
       },
     };
+  }
+
+  async $onChanges(changes) {
+    if (changes.report && !changes.report.isFirstChange()) {
+      const promises = await Promise.all([
+        GenomicAlterationsService.all(this.report.ident),
+        MutationSummaryService.get(this.report.ident),
+        ProbeTargetService.all(this.report.ident),
+        MutationSignatureService.all(this.report.ident),
+        MicrobialService.get(this.report.ident),
+      ]);
+      [
+        this.genomicAlterations,
+        this.mutationSummary,
+        this.probeTarget,
+        this.mutationSignature,
+        this.microbial,
+      ] = promises;
+      this.tumourAnalysis = this.report.tumourAnalysis;
+      this.microbial = this.microbial || { species: 'None', integrationSite: 'None' };
+      this.genomicAlterations = sortBy(this.processVariants(this.genomicAlterations), ['type', 'geneVariant']);
+      $rootScope.$digest();
+    }
   }
 
   /* eslint-disable-next-line class-methods-use-this */

@@ -17,6 +17,7 @@ import 'ngimport';
 import { NavBarComponent } from '@/components/NavBar';
 import { SidebarComponent } from '@/components/Sidebar';
 import { GenomicSummaryComponent } from '@/views/ReportView/components/GenomicSummary';
+import { AnalystCommentsComponent } from '@/views/ReportView/components/AnalystComments';
 
 import PogService from './services/reports/pog.service';
 import ProjectService from './services/management/project.service';
@@ -71,6 +72,7 @@ const rootModule = angular.module('root')
   .component('navBar', NavBarComponent)
   .component('sidebar', SidebarComponent)
   .component('genomicSummary', GenomicSummaryComponent)
+  .component('analystComments', AnalystCommentsComponent)
   .service('PogService', PogService)
   .service('ProjectService', ProjectService)
   .service('AclService', AclService)

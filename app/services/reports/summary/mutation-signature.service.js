@@ -1,7 +1,7 @@
+import { $http } from 'ngimport';
+
 class MutationSignatureService {
-  /* @ngInject */
-  constructor($http) {
-    this.$http = $http;
+  constructor() {
     this.api = `${CONFIG.ENDPOINTS.API}/reports`;
   }
 
@@ -12,11 +12,11 @@ class MutationSignatureService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async all(report) {
-    const resp = await this.$http.get(
+    const resp = await $http.get(
       `${this.api}/${report}/mutation-signatures`,
     );
     return resp.data;
   }
 }
 
-export default MutationSignatureService;
+export default new MutationSignatureService();
