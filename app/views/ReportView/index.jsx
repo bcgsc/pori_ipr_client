@@ -18,6 +18,7 @@ import './index.scss';
 const GenomicSummary = lazy(() => import('./components/GenomicSummary'));
 const AnalystComments = lazy(() => import('./components/AnalystComments'));
 const PathwayAnalysis = lazy(() => import('./components/PathwayAnalysis'));
+const TherapeuticTargets = lazy(() => import('./components/TherapeuticTargets'));
 
 
 const ReportView = () => {
@@ -64,6 +65,13 @@ const ReportView = () => {
               )}
               path={`${match.path}/analyst-comments`}
             />
+            <Route
+              render={routeProps => (
+                <TherapeuticTargets {...routeProps} print={false} report={report} reportEdit />
+              )}
+              path={`${match.path}/therapeutic-targets`}
+            />
+            {/* Need token for FileUpload API call */}
             <SecurityContext.Consumer>
               {value => (
                 <Route
