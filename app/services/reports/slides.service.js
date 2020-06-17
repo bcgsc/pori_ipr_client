@@ -1,7 +1,7 @@
+import { $http } from 'ngimport';
+
 class SlidesService {
-  /* @ngInject */
-  constructor($http) {
-    this.$http = $http;
+  constructor() {
     this.api = `${CONFIG.ENDPOINTS.API}/reports`;
   }
 
@@ -11,7 +11,7 @@ class SlidesService {
    * @returns {Promise} - resolves with all slides
    */
   async all(report) {
-    const { data } = await this.$http.get(
+    const { data } = await $http.get(
       `${this.api}/${report}/presentation/slide`,
     );
     return data;
@@ -26,7 +26,7 @@ class SlidesService {
    * @returns {Promise} - resolves with all slides
    */
   async get(report, ident) {
-    const { data } = await this.$http.get(
+    const { data } = await $http.get(
       `${this.api}/${report}/presentation/slide/${ident}`,
     );
     return data;
@@ -41,11 +41,11 @@ class SlidesService {
    * @returns {Promise} - resolves with all slides
    */
   async remove(report, ident) {
-    const { data } = await this.$http.delete(
+    const { data } = await $http.delete(
       `${this.api}/${report}/presentation/slide/${ident}`,
     );
     return data;
   }
 }
 
-export default SlidesService;
+export default new SlidesService();

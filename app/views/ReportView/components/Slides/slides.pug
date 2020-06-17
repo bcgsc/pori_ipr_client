@@ -13,7 +13,7 @@ section.material-section.slide.presentation
           md-tab(ng-if="$ctrl.slides.length", ng-repeat="slide in $ctrl.slides track by $index", label="{{slide.name}}")
             md-content.md-padding
               h3 {{slide.name}}
-                md-icon(ng-click="$ctrl.remove(slide)").clickable.small delete
+                md-icon(ng-click="$ctrl.remove($event, slide)").clickable.small delete
 
               img(data-ng-src="data:{{slide.object_type}};base64,{{slide.object}}").slide
 
@@ -26,7 +26,7 @@ section.material-section.slide.presentation
             md-input-container(flex).name
               input(ng-model="$ctrl.new.name", placeholder="Slide Name", flex)
             md-input-container(flex)
-              input(aria-label="Slide Upload" type="file" nv-file-select="" uploader="$ctrl.uploader", ng-model="$ctrl.new.file", flex, ng-disabled="$ctrl.new.name.length === 0")
+              input(ng-if="$ctrl.uploader" aria-label="Slide Upload" type="file" nv-file-select="" uploader="$ctrl.uploader", ng-model="$ctrl.new.file", flex, ng-disabled="$ctrl.new.name.length === 0")
               span.hint(ng-if="$ctrl.new.name.length === 0")
                 md-icon.small keyboard_arrow_left
                 | Slide name must be entered before a file can be selected.

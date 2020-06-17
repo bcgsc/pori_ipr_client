@@ -1,3 +1,10 @@
+import { angular2react } from 'angular2react';
+import { $rootScope } from 'ngimport';
+
+import dialogCreator from '@/services/utils/dialogCreator';
+import toastCreator from '@/services/utils/toastCreator';
+import SlidesService from '@/services/reports/slides.service';
+import lazyInjector from '@/lazyInjector';
 import template from './slides.pug';
 import './slides.scss';
 
@@ -5,19 +12,14 @@ const bindings = {
   report: '<',
   slides: '<',
   print: '<',
+  token: '<',
 };
 
-class GenomicSlidesComponent {
-  /* @ngInject */
-  constructor($scope, $mdDialog, $mdToast, SlidesService, DiscussionService,
-    FileUploader, $localStorage) {
-    this.$scope = $scope;
+class Slides {
+  constructor($mdDialog, $mdToast, FileUploader) {
     this.$mdDialog = $mdDialog;
     this.$mdToast = $mdToast;
-    this.SlidesService = SlidesService;
-    this.DiscussionService = DiscussionService;
     this.FileUploader = FileUploader;
-    this.$localStorage = $localStorage;
   }
 
   $onInit() {
@@ -35,24 +37,36 @@ class GenomicSlidesComponent {
     ];
 
     this.selectedItem = null;
-    this.uploader = this.setupUploader();
+  }
+
+  async $onChanges(changes) {
+    if (changes.report && changes.report.currentValue) {
+      this.slides = await SlidesService.all(this.report.ident);
+      this.uploader = this.setupUploader();
+      $rootScope.$digest();
+    }
   }
 
   // Remove a slide entry
-  async remove(slide) {
-    const confirm = this.$mdDialog.confirm()
-      .textContent('Are you sure you want to remove this slide?')
-      .ok('Remove Slide')
-      .cancel('Cancel');
+  async remove($event, slide) {
+    const confirm = dialogCreator(
+      $event,
+      'Are you sure you want to remove this slide?',
+      'Confirm',
+      [
+        { text: 'Remove Slide', click: this.$mdDialog.hide },
+        { text: 'Cancel', click: this.$mdDialog.cancel },
+      ],
+    );
 
     try {
       await this.$mdDialog.show(confirm);
-      await this.SlidesService.remove(this.report.ident, slide.ident);
+      await SlidesService.remove(this.report.ident, slide.ident);
       this.slides = this.slides.filter(entry => entry.ident !== slide.ident);
     } catch (err) {
-      this.$mdToast.showSimple('No changes were made');
+      this.$mdToast.show(toastCreator('No changes were made'));
     } finally {
-      this.$scope.$digest();
+      $rootScope.$digest();
     }
   }
 
@@ -67,7 +81,7 @@ class GenomicSlidesComponent {
       url: `${CONFIG.ENDPOINTS.API}/reports/${this.report.ident}/presentation/slide`,
     });
 
-    this.uploader.headers.Authorization = this.$localStorage[CONFIG.STORAGE.KEYCLOAK];
+    this.uploader.headers.Authorization = this.token;
     this.uploader.method = 'POST';
     this.uploader.alias = 'file'; // Name of the file in the POST
     this.selectedItem = null;
@@ -92,8 +106,8 @@ class GenomicSlidesComponent {
     // Only allow 1 upload. When Finished
     this.uploader.onCompleteItem = async () => {
       // Add to tabs and notify user of great success
-      this.$mdToast.showSimple('The slide was successfully uploaded');
-      this.slides = await this.SlidesService.all(
+      this.$mdToast.show(toastCreator('The slide was successfully uploaded'));
+      this.slides = await SlidesService.all(
         this.report.ident,
       );
       this.new.name = '';
@@ -103,7 +117,7 @@ class GenomicSlidesComponent {
       this.uploader.clearQueue();
       this.selectedItem = null;
       this.progress = 0;
-      this.$scope.$digest();
+      $rootScope.$digest();
     };
 
     // Sync filter
@@ -112,9 +126,9 @@ class GenomicSlidesComponent {
       fn: (item) => {
         this.uploader.formData = [{ name: this.new.name }];
         if (this.allowedImageFormats.includes(item.type)) {
-          this.$mdToast.showSimple(
+          this.$mdToast.show(toastCreator(
             `Invalid file format provided. Must be an image of type: ${this.allowedImageFormats.join(',')}`,
-          );
+          ));
           return false;
         }
         return true;
@@ -134,8 +148,12 @@ class GenomicSlidesComponent {
   }
 }
 
-export default {
+Slides.$inject = ['$mdDialog', '$mdToast', 'FileUploader'];
+
+export const SlidesComponent = {
   template,
   bindings,
-  controller: GenomicSlidesComponent,
+  controller: Slides,
 };
+
+export default angular2react('slides', SlidesComponent, lazyInjector.$injector);

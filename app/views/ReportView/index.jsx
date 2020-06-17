@@ -20,6 +20,7 @@ const AnalystComments = lazy(() => import('./components/AnalystComments'));
 const PathwayAnalysis = lazy(() => import('./components/PathwayAnalysis'));
 const TherapeuticTargets = lazy(() => import('./components/TherapeuticTargets'));
 const KbMatches = lazy(() => import('./components/KbMatches'));
+const Slides = lazy(() => import('./components/Slides'));
 
 const ReportView = () => {
   const match = useRouteMatch();
@@ -80,18 +81,32 @@ const ReportView = () => {
             {/* Need token for FileUpload API call */}
             <SecurityContext.Consumer>
               {value => (
-                <Route
-                  render={routeProps => (
-                    <PathwayAnalysis
-                      {...routeProps}
-                      print={false}
-                      report={report}
-                      reportEdit
-                      token={value.authorizationToken}
-                    />
-                  )}
-                  path={`${match.path}/pathway-analysis`}
-                />
+                <>
+                  <Route
+                    render={routeProps => (
+                      <PathwayAnalysis
+                        {...routeProps}
+                        print={false}
+                        report={report}
+                        reportEdit
+                        token={value.authorizationToken}
+                      />
+                    )}
+                    path={`${match.path}/pathway-analysis`}
+                  />
+                  <Route
+                    render={routeProps => (
+                      <Slides
+                        {...routeProps}
+                        print={false}
+                        report={report}
+                        reportEdit
+                        token={value.authorizationToken}
+                      />
+                    )}
+                    path={`${match.path}/slides`}
+                  />
+                </>
               )}
             </SecurityContext.Consumer>
           </Switch>

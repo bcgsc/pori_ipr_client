@@ -45,7 +45,7 @@ const sections = [
     showChildren: false,
     clinician: true,
     children: [
-      { name: 'Additional Information', uri: 'slide' },
+      { name: 'Additional Information', uri: 'slides' },
       { name: 'Discussion Notes', uri: 'discussion' },
     ],
   },

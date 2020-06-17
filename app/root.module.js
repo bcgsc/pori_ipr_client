@@ -21,6 +21,7 @@ import { SidebarComponent } from '@/components/Sidebar';
 import { GenomicSummaryComponent } from '@/views/ReportView/components/GenomicSummary';
 import { AnalystCommentsComponent } from '@/views/ReportView/components/AnalystComments';
 import { PathwayAnalysisComponent } from '@/views/ReportView/components/PathwayAnalysis';
+import { SlidesComponent } from '@/views/ReportView/components/Slides';
 
 import MutationSignatureComponent from '@/components/MutationSignature';
 
@@ -39,8 +40,6 @@ import AnalystCommentsService from './services/reports/analyst-comments/analyst-
 import AlterationService from './services/reports/alteration.service';
 import ProbeSignatureService from './services/reports/probe/signature.service';
 import ProbeTestInformationService from './services/reports/probe/test-information.service';
-import SlidesService from './services/reports/presentation/slides.service';
-import DiscussionService from './services/reports/presentation/discussion.service';
 import GroupService from './services/management/group.service';
 import TherapeuticService from './services/reports/therapeutic/therapeutic-options.service';
 import GermlineService from './services/reports/germline.service';
@@ -79,6 +78,7 @@ const rootModule = angular.module('root')
   .component('analystComments', AnalystCommentsComponent)
   .component('pathwayAnalysis', PathwayAnalysisComponent)
   .component('mutationSignature', MutationSignatureComponent)
+  .component('slides', SlidesComponent)
   .service('PogService', PogService)
   .service('ProjectService', ProjectService)
   .service('AclService', AclService)
@@ -91,8 +91,6 @@ const rootModule = angular.module('root')
   .service('MutationSignatureService', MutationSignatureService)
   .service('MicrobialService', MicrobialService)
   .service('AnalystCommentsService', AnalystCommentsService)
-  .service('SlidesService', SlidesService)
-  .service('DiscussionService', DiscussionService)
   .service('GroupService', GroupService)
   .service('TherapeuticService', TherapeuticService)
   .service('GermlineService', GermlineService)
