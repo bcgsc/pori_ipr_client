@@ -21,6 +21,8 @@ import { GenomicSummaryComponent } from '@/views/ReportView/components/GenomicSu
 import { AnalystCommentsComponent } from '@/views/ReportView/components/AnalystComments';
 import { PathwayAnalysisComponent } from '@/views/ReportView/components/PathwayAnalysis';
 
+import MutationSignatureComponent from '@/components/MutationSignature';
+
 import PogService from './services/reports/pog.service';
 import ProjectService from './services/management/project.service';
 import AclService from './services/management/acl.service';
@@ -76,6 +78,7 @@ const rootModule = angular.module('root')
   .component('genomicSummary', GenomicSummaryComponent)
   .component('analystComments', AnalystCommentsComponent)
   .component('pathwayAnalysis', PathwayAnalysisComponent)
+  .component('mutationSignature', MutationSignatureComponent)
   .service('PogService', PogService)
   .service('ProjectService', ProjectService)
   .service('AclService', AclService)

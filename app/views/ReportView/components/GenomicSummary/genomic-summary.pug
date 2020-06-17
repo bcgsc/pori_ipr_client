@@ -70,13 +70,8 @@ md-content
               div(flex) Tumour Content
               div(flex) Ploidy Model
             div(layout="row", flex).content.tumour-analysis__box-content
-              div(flex)
-                tumour-content(
-                  tc="$ctrl.tumourAnalysis.tumourContent",
-                  md-whiteframe="1",
-                  ng-if="$ctrl.tumourAnalysis.tumourContent !== -1 && !$ctrl.print",
-                )
-                span(ng-if="$ctrl.tumourAnalysis.tumourContent !== -1 && $ctrl.print") {{$ctrl.tumourAnalysis.tumourContent}}%
+              div(flex) 
+                span(ng-if="$ctrl.tumourAnalysis.tumourContent !== -1") {{$ctrl.tumourAnalysis.tumourContent}}%
                 span(ng-if="$ctrl.tumourAnalysis.tumourContent === -1") N/A
               div(flex) {{$ctrl.tumourAnalysis.ploidy}}
 

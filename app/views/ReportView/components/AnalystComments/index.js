@@ -22,7 +22,7 @@ class AnalystComments {
   }
 
   async $onChanges(changes) {
-    if (changes.report && !changes.report.isFirstChange()) {
+    if (changes.report && changes.report.currentValue) {
       this.analystComments = await AnalystCommentsService.get(this.report.ident);
       $rootScope.$digest();
     }
