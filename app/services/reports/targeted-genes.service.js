@@ -1,19 +1,19 @@
+import { $http } from 'ngimport';
+
 class TargetedGenesService {
-  /* @ngInject */
-  constructor($http) {
-    this.$http = $http;
+  constructor() {
     this.api = `${CONFIG.ENDPOINTS.API}/reports`;
   }
 
   async getAll(report) {
-    const { data } = await this.$http.get(
+    const { data } = await $http.get(
       `${this.api}/${report}/probe-results`,
     );
     return data;
   }
 
   async update(report, eventId, comments) {
-    const data = await this.$http.put(
+    const data = await $http.put(
       `${this.api}/${report}/probe-results/${eventId}`,
       comments,
     );
@@ -21,4 +21,4 @@ class TargetedGenesService {
   }
 }
 
-export default TargetedGenesService;
+export default new TargetedGenesService();

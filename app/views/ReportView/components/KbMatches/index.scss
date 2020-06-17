@@ -8,9 +8,13 @@
   }
 
   &__filter {
-    padding: 20px 12px 0;
-  }
+    margin: 20px 12px 10px;
+    height: 40px;
 
+    > * {
+      box-sizing: content-box;
+    }
+  }
 }
 
 .expansion-panel {

@@ -37,13 +37,11 @@ import MutationSignatureService from './services/reports/summary/mutation-signat
 import MicrobialService from './services/reports/summary/microbial.service';
 import AnalystCommentsService from './services/reports/analyst-comments/analyst-comments.service';
 import AlterationService from './services/reports/alteration.service';
-import TargetedGenesService from './services/reports/probe/targeted-genes.service';
 import ProbeSignatureService from './services/reports/probe/signature.service';
 import ProbeTestInformationService from './services/reports/probe/test-information.service';
 import SlidesService from './services/reports/presentation/slides.service';
 import DiscussionService from './services/reports/presentation/discussion.service';
 import GroupService from './services/management/group.service';
-import KnowledgebaseService from './services/reports/knowledgebase.service';
 import TherapeuticService from './services/reports/therapeutic/therapeutic-options.service';
 import GermlineService from './services/reports/germline.service';
 import ImageService from './services/reports/image.service';
@@ -96,11 +94,9 @@ const rootModule = angular.module('root')
   .service('SlidesService', SlidesService)
   .service('DiscussionService', DiscussionService)
   .service('GroupService', GroupService)
-  .service('KnowledgebaseService', KnowledgebaseService)
   .service('TherapeuticService', TherapeuticService)
   .service('GermlineService', GermlineService)
   .service('AlterationService', AlterationService)
-  .service('TargetedGenesService', TargetedGenesService)
   .service('ProbeSignatureService', ProbeSignatureService)
   .service('ProbeTestInformationService', ProbeTestInformationService)
   .service('ImageService', ImageService)
