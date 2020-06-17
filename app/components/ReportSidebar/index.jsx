@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   List, ListItem, ListItemText,
 } from '@material-ui/core';
@@ -12,6 +12,8 @@ const ReportSidebar = (props) => {
     sections,
     isSidebarVisible,
   } = props;
+
+  const { pathname } = useLocation();
 
   if (!isSidebarVisible) {
     return null;
@@ -29,7 +31,13 @@ const ReportSidebar = (props) => {
           <React.Fragment key={section.name}>
             {section.uri ? (
               <Link to={{ pathname: section.uri }} className="report-sidebar__list-link">
-                <ListItem classes={{ root: 'report-sidebar__list-item' }}>
+                <ListItem classes={{
+                  root: `
+                    report-sidebar__list-item
+                    ${pathname.includes(section.uri) ? 'report-sidebar__list-item--active' : ''}
+                  `,
+                }}
+                >
                   <ListItemText>
                     {section.name}
                   </ListItemText>
@@ -51,7 +59,13 @@ const ReportSidebar = (props) => {
                       to={{ pathname: child.uri }}
                       className="report-sidebar__list-link"
                     >
-                      <ListItem classes={{ root: 'report-sidebar__list-item--indented' }}>
+                      <ListItem classes={{
+                        root: `
+                          report-sidebar__list-item--indented
+                          ${pathname.includes(child.uri) ? 'report-sidebar__list-item--active' : ''}
+                        `,
+                      }}
+                      >
                         <ListItemText>
                           {child.name}
                         </ListItemText>

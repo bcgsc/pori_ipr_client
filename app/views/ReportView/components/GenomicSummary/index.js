@@ -300,7 +300,7 @@ class GenomicSummary {
       });
       this.$mdToast.show(toastCreator(resp.message));
       this.report.patientInformation = resp.data;
-      this.$scope.$digest();
+      $rootScope.$digest();
     } catch (err) {
       this.$mdToast.show(toastCreator(err));
     }
@@ -398,14 +398,31 @@ class GenomicSummary {
   }
 
   showHelpMessage($event, message) {
-    this.$mdDialog.show(
-      this.$mdDialog.alert()
-        .clickOutsideToClose(true)
-        .title(message.title)
-        .htmlContent(message.content)
-        .ok('Close')
-        .targetEvent($event),
-    );
+    this.$mdDialog.show({
+      targetEvent: $event,
+      clickOutToClose: true,
+      parent: angular.element(document.body),
+      template: `
+        <md-dialog flex="40">
+          <md-toolbar class="md-toolbar-tools">
+            Help
+          </md-toolbar>
+          <md-dialog-content class="layout-padding">
+            <div>
+              ${message.content}
+            </div>
+          </md-dialog-content>
+          <md-dialog-actions>
+            <md-button ng-click="hide()">
+              Close
+            </md-button>
+          </md-dialog-actions>
+        </md-dialog>
+      `,
+      controller: ['scope', (scope) => {
+        scope.hide = () => this.$mdDialog.hide();
+      }],
+    });
   }
 }
 

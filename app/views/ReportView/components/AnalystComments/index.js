@@ -1,11 +1,13 @@
 import { $sce, $rootScope } from 'ngimport';
 import { angular2react } from 'angular2react';
 
+import toastCreator from '@/services/utils/toastCreator';
 import lazyInjector from '@/lazyInjector';
 import AnalystCommentsService from '@/services/reports/analyst-comments/analyst-comments.service';
 import template from './analyst-comments.pug';
 import editTemplate from './analyst-comments-edit.pug';
 
+import 'quill/dist/quill.snow.css';
 import './index.scss';
 
 const bindings = {
@@ -51,6 +53,7 @@ class AnalystComments {
         targetEvent: $event,
         template: editTemplate,
         clickOutToClose: false,
+        parent: angular.element(document.body),
         controller: ['scope', (scope) => {
           scope.analystComments = this.analystComments;
           // Cancel Dialog
@@ -78,9 +81,9 @@ class AnalystComments {
       this.analystComments = resp.comment;
       this.analystComments.comments = resp.comment.comments;
       // Display Message from Hiding
-      this.$mdToast.show(this.$mdToast.simple().textContent(resp.message));
+      this.$mdToast.show(toastCreator(resp.message));
     } catch (err) {
-      this.$mdToast.show(this.$mdToast.simple().textContent(err));
+      this.$mdToast.show(toastCreator(err));
     }
   }
 }

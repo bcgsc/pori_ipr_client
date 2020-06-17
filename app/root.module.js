@@ -7,6 +7,7 @@ import 'ngstorage';
 import 'angular-material/angular-material.min.css';
 import 'angular-sortable-view';
 import 'angular-file-upload';
+import 'ng-quill';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { CsvExportModule } from '@ag-grid-community/csv-export';
@@ -70,6 +71,7 @@ angular.module('root', [
   'ngSanitize',
   'angularFileUpload',
   'bcherny/ngimport',
+  'ngQuill',
 ]);
 
 const rootModule = angular.module('root')

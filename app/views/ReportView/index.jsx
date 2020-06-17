@@ -2,7 +2,6 @@ import React, {
   lazy,
   useEffect,
   useState,
-  useCallback,
 } from 'react';
 import {
   Switch, Route, useRouteMatch, useParams,
