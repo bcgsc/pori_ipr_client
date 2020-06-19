@@ -23,6 +23,7 @@ import { AnalystCommentsComponent } from '@/views/ReportView/components/AnalystC
 import { PathwayAnalysisComponent } from '@/views/ReportView/components/PathwayAnalysis';
 import { SlidesComponent } from '@/views/ReportView/components/Slides';
 import { DiscussionComponent } from '@/views/ReportView/components/Discussion';
+import { MicrobialComponent } from '@/views/ReportView/components/Microbial';
 
 import MutationSignatureComponent from '@/components/MutationSignature';
 import DiscussionEntryComponent from '@/views/ReportView/components/Discussion/components/DiscussionEntry';
@@ -83,6 +84,7 @@ const rootModule = angular.module('root')
   .component('slides', SlidesComponent)
   .component('discussion', DiscussionComponent)
   .component('discussionEntry', DiscussionEntryComponent)
+  .component('microbial', MicrobialComponent)
   .service('PogService', PogService)
   .service('ProjectService', ProjectService)
   .service('AclService', AclService)

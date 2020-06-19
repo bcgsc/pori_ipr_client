@@ -1,7 +1,7 @@
+import { $http } from 'ngimport';
+
 class ImageService {
-  /* @ngInject */
-  constructor($http) {
-    this.$http = $http;
+  constructor() {
     this.api = `${CONFIG.ENDPOINTS.API}/reports`;
   }
 
@@ -13,7 +13,7 @@ class ImageService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async get(report, key) {
-    const { data } = await this.$http.get(
+    const { data } = await $http.get(
       `${this.api}/${report}/image/retrieve/${key}`,
     );
     return data;
@@ -26,7 +26,7 @@ class ImageService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async expDensityGraphs(report) {
-    const { data } = await this.$http.get(
+    const { data } = await $http.get(
       `${this.api}/${report}/image/expression-density-graphs`,
     );
     return data;
@@ -39,7 +39,7 @@ class ImageService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async mutationSummary(report) {
-    const { data } = await this.$http.get(
+    const { data } = await $http.get(
       `${this.api}/${report}/image/mutation-summary`,
     );
     return data;
@@ -52,11 +52,11 @@ class ImageService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async subtypePlots(report) {
-    const { data } = await this.$http.get(
+    const { data } = await $http.get(
       `${this.api}/${report}/image/subtype-plots`,
     );
     return data;
   }
 }
 
-export default ImageService;
+export default new ImageService();

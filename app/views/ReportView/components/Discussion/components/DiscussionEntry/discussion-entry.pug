@@ -1,6 +1,6 @@
 h2.title {{$ctrl.entry.user.firstName}} {{$ctrl.entry.user.lastName}}
   md-icon(ng-if="$ctrl.entry.user.username === $ctrl.user.username && !$ctrl.removed", ng-click="$ctrl.edit()").small.clickable edit
-  span {{$ctrl.entry.createdAt | date: 'EEEE, MMMM d, y HH:mm'}}
+  span.discussion-entry__date {{$ctrl.entry.createdAt | date: 'EEEE, MMMM d, y HH:mm'}}
 div(ng-if="!$ctrl.editing").body {{$ctrl.entry.body}}
   p(ng-if="$ctrl.removed").italic This entry has been removed.
   p(ng-if="$ctrl.entry.createdAt !== $ctrl.entry.updatedAt").edited Edited on {{$ctrl.entry.updatedAt | date: 'EEEE, MMMM d, y HH:mm' }}

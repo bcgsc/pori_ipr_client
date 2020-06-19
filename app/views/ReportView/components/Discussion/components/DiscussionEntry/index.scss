@@ -47,3 +47,9 @@ discussion-entry {
     }
   }
 }
+
+.discussion-entry {
+  &__date {
+    margin: 0 8px 0 0;
+  }
+}
