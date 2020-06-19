@@ -11,6 +11,7 @@ import 'ng-quill';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { CsvExportModule } from '@ag-grid-community/csv-export';
+import { react2angular } from 'react2angular';
 
 import ReactBootstrap from './index';
 import lazyInjector from './lazyInjector';
@@ -26,39 +27,16 @@ import { DiscussionComponent } from '@/views/ReportView/components/Discussion';
 import { MicrobialComponent } from '@/views/ReportView/components/Microbial';
 import { SpearmanComponent } from '@/views/ReportView/components/Spearman';
 import { DiseaseSpecificComponent } from '@/views/ReportView/components/DiseaseSpecific';
+import { SmallMutationsComponent } from '@/views/ReportView/components/SmallMutations';
 
 import MutationSignatureComponent from '@/components/MutationSignature';
 import DiscussionEntryComponent from '@/views/ReportView/components/Discussion/components/DiscussionEntry';
+import ReactTable from '@/components/DataTable';
 
-import PogService from './services/reports/pog.service';
 import ProjectService from './services/management/project.service';
 import AclService from './services/management/acl.service';
 import ReportService from './services/reports/report.service';
-import TumourAnalysisService from './services/reports/summary/tumour-analysis.service';
-import PatientInformationService from './services/reports/summary/patient-information.service';
-import GenomicAlterationsService from './services/reports/summary/genomic-alterations.service';
-import MutationSummaryService from './services/reports/summary/mutation-summary.service';
-import ProbeTargetService from './services/reports/summary/probe-target.service';
-import MutationSignatureService from './services/reports/summary/mutation-signature.service';
-import MicrobialService from './services/reports/summary/microbial.service';
-import AnalystCommentsService from './services/reports/analyst-comments/analyst-comments.service';
-import AlterationService from './services/reports/alteration.service';
-import ProbeSignatureService from './services/reports/probe/signature.service';
-import ProbeTestInformationService from './services/reports/probe/test-information.service';
 import GroupService from './services/management/group.service';
-import TherapeuticService from './services/reports/therapeutic/therapeutic-options.service';
-import GermlineService from './services/reports/germline.service';
-import ImageService from './services/reports/image.service';
-import SmallMutationsService from './services/reports/somatic/small-mutations.service';
-import GeneViewerService from './services/reports/somatic/gene-viewer.service';
-import CopyNumberAnalysesService from './services/reports/copy-number-analyses/copy-number-analyses.service';
-import StructuralVariantService from './services/reports/structural-variants/structural-variants.service';
-import MavisService from './services/reports/structural-variants/mavis.service';
-import DrugTargetService from './services/reports/expression/drug-target.service';
-import OutlierService from './services/reports/expression/outlier.service';
-import AppendicesService from './services/reports/appendices/appendices.service';
-import GenomicEventsService from './services/reports/summary/genomic-events.service';
-import GeneService from './services/reports/probe/gene.service';
 import IndefiniteArticleFilter from './filters/indefinite-article.filter';
 import TitleCaseFilter from './filters/titlecase.filter';
 import '@ag-grid-community/core/dist/styles/ag-grid.min.css';
@@ -88,35 +66,12 @@ const rootModule = angular.module('root')
   .component('microbial', MicrobialComponent)
   .component('spearman', SpearmanComponent)
   .component('diseaseSpecific', DiseaseSpecificComponent)
-  .service('PogService', PogService)
+  .component('smallMutations', SmallMutationsComponent)
+  .component('reactTable', react2angular(ReactTable))
   .service('ProjectService', ProjectService)
   .service('AclService', AclService)
   .service('ReportService', ReportService)
-  .service('TumourAnalysisService', TumourAnalysisService)
-  .service('PatientInformationService', PatientInformationService)
-  .service('GenomicAlterationsService', GenomicAlterationsService)
-  .service('MutationSummaryService', MutationSummaryService)
-  .service('ProbeTargetService', ProbeTargetService)
-  .service('MutationSignatureService', MutationSignatureService)
-  .service('MicrobialService', MicrobialService)
-  .service('AnalystCommentsService', AnalystCommentsService)
   .service('GroupService', GroupService)
-  .service('TherapeuticService', TherapeuticService)
-  .service('GermlineService', GermlineService)
-  .service('AlterationService', AlterationService)
-  .service('ProbeSignatureService', ProbeSignatureService)
-  .service('ProbeTestInformationService', ProbeTestInformationService)
-  .service('ImageService', ImageService)
-  .service('SmallMutationsService', SmallMutationsService)
-  .service('GeneViewerService', GeneViewerService)
-  .service('CopyNumberAnalysesService', CopyNumberAnalysesService)
-  .service('StructuralVariantsService', StructuralVariantService)
-  .service('MavisService', MavisService)
-  .service('DrugTargetService', DrugTargetService)
-  .service('OutlierService', OutlierService)
-  .service('AppendicesService', AppendicesService)
-  .service('GenomicEventsService', GenomicEventsService)
-  .service('GeneService', GeneService)
   .filter('indefiniteArticle', IndefiniteArticleFilter)
   .filter('titlecase', TitleCaseFilter)
   .config(['$locationProvider', ($locationProvider) => {
