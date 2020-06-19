@@ -24,6 +24,7 @@ const Slides = lazy(() => import('./components/Slides'));
 const Discussion = lazy(() => import('./components/Discussion'));
 const Microbial = lazy(() => import('./components/Microbial'));
 const Spearman = lazy(() => import('./components/Spearman'));
+const DiseaseSpecific = lazy(() => import('./components/DiseaseSpecific'));
 
 const ReportView = () => {
   const match = useRouteMatch();
@@ -98,6 +99,12 @@ const ReportView = () => {
                 <Spearman {...routeProps} print={false} report={report} reportEdit />
               )}
               path={`${match.path}/spearman`}
+            />
+            <Route
+              render={routeProps => (
+                <DiseaseSpecific {...routeProps} print={false} report={report} reportEdit />
+              )}
+              path={`${match.path}/disease-specific`}
             />
             {/* Need token for FileUpload API call */}
             <SecurityContext.Consumer>

@@ -25,6 +25,7 @@ import { SlidesComponent } from '@/views/ReportView/components/Slides';
 import { DiscussionComponent } from '@/views/ReportView/components/Discussion';
 import { MicrobialComponent } from '@/views/ReportView/components/Microbial';
 import { SpearmanComponent } from '@/views/ReportView/components/Spearman';
+import { DiseaseSpecificComponent } from '@/views/ReportView/components/DiseaseSpecific';
 
 import MutationSignatureComponent from '@/components/MutationSignature';
 import DiscussionEntryComponent from '@/views/ReportView/components/Discussion/components/DiscussionEntry';
@@ -62,7 +63,6 @@ import IndefiniteArticleFilter from './filters/indefinite-article.filter';
 import TitleCaseFilter from './filters/titlecase.filter';
 import '@ag-grid-community/core/dist/styles/ag-grid.min.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-material.min.css';
-// import './root.scss';
 import './styles/ag-grid.scss';
 import theme from './styles/_theme.scss';
 
@@ -87,6 +87,7 @@ const rootModule = angular.module('root')
   .component('discussionEntry', DiscussionEntryComponent)
   .component('microbial', MicrobialComponent)
   .component('spearman', SpearmanComponent)
+  .component('diseaseSpecific', DiseaseSpecificComponent)
   .service('PogService', PogService)
   .service('ProjectService', ProjectService)
   .service('AclService', AclService)

@@ -58,7 +58,7 @@ const sections = [
     children: [
       { name: 'Microbial', uri: 'microbial' },
       { name: 'Spearman', uri: 'spearman' },
-      { name: 'Disease Specific', uri: 'disease-specific-analysis' },
+      { name: 'Disease Specific', uri: 'disease-specific' },
     ],
   },
   {
