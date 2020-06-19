@@ -1,7 +1,7 @@
-class CopyNumberAnalyses {
-  /* @ngInject */
-  constructor($http) {
-    this.$http = $http;
+import { $http } from 'ngimport';
+
+class CopyNumber {
+  constructor() {
     this.api = `${CONFIG.ENDPOINTS.API}/reports`;
   }
 
@@ -12,7 +12,7 @@ class CopyNumberAnalyses {
    * @throws {ErrorType} Thrown when API call fails
    */
   async all(report) {
-    const { data } = await this.$http.get(
+    const { data } = await $http.get(
       `${this.api}/${report}/copy-variants`,
     );
     return data;
@@ -27,7 +27,7 @@ class CopyNumberAnalyses {
    * @throws {ErrorType} Thrown when API call fails
    */
   async updateOne(report, ident, payload) {
-    const { data } = await this.$http.put(
+    const { data } = await $http.put(
       `${this.api}/${report}/copy-variants/${ident}`,
       payload,
     );
@@ -42,11 +42,11 @@ class CopyNumberAnalyses {
    * @throws {ErrorType} Thrown when API call fails
    */
   async getType(report, type) {
-    const { data } = await this.$http.get(
+    const { data } = await $http.get(
       `${this.api}/${report}/copy-variants/${type}`,
     );
     return data;
   }
 }
 
-export default CopyNumberAnalyses;
+export default new CopyNumber();

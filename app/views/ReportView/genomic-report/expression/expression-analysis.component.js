@@ -1,6 +1,6 @@
 import template from './expression-analysis.pug';
 import './expression-analysis.scss';
-import { EXPLEVEL } from '../constants';
+import { EXPLEVEL } from '@/constants';
 
 const bindings = {
   report: '<',
