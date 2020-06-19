@@ -16,7 +16,7 @@ import SpearmanComponent from './spearman/spearman.component';
 import DiseaseSpecificAnalysisComponent from './disease-specific-analysis/disease-specific-analysis.component';
 import SmallMutationsComponent from './small-mutations/small-mutations.component';
 import CopyNumberAnalysesComponent from './copy-number-analyses/copy-number-analyses.component';
-import StructuralVariantsComponent from './structural-variants/structural-variants.component';
+import StructuralVariantsComponent from '../components/StructuralVariants';
 import ExpressionAnalysisAngularComponent from './expression/expression-analysis.component';
 import ExpressionAnalysisComponent from './expression';
 import AppendicesComponent from './appendices/appendices.component';

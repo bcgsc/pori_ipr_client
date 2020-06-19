@@ -28,6 +28,7 @@ const Spearman = lazy(() => import('./components/Spearman'));
 const DiseaseSpecific = lazy(() => import('./components/DiseaseSpecific'));
 const SmallMutations = lazy(() => import('./components/SmallMutations'));
 const CopyNumber = lazy(() => import('./components/CopyNumber'));
+const StructuralVariants = lazy(() => import('./components/StructuralVariants'));
 
 const ReportView = () => {
   const match = useRouteMatch();
@@ -121,6 +122,12 @@ const ReportView = () => {
                 <CopyNumber {...routeProps} print={false} report={report} reportEdit theme={theme} />
               )}
               path={`${match.path}/copy-number`}
+            />
+            <Route
+              render={routeProps => (
+                <StructuralVariants {...routeProps} print={false} report={report} reportEdit theme={theme} />
+              )}
+              path={`${match.path}/structural-variants`}
             />
             {/* Need token for FileUpload API call */}
             <SecurityContext.Consumer>
