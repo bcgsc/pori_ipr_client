@@ -22,7 +22,7 @@ class MutationSignature {
   }
 
   $onChanges(changes) {
-    if (changes.report && changes.report.currentValue) {
+    if (changes.mutationSignature && changes.mutationSignature.currentValue) {
       this.mode = this.mode || 'normal';
       // If mode is pick, preload selected sigs:
       if (this.mode === 'pick') {

@@ -1,25 +1,21 @@
+import { angular2react } from 'angular2react';
+import { $rootScope } from 'ngimport';
+
+import SmallMutationsService from '@/services/reports/small-mutations.service';
+import MutationSummaryService from '@/services/reports/mutation-summary.service';
+import MutationSignatureService from '@/services/reports/mutation-signature.service';
+import ImageService from '@/services/reports/image.service';
+import lazyInjector from '@/lazyInjector';
 import template from './small-mutations.pug';
 import { setHeaderName, columnDefs, signatureColumnDefs } from './columnDefs';
-import './small-mutations.scss';
+import './index.scss';
 
 const bindings = {
   report: '<',
-  images: '<',
-  mutationSummaryImages: '<',
-  mutationSummary: '<',
-  smallMutations: '<',
-  mutationSignature: '<',
+  theme: '<',
 };
 
-class SmallMutationsComponent {
-  /* @ngInject */
-  constructor($scope, $state, $mdDialog, SmallMutationsService) {
-    this.$scope = $scope;
-    this.$state = $state;
-    this.$mdDialog = $mdDialog;
-    this.SmallMutationsService = SmallMutationsService;
-  }
-
+class SmallMutations {
   $onInit() {
     this.titleMap = {
       biological: 'Variants of Biological Relevance',
@@ -28,12 +24,37 @@ class SmallMutationsComponent {
       nostic: 'Variants of Prognostic or Diagnostic Relevance',
     };
     this.columnDefs = columnDefs;
-    this.signatureColumnDefs = signatureColumnDefs;
-    setHeaderName(`${this.report.tumourAnalysis.diseaseExpressionComparator || ''} %ile`, 'tcgaPerc');
-    setHeaderName(`Fold Change vs ${this.report.tumourAnalysis.normalExpressionComparator}`, 'foldChange');
-    this.processMutationSummaryImages(this.mutationSummaryImages);
-    this.processMutations(this.smallMutations);
-    this.pickComparator();
+  }
+
+  async $onChanges(changes) {
+    if (changes.report && changes.report.currentValue) {
+      const promises = Promise.all([
+        ImageService.get(
+          this.report.ident,
+          'mutSignature.corPcors,mutSignature.snvsAllStrelka',
+        ),
+        ImageService.mutationSummary(this.report.ident),
+        MutationSummaryService.get(this.report.ident),
+        SmallMutationsService.all(this.report.ident),
+        MutationSignatureService.all(this.report.ident),
+      ]);
+
+      const [
+        images, mutationSummaryImages, mutationSummary, smallMutations, mutationSignature,
+      ] = await promises;
+      this.images = images;
+      this.mutationSummaryImages = mutationSummaryImages;
+      this.mutationSummary = mutationSummary;
+      this.smallMutations = smallMutations;
+      this.mutationSignature = mutationSignature;
+
+      setHeaderName(`${this.report.tumourAnalysis.diseaseExpressionComparator || ''} %ile`, 'tcgaPerc');
+      setHeaderName(`Fold Change vs ${this.report.tumourAnalysis.normalExpressionComparator}`, 'foldChange');
+      this.processMutationSummaryImages(this.mutationSummaryImages);
+      this.processMutations(this.smallMutations);
+      this.pickComparator();
+      $rootScope.$digest();
+    }
   }
 
   processMutations(muts) {
@@ -163,8 +184,10 @@ class SmallMutationsComponent {
   }
 }
 
-export default {
+export const SmallMutationsComponent = {
   template,
   bindings,
-  controller: SmallMutationsComponent,
+  controller: SmallMutations,
 };
+
+export default angular2react('smallMutations', SmallMutationsComponent, lazyInjector.$injector);

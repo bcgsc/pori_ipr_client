@@ -6,6 +6,7 @@ import React, {
 import {
   Switch, Route, useRouteMatch, useParams,
 } from 'react-router-dom';
+import { useTheme } from '@material-ui/core/styles';
 
 import SecurityContext from '@/components/SecurityContext';
 import ReportToolbar from '@/components/ReportToolbar';
@@ -25,10 +26,12 @@ const Discussion = lazy(() => import('./components/Discussion'));
 const Microbial = lazy(() => import('./components/Microbial'));
 const Spearman = lazy(() => import('./components/Spearman'));
 const DiseaseSpecific = lazy(() => import('./components/DiseaseSpecific'));
+const SmallMutations = lazy(() => import('./components/SmallMutations'));
 
 const ReportView = () => {
   const match = useRouteMatch();
   const params = useParams();
+  const theme = useTheme();
   const [report, setReport] = useState();
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
 
@@ -105,6 +108,12 @@ const ReportView = () => {
                 <DiseaseSpecific {...routeProps} print={false} report={report} reportEdit />
               )}
               path={`${match.path}/disease-specific`}
+            />
+            <Route
+              render={routeProps => (
+                <SmallMutations {...routeProps} print={false} report={report} reportEdit theme={theme} />
+              )}
+              path={`${match.path}/small-mutations`}
             />
             {/* Need token for FileUpload API call */}
             <SecurityContext.Consumer>

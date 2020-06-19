@@ -3,7 +3,7 @@ import { angular2react } from 'angular2react';
 
 import toastCreator from '@/services/utils/toastCreator';
 import lazyInjector from '@/lazyInjector';
-import AnalystCommentsService from '@/services/reports/analyst-comments/analyst-comments.service';
+import AnalystCommentsService from '@/services/reports/analyst-comments.service';
 import template from './analyst-comments.pug';
 import editTemplate from './analyst-comments-edit.pug';
 

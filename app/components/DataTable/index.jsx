@@ -10,6 +10,7 @@ import {
   Switch,
   Snackbar,
 } from '@material-ui/core';
+import { ThemeProvider } from '@material-ui/core/styles';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import GetAppIcon from '@material-ui/icons/GetApp';
@@ -65,6 +66,7 @@ function DataTable(props) {
     rowUpdateAPICall,
     canExport,
     patientId,
+    theme,
   } = props;
 
   const domLayout = 'autoHeight';
@@ -330,137 +332,139 @@ function DataTable(props) {
   };
 
   return (
-    <div className="data-table--padded">
-      {rowData.length || canEdit ? (
-        <>
-          <div className="data-table__header-container">
-            <Typography variant="h5" className="data-table__header">
-              {titleText}
-            </Typography>
-            <div>
-              {canAdd && (
-                <span className="data-table__action">
-                  <Typography display="inline">
-                    Add Row
-                  </Typography>
-                  <IconButton
-                    onClick={() => setShowEditDialog(true)}
-                    title="Add Row"
-                  >
-                    <AddCircleOutlineIcon />
-                  </IconButton>
-                </span>
-              )}
-              {canToggleColumns && (
-                <span className="data-table__action">
-                  <IconButton
-                    onClick={() => setShowPopover(prevVal => !prevVal)}
-                  >
-                    <MoreHorizIcon />
-                  </IconButton>
-                </span>
-              )}
-              {canExport && (
-                <span className="data-table__action">
-                  <Typography display="inline">
-                    Export to CSV
-                  </Typography>
-                  <IconButton
-                    onClick={handleCSVExport}
-                    title="Export to CSV"
-                  >
-                    <GetAppIcon />
-                  </IconButton>
-                </span>
-              )}
-              {canReorder && (
-                <span className="data-table__action">
-                  <Typography display="inline">
-                    Reorder Rows
-                  </Typography>
-                  <Switch
-                    checked={showReorder}
-                    onChange={toggleReorder}
-                    color="primary"
-                    title="Reorder Rows"
-                  />
-                  <Snackbar
-                    anchorOrigin={{
-                      vertical: 'bottom',
-                      horizontal: 'left',
-                    }}
-                    open={showSnackbar}
-                    autoHideDuration={snackbarDuration}
-                    message={snackbarMessage}
-                    onClose={handleSnackbarClose}
-                  />
-                </span>
-              )}
+    <ThemeProvider theme={theme}>
+      <div className="data-table--padded">
+        {rowData.length || canEdit ? (
+          <>
+            <div className="data-table__header-container">
+              <Typography variant="h5" className="data-table__header">
+                {titleText}
+              </Typography>
+              <div>
+                {canAdd && (
+                  <span className="data-table__action">
+                    <Typography display="inline">
+                      Add Row
+                    </Typography>
+                    <IconButton
+                      onClick={() => setShowEditDialog(true)}
+                      title="Add Row"
+                    >
+                      <AddCircleOutlineIcon />
+                    </IconButton>
+                  </span>
+                )}
+                {canToggleColumns && (
+                  <span className="data-table__action">
+                    <IconButton
+                      onClick={() => setShowPopover(prevVal => !prevVal)}
+                    >
+                      <MoreHorizIcon />
+                    </IconButton>
+                  </span>
+                )}
+                {canExport && (
+                  <span className="data-table__action">
+                    <Typography display="inline">
+                      Export to CSV
+                    </Typography>
+                    <IconButton
+                      onClick={handleCSVExport}
+                      title="Export to CSV"
+                    >
+                      <GetAppIcon />
+                    </IconButton>
+                  </span>
+                )}
+                {canReorder && (
+                  <span className="data-table__action">
+                    <Typography display="inline">
+                      Reorder Rows
+                    </Typography>
+                    <Switch
+                      checked={showReorder}
+                      onChange={toggleReorder}
+                      color="primary"
+                      title="Reorder Rows"
+                    />
+                    <Snackbar
+                      anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                      }}
+                      open={showSnackbar}
+                      autoHideDuration={snackbarDuration}
+                      message={snackbarMessage}
+                      onClose={handleSnackbarClose}
+                    />
+                  </span>
+                )}
+              </div>
+              <EditDialog
+                open={showEditDialog}
+                onClose={handleRowEditClose}
+                editData={selectedRow.data}
+                reportIdent={reportIdent}
+                tableType={tableType}
+                addIndex={tableLength}
+              />
             </div>
-            <EditDialog
-              open={showEditDialog}
-              onClose={handleRowEditClose}
-              editData={selectedRow.data}
-              reportIdent={reportIdent}
-              tableType={tableType}
-              addIndex={tableLength}
-            />
-          </div>
-          <div
-            className="ag-theme-material data-table__container"
-            ref={gridDiv}
-          >
-            {showPopover
-              && renderColumnPicker()
-            }
-            <AgGridReact
-              columnDefs={columnDefs}
-              rowData={rowData}
-              defaultColDef={defaultColDef}
-              onGridReady={onGridReady}
-              domLayout={domLayout}
-              pagination={isPaginated}
-              paginationPageSize={MAX_VISIBLE_ROWS}
-              autoSizePadding="0"
-              deltaRowDataMode={canReorder}
-              getRowNodeId={data => data.ident}
-              onRowDragEnd={canReorder ? onRowDragEnd : null}
-              editType="fullRow"
-              context={{
-                canEdit,
-                canViewDetails,
-                EditDialog,
-                reportIdent,
-                tableType,
-              }}
-              frameworkComponents={{
-                EditDialog,
-                LinkCellRenderer,
-                GeneCellRenderer,
-                ActionCellRenderer: RowActionCellRenderer,
-              }}
-              suppressAnimationFrame
-              suppressColumnVirtualisation
-              disableStaticMarkup // See https://github.com/ag-grid/ag-grid/issues/3727
-              onFirstDataRendered={onFirstDataRendered}
-            />
-          </div>
-        </>
-      ) : (
-        <>
-          <div className="data-table__header-container">
-            <Typography variant="h5" className="data-table__header">
-              {titleText}
-            </Typography>
-          </div>
-          <div className="data-table__container">
-            <Typography variant="body1" align="center">
-              No data to display
-            </Typography>
-          </div>
-        </>
-      )}
-    </div>
+            <div
+              className="ag-theme-material data-table__container"
+              ref={gridDiv}
+            >
+              {showPopover
+                && renderColumnPicker()
+              }
+              <AgGridReact
+                columnDefs={columnDefs}
+                rowData={rowData}
+                defaultColDef={defaultColDef}
+                onGridReady={onGridReady}
+                domLayout={domLayout}
+                pagination={isPaginated}
+                paginationPageSize={MAX_VISIBLE_ROWS}
+                autoSizePadding="0"
+                deltaRowDataMode={canReorder}
+                getRowNodeId={data => data.ident}
+                onRowDragEnd={canReorder ? onRowDragEnd : null}
+                editType="fullRow"
+                context={{
+                  canEdit,
+                  canViewDetails,
+                  EditDialog,
+                  reportIdent,
+                  tableType,
+                }}
+                frameworkComponents={{
+                  EditDialog,
+                  LinkCellRenderer,
+                  GeneCellRenderer,
+                  ActionCellRenderer: RowActionCellRenderer,
+                }}
+                suppressAnimationFrame
+                suppressColumnVirtualisation
+                disableStaticMarkup // See https://github.com/ag-grid/ag-grid/issues/3727
+                onFirstDataRendered={onFirstDataRendered}
+              />
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="data-table__header-container">
+              <Typography variant="h5" className="data-table__header">
+                {titleText}
+              </Typography>
+            </div>
+            <div className="data-table__container">
+              <Typography variant="body1" align="center">
+                No data to display
+              </Typography>
+            </div>
+          </>
+        )}
+      </div>
+    </ThemeProvider>
   );
 }
 
@@ -483,6 +487,7 @@ DataTable.propTypes = {
   rowUpdateAPICall: PropTypes.func,
   canExport: PropTypes.bool,
   patientId: PropTypes.string,
+  theme: PropTypes.object,
 };
 
 DataTable.defaultProps = {
@@ -502,6 +507,7 @@ DataTable.defaultProps = {
   rowUpdateAPICall: () => {},
   canExport: false,
   patientId: '',
+  theme: null,
 };
 
 export default DataTable;
