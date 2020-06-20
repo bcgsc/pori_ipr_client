@@ -16,7 +16,7 @@ import geneViewerApi from '../../../../services/reports/geneViewer';
 import { columnDefs } from '@/views/ReportView/components/KbMatches/columnDefs';
 import { columnDefs as smallMutationsColumnDefs } from '@/views/ReportView/components/SmallMutations/columnDefs';
 import copyNumberColumnDefs from '@/views/ReportView/components/CopyNumber/columnDefs';
-import expressionColumnDefs from '@/views/ReportView/genomic-report/expression/columnDefs';
+import expressionColumnDefs from '@/views/ReportView/components/Expression/columnDefs';
 import structuralVariantsColumnDefs from '@/views/ReportView/components/StructuralVariants/columnDefs';
 
 import './index.scss';

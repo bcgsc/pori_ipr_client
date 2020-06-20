@@ -11,12 +11,6 @@ const bindings = {
 
 class ExpressionAnalysisComponent {
   $onInit() {
-    this.showSection = {
-      analysis: true,
-      outlierSummary: true,
-      mrnaOutliers: true,
-      drugTargetable: false,
-    };
     /* can remove next line when API returns array */
     this.densityGraphs = Object.values(this.densityGraphs);
 
@@ -57,22 +51,6 @@ class ExpressionAnalysisComponent {
       comparator = 'N/A';
     }
     return comparator;
-  }
-
-  searchDrugs(query) {
-    return (drug) => {
-      if (!query) {
-        return true;
-      }
-      // Rever to false return
-      let result = false;
-      const names = [drug.gene, drug.lohRegion, drug.drugOptions].join().toLowerCase();
-
-      if (names.includes(query.toLowerCase())) {
-        result = true;
-      }
-      return result;
-    };
   }
 
   // Sort outliers into categories
@@ -117,17 +95,6 @@ class ExpressionAnalysisComponent {
     }
 
     return expressions;
-  }
-
-  processGraphs() {
-    const graphs = {};
-
-    this.densityGraphs.forEach((graph) => {
-      const [gene] = graph.filename.split('.');
-      graphs[gene] = graph;
-    });
-
-    this.densityGraphs = graphs;
   }
 }
 

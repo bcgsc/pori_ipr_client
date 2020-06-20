@@ -75,7 +75,7 @@ const sections = [
   },
   {
     name: 'Expression',
-    uri: 'expression-analysis',
+    uri: 'expression',
     meta: false,
     showChildren: false,
     clinician: true,

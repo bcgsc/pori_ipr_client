@@ -21,14 +21,14 @@ function ReportToolbar(props) {
 
   return (
     <span className="report__header">
-      <Typography display="inline" variant="h6" className="report__header--text-align-left">
+      <Typography display="inline" variant="h5" className="report__header--text-align-left">
         {diagnosis}
       </Typography>
-      <Typography display="inline" variant="h6" className="report__header--text-align-center">
+      <Typography display="inline" variant="h5" className="report__header--text-align-center">
         {patientId}
         {` ${type} Report`}
       </Typography>
-      <Typography display="inline" variant="h6" className="report__header--text-align-right">
+      <Typography display="inline" variant="h5" className="report__header--text-align-right">
         {state}
       </Typography>
       <IconButton

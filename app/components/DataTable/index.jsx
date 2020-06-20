@@ -339,7 +339,7 @@ function DataTable(props) {
         {rowData.length || canEdit ? (
           <>
             <div className="data-table__header-container">
-              <Typography variant="h5" className="data-table__header">
+              <Typography variant="h3" className="data-table__header">
                 {titleText}
               </Typography>
               <div>
@@ -454,7 +454,7 @@ function DataTable(props) {
         ) : (
           <>
             <div className="data-table__header-container">
-              <Typography variant="h5" className="data-table__header">
+              <Typography variant="h3" className="data-table__header">
                 {titleText}
               </Typography>
             </div>
