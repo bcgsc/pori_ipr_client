@@ -30,6 +30,7 @@ import { DiseaseSpecificComponent } from '@/views/ReportView/components/DiseaseS
 import { SmallMutationsComponent } from '@/views/ReportView/components/SmallMutations';
 import { CopyNumberComponent } from '@/views/ReportView/components/CopyNumber';
 import { StructuralVariantsComponent } from '@/views/ReportView/components/StructuralVariants';
+import { AppendicesComponent } from '@/views/ReportView/components/Appendices';
 
 import MutationSignatureComponent from '@/components/MutationSignature';
 import DiscussionEntryComponent from '@/views/ReportView/components/Discussion/components/DiscussionEntry';
@@ -71,6 +72,7 @@ const rootModule = angular.module('root')
   .component('smallMutations', SmallMutationsComponent)
   .component('copyNumber', CopyNumberComponent)
   .component('structuralVariants', StructuralVariantsComponent)
+  .component('appendices', AppendicesComponent)
   .component('reactTable', react2angular(ReactTable))
   .service('ProjectService', ProjectService)
   .service('AclService', AclService)

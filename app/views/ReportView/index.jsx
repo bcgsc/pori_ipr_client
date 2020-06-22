@@ -30,6 +30,7 @@ const SmallMutations = lazy(() => import('./components/SmallMutations'));
 const CopyNumber = lazy(() => import('./components/CopyNumber'));
 const StructuralVariants = lazy(() => import('./components/StructuralVariants'));
 const Expression = lazy(() => import('./components/Expression'));
+const Appendices = lazy(() => import('./components/Appendices'));
 
 const ReportView = () => {
   const match = useRouteMatch();
@@ -135,6 +136,12 @@ const ReportView = () => {
                 <Expression {...routeProps} print={false} report={report} reportEdit />
               )}
               path={`${match.path}/expression`}
+            />
+            <Route
+              render={routeProps => (
+                <Appendices {...routeProps} print={false} report={report} reportEdit theme={theme} />
+              )}
+              path={`${match.path}/appendices`}
             />
             {/* Need token for FileUpload API call */}
             <SecurityContext.Consumer>
