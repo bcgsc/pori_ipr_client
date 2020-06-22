@@ -4,10 +4,10 @@ import { Typography, Paper } from '@material-ui/core';
 
 import DataTable from '../../../../components/DataTable';
 import columnDefs from './columnDefs';
-import MutationSummaryService from '@/services/reports/mutation-summary.service';
 import ExpressionService from '@/services/reports/expression.service';
-import ImageService from '@/services/reports/image.service';
 import { processExpression, getPtxComparator } from './processData';
+
+import './index.scss';
 
 const tables = {
   clinical: 'Expression Level Outliers of Potential Clinical Relevance',
@@ -30,9 +30,7 @@ function Expression(props) {
   } = props;
 
   const [tissueSites, setTissueSites] = useState();
-  const [outliers, setOutliers] = useState();
-  const [mutationSummary, setMutationSummary] = useState();
-  const [densityGraphs, setDensityGraphs] = useState();
+  const [comparators, setComparators] = useState();
   const [expOutliers, setExpOutliers] = useState();
   const [ptxComparator, setPtxComparator] = useState();
   const [visibleCols, setVisibleCols] = useState(
@@ -46,37 +44,41 @@ function Expression(props) {
   useEffect(() => {
     if (report) {
       const getData = async () => {
-        const promises = Promise.all([
-          MutationSummaryService.get(report.ident),
-          ExpressionService.all(report.ident),
-          ImageService.expDensityGraphs(report.ident),
-        ]);
-        const [mutationSummaryResp, outliersResp, densityGraphsResp] = await promises;
+        const outliers = await ExpressionService.all(report.ident);
 
-        setOutliers(outliersResp);
-        setMutationSummary(mutationSummaryResp);
-        /* can remove object call when API returns array */
-        setDensityGraphs(Object.values(densityGraphsResp));
+        if (outliers && outliers.length) {
+          setExpOutliers(processExpression(outliers));
+          setPtxComparator(getPtxComparator(outliers));
+        }
       };
 
       setTissueSites([
-        { key: 'Diagnosis', value: report.patientInformation.diagnosis },
-        { key: 'Biopsy Type', value: report.patientInformation.biopsySite },
-        { key: 'Site of Primary Disease', value: 'N/A' },
-        { key: 'Biopsy Site', value: 'N/A' },
-        { key: 'Tumour Content', value: `${report.tumourAnalysis.tumourContent}%` || 'N/A' },
-        { key: 'Ploidy Model', value: report.tumourAnalysis.ploidy },
+        [
+          { key: 'Diagnosis', value: report.patientInformation.diagnosis },
+          { key: 'Biopsy Type', value: report.patientInformation.biopsySite },
+        ],
+        [
+          { key: 'Site of Primary Disease', value: 'N/A' },
+          { key: 'Biopsy Site', value: 'N/A' },
+        ],
+        [
+          { key: 'Tumour Content', value: `${report.tumourAnalysis.tumourContent}%` || 'N/A' },
+          { key: 'Ploidy Model', value: report.tumourAnalysis.ploidy },
+        ],
       ]);
       getData();
     }
   }, [report]);
 
   useEffect(() => {
-    if (outliers && outliers.length) {
-      setExpOutliers(processExpression(outliers));
-      setPtxComparator(getPtxComparator(outliers));
+    if (ptxComparator) {
+      setComparators([
+        { key: 'Tissue Comparator', value: `GTEX ${report.tumourAnalysis.normalExpressionComparator}` },
+        { key: 'Disease Expression Comparator', value: `TCGA ${report.tumourAnalysis.diseaseExpressionComparator}` },
+        { key: 'Protein Expression Comparator', value: `POG ${ptxComparator}` },
+      ]);
     }
-  }, [outliers]);
+  }, [ptxComparator]);
 
   const handleVisibleColsChange = (change) => {
     setVisibleCols(change);
@@ -89,31 +91,49 @@ function Expression(props) {
   return (
     <>
       {report && tissueSites ? (
-        <div>
-          <Typography variant="h1">
+        <div className="expression--padded">
+          <Typography variant="h1" className="expression__title">
             Expression Analysis
           </Typography>
-          <Typography variant="h2">
+          <Typography variant="h3" className="expression__subtitle">
             Tissue Sites
           </Typography>
-          <Paper elevation={0}>
-            {tissueSites.map(({ key, value }) => (
-              <React.Fragment key={key}>
-                <Typography display="inline">
-                  {`${key}: `}
-                </Typography>
-                <Typography display="inline">
-                  {value}
-                </Typography>
-              </React.Fragment>
+          <Paper elevation={0} className="expression__box">
+            {tissueSites.map((site, index) => (
+              <span
+                key={index}
+                className="expression__box-column"
+              >
+                {site.map(({ key, value }) => (
+                  <div key={key} className="expression__box-row">
+                    <Typography display="inline" className="expression__key">
+                      {`${key}: `}
+                    </Typography>
+                    <Typography display="inline" className="expression__value">
+                      {value}
+                    </Typography>
+                  </div>
+                ))}
+              </span>
             ))}
           </Paper>
-          <Typography variant="h2">
+          <Typography variant="h3" className="expression__subtitle">
             Expression Correlation Summary and Comparator Choices
           </Typography>
-          <Paper elevation={0}>
-            
-          </Paper>
+          {comparators ? (
+            <Paper elevation={0} className="expression__comparator-box" square>
+              {comparators.map(({ key, value }) => (
+                <div key={key} className="expression__comparator-column">
+                  <Typography className="expression__comparator-value--padded">
+                    {key}
+                  </Typography>
+                  <Typography className="expression__comparator-value--padded">
+                    {value}
+                  </Typography>
+                </div>
+              ))}
+            </Paper>
+          ) : null}
         </div>
       ) : null}
       <>
