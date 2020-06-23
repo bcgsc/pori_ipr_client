@@ -14,7 +14,7 @@ import {
 import DataTable from '../..';
 import geneViewerApi from '../../../../services/reports/geneViewer';
 import { columnDefs } from '../../../../views/report/genomic-report/kb-matches/columnDefs';
-import smallMutationsColumnDefs from '../../../../views/report/genomic-report/small-mutations/columnDefs';
+import { columnDefs as smallMutationsColumnDefs } from '../../../../views/report/genomic-report/small-mutations/columnDefs';
 import copyNumberColumnDefs from '../../../../views/report/genomic-report/copy-number-analyses/columnDefs';
 import expressionColumnDefs from '../../../../views/report/genomic-report/expression/columnDefs';
 import structuralVariantsColumnDefs from '../../../../views/report/genomic-report/structural-variants/columnDefs';

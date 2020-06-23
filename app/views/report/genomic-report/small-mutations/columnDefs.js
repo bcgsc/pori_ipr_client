@@ -90,9 +90,53 @@ const columnDefs = [{
   hide: true,
 }];
 
-export const setHeaderName = (header, colId) => {
+const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+
+const signatureColumnDefs = [
+  {
+    headerName: 'Signature',
+    field: 'signature',
+    hide: false,
+    comparator: collator.compare,
+    sort: 'asc',
+    sortedAt: 1,
+  },
+  {
+    headerName: 'NNLS',
+    field: 'nnls',
+    hide: false,
+    sort: 'desc',
+    sortedAt: 0,
+  },
+  {
+    headerName: 'Proposed Association',
+    field: 'associations',
+    hide: false,
+  },
+  {
+    headerName: 'Additional Features',
+    field: 'features',
+    hide: true,
+  },
+  {
+    headerName: '# Cancer Types',
+    field: 'numCancerTypes',
+    hide: true,
+  },
+  {
+    headerName: 'Significant Cancer Type',
+    field: 'cancerTypes',
+    hide: true,
+  },
+];
+
+const setHeaderName = (header, colId) => {
   const index = columnDefs.findIndex(obj => obj.colId === colId);
   columnDefs[index].headerName = header;
 };
 
-export default columnDefs;
+export {
+  columnDefs,
+  setHeaderName,
+  signatureColumnDefs,
+};
