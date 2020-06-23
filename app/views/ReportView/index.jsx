@@ -12,7 +12,7 @@ import SecurityContext from '@/components/SecurityContext';
 import ReportToolbar from '@/components/ReportToolbar';
 import ReportSidebar from '@/components/ReportSidebar';
 import ReportService from '@/services/reports/report.service';
-import sections from './sections';
+import { genomic, probe } from './sections';
 
 import './index.scss';
 
@@ -31,6 +31,7 @@ const CopyNumber = lazy(() => import('./components/CopyNumber'));
 const StructuralVariants = lazy(() => import('./components/StructuralVariants'));
 const Expression = lazy(() => import('./components/Expression'));
 const Appendices = lazy(() => import('./components/Appendices'));
+const Settings = lazy(() => import('./components/Settings'));
 
 const ReportView = () => {
   const match = useRouteMatch();
@@ -38,12 +39,19 @@ const ReportView = () => {
   const theme = useTheme();
   const [report, setReport] = useState();
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
+  const [sections, setSections] = useState();
 
   useEffect(() => {
     if (!report) {
       const getReport = async () => {
         const resp = await ReportService.getReport(params.ident);
         setReport(resp);
+
+        if (resp.type === 'genomic') {
+          setSections(genomic);
+        } else {
+          setSections(probe);
+        }
       };
 
       getReport();
@@ -143,6 +151,12 @@ const ReportView = () => {
               )}
               path={`${match.path}/appendices`}
             />
+            <Route
+              render={routeProps => (
+                <Settings {...routeProps} print={false} report={report} reportEdit showBindings />
+              )}
+              path={`${match.path}/settings`}
+            />
             {/* Need token for FileUpload API call */}
             <SecurityContext.Consumer>
               {value => (
@@ -177,7 +191,9 @@ const ReportView = () => {
           </Switch>
         </div>
       </div>
-      <ReportSidebar sections={sections} isSidebarVisible={isSidebarVisible} />
+      {Boolean(sections) && (
+        <ReportSidebar sections={sections} isSidebarVisible={isSidebarVisible} />
+      )}
     </div>
   );
 };

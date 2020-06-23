@@ -1,38 +1,47 @@
+import { angular2react } from 'angular2react';
+import { $rootScope } from 'ngimport';
+
+import toastCreator from '@/services/utils/toastCreator';
+import { searchUsers } from '@/services/management/auth';
+import lazyInjector from '@/lazyInjector';
 import template from './report-settings.pug';
 import addTemplate from './role-add.pug';
 import deleteTemplate from './report-delete.pug';
-import './report-settings.scss';
+import ReportService from '@/services/reports/report.service';
+
+import './index.scss';
 
 const bindings = {
   report: '<',
-  reportSettings: '<',
   showBindings: '<',
+  history: '<',
 };
 
-class ReportSettingsComponent {
-  /* @ngInject */
-  constructor($scope, $state, $mdDialog, $mdToast, ReportService, indefiniteArticleFilter) {
-    this.$scope = $scope;
-    this.$state = $state;
+class Settings {
+  constructor($mdDialog, $mdToast, indefiniteArticleFilter) {
     this.$mdDialog = $mdDialog;
     this.$mdToast = $mdToast;
-    this.ReportService = ReportService;
     this.indefiniteArticleFilter = indefiniteArticleFilter;
   }
 
   $onInit() {
     this.roles = ['bioinformatician', 'analyst', 'reviewer', 'admin', 'clinician'];
     this.reportSettingsChanged = false;
+  }
 
-    this.reportCache = angular.copy(this.report);
+  async $onChanges(changes) {
+    if (changes.report && changes.report.currentValue) {
+      this.reportCache = angular.copy(this.report);
+    }
   }
 
   // Unbind user
   async removeEntry(role) {
-    const result = await this.ReportService.unbindUser(
+    const result = await ReportService.unbindUser(
       this.report.ident, role.user.ident, role.role,
     );
     this.report = result;
+    $rootScope.$digest();
   }
 
   /* eslint-disable class-methods-use-this */
@@ -47,7 +56,8 @@ class ReportSettingsComponent {
         targetEvent: $event,
         template: addTemplate,
         clickOutToClose: false,
-        controller: ['scope', 'UserService', (scope, UserService) => {
+        parent: angular.element(document.body),
+        controller: ['scope', (scope) => {
           scope.role = { role: suggestedRole };
 
           scope.cancel = () => {
@@ -59,7 +69,7 @@ class ReportSettingsComponent {
               return [];
             }
 
-            const resp = await UserService.search(searchText);
+            const resp = await searchUsers(searchText);
             return resp;
           };
 
@@ -76,7 +86,7 @@ class ReportSettingsComponent {
             }
 
             // Perform binding
-            const resp = await this.ReportService.bindUser(
+            const resp = await ReportService.bindUser(
               this.report.ident, scope.role.user.ident, scope.role.role,
             );
             this.$mdDialog.hide({
@@ -87,11 +97,12 @@ class ReportSettingsComponent {
         }],
       });
       if (outcome) {
-        this.$mdToast.show(this.$mdToast.simple().textContent(outcome.message));
+        this.$mdToast.show(toastCreator(outcome.message));
+        $rootScope.$digest();
       }
       this.report = outcome.data;
     } catch (err) {
-      this.$mdToast.show(this.$mdToast.simple().textContent('No changes were made'));
+      this.$mdToast.show(toastCreator('No changes were made'));
     }
   }
 
@@ -114,11 +125,11 @@ class ReportSettingsComponent {
     this.reportSettingsChanged = false;
 
     // Send updated settings to API
-    const resp = await this.ReportService.updateReport(this.report);
+    const resp = await ReportService.updateReport(this.report);
     this.report = resp;
-    this.$scope.$digest();
+    $rootScope.$digest();
 
-    this.$mdToast.show(this.$mdToast.simple().textContent('Report settings have been updated.'));
+    this.$mdToast.show(toastCreator('Report settings have been updated.'));
   }
 
   async deleteReport($event) {
@@ -127,6 +138,7 @@ class ReportSettingsComponent {
         targetEvent: $event,
         template: deleteTemplate,
         clickOutToClose: true,
+        parent: angular.element(document.body),
         controller: ['scope', (scope) => {
           scope.report = this.report;
           scope.confirmText = '';
@@ -139,7 +151,7 @@ class ReportSettingsComponent {
             try {
               if (scope.confirmText.toLowerCase() === this.report.ident.toLowerCase()) {
                 form.$error.invalid = false;
-                const resp = await this.ReportService.deleteReport(this.report);
+                const resp = await ReportService.deleteReport(this.report);
                 this.$mdDialog.hide({ data: resp.data, status: resp.status });
               } else {
                 form.$error.invalid = true;
@@ -152,27 +164,27 @@ class ReportSettingsComponent {
       });
 
       if (outcome.status === 204) {
-        this.$mdToast.show(this.$mdToast.simple().textContent('Report Deleted'));
-        this.$state.go('root.reportlisting.reports');
+        this.$mdToast.show(toastCreator('Report Deleted'));
+        this.history.push('/report-listing');
       } else {
-        this.$mdToast.show(this.$mdToast.simple().textContent(`Delete Error: ${outcome.data}`));
+        this.$mdToast.show(toastCreator(`Delete Error: ${outcome.data}`));
       }
     } catch (err) {
       if (err.status === 403) {
-        this.$mdToast.show(
-          this.$mdToast.simple().textContent('You do not have permission to delete reports'),
-        );
+        this.$mdToast.show(toastCreator('You do not have permission to delete reports'));
       } else {
-        this.$mdToast.show(
-          this.$mdToast.simple().textContent(`Report not deleted: ${err.data.message}`),
-        );
+        this.$mdToast.show(toastCreator(`Report not deleted: ${err.data.message}`));
       }
     }
   }
 }
 
-export default {
+Settings.$inject = ['$mdDialog', '$mdToast', 'indefiniteArticleFilter'];
+
+export const SettingsComponent = {
   template,
   bindings,
-  controller: ReportSettingsComponent,
+  controller: Settings,
 };
+
+export default angular2react('settings', SettingsComponent, lazyInjector.$injector);

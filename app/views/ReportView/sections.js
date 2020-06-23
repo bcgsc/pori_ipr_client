@@ -1,4 +1,4 @@
-const sections = [
+const genomic = [
   {
     name: 'Summary',
     uri: 'summary',
@@ -91,7 +91,7 @@ const sections = [
   },
   {
     name: 'Report Settings',
-    uri: 'report-settings',
+    uri: 'settings',
     meta: true,
     showChildren: false,
     clinician: false,
@@ -99,4 +99,42 @@ const sections = [
   },
 ];
 
-export default sections;
+const probe = [
+  {
+    name: 'Summary',
+    uri: 'summary',
+    meta: false,
+    showChildren: false,
+    clinician: true,
+    children: [],
+  },
+  {
+    name: 'Detailed Genomic Analysis',
+    uri: 'kb-matches',
+    meta: false,
+    showChildren: false,
+    clinician: true,
+    children: [],
+  },
+  {
+    name: 'Appendices',
+    uri: 'appendices',
+    meta: false,
+    showChildren: false,
+    clinician: true,
+    children: [],
+  },
+  {
+    name: 'Report Settings',
+    uri: 'settings',
+    meta: true,
+    showChildren: false,
+    clinician: false,
+    children: [],
+  },
+];
+
+export {
+  genomic,
+  probe,
+};

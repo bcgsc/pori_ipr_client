@@ -90,6 +90,15 @@ const isExternalMode = ({ authorizationToken }) => {
   }
 };
 
+const searchUsers = async (query) => {
+  try {
+    const resp = await $http.get(`${CONFIG.ENDPOINTS.API}/user/search`, { params: { query }});
+    return resp.data;
+  } catch {
+    return false;
+  }
+};
+
 const login = async (referrerUri = null) => {
   setReferrerUri(referrerUri);
 
@@ -125,4 +134,5 @@ export {
   getUser,
   getUsername,
   isExternalMode,
+  searchUsers,
 };
