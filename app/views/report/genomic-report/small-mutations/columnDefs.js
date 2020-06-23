@@ -64,22 +64,22 @@ const columnDefs = [{
   valueGetter: 'data.gene.oncogene || false',
   hide: true,
 }, {
-  headerName: 'Tumour Suppressor',
+  headerName: 'Tumour Suppressor Gene',
   colId: 'tumourSuppressor',
   valueGetter: 'data.gene.tumourSuppressor || false',
   hide: true,
 }, {
-  headerName: 'Cancer Related',
+  headerName: 'Cancer Related Gene',
   colId: 'cancerRelated',
   valueGetter: 'data.gene.cancerRelated || false',
   hide: true,
 }, {
-  headerName: 'Known Fusion Partner',
+  headerName: 'Known Fusion Partner Gene',
   colId: 'knownFusionPartner',
   valueGetter: 'data.gene.knownFusionPartner || false',
   hide: true,
 }, {
-  headerName: 'Known Small Mutation',
+  headerName: 'Known Small Mutation Gene',
   colId: 'knownSmallMutation',
   valueGetter: 'data.gene.knownSmallMutation || false',
   hide: true,
