@@ -338,13 +338,12 @@ class GenomicSummaryComponent {
             this.$mdDialog.cancel('Alteration was not removed');
           };
           // Perform Update/Change
-          scope.update = async (cascade) => {
+          scope.update = async () => {
             try {
               await this.GenomicAlterationsService.remove(
                 this.report.ident,
                 alteration.ident,
                 scope.comment,
-                cascade,
               );
               this.genomicAlterations = this.genomicAlterations.filter(r => r.ident !== alteration.ident);
 
@@ -353,12 +352,12 @@ class GenomicSummaryComponent {
 
               this.$mdDialog.hide({
                 status: true,
-                message: `Successfully removed the ${cascade ? 'alterations' : 'alteration'}`,
+                message: 'Successfully removed the alteration',
               });
             } catch (err) {
               this.$mdDialog.hide({
                 status: true,
-                message: `Unable to remove the ${cascade ? 'alterations' : 'alteration'} due to an error: ${err}`,
+                message: `Unable to remove the alteration due to an error: ${err}`,
               });
             } finally {
               scope.$digest();

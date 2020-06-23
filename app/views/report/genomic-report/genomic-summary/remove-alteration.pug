@@ -12,5 +12,4 @@ md-dialog(layout="column", aria-label="Remove Alteration", ng-cloak, flex=55).ed
     md-dialog-actions(layout="row", layout-align="end center")
         md-button(ng-click="cancel()") Cancel
         span(flex)
-        md-button(ng-click="update(false)").md-accent Remove only this entry
-        md-button(ng-click="update(true)").md-accent Removed associated entries
+        md-button(ng-click="update()").md-accent Remove
