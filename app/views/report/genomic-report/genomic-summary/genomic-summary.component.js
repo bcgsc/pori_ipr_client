@@ -21,7 +21,7 @@ const bindings = {
 class GenomicSummaryComponent {
   /* @ngInject */
   constructor($state, $scope, TumourAnalysisService, PatientInformationService,
-    MutationSummaryService, GenomicAlterationsService, $mdDialog, $mdToast) {
+    MutationSummaryService, GenomicAlterationsService, $mdDialog, $mdToast, ReportService) {
     this.$state = $state;
     this.$scope = $scope;
     this.TumourAnalysisService = TumourAnalysisService;
@@ -30,6 +30,7 @@ class GenomicSummaryComponent {
     this.GenomicAlterationsService = GenomicAlterationsService;
     this.$mdDialog = $mdDialog;
     this.$mdToast = $mdToast;
+    this.ReportService = ReportService;
   }
 
   async $onInit() {
@@ -253,18 +254,24 @@ class GenomicSummaryComponent {
         controller: ['scope', (scope) => {
           scope.patientId = this.report.patientId;
           scope.patientInformation = { ...this.report.patientInformation };
+          scope.biopsyName = this.report.biopsyName;
           scope.cancel = () => {
             this.$mdDialog.cancel('Patient information was not updated');
           };
-          scope.update = async () => {
+          scope.update = async (form) => {
             try {
-              const response = await this.PatientInformationService.update(
+              let report;
+              if (form.Biopsy.$dirty) {
+                report = await this.ReportService.updateReport({ ...this.report, biopsyName: scope.biopsyName });
+              }
+              const patientInfo = await this.PatientInformationService.update(
                 this.report.ident,
                 scope.patientInformation,
               );
               this.$mdDialog.hide({
                 message: 'Patient information has been successfully updated',
-                data: response,
+                report,
+                patientInfo,
               });
             } catch (err) {
               this.$mdToast.showSimple(
@@ -275,7 +282,12 @@ class GenomicSummaryComponent {
         }],
       });
       this.$mdToast.showSimple(resp.message);
-      this.report.patientInformation = resp.data;
+      if (resp.report) {
+        this.report = resp.report;
+      }
+      if (resp.patientInfo) {
+        this.report.patientInformation = resp.patientInfo;
+      }
       this.$scope.$digest();
     } catch (err) {
       this.$mdToast.showSimple(err);
