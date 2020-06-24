@@ -95,7 +95,7 @@ const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'bas
 const signatureColumnDefs = [
   {
     headerName: 'Signature',
-    field: 'signature',
+    valueGetter: 'data.signature.replace("Signature ", "")',
     hide: false,
     comparator: collator.compare,
     sort: 'asc',
