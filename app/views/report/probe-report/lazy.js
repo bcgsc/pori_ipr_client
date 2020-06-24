@@ -23,8 +23,8 @@ const summary = {
       async ($transition$, ProbeTestInformationService) => ProbeTestInformationService.retrieve(
         $transition$.params().analysis_report,
       )],
-    signature: ['$transition$', 'ProbeSignatureService',
-      async ($transition$, ProbeSignatureService) => ProbeSignatureService.retrieve(
+    signatures: ['$transition$', 'SignatureService',
+      async ($transition$, SignatureService) => SignatureService.getSignatures(
         $transition$.params().analysis_report,
       )],
     probeResults: ['$transition$', 'TargetedGenesService',

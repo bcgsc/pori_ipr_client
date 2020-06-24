@@ -31,7 +31,6 @@ import PathwayAnalysisService from './services/reports/pathway-analysis/pathway-
 import AnalystCommentsService from './services/reports/analyst-comments/analyst-comments.service';
 import AlterationService from './services/reports/alteration.service';
 import TargetedGenesService from './services/reports/probe/targeted-genes.service';
-import ProbeSignatureService from './services/reports/probe/signature.service';
 import ProbeTestInformationService from './services/reports/probe/test-information.service';
 import SlidesService from './services/reports/presentation/slides.service';
 import DiscussionService from './services/reports/presentation/discussion.service';
@@ -98,7 +97,6 @@ const rootModule = angular.module('root')
   .service('GermlineService', GermlineService)
   .service('AlterationService', AlterationService)
   .service('TargetedGenesService', TargetedGenesService)
-  .service('ProbeSignatureService', ProbeSignatureService)
   .service('ProbeTestInformationService', ProbeTestInformationService)
   .service('ImageService', ImageService)
   .service('SmallMutationsService', SmallMutationsService)
