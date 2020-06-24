@@ -31,36 +31,6 @@ class AnalystCommentsService {
     );
     return data;
   }
-
-  /**
-   * Sign Analyst Comments
-   *
-   * @param {String} report - Report unique identifier
-   * @param {String} role - The role to sign for
-   * @return {Promise} API response data
-   * @throws {ErrorType} Thrown when API call fails
-   */
-  async sign(report, role) {
-    const { data } = await this.$http.put(
-      `${this.api}/${report}/summary/analyst-comments/sign/${role}`, {},
-    );
-    return data;
-  }
-
-  /**
-   * Revoke Analyst Comments Signature
-   * @param {String} report - Report unique identifier
-   * @param {String} role - The role to sign for
-   * @return {Promise} API response data
-   * @throws {ErrorType} Thrown when API call fails
-   */
-  async revokeSign(report, role) {
-    const { data } = await this.$http.put(
-      `${this.api}/${report}/summary/analyst-comments/sign/revoke/${role}`,
-      {},
-    );
-    return data;
-  }
 }
 
 export default AnalystCommentsService;

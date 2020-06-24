@@ -52,6 +52,10 @@ const analystComments = {
       async ($transition$, AnalystCommentsService) => AnalystCommentsService.get(
         $transition$.params().analysis_report,
       )],
+    signatures: ['$transition$', 'SignatureService',
+      async ($transition$, SignatureService) => SignatureService.getSignatures(
+        $transition$.params().analysis_report,
+      )],
   },
   lazyLoad: async ($transition$) => {
     const mod = await import(/* webpackChunkName: "quill" */ 'ng-quill/dist/ng-quill.min');

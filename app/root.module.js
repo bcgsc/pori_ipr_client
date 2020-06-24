@@ -50,6 +50,7 @@ import OutlierService from './services/reports/expression/outlier.service';
 import AppendicesService from './services/reports/appendices/appendices.service';
 import GenomicEventsService from './services/reports/summary/genomic-events.service';
 import GeneService from './services/reports/probe/gene.service';
+import SignatureService from './services/reports/analyst-comments/signature.service';
 import IndefiniteArticleFilter from './filters/indefinite-article.filter';
 import TitleCaseFilter from './filters/titlecase.filter';
 import '@ag-grid-community/core/dist/styles/ag-grid.min.css';
@@ -110,6 +111,7 @@ const rootModule = angular.module('root')
   .service('AppendicesService', AppendicesService)
   .service('GenomicEventsService', GenomicEventsService)
   .service('GeneService', GeneService)
+  .service('SignatureService', SignatureService)
   .filter('indefiniteArticle', IndefiniteArticleFilter)
   .filter('titlecase', TitleCaseFilter)
   .config(($stateProvider, $urlServiceProvider, $locationProvider) => {

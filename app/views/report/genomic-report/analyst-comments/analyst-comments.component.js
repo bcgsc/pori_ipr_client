@@ -7,31 +7,33 @@ const bindings = {
   report: '<',
   reportEdit: '<',
   analystComments: '<',
+  signatures: '<',
 };
 
 class AnalystCommentsComponent {
   /* @ngInject */
-  constructor($scope, $mdDialog, $mdToast, $sce, AnalystCommentsService) {
+  constructor($scope, $mdDialog, $mdToast, $sce, AnalystCommentsService, SignatureService) {
     this.$scope = $scope;
     this.$mdDialog = $mdDialog;
     this.$mdToast = $mdToast;
     this.$sce = $sce;
     this.AnalystCommentsService = AnalystCommentsService;
+    this.SignatureService = SignatureService;
   }
 
   // Sign The comments
   async sign(role) {
-    const resp = await this.AnalystCommentsService.sign(this.report.ident, role);
-    this.analystComments = resp;
+    const resp = await this.SignatureService.sign(this.report.ident, role);
+    this.signatures = resp;
     this.$scope.$digest();
   }
 
   // Sign The comments
   async revokeSign(role) {
-    const resp = await this.AnalystCommentsService.revokeSign(
+    const resp = await this.SignatureService.revoke(
       this.report.ident, role,
     );
-    this.analystComments = resp;
+    this.signatures = resp;
     this.$scope.$digest();
   }
 
