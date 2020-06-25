@@ -72,13 +72,12 @@ class GenomicAterationsService {
    * @return {Promise} API respoinse
    * @throws {ErrorType} Thrown when API call fails
    */
-  async remove(reportIdent, ident, comment, cascade = false) {
+  async remove(reportIdent, ident, comment) {
     await this.$http.delete(
       `${this.api}/${reportIdent}/summary/genomic-alterations-identified/${ident}`,
       {
         data: {
           comment,
-          cascade,
         },
         headers: {
           'Content-Type': 'application/json',
