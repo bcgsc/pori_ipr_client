@@ -10,7 +10,7 @@ import './index.scss';
 const bindings = {
   report: '<',
   print: '<',
-  probe: '<',
+  isProbe: '<',
   theme: '<',
 };
 
