@@ -32,6 +32,7 @@ import { CopyNumberComponent } from '@/views/ReportView/components/CopyNumber';
 import { StructuralVariantsComponent } from '@/views/ReportView/components/StructuralVariants';
 import { AppendicesComponent } from '@/views/ReportView/components/Appendices';
 import { SettingsComponent } from '@/views/ReportView/components/Settings';
+import { ProbeSummaryComponent } from '@/views/ReportView/components/ProbeSummary';
 
 import MutationSignatureComponent from '@/components/MutationSignature';
 import DiscussionEntryComponent from '@/views/ReportView/components/Discussion/components/DiscussionEntry';
@@ -76,6 +77,7 @@ const rootModule = angular.module('root')
   .component('structuralVariants', StructuralVariantsComponent)
   .component('appendices', AppendicesComponent)
   .component('settings', SettingsComponent)
+  .component('probeSummary', ProbeSummaryComponent)
   .component('roleCard', RoleCardComponent)
   .component('reactTable', react2angular(ReactTable))
   .service('ProjectService', ProjectService)

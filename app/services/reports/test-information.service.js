@@ -1,7 +1,7 @@
+import { $http } from 'ngimport';
+
 class ProbeTestInformationService {
-  /* @ngInject */
-  constructor($http) {
-    this.$http = $http;
+  constructor() {
     this.api = `${CONFIG.ENDPOINTS.API}/reports`;
   }
 
@@ -13,11 +13,11 @@ class ProbeTestInformationService {
    * @returns {Promise} - result of API call
    */
   async retrieve(report) {
-    const { data } = await this.$http.get(
+    const { data } = await $http.get(
       `${this.api}/${report}/probe-test-information`,
     );
     return data;
   }
 }
 
-export default ProbeTestInformationService;
+export default new ProbeTestInformationService();
