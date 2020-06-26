@@ -40,11 +40,14 @@ md-dialog(layout="column", aria-label="Update Patient Information", ng-cloak, fl
             input(name="BiopsyDetails", placeholder="Biopsy Details", ng-model="patientInformation.biopsySite")
 
           md-input-container(flex)
-            input(name="Physician", placeholder="Physician", ng-model="patientInformation.physician")
+            input(name="Biopsy", placeholder="Biopsy", ng-model="biopsyName")
 
         div(layout="row")
           md-input-container(flex)
             input(name="Protocol", placeholder="Protocol", ng-model="patientInformation.tumourProtocol", disabled)
+
+          md-input-container(flex)
+            input(name="Physician", placeholder="Physician", ng-model="patientInformation.physician")
 
         div(layout="row")
           md-input-container(flex)
