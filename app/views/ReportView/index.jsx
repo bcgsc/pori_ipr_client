@@ -201,7 +201,7 @@ const ReportView = () => {
         </div>
       </div>
       {Boolean(sections) && (
-        <ReportSidebar sections={sections} isSidebarVisible={isSidebarVisible} />
+        <ReportSidebar sections={sections} isSidebarVisible={isSidebarVisible} reportIdent={report.ident} />
       )}
     </div>
   );

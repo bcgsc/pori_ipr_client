@@ -3,6 +3,7 @@ import React, {
   Suspense,
   useState,
   useEffect,
+  useCallback,
 } from 'react';
 import fetchIntercept from 'fetch-intercept';
 import { Route, Switch } from 'react-router-dom';
@@ -21,6 +22,7 @@ const LoginView = lazy(() => import('@/views/LoginView'));
 const TermsView = lazy(() => import('@/views/TermsView'));
 const ReportsView = lazy(() => import('@/views/ReportsView'));
 const ReportView = lazy(() => import('@/views/ReportView'));
+const PrintView = lazy(() => import('@/views/PrintView'));
 
 /**
  * Entry point to application. Handles routing, app theme, and logged in state.
@@ -30,6 +32,7 @@ const Main = () => {
   const [user, setUser] = useState({ firstName: 'Not', lastName: 'logged in' });
   const [admin, setAdmin] = useState(false);
   const [sidebarMaximized, setSidebarMaximized] = useState(false);
+  const [hideNav, setHideNav] = useState(false);
 
   useEffect(() => {
     if (authorizationToken) {
@@ -67,24 +70,29 @@ const Main = () => {
   return (
     <SecurityContext.Provider value={{ authorizationToken, setAuthorizationToken }}>
       <div>
-        <NavBar
-          sidebarMaximized={sidebarMaximized}
-          setSidebarMaximized={setSidebarMaximized}
-          user={user}
-        />
-        <Sidebar
-          sidebarMaximized={sidebarMaximized}
-          setSidebarMaximized={setSidebarMaximized}
-          user={user}
-          admin={admin}
-        />
-        <section className={`main__content ${sidebarMaximized ? 'main__content--maximized' : ''}`}>
+        <section className={`${!hideNav ? 'main__content' : ''} ${sidebarMaximized ? 'main__content--maximized' : ''}`}>
+          {!hideNav ? (
+            <>
+              <NavBar
+                sidebarMaximized={sidebarMaximized}
+                setSidebarMaximized={setSidebarMaximized}
+                user={user}
+              />
+              <Sidebar
+                sidebarMaximized={sidebarMaximized}
+                setSidebarMaximized={setSidebarMaximized}
+                user={user}
+                admin={admin}
+              />
+            </>
+          ) : null}
           <Suspense fallback={(<CircularProgress color="secondary" />)}>
             <Switch>
               <Route component={LoginView} path="/login" />
               <Route component={TermsView} path="/terms" />
               <AuthenticatedRoute admin={admin} component={ReportsView} path="/reports" />
               <AuthenticatedRoute component={ReportView} path="/report/:ident" />
+              <AuthenticatedRoute component={PrintView} path="/print/:ident" hideNav setHideNav={setHideNav} />
             </Switch>
           </Suspense>
         </section>

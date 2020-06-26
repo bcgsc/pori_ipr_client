@@ -13,7 +13,7 @@ import { isAuthorized } from '@/services/management/auth';
  * @returns {Route} a route component which checks authorization on render or redirects to login
  */
 const AuthenticatedRoute = ({
-  component: Component, admin, adminRequired, ...rest
+  component: Component, admin, adminRequired, hideNav, setHideNav, ...rest
 }) => {
   const { authorizationToken } = useContext(SecurityContext);
   const authOk = isAuthorized(authorizationToken);
@@ -37,6 +37,11 @@ const AuthenticatedRoute = ({
     );
   } else {
     ChildComponent = Component;
+  }
+  if (hideNav) {
+    setHideNav(true);
+  } else {
+    setHideNav(false);
   }
   return (
     <Route

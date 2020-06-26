@@ -4,6 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import {
   List, ListItem, ListItemText,
 } from '@material-ui/core';
+import PrintIcon from '@material-ui/icons/Print';
 
 import './index.scss';
 
@@ -11,6 +12,7 @@ const ReportSidebar = (props) => {
   const {
     sections,
     isSidebarVisible,
+    reportIdent,
   } = props;
 
   const { pathname } = useLocation();
@@ -26,6 +28,9 @@ const ReportSidebar = (props) => {
           <ListItemText classes={{ root: 'report-sidebar__list-title', primary: 'report-sidebar__list-title-text' }}>
             Report Sections
           </ListItemText>
+          <Link to={{ pathname: `/print/${reportIdent}` }} className="report-sidebar__list-link">
+            <PrintIcon />
+          </Link>
         </ListItem>
         {sections.map(section => (
           <React.Fragment key={section.name}>
@@ -85,6 +90,7 @@ const ReportSidebar = (props) => {
 ReportSidebar.propTypes = {
   sections: PropTypes.arrayOf(PropTypes.object).isRequired,
   isSidebarVisible: PropTypes.bool.isRequired,
+  reportIdent: PropTypes.string.isRequired,
 };
 
 export default ReportSidebar;
