@@ -58,6 +58,7 @@ function TherapeuticView(props) {
             rowUpdateAPICall={therapeuticUpdateTable}
             canExport
             patientId={report.patientId}
+            print
           />
 
           <DataTable
@@ -74,6 +75,7 @@ function TherapeuticView(props) {
             rowUpdateAPICall={therapeuticUpdateTable}
             canExport
             patientId={report.patientId}
+            print
           />
         </>
       )}
@@ -82,9 +84,14 @@ function TherapeuticView(props) {
 }
 
 TherapeuticView.propTypes = {
-  reportEdit: PropTypes.bool.isRequired,
-  print: PropTypes.bool.isRequired,
+  reportEdit: PropTypes.bool,
+  print: PropTypes.bool,
   report: PropTypes.objectOf(PropTypes.any).isRequired,
+};
+
+TherapeuticView.defaultProps = {
+  reportEdit: false,
+  print: false,
 };
 
 export default TherapeuticView;

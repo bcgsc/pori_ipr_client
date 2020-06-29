@@ -7,7 +7,7 @@ import ProbeSummary from '../ReportView/components/ProbeSummary';
 import AnalystComments from '../ReportView/components/AnalystComments';
 import PathwayAnalysis from '../ReportView/components/PathwayAnalysis';
 import KbMatches from '../ReportView/components/KbMatches';
-import TherapeuticTargets from '../ReportView/components/TherapeuticTargets';
+import TherapeuticTargets from '../ReportView/components/TherapeuticTargets/components/PrintTables';
 import Slides from '../ReportView/components/Slides';
 import Appendices from '../ReportView/components/Appendices';
 
@@ -27,6 +27,9 @@ const Print = () => {
         if (resp.type !== 'genomic') {
           setIsProbe(true);
         }
+        setTimeout(() => {
+          window.print();
+        }, 1500);
       };
 
       getReport();
@@ -46,7 +49,7 @@ const Print = () => {
       <GenomicSummary report={report} print />
       <AnalystComments report={report} print />
       <PathwayAnalysis report={report} print />
-      <TherapeuticTargets report={report} print />
+      <TherapeuticTargets report={report} />
       <Slides report={report} print />
     </>
   );

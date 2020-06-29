@@ -90,8 +90,8 @@ const Main = () => {
             <Switch>
               <Route component={LoginView} path="/login" />
               <Route component={TermsView} path="/terms" />
-              <AuthenticatedRoute admin={admin} component={ReportsView} path="/reports" />
-              <AuthenticatedRoute component={ReportView} path="/report/:ident" />
+              <AuthenticatedRoute admin={admin} component={ReportsView} path="/reports" setHideNav={setHideNav} />
+              <AuthenticatedRoute component={ReportView} path="/report/:ident" setHideNav={setHideNav} />
               <AuthenticatedRoute component={PrintView} path="/print/:ident" hideNav setHideNav={setHideNav} />
             </Switch>
           </Suspense>
