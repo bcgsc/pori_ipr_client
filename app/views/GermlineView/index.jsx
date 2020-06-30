@@ -1,7 +1,5 @@
 import React, {
   lazy,
-  useEffect,
-  useState,
 } from 'react';
 import {
   Switch, Route,
