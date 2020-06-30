@@ -15,7 +15,6 @@ import AlterationService from '@/services/reports/alteration.service';
 import TargetedGenesService from '@/services/reports/targeted-genes.service';
 
 import './index.scss';
-import { therapeuticUpdate } from '../../../../services/reports/therapeutic';
 
 const VISIBLE = 'visibleColsKb';
 
@@ -38,13 +37,6 @@ function KBMatches(props) {
       : columnDefs.filter(c => !c.hide).map(c => c.colId),
   );
 
-  const [therapeutic, setTherapeutic] = useState();
-  const [biological, setBiological] = useState();
-  const [diagnostic, setDiagnostic] = useState();
-  const [prognostic, setPrognostic] = useState();
-  const [unknown, setUnknown] = useState();
-  const [thisCancer, setThisCancer] = useState();
-  const [otherCancer, setOtherCancer] = useState();
   const [targetedGenes, setTargetedGenes] = useState();
 
   const [filterText, setFilterText] = useState('');
@@ -102,14 +94,8 @@ function KBMatches(props) {
           targetedGenesResp,
         ] = await promises;
 
-        setTherapeutic(therapeuticResp);
-        setBiological(biologicalResp);
-        setDiagnostic(diagnosticResp);
-        setPrognostic(prognosticResp);
-        setUnknown(unknownResp);
-        setThisCancer(thisCancerResp);
-        setOtherCancer(otherCancerResp);
         setTargetedGenes(targetedGenesResp);
+
         setSyncedTableData({
           thisCancer: {
             titleText: 'Therapies Approved In This Cancer Type',
