@@ -34,10 +34,12 @@ import { AppendicesComponent } from '@/views/ReportView/components/Appendices';
 import { SettingsComponent } from '@/views/ReportView/components/Settings';
 import { ProbeSummaryComponent } from '@/views/ReportView/components/ProbeSummary';
 import { BoardComponent } from '@/views/GermlineView/components/Board';
+import { ReportComponent } from '@/views/GermlineView/components/Report';
 
 import MutationSignatureComponent from '@/components/MutationSignature';
 import DiscussionEntryComponent from '@/views/ReportView/components/Discussion/components/DiscussionEntry';
 import RoleCardComponent from '@/components/RoleCard';
+import PaginateComponent from '@/components/Paginate';
 import ReactTable from '@/components/DataTable';
 
 import ProjectService from './services/management/project.service';
@@ -80,7 +82,9 @@ const rootModule = angular.module('root')
   .component('settings', SettingsComponent)
   .component('probeSummary', ProbeSummaryComponent)
   .component('board', BoardComponent)
+  .component('report', ReportComponent)
   .component('roleCard', RoleCardComponent)
+  .component('paginate', PaginateComponent)
   .component('reactTable', react2angular(ReactTable))
   .service('ProjectService', ProjectService)
   .service('AclService', AclService)

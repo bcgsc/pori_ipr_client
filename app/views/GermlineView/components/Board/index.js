@@ -7,34 +7,28 @@ import template from './germline-board.pug';
 import germlineDownload from '@/services/reports/germline';
 import GermlineService from '@/services/reports/germline.service';
 
-const bindings = {
-  reports: '<',
-};
+import './index.scss';
 
 class Board {
   constructor($mdToast) {
     this.$mdToast = $mdToast;
   }
 
-  $onInit() {
+  async $onInit() {
     this.loading = false;
     this.showSearch = true;
     this.focusSearch = false;
     this.filter = {
       search: null,
     };
-  }
-
-  async $onChanges(changes) {
-    if (changes.report && changes.report.currentValue) {
-      const { reports } = await GermlineService.getAllReports();
-      this.reports = reports;
-      this.paginate = {
-        total: this.reports.total,
-        offset: 0,
-        limit: 25,
-      };
-    }
+    const { reports } = await GermlineService.getAllReports();
+    this.reports = reports;
+    this.paginate = {
+      total: this.reports.total,
+      offset: 0,
+      limit: 25,
+    };
+    $rootScope.$digest();
   }
 
   clearSearch() {
@@ -144,7 +138,6 @@ Board.$inject = ['$mdToast'];
 
 export const BoardComponent = {
   template,
-  bindings,
   controller: Board,
 };
 

@@ -14,8 +14,13 @@ const GermlineView = () => {
   return (
     <div>
       <Switch>
-        <Route component={BoardComponent} path="/" />
-        <Route component={ReportComponent} path="/report/:ident" />
+        <Route component={BoardComponent} exact path="/germline" />
+        <Route
+          render={routeProps => (
+            <ReportComponent {...routeProps} />
+          )}
+          path="/germline/report/:ident"
+        />
       </Switch>
     </div>
   );

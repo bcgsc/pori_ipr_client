@@ -1,4 +1,6 @@
-const dialogCreator = ($event, text, title, actions) => ({
+const dialogCreator = ({
+  $event, text, title, actions,
+}) => ({
   targetEvent: $event,
   clickOutsideToClose: true,
   parent: angular.element(document.body),

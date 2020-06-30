@@ -1,23 +1,29 @@
+import { angular2react } from 'angular2react';
+import { $rootScope } from 'ngimport';
+
+import { getUser } from '@/services/management/auth';
+import toastCreator from '@/services/utils/toastCreator';
+import dialogCreator from '@/services/utils/dialogCreator';
+import lazyInjector from '@/lazyInjector';
+import GermlineService from '@/services/reports/germline.service';
 import template from './germline-report.pug';
 import inputTemplate from './germline-report-input.pug';
 import './index.scss';
 
 const bindings = {
-  user: '<',
-  report: '<',
+  history: '<',
 };
 
-class GermlineReportComponent {
-  /* @ngInject */
-  constructor($scope, $state, GermlineService, $mdDialog, $mdToast) {
-    this.$scope = $scope;
-    this.$state = $state;
-    this.GermlineService = GermlineService;
+class Report {
+  constructor($mdDialog, $mdToast) {
     this.$mdDialog = $mdDialog;
     this.$mdToast = $mdToast;
   }
 
-  $onInit() {
+  async $onInit() {
+    this.reportIdent = this.history.location.pathname.split('/').pop();
+    this.user = (await getUser()).user;
+    this.report = await GermlineService.getReport(this.reportIdent);
     this.addReview = false;
     this.showExtended = false;
     this.columns = {
@@ -184,6 +190,7 @@ class GermlineReportComponent {
         showAlways: false,
       },
     };
+    $rootScope.$digest();
   }
 
   /* eslint-disable class-methods-use-this */
@@ -211,6 +218,7 @@ class GermlineReportComponent {
       template: inputTemplate,
       targetEvent: $event,
       clickOutsideToClose: true,
+      parent: angular.element(document.body),
       controller: ['scope', async (scope) => {
         scope.input = input;
 
@@ -239,13 +247,13 @@ class GermlineReportComponent {
     }
 
     await Promise.all(
-      this.report.variants.map(variant => this.GermlineService.updateVariant(
+      this.report.variants.map(variant => GermlineService.updateVariant(
         this.report.ident,
         variant.ident,
         updatedVariant,
       )),
     );
-    this.$mdToast.showSimple('Report has been updated.');
+    this.$mdToast.show(toastCreator('Report has been updated.'));
   }
 
   async review() {
@@ -255,12 +263,12 @@ class GermlineReportComponent {
     };
 
     try {
-      const review = await this.GermlineService.addReview(this.report.ident, data);
+      const review = await GermlineService.addReview(this.report.ident, data);
       this.report.reviews.push(review[0]);
-      this.$mdToast.showSimple('The review has been added.');
+      this.$mdToast.show(toastCreator('The review has been added.'));
       this.addReview = false;
     } catch (err) {
-      this.$mdToast.showSimple('Failed to add the submitted reviewed.');
+      this.$mdToast.show(toastCreator('Failed to add the submitted reviewed.'));
     }
   }
 
@@ -268,7 +276,7 @@ class GermlineReportComponent {
     variant.hidden = !variant.hidden;
 
     try {
-      const result = await this.GermlineService.updateVariant(
+      const result = await GermlineService.updateVariant(
         this.report.ident,
         variant.ident,
         { hidden: variant.hidden },
@@ -277,47 +285,48 @@ class GermlineReportComponent {
       const i = this.report.variants.findIndex(v => v.ident === result.ident);
       this.report.variants[i] = result;
     } catch (err) {
-      this.$mdToast.showSimple('Failed to update variant with visibility change');
+      this.$mdToast.show(toastCreator('Failed to update variant with visibility change'));
     }
   }
-
 
   async removeReview(review) {
     try {
-      await this.GermlineService.removeReview(this.report.ident, review.ident);
+      await GermlineService.removeReview(this.report.ident, review.ident);
       this.report.reviews.splice(
         this.report.reviews.findIndex(rev => rev.ident === review.ident), 1,
       );
-      this.$scope.$digest();
+      this.$mdToast.show(toastCreator('Review removed successfully'));
+      $rootScope.$digest();
     } catch (err) {
-      this.$mdToast.showSimple('Failed to remove the requested review');
+      this.$mdToast.show(toastCreator('Failed to remove the requested review'));
     }
   }
 
-  async removeReport() {
-    const confirm = this.$mdDialog.confirm({
+  async removeReport($event) {
+    const confirm = dialogCreator({
+      $event,
       title: 'Confirm remove',
-      textContent: 'Are you sure you want to remove this germline report?',
-      ok: 'Remove',
-      cancel: 'Cancel',
+      text: 'Are you sure you want to remove this germline report?',
+      actions: [{ text: 'Remove', click: this.$mdDialog.hide }, { text: 'Cancel', click: this.$mdDialog.cancel }],
     });
 
     try {
-      const response = await this.$mdDialog.show(confirm);
-      if (!response) {
-        this.$mdToast.showSimple('No changes were made.');
-        return;
-      }
-      await this.GermlineService.deleteReport(this.report.ident);
-      this.$state.go('root.germline.board');
+      await this.$mdDialog.show(confirm);
+      await GermlineService.deleteReport(this.reportIdent);
+      this.$mdToast.show(toastCreator('Report deleted'));
+      this.history.push({ pathname: '/germline' });
     } catch (err) {
-      this.$mdToast.showSimple('Something went wrong and the report has NOT been removed.');
+      this.$mdToast.show(toastCreator('Report NOT deleted'));
     }
   }
 }
 
-export default {
+Report.$inject = ['$mdDialog', '$mdToast'];
+
+export const ReportComponent = {
   template,
   bindings,
-  controller: GermlineReportComponent,
+  controller: Report,
 };
+
+export default angular2react('report', ReportComponent, lazyInjector.$injector);

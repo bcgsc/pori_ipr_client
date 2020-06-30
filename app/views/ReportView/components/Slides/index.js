@@ -49,15 +49,15 @@ class Slides {
 
   // Remove a slide entry
   async remove($event, slide) {
-    const confirm = dialogCreator(
+    const confirm = dialogCreator({
       $event,
-      'Are you sure you want to remove this slide?',
-      'Confirm',
-      [
+      text: 'Are you sure you want to remove this slide?',
+      title: 'Confirm',
+      actions: [
         { text: 'Remove Slide', click: this.$mdDialog.hide },
         { text: 'Cancel', click: this.$mdDialog.cancel },
       ],
-    );
+    });
 
     try {
       await this.$mdDialog.show(confirm);
