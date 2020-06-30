@@ -1,6 +1,6 @@
 import template from './germline-report.pug';
 import inputTemplate from './germline-report-input.pug';
-import './germline-report.scss';
+import './index.scss';
 
 const bindings = {
   user: '<',

@@ -1,18 +1,10 @@
-import getLocalToken from '../management/token';
 import errorHandler from '../errors/errorHandler';
-import { AuthenticationError } from '../errors/errors';
 
 const germlineDownload = async () => {
-  const authToken = getLocalToken();
-  if (!authToken) {
-    throw new AuthenticationError('missing authentication token');
-  }
-
   const options = {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json; charset=UTF-8',
-      'Authorization': authToken,
     },
   };
 

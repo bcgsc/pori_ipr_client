@@ -3,10 +3,9 @@ import React, {
   Suspense,
   useState,
   useEffect,
-  useCallback,
 } from 'react';
 import fetchIntercept from 'fetch-intercept';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, Redirect } from 'react-router-dom';
 import { CircularProgress } from '@material-ui/core';
 import { $httpProvider } from 'ngimport';
 
@@ -23,6 +22,7 @@ const TermsView = lazy(() => import('@/views/TermsView'));
 const ReportsView = lazy(() => import('@/views/ReportsView'));
 const ReportView = lazy(() => import('@/views/ReportView'));
 const PrintView = lazy(() => import('@/views/PrintView'));
+const GermlineView = lazy(() => import('@/views/GermlineView'));
 
 /**
  * Entry point to application. Handles routing, app theme, and logged in state.
@@ -90,9 +90,13 @@ const Main = () => {
             <Switch>
               <Route component={LoginView} path="/login" />
               <Route component={TermsView} path="/terms" />
+              <Route path="/" exact>
+                <Redirect to={{ pathname: '/reports' }} />
+              </Route>
               <AuthenticatedRoute admin={admin} component={ReportsView} path="/reports" onToggleNav={setIsNavVisible} />
               <AuthenticatedRoute component={ReportView} path="/report/:ident" onToggleNav={setIsNavVisible} />
               <AuthenticatedRoute component={PrintView} path="/print/:ident" isNavVisible={false} onToggleNav={setIsNavVisible} />
+              <AuthenticatedRoute component={GermlineView} path="/germline" onToggleNav={setIsNavVisible} />
             </Switch>
           </Suspense>
         </section>
