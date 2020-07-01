@@ -8,8 +8,8 @@ section.pathwayAnalysis.pathway
         md-icon(ng-click="$ctrl.update()") file_upload
 
       div(id="svgImage")
-  
-  print-header(pog="$ctrl.pog", report="$ctrl.report")
+
+  printheader(report="$ctrl.report")
 
   div(layout="row", layout-align="center center")
     img(ng-src="img/pathway_legend.png", ng-if="$ctrl.print").pathway__legend

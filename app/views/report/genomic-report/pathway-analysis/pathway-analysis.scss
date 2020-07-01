@@ -17,16 +17,12 @@
 
 @media print {
   .pathway {
-    page-break-before: always;
-    page-break-after: always;
-
     &__header {
       @include print-header;
     }
 
     &__container {
       background-color: $white;
-      page-break-after: always;
     }
 
     &__legend {
