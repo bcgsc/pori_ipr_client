@@ -9,7 +9,7 @@
   font-weight: 700;
   text-transform: uppercase;
 
-  > .md-subheader-inner {
+  >.md-subheader-inner {
     // Override angularjs material library
     padding: 0 !important;
   }
@@ -50,18 +50,18 @@
 
       md-icon {
         position: absolute;
-        background-color: rgb(255,255,255);
+        background-color: rgb(255, 255, 255);
         cursor: pointer;
 
         &:hover {
-          color: rgb(63,81,181);
+          color: rgb(63, 81, 181);
         }
       }
     }
 
     .window {
       min-height: 400px;
-      background-color: rgb(255,255,255);
+      background-color: rgb(255, 255, 255);
     }
 
     #pathway {
@@ -78,9 +78,9 @@
   md-dialog.pathway.edit {
     div.dropZone {
       padding: 25px 15px;
-      border: 2px solid rgb(235,235,235);
-      background-color: rgb(245,245,245);
-      color: rgb(140,140,140);
+      border: 2px solid rgb(235, 235, 235);
+      background-color: rgb(245, 245, 245);
+      color: rgb(140, 140, 140);
       text-align: center;
     }
   }

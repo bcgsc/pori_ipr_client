@@ -10,7 +10,7 @@
   padding: 1.5mm 1mm;
   text-transform: uppercase;
 
-  > .md-subheader-inner {
+  >.md-subheader-inner {
     // Override angularjs material library
     padding: 0 !important;
   }
@@ -20,14 +20,13 @@
   .analyst {
     &__header {
       @include print-header;
-      page-break-before: always;
     }
 
     &__comments {
       border: .1mm solid grey;
 
       // Use * rule since the analyst input could have any tag and no classes
-      & > * {
+      &>* {
         padding: 0 3mm;
       }
     }
@@ -65,12 +64,12 @@
     }
 
     &__comments {
-       margin: 16px;
-       padding: 4px 8px;
+      margin: 16px;
+      padding: 4px 8px;
 
-       img {
-         max-width: 100%;
-       }
+      img {
+        max-width: 100%;
+      }
     }
   }
 
@@ -79,6 +78,7 @@
       margin: 8px 0 !important;
 
     }
+
     max-height: 60vh;
     overflow-y: auto;
   }
