@@ -23,6 +23,7 @@ const ReportsView = lazy(() => import('@/views/ReportsView'));
 const ReportView = lazy(() => import('@/views/ReportView'));
 const PrintView = lazy(() => import('@/views/PrintView'));
 const GermlineView = lazy(() => import('@/views/GermlineView'));
+const AdminView = lazy(() => import('@/views/AdminView'));
 
 /**
  * Entry point to application. Handles routing, app theme, and logged in state.
@@ -97,6 +98,7 @@ const Main = () => {
               <AuthenticatedRoute component={ReportView} path="/report/:ident" onToggleNav={setIsNavVisible} />
               <AuthenticatedRoute component={PrintView} path="/print/:ident" isNavVisible={false} onToggleNav={setIsNavVisible} />
               <AuthenticatedRoute component={GermlineView} path="/germline" onToggleNav={setIsNavVisible} />
+              <AuthenticatedRoute admin={admin} adminRequired component={AdminView} path="/admin" onToggleNav={setIsNavVisible} />
             </Switch>
           </Suspense>
         </section>

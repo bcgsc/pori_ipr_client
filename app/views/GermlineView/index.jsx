@@ -5,17 +5,17 @@ import {
   Switch, Route,
 } from 'react-router-dom';
 
-const BoardComponent = lazy(() => import('./components/Board'));
-const ReportComponent = lazy(() => import('./components/Report'));
+const Board = lazy(() => import('./components/Board'));
+const Report = lazy(() => import('./components/Report'));
 
 const GermlineView = () => {
   return (
     <div>
       <Switch>
-        <Route component={BoardComponent} exact path="/germline" />
+        <Route component={Board} exact path="/germline" />
         <Route
           render={routeProps => (
-            <ReportComponent {...routeProps} />
+            <Report {...routeProps} />
           )}
           path="/germline/report/:ident"
         />

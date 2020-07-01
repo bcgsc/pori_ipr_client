@@ -1,22 +1,33 @@
+import { angular2react } from 'angular2react';
+import { $rootScope } from 'ngimport';
+
+import toastCreator from '@/services/utils/toastCreator';
+import dialogCreator from '@/services/utils/dialogCreator';
+import UserService from '@/services/management/user.service';
+import GroupService from '@/services/management/group.service';
+import ProjectService from '@/services/management/project.service';
+import lazyInjector from '@/lazyInjector';
+
 import sortBy from 'lodash.sortby';
 import template from './users.pug';
 
-const bindings = {
-  users: '<',
-  projects: '<',
-  groups: '<',
-};
-
-class UsersComponent {
-  /* @ngInject */
-  constructor($scope, $mdDialog, $mdToast, UserService) {
-    this.$scope = $scope;
+class Users {
+  constructor($mdDialog, $mdToast) {
     this.$mdDialog = $mdDialog;
     this.$mdToast = $mdToast;
-    this.UserService = UserService;
   }
 
   async $onInit() {
+    const [users, groups, projects] = await Promise.all([
+      UserService.all(),
+      GroupService.all(),
+      ProjectService.all({ admin: true }),
+    ]);
+
+    this.users = users;
+    this.groups = groups;
+    this.projects = projects;
+
     this.accessGroup = this.groups.find(group => group.name === 'Full Project Access');
 
     const deleteUser = async ($event, user) => {
@@ -98,8 +109,11 @@ class UsersComponent {
   }
 }
 
-export default {
+Users.$inject = ['$mdDialog', '$mdToast'];
+
+export const UsersComponent = {
   template,
-  bindings,
-  controller: UsersComponent,
+  controller: Users,
 };
+
+export default angular2react('users', UsersComponent, lazyInjector.$injector);
