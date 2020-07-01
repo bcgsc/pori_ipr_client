@@ -46,9 +46,13 @@ section
               div
                 img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{$ctrl.mutationSummaryImages.legend.snv_indel.data}}")
 
-
-      h2.title Mutational Spectrum
-      mutation-signature(report="$ctrl.report", mutation-signature="$ctrl.mutationSignature", mutation-summary="$ctrl.mutationSummary")
+      react-table(
+        row-data="$ctrl.mutationSignature",
+        column-defs="$ctrl.signatureColumnDefs",
+        title-text="'Mutational Spectrum'",
+        report-ident="$ctrl.report.ident",
+        can-toggle-columns="true"
+      )
 
       div(layout="column", layout-align="center center")
         div

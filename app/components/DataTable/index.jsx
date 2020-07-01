@@ -21,8 +21,8 @@ import getDate from '../../services/utils/date';
 
 import './index.scss';
 
-const MAX_VISIBLE_ROWS = 11;
-const MAX_TABLE_HEIGHT = '500px';
+const MAX_VISIBLE_ROWS = 12;
+const MAX_TABLE_HEIGHT = '517px';
 
 /**
  * @param {object} props props

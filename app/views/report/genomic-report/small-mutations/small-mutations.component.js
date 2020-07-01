@@ -1,5 +1,5 @@
 import template from './small-mutations.pug';
-import columnDefs, { setHeaderName } from './columnDefs';
+import { setHeaderName, columnDefs, signatureColumnDefs } from './columnDefs';
 import './small-mutations.scss';
 
 const bindings = {
@@ -28,6 +28,7 @@ class SmallMutationsComponent {
       nostic: 'Variants of Prognostic or Diagnostic Relevance',
     };
     this.columnDefs = columnDefs;
+    this.signatureColumnDefs = signatureColumnDefs;
     setHeaderName(`${this.report.tumourAnalysis.diseaseExpressionComparator || ''} %ile`, 'tcgaPerc');
     setHeaderName(`Fold Change vs ${this.report.tumourAnalysis.normalExpressionComparator}`, 'foldChange');
     this.processMutationSummaryImages(this.mutationSummaryImages);
