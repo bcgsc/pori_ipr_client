@@ -146,6 +146,10 @@ const probe = {
       async ($transition$, AppendicesService) => AppendicesService.tcga(
         $transition$.params().report,
       )],
+    probeResults: ['$transition$', 'TargetedGenesService',
+      async ($transition$, TargetedGenesService) => TargetedGenesService.getAll(
+        $transition$.params().report,
+      )],
   },
   lazyLoad: undefined,
 };
