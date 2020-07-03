@@ -139,10 +139,10 @@ class SmallMutationsComponent {
         sorted.snv.barplot.push(img);
       }
 
-      if (pieces[1].includes('density_plot_indel') || pieces[1] === 'indel') {
+      if (pieces[1].includes('density') && pieces[1].includes('indel')) {
         sorted.indel.densityPlot.push(img);
       }
-      if (pieces[1].includes('density_plot_snv') || pieces[1] === 'snv') {
+      if (pieces[1].includes('density') && pieces[1].includes('snv')) {
         sorted.snv.densityPlot.push(img);
       }
     });

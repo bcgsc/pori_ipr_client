@@ -78,7 +78,7 @@ class StructuralVariantsComponent {
       if (pieces[1].includes('barplot_sv') || pieces[1] === 'bar_sv') {
         sorted.sv.barplot.push(img);
       }
-      if (pieces[1].includes('density_plot_sv') || pieces[1] === 'sv') {
+      if (pieces[1].includes('density') || pieces[1] === 'sv') {
         sorted.sv.densityPlot.push(img);
       }
       if (pieces[1].includes('legend_sv')) {
