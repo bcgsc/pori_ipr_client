@@ -1,4 +1,5 @@
 import eager from './eager';
+import appendicesCall from '../../services/reports/appendices';
 
 const print = {
   ...eager.print,
@@ -150,6 +151,9 @@ const probe = {
       async ($transition$, TargetedGenesService) => TargetedGenesService.getAll(
         $transition$.params().report,
       )],
+    appendices: ['$transition$',
+      async $transition$ => appendicesCall($transition$.params().report),
+    ],
   },
   lazyLoad: undefined,
 };
