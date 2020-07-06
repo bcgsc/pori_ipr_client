@@ -83,7 +83,11 @@ class ProbeSummaryComponent {
               await this.TargetedGenesService.update(
                 this.report.ident,
                 scope.event.ident,
-                { comments: scope.event.comments },
+                {
+                  comments: scope.event.comments,
+                  variant: scope.event.variant,
+                  gene: scope.event.gene.name,
+                },
               );
               await this.GeneService.update(
                 this.report.ident,
