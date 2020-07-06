@@ -605,6 +605,10 @@
 
 .text-left {
   text-align: left;
+
+  @media screen {
+    margin: 0 0 0 4px;
+  }
 }
 
 .inlineEditor {
