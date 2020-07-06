@@ -7,6 +7,7 @@ const bindings = {
   alterations: '<',
   tcgaAcronyms: '<',
   probeResults: '<',
+  appendices: '<',
 };
 
 export default {

@@ -260,6 +260,11 @@
       font-size: 9pt;
       font-weight: 100;
     }
+
+    &__none {
+      margin: 0 auto;
+      padding: 16px;
+    }
   }
 
   .test-info {
@@ -289,12 +294,20 @@
   }
 
   .review {
+    margin: 24px 0;
+
     &__box {
       width: 50%;
       margin: 2mm auto;
       padding: 1mm 0;
       border: 1px solid black;
       font-size: 11pt;
+    }
+
+    &__entry {
+      > * {
+        padding: 4px;
+      }
     }
   }
 }
