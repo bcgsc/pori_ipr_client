@@ -30,8 +30,8 @@ const AdminView = lazy(() => import('@/views/AdminView'));
  */
 const Main = () => {
   const [authorizationToken, setAuthorizationToken] = useState('');
-  const [user, setUser] = useState({ firstName: 'Not', lastName: 'logged in' });
   const [admin, setAdmin] = useState(false);
+  const [user, setUser] = useState({ firstName: 'Not', lastName: 'logged in' });
   const [sidebarMaximized, setSidebarMaximized] = useState(false);
   const [isNavVisible, setIsNavVisible] = useState(true);
 
@@ -57,9 +57,9 @@ const Main = () => {
       const unregister = fetchIntercept.register(interceptor);
 
       const asyncUser = async () => {
-        const { user: userResp, admin: adminResp } = await getUser();
+        const userResp = await getUser();
         setUser(userResp);
-        setAdmin(adminResp);
+        setAdmin(userResp.groups.some(group => group.name.toLowerCase() === 'admin'));
       };
 
       asyncUser();

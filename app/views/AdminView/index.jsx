@@ -13,8 +13,8 @@ const AdminView = () => {
   return (
     <Switch>
       <Route component={Users} path="/users" />
-      <Route component={Groups} />
-      <Route component={Projects} />
+      <Route component={Groups} path="/groups" />
+      <Route component={Projects} path="/projects" />
     </Switch>
   );
 };

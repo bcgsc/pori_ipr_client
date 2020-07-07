@@ -50,7 +50,7 @@ class AclService {
 
     if (!user) {
       try {
-        user = await getUser().user;
+        user = await getUser();
       } catch {
         return false;
       }
@@ -78,7 +78,7 @@ class AclService {
     const userGroups = [];
     if (!user) {
       try {
-        user = await getUser().user;
+        user = await getUser();
       } catch {
         return false;
       }
@@ -115,7 +115,7 @@ class AclService {
    * @return {Promise} Boolean with if the user is in a group
    */
   async inGroup(group) {
-    const { user } = await getUser();
+    const user = await getUser();
     return user.groups.some(userGroup => group.toLowerCase() === userGroup.name.toLowerCase());
   }
 

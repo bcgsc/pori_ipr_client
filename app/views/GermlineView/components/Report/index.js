@@ -22,7 +22,7 @@ class Report {
 
   async $onInit() {
     this.reportIdent = this.history.location.pathname.split('/').pop();
-    this.user = (await getUser()).user;
+    this.user = await getUser();
     this.report = await GermlineService.getReport(this.reportIdent);
     this.addReview = false;
     this.showExtended = false;

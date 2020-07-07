@@ -35,6 +35,7 @@ import { SettingsComponent } from '@/views/ReportView/components/Settings';
 import { ProbeSummaryComponent } from '@/views/ReportView/components/ProbeSummary';
 import { BoardComponent } from '@/views/GermlineView/components/Board';
 import { ReportComponent } from '@/views/GermlineView/components/Report';
+import { UsersComponent } from '@/views/AdminView/components/Users';
 
 import MutationSignatureComponent from '@/components/MutationSignature';
 import DiscussionEntryComponent from '@/views/ReportView/components/Discussion/components/DiscussionEntry';
@@ -83,6 +84,7 @@ const rootModule = angular.module('root')
   .component('probeSummary', ProbeSummaryComponent)
   .component('board', BoardComponent)
   .component('report', ReportComponent)
+  .component('users', UsersComponent)
   .component('roleCard', RoleCardComponent)
   .component('paginate', PaginateComponent)
   .component('reactTable', react2angular(ReactTable))

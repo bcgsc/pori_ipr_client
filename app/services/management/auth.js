@@ -58,6 +58,30 @@ const isAuthorized = (authorizationToken) => {
 };
 
 /**
+ * Gets the user object from the api
+ */
+const getUser = async () => {
+  try {
+    const resp = await $http.get(`${CONFIG.ENDPOINTS.API}/user/me`);
+    return resp.data;
+  } catch (err) {
+    return null;
+  }
+};
+
+/**
+ * Returns true if the user has been sucessfully authenticated and the token is valid
+ */
+const isAdmin = async () => {
+  try {
+    const user = await getUser();
+    return user.groups.some(group => group.name.toLowerCase() === 'admin');
+  } catch {
+    return false;
+  }
+};
+
+/**
  * Primarily used for display when logged in
  */
 const getUsername = ({ authorizationToken }) => {
@@ -65,18 +89,6 @@ const getUsername = ({ authorizationToken }) => {
     return jwt.decode(authorizationToken).preferred_username;
   }
   return null;
-};
-
-/**
- * Gets the user object from the api
- */
-const getUser = async () => {
-  try {
-    const resp = await $http.get(`${CONFIG.ENDPOINTS.API}/user/me`);
-    return { user: resp.data, admin: resp.data.groups.some(({ name }) => name === 'admin') };
-  } catch (err) {
-    return null;
-  }
 };
 
 const isExternalMode = ({ authorizationToken }) => {
@@ -126,6 +138,7 @@ const logout = async () => {
 
 export {
   isAuthorized,
+  isAdmin,
   login,
   logout,
   keycloak,
