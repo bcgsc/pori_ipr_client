@@ -31,32 +31,35 @@ class Users {
     this.accessGroup = this.groups.find(group => group.name === 'Full Project Access');
 
     const deleteUser = async ($event, user) => {
-      const confirm = this.$mdDialog.confirm()
-        .title(`Are you sure you want to remove ${user.firstName} ${user.lastName}?`)
-        .htmlContent(`Are you sure you want to remove <strong>${user.firstName} ${user.lastName}'s</strong> access to this system? <br/><br/>This will <em>not</em> affect access to any other BC GSC services.`)
-        .ariaLabel('Remove User?')
-        .targetEvent($event)
-        .ok('Remove User')
-        .cancel('Cancel');
+      const confirm = dialogCreator({
+        $event,
+        title: `Are you sure you want to remove ${user.firstName} ${user.lastName}?`,
+        text: `
+          Are you sure you want to remove <strong>${user.firstName} ${user.lastName}'s</strong> access to this system? <br/><br/>This will <em>not</em> affect access to any other BC GSC services.
+        `,
+        actions: [{ click: this.$mdDialog.cancel, text: 'Cancel' }, { click: this.$mdDialog.hide, text: 'Remove User' }],
+      });
   
       try {
         try {
           this.$mdDialog.hide();
           await this.$mdDialog.show(confirm);
         } catch (e) {
-          return this.$mdToast.show(this.$mdToast.simple('The user has not been removed'));
+          return this.$mdToast.show(toastCreator('The user has not been removed'));
         }
         const tempUser = angular.copy(user);
         // Remove User
         await this.UserService.remove(user);
         this.users = this.users.filter(u => u.ident !== tempUser.ident);
-        this.$mdToast.show(this.$mdToast.simple('The user has been removed'));
+        this.$mdToast.show(toastCreator('The user has been removed'));
       } catch (err) {
-        this.$mdToast.show(this.$mdToast.simple('A technical issue prevented the user from being removed.'));
+        console.log(err);
+        this.$mdToast.show(toastCreator('A technical issue prevented the user from being removed.'));
       }
     };
   
     this.passDelete = () => deleteUser;
+    $rootScope.$digest();
   }
 
   async userDiag($event, editUser, newUser = false) {
@@ -65,6 +68,7 @@ class Users {
         targetEvent: $event,
         template: '<users-edit edit-user="editUser" new-user="newUser" user-delete="userDelete" projects="projects" access-group="accessGroup" self-edit="selfEdit"></user-edit>',
         clickOutsideToClose: true,
+        parent: angular.element(document.body),
         locals: {
           editUser: angular.copy(editUser),
           newUser,
@@ -74,21 +78,20 @@ class Users {
           selfEdit: false,
         },
         /* eslint-disable no-shadow */
-        controller: ($scope, editUser, newUser, userDelete, projects, accessGroup, selfEdit) => {
-          'ngInject';
-
-          $scope.editUser = editUser;
-          $scope.newUser = newUser;
-          $scope.userDelete = userDelete;
-          $scope.projects = projects;
-          $scope.accessGroup = accessGroup;
-          $scope.selfEdit = selfEdit;
-        },
+        controller: ['$scope', 'editUser', 'newUser', 'userDelete', 'projects', 'accessGroup', 'selfEdit',
+          ($scope, editUser, newUser, userDelete, projects, accessGroup, selfEdit) => {
+            $scope.editUser = editUser;
+            $scope.newUser = newUser;
+            $scope.userDelete = userDelete;
+            $scope.projects = projects;
+            $scope.accessGroup = accessGroup;
+            $scope.selfEdit = selfEdit;
+          }],
       });
 
       if (resp) {
         if (resp.message) {
-          this.$mdToast.show(this.$mdToast.simple().textContent(resp.message));
+          this.$mdToast.show(toastCreator(resp.message));
         }
         if (resp.data) {
           this.users.forEach((u, i) => {
@@ -104,7 +107,7 @@ class Users {
         }
       }
     } catch (err) {
-      this.$mdToast.show(this.$mdToast.simple().textContent('The user has not been updated.'));
+      this.$mdToast.show(toastCreator('The user has not been updated.'));
     }
   }
 }

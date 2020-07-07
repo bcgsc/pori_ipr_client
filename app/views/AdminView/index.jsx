@@ -5,17 +5,21 @@ import {
   Switch, Route,
 } from 'react-router-dom';
 
+import './index.scss';
+
 const Users = lazy(() => import('./components/Users'));
 const Groups = lazy(() => import('./components/Groups'));
 const Projects = lazy(() => import('./components/Projects'));
 
 const AdminView = () => {
   return (
-    <Switch>
-      <Route component={Users} path="/users" />
-      <Route component={Groups} path="/groups" />
-      <Route component={Projects} path="/projects" />
-    </Switch>
+    <div className="admin">
+      <Switch>
+        <Route component={Users} path="/admin/users" />
+        <Route component={Groups} path="/admin/groups" />
+        <Route component={Projects} path="/admin/projects" />
+      </Switch>
+    </div>
   );
 };
 

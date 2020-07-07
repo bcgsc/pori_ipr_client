@@ -31,3 +31,4 @@ md-content(flex).adminSection
           md-tooltip(md-direction="left", ng-if="u.lastLogin") {{u.lastLogin | date:'dddd, MMMM Do YYYY, h:mm:ss a'}}
         div(flex=15) {{u.createdAt | date: 'dd/MM/yy'}}
           md-tooltip(md-direction="left") {{u.createdAt | date:'dddd, MMMM Do YYYY, h:mm:ss a' }}
+md-progress-circular(md-mode="indeterminate", ng-if="!$ctrl.users")
