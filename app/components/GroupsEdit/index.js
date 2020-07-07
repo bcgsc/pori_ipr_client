@@ -1,4 +1,8 @@
+import { $rootScope } from 'ngimport';
+
 import template from './groups-edit.pug';
+import UserService from '@/services/management/user.service';
+import GroupService from '@/services/management/group.service';
 
 const bindings = {
   editGroup: '<',
@@ -6,13 +10,9 @@ const bindings = {
   groupDelete: '&',
 };
 
-class GroupsEditComponent {
-  /* @ngInject */
-  constructor($scope, $mdDialog, UserService, GroupService) {
-    this.$scope = $scope;
+class GroupsEdit {
+  constructor($mdDialog) {
     this.$mdDialog = $mdDialog;
-    this.UserService = UserService;
-    this.GroupService = GroupService;
   }
 
   $onInit() {
@@ -29,7 +29,7 @@ class GroupsEditComponent {
       return [];
     }
 
-    return this.UserService.search(searchText);
+    return UserService.search(searchText);
   }
 
   async searchOwner(searchOwnerText) {
@@ -37,7 +37,7 @@ class GroupsEditComponent {
       return [];
     }
 
-    return this.UserService.search(searchOwnerText);
+    return UserService.search(searchOwnerText);
   }
 
   cancel() {
@@ -51,11 +51,11 @@ class GroupsEditComponent {
     }
     try {
       // Add user to group
-      const resp = await this.GroupService.addUser(this.editGroup.ident, this.member.ident);
+      const resp = await GroupService.addUser(this.editGroup.ident, this.member.ident);
       this.editGroup.users.push(resp);
       this.member = null;
       this.searchQuery = '';
-      this.$scope.$digest();
+      $rootScope.$digest();
     } catch (err) {
       console.log('Unable to add user', err);
     }
@@ -65,10 +65,10 @@ class GroupsEditComponent {
   async removeUser(user) {
     if (confirm(`Are you sure you want to remove '${user.firstName} ${user.lastName} from ${this.editGroup.name}?`)) {
       try {
-        await this.GroupService.removeUser(this.editGroup.ident, user.ident);
+        await GroupService.removeUser(this.editGroup.ident, user.ident);
         // Remove entry from group list
         this.editGroup.users = this.editGroup.users.filter(u => u.ident !== user.ident);
-        this.$scope.$digest();
+        $rootScope.$digest();
       } catch (err) {
         console.log('Unable to remove user from group', err);
       }
@@ -93,7 +93,7 @@ class GroupsEditComponent {
     // Send updated user to api
     if (!this.newGroup) {
       try {
-        const group = await this.GroupService.update(this.editGroup.ident, this.editGroup);
+        const group = await GroupService.update(this.editGroup.ident, this.editGroup);
         this.$mdDialog.hide({ status: true, data: group, message: 'The group has been updated!' });
       } catch (err) {
         this.$mdDialog.cancel({ status: false, message: 'Could not update this group.' });
@@ -102,7 +102,7 @@ class GroupsEditComponent {
     // Send updated user to api
     if (this.newGroup) {
       try {
-        const group = await this.GroupService.create(this.editGroup);
+        const group = await GroupService.create(this.editGroup);
         this.$mdDialog.hide({
           status: true, data: group, message: 'The group has been added!', newGroup: true,
         });
@@ -113,8 +113,10 @@ class GroupsEditComponent {
   }
 }
 
+GroupsEdit.$inject = ['$mdDialog'];
+
 export default {
   template,
   bindings,
-  controller: GroupsEditComponent,
+  controller: GroupsEdit,
 };
