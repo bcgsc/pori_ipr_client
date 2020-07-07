@@ -1,22 +1,23 @@
+import { angular2react } from 'angular2react';
+
+import toastCreator from '@/services/utils/toastCreator';
+import dialogCreator from '@/services/utils/dialogCreator';
+import GroupService from '@/services/management/group.service';
+import ProjectService from '@/services/management/project.service';
+import lazyInjector from '@/lazyInjector';
 import sortBy from 'lodash.sortby';
 import template from './projects.pug';
 
-const bindings = {
-  isAdmin: '<',
-  projects: '<',
-  groups: '<',
-};
-
-class ProjectComponent {
-  /* @ngInject */
-  constructor($scope, $mdDialog, $mdToast, ProjectService) {
+class Projects {
+  constructor($scope, $mdDialog, $mdToast) {
     this.$scope = $scope;
     this.$mdDialog = $mdDialog;
     this.$mdToast = $mdToast;
-    this.ProjectService = ProjectService;
   }
 
-  $onInit() {
+  async $onInit() {
+    this.projects = await ProjectService.all({ admin: true });
+    this.groups = await GroupService.all();
     this.accessGroup = this.groups.find(group => group.name === 'Full Project Access');
 
     // getting list of users with full access to display as project members
@@ -37,24 +38,25 @@ class ProjectComponent {
     });
 
     this.deleteProject = async ($event, project) => {
-      const confirm = this.$mdDialog.confirm()
-        .title(`Are you sure you want to remove ${project.name}?`)
-        .htmlContent(`Are you sure you want to remove the project <strong> ${project.name}</strong>?<br /><br />This will <em>not</em> affect access to any other BC GSC services.`)
-        .ariaLabel('Remove Project?')
-        .targetEvent($event)
-        .ok('Remove Project')
-        .cancel('Cancel');
+      const confirm = dialogCreator({
+        $event,
+        title: `Are you sure you want to remove ${project.name}?`,
+        text: `
+          Are you sure you want to remove the project <strong>${project.name}</strong>? <br/><br/>This will <em>not</em> affect access to any other BC GSC services.
+        `,
+        actions: [{ click: this.$mdDialog.cancel, text: 'Cancel' }, { click: this.$mdDialog.hide, text: 'Remove Project' }],
+      });
 
       await this.$mdDialog.show(confirm);
       const tempProject = angular.copy(project);
       // Remove User
       try {
-        await this.ProjectService.remove(project);
+        await ProjectService.remove(project);
         this.projects = this.projects.filter(p => p.ident !== tempProject.ident);
         this.$scope.$parent.projects = this.projects;
-        this.$mdToast.show(this.$mdToast.simple('The project has been removed'));
+        this.$mdToast.show(toastCreator('The project has been removed'));
       } catch (err) {
-        this.$mdToast.show(this.$mdToast.simple('Project service call to API failed'));
+        this.$mdToast.show(toastCreator('Project service call to API failed'));
       }
     };
 
@@ -63,6 +65,7 @@ class ProjectComponent {
       this.$mdDialog.hide(); // Hide any displayed dialog;
       return this.deleteProject;
     };
+    this.$scope.$digest();
   }
 
   async projectDiag($event, editProject, newProject = false) {
@@ -71,6 +74,7 @@ class ProjectComponent {
         targetEvent: $event,
         template: '<projects-edit edit-project="editProject" new-project="newProject" project-delete="projectDelete" full-access-users="fullAccessUsers"> </projects-edit>',
         clickOutsideToClose: true,
+        parent: angular.element(document.body),
         locals: {
           editProject: angular.copy(editProject),
           newProject,
@@ -78,16 +82,15 @@ class ProjectComponent {
           fullAccessUsers: this.fullAccessUsers,
         },
         /* eslint-disable no-shadow */
-        controller: ($scope, editProject, newProject, projectDelete, fullAccessUsers) => {
-          'ngInject';
-
-          $scope.editProject = editProject;
-          $scope.newProject = newProject;
-          $scope.projectDelete = projectDelete;
-          $scope.fullAccessUsers = fullAccessUsers;
-        },
+        controller: ['$scope', 'editProject', 'newProject', 'projectDelete', 'fullAccessUsers',
+          ($scope, editProject, newProject, projectDelete, fullAccessUsers) => {
+            $scope.editProject = editProject;
+            $scope.newProject = newProject;
+            $scope.projectDelete = projectDelete;
+            $scope.fullAccessUsers = fullAccessUsers;
+          }],
       });
-      this.$mdToast.show(this.$mdToast.simple().textContent(resp.message));
+      this.$mdToast.show(toastCreator(resp.message));
       this.projects.forEach((p, i) => {
         if (p.ident === resp.data.ident) {
           this.projects[i] = resp.data;
@@ -100,13 +103,16 @@ class ProjectComponent {
         this.$scope.$parent.projects = this.projects;
       }
     } catch (err) {
-      this.$mdToast.show(this.$mdToast.simple().textContent('The project has not been updated.'));
+      this.$mdToast.show(toastCreator('The project has not been updated.'));
     }
   }
 }
+
+Projects.$inject = ['$scope', '$mdDialog', '$mdToast'];
   
-export default {
+export const ProjectsComponent = {
   template,
-  bindings,
-  controller: ProjectComponent,
+  controller: Projects,
 };
+
+export default angular2react('projects', ProjectsComponent, lazyInjector.$injector);
