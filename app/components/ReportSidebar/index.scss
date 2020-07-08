@@ -26,6 +26,15 @@
   &__list-title-text {
     font-size: $typography__font-size--h6;
     font-weight: 700;
+    margin: 8px 0;
+    padding: 10px 20px;
+    user-select: none;
+    display: flex;
+    justify-content: space-between;
+
+    > a {
+      opacity: $icon-opacity;
+    }
   }
 
   &__list-item {
@@ -38,6 +47,7 @@
 
     &--active {
       background-color: $black-12;
+      color: $palette__secondary--main;
     }
 
     &:hover:not(.report-sidebar__list-item--bold) {
