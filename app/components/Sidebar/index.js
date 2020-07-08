@@ -15,7 +15,8 @@ const bindings = {
 };
 
 class Sidebar {
-  constructor() {
+  constructor($window) {
+    this.$window = $window;
     this.AclService = new AclService();
     this.pageAccess = {};
     this.pages = ['report', 'germline'];
@@ -35,7 +36,8 @@ class Sidebar {
   }
 }
 
-export const SidebarComponent = { template, bindings, controller: Sidebar };
-const reactComponent = angular2react('sidebar', SidebarComponent, lazyInjector.$injector);
+Sidebar.$inject = ['$window'];
 
-export default reactComponent;
+export const SidebarComponent = { template, bindings, controller: Sidebar };
+
+export default angular2react('sidebar', SidebarComponent, lazyInjector.$injector);

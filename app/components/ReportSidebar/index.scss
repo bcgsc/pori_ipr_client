@@ -40,6 +40,10 @@
       background-color: $black-12;
     }
 
+    &:hover:not(.report-sidebar__list-item--bold) {
+      background-color: $black-12;
+    }
+
     &--bold {
       &#{&} {
         font-weight: 700;
