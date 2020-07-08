@@ -41,7 +41,7 @@ function TherapeuticView(props) {
   }, [report]);
 
   return (
-    <>
+    <div className="therapeutic">
       {report && (
         <>
           <DataTable
@@ -58,7 +58,7 @@ function TherapeuticView(props) {
             rowUpdateAPICall={therapeuticUpdateTable}
             canExport
             patientId={report.patientId}
-            print
+            print={print}
           />
 
           <DataTable
@@ -75,11 +75,11 @@ function TherapeuticView(props) {
             rowUpdateAPICall={therapeuticUpdateTable}
             canExport
             patientId={report.patientId}
-            print
+            print={print}
           />
         </>
       )}
-    </>
+    </div>
   );
 }
 
