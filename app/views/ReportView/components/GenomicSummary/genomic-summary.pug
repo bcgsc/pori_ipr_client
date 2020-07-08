@@ -63,7 +63,7 @@ div
       div(layout="row")
         div(layout="column", flex).dataBox.tumour-analysis__full-box
           h2.title.tumour-analysis__subheader Genome Status
-            md-icon(ng-if="!$ctrl.print", ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.genomeStatus)").tumour-analysis__icon help
+            md-icon(ng-if="!$ctrl.print", ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.genomeStatus)").tumour-analysis__icon.clickable help
 
           div.box.tumour-analysis__box
             div(layout="row", flex).heading.tumour-analysis__box-header
@@ -77,7 +77,7 @@ div
 
         div(layout="column", flex).dataBox.tumour-analysis__full-box
           h2.title.tumour-analysis__subheader Tissue Comparators
-            md-icon(ng-if="!$ctrl.print", ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.tissueComparators)").tumour-analysis__icon help
+            md-icon(ng-if="!$ctrl.print", ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.tissueComparators)").tumour-analysis__icon.clickable help
 
           div.box.tumour-analysis__box
             div(layout="row", flex).heading.tumour-analysis__box-header
@@ -89,7 +89,7 @@ div
 
         div(layout="column", flex).dataBox.tumour-analysis__full-box
           h2.title.tumour-analysis__subheader Subtyping
-            md-icon(ng-if="!$ctrl.print", ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.subtyping)").tumour-analysis__icon help
+            md-icon(ng-if="!$ctrl.print", ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.subtyping)").tumour-analysis__icon.clickable help
 
           div.box.tumour-analysis__box
             div(layout="row", flex).heading.tumour-analysis__box-header
@@ -102,7 +102,7 @@ div
 
         div(layout="column", flex).dataBox.tumour-analysis__full-box
           h2.title.tumour-analysis__subheader Microbial Content
-            md-icon(ng-if="!$ctrl.print", ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.microbialContent)").tumour-analysis__icon help
+            md-icon(ng-if="!$ctrl.print", ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.microbialContent)").tumour-analysis__icon.clickable help
 
           div.box.tumour-analysis__box
             div(layout="row", flex).heading.tumour-analysis__box-header
@@ -126,11 +126,11 @@ div
                 ng-if="!$ctrl.print",
                 ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.mutationSignature)",
                 style="margin-left: 5px;"
-              ).tumour-analysis__icon help
+              ).tumour-analysis__icon.clickable help
           div(layout="column", flex=75).mutation-table--align-left
             h2.title.tumour-analysis__subheader Mutation Burden
               span.tumour-analysis__subheader--small (in protein coding genes)
-              md-icon(ng-if="!$ctrl.print", ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.mutationBurden)").tumour-analysis__icon help
+              md-icon(ng-if="!$ctrl.print", ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.mutationBurden)").tumour-analysis__icon.clickable help
 
         div(layout="row").header
           div(flex).container
