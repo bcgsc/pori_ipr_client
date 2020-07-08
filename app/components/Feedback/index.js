@@ -1,11 +1,11 @@
-import './feedback.scss';
+import './index.scss';
 
 const feedbackController = ($scope, $mdDialog) => {
-  'ngInject';
-
   $scope.cancel = () => {
     $mdDialog.hide();
   };
 };
+
+feedbackController.$inject = ['$scope', '$mdDialog'];
 
 export default feedbackController;
