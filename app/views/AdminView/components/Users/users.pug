@@ -9,6 +9,7 @@ md-content(flex).adminSection
   div.content
 
     p All users currently given access to the Integrated Pipeline Reports system.
+    md-button(ng-click="$ctrl.userDiag($event, null, true)") Add user
 
     div(flex, layout="column").table
       div(flex, layout="row").header

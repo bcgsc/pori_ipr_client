@@ -9,6 +9,7 @@ md-content(flex).adminSection
   div.content
 
     p Projects that users can be assigned to.
+    md-button(ng-click="$ctrl.projectDiag($event, null, true)") Add Project
 
     div(flex, layout="column").table
       div(flex, layout="row").header

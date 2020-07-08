@@ -11,6 +11,7 @@ md-content(flex).adminSection
   div.content
 
     p Groups that users can be assigned to.
+    md-button(ng-click="$ctrl.groupDiag($event, null, true)") Add Group
 
     div(flex, layout="column").table
       div(flex, layout="row").header
