@@ -1,66 +1,55 @@
 /* eslint-disable react/display-name */
 import { PropTypes } from 'prop-types';
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import {
   Redirect,
   Route,
 } from 'react-router-dom';
 
 import SecurityContext from '@/components/SecurityContext';
-import { isAuthorized, isAdmin } from '@/services/management/auth';
+import { isAuthorized } from '@/services/management/auth';
 
 /**
  * @returns {Route} a route component which checks authorization on render or redirects to login
  */
 const AuthenticatedRoute = ({
-  component: Component, admin, adminRequired, isNavVisible, onToggleNav, ...rest
+  component: Component, adminRequired, admin, hideNav, setHideNav, ...rest
 }) => {
   const { authorizationToken } = useContext(SecurityContext);
-  const [ChildComponent, setChildComponent] = useState(null);
-
-  const [adminOk, setAdminOk] = useState(false);
   const authOk = isAuthorized(authorizationToken);
 
-  useEffect(() => {
-    const getData = async () => {
-      const adminResp = await isAdmin();
-      setAdminOk(adminResp);
+  let ChildComponent = null;
 
-      if (!authOk) {
-        setChildComponent(() => (props) => {
-          const { location } = props;
-          return (
-            <Redirect to={{
-              pathname: '/login',
-              state: { from: location },
-            }}
-            />
-          );
-        });
-      } else if (!adminResp && adminRequired) {
-        setChildComponent(() => () => (
-          <Redirect to="/" />
-        ));
-      } else {
-        setChildComponent(Component);
-      }
-      if (isNavVisible) {
-        onToggleNav(true);
-      } else {
-        onToggleNav(false);
-      }
+  if (!authOk) {
+    ChildComponent = (props) => {
+      const { location } = props;
+      return (
+        <Redirect to={{
+          pathname: '/login',
+          state: { from: location },
+        }}
+        />
+      );
     };
-    getData();
-  }, []);
+  } else if (!admin && adminRequired) {
+    ChildComponent = () => (
+      <Redirect to="/" />
+    );
+  } else {
+    ChildComponent = Component;
+  }
+  if (hideNav) {
+    setHideNav(true);
+  } else {
+    setHideNav(false);
+  }
 
   return (
     <>
-      {ChildComponent && (
-        <Route
-          {...rest}
-          render={props => (<ChildComponent admin={adminOk} {...props} />)}
-        />
-      )}
+      <Route
+        {...rest}
+        render={props => (<ChildComponent admin={admin} {...props} />)}
+      />
     </>
   );
 };

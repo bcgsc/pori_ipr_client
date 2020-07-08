@@ -60,8 +60,12 @@ const isAuthorized = (authorizationToken) => {
 /**
  * Gets the user object from the api
  */
-const getUser = async () => {
+const getUser = async (token) => {
   try {
+    // Token passed on login
+    if (token) {
+      $http.defaults.headers.common.Authorization = token;
+    }
     const resp = await $http.get(`${CONFIG.ENDPOINTS.API}/user/me`);
     return resp.data;
   } catch (err) {
@@ -72,9 +76,8 @@ const getUser = async () => {
 /**
  * Returns true if the user has been sucessfully authenticated and the token is valid
  */
-const isAdmin = async () => {
+const isAdmin = (user) => {
   try {
-    const user = await getUser();
     return user.groups.some(group => group.name.toLowerCase() === 'admin');
   } catch {
     return false;
@@ -91,14 +94,11 @@ const getUsername = ({ authorizationToken }) => {
   return null;
 };
 
-const isExternalMode = ({ authorizationToken }) => {
+const isExternalMode = (user) => {
   try {
-    return Boolean(
-      getUser({ authorizationToken }).groups
-        .find(group => externalGroups.includes(group.name.toLowerCase())),
-    );
+    return user.groups.some(group => externalGroups.includes(group.name.toLowerCase()));
   } catch (err) {
-    return false;
+    return true;
   }
 };
 

@@ -35,7 +35,7 @@ const Settings = lazy(() => import('./components/Settings'));
 const ProbeSummary = lazy(() => import('./components/ProbeSummary'));
 
 const ReportView = () => {
-  const match = useRouteMatch();
+  const { path } = useRouteMatch();
   const params = useParams();
   const theme = useTheme();
   const [report, setReport] = useState();
@@ -86,85 +86,85 @@ const ReportView = () => {
                   )}
                 </>
               )}
-              path={`${match.path}/summary`}
+              path={`${path}/summary`}
             />
             <Route
               render={routeProps => (
                 <AnalystComments {...routeProps} print={false} report={report} reportEdit />
               )}
-              path={`${match.path}/analyst-comments`}
+              path={`${path}/analyst-comments`}
             />
             <Route
               render={routeProps => (
                 <TherapeuticTargets {...routeProps} print={false} report={report} reportEdit />
               )}
-              path={`${match.path}/therapeutic-targets`}
+              path={`${path}/therapeutic-targets`}
             />
             <Route
               render={routeProps => (
                 <KbMatches {...routeProps} print={false} report={report} reportEdit />
               )}
-              path={`${match.path}/kb-matches`}
+              path={`${path}/kb-matches`}
             />
             <Route
               render={routeProps => (
                 <Discussion {...routeProps} print={false} report={report} reportEdit />
               )}
-              path={`${match.path}/discussion`}
+              path={`${path}/discussion`}
             />
             <Route
               render={routeProps => (
                 <Microbial {...routeProps} print={false} report={report} reportEdit />
               )}
-              path={`${match.path}/microbial`}
+              path={`${path}/microbial`}
             />
             <Route
               render={routeProps => (
                 <Spearman {...routeProps} print={false} report={report} reportEdit />
               )}
-              path={`${match.path}/spearman`}
+              path={`${path}/spearman`}
             />
             <Route
               render={routeProps => (
                 <DiseaseSpecific {...routeProps} print={false} report={report} reportEdit />
               )}
-              path={`${match.path}/disease-specific`}
+              path={`${path}/disease-specific`}
             />
             <Route
               render={routeProps => (
                 <SmallMutations {...routeProps} print={false} report={report} reportEdit theme={theme} />
               )}
-              path={`${match.path}/small-mutations`}
+              path={`${path}/small-mutations`}
             />
             <Route
               render={routeProps => (
                 <CopyNumber {...routeProps} print={false} report={report} reportEdit theme={theme} />
               )}
-              path={`${match.path}/copy-number`}
+              path={`${path}/copy-number`}
             />
             <Route
               render={routeProps => (
                 <StructuralVariants {...routeProps} print={false} report={report} reportEdit theme={theme} />
               )}
-              path={`${match.path}/structural-variants`}
+              path={`${path}/structural-variants`}
             />
             <Route
               render={routeProps => (
                 <Expression {...routeProps} print={false} report={report} reportEdit />
               )}
-              path={`${match.path}/expression`}
+              path={`${path}/expression`}
             />
             <Route
               render={routeProps => (
                 <Appendices {...routeProps} print={false} report={report} reportEdit theme={theme} isProbe={isProbe} />
               )}
-              path={`${match.path}/appendices`}
+              path={`${path}/appendices`}
             />
             <Route
               render={routeProps => (
                 <Settings {...routeProps} print={false} report={report} reportEdit showBindings={!isProbe} />
               )}
-              path={`${match.path}/settings`}
+              path={`${path}/settings`}
             />
             {/* Need token for FileUpload API call */}
             <SecurityContext.Consumer>
@@ -180,7 +180,7 @@ const ReportView = () => {
                         token={value.authorizationToken}
                       />
                     )}
-                    path={`${match.path}/pathway-analysis`}
+                    path={`${path}/pathway-analysis`}
                   />
                   <Route
                     render={routeProps => (
@@ -192,7 +192,7 @@ const ReportView = () => {
                         token={value.authorizationToken}
                       />
                     )}
-                    path={`${match.path}/slides`}
+                    path={`${path}/slides`}
                   />
                 </>
               )}
