@@ -1,6 +1,6 @@
-import indefiniteArticle from '@/services/utils/indefiniteArticle';
-import toastCreator from '@/services/utils/toastCreator';
-import dialogCreator from '@/services/utils/dialogCreator';
+import indefiniteArticle from '@/utils/indefiniteArticle';
+import toastCreator from '@/utils/toastCreator';
+import dialogCreator from '@/utils/dialogCreator';
 import template from './role-card.pug';
 import './index.scss';
 

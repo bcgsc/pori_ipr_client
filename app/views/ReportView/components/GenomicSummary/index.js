@@ -2,8 +2,8 @@ import { angular2react } from 'angular2react';
 import sortBy from 'lodash.sortby';
 import { $rootScope } from 'ngimport';
 
-import dialogCreator from '@/services/utils/dialogCreator';
-import toastCreator from '@/services/utils/toastCreator';
+import dialogCreator from '@/utils/dialogCreator';
+import toastCreator from '@/utils/toastCreator';
 import lazyInjector from '@/lazyInjector';
 import TumourAnalysisService from '@/services/reports/tumour-analysis.service';
 import PatientInformationService from '@/services/reports/patient-information.service';

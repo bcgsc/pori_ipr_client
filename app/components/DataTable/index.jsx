@@ -18,7 +18,7 @@ import ColumnPicker from './components/ColumnPicker';
 import LinkCellRenderer from './components/LinkCellRenderer';
 import GeneCellRenderer from './components/GeneCellRenderer';
 import ActionCellRenderer from './components/ActionCellRenderer';
-import getDate from '../../services/utils/date';
+import getDate from '../../utils/date';
 
 import './index.scss';
 

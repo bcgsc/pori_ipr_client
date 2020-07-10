@@ -1,7 +1,7 @@
 import { $rootScope } from 'ngimport';
 import { angular2react } from 'angular2react';
 
-import toastCreator from '@/services/utils/toastCreator';
+import toastCreator from '@/utils/toastCreator';
 import PathwayService from '@/services/reports/pathway.service';
 import lazyInjector from '@/lazyInjector';
 import * as svgPanZoom from 'svg-pan-zoom';

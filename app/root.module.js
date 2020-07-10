@@ -93,13 +93,9 @@ const rootModule = angular.module('root')
   .component('paginate', PaginateComponent)
   .component('reactTable', react2angular(ReactTable))
   .config(['$locationProvider', ($locationProvider) => {
-    'ngInject';
-
     $locationProvider.html5Mode(true);
   }])
   .config(['$mdThemingProvider', ($mdThemingProvider) => {
-    'ngInject';
-
     const printGrey = $mdThemingProvider.extendPalette('grey', {
       50: '#FFFFFF',
     });

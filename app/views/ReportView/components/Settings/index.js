@@ -1,8 +1,8 @@
 import { angular2react } from 'angular2react';
 import { $rootScope } from 'ngimport';
 
-import indefiniteArticle from '@/services/utils/indefiniteArticle';
-import toastCreator from '@/services/utils/toastCreator';
+import indefiniteArticle from '@/utils/indefiniteArticle';
+import toastCreator from '@/utils/toastCreator';
 import { searchUsers } from '@/services/management/auth';
 import lazyInjector from '@/lazyInjector';
 import template from './report-settings.pug';

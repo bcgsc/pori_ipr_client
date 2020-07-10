@@ -1,8 +1,8 @@
 import { angular2react } from 'angular2react';
 import { $rootScope } from 'ngimport';
 
-import dialogCreator from '@/services/utils/dialogCreator';
-import toastCreator from '@/services/utils/toastCreator';
+import dialogCreator from '@/utils/dialogCreator';
+import toastCreator from '@/utils/toastCreator';
 import SlidesService from '@/services/reports/slides.service';
 import lazyInjector from '@/lazyInjector';
 import template from './slides.pug';
