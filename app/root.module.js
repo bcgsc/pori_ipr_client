@@ -48,7 +48,6 @@ import GroupsEditComponent from '@/components/GroupsEdit';
 import ProjectsEditComponent from '@/components/ProjectsEdit';
 import ReactTable from '@/components/DataTable';
 
-import IndefiniteArticleFilter from './filters/indefinite-article.filter';
 import '@ag-grid-community/core/dist/styles/ag-grid.min.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-material.min.css';
 import './styles/ag-grid.scss';
@@ -93,7 +92,6 @@ const rootModule = angular.module('root')
   .component('roleCard', RoleCardComponent)
   .component('paginate', PaginateComponent)
   .component('reactTable', react2angular(ReactTable))
-  .filter('indefiniteArticle', IndefiniteArticleFilter)
   .config(['$locationProvider', ($locationProvider) => {
     'ngInject';
 

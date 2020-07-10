@@ -1,6 +1,7 @@
 import { angular2react } from 'angular2react';
 import { $rootScope } from 'ngimport';
 
+import indefiniteArticle from '@/services/utils/indefiniteArticle';
 import toastCreator from '@/services/utils/toastCreator';
 import { searchUsers } from '@/services/management/auth';
 import lazyInjector from '@/lazyInjector';
@@ -18,10 +19,9 @@ const bindings = {
 };
 
 class Settings {
-  constructor($mdDialog, $mdToast, indefiniteArticleFilter) {
+  constructor($mdDialog, $mdToast) {
     this.$mdDialog = $mdDialog;
     this.$mdToast = $mdToast;
-    this.indefiniteArticleFilter = indefiniteArticleFilter;
   }
 
   $onInit() {
@@ -91,7 +91,7 @@ class Settings {
             );
             this.$mdDialog.hide({
               data: resp,
-              message: `${scope.role.user.firstName} ${scope.role.user.lastName} has been added as ${this.indefiniteArticleFilter(scope.role.role)} ${scope.role.role}`,
+              message: `${scope.role.user.firstName} ${scope.role.user.lastName} has been added as ${indefiniteArticle(scope.role.role)} ${scope.role.role}`,
             });
           };
         }],
@@ -179,7 +179,7 @@ class Settings {
   }
 }
 
-Settings.$inject = ['$mdDialog', '$mdToast', 'indefiniteArticleFilter'];
+Settings.$inject = ['$mdDialog', '$mdToast'];
 
 export const SettingsComponent = {
   template,

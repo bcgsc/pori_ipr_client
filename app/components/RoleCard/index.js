@@ -1,3 +1,4 @@
+import indefiniteArticle from '@/services/utils/indefiniteArticle';
 import toastCreator from '@/services/utils/toastCreator';
 import dialogCreator from '@/services/utils/dialogCreator';
 import template from './role-card.pug';
@@ -9,16 +10,15 @@ const bindings = {
 };
 
 class RoleCard {
-  constructor($mdDialog, $mdToast, indefiniteArticleFilter) {
+  constructor($mdDialog, $mdToast) {
     this.$mdDialog = $mdDialog;
     this.$mdToast = $mdToast;
-    this.indefiniteArticleFilter = indefiniteArticleFilter;
   }
 
   async remove($event) {
     const confirm = dialogCreator({
       $event,
-      text: `Are you sure you want to remove ${this.role.user.firstName} ${this.role.user.lastName} as ${this.indefiniteArticleFilter(this.role.role)} ${this.role.role}?`,
+      text: `Are you sure you want to remove ${this.role.user.firstName} ${this.role.user.lastName} as ${indefiniteArticle(this.role.role)} ${this.role.role}?`,
       title: 'Are you sure you want to remove this user?',
       actions: [{ text: 'Cancel', click: this.$mdDialog.cancel }, { text: 'Confirm', click: this.$mdDialog.hide }],
     });
@@ -26,7 +26,7 @@ class RoleCard {
     await this.$mdDialog.show(confirm);
     const role = angular.copy(this.role);
     this.$mdToast.show(toastCreator(
-      `${role.user.firstName} ${role.user.lastName} has been removed as ${this.indefiniteArticleFilter(this.role.role)} ${role.role}.`,
+      `${role.user.firstName} ${role.user.lastName} has been removed as ${indefiniteArticle(this.role.role)} ${role.role}.`,
     ));
     /* This syntax is really weird, but if anyone is interested: */
     /* Read about '&' binding for components in angularjs for why we pass an object back */
@@ -35,7 +35,7 @@ class RoleCard {
   }
 }
 
-RoleCard.$inject = ['$mdDialog', '$mdToast', 'indefiniteArticleFilter'];
+RoleCard.$inject = ['$mdDialog', '$mdToast'];
 
 export default {
   template,
