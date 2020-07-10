@@ -97,7 +97,7 @@ div
             div(layout="row", flex).content.tumour-analysis__box-content
               div(flex).editable
                 span
-                  | {{($ctrl.tumourAnalysis.subtyping || "Not Specified")}}
+                  span {{($ctrl.tumourAnalysis.subtyping || "Not Specified")}}
                   md-icon(ng-click="$ctrl.updateTumourAnalysis($event)", ng-if="$ctrl.reportEdit && !$ctrl.print") edit
 
         div(layout="column", flex).dataBox.tumour-analysis__full-box
