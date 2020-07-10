@@ -163,10 +163,10 @@ section(ng-if="!$ctrl.print")
       div(flex=25, layout="column")
         h5 Ready
         div(flex, layout="row")
-          span(ng-if="$ctrl.signatures === null || $ctrl.signatures.authorSignature.ident === null", layout="row", layout-align="start center", ng-click="$ctrl.sign('author')").clickable
+          span(ng-if="$ctrl.signatures === null || $ctrl.signatures.authorSignature === null", layout="row", layout-align="start center", ng-click="$ctrl.sign('author')").clickable
             md-icon(style="margin-right: 5px;") gesture
             span Sign
-          span(ng-if="$ctrl.signatures.authorSignature.ident") {{$ctrl.signatures.authorSignature.firstName}} {{$ctrl.signatures.authorSignature.lastName}}
+          span(ng-if="$ctrl.signatures.authorSignature") {{$ctrl.signatures.authorSignature.firstName}} {{$ctrl.signatures.authorSignature.lastName}}
 
       div(flex=25, layout="column")
         h5 Date
@@ -174,7 +174,7 @@ section(ng-if="!$ctrl.print")
           span.context {{$ctrl.signatures.authorSignedAt | date: 'EEEE, MMMM d, y HH:mm'}}
       div(flex)
       div(layout="column", layout-align="start start").options
-        div(ng-if="$ctrl.signatures.authorSignature.ident")
+        div(ng-if="$ctrl.signatures.authorSignature")
           md-icon(ng-click="$ctrl.revokeSign('author')", ng-if="$ctrl.reportEdit") remove_circle
             md-tooltip Remove signing
 
@@ -182,17 +182,17 @@ section(ng-if="!$ctrl.print")
       div(flex=25, layout="column")
         h5 Reviewer
         div(flex, layout="row")
-          span(ng-if="$ctrl.signatures === null || $ctrl.signatures.reviewerSignature.ident === null", layout="row", layout-align="start center", ng-click="$ctrl.sign('reviewer')").clickable
+          span(ng-if="$ctrl.signatures === null || $ctrl.signatures.reviewerSignature === null", layout="row", layout-align="start center", ng-click="$ctrl.sign('reviewer')").clickable
             md-icon(style="margin-right: 5px;") gesture
             span Sign
-          span(ng-if="$ctrl.signatures.reviewerSignature.ident") {{$ctrl.signatures.reviewerSignature.firstName}} {{$ctrl.signatures.reviewerSignature.lastName}}
+          span(ng-if="$ctrl.signatures.reviewerSignature") {{$ctrl.signatures.reviewerSignature.firstName}} {{$ctrl.signatures.reviewerSignature.lastName}}
       div(flex=25, layout="column")
         h5 Date
         div(flex, layout="row")
           span.context {{$ctrl.signatures.reviewerSignedAt | date: 'EEEE, MMMM d, y HH:mm'}}
       div(flex)
       div(layout="column", layout-align="start start").options
-        div(ng-if="$ctrl.signatures.reviewerSignature.ident")
+        div(ng-if="$ctrl.signatures.reviewerSignature")
           md-icon(ng-click="$ctrl.revokeSign('reviewer')", ng-if="$ctrl.reportEdit") remove_circle
             md-tooltip Remove signing
 
