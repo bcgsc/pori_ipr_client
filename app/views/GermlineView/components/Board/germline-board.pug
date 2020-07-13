@@ -35,7 +35,7 @@ md-content(flex, layout="column").md-padding.germline
           th(width="15%") Created
 
       tbody
-        tr(ng-show="$ctrl.loading").loading
+        tr(ng-if="$ctrl.loading").loading
           td(colspan="10").text-center
             span Loading...
             md-progress-circular(md-mode="indeterminate")

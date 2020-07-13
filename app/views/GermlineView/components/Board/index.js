@@ -15,19 +15,20 @@ class Board {
   }
 
   async $onInit() {
-    this.loading = false;
+    this.loading = true;
     this.showSearch = true;
     this.focusSearch = false;
     this.filter = {
       search: null,
     };
-    const { reports } = await GermlineService.getAllReports();
-    this.reports = reports;
+    const reports = await GermlineService.getAllReports();
+    this.reports = reports.reports;
     this.paginate = {
-      total: this.reports.total,
+      total: reports.total,
       offset: 0,
       limit: 25,
     };
+    this.loading = false;
     $rootScope.$digest();
   }
 
