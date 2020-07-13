@@ -27,6 +27,7 @@ section
 
     div(layout="column", flex).bg-white
       h2.title Copy Number & LOH
+      md-progress-linear(ng-if="$ctrl.loading")
 
       div(layout="column", layout-align="center start").cnvloh
         div(ng-if="$ctrl.images['cnv.1'].data || $ctrl.images['loh.1'].data").container

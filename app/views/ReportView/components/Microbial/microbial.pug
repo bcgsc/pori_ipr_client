@@ -6,6 +6,7 @@ section
     div(layout="column", flex).bg-white
 
       h2.title Microbial Integration
+      md-progress-linear(ng-if="$ctrl.loading")
 
       p(ng-if="!$ctrl.images['microbial.circos.genome'] && !$ctrl.images['microbial.circos.transcriptome'] && !$ctrlimages['microbial.circos']").microbial__none Microbial integration circos plots are not applicable for this case
 

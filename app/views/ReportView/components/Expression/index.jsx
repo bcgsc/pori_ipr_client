@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Typography, Paper } from '@material-ui/core';
+import { Typography, Paper, LinearProgress } from '@material-ui/core';
 
 import DataTable from '../../../../components/DataTable';
 import columnDefs from './columnDefs';
@@ -137,7 +137,7 @@ function Expression(props) {
         </div>
       )}
       <>
-        {expOutliers && (
+        {expOutliers ? (
           <>
             {Object.entries(tables).map(([key, titleText]) => (
               <DataTable
@@ -154,6 +154,8 @@ function Expression(props) {
               />
             ))}
           </>
+        ) : (
+          <LinearProgress />
         )}
       </>
     </>

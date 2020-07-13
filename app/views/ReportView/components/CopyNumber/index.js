@@ -29,6 +29,7 @@ class CopyNumberAnalyses {
       highlyExpOncoGain: 'Highly Expressed Oncogenes with Copy Gains',
       lowlyExpTSloss: 'Lowly Expressed Tumour Suppressors with Copy Losses',
     };
+    this.loading = true;
   }
 
   async $onChanges(changes) {
@@ -50,6 +51,7 @@ class CopyNumberAnalyses {
       setHeaderName(`${this.report.tumourAnalysis.diseaseExpressionComparator || ''} %ile`, 'tcgaPerc');
       setHeaderName(`Fold Change vs ${this.report.tumourAnalysis.normalExpressionComparator}`, 'foldChange');
       this.cnvGroups = this.groupCnvs(this.cnvs);
+      this.loading = false;
       $rootScope.$digest();
     }
   }

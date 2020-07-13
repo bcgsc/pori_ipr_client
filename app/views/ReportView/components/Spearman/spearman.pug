@@ -5,6 +5,7 @@ section
 
     div(layout="column", flex).bg-white
       h2.title Spearman Correlation with Available Expression Datasets
+      md-progress-linear(ng-if="$ctrl.loading")
 
       div(layout="row", layout-align="center center").md-padding
         span(layout="row").spearman__container

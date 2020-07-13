@@ -3,6 +3,7 @@ div
     md-subheader.md-no-sticky.print-title Patient Information
       span(ng-if="$ctrl.reportEdit").edit
         md-icon(ng-click="$ctrl.updatePatient($event)") edit
+    md-progress-linear(ng-if="$ctrl.loading")
 
     div(layout="column", flex).details.patient-info__details
       div(layout="row", flex).patient-info__description-row

@@ -13,16 +13,23 @@ class Paginate {
     this.$timeout = $timeout;
     this.$scope = $scope;
   }
-  
+
   $onInit() {
-    /* eslint-disable-next-line arrow-body-style */
-    this.$scope.$watch(() => this.limit, (newVal, oldVal) => {
-      if (newVal === oldVal) return;
-      this.offset = 0;
-      this.$timeout(() => {
-        this.refresh();
-      }, 100);
-    });
+    console.log(this.total);
+  }
+  
+  $onChanges(changes) {
+    console.log(changes);
+    if (changes.total && changes.total.isFirstChange()) {
+      /* eslint-disable-next-line arrow-body-style */
+      this.$scope.$watch(() => this.limit, (newVal, oldVal) => {
+        if (newVal === oldVal) return;
+        this.offset = 0;
+        this.$timeout(() => {
+          this.refresh();
+        }, 100);
+      });
+    }
   }
   
   prevPage() {

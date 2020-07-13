@@ -6,6 +6,7 @@ section(flex).appendices
       div(layout="column", flex)
         div(ng-if="!$ctrl.print")
           h2.title Appendix A
+          md-progress-linear(ng-if="$ctrl.loading")
           react-table(
             column-defs="$ctrl.sampleInformationColumnDefs",
             row-data="$ctrl.sampleInfo",

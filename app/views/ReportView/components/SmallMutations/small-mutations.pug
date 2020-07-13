@@ -7,6 +7,7 @@ section
 
       h2.title Small Somatic Mutations
       h2.title Summary of Somatic Events
+      md-progress-linear(ng-if="$ctrl.loading")
 
       div(layout="row").mutation-summary-images
         div(layout="column", flex=15).comparator-list
