@@ -20,7 +20,6 @@
   .analyst {
     &__header {
       @include print-header;
-      page-break-before: always;
     }
 
     &__comments {
@@ -33,7 +32,7 @@
     }
 
     &__review-box {
-      margin: 4mm 0 0;
+      margin: 8mm 0 0;
       padding: 2mm;
       border: .1mm solid grey;
       font-size: 11pt;

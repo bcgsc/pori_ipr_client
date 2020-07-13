@@ -1,8 +1,33 @@
+@import '../../styles/variables';
+
 .print {
   height: 100vh;
   overflow-y: auto;
   width: 8.5in;
   margin: auto;
+
+  &__logo {
+    max-width: 50%;
+  }
+
+  &__header-top {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 12px 0;
+  }
+
+  &__header-middle {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 12px 0 4px;
+  }
+
+  &__header-bottom {
+    border: 2px solid $black-50;
+    margin: 8px 0;
+  }
 }
 
 @page {

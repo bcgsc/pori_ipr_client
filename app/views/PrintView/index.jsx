@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { Typography } from '@material-ui/core';
 
 import ReportService from '@/services/reports/report.service';
 import GenomicSummary from '../ReportView/components/GenomicSummary';
@@ -10,6 +11,8 @@ import KbMatches from '../ReportView/components/KbMatches';
 import TherapeuticTargets from '../ReportView/components/TherapeuticTargets/components/PrintTables';
 import Slides from '../ReportView/components/Slides';
 import Appendices from '../ReportView/components/Appendices';
+import PageBreak from '@/components/PageBreak';
+import PrintLogo from '@/../statics/images/print_logo.png';
 
 import './index.scss';
 
@@ -39,7 +42,9 @@ const Print = () => {
   const probeSections = () => (
     <>
       <ProbeSummary report={report} print />
+      <PageBreak report={report} />
       <KbMatches report={report} print />
+      <PageBreak report={report} />
       <Appendices report={report} print isProbe />
     </>
   );
@@ -47,20 +52,60 @@ const Print = () => {
   const genomicSections = () => (
     <>
       <GenomicSummary report={report} print />
+      <PageBreak report={report} />
       <AnalystComments report={report} print />
+      <PageBreak report={report} />
       <PathwayAnalysis report={report} print />
+      <PageBreak report={report} />
       <TherapeuticTargets report={report} />
+      <PageBreak report={report} />
       <Slides report={report} print />
     </>
   );
 
+  const titleBar = () => (
+    <div className="print__headers">
+      <div className="print__header-top">
+        <img className="print__logo" src={PrintLogo} alt="" />
+        <div>
+          <Typography align="right" variant="body2">
+            Tumour Genome Analysis
+          </Typography>
+          <Typography align="right" variant="body2">
+            Whole Genome; Transcriptome; Somatic
+          </Typography>
+        </div>
+      </div>
+      <div className="print__header-middle">
+        <Typography variant="body2">
+          {`Report version: ${report.reportVersion}`}
+        </Typography>
+        <Typography variant="body2">
+          {`Knowledgebase version: ${report.kbVersion}`}
+        </Typography>
+      </div>
+      <div className="print__header-bottom">
+        <Typography align="center" variant="h1">
+          {report.patientId}
+        </Typography>
+      </div>
+    </div>
+  );
+
   return (
     <div className="print">
-      {isProbe ? (
-        probeSections()
-      ) : (
-        genomicSections()
-      )}
+      {report ? (
+        <>
+          {titleBar()}
+          <>
+            {isProbe ? (
+              probeSections()
+            ) : (
+              genomicSections()
+            )}
+          </>
+        </>
+      ) : null}
     </div>
   );
 };
