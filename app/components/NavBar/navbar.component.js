@@ -48,6 +48,7 @@ class NavBar {
       await logout();
       $mdToast.showSimple('You have been logged out.');
     } catch (err) {
+      console.error(err);
       $mdToast.showSimple('Error: Could not logout due to connection issue.');
       $state.go('public.login');
     }
