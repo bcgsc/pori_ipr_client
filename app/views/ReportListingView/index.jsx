@@ -1,30 +1,31 @@
-import React, { useRef, useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useRef, useState, useEffect } from 'react';
 import { AgGridReact } from '@ag-grid-community/react';
+
+import columnDefs from './columnDefs';
+import { isExternalMode } from '@/services/management/auth';
+import SecurityContext from '@/components/SecurityContext';
+import ReportService from '@/services/reports/report.service';
 
 import './index.scss';
 
 /**
- * @param {object} props props
- * @param {array} props.columnDefs column definitions for ag-grid
- * @param {object} props.$state angularjs state service
- * @param {bool} props.isExternalMode is external mode user
- * @param {bool} props.isAdmin is admin user
- * @return {*} JSX
+ * Report table containing all reports
  */
 function ReportsTableComponent(props) {
   const {
-    columnDefs,
-    isExternalMode,
-    isAdmin,
-    $state,
-    ReportService,
+    history,
   } = props;
 
   const gridApi = useRef();
   const columnApi = useRef();
 
   const [rowData, setRowData] = useState();
+  const [admin, setAdmin] = useState(false);
+  const [externalMode, setExternalMode] = useState(true);
+
+  useEffect(() => {
+    setExternalMode(isExternalMode(SecurityContext));
+  }, [isExternalMode]);
 
   const onGridReady = async (params) => {
     gridApi.current = params.api;
@@ -35,15 +36,16 @@ function ReportsTableComponent(props) {
       states: 'ready,active,uploaded,signedoff,archived,reviewed',
     };
 
-    if (isAdmin) {
+    if (admin) {
       opts.states = 'ready,active,uploaded,signedoff,archived,reviewed,nonproduction';
     }
 
-    if (isExternalMode) {
+    if (externalMode) {
       opts.states = 'reviewed,archived';
     }
 
-    const { reports } = await ReportService.allFiltered(opts);
+    const reportService = new ReportService();
+    const { reports } = await reportService.allFiltered(opts);
 
     setRowData(reports.map((report) => {
       const [analyst] = report.users
@@ -87,19 +89,12 @@ function ReportsTableComponent(props) {
   const onRowClicked = ({ event }) => {
     const selectedRow = gridApi.current.getSelectedRows();
     const [{ reportIdent }] = selectedRow;
-    let [{ reportType }] = selectedRow;
 
-    // Convert displayed report type (Genomic, Targeted gene) back to the API values
-    reportType = reportType === 'Genomic' ? 'genomic' : 'probe';
     if (event.ctrlKey || event.metaKey) {
-      const url = $state.href(`root.reportlisting.${reportType}.summary`, {
-        analysis_report: reportIdent,
-      });
-
-      window.open(url, '_blank');
+      window.open(`${window.location.href}/report/${reportIdent}/summary`, '_blank');
     } else {
-      $state.go(`root.reportlisting.${reportType}.summary`, {
-        analysis_report: reportIdent,
+      history.push({
+        pathname: `/report/${reportIdent}/summary`,
       });
     }
   };
@@ -126,13 +121,5 @@ function ReportsTableComponent(props) {
     </div>
   );
 }
-
-ReportsTableComponent.propTypes = {
-  columnDefs: PropTypes.arrayOf(PropTypes.object).isRequired,
-  isExternalMode: PropTypes.bool.isRequired,
-  isAdmin: PropTypes.bool.isRequired,
-  $state: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  ReportService: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-};
 
 export default ReportsTableComponent;

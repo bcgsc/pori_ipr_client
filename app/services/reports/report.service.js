@@ -1,7 +1,8 @@
+import { $http } from 'ngimport';
+
 class ReportService {
   /* @ngInject */
-  constructor($http) {
-    this.$http = $http;
+  constructor() {
     this.api = `${CONFIG.ENDPOINTS.API}/reports`;
   }
 
@@ -13,7 +14,7 @@ class ReportService {
    */
   async allFiltered(params = {}) {
     const opts = { params };
-    const { data } = await this.$http.get(`${this.api}`, opts);
+    const { data } = await $http.get(`${this.api}`, opts);
     return data;
   } // TODO: Differenciate between this member and getAllReports (was $report.all())
 
@@ -24,7 +25,7 @@ class ReportService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async getReport(report) {
-    const { data } = await this.$http.get(`${this.api}/${report}`);
+    const { data } = await $http.get(`${this.api}/${report}`);
     return data;
   } // TODO: Differenciate between this member and getPogReport (was $report.get())
 
@@ -35,7 +36,7 @@ class ReportService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async updateReport(report) {
-    const { data } = await this.$http.put(`${this.api}/${report.ident}`, report);
+    const { data } = await $http.put(`${this.api}/${report.ident}`, report);
     return data;
   }
 
@@ -46,7 +47,7 @@ class ReportService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async deleteReport(report) {
-    return this.$http.delete(`${this.api}/${report.ident}`, report);
+    return $http.delete(`${this.api}/${report.ident}`, report);
   }
 
   /**
@@ -58,7 +59,7 @@ class ReportService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async bindUser(report, user, role) {
-    const { data } = await this.$http.post(`${this.api}/${report}/user`, { user, role });
+    const { data } = await $http.post(`${this.api}/${report}/user`, { user, role });
     return data;
   }
 
@@ -71,7 +72,7 @@ class ReportService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async unbindUser(report, user, role) {
-    const { data } = await this.$http.delete(`${this.api}/${report}/user`,
+    const { data } = await $http.delete(`${this.api}/${report}/user`,
       {
         data: {
           user, role,

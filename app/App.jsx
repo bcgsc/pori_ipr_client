@@ -76,7 +76,6 @@ function App() {
             <BrowserRouter>
               <ScopedCssBaseline>
                 <MainView />
-                {/* TODO DEVSU-1065 this is where the top level react routing will go */}
               </ScopedCssBaseline>
             </BrowserRouter>
           </SnackbarProvider>

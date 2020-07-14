@@ -67,7 +67,8 @@
     "webpack-bundle-analyzer": "~3.3.2",
     "webpack-cli": "~3.1.2",
     "webpack-dashboard": "~3.0.7",
-    "webpack-dev-server": "~3.11.0"
+    "webpack-dev-server": "~3.11.0",
+    "whatwg-fetch": "~3.0.0"
   },
   "dependencies": {
     "@ag-grid-community/client-side-row-model": "~23.0.2",
@@ -96,8 +97,10 @@
     "angular-sortable-view": "~0.0.17",
     "angular2react": "~3.0.2",
     "chart.js": "~2.7.3",
+    "fetch-intercept": "~2.3.1",
+    "jsonwebtoken": "~8.5.1",
     "jss": "~10.1.1",
-    "keycloak-js": "~10.0.1",
+    "keycloak-js": "~10.0.2",
     "lodash.differenceby": "~4.8.0",
     "lodash.get": "~4.4.2",
     "lodash.omit": "~4.5.0",
