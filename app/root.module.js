@@ -1,6 +1,5 @@
 import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
-import { angular2react } from 'angular2react';
 import 'angular-aria/angular-aria.min';
 import 'angular-animate/angular-animate.min';
 import 'angular-sanitize/angular-sanitize.min';
@@ -11,6 +10,13 @@ import 'angular-sortable-view';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { CsvExportModule } from '@ag-grid-community/csv-export';
+
+import ReactBootstrap from './index';
+import lazyInjector from './lazyInjector';
+import 'ngimport';
+
+import { NavBarComponent } from '@/components/NavBar/navbar.component';
+import { SidebarComponent } from '@/components/Sidebar/sidebar.component';
 import ComponentsModule from './components/components.module';
 import ViewsModule from './views/views.module';
 import RootComponent from './root.component';
@@ -58,9 +64,6 @@ import './root.scss';
 import './styles/ag-grid.scss';
 import theme from './styles/_theme.scss';
 
-const AngularjsUiView = { template: '<ui-view></ui-view>' };
-let $injector;
-
 angular.module('root', [
   uiRouter,
   ComponentsModule,
@@ -68,11 +71,13 @@ angular.module('root', [
   'ngStorage',
   'ngMaterial',
   'ngSanitize',
+  'bcherny/ngimport',
 ]);
 
 const rootModule = angular.module('root')
   .component('root', RootComponent)
-  .component('uiview', AngularjsUiView)
+  .component('navBar', NavBarComponent)
+  .component('sidebar', SidebarComponent)
   .service('UserService', UserService)
   .service('PogService', PogService)
   .service('ProjectService', ProjectService)
@@ -112,56 +117,56 @@ const rootModule = angular.module('root')
   .service('GeneService', GeneService)
   .filter('indefiniteArticle', IndefiniteArticleFilter)
   .filter('titlecase', TitleCaseFilter)
-  .config(($stateProvider, $urlServiceProvider, $locationProvider) => {
-    'ngInject';
+  // .config(($stateProvider, $urlServiceProvider, $locationProvider) => {
+  //   'ngInject';
 
-    $locationProvider.html5Mode(true);
-    // Don't require a perfect URL match (trailing slashes, etc)
-    $urlServiceProvider.config.strictMode(false);
-    // If no path could be found, send user to 404 error
-    $urlServiceProvider.rules.otherwise({ state: 'root.reportlisting.reports' });
+  //   $locationProvider.html5Mode(true);
+  //   // Don't require a perfect URL match (trailing slashes, etc)
+  //   $urlServiceProvider.config.strictMode(false);
+  //   // If no path could be found, send user to 404 error
+  //   $urlServiceProvider.rules.otherwise({ state: 'root.reportlisting.reports' });
 
-    $stateProvider
-      .state('root', {
-        component: 'root',
-        resolve: {
-          /* eslint-disable no-shadow */
-          user: ['UserService', '$transition$', '$state', async (UserService, $transition$, $state) => {
-            try {
-              const user = await UserService.me();
-              return user;
-            } catch (err) {
-              $transition$.abort();
-              $state.go('public.login');
-            }
-          }],
-          /* eslint-disable no-shadow */
-          isAdmin: ['UserService', async (UserService) => {
-            try {
-              return UserService.isAdmin();
-            } catch (err) {
-              return false;
-            }
-          }],
-          /* eslint-disable no-shadow */
-          projects: ['ProjectService', async (ProjectService) => {
-            try {
-              return ProjectService.all();
-            } catch (err) {
-              return [{}];
-            }
-          }],
-          /* eslint-disable no-shadow */
-          isExternalMode: ['AclService', async (AclService) => {
-            try {
-              return AclService.isExternalMode();
-            } catch (err) {
-              return true;
-            }
-          }],
-        },
-      });
-  })
+  //   $stateProvider
+  //     .state('root', {
+  //       component: 'root',
+  //       resolve: {
+  //         /* eslint-disable no-shadow */
+  //         user: ['UserService', '$transition$', '$state', async (UserService, $transition$, $state) => {
+  //           try {
+  //             const user = await UserService.me();
+  //             return user;
+  //           } catch (err) {
+  //             $transition$.abort();
+  //             $state.go('public.login');
+  //           }
+  //         }],
+  //         /* eslint-disable no-shadow */
+  //         isAdmin: ['UserService', async (UserService) => {
+  //           try {
+  //             return UserService.isAdmin();
+  //           } catch (err) {
+  //             return false;
+  //           }
+  //         }],
+  //         /* eslint-disable no-shadow */
+  //         projects: ['ProjectService', async (ProjectService) => {
+  //           try {
+  //             return ProjectService.all();
+  //           } catch (err) {
+  //             return [{}];
+  //           }
+  //         }],
+  //         /* eslint-disable no-shadow */
+  //         isExternalMode: ['AclService', async (AclService) => {
+  //           try {
+  //             return AclService.isExternalMode();
+  //           } catch (err) {
+  //             return true;
+  //           }
+  //         }],
+  //       },
+  //     });
+  // })
   .config(($mdThemingProvider) => {
     'ngInject';
 
@@ -239,7 +244,10 @@ const rootModule = angular.module('root')
       $sessionStorage.returnParams = transition.params();
     });
   })
-  .run(['$injector', (_$injector) => { $injector = _$injector; }])
+  .run(['$injector', ($injector) => {
+    lazyInjector.$injector = $injector;
+    ReactBootstrap();
+  }])
   .name;
 
 ModuleRegistry.registerModules([
@@ -248,6 +256,3 @@ ModuleRegistry.registerModules([
 ]);
 
 angular.bootstrap(document, [rootModule]);
-
-const AngularjsRoot = angular2react('uiview', AngularjsUiView, $injector);
-export default AngularjsRoot;
