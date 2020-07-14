@@ -16,7 +16,7 @@ const Login = (props) => {
   let from;
 
   try {
-    from = location.state.from.pathname;
+    from = location.state.from.pathname + location.state.from.search;
   } catch (err) {
     from = getReferrerUri() || '/report-listing';
   }

@@ -6,7 +6,7 @@ const externalGroups = ['clinician', 'collaborator', 'external analyst'];
 
 const keycloak = Keycloak({
   'realm': CONFIG.SSO.REALM,
-  'clientId': 'IPR',
+  'clientId': CONFIG.SSO.CLIENT,
   'url': CONFIG.ENDPOINTS.KEYCLOAK,
 });
 

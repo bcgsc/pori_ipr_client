@@ -49,8 +49,7 @@ const AuthenticatedRoute = ({
 };
 
 AuthenticatedRoute.propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types
-  component: PropTypes.object.isRequired,
+  component: PropTypes.node.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
   location: PropTypes.object,
   admin: PropTypes.bool,
