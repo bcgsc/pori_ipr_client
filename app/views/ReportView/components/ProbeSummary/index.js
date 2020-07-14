@@ -25,6 +25,10 @@ class ProbeSummary {
     this.$mdToast = $mdToast;
   }
 
+  $onInit() {
+    this.loading = true;
+  }
+
   async $onChanges(changes) {
     if (changes.report && changes.report.currentValue) {
       const promises = [
@@ -38,6 +42,7 @@ class ProbeSummary {
       this.signatures = signatures;
       this.probeResults = probeResults;
       this.patientInformation = this.report.patientInformation;
+      this.loading = false;
       $rootScope.$digest();
     }
   }

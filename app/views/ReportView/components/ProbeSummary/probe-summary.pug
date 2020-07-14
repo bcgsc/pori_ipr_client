@@ -3,6 +3,8 @@ section.patient-info
     span.edit(ng-if="$ctrl.reportEdit")
       md-icon(ng-click="$ctrl.updatePatient($event)") edit
 
+  md-progress-linear(ng-if="$ctrl.loading")
+
   div(layout="column", flex).details.patient-info__details
     div(layout="row", flex).patient-info__description-container
       dt(flex="{{$ctrl.detailSize}}", ng-init="$ctrl.detailSize=10").patient-info__description-term Patient ID:
