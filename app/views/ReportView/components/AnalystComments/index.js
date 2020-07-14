@@ -4,6 +4,7 @@ import { angular2react } from 'angular2react';
 import toastCreator from '@/utils/toastCreator';
 import lazyInjector from '@/lazyInjector';
 import AnalystCommentsService from '@/services/reports/analyst-comments.service';
+import { getSignatures, sign, revokeSignature } from '@/services/reports/signatures';
 import template from './analyst-comments.pug';
 import editTemplate from './analyst-comments-edit.pug';
 
@@ -30,6 +31,7 @@ class AnalystComments {
   async $onChanges(changes) {
     if (changes.report && changes.report.currentValue) {
       this.analystComments = await AnalystCommentsService.get(this.report.ident);
+      this.signatures = await getSignatures(this.report.ident);
       this.loading = false;
       $rootScope.$digest();
     }
@@ -37,17 +39,17 @@ class AnalystComments {
 
   // Sign The comments
   async sign(role) {
-    const resp = await AnalystCommentsService.sign(this.report.ident, role);
-    this.analystComments = resp;
+    const resp = await sign(this.report.ident, role);
+    this.signatures = resp;
     $rootScope.$digest();
   }
 
   // Sign The comments
   async revokeSign(role) {
-    const resp = await AnalystCommentsService.revokeSign(
+    const resp = await revokeSignature(
       this.report.ident, role,
     );
-    this.analystComments = resp;
+    this.signatures = resp;
     $rootScope.$digest();
   }
 

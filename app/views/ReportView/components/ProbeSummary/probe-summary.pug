@@ -163,7 +163,7 @@ section(ng-if="!$ctrl.print")
       div(flex=25, layout="column")
         h5 Ready
         div(flex, layout="row")
-          span(ng-if="$ctrl.signatures === null || $ctrl.signatures.authorSignature.ident === null", layout="row", layout-align="start center", ng-click="$ctrl.sign('author')").clickable
+          span(ng-if="!$ctrl.signatures || !$ctrl.signatures.authorSignature", layout="row", layout-align="start center", ng-click="$ctrl.sign('author')").clickable
             md-icon(style="margin-right: 5px;") gesture
             span Sign
           span(ng-if="$ctrl.signatures.authorSignature.ident") {{$ctrl.signatures.authorSignature.firstName}} {{$ctrl.signatures.authorSignature.lastName}}
@@ -182,7 +182,7 @@ section(ng-if="!$ctrl.print")
       div(flex=25, layout="column")
         h5 Reviewer
         div(flex, layout="row")
-          span(ng-if="$ctrl.signatures === null || $ctrl.signatures.reviewerSignature.ident === null", layout="row", layout-align="start center", ng-click="$ctrl.sign('reviewer')").clickable
+          span(ng-if="!$ctrl.signatures || !$ctrl.signatures.reviewerSignature", layout="row", layout-align="start center", ng-click="$ctrl.sign('reviewer')").clickable
             md-icon(style="margin-right: 5px;") gesture
             span Sign
           span(ng-if="$ctrl.signatures.reviewerSignature.ident") {{$ctrl.signatures.reviewerSignature.firstName}} {{$ctrl.signatures.reviewerSignature.lastName}}
