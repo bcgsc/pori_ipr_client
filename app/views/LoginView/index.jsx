@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from 'react';
 
 import SecurityContext from '@/components/SecurityContext';
 import {
-  login, isAuthenticated, getReferrerUri, keycloak,
+  login, isAuthorized, getReferrerUri, keycloak,
 } from '@/services/management/auth';
 
 const Login = (props) => {
@@ -11,7 +11,7 @@ const Login = (props) => {
     location,
   } = props;
 
-  const { authorizationToken, setAuthorizationToken } = useContext(SecurityContext);
+  const { authorizationToken , setAuthorizationToken } = useContext(SecurityContext);
 
   let from;
 
@@ -22,7 +22,7 @@ const Login = (props) => {
   }
 
   useEffect(() => {
-    if (!isAuthenticated(SecurityContext)) {
+    if (!isAuthorized(authorizationToken)) {
       const auth = async () => {
         await login(from);
         setAuthorizationToken(keycloak.token);

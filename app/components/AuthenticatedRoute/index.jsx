@@ -1,13 +1,13 @@
 /* eslint-disable react/display-name */
 import { PropTypes } from 'prop-types';
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   Redirect,
   Route,
 } from 'react-router-dom';
 
 import SecurityContext from '@/components/SecurityContext';
-import { isAuthenticated } from '@/services/management/auth';
+import { isAuthorized } from '@/services/management/auth';
 
 /**
  * @returns {Route} a route component which checks authorization on render or redirects to login
@@ -15,7 +15,8 @@ import { isAuthenticated } from '@/services/management/auth';
 const AuthenticatedRoute = ({
   component: Component, admin, adminRequired, ...rest
 }) => {
-  const authOk = isAuthenticated(SecurityContext);
+  const { authorizationToken } = useContext(SecurityContext);
+  const authOk = isAuthorized(authorizationToken);
 
   let ChildComponent;
 

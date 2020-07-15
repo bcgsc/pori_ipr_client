@@ -47,7 +47,7 @@ const validToken = (token) => {
 /**
  * Returns true if the user has been sucessfully authenticated and the token is valid
  */
-const isAuthenticated = ({ authorizationToken }) => {
+const isAuthorized = (authorizationToken) => {
   const token = authorizationToken || keycloak.token;
 
   if (token) {
@@ -124,7 +124,7 @@ const getToken = async () => {
 };
 
 export {
-  isAuthenticated,
+  isAuthorized,
   login,
   logout,
   getToken,
