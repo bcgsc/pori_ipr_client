@@ -1,3 +1,5 @@
+@import '../../styles/theme';
+
 md-card.userRole {
   width: 310px;
 
@@ -20,10 +22,10 @@ md-card.userRole {
     padding-bottom: 0px;
     div {
       font-size: 0.85em;
-      color: rgb(110,110,110);
+      color: $palette__grey--600;
 
       &.value {
-        color: rgb(0,0,0);
+        color: $palette__common--black;
       }
     }
   }

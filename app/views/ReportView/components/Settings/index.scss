@@ -1,7 +1,9 @@
+@import '../../../../styles/theme';
+
 @media screen {
   .delete-report {
     &__invalid {
-      color: red;
+      color: $palette__error--main;
       font-size: 11px;
     }
 
@@ -28,8 +30,8 @@ section.meta {
   div.add {
     height: 135px;
     width: 310px;
-    background-color: rgb(210,210,210);
-    color: rgb(160, 160, 160);
+    background-color: $palette__grey--300;
+    color: $palette__grey--600;
     font-weight: 400;
     font-size: 1.1em;
     cursor: pointer;
@@ -38,14 +40,14 @@ section.meta {
     span.icon {
       margin-bottom: 10px;
       md-icon {
-        color: rgb(160, 160, 160);
+        color: $palette__grey--600;
       }
     }
 
     &:hover {
-      background-color: rgb(200,200,200);
-      color: rgb(120,120,120);
-      span.icon md-icon {color: rgb(120,120,120);}
+      background-color: darken($palette__grey--300, 15);
+      color: darken($palette__grey--600, 15);
+      span.icon md-icon {color: darken($palette__grey--600, 15);}
     }
   }
 }
