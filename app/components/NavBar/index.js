@@ -1,6 +1,4 @@
-/* eslint-disable class-methods-use-this */
 import { angular2react } from 'angular2react';
-import { $rootScope } from 'ngimport';
 import { StateService as $state } from '@uirouter/angularjs';
 import { $mdDialog, $mdToast } from 'angular-material';
 
@@ -13,6 +11,8 @@ import feedbackController from './feedback/feedback';
 import './navbar.scss';
 
 const bindings = {
+  sidebarMaximized: '<',
+  setSidebarMaximized: '<',
   user: '<',
 };
 
@@ -21,16 +21,10 @@ class NavBar {
   async $onInit() {
     this.config = CONFIG.ATTRS.name;
     this.version = VERSION;
-    this.maximized = false;
-
-    $rootScope.$on('navbarToggle', () => {
-      this.maximized = !this.maximized;
-    });
   }
 
   toggleSidebar() {
-    this.maximized = !this.maximized;
-    $rootScope.$emit('sidebarToggle');
+    this.setSidebarMaximized(!this.sidebarMaximized);
   }
 
   async openFeedback($event) {

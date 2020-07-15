@@ -5,19 +5,22 @@ import React, {
   useEffect,
 } from 'react';
 import fetchIntercept from 'fetch-intercept';
-import { Redirect, Route, Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import { CircularProgress } from '@material-ui/core';
 import { $httpProvider } from 'ngimport';
 
 import { getUser } from '@/services/management/auth';
 import AuthenticatedRoute from '@/components/AuthenticatedRoute';
 import SecurityContext from '@/components/SecurityContext';
-import NavBar from '@/components/NavBar/navbar.component';
-import Sidebar from '@/components/Sidebar/sidebar.component';
+import NavBar from '@/components/NavBar';
+import Sidebar from '@/components/Sidebar';
+
+import './index.scss';
 
 const LoginView = lazy(() => import('@/views/LoginView'));
 const TermsView = lazy(() => import('@/views/TermsView'));
 const ReportListingView = lazy(() => import('@/views/ReportListingView'));
+const ReportView = lazy(() => import('@/views/ReportView'));
 
 /**
  * Entry point to application. Handles routing, app theme, and logged in state.
@@ -26,6 +29,7 @@ const Main = () => {
   const [authorizationToken, setAuthorizationToken] = useState('');
   const [user, setUser] = useState({ firstName: 'Not', lastName: 'logged in' });
   const [admin, setAdmin] = useState(false);
+  const [sidebarMaximized, setSidebarMaximized] = useState(false);
 
   useEffect(() => {
     if (authorizationToken) {
@@ -63,14 +67,24 @@ const Main = () => {
   return (
     <SecurityContext.Provider value={{ authorizationToken, setAuthorizationToken }}>
       <div>
-        <NavBar user={user} />
-        <Sidebar />
-        <section>
+        <NavBar
+          sidebarMaximized={sidebarMaximized}
+          setSidebarMaximized={setSidebarMaximized}
+          user={user}
+        />
+        <Sidebar
+          sidebarMaximized={sidebarMaximized}
+          setSidebarMaximized={setSidebarMaximized}
+          user={user}
+          admin={admin}
+        />
+        <section className={`main__content ${sidebarMaximized ? 'main__content--maximized' : ''}`}>
           <Suspense fallback={(<CircularProgress color="secondary" />)}>
             <Switch>
               <Route component={LoginView} path="/login" />
               <Route component={TermsView} path="/terms" />
               <AuthenticatedRoute admin={admin} component={ReportListingView} path="/report-listing" />
+              <AuthenticatedRoute component={ReportView} path="/report/:ident" />
             </Switch>
           </Suspense>
         </section>

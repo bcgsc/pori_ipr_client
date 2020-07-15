@@ -1,10 +1,8 @@
 import get from 'lodash.get';
+import { getUser } from './auth';
 
 class AclService {
-  /* @ngInject */
-  constructor(UserService) {
-    this.UserService = UserService;
-
+  constructor() {
     this.actions = { // Move this out to some sort of constants file eventually
       report: {
         view: {
@@ -37,7 +35,7 @@ class AclService {
    * @param {String} name - Resource name
    * @return {Promise} Boolean with if user is allowed to see resource
    */
-  async checkResource(name) {
+  async checkResource(name, user = null) {
     let resource;
 
     try {
@@ -50,7 +48,14 @@ class AclService {
       return true;
     }
 
-    const user = await this.UserService.me();
+    if (!user) {
+      try {
+        user = await getUser().user;
+      } catch {
+        return false;
+      }
+    }
+
     return user.groups.some(entry => resource.allow.includes(entry.name.toLowerCase()));
   }
 
@@ -59,7 +64,7 @@ class AclService {
    * @param {String} name - The action string to be parsed
    * @return {Promise} Boolean with if an action can be performed
    */
-  async checkAction(name) {
+  async checkAction(name, user = null) {
     let permission = false;
     let action;
 
@@ -71,7 +76,14 @@ class AclService {
 
     /* Pull out the user's groups into an array */
     const userGroups = [];
-    const user = await this.UserService.me();
+    if (!user) {
+      try {
+        user = await getUser().user;
+      } catch {
+        return false;
+      }
+    }
+
     user.groups.forEach((entry) => {
       userGroups.push(entry.name.toLowerCase());
     });
@@ -103,7 +115,7 @@ class AclService {
    * @return {Promise} Boolean with if the user is in a group
    */
   async inGroup(group) {
-    const user = await this.UserService.me();
+    const { user } = await getUser();
     return user.groups.some(userGroup => group.toLowerCase() === userGroup.name.toLowerCase());
   }
 

@@ -1,7 +1,7 @@
+import { $http } from 'ngimport';
+
 class TumourAnalysisService {
-  /* @ngInject */
-  constructor($http) {
-    this.$http = $http;
+  constructor() {
     this.api = `${CONFIG.ENDPOINTS.API}/reports`;
   }
 
@@ -11,7 +11,7 @@ class TumourAnalysisService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async get(report) {
-    const resp = await this.$http.get(
+    const resp = await $http.get(
       `${this.api}/${report}/summary/tumour-analysis`,
     );
     return resp.data;
@@ -24,7 +24,7 @@ class TumourAnalysisService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async update(report, analysis) {
-    const resp = await this.$http.put(
+    const resp = await $http.put(
       `${this.api}/${report}/summary/tumour-analysis/`, analysis,
     );
     return resp.data;

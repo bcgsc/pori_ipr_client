@@ -70,9 +70,6 @@ function ReportsTableComponent(props) {
         date: report.createdAt,
       };
     }));
-
-    const allCols = columnApi.current.getAllColumns().map(col => col.colId);
-    columnApi.current.autoSizeColumns(allCols);
   };
 
   const onGridSizeChanged = (params) => {

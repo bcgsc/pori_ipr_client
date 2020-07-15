@@ -1,6 +1,6 @@
-md-toolbar(ng-class="{'navbar--open': $ctrl.maximized}").navbar
+md-toolbar(ng-class="{'navbar--open': $ctrl.sidebarMaximized}").navbar
   div.md-toolbar-tools
-    md-button(ng-click="$ctrl.toggleSidebar()", ng-if="!$ctrl.maximized").md-icon-button.navbar__menu
+    md-button(ng-click="$ctrl.toggleSidebar()", ng-if="!$ctrl.sidebarMaximized").md-icon-button.navbar__menu
       md-icon.navbar__icon menu
     h2(flex).navbar__title
       |  BCGSC Integrated Pipeline Reports 
