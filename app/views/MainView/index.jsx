@@ -9,7 +9,6 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 import { CircularProgress } from '@material-ui/core';
 import { $httpProvider } from 'ngimport';
 
-import { getUser } from '@/services/management/auth';
 import AuthenticatedRoute from '@/components/AuthenticatedRoute';
 import SecurityContext from '@/components/SecurityContext';
 import NavBar from '@/components/NavBar';
@@ -24,6 +23,7 @@ const ReportView = lazy(() => import('@/views/ReportView'));
 const PrintView = lazy(() => import('@/views/PrintView'));
 const GermlineView = lazy(() => import('@/views/GermlineView'));
 const AdminView = lazy(() => import('@/views/AdminView'));
+const LinkOutView = lazy(() => import('@/views/LinkOutView'));
 
 /**
  * Entry point to application. Handles routing, app theme, and logged in state.
@@ -87,6 +87,7 @@ const Main = () => {
             <Switch>
               <Route component={LoginView} path="/login" />
               <Route component={TermsView} path="/terms" />
+              <Route component={LinkOutView} path="/graphkb" />
               <Route path="/" exact>
                 <Redirect to={{ pathname: '/reports' }} />
               </Route>
