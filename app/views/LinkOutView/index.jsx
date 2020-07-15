@@ -1,15 +1,30 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const LinkOutView = () => {
+  const [error, setError] = useState();
+
   useEffect(() => {
-    const [link] = window.location.href.match(/(?<=\/graphkb).+/g);
-    window.location.assign(`${CONFIG.ENDPOINTS.GRAPHKB}${link}`);
+    try {
+      const [link] = window.location.href.match(/(?<=\/graphkb).+/g);
+      window.location.assign(`${CONFIG.ENDPOINTS.GRAPHKB}${link}`);
+    } catch (err) {
+      setError(err);
+    }
   }, []);
 
   return (
-    <div>
-      Redirecting...
-    </div>
+    <>
+      {error ? (
+        <div>
+          An error has occured redirecting to GraphKB:
+          {error}
+        </div>
+      ) : (
+        <div>
+          Redirecting...
+        </div>
+      )}
+    </>
   );
 };
 
