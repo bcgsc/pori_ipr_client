@@ -8,19 +8,19 @@ const bindings = {
   report: '<',
   reportEdit: '<',
   testInformation: '<',
-  signature: '<',
+  signatures: '<',
   probeResults: '<',
   print: '<',
 };
 
 class ProbeSummaryComponent {
   /* @ngInject */
-  constructor($scope, $mdDialog, $mdToast, ProbeSignatureService,
+  constructor($scope, $mdDialog, $mdToast, SignatureService,
     PatientInformationService, TargetedGenesService, GeneService) {
     this.$scope = $scope;
     this.$mdDialog = $mdDialog;
     this.$mdToast = $mdToast;
-    this.ProbeSignatureService = ProbeSignatureService;
+    this.SignatureService = SignatureService;
     this.PatientInformationService = PatientInformationService;
     this.TargetedGenesService = TargetedGenesService;
     this.GeneService = GeneService;
@@ -120,10 +120,10 @@ class ProbeSummaryComponent {
   // Sign The comments
   async sign(role) {
     try {
-      const resp = await this.ProbeSignatureService.sign(
+      const resp = await this.SignatureService.sign(
         this.report.ident, role,
       );
-      this.signature = resp;
+      this.signatures = resp;
       this.$scope.$digest();
     } catch (err) {
       this.$mdToast.showSimple('Unable to sign. Error: ', err);
@@ -133,10 +133,10 @@ class ProbeSummaryComponent {
   // Unsign The comments
   async revokeSign(role) {
     try {
-      const resp = await this.ProbeSignatureService.revoke(
+      const resp = await this.SignatureService.revoke(
         this.report.ident, role,
       );
-      this.signature = resp;
+      this.signatures = resp;
       this.$scope.$digest();
     } catch (err) {
       this.$mdToast.showSimple('Unable to revoke. Error: ', err);
