@@ -19,24 +19,33 @@
   }
 
   &__list-title {
-    font-size: $typography__font-size--h6;
-    font-weight: 700;
-    margin: 10px 4px 9px 0;
-    padding: 10px 20px;
+    margin: 12px 0;
     user-select: none;
   }
 
+  &__list-title-text {
+    font-size: $typography__font-size--h6;
+    font-weight: 700;
+  }
+
   &__list-item {
-    padding: 10px 0 10px 20px;
+    padding: 6px 0 6px 20px;
+    user-select: none;
 
     &--indented {
-      padding: 10px 0 10px 35px;
+      padding: 6px 0 6px 35px;
     }
 
     &--bold {
       &#{&} {
         font-weight: 700;
       }
+    }
+  }
+
+  &__list-item-text {
+    &--bold {
+      font-weight: 700;
     }
   }
 

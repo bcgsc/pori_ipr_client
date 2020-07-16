@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Typography } from '@material-ui/core';
+import {
+  List, ListItem, ListItemText,
+} from '@material-ui/core';
 
 import './index.scss';
 
@@ -17,26 +19,28 @@ const ReportSidebar = (props) => {
 
   return (
     <div className="report-sidebar">
-      <ul className="report-sidebar__list">
-        <li className="report-sidebar__list-title">
-          Report Sections
-        </li>
+      <List dense classes={{ root: 'report-sidebar__list' }}>
+        <ListItem classes={{ root: 'report-sidebar__list-item' }}>
+          <ListItemText classes={{ root: 'report-sidebar__list-title', primary: 'report-sidebar__list-title-text' }}>
+            Report Sections
+          </ListItemText>
+        </ListItem>
         {sections.map(section => (
           <React.Fragment key={section.name}>
             {section.uri ? (
               <Link to={{ pathname: section.uri }} className="report-sidebar__list-link">
-                <li className="report-sidebar__list-item">
-                  <Typography variant="body2">
+                <ListItem classes={{ root: 'report-sidebar__list-item' }}>
+                  <ListItemText>
                     {section.name}
-                  </Typography>
-                </li>
+                  </ListItemText>
+                </ListItem>
               </Link>
             ) : (
-              <li className="report-sidebar__list-item report-sidebar__list-item--bold">
-                <Typography variant="h6">
+              <ListItem classes={{ root: 'report-sidebar__list-item' }}>
+                <ListItemText classes={{ primary: 'report-sidebar__list-item-text--bold' }}>
                   {section.name}
-                </Typography>
-              </li>
+                </ListItemText>
+              </ListItem>
             )}
             <>
               {section.children.length ? (
@@ -47,11 +51,11 @@ const ReportSidebar = (props) => {
                       to={{ pathname: child.uri }}
                       className="report-sidebar__list-link"
                     >
-                      <li className="report-sidebar__list-item--indented">
-                        <Typography variant="body2">
+                      <ListItem classes={{ root: 'report-sidebar__list-item--indented' }}>
+                        <ListItemText>
                           {child.name}
-                        </Typography>
-                      </li>
+                        </ListItemText>
+                      </ListItem>
                     </Link>
                   ))}
                 </>
@@ -59,7 +63,7 @@ const ReportSidebar = (props) => {
             </>
           </React.Fragment>
         ))}
-      </ul>
+      </List>
     </div>
   );
 };
