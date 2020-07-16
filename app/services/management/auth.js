@@ -115,19 +115,10 @@ const logout = async () => {
   }
 };
 
-const getToken = async () => {
-  try {
-    return localStorage[CONFIG.STORAGE.KEYCLOAK];
-  } catch (err) {
-    return false;
-  }
-};
-
 export {
   isAuthorized,
   login,
   logout,
-  getToken,
   keycloak,
   getReferrerUri,
   setReferrerUri,

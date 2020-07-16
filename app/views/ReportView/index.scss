@@ -1,0 +1,19 @@
+.report {
+  &__container {
+    display: flex;
+    flex-direction: row;
+  }
+
+  &__content {
+    height: calc(100vh - 56px - 57px);
+    overflow: auto;
+  }
+
+  &__content-container {
+    display: flex;
+    flex-direction: column;
+    flex-basis: 0%;
+    flex-grow: 1;
+    flex-shrink: 1;
+  }
+}

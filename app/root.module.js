@@ -6,6 +6,7 @@ import 'angular-material/angular-material.min';
 import 'ngstorage';
 import 'angular-material/angular-material.min.css';
 import 'angular-sortable-view';
+import 'angular-file-upload';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { CsvExportModule } from '@ag-grid-community/csv-export';
@@ -17,6 +18,8 @@ import 'ngimport';
 import { NavBarComponent } from '@/components/NavBar';
 import { SidebarComponent } from '@/components/Sidebar';
 import { GenomicSummaryComponent } from '@/views/ReportView/components/GenomicSummary';
+import { AnalystCommentsComponent } from '@/views/ReportView/components/AnalystComments';
+import { PathwayAnalysisComponent } from '@/views/ReportView/components/PathwayAnalysis';
 
 import PogService from './services/reports/pog.service';
 import ProjectService from './services/management/project.service';
@@ -29,7 +32,6 @@ import MutationSummaryService from './services/reports/summary/mutation-summary.
 import ProbeTargetService from './services/reports/summary/probe-target.service';
 import MutationSignatureService from './services/reports/summary/mutation-signature.service';
 import MicrobialService from './services/reports/summary/microbial.service';
-import PathwayAnalysisService from './services/reports/pathway-analysis/pathway-analysis.service';
 import AnalystCommentsService from './services/reports/analyst-comments/analyst-comments.service';
 import AlterationService from './services/reports/alteration.service';
 import TargetedGenesService from './services/reports/probe/targeted-genes.service';
@@ -64,6 +66,7 @@ angular.module('root', [
   'ngStorage',
   'ngMaterial',
   'ngSanitize',
+  'angularFileUpload',
   'bcherny/ngimport',
 ]);
 
@@ -71,6 +74,8 @@ const rootModule = angular.module('root')
   .component('navBar', NavBarComponent)
   .component('sidebar', SidebarComponent)
   .component('genomicSummary', GenomicSummaryComponent)
+  .component('analystComments', AnalystCommentsComponent)
+  .component('pathwayAnalysis', PathwayAnalysisComponent)
   .service('PogService', PogService)
   .service('ProjectService', ProjectService)
   .service('AclService', AclService)
@@ -82,14 +87,12 @@ const rootModule = angular.module('root')
   .service('ProbeTargetService', ProbeTargetService)
   .service('MutationSignatureService', MutationSignatureService)
   .service('MicrobialService', MicrobialService)
-  .service('PathwayAnalysisService', PathwayAnalysisService)
   .service('AnalystCommentsService', AnalystCommentsService)
   .service('SlidesService', SlidesService)
   .service('DiscussionService', DiscussionService)
   .service('GroupService', GroupService)
   .service('KnowledgebaseService', KnowledgebaseService)
   .service('TherapeuticService', TherapeuticService)
-  .service('PathwayAnalysisService', PathwayAnalysisService)
   .service('GermlineService', GermlineService)
   .service('AlterationService', AlterationService)
   .service('TargetedGenesService', TargetedGenesService)

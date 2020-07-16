@@ -1,38 +1,47 @@
+import { $sce, $rootScope } from 'ngimport';
+import { angular2react } from 'angular2react';
+
+import lazyInjector from '@/lazyInjector';
+import AnalystCommentsService from '@/services/reports/analyst-comments/analyst-comments.service';
 import template from './analyst-comments.pug';
 import editTemplate from './analyst-comments-edit.pug';
-import './analyst-comments.scss';
+
+import './index.scss';
 
 const bindings = {
   print: '<',
   report: '<',
   reportEdit: '<',
-  analystComments: '<',
 };
 
-class AnalystCommentsComponent {
-  /* @ngInject */
-  constructor($scope, $mdDialog, $mdToast, $sce, AnalystCommentsService) {
-    this.$scope = $scope;
-    this.$mdDialog = $mdDialog;
-    this.$mdToast = $mdToast;
+class AnalystComments {
+  constructor($mdDialog, $mdToast) {
     this.$sce = $sce;
-    this.AnalystCommentsService = AnalystCommentsService;
+    this.$mdToast = $mdToast;
+    this.$mdDialog = $mdDialog;
+  }
+
+  async $onChanges(changes) {
+    if (changes.report && !changes.report.isFirstChange()) {
+      this.analystComments = await AnalystCommentsService.get(this.report.ident);
+      $rootScope.$digest();
+    }
   }
 
   // Sign The comments
   async sign(role) {
-    const resp = await this.AnalystCommentsService.sign(this.report.ident, role);
+    const resp = await AnalystCommentsService.sign(this.report.ident, role);
     this.analystComments = resp;
-    this.$scope.$digest();
+    $rootScope.$digest();
   }
 
   // Sign The comments
   async revokeSign(role) {
-    const resp = await this.AnalystCommentsService.revokeSign(
+    const resp = await AnalystCommentsService.revokeSign(
       this.report.ident, role,
     );
     this.analystComments = resp;
-    this.$scope.$digest();
+    $rootScope.$digest();
   }
 
   // Editor Update Modal
@@ -51,7 +60,7 @@ class AnalystCommentsComponent {
           // Update Details
           scope.update = async () => {
             try {
-              await this.AnalystCommentsService.update(
+              await AnalystCommentsService.update(
                 this.report.ident, scope.analystComments,
               );
               this.$mdDialog.hide({
@@ -72,14 +81,16 @@ class AnalystCommentsComponent {
       this.$mdToast.show(this.$mdToast.simple().textContent(resp.message));
     } catch (err) {
       this.$mdToast.show(this.$mdToast.simple().textContent(err));
-    } finally {
-      this.$scope.$digest();
     }
   }
 }
 
-export default {
+AnalystComments.$inject = ['$mdDialog', '$mdToast'];
+
+export const AnalystCommentsComponent = {
   template,
   bindings,
-  controller: AnalystCommentsComponent,
+  controller: AnalystComments,
 };
+
+export default angular2react('analystComments', AnalystCommentsComponent, lazyInjector.$injector);

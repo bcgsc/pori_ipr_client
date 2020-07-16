@@ -88,4 +88,4 @@ class GenomicAterationsService {
   }
 }
 
-export default GenomicAterationsService;
+export default new GenomicAterationsService();

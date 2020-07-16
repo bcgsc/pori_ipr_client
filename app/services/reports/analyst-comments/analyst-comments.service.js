@@ -1,7 +1,7 @@
+import { $http } from 'ngimport';
+
 class AnalystCommentsService {
-  /* @ngInject */
-  constructor($http) {
-    this.$http = $http;
+  constructor() {
     this.api = `${CONFIG.ENDPOINTS.API}/reports`;
   }
 
@@ -12,7 +12,7 @@ class AnalystCommentsService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async get(report) {
-    const { data } = await this.$http.get(
+    const { data } = await $http.get(
       `${this.api}/${report}/summary/analyst-comments`,
     );
     return data;
@@ -26,7 +26,7 @@ class AnalystCommentsService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async update(report, summary) {
-    const { data } = await this.$http.put(
+    const { data } = await $http.put(
       `${this.api}/${report}/summary/analyst-comments`, summary,
     );
     return data;
@@ -41,7 +41,7 @@ class AnalystCommentsService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async sign(report, role) {
-    const { data } = await this.$http.put(
+    const { data } = await $http.put(
       `${this.api}/${report}/summary/analyst-comments/sign/${role}`, {},
     );
     return data;
@@ -55,7 +55,7 @@ class AnalystCommentsService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async revokeSign(report, role) {
-    const { data } = await this.$http.put(
+    const { data } = await $http.put(
       `${this.api}/${report}/summary/analyst-comments/sign/revoke/${role}`,
       {},
     );
@@ -63,4 +63,4 @@ class AnalystCommentsService {
   }
 }
 
-export default AnalystCommentsService;
+export default new AnalystCommentsService();

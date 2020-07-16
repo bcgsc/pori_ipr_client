@@ -1,7 +1,7 @@
+import { $http } from 'ngimport';
+
 class PathwayAnalysisService {
-  /* @ngInject */
-  constructor($http) {
-    this.$http = $http;
+  constructor() {
     this.api = `${CONFIG.ENDPOINTS.API}/reports`;
   }
 
@@ -10,8 +10,8 @@ class PathwayAnalysisService {
    * @param {String} report - report ident
    * @returns {Promise} - result of API call
    */
-  async retrieve(report) {
-    const { data } = await this.$http.get(
+  async get(report) {
+    const { data } = await $http.get(
       `${this.api}/${report}/summary/pathway-analysis`,
     );
     return data;
@@ -25,7 +25,7 @@ class PathwayAnalysisService {
    * @returns {Promise} - result of API call
    */
   async update(report, summary) {
-    const { data } = await this.$http.put(
+    const { data } = await $http.put(
       `${this.api}/${report}/summary/pathway-analysis`,
       summary,
     );
@@ -33,4 +33,4 @@ class PathwayAnalysisService {
   }
 }
 
-export default PathwayAnalysisService;
+export default new PathwayAnalysisService();

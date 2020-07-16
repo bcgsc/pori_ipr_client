@@ -26,3 +26,9 @@ html body {
   height: 100%;
   overflow: hidden;
 }
+
+.toast {
+  &--bottom-left {
+    position: fixed;
+  }
+}

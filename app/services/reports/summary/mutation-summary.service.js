@@ -33,4 +33,4 @@ class MutationSummaryService {
   }
 }
 
-export default MutationSummaryService;
+export default new MutationSummaryService();
