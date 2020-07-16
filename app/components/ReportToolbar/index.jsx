@@ -16,7 +16,7 @@ function ReportToolbar(props) {
     type,
     state,
     isSidebarVisible,
-    setIsSidebarVisible,
+    onSidebarToggle,
   } = props;
 
   return (
@@ -32,7 +32,7 @@ function ReportToolbar(props) {
         {state}
       </Typography>
       <IconButton
-        onClick={() => setIsSidebarVisible(!isSidebarVisible)}
+        onClick={() => onSidebarToggle(!isSidebarVisible)}
         title={`${isSidebarVisible ? 'Close' : 'Open'} Sidebar`}
         className="report__header--max-width"
       >
@@ -54,7 +54,7 @@ ReportToolbar.propTypes = {
   type: PropTypes.string.isRequired,
   state: PropTypes.string.isRequired,
   isSidebarVisible: PropTypes.bool.isRequired,
-  setIsSidebarVisible: PropTypes.func.isRequired,
+  onSidebarToggle: PropTypes.func.isRequired,
 };
 
 ReportToolbar.defaultProps = {

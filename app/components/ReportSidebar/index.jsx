@@ -70,6 +70,7 @@ const ReportSidebar = (props) => {
 
 ReportSidebar.propTypes = {
   sections: PropTypes.arrayOf(PropTypes.object).isRequired,
+  isSidebarVisible: PropTypes.bool.isRequired,
 };
 
 export default ReportSidebar;

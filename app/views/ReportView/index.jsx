@@ -48,7 +48,7 @@ const ReportView = () => {
             type={report.type}
             state={report.state}
             isSidebarVisible={isSidebarVisible}
-            setIsSidebarVisible={setIsSidebarVisible}
+            onSidebarToggle={setIsSidebarVisible}
           />
         )}
         <div className="report__content">
