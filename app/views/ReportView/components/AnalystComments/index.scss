@@ -2,7 +2,7 @@
 @import '../../../../styles/theme';
 
 @mixin print-header {
-  background-color: #bcbddc;
+  background-color: $print-header;
   color: black;
   font-size: 14pt;
   font-weight: 700;
@@ -23,7 +23,7 @@
     }
 
     &__comments {
-      border: .1mm solid grey;
+      border: .1mm solid $palette__grey--600;
 
       // Use * rule since the analyst input could have any tag and no classes
       & > * {
@@ -34,7 +34,7 @@
     &__review-box {
       margin: 8mm 0 0;
       padding: 2mm;
-      border: .1mm solid grey;
+      border: .1mm solid $palette__grey--600;
       font-size: 11pt;
     }
   }

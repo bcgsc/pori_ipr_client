@@ -3,7 +3,7 @@
 @mixin print-header {
   margin: 2mm 0 1mm;
   padding: 1.5mm 1mm;
-  background-color: #bcbddc;
+  background-color: $print-header;
   color: black;
   font-size: 14pt;
   font-weight: 700;

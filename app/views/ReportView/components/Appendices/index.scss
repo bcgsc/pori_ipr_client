@@ -1,9 +1,10 @@
 @import '../../../../styles/theme';
+@import '../../../../styles/variables';
 
 @mixin print-subheader {
   margin: 1mm 0;
   padding: 1mm;
-  background-color: #d3d4f4;
+  background-color: $print-subheader;
   color: black;
   font-size: 13pt;
   font-weight: 700;

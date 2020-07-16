@@ -1,9 +1,10 @@
 @import '../../../../styles/theme';
+@import '../../../../styles/variables';
 
 @mixin print-header {
   margin: 2mm 0 1mm;
   padding: 1.5mm 1mm;
-  background-color: #bcbddc;
+  background-color: $print-header;
   color: black;
   font-size: 14pt;
   font-weight: 700;
@@ -37,7 +38,7 @@
       width: 100%;
       margin: 2mm 0;
       padding: 1mm;
-      background-color: #efdaf4;
+      background-color: $print-subheader;
       font-size: 12pt;
       font-weight: 700;
       text-transform: uppercase;
