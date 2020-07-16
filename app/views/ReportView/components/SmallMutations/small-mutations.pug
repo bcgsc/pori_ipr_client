@@ -52,7 +52,9 @@ section
         column-defs="$ctrl.signatureColumnDefs",
         title-text="'Mutational Spectrum'",
         report-ident="$ctrl.report.ident",
-        can-toggle-columns="true"
+        can-toggle-columns="true",
+        ng-if="$ctrl.report",
+        theme="$ctrl.theme"
       )
 
       div(layout="column", layout-align="center center")
