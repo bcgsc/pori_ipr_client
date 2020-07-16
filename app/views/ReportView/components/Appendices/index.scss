@@ -1,3 +1,5 @@
+@import '../../../../styles/theme';
+
 @mixin print-subheader {
   margin: 1mm 0;
   padding: 1mm;
@@ -73,8 +75,8 @@
 
     padding: 10px;
     margin: 20px;
-    background-color: rgb(190,190,190);
-    border: 1px solid rgb(80,80,80);
+    background-color: $palette__grey--300;
+    border: 1px solid $palette__grey--600;
     max-height: 300px;
     overflow-y: auto;
 

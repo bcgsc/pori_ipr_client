@@ -1,3 +1,5 @@
+@import '../../../../styles/theme';
+
 .germline_report {
 
   h2 {
@@ -12,7 +14,7 @@
 
   tr.lowScore {
     td {
-      background-color: rgb(255,200,200);
+      background-color: $palette__error--light;
     }
   }
 

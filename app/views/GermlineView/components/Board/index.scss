@@ -1,3 +1,5 @@
+@import '../../../../styles/theme';
+
 .germline {
   height: calc(100vh - 56px);
   overflow-y: auto;
@@ -8,22 +10,18 @@ table.material-table {
   border-spacing: 0;
   border-collapse: collapse;
 
-  $material-table-background-light: rgb(247,247,247);
-  $material-table-row-hover: rgb(238,238,238);
-  $material-table-border-color: rgb(220,220,220);
+  .border-left { border-left: 1px solid $palette__divider }
 
-  .border-left { border-left: 1px solid $material-table-border-color }
-
-  .background-light { background-color: $material-table-background-light }
+  .background-light { background-color: $palette__background--default }
 
   thead {
 
     tr > th {
       font-weight: 400;
-      border-bottom: 1px solid $material-table-border-color;
+      border-bottom: 1px solid $palette__divider;
 
       vertical-align: bottom;
-      color: rgba(0,0,0,0.54);
+      color: $palette__text--secondary;
       font-size: 0.75em;
       padding: 10px 7px;
       text-align: left;
@@ -55,7 +53,7 @@ table.material-table {
   tbody {
     tr {
 
-      border-bottom: 1px solid $material-table-border-color;
+      border-bottom: 1px solid $palette__divider;
 
       &:last-of-type { border-bottom: none; }
 
@@ -82,17 +80,14 @@ table.material-table {
       }
 
       &:hover {
-        background-color: $material-table-row-hover;
+        background-color: darken($palette__background--default, 5);
 
         &.no-hover {
           background-color: transparent;
         }
 
         > .background-light {
-          background-color: $material-table-row-hover;
-        }
-        > .options md-icon {
-          color: rgb(89, 117, 236);
+          background-color: darken($palette__background--default, 5);
         }
       }
     }

@@ -1,3 +1,5 @@
+@import '../../../../styles/theme';
+
 @mixin print-header {
   margin: 2mm 0 1mm;
   padding: 1.5mm 1mm;
@@ -60,7 +62,7 @@
 
       span.hint {
         font-size: 0.75em;
-        color: rgb(130,130,130);
+        color: $palette__grey--600;
         padding: 4px;
         display: inline-block;
       }
@@ -72,12 +74,6 @@
       .add-slide {
         margin: 10px 20px 0 20px;
         padding-bottom: 30px;
-
-        textarea {
-          border: 1px solid rgba(0,0,0,0.2);
-          background-color: rgba(0,0,0,0.03);
-          padding: 5px;
-        }
 
         md-input-container {
           margin: 8px 0 4px 0;
@@ -91,13 +87,6 @@
 
       .edit-entry {
         margin: 10px;
-      }
-
-      .edited {
-        font-size: 11px;
-        color: rgba(0,0,0,0.5);
-        font-style: italic;
-        margin: 25px 0 0 0;
       }
     }
   }
