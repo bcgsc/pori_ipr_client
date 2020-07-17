@@ -1,5 +1,5 @@
 import angular from 'angular';
-import ReportListingCardComponent from './report-listing-card.component';
+import ReportListingCardComponent from './reports-card.component';
 
 angular.module('report.listing.card', []);
 

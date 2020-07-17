@@ -1,7 +1,7 @@
+import { $http } from 'ngimport';
+
 class DiscussionService {
-  /* @ngInject */
-  constructor($http) {
-    this.$http = $http;
+  constructor() {
     this.api = `${CONFIG.ENDPOINTS.API}/reports`;
   }
 
@@ -13,7 +13,7 @@ class DiscussionService {
    * @returns {Promise} - Resolves with all entries
    */
   async all(report) {
-    const { data } = await this.$http.get(
+    const { data } = await $http.get(
       `${this.api}/${report}/presentation/discussion`,
     );
     return data;
@@ -28,7 +28,7 @@ class DiscussionService {
    * @returns {Promise} - Resolves with new entry
    */
   async create(report, entry) {
-    const { data } = await this.$http.post(
+    const { data } = await $http.post(
       `${this.api}/${report}/presentation/discussion`, entry,
     );
     return data;
@@ -43,7 +43,7 @@ class DiscussionService {
    * @returns {Promise} - Resolves with updated entry
    */
   async get(report, ident) {
-    const { data } = await this.$http.get(
+    const { data } = await $http.get(
       `${this.api}/${report}/presentation/discussion/${ident}`,
     );
     return data;
@@ -59,7 +59,7 @@ class DiscussionService {
    * @returns {Promise} - Resolves with updated entry
    */
   async update(report, ident, entry) {
-    const { data } = await this.$http.put(
+    const { data } = await $http.put(
       `${this.api}/${report}/presentation/discussion/${ident}`, entry,
     );
     return data;
@@ -74,11 +74,11 @@ class DiscussionService {
    * @returns {Promise} - Resolves with updated entry
    */
   async remove(report, ident) {
-    const { data } = await this.$http.delete(
+    const { data } = await $http.delete(
       `${this.api}/${report}/presentation/discussion/${ident}`,
     );
     return data;
   }
 }
 
-export default DiscussionService;
+export default new DiscussionService();

@@ -19,7 +19,7 @@ import './index.scss';
 
 const LoginView = lazy(() => import('@/views/LoginView'));
 const TermsView = lazy(() => import('@/views/TermsView'));
-const ReportListingView = lazy(() => import('@/views/ReportListingView'));
+const ReportsView = lazy(() => import('@/views/ReportsView'));
 const ReportView = lazy(() => import('@/views/ReportView'));
 
 /**
@@ -83,7 +83,7 @@ const Main = () => {
             <Switch>
               <Route component={LoginView} path="/login" />
               <Route component={TermsView} path="/terms" />
-              <AuthenticatedRoute admin={admin} component={ReportListingView} path="/report-listing" />
+              <AuthenticatedRoute admin={admin} component={ReportsView} path="/reports" />
               <AuthenticatedRoute component={ReportView} path="/report/:ident" />
             </Switch>
           </Suspense>

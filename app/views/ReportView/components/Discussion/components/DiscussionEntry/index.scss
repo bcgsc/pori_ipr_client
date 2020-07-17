@@ -1,4 +1,4 @@
-@import '../../styles/variables';
+@import '../../../../../../styles/variables';
 
 discussion-entry {
   border: 1px solid $black-15;
@@ -45,5 +45,11 @@ discussion-entry {
       font-style: italic;
       margin: 25px 0 0;
     }
+  }
+}
+
+.discussion-entry {
+  &__date {
+    margin: 0 8px 0 0;
   }
 }

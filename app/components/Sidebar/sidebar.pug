@@ -4,14 +4,14 @@ div(layout="column", ng-class="{'sidebar--maximized': $ctrl.sidebarMaximized}").
       md-icon chevron_left
   md-divider
 
-  a(layout="row", ng-if="$ctrl.pageAccess.report", ui-sref="root.reportlisting.reports",
+  a(layout="row", ng-if="$ctrl.pageAccess.report", href="/reports",
     ng-class="{'sidebar__row--active': $ctrl.$state.current.name.includes('reportlisting')}"
   ).sidebar__row
     md-icon.sidebar__icon assignment
     md-tooltip(ng-if="!$ctrl.sidebarMaximized", md-direction="right") Reports
     span(ng-class="{'sidebar__text--visible': $ctrl.sidebarMaximized}").sidebar__text.sidebar__text--transition Reports
 
-  a(layout="row", ng-if="$ctrl.pageAccess.germline", ui-sref="root.germline.board",
+  a(layout="row", ng-if="$ctrl.pageAccess.germline", href="/germline",
     ng-class="{'sidebar__row--active': $ctrl.$state.current.name.includes('germline')}"
   ).sidebar__row
     img(src="img/germline_icon.svg").sidebar__icon--custom
@@ -23,7 +23,7 @@ div(layout="column", ng-class="{'sidebar--maximized': $ctrl.sidebarMaximized}").
     md-tooltip(ng-if="!$ctrl.sidebarMaximized", md-direction="right") Graph Knowledgebase
     span(ng-class="{'sidebar__text--visible': $ctrl.sidebarMaximized}").sidebar__text.sidebar__text--transition Graph Knowledgebase
 
-  a(layout="row", ui-sref="root.terms",
+  a(layout="row", href="/terms",
     ng-class="{'sidebar__row--active': $ctrl.$state.current.name.includes('terms')}"
   ).sidebar__row
     md-icon.sidebar__icon help_outline
@@ -31,21 +31,21 @@ div(layout="column", ng-class="{'sidebar--maximized': $ctrl.sidebarMaximized}").
     span(ng-class="{'sidebar__text--visible': $ctrl.sidebarMaximized}").sidebar__text.sidebar__text--transition Terms of Use
 
 
-  a(layout="row", ng-if="$ctrl.admin", ui-sref="root.admin.users",
+  a(layout="row", ng-if="$ctrl.admin", href="/admin/users",
       ng-class="{'sidebar__row--active': $ctrl.$state.current.name.includes('users')}"
     ).sidebar__row
     md-icon.sidebar__icon person
     md-tooltip(ng-if="!$ctrl.sidebarMaximized", md-direction="right") Users
     span(ng-class="{'sidebar__text--visible': $ctrl.sidebarMaximized}").sidebar__text.sidebar__text--transition Users
 
-  a(layout="row", ng-if="$ctrl.admin", ui-sref="root.admin.groups",
+  a(layout="row", ng-if="$ctrl.admin", href="/admin/groups",
       ng-class="{'sidebar__row--active': $ctrl.$state.current.name.includes('groups')}"
     ).sidebar__row
     md-icon.sidebar__icon supervisor_account
     md-tooltip(ng-if="!$ctrl.sidebarMaximized", md-direction="right") Groups
     span(ng-class="{'sidebar__text--visible': $ctrl.sidebarMaximized}").sidebar__text.sidebar__text--transition Groups
 
-  a(layout="row", ng-if="$ctrl.admin", ui-sref="root.admin.projects",
+  a(layout="row", ng-if="$ctrl.admin", href="/admin/projects",
       ng-class="{'sidebar__row--active': $ctrl.$state.current.name.includes('projects')}"
     ).sidebar__row
     md-icon.sidebar__icon folder_shared

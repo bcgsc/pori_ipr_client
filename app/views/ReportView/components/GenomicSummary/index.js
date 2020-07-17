@@ -2,6 +2,7 @@ import { angular2react } from 'angular2react';
 import sortBy from 'lodash.sortby';
 import { $rootScope } from 'ngimport';
 
+import dialogCreator from '@/services/utils/dialogCreator';
 import toastCreator from '@/services/utils/toastCreator';
 import lazyInjector from '@/lazyInjector';
 import TumourAnalysisService from '@/services/reports/summary/tumour-analysis.service';
@@ -398,31 +399,9 @@ class GenomicSummary {
   }
 
   showHelpMessage($event, message) {
-    this.$mdDialog.show({
-      targetEvent: $event,
-      clickOutToClose: true,
-      parent: angular.element(document.body),
-      template: `
-        <md-dialog flex="40">
-          <md-toolbar class="md-toolbar-tools">
-            Help
-          </md-toolbar>
-          <md-dialog-content class="layout-padding">
-            <div>
-              ${message.content}
-            </div>
-          </md-dialog-content>
-          <md-dialog-actions>
-            <md-button ng-click="hide()">
-              Close
-            </md-button>
-          </md-dialog-actions>
-        </md-dialog>
-      `,
-      controller: ['scope', (scope) => {
-        scope.hide = () => this.$mdDialog.hide();
-      }],
-    });
+    this.$mdDialog.show(
+      dialogCreator($event, message.content, 'Help', [{ text: 'Close', click: this.$mdDialog.hide }]),
+    );
   }
 }
 

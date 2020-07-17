@@ -1,5 +1,5 @@
-import template from './report-listing-card.pug';
-import './report-listing-card.scss';
+import template from './reports-card.pug';
+import './reports-card.scss';
 
 const bindings = {
   report: '<',
