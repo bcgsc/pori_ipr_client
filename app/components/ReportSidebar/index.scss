@@ -36,6 +36,10 @@
       padding: 6px 0 6px 35px;
     }
 
+    &--active {
+      background-color: $black-12;
+    }
+
     &--bold {
       &#{&} {
         font-weight: 700;

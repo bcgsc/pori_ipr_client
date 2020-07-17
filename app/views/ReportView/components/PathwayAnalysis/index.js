@@ -13,7 +13,6 @@ import './index.scss';
 const bindings = {
   report: '<',
   reportEdit: '<',
-  pathway: '<',
   print: '<',
   token: '<',
 };
@@ -26,7 +25,7 @@ class PathwayAnalysis {
   }
 
   async $onChanges(changes) {
-    if (changes.report && !changes.report.isFirstChange()) {
+    if (changes.report && changes.report.currentValue) {
       this.pathway = await PathwayService.get(this.report.ident);
       // Show a message if pathway isn't created yet.
       if (this.pathway) {

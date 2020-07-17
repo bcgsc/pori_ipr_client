@@ -7,6 +7,7 @@ import 'ngstorage';
 import 'angular-material/angular-material.min.css';
 import 'angular-sortable-view';
 import 'angular-file-upload';
+import 'ng-quill';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { CsvExportModule } from '@ag-grid-community/csv-export';
@@ -20,6 +21,8 @@ import { SidebarComponent } from '@/components/Sidebar';
 import { GenomicSummaryComponent } from '@/views/ReportView/components/GenomicSummary';
 import { AnalystCommentsComponent } from '@/views/ReportView/components/AnalystComments';
 import { PathwayAnalysisComponent } from '@/views/ReportView/components/PathwayAnalysis';
+
+import MutationSignatureComponent from '@/components/MutationSignature';
 
 import PogService from './services/reports/pog.service';
 import ProjectService from './services/management/project.service';
@@ -68,6 +71,7 @@ angular.module('root', [
   'ngSanitize',
   'angularFileUpload',
   'bcherny/ngimport',
+  'ngQuill',
 ]);
 
 const rootModule = angular.module('root')
@@ -76,6 +80,7 @@ const rootModule = angular.module('root')
   .component('genomicSummary', GenomicSummaryComponent)
   .component('analystComments', AnalystCommentsComponent)
   .component('pathwayAnalysis', PathwayAnalysisComponent)
+  .component('mutationSignature', MutationSignatureComponent)
   .service('PogService', PogService)
   .service('ProjectService', ProjectService)
   .service('AclService', AclService)

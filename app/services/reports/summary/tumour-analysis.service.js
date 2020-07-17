@@ -31,4 +31,4 @@ class TumourAnalysisService {
   }
 }
 
-export default TumourAnalysisService;
+export default new TumourAnalysisService();

@@ -1,8 +1,8 @@
 import { angular2react } from 'angular2react';
 import sortBy from 'lodash.sortby';
-import { $mdDialog, $mdToast } from 'angular-material';
 import { $rootScope } from 'ngimport';
 
+import toastCreator from '@/services/utils/toastCreator';
 import lazyInjector from '@/lazyInjector';
 import TumourAnalysisService from '@/services/reports/summary/tumour-analysis.service';
 import PatientInformationService from '@/services/reports/summary/patient-information.service';
@@ -26,7 +26,12 @@ const bindings = {
 };
 
 class GenomicSummary {
-  async $onInit() {
+  constructor($mdDialog, $mdToast) {
+    this.$mdDialog = $mdDialog;
+    this.$mdToast = $mdToast;
+  }
+
+  $onInit() {
     this.variantCounts = {
       cnv: 0,
       smallMutation: 0,
@@ -90,7 +95,7 @@ class GenomicSummary {
   }
 
   async $onChanges(changes) {
-    if (changes.report && !changes.report.isFirstChange()) {
+    if (changes.report && changes.report.currentValue) {
       const promises = await Promise.all([
         GenomicAlterationsService.all(this.report.ident),
         MutationSummaryService.get(this.report.ident),
@@ -177,14 +182,15 @@ class GenomicSummary {
   // Update Tumour Analysis Details
   async updateTumourAnalysis($event) {
     try {
-      const resp = await $mdDialog.show({
+      const resp = await this.$mdDialog.show({
         targetEvent: $event,
         template: tumourTemplate,
         clickOutToClose: false,
+        parent: angular.element(document.body),
         controller: ['scope', (scope) => {
           scope.tumourAnalysis = this.tumourAnalysis;
           scope.cancel = () => {
-            $mdDialog.cancel('Tumour analysis details were not updated');
+            this.$mdDialog.cancel('Tumour analysis details were not updated');
           };
           scope.update = async (form) => {
             // Check for valid inputs by touching each entry
@@ -201,75 +207,77 @@ class GenomicSummary {
               await TumourAnalysisService.update(
                 this.report.ident, scope.tumourAnalysis,
               );
-              $mdDialog.hide('Tumour analysis details have been successfully updated');
+              this.$mdDialog.hide('Tumour analysis details have been successfully updated');
             } catch (err) {
-              $mdToast.showSimple(
+              this.$mdToast.show(toastCreator(
                 `Tumour analysis details were not updated due to an error: ${err}`,
-              );
+              ));
             } finally {
               scope.$digest();
             }
           };
         }],
       });
-      $mdToast.showSimple(resp);
+      this.$mdToast.show(toastCreator(resp));
     } catch (err) {
-      $mdToast.showSimple(err);
+      this.$mdToast.show(toastCreator(err));
     }
   }
 
   // Update Mutation Signature Details
   async updateMutationSignature($event) {
     try {
-      const resp = await $mdDialog.show({
+      const resp = await this.$mdDialog.show({
         targetEvent: $event,
         template: mutationTemplate,
         clickOutToClose: false,
+        parent: angular.element(document.body),
         controller: ['scope', (scope) => {
           scope.tumourAnalysis = angular.copy(this.tumourAnalysis);
           scope.mutationSignature = angular.copy(this.mutationSignature);
           scope.cancel = () => {
-            $mdDialog.cancel('Mutation signature details were not updated');
+            this.$mdDialog.cancel('Mutation signature details were not updated');
           };
           scope.update = async () => {
             try {
               await TumourAnalysisService.update(
                 this.report.ident, scope.tumourAnalysis,
               );
-              $mdDialog.hide({
+              this.$mdDialog.hide({
                 message: 'Mutation signature details have been successfully updated',
                 data: scope.tumourAnalysis,
               });
             } catch (err) {
-              $mdToast.showSimple(
+              this.$mdToast.show(toastCreator(
                 `Mutation signature details were not updated due to an error: ${err}`,
-              );
+              ));
             } finally {
               scope.$digest();
             }
           };
         }],
       });
-      $mdToast.showSimple(resp.message);
+      this.$mdToast.show(toastCreator(resp.message));
       this.tumourAnalysis = resp.data;
     } catch (err) {
-      $mdToast.showSimple(err);
+      this.$mdToast.show(toastCreator(err));
     }
   }
 
   // Update Patient Information
   async updatePatient($event) {
     try {
-      const resp = await $mdDialog.show({
+      const resp = await this.$mdDialog.show({
         targetEvent: $event,
         template: patientTemplate,
         clickOutToClose: false,
+        parent: angular.element(document.body),
         controller: ['scope', (scope) => {
           scope.patientId = this.report.patientId;
           scope.patientInformation = { ...this.report.patientInformation };
           scope.biopsyName = this.report.biopsyName;
           scope.cancel = () => {
-            $mdDialog.cancel('Patient information was not updated');
+            this.$mdDialog.cancel('Patient information was not updated');
           };
           scope.update = async (form) => {
             try {
@@ -277,37 +285,38 @@ class GenomicSummary {
                 this.report.ident,
                 scope.patientInformation,
               );
-              $mdDialog.hide({
+              this.$mdDialog.hide({
                 message: 'Patient information has been successfully updated',
                 report,
                 patientInfo,
               });
             } catch (err) {
-              $mdToast.showSimple(
+              this.$mdToast.show(toastCreator(
                 `Patient information was not updated due to an error: ${err}`,
-              );
+              ));
             }
           };
         }],
       });
-      $mdToast.showSimple(resp.message);
+      this.$mdToast.show(toastCreator(resp.message));
       this.report.patientInformation = resp.data;
-      this.$scope.$digest();
+      $rootScope.$digest();
     } catch (err) {
-      $mdToast.showSimple(err);
+      this.$mdToast.show(toastCreator(err));
     }
   }
 
 
   async addAlteration($event) {
     try {
-      const resp = await $mdDialog.show({
+      const resp = await this.$mdDialog.show({
         targetEvent: $event,
         template: addAlterationTemplate,
         clickOutToClose: false,
+        parent: angular.element(document.body),
         controller: ['scope', (scope) => {
           scope.cancel = () => {
-            $mdDialog.cancel('Alteration was not added');
+            this.$mdDialog.cancel('Alteration was not added');
           };
           // Perform Update/Change
           scope.add = async () => {
@@ -321,12 +330,12 @@ class GenomicSummary {
               // Reprocess variants
               this.genomicAlterations = this.processVariants(this.genomicAlterations);
               this.genomicAlterations = sortBy(this.genomicAlterations, 'type');
-              $mdDialog.hide({
+              this.$mdDialog.hide({
                 status: true,
                 message: 'Alteration has been successfully added',
               });
             } catch (err) {
-              $mdDialog.hide({
+              this.$mdDialog.hide({
                 status: false,
                 message: `Alteration was not added due to an error: ${err}`,
               });
@@ -336,22 +345,23 @@ class GenomicSummary {
           };
         }],
       });
-      $mdToast.showSimple(resp.message);
+      this.$mdToast.show(toastCreator(resp.message));
     } catch (err) {
-      $mdToast.showSimple(err);
+      this.$mdToast.show(toastCreator(err));
     }
   }
 
   async removeAlteration($event, alteration) {
     try {
-      const resp = await $mdDialog.show({
+      const resp = await this.$mdDialog.show({
         targetEvent: $event,
         template: removeAlterationTemplate,
         clickOutToClose: false,
+        parent: angular.element(document.body),
         controller: ['scope', (scope) => {
           scope.alteration = alteration;
           scope.cancel = () => {
-            $mdDialog.cancel('Alteration was not removed');
+            this.$mdDialog.cancel('Alteration was not removed');
           };
           // Perform Update/Change
           scope.update = async () => {
@@ -366,12 +376,12 @@ class GenomicSummary {
               // Subtract count
               this.variantCounts[alteration.type] -= 1;
 
-              $mdDialog.hide({
+              this.$mdDialog.hide({
                 status: true,
                 message: 'Successfully removed the alteration',
               });
             } catch (err) {
-              $mdDialog.hide({
+              this.$mdDialog.hide({
                 status: true,
                 message: `Unable to remove the alteration due to an error: ${err}`,
               });
@@ -381,23 +391,42 @@ class GenomicSummary {
           };
         }],
       });
-      $mdToast.showSimple(resp.message);
+      this.$mdToast.show(toastCreator(resp.message));
     } catch (err) {
-      $mdToast.showSimple(err);
+      this.$mdToast.show(toastCreator(err));
     }
   }
 
   showHelpMessage($event, message) {
-    $mdDialog.show(
-      $mdDialog.alert()
-        .clickOutsideToClose(true)
-        .title(message.title)
-        .htmlContent(message.content)
-        .ok('Close')
-        .targetEvent($event),
-    );
+    this.$mdDialog.show({
+      targetEvent: $event,
+      clickOutToClose: true,
+      parent: angular.element(document.body),
+      template: `
+        <md-dialog flex="40">
+          <md-toolbar class="md-toolbar-tools">
+            Help
+          </md-toolbar>
+          <md-dialog-content class="layout-padding">
+            <div>
+              ${message.content}
+            </div>
+          </md-dialog-content>
+          <md-dialog-actions>
+            <md-button ng-click="hide()">
+              Close
+            </md-button>
+          </md-dialog-actions>
+        </md-dialog>
+      `,
+      controller: ['scope', (scope) => {
+        scope.hide = () => this.$mdDialog.hide();
+      }],
+    });
   }
 }
+
+GenomicSummary.$inject = ['$mdDialog', '$mdToast'];
 
 export const GenomicSummaryComponent = {
   template,

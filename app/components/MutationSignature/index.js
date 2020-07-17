@@ -1,6 +1,6 @@
 import sortBy from 'lodash.sortby';
 import template from './mutation-signature.pug';
-import './mutation-signature.scss';
+import './index.scss';
 
 const bindings = {
   report: '<',
@@ -9,8 +9,7 @@ const bindings = {
   mode: '<',
 };
 
-class MutationSignatureComponent {
-  /* @ngInject */
+class MutationSignature {
   constructor($mdDialog) {
     this.$mdDialog = $mdDialog;
   }
@@ -20,15 +19,20 @@ class MutationSignatureComponent {
     this.mutationSort = { col: 'signature', order: true };
     this.selectedSigs = [];
     this.modifier = {};
-    this.mode = this.mode || 'normal';
-    // If mode is pick, preload selected sigs:
-    if (this.mode === 'pick') {
-      this.mutationSummary.mutationSignature.forEach((v) => {
-        this.selectedSigs.push(v.ident);
-        this.modifier[v.ident] = v.modifier;
-      });
+  }
+
+  $onChanges(changes) {
+    if (changes.report && changes.report.currentValue) {
+      this.mode = this.mode || 'normal';
+      // If mode is pick, preload selected sigs:
+      if (this.mode === 'pick') {
+        this.mutationSummary.mutationSignature.forEach((v) => {
+          this.selectedSigs.push(v.ident);
+          this.modifier[v.ident] = v.modifier;
+        });
+      }
+      this.processSignature(angular.copy(this.mutationSignature));
     }
-    this.processSignature(angular.copy(this.mutationSignature));
   }
 
 
@@ -109,8 +113,10 @@ class MutationSignatureComponent {
   }
 }
 
+MutationSignature.$inject = ['$mdDialog'];
+
 export default {
   template,
   bindings,
-  controller: MutationSignatureComponent,
+  controller: MutationSignature,
 };
