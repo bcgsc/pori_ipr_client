@@ -18,7 +18,7 @@ const Login = (props) => {
   try {
     from = location.state.from.pathname + location.state.from.search;
   } catch (err) {
-    from = getReferrerUri() || '/report-listing';
+    from = getReferrerUri() || '/reports';
   }
 
   useEffect(() => {

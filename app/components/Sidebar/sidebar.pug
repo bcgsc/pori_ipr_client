@@ -4,7 +4,7 @@ div(layout="column", ng-class="{'sidebar--maximized': $ctrl.sidebarMaximized}").
       md-icon chevron_left
   md-divider
 
-  a(layout="row", ng-if="$ctrl.pageAccess.report", href="/report-listing",
+  a(layout="row", ng-if="$ctrl.pageAccess.report", href="/reports",
     ng-class="{'sidebar__row--active': $ctrl.$state.current.name.includes('reportlisting')}"
   ).sidebar__row
     md-icon.sidebar__icon assignment
