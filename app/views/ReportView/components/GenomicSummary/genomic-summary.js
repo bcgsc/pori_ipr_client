@@ -18,7 +18,7 @@ import mutationTemplate from './mutation-signature-edit.pug';
 import patientTemplate from './patient-edit.pug';
 import addAlterationTemplate from './add-alteration.pug';
 import removeAlterationTemplate from './remove-alteration.pug';
-import './index.scss';
+import './genomic-summary.scss';
 
 const bindings = {
   print: '<',

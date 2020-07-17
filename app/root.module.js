@@ -19,7 +19,7 @@ import 'ngimport';
 
 import { NavBarComponent } from '@/components/NavBar';
 import { SidebarComponent } from '@/components/Sidebar';
-import { GenomicSummaryComponent } from '@/views/ReportView/components/GenomicSummary';
+import { GenomicSummaryComponent } from '@/views/ReportView/components/GenomicSummary/genomic-summary';
 import { AnalystCommentsComponent } from '@/views/ReportView/components/AnalystComments';
 import { PathwayAnalysisComponent } from '@/views/ReportView/components/PathwayAnalysis';
 import { SlidesComponent } from '@/views/ReportView/components/Slides';
