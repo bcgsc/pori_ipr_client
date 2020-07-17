@@ -18,7 +18,8 @@ import './index.scss';
 const GenomicSummary = lazy(() => import('./components/GenomicSummary'));
 const AnalystComments = lazy(() => import('./components/AnalystComments'));
 const PathwayAnalysis = lazy(() => import('./components/PathwayAnalysis'));
-
+const TherapeuticTargets = lazy(() => import('./components/TherapeuticTargets'));
+const KbMatches = lazy(() => import('./components/KbMatches'));
 
 const ReportView = () => {
   const match = useRouteMatch();
@@ -64,6 +65,19 @@ const ReportView = () => {
               )}
               path={`${match.path}/analyst-comments`}
             />
+            <Route
+              render={routeProps => (
+                <TherapeuticTargets {...routeProps} print={false} report={report} reportEdit />
+              )}
+              path={`${match.path}/therapeutic-targets`}
+            />
+            <Route
+              render={routeProps => (
+                <KbMatches {...routeProps} print={false} report={report} reportEdit />
+              )}
+              path={`${match.path}/kb-matches`}
+            />
+            {/* Need token for FileUpload API call */}
             <SecurityContext.Consumer>
               {value => (
                 <Route

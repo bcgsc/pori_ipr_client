@@ -1,7 +1,7 @@
+import { $http } from 'ngimport';
+
 class AlterationService {
-  /* @ngInject */
-  constructor($http) {
-    this.$http = $http;
+  constructor() {
     this.api = `${CONFIG.ENDPOINTS.API}/reports`;
   }
 
@@ -17,7 +17,7 @@ class AlterationService {
    * @returns {Promise} - result of API call
    */
   async getAll(report) {
-    const { data } = await this.$http.get(this.baseUrl(report));
+    const { data } = await $http.get(this.baseUrl(report));
     return data;
   }
 
@@ -32,7 +32,7 @@ class AlterationService {
    * @returns {Promise} - result of API call
    */
   async update(report, ident, payload) {
-    const { data } = await this.$http.put(
+    const { data } = await $http.put(
       `${this.baseUrl(report)}/${ident}`,
       payload,
     );
@@ -49,7 +49,7 @@ class AlterationService {
    * @returns {Promise} - result of API call
    */
   async create(report, ident, payload) {
-    const { data } = await this.$http.post(
+    const { data } = await $http.post(
       `${this.baseUrl(report)}/${ident}`,
       payload,
     );
@@ -65,7 +65,7 @@ class AlterationService {
    * @returns {Promise} - result of API call
    */
   async getType(report, { category, matchedCancer, approvedTherapy }) {
-    const { data } = await this.$http.get(
+    const { data } = await $http.get(
       `${this.baseUrl(report)}`,
       { params: { category, matchedCancer, approvedTherapy } },
     );
@@ -73,4 +73,4 @@ class AlterationService {
   }
 }
 
-export default AlterationService;
+export default new AlterationService();
