@@ -42,7 +42,7 @@ function TherapeuticView(props) {
 
   return (
     <>
-      {report ? (
+      {report && (
         <>
           <DataTable
             titleText="Potential Therapeutic Targets"
@@ -76,7 +76,7 @@ function TherapeuticView(props) {
             patientId={report.patientId}
           />
         </>
-      ) : null}
+      )}
     </>
   );
 }

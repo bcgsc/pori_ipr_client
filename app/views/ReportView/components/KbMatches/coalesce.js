@@ -1,3 +1,8 @@
+/**
+ * Merges duplicated entries based on gene, context, and variant
+ * @param {array} entries kb matches to be coalesced
+ * @returns {array} bucketed entries post merge
+ */
 const coalesceEntries = (entries) => {
   const getVariantName = (variant, variantType) => {
     if (variantType === 'cnv') {

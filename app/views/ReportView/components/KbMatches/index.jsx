@@ -199,7 +199,7 @@ function KBMatches(props) {
             ))}
           </div>
 
-          {report.type === 'probe' ? null : (
+          {report.type !== 'probe' && (
             <div>
               <DataTable
                 columnDefs={targetedColumnDefs}
