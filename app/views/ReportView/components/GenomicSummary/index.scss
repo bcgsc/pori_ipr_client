@@ -1,9 +1,17 @@
 .genomic-summary {
   display: flex;
+  flex-direction: column;
   margin: 20px auto;
+  padding: 0 20px;
 
   &__patient-information {
+    &-title {
+    }
 
+    &-content {
+      display: flex;
+      justify-content: space-around;
+    }
   }
 
   &__tumour-summary {
