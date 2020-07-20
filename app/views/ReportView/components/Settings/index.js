@@ -165,7 +165,7 @@ class Settings {
 
       if (outcome.status === 204) {
         this.$mdToast.show(toastCreator('Report Deleted'));
-        this.history.push('/report-listing');
+        this.history.push('/reports');
       } else {
         this.$mdToast.show(toastCreator(`Delete Error: ${outcome.data}`));
       }
