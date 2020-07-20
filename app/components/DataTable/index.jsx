@@ -44,6 +44,7 @@ const MAX_TABLE_HEIGHT = '517px';
  * @param {func} props.rowUpdateAPICall API call for reordering rows
  * @param {bool} props.canExport can table data be exported to csv
  * @param {string} props.patientId patient identifer as readable string
+ * @param {object} props.theme MUI theme passed for react in angular table compatibility
  * @return {*} JSX
  */
 function DataTable(props) {
@@ -331,6 +332,7 @@ function DataTable(props) {
     });
   };
 
+  // Theme is needed for react in angular tables. It can't access the theme provider otherwise
   return (
     <ThemeProvider theme={theme}>
       <div className="data-table--padded">

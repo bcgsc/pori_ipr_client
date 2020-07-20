@@ -18,7 +18,7 @@ class DiseaseSpecific {
         'microbial.circos',
       );
       this.subtypePlotImages = await ImageService.subtypePlots(this.report.ident);
-      this.hasSubtypePlot = !(Object.keys(this.subtypePlotImages).length === 0);
+      this.hasSubtypePlot = Boolean(Object.keys(this.subtypePlotImages).length);
       $rootScope.$digest();
     }
   }
