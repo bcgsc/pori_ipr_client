@@ -1,0 +1,25 @@
+.description-list {
+  display: flex;
+  flex-direction: column;
+
+  &__group {
+    display: inline-flex;
+    flex-direction: row;
+
+    &--left {
+      float: left;
+    }
+    
+    &--right {
+      float: right;
+    }
+  }
+
+  &__term {
+    display: inline;
+  }
+
+  &__value {
+    display: inline;
+  }
+}

@@ -11,7 +11,7 @@ import GenomicAlterationsService from '@/services/reports/genomic-alterations.se
 import MutationSummaryService from '@/services/reports/mutation-summary.service';
 import MutationSignatureService from '@/services/reports/mutation-signature.service';
 import ProbeTargetService from '@/services/reports/probe-target.service';
-import MicrobialService from '@/services/reports/microbial.service';
+// import MicrobialService from '@/services/reports/microbial.service';
 import template from './genomic-summary.pug';
 import tumourTemplate from './tumour-analysis-edit.pug';
 import mutationTemplate from './mutation-signature-edit.pug';
@@ -103,7 +103,7 @@ class GenomicSummary {
         MutationSummaryService.get(this.report.ident),
         ProbeTargetService.all(this.report.ident),
         MutationSignatureService.all(this.report.ident),
-        MicrobialService.get(this.report.ident),
+        // MicrobialService.get(this.report.ident),
       ]);
       [
         this.genomicAlterations,
@@ -284,7 +284,11 @@ class GenomicSummary {
           };
           scope.update = async (form) => {
             try {
-              const response = await PatientInformationService.update(
+              let report;
+              if (form.Biopsy.$dirty) {
+                // report = await ReportService.updateReport({ ...this.report, biopsyName: scope.biopsyName });
+              }
+              const patientInfo = await PatientInformationService.update(
                 this.report.ident,
                 scope.patientInformation,
               );

@@ -4,7 +4,9 @@ import {
   Typography,
 } from '@material-ui/core';
 
+import { getMicrobial } from '@/services/reports/microbial';
 import DisabledTextField from '@/components/DisabledTextField';
+import DescriptionList from '@/components/DescriptionList';
 
 import './index.scss';
 
@@ -16,33 +18,81 @@ const GenomicSummary = (props) => {
   } = props;
 
   const [patientInformationData, setPatientInformationData] = useState();
+  const [tumourSummaryData, setTumourSummaryData] = useState();
 
   useEffect(() => {
     if (report && report.patientInformation) {
-      setPatientInformationData([
-        {
-          label: 'Alternate ID',
-          value: report.alternateIdentifier,
-        },
-        {
-          label: 'Report Date',
-          value: report.createdAt,
-        },
-        {
-          label: 'Case Type',
-          value: report.patientInformation.caseType,
-        },
-        {
-          label: 'Physician',
-          value: report.patientInformation.physician,
-        },
-      ]);
+      const getData = async () => {
+        const microbial = await getMicrobial(report.ident);
+
+        setPatientInformationData([
+          {
+            label: 'Alternate ID',
+            value: report.alternateIdentifier,
+          },
+          {
+            label: 'Report Date',
+            value: report.createdAt,
+          },
+          {
+            label: 'Case Type',
+            value: report.patientInformation.caseType,
+          },
+          {
+            label: 'Physician',
+            value: report.patientInformation.physician,
+          },
+        ]);
+
+        setTumourSummaryData([
+          {
+            term: 'Tumour Content',
+            value: report.tumourAnalysis.tumourContent,
+          },
+          {
+            term: 'Subtype',
+            value: report.tumourAnalysis.subtyping,
+          },
+          {
+            term: 'Microbial Species',
+            value: microbial.species,
+          },
+          {
+            term: `Immune Infiltration${print ? '*' : ''}`,
+            value: null,
+          },
+          {
+            term: 'Mutation Signature',
+            value: report.tumourAnalysis.mutationSignature.map(({ associations, signature }, index) => (
+              `${signature} (${associations})${index < report.tumourAnalysis.mutationSignature.length - 1 ? ', ' : ''}`
+            )),
+          },
+          {
+            term: `HR Deficiency${print ? '*' : ''}`,
+            value: null,
+          },
+          {
+            term: 'Mutation Burden',
+            value: null,
+          },
+          {
+            term: `SV Burden${print ? '*' : ''}`,
+            value: null,
+          },
+          {
+            term: 'MSI Status',
+            value: null,
+          },
+        ]);
+      };
+
+      getData();
     }
   }, [report]);
 
   return (
     <div className="genomic-summary">
-      {report && patientInformationData ? (
+      {report && patientInformationData && tumourSummaryData ? (
         <>
           <div className="genomic-summary__patient-information">
             <div className="genomic-summary__patient-information-title">
@@ -66,9 +116,14 @@ const GenomicSummary = (props) => {
             </div>
           </div>
           <div className="genomic-summary__tumour-summary">
-            <Typography variant="h3">
-              Tumour Summary
-            </Typography>
+            <div className="genomic-summary__tumour-summary-title">
+              <Typography variant="h3">
+                Tumour Summary
+              </Typography>
+            </div>
+            <div className="genomic-summary__tumour-summary-content">
+              <DescriptionList entries={tumourSummaryData} />
+            </div>
           </div>
           <div className="genomic-summary__therapeutic-summary">
             <Typography variant="h3">
