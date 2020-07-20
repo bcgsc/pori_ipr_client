@@ -1,26 +1,26 @@
+import { angular2react } from 'angular2react';
+import { $rootScope } from 'ngimport';
+
+import MutationSummaryService from '@/services/reports/mutation-summary.service';
+import MavisService from '@/services/reports/mavis.service';
+import StructuralVariantsService from '@/services/reports/structural-variants.service';
+import ImageService from '@/services/reports/image.service';
+import lazyInjector from '@/lazyInjector';
+
 import template from './structural-variants.pug';
 import columnDefs, { setHeaderName } from './columnDefs';
-import './structural-variants.scss';
+import './index.scss';
 
 const bindings = {
   report: '<',
   images: '<',
-  structuralVariants: '<',
-  mutationSummary: '<',
-  mutationSummaryImages: '<',
-  mavisSummary: '<',
+  theme: '<',
 };
 
-class StructuralVariantsComponent {
-  /* @ngInject */
-  constructor() {
+class StructuralVariants {
+  $onInit() {
     this.firstGeneClicked = false;
     this.secondGeneClicked = false;
-  }
-
-  $onInit() {
-    setHeaderName(`${this.report.tumourAnalysis.diseaseExpressionComparator || ''} %ile`, 'tcgaPerc');
-    setHeaderName(`Fold Change vs ${this.report.tumourAnalysis.normalExpressionComparator}`, 'foldChange');
     this.columnDefs = columnDefs;
     this.StrucVars = {};
     this.titleMap = {
@@ -29,11 +29,41 @@ class StructuralVariantsComponent {
       biological: 'Gene Fusions with Biological Relevance',
       uncharacterized: 'Structural Variants of Unknown Significance',
     };
-    this.processSvs(this.structuralVariants);
-    this.pickComparator();
-    this.processMutationSummaryImages(this.mutationSummaryImages);
   }
 
+  async $onChanges(changes) {
+    if (changes.report && changes.report.currentValue) {
+      const [
+        images,
+        mutationSummary,
+        structuralVariants,
+        mutationSummaryImages,
+        mavisSummary,
+      ] = await Promise.all([
+        ImageService.get(
+          this.report.ident,
+          'mutation_summary.barplot_sv,mutation_summary.density_plot_sv,circosSv.genome,circosSv.transcriptome',
+        ),
+        MutationSummaryService.get(this.report.ident),
+        StructuralVariantsService.all(this.report.ident),
+        ImageService.mutationSummary(this.report.ident),
+        MavisService.all(this.report.ident),
+      ]);
+
+      this.images = images;
+      this.mutationSummary = mutationSummary;
+      this.structuralVariants = structuralVariants;
+      this.mutationSummaryImages = mutationSummaryImages;
+      this.mavisSummary = mavisSummary;
+
+      setHeaderName(`${this.report.tumourAnalysis.diseaseExpressionComparator || ''} %ile`, 'tcgaPerc');
+      setHeaderName(`Fold Change vs ${this.report.tumourAnalysis.normalExpressionComparator}`, 'foldChange');
+      this.processSvs(this.structuralVariants);
+      this.pickComparator();
+      this.processMutationSummaryImages(this.mutationSummaryImages);
+      $rootScope.$digest();
+    }
+  }
 
   pickComparator() {
     let search = this.mutationSummary.find(entry => entry.comparator === this.report.tumourAnalysis.diseaseExpressionComparator);
@@ -148,8 +178,10 @@ class StructuralVariantsComponent {
   }
 }
 
-export default {
+export const StructuralVariantsComponent = {
   template,
   bindings,
-  controller: StructuralVariantsComponent,
+  controller: StructuralVariants,
 };
+
+export default angular2react('structuralVariants', StructuralVariantsComponent, lazyInjector.$injector);

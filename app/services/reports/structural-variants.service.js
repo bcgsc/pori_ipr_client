@@ -1,7 +1,7 @@
+import { $http } from 'ngimport';
+
 class StructuralVariantsService {
-  /* @ngInject */
-  constructor($http) {
-    this.$http = $http;
+  constructor() {
     this.api = `${CONFIG.ENDPOINTS.API}/reports`;
   }
 
@@ -12,7 +12,7 @@ class StructuralVariantsService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async all(report) {
-    const { data } = await this.$http.get(
+    const { data } = await $http.get(
       `${this.api}/${report}/structural-variants`,
     );
     return data;
@@ -27,7 +27,7 @@ class StructuralVariantsService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async updateOne(report, ident, payload) {
-    const { data } = await this.$http.put(
+    const { data } = await $http.put(
       `${this.api}/${report}/structural-variants/${ident}`,
       payload,
     );
@@ -42,11 +42,11 @@ class StructuralVariantsService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async getType(report, type) {
-    const { data } = await this.$http.get(
+    const { data } = await $http.get(
       `${this.api}/${report}/structural-variants/${type}`,
     );
     return data;
   }
 }
 
-export default StructuralVariantsService;
+export default new StructuralVariantsService();

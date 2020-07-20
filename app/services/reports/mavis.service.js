@@ -1,7 +1,7 @@
+import { $http } from 'ngimport';
+
 class MavisService {
-  /* @ngInject */
-  constructor($http) {
-    this.$http = $http;
+  constructor() {
     this.api = `${CONFIG.ENDPOINTS.API}/reports`;
   }
 
@@ -12,11 +12,11 @@ class MavisService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async all(report) {
-    const { data } = await this.$http.get(
+    const { data } = await $http.get(
       `${this.api}/${report}/mavis`,
     );
     return data;
   }
 }
 
-export default MavisService;
+export default new MavisService();

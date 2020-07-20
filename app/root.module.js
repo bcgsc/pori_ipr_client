@@ -28,6 +28,8 @@ import { MicrobialComponent } from '@/views/ReportView/components/Microbial';
 import { SpearmanComponent } from '@/views/ReportView/components/Spearman';
 import { DiseaseSpecificComponent } from '@/views/ReportView/components/DiseaseSpecific';
 import { SmallMutationsComponent } from '@/views/ReportView/components/SmallMutations';
+import { CopyNumberComponent } from '@/views/ReportView/components/CopyNumber';
+import { StructuralVariantsComponent } from '@/views/ReportView/components/StructuralVariants';
 
 import MutationSignatureComponent from '@/components/MutationSignature';
 import DiscussionEntryComponent from '@/views/ReportView/components/Discussion/components/DiscussionEntry';
@@ -67,6 +69,8 @@ const rootModule = angular.module('root')
   .component('spearman', SpearmanComponent)
   .component('diseaseSpecific', DiseaseSpecificComponent)
   .component('smallMutations', SmallMutationsComponent)
+  .component('copyNumber', CopyNumberComponent)
+  .component('structuralVariants', StructuralVariantsComponent)
   .component('reactTable', react2angular(ReactTable))
   .service('ProjectService', ProjectService)
   .service('AclService', AclService)

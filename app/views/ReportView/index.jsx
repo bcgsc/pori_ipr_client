@@ -27,6 +27,9 @@ const Microbial = lazy(() => import('./components/Microbial'));
 const Spearman = lazy(() => import('./components/Spearman'));
 const DiseaseSpecific = lazy(() => import('./components/DiseaseSpecific'));
 const SmallMutations = lazy(() => import('./components/SmallMutations'));
+const CopyNumber = lazy(() => import('./components/CopyNumber'));
+const StructuralVariants = lazy(() => import('./components/StructuralVariants'));
+const Expression = lazy(() => import('./components/Expression'));
 
 const ReportView = () => {
   const match = useRouteMatch();
@@ -114,6 +117,24 @@ const ReportView = () => {
                 <SmallMutations {...routeProps} print={false} report={report} reportEdit theme={theme} />
               )}
               path={`${match.path}/small-mutations`}
+            />
+            <Route
+              render={routeProps => (
+                <CopyNumber {...routeProps} print={false} report={report} reportEdit theme={theme} />
+              )}
+              path={`${match.path}/copy-number`}
+            />
+            <Route
+              render={routeProps => (
+                <StructuralVariants {...routeProps} print={false} report={report} reportEdit theme={theme} />
+              )}
+              path={`${match.path}/structural-variants`}
+            />
+            <Route
+              render={routeProps => (
+                <Expression {...routeProps} print={false} report={report} reportEdit />
+              )}
+              path={`${match.path}/expression`}
             />
             {/* Need token for FileUpload API call */}
             <SecurityContext.Consumer>

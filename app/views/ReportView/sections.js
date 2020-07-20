@@ -69,13 +69,13 @@ const sections = [
     category: true,
     children: [
       { name: 'Small Mutations', uri: 'small-mutations' },
-      { name: 'Copy Number Analyses', uri: 'copy-number-analyses' },
-      { name: 'Structural Variants', uri: 'structural-variation' },
+      { name: 'Copy Number Analyses', uri: 'copy-number' },
+      { name: 'Structural Variants', uri: 'structural-variants' },
     ],
   },
   {
     name: 'Expression',
-    uri: 'expression-analysis',
+    uri: 'expression',
     meta: false,
     showChildren: false,
     clinician: true,

@@ -1,7 +1,7 @@
-class OutlierService {
-  /* @ngInject */
-  constructor($http) {
-    this.$http = $http;
+import { $http } from 'ngimport';
+
+class ExpressionService {
+  constructor() {
     this.api = `${CONFIG.ENDPOINTS.API}/reports`;
   }
 
@@ -11,7 +11,7 @@ class OutlierService {
    * @return {Promise} - API response data
 */
   async all(report) {
-    const { data } = await this.$http.get(
+    const { data } = await $http.get(
       `${this.api}/${report}/expression-variants`,
     );
     return data;
@@ -25,7 +25,7 @@ class OutlierService {
    * @return {Promise} - API response data
    */
   async updateOne(report, ident, payload) {
-    const { data } = await this.$http.put(
+    const { data } = await $http.put(
       `${this.api}/${report}/expression-variants/${ident}`,
       payload,
     );
@@ -39,11 +39,11 @@ class OutlierService {
    * @return {Promise} - API response data
    */
   async getType(report, type) {
-    const { data } = await this.$http.get(
+    const { data } = await $http.get(
       `${this.api}/${report}/expression-variants/${type}`,
     );
     return data;
   }
 }
 
-export default OutlierService;
+export default new ExpressionService();
