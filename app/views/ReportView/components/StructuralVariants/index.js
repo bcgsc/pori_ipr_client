@@ -33,7 +33,13 @@ class StructuralVariants {
 
   async $onChanges(changes) {
     if (changes.report && changes.report.currentValue) {
-      const promises = Promise.all([
+      const [
+        images,
+        mutationSummary,
+        structuralVariants,
+        mutationSummaryImages,
+        mavisSummary,
+      ] = await Promise.all([
         ImageService.get(
           this.report.ident,
           'mutation_summary.barplot_sv,mutation_summary.density_plot_sv,circosSv.genome,circosSv.transcriptome',
@@ -43,13 +49,6 @@ class StructuralVariants {
         ImageService.mutationSummary(this.report.ident),
         MavisService.all(this.report.ident),
       ]);
-      const [
-        images,
-        mutationSummary,
-        structuralVariants,
-        mutationSummaryImages,
-        mavisSummary,
-      ] = await promises;
 
       this.images = images;
       this.mutationSummary = mutationSummary;

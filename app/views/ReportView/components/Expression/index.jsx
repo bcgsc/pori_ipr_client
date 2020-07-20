@@ -90,7 +90,7 @@ function Expression(props) {
 
   return (
     <>
-      {report && tissueSites ? (
+      {report && tissueSites && (
         <div className="expression--padded">
           <Typography variant="h1" className="expression__title">
             Expression Analysis
@@ -135,9 +135,9 @@ function Expression(props) {
             </Paper>
           ) : null}
         </div>
-      ) : null}
+      )}
       <>
-        {expOutliers ? (
+        {expOutliers && (
           <>
             {Object.entries(tables).map(([key, titleText]) => (
               <DataTable
@@ -154,7 +154,7 @@ function Expression(props) {
               />
             ))}
           </>
-        ) : null}
+        )}
       </>
     </>
   );
