@@ -1,33 +1,45 @@
+import { angular2react } from 'angular2react';
+import { $rootScope } from 'ngimport';
+
+import toastCreator from '@/services/utils/toastCreator';
+import lazyInjector from '@/lazyInjector';
+import { getSignatures, sign, revokeSignature } from '@/services/reports/signatures';
+import PatientInformationService from '@/services/reports/patient-information.service';
+import TargetedGenesService from '@/services/reports/targeted-genes.service';
+import GeneService from '@/services/reports/gene.service';
+import TestInformationService from '@/services/reports/test-information.service';
 import template from './probe-summary.pug';
-import patientTemplate from '../../genomic-report/genomic-summary/patient-edit.pug';
+import patientTemplate from '../GenomicSummary/patient-edit.pug';
 import eventsTemplate from './events-edit.pug';
-import '../../genomic-report/genomic-summary/genomic-summary.scss';
-import '../../genomic-report/genomic-report.scss';
+import '../GenomicSummary/index.scss';
 
 const bindings = {
   report: '<',
   reportEdit: '<',
-  testInformation: '<',
-  signature: '<',
-  probeResults: '<',
   print: '<',
 };
 
-class ProbeSummaryComponent {
-  /* @ngInject */
-  constructor($scope, $mdDialog, $mdToast, ProbeSignatureService,
-    PatientInformationService, TargetedGenesService, GeneService) {
-    this.$scope = $scope;
+class ProbeSummary {
+  constructor($mdDialog, $mdToast) {
     this.$mdDialog = $mdDialog;
     this.$mdToast = $mdToast;
-    this.ProbeSignatureService = ProbeSignatureService;
-    this.PatientInformationService = PatientInformationService;
-    this.TargetedGenesService = TargetedGenesService;
-    this.GeneService = GeneService;
   }
 
-  $onInit() {
-    this.patientInformation = this.report.patientInformation;
+  async $onChanges(changes) {
+    if (changes.report && changes.report.currentValue) {
+      const promises = [
+        TestInformationService.retrieve(this.report.ident),
+        getSignatures(this.report.ident),
+        TargetedGenesService.getAll(this.report.ident),
+      ];
+      const [testInformation, signatures, probeResults] = await Promise.all(promises);
+
+      this.testInformation = testInformation;
+      this.signatures = signatures;
+      this.probeResults = probeResults;
+      this.patientInformation = this.report.patientInformation;
+      $rootScope.$digest();
+    }
   }
 
   // Update Patient Information
@@ -37,6 +49,7 @@ class ProbeSummaryComponent {
         targetEvent: $event,
         template: patientTemplate,
         clickOutToClose: true,
+        parent: angular.element(document.body),
         controller: ['scope', (scope) => {
           scope.patientInformation = angular.copy(this.patientInformation);
 
@@ -45,7 +58,7 @@ class ProbeSummaryComponent {
           };
 
           scope.update = async () => {
-            await this.PatientInformationService.update(
+            await PatientInformationService.update(
               scope.patientInformation,
             );
             this.$mdDialog.hide({
@@ -56,12 +69,12 @@ class ProbeSummaryComponent {
         }],
       });
       if (resp) {
-        this.$mdToast.show(this.$mdToast.simple().textContent(resp.message));
+        this.$mdToast.show(toastCreator(resp.message));
       }
       this.patientInformation = resp.data;
       this.report.patientInformation = this.patientInformation;
     } catch (err) {
-      this.$mdToast.show(this.$mdToast.simple().textContent(err));
+      this.$mdToast.show(toastCreator(err));
     }
   }
 
@@ -71,6 +84,7 @@ class ProbeSummaryComponent {
         targetEvent: $event,
         template: eventsTemplate,
         clickOutToClose: true,
+        parent: angular.element(document.body),
         controller: ['scope', (scope) => {
           scope.event = angular.copy(event);
 
@@ -80,12 +94,12 @@ class ProbeSummaryComponent {
 
           scope.update = async () => {
             try {
-              await this.TargetedGenesService.update(
+              await TargetedGenesService.update(
                 this.report.ident,
                 scope.event.ident,
                 { comments: scope.event.comments },
               );
-              await this.GeneService.update(
+              await GeneService.update(
                 this.report.ident,
                 event.gene.name,
                 scope.event.gene,
@@ -105,7 +119,7 @@ class ProbeSummaryComponent {
       });
 
       if (resp) {
-        this.$mdToast.show(this.$mdToast.simple().textContent(resp.message));
+        this.$mdToast.show(toastCreator(resp.message));
         this.probeResults.forEach((ev, index) => {
           if (ev.ident === resp.data.ident) {
             this.probeResults[index] = resp.data;
@@ -113,39 +127,43 @@ class ProbeSummaryComponent {
         });
       }
     } catch (err) {
-      this.$mdToast.show(this.$mdToast.simple().textContent(err.message || 'Error: changes were not saved'));
+      this.$mdToast.show(toastCreator(err.message || 'Error: changes were not saved'));
     }
   }
 
   // Sign The comments
   async sign(role) {
     try {
-      const resp = await this.ProbeSignatureService.sign(
+      const resp = await sign(
         this.report.ident, role,
       );
-      this.signature = resp;
-      this.$scope.$digest();
+      this.signatures = resp;
+      $rootScope.$digest();
     } catch (err) {
-      this.$mdToast.showSimple('Unable to sign. Error: ', err);
+      this.$mdToast.show(toastCreator('Unable to sign. Error: ', err));
     }
   }
 
   // Unsign The comments
   async revokeSign(role) {
     try {
-      const resp = await this.ProbeSignatureService.revoke(
+      const resp = await revokeSignature(
         this.report.ident, role,
       );
-      this.signature = resp;
-      this.$scope.$digest();
+      this.signatures = resp;
+      $rootScope.$digest();
     } catch (err) {
-      this.$mdToast.showSimple('Unable to revoke. Error: ', err);
+      this.$mdToast.show(toastCreator('Unable to revoke. Error: ', err));
     }
   }
 }
 
-export default {
+ProbeSummary.$inject = ['$mdDialog', '$mdToast'];
+
+export const ProbeSummaryComponent = {
   template,
   bindings,
-  controller: ProbeSummaryComponent,
+  controller: ProbeSummary,
 };
+
+export default angular2react('probeSummary', ProbeSummaryComponent, lazyInjector.$injector);

@@ -32,6 +32,7 @@ const StructuralVariants = lazy(() => import('./components/StructuralVariants'))
 const Expression = lazy(() => import('./components/Expression'));
 const Appendices = lazy(() => import('./components/Appendices'));
 const Settings = lazy(() => import('./components/Settings'));
+const ProbeSummary = lazy(() => import('./components/ProbeSummary'));
 
 const ReportView = () => {
   const match = useRouteMatch();
@@ -40,6 +41,7 @@ const ReportView = () => {
   const [report, setReport] = useState();
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [sections, setSections] = useState();
+  const [isProbe, setIsProbe] = useState(false);
 
   useEffect(() => {
     if (!report) {
@@ -51,6 +53,7 @@ const ReportView = () => {
           setSections(genomic);
         } else {
           setSections(probe);
+          setIsProbe(true);
         }
       };
 
@@ -75,7 +78,13 @@ const ReportView = () => {
           <Switch>
             <Route
               render={routeProps => (
-                <GenomicSummary {...routeProps} print={false} report={report} reportEdit />
+                <>
+                  {isProbe ? (
+                    <ProbeSummary {...routeProps} print={false} report={report} reportEdit />
+                  ) : (
+                    <GenomicSummary {...routeProps} print={false} report={report} reportEdit />
+                  )}
+                </>
               )}
               path={`${match.path}/summary`}
             />
@@ -147,13 +156,13 @@ const ReportView = () => {
             />
             <Route
               render={routeProps => (
-                <Appendices {...routeProps} print={false} report={report} reportEdit theme={theme} />
+                <Appendices {...routeProps} print={false} report={report} reportEdit theme={theme} isProbe={isProbe} />
               )}
               path={`${match.path}/appendices`}
             />
             <Route
               render={routeProps => (
-                <Settings {...routeProps} print={false} report={report} reportEdit showBindings />
+                <Settings {...routeProps} print={false} report={report} reportEdit showBindings={!isProbe} />
               )}
               path={`${match.path}/settings`}
             />

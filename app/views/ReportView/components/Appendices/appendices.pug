@@ -33,7 +33,7 @@ section(flex).appendices
           theme="$ctrl.theme",
         )
 
-      div(layout="column", ng-if="!$ctrl.probe", flex)
+      div(layout="column", ng-if="!$ctrl.isProbe", flex)
         h2.title Appendix C
         h3.title Report Overview
         div.md-padding
@@ -67,7 +67,7 @@ section(flex).appendices
           p
             strong Genomic events with potential therapeutic association:
             |  The subset of alterations with specific therapeutic associations are identified using the Genome Sciences Centre's expert curated Knowledgebase, which integrates information from sources including cancer databases, drug databases, clinical tests, and the literature. Associations are listed by the level of evidence for the use of that drug in the context of the observed alteration, including those that are approved in this or other cancer types, and those that have early clinical or preclinical evidence.
-      div(layout="column", ng-if="$ctrl.probe", flex)
+      div(layout="column", ng-if="$ctrl.isProbe", flex)
         h2(ng-if="!$ctrl.print").title Appendix C
         h3.title.print-subtitle Test Summary
         div.test-summary__container
