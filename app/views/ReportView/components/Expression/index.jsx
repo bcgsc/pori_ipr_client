@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { Typography, Paper } from '@material-ui/core';
 
 import DataTable from '../../../../components/DataTable';
 import columnDefs from './columnDefs';
 import MutationSummaryService from '@/services/reports/mutation-summary.service';
-import OutlierService from '@/services/reports/outlier.service';
+import ExpressionService from '@/services/reports/expression.service';
 import ImageService from '@/services/reports/image.service';
 import { processExpression, getPtxComparator } from './processData';
-import { Typography, Paper } from '@material-ui/core';
 
 const tables = {
   clinical: 'Expression Level Outliers of Potential Clinical Relevance',
@@ -48,7 +48,7 @@ function Expression(props) {
       const getData = async () => {
         const promises = Promise.all([
           MutationSummaryService.get(report.ident),
-          OutlierService.all(report.ident),
+          ExpressionService.all(report.ident),
           ImageService.expDensityGraphs(report.ident),
         ]);
         const [mutationSummaryResp, outliersResp, densityGraphsResp] = await promises;

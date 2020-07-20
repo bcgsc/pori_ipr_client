@@ -1,6 +1,6 @@
 import { $http } from 'ngimport';
 
-class OutlierService {
+class ExpressionService {
   constructor() {
     this.api = `${CONFIG.ENDPOINTS.API}/reports`;
   }
@@ -46,4 +46,4 @@ class OutlierService {
   }
 }
 
-export default new OutlierService();
+export default new ExpressionService();
