@@ -1,7 +1,7 @@
+import { $http } from 'ngimport';
+
 class SmallMutationsService {
-  /* @ngInject */
-  constructor($http) {
-    this.$http = $http;
+  constructor() {
     this.api = `${CONFIG.ENDPOINTS.API}/reports`;
   }
 
@@ -11,7 +11,7 @@ class SmallMutationsService {
    * @return {Promise} API response data
    */
   async all(report) {
-    const { data } = await this.$http.get(
+    const { data } = await $http.get(
       `${this.api}/${report}/small-mutations`,
     );
     return data;
@@ -25,7 +25,7 @@ class SmallMutationsService {
    * @return {Promise} API response data
    */
   async update(report, ident, payload) {
-    const { data } = await this.$http.put(
+    const { data } = await $http.put(
       `${this.api}/${report}/small-mutations/${ident}`,
       payload,
     );
@@ -39,11 +39,11 @@ class SmallMutationsService {
    * @return {Promise} API response data
    */
   async getType(report, type) {
-    const { data } = await this.$http.get(
+    const { data } = await $http.get(
       `${this.api}/${report}/small-mutations/${type}`,
     );
     return data;
   }
 }
 
-export default SmallMutationsService;
+export default new SmallMutationsService();
