@@ -17,7 +17,7 @@ const DescriptionList = (props) => {
 
   useEffect(() => {
     if (entries && entries.length) {
-      setVisibleEntries(entries.filter(({ value }) => value !== null));
+      setVisibleEntries(entries.filter(({ value }) => value !== null && value !== ''));
     }
   }, [entries]);
 

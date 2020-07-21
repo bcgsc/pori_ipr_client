@@ -63,9 +63,9 @@ const GenomicSummary = (props) => {
           },
           {
             term: 'Mutation Signature',
-            value: report.tumourAnalysis.mutationSignature.map(({ associations, signature }, index) => (
-              `${signature} (${associations})${index < report.tumourAnalysis.mutationSignature.length - 1 ? ', ' : ''}`
-            )),
+            value: report.tumourAnalysis.mutationSignature.map(({ associations, signature }) => (
+              `${signature} (${associations})`
+            )).join(', '),
           },
           {
             term: `HR Deficiency${print ? '*' : ''}`,
@@ -125,10 +125,15 @@ const GenomicSummary = (props) => {
               <DescriptionList entries={tumourSummaryData} />
             </div>
           </div>
-          <div className="genomic-summary__therapeutic-summary">
-            <Typography variant="h3">
-              Therapeutic Summary
-            </Typography>
+          <div className="genomic-summary__alterations">
+            <div className="genomic-summary__alterations-title">
+              <Typography variant="h3">
+                Key Genomic and Transcriptomic Alterations Identified
+              </Typography>
+            </div>
+            <div className="genomic-summary__alterations-content">
+              <span>test</span>
+            </div>
           </div>
         </>
       )}

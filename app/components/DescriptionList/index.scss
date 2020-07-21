@@ -25,10 +25,12 @@
 
   &__term {
     display: inline-flex;
+    flex-basis: 0;
     color: $palette__text--secondary;
   }
 
   &__value {
     display: inline-flex;
+    flex-basis: 0;
   }
 }
