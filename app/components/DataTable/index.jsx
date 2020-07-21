@@ -68,9 +68,10 @@ function DataTable(props) {
     canExport,
     patientId,
     theme,
+    isPrint,
   } = props;
 
-  const domLayout = 'autoHeight';
+  const domLayout = isPrint ? 'print' : 'autoHeight';
 
   const gridApi = useRef();
   const columnApi = useRef();
@@ -141,9 +142,14 @@ function DataTable(props) {
       columnApi.current.setColumnsVisible(hiddenColumns, false);
     }
 
-    if (rowData.length >= MAX_VISIBLE_ROWS) {
+    if (rowData.length >= MAX_VISIBLE_ROWS && !isPrint) {
       gridDiv.current.style.height = MAX_TABLE_HEIGHT;
       gridApi.current.setDomLayout('normal');
+    }
+
+    if (isPrint) {
+      columnApi.current.setColumnVisible('Actions', false);
+      gridApi.current.sizeColumnsToFit();
     }
   };
 
@@ -343,7 +349,7 @@ function DataTable(props) {
                 {titleText}
               </Typography>
               <div>
-                {canAdd && (
+                {canAdd && !isPrint && (
                   <span className="data-table__action">
                     <Typography display="inline">
                       Add Row
@@ -356,7 +362,7 @@ function DataTable(props) {
                     </IconButton>
                   </span>
                 )}
-                {canToggleColumns && (
+                {canToggleColumns && !isPrint && (
                   <span className="data-table__action">
                     <IconButton
                       onClick={() => setShowPopover(prevVal => !prevVal)}
@@ -365,7 +371,7 @@ function DataTable(props) {
                     </IconButton>
                   </span>
                 )}
-                {canExport && (
+                {canExport && !isPrint && (
                   <span className="data-table__action">
                     <Typography display="inline">
                       Export to CSV
@@ -378,7 +384,7 @@ function DataTable(props) {
                     </IconButton>
                   </span>
                 )}
-                {canReorder && (
+                {canReorder && !isPrint && (
                   <span className="data-table__action">
                     <Typography display="inline">
                       Reorder Rows
@@ -489,7 +495,9 @@ DataTable.propTypes = {
   rowUpdateAPICall: PropTypes.func,
   canExport: PropTypes.bool,
   patientId: PropTypes.string,
+  // eslint-disable-next-line react/forbid-prop-types
   theme: PropTypes.object,
+  isPrint: PropTypes.bool,
 };
 
 DataTable.defaultProps = {
@@ -509,7 +517,8 @@ DataTable.defaultProps = {
   rowUpdateAPICall: () => {},
   canExport: false,
   patientId: '',
-  theme: null,
+  theme: {},
+  isPrint: false,
 };
 
 export default DataTable;

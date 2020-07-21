@@ -19,17 +19,13 @@
   white-space: normal;
 }
 
-.cell-line-height {
-  line-height: 26px !important;
-}
-
 .therapeutic-table {
   &__container {
     width: 100%;
     padding: 1mm 0 6mm;
 
     .ag-body-viewport {
-      width: 258mm;
+      width: calc(8.5in - 20px);
     }
   }
 
