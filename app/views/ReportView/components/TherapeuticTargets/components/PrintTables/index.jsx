@@ -48,7 +48,7 @@ const makeColDefs = (columnNames) => {
  * @property {bool} print is this used on the print page
  * @return {*} JSX
  */
-function TherapeuticTableComponent(props) {
+const TherapeuticTable = (props) => {
   const {
     report,
   } = props;
@@ -174,11 +174,11 @@ function TherapeuticTableComponent(props) {
       </div>
     </div>
   );
-}
+};
 
-TherapeuticTableComponent.propTypes = {
+TherapeuticTable.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
   report: PropTypes.object.isRequired,
 };
 
-export default TherapeuticTableComponent;
+export default TherapeuticTable;
