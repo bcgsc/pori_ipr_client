@@ -8,6 +8,7 @@ import { AgGridReact } from '@ag-grid-community/react';
 import omit from 'lodash.omit';
 
 import { therapeuticGet } from '@/services/reports/therapeutic';
+import useGrid from '@/services/utils/useGrid';
 
 import './index.scss';
 
@@ -58,8 +59,16 @@ const TherapeuticTable = (props) => {
   const [therapeuticColDefs, setTherapeuticColDefs] = useState([]);
   const [chemoresistanceColDefs, setChemoresistanceColDefs] = useState([]);
 
-  const therapeuticGridApi = useRef();
-  const chemoresistanceGridApi = useRef();
+  const {
+    gridApi: therapeuticGridApi,
+    colApi: therapeuticColApi,
+    onGridReady: therapeuticOnGridReady,
+  } = useGrid();
+  const {
+    gridApi: chemoresistanceGridApi,
+    colApi: chemoresistanceColApi,
+    onGridReady: chemoresistanceOnGridReady,
+  } = useGrid();
 
   useEffect(() => {
     if (report) {
@@ -125,14 +134,6 @@ const TherapeuticTable = (props) => {
     }
   }, [chemoresistanceRowData]);
 
-  const onTherapeuticGridReady = (params) => {
-    therapeuticGet.current = params.api;
-  };
-
-  const onChemoresistanceGridReady = (params) => {
-    chemoresistanceGridApi.current = params.api;
-  };
-
   const onFirstDataRendered = (gridApi) => {
     if (gridApi.current) {
       gridApi.current.sizeColumnsToFit();
@@ -154,7 +155,7 @@ const TherapeuticTable = (props) => {
           columnDefs={therapeuticColDefs}
           rowData={therapeuticRowData}
           defaultColDef={defaultColDef}
-          onGridReady={onTherapeuticGridReady}
+          onGridReady={therapeuticOnGridReady}
           overlayNoRowsTemplate={overlayNoRowsTemplate('therapeutic options data')}
           domLayout="print"
           onFirstDataRendered={() => onFirstDataRendered(therapeuticGridApi)}
@@ -166,7 +167,7 @@ const TherapeuticTable = (props) => {
           columnDefs={chemoresistanceColDefs}
           rowData={chemoresistanceRowData}
           defaultColDef={defaultColDef}
-          onGridReady={onChemoresistanceGridReady}
+          onGridReady={chemoresistanceOnGridReady}
           overlayNoRowsTemplate={overlayNoRowsTemplate('chemoresistance data')}
           domLayout="print"
           onFirstDataRendered={() => onFirstDataRendered(chemoresistanceGridApi)}
