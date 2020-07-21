@@ -32,7 +32,7 @@ const Main = () => {
   const [user, setUser] = useState({ firstName: 'Not', lastName: 'logged in' });
   const [admin, setAdmin] = useState(false);
   const [sidebarMaximized, setSidebarMaximized] = useState(false);
-  const [hideNav, setHideNav] = useState(false);
+  const [isNavVisible, setIsNavVisible] = useState(true);
 
   useEffect(() => {
     if (authorizationToken) {
@@ -70,8 +70,8 @@ const Main = () => {
   return (
     <SecurityContext.Provider value={{ authorizationToken, setAuthorizationToken }}>
       <div>
-        <section className={`${!hideNav ? 'main__content' : ''} ${sidebarMaximized ? 'main__content--maximized' : ''}`}>
-          {!hideNav ? (
+        <section className={`${isNavVisible ? 'main__content' : ''} ${sidebarMaximized ? 'main__content--maximized' : ''}`}>
+          {isNavVisible ? (
             <>
               <NavBar
                 sidebarMaximized={sidebarMaximized}
@@ -90,9 +90,9 @@ const Main = () => {
             <Switch>
               <Route component={LoginView} path="/login" />
               <Route component={TermsView} path="/terms" />
-              <AuthenticatedRoute admin={admin} component={ReportsView} path="/reports" setHideNav={setHideNav} />
-              <AuthenticatedRoute component={ReportView} path="/report/:ident" setHideNav={setHideNav} />
-              <AuthenticatedRoute component={PrintView} path="/print/:ident" hideNav setHideNav={setHideNav} />
+              <AuthenticatedRoute admin={admin} component={ReportsView} path="/reports" onToggleNav={setIsNavVisible} />
+              <AuthenticatedRoute component={ReportView} path="/report/:ident" onToggleNav={setIsNavVisible} />
+              <AuthenticatedRoute component={PrintView} path="/print/:ident" isNavVisible={false} onToggleNav={setIsNavVisible} />
             </Switch>
           </Suspense>
         </section>

@@ -39,9 +39,9 @@ const AuthenticatedRoute = ({
     ChildComponent = Component;
   }
   if (isNavVisible) {
-    onToggleNav(false);
-  } else {
     onToggleNav(true);
+  } else {
+    onToggleNav(false);
   }
   return (
     <Route
