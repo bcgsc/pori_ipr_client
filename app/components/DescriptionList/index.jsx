@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import {
+  List,
+  ListItem,
+  ListItemText,
+} from '@material-ui/core';
 
 import './index.scss';
 
@@ -19,24 +24,18 @@ const DescriptionList = (props) => {
   return (
     <>
       {visibleEntries && (
-        <dl className="description-list">
-          {visibleEntries.map(({ term, value }, index) => (
-            <span
-              key={term}
-              className={`
-                description-list__group
-                ${index < (visibleEntries.length - 1) / 2 ? 'description-list__group--left' : 'description-list__group--right'}
-              `}
-            >
-              <dt className="description-list__term">
+        <List className="description-list">
+          {visibleEntries.map(({ term, value }) => (
+            <ListItem key={term} className="description-list__group">
+              <ListItemText className="description-list__term">
                 {term}
-              </dt>
-              <dd className="description-list__value">
+              </ListItemText>
+              <ListItemText className="description-list__value">
                 {value}
-              </dd>
-            </span>
+              </ListItemText>
+            </ListItem>
           ))}
-        </dl>
+        </List>
       )}
     </>
   );

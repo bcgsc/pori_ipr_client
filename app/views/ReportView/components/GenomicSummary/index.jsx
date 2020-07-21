@@ -92,7 +92,7 @@ const GenomicSummary = (props) => {
 
   return (
     <div className="genomic-summary">
-      {report && patientInformationData && tumourSummaryData ? (
+      {report && patientInformationData && tumourSummaryData && (
         <>
           <div className="genomic-summary__patient-information">
             <div className="genomic-summary__patient-information-title">
@@ -131,7 +131,7 @@ const GenomicSummary = (props) => {
             </Typography>
           </div>
         </>
-      ) : null}
+      )}
     </div>
   );
 };
