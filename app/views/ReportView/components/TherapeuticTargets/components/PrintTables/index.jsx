@@ -1,14 +1,13 @@
 import React, {
-  useRef,
   useEffect,
   useState,
 } from 'react';
 import PropTypes from 'prop-types';
 import { AgGridReact } from '@ag-grid-community/react';
+import { useGrid } from '@bcgsc/react-use-grid';
 import omit from 'lodash.omit';
 
 import { therapeuticGet } from '@/services/reports/therapeutic';
-import useGrid from '@/services/utils/useGrid';
 
 import './index.scss';
 
@@ -61,12 +60,10 @@ const TherapeuticTable = (props) => {
 
   const {
     gridApi: therapeuticGridApi,
-    colApi: therapeuticColApi,
     onGridReady: therapeuticOnGridReady,
   } = useGrid();
   const {
     gridApi: chemoresistanceGridApi,
-    colApi: chemoresistanceColApi,
     onGridReady: chemoresistanceOnGridReady,
   } = useGrid();
 
