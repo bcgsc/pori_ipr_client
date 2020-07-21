@@ -1,5 +1,5 @@
 import template from './paginate.pug';
-import './paginate.scss';
+import './index.scss';
 
 const bindings = {
   offset: '=',
@@ -9,9 +9,7 @@ const bindings = {
 };
 
 class Paginate {
-  /* @ngInject */
-  constructor(ReportService, $timeout, $scope) {
-    this.ReportService = ReportService;
+  constructor($timeout, $scope) {
     this.$timeout = $timeout;
     this.$scope = $scope;
   }
@@ -41,6 +39,8 @@ class Paginate {
     }, 100);
   }
 }
+
+Paginate.$inject = ['$timeout', '$scope'];
 
 export default {
   template,

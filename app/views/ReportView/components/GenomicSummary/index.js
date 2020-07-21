@@ -400,7 +400,12 @@ class GenomicSummary {
 
   showHelpMessage($event, message) {
     this.$mdDialog.show(
-      dialogCreator($event, message.content, 'Help', [{ text: 'Close', click: this.$mdDialog.hide }]),
+      dialogCreator({
+        $event,
+        text: message.content,
+        title: 'Help',
+        actions: [{ text: 'Close', click: this.$mdDialog.hide }],
+      }),
     );
   }
 }

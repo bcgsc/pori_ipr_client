@@ -16,12 +16,12 @@ class RoleCard {
   }
 
   async remove($event) {
-    const confirm = dialogCreator(
+    const confirm = dialogCreator({
       $event,
-      `Are you sure you want to remove ${this.role.user.firstName} ${this.role.user.lastName} as ${this.indefiniteArticleFilter(this.role.role)} ${this.role.role}?`,
-      'Are you sure you want to remove this user?',
-      [{ text: 'Cancel', click: this.$mdDialog.cancel }, { text: 'Confirm', click: this.$mdDialog.hide }],
-    );
+      text: `Are you sure you want to remove ${this.role.user.firstName} ${this.role.user.lastName} as ${this.indefiniteArticleFilter(this.role.role)} ${this.role.role}?`,
+      title: 'Are you sure you want to remove this user?',
+      actions: [{ text: 'Cancel', click: this.$mdDialog.cancel }, { text: 'Confirm', click: this.$mdDialog.hide }],
+    });
 
     await this.$mdDialog.show(confirm);
     const role = angular.copy(this.role);
