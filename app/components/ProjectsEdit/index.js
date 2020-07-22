@@ -59,7 +59,6 @@ class ProjectsEdit {
       return [];
     }
     const users = await UserService.search(searchText);
-    console.log(users);
     return users;
   }
 
@@ -93,7 +92,6 @@ class ProjectsEdit {
 
   // Remove user from project
   async removeUser($event, user) {
-    console.log(user);
     if (confirm(`Are you sure you want to remove ${user.firstName} ${user.lastName} from ${this.editProject.name}?`)) {
       await ProjectService.removeUser(this.editProject.ident, user.ident);
       // Remove entry from project list
