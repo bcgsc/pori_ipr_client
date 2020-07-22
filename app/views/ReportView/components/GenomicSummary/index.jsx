@@ -6,6 +6,7 @@ import {
 import sortBy from 'lodash.sortby';
 
 import { getMicrobial } from '@/services/reports/microbial';
+import { formatDate } from '@/utils/date';
 import AlterationsService from '@/services/reports/genomic-alterations.service';
 import DisabledTextField from '@/components/DisabledTextField';
 import DescriptionList from '@/components/DescriptionList';
@@ -47,6 +48,7 @@ const GenomicSummary = (props) => {
   const [patientInformationData, setPatientInformationData] = useState();
   const [tumourSummaryData, setTumourSummaryData] = useState();
   const [variantData, setVariantData] = useState();
+  const [variantFilter, setVariantFilter] = useState();
   const [variantCounts, setVariantCounts] = useState({
     cnv: 0,
     smallMutation: 0,
@@ -67,7 +69,7 @@ const GenomicSummary = (props) => {
           },
           {
             label: 'Report Date',
-            value: report.createdAt,
+            value: formatDate(report.createdAt),
           },
           {
             label: 'Case Type',
@@ -188,8 +190,14 @@ const GenomicSummary = (props) => {
               </Typography>
             </div>
             <div className="genomic-summary__alterations-content">
-              <VariantCounts counts={variantCounts} />
-              <VariantChips variants={variantData} />
+              <VariantCounts
+                filter={variantFilter}
+                counts={variantCounts}
+                onToggleFilter={setVariantFilter}
+              />
+              <VariantChips
+                variants={variantFilter ? variantData.filter(v => v.type === variantFilter) : variantData}
+              />
             </div>
           </div>
         </>

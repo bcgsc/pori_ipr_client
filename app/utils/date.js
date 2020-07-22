@@ -13,4 +13,18 @@ const getDate = (time = true) => {
   return formattedDate.replace(', ', '__').replace(/:/g, '-');
 };
 
-export default getDate;
+const formatDate = (date) => {
+  const convertedDate = new Date(date);
+  const formattedDate = new Intl.DateTimeFormat('en-ca', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(convertedDate);
+
+  return formattedDate.replace(', ', '-');
+};
+
+export {
+  getDate,
+  formatDate,
+};

@@ -17,7 +17,7 @@ const DisabledTextField = (props) => {
   return (
     <TextField
       label={label}
-      value={children === null ? ' ' : children}
+      value={children === null || children === '' ? ' ' : children}
       classes={{ root: 'text-field' }}
       InputProps={{ disableUnderline }}
       disabled

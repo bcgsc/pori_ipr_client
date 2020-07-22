@@ -27,6 +27,10 @@
     border-right: 1px solid $palette__common--black;
   }
 
+  &__icon {
+    margin: 0 auto;
+  }
+
   &__group {
     display: flex;
     flex-grow: 1;
