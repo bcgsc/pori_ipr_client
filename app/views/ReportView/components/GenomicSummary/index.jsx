@@ -9,7 +9,8 @@ import { getMicrobial } from '@/services/reports/microbial';
 import AlterationsService from '@/services/reports/genomic-alterations.service';
 import DisabledTextField from '@/components/DisabledTextField';
 import DescriptionList from '@/components/DescriptionList';
-import VariantChips from '@/components/VariantChips';
+import VariantChips from './components/VariantChips';
+import VariantCounts from './components/VariantCounts';
 
 import './index.scss';
 
@@ -49,8 +50,8 @@ const GenomicSummary = (props) => {
   const [variantCounts, setVariantCounts] = useState({
     cnv: 0,
     smallMutation: 0,
-    expression: 0,
     structuralVariant: 0,
+    expression: 0,
   });
 
   useEffect(() => {
@@ -187,6 +188,7 @@ const GenomicSummary = (props) => {
               </Typography>
             </div>
             <div className="genomic-summary__alterations-content">
+              <VariantCounts counts={variantCounts} />
               <VariantChips variants={variantData} />
             </div>
           </div>

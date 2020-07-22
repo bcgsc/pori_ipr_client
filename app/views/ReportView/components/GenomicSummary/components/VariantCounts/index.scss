@@ -1,0 +1,68 @@
+@import '../../../../../../styles/variables';
+@import '../../../../../../styles/theme';
+
+.variant-counts {
+  display: flex;
+  justify-content: space-around;
+  margin: 20px 4px;
+  border: 1px solid $palette__common--black;
+
+  &__key {
+    display: flex;
+    flex-grow: 1;
+    width: 80%;
+    padding: 12px;
+    margin: auto 0;
+  }
+
+  &__count {
+    display: flex;
+    flex-grow: 1;
+    justify-content: center;
+    align-items: center;
+    width: 20%;
+    padding: 12px;
+    color: $palette__common--white;
+    border-left: 1px solid $palette__common--black;
+    border-right: 1px solid $palette__common--black;
+  }
+
+  &__group {
+    display: flex;
+    flex-grow: 1;
+    flex-basis: 0;
+
+    &--cnv {
+      background-color: $accent--green;
+
+      & > .variant-counts__count {
+        background-color: darken($accent--green, 30);
+      }
+    }
+
+    &--smallMutation {
+      background-color: $accent--blue;
+
+      & > .variant-counts__count {
+        background-color: darken($accent--blue, 30);
+      }
+    }
+
+    &--expression {
+      background-color: $accent--orange;
+
+      & > .variant-counts__count {
+        background-color: darken($accent--orange, 30);
+      }
+    }
+
+    &--structuralVariant {
+      background-color: $accent--purple;
+
+      & > .variant-counts__count {
+        background-color: darken($accent--purple, 30);
+        border-right: none;
+      }
+    }
+  }
+}
