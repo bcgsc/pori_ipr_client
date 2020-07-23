@@ -1,6 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { Chip } from '@material-ui/core';
+import {
+  Chip, TextField, InputAdornment, IconButton,
+} from '@material-ui/core';
+import DoneIcon from '@material-ui/icons/Done';
+import CloseIcon from '@material-ui/icons/Close';
 import AlertDialog from '@/components/AlertDialog';
 
 import './index.scss';
@@ -10,37 +14,88 @@ const VariantChips = (props) => {
     variants,
     canEdit,
     handleChipDeleted,
+    handleChipAdded,
   } = props;
 
-  const [showAlert, setShowAlert] = useState(false);
+  const [showDeleteAlert, setShowDeleteAlert] = useState(false);
+  const [showAddInput, setShowAddInput] = useState(false);
+  const [addedVariant, setAddedVariant] = useState('');
 
-  const handleDialogClose = async (deleted, comment) => {
+  const handleDeleteDialogClose = useCallback((deleted, comment) => {
     if (deleted) {
-      handleChipDeleted(showAlert.ident, showAlert.type, comment);
+      handleChipDeleted(showDeleteAlert.ident, showDeleteAlert.type, comment);
     }
-    setShowAlert(false);
-  };
+    setShowDeleteAlert(false);
+  }, [showDeleteAlert, handleChipDeleted]);
+
+  const handleAddInputClose = useCallback((added) => {
+    if (added) {
+      handleChipAdded(addedVariant);
+    }
+    setShowAddInput(false);
+    setAddedVariant('');
+  }, [handleChipAdded, addedVariant]);
 
   return (
     <div>
-      {Boolean(variants.length) && (
+      <div>
+        {Boolean(variants.length) && (
+          <>
+            {variants.map(variant => (
+              <React.Fragment key={variant.geneVariant}>
+                <Chip
+                  label={variant.geneVariant}
+                  className={`variant variant--${variant.type}`}
+                  onDelete={canEdit ? () => setShowDeleteAlert(variant) : null}
+                />
+              </React.Fragment>
+            ))}
+          </>
+        )}
+      </div>
+      {canEdit && (
         <>
-          {variants.map(variant => (
-            <React.Fragment key={variant.geneVariant}>
-              <Chip
-                label={variant.geneVariant}
-                className={`variant variant--${variant.type}`}
-                onDelete={canEdit ? () => setShowAlert(variant) : null}
+          {!showAddInput ? (
+            <Chip
+              label="Add new entry"
+              className="variant variant__add"
+              onClick={() => setShowAddInput(true)}
+            />
+          ) : (
+            <form className="variant__form">
+              <TextField
+                className="text-field-fix"
+                value={addedVariant}
+                type="text"
+                size="small"
+                margin="dense"
+                variant="outlined"
+                label="Gene name (alteration)"
+                onChange={event => setAddedVariant(event.target.value)}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {addedVariant && (
+                        <IconButton onClick={() => handleAddInputClose(true)}>
+                          <DoneIcon />
+                        </IconButton>
+                      )}
+                      <IconButton onClick={() => handleAddInputClose(false)}>
+                        <CloseIcon />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
-            </React.Fragment>
-          ))}
+            </form>
+          )}
         </>
       )}
       <AlertDialog
-        isOpen={Boolean(showAlert)}
-        handleClose={handleDialogClose}
-        title="Confirm"
-        text={`Are you sure you want to delete ${showAlert.geneVariant}?`}
+        isOpen={Boolean(showDeleteAlert)}
+        handleClose={handleDeleteDialogClose}
+        title="Remove Alteration"
+        text={`Are you sure you want to delete ${showDeleteAlert.geneVariant}?`}
         confirmText="Delete"
         cancelText="Cancel"
         commentRequired
@@ -53,12 +108,14 @@ VariantChips.propTypes = {
   variants: PropTypes.arrayOf(PropTypes.object),
   canEdit: PropTypes.bool,
   handleChipDeleted: PropTypes.func,
+  handleChipAdded: PropTypes.func,
 };
 
 VariantChips.defaultProps = {
   variants: [],
   canEdit: false,
   handleChipDeleted: () => {},
+  handleChipAdded: () => {},
 };
 
 export default VariantChips;

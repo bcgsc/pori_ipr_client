@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import {
   Typography,
@@ -156,11 +156,12 @@ const GenomicSummary = (props) => {
 
       getData();
     }
-  }, [report]);
+  }, [report, print]);
 
-  const handleChipDeleted = async (chipIdent, type, comment) => {
+  const handleChipDeleted = useCallback(async (chipIdent, type, comment) => {
     try {
       await AlterationsService.remove(report.ident, chipIdent, comment);
+
       setVariantCounts(prevVal => ({ ...prevVal, [type]: prevVal[type] - 1 }));
       setVariantData(prevVal => (prevVal.filter(val => val.ident !== chipIdent)));
       setShowSnackbar('Entry deleted');
@@ -168,15 +169,29 @@ const GenomicSummary = (props) => {
       console.error(err);
       setShowSnackbar('Entry NOT deleted due to an error');
     }
-  };
+  }, [report.ident]);
 
-  const handleSnackbarClose = (event, reason) => {
+  const handleChipAdded = useCallback(async (variant) => {
+    try {
+      const newVariantEntry = await AlterationsService.create(report.ident, { geneVariant: variant });
+      const categorizedVariantEntry = variantCategory(newVariantEntry);
+
+      setVariantCounts(prevVal => ({ ...prevVal, [categorizedVariantEntry.type]: prevVal[categorizedVariantEntry.type] + 1 }));
+      setVariantData(prevVal => ([...prevVal, categorizedVariantEntry]));
+      setShowSnackbar('Entry added');
+    } catch (err) {
+      console.error(err);
+      setShowSnackbar('Entry NOT added due to an error');
+    }
+  }, [report.ident]);
+
+  const handleSnackbarClose = useCallback((event, reason) => {
     if (reason === 'clickaway') {
       return;
     }
 
     setShowSnackbar(false);
-  };
+  }, []);
 
   return (
     <div className="genomic-summary">
@@ -230,6 +245,7 @@ const GenomicSummary = (props) => {
                 canEdit={canEdit}
                 reportIdent={report.ident}
                 handleChipDeleted={handleChipDeleted}
+                handleChipAdded={handleChipAdded}
               />
               <Snackbar
                 open={Boolean(showSnackbar)}

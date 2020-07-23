@@ -7,7 +7,7 @@ import {
   DialogContentText,
   DialogTitle,
   Button,
-  Input,
+  TextField,
 } from '@material-ui/core';
 
 const AlertDialog = (props) => {
@@ -33,10 +33,14 @@ const AlertDialog = (props) => {
           {text}
         </DialogContentText>
         {commentRequired && (
-          <Input
-            autoFocus
+          <TextField
+            className="text-field-fix"
             value={commentInput}
             onChange={event => setCommentInput(event.target.value)}
+            label="Comment"
+            required
+            fullWidth
+            multiline
           />
         )}
       </DialogContent>

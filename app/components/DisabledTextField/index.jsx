@@ -16,6 +16,7 @@ const DisabledTextField = (props) => {
 
   return (
     <TextField
+      className="text-field-fix"
       label={label}
       value={children === null || children === '' ? ' ' : children}
       classes={{ root: 'text-field' }}
