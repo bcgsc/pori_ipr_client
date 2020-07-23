@@ -1,6 +1,6 @@
 import { $rootScope } from 'ngimport';
 
-import toastCreator from '@/services/utils/toastCreator';
+import toastCreator from '@/utils/toastCreator';
 import DiscussionService from '@/services/reports/discussion.service';
 import template from './discussion-entry.pug';
 import './index.scss';

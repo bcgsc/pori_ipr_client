@@ -1,8 +1,8 @@
 import { angular2react } from 'angular2react';
 import { $rootScope } from 'ngimport';
 
-import toastCreator from '@/services/utils/toastCreator';
-import dialogCreator from '@/services/utils/dialogCreator';
+import toastCreator from '@/utils/toastCreator';
+import dialogCreator from '@/utils/dialogCreator';
 import UserService from '@/services/management/user.service';
 import GroupService from '@/services/management/group.service';
 import ProjectService from '@/services/management/project.service';
@@ -30,6 +30,7 @@ class Users {
 
     this.accessGroup = this.groups.find(group => group.name === 'Full Project Access');
 
+    // eslint-disable-next-line consistent-return
     const deleteUser = async ($event, user) => {
       const confirm = dialogCreator({
         $event,

@@ -1,9 +1,0 @@
-div(layout="row" layout-align="center center", ng-if="$root.showLoader", id="page-loading", ng-cloak)
-  div
-    img(src="img/gsclogo.svg").loader-spin
-div(layout="column", flex).topbar
-  navbar
-div(layout="row", flex).main__view
-  sidebar(is-admin="$ctrl.isAdmin")
-  div(flex, ng-class="{'main__content--sidebaropen': ($ctrl.maximized)}").main__content
-    ui-view

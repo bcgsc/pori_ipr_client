@@ -1,6 +1,6 @@
 import orderBy from 'lodash.orderby';
 
-import toastCreator from '@/services/utils/toastCreator';
+import toastCreator from '@/utils/toastCreator';
 import UserService from '@/services/management/user.service';
 import ProjectService from '@/services/management/project.service';
 import ReportService from '@/services/reports/report.service';

@@ -1,6 +1,6 @@
 import differenceBy from 'lodash.differenceby';
 
-import toastCreator from '@/services/utils/toastCreator';
+import toastCreator from '@/utils/toastCreator';
 import UserService from '@/services/management/user.service';
 import GroupService from '@/services/management/group.service';
 import ProjectService from '@/services/management/project.service';

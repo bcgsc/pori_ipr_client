@@ -1,7 +1,7 @@
 import { angular2react } from 'angular2react';
 
-import toastCreator from '@/services/utils/toastCreator';
-import dialogCreator from '@/services/utils/dialogCreator';
+import toastCreator from '@/utils/toastCreator';
+import dialogCreator from '@/utils/dialogCreator';
 import GroupService from '@/services/management/group.service';
 import lazyInjector from '@/lazyInjector';
 

@@ -48,12 +48,6 @@ import GroupsEditComponent from '@/components/GroupsEdit';
 import ProjectsEditComponent from '@/components/ProjectsEdit';
 import ReactTable from '@/components/DataTable';
 
-import ProjectService from './services/management/project.service';
-import AclService from './services/management/acl.service';
-import ReportService from './services/reports/report.service';
-import GroupService from './services/management/group.service';
-import IndefiniteArticleFilter from './filters/indefinite-article.filter';
-import TitleCaseFilter from './filters/titlecase.filter';
 import '@ag-grid-community/core/dist/styles/ag-grid.min.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-material.min.css';
 import './styles/ag-grid.scss';
@@ -98,20 +92,10 @@ const rootModule = angular.module('root')
   .component('roleCard', RoleCardComponent)
   .component('paginate', PaginateComponent)
   .component('reactTable', react2angular(ReactTable))
-  .service('ProjectService', ProjectService)
-  .service('AclService', AclService)
-  .service('ReportService', ReportService)
-  .service('GroupService', GroupService)
-  .filter('indefiniteArticle', IndefiniteArticleFilter)
-  .filter('titlecase', TitleCaseFilter)
   .config(['$locationProvider', ($locationProvider) => {
-    'ngInject';
-
     $locationProvider.html5Mode(true);
   }])
   .config(['$mdThemingProvider', ($mdThemingProvider) => {
-    'ngInject';
-
     const printGrey = $mdThemingProvider.extendPalette('grey', {
       50: '#FFFFFF',
     });

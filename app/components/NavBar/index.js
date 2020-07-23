@@ -1,6 +1,6 @@
 import { angular2react } from 'angular2react';
 
-import toastCreator from '@/services/utils/toastCreator';
+import toastCreator from '@/utils/toastCreator';
 import lazyInjector from '@/lazyInjector';
 import { logout } from '@/services/management/auth';
 import template from './navbar.pug';

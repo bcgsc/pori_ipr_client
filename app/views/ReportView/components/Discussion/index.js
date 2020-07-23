@@ -2,7 +2,7 @@ import { $rootScope } from 'ngimport';
 import { angular2react } from 'angular2react';
 
 import { getUser } from '@/services/management/auth';
-import toastCreator from '@/services/utils/toastCreator';
+import toastCreator from '@/utils/toastCreator';
 import lazyInjector from '@/lazyInjector';
 import DiscussionService from '@/services/reports/discussion.service';
 import template from './discussion.pug';

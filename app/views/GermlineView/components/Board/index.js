@@ -1,7 +1,7 @@
 import { angular2react } from 'angular2react';
 import { $rootScope } from 'ngimport';
 
-import toastCreator from '@/services/utils/toastCreator';
+import toastCreator from '@/utils/toastCreator';
 import lazyInjector from '@/lazyInjector';
 import template from './germline-board.pug';
 import germlineDownload from '@/services/reports/germline';
