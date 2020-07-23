@@ -1,14 +1,13 @@
 import { angular2react } from 'angular2react';
-import { StateService as $state } from '@uirouter/angularjs';
-import { $mdDialog, $mdToast } from 'angular-material';
 
+import toastCreator from '@/services/utils/toastCreator';
 import lazyInjector from '@/lazyInjector';
 import { logout } from '@/services/management/auth';
 import template from './navbar.pug';
-import feedbackTemplate from './feedback/feedback.pug';
-import feedbackController from './feedback/feedback';
+import feedbackTemplate from '../Feedback/feedback.pug';
+import feedbackController from '../Feedback';
 
-import './navbar.scss';
+import './index.scss';
 
 const bindings = {
   sidebarMaximized: '<',
@@ -17,6 +16,11 @@ const bindings = {
 };
 
 class NavBar {
+  constructor($mdDialog, $mdToast) {
+    this.$mdDialog = $mdDialog;
+    this.$mdToast = $mdToast;
+  }
+
   // CONFIG and VERSION are injected with webpack
   async $onInit() {
     this.config = CONFIG.ATTRS.name;
@@ -28,25 +32,27 @@ class NavBar {
   }
 
   async openFeedback($event) {
-    await $mdDialog.show({
+    await this.$mdDialog.show({
       controller: feedbackController,
       template: feedbackTemplate,
       targetEvent: $event,
       clickOutsideToClose: true,
+      parent: angular.element(document.body),
     });
   }
 
   async userLogout() {
     try {
       await logout();
-      $mdToast.showSimple('You have been logged out.');
+      this.$mdToast.show(toastCreator('You have been logged out.'));
     } catch (err) {
       console.error(err);
-      $mdToast.showSimple('Error: Could not logout due to connection issue.');
-      $state.go('public.login');
+      this.$mdToast.show(toastCreator('Error: Could not logout due to connection issue.'));
     }
   }
 }
+
+NavBar.$inject = ['$mdDialog', '$mdToast'];
 
 export const NavBarComponent = { template, bindings, controller: NavBar };
 

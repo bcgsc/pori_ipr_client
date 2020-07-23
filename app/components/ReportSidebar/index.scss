@@ -25,7 +25,6 @@
 
   &__list-title-text {
     font-size: $typography__font-size--h6;
-    font-weight: 700;
   }
 
   &__list-item {
@@ -38,6 +37,7 @@
 
     &--active {
       background-color: $black-12;
+      color: $palette__secondary--main;
     }
 
     &:hover:not(.report-sidebar__list-item--bold) {
@@ -60,5 +60,11 @@
   &__list-link {
     text-decoration: none;
     color: $black-80;
+
+    &--adornment {
+      margin: auto 12px auto 0;
+      opacity: $icon-opacity;
+      text-align: center;
+    }
   }
 }

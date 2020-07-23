@@ -26,7 +26,7 @@ function ReportToolbar(props) {
       </Typography>
       <Typography display="inline" variant="h5" className="report__header--text-align-center">
         {patientId}
-        {` ${type} Report`}
+        {` ${type.slice(0, 1).toUpperCase().concat(type.slice(1))} Report`}
       </Typography>
       <Typography display="inline" variant="h5" className="report__header--text-align-right">
         {state}

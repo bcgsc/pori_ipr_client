@@ -28,7 +28,12 @@ const ReportSidebar = (props) => {
           <ListItemText classes={{ root: 'report-sidebar__list-title', primary: 'report-sidebar__list-title-text' }}>
             Report Sections
           </ListItemText>
-          <Link to={{ pathname: `/print/${reportIdent}` }} className="report-sidebar__list-link">
+          <Link
+            to={{ pathname: `/print/${reportIdent}` }}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="report-sidebar__list-link report-sidebar__list-link--adornment"
+          >
             <PrintIcon />
           </Link>
         </ListItem>
