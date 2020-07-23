@@ -14,12 +14,7 @@ class Paginate {
     this.$scope = $scope;
   }
 
-  $onInit() {
-    console.log(this.total);
-  }
-  
   $onChanges(changes) {
-    console.log(changes);
     if (changes.total && changes.total.isFirstChange()) {
       /* eslint-disable-next-line arrow-body-style */
       this.$scope.$watch(() => this.limit, (newVal, oldVal) => {
