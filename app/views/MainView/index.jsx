@@ -23,14 +23,15 @@ const ReportsView = lazy(() => import('@/views/ReportsView'));
 const ReportView = lazy(() => import('@/views/ReportView'));
 const PrintView = lazy(() => import('@/views/PrintView'));
 const GermlineView = lazy(() => import('@/views/GermlineView'));
+const AdminView = lazy(() => import('@/views/AdminView'));
 
 /**
  * Entry point to application. Handles routing, app theme, and logged in state.
  */
 const Main = () => {
   const [authorizationToken, setAuthorizationToken] = useState('');
-  const [user, setUser] = useState({ firstName: 'Not', lastName: 'logged in' });
-  const [admin, setAdmin] = useState(false);
+  const [userDetails, setUserDetails] = useState('');
+  const [adminUser, setAdminUser] = useState(false);
   const [sidebarMaximized, setSidebarMaximized] = useState(false);
   const [isNavVisible, setIsNavVisible] = useState(true);
 
@@ -55,20 +56,16 @@ const Main = () => {
 
       const unregister = fetchIntercept.register(interceptor);
 
-      const asyncUser = async () => {
-        const { user: userResp, admin: adminResp } = await getUser();
-        setUser(userResp);
-        setAdmin(adminResp);
-      };
-
-      asyncUser();
-
       return unregister;
     }
   }, [authorizationToken]);
 
   return (
-    <SecurityContext.Provider value={{ authorizationToken, setAuthorizationToken }}>
+    <SecurityContext.Provider
+      value={{
+        authorizationToken, setAuthorizationToken, userDetails, setUserDetails, adminUser, setAdminUser,
+      }}
+    >
       <div>
         <section className={`${isNavVisible ? 'main__content' : ''} ${sidebarMaximized ? 'main__content--maximized' : ''}`}>
           {isNavVisible ? (
@@ -76,13 +73,13 @@ const Main = () => {
               <NavBar
                 sidebarMaximized={sidebarMaximized}
                 setSidebarMaximized={setSidebarMaximized}
-                user={user}
+                user={userDetails}
               />
               <Sidebar
                 sidebarMaximized={sidebarMaximized}
                 setSidebarMaximized={setSidebarMaximized}
-                user={user}
-                admin={admin}
+                user={userDetails}
+                admin={adminUser}
               />
             </>
           ) : null}
@@ -93,10 +90,11 @@ const Main = () => {
               <Route path="/" exact>
                 <Redirect to={{ pathname: '/reports' }} />
               </Route>
-              <AuthenticatedRoute admin={admin} component={ReportsView} path="/reports" onToggleNav={setIsNavVisible} />
+              <AuthenticatedRoute admin={adminUser} component={ReportsView} path="/reports" onToggleNav={setIsNavVisible} />
               <AuthenticatedRoute component={ReportView} path="/report/:ident" onToggleNav={setIsNavVisible} />
               <AuthenticatedRoute component={PrintView} path="/print/:ident" isNavVisible={false} onToggleNav={setIsNavVisible} />
               <AuthenticatedRoute component={GermlineView} path="/germline" onToggleNav={setIsNavVisible} />
+              <AuthenticatedRoute admin={adminUser} adminRequired component={AdminView} path="/admin" onToggleNav={setIsNavVisible} />
             </Switch>
           </Suspense>
         </section>

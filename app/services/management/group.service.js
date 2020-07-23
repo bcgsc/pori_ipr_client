@@ -1,7 +1,7 @@
+import { $http } from 'ngimport';
+
 class GroupService {
-  /* @ngInject */
-  constructor($http) {
-    this.$http = $http;
+  constructor() {
     this.api = `${CONFIG.ENDPOINTS.API}/user/group`;
   }
   
@@ -11,7 +11,7 @@ class GroupService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async all() {
-    const resp = await this.$http.get(this.api);
+    const resp = await $http.get(this.api);
     return resp.data;
   }
 
@@ -22,7 +22,7 @@ class GroupService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async retrieve(ident) {
-    const resp = await this.$http.get(`${this.api}/${ident}`);
+    const resp = await $http.get(`${this.api}/${ident}`);
     return resp.data;
   }
 
@@ -33,7 +33,7 @@ class GroupService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async create(group) {
-    const resp = await this.$http.post(this.api, group);
+    const resp = await $http.post(this.api, group);
     return resp.data;
   }
 
@@ -44,7 +44,7 @@ class GroupService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async remove(group) {
-    const resp = await this.$http.delete(`${this.api}/${group.ident}`);
+    const resp = await $http.delete(`${this.api}/${group.ident}`);
     return resp.data;
   }
 
@@ -56,7 +56,7 @@ class GroupService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async update(ident, group) {
-    const resp = await this.$http.put(`${this.api}/${ident}`, group);
+    const resp = await $http.put(`${this.api}/${ident}`, group);
     return resp.data;
   }
 
@@ -68,7 +68,7 @@ class GroupService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async addUser(group, user) {
-    const resp = await this.$http.post(`${this.api}/${group}/member`, { user });
+    const resp = await $http.post(`${this.api}/${group}/member`, { user });
     return resp.data;
   }
 
@@ -80,7 +80,7 @@ class GroupService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async removeUser(group, user) {
-    const resp = await this.$http.delete(`${this.api}/${group}/member`, {
+    const resp = await $http.delete(`${this.api}/${group}/member`, {
       data: { user },
       headers: { 'Content-Type': 'application/json' },
     });
@@ -88,4 +88,4 @@ class GroupService {
   }
 }
     
-export default GroupService;
+export default new GroupService();

@@ -1,4 +1,7 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, {
+  useRef, useState, useContext,
+} from 'react';
+import PropTypes from 'prop-types';
 import { AgGridReact } from '@ag-grid-community/react';
 
 import columnDefs from './columnDefs';
@@ -19,13 +22,8 @@ function ReportsTableComponent(props) {
   const gridApi = useRef();
   const columnApi = useRef();
 
+  const { userDetails, adminUser } = useContext(SecurityContext);
   const [rowData, setRowData] = useState();
-  const [admin, setAdmin] = useState(false);
-  const [externalMode, setExternalMode] = useState(true);
-
-  useEffect(() => {
-    setExternalMode(isExternalMode(SecurityContext));
-  }, [isExternalMode]);
 
   const onGridReady = async (params) => {
     gridApi.current = params.api;
@@ -36,11 +34,11 @@ function ReportsTableComponent(props) {
       states: 'ready,active,uploaded,signedoff,archived,reviewed',
     };
 
-    if (admin) {
+    if (adminUser) {
       opts.states = 'ready,active,uploaded,signedoff,archived,reviewed,nonproduction';
     }
 
-    if (externalMode) {
+    if (isExternalMode(userDetails)) {
       opts.states = 'reviewed,archived';
     }
 
@@ -89,9 +87,7 @@ function ReportsTableComponent(props) {
     if (event.ctrlKey || event.metaKey) {
       window.open(`${window.location.href}/report/${reportIdent}/summary`, '_blank');
     } else {
-      history.push({
-        pathname: `/report/${reportIdent}/summary`,
-      });
+      history.push({ pathname: `/report/${reportIdent}/summary` });
     }
   };
 
@@ -117,5 +113,10 @@ function ReportsTableComponent(props) {
     </div>
   );
 }
+
+ReportsTableComponent.propTypes = {
+  // eslint-disable-next-line react/forbid-prop-types
+  history: PropTypes.object.isRequired,
+};
 
 export default ReportsTableComponent;

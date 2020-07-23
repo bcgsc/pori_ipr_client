@@ -188,5 +188,6 @@ div.adminSection md-content.diagTable {
 }
 
 .admin {
-  height: 100%;
+  height: calc(100vh - 56px);
+  overflow-y: auto;
 }

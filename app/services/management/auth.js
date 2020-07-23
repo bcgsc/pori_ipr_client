@@ -58,6 +58,33 @@ const isAuthorized = (authorizationToken) => {
 };
 
 /**
+ * Gets the user object from the api
+ */
+const getUser = async (token) => {
+  try {
+    // Token passed on login
+    if (token) {
+      $http.defaults.headers.common.Authorization = token;
+    }
+    const resp = await $http.get(`${CONFIG.ENDPOINTS.API}/user/me`);
+    return resp.data;
+  } catch (err) {
+    return null;
+  }
+};
+
+/**
+ * Returns true if the user has been sucessfully authenticated and the token is valid
+ */
+const isAdmin = (user) => {
+  try {
+    return user.groups.some(group => group.name.toLowerCase() === 'admin');
+  } catch {
+    return false;
+  }
+};
+
+/**
  * Primarily used for display when logged in
  */
 const getUsername = ({ authorizationToken }) => {
@@ -67,26 +94,11 @@ const getUsername = ({ authorizationToken }) => {
   return null;
 };
 
-/**
- * Gets the user object from the api
- */
-const getUser = async () => {
+const isExternalMode = (user) => {
   try {
-    const resp = await $http.get(`${CONFIG.ENDPOINTS.API}/user/me`);
-    return { user: resp.data, admin: resp.data.groups.some(({ name }) => name === 'admin') };
+    return user.groups.some(group => externalGroups.includes(group.name.toLowerCase()));
   } catch (err) {
-    return null;
-  }
-};
-
-const isExternalMode = ({ authorizationToken }) => {
-  try {
-    return Boolean(
-      getUser({ authorizationToken }).groups
-        .find(group => externalGroups.includes(group.name.toLowerCase())),
-    );
-  } catch (err) {
-    return false;
+    return true;
   }
 };
 
@@ -126,6 +138,7 @@ const logout = async () => {
 
 export {
   isAuthorized,
+  isAdmin,
   login,
   logout,
   keycloak,

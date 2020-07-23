@@ -1,4 +1,9 @@
 import differenceBy from 'lodash.differenceby';
+
+import toastCreator from '@/services/utils/toastCreator';
+import UserService from '@/services/management/user.service';
+import GroupService from '@/services/management/group.service';
+import ProjectService from '@/services/management/project.service';
 import template from './users-edit.pug';
 
 const bindings = {
@@ -10,15 +15,10 @@ const bindings = {
   selfGroup: '<',
 };
 
-class UsersEditComponent {
-  /* @ngInject */
-  constructor($scope, $mdDialog, $mdToast, UserService, ProjectService, GroupService) {
-    this.$scope = $scope;
+class UsersEdit {
+  constructor($mdDialog, $mdToast) {
     this.$mdDialog = $mdDialog;
     this.$mdToast = $mdToast;
-    this.UserService = UserService;
-    this.ProjectService = ProjectService;
-    this.GroupService = GroupService;
   }
 
   $onInit() {
@@ -65,9 +65,9 @@ class UsersEditComponent {
           if (!this.user.groups.find(group => group.name === this.accessGroup.name)) {
             // add to group
             try {
-              await this.GroupService.addUser(this.accessGroup.ident, this.user.ident);
+              await GroupService.addUser(this.accessGroup.ident, this.user.ident);
             } catch (err) {
-              this.$mdToast.showSimple('User was not given full project access.');
+              this.$mdToast.show(toastCreator('User was not given full project access.'));
             }
           }
         } else {
@@ -76,9 +76,9 @@ class UsersEditComponent {
           if (this.user.groups.find(group => group.name === this.accessGroup.name)) {
             // remove from group
             try {
-              await this.GroupService.removeUser(this.accessGroup.ident, this.user.ident);
+              await GroupService.removeUser(this.accessGroup.ident, this.user.ident);
             } catch (err) {
-              this.$mdToast.showSimple('User was not removed from full project access.');
+              this.$mdToast.show(toastCreator('User was not removed from full project access.'));
             }
           }
 
@@ -86,9 +86,9 @@ class UsersEditComponent {
           const unbind = differenceBy(this.user.projects, this.projectAccess.projects, 'name');
           unbind.forEach(async (project) => {
             try {
-              await this.ProjectService.removeUser(project.ident, this.user.ident);
+              await ProjectService.removeUser(project.ident, this.user.ident);
             } catch (err) {
-              this.$mdToast.showSimple(`User was not removed from project ${project.name}`);
+              this.$mdToast.show(toastCreator(`User was not removed from project ${project.name}`));
               console.error('Unable to remove user from project', err);
             }
           });
@@ -97,9 +97,9 @@ class UsersEditComponent {
           const bind = differenceBy(this.projectAccess.projects, this.user.projects, 'name');
           bind.forEach(async (project) => {
             try {
-              await this.ProjectService.addUser(project.ident, this.user.ident);
+              await ProjectService.addUser(project.ident, this.user.ident);
             } catch (err) {
-              this.$mdToast.showSimple(`User was not added to project ${project.name}`);
+              this.$mdToast.show(toastCreator(`User was not added to project ${project.name}`));
               console.error('Unable to add user to project', err);
             }
           });
@@ -107,7 +107,7 @@ class UsersEditComponent {
       }
       // update user
       try {
-        await this.UserService.update(this.user);
+        await UserService.update(this.user);
         // Update user projects
         this.user.projects = this.projectAccess.projects;
 
@@ -134,21 +134,21 @@ class UsersEditComponent {
     // Send new user to api
     if (this.newUser) {
       // create user
-      const user = await this.UserService.create(this.user);
+      const user = await UserService.create(this.user);
       // create user/project binding
       if (this.projectAccess.allProjectAccess) { // if full access, add to group
         // Add user to group
         try {
-          await this.GroupService.addUser(this.accessGroup.ident, user.ident);
+          await GroupService.addUser(this.accessGroup.ident, user.ident);
         } catch (err) {
-          this.$mdToast.showSimple('User was not given full project access.');
+          this.$mdToast.show(toastCreator('User was not given full project access.'));
         }
       } else { // if not full access, bind to projects
         this.projectAccess.projects.forEach(async (project) => {
           try {
-            await this.ProjectService.addUser(project.ident, user.ident);
+            await ProjectService.addUser(project.ident, user.ident);
           } catch (err) {
-            this.$mdToast.showSimple(`User was not added to project ${project.name}`);
+            this.$mdToast.show(toastCreator(`User was not added to project ${project.name}`));
             console.error('Unable to add user to project', err);
           }
         });
@@ -170,8 +170,10 @@ class UsersEditComponent {
   }
 }
 
+UsersEdit.$inject = ['$mdDialog', '$mdToast'];
+
 export default {
   template,
   bindings,
-  controller: UsersEditComponent,
+  controller: UsersEdit,
 };

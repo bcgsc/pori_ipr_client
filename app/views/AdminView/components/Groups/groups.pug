@@ -11,6 +11,7 @@ md-content(flex).adminSection
   div.content
 
     p Groups that users can be assigned to.
+    md-button(ng-click="$ctrl.groupDiag($event, null, true)") Add Group
 
     div(flex, layout="column").table
       div(flex, layout="row").header
@@ -24,3 +25,4 @@ md-content(flex).adminSection
         div(flex) {{g.owner.firstName}} {{g.owner.lastName}}
         div(flex) {{g.createdAt | date:'dd/MM/yy'}}
           md-tooltip(md-direction="left") {{g.createdAt | date:'dddd, MMMM Do YYYY, h:mm:ss a' }}
+md-progress-circular(md-mode="indeterminate", ng-if="!$ctrl.groups")
