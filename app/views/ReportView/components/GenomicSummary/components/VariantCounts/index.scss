@@ -57,6 +57,7 @@
 
       & > .variant-counts__count {
         background-color: darken($accent--orange, 30);
+        border-right: none;
       }
     }
 
@@ -65,7 +66,6 @@
 
       & > .variant-counts__count {
         background-color: darken($accent--purple, 30);
-        border-right: none;
       }
     }
   }

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   Typography,
+  Snackbar,
 } from '@material-ui/core';
 import sortBy from 'lodash.sortby';
 
@@ -38,20 +39,28 @@ const variantCategory = (variant) => {
   return variant;
 };
 
+const customTypeSort = (variant) => {
+  if (variant.type === 'smallMutation') return 0;
+  if (variant.type === 'cnv') return 1;
+  if (variant.type === 'structuralVariant') return 2;
+  return 3;
+};
+
 const GenomicSummary = (props) => {
   const {
     report,
-    reportEdit,
+    canEdit,
     print,
   } = props;
 
+  const [showSnackbar, setShowSnackbar] = useState(false);
   const [patientInformationData, setPatientInformationData] = useState();
   const [tumourSummaryData, setTumourSummaryData] = useState();
   const [variantData, setVariantData] = useState();
   const [variantFilter, setVariantFilter] = useState();
   const [variantCounts, setVariantCounts] = useState({
-    cnv: 0,
     smallMutation: 0,
+    cnv: 0,
     structuralVariant: 0,
     expression: 0,
   });
@@ -124,10 +133,10 @@ const GenomicSummary = (props) => {
 
         const output = [];
         const counts = {
-          cnv: 0,
           smallMutation: 0,
-          expression: 0,
+          cnv: 0,
           structuralVariant: 0,
+          expression: 0,
         };
 
         variants.forEach((variant, k) => {
@@ -140,13 +149,34 @@ const GenomicSummary = (props) => {
           }
           counts[variants[k].type] += 1;
         });
-        setVariantData(sortBy(output, ['type', 'geneVariant']));
+        const sorted = sortBy(output, [customTypeSort, 'geneVariant']);
+        setVariantData(sorted);
         setVariantCounts(counts);
       };
 
       getData();
     }
   }, [report]);
+
+  const handleChipDeleted = async (chipIdent, type, comment) => {
+    try {
+      await AlterationsService.remove(report.ident, chipIdent, comment);
+      setVariantCounts(prevVal => ({ ...prevVal, [type]: prevVal[type] - 1 }));
+      setVariantData(prevVal => (prevVal.filter(val => val.ident !== chipIdent)));
+      setShowSnackbar('Entry deleted');
+    } catch (err) {
+      console.error(err);
+      setShowSnackbar('Entry NOT deleted due to an error');
+    }
+  };
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setShowSnackbar(false);
+  };
 
   return (
     <div className="genomic-summary">
@@ -197,6 +227,19 @@ const GenomicSummary = (props) => {
               />
               <VariantChips
                 variants={variantFilter ? variantData.filter(v => v.type === variantFilter) : variantData}
+                canEdit={canEdit}
+                reportIdent={report.ident}
+                handleChipDeleted={handleChipDeleted}
+              />
+              <Snackbar
+                open={Boolean(showSnackbar)}
+                message={showSnackbar}
+                autoHideDuration={3000}
+                onClose={handleSnackbarClose}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'left',
+                }}
               />
             </div>
           </div>
@@ -209,13 +252,13 @@ const GenomicSummary = (props) => {
 GenomicSummary.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
   report: PropTypes.object,
-  reportEdit: PropTypes.bool,
+  canEdit: PropTypes.bool,
   print: PropTypes.bool,
 };
 
 GenomicSummary.defaultProps = {
   report: {},
-  reportEdit: false,
+  canEdit: false,
   print: false,
 };
 
