@@ -23,6 +23,10 @@ class PathwayAnalysis {
     this.$mdToast = $mdToast;
     this.FileUploader = FileUploader;
   }
+  
+  $onInit() {
+    this.loading = true;
+  }
 
   async $onChanges(changes) {
     if (changes.report && changes.report.currentValue) {
@@ -35,6 +39,7 @@ class PathwayAnalysis {
           '<?xml version="1.0" encoding="UTF-8"?><svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" xml:space="preserve" width="400"><text x="0" y="0" fill="rgb(210,210,210)">Pathway not yet analyzed.</text></svg>',
         );
       }
+      this.loading = false;
       $rootScope.$digest();
     }
   }

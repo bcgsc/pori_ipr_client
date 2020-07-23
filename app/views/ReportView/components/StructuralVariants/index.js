@@ -29,6 +29,7 @@ class StructuralVariants {
       biological: 'Gene Fusions with Biological Relevance',
       uncharacterized: 'Structural Variants of Unknown Significance',
     };
+    this.loading = true;
   }
 
   async $onChanges(changes) {
@@ -61,6 +62,7 @@ class StructuralVariants {
       this.processSvs(this.structuralVariants);
       this.pickComparator();
       this.processMutationSummaryImages(this.mutationSummaryImages);
+      this.loading = false;
       $rootScope.$digest();
     }
   }

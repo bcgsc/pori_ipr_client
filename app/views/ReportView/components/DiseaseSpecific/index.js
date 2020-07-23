@@ -11,6 +11,10 @@ const bindings = {
 };
 
 class DiseaseSpecific {
+  $onInit() {
+    this.loading = true;
+  }
+
   async $onChanges(changes) {
     if (changes.report && changes.report.currentValue) {
       this.images = await ImageService.get(
@@ -19,6 +23,7 @@ class DiseaseSpecific {
       );
       this.subtypePlotImages = await ImageService.subtypePlots(this.report.ident);
       this.hasSubtypePlot = Boolean(Object.keys(this.subtypePlotImages).length);
+      this.loading = false;
       $rootScope.$digest();
     }
   }

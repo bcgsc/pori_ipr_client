@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {
   TextField,
   InputAdornment,
+  LinearProgress,
 } from '@material-ui/core';
 import {
   FilterList,
@@ -197,7 +198,9 @@ function KBMatches(props) {
             </div>
           )}
         </>
-      ) : null}
+      ) : (
+        <LinearProgress />
+      )}
     </>
   );
 }

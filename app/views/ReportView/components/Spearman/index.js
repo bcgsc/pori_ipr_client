@@ -14,6 +14,7 @@ class Spearman {
   $onInit() {
     // Convert full hex to 6chr
     this.colourHex = hex => hex.match(/([A-z0-9]{6}$)/)[0];
+    this.loading = true;
   }
 
   async $onChanges(changes) {
@@ -22,6 +23,7 @@ class Spearman {
         this.report.ident,
         'expression.chart,expression.legend',
       );
+      this.loading = false;
       $rootScope.$digest();
     }
   }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { LinearProgress } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import DataTable from '@/components/DataTable';
 import EditDialog from './components/EditDialog';
@@ -42,7 +43,7 @@ function TherapeuticView(props) {
 
   return (
     <div className="therapeutic">
-      {report && (
+      {therapeuticData ? (
         <>
           <DataTable
             titleText="Potential Therapeutic Targets"
@@ -78,6 +79,8 @@ function TherapeuticView(props) {
             print={print}
           />
         </>
+      ) : (
+        <LinearProgress />
       )}
     </div>
   );

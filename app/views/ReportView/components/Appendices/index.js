@@ -19,6 +19,7 @@ class Appendices {
     this.sampleInformationColumnDefs = columnDefs.sampleInformationColumnDefs;
     this.sequencingProtocolInformationColumnDefs = columnDefs.sequencingProtocolInformationColumnDefs;
     this.tcgaAcronymsColumnDefs = columnDefs.tcgaAcronymsColumnDefs;
+    this.loading = true;
   }
 
   async $onChanges(changes) {
@@ -37,6 +38,7 @@ class Appendices {
       this.config = this.appendices.config;
       this.seqQC = this.appendices.seqQC;
       this.sampleInfo = this.appendices.sampleInfo;
+      this.loading = false;
       $rootScope.$digest();
     }
   }

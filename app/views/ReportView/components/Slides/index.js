@@ -37,12 +37,14 @@ class Slides {
     ];
 
     this.selectedItem = null;
+    this.loading = true;
   }
 
   async $onChanges(changes) {
     if (changes.report && changes.report.currentValue) {
       this.slides = await SlidesService.all(this.report.ident);
       this.uploader = this.setupUploader();
+      this.loading = false;
       $rootScope.$digest();
     }
   }

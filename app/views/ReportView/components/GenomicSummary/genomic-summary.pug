@@ -3,57 +3,73 @@ div
     md-subheader.md-no-sticky.print-title Patient Information
       span(ng-if="$ctrl.reportEdit").edit
         md-icon(ng-click="$ctrl.updatePatient($event)") edit
+    md-progress-linear(ng-if="$ctrl.loading")
 
     div(layout="column", flex).details.patient-info__details
-      div(layout="row", flex).patient-info__description-container
-        dt(flex="{{$ctrl.detailSize}}", ng-init="$ctrl.detailSize=10").patient-info__description-term Patient ID:
-        dd(flex).patient-info__description-details {{$ctrl.report.patientId}}
+      div(layout="row", flex).patient-info__description-row
+        span(flex="33").patient-info__description-container
+          dt.patient-info__description-term Patient ID:
+          dd.patient-info__description-details {{$ctrl.report.patientId}}
 
-        dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Alternate ID:
-        dd(flex).patient-info__description-details {{$ctrl.report.alternateIdentifier || 'N/A'}}
+        span(flex="33").patient-info__description-container
+          dt.patient-info__description-term Alternate ID:
+          dd.patient-info__description-details {{$ctrl.report.alternateIdentifier || 'N/A'}}
 
-        dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Sex:
-        dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.gender}}
+        span(flex="33").patient-info__description-container
+          dt.patient-info__description-term Sex:
+          dd.patient-info__description-details {{$ctrl.report.patientInformation.gender}}
 
-      div(layout="row", flex).patient-info__description-container
-        dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Tumour Sample:
-        dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.tumourSample}}
+      div(layout="row", flex).patient-info__description-row
+        span(flex="33").patient-info__description-container
+          dt.patient-info__description-term Tumour Sample:
+          dd.patient-info__description-details {{$ctrl.report.patientInformation.tumourSample}}
 
-        dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Tumour Type:
-        dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.diagnosis}}
+        span(flex="33").patient-info__description-container
+          dt.patient-info__description-term Tumour Type:
+          dd.patient-info__description-details {{$ctrl.report.patientInformation.diagnosis}}
 
-        dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Constitutional Sample:
-        dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.constitutionalSample}}
+        span(flex="33").patient-info__description-container
+          dt.patient-info__description-term Constitutional Sample:
+          dd.patient-info__description-details {{$ctrl.report.patientInformation.constitutionalSample}}
 
-      div(layout="row", flex).patient-info__description-container
-        dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Report Date:
-        dd(flex).patient-info__description-details {{$ctrl.report.createdAt | date: 'yyyy-MM-dd'}}
+      div(layout="row", flex).patient-info__description-row
+        span(flex="33").patient-info__description-container
+          dt.patient-info__description-term Report Date:
+          dd.patient-info__description-details {{$ctrl.report.createdAt | date: 'yyyy-MM-dd'}}
 
-        dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Case Type:
-        dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.caseType}}
+        span(flex="33").patient-info__description-container
+          dt.patient-info__description-term Case Type:
+          dd.patient-info__description-details {{$ctrl.report.patientInformation.caseType}}
 
-        dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Biopsy Details:
-        dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.biopsySite}}
+        span(flex="33").patient-info__description-container
+          dt.patient-info__description-term Biopsy Details:
+          dd.patient-info__description-details {{$ctrl.report.patientInformation.biopsySite}}
 
-      div(layout="row", flex).patient-info__description-container
-        dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Physician:
-        dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.physician}}
+      div(layout="row", flex).patient-info__description-row
+        span(flex="33").patient-info__description-container
+          dt.patient-info__description-term Physician:
+          dd.patient-info__description-details {{$ctrl.report.patientInformation.physician}}
 
-        dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Age at Diagnosis:
-        dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.age}}
+        span(flex="33").patient-info__description-container
+          dt.patient-info__description-term Age at Diagnosis:
+          dd.patient-info__description-details {{$ctrl.report.patientInformation.age}}
 
-        dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Age of Consent:
-        dd(flex).patient-info__description-details {{$ctrl.report.ageOfConsent || 'Not Specified'}}
+        span(flex="33").patient-info__description-container
+          dt.patient-info__description-term Age of Consent:
+          dd.patient-info__description-details {{$ctrl.report.ageOfConsent || 'Not Specified'}}
 
-      div(layout="row", flex).patient-info__description-container
-        dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Protocol:
-        dd(flex).patient-info__description-details {{$ctrl.report.patientInformation.tumourProtocol}}
+      div(layout="row", flex).patient-info__description-row
+        span(flex="33").patient-info__description-container
+          dt.patient-info__description-term Protocol:
+          dd.patient-info__description-details {{$ctrl.report.patientInformation.tumourProtocol}}
 
-        dt(flex="{{$ctrl.detailSize}}").patient-info__description-term Biopsy:
-        dd(flex).patient-info__description-details {{$ctrl.report.biopsyName || 'N/A'}}
+        span(flex="33").patient-info__description-container
+          dt.patient-info__description-term Biopsy:
+          dd.patient-info__description-details {{$ctrl.report.biopsyName || 'N/A'}}
 
-        dt(flex="{{$ctrl.detailSize}}").patient-info__description-term
-        dd(flex).patient-info__description-details
+        span(flex="33").patient-info__description-container
+          dt.patient-info__description-term
+          dd.patient-info__description-details
 
   section.tumour-analysis
     md-subheader.md-no-sticky.print-title Tumour Analysis Summary
@@ -187,7 +203,6 @@ div
         span(flex=25).details--align-center Details in SOMATIC MUTATIONS section
         span(flex=25)
         span(flex=25).details--align-center Details in STRUCTURAL VARIATION section
-      br(ng-if="$ctrl.print")
 
     div(layout="column", flex).alterations
 
@@ -195,7 +210,7 @@ div
         div(layout="column", flex).dataBox.noBottomMargin
           h2.title.tumour-analysis__subheader Key Genomic and Transcriptomic Alterations Identified
 
-      div(layout="row").keyAlterationsIdentified.print-title
+      div(layout="row").keyAlterationsIdentified
         div(layout="row", flex).header.sm.alterations__box
           div(
             flex,
@@ -232,7 +247,7 @@ div
           span(ng-click="$ctrl.removeAlteration($event, variant)", ng-if="$ctrl.reportEdit")
             md-icon remove_circle
 
-        div(ng-if="$ctrl.reportEdit", ng-click="$ctrl.addAlteration($event)", layout="row").add.clickable Add new entry
+        div(ng-if="$ctrl.reportEdit", ng-click="$ctrl.addAlteration($event)", layout="row").add.clickable.alterations__variant Add new entry
           span
             md-icon add_circle
 
@@ -240,10 +255,6 @@ div
       div(flex, ng-if="!$ctrl.print", layout="row", layout-align="end end").keyAlterationsIdentified.margin-bottom-10
         div(flex=10, ng-click="$ctrl.setMutationMask(null)", ng-if="$ctrl.mutationMask").margin-bottom-10.text-small.clickable View all
 
-      div(flex, ng-if="$ctrl.print", layout="row", layout-align="end end")
-        div(layout="row")
-          div.alterations__additional-text Additional variants of uncertain significance (VUS) detected in cancer-related genes:
-          div.alterations__additional-total {{$ctrl.variantCounts.variantsUnknown}}
       div(layout="row", layout-align="end center", ng-if="$ctrl.print").details--extra-small-text
         span
         span

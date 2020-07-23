@@ -24,6 +24,7 @@ class SmallMutations {
       nostic: 'Variants of Prognostic or Diagnostic Relevance',
     };
     this.columnDefs = columnDefs;
+    this.loading = true;
   }
 
   async $onChanges(changes) {
@@ -53,6 +54,7 @@ class SmallMutations {
       this.processMutationSummaryImages(this.mutationSummaryImages);
       this.processMutations(this.smallMutations);
       this.pickComparator();
+      this.loading = false;
       $rootScope.$digest();
     }
   }

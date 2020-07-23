@@ -33,6 +33,7 @@ class GenomicSummary {
   }
 
   $onInit() {
+    this.loading = true;
     this.variantCounts = {
       cnv: 0,
       smallMutation: 0,
@@ -114,6 +115,7 @@ class GenomicSummary {
       this.tumourAnalysis = this.report.tumourAnalysis;
       this.microbial = this.microbial || { species: 'None', integrationSite: 'None' };
       this.genomicAlterations = sortBy(this.processVariants(this.genomicAlterations), ['type', 'geneVariant']);
+      this.loading = false;
       $rootScope.$digest();
     }
   }

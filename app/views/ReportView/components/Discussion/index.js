@@ -20,6 +20,7 @@ class Discussion {
 
   $onInit() {
     this.new = { body: null };
+    this.loading = true;
   }
 
   async $onChanges(changes) {
@@ -31,6 +32,7 @@ class Discussion {
       const [discussionsResp, userResp] = await promises;
       this.discussions = discussionsResp;
       this.user = userResp.user;
+      this.loading = false;
       $rootScope.$digest();
     }
   }

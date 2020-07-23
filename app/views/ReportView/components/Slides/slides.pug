@@ -1,5 +1,6 @@
 section.material-section.slide.presentation
   md-subheader(ng-if="!$ctrl.print").md-no-sticky Additional Information
+  md-progress-linear(ng-if="$ctrl.loading")
 
   div(ng-if="!$ctrl.print", layout="column")
 

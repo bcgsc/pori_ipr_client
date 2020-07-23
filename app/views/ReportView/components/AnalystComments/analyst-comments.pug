@@ -1,5 +1,6 @@
 section.analyst
   md-subheader.analyst__header.md-no-sticky Analyst Comments
+  md-progress-linear(ng-if="$ctrl.loading")
 
   span.analyst__edit
     md-button(ng-if="$ctrl.reportEdit", ng-click="$ctrl.updateComments()").md-fab.md-mini.edit-icon

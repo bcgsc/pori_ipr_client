@@ -23,9 +23,14 @@ class AnalystComments {
     this.$mdDialog = $mdDialog;
   }
 
+  $onInit() {
+    this.loading = true;
+  }
+
   async $onChanges(changes) {
     if (changes.report && changes.report.currentValue) {
       this.analystComments = await AnalystCommentsService.get(this.report.ident);
+      this.loading = false;
       $rootScope.$digest();
     }
   }

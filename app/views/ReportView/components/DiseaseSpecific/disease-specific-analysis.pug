@@ -6,6 +6,7 @@ section
     div(layout="column", flex).bg-white
 
       h2.title Expression Subtype        
+      md-progress-linear(ng-if="$ctrl.loading")
 
       p(ng-if="!$ctrl.hasSubtypePlot").disease__none Current disease specific analysis is not applicable for this case
 
