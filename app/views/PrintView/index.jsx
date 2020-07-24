@@ -85,7 +85,7 @@ const Print = () => {
         </Typography>
       </div>
       <div className="print__header-bottom">
-        <Typography align="center" variant="h1">
+        <Typography align="center" variant="h2">
           {report.patientId}
         </Typography>
       </div>

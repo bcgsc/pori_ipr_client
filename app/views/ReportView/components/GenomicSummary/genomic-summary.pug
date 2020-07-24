@@ -100,8 +100,8 @@ div
               div(flex) Normal Expression
               div(flex) Disease Expression
             div(layout="row", flex).content.tumour-analysis__box-content
-              div(flex) {{$ctrl.tumourAnalysis.normalExpressionComparator}}
-              div(flex) {{$ctrl.tumourAnalysis.diseaseExpressionComparator}}
+              div {{$ctrl.tumourAnalysis.normalExpressionComparator}}
+              div {{$ctrl.tumourAnalysis.diseaseExpressionComparator}}
 
         div(layout="column", flex).dataBox.tumour-analysis__full-box
           h2.title.tumour-analysis__subheader Subtyping
@@ -132,7 +132,6 @@ div
         span Details in EXPRESSION ANALYSIS section
         span Details in EXPRESSION ANALYSIS section
         span Details in MICROBIAL CONTENT section
-      br(ng-if="$ctrl.print")
 
       div(layout="column").mutationTable.mutation-table
         div(layout="row")
@@ -148,7 +147,7 @@ div
               span.tumour-analysis__subheader--small (in protein coding genes)
               md-icon(ng-if="!$ctrl.print", ng-click="$ctrl.showHelpMessage($event, $ctrl.helpMessages.mutationBurden)").tumour-analysis__icon.clickable help
 
-        div(layout="row").header
+        div(layout="row").header.mutation-table__header
           div(flex).container
             div(flex).signature.editable.mutation-table__signature
               span(ng-if="($ctrl.tumourAnalysis.mutationSignature.length === 0 || $ctrl.tumourAnalysis.mutationSignature === null)") Nothing striking

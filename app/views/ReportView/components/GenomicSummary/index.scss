@@ -17,7 +17,8 @@
 }
 
 @mixin coloured-table-category {
-  padding: 0 0 0 3mm !important;
+  padding: 0 !important;
+  text-align: center;
   margin: auto 0;
   font-size: 10pt;
 }
@@ -27,7 +28,6 @@
   font-size: 12pt;
   font-weight: 600;
   text-align: center;
-  border: 1px solid $black-50;
 }
 
 @media print {
@@ -41,7 +41,7 @@
     }
 
     &__details {
-      padding: 1mm;
+      padding: 1mm !important;
       font-size: 9pt;
     }
 
@@ -73,9 +73,10 @@
     &__subheader {
       margin: 1mm 0;
       padding: 0;
-      font-size: 13pt;
-      font-weight: 600;
+      font-size: 10pt !important;
+      font-weight: 600 !important;
       text-transform: uppercase;
+      background-color: $palette__common--white !important;
 
       &--small {
         font-size: 9pt;
@@ -83,19 +84,18 @@
     }
 
     &__full-box {
-      margin: 0 .5mm;
+      margin: 0 .3mm !important;
     }
 
     &__box {
-      border: 1px solid #6e6e6e;
+      border: .1mm solid $palette__grey--600;
     }
 
     &__box-header {
-      border: 1px solid $black-50;
-      padding: 0 2mm;
+      background-color: $palette__common--white !important;
       font-size: 9pt;
       text-align: center;
-      height: 36px;
+      height: 8mm;
 
       & > * {
         padding: 0 !important;
@@ -106,13 +106,20 @@
     &__box-content {
       font-size: 9pt;
       text-align: center;
-      padding: 2mm;
+      padding: 0 !important;
+      
+      & > * {
+        display: inline !important;
+        padding: 1mm 0 !important;
+        margin: 0 auto !important;
+      }
     }
   }
 
   .details {
     &--extra-small-text {
       font-size: 7pt;
+      margin: 1mm 0;
     }
 
     &--align-center {
@@ -121,46 +128,48 @@
   }
 
   .mutation-table {
+    margin: 0 !important;
     text-align: center;
     border-collapse: collapse;
 
     &__signature {
-      margin: 0 1mm 1mm 0;
-      padding: 1.4mm 0;
-      border: 1px solid #6e6e6e !important;
+      margin: 0 1mm 1mm 0 !important;
+      padding: 1.4mm 0 !important;
+      border: .1mm solid $palette__grey--600 !important;
+      background-color: $palette__common--white !important;
       font-size: 10pt;
       font-weight: 300;
     }
 
     &__type {
-      padding: 2mm 0;
-      border-top: .1mm solid grey;
-      border-left: .1mm solid grey;
+      padding: 2mm 0 !important;
+      border-top: .1mm solid $palette__grey--600;
+      border-left: .1mm solid $palette__grey--600;
       background-color: #c0e8fc;
       font-size: 11pt;
       font-weight: 300;
 
       &--dark {
-        background-color: #5284b1;
+        background-color: #5284b1 !important;
         color: $white;
         font-size: 12pt;
       }
 
       &--right-border {
-        border-right: .1mm solid grey;
+        border-right: .1mm solid $palette__grey--600;
       }
     }
 
     &__data {
       display: table-row;
-      border: .1mm solid grey;
+      border: .1mm solid $palette__grey--600;
       background-color: #dcdcdc;
       font-size: 10pt;
     }
 
     &__data-row {
       padding: 2mm !important;
-      border-left: .1mm solid grey;
+      border-left: .1mm solid $palette__grey--600;
     }
 
     &--align-left {
@@ -170,7 +179,14 @@
 
   .alterations {
     &__box {
-      border: 1px solid $black-50;
+      border-top: .1mm solid $palette__grey--600;
+      border-right: none;
+      border-left: .1mm solid $palette__grey--600;
+      border-bottom: none;
+
+      &:last-of-type {
+        border-right: .1mm solid $palette__grey--600;
+      }
     }
 
     &__header {
@@ -223,22 +239,23 @@
 
     &__list {
       padding: 1mm !important;
-      border: 1px solid $black-50;
-      background-color: #ebebeb;
+      border: .1mm solid $palette__grey--600;
+      background-color: $palette__grey--300;
     }
 
     &__variant {
+      background-color: $palette__grey--300 !important;
       display: inline-block;
-      width: 20%;
       font-size: 10pt;
-      margin: 1px !important;
+      margin: 0 !important;
+      padding: 0 0 0 8px !important;
     }
   }
 
   .sample-info {
     &__table-header {
       padding: 1mm 0;
-      border-bottom: 1px solid black;
+      border-bottom: 1px solid $palette__grey--600;
       font-size: 9pt;
       font-weight: 700;
     }
@@ -253,7 +270,7 @@
   .test-info {
     &__header {
       margin-right: 2mm;
-      border-bottom: 1px solid black;
+      border-bottom: 1px solid $palette__grey--600;
       font-size: 9pt;
       font-weight: 700;
       text-align: left;
@@ -281,7 +298,7 @@
       width: 50%;
       margin: 2mm auto;
       padding: 1mm 0;
-      border: 1px solid black;
+      border: .1mm solid $palette__grey--600;
       font-size: 11pt;
     }
   }
@@ -520,11 +537,6 @@ section {
 
         div {
           padding: 10px 0;
-          border-right: 1px solid rgb(136, 147, 195);
-        }
-
-        div:last-of-type{
-          border-right: 0px;
         }
 
         .bg1 { background-color: rgb(193, 196, 215); }
