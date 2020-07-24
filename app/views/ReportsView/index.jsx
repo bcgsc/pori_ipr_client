@@ -85,7 +85,7 @@ function ReportsTableComponent(props) {
     const [{ reportIdent }] = selectedRow;
 
     if (event.ctrlKey || event.metaKey) {
-      window.open(`${window.location.href}/report/${reportIdent}/summary`, '_blank');
+      window.open(`/report/${reportIdent}/summary`, '_blank');
     } else {
       history.push({ pathname: `/report/${reportIdent}/summary` });
     }
