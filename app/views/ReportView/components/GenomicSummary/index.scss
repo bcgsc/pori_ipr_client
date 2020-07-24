@@ -578,7 +578,8 @@ section {
         }
 
         &:hover {
-          background-color: rgb(247,206,170);
+          background-color: $palette__secondary--main;
+          color: $palette__common--white;
         }
         
         span.reference {
