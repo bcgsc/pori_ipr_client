@@ -37,7 +37,7 @@ class PathwayAnalysis {
         this.processSVG(this.pathway.pathway);
       } else {
         this.processSVG(
-          '<?xml version="1.0" encoding="UTF-8"?><svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" xml:space="preserve" width="400"><text x="0" y="0" fill="rgb(210,210,210)">Pathway not yet analyzed.</text></svg>',
+          '<?xml version="1.0" encoding="UTF-8"?><svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" xml:space="preserve" width="400"><text x="100" y="0" fill="rgb(0,0,0)">Pathway not yet analyzed.</text></svg>',
         );
       }
       this.loading = false;
@@ -68,7 +68,7 @@ class PathwayAnalysis {
     // Extract SVG element from within XML wrapper.
     const [xmlSVG] = this.pathway.getElementsByTagName('svg');
     xmlSVG.id = 'pathway'; // Set ID that we can grapple.
-    xmlSVG.setAttribute('viewBox', `0 0 ${svgVW} ${svgVH}`);
+    xmlSVG.setAttribute('viewBox', `0 0 ${svgVW || 10} ${svgVH || 10}`);
 
     svgImage.appendChild(
       svgImage.ownerDocument.importNode(this.pathway.documentElement, true),
