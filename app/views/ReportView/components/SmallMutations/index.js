@@ -146,13 +146,13 @@ class SmallMutations {
         img.comparator = this.report.tumourAnalysis.diseaseExpressionComparator || '';
       }
 
-      if (img.filename.includes('legend') && img.filename.includes('snv_indel')) {
+      if (pieces[1].includes('legend') && pieces[1].includes('snv_indel')) {
         sorted.legend.snv_indel = img;
         return;
       }
 
       // Set comparator to lowercase
-      if (img.comparator.toLowerCase() && !sorted.comparators.find(entry => entry.name === img.comparator.toLowerCase())) {
+      if (img.comparator && !sorted.comparators.find(entry => entry.name.toLowerCase() === img.comparator.toLowerCase())) {
         sorted.comparators.push({ name: img.comparator.toLowerCase(), visible: false });
       }
 
@@ -163,10 +163,10 @@ class SmallMutations {
         sorted.snv.barplot.push(img);
       }
 
-      if (pieces[1].includes('density_plot_indel') || pieces[1] === 'indel') {
+      if ((pieces[1].includes('density') && pieces[1].includes('indel')) || pieces[1] === 'indel') {
         sorted.indel.densityPlot.push(img);
       }
-      if (pieces[1].includes('density_plot_snv') || pieces[1] === 'snv') {
+      if ((pieces[1].includes('density') && pieces[1].includes('snv')) || pieces[1] === 'snv') {
         sorted.snv.densityPlot.push(img);
       }
     });
