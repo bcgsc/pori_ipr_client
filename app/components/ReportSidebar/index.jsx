@@ -24,7 +24,7 @@ const ReportSidebar = (props) => {
   return (
     <div className="report-sidebar">
       <List dense classes={{ root: 'report-sidebar__list' }}>
-        <ListItem classes={{ root: 'report-sidebar__list-item' }}>
+        <ListItem classes={{ root: 'report-sidebar__list-item report-sidebar__list-item--no-hover' }}>
           <ListItemText classes={{ root: 'report-sidebar__list-title', primary: 'report-sidebar__list-title-text' }}>
             Report Sections
           </ListItemText>
@@ -54,14 +54,14 @@ const ReportSidebar = (props) => {
                 </ListItem>
               </Link>
             ) : (
-              <ListItem classes={{ root: 'report-sidebar__list-item' }}>
+              <ListItem classes={{ root: 'report-sidebar__list-item report-sidebar__list-item--no-hover' }}>
                 <ListItemText classes={{ primary: 'report-sidebar__list-item-text--bold' }}>
                   {section.name}
                 </ListItemText>
               </ListItem>
             )}
             <>
-              {section.children.length ? (
+              {Boolean(section.children.length) && (
                 <>
                   {section.children.map(child => (
                     <Link
@@ -83,7 +83,7 @@ const ReportSidebar = (props) => {
                     </Link>
                   ))}
                 </>
-              ) : null}
+              )}
             </>
           </React.Fragment>
         ))}
