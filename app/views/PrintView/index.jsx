@@ -30,14 +30,17 @@ const Print = () => {
         if (resp.type !== 'genomic') {
           setIsProbe(true);
         }
-        setTimeout(() => {
-          window.print();
-        }, 1500);
       };
 
       getReport();
     }
   }, [report]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      window.print();
+    }, 2500);
+  }, []);
 
   const probeSections = () => (
     <>
