@@ -13,6 +13,7 @@ const bindings = {
   slides: '<',
   print: '<',
   token: '<',
+  loadedDispatch: '<',
 };
 
 class Slides {
@@ -45,6 +46,9 @@ class Slides {
       this.slides = await SlidesService.all(this.report.ident);
       this.uploader = this.setupUploader();
       this.loading = false;
+      if (this.loadedDispatch) {
+        this.loadedDispatch({ type: 'slides' });
+      }
       $rootScope.$digest();
     }
   }

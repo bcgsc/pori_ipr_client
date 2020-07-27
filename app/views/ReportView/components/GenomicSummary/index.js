@@ -24,6 +24,7 @@ const bindings = {
   print: '<',
   report: '<',
   reportEdit: '<',
+  loadedDispatch: '<',
 };
 
 class GenomicSummary {
@@ -116,6 +117,9 @@ class GenomicSummary {
       this.microbial = this.microbial || { species: 'None', integrationSite: 'None' };
       this.genomicAlterations = sortBy(this.processVariants(this.genomicAlterations), ['type', 'geneVariant']);
       this.loading = false;
+      if (this.loadedDispatch) {
+        this.loadedDispatch({ type: 'genomicSummary' });
+      }
       $rootScope.$digest();
     }
   }

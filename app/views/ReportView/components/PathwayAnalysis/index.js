@@ -15,6 +15,7 @@ const bindings = {
   reportEdit: '<',
   print: '<',
   token: '<',
+  loadedDispatch: '<',
 };
 
 class PathwayAnalysis {
@@ -40,6 +41,9 @@ class PathwayAnalysis {
         );
       }
       this.loading = false;
+      if (this.loadedDispatch) {
+        this.loadedDispatch({ type: 'pathway' });
+      }
       $rootScope.$digest();
     }
   }
