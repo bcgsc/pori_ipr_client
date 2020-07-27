@@ -11,8 +11,6 @@ section.analyst
       div Author Review: {{$ctrl.signatures.authorSignature.firstName[0]}}{{$ctrl.signatures.authorSignature.lastName[0]}} {{$ctrl.signatures.authorSignedAt | date: 'yy/MM/dd HH:mm'}}
       div Reviewer: {{$ctrl.signatures.reviewerSignature.firstName[0]}}{{$ctrl.signatures.reviewerSignature.lastName[0]}} {{$ctrl.signatures.reviewerSignedAt | date: 'yy/MM/dd HH:mm'}}
 
-
-  div.smallBottom &nbsp;
   div(layout="column", ng-if="$ctrl.analystComments !== null && !$ctrl.print").layout-padding.analystSignatures
     div Signed By
 
