@@ -48,12 +48,10 @@ const columnDefs = [{
 {
   headerName: 'Physician',
   field: 'physician',
-  hide: true,
 },
 {
   headerName: 'Analyst',
   field: 'analyst',
-  hide: true,
 },
 {
   headerName: 'Date Created',
