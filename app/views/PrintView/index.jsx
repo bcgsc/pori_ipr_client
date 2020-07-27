@@ -46,8 +46,6 @@ const Print = () => {
     <>
       <ProbeSummary report={report} print />
       <PageBreak report={report} />
-      <KbMatches report={report} isPrint />
-      <PageBreak report={report} />
       <Appendices report={report} print isProbe />
     </>
   );
