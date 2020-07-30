@@ -1,0 +1,77 @@
+md-content(flex, layout="column").md-padding.biopsyBoard.germline_report
+
+  h1.md-title Germline Reports
+  div(layout="row")
+    h2(layout="row").header--center {{$ctrl.report.patientId}} {{ '- ' + $ctrl.report.normalLibrary || 'DummyNormalLibName'}}
+    span(flex)
+    md-button(ng-click="$ctrl.removeReport($event)").md-raised.md-accent Remove
+
+  div(ng-if="!$ctrl.report.variants.length", layout="row", layout-align="center center").content__container
+    span No variants detected in this germline report
+
+  div(ng-if="$ctrl.report.variants.length")
+    div(layout="row", layout-align="space-between center")
+      p Variants with a strikethrough will not be included in report exports.
+      md-checkbox(ng-model="$ctrl.showExtended") Show all columns
+    div.table--scrollx
+      table.material-table
+        thead
+          tr
+            th
+              span(style="min-width: 40px;")
+            th(ng-repeat="(key, val) in $ctrl.columns track by $index", ng-if="val.showAlways || $ctrl.showExtended")
+              span(ng-class="{'text-underline': (val.tooltip), 'clickable': (val.tooltip)}", style="display: block; min-width: {{val.width}}px") {{val.name}}
+                md-tooltip(ng-if="val.tooltip") {{val.tooltip}}
+
+        tbody
+          tr(ng-repeat="variant in $ctrl.report.variants track by $index", ng-if="$ctrl.report.variants.length", ng-class="{lowScore: (variant['score'] < 100), strike: variant['hidden']}")
+            td.options
+              md-icon(ng-click="$ctrl.toggleVariantHidden(variant)").clickable strikethrough_s
+                md-tooltip Striking out a row will exclude it from being exported by Projects.
+
+            td(ng-repeat="(key, col) in $ctrl.columns track by $index", ng-if="col.showAlways || $ctrl.showExtended")
+
+              span(ng-if="key == 'patient_history'", ng-click="$ctrl.getHistory($event, 'patient', variant['patient_history'])").clickable.blue.text-underline {{variant['patient_history']}}
+              span(ng-if="key == 'family_history'", ng-click="$ctrl.getHistory($event, 'family', variant['family_history'])").clickable.blue.text-underline {{variant['family_history']}}
+
+              span(ng-if="col.split && (key !== 'patient_history' && key !== 'family_history')", ng-init="$ctrl.splitVal = variant[key].split(col.split)")
+                span(ng-repeat="v in $ctrl.splitVal track by $index").pill {{v}}&nbsp
+              span(ng-if="!col.split && (key !== 'patient_history' && key !== 'family_history')")
+                span(style="display: block;", ng-if="!col.truncate") {{variant[key] || 'N/A'}}
+                span(style="display: block;", ng-if="col.truncate")
+                  md-trunctate {{variant[key] || 'N/A'}}
+  div.reviews
+    h2 Reviews
+
+    table.material-table
+      thead
+        tr
+          th(width="25%") Reviewer
+          th(width="30%") Comments
+          th(width="15%") Type
+          th(width="20%") Reviewed
+          th(width="10%")
+      tbody
+        tr(ng-repeat="review in $ctrl.report.reviews track by $index")
+          td {{review.reviewedBy.firstName}} {{review.reviewedBy.lastName}}
+          td {{review.comment || 'None'}}
+          td {{review.type}}
+          td {{review.createdAt | date: 'yyyy-MM-dd HH:mm'}}
+          td.options
+            md-icon(ng-click="$ctrl.removeReview(review)").clickable delete
+
+        tr(ng-if="$ctrl.addReview")
+          td {{$ctrl.user.firstName}} {{$ctrl.user.lastName}}
+          td
+            md-input-container(style="width: 90%")
+              input(name="Comments", ng-model="$ctrl.new.comment", placeholder="Comment")
+          td
+            md-select(name="Type", ng-model="$ctrl.new.type", placeholder="Review Type", required)
+              md-option(value="biofx") biofx
+              md-option(value="projects") projects
+          td.text-right
+            md-button(ng-click="$ctrl.review()").md-raised.md-accent Add Review
+          td
+        tr
+          td(colspan="5").text-center
+            span(ng-click="$ctrl.addReview = true").clickable Add Review

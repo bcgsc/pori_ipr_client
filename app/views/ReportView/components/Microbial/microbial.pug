@@ -1,0 +1,20 @@
+section
+  md-subheader.md-primary Microbial
+
+  div(layout="column", flex)
+
+    div(layout="column", flex).bg-white
+
+      h2.title Microbial Integration
+      md-progress-linear(ng-if="$ctrl.loading")
+
+      p(ng-if="!$ctrl.images['microbial.circos.genome'] && !$ctrl.images['microbial.circos.transcriptome'] && !$ctrlimages['microbial.circos']").microbial__none Microbial integration circos plots are not applicable for this case
+
+      md-tabs(md-dynamic-height=true, md-center-tabs=true).margin-bottom-20
+        md-tab(label="Genome", ng-if="$ctrl.images['microbial.circos.genome']")
+          div(layout="column", layout-align="center center")
+            img(data-ng-src="data:image/svg;base64,{{$ctrl.images['microbial.circos.genome'].data}}")
+        md-tab(label="Transcriptome", ng-if="$ctrl.images['microbial.circos.transcriptome'] || $ctrl.images['microbial.circos']")
+          div(layout="column", layout-align="center center")
+            img(data-ng-src="data:image/svg;base64,{{$ctrl.images['microbial.circos.transcriptome'].data}}", ng-if="$ctrl.images['microbial.circos.transcriptome']")
+            img(data-ng-src="data:image/svg;base64,{{$ctrl.images['microbial.circos'].data}}", ng-if="$ctrl.images['microbial.circos']")

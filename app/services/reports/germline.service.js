@@ -1,7 +1,7 @@
+import { $http } from 'ngimport';
+
 class GermlineService {
-  /* @ngInject */
-  constructor($http) {
-    this.$http = $http;
+  constructor() {
     this.baseApi = CONFIG.ENDPOINTS.API;
     this.api = `${CONFIG.ENDPOINTS.API}/germline-small-mutation-reports`;
   }
@@ -12,7 +12,7 @@ class GermlineService {
    * @returns {Promise} - resolves with object of {total: int, reports: [{collection},{},...]}
    */
   async getAllReports(opts = {}) {
-    const { data } = await this.$http.get(this.api, { params: opts });
+    const { data } = await $http.get(this.api, { params: opts });
     return data;
   }
 
@@ -22,7 +22,7 @@ class GermlineService {
    * @returns {Promise} - result of API call
    */
   async getReport(report) {
-    const { data } = await this.$http.get(
+    const { data } = await $http.get(
       `${this.api}/${report}`,
     );
     return data;
@@ -35,7 +35,7 @@ class GermlineService {
    * @returns {Promise/array} - result of API call
    */
   async updateReport(report, payload) {
-    const { data } = await this.$http.put(
+    const { data } = await $http.put(
       `${this.api}/${report}`,
       payload,
     );
@@ -48,7 +48,7 @@ class GermlineService {
    * @returns {Promise/array} - result of API call
    */
   async deleteReport(report) {
-    const { data } = await this.$http.delete(
+    const { data } = await $http.delete(
       `${this.api}/${report}`,
     );
     return data;
@@ -61,7 +61,7 @@ class GermlineService {
    * @returns {Promise} - created review object
    */
   async addReview(report, payload) {
-    const { data } = await this.$http.put(
+    const { data } = await $http.put(
       `${this.api}/${report}/review`,
       payload,
     );
@@ -75,7 +75,7 @@ class GermlineService {
    * @returns {Promise} - result of API call
    */
   async removeReview(report, review) {
-    const { data } = await this.$http.delete(
+    const { data } = await $http.delete(
       `${this.api}/${report}/review/${review}`,
     );
     return data;
@@ -89,7 +89,7 @@ class GermlineService {
    * @returns {Promise} - variant object
    */
   async updateVariant(report, variant, payload) {
-    const { data } = await this.$http.put(
+    const { data } = await $http.put(
       `${this.api}/${report}/variant/${variant}`,
       payload,
     );
@@ -97,4 +97,4 @@ class GermlineService {
   }
 }
 
-export default GermlineService;
+export default new GermlineService();

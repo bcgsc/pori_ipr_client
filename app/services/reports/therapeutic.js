@@ -1,19 +1,11 @@
-import getLocalToken from '../management/token';
 import errorHandler from '../errors/errorHandler';
-import { AuthenticationError } from '../errors/errors';
 
 export const therapeuticAdd = async (reportIdent, entry) => {
-  const authToken = getLocalToken();
-  if (!authToken) {
-    throw new AuthenticationError('missing authentication token');
-  }
-
   const options = {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'Authorization': authToken,
     },
     body: JSON.stringify(entry),
   };
@@ -30,17 +22,11 @@ export const therapeuticAdd = async (reportIdent, entry) => {
 };
 
 export const therapeuticDelete = async (reportIdent, entryIdent) => {
-  const authToken = getLocalToken();
-  if (!authToken) {
-    throw new AuthenticationError('missing authentication token');
-  }
-
   const options = {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'Authorization': authToken,
     },
   };
 
@@ -58,17 +44,11 @@ export const therapeuticDelete = async (reportIdent, entryIdent) => {
 
 
 export const therapeuticUpdate = async (reportIdent, entryIdent, entry) => {
-  const authToken = getLocalToken();
-  if (!authToken) {
-    throw new AuthenticationError('missing authentication token');
-  }
-
   const options = {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'Authorization': authToken,
     },
     body: JSON.stringify(entry),
   };
@@ -86,17 +66,11 @@ export const therapeuticUpdate = async (reportIdent, entryIdent, entry) => {
 };
 
 export const therapeuticUpdateTable = async (reportIdent, entry) => {
-  const authToken = getLocalToken();
-  if (!authToken) {
-    throw new AuthenticationError('missing authentication token');
-  }
-
   const options = {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'Authorization': authToken,
     },
     body: JSON.stringify(entry),
   };
@@ -108,6 +82,26 @@ export const therapeuticUpdateTable = async (reportIdent, entry) => {
 
   if (response.ok) {
     return entry; // the response returns "ok" not the updated content
+  }
+  return errorHandler(response);
+};
+
+export const therapeuticGet = async (reportIdent) => {
+  const options = {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+  };
+
+  const response = await fetch(
+    `${CONFIG.ENDPOINTS.API}/reports/${reportIdent}/therapeutic-targets`,
+    options,
+  );
+
+  if (response.ok) {
+    return response.json();
   }
   return errorHandler(response);
 };

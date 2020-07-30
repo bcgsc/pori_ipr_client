@@ -1,19 +1,11 @@
-import getLocalToken from '../management/token';
 import errorHandler from '../errors/errorHandler';
-import { AuthenticationError } from '../errors/errors';
 
-const appendices = async (reportIdent) => {
-  const authToken = getLocalToken();
-  if (!authToken) {
-    return new AuthenticationError('missing authentication token');
-  }
-
+const getAppendices = async (reportIdent) => {
   const options = {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'Authorization': authToken,
     },
   };
 
@@ -28,4 +20,27 @@ const appendices = async (reportIdent) => {
   return errorHandler(response);
 };
 
-export default appendices;
+const getTcgaAcronyms = async (reportIdent) => {
+  const options = {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+  };
+
+  const response = await fetch(
+    `${CONFIG.ENDPOINTS.API}/reports/${reportIdent}/appendices/tcga`,
+    options,
+  );
+
+  if (response.ok) {
+    return response.json();
+  }
+  return errorHandler(response);
+};
+
+export {
+  getAppendices,
+  getTcgaAcronyms,
+};

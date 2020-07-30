@@ -1,10 +1,7 @@
-/**
- * Project service for API calls
- */
+import { $http } from 'ngimport';
+
 class ProjectService {
-  /* @ngInject */
-  constructor($http) {
-    this.$http = $http;
+  constructor() {
     this.api = `${CONFIG.ENDPOINTS.API}/project`;
   }
 
@@ -15,7 +12,7 @@ class ProjectService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async all(opts = {}) {
-    const { data } = await this.$http.get(this.api, { params: opts });
+    const { data } = await $http.get(this.api, { params: opts });
     return data;
   }
 
@@ -26,7 +23,7 @@ class ProjectService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async add(payload) {
-    const { data } = await this.$http.post(this.api, payload);
+    const { data } = await $http.post(this.api, payload);
     return data;
   }
 
@@ -37,7 +34,7 @@ class ProjectService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async remove(project) {
-    const { data } = await this.$http.delete(`${this.api}/${project.ident}`);
+    const { data } = await $http.delete(`${this.api}/${project.ident}`);
     return data;
   }
 
@@ -48,7 +45,7 @@ class ProjectService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async update(project) {
-    const { data } = await this.$http.put(`${this.api}/${project.ident}`, project);
+    const { data } = await $http.put(`${this.api}/${project.ident}`, project);
     return data;
   }
 
@@ -60,7 +57,7 @@ class ProjectService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async addUser(project, user) {
-    const { data } = await this.$http.post(`${this.api}/${project}/user`, { user });
+    const { data } = await $http.post(`${this.api}/${project}/user`, { user });
     return data;
   }
 
@@ -72,7 +69,7 @@ class ProjectService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async removeUser(project, user) {
-    const { data } = await this.$http.delete(`${this.api}/${project}/user`, { data: { user } });
+    const { data } = await $http.delete(`${this.api}/${project}/user`, { data: { user } });
     return data;
   }
 
@@ -84,7 +81,7 @@ class ProjectService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async addReport(project, report) {
-    const { data } = await this.$http.post(`${this.api}/${project}/reports`, { report });
+    const { data } = await $http.post(`${this.api}/${project}/reports`, { report });
     return data;
   }
 
@@ -96,9 +93,9 @@ class ProjectService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async removeReport(project, report) {
-    const { data } = await this.$http.delete(`${this.api}/${project}/reports`, { data: { report } });
+    const { data } = await $http.delete(`${this.api}/${project}/reports`, { data: { report } });
     return data;
   }
 }
 
-export default ProjectService;
+export default new ProjectService();

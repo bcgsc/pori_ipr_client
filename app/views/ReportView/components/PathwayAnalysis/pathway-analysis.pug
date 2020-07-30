@@ -1,0 +1,16 @@
+section.pathwayAnalysis.pathway
+  md-subheader.md-no-sticky.pathway__header Pathway Analysis
+  md-progress-linear(ng-if="$ctrl.loading")
+
+  div.pathway__container
+
+    div(layout="row").window
+      div(ng-if="$ctrl.reportEdit").upload
+        md-icon(ng-click="$ctrl.update()") file_upload
+
+      div(id="svgImage")
+  
+  page-break(report="$ctrl.report", ng-if="$ctrl.print")
+
+  div(layout="row", layout-align="center center")
+    img(ng-src="img/pathway_legend.png", ng-if="$ctrl.print").pathway__legend

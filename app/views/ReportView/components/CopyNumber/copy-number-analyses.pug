@@ -1,0 +1,81 @@
+section
+  md-subheader.md-primary.md-no-sticky Copy Number Analyses
+
+  div(layout="column", flex)
+
+    div(layout="column", ng-if="$ctrl.images['cnvLoh.circos']", flex).bg-white
+
+      h2.title Summary of Copy Number Events
+
+      div(layout="row", layout-align="space-around center").margin-bottom-40.margin-top-30
+        div(layout="column").smEvents.snv
+          div(style="max-width: 100%")
+            img(style="width: 90%", data-ng-src="data:image/png;base64,{{$ctrl.images['cnvLoh.circos'].data}}")
+
+    div(layout="column", flex).bg-white
+      h2.title Copy Number Variants: Genomic Details
+
+      div(ng-repeat="(title, cnvs) in $ctrl.cnvGroups track by $index")
+        react-table(
+          column-defs="$ctrl.columnDefs",
+          row-data="cnvs",
+          title-text="$ctrl.titleMap[title]",
+          report-ident="$ctrl.report.ident",
+          can-toggle-columns="true",
+          theme="$ctrl.theme"
+        )
+
+    div(layout="column", flex).bg-white
+      h2.title Copy Number & LOH
+      md-progress-linear(ng-if="$ctrl.loading")
+
+      div(layout="column", layout-align="center start").cnvloh
+        div(ng-if="$ctrl.images['cnv.1'].data || $ctrl.images['loh.1'].data").container
+          div(layout="row")
+            span(flex="15")
+            span(flex) Chr 1
+            span(flex) Chr 2
+            span(flex) Chr 3
+            span(flex) Chr 4
+          img(data-ng-src="data:image/png;base64,{{$ctrl.images['cnv.1'].data}}")
+          img(data-ng-src="data:image/png;base64,{{$ctrl.images['loh.1'].data}}")
+
+        div(ng-if="$ctrl.images['cnv.2'].data || $ctrl.images['loh.2'].data").container
+          div(layout="row")
+            span(flex) Chr 5
+            span(flex) Chr 6
+            span(flex) Chr 7
+            span(flex) Chr 8
+            span(flex) Chr 9
+          img(data-ng-src="data:image/png;base64,{{$ctrl.images['cnv.2'].data}}")
+          img(data-ng-src="data:image/png;base64,{{$ctrl.images['loh.2'].data}}")
+
+        div(ng-if="$ctrl.images['cnv.3'].data || $ctrl.images['loh.3'].data").container
+          div(layout="row")
+            span(flex) Chr 10
+            span(flex) Chr 11
+            span(flex) Chr 12
+            span(flex) Chr 13
+            span(flex) Chr 14
+          img(data-ng-src="data:image/png;base64,{{$ctrl.images['cnv.3'].data}}")
+          img(data-ng-src="data:image/png;base64,{{$ctrl.images['loh.3'].data}}")
+
+        div(ng-if="$ctrl.images['cnv.4'].data || $ctrl.images['loh.4'].data").container
+          div(layout="row")
+            span(flex) Chr 15
+            span(flex) Chr 16
+            span(flex) Chr 17
+            span(flex) Chr 18
+            span(flex) Chr 19
+          img(data-ng-src="data:image/png;base64,{{$ctrl.images['cnv.4'].data}}")
+          img(data-ng-src="data:image/png;base64,{{$ctrl.images['loh.4'].data}}")
+
+        div(ng-if="$ctrl.images['cnv.5'].data || $ctrl.images['loh.5'].data").container
+          div(layout="row")
+            span(flex) Chr 20
+            span(flex) Chr 21
+            span(flex) Chr 22
+            span(flex) Chr 23
+            span(flex)
+          img(data-ng-src="data:image/png;base64,{{$ctrl.images['cnv.5'].data}}")
+          img(data-ng-src="data:image/png;base64,{{$ctrl.images['loh.5'].data}}")

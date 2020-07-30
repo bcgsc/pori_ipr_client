@@ -13,11 +13,11 @@ import {
 } from '@material-ui/core';
 import DataTable from '../..';
 import geneViewerApi from '../../../../services/reports/geneViewer';
-import { columnDefs } from '../../../../views/report/genomic-report/kb-matches/columnDefs';
-import { columnDefs as smallMutationsColumnDefs } from '../../../../views/report/genomic-report/small-mutations/columnDefs';
-import copyNumberColumnDefs from '../../../../views/report/genomic-report/copy-number-analyses/columnDefs';
-import expressionColumnDefs from '../../../../views/report/genomic-report/expression/columnDefs';
-import structuralVariantsColumnDefs from '../../../../views/report/genomic-report/structural-variants/columnDefs';
+import { columnDefs } from '@/views/ReportView/components/KbMatches/columnDefs';
+import { columnDefs as smallMutationsColumnDefs } from '@/views/ReportView/components/SmallMutations/columnDefs';
+import copyNumberColumnDefs from '@/views/ReportView/components/CopyNumber/columnDefs';
+import expressionColumnDefs from '@/views/ReportView/components/Expression/columnDefs';
+import structuralVariantsColumnDefs from '@/views/ReportView/components/StructuralVariants/columnDefs';
 
 import './index.scss';
 

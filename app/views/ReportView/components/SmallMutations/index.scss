@@ -1,0 +1,52 @@
+@import '../../../../styles/variables';
+@import '../../../../styles/theme';
+
+div.smEvents {
+
+  div {
+    font-size: 1.0em;
+    font-weight: 500;
+    text-align: center;
+    padding: 10px;
+
+  }
+
+  div.count {
+    font-size: 1.0em;
+    padding: 0;
+    div {
+      padding: 10px;
+      font-size: 0.9em;
+      font-weight: 600;
+      width: 80%;
+
+      &.snv { background-color: $snv-background; }
+      &.indel { background-color: $indel-background; }
+      &.sv { background-color: $sv-background; }
+
+    }
+  }
+
+}
+
+.text-uppercase {
+  text-transform: uppercase;
+}
+
+.mutation-summary-images {
+  padding: 15px;
+
+  .comparator-list {
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+  }
+
+  .summary-plots > div > div {
+    padding: 15px;
+    margin: 10px 0;
+    text-align: center;
+  }
+}

@@ -1,0 +1,52 @@
+@import '../../styles/theme';
+
+md-card.userRole {
+  width: 310px;
+
+  md-card-title {
+    padding-bottom: 8px;
+
+    md-card-title-text {
+
+      span.md-headline {
+        font-size: 1.1em;
+        padding: 5px 0;
+        line-height: 0em;
+      }
+      span.md-subhead {
+        font-size: 0.8em;
+      }
+    }
+  }
+  md-card-content {
+    padding-bottom: 0px;
+    div {
+      font-size: 0.85em;
+      color: $palette__grey--600;
+
+      &.value {
+        color: $palette__common--black;
+      }
+    }
+  }
+  md-card-actions {
+    height: 25px;
+
+    .md-button {
+      margin: 0;
+      padding: 0 10px;
+      min-width: 0;
+      min-height: 0;
+      line-height: 16px;
+      height: 25px;
+
+      span {
+        margin: 0;
+        padding: 0;
+        min-height: 0;
+        line-height: 16px;
+        font-size: 10px;
+      }
+    }
+  }
+}

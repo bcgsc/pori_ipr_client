@@ -1,0 +1,45 @@
+@import '../../styles/variables';
+@import '../../styles/theme';
+
+.print {
+  height: 100vh;
+  overflow-y: auto;
+  width: 8.5in;
+  margin: auto;
+
+  &__logo {
+    max-width: 50%;
+  }
+
+  &__header-top {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 12px 0;
+  }
+
+  &__header-middle {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 12px 0 4px;
+  }
+
+  &__header-bottom {
+    background-color: $print-title;
+    color: $palette__common--white;
+    border: 4px solid $palette__grey--A100;
+    margin: 8px 0 12px;
+  }
+}
+
+@page {
+  margin: 10mm;
+}
+
+@media print {
+  .print {
+    height: 100%;
+    width: 8.5in;
+  }
+}

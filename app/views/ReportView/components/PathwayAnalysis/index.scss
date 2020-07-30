@@ -1,0 +1,91 @@
+@import '../../../../styles/variables';
+@import '../../../../styles/theme';
+
+@mixin print-header {
+  margin: 2mm 0 1mm;
+  padding: 1.5mm 1mm;
+  background-color: $print-header;
+  color: black;
+  font-size: 14pt;
+  font-weight: 700;
+  text-transform: uppercase;
+
+  > .md-subheader-inner {
+    // Override angularjs material library
+    padding: 0 !important;
+  }
+}
+
+@media print {
+  .pathway {
+    page-break-after: always;
+
+    &__header {
+      @include print-header;
+    }
+
+    &__container {
+      background-color: $palette__common--white;
+      page-break-after: always;
+    }
+
+    &__legend {
+      width: 70%;
+      height: 100%;
+      margin: 6mm 0;
+    }
+  }
+
+  #pathway {
+    width: 100%;
+    height: calc(100vh - 164px);
+  }
+
+  #svgImage {
+    display: flex;
+    flex-grow: 1;
+  }
+}
+
+@media screen {
+  section.pathwayAnalysis {
+    .upload {
+      padding: 10px 0 0 10px;
+
+      md-icon {
+        position: absolute;
+        background-color: $palette__common--white;
+        cursor: pointer;
+
+        &:hover {
+          color: $palette__secondary--main;
+        }
+      }
+    }
+
+    .window {
+      min-height: 400px;
+      background-color: $palette__common--white;
+    }
+
+    #pathway {
+      width: 100%;
+      height: calc(100vh - 164px);
+    }
+
+    #svgImage {
+      display: flex;
+      flex-grow: 1;
+    }
+  }
+
+  md-dialog.pathway.edit {
+    div.dropZone {
+      padding: 25px 15px;
+      border: 2px solid $palette__grey--600;
+      background-color: $palette__grey--A100;
+      color: $palette__grey--600;
+      text-align: center;
+    }
+  }
+}

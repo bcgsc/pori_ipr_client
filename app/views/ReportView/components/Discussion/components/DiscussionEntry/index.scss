@@ -1,0 +1,55 @@
+@import '../../../../../../styles/variables';
+
+discussion-entry {
+  border: 1px solid $black-15;
+  margin: 12px;
+
+  &:first-of-type {
+    margin-top: 20px;
+  }
+
+  h2 {
+    md-icon {
+      &.small {
+        color: $black-80;
+        font-size: 14px;
+        height: 14px;
+        min-height: 14px;
+        padding-left: 5px;
+      }
+    }
+
+    span {
+      float: right;
+
+      &.clickable {
+        cursor: pointer;
+        outline: 0;
+      }
+    }
+  }
+
+  div {
+    &.body {
+      padding: 20px;
+      white-space: pre-line;
+    }
+
+    &.edit-entry {
+      margin: 10px;
+    }
+
+    &.edited {
+      color: $black-50;
+      font-size: 11px;
+      font-style: italic;
+      margin: 25px 0 0;
+    }
+  }
+}
+
+.discussion-entry {
+  &__date {
+    margin: 0 8px 0 0;
+  }
+}

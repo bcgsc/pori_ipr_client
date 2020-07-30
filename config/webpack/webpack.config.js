@@ -7,6 +7,9 @@ const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const packageFile = require('../../package.json');
 
+const BASE_DIR = path.resolve(__dirname, '../..');
+const APP_PATH = path.resolve(BASE_DIR, 'app');
+
 module.exports = {
   module: {
     rules: [
@@ -73,6 +76,9 @@ module.exports = {
   },
   resolve: {
     extensions: ['.js', '.jsx'],
+    alias: {
+      '@': APP_PATH,
+    },
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -107,7 +113,7 @@ module.exports = {
   },
   mode: 'development',
   devtool: 'inline-source-map',
-  entry: path.resolve(__dirname, '../../app/index.jsx'),
+  entry: path.resolve(__dirname, '../../app/root.module.js'),
   output: {
     path: path.resolve(__dirname, '../../dist'),
     chunkFilename: '[name].[chunkhash].chunk.js',
@@ -118,7 +124,7 @@ module.exports = {
     contentBase: path.join(__dirname, '../../dist'),
     compress: true,
     port: 3000,
-    host: '0.0.0.0',
+    host: process.env.HOSTNAME || '0.0.0.0',
     hot: true,
     allowedHosts: ['.phage.bcgsc.ca'],
     publicPath: '/',

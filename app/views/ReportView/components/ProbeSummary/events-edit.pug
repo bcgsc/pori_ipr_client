@@ -1,0 +1,25 @@
+md-dialog(layout="column", aria-label="Update Event Details", flex=45).editor
+  form(flex='auto', name='form', ng-submit="update(form)")
+    md-toolbar
+      .md-toolbar-tools
+        h2 Update Event Details
+        span(flex)
+        md-button.md-icon-button(ng-click='cancel()')
+          md-icon cancel
+    md-dialog-content(layout-padding)
+
+      div(layout="column")
+
+        div(layout="row")
+          md-input-container(flex)
+            input(name="Gene", placeholder="Gene", ng-model="event.gene.name")
+        div(layout="row")
+          md-input-container(flex)
+            input(name="Variant", placeholder="Variant", ng-model="event.variant")
+        div(layout="row")
+          md-input-container(flex)
+            input(name="Comment", placeholder="Comments", ng-model="event.comments")
+
+
+    md-dialog-actions(layout="row", layout-align="end center", layout-padding)
+      md-button(type="submit").md-accent Update Event

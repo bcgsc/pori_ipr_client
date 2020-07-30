@@ -17,15 +17,13 @@ Before running the client, the npm dependencies need to be installed:
 npm install
 ```
 
-A local version of the client can be run using:
+A dev version of the client can be run using:
 
 ```Bash
-npm run start:local
+npm start
 ```
 
-Local in the above example can also be replaced by dev or prod to run againt those APIs.
-
-NOTE: IPR-API is expected to be running locally as well when using this env.
+Dev in the above example can also be replaced by local or prod to run againt those APIs (local would be your own API instance).
 
 Local environment will map API's to the machine's IP address and is meant to be used in parallel with a locally
 running API server. After starting, the local web server will watch for changes on any files in the app and rebuild
@@ -50,3 +48,10 @@ The main app directory contains all of the application logic and templates.
 * `services` - AngularJS/React API calls which can be injected into the application
 * `styles` - General style related files and variables
 * `filters` - AngularJS filters used in pug files
+* `statics` - Files and images not expected to change
+
+## Angular Caveats
+
+There's still parts of angular throughout the app (components, some views).
+Root.module registers these angular parts and then bootstraps react. The components imported using default imports
+are pure AngularJS, meant to be used within react converted angular components (using angular2react).
