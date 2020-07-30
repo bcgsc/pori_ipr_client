@@ -110,6 +110,12 @@ const columnDefs = [{
   hide: true,
 },
 {
+  headerName: 'Inferred',
+  field: 'inferred',
+  valueGetter: 'data.inferred || false',
+  hide: true,
+},
+{
   headerName: 'Sample',
   field: 'sample',
   cellRendererFramework: ArrayCell('sample', false),
