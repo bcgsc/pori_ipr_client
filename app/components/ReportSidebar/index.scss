@@ -30,9 +30,16 @@
   &__list-item {
     padding: 6px 0 6px 20px;
     user-select: none;
+    transition: background-color $transitions__duration--standard;
 
     &--indented {
       padding: 6px 0 6px 35px;
+      user-select: none;
+      transition: background-color $transitions__duration--standard;
+
+      &:hover {
+        background-color: $black-12;
+      }
     }
 
     &--active {
@@ -40,8 +47,14 @@
       color: $palette__secondary--main;
     }
 
-    &:hover:not(.report-sidebar__list-item--bold) {
+    &:hover {
       background-color: $black-12;
+    }
+
+    &--no-hover {
+      &:hover {
+        background-color: $palette__common--white;
+      }
     }
 
     &--bold {

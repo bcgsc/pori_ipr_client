@@ -13,6 +13,7 @@ const bindings = {
   slides: '<',
   print: '<',
   token: '<',
+  loadedDispatch: '<',
 };
 
 class Slides {
@@ -46,6 +47,10 @@ class Slides {
       this.uploader = this.setupUploader();
       this.loading = false;
       $rootScope.$digest();
+      // must be after digest call since slides are displayed in ng-repeat
+      if (this.loadedDispatch) {
+        this.loadedDispatch({ type: 'slides' });
+      }
     }
   }
 

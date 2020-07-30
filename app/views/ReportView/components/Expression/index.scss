@@ -30,6 +30,7 @@
   &__box-row {
     display: flex;
     flex-direction: row;
+    flex-grow: 1;
     padding: 8px;
     text-align: left;
 
@@ -63,7 +64,7 @@
     max-width: 34%;
 
     > * {
-      &:last-of-type {
+      &:first-of-type {
         background-color: $black-03;
       }
     }

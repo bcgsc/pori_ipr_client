@@ -10,7 +10,7 @@ section.pathwayAnalysis.pathway
 
       div(id="svgImage")
   
-  print-header(report="$ctrl.report", ng-if="$ctrl.print")
+  page-break(report="$ctrl.report", ng-if="$ctrl.print")
 
   div(layout="row", layout-align="center center")
     img(ng-src="img/pathway_legend.png", ng-if="$ctrl.print").pathway__legend

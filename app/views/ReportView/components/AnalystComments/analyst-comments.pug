@@ -6,13 +6,11 @@ section.analyst
     md-button(ng-if="$ctrl.reportEdit", ng-click="$ctrl.updateComments()").md-fab.md-mini.edit-icon
       md-icon edit
   div(layout="column").analystComments.analyst__comments.layout-padding
-    div(ng-bind-html="$ctrl.$sce.trustAsHtml($ctrl.analystComments.comments) || '<h2>Report Draft</h2> <br /> No comments yet.'")
+    div(ng-bind-html="$ctrl.$sce.trustAsHtml($ctrl.analystComments.comments) || '<h2>Report Draft</h2> <br /> No comments yet.'").analyst__bind
     div(ng-if="$ctrl.print", layout="row", layout-align="space-around center").analyst__review-box
       div Author Review: {{$ctrl.signatures.authorSignature.firstName[0]}}{{$ctrl.signatures.authorSignature.lastName[0]}} {{$ctrl.signatures.authorSignedAt | date: 'yy/MM/dd HH:mm'}}
       div Reviewer: {{$ctrl.signatures.reviewerSignature.firstName[0]}}{{$ctrl.signatures.reviewerSignature.lastName[0]}} {{$ctrl.signatures.reviewerSignedAt | date: 'yy/MM/dd HH:mm'}}
 
-
-  div.smallBottom &nbsp;
   div(layout="column", ng-if="$ctrl.analystComments !== null && !$ctrl.print").layout-padding.analystSignatures
     div Signed By
 

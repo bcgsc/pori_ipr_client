@@ -47,6 +47,7 @@ import UsersEditComponent from '@/components/UsersEdit';
 import GroupsEditComponent from '@/components/GroupsEdit';
 import ProjectsEditComponent from '@/components/ProjectsEdit';
 import ReactTable from '@/components/DataTable';
+import PageBreak from '@/components/PageBreak';
 
 import '@ag-grid-community/core/dist/styles/ag-grid.min.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-material.min.css';
@@ -92,6 +93,7 @@ const rootModule = angular.module('root')
   .component('roleCard', RoleCardComponent)
   .component('paginate', PaginateComponent)
   .component('reactTable', react2angular(ReactTable))
+  .component('pageBreak', react2angular(PageBreak))
   .config(['$locationProvider', ($locationProvider) => {
     $locationProvider.html5Mode(true);
   }])

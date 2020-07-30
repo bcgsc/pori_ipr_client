@@ -27,9 +27,10 @@ const VISIBLE = 'visibleColsKb';
  * @param {string} reportIdent report ident string
  * @returns {*} JSX
  */
-function KBMatches(props) {
+function KbMatches(props) {
   const {
     report,
+    isPrint,
   } = props;
 
   const [visibleColumns, setVisibleColumns] = useState(
@@ -152,23 +153,25 @@ function KBMatches(props) {
     <>
       {report && syncedTableData && unsyncedTableData ? (
         <>
-          <div className="kb-matches__filter">
-            <TextField
-              label="Filter Table Text"
-              type="text"
-              variant="outlined"
-              value={filterText}
-              onChange={handleFilter}
-              margin="dense"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <FilterList color="action" />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </div>
+          {!isPrint && (
+            <div className="kb-matches__filter">
+              <TextField
+                label="Filter Table Text"
+                type="text"
+                variant="outlined"
+                value={filterText}
+                onChange={handleFilter}
+                margin="dense"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <FilterList color="action" />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </div>
+          )}
 
           <div>
             {Object.values(syncedTableData).map(table => (
@@ -182,6 +185,7 @@ function KBMatches(props) {
                 filterText={filterText}
                 canToggleColumns
                 reportIdent={report.ident}
+                isPrint={isPrint}
               />
             ))}
           </div>
@@ -205,8 +209,14 @@ function KBMatches(props) {
   );
 }
 
-KBMatches.propTypes = {
+KbMatches.propTypes = {
+  // eslint-disable-next-line react/forbid-prop-types
   report: PropTypes.object.isRequired,
+  isPrint: PropTypes.bool,
 };
 
-export default KBMatches;
+KbMatches.defaultProps = {
+  isPrint: false,
+};
+
+export default KbMatches;

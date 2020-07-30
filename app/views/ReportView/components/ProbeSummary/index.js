@@ -16,6 +16,7 @@ import './index.scss';
 const bindings = {
   report: '<',
   reportEdit: '<',
+  loadedDispatch: '<',
   print: '<',
 };
 
@@ -43,6 +44,9 @@ class ProbeSummary {
       this.probeResults = probeResults;
       this.patientInformation = this.report.patientInformation;
       this.loading = false;
+      if (this.loadedDispatch) {
+        this.loadedDispatch({ type: 'probeSummary' });
+      }
       $rootScope.$digest();
     }
   }

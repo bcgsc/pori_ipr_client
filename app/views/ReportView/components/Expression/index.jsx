@@ -49,6 +49,9 @@ function Expression(props) {
         if (outliers && outliers.length) {
           setExpOutliers(processExpression(outliers));
           setPtxComparator(getPtxComparator(outliers));
+        } else if (outliers.length === 0) {
+          setExpOutliers([]);
+          setPtxComparator(null);
         }
       };
 
@@ -133,7 +136,9 @@ function Expression(props) {
                 </div>
               ))}
             </Paper>
-          ) : null}
+          ) : (
+            <Typography align="center">No comparator data to display</Typography>
+          )}
         </div>
       )}
       <>

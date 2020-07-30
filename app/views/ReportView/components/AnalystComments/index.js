@@ -15,6 +15,7 @@ const bindings = {
   print: '<',
   report: '<',
   reportEdit: '<',
+  loadedDispatch: '<',
 };
 
 class AnalystComments {
@@ -33,6 +34,9 @@ class AnalystComments {
       this.analystComments = await AnalystCommentsService.get(this.report.ident);
       this.signatures = await getSignatures(this.report.ident);
       this.loading = false;
+      if (this.loadedDispatch) {
+        this.loadedDispatch({ type: 'analyst' });
+      }
       $rootScope.$digest();
     }
   }

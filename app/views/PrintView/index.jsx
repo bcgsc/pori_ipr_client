@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useReducer } from 'react';
 import { useParams } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
 
@@ -7,7 +7,6 @@ import GenomicSummary from '../ReportView/components/GenomicSummary';
 import ProbeSummary from '../ReportView/components/ProbeSummary';
 import AnalystComments from '../ReportView/components/AnalystComments';
 import PathwayAnalysis from '../ReportView/components/PathwayAnalysis';
-import KbMatches from '../ReportView/components/KbMatches';
 import TherapeuticTargets from '../ReportView/components/TherapeuticTargets/components/PrintTables';
 import Slides from '../ReportView/components/Slides';
 import Appendices from '../ReportView/components/Appendices';
@@ -16,9 +15,47 @@ import PrintLogo from '@/../statics/images/print_logo.png';
 
 import './index.scss';
 
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'genomicSummary':
+      return { ...state, genomicSummary: true };
+    case 'probeSummary':
+      return { ...state, probeSummary: true };
+    case 'analyst':
+      return { ...state, analyst: true };
+    case 'pathway':
+      return { ...state, pathway: true };
+    case 'therapeutic':
+      return { ...state, therapeutic: true };
+    case 'slides':
+      return { ...state, slides: true };
+    case 'appendices':
+      return { ...state, appendices: true };
+    default:
+      return {
+        genomicSummary: false,
+        probeSummary: false,
+        analyst: false,
+        pathway: false,
+        therapeutic: false,
+        slides: false,
+        appendices: false,
+      };
+  }
+};
+
 const Print = () => {
   const params = useParams();
   const [report, setReport] = useState();
+  const [reportSectionsLoaded, dispatch] = useReducer(reducer, {
+    genomicSummary: false,
+    probeSummary: false,
+    analyst: false,
+    pathway: false,
+    therapeutic: false,
+    slides: false,
+    appendices: false,
+  });
   const [isProbe, setIsProbe] = useState(false);
 
   useEffect(() => {
@@ -30,36 +67,43 @@ const Print = () => {
         if (resp.type !== 'genomic') {
           setIsProbe(true);
         }
-        setTimeout(() => {
-          window.print();
-        }, 1500);
       };
 
       getReport();
     }
   }, [report]);
 
+  useEffect(() => {
+    let sections;
+    if (isProbe) {
+      sections = ['probeSummary', 'appendices'];
+    } else {
+      sections = ['genomicSummary', 'analyst', 'pathway', 'therapeutic', 'slides'];
+    }
+    if (reportSectionsLoaded && Object.entries(reportSectionsLoaded).every(([section, loaded]) => loaded || !sections.includes(section))) {
+      window.print();
+    }
+  }, [reportSectionsLoaded]);
+
   const probeSections = () => (
     <>
-      <ProbeSummary report={report} print />
+      <ProbeSummary report={report} print loadedDispatch={dispatch} />
       <PageBreak report={report} />
-      <KbMatches report={report} print />
-      <PageBreak report={report} />
-      <Appendices report={report} print isProbe />
+      <Appendices report={report} print isProbe loadedDispatch={dispatch} />
     </>
   );
 
   const genomicSections = () => (
     <>
-      <GenomicSummary report={report} print />
+      <GenomicSummary report={report} print loadedDispatch={dispatch} />
       <PageBreak report={report} />
-      <AnalystComments report={report} print />
+      <AnalystComments report={report} print loadedDispatch={dispatch} />
       <PageBreak report={report} />
-      <PathwayAnalysis report={report} print />
+      <PathwayAnalysis report={report} print loadedDispatch={dispatch} />
       <PageBreak report={report} />
-      <TherapeuticTargets report={report} />
+      <TherapeuticTargets report={report} loadedDispatch={dispatch} />
       <PageBreak report={report} />
-      <Slides report={report} print />
+      <Slides report={report} print loadedDispatch={dispatch} />
     </>
   );
 
@@ -85,7 +129,7 @@ const Print = () => {
         </Typography>
       </div>
       <div className="print__header-bottom">
-        <Typography align="center" variant="h1">
+        <Typography align="center" variant="h5">
           {report.patientId}
         </Typography>
       </div>

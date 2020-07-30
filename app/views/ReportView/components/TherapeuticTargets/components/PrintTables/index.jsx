@@ -51,6 +51,7 @@ const makeColDefs = (columnNames) => {
 const TherapeuticTable = (props) => {
   const {
     report,
+    loadedDispatch,
   } = props;
 
   const [chemoresistanceRowData, setChemoresistanceRowData] = useState([]);
@@ -111,6 +112,7 @@ const TherapeuticTable = (props) => {
             ],
           ));
         }
+        loadedDispatch({ type: 'therapeutic' });
       };
       
       getData();
@@ -177,6 +179,7 @@ const TherapeuticTable = (props) => {
 TherapeuticTable.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
   report: PropTypes.object.isRequired,
+  loadedDispatch: PropTypes.func.isRequired,
 };
 
 export default TherapeuticTable;

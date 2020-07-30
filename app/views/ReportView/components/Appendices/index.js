@@ -12,6 +12,7 @@ const bindings = {
   print: '<',
   isProbe: '<',
   theme: '<',
+  loadedDispatch: '<',
 };
 
 class Appendices {
@@ -39,6 +40,9 @@ class Appendices {
       this.seqQC = this.appendices.seqQC;
       this.sampleInfo = this.appendices.sampleInfo;
       this.loading = false;
+      if (this.loadedDispatch) {
+        this.loadedDispatch({ type: 'appendices' });
+      }
       $rootScope.$digest();
     }
   }
