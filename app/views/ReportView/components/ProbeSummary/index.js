@@ -9,7 +9,7 @@ import TargetedGenesService from '@/services/reports/targeted-genes.service';
 import GeneService from '@/services/reports/gene.service';
 import TestInformationService from '@/services/reports/test-information.service';
 import template from './probe-summary.pug';
-import patientTemplate from '../GenomicSummary/patient-edit.pug';
+import patientTemplate from './patient-edit.pug';
 import eventsTemplate from './events-edit.pug';
 import './index.scss';
 
