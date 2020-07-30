@@ -47,16 +47,6 @@ section
               div
                 img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{$ctrl.mutationSummaryImages.legend.snv_indel.data}}")
 
-      react-table(
-        row-data="$ctrl.mutationSignature",
-        column-defs="$ctrl.signatureColumnDefs",
-        title-text="'Mutational Spectrum'",
-        report-ident="$ctrl.report.ident",
-        can-toggle-columns="true",
-        ng-if="$ctrl.report",
-        theme="$ctrl.theme"
-      )
-
       div(layout="column", layout-align="center center")
         div
           img(data-ng-src="data:image/png;base64,{{$ctrl.images['mutSignature.snvsAllStrelka'].data}}")
