@@ -9,6 +9,8 @@ import AlertDialog from '@/components/AlertDialog';
 
 import './index.scss';
 
+const ENTER_KEYCODE = 13;
+
 const VariantChips = (props) => {
   const {
     variants,
@@ -36,6 +38,12 @@ const VariantChips = (props) => {
     setAddedVariant('');
   }, [handleChipAdded, addedVariant]);
 
+  const handleEnterPressed = (event) => {
+    if (event.keyCode === ENTER_KEYCODE) {
+      handleAddInputClose(true);
+    }
+  }
+
   return (
     <div>
       <div>
@@ -62,32 +70,31 @@ const VariantChips = (props) => {
               onClick={() => setShowAddInput(true)}
             />
           ) : (
-            <form className="variant__form">
-              <TextField
-                className="text-field-fix"
-                value={addedVariant}
-                type="text"
-                size="small"
-                margin="dense"
-                variant="outlined"
-                label="Gene name (alteration)"
-                onChange={event => setAddedVariant(event.target.value)}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      {addedVariant && (
-                        <IconButton onClick={() => handleAddInputClose(true)}>
-                          <DoneIcon />
-                        </IconButton>
-                      )}
-                      <IconButton onClick={() => handleAddInputClose(false)}>
-                        <CloseIcon />
+            <TextField
+              className="text-field-fix"
+              value={addedVariant}
+              type="text"
+              size="small"
+              margin="dense"
+              variant="outlined"
+              label="Gene name (alteration)"
+              onKeyDown={handleEnterPressed}
+              onChange={event => setAddedVariant(event.target.value)}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    {addedVariant && (
+                      <IconButton onClick={() => handleAddInputClose(true)}>
+                        <DoneIcon />
                       </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </form>
+                    )}
+                    <IconButton onClick={() => handleAddInputClose(false)}>
+                      <CloseIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
           )}
         </>
       )}
