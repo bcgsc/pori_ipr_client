@@ -5,7 +5,6 @@
   display: flex;
   justify-content: space-around;
   margin: 20px 4px;
-  border: 1px solid $palette__common--black;
 
   &__key {
     display: flex;
@@ -23,8 +22,6 @@
     width: 20%;
     padding: 12px;
     color: $palette__common--white;
-    border-left: 1px solid $palette__common--black;
-    border-right: 1px solid $palette__common--black;
   }
 
   &__icon {
