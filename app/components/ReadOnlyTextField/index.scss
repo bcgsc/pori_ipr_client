@@ -2,10 +2,15 @@
 
 .text-field {
   padding: 0 12px;
+  color: $palette__text--primary;
 
   & label.Mui-disabled {
     color: $palette__text--primary;
     padding: 0 16px;
+  }
+
+  & textarea.Mui-disabled {
+    color: $palette__text--primary;
   }
 
   & input.Mui-disabled {

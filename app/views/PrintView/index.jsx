@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useReducer } from 'react';
 import { useParams } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
+import { useTheme } from '@material-ui/core/styles';
 
 import ReportService from '@/services/reports/report.service';
 import GenomicSummary from '../ReportView/components/GenomicSummary';
@@ -46,6 +47,7 @@ const reducer = (state, action) => {
 
 const Print = () => {
   const params = useParams();
+  const theme = useTheme();
   const [report, setReport] = useState();
   const [reportSectionsLoaded, dispatch] = useReducer(reducer, {
     genomicSummary: false,
@@ -96,14 +98,14 @@ const Print = () => {
   const genomicSections = () => (
     <>
       <GenomicSummary report={report} print loadedDispatch={dispatch} />
-      <PageBreak report={report} />
+      <PageBreak report={report} theme={theme} />
       <AnalystComments report={report} print loadedDispatch={dispatch} />
-      <PageBreak report={report} />
+      <PageBreak report={report} theme={theme} />
       <PathwayAnalysis report={report} print loadedDispatch={dispatch} />
-      <PageBreak report={report} />
+      <PageBreak report={report} theme={theme} />
       <TherapeuticTargets report={report} loadedDispatch={dispatch} />
-      <PageBreak report={report} />
-      <Slides report={report} print loadedDispatch={dispatch} />
+      <PageBreak report={report} theme={theme} />
+      <Slides report={report} print loadedDispatch={dispatch} theme={theme}/>
     </>
   );
 
@@ -129,7 +131,7 @@ const Print = () => {
         </Typography>
       </div>
       <div className="print__header-bottom">
-        <Typography align="center" variant="h5">
+        <Typography align="center" variant="h2">
           {report.patientId}
         </Typography>
       </div>

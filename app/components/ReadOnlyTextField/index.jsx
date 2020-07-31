@@ -9,7 +9,6 @@ import './index.scss';
 const ReadOnlyTextField = (props) => {
   const {
     label,
-    disableUnderline,
     children,
     ...rest
   } = props;
@@ -21,7 +20,6 @@ const ReadOnlyTextField = (props) => {
       label={label}
       value={children === null || children === '' ? ' ' : children}
       classes={{ root: 'text-field' }}
-      InputProps={{ disableUnderline }}
       disabled
       {...rest}
     />
@@ -30,13 +28,11 @@ const ReadOnlyTextField = (props) => {
 
 ReadOnlyTextField.propTypes = {
   label: PropTypes.string,
-  disableUnderline: PropTypes.bool,
   children: PropTypes.string,
 };
 
 ReadOnlyTextField.defaultProps = {
   label: '',
-  disableUnderline: false,
   children: '',
 };
 

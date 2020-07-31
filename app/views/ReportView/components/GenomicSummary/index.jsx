@@ -211,7 +211,6 @@ const GenomicSummary = (props) => {
                   margin="normal"
                   fullWidth
                   multiline={print}
-                  disableUnderline={print}
                 >
                   {value}
                 </ReadOnlyTextField>

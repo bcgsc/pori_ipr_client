@@ -50,6 +50,6 @@ section.material-section.slide.presentation
   md-subheader(ng-if="$ctrl.print").print-slide__header.md-no-sticky Slides
   div(ng-if="$ctrl.print" layout="column", layout-align="space-around center")
     div(ng-repeat="slide in ::$ctrl.slides track by $index", layout="column", layout-align="space-around center").print-slide__container
-      page-break(ng-if="$index % 2 === 0 && $index !== 0", report="$ctrl.report")
+      page-break(ng-if="$index % 2 === 0 && $index !== 0", report="$ctrl.report", theme="$ctrl.theme")
       h3.print-slide__name {{::slide.name}}
       img(data-ng-src="data:{{::slide.object_type}};base64,{{::slide.object}}").print-slide__image

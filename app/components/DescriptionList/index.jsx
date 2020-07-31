@@ -27,12 +27,14 @@ const DescriptionList = (props) => {
         <List className="description-list">
           {visibleEntries.map(({ term, value }) => (
             <ListItem key={term} className="description-list__group">
-              <ListItemText className="description-list__term">
-                {term}
-              </ListItemText>
-              <ListItemText className="description-list__value">
-                {value}
-              </ListItemText>
+              <span className="description-list__text-group">
+                <ListItemText className="description-list__term">
+                  {`${term}: `}
+                </ListItemText>
+                <ListItemText className="description-list__value">
+                  {value}
+                </ListItemText>
+              </span>
             </ListItem>
           ))}
         </List>
