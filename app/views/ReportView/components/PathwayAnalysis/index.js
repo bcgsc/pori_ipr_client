@@ -12,7 +12,7 @@ import './index.scss';
 
 const bindings = {
   report: '<',
-  reportEdit: '<',
+  canEdit: '<',
   print: '<',
   token: '<',
   loadedDispatch: '<',

@@ -15,7 +15,7 @@ import './index.scss';
 
 const bindings = {
   report: '<',
-  reportEdit: '<',
+  canEdit: '<',
   loadedDispatch: '<',
   print: '<',
 };

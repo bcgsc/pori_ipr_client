@@ -1,6 +1,6 @@
 section.patient-info
   md-subheader.md-no-sticky.print-title Patient Information
-    span.edit(ng-if="$ctrl.reportEdit")
+    span.edit(ng-if="$ctrl.canEdit")
       md-icon(ng-click="$ctrl.updatePatient($event)") edit
 
   md-progress-linear(ng-if="$ctrl.loading")
@@ -151,10 +151,10 @@ section
             div(flex, style="padding: 10px 5px; margin: 7px 0").text-left Comments
           div(layout="row", flex, ng-if="$ctrl.probeResults.length === 0").row
             div(flex) No clinically relevant genomic alterations were found from the analysis.
-          div(layout="row", flex, ng-repeat="gene in $ctrl.probeResults", ng-click="$ctrl.modifyEvent($event, gene)", ng-if="$ctrl.reportEdit", style="cursor: pointer").row
+          div(layout="row", flex, ng-repeat="gene in $ctrl.probeResults", ng-click="$ctrl.modifyEvent($event, gene)", ng-if="$ctrl.canEdit", style="cursor: pointer").row
             div(flex) {{gene.gene.name}} ({{gene.variant}})
             div(flex) {{gene.comments}}
-          div(layout="row", flex, ng-repeat="gene in $ctrl.probeResults", ng-if="!$ctrl.reportEdit").row
+          div(layout="row", flex, ng-repeat="gene in $ctrl.probeResults", ng-if="!$ctrl.canEdit").row
             div(flex) {{gene.gene.name}} ({{gene.variant}})
             div(flex) {{gene.comments}}
 
@@ -177,7 +177,7 @@ section(ng-if="!$ctrl.print")
       div(flex)
       div(layout="column", layout-align="start start").options
         div(ng-if="$ctrl.signatures.authorSignature.ident")
-          md-icon(ng-click="$ctrl.revokeSign('author')", ng-if="$ctrl.reportEdit") remove_circle
+          md-icon(ng-click="$ctrl.revokeSign('author')", ng-if="$ctrl.canEdit") remove_circle
             md-tooltip Remove signing
 
     div(layout="row", md-whiteframe=1, layout-align="start start").rowCard
@@ -195,7 +195,7 @@ section(ng-if="!$ctrl.print")
       div(flex)
       div(layout="column", layout-align="start start").options
         div(ng-if="$ctrl.signatures.reviewerSignature.ident")
-          md-icon(ng-click="$ctrl.revokeSign('reviewer')", ng-if="$ctrl.reportEdit") remove_circle
+          md-icon(ng-click="$ctrl.revokeSign('reviewer')", ng-if="$ctrl.canEdit") remove_circle
             md-tooltip Remove signing
 
 section(ng-if="$ctrl.print").review
