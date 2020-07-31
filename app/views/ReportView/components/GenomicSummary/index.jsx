@@ -51,6 +51,7 @@ const GenomicSummary = (props) => {
     report,
     canEdit,
     print,
+    loadedDispatch
   } = props;
 
   const [showSnackbar, setShowSnackbar] = useState(false);
@@ -152,6 +153,7 @@ const GenomicSummary = (props) => {
         const sorted = sortBy(output, [customTypeSort, 'geneVariant']);
         setVariantData(sorted);
         setVariantCounts(counts);
+        loadedDispatch({ type: 'genomicSummary' });
       };
 
       getData();
@@ -269,12 +271,14 @@ GenomicSummary.propTypes = {
   report: PropTypes.object,
   canEdit: PropTypes.bool,
   print: PropTypes.bool,
+  loadedDispatch: PropTypes.func,
 };
 
 GenomicSummary.defaultProps = {
   report: {},
   canEdit: false,
   print: false,
+  loadedDispatch: () => {},
 };
 
 export default GenomicSummary;

@@ -12,7 +12,8 @@ import TherapeuticTargets from '../ReportView/components/TherapeuticTargets/comp
 import Slides from '../ReportView/components/Slides';
 import Appendices from '../ReportView/components/Appendices';
 import PageBreak from '@/components/PageBreak';
-import PrintLogo from '@/../statics/images/print_logo.png';
+import startCase from '@/utils/startCase';
+import PrintLogo from '@/../statics/images/print_logo.svg';
 
 import './index.scss';
 
@@ -111,28 +112,15 @@ const Print = () => {
 
   const titleBar = () => (
     <div className="print__headers">
-      <div className="print__header-top">
+      <div className="print__header-left">
         <img className="print__logo" src={PrintLogo} alt="" />
-        <div>
-          <Typography align="right" variant="body2">
-            Tumour Genome Analysis
-          </Typography>
-          <Typography align="right" variant="body2">
-            Whole Genome; Transcriptome; Somatic
-          </Typography>
-        </div>
       </div>
-      <div className="print__header-middle">
-        <Typography variant="body2">
-          {`Report version: ${report.reportVersion}`}
+      <div className="print__header-right">
+        <Typography variant="h1">
+          {`${report.patientId}${report.alternateIdentifier ? `(${report.alternateIdentifier})` : ''}`}
         </Typography>
-        <Typography variant="body2">
-          {`Knowledgebase version: ${report.kbVersion}`}
-        </Typography>
-      </div>
-      <div className="print__header-bottom">
-        <Typography align="center" variant="h2">
-          {report.patientId}
+        <Typography variant="h5">
+          {`${startCase(report.biopsyName)} - ${startCase(report.patientInformation.diagnosis)} (${report.patientInformation.tumourSample})`}
         </Typography>
       </div>
     </div>
