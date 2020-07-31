@@ -6,7 +6,7 @@ import {
 
 import './index.scss';
 
-const DisabledTextField = (props) => {
+const ReadOnlyTextField = (props) => {
   const {
     label,
     disableUnderline,
@@ -28,16 +28,16 @@ const DisabledTextField = (props) => {
   );
 };
 
-DisabledTextField.propTypes = {
+ReadOnlyTextField.propTypes = {
   label: PropTypes.string,
   disableUnderline: PropTypes.bool,
   children: PropTypes.string,
 };
 
-DisabledTextField.defaultProps = {
+ReadOnlyTextField.defaultProps = {
   label: '',
   disableUnderline: false,
   children: '',
 };
 
-export default DisabledTextField;
+export default ReadOnlyTextField;

@@ -9,7 +9,7 @@ import sortBy from 'lodash.sortby';
 import { getMicrobial } from '@/services/reports/microbial';
 import { formatDate } from '@/utils/date';
 import AlterationsService from '@/services/reports/genomic-alterations.service';
-import DisabledTextField from '@/components/DisabledTextField';
+import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import DescriptionList from '@/components/DescriptionList';
 import VariantChips from './components/VariantChips';
 import VariantCounts from './components/VariantCounts';
@@ -205,7 +205,7 @@ const GenomicSummary = (props) => {
             </div>
             <div className="genomic-summary__patient-information-content">
               {patientInformationData.map(({ label, value }) => (
-                <DisabledTextField
+                <ReadOnlyTextField
                   key={label}
                   label={label}
                   margin="normal"
@@ -214,7 +214,7 @@ const GenomicSummary = (props) => {
                   disableUnderline={print}
                 >
                   {value}
-                </DisabledTextField>
+                </ReadOnlyTextField>
               ))}
             </div>
           </div>
