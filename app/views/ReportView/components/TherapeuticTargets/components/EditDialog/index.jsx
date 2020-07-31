@@ -103,9 +103,7 @@ function EditDialog(props) {
         reportIdent,
         newData.ident,
       );
-      console.log('handleDelete. trigger onClose');
       onClose(null);
-      console.log('post call onClose');
     } catch (err) {
       console.error('error', err); // TODO: send to snackbar
     }
