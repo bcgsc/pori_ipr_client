@@ -9,7 +9,16 @@
 
     &-content {
       display: flex;
-      justify-content: space-around;
+      justify-content: start;
+      flex-wrap: wrap;
+
+      & > * {
+        width: 23%;
+
+        @media print {
+          width: 21%;
+        }
+      }
     }
   }
 

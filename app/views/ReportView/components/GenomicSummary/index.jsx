@@ -89,6 +89,10 @@ const GenomicSummary = (props) => {
             label: 'Physician',
             value: report.patientInformation.physician,
           },
+          {
+            label: 'Biopsy Name',
+            value: report.biopsyName,
+          },
         ]);
 
         setTumourSummaryData([
