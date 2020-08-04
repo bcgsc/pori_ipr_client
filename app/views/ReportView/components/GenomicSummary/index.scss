@@ -1,6 +1,4 @@
 .genomic-summary {
-  display: flex;
-  flex-direction: column;
   margin: 20px auto;
   padding: 0 20px;
 
@@ -13,11 +11,25 @@
       flex-wrap: wrap;
 
       & > * {
-        width: 23%;
+        width: 21%;
+      }
+    }
+  }
 
-        @media print {
-          width: 21%;
-        }
+  &__analysis-summary {
+    margin: 0 0 32px 0;
+
+    @media print {
+      margin: 32px 0;
+    }
+
+    &-content {
+      display: flex;
+      justify-content: start;
+      flex-wrap: wrap;
+
+      & > * {
+        width: 21%;
       }
     }
   }
@@ -26,7 +38,7 @@
     margin: 0 0 32px 0;
   }
 
-  &__therapeutic-summary {
+  &__alterations {
     margin: 0 0 32px 0;
   }
 }

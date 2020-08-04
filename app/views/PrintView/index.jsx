@@ -120,7 +120,7 @@ const Print = () => {
           {`${report.patientId}${report.alternateIdentifier ? `(${report.alternateIdentifier})` : ''}`}
         </Typography>
         <Typography variant="h5">
-          {`${startCase(report.biopsyName)} - ${startCase(report.patientInformation.diagnosis)} (${report.patientInformation.tumourSample})`}
+          {`${startCase(report.biopsyName || 'No Biopsy Name')} - ${startCase(report.patientInformation.diagnosis)} (${report.patientInformation.tumourSample})`}
         </Typography>
       </div>
     </div>

@@ -11,6 +11,7 @@ import { formatDate } from '@/utils/date';
 import AlterationsService from '@/services/reports/genomic-alterations.service';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import DescriptionList from '@/components/DescriptionList';
+import PageBreak from '@/components/PageBreak';
 import VariantChips from './components/VariantChips';
 import VariantCounts from './components/VariantCounts';
 
@@ -57,6 +58,7 @@ const GenomicSummary = (props) => {
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [patientInformationData, setPatientInformationData] = useState();
   const [tumourSummaryData, setTumourSummaryData] = useState();
+  const [analysisSummaryData, setAnalysisSummaryData] = useState();
   const [variantData, setVariantData] = useState();
   const [variantFilter, setVariantFilter] = useState();
   const [variantCounts, setVariantCounts] = useState({
@@ -92,6 +94,14 @@ const GenomicSummary = (props) => {
           {
             label: 'Biopsy Name',
             value: report.biopsyName,
+          },
+          {
+            label: 'Biopsy Details',
+            value: report.patientInformation.biopsySite,
+          },
+          {
+            label: 'Sex',
+            value: report.patientInformation.gender,
           },
         ]);
 
@@ -135,6 +145,29 @@ const GenomicSummary = (props) => {
             value: null,
           },
         ]);
+
+        setAnalysisSummaryData([
+          {
+            label: 'Constitutional Protocol',
+            value: report.patientInformation.constitutionalProtocol,
+          },
+          {
+            label: 'Constitutional Sample',
+            value: report.patientInformation.constitutionalSample,
+          },
+          {
+            label: 'Normal Comparator',
+            value: report.tumourAnalysis.normalExpressionComparator,
+          },
+          {
+            label: 'Disease Comparator',
+            value: report.tumourAnalysis.diseaseExpressionComparator,
+          },
+          {
+            label: 'Ploidy',
+            value: report.tumourAnalysis.ploidy,
+          },
+        ])
 
         const output = [];
         const counts = {
@@ -201,7 +234,7 @@ const GenomicSummary = (props) => {
 
   return (
     <div className="genomic-summary">
-      {report && patientInformationData && tumourSummaryData && (
+      {report && patientInformationData && tumourSummaryData && analysisSummaryData && (
         <>
           <div className="genomic-summary__patient-information">
             <div className="genomic-summary__patient-information-title">
@@ -216,13 +249,14 @@ const GenomicSummary = (props) => {
                   label={label}
                   margin="normal"
                   fullWidth
-                  multiline={print}
+                  multiline
                 >
                   {value}
                 </ReadOnlyTextField>
               ))}
             </div>
           </div>
+
           <div className="genomic-summary__tumour-summary">
             <div className="genomic-summary__tumour-summary-title">
               <Typography variant="h3">
@@ -233,6 +267,7 @@ const GenomicSummary = (props) => {
               <DescriptionList entries={tumourSummaryData} />
             </div>
           </div>
+
           <div className="genomic-summary__alterations">
             <div className="genomic-summary__alterations-title">
               <Typography variant="h3">
@@ -262,6 +297,29 @@ const GenomicSummary = (props) => {
                   horizontal: 'left',
                 }}
               />
+            </div>
+          </div>
+          {print && (
+            <PageBreak report={report} />
+          )}
+          <div className="genomic-summary__analysis-summary">
+            <div className="genomic-summary__analysis-summary-title">
+              <Typography variant="h3">
+                Analysis Summary
+              </Typography>
+            </div>
+            <div className="genomic-summary__analysis-summary-content">
+              {analysisSummaryData.map(({ label, value }) => (
+                <ReadOnlyTextField
+                  key={label}
+                  label={label}
+                  margin="normal"
+                  fullWidth
+                  multiline
+                >
+                  {value}
+                </ReadOnlyTextField>
+              ))}
             </div>
           </div>
         </>
