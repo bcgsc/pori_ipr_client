@@ -3,17 +3,22 @@ import PropTypes from 'prop-types';
 import {
   Typography,
   Snackbar,
+  IconButton,
 } from '@material-ui/core';
+import EditIcon from '@material-ui/icons/Edit'
 import sortBy from 'lodash.sortby';
 
 import { getMicrobial } from '@/services/reports/microbial';
 import { formatDate } from '@/utils/date';
 import AlterationsService from '@/services/reports/genomic-alterations.service';
+import PatientInformationService from '@/services/reports/patient-information.service';
+import ReportService from '@/services/reports/report.service';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import DescriptionList from '@/components/DescriptionList';
 import PageBreak from '@/components/PageBreak';
 import VariantChips from './components/VariantChips';
 import VariantCounts from './components/VariantCounts';
+import PatientEdit from './components/PatientEdit';
 
 import './index.scss';
 
@@ -56,6 +61,7 @@ const GenomicSummary = (props) => {
   } = props;
 
   const [showSnackbar, setShowSnackbar] = useState(false);
+  const [isPatientEditOpen, setIsPatientEditOpen] = useState(false);
   const [patientInformationData, setPatientInformationData] = useState();
   const [tumourSummaryData, setTumourSummaryData] = useState();
   const [analysisSummaryData, setAnalysisSummaryData] = useState();
@@ -232,14 +238,73 @@ const GenomicSummary = (props) => {
     setShowSnackbar(false);
   }, []);
 
+  const handlePatientEditClose = useCallback(async (isSaved, newPatientData, newReportData) => {
+    setIsPatientEditOpen(false);
+    if (!isSaved || !newPatientData && !newReportData) {
+      return;
+    }
+
+    if (newPatientData) {
+      await PatientInformationService.update(report.ident, newPatientData);
+    }
+
+    if (newReportData) {
+      await ReportService.updateReport(newReportData);
+    }
+
+    setPatientInformationData([
+      {
+        label: 'Alternate ID',
+        value: newReportData ? newReportData.alternateIdentifier : report.alternateIdentifier,
+      },
+      {
+        label: 'Report Date',
+        value: formatDate(report.createdAt),
+      },
+      {
+        label: 'Case Type',
+        value: newPatientData ? newPatientData.caseType : report.patientInformation.caseType,
+      },
+      {
+        label: 'Physician',
+        value: newPatientData ? newPatientData.physician : report.patientInformation.physician,
+      },
+      {
+        label: 'Biopsy Name',
+        value: newReportData ? newReportData.biopsyName : report.biopsyName,
+      },
+      {
+        label: 'Biopsy Details',
+        value: newPatientData ? newPatientData.biopsySite : report.patientInformation.biopsySite,
+      },
+      {
+        label: 'Sex',
+        value: newPatientData ? newPatientData.gender : report.patientInformation.gender,
+      },
+    ]);
+  }, [report]);
+
   return (
     <div className="genomic-summary">
       {report && patientInformationData && tumourSummaryData && analysisSummaryData && (
         <>
           <div className="genomic-summary__patient-information">
             <div className="genomic-summary__patient-information-title">
-              <Typography variant="h3">
+              <Typography variant="h3" dislay="inline">
                 Patient Information
+                {canEdit && (
+                  <>
+                    <IconButton onClick={setIsPatientEditOpen}>
+                      <EditIcon />
+                    </IconButton>
+                    <PatientEdit
+                      patientInformation={report.patientInformation}
+                      report={report}
+                      isOpen={Boolean(isPatientEditOpen)}
+                      onClose={handlePatientEditClose}
+                    />
+                  </>
+                )}
               </Typography>
             </div>
             <div className="genomic-summary__patient-information-content">
