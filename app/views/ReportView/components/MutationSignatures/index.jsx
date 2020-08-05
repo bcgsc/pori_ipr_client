@@ -21,7 +21,9 @@ const MutationSignatures = (props) => {
   } = props;
 
   const [images, setImages] = useState({});
-  const [signatures, setSignatures] = useState([]);
+  const [sbsSignatures, setSbsSignatures] = useState([]);
+  const [dbsSignatures, setDbsSignatures] = useState([]);
+  const [idSignatures, setIdSignatures] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -35,7 +37,9 @@ const MutationSignatures = (props) => {
           MutationSignatureService.all(report.ident),
         ]);
         setImages(imageData);
-        setSignatures(signatureData);
+        setSbsSignatures(signatureData.filter(sig => !(new RegExp(/dbs|id/)).test(sig.signature.toLowerCase())));
+        setDbsSignatures(signatureData.filter(sig => (new RegExp(/dbs/)).test(sig.signature.toLowerCase())));
+        setIdSignatures(signatureData.filter(sig => (new RegExp(/id/)).test(sig.signature.toLowerCase())));
         setIsLoading(false);
       };
 
@@ -48,16 +52,50 @@ const MutationSignatures = (props) => {
       {!isLoading ? (
         <>
           <DataTable
-            rowData={signatures}
+            rowData={sbsSignatures}
             columnDefs={columnDefs}
-            titleText="Mutation Signatures"
+            titleText="Single base subtitution signatures"
             isPaginated
           />
-          <div className="mutation-signature__images">
-            {Object.entries(images).map(([key, value]) => (
-              <img src={`data:image/${value.format};base64,${value.data}`} alt={key} key={key} className="mutation-signature__image" />
-            ))}
-          </div>
+          {images['mutSignature.barplot.sbs'] && (
+            <div className="mutation-signature__images">
+              <img
+                src={`data:image/${images['mutSignature.barplot.sbs'].format};base64,${images['mutSignature.barplot.sbs'].data}`}
+                alt="Single base substitution barplot"
+                className="mutation-signature__image"
+              />
+            </div>
+          )}
+          <DataTable
+            rowData={dbsSignatures}
+            columnDefs={columnDefs}
+            titleText="Double base substitution signatures"
+            isPaginated
+          />
+          {images['mutSignature.barplot.dbs'] && (
+            <div className="mutation-signature__images">
+              <img
+                src={`data:image/${images['mutSignature.barplot.dbs'].format};base64,${images['mutSignature.barplot.dbs'].data}`}
+                alt="Double base substitution barplot"
+                className="mutation-signature__image"
+              />
+            </div>
+          )}
+          <DataTable
+            rowData={idSignatures}
+            columnDefs={columnDefs}
+            titleText="Indel Signatures"
+            isPaginated
+          />
+          {images['mutSignature.barplot.indels'] && (
+            <div className="mutation-signature__images">
+              <img
+                src={`data:image/${images['mutSignature.barplot.indels'].format};base64,${images['mutSignature.barplot.indels'].data}`}
+                alt="Indel barplot"
+                className="mutation-signature__image"
+              />
+            </div>
+          )}
         </>
       ) : (
         <LinearProgress />
