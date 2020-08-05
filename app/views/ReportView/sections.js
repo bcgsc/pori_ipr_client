@@ -59,6 +59,7 @@ const genomic = [
       { name: 'Microbial', uri: 'microbial' },
       { name: 'Spearman', uri: 'spearman' },
       { name: 'Disease Specific', uri: 'disease-specific' },
+      { name: 'Mutation Signatures', uri: 'mutation-signatures' },
     ],
   },
   {

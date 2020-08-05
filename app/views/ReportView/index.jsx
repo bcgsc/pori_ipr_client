@@ -25,6 +25,7 @@ const Slides = lazy(() => import('./components/Slides'));
 const Discussion = lazy(() => import('./components/Discussion'));
 const Microbial = lazy(() => import('./components/Microbial'));
 const Spearman = lazy(() => import('./components/Spearman'));
+const MutationSignatures = lazy(() => import('./components/MutationSignatures'));
 const DiseaseSpecific = lazy(() => import('./components/DiseaseSpecific'));
 const SmallMutations = lazy(() => import('./components/SmallMutations'));
 const CopyNumber = lazy(() => import('./components/CopyNumber'));
@@ -123,6 +124,12 @@ const ReportView = () => {
                 <Spearman {...routeProps} print={false} report={report} reportEdit />
               )}
               path={`${path}/spearman`}
+            />
+            <Route
+              render={routeProps => (
+                <MutationSignatures {...routeProps} print={false} report={report} reportEdit />
+              )}
+              path={`${path}/mutation-signatures`}
             />
             <Route
               render={routeProps => (
