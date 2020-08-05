@@ -10,8 +10,6 @@ import columnDefs from './columnDefs';
 import './index.scss';
 
 const imageKeys = [
-  'mutSignature.corPcors.dbs',
-  'mutSignature.corPcors.indels',
   'mutSignature.barplot.dbs',
   'mutSignature.barplot.indels',
   'mutSignature.barplot.sbs',
