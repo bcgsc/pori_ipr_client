@@ -110,7 +110,7 @@ const probe = [
     children: [],
   },
   {
-    name: 'Detailed Genomic Analysis',
+    name: 'Knowledgebase Matches',
     uri: 'kb-matches',
     meta: false,
     showChildren: false,
