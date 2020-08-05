@@ -4,6 +4,7 @@ import {
   Chip, TextField, InputAdornment, IconButton,
 } from '@material-ui/core';
 import DoneIcon from '@material-ui/icons/Done';
+import AddIcon from '@material-ui/icons/AddCircle';
 import CloseIcon from '@material-ui/icons/Close';
 import AlertDialog from '@/components/AlertDialog';
 
@@ -67,7 +68,8 @@ const VariantChips = (props) => {
             <Chip
               label="Add new entry"
               className="variant variant__add"
-              onClick={() => setShowAddInput(true)}
+              onDelete={() => setShowAddInput(true)}
+              deleteIcon={<AddIcon />}
             />
           ) : (
             <TextField
