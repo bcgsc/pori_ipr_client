@@ -62,7 +62,7 @@ const MutationSignatures = (props) => {
               <img
                 src={`data:image/${images['mutSignature.barplot.sbs'].format};base64,${images['mutSignature.barplot.sbs'].data}`}
                 alt="Single base substitution barplot"
-                className="mutation-signature__image"
+                className="mutation-signature__image mutation-signature__image--small"
               />
             </div>
           )}
