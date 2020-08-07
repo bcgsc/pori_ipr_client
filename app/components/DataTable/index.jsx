@@ -268,6 +268,7 @@ function DataTable(props) {
     resizable: true,
     filter: !showReorder,
     editable: false,
+    valueFormatter: params => (params.value === null ? '' : params.value),
   };
     
   const renderColumnPicker = () => {
