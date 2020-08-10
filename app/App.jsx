@@ -13,7 +13,7 @@ import React from 'react';
 import { JssProvider } from 'react-jss';
 import { BrowserRouter } from 'react-router-dom';
 
-import AngularjsRoot from './root.module';
+import MainView from './views/MainView';
 import * as cssTheme from './styles/_theme.scss';
 
 const theme = createMuiTheme({
@@ -75,9 +75,8 @@ function App() {
           <SnackbarProvider anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
             <BrowserRouter>
               <ScopedCssBaseline>
-                {/* TODO DEVSU-1065 this is where the top level react routing will go */}
+                <MainView />
               </ScopedCssBaseline>
-              <AngularjsRoot />
             </BrowserRouter>
           </SnackbarProvider>
         </MuiThemeProvider>

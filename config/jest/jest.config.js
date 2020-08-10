@@ -25,11 +25,8 @@ module.exports = {
     '^(?!.*\\.(js|jsx|css|json)$)': '<rootDir>/config/jest/fileTransform.js',
   },
   transformIgnorePatterns: [
-    '<rootDir>/node_modules/(?!@material-ui|@testing-library).+(js|jsx)$',
   ],
-  moduleNameMapper: {
     '@/(.*)$': '<rootDir>/app/$1',
-  },
   moduleFileExtensions: [
     'web.js',
     'js',

@@ -1,0 +1,38 @@
+@import '../../../../styles/theme';
+
+.germline_report {
+
+  h2 {
+    font-size: 1.1em;
+    font-weight: 200;
+    margin: 15px 0 5px 0;
+  }
+
+  md-dialog{
+    min-width: 300px;
+  }
+
+  tr.lowScore {
+    td {
+      background-color: $palette__error--light;
+    }
+  }
+
+  tr.strike {
+    td {
+      text-decoration: line-through;
+    }
+  }
+}
+
+.table--scrollx {
+  overflow-x: scroll;
+}
+
+.header--center {
+  text-align: center;
+}
+
+.content__container {
+  margin: 10% 0;
+}

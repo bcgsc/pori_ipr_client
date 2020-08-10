@@ -1,6 +1,4 @@
 import angular from 'angular';
-import uiRouter from '@uirouter/angularjs';
-import { angular2react } from 'angular2react';
 import 'angular-aria/angular-aria.min';
 import 'angular-animate/angular-animate.min';
 import 'angular-sanitize/angular-sanitize.min';
@@ -8,163 +6,98 @@ import 'angular-material/angular-material.min';
 import 'ngstorage';
 import 'angular-material/angular-material.min.css';
 import 'angular-sortable-view';
+import 'angular-file-upload';
+import 'ng-quill';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { CsvExportModule } from '@ag-grid-community/csv-export';
-import ComponentsModule from './components/components.module';
-import ViewsModule from './views/views.module';
-import RootComponent from './root.component';
-import UserService from './services/management/user.service';
-import PogService from './services/reports/pog.service';
-import ProjectService from './services/management/project.service';
-import AclService from './services/management/acl.service';
-import ReportService from './services/reports/report.service';
-import KeycloakService from './services/management/keycloak.service';
-import TumourAnalysisService from './services/reports/summary/tumour-analysis.service';
-import PatientInformationService from './services/reports/summary/patient-information.service';
-import GenomicAlterationsService from './services/reports/summary/genomic-alterations.service';
-import MutationSummaryService from './services/reports/summary/mutation-summary.service';
-import ProbeTargetService from './services/reports/summary/probe-target.service';
-import MutationSignatureService from './services/reports/summary/mutation-signature.service';
-import MicrobialService from './services/reports/summary/microbial.service';
-import PathwayAnalysisService from './services/reports/pathway-analysis/pathway-analysis.service';
-import AnalystCommentsService from './services/reports/analyst-comments/analyst-comments.service';
-import AlterationService from './services/reports/alteration.service';
-import TargetedGenesService from './services/reports/probe/targeted-genes.service';
-import ProbeSignatureService from './services/reports/probe/signature.service';
-import ProbeTestInformationService from './services/reports/probe/test-information.service';
-import SlidesService from './services/reports/presentation/slides.service';
-import DiscussionService from './services/reports/presentation/discussion.service';
-import GroupService from './services/management/group.service';
-import KnowledgebaseService from './services/reports/knowledgebase.service';
-import TherapeuticService from './services/reports/therapeutic/therapeutic-options.service';
-import GermlineService from './services/reports/germline.service';
-import ImageService from './services/reports/image.service';
-import SmallMutationsService from './services/reports/somatic/small-mutations.service';
-import GeneViewerService from './services/reports/somatic/gene-viewer.service';
-import CopyNumberAnalysesService from './services/reports/copy-number-analyses/copy-number-analyses.service';
-import StructuralVariantService from './services/reports/structural-variants/structural-variants.service';
-import MavisService from './services/reports/structural-variants/mavis.service';
-import DrugTargetService from './services/reports/expression/drug-target.service';
-import OutlierService from './services/reports/expression/outlier.service';
-import AppendicesService from './services/reports/appendices/appendices.service';
-import GenomicEventsService from './services/reports/summary/genomic-events.service';
-import GeneService from './services/reports/probe/gene.service';
-import IndefiniteArticleFilter from './filters/indefinite-article.filter';
-import TitleCaseFilter from './filters/titlecase.filter';
+import { react2angular } from 'react2angular';
+
+import ReactBootstrap from './index';
+import lazyInjector from './lazyInjector';
+import 'ngimport';
+
+import { NavBarComponent } from '@/components/NavBar';
+import { SidebarComponent } from '@/components/Sidebar';
+import { GenomicSummaryComponent } from '@/views/ReportView/components/GenomicSummary';
+import { AnalystCommentsComponent } from '@/views/ReportView/components/AnalystComments';
+import { PathwayAnalysisComponent } from '@/views/ReportView/components/PathwayAnalysis';
+import { SlidesComponent } from '@/views/ReportView/components/Slides';
+import { DiscussionComponent } from '@/views/ReportView/components/Discussion';
+import { MicrobialComponent } from '@/views/ReportView/components/Microbial';
+import { SpearmanComponent } from '@/views/ReportView/components/Spearman';
+import { DiseaseSpecificComponent } from '@/views/ReportView/components/DiseaseSpecific';
+import { SmallMutationsComponent } from '@/views/ReportView/components/SmallMutations';
+import { CopyNumberComponent } from '@/views/ReportView/components/CopyNumber';
+import { StructuralVariantsComponent } from '@/views/ReportView/components/StructuralVariants';
+import { AppendicesComponent } from '@/views/ReportView/components/Appendices';
+import { SettingsComponent } from '@/views/ReportView/components/Settings';
+import { ProbeSummaryComponent } from '@/views/ReportView/components/ProbeSummary';
+import { BoardComponent } from '@/views/GermlineView/components/Board';
+import { ReportComponent } from '@/views/GermlineView/components/Report';
+import { UsersComponent } from '@/views/AdminView/components/Users';
+import { GroupsComponent } from '@/views/AdminView/components/Groups';
+import { ProjectsComponent } from '@/views/AdminView/components/Projects';
+
+import MutationSignatureComponent from '@/components/MutationSignature';
+import DiscussionEntryComponent from '@/views/ReportView/components/Discussion/components/DiscussionEntry';
+import RoleCardComponent from '@/components/RoleCard';
+import PaginateComponent from '@/components/Paginate';
+import UsersEditComponent from '@/components/UsersEdit';
+import GroupsEditComponent from '@/components/GroupsEdit';
+import ProjectsEditComponent from '@/components/ProjectsEdit';
+import ReactTable from '@/components/DataTable';
+import PageBreak from '@/components/PageBreak';
+
 import '@ag-grid-community/core/dist/styles/ag-grid.min.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-material.min.css';
-import './root.scss';
 import './styles/ag-grid.scss';
 import theme from './styles/_theme.scss';
 
-const AngularjsUiView = { template: '<ui-view></ui-view>' };
-let $injector;
-
 angular.module('root', [
-  uiRouter,
-  ComponentsModule,
-  ViewsModule,
   'ngStorage',
   'ngMaterial',
   'ngSanitize',
+  'angularFileUpload',
+  'bcherny/ngimport',
+  'ngQuill',
 ]);
 
 const rootModule = angular.module('root')
-  .component('root', RootComponent)
-  .component('uiview', AngularjsUiView)
-  .service('UserService', UserService)
-  .service('PogService', PogService)
-  .service('ProjectService', ProjectService)
-  .service('AclService', AclService)
-  .service('ReportService', ReportService)
-  .service('KeycloakService', KeycloakService)
-  .service('TumourAnalysisService', TumourAnalysisService)
-  .service('PatientInformationService', PatientInformationService)
-  .service('GenomicAlterationsService', GenomicAlterationsService)
-  .service('MutationSummaryService', MutationSummaryService)
-  .service('ProbeTargetService', ProbeTargetService)
-  .service('MutationSignatureService', MutationSignatureService)
-  .service('MicrobialService', MicrobialService)
-  .service('PathwayAnalysisService', PathwayAnalysisService)
-  .service('AnalystCommentsService', AnalystCommentsService)
-  .service('SlidesService', SlidesService)
-  .service('DiscussionService', DiscussionService)
-  .service('GroupService', GroupService)
-  .service('KnowledgebaseService', KnowledgebaseService)
-  .service('TherapeuticService', TherapeuticService)
-  .service('PathwayAnalysisService', PathwayAnalysisService)
-  .service('GermlineService', GermlineService)
-  .service('AlterationService', AlterationService)
-  .service('TargetedGenesService', TargetedGenesService)
-  .service('ProbeSignatureService', ProbeSignatureService)
-  .service('ProbeTestInformationService', ProbeTestInformationService)
-  .service('ImageService', ImageService)
-  .service('SmallMutationsService', SmallMutationsService)
-  .service('GeneViewerService', GeneViewerService)
-  .service('CopyNumberAnalysesService', CopyNumberAnalysesService)
-  .service('StructuralVariantsService', StructuralVariantService)
-  .service('MavisService', MavisService)
-  .service('DrugTargetService', DrugTargetService)
-  .service('OutlierService', OutlierService)
-  .service('AppendicesService', AppendicesService)
-  .service('GenomicEventsService', GenomicEventsService)
-  .service('GeneService', GeneService)
-  .filter('indefiniteArticle', IndefiniteArticleFilter)
-  .filter('titlecase', TitleCaseFilter)
-  .config(($stateProvider, $urlServiceProvider, $locationProvider) => {
-    'ngInject';
-
+  .component('navBar', NavBarComponent)
+  .component('sidebar', SidebarComponent)
+  .component('genomicSummary', GenomicSummaryComponent)
+  .component('analystComments', AnalystCommentsComponent)
+  .component('pathwayAnalysis', PathwayAnalysisComponent)
+  .component('mutationSignature', MutationSignatureComponent)
+  .component('slides', SlidesComponent)
+  .component('discussion', DiscussionComponent)
+  .component('discussionEntry', DiscussionEntryComponent)
+  .component('microbial', MicrobialComponent)
+  .component('spearman', SpearmanComponent)
+  .component('diseaseSpecific', DiseaseSpecificComponent)
+  .component('smallMutations', SmallMutationsComponent)
+  .component('copyNumber', CopyNumberComponent)
+  .component('structuralVariants', StructuralVariantsComponent)
+  .component('appendices', AppendicesComponent)
+  .component('settings', SettingsComponent)
+  .component('probeSummary', ProbeSummaryComponent)
+  .component('board', BoardComponent)
+  .component('report', ReportComponent)
+  .component('users', UsersComponent)
+  .component('usersEdit', UsersEditComponent)
+  .component('groups', GroupsComponent)
+  .component('groupsEdit', GroupsEditComponent)
+  .component('projects', ProjectsComponent)
+  .component('projectsEdit', ProjectsEditComponent)
+  .component('roleCard', RoleCardComponent)
+  .component('paginate', PaginateComponent)
+  .component('reactTable', react2angular(ReactTable))
+  .component('pageBreak', react2angular(PageBreak))
+  .config(['$locationProvider', ($locationProvider) => {
     $locationProvider.html5Mode(true);
-    // Don't require a perfect URL match (trailing slashes, etc)
-    $urlServiceProvider.config.strictMode(false);
-    // If no path could be found, send user to 404 error
-    $urlServiceProvider.rules.otherwise({ state: 'root.reportlisting.reports' });
-
-    $stateProvider
-      .state('root', {
-        component: 'root',
-        resolve: {
-          /* eslint-disable no-shadow */
-          user: ['UserService', '$transition$', '$state', async (UserService, $transition$, $state) => {
-            try {
-              const user = await UserService.me();
-              return user;
-            } catch (err) {
-              $transition$.abort();
-              $state.go('public.login');
-            }
-          }],
-          /* eslint-disable no-shadow */
-          isAdmin: ['UserService', async (UserService) => {
-            try {
-              return UserService.isAdmin();
-            } catch (err) {
-              return false;
-            }
-          }],
-          /* eslint-disable no-shadow */
-          projects: ['ProjectService', async (ProjectService) => {
-            try {
-              return ProjectService.all();
-            } catch (err) {
-              return [{}];
-            }
-          }],
-          /* eslint-disable no-shadow */
-          isExternalMode: ['AclService', async (AclService) => {
-            try {
-              return AclService.isExternalMode();
-            } catch (err) {
-              return true;
-            }
-          }],
-        },
-      });
-  })
-  .config(($mdThemingProvider) => {
-    'ngInject';
-
+  }])
+  .config(['$mdThemingProvider', ($mdThemingProvider) => {
     const printGrey = $mdThemingProvider.extendPalette('grey', {
       50: '#FFFFFF',
     });
@@ -188,58 +121,11 @@ const rootModule = angular.module('root')
       .primaryPalette('gscBlue')
       .backgroundPalette('printGrey')
       .accentPalette('gscGreen');
-  })
-  .config(($httpProvider) => {
-    'ngInject';
-
-    $httpProvider.interceptors.push(($injector) => {
-      'ngInject';
-
-      const accessRegex = /access/gi;
-
-      return {
-        request: async (config) => {
-          const KeycloakService = $injector.get('KeycloakService');
-          const token = await KeycloakService.getToken();
-          if (token) {
-            config.headers.Authorization = token;
-          }
-          return config;
-        },
-        responseError: (response) => {
-          switch (response.status) {
-            case 403:
-              if (response.data.message.match(accessRegex)) {
-                const $state = $injector.get('$state');
-                $state.go('public.access');
-              }
-              break;
-            default:
-              break;
-          }
-        },
-      };
-    });
-  })
-  .run(($transitions, $rootScope, $sessionStorage) => {
-    'ngInject';
-
-    $transitions.onStart({ }, async (transition) => {
-      $rootScope.showLoader = true;
-
-      transition.promise.finally(() => {
-        $rootScope.showLoader = false;
-      });
-    });
-
-    $transitions.onError({
-      to: state => state.name !== 'public.login',
-    }, async (transition) => {
-      $sessionStorage.returnToState = transition.to().name;
-      $sessionStorage.returnParams = transition.params();
-    });
-  })
-  .run(['$injector', (_$injector) => { $injector = _$injector; }])
+  }])
+  .run(['$injector', ($injector) => {
+    lazyInjector.$injector = $injector;
+    ReactBootstrap();
+  }])
   .name;
 
 ModuleRegistry.registerModules([
@@ -247,7 +133,4 @@ ModuleRegistry.registerModules([
   CsvExportModule,
 ]);
 
-angular.bootstrap(document, [rootModule]);
-
-const AngularjsRoot = angular2react('uiview', AngularjsUiView, $injector);
-export default AngularjsRoot;
+angular.bootstrap(document.createElement('div'), [rootModule], { strictDi: true });

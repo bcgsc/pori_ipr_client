@@ -1,0 +1,58 @@
+section
+  md-progress-linear(ng-if="$ctrl.loading")
+  md-subheader.md-primary.md-no-sticky Structural Variation
+
+  div(layout="column", flex)
+
+    div(layout="column", flex).bg-white
+
+      h2.title Summary of Structural Events
+
+      div(layout="row").mutation-summary-images
+        div(layout="column", flex=15).comparator-list
+
+
+        div(layout="column", flex)
+
+          div(layout="row", layout-align="space around")
+            div(layout="column", flex=45).smEvents.sv
+              div(layout="row")
+                div(flex=60) Structural Variants (Expressed Fusions)
+                div(flex=40, layout="row", layout-align="center center").count
+                  div.sv {{$ctrl.mutationSummary.sv || 'na'}} ({{$ctrl.mutationSummary.sv_expressed || 'na'}})
+
+            div(layout="column", flex=45).smEvents.indel
+
+          div(layout="row", layout-align="space around").summary-plots
+            div(layout="column", flex=45)
+              div(ng-repeat="comp in $ctrl.mutationSummaryImages.comparators track by $index")
+                img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{$ctrl.getMutationSummaryImage('densityPlot', 'sv').data}}")
+                img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{$ctrl.mutationSummaryImages.legend.sv.data}}")
+
+            div(layout="column", flex=45)
+              div(ng-repeat="comp in $ctrl.mutationSummaryImages.comparators track by $index")
+                img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{$ctrl.getMutationSummaryImage('barplot', 'sv').data}}")
+                img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{$ctrl.mutationSummaryImages.legend.sv.data}}")
+
+
+      md-tabs(md-dynamic-height=true, md-center-tabs=true).margin-bottom-20
+        md-tab(label="Genome")
+          div(layout="column", layout-align="center center")
+            img(data-ng-src="data:image/svg;base64,{{$ctrl.images['circosSv.genome'].data}}")
+        md-tab(label="Transcriptome")
+          div(layout="column", layout-align="center center")
+            img(data-ng-src="data:image/svg;base64,{{$ctrl.images['circosSv.transcriptome'].data}}")
+
+    div(layout="column", flex).bg-white
+
+      h2.title Structural Variation: Genomic Details
+
+      div(ng-repeat="(title, svs) in $ctrl.StrucVars track by $index")
+        react-table(
+          column-defs="$ctrl.columnDefs",
+          row-data="svs",
+          title-text="$ctrl.titleMap[title]",
+          report-ident="$ctrl.report.ident",
+          can-toggle-columns="true",
+          theme="$ctrl.theme"
+        )

@@ -15,24 +15,28 @@ function ReportToolbar(props) {
     patientId,
     type,
     state,
-    isVisible,
-    toggleIsVisible,
+    isSidebarVisible,
+    onSidebarToggle,
   } = props;
 
   return (
     <span className="report__header">
-      <Typography display="inline" variant="h6" className="report__header--text-align-left">
+      <Typography display="inline" variant="h5" className="report__header--text-align-left">
         {diagnosis}
       </Typography>
-      <Typography display="inline" variant="h6" className="report__header--text-align-center">
+      <Typography display="inline" variant="h5" className="report__header--text-align-center">
         {patientId}
-        {` ${type} Report`}
+        {` ${type.slice(0, 1).toUpperCase().concat(type.slice(1))} Report`}
       </Typography>
-      <Typography display="inline" variant="h6" className="report__header--text-align-right">
+      <Typography display="inline" variant="h5" className="report__header--text-align-right">
         {state}
       </Typography>
-      <IconButton onClick={toggleIsVisible} title={`${isVisible ? 'Close' : 'Open'} Sidebar`}>
-        {isVisible
+      <IconButton
+        onClick={() => onSidebarToggle(!isSidebarVisible)}
+        title={`${isSidebarVisible ? 'Close' : 'Open'} Sidebar`}
+        className="report__header--max-width"
+      >
+        {isSidebarVisible
           ? (
             <KeyboardArrowRightIcon />
           )
@@ -49,8 +53,8 @@ ReportToolbar.propTypes = {
   patientId: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
   state: PropTypes.string.isRequired,
-  isVisible: PropTypes.bool.isRequired,
-  toggleIsVisible: PropTypes.func.isRequired,
+  isSidebarVisible: PropTypes.bool.isRequired,
+  onSidebarToggle: PropTypes.func.isRequired,
 };
 
 ReportToolbar.defaultProps = {

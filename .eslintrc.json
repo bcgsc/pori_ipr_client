@@ -92,6 +92,8 @@
       "ForInStatement",
       "LabeledStatement",
       "WithStatement"
-    ]
+    ],
+    "import/no-unresolved": "off",
+    "class-methods-use-this": "off"
   }
 }
