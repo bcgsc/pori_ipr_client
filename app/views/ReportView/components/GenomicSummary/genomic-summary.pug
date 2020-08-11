@@ -156,7 +156,7 @@ div
               span(ng-if="$ctrl.tumourAnalysis.mutationSignature.length > 0")
                 span(ng-repeat="sig in $ctrl.tumourAnalysis.mutationSignature track by $index").repeat-comma
                   span.listitem
-                    span {{sig.signature}}
+                    span {{sig.signature}}{{$index !== $ctrl.tumourAnalysis.mutationSignature.length-1 ? ',' : ''}}
                     md-tooltip Pearson: {{sig.pearson}} | NNLS: {{sig.nnls}} | Cancer Types: {{sig.cancerTypes}}
                 md-icon(ng-click="$ctrl.updateMutationSignature($event)", ng-if="$ctrl.reportEdit && !$ctrl.print") edit
 
