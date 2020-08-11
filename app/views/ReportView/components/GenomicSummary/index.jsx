@@ -4,6 +4,7 @@ import {
   Typography,
   Snackbar,
   IconButton,
+  Grid,
 } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit'
 import sortBy from 'lodash.sortby';
@@ -307,19 +308,25 @@ const GenomicSummary = (props) => {
                 )}
               </Typography>
             </div>
-            <div className="genomic-summary__patient-information-content">
+            <Grid
+              alignItems="flex-end"
+              container
+              spacing={3}
+              className="genomic-summary__patient-information-content"
+            >
               {patientInformationData.map(({ label, value }) => (
-                <ReadOnlyTextField
-                  key={label}
-                  label={label}
-                  margin="normal"
-                  fullWidth
-                  multiline
-                >
-                  {value}
-                </ReadOnlyTextField>
+                <Grid item spacing={3}>
+                  <ReadOnlyTextField
+                    key={label}
+                    label={label}
+                    margin="normal"
+                    fullWidth
+                  >
+                    {value}
+                  </ReadOnlyTextField>
+                </Grid>
               ))}
-            </div>
+            </Grid>
           </div>
 
           <div className="genomic-summary__tumour-summary">
@@ -373,19 +380,26 @@ const GenomicSummary = (props) => {
                 Analysis Summary
               </Typography>
             </div>
-            <div className="genomic-summary__analysis-summary-content">
+            <Grid
+              alignItems="flex-end"
+              container
+              spacing={3}
+              className="genomic-summary__analysis-summary-content"
+            >
               {analysisSummaryData.map(({ label, value }) => (
-                <ReadOnlyTextField
-                  key={label}
-                  label={label}
-                  margin="normal"
-                  fullWidth
-                  multiline
-                >
-                  {value}
-                </ReadOnlyTextField>
+                <Grid item spacing={3}>
+                  <ReadOnlyTextField
+                    key={label}
+                    label={label}
+                    margin="normal"
+                    fullWidth
+                    multiline
+                  >
+                    {value}
+                  </ReadOnlyTextField>
+                </Grid>
               ))}
-            </div>
+            </Grid>
           </div>
         </>
       )}

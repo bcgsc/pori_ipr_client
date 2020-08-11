@@ -1,24 +1,9 @@
 @import '../../styles/theme';
 
+
 .text-field {
-  padding: 0 12px;
-  color: $palette__text--primary;
-
-  & label.Mui-disabled {
-    color: $palette__text--primary;
-    padding: 0 16px;
-  }
-
-  & textarea.Mui-disabled {
-    color: $palette__text--primary;
-  }
-
-  & input.Mui-disabled {
-    color: $palette__text--primary;
-  }
-
-  & .MuiInput-underline.Mui-disabled::before {
-    bottom: -4px;
-    border-bottom-style: solid;
-  }
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
+  border-bottom: 1px solid $palette__common--black;
 }

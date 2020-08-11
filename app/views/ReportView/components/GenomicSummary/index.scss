@@ -6,12 +6,14 @@
     margin: 0 0 32px 0;
 
     &-content {
-      display: flex;
-      justify-content: start;
-      flex-wrap: wrap;
+      padding: 0 16px;
 
       & > * {
-        width: 21%;
+        width: 300px;
+
+        @media print {
+          width: 2in;
+        }
       }
     }
   }
@@ -24,12 +26,14 @@
     }
 
     &-content {
-      display: flex;
-      justify-content: start;
-      flex-wrap: wrap;
+      padding: 0 16px;
 
       & > * {
-        width: 21%;
+        width: 300px;
+
+        @media print {
+          width: 2in;
+        }
       }
     }
   }

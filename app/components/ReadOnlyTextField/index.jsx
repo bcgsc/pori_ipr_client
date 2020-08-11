@@ -1,10 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  TextField,
+  TextField, Typography,
 } from '@material-ui/core';
 
 import './index.scss';
+
+const NON_BREAKING_SPACE = '\u00A0';
 
 const ReadOnlyTextField = (props) => {
   const {
@@ -14,15 +16,14 @@ const ReadOnlyTextField = (props) => {
   } = props;
 
   return (
-    <TextField
-      className="text-field-fix"
-      title={children}
-      label={label}
-      value={children === null || children === '' ? ' ' : children}
-      classes={{ root: 'text-field' }}
-      disabled
-      {...rest}
-    />
+    <span className="text-field">
+      <Typography variant="caption">
+        {label}
+      </Typography>
+      <Typography>
+        {children === null || children === '' ? NON_BREAKING_SPACE : children}
+      </Typography>
+    </span>
   );
 };
 
