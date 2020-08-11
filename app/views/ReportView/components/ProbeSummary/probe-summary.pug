@@ -139,24 +139,23 @@ section.test-info
             span(flex=50).test-info__key Characterized Events
             span(flex=50).test-info__value 8588
 
-section
-  md-subheader.md-primary Genomic Events with Potential Therapeutic Association
+section.sample-info
 
-  div(layout="column", flex)
-    div(layout="row")
-      div(layout="column", flex).dataBox
-        div.box
-          div(layout="row", flex).heading
-            div(flex, style="padding: 10px 5px; margin: 7px 0").text-left Genomic Events
-            div(flex, style="padding: 10px 5px; margin: 7px 0").text-left Comments
-          div(layout="row", flex, ng-if="$ctrl.probeResults.length === 0").row
-            div(flex) No clinically relevant genomic alterations were found from the analysis.
-          div(layout="row", flex, ng-repeat="gene in $ctrl.probeResults", ng-click="$ctrl.modifyEvent($event, gene)", ng-if="$ctrl.reportEdit", style="cursor: pointer").row
-            div(flex) {{gene.gene.name}} ({{gene.variant}})
-            div(flex) {{gene.comments}}
-          div(layout="row", flex, ng-repeat="gene in $ctrl.probeResults", ng-if="!$ctrl.reportEdit").row
-            div(flex) {{gene.gene.name}} ({{gene.variant}})
-            div(flex) {{gene.comments}}
+  div(layout="row")
+    div(layout="column", flex).dataBox
+      h2.title.print-title Genomic Events with Potential Therapeutic Association
+      div(layout="row", flex, ng-if="$ctrl.probeResults.length === 0").sample-info__none
+        div(flex) No clinically relevant genomic alterations were found from the analysis.
+      div(ng-if="$ctrl.probeResults.length").box
+        div(layout="row", layout-align="space-around center", flex).heading.sample-info__table-header
+          div(flex).text-left Genomic Events
+          div(flex).text-left Comments
+        div(layout="row", flex, ng-repeat="gene in $ctrl.probeResults", ng-click="$ctrl.modifyEvent($event, gene)", ng-if="$ctrl.reportEdit", style="cursor: pointer").row
+          div(flex) {{gene.gene.name}} ({{gene.variant}})
+          div(flex) {{gene.comments}}
+        div(layout="row", flex, ng-repeat="gene in $ctrl.probeResults", ng-if="!$ctrl.reportEdit").row.sample-info__table-row
+          div(flex) {{gene.gene.name}} ({{gene.variant}})
+          div(flex) {{gene.comments}}
 
 section(ng-if="!$ctrl.print")
   md-subheader.md-primary Review
@@ -200,5 +199,9 @@ section(ng-if="!$ctrl.print")
 
 section(ng-if="$ctrl.print").review
   div(layout="row", layout-align="space-around center").review__box
-    span Manual Review: {{$ctrl.signatures.readySignature.firstName || 'Not yet reviewed'}}  {{$ctrl.signatures.readySignature.lastName}}
-    span Date: {{$ctrl.signatures.readySignedAt | date: 'yyyy-MM-dd' || 'N/A'}}
+    span(layout="column").review__entry
+      span Manual Review: {{$ctrl.signatures.readySignature.firstName || 'Not yet reviewed'}}  {{$ctrl.signatures.readySignature.lastName}}
+      span Date: {{$ctrl.signatures.readySignedAt | date: 'yyyy-MM-dd' || 'N/A'}}
+    span(ng-if="$ctrl.signatures.reviewerSignature.ident !== null", layout="column").review__entry
+      span Reviewer: {{$ctrl.signatures.reviewerSignature.firstName || 'Not yet reviewed'}}  {{$ctrl.signatures.reviewerSignature.lastName}}
+      span Date: {{$ctrl.signatures.reviewerSignedAt | date: 'yyyy-MM-dd' || 'N/A'}}

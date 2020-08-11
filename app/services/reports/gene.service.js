@@ -6,8 +6,9 @@ class GeneService {
   }
 
   async update(report, geneName, gene) {
+    const geneNameEncoded = encodeURIComponent(geneName);
     return $http.put(
-      `${this.api}/${report}/genes/${geneName}`,
+      `${this.api}/${report}/genes/${geneNameEncoded}`,
       gene,
     );
   }
