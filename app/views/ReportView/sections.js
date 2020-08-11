@@ -59,6 +59,7 @@ const genomic = [
       { name: 'Microbial', uri: 'microbial' },
       { name: 'Spearman', uri: 'spearman' },
       { name: 'Disease Specific', uri: 'disease-specific' },
+      { name: 'Mutation Signatures', uri: 'mutation-signatures' },
     ],
   },
   {
@@ -109,7 +110,7 @@ const probe = [
     children: [],
   },
   {
-    name: 'Detailed Genomic Analysis',
+    name: 'Knowledgebase Matches',
     uri: 'kb-matches',
     meta: false,
     showChildren: false,

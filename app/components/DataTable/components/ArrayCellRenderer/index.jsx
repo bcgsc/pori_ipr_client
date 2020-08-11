@@ -48,7 +48,7 @@ const RenderArrayCell = (field, isLink) => {
 
       return (
         <div>
-          {`${firstVal}`}
+          {`${firstVal === null ? '' : firstVal}`}
           {cellData.length > 1 && (
             <>
               …
@@ -59,7 +59,7 @@ const RenderArrayCell = (field, isLink) => {
     }
     return (
       <div>
-        {`${cellParams.data[field]}`}
+        {`${cellParams.data[field] === null ? '' : cellParams.data[field]}`}
       </div>
     );
   };

@@ -1,0 +1,16 @@
+.mutation-signature {
+  &__images {
+    width: 100%;
+    padding: 0 4%;
+    text-align: center;
+  }
+
+  &__image {
+    width: 100%;
+    max-width: 1000px;
+
+    &--small {
+      max-width: 480px;
+    }
+  }
+}

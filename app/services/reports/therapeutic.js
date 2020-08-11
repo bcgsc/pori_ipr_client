@@ -35,9 +35,8 @@ export const therapeuticDelete = async (reportIdent, entryIdent) => {
     options,
   );
 
-  if (response.ok) {
-    const { result } = await response.json();
-    return result;
+  if (response.ok) { // Returns 204 with no content
+    return true;
   }
   return errorHandler(response);
 };

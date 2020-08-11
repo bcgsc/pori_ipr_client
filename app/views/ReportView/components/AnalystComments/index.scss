@@ -10,7 +10,7 @@
   padding: 1.5mm 1mm;
   text-transform: uppercase;
 
-  > .md-subheader-inner {
+  >.md-subheader-inner {
     // Override angularjs material library
     padding: 0 !important;
   }
@@ -67,9 +67,9 @@
        padding: 4px 8px;
        max-width: 700px;
 
-       img {
-         max-width: 100%;
-       }
+      img {
+        max-width: 100%;
+      }
     }
   }
 
@@ -78,6 +78,7 @@
       margin: 8px 0 !important;
 
     }
+
     max-height: 60vh;
     overflow-y: auto;
   }

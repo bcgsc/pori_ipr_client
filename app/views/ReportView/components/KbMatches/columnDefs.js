@@ -97,7 +97,7 @@ const columnDefs = [{
   hide: true,
 },
 {
-  headerName: 'Evidence',
+  headerName: 'Evidence Level',
   colId: 'evidenceLevel',
   field: 'evidenceLevel',
   cellRendererFramework: ArrayCell('evidenceLevel', false),

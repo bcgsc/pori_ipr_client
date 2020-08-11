@@ -86,12 +86,13 @@ const Main = () => {
           <Suspense fallback={(<CircularProgress color="secondary" />)}>
             <Switch>
               <Route component={LoginView} path="/login" />
-              <Route component={TermsView} path="/terms" />
               <Route component={LinkOutView} path="/graphkb" />
               <Route path="/" exact>
                 <Redirect to={{ pathname: '/reports' }} />
               </Route>
+              <AuthenticatedRoute component={TermsView} path="/terms" />
               <AuthenticatedRoute admin={adminUser} component={ReportsView} path="/reports" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
+              <Redirect exact from="/report/:ident/(genomic|probe)/summary" to="/report/:ident/summary" />
               <AuthenticatedRoute component={ReportView} path="/report/:ident" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
               <AuthenticatedRoute component={PrintView} path="/print/:ident" isNavVisible={false} onToggleNav={setIsNavVisible} />
               <AuthenticatedRoute component={GermlineView} path="/germline" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
