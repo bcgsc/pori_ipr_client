@@ -13,7 +13,7 @@ import {
 const AlertDialog = (props) => {
   const {
     isOpen,
-    handleClose,
+    onClose,
     title,
     text,
     commentRequired,
@@ -24,7 +24,7 @@ const AlertDialog = (props) => {
   const [commentInput, setCommentInput] = useState('');
 
   return (
-    <Dialog open={isOpen} onClose={handleClose}>
+    <Dialog open={isOpen} onClose={onClose}>
       <DialogTitle>
         {title}
       </DialogTitle>
@@ -45,13 +45,13 @@ const AlertDialog = (props) => {
         )}
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => handleClose(false)}>
+        <Button onClick={() => onClose(false)}>
           {cancelText}
         </Button>
         {Boolean(confirmText) && (
           <Button
             disabled={commentRequired && !commentInput}
-            onClick={() => (commentRequired ? handleClose(true, commentInput) : handleClose(true))}
+            onClick={() => (commentRequired ? onClose(true, commentInput) : onClose(true))}
           >
             {confirmText}
           </Button>
@@ -63,7 +63,7 @@ const AlertDialog = (props) => {
 
 AlertDialog.propTypes = {
   isOpen: PropTypes.bool.isRequired,
-  handleClose: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
   title: PropTypes.string,
   text: PropTypes.string.isRequired,
   confirmText: PropTypes.string,

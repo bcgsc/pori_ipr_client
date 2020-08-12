@@ -102,7 +102,7 @@ const VariantChips = (props) => {
       )}
       <AlertDialog
         isOpen={Boolean(showDeleteAlert)}
-        handleClose={handleDeleteDialogClose}
+        onClose={handleDeleteDialogClose}
         title="Remove Alteration"
         text={`Are you sure you want to delete ${showDeleteAlert.geneVariant}?`}
         confirmText="Delete"
