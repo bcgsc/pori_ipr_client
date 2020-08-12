@@ -19,7 +19,6 @@ import 'ngimport';
 
 import { NavBarComponent } from '@/components/NavBar';
 import { SidebarComponent } from '@/components/Sidebar';
-import { GenomicSummaryComponent } from '@/views/ReportView/components/GenomicSummary';
 import { AnalystCommentsComponent } from '@/views/ReportView/components/AnalystComments';
 import { PathwayAnalysisComponent } from '@/views/ReportView/components/PathwayAnalysis';
 import { SlidesComponent } from '@/views/ReportView/components/Slides';
@@ -66,7 +65,6 @@ angular.module('root', [
 const rootModule = angular.module('root')
   .component('navBar', NavBarComponent)
   .component('sidebar', SidebarComponent)
-  .component('genomicSummary', GenomicSummaryComponent)
   .component('analystComments', AnalystCommentsComponent)
   .component('pathwayAnalysis', PathwayAnalysisComponent)
   .component('mutationSignature', MutationSignatureComponent)

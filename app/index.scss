@@ -36,3 +36,12 @@ html body {
 .clickable {
   cursor: pointer;
 }
+
+.text-field-fix {
+  margin: 20px 12px 10px;
+  height: 40px;
+
+  > * {
+    box-sizing: content-box;
+  }
+}

@@ -8,28 +8,30 @@
   margin: auto;
 
   &__logo {
-    max-width: 50%;
+    width: 100%;
   }
 
-  &__header-top {
-    display: flex;
-    flex-direction: row;
+  &__headers {
+    display: inline-flex;
+    flex: 1 1 100%;
     justify-content: space-between;
-    margin: 12px 0;
+    width: 100%;
+    padding: 1mm;
+    margin: 4mm;
   }
 
-  &__header-middle {
+  &__header-left {
+    width: 35%;
+  }
+
+  &__header-right {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    margin: 12px 0 4px;
-  }
-
-  &__header-bottom {
-    background-color: $print-title;
-    color: $palette__common--white;
-    border: 4px solid $palette__grey--A100;
-    margin: 8px 0 12px;
+    flex-direction: column;
+    margin: auto auto auto 10mm;
+    
+    & > * {
+      margin: 1mm;
+    }
   }
 }
 

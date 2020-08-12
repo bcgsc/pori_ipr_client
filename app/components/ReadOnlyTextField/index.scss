@@ -1,0 +1,9 @@
+@import '../../styles/theme';
+
+
+.text-field {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
+  border-bottom: 1px solid $palette__common--black;
+}

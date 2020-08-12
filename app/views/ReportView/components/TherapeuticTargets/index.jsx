@@ -8,7 +8,7 @@ import { therapeuticUpdateTable, therapeuticGet } from '@/services/reports/thera
 
 /**
  * @param {object} props props
- * @param {bool} props.reportEdit can user edit report?
+ * @param {bool} props.canEdit can user edit report?
  * @param {array} props.therapeuticTargets therapeutic and chemoresistance row data
  * @param {bool} props.print is this the print version?
  * @param {report} props.report report object
@@ -16,7 +16,7 @@ import { therapeuticUpdateTable, therapeuticGet } from '@/services/reports/thera
  */
 function TherapeuticView(props) {
   const {
-    reportEdit,
+    canEdit,
     print,
     report,
   } = props;
@@ -49,13 +49,13 @@ function TherapeuticView(props) {
             titleText="Potential Therapeutic Targets"
             columnDefs={columnDefs}
             rowData={therapeuticData}
-            canEdit={reportEdit && !print}
+            canEdit={canEdit && !print}
             EditDialog={EditDialog}
-            canAdd={reportEdit && !print}
+            canAdd={canEdit && !print}
             reportIdent={report.ident}
             tableType="therapeutic"
             isPaginated={false}
-            canReorder={reportEdit && !print}
+            canReorder={canEdit && !print}
             rowUpdateAPICall={therapeuticUpdateTable}
             canExport
             patientId={report.patientId}
@@ -66,13 +66,13 @@ function TherapeuticView(props) {
             titleText="Potential Chemoresistance"
             columnDefs={columnDefs}
             rowData={chemoresistanceData}
-            canEdit={reportEdit && !print}
+            canEdit={canEdit && !print}
             EditDialog={EditDialog}
-            canAdd={reportEdit && !print}
+            canAdd={canEdit && !print}
             reportIdent={report.ident}
             tableType="chemoresistance"
             isPaginated={false}
-            canReorder={reportEdit && !print}
+            canReorder={canEdit && !print}
             rowUpdateAPICall={therapeuticUpdateTable}
             canExport
             patientId={report.patientId}
@@ -87,13 +87,13 @@ function TherapeuticView(props) {
 }
 
 TherapeuticView.propTypes = {
-  reportEdit: PropTypes.bool,
+  canEdit: PropTypes.bool,
   print: PropTypes.bool,
   report: PropTypes.objectOf(PropTypes.any).isRequired,
 };
 
 TherapeuticView.defaultProps = {
-  reportEdit: false,
+  canEdit: false,
   print: false,
 };
 

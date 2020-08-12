@@ -81,9 +81,9 @@ const ReportView = () => {
               render={routeProps => (
                 <>
                   {isProbe ? (
-                    <ProbeSummary {...routeProps} print={false} report={report} reportEdit />
+                    <ProbeSummary {...routeProps} print={false} report={report} canEdit />
                   ) : (
-                    <GenomicSummary {...routeProps} print={false} report={report} reportEdit />
+                    <GenomicSummary {...routeProps} print={false} report={report} canEdit />
                   )}
                 </>
               )}
@@ -91,37 +91,37 @@ const ReportView = () => {
             />
             <Route
               render={routeProps => (
-                <AnalystComments {...routeProps} print={false} report={report} reportEdit />
+                <AnalystComments {...routeProps} print={false} report={report} canEdit />
               )}
               path={`${path}/analyst-comments`}
             />
             <Route
               render={routeProps => (
-                <TherapeuticTargets {...routeProps} print={false} report={report} reportEdit />
+                <TherapeuticTargets {...routeProps} print={false} report={report} canEdit />
               )}
               path={`${path}/therapeutic-targets`}
             />
             <Route
               render={routeProps => (
-                <KbMatches {...routeProps} print={false} report={report} reportEdit />
+                <KbMatches {...routeProps} print={false} report={report} canEdit />
               )}
               path={`${path}/kb-matches`}
             />
             <Route
               render={routeProps => (
-                <Discussion {...routeProps} print={false} report={report} reportEdit />
+                <Discussion {...routeProps} print={false} report={report} canEdit />
               )}
               path={`${path}/discussion`}
             />
             <Route
               render={routeProps => (
-                <Microbial {...routeProps} print={false} report={report} reportEdit />
+                <Microbial {...routeProps} print={false} report={report} canEdit />
               )}
               path={`${path}/microbial`}
             />
             <Route
               render={routeProps => (
-                <Spearman {...routeProps} print={false} report={report} reportEdit />
+                <Spearman {...routeProps} print={false} report={report} canEdit />
               )}
               path={`${path}/spearman`}
             />
@@ -139,37 +139,37 @@ const ReportView = () => {
             />
             <Route
               render={routeProps => (
-                <SmallMutations {...routeProps} print={false} report={report} reportEdit theme={theme} />
+                <SmallMutations {...routeProps} print={false} report={report} canEdit theme={theme} />
               )}
               path={`${path}/small-mutations`}
             />
             <Route
               render={routeProps => (
-                <CopyNumber {...routeProps} print={false} report={report} reportEdit theme={theme} />
+                <CopyNumber {...routeProps} print={false} report={report} canEdit theme={theme} />
               )}
               path={`${path}/copy-number`}
             />
             <Route
               render={routeProps => (
-                <StructuralVariants {...routeProps} print={false} report={report} reportEdit theme={theme} />
+                <StructuralVariants {...routeProps} print={false} report={report} canEdit theme={theme} />
               )}
               path={`${path}/structural-variants`}
             />
             <Route
               render={routeProps => (
-                <Expression {...routeProps} print={false} report={report} reportEdit />
+                <Expression {...routeProps} print={false} report={report} canEdit />
               )}
               path={`${path}/expression`}
             />
             <Route
               render={routeProps => (
-                <Appendices {...routeProps} print={false} report={report} reportEdit theme={theme} isProbe={isProbe} />
+                <Appendices {...routeProps} print={false} report={report} canEdit theme={theme} isProbe={isProbe} />
               )}
               path={`${path}/appendices`}
             />
             <Route
               render={routeProps => (
-                <Settings {...routeProps} print={false} report={report} reportEdit showBindings={!isProbe} />
+                <Settings {...routeProps} print={false} report={report} canEdit showBindings={!isProbe} />
               )}
               path={`${path}/settings`}
             />
@@ -183,7 +183,7 @@ const ReportView = () => {
                         {...routeProps}
                         print={false}
                         report={report}
-                        reportEdit
+                        canEdit
                         token={value.authorizationToken}
                       />
                     )}
@@ -195,7 +195,7 @@ const ReportView = () => {
                         {...routeProps}
                         print={false}
                         report={report}
-                        reportEdit
+                        canEdit
                         token={value.authorizationToken}
                       />
                     )}

@@ -1,0 +1,38 @@
+@import '../../styles/theme';
+
+.description-list {
+  &__group {
+    width: 43%;
+    display: inline-flex;
+    border-bottom: 1px solid $palette__text--secondary;
+
+    &:nth-child(1n) {
+      margin: 0 5% 8px 2%;
+    }
+
+    &:nth-child(2n) {
+      margin: 0 2% 8px 5%;
+    }
+
+    &:nth-last-child(1) {
+      border: none;
+    }
+
+    &:nth-last-child(2) {
+      border: none;
+    }
+  }
+
+  &__term {
+    display: inline-flex;
+    flex-basis: 0;
+    padding: 0 4px;
+    color: $palette__text--secondary;
+  }
+
+  &__value {
+    display: inline-flex;
+    flex-basis: 0;
+    padding: 0 4px;
+  }
+}

@@ -52,7 +52,7 @@ module.exports = {
             }],
           },
           {
-            test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
+            test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.svg$/],
             exclude: /node_modules/,
             loader: 'file-loader',
             options: {

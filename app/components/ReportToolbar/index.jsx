@@ -6,6 +6,7 @@ import {
 } from '@material-ui/core';
 import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
+import startCase from '@/utils/startCase';
 
 import './index.scss';
 
@@ -26,7 +27,7 @@ function ReportToolbar(props) {
       </Typography>
       <Typography display="inline" variant="h5" className="report__header--text-align-center">
         {patientId}
-        {` ${type.slice(0, 1).toUpperCase().concat(type.slice(1))} Report`}
+        {` ${startCase(type)} Report`}
       </Typography>
       <Typography display="inline" variant="h5" className="report__header--text-align-right">
         {state}
