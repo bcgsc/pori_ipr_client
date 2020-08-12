@@ -16,8 +16,8 @@ const VariantChips = (props) => {
   const {
     variants,
     canEdit,
-    handleChipDeleted,
-    handleChipAdded,
+    onChipDeleted,
+    onChipAdded,
   } = props;
 
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
@@ -26,18 +26,18 @@ const VariantChips = (props) => {
 
   const handleDeleteDialogClose = useCallback((deleted, comment) => {
     if (deleted) {
-      handleChipDeleted(showDeleteAlert.ident, showDeleteAlert.type, comment);
+      onChipDeleted(showDeleteAlert.ident, showDeleteAlert.type, comment);
     }
     setShowDeleteAlert(false);
-  }, [showDeleteAlert, handleChipDeleted]);
+  }, [showDeleteAlert, onChipDeleted]);
 
   const handleAddInputClose = useCallback((added) => {
     if (added) {
-      handleChipAdded(addedVariant);
+      onChipAdded(addedVariant);
     }
     setShowAddInput(false);
     setAddedVariant('');
-  }, [handleChipAdded, addedVariant]);
+  }, [onChipAdded, addedVariant]);
 
   const handleEnterPressed = (event) => {
     if (event.keyCode === ENTER_KEYCODE) {
@@ -116,15 +116,15 @@ const VariantChips = (props) => {
 VariantChips.propTypes = {
   variants: PropTypes.arrayOf(PropTypes.object),
   canEdit: PropTypes.bool,
-  handleChipDeleted: PropTypes.func,
-  handleChipAdded: PropTypes.func,
+  onChipDeleted: PropTypes.func,
+  onChipAdded: PropTypes.func,
 };
 
 VariantChips.defaultProps = {
   variants: [],
   canEdit: false,
-  handleChipDeleted: () => {},
-  handleChipAdded: () => {},
+  onChipDeleted: () => {},
+  onChipAdded: () => {},
 };
 
 export default VariantChips;
