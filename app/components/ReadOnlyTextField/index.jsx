@@ -7,6 +7,10 @@ import {
 import './index.scss';
 
 const NON_BREAKING_SPACE = '\u00A0';
+const WIDTH_FACTOR = 8;
+const WIDTH_SMALL = 160;
+const WIDTH_MEDIUM = 346;
+const WIDTH_LARGE = 528;
 
 const ReadOnlyTextField = (props) => {
   const {
@@ -18,16 +22,16 @@ const ReadOnlyTextField = (props) => {
 
   useEffect(() => {
     if (children) {
-      const calculatedWidth = children.length * 8;
+      const calculatedWidth = children.length * WIDTH_FACTOR;
 
-      if (calculatedWidth <= 160) {
-        setWidth(160);
+      if (calculatedWidth <= WIDTH_SMALL) {
+        setWidth(WIDTH_SMALL);
       }
-      if (calculatedWidth > 160 && calculatedWidth <= 340) {
-        setWidth(346);
+      if (calculatedWidth > WIDTH_SMALL && calculatedWidth <= WIDTH_MEDIUM) {
+        setWidth(WIDTH_MEDIUM);
       }
-      if (calculatedWidth > 340) {
-        setWidth(528);
+      if (calculatedWidth > WIDTH_MEDIUM) {
+        setWidth(WIDTH_LARGE);
       }
     }
   }, [children]);
