@@ -7,14 +7,6 @@
 
     &-content {
       padding: 0 16px;
-
-      & > * {
-        width: 300px;
-
-        @media print {
-          width: 2in;
-        }
-      }
     }
   }
 
@@ -27,14 +19,6 @@
 
     &-content {
       padding: 0 16px;
-
-      & > * {
-        width: 300px;
-
-        @media print {
-          width: 2in;
-        }
-      }
     }
   }
 

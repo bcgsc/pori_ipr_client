@@ -315,12 +315,10 @@ const GenomicSummary = (props) => {
               className="genomic-summary__patient-information-content"
             >
               {patientInformationData.map(({ label, value }) => (
-                <Grid item spacing={3}>
+                <Grid item>
                   <ReadOnlyTextField
                     key={label}
                     label={label}
-                    margin="normal"
-                    fullWidth
                   >
                     {value}
                   </ReadOnlyTextField>
@@ -387,13 +385,10 @@ const GenomicSummary = (props) => {
               className="genomic-summary__analysis-summary-content"
             >
               {analysisSummaryData.map(({ label, value }) => (
-                <Grid item spacing={3}>
+                <Grid item>
                   <ReadOnlyTextField
                     key={label}
                     label={label}
-                    margin="normal"
-                    fullWidth
-                    multiline
                   >
                     {value}
                   </ReadOnlyTextField>
