@@ -8,6 +8,12 @@ import {
 
 import './index.scss';
 
+/**
+ * Displays term/value pairs in 2 columns
+ * 
+ * @param {object} props 
+ * @param {array} props.entries
+ */
 const DescriptionList = (props) => {
   const {
     entries,
