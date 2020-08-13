@@ -26,6 +26,7 @@ class Settings {
 
   $onInit() {
     this.roles = ['bioinformatician', 'analyst', 'reviewer', 'admin', 'clinician'];
+    this.dirtyFields = {};
     this.reportSettingsChanged = false;
   }
 
@@ -107,26 +108,34 @@ class Settings {
   }
 
   checkChange() {
-    if (this.report.type !== this.reportCache.type
-      || this.report.state !== this.reportCache.state
-      || this.report.reportVersion !== this.reportCache.reportVersion
-      || this.report.kbVersion !== this.reportCache.kbVersion) {
-      this.reportSettingsChanged = true;
+    if (this.report.type !== this.reportCache.type) {
+      this.dirtyFields.type = this.report.type;
     }
 
-    if (this.reportSettingsChanged
-      && JSON.stringify(this.report) === JSON.stringify(this.reportCache)
-    ) {
-      this.reportSettingsChanged = false;
+    if (this.report.state !== this.reportCache.state) {
+      this.dirtyFields.state = this.report.state;
     }
+
+    if (this.report.reportVersion !== this.reportCache.reportVersion) {
+      this.dirtyFields.reportVersion = this.report.reportVersion;
+    }
+
+    if (this.report.kbVersion !== this.reportCache.kbVersion) {
+      this.dirtyFields.kbVersion = this.report.kbVersion;
+    }
+
+    if (Object.values(this.dirtyFields).length > 0) {
+      this.reportSettingsChanged = true;
+    }
+    this.$rootScope.$digest();
   }
 
   async updateSettings() {
     this.reportSettingsChanged = false;
-
     // Send updated settings to API
-    const resp = await ReportService.updateReport(this.report);
+    const resp = await ReportService.updateReport(this.report.ident, this.dirtyFields);
     this.report = resp;
+    this.dirtyFields = {};
     $rootScope.$digest();
 
     this.$mdToast.show(toastCreator('Report settings have been updated.'));
