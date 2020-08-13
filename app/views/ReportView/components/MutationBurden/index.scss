@@ -1,0 +1,31 @@
+.mutation-burden {
+  padding: 16px;
+
+  &__content {
+    margin: 24px 16px;
+  }
+
+  &__images {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin: 0 0 32px;
+
+    & > * {
+      margin: 8px 0;
+    }
+  }
+
+  &__pair {
+    display: flex;
+    flex-direction: column;
+
+    & > *:first-child {
+      margin-bottom: 2px;
+    }
+
+    & > *:last-child {
+      margin-top: 2px;
+    }
+  }
+}
