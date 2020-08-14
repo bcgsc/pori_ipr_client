@@ -31,26 +31,6 @@ section
                 div(flex=40, layout="row", layout-align="center center").count
                   div.indel {{$ctrl.mutationSummary.indels}} ({{$ctrl.mutationSummary.indels_frameshift}})
 
-          div(layout="row", layout-align="space around").summary-plots
-            div(layout="column", flex=45)
-              div(ng-repeat="comp in $ctrl.mutationSummaryImages.comparators", ng-show="comp.visible")
-                img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{$ctrl.getMutationSummaryImage('densityPlot', 'snv', comp.name).data}}")
-                img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{$ctrl.getMutationSummaryImage('barplot', 'snv', comp.name).data}}")
-              div
-                img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{$ctrl.mutationSummaryImages.legend.snv_indel.data}}")
-
-
-            div(layout="column", flex=45)
-              div(ng-repeat="comp in $ctrl.mutationSummaryImages.comparators", ng-show="comp.visible")
-                img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{$ctrl.getMutationSummaryImage('densityPlot', 'indel', comp.name).data}}")
-                img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{$ctrl.getMutationSummaryImage('barplot', 'indel', comp.name).data}}")
-              div
-                img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{$ctrl.mutationSummaryImages.legend.snv_indel.data}}")
-
-      div(layout="column", layout-align="center center")
-        div
-          img(data-ng-src="data:image/png;base64,{{$ctrl.images['mutSignature.snvsAllStrelka'].data}}")
-
     div(layout="column", flex).bg-white
       h2.title Small Mutations: Genomic Details
 
