@@ -14,7 +14,11 @@ const columnDefs = [{
   hide: false,
 }, {
   headerName: 'Location',
-  field: 'location',
+  valueGetter: ({data}) => data.chromosome && `${data.chromosome}:${data.startPosition}${
+    data.endPosition && data.startPosition !== data.endPosition
+      ? `-${data.endPosition}`
+      : ''
+    }`,
   hide: false,
 }, {
   headerName: 'Zygosity',
@@ -22,11 +26,11 @@ const columnDefs = [{
   hide: false,
 }, {
   headerName: 'Ref/Alt',
-  field: 'refAlt',
+  valueGetter: ({data}) => `${data.refSeq}>${data.altSeq}`,
   hide: false,
 }, {
   headerName: 'Copy Change',
-  field: 'gene.copyVariants.ploidyCorrCpChange',
+  field: 'gene.copyVariants.copyChange',
   hide: false,
 }, {
   headerName: 'LOH State',
@@ -34,23 +38,33 @@ const columnDefs = [{
   hide: false,
 }, {
   headerName: 'Ref/Alt DNA',
-  field: 'tumourReads',
+  valueGetter: ({data}) => `${data.tumourRefCount} / ${data.tumourAltCount}`,
   hide: false,
 }, {
-  headerName: 'Ref/Alt RNA',
-  field: 'rnaReads',
-  hide: false,
+  headerName: 'HGVSp',
+  field: 'hgvsProtein',
+  hide: true,
+}, {
+  headerName: 'HGVSc',
+  field: 'hgvsCds',
+  hide: true,
+}, {
+  headerName: 'HGVSg',
+  field: 'hgvsGenomic',
+  hide: true,
 }, {
   headerName: 'Expression (RPKM)',
   field: 'gene.expressionVariants.rpkm',
   hide: false,
 }, {
+  headerName: 'Expression (FC normal)',
   colId: 'foldChange',
-  field: 'gene.expressionVariants.foldChange',
+  field: 'gene.expressionVariants.primarySiteFoldChange',
   hide: false,
 }, {
-  colId: 'tcgaPerc',
-  field: 'gene.expressionVariants.tcgaPerc',
+  headerName: 'Expression (%tile)',
+  colId: 'diseasePercentile',
+  field: 'gene.expressionVariants.diseasePercentile',
   hide: false,
 }, {
   headerName: 'Actions',
