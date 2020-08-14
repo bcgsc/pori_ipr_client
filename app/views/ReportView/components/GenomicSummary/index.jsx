@@ -115,11 +115,11 @@ const GenomicSummary = (props) => {
         setTumourSummaryData([
           {
             term: 'Tumour Content',
-            value: report.tumourAnalysis.tumourContent,
+            value: report.tumourContent,
           },
           {
             term: 'Subtype',
-            value: report.tumourAnalysis.subtyping,
+            value: report.subtyping,
           },
           {
             term: 'Microbial Species',
@@ -172,7 +172,7 @@ const GenomicSummary = (props) => {
           },
           {
             label: 'Ploidy',
-            value: report.tumourAnalysis.ploidy,
+            value: report.ploidy,
           },
         ])
 
