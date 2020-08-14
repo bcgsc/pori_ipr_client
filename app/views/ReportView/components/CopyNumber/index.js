@@ -7,7 +7,7 @@ import ImageService from '@/services/reports/image.service';
 import lazyInjector from '@/lazyInjector';
 
 import template from './copy-number-analyses.pug';
-import columnDefs, { setHeaderName } from './columnDefs';
+import columnDefs from './columnDefs';
 import { CNVSTATE, EXPLEVEL } from '@/constants';
 
 import './index.scss';
@@ -48,8 +48,6 @@ class CopyNumberAnalyses {
       this.mutationSummary = mutationSummary;
       this.cnvs = cnvs;
 
-      setHeaderName(`${this.report.tumourAnalysis.diseaseExpressionComparator || ''} %ile`, 'tcgaPerc');
-      setHeaderName(`Fold Change vs ${this.report.tumourAnalysis.normalExpressionComparator}`, 'foldChange');
       this.cnvGroups = this.groupCnvs(this.cnvs);
       this.loading = false;
       $rootScope.$digest();
