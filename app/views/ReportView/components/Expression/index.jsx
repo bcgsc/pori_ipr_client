@@ -75,6 +75,7 @@ function Expression(props) {
 
   useEffect(() => {
     if (ptxComparator) {
+      // TODO: https://www.bcgsc.ca/jira/browse/DEVSU-1244
       setComparators([
         { key: 'Disease Expression Comparator', value: `TODO` },
         { key: 'Normal Primary Site Expression Comparator', value: `TODO` },
