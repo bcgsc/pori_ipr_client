@@ -7,13 +7,16 @@
 
   &__images {
     display: flex;
-    justify-content: space-around;
+    flex-direction: row;
     flex-wrap: wrap;
-    margin: 0 0 32px;
+  }
 
-    & > * {
-      margin: 8px 0;
-    }
+  &__group {
+    margin: 0 8px 48px;
+  }
+  
+  &__comparator {
+    margin: 12px 0;
   }
 
   &__pair {
