@@ -7,6 +7,7 @@ import toastCreator from '@/utils/toastCreator';
 import lazyInjector from '@/lazyInjector';
 import TumourAnalysisService from '@/services/reports/tumour-analysis.service';
 import PatientInformationService from '@/services/reports/patient-information.service';
+import ReportService from '@/services/reports/report.service';
 import GenomicAlterationsService from '@/services/reports/genomic-alterations.service';
 import MutationSummaryService from '@/services/reports/mutation-summary.service';
 import MutationSignatureService from '@/services/reports/mutation-signature.service';
@@ -288,7 +289,12 @@ class GenomicSummary {
           };
           scope.update = async (form) => {
             try {
-              const response = await PatientInformationService.update(
+              let report;
+              if (form.Biopsy.$dirty) {
+                await ReportService.updateReport(this.report.ident, { biopsyName: scope.biopsyName });
+                report.biopsyName = scope.biopsyName;
+              }
+              const patientInfo = await PatientInformationService.update(
                 this.report.ident,
                 scope.patientInformation,
               );
@@ -298,18 +304,20 @@ class GenomicSummary {
                 patientInfo,
               });
             } catch (err) {
-              this.$mdToast.show(toastCreator(
+              this.$mdToast.showSimple(
                 `Patient information was not updated due to an error: ${err}`,
-              ));
+              );
             }
           };
         }],
       });
-      this.$mdToast.show(toastCreator(resp.message));
-      this.report.patientInformation = resp.data;
-      $rootScope.$digest();
+      this.$mdToast.showSimple(resp.message);
+      if (resp.patientInfo) {
+        this.report.patientInformation = resp.patientInfo;
+      }
+      this.$scope.$digest();
     } catch (err) {
-      this.$mdToast.show(toastCreator(err));
+      this.$mdToast.showSimple(err);
     }
   }
 
