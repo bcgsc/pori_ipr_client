@@ -2,7 +2,7 @@ import { angular2react } from 'angular2react';
 import { $rootScope } from 'ngimport';
 
 import SmallMutationsService from '@/services/reports/small-mutations.service';
-import MutationSummaryService from '@/services/reports/mutation-summary.service';
+import MutationSummaryService from '@/services/reports/mutation-burden.service';
 import ImageService from '@/services/reports/image.service';
 import lazyInjector from '@/lazyInjector';
 import template from './small-mutations.pug';

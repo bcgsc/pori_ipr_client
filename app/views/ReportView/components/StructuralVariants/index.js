@@ -1,7 +1,7 @@
 import { angular2react } from 'angular2react';
 import { $rootScope } from 'ngimport';
 
-import MutationSummaryService from '@/services/reports/mutation-summary.service';
+import MutationSummaryService from '@/services/reports/mutation-burden.service';
 import MavisService from '@/services/reports/mavis.service';
 import StructuralVariantsService from '@/services/reports/structural-variants.service';
 import ImageService from '@/services/reports/image.service';
