@@ -76,9 +76,9 @@ function Expression(props) {
   useEffect(() => {
     if (ptxComparator) {
       setComparators([
-        { key: 'Tissue Comparator', value: `GTEX ${report.tumourAnalysis.normalExpressionComparator}` },
-        { key: 'Disease Expression Comparator', value: `TCGA ${report.tumourAnalysis.diseaseExpressionComparator}` },
-        { key: 'Protein Expression Comparator', value: `POG ${ptxComparator}` },
+        { key: 'Disease Expression Comparator', value: `TODO` },
+        { key: 'Normal Primary Site Expression Comparator', value: `TODO` },
+        { key: 'Normal Biopsy Site Expression Comparator', value: `TODO` },
       ]);
     }
   }, [ptxComparator]);
