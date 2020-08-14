@@ -62,7 +62,7 @@ const columnDefs = [{
   field: 'gene.expressionVariants.primarySiteFoldChange',
   hide: false,
 }, {
-  headerName: 'Expression (%tile)',
+  headerName: 'Expression (Perc)',
   colId: 'diseasePercentile',
   field: 'gene.expressionVariants.diseasePercentile',
   hide: false,
