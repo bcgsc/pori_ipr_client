@@ -11,23 +11,29 @@ const Image = (props) => {
       format,
       key,
     },
+    showTitle,
+    showCaption,
   } = props;
 
   return (
     <>
       {data && (
         <>
-          <Typography>
-            {title}
-          </Typography>
+          {showTitle && (
+            <Typography>
+              {title}
+            </Typography>
+          )}
           <img
             src={`data:image/${format};base64,${data}`}
             alt={title}
             key={key}
           />
-          <Typography>
-            {caption}
-          </Typography>
+          {showCaption && (
+            <Typography>
+              {caption}
+            </Typography>
+          )}
         </>
       )}
     </>
@@ -36,6 +42,13 @@ const Image = (props) => {
 
 Image.propTypes = {
   image: PropTypes.objectOf(PropTypes.string).isRequired,
+  showTitle: PropTypes.bool,
+  showCaption: PropTypes.bool,
+};
+
+Image.defaultProps = {
+  showTitle: false,
+  showCaption: false,
 };
 
 export default Image;

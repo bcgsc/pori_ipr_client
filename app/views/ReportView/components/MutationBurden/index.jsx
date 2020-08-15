@@ -121,7 +121,7 @@ const MutationBurden = (props) => {
       {images ? (
         <div className="mutation-burden__content">
           {images.comparators.map(comparator => (
-            <>
+            <React.Fragment key={comparator}>
               <Typography variant="h3" className="mutation-burden__comparator">
                 {`Comparator: ${comparator || 'none'}`}
               </Typography>
@@ -131,44 +131,60 @@ const MutationBurden = (props) => {
                     <span className="mutation-burden__image">
                       <Image
                         image={getImage(images.indel.barplot, comparator)}
+                        showTitle
+                        showCaption
                       />
                     </span>
                   )}
                   {getImage(images.indel.density, comparator).data && getImage(images.indel.legend, comparator).data && (
                     <span className="mutation-burden__pair">
+                      <Typography>{getImage(images.indel.density, comparator).title}</Typography>
                       <Image image={getImage(images.indel.density, comparator)} />
                       <Image image={getImage(images.indel.legend, comparator)} />
+                      <Typography>{getImage(images.indel.density, comparator).caption}</Typography>
                     </span>
                   )}
                 </span>
                 <span className="mutation-burden__group">
                   {getImage(images.sv.barplot, comparator).data && (
                     <span className="mutation-burden__image">
-                      <Image image={getImage(images.sv.barplot, comparator)} />
+                      <Image
+                        image={getImage(images.sv.barplot, comparator)}
+                        showTitle
+                        showCaption
+                      />
                     </span>
                   )}
                   {getImage(images.sv.density, comparator).data && getImage(images.sv.legend, comparator).data && (
                     <span className="mutation-burden__pair">
+                      <Typography>{getImage(images.sv.density, comparator).title}</Typography>
                       <Image image={getImage(images.sv.density, comparator)} />
                       <Image image={getImage(images.sv.legend, comparator)} />
+                      <Typography>{getImage(images.sv.density, comparator).caption}</Typography>
                     </span>
                   )}
                 </span>
                 <span className="mutation-burden__group">
                   {getImage(images.snv.barplot, comparator).data && (
                     <span className="mutation-burden__image">
-                      <Image image={getImage(images.snv.barplot, comparator)} />
+                      <Image
+                        image={getImage(images.snv.barplot, comparator)}
+                        showTitle
+                        showCaption
+                      />
                     </span>
                   )}
                   {getImage(images.snv.density, comparator).data && getImage(images.snv.legend, comparator).data && (
                     <span className="mutation-burden__pair">
+                      <Typography>{getImage(images.snv.density, comparator).title}</Typography>
                       <Image image={getImage(images.snv.density, comparator)} />
                       <Image image={getImage(images.snv.legend, comparator)} />
+                      <Typography>{getImage(images.snv.density, comparator).caption}</Typography>
                     </span>
                   )}
                 </span>
               </div>
-            </>
+            </React.Fragment>
           ))}
         </div>
       ) : <LinearProgress />}
