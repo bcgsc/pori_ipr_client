@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { Typography, Paper, LinearProgress } from '@material-ui/core';
 
 import DataTable from '../../../../components/DataTable';
 import columnDefs from './columnDefs';
 import ExpressionService from '@/services/reports/expression.service';
+import ReportContext from '../ReportContext';
 import { processExpression, getPtxComparator } from './processData';
 
 import './index.scss';
@@ -24,11 +25,8 @@ const tables = {
  * @param {string} props.reportIdent current report ID
  * @return {*} JSX
  */
-function Expression(props) {
-  const {
-    report,
-  } = props;
-
+const Expression = () => {
+  const { report } = useContext(ReportContext);
   const [tissueSites, setTissueSites] = useState();
   const [comparators, setComparators] = useState();
   const [expOutliers, setExpOutliers] = useState();
@@ -165,14 +163,6 @@ function Expression(props) {
       </>
     </>
   );
-}
-
-Expression.propTypes = {
-  report: PropTypes.objectOf(PropTypes.any),
-};
-
-Expression.defaultProps = {
-  report: null,
 };
 
 export default Expression;
