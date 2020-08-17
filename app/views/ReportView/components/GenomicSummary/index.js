@@ -292,7 +292,7 @@ class GenomicSummary {
               let report;
               if (form.Biopsy.$dirty) {
                 await ReportService.updateReport(this.report.ident, { biopsyName: scope.biopsyName });
-                report.biopsyName = scope.biopsyName;
+                this.report.biopsyName = scope.biopsyName;
               }
               const patientInfo = await PatientInformationService.update(
                 this.report.ident,
@@ -304,20 +304,20 @@ class GenomicSummary {
                 patientInfo,
               });
             } catch (err) {
-              this.$mdToast.showSimple(
+              this.$mdToast.show(toastCreator(
                 `Patient information was not updated due to an error: ${err}`,
-              );
+              ));
             }
           };
         }],
       });
-      this.$mdToast.showSimple(resp.message);
+      this.$mdToast.show(toastCreator(resp.message));
       if (resp.patientInfo) {
         this.report.patientInformation = resp.patientInfo;
       }
-      this.$scope.$digest();
+      $rootScope.$digest();
     } catch (err) {
-      this.$mdToast.showSimple(err);
+      this.$mdToast.show(toastCreator(err));
     }
   }
 
