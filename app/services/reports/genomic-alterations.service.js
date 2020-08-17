@@ -73,7 +73,7 @@ class GenomicAterationsService {
    * @throws {ErrorType} Thrown when API call fails
    */
   async remove(reportIdent, ident, comment) {
-    await this.$http.delete(
+    await $http.delete(
       `${this.api}/${reportIdent}/summary/genomic-alterations-identified/${ident}`,
       {
         data: {

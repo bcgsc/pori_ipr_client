@@ -36,3 +36,8 @@ html body {
 .clickable {
   cursor: pointer;
 }
+
+// Fix for dialog not accounting for AppBar
+.md-dialog-container {
+  top: -56px !important;
+}
