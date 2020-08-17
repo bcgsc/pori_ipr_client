@@ -26,7 +26,7 @@ function ReportToolbar(props) {
       </Typography>
       <Typography display="inline" variant="h5" className="report__header--text-align-center">
         {patientId}
-        {` ${type.slice(0, 1).toUpperCase().concat(type.slice(1))} Report`}
+        {` ${type === 'genomic' ? 'Genomic' : 'Targeted Gene'} Report`}
       </Typography>
       <Typography display="inline" variant="h5" className="report__header--text-align-right">
         {state}
