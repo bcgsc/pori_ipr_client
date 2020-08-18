@@ -65,8 +65,8 @@ function Expression(props) {
           { key: 'Biopsy Site', value: 'N/A' },
         ],
         [
-          { key: 'Tumour Content', value: `${report.tumourAnalysis.tumourContent}%` || 'N/A' },
-          { key: 'Ploidy Model', value: report.tumourAnalysis.ploidy },
+          { key: 'Tumour Content', value: `${report.tumourContent}%` || 'N/A' },
+          { key: 'Ploidy Model', value: report.ploidy },
         ],
       ]);
       getData();
@@ -75,10 +75,11 @@ function Expression(props) {
 
   useEffect(() => {
     if (ptxComparator) {
+      // TODO: https://www.bcgsc.ca/jira/browse/DEVSU-1244
       setComparators([
-        { key: 'Tissue Comparator', value: `GTEX ${report.tumourAnalysis.normalExpressionComparator}` },
-        { key: 'Disease Expression Comparator', value: `TCGA ${report.tumourAnalysis.diseaseExpressionComparator}` },
-        { key: 'Protein Expression Comparator', value: `POG ${ptxComparator}` },
+        { key: 'Disease Expression Comparator', value: `TODO` },
+        { key: 'Normal Primary Site Expression Comparator', value: `TODO` },
+        { key: 'Normal Biopsy Site Expression Comparator', value: `TODO` },
       ]);
     }
   }, [ptxComparator]);

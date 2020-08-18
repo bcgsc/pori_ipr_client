@@ -1,11 +1,30 @@
+const createGeneRelatedValueGetter = (field, delimiter=' / ', subfield='') => {
+  return ({data}) => {
+    try {
+      let attr1 = data.gene1[field];
+      let attr2 = data.gene2[field];
+      if (subfield) {
+        attr1 = attr1[subfield];
+        attr2 = attr2[subfield];
+      }
+      if (attr1 !== undefined && attr2 !== undefined && attr1 !== null && attr2 !== null) {
+        return `${attr1}${delimiter}${attr2}`;
+      } if (attr1 !== undefined && attr1 !== null) {
+        return attr1;
+      }
+      return attr2;
+    } catch (err) {
+      return null;
+    }
+  };
+};
+
 const columnDefs = [{
   headerName: 'Genes 5`::3`',
   colId: 'genes',
   cellRenderer: 'GeneCellRenderer',
   cellRendererParams: { link: true },
-  valueGetter: params => (params.data.gene1.name && params.data.gene2.name
-    ? `${params.data.gene1.name} :: ${params.data.gene2.name}`
-    : (params.data.gene1.name || params.data.gene2.name)),
+  valueGetter: createGeneRelatedValueGetter('name', ' :: '),
   hide: false,
 }, {
   headerName: 'Exons 5`/3`',
@@ -35,50 +54,19 @@ const columnDefs = [{
   field: 'conventionalName',
   hide: false,
 }, {
-  headerName: 'RPKM 5`/3`',
+  headerName: 'Expression (RPKM) 5`/3`',
   colId: 'rpkm',
-  valueGetter: (params) => {
-    try {
-      const val = (
-        params.data.gene1.expressionVariants.rpkm && params.data.gene2.expressionVariants.rpkm
-          ? `${params.data.gene1.expressionVariants.rpkm}/${params.data.gene2.expressionVariants.rpkm}`
-          : (params.data.gene1.expressionVariants.rpkm || params.data.gene2.expressionVariants.rpkm)
-      );
-      return val;
-    } catch (err) {
-      return null;
-    }
-  },
+  valueGetter: createGeneRelatedValueGetter('expressionVariants', ' / ', 'rpkm'),
   hide: false,
 }, {
-  colId: 'foldChange',
-  valueGetter: (params) => {
-    try {
-      const val = (
-        params.data.gene1.expressionVariants.foldChange && params.data.gene2.expressionVariants.foldChange
-          ? `${params.data.gene1.expressionVariants.foldChange}/${params.data.gene2.expressionVariants.foldChange}`
-          : (params.data.gene1.expressionVariants.foldChange || params.data.gene2.expressionVariants.foldChange)
-      );
-      return val;
-    } catch (err) {
-      return null;
-    }
-  },
+  headerName: 'Expression (normal FC) 5`/3`',
+  colId: 'primarySiteFoldChange',
+  valueGetter: createGeneRelatedValueGetter('expressionVariants', ' / ', 'primarySiteFoldChange'),
   hide: false,
 }, {
-  colId: 'tcgaPerc',
-  valueGetter: (params) => {
-    try {
-      const val = (
-        params.data.gene1.expressionVariants.tcgaPerc && params.data.gene2.expressionVariants.tcgaPerc
-          ? `${params.data.gene1.expressionVariants.tcgaPerc}/${params.data.gene2.expressionVariants.tcgaPerc}`
-          : (params.data.gene1.expressionVariants.tcgaPerc || params.data.gene2.expressionVariants.tcgaPerc)
-      );
-      return val;
-    } catch (err) {
-      return null;
-    }
-  },
+  headerName: 'Expression (Perc) 5`/3`',
+  colId: 'diseasePercentile',
+  valueGetter: createGeneRelatedValueGetter('expressionVariants', ' / ', 'diseasePercentile'),
   hide: false,
 }, {
   headerName: 'Oncogene',

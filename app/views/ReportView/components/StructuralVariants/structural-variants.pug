@@ -8,18 +8,13 @@ section
 
       h2.title Summary of Structural Events
 
-      div(layout="row").mutation-summary-images
-        div(layout="column", flex=15).comparator-list
-
-
-        div(layout="column", flex)
-
-          div(layout="row", layout-align="space around")
-            div(layout="column", flex=45).smEvents.sv
-              div(layout="row")
-                div(flex=60) Structural Variants (Expressed Fusions)
-                div(flex=40, layout="row", layout-align="center center").count
-                  div.sv {{$ctrl.mutationSummary.sv || 'na'}} ({{$ctrl.mutationSummary.sv_expressed || 'na'}})
+      md-tabs(md-dynamic-height=true, md-center-tabs=true).margin-bottom-20
+        md-tab(label="Genome")
+          div(layout="column", layout-align="center center")
+            img(data-ng-src="data:image/svg;base64,{{$ctrl.images['circosSv.genome'].data}}")
+        md-tab(label="Transcriptome")
+          div(layout="column", layout-align="center center")
+            img(data-ng-src="data:image/svg;base64,{{$ctrl.images['circosSv.transcriptome'].data}}")
 
     div(layout="column", flex).bg-white
 

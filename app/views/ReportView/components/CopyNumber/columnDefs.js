@@ -6,7 +6,7 @@ const columnDefs = [{
   hide: false,
 }, {
   headerName: 'Copy Change',
-  field: 'ploidyCorrCpChange',
+  field: 'copyChange',
   hide: false,
 }, {
   headerName: 'LOH State',
@@ -37,12 +37,14 @@ const columnDefs = [{
   field: 'gene.expressionVariants.rpkm',
   hide: false,
 }, {
-  colId: 'foldChange',
-  field: 'gene.expressionVariants.foldChange',
+  headerName: 'Expression (Normal FC)',
+  colId: 'primarySiteFoldChange',
+  field: 'gene.expressionVariants.primarySiteFoldChange',
   hide: false,
 }, {
-  colId: 'tcgaPerc',
-  field: 'gene.expressionVariants.tcgaPerc',
+  headerName: 'Expression (Perc)',
+  colId: 'diseasePercentile',
+  field: 'gene.expressionVariants.diseasePercentile',
   hide: false,
 }, {
   headerName: 'Oncogene',
