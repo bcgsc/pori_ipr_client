@@ -44,45 +44,21 @@ function Expression(props) {
   useEffect(() => {
     if (report) {
       const getData = async () => {
-        const [outliers, comparatorsResp] = await Promise.all([
-          ExpressionService.all(report.ident),
-          getComparators(report.ident),
-        ]);
+        const outliers = await ExpressionService.all(report.ident);
 
         if (outliers && outliers.length) {
           setExpOutliers(processExpression(outliers));
-        } else if (outliers.length === 0) {
+        } else if (!outliers.length) {
           setExpOutliers([]);
         }
-
-        const diseaseExpression = comparatorsResp.find(({ analysisRole }) => (
-          analysisRole === 'expression (disease)'
-        ));
-
-        const normalPrimary = comparatorsResp.find(({ analysisRole }) => (
-          analysisRole === 'expression (primary site)'
-        ));
-
-        const normalBiopsy = comparatorsResp.find(({ analysisRole }) => (
-          analysisRole === 'expression (biopsy site)'
-        ));
-
-        setComparators([
-          {
-            key: 'Disease Expression',
-            value: diseaseExpression ? diseaseExpression.name : 'Not specified',
-          },
-          {
-            key: 'Normal Primary Site',
-            value: normalPrimary ? normalPrimary.name : 'Not specified',
-          },
-          {
-            key: 'Normal Biopsy Site',
-            value: normalBiopsy ? normalBiopsy.name : 'Not specified',
-          },
-        ]);
       };
 
+      getData();
+    }
+  }, [report]);
+
+  useEffect(() => {
+    if (report) {
       setTissueSites([
         [
           { key: 'Diagnosis', value: report.patientInformation.diagnosis },
@@ -97,8 +73,42 @@ function Expression(props) {
           { key: 'Ploidy Model', value: report.ploidy },
         ],
       ]);
-      getData();
     }
+  }, [report])
+
+  useEffect(() => {
+    const getData = async () => {
+      const comparatorsResp = await getComparators(report.ident);
+
+      const diseaseExpression = comparatorsResp.find(({ analysisRole }) => (
+        analysisRole === 'expression (disease)'
+      ));
+
+      const normalPrimary = comparatorsResp.find(({ analysisRole }) => (
+        analysisRole === 'expression (primary site)'
+      ));
+
+      const normalBiopsy = comparatorsResp.find(({ analysisRole }) => (
+        analysisRole === 'expression (biopsy site)'
+      ));
+
+      setComparators([
+        {
+          key: 'Disease Expression',
+          value: diseaseExpression ? diseaseExpression.name : 'Not specified',
+        },
+        {
+          key: 'Normal Primary Site',
+          value: normalPrimary ? normalPrimary.name : 'Not specified',
+        },
+        {
+          key: 'Normal Biopsy Site',
+          value: normalBiopsy ? normalBiopsy.name : 'Not specified',
+        },
+      ]);
+    };
+
+    getData();
   }, [report]);
 
   const handleVisibleColsChange = (change) => {
