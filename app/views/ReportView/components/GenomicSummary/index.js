@@ -213,7 +213,11 @@ class GenomicSummary {
             }
             try {
               await TumourAnalysisService.update(
-                this.report.ident, scope.tumourAnalysis,
+                this.report.ident,
+                {
+                  subtyping: scope.tumourAnalysis.subtyping,
+                  mutationSignature: scope.tumourAnalysis.mutationSignature,
+                },
               );
               this.$mdDialog.hide('Tumour analysis details have been successfully updated');
             } catch (err) {
@@ -249,11 +253,11 @@ class GenomicSummary {
           scope.update = async () => {
             try {
               await TumourAnalysisService.update(
-                this.report.ident, scope.tumourAnalysis,
+                this.report.ident, { mutationSignature: scope.tumourAnalysis.mutationSignature },
               );
               this.$mdDialog.hide({
                 message: 'Mutation signature details have been successfully updated',
-                data: scope.tumourAnalysis,
+                data: scope.tumourAnalysis.mutationSignature,
               });
             } catch (err) {
               this.$mdToast.show(toastCreator(
@@ -266,7 +270,7 @@ class GenomicSummary {
         }],
       });
       this.$mdToast.show(toastCreator(resp.message));
-      this.tumourAnalysis = resp.data;
+      this.tumourAnalysis.mutationSignature = resp.data;
     } catch (err) {
       this.$mdToast.show(toastCreator(err));
     }
