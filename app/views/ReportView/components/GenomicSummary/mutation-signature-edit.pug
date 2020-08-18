@@ -9,15 +9,6 @@ md-dialog(layout="column", aria-label="Update Mutation Signature Details").edito
 
     md-dialog-content(layout-padding)
       mutation-signature(report="report", mutation-summary="tumourAnalysis", mutation-signature="mutationSignature", mode="'pick'")
-      div(layout="row", flex=60, layout-padding).margin-top-10
-        md-input-container(flex)
-          textarea(
-            ng-model="mutationSignature.comment",
-            md-maxlength=150,
-            placeholder="Why are you making this change?",
-            required,
-            md-autofocus
-          )
 
     md-dialog-actions(layout="row", layout-align="end center", layout-padding)
       span(flex)
