@@ -166,6 +166,9 @@ const GenomicSummary = (props) => {
           },
         ]);
 
+        const normalComparator = comparators.find(({ analysisRole }) => analysisRole === 'expression (primary site)');
+        const diseaseComparator = comparators.find(({ analysisRole }) => analysisRole === 'expression (disease)');
+
         setAnalysisSummaryData([
           {
             label: 'Constitutional Protocol',
@@ -177,11 +180,11 @@ const GenomicSummary = (props) => {
           },
           {
             label: 'Normal Comparator',
-            value: comparators.find(({ analysisRole }) => analysisRole === 'expression (primary site)').name,
+            value: normalComparator ? normalComparator.name : 'Not specified',
           },
           {
             label: 'Disease Comparator',
-            value: comparators.find(({ analysisRole }) => analysisRole === 'expression (disease)').name,
+            value: diseaseComparator ? diseaseComparator.name : 'Not specified',
           },
           {
             label: 'Ploidy',
