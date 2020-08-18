@@ -15,19 +15,6 @@ md-dialog(layout="column", aria-label="Update Tumour Analysis Details", flex=55)
           md-input-container(flex)
             input(name="Subtype", placeholder="Subtype", ng-model="tumourAnalysis.subtyping")
 
-        div(layout="row")
-          md-input-container(flex)
-            label Comment
-            textarea(
-              ng-model="tumourAnalysis.comment",
-              md-maxlength=150,
-              placeholder="Why are you making this change?",
-              required,
-              md-autofocus
-            )
-
-
     md-dialog-actions(layout="row", layout-align="end center", layout-padding)
       md-button(ng-click="cancel()") Cancel
       md-button(type="submit").md-accent Submit
-
