@@ -6,11 +6,12 @@ import {
   IconButton,
   Grid,
 } from '@material-ui/core';
-import EditIcon from '@material-ui/icons/Edit'
+import EditIcon from '@material-ui/icons/Edit';
 import sortBy from 'lodash.sortby';
 
 import { getMicrobial } from '@/services/reports/microbial';
 import { getComparators } from '@/services/reports/comparators';
+import { getMutationSignatures } from '@/services/reports/mutation-signature';
 import { formatDate } from '@/utils/date';
 import AlterationsService from '@/services/reports/genomic-alterations.service';
 import PatientInformationService from '@/services/reports/patient-information.service';
@@ -59,7 +60,7 @@ const GenomicSummary = (props) => {
     report,
     canEdit,
     print,
-    loadedDispatch
+    loadedDispatch,
   } = props;
 
   const [showSnackbar, setShowSnackbar] = useState(false);
@@ -79,9 +80,17 @@ const GenomicSummary = (props) => {
   useEffect(() => {
     if (report && report.patientInformation) {
       const getData = async () => {
-        const microbial = await getMicrobial(report.ident);
-        const variants = await AlterationsService.all(report.ident);
-        await getComparators(report.ident);
+        const [
+          microbial,
+          variants,
+          comparators,
+          signatures,
+        ] = await Promise.all([
+          getMicrobial(report.ident),
+          AlterationsService.all(report.ident),
+          getComparators(report.ident),
+          getMutationSignatures(report.ident),
+        ]);
 
         setPatientInformationData([
           {
@@ -133,10 +142,11 @@ const GenomicSummary = (props) => {
           },
           {
             term: 'Mutation Signature',
-            // value: report.tumourAnalysis.mutationSignature.map(({ associations, signature }) => (
-            //   `${signature} (${associations})`
-            // )).join(', '),
-            value: 'TODO', // TODO: https://www.bcgsc.ca/jira/browse/DEVSU-1262
+            value: signatures
+              .filter(({ selected }) => selected)
+              .map(({ associations, signature }) => (
+              `${signature} (${associations})`
+            )).join(', '),
           },
           {
             term: `HR Deficiency${print ? '*' : ''}`,
@@ -167,13 +177,11 @@ const GenomicSummary = (props) => {
           },
           {
             label: 'Normal Comparator',
-            // value: report.tumourAnalysis.normalExpressionComparator,
-            value: 'TODO' // TODO: https://www.bcgsc.ca/jira/browse/DEVSU-1244
+            value: comparators.find(({ analysisRole }) => analysisRole === 'expression (primary site)').name,
           },
           {
             label: 'Disease Comparator',
-            // value: report.tumourAnalysis.diseaseExpressionComparator,
-            value: 'TODO' // TODO: https://www.bcgsc.ca/jira/browse/DEVSU-1244
+            value: comparators.find(({ analysisRole }) => analysisRole === 'expression (disease)').name,
           },
           {
             label: 'Ploidy',

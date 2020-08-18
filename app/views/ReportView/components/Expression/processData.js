@@ -43,21 +43,4 @@ const processExpression = (input) => {
   return expressions;
 };
 
-const getPtxComparator = (outliers) => {
-  let comparator;
-  if (outliers[0].ptxPercCol) {
-    /* Get part of substring. Ex: PTX_POG_OV_percentile returns OV */
-    comparator = outliers[0].ptxPercCol.substring(
-      outliers[0].ptxPercCol.lastIndexOf('PTX_POG_') + 8,
-      outliers[0].ptxPercCol.lastIndexOf('_percentile'),
-    );
-  } else {
-    comparator = 'N/A';
-  }
-  return comparator;
-};
-
-export {
-  processExpression,
-  getPtxComparator,
-};
+export default processExpression;
