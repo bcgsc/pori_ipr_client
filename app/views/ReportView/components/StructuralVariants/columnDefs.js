@@ -24,7 +24,7 @@ const columnDefs = [{
   colId: 'genes',
   cellRenderer: 'GeneCellRenderer',
   cellRendererParams: { link: true },
-  valueGetter: createGeneRelatedValueGetter('name', '::'),
+  valueGetter: createGeneRelatedValueGetter('name', ' :: '),
   hide: false,
 }, {
   headerName: 'Exons 5`/3`',
