@@ -131,9 +131,10 @@ const GenomicSummary = (props) => {
           },
           {
             term: 'Mutation Signature',
-            value: report.tumourAnalysis.mutationSignature.map(({ associations, signature }) => (
-              `${signature} (${associations})`
-            )).join(', '),
+            // value: report.tumourAnalysis.mutationSignature.map(({ associations, signature }) => (
+            //   `${signature} (${associations})`
+            // )).join(', '),
+            value: 'TODO', // TODO: https://www.bcgsc.ca/jira/browse/DEVSU-1262
           },
           {
             term: `HR Deficiency${print ? '*' : ''}`,
@@ -164,11 +165,13 @@ const GenomicSummary = (props) => {
           },
           {
             label: 'Normal Comparator',
-            value: report.tumourAnalysis.normalExpressionComparator,
+            // value: report.tumourAnalysis.normalExpressionComparator,
+            value: 'TODO' // TODO: https://www.bcgsc.ca/jira/browse/DEVSU-1244
           },
           {
             label: 'Disease Comparator',
-            value: report.tumourAnalysis.diseaseExpressionComparator,
+            // value: report.tumourAnalysis.diseaseExpressionComparator,
+            value: 'TODO' // TODO: https://www.bcgsc.ca/jira/browse/DEVSU-1244
           },
           {
             label: 'Ploidy',
