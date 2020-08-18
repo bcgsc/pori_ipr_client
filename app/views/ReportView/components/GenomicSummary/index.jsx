@@ -10,6 +10,7 @@ import EditIcon from '@material-ui/icons/Edit'
 import sortBy from 'lodash.sortby';
 
 import { getMicrobial } from '@/services/reports/microbial';
+import { getComparators } from '@/services/reports/comparators';
 import { formatDate } from '@/utils/date';
 import AlterationsService from '@/services/reports/genomic-alterations.service';
 import PatientInformationService from '@/services/reports/patient-information.service';
@@ -80,6 +81,7 @@ const GenomicSummary = (props) => {
       const getData = async () => {
         const microbial = await getMicrobial(report.ident);
         const variants = await AlterationsService.all(report.ident);
+        await getComparators(report.ident);
 
         setPatientInformationData([
           {
