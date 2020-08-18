@@ -20,11 +20,11 @@ section
                 span(
                   style="background-color: #{{$ctrl.colourHex($ctrl.report.tumourAnalysis.tcgaColor)}}"
                   ng-if="$ctrl.report"
-                ) {{$ctrl.report.tumourAnalysis.normalExpressionComparator}}
+                ) {{$ctrl.normalComparator}}
               div(flex).disease
                 | Disease Expression Comparator
                 span(
                   style="background-color: #{{$ctrl.colourHex($ctrl.report.tumourAnalysis.tcgaColor)}}"
                   ng-if="$ctrl.report"
-                ) {{$ctrl.report.tumourAnalysis.diseaseExpressionComparator}}
+                ) {{$ctrl.diseaseComparator}}
             span.details Tissue Comparator Details
