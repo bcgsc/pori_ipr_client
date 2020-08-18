@@ -60,6 +60,7 @@ const genomic = [
       { name: 'Spearman', uri: 'spearman' },
       { name: 'Disease Specific', uri: 'disease-specific' },
       { name: 'Mutation Signatures', uri: 'mutation-signatures' },
+      { name: 'Mutation Burden', uri: 'mutation-burden' },
     ],
   },
   {
