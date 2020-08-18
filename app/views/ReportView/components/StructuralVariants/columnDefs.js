@@ -2,11 +2,9 @@ const createGeneRelatedValueGetter = (field, delimiter=' / ', subfield='') => {
   return ({data}) => {
     try {
       let attr1 = data.gene1[field];
-      if (subfield) {
-        attr1 = attr1[subfield];
-      }
       let attr2 = data.gene2[field];
       if (subfield) {
+        attr1 = attr1[subfield];
         attr2 = attr2[subfield];
       }
       if (attr1 !== undefined && attr2 !== undefined && attr1 !== null && attr2 !== null) {
