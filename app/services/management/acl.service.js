@@ -129,4 +129,4 @@ class AclService {
   }
 }
 
-export default AclService;
+export default new AclService();

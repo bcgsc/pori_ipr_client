@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { LinearProgress } from '@material-ui/core';
 
 import DataTable from '@/components/DataTable';
+import ReportContext from '../ReportContext';
 import ImageService from '@/services/reports/image.service';
 import { getMutationSignatures } from '@/services/reports/mutation-signature';
 import columnDefs from './columnDefs';
@@ -15,11 +16,8 @@ const imageKeys = [
   'mutSignature.barplot.sbs',
 ];
 
-const MutationSignatures = (props) => {
-  const {
-    report,
-  } = props;
-
+const MutationSignatures = () => {
+  const { report } = useContext(ReportContext);
   const [images, setImages] = useState({});
   const [sbsSignatures, setSbsSignatures] = useState([]);
   const [dbsSignatures, setDbsSignatures] = useState([]);
@@ -102,15 +100,6 @@ const MutationSignatures = (props) => {
       )}
     </div>
   );
-};
-
-MutationSignatures.propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types
-  report: PropTypes.object,
-};
-
-MutationSignatures.defaultProps = {
-  report: {},
 };
 
 export default MutationSignatures;
