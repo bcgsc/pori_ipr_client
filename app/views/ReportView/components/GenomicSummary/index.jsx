@@ -6,10 +6,12 @@ import {
   IconButton,
   Grid,
 } from '@material-ui/core';
-import EditIcon from '@material-ui/icons/Edit'
+import EditIcon from '@material-ui/icons/Edit';
 import sortBy from 'lodash.sortby';
 
 import { getMicrobial } from '@/services/reports/microbial';
+import { getComparators } from '@/services/reports/comparators';
+import { getMutationSignatures } from '@/services/reports/mutation-signature';
 import { formatDate } from '@/utils/date';
 import ReportContext from '../ReportContext';
 import EditContext from '@/components/EditContext';
@@ -58,7 +60,7 @@ const customTypeSort = (variant) => {
 const GenomicSummary = (props) => {
   const {
     print,
-    loadedDispatch
+    loadedDispatch,
   } = props;
 
   const { report } = useContext(ReportContext);
@@ -80,8 +82,17 @@ const GenomicSummary = (props) => {
   useEffect(() => {
     if (report && report.patientInformation) {
       const getData = async () => {
-        const microbial = await getMicrobial(report.ident);
-        const variants = await AlterationsService.all(report.ident);
+        const [
+          microbial,
+          variants,
+          comparators,
+          signatures,
+        ] = await Promise.all([
+          getMicrobial(report.ident),
+          AlterationsService.all(report.ident),
+          getComparators(report.ident),
+          getMutationSignatures(report.ident),
+        ]);
 
         setPatientInformationData([
           {
@@ -117,11 +128,11 @@ const GenomicSummary = (props) => {
         setTumourSummaryData([
           {
             term: 'Tumour Content',
-            value: report.tumourAnalysis.tumourContent,
+            value: report.tumourContent,
           },
           {
             term: 'Subtype',
-            value: report.tumourAnalysis.subtyping,
+            value: report.subtyping,
           },
           {
             term: 'Microbial Species',
@@ -133,7 +144,9 @@ const GenomicSummary = (props) => {
           },
           {
             term: 'Mutation Signature',
-            value: report.tumourAnalysis.mutationSignature.map(({ associations, signature }) => (
+            value: signatures
+              .filter(({ selected }) => selected)
+              .map(({ associations, signature }) => (
               `${signature} (${associations})`
             )).join(', '),
           },
@@ -155,6 +168,9 @@ const GenomicSummary = (props) => {
           },
         ]);
 
+        const normalComparator = comparators.find(({ analysisRole }) => analysisRole === 'expression (primary site)');
+        const diseaseComparator = comparators.find(({ analysisRole }) => analysisRole === 'expression (disease)');
+
         setAnalysisSummaryData([
           {
             label: 'Constitutional Protocol',
@@ -166,15 +182,15 @@ const GenomicSummary = (props) => {
           },
           {
             label: 'Normal Comparator',
-            value: report.tumourAnalysis.normalExpressionComparator,
+            value: normalComparator ? normalComparator.name : 'Not specified',
           },
           {
             label: 'Disease Comparator',
-            value: report.tumourAnalysis.diseaseExpressionComparator,
+            value: diseaseComparator ? diseaseComparator.name : 'Not specified',
           },
           {
             label: 'Ploidy',
-            value: report.tumourAnalysis.ploidy,
+            value: report.ploidy,
           },
         ])
 

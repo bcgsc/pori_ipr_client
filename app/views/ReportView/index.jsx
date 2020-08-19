@@ -29,6 +29,7 @@ const Discussion = lazy(() => import('./components/Discussion'));
 const Microbial = lazy(() => import('./components/Microbial'));
 const Spearman = lazy(() => import('./components/Spearman'));
 const MutationSignatures = lazy(() => import('./components/MutationSignatures'));
+const MutationBurden = lazy(() => import('./components/MutationBurden'));
 const DiseaseSpecific = lazy(() => import('./components/DiseaseSpecific'));
 const SmallMutations = lazy(() => import('./components/SmallMutations'));
 const CopyNumber = lazy(() => import('./components/CopyNumber'));

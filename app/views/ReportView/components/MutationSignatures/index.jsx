@@ -5,7 +5,7 @@ import { LinearProgress } from '@material-ui/core';
 import DataTable from '@/components/DataTable';
 import ReportContext from '../ReportContext';
 import ImageService from '@/services/reports/image.service';
-import MutationSignatureService from '@/services/reports/mutation-signature.service';
+import { getMutationSignatures } from '@/services/reports/mutation-signature';
 import columnDefs from './columnDefs';
 
 import './index.scss';
@@ -32,7 +32,7 @@ const MutationSignatures = () => {
             report.ident,
             imageKeys.join(','),
           ),
-          MutationSignatureService.all(report.ident),
+          getMutationSignatures(report.ident),
         ]);
         setImages(imageData);
         setSbsSignatures(signatureData.filter(sig => !(new RegExp(/dbs|id/)).test(sig.signature.toLowerCase())));
