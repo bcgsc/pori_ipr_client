@@ -2,6 +2,8 @@ import React, { useEffect, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { Typography, LinearProgress } from '@material-ui/core';
 import ImageService from '@/services/reports/image.service';
+import { getComparators } from '@/services/reports/comparators';
+import { getMutationBurden } from '@/services/reports/mutation-burden';
 import Image from './components/Image';
 
 import './index.scss';
@@ -9,7 +11,6 @@ import './index.scss';
 const processImages = (images) => {
   if (images) {
     const keyedImages = {
-      comparators: [],
       indel: {
         density: [],
         barplot: [],
@@ -29,11 +30,6 @@ const processImages = (images) => {
 
     Object.values(images).forEach((image) => {
       const key = image.key.toLowerCase();
-      const comparator = key.split('.')[2] || '';
-
-      if (!keyedImages.comparators.includes(comparator)) {
-        keyedImages.comparators.push(comparator.toLowerCase());
-      }
 
       if (key.includes('barplot')) {
         if (key.includes('indel')) {
@@ -85,12 +81,20 @@ const MutationBurden = (props) => {
   } = props;
 
   const [images, setImages] = useState();
+  const [comparators, setComparators] = useState();
+  const [mutationBurden, setMutationBurden] = useState();
 
   useEffect(() => {
     if (report) {
       const getData = async () => {
-        const imagesResp = await ImageService.mutationSummary(report.ident);
+        const [imagesResp, comparatorsResp, mutationBurdenResp] = await Promise.all([
+          ImageService.mutationSummary(report.ident),
+          getComparators(report.ident),
+          getMutationBurden(report.ident),
+        ])
         setImages(processImages(imagesResp));
+        setComparators(comparatorsResp);
+        setMutationBurden(mutationBurdenResp);
       };
 
       getData();
@@ -118,74 +122,101 @@ const MutationBurden = (props) => {
       <Typography variant="h1">
         Mutation Burden
       </Typography>
-      {images ? (
+      {comparators && mutationBurden && images ? (
         <div className="mutation-burden__content">
-          {images.comparators.map(comparator => (
-            <React.Fragment key={comparator}>
-              <Typography variant="h3" className="mutation-burden__comparator">
-                {`Comparator: ${comparator || 'none'}`}
-              </Typography>
-              <div className="mutation-burden__images">
-                <span className="mutation-burden__group">
-                  {getImage(images.indel.barplot, comparator).data && (
-                    <span className="mutation-burden__image">
-                      <Image
-                        image={getImage(images.indel.barplot, comparator)}
-                        showTitle
-                        showCaption
-                      />
-                    </span>
+          {comparators.map(({ analysisRole, name }) => {
+            const mutationBurdenRole = mutationBurden.find(({ role }) => (
+              analysisRole.includes('mutation burden') && analysisRole.includes(role)
+            ));
+
+            return (
+              <React.Fragment key={analysisRole}>
+                <div className="mutation-burden__comparator">
+                  <Typography variant="h3">
+                    {`Comparator: ${name || 'none'}`}
+                  </Typography>
+                  <Typography variant="body2" className="mutation-burden__comparator--padded">
+                    {`Role: ${analysisRole || 'none'}`}
+                  </Typography>
+                  {mutationBurdenRole && (
+                    <>
+                      <Typography variant="body2" className="mutation-burden__comparator--padded">
+                        <>
+                          Number of non synonymous protein coding SNVs (Truncating):
+                          {` ${mutationBurdenRole.snvTruncating}`}
+                        </>
+                      </Typography>
+                      <Typography variant="body2" className="mutation-burden__comparator--padded">
+                        <>
+                          Number of protein coding indels (Frameshift):
+                          {` ${mutationBurdenRole.indelsFrameshift}`}
+                        </>
+                      </Typography>
+                    </>
                   )}
-                  {getImage(images.indel.density, comparator).data && getImage(images.indel.legend, comparator).data && (
-                    <span className="mutation-burden__pair">
-                      <Typography>{getImage(images.indel.density, comparator).title}</Typography>
-                      <Image image={getImage(images.indel.density, comparator)} />
-                      <Image image={getImage(images.indel.legend, comparator)} />
-                      <Typography>{getImage(images.indel.density, comparator).caption}</Typography>
-                    </span>
-                  )}
-                </span>
-                <span className="mutation-burden__group">
-                  {getImage(images.sv.barplot, comparator).data && (
-                    <span className="mutation-burden__image">
-                      <Image
-                        image={getImage(images.sv.barplot, comparator)}
-                        showTitle
-                        showCaption
-                      />
-                    </span>
-                  )}
-                  {getImage(images.sv.density, comparator).data && getImage(images.sv.legend, comparator).data && (
-                    <span className="mutation-burden__pair">
-                      <Typography>{getImage(images.sv.density, comparator).title}</Typography>
-                      <Image image={getImage(images.sv.density, comparator)} />
-                      <Image image={getImage(images.sv.legend, comparator)} />
-                      <Typography>{getImage(images.sv.density, comparator).caption}</Typography>
-                    </span>
-                  )}
-                </span>
-                <span className="mutation-burden__group">
-                  {getImage(images.snv.barplot, comparator).data && (
-                    <span className="mutation-burden__image">
-                      <Image
-                        image={getImage(images.snv.barplot, comparator)}
-                        showTitle
-                        showCaption
-                      />
-                    </span>
-                  )}
-                  {getImage(images.snv.density, comparator).data && getImage(images.snv.legend, comparator).data && (
-                    <span className="mutation-burden__pair">
-                      <Typography>{getImage(images.snv.density, comparator).title}</Typography>
-                      <Image image={getImage(images.snv.density, comparator)} />
-                      <Image image={getImage(images.snv.legend, comparator)} />
-                      <Typography>{getImage(images.snv.density, comparator).caption}</Typography>
-                    </span>
-                  )}
-                </span>
-              </div>
-            </React.Fragment>
-          ))}
+                </div>
+                <div className="mutation-burden__images">
+                  <span className="mutation-burden__group">
+                    {getImage(images.indel.barplot, name).data && (
+                      <span className="mutation-burden__image">
+                        <Image
+                          image={getImage(images.indel.barplot, name)}
+                          showTitle
+                          showCaption
+                        />
+                      </span>
+                    )}
+                    {getImage(images.indel.density, name).data && getImage(images.indel.legend, name).data && (
+                      <span className="mutation-burden__pair">
+                        <Typography>{getImage(images.indel.density, name).title}</Typography>
+                        <Image image={getImage(images.indel.density, name)} />
+                        <Image image={getImage(images.indel.legend, name)} />
+                        <Typography>{getImage(images.indel.density, name).caption}</Typography>
+                      </span>
+                    )}
+                  </span>
+                  <span className="mutation-burden__group">
+                    {getImage(images.sv.barplot, name).data && (
+                      <span className="mutation-burden__image">
+                        <Image
+                          image={getImage(images.sv.barplot, name)}
+                          showTitle
+                          showCaption
+                        />
+                      </span>
+                    )}
+                    {getImage(images.sv.density, name).data && getImage(images.sv.legend, name).data && (
+                      <span className="mutation-burden__pair">
+                        <Typography>{getImage(images.sv.density, name).title}</Typography>
+                        <Image image={getImage(images.sv.density, name)} />
+                        <Image image={getImage(images.sv.legend, name)} />
+                        <Typography>{getImage(images.sv.density, name).caption}</Typography>
+                      </span>
+                    )}
+                  </span>
+                  <span className="mutation-burden__group">
+                    {getImage(images.snv.barplot, name).data && (
+                      <span className="mutation-burden__image">
+                        <Image
+                          image={getImage(images.snv.barplot, name)}
+                          showTitle
+                          showCaption
+                        />
+                      </span>
+                    )}
+                    {getImage(images.snv.density, name).data && getImage(images.snv.legend, name).data && (
+                      <span className="mutation-burden__pair">
+                        <Typography>{getImage(images.snv.density, name).title}</Typography>
+                        <Image image={getImage(images.snv.density, name)} />
+                        <Image image={getImage(images.snv.legend, name)} />
+                        <Typography>{getImage(images.snv.density, name).caption}</Typography>
+                      </span>
+                    )}
+                  </span>
+                </div>
+              </React.Fragment>
+            );
+          })}
         </div>
       ) : <LinearProgress />}
     </div>

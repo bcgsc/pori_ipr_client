@@ -16,7 +16,11 @@
   }
   
   &__comparator {
-    margin: 12px 0;
+    margin: 24px 0;
+
+    &--padded {
+      padding: 0 0 0 8px;
+    }
   }
 
   &__pair {
