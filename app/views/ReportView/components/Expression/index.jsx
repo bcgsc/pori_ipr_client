@@ -4,8 +4,9 @@ import { Typography, Paper, LinearProgress } from '@material-ui/core';
 
 import DataTable from '../../../../components/DataTable';
 import columnDefs from './columnDefs';
+import { getComparators } from '@/services/reports/comparators';
 import ExpressionService from '@/services/reports/expression.service';
-import { processExpression, getPtxComparator } from './processData';
+import processExpression from './processData';
 
 import './index.scss';
 
@@ -32,7 +33,6 @@ function Expression(props) {
   const [tissueSites, setTissueSites] = useState();
   const [comparators, setComparators] = useState();
   const [expOutliers, setExpOutliers] = useState();
-  const [ptxComparator, setPtxComparator] = useState();
   const [visibleCols, setVisibleCols] = useState(
     columnDefs.filter(c => !c.hide).map(c => c.field),
   );
@@ -48,13 +48,17 @@ function Expression(props) {
 
         if (outliers && outliers.length) {
           setExpOutliers(processExpression(outliers));
-          setPtxComparator(getPtxComparator(outliers));
-        } else if (outliers.length === 0) {
+        } else if (!outliers.length) {
           setExpOutliers([]);
-          setPtxComparator(null);
         }
       };
 
+      getData();
+    }
+  }, [report]);
+
+  useEffect(() => {
+    if (report) {
       setTissueSites([
         [
           { key: 'Diagnosis', value: report.patientInformation.diagnosis },
@@ -69,20 +73,43 @@ function Expression(props) {
           { key: 'Ploidy Model', value: report.ploidy },
         ],
       ]);
-      getData();
     }
-  }, [report]);
+  }, [report])
 
   useEffect(() => {
-    if (ptxComparator) {
-      // TODO: https://www.bcgsc.ca/jira/browse/DEVSU-1244
+    const getData = async () => {
+      const comparatorsResp = await getComparators(report.ident);
+
+      const diseaseExpression = comparatorsResp.find(({ analysisRole }) => (
+        analysisRole === 'expression (disease)'
+      ));
+
+      const normalPrimary = comparatorsResp.find(({ analysisRole }) => (
+        analysisRole === 'expression (primary site)'
+      ));
+
+      const normalBiopsy = comparatorsResp.find(({ analysisRole }) => (
+        analysisRole === 'expression (biopsy site)'
+      ));
+
       setComparators([
-        { key: 'Disease Expression Comparator', value: `TODO` },
-        { key: 'Normal Primary Site Expression Comparator', value: `TODO` },
-        { key: 'Normal Biopsy Site Expression Comparator', value: `TODO` },
+        {
+          key: 'Disease Expression',
+          value: diseaseExpression ? diseaseExpression.name : 'Not specified',
+        },
+        {
+          key: 'Normal Primary Site',
+          value: normalPrimary ? normalPrimary.name : 'Not specified',
+        },
+        {
+          key: 'Normal Biopsy Site',
+          value: normalBiopsy ? normalBiopsy.name : 'Not specified',
+        },
       ]);
-    }
-  }, [ptxComparator]);
+    };
+
+    getData();
+  }, [report]);
 
   const handleVisibleColsChange = (change) => {
     setVisibleCols(change);
@@ -124,7 +151,7 @@ function Expression(props) {
           <Typography variant="h3" className="expression__subtitle">
             Expression Correlation Summary and Comparator Choices
           </Typography>
-          {comparators ? (
+          {comparators && (
             <Paper elevation={0} className="expression__comparator-box" square>
               {comparators.map(({ key, value }) => (
                 <div key={key} className="expression__comparator-column">
@@ -137,7 +164,8 @@ function Expression(props) {
                 </div>
               ))}
             </Paper>
-          ) : (
+          )}
+          {comparators && !Boolean(comparators.length) && (
             <Typography align="center">No comparator data to display</Typography>
           )}
         </div>
