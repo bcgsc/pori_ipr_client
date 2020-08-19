@@ -13,7 +13,7 @@ const columnDefs = [{
   field: 'gene.copyVariants.cnvState',
   hide: false,
 }, {
-  headerName: 'Disease ',
+  headerName: 'Disease',
   children: [
     { headerName: 'Perc', field: 'diseasePercentile', hide: false },
     { headerName: 'kIQR', field: 'diseasekIQR', hide: false },

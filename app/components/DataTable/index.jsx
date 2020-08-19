@@ -303,7 +303,13 @@ function DataTable(props) {
           columns={columnApi.current.getAllColumns()
             .filter(col => col.colId !== 'Actions')
             .map((col) => {
-              col.name = columnApi.current.getDisplayNameForColumn(col);
+              const parent = col.getOriginalParent();
+              if (parent && parent.colGroupDef.headerName) {
+                const parentName = parent.colGroupDef.headerName;
+                col.name = `${parentName} ${columnApi.current.getDisplayNameForColumn(col)}`;
+              } else {
+                col.name = columnApi.current.getDisplayNameForColumn(col);
+              }
               return col;
             })
           }
