@@ -1,6 +1,7 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { Typography, LinearProgress } from '@material-ui/core';
+import ReportContext from '../ReportContext';
 import ImageService from '@/services/reports/image.service';
 import { getComparators } from '@/services/reports/comparators';
 import { getMutationBurden } from '@/services/reports/mutation-burden';
@@ -75,11 +76,8 @@ const processImages = (images) => {
   return {};
 };
 
-const MutationBurden = (props) => {
-  const {
-    report,
-  } = props;
-
+const MutationBurden = () => {
+  const { report } = useContext(ReportContext);
   const [images, setImages] = useState();
   const [comparators, setComparators] = useState();
   const [mutationBurden, setMutationBurden] = useState();
@@ -221,10 +219,6 @@ const MutationBurden = (props) => {
       ) : <LinearProgress />}
     </div>
   );
-};
-
-MutationBurden.PropTypes = {
-  report: PropTypes.object.isRequired,
 };
 
 export default MutationBurden;
