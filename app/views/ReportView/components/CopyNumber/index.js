@@ -1,7 +1,7 @@
 import { angular2react } from 'angular2react';
 import { $rootScope } from 'ngimport';
 
-import MutationSummaryService from '@/services/reports/mutation-burden.service';
+import { getMutationBurden } from '@/services/reports/mutation-burden';
 import CopyNumberService from '@/services/reports/copy-number.service';
 import ImageService from '@/services/reports/image.service';
 import lazyInjector from '@/lazyInjector';
@@ -39,7 +39,7 @@ class CopyNumberAnalyses {
           this.report.ident,
           'cnvLoh.circos,cnv.1,cnv.2,cnv.3,cnv.4,cnv.5,loh.1,loh.2,loh.3,loh.4,loh.5',
         ),
-        MutationSummaryService.get(this.report.ident),
+        getMutationBurden(this.report.ident),
         CopyNumberService.all(this.report.ident),
       ]);
 
