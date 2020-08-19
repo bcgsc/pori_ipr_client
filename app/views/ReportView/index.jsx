@@ -139,6 +139,12 @@ const ReportView = () => {
               />
               <Route
                 render={routeProps => (
+                  <MutationBurden {...routeProps} print={false} />
+                )}
+                path={`${path}/mutation-burden`}
+              />
+              <Route
+                render={routeProps => (
                   <DiseaseSpecific {...routeProps} print={false} report={report} />
                 )}
                 path={`${path}/disease-specific`}
