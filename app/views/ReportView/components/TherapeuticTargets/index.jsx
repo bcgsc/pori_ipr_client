@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { LinearProgress } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import DataTable from '@/components/DataTable';
+import EditContext from '@/components/EditContext';
+import ReportContext from '../ReportContext';
 import EditDialog from './components/EditDialog';
 import columnDefs from './columnDefs';
 import { therapeuticUpdateTable, therapeuticGet } from '@/services/reports/therapeutic';
@@ -16,10 +18,11 @@ import { therapeuticUpdateTable, therapeuticGet } from '@/services/reports/thera
  */
 function TherapeuticView(props) {
   const {
-    canEdit,
     print,
-    report,
   } = props;
+
+  const { canEdit } = useContext(EditContext);
+  const { report } = useContext(ReportContext);
 
   const [therapeuticData, setTherapeuticData] = useState();
 
@@ -87,13 +90,10 @@ function TherapeuticView(props) {
 }
 
 TherapeuticView.propTypes = {
-  canEdit: PropTypes.bool,
   print: PropTypes.bool,
-  report: PropTypes.objectOf(PropTypes.any).isRequired,
 };
 
 TherapeuticView.defaultProps = {
-  canEdit: false,
   print: false,
 };
 

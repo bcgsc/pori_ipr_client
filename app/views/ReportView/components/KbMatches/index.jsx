@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import {
   TextField,
@@ -14,6 +14,7 @@ import { columnDefs, targetedColumnDefs } from './columnDefs';
 import coalesceEntries from './coalesce';
 import AlterationService from '@/services/reports/alteration.service';
 import TargetedGenesService from '@/services/reports/targeted-genes.service';
+import ReportContext from '../ReportContext';
 
 import './index.scss';
 
@@ -29,9 +30,9 @@ const VISIBLE = 'visibleColsKb';
  */
 function KbMatches(props) {
   const {
-    report,
     isPrint,
   } = props;
+
 
   const [visibleColumns, setVisibleColumns] = useState(
     localStorage.getItem(VISIBLE)
@@ -40,8 +41,8 @@ function KbMatches(props) {
   );
 
   const [targetedGenes, setTargetedGenes] = useState();
-
   const [filterText, setFilterText] = useState('');
+  const { report } = useContext(ReportContext);
 
   const [syncedTableData, setSyncedTableData] = useState();
 
@@ -210,8 +211,6 @@ function KbMatches(props) {
 }
 
 KbMatches.propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types
-  report: PropTypes.object.isRequired,
   isPrint: PropTypes.bool,
 };
 

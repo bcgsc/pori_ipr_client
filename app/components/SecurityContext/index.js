@@ -1,8 +1,8 @@
 import React from 'react';
 
 const SecurityContext = React.createContext({
-  authenticationToken: '',
-  setAuthenticationToken: () => {},
+  authorizationToken: '',
+  setAuthorizationToken: () => {},
   userDetails: '',
   setUserDetails: () => {},
   adminUser: '',

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useContext } from 'react';
 import PropTypes from 'prop-types';
 import {
   Typography,
@@ -13,6 +13,8 @@ import { getMicrobial } from '@/services/reports/microbial';
 import { getComparators } from '@/services/reports/comparators';
 import { getMutationSignatures } from '@/services/reports/mutation-signature';
 import { formatDate } from '@/utils/date';
+import ReportContext from '../ReportContext';
+import EditContext from '@/components/EditContext';
 import AlterationsService from '@/services/reports/genomic-alterations.service';
 import PatientInformationService from '@/services/reports/patient-information.service';
 import ReportService from '@/services/reports/report.service';
@@ -57,12 +59,12 @@ const customTypeSort = (variant) => {
 
 const GenomicSummary = (props) => {
   const {
-    report,
-    canEdit,
     print,
     loadedDispatch,
   } = props;
 
+  const { report } = useContext(ReportContext);
+  const { canEdit } = useContext(EditContext);
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [isPatientEditOpen, setIsPatientEditOpen] = useState(false);
   const [patientInformationData, setPatientInformationData] = useState();
@@ -231,7 +233,7 @@ const GenomicSummary = (props) => {
       console.error(err);
       setShowSnackbar('Entry NOT deleted due to an error');
     }
-  }, [report.ident]);
+  }, [report]);
 
   const handleChipAdded = useCallback(async (variant) => {
     try {
@@ -245,7 +247,7 @@ const GenomicSummary = (props) => {
       console.error(err);
       setShowSnackbar('Entry NOT added due to an error');
     }
-  }, [report.ident]);
+  }, [report]);
 
   const handleSnackbarClose = useCallback((event, reason) => {
     if (reason === 'clickaway') {

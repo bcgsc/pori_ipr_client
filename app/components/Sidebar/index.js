@@ -17,7 +17,6 @@ const bindings = {
 class Sidebar {
   constructor($window) {
     this.$window = $window;
-    this.AclService = new AclService();
     this.pageAccess = {};
     this.pages = ['report', 'germline'];
   }
@@ -25,7 +24,7 @@ class Sidebar {
   async $onChanges(changes) {
     if (changes.user && !changes.user.isFirstChange()) {
       this.pages.forEach(async (page) => {
-        this.pageAccess[page] = await this.AclService.checkResource(page, this.user);
+        this.pageAccess[page] = await AclService.checkResource(page, this.user);
         $rootScope.$digest();
       });
     }
