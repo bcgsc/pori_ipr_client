@@ -416,7 +416,7 @@ function DataTable(props) {
                 )}
               </div>
               <EditDialog
-                open={showEditDialog}
+                isOpen={showEditDialog}
                 onClose={handleRowEditClose}
                 editData={selectedRow.data}
                 reportIdent={reportIdent}

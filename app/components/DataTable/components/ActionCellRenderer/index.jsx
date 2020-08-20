@@ -132,7 +132,7 @@ function ActionCellRenderer(params) {
       }
       {showDetailDialog && (
         <DetailDialog
-          open={showDetailDialog}
+          isOpen={showDetailDialog}
           selectedRow={data}
           onClose={handleDetailClose}
           columnMapping={columnMapping}
@@ -160,7 +160,7 @@ function ActionCellRenderer(params) {
       )}
       {showSvgViewer && (
         <SvgViewer
-          open={showSvgViewer}
+          isOpen={showSvgViewer}
           selectedRow={data}
           onClose={handleSvgViewerClose}
         />

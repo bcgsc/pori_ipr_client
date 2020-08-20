@@ -27,13 +27,13 @@ import './index.scss';
  * @param {func} props.onClose parent close handler
  * @param {string} props.gene gene name
  * @param {string} props.reportIdent current report ID for API calls
- * @param {bool} props.open is open?
+ * @param {bool} props.isOpen is open?
  * @return {*} JSX
  */
 function GeneViewer(props) {
   const {
     onClose,
-    open,
+    isOpen,
     gene,
     reportIdent,
   } = props;
@@ -42,7 +42,7 @@ function GeneViewer(props) {
   const [tabValue, setTabValue] = useState(0);
 
   useEffect(() => {
-    if (open) {
+    if (isOpen) {
       const api = async () => {
         const resp = await geneViewerApi(gene, reportIdent);
         setGeneData(resp);
@@ -55,7 +55,7 @@ function GeneViewer(props) {
       structuralVariantsColumnDefs[0].cellRendererParams = { link: false };
       api();
     }
-  }, [open]);
+  }, [isOpen]);
 
   const handleClose = (value) => {
     columnDefs[0].cellRendererParams = { link: true };
@@ -73,7 +73,7 @@ function GeneViewer(props) {
   return (
     <Dialog
       onClose={handleClose}
-      open={open}
+      open={isOpen}
       maxWidth="xl"
       fullWidth
     >
@@ -161,7 +161,7 @@ GeneViewer.propTypes = {
   onClose: PropTypes.func.isRequired,
   gene: PropTypes.string.isRequired,
   reportIdent: PropTypes.string.isRequired,
-  open: PropTypes.bool.isRequired,
+  isOpen: PropTypes.bool.isRequired,
 };
 
 export default GeneViewer;

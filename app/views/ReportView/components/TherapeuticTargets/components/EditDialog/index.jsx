@@ -19,7 +19,7 @@ import { therapeuticAdd, therapeuticUpdate, therapeuticDelete } from '../../../.
 /**
  * @param {object} props props
  * @param {object} props.editData data passed to edit
- * @param {bool} props.open is the dialog open
+ * @param {bool} props.isOpen is the dialog open
  * @param {func} props.onClose onClose function
  * @param {string} props.reportIdent ident of current report
  * @param {string} props.tableType therapeutic | chemoresistant
@@ -29,8 +29,8 @@ import { therapeuticAdd, therapeuticUpdate, therapeuticDelete } from '../../../.
 function EditDialog(props) {
   const {
     editData,
-    open,
-    onClose, // TODO: alias to std-naming until prop name can be changed
+    isOpen,
+    onClose,
     reportIdent,
     tableType,
     addIndex,
@@ -145,7 +145,7 @@ function EditDialog(props) {
   };
 
   return (
-    <Dialog open={open} maxWidth="sm" fullWidth className="edit-dialog">
+    <Dialog open={isOpen} maxWidth="sm" fullWidth className="edit-dialog">
       <DialogTitle>{dialogTitle}</DialogTitle>
       <DialogContent>
         <FormControl fullWidth>
@@ -223,7 +223,7 @@ function EditDialog(props) {
 
 EditDialog.propTypes = {
   editData: PropTypes.objectOf(PropTypes.any),
-  open: PropTypes.bool.isRequired,
+  isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   reportIdent: PropTypes.string.isRequired,
   tableType: PropTypes.string.isRequired,

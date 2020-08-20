@@ -4,8 +4,10 @@ import { LinearProgress } from '@material-ui/core';
 
 import DataTable from '@/components/DataTable';
 import ReportContext from '../ReportContext';
+import EditContext from '@/components/EditContext';
 import ImageService from '@/services/reports/image.service';
 import { getMutationSignatures } from '@/services/reports/mutation-signature';
+import EditDialog from './components/EditDialog';
 import columnDefs from './columnDefs';
 
 import './index.scss';
@@ -18,6 +20,7 @@ const imageKeys = [
 
 const MutationSignatures = () => {
   const { report } = useContext(ReportContext);
+  const { canEdit } = useContext(EditContext);
   const [images, setImages] = useState({});
   const [sbsSignatures, setSbsSignatures] = useState([]);
   const [dbsSignatures, setDbsSignatures] = useState([]);
@@ -54,6 +57,8 @@ const MutationSignatures = () => {
             columnDefs={columnDefs}
             titleText="Single base subtitution signatures"
             isPaginated
+            canEdit={canEdit}
+            EditDialog={EditDialog}
           />
           {images['mutSignature.barplot.sbs'] && (
             <div className="mutation-signature__images">
@@ -69,6 +74,8 @@ const MutationSignatures = () => {
             columnDefs={columnDefs}
             titleText="Double base substitution signatures"
             isPaginated
+            canEdit={canEdit}
+            EditDialog={EditDialog}
           />
           {images['mutSignature.barplot.dbs'] && (
             <div className="mutation-signature__images">
@@ -84,6 +91,8 @@ const MutationSignatures = () => {
             columnDefs={columnDefs}
             titleText="Indel Signatures"
             isPaginated
+            canEdit={canEdit}
+            EditDialog={EditDialog}
           />
           {images['mutSignature.barplot.indels'] && (
             <div className="mutation-signature__images">
