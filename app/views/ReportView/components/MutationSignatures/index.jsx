@@ -59,6 +59,7 @@ const MutationSignatures = () => {
             isPaginated
             canEdit={canEdit}
             EditDialog={EditDialog}
+            canToggleColumns
           />
           {images['mutSignature.barplot.sbs'] && (
             <div className="mutation-signature__images">
@@ -76,6 +77,7 @@ const MutationSignatures = () => {
             isPaginated
             canEdit={canEdit}
             EditDialog={EditDialog}
+            canToggleColumns
           />
           {images['mutSignature.barplot.dbs'] && (
             <div className="mutation-signature__images">
@@ -93,6 +95,7 @@ const MutationSignatures = () => {
             isPaginated
             canEdit={canEdit}
             EditDialog={EditDialog}
+            canToggleColumns
           />
           {images['mutSignature.barplot.indels'] && (
             <div className="mutation-signature__images">
