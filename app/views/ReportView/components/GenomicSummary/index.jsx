@@ -136,7 +136,7 @@ const GenomicSummary = (props) => {
           },
           {
             term: 'Microbial Species',
-            value: microbial.species,
+            value: microbial ? microbial.species : null,
           },
           {
             term: `Immune Infiltration${print ? '*' : ''}`,
