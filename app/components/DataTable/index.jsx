@@ -87,8 +87,6 @@ function DataTable(props) {
   const [selectedRow, setSelectedRow] = useState({});
   const [showReorder, setShowReorder] = useState(false);
   const [showSnackbar, setShowSnackbar] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarDuration, setSnackbarDuration] = useState(2000);
   const [tableLength, setTableLength] = useState(rowData.length);
 
   useEffect(() => {
@@ -210,14 +208,10 @@ function DataTable(props) {
       );
 
       gridApi.current.updateRowData({ update: updatedRows });
-      setSnackbarDuration(2000);
-      setShowSnackbar(true);
-      setSnackbarMessage('Row update success');
+      setShowSnackbar('Row update success');
     } catch (err) {
       console.error(err);
-      setSnackbarDuration(5000);
-      setShowSnackbar(true);
-      setSnackbarMessage(`Rows were not updated: ${err}`);
+      setShowSnackbar(`Rows were not updated: ${err}`);
     }
   };
 
@@ -238,9 +232,7 @@ function DataTable(props) {
       gridApi.current.setRowData(updatedRows);
     } catch (err) {
       console.error(err);
-      setSnackbarDuration(5000);
-      setShowSnackbar(true);
-      setSnackbarMessage(`Rows were not updated: ${err}`);
+      setShowSnackbar(`Rows were not updated: ${err}`);
     }
   };
 
@@ -402,19 +394,19 @@ function DataTable(props) {
                       color="primary"
                       title="Reorder Rows"
                     />
-                    <Snackbar
-                      anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'left',
-                      }}
-                      open={showSnackbar}
-                      autoHideDuration={snackbarDuration}
-                      message={snackbarMessage}
-                      onClose={handleSnackbarClose}
-                    />
                   </span>
                 )}
               </div>
+              <Snackbar
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'left',
+                }}
+                open={Boolean(showSnackbar)}
+                autoHideDuration={4000}
+                message={showSnackbar}
+                onClose={handleSnackbarClose}
+              />
               <EditDialog
                 isOpen={showEditDialog}
                 onClose={handleRowEditClose}
@@ -422,6 +414,7 @@ function DataTable(props) {
                 reportIdent={reportIdent}
                 tableType={tableType}
                 addIndex={tableLength}
+                showErrorSnackbar={setShowSnackbar}
               />
             </div>
             <div

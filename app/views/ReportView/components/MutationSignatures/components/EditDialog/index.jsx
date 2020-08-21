@@ -25,6 +25,7 @@ const EditDialog = (props) => {
     editData,
     isOpen,
     onClose,
+    showErrorSnackbar,
   } = props;
 
   const { report } = useContext(ReportContext);
@@ -48,12 +49,17 @@ const EditDialog = (props) => {
 
   const handleSubmit = useCallback(async () => {
     if (checkboxSelected !== editData.selected || selectValue !== editData.kbCategory) {
-      await updateMutationSignature(
-        report.ident,
-        editData.ident,
-        { selected: checkboxSelected, kbCategory: selectValue },
-      );
-      onClose({ ...editData, selected: checkboxSelected, kbCategory: selectValue });
+      try {
+        await updateMutationSignature(
+          report.ident,
+          editData.ident,
+          { selected: checkboxSelected, kbCategory: selectValue },
+        );
+        onClose({ ...editData, selected: checkboxSelected, kbCategory: selectValue });
+      } catch (err) {
+        showErrorSnackbar(`Error updating signature: ${err.message}`);
+        onClose();
+      }
     } else {
       onClose();
     }
