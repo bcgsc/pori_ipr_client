@@ -143,7 +143,7 @@ const MutationBurden = () => {
                     </Typography>
                   </div>
                   <div className="mutation-burden__images">
-                    <Card className="mutation-burden__group">
+                    <Card raised className="mutation-burden__group">
                       {getImage(images.indel.barplot, name).data && (
                         <span className="mutation-burden__image">
                           <Image
@@ -184,7 +184,7 @@ const MutationBurden = () => {
                         </span>
                       )}
                     </Card>
-                    <Card className="mutation-burden__group">
+                    <Card raised className="mutation-burden__group">
                       {getImage(images.sv.barplot, name).data && (
                         <span className="mutation-burden__image">
                           <Image
@@ -225,7 +225,7 @@ const MutationBurden = () => {
                         </span>
                       )}
                     </Card>
-                    <Card className="mutation-burden__group">
+                    <Card raised className="mutation-burden__group">
                       {getImage(images.snv.barplot, name).data && (
                         <span className="mutation-burden__image">
                           <Image
