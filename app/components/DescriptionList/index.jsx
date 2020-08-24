@@ -41,12 +41,12 @@ const DescriptionList = (props) => {
                 </ListItemText>
                 <ListItemText className="description-list__value">
                   {value}
+                  {action && (
+                    <IconButton size="small" onClick={action} className="description-list__action">
+                      <EditIcon />
+                    </IconButton>
+                  )}
                 </ListItemText>
-                {action && (
-                  <IconButton onClick={action}>
-                    <EditIcon />
-                  </IconButton>
-                )}
               </span>
             </ListItem>
           ))}

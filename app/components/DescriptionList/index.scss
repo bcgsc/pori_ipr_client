@@ -2,16 +2,16 @@
 
 .description-list {
   &__group {
-    width: 43%;
+    width: 46%;
     display: inline-flex;
     border-bottom: 1px solid $palette__text--secondary;
 
     &:nth-child(1n) {
-      margin: 0 5% 8px 2%;
+      margin: 0 2% 8px 2%;
     }
 
     &:nth-child(2n) {
-      margin: 0 2% 8px 5%;
+      margin: 0 2% 8px 2%;
     }
 
     &:nth-last-child(1) {
@@ -34,5 +34,9 @@
     display: inline-flex;
     flex-basis: 0;
     padding: 0 4px;
+  }
+
+  &__action {
+    // float: right;
   }
 }
