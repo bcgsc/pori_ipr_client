@@ -163,19 +163,19 @@ const MutationBurden = () => {
                             <CardContent>
                               <Typography variant="body2" className="mutation-burden__comparator--padded">
                                 <>
-                                  Indels: 
+                                  Protein Coding Indels (count): 
                                   {` ${mutationBurdenRole.indels}`}
                                 </>
                               </Typography>
                               <Typography variant="body2" className="mutation-burden__comparator--padded">
                                 <>
-                                  Indel percentile: 
+                                  Protein Coding Indels (percentile): 
                                   {` ${mutationBurdenRole.indelPercentile}%`}
                                 </>
                               </Typography>
                               <Typography variant="body2" className="mutation-burden__comparator--padded">
                                 <>
-                                  Number of protein coding indels (Frameshift):
+                                  Frameshifting Protein Coding Indels (count):
                                   {` ${mutationBurdenRole.indelsFrameshift}`}
                                 </>
                               </Typography>
@@ -204,19 +204,19 @@ const MutationBurden = () => {
                             <CardContent>
                               <Typography variant="body2" className="mutation-burden__comparator--padded">
                                 <>
-                                  SVs: 
+                                  Structural Variants (count): 
                                   {` ${mutationBurdenRole.sv}`}
                                 </>
                               </Typography>
                               <Typography variant="body2" className="mutation-burden__comparator--padded">
                                 <>
-                                  SV percentile: 
+                                  Structural Variants (percentile): 
                                   {` ${mutationBurdenRole.svPercentile}%`}
                                 </>
                               </Typography>
                               <Typography variant="body2" className="mutation-burden__comparator--padded">
                                 <>
-                                  Number of non-synonymous protein coding SVs (Truncating):
+                                  Expressed Structural Variants (count):
                                   {` ${mutationBurdenRole.svTruncating}`}
                                 </>
                               </Typography>
@@ -245,19 +245,19 @@ const MutationBurden = () => {
                             <CardContent>
                               <Typography variant="body2" className="mutation-burden__comparator--padded">
                                 <>
-                                  SNVs: 
+                                  Protein Coding SNVs (count):
                                   {` ${mutationBurdenRole.snv}`}
                                 </>
                               </Typography>
                               <Typography variant="body2" className="mutation-burden__comparator--padded">
                                 <>
-                                  SNV percentile: 
+                                  Protein Coding SNVs (percentile):
                                   {` ${mutationBurdenRole.snvPercentile}%`}
                                 </>
                               </Typography>
                               <Typography variant="body2" className="mutation-burden__comparator--padded">
                                 <>
-                                  Number of non-synonymous protein coding SNVs (Truncating):
+                                  Truncating Protein Coding SNVs (count):
                                   {` ${mutationBurdenRole.snvTruncating}`}
                                 </>
                               </Typography>
