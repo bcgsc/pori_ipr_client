@@ -73,7 +73,7 @@ const ExpressionCorrelation = () => {
                 </span>
               )}
             </div>
-            {Boolean(subtypePlots.length) && (
+            {Boolean(Object.values(subtypePlots).length) && (
               <div className="expression-correlation__subtype">
                 <span>
                   <Typography variant="h3" align="center" className="expression-correlation__header">
