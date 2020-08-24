@@ -170,7 +170,7 @@ const MutationBurden = () => {
                               <Typography variant="body2" className="mutation-burden__comparator--padded">
                                 <>
                                   Protein Coding Indels (percentile): 
-                                  {` ${mutationBurdenRole.indelPercentile}%`}
+                                  {` ${mutationBurdenRole.indelPercentile}`}
                                 </>
                               </Typography>
                               <Typography variant="body2" className="mutation-burden__comparator--padded">
@@ -211,7 +211,7 @@ const MutationBurden = () => {
                               <Typography variant="body2" className="mutation-burden__comparator--padded">
                                 <>
                                   Structural Variants (percentile): 
-                                  {` ${mutationBurdenRole.svPercentile}%`}
+                                  {` ${mutationBurdenRole.svPercentile}`}
                                 </>
                               </Typography>
                               <Typography variant="body2" className="mutation-burden__comparator--padded">
@@ -252,7 +252,7 @@ const MutationBurden = () => {
                               <Typography variant="body2" className="mutation-burden__comparator--padded">
                                 <>
                                   Protein Coding SNVs (percentile):
-                                  {` ${mutationBurdenRole.snvPercentile}%`}
+                                  {` ${mutationBurdenRole.snvPercentile}`}
                                 </>
                               </Typography>
                               <Typography variant="body2" className="mutation-burden__comparator--padded">
