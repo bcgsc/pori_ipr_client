@@ -38,7 +38,6 @@ import { UsersComponent } from '@/views/AdminView/components/Users';
 import { GroupsComponent } from '@/views/AdminView/components/Groups';
 import { ProjectsComponent } from '@/views/AdminView/components/Projects';
 
-import MutationSignatureComponent from '@/components/MutationSignature';
 import DiscussionEntryComponent from '@/views/ReportView/components/Discussion/components/DiscussionEntry';
 import RoleCardComponent from '@/components/RoleCard';
 import PaginateComponent from '@/components/Paginate';
@@ -67,7 +66,6 @@ const rootModule = angular.module('root')
   .component('sidebar', SidebarComponent)
   .component('analystComments', AnalystCommentsComponent)
   .component('pathwayAnalysis', PathwayAnalysisComponent)
-  .component('mutationSignature', MutationSignatureComponent)
   .component('slides', SlidesComponent)
   .component('discussion', DiscussionComponent)
   .component('discussionEntry', DiscussionEntryComponent)
