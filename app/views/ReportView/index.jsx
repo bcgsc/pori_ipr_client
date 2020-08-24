@@ -27,11 +27,9 @@ const KbMatches = lazy(() => import('./components/KbMatches'));
 const Slides = lazy(() => import('./components/Slides'));
 const Discussion = lazy(() => import('./components/Discussion'));
 const Microbial = lazy(() => import('./components/Microbial'));
-const Spearman = lazy(() => import('./components/Spearman'));
 const MutationSignatures = lazy(() => import('./components/MutationSignatures'));
 const MutationBurden = lazy(() => import('./components/MutationBurden'));
 const ExpressionCorrelation = lazy(() => import('./components/ExpressionCorrelation'));
-const DiseaseSpecific = lazy(() => import('./components/DiseaseSpecific'));
 const SmallMutations = lazy(() => import('./components/SmallMutations'));
 const CopyNumber = lazy(() => import('./components/CopyNumber'));
 const StructuralVariants = lazy(() => import('./components/StructuralVariants'));
@@ -128,12 +126,6 @@ const ReportView = () => {
               />
               <Route
                 render={routeProps => (
-                  <Spearman {...routeProps} print={false} report={report} canEdit={canEdit} />
-                )}
-                path={`${path}/spearman`}
-              />
-              <Route
-                render={routeProps => (
                   <MutationSignatures {...routeProps} print={false} />
                 )}
                 path={`${path}/mutation-signatures`}
@@ -149,12 +141,6 @@ const ReportView = () => {
                   <ExpressionCorrelation {...routeProps} print={false} />
                 )}
                 path={`${path}/expression-correlation`}
-              />
-              <Route
-                render={routeProps => (
-                  <DiseaseSpecific {...routeProps} print={false} report={report} />
-                )}
-                path={`${path}/disease-specific`}
               />
               <Route
                 render={routeProps => (

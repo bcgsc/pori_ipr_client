@@ -1,6 +1,10 @@
 .expression-correlation {
   padding: 16px;
 
+  &__header {
+    margin: 0 0 12px;
+  }
+
   &__expression-charts {
     display: flex;
     justify-content: space-around;

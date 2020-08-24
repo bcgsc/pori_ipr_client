@@ -57,11 +57,9 @@ const genomic = [
     category: true,
     children: [
       { name: 'Microbial', uri: 'microbial' },
-      { name: 'Spearman', uri: 'spearman' },
-      { name: 'Disease Specific', uri: 'disease-specific' },
+      { name: 'Expression Correlation', uri: 'expression-correlation' },
       { name: 'Mutation Signatures', uri: 'mutation-signatures' },
       { name: 'Mutation Burden', uri: 'mutation-burden' },
-      { name: 'Expression Correlation', uri: 'expression-correlation' },
     ],
   },
   {

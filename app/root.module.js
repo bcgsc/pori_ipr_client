@@ -24,8 +24,6 @@ import { PathwayAnalysisComponent } from '@/views/ReportView/components/PathwayA
 import { SlidesComponent } from '@/views/ReportView/components/Slides';
 import { DiscussionComponent } from '@/views/ReportView/components/Discussion';
 import { MicrobialComponent } from '@/views/ReportView/components/Microbial';
-import { SpearmanComponent } from '@/views/ReportView/components/Spearman';
-import { DiseaseSpecificComponent } from '@/views/ReportView/components/DiseaseSpecific';
 import { SmallMutationsComponent } from '@/views/ReportView/components/SmallMutations';
 import { CopyNumberComponent } from '@/views/ReportView/components/CopyNumber';
 import { StructuralVariantsComponent } from '@/views/ReportView/components/StructuralVariants';
@@ -72,8 +70,6 @@ const rootModule = angular.module('root')
   .component('discussion', DiscussionComponent)
   .component('discussionEntry', DiscussionEntryComponent)
   .component('microbial', MicrobialComponent)
-  .component('spearman', SpearmanComponent)
-  .component('diseaseSpecific', DiseaseSpecificComponent)
   .component('smallMutations', SmallMutationsComponent)
   .component('copyNumber', CopyNumberComponent)
   .component('structuralVariants', StructuralVariantsComponent)

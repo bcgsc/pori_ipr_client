@@ -37,7 +37,9 @@ const ExpressionCorrelation = () => {
           <div>
             {plots['microbial.circos'] && (
               <span>
-                <Typography variant="h3">Microbial Circos</Typography>
+                <Typography variant="h3" className="expression-correlation__header">
+                  Microbial Circos
+                </Typography>
                 <Image
                   image={plots['microbial.circos']}
                   showTitle
@@ -48,7 +50,9 @@ const ExpressionCorrelation = () => {
             <div className="expression-correlation__expression-charts">
               {plots['expression.chart'] && (
                 <span>
-                  <Typography variant="h3" align="center">Expression Chart</Typography>
+                  <Typography variant="h3" align="center" className="expression-correlation__header">
+                    Expression Chart
+                  </Typography>
                   <Image
                     image={plots['expression.chart']}
                     showTitle
@@ -58,7 +62,9 @@ const ExpressionCorrelation = () => {
               )}
               {plots['expression.legend'] && (
                 <span>
-                  <Typography variant="h3" align="center">Expression Legend</Typography>
+                  <Typography variant="h3" align="center" className="expression-correlation__header">
+                    Expression Legend
+                  </Typography>
                   <Image
                     image={plots['expression.legend']}
                     showTitle
@@ -70,7 +76,9 @@ const ExpressionCorrelation = () => {
             {Boolean(subtypePlots.length) && (
               <div className="expression-correlation__subtype">
                 <span>
-                  <Typography variant="h3" align="center">Subtype Plots</Typography>
+                  <Typography variant="h3" align="center" className="expression-correlation__header">
+                    Subtype Plots
+                  </Typography>
                   {Object.values(subtypePlots).map(plot => (
                     <Image
                       image={plot}
