@@ -61,6 +61,7 @@ const genomic = [
       { name: 'Disease Specific', uri: 'disease-specific' },
       { name: 'Mutation Signatures', uri: 'mutation-signatures' },
       { name: 'Mutation Burden', uri: 'mutation-burden' },
+      { name: 'Expression Correlation', uri: 'expression-correlation' },
     ],
   },
   {

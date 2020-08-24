@@ -30,6 +30,7 @@ const Microbial = lazy(() => import('./components/Microbial'));
 const Spearman = lazy(() => import('./components/Spearman'));
 const MutationSignatures = lazy(() => import('./components/MutationSignatures'));
 const MutationBurden = lazy(() => import('./components/MutationBurden'));
+const ExpressionCorrelation = lazy(() => import('./components/ExpressionCorrelation'));
 const DiseaseSpecific = lazy(() => import('./components/DiseaseSpecific'));
 const SmallMutations = lazy(() => import('./components/SmallMutations'));
 const CopyNumber = lazy(() => import('./components/CopyNumber'));
@@ -142,6 +143,12 @@ const ReportView = () => {
                   <MutationBurden {...routeProps} print={false} />
                 )}
                 path={`${path}/mutation-burden`}
+              />
+              <Route
+                render={routeProps => (
+                  <ExpressionCorrelation {...routeProps} print={false} />
+                )}
+                path={`${path}/expression-correlation`}
               />
               <Route
                 render={routeProps => (
