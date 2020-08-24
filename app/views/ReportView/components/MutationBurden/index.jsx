@@ -10,7 +10,7 @@ import ReportContext from '../ReportContext';
 import ImageService from '@/services/reports/image.service';
 import { getComparators } from '@/services/reports/comparators';
 import { getMutationBurden } from '@/services/reports/mutation-burden';
-import Image from './components/Image';
+import Image from '../../../../components/Image';
 
 import './index.scss';
 
