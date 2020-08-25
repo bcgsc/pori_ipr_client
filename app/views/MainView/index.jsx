@@ -104,7 +104,7 @@ const Main = () => {
                 <Route path="/" exact>
                   <Redirect to={{ pathname: '/reports' }} />
                 </Route>
-                <AuthenticatedRoute component={TermsView} path="/terms" />
+                <AuthenticatedRoute component={TermsView} path="/terms" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
                 <AuthenticatedRoute admin={adminUser} component={ReportsView} path="/reports" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
                 <Redirect exact from="/report/:ident/(genomic|probe)/summary" to="/report/:ident/summary" />
                 <AuthenticatedRoute component={ReportView} path="/report/:ident" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />

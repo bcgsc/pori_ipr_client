@@ -3,7 +3,7 @@ import './index.scss';
 import {
   Typography,
 } from '@material-ui/core';
-import React from 'react';
+import * as React from 'react';
 
 const Terms = () => {
   const sectionData = [

@@ -52,6 +52,10 @@ module.exports = {
             }],
           },
           {
+            test: /\.tsx?$/,
+            loader: 'ts-loader',
+          },
+          {
             test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.svg$/],
             exclude: /node_modules/,
             loader: 'file-loader',
@@ -75,7 +79,7 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: ['.js', '.jsx'],
+    extensions: ['.js', '.jsx', '.ts', '.tsx'],
     alias: {
       '@': APP_PATH,
     },
