@@ -1,0 +1,29 @@
+.image {
+  &__zoom {
+    &--in {
+      cursor: zoom-in;
+    }
+
+    &--out {
+      cursor: zoom-out;
+    }
+  }
+
+  &__dialog {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    height: 100%;
+  }
+
+  &__dialog-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 100;
+    background-color: rgba(0, 0, 0, .5);
+  }
+}

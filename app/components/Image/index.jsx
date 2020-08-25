@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { Typography } from '@material-ui/core';
+import { Typography, Fade } from '@material-ui/core';
+
+import './index.scss';
 
 const Image = (props) => {
   const {
@@ -13,27 +15,62 @@ const Image = (props) => {
     },
     showTitle,
     showCaption,
+    isZoomable,
   } = props;
+
+  const [isZoomed, setIsZoomed] = useState(false);
+
+  const handleZoom = useCallback(() => {
+    if (isZoomable) {
+      setIsZoomed(prevVal => !prevVal);
+    }
+  }, [isZoomable]);
 
   return (
     <>
       {data && (
         <>
-          {showTitle && (
-            <Typography>
-              {title}
-            </Typography>
-          )}
-          <img
-            src={`data:image/${format};base64,${data}`}
-            alt={title}
-            key={key}
-          />
-          {showCaption && (
-            <Typography>
-              {caption}
-            </Typography>
-          )}
+          <span>
+            {showTitle && (
+              <Typography>
+                {title}
+              </Typography>
+            )}
+            <img
+              className={`${isZoomable && !isZoomed ? 'image__zoom--in' : ''}`}
+              src={`data:image/${format};base64,${data}`}
+              alt={title}
+              key={key}
+              onClick={handleZoom}
+            />
+            {showCaption && (
+              <Typography>
+                {caption}
+              </Typography>
+            )}
+          </span>
+          <Fade in={isZoomed}>
+            <div className="image__dialog-background" onClick={handleZoom}>
+              <div className="image__dialog">
+                {showTitle && (
+                  <Typography>
+                    {title}
+                  </Typography>
+                )}
+                <img
+                  className={`${isZoomable && isZoomed ? 'image__zoom--out' : ''}`}
+                  src={`data:image/${format};base64,${data}`}
+                  alt={title}
+                  key={key}
+                />
+                {showCaption && (
+                  <Typography>
+                    {caption}
+                  </Typography>
+                )}
+              </div>
+            </div>
+          </Fade>
         </>
       )}
     </>
@@ -44,11 +81,13 @@ Image.propTypes = {
   image: PropTypes.objectOf(PropTypes.string).isRequired,
   showTitle: PropTypes.bool,
   showCaption: PropTypes.bool,
+  isZoomable: PropTypes.bool,
 };
 
 Image.defaultProps = {
   showTitle: false,
   showCaption: false,
+  isZoomable: true,
 };
 
 export default Image;
