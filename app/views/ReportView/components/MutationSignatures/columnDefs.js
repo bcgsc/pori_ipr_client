@@ -22,6 +22,16 @@ const columnDefs = [
     hide: false,
   },
   {
+    headerName: 'Selected',
+    field: 'selected',
+    hide: false,
+  },
+  {
+    headerName: 'kbCategory',
+    field: 'kbCategory',
+    hide: false,
+  },
+  {
     headerName: 'Additional Features',
     field: 'features',
     hide: true,
@@ -36,6 +46,15 @@ const columnDefs = [
     field: 'cancerTypes',
     hide: true,
   },
+  {
+    headerName: 'Actions',
+    colId: 'Actions',
+    cellRenderer: 'ActionCellRenderer',
+    pinned: 'right',
+    hide: false,
+    sortable: false,
+    suppressMenu: true,
+  }
 ];
 
 export default columnDefs;

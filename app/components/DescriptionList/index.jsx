@@ -4,7 +4,9 @@ import {
   List,
   ListItem,
   ListItemText,
+  IconButton,
 } from '@material-ui/core';
+import EditIcon from '@material-ui/icons/Edit';
 
 import './index.scss';
 
@@ -31,7 +33,7 @@ const DescriptionList = (props) => {
     <>
       {visibleEntries && (
         <List className="description-list">
-          {visibleEntries.map(({ term, value }) => (
+          {visibleEntries.map(({ term, value, action }) => (
             <ListItem key={term} className="description-list__group">
               <span className="description-list__text-group">
                 <ListItemText className="description-list__term">
@@ -39,6 +41,11 @@ const DescriptionList = (props) => {
                 </ListItemText>
                 <ListItemText className="description-list__value">
                   {value}
+                  {action && (
+                    <IconButton size="small" onClick={action} className="description-list__action">
+                      <EditIcon />
+                    </IconButton>
+                  )}
                 </ListItemText>
               </span>
             </ListItem>

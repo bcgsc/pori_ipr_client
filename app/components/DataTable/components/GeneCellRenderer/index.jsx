@@ -40,7 +40,7 @@ function GeneCellRenderer(params) {
               <>
                 {showGeneViewer && (
                   <GeneViewer
-                    open={showGeneViewer === val}
+                    isOpen={showGeneViewer === val}
                     gene={val}
                     reportIdent={reportIdent}
                     onClose={() => setShowGeneViewer(false)}

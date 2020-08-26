@@ -27,6 +27,7 @@ function TherapeuticView(props) {
   const [therapeuticData, setTherapeuticData] = useState();
 
   const [chemoresistanceData, setChemoresistanceData] = useState();
+
   useEffect(() => {
     if (report) {
       const getData = async () => {

@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback, useContext } from 'react';
+import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {
   Typography,
@@ -65,6 +66,7 @@ const GenomicSummary = (props) => {
 
   const { report } = useContext(ReportContext);
   const { canEdit } = useContext(EditContext);
+  const history = useHistory();
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [isPatientEditOpen, setIsPatientEditOpen] = useState(false);
   const [patientInformationData, setPatientInformationData] = useState();
@@ -149,6 +151,7 @@ const GenomicSummary = (props) => {
               .map(({ associations, signature }) => (
               `${signature} (${associations})`
             )).join(', '),
+            action: () => history.push('mutation-signatures'),
           },
           {
             term: `HR Deficiency${print ? '*' : ''}`,
