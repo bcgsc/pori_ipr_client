@@ -13,7 +13,7 @@ import React from 'react';
 import { JssProvider } from 'react-jss';
 import { BrowserRouter } from 'react-router-dom';
 
-import MainView from './views/MainView';
+import MainView from './views/MainView/index';
 import cssTheme from './styles/_theme.scss';
 
 const theme = createMuiTheme({
