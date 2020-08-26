@@ -7,7 +7,7 @@ module.exports = {
   rootDir: BASE_DIR,
   collectCoverage: true,
   collectCoverageFrom: [
-    '<rootDir>/app/**/**.{js,jsx,mjs}',
+    '<rootDir>/app/**/**.{js,jsx,ts,tsx,mjs}',
   ],
   coverageReporters: [
     'clover',
@@ -17,16 +17,19 @@ module.exports = {
   ],
   setupFilesAfterEnv: ['<rootDir>/config/jest/setup.js'],
   testEnvironment: 'jest-environment-jsdom-fourteen',
-  testRegex: 'app.*__tests__.*.jsx?$',
+  testRegex: 'app.*__tests__.*.(j|t)sx?$',
   testURL: 'http://0.0.0.0',
   transform: {
-    '^.+\\.(js|jsx)$': '<rootDir>/node_modules/babel-jest',
+    '^.+\\.(js|jsx|ts|tsx)$': '<rootDir>/node_modules/babel-jest',
     '^.+\\.s?css$': '<rootDir>/config/jest/cssTransform.js',
-    '^(?!.*\\.(js|jsx|css|json)$)': '<rootDir>/config/jest/fileTransform.js',
+    '^(?!.*\\.((j|t)sx?|css|json)$)': '<rootDir>/config/jest/fileTransform.js',
   },
   transformIgnorePatterns: [
+    '<rootDir>/node_modules/(?!@material-ui).+(jsx?)$',
   ],
+  moduleNameMapper: {
     '@/(.*)$': '<rootDir>/app/$1',
+  },
   moduleFileExtensions: [
     'web.js',
     'js',
@@ -35,5 +38,7 @@ module.exports = {
     'jsx',
     'node',
     'mjs',
+    'ts',
+    'tsx',
   ],
 };
