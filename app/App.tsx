@@ -2,7 +2,7 @@
  * @module /App
  */
 import { SnackbarContextProvider as SnackbarProvider } from '@bcgsc/react-snackbar-provider';
-import { ScopedCssBaseline } from '@material-ui/core';
+import ScopedCssBaseline from '@material-ui/core/ScopedCssBaseline';
 import {
   createMuiTheme,
   MuiThemeProvider,
@@ -13,8 +13,8 @@ import React from 'react';
 import { JssProvider } from 'react-jss';
 import { BrowserRouter } from 'react-router-dom';
 
-import MainView from './views/MainView';
-import * as cssTheme from './styles/_theme.scss';
+import MainView from './views/MainView/index';
+import cssTheme from './styles/_theme.scss';
 
 const theme = createMuiTheme({
   direction: 'ltr',
@@ -57,7 +57,9 @@ const theme = createMuiTheme({
   },
 });
 
-const generateClassName = createGenerateClassName();
+const generateClassName = createGenerateClassName({
+  productionPrefix: 'ipr',
+});
 const jss = create({
   ...jssPreset(),
   // We define a custom insertion point that JSS will look for injecting the styles in the DOM.
@@ -69,8 +71,8 @@ const jss = create({
  */
 function App() {
   return (
-    <StylesProvider injectFirst>
-      <JssProvider generateClassName={generateClassName} jss={jss}>
+    <StylesProvider generateClassName={generateClassName} injectFirst>
+      <JssProvider jss={jss}>
         <MuiThemeProvider theme={theme}>
           <SnackbarProvider anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
             <BrowserRouter>

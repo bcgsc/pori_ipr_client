@@ -45,7 +45,7 @@ module.exports = {
             ],
           },
           {
-            test: /\.jsx?$/,
+            test: [/\.jsx?$/, /\.tsx?$/],
             exclude: /node_modules/,
             use: [{
               loader: 'babel-loader',
@@ -75,7 +75,7 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: ['.js', '.jsx'],
+    extensions: ['.js', '.jsx', '.ts', '.tsx'],
     alias: {
       '@': APP_PATH,
     },
@@ -85,16 +85,20 @@ module.exports = {
       template: path.join(__dirname, '../../statics/index.html'),
       inject: true,
     }),
-    new CopyWebpackPlugin([{
-      from: path.join(__dirname, '../../statics/images/*'),
-      to: 'img/',
-      flatten: true,
-    },
-    {
-      from: path.join(__dirname, '../../statics/favicon/*'),
-      flatten: true,
-    },
-    ]),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: path.join(__dirname, '../../statics/images/*'),
+          to: 'img/',
+          flatten: true,
+        },
+        {
+          from: path.join(__dirname, '../../statics/favicon/*'),
+          to: 'img/',
+          flatten: true,
+        },
+      ],
+    }),
     new webpack.HotModuleReplacementPlugin(),
     new DashboardPlugin({ port: 3000 }),
     new webpack.DefinePlugin({

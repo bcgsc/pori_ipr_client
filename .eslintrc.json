@@ -2,14 +2,15 @@
   "extends": [
     "airbnb",
     "plugin:react/recommended",
-    "plugin:react-hooks/recommended"
+    "plugin:react-hooks/recommended",
+    "plugin:@typescript-eslint/recommended"
   ],
   "env": {
     "es6": true,
     "node": true,
     "cypress/globals": true
   },
-  "parser": "babel-eslint",
+  "parser": "@typescript-eslint",
   "parserOptions": {
     "sourceType": "module"
   },
@@ -27,7 +28,8 @@
     "babel",
     "cypress",
     "react",
-    "react-hooks"
+    "react-hooks",
+    "@typescript-eslint"
   ],
   "rules": {
     "semi": "error",

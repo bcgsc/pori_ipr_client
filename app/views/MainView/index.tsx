@@ -9,23 +9,23 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 import { CircularProgress } from '@material-ui/core';
 import { $httpProvider } from 'ngimport';
 
-import AuthenticatedRoute from '@/components/AuthenticatedRoute';
-import SecurityContext from '@/components/SecurityContext';
-import EditContext from '@/components/EditContext';
-import NavBar from '@/components/NavBar';
-import Sidebar from '@/components/Sidebar';
-import AclService from '@/services/management/acl.service';
+import AuthenticatedRoute from '../../components/AuthenticatedRoute';
+import SecurityContext from '../../components/SecurityContext';
+import EditContext from '../../components/EditContext';
+import NavBar from '../../components/NavBar';
+import Sidebar from '../../components/Sidebar';
+import AclService from '../../services/management/acl.service';
 
 import './index.scss';
 
-const LoginView = lazy(() => import('@/views/LoginView'));
-const TermsView = lazy(() => import('@/views/TermsView'));
-const ReportsView = lazy(() => import('@/views/ReportsView'));
-const ReportView = lazy(() => import('@/views/ReportView'));
-const PrintView = lazy(() => import('@/views/PrintView'));
-const GermlineView = lazy(() => import('@/views/GermlineView'));
-const AdminView = lazy(() => import('@/views/AdminView'));
-const LinkOutView = lazy(() => import('@/views/LinkOutView'));
+const LoginView = lazy(() => import('../LoginView'));
+const TermsView = lazy(() => import('../TermsView'));
+const ReportsView = lazy(() => import('../ReportsView'));
+const ReportView = lazy(() => import('../ReportView'));
+const PrintView = lazy(() => import('../PrintView'));
+const GermlineView = lazy(() => import('../GermlineView'));
+const AdminView = lazy(() => import('../AdminView'));
+const LinkOutView = lazy(() => import('../LinkOutView'));
 
 /**
  * Entry point to application. Handles routing, app theme, and logged in state.
@@ -104,7 +104,7 @@ const Main = () => {
                 <Route path="/" exact>
                   <Redirect to={{ pathname: '/reports' }} />
                 </Route>
-                <AuthenticatedRoute component={TermsView} path="/terms" />
+                <AuthenticatedRoute component={TermsView} path="/terms" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
                 <AuthenticatedRoute admin={adminUser} component={ReportsView} path="/reports" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
                 <Redirect exact from="/report/:ident/(genomic|probe)/summary" to="/report/:ident/summary" />
                 <AuthenticatedRoute component={ReportView} path="/report/:ident" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
