@@ -45,15 +45,11 @@ module.exports = {
             ],
           },
           {
-            test: /\.jsx?$/,
+            test: [/\.jsx?$/, /\.tsx?$/],
             exclude: /node_modules/,
             use: [{
               loader: 'babel-loader',
             }],
-          },
-          {
-            test: /\.tsx?$/,
-            loader: 'ts-loader',
           },
           {
             test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.svg$/],

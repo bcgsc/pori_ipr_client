@@ -13,7 +13,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import { CsvExportModule } from '@ag-grid-community/csv-export';
 import { react2angular } from 'react2angular';
 
-import ReactBootstrap from './index';
+import ReactBootstrap from './index.tsx';
 import lazyInjector from './lazyInjector';
 import 'ngimport';
 
