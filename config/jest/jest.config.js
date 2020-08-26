@@ -17,12 +17,12 @@ module.exports = {
   ],
   setupFilesAfterEnv: ['<rootDir>/config/jest/setup.js'],
   testEnvironment: 'jest-environment-jsdom-fourteen',
-  testRegex: 'app.*__tests__.*.(j|t)sx?$',
+  testRegex: 'app.*__tests__.*.[jt]sx?$',
   testURL: 'http://0.0.0.0',
   transform: {
-    '^.+\\.(js|jsx|ts|tsx)$': '<rootDir>/node_modules/babel-jest',
+    '^.+\\.([jt]sx?)$': '<rootDir>/node_modules/babel-jest',
     '^.+\\.s?css$': '<rootDir>/config/jest/cssTransform.js',
-    '^(?!.*\\.((j|t)sx?|css|json)$)': '<rootDir>/config/jest/fileTransform.js',
+    '^(?!.*\\.([jt]sx?|css|json)$)': '<rootDir>/config/jest/fileTransform.js',
   },
   transformIgnorePatterns: [
     '<rootDir>/node_modules/(?!@material-ui).+(jsx?)$',
