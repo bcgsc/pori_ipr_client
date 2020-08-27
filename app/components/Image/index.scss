@@ -13,11 +13,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 0 auto;
-    height: 100%;
+    overflow-y: auto;
+    margin: auto 0;
   }
 
   &__dialog-background {
+    overflow-y: auto;
     position: fixed;
     top: 0;
     left: 0;

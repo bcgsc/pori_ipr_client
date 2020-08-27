@@ -50,7 +50,7 @@ const Image = (props) => {
             )}
           </span>
           <Fade in={isZoomed}>
-            <div className="image__dialog-background" onClick={handleZoom}>
+            <div className="image__dialog-background" onClick={handleZoom} onKeyUp={handleZoom} role="dialog">
               <div className="image__dialog">
                 {showTitle && (
                   <Typography>
