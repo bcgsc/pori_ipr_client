@@ -67,9 +67,12 @@ const GenomicSummary = (props) => {
   const { report } = useContext(ReportContext);
   const { canEdit } = useContext(EditContext);
   const history = useHistory();
+
   const [showSnackbar, setShowSnackbar] = useState(false);
-  const [isPatientEditOpen, setIsPatientEditOpen] = useState(false);
+  const [showPatientEdit, setShowPatientEdit] = useState(false);
   const [patientInformationData, setPatientInformationData] = useState();
+  const [showTumourSummaryEdit, setShowTumourSummaryEdit] = useState(false);
+
   const [tumourSummaryData, setTumourSummaryData] = useState();
   const [analysisSummaryData, setAnalysisSummaryData] = useState();
   const [variantData, setVariantData] = useState();
@@ -131,14 +134,17 @@ const GenomicSummary = (props) => {
           {
             term: 'Tumour Content',
             value: report.tumourContent,
+            action: () => setShowTumourSummaryEdit(true),
           },
           {
             term: 'Subtype',
             value: report.subtyping,
+            action: () => setShowTumourSummaryEdit(true),
           },
           {
             term: 'Microbial Species',
             value: microbial ? microbial.species : null,
+            action: () => setShowTumourSummaryEdit(true),
           },
           {
             term: `Immune Infiltration${print ? '*' : ''}`,
@@ -261,7 +267,7 @@ const GenomicSummary = (props) => {
   }, []);
 
   const handlePatientEditClose = useCallback(async (isSaved, newPatientData, newReportData) => {
-    setIsPatientEditOpen(false);
+    setShowPatientEdit(false);
     if (!isSaved || !newPatientData && !newReportData) {
       return;
     }
@@ -316,13 +322,13 @@ const GenomicSummary = (props) => {
                 Patient Information
                 {canEdit && (
                   <>
-                    <IconButton onClick={setIsPatientEditOpen}>
+                    <IconButton onClick={setShowPatientEdit}>
                       <EditIcon />
                     </IconButton>
                     <PatientEdit
                       patientInformation={report.patientInformation}
                       report={report}
-                      isOpen={Boolean(isPatientEditOpen)}
+                      isOpen={Boolean(showPatientEdit)}
                       onClose={handlePatientEditClose}
                     />
                   </>
