@@ -10,7 +10,7 @@ import {
 import EditIcon from '@material-ui/icons/Edit';
 import sortBy from 'lodash.sortby';
 
-import { getMicrobial } from '@/services/reports/microbial';
+import { getMicrobial, updateMicrobial } from '@/services/reports/microbial';
 import { getComparators } from '@/services/reports/comparators';
 import { getMutationSignatures } from '@/services/reports/mutation-signature';
 import { formatDate } from '@/utils/date';
@@ -25,6 +25,7 @@ import PageBreak from '@/components/PageBreak';
 import VariantChips from './components/VariantChips';
 import VariantCounts from './components/VariantCounts';
 import PatientEdit from './components/PatientEdit';
+import TumourSummaryEdit from './components/TumourSummaryEdit';
 
 import './index.scss';
 
@@ -73,6 +74,8 @@ const GenomicSummary = (props) => {
   const [patientInformationData, setPatientInformationData] = useState();
   const [showTumourSummaryEdit, setShowTumourSummaryEdit] = useState(false);
 
+  const [microbialData, setMicrobialData] = useState([]);
+  const [signatureData, setSignatureData] = useState([]);
   const [tumourSummaryData, setTumourSummaryData] = useState();
   const [analysisSummaryData, setAnalysisSummaryData] = useState();
   const [variantData, setVariantData] = useState();
@@ -98,6 +101,9 @@ const GenomicSummary = (props) => {
           getComparators(report.ident),
           getMutationSignatures(report.ident),
         ]);
+
+        setMicrobialData(microbial);
+        setSignatureData(signatures);
 
         setPatientInformationData([
           {
@@ -277,7 +283,7 @@ const GenomicSummary = (props) => {
     }
 
     if (newReportData) {
-      await ReportService.updateReport(newReportData);
+      await ReportService.updateReport(report.ident, newReportData);
     }
 
     setPatientInformationData([
@@ -308,6 +314,68 @@ const GenomicSummary = (props) => {
       {
         label: 'Sex',
         value: newPatientData ? newPatientData.gender : report.patientInformation.gender,
+      },
+    ]);
+  }, [report]);
+
+  const handleTumourSummaryEditClose = useCallback(async (isSaved, newMicrobialData, newReportData) => {
+    setShowTumourSummaryEdit(false);
+    if (!isSaved || !newMicrobialData && !newReportData) {
+      return;
+    }
+
+    if (newMicrobialData) {
+      await updateMicrobial(report.ident, newMicrobialData);
+    }
+
+    if (newReportData) {
+      await ReportService.updateReport(report.ident, newReportData);
+    }
+
+    setTumourSummaryData([
+      {
+        term: 'Tumour Content',
+        value: newReportData ? newReportData.tumourContent : report.tumourContent,
+        action: () => setShowTumourSummaryEdit(true),
+      },
+      {
+        term: 'Subtype',
+        value: newReportData ? newReportData.subtyping : report.subtyping,
+        action: () => setShowTumourSummaryEdit(true),
+      },
+      {
+        term: 'Microbial Species',
+        value: newMicrobialData ? newMicrobialData.species : microbialData.species,
+        action: () => setShowTumourSummaryEdit(true),
+      },
+      {
+        term: `Immune Infiltration${print ? '*' : ''}`,
+        value: null,
+      },
+      {
+        term: 'Mutation Signature',
+        value: signatureData
+          .filter(({ selected }) => selected)
+          .map(({ associations, signature }) => (
+          `${signature} (${associations})`
+        )).join(', '),
+        action: () => history.push('mutation-signatures'),
+      },
+      {
+        term: `HR Deficiency${print ? '*' : ''}`,
+        value: null,
+      },
+      {
+        term: 'Mutation Burden',
+        value: null,
+      },
+      {
+        term: `SV Burden${print ? '*' : ''}`,
+        value: null,
+      },
+      {
+        term: 'MSI Status',
+        value: null,
       },
     ]);
   }, [report]);
@@ -362,6 +430,12 @@ const GenomicSummary = (props) => {
             </div>
             <div className="genomic-summary__tumour-summary-content">
               <DescriptionList entries={tumourSummaryData} />
+              <TumourSummaryEdit
+                microbial={microbialData}
+                report={report}
+                isOpen={showTumourSummaryEdit}
+                onClose={handleTumourSummaryEditClose}
+              />
             </div>
           </div>
 

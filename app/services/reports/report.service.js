@@ -35,8 +35,8 @@ class ReportService {
    * @returns {Promise} Result of update report API call
    * @throws {ErrorType} Thrown when API call fails
    */
-  async updateReport(report) {
-    const { data } = await $http.put(`${this.api}/${report.ident}`, report);
+  async updateReport(reportIdent, report) {
+    const { data } = await $http.put(`${this.api}/${reportIdent}`, report);
     return data;
   }
 

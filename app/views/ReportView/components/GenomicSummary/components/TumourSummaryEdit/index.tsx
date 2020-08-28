@@ -18,26 +18,29 @@ const PatientEdit = (props) => {
     onClose,
   } = props;
 
-  const [newMicrobialData, setNewMicrobialData] = useState();
-  const [newReportData, setNewReportData] = useState();
+  const [newMicrobialData, setNewMicrobialData] = useState({});
+  const [newReportData, setNewReportData] = useState({});
   const [microbialDirty, setMicrobialDirty] = useState(false);
   const [reportDirty, setReportDirty] = useState(false);
 
   useEffect(() => {
     if (microbial) {
-      setNewPatientData(microbial);
+      setNewMicrobialData({ species: microbial.species });
     }
   }, [microbial]);
 
   useEffect(() => {
     if (report) {
-      setNewReportData(report);
+      setNewReportData({
+        tumourContent: report.tumourContent,
+        subtyping: report.subtyping,
+      });
     }
   }, [report]);
 
   const handleMicrobialChange = (event) => {
     const { target: { value, name } } = event;
-    setNewMicrobialData(prevVal => ({...prevVal, [name]: value }));
+    setNewMicrobialData(prevVal => ({ ...prevVal, [name]: value }));
 
     if (!microbialDirty) {
       setMicrobialDirty(true);
@@ -46,7 +49,7 @@ const PatientEdit = (props) => {
 
   const handleReportChange = (event) => {
     const { target: { value, name } } = event;
-    setNewReportData(prevVal => ({...prevVal, [name]: value }));
+    setNewReportData(prevVal => ({ ...prevVal, [name]: value }));
 
     if (!reportDirty) {
       setReportDirty(true)
@@ -66,11 +69,11 @@ const PatientEdit = (props) => {
       <DialogTitle>
         Edit Tumour Summary
       </DialogTitle>
-      <DialogContent className="patient-dialog__content">
+      <DialogContent className="tumour-dialog__content">
         {newMicrobialData && newReportData && (
           <>
             <TextField
-              className="patient-dialog__text-field"
+              className="tumour-dialog__text-field"
               label="Tumour Content"
               value={newReportData.tumourContent}
               name="tumourContent"
@@ -80,7 +83,7 @@ const PatientEdit = (props) => {
               fullWidth
             />
             <TextField
-              className="patient-dialog__text-field"
+              className="tumour-dialog__text-field"
               label="Subtyping"
               value={newReportData.subtyping}
               name="subtyping"
@@ -90,10 +93,10 @@ const PatientEdit = (props) => {
               fullWidth
             />
             <TextField
-              className="patient-dialog__text-field"
-              label="Case Type"
+              className="tumour-dialog__text-field"
+              label="Microbial Species"
               value={newMicrobialData.species}
-              name="caseType"
+              name="species"
               onChange={handleMicrobialChange}
               variant="outlined"
               multiline
