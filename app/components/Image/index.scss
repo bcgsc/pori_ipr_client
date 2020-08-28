@@ -1,3 +1,5 @@
+@import '../../styles/theme';
+
 .image {
   &__zoom {
     &--in {
@@ -10,21 +12,21 @@
   }
 
   &__dialog {
-    display: flex;
-    justify-content: center;
-    align-items: center;
     overflow-y: auto;
-    margin: auto 0;
+    height: fit-content;
+    margin: auto;
+    background-color: $palette__common--white;
   }
 
   &__dialog-background {
-    overflow-y: auto;
     position: fixed;
+    display: flex;
     top: 0;
     left: 0;
     height: 100%;
     width: 100%;
     z-index: 100;
     background-color: rgba(0, 0, 0, .5);
+    overflow-y: auto;
   }
 }
