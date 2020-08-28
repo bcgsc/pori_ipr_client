@@ -125,7 +125,7 @@ class Settings {
     this.reportSettingsChanged = false;
 
     // Send updated settings to API
-    const resp = await ReportService.updateReport(this.report);
+    const resp = await ReportService.updateReport(this.report.ident, this.report);
     this.report = resp;
     $rootScope.$digest();
 
