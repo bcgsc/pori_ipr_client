@@ -10,7 +10,7 @@ import {
 
 import './index.scss';
 
-const PatientEdit = (props) => {
+const TumourSummaryEdit = (props) => {
   const {
     microbial,
     report,
@@ -117,4 +117,4 @@ const PatientEdit = (props) => {
   )
 }
 
-export default PatientEdit;
+export default TumourSummaryEdit;
