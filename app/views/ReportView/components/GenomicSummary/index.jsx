@@ -140,17 +140,14 @@ const GenomicSummary = (props) => {
           {
             term: 'Tumour Content',
             value: report.tumourContent,
-            action: () => setShowTumourSummaryEdit(true),
           },
           {
             term: 'Subtype',
             value: report.subtyping,
-            action: () => setShowTumourSummaryEdit(true),
           },
           {
             term: 'Microbial Species',
             value: microbial ? microbial.species : null,
-            action: () => setShowTumourSummaryEdit(true),
           },
           {
             term: `Immune Infiltration${print ? '*' : ''}`,
@@ -161,8 +158,8 @@ const GenomicSummary = (props) => {
             value: signatures
               .filter(({ selected }) => selected)
               .map(({ associations, signature }) => (
-              `${signature} (${associations})`
-            )).join(', '),
+                `${signature} (${associations})`
+              )).join(', '),
             action: () => history.push('mutation-signatures'),
           },
           {
@@ -207,7 +204,7 @@ const GenomicSummary = (props) => {
             label: 'Ploidy',
             value: report.ploidy,
           },
-        ])
+        ]);
 
         const output = [];
         const counts = {
@@ -235,7 +232,7 @@ const GenomicSummary = (props) => {
 
       getData();
     }
-  }, [report, print]);
+  }, [report, print, loadedDispatch]);
 
   const handleChipDeleted = useCallback(async (chipIdent, type, comment) => {
     try {
@@ -410,11 +407,8 @@ const GenomicSummary = (props) => {
               className="genomic-summary__patient-information-content"
             >
               {patientInformationData.map(({ label, value }) => (
-                <Grid item>
-                  <ReadOnlyTextField
-                    key={label}
-                    label={label}
-                  >
+                <Grid key={label} item>
+                  <ReadOnlyTextField label={label}>
                     {value}
                   </ReadOnlyTextField>
                 </Grid>
@@ -426,16 +420,23 @@ const GenomicSummary = (props) => {
             <div className="genomic-summary__tumour-summary-title">
               <Typography variant="h3">
                 Tumour Summary
+                {canEdit && (
+                  <>
+                    <IconButton onClick={setShowTumourSummaryEdit}>
+                      <EditIcon />
+                    </IconButton>
+                    <TumourSummaryEdit
+                      microbial={microbialData}
+                      report={report}
+                      isOpen={showTumourSummaryEdit}
+                      onClose={handleTumourSummaryEditClose}
+                    />
+                  </>
+                )}
               </Typography>
             </div>
             <div className="genomic-summary__tumour-summary-content">
               <DescriptionList entries={tumourSummaryData} />
-              <TumourSummaryEdit
-                microbial={microbialData}
-                report={report}
-                isOpen={showTumourSummaryEdit}
-                onClose={handleTumourSummaryEditClose}
-              />
             </div>
           </div>
 
@@ -486,11 +487,8 @@ const GenomicSummary = (props) => {
               className="genomic-summary__analysis-summary-content"
             >
               {analysisSummaryData.map(({ label, value }) => (
-                <Grid item>
-                  <ReadOnlyTextField
-                    key={label}
-                    label={label}
-                  >
+                <Grid key={label} item>
+                  <ReadOnlyTextField label={label}>
                     {value}
                   </ReadOnlyTextField>
                 </Grid>
