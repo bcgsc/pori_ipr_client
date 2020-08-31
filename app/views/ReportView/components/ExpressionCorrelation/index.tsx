@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
+import orderBy from 'lodash.orderby';
 import { HorizontalBar } from 'react-chartjs-2';
 import ReportContext from '../ReportContext';
 import ImageService from '../../../../services/reports/image.service';
@@ -59,7 +60,7 @@ const ExpressionCorrelation = () => {
 
         setPlots(plotData);
         setSubtypePlots(subtypePlotData);
-        setPairwiseExpression([
+        const mockData = [
           {
             patientId: 'UPLOADPAT02',
             libraryName: 'LIB0002',
@@ -76,7 +77,8 @@ const ExpressionCorrelation = () => {
             tissueType: 'lung',
             tumourContent: 68,
           },
-        ]);
+        ];
+        setPairwiseExpression(orderBy(mockData, ['correlation'], ['desc']));
       }
 
       getData();
@@ -179,7 +181,27 @@ const ExpressionCorrelation = () => {
         )}
       </div>
       {Boolean(Object.values(barChartData).length) && (
-        <HorizontalBar data={barChartData} />
+        <span className="expression-correlation__chart-group">
+          <div className="expression-correlation__chart">
+            <HorizontalBar
+              data={barChartData}
+              width={400}
+              options={{ responsive: false }}
+            />
+          </div>
+          <div className="expression-correlation__legend-group">
+            <Typography>Tumour Content</Typography>
+            <div className="expression-correlation__legend-amounts">
+              <span className="expression-correlation__legend-box"></span>
+              <span className="expression-correlation__legend-labels">
+                <Typography>100</Typography>
+                <Typography>80</Typography>
+                <Typography>60</Typography>
+                <Typography>40</Typography>
+              </span>
+            </div>
+          </div>
+        </span>
       )}
     </>
   );

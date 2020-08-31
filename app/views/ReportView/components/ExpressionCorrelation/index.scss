@@ -18,4 +18,31 @@
     flex-wrap: wrap;
     margin: 24px 0;
   }
+
+  &__chart-group {
+    display: flex;
+    justify-content: center;
+  }
+
+  &__chart {
+    position: relative;
+    display: inline;
+    margin: 0 auto;
+  }
+
+  &__legend-box {
+    display: inline-block;
+    background: linear-gradient(0deg, rgba(19,43,67,1) 0%, rgba(122,194,248,1) 100%); 
+    min-width: 30px;
+    min-height: 100px;
+  }
+  
+  &__legend-amounts {
+    display: flex;
+    justify-content: center;
+  }
+
+  &__legend-labels {
+    display: inline;
+  }
 }
