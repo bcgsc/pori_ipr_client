@@ -26,17 +26,13 @@ const makeColDefs = (columnNames) => {
     returnColDefs.push({
       headerName: `${col.charAt(0).toUpperCase()}${col.slice(1)}`,
       field: col,
-      flex: col === 'notes' ? 1 : null,
       maxWidth: (() => {
         if (col === 'notes') { return null; }
         if (col === 'therapy') { return 180; }
         return 110;
       })(),
-      hide: col === 'rank',
+      hide: col === 'rank' || col === 'kbStatementIds',
       sort: col === 'rank' ? 'asc' : null,
-      cellClass: ['cell-wrap-text', 'cell-line-height'],
-      cellStyle: { 'white-space': 'normal' },
-      autoHeight: true,
     });
   });
   return returnColDefs;
@@ -134,16 +130,19 @@ const TherapeuticTable = (props) => {
   }, [chemoresistanceRowData]);
 
   const onFirstDataRendered = (gridApi) => {
-    if (gridApi.current) {
-      gridApi.current.sizeColumnsToFit();
-      gridApi.current.resetRowHeights();
+    if (gridApi) {
+      gridApi.sizeColumnsToFit();
+      gridApi.forEachNode(node => node.setRowHeight());
+      gridApi.onRowHeightChanged();
     }
   };
 
   const defaultColDef = {
+    autoHeight: true,
     sortable: false,
     resizable: false,
     filter: false,
+    cellClass: ['cell-wrap-text', 'cell-line-height'],
   };
 
   return (
