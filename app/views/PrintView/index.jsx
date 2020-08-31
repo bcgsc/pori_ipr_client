@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
 import { useTheme } from '@material-ui/core/styles';
 
+import ReportContext from '../../components/ReportContext';
 import ReportService from '@/services/reports/report.service';
 import GenomicSummary from '../ReportView/components/GenomicSummary';
 import ProbeSummary from '../ReportView/components/ProbeSummary';
@@ -98,13 +99,13 @@ const Print = () => {
 
   const genomicSections = () => (
     <>
-      <GenomicSummary report={report} print loadedDispatch={dispatch} />
+      <GenomicSummary print loadedDispatch={dispatch} />
       <PageBreak report={report} theme={theme} />
       <AnalystComments report={report} print loadedDispatch={dispatch} />
       <PageBreak report={report} theme={theme} />
       <PathwayAnalysis report={report} print loadedDispatch={dispatch} />
       <PageBreak report={report} theme={theme} />
-      <TherapeuticTargets report={report} loadedDispatch={dispatch} />
+      <TherapeuticTargets print loadedDispatch={dispatch} />
       <PageBreak report={report} theme={theme} />
       <Slides report={report} print loadedDispatch={dispatch} theme={theme}/>
     </>
@@ -127,20 +128,22 @@ const Print = () => {
   );
 
   return (
-    <div className="print">
-      {report ? (
-        <>
-          {titleBar()}
+    <ReportContext.Provider value={{ report, setReport }}>
+      <div className="print">
+        {report ? (
           <>
-            {isProbe ? (
-              probeSections()
-            ) : (
-              genomicSections()
-            )}
+            {titleBar()}
+            <>
+              {isProbe ? (
+                probeSections()
+              ) : (
+                genomicSections()
+              )}
+            </>
           </>
-        </>
-      ) : null}
-    </div>
+        ) : null}
+      </div>
+    </ReportContext.Provider>
   );
 };
 

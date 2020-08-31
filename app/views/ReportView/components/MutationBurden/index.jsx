@@ -6,7 +6,7 @@ import {
   Card,
   CardContent,
 } from '@material-ui/core';
-import ReportContext from '../ReportContext';
+import ReportContext from '../../../../components/ReportContext';
 import ImageService from '@/services/reports/image.service';
 import { getComparators } from '@/services/reports/comparators';
 import { getMutationBurden } from '@/services/reports/mutation-burden';

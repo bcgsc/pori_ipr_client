@@ -18,7 +18,7 @@ import { updateMutationSignature } from '@/services/reports/mutation-signature';
 
 import './index.scss';
 import { useCallback } from 'react';
-import ReportContext from '../../../ReportContext';
+import ReportContext from '../../../../../../components/ReportContext';
 
 const EditDialog = (props) => {
   const {

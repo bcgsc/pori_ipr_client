@@ -14,7 +14,7 @@ import ReportToolbar from '@/components/ReportToolbar';
 import ReportSidebar from '@/components/ReportSidebar';
 import ReportService from '@/services/reports/report.service';
 import EditContext from '@/components/EditContext';
-import ReportContext from './components/ReportContext';
+import ReportContext from '../../components/ReportContext';
 import { genomic, probe } from './sections';
 
 import './index.scss';
