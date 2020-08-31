@@ -3,7 +3,7 @@ import { LinearProgress } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import DataTable from '@/components/DataTable';
 import EditContext from '@/components/EditContext';
-import ReportContext from '../ReportContext';
+import ReportContext from '../../../../components/ReportContext';
 import EditDialog from './components/EditDialog';
 import columnDefs from './columnDefs';
 import { therapeuticUpdateTable, therapeuticGet } from '@/services/reports/therapeutic';

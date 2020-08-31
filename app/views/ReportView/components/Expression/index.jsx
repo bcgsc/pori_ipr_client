@@ -6,7 +6,7 @@ import DataTable from '../../../../components/DataTable';
 import columnDefs from './columnDefs';
 import { getComparators } from '@/services/reports/comparators';
 import ExpressionService from '@/services/reports/expression.service';
-import ReportContext from '../ReportContext';
+import ReportContext from '../../../../components/ReportContext';
 import processExpression from './processData';
 
 import './index.scss';

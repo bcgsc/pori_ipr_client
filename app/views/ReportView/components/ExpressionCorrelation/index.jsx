@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import ReportContext from '../ReportContext';
+import ReportContext from '../../../../components/ReportContext';
 import ImageService from '@/services/reports/image.service';
 import Image from '@/components/Image';
 import { Typography } from '@material-ui/core';

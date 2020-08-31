@@ -1,29 +1,33 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { Typography } from '@material-ui/core';
 import { MuiThemeProvider } from '@material-ui/core/styles';
+import ReportContext from '../ReportContext';
 
 import './index.scss';
 
 const PageBreak = (props) => {
   const {
-    report,
     theme,
   } = props;
 
+  const { report } = useContext(ReportContext);
+
   return (
     <MuiThemeProvider theme={theme}>
-      <span className="page-break">
-        <Typography display="inline" variant="caption" className="page-break__text--left">
-          {report.patientId}
-        </Typography>
-        <Typography align="center" display="inline" variant="caption" className="page-break__text--middle">
-          BCCA Confidential - For Research Purposes Only
-        </Typography>
-        <Typography align="right" display="inline" variant="caption" className="page-break__text-right">
-          {report.patientInformation.diagnosis}
-        </Typography>
-      </span>
+      {report && (
+        <span className="page-break">
+          <Typography display="inline" variant="caption" className="page-break__text--left">
+            {report.patientId}
+          </Typography>
+          <Typography align="center" display="inline" variant="caption" className="page-break__text--middle">
+            BCCA Confidential - For Research Purposes Only
+          </Typography>
+          <Typography align="right" display="inline" variant="caption" className="page-break__text-right">
+            {report.patientInformation.diagnosis}
+          </Typography>
+        </span>
+      )}
     </MuiThemeProvider>
   );
 };

@@ -14,7 +14,7 @@ import { getMicrobial, updateMicrobial } from '@/services/reports/microbial';
 import { getComparators } from '@/services/reports/comparators';
 import { getMutationSignatures } from '@/services/reports/mutation-signature';
 import { formatDate } from '@/utils/date';
-import ReportContext from '../ReportContext';
+import ReportContext from '../../../../components/ReportContext';
 import EditContext from '@/components/EditContext';
 import AlterationsService from '@/services/reports/genomic-alterations.service';
 import PatientInformationService from '@/services/reports/patient-information.service';
