@@ -19,15 +19,13 @@
     margin: 24px 0;
   }
 
-  &__chart-group {
-    display: flex;
-    justify-content: center;
-  }
-
   &__chart {
     position: relative;
     display: inline;
-    margin: 0 auto;
+
+    & > canvas {
+      margin: 0 auto;
+    }
   }
 
   &__legend-box {

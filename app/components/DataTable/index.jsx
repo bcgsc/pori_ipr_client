@@ -18,6 +18,7 @@ import ColumnPicker from './components/ColumnPicker';
 import LinkCellRenderer from './components/LinkCellRenderer';
 import GeneCellRenderer from './components/GeneCellRenderer';
 import ActionCellRenderer from './components/ActionCellRenderer';
+import GradientCellRenderer from './components/GradientCellRenderer';
 import { getDate } from '../../utils/date';
 
 import './index.scss';
@@ -69,6 +70,7 @@ function DataTable(props) {
     patientId,
     theme,
     isPrint,
+    highlightRow,
   } = props;
 
   const domLayout = isPrint ? 'print' : 'autoHeight';
@@ -77,6 +79,7 @@ function DataTable(props) {
   const columnApi = useRef();
   const ColumnPickerOnClose = useRef();
   const gridDiv = useRef();
+  const gridRef = useRef();
 
   const setColumnPickerOnClose = (ref) => {
     ColumnPickerOnClose.current = ref;
@@ -104,6 +107,21 @@ function DataTable(props) {
       columnApi.current.setColumnsVisible(hiddenColumns, false);
     }
   }, [visibleColumns]);
+
+  useEffect(() => {
+    if (typeof highlightRow === 'number') {
+      const rowNode = gridApi.current.getDisplayedRowAtIndex(highlightRow);
+      rowNode.setSelected(true, true);
+      gridApi.current.ensureIndexVisible(highlightRow, 'middle');
+
+      const [element] = document.querySelectorAll(`div[class="report__content"]`);
+      element.scrollTo({
+        top: gridRef.current.eGridDiv.offsetTop,
+        left: 0,
+        behavior: 'smooth',
+      });
+    }
+  }, [highlightRow]);
 
   const handleSnackbarClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -425,6 +443,7 @@ function DataTable(props) {
                 && renderColumnPicker()
               }
               <AgGridReact
+                ref={gridRef}
                 columnDefs={columnDefs}
                 rowData={rowData}
                 defaultColDef={defaultColDef}
@@ -449,6 +468,7 @@ function DataTable(props) {
                   LinkCellRenderer,
                   GeneCellRenderer,
                   ActionCellRenderer: RowActionCellRenderer,
+                  GradientCellRenderer,
                 }}
                 suppressAnimationFrame
                 suppressColumnVirtualisation
@@ -498,6 +518,7 @@ DataTable.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
   theme: PropTypes.object,
   isPrint: PropTypes.bool,
+  highlightRow: PropTypes.number || PropTypes.object,
 };
 
 DataTable.defaultProps = {
@@ -519,6 +540,7 @@ DataTable.defaultProps = {
   patientId: '',
   theme: {},
   isPrint: false,
+  highlightRow: null,
 };
 
 export default DataTable;

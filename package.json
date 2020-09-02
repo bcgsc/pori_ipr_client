@@ -104,6 +104,7 @@
     "angular-sortable-view": "~0.0.17",
     "angular2react": "~3.0.2",
     "chart.js": "~2.7.3",
+    "chartjs-plugin-datalabels": "~0.7.0",
     "fetch-intercept": "~2.3.1",
     "jsonwebtoken": "~8.5.1",
     "jss": "~10.1.1",

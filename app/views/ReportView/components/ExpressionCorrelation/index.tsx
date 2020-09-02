@@ -1,11 +1,16 @@
 import React, { useEffect, useState, useContext } from 'react';
 import orderBy from 'lodash.orderby';
-import { HorizontalBar } from 'react-chartjs-2';
+import { HorizontalBar, Chart } from 'react-chartjs-2';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { Typography } from '@material-ui/core';
+
 import ReportContext from '../ReportContext';
 import ImageService from '../../../../services/reports/image.service';
+import DataTable from '../../../../components/DataTable';
+import columnDefs from './columnDefs';
 import { getPairwiseExpressionCorrelation } from '../../../../services/reports/pairwise-expression';
 import Image from '../../../../components/Image';
-import { Typography } from '@material-ui/core';
+import CorrelationTable from './components/CorrelationTable';
 
 import './index.scss';
 
@@ -16,15 +21,15 @@ type Color = {
 };
 
 const LOWER_COLOR = {
-  red: 19,
-  green: 43,
-  blue: 67,
+  red: 134,
+  green: 244,
+  blue: 207,
 };
 
 const UPPER_COLOR = {
-  red: 122,
-  green: 194,
-  blue: 248,
+  red: 25,
+  green: 96,
+  blue: 121,
 };
 
 const getColor = (lowerColor: Color, upperColor: Color, ratio: number) => {
@@ -48,6 +53,7 @@ const ExpressionCorrelation = () => {
     labels: [],
     datasets: [],
   });
+  const [rowClicked, setRowClicked] = useState();
 
   useEffect(() => {
     if (report) {
@@ -62,6 +68,7 @@ const ExpressionCorrelation = () => {
         setSubtypePlots(subtypePlotData);
         const mockData = [
           {
+            ident: 'L6CQ4',
             patientId: 'UPLOADPAT02',
             libraryName: 'LIB0002',
             correlation: 0.99,
@@ -70,9 +77,19 @@ const ExpressionCorrelation = () => {
             tumourContent: 15,
           },
           {
+            ident: 'RQN4C',
+            patientId: 'UPLOADPAT03',
+            libraryName: 'LIB0003',
+            correlation: 0.52,
+            tumourType: 'sarcoma',
+            tissueType: 'sarcoma',
+            tumourContent: 99,
+          },
+          {
+            ident: 'ET64E',
             patientId: 'UPLOADPAT05',
             libraryName: 'LIB0005',
-            correlation: 0.79,
+            correlation: 0.1,
             tumourType: 'lung andenocarcinoma',
             tissueType: 'lung',
             tumourContent: 68,
@@ -84,19 +101,23 @@ const ExpressionCorrelation = () => {
       getData();
     }
   }, [report]);
+  
+  useEffect(() => {
+    Chart.pluginService.register({
+      plugins: [ChartDataLabels],
+    });
+  }, []);
 
   useEffect(() => {
     if (pairwiseExpression.length) {
-      const labels = pairwiseExpression.map(data => data.libraryName);
-      const colors = pairwiseExpression.map(data => (
-        `rgb(${getColor(LOWER_COLOR, UPPER_COLOR, data.tumourContent/100).red},${getColor(LOWER_COLOR, UPPER_COLOR, data.tumourContent/100).green},${getColor(LOWER_COLOR, UPPER_COLOR, data.tumourContent/100).blue})`
-      ));
+      const labels = pairwiseExpression.map(data => `${data.libraryName} (${data.tumourContent}% TC)`);
+      const colors = pairwiseExpression.map(data => `rgb(${Object.values(getColor(LOWER_COLOR, UPPER_COLOR, data.correlation)).join(',')})`);
 
       const datasets = [
         {
           label: 'Correlation',
           backgroundColor: colors,
-          borderColor: colors,
+          borderColor: '#FFFFFF',
           borderWidth: 1,
           hoverBackgroundColor: `rgb(${UPPER_COLOR.red},${UPPER_COLOR.green},${UPPER_COLOR.blue})`,
           hoverBorderColor: `rgb(${UPPER_COLOR.red},${UPPER_COLOR.green},${UPPER_COLOR.blue})`,
@@ -185,22 +206,54 @@ const ExpressionCorrelation = () => {
           <div className="expression-correlation__chart">
             <HorizontalBar
               data={barChartData}
-              width={400}
-              options={{ responsive: false }}
+              width={600}
+              options={{
+                responsive: false,
+                onClick: (event, [context]) => {
+                  setRowClicked(context._index);
+                },
+                legend: {
+                  display: true,
+                  labels: {
+                    boxWidth: 0,
+                  },
+                },
+                scales: {
+                  xAxes: [{
+                    ticks: {
+                      beginAtZero: true,
+                    },
+                  }],
+                },
+                plugins: {
+                  datalabels: {
+                    color: 'white',
+                    anchor: 'start',
+                    align: 'end',
+                    clamp: true,
+                  },
+                },
+                tooltips: {
+                  callbacks: {
+                    label: (tooltipItem, data) => {
+                      const newTip = Object.entries(pairwiseExpression[tooltipItem.index]).map(([key, value]) => `${key}: ${value}`);
+                      return newTip;
+                    }
+                  },
+                  displayColors: false,
+                  intersect: false,
+                  enabled: false,
+                },
+              }}
             />
           </div>
-          <div className="expression-correlation__legend-group">
-            <Typography>Tumour Content</Typography>
-            <div className="expression-correlation__legend-amounts">
-              <span className="expression-correlation__legend-box"></span>
-              <span className="expression-correlation__legend-labels">
-                <Typography>100</Typography>
-                <Typography>80</Typography>
-                <Typography>60</Typography>
-                <Typography>40</Typography>
-              </span>
-            </div>
-          </div>
+          {Boolean(pairwiseExpression.length) && (
+            <DataTable
+              rowData={pairwiseExpression}
+              columnDefs={columnDefs}
+              highlightRow={rowClicked}
+            />
+          )}
         </span>
       )}
     </>
