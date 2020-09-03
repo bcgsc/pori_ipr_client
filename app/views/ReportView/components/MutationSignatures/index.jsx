@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { LinearProgress } from '@material-ui/core';
 
 import DataTable from '@/components/DataTable';
-import ReportContext from '../ReportContext';
+import ReportContext from '../../../../components/ReportContext';
 import EditContext from '@/components/EditContext';
 import ImageService from '@/services/reports/image.service';
 import { getMutationSignatures } from '@/services/reports/mutation-signature';

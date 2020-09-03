@@ -10,11 +10,11 @@ import {
 import EditIcon from '@material-ui/icons/Edit';
 import sortBy from 'lodash.sortby';
 
-import { getMicrobial } from '@/services/reports/microbial';
+import { getMicrobial, updateMicrobial } from '@/services/reports/microbial';
 import { getComparators } from '@/services/reports/comparators';
 import { getMutationSignatures } from '@/services/reports/mutation-signature';
 import { formatDate } from '@/utils/date';
-import ReportContext from '../ReportContext';
+import ReportContext from '../../../../components/ReportContext';
 import EditContext from '@/components/EditContext';
 import AlterationsService from '@/services/reports/genomic-alterations.service';
 import PatientInformationService from '@/services/reports/patient-information.service';
@@ -25,6 +25,7 @@ import PageBreak from '@/components/PageBreak';
 import VariantChips from './components/VariantChips';
 import VariantCounts from './components/VariantCounts';
 import PatientEdit from './components/PatientEdit';
+import TumourSummaryEdit from './components/TumourSummaryEdit';
 
 import './index.scss';
 
@@ -67,9 +68,14 @@ const GenomicSummary = (props) => {
   const { report } = useContext(ReportContext);
   const { canEdit } = useContext(EditContext);
   const history = useHistory();
+
   const [showSnackbar, setShowSnackbar] = useState(false);
-  const [isPatientEditOpen, setIsPatientEditOpen] = useState(false);
+  const [showPatientEdit, setShowPatientEdit] = useState(false);
   const [patientInformationData, setPatientInformationData] = useState();
+  const [showTumourSummaryEdit, setShowTumourSummaryEdit] = useState(false);
+
+  const [microbialData, setMicrobialData] = useState([]);
+  const [signatureData, setSignatureData] = useState([]);
   const [tumourSummaryData, setTumourSummaryData] = useState();
   const [analysisSummaryData, setAnalysisSummaryData] = useState();
   const [variantData, setVariantData] = useState();
@@ -95,6 +101,9 @@ const GenomicSummary = (props) => {
           getComparators(report.ident),
           getMutationSignatures(report.ident),
         ]);
+
+        setMicrobialData(microbial);
+        setSignatureData(signatures);
 
         setPatientInformationData([
           {
@@ -149,8 +158,8 @@ const GenomicSummary = (props) => {
             value: signatures
               .filter(({ selected }) => selected)
               .map(({ associations, signature }) => (
-              `${signature} (${associations})`
-            )).join(', '),
+                `${signature} (${associations})`
+              )).join(', '),
             action: () => history.push('mutation-signatures'),
           },
           {
@@ -195,7 +204,7 @@ const GenomicSummary = (props) => {
             label: 'Ploidy',
             value: report.ploidy,
           },
-        ])
+        ]);
 
         const output = [];
         const counts = {
@@ -223,7 +232,7 @@ const GenomicSummary = (props) => {
 
       getData();
     }
-  }, [report, print]);
+  }, [report, print, loadedDispatch]);
 
   const handleChipDeleted = useCallback(async (chipIdent, type, comment) => {
     try {
@@ -261,7 +270,7 @@ const GenomicSummary = (props) => {
   }, []);
 
   const handlePatientEditClose = useCallback(async (isSaved, newPatientData, newReportData) => {
-    setIsPatientEditOpen(false);
+    setShowPatientEdit(false);
     if (!isSaved || !newPatientData && !newReportData) {
       return;
     }
@@ -271,7 +280,7 @@ const GenomicSummary = (props) => {
     }
 
     if (newReportData) {
-      await ReportService.updateReport(newReportData);
+      await ReportService.updateReport(report.ident, newReportData);
     }
 
     setPatientInformationData([
@@ -306,6 +315,68 @@ const GenomicSummary = (props) => {
     ]);
   }, [report]);
 
+  const handleTumourSummaryEditClose = useCallback(async (isSaved, newMicrobialData, newReportData) => {
+    setShowTumourSummaryEdit(false);
+    if (!isSaved || !newMicrobialData && !newReportData) {
+      return;
+    }
+
+    if (newMicrobialData) {
+      await updateMicrobial(report.ident, newMicrobialData);
+    }
+
+    if (newReportData) {
+      await ReportService.updateReport(report.ident, newReportData);
+    }
+
+    setTumourSummaryData([
+      {
+        term: 'Tumour Content',
+        value: newReportData ? newReportData.tumourContent : report.tumourContent,
+        action: () => setShowTumourSummaryEdit(true),
+      },
+      {
+        term: 'Subtype',
+        value: newReportData ? newReportData.subtyping : report.subtyping,
+        action: () => setShowTumourSummaryEdit(true),
+      },
+      {
+        term: 'Microbial Species',
+        value: newMicrobialData ? newMicrobialData.species : microbialData.species,
+        action: () => setShowTumourSummaryEdit(true),
+      },
+      {
+        term: `Immune Infiltration${print ? '*' : ''}`,
+        value: null,
+      },
+      {
+        term: 'Mutation Signature',
+        value: signatureData
+          .filter(({ selected }) => selected)
+          .map(({ associations, signature }) => (
+          `${signature} (${associations})`
+        )).join(', '),
+        action: () => history.push('mutation-signatures'),
+      },
+      {
+        term: `HR Deficiency${print ? '*' : ''}`,
+        value: null,
+      },
+      {
+        term: 'Mutation Burden',
+        value: null,
+      },
+      {
+        term: `SV Burden${print ? '*' : ''}`,
+        value: null,
+      },
+      {
+        term: 'MSI Status',
+        value: null,
+      },
+    ]);
+  }, [report]);
+
   return (
     <div className="genomic-summary">
       {report && patientInformationData && tumourSummaryData && analysisSummaryData && (
@@ -316,13 +387,13 @@ const GenomicSummary = (props) => {
                 Patient Information
                 {canEdit && (
                   <>
-                    <IconButton onClick={setIsPatientEditOpen}>
+                    <IconButton onClick={setShowPatientEdit}>
                       <EditIcon />
                     </IconButton>
                     <PatientEdit
                       patientInformation={report.patientInformation}
                       report={report}
-                      isOpen={Boolean(isPatientEditOpen)}
+                      isOpen={Boolean(showPatientEdit)}
                       onClose={handlePatientEditClose}
                     />
                   </>
@@ -336,11 +407,8 @@ const GenomicSummary = (props) => {
               className="genomic-summary__patient-information-content"
             >
               {patientInformationData.map(({ label, value }) => (
-                <Grid item>
-                  <ReadOnlyTextField
-                    key={label}
-                    label={label}
-                  >
+                <Grid key={label} item>
+                  <ReadOnlyTextField label={label}>
                     {value}
                   </ReadOnlyTextField>
                 </Grid>
@@ -352,6 +420,19 @@ const GenomicSummary = (props) => {
             <div className="genomic-summary__tumour-summary-title">
               <Typography variant="h3">
                 Tumour Summary
+                {canEdit && (
+                  <>
+                    <IconButton onClick={setShowTumourSummaryEdit}>
+                      <EditIcon />
+                    </IconButton>
+                    <TumourSummaryEdit
+                      microbial={microbialData}
+                      report={report}
+                      isOpen={showTumourSummaryEdit}
+                      onClose={handleTumourSummaryEditClose}
+                    />
+                  </>
+                )}
               </Typography>
             </div>
             <div className="genomic-summary__tumour-summary-content">
@@ -406,11 +487,8 @@ const GenomicSummary = (props) => {
               className="genomic-summary__analysis-summary-content"
             >
               {analysisSummaryData.map(({ label, value }) => (
-                <Grid item>
-                  <ReadOnlyTextField
-                    key={label}
-                    label={label}
-                  >
+                <Grid key={label} item>
+                  <ReadOnlyTextField label={label}>
                     {value}
                   </ReadOnlyTextField>
                 </Grid>

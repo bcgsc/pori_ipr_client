@@ -14,7 +14,7 @@ import { columnDefs, targetedColumnDefs } from './columnDefs';
 import coalesceEntries from './coalesce';
 import AlterationService from '@/services/reports/alteration.service';
 import TargetedGenesService from '@/services/reports/targeted-genes.service';
-import ReportContext from '../ReportContext';
+import ReportContext from '../../../../components/ReportContext';
 
 import './index.scss';
 
