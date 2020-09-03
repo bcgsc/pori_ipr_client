@@ -18,7 +18,6 @@ import ColumnPicker from './components/ColumnPicker';
 import LinkCellRenderer from './components/LinkCellRenderer';
 import GeneCellRenderer from './components/GeneCellRenderer';
 import ActionCellRenderer from './components/ActionCellRenderer';
-import GradientCellRenderer from './components/GradientCellRenderer';
 import { getDate } from '../../utils/date';
 
 import './index.scss';
@@ -479,7 +478,6 @@ function DataTable(props) {
                   LinkCellRenderer,
                   GeneCellRenderer,
                   ActionCellRenderer: RowActionCellRenderer,
-                  GradientCellRenderer,
                 }}
                 suppressAnimationFrame
                 suppressColumnVirtualisation

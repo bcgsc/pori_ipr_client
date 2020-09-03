@@ -22,12 +22,11 @@ const columnDefs = [
   {
     headerName: 'Tumour Content',
     field: 'tumourContent',
-    valueFormatter: (params) => `${params.value}%`,
+    valueFormatter: params => `${params.value}%`,
     hide: false,
   },
   {
     headerName: 'Correlation',
-    // cellRenderer: 'GradientCellRenderer',
     field: 'correlation',
     hide: false,
   },
