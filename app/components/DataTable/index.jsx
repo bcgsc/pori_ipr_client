@@ -51,6 +51,7 @@ const MAX_TABLE_HEIGHT = '517px';
 function DataTable(props) {
   const {
     rowData,
+    onRowDataChanged,
     columnDefs,
     titleText,
     filterText,
@@ -355,6 +356,14 @@ function DataTable(props) {
     });
   };
 
+  const handleFilterAndSortChanged = useCallback(() => {
+    const newRows = [];
+    gridApi.current.forEachNodeAfterFilterAndSort(node => {
+      newRows.push(node.data);
+    });
+    onRowDataChanged(newRows);
+  }, [gridApi.current]);
+
   // Theme is needed for react in angular tables. It can't access the theme provider otherwise
   return (
     <ThemeProvider theme={theme}>
@@ -456,6 +465,8 @@ function DataTable(props) {
                 getRowNodeId={data => data.ident}
                 onRowDragEnd={canReorder ? onRowDragEnd : null}
                 editType="fullRow"
+                onFilterChanged={handleFilterAndSortChanged}
+                onSortChanged={handleFilterAndSortChanged}
                 context={{
                   canEdit,
                   canViewDetails,
@@ -519,6 +530,7 @@ DataTable.propTypes = {
   theme: PropTypes.object,
   isPrint: PropTypes.bool,
   highlightRow: PropTypes.number || PropTypes.object,
+  onRowDataChanged: PropTypes.func,
 };
 
 DataTable.defaultProps = {
@@ -541,6 +553,7 @@ DataTable.defaultProps = {
   theme: {},
   isPrint: false,
   highlightRow: null,
+  onRowDataChanged: () => {},
 };
 
 export default DataTable;

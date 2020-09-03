@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useRef } from 'react';
 import orderBy from 'lodash.orderby';
 import { HorizontalBar, Chart } from 'react-chartjs-2';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
@@ -10,7 +10,6 @@ import DataTable from '../../../../components/DataTable';
 import columnDefs from './columnDefs';
 import { getPairwiseExpressionCorrelation } from '../../../../services/reports/pairwise-expression';
 import Image from '../../../../components/Image';
-import CorrelationTable from './components/CorrelationTable';
 
 import './index.scss';
 
@@ -48,12 +47,14 @@ const ExpressionCorrelation = () => {
   const [plots, setPlots] = useState({});
   const [subtypePlots, setSubtypePlots] = useState({});
   const [pairwiseExpression, setPairwiseExpression] = useState([]);
+  const [modifiedRowData, setModifiedRowData] = useState();
 
   const [barChartData, setBarChartData] = useState({
     labels: [],
     datasets: [],
   });
   const [rowClicked, setRowClicked] = useState();
+  const chartRef = useRef();
 
   useEffect(() => {
     if (report) {
@@ -108,28 +109,83 @@ const ExpressionCorrelation = () => {
     });
   }, []);
 
+  const getGraphData = (rowData) => {
+    const labels = rowData.map(data => `${data.libraryName} (${data.tumourContent}% TC)`);
+    const colors = rowData.map(data => `rgb(${Object.values(getColor(LOWER_COLOR, UPPER_COLOR, data.correlation)).join(',')})`);
+
+    const datasets = [
+      {
+        label: 'Correlation',
+        backgroundColor: colors,
+        borderColor: rowData.map(() => '#FFFFFF'),
+        borderWidth: 1,
+        hoverBackgroundColor: `rgb(${UPPER_COLOR.red},${UPPER_COLOR.green},${UPPER_COLOR.blue})`,
+        hoverBorderColor: `rgb(${UPPER_COLOR.red},${UPPER_COLOR.green},${UPPER_COLOR.blue})`,
+        data: rowData.map(data => data.correlation),
+      },
+    ];
+    return {
+      labels,
+      datasets,
+    };
+  };
+
   useEffect(() => {
     if (pairwiseExpression.length) {
-      const labels = pairwiseExpression.map(data => `${data.libraryName} (${data.tumourContent}% TC)`);
-      const colors = pairwiseExpression.map(data => `rgb(${Object.values(getColor(LOWER_COLOR, UPPER_COLOR, data.correlation)).join(',')})`);
-
-      const datasets = [
-        {
-          label: 'Correlation',
-          backgroundColor: colors,
-          borderColor: '#FFFFFF',
-          borderWidth: 1,
-          hoverBackgroundColor: `rgb(${UPPER_COLOR.red},${UPPER_COLOR.green},${UPPER_COLOR.blue})`,
-          hoverBorderColor: `rgb(${UPPER_COLOR.red},${UPPER_COLOR.green},${UPPER_COLOR.blue})`,
-          data: pairwiseExpression.map(data => data.correlation),
-        },
-      ];
-      setBarChartData({
-        labels,
-        datasets,
-      });
+      setBarChartData(getGraphData(pairwiseExpression));
     }
   }, [pairwiseExpression]);
+
+  useEffect(() => {
+    if (modifiedRowData) {
+      setBarChartData(getGraphData(modifiedRowData));
+    }
+  }, [modifiedRowData]);
+
+  const handleRowDataChanged = (newData) => {
+    setModifiedRowData(newData);
+  };
+
+  const options = {
+    responsive: false,
+    onClick: (event, [context]) => {
+      if (context && chartRef.current) {
+        setRowClicked(context._index);
+        const newColors = chartRef.current.chartInstance.config.data.datasets[0].borderColor.map((color, index) => {
+          if (index === context._index) {
+            return '#000000';
+          }
+          return '#FFFFFF';
+        });
+        chartRef.current.chartInstance.config.data.datasets[0].borderColor = newColors;
+        chartRef.current.chartInstance.update();
+      }
+    },
+    legend: {
+      display: true,
+      labels: {
+        boxWidth: 0,
+      },
+    },
+    scales: {
+      xAxes: [{
+        ticks: {
+          beginAtZero: true,
+        },
+      }],
+    },
+    plugins: {
+      datalabels: {
+        color: 'white',
+        anchor: 'start',
+        align: 'end',
+        clamp: true,
+      },
+    },
+    tooltips: {
+      enabled: false,
+    },
+  };
 
   return (
     <>
@@ -205,46 +261,10 @@ const ExpressionCorrelation = () => {
         <span className="expression-correlation__chart-group">
           <div className="expression-correlation__chart">
             <HorizontalBar
+              ref={chartRef}
               data={barChartData}
               width={600}
-              options={{
-                responsive: false,
-                onClick: (event, [context]) => {
-                  setRowClicked(context._index);
-                },
-                legend: {
-                  display: true,
-                  labels: {
-                    boxWidth: 0,
-                  },
-                },
-                scales: {
-                  xAxes: [{
-                    ticks: {
-                      beginAtZero: true,
-                    },
-                  }],
-                },
-                plugins: {
-                  datalabels: {
-                    color: 'white',
-                    anchor: 'start',
-                    align: 'end',
-                    clamp: true,
-                  },
-                },
-                tooltips: {
-                  callbacks: {
-                    label: (tooltipItem, data) => {
-                      const newTip = Object.entries(pairwiseExpression[tooltipItem.index]).map(([key, value]) => `${key}: ${value}`);
-                      return newTip;
-                    }
-                  },
-                  displayColors: false,
-                  intersect: false,
-                  enabled: false,
-                },
-              }}
+              options={options}
             />
           </div>
           {Boolean(pairwiseExpression.length) && (
@@ -252,6 +272,7 @@ const ExpressionCorrelation = () => {
               rowData={pairwiseExpression}
               columnDefs={columnDefs}
               highlightRow={rowClicked}
+              onRowDataChanged={handleRowDataChanged}
             />
           )}
         </span>
