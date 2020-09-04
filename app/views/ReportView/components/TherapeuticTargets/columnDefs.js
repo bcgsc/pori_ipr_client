@@ -13,7 +13,7 @@ const columnDefs = [{
   cellRenderer: 'GeneCellRenderer',
   cellRendererParams: { link: true },
 }, {
-  headerName: 'Variant',
+  headerName: 'Observed Variant',
   field: 'variant',
   hide: false,
 }, {
@@ -23,7 +23,7 @@ const columnDefs = [{
 }, {
   headerName: 'Context',
   field: 'context',
-  hide: false,
+  hide: true,
 }, {
   headerName: 'Evidence Level',
   field: 'evidenceLevel',
