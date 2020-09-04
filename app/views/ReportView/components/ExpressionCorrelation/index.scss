@@ -22,10 +22,6 @@
   &__chart {
     position: relative;
     width: 50%;
-    // display: inline;
-
-    & > canvas {
-      margin: 0 auto;
-    }
+    margin: 0 auto;
   }
 }
