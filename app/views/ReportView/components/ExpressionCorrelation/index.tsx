@@ -75,7 +75,7 @@ const ExpressionCorrelation = () => {
             correlation: 0.99,
             tumourType: 'pancreatic cancer',
             tissueType: 'liver',
-            tumourContent: 15,
+            tumourContent: 15.2,
           },
           {
             ident: 'RQN4C',
@@ -84,7 +84,7 @@ const ExpressionCorrelation = () => {
             correlation: 0.52,
             tumourType: 'sarcoma',
             tissueType: 'sarcoma',
-            tumourContent: 99,
+            tumourContent: 15.1,
           },
           {
             ident: 'ET64E',
@@ -93,7 +93,7 @@ const ExpressionCorrelation = () => {
             correlation: 0.1,
             tumourType: 'lung andenocarcinoma',
             tissueType: 'lung',
-            tumourContent: 68,
+            tumourContent: 100,
           },
         ];
         setPairwiseExpression(orderBy(mockData, ['correlation'], ['desc']));
@@ -115,10 +115,12 @@ const ExpressionCorrelation = () => {
 
     const datasets = [
       {
-        label: 'Correlation',
+        label: '',
         backgroundColor: colors,
         borderColor: rowData.map(() => '#FFFFFF'),
-        borderWidth: 1,
+        borderWidth: 2,
+        borderSkipped: 'left',
+        barPercentage: 1,
         hoverBackgroundColor: `rgb(${UPPER_COLOR.red},${UPPER_COLOR.green},${UPPER_COLOR.blue})`,
         hoverBorderColor: `rgb(${UPPER_COLOR.red},${UPPER_COLOR.green},${UPPER_COLOR.blue})`,
         data: rowData.map(data => data.correlation),
@@ -147,10 +149,12 @@ const ExpressionCorrelation = () => {
   };
 
   const options = {
-    responsive: false,
+    responsive: true,
+    maintainAspectRatio: false,
     onClick: (event, [context]) => {
       if (context && chartRef.current) {
         setRowClicked(context._index);
+        console.log(chartRef.current);
         const newColors = chartRef.current.chartInstance.config.data.datasets[0].borderColor.map((color, index) => {
           if (index === context._index) {
             return '#000000';
@@ -162,15 +166,22 @@ const ExpressionCorrelation = () => {
       }
     },
     legend: {
-      display: true,
-      labels: {
-        boxWidth: 0,
-      },
+      display: false,
     },
     scales: {
       xAxes: [{
         ticks: {
           beginAtZero: true,
+        },
+        scaleLabel: {
+          display: true,
+          labelString: 'Correlation',
+        },
+      }],
+      yAxes: [{
+        scaleLabel: {
+          display: true,
+          labelString: 'Libraries',
         },
       }],
     },
@@ -181,6 +192,10 @@ const ExpressionCorrelation = () => {
         align: 'end',
         clamp: true,
       },
+    },
+    title: {
+      display: true,
+      text: 'Libraries by correlation',
     },
     tooltips: {
       enabled: false,
@@ -257,13 +272,14 @@ const ExpressionCorrelation = () => {
           </>
         )}
       </div>
-      {Boolean(Object.values(barChartData).length) && (
+      {Boolean(Object.values(barChartData.datasets).length) && (
         <span className="expression-correlation__chart-group">
           <div className="expression-correlation__chart">
             <HorizontalBar
               ref={chartRef}
               data={barChartData}
-              width={600}
+              height={150 + (barChartData.datasets[0].data.length * 25)}
+              // width={600}
               options={options}
             />
           </div>

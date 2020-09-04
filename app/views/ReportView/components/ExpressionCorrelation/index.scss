@@ -21,7 +21,8 @@
 
   &__chart {
     position: relative;
-    display: inline;
+    width: 50%;
+    // display: inline;
 
     & > canvas {
       margin: 0 auto;

@@ -109,7 +109,7 @@ function DataTable(props) {
   }, [visibleColumns]);
 
   useEffect(() => {
-    if (typeof highlightRow === 'number') {
+    if (highlightRow !== null) {
       const rowNode = gridApi.current.getDisplayedRowAtIndex(highlightRow);
       rowNode.setSelected(true, true);
       gridApi.current.ensureIndexVisible(highlightRow, 'middle');
