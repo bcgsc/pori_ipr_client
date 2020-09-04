@@ -60,7 +60,7 @@ const ExpressionCorrelation = () => {
     if (report) {
       const getData = async () => {
         const [plotData, subtypePlotData, pairwiseData] = await Promise.all([
-          ImageService.get(report.ident, 'microbial.circos,expression.chart,expression.legend'),
+          ImageService.get(report.ident, 'expression.chart,expression.legend'),
           ImageService.subtypePlots(report.ident),
           getPairwiseExpressionCorrelation(report.ident),
         ]);
@@ -211,18 +211,6 @@ const ExpressionCorrelation = () => {
         {plots && subtypePlots && (
           <>
             <div>
-              {plots['microbial.circos'] && (
-                <span>
-                  <Typography variant="h3" className="expression-correlation__header">
-                    Microbial Circos
-                  </Typography>
-                  <Image
-                    image={plots['microbial.circos']}
-                    showTitle
-                    showCaption
-                  />
-                </span>
-              )}
               <div className="expression-correlation__expression-charts">
                 {plots['expression.chart'] && (
                   <span>
