@@ -1,0 +1,65 @@
+import React from 'react';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Typography,
+  Button,
+} from '@material-ui/core';
+import Image from '../../../Image';
+import { SelectedRow } from './interfaces';
+
+import './index.scss';
+
+interface Props {
+  /** Handles dialog close */
+  onClose: Function,
+  /** Row object selected from table */
+  selectedRow: SelectedRow,
+  /** Dialog open state */
+  isOpen: boolean,
+};
+
+const ImageViewer: React.FC<Props> = ({
+  onClose,
+  selectedRow,
+  isOpen,
+}) => {
+  const handleClose = (): void => {
+    onClose();
+  };
+
+  return (
+    <Dialog
+      onClose={handleClose}
+      open={isOpen}
+      maxWidth="xl"
+    >
+      <DialogTitle>
+        <span className="dialog__title">
+          <Typography variant="h5" align="center">
+            Image Details
+          </Typography>
+        </span>
+      </DialogTitle>
+      <DialogContent>
+        {selectedRow.image && (
+          <Image
+            image={selectedRow.image}
+            showTitle
+            showCaption
+            isZoomable={false}
+          />
+        )}
+      </DialogContent>
+      <DialogActions>
+        <Button color="primary" onClick={handleClose}>
+          Close
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
+
+export default ImageViewer;

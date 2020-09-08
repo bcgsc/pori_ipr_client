@@ -12,6 +12,7 @@ import {
 } from '@material-ui/icons';
 import DetailDialog from '../DetailDialog';
 import SvgViewer from '../SvgViewer';
+import ImageViewer from '../ImageViewer';
 
 import './index.scss';
 
@@ -35,6 +36,7 @@ function ActionCellRenderer(params) {
 
   const [showDetailDialog, setShowDetailDialog] = useState(false);
   const [showSvgViewer, setShowSvgViewer] = useState(false);
+  const [showImageViewer, setShowImageViewer] = useState(false);
   const [columnMapping, setColumnMapping] = useState({});
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -59,6 +61,10 @@ function ActionCellRenderer(params) {
 
   const handleSvgViewerClose = () => {
     setShowSvgViewer(false);
+  };
+
+  const handleImageViewerClose = () => {
+    setShowImageViewer(false);
   };
 
   const handleMenuOpen = (event) => {
@@ -163,6 +169,23 @@ function ActionCellRenderer(params) {
           isOpen={showSvgViewer}
           selectedRow={data}
           onClose={handleSvgViewerClose}
+        />
+      )}
+      {data.image && (
+        <IconButton
+          size="small"
+          aria-label="View Image"
+          onClick={() => setShowImageViewer(prevVal => !prevVal)}
+          title="View Image"
+        >
+          <Photo />
+        </IconButton>
+      )}
+      {showImageViewer && (
+        <ImageViewer
+          isOpen={showImageViewer}
+          selectedRow={data}
+          onClose={handleImageViewerClose}
         />
       )}
     </>
