@@ -13,7 +13,7 @@ import Image from '../../../../components/Image';
 
 import './index.scss';
 
-type Color = {
+interface Color {
   red: number,
   green: number,
   blue: number,
@@ -31,7 +31,7 @@ const UPPER_COLOR = {
   blue: 121,
 };
 
-const getColor = (lowerColor: Color, upperColor: Color, ratio: number) => {
+const getColor = (lowerColor: Color, upperColor: Color, ratio: number): Color => {
   const newColor = {
     red: Math.floor(lowerColor.red + ratio * (upperColor.red - lowerColor.red)),
     green: Math.floor(lowerColor.green + ratio * (upperColor.green - lowerColor.green)),
@@ -39,6 +39,24 @@ const getColor = (lowerColor: Color, upperColor: Color, ratio: number) => {
   };
 
   return newColor;
+};
+
+const LUMINANCE_THRESHOLD: number = 186;
+
+/** Values are from RGB -> Luma formula: Y = 0.2126 R + 0.7152 G + 0.0722 B */
+const getLuminance = (color: Color): number => {
+  /** Compute sRGB, then linear RGB */
+  for (let col of Object.values(color)) {
+    col = col/255;
+    if (col <= 0.03928) {
+      col = col/12.92;
+    } else {
+      col = ((col + 0.055)/1.055) ^ 2.4;
+    }
+  }
+
+  /** Calculate luminance from linear RGB */
+  return 0.2126 * color.red + 0.7152 * color.green + 0.0722 * color.blue;
 };
 
 const ExpressionCorrelation = () => {
@@ -121,8 +139,8 @@ const ExpressionCorrelation = () => {
         borderWidth: 2,
         borderSkipped: 'left',
         barPercentage: 1,
-        hoverBackgroundColor: `rgb(${UPPER_COLOR.red},${UPPER_COLOR.green},${UPPER_COLOR.blue})`,
-        hoverBorderColor: `rgb(${UPPER_COLOR.red},${UPPER_COLOR.green},${UPPER_COLOR.blue})`,
+        hoverBackgroundColor: colors,
+        hoverBorderColor: colors,
         data: rowData.map(data => data.correlation),
       },
     ];
@@ -187,7 +205,17 @@ const ExpressionCorrelation = () => {
     },
     plugins: {
       datalabels: {
-        color: 'white',
+        color: ({ dataIndex }): string => {
+          const backgroundColor = getColor(LOWER_COLOR, UPPER_COLOR, barChartData.datasets[0].data[dataIndex]);
+          console.log(backgroundColor);
+          const luminance = getLuminance(backgroundColor);
+          console.log(luminance);
+
+          if (luminance > LUMINANCE_THRESHOLD) {
+            return 'black';
+          }
+          return 'white';
+        },
         anchor: 'start',
         align: 'end',
         clamp: true,
