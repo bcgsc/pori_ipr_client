@@ -33,7 +33,7 @@ function DetailDialog(props) {
   const printRow = rows => Object.entries(rows)
     .sort(compare)
     .map(([key, value], index, rowEntries) => {
-      if (['ident', 'svg', 'svgTitle'].includes(key) || value === null) {
+      if (['ident', 'svg', 'svgTitle', 'image'].includes(key) || value === null) {
         return null;
       }
 

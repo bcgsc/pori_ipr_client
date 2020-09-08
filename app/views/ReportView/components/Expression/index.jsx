@@ -6,6 +6,7 @@ import DataTable from '../../../../components/DataTable';
 import columnDefs from './columnDefs';
 import { getComparators } from '@/services/reports/comparators';
 import ExpressionService from '@/services/reports/expression.service';
+import ImageService from '@/services/reports/image.service';
 import ReportContext from '../../../../components/ReportContext';
 import processExpression from './processData';
 
@@ -40,13 +41,24 @@ const Expression = () => {
   );
 
   useEffect(() => {
-    if (report) {
+    if (report && report.ident) {
       const getData = async () => {
-        const outliers = await ExpressionService.all(report.ident);
+        const [outliers, images] = await Promise.all([
+          ExpressionService.all(report.ident),
+          ImageService.expDensityGraphs(report.ident),
+        ]);
 
         if (outliers && outliers.length) {
-          setExpOutliers(processExpression(outliers));
-        } else if (!outliers.length) {
+          const processedOutliers = processExpression(outliers);
+
+          const imageAttachedOutliers = Object.entries(processedOutliers).reduce((accumulator, [key, value]) => {
+            const newValues = value.map(val => ({ ...val, image: images[`expDensity.${val.gene.name}`] }));
+            accumulator[key] = newValues;
+            return accumulator;
+          }, {});
+
+          setExpOutliers(imageAttachedOutliers);
+        } else {
           setExpOutliers([]);
         }
       };
@@ -75,38 +87,40 @@ const Expression = () => {
   }, [report])
 
   useEffect(() => {
-    const getData = async () => {
-      const comparatorsResp = await getComparators(report.ident);
+    if (report && report.ident) {
+      const getData = async () => {
+        const comparatorsResp = await getComparators(report.ident);
 
-      const diseaseExpression = comparatorsResp.find(({ analysisRole }) => (
-        analysisRole === 'expression (disease)'
-      ));
+        const diseaseExpression = comparatorsResp.find(({ analysisRole }) => (
+          analysisRole === 'expression (disease)'
+        ));
 
-      const normalPrimary = comparatorsResp.find(({ analysisRole }) => (
-        analysisRole === 'expression (primary site)'
-      ));
+        const normalPrimary = comparatorsResp.find(({ analysisRole }) => (
+          analysisRole === 'expression (primary site)'
+        ));
 
-      const normalBiopsy = comparatorsResp.find(({ analysisRole }) => (
-        analysisRole === 'expression (biopsy site)'
-      ));
+        const normalBiopsy = comparatorsResp.find(({ analysisRole }) => (
+          analysisRole === 'expression (biopsy site)'
+        ));
 
-      setComparators([
-        {
-          key: 'Disease Expression',
-          value: diseaseExpression ? diseaseExpression.name : 'Not specified',
-        },
-        {
-          key: 'Normal Primary Site',
-          value: normalPrimary ? normalPrimary.name : 'Not specified',
-        },
-        {
-          key: 'Normal Biopsy Site',
-          value: normalBiopsy ? normalBiopsy.name : 'Not specified',
-        },
-      ]);
-    };
+        setComparators([
+          {
+            key: 'Disease Expression',
+            value: diseaseExpression ? diseaseExpression.name : 'Not specified',
+          },
+          {
+            key: 'Normal Primary Site',
+            value: normalPrimary ? normalPrimary.name : 'Not specified',
+          },
+          {
+            key: 'Normal Biopsy Site',
+            value: normalBiopsy ? normalBiopsy.name : 'Not specified',
+          },
+        ]);
+      };
 
-    getData();
+      getData();
+    }
   }, [report]);
 
   const handleVisibleColsChange = (change) => {
