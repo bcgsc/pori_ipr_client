@@ -78,7 +78,7 @@ const GenomicSummary = (props) => {
   const [microbialData, setMicrobialData] = useState([]);
   const [signatureData, setSignatureData] = useState([]);
   const [tumourSummaryData, setTumourSummaryData] = useState();
-  const [burdenData, setBurdenData] = useState();
+  const [primaryBurdenData, setPrimaryBurdenData] = useState();
   const [analysisSummaryData, setAnalysisSummaryData] = useState();
   const [variantData, setVariantData] = useState();
   const [variantFilter, setVariantFilter] = useState();
@@ -108,7 +108,7 @@ const GenomicSummary = (props) => {
 
         const primaryBurden = burden.find(entry => entry.role === 'primary');
 
-        setBurdenData(primaryBurden);
+        setPrimaryBurdenData(primaryBurden);
         setMicrobialData(microbial);
         setSignatureData(signatures);
 
@@ -372,7 +372,7 @@ const GenomicSummary = (props) => {
       },
       {
         term: 'Mutation Burden (primary)',
-        value: burdenData ? burdenData.totalMutationsPerMb : null,
+        value: primaryBurdenData ? primaryBurdenData.totalMutationsPerMb : null,
         action: () => history.push('mutation-burden'),
       },
       {
