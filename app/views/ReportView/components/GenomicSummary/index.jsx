@@ -171,7 +171,7 @@ const GenomicSummary = (props) => {
           },
           {
             term: 'Mutation Burden (primary)',
-            value: primaryBurden ? `${primaryBurden.totalMutationsPerMb} mut/Mb` : null,
+            value: primaryBurden && primaryBurden.totalMutationsPerMb !== null ? `${primaryBurden.totalMutationsPerMb} mut/Mb` : null,
             action: () => history.push('mutation-burden'),
           },
           {
@@ -372,7 +372,7 @@ const GenomicSummary = (props) => {
       },
       {
         term: 'Mutation Burden (primary)',
-        value: primaryBurdenData ? primaryBurdenData.totalMutationsPerMb : null,
+        value: primaryBurdenData && primaryBurdenData.totalMutationsPerMb !== null ? `${primaryBurdenData.totalMutationsPerMb} mut/Mb` : null,
         action: () => history.push('mutation-burden'),
       },
       {
