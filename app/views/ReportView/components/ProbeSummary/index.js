@@ -11,7 +11,7 @@ import TestInformationService from '@/services/reports/test-information.service'
 import template from './probe-summary.pug';
 import patientTemplate from './patient-edit.pug';
 import eventsTemplate from './events-edit.pug';
-import './index.scss';
+import './old.scss';
 
 const bindings = {
   report: '<',
