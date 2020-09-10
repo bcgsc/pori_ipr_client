@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useContext } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -8,12 +8,13 @@ import {
   Button,
 } from '@material-ui/core';
 
-import './index.scss';
+import ReportContext from '../../../../../../components/ReportContext';
+import TargetedGenesService from '../../../../../../services/reports/targeted-genes.service';
 
 type Props = {
   isOpen: boolean,
   onClose: Function,
-  data: Array<{
+  editData: Array<{
     gene: {
       name: string,
     },
@@ -23,88 +24,82 @@ type Props = {
 };
 
 const EventsEditDialog: React.FC<Props> = ({
+  editData,
   isOpen,
   onClose,
-  data,
 }) => {
+  const { report } = useContext(ReportContext);
 
-  const [newPatientData, setNewPatientData] = useState();
-  const [newReportData, setNewReportData] = useState();
-  const [patientDirty, setPatientDirty] = useState(false);
-  const [reportDirty, setReportDirty] = useState(false);
-
-  useEffect(() => {
-    if (patientInformation) {
-      setNewPatientData(patientInformation);
-    }
-  }, [patientInformation]);
+  const [newData, setNewData] = useState<Array<any>>();
+  const [editDataDirty, setDataDirty] = useState<Boolean>(false);
 
   useEffect(() => {
-    if (report) {
-      setNewReportData(report);
+    if (editData) {
+      setNewData(editData);
     }
-  }, [report]);
+  }, [editData]);
 
-  const handlePatientChange = (event) => {
+  const handleDataChange = (event) => {
     const { target: { value, name } } = event;
-    setNewPatientData(prevVal => ({...prevVal, [name]: value }));
 
-    if (!patientDirty) {
-      setPatientDirty(true);
+    let prop: string = name;
+    let subprop: string | null;
+
+    if (prop.includes('.')) {
+      [prop, subprop] = prop.split('.');
+      setNewData(prevVal => ({ ...prevVal, [prop]: { [subprop]: value }}));
+    } else {
+      setNewData(prevVal => ({...prevVal, [prop]: value }));
+    }
+
+    if (!editDataDirty) {
+      setDataDirty(true);
     }
   };
 
-  const handleReportChange = (event) => {
-    const { target: { value, name } } = event;
-    setNewReportData(prevVal => ({...prevVal, [name]: value }));
-
-    if (!reportDirty) {
-      setReportDirty(true)
-    }
-  };
-
-  const handleClose = useCallback((isSaved) => {
-    if (isSaved) {
-      onClose(true, patientDirty ? newPatientData : null, reportDirty ? newReportData : null);
+  const handleClose = useCallback(async (isSaved) => {
+    if (isSaved && editDataDirty) {
+      await TargetedGenesService.update(report.ident, newData.ident, newData);
+      onClose(newData);
     } else {
       onClose(false);
     }
-  }, [newPatientData, newReportData])
+  }, [newData])
 
   return (
     <Dialog open={isOpen}>
       <DialogTitle>
-        Edit Patient Information
+        Edit Event
       </DialogTitle>
       <DialogContent className="patient-dialog__content">
-        {newPatientData && newReportData && (
+        {newData && newData.gene && newData.gene.name && (
           <>
             <TextField
               className="patient-dialog__text-field"
-              label="Alternate ID"
-              value={newReportData.alternateIdentifier}
-              name="alternateIdentifier"
-              onChange={handleReportChange}
+              label="Gene"
+              value={newData.gene.name}
+              name="gene.name"
+              onChange={handleDataChange}
               variant="outlined"
               multiline
               fullWidth
             />
             <TextField
               className="patient-dialog__text-field"
-              label="Case Type"
-              value={newPatientData.caseType}
-              name="caseType"
-              onChange={handlePatientChange}
+              label="Variant"
+              value={newData.variant}
+              name="variant"
+              onChange={handleDataChange}
               variant="outlined"
               multiline
               fullWidth
             />
             <TextField
               className="patient-dialog__text-field"
-              label="Physician"
-              value={newPatientData.physician}
-              name="physician"
-              onChange={handlePatientChange}
+              label="comments"
+              value={newData.comments}
+              name="comments"
+              onChange={handleDataChange}
               variant="outlined"
               multiline
               fullWidth

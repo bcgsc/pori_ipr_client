@@ -21,6 +21,7 @@ import { formatDate } from '../../../../utils/date';
 import TestInformation from './components/TestInformation';
 import { TestInformationInterface } from './components/TestInformation/interfaces';
 import PatientEdit from '../GenomicSummary/components/PatientEdit';
+import EventsEditDialog from './components/EventsEditDialog';
 
 import './index.scss';
 
@@ -42,6 +43,7 @@ const ProbeSummary: React.FC<Props> = ({
   const [patientInformation, setPatientInformation] = useState<Array<object> | null>();
 
   const [showPatientEdit, setShowPatientEdit] = useState<Boolean>(false);
+  const [showEventsEdit, setShowEventsEdit] = useState<Boolean>(false);
 
   useEffect(() => {
     if (report && report.ident) {
@@ -142,6 +144,15 @@ const ProbeSummary: React.FC<Props> = ({
     ]);
   }, [report]);
 
+  const handleEventsEditClose = useCallback(async (isSaved, data) => {
+    setShowEventsEdit(false);
+
+    if (!isSaved) {
+      return;
+    }
+    
+    await TargetedGenesService.update(report.ident, data.ident, data);
+  }, [report]);
 
   return (
     <div className="probe-summary">
@@ -211,6 +222,7 @@ const ProbeSummary: React.FC<Props> = ({
             columnDefs={eventsColumnDefs}
             rowData={probeResults}
             canEdit={canEdit}
+            EditDialog={EventsEditDialog}
           />
         </>
       )}

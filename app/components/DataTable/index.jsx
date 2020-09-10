@@ -252,7 +252,6 @@ function DataTable(props) {
       normalizeRowRanks(selectedRow.node.data.rank);
       setTableLength(gridApi.current.getDisplayedRowCount());
     }
-    setSelectedRow({});
   };
 
   const defaultColDef = {
