@@ -6,6 +6,8 @@ import {
 } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 
+import DataTable from '../../../../components/DataTable';
+import { sampleColumnDefs, eventsColumnDefs } from './columnDefs';
 import ReportContext from '../../../../components/ReportContext';
 import EditContext from '../../../../components/EditContext';
 import ReadOnlyTextField from '../../../../components/ReadOnlyTextField';
@@ -16,6 +18,8 @@ import TargetedGenesService from '../../../../services/reports/targeted-genes.se
 import GeneService from '../../../../services/reports/gene.service';
 import TestInformationService from '../../../../services/reports/test-information.service';
 import { formatDate } from '../../../../utils/date';
+import TestInformation from './components/TestInformation';
+import { TestInformationInterface } from './components/TestInformation/interfaces';
 import PatientEdit from '../GenomicSummary/components/PatientEdit';
 
 import './index.scss';
@@ -32,10 +36,10 @@ const ProbeSummary: React.FC<Props> = ({
   const { report } = useContext(ReportContext);
   const { canEdit } = useContext(EditContext);
 
-  const [testInformation, setTestInformation] = useState<Array<Object> | null>();
-  const [signatures, setSignatures] = useState<Array<Object> | null>();
-  const [probeResults, setProbeResults] = useState<Array<Object> | null>();
-  const [patientInformation, setPatientInformation] = useState<Array<Object> | null>();
+  const [testInformation, setTestInformation] = useState<Array<TestInformationInterface> | null>();
+  const [signatures, setSignatures] = useState<Array<object> | null>();
+  const [probeResults, setProbeResults] = useState<Array<object> | null>();
+  const [patientInformation, setPatientInformation] = useState<Array<object> | null>();
 
   const [showPatientEdit, setShowPatientEdit] = useState<Boolean>(false);
 
@@ -82,6 +86,10 @@ const ProbeSummary: React.FC<Props> = ({
             value: report.patientInformation.gender,
           },
         ]);
+
+        if (loadedDispatch) {
+          loadedDispatch('probeSummary');
+        }
       }
 
       getData();
@@ -175,8 +183,43 @@ const ProbeSummary: React.FC<Props> = ({
           </div>
         </>
       )}
+      {report && report.sampleInfo && (
+        <>
+          <Typography variant="h3" dislay="inline">
+            Sample Information
+          </Typography>
+          <DataTable
+            columnDefs={sampleColumnDefs}
+            rowData={report.sampleInfo}
+          />
+        </>
+      )}
+      {report && testInformation && (
+        <>
+          <Typography variant="h3" display="inline">
+            Test Information
+          </Typography>
+          <TestInformation data={testInformation} />
+        </>
+      )}
+      {report && probeResults && (
+        <>
+          <Typography variant="h3" dislay="inline">
+            Genomic Events with Potential Therapeutic Association
+          </Typography>
+          <DataTable
+            columnDefs={eventsColumnDefs}
+            rowData={probeResults}
+          />
+        </>
+      )}
     </div>
   );
+};
+
+ProbeSummary.defaultProps = {
+  loadedDispatch: () => {},
+  isPrint: false,
 };
 
 export default ProbeSummary;
