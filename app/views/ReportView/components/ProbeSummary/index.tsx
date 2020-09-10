@@ -210,6 +210,7 @@ const ProbeSummary: React.FC<Props> = ({
           <DataTable
             columnDefs={eventsColumnDefs}
             rowData={probeResults}
+            canEdit={canEdit}
           />
         </>
       )}

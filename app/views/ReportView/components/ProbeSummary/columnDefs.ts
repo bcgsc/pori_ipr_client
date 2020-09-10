@@ -42,6 +42,15 @@ const eventsColumnDefs = [
     field: 'comments',
     hide: false,
   },
+  {
+    headerName: 'Actions',
+    colId: 'Actions',
+    cellRenderer: 'ActionCellRenderer',
+    pinned: 'right',
+    hide: false,
+    sortable: false,
+    suppressMenu: true,
+  }
 ];
 
 export {
