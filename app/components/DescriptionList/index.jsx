@@ -6,7 +6,7 @@ import {
   ListItemText,
   IconButton,
 } from '@material-ui/core';
-import EditIcon from '@material-ui/icons/Edit';
+import LaunchIcon from '@material-ui/icons/Launch';
 
 import './index.scss';
 
@@ -43,7 +43,7 @@ const DescriptionList = (props) => {
                   {value}
                   {action && (
                     <IconButton size="small" onClick={action} className="description-list__action">
-                      <EditIcon />
+                      <LaunchIcon />
                     </IconButton>
                   )}
                 </ListItemText>
