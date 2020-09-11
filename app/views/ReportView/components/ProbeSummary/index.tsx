@@ -3,8 +3,10 @@ import {
   Typography,
   IconButton,
   Grid,
+  Paper,
 } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
+import SignIcon from '@material-ui/icons/Gesture';
 
 import DataTable from '../../../../components/DataTable';
 import { sampleColumnDefs, eventsColumnDefs } from './columnDefs';
@@ -15,11 +17,11 @@ import { getSignatures, sign, revokeSignature } from '../../../../services/repor
 import PatientInformationService from '../../../../services/reports/patient-information.service';
 import ReportService from '../../../../services/reports/report.service';
 import TargetedGenesService from '../../../../services/reports/targeted-genes.service';
-import GeneService from '../../../../services/reports/gene.service';
 import TestInformationService from '../../../../services/reports/test-information.service';
 import { formatDate } from '../../../../utils/date';
 import TestInformation from './components/TestInformation';
 import { TestInformationInterface } from './components/TestInformation/interfaces';
+import SignatureCard from '../../../../components/SignatureCard';
 import PatientEdit from '../GenomicSummary/components/PatientEdit';
 import EventsEditDialog from './components/EventsEditDialog';
 
@@ -38,7 +40,7 @@ const ProbeSummary: React.FC<Props> = ({
   const { canEdit } = useContext(EditContext);
 
   const [testInformation, setTestInformation] = useState<Array<TestInformationInterface> | null>();
-  const [signatures, setSignatures] = useState<Array<object> | null>();
+  const [signatures, setSignatures] = useState<any | null>();
   const [probeResults, setProbeResults] = useState<Array<object> | null>();
   const [patientInformation, setPatientInformation] = useState<Array<object> | null>();
 
@@ -154,6 +156,18 @@ const ProbeSummary: React.FC<Props> = ({
     await TargetedGenesService.update(report.ident, data.ident, data);
   }, [report]);
 
+  const handleSign = async (signed: boolean, role: 'author' | 'reviewer') => {
+    let newSignature;
+
+    if (signed) {
+      newSignature = await sign(report.ident, role);
+    } else {
+      newSignature = await revokeSignature(report.ident, role);
+    }
+
+    setSignatures(newSignature);
+  };
+
   return (
     <div className="probe-summary">
       {report && patientInformation && (
@@ -223,6 +237,25 @@ const ProbeSummary: React.FC<Props> = ({
             rowData={probeResults}
             canEdit={canEdit}
             EditDialog={EventsEditDialog}
+          />
+        </>
+      )}
+      {report && signatures && (
+        <>
+          <Typography variant="h3">
+            Reviews
+          </Typography>
+          <SignatureCard
+            title="Ready"
+            signature={signatures.authorSignature}
+            onClick={handleSign}
+            role="author"
+          />
+          <SignatureCard
+            title="Reviewer"
+            signature={signatures.reviewerSignature}
+            onClick={handleSign}
+            role="reviewer"
           />
         </>
       )}
