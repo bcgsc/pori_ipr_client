@@ -221,7 +221,7 @@ const ProbeSummary: React.FC<Props> = ({
       )}
       {report && testInformation && (
         <>
-          <Typography variant="h3" display="inline">
+          <Typography variant="h3" display="inline" className="probe-summary__test-information-title">
             Test Information
           </Typography>
           <TestInformation data={testInformation} />
@@ -242,7 +242,7 @@ const ProbeSummary: React.FC<Props> = ({
       )}
       {report && signatures && (
         <>
-          <Typography variant="h3">
+          <Typography variant="h3" className="probe-summary__reviews-title">
             Reviews
           </Typography>
           <SignatureCard

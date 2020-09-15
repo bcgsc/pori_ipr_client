@@ -1,20 +1,20 @@
 .signatures {
   margin: 8px;
+  display: block;
 
   &__name {
     display: inline-block;
     padding: 16px;
-    width: 40%;
+    width: 30%;
   }
 
   &__date {
     display: inline-block;
     padding: 16px;
-    width: 40%;
   }
 
   &__button {
-    display: inline-flex;
-    vertical-align: middle;
+    margin: 22px;
+    float: right;
   }
 }

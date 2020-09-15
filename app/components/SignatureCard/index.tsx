@@ -3,6 +3,7 @@ import {
   Paper,
   Typography,
   IconButton,
+  Button,
 } from '@material-ui/core';
 import GestureIcon from '@material-ui/icons/Gesture';
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
@@ -10,6 +11,8 @@ import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 import EditContext from '../EditContext';
 
 import './index.scss';
+
+const NON_BREAKING_SPACE = '\u00A0';
 
 type Props = {
   title: string,
@@ -35,7 +38,7 @@ const SignatureCard: React.FC<Props> = ({
   };
 
   return (
-    <Paper elevation={3} className="signatures">
+    <Paper elevation={2} className="signatures">
       <div className="signatures__name">
         <Typography variant="body2">
           {title}
@@ -49,12 +52,15 @@ const SignatureCard: React.FC<Props> = ({
         )}
         {!signature && canEdit && (
           <>
-            <IconButton size="small" onClick={handleSign}>
-              <GestureIcon />
-            </IconButton>
-            <Typography display="inline">
+            <Button
+              onClick={handleSign}
+              variant="text"
+              disableElevation
+              startIcon={<GestureIcon />}
+              color="inherit"
+            >
               Sign
-            </Typography>
+            </Button>
           </>
         )}
       </div>
@@ -62,12 +68,16 @@ const SignatureCard: React.FC<Props> = ({
         <Typography variant="body2">
           Date
         </Typography>
-        {signature && (
+        {signature ? (
             <Typography>
               {signature.updatedAt
                 ? signature.updatedAt
                 : signature.createdAt}
             </Typography>
+        ) : (
+          <Typography>
+            {NON_BREAKING_SPACE}
+          </Typography>
         )}
       </div>
       {signature && canEdit && (
