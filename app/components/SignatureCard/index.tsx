@@ -19,6 +19,7 @@ type Props = {
   signature: any | object,
   onClick: Function,
   role: 'author' | 'reviewer',
+  isPrint: boolean,
 };
 
 const SignatureCard: React.FC<Props> = ({
@@ -26,16 +27,56 @@ const SignatureCard: React.FC<Props> = ({
   signature,
   onClick,
   role,
+  isPrint,
 }) => {
   const { canEdit } = useContext(EditContext);
 
   const handleSign = () => {
-    if (signature) {
-      onClick(false, role);
-    } else {
-      onClick(true, role)
-    }
+    onClick(true, role);
   };
+
+  const handleRevoke = () => {
+    onClick(false, role);
+  };
+
+  if (isPrint) {
+    return (
+      <span className="signatures-print__group">
+        <div className="signatures-print__value">
+          <Typography variant="body2" display="inline">
+            {`${title}: `}
+          </Typography>
+          {signature && signature.ident ? (
+            <Typography variant="body2" display="inline">
+              {signature.firstName}
+              {' '}
+              {signature.lastName}
+            </Typography>
+          ) : (
+            <Typography variant="body2" display="inline">
+              Not yet reviewed
+            </Typography>
+          )}
+        </div>
+        <div className="signatures-print__value">
+          <Typography variant="body2" display="inline">
+            {`Date: `}
+          </Typography>
+          {signature && signature.ident ? (
+              <Typography variant="body2" display="inline">
+                {signature.updatedAt
+                  ? signature.updatedAt
+                  : signature.createdAt}
+              </Typography>
+          ) : (
+            <Typography display="inline">
+              {NON_BREAKING_SPACE}
+            </Typography>
+          )}
+        </div>
+      </span>
+    );
+  }
 
   return (
     <Paper elevation={2} className="signatures">
@@ -43,14 +84,14 @@ const SignatureCard: React.FC<Props> = ({
         <Typography variant="body2">
           {title}
         </Typography>
-        {signature && (
+        {signature && signature.ident && (
           <Typography>
             {signature.firstName}
             {' '}
             {signature.lastName}
           </Typography>
         )}
-        {!signature && canEdit && (
+        {(!signature || !signature.ident) && canEdit && (
           <>
             <Button
               onClick={handleSign}
@@ -68,7 +109,7 @@ const SignatureCard: React.FC<Props> = ({
         <Typography variant="body2">
           Date
         </Typography>
-        {signature ? (
+        {signature && signature.ident ? (
             <Typography>
               {signature.updatedAt
                 ? signature.updatedAt
@@ -80,11 +121,11 @@ const SignatureCard: React.FC<Props> = ({
           </Typography>
         )}
       </div>
-      {signature && canEdit && (
+      {signature && signature.ident && canEdit && (
         <div className="signatures__button">
           <IconButton
             size="small"
-            onClick={handleSign}
+            onClick={handleRevoke}
           >
             <RemoveCircleIcon />
           </IconButton>
@@ -92,6 +133,10 @@ const SignatureCard: React.FC<Props> = ({
       )}
     </Paper>
   );
+};
+
+SignatureCard.defaultProps = {
+  isPrint: false,
 };
 
 export default SignatureCard;

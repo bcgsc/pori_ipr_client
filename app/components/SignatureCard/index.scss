@@ -17,4 +17,20 @@
     margin: 22px;
     float: right;
   }
+
+  &-print {
+    &__group {
+      display: inline-block;
+      width: 50%;
+    }
+
+    &__value {
+      display: flex;
+      justify-content: flex-start;
+
+      & > * {
+        margin: 0 4px;
+      }
+    }
+  }
 }

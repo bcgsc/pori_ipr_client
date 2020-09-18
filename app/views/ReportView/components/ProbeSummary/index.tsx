@@ -92,7 +92,7 @@ const ProbeSummary: React.FC<Props> = ({
         ]);
 
         if (loadedDispatch) {
-          loadedDispatch('probeSummary');
+          loadedDispatch({ type: 'probeSummary' });
         }
       }
 
@@ -174,9 +174,9 @@ const ProbeSummary: React.FC<Props> = ({
         <>
           <div className="probe-summary__patient-information">
             <div className="probe-summary__patient-information-title">
-              <Typography variant="h3" dislay="inline">
+              <Typography variant="h3" display="inline">
                 Patient Information
-                {canEdit && (
+                {canEdit && !isPrint && (
                   <>
                     <IconButton onClick={() => setShowPatientEdit(true)}>
                       <EditIcon />
@@ -195,7 +195,7 @@ const ProbeSummary: React.FC<Props> = ({
               alignItems="flex-end"
               container
               spacing={3}
-              className="genomic-summary__patient-information-content"
+              className="probe-summary__patient-information-content"
             >
               {patientInformation.map(({ label, value }) => (
                 <Grid key={label} item>
@@ -210,12 +210,14 @@ const ProbeSummary: React.FC<Props> = ({
       )}
       {report && report.sampleInfo && (
         <>
-          <Typography variant="h3" dislay="inline">
+          <Typography variant="h3" display="inline" className="probe-summary__sample-information-title">
             Sample Information
           </Typography>
           <DataTable
             columnDefs={sampleColumnDefs}
             rowData={report.sampleInfo}
+            isPrint={isPrint}
+            isPaginated={!isPrint}
           />
         </>
       )}
@@ -229,35 +231,47 @@ const ProbeSummary: React.FC<Props> = ({
       )}
       {report && probeResults && (
         <>
-          <Typography variant="h3" dislay="inline">
+          <Typography variant="h3" display="inline">
             Genomic Events with Potential Therapeutic Association
           </Typography>
-          <DataTable
-            columnDefs={eventsColumnDefs}
-            rowData={probeResults}
-            canEdit={canEdit}
-            EditDialog={EventsEditDialog}
-          />
+          {Boolean(probeResults.length) ? (
+            <DataTable
+              columnDefs={eventsColumnDefs}
+              rowData={probeResults}
+              canEdit={canEdit}
+              EditDialog={EventsEditDialog}
+              isPrint={isPrint}
+              isPaginated={!isPrint}
+            />
+          ) : (
+            <div className="probe-summary__none">
+              No Genomic Events were found
+            </div>
+          )}
         </>
       )}
-      {report && signatures && (
-        <>
+      {report && (
+        <span className="probe-summary__reviews">
           <Typography variant="h3" className="probe-summary__reviews-title">
             Reviews
           </Typography>
-          <SignatureCard
-            title="Ready"
-            signature={signatures.authorSignature}
-            onClick={handleSign}
-            role="author"
-          />
-          <SignatureCard
-            title="Reviewer"
-            signature={signatures.reviewerSignature}
-            onClick={handleSign}
-            role="reviewer"
-          />
-        </>
+          <span className={`${isPrint ? 'probe-summary__signatures' : ''}`}>
+            <SignatureCard
+              title={`${isPrint ? 'Manual Review' : 'Ready'}`}
+              signature={signatures ? signatures.authorSignature : null}
+              onClick={handleSign}
+              role="author"
+              isPrint={isPrint}
+            />
+            <SignatureCard
+              title="Reviewer"
+              signature={signatures ? signatures.reviewerSignature : null}
+              onClick={handleSign}
+              role="reviewer"
+              isPrint={isPrint}
+            />
+          </span>
+        </span>
       )}
     </div>
   );

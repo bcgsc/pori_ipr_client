@@ -4,3 +4,9 @@
     align-items: center;
   }
 }
+
+@media print {
+  .text-field {
+    padding: 2px;
+  }
+}
