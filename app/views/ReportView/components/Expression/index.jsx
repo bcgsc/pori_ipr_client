@@ -75,10 +75,6 @@ const Expression = () => {
           { key: 'Biopsy Type', value: report.patientInformation.biopsySite },
         ],
         [
-          { key: 'Site of Primary Disease', value: 'N/A' },
-          { key: 'Biopsy Site', value: 'N/A' },
-        ],
-        [
           { key: 'Tumour Content', value: `${report.tumourContent}%` || 'N/A' },
           { key: 'Ploidy Model', value: report.ploidy },
         ],
