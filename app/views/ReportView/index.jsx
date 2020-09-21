@@ -5,7 +5,7 @@ import React, {
   useContext,
 } from 'react';
 import {
-  Switch, Route, useRouteMatch, useParams,
+  Switch, Route, useRouteMatch, useParams, useHistory
 } from 'react-router-dom';
 import { useTheme } from '@material-ui/core/styles';
 
@@ -15,6 +15,7 @@ import ReportSidebar from '@/components/ReportSidebar';
 import ReportService from '@/services/reports/report.service';
 import EditContext from '@/components/EditContext';
 import ReportContext from '../../components/ReportContext';
+import SnackbarContext from '../../components/SnackbarContext';
 import { genomic, probe } from './sections';
 
 import './index.scss';
@@ -42,7 +43,10 @@ const ReportView = () => {
   const { path } = useRouteMatch();
   const params = useParams();
   const theme = useTheme();
+  const history = useHistory();
   const { canEdit } = useContext(EditContext);
+  const { setIsSnackbarOpen, setSnackbarMessage } = useContext(SnackbarContext)
+
   const [report, setReport] = useState();
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [sections, setSections] = useState();
@@ -51,14 +55,19 @@ const ReportView = () => {
   useEffect(() => {
     if (!report) {
       const getReport = async () => {
-        const resp = await ReportService.getReport(params.ident);
-        setReport(resp);
-
-        if (resp.type === 'genomic') {
-          setSections(genomic);
-        } else {
-          setSections(probe);
-          setIsProbe(true);
+        try {
+          const resp = await ReportService.getReport(params.ident);
+          setReport(resp);
+          if (resp.type === 'genomic') {
+            setSections(genomic);
+          } else {
+            setSections(probe);
+            setIsProbe(true);
+          }
+        } catch {
+          setIsSnackbarOpen(true);
+          setSnackbarMessage(`Report ${params.ident} not found`);
+          history.push('/reports');
         }
       };
 
