@@ -24,6 +24,7 @@ import { TestInformationInterface } from './components/TestInformation/interface
 import SignatureCard from '../../../../components/SignatureCard';
 import PatientEdit from '../GenomicSummary/components/PatientEdit';
 import EventsEditDialog from './components/EventsEditDialog';
+import PrintTable from './components/PrintTable';
 
 import './index.scss';
 
@@ -213,12 +214,19 @@ const ProbeSummary: React.FC<Props> = ({
           <Typography variant="h3" display="inline" className="probe-summary__sample-information-title">
             Sample Information
           </Typography>
-          <DataTable
-            columnDefs={sampleColumnDefs}
-            rowData={report.sampleInfo}
-            isPrint={isPrint}
-            isPaginated={!isPrint}
-          />
+          {isPrint ? (
+            <PrintTable
+              data={report.sampleInfo}
+              headers={sampleColumnDefs.map(col => col.headerName)}
+            />
+          ) : (
+            <DataTable
+              columnDefs={sampleColumnDefs}
+              rowData={report.sampleInfo}
+              isPrint={isPrint}
+              isPaginated={!isPrint}
+            />
+          )}
         </>
       )}
       {report && testInformation && (

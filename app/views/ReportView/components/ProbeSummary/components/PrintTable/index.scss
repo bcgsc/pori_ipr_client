@@ -1,0 +1,27 @@
+@import '../../../../../../styles/theme';
+
+.table {
+  border-collapse: collapse;
+  margin: 16px;
+
+  &__header {
+    font-size: 9pt;
+    text-align: left;
+    color: $palette__text--secondary;
+    padding: 2px;
+    border-bottom: 1px solid $palette__text--hint;
+
+    & th {
+      padding: 10px 4px;
+    }
+  }
+
+  &__row {
+    font-size: 10pt;
+    border-bottom: 1px solid $palette__text--hint;
+
+    & td {
+      padding: 10px 4px;
+    }
+  }
+}
