@@ -85,36 +85,7 @@ const ExpressionCorrelation = () => {
 
         setPlots(plotData);
         setSubtypePlots(subtypePlotData);
-        const mockData = [
-          {
-            ident: 'L6CQ4',
-            patientId: 'UPLOADPAT02',
-            libraryName: 'LIB0002',
-            correlation: 0.99,
-            tumourType: 'pancreatic cancer',
-            tissueType: 'liver',
-            tumourContent: 15.2,
-          },
-          {
-            ident: 'RQN4C',
-            patientId: 'UPLOADPAT03',
-            libraryName: 'LIB0003',
-            correlation: 0.52,
-            tumourType: 'sarcoma',
-            tissueType: 'sarcoma',
-            tumourContent: 15.1,
-          },
-          {
-            ident: 'ET64E',
-            patientId: 'UPLOADPAT05',
-            libraryName: 'LIB0005',
-            correlation: 0.1,
-            tumourType: 'lung andenocarcinoma',
-            tissueType: 'lung',
-            tumourContent: 100,
-          },
-        ];
-        setPairwiseExpression(orderBy(mockData, ['correlation'], ['desc']));
+        setPairwiseExpression(orderBy(pairwiseData, ['correlation'], ['desc'], {}));
       }
 
       getData();
@@ -172,7 +143,6 @@ const ExpressionCorrelation = () => {
     onClick: (event, [context]) => {
       if (context && chartRef.current) {
         setRowClicked(context._index);
-        console.log(chartRef.current);
         const newColors = chartRef.current.chartInstance.config.data.datasets[0].borderColor.map((color, index) => {
           if (index === context._index) {
             return '#000000';
@@ -207,9 +177,7 @@ const ExpressionCorrelation = () => {
       datalabels: {
         color: ({ dataIndex }): string => {
           const backgroundColor = getColor(LOWER_COLOR, UPPER_COLOR, barChartData.datasets[0].data[dataIndex]);
-          console.log(backgroundColor);
           const luminance = getLuminance(backgroundColor);
-          console.log(luminance);
 
           if (luminance > LUMINANCE_THRESHOLD) {
             return 'black';
