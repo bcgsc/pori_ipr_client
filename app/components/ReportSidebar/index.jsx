@@ -44,7 +44,7 @@ const ReportSidebar = (props) => {
                 <ListItem classes={{
                   root: `
                     report-sidebar__list-item
-                    ${pathname.includes(section.uri) ? 'report-sidebar__list-item--active' : ''}
+                    ${pathname.split('/').pop() === section.uri ? 'report-sidebar__list-item--active' : ''}
                   `,
                 }}
                 >
@@ -72,7 +72,7 @@ const ReportSidebar = (props) => {
                       <ListItem classes={{
                         root: `
                           report-sidebar__list-item--indented
-                          ${pathname.includes(child.uri) ? 'report-sidebar__list-item--active' : ''}
+                          ${pathname.split('/').pop() === child.uri ? 'report-sidebar__list-item--active' : ''}
                         `,
                       }}
                       >

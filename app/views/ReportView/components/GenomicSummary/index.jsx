@@ -13,6 +13,7 @@ import sortBy from 'lodash.sortby';
 import { getMicrobial, updateMicrobial } from '@/services/reports/microbial';
 import { getComparators } from '@/services/reports/comparators';
 import { getMutationSignatures } from '@/services/reports/mutation-signature';
+import { getMutationBurden } from '@/services/reports/mutation-burden';
 import { formatDate } from '@/utils/date';
 import ReportContext from '../../../../components/ReportContext';
 import EditContext from '@/components/EditContext';
@@ -77,6 +78,7 @@ const GenomicSummary = (props) => {
   const [microbialData, setMicrobialData] = useState([]);
   const [signatureData, setSignatureData] = useState([]);
   const [tumourSummaryData, setTumourSummaryData] = useState();
+  const [primaryBurdenData, setPrimaryBurdenData] = useState();
   const [analysisSummaryData, setAnalysisSummaryData] = useState();
   const [variantData, setVariantData] = useState();
   const [variantFilter, setVariantFilter] = useState();
@@ -95,13 +97,18 @@ const GenomicSummary = (props) => {
           variants,
           comparators,
           signatures,
+          burden,
         ] = await Promise.all([
           getMicrobial(report.ident),
           AlterationsService.all(report.ident),
           getComparators(report.ident),
           getMutationSignatures(report.ident),
+          getMutationBurden(report.ident),
         ]);
 
+        const primaryBurden = burden.find(entry => entry.role === 'primary');
+
+        setPrimaryBurdenData(primaryBurden);
         setMicrobialData(microbial);
         setSignatureData(signatures);
 
@@ -161,6 +168,11 @@ const GenomicSummary = (props) => {
                 `${signature} (${associations})`
               )).join(', '),
             action: () => history.push('mutation-signatures'),
+          },
+          {
+            term: 'Mutation Burden (primary)',
+            value: primaryBurden && primaryBurden.totalMutationsPerMb !== null ? `${primaryBurden.totalMutationsPerMb} mut/Mb` : null,
+            action: () => history.push('mutation-burden'),
           },
           {
             term: `HR Deficiency${print ? '*' : ''}`,
@@ -357,6 +369,11 @@ const GenomicSummary = (props) => {
           `${signature} (${associations})`
         )).join(', '),
         action: () => history.push('mutation-signatures'),
+      },
+      {
+        term: 'Mutation Burden (primary)',
+        value: primaryBurdenData && primaryBurdenData.totalMutationsPerMb !== null ? `${primaryBurdenData.totalMutationsPerMb} mut/Mb` : null,
+        action: () => history.push('mutation-burden'),
       },
       {
         term: `HR Deficiency${print ? '*' : ''}`,
