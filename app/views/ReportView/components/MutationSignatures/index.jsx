@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import PropTypes from 'prop-types';
-import { LinearProgress } from '@material-ui/core';
+import { LinearProgress, Typography } from '@material-ui/core';
 
 import DataTable from '@/components/DataTable';
 import ReportContext from '../../../../components/ReportContext';
@@ -52,15 +52,9 @@ const MutationSignatures = () => {
     <div>
       {!isLoading ? (
         <>
-          <DataTable
-            rowData={sbsSignatures}
-            columnDefs={columnDefs}
-            titleText="Single base subtitution signatures"
-            isPaginated
-            canEdit={canEdit}
-            EditDialog={EditDialog}
-            canToggleColumns
-          />
+          <Typography variant="h3" className="mutation-signature__title">
+            Single base substitution signatures
+          </Typography>
           {images['mutSignature.barplot.sbs'] && (
             <div className="mutation-signature__images">
               <img
@@ -71,14 +65,16 @@ const MutationSignatures = () => {
             </div>
           )}
           <DataTable
-            rowData={dbsSignatures}
+            rowData={sbsSignatures}
             columnDefs={columnDefs}
-            titleText="Double base substitution signatures"
             isPaginated
             canEdit={canEdit}
             EditDialog={EditDialog}
             canToggleColumns
           />
+          <Typography variant="h3" className="mutation-signature__title">
+            Double base substitution signatures
+          </Typography>
           {images['mutSignature.barplot.dbs'] && (
             <div className="mutation-signature__images">
               <img
@@ -89,14 +85,16 @@ const MutationSignatures = () => {
             </div>
           )}
           <DataTable
-            rowData={idSignatures}
+            rowData={dbsSignatures}
             columnDefs={columnDefs}
-            titleText="Indel Signatures"
             isPaginated
             canEdit={canEdit}
             EditDialog={EditDialog}
             canToggleColumns
           />
+          <Typography variant="h3" className="mutation-signature__title">
+            Indel Signatures
+          </Typography>
           {images['mutSignature.barplot.indels'] && (
             <div className="mutation-signature__images">
               <img
@@ -106,6 +104,14 @@ const MutationSignatures = () => {
               />
             </div>
           )}
+          <DataTable
+            rowData={idSignatures}
+            columnDefs={columnDefs}
+            isPaginated
+            canEdit={canEdit}
+            EditDialog={EditDialog}
+            canToggleColumns
+          />
         </>
       ) : (
         <LinearProgress />
