@@ -91,7 +91,7 @@ const MutationBurden = () => {
     if (report) {
       const getData = async () => {
         const [imagesResp, comparatorsResp, mutationBurdenResp] = await Promise.all([
-          ImageService.mutationSummary(report.ident),
+          ImageService.mutationBurden(report.ident),
           getComparators(report.ident),
           getMutationBurden(report.ident),
         ])
