@@ -29,7 +29,7 @@
   }
 
   &__signatures {
-    display: block;
+    margin: 0 8px;
     border: 1px solid black;
   }
 
@@ -53,6 +53,8 @@
     }
 
     &__test-information {
+      margin: 16px 0;
+
       &-title {
         margin: 0 0 16px;
       }

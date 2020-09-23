@@ -230,12 +230,12 @@ const ProbeSummary: React.FC<Props> = ({
         </>
       )}
       {report && testInformation && (
-        <>
-          <Typography variant="h3" display="inline" className="probe-summary__test-information-title">
+        <div className="probe-summary__test-information">
+          <Typography variant="h3" className="probe-summary__test-information-title">
             Test Information
           </Typography>
           <TestInformation data={testInformation} />
-        </>
+        </div>
       )}
       {report && probeResults && (
         <>
@@ -263,7 +263,7 @@ const ProbeSummary: React.FC<Props> = ({
           <Typography variant="h3" className="probe-summary__reviews-title">
             Reviews
           </Typography>
-          <span className={`${isPrint ? 'probe-summary__signatures' : ''}`}>
+          <div className={`${isPrint ? 'probe-summary__signatures' : ''}`}>
             <SignatureCard
               title={`${isPrint ? 'Manual Review' : 'Ready'}`}
               signature={signatures ? signatures.authorSignature : null}
@@ -278,7 +278,7 @@ const ProbeSummary: React.FC<Props> = ({
               role="reviewer"
               isPrint={isPrint}
             />
-          </span>
+          </div>
         </span>
       )}
     </div>
