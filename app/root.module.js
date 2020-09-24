@@ -29,7 +29,6 @@ import { CopyNumberComponent } from '@/views/ReportView/components/CopyNumber';
 import { StructuralVariantsComponent } from '@/views/ReportView/components/StructuralVariants';
 import { AppendicesComponent } from '@/views/ReportView/components/Appendices';
 import { SettingsComponent } from '@/views/ReportView/components/Settings';
-import { ProbeSummaryComponent } from '@/views/ReportView/components/ProbeSummary';
 import { BoardComponent } from '@/views/GermlineView/components/Board';
 import { ReportComponent } from '@/views/GermlineView/components/Report';
 import { UsersComponent } from '@/views/AdminView/components/Users';
@@ -73,7 +72,6 @@ const rootModule = angular.module('root')
   .component('structuralVariants', StructuralVariantsComponent)
   .component('appendices', AppendicesComponent)
   .component('settings', SettingsComponent)
-  .component('probeSummary', ProbeSummaryComponent)
   .component('board', BoardComponent)
   .component('report', ReportComponent)
   .component('users', UsersComponent)
