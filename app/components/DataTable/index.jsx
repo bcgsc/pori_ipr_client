@@ -431,27 +431,27 @@ function DataTable(props) {
                     </span>
                   )}
                 </div>
-                <Snackbar
-                  anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                  }}
-                  open={Boolean(showSnackbar)}
-                  autoHideDuration={4000}
-                  message={showSnackbar}
-                  onClose={handleSnackbarClose}
-                />
-                <EditDialog
-                  isOpen={showEditDialog}
-                  onClose={handleRowEditClose}
-                  editData={selectedRow.data}
-                  reportIdent={reportIdent}
-                  tableType={tableType}
-                  addIndex={tableLength}
-                  showErrorSnackbar={setShowSnackbar}
-                />
               </div>
             )}
+            <Snackbar
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+              }}
+              open={Boolean(showSnackbar)}
+              autoHideDuration={4000}
+              message={showSnackbar}
+              onClose={handleSnackbarClose}
+            />
+            <EditDialog
+              isOpen={showEditDialog}
+              onClose={handleRowEditClose}
+              editData={selectedRow.data}
+              reportIdent={reportIdent}
+              tableType={tableType}
+              addIndex={tableLength}
+              showErrorSnackbar={setShowSnackbar}
+            />
             <div
               className="ag-theme-material data-table__container"
               ref={gridDiv}
