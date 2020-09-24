@@ -179,7 +179,9 @@ function DataTable(props) {
 
   const onFirstDataRendered = () => {
     if (columnApi.current) {
-      const { visibleColumnIds } = getColumnVisibility();
+      const visibleColumnIds = columnApi.current.getAllColumns()
+        .filter(col => !col.flex && col.visible)
+        .map(col => col.colId);
       columnApi.current.autoSizeColumns(visibleColumnIds);
     }
   };
