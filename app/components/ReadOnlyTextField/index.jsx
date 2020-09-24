@@ -23,7 +23,17 @@ const ReadOnlyTextField = (props) => {
 
   useEffect(() => {
     if (children) {
-      const calculatedWidth = children.length * WIDTH_FACTOR;
+      let weightedLength = 0;
+
+      for (let i = 0; i < children.length; i++) {
+        if (children.charAt(i) === children.charAt(i).toUpperCase()) {
+          weightedLength += 1.3;
+        } else {
+          weightedLength += 0.8;
+        }
+      }
+
+      const calculatedWidth = weightedLength * WIDTH_FACTOR;
 
       if (calculatedWidth <= WIDTH_SMALL) {
         setWidth(WIDTH_SMALL);
