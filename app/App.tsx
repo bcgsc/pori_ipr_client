@@ -74,7 +74,7 @@ function App() {
     <StylesProvider generateClassName={generateClassName} injectFirst>
       <JssProvider jss={jss}>
         <MuiThemeProvider theme={theme}>
-          <SnackbarProvider anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
+          <SnackbarProvider anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}>
             <BrowserRouter>
               <ScopedCssBaseline>
                 <MainView />

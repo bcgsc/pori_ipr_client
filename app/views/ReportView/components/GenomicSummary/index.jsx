@@ -3,11 +3,11 @@ import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {
   Typography,
-  Snackbar,
   IconButton,
   Grid,
 } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
+import { SnackbarContext } from '@bcgsc/react-snackbar-provider';
 import sortBy from 'lodash.sortby';
 
 import { getMicrobial, updateMicrobial } from '@/services/reports/microbial';
@@ -68,9 +68,9 @@ const GenomicSummary = (props) => {
 
   const { report } = useContext(ReportContext);
   const { canEdit } = useContext(EditContext);
+  const snackbar = useContext(SnackbarContext);
   const history = useHistory();
 
-  const [showSnackbar, setShowSnackbar] = useState(false);
   const [showPatientEdit, setShowPatientEdit] = useState(false);
   const [patientInformationData, setPatientInformationData] = useState();
   const [showTumourSummaryEdit, setShowTumourSummaryEdit] = useState(false);
@@ -252,10 +252,10 @@ const GenomicSummary = (props) => {
 
       setVariantCounts(prevVal => ({ ...prevVal, [type]: prevVal[type] - 1 }));
       setVariantData(prevVal => (prevVal.filter(val => val.ident !== chipIdent)));
-      setShowSnackbar('Entry deleted');
+      snackbar.add('Entry deleted');
     } catch (err) {
       console.error(err);
-      setShowSnackbar('Entry NOT deleted due to an error');
+      snackbar.add('Entry NOT deleted due to an error');
     }
   }, [report]);
 
@@ -266,20 +266,12 @@ const GenomicSummary = (props) => {
 
       setVariantCounts(prevVal => ({ ...prevVal, [categorizedVariantEntry.type]: prevVal[categorizedVariantEntry.type] + 1 }));
       setVariantData(prevVal => ([...prevVal, categorizedVariantEntry]));
-      setShowSnackbar('Entry added');
+      snackbar.add('Entry added');
     } catch (err) {
       console.error(err);
-      setShowSnackbar('Entry NOT added due to an error');
+      snackbar.add('Entry NOT added due to an error');
     }
   }, [report]);
-
-  const handleSnackbarClose = useCallback((event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    setShowSnackbar(false);
-  }, []);
 
   const handlePatientEditClose = useCallback(async (isSaved, newPatientData, newReportData) => {
     setShowPatientEdit(false);
@@ -475,16 +467,6 @@ const GenomicSummary = (props) => {
                 reportIdent={report.ident}
                 handleChipDeleted={handleChipDeleted}
                 handleChipAdded={handleChipAdded}
-              />
-              <Snackbar
-                open={Boolean(showSnackbar)}
-                message={showSnackbar}
-                autoHideDuration={3000}
-                onClose={handleSnackbarClose}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'left',
-                }}
               />
             </div>
           </div>

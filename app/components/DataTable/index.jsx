@@ -1,14 +1,14 @@
 import React, {
-  useRef, useState, useEffect, useCallback,
+  useRef, useState, useEffect, useCallback, useContext,
 } from 'react';
 import PropTypes from 'prop-types';
 import { AgGridReact } from '@ag-grid-community/react';
+import { SnackbarContext } from '@bcgsc/react-snackbar-provider';
 import {
   Typography,
   IconButton,
   Dialog,
   Switch,
-  Snackbar,
 } from '@material-ui/core';
 import { ThemeProvider } from '@material-ui/core/styles';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
@@ -85,11 +85,12 @@ function DataTable(props) {
     ColumnPickerOnClose.current = ref;
   };
 
+  const snackbar = useContext(SnackbarContext);
+
   const [showPopover, setShowPopover] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [selectedRow, setSelectedRow] = useState({});
   const [showReorder, setShowReorder] = useState(false);
-  const [showSnackbar, setShowSnackbar] = useState(false);
   const [tableLength, setTableLength] = useState(rowData.length);
 
   useEffect(() => {
@@ -122,14 +123,6 @@ function DataTable(props) {
       });
     }
   }, [highlightRow]);
-
-  const handleSnackbarClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    setShowSnackbar(false);
-  };
 
   const getColumnVisibility = () => {
     const visibleColumnIds = columnApi.current.getAllDisplayedColumns()
@@ -201,7 +194,7 @@ function DataTable(props) {
 
   const onRowDragEnd = async (event) => {
     try {
-      setShowSnackbar(false);
+      snackbar.clear()
       const oldRank = event.node.data.rank;
       const newRank = event.overIndex;
 
@@ -226,10 +219,10 @@ function DataTable(props) {
       );
 
       gridApi.current.updateRowData({ update: updatedRows });
-      setShowSnackbar('Row update success');
+      snackbar.add('Row update success');
     } catch (err) {
       console.error(err);
-      setShowSnackbar(`Rows were not updated: ${err}`);
+      snackbar.add(`Rows were not updated: ${err}`);
     }
   };
 
@@ -250,7 +243,7 @@ function DataTable(props) {
       gridApi.current.setRowData(updatedRows);
     } catch (err) {
       console.error(err);
-      setShowSnackbar(`Rows were not updated: ${err}`);
+      snackbar.add(`Rows were not updated: ${err}`);
     }
   };
 
@@ -423,16 +416,6 @@ function DataTable(props) {
                   </span>
                 )}
               </div>
-              <Snackbar
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'left',
-                }}
-                open={Boolean(showSnackbar)}
-                autoHideDuration={4000}
-                message={showSnackbar}
-                onClose={handleSnackbarClose}
-              />
               <EditDialog
                 isOpen={showEditDialog}
                 onClose={handleRowEditClose}
@@ -440,7 +423,7 @@ function DataTable(props) {
                 reportIdent={reportIdent}
                 tableType={tableType}
                 addIndex={tableLength}
-                showErrorSnackbar={setShowSnackbar}
+                showErrorSnackbar={snackbar.add}
               />
             </div>
             <div
