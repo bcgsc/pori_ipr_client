@@ -25,7 +25,7 @@ const TestInformation = ({
 
   return (
     <Grid direction="row" container>
-      <Grid direction="column" container className="grid--half">
+      <Grid direction="column" container className="grid--third">
         <Grid item>
           <ReadOnlyTextField isUnderlined={false} label="Variant Probe Version">
             {snpProbe}
@@ -42,7 +42,7 @@ const TestInformation = ({
           </ReadOnlyTextField>
         </Grid>
       </Grid>
-      <Grid direction="column" container className="grid--half">
+      <Grid direction="column" container className="grid--third">
         <Grid item>
           <ReadOnlyTextField isUnderlined={false} label="Genes Screened">
             {snpGenes}
@@ -53,6 +53,8 @@ const TestInformation = ({
             {snpVars}
           </ReadOnlyTextField>
         </Grid>
+      </Grid>
+      <Grid direction="column" container className="grid--third">
         <Grid item>
           <ReadOnlyTextField isUnderlined={false} label="Fusion Genes Screened">
             {fusionGenes}
