@@ -1,0 +1,36 @@
+.signatures {
+  margin: 8px;
+  display: block;
+
+  &__name {
+    display: inline-block;
+    padding: 16px;
+    width: 30%;
+  }
+
+  &__date {
+    display: inline-block;
+    padding: 16px;
+  }
+
+  &__button {
+    margin: 22px;
+    float: right;
+  }
+
+  &-print {
+    &__group {
+      display: inline-block;
+      width: 50%;
+    }
+
+    &__value {
+      display: flex;
+      justify-content: flex-start;
+
+      & > * {
+        margin: 0 4px;
+      }
+    }
+  }
+}

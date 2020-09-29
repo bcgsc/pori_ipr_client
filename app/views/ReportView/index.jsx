@@ -37,7 +37,7 @@ const StructuralVariants = lazy(() => import('./components/StructuralVariants'))
 const Expression = lazy(() => import('./components/Expression'));
 const Appendices = lazy(() => import('./components/Appendices'));
 const Settings = lazy(() => import('./components/Settings'));
-const ProbeSummary = lazy(() => import('./components/ProbeSummary'));
+const ProbeSummary = lazy(() => import('./components/ProbeSummary/index.tsx'));
 
 const ReportView = () => {
   const { path } = useRouteMatch();
