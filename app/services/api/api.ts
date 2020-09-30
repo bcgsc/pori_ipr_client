@@ -98,6 +98,10 @@ class ApiCall {
     }
     this.controller = null;
 
+    if (response.status === 204) {
+      return null;
+    }
+
     if (response.ok) {
       let result = await response.json();
 

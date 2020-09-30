@@ -251,7 +251,8 @@ const GenomicSummary = (props) => {
 
   const handleChipDeleted = useCallback(async (chipIdent, type, comment) => {
     try {
-      await AlterationsService.remove(report.ident, chipIdent, comment);
+      const req = api.del(`/reports/${report.ident}/kb-matches/${chipIdent}`);
+      await req.request();
 
       setVariantCounts(prevVal => ({ ...prevVal, [type]: prevVal[type] - 1 }));
       setVariantData(prevVal => (prevVal.filter(val => val.ident !== chipIdent)));
@@ -264,7 +265,9 @@ const GenomicSummary = (props) => {
 
   const handleChipAdded = useCallback(async (variant) => {
     try {
-      const newVariantEntry = await AlterationsService.create(report.ident, { geneVariant: variant });
+      const req = api.post(`/reports/${report.ident}/summary/genomic-alterations-identified`, { geneVariant: variant });
+      const newVariantEntry = await req.request();
+
       const categorizedVariantEntry = variantCategory(newVariantEntry);
 
       setVariantCounts(prevVal => ({ ...prevVal, [categorizedVariantEntry.type]: prevVal[categorizedVariantEntry.type] + 1 }));
@@ -339,17 +342,34 @@ const GenomicSummary = (props) => {
   }, [report, isSigned]);
 
   const handleTumourSummaryEditClose = useCallback(async (isSaved, newMicrobialData, newReportData) => {
+    const apiCalls = [];
     setShowTumourSummaryEdit(false);
+
     if (!isSaved || !newMicrobialData && !newReportData) {
       return;
     }
 
     if (newMicrobialData) {
-      await updateMicrobial(report.ident, newMicrobialData);
+      if (isSigned) {
+        apiCalls.push(api.put(`/reports/${report.ident}/microbial`, newMicrobialData));
+      } else {
+        const req = await api.put(`/reports/${report.ident}/microbial`, newMicrobialData);
+        await req.request();
+      }
     }
 
     if (newReportData) {
-      await ReportService.updateReport(report.ident, newReportData);
+      if (isSigned) {
+        apiCalls.push(api.put(`/reports/${report.ident}`, newReportData));
+      } else {
+        const req = await api.put(`/reports/${report.ident}`, newReportData);
+        await req.request();
+      }
+    }
+
+    if (isSigned) {
+      setApiCalls(apiCalls);
+      setShowConfirm(true);
     }
 
     setTumourSummaryData([
@@ -403,7 +423,7 @@ const GenomicSummary = (props) => {
         value: null,
       },
     ]);
-  }, [report]);
+  }, [report, isSigned]);
 
   return (
     <div className="genomic-summary">
@@ -484,8 +504,8 @@ const GenomicSummary = (props) => {
                 variants={variantFilter ? variantData.filter(v => v.type === variantFilter) : variantData}
                 canEdit={canEdit}
                 reportIdent={report.ident}
-                handleChipDeleted={handleChipDeleted}
-                handleChipAdded={handleChipAdded}
+                onChipDeleted={handleChipDeleted}
+                onChipAdded={handleChipAdded}
               />
             </div>
           </div>
