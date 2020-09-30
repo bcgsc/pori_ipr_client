@@ -10,6 +10,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import { SnackbarContext } from '@bcgsc/react-snackbar-provider';
 import sortBy from 'lodash.sortby';
 
+import api from '@/services/api';
 import { getMicrobial, updateMicrobial } from '@/services/reports/microbial';
 import { getComparators } from '@/services/reports/comparators';
 import { getMutationSignatures } from '@/services/reports/mutation-signature';
@@ -17,6 +18,7 @@ import { getMutationBurden } from '@/services/reports/mutation-burden';
 import { formatDate } from '@/utils/date';
 import ReportContext from '../../../../components/ReportContext';
 import EditContext from '@/components/EditContext';
+import ConfirmContext from '@/components/ConfirmContext';
 import AlterationsService from '@/services/reports/genomic-alterations.service';
 import PatientInformationService from '@/services/reports/patient-information.service';
 import ReportService from '@/services/reports/report.service';
@@ -68,6 +70,7 @@ const GenomicSummary = (props) => {
 
   const { report } = useContext(ReportContext);
   const { canEdit } = useContext(EditContext);
+  const { setShowConfirm, isSigned, setApiCalls } = useContext(ConfirmContext);
   const snackbar = useContext(SnackbarContext);
   const history = useHistory();
 
@@ -274,17 +277,33 @@ const GenomicSummary = (props) => {
   }, [report]);
 
   const handlePatientEditClose = useCallback(async (isSaved, newPatientData, newReportData) => {
+    const apiCalls = [];
     setShowPatientEdit(false);
     if (!isSaved || !newPatientData && !newReportData) {
       return;
     }
 
     if (newPatientData) {
-      await PatientInformationService.update(report.ident, newPatientData);
+      if (isSigned) {
+        apiCalls.push(api.put(`/reports/${report.ident}/patient-information`, newPatientData));
+      } else {
+        const req = await api.put(`/reports/${report.ident}/patient-information`, newPatientData);
+        await req.request();
+      }
     }
 
     if (newReportData) {
-      await ReportService.updateReport(report.ident, newReportData);
+      if (isSigned) {
+        apiCalls.push(api.put(`/reports/${report.ident}`, newReportData));
+      } else {
+        const req = await api.put(`/reports/${report.ident}`, newReportData);
+        await req.request();
+      }
+    }
+
+    if (isSigned) {
+      setApiCalls(apiCalls);
+      setShowConfirm(true);
     }
 
     setPatientInformationData([

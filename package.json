@@ -128,6 +128,7 @@
     "react-chartjs-2": "~2.10.0",
     "react-dom": "~16.9.0",
     "react-jss": "~10.1.1",
+    "react-query": "~2.23.0",
     "react-router-dom": "~5.1.2",
     "react-svg-pan-zoom": "~3.8.0",
     "react-virtualized": "~9.21.2",

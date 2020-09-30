@@ -3,19 +3,23 @@ import React, {
   useEffect,
   useState,
   useContext,
+  useCallback,
 } from 'react';
 import {
   Switch, Route, useRouteMatch, useParams,
 } from 'react-router-dom';
 import { useTheme } from '@material-ui/core/styles';
 
+import AlertDialog from '@/components/AlertDialog';
 import SecurityContext from '@/components/SecurityContext';
 import ReportToolbar from '@/components/ReportToolbar';
 import ReportSidebar from '@/components/ReportSidebar';
 import ReportService from '@/services/reports/report.service';
 import EditContext from '@/components/EditContext';
 import ReportContext from '../../components/ReportContext';
+import ConfirmContext from '@/components/ConfirmContext';
 import { genomic, probe } from './sections';
+import api from '@/services/api';
 
 import './index.scss';
 
@@ -43,10 +47,14 @@ const ReportView = () => {
   const params = useParams();
   const theme = useTheme();
   const { canEdit } = useContext(EditContext);
+
   const [report, setReport] = useState();
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [sections, setSections] = useState();
   const [isProbe, setIsProbe] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [apiCalls, setApiCalls] = useState([]);
+  const [isSigned, setIsSigned] = useState(false);
 
   useEffect(() => {
     if (!report) {
@@ -66,156 +74,193 @@ const ReportView = () => {
     }
   }, [report]);
 
+  useEffect(() => {
+    if (report) {
+      const getSignatures = async () => {
+        const req = api.get(`/reports/${params.ident}/signatures`);
+        const resp = await req.request();
+        if (resp && ((resp.reviewerSignature && resp.reviewerSignature.ident)
+          || (resp.authorSignature && resp.authorSignature.ident))) {
+          setIsSigned(true);
+        }
+      }
+
+      getSignatures();
+    }
+  }, [report]);
+
+  const handleConfirmClose = useCallback(async (isSaved) => {
+    if (isSaved) {
+      await Promise.all(apiCalls.map(call => call.request()));
+    }
+
+    setApiCalls([]);
+    setShowConfirm(false);
+    location.reload();
+  }, [apiCalls]);
+
   return (
     <ReportContext.Provider value={{ report, setReport }}>
-      <div className="report__container">
-        <div className="report__content-container">
-          {Boolean(report) && (
-            <ReportToolbar
-              diagnosis={report.patientInformation.diagnosis}
-              patientId={report.patientId}
-              type={report.type}
-              state={report.state}
-              isSidebarVisible={isSidebarVisible}
-              onSidebarToggle={setIsSidebarVisible}
+      <ConfirmContext.Provider value={{
+        showConfirm, setShowConfirm, apiCalls, setApiCalls, isSigned, setIsSigned
+      }}>
+        <div className="report__container">
+          <div className="report__content-container">
+            {Boolean(report) && (
+              <ReportToolbar
+                diagnosis={report.patientInformation.diagnosis}
+                patientId={report.patientId}
+                type={report.type}
+                state={report.state}
+                isSidebarVisible={isSidebarVisible}
+                onSidebarToggle={setIsSidebarVisible}
+              />
+            )}
+            <AlertDialog
+              isOpen={showConfirm}
+              onClose={handleConfirmClose}
+              title="Confirm Action"
+              text="Editing this report will remove analyst signatures. Continue?"
+              confirmText="OK"
+              cancelText="Cancel"
             />
-          )}
-          <div className="report__content">
-            <Switch>
-              <Route
-                render={routeProps => (
-                  <>
-                    {isProbe ? (
-                      <ProbeSummary {...routeProps} print={false} report={report} canEdit={canEdit} />
-                    ) : (
-                      <GenomicSummary {...routeProps} print={false} />
-                    )}
-                  </>
-                )}
-                path={`${path}/summary`}
-              />
-              <Route
-                render={routeProps => (
-                  <AnalystComments {...routeProps} print={false} report={report} canEdit={canEdit} />
-                )}
-                path={`${path}/analyst-comments`}
-              />
-              <Route
-                render={routeProps => (
-                  <TherapeuticTargets {...routeProps} print={false} />
-                )}
-                path={`${path}/therapeutic-targets`}
-              />
-              <Route
-                render={routeProps => (
-                  <KbMatches {...routeProps} print={false} />
-                )}
-                path={`${path}/kb-matches`}
-              />
-              <Route
-                render={routeProps => (
-                  <Discussion {...routeProps} print={false} report={report} canEdit={canEdit} />
-                )}
-                path={`${path}/discussion`}
-              />
-              <Route
-                render={routeProps => (
-                  <Microbial {...routeProps} print={false} report={report} canEdit={canEdit} />
-                )}
-                path={`${path}/microbial`}
-              />
-              <Route
-                render={routeProps => (
-                  <MutationSignatures {...routeProps} print={false} />
-                )}
-                path={`${path}/mutation-signatures`}
-              />
-              <Route
-                render={routeProps => (
-                  <MutationBurden {...routeProps} print={false} />
-                )}
-                path={`${path}/mutation-burden`}
-              />
-              <Route
-                render={routeProps => (
-                  <ExpressionCorrelation {...routeProps} print={false} />
-                )}
-                path={`${path}/expression-correlation`}
-              />
-              <Route
-                render={routeProps => (
-                  <SmallMutations {...routeProps} print={false} theme={theme} report={report} canEdit={canEdit} />
-                )}
-                path={`${path}/small-mutations`}
-              />
-              <Route
-                render={routeProps => (
-                  <CopyNumber {...routeProps} print={false} theme={theme} report={report} canEdit={canEdit} />
-                )}
-                path={`${path}/copy-number`}
-              />
-              <Route
-                render={routeProps => (
-                  <StructuralVariants {...routeProps} print={false} theme={theme} report={report} canEdit={canEdit} />
-                )}
-                path={`${path}/structural-variants`}
-              />
-              <Route
-                render={routeProps => (
-                  <Expression {...routeProps} print={false} />
-                )}
-                path={`${path}/expression`}
-              />
-              <Route
-                render={routeProps => (
-                  <Appendices {...routeProps} print={false} theme={theme} isProbe={isProbe} report={report} canEdit={canEdit} />
-                )}
-                path={`${path}/appendices`}
-              />
-              <Route
-                render={routeProps => (
-                  <Settings {...routeProps} print={false} showBindings={!isProbe} report={report} canEdit={canEdit} />
-                )}
-                path={`${path}/settings`}
-              />
-              {/* Need token for FileUpload API call */}
-              <SecurityContext.Consumer>
-                {value => (
-                  <>
-                    <Route
-                      render={routeProps => (
-                        <PathwayAnalysis
-                          {...routeProps}
-                          print={false}
-                          token={value.authorizationToken}
-                          report={report}
-                          canEdit={canEdit}
-                        />
+            <div className="report__content">
+              <Switch>
+                <Route
+                  render={routeProps => (
+                    <>
+                      {isProbe ? (
+                        <ProbeSummary {...routeProps} print={false} report={report} canEdit={canEdit} />
+                      ) : (
+                        <GenomicSummary {...routeProps} print={false} />
                       )}
-                      path={`${path}/pathway-analysis`}
-                    />
-                    <Route
-                      render={routeProps => (
-                        <Slides
-                          {...routeProps}
-                          print={false}
-                          token={value.authorizationToken}
-                          report={report}
-                          canEdit={canEdit}
-                        />
-                      )}
-                      path={`${path}/slides`}
-                    />
-                  </>
-                )}
-              </SecurityContext.Consumer>
-            </Switch>
+                    </>
+                  )}
+                  path={`${path}/summary`}
+                />
+                <Route
+                  render={routeProps => (
+                    <AnalystComments {...routeProps} print={false} report={report} canEdit={canEdit} />
+                  )}
+                  path={`${path}/analyst-comments`}
+                />
+                <Route
+                  render={routeProps => (
+                    <TherapeuticTargets {...routeProps} print={false} />
+                  )}
+                  path={`${path}/therapeutic-targets`}
+                />
+                <Route
+                  render={routeProps => (
+                    <KbMatches {...routeProps} print={false} />
+                  )}
+                  path={`${path}/kb-matches`}
+                />
+                <Route
+                  render={routeProps => (
+                    <Discussion {...routeProps} print={false} report={report} canEdit={canEdit} />
+                  )}
+                  path={`${path}/discussion`}
+                />
+                <Route
+                  render={routeProps => (
+                    <Microbial {...routeProps} print={false} report={report} canEdit={canEdit} />
+                  )}
+                  path={`${path}/microbial`}
+                />
+                <Route
+                  render={routeProps => (
+                    <MutationSignatures {...routeProps} print={false} />
+                  )}
+                  path={`${path}/mutation-signatures`}
+                />
+                <Route
+                  render={routeProps => (
+                    <MutationBurden {...routeProps} print={false} />
+                  )}
+                  path={`${path}/mutation-burden`}
+                />
+                <Route
+                  render={routeProps => (
+                    <ExpressionCorrelation {...routeProps} print={false} />
+                  )}
+                  path={`${path}/expression-correlation`}
+                />
+                <Route
+                  render={routeProps => (
+                    <SmallMutations {...routeProps} print={false} theme={theme} report={report} canEdit={canEdit} />
+                  )}
+                  path={`${path}/small-mutations`}
+                />
+                <Route
+                  render={routeProps => (
+                    <CopyNumber {...routeProps} print={false} theme={theme} report={report} canEdit={canEdit} />
+                  )}
+                  path={`${path}/copy-number`}
+                />
+                <Route
+                  render={routeProps => (
+                    <StructuralVariants {...routeProps} print={false} theme={theme} report={report} canEdit={canEdit} />
+                  )}
+                  path={`${path}/structural-variants`}
+                />
+                <Route
+                  render={routeProps => (
+                    <Expression {...routeProps} print={false} />
+                  )}
+                  path={`${path}/expression`}
+                />
+                <Route
+                  render={routeProps => (
+                    <Appendices {...routeProps} print={false} theme={theme} isProbe={isProbe} report={report} canEdit={canEdit} />
+                  )}
+                  path={`${path}/appendices`}
+                />
+                <Route
+                  render={routeProps => (
+                    <Settings {...routeProps} print={false} showBindings={!isProbe} report={report} canEdit={canEdit} />
+                  )}
+                  path={`${path}/settings`}
+                />
+                {/* Need token for FileUpload API call */}
+                <SecurityContext.Consumer>
+                  {value => (
+                    <>
+                      <Route
+                        render={routeProps => (
+                          <PathwayAnalysis
+                            {...routeProps}
+                            print={false}
+                            token={value.authorizationToken}
+                            report={report}
+                            canEdit={canEdit}
+                          />
+                        )}
+                        path={`${path}/pathway-analysis`}
+                      />
+                      <Route
+                        render={routeProps => (
+                          <Slides
+                            {...routeProps}
+                            print={false}
+                            token={value.authorizationToken}
+                            report={report}
+                            canEdit={canEdit}
+                          />
+                        )}
+                        path={`${path}/slides`}
+                      />
+                    </>
+                  )}
+                </SecurityContext.Consumer>
+              </Switch>
+            </div>
           </div>
+          {Boolean(sections) && (
+            <ReportSidebar sections={sections} isSidebarVisible={isSidebarVisible} reportIdent={report.ident} />
+          )}
         </div>
-        {Boolean(sections) && (
-          <ReportSidebar sections={sections} isSidebarVisible={isSidebarVisible} reportIdent={report.ident} />
-        )}
-      </div>
+      </ConfirmContext.Provider>
     </ReportContext.Provider>
   );
 };
