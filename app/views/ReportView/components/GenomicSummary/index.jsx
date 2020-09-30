@@ -336,7 +336,7 @@ const GenomicSummary = (props) => {
         value: newPatientData ? newPatientData.gender : report.patientInformation.gender,
       },
     ]);
-  }, [report]);
+  }, [report, isSigned]);
 
   const handleTumourSummaryEditClose = useCallback(async (isSaved, newMicrobialData, newReportData) => {
     setShowTumourSummaryEdit(false);

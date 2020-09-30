@@ -140,7 +140,7 @@ const ReportView = () => {
                 />
                 <Route
                   render={routeProps => (
-                    <AnalystComments {...routeProps} print={false} report={report} canEdit={canEdit} />
+                    <AnalystComments {...routeProps} print={false} report={report} canEdit={canEdit} setIsSigned={setIsSigned} />
                   )}
                   path={`${path}/analyst-comments`}
                 />

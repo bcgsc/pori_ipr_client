@@ -16,6 +16,7 @@ const bindings = {
   report: '<',
   canEdit: '<',
   loadedDispatch: '<',
+  setIsSigned: '<',
 };
 
 class AnalystComments {
@@ -45,6 +46,7 @@ class AnalystComments {
   async sign(role) {
     const resp = await sign(this.report.ident, role);
     this.signatures = resp;
+    this.setIsSigned(true);
     $rootScope.$digest();
   }
 
@@ -54,6 +56,7 @@ class AnalystComments {
       this.report.ident, role,
     );
     this.signatures = resp;
+    this.setIsSigned(false);
     $rootScope.$digest();
   }
 
