@@ -10,7 +10,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import { SnackbarContext } from '@bcgsc/react-snackbar-provider';
 import sortBy from 'lodash.sortby';
 
-import api from '@/services/api';
+import api, { ApiCallSet } from '@/services/api';
 import { getMicrobial, updateMicrobial } from '@/services/reports/microbial';
 import { getComparators } from '@/services/reports/comparators';
 import { getMutationSignatures } from '@/services/reports/mutation-signature';
@@ -70,7 +70,7 @@ const GenomicSummary = (props) => {
 
   const { report } = useContext(ReportContext);
   const { canEdit } = useContext(EditContext);
-  const { setShowConfirm, isSigned, setApiCalls } = useContext(ConfirmContext);
+  const { isSigned } = useContext(ConfirmContext);
   const snackbar = useContext(SnackbarContext);
   const history = useHistory();
 
@@ -252,7 +252,7 @@ const GenomicSummary = (props) => {
   const handleChipDeleted = useCallback(async (chipIdent, type, comment) => {
     try {
       const req = api.del(`/reports/${report.ident}/kb-matches/${chipIdent}`);
-      await req.request();
+      await req.request(isSigned);
 
       setVariantCounts(prevVal => ({ ...prevVal, [type]: prevVal[type] - 1 }));
       setVariantData(prevVal => (prevVal.filter(val => val.ident !== chipIdent)));
@@ -261,7 +261,7 @@ const GenomicSummary = (props) => {
       console.error(err);
       snackbar.add('Entry NOT deleted due to an error');
     }
-  }, [report]);
+  }, [report, isSigned, snackbar]);
 
   const handleChipAdded = useCallback(async (variant) => {
     try {
@@ -277,37 +277,26 @@ const GenomicSummary = (props) => {
       console.error(err);
       snackbar.add('Entry NOT added due to an error');
     }
-  }, [report]);
+  }, [report, snackbar]);
 
   const handlePatientEditClose = useCallback(async (isSaved, newPatientData, newReportData) => {
     const apiCalls = [];
     setShowPatientEdit(false);
+
     if (!isSaved || !newPatientData && !newReportData) {
       return;
     }
 
     if (newPatientData) {
-      if (isSigned) {
-        apiCalls.push(api.put(`/reports/${report.ident}/patient-information`, newPatientData));
-      } else {
-        const req = await api.put(`/reports/${report.ident}/patient-information`, newPatientData);
-        await req.request();
-      }
+      apiCalls.push(api.put(`/reports/${report.ident}/patient-information`, newPatientData));
     }
 
     if (newReportData) {
-      if (isSigned) {
-        apiCalls.push(api.put(`/reports/${report.ident}`, newReportData));
-      } else {
-        const req = await api.put(`/reports/${report.ident}`, newReportData);
-        await req.request();
-      }
+      apiCalls.push(api.put(`/reports/${report.ident}`, newReportData));
     }
 
-    if (isSigned) {
-      setApiCalls(apiCalls);
-      setShowConfirm(true);
-    }
+    const callSet = new ApiCallSet(apiCalls);
+    await callSet.request(isSigned);
 
     setPatientInformationData([
       {
@@ -350,27 +339,15 @@ const GenomicSummary = (props) => {
     }
 
     if (newMicrobialData) {
-      if (isSigned) {
-        apiCalls.push(api.put(`/reports/${report.ident}/microbial`, newMicrobialData));
-      } else {
-        const req = await api.put(`/reports/${report.ident}/microbial`, newMicrobialData);
-        await req.request();
-      }
+      apiCalls.push(api.put(`/reports/${report.ident}/microbial`, newMicrobialData));
     }
 
     if (newReportData) {
-      if (isSigned) {
-        apiCalls.push(api.put(`/reports/${report.ident}`, newReportData));
-      } else {
-        const req = await api.put(`/reports/${report.ident}`, newReportData);
-        await req.request();
-      }
+      apiCalls.push(api.put(`/reports/${report.ident}`, newReportData));
     }
 
-    if (isSigned) {
-      setApiCalls(apiCalls);
-      setShowConfirm(true);
-    }
+    const callSet = new ApiCallSet(apiCalls);
+    await callSet.request(isSigned);
 
     setTumourSummaryData([
       {

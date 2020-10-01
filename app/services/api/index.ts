@@ -1,4 +1,4 @@
-import { ApiCall } from "./api";
+import { ApiCall, ApiCallSet } from "./api";
 
 const get = (endpoint, callOptions) => {
   const requestOptions = {
@@ -35,4 +35,6 @@ export default {
   post,
   del,
   put,
+  ApiCall,
+  ApiCallSet,
 };

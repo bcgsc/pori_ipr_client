@@ -3,14 +3,12 @@ import React, {
   useEffect,
   useState,
   useContext,
-  useCallback,
 } from 'react';
 import {
   Switch, Route, useRouteMatch, useParams,
 } from 'react-router-dom';
 import { useTheme } from '@material-ui/core/styles';
 
-import AlertDialog from '@/components/AlertDialog';
 import SecurityContext from '@/components/SecurityContext';
 import ReportToolbar from '@/components/ReportToolbar';
 import ReportSidebar from '@/components/ReportSidebar';
@@ -52,8 +50,6 @@ const ReportView = () => {
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [sections, setSections] = useState();
   const [isProbe, setIsProbe] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [apiCalls, setApiCalls] = useState([]);
   const [isSigned, setIsSigned] = useState(false);
 
   useEffect(() => {
@@ -89,21 +85,11 @@ const ReportView = () => {
     }
   }, [report]);
 
-  const handleConfirmClose = useCallback(async (isSaved) => {
-    if (isSaved) {
-      await Promise.all(apiCalls.map(call => call.request()));
-    }
-
-    setApiCalls([]);
-    setShowConfirm(false);
-    location.reload();
-  }, [apiCalls]);
-
   return (
     <ReportContext.Provider value={{ report, setReport }}>
-      <ConfirmContext.Provider value={{
-        showConfirm, setShowConfirm, apiCalls, setApiCalls, isSigned, setIsSigned
-      }}>
+      <ConfirmContext.Provider value={{ isSigned, setIsSigned }}>
+        {/* alert-dialog has a dialog attach to it upon report edit after signed */}
+        <div id="alert-dialog" />
         <div className="report__container">
           <div className="report__content-container">
             {Boolean(report) && (
@@ -116,14 +102,6 @@ const ReportView = () => {
                 onSidebarToggle={setIsSidebarVisible}
               />
             )}
-            <AlertDialog
-              isOpen={showConfirm}
-              onClose={handleConfirmClose}
-              title="Confirm Action"
-              text="Editing this report will remove analyst signatures. Continue?"
-              confirmText="OK"
-              cancelText="Cancel"
-            />
             <div className="report__content">
               <Switch>
                 <Route

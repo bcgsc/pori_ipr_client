@@ -2,6 +2,14 @@ import {
   BadRequestError,
 } from '../errors/errors';
 
+import React from 'react';
+import ReactDOM from 'react-dom';
+import AlertDialog from '../../components/AlertDialog';
+import { theme } from '../../App';
+import {
+  MuiThemeProvider,
+} from '@material-ui/core/styles';
+
 import errorHandler from '../errors/errorHandler';
 
 const {
@@ -15,16 +23,22 @@ class ApiCall {
   forceListReturn: boolean;
   forceRecordReturn: boolean;
   name: string;
+  confirm: boolean;
 
   constructor(
     endpoint: string,
     requestOptions: any,
-    callOptions: { forceListReturn: boolean, forceRecordReturn: boolean, name: string },
-  ) {
+    callOptions: {
+      forceListReturn: boolean,
+      forceRecordReturn: boolean,
+      name: string,
+      confirm: boolean
+    }) {
     const {
-      forceListReturn = false,
-      forceRecordReturn = false,
-      name = null,
+      forceListReturn,
+      forceRecordReturn,
+      name,
+      confirm,
     } = callOptions || {};
     this.endpoint = endpoint;
     this.requestOptions = requestOptions;
@@ -32,6 +46,7 @@ class ApiCall {
     this.forceListReturn = forceListReturn;
     this.forceRecordReturn = forceRecordReturn;
     this.name = name || endpoint;
+    this.confirm = confirm || false;
   }
 
   /**
@@ -48,14 +63,51 @@ class ApiCall {
     return !this.controller;
   }
 
+  showConfirm() {
+    const handleClose = async (isSaved) => {
+      if (isSaved) {
+        await fetch(
+          API + this.endpoint,
+          {
+            ...this.requestOptions,
+            headers: {
+              'Content-type': 'application/json',
+            },
+            signal: this.controller.signal,
+          },
+        );
+        location.reload();
+      }
+      ReactDOM.unmountComponentAtNode(document.getElementById('alert-dialog'));
+    };
+
+    ReactDOM.render(
+      <MuiThemeProvider theme={theme}>
+        <AlertDialog
+          isOpen
+          onClose={handleClose}
+          title="Confirm Action"
+          text="Editing this report will remove analyst signatures. Continue?"
+          confirmText="OK"
+          cancelText="cancel"
+        />
+      </MuiThemeProvider>,
+      document.getElementById('alert-dialog'),
+    );
+  }
+
   /**
    * Makes the fetch request and awaits the response or error. Also handles the redirect to error
    * or login pages
    */
-  async request(ignoreAbort = false) {
+  async request(ignoreAbort = false, confirm = false) {
     this.controller = new AbortController();
 
     let response;
+
+    if (confirm) {
+      this.showConfirm();
+    }
 
     try {
       response = await fetch(
@@ -137,10 +189,39 @@ class ApiCallSet {
     this.calls.forEach(controller => controller.abort());
   }
 
-  async request() {
+  showConfirm() {
+    const handleClose = async (isSaved: boolean) => {
+      if (isSaved) {
+        const promises = this.calls.map(call => call.request());
+        await Promise.all(promises);
+        location.reload();
+      }
+      ReactDOM.unmountComponentAtNode(document.getElementById('alert-dialog'));
+    };
+
+    ReactDOM.render(
+      <MuiThemeProvider theme={theme}>
+        <AlertDialog
+          isOpen
+          onClose={handleClose}
+          title="Confirm Action"
+          text="Editing this report will remove analyst signatures. Continue?"
+          confirmText="OK"
+          cancelText="cancel"
+        />
+      </MuiThemeProvider>,
+      document.getElementById('alert-dialog'),
+    );
+  }
+
+  async request(confirm = false) {
+    if (confirm) {
+      this.showConfirm();
+      return;
+    }
+
     return Promise.all(this.calls.map(call => async () => call.request()));
   }
 }
-
 
 export { ApiCall, ApiCallSet };
