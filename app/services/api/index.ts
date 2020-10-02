@@ -35,6 +35,9 @@ export default {
   post,
   del,
   put,
+};
+
+export {
   ApiCall,
   ApiCallSet,
-};
+}

@@ -100,13 +100,14 @@ class ApiCall {
    * Makes the fetch request and awaits the response or error. Also handles the redirect to error
    * or login pages
    */
-  async request(ignoreAbort = false, confirm = false) {
+  async request(confirm = false, ignoreAbort = false) {
     this.controller = new AbortController();
 
     let response;
 
     if (confirm) {
       this.showConfirm();
+      return null;
     }
 
     try {
@@ -219,8 +220,7 @@ class ApiCallSet {
       this.showConfirm();
       return;
     }
-
-    return Promise.all(this.calls.map(call => async () => call.request()));
+    return Promise.all(this.calls.map(call => call.request()));
   }
 }
 
