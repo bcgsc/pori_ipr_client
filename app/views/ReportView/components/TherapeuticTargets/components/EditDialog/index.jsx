@@ -70,7 +70,8 @@ function EditDialog(props) {
 
 
   const handleSubmit = useCallback(async () => {
-    const combinedData = { type: tableType, ...newData };
+    const { ident, createdAt, updatedAt, rank, ...rest } = newData;
+    const combinedData = { type: tableType, ...rest };
 
     try {
       if (newData.ident) { // existing option
@@ -82,8 +83,6 @@ function EditDialog(props) {
         setIsDirty(false);
         onClose(combinedData);
       } else {
-        combinedData.rank = addIndex;
-
         const returnedData = await therapeuticAdd(
           reportIdent,
           combinedData,

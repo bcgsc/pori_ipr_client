@@ -1,6 +1,7 @@
 import { $sce, $rootScope } from 'ngimport';
 import { angular2react } from 'angular2react';
 
+import api from '@/services/api';
 import toastCreator from '@/utils/toastCreator';
 import lazyInjector from '@/lazyInjector';
 import AnalystCommentsService from '@/services/reports/analyst-comments.service';
@@ -16,6 +17,7 @@ const bindings = {
   report: '<',
   canEdit: '<',
   loadedDispatch: '<',
+  isSigned: '<',
   setIsSigned: '<',
 };
 
@@ -77,9 +79,11 @@ class AnalystComments {
           // Update Details
           scope.update = async () => {
             try {
-              await AnalystCommentsService.update(
-                this.report.ident, scope.analystComments,
+              const call = api.put(
+                `/reports/${this.report.ident}/summary/analyst-comments`,
+                { comments: scope.analystComments.comments },
               );
+              await call.request(this.isSigned);
               this.$mdDialog.hide({
                 message: 'Entry has been updated',
                 comment: scope.analystComments,

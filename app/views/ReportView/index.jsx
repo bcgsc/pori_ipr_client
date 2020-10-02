@@ -118,7 +118,14 @@ const ReportView = () => {
                 />
                 <Route
                   render={routeProps => (
-                    <AnalystComments {...routeProps} print={false} report={report} canEdit={canEdit} setIsSigned={setIsSigned} />
+                    <AnalystComments
+                      {...routeProps}
+                      print={false}
+                      report={report}
+                      canEdit={canEdit}
+                      setIsSigned={setIsSigned}
+                      isSigned={isSigned}
+                    />
                   )}
                   path={`${path}/analyst-comments`}
                 />
@@ -196,7 +203,7 @@ const ReportView = () => {
                 />
                 <Route
                   render={routeProps => (
-                    <Settings {...routeProps} print={false} showBindings={!isProbe} report={report} canEdit={canEdit} />
+                    <Settings {...routeProps} print={false} showBindings={!isProbe} report={report} canEdit={canEdit} isSigned={isSigned} />
                   )}
                   path={`${path}/settings`}
                 />

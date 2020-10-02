@@ -19,6 +19,7 @@ import LinkCellRenderer from './components/LinkCellRenderer';
 import GeneCellRenderer from './components/GeneCellRenderer';
 import ActionCellRenderer from './components/ActionCellRenderer';
 import { getDate } from '../../utils/date';
+import ConfirmContext from '@/components/ConfirmContext';
 
 import './index.scss';
 
@@ -86,6 +87,7 @@ function DataTable(props) {
   };
 
   const snackbar = useContext(SnackbarContext);
+  const { isSigned } = useContext(ConfirmContext);
 
   const [showPopover, setShowPopover] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
@@ -213,13 +215,13 @@ function DataTable(props) {
         return newData.push(row);
       });
       newData.rank = event.overIndex;
-      const updatedRows = await rowUpdateAPICall(
-        reportIdent,
-        newData,
-      );
+      const call = rowUpdateAPICall(reportIdent, newData);
+      const updatedRows = await call.request();
 
-      gridApi.current.updateRowData({ update: updatedRows });
-      snackbar.add('Row update success');
+      if (updatedRows) {
+        gridApi.current.updateRowData({ update: updatedRows });
+        snackbar.add('Row update success');
+      }
     } catch (err) {
       console.error(err);
       snackbar.add(`Rows were not updated: ${err}`);
@@ -236,11 +238,11 @@ function DataTable(props) {
     rerankedData.sort((row1, row2) => row1.rank - row2.rank);
     rerankedData.forEach((row, index) => { row.rank = index; });
     try {
-      const updatedRows = await rowUpdateAPICall(
-        reportIdent,
-        rerankedData,
-      );
-      gridApi.current.setRowData(updatedRows);
+      const call = rowUpdateAPICall(reportIdent, rerankedData);
+      const updatedRows = await call.request();
+      if (updatedRows) {
+        gridApi.current.setRowData(updatedRows);
+      }
     } catch (err) {
       console.error(err);
       snackbar.add(`Rows were not updated: ${err}`);

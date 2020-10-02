@@ -68,7 +68,7 @@ const GenomicSummary = (props) => {
     loadedDispatch,
   } = props;
 
-  const { report } = useContext(ReportContext);
+  const { report, setReport } = useContext(ReportContext);
   const { canEdit } = useContext(EditContext);
   const { isSigned } = useContext(ConfirmContext);
   const snackbar = useContext(SnackbarContext);
@@ -157,7 +157,7 @@ const GenomicSummary = (props) => {
           },
           {
             term: 'Microbial Species',
-            value: microbial ? microbial.species : null,
+            value: microbial ? microbial[0].species : null,
           },
           {
             term: `Immune Infiltration${print ? '*' : ''}`,
@@ -296,7 +296,11 @@ const GenomicSummary = (props) => {
     }
 
     const callSet = new ApiCallSet(apiCalls);
-    await callSet.request(isSigned);
+    const [_, reportResp] = await callSet.request(isSigned);
+
+    if (reportResp) {
+      setReport({ ...reportResp, ...report });
+    }
 
     setPatientInformationData([
       {
@@ -340,6 +344,7 @@ const GenomicSummary = (props) => {
 
     if (newMicrobialData) {
       apiCalls.push(api.put(`/reports/${report.ident}/microbial`, newMicrobialData));
+      setMicrobialData(newMicrobialData);
     }
 
     if (newReportData) {
@@ -347,23 +352,24 @@ const GenomicSummary = (props) => {
     }
 
     const callSet = new ApiCallSet(apiCalls);
-    await callSet.request(isSigned);
+    const [_, reportResp] = await callSet.request(isSigned);
+
+    if (reportResp) {
+      setReport(reportResp);
+    }
 
     setTumourSummaryData([
       {
         term: 'Tumour Content',
         value: newReportData ? newReportData.tumourContent : report.tumourContent,
-        action: () => setShowTumourSummaryEdit(true),
       },
       {
         term: 'Subtype',
         value: newReportData ? newReportData.subtyping : report.subtyping,
-        action: () => setShowTumourSummaryEdit(true),
       },
       {
         term: 'Microbial Species',
-        value: newMicrobialData ? newMicrobialData.species : microbialData.species,
-        action: () => setShowTumourSummaryEdit(true),
+        value: newMicrobialData ? newMicrobialData[0].species : microbialData[0].species,
       },
       {
         term: `Immune Infiltration${print ? '*' : ''}`,
@@ -451,7 +457,7 @@ const GenomicSummary = (props) => {
                       <EditIcon />
                     </IconButton>
                     <TumourSummaryEdit
-                      microbial={microbialData}
+                      microbial={microbialData[0]}
                       report={report}
                       isOpen={showTumourSummaryEdit}
                       onClose={handleTumourSummaryEditClose}
