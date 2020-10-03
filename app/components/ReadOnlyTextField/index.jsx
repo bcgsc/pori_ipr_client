@@ -16,13 +16,24 @@ const ReadOnlyTextField = (props) => {
   const {
     label,
     children,
+    isUnderlined,
   } = props;
 
   const [width, setWidth] = useState(160);
 
   useEffect(() => {
     if (children) {
-      const calculatedWidth = children.length * WIDTH_FACTOR;
+      let weightedLength = 0;
+
+      for (let i = 0; i < children.length; i++) {
+        if (children.charAt(i) === children.charAt(i).toUpperCase()) {
+          weightedLength += 1.3;
+        } else {
+          weightedLength += 0.8;
+        }
+      }
+
+      const calculatedWidth = weightedLength * WIDTH_FACTOR;
 
       if (calculatedWidth <= WIDTH_SMALL) {
         setWidth(WIDTH_SMALL);
@@ -37,7 +48,7 @@ const ReadOnlyTextField = (props) => {
   }, [children]);
 
   return (
-    <span className="text-field" style={{ width }}>
+    <span className={`text-field ${isUnderlined ? 'text-field--underlined' : ''}`} style={{ width }}>
       <Typography variant="caption">
         {label}
       </Typography>
@@ -51,11 +62,13 @@ const ReadOnlyTextField = (props) => {
 ReadOnlyTextField.propTypes = {
   label: PropTypes.string,
   children: PropTypes.string,
+  isUnderlined: PropTypes.bool,
 };
 
 ReadOnlyTextField.defaultProps = {
   label: '',
   children: '',
+  isUnderlined: true,
 };
 
 export default ReadOnlyTextField;

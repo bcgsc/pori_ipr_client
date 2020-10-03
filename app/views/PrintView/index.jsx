@@ -6,7 +6,7 @@ import { useTheme } from '@material-ui/core/styles';
 import ReportContext from '../../components/ReportContext';
 import ReportService from '@/services/reports/report.service';
 import GenomicSummary from '../ReportView/components/GenomicSummary';
-import ProbeSummary from '../ReportView/components/ProbeSummary';
+import ProbeSummary from '../ReportView/components/ProbeSummary/index.tsx';
 import AnalystComments from '../ReportView/components/AnalystComments';
 import PathwayAnalysis from '../ReportView/components/PathwayAnalysis';
 import TherapeuticTargets from '../ReportView/components/TherapeuticTargets/components/PrintTables';
@@ -61,6 +61,7 @@ const Print = () => {
     appendices: false,
   });
   const [isProbe, setIsProbe] = useState(false);
+  const [isPrintDialogShown, setIsPrintDialogShown] = useState(false);
 
   useEffect(() => {
     if (!report) {
@@ -84,14 +85,17 @@ const Print = () => {
     } else {
       sections = ['genomicSummary', 'analyst', 'pathway', 'therapeutic', 'slides'];
     }
-    if (reportSectionsLoaded && Object.entries(reportSectionsLoaded).every(([section, loaded]) => loaded || !sections.includes(section))) {
+    if (reportSectionsLoaded
+      && Object.entries(reportSectionsLoaded).every(([section, loaded]) => loaded || !sections.includes(section))
+      && !isPrintDialogShown) {
       window.print();
+      setIsPrintDialogShown(true);
     }
   }, [reportSectionsLoaded]);
 
   const probeSections = () => (
     <>
-      <ProbeSummary report={report} print loadedDispatch={dispatch} />
+      <ProbeSummary report={report} isPrint loadedDispatch={dispatch} />
       <PageBreak report={report} />
       <Appendices report={report} print isProbe loadedDispatch={dispatch} />
     </>

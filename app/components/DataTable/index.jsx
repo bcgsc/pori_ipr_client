@@ -159,6 +159,14 @@ function DataTable(props) {
     }
 
     if (isPrint) {
+      const newCols = columnDefs.map(col => ({
+        ...col,
+        wrapText: true,
+        autoHeight: true,
+        cellClass: ['cell-wrap-text', 'cell-line-height'],
+        cellStyle: { 'white-space': 'normal' },
+      }));
+      gridApi.current.setColumnDefs(newCols);
       columnApi.current.setColumnVisible('Actions', false);
       gridApi.current.sizeColumnsToFit();
     }
@@ -166,7 +174,9 @@ function DataTable(props) {
 
   const onFirstDataRendered = () => {
     if (columnApi.current) {
-      const { visibleColumnIds } = getColumnVisibility();
+      const visibleColumnIds = columnApi.current.getAllColumns()
+        .filter(col => !col.flex && col.visible)
+        .map(col => col.colId);
       columnApi.current.autoSizeColumns(visibleColumnIds);
     }
   };
@@ -265,7 +275,6 @@ function DataTable(props) {
       normalizeRowRanks(selectedRow.node.data.rank);
       setTableLength(gridApi.current.getDisplayedRowCount());
     }
-    setSelectedRow({});
   };
 
   const defaultColDef = {
@@ -364,70 +373,72 @@ function DataTable(props) {
       <div className="data-table--padded">
         {rowData.length || canEdit ? (
           <>
-            <div className="data-table__header-container">
-              <Typography variant="h3" className="data-table__header">
-                {titleText}
-              </Typography>
-              <div>
-                {canAdd && !isPrint && (
-                  <span className="data-table__action">
-                    <Typography display="inline">
-                      Add Row
-                    </Typography>
-                    <IconButton
-                      onClick={() => setShowEditDialog(true)}
-                      title="Add Row"
-                    >
-                      <AddCircleOutlineIcon />
-                    </IconButton>
-                  </span>
-                )}
-                {canToggleColumns && !isPrint && (
-                  <span className="data-table__action">
-                    <IconButton
-                      onClick={() => setShowPopover(prevVal => !prevVal)}
-                    >
-                      <MoreHorizIcon />
-                    </IconButton>
-                  </span>
-                )}
-                {canExport && !isPrint && (
-                  <span className="data-table__action">
-                    <Typography display="inline">
-                      Export to CSV
-                    </Typography>
-                    <IconButton
-                      onClick={handleCSVExport}
-                      title="Export to CSV"
-                    >
-                      <GetAppIcon />
-                    </IconButton>
-                  </span>
-                )}
-                {canReorder && !isPrint && (
-                  <span className="data-table__action">
-                    <Typography display="inline">
-                      Reorder Rows
-                    </Typography>
-                    <Switch
-                      checked={showReorder}
-                      onChange={toggleReorder}
-                      color="primary"
-                      title="Reorder Rows"
-                    />
-                  </span>
-                )}
+            {titleText && (
+              <div className="data-table__header-container">
+                <Typography variant="h3" className="data-table__header">
+                  {titleText}
+                </Typography>
+                <div>
+                  {canAdd && !isPrint && (
+                    <span className="data-table__action">
+                      <Typography display="inline">
+                        Add Row
+                      </Typography>
+                      <IconButton
+                        onClick={() => setShowEditDialog(true)}
+                        title="Add Row"
+                      >
+                        <AddCircleOutlineIcon />
+                      </IconButton>
+                    </span>
+                  )}
+                  {canToggleColumns && !isPrint && (
+                    <span className="data-table__action">
+                      <IconButton
+                        onClick={() => setShowPopover(prevVal => !prevVal)}
+                      >
+                        <MoreHorizIcon />
+                      </IconButton>
+                    </span>
+                  )}
+                  {canExport && !isPrint && (
+                    <span className="data-table__action">
+                      <Typography display="inline">
+                        Export to CSV
+                      </Typography>
+                      <IconButton
+                        onClick={handleCSVExport}
+                        title="Export to CSV"
+                      >
+                        <GetAppIcon />
+                      </IconButton>
+                    </span>
+                  )}
+                  {canReorder && !isPrint && (
+                    <span className="data-table__action">
+                      <Typography display="inline">
+                        Reorder Rows
+                      </Typography>
+                      <Switch
+                        checked={showReorder}
+                        onChange={toggleReorder}
+                        color="primary"
+                        title="Reorder Rows"
+                      />
+                    </span>
+                  )}
+                </div>
               </div>
-              <EditDialog
-                isOpen={showEditDialog}
-                onClose={handleRowEditClose}
-                editData={selectedRow.data}
-                reportIdent={reportIdent}
-                tableType={tableType}
-                addIndex={tableLength}
-                showErrorSnackbar={snackbar.add}
-              />
-            </div>
+            )}
+            <EditDialog
+              isOpen={showEditDialog}
+              onClose={handleRowEditClose}
+              editData={selectedRow.data}
+              reportIdent={reportIdent}
+              tableType={tableType}
+              addIndex={tableLength}
+              showErrorSnackbar={snackbar.add}
+            />
             <div
               className="ag-theme-material data-table__container"
               ref={gridDiv}
