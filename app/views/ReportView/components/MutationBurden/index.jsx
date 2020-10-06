@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useCallback, useContext } from 'react';
-import PropTypes from 'prop-types';
 import {
   Typography,
   LinearProgress,
@@ -153,7 +152,7 @@ const MutationBurden = () => {
                     </Typography>
                   </div>
                   <div className="mutation-burden__images">
-                    {(indelBarplot.data || indelDensity.data || indelLegend.data) && (
+                    {(indelBarplot.data || indelDensity.data || indelLegend.data || mutationBurdenRole) && (
                       <Card elevation={3} className="mutation-burden__group">
                         {indelBarplot.data && (
                           <span className="mutation-burden__image">
@@ -170,33 +169,33 @@ const MutationBurden = () => {
                             <Image image={indelDensity} />
                             <Image image={indelLegend} />
                             <Typography>{indelDensity.caption}</Typography>
-                            {mutationBurdenRole && (
-                              <CardContent>
-                                <Typography variant="body2" className="mutation-burden__comparator--padded">
-                                  <>
-                                    Protein Coding Indels (count): 
-                                    {` ${mutationBurdenRole.codingIndelsCount}`}
-                                  </>
-                                </Typography>
-                                <Typography variant="body2" className="mutation-burden__comparator--padded">
-                                  <>
-                                    Protein Coding Indels (percentile): 
-                                    {` ${mutationBurdenRole.codingIndelPercentile}`}
-                                  </>
-                                </Typography>
-                                <Typography variant="body2" className="mutation-burden__comparator--padded">
-                                  <>
-                                    Frameshifting Protein Coding Indels (count):
-                                    {` ${mutationBurdenRole.frameshiftIndelsCount}`}
-                                  </>
-                                </Typography>
-                              </CardContent>
-                            )}
                           </span>
+                        )}
+                        {mutationBurdenRole && (
+                          <CardContent>
+                            <Typography variant="body2" className="mutation-burden__comparator--padded">
+                              <>
+                                Protein Coding Indels (count): 
+                                {` ${mutationBurdenRole.codingIndelsCount}`}
+                              </>
+                            </Typography>
+                            <Typography variant="body2" className="mutation-burden__comparator--padded">
+                              <>
+                                Protein Coding Indels (percentile): 
+                                {` ${mutationBurdenRole.codingIndelPercentile}`}
+                              </>
+                            </Typography>
+                            <Typography variant="body2" className="mutation-burden__comparator--padded">
+                              <>
+                                Frameshifting Protein Coding Indels (count):
+                                {` ${mutationBurdenRole.frameshiftIndelsCount}`}
+                              </>
+                            </Typography>
+                          </CardContent>
                         )}
                       </Card>
                     )}
-                    {(svBarplot.data || svDensity.data || svLegend.data) && (
+                    {(svBarplot.data || svDensity.data || svLegend.data || mutationBurdenRole) && (
                       <Card elevation={3} className="mutation-burden__group">
                         {svBarplot.data && (
                           <span className="mutation-burden__image">
@@ -213,33 +212,33 @@ const MutationBurden = () => {
                             <Image image={svDensity} />
                             <Image image={svLegend} />
                             <Typography>{svDensity.caption}</Typography>
-                            {mutationBurdenRole && (
-                              <CardContent>
-                                <Typography variant="body2" className="mutation-burden__comparator--padded">
-                                  <>
-                                    Structural Variants (count): 
-                                    {` ${mutationBurdenRole.qualitySvCount}`}
-                                  </>
-                                </Typography>
-                                <Typography variant="body2" className="mutation-burden__comparator--padded">
-                                  <>
-                                    Structural Variants (percentile): 
-                                    {` ${mutationBurdenRole.qualitySvPercentile}`}
-                                  </>
-                                </Typography>
-                                <Typography variant="body2" className="mutation-burden__comparator--padded">
-                                  <>
-                                    Expressed Structural Variants (count):
-                                    {` ${mutationBurdenRole.qualitySvExpressedCount}`}
-                                  </>
-                                </Typography>
-                              </CardContent>
-                            )}
                           </span>
+                        )}
+                        {mutationBurdenRole && (
+                          <CardContent>
+                            <Typography variant="body2" className="mutation-burden__comparator--padded">
+                              <>
+                                Structural Variants (count): 
+                                {` ${mutationBurdenRole.qualitySvCount}`}
+                              </>
+                            </Typography>
+                            <Typography variant="body2" className="mutation-burden__comparator--padded">
+                              <>
+                                Structural Variants (percentile): 
+                                {` ${mutationBurdenRole.qualitySvPercentile}`}
+                              </>
+                            </Typography>
+                            <Typography variant="body2" className="mutation-burden__comparator--padded">
+                              <>
+                                Expressed Structural Variants (count):
+                                {` ${mutationBurdenRole.qualitySvExpressedCount}`}
+                              </>
+                            </Typography>
+                          </CardContent>
                         )}
                       </Card>
                     )}
-                    {(snvBarplot.data || snvDensity.data || snvLegend.data) && (
+                    {(snvBarplot.data || snvDensity.data || snvLegend.data || mutationBurdenRole) && (
                       <Card elevation={3} className="mutation-burden__group">
                         {snvBarplot.data && (
                           <span className="mutation-burden__image">
@@ -256,29 +255,29 @@ const MutationBurden = () => {
                             <Image image={snvDensity} />
                             <Image image={snvLegend} />
                             <Typography>{snvDensity.caption}</Typography>
-                            {mutationBurdenRole && (
-                              <CardContent>
-                                <Typography variant="body2" className="mutation-burden__comparator--padded">
-                                  <>
-                                    Protein Coding SNVs (count):
-                                    {` ${mutationBurdenRole.codingSnvCount}`}
-                                  </>
-                                </Typography>
-                                <Typography variant="body2" className="mutation-burden__comparator--padded">
-                                  <>
-                                    Protein Coding SNVs (percentile):
-                                    {` ${mutationBurdenRole.codingSnvPercentile}`}
-                                  </>
-                                </Typography>
-                                <Typography variant="body2" className="mutation-burden__comparator--padded">
-                                  <>
-                                    Truncating Protein Coding SNVs (count):
-                                    {` ${mutationBurdenRole.truncatingSnvCount}`}
-                                  </>
-                                </Typography>
-                              </CardContent>
-                            )}
                           </span>
+                        )}
+                        {mutationBurdenRole && (
+                          <CardContent>
+                            <Typography variant="body2" className="mutation-burden__comparator--padded">
+                              <>
+                                Protein Coding SNVs (count):
+                                {` ${mutationBurdenRole.codingSnvCount}`}
+                              </>
+                            </Typography>
+                            <Typography variant="body2" className="mutation-burden__comparator--padded">
+                              <>
+                                Protein Coding SNVs (percentile):
+                                {` ${mutationBurdenRole.codingSnvPercentile}`}
+                              </>
+                            </Typography>
+                            <Typography variant="body2" className="mutation-burden__comparator--padded">
+                              <>
+                                Truncating Protein Coding SNVs (count):
+                                {` ${mutationBurdenRole.truncatingSnvCount}`}
+                              </>
+                            </Typography>
+                          </CardContent>
                         )}
                       </Card>
                     )}
