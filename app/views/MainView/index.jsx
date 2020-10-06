@@ -20,6 +20,7 @@ const LoginView = lazy(() => import('@/views/LoginView'));
 const TermsView = lazy(() => import('@/views/TermsView'));
 const ReportsView = lazy(() => import('@/views/ReportsView'));
 const ReportView = lazy(() => import('@/views/ReportView'));
+const PatientsView = lazy(() => import('@/views/PatientsView'));
 const PrintView = lazy(() => import('@/views/PrintView'));
 const GermlineView = lazy(() => import('@/views/GermlineView'));
 const AdminView = lazy(() => import('@/views/AdminView'));
@@ -91,7 +92,8 @@ const Main = () => {
                 <Redirect to={{ pathname: '/reports' }} />
               </Route>
               <AuthenticatedRoute component={TermsView} path="/terms" />
-              <AuthenticatedRoute admin={adminUser} component={ReportsView} path="/reports" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
+              <AuthenticatedRoute exact admin={adminUser} component={ReportsView} path="/reports" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
+              <AuthenticatedRoute exact admin={adminUser} component={PatientsView} path="/reports/patients/:patientId" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
               <Redirect exact from="/report/:ident/(genomic|probe)/summary" to="/report/:ident/summary" />
               <AuthenticatedRoute component={ReportView} path="/report/:ident" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
               <AuthenticatedRoute component={PrintView} path="/print/:ident" isNavVisible={false} onToggleNav={setIsNavVisible} />
