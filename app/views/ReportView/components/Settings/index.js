@@ -3,7 +3,8 @@ import { $rootScope } from 'ngimport';
 
 import indefiniteArticle from '@/utils/indefiniteArticle';
 import toastCreator from '@/utils/toastCreator';
-import { searchUsers } from '@/services/management/auth';
+import { searchUsers, getUser } from '@/services/management/auth';
+import { formatDate } from '@/utils/date';
 import lazyInjector from '@/lazyInjector';
 import template from './report-settings.pug';
 import addTemplate from './role-add.pug';
@@ -27,11 +28,15 @@ class Settings {
   $onInit() {
     this.roles = ['bioinformatician', 'analyst', 'reviewer', 'admin', 'clinician'];
     this.reportSettingsChanged = false;
+    this.formatDate = formatDate;
   }
 
   async $onChanges(changes) {
     if (changes.report && changes.report.currentValue) {
       this.reportCache = angular.copy(this.report);
+      this.user = await getUser();
+      this.canStartAnalysis = this.report.users.some(({ user: { username } }) => username === this.user.username);
+      $rootScope.$digest();
     }
   }
 
@@ -41,6 +46,7 @@ class Settings {
       this.report.ident, role.user.ident, role.role,
     );
     this.report = result;
+    this.canStartAnalysis = this.report.users.some(({ user: { username } }) => username === this.user.username);
     $rootScope.$digest();
   }
 
@@ -101,6 +107,7 @@ class Settings {
         $rootScope.$digest();
       }
       this.report = outcome.data;
+      this.canStartAnalysis = this.report.users.some(({ user: { username } }) => username === this.user.username);
     } catch (err) {
       this.$mdToast.show(toastCreator('No changes were made'));
     }
@@ -176,6 +183,13 @@ class Settings {
         this.$mdToast.show(toastCreator(`Report not deleted: ${err.data.message}`));
       }
     }
+  }
+
+  async startAnalysis() {
+    const date = new Date();
+    const resp = await ReportService.updateReport(this.report.ident, { analysisStartedAt: date.toISOString() });
+    this.report = resp;
+    $rootScope.$digest();
   }
 }
 
