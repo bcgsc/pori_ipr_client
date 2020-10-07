@@ -40,7 +40,7 @@ class ImageService {
    */
   async mutationSummary(report) {
     const { data } = await $http.get(
-      `${this.api}/${report}/image/mutation-summary`,
+      `${this.api}/${report}/image/mutation-burden`,
     );
     return data;
   }

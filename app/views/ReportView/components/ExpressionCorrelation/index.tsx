@@ -201,7 +201,7 @@ const ExpressionCorrelation = () => {
   return (
     <>
       <div className="expression-correlation">
-        <Typography variant="h1">
+        <Typography variant="h3">
           Expression Correlation
         </Typography>
         {plots && subtypePlots && (
