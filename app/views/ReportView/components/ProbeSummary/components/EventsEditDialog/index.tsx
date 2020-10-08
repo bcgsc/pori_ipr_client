@@ -9,7 +9,8 @@ import {
 } from '@material-ui/core';
 
 import ReportContext from '../../../../../../components/ReportContext';
-import TargetedGenesService from '../../../../../../services/reports/targeted-genes.service';
+import ConfirmContext from '../../../../../../components/ConfirmContext';
+import api from '../../../../../../services/api';
 
 type Props = {
   isOpen: boolean,
@@ -29,6 +30,7 @@ const EventsEditDialog: React.FC<Props> = ({
   onClose,
 }) => {
   const { report } = useContext(ReportContext);
+  const { isSigned } = useContext(ConfirmContext);
 
   const [newData, setNewData] = useState<Array<any>>();
   const [editDataDirty, setDataDirty] = useState<Boolean>(false);
@@ -59,7 +61,8 @@ const EventsEditDialog: React.FC<Props> = ({
 
   const handleClose = useCallback(async (isSaved) => {
     if (isSaved && editDataDirty) {
-      await TargetedGenesService.update(report.ident, newData.ident, newData);
+      const call = api.put(`/report/${report.ident}/probe-results/${newData.ident}`, newData, {});
+      await call.request(isSigned)
       onClose(newData);
     } else {
       onClose(false);

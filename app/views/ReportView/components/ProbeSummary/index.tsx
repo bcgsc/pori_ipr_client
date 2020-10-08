@@ -3,19 +3,17 @@ import {
   Typography,
   IconButton,
   Grid,
-  Paper,
 } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
-import SignIcon from '@material-ui/icons/Gesture';
 
+import api, { ApiCallSet } from '../../../../services/api';
 import DataTable from '../../../../components/DataTable';
 import { sampleColumnDefs, eventsColumnDefs } from './columnDefs';
 import ReportContext from '../../../../components/ReportContext';
 import EditContext from '../../../../components/EditContext';
+import ConfirmContext from '../../../../components/ConfirmContext';
 import ReadOnlyTextField from '../../../../components/ReadOnlyTextField';
 import { getSignatures, sign, revokeSignature } from '../../../../services/reports/signatures';
-import PatientInformationService from '../../../../services/reports/patient-information.service';
-import ReportService from '../../../../services/reports/report.service';
 import TargetedGenesService from '../../../../services/reports/targeted-genes.service';
 import TestInformationService from '../../../../services/reports/test-information.service';
 import { formatDate } from '../../../../utils/date';
@@ -37,8 +35,9 @@ const ProbeSummary: React.FC<Props> = ({
   loadedDispatch,
   isPrint,
 }) => {
-  const { report } = useContext(ReportContext);
+  const { report, setReport } = useContext(ReportContext);
   const { canEdit } = useContext(EditContext);
+  const { isSigned, setIsSigned } = useContext(ConfirmContext);
 
   const [testInformation, setTestInformation] = useState<Array<TestInformationInterface> | null>();
   const [signatures, setSignatures] = useState<any | null>();
@@ -46,7 +45,6 @@ const ProbeSummary: React.FC<Props> = ({
   const [patientInformation, setPatientInformation] = useState<Array<object> | null>();
 
   const [showPatientEdit, setShowPatientEdit] = useState<Boolean>(false);
-  const [showEventsEdit, setShowEventsEdit] = useState<Boolean>(false);
 
   useEffect(() => {
     if (report && report.ident) {
@@ -102,17 +100,26 @@ const ProbeSummary: React.FC<Props> = ({
   }, [report]);
 
   const handlePatientEditClose = useCallback(async (isSaved, newPatientData, newReportData) => {
+    const apiCalls = [];
     setShowPatientEdit(false);
+
     if (!isSaved || !newPatientData && !newReportData) {
       return;
     }
 
     if (newPatientData) {
-      await PatientInformationService.update(report.ident, newPatientData);
+      apiCalls.push(api.put(`/reports/${report.ident}/patient-information`, newPatientData, {}));
     }
 
     if (newReportData) {
-      await ReportService.updateReport(report.ident, newReportData);
+      apiCalls.push(api.put(`/reports/${report.ident}`, newReportData, {}));
+    }
+
+    const callSet = new ApiCallSet(apiCalls);
+    const [_, reportResp] = await callSet.request(isSigned);
+
+    if (reportResp) {
+      setReport({ ...reportResp, ...report });
     }
 
     setPatientInformation([
@@ -147,16 +154,6 @@ const ProbeSummary: React.FC<Props> = ({
     ]);
   }, [report]);
 
-  const handleEventsEditClose = useCallback(async (isSaved, data) => {
-    setShowEventsEdit(false);
-
-    if (!isSaved) {
-      return;
-    }
-    
-    await TargetedGenesService.update(report.ident, data.ident, data);
-  }, [report]);
-
   const handleSign = async (signed: boolean, role: 'author' | 'reviewer') => {
     let newSignature;
 
@@ -166,6 +163,7 @@ const ProbeSummary: React.FC<Props> = ({
       newSignature = await revokeSignature(report.ident, role);
     }
 
+    setIsSigned(signed);
     setSignatures(newSignature);
   };
 
