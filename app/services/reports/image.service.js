@@ -38,9 +38,9 @@ class ImageService {
    * @return {Promise} API response data
    * @throws {ErrorType} Thrown when API call fails
    */
-  async mutationSummary(report) {
+  async mutationBurden(report) {
     const { data } = await $http.get(
-      `${this.api}/${report}/image/mutation-summary`,
+      `${this.api}/${report}/image/mutation-burden`,
     );
     return data;
   }
