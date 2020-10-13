@@ -152,7 +152,7 @@ const ProbeSummary: React.FC<Props> = ({
         value: newPatientData ? newPatientData.gender : report.patientInformation.gender,
       },
     ]);
-  }, [report]);
+  }, [report, isSigned]);
 
   const handleSign = async (signed: boolean, role: 'author' | 'reviewer') => {
     let newSignature;
