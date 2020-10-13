@@ -49,11 +49,12 @@
 
 @media screen {
   section.pathwayAnalysis {
+    padding: 0 60px 8px;
+
     .upload {
       padding: 10px 0 0 10px;
 
       md-icon {
-        position: absolute;
         background-color: $palette__common--white;
         cursor: pointer;
 
