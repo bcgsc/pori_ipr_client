@@ -15,10 +15,19 @@ const post = (endpoint, payload, callOptions) => {
   return new ApiCall(endpoint, requestOptions, callOptions);
 };
 
-const del = (endpoint, callOptions) => {
-  const requestOptions = {
-    method: 'DELETE',
-  };
+const del = (endpoint, payload, callOptions) => {
+  let requestOptions;
+
+  if (payload) {
+    requestOptions = {
+      method: 'DELETE',
+      body: JSON.stringify(payload),
+    };
+  } else {
+    requestOptions = {
+      method: 'DELETE',
+    };
+  }
   return new ApiCall(endpoint, requestOptions, callOptions);
 }
 

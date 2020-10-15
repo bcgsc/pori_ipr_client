@@ -251,7 +251,10 @@ const GenomicSummary = (props) => {
 
   const handleChipDeleted = useCallback(async (chipIdent, type, comment) => {
     try {
-      const req = api.del(`/reports/${report.ident}/kb-matches/${chipIdent}`);
+      const req = api.del(
+        `/reports/${report.ident}/summary/genomic-alterations-identified/${chipIdent}`,
+        { comment },
+      );
       await req.request(isSigned);
 
       setVariantCounts(prevVal => ({ ...prevVal, [type]: prevVal[type] - 1 }));
