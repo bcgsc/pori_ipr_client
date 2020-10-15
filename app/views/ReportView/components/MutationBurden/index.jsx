@@ -121,7 +121,7 @@ const MutationBurden = () => {
 
   return (
     <div className="mutation-burden">
-      <Typography variant="h1">
+      <Typography variant="h3">
         Mutation Burden
       </Typography>
       {comparators && mutationBurden && images ? (
