@@ -238,27 +238,6 @@ function DataTable(props) {
     }
   };
 
-  const normalizeRowRanks = async (deletedRank) => {
-    const rerankedData = [];
-    gridApi.current.forEachNode((node) => {
-      if (node.data.rank !== deletedRank) {
-        rerankedData.push(node.data);
-      }
-    });
-    rerankedData.sort((row1, row2) => row1.rank - row2.rank);
-    rerankedData.forEach((row, index) => { row.rank = index; });
-    try {
-      const call = rowUpdateAPICall(reportIdent, rerankedData);
-      const updatedRows = await call.request();
-      if (updatedRows) {
-        gridApi.current.setRowData(updatedRows);
-      }
-    } catch (err) {
-      console.error(err);
-      snackbar.add(`Rows were not updated: ${err}`);
-    }
-  };
-
   const handleRowEditClose = (editedData) => {
     setShowEditDialog(false);
     if (editedData && selectedRow.node) {
@@ -272,7 +251,7 @@ function DataTable(props) {
       columnApi.current.autoSizeColumns(visibleColumnIds);
     } else if (editedData === null) {
       // sending back null indicates the row was deleted
-      normalizeRowRanks(selectedRow.node.data.rank);
+      gridApi.current.updateRowData({ remove: [selectedRow.node.data] });
       setTableLength(gridApi.current.getDisplayedRowCount());
     }
   };
