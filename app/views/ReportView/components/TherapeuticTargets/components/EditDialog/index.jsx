@@ -1,7 +1,7 @@
 import './index.scss';
 
 import React, {
-  useState, useEffect, useCallback, useReducer,
+  useState, useEffect, useCallback, useReducer, useContext,
 } from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -13,8 +13,11 @@ import {
   FormControl,
   TextField,
 } from '@material-ui/core';
+
 import AutocompleteHandler from '../AutocompleteHandler';
-import { therapeuticAdd, therapeuticUpdate, therapeuticDelete } from '../../../../../../services/reports/therapeutic';
+import { therapeuticAdd, therapeuticDelete } from '../../../../../../services/reports/therapeutic';
+import api from '@/services/api';
+import ConfirmContext from '@/components/ConfirmContext';
 
 /**
  * @param {object} props props
@@ -23,7 +26,6 @@ import { therapeuticAdd, therapeuticUpdate, therapeuticDelete } from '../../../.
  * @param {func} props.onClose onClose function
  * @param {string} props.reportIdent ident of current report
  * @param {string} props.tableType therapeutic | chemoresistant
- * @param {number} props.addIndex index of table to add new row to
  * @return {*} JSX
  */
 function EditDialog(props) {
@@ -33,7 +35,6 @@ function EditDialog(props) {
     onClose,
     reportIdent,
     tableType,
-    addIndex,
   } = props;
 
   const [newData, setNewData] = useReducer((state, action) => {
@@ -46,6 +47,8 @@ function EditDialog(props) {
   }, editData || {});
 
   const dialogTitle = newData.ident ? 'Edit Row' : 'Add Row';
+
+  const { isSigned } = useContext(ConfirmContext);
 
   const [requiredFields] = useState(['variant', 'context', 'therapy']);
   const [errors, setErrors] = useState(null);
@@ -75,11 +78,11 @@ function EditDialog(props) {
 
     try {
       if (newData.ident) { // existing option
-        await therapeuticUpdate(
-          reportIdent,
-          editData.ident,
+        const call = api.put(
+          `/reports/${reportIdent}/therapeutic-targets/${editData.ident}`,
           combinedData,
         );
+        await call.request(isSigned);
         setIsDirty(false);
         onClose(combinedData);
       } else {
