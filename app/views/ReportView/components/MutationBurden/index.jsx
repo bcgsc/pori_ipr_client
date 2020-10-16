@@ -131,6 +131,10 @@ const MutationBurden = () => {
             .map(({ analysisRole, name }) => {
               const mutationBurdenRole = mutationBurden.find(({ role }) => analysisRole.includes(role));
 
+              if (!mutationBurdenRole) {
+                return null;
+              }
+
               const indelBarplot = getImage(images.indel.barplot, mutationBurdenRole.role);
               const indelDensity = getImage(images.indel.density, mutationBurdenRole.role);
               const indelLegend = getImage(images.indel.legend, mutationBurdenRole.role);
