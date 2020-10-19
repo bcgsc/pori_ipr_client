@@ -83,6 +83,14 @@ const genomic = [
     children: [],
   },
   {
+    name: 'Immune Microenvironment',
+    uri: 'immune',
+    meta: false,
+    showChildren: false,
+    clinician: true,
+    children: [],
+  },
+  {
     name: 'Appendices',
     uri: 'appendices',
     meta: false,
