@@ -5,9 +5,10 @@ import React, {
   useContext,
 } from 'react';
 import {
-  Switch, Route, useRouteMatch, useParams, useHistory
+  Switch, Route, useRouteMatch, useParams, useHistory,
 } from 'react-router-dom';
 import { useTheme } from '@material-ui/core/styles';
+import { SnackbarContext } from '@bcgsc/react-snackbar-provider';
 
 import SecurityContext from '@/components/SecurityContext';
 import ReportToolbar from '@/components/ReportToolbar';
@@ -46,6 +47,7 @@ const ReportView = () => {
   const theme = useTheme();
   const history = useHistory();
   const { canEdit } = useContext(EditContext);
+  const snackbar = useContext(SnackbarContext);
 
   const [report, setReport] = useState();
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
@@ -66,15 +68,14 @@ const ReportView = () => {
             setIsProbe(true);
           }
         } catch {
-          setIsSnackbarOpen(true);
-          setSnackbarMessage(`Report ${params.ident} not found`);
+          snackbar.add(`Report ${params.ident} not found`);
           history.push('/reports');
         }
       };
 
       getReport();
     }
-  }, [report]);
+  }, [history, params.ident, report, snackbar]);
 
   useEffect(() => {
     if (report) {
@@ -85,11 +86,11 @@ const ReportView = () => {
           || (resp.authorSignature && resp.authorSignature.ident))) {
           setIsSigned(true);
         }
-      }
+      };
 
       getSignatures();
     }
-  }, [report]);
+  }, [params.ident, report]);
 
   return (
     <ReportContext.Provider value={{ report, setReport }}>
