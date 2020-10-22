@@ -3,6 +3,7 @@ import { $rootScope } from 'ngimport';
 
 import MavisService from '@/services/reports/mavis.service';
 import StructuralVariantsService from '@/services/reports/structural-variants.service';
+import ImageService from '@/services/reports/image.service';
 import lazyInjector from '@/lazyInjector';
 
 import template from './structural-variants.pug';
@@ -11,7 +12,6 @@ import './index.scss';
 
 const bindings = {
   report: '<',
-  images: '<',
   theme: '<',
 };
 
@@ -35,13 +35,16 @@ class StructuralVariants {
       const [
         structuralVariants,
         mavisSummary,
+        images,
       ] = await Promise.all([
         StructuralVariantsService.all(this.report.ident),
         MavisService.all(this.report.ident),
+        ImageService.get(this.report.ident, 'circosSv.genome,circosSv.transcriptome'),
       ]);
 
       this.structuralVariants = structuralVariants;
       this.mavisSummary = mavisSummary;
+      this.images = images;
 
       this.processSvs(this.structuralVariants);
       this.loading = false;
