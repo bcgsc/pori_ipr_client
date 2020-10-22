@@ -10,7 +10,7 @@
     "node": true,
     "cypress/globals": true
   },
-  "parser": "@typescript-eslint",
+  "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "sourceType": "module"
   },
@@ -72,11 +72,7 @@
     "no-useless-call": "error",
     "no-useless-concat": "error",
     "no-useless-rename": "error",
-    "max-len": ["warn", {
-        "code": 100,
-        "ignoreUrls": true,
-        "ignoreStrings": true
-    }],
+    "max-len": "off",
     "no-undef": "warn",
     "arrow-body-style": ["error", "as-needed"],
     "object-shorthand": ["error", "always"],
