@@ -11,7 +11,7 @@ import { SnackbarContext } from '@bcgsc/react-snackbar-provider';
 import sortBy from 'lodash.sortby';
 
 import api, { ApiCallSet } from '@/services/api';
-import { getMicrobial, updateMicrobial } from '@/services/reports/microbial';
+import { getMicrobial } from '@/services/reports/microbial';
 import { getComparators } from '@/services/reports/comparators';
 import { getMutationSignatures } from '@/services/reports/mutation-signature';
 import { getMutationBurden } from '@/services/reports/mutation-burden';
@@ -20,8 +20,6 @@ import ReportContext from '../../../../components/ReportContext';
 import EditContext from '@/components/EditContext';
 import ConfirmContext from '@/components/ConfirmContext';
 import AlterationsService from '@/services/reports/genomic-alterations.service';
-import PatientInformationService from '@/services/reports/patient-information.service';
-import ReportService from '@/services/reports/report.service';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import DescriptionList from '@/components/DescriptionList';
 import PageBreak from '@/components/PageBreak';
@@ -157,7 +155,7 @@ const GenomicSummary = (props) => {
           },
           {
             term: 'Microbial Species',
-            value: microbial ? microbial[0].species : null,
+            value: microbial && microbial.length ? microbial[0].species : null,
           },
           {
             term: `Immune Infiltration${print ? '*' : ''}`,
@@ -247,7 +245,7 @@ const GenomicSummary = (props) => {
 
       getData();
     }
-  }, [report, print, loadedDispatch]);
+  }, [report, print, loadedDispatch, history]);
 
   const handleChipDeleted = useCallback(async (chipIdent, type, comment) => {
     try {
@@ -286,7 +284,7 @@ const GenomicSummary = (props) => {
     const apiCalls = [];
     setShowPatientEdit(false);
 
-    if (!isSaved || !newPatientData && !newReportData) {
+    if (!isSaved || (!newPatientData && !newReportData)) {
       return;
     }
 
@@ -335,13 +333,13 @@ const GenomicSummary = (props) => {
         value: newPatientData ? newPatientData.gender : report.patientInformation.gender,
       },
     ]);
-  }, [report, isSigned]);
+  }, [isSigned, report, setReport]);
 
   const handleTumourSummaryEditClose = useCallback(async (isSaved, newMicrobialData, newReportData) => {
     const apiCalls = [];
     setShowTumourSummaryEdit(false);
 
-    if (!isSaved || !newMicrobialData && !newReportData) {
+    if (!isSaved || (!newMicrobialData && !newReportData)) {
       return;
     }
 
@@ -361,6 +359,15 @@ const GenomicSummary = (props) => {
       setReport(reportResp);
     }
 
+    let microbialUpdateData;
+    if (newMicrobialData && newMicrobialData.length) {
+      microbialUpdateData = newMicrobialData[0].species;
+    } else if (microbialData && microbialData.length) {
+      microbialUpdateData = microbialData[0].species;
+    } else {
+      microbialUpdateData = null;
+    }
+
     setTumourSummaryData([
       {
         term: 'Tumour Content',
@@ -372,7 +379,7 @@ const GenomicSummary = (props) => {
       },
       {
         term: 'Microbial Species',
-        value: newMicrobialData ? newMicrobialData[0].species : microbialData[0].species,
+        value: microbialUpdateData,
       },
       {
         term: `Immune Infiltration${print ? '*' : ''}`,
@@ -383,8 +390,8 @@ const GenomicSummary = (props) => {
         value: signatureData
           .filter(({ selected }) => selected)
           .map(({ associations, signature }) => (
-          `${signature} (${associations})`
-        )).join(', '),
+            `${signature} (${associations})`
+          )).join(', '),
         action: () => history.push('mutation-signatures'),
       },
       {
@@ -409,7 +416,7 @@ const GenomicSummary = (props) => {
         value: null,
       },
     ]);
-  }, [report, isSigned]);
+  }, [report, isSigned, history, microbialData, primaryBurdenData, print, setReport, signatureData]);
 
   return (
     <div className="genomic-summary">
@@ -527,15 +534,11 @@ const GenomicSummary = (props) => {
 
 GenomicSummary.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
-  report: PropTypes.object,
-  canEdit: PropTypes.bool,
   print: PropTypes.bool,
   loadedDispatch: PropTypes.func,
 };
 
 GenomicSummary.defaultProps = {
-  report: {},
-  canEdit: false,
   print: false,
   loadedDispatch: () => {},
 };
