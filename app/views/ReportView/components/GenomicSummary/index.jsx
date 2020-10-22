@@ -213,7 +213,7 @@ const GenomicSummary = (props) => {
             value: diseaseComparator ? diseaseComparator.name : 'Not specified',
           },
           {
-            label: 'Ploidy',
+            label: 'Ploidy Model',
             value: report.ploidy,
           },
         ]);
