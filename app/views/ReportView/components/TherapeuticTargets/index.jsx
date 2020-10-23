@@ -6,7 +6,7 @@ import EditContext from '@/components/EditContext';
 import ReportContext from '../../../../components/ReportContext';
 import EditDialog from './components/EditDialog';
 import columnDefs from './columnDefs';
-import { therapeuticUpdateTable, therapeuticGet } from '@/services/reports/therapeutic';
+import api from '@/services/api';
 
 /**
  * @param {object} props props
@@ -31,7 +31,8 @@ function TherapeuticView(props) {
   useEffect(() => {
     if (report) {
       const getData = async () => {
-        const resp = await therapeuticGet(report.ident);
+        const call = api.get(`/reports/${report.ident}/therapeutic-targets`);
+        const resp = await call.request();
 
         setTherapeuticData(resp.filter(
           target => target.type === 'therapeutic',
@@ -60,7 +61,7 @@ function TherapeuticView(props) {
             tableType="therapeutic"
             isPaginated={false}
             canReorder={canEdit && !print}
-            rowUpdateAPICall={therapeuticUpdateTable}
+            rowUpdateAPICall={(reportIdent, data) => api.put(`/reports/${reportIdent}/therapeutic-targets`, data)}
             canExport
             patientId={report.patientId}
             print={print}
@@ -77,7 +78,7 @@ function TherapeuticView(props) {
             tableType="chemoresistance"
             isPaginated={false}
             canReorder={canEdit && !print}
-            rowUpdateAPICall={therapeuticUpdateTable}
+            rowUpdateAPICall={(reportIdent, data) => api.put(`/reports/${reportIdent}/therapeutic-targets`, data)}
             canExport
             patientId={report.patientId}
             print={print}

@@ -14,11 +14,12 @@ import {
   InputLabel,
 } from '@material-ui/core';
 
-import { updateMutationSignature } from '@/services/reports/mutation-signature';
+import api from '@/services/api';
 
 import './index.scss';
 import { useCallback } from 'react';
 import ReportContext from '../../../../../../components/ReportContext';
+import ConfirmContext from '@/components/ConfirmContext';
 
 const EditDialog = (props) => {
   const {
@@ -29,6 +30,7 @@ const EditDialog = (props) => {
   } = props;
 
   const { report } = useContext(ReportContext);
+  const { isSigned } = useContext(ConfirmContext);
   const [checkboxSelected, setCheckboxSelected] = useState(false);
   const [selectValue, setSelectValue] = useState('');
 
@@ -50,11 +52,11 @@ const EditDialog = (props) => {
   const handleSubmit = useCallback(async () => {
     if (checkboxSelected !== editData.selected || selectValue !== editData.kbCategory) {
       try {
-        await updateMutationSignature(
-          report.ident,
-          editData.ident,
+        const call = api.put(
+          `/reports/${report.ident}/mutation-signatures/${editData.ident}`,
           { selected: checkboxSelected, kbCategory: selectValue },
         );
+        await call.request(isSigned);
         onClose({ ...editData, selected: checkboxSelected, kbCategory: selectValue });
       } catch (err) {
         showErrorSnackbar(`Error updating signature: ${err.message}`);
@@ -63,7 +65,7 @@ const EditDialog = (props) => {
     } else {
       onClose();
     }
-  }, [checkboxSelected, selectValue]);
+  }, [checkboxSelected, selectValue, isSigned, editData]);
 
   return (
     <Dialog open={isOpen} maxWidth="sm" fullWidth className="edit-dialog">

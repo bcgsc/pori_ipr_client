@@ -3,23 +3,23 @@ import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {
   Typography,
-  Snackbar,
   IconButton,
   Grid,
 } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
+import { SnackbarContext } from '@bcgsc/react-snackbar-provider';
 import sortBy from 'lodash.sortby';
 
-import { getMicrobial, updateMicrobial } from '@/services/reports/microbial';
+import api, { ApiCallSet } from '@/services/api';
+import { getMicrobial } from '@/services/reports/microbial';
 import { getComparators } from '@/services/reports/comparators';
 import { getMutationSignatures } from '@/services/reports/mutation-signature';
 import { getMutationBurden } from '@/services/reports/mutation-burden';
 import { formatDate } from '@/utils/date';
 import ReportContext from '../../../../components/ReportContext';
 import EditContext from '@/components/EditContext';
+import ConfirmContext from '@/components/ConfirmContext';
 import AlterationsService from '@/services/reports/genomic-alterations.service';
-import PatientInformationService from '@/services/reports/patient-information.service';
-import ReportService from '@/services/reports/report.service';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import DescriptionList from '@/components/DescriptionList';
 import PageBreak from '@/components/PageBreak';
@@ -66,11 +66,12 @@ const GenomicSummary = (props) => {
     loadedDispatch,
   } = props;
 
-  const { report } = useContext(ReportContext);
+  const { report, setReport } = useContext(ReportContext);
   const { canEdit } = useContext(EditContext);
+  const { isSigned } = useContext(ConfirmContext);
+  const snackbar = useContext(SnackbarContext);
   const history = useHistory();
 
-  const [showSnackbar, setShowSnackbar] = useState(false);
   const [showPatientEdit, setShowPatientEdit] = useState(false);
   const [patientInformationData, setPatientInformationData] = useState();
   const [showTumourSummaryEdit, setShowTumourSummaryEdit] = useState(false);
@@ -154,7 +155,7 @@ const GenomicSummary = (props) => {
           },
           {
             term: 'Microbial Species',
-            value: microbial ? microbial.species : null,
+            value: microbial && microbial.length ? microbial[0].species : null,
           },
           {
             term: `Immune Infiltration${print ? '*' : ''}`,
@@ -244,55 +245,62 @@ const GenomicSummary = (props) => {
 
       getData();
     }
-  }, [report, print, loadedDispatch]);
+  }, [report, print, loadedDispatch, history]);
 
   const handleChipDeleted = useCallback(async (chipIdent, type, comment) => {
     try {
-      await AlterationsService.remove(report.ident, chipIdent, comment);
+      const req = api.del(
+        `/reports/${report.ident}/summary/genomic-alterations-identified/${chipIdent}`,
+        { comment },
+      );
+      await req.request(isSigned);
 
       setVariantCounts(prevVal => ({ ...prevVal, [type]: prevVal[type] - 1 }));
       setVariantData(prevVal => (prevVal.filter(val => val.ident !== chipIdent)));
-      setShowSnackbar('Entry deleted');
+      snackbar.add('Entry deleted');
     } catch (err) {
       console.error(err);
-      setShowSnackbar('Entry NOT deleted due to an error');
+      snackbar.add('Entry NOT deleted due to an error');
     }
-  }, [report]);
+  }, [report, isSigned, snackbar]);
 
   const handleChipAdded = useCallback(async (variant) => {
     try {
-      const newVariantEntry = await AlterationsService.create(report.ident, { geneVariant: variant });
+      const req = api.post(`/reports/${report.ident}/summary/genomic-alterations-identified`, { geneVariant: variant });
+      const newVariantEntry = await req.request();
+
       const categorizedVariantEntry = variantCategory(newVariantEntry);
 
       setVariantCounts(prevVal => ({ ...prevVal, [categorizedVariantEntry.type]: prevVal[categorizedVariantEntry.type] + 1 }));
       setVariantData(prevVal => ([...prevVal, categorizedVariantEntry]));
-      setShowSnackbar('Entry added');
+      snackbar.add('Entry added');
     } catch (err) {
       console.error(err);
-      setShowSnackbar('Entry NOT added due to an error');
+      snackbar.add('Entry NOT added due to an error');
     }
-  }, [report]);
-
-  const handleSnackbarClose = useCallback((event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    setShowSnackbar(false);
-  }, []);
+  }, [report, snackbar]);
 
   const handlePatientEditClose = useCallback(async (isSaved, newPatientData, newReportData) => {
+    const apiCalls = [];
     setShowPatientEdit(false);
-    if (!isSaved || !newPatientData && !newReportData) {
+
+    if (!isSaved || (!newPatientData && !newReportData)) {
       return;
     }
 
     if (newPatientData) {
-      await PatientInformationService.update(report.ident, newPatientData);
+      apiCalls.push(api.put(`/reports/${report.ident}/patient-information`, newPatientData));
     }
 
     if (newReportData) {
-      await ReportService.updateReport(report.ident, newReportData);
+      apiCalls.push(api.put(`/reports/${report.ident}`, newReportData));
+    }
+
+    const callSet = new ApiCallSet(apiCalls);
+    const [_, reportResp] = await callSet.request(isSigned);
+
+    if (reportResp) {
+      setReport({ ...reportResp, ...report });
     }
 
     setPatientInformationData([
@@ -325,37 +333,53 @@ const GenomicSummary = (props) => {
         value: newPatientData ? newPatientData.gender : report.patientInformation.gender,
       },
     ]);
-  }, [report]);
+  }, [isSigned, report, setReport]);
 
   const handleTumourSummaryEditClose = useCallback(async (isSaved, newMicrobialData, newReportData) => {
+    const apiCalls = [];
     setShowTumourSummaryEdit(false);
-    if (!isSaved || !newMicrobialData && !newReportData) {
+
+    if (!isSaved || (!newMicrobialData && !newReportData)) {
       return;
     }
 
     if (newMicrobialData) {
-      await updateMicrobial(report.ident, newMicrobialData);
+      apiCalls.push(api.put(`/reports/${report.ident}/microbial`, newMicrobialData));
+      setMicrobialData(newMicrobialData);
     }
 
     if (newReportData) {
-      await ReportService.updateReport(report.ident, newReportData);
+      apiCalls.push(api.put(`/reports/${report.ident}`, newReportData));
+    }
+
+    const callSet = new ApiCallSet(apiCalls);
+    const [_, reportResp] = await callSet.request(isSigned);
+
+    if (reportResp) {
+      setReport(reportResp);
+    }
+
+    let microbialUpdateData;
+    if (newMicrobialData && newMicrobialData.length) {
+      microbialUpdateData = newMicrobialData[0].species;
+    } else if (microbialData && microbialData.length) {
+      microbialUpdateData = microbialData[0].species;
+    } else {
+      microbialUpdateData = null;
     }
 
     setTumourSummaryData([
       {
         term: 'Tumour Content',
         value: newReportData ? newReportData.tumourContent : report.tumourContent,
-        action: () => setShowTumourSummaryEdit(true),
       },
       {
         term: 'Subtype',
         value: newReportData ? newReportData.subtyping : report.subtyping,
-        action: () => setShowTumourSummaryEdit(true),
       },
       {
         term: 'Microbial Species',
-        value: newMicrobialData ? newMicrobialData.species : microbialData.species,
-        action: () => setShowTumourSummaryEdit(true),
+        value: microbialUpdateData,
       },
       {
         term: `Immune Infiltration${print ? '*' : ''}`,
@@ -366,8 +390,8 @@ const GenomicSummary = (props) => {
         value: signatureData
           .filter(({ selected }) => selected)
           .map(({ associations, signature }) => (
-          `${signature} (${associations})`
-        )).join(', '),
+            `${signature} (${associations})`
+          )).join(', '),
         action: () => history.push('mutation-signatures'),
       },
       {
@@ -392,7 +416,7 @@ const GenomicSummary = (props) => {
         value: null,
       },
     ]);
-  }, [report]);
+  }, [report, isSigned, history, microbialData, primaryBurdenData, print, setReport, signatureData]);
 
   return (
     <div className="genomic-summary">
@@ -443,7 +467,7 @@ const GenomicSummary = (props) => {
                       <EditIcon />
                     </IconButton>
                     <TumourSummaryEdit
-                      microbial={microbialData}
+                      microbial={microbialData[0]}
                       report={report}
                       isOpen={showTumourSummaryEdit}
                       onClose={handleTumourSummaryEditClose}
@@ -473,18 +497,8 @@ const GenomicSummary = (props) => {
                 variants={variantFilter ? variantData.filter(v => v.type === variantFilter) : variantData}
                 canEdit={canEdit}
                 reportIdent={report.ident}
-                handleChipDeleted={handleChipDeleted}
-                handleChipAdded={handleChipAdded}
-              />
-              <Snackbar
-                open={Boolean(showSnackbar)}
-                message={showSnackbar}
-                autoHideDuration={3000}
-                onClose={handleSnackbarClose}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'left',
-                }}
+                onChipDeleted={handleChipDeleted}
+                onChipAdded={handleChipAdded}
               />
             </div>
           </div>
@@ -520,15 +534,11 @@ const GenomicSummary = (props) => {
 
 GenomicSummary.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
-  report: PropTypes.object,
-  canEdit: PropTypes.bool,
   print: PropTypes.bool,
   loadedDispatch: PropTypes.func,
 };
 
 GenomicSummary.defaultProps = {
-  report: {},
-  canEdit: false,
   print: false,
   loadedDispatch: () => {},
 };

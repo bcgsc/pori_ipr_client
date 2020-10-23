@@ -31,7 +31,10 @@ const PatientEdit = (props) => {
 
   useEffect(() => {
     if (report) {
-      setNewReportData(report);
+      setNewReportData({
+        alternateIdentifier: report.alternateIdentifier,
+        biopsyName: report.biopsyName,
+      });
     }
   }, [report]);
 

@@ -1,14 +1,14 @@
 import React, {
-  useRef, useState, useEffect, useCallback,
+  useRef, useState, useEffect, useCallback, useContext,
 } from 'react';
 import PropTypes from 'prop-types';
 import { AgGridReact } from '@ag-grid-community/react';
+import { SnackbarContext } from '@bcgsc/react-snackbar-provider';
 import {
   Typography,
   IconButton,
   Dialog,
   Switch,
-  Snackbar,
 } from '@material-ui/core';
 import { ThemeProvider } from '@material-ui/core/styles';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
@@ -19,6 +19,7 @@ import LinkCellRenderer from './components/LinkCellRenderer';
 import GeneCellRenderer from './components/GeneCellRenderer';
 import ActionCellRenderer from './components/ActionCellRenderer';
 import { getDate } from '../../utils/date';
+import ConfirmContext from '@/components/ConfirmContext';
 
 import './index.scss';
 
@@ -85,11 +86,13 @@ function DataTable(props) {
     ColumnPickerOnClose.current = ref;
   };
 
+  const snackbar = useContext(SnackbarContext);
+  const { isSigned } = useContext(ConfirmContext);
+
   const [showPopover, setShowPopover] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [selectedRow, setSelectedRow] = useState({});
   const [showReorder, setShowReorder] = useState(false);
-  const [showSnackbar, setShowSnackbar] = useState(false);
   const [tableLength, setTableLength] = useState(rowData.length);
 
   useEffect(() => {
@@ -122,14 +125,6 @@ function DataTable(props) {
       });
     }
   }, [highlightRow]);
-
-  const handleSnackbarClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    setShowSnackbar(false);
-  };
 
   const getColumnVisibility = () => {
     const visibleColumnIds = columnApi.current.getAllDisplayedColumns()
@@ -211,7 +206,7 @@ function DataTable(props) {
 
   const onRowDragEnd = async (event) => {
     try {
-      setShowSnackbar(false);
+      snackbar.clear()
       const oldRank = event.node.data.rank;
       const newRank = event.overIndex;
 
@@ -230,37 +225,16 @@ function DataTable(props) {
         return newData.push(row);
       });
       newData.rank = event.overIndex;
-      const updatedRows = await rowUpdateAPICall(
-        reportIdent,
-        newData,
-      );
+      const call = rowUpdateAPICall(reportIdent, newData);
+      const updatedRows = await call.request();
 
-      gridApi.current.updateRowData({ update: updatedRows });
-      setShowSnackbar('Row update success');
-    } catch (err) {
-      console.error(err);
-      setShowSnackbar(`Rows were not updated: ${err}`);
-    }
-  };
-
-  const normalizeRowRanks = async (deletedRank) => {
-    const rerankedData = [];
-    gridApi.current.forEachNode((node) => {
-      if (node.data.rank !== deletedRank) {
-        rerankedData.push(node.data);
+      if (updatedRows) {
+        gridApi.current.updateRowData({ update: updatedRows });
+        snackbar.add('Row update success');
       }
-    });
-    rerankedData.sort((row1, row2) => row1.rank - row2.rank);
-    rerankedData.forEach((row, index) => { row.rank = index; });
-    try {
-      const updatedRows = await rowUpdateAPICall(
-        reportIdent,
-        rerankedData,
-      );
-      gridApi.current.setRowData(updatedRows);
     } catch (err) {
       console.error(err);
-      setShowSnackbar(`Rows were not updated: ${err}`);
+      snackbar.add(`Rows were not updated: ${err}`);
     }
   };
 
@@ -277,7 +251,7 @@ function DataTable(props) {
       columnApi.current.autoSizeColumns(visibleColumnIds);
     } else if (editedData === null) {
       // sending back null indicates the row was deleted
-      normalizeRowRanks(selectedRow.node.data.rank);
+      gridApi.current.updateRowData({ remove: [selectedRow.node.data] });
       setTableLength(gridApi.current.getDisplayedRowCount());
     }
   };
@@ -435,16 +409,6 @@ function DataTable(props) {
                 </div>
               </div>
             )}
-            <Snackbar
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
-              open={Boolean(showSnackbar)}
-              autoHideDuration={4000}
-              message={showSnackbar}
-              onClose={handleSnackbarClose}
-            />
             <EditDialog
               isOpen={showEditDialog}
               onClose={handleRowEditClose}
@@ -452,7 +416,7 @@ function DataTable(props) {
               reportIdent={reportIdent}
               tableType={tableType}
               addIndex={tableLength}
-              showErrorSnackbar={setShowSnackbar}
+              showErrorSnackbar={snackbar.add}
             />
             <div
               className="ag-theme-material data-table__container"

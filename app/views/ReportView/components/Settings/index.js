@@ -10,6 +10,7 @@ import template from './report-settings.pug';
 import addTemplate from './role-add.pug';
 import deleteTemplate from './report-delete.pug';
 import ReportService from '@/services/reports/report.service';
+import api from '@/services/api';
 
 import './index.scss';
 
@@ -17,6 +18,7 @@ const bindings = {
   report: '<',
   showBindings: '<',
   history: '<',
+  isSigned: '<',
 };
 
 class Settings {
@@ -28,6 +30,7 @@ class Settings {
   $onInit() {
     this.roles = ['bioinformatician', 'analyst', 'reviewer', 'admin', 'clinician'];
     this.reportSettingsChanged = false;
+    this.newReportFields = {};
     this.formatDate = formatDate;
   }
 
@@ -114,10 +117,20 @@ class Settings {
   }
 
   checkChange() {
-    if (this.report.type !== this.reportCache.type
-      || this.report.state !== this.reportCache.state
-      || this.report.reportVersion !== this.reportCache.reportVersion
-      || this.report.kbVersion !== this.reportCache.kbVersion) {
+    if (this.report.type !== this.reportCache.type) {
+      this.newReportFields.type = this.report.type;
+      this.reportSettingsChanged = true;
+    }
+    if (this.report.state !== this.reportCache.state) {
+      this.newReportFields.state = this.report.state;
+      this.reportSettingsChanged = true;
+    }
+    if (this.report.reportVersion !== this.reportCache.reportVersion) {
+      this.newReportFields.reportVersion = this.report.reportVersion;
+      this.reportSettingsChanged = true;
+    }
+    if (this.report.kbVersion !== this.reportCache.kbVersion) {
+      this.newReportFields.kbVersion = this.report.kbVersion;
       this.reportSettingsChanged = true;
     }
 
@@ -131,8 +144,13 @@ class Settings {
   async updateSettings() {
     this.reportSettingsChanged = false;
 
-    // Send updated settings to API
-    const resp = await ReportService.updateReport(this.report.ident, this.report);
+    const call = api.put(`/reports/${this.report.ident}`, this.newReportFields);
+    let resp;
+    if (this.isSigned && Object.keys(this.newReportFields).some(field => field !== 'state')) {
+      resp = await call.request(true);
+    } else {
+      resp = await call.request();
+    }
     this.report = resp;
     $rootScope.$digest();
 
