@@ -17,7 +17,7 @@ class SmallMutations {
     this.titleMap = {
       biological: 'Variants of Biological Relevance',
       unknown: 'Variants of Unknown Significance',
-      clinical: 'Variants of Clinical Relevance',
+      clinical: 'Variants of Therapeutic Relevance',
       nostic: 'Variants of Prognostic or Diagnostic Relevance',
     };
     this.columnDefs = columnDefs;
