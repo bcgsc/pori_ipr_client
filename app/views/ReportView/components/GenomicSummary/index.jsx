@@ -481,30 +481,6 @@ const GenomicSummary = (props) => {
             </div>
           </div>
 
-          <div className="genomic-summary__alterations">
-            <div className="genomic-summary__alterations-title">
-              <Typography variant="h3">
-                Key Genomic and Transcriptomic Alterations Identified
-              </Typography>
-            </div>
-            <div className="genomic-summary__alterations-content">
-              <VariantCounts
-                filter={variantFilter}
-                counts={variantCounts}
-                onToggleFilter={setVariantFilter}
-              />
-              <VariantChips
-                variants={variantFilter ? variantData.filter(v => v.type === variantFilter) : variantData}
-                canEdit={canEdit}
-                reportIdent={report.ident}
-                onChipDeleted={handleChipDeleted}
-                onChipAdded={handleChipAdded}
-              />
-            </div>
-          </div>
-          {print && (
-            <PageBreak report={report} />
-          )}
           <div className="genomic-summary__analysis-summary">
             <div className="genomic-summary__analysis-summary-title">
               <Typography variant="h3">
@@ -525,6 +501,30 @@ const GenomicSummary = (props) => {
                 </Grid>
               ))}
             </Grid>
+          </div>
+          {print && (
+            <PageBreak report={report} />
+          )}
+          <div className="genomic-summary__alterations">
+            <div className="genomic-summary__alterations-title">
+              <Typography variant="h3">
+                Key Genomic and Transcriptomic Alterations Identified
+              </Typography>
+            </div>
+            <div className="genomic-summary__alterations-content">
+              <VariantCounts
+                filter={variantFilter}
+                counts={variantCounts}
+                onToggleFilter={setVariantFilter}
+              />
+              <VariantChips
+                variants={variantFilter ? variantData.filter(v => v.type === variantFilter) : variantData}
+                canEdit={canEdit}
+                reportIdent={report.ident}
+                onChipDeleted={handleChipDeleted}
+                onChipAdded={handleChipAdded}
+              />
+            </div>
           </div>
         </>
       )}
