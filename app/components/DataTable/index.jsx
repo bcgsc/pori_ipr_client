@@ -331,6 +331,7 @@ function DataTable(props) {
 
     gridApi.current.exportDataAsCsv({
       suppressQuotes: true,
+      columnSeparator: '  ',
       columnKeys: columnApi.current.getAllDisplayedColumns()
         .map(col => col.colId)
         .filter(col => col === 'Actions'),
