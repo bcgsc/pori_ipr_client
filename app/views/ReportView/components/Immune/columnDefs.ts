@@ -5,11 +5,6 @@ const cellTypesColumnDefs = [
     hide: false,
   },
   {
-    headerName: 'Knowledgebase Category',
-    field: 'kbCategory',
-    hide: false,
-  },
-  {
     headerName: 'Score',
     field: 'score',
     hide: false,
@@ -17,6 +12,11 @@ const cellTypesColumnDefs = [
   {
     headerName: 'Percentile',
     field: 'percentile',
+    hide: false,
+  },
+  {
+    headerName: 'Knowledgebase Category',
+    field: 'kbCategory',
     hide: false,
   },
 ];
@@ -38,32 +38,32 @@ const hlaColumnDefs = [
     hide: false,
   },
   {
-    headerName: 'First Allele (A)',
+    headerName: 'A1',
     field: 'a1',
     hide: false,
   },
   {
-    headerName: 'Second Allele (A)',
+    headerName: 'A2',
     field: 'a2',
     hide: false,
   },
   {
-    headerName: 'First Allele (B)',
+    headerName: 'B1',
     field: 'b1',
     hide: false,
   },
   {
-    headerName: 'Second Allele (B)',
+    headerName: 'B2',
     field: 'b2',
     hide: false,
   },
   {
-    headerName: 'First Allele (C)',
+    headerName: 'C1',
     field: 'c1',
     hide: false,
   },
   {
-    headerName: 'Second Allele (C)',
+    headerName: 'C2',
     field: 'c2',
     hide: false,
   },
