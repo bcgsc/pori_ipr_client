@@ -175,6 +175,10 @@ const GenomicSummary = (props) => {
             value: primaryBurden && primaryBurden.totalMutationsPerMb !== null ? `${primaryBurden.totalMutationsPerMb} mut/Mb` : null,
           },
           {
+            term: 'SV Burden (primary)',
+            value: primaryBurden && primaryBurden.qualitySvCount !== null ? `${primaryBurden.qualitySvCount} (${primaryBurden.qualitySvPercentile}%)` : null,
+          },
+          {
             term: `HR Deficiency${print ? '*' : ''}`,
             value: null,
           },
@@ -379,13 +383,22 @@ const GenomicSummary = (props) => {
       microbialUpdateData = null;
     }
 
-    let primaryBurdenUpdateData;
+    let primaryBurdenTotalUpdate;
     if (primaryBurdenResp && primaryBurdenResp.totalMutationsPerMb !== null) {
-      primaryBurdenUpdateData = `${primaryBurdenResp.totalMutationsPerMb} mut/Mb`;
+      primaryBurdenTotalUpdate = `${primaryBurdenResp.totalMutationsPerMb} mut/Mb`;
     } else if (primaryBurdenData && primaryBurdenData.totalMutationsPerMb !== null) {
-      primaryBurdenUpdateData = `${primaryBurdenData.totalMutationsPerMb} mut/Mb`;
+      primaryBurdenTotalUpdate = `${primaryBurdenData.totalMutationsPerMb} mut/Mb`;
     } else {
-      primaryBurdenUpdateData = null;
+      primaryBurdenTotalUpdate = null;
+    }
+
+    let primaryBurdenSvUpdate;
+    if (primaryBurdenResp && primaryBurdenResp.qualitySvCount !== null) {
+      primaryBurdenSvUpdate = `${primaryBurdenResp.qualitySvCount} (${primaryBurdenResp.qualitySvPercentile}%)`;
+    } else if (primaryBurdenData && primaryBurdenData.qualitySvCount !== null) {
+      primaryBurdenSvUpdate = `${primaryBurdenData.qualitySvCount} (${primaryBurdenData.qualitySvPercentile}%)`;
+    } else {
+      primaryBurdenSvUpdate = null;
     }
 
     setTumourSummaryData([
@@ -416,7 +429,11 @@ const GenomicSummary = (props) => {
       },
       {
         term: 'Mutation Burden (primary)',
-        value: primaryBurdenUpdateData,
+        value: primaryBurdenTotalUpdate,
+      },
+      {
+        term: 'SV Burden (primary)',
+        value: primaryBurdenSvUpdate,
       },
       {
         term: `HR Deficiency${print ? '*' : ''}`,
