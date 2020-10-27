@@ -173,7 +173,6 @@ const GenomicSummary = (props) => {
           {
             term: 'Mutation Burden (primary)',
             value: primaryBurden && primaryBurden.totalMutationsPerMb !== null ? `${primaryBurden.totalMutationsPerMb} mut/Mb` : null,
-            action: () => history.push('mutation-burden'),
           },
           {
             term: `HR Deficiency${print ? '*' : ''}`,
@@ -335,25 +334,37 @@ const GenomicSummary = (props) => {
     ]);
   }, [isSigned, report, setReport]);
 
-  const handleTumourSummaryEditClose = useCallback(async (isSaved, newMicrobialData, newReportData) => {
+  const handleTumourSummaryEditClose = useCallback(async (isSaved, newMicrobialData, newReportData, newMutationBurdenData) => {
     const apiCalls = [];
     setShowTumourSummaryEdit(false);
 
-    if (!isSaved || (!newMicrobialData && !newReportData)) {
+    if (!isSaved || (!newMicrobialData && !newReportData && !newMutationBurdenData)) {
       return;
     }
 
     if (newMicrobialData) {
       apiCalls.push(api.put(`/reports/${report.ident}/microbial`, newMicrobialData));
       setMicrobialData(newMicrobialData);
+    } else {
+      apiCalls.push({ request: () => null });
     }
 
     if (newReportData) {
       apiCalls.push(api.put(`/reports/${report.ident}`, newReportData));
+    } else {
+      apiCalls.push({ request: () => null });
+    }
+
+    if (newMutationBurdenData) {
+      if (primaryBurdenData) {
+        apiCalls.push(api.put(`/reports/${report.ident}/mutation-burden/${primaryBurdenData.ident}`, newMutationBurdenData));
+      } else {
+        apiCalls.push(api.post(`/reports/${report.ident}/mutation-burden`, newMutationBurdenData));
+      }
     }
 
     const callSet = new ApiCallSet(apiCalls);
-    const [_, reportResp] = await callSet.request(isSigned);
+    const [_, reportResp, primaryBurdenResp] = await callSet.request(isSigned);
 
     if (reportResp) {
       setReport(reportResp);
@@ -366,6 +377,15 @@ const GenomicSummary = (props) => {
       microbialUpdateData = microbialData[0].species;
     } else {
       microbialUpdateData = null;
+    }
+
+    let primaryBurdenUpdateData;
+    if (primaryBurdenResp && primaryBurdenResp.totalMutationsPerMb !== null) {
+      primaryBurdenUpdateData = `${primaryBurdenResp.totalMutationsPerMb} mut/Mb`;
+    } else if (primaryBurdenData && primaryBurdenData.totalMutationsPerMb !== null) {
+      primaryBurdenUpdateData = `${primaryBurdenData.totalMutationsPerMb} mut/Mb`;
+    } else {
+      primaryBurdenUpdateData = null;
     }
 
     setTumourSummaryData([
@@ -396,8 +416,7 @@ const GenomicSummary = (props) => {
       },
       {
         term: 'Mutation Burden (primary)',
-        value: primaryBurdenData && primaryBurdenData.totalMutationsPerMb !== null ? `${primaryBurdenData.totalMutationsPerMb} mut/Mb` : null,
-        action: () => history.push('mutation-burden'),
+        value: primaryBurdenUpdateData,
       },
       {
         term: `HR Deficiency${print ? '*' : ''}`,
@@ -469,6 +488,7 @@ const GenomicSummary = (props) => {
                     <TumourSummaryEdit
                       microbial={microbialData[0]}
                       report={report}
+                      mutationBurden={primaryBurdenData}
                       isOpen={showTumourSummaryEdit}
                       onClose={handleTumourSummaryEditClose}
                     />
