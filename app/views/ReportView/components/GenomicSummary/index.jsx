@@ -80,6 +80,7 @@ const GenomicSummary = (props) => {
   const [signatureData, setSignatureData] = useState([]);
   const [tumourSummaryData, setTumourSummaryData] = useState();
   const [primaryBurdenData, setPrimaryBurdenData] = useState();
+  const [primaryComparator, setPrimaryComparator] = useState();
   const [analysisSummaryData, setAnalysisSummaryData] = useState();
   const [variantData, setVariantData] = useState();
   const [variantFilter, setVariantFilter] = useState();
@@ -108,7 +109,9 @@ const GenomicSummary = (props) => {
         ]);
 
         const primaryBurden = burden.find(entry => entry.role === 'primary');
+        const primaryComparatorTemp = comparators.find(({ analysisRole }) => analysisRole === 'mutation burden (primary)');
 
+        setPrimaryComparator(primaryComparatorTemp);
         setPrimaryBurdenData(primaryBurden);
         setMicrobialData(microbial);
         setSignatureData(signatures);
@@ -171,11 +174,11 @@ const GenomicSummary = (props) => {
             action: () => history.push('mutation-signatures'),
           },
           {
-            term: 'Mutation Burden (primary)',
+            term: `Mutation Burden (${primaryComparator ? primaryComparator.name : 'primary'})`,
             value: primaryBurden && primaryBurden.totalMutationsPerMb !== null ? `${primaryBurden.totalMutationsPerMb} mut/Mb` : null,
           },
           {
-            term: 'SV Burden (primary)',
+            term: `SV Burden (${primaryComparator ? primaryComparator.name : 'primary'})`,
             value: primaryBurden && primaryBurden.qualitySvCount !== null ? `${primaryBurden.qualitySvCount} (${primaryBurden.qualitySvPercentile}%)` : null,
           },
           {
@@ -428,11 +431,11 @@ const GenomicSummary = (props) => {
         action: () => history.push('mutation-signatures'),
       },
       {
-        term: 'Mutation Burden (primary)',
+        term: `Mutation Burden (${primaryComparator ? primaryComparator.name : 'primary'})`,
         value: primaryBurdenTotalUpdate,
       },
       {
-        term: 'SV Burden (primary)',
+        term: `SV Burden (${primaryComparator ? primaryComparator.name : 'primary'})`,
         value: primaryBurdenSvUpdate,
       },
       {
