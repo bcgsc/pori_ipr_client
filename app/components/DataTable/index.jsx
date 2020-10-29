@@ -331,10 +331,11 @@ function DataTable(props) {
 
     gridApi.current.exportDataAsCsv({
       suppressQuotes: true,
+      columnSeparator: '\t',
       columnKeys: columnApi.current.getAllDisplayedColumns()
         .map(col => col.colId)
         .filter(col => col === 'Actions'),
-      fileName: `ipr_${patientId}_${reportIdent}_${titleText.split(' ').join('_')}_${date}`,
+      fileName: `ipr_${patientId}_${reportIdent}_${titleText.split(' ').join('_')}_${date}.tsv`,
     });
   };
 
@@ -383,7 +384,7 @@ function DataTable(props) {
                   {canExport && !isPrint && (
                     <span className="data-table__action">
                       <Typography display="inline">
-                        Export to CSV
+                        Export to TSV
                       </Typography>
                       <IconButton
                         onClick={handleCSVExport}
