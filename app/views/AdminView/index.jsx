@@ -7,20 +7,18 @@ import {
 
 import './index.scss';
 
-const Users = lazy(() => import('./components/Users'));
+const Users = lazy(() => import('./components/Users/index.tsx'));
 const Groups = lazy(() => import('./components/Groups'));
 const Projects = lazy(() => import('./components/Projects'));
 
-const AdminView = () => {
-  return (
-    <div className="admin">
-      <Switch>
-        <Route component={Users} path="/admin/users" />
-        <Route component={Groups} path="/admin/groups" />
-        <Route component={Projects} path="/admin/projects" />
-      </Switch>
-    </div>
-  );
-};
+const AdminView = () => (
+  <div className="admin">
+    <Switch>
+      <Route component={Users} path="/admin/users" />
+      <Route component={Groups} path="/admin/groups" />
+      <Route component={Projects} path="/admin/projects" />
+    </Switch>
+  </div>
+);
 
 export default AdminView;

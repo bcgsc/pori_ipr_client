@@ -65,6 +65,7 @@ function DataTable(props) {
     canToggleColumns,
     canViewDetails,
     isPaginated,
+    isFullLength,
     canReorder,
     rowUpdateAPICall,
     canExport,
@@ -153,8 +154,14 @@ function DataTable(props) {
       columnApi.current.setColumnsVisible(hiddenColumns, false);
     }
 
-    if (rowData.length >= MAX_VISIBLE_ROWS && !isPrint) {
+    if (rowData.length >= MAX_VISIBLE_ROWS && !isPrint && !isFullLength) {
       gridDiv.current.style.height = MAX_TABLE_HEIGHT;
+      gridApi.current.setDomLayout('normal');
+    }
+
+    if (isFullLength) {
+      gridDiv.current.style.height = '100%';
+      gridDiv.current.style.flex = '1';
       gridApi.current.setDomLayout('normal');
     }
 
@@ -206,7 +213,7 @@ function DataTable(props) {
 
   const onRowDragEnd = async (event) => {
     try {
-      snackbar.clear()
+      snackbar.clear();
       const oldRank = event.node.data.rank;
       const newRank = event.overIndex;
 
@@ -433,6 +440,7 @@ function DataTable(props) {
                 onGridReady={onGridReady}
                 domLayout={domLayout}
                 pagination={isPaginated}
+                paginationAutoPageSize={isFullLength}
                 paginationPageSize={MAX_VISIBLE_ROWS}
                 autoSizePadding="0"
                 deltaRowDataMode={canReorder}
