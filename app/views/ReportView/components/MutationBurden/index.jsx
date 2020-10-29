@@ -1,8 +1,11 @@
-import React, { useEffect, useState, useCallback, useContext } from 'react';
+import React, {
+  useEffect, useState, useCallback, useContext,
+} from 'react';
 import {
   Typography,
   LinearProgress,
   Card,
+  CardHeader,
   CardContent,
 } from '@material-ui/core';
 import ReportContext from '../../../../components/ReportContext';
@@ -93,7 +96,7 @@ const MutationBurden = () => {
           ImageService.mutationBurden(report.ident),
           getComparators(report.ident),
           getMutationBurden(report.ident),
-        ])
+        ]);
         setImages(processImages(imagesResp));
         setComparators(comparatorsResp);
         setMutationBurden(mutationBurdenResp);
@@ -135,15 +138,15 @@ const MutationBurden = () => {
                 return null;
               }
 
+              const snvBarplot = getImage(images.snv.barplot, mutationBurdenRole.role);
+              const snvDensity = getImage(images.snv.density, mutationBurdenRole.role);
+              const snvLegend = getImage(images.snv.legend, mutationBurdenRole.role);
               const indelBarplot = getImage(images.indel.barplot, mutationBurdenRole.role);
               const indelDensity = getImage(images.indel.density, mutationBurdenRole.role);
               const indelLegend = getImage(images.indel.legend, mutationBurdenRole.role);
               const svBarplot = getImage(images.sv.barplot, mutationBurdenRole.role);
               const svDensity = getImage(images.sv.density, mutationBurdenRole.role);
               const svLegend = getImage(images.sv.legend, mutationBurdenRole.role);
-              const snvBarplot = getImage(images.snv.barplot, mutationBurdenRole.role);
-              const snvDensity = getImage(images.snv.density, mutationBurdenRole.role);
-              const snvLegend = getImage(images.snv.legend, mutationBurdenRole.role);
 
               return (
                 <React.Fragment key={analysisRole}>
@@ -156,8 +159,53 @@ const MutationBurden = () => {
                     </Typography>
                   </div>
                   <div className="mutation-burden__images">
+                    {(snvBarplot.data || snvDensity.data || snvLegend.data || mutationBurdenRole) && (
+                      <Card elevation={3} className="mutation-burden__group">
+                        <CardHeader title="SNV" />
+                        {snvBarplot.data && (
+                          <span className="mutation-burden__image">
+                            <Image
+                              image={snvBarplot}
+                              showTitle
+                              showCaption
+                            />
+                          </span>
+                        )}
+                        {snvDensity.data && snvLegend.data && (
+                          <span className="mutation-burden__pair">
+                            <Typography>{snvDensity.title}</Typography>
+                            <Image image={snvDensity} />
+                            <Image image={snvLegend} />
+                            <Typography>{snvDensity.caption}</Typography>
+                          </span>
+                        )}
+                        {mutationBurdenRole && (
+                          <CardContent>
+                            <Typography variant="body2" className="mutation-burden__comparator--padded">
+                              <>
+                                Protein Coding SNVs (count):
+                                {` ${mutationBurdenRole.codingSnvCount}`}
+                              </>
+                            </Typography>
+                            <Typography variant="body2" className="mutation-burden__comparator--padded">
+                              <>
+                                Protein Coding SNVs (percentile):
+                                {` ${mutationBurdenRole.codingSnvPercentile}`}
+                              </>
+                            </Typography>
+                            <Typography variant="body2" className="mutation-burden__comparator--padded">
+                              <>
+                                Truncating Protein Coding SNVs (count):
+                                {` ${mutationBurdenRole.truncatingSnvCount}`}
+                              </>
+                            </Typography>
+                          </CardContent>
+                        )}
+                      </Card>
+                    )}
                     {(indelBarplot.data || indelDensity.data || indelLegend.data || mutationBurdenRole) && (
                       <Card elevation={3} className="mutation-burden__group">
+                        <CardHeader title="Indel" />
                         {indelBarplot.data && (
                           <span className="mutation-burden__image">
                             <Image
@@ -201,6 +249,7 @@ const MutationBurden = () => {
                     )}
                     {(svBarplot.data || svDensity.data || svLegend.data || mutationBurdenRole) && (
                       <Card elevation={3} className="mutation-burden__group">
+                        <CardHeader title="SV" />
                         {svBarplot.data && (
                           <span className="mutation-burden__image">
                             <Image
@@ -228,7 +277,7 @@ const MutationBurden = () => {
                             </Typography>
                             <Typography variant="body2" className="mutation-burden__comparator--padded">
                               <>
-                                Structural Variants (percentile): 
+                                Structural Variants (percentile):
                                 {` ${mutationBurdenRole.qualitySvPercentile}`}
                               </>
                             </Typography>
@@ -242,53 +291,10 @@ const MutationBurden = () => {
                         )}
                       </Card>
                     )}
-                    {(snvBarplot.data || snvDensity.data || snvLegend.data || mutationBurdenRole) && (
-                      <Card elevation={3} className="mutation-burden__group">
-                        {snvBarplot.data && (
-                          <span className="mutation-burden__image">
-                            <Image
-                              image={snvBarplot}
-                              showTitle
-                              showCaption
-                            />
-                          </span>
-                        )}
-                        {snvDensity.data && snvLegend.data && (
-                          <span className="mutation-burden__pair">
-                            <Typography>{snvDensity.title}</Typography>
-                            <Image image={snvDensity} />
-                            <Image image={snvLegend} />
-                            <Typography>{snvDensity.caption}</Typography>
-                          </span>
-                        )}
-                        {mutationBurdenRole && (
-                          <CardContent>
-                            <Typography variant="body2" className="mutation-burden__comparator--padded">
-                              <>
-                                Protein Coding SNVs (count):
-                                {` ${mutationBurdenRole.codingSnvCount}`}
-                              </>
-                            </Typography>
-                            <Typography variant="body2" className="mutation-burden__comparator--padded">
-                              <>
-                                Protein Coding SNVs (percentile):
-                                {` ${mutationBurdenRole.codingSnvPercentile}`}
-                              </>
-                            </Typography>
-                            <Typography variant="body2" className="mutation-burden__comparator--padded">
-                              <>
-                                Truncating Protein Coding SNVs (count):
-                                {` ${mutationBurdenRole.truncatingSnvCount}`}
-                              </>
-                            </Typography>
-                          </CardContent>
-                        )}
-                      </Card>
-                    )}
                   </div>
                 </React.Fragment>
               );
-          })}
+            })}
         </div>
       ) : <LinearProgress />}
     </div>
