@@ -46,13 +46,20 @@ function EditDialog(props) {
     return { ...state, ...payload };
   }, editData || {});
 
-  const dialogTitle = newData.ident ? 'Edit Row' : 'Add Row';
-
   const { isSigned } = useContext(ConfirmContext);
 
+  const [dialogTitle, setDialogTitle] = useState('Add Row');
   const [requiredFields] = useState(['variant', 'context', 'therapy']);
   const [errors, setErrors] = useState(null);
   const [isDirty, setIsDirty] = useState(false);
+
+  useEffect(() => {
+    if (newData.ident) {
+      setDialogTitle('Edit Row');
+    } else {
+      setDialogTitle('Add Row');
+    }
+  }, [newData]);
 
   useEffect(() => {
     setNewData({ type: 'replace', payload: editData || {} });
@@ -69,11 +76,17 @@ function EditDialog(props) {
     } else {
       setErrors(null);
     }
-  }, [newData]);
+  }, [newData, requiredFields]);
 
 
   const handleSubmit = useCallback(async () => {
-    const { ident, createdAt, updatedAt, rank, ...rest } = newData;
+    const {
+      ident,
+      createdAt,
+      updatedAt,
+      rank,
+      ...rest
+    } = newData;
     const combinedData = { type: tableType, ...rest };
 
     try {
@@ -97,7 +110,7 @@ function EditDialog(props) {
     } catch (err) {
       console.error(err); // TODO: send to snackbar
     }
-  }, [reportIdent, onClose, newData]);
+  }, [newData, tableType, reportIdent, editData.ident, isSigned, onClose]);
 
   const handleDelete = useCallback(async () => {
     try {
@@ -229,7 +242,6 @@ EditDialog.propTypes = {
   onClose: PropTypes.func.isRequired,
   reportIdent: PropTypes.string.isRequired,
   tableType: PropTypes.string.isRequired,
-  addIndex: PropTypes.number,
 };
 
 EditDialog.defaultProps = {

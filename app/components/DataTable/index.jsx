@@ -206,7 +206,7 @@ function DataTable(props) {
 
   const onRowDragEnd = async (event) => {
     try {
-      snackbar.clear()
+      snackbar.clear();
       const oldRank = event.node.data.rank;
       const newRank = event.overIndex;
 
@@ -238,7 +238,7 @@ function DataTable(props) {
     }
   };
 
-  const handleRowEditClose = (editedData) => {
+  const handleRowEditClose = useCallback((editedData) => {
     setShowEditDialog(false);
     if (editedData && selectedRow.node) {
       selectedRow.node.setData(editedData);
@@ -254,7 +254,8 @@ function DataTable(props) {
       gridApi.current.updateRowData({ remove: [selectedRow.node.data] });
       setTableLength(gridApi.current.getDisplayedRowCount());
     }
-  };
+    setSelectedRow({});
+  }, [selectedRow.node, tableLength]);
 
   const defaultColDef = {
     sortable: !showReorder,
@@ -345,7 +346,7 @@ function DataTable(props) {
       newRows.push(node.data);
     });
     onRowDataChanged(newRows);
-  }, [gridApi.current]);
+  }, [onRowDataChanged]);
 
   // Theme is needed for react in angular tables. It can't access the theme provider otherwise
   return (
