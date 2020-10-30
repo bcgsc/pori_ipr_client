@@ -100,7 +100,7 @@ const ExpressionCorrelation = () => {
 
   const getGraphData = (rowData) => {
     const labels = rowData.map(data => `${data.library} (${data.tumourContent}% TC)`);
-    const colors = rowData.map(data => `rgb(${Object.values(getColor(LOWER_COLOR, UPPER_COLOR, data.correlation)).join(',')})`);
+    const colors = rowData.map(data => `rgb(${Object.values(getColor(LOWER_COLOR, UPPER_COLOR, data.tumourContent)).join(',')})`);
 
     const datasets = [
       {
@@ -112,7 +112,7 @@ const ExpressionCorrelation = () => {
         barPercentage: 1,
         hoverBackgroundColor: colors,
         hoverBorderColor: colors,
-        data: rowData.map(data => data.correlation),
+        data: rowData.map(data => data.correlation.toFixed(2)),
       },
     ];
     return {
