@@ -60,6 +60,7 @@ const genomic = [
       { name: 'Expression Correlation', uri: 'expression-correlation' },
       { name: 'Mutation Signatures', uri: 'mutation-signatures' },
       { name: 'Mutation Burden', uri: 'mutation-burden' },
+      { name: 'Immune', uri: 'immune' },
     ],
   },
   {
