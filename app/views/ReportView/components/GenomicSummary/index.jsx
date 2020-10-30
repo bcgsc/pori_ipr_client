@@ -80,6 +80,7 @@ const GenomicSummary = (props) => {
   const [signatureData, setSignatureData] = useState([]);
   const [tumourSummaryData, setTumourSummaryData] = useState();
   const [primaryBurdenData, setPrimaryBurdenData] = useState();
+  const [primaryComparator, setPrimaryComparator] = useState();
   const [analysisSummaryData, setAnalysisSummaryData] = useState();
   const [variantData, setVariantData] = useState();
   const [variantFilter, setVariantFilter] = useState();
@@ -108,7 +109,9 @@ const GenomicSummary = (props) => {
         ]);
 
         const primaryBurden = burden.find(entry => entry.role === 'primary');
+        const primaryComparatorTemp = comparators.find(({ analysisRole }) => analysisRole === 'mutation burden (primary)');
 
+        setPrimaryComparator(primaryComparatorTemp);
         setPrimaryBurdenData(primaryBurden);
         setMicrobialData(microbial);
         setSignatureData(signatures);
@@ -171,8 +174,12 @@ const GenomicSummary = (props) => {
             action: () => history.push('mutation-signatures'),
           },
           {
-            term: 'Mutation Burden (primary)',
+            term: `Mutation Burden (${primaryComparatorTemp ? primaryComparatorTemp.name : 'primary'})`,
             value: primaryBurden && primaryBurden.totalMutationsPerMb !== null ? `${primaryBurden.totalMutationsPerMb} mut/Mb` : null,
+          },
+          {
+            term: `SV Burden (${primaryComparatorTemp ? primaryComparatorTemp.name : 'primary'})`,
+            value: primaryBurden && primaryBurden.qualitySvCount !== null ? `${primaryBurden.qualitySvCount} (${primaryBurden.qualitySvPercentile}%)` : null,
           },
           {
             term: `HR Deficiency${print ? '*' : ''}`,
@@ -379,13 +386,22 @@ const GenomicSummary = (props) => {
       microbialUpdateData = null;
     }
 
-    let primaryBurdenUpdateData;
+    let primaryBurdenTotalUpdate;
     if (primaryBurdenResp && primaryBurdenResp.totalMutationsPerMb !== null) {
-      primaryBurdenUpdateData = `${primaryBurdenResp.totalMutationsPerMb} mut/Mb`;
+      primaryBurdenTotalUpdate = `${primaryBurdenResp.totalMutationsPerMb} mut/Mb`;
     } else if (primaryBurdenData && primaryBurdenData.totalMutationsPerMb !== null) {
-      primaryBurdenUpdateData = `${primaryBurdenData.totalMutationsPerMb} mut/Mb`;
+      primaryBurdenTotalUpdate = `${primaryBurdenData.totalMutationsPerMb} mut/Mb`;
     } else {
-      primaryBurdenUpdateData = null;
+      primaryBurdenTotalUpdate = null;
+    }
+
+    let primaryBurdenSvUpdate;
+    if (primaryBurdenResp && primaryBurdenResp.qualitySvCount !== null) {
+      primaryBurdenSvUpdate = `${primaryBurdenResp.qualitySvCount} (${primaryBurdenResp.qualitySvPercentile}%)`;
+    } else if (primaryBurdenData && primaryBurdenData.qualitySvCount !== null) {
+      primaryBurdenSvUpdate = `${primaryBurdenData.qualitySvCount} (${primaryBurdenData.qualitySvPercentile}%)`;
+    } else {
+      primaryBurdenSvUpdate = null;
     }
 
     setTumourSummaryData([
@@ -415,8 +431,12 @@ const GenomicSummary = (props) => {
         action: () => history.push('mutation-signatures'),
       },
       {
-        term: 'Mutation Burden (primary)',
-        value: primaryBurdenUpdateData,
+        term: `Mutation Burden (${primaryComparator ? primaryComparator.name : 'primary'})`,
+        value: primaryBurdenTotalUpdate,
+      },
+      {
+        term: `SV Burden (${primaryComparator ? primaryComparator.name : 'primary'})`,
+        value: primaryBurdenSvUpdate,
       },
       {
         term: `HR Deficiency${print ? '*' : ''}`,
