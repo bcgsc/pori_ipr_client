@@ -18,6 +18,7 @@ const VariantChips = (props) => {
     canEdit,
     onChipDeleted,
     onChipAdded,
+    isPrint,
   } = props;
 
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
@@ -55,14 +56,14 @@ const VariantChips = (props) => {
                 <Chip
                   label={variant.geneVariant}
                   className={`variant variant--${variant.type}`}
-                  onDelete={canEdit ? () => setShowDeleteAlert(variant) : null}
+                  onDelete={canEdit && !isPrint ? () => setShowDeleteAlert(variant) : null}
                 />
               </React.Fragment>
             ))}
           </>
         )}
       </div>
-      {canEdit && (
+      {canEdit && !isPrint && (
         <>
           {!showAddInput ? (
             <Chip
@@ -118,6 +119,7 @@ VariantChips.propTypes = {
   canEdit: PropTypes.bool,
   onChipDeleted: PropTypes.func,
   onChipAdded: PropTypes.func,
+  isPrint: PropTypes.bool,
 };
 
 VariantChips.defaultProps = {
@@ -125,6 +127,7 @@ VariantChips.defaultProps = {
   canEdit: false,
   onChipDeleted: () => {},
   onChipAdded: () => {},
+  isPrint: false,
 };
 
 export default VariantChips;
