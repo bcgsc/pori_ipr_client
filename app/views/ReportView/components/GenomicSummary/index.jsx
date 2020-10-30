@@ -174,11 +174,11 @@ const GenomicSummary = (props) => {
             action: () => history.push('mutation-signatures'),
           },
           {
-            term: `Mutation Burden (${primaryComparator ? primaryComparator.name : 'primary'})`,
+            term: `Mutation Burden (${primaryComparatorTemp ? primaryComparatorTemp.name : 'primary'})`,
             value: primaryBurden && primaryBurden.totalMutationsPerMb !== null ? `${primaryBurden.totalMutationsPerMb} mut/Mb` : null,
           },
           {
-            term: `SV Burden (${primaryComparator ? primaryComparator.name : 'primary'})`,
+            term: `SV Burden (${primaryComparatorTemp ? primaryComparatorTemp.name : 'primary'})`,
             value: primaryBurden && primaryBurden.qualitySvCount !== null ? `${primaryBurden.qualitySvCount} (${primaryBurden.qualitySvPercentile}%)` : null,
           },
           {
