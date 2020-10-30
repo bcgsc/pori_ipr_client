@@ -6,7 +6,7 @@ const columnDefs = [
   },
   {
     headerName: 'Library Name',
-    field: 'libraryName',
+    field: 'library',
     hide: false,
   },
   {
