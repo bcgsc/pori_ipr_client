@@ -41,17 +41,17 @@ const getColor = (lowerColor: Color, upperColor: Color, ratio: number): Color =>
   return newColor;
 };
 
-const LUMINANCE_THRESHOLD: number = 186;
+const LUMINANCE_THRESHOLD = 186;
 
 /** Values are from RGB -> Luma formula: Y = 0.2126 R + 0.7152 G + 0.0722 B */
 const getLuminance = (color: Color): number => {
   /** Compute sRGB, then linear RGB */
   for (let col of Object.values(color)) {
-    col = col/255;
+    col /= 255;
     if (col <= 0.03928) {
-      col = col/12.92;
+      col /= 12.92;
     } else {
-      col = ((col + 0.055)/1.055) ^ 2.4;
+      col = ((col + 0.055) / 1.055) ** 2.4;
     }
   }
 
@@ -85,8 +85,8 @@ const ExpressionCorrelation = () => {
 
         setPlots(plotData);
         setSubtypePlots(subtypePlotData);
-        setPairwiseExpression(orderBy(pairwiseData, ['correlation'], ['desc'], {}));
-      }
+        setPairwiseExpression(orderBy(pairwiseData, ['correlation'], ['desc']).slice(0, 19));
+      };
 
       getData();
     }
@@ -99,8 +99,8 @@ const ExpressionCorrelation = () => {
   }, []);
 
   const getGraphData = (rowData) => {
-    const labels = rowData.map(data => `${data.libraryName} (${data.tumourContent}% TC)`);
-    const colors = rowData.map(data => `rgb(${Object.values(getColor(LOWER_COLOR, UPPER_COLOR, data.correlation)).join(',')})`);
+    const labels = rowData.map(data => `${data.library} (${data.tumourContent}% TC)`);
+    const colors = rowData.map(data => `rgb(${Object.values(getColor(LOWER_COLOR, UPPER_COLOR, data.tumourContent)).join(',')})`);
 
     const datasets = [
       {
@@ -112,7 +112,7 @@ const ExpressionCorrelation = () => {
         barPercentage: 1,
         hoverBackgroundColor: colors,
         hoverBorderColor: colors,
-        data: rowData.map(data => data.correlation),
+        data: rowData.map(data => data.correlation.toFixed(2)),
       },
     ];
     return {
@@ -191,7 +191,7 @@ const ExpressionCorrelation = () => {
     },
     title: {
       display: true,
-      text: 'Libraries by correlation',
+      text: 'Top 20 libraries by correlation',
     },
     tooltips: {
       enabled: false,
