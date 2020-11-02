@@ -45,3 +45,8 @@ html body {
     box-sizing: content-box;
   }
 }
+
+// Fix for dialog not accounting for AppBar
+.md-dialog-container {
+  top: -56px !important;
+}

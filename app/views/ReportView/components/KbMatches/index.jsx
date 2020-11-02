@@ -40,16 +40,12 @@ function KbMatches(props) {
       : columnDefs.filter(c => !c.hide).map(c => c.colId),
   );
 
-  const [targetedGenes, setTargetedGenes] = useState();
   const [filterText, setFilterText] = useState('');
   const { report } = useContext(ReportContext);
 
+  const [unsyncedTableData, setUnsyncedTableData] = useState();
   const [syncedTableData, setSyncedTableData] = useState();
 
-  const [unsyncedTableData] = useState({
-    titleText: 'Detected Alterations From Targeted Gene Report',
-    rowData: targetedGenes,
-  });
 
   useEffect(() => {
     if (report) {
@@ -97,7 +93,10 @@ function KbMatches(props) {
           targetedGenesResp,
         ] = await promises;
 
-        setTargetedGenes(targetedGenesResp);
+        setUnsyncedTableData({
+          titleText: 'Detected Alterations From Targeted Gene Report',
+          rowData: targetedGenesResp,
+        });
 
         setSyncedTableData({
           thisCancer: {
