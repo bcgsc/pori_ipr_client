@@ -40,3 +40,9 @@
     margin: 0;
   }
 }
+
+@media print {
+  .variant {
+    margin: 2px;
+  }
+}

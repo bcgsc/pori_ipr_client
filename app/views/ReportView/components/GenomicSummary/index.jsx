@@ -521,51 +521,99 @@ const GenomicSummary = (props) => {
             </div>
           </div>
 
-          <div className="genomic-summary__alterations">
-            <div className="genomic-summary__alterations-title">
-              <Typography variant="h3">
-                Key Genomic and Transcriptomic Alterations Identified
-              </Typography>
-            </div>
-            <div className="genomic-summary__alterations-content">
-              <VariantCounts
-                filter={variantFilter}
-                counts={variantCounts}
-                onToggleFilter={setVariantFilter}
-              />
-              <VariantChips
-                variants={variantFilter ? variantData.filter(v => v.type === variantFilter) : variantData}
-                canEdit={canEdit}
-                reportIdent={report.ident}
-                onChipDeleted={handleChipDeleted}
-                onChipAdded={handleChipAdded}
-              />
-            </div>
-          </div>
-          {print && (
-            <PageBreak report={report} />
-          )}
-          <div className="genomic-summary__analysis-summary">
-            <div className="genomic-summary__analysis-summary-title">
-              <Typography variant="h3">
-                Analysis Summary
-              </Typography>
-            </div>
-            <Grid
-              alignItems="flex-end"
-              container
-              spacing={3}
-              className="genomic-summary__analysis-summary-content"
-            >
-              {analysisSummaryData.map(({ label, value }) => (
-                <Grid key={label} item>
-                  <ReadOnlyTextField label={label}>
-                    {value}
-                  </ReadOnlyTextField>
+          {print ? (
+            <React.Fragment>
+              <div className="genomic-summary__alterations">
+                <div className="genomic-summary__alterations-title">
+                  <Typography variant="h3">
+                    Key Genomic and Transcriptomic Alterations Identified
+                  </Typography>
+                </div>
+                <div className="genomic-summary__alterations-content">
+                  <VariantCounts
+                    filter={variantFilter}
+                    counts={variantCounts}
+                    onToggleFilter={setVariantFilter}
+                  />
+                  <VariantChips
+                    variants={variantFilter ? variantData.filter(v => v.type === variantFilter) : variantData}
+                    canEdit={canEdit}
+                    reportIdent={report.ident}
+                    onChipDeleted={handleChipDeleted}
+                    onChipAdded={handleChipAdded}
+                    isPrint={print}
+                  />
+                </div>
+              </div>
+              <PageBreak report={report} />
+              <div className="genomic-summary__analysis-summary">
+                <div className="genomic-summary__analysis-summary-title">
+                  <Typography variant="h3">
+                    Analysis Summary
+                  </Typography>
+                </div>
+                <Grid
+                  alignItems="flex-end"
+                  container
+                  spacing={3}
+                  className="genomic-summary__analysis-summary-content"
+                >
+                  {analysisSummaryData.map(({ label, value }) => (
+                    <Grid key={label} item>
+                      <ReadOnlyTextField label={label}>
+                        {value}
+                      </ReadOnlyTextField>
+                    </Grid>
+                  ))}
                 </Grid>
-              ))}
-            </Grid>
-          </div>
+              </div>
+            </React.Fragment>
+          ) : (
+            <React.Fragment>
+              <div className="genomic-summary__analysis-summary">
+                <div className="genomic-summary__analysis-summary-title">
+                  <Typography variant="h3">
+                    Analysis Summary
+                  </Typography>
+                </div>
+                <Grid
+                  alignItems="flex-end"
+                  container
+                  spacing={3}
+                  className="genomic-summary__analysis-summary-content"
+                >
+                  {analysisSummaryData.map(({ label, value }) => (
+                    <Grid key={label} item>
+                      <ReadOnlyTextField label={label}>
+                        {value}
+                      </ReadOnlyTextField>
+                    </Grid>
+                  ))}
+                </Grid>
+              </div>
+              <div className="genomic-summary__alterations">
+                <div className="genomic-summary__alterations-title">
+                  <Typography variant="h3">
+                    Key Genomic and Transcriptomic Alterations Identified
+                  </Typography>
+                </div>
+                <div className="genomic-summary__alterations-content">
+                  <VariantCounts
+                    filter={variantFilter}
+                    counts={variantCounts}
+                    onToggleFilter={setVariantFilter}
+                  />
+                  <VariantChips
+                    variants={variantFilter ? variantData.filter(v => v.type === variantFilter) : variantData}
+                    canEdit={canEdit}
+                    reportIdent={report.ident}
+                    onChipDeleted={handleChipDeleted}
+                    onChipAdded={handleChipAdded}
+                  />
+                </div>
+              </div>
+            </React.Fragment>
+          )}
         </>
       )}
     </div>
