@@ -45,14 +45,14 @@ module.exports = {
             ],
           },
           {
-            test: /\.jsx?$/,
+            test: [/\.jsx?$/, /\.tsx?$/],
             exclude: /node_modules/,
             use: [{
               loader: 'babel-loader',
             }],
           },
           {
-            test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
+            test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.svg$/],
             exclude: /node_modules/,
             loader: 'file-loader',
             options: {
@@ -75,7 +75,7 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: ['.js', '.jsx'],
+    extensions: ['.js', '.jsx', '.ts', '.tsx'],
     alias: {
       '@': APP_PATH,
     },

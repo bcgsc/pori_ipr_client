@@ -6,6 +6,7 @@ import {
 } from '@material-ui/core';
 import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
+import startCase from '@/utils/startCase';
 
 import './index.scss';
 
@@ -22,14 +23,14 @@ function ReportToolbar(props) {
   return (
     <span className="report__header">
       <Typography display="inline" variant="h5" className="report__header--text-align-left">
-        {diagnosis}
+        {startCase(diagnosis)}
       </Typography>
       <Typography display="inline" variant="h5" className="report__header--text-align-center">
         {patientId}
         {` ${type === 'genomic' ? 'Genomic' : 'Targeted Gene'} Report`}
       </Typography>
       <Typography display="inline" variant="h5" className="report__header--text-align-right">
-        {state}
+        {startCase(state)}
       </Typography>
       <IconButton
         onClick={() => onSidebarToggle(!isSidebarVisible)}

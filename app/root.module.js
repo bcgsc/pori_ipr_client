@@ -19,27 +19,22 @@ import 'ngimport';
 
 import { NavBarComponent } from '@/components/NavBar';
 import { SidebarComponent } from '@/components/Sidebar';
-import { GenomicSummaryComponent } from '@/views/ReportView/components/GenomicSummary';
 import { AnalystCommentsComponent } from '@/views/ReportView/components/AnalystComments';
 import { PathwayAnalysisComponent } from '@/views/ReportView/components/PathwayAnalysis';
 import { SlidesComponent } from '@/views/ReportView/components/Slides';
 import { DiscussionComponent } from '@/views/ReportView/components/Discussion';
 import { MicrobialComponent } from '@/views/ReportView/components/Microbial';
-import { SpearmanComponent } from '@/views/ReportView/components/Spearman';
-import { DiseaseSpecificComponent } from '@/views/ReportView/components/DiseaseSpecific';
 import { SmallMutationsComponent } from '@/views/ReportView/components/SmallMutations';
 import { CopyNumberComponent } from '@/views/ReportView/components/CopyNumber';
 import { StructuralVariantsComponent } from '@/views/ReportView/components/StructuralVariants';
 import { AppendicesComponent } from '@/views/ReportView/components/Appendices';
 import { SettingsComponent } from '@/views/ReportView/components/Settings';
-import { ProbeSummaryComponent } from '@/views/ReportView/components/ProbeSummary';
 import { BoardComponent } from '@/views/GermlineView/components/Board';
 import { ReportComponent } from '@/views/GermlineView/components/Report';
 import { UsersComponent } from '@/views/AdminView/components/Users';
 import { GroupsComponent } from '@/views/AdminView/components/Groups';
 import { ProjectsComponent } from '@/views/AdminView/components/Projects';
 
-import MutationSignatureComponent from '@/components/MutationSignature';
 import DiscussionEntryComponent from '@/views/ReportView/components/Discussion/components/DiscussionEntry';
 import RoleCardComponent from '@/components/RoleCard';
 import PaginateComponent from '@/components/Paginate';
@@ -66,22 +61,17 @@ angular.module('root', [
 const rootModule = angular.module('root')
   .component('navBar', NavBarComponent)
   .component('sidebar', SidebarComponent)
-  .component('genomicSummary', GenomicSummaryComponent)
   .component('analystComments', AnalystCommentsComponent)
   .component('pathwayAnalysis', PathwayAnalysisComponent)
-  .component('mutationSignature', MutationSignatureComponent)
   .component('slides', SlidesComponent)
   .component('discussion', DiscussionComponent)
   .component('discussionEntry', DiscussionEntryComponent)
   .component('microbial', MicrobialComponent)
-  .component('spearman', SpearmanComponent)
-  .component('diseaseSpecific', DiseaseSpecificComponent)
   .component('smallMutations', SmallMutationsComponent)
   .component('copyNumber', CopyNumberComponent)
   .component('structuralVariants', StructuralVariantsComponent)
   .component('appendices', AppendicesComponent)
   .component('settings', SettingsComponent)
-  .component('probeSummary', ProbeSummaryComponent)
   .component('board', BoardComponent)
   .component('report', ReportComponent)
   .component('users', UsersComponent)

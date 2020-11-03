@@ -14,6 +14,7 @@ const bindings = {
   print: '<',
   token: '<',
   loadedDispatch: '<',
+  theme: '<',
 };
 
 class Slides {

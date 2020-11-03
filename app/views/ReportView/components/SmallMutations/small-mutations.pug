@@ -4,54 +4,6 @@ section
   div(layout="column", flex)
 
     div(layout="column", flex).bg-white
-
-      h2.title Small Somatic Mutations
-      h2.title Summary of Somatic Events
-      md-progress-linear(ng-if="$ctrl.loading")
-
-      div(layout="row").mutation-summary-images
-        div(layout="column", flex=15).comparator-list
-          p Available comparators
-          ul
-            li(ng-repeat="comp in $ctrl.mutationSummaryImages.comparators track by $index", ng-init="comp.visible = true")
-              md-checkbox(ng-model="comp.visible", name="{{comp.name}}Checkbox").text-uppercase {{comp.name.split('_').join(' ') || 'All'}}
-
-        div(layout="column", flex)
-
-          div(layout="row", layout-align="space around")
-            div(layout="column", flex=45).smEvents.snv
-              div(layout="row")
-                div(flex=60) Number of non-synonymous protein coding SNVs (Truncating)
-                div(flex=40, layout="row", layout-align="center center").count
-                  div.snv {{$ctrl.mutationSummary.snv}} ({{$ctrl.mutationSummary.snv_truncating}})
-
-            div(layout="column", flex=45).smEvents.indel
-              div(layout="row")
-                div(flex=60) Number of protein coding indels (Frameshift)
-                div(flex=40, layout="row", layout-align="center center").count
-                  div.indel {{$ctrl.mutationSummary.indels}} ({{$ctrl.mutationSummary.indels_frameshift}})
-
-          div(layout="row", layout-align="space around").summary-plots
-            div(layout="column", flex=45)
-              div(ng-repeat="comp in $ctrl.mutationSummaryImages.comparators", ng-show="comp.visible")
-                img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{$ctrl.getMutationSummaryImage('densityPlot', 'snv', comp.name).data}}")
-                img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{$ctrl.getMutationSummaryImage('barplot', 'snv', comp.name).data}}")
-              div
-                img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{$ctrl.mutationSummaryImages.legend.snv_indel.data}}")
-
-
-            div(layout="column", flex=45)
-              div(ng-repeat="comp in $ctrl.mutationSummaryImages.comparators", ng-show="comp.visible")
-                img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{$ctrl.getMutationSummaryImage('densityPlot', 'indel', comp.name).data}}")
-                img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{$ctrl.getMutationSummaryImage('barplot', 'indel', comp.name).data}}")
-              div
-                img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{$ctrl.mutationSummaryImages.legend.snv_indel.data}}")
-
-      div(layout="column", layout-align="center center")
-        div
-          img(data-ng-src="data:image/png;base64,{{$ctrl.images['mutSignature.snvsAllStrelka'].data}}")
-
-    div(layout="column", flex).bg-white
       h2.title Small Mutations: Genomic Details
 
       div(ng-repeat="(title, smallMutation) in $ctrl.smallMutations")

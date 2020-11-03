@@ -8,33 +8,6 @@ section
 
       h2.title Summary of Structural Events
 
-      div(layout="row").mutation-summary-images
-        div(layout="column", flex=15).comparator-list
-
-
-        div(layout="column", flex)
-
-          div(layout="row", layout-align="space around")
-            div(layout="column", flex=45).smEvents.sv
-              div(layout="row")
-                div(flex=60) Structural Variants (Expressed Fusions)
-                div(flex=40, layout="row", layout-align="center center").count
-                  div.sv {{$ctrl.mutationSummary.sv || 'na'}} ({{$ctrl.mutationSummary.sv_expressed || 'na'}})
-
-            div(layout="column", flex=45).smEvents.indel
-
-          div(layout="row", layout-align="space around").summary-plots
-            div(layout="column", flex=45)
-              div(ng-repeat="comp in $ctrl.mutationSummaryImages.comparators track by $index")
-                img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{$ctrl.getMutationSummaryImage('densityPlot', 'sv').data}}")
-                img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{$ctrl.mutationSummaryImages.legend.sv.data}}")
-
-            div(layout="column", flex=45)
-              div(ng-repeat="comp in $ctrl.mutationSummaryImages.comparators track by $index")
-                img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{$ctrl.getMutationSummaryImage('barplot', 'sv').data}}")
-                img(style="max-width: 90%;", data-ng-src="data:image/png;base64,{{$ctrl.mutationSummaryImages.legend.sv.data}}")
-
-
       md-tabs(md-dynamic-height=true, md-center-tabs=true).margin-bottom-20
         md-tab(label="Genome")
           div(layout="column", layout-align="center center")

@@ -57,7 +57,7 @@ class GenomicAterationsService {
    */
   async create(reportIdent, alteration) {
     const resp = await $http.post(
-      `${this.api}/${reportIdent}/summary/genomic-alterations-identified/`,
+      `${this.api}/${reportIdent}/summary/genomic-alterations-identified`,
       alteration,
     );
     return resp.data;

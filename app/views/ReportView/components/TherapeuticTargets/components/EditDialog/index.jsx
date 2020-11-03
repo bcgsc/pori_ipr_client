@@ -1,7 +1,7 @@
 import './index.scss';
 
 import React, {
-  useState, useEffect, useCallback, useReducer,
+  useState, useEffect, useCallback, useReducer, useContext,
 } from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -13,27 +13,28 @@ import {
   FormControl,
   TextField,
 } from '@material-ui/core';
+
 import AutocompleteHandler from '../AutocompleteHandler';
-import { therapeuticAdd, therapeuticUpdate, therapeuticDelete } from '../../../../../../services/reports/therapeutic';
+import { therapeuticAdd, therapeuticDelete } from '../../../../../../services/reports/therapeutic';
+import api from '@/services/api';
+import ConfirmContext from '@/components/ConfirmContext';
 
 /**
  * @param {object} props props
  * @param {object} props.editData data passed to edit
- * @param {bool} props.open is the dialog open
+ * @param {bool} props.isOpen is the dialog open
  * @param {func} props.onClose onClose function
  * @param {string} props.reportIdent ident of current report
  * @param {string} props.tableType therapeutic | chemoresistant
- * @param {number} props.addIndex index of table to add new row to
  * @return {*} JSX
  */
 function EditDialog(props) {
   const {
     editData,
-    open,
-    onClose, // TODO: alias to std-naming until prop name can be changed
+    isOpen,
+    onClose,
     reportIdent,
     tableType,
-    addIndex,
   } = props;
 
   const [newData, setNewData] = useReducer((state, action) => {
@@ -45,11 +46,20 @@ function EditDialog(props) {
     return { ...state, ...payload };
   }, editData || {});
 
-  const dialogTitle = newData.ident ? 'Edit Row' : 'Add Row';
+  const { isSigned } = useContext(ConfirmContext);
 
+  const [dialogTitle, setDialogTitle] = useState('Add Row');
   const [requiredFields] = useState(['variant', 'context', 'therapy']);
   const [errors, setErrors] = useState(null);
   const [isDirty, setIsDirty] = useState(false);
+
+  useEffect(() => {
+    if (newData.ident) {
+      setDialogTitle('Edit Row');
+    } else {
+      setDialogTitle('Add Row');
+    }
+  }, [newData]);
 
   useEffect(() => {
     setNewData({ type: 'replace', payload: editData || {} });
@@ -66,24 +76,29 @@ function EditDialog(props) {
     } else {
       setErrors(null);
     }
-  }, [newData]);
+  }, [newData, requiredFields]);
 
 
   const handleSubmit = useCallback(async () => {
-    const combinedData = { type: tableType, ...newData };
+    const {
+      ident,
+      createdAt,
+      updatedAt,
+      rank,
+      ...rest
+    } = newData;
+    const combinedData = { type: tableType, ...rest };
 
     try {
       if (newData.ident) { // existing option
-        await therapeuticUpdate(
-          reportIdent,
-          editData.ident,
+        const call = api.put(
+          `/reports/${reportIdent}/therapeutic-targets/${editData.ident}`,
           combinedData,
         );
+        await call.request(isSigned);
         setIsDirty(false);
         onClose(combinedData);
       } else {
-        combinedData.rank = addIndex;
-
         const returnedData = await therapeuticAdd(
           reportIdent,
           combinedData,
@@ -95,7 +110,7 @@ function EditDialog(props) {
     } catch (err) {
       console.error(err); // TODO: send to snackbar
     }
-  }, [reportIdent, onClose, newData]);
+  }, [newData, tableType, reportIdent, editData.ident, isSigned, onClose]);
 
   const handleDelete = useCallback(async () => {
     try {
@@ -145,7 +160,7 @@ function EditDialog(props) {
   };
 
   return (
-    <Dialog open={open} maxWidth="sm" fullWidth className="edit-dialog">
+    <Dialog open={isOpen} maxWidth="sm" fullWidth className="edit-dialog">
       <DialogTitle>{dialogTitle}</DialogTitle>
       <DialogContent>
         <FormControl fullWidth>
@@ -223,11 +238,10 @@ function EditDialog(props) {
 
 EditDialog.propTypes = {
   editData: PropTypes.objectOf(PropTypes.any),
-  open: PropTypes.bool.isRequired,
+  isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   reportIdent: PropTypes.string.isRequired,
   tableType: PropTypes.string.isRequired,
-  addIndex: PropTypes.number,
 };
 
 EditDialog.defaultProps = {

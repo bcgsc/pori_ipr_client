@@ -14,7 +14,7 @@ const { compare } = new Intl.Collator(undefined, { numeric: true, sensitivity: '
  * @param {object} props props
  * @param {func} props.onClose callback function to run on close
  * @param {object} props.selectedRow row data for selected row
- * @param {bool} props.open is the dialog open
+ * @param {bool} props.isOpen is the dialog open
  * @param {object} props.columnMapping mapping object for displayed col names
  * @return {*} jsx
  */
@@ -22,7 +22,7 @@ function DetailDialog(props) {
   const {
     onClose,
     selectedRow,
-    open,
+    isOpen,
     columnMapping,
   } = props;
 
@@ -33,7 +33,7 @@ function DetailDialog(props) {
   const printRow = rows => Object.entries(rows)
     .sort(compare)
     .map(([key, value], index, rowEntries) => {
-      if (['ident', 'svg', 'svgTitle'].includes(key) || value === null) {
+      if (['ident', 'svg', 'svgTitle', 'image'].includes(key) || value === null) {
         return null;
       }
 
@@ -116,7 +116,7 @@ function DetailDialog(props) {
 
 
   return (
-    <Dialog onClose={handleClose} open={open}>
+    <Dialog onClose={handleClose} open={isOpen}>
       <DialogTitle>
         Detailed View
       </DialogTitle>
@@ -130,7 +130,7 @@ function DetailDialog(props) {
 DetailDialog.propTypes = {
   onClose: PropTypes.func.isRequired,
   selectedRow: PropTypes.objectOf(PropTypes.any).isRequired,
-  open: PropTypes.bool.isRequired,
+  isOpen: PropTypes.bool.isRequired,
   columnMapping: PropTypes.objectOf(PropTypes.string),
 };
 

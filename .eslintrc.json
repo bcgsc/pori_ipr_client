@@ -1,14 +1,16 @@
 {
   "extends": [
     "airbnb",
-    "plugin:react/recommended"
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:@typescript-eslint/recommended"
   ],
   "env": {
     "es6": true,
     "node": true,
     "cypress/globals": true
   },
-  "parser": "babel-eslint",
+  "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "sourceType": "module"
   },
@@ -25,7 +27,9 @@
   "plugins": [
     "babel",
     "cypress",
-    "react"
+    "react",
+    "react-hooks",
+    "@typescript-eslint"
   ],
   "rules": {
     "semi": "error",
@@ -68,11 +72,7 @@
     "no-useless-call": "error",
     "no-useless-concat": "error",
     "no-useless-rename": "error",
-    "max-len": ["warn", {
-        "code": 100,
-        "ignoreUrls": true,
-        "ignoreStrings": true
-    }],
+    "max-len": "off",
     "no-undef": "warn",
     "arrow-body-style": ["error", "as-needed"],
     "object-shorthand": ["error", "always"],
@@ -94,6 +94,7 @@
       "WithStatement"
     ],
     "import/no-unresolved": "off",
-    "class-methods-use-this": "off"
+    "class-methods-use-this": "off",
+    "react/jsx-filename-extension": "off"
   }
 }

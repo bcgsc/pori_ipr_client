@@ -1,14 +1,14 @@
 import React, {
-  useRef, useState, useEffect, useCallback,
+  useRef, useState, useEffect, useCallback, useContext,
 } from 'react';
 import PropTypes from 'prop-types';
 import { AgGridReact } from '@ag-grid-community/react';
+import { SnackbarContext } from '@bcgsc/react-snackbar-provider';
 import {
   Typography,
   IconButton,
   Dialog,
   Switch,
-  Snackbar,
 } from '@material-ui/core';
 import { ThemeProvider } from '@material-ui/core/styles';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
@@ -18,7 +18,8 @@ import ColumnPicker from './components/ColumnPicker';
 import LinkCellRenderer from './components/LinkCellRenderer';
 import GeneCellRenderer from './components/GeneCellRenderer';
 import ActionCellRenderer from './components/ActionCellRenderer';
-import getDate from '@/utils/date';
+import { getDate } from '../../utils/date';
+import ConfirmContext from '@/components/ConfirmContext';
 
 import './index.scss';
 
@@ -50,6 +51,7 @@ const MAX_TABLE_HEIGHT = '517px';
 function DataTable(props) {
   const {
     rowData,
+    onRowDataChanged,
     columnDefs,
     titleText,
     filterText,
@@ -69,6 +71,7 @@ function DataTable(props) {
     patientId,
     theme,
     isPrint,
+    highlightRow,
   } = props;
 
   const domLayout = isPrint ? 'print' : 'autoHeight';
@@ -77,18 +80,19 @@ function DataTable(props) {
   const columnApi = useRef();
   const ColumnPickerOnClose = useRef();
   const gridDiv = useRef();
+  const gridRef = useRef();
 
   const setColumnPickerOnClose = (ref) => {
     ColumnPickerOnClose.current = ref;
   };
 
+  const snackbar = useContext(SnackbarContext);
+  const { isSigned } = useContext(ConfirmContext);
+
   const [showPopover, setShowPopover] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [selectedRow, setSelectedRow] = useState({});
   const [showReorder, setShowReorder] = useState(false);
-  const [showSnackbar, setShowSnackbar] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarDuration, setSnackbarDuration] = useState(2000);
   const [tableLength, setTableLength] = useState(rowData.length);
 
   useEffect(() => {
@@ -107,13 +111,20 @@ function DataTable(props) {
     }
   }, [visibleColumns]);
 
-  const handleSnackbarClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
+  useEffect(() => {
+    if (highlightRow !== null) {
+      const rowNode = gridApi.current.getDisplayedRowAtIndex(highlightRow);
+      rowNode.setSelected(true, true);
+      gridApi.current.ensureIndexVisible(highlightRow, 'middle');
 
-    setShowSnackbar(false);
-  };
+      const [element] = document.querySelectorAll(`div[class="report__content"]`);
+      element.scrollTo({
+        top: gridRef.current.eGridDiv.offsetTop,
+        left: 0,
+        behavior: 'smooth',
+      });
+    }
+  }, [highlightRow]);
 
   const getColumnVisibility = () => {
     const visibleColumnIds = columnApi.current.getAllDisplayedColumns()
@@ -148,6 +159,14 @@ function DataTable(props) {
     }
 
     if (isPrint) {
+      const newCols = columnDefs.map(col => ({
+        ...col,
+        wrapText: true,
+        autoHeight: true,
+        cellClass: ['cell-wrap-text', 'cell-line-height'],
+        cellStyle: { 'white-space': 'normal' },
+      }));
+      gridApi.current.setColumnDefs(newCols);
       columnApi.current.setColumnVisible('Actions', false);
       gridApi.current.sizeColumnsToFit();
     }
@@ -155,7 +174,9 @@ function DataTable(props) {
 
   const onFirstDataRendered = () => {
     if (columnApi.current) {
-      const { visibleColumnIds } = getColumnVisibility();
+      const visibleColumnIds = columnApi.current.getAllColumns()
+        .filter(col => !col.flex && col.visible)
+        .map(col => col.colId);
       columnApi.current.autoSizeColumns(visibleColumnIds);
     }
   };
@@ -185,7 +206,7 @@ function DataTable(props) {
 
   const onRowDragEnd = async (event) => {
     try {
-      setShowSnackbar(false);
+      snackbar.clear();
       const oldRank = event.node.data.rank;
       const newRank = event.overIndex;
 
@@ -204,47 +225,20 @@ function DataTable(props) {
         return newData.push(row);
       });
       newData.rank = event.overIndex;
-      const updatedRows = await rowUpdateAPICall(
-        reportIdent,
-        newData,
-      );
+      const call = rowUpdateAPICall(reportIdent, newData);
+      const updatedRows = await call.request();
 
-      gridApi.current.updateRowData({ update: updatedRows });
-      setSnackbarDuration(2000);
-      setShowSnackbar(true);
-      setSnackbarMessage('Row update success');
-    } catch (err) {
-      console.error(err);
-      setSnackbarDuration(5000);
-      setShowSnackbar(true);
-      setSnackbarMessage(`Rows were not updated: ${err}`);
-    }
-  };
-
-  const normalizeRowRanks = async (deletedRank) => {
-    const rerankedData = [];
-    gridApi.current.forEachNode((node) => {
-      if (node.data.rank !== deletedRank) {
-        rerankedData.push(node.data);
+      if (updatedRows) {
+        gridApi.current.updateRowData({ update: updatedRows });
+        snackbar.add('Row update success');
       }
-    });
-    rerankedData.sort((row1, row2) => row1.rank - row2.rank);
-    rerankedData.forEach((row, index) => { row.rank = index; });
-    try {
-      const updatedRows = await rowUpdateAPICall(
-        reportIdent,
-        rerankedData,
-      );
-      gridApi.current.setRowData(updatedRows);
     } catch (err) {
       console.error(err);
-      setSnackbarDuration(5000);
-      setShowSnackbar(true);
-      setSnackbarMessage(`Rows were not updated: ${err}`);
+      snackbar.add(`Rows were not updated: ${err}`);
     }
   };
 
-  const handleRowEditClose = (editedData) => {
+  const handleRowEditClose = useCallback((editedData) => {
     setShowEditDialog(false);
     if (editedData && selectedRow.node) {
       selectedRow.node.setData(editedData);
@@ -257,11 +251,11 @@ function DataTable(props) {
       columnApi.current.autoSizeColumns(visibleColumnIds);
     } else if (editedData === null) {
       // sending back null indicates the row was deleted
-      normalizeRowRanks(selectedRow.node.data.rank);
+      gridApi.current.updateRowData({ remove: [selectedRow.node.data] });
       setTableLength(gridApi.current.getDisplayedRowCount());
     }
     setSelectedRow({});
-  };
+  }, [selectedRow.node, tableLength]);
 
   const defaultColDef = {
     sortable: !showReorder,
@@ -303,7 +297,13 @@ function DataTable(props) {
           columns={columnApi.current.getAllColumns()
             .filter(col => col.colId !== 'Actions')
             .map((col) => {
-              col.name = columnApi.current.getDisplayNameForColumn(col);
+              const parent = col.getOriginalParent();
+              if (parent && parent.colGroupDef.headerName) {
+                const parentName = parent.colGroupDef.headerName;
+                col.name = `${parentName} ${columnApi.current.getDisplayNameForColumn(col)}`;
+              } else {
+                col.name = columnApi.current.getDisplayNameForColumn(col);
+              }
               return col;
             })
           }
@@ -332,12 +332,21 @@ function DataTable(props) {
 
     gridApi.current.exportDataAsCsv({
       suppressQuotes: true,
+      columnSeparator: '\t',
       columnKeys: columnApi.current.getAllDisplayedColumns()
         .map(col => col.colId)
         .filter(col => col === 'Actions'),
-      fileName: `ipr_${patientId}_${reportIdent}_${titleText.split(' ').join('_')}_${date}`,
+      fileName: `ipr_${patientId}_${reportIdent}_${titleText.split(' ').join('_')}_${date}.tsv`,
     });
   };
+
+  const handleFilterAndSortChanged = useCallback(() => {
+    const newRows = [];
+    gridApi.current.forEachNodeAfterFilterAndSort(node => {
+      newRows.push(node.data);
+    });
+    onRowDataChanged(newRows);
+  }, [onRowDataChanged]);
 
   // Theme is needed for react in angular tables. It can't access the theme provider otherwise
   return (
@@ -345,79 +354,72 @@ function DataTable(props) {
       <div className="data-table--padded">
         {rowData.length || canEdit ? (
           <>
-            <div className="data-table__header-container">
-              <Typography variant="h3" className="data-table__header">
-                {titleText}
-              </Typography>
-              <div>
-                {canAdd && !isPrint && (
-                  <span className="data-table__action">
-                    <Typography display="inline">
-                      Add Row
-                    </Typography>
-                    <IconButton
-                      onClick={() => setShowEditDialog(true)}
-                      title="Add Row"
-                    >
-                      <AddCircleOutlineIcon />
-                    </IconButton>
-                  </span>
-                )}
-                {canToggleColumns && !isPrint && (
-                  <span className="data-table__action">
-                    <IconButton
-                      onClick={() => setShowPopover(prevVal => !prevVal)}
-                    >
-                      <MoreHorizIcon />
-                    </IconButton>
-                  </span>
-                )}
-                {canExport && !isPrint && (
-                  <span className="data-table__action">
-                    <Typography display="inline">
-                      Export to CSV
-                    </Typography>
-                    <IconButton
-                      onClick={handleCSVExport}
-                      title="Export to CSV"
-                    >
-                      <GetAppIcon />
-                    </IconButton>
-                  </span>
-                )}
-                {canReorder && !isPrint && (
-                  <span className="data-table__action">
-                    <Typography display="inline">
-                      Reorder Rows
-                    </Typography>
-                    <Switch
-                      checked={showReorder}
-                      onChange={toggleReorder}
-                      color="primary"
-                      title="Reorder Rows"
-                    />
-                    <Snackbar
-                      anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'left',
-                      }}
-                      open={showSnackbar}
-                      autoHideDuration={snackbarDuration}
-                      message={snackbarMessage}
-                      onClose={handleSnackbarClose}
-                    />
-                  </span>
-                )}
+            {titleText && (
+              <div className="data-table__header-container">
+                <Typography variant="h3" className="data-table__header">
+                  {titleText}
+                </Typography>
+                <div>
+                  {canAdd && !isPrint && (
+                    <span className="data-table__action">
+                      <Typography display="inline">
+                        Add Row
+                      </Typography>
+                      <IconButton
+                        onClick={() => setShowEditDialog(true)}
+                        title="Add Row"
+                      >
+                        <AddCircleOutlineIcon />
+                      </IconButton>
+                    </span>
+                  )}
+                  {canToggleColumns && !isPrint && (
+                    <span className="data-table__action">
+                      <IconButton
+                        onClick={() => setShowPopover(prevVal => !prevVal)}
+                      >
+                        <MoreHorizIcon />
+                      </IconButton>
+                    </span>
+                  )}
+                  {canExport && !isPrint && (
+                    <span className="data-table__action">
+                      <Typography display="inline">
+                        Export to TSV
+                      </Typography>
+                      <IconButton
+                        onClick={handleCSVExport}
+                        title="Export to CSV"
+                      >
+                        <GetAppIcon />
+                      </IconButton>
+                    </span>
+                  )}
+                  {canReorder && !isPrint && (
+                    <span className="data-table__action">
+                      <Typography display="inline">
+                        Reorder Rows
+                      </Typography>
+                      <Switch
+                        checked={showReorder}
+                        onChange={toggleReorder}
+                        color="primary"
+                        title="Reorder Rows"
+                      />
+                    </span>
+                  )}
+                </div>
               </div>
-              <EditDialog
-                open={showEditDialog}
-                onClose={handleRowEditClose}
-                editData={selectedRow.data}
-                reportIdent={reportIdent}
-                tableType={tableType}
-                addIndex={tableLength}
-              />
-            </div>
+            )}
+            <EditDialog
+              isOpen={showEditDialog}
+              onClose={handleRowEditClose}
+              editData={selectedRow.data}
+              reportIdent={reportIdent}
+              tableType={tableType}
+              addIndex={tableLength}
+              showErrorSnackbar={snackbar.add}
+            />
             <div
               className="ag-theme-material data-table__container"
               ref={gridDiv}
@@ -426,6 +428,7 @@ function DataTable(props) {
                 && renderColumnPicker()
               }
               <AgGridReact
+                ref={gridRef}
                 columnDefs={columnDefs}
                 rowData={rowData}
                 defaultColDef={defaultColDef}
@@ -438,6 +441,8 @@ function DataTable(props) {
                 getRowNodeId={data => data.ident}
                 onRowDragEnd={canReorder ? onRowDragEnd : null}
                 editType="fullRow"
+                onFilterChanged={handleFilterAndSortChanged}
+                onSortChanged={handleFilterAndSortChanged}
                 context={{
                   canEdit,
                   canViewDetails,
@@ -499,6 +504,8 @@ DataTable.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
   theme: PropTypes.object,
   isPrint: PropTypes.bool,
+  highlightRow: PropTypes.number || PropTypes.object,
+  onRowDataChanged: PropTypes.func,
 };
 
 DataTable.defaultProps = {
@@ -520,6 +527,8 @@ DataTable.defaultProps = {
   patientId: '',
   theme: {},
   isPrint: false,
+  highlightRow: null,
+  onRowDataChanged: () => {},
 };
 
 export default DataTable;

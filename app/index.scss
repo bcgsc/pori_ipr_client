@@ -37,6 +37,15 @@ html body {
   cursor: pointer;
 }
 
+.text-field-fix {
+  margin: 20px 12px 10px;
+  height: 40px;
+
+  > * {
+    box-sizing: content-box;
+  }
+}
+
 // Fix for dialog not accounting for AppBar
 .md-dialog-container {
   top: -56px !important;

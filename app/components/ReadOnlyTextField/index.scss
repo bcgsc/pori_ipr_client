@@ -1,0 +1,12 @@
+@import '../../styles/theme';
+
+
+.text-field {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
+
+  &--underlined {
+    border-bottom: 1px solid $palette__text--hint;
+  }
+}

@@ -33,14 +33,14 @@ const getFrameText = (frame) => {
  * @param {object} props props
  * @param {func} props.onClose parent close handler
  * @param {object} props.selectedRow current row object
- * @param {bool} props.open is open?
+ * @param {bool} props.isOpen is open?
  * @return {*} JSX
  */
 function SvgViewer(props) {
   const {
     onClose,
     selectedRow,
-    open,
+    isOpen,
   } = props;
 
   const [svgSize, setSvgSize] = useState({
@@ -89,7 +89,7 @@ function SvgViewer(props) {
   return (
     <Dialog
       onClose={handleClose}
-      open={open}
+      open={isOpen}
       maxWidth="xl"
       fullWidth
     >
@@ -140,7 +140,7 @@ function SvgViewer(props) {
 SvgViewer.propTypes = {
   onClose: PropTypes.func.isRequired,
   selectedRow: PropTypes.objectOf(PropTypes.any).isRequired,
-  open: PropTypes.bool.isRequired,
+  isOpen: PropTypes.bool.isRequired,
 };
 
 export default SvgViewer;

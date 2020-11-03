@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { LinearProgress } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import DataTable from '@/components/DataTable';
+import EditContext from '@/components/EditContext';
+import ReportContext from '../../../../components/ReportContext';
 import EditDialog from './components/EditDialog';
 import columnDefs from './columnDefs';
-import { therapeuticUpdateTable, therapeuticGet } from '@/services/reports/therapeutic';
+import api from '@/services/api';
 
 /**
  * @param {object} props props
- * @param {bool} props.reportEdit can user edit report?
+ * @param {bool} props.canEdit can user edit report?
  * @param {array} props.therapeuticTargets therapeutic and chemoresistance row data
  * @param {bool} props.print is this the print version?
  * @param {report} props.report report object
@@ -16,18 +18,21 @@ import { therapeuticUpdateTable, therapeuticGet } from '@/services/reports/thera
  */
 function TherapeuticView(props) {
   const {
-    reportEdit,
     print,
-    report,
   } = props;
+
+  const { canEdit } = useContext(EditContext);
+  const { report } = useContext(ReportContext);
 
   const [therapeuticData, setTherapeuticData] = useState();
 
   const [chemoresistanceData, setChemoresistanceData] = useState();
+
   useEffect(() => {
     if (report) {
       const getData = async () => {
-        const resp = await therapeuticGet(report.ident);
+        const call = api.get(`/reports/${report.ident}/therapeutic-targets`);
+        const resp = await call.request();
 
         setTherapeuticData(resp.filter(
           target => target.type === 'therapeutic',
@@ -49,14 +54,14 @@ function TherapeuticView(props) {
             titleText="Potential Therapeutic Targets"
             columnDefs={columnDefs}
             rowData={therapeuticData}
-            canEdit={reportEdit && !print}
+            canEdit={canEdit && !print}
             EditDialog={EditDialog}
-            canAdd={reportEdit && !print}
+            canAdd={canEdit && !print}
             reportIdent={report.ident}
             tableType="therapeutic"
             isPaginated={false}
-            canReorder={reportEdit && !print}
-            rowUpdateAPICall={therapeuticUpdateTable}
+            canReorder={canEdit && !print}
+            rowUpdateAPICall={(reportIdent, data) => api.put(`/reports/${reportIdent}/therapeutic-targets`, data)}
             canExport
             patientId={report.patientId}
             print={print}
@@ -66,14 +71,14 @@ function TherapeuticView(props) {
             titleText="Potential Chemoresistance"
             columnDefs={columnDefs}
             rowData={chemoresistanceData}
-            canEdit={reportEdit && !print}
+            canEdit={canEdit && !print}
             EditDialog={EditDialog}
-            canAdd={reportEdit && !print}
+            canAdd={canEdit && !print}
             reportIdent={report.ident}
             tableType="chemoresistance"
             isPaginated={false}
-            canReorder={reportEdit && !print}
-            rowUpdateAPICall={therapeuticUpdateTable}
+            canReorder={canEdit && !print}
+            rowUpdateAPICall={(reportIdent, data) => api.put(`/reports/${reportIdent}/therapeutic-targets`, data)}
             canExport
             patientId={report.patientId}
             print={print}
@@ -87,13 +92,10 @@ function TherapeuticView(props) {
 }
 
 TherapeuticView.propTypes = {
-  reportEdit: PropTypes.bool,
   print: PropTypes.bool,
-  report: PropTypes.objectOf(PropTypes.any).isRequired,
 };
 
 TherapeuticView.defaultProps = {
-  reportEdit: false,
   print: false,
 };
 

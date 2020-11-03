@@ -1,0 +1,48 @@
+@import '../../../../../../styles/variables';
+@import '../../../../../../styles/theme';
+
+.variant {
+  margin: 4px;
+
+  &--expression {
+    background-color: $accent--orange;
+
+    &:focus {
+      background-color: $accent--orange;
+    }
+  }
+
+  &--structuralVariant {
+    background-color: $accent--purple;
+
+    &:focus {
+      background-color: $accent--purple;
+    }
+  }
+
+  &--smallMutation {
+    background-color: $accent--blue;
+
+    &:focus {
+      background-color: $accent--blue;
+    }
+  }
+
+  &--cnv {
+    background-color: $accent--green;
+
+    &:focus {
+      background-color: $accent--green;
+    }
+  }
+
+  &__form {
+    margin: 0;
+  }
+}
+
+@media print {
+  .variant {
+    margin: 2px;
+  }
+}

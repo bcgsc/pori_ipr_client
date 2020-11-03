@@ -13,25 +13,40 @@ const columnDefs = [{
   field: 'gene.copyVariants.cnvState',
   hide: false,
 }, {
-  headerName: 'Normal Tissue',
+  headerName: 'Disease',
   children: [
-    { headerName: 'Perc', field: 'gtexPerc', hide: false },
-    { headerName: 'kIQR', field: 'gtexkIQR', hide: false },
+    { headerName: 'Perc', field: 'diseasePercentile', hide: false },
+    { headerName: 'kIQR', field: 'diseasekIQR', hide: false },
+    { headerName: 'QC', field: 'diseaseQC', hide: false },
+    { headerName: 'FC', field: 'diseaseFoldChange', hide: true },
+    { headerName: 'Z-Score', field: 'diseaseZScore', hide: true },
   ],
 }, {
-  headerName: 'Disease Tissue',
+  headerName: 'Normal Primary Site',
   children: [
-    { headerName: 'Perc', field: 'tcgaPerc', hide: false },
-    { headerName: 'kIQR', field: 'tcgakIQR', hide: false },
-    { headerName: 'QC', field: 'tcgaQC', hide: false },
+    { headerName: 'FC', field: 'primarySiteFoldChange', hide: false },
+    { headerName: 'Perc', field: 'primarySitePercentile', hide: false },
+    { headerName: 'kIQR', field: 'primarySitekIQR', hide: false },
+    { headerName: 'QC', field: 'primarySiteQC', hide: true },
+    { headerName: 'Z-Score', field: 'primarySiteZScore', hide: true },
   ],
 }, {
-  headerName: 'Protein',
+  headerName: 'Normal Biopsy Site',
   children: [
-    { headerName: 'Perc', field: 'ptxPerc', hide: true },
-    { headerName: 'kIQR', field: 'ptxkIQR', hide: true },
-    { headerName: 'QC', field: 'ptxQC', hide: true },
+    { headerName: 'FC', field: 'biopsySiteFoldChange', hide: false },
+    { headerName: 'Perc', field: 'biopsySitePercentile', hide: false },
+    { headerName: 'kIQR', field: 'biopsySitekIQR', hide: false },
+    { headerName: 'QC', field: 'biopsySiteQC', hide: true },
+    { headerName: 'Z-Score', field: 'biopsySiteZScore', hide: true },
   ],
+}, {
+  headerName: 'RPKM',
+  field: 'rpkm',
+  hide: false,
+}, {
+  headerName: 'TPM',
+  field: 'tpm',
+  hide: true,
 }, {
   headerName: 'Oncogene',
   colId: 'oncogene',

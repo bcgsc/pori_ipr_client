@@ -1,12 +1,14 @@
 import React, {
   useEffect,
   useState,
+  useContext,
 } from 'react';
 import PropTypes from 'prop-types';
 import { AgGridReact } from '@ag-grid-community/react';
 import { useGrid } from '@bcgsc/react-use-grid';
 import omit from 'lodash.omit';
 
+import ReportContext from '../../../../../../components/ReportContext';
 import { therapeuticGet } from '@/services/reports/therapeutic';
 
 import './index.scss';
@@ -46,9 +48,10 @@ const makeColDefs = (columnNames) => {
  */
 const TherapeuticTable = (props) => {
   const {
-    report,
     loadedDispatch,
   } = props;
+
+  const { report } = useContext(ReportContext);
 
   const [chemoresistanceRowData, setChemoresistanceRowData] = useState([]);
   const [therapeuticRowData, setTherapeuticRowData] = useState([]);

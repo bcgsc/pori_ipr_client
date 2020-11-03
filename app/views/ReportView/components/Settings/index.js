@@ -3,12 +3,14 @@ import { $rootScope } from 'ngimport';
 
 import indefiniteArticle from '@/utils/indefiniteArticle';
 import toastCreator from '@/utils/toastCreator';
-import { searchUsers } from '@/services/management/auth';
+import { searchUsers, getUser } from '@/services/management/auth';
+import { formatDate } from '@/utils/date';
 import lazyInjector from '@/lazyInjector';
 import template from './report-settings.pug';
 import addTemplate from './role-add.pug';
 import deleteTemplate from './report-delete.pug';
 import ReportService from '@/services/reports/report.service';
+import api from '@/services/api';
 
 import './index.scss';
 
@@ -16,6 +18,7 @@ const bindings = {
   report: '<',
   showBindings: '<',
   history: '<',
+  isSigned: '<',
 };
 
 class Settings {
@@ -28,11 +31,16 @@ class Settings {
     this.roles = ['bioinformatician', 'analyst', 'reviewer', 'admin', 'clinician'];
     this.dirtyFields = {};
     this.reportSettingsChanged = false;
+    this.newReportFields = {};
+    this.formatDate = formatDate;
   }
 
   async $onChanges(changes) {
     if (changes.report && changes.report.currentValue) {
       this.reportCache = angular.copy(this.report);
+      this.user = await getUser();
+      this.canStartAnalysis = this.report.users.some(({ user: { username } }) => username === this.user.username);
+      $rootScope.$digest();
     }
   }
 
@@ -42,6 +50,7 @@ class Settings {
       this.report.ident, role.user.ident, role.role,
     );
     this.report = result;
+    this.canStartAnalysis = this.report.users.some(({ user: { username } }) => username === this.user.username);
     $rootScope.$digest();
   }
 
@@ -102,6 +111,7 @@ class Settings {
         $rootScope.$digest();
       }
       this.report = outcome.data;
+      this.canStartAnalysis = this.report.users.some(({ user: { username } }) => username === this.user.username);
     } catch (err) {
       this.$mdToast.show(toastCreator('No changes were made'));
     }
@@ -109,15 +119,20 @@ class Settings {
 
   checkChange() {
     if (this.report.type !== this.reportCache.type) {
-      this.dirtyFields.type = this.report.type;
+      this.newReportFields.type = this.report.type;
+      this.reportSettingsChanged = true;
     }
-
     if (this.report.state !== this.reportCache.state) {
-      this.dirtyFields.state = this.report.state;
+      this.newReportFields.state = this.report.state;
+      this.reportSettingsChanged = true;
     }
-
     if (this.report.reportVersion !== this.reportCache.reportVersion) {
-      this.dirtyFields.reportVersion = this.report.reportVersion;
+      this.newReportFields.reportVersion = this.report.reportVersion;
+      this.reportSettingsChanged = true;
+    }
+    if (this.report.kbVersion !== this.reportCache.kbVersion) {
+      this.newReportFields.kbVersion = this.report.kbVersion;
+      this.reportSettingsChanged = true;
     }
 
     if (this.report.kbVersion !== this.reportCache.kbVersion) {
@@ -132,8 +147,14 @@ class Settings {
 
   async updateSettings() {
     this.reportSettingsChanged = false;
-    // Send updated settings to API
-    const resp = await ReportService.updateReport(this.report.ident, this.dirtyFields);
+
+    const call = api.put(`/reports/${this.report.ident}`, this.newReportFields);
+    let resp;
+    if (this.isSigned && Object.keys(this.newReportFields).some(field => field !== 'state')) {
+      resp = await call.request(true);
+    } else {
+      resp = await call.request();
+    }
     this.report = resp;
     this.dirtyFields = {};
     $rootScope.$digest();
@@ -185,6 +206,13 @@ class Settings {
         this.$mdToast.show(toastCreator(`Report not deleted: ${err.data.message}`));
       }
     }
+  }
+
+  async startAnalysis() {
+    const date = new Date();
+    const resp = await ReportService.updateReport(this.report.ident, { analysisStartedAt: date.toISOString() });
+    this.report = resp;
+    $rootScope.$digest();
   }
 }
 

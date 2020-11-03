@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import PropTypes from 'prop-types';
-import { LinearProgress } from '@material-ui/core';
+import { LinearProgress, Typography } from '@material-ui/core';
 
 import DataTable from '@/components/DataTable';
+import ReportContext from '../../../../components/ReportContext';
+import EditContext from '@/components/EditContext';
 import ImageService from '@/services/reports/image.service';
-import MutationSignatureService from '@/services/reports/mutation-signature.service';
+import { getMutationSignatures } from '@/services/reports/mutation-signature';
+import EditDialog from './components/EditDialog';
 import columnDefs from './columnDefs';
 
 import './index.scss';
@@ -15,11 +18,9 @@ const imageKeys = [
   'mutSignature.barplot.sbs',
 ];
 
-const MutationSignatures = (props) => {
-  const {
-    report,
-  } = props;
-
+const MutationSignatures = () => {
+  const { report } = useContext(ReportContext);
+  const { canEdit } = useContext(EditContext);
   const [images, setImages] = useState({});
   const [sbsSignatures, setSbsSignatures] = useState([]);
   const [dbsSignatures, setDbsSignatures] = useState([]);
@@ -34,7 +35,7 @@ const MutationSignatures = (props) => {
             report.ident,
             imageKeys.join(','),
           ),
-          MutationSignatureService.all(report.ident),
+          getMutationSignatures(report.ident),
         ]);
         setImages(imageData);
         setSbsSignatures(signatureData.filter(sig => !(new RegExp(/dbs|id/)).test(sig.signature.toLowerCase())));
@@ -51,12 +52,9 @@ const MutationSignatures = (props) => {
     <div>
       {!isLoading ? (
         <>
-          <DataTable
-            rowData={sbsSignatures}
-            columnDefs={columnDefs}
-            titleText="Single base subtitution signatures"
-            isPaginated
-          />
+          <Typography variant="h3" className="mutation-signature__title">
+            Single base substitution signatures
+          </Typography>
           {images['mutSignature.barplot.sbs'] && (
             <div className="mutation-signature__images">
               <img
@@ -67,11 +65,16 @@ const MutationSignatures = (props) => {
             </div>
           )}
           <DataTable
-            rowData={dbsSignatures}
+            rowData={sbsSignatures}
             columnDefs={columnDefs}
-            titleText="Double base substitution signatures"
             isPaginated
+            canEdit={canEdit}
+            EditDialog={EditDialog}
+            canToggleColumns
           />
+          <Typography variant="h3" className="mutation-signature__title">
+            Double base substitution signatures
+          </Typography>
           {images['mutSignature.barplot.dbs'] && (
             <div className="mutation-signature__images">
               <img
@@ -82,11 +85,16 @@ const MutationSignatures = (props) => {
             </div>
           )}
           <DataTable
-            rowData={idSignatures}
+            rowData={dbsSignatures}
             columnDefs={columnDefs}
-            titleText="Indel Signatures"
             isPaginated
+            canEdit={canEdit}
+            EditDialog={EditDialog}
+            canToggleColumns
           />
+          <Typography variant="h3" className="mutation-signature__title">
+            Indel Signatures
+          </Typography>
           {images['mutSignature.barplot.indels'] && (
             <div className="mutation-signature__images">
               <img
@@ -96,21 +104,20 @@ const MutationSignatures = (props) => {
               />
             </div>
           )}
+          <DataTable
+            rowData={idSignatures}
+            columnDefs={columnDefs}
+            isPaginated
+            canEdit={canEdit}
+            EditDialog={EditDialog}
+            canToggleColumns
+          />
         </>
       ) : (
         <LinearProgress />
       )}
     </div>
   );
-};
-
-MutationSignatures.propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types
-  report: PropTypes.object,
-};
-
-MutationSignatures.defaultProps = {
-  report: {},
 };
 
 export default MutationSignatures;

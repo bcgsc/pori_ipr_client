@@ -1,17 +1,20 @@
 import React, { useEffect, useState, useReducer } from 'react';
 import { useParams } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
+import { useTheme } from '@material-ui/core/styles';
 
+import ReportContext from '../../components/ReportContext';
 import ReportService from '@/services/reports/report.service';
 import GenomicSummary from '../ReportView/components/GenomicSummary';
-import ProbeSummary from '../ReportView/components/ProbeSummary';
+import ProbeSummary from '../ReportView/components/ProbeSummary/index.tsx';
 import AnalystComments from '../ReportView/components/AnalystComments';
 import PathwayAnalysis from '../ReportView/components/PathwayAnalysis';
 import TherapeuticTargets from '../ReportView/components/TherapeuticTargets/components/PrintTables';
 import Slides from '../ReportView/components/Slides';
 import Appendices from '../ReportView/components/Appendices';
 import PageBreak from '@/components/PageBreak';
-import PrintLogo from '@/../statics/images/print_logo.png';
+import startCase from '@/utils/startCase';
+import PrintLogo from '@/../statics/images/print_logo.svg';
 
 import './index.scss';
 
@@ -46,6 +49,7 @@ const reducer = (state, action) => {
 
 const Print = () => {
   const params = useParams();
+  const theme = useTheme();
   const [report, setReport] = useState();
   const [reportSectionsLoaded, dispatch] = useReducer(reducer, {
     genomicSummary: false,
@@ -57,6 +61,7 @@ const Print = () => {
     appendices: false,
   });
   const [isProbe, setIsProbe] = useState(false);
+  const [isPrintDialogShown, setIsPrintDialogShown] = useState(false);
 
   useEffect(() => {
     if (!report) {
@@ -80,14 +85,17 @@ const Print = () => {
     } else {
       sections = ['genomicSummary', 'analyst', 'pathway', 'therapeutic', 'slides'];
     }
-    if (reportSectionsLoaded && Object.entries(reportSectionsLoaded).every(([section, loaded]) => loaded || !sections.includes(section))) {
+    if (reportSectionsLoaded
+      && Object.entries(reportSectionsLoaded).every(([section, loaded]) => loaded || !sections.includes(section))
+      && !isPrintDialogShown) {
       window.print();
+      setIsPrintDialogShown(true);
     }
   }, [reportSectionsLoaded]);
 
   const probeSections = () => (
     <>
-      <ProbeSummary report={report} print loadedDispatch={dispatch} />
+      <ProbeSummary report={report} isPrint loadedDispatch={dispatch} />
       <PageBreak report={report} />
       <Appendices report={report} print isProbe loadedDispatch={dispatch} />
     </>
@@ -95,62 +103,51 @@ const Print = () => {
 
   const genomicSections = () => (
     <>
-      <GenomicSummary report={report} print loadedDispatch={dispatch} />
-      <PageBreak report={report} />
+      <GenomicSummary print loadedDispatch={dispatch} />
+      <PageBreak report={report} theme={theme} />
       <AnalystComments report={report} print loadedDispatch={dispatch} />
-      <PageBreak report={report} />
+      <PageBreak report={report} theme={theme} />
       <PathwayAnalysis report={report} print loadedDispatch={dispatch} />
-      <PageBreak report={report} />
-      <TherapeuticTargets report={report} loadedDispatch={dispatch} />
-      <PageBreak report={report} />
-      <Slides report={report} print loadedDispatch={dispatch} />
+      <PageBreak report={report} theme={theme} />
+      <TherapeuticTargets print loadedDispatch={dispatch} />
+      <PageBreak report={report} theme={theme} />
+      <Slides report={report} print loadedDispatch={dispatch} theme={theme}/>
     </>
   );
 
   const titleBar = () => (
     <div className="print__headers">
-      <div className="print__header-top">
+      <div className="print__header-left">
         <img className="print__logo" src={PrintLogo} alt="" />
-        <div>
-          <Typography align="right" variant="body2">
-            Tumour Genome Analysis
-          </Typography>
-          <Typography align="right" variant="body2">
-            Whole Genome; Transcriptome; Somatic
-          </Typography>
-        </div>
       </div>
-      <div className="print__header-middle">
-        <Typography variant="body2">
-          {`Report version: ${report.reportVersion}`}
+      <div className="print__header-right">
+        <Typography variant="h1">
+          {`${report.patientId}${report.alternateIdentifier ? `(${report.alternateIdentifier})` : ''}`}
         </Typography>
-        <Typography variant="body2">
-          {`Knowledgebase version: ${report.kbVersion}`}
-        </Typography>
-      </div>
-      <div className="print__header-bottom">
-        <Typography align="center" variant="h5">
-          {report.patientId}
+        <Typography variant="h5">
+          {`${startCase(report.biopsyName || 'No Biopsy Name')} - ${startCase(report.patientInformation.diagnosis)} (${report.patientInformation.tumourSample})`}
         </Typography>
       </div>
     </div>
   );
 
   return (
-    <div className="print">
-      {report ? (
-        <>
-          {titleBar()}
+    <ReportContext.Provider value={{ report, setReport }}>
+      <div className="print">
+        {report ? (
           <>
-            {isProbe ? (
-              probeSections()
-            ) : (
-              genomicSections()
-            )}
+            {titleBar()}
+            <>
+              {isProbe ? (
+                probeSections()
+              ) : (
+                genomicSections()
+              )}
+            </>
           </>
-        </>
-      ) : null}
-    </div>
+        ) : null}
+      </div>
+    </ReportContext.Provider>
   );
 };
 
