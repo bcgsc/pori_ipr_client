@@ -179,7 +179,9 @@ const GenomicSummary = (props) => {
           },
           {
             term: `SV Burden (${primaryComparatorTemp ? primaryComparatorTemp.name : 'primary'})`,
-            value: primaryBurden && primaryBurden.qualitySvCount !== null ? `${primaryBurden.qualitySvCount} (${primaryBurden.qualitySvPercentile}%)` : null,
+            value: primaryBurden && primaryBurden.qualitySvCount !== null
+              ? `${primaryBurden.qualitySvCount} ${primaryBurden.qualitySvPercentile ? `(${primaryBurden.qualitySvPercentile}%)` : ''}`
+              : null,
           },
           {
             term: `HR Deficiency${print ? '*' : ''}`,
