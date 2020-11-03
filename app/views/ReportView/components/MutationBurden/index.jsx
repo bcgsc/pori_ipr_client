@@ -133,20 +133,21 @@ const MutationBurden = () => {
             .filter(({ analysisRole }) => analysisRole.includes('mutation burden'))
             .map(({ analysisRole, name }) => {
               const mutationBurdenRole = mutationBurden.find(({ role }) => analysisRole.includes(role));
+              const [roleName] = analysisRole.match(/(?<=\().+(?=\))/g);
 
-              if (!mutationBurdenRole) {
+              if (!roleName) {
                 return null;
               }
 
-              const snvBarplot = getImage(images.snv.barplot, mutationBurdenRole.role);
-              const snvDensity = getImage(images.snv.density, mutationBurdenRole.role);
-              const snvLegend = getImage(images.snv.legend, mutationBurdenRole.role);
-              const indelBarplot = getImage(images.indel.barplot, mutationBurdenRole.role);
-              const indelDensity = getImage(images.indel.density, mutationBurdenRole.role);
-              const indelLegend = getImage(images.indel.legend, mutationBurdenRole.role);
-              const svBarplot = getImage(images.sv.barplot, mutationBurdenRole.role);
-              const svDensity = getImage(images.sv.density, mutationBurdenRole.role);
-              const svLegend = getImage(images.sv.legend, mutationBurdenRole.role);
+              const snvBarplot = getImage(images.snv.barplot, roleName);
+              const snvDensity = getImage(images.snv.density, roleName);
+              const snvLegend = getImage(images.snv.legend, roleName);
+              const indelBarplot = getImage(images.indel.barplot, roleName);
+              const indelDensity = getImage(images.indel.density, roleName);
+              const indelLegend = getImage(images.indel.legend, roleName);
+              const svBarplot = getImage(images.sv.barplot, roleName);
+              const svDensity = getImage(images.sv.density, roleName);
+              const svLegend = getImage(images.sv.legend, roleName);
 
               return (
                 <React.Fragment key={analysisRole}>
@@ -155,11 +156,11 @@ const MutationBurden = () => {
                       {`Comparator: ${name || 'none'}`}
                     </Typography>
                     <Typography variant="body2" className="mutation-burden__comparator--padded">
-                      {`Role: ${mutationBurdenRole.role || 'none'}`}
+                      {`Role: ${roleName || 'none'}`}
                     </Typography>
                   </div>
                   <div className="mutation-burden__images">
-                    {(snvBarplot.data || snvDensity.data || snvLegend.data || mutationBurdenRole) && (
+                    {(snvBarplot.data || (snvDensity.data && snvLegend.data) || mutationBurdenRole) && (
                       <Card elevation={3} className="mutation-burden__group">
                         <CardHeader title="SNV" />
                         {snvBarplot.data && (
@@ -203,7 +204,7 @@ const MutationBurden = () => {
                         )}
                       </Card>
                     )}
-                    {(indelBarplot.data || indelDensity.data || indelLegend.data || mutationBurdenRole) && (
+                    {(indelBarplot.data || (indelDensity.data && indelLegend.data) || mutationBurdenRole) && (
                       <Card elevation={3} className="mutation-burden__group">
                         <CardHeader title="Indel" />
                         {indelBarplot.data && (
@@ -227,7 +228,7 @@ const MutationBurden = () => {
                           <CardContent>
                             <Typography variant="body2" className="mutation-burden__comparator--padded">
                               <>
-                                Protein Coding Indels (count): 
+                                Protein Coding Indels (count):
                                 {` ${mutationBurdenRole.codingIndelsCount}`}
                               </>
                             </Typography>
@@ -247,7 +248,7 @@ const MutationBurden = () => {
                         )}
                       </Card>
                     )}
-                    {(svBarplot.data || svDensity.data || svLegend.data || mutationBurdenRole) && (
+                    {(svBarplot.data || (svDensity.data && svLegend.data) || mutationBurdenRole) && (
                       <Card elevation={3} className="mutation-burden__group">
                         <CardHeader title="SV" />
                         {svBarplot.data && (
