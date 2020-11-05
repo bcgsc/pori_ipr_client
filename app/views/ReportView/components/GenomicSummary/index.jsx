@@ -147,6 +147,13 @@ const GenomicSummary = (props) => {
           },
         ]);
 
+        let svBurden;
+        if (primaryBurden && primaryBurden.qualitySvCount !== null) {
+          svBurden = `${primaryBurden.qualitySvCount} ${primaryBurden.qualitySvPercentile ? `(${primaryBurden.qualitySvPercentile}%)` : ''}`;
+        } else {
+          svBurden = null;
+        }
+
         setTumourSummaryData([
           {
             term: 'Tumour Content',
@@ -179,9 +186,7 @@ const GenomicSummary = (props) => {
           },
           {
             term: `SV Burden (${primaryComparatorTemp ? primaryComparatorTemp.name : 'primary'})`,
-            value: primaryBurden && primaryBurden.qualitySvCount !== null
-              ? `${primaryBurden.qualitySvCount} ${primaryBurden.qualitySvPercentile ? `(${primaryBurden.qualitySvPercentile}%)` : ''}`
-              : null,
+            value: svBurden,
           },
           {
             term: `HR Deficiency${print ? '*' : ''}`,
@@ -399,9 +404,9 @@ const GenomicSummary = (props) => {
 
     let primaryBurdenSvUpdate;
     if (primaryBurdenResp && primaryBurdenResp.qualitySvCount !== null) {
-      primaryBurdenSvUpdate = `${primaryBurdenResp.qualitySvCount} (${primaryBurdenResp.qualitySvPercentile}%)`;
+      primaryBurdenSvUpdate = `${primaryBurdenResp.qualitySvCount} ${primaryBurdenResp.qualitySvPercentile ? `(${primaryBurdenResp.qualitySvPercentile}%)` : ''}`;
     } else if (primaryBurdenData && primaryBurdenData.qualitySvCount !== null) {
-      primaryBurdenSvUpdate = `${primaryBurdenData.qualitySvCount} (${primaryBurdenData.qualitySvPercentile}%)`;
+      primaryBurdenSvUpdate = `${primaryBurdenData.qualitySvCount} ${primaryBurdenData.qualitySvPercentile ? `(${primaryBurdenData.qualitySvPercentile}%)` : ''}`;
     } else {
       primaryBurdenSvUpdate = null;
     }
