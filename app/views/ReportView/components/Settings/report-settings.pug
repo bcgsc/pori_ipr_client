@@ -36,7 +36,7 @@ section.meta
   div(layout="column", ng-if="!$ctrl.report.users.includes($ctrl.user)")
     md-subheader.md-no-sticky Analysis Status
     div(ng-if="$ctrl.report.analysisStartedAt").analysis__start
-      span Analysis started: {{$ctrl.formatDate($ctrl.report.analysisStartedAt)}}
+      span Analysis started: {{$ctrl.formatDate($ctrl.report.analysisStartedAt, true)}}
     md-tooltip(ng-if="!$ctrl.report.analysisStartedAt && !$ctrl.canStartAnalysis", md-direction="bottom") Only assigned users can start the analysis
     md-button(ng-click="$ctrl.startAnalysis()", ng-if="!$ctrl.report.analysisStartedAt", ng-disabled="!$ctrl.canStartAnalysis").md-accent Start Analysis
   md-subheader(ng-if="$ctrl.showBindings").md-no-sticky User Associations
