@@ -19,7 +19,7 @@ interface Props {
   selectedRow: SelectedRow,
   /** Dialog open state */
   isOpen: boolean,
-};
+}
 
 const ImageViewer: React.FC<Props> = ({
   onClose,

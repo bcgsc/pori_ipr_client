@@ -7,7 +7,7 @@ import api, { ApiCallSet } from '../../../../services/api';
 import { hlaColumnDefs, cellTypesColumnDefs } from './columnDefs';
 
 const Immune = () => {
-  const { report } = useContext(ReportContext)
+  const { report } = useContext(ReportContext);
   const [cellTypes, setCellTypes] = useState<Array<object>>([]);
   const [images, setImages] = useState<object>({});
   const [hlaTypes, setHlaTypes] = useState<Array<object>>([]);

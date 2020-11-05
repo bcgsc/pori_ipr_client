@@ -1,4 +1,4 @@
-import { ApiCall, ApiCallSet } from "./api";
+import { ApiCall, ApiCallSet } from './api';
 
 const get = (endpoint, callOptions) => {
   const requestOptions = {
@@ -29,7 +29,7 @@ const del = (endpoint, payload, callOptions) => {
     };
   }
   return new ApiCall(endpoint, requestOptions, callOptions);
-}
+};
 
 const put = (endpoint, payload, callOptions) => {
   const requestOptions = {
@@ -49,4 +49,4 @@ export default {
 export {
   ApiCall,
   ApiCallSet,
-}
+};

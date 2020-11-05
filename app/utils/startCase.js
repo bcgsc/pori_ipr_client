@@ -4,7 +4,7 @@
  * @param {string} delimiter optional delimiter
  */
 const startCase = (str, delimiter = ' ') => {
-  const splitStr = str.split(delimiter)
+  const splitStr = str.split(delimiter);
   const splitStrStartCase = splitStr.map(word => word.slice(0, 1).toUpperCase().concat(word.slice(1)));
   return splitStrStartCase.join(delimiter);
 };

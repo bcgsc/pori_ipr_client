@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useContext, useCallback } from 'react';
+import React, {
+  useState, useEffect, useContext, useCallback,
+} from 'react';
 import {
   Typography,
   IconButton,
@@ -44,7 +46,7 @@ const ProbeSummary: React.FC<Props> = ({
   const [probeResults, setProbeResults] = useState<Array<object> | null>();
   const [patientInformation, setPatientInformation] = useState<Array<object> | null>();
 
-  const [showPatientEdit, setShowPatientEdit] = useState<Boolean>(false);
+  const [showPatientEdit, setShowPatientEdit] = useState<boolean>(false);
 
   useEffect(() => {
     if (report && report.ident) {
@@ -93,7 +95,7 @@ const ProbeSummary: React.FC<Props> = ({
         if (loadedDispatch) {
           loadedDispatch({ type: 'probeSummary' });
         }
-      }
+      };
 
       getData();
     }
@@ -240,7 +242,7 @@ const ProbeSummary: React.FC<Props> = ({
           <Typography variant="h3" display="inline">
             Genomic Events with Potential Therapeutic Association
           </Typography>
-          {Boolean(probeResults.length) ? (
+          {probeResults.length ? (
             <DataTable
               columnDefs={eventsColumnDefs}
               rowData={probeResults}

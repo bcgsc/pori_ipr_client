@@ -1,4 +1,6 @@
-import React, { useEffect, useState, useContext, useRef } from 'react';
+import React, {
+  useEffect, useState, useContext, useRef,
+} from 'react';
 import orderBy from 'lodash.orderby';
 import { HorizontalBar, Chart } from 'react-chartjs-2';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
@@ -17,7 +19,7 @@ interface Color {
   red: number,
   green: number,
   blue: number,
-};
+}
 
 const LOWER_COLOR = {
   red: 134,
@@ -250,7 +252,7 @@ const ExpressionCorrelation = () => {
                 </div>
               )}
             </div>
-            {!Boolean(Object.values(plots).length) && !Boolean(Object.values(subtypePlots).length) && (
+            {!Object.values(plots).length && !Object.values(subtypePlots).length && (
               <Typography align="center">No expression correlation plots found</Typography>
             )}
           </>

@@ -39,7 +39,7 @@ const updateMicrobial = async (reportIdent, microbial) => {
     return response.json();
   }
   return errorHandler(response);
-}
+};
 
 export {
   getMicrobial,

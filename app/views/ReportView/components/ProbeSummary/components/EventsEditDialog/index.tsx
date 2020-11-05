@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useCallback, useContext } from 'react';
+import React, {
+  useState, useEffect, useCallback, useContext,
+} from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -33,7 +35,7 @@ const EventsEditDialog: React.FC<Props> = ({
   const { isSigned } = useContext(ConfirmContext);
 
   const [newData, setNewData] = useState<Array<any>>();
-  const [editDataDirty, setDataDirty] = useState<Boolean>(false);
+  const [editDataDirty, setDataDirty] = useState<boolean>(false);
 
   useEffect(() => {
     if (editData) {
@@ -49,9 +51,9 @@ const EventsEditDialog: React.FC<Props> = ({
 
     if (prop.includes('.')) {
       [prop, subprop] = prop.split('.');
-      setNewData(prevVal => ({ ...prevVal, [prop]: { [subprop]: value }}));
+      setNewData(prevVal => ({ ...prevVal, [prop]: { [subprop]: value } }));
     } else {
-      setNewData(prevVal => ({...prevVal, [prop]: value }));
+      setNewData(prevVal => ({ ...prevVal, [prop]: value }));
     }
 
     if (!editDataDirty) {
@@ -62,12 +64,12 @@ const EventsEditDialog: React.FC<Props> = ({
   const handleClose = useCallback(async (isSaved) => {
     if (isSaved && editDataDirty) {
       const call = api.put(`/report/${report.ident}/probe-results/${newData.ident}`, newData, {});
-      await call.request(isSigned)
+      await call.request(isSigned);
       onClose(newData);
     } else {
       onClose(false);
     }
-  }, [newData])
+  }, [newData]);
 
   return (
     <Dialog open={isOpen}>
@@ -119,7 +121,7 @@ const EventsEditDialog: React.FC<Props> = ({
         </Button>
       </DialogActions>
     </Dialog>
-  )
-}
+  );
+};
 
 export default EventsEditDialog;

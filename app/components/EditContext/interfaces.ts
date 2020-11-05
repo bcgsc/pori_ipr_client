@@ -1,6 +1,6 @@
 interface EditContextInterface {
   /** Can the current user make edits */
-  canEdit: Boolean,
+  canEdit: boolean,
   /** Update current user edit status */
   setCanEdit: Function,
 }

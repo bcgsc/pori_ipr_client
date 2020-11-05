@@ -149,7 +149,7 @@ const TumourSummaryEdit = (props) => {
         </Button>
       </DialogActions>
     </Dialog>
-  )
-}
+  );
+};
 
 export default TumourSummaryEdit;

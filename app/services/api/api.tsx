@@ -1,14 +1,14 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
+import {
+  MuiThemeProvider,
+} from '@material-ui/core/styles';
 import {
   BadRequestError,
 } from '../errors/errors';
 
-import React from 'react';
-import ReactDOM from 'react-dom';
 import AlertDialog from '../../components/AlertDialog';
 import { theme } from '../../App';
-import {
-  MuiThemeProvider,
-} from '@material-ui/core/styles';
 
 import errorHandler from '../errors/errorHandler';
 
@@ -18,11 +18,17 @@ const {
 
 class ApiCall {
   endpoint: string;
+
   requestOptions: any;
+
   controller: any;
+
   forceListReturn: boolean;
+
   forceRecordReturn: boolean;
+
   name: string;
+
   confirm: boolean;
 
   constructor(
@@ -33,7 +39,8 @@ class ApiCall {
       forceRecordReturn: boolean,
       name: string,
       confirm: boolean
-    }) {
+    },
+  ) {
     const {
       forceListReturn,
       forceRecordReturn,

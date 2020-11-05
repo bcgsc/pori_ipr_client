@@ -60,14 +60,14 @@ const SignatureCard: React.FC<Props> = ({
         </div>
         <div className="signatures-print__value">
           <Typography variant="body2" display="inline">
-            {`Date: `}
+            {'Date: '}
           </Typography>
           {signature && signature.ident ? (
-              <Typography variant="body2" display="inline">
-                {signature.updatedAt
-                  ? signature.updatedAt
-                  : signature.createdAt}
-              </Typography>
+            <Typography variant="body2" display="inline">
+              {signature.updatedAt
+                ? signature.updatedAt
+                : signature.createdAt}
+            </Typography>
           ) : (
             <Typography display="inline">
               {NON_BREAKING_SPACE}
@@ -110,11 +110,11 @@ const SignatureCard: React.FC<Props> = ({
           Date
         </Typography>
         {signature && signature.ident ? (
-            <Typography>
-              {signature.updatedAt
-                ? signature.updatedAt
-                : signature.createdAt}
-            </Typography>
+          <Typography>
+            {signature.updatedAt
+              ? signature.updatedAt
+              : signature.createdAt}
+          </Typography>
         ) : (
           <Typography>
             {NON_BREAKING_SPACE}
