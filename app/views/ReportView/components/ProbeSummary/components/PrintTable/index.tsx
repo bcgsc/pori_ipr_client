@@ -3,7 +3,7 @@ import React from 'react';
 import './index.scss';
 
 type Props = {
-  data: Array<object>,
+  data: Array<Record<string, unknown>>,
   headers: Array<string>,
 };
 
@@ -14,7 +14,7 @@ const PrintTable: React.FC<Props> = ({ data, headers }) => (
         <thead className="table__header">
           <tr>
             {headers.map(val => (
-              <th>
+              <th key={val}>
                 {val}
               </th>
             ))}
@@ -22,7 +22,7 @@ const PrintTable: React.FC<Props> = ({ data, headers }) => (
         </thead>
         <tbody>
           {data.map(val => (
-            <tr className="table__row">
+            <tr key={val.Sample} className="table__row">
               <td>
                 {val.Sample}
               </td>

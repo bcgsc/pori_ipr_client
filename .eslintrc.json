@@ -95,6 +95,7 @@
     ],
     "import/no-unresolved": "off",
     "import/no-named-as-default": "off",
+    "import/named": "off",
     "import/no-named-as-default-member": "off",
     "class-methods-use-this": "off",
     "react/jsx-filename-extension": "off"

@@ -16,14 +16,8 @@ import api from '../../../../../../services/api';
 
 type Props = {
   isOpen: boolean,
-  onClose: Function,
-  editData: Array<{
-    gene: {
-      name: string,
-    },
-    variant: string,
-    comment: string | null,
-  }>
+  onClose: (arg0: boolean | Record<string, unknown>) => void,
+  editData: Record<string, unknown>
 };
 
 const EventsEditDialog: React.FC<Props> = ({
@@ -34,7 +28,7 @@ const EventsEditDialog: React.FC<Props> = ({
   const { report } = useContext(ReportContext);
   const { isSigned } = useContext(ConfirmContext);
 
-  const [newData, setNewData] = useState<Array<any>>();
+  const [newData, setNewData] = useState<Record<string, unknown | Record<string, unknown>>>();
   const [editDataDirty, setDataDirty] = useState<boolean>(false);
 
   useEffect(() => {
@@ -69,7 +63,7 @@ const EventsEditDialog: React.FC<Props> = ({
     } else {
       onClose(false);
     }
-  }, [newData]);
+  }, [editDataDirty, isSigned, newData, onClose, report.ident]);
 
   return (
     <Dialog open={isOpen}>
@@ -77,7 +71,7 @@ const EventsEditDialog: React.FC<Props> = ({
         Edit Event
       </DialogTitle>
       <DialogContent className="patient-dialog__content">
-        {newData && newData.gene && newData.gene.name && (
+        {newData?.gene?.name && (
           <>
             <TextField
               className="patient-dialog__text-field"

@@ -18,7 +18,7 @@ type Props = {
   title: string,
   signature: any | object,
   onClick: Function,
-  role: 'author' | 'reviewer',
+  type: 'author' | 'reviewer',
   isPrint: boolean,
 };
 
@@ -26,17 +26,17 @@ const SignatureCard: React.FC<Props> = ({
   title,
   signature,
   onClick,
-  role,
+  type,
   isPrint,
 }) => {
   const { canEdit } = useContext(EditContext);
 
   const handleSign = () => {
-    onClick(true, role);
+    onClick(true, type);
   };
 
   const handleRevoke = () => {
-    onClick(false, role);
+    onClick(false, type);
   };
 
   if (isPrint) {
