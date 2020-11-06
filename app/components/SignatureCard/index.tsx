@@ -17,8 +17,8 @@ const NON_BREAKING_SPACE = '\u00A0';
 
 type Props = {
   title: string,
-  signatures: any | object,
-  onClick: Function,
+  signatures: null | Record<string, unknown | Record<string, unknown>>,
+  onClick: (arg0: boolean, arg1: string) => void,
   role: 'author' | 'reviewer',
   isPrint: boolean,
 };
@@ -31,7 +31,7 @@ const SignatureCard: React.FC<Props> = ({
   isPrint,
 }) => {
   const { canEdit } = useContext(EditContext);
-  const [userSignature, setUserSignature] = useState({});
+  const [userSignature, setUserSignature] = useState<Record<string, unknown>>({});
 
   useEffect(() => {
     if (signatures && role) {
