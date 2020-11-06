@@ -58,7 +58,7 @@ const SignatureCard: React.FC<Props> = ({
           <Typography variant="body2" display="inline">
             {`${title}: `}
           </Typography>
-          {userSignature && userSignature.ident ? (
+          {userSignature?.ident ? (
             <Typography variant="body2" display="inline">
               {userSignature.firstName}
               {' '}
@@ -74,7 +74,7 @@ const SignatureCard: React.FC<Props> = ({
           <Typography variant="body2" display="inline">
             {'Date: '}
           </Typography>
-          {signatures && signatures.ident ? (
+          {signatures?.ident ? (
             <Typography variant="body2" display="inline">
               {role === 'author' ? formatDate(signatures.authorSignedAt, true) : formatDate(signatures.reviewerSignedAt, true)}
             </Typography>
@@ -94,14 +94,14 @@ const SignatureCard: React.FC<Props> = ({
         <Typography variant="body2">
           {title}
         </Typography>
-        {userSignature && userSignature.ident && (
+        {userSignature?.ident && (
           <Typography>
             {userSignature.firstName}
             {' '}
             {userSignature.lastName}
           </Typography>
         )}
-        {(!userSignature || !userSignature.ident) && canEdit && (
+        {!userSignature?.ident && canEdit && (
           <>
             <Button
               onClick={handleSign}
@@ -129,7 +129,7 @@ const SignatureCard: React.FC<Props> = ({
           </Typography>
         )}
       </div>
-      {userSignature && userSignature.ident && canEdit && (
+      {userSignature?.ident && canEdit && (
         <div className="signatures__button">
           <IconButton
             size="small"
