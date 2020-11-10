@@ -119,7 +119,7 @@ const SignatureCard: React.FC<Props> = ({
         <Typography variant="body2">
           Date
         </Typography>
-        {signatures && signatures.ident ? (
+        {signatures?.ident ? (
           <Typography>
             {role === 'author' ? formatDate(signatures.authorSignedAt, true) : formatDate(signatures.reviewerSignedAt, true)}
           </Typography>
