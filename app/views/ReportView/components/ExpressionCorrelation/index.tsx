@@ -61,7 +61,7 @@ const getLuminance = (color: Color): number => {
   return 0.2126 * color.red + 0.7152 * color.green + 0.0722 * color.blue;
 };
 
-const ExpressionCorrelation = () => {
+const ExpressionCorrelation = (): JSX.Element => {
   const { report } = useContext(ReportContext);
 
   const [plots, setPlots] = useState({});
@@ -243,6 +243,7 @@ const ExpressionCorrelation = () => {
                     </Typography>
                     {Object.values(subtypePlots).map(plot => (
                       <Image
+                        key={plot.ident}
                         image={plot}
                         showTitle
                         showCaption

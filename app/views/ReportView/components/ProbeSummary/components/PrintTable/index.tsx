@@ -7,7 +7,7 @@ type Props = {
   headers: Array<string>,
 };
 
-const PrintTable: React.FC<Props> = ({ data, headers }) => (
+const PrintTable = ({ data, headers }: Props): JSX.Element => (
   <div>
     {Boolean(data.length) && Boolean(headers.length) && (
       <table className="table">

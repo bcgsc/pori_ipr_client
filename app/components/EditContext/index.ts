@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import React from 'react';
-import { EditContextInterface } from './interfaces';
+import EditContextInterface from './interfaces';
 
 const EditContext = React.createContext<EditContextInterface>({
   canEdit: false,

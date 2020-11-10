@@ -39,7 +39,7 @@ interface ReportContextInterface {
     type: string,
   } | null,
   /** Set new current report */
-  setReport: Function,
+  setReport: () => void,
 }
 
 export {

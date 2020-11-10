@@ -33,10 +33,10 @@ type Props = {
   isPrint: boolean,
 };
 
-const ProbeSummary: React.FC<Props> = ({
+const ProbeSummary = ({
   loadedDispatch,
   isPrint,
-}) => {
+}: Props): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
   const { canEdit } = useContext(EditContext);
   const { isSigned, setIsSigned } = useContext(ConfirmContext);

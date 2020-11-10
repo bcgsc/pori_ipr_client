@@ -20,11 +20,11 @@ type Props = {
   editData: Record<string, unknown>
 };
 
-const EventsEditDialog: React.FC<Props> = ({
+const EventsEditDialog = ({
   editData,
   isOpen,
   onClose,
-}) => {
+}: Props): JSX.Element => {
   const { report } = useContext(ReportContext);
   const { isSigned } = useContext(ConfirmContext);
 

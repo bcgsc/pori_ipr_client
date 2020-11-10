@@ -227,6 +227,7 @@ class ApiCallSet {
       this.showConfirm();
       return;
     }
+    // eslint-disable-next-line consistent-return
     return Promise.all(this.calls.map(call => call.request()));
   }
 }

@@ -129,6 +129,7 @@ const logout = async () => {
     await keycloak.logout({
       redirectUri: window.location.uri,
     });
+    return null;
   } catch (err) {
     delete localStorage[CONFIG.STORAGE.KEYCLOAK];
     delete $http.headers.Authorization;
