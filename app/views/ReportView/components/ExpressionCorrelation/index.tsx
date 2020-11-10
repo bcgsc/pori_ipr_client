@@ -102,7 +102,7 @@ const ExpressionCorrelation = (): JSX.Element => {
 
   const getGraphData = (rowData) => {
     const labels = rowData.map(data => `${data.library} (${data.tumourContent}% TC)`);
-    const colors = rowData.map(data => `rgb(${Object.values(getColor(LOWER_COLOR, UPPER_COLOR, data.tumourContent)).join(',')})`);
+    const colors = rowData.map(data => `rgb(${Object.values(getColor(LOWER_COLOR, UPPER_COLOR, data.tumourContent / 100)).join(',')})`);
 
     const datasets = [
       {

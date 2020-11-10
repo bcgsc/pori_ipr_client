@@ -266,14 +266,14 @@ const ProbeSummary = ({
           <div className={`${isPrint ? 'probe-summary__signatures' : ''}`}>
             <SignatureCard
               title={`${isPrint ? 'Manual Review' : 'Ready'}`}
-              signature={signatures ? signatures.authorSignature : null}
+              signatures={signatures}
               onClick={handleSign}
               type="author"
               isPrint={isPrint}
             />
             <SignatureCard
               title="Reviewer"
-              signature={signatures ? signatures.reviewerSignature : null}
+              signatures={signatures}
               onClick={handleSign}
               type="reviewer"
               isPrint={isPrint}
