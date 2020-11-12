@@ -16,7 +16,7 @@ import api from '../../../../../../services/api';
 
 type Props = {
   isOpen: boolean,
-  onClose: (arg0: boolean | Record<string, unknown>) => void,
+  onClose: (isSaved: boolean | Record<string, unknown>) => void,
   editData: Record<string, unknown>
 };
 
