@@ -176,7 +176,7 @@ const GenomicSummary = (props) => {
             value: signatures
               .filter(({ selected }) => selected)
               .map(({ associations, signature }) => (
-                `${signature} (${associations})`
+                `${signature} ${associations ? `(${associations})` : ''}`
               )).join(', '),
             action: () => history.push('mutation-signatures'),
           },
@@ -433,7 +433,7 @@ const GenomicSummary = (props) => {
         value: signatureData
           .filter(({ selected }) => selected)
           .map(({ associations, signature }) => (
-            `${signature} (${associations})`
+            `${signature} ${associations ? `(${associations})` : ''}`
           )).join(', '),
         action: () => history.push('mutation-signatures'),
       },
