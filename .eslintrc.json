@@ -94,7 +94,12 @@
       "WithStatement"
     ],
     "import/no-unresolved": "off",
+    "import/no-named-as-default": "off",
+    "import/named": "off",
+    "import/no-named-as-default-member": "off",
+    "import/prefer-default-export": "warn",
     "class-methods-use-this": "off",
-    "react/jsx-filename-extension": "off"
+    "react/jsx-filename-extension": "off",
+    "@typescript-eslint/no-empty-function": "off"
   }
 }

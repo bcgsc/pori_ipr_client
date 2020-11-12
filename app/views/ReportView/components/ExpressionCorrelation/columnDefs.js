@@ -38,7 +38,7 @@ const columnDefs = [
     hide: false,
     sortable: false,
     suppressMenu: true,
-  }
+  },
 ];
 
 export default columnDefs;
