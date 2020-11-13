@@ -1,5 +1,7 @@
+@import '../../../../../../styles/variables';
+
 .autocomplete {
   &__popper {
-    margin: -60px 0 0;
+    margin: -$navbar-size 0 0;
   }
 }

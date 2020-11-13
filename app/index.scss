@@ -48,5 +48,5 @@ html body {
 
 // Fix for dialog not accounting for AppBar
 .md-dialog-container {
-  top: -56px !important;
+  top: -$navbar-size !important;
 }

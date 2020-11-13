@@ -2,7 +2,7 @@
 @import '../../styles/theme';
 
 .report-sidebar {
-  height: calc(100vh - 56px);
+  height: calc(100vh - #{$navbar-size});
   float: right;
   position: sticky;
   top: 0px;
