@@ -1,4 +1,6 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, {
+  useEffect, useState, useContext, useCallback,
+} from 'react';
 import PropTypes from 'prop-types';
 import {
   Dialog,
@@ -43,6 +45,19 @@ const GeneViewer = (props) => {
   const [tabValue, setTabValue] = useState(0);
   const snackbar = useContext(SnackbarContext);
 
+  const handleClose = useCallback((value) => {
+    columnDefs[0].cellRendererParams = { link: true };
+    smallMutationsColumnDefs[0].cellRendererParams = { link: true };
+    copyNumberColumnDefs[0].cellRendererParams = { link: true };
+    expressionColumnDefs[0].cellRendererParams = { link: true };
+    structuralVariantsColumnDefs[0].cellRendererParams = { link: true };
+    onClose(value);
+  }, [onClose]);
+
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
+  };
+
   useEffect(() => {
     if (isOpen) {
       const getData = async () => {
@@ -52,6 +67,7 @@ const GeneViewer = (props) => {
           setGeneData(resp);
         } catch {
           snackbar.add(`Error: gene viewer data does not exist for ${gene}`);
+          handleClose(null);
         }
       };
       // Don't show gene viewer link when in gene viewer
@@ -62,20 +78,7 @@ const GeneViewer = (props) => {
       structuralVariantsColumnDefs[0].cellRendererParams = { link: false };
       getData();
     }
-  }, [gene, isOpen, reportIdent, snackbar]);
-
-  const handleClose = (value) => {
-    columnDefs[0].cellRendererParams = { link: true };
-    smallMutationsColumnDefs[0].cellRendererParams = { link: true };
-    copyNumberColumnDefs[0].cellRendererParams = { link: true };
-    expressionColumnDefs[0].cellRendererParams = { link: true };
-    structuralVariantsColumnDefs[0].cellRendererParams = { link: true };
-    onClose(value);
-  };
-
-  const handleTabChange = (event, newValue) => {
-    setTabValue(newValue);
-  };
+  }, [gene, handleClose, isOpen, reportIdent, snackbar]);
 
   return (
     <Dialog
