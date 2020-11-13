@@ -81,5 +81,5 @@ const hlaColumnDefs = [
 
 export {
   cellTypesColumnDefs,
-  hlaColumnDefs
+  hlaColumnDefs,
 };

@@ -14,18 +14,14 @@ import './index.scss';
 
 interface Props {
   /** Handles dialog close */
-  onClose: Function,
+  onClose: () => void,
   /** Row object selected from table */
   selectedRow: SelectedRow,
   /** Dialog open state */
   isOpen: boolean,
-};
+}
 
-const ImageViewer: React.FC<Props> = ({
-  onClose,
-  selectedRow,
-  isOpen,
-}) => {
+const ImageViewer = ({ onClose, selectedRow, isOpen }: Props): JSX.Element => {
   const handleClose = (): void => {
     onClose();
   };

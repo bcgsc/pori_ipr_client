@@ -60,10 +60,7 @@ const coalesceEntries = (entries) => {
           if (!buckets[bucketKey][key].includes(value)) {
             buckets[bucketKey][key].push(value);
           }
-        } else if (typeof buckets[bucketKey][key] === 'object') {
-          // the only object is variant which matches due to being in the same bucket. No action
-          return;
-        } else if (buckets[bucketKey][key] !== value) {
+        } else if (typeof buckets[bucketKey][key] !== 'object' && buckets[bucketKey][key] !== value) {
           buckets[bucketKey][key] = [buckets[bucketKey][key], value];
         }
       });

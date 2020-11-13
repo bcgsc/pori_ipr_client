@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useContext, useCallback } from 'react';
+import React, {
+  useState, useEffect, useContext, useCallback,
+} from 'react';
 import {
   Typography,
   IconButton,
@@ -27,24 +29,24 @@ import PrintTable from './components/PrintTable';
 import './index.scss';
 
 type Props = {
-  loadedDispatch: Function,
+  loadedDispatch: (type: Record<string, unknown>) => void,
   isPrint: boolean,
 };
 
-const ProbeSummary: React.FC<Props> = ({
+const ProbeSummary = ({
   loadedDispatch,
   isPrint,
-}) => {
+}: Props): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
   const { canEdit } = useContext(EditContext);
   const { isSigned, setIsSigned } = useContext(ConfirmContext);
 
   const [testInformation, setTestInformation] = useState<Array<TestInformationInterface> | null>();
   const [signatures, setSignatures] = useState<any | null>();
-  const [probeResults, setProbeResults] = useState<Array<object> | null>();
-  const [patientInformation, setPatientInformation] = useState<Array<object> | null>();
+  const [probeResults, setProbeResults] = useState<Array<Record<string, unknown>> | null>();
+  const [patientInformation, setPatientInformation] = useState<Array<Record<string, unknown>> | null>();
 
-  const [showPatientEdit, setShowPatientEdit] = useState<Boolean>(false);
+  const [showPatientEdit, setShowPatientEdit] = useState<boolean>(false);
 
   useEffect(() => {
     if (report && report.ident) {
@@ -93,7 +95,7 @@ const ProbeSummary: React.FC<Props> = ({
         if (loadedDispatch) {
           loadedDispatch({ type: 'probeSummary' });
         }
-      }
+      };
 
       getData();
     }
@@ -103,7 +105,7 @@ const ProbeSummary: React.FC<Props> = ({
     const apiCalls = [];
     setShowPatientEdit(false);
 
-    if (!isSaved || !newPatientData && !newReportData) {
+    if (!isSaved || (!newPatientData && !newReportData)) {
       return;
     }
 
@@ -152,7 +154,7 @@ const ProbeSummary: React.FC<Props> = ({
         value: newPatientData ? newPatientData.gender : report.patientInformation.gender,
       },
     ]);
-  }, [report, isSigned]);
+  }, [isSigned, report, setReport]);
 
   const handleSign = async (signed: boolean, role: 'author' | 'reviewer') => {
     let newSignature;
@@ -240,7 +242,7 @@ const ProbeSummary: React.FC<Props> = ({
           <Typography variant="h3" display="inline">
             Genomic Events with Potential Therapeutic Association
           </Typography>
-          {Boolean(probeResults.length) ? (
+          {probeResults.length ? (
             <DataTable
               columnDefs={eventsColumnDefs}
               rowData={probeResults}
@@ -266,14 +268,14 @@ const ProbeSummary: React.FC<Props> = ({
               title={`${isPrint ? 'Manual Review' : 'Ready'}`}
               signatures={signatures}
               onClick={handleSign}
-              role="author"
+              type="author"
               isPrint={isPrint}
             />
             <SignatureCard
               title="Reviewer"
               signatures={signatures}
               onClick={handleSign}
-              role="reviewer"
+              type="reviewer"
               isPrint={isPrint}
             />
           </div>
@@ -281,11 +283,6 @@ const ProbeSummary: React.FC<Props> = ({
       )}
     </div>
   );
-};
-
-ProbeSummary.defaultProps = {
-  loadedDispatch: () => {},
-  isPrint: false,
 };
 
 export default ProbeSummary;
