@@ -72,7 +72,7 @@ const Main = (): JSX.Element => {
 
       return unregister;
     }
-    return null;
+    return undefined;
   }, [authorizationToken]);
 
   const handleSnackbarClose = useCallback((event, reason) => {

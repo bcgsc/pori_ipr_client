@@ -1,4 +1,6 @@
-import React, { useEffect, useState, useCallback, useContext } from 'react';
+import React, {
+  useEffect, useState, useCallback, useContext,
+} from 'react';
 import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {
@@ -60,30 +62,30 @@ const customTypeSort = (variant) => {
   return 3;
 };
 
-const GenomicSummary = (props) => {
-  const {
-    print,
-    loadedDispatch,
-  } = props;
+type Props = {
+  print: boolean,
+  loadedDispatch: (section: Record<'type', string>) => void,
+};
 
+const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
   const { canEdit } = useContext(EditContext);
   const { isSigned } = useContext(ConfirmContext);
   const snackbar = useContext(SnackbarContext);
   const history = useHistory();
 
-  const [showPatientEdit, setShowPatientEdit] = useState(false);
-  const [patientInformationData, setPatientInformationData] = useState();
-  const [showTumourSummaryEdit, setShowTumourSummaryEdit] = useState(false);
+  const [showPatientEdit, setShowPatientEdit] = useState<boolean>(false);
+  const [patientInformationData, setPatientInformationData] = useState<Array<Record<string, unknown>>>();
+  const [showTumourSummaryEdit, setShowTumourSummaryEdit] = useState<boolean>(false);
 
-  const [microbialData, setMicrobialData] = useState([]);
-  const [signatureData, setSignatureData] = useState([]);
-  const [tumourSummaryData, setTumourSummaryData] = useState();
-  const [primaryBurdenData, setPrimaryBurdenData] = useState();
-  const [primaryComparator, setPrimaryComparator] = useState();
-  const [analysisSummaryData, setAnalysisSummaryData] = useState();
-  const [variantData, setVariantData] = useState();
-  const [variantFilter, setVariantFilter] = useState();
+  const [microbialData, setMicrobialData] = useState<Array<Record<string, unknown>>>([]);
+  const [signatureData, setSignatureData] = useState<Array<Record<string, unknown>>>([]);
+  const [tumourSummaryData, setTumourSummaryData] = useState<Array<Record<string, unknown>>>();
+  const [primaryBurdenData, setPrimaryBurdenData] = useState<Record<string, unknown>>();
+  const [primaryComparator, setPrimaryComparator] = useState<Record<string, unknown>>();
+  const [analysisSummaryData, setAnalysisSummaryData] = useState<Array<Record<string, unknown>>>();
+  const [variantData, setVariantData] = useState<Array<Record<string, unknown>>>();
+  const [variantFilter, setVariantFilter] = useState<string>('');
   const [variantCounts, setVariantCounts] = useState({
     smallMutation: 0,
     cnv: 0,
@@ -462,7 +464,7 @@ const GenomicSummary = (props) => {
         value: null,
       },
     ]);
-  }, [report, isSigned, history, microbialData, primaryBurdenData, print, setReport, signatureData]);
+  }, [isSigned, microbialData, primaryBurdenData, report.tumourContent, report.subtyping, report.ident, print, signatureData, primaryComparator, setReport, history]);
 
   return (
     <div className="genomic-summary">
@@ -470,7 +472,7 @@ const GenomicSummary = (props) => {
         <>
           <div className="genomic-summary__patient-information">
             <div className="genomic-summary__patient-information-title">
-              <Typography variant="h3" dislay="inline">
+              <Typography variant="h3" display="inline">
                 Patient Information
                 {canEdit && (
                   <>
