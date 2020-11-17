@@ -339,8 +339,7 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
     const callSet = new ApiCallSet(apiCalls);
     await callSet.request(isSigned);
 
-    const reportUpdateCall = api.get(`/reports/${report.ident}`);
-    const reportResp = await reportUpdateCall.request();
+    const reportResp = await api.get(`/reports/${report.ident}`).request();
     setReport(reportResp);
 
     setPatientInformation([
