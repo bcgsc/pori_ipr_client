@@ -75,16 +75,18 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
   const history = useHistory();
 
   const [showPatientEdit, setShowPatientEdit] = useState<boolean>(false);
-  const [patientInformationData, setPatientInformationData] = useState<Array<Record<string, unknown>>>();
   const [showTumourSummaryEdit, setShowTumourSummaryEdit] = useState<boolean>(false);
 
-  const [microbialData, setMicrobialData] = useState<Array<Record<string, unknown>>>([]);
-  const [signatureData, setSignatureData] = useState<Array<Record<string, unknown>>>([]);
-  const [tumourSummaryData, setTumourSummaryData] = useState<Array<Record<string, unknown>>>();
-  const [primaryBurdenData, setPrimaryBurdenData] = useState<Record<string, unknown>>();
+  const [patientInformation, setPatientInformation] = useState<Array<Record<string, unknown>>>();
+  const [microbial, setMicrobial] = useState<Array<Record<string, unknown>>>([]);
+  const [signatures, setSignatures] = useState<Array<Record<string, unknown>>>([]);
+  const [tumourSummary, setTumourSummary] = useState<Array<Record<string, unknown>>>();
+  const [primaryBurden, setPrimaryBurden] = useState<Record<string, unknown>>();
+  const [variants, setVariants] = useState<Array<Record<string, unknown>>>();
+
+  const [tCellCd8, setTCellCd8] = useState<Record<string, unknown>>();
   const [primaryComparator, setPrimaryComparator] = useState<Record<string, unknown>>();
-  const [analysisSummaryData, setAnalysisSummaryData] = useState<Array<Record<string, unknown>>>();
-  const [variantData, setVariantData] = useState<Array<Record<string, unknown>>>();
+  const [analysisSummary, setAnalysisSummary] = useState<Array<Record<string, unknown>>>();
   const [variantFilter, setVariantFilter] = useState<string>('');
   const [variantCounts, setVariantCounts] = useState({
     smallMutation: 0,
@@ -96,29 +98,34 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
   useEffect(() => {
     if (report && report.patientInformation) {
       const getData = async () => {
+        const call = api.get(`/reports/${report.ident}/immune-cell-types`);
         const [
-          microbial,
-          variants,
-          comparators,
-          signatures,
-          burden,
+          microbialResp,
+          variantsResp,
+          comparatorsResp,
+          signaturesResp,
+          burdenResp,
+          immuneResp,
         ] = await Promise.all([
           getMicrobial(report.ident),
           AlterationsService.all(report.ident),
           getComparators(report.ident),
           getMutationSignatures(report.ident),
           getMutationBurden(report.ident),
+          call.request(),
         ]);
 
-        const primaryBurden = burden.find(entry => entry.role === 'primary');
-        const primaryComparatorTemp = comparators.find(({ analysisRole }) => analysisRole === 'mutation burden (primary)');
+        const tCellCd8Temp = immuneResp.find(({ cellType }) => cellType === 'T cells CD8');
+        const primaryBurdenTemp = burdenResp.find((entry: Record<string, unknown>) => entry.role === 'primary');
+        const primaryComparatorTemp = comparatorsResp.find(({ analysisRole }) => analysisRole === 'mutation burden (primary)');
 
         setPrimaryComparator(primaryComparatorTemp);
-        setPrimaryBurdenData(primaryBurden);
-        setMicrobialData(microbial);
-        setSignatureData(signatures);
+        setPrimaryBurden(primaryBurdenTemp);
+        setMicrobial(microbialResp);
+        setSignatures(signaturesResp);
+        setTCellCd8(tCellCd8Temp);
 
-        setPatientInformationData([
+        setPatientInformation([
           {
             label: 'Alternate ID',
             value: report.alternateIdentifier,
@@ -150,13 +157,20 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
         ]);
 
         let svBurden;
-        if (primaryBurden && primaryBurden.qualitySvCount !== null) {
-          svBurden = `${primaryBurden.qualitySvCount} ${primaryBurden.qualitySvPercentile ? `(${primaryBurden.qualitySvPercentile}%)` : ''}`;
+        if (primaryBurdenTemp && primaryBurdenTemp.qualitySvCount !== null) {
+          svBurden = `${primaryBurdenTemp.qualitySvCount} ${primaryBurdenTemp.qualitySvPercentile ? `(${primaryBurdenTemp.qualitySvPercentile}%)` : ''}`;
         } else {
           svBurden = null;
         }
 
-        setTumourSummaryData([
+        let tCell;
+        if (tCellCd8Temp && typeof tCellCd8Temp.score === 'number') {
+          tCell = `${tCellCd8Temp.score} ${tCellCd8Temp.percentile ? `(${tCellCd8Temp.percentile}%)` : ''}`;
+        } else {
+          tCell = null;
+        }
+
+        setTumourSummary([
           {
             term: 'Tumour Content',
             value: report.tumourContent,
@@ -167,7 +181,7 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
           },
           {
             term: 'Microbial Species',
-            value: microbial && microbial.length ? microbial[0].species : null,
+            value: microbialResp && microbialResp.length ? microbialResp[0].species : null,
           },
           {
             term: `Immune Infiltration${print ? '*' : ''}`,
@@ -175,7 +189,7 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
           },
           {
             term: 'Mutation Signature',
-            value: signatures
+            value: signaturesResp
               .filter(({ selected }) => selected)
               .map(({ associations, signature }) => (
                 `${signature} (${associations})`
@@ -184,11 +198,15 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
           },
           {
             term: `Mutation Burden (${primaryComparatorTemp ? primaryComparatorTemp.name : 'primary'})`,
-            value: primaryBurden && primaryBurden.totalMutationsPerMb !== null ? `${primaryBurden.totalMutationsPerMb} mut/Mb` : null,
+            value: primaryBurdenTemp && primaryBurdenTemp.totalMutationsPerMb !== null ? `${primaryBurdenTemp.totalMutationsPerMb} mut/Mb` : null,
           },
           {
             term: `SV Burden (${primaryComparatorTemp ? primaryComparatorTemp.name : 'primary'})`,
             value: svBurden,
+          },
+          {
+            term: 'T-Cell Score',
+            value: tCell,
           },
           {
             term: `HR Deficiency${print ? '*' : ''}`,
@@ -208,10 +226,10 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
           },
         ]);
 
-        const normalComparator = comparators.find(({ analysisRole }) => analysisRole === 'expression (primary site)');
-        const diseaseComparator = comparators.find(({ analysisRole }) => analysisRole === 'expression (disease)');
+        const normalComparator = comparatorsResp.find(({ analysisRole }) => analysisRole === 'expression (primary site)');
+        const diseaseComparator = comparatorsResp.find(({ analysisRole }) => analysisRole === 'expression (disease)');
 
-        setAnalysisSummaryData([
+        setAnalysisSummary([
           {
             label: 'Constitutional Protocol',
             value: report.patientInformation.constitutionalProtocol,
@@ -242,18 +260,18 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
           expression: 0,
         };
 
-        variants.forEach((variant, k) => {
+        variantsResp.forEach((variant, k) => {
           // Add processed Variant
           output.push(variantCategory(variant));
 
           // Update counts
-          if (!counts[variants[k].type]) {
-            counts[variants[k].type] = 0;
+          if (!counts[variantsResp[k].type]) {
+            counts[variantsResp[k].type] = 0;
           }
-          counts[variants[k].type] += 1;
+          counts[variantsResp[k].type] += 1;
         });
         const sorted = sortBy(output, [customTypeSort, 'geneVariant']);
-        setVariantData(sorted);
+        setVariants(sorted);
         setVariantCounts(counts);
         loadedDispatch({ type: 'genomicSummary' });
       };
@@ -271,7 +289,7 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
       await req.request(isSigned);
 
       setVariantCounts(prevVal => ({ ...prevVal, [type]: prevVal[type] - 1 }));
-      setVariantData(prevVal => (prevVal.filter(val => val.ident !== chipIdent)));
+      setVariants(prevVal => (prevVal.filter(val => val.ident !== chipIdent)));
       snackbar.add('Entry deleted');
     } catch (err) {
       console.error(err);
@@ -287,7 +305,7 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
       const categorizedVariantEntry = variantCategory(newVariantEntry);
 
       setVariantCounts(prevVal => ({ ...prevVal, [categorizedVariantEntry.type]: prevVal[categorizedVariantEntry.type] + 1 }));
-      setVariantData(prevVal => ([...prevVal, categorizedVariantEntry]));
+      setVariants(prevVal => ([...prevVal, categorizedVariantEntry]));
       snackbar.add('Entry added');
     } catch (err) {
       console.error(err);
@@ -318,7 +336,7 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
       setReport({ ...reportResp, ...report });
     }
 
-    setPatientInformationData([
+    setPatientInformation([
       {
         label: 'Alternate ID',
         value: newReportData ? newReportData.alternateIdentifier : report.alternateIdentifier,
@@ -360,7 +378,7 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
 
     if (newMicrobialData) {
       apiCalls.push(api.put(`/reports/${report.ident}/microbial`, newMicrobialData));
-      setMicrobialData(newMicrobialData);
+      setMicrobial(newMicrobialData);
     } else {
       apiCalls.push({ request: () => null });
     }
@@ -372,8 +390,8 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
     }
 
     if (newMutationBurdenData) {
-      if (primaryBurdenData) {
-        apiCalls.push(api.put(`/reports/${report.ident}/mutation-burden/${primaryBurdenData.ident}`, newMutationBurdenData));
+      if (primaryBurden) {
+        apiCalls.push(api.put(`/reports/${report.ident}/mutation-burden/${primaryBurden.ident}`, newMutationBurdenData));
       } else {
         apiCalls.push(api.post(`/reports/${report.ident}/mutation-burden`, newMutationBurdenData));
       }
@@ -386,20 +404,20 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
       setReport(reportResp);
     }
 
-    let microbialUpdateData;
+    let microbialUpdate;
     if (newMicrobialData && newMicrobialData.length) {
-      microbialUpdateData = newMicrobialData[0].species;
-    } else if (microbialData && microbialData.length) {
-      microbialUpdateData = microbialData[0].species;
+      microbialUpdate = newMicrobialData[0].species;
+    } else if (microbial && microbial.length) {
+      microbialUpdate = microbial[0].species;
     } else {
-      microbialUpdateData = null;
+      microbialUpdate = null;
     }
 
     let primaryBurdenTotalUpdate;
     if (primaryBurdenResp && primaryBurdenResp.totalMutationsPerMb !== null) {
       primaryBurdenTotalUpdate = `${primaryBurdenResp.totalMutationsPerMb} mut/Mb`;
-    } else if (primaryBurdenData && primaryBurdenData.totalMutationsPerMb !== null) {
-      primaryBurdenTotalUpdate = `${primaryBurdenData.totalMutationsPerMb} mut/Mb`;
+    } else if (primaryBurden && primaryBurden.totalMutationsPerMb !== null) {
+      primaryBurdenTotalUpdate = `${primaryBurden.totalMutationsPerMb} mut/Mb`;
     } else {
       primaryBurdenTotalUpdate = null;
     }
@@ -407,13 +425,13 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
     let primaryBurdenSvUpdate;
     if (primaryBurdenResp && primaryBurdenResp.qualitySvCount !== null) {
       primaryBurdenSvUpdate = `${primaryBurdenResp.qualitySvCount} ${primaryBurdenResp.qualitySvPercentile ? `(${primaryBurdenResp.qualitySvPercentile}%)` : ''}`;
-    } else if (primaryBurdenData && primaryBurdenData.qualitySvCount !== null) {
-      primaryBurdenSvUpdate = `${primaryBurdenData.qualitySvCount} ${primaryBurdenData.qualitySvPercentile ? `(${primaryBurdenData.qualitySvPercentile}%)` : ''}`;
+    } else if (primaryBurden && primaryBurden.qualitySvCount !== null) {
+      primaryBurdenSvUpdate = `${primaryBurden.qualitySvCount} ${primaryBurden.qualitySvPercentile ? `(${primaryBurden.qualitySvPercentile}%)` : ''}`;
     } else {
       primaryBurdenSvUpdate = null;
     }
 
-    setTumourSummaryData([
+    setTumourSummary([
       {
         term: 'Tumour Content',
         value: newReportData ? newReportData.tumourContent : report.tumourContent,
@@ -424,7 +442,7 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
       },
       {
         term: 'Microbial Species',
-        value: microbialUpdateData,
+        value: microbialUpdate,
       },
       {
         term: `Immune Infiltration${print ? '*' : ''}`,
@@ -432,7 +450,7 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
       },
       {
         term: 'Mutation Signature',
-        value: signatureData
+        value: signatures
           .filter(({ selected }) => selected)
           .map(({ associations, signature }) => (
             `${signature} (${associations})`
@@ -464,11 +482,11 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
         value: null,
       },
     ]);
-  }, [isSigned, microbialData, primaryBurdenData, report.tumourContent, report.subtyping, report.ident, print, signatureData, primaryComparator, setReport, history]);
+  }, [isSigned, microbial, primaryBurden, report, print, signatures, primaryComparator, setReport, history]);
 
   return (
     <div className="genomic-summary">
-      {report && patientInformationData && tumourSummaryData && analysisSummaryData && (
+      {report && patientInformation && tumourSummary && analysisSummary && (
         <>
           <div className="genomic-summary__patient-information">
             <div className="genomic-summary__patient-information-title">
@@ -476,7 +494,7 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
                 Patient Information
                 {canEdit && (
                   <>
-                    <IconButton onClick={setShowPatientEdit}>
+                    <IconButton onClick={() => setShowPatientEdit(true)}>
                       <EditIcon />
                     </IconButton>
                     <PatientEdit
@@ -495,7 +513,7 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
               spacing={3}
               className="genomic-summary__patient-information-content"
             >
-              {patientInformationData.map(({ label, value }) => (
+              {patientInformation.map(({ label, value }) => (
                 <Grid key={label} item>
                   <ReadOnlyTextField label={label}>
                     {value}
@@ -511,13 +529,13 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
                 Tumour Summary
                 {canEdit && (
                   <>
-                    <IconButton onClick={setShowTumourSummaryEdit}>
+                    <IconButton onClick={() => setShowTumourSummaryEdit(true)}>
                       <EditIcon />
                     </IconButton>
                     <TumourSummaryEdit
-                      microbial={microbialData[0]}
+                      microbial={microbial[0]}
                       report={report}
-                      mutationBurden={primaryBurdenData}
+                      mutationBurden={primaryBurden}
                       isOpen={showTumourSummaryEdit}
                       onClose={handleTumourSummaryEditClose}
                     />
@@ -526,7 +544,7 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
               </Typography>
             </div>
             <div className="genomic-summary__tumour-summary-content">
-              <DescriptionList entries={tumourSummaryData} />
+              <DescriptionList entries={tumourSummary} />
             </div>
           </div>
 
@@ -545,7 +563,7 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
                     onToggleFilter={setVariantFilter}
                   />
                   <VariantChips
-                    variants={variantFilter ? variantData.filter(v => v.type === variantFilter) : variantData}
+                    variants={variantFilter ? variants.filter(v => v.type === variantFilter) : variants}
                     canEdit={canEdit}
                     reportIdent={report.ident}
                     onChipDeleted={handleChipDeleted}
@@ -567,7 +585,7 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
                   spacing={3}
                   className="genomic-summary__analysis-summary-content"
                 >
-                  {analysisSummaryData.map(({ label, value }) => (
+                  {analysisSummary.map(({ label, value }) => (
                     <Grid key={label} item>
                       <ReadOnlyTextField label={label}>
                         {value}
@@ -591,7 +609,7 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
                   spacing={3}
                   className="genomic-summary__analysis-summary-content"
                 >
-                  {analysisSummaryData.map(({ label, value }) => (
+                  {analysisSummary.map(({ label, value }) => (
                     <Grid key={label} item>
                       <ReadOnlyTextField label={label}>
                         {value}
@@ -613,7 +631,7 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
                     onToggleFilter={setVariantFilter}
                   />
                   <VariantChips
-                    variants={variantFilter ? variantData.filter(v => v.type === variantFilter) : variantData}
+                    variants={variantFilter ? variants.filter(v => v.type === variantFilter) : variants}
                     canEdit={canEdit}
                     reportIdent={report.ident}
                     onChipDeleted={handleChipDeleted}
