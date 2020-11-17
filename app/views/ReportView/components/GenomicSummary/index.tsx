@@ -78,12 +78,13 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
   const [showTumourSummaryEdit, setShowTumourSummaryEdit] = useState<boolean>(false);
 
   const [patientInformation, setPatientInformation] = useState<Array<Record<string, unknown>>>();
-  const [microbial, setMicrobial] = useState<Array<Record<string, unknown>>>([]);
   const [signatures, setSignatures] = useState<Array<Record<string, unknown>>>([]);
   const [tumourSummary, setTumourSummary] = useState<Array<Record<string, unknown>>>();
   const [primaryBurden, setPrimaryBurden] = useState<Record<string, unknown>>();
   const [variants, setVariants] = useState<Array<Record<string, unknown>>>();
+  const [comparators, setComparators] = useState<Array<Record<string, unknown>>>();
 
+  const [microbial, setMicrobial] = useState<Record<string, unknown>>({ species: '' });
   const [tCellCd8, setTCellCd8] = useState<Record<string, unknown>>();
   const [primaryComparator, setPrimaryComparator] = useState<Record<string, unknown>>();
   const [analysisSummary, setAnalysisSummary] = useState<Array<Record<string, unknown>>>();
@@ -96,7 +97,7 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
   });
 
   useEffect(() => {
-    if (report && report.patientInformation) {
+    if (report) {
       const getData = async () => {
         const call = api.get(`/reports/${report.ident}/immune-cell-types`);
         const [
@@ -115,138 +116,13 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
           call.request(),
         ]);
 
-        const tCellCd8Temp = immuneResp.find(({ cellType }) => cellType === 'T cells CD8');
-        const primaryBurdenTemp = burdenResp.find((entry: Record<string, unknown>) => entry.role === 'primary');
-        const primaryComparatorTemp = comparatorsResp.find(({ analysisRole }) => analysisRole === 'mutation burden (primary)');
+        setPrimaryComparator(comparatorsResp.find(({ analysisRole }) => analysisRole === 'mutation burden (primary)'));
+        setPrimaryBurden(burdenResp.find((entry: Record<string, unknown>) => entry.role === 'primary'));
+        setTCellCd8(immuneResp.find(({ cellType }) => cellType === 'T cells CD8'));
 
-        setPrimaryComparator(primaryComparatorTemp);
-        setPrimaryBurden(primaryBurdenTemp);
-        setMicrobial(microbialResp);
+        setComparators(comparatorsResp);
+        setMicrobial(microbialResp[0]);
         setSignatures(signaturesResp);
-        setTCellCd8(tCellCd8Temp);
-
-        setPatientInformation([
-          {
-            label: 'Alternate ID',
-            value: report.alternateIdentifier,
-          },
-          {
-            label: 'Report Date',
-            value: formatDate(report.createdAt),
-          },
-          {
-            label: 'Case Type',
-            value: report.patientInformation.caseType,
-          },
-          {
-            label: 'Physician',
-            value: report.patientInformation.physician,
-          },
-          {
-            label: 'Biopsy Name',
-            value: report.biopsyName,
-          },
-          {
-            label: 'Biopsy Details',
-            value: report.patientInformation.biopsySite,
-          },
-          {
-            label: 'Sex',
-            value: report.patientInformation.gender,
-          },
-        ]);
-
-        let svBurden;
-        if (primaryBurdenTemp && primaryBurdenTemp.qualitySvCount !== null) {
-          svBurden = `${primaryBurdenTemp.qualitySvCount} ${primaryBurdenTemp.qualitySvPercentile ? `(${primaryBurdenTemp.qualitySvPercentile}%)` : ''}`;
-        } else {
-          svBurden = null;
-        }
-
-        let tCell;
-        if (tCellCd8Temp && typeof tCellCd8Temp.score === 'number') {
-          tCell = `${tCellCd8Temp.score} ${tCellCd8Temp.percentile ? `(${tCellCd8Temp.percentile}%)` : ''}`;
-        } else {
-          tCell = null;
-        }
-
-        setTumourSummary([
-          {
-            term: 'Tumour Content',
-            value: report.tumourContent,
-          },
-          {
-            term: 'Subtype',
-            value: report.subtyping,
-          },
-          {
-            term: 'Microbial Species',
-            value: microbialResp && microbialResp.length ? microbialResp[0].species : null,
-          },
-          {
-            term: 'Immune Infiltration',
-            value: tCell,
-          },
-          {
-            term: 'Mutation Signature',
-            value: signaturesResp
-              .filter(({ selected }) => selected)
-              .map(({ associations, signature }) => (
-                `${signature} (${associations})`
-              )).join(', '),
-            action: () => history.push('mutation-signatures'),
-          },
-          {
-            term: `Mutation Burden (${primaryComparatorTemp ? primaryComparatorTemp.name : 'primary'})`,
-            value: primaryBurdenTemp && primaryBurdenTemp.totalMutationsPerMb !== null ? `${primaryBurdenTemp.totalMutationsPerMb} mut/Mb` : null,
-          },
-          {
-            term: `SV Burden (${primaryComparatorTemp ? primaryComparatorTemp.name : 'primary'})`,
-            value: svBurden,
-          },
-          {
-            term: `HR Deficiency${print ? '*' : ''}`,
-            value: null,
-          },
-          {
-            term: 'Mutation Burden',
-            value: null,
-          },
-          {
-            term: `SV Burden${print ? '*' : ''}`,
-            value: null,
-          },
-          {
-            term: 'MSI Status',
-            value: null,
-          },
-        ]);
-
-        const normalComparator = comparatorsResp.find(({ analysisRole }) => analysisRole === 'expression (primary site)');
-        const diseaseComparator = comparatorsResp.find(({ analysisRole }) => analysisRole === 'expression (disease)');
-
-        setAnalysisSummary([
-          {
-            label: 'Constitutional Protocol',
-            value: report.patientInformation.constitutionalProtocol,
-          },
-          {
-            label: 'Constitutional Sample',
-            value: report.patientInformation.constitutionalSample,
-          },
-          {
-            label: 'Normal Comparator',
-            value: normalComparator ? normalComparator.name : 'Not specified',
-          },
-          {
-            label: 'Disease Comparator',
-            value: diseaseComparator ? diseaseComparator.name : 'Not specified',
-          },
-          {
-            label: 'Ploidy Model',
-            value: report.ploidy,
-          },
-        ]);
 
         const output = [];
         const counts = {
@@ -274,7 +150,142 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
 
       getData();
     }
-  }, [report, print, loadedDispatch, history]);
+  }, [loadedDispatch, report]);
+
+  useEffect(() => {
+    if (report && report.patientInformation) {
+      setPatientInformation([
+        {
+          label: 'Alternate ID',
+          value: report.alternateIdentifier,
+        },
+        {
+          label: 'Report Date',
+          value: formatDate(report.createdAt),
+        },
+        {
+          label: 'Case Type',
+          value: report.patientInformation.caseType,
+        },
+        {
+          label: 'Physician',
+          value: report.patientInformation.physician,
+        },
+        {
+          label: 'Biopsy Name',
+          value: report.biopsyName,
+        },
+        {
+          label: 'Biopsy Details',
+          value: report.patientInformation.biopsySite,
+        },
+        {
+          label: 'Sex',
+          value: report.patientInformation.gender,
+        },
+      ]);
+    }
+  }, [report]);
+
+  useEffect(() => {
+    if (report) {
+      let svBurden: null | string;
+      if (primaryBurden && primaryBurden.qualitySvCount !== null) {
+        svBurden = `${primaryBurden.qualitySvCount} ${primaryBurden.qualitySvPercentile ? `(${primaryBurden.qualitySvPercentile}%)` : ''}`;
+      } else {
+        svBurden = null;
+      }
+
+      let tCell: null | string;
+      if (tCellCd8 && typeof tCellCd8.score === 'number') {
+        tCell = `${tCellCd8.score} ${tCellCd8.percentile ? `(${tCellCd8.percentile}%)` : ''}`;
+      } else {
+        tCell = null;
+      }
+
+      setTumourSummary([
+        {
+          term: 'Tumour Content',
+          value: report.tumourContent,
+        },
+        {
+          term: 'Subtype',
+          value: report.subtyping,
+        },
+        {
+          term: 'Microbial Species',
+          value: microbial ? microbial.species : null,
+        },
+        {
+          term: 'Immune Infiltration',
+          value: tCell,
+        },
+        {
+          term: 'Mutation Signature',
+          value: signatures
+            .filter(({ selected }) => selected)
+            .map(({ associations, signature }) => (
+              `${signature} (${associations})`
+            )).join(', '),
+          action: () => history.push('mutation-signatures'),
+        },
+        {
+          term: `Mutation Burden (${primaryComparator ? primaryComparator.name : 'primary'})`,
+          value: primaryBurden && primaryBurden.totalMutationsPerMb !== null ? `${primaryBurden.totalMutationsPerMb} mut/Mb` : null,
+        },
+        {
+          term: `SV Burden (${primaryComparator ? primaryComparator.name : 'primary'})`,
+          value: svBurden,
+        },
+        {
+          term: `HR Deficiency${print ? '*' : ''}`,
+          value: null,
+        },
+        {
+          term: 'Mutation Burden',
+          value: null,
+        },
+        {
+          term: `SV Burden${print ? '*' : ''}`,
+          value: null,
+        },
+        {
+          term: 'MSI Status',
+          value: null,
+        },
+      ]);
+    }
+  }, [history, microbial, microbial.species, primaryBurden, primaryComparator, print, report, signatures, tCellCd8]);
+
+  useEffect(() => {
+    if (report && comparators) {
+      const normalComparator = comparators.find(({ analysisRole }) => analysisRole === 'expression (primary site)');
+      const diseaseComparator = comparators.find(({ analysisRole }) => analysisRole === 'expression (disease)');
+
+      setAnalysisSummary([
+        {
+          label: 'Constitutional Protocol',
+          value: report.patientInformation.constitutionalProtocol,
+        },
+        {
+          label: 'Constitutional Sample',
+          value: report.patientInformation.constitutionalSample,
+        },
+        {
+          label: 'Normal Comparator',
+          value: normalComparator ? normalComparator.name : 'Not specified',
+        },
+        {
+          label: 'Disease Comparator',
+          value: diseaseComparator ? diseaseComparator.name : 'Not specified',
+        },
+        {
+          label: 'Ploidy Model',
+          value: report.ploidy,
+        },
+      ]);
+    }
+  }, [comparators, report]);
 
   const handleChipDeleted = useCallback(async (chipIdent, type, comment) => {
     try {
@@ -326,16 +337,16 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
     }
 
     const callSet = new ApiCallSet(apiCalls);
-    const [_, reportResp] = await callSet.request(isSigned);
+    await callSet.request(isSigned);
 
-    if (reportResp) {
-      setReport({ ...reportResp, ...report });
-    }
+    const reportUpdateCall = api.get(`/reports/${report.ident}`);
+    const reportResp = await reportUpdateCall.request();
+    setReport(reportResp);
 
     setPatientInformation([
       {
         label: 'Alternate ID',
-        value: newReportData ? newReportData.alternateIdentifier : report.alternateIdentifier,
+        value: reportResp ? reportResp.alternateIdentifier : report.alternateIdentifier,
       },
       {
         label: 'Report Date',
@@ -351,7 +362,7 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
       },
       {
         label: 'Biopsy Name',
-        value: newReportData ? newReportData.biopsyName : report.biopsyName,
+        value: reportResp ? reportResp.biopsyName : report.biopsyName,
       },
       {
         label: 'Biopsy Details',
@@ -373,8 +384,11 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
     }
 
     if (newMicrobialData) {
-      apiCalls.push(api.put(`/reports/${report.ident}/microbial`, newMicrobialData));
-      setMicrobial(newMicrobialData);
+      if (microbial) {
+        apiCalls.push(api.put(`/reports/${report.ident}/summary/microbial/${microbial.ident}`, newMicrobialData));
+      } else {
+        apiCalls.push(api.post(`/reports/${report.ident}/summary/microbial`, newMicrobialData));
+      }
     } else {
       apiCalls.push({ request: () => null });
     }
@@ -394,99 +408,20 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
     }
 
     const callSet = new ApiCallSet(apiCalls);
-    const [_, reportResp, primaryBurdenResp] = await callSet.request(isSigned);
+    const [microbialResp, reportResp, primaryBurdenResp] = await callSet.request(isSigned);
+
+    if (microbialResp) {
+      setMicrobial(microbialResp);
+    }
 
     if (reportResp) {
       setReport(reportResp);
     }
 
-    let microbialUpdate;
-    if (newMicrobialData && newMicrobialData.length) {
-      microbialUpdate = newMicrobialData[0].species;
-    } else if (microbial && microbial.length) {
-      microbialUpdate = microbial[0].species;
-    } else {
-      microbialUpdate = null;
+    if (primaryBurdenResp) {
+      setPrimaryBurden(primaryBurdenResp);
     }
-
-    let primaryBurdenTotalUpdate;
-    if (primaryBurdenResp && primaryBurdenResp.totalMutationsPerMb !== null) {
-      primaryBurdenTotalUpdate = `${primaryBurdenResp.totalMutationsPerMb} mut/Mb`;
-    } else if (primaryBurden && primaryBurden.totalMutationsPerMb !== null) {
-      primaryBurdenTotalUpdate = `${primaryBurden.totalMutationsPerMb} mut/Mb`;
-    } else {
-      primaryBurdenTotalUpdate = null;
-    }
-
-    let primaryBurdenSvUpdate;
-    if (primaryBurdenResp && primaryBurdenResp.qualitySvCount !== null) {
-      primaryBurdenSvUpdate = `${primaryBurdenResp.qualitySvCount} ${primaryBurdenResp.qualitySvPercentile ? `(${primaryBurdenResp.qualitySvPercentile}%)` : ''}`;
-    } else if (primaryBurden && primaryBurden.qualitySvCount !== null) {
-      primaryBurdenSvUpdate = `${primaryBurden.qualitySvCount} ${primaryBurden.qualitySvPercentile ? `(${primaryBurden.qualitySvPercentile}%)` : ''}`;
-    } else {
-      primaryBurdenSvUpdate = null;
-    }
-
-
-    let tCellUpdate;
-    if (tCellCd8 && typeof tCellCd8.score === 'number') {
-      tCellUpdate = `${tCellCd8.score} ${tCellCd8.percentile ? `(${tCellCd8.percentile}%)` : ''}`;
-    } else {
-      tCellUpdate = null;
-    }
-
-    setTumourSummary([
-      {
-        term: 'Tumour Content',
-        value: newReportData ? newReportData.tumourContent : report.tumourContent,
-      },
-      {
-        term: 'Subtype',
-        value: newReportData ? newReportData.subtyping : report.subtyping,
-      },
-      {
-        term: 'Microbial Species',
-        value: microbialUpdate,
-      },
-      {
-        term: 'Immune Infiltration',
-        value: tCellUpdate,
-      },
-      {
-        term: 'Mutation Signature',
-        value: signatures
-          .filter(({ selected }) => selected)
-          .map(({ associations, signature }) => (
-            `${signature} (${associations})`
-          )).join(', '),
-        action: () => history.push('mutation-signatures'),
-      },
-      {
-        term: `Mutation Burden (${primaryComparator ? primaryComparator.name : 'primary'})`,
-        value: primaryBurdenTotalUpdate,
-      },
-      {
-        term: `SV Burden (${primaryComparator ? primaryComparator.name : 'primary'})`,
-        value: primaryBurdenSvUpdate,
-      },
-      {
-        term: `HR Deficiency${print ? '*' : ''}`,
-        value: null,
-      },
-      {
-        term: 'Mutation Burden',
-        value: null,
-      },
-      {
-        term: `SV Burden${print ? '*' : ''}`,
-        value: null,
-      },
-      {
-        term: 'MSI Status',
-        value: null,
-      },
-    ]);
-  }, [isSigned, microbial, primaryBurden, tCellCd8, report.tumourContent, report.subtyping, report.ident, signatures, primaryComparator, print, setReport, history]);
+  }, [isSigned, microbial, primaryBurden, report, setReport]);
 
   return (
     <div className="genomic-summary">
@@ -537,7 +472,7 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
                       <EditIcon />
                     </IconButton>
                     <TumourSummaryEdit
-                      microbial={microbial[0]}
+                      microbial={microbial}
                       report={report}
                       mutationBurden={primaryBurden}
                       isOpen={showTumourSummaryEdit}
