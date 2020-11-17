@@ -112,17 +112,24 @@ function DataTable(props) {
   }, [visibleColumns]);
 
   useEffect(() => {
-    if (highlightRow !== null) {
-      const rowNode = gridApi.current.getDisplayedRowAtIndex(highlightRow);
-      rowNode.setSelected(true, true);
-      gridApi.current.ensureIndexVisible(highlightRow, 'middle');
+    if (gridApi.current) {
+      if (highlightRow !== null) {
+        const rowNode = gridApi.current.getDisplayedRowAtIndex(highlightRow);
+        rowNode.setSelected(true, true);
+        gridApi.current.ensureIndexVisible(highlightRow, 'middle');
 
-      const [element] = document.querySelectorAll(`div[class="report__content"]`);
-      element.scrollTo({
-        top: gridRef.current.eGridDiv.offsetTop,
-        left: 0,
-        behavior: 'smooth',
-      });
+        const [element] = document.querySelectorAll(`div[class="report__content"]`);
+        element.scrollTo({
+          top: gridRef.current.eGridDiv.offsetTop,
+          left: 0,
+          behavior: 'smooth',
+        });
+      } else {
+        const selected = gridApi.current.getSelectedNodes();
+        if (selected && selected.length) {
+          selected.forEach(node => node.setSelected(false));
+        }
+      }
     }
   }, [highlightRow]);
 

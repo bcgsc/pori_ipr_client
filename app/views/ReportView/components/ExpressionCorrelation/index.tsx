@@ -144,15 +144,22 @@ const ExpressionCorrelation = (): JSX.Element => {
     maintainAspectRatio: false,
     onClick: (event, [context]) => {
       if (context && chartRef.current) {
-        setRowClicked(context._index);
-        const newColors = chartRef.current.chartInstance.config.data.datasets[0].borderColor.map((color, index) => {
-          if (index === context._index) {
-            return '#000000';
-          }
-          return '#FFFFFF';
-        });
-        chartRef.current.chartInstance.config.data.datasets[0].borderColor = newColors;
-        chartRef.current.chartInstance.update();
+        if (rowClicked === context._index) {
+          setRowClicked(null);
+          const newColors = chartRef.current.chartInstance.config.data.datasets[0].borderColor.map(() => '#FFFFFF');
+          chartRef.current.chartInstance.config.data.datasets[0].borderColor = newColors;
+          chartRef.current.chartInstance.update();
+        } else {
+          setRowClicked(context._index);
+          const newColors = chartRef.current.chartInstance.config.data.datasets[0].borderColor.map((color, index) => {
+            if (index === context._index) {
+              return '#000000';
+            }
+            return '#FFFFFF';
+          });
+          chartRef.current.chartInstance.config.data.datasets[0].borderColor = newColors;
+          chartRef.current.chartInstance.update();
+        }
       }
     },
     legend: {
@@ -266,7 +273,6 @@ const ExpressionCorrelation = (): JSX.Element => {
               ref={chartRef}
               data={barChartData}
               height={150 + (barChartData.datasets[0].data.length * 25)}
-              // width={600}
               options={options}
             />
           </div>
