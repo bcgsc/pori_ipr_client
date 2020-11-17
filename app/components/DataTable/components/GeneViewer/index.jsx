@@ -45,13 +45,13 @@ const GeneViewer = (props) => {
   const [tabValue, setTabValue] = useState(0);
   const snackbar = useContext(SnackbarContext);
 
-  const handleClose = useCallback((value) => {
+  const handleClose = useCallback(() => {
     columnDefs[0].cellRendererParams = { link: true };
     smallMutationsColumnDefs[0].cellRendererParams = { link: true };
     copyNumberColumnDefs[0].cellRendererParams = { link: true };
     expressionColumnDefs[0].cellRendererParams = { link: true };
     structuralVariantsColumnDefs[0].cellRendererParams = { link: true };
-    onClose(value);
+    onClose();
   }, [onClose]);
 
   const handleTabChange = (event, newValue) => {
