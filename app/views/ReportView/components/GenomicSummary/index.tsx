@@ -184,8 +184,8 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
             value: microbialResp && microbialResp.length ? microbialResp[0].species : null,
           },
           {
-            term: `Immune Infiltration${print ? '*' : ''}`,
-            value: null,
+            term: 'Immune Infiltration',
+            value: tCell,
           },
           {
             term: 'Mutation Signature',
@@ -203,10 +203,6 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
           {
             term: `SV Burden (${primaryComparatorTemp ? primaryComparatorTemp.name : 'primary'})`,
             value: svBurden,
-          },
-          {
-            term: 'T-Cell Score',
-            value: tCell,
           },
           {
             term: `HR Deficiency${print ? '*' : ''}`,
@@ -431,6 +427,14 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
       primaryBurdenSvUpdate = null;
     }
 
+
+    let tCellUpdate;
+    if (tCellCd8 && typeof tCellCd8.score === 'number') {
+      tCellUpdate = `${tCellCd8.score} ${tCellCd8.percentile ? `(${tCellCd8.percentile}%)` : ''}`;
+    } else {
+      tCellUpdate = null;
+    }
+
     setTumourSummary([
       {
         term: 'Tumour Content',
@@ -445,8 +449,8 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
         value: microbialUpdate,
       },
       {
-        term: `Immune Infiltration${print ? '*' : ''}`,
-        value: null,
+        term: 'Immune Infiltration',
+        value: tCellUpdate,
       },
       {
         term: 'Mutation Signature',
@@ -482,7 +486,7 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
         value: null,
       },
     ]);
-  }, [isSigned, microbial, primaryBurden, report, print, signatures, primaryComparator, setReport, history]);
+  }, [isSigned, microbial, primaryBurden, tCellCd8, report.tumourContent, report.subtyping, report.ident, signatures, primaryComparator, print, setReport, history]);
 
   return (
     <div className="genomic-summary">
