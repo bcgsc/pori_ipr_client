@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 import orderBy from 'lodash.orderby';
 
 import toastCreator from '@/utils/toastCreator';

@@ -1,22 +1,20 @@
-const createGeneRelatedValueGetter = (field, delimiter=' / ', subfield='') => {
-  return ({data}) => {
-    try {
-      let attr1 = data.gene1[field];
-      let attr2 = data.gene2[field];
-      if (subfield) {
-        attr1 = attr1[subfield];
-        attr2 = attr2[subfield];
-      }
-      if (attr1 !== undefined && attr2 !== undefined && attr1 !== null && attr2 !== null) {
-        return `${attr1}${delimiter}${attr2}`;
-      } if (attr1 !== undefined && attr1 !== null) {
-        return attr1;
-      }
-      return attr2;
-    } catch (err) {
-      return null;
+const createGeneRelatedValueGetter = (field, delimiter = ' / ', subfield = '') => ({ data }) => {
+  try {
+    let attr1 = data.gene1[field];
+    let attr2 = data.gene2[field];
+    if (subfield) {
+      attr1 = attr1[subfield];
+      attr2 = attr2[subfield];
     }
-  };
+    if (attr1 !== undefined && attr2 !== undefined && attr1 !== null && attr2 !== null) {
+      return `${attr1}${delimiter}${attr2}`;
+    } if (attr1 !== undefined && attr1 !== null) {
+      return attr1;
+    }
+    return attr2;
+  } catch (err) {
+    return null;
+  }
 };
 
 const columnDefs = [{

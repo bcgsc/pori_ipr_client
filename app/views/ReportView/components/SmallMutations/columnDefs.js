@@ -14,11 +14,11 @@ const columnDefs = [{
   hide: false,
 }, {
   headerName: 'Location',
-  valueGetter: ({data}) => data.chromosome && `${data.chromosome}:${data.startPosition}${
+  valueGetter: ({ data }) => data.chromosome && `${data.chromosome}:${data.startPosition}${
     data.endPosition && data.startPosition !== data.endPosition
       ? `-${data.endPosition}`
       : ''
-    }`,
+  }`,
   hide: false,
 }, {
   headerName: 'Zygosity',
@@ -26,7 +26,7 @@ const columnDefs = [{
   hide: false,
 }, {
   headerName: 'Ref/Alt',
-  valueGetter: ({data}) => `${data.refSeq}>${data.altSeq}`,
+  valueGetter: ({ data }) => `${data.refSeq}>${data.altSeq}`,
   hide: false,
 }, {
   headerName: 'Copy Change',
@@ -38,7 +38,7 @@ const columnDefs = [{
   hide: false,
 }, {
   headerName: 'Ref/Alt DNA',
-  valueGetter: ({data}) => `${data.tumourRefCount} / ${data.tumourAltCount}`,
+  valueGetter: ({ data }) => `${data.tumourRefCount} / ${data.tumourAltCount}`,
   hide: false,
 }, {
   headerName: 'HGVSp',

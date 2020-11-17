@@ -1,4 +1,6 @@
-import React, { useEffect, useState, useContext, useRef } from 'react';
+import React, {
+  useEffect, useState, useContext, useRef,
+} from 'react';
 import orderBy from 'lodash.orderby';
 import { HorizontalBar, Chart } from 'react-chartjs-2';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
@@ -17,7 +19,7 @@ interface Color {
   red: number,
   green: number,
   blue: number,
-};
+}
 
 const LOWER_COLOR = {
   red: 134,
@@ -59,7 +61,7 @@ const getLuminance = (color: Color): number => {
   return 0.2126 * color.red + 0.7152 * color.green + 0.0722 * color.blue;
 };
 
-const ExpressionCorrelation = () => {
+const ExpressionCorrelation = (): JSX.Element => {
   const { report } = useContext(ReportContext);
 
   const [plots, setPlots] = useState({});
@@ -142,15 +144,22 @@ const ExpressionCorrelation = () => {
     maintainAspectRatio: false,
     onClick: (event, [context]) => {
       if (context && chartRef.current) {
-        setRowClicked(context._index);
-        const newColors = chartRef.current.chartInstance.config.data.datasets[0].borderColor.map((color, index) => {
-          if (index === context._index) {
-            return '#000000';
-          }
-          return '#FFFFFF';
-        });
-        chartRef.current.chartInstance.config.data.datasets[0].borderColor = newColors;
-        chartRef.current.chartInstance.update();
+        if (rowClicked === context._index) {
+          setRowClicked(null);
+          const newColors = chartRef.current.chartInstance.config.data.datasets[0].borderColor.map(() => '#FFFFFF');
+          chartRef.current.chartInstance.config.data.datasets[0].borderColor = newColors;
+          chartRef.current.chartInstance.update();
+        } else {
+          setRowClicked(context._index);
+          const newColors = chartRef.current.chartInstance.config.data.datasets[0].borderColor.map((color, index) => {
+            if (index === context._index) {
+              return '#000000';
+            }
+            return '#FFFFFF';
+          });
+          chartRef.current.chartInstance.config.data.datasets[0].borderColor = newColors;
+          chartRef.current.chartInstance.update();
+        }
       }
     },
     legend: {
@@ -241,6 +250,7 @@ const ExpressionCorrelation = () => {
                     </Typography>
                     {Object.values(subtypePlots).map(plot => (
                       <Image
+                        key={plot.ident}
                         image={plot}
                         showTitle
                         showCaption
@@ -250,7 +260,7 @@ const ExpressionCorrelation = () => {
                 </div>
               )}
             </div>
-            {!Boolean(Object.values(plots).length) && !Boolean(Object.values(subtypePlots).length) && (
+            {!Object.values(plots).length && !Object.values(subtypePlots).length && (
               <Typography align="center">No expression correlation plots found</Typography>
             )}
           </>
@@ -263,7 +273,6 @@ const ExpressionCorrelation = () => {
               ref={chartRef}
               data={barChartData}
               height={150 + (barChartData.datasets[0].data.length * 25)}
-              // width={600}
               options={options}
             />
           </div>

@@ -33,7 +33,7 @@ const PatientsView = lazy(() => import('../PatientsView'));
 /**
  * Entry point to application. Handles routing, app theme, and logged in state.
  */
-const Main = () => {
+const Main = (): JSX.Element => {
   const [authorizationToken, setAuthorizationToken] = useState<string>('');
   const [canEdit, setCanEdit] = useState<boolean>(false);
   const [userDetails, setUserDetails] = useState<string>('');
@@ -72,6 +72,7 @@ const Main = () => {
 
       return unregister;
     }
+    return undefined;
   }, [authorizationToken]);
 
   const handleSnackbarClose = useCallback((event, reason) => {

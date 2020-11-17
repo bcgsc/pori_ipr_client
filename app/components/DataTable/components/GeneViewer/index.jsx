@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, {
+  useEffect, useState, useContext, useCallback,
+} from 'react';
 import PropTypes from 'prop-types';
 import {
   Dialog,
@@ -11,8 +13,9 @@ import {
   Tab,
   AppBar,
 } from '@material-ui/core';
+import SnackbarContext from '@bcgsc/react-snackbar-provider';
 import DataTable from '../..';
-import geneViewerApi from '../../../../services/reports/geneViewer';
+import api from '../../../../services/api';
 import { columnDefs } from '@/views/ReportView/components/KbMatches/columnDefs';
 import { columnDefs as smallMutationsColumnDefs } from '@/views/ReportView/components/SmallMutations/columnDefs';
 import copyNumberColumnDefs from '@/views/ReportView/components/CopyNumber/columnDefs';
@@ -30,7 +33,7 @@ import './index.scss';
  * @param {bool} props.isOpen is open?
  * @return {*} JSX
  */
-function GeneViewer(props) {
+const GeneViewer = (props) => {
   const {
     onClose,
     isOpen,
@@ -40,12 +43,32 @@ function GeneViewer(props) {
   
   const [geneData, setGeneData] = useState();
   const [tabValue, setTabValue] = useState(0);
+  const snackbar = useContext(SnackbarContext);
+
+  const handleClose = useCallback(() => {
+    columnDefs[0].cellRendererParams = { link: true };
+    smallMutationsColumnDefs[0].cellRendererParams = { link: true };
+    copyNumberColumnDefs[0].cellRendererParams = { link: true };
+    expressionColumnDefs[0].cellRendererParams = { link: true };
+    structuralVariantsColumnDefs[0].cellRendererParams = { link: true };
+    onClose();
+  }, [onClose]);
+
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
+  };
 
   useEffect(() => {
     if (isOpen) {
-      const api = async () => {
-        const resp = await geneViewerApi(gene, reportIdent);
-        setGeneData(resp);
+      const getData = async () => {
+        try {
+          const call = api.get(`/reports/${reportIdent}/gene-viewer/${gene}`);
+          const resp = await call.request();
+          setGeneData(resp);
+        } catch {
+          snackbar.add(`Error: gene viewer data does not exist for ${gene}`);
+          handleClose(null);
+        }
       };
       // Don't show gene viewer link when in gene viewer
       columnDefs[0].cellRendererParams = { link: false };
@@ -53,22 +76,9 @@ function GeneViewer(props) {
       copyNumberColumnDefs[0].cellRendererParams = { link: false };
       expressionColumnDefs[0].cellRendererParams = { link: false };
       structuralVariantsColumnDefs[0].cellRendererParams = { link: false };
-      api();
+      getData();
     }
-  }, [isOpen]);
-
-  const handleClose = (value) => {
-    columnDefs[0].cellRendererParams = { link: true };
-    smallMutationsColumnDefs[0].cellRendererParams = { link: true };
-    copyNumberColumnDefs[0].cellRendererParams = { link: true };
-    expressionColumnDefs[0].cellRendererParams = { link: true };
-    structuralVariantsColumnDefs[0].cellRendererParams = { link: true };
-    onClose(value);
-  };
-
-  const handleTabChange = (event, newValue) => {
-    setTabValue(newValue);
-  };
+  }, [gene, handleClose, isOpen, reportIdent, snackbar]);
 
   return (
     <Dialog
@@ -155,7 +165,7 @@ function GeneViewer(props) {
       </DialogActions>
     </Dialog>
   );
-}
+};
 
 GeneViewer.propTypes = {
   onClose: PropTypes.func.isRequired,

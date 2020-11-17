@@ -104,7 +104,7 @@ const isExternalMode = (user) => {
 
 const searchUsers = async (query) => {
   try {
-    const resp = await $http.get(`${CONFIG.ENDPOINTS.API}/user/search`, { params: { query }});
+    const resp = await $http.get(`${CONFIG.ENDPOINTS.API}/user/search`, { params: { query } });
     return resp.data;
   } catch {
     return false;
@@ -129,6 +129,7 @@ const logout = async () => {
     await keycloak.logout({
       redirectUri: window.location.uri,
     });
+    return null;
   } catch (err) {
     delete localStorage[CONFIG.STORAGE.KEYCLOAK];
     delete $http.headers.Authorization;
