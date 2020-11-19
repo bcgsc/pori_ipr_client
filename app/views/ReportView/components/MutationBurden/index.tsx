@@ -17,7 +17,7 @@ import Image from '../../../../components/Image';
 
 import './index.scss';
 
-const processImages = (images) => {
+const processImages = (images): Record<string, Record<string, Record<string, unknown>[]>> => {
   if (images) {
     const keyedImages = {
       indel: {
@@ -84,12 +84,12 @@ const processImages = (images) => {
   return {};
 };
 
-const MutationBurden = () => {
+const MutationBurden = (): JSX.Element => {
   const { report } = useContext(ReportContext);
-  const [images, setImages] = useState();
-  const [comparators, setComparators] = useState([]);
-  const [mutationBurden, setMutationBurden] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [images, setImages] = useState<Record<string, unknown>>();
+  const [comparators, setComparators] = useState<Record<string, unknown>[]>([]);
+  const [mutationBurden, setMutationBurden] = useState<Record<string, unknown>[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     if (report) {
