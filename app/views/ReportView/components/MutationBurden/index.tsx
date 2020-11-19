@@ -109,7 +109,7 @@ const MutationBurden = (): JSX.Element => {
     }
   }, [report]);
 
-  const getImages = useCallback((imageGroup, role) => {
+  const getImages = (imageGroup, role) => {
     const foundImages = [];
 
     imageGroup.forEach((img) => {
@@ -119,7 +119,7 @@ const MutationBurden = (): JSX.Element => {
       }
     });
     return foundImages;
-  }, []);
+  };
 
   const getCardContent = useCallback((burden, type) => {
     switch (type) {
