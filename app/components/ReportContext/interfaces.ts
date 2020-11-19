@@ -33,13 +33,15 @@ interface ReportContextInterface {
     ident: string,
     patientId: string,
     patientInformation: PatientInformationInterface,
+    ploidy: string,
     sampleInfo: Array<SampleInfoInterface>
     state: string,
+    subtyping: string,
     tumourContent?: number,
     type: string,
   } | null,
   /** Set new current report */
-  setReport: () => void,
+  setReport: (newValue: Record<string, unknown>) => void,
 }
 
 export {

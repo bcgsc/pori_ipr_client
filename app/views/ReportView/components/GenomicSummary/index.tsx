@@ -1,4 +1,6 @@
-import React, { useEffect, useState, useCallback, useContext } from 'react';
+import React, {
+  useEffect, useState, useCallback, useContext,
+} from 'react';
 import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {
@@ -60,30 +62,33 @@ const customTypeSort = (variant) => {
   return 3;
 };
 
-const GenomicSummary = (props) => {
-  const {
-    print,
-    loadedDispatch,
-  } = props;
+type Props = {
+  print: boolean,
+  loadedDispatch: (section: Record<'type', string>) => void,
+};
 
+const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
   const { canEdit } = useContext(EditContext);
   const { isSigned } = useContext(ConfirmContext);
   const snackbar = useContext(SnackbarContext);
   const history = useHistory();
 
-  const [showPatientEdit, setShowPatientEdit] = useState(false);
-  const [patientInformationData, setPatientInformationData] = useState();
-  const [showTumourSummaryEdit, setShowTumourSummaryEdit] = useState(false);
+  const [showPatientEdit, setShowPatientEdit] = useState<boolean>(false);
+  const [showTumourSummaryEdit, setShowTumourSummaryEdit] = useState<boolean>(false);
 
-  const [microbialData, setMicrobialData] = useState([]);
-  const [signatureData, setSignatureData] = useState([]);
-  const [tumourSummaryData, setTumourSummaryData] = useState();
-  const [primaryBurdenData, setPrimaryBurdenData] = useState();
-  const [primaryComparator, setPrimaryComparator] = useState();
-  const [analysisSummaryData, setAnalysisSummaryData] = useState();
-  const [variantData, setVariantData] = useState();
-  const [variantFilter, setVariantFilter] = useState();
+  const [patientInformation, setPatientInformation] = useState<Array<Record<string, unknown>>>();
+  const [signatures, setSignatures] = useState<Array<Record<string, unknown>>>([]);
+  const [tumourSummary, setTumourSummary] = useState<Array<Record<string, unknown>>>();
+  const [primaryBurden, setPrimaryBurden] = useState<Record<string, unknown>>();
+  const [variants, setVariants] = useState<Array<Record<string, unknown>>>();
+  const [comparators, setComparators] = useState<Array<Record<string, unknown>>>();
+
+  const [microbial, setMicrobial] = useState<Record<string, unknown>>({ species: '' });
+  const [tCellCd8, setTCellCd8] = useState<Record<string, unknown>>();
+  const [primaryComparator, setPrimaryComparator] = useState<Record<string, unknown>>();
+  const [analysisSummary, setAnalysisSummary] = useState<Array<Record<string, unknown>>>();
+  const [variantFilter, setVariantFilter] = useState<string>('');
   const [variantCounts, setVariantCounts] = useState({
     smallMutation: 0,
     cnv: 0,
@@ -92,145 +97,32 @@ const GenomicSummary = (props) => {
   });
 
   useEffect(() => {
-    if (report && report.patientInformation) {
+    if (report) {
       const getData = async () => {
+        const call = api.get(`/reports/${report.ident}/immune-cell-types`);
         const [
-          microbial,
-          variants,
-          comparators,
-          signatures,
-          burden,
+          microbialResp,
+          variantsResp,
+          comparatorsResp,
+          signaturesResp,
+          burdenResp,
+          immuneResp,
         ] = await Promise.all([
           getMicrobial(report.ident),
           AlterationsService.all(report.ident),
           getComparators(report.ident),
           getMutationSignatures(report.ident),
           getMutationBurden(report.ident),
+          call.request(),
         ]);
 
-        const primaryBurden = burden.find(entry => entry.role === 'primary');
-        const primaryComparatorTemp = comparators.find(({ analysisRole }) => analysisRole === 'mutation burden (primary)');
+        setPrimaryComparator(comparatorsResp.find(({ analysisRole }) => analysisRole === 'mutation burden (primary)'));
+        setPrimaryBurden(burdenResp.find((entry: Record<string, unknown>) => entry.role === 'primary'));
+        setTCellCd8(immuneResp.find(({ cellType }) => cellType === 'T cells CD8'));
 
-        setPrimaryComparator(primaryComparatorTemp);
-        setPrimaryBurdenData(primaryBurden);
-        setMicrobialData(microbial);
-        setSignatureData(signatures);
-
-        setPatientInformationData([
-          {
-            label: 'Alternate ID',
-            value: report.alternateIdentifier,
-          },
-          {
-            label: 'Report Date',
-            value: formatDate(report.createdAt),
-          },
-          {
-            label: 'Case Type',
-            value: report.patientInformation.caseType,
-          },
-          {
-            label: 'Physician',
-            value: report.patientInformation.physician,
-          },
-          {
-            label: 'Biopsy Name',
-            value: report.biopsyName,
-          },
-          {
-            label: 'Biopsy Details',
-            value: report.patientInformation.biopsySite,
-          },
-          {
-            label: 'Sex',
-            value: report.patientInformation.gender,
-          },
-        ]);
-
-        let svBurden;
-        if (primaryBurden && primaryBurden.qualitySvCount !== null) {
-          svBurden = `${primaryBurden.qualitySvCount} ${primaryBurden.qualitySvPercentile ? `(${primaryBurden.qualitySvPercentile}%)` : ''}`;
-        } else {
-          svBurden = null;
-        }
-
-        setTumourSummaryData([
-          {
-            term: 'Tumour Content',
-            value: report.tumourContent,
-          },
-          {
-            term: 'Subtype',
-            value: report.subtyping,
-          },
-          {
-            term: 'Microbial Species',
-            value: microbial && microbial.length ? microbial[0].species : null,
-          },
-          {
-            term: `Immune Infiltration${print ? '*' : ''}`,
-            value: null,
-          },
-          {
-            term: 'Mutation Signature',
-            value: signatures
-              .filter(({ selected }) => selected)
-              .map(({ associations, signature }) => (
-                `${signature} ${associations ? `(${associations})` : ''}`
-              )).join(', '),
-            action: () => history.push('mutation-signatures'),
-          },
-          {
-            term: `Mutation Burden (${primaryComparatorTemp ? primaryComparatorTemp.name : 'primary'})`,
-            value: primaryBurden && primaryBurden.totalMutationsPerMb !== null ? `${primaryBurden.totalMutationsPerMb} mut/Mb` : null,
-          },
-          {
-            term: `SV Burden (${primaryComparatorTemp ? primaryComparatorTemp.name : 'primary'})`,
-            value: svBurden,
-          },
-          {
-            term: `HR Deficiency${print ? '*' : ''}`,
-            value: null,
-          },
-          {
-            term: 'Mutation Burden',
-            value: null,
-          },
-          {
-            term: `SV Burden${print ? '*' : ''}`,
-            value: null,
-          },
-          {
-            term: 'MSI Status',
-            value: null,
-          },
-        ]);
-
-        const normalComparator = comparators.find(({ analysisRole }) => analysisRole === 'expression (primary site)');
-        const diseaseComparator = comparators.find(({ analysisRole }) => analysisRole === 'expression (disease)');
-
-        setAnalysisSummaryData([
-          {
-            label: 'Constitutional Protocol',
-            value: report.patientInformation.constitutionalProtocol,
-          },
-          {
-            label: 'Constitutional Sample',
-            value: report.patientInformation.constitutionalSample,
-          },
-          {
-            label: 'Normal Comparator',
-            value: normalComparator ? normalComparator.name : 'Not specified',
-          },
-          {
-            label: 'Disease Comparator',
-            value: diseaseComparator ? diseaseComparator.name : 'Not specified',
-          },
-          {
-            label: 'Ploidy Model',
-            value: report.ploidy,
-          },
-        ]);
+        setComparators(comparatorsResp);
+        setMicrobial(microbialResp[0]);
+        setSignatures(signaturesResp);
 
         const output = [];
         const counts = {
@@ -240,25 +132,160 @@ const GenomicSummary = (props) => {
           expression: 0,
         };
 
-        variants.forEach((variant, k) => {
+        variantsResp.forEach((variant, k) => {
           // Add processed Variant
           output.push(variantCategory(variant));
 
           // Update counts
-          if (!counts[variants[k].type]) {
-            counts[variants[k].type] = 0;
+          if (!counts[variantsResp[k].type]) {
+            counts[variantsResp[k].type] = 0;
           }
-          counts[variants[k].type] += 1;
+          counts[variantsResp[k].type] += 1;
         });
         const sorted = sortBy(output, [customTypeSort, 'geneVariant']);
-        setVariantData(sorted);
+        setVariants(sorted);
         setVariantCounts(counts);
         loadedDispatch({ type: 'genomicSummary' });
       };
 
       getData();
     }
-  }, [report, print, loadedDispatch, history]);
+  }, [loadedDispatch, report]);
+
+  useEffect(() => {
+    if (report && report.patientInformation) {
+      setPatientInformation([
+        {
+          label: 'Alternate ID',
+          value: report.alternateIdentifier,
+        },
+        {
+          label: 'Report Date',
+          value: formatDate(report.createdAt),
+        },
+        {
+          label: 'Case Type',
+          value: report.patientInformation.caseType,
+        },
+        {
+          label: 'Physician',
+          value: report.patientInformation.physician,
+        },
+        {
+          label: 'Biopsy Name',
+          value: report.biopsyName,
+        },
+        {
+          label: 'Biopsy Details',
+          value: report.patientInformation.biopsySite,
+        },
+        {
+          label: 'Sex',
+          value: report.patientInformation.gender,
+        },
+      ]);
+    }
+  }, [report]);
+
+  useEffect(() => {
+    if (report) {
+      let svBurden: null | string;
+      if (primaryBurden && primaryBurden.qualitySvCount !== null) {
+        svBurden = `${primaryBurden.qualitySvCount} ${primaryBurden.qualitySvPercentile ? `(${primaryBurden.qualitySvPercentile}%)` : ''}`;
+      } else {
+        svBurden = null;
+      }
+
+      let tCell: null | string;
+      if (tCellCd8 && typeof tCellCd8.score === 'number') {
+        tCell = `${tCellCd8.score} ${tCellCd8.percentile ? `(${tCellCd8.percentile}%)` : ''}`;
+      } else {
+        tCell = null;
+      }
+
+      setTumourSummary([
+        {
+          term: 'Tumour Content',
+          value: report.tumourContent,
+        },
+        {
+          term: 'Subtype',
+          value: report.subtyping,
+        },
+        {
+          term: 'Microbial Species',
+          value: microbial ? microbial.species : null,
+        },
+        {
+          term: 'Immune Infiltration',
+          value: tCell,
+        },
+        {
+          term: 'Mutation Signature',
+          value: signatures
+            .filter(({ selected }) => selected)
+            .map(({ associations, signature }) => (
+              `${signature} (${associations})`
+            )).join(', '),
+          action: () => history.push('mutation-signatures'),
+        },
+        {
+          term: `Mutation Burden (${primaryComparator ? primaryComparator.name : 'primary'})`,
+          value: primaryBurden && primaryBurden.totalMutationsPerMb !== null ? `${primaryBurden.totalMutationsPerMb} mut/Mb` : null,
+        },
+        {
+          term: `SV Burden (${primaryComparator ? primaryComparator.name : 'primary'})`,
+          value: svBurden,
+        },
+        {
+          term: `HR Deficiency${print ? '*' : ''}`,
+          value: null,
+        },
+        {
+          term: 'Mutation Burden',
+          value: null,
+        },
+        {
+          term: `SV Burden${print ? '*' : ''}`,
+          value: null,
+        },
+        {
+          term: 'MSI Status',
+          value: null,
+        },
+      ]);
+    }
+  }, [history, microbial, microbial.species, primaryBurden, primaryComparator, print, report, signatures, tCellCd8]);
+
+  useEffect(() => {
+    if (report && comparators) {
+      const normalComparator = comparators.find(({ analysisRole }) => analysisRole === 'expression (primary site)');
+      const diseaseComparator = comparators.find(({ analysisRole }) => analysisRole === 'expression (disease)');
+
+      setAnalysisSummary([
+        {
+          label: 'Constitutional Protocol',
+          value: report.patientInformation.constitutionalProtocol,
+        },
+        {
+          label: 'Constitutional Sample',
+          value: report.patientInformation.constitutionalSample,
+        },
+        {
+          label: 'Normal Comparator',
+          value: normalComparator ? normalComparator.name : 'Not specified',
+        },
+        {
+          label: 'Disease Comparator',
+          value: diseaseComparator ? diseaseComparator.name : 'Not specified',
+        },
+        {
+          label: 'Ploidy Model',
+          value: report.ploidy,
+        },
+      ]);
+    }
+  }, [comparators, report]);
 
   const handleChipDeleted = useCallback(async (chipIdent, type, comment) => {
     try {
@@ -269,7 +296,7 @@ const GenomicSummary = (props) => {
       await req.request(isSigned);
 
       setVariantCounts(prevVal => ({ ...prevVal, [type]: prevVal[type] - 1 }));
-      setVariantData(prevVal => (prevVal.filter(val => val.ident !== chipIdent)));
+      setVariants(prevVal => (prevVal.filter(val => val.ident !== chipIdent)));
       snackbar.add('Entry deleted');
     } catch (err) {
       console.error(err);
@@ -285,7 +312,7 @@ const GenomicSummary = (props) => {
       const categorizedVariantEntry = variantCategory(newVariantEntry);
 
       setVariantCounts(prevVal => ({ ...prevVal, [categorizedVariantEntry.type]: prevVal[categorizedVariantEntry.type] + 1 }));
-      setVariantData(prevVal => ([...prevVal, categorizedVariantEntry]));
+      setVariants(prevVal => ([...prevVal, categorizedVariantEntry]));
       snackbar.add('Entry added');
     } catch (err) {
       console.error(err);
@@ -310,16 +337,15 @@ const GenomicSummary = (props) => {
     }
 
     const callSet = new ApiCallSet(apiCalls);
-    const [_, reportResp] = await callSet.request(isSigned);
+    await callSet.request(isSigned);
 
-    if (reportResp) {
-      setReport({ ...reportResp, ...report });
-    }
+    const reportResp = await api.get(`/reports/${report.ident}`).request();
+    setReport(reportResp);
 
-    setPatientInformationData([
+    setPatientInformation([
       {
         label: 'Alternate ID',
-        value: newReportData ? newReportData.alternateIdentifier : report.alternateIdentifier,
+        value: reportResp ? reportResp.alternateIdentifier : report.alternateIdentifier,
       },
       {
         label: 'Report Date',
@@ -335,7 +361,7 @@ const GenomicSummary = (props) => {
       },
       {
         label: 'Biopsy Name',
-        value: newReportData ? newReportData.biopsyName : report.biopsyName,
+        value: reportResp ? reportResp.biopsyName : report.biopsyName,
       },
       {
         label: 'Biopsy Details',
@@ -357,8 +383,11 @@ const GenomicSummary = (props) => {
     }
 
     if (newMicrobialData) {
-      apiCalls.push(api.put(`/reports/${report.ident}/microbial`, newMicrobialData));
-      setMicrobialData(newMicrobialData);
+      if (microbial) {
+        apiCalls.push(api.put(`/reports/${report.ident}/summary/microbial/${microbial.ident}`, newMicrobialData));
+      } else {
+        apiCalls.push(api.post(`/reports/${report.ident}/summary/microbial`, newMicrobialData));
+      }
     } else {
       apiCalls.push({ request: () => null });
     }
@@ -370,111 +399,40 @@ const GenomicSummary = (props) => {
     }
 
     if (newMutationBurdenData) {
-      if (primaryBurdenData) {
-        apiCalls.push(api.put(`/reports/${report.ident}/mutation-burden/${primaryBurdenData.ident}`, newMutationBurdenData));
+      if (primaryBurden) {
+        apiCalls.push(api.put(`/reports/${report.ident}/mutation-burden/${primaryBurden.ident}`, newMutationBurdenData));
       } else {
         apiCalls.push(api.post(`/reports/${report.ident}/mutation-burden`, newMutationBurdenData));
       }
     }
 
     const callSet = new ApiCallSet(apiCalls);
-    const [_, reportResp, primaryBurdenResp] = await callSet.request(isSigned);
+    const [microbialResp, reportResp, primaryBurdenResp] = await callSet.request(isSigned);
+
+    if (microbialResp) {
+      setMicrobial(microbialResp);
+    }
 
     if (reportResp) {
       setReport(reportResp);
     }
 
-    let microbialUpdateData;
-    if (newMicrobialData && newMicrobialData.length) {
-      microbialUpdateData = newMicrobialData[0].species;
-    } else if (microbialData && microbialData.length) {
-      microbialUpdateData = microbialData[0].species;
-    } else {
-      microbialUpdateData = null;
+    if (primaryBurdenResp) {
+      setPrimaryBurden(primaryBurdenResp);
     }
-
-    let primaryBurdenTotalUpdate;
-    if (primaryBurdenResp && primaryBurdenResp.totalMutationsPerMb !== null) {
-      primaryBurdenTotalUpdate = `${primaryBurdenResp.totalMutationsPerMb} mut/Mb`;
-    } else if (primaryBurdenData && primaryBurdenData.totalMutationsPerMb !== null) {
-      primaryBurdenTotalUpdate = `${primaryBurdenData.totalMutationsPerMb} mut/Mb`;
-    } else {
-      primaryBurdenTotalUpdate = null;
-    }
-
-    let primaryBurdenSvUpdate;
-    if (primaryBurdenResp && primaryBurdenResp.qualitySvCount !== null) {
-      primaryBurdenSvUpdate = `${primaryBurdenResp.qualitySvCount} ${primaryBurdenResp.qualitySvPercentile ? `(${primaryBurdenResp.qualitySvPercentile}%)` : ''}`;
-    } else if (primaryBurdenData && primaryBurdenData.qualitySvCount !== null) {
-      primaryBurdenSvUpdate = `${primaryBurdenData.qualitySvCount} ${primaryBurdenData.qualitySvPercentile ? `(${primaryBurdenData.qualitySvPercentile}%)` : ''}`;
-    } else {
-      primaryBurdenSvUpdate = null;
-    }
-
-    setTumourSummaryData([
-      {
-        term: 'Tumour Content',
-        value: newReportData ? newReportData.tumourContent : report.tumourContent,
-      },
-      {
-        term: 'Subtype',
-        value: newReportData ? newReportData.subtyping : report.subtyping,
-      },
-      {
-        term: 'Microbial Species',
-        value: microbialUpdateData,
-      },
-      {
-        term: `Immune Infiltration${print ? '*' : ''}`,
-        value: null,
-      },
-      {
-        term: 'Mutation Signature',
-        value: signatureData
-          .filter(({ selected }) => selected)
-          .map(({ associations, signature }) => (
-            `${signature} ${associations ? `(${associations})` : ''}`
-          )).join(', '),
-        action: () => history.push('mutation-signatures'),
-      },
-      {
-        term: `Mutation Burden (${primaryComparator ? primaryComparator.name : 'primary'})`,
-        value: primaryBurdenTotalUpdate,
-      },
-      {
-        term: `SV Burden (${primaryComparator ? primaryComparator.name : 'primary'})`,
-        value: primaryBurdenSvUpdate,
-      },
-      {
-        term: `HR Deficiency${print ? '*' : ''}`,
-        value: null,
-      },
-      {
-        term: 'Mutation Burden',
-        value: null,
-      },
-      {
-        term: `SV Burden${print ? '*' : ''}`,
-        value: null,
-      },
-      {
-        term: 'MSI Status',
-        value: null,
-      },
-    ]);
-  }, [report, isSigned, history, microbialData, primaryBurdenData, print, setReport, signatureData]);
+  }, [isSigned, microbial, primaryBurden, report, setReport]);
 
   return (
     <div className="genomic-summary">
-      {report && patientInformationData && tumourSummaryData && analysisSummaryData && (
+      {report && patientInformation && tumourSummary && analysisSummary && (
         <>
           <div className="genomic-summary__patient-information">
             <div className="genomic-summary__patient-information-title">
-              <Typography variant="h3" dislay="inline">
+              <Typography variant="h3" display="inline">
                 Patient Information
                 {canEdit && (
                   <>
-                    <IconButton onClick={setShowPatientEdit}>
+                    <IconButton onClick={() => setShowPatientEdit(true)}>
                       <EditIcon />
                     </IconButton>
                     <PatientEdit
@@ -493,7 +451,7 @@ const GenomicSummary = (props) => {
               spacing={3}
               className="genomic-summary__patient-information-content"
             >
-              {patientInformationData.map(({ label, value }) => (
+              {patientInformation.map(({ label, value }) => (
                 <Grid key={label} item>
                   <ReadOnlyTextField label={label}>
                     {value}
@@ -509,13 +467,13 @@ const GenomicSummary = (props) => {
                 Tumour Summary
                 {canEdit && (
                   <>
-                    <IconButton onClick={setShowTumourSummaryEdit}>
+                    <IconButton onClick={() => setShowTumourSummaryEdit(true)}>
                       <EditIcon />
                     </IconButton>
                     <TumourSummaryEdit
-                      microbial={microbialData[0]}
+                      microbial={microbial}
                       report={report}
-                      mutationBurden={primaryBurdenData}
+                      mutationBurden={primaryBurden}
                       isOpen={showTumourSummaryEdit}
                       onClose={handleTumourSummaryEditClose}
                     />
@@ -524,7 +482,7 @@ const GenomicSummary = (props) => {
               </Typography>
             </div>
             <div className="genomic-summary__tumour-summary-content">
-              <DescriptionList entries={tumourSummaryData} />
+              <DescriptionList entries={tumourSummary} />
             </div>
           </div>
 
@@ -543,7 +501,7 @@ const GenomicSummary = (props) => {
                     onToggleFilter={setVariantFilter}
                   />
                   <VariantChips
-                    variants={variantFilter ? variantData.filter(v => v.type === variantFilter) : variantData}
+                    variants={variantFilter ? variants.filter(v => v.type === variantFilter) : variants}
                     canEdit={canEdit}
                     reportIdent={report.ident}
                     onChipDeleted={handleChipDeleted}
@@ -565,7 +523,7 @@ const GenomicSummary = (props) => {
                   spacing={3}
                   className="genomic-summary__analysis-summary-content"
                 >
-                  {analysisSummaryData.map(({ label, value }) => (
+                  {analysisSummary.map(({ label, value }) => (
                     <Grid key={label} item>
                       <ReadOnlyTextField label={label}>
                         {value}
@@ -589,7 +547,7 @@ const GenomicSummary = (props) => {
                   spacing={3}
                   className="genomic-summary__analysis-summary-content"
                 >
-                  {analysisSummaryData.map(({ label, value }) => (
+                  {analysisSummary.map(({ label, value }) => (
                     <Grid key={label} item>
                       <ReadOnlyTextField label={label}>
                         {value}
@@ -611,7 +569,7 @@ const GenomicSummary = (props) => {
                     onToggleFilter={setVariantFilter}
                   />
                   <VariantChips
-                    variants={variantFilter ? variantData.filter(v => v.type === variantFilter) : variantData}
+                    variants={variantFilter ? variants.filter(v => v.type === variantFilter) : variants}
                     canEdit={canEdit}
                     reportIdent={report.ident}
                     onChipDeleted={handleChipDeleted}
