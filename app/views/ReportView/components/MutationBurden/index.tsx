@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useState, useCallback, useContext,
+  useEffect, useState, useContext,
 } from 'react';
 import {
   Typography,
@@ -12,14 +12,15 @@ import {
 } from '@material-ui/core';
 
 import ReportContext from '../../../../components/ReportContext';
-import ImageService from '@/services/reports/image.service';
-import { getComparators } from '@/services/reports/comparators';
-import { getMutationBurden } from '@/services/reports/mutation-burden';
+import ImageService from '../../../../services/reports/image.service';
+import { getComparators } from '../../../../services/reports/comparators';
+import { getMutationBurden } from '../../../../services/reports/mutation-burden';
 import Image from '../../../../components/Image';
+import { imageType, comparatorType, mutationBurdenType } from './types';
 
 import './index.scss';
 
-const processImages = (images): Record<string, Record<string, Record<string, unknown>[]>> => {
+const processImages = (images: Record<string, imageType>): Record<string, Record<string, Record<string, imageType>[]>> => {
   if (images) {
     const keyedImages = {
       indel: {
@@ -96,9 +97,9 @@ const rankMapping = {
 const MutationBurden = (): JSX.Element => {
   const { report } = useContext(ReportContext);
 
-  const [images, setImages] = useState<Record<string, unknown>>();
-  const [comparators, setComparators] = useState<Record<string, unknown>[]>([]);
-  const [mutationBurden, setMutationBurden] = useState<Record<string, unknown>[]>([]);
+  const [images, setImages] = useState<Record<string, Record<string, Record<string, imageType>[]>>>();
+  const [comparators, setComparators] = useState<comparatorType[]>([]);
+  const [mutationBurden, setMutationBurden] = useState<mutationBurdenType[]>([]);
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [snvTabValue, setSnvTabValue] = useState<number>(0);
