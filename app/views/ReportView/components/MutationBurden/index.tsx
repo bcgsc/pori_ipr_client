@@ -7,6 +7,8 @@ import {
   Card,
   CardHeader,
   CardContent,
+  Tabs,
+  Tab,
 } from '@material-ui/core';
 
 import ReportContext from '../../../../components/ReportContext';
@@ -84,12 +86,24 @@ const processImages = (images): Record<string, Record<string, Record<string, unk
   return {};
 };
 
+const rankMapping = {
+  primary: 0,
+  secondary: 1,
+  tertiary: 2,
+  quaternary: 3,
+};
+
 const MutationBurden = (): JSX.Element => {
   const { report } = useContext(ReportContext);
+
   const [images, setImages] = useState<Record<string, unknown>>();
   const [comparators, setComparators] = useState<Record<string, unknown>[]>([]);
   const [mutationBurden, setMutationBurden] = useState<Record<string, unknown>[]>([]);
+
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [snvTabValue, setSnvTabValue] = useState<number>(0);
+  const [indelTabValue, setIndelTabValue] = useState<number>(0);
+  const [svTabValue, setSvTabValue] = useState<number>(0);
 
   useEffect(() => {
     if (report) {
@@ -109,6 +123,35 @@ const MutationBurden = (): JSX.Element => {
     }
   }, [report]);
 
+  const handleTabChange = (event, value: number, type: string): void => {
+    switch (type) {
+      case 'SNV':
+        setSnvTabValue(value);
+        break;
+      case 'Indel':
+        setIndelTabValue(value);
+        break;
+      case 'SV':
+        setSvTabValue(value);
+        break;
+      default:
+        break;
+    }
+  };
+
+  const getTabValue = (type: string): number => {
+    switch (type) {
+      case 'SNV':
+        return snvTabValue;
+      case 'Indel':
+        return indelTabValue;
+      case 'SV':
+        return svTabValue;
+      default:
+        return 0;
+    }
+  };
+
   const getImages = (imageGroup, role) => {
     const foundImages = [];
 
@@ -121,7 +164,7 @@ const MutationBurden = (): JSX.Element => {
     return foundImages;
   };
 
-  const getCardContent = useCallback((burden, type) => {
+  const getCardContent = (burden, type) => {
     switch (type) {
       case 'SNV':
         return (
@@ -196,7 +239,7 @@ const MutationBurden = (): JSX.Element => {
         console.error(`Bad card type found: ${type}`);
         return null;
     }
-  }, []);
+  };
 
   return (
     <div className="mutation-burden">
@@ -217,6 +260,19 @@ const MutationBurden = (): JSX.Element => {
                     {`${type}`}
                   </Typography>
                 </div>
+                <div className="mutation-burden__tab-control">
+                  <Tabs value={getTabValue(type)} onChange={(event, value) => handleTabChange(event, value, type)}>
+                    {comparators
+                      .filter(({ analysisRole }) => analysisRole.includes('mutation burden'))
+                      .map(({ analysisRole }) => {
+                        const [roleName] = analysisRole.match(/(?<=\().+(?=\))/g);
+
+                        return (
+                          <Tab key={analysisRole} label={roleName} />
+                        );
+                      })}
+                  </Tabs>
+                </div>
                 <div className="mutation-burden__images">
                   {comparators
                     .filter(({ analysisRole }) => analysisRole.includes('mutation burden'))
@@ -229,33 +285,37 @@ const MutationBurden = (): JSX.Element => {
                       const legendsByRole = getImages(legends, roleName);
 
                       return (
-                        <Card key={name} elevation={3} className="mutation-burden__group">
-                          <CardHeader title={`Comparator: ${name} (${roleName})`} />
-                          {Boolean(barplotsByRole.length) && barplotsByRole.map(plot => (
-                            <span key={plot.key} className="mutation-burden__image">
-                              <Image
-                                image={plot}
-                                showTitle
-                                showCaption
-                              />
-                            </span>
-                          ))}
-                          {Boolean(densitiesByRole.length) && densitiesByRole.map((plot, index) => (
-                            <span key={plot.key} className="mutation-burden__pair">
-                              <Typography>{plot.title}</Typography>
-                              <Image image={plot} />
-                              {legendsByRole[index] && (
-                                <Image image={legendsByRole[index]} />
+                        <>
+                          {rankMapping[roleName] === getTabValue(type) && (
+                            <Card key={name} elevation={3} className="mutation-burden__group">
+                              <CardHeader title={`Comparator: ${name} (${roleName})`} />
+                              {Boolean(barplotsByRole.length) && barplotsByRole.map(plot => (
+                                <span key={plot.key} className="mutation-burden__image">
+                                  <Image
+                                    image={plot}
+                                    showTitle
+                                    showCaption
+                                  />
+                                </span>
+                              ))}
+                              {Boolean(densitiesByRole.length) && densitiesByRole.map((plot, index) => (
+                                <span key={plot.key} className="mutation-burden__pair">
+                                  <Typography>{plot.title}</Typography>
+                                  <Image image={plot} />
+                                  {legendsByRole[index] && (
+                                    <Image image={legendsByRole[index]} />
+                                  )}
+                                  <Typography>{plot.caption}</Typography>
+                                </span>
+                              ))}
+                              {mutationBurdenRole && (
+                                <CardContent>
+                                  {getCardContent(mutationBurdenRole, type)}
+                                </CardContent>
                               )}
-                              <Typography>{plot.caption}</Typography>
-                            </span>
-                          ))}
-                          {mutationBurdenRole && (
-                            <CardContent>
-                              {getCardContent(mutationBurdenRole, type)}
-                            </CardContent>
+                            </Card>
                           )}
-                        </Card>
+                        </>
                       );
                     })}
                 </div>
