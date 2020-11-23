@@ -278,6 +278,11 @@ const MutationBurden = (): JSX.Element => {
                   {comparators
                     .filter(({ analysisRole }) => analysisRole.includes('mutation burden'))
                     .map(({ analysisRole, name }) => {
+                      if (type === 'SV'
+                        && comparators.some(({ analysisRole: role }) => role.includes('mutation burden SV'))
+                        && !analysisRole.includes('mutation burden SV')) {
+                        return null;
+                      }
                       const [roleName] = analysisRole.match(/(?<=\().+(?=\))/g);
                       const mutationBurdenRole = mutationBurden.find(({ role }) => role === roleName);
 
