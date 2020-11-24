@@ -38,7 +38,7 @@ const CopyNumber = lazy(() => import('./components/CopyNumber'));
 const StructuralVariants = lazy(() => import('./components/StructuralVariants'));
 const Expression = lazy(() => import('./components/Expression'));
 const Immune = lazy(() => import('./components/Immune'));
-const Appendices = lazy(() => import('./components/Appendices'));
+const Appendices = lazy(() => import('./components/Appendices/index.tsx'));
 const Settings = lazy(() => import('./components/Settings'));
 const ProbeSummary = lazy(() => import('./components/ProbeSummary/index.tsx'));
 
