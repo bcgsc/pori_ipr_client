@@ -226,7 +226,7 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
           action: () => history.push('mutation-signatures'),
         },
         {
-          term: `Mutation Burden (${primaryComparator ? primaryComparator.name : 'primary'})`,
+          term: 'Mutation Burden',
           value: primaryBurden && primaryBurden.totalMutationsPerMb !== null ? `${primaryBurden.totalMutationsPerMb} mut/Mb` : null,
         },
         {
@@ -235,10 +235,6 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
         },
         {
           term: `HR Deficiency${print ? '*' : ''}`,
-          value: null,
-        },
-        {
-          term: 'Mutation Burden',
           value: null,
         },
         {
