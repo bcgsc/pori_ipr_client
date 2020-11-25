@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import {
   Typography,
+  Grid,
 } from '@material-ui/core';
 
 import api, { ApiCallSet } from '../../../../services/api';
@@ -11,6 +12,7 @@ import { sampleInformationColumnDefs, sequencingProtocolInformationColumnDefs, t
 import GenomicReportOverview from './components/GenomicReportOverview';
 import ProbeReportOverview from './components/ProbeReportOverview';
 import ConfigTable from './components/ConfigTable';
+import ReadOnlyTextField from '../../../../components/ReadOnlyTextField';
 
 import './index.scss';
 
@@ -23,8 +25,10 @@ type AppendicesProps = {
 const Appendices = ({ isProbe, isPrint, loadedDispatch }: AppendicesProps): JSX.Element => {
   const { report } = useContext(ReportContext);
 
+  const [comparators, setComparators] = useState<Record<string, unknown>>();
   const [appendices, setAppendices] = useState<appendicesType>();
   const [tcga, setTcga] = useState<tcgaType[]>([]);
+  const [analysisSummary, setAnalysisSummary] = useState<Record<string, unknown>[]>([]);
 
   useEffect(() => {
     if (report) {
@@ -32,17 +36,50 @@ const Appendices = ({ isProbe, isPrint, loadedDispatch }: AppendicesProps): JSX.
         const callSet = new ApiCallSet([
           api.get(`/reports/${report.ident}/appendices`, {}),
           api.get(`/reports/${report.ident}/appendices/tcga`, {}),
+          api.get(`/reports/${report.ident}/comparators`, {}),
         ]);
-        const [appendicesResp, tcgaResp] = await callSet.request();
+        const [appendicesResp, tcgaResp, comparatorsResp] = await callSet.request();
 
         setAppendices(appendicesResp);
         setTcga(tcgaResp);
+        setComparators(comparatorsResp);
+
         loadedDispatch({ type: 'appendices' });
       };
 
       getData();
     }
   }, [loadedDispatch, report]);
+
+  useEffect(() => {
+    if (report && comparators) {
+      const normalComparator = comparators.find(({ analysisRole }) => analysisRole === 'expression (primary site)');
+      const diseaseComparator = comparators.find(({ analysisRole }) => analysisRole === 'expression (disease)');
+
+      setAnalysisSummary([
+        {
+          label: 'Constitutional Protocol',
+          value: report.patientInformation.constitutionalProtocol,
+        },
+        {
+          label: 'Constitutional Sample',
+          value: report.patientInformation.constitutionalSample,
+        },
+        {
+          label: 'Normal Comparator',
+          value: normalComparator ? normalComparator.name : 'Not specified',
+        },
+        {
+          label: 'Disease Comparator',
+          value: diseaseComparator ? diseaseComparator.name : 'Not specified',
+        },
+        {
+          label: 'Ploidy Model',
+          value: report.ploidy,
+        },
+      ]);
+    }
+  }, [comparators, report]);
 
   return (
     <div className="appendices">
@@ -51,6 +88,25 @@ const Appendices = ({ isProbe, isPrint, loadedDispatch }: AppendicesProps): JSX.
           <Typography variant="h1">
             Appendix A
           </Typography>
+          <div className="analysis-summary">
+            <Typography variant="h3">
+              Analysis Summary
+            </Typography>
+            <Grid
+              alignItems="flex-end"
+              container
+              spacing={3}
+              className="analysis-summary__content"
+            >
+              {analysisSummary.map(({ label, value }) => (
+                <Grid key={label} item>
+                  <ReadOnlyTextField label={label}>
+                    {value}
+                  </ReadOnlyTextField>
+                </Grid>
+              ))}
+            </Grid>
+          </div>
           {appendices?.sampleInfo && (
             <DataTable
               columnDefs={sampleInformationColumnDefs}
@@ -81,6 +137,27 @@ const Appendices = ({ isProbe, isPrint, loadedDispatch }: AppendicesProps): JSX.
         <Typography variant="h1">
           Appendix C
         </Typography>
+      )}
+      {isPrint && (
+        <div className="analysis-summary">
+          <Typography variant="h3">
+            Analysis Summary
+          </Typography>
+          <Grid
+            alignItems="flex-end"
+            container
+            spacing={3}
+            className="analysis-summary__content"
+          >
+            {analysisSummary.map(({ label, value }) => (
+              <Grid key={label} item>
+                <ReadOnlyTextField label={label}>
+                  {value}
+                </ReadOnlyTextField>
+              </Grid>
+            ))}
+          </Grid>
+        </div>
       )}
       {isProbe ? (
         <ProbeReportOverview />

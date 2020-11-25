@@ -24,7 +24,6 @@ import ConfirmContext from '@/components/ConfirmContext';
 import AlterationsService from '@/services/reports/genomic-alterations.service';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import DescriptionList from '@/components/DescriptionList';
-import PageBreak from '@/components/PageBreak';
 import VariantChips from './components/VariantChips';
 import VariantCounts from './components/VariantCounts';
 import PatientEdit from './components/PatientEdit';
@@ -82,12 +81,10 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
   const [tumourSummary, setTumourSummary] = useState<Array<Record<string, unknown>>>();
   const [primaryBurden, setPrimaryBurden] = useState<Record<string, unknown>>();
   const [variants, setVariants] = useState<Array<Record<string, unknown>>>();
-  const [comparators, setComparators] = useState<Array<Record<string, unknown>>>();
 
   const [microbial, setMicrobial] = useState<Record<string, unknown>>({ species: '' });
   const [tCellCd8, setTCellCd8] = useState<Record<string, unknown>>();
   const [primaryComparator, setPrimaryComparator] = useState<Record<string, unknown>>();
-  const [analysisSummary, setAnalysisSummary] = useState<Array<Record<string, unknown>>>();
   const [variantFilter, setVariantFilter] = useState<string>('');
   const [variantCounts, setVariantCounts] = useState({
     smallMutation: 0,
@@ -120,7 +117,6 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
         setPrimaryBurden(burdenResp.find((entry: Record<string, unknown>) => entry.role === 'primary'));
         setTCellCd8(immuneResp.find(({ cellType }) => cellType === 'T cells CD8'));
 
-        setComparators(comparatorsResp);
         setMicrobial(microbialResp[0]);
         setSignatures(signaturesResp);
 
@@ -257,35 +253,6 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
     }
   }, [history, microbial, microbial.species, primaryBurden, primaryComparator, print, report, signatures, tCellCd8]);
 
-  useEffect(() => {
-    if (report && comparators) {
-      const normalComparator = comparators.find(({ analysisRole }) => analysisRole === 'expression (primary site)');
-      const diseaseComparator = comparators.find(({ analysisRole }) => analysisRole === 'expression (disease)');
-
-      setAnalysisSummary([
-        {
-          label: 'Constitutional Protocol',
-          value: report.patientInformation.constitutionalProtocol,
-        },
-        {
-          label: 'Constitutional Sample',
-          value: report.patientInformation.constitutionalSample,
-        },
-        {
-          label: 'Normal Comparator',
-          value: normalComparator ? normalComparator.name : 'Not specified',
-        },
-        {
-          label: 'Disease Comparator',
-          value: diseaseComparator ? diseaseComparator.name : 'Not specified',
-        },
-        {
-          label: 'Ploidy Model',
-          value: report.ploidy,
-        },
-      ]);
-    }
-  }, [comparators, report]);
 
   const handleChipDeleted = useCallback(async (chipIdent, type, comment) => {
     try {
@@ -424,7 +391,7 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
 
   return (
     <div className="genomic-summary">
-      {report && patientInformation && tumourSummary && analysisSummary && (
+      {report && patientInformation && tumourSummary && (
         <>
           <div className="genomic-summary__patient-information">
             <div className="genomic-summary__patient-information-title">
@@ -510,52 +477,9 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
                   />
                 </div>
               </div>
-              <PageBreak report={report} />
-              <div className="genomic-summary__analysis-summary">
-                <div className="genomic-summary__analysis-summary-title">
-                  <Typography variant="h3">
-                    Analysis Summary
-                  </Typography>
-                </div>
-                <Grid
-                  alignItems="flex-end"
-                  container
-                  spacing={3}
-                  className="genomic-summary__analysis-summary-content"
-                >
-                  {analysisSummary.map(({ label, value }) => (
-                    <Grid key={label} item>
-                      <ReadOnlyTextField label={label}>
-                        {value}
-                      </ReadOnlyTextField>
-                    </Grid>
-                  ))}
-                </Grid>
-              </div>
             </React.Fragment>
           ) : (
             <React.Fragment>
-              <div className="genomic-summary__analysis-summary">
-                <div className="genomic-summary__analysis-summary-title">
-                  <Typography variant="h3">
-                    Analysis Summary
-                  </Typography>
-                </div>
-                <Grid
-                  alignItems="flex-end"
-                  container
-                  spacing={3}
-                  className="genomic-summary__analysis-summary-content"
-                >
-                  {analysisSummary.map(({ label, value }) => (
-                    <Grid key={label} item>
-                      <ReadOnlyTextField label={label}>
-                        {value}
-                      </ReadOnlyTextField>
-                    </Grid>
-                  ))}
-                </Grid>
-              </div>
               <div className="genomic-summary__alterations">
                 <div className="genomic-summary__alterations-title">
                   <Typography variant="h3">
