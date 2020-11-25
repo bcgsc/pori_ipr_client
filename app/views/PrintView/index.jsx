@@ -6,7 +6,7 @@ import { useTheme } from '@material-ui/core/styles';
 import ReportContext from '../../components/ReportContext';
 import ReportService from '@/services/reports/report.service';
 import GenomicSummary from '../ReportView/components/GenomicSummary';
-import ProbeSummary from '../ReportView/components/ProbeSummary/index.tsx';
+import ProbeSummary from '../ReportView/components/ProbeSummary';
 import AnalystComments from '../ReportView/components/AnalystComments';
 import PathwayAnalysis from '../ReportView/components/PathwayAnalysis';
 import TherapeuticTargets from '../ReportView/components/TherapeuticTargets/components/PrintTables';
@@ -76,7 +76,7 @@ const Print = () => {
 
       getReport();
     }
-  }, [report]);
+  }, [params.ident, report]);
 
   useEffect(() => {
     let sections;
@@ -91,13 +91,13 @@ const Print = () => {
       window.print();
       setIsPrintDialogShown(true);
     }
-  }, [reportSectionsLoaded]);
+  }, [isPrintDialogShown, isProbe, reportSectionsLoaded]);
 
   const probeSections = () => (
     <>
       <ProbeSummary report={report} isPrint loadedDispatch={dispatch} />
       <PageBreak report={report} />
-      <Appendices report={report} print isProbe loadedDispatch={dispatch} />
+      <Appendices report={report} isPrint isProbe loadedDispatch={dispatch} />
     </>
   );
 
