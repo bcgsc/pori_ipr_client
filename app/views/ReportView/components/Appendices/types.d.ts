@@ -36,9 +36,21 @@ type tcgaType = {
   'Tumour Count': string,
 };
 
+type comparatorType = {
+  analysisRole: string,
+  createdAt: string,
+  description: string | null,
+  ident: string,
+  name: string,
+  size: number | null,
+  updatedAt: string | null,
+  version: string | null,
+};
+
 export {
   sampleInfoType,
   seqQCType,
   appendicesType,
   tcgaType,
+  comparatorType,
 };

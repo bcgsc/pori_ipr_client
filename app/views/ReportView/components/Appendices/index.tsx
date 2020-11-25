@@ -7,7 +7,7 @@ import {
 import api, { ApiCallSet } from '../../../../services/api';
 import DataTable from '../../../../components/DataTable';
 import ReportContext from '../../../../components/ReportContext';
-import { appendicesType, tcgaType } from './types';
+import { appendicesType, tcgaType, comparatorType } from './types';
 import { sampleInformationColumnDefs, sequencingProtocolInformationColumnDefs, tcgaAcronymsColumnDefs } from './columnDefs';
 import GenomicReportOverview from './components/GenomicReportOverview';
 import ProbeReportOverview from './components/ProbeReportOverview';
@@ -25,7 +25,7 @@ type AppendicesProps = {
 const Appendices = ({ isProbe, isPrint, loadedDispatch }: AppendicesProps): JSX.Element => {
   const { report } = useContext(ReportContext);
 
-  const [comparators, setComparators] = useState<Record<string, unknown>>();
+  const [comparators, setComparators] = useState<comparatorType[]>([]);
   const [appendices, setAppendices] = useState<appendicesType>();
   const [tcga, setTcga] = useState<tcgaType[]>([]);
   const [analysisSummary, setAnalysisSummary] = useState<Record<string, unknown>[]>([]);
@@ -44,7 +44,9 @@ const Appendices = ({ isProbe, isPrint, loadedDispatch }: AppendicesProps): JSX.
         setTcga(tcgaResp);
         setComparators(comparatorsResp);
 
-        loadedDispatch({ type: 'appendices' });
+        if (loadedDispatch) {
+          loadedDispatch({ type: 'appendices' });
+        }
       };
 
       getData();
@@ -52,7 +54,7 @@ const Appendices = ({ isProbe, isPrint, loadedDispatch }: AppendicesProps): JSX.
   }, [loadedDispatch, report]);
 
   useEffect(() => {
-    if (report && comparators) {
+    if (report && comparators.length) {
       const normalComparator = comparators.find(({ analysisRole }) => analysisRole === 'expression (primary site)');
       const diseaseComparator = comparators.find(({ analysisRole }) => analysisRole === 'expression (disease)');
 
