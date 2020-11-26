@@ -4,23 +4,18 @@ import React, {
 import {
   Typography,
   LinearProgress,
-  Card,
-  CardHeader,
-  CardContent,
-  Tabs,
-  Tab,
 } from '@material-ui/core';
 
 import ReportContext from '../../../../components/ReportContext';
 import ImageService from '../../../../services/reports/image.service';
 import { getComparators } from '../../../../services/reports/comparators';
 import { getMutationBurden } from '../../../../services/reports/mutation-burden';
-import Image from '../../../../components/Image';
 import { imageType, comparatorType, mutationBurdenType } from './types';
+import TabCards from './components/TabCards';
 
 import './index.scss';
 
-const processImages = (images: Record<string, imageType>): Record<string, Record<string, Record<string, imageType>[]>> => {
+const processImages = (images: Record<string, imageType>): Record<string, Record<string, imageType[]>> => {
   if (images) {
     const keyedImages = {
       indel: {
@@ -87,24 +82,15 @@ const processImages = (images: Record<string, imageType>): Record<string, Record
   return {};
 };
 
-const rankMapping = {
-  primary: 0,
-  secondary: 1,
-  tertiary: 2,
-  quaternary: 3,
-};
 
 const MutationBurden = (): JSX.Element => {
   const { report } = useContext(ReportContext);
 
-  const [images, setImages] = useState<Record<string, Record<string, Record<string, imageType>[]>>>();
+  const [images, setImages] = useState<Record<string, Record<string, imageType[]>>>();
   const [comparators, setComparators] = useState<comparatorType[]>([]);
   const [mutationBurden, setMutationBurden] = useState<mutationBurdenType[]>([]);
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [snvTabValue, setSnvTabValue] = useState<number>(0);
-  const [indelTabValue, setIndelTabValue] = useState<number>(0);
-  const [svTabValue, setSvTabValue] = useState<number>(0);
 
   useEffect(() => {
     if (report) {
@@ -123,124 +109,6 @@ const MutationBurden = (): JSX.Element => {
       getData();
     }
   }, [report]);
-
-  const handleTabChange = (event, value: number, type: string): void => {
-    switch (type) {
-      case 'SNV':
-        setSnvTabValue(value);
-        break;
-      case 'Indel':
-        setIndelTabValue(value);
-        break;
-      case 'SV':
-        setSvTabValue(value);
-        break;
-      default:
-        break;
-    }
-  };
-
-  const getTabValue = (type: string): number => {
-    switch (type) {
-      case 'SNV':
-        return snvTabValue;
-      case 'Indel':
-        return indelTabValue;
-      case 'SV':
-        return svTabValue;
-      default:
-        return 0;
-    }
-  };
-
-  const getImages = (imageGroup, role) => {
-    const foundImages = [];
-
-    imageGroup.forEach((img) => {
-      const imgRole = img.key.split('.')[2] || '';
-      if (role.toLowerCase() === imgRole.toLowerCase()) {
-        foundImages.push(img);
-      }
-    });
-    return foundImages;
-  };
-
-  const getCardContent = (burden, type) => {
-    switch (type) {
-      case 'SNV':
-        return (
-          <>
-            <Typography variant="body2" className="mutation-burden__comparator--padded">
-              <>
-                Protein Coding SNVs (count):
-                {` ${burden.codingSnvCount}`}
-              </>
-            </Typography>
-            <Typography variant="body2" className="mutation-burden__comparator--padded">
-              <>
-                Protein Coding SNVs (percentile):
-                {` ${burden.codingSnvPercentile}`}
-              </>
-            </Typography>
-            <Typography variant="body2" className="mutation-burden__comparator--padded">
-              <>
-                Truncating Protein Coding SNVs (count):
-                {` ${burden.truncatingSnvCount}`}
-              </>
-            </Typography>
-          </>
-        );
-      case 'Indel':
-        return (
-          <>
-            <Typography variant="body2" className="mutation-burden__comparator--padded">
-              <>
-                Protein Coding Indels (count):
-                {` ${burden.codingIndelsCount}`}
-              </>
-            </Typography>
-            <Typography variant="body2" className="mutation-burden__comparator--padded">
-              <>
-                Protein Coding Indels (percentile):
-                {` ${burden.codingIndelPercentile}`}
-              </>
-            </Typography>
-            <Typography variant="body2" className="mutation-burden__comparator--padded">
-              <>
-                Frameshifting Protein Coding Indels (count):
-                {` ${burden.frameshiftIndelsCount}`}
-              </>
-            </Typography>
-          </>
-        );
-      case 'SV':
-        return (
-          <>
-            <Typography variant="body2" className="mutation-burden__comparator--padded">
-              <>
-                Structural Variants (count):
-                {` ${burden.qualitySvCount}`}
-              </>
-            </Typography>
-            <Typography variant="body2" className="mutation-burden__comparator--padded">
-              <>
-                Structural Variants (percentile):
-                {` ${burden.qualitySvPercentile}`}
-              </>
-            </Typography>
-            <Typography variant="body2" className="mutation-burden__comparator--padded">
-              <>
-                Expressed Structural Variants (count):
-                {` ${burden.qualitySvExpressedCount}`}
-              </>
-            </Typography>
-          </>
-        );
-      default:
-        console.error(`Bad card type found: ${type}`);
-        return null;
-    }
-  };
 
   return (
     <div className="mutation-burden">
@@ -261,70 +129,14 @@ const MutationBurden = (): JSX.Element => {
                     {`${type}`}
                   </Typography>
                 </div>
-                <div className="mutation-burden__tab-control">
-                  <Tabs value={getTabValue(type)} onChange={(event, value) => handleTabChange(event, value, type)}>
-                    {comparators
-                      .filter(({ analysisRole }) => analysisRole.includes('mutation burden'))
-                      .map(({ analysisRole }) => {
-                        const [roleName] = analysisRole.match(/(?<=\().+(?=\))/g);
-
-                        return (
-                          <Tab key={analysisRole} label={roleName} />
-                        );
-                      })}
-                  </Tabs>
-                </div>
-                <div className="mutation-burden__images">
-                  {comparators
-                    .filter(({ analysisRole }) => analysisRole.includes('mutation burden'))
-                    .map(({ analysisRole, name }) => {
-                      if (type === 'SV'
-                        && comparators.some(({ analysisRole: role }) => role.includes('mutation burden SV'))
-                        && !analysisRole.includes('mutation burden SV')) {
-                        return null;
-                      }
-                      const [roleName] = analysisRole.match(/(?<=\().+(?=\))/g);
-                      const mutationBurdenRole = mutationBurden.find(({ role }) => role === roleName);
-
-                      const barplotsByRole = getImages(barplots, roleName);
-                      const densitiesByRole = getImages(densities, roleName);
-                      const legendsByRole = getImages(legends, roleName);
-
-                      return (
-                        <>
-                          {rankMapping[roleName] === getTabValue(type) && (
-                            <Card key={name} elevation={3} className="mutation-burden__group">
-                              <CardHeader title={`Comparator: ${name} (${roleName})`} />
-                              {Boolean(barplotsByRole.length) && barplotsByRole.map(plot => (
-                                <span key={plot.key} className="mutation-burden__image">
-                                  <Image
-                                    image={plot}
-                                    showTitle
-                                    showCaption
-                                  />
-                                </span>
-                              ))}
-                              {Boolean(densitiesByRole.length) && densitiesByRole.map((plot, index) => (
-                                <span key={plot.key} className="mutation-burden__pair">
-                                  <Typography>{plot.title}</Typography>
-                                  <Image image={plot} />
-                                  {legendsByRole[index] && (
-                                    <Image image={legendsByRole[index]} />
-                                  )}
-                                  <Typography>{plot.caption}</Typography>
-                                </span>
-                              ))}
-                              {mutationBurdenRole && (
-                                <CardContent>
-                                  {getCardContent(mutationBurdenRole, type)}
-                                </CardContent>
-                              )}
-                            </Card>
-                          )}
-                        </>
-                      );
-                    })}
-                </div>
+                <TabCards
+                  type={type}
+                  comparators={comparators}
+                  mutationBurden={mutationBurden}
+                  barplots={barplots}
+                  densities={densities}
+                  legends={legends}
+                />
               </React.Fragment>
             );
           })}
