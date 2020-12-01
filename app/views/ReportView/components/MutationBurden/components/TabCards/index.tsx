@@ -54,6 +54,24 @@ const TabCards = ({
     return foundImages;
   };
 
+  const getTabs = useCallback(() => {
+    const tabNames = [];
+
+    return comparators
+      .filter(({ analysisRole }) => analysisRole.includes('mutation burden'))
+      .map(({ analysisRole }) => {
+        const [roleName] = analysisRole.match(/(?<=\().+(?=\))/g);
+        if (!tabNames.includes(roleName)) {
+          tabNames.push(roleName);
+
+          return (
+            <Tab key={analysisRole} label={roleName} />
+          );
+        }
+        return null;
+      });
+  }, [comparators]);
+
   const getCardContent = useCallback((burden) => {
     switch (type) {
       case 'SNV':
@@ -117,15 +135,7 @@ const TabCards = ({
     <>
       <div className="mutation-burden__tab-control">
         <Tabs value={tabValue} onChange={(event, value) => handleTabChange(event, value)}>
-          {comparators
-            .filter(({ analysisRole }) => analysisRole.includes('mutation burden'))
-            .map(({ analysisRole }) => {
-              const [roleName] = analysisRole.match(/(?<=\().+(?=\))/g);
-
-              return (
-                <Tab key={analysisRole} label={roleName} />
-              );
-            })}
+          {getTabs()}
         </Tabs>
       </div>
       <div className="mutation-burden__images">
@@ -137,6 +147,12 @@ const TabCards = ({
               && !analysisRole.includes('mutation burden SV')) {
               return null;
             }
+
+            if (type !== 'SV'
+              && analysisRole.includes('mutation burden SV')) {
+              return null;
+            }
+
             const [roleName] = analysisRole.match(/(?<=\().+(?=\))/g);
             const mutationBurdenRole = mutationBurden.find(({ role }) => role === roleName);
 
