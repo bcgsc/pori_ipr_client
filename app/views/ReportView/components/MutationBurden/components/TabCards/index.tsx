@@ -60,22 +60,16 @@ const TabCards = ({
         return (
           <>
             <Typography variant="body2" className="mutation-burden__comparator--padded">
-              <>
-                Protein Coding SNVs (count):
-                {` ${burden.codingSnvCount}`}
-              </>
+              Protein Coding SNVs (count):
+              {` ${burden.codingSnvCount}`}
             </Typography>
             <Typography variant="body2" className="mutation-burden__comparator--padded">
-              <>
-                Protein Coding SNVs (percentile):
-                {` ${burden.codingSnvPercentile}`}
-              </>
+              Protein Coding SNVs (percentile):
+              {` ${burden.codingSnvPercentile}`}
             </Typography>
             <Typography variant="body2" className="mutation-burden__comparator--padded">
-              <>
-                Truncating Protein Coding SNVs (count):
-                {` ${burden.truncatingSnvCount}`}
-              </>
+              Truncating Protein Coding SNVs (count):
+              {` ${burden.truncatingSnvCount}`}
             </Typography>
           </>
         );
@@ -83,22 +77,16 @@ const TabCards = ({
         return (
           <>
             <Typography variant="body2" className="mutation-burden__comparator--padded">
-              <>
-                Protein Coding Indels (count):
-                {` ${burden.codingIndelsCount}`}
-              </>
+              Protein Coding Indels (count):
+              {` ${burden.codingIndelsCount}`}
             </Typography>
             <Typography variant="body2" className="mutation-burden__comparator--padded">
-              <>
-                Protein Coding Indels (percentile):
-                {` ${burden.codingIndelPercentile}`}
-              </>
+              Protein Coding Indels (percentile):
+              {` ${burden.codingIndelPercentile}`}
             </Typography>
             <Typography variant="body2" className="mutation-burden__comparator--padded">
-              <>
-                Frameshifting Protein Coding Indels (count):
-                {` ${burden.frameshiftIndelsCount}`}
-              </>
+              Frameshifting Protein Coding Indels (count):
+              {` ${burden.frameshiftIndelsCount}`}
             </Typography>
           </>
         );
@@ -106,22 +94,16 @@ const TabCards = ({
         return (
           <>
             <Typography variant="body2" className="mutation-burden__comparator--padded">
-              <>
-                Structural Variants (count):
-                {` ${burden.qualitySvCount}`}
-              </>
+              Structural Variants (count):
+              {` ${burden.qualitySvCount}`}
             </Typography>
             <Typography variant="body2" className="mutation-burden__comparator--padded">
-              <>
-                Structural Variants (percentile):
-                {` ${burden.qualitySvPercentile}`}
-              </>
+              Structural Variants (percentile):
+              {` ${burden.qualitySvPercentile}`}
             </Typography>
             <Typography variant="body2" className="mutation-burden__comparator--padded">
-              <>
-                Expressed Structural Variants (count):
-                {` ${burden.qualitySvExpressedCount}`}
-              </>
+              Expressed Structural Variants (count):
+              {` ${burden.qualitySvExpressedCount}`}
             </Typography>
           </>
         );
