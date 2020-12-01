@@ -110,6 +110,16 @@ const MutationBurden = (): JSX.Element => {
     }
   }, [report]);
 
+  const getSectionHeader = (type) => {
+    if (type === 'SNV') {
+      return 'Single Nucleotide Variants (SNV)';
+    }
+    if (type === 'Indel') {
+      return 'Insertions/Deletions (Indel)';
+    }
+    return 'Structural Variants (SV)';
+  };
+
   return (
     <div className="mutation-burden">
       <Typography variant="h3">
@@ -126,7 +136,7 @@ const MutationBurden = (): JSX.Element => {
               <React.Fragment key={type}>
                 <div className="mutation-burden__comparator">
                   <Typography variant="h3">
-                    {`${type}`}
+                    {getSectionHeader(type)}
                   </Typography>
                 </div>
                 <TabCards
