@@ -264,7 +264,7 @@ class Report {
 
     try {
       const review = await GermlineService.addReview(this.report.ident, data);
-      this.report.reviews.push(review[0]);
+      this.report.reviews.push(review);
       this.$mdToast.show(toastCreator('The review has been added.'));
       this.addReview = false;
     } catch (err) {
