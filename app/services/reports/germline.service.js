@@ -61,7 +61,7 @@ class GermlineService {
    * @returns {Promise} - created review object
    */
   async addReview(report, payload) {
-    const { data } = await $http.put(
+    const { data } = await $http.post(
       `${this.api}/${report}/review`,
       payload,
     );
