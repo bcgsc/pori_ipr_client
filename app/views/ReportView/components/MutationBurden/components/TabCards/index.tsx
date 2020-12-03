@@ -161,7 +161,7 @@ const TabCards = ({
             const legendsByRole = getImages(legends, roleName);
 
             return (
-              <>
+              <React.Fragment key={analysisRole}>
                 {rankMapping[roleName] === tabValue && (
                   <Card key={name} elevation={3} className="mutation-burden__group">
                     <CardHeader title={`Comparator: ${name} (${roleName})`} />
@@ -191,7 +191,7 @@ const TabCards = ({
                     )}
                   </Card>
                 )}
-              </>
+              </React.Fragment>
             );
           })}
       </div>

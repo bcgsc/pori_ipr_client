@@ -1,87 +1,20 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 
+import {
+  comparators,
+  mutationBurden,
+  barplots,
+  densities,
+  legends,
+} from './mockData';
 import TabCards from '..';
 
-describe('Tab Cards Component', () => {
-  test('Header text is in the document', async () => {
-    const comparators = [
-      {
-        analysisRole: 'mutation burden (primary)',
-        createdAt: '',
-        description: '',
-        ident: '',
-        name: 'POG',
-        size: null,
-        updatedAt: null,
-        version: null,
-      },
-    ];
+describe('TabCards SNV', () => {
+  let queryFunctions;
 
-    const mutationBurden = [
-      {
-        codingIndelPercentile: 24,
-        codingIndelsCount: 1,
-        codingSnvCount: 10,
-        codingSnvPercentile: 10,
-        createdAt: 'now',
-        frameshiftIndelsCount: 1,
-        ident: 'e',
-        qualitySvCount: 53,
-        qualitySvExpressedCount: 14,
-        qualitySvPercentile: 92,
-        role: 'primary',
-        totalIndelCount: null,
-        totalMutationsPerMb: 1.98,
-        totalSnvCount: null,
-        truncatingSnvCount: 1,
-        updatedAt: '',
-      },
-    ];
-
-    const barplots = [
-      {
-        caption: null,
-        createdAt: '',
-        data: '',
-        filename: '',
-        format: 'PNG',
-        ident: '',
-        key: '',
-        title: '',
-        updatedAt: '',
-      },
-    ];
-
-    const densities = [
-      {
-        caption: null,
-        createdAt: '',
-        data: '',
-        filename: '',
-        format: 'PNG',
-        ident: '',
-        key: '',
-        title: '',
-        updatedAt: '',
-      },
-    ];
-
-    const legends = [
-      {
-        caption: null,
-        createdAt: '',
-        data: '',
-        filename: '',
-        format: 'PNG',
-        ident: '',
-        key: '',
-        title: '',
-        updatedAt: '',
-      },
-    ];
-
-    const { getByText } = render(
+  beforeEach(() => {
+    queryFunctions = render(
       <TabCards
         comparators={comparators}
         mutationBurden={mutationBurden}
@@ -91,5 +24,69 @@ describe('Tab Cards Component', () => {
         legends={legends}
       />,
     );
+  });
+
+  test('Primary comparator tab is present', () => {
+    const { getByText } = queryFunctions;
+    expect(getByText('primary')).toBeInTheDocument();
+  });
+
+  test('Secondary comparator tab is present', () => {
+    const { getByText } = queryFunctions;
+    expect(getByText('secondary')).toBeInTheDocument();
+  });
+
+  test('TCGA is the primary comparator', () => {
+    const { getByText } = queryFunctions;
+    expect(getByText('Comparator: TCGA (primary)')).toBeInTheDocument();
+  });
+
+  test('POG primary SV comparator is not present for SNV', () => {
+    const { queryByText } = queryFunctions;
+    expect(queryByText('Comparator: POG (primary)')).not.toBeInTheDocument();
+  });
+
+  test('Secondary comparator is visible on tab change', async () => {
+    const { getByText, container } = queryFunctions;
+    const secondaryTabButton = container.querySelector('button[aria-selected="false"]');
+    await fireEvent.click(secondaryTabButton);
+    expect(getByText('Comparator: TCGA (secondary)')).toBeInTheDocument();
+  });
+
+  test('Barplot image is shown', () => {
+    const { getAllByText } = queryFunctions;
+    expect(getAllByText('SNV barplot image').length).toBeGreaterThanOrEqual(1);
+  });
+
+  test('Density image is shown', () => {
+    const { getAllByText } = queryFunctions;
+    expect(getAllByText('SNV density image').length).toBeGreaterThanOrEqual(1);
+  });
+
+  test('Legend image is shown', () => {
+    const { getAllByAltText } = queryFunctions;
+    expect(getAllByAltText('SNV legend image').length).toBeGreaterThanOrEqual(1);
+  });
+});
+
+describe('TabCards SV overload', () => {
+  let queryFunctions;
+
+  beforeEach(() => {
+    queryFunctions = render(
+      <TabCards
+        comparators={comparators}
+        mutationBurden={mutationBurden}
+        type="SV"
+        barplots={barplots}
+        densities={densities}
+        legends={legends}
+      />,
+    );
+  });
+
+  test('POG primary SV comparator overloads non-SV comparator', () => {
+    const { getByText } = queryFunctions;
+    expect(getByText('Comparator: POG (primary)')).toBeInTheDocument();
   });
 });

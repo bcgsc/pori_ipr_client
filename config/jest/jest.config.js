@@ -17,7 +17,7 @@ module.exports = {
   ],
   setupFilesAfterEnv: ['<rootDir>/config/jest/setup.js'],
   testEnvironment: 'jest-environment-jsdom-fourteen',
-  testRegex: 'app.*__tests__.*.[jt]sx?$',
+  testRegex: 'app.*__tests__.*.test.[jt]sx?$',
   testURL: 'http://0.0.0.0',
   transform: {
     '^.+\\.([jt]sx?)$': '<rootDir>/node_modules/babel-jest',
