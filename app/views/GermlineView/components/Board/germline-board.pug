@@ -49,9 +49,9 @@ md-content(flex, layout="column").md-padding.germline
             span(ng-repeat="project in report.projects") {{ $index==0 ? project.name : ', ' + project.name }}
           td {{report.biopsyName}}
           td
-            span {{report.source_version}}
-              md-tooltip {{report.source_path}}
-          td {{report.biofx_assigned.firstName + ' ' + report.biofx_assigned.lastName}}
+            span {{report.sourceVersion}}
+              md-tooltip {{report.sourcePath}}
+          td {{report.biofxAssigned.firstName + ' ' + report.biofxAssigned.lastName}}
           td
             md-icon {{$ctrl.hasReview(report, 'biofx') ? 'check_box' : 'check_box_outline_blank'}}
           td
