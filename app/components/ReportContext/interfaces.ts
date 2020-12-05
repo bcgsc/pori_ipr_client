@@ -31,9 +31,11 @@ interface ReportContextInterface {
     biopsyName?: string,
     createdAt: string,
     ident: string,
+    kbVersion: string,
     patientId: string,
     patientInformation: PatientInformationInterface,
     ploidy: string,
+    reportVersion: string,
     sampleInfo: Array<SampleInfoInterface>
     state: string,
     subtyping: string,
