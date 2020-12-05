@@ -117,7 +117,9 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
         setPrimaryBurden(burdenResp.find((entry: Record<string, unknown>) => entry.role === 'primary'));
         setTCellCd8(immuneResp.find(({ cellType }) => cellType === 'T cells CD8'));
 
-        setMicrobial(microbialResp[0]);
+        if (microbialResp.length) {
+          setMicrobial(microbialResp[0]);
+        }
         setSignatures(signaturesResp);
 
         const output = [];
