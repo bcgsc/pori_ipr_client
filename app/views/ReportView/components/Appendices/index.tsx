@@ -101,7 +101,7 @@ const Appendices = ({ isProbe, isPrint, loadedDispatch }: AppendicesProps): JSX.
               className="analysis-summary__content"
             >
               {analysisSummary.map(({ label, value }) => (
-                <Grid key={label} item>
+                <Grid key={label as string} item>
                   <ReadOnlyTextField label={label}>
                     {value}
                   </ReadOnlyTextField>
@@ -152,7 +152,7 @@ const Appendices = ({ isProbe, isPrint, loadedDispatch }: AppendicesProps): JSX.
             className="analysis-summary__content"
           >
             {analysisSummary.map(({ label, value }) => (
-              <Grid key={label} item>
+              <Grid key={label as string} item>
                 <ReadOnlyTextField label={label}>
                   {value}
                 </ReadOnlyTextField>

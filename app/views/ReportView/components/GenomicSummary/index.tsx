@@ -417,7 +417,7 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
               className="genomic-summary__patient-information-content"
             >
               {patientInformation.map(({ label, value }) => (
-                <Grid key={label} item>
+                <Grid key={label as string} item>
                   <ReadOnlyTextField label={label}>
                     {value}
                   </ReadOnlyTextField>
