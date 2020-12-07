@@ -61,7 +61,7 @@ class Board {
 
       report.exported = false;
       const reportCache = angular.copy(report);
-      reportCache.biofx_assigned = report.biofx_assigned.ident;
+      reportCache.biofxAssigned = report.biofxAssigned.ident;
 
       const result = await GermlineService.updateReport(reportCache.ident, reportCache);
       const i = this.reports.findIndex(rep => rep.ident === reportCache.ident);

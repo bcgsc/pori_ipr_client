@@ -61,8 +61,8 @@ class GermlineService {
    * @returns {Promise} - created review object
    */
   async addReview(report, payload) {
-    const { data } = await $http.put(
-      `${this.api}/${report}/review`,
+    const { data } = await $http.post(
+      `${this.api}/${report}/reviews`,
       payload,
     );
     return data;
@@ -76,7 +76,7 @@ class GermlineService {
    */
   async removeReview(report, review) {
     const { data } = await $http.delete(
-      `${this.api}/${report}/review/${review}`,
+      `${this.api}/${report}/reviews/${review}`,
     );
     return data;
   }
@@ -90,7 +90,7 @@ class GermlineService {
    */
   async updateVariant(report, variant, payload) {
     const { data } = await $http.put(
-      `${this.api}/${report}/variant/${variant}`,
+      `${this.api}/${report}/variants/${variant}`,
       payload,
     );
     return data;
