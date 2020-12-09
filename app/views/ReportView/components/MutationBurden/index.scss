@@ -5,10 +5,16 @@
     margin: 24px 16px;
   }
 
+  &__tab-control {
+    margin: 16px;
+    display: flex;
+    justify-content: center;
+  }
+
   &__images {
     display: flex;
+    justify-content: center;
     flex-direction: row;
-    flex-wrap: wrap;
   }
 
   &__group {
