@@ -12,7 +12,12 @@ import api from '../../../../../../services/api';
 
 import './index.scss';
 
-const InfoDialog = ({ isOpen, onClose }) => {
+type props = {
+  isOpen: boolean,
+  onClose: () => void,
+};
+
+const InfoDialog = ({ isOpen, onClose }: props): JSX.Element => {
   const [evidenceLevels, setEvidenceLevels] = useState([]);
 
   useEffect(() => {
@@ -40,10 +45,10 @@ const InfoDialog = ({ isOpen, onClose }) => {
             {evidenceLevels.map(({ displayName, description }) => (
               <div key={displayName} className="info__group">
                 <Typography variant="h5">
-                  {displayName}  
+                  {displayName}
                 </Typography>
                 <Typography variant="body2">
-                  {description}  
+                  {description}
                 </Typography>
               </div>
             ))}
