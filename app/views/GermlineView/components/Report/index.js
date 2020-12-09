@@ -97,44 +97,44 @@ class Report {
         width: 50,
         showAlways: true,
       },
-      zygosity_germline: {
+      zygosityGermline: {
         name: 'Zygosity in germline',
         width: 100,
         showAlways: true,
       },
-      preferred_transcript: {
+      preferredTranscript: {
         name: 'Preferred Transcript',
         width: 150,
         showAlways: true,
       },
-      hgvs_cdna: {
+      hgvsCdna: {
         name: 'HGVS-cDNA',
         width: 100,
         showAlways: true,
       },
-      hgvs_protein: {
+      hgvsProtein: {
         name: 'HGVS-protein',
         width: 100,
         showAlways: true,
       },
-      zygosity_tumour: {
+      zygosityTumour: {
         name: 'Zygosity in tumour',
         width: 100,
         showAlways: true,
       },
-      genomic_variant_reads: {
+      genomicVariantReads: {
         name: 'Genomic variant reads ',
         tooltip: '(alt/total)',
         width: 120,
         showAlways: false,
       },
-      rna_variant_reads: {
+      rnaVariantReads: {
         name: 'RNA variant reads',
         tooltip: '(alt/total)',
         width: 120,
         showAlways: false,
       },
-      gene_somatic_abberation: {
+      geneSomaticAbberation: {
         name: 'Gene somatic aberration?',
         width: 100,
         showAlways: false,
@@ -149,42 +149,42 @@ class Report {
         width: 100,
         showAlways: true,
       },
-      patient_history: {
+      patientHistory: {
         name: 'Patient History',
         width: 100,
         showAlways: true,
       },
-      family_history: {
+      familyHistory: {
         name: 'Family History',
         width: 100,
         showAlways: true,
       },
-      tcga_comp_norm_percentile: {
+      tcgaCompNormPercentile: {
         name: 'tcga_comp_norm_percentile',
         width: 100,
         showAlways: false,
       },
-      tcga_comp_percentile: {
+      tcgaCompPercentile: {
         name: 'tcga_comp_percentile',
         width: 200,
         showAlways: false,
       },
-      gtex_comp_percentile: {
+      gtexCompPercentile: {
         name: 'gtex_comp_average_percentile',
         width: 200,
         showAlways: false,
       },
-      fc_bodymap: {
+      fcBodymap: {
         name: 'fc_bodymap',
         width: 100,
         showAlways: false,
       },
-      gene_expression_rpkm: {
+      geneExpressionRpkm: {
         name: 'Gene Expression RPKM',
         width: 100,
         showAlways: true,
       },
-      additional_info: {
+      additionalInfo: {
         name: 'Additional Info',
         width: 100,
         showAlways: false,
@@ -235,14 +235,14 @@ class Report {
 
     if (mode === 'patient') {
       this.report.variants.forEach((variant) => {
-        variant.patient_history = resp.value;
-        updatedVariant.patient_history = resp.value;
+        variant.patientHistory = resp.value;
+        updatedVariant.patientHistory = resp.value;
       });
     }
     if (mode === 'family') {
       this.report.variants.forEach((variant) => {
-        variant.family_history = resp.value;
-        updatedVariant.family_history = resp.value;
+        variant.familyHistory = resp.value;
+        updatedVariant.familyHistory = resp.value;
       });
     }
 
@@ -264,7 +264,7 @@ class Report {
 
     try {
       const review = await GermlineService.addReview(this.report.ident, data);
-      this.report.reviews.push(review[0]);
+      this.report.reviews.push(review);
       this.$mdToast.show(toastCreator('The review has been added.'));
       this.addReview = false;
     } catch (err) {
