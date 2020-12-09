@@ -26,6 +26,7 @@ const columnDefs = [{
   hide: true,
 }, {
   headerName: 'Evidence Level',
+  headerComponent: 'headerCellRenderer',
   field: 'evidenceLevel',
   hide: false,
 }, {

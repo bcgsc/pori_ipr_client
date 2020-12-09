@@ -72,6 +72,7 @@ function DataTable(props) {
     theme,
     isPrint,
     highlightRow,
+    Header,
   } = props;
 
   const domLayout = isPrint ? 'print' : 'autoHeight';
@@ -462,6 +463,7 @@ function DataTable(props) {
                   LinkCellRenderer,
                   GeneCellRenderer,
                   ActionCellRenderer: RowActionCellRenderer,
+                  headerCellRenderer: Header,
                 }}
                 suppressAnimationFrame
                 suppressColumnVirtualisation
