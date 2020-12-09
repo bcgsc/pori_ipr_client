@@ -15,6 +15,16 @@ module.exports = {
     'json',
     'json-summary',
   ],
+  reporters: [
+    'default',
+    [
+      'jest-junit',
+      {
+        outputDirectory: '<rootDir>/coverage',
+        outputName: 'junit.xml',
+      },
+    ],
+  ],
   setupFilesAfterEnv: ['<rootDir>/config/jest/setup.js'],
   testEnvironment: 'jest-environment-jsdom-fourteen',
   testRegex: 'app.*__tests__.*.test.[jt]sx?$',
