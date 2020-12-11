@@ -23,7 +23,7 @@ const InfoDialog = ({ isOpen, onClose }: props): JSX.Element => {
   useEffect(() => {
     if (isOpen) {
       const getData = async () => {
-        const evidenceLevelsResp = await api.get('/graphkb/evidenceLevels', {}).request();
+        const evidenceLevelsResp = await api.get('/graphkb/evidence-levels', {}).request();
         if (evidenceLevelsResp) {
           setEvidenceLevels(evidenceLevelsResp.result);
         }
