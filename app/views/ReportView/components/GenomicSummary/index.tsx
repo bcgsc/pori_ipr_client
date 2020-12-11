@@ -227,7 +227,7 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
             .map(({ associations, signature }) => (
               `${signature} (${associations})`
             )).join(', '),
-          action: () => history.push('mutation-signatures'),
+          action: !print ? () => history.push('mutation-signatures') : null,
         },
         {
           term: 'Mutation Burden',
@@ -426,7 +426,7 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
             <div className="genomic-summary__patient-information-title">
               <Typography variant="h3" display="inline">
                 Patient Information
-                {canEdit && (
+                {canEdit && !print && (
                   <>
                     <IconButton onClick={() => setShowPatientEdit(true)}>
                       <EditIcon />
@@ -461,7 +461,7 @@ const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
             <div className="genomic-summary__tumour-summary-title">
               <Typography variant="h3">
                 Tumour Summary
-                {canEdit && (
+                {canEdit && !print && (
                   <>
                     <IconButton onClick={() => setShowTumourSummaryEdit(true)}>
                       <EditIcon />
