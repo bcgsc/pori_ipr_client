@@ -1,0 +1,31 @@
+@import '../../../../../../styles/theme';
+
+.config {
+  font-family: monospace;
+  font-size: 0.95em;
+  font-weight: 600;
+  line-height: 140%;
+
+  padding: 10px;
+  background-color: $palette__grey--300;
+  border: 1px solid $palette__grey--600;
+  max-height: 300px;
+  overflow-y: auto;
+
+  white-space: pre-wrap;
+  word-break: break-all;
+  word-wrap: break-word;
+
+  &__table {
+    margin: 2mm 0;
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
+
+  &__row {
+    margin: 0;
+    padding: .5mm 0;
+    font-family: monospace;
+    font-size: 7pt;
+  }
+}

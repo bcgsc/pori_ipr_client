@@ -109,7 +109,7 @@ const tcgaAcronymsColumnDefs = [{
   hide: false,
 }];
 
-export default {
+export {
   sampleInformationColumnDefs,
   sequencingProtocolInformationColumnDefs,
   tcgaAcronymsColumnDefs,
