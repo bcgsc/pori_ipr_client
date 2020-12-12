@@ -1,6 +1,6 @@
 declare module '*.scss';
 
-declare var CONFIG: {
+declare let CONFIG: {
   ATTRS: {
     NAME: string,
   },

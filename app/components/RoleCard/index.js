@@ -31,7 +31,6 @@ class RoleCard {
     /* This syntax is really weird, but if anyone is interested: */
     /* Read about '&' binding for components in angularjs for why we pass an object back */
     this.removeEntry({ entry: this.role });
-    
   }
 }
 

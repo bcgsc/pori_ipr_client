@@ -31,15 +31,19 @@ interface ReportContextInterface {
     biopsyName?: string,
     createdAt: string,
     ident: string,
+    kbVersion: string,
     patientId: string,
     patientInformation: PatientInformationInterface,
+    ploidy: string,
+    reportVersion: string,
     sampleInfo: Array<SampleInfoInterface>
     state: string,
+    subtyping: string,
     tumourContent?: number,
     type: string,
   } | null,
   /** Set new current report */
-  setReport: Function,
+  setReport: (newValue: Record<string, unknown>) => void,
 }
 
 export {

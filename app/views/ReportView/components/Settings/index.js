@@ -29,6 +29,7 @@ class Settings {
 
   $onInit() {
     this.roles = ['bioinformatician', 'analyst', 'reviewer', 'admin', 'clinician'];
+    this.dirtyFields = {};
     this.reportSettingsChanged = false;
     this.newReportFields = {};
     this.formatDate = formatDate;
@@ -134,11 +135,14 @@ class Settings {
       this.reportSettingsChanged = true;
     }
 
-    if (this.reportSettingsChanged
-      && JSON.stringify(this.report) === JSON.stringify(this.reportCache)
-    ) {
-      this.reportSettingsChanged = false;
+    if (this.report.kbVersion !== this.reportCache.kbVersion) {
+      this.dirtyFields.kbVersion = this.report.kbVersion;
     }
+
+    if (Object.values(this.dirtyFields).length > 0) {
+      this.reportSettingsChanged = true;
+    }
+    this.$rootScope.$digest();
   }
 
   async updateSettings() {
@@ -152,6 +156,7 @@ class Settings {
       resp = await call.request();
     }
     this.report = resp;
+    this.dirtyFields = {};
     $rootScope.$digest();
 
     this.$mdToast.show(toastCreator('Report settings have been updated.'));

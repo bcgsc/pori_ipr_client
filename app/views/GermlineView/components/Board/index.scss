@@ -1,7 +1,8 @@
 @import '../../../../styles/theme';
+@import '../../../../styles/variables';
 
 .germline {
-  height: calc(100vh - 56px);
+  height: calc(100vh - #{$navbar-size});
   overflow-y: auto;
 }
 

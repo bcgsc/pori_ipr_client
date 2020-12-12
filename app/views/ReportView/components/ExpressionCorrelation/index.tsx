@@ -1,4 +1,6 @@
-import React, { useEffect, useState, useContext, useRef } from 'react';
+import React, {
+  useEffect, useState, useContext, useRef,
+} from 'react';
 import orderBy from 'lodash.orderby';
 import { HorizontalBar, Chart } from 'react-chartjs-2';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
@@ -17,7 +19,7 @@ interface Color {
   red: number,
   green: number,
   blue: number,
-};
+}
 
 const LOWER_COLOR = {
   red: 134,
@@ -41,17 +43,17 @@ const getColor = (lowerColor: Color, upperColor: Color, ratio: number): Color =>
   return newColor;
 };
 
-const LUMINANCE_THRESHOLD: number = 186;
+const LUMINANCE_THRESHOLD = 186;
 
 /** Values are from RGB -> Luma formula: Y = 0.2126 R + 0.7152 G + 0.0722 B */
 const getLuminance = (color: Color): number => {
   /** Compute sRGB, then linear RGB */
   for (let col of Object.values(color)) {
-    col = col/255;
+    col /= 255;
     if (col <= 0.03928) {
-      col = col/12.92;
+      col /= 12.92;
     } else {
-      col = ((col + 0.055)/1.055) ^ 2.4;
+      col = ((col + 0.055) / 1.055) ** 2.4;
     }
   }
 
@@ -59,7 +61,7 @@ const getLuminance = (color: Color): number => {
   return 0.2126 * color.red + 0.7152 * color.green + 0.0722 * color.blue;
 };
 
-const ExpressionCorrelation = () => {
+const ExpressionCorrelation = (): JSX.Element => {
   const { report } = useContext(ReportContext);
 
   const [plots, setPlots] = useState({});
@@ -85,8 +87,8 @@ const ExpressionCorrelation = () => {
 
         setPlots(plotData);
         setSubtypePlots(subtypePlotData);
-        setPairwiseExpression(orderBy(pairwiseData, ['correlation'], ['desc'], {}));
-      }
+        setPairwiseExpression(orderBy(pairwiseData, ['correlation'], ['desc']).slice(0, 19));
+      };
 
       getData();
     }
@@ -99,8 +101,8 @@ const ExpressionCorrelation = () => {
   }, []);
 
   const getGraphData = (rowData) => {
-    const labels = rowData.map(data => `${data.libraryName} (${data.tumourContent}% TC)`);
-    const colors = rowData.map(data => `rgb(${Object.values(getColor(LOWER_COLOR, UPPER_COLOR, data.correlation)).join(',')})`);
+    const labels = rowData.map(data => `${data.library} (${data.tumourContent}% TC)`);
+    const colors = rowData.map(data => `rgb(${Object.values(getColor(LOWER_COLOR, UPPER_COLOR, data.tumourContent / 100)).join(',')})`);
 
     const datasets = [
       {
@@ -112,7 +114,7 @@ const ExpressionCorrelation = () => {
         barPercentage: 1,
         hoverBackgroundColor: colors,
         hoverBorderColor: colors,
-        data: rowData.map(data => data.correlation),
+        data: rowData.map(data => data.correlation.toFixed(2)),
       },
     ];
     return {
@@ -142,15 +144,22 @@ const ExpressionCorrelation = () => {
     maintainAspectRatio: false,
     onClick: (event, [context]) => {
       if (context && chartRef.current) {
-        setRowClicked(context._index);
-        const newColors = chartRef.current.chartInstance.config.data.datasets[0].borderColor.map((color, index) => {
-          if (index === context._index) {
-            return '#000000';
-          }
-          return '#FFFFFF';
-        });
-        chartRef.current.chartInstance.config.data.datasets[0].borderColor = newColors;
-        chartRef.current.chartInstance.update();
+        if (rowClicked === context._index) {
+          setRowClicked(null);
+          const newColors = chartRef.current.chartInstance.config.data.datasets[0].borderColor.map(() => '#FFFFFF');
+          chartRef.current.chartInstance.config.data.datasets[0].borderColor = newColors;
+          chartRef.current.chartInstance.update();
+        } else {
+          setRowClicked(context._index);
+          const newColors = chartRef.current.chartInstance.config.data.datasets[0].borderColor.map((color, index) => {
+            if (index === context._index) {
+              return '#000000';
+            }
+            return '#FFFFFF';
+          });
+          chartRef.current.chartInstance.config.data.datasets[0].borderColor = newColors;
+          chartRef.current.chartInstance.update();
+        }
       }
     },
     legend: {
@@ -191,7 +200,7 @@ const ExpressionCorrelation = () => {
     },
     title: {
       display: true,
-      text: 'Libraries by correlation',
+      text: 'Top 20 libraries by correlation',
     },
     tooltips: {
       enabled: false,
@@ -241,6 +250,7 @@ const ExpressionCorrelation = () => {
                     </Typography>
                     {Object.values(subtypePlots).map(plot => (
                       <Image
+                        key={plot.ident}
                         image={plot}
                         showTitle
                         showCaption
@@ -250,7 +260,7 @@ const ExpressionCorrelation = () => {
                 </div>
               )}
             </div>
-            {!Boolean(Object.values(plots).length) && !Boolean(Object.values(subtypePlots).length) && (
+            {!Object.values(plots).length && !Object.values(subtypePlots).length && (
               <Typography align="center">No expression correlation plots found</Typography>
             )}
           </>
@@ -263,7 +273,6 @@ const ExpressionCorrelation = () => {
               ref={chartRef}
               data={barChartData}
               height={150 + (barChartData.datasets[0].data.length * 25)}
-              // width={600}
               options={options}
             />
           </div>

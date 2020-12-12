@@ -51,7 +51,7 @@ const eventsColumnDefs = [
     hide: false,
     sortable: false,
     suppressMenu: true,
-  }
+  },
 ];
 
 export {

@@ -113,17 +113,24 @@ function DataTable(props) {
   }, [visibleColumns]);
 
   useEffect(() => {
-    if (highlightRow !== null) {
-      const rowNode = gridApi.current.getDisplayedRowAtIndex(highlightRow);
-      rowNode.setSelected(true, true);
-      gridApi.current.ensureIndexVisible(highlightRow, 'middle');
+    if (gridApi.current) {
+      if (highlightRow !== null) {
+        const rowNode = gridApi.current.getDisplayedRowAtIndex(highlightRow);
+        rowNode.setSelected(true, true);
+        gridApi.current.ensureIndexVisible(highlightRow, 'middle');
 
-      const [element] = document.querySelectorAll(`div[class="report__content"]`);
-      element.scrollTo({
-        top: gridRef.current.eGridDiv.offsetTop,
-        left: 0,
-        behavior: 'smooth',
-      });
+        const [element] = document.querySelectorAll(`div[class="report__content"]`);
+        element.scrollTo({
+          top: gridRef.current.eGridDiv.offsetTop,
+          left: 0,
+          behavior: 'smooth',
+        });
+      } else {
+        const selected = gridApi.current.getSelectedNodes();
+        if (selected && selected.length) {
+          selected.forEach(node => node.setSelected(false));
+        }
+      }
     }
   }, [highlightRow]);
 
@@ -245,7 +252,7 @@ function DataTable(props) {
     }
   };
 
-  const handleRowEditClose = (editedData) => {
+  const handleRowEditClose = useCallback((editedData) => {
     setShowEditDialog(false);
     if (editedData && selectedRow.node) {
       selectedRow.node.setData(editedData);
@@ -261,7 +268,8 @@ function DataTable(props) {
       gridApi.current.updateRowData({ remove: [selectedRow.node.data] });
       setTableLength(gridApi.current.getDisplayedRowCount());
     }
-  };
+    setSelectedRow({});
+  }, [selectedRow.node, tableLength]);
 
   const defaultColDef = {
     sortable: !showReorder,
@@ -338,10 +346,11 @@ function DataTable(props) {
 
     gridApi.current.exportDataAsCsv({
       suppressQuotes: true,
+      columnSeparator: '\t',
       columnKeys: columnApi.current.getAllDisplayedColumns()
         .map(col => col.colId)
         .filter(col => col === 'Actions'),
-      fileName: `ipr_${patientId}_${reportIdent}_${titleText.split(' ').join('_')}_${date}`,
+      fileName: `ipr_${patientId}_${reportIdent}_${titleText.split(' ').join('_')}_${date}.tsv`,
     });
   };
 
@@ -351,7 +360,7 @@ function DataTable(props) {
       newRows.push(node.data);
     });
     onRowDataChanged(newRows);
-  }, [gridApi.current]);
+  }, [onRowDataChanged]);
 
   // Theme is needed for react in angular tables. It can't access the theme provider otherwise
   return (
@@ -390,7 +399,7 @@ function DataTable(props) {
                   {canExport && !isPrint && (
                     <span className="data-table__action">
                       <Typography display="inline">
-                        Export to CSV
+                        Export to TSV
                       </Typography>
                       <IconButton
                         onClick={handleCSVExport}

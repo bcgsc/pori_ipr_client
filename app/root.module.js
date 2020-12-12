@@ -27,7 +27,6 @@ import { MicrobialComponent } from '@/views/ReportView/components/Microbial';
 import { SmallMutationsComponent } from '@/views/ReportView/components/SmallMutations';
 import { CopyNumberComponent } from '@/views/ReportView/components/CopyNumber';
 import { StructuralVariantsComponent } from '@/views/ReportView/components/StructuralVariants';
-import { AppendicesComponent } from '@/views/ReportView/components/Appendices';
 import { SettingsComponent } from '@/views/ReportView/components/Settings';
 import { BoardComponent } from '@/views/GermlineView/components/Board';
 import { ReportComponent } from '@/views/GermlineView/components/Report';
@@ -70,7 +69,6 @@ const rootModule = angular.module('root')
   .component('smallMutations', SmallMutationsComponent)
   .component('copyNumber', CopyNumberComponent)
   .component('structuralVariants', StructuralVariantsComponent)
-  .component('appendices', AppendicesComponent)
   .component('settings', SettingsComponent)
   .component('board', BoardComponent)
   .component('report', ReportComponent)

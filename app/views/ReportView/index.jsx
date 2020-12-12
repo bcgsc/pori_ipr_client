@@ -37,9 +37,10 @@ const SmallMutations = lazy(() => import('./components/SmallMutations'));
 const CopyNumber = lazy(() => import('./components/CopyNumber'));
 const StructuralVariants = lazy(() => import('./components/StructuralVariants'));
 const Expression = lazy(() => import('./components/Expression'));
+const Immune = lazy(() => import('./components/Immune'));
 const Appendices = lazy(() => import('./components/Appendices'));
 const Settings = lazy(() => import('./components/Settings'));
-const ProbeSummary = lazy(() => import('./components/ProbeSummary/index.tsx'));
+const ProbeSummary = lazy(() => import('./components/ProbeSummary'));
 
 const ReportView = () => {
   const { path } = useRouteMatch();
@@ -204,7 +205,13 @@ const ReportView = () => {
                 />
                 <Route
                   render={routeProps => (
-                    <Appendices {...routeProps} print={false} theme={theme} isProbe={isProbe} report={report} canEdit={canEdit} />
+                    <Immune {...routeProps} print={false} />
+                  )}
+                  path={`${path}/immune`}
+                />
+                <Route
+                  render={routeProps => (
+                    <Appendices {...routeProps} isPrint={false} theme={theme} isProbe={isProbe} report={report} canEdit={canEdit} />
                   )}
                   path={`${path}/appendices`}
                 />

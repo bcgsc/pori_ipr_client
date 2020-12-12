@@ -6,7 +6,7 @@ const columnDefs = [
   },
   {
     headerName: 'Library Name',
-    field: 'libraryName',
+    field: 'library',
     hide: false,
   },
   {
@@ -38,7 +38,7 @@ const columnDefs = [
     hide: false,
     sortable: false,
     suppressMenu: true,
-  }
+  },
 ];
 
 export default columnDefs;

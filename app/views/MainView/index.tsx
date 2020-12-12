@@ -28,11 +28,12 @@ const PrintView = lazy(() => import('../PrintView'));
 const GermlineView = lazy(() => import('../GermlineView'));
 const AdminView = lazy(() => import('../AdminView'));
 const LinkOutView = lazy(() => import('../LinkOutView'));
+const PatientsView = lazy(() => import('../PatientsView'));
 
 /**
  * Entry point to application. Handles routing, app theme, and logged in state.
  */
-const Main = () => {
+const Main = (): JSX.Element => {
   const [authorizationToken, setAuthorizationToken] = useState<string>('');
   const [canEdit, setCanEdit] = useState<boolean>(false);
   const [userDetails, setUserDetails] = useState<string>('');
@@ -71,6 +72,7 @@ const Main = () => {
 
       return unregister;
     }
+    return undefined;
   }, [authorizationToken]);
 
   const handleSnackbarClose = useCallback((event, reason) => {
@@ -123,6 +125,7 @@ const Main = () => {
                   </Route>
                   <AuthenticatedRoute component={TermsView} path="/terms" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
                   <AuthenticatedRoute admin={adminUser} component={ReportsView} path="/reports" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
+                  <AuthenticatedRoute exact admin={adminUser} component={PatientsView} path="/reports/patients/:patientId" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
                   <Redirect exact from="/report/:ident/(genomic|probe)/summary" to="/report/:ident/summary" />
                   <AuthenticatedRoute component={ReportView} path="/report/:ident" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
                   <AuthenticatedRoute component={PrintView} path="/print/:ident" isNavVisible={false} onToggleNav={setIsNavVisible} />

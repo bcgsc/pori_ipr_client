@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import {
   Paper,
   Typography,
@@ -9,6 +9,7 @@ import GestureIcon from '@material-ui/icons/Gesture';
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 
 import EditContext from '../EditContext';
+import { formatDate } from '../../utils/date';
 
 import './index.scss';
 
@@ -16,27 +17,38 @@ const NON_BREAKING_SPACE = '\u00A0';
 
 type Props = {
   title: string,
-  signature: any | object,
-  onClick: Function,
-  role: 'author' | 'reviewer',
+  signatures: null | Record<string, unknown | Record<string, unknown>>,
+  onClick: (arg0: boolean, arg1: string) => void,
+  type: 'author' | 'reviewer',
   isPrint: boolean,
 };
 
-const SignatureCard: React.FC<Props> = ({
+const SignatureCard = ({
   title,
-  signature,
+  signatures,
   onClick,
-  role,
+  type,
   isPrint,
-}) => {
+}: Props): JSX.Element => {
   const { canEdit } = useContext(EditContext);
+  const [userSignature, setUserSignature] = useState<Record<string, unknown>>({});
+
+  useEffect(() => {
+    if (signatures && type) {
+      if (type === 'author') {
+        setUserSignature(signatures.authorSignature);
+      } else {
+        setUserSignature(signatures.reviewerSignature);
+      }
+    }
+  }, [signatures, type]);
 
   const handleSign = () => {
-    onClick(true, role);
+    onClick(true, type);
   };
 
   const handleRevoke = () => {
-    onClick(false, role);
+    onClick(false, type);
   };
 
   if (isPrint) {
@@ -46,11 +58,11 @@ const SignatureCard: React.FC<Props> = ({
           <Typography variant="body2" display="inline">
             {`${title}: `}
           </Typography>
-          {signature && signature.ident ? (
+          {userSignature?.ident ? (
             <Typography variant="body2" display="inline">
-              {signature.firstName}
+              {userSignature.firstName}
               {' '}
-              {signature.lastName}
+              {userSignature.lastName}
             </Typography>
           ) : (
             <Typography variant="body2" display="inline">
@@ -60,14 +72,12 @@ const SignatureCard: React.FC<Props> = ({
         </div>
         <div className="signatures-print__value">
           <Typography variant="body2" display="inline">
-            {`Date: `}
+            {'Date: '}
           </Typography>
-          {signature && signature.ident ? (
-              <Typography variant="body2" display="inline">
-                {signature.updatedAt
-                  ? signature.updatedAt
-                  : signature.createdAt}
-              </Typography>
+          {signatures?.ident ? (
+            <Typography variant="body2" display="inline">
+              {type === 'author' ? formatDate(signatures.authorSignedAt, true) : formatDate(signatures.reviewerSignedAt, true)}
+            </Typography>
           ) : (
             <Typography display="inline">
               {NON_BREAKING_SPACE}
@@ -84,14 +94,14 @@ const SignatureCard: React.FC<Props> = ({
         <Typography variant="body2">
           {title}
         </Typography>
-        {signature && signature.ident && (
+        {userSignature?.ident && (
           <Typography>
-            {signature.firstName}
+            {userSignature.firstName}
             {' '}
-            {signature.lastName}
+            {userSignature.lastName}
           </Typography>
         )}
-        {(!signature || !signature.ident) && canEdit && (
+        {!userSignature?.ident && canEdit && (
           <>
             <Button
               onClick={handleSign}
@@ -109,19 +119,17 @@ const SignatureCard: React.FC<Props> = ({
         <Typography variant="body2">
           Date
         </Typography>
-        {signature && signature.ident ? (
-            <Typography>
-              {signature.updatedAt
-                ? signature.updatedAt
-                : signature.createdAt}
-            </Typography>
+        {signatures?.ident ? (
+          <Typography>
+            {type === 'author' ? formatDate(signatures.authorSignedAt, true) : formatDate(signatures.reviewerSignedAt, true)}
+          </Typography>
         ) : (
           <Typography>
             {NON_BREAKING_SPACE}
           </Typography>
         )}
       </div>
-      {signature && signature.ident && canEdit && (
+      {userSignature?.ident && canEdit && (
         <div className="signatures__button">
           <IconButton
             size="small"
@@ -133,10 +141,6 @@ const SignatureCard: React.FC<Props> = ({
       )}
     </Paper>
   );
-};
-
-SignatureCard.defaultProps = {
-  isPrint: false,
 };
 
 export default SignatureCard;

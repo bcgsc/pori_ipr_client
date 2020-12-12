@@ -18,7 +18,7 @@ section.analyst
       div(flex=25, layout="column")
         h5 Author
         div(flex, layout="row")
-          span(ng-if="$ctrl.canEdit", ng-show="!$ctrl.signatures.authorSignature || !$ctrl.signatures", layout="row", layout-align="start center", ng-click="$ctrl.sign('author')").clickable
+          span(ng-if="$ctrl.canEdit", ng-show="!$ctrl.signatures.authorSignature.ident || !$ctrl.signatures", layout="row", layout-align="start center", ng-click="$ctrl.sign('author')").clickable
             md-icon(style="margin-right: 5px;") gesture
             span Sign
           span(ng-show="$ctrl.signatures.authorSignature.ident") {{$ctrl.signatures.authorSignature.firstName}} {{$ctrl.signatures.authorSignature.lastName}}
@@ -37,7 +37,7 @@ section.analyst
       div(flex=25, layout="column")
         h5 Reviewer
         div(flex, layout="row")
-          span(ng-if="$ctrl.canEdit", ng-show="!$ctrl.signatures.reviewerSignature || !$ctrl.signatures", layout="row", layout-align="start center", ng-click="$ctrl.sign('reviewer')").clickable
+          span(ng-if="$ctrl.canEdit", ng-show="!$ctrl.signatures.reviewerSignature.ident || !$ctrl.signatures", layout="row", layout-align="start center", ng-click="$ctrl.sign('reviewer')").clickable
             md-icon(style="margin-right: 5px;") gesture
             span Sign
           span(ng-show="$ctrl.signatures.reviewerSignature.ident") {{$ctrl.signatures.reviewerSignature.firstName}} {{$ctrl.signatures.reviewerSignature.lastName}}
