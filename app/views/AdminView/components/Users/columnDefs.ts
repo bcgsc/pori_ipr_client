@@ -8,7 +8,7 @@ const columnDefs = [
   },
   {
     headerName: 'Name',
-    field: 'name',
+    valueGetter: ({ data }) => `${data.firstName} ${data.lastName}`,
     hide: false,
   },
   {

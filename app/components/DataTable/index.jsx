@@ -187,11 +187,13 @@ function DataTable(props) {
   };
 
   const onFirstDataRendered = () => {
-    if (columnApi.current) {
+    if (columnApi.current && !isFullLength) {
       const visibleColumnIds = columnApi.current.getAllColumns()
         .filter(col => !col.flex && col.visible)
         .map(col => col.colId);
       columnApi.current.autoSizeColumns(visibleColumnIds);
+    } if (isFullLength) {
+      gridApi.current.sizeColumnsToFit();
     }
   };
 
@@ -365,7 +367,7 @@ function DataTable(props) {
   // Theme is needed for react in angular tables. It can't access the theme provider otherwise
   return (
     <ThemeProvider theme={theme}>
-      <div className="data-table--padded">
+      <div className="data-table--padded" style={{height: '100%'}}>
         {rowData.length || canEdit ? (
           <>
             {titleText && (

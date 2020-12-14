@@ -4,6 +4,8 @@ import api from '../../../../services/api';
 import DataTable from '../../../../components/DataTable';
 import columnDefs from './columnDefs';
 
+import './index.scss';
+
 const Users = () => {
   const [users, setUsers] = useState([]);
 
@@ -19,15 +21,16 @@ const Users = () => {
   }, []);
 
   return (
-    <React.Fragment>
+    <div className="admin-table__container">
       {Boolean(users.length) && (
         <DataTable
           rowData={users}
           columnDefs={columnDefs}
+          isPaginated
           isFullLength
         />
       )}
-    </React.Fragment>
+    </div>
   );
 };
 
