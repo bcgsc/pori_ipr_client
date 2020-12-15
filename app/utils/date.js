@@ -13,15 +13,19 @@ const getDate = (time = true) => {
   return formattedDate.replace(', ', '__').replace(/:/g, '-');
 };
 
-const formatDate = (date) => {
+const formatDate = (date, long = false) => {
   const convertedDate = new Date(date);
   const formattedDate = new Intl.DateTimeFormat('en-ca', {
+    weekday: long ? 'long' : undefined,
+    month: long ? 'long' : '2-digit',
+    day: 'numeric',
     year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
+    hour: long ? '2-digit' : undefined,
+    minute: long ? '2-digit' : undefined,
+    hour12: false,
   }).format(convertedDate);
 
-  return formattedDate.replace(', ', '-');
+  return formattedDate;
 };
 
 export {
