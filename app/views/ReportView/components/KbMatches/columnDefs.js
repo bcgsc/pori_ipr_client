@@ -122,6 +122,11 @@ const columnDefs = [{
   hide: false,
 },
 {
+  headerName: 'Review Status',
+  field: 'reviewStatus',
+  hide: true,
+},
+{
   headerName: 'Zygosity',
   colId: 'zygosity',
   hide: true,
