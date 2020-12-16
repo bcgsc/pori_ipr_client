@@ -8,8 +8,8 @@ import {
 import './index.scss';
 
 const Users = lazy(() => import('./components/Users/index.tsx'));
-const Groups = lazy(() => import('./components/Groups'));
-const Projects = lazy(() => import('./components/Projects'));
+const Groups = lazy(() => import('./components/Groups/index.tsx'));
+const Projects = lazy(() => import('./components/Projects/index.tsx'));
 
 const AdminView = () => (
   <div className="admin">

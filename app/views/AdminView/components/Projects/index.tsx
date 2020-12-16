@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import api from '../../../../services/api';
 import DataTable from '../../../../components/DataTable';
@@ -6,14 +6,14 @@ import columnDefs from './columnDefs';
 
 import './index.scss';
 
-const Users = () => {
-  const [users, setUsers] = useState([]);
+const Projects = () => {
+  const [projects, setProjects] = useState([]);
 
   useEffect(() => {
     const getData = async () => {
-      const usersResp = await api.get('/user', {}).request();
+      const projectsResp = await api.get('/project', {}).request()
 
-      setUsers(usersResp);
+      setProjects(projectsResp);
     };
 
     getData();
@@ -21,9 +21,9 @@ const Users = () => {
 
   return (
     <div className="admin-table__container">
-      {Boolean(users.length) && (
+      {Boolean(projects.length) && (
         <DataTable
-          rowData={users}
+          rowData={projects}
           columnDefs={columnDefs}
           isPaginated
           isFullLength
@@ -33,4 +33,4 @@ const Users = () => {
   );
 };
 
-export default Users;
+export default Projects;
