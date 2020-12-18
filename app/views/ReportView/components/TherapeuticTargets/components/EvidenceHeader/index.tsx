@@ -4,6 +4,8 @@ import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
 
 import InfoDialog from '../InfoDialog';
 
+import './index.scss';
+
 const EvidenceHeader = (params) => {
   const {
     displayName,
@@ -24,7 +26,7 @@ const EvidenceHeader = (params) => {
   return (
     <span>
       {displayName}
-      <IconButton size="small" onClick={handleClick}>
+      <IconButton className="evidence__button" size="small" onClick={handleClick}>
         <HelpOutlineIcon />
       </IconButton>
       <InfoDialog
