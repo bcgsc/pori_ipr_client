@@ -4,11 +4,12 @@ import api from '../../../../services/api';
 import DataTable from '../../../../components/DataTable';
 import columnDefs from './columnDefs';
 import AddUserDialog from './components/AddUserDialog';
+import { userType } from './types';
 
 import './index.scss';
 
-const Users = () => {
-  const [users, setUsers] = useState([]);
+const Users = (): JSX.Element => {
+  const [users, setUsers] = useState<userType[]>([]);
 
   useEffect(() => {
     const getData = async () => {

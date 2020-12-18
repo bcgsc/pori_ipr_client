@@ -15,31 +15,40 @@ import {
 } from '@material-ui/core';
 
 import api, { ApiCallSet } from '../../../../../../services/api';
+import {
+  userType, projectType, groupType, formErrorType,
+} from '../../types';
 
 import './index.scss';
+
+type AddUserDialogType = {
+  isOpen: boolean,
+  onClose: (newData?: null | userType) => void,
+  editData: null | userType,
+};
 
 const AddUserDialog = ({
   isOpen,
   onClose,
   editData,
-}) => {
+}: AddUserDialogType): JSX.Element => {
   const [username, setUsername] = useState<string>('');
   const [firstName, setFirstName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
-  const [projects, setProjects] = useState([]);
-  const [groups, setGroups] = useState([]);
+  const [projects, setProjects] = useState<projectType[]>([]);
+  const [groups, setGroups] = useState<groupType[]>([]);
 
-  const [projectOptions, setProjectOptions] = useState([]);
-  const [groupOptions, setGroupOptions] = useState([]);
-  const [errors, setErrors] = useState({
+  const [projectOptions, setProjectOptions] = useState<projectType[]>([]);
+  const [groupOptions, setGroupOptions] = useState<groupType[]>([]);
+  const [errors, setErrors] = useState<formErrorType>({
     username: false,
     firstName: false,
     lastName: false,
     email: false,
   });
   const [emailValidationError, setEmailValidationError] = useState<string>('');
-  const [dialogTitle, setDialogTitle] = useState('');
+  const [dialogTitle, setDialogTitle] = useState<string>('');
 
   useEffect(() => {
     const getData = async () => {
@@ -81,7 +90,7 @@ const AddUserDialog = ({
       setProjects([]);
       setGroups([]);
     }
-  }, [editData])
+  }, [editData]);
 
   const handleClose = useCallback(async () => {
     if (username.length && firstName.length && lastName.length && email.length) {
@@ -130,7 +139,7 @@ const AddUserDialog = ({
         email: !email.length,
       });
     }
-  }, [username, firstName, lastName, email, projects, groups]);
+  }, [username, firstName, lastName, email, editData, projects, groups, onClose]);
 
   const handleUsernameChange = (event) => {
     setUsername(event.target.value);
@@ -156,15 +165,6 @@ const AddUserDialog = ({
     setGroups(event.target.value);
   };
 
-  const emailHelperText = useCallback(() => {
-    if (emailValidationError) {
-      return 'Email format incorrect';
-    }
-    if (errors.email) {
-      return 'Email is required';
-    }
-  }, [errors, emailValidationError]);
-
   return (
     <Dialog open={isOpen} onClose={onClose} maxWidth="sm" fullWidth className="edit-dialog">
       <DialogTitle>{dialogTitle}</DialogTitle>
@@ -175,11 +175,11 @@ const AddUserDialog = ({
             onChange={handleUsernameChange}
             label="Username"
             variant="outlined"
-            error={errors.username} 
-            helperText={errors.username ? "Username is required" : null}
+            error={errors.username}
+            helperText={errors.username ? 'Username is required' : null}
             className="add-user__text-field"
             disabled={Boolean(editData)}
-            required={!Boolean(editData)}
+            required={!editData}
           />
         </FormControl>
         <FormControl fullWidth classes={{ root: 'add-user__form-container' }} variant="outlined">
@@ -189,8 +189,8 @@ const AddUserDialog = ({
             onChange={handleFirstNameChange}
             label="First Name"
             variant="outlined"
-            error={errors.firstName} 
-            helperText={errors.firstName ? "First name is required": null}
+            error={errors.firstName}
+            helperText={errors.firstName ? 'First name is required' : null}
             className="add-user__text-field"
             required
           />
@@ -200,8 +200,8 @@ const AddUserDialog = ({
             onChange={handleLastNameChange}
             label="Last Name"
             variant="outlined"
-            error={errors.lastName} 
-            helperText={errors.lastName ? "Last name is required": null}
+            error={errors.lastName}
+            helperText={errors.lastName ? 'Last name is required' : null}
             className="add-user__text-field"
             required
           />
@@ -212,7 +212,7 @@ const AddUserDialog = ({
             onChange={handleEmailChange}
             label="Email"
             variant="outlined"
-            error={errors.email || Boolean(emailValidationError)} 
+            error={errors.email || Boolean(emailValidationError)}
             helperText={emailValidationError}
             className="add-user__text-field"
             required
@@ -231,11 +231,11 @@ const AddUserDialog = ({
                 variant="outlined"
                 onChange={handleProjectsChange}
                 className="add-user__select"
-                renderValue={values => `${values.map(val => val.name).join(', ')}`}
+                renderValue={(values: projectType[]) => `${values.map(val => val.name).join(', ')}`}
               >
                 {projectOptions.map(project => (
                   <MenuItem key={project.name} value={project}>
-                    <Checkbox checked={projects.includes(project)}/>
+                    <Checkbox checked={projects.includes(project)} />
                     <ListItemText>
                       {project.name}
                     </ListItemText>
@@ -258,11 +258,11 @@ const AddUserDialog = ({
                 variant="outlined"
                 onChange={handleGroupsChange}
                 className="add-user__select"
-                renderValue={values => `${values.map(val => val.name).join(', ')}`}
+                renderValue={(values: groupType[]) => `${values.map(val => val.name).join(', ')}`}
               >
                 {groupOptions.map(group => (
                   <MenuItem key={group.name} value={group}>
-                    <Checkbox checked={groups.includes(group)}/>
+                    <Checkbox checked={groups.includes(group)} />
                     <ListItemText>
                       {group.name}
                     </ListItemText>
