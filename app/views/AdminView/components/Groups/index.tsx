@@ -27,6 +27,9 @@ const Groups = () => {
           columnDefs={columnDefs}
           isPaginated
           isFullLength
+          canEdit
+          canAdd
+          titleText="Groups"
         />
       )}
     </div>

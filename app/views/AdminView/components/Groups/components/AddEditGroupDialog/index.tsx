@@ -27,7 +27,7 @@ type AddUserDialogType = {
   editData: null | userType,
 };
 
-const AddUserDialog = ({
+const EditGroupDialog = ({
   isOpen,
   onClose,
   editData,
@@ -285,4 +285,4 @@ const AddUserDialog = ({
   );
 };
 
-export default AddUserDialog;
+export default EditGroupDialog;

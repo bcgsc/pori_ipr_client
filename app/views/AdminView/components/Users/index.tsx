@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import api from '../../../../services/api';
 import DataTable from '../../../../components/DataTable';
 import columnDefs from './columnDefs';
-import AddUserDialog from './components/AddUserDialog';
+import AddEditUserDialog from './components/AddEditUserDialog';
 import { userType } from './types';
 
 import './index.scss';
@@ -32,7 +32,7 @@ const Users = (): JSX.Element => {
           canEdit
           canAdd
           titleText="Users"
-          EditDialog={AddUserDialog}
+          EditDialog={AddEditUserDialog}
         />
       )}
     </div>
