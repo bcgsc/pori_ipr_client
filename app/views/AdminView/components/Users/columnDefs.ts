@@ -31,6 +31,13 @@ const columnDefs = [
     valueGetter: ({ data }) => formatDate(data.createdAt),
     hide: false,
   },
+  {
+    headerName: 'Actions',
+    cellRenderer: 'ActionCellRenderer',
+    pinned: 'right',
+    sortable: false,
+    suppressMenu: true,
+  },
 ];
 
 export default columnDefs;

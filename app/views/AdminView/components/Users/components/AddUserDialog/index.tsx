@@ -21,6 +21,7 @@ import './index.scss';
 const AddUserDialog = ({
   isOpen,
   onClose,
+  editData,
 }) => {
   const [username, setUsername] = useState<string>('');
   const [firstName, setFirstName] = useState<string>('');
@@ -32,6 +33,7 @@ const AddUserDialog = ({
   const [projectOptions, setProjectOptions] = useState([]);
   const [groupOptions, setGroupOptions] = useState([]);
   const [errors, setErrors] = useState('');
+  const [dialogTitle, setDialogTitle] = useState('');
 
   useEffect(() => {
     const getData = async () => {
@@ -46,6 +48,35 @@ const AddUserDialog = ({
     getData();
   }, []);
 
+  useEffect(() => {
+    if (editData) {
+      const {
+        username: editUsername,
+        firstName: editFirstName,
+        lastName: editLastName,
+        email: editEmail,
+        projects: editProjects,
+        groups: editGroups,
+      } = editData;
+
+      setDialogTitle('Edit user');
+      setUsername(editUsername);
+      setFirstName(editFirstName);
+      setLastName(editLastName);
+      setEmail(editEmail);
+      setProjects(editProjects);
+      setGroups(editGroups);
+    } else {
+      setDialogTitle('Add user');
+      setUsername('');
+      setFirstName('');
+      setLastName('');
+      setEmail('');
+      setProjects([]);
+      setGroups([]);
+    }
+  }, [editData])
+
   const handleClose = useCallback(async () => {
     if (username.length && firstName.length && lastName.length && email.length) {
       const newEntry = {
@@ -55,7 +86,13 @@ const AddUserDialog = ({
         email,
         type: 'bcgsc',
       };
-      const createdResp = await api.post('/user', newEntry, {}).request();
+
+      let createdResp;
+      if (editData) {
+        createdResp = await api.put(`/user/${editData.ident}`, newEntry, {}).request();
+      } else {
+        createdResp = await api.post('/user', newEntry, {}).request();
+      }
 
       if (projects.length) {
         const callSet = new ApiCallSet(projects.map(project => api.post(`/project/${project.ident}/user`, { user: createdResp.ident }, {})));
@@ -105,7 +142,7 @@ const AddUserDialog = ({
 
   return (
     <Dialog open={isOpen} onClose={onClose} maxWidth="sm" fullWidth className="edit-dialog">
-      <DialogTitle>Add user</DialogTitle>
+      <DialogTitle>{dialogTitle}</DialogTitle>
       <DialogContent>
         <FormControl fullWidth variant="outlined">
           <TextField
@@ -114,7 +151,8 @@ const AddUserDialog = ({
             label="Username"
             variant="outlined"
             className="add-user__text-field"
-            required
+            disabled={Boolean(editData)}
+            required={!Boolean(editData)}
           />
         </FormControl>
         <FormControl fullWidth classes={{ root: 'add-user__form-container' }} variant="outlined">
@@ -203,7 +241,7 @@ const AddUserDialog = ({
         </FormControl>
       </DialogContent>
       <DialogActions className="edit-dialog__actions">
-        <Button color="primary" onClick={onClose}>
+        <Button color="primary" onClick={() => onClose()}>
           Cancel
         </Button>
         <Button color="primary" onClick={handleClose}>
