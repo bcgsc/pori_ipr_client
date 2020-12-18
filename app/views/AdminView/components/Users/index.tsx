@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import api from '../../../../services/api';
 import DataTable from '../../../../components/DataTable';
 import columnDefs from './columnDefs';
+import AddUserDialog from './components/AddUserDialog';
 
 import './index.scss';
 
@@ -27,6 +28,10 @@ const Users = () => {
           columnDefs={columnDefs}
           isPaginated
           isFullLength
+          canEdit
+          canAdd
+          titleText="Users"
+          EditDialog={AddUserDialog}
         />
       )}
     </div>

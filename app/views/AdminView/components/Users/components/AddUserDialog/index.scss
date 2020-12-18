@@ -1,0 +1,13 @@
+.add-user {
+  &__text-field {
+    margin: 8px;
+  }
+
+  &__select {
+    margin: 8px;
+  }
+
+  &__form-container {
+    flex-direction: row;
+  }
+}
