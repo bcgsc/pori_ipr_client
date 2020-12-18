@@ -32,7 +32,13 @@ const AddUserDialog = ({
 
   const [projectOptions, setProjectOptions] = useState([]);
   const [groupOptions, setGroupOptions] = useState([]);
-  const [errors, setErrors] = useState('');
+  const [errors, setErrors] = useState({
+    username: false,
+    firstName: false,
+    lastName: false,
+    email: false,
+  });
+  const [emailValidationError, setEmailValidationError] = useState<string>('');
   const [dialogTitle, setDialogTitle] = useState('');
 
   useEffect(() => {
@@ -79,6 +85,11 @@ const AddUserDialog = ({
 
   const handleClose = useCallback(async () => {
     if (username.length && firstName.length && lastName.length && email.length) {
+      if (!email.match(/^\S+@\S+$/)) {
+        setEmailValidationError('Email format is incorrect');
+        return;
+      }
+
       const newEntry = {
         username,
         firstName,
@@ -112,7 +123,12 @@ const AddUserDialog = ({
       
       onClose(createdResp);
     } else {
-      setErrors('Required fields missing');
+      setErrors({
+        username: !username.length,
+        firstName: !firstName.length,
+        lastName: !lastName.length,
+        email: !email.length,
+      });
     }
   }, [username, firstName, lastName, email, projects, groups]);
 
@@ -140,6 +156,15 @@ const AddUserDialog = ({
     setGroups(event.target.value);
   };
 
+  const emailHelperText = useCallback(() => {
+    if (emailValidationError) {
+      return 'Email format incorrect';
+    }
+    if (errors.email) {
+      return 'Email is required';
+    }
+  }, [errors, emailValidationError]);
+
   return (
     <Dialog open={isOpen} onClose={onClose} maxWidth="sm" fullWidth className="edit-dialog">
       <DialogTitle>{dialogTitle}</DialogTitle>
@@ -150,6 +175,8 @@ const AddUserDialog = ({
             onChange={handleUsernameChange}
             label="Username"
             variant="outlined"
+            error={errors.username} 
+            helperText={errors.username ? "Username is required" : null}
             className="add-user__text-field"
             disabled={Boolean(editData)}
             required={!Boolean(editData)}
@@ -162,6 +189,8 @@ const AddUserDialog = ({
             onChange={handleFirstNameChange}
             label="First Name"
             variant="outlined"
+            error={errors.firstName} 
+            helperText={errors.firstName ? "First name is required": null}
             className="add-user__text-field"
             required
           />
@@ -171,6 +200,8 @@ const AddUserDialog = ({
             onChange={handleLastNameChange}
             label="Last Name"
             variant="outlined"
+            error={errors.lastName} 
+            helperText={errors.lastName ? "Last name is required": null}
             className="add-user__text-field"
             required
           />
@@ -181,6 +212,8 @@ const AddUserDialog = ({
             onChange={handleEmailChange}
             label="Email"
             variant="outlined"
+            error={errors.email || Boolean(emailValidationError)} 
+            helperText={emailValidationError}
             className="add-user__text-field"
             required
           />
