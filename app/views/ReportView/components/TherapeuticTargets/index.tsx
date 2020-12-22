@@ -5,6 +5,7 @@ import DataTable from '@/components/DataTable';
 import EditContext from '@/components/EditContext';
 import ReportContext from '../../../../components/ReportContext';
 import EditDialog from './components/EditDialog';
+import EvidenceHeader from './components/EvidenceHeader';
 import columnDefs from './columnDefs';
 import api from '@/services/api';
 
@@ -16,7 +17,7 @@ import api from '@/services/api';
  * @param {report} props.report report object
  * @return {*} JSX
  */
-function TherapeuticView(props) {
+const Therapeutic = (props) => {
   const {
     print,
   } = props;
@@ -25,19 +26,17 @@ function TherapeuticView(props) {
   const { report } = useContext(ReportContext);
 
   const [therapeuticData, setTherapeuticData] = useState();
-
   const [chemoresistanceData, setChemoresistanceData] = useState();
 
   useEffect(() => {
     if (report) {
       const getData = async () => {
-        const call = api.get(`/reports/${report.ident}/therapeutic-targets`);
-        const resp = await call.request();
+        const therapeuticResp = await api.get(`/reports/${report.ident}/therapeutic-targets`).request();
 
-        setTherapeuticData(resp.filter(
+        setTherapeuticData(therapeuticResp.filter(
           target => target.type === 'therapeutic',
         ));
-        setChemoresistanceData(resp.filter(
+        setChemoresistanceData(therapeuticResp.filter(
           target => target.type === 'chemoresistance',
         ));
       };
@@ -65,6 +64,7 @@ function TherapeuticView(props) {
             canExport
             patientId={report.patientId}
             print={print}
+            Header={EvidenceHeader}
           />
 
           <DataTable
@@ -82,6 +82,7 @@ function TherapeuticView(props) {
             canExport
             patientId={report.patientId}
             print={print}
+            Header={EvidenceHeader}
           />
         </>
       ) : (
@@ -89,14 +90,14 @@ function TherapeuticView(props) {
       )}
     </div>
   );
-}
+};
 
-TherapeuticView.propTypes = {
+Therapeutic.propTypes = {
   print: PropTypes.bool,
 };
 
-TherapeuticView.defaultProps = {
+Therapeutic.defaultProps = {
   print: false,
 };
 
-export default TherapeuticView;
+export default Therapeutic;
