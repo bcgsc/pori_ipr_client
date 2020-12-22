@@ -36,6 +36,7 @@ const AddEditUserDialog = ({
   const [firstName, setFirstName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
+  const [dbType, setDbType] = useState<string>(CONFIG.STORAGE.DATABASE_TYPE);
   const [projects, setProjects] = useState<projectType[]>([]);
   const [groups, setGroups] = useState<groupType[]>([]);
 
@@ -72,6 +73,7 @@ const AddEditUserDialog = ({
         email: editEmail,
         projects: editProjects,
         groups: editGroups,
+        type: editDbType,
       } = editData;
 
       setDialogTitle('Edit user');
@@ -81,6 +83,7 @@ const AddEditUserDialog = ({
       setEmail(editEmail);
       setProjects(editProjects);
       setGroups(editGroups);
+      setDbType(editDbType);
     } else {
       setDialogTitle('Add user');
       setUsername('');
@@ -89,6 +92,7 @@ const AddEditUserDialog = ({
       setEmail('');
       setProjects([]);
       setGroups([]);
+      setDbType(CONFIG.STORAGE.DATABASE_TYPE);
     }
   }, [editData]);
 
@@ -104,7 +108,7 @@ const AddEditUserDialog = ({
         firstName,
         lastName,
         email,
-        type: 'bcgsc',
+        type: dbType,
       };
 
       let createdResp;
@@ -139,31 +143,7 @@ const AddEditUserDialog = ({
         email: !email.length,
       });
     }
-  }, [username, firstName, lastName, email, editData, projects, groups, onClose]);
-
-  const handleUsernameChange = (event) => {
-    setUsername(event.target.value);
-  };
-
-  const handleFirstNameChange = (event) => {
-    setFirstName(event.target.value);
-  };
-
-  const handleLastNameChange = (event) => {
-    setLastName(event.target.value);
-  };
-
-  const handleEmailChange = (event) => {
-    setEmail(event.target.value);
-  };
-
-  const handleProjectsChange = (event) => {
-    setProjects(event.target.value);
-  };
-
-  const handleGroupsChange = (event) => {
-    setGroups(event.target.value);
-  };
+  }, [username, firstName, lastName, email, dbType, editData, projects, groups, onClose]);
 
   return (
     <Dialog open={isOpen} onClose={onClose} maxWidth="sm" fullWidth className="edit-dialog">
@@ -172,7 +152,7 @@ const AddEditUserDialog = ({
         <FormControl fullWidth variant="outlined">
           <TextField
             value={username}
-            onChange={handleUsernameChange}
+            onChange={({ target: { value } }) => setUsername(value)}
             label="Username"
             variant="outlined"
             error={errors.username}
@@ -186,7 +166,7 @@ const AddEditUserDialog = ({
           <TextField
             value={firstName}
             fullWidth
-            onChange={handleFirstNameChange}
+            onChange={({ target: { value } }) => setFirstName(value)}
             label="First Name"
             variant="outlined"
             error={errors.firstName}
@@ -197,7 +177,7 @@ const AddEditUserDialog = ({
           <TextField
             value={lastName}
             fullWidth
-            onChange={handleLastNameChange}
+            onChange={({ target: { value } }) => setLastName(value)}
             label="Last Name"
             variant="outlined"
             error={errors.lastName}
@@ -209,7 +189,7 @@ const AddEditUserDialog = ({
         <FormControl fullWidth variant="outlined">
           <TextField
             value={email}
-            onChange={handleEmailChange}
+            onChange={({ target: { value } }) => setEmail(value)}
             label="Email"
             variant="outlined"
             error={errors.email || Boolean(emailValidationError)}
@@ -217,6 +197,23 @@ const AddEditUserDialog = ({
             className="add-user__text-field"
             required
           />
+        </FormControl>
+
+        <FormControl fullWidth variant="outlined">
+          <InputLabel className="add-user__select" id="db-select">Database Type</InputLabel>
+          <Select
+            id="db-select"
+            label="Database Type"
+            value={dbType}
+            autoWidth
+            disabled={Boolean(editData)}
+            variant="outlined"
+            onChange={({ target: { value } }) => setDbType(value)}
+            className="add-user__select"
+          >
+            <MenuItem value={CONFIG.STORAGE.DATABASE_TYPE}>{CONFIG.STORAGE.DATABASE_TYPE}</MenuItem>
+            <MenuItem value="local">local</MenuItem>
+          </Select>
         </FormControl>
         <FormControl fullWidth variant="outlined">
           {Boolean(projectOptions.length) && (
@@ -229,7 +226,7 @@ const AddEditUserDialog = ({
                 value={projects}
                 autoWidth
                 variant="outlined"
-                onChange={handleProjectsChange}
+                onChange={({ target: { value } }) => setProjects(value)}
                 className="add-user__select"
                 renderValue={(values: projectType[]) => `${values.map(val => val.name).join(', ')}`}
               >
@@ -256,7 +253,7 @@ const AddEditUserDialog = ({
                 value={groups}
                 autoWidth
                 variant="outlined"
-                onChange={handleGroupsChange}
+                onChange={({ target: { value } }) => setGroups(value)}
                 className="add-user__select"
                 renderValue={(values: groupType[]) => `${values.map(val => val.name).join(', ')}`}
               >
