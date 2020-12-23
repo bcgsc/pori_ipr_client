@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import api from '../../../../services/api';
 import DataTable from '../../../../components/DataTable';
 import columnDefs from './columnDefs';
+import AddEditGroupDialog from './components/AddEditGroupDialog';
 
 import './index.scss';
 
@@ -29,6 +30,7 @@ const Groups = () => {
           isFullLength
           canEdit
           canAdd
+          EditDialog={AddEditGroupDialog}
           titleText="Groups"
         />
       )}

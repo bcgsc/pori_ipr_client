@@ -56,6 +56,8 @@ function DataTable(props) {
     titleText,
     filterText,
     canEdit,
+    canDelete,
+    onDelete,
     EditDialog,
     canAdd,
     reportIdent,
@@ -334,10 +336,11 @@ function DataTable(props) {
     const handleEdit = useCallback(() => {
       setShowEditDialog(true);
       setSelectedRow(row);
-    }, [row.node]);
+    }, [row]);
     return (
       <ActionCellRenderer
         onEdit={handleEdit}
+        onDelete={onDelete}
         {...row}
       />
     );
@@ -462,6 +465,7 @@ function DataTable(props) {
                 onSortChanged={handleFilterAndSortChanged}
                 context={{
                   canEdit,
+                  canDelete,
                   canViewDetails,
                   EditDialog,
                   reportIdent,

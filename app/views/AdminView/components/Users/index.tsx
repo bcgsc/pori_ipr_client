@@ -4,7 +4,7 @@ import api from '../../../../services/api';
 import DataTable from '../../../../components/DataTable';
 import columnDefs from './columnDefs';
 import AddEditUserDialog from './components/AddEditUserDialog';
-import { userType } from './types';
+import { userType } from '../../types';
 
 import './index.scss';
 

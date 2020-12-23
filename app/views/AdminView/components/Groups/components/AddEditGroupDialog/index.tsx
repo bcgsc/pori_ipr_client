@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useContext } from 'react';
 import {
   Button,
   Dialog,
@@ -6,272 +6,124 @@ import {
   DialogContent,
   DialogTitle,
   TextField,
-  Select,
-  MenuItem,
   FormControl,
-  ListItemText,
-  Checkbox,
-  InputLabel,
 } from '@material-ui/core';
 
-import api, { ApiCallSet } from '../../../../../../services/api';
-import {
-  userType, projectType, groupType, formErrorType,
-} from '../../types';
+import { SnackbarContext } from '@bcgsc/react-snackbar-provider';
+import api from '../../../../../../services/api';
+import DataTable from '../../../../../../components/DataTable';
+import { groupType } from '../../../../types';
+import columnDefs from './columnDefs';
+import UserAutocomplete from './components/UserAutocomplete';
 
 import './index.scss';
 
-type AddUserDialogType = {
+type AddEditGroupDialogType = {
   isOpen: boolean,
-  onClose: (newData?: null | userType) => void,
-  editData: null | userType,
+  onClose: (newData?: null | { name: string }) => void,
+  editData: null | groupType,
 };
 
-const EditGroupDialog = ({
+const AddEditUserDialog = ({
   isOpen,
   onClose,
   editData,
-}: AddUserDialogType): JSX.Element => {
-  const [username, setUsername] = useState<string>('');
-  const [firstName, setFirstName] = useState<string>('');
-  const [lastName, setLastName] = useState<string>('');
-  const [email, setEmail] = useState<string>('');
-  const [projects, setProjects] = useState<projectType[]>([]);
-  const [groups, setGroups] = useState<groupType[]>([]);
-
-  const [projectOptions, setProjectOptions] = useState<projectType[]>([]);
-  const [groupOptions, setGroupOptions] = useState<groupType[]>([]);
-  const [errors, setErrors] = useState<formErrorType>({
-    username: false,
-    firstName: false,
-    lastName: false,
-    email: false,
+}: AddEditGroupDialogType): JSX.Element => {
+  const [groupName, setGroupName] = useState<string>('');
+  const [errors, setErrors] = useState({
+    groupName: false,
   });
-  const [emailValidationError, setEmailValidationError] = useState<string>('');
   const [dialogTitle, setDialogTitle] = useState<string>('');
+  const [users, setUsers] = useState();
+  const [user, setUser] = useState();
 
-  useEffect(() => {
-    const getData = async () => {
-      const callSet = new ApiCallSet([
-        api.get('/project', {}),
-        api.get('/user/group', {}),
-      ]);
-      const [projectsResp, groupsResp] = await callSet.request();
-      setProjectOptions(projectsResp);
-      setGroupOptions(groupsResp);
-    };
-    getData();
-  }, []);
+  const snackbar = useContext(SnackbarContext);
 
   useEffect(() => {
     if (editData) {
       const {
-        username: editUsername,
-        firstName: editFirstName,
-        lastName: editLastName,
-        email: editEmail,
-        projects: editProjects,
-        groups: editGroups,
+        name: editName,
+        users: editUsers,
       } = editData;
 
-      setDialogTitle('Edit user');
-      setUsername(editUsername);
-      setFirstName(editFirstName);
-      setLastName(editLastName);
-      setEmail(editEmail);
-      setProjects(editProjects);
-      setGroups(editGroups);
+      setDialogTitle('Edit group');
+      setGroupName(editName);
+      setUsers(editUsers);
     } else {
-      setDialogTitle('Add user');
-      setUsername('');
-      setFirstName('');
-      setLastName('');
-      setEmail('');
-      setProjects([]);
-      setGroups([]);
+      setDialogTitle('Add group');
+      setGroupName('');
+      setUsers([]);
     }
   }, [editData]);
 
   const handleClose = useCallback(async () => {
-    if (username.length && firstName.length && lastName.length && email.length) {
-      if (!email.match(/^\S+@\S+$/)) {
-        setEmailValidationError('Email format is incorrect');
-        return;
-      }
-
+    if (groupName.length) {
       const newEntry = {
-        username,
-        firstName,
-        lastName,
-        email,
-        type: 'bcgsc',
+        name: groupName,
+        owner: null,
       };
 
       let createdResp;
       if (editData) {
-        createdResp = await api.put(`/user/${editData.ident}`, newEntry, {}).request();
+        createdResp = await api.put(`/user/group/${editData.ident}`, newEntry, {}).request();
       } else {
-        createdResp = await api.post('/user', newEntry, {}).request();
+        createdResp = await api.post('/user/group', newEntry, {}).request();
       }
 
-      if (projects.length) {
-        const callSet = new ApiCallSet(projects.map(project => api.post(`/project/${project.ident}/user`, { user: createdResp.ident }, {})));
-        await callSet.request();
-        createdResp.projects = projects;
-      } else {
-        createdResp.projects = [];
-      }
-
-      if (groups.length) {
-        const callSet = new ApiCallSet(groups.map(group => api.post(`/user/group/${group.ident}/member`, { user: createdResp.ident }, {})));
-        await callSet.request();
-        createdResp.groups = groups;
-      } else {
-        createdResp.groups = [];
-      }
-      
       onClose(createdResp);
     } else {
       setErrors({
-        username: !username.length,
-        firstName: !firstName.length,
-        lastName: !lastName.length,
-        email: !email.length,
+        groupName: true,
       });
     }
-  }, [username, firstName, lastName, email, editData, projects, groups, onClose]);
+  }, [groupName, editData, onClose]);
 
-  const handleUsernameChange = (event) => {
-    setUsername(event.target.value);
+  const handleDelete = async (ident) => {
+    // eslint-disable-next-line no-restricted-globals
+    if (confirm(`Are you sure you want to remove this user from the ${groupName} group?`)) {
+      await api.del(`/user/group/${editData.ident}/member`, { user: ident }, {}).request();
+      snackbar.add('User removed');
+    } else {
+      snackbar.add('User not removed');
+    }
   };
 
-  const handleFirstNameChange = (event) => {
-    setFirstName(event.target.value);
-  };
-
-  const handleLastNameChange = (event) => {
-    setLastName(event.target.value);
-  };
-
-  const handleEmailChange = (event) => {
-    setEmail(event.target.value);
-  };
-
-  const handleProjectsChange = (event) => {
-    setProjects(event.target.value);
-  };
-
-  const handleGroupsChange = (event) => {
-    setGroups(event.target.value);
+  const handleUserChange = (userSelected) => {
+    if (userSelected) {
+      setUser(userSelected);
+    }
   };
 
   return (
     <Dialog open={isOpen} onClose={onClose} maxWidth="sm" fullWidth className="edit-dialog">
       <DialogTitle>{dialogTitle}</DialogTitle>
       <DialogContent>
-        <FormControl fullWidth variant="outlined">
-          <TextField
-            value={username}
-            onChange={handleUsernameChange}
-            label="Username"
-            variant="outlined"
-            error={errors.username}
-            helperText={errors.username ? 'Username is required' : null}
-            className="add-user__text-field"
-            disabled={Boolean(editData)}
-            required={!editData}
-          />
-        </FormControl>
         <FormControl fullWidth classes={{ root: 'add-user__form-container' }} variant="outlined">
           <TextField
-            value={firstName}
+            value={groupName}
             fullWidth
-            onChange={handleFirstNameChange}
-            label="First Name"
+            onChange={({ target: { value } }) => setGroupName(value)}
+            label="Group Name"
             variant="outlined"
-            error={errors.firstName}
-            helperText={errors.firstName ? 'First name is required' : null}
-            className="add-user__text-field"
-            required
-          />
-          <TextField
-            value={lastName}
-            fullWidth
-            onChange={handleLastNameChange}
-            label="Last Name"
-            variant="outlined"
-            error={errors.lastName}
-            helperText={errors.lastName ? 'Last name is required' : null}
+            error={errors.groupName}
+            helperText={errors.groupName ? 'Group name is required' : null}
             className="add-user__text-field"
             required
           />
         </FormControl>
-        <FormControl fullWidth variant="outlined">
-          <TextField
-            value={email}
-            onChange={handleEmailChange}
-            label="Email"
-            variant="outlined"
-            error={errors.email || Boolean(emailValidationError)}
-            helperText={emailValidationError}
-            className="add-user__text-field"
-            required
+        <UserAutocomplete
+          defaultValue={editData ? editData.owner : { firstName: '', lastName: '' }}
+          onChange={handleUserChange}
+        />
+        {editData && (
+          <DataTable
+            rowData={users}
+            columnDefs={columnDefs}
+            canViewDetails={false}
+            onDelete={handleDelete}
+            canDelete
           />
-        </FormControl>
-        <FormControl fullWidth variant="outlined">
-          {Boolean(projectOptions.length) && (
-            <>
-              <InputLabel className="add-user__select" id="projects-select">Projects</InputLabel>
-              <Select
-                id="projects-select"
-                multiple
-                label="Projects"
-                value={projects}
-                autoWidth
-                variant="outlined"
-                onChange={handleProjectsChange}
-                className="add-user__select"
-                renderValue={(values: projectType[]) => `${values.map(val => val.name).join(', ')}`}
-              >
-                {projectOptions.map(project => (
-                  <MenuItem key={project.name} value={project}>
-                    <Checkbox checked={projects.includes(project)} />
-                    <ListItemText>
-                      {project.name}
-                    </ListItemText>
-                  </MenuItem>
-                ))}
-              </Select>
-            </>
-          )}
-        </FormControl>
-        <FormControl fullWidth variant="outlined">
-          {Boolean(groupOptions.length) && (
-            <>
-              <InputLabel className="add-user__select" id="groups-select">Groups</InputLabel>
-              <Select
-                id="groups-select"
-                multiple
-                label="Groups"
-                value={groups}
-                autoWidth
-                variant="outlined"
-                onChange={handleGroupsChange}
-                className="add-user__select"
-                renderValue={(values: groupType[]) => `${values.map(val => val.name).join(', ')}`}
-              >
-                {groupOptions.map(group => (
-                  <MenuItem key={group.name} value={group}>
-                    <Checkbox checked={groups.includes(group)} />
-                    <ListItemText>
-                      {group.name}
-                    </ListItemText>
-                  </MenuItem>
-                ))}
-              </Select>
-            </>
-          )}
-        </FormControl>
+        )}
       </DialogContent>
       <DialogActions className="edit-dialog__actions">
         <Button color="primary" onClick={() => onClose()}>
@@ -285,4 +137,4 @@ const EditGroupDialog = ({
   );
 };
 
-export default EditGroupDialog;
+export default AddEditUserDialog;

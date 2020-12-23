@@ -9,6 +9,7 @@ import {
   Photo,
   LibraryBooks,
   OpenInNew,
+  Delete,
 } from '@material-ui/icons';
 import DetailDialog from '../DetailDialog';
 import SvgViewer from '../SvgViewer';
@@ -29,9 +30,11 @@ function ActionCellRenderer(params) {
     context: {
       canEdit,
       canViewDetails,
+      canDelete,
     },
     columnApi,
     onEdit,
+    onDelete,
   } = params;
 
   const [showDetailDialog, setShowDetailDialog] = useState(false);
@@ -49,7 +52,7 @@ function ActionCellRenderer(params) {
         }, {}),
       );
     }
-  }, [showDetailDialog]);
+  }, [columnApi, showDetailDialog]);
 
   const detailClick = () => {
     setShowDetailDialog(true);
@@ -143,6 +146,16 @@ function ActionCellRenderer(params) {
           onClose={handleDetailClose}
           columnMapping={columnMapping}
         />
+      )}
+      {canDelete && (
+        <IconButton
+          size="small"
+          aria-label="Delete"
+          onClick={() => onDelete(data.ident)}
+          title="Delete"
+        >
+          <Delete />
+        </IconButton>
       )}
       {canEdit && (
         <IconButton

@@ -17,7 +17,7 @@ import {
 import api, { ApiCallSet } from '../../../../../../services/api';
 import {
   userType, projectType, groupType, formErrorType,
-} from '../../types';
+} from '../../../../types';
 
 import './index.scss';
 
