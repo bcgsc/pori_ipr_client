@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { CircularProgress } from '@material-ui/core';
 
 import api from '../../../../services/api';
 import DataTable from '../../../../components/DataTable';
@@ -9,12 +10,14 @@ import './index.scss';
 
 const Projects = (): JSX.Element => {
   const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getData = async () => {
       const projectsResp = await api.get('/project?admin=true', {}).request();
 
       setProjects(projectsResp);
+      setLoading(false);
     };
 
     getData();
@@ -34,6 +37,9 @@ const Projects = (): JSX.Element => {
           canAdd
           titleText="Projects"
         />
+      )}
+      {loading && (
+        <CircularProgress />
       )}
     </div>
   );

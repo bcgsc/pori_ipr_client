@@ -97,6 +97,11 @@ const AddEditUserDialog = ({
     }
   };
 
+  const handleAddUser = async (user) => {
+    await api.post(`/user/group/${editData.ident}/member`, { user: user.ident }, {}).request();
+    snackbar.add('User added to group');
+  };
+
   return (
     <Dialog open={isOpen} onClose={onClose} maxWidth="sm" fullWidth className="edit-dialog">
       <DialogTitle>{dialogTitle}</DialogTitle>
@@ -120,13 +125,19 @@ const AddEditUserDialog = ({
           label="Group owner"
         />
         {editData && (
-          <DataTable
-            rowData={users}
-            columnDefs={columnDefs}
-            canViewDetails={false}
-            onDelete={handleDelete}
-            canDelete
-          />
+          <>
+            <UserAutocomplete
+              onSubmit={handleAddUser}
+              label="Add user to group"
+            />
+            <DataTable
+              rowData={users}
+              columnDefs={columnDefs}
+              canViewDetails={false}
+              onDelete={handleDelete}
+              canDelete
+            />
+          </>
         )}
       </DialogContent>
       <DialogActions className="edit-dialog__actions">
