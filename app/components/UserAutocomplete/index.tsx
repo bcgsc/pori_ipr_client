@@ -1,18 +1,26 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Autocomplete } from '@material-ui/lab';
 import {
   TextField,
   CircularProgress,
+  Button,
 } from '@material-ui/core';
 
-import api from '../../../../../../../../services/api';
+import api from '../../services/api';
 
 import './index.scss';
 
+type props = {
+  defaultValue?: Record<string, unknown>,
+  label: string,
+  onSubmit: (val: Record<string, unknown>) => void,
+}
+
 const UserAutocomplete = ({
   defaultValue,
-  onChange,
-}): JSX.Element => {
+  onSubmit,
+  label,
+}:props): JSX.Element => {
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [value, setValue] = useState({});
@@ -31,33 +39,36 @@ const UserAutocomplete = ({
     setLoading(false);
   };
 
-  const handleAutocompleteChange = useCallback((event, val) => {
-    setValue(val);
-    onChange(val);
-  }, [onChange]);
+  const submit = useCallback(() => {
+    onSubmit(value);
+  }, [onSubmit, value]);
 
   return (
     <Autocomplete
       autoHighlight
       disableOpenOnFocus
       classes={{ root: 'autocomplete', popper: 'autocomplete__popper' }}
-      onChange={handleAutocompleteChange}
+      onChange={(event, val) => setValue(val)}
       options={options}
-      getOptionLabel={option => `${option.firstName} ${option.lastName}` || option}
+      getOptionLabel={option => (option.firstName && option.lastName ? `${option.firstName} ${option.lastName}` : '')}
       value={value}
       renderInput={params => (
         <TextField
           {...params}
-          label="Group owner"
+          label={label || 'User'}
           variant="outlined"
           margin="normal"
-          required
           onChange={handleInputChange}
           InputProps={{
             ...params.InputProps,
             endAdornment: (
               <React.Fragment>
                 {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                {value && (
+                  <Button onClick={submit}>
+                    Add
+                  </Button>
+                )}
               </React.Fragment>
             ),
           }}

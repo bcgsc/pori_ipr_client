@@ -14,19 +14,17 @@ type groupType = {
   userGroupMember: userGroupMemberType,
 };
 
-type userProjectType = {
-  createdAt: string,
-  deletedAt: null | string,
-  id: number,
-  project_id: number,
-  updatedAt: null | string,
-  user_id: number,
-};
-
-type projectType = {
+type userProjectsType = {
   ident: string,
   name: string,
-  user_project: userProjectType,
+  user_project: {
+    createdAt: string,
+    deletedAt: null | string,
+    id: number,
+    project_id: number,
+    updatedAt: null | string,
+    user_id: number,
+  },
 };
 
 type userType = {
@@ -37,7 +35,7 @@ type userType = {
   ident: string,
   lastLogin: null | string,
   lastName: string,
-  projects: projectType[],
+  projects: userProjectsType[],
   type: string,
   updatedAt: null | string,
   username: string,
@@ -53,6 +51,6 @@ type formErrorType = {
 export {
   userType,
   groupType,
-  projectType,
+  userProjectsType,
   formErrorType,
 };

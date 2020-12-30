@@ -14,7 +14,7 @@ import api from '../../../../../../services/api';
 import DataTable from '../../../../../../components/DataTable';
 import { groupType } from '../../../../types';
 import columnDefs from './columnDefs';
-import UserAutocomplete from './components/UserAutocomplete';
+import UserAutocomplete from '../../../../../../components/UserAutocomplete';
 
 import './index.scss';
 
@@ -114,6 +114,7 @@ const AddEditUserDialog = ({
         <UserAutocomplete
           defaultValue={editData ? editData.owner : { firstName: '', lastName: '' }}
           onChange={handleUserChange}
+          label="Group owner"
         />
         {editData && (
           <DataTable
