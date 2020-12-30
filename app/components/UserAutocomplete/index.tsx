@@ -7,23 +7,26 @@ import {
 } from '@material-ui/core';
 
 import api from '../../services/api';
+import { userType } from '../../common';
 
 import './index.scss';
 
 type props = {
-  defaultValue?: Record<string, unknown>,
+  defaultValue?: userType,
   label: string,
-  onSubmit: (val: Record<string, unknown>) => void,
+  onSubmit?: (val: userType) => void,
+  onChange?: (val: userType) => void,
 }
 
 const UserAutocomplete = ({
   defaultValue,
-  onSubmit,
   label,
-}:props): JSX.Element => {
+  onSubmit,
+  onChange,
+}: props): JSX.Element => {
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [value, setValue] = useState({});
+  const [value, setValue] = useState<userType>();
 
   useEffect(() => {
     if (defaultValue) {
@@ -43,12 +46,17 @@ const UserAutocomplete = ({
     onSubmit(value);
   }, [onSubmit, value]);
 
+  const handleSelectedValueChange = useCallback((event, val) => {
+    setValue(val);
+    onChange(val);
+  }, [onChange]);
+
   return (
     <Autocomplete
       autoHighlight
       disableOpenOnFocus
       classes={{ root: 'autocomplete', popper: 'autocomplete__popper' }}
-      onChange={(event, val) => setValue(val)}
+      onChange={handleSelectedValueChange}
       options={options}
       getOptionLabel={option => (option.firstName && option.lastName ? `${option.firstName} ${option.lastName}` : '')}
       value={value}
@@ -64,7 +72,7 @@ const UserAutocomplete = ({
             endAdornment: (
               <React.Fragment>
                 {loading ? <CircularProgress color="inherit" size={20} /> : null}
-                {value && (
+                {value && !onChange && (
                   <Button onClick={submit}>
                     Add
                   </Button>
