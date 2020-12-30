@@ -12,7 +12,7 @@ import {
 import { SnackbarContext } from '@bcgsc/react-snackbar-provider';
 import api from '../../../../../../services/api';
 import DataTable from '../../../../../../components/DataTable';
-import { groupType, userType } from '../../../../types';
+import { groupType, userGroupMemberType, userType } from '../../../../../../common';
 import columnDefs from './columnDefs';
 import UserAutocomplete from '../../../../../../components/UserAutocomplete';
 
@@ -34,8 +34,8 @@ const AddEditUserDialog = ({
     groupName: false,
   });
   const [dialogTitle, setDialogTitle] = useState<string>('');
-  const [users, setUsers] = useState<userType[]>();
-  const [user, setUser] = useState();
+  const [users, setUsers] = useState<userGroupMemberType[]>();
+  const [owner, setOwner] = useState<userType>();
 
   const snackbar = useContext(SnackbarContext);
 
@@ -44,11 +44,13 @@ const AddEditUserDialog = ({
       const {
         name: editName,
         users: editUsers,
+        owner: editOwner,
       } = editData;
 
       setDialogTitle('Edit group');
       setGroupName(editName);
       setUsers(editUsers);
+      setOwner(editOwner);
     } else {
       setDialogTitle('Add group');
       setGroupName('');
@@ -57,10 +59,10 @@ const AddEditUserDialog = ({
   }, [editData]);
 
   const handleClose = useCallback(async () => {
-    if (groupName.length) {
+    if (groupName.length && owner) {
       const newEntry = {
         name: groupName,
-        owner: null,
+        owner: owner.ident,
       };
 
       let createdResp;
@@ -76,7 +78,7 @@ const AddEditUserDialog = ({
         groupName: true,
       });
     }
-  }, [groupName, editData, onClose]);
+  }, [groupName, editData, onClose, owner]);
 
   const handleDelete = async (ident) => {
     // eslint-disable-next-line no-restricted-globals
@@ -88,9 +90,9 @@ const AddEditUserDialog = ({
     }
   };
 
-  const handleUserChange = (userSelected) => {
+  const handleOwnerChange = (userSelected) => {
     if (userSelected) {
-      setUser(userSelected);
+      setOwner(userSelected);
     }
   };
 
@@ -112,8 +114,8 @@ const AddEditUserDialog = ({
           />
         </FormControl>
         <UserAutocomplete
-          defaultValue={editData ? editData.owner : { firstName: '', lastName: '' }}
-          onChange={handleUserChange}
+          defaultValue={editData ? editData.owner : null}
+          onChange={handleOwnerChange}
           label="Group owner"
         />
         {editData && (
