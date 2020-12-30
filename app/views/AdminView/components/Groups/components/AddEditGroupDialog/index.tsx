@@ -12,7 +12,7 @@ import {
 import { SnackbarContext } from '@bcgsc/react-snackbar-provider';
 import api from '../../../../../../services/api';
 import DataTable from '../../../../../../components/DataTable';
-import { groupType } from '../../../../types';
+import { groupType, userType } from '../../../../types';
 import columnDefs from './columnDefs';
 import UserAutocomplete from '../../../../../../components/UserAutocomplete';
 
@@ -34,7 +34,7 @@ const AddEditUserDialog = ({
     groupName: false,
   });
   const [dialogTitle, setDialogTitle] = useState<string>('');
-  const [users, setUsers] = useState();
+  const [users, setUsers] = useState<userType[]>();
   const [user, setUser] = useState();
 
   const snackbar = useContext(SnackbarContext);

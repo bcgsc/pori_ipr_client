@@ -7,7 +7,7 @@ import AddEditGroupDialog from './components/AddEditGroupDialog';
 
 import './index.scss';
 
-const Groups = () => {
+const Groups = (): JSX.Element => {
   const [groups, setGroups] = useState([]);
 
   useEffect(() => {

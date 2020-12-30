@@ -14,7 +14,7 @@ import {
 import { SnackbarContext } from '@bcgsc/react-snackbar-provider';
 import api from '../../../../../../services/api';
 import DataTable from '../../../../../../components/DataTable';
-import { projectType } from '../../../../types';
+import { projectType, shortReportType, userType } from '../../../../types';
 import { userColumnDefs, reportColumnDefs } from './columnDefs';
 import ReportAutocomplete from '../../../../../../components/ReportAutocomplete';
 import UserAutocomplete from '../../../../../../components/UserAutocomplete';
@@ -33,12 +33,12 @@ const AddEditProjectDialog = ({
   editData,
 }: AddEditProjectDialogType): JSX.Element => {
   const [projectName, setProjectName] = useState<string>('');
-  const [errors, setErrors] = useState({
+  const [errors, setErrors] = useState<{ projectName: boolean }>({
     projectName: false,
   });
   const [dialogTitle, setDialogTitle] = useState<string>('');
-  const [users, setUsers] = useState([]);
-  const [reports, setReports] = useState([]);
+  const [users, setUsers] = useState<userType[]>([]);
+  const [reports, setReports] = useState<shortReportType[]>([]);
 
   const snackbar = useContext(SnackbarContext);
 

@@ -1,4 +1,10 @@
 /* eslint-disable camelcase */
+type recordDefaults = {
+  ident: string,
+  updatedAt: string | null,
+  createdAt: string | null,
+}
+
 type userGroupMemberType = {
   createdAt: string,
   deletedAt: null | string,
@@ -6,12 +12,13 @@ type userGroupMemberType = {
   id: number,
   updatedAt: null | string,
   user_id: number,
-};
+} & recordDefaults;
 
 type groupType = {
   ident: string,
   name: string,
-  userGroupMember: userGroupMemberType,
+  users: userGroupMemberType,
+  owner: userType,
 };
 
 type userProjectsType = {
@@ -27,19 +34,27 @@ type userProjectsType = {
   },
 };
 
+type shortReportType = {
+  alternateIdentifier: string | null,
+  patientId: string,
+} & recordDefaults;
+
+type projectType = {
+  name: string,
+  reports: shortReportType[],
+  users: userType[],
+} & recordDefaults;
+
 type userType = {
-  createdAt: string,
   email: string,
   firstName: string,
   groups: groupType[],
-  ident: string,
   lastLogin: null | string,
   lastName: string,
   projects: userProjectsType[],
   type: string,
-  updatedAt: null | string,
   username: string,
-};
+} & recordDefaults;
 
 type formErrorType = {
   username: boolean,
@@ -52,5 +67,7 @@ export {
   userType,
   groupType,
   userProjectsType,
+  shortReportType,
+  projectType,
   formErrorType,
 };
