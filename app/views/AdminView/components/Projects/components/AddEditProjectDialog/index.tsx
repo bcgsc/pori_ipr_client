@@ -14,7 +14,8 @@ import {
 import { SnackbarContext } from '@bcgsc/react-snackbar-provider';
 import api from '../../../../../../services/api';
 import DataTable from '../../../../../../components/DataTable';
-import { projectType, shortReportType, userType } from '../../../../types';
+import { projectType, shortReportType } from '../../../../types';
+import { userType } from '../../../../../../common';
 import { userColumnDefs, reportColumnDefs } from './columnDefs';
 import ReportAutocomplete from '../../../../../../components/ReportAutocomplete';
 import UserAutocomplete from '../../../../../../components/UserAutocomplete';
