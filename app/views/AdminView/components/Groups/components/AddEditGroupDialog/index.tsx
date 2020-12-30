@@ -34,7 +34,7 @@ const AddEditUserDialog = ({
     groupName: false,
   });
   const [dialogTitle, setDialogTitle] = useState<string>('');
-  const [users, setUsers] = useState<userGroupMemberType[]>();
+  const [users, setUsers] = useState<userGroupMemberType[]>([]);
   const [owner, setOwner] = useState<userType>();
 
   const snackbar = useContext(SnackbarContext);
@@ -55,6 +55,7 @@ const AddEditUserDialog = ({
       setDialogTitle('Add group');
       setGroupName('');
       setUsers([]);
+      setOwner(null);
     }
   }, [editData]);
 
@@ -114,7 +115,7 @@ const AddEditUserDialog = ({
           />
         </FormControl>
         <UserAutocomplete
-          defaultValue={editData ? editData.owner : null}
+          defaultValue={owner || null}
           onChange={handleOwnerChange}
           label="Group owner"
         />

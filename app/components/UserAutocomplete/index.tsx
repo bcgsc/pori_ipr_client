@@ -26,7 +26,19 @@ const UserAutocomplete = ({
 }: props): JSX.Element => {
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [value, setValue] = useState<userType>();
+  const [value, setValue] = useState<userType>({
+    email: '',
+    firstName: '',
+    groups: [],
+    lastLogin: null,
+    lastName: '',
+    projects: [],
+    type: '',
+    username: '',
+    ident: '',
+    updatedAt: '',
+    createdAt: '',
+  });
 
   useEffect(() => {
     if (defaultValue) {
@@ -42,13 +54,15 @@ const UserAutocomplete = ({
     setLoading(false);
   };
 
-  const submit = useCallback(() => {
+  const handleSubmit = useCallback(() => {
     onSubmit(value);
   }, [onSubmit, value]);
 
   const handleSelectedValueChange = useCallback((event, val) => {
     setValue(val);
-    onChange(val);
+    if (onChange) {
+      onChange(val);
+    }
   }, [onChange]);
 
   return (
@@ -73,7 +87,7 @@ const UserAutocomplete = ({
               <React.Fragment>
                 {loading ? <CircularProgress color="inherit" size={20} /> : null}
                 {value && !onChange && (
-                  <Button onClick={submit}>
+                  <Button onClick={handleSubmit}>
                     Add
                   </Button>
                 )}
