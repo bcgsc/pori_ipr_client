@@ -7,7 +7,7 @@ import {
 
 import './index.scss';
 
-const Board = lazy(() => import('./components/Board'));
+const Board = lazy(() => import('./components/Board/index.tsx'));
 const Report = lazy(() => import('./components/Report'));
 
 const GermlineView = () => (
