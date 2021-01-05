@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { AgGridReact } from '@ag-grid-community/react';
 import { useGrid } from '@bcgsc/react-use-grid';
 
@@ -10,15 +10,15 @@ import './index.scss';
 type props = {
   columnDefs: Record<string, unknown>[],
   rowData: Record<string, unknown>[],
-  onOffsetChange: (offset: number) => void,
+  totalRows: number,
 }
 
 const ApiPaginatedTable = ({
   columnDefs,
   rowData,
-  onOffsetChange,
+  totalRows,
 }: props): JSX.Element => {
-  const { gridApi, colApi, onGridReady } = useGrid();
+  const { colApi, onGridReady } = useGrid();
 
   const onFirstDataRendered = useCallback(() => {
     const visibleColumnIds = colApi.getAllColumns()
@@ -37,16 +37,12 @@ const ApiPaginatedTable = ({
         frameworkComponents={{
           checkboxCellRenderer: CheckboxCell,
         }}
-        pagination
-        suppressPaginationPanel
-        paginationAutoPageSize
         suppressAnimationFrame
         suppressColumnVirtualisation
         disableStaticMarkup // See https://github.com/ag-grid/ag-grid/issues/3727
       />
       <PaginationPanel
-        gridApi={gridApi}
-        onChange={onOffsetChange}
+        totalRows={totalRows}
       />
     </div>
   );

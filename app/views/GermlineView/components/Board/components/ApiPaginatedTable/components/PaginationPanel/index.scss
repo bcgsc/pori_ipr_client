@@ -1,0 +1,20 @@
+.pagination-panel {
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px;
+
+  &__select {
+    width: 125px;
+    
+    &-box {
+      margin: 8px 16px;
+    }
+  }
+}
+
+.pagination {
+  &__text {
+    margin: auto 0;
+    opacity: 68%;
+  }
+}
