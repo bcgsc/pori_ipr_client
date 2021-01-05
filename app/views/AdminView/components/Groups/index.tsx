@@ -1,20 +1,26 @@
 import React, { useState, useEffect } from 'react';
+import {
+  CircularProgress,
+} from '@material-ui/core';
 
 import api from '../../../../services/api';
 import DataTable from '../../../../components/DataTable';
 import columnDefs from './columnDefs';
 import AddEditGroupDialog from './components/AddEditGroupDialog';
+import { groupType } from '../../../../common';
 
 import './index.scss';
 
 const Groups = (): JSX.Element => {
-  const [groups, setGroups] = useState([]);
+  const [groups, setGroups] = useState<groupType[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const getData = async () => {
       const groupsResp = await api.get('/user/group', {}).request();
 
       setGroups(groupsResp);
+      setLoading(false);
     };
 
     getData();
@@ -22,7 +28,7 @@ const Groups = (): JSX.Element => {
 
   return (
     <div className="admin-table__container">
-      {Boolean(groups.length) && (
+      {!loading && (
         <DataTable
           rowData={groups}
           columnDefs={columnDefs}
@@ -33,6 +39,9 @@ const Groups = (): JSX.Element => {
           EditDialog={AddEditGroupDialog}
           titleText="Groups"
         />
+      )}
+      {loading && (
+        <CircularProgress />
       )}
     </div>
   );

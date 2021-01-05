@@ -7,10 +7,11 @@ import columnDefs from './columnDefs';
 import AddEditProjectDialog from './components/AddEditProjectDialog';
 
 import './index.scss';
+import { projectType } from '../../types';
 
 const Projects = (): JSX.Element => {
-  const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [projects, setProjects] = useState<projectType[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const getData = async () => {
