@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { CircularProgress } from '@material-ui/core';
+import { SnackbarContext } from '@bcgsc/react-snackbar-provider';
 
 import api from '../../../../services/api';
 import DataTable from '../../../../components/DataTable';
@@ -13,6 +14,8 @@ const Projects = (): JSX.Element => {
   const [projects, setProjects] = useState<projectType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
+  const snackbar = useContext(SnackbarContext);
+
   useEffect(() => {
     const getData = async () => {
       const projectsResp = await api.get('/project?admin=true', {}).request();
@@ -23,6 +26,16 @@ const Projects = (): JSX.Element => {
 
     getData();
   }, []);
+
+  const handleDelete = async (ident) => {
+    // eslint-disable-next-line no-restricted-globals
+    if (confirm('Are you sure you want to remove this project?')) {
+      await api.del(`/project/${ident}`, {}, {}).request();
+      snackbar.add('Project deleted');
+    } else {
+      snackbar.add('Project not deleted');
+    }
+  };
   
   return (
     <div className="admin-table__container">
@@ -36,6 +49,8 @@ const Projects = (): JSX.Element => {
           EditDialog={AddEditProjectDialog}
           canEdit
           canAdd
+          canDelete
+          onDelete={handleDelete}
           titleText="Projects"
         />
       )}
