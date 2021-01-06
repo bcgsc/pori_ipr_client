@@ -49,6 +49,7 @@ const Groups = (): JSX.Element => {
           isFullLength
           canEdit
           canAdd
+          addText="Add group"
           canDelete
           onDelete={handleDelete}
           EditDialog={AddEditGroupDialog}

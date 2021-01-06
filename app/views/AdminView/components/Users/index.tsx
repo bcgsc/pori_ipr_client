@@ -47,6 +47,7 @@ const Users = (): JSX.Element => {
           isFullLength
           canEdit
           canAdd
+          addText="Add user"
           canDelete
           titleText="Users"
           EditDialog={AddEditUserDialog}

@@ -49,6 +49,7 @@ const Projects = (): JSX.Element => {
           EditDialog={AddEditProjectDialog}
           canEdit
           canAdd
+          addText="Add project"
           canDelete
           onDelete={handleDelete}
           titleText="Projects"

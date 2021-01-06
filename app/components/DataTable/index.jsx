@@ -60,6 +60,7 @@ function DataTable(props) {
     onDelete,
     EditDialog,
     canAdd,
+    addText,
     reportIdent,
     tableType,
     visibleColumns,
@@ -382,11 +383,12 @@ function DataTable(props) {
                   {canAdd && !isPrint && (
                     <span className="data-table__action">
                       <Typography display="inline">
-                        Add Row
+                        {addText || 'Add row'}
                       </Typography>
                       <IconButton
                         onClick={() => setShowEditDialog(true)}
                         title="Add Row"
+                        className="data-table__icon-button"
                       >
                         <AddCircleOutlineIcon />
                       </IconButton>
@@ -396,6 +398,7 @@ function DataTable(props) {
                     <span className="data-table__action">
                       <IconButton
                         onClick={() => setShowPopover(prevVal => !prevVal)}
+                        className="data-table__icon-button"
                       >
                         <MoreHorizIcon />
                       </IconButton>
@@ -409,6 +412,7 @@ function DataTable(props) {
                       <IconButton
                         onClick={handleCSVExport}
                         title="Export to CSV"
+                        className="data-table__icon-button"
                       >
                         <GetAppIcon />
                       </IconButton>
