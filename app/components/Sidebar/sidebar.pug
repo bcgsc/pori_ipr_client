@@ -30,7 +30,7 @@ div(layout="column", ng-class="{'sidebar--maximized': $ctrl.sidebarMaximized}").
     md-tooltip(ng-if="!$ctrl.sidebarMaximized", md-direction="right") Terms of Use
     span(ng-class="{'sidebar__text--visible': $ctrl.sidebarMaximized}").sidebar__text.sidebar__text--transition Terms of Use
 
-
+  md-divider(ng-if="$ctrl.admin")
   a(layout="row", ng-if="$ctrl.admin", href="/admin/users",
       ng-class="{'sidebar__row--active': $ctrl.$window.location.pathname.includes('users')}"
     ).sidebar__row
