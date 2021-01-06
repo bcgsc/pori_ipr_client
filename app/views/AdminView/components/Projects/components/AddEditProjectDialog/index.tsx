@@ -84,29 +84,34 @@ const AddEditProjectDialog = ({
     }
   }, [projectName, editData, onClose]);
 
-  const handleProjectDelete = async (ident) => {
+  const handleReportDelete = useCallback(async (ident) => {
     // eslint-disable-next-line no-restricted-globals
     if (confirm(`Are you sure you want to remove this report from the ${projectName} project?`)) {
       await api.del(`/project/${editData.ident}/reports`, { report: ident }, {}).request();
+      const newReports = reports.filter(entry => entry.ident !== ident);
+      setReports(newReports);
       snackbar.add('Report removed from project');
     } else {
       snackbar.add('Report not removed');
     }
-  };
+  }, [editData, projectName, snackbar, reports]);
 
-  const handleUserDelete = async (ident) => {
+  const handleUserDelete = useCallback(async (ident) => {
     // eslint-disable-next-line no-restricted-globals
     if (confirm(`Are you sure you want to remove this user from the ${projectName} project?`)) {
       await api.del(`/project/${editData.ident}/user`, { user: ident }, {}).request();
+      const newUsers = users.filter(user => user.ident !== ident);
+      setUsers(newUsers);
       snackbar.add('User removed from project');
     } else {
       snackbar.add('User not removed');
     }
-  };
+  }, [projectName, editData, users, snackbar]);
 
   const handleUserSubmit = useCallback(async (user) => {
     if (editData) {
       await api.post(`/project/${editData.ident}/user`, { user: user.ident }, {}).request();
+      setUsers(prevVal => [...prevVal, user]);
       snackbar.add('User added to project');
     }
   }, [editData, snackbar]);
@@ -114,6 +119,7 @@ const AddEditProjectDialog = ({
   const handleReportSubmit = useCallback(async (report) => {
     if (editData) {
       await api.post(`/project/${editData.ident}/reports`, { report: report.ident }, {}).request();
+      setReports(prevVal => [...prevVal, report]);
       snackbar.add('Report added to project');
     }
   }, [editData, snackbar]);
@@ -156,7 +162,7 @@ const AddEditProjectDialog = ({
               rowData={reports}
               columnDefs={reportColumnDefs}
               canViewDetails={false}
-              onDelete={handleProjectDelete}
+              onDelete={handleReportDelete}
               canDelete
             />
           </>

@@ -81,15 +81,17 @@ const AddEditUserDialog = ({
     }
   }, [groupName, editData, onClose, owner]);
 
-  const handleDelete = async (ident) => {
+  const handleDeleteUser = useCallback(async (ident) => {
     // eslint-disable-next-line no-restricted-globals
     if (confirm(`Are you sure you want to remove this user from the ${groupName} group?`)) {
       await api.del(`/user/group/${editData.ident}/member`, { user: ident }, {}).request();
+      const newUsers = users.filter(user => user.ident !== ident);
+      setUsers(newUsers);
       snackbar.add('User removed');
     } else {
       snackbar.add('User not removed');
     }
-  };
+  }, [groupName, editData, users, snackbar]);
 
   const handleOwnerChange = (userSelected) => {
     if (userSelected) {
@@ -97,10 +99,11 @@ const AddEditUserDialog = ({
     }
   };
 
-  const handleAddUser = async (user) => {
+  const handleAddUser = useCallback(async (user) => {
     await api.post(`/user/group/${editData.ident}/member`, { user: user.ident }, {}).request();
+    setUsers(prevVal => [...prevVal, user]);
     snackbar.add('User added to group');
-  };
+  }, [editData, snackbar]);
 
   return (
     <Dialog open={isOpen} onClose={onClose} maxWidth="sm" fullWidth className="edit-dialog">
@@ -134,7 +137,7 @@ const AddEditUserDialog = ({
               rowData={users}
               columnDefs={columnDefs}
               canViewDetails={false}
-              onDelete={handleDelete}
+              onDelete={handleDeleteUser}
               canDelete
             />
           </>

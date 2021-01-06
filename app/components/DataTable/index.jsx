@@ -371,7 +371,7 @@ function DataTable(props) {
   // Theme is needed for react in angular tables. It can't access the theme provider otherwise
   return (
     <ThemeProvider theme={theme}>
-      <div className="data-table--padded" style={{height: '100%'}}>
+      <div className="data-table--padded" style={{ height: '100%' }}>
         {rowData.length || canEdit ? (
           <>
             {titleText && (
