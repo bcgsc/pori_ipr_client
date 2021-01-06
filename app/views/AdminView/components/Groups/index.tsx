@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, {
+  useState, useEffect, useContext, useCallback,
+} from 'react';
 import {
   CircularProgress,
 } from '@material-ui/core';
@@ -29,15 +31,17 @@ const Groups = (): JSX.Element => {
     getData();
   }, []);
 
-  const handleDelete = async (ident) => {
+  const handleDelete = useCallback(async (ident) => {
     // eslint-disable-next-line no-restricted-globals
     if (confirm('Are you sure you want to remove this group?')) {
       await api.del(`/user/group/${ident}`, {}, {}).request();
+      const newGroups = groups.filter(group => group.ident !== ident);
+      setGroups(newGroups);
       snackbar.add('Group deleted');
     } else {
       snackbar.add('Group not deleted');
     }
-  };
+  }, [snackbar, groups]);
 
   return (
     <div className="admin-table__container">

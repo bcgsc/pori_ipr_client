@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, {
+  useState, useEffect, useContext, useCallback,
+} from 'react';
 import { CircularProgress } from '@material-ui/core';
 import { SnackbarContext } from '@bcgsc/react-snackbar-provider';
 
@@ -27,15 +29,17 @@ const Projects = (): JSX.Element => {
     getData();
   }, []);
 
-  const handleDelete = async (ident) => {
+  const handleDelete = useCallback(async (ident) => {
     // eslint-disable-next-line no-restricted-globals
     if (confirm('Are you sure you want to remove this project?')) {
       await api.del(`/project/${ident}`, {}, {}).request();
+      const newProjects = projects.filter(project => project.ident !== ident);
+      setProjects(newProjects);
       snackbar.add('Project deleted');
     } else {
       snackbar.add('Project not deleted');
     }
-  };
+  }, [snackbar, projects]);
   
   return (
     <div className="admin-table__container">

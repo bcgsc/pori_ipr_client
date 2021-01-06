@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, {
+  useState, useEffect, useContext, useCallback,
+} from 'react';
 import { CircularProgress } from '@material-ui/core';
 import { SnackbarContext } from '@bcgsc/react-snackbar-provider';
 
@@ -27,15 +29,17 @@ const Users = (): JSX.Element => {
     getData();
   }, []);
 
-  const handleDelete = async (ident) => {
+  const handleDelete = useCallback(async (ident) => {
     // eslint-disable-next-line no-restricted-globals
     if (confirm('Are you sure you want to remove this user?')) {
       await api.del(`/user/${ident}`, {}, {}).request();
+      const newUsers = users.filter(user => user.ident !== ident);
+      setUsers(newUsers);
       snackbar.add('User deleted');
     } else {
       snackbar.add('User not deleted');
     }
-  };
+  }, [snackbar, users]);
 
   return (
     <div className="admin-table__container">
