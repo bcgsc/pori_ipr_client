@@ -17,6 +17,8 @@ import './index.scss';
 const Groups = (): JSX.Element => {
   const [groups, setGroups] = useState<groupType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [showDialog, setShowDialog] = useState<boolean>(false);
+  const [editData, setEditData] = useState<groupType | null>();
 
   const snackbar = useContext(SnackbarContext);
 
@@ -43,22 +45,54 @@ const Groups = (): JSX.Element => {
     }
   }, [snackbar, groups]);
 
+  const handleEditStart = (rowData) => {
+    setShowDialog(true);
+    setEditData(rowData);
+  };
+
+  const handleEditClose = useCallback((newData) => {
+    setShowDialog(false);
+    if (newData) {
+      const groupIndex = groups.findIndex(group => group.ident === newData.ident);
+      if (groupIndex !== null) {
+        const newGroups = [...groups];
+        newGroups[groupIndex] = newData;
+        setGroups(newGroups);
+        snackbar.add('Group edited');
+      } else {
+        setGroups(prevVal => [...prevVal, newData]);
+        snackbar.add('Group added');
+      }
+    }
+    setEditData(null);
+  }, [groups, snackbar]);
+
   return (
     <div className="admin-table__container">
       {!loading && (
-        <DataTable
-          rowData={groups}
-          columnDefs={columnDefs}
-          isPaginated
-          isFullLength
-          canEdit
-          canAdd
-          addText="Add group"
-          canDelete
-          onDelete={handleDelete}
-          EditDialog={AddEditGroupDialog}
-          titleText="Groups"
-        />
+        <>
+          <DataTable
+            rowData={groups}
+            columnDefs={columnDefs}
+            isPaginated
+            isFullLength
+            canEdit
+            onEdit={handleEditStart}
+            canAdd
+            onAdd={() => setShowDialog(true)}
+            addText="Add group"
+            canDelete
+            onDelete={handleDelete}
+            titleText="Groups"
+          />
+          {showDialog && (
+            <AddEditGroupDialog
+              isOpen={showDialog}
+              onClose={handleEditClose}
+              editData={editData}
+            />
+          )}
+        </>
       )}
       {loading && (
         <CircularProgress />

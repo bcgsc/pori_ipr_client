@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useCallback, useContext } from 'react';
+import React, {
+  useState, useEffect, useCallback, useReducer,
+} from 'react';
 import {
   Button,
   Dialog,
@@ -9,7 +11,6 @@ import {
   FormControl,
 } from '@material-ui/core';
 
-import { SnackbarContext } from '@bcgsc/react-snackbar-provider';
 import api from '../../../../../../services/api';
 import DataTable from '../../../../../../components/DataTable';
 import { groupType, userGroupMemberType, userType } from '../../../../../../common';
@@ -24,6 +25,17 @@ type AddEditGroupDialogType = {
   editData: null | groupType,
 };
 
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'add':
+      return [...state, action.payload];
+    case 'reset':
+      return [];
+    default:
+      return state;
+  }
+};
+
 const AddEditUserDialog = ({
   isOpen,
   onClose,
@@ -36,8 +48,7 @@ const AddEditUserDialog = ({
   const [dialogTitle, setDialogTitle] = useState<string>('');
   const [users, setUsers] = useState<userGroupMemberType[]>([]);
   const [owner, setOwner] = useState<userType>();
-
-  const snackbar = useContext(SnackbarContext);
+  const [apiCallQueue, apiCallQueueDispatch] = useReducer(reducer, []);
 
   useEffect(() => {
     if (editData) {
@@ -73,25 +84,22 @@ const AddEditUserDialog = ({
         createdResp = await api.post('/user/group', newEntry, {}).request();
       }
 
-      onClose(createdResp);
+      await Promise.all(apiCallQueue.map(call => call.request()));
+      const updatedGroup = await api.get(`/user/group/${createdResp.ident}`, {}).request();
+
+      onClose(updatedGroup);
     } else {
       setErrors({
         groupName: true,
       });
     }
-  }, [groupName, editData, onClose, owner]);
+  }, [groupName, owner, editData, apiCallQueue, onClose]);
 
-  const handleDeleteUser = useCallback(async (ident) => {
-    // eslint-disable-next-line no-restricted-globals
-    if (confirm(`Are you sure you want to remove this user from the ${groupName} group?`)) {
-      await api.del(`/user/group/${editData.ident}/member`, { user: ident }, {}).request();
-      const newUsers = users.filter(user => user.ident !== ident);
-      setUsers(newUsers);
-      snackbar.add('User removed');
-    } else {
-      snackbar.add('User not removed');
-    }
-  }, [groupName, editData, users, snackbar]);
+  const handleDeleteUser = useCallback((ident) => {
+    apiCallQueueDispatch({ type: 'add', payload: api.del(`/user/group/${editData.ident}/member`, { user: ident }, {}) });
+    const newUsers = users.filter(user => user.ident !== ident);
+    setUsers(newUsers);
+  }, [editData, users]);
 
   const handleOwnerChange = (userSelected) => {
     if (userSelected) {
@@ -100,10 +108,9 @@ const AddEditUserDialog = ({
   };
 
   const handleAddUser = useCallback(async (user) => {
-    await api.post(`/user/group/${editData.ident}/member`, { user: user.ident }, {}).request();
+    apiCallQueueDispatch({ type: 'add', payload: api.post(`/user/group/${editData.ident}/member`, { user: user.ident }, {}) });
     setUsers(prevVal => [...prevVal, user]);
-    snackbar.add('User added to group');
-  }, [editData, snackbar]);
+  }, [editData]);
 
   return (
     <Dialog open={isOpen} onClose={onClose} maxWidth="sm" fullWidth className="edit-dialog">

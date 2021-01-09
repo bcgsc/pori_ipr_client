@@ -15,6 +15,8 @@ import './index.scss';
 const Users = (): JSX.Element => {
   const [users, setUsers] = useState<userType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [showDialog, setShowDialog] = useState<boolean>(false);
+  const [editData, setEditData] = useState<userType>();
 
   const snackbar = useContext(SnackbarContext);
 
@@ -41,22 +43,54 @@ const Users = (): JSX.Element => {
     }
   }, [snackbar, users]);
 
+  const handleEditStart = (rowData) => {
+    setShowDialog(true);
+    setEditData(rowData);
+  };
+
+  const handleEditClose = useCallback((newData) => {
+    setShowDialog(false);
+    if (newData) {
+      const userIndex = users.findIndex(user => user.ident === newData.ident);
+      if (userIndex !== null) {
+        const newUsers = [...users];
+        newUsers[userIndex] = newData;
+        setUsers(newUsers);
+        snackbar.add('User edited');
+      } else {
+        setUsers(prevVal => [...prevVal, newData]);
+        snackbar.add('User added');
+      }
+    }
+  }, [snackbar, users]);
+
   return (
     <div className="admin-table__container">
       {!loading && (
-        <DataTable
-          rowData={users}
-          columnDefs={columnDefs}
-          isPaginated
-          isFullLength
-          canEdit
-          canAdd
-          addText="Add user"
-          canDelete
-          titleText="Users"
-          EditDialog={AddEditUserDialog}
-          onDelete={handleDelete}
-        />
+        <>
+          <DataTable
+            rowData={users}
+            columnDefs={columnDefs}
+            isPaginated
+            isFullLength
+            canEdit
+            canAdd
+            addText="Add user"
+            canDelete
+            titleText="Users"
+            EditDialog={AddEditUserDialog}
+            onDelete={handleDelete}
+            onEdit={handleEditStart}
+            onAdd={() => setShowDialog(true)}
+          />
+          {showDialog && (
+            <AddEditUserDialog
+              isOpen={showDialog}
+              onClose={handleEditClose}
+              editData={editData}
+            />
+          )}
+        </>
       )}
       {loading && (
         <CircularProgress />

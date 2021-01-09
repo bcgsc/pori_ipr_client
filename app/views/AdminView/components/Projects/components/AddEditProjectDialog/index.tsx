@@ -1,5 +1,5 @@
 import React, {
-  useState, useEffect, useCallback, useContext,
+  useState, useEffect, useCallback, useReducer,
 } from 'react';
 import {
   Button,
@@ -11,7 +11,6 @@ import {
   FormControl,
 } from '@material-ui/core';
 
-import { SnackbarContext } from '@bcgsc/react-snackbar-provider';
 import api from '../../../../../../services/api';
 import DataTable from '../../../../../../components/DataTable';
 import { projectType, shortReportType } from '../../../../types';
@@ -28,6 +27,17 @@ type AddEditProjectDialogType = {
   editData: null | projectType,
 };
 
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'add':
+      return [...state, action.payload];
+    case 'reset':
+      return [];
+    default:
+      return state;
+  }
+};
+
 const AddEditProjectDialog = ({
   isOpen,
   onClose,
@@ -40,8 +50,7 @@ const AddEditProjectDialog = ({
   const [dialogTitle, setDialogTitle] = useState<string>('');
   const [users, setUsers] = useState<userType[]>([]);
   const [reports, setReports] = useState<shortReportType[]>([]);
-
-  const snackbar = useContext(SnackbarContext);
+  const [apiCallQueue, apiCallQueueDispatch] = useReducer(reducer, []);
 
   useEffect(() => {
     if (editData) {
@@ -76,53 +85,38 @@ const AddEditProjectDialog = ({
         createdResp = await api.post('/project', newEntry, {}).request();
       }
 
-      onClose(createdResp);
+      await Promise.all(apiCallQueue.map(call => call.request()));
+      const updatedProject = await api.get(`/project/${createdResp.ident}`, {}).request();
+
+      onClose(updatedProject);
     } else {
       setErrors({
         projectName: true,
       });
     }
-  }, [projectName, editData, onClose]);
+  }, [projectName, editData, apiCallQueue, onClose]);
 
-  const handleReportDelete = useCallback(async (ident) => {
-    // eslint-disable-next-line no-restricted-globals
-    if (confirm(`Are you sure you want to remove this report from the ${projectName} project?`)) {
-      await api.del(`/project/${editData.ident}/reports`, { report: ident }, {}).request();
-      const newReports = reports.filter(entry => entry.ident !== ident);
-      setReports(newReports);
-      snackbar.add('Report removed from project');
-    } else {
-      snackbar.add('Report not removed');
-    }
-  }, [editData, projectName, snackbar, reports]);
+  const handleReportDelete = useCallback((ident) => {
+    apiCallQueueDispatch({ type: 'add', payload: api.del(`/project/${editData.ident}/reports`, { report: ident }, {}) });
+    const newReports = reports.filter(entry => entry.ident !== ident);
+    setReports(newReports);
+  }, [editData, reports]);
 
-  const handleUserDelete = useCallback(async (ident) => {
-    // eslint-disable-next-line no-restricted-globals
-    if (confirm(`Are you sure you want to remove this user from the ${projectName} project?`)) {
-      await api.del(`/project/${editData.ident}/user`, { user: ident }, {}).request();
-      const newUsers = users.filter(user => user.ident !== ident);
-      setUsers(newUsers);
-      snackbar.add('User removed from project');
-    } else {
-      snackbar.add('User not removed');
-    }
-  }, [projectName, editData, users, snackbar]);
+  const handleUserDelete = useCallback((ident) => {
+    apiCallQueueDispatch({ type: 'add', payload: api.del(`/project/${editData.ident}/user`, { user: ident }, {}) });
+    const newUsers = users.filter(user => user.ident !== ident);
+    setUsers(newUsers);
+  }, [editData, users]);
 
-  const handleUserSubmit = useCallback(async (user) => {
-    if (editData) {
-      await api.post(`/project/${editData.ident}/user`, { user: user.ident }, {}).request();
-      setUsers(prevVal => [...prevVal, user]);
-      snackbar.add('User added to project');
-    }
-  }, [editData, snackbar]);
+  const handleUserSubmit = useCallback((user) => {
+    apiCallQueueDispatch({ type: 'add', payload: api.post(`/project/${editData.ident}/user`, { user: user.ident }, {}) });
+    setUsers(prevVal => [...prevVal, user]);
+  }, [editData]);
 
-  const handleReportSubmit = useCallback(async (report) => {
-    if (editData) {
-      await api.post(`/project/${editData.ident}/reports`, { report: report.ident }, {}).request();
-      setReports(prevVal => [...prevVal, report]);
-      snackbar.add('Report added to project');
-    }
-  }, [editData, snackbar]);
+  const handleReportSubmit = useCallback((report) => {
+    apiCallQueueDispatch({ type: 'add', payload: api.post(`/project/${editData.ident}/reports`, { report: report.ident }, {}) });
+    setReports(prevVal => [...prevVal, report]);
+  }, [editData]);
 
   return (
     <Dialog open={isOpen} onClose={onClose} maxWidth="sm" fullWidth className="edit-dialog">
