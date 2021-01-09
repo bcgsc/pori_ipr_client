@@ -161,7 +161,7 @@ function ActionCellRenderer(params) {
         <IconButton
           size="small"
           aria-label="Edit"
-          onClick={onEdit}
+          onClick={() => onEdit(data)}
           title="Edit"
         >
           <Edit />

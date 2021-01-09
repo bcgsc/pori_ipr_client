@@ -56,10 +56,11 @@ function DataTable(props) {
     titleText,
     filterText,
     canEdit,
+    onEdit,
     canDelete,
     onDelete,
-    EditDialog,
     canAdd,
+    onAdd,
     addText,
     reportIdent,
     tableType,
@@ -257,24 +258,27 @@ function DataTable(props) {
     }
   };
 
-  const handleRowEditClose = useCallback((editedData) => {
-    setShowEditDialog(false);
-    if (editedData && selectedRow.node) {
-      selectedRow.node.setData(editedData);
-    } else if (editedData) {
-      editedData.rank = tableLength;
-      gridApi.current.updateRowData({ add: [editedData] });
-      setTableLength(gridApi.current.getDisplayedRowCount());
+  // const handleRowEditClose = useCallback((editedData) => {
+  //   setShowEditDialog(false);
+  //   if (editedData && selectedRow.node) {
+  //     console.log(editedData);
+  //     selectedRow.node.setData(editedData);
+  //     gridApi.current.updateRowData({ update: [editedData] });
+  //     console.log(selectedRow.node);
+  //   } else if (editedData) {
+  //     editedData.rank = tableLength;
+  //     gridApi.current.updateRowData({ add: [editedData] });
+  //     setTableLength(gridApi.current.getDisplayedRowCount());
 
-      const { visibleColumnIds } = getColumnVisibility();
-      columnApi.current.autoSizeColumns(visibleColumnIds);
-    } else if (editedData === null) {
-      // sending back null indicates the row was deleted
-      gridApi.current.updateRowData({ remove: [selectedRow.node.data] });
-      setTableLength(gridApi.current.getDisplayedRowCount());
-    }
-    setSelectedRow({});
-  }, [selectedRow.node, tableLength]);
+  //     const { visibleColumnIds } = getColumnVisibility();
+  //     columnApi.current.autoSizeColumns(visibleColumnIds);
+  //   } else if (editedData === null) {
+  //     // sending back null indicates the row was deleted
+  //     gridApi.current.updateRowData({ remove: [selectedRow.node.data] });
+  //     setTableLength(gridApi.current.getDisplayedRowCount());
+  //   }
+  //   setSelectedRow({});
+  // }, [selectedRow.node, tableLength]);
 
   const defaultColDef = {
     sortable: !showReorder,
@@ -333,19 +337,13 @@ function DataTable(props) {
     return result;
   };
 
-  const RowActionCellRenderer = (row) => {
-    const handleEdit = useCallback(() => {
-      setShowEditDialog(true);
-      setSelectedRow(row);
-    }, [row]);
-    return (
-      <ActionCellRenderer
-        onEdit={handleEdit}
-        onDelete={onDelete}
-        {...row}
-      />
-    );
-  };
+  const RowActionCellRenderer = useCallback(row => (
+    <ActionCellRenderer
+      onEdit={onEdit}
+      onDelete={onDelete}
+      {...row}
+    />
+  ), [onDelete, onEdit]);
 
   const handleCSVExport = () => {
     const date = getDate();
@@ -372,7 +370,7 @@ function DataTable(props) {
   return (
     <ThemeProvider theme={theme}>
       <div className="data-table--padded" style={{ height: '100%' }}>
-        {rowData.length || canEdit ? (
+        {Boolean(rowData.length) || canEdit ? (
           <>
             {titleText && (
               <div className="data-table__header-container">
@@ -386,7 +384,7 @@ function DataTable(props) {
                         {addText || 'Add row'}
                       </Typography>
                       <IconButton
-                        onClick={() => setShowEditDialog(true)}
+                        onClick={onAdd}
                         title="Add Row"
                         className="data-table__icon-button"
                       >
@@ -434,15 +432,6 @@ function DataTable(props) {
                 </div>
               </div>
             )}
-            <EditDialog
-              isOpen={showEditDialog}
-              onClose={handleRowEditClose}
-              editData={selectedRow.data}
-              reportIdent={reportIdent}
-              tableType={tableType}
-              addIndex={tableLength}
-              showErrorSnackbar={snackbar.add}
-            />
             <div
               className="ag-theme-material data-table__container"
               ref={gridDiv}
@@ -471,12 +460,10 @@ function DataTable(props) {
                   canEdit,
                   canDelete,
                   canViewDetails,
-                  EditDialog,
                   reportIdent,
                   tableType,
                 }}
                 frameworkComponents={{
-                  EditDialog,
                   LinkCellRenderer,
                   GeneCellRenderer,
                   ActionCellRenderer: RowActionCellRenderer,
