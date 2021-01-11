@@ -18,6 +18,11 @@
     background-color: $palette__common--white;
   }
 
+  &__caption {
+    display: block;
+    max-width: fit-content;
+  }
+
   &__dialog-background {
     position: fixed;
     display: flex;
