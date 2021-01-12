@@ -93,13 +93,9 @@ function DataTable(props) {
   };
 
   const snackbar = useContext(SnackbarContext);
-  const { isSigned } = useContext(ConfirmContext);
 
   const [showPopover, setShowPopover] = useState(false);
-  const [showEditDialog, setShowEditDialog] = useState(false);
-  const [selectedRow, setSelectedRow] = useState({});
   const [showReorder, setShowReorder] = useState(false);
-  const [tableLength, setTableLength] = useState(rowData.length);
 
   useEffect(() => {
     if (gridApi.current) {
@@ -138,20 +134,6 @@ function DataTable(props) {
       }
     }
   }, [highlightRow]);
-
-  const getColumnVisibility = () => {
-    const visibleColumnIds = columnApi.current.getAllDisplayedColumns()
-      .map(col => col.colId);
-
-    const hiddenColumnIds = columnApi.current.getAllColumns()
-      .filter(col => !col.visible)
-      .map(col => col.colId);
-
-    return {
-      visibleColumnIds,
-      hiddenColumnIds,
-    };
-  };
 
   const onGridReady = (params) => {
     gridApi.current = params.api;
@@ -258,28 +240,6 @@ function DataTable(props) {
       snackbar.add(`Rows were not updated: ${err}`);
     }
   };
-
-  // const handleRowEditClose = useCallback((editedData) => {
-  //   setShowEditDialog(false);
-  //   if (editedData && selectedRow.node) {
-  //     console.log(editedData);
-  //     selectedRow.node.setData(editedData);
-  //     gridApi.current.updateRowData({ update: [editedData] });
-  //     console.log(selectedRow.node);
-  //   } else if (editedData) {
-  //     editedData.rank = tableLength;
-  //     gridApi.current.updateRowData({ add: [editedData] });
-  //     setTableLength(gridApi.current.getDisplayedRowCount());
-
-  //     const { visibleColumnIds } = getColumnVisibility();
-  //     columnApi.current.autoSizeColumns(visibleColumnIds);
-  //   } else if (editedData === null) {
-  //     // sending back null indicates the row was deleted
-  //     gridApi.current.updateRowData({ remove: [selectedRow.node.data] });
-  //     setTableLength(gridApi.current.getDisplayedRowCount());
-  //   }
-  //   setSelectedRow({});
-  // }, [selectedRow.node, tableLength]);
 
   const defaultColDef = {
     sortable: !showReorder,
