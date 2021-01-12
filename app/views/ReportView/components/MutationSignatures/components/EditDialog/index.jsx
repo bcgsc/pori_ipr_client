@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useContext } from 'react';
-import PropTypes from 'prop-types';
+import React, {
+  useState, useEffect, useContext, useCallback,
+} from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -17,7 +18,6 @@ import {
 import api from '@/services/api';
 
 import './index.scss';
-import { useCallback } from 'react';
 import ReportContext from '../../../../../../components/ReportContext';
 import ConfirmContext from '@/components/ConfirmContext';
 
@@ -52,11 +52,10 @@ const EditDialog = (props) => {
   const handleSubmit = useCallback(async () => {
     if (checkboxSelected !== editData.selected || selectValue !== editData.kbCategory) {
       try {
-        const call = api.put(
+        await api.put(
           `/reports/${report.ident}/mutation-signatures/${editData.ident}`,
           { selected: checkboxSelected, kbCategory: selectValue },
-        );
-        await call.request(isSigned);
+        ).request(isSigned);
         onClose({ ...editData, selected: checkboxSelected, kbCategory: selectValue });
       } catch (err) {
         showErrorSnackbar(`Error updating signature: ${err.message}`);
@@ -65,7 +64,7 @@ const EditDialog = (props) => {
     } else {
       onClose();
     }
-  }, [checkboxSelected, selectValue, isSigned, editData]);
+  }, [checkboxSelected, editData, selectValue, report, isSigned, onClose, showErrorSnackbar]);
 
   return (
     <Dialog open={isOpen} maxWidth="sm" fullWidth className="edit-dialog">
