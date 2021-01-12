@@ -384,7 +384,7 @@ function DataTable(props) {
                         {addText || 'Add row'}
                       </Typography>
                       <IconButton
-                        onClick={onAdd}
+                        onClick={() => onAdd(tableType ? { type: tableType } : null)}
                         title="Add Row"
                         className="data-table__icon-button"
                       >

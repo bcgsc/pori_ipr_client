@@ -52,7 +52,7 @@ const Projects = (): JSX.Element => {
     setShowDialog(false);
     if (newData) {
       const projectIndex = projects.findIndex(project => project.ident === newData.ident);
-      if (projectIndex !== null) {
+      if (projectIndex !== -1) {
         const newProjects = [...projects];
         newProjects[projectIndex] = newData;
         setProjects(newProjects);

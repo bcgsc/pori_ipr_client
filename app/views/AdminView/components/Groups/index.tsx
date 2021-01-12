@@ -54,7 +54,7 @@ const Groups = (): JSX.Element => {
     setShowDialog(false);
     if (newData) {
       const groupIndex = groups.findIndex(group => group.ident === newData.ident);
-      if (groupIndex !== null) {
+      if (groupIndex !== -1) {
         const newGroups = [...groups];
         newGroups[groupIndex] = newData;
         setGroups(newGroups);

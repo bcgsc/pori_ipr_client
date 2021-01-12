@@ -18,6 +18,7 @@ import AutocompleteHandler from '../AutocompleteHandler';
 import { therapeuticAdd, therapeuticDelete } from '../../../../../../services/reports/therapeutic';
 import api from '@/services/api';
 import ConfirmContext from '@/components/ConfirmContext';
+import ReportContext from '@/components/ReportContext';
 
 /**
  * @param {object} props props
@@ -28,12 +29,11 @@ import ConfirmContext from '@/components/ConfirmContext';
  * @param {string} props.tableType therapeutic | chemoresistant
  * @return {*} JSX
  */
-function EditDialog(props) {
+const EditDialog = (props) => {
   const {
     editData,
     isOpen,
     onClose,
-    reportIdent,
     tableType,
   } = props;
 
@@ -47,6 +47,7 @@ function EditDialog(props) {
   }, editData || {});
 
   const { isSigned } = useContext(ConfirmContext);
+  const { report } = useContext(ReportContext);
 
   const [dialogTitle, setDialogTitle] = useState('Add Row');
   const [requiredFields] = useState(['variant', 'context', 'therapy']);
@@ -91,16 +92,15 @@ function EditDialog(props) {
 
     try {
       if (newData.ident) { // existing option
-        const call = api.put(
-          `/reports/${reportIdent}/therapeutic-targets/${editData.ident}`,
+        const returnedData = await api.put(
+          `/reports/${report.ident}/therapeutic-targets/${editData.ident}`,
           combinedData,
-        );
-        await call.request(isSigned);
+        ).request(isSigned);
         setIsDirty(false);
-        onClose(combinedData);
+        onClose(returnedData);
       } else {
         const returnedData = await therapeuticAdd(
-          reportIdent,
+          report.ident,
           combinedData,
         );
         setNewData({ type: 'replace', payload: {} });
@@ -110,19 +110,19 @@ function EditDialog(props) {
     } catch (err) {
       console.error(err); // TODO: send to snackbar
     }
-  }, [newData, tableType, reportIdent, editData.ident, isSigned, onClose]);
+  }, [newData, tableType, report, editData.ident, isSigned, onClose]);
 
   const handleDelete = useCallback(async () => {
     try {
       await therapeuticDelete(
-        reportIdent,
+        report.ident,
         newData.ident,
       );
       onClose(null);
     } catch (err) {
       console.error('error', err); // TODO: send to snackbar
     }
-  }, [onClose, newData.ident, reportIdent]);
+  }, [onClose, newData.ident, report.ident]);
 
   const handleAutocompleteValueSelected = (selectedValue, typeName) => {
     setIsDirty(true);
@@ -234,19 +234,17 @@ function EditDialog(props) {
       </DialogContent>
     </Dialog>
   );
-}
+};
 
 EditDialog.propTypes = {
   editData: PropTypes.objectOf(PropTypes.any),
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  reportIdent: PropTypes.string.isRequired,
   tableType: PropTypes.string.isRequired,
 };
 
 EditDialog.defaultProps = {
   editData: {},
-  addIndex: 0,
 };
 
 export default EditDialog;

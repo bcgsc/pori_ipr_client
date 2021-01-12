@@ -68,7 +68,7 @@ const MutationSignatures = () => {
       if (!newData.signature.toLowerCase().match(/dbs|id/)) {
         newSignatures = orderBy(sbsSignatures, ['nnls', 'signature'], ['desc', 'asc']);
         const signatureIndex = newSignatures.findIndex(sig => sig.ident === newData.ident);
-        if (signatureIndex !== null) {
+        if (signatureIndex !== -1) {
           newSignatures[signatureIndex] = newData;
           setSbsSignatures(newSignatures);
         }
@@ -76,7 +76,7 @@ const MutationSignatures = () => {
       if (newData.signature.toLowerCase().match(/dbs/)) {
         newSignatures = orderBy(dbsSignatures, ['nnls', 'signature'], ['desc', 'asc']);
         const signatureIndex = dbsSignatures.findIndex(sig => sig.ident === newData.ident);
-        if (signatureIndex !== null) {
+        if (signatureIndex !== -1) {
           newSignatures[signatureIndex] = newData;
           setDbsSignatures(newSignatures);
         }
@@ -84,7 +84,7 @@ const MutationSignatures = () => {
       if (newData.signature.toLowerCase().match(/id/)) {
         newSignatures = orderBy(idSignatures, ['nnls', 'signature'], ['desc', 'asc']);
         const signatureIndex = idSignatures.findIndex(sig => sig.ident === newData.ident);
-        if (signatureIndex !== null) {
+        if (signatureIndex !== -1) {
           newSignatures[signatureIndex] = newData;
           setIdSignatures(newSignatures);
         }

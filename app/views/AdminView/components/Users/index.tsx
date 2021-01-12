@@ -52,7 +52,7 @@ const Users = (): JSX.Element => {
     setShowDialog(false);
     if (newData) {
       const userIndex = users.findIndex(user => user.ident === newData.ident);
-      if (userIndex !== null) {
+      if (userIndex !== -1) {
         const newUsers = [...users];
         newUsers[userIndex] = newData;
         setUsers(newUsers);

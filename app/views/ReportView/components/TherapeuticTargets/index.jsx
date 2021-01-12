@@ -1,6 +1,10 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, {
+  useState, useEffect, useContext, useCallback,
+} from 'react';
 import { LinearProgress } from '@material-ui/core';
 import PropTypes from 'prop-types';
+import orderBy from 'lodash.orderby';
+
 import DataTable from '@/components/DataTable';
 import EditContext from '@/components/EditContext';
 import ReportContext from '../../../../components/ReportContext';
@@ -16,17 +20,19 @@ import api from '@/services/api';
  * @param {report} props.report report object
  * @return {*} JSX
  */
-function TherapeuticView(props) {
+const TherapeuticView = (props) => {
   const {
     print,
   } = props;
 
+  const [therapeuticData, setTherapeuticData] = useState();
+  const [chemoresistanceData, setChemoresistanceData] = useState();
+
+  const [showDialog, setShowDialog] = useState(false);
+  const [editData, setEditData] = useState();
+
   const { canEdit } = useContext(EditContext);
   const { report } = useContext(ReportContext);
-
-  const [therapeuticData, setTherapeuticData] = useState();
-
-  const [chemoresistanceData, setChemoresistanceData] = useState();
 
   useEffect(() => {
     if (report) {
@@ -46,6 +52,40 @@ function TherapeuticView(props) {
     }
   }, [report]);
 
+  const handleEditStart = (rowData) => {
+    setShowDialog(true);
+    if (rowData) {
+      setEditData(rowData);
+    }
+  };
+
+  const handleEditClose = useCallback((newData) => {
+    setShowDialog(false);
+    if (newData) {
+      if (newData.type === 'therapeutic') {
+        const therapeuticIndex = therapeuticData.findIndex(row => row.ident === newData.ident);
+        if (therapeuticIndex !== -1) {
+          const newTherapeutic = [...orderBy(therapeuticData, ['rank'], ['asc'])];
+          newTherapeutic[therapeuticIndex] = newData;
+          setTherapeuticData(newTherapeutic);
+        } else {
+          setTherapeuticData(prevVal => [...prevVal, newData]);
+        }
+      }
+      if (newData.type === 'chemoresistance') {
+        const chemoresistanceIndex = chemoresistanceData.findIndex(row => row.ident === newData.ident);
+        if (chemoresistanceIndex !== -1) {
+          const newChemoresistance = [...orderBy(chemoresistanceData, ['rank'], ['asc'])];
+          newChemoresistance[chemoresistanceIndex] = newData;
+          setChemoresistanceData(newChemoresistance);
+        } else {
+          setChemoresistanceData(prevVal => [...prevVal, newData]);
+        }
+      }
+    }
+    setEditData(null);
+  }, [chemoresistanceData, therapeuticData]);
+
   return (
     <div className="therapeutic">
       {therapeuticData ? (
@@ -55,8 +95,9 @@ function TherapeuticView(props) {
             columnDefs={columnDefs}
             rowData={therapeuticData}
             canEdit={canEdit && !print}
-            EditDialog={EditDialog}
+            onEdit={handleEditStart}
             canAdd={canEdit && !print}
+            onAdd={handleEditStart}
             reportIdent={report.ident}
             tableType="therapeutic"
             isPaginated={false}
@@ -66,14 +107,14 @@ function TherapeuticView(props) {
             patientId={report.patientId}
             print={print}
           />
-
           <DataTable
             titleText="Potential Chemoresistance"
             columnDefs={columnDefs}
             rowData={chemoresistanceData}
             canEdit={canEdit && !print}
-            EditDialog={EditDialog}
+            onEdit={handleEditStart}
             canAdd={canEdit && !print}
+            onAdd={handleEditStart}
             reportIdent={report.ident}
             tableType="chemoresistance"
             isPaginated={false}
@@ -83,13 +124,21 @@ function TherapeuticView(props) {
             patientId={report.patientId}
             print={print}
           />
+          {showDialog && (
+            <EditDialog
+              isOpen={showDialog}
+              onClose={handleEditClose}
+              editData={editData}
+              tableType={editData.type}
+            />
+          )}
         </>
       ) : (
         <LinearProgress />
       )}
     </div>
   );
-}
+};
 
 TherapeuticView.propTypes = {
   print: PropTypes.bool,
