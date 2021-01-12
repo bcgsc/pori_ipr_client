@@ -9,6 +9,7 @@ import DataTable from '@/components/DataTable';
 import EditContext from '@/components/EditContext';
 import ReportContext from '../../../../components/ReportContext';
 import EditDialog from './components/EditDialog';
+import EvidenceHeader from './components/EvidenceHeader';
 import columnDefs from './columnDefs';
 import api from '@/services/api';
 
@@ -20,7 +21,7 @@ import api from '@/services/api';
  * @param {report} props.report report object
  * @return {*} JSX
  */
-const TherapeuticView = (props) => {
+const Therapeutic = (props) => {
   const {
     print,
   } = props;
@@ -37,13 +38,12 @@ const TherapeuticView = (props) => {
   useEffect(() => {
     if (report) {
       const getData = async () => {
-        const call = api.get(`/reports/${report.ident}/therapeutic-targets`);
-        const resp = await call.request();
+        const therapeuticResp = await api.get(`/reports/${report.ident}/therapeutic-targets`).request();
 
-        setTherapeuticData(resp.filter(
+        setTherapeuticData(therapeuticResp.filter(
           target => target.type === 'therapeutic',
         ));
-        setChemoresistanceData(resp.filter(
+        setChemoresistanceData(therapeuticResp.filter(
           target => target.type === 'chemoresistance',
         ));
       };
@@ -106,6 +106,7 @@ const TherapeuticView = (props) => {
             canExport
             patientId={report.patientId}
             print={print}
+            Header={EvidenceHeader}
           />
           <DataTable
             titleText="Potential Chemoresistance"
@@ -123,6 +124,7 @@ const TherapeuticView = (props) => {
             canExport
             patientId={report.patientId}
             print={print}
+            Header={EvidenceHeader}
           />
           {showDialog && (
             <EditDialog
@@ -140,12 +142,12 @@ const TherapeuticView = (props) => {
   );
 };
 
-TherapeuticView.propTypes = {
+Therapeutic.propTypes = {
   print: PropTypes.bool,
 };
 
-TherapeuticView.defaultProps = {
+Therapeutic.defaultProps = {
   print: false,
 };
 
-export default TherapeuticView;
+export default Therapeutic;
