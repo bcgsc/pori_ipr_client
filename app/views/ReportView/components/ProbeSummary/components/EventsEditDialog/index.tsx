@@ -16,7 +16,7 @@ import api from '../../../../../../services/api';
 
 type Props = {
   isOpen: boolean,
-  onClose: (isSaved: boolean | Record<string, unknown>) => void,
+  onClose: (isSaved?: Record<string, unknown>) => void,
   editData: Record<string, unknown>
 };
 
@@ -57,11 +57,11 @@ const EventsEditDialog = ({
 
   const handleClose = useCallback(async (isSaved) => {
     if (isSaved && editDataDirty) {
-      const call = api.put(`/report/${report.ident}/probe-results/${newData.ident}`, newData, {});
+      const call = api.put(`/reports/${report.ident}/probe-results/${newData.ident}`, newData, {});
       await call.request(isSigned);
       onClose(newData);
     } else {
-      onClose(false);
+      onClose();
     }
   }, [editDataDirty, isSigned, newData, onClose, report.ident]);
 

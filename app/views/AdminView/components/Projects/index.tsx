@@ -75,7 +75,6 @@ const Projects = (): JSX.Element => {
             canViewDetails={false}
             isPaginated
             isFullLength
-            EditDialog={AddEditProjectDialog}
             canEdit
             onEdit={handleEditStart}
             canAdd

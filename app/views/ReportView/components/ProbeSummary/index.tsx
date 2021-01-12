@@ -45,8 +45,10 @@ const ProbeSummary = ({
   const [signatures, setSignatures] = useState<any | null>();
   const [probeResults, setProbeResults] = useState<Array<Record<string, unknown>> | null>();
   const [patientInformation, setPatientInformation] = useState<Array<Record<string, unknown>> | null>();
+  const [editData, setEditData] = useState();
 
   const [showPatientEdit, setShowPatientEdit] = useState<boolean>(false);
+  const [showEventsDialog, setShowEventsDialog] = useState<boolean>(false);
 
   useEffect(() => {
     if (report && report.ident) {
@@ -99,7 +101,7 @@ const ProbeSummary = ({
 
       getData();
     }
-  }, [report]);
+  }, [loadedDispatch, report]);
 
   const handlePatientEditClose = useCallback(async (isSaved, newPatientData, newReportData) => {
     const apiCalls = [];
@@ -168,6 +170,25 @@ const ProbeSummary = ({
     setIsSigned(signed);
     setSignatures(newSignature);
   };
+
+  const handleEditStart = (rowData) => {
+    setShowEventsDialog(true);
+    if (rowData) {
+      setEditData(rowData);
+    }
+  };
+
+  const handleEditClose = useCallback((newData) => {
+    setShowEventsDialog(false);
+    if (newData) {
+      const eventsIndex = probeResults.findIndex(user => user.ident === newData.ident);
+      if (eventsIndex !== -1) {
+        const newEvents = [...probeResults];
+        newEvents[eventsIndex] = newData;
+        setProbeResults(newEvents);
+      }
+    }
+  }, [probeResults]);
 
   return (
     <div className="probe-summary">
@@ -243,14 +264,21 @@ const ProbeSummary = ({
             Genomic Events with Potential Therapeutic Association
           </Typography>
           {probeResults.length ? (
-            <DataTable
-              columnDefs={eventsColumnDefs}
-              rowData={probeResults}
-              canEdit={canEdit}
-              EditDialog={EventsEditDialog}
-              isPrint={isPrint}
-              isPaginated={!isPrint}
-            />
+            <>
+              <DataTable
+                columnDefs={eventsColumnDefs}
+                rowData={probeResults}
+                canEdit={canEdit}
+                onEdit={handleEditStart}
+                isPrint={isPrint}
+                isPaginated={!isPrint}
+              />
+              <EventsEditDialog
+                isOpen={showEventsDialog}
+                editData={editData}
+                onClose={handleEditClose}
+              />
+            </>
           ) : (
             <div className="probe-summary__none">
               No Genomic Events were found

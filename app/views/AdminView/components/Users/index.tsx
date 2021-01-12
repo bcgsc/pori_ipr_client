@@ -78,7 +78,6 @@ const Users = (): JSX.Element => {
             addText="Add user"
             canDelete
             titleText="Users"
-            EditDialog={AddEditUserDialog}
             onDelete={handleDelete}
             onEdit={handleEditStart}
             onAdd={() => setShowDialog(true)}
