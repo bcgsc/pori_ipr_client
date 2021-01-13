@@ -7,7 +7,7 @@ import { TestInformationInterface } from './interfaces';
 
 import './index.scss';
 
-type Props = {
+type TestInformationProps = {
   data: TestInformationInterface,
 };
 
@@ -21,7 +21,7 @@ const TestInformation = ({
     snpProbe,
     snpVars,
   },
-}: Props): JSX.Element => (
+}: TestInformationProps): JSX.Element => (
   <Grid direction="row" container>
     <Grid direction="column" container className="grid--third">
       <Grid item>

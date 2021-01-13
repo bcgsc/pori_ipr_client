@@ -28,7 +28,7 @@ import PrintTable from './components/PrintTable';
 
 import './index.scss';
 
-type Props = {
+type ProbeSummaryProps = {
   loadedDispatch: (type: Record<string, unknown>) => void,
   isPrint: boolean,
 };
@@ -36,7 +36,7 @@ type Props = {
 const ProbeSummary = ({
   loadedDispatch,
   isPrint,
-}: Props): JSX.Element => {
+}: ProbeSummaryProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
   const { canEdit } = useContext(EditContext);
   const { isSigned, setIsSigned } = useContext(ConfirmContext);

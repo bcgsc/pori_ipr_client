@@ -14,7 +14,7 @@ import ReportContext from '../../../../../../components/ReportContext';
 import ConfirmContext from '../../../../../../components/ConfirmContext';
 import api from '../../../../../../services/api';
 
-type Props = {
+type EventsEditDialogProps = {
   isOpen: boolean,
   onClose: (isSaved?: Record<string, unknown>) => void,
   editData: Record<string, unknown>
@@ -24,7 +24,7 @@ const EventsEditDialog = ({
   editData,
   isOpen,
   onClose,
-}: Props): JSX.Element => {
+}: EventsEditDialogProps): JSX.Element => {
   const { report } = useContext(ReportContext);
   const { isSigned } = useContext(ConfirmContext);
 

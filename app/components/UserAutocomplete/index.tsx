@@ -11,7 +11,7 @@ import { userType } from '../../common';
 
 import './index.scss';
 
-type props = {
+type UserAutocompleteProps = {
   defaultValue?: userType,
   label: string,
   onSubmit?: (val: userType) => void,
@@ -23,7 +23,7 @@ const UserAutocomplete = ({
   label,
   onSubmit,
   onChange,
-}: props): JSX.Element => {
+}: UserAutocompleteProps): JSX.Element => {
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [value, setValue] = useState<userType>({

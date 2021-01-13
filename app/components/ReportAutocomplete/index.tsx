@@ -10,7 +10,7 @@ import api from '../../services/api';
 
 import './index.scss';
 
-type props = {
+type ReportAutocompleteProps = {
   defaultValue?: string,
   onSubmit: (report: Record<string, unknown>) => void,
   label?: string,
@@ -20,7 +20,7 @@ const ReportAutocomplete = ({
   defaultValue,
   onSubmit,
   label,
-}: props): JSX.Element => {
+}: ReportAutocompleteProps): JSX.Element => {
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [value, setValue] = useState({});
