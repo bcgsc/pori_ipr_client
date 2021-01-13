@@ -32,13 +32,6 @@ const ImageViewer = ({ onClose, selectedRow, isOpen }: Props): JSX.Element => {
       open={isOpen}
       maxWidth="xl"
     >
-      <DialogTitle>
-        <span className="dialog__title">
-          <Typography variant="h5" align="center">
-            Image Details
-          </Typography>
-        </span>
-      </DialogTitle>
       <DialogContent>
         {selectedRow.image && (
           <Image

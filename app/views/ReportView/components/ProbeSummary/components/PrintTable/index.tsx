@@ -2,12 +2,12 @@ import React from 'react';
 
 import './index.scss';
 
-type Props = {
+type PrintTableProps = {
   data: Array<Record<string, unknown>>,
   headers: Array<string>,
 };
 
-const PrintTable = ({ data, headers }: Props): JSX.Element => (
+const PrintTable = ({ data, headers }: PrintTableProps): JSX.Element => (
   <div>
     {Boolean(data.length) && Boolean(headers.length) && (
       <table className="table">
