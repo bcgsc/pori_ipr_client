@@ -63,31 +63,26 @@ const MutationSignatures = () => {
 
   const handleEditClose = useCallback((newData) => {
     setShowDialog(false);
+    let newSignatures;
+    let setter;
+
     if (newData) {
-      let newSignatures;
       if (!newData.signature.toLowerCase().match(/dbs|id/)) {
+        setter = setSbsSignatures;
         newSignatures = orderBy(sbsSignatures, ['nnls', 'signature'], ['desc', 'asc']);
-        const signatureIndex = newSignatures.findIndex(sig => sig.ident === newData.ident);
-        if (signatureIndex !== -1) {
-          newSignatures[signatureIndex] = newData;
-          setSbsSignatures(newSignatures);
-        }
       }
       if (newData.signature.toLowerCase().match(/dbs/)) {
+        setter = setDbsSignatures;
         newSignatures = orderBy(dbsSignatures, ['nnls', 'signature'], ['desc', 'asc']);
-        const signatureIndex = dbsSignatures.findIndex(sig => sig.ident === newData.ident);
-        if (signatureIndex !== -1) {
-          newSignatures[signatureIndex] = newData;
-          setDbsSignatures(newSignatures);
-        }
       }
       if (newData.signature.toLowerCase().match(/id/)) {
+        setter = setIdSignatures;
         newSignatures = orderBy(idSignatures, ['nnls', 'signature'], ['desc', 'asc']);
-        const signatureIndex = idSignatures.findIndex(sig => sig.ident === newData.ident);
-        if (signatureIndex !== -1) {
-          newSignatures[signatureIndex] = newData;
-          setIdSignatures(newSignatures);
-        }
+      }
+      const signatureIndex = newSignatures.findIndex(sig => sig.ident === newData.ident);
+      if (signatureIndex !== -1) {
+        newSignatures[signatureIndex] = newData;
+        setter(newSignatures);
       }
     }
     setEditData(null);

@@ -26,11 +26,12 @@ const Therapeutic = (props) => {
     print,
   } = props;
 
-  const [therapeuticData, setTherapeuticData] = useState();
-  const [chemoresistanceData, setChemoresistanceData] = useState();
+  const [therapeuticData, setTherapeuticData] = useState([]);
+  const [chemoresistanceData, setChemoresistanceData] = useState([]);
 
-  const [showDialog, setShowDialog] = useState(false);
+  const [showDialog, setShowDialog] = useState<boolean>(false);
   const [editData, setEditData] = useState();
+  const [loading, setLoading] = useState<boolean>(true);
 
   const { canEdit } = useContext(EditContext);
   const { report } = useContext(ReportContext);
@@ -46,6 +47,7 @@ const Therapeutic = (props) => {
         setChemoresistanceData(therapeuticResp.filter(
           target => target.type === 'chemoresistance',
         ));
+        setLoading(false);
       };
 
       getData();
@@ -54,33 +56,29 @@ const Therapeutic = (props) => {
 
   const handleEditStart = (rowData) => {
     setShowDialog(true);
-    if (rowData) {
-      setEditData(rowData);
-    }
+    setEditData(rowData);
   };
 
   const handleEditClose = useCallback((newData) => {
     setShowDialog(false);
+    let tableData;
+    let setter;
+
     if (newData) {
       if (newData.type === 'therapeutic') {
-        const therapeuticIndex = therapeuticData.findIndex(row => row.ident === newData.ident);
-        if (therapeuticIndex !== -1) {
-          const newTherapeutic = [...orderBy(therapeuticData, ['rank'], ['asc'])];
-          newTherapeutic[therapeuticIndex] = newData;
-          setTherapeuticData(newTherapeutic);
-        } else {
-          setTherapeuticData(prevVal => [...prevVal, newData]);
-        }
+        tableData = therapeuticData;
+        setter = setTherapeuticData;
+      } else if (newData.type === 'chemoresistance') {
+        tableData = chemoresistanceData;
+        setter = setChemoresistanceData;
       }
-      if (newData.type === 'chemoresistance') {
-        const chemoresistanceIndex = chemoresistanceData.findIndex(row => row.ident === newData.ident);
-        if (chemoresistanceIndex !== -1) {
-          const newChemoresistance = [...orderBy(chemoresistanceData, ['rank'], ['asc'])];
-          newChemoresistance[chemoresistanceIndex] = newData;
-          setChemoresistanceData(newChemoresistance);
-        } else {
-          setChemoresistanceData(prevVal => [...prevVal, newData]);
-        }
+      const tableIndex = tableData.findIndex(row => row.ident === newData.ident);
+      if (tableIndex !== -1) {
+        const newTable = [...orderBy(tableData, ['rank'], ['asc'])];
+        newTable[tableIndex] = newData;
+        setter(newTable);
+      } else {
+        setter(prevVal => [...prevVal, newData]);
       }
     }
     setEditData(null);
@@ -88,7 +86,7 @@ const Therapeutic = (props) => {
 
   return (
     <div className="therapeutic">
-      {therapeuticData ? (
+      {!loading && (
         <>
           <DataTable
             titleText="Potential Therapeutic Targets"
@@ -135,7 +133,8 @@ const Therapeutic = (props) => {
             />
           )}
         </>
-      ) : (
+      )}
+      {loading && (
         <LinearProgress />
       )}
     </div>
