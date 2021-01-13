@@ -61,12 +61,12 @@ const customTypeSort = (variant) => {
   return 3;
 };
 
-type Props = {
+type GenomicSummaryProps = {
   print: boolean,
   loadedDispatch: (section: Record<'type', string>) => void,
 };
 
-const GenomicSummary = ({ print, loadedDispatch }: Props): JSX.Element => {
+const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
   const { canEdit } = useContext(EditContext);
   const { isSigned } = useContext(ConfirmContext);

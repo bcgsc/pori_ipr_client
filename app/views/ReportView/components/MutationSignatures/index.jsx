@@ -1,6 +1,9 @@
-import React, { useEffect, useState, useContext } from 'react';
-import PropTypes from 'prop-types';
+import React, {
+  useEffect, useState, useContext, useCallback,
+} from 'react';
+import orderBy from 'lodash.orderby';
 import { LinearProgress, Typography } from '@material-ui/core';
+import { SnackbarContext } from '@bcgsc/react-snackbar-provider';
 
 import DataTable from '@/components/DataTable';
 import ReportContext from '../../../../components/ReportContext';
@@ -27,6 +30,11 @@ const MutationSignatures = () => {
   const [idSignatures, setIdSignatures] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const [showDialog, setShowDialog] = useState(false);
+  const [editData, setEditData] = useState();
+
+  const snackbar = useContext(SnackbarContext);
+
   useEffect(() => {
     if (report && report.ident) {
       const getData = async () => {
@@ -48,6 +56,38 @@ const MutationSignatures = () => {
     }
   }, [report]);
 
+  const handleEditStart = (rowData) => {
+    setShowDialog(true);
+    setEditData(rowData);
+  };
+
+  const handleEditClose = useCallback((newData) => {
+    setShowDialog(false);
+    let newSignatures;
+    let setter;
+
+    if (newData) {
+      if (!newData.signature.toLowerCase().match(/dbs|id/)) {
+        setter = setSbsSignatures;
+        newSignatures = orderBy(sbsSignatures, ['nnls', 'signature'], ['desc', 'asc']);
+      }
+      if (newData.signature.toLowerCase().match(/dbs/)) {
+        setter = setDbsSignatures;
+        newSignatures = orderBy(dbsSignatures, ['nnls', 'signature'], ['desc', 'asc']);
+      }
+      if (newData.signature.toLowerCase().match(/id/)) {
+        setter = setIdSignatures;
+        newSignatures = orderBy(idSignatures, ['nnls', 'signature'], ['desc', 'asc']);
+      }
+      const signatureIndex = newSignatures.findIndex(sig => sig.ident === newData.ident);
+      if (signatureIndex !== -1) {
+        newSignatures[signatureIndex] = newData;
+        setter(newSignatures);
+      }
+    }
+    setEditData(null);
+  }, [dbsSignatures, idSignatures, sbsSignatures]);
+
   return (
     <div>
       {!isLoading ? (
@@ -64,13 +104,20 @@ const MutationSignatures = () => {
               />
             </div>
           )}
+          {showDialog && (
+            <EditDialog
+              editData={editData}
+              isOpen={showDialog}
+              onClose={handleEditClose}
+              showErrorSnackbar={snackbar.add}
+            />
+          )}
           <DataTable
             rowData={sbsSignatures}
             columnDefs={columnDefs}
             isPaginated
             canEdit={canEdit}
-            EditDialog={EditDialog}
-            canToggleColumns
+            onEdit={handleEditStart}
           />
           <Typography variant="h3" className="mutation-signature__title">
             Double base substitution signatures
@@ -89,7 +136,7 @@ const MutationSignatures = () => {
             columnDefs={columnDefs}
             isPaginated
             canEdit={canEdit}
-            EditDialog={EditDialog}
+            onEdit={handleEditStart}
             canToggleColumns
           />
           <Typography variant="h3" className="mutation-signature__title">
@@ -109,7 +156,7 @@ const MutationSignatures = () => {
             columnDefs={columnDefs}
             isPaginated
             canEdit={canEdit}
-            EditDialog={EditDialog}
+            onEdit={handleEditStart}
             canToggleColumns
           />
         </>

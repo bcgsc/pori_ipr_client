@@ -30,16 +30,10 @@ import { StructuralVariantsComponent } from '@/views/ReportView/components/Struc
 import { SettingsComponent } from '@/views/ReportView/components/Settings';
 import { BoardComponent } from '@/views/GermlineView/components/Board';
 import { ReportComponent } from '@/views/GermlineView/components/Report';
-import { UsersComponent } from '@/views/AdminView/components/Users';
-import { GroupsComponent } from '@/views/AdminView/components/Groups';
-import { ProjectsComponent } from '@/views/AdminView/components/Projects';
 
 import DiscussionEntryComponent from '@/views/ReportView/components/Discussion/components/DiscussionEntry';
 import RoleCardComponent from '@/components/RoleCard';
 import PaginateComponent from '@/components/Paginate';
-import UsersEditComponent from '@/components/UsersEdit';
-import GroupsEditComponent from '@/components/GroupsEdit';
-import ProjectsEditComponent from '@/components/ProjectsEdit';
 import ReactTable from '@/components/DataTable';
 import PageBreak from '@/components/PageBreak';
 
@@ -72,12 +66,6 @@ const rootModule = angular.module('root')
   .component('settings', SettingsComponent)
   .component('board', BoardComponent)
   .component('report', ReportComponent)
-  .component('users', UsersComponent)
-  .component('usersEdit', UsersEditComponent)
-  .component('groups', GroupsComponent)
-  .component('groupsEdit', GroupsEditComponent)
-  .component('projects', ProjectsComponent)
-  .component('projectsEdit', ProjectsEditComponent)
   .component('roleCard', RoleCardComponent)
   .component('paginate', PaginateComponent)
   .component('reactTable', react2angular(ReactTable))

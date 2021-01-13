@@ -10,7 +10,7 @@ import {
 
 import './index.scss';
 
-type Props = {
+type TumourSummaryEditProps = {
   microbial: any,
   report: any,
   mutationBurden: any,
@@ -24,7 +24,7 @@ const TumourSummaryEdit = ({
   mutationBurden,
   isOpen,
   onClose,
-}: Props): JSX.Element => {
+}: TumourSummaryEditProps): JSX.Element => {
   const [newMicrobialData, setNewMicrobialData] = useState({});
   const [newReportData, setNewReportData] = useState({});
   const [newMutationBurdenData, setNewMutationBurdenData] = useState({});

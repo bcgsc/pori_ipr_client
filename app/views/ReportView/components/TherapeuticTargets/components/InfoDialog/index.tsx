@@ -12,12 +12,12 @@ import api from '../../../../../../services/api';
 
 import './index.scss';
 
-type props = {
+type InfoDialogProps = {
   isOpen: boolean,
   onClose: () => void,
 };
 
-const InfoDialog = ({ isOpen, onClose }: props): JSX.Element => {
+const InfoDialog = ({ isOpen, onClose }: InfoDialogProps): JSX.Element => {
   const [evidenceLevels, setEvidenceLevels] = useState([]);
 
   useEffect(() => {

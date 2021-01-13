@@ -18,7 +18,7 @@ const formatDate = (date, long = false) => {
   const formattedDate = new Intl.DateTimeFormat('en-ca', {
     weekday: long ? 'long' : undefined,
     month: long ? 'long' : '2-digit',
-    day: 'numeric',
+    day: '2-digit',
     year: 'numeric',
     hour: long ? '2-digit' : undefined,
     minute: long ? '2-digit' : undefined,

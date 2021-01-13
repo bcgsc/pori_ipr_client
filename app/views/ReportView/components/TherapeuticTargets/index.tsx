@@ -1,6 +1,10 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, {
+  useState, useEffect, useContext, useCallback,
+} from 'react';
 import { LinearProgress } from '@material-ui/core';
 import PropTypes from 'prop-types';
+import orderBy from 'lodash.orderby';
+
 import DataTable from '@/components/DataTable';
 import EditContext from '@/components/EditContext';
 import ReportContext from '../../../../components/ReportContext';
@@ -22,11 +26,15 @@ const Therapeutic = (props) => {
     print,
   } = props;
 
+  const [therapeuticData, setTherapeuticData] = useState([]);
+  const [chemoresistanceData, setChemoresistanceData] = useState([]);
+
+  const [showDialog, setShowDialog] = useState<boolean>(false);
+  const [editData, setEditData] = useState();
+  const [loading, setLoading] = useState<boolean>(true);
+
   const { canEdit } = useContext(EditContext);
   const { report } = useContext(ReportContext);
-
-  const [therapeuticData, setTherapeuticData] = useState();
-  const [chemoresistanceData, setChemoresistanceData] = useState();
 
   useEffect(() => {
     if (report) {
@@ -39,23 +47,55 @@ const Therapeutic = (props) => {
         setChemoresistanceData(therapeuticResp.filter(
           target => target.type === 'chemoresistance',
         ));
+        setLoading(false);
       };
 
       getData();
     }
   }, [report]);
 
+  const handleEditStart = (rowData) => {
+    setShowDialog(true);
+    setEditData(rowData);
+  };
+
+  const handleEditClose = useCallback((newData) => {
+    setShowDialog(false);
+    let tableData;
+    let setter;
+
+    if (newData) {
+      if (newData.type === 'therapeutic') {
+        tableData = therapeuticData;
+        setter = setTherapeuticData;
+      } else if (newData.type === 'chemoresistance') {
+        tableData = chemoresistanceData;
+        setter = setChemoresistanceData;
+      }
+      const tableIndex = tableData.findIndex(row => row.ident === newData.ident);
+      if (tableIndex !== -1) {
+        const newTable = [...orderBy(tableData, ['rank'], ['asc'])];
+        newTable[tableIndex] = newData;
+        setter(newTable);
+      } else {
+        setter(prevVal => [...prevVal, newData]);
+      }
+    }
+    setEditData(null);
+  }, [chemoresistanceData, therapeuticData]);
+
   return (
     <div className="therapeutic">
-      {therapeuticData ? (
+      {!loading && (
         <>
           <DataTable
             titleText="Potential Therapeutic Targets"
             columnDefs={columnDefs}
             rowData={therapeuticData}
             canEdit={canEdit && !print}
-            EditDialog={EditDialog}
+            onEdit={handleEditStart}
             canAdd={canEdit && !print}
+            onAdd={handleEditStart}
             reportIdent={report.ident}
             tableType="therapeutic"
             isPaginated={false}
@@ -66,14 +106,14 @@ const Therapeutic = (props) => {
             print={print}
             Header={EvidenceHeader}
           />
-
           <DataTable
             titleText="Potential Chemoresistance"
             columnDefs={columnDefs}
             rowData={chemoresistanceData}
             canEdit={canEdit && !print}
-            EditDialog={EditDialog}
+            onEdit={handleEditStart}
             canAdd={canEdit && !print}
+            onAdd={handleEditStart}
             reportIdent={report.ident}
             tableType="chemoresistance"
             isPaginated={false}
@@ -84,8 +124,17 @@ const Therapeutic = (props) => {
             print={print}
             Header={EvidenceHeader}
           />
+          {showDialog && (
+            <EditDialog
+              isOpen={showDialog}
+              onClose={handleEditClose}
+              editData={editData}
+              tableType={editData.type}
+            />
+          )}
         </>
-      ) : (
+      )}
+      {loading && (
         <LinearProgress />
       )}
     </div>

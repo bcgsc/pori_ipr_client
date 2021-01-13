@@ -56,8 +56,12 @@ function DataTable(props) {
     titleText,
     filterText,
     canEdit,
-    EditDialog,
+    onEdit,
+    canDelete,
+    onDelete,
     canAdd,
+    onAdd,
+    addText,
     reportIdent,
     tableType,
     visibleColumns,
@@ -65,6 +69,7 @@ function DataTable(props) {
     canToggleColumns,
     canViewDetails,
     isPaginated,
+    isFullLength,
     canReorder,
     rowUpdateAPICall,
     canExport,
@@ -88,13 +93,9 @@ function DataTable(props) {
   };
 
   const snackbar = useContext(SnackbarContext);
-  const { isSigned } = useContext(ConfirmContext);
 
   const [showPopover, setShowPopover] = useState(false);
-  const [showEditDialog, setShowEditDialog] = useState(false);
-  const [selectedRow, setSelectedRow] = useState({});
   const [showReorder, setShowReorder] = useState(false);
-  const [tableLength, setTableLength] = useState(rowData.length);
 
   useEffect(() => {
     if (gridApi.current) {
@@ -134,20 +135,6 @@ function DataTable(props) {
     }
   }, [highlightRow]);
 
-  const getColumnVisibility = () => {
-    const visibleColumnIds = columnApi.current.getAllDisplayedColumns()
-      .map(col => col.colId);
-
-    const hiddenColumnIds = columnApi.current.getAllColumns()
-      .filter(col => !col.visible)
-      .map(col => col.colId);
-
-    return {
-      visibleColumnIds,
-      hiddenColumnIds,
-    };
-  };
-
   const onGridReady = (params) => {
     gridApi.current = params.api;
     columnApi.current = params.columnApi;
@@ -161,8 +148,14 @@ function DataTable(props) {
       columnApi.current.setColumnsVisible(hiddenColumns, false);
     }
 
-    if (rowData.length >= MAX_VISIBLE_ROWS && !isPrint) {
+    if (rowData.length >= MAX_VISIBLE_ROWS && !isPrint && !isFullLength) {
       gridDiv.current.style.height = MAX_TABLE_HEIGHT;
+      gridApi.current.setDomLayout('normal');
+    }
+
+    if (isFullLength) {
+      gridDiv.current.style.height = '100%';
+      gridDiv.current.style.flex = '1';
       gridApi.current.setDomLayout('normal');
     }
 
@@ -181,11 +174,13 @@ function DataTable(props) {
   };
 
   const onFirstDataRendered = () => {
-    if (columnApi.current) {
+    if (columnApi.current && !isFullLength) {
       const visibleColumnIds = columnApi.current.getAllColumns()
         .filter(col => !col.flex && col.visible)
         .map(col => col.colId);
       columnApi.current.autoSizeColumns(visibleColumnIds);
+    } if (isFullLength) {
+      gridApi.current.sizeColumnsToFit();
     }
   };
 
@@ -246,25 +241,6 @@ function DataTable(props) {
     }
   };
 
-  const handleRowEditClose = useCallback((editedData) => {
-    setShowEditDialog(false);
-    if (editedData && selectedRow.node) {
-      selectedRow.node.setData(editedData);
-    } else if (editedData) {
-      editedData.rank = tableLength;
-      gridApi.current.updateRowData({ add: [editedData] });
-      setTableLength(gridApi.current.getDisplayedRowCount());
-
-      const { visibleColumnIds } = getColumnVisibility();
-      columnApi.current.autoSizeColumns(visibleColumnIds);
-    } else if (editedData === null) {
-      // sending back null indicates the row was deleted
-      gridApi.current.updateRowData({ remove: [selectedRow.node.data] });
-      setTableLength(gridApi.current.getDisplayedRowCount());
-    }
-    setSelectedRow({});
-  }, [selectedRow.node, tableLength]);
-
   const defaultColDef = {
     sortable: !showReorder,
     resizable: true,
@@ -324,12 +300,17 @@ function DataTable(props) {
 
   const RowActionCellRenderer = (row) => {
     const handleEdit = useCallback(() => {
-      setShowEditDialog(true);
-      setSelectedRow(row);
-    }, [row.node]);
+      onEdit(row.node.data);
+    }, [row]);
+
+    const handleDelete = useCallback(() => {
+      onDelete(row.node.data);
+    }, [row]);
+
     return (
       <ActionCellRenderer
         onEdit={handleEdit}
+        onDelete={handleDelete}
         {...row}
       />
     );
@@ -359,8 +340,8 @@ function DataTable(props) {
   // Theme is needed for react in angular tables. It can't access the theme provider otherwise
   return (
     <ThemeProvider theme={theme}>
-      <div className="data-table--padded">
-        {rowData.length || canEdit ? (
+      <div className="data-table--padded" style={{ height: '100%' }}>
+        {Boolean(rowData.length) || canEdit ? (
           <>
             {titleText && (
               <div className="data-table__header-container">
@@ -371,11 +352,12 @@ function DataTable(props) {
                   {canAdd && !isPrint && (
                     <span className="data-table__action">
                       <Typography display="inline">
-                        Add Row
+                        {addText || 'Add row'}
                       </Typography>
                       <IconButton
-                        onClick={() => setShowEditDialog(true)}
+                        onClick={() => onAdd(tableType ? { type: tableType } : null)}
                         title="Add Row"
+                        className="data-table__icon-button"
                       >
                         <AddCircleOutlineIcon />
                       </IconButton>
@@ -385,6 +367,7 @@ function DataTable(props) {
                     <span className="data-table__action">
                       <IconButton
                         onClick={() => setShowPopover(prevVal => !prevVal)}
+                        className="data-table__icon-button"
                       >
                         <MoreHorizIcon />
                       </IconButton>
@@ -398,6 +381,7 @@ function DataTable(props) {
                       <IconButton
                         onClick={handleCSVExport}
                         title="Export to CSV"
+                        className="data-table__icon-button"
                       >
                         <GetAppIcon />
                       </IconButton>
@@ -419,15 +403,6 @@ function DataTable(props) {
                 </div>
               </div>
             )}
-            <EditDialog
-              isOpen={showEditDialog}
-              onClose={handleRowEditClose}
-              editData={selectedRow.data}
-              reportIdent={reportIdent}
-              tableType={tableType}
-              addIndex={tableLength}
-              showErrorSnackbar={snackbar.add}
-            />
             <div
               className="ag-theme-material data-table__container"
               ref={gridDiv}
@@ -443,6 +418,7 @@ function DataTable(props) {
                 onGridReady={onGridReady}
                 domLayout={domLayout}
                 pagination={isPaginated}
+                paginationAutoPageSize={isFullLength}
                 paginationPageSize={MAX_VISIBLE_ROWS}
                 autoSizePadding="0"
                 deltaRowDataMode={canReorder}
@@ -453,13 +429,12 @@ function DataTable(props) {
                 onSortChanged={handleFilterAndSortChanged}
                 context={{
                   canEdit,
+                  canDelete,
                   canViewDetails,
-                  EditDialog,
                   reportIdent,
                   tableType,
                 }}
                 frameworkComponents={{
-                  EditDialog,
                   LinkCellRenderer,
                   GeneCellRenderer,
                   ActionCellRenderer: RowActionCellRenderer,

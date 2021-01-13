@@ -6,11 +6,11 @@ import InfoDialog from '../InfoDialog';
 
 import './index.scss';
 
-type props = {
+type EvidenceHeaderProps = {
   displayName: string,
 }
 
-const EvidenceHeader = ({ displayName }: props): JSX.Element => {
+const EvidenceHeader = ({ displayName }: EvidenceHeaderProps): JSX.Element => {
   const [showDialog, setShowDialog] = useState<boolean>(false);
 
   const handleClick = useCallback(() => {
