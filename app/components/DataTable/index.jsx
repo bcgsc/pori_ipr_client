@@ -298,13 +298,23 @@ function DataTable(props) {
     return result;
   };
 
-  const RowActionCellRenderer = useCallback(row => (
-    <ActionCellRenderer
-      onEdit={onEdit}
-      onDelete={onDelete}
-      {...row}
-    />
-  ), [onDelete, onEdit]);
+  const RowActionCellRenderer = (row) => {
+    const handleEdit = useCallback(() => {
+      onEdit(row.node.data);
+    }, [row]);
+
+    const handleDelete = useCallback(() => {
+      onDelete(row.node.data);
+    }, [row]);
+
+    return (
+      <ActionCellRenderer
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        {...row}
+      />
+    );
+  };
 
   const handleCSVExport = () => {
     const date = getDate();
