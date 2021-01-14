@@ -5,6 +5,8 @@ const ParamsContext = React.createContext({
   setLimit: () => {},
   offset: 0,
   setOffset: () => {},
+  reviewFilter: false,
+  setReviewFilter: () => {},
 });
 
 export default ParamsContext;

@@ -4,10 +4,11 @@ import { useGrid } from '@bcgsc/react-use-grid';
 
 import PaginationPanel from './components/PaginationPanel';
 import CheckboxCell from './components/CheckboxCell';
+import FilterBar from './components/FilterBar';
 
 import './index.scss';
 
-type props = {
+type ApiPaginatedTableProps = {
   columnDefs: Record<string, unknown>[],
   rowData: Record<string, unknown>[],
   totalRows: number,
@@ -17,7 +18,7 @@ const ApiPaginatedTable = ({
   columnDefs,
   rowData,
   totalRows,
-}: props): JSX.Element => {
+}: ApiPaginatedTableProps): JSX.Element => {
   const { colApi, onGridReady } = useGrid();
 
   const onFirstDataRendered = useCallback(() => {
@@ -29,6 +30,7 @@ const ApiPaginatedTable = ({
 
   return (
     <div className="ag-theme-material paginated-table__container">
+      <FilterBar />
       <AgGridReact
         rowData={rowData}
         columnDefs={columnDefs}

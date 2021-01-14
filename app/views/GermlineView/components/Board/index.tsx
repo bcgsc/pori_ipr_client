@@ -7,9 +7,10 @@ import ParamsContext from './components/ParamsContext';
 
 const Board = (): JSX.Element => {
   const [reports, setReports] = useState([]);
-  const [totalRows, setTotalRows] = useState(0);
-  const [limit, setLimit] = useState(20);
-  const [offset, setOffset] = useState(0);
+  const [totalRows, setTotalRows] = useState<number>(0);
+  const [limit, setLimit] = useState<number>(20);
+  const [offset, setOffset] = useState<number>(0);
+  const [reviewFilter, setReviewFilter] = useState<boolean>(false);
 
 
   useEffect(() => {
@@ -17,17 +18,17 @@ const Board = (): JSX.Element => {
       const {
         total: totalRowsResp,
         reports: reportsResp,
-      } = await api.get(`/germline-small-mutation-reports?limit=${limit}&offset=${offset}`, {}).request();
+      } = await api.get(`/germline-small-mutation-reports?limit=${limit}&offset=${offset}&reviewFilter=${reviewFilter}`, {}).request();
       setReports(reportsResp);
       setTotalRows(totalRowsResp);
     };
     getData();
-  }, [limit, offset]);
+  }, [limit, offset, reviewFilter]);
 
   return (
     <ParamsContext.Provider
       value={{
-        limit, setLimit, offset, setOffset
+        limit, setLimit, offset, setOffset, reviewFilter, setReviewFilter,
       }}
     >
       {Boolean(reports.length) && (
