@@ -11,18 +11,19 @@ import LaunchIcon from '@material-ui/icons/Launch';
 
 import './index.scss';
 
+type DescriptionListProps = {
+  entries: Record<string, unknown>[],
+};
+
 /**
  * Displays term/value pairs in 2 columns
- * 
- * @param {object} props 
+ *
  * @param {array} props.entries
  */
-const DescriptionList = (props) => {
-  const {
-    entries,
-  } = props;
-
-  const [visibleEntries, setVisibleEntries] = useState();
+const DescriptionList = ({
+  entries,
+}: DescriptionListProps): JSX.Element => {
+  const [visibleEntries, setVisibleEntries] = useState([]);
 
   useEffect(() => {
     if (entries && entries.length) {
@@ -32,11 +33,11 @@ const DescriptionList = (props) => {
 
   return (
     <>
-      {visibleEntries && (
+      {Boolean(visibleEntries.length) && (
         <List className="description-list">
           {visibleEntries.map(({ term, value, action }, index) => (
-            <>
-              <ListItem key={term} className="description-list__group">
+            <React.Fragment key={term}>
+              <ListItem className="description-list__group">
                 <span className="description-list__text-group">
                   <ListItemText className="description-list__term">
                     {`${term}: `}
@@ -54,7 +55,7 @@ const DescriptionList = (props) => {
               {index % 2 === 1 && index !== visibleEntries.length - 1 && (
                 <Divider variant="middle" className="description-list__divider" />
               )}
-            </>
+            </React.Fragment>
           ))}
         </List>
       )}
