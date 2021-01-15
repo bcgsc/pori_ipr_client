@@ -3,24 +3,7 @@
 .description-list {
   &__group {
     width: 46%;
-    display: inline-flex;
-    border-bottom: 1px solid $palette__text--secondary;
-
-    &:nth-child(1n) {
-      margin: 0 2% 8px 2%;
-    }
-
-    &:nth-child(2n) {
-      margin: 0 2% 8px 2%;
-    }
-
-    &:nth-last-child(1) {
-      border: none;
-    }
-
-    &:nth-last-child(2) {
-      border: none;
-    }
+    display: inline-block;
   }
 
   &__term {
@@ -36,7 +19,7 @@
     padding: 0 4px;
   }
 
-  &__action {
-    // float: right;
+  &__divider {
+    background-color: $palette__text--secondary; 
   }
 }

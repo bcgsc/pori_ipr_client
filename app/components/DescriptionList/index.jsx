@@ -5,6 +5,7 @@ import {
   ListItem,
   ListItemText,
   IconButton,
+  Divider,
 } from '@material-ui/core';
 import LaunchIcon from '@material-ui/icons/Launch';
 
@@ -33,22 +34,27 @@ const DescriptionList = (props) => {
     <>
       {visibleEntries && (
         <List className="description-list">
-          {visibleEntries.map(({ term, value, action }) => (
-            <ListItem key={term} className="description-list__group">
-              <span className="description-list__text-group">
-                <ListItemText className="description-list__term">
-                  {`${term}: `}
-                </ListItemText>
-                <ListItemText className="description-list__value">
-                  {value}
-                  {action && (
-                    <IconButton size="small" onClick={action} className="description-list__action">
-                      <LaunchIcon />
-                    </IconButton>
-                  )}
-                </ListItemText>
-              </span>
-            </ListItem>
+          {visibleEntries.map(({ term, value, action }, index) => (
+            <>
+              <ListItem key={term} className="description-list__group">
+                <span className="description-list__text-group">
+                  <ListItemText className="description-list__term">
+                    {`${term}: `}
+                  </ListItemText>
+                  <ListItemText className="description-list__value">
+                    {value}
+                    {action && (
+                      <IconButton size="small" onClick={action} className="description-list__action">
+                        <LaunchIcon />
+                      </IconButton>
+                    )}
+                  </ListItemText>
+                </span>
+              </ListItem>
+              {index % 2 === 1 && index !== visibleEntries.length - 1 && (
+                <Divider variant="middle" className="description-list__divider" />
+              )}
+            </>
           ))}
         </List>
       )}
