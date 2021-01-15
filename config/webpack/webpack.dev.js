@@ -1,13 +1,30 @@
 const webpack = require('webpack');
 const merge = require('webpack-merge');
 const common = require('./webpack.config.js');
-const { development } = require('../../env.json');
 
 const devConfig = {
   mode: 'development',
   plugins: [
     new webpack.DefinePlugin({
-      CONFIG: JSON.stringify(development),
+      CONFIG: JSON.stringify({
+        ATTRS: {
+          name: 'DEVELOPMENT',
+        },
+        STORAGE: {
+          REFERRER: 'IPR_URI',
+          KEYCLOAK: 'BCGSC_SSO',
+          DATABASE_TYPE: 'bcgsc',
+        },
+        ENDPOINTS: {
+          API: 'https://iprdev-api.bcgsc.ca/api',
+          KEYCLOAK: 'https://keycloakdev01.bcgsc.ca/auth',
+          GRAPHKB: 'https://graphkbstaging.bcgsc.ca',
+        },
+        SSO: {
+          REALM: 'GSC',
+          CLIENT: 'IPR',
+        },
+      }),
     }),
   ],
 };

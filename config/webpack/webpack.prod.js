@@ -2,7 +2,6 @@ const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const webpack = require('webpack');
 const merge = require('webpack-merge');
 const common = require('./webpack.config.js');
-const { production } = require('../../env.json');
 
 const prodConfig = {
   module: {
@@ -20,7 +19,25 @@ const prodConfig = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      CONFIG: JSON.stringify(production),
+      CONFIG: JSON.stringify({
+        ATTRS: {
+          name: 'PRODUCTION',
+        },
+        STORAGE: {
+          REFERRER: 'IPR_URI',
+          KEYCLOAK: 'BCGSC_SSO',
+          DATABASE_TYPE: 'bcgsc',
+        },
+        ENDPOINTS: {
+          API: 'https://ipr-api.bcgsc.ca/api',
+          KEYCLOAK: 'https://sso.bcgsc.ca/auth/',
+          GRAPHKB: 'https://graphkb.bcgsc.ca',
+        },
+        SSO: {
+          REALM: 'GSC',
+          CLIENT: 'IPR',
+        },
+      }),
     }),
     new OptimizeCSSAssetsPlugin({}),
   ],
