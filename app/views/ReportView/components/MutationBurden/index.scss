@@ -25,6 +25,14 @@
   &__comparator {
     margin: 24px 0;
 
+    &-container {
+      display: flex;
+      
+      & > * {
+        margin: 0 4px;
+      }
+    }
+
     &--padded {
       padding: 0 0 0 8px;
     }

@@ -77,50 +77,62 @@ const TabCards = ({
       case 'SNV':
         return (
           <>
-            <Typography variant="body2" className="mutation-burden__comparator--padded">
-              Protein Coding SNVs (count):
-              {` ${burden.codingSnvCount}`}
-            </Typography>
-            <Typography variant="body2" className="mutation-burden__comparator--padded">
-              Protein Coding SNVs (percentile):
-              {` ${burden.codingSnvPercentile}`}
-            </Typography>
-            <Typography variant="body2" className="mutation-burden__comparator--padded">
-              Truncating Protein Coding SNVs (count):
-              {` ${burden.truncatingSnvCount}`}
-            </Typography>
+            <div className="mutation-burden__comparator-container">
+              <Typography variant="body2" className="mutation-burden__comparator--padded">
+                Protein Coding SNVs (count):
+                {` ${burden.codingSnvCount}`}
+              </Typography>
+            </div>
+            <div className="mutation-burden__comparator-container">
+              <Typography variant="body2" className="mutation-burden__comparator--padded">
+                Protein Coding SNVs (percentile):
+                {` ${burden.codingSnvPercentile}`}
+              </Typography>
+            </div>
+            <div className="mutation-burden__comparator-container">
+              <Typography variant="body2" className="mutation-burden__comparator--padded">
+                Truncating Protein Coding SNVs (count):
+                {` ${burden.truncatingSnvCount}`}
+              </Typography>
+            </div>
           </>
         );
       case 'Indel':
         return (
           <>
-            <Typography variant="body2" className="mutation-burden__comparator--padded">
-              Protein Coding Indels (count):
-              {` ${burden.codingIndelsCount}`}
-            </Typography>
-            <Typography variant="body2" className="mutation-burden__comparator--padded">
-              Protein Coding Indels (percentile):
-              {` ${burden.codingIndelPercentile}`}
-            </Typography>
-            <Typography variant="body2" className="mutation-burden__comparator--padded">
-              Frameshifting Protein Coding Indels (count):
-              {` ${burden.frameshiftIndelsCount}`}
-            </Typography>
+            <div className="mutation-burden__comparator-container">
+              <Typography variant="body2" className="mutation-burden__comparator--padded">
+                Protein Coding Indels (count):
+                {` ${burden.codingIndelsCount}`}
+              </Typography>
+            </div>
+            <div className="mutation-burden__comparator-container">
+              <Typography variant="body2" className="mutation-burden__comparator--padded">
+                Protein Coding Indels (percentile):
+                {` ${burden.codingIndelPercentile}`}
+              </Typography>
+            </div>
+            <div className="mutation-burden__comparator-container">
+              <Typography variant="body2" className="mutation-burden__comparator--padded">
+                Frameshifting Protein Coding Indels (count):
+                {` ${burden.frameshiftIndelsCount}`}
+              </Typography>
+            </div>
           </>
         );
       case 'SV':
         return (
           <>
-            <div>
+            <div className="mutation-burden__comparator-container">
               <Typography variant="body2" className="mutation-burden__comparator--padded" display="inline">
                 Structural Variants (count):
+                {` ${burden.qualitySvCount}`}
               </Typography>
-              {` ${burden.qualitySvCount}`}
               {burden.role === 'primary' && (
                 <FrontPageTooltip />
               )}
             </div>
-            <div>
+            <div className="mutation-burden__comparator-container">
               <Typography variant="body2" className="mutation-burden__comparator--padded" display="inline">
                 Structural Variants (percentile):
                 {` ${burden.qualitySvPercentile}`}
@@ -129,10 +141,12 @@ const TabCards = ({
                 <FrontPageTooltip />
               )}
             </div>
-            <Typography variant="body2" className="mutation-burden__comparator--padded">
-              Expressed Structural Variants (count):
-              {` ${burden.qualitySvExpressedCount}`}
-            </Typography>
+            <div className="mutation-burden__comparator-container">
+              <Typography variant="body2" className="mutation-burden__comparator--padded">
+                Expressed Structural Variants (count):
+                {` ${burden.qualitySvExpressedCount}`}
+              </Typography>
+            </div>
           </>
         );
       default:
