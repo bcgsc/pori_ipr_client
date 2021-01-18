@@ -9,7 +9,7 @@ import {
 } from '@material-ui/core';
 
 import { imageType, comparatorType, mutationBurdenType } from '../../types';
-
+import FrontPageTooltip from '../../../../../../components/FrontPageTooltip'; 
 import Image from '../../../../../../components/Image';
 
 const rankMapping = {
@@ -111,14 +111,24 @@ const TabCards = ({
       case 'SV':
         return (
           <>
-            <Typography variant="body2" className="mutation-burden__comparator--padded">
-              Structural Variants (count):
+            <div>
+              <Typography variant="body2" className="mutation-burden__comparator--padded" display="inline">
+                Structural Variants (count):
+              </Typography>
               {` ${burden.qualitySvCount}`}
-            </Typography>
-            <Typography variant="body2" className="mutation-burden__comparator--padded">
-              Structural Variants (percentile):
-              {` ${burden.qualitySvPercentile}`}
-            </Typography>
+              {burden.role === 'primary' && (
+                <FrontPageTooltip />
+              )}
+            </div>
+            <div>
+              <Typography variant="body2" className="mutation-burden__comparator--padded" display="inline">
+                Structural Variants (percentile):
+                {` ${burden.qualitySvPercentile}`}
+              </Typography>
+              {burden.role === 'primary' && (
+                <FrontPageTooltip />
+              )}
+            </div>
             <Typography variant="body2" className="mutation-burden__comparator--padded">
               Expressed Structural Variants (count):
               {` ${burden.qualitySvExpressedCount}`}
