@@ -16,7 +16,7 @@ const localConfig = {
           DATABASE_TYPE: 'bcgsc',
         },
         ENDPOINTS: {
-          API: 'http://adavies02.phage.bcgsc.ca:8080/api',
+          API: `http://${process.env.HOSTNAME}:8080/api`,
           KEYCLOAK: 'https://keycloakdev01.bcgsc.ca/auth',
           GRAPHKB: 'https://graphkbstaging.bcgsc.ca',
         },
