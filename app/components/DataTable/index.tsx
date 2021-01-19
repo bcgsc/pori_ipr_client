@@ -4,6 +4,7 @@ import React, {
 import PropTypes from 'prop-types';
 import { AgGridReact } from '@ag-grid-community/react';
 import { SnackbarContext } from '@bcgsc/react-snackbar-provider';
+import { useGrid } from '@bcgsc/react-use-grid';
 import {
   Typography,
   IconButton,
@@ -19,12 +20,42 @@ import LinkCellRenderer from './components/LinkCellRenderer';
 import GeneCellRenderer from './components/GeneCellRenderer';
 import ActionCellRenderer from './components/ActionCellRenderer';
 import { getDate } from '../../utils/date';
-import ConfirmContext from '@/components/ConfirmContext';
 
 import './index.scss';
 
 const MAX_VISIBLE_ROWS = 12;
 const MAX_TABLE_HEIGHT = '517px';
+
+type DataTableType = {
+  rowData,
+  onRowDataChanged,
+  columnDefs,
+  titleText,
+  filterText,
+  canEdit,
+  onEdit,
+  canDelete,
+  onDelete,
+  canAdd,
+  onAdd,
+  addText,
+  reportIdent,
+  tableType,
+  visibleColumns,
+  syncVisibleColumns,
+  canToggleColumns,
+  canViewDetails,
+  isPaginated,
+  isFullLength,
+  canReorder,
+  rowUpdateAPICall,
+  canExport,
+  patientId,
+  theme,
+  isPrint,
+  highlightRow,
+  Header,
+};
 
 /**
  * @param {object} props props
@@ -48,7 +79,7 @@ const MAX_TABLE_HEIGHT = '517px';
  * @param {object} props.theme MUI theme passed for react in angular table compatibility
  * @return {*} JSX
  */
-function DataTable(props) {
+const DataTable = (props) => {
   const {
     rowData,
     onRowDataChanged,
@@ -81,9 +112,8 @@ function DataTable(props) {
   } = props;
 
   const domLayout = isPrint ? 'print' : 'autoHeight';
+  const { gridApi, columnApi, onGridReady } = useGrid();
 
-  const gridApi = useRef();
-  const columnApi = useRef();
   const ColumnPickerOnClose = useRef();
   const gridDiv = useRef();
   const gridRef = useRef();
@@ -98,65 +128,62 @@ function DataTable(props) {
   const [showReorder, setShowReorder] = useState(false);
 
   useEffect(() => {
-    if (gridApi.current) {
-      gridApi.current.setQuickFilter(filterText);
+    if (gridApi) {
+      gridApi.setQuickFilter(filterText);
     }
-  }, [filterText]);
+  }, [filterText, gridApi]);
 
   // Triggers when syncVisibleColumns is called
   useEffect(() => {
-    if (columnApi.current && visibleColumns.length) {
-      const allCols = columnApi.current.getAllColumns().map(col => col.colId);
+    if (columnApi && visibleColumns.length) {
+      const allCols = columnApi.getAllColumns().map(col => col.colId);
       const hiddenColumns = allCols.filter(col => !visibleColumns.includes(col));
-      columnApi.current.setColumnsVisible(visibleColumns, true);
-      columnApi.current.setColumnsVisible(hiddenColumns, false);
+      columnApi.setColumnsVisible(visibleColumns, true);
+      columnApi.setColumnsVisible(hiddenColumns, false);
     }
-  }, [visibleColumns]);
+  }, [columnApi, visibleColumns]);
 
   useEffect(() => {
-    if (gridApi.current) {
+    if (gridApi) {
       if (highlightRow !== null) {
-        const rowNode = gridApi.current.getDisplayedRowAtIndex(highlightRow);
+        const rowNode = gridApi.getDisplayedRowAtIndex(highlightRow);
         rowNode.setSelected(true, true);
-        gridApi.current.ensureIndexVisible(highlightRow, 'middle');
+        gridApi.ensureIndexVisible(highlightRow, 'middle');
 
         const [element] = document.querySelectorAll(`div[class="report__content"]`);
         element.scrollTo({
-          top: gridRef.current.eGridDiv.offsetTop,
+          top: gridRef.eGridDiv.offsetTop,
           left: 0,
           behavior: 'smooth',
         });
       } else {
-        const selected = gridApi.current.getSelectedNodes();
+        const selected = gridApi.getSelectedNodes();
         if (selected && selected.length) {
           selected.forEach(node => node.setSelected(false));
         }
       }
     }
-  }, [highlightRow]);
+  }, [gridApi, highlightRow]);
 
-  const onGridReady = (params) => {
-    gridApi.current = params.api;
-    columnApi.current = params.columnApi;
-
+  const onFirstDataRendered = () => {
     if (syncVisibleColumns) {
-      const hiddenColumns = columnApi.current.getAllColumns()
+      const hiddenColumns = columnApi.getAllColumns()
         .map(col => col.colId)
         .filter(col => !visibleColumns.includes(col));
 
-      columnApi.current.setColumnsVisible(visibleColumns, true);
-      columnApi.current.setColumnsVisible(hiddenColumns, false);
+      columnApi.setColumnsVisible(visibleColumns, true);
+      columnApi.setColumnsVisible(hiddenColumns, false);
     }
 
     if (rowData.length >= MAX_VISIBLE_ROWS && !isPrint && !isFullLength) {
-      gridDiv.current.style.height = MAX_TABLE_HEIGHT;
-      gridApi.current.setDomLayout('normal');
+      gridDiv.style.height = MAX_TABLE_HEIGHT;
+      gridApi.setDomLayout('normal');
     }
 
     if (isFullLength) {
-      gridDiv.current.style.height = '100%';
-      gridDiv.current.style.flex = '1';
-      gridApi.current.setDomLayout('normal');
+      gridDiv.style.height = '100%';
+      gridDiv.style.flex = '1';
+      gridApi.setDomLayout('normal');
     }
 
     if (isPrint) {
@@ -167,20 +194,18 @@ function DataTable(props) {
         cellClass: ['cell-wrap-text', 'cell-line-height'],
         cellStyle: { 'white-space': 'normal' },
       }));
-      gridApi.current.setColumnDefs(newCols);
-      columnApi.current.setColumnVisible('Actions', false);
-      gridApi.current.sizeColumnsToFit();
+      gridApi.setColumnDefs(newCols);
+      columnApi.setColumnVisible('Actions', false);
+      gridApi.sizeColumnsToFit();
     }
-  };
 
-  const onFirstDataRendered = () => {
-    if (columnApi.current && !isFullLength) {
-      const visibleColumnIds = columnApi.current.getAllColumns()
+    if (columnApi && !isFullLength) {
+      const visibleColumnIds = columnApi.getAllColumns()
         .filter(col => !col.flex && col.visible)
         .map(col => col.colId);
-      columnApi.current.autoSizeColumns(visibleColumnIds);
+      columnApi.autoSizeColumns(visibleColumnIds);
     } if (isFullLength) {
-      gridApi.current.sizeColumnsToFit();
+      gridApi.sizeColumnsToFit();
     }
   };
 
@@ -190,19 +215,19 @@ function DataTable(props) {
         col.sortable = false;
         col.filter = false;
       });
-      gridApi.current.setSortModel([{ colId: 'rank', sort: 'asc' }]);
-      gridApi.current.setColumnDefs(columnDefs);
+      gridApi.setSortModel([{ colId: 'rank', sort: 'asc' }]);
+      gridApi.setColumnDefs(columnDefs);
 
-      columnApi.current.setColumnVisible('drag', true);
+      columnApi.setColumnVisible('drag', true);
       setShowReorder(true);
     } else {
       columnDefs.forEach((col) => {
         col.sortable = true;
         col.filter = true;
       });
-      gridApi.current.setColumnDefs(columnDefs);
+      gridApi.setColumnDefs(columnDefs);
 
-      columnApi.current.setColumnVisible('drag', false);
+      columnApi.setColumnVisible('drag', false);
       setShowReorder(false);
     }
   };
@@ -214,7 +239,7 @@ function DataTable(props) {
       const newRank = event.overIndex;
 
       const newData = [];
-      gridApi.current.forEachNode(({ data: row }) => {
+      gridApi.forEachNode(({ data: row }) => {
         if (row.rank === oldRank) {
           row.rank = newRank;
           return newData.push(row);
@@ -232,7 +257,7 @@ function DataTable(props) {
       const updatedRows = await call.request();
 
       if (updatedRows) {
-        gridApi.current.updateRowData({ update: updatedRows });
+        gridApi.updateRowData({ update: updatedRows });
         snackbar.add('Row update success');
       }
     } catch (err) {
@@ -255,14 +280,14 @@ function DataTable(props) {
         visibleCols: returnedVisibleCols,
       } = ColumnPickerOnClose.current();
       returnedVisibleCols.push('Actions');
-      const returnedHiddenCols = columnApi.current.getAllColumns()
+      const returnedHiddenCols = columnApi.getAllColumns()
         .map(col => col.colId)
         .filter(col => !returnedVisibleCols.includes(col));
 
-      columnApi.current.setColumnsVisible(returnedVisibleCols, true);
-      columnApi.current.setColumnsVisible(returnedHiddenCols, false);
+      columnApi.setColumnsVisible(returnedVisibleCols, true);
+      columnApi.setColumnsVisible(returnedHiddenCols, false);
 
-      columnApi.current.autoSizeColumns(returnedVisibleCols);
+      columnApi.autoSizeColumns(returnedVisibleCols);
       
       if (syncVisibleColumns) {
         syncVisibleColumns(returnedVisibleCols);
@@ -278,15 +303,15 @@ function DataTable(props) {
         <ColumnPicker
           className="data-view__options-menu"
           label="Configure Visible Columns"
-          columns={columnApi.current.getAllColumns()
+          columns={columnApi.getAllColumns()
             .filter(col => col.colId !== 'Actions')
             .map((col) => {
               const parent = col.getOriginalParent();
               if (parent && parent.colGroupDef.headerName) {
                 const parentName = parent.colGroupDef.headerName;
-                col.name = `${parentName} ${columnApi.current.getDisplayNameForColumn(col)}`;
+                col.name = `${parentName} ${columnApi.getDisplayNameForColumn(col)}`;
               } else {
-                col.name = columnApi.current.getDisplayNameForColumn(col);
+                col.name = columnApi.getDisplayNameForColumn(col);
               }
               return col;
             })
@@ -319,10 +344,10 @@ function DataTable(props) {
   const handleCSVExport = () => {
     const date = getDate();
 
-    gridApi.current.exportDataAsCsv({
+    gridApi.exportDataAsCsv({
       suppressQuotes: true,
       columnSeparator: '\t',
-      columnKeys: columnApi.current.getAllDisplayedColumns()
+      columnKeys: columnApi.getAllDisplayedColumns()
         .map(col => col.colId)
         .filter(col => col === 'Actions'),
       fileName: `ipr_${patientId}_${reportIdent}_${titleText.split(' ').join('_')}_${date}.tsv`,
@@ -331,11 +356,11 @@ function DataTable(props) {
 
   const handleFilterAndSortChanged = useCallback(() => {
     const newRows = [];
-    gridApi.current.forEachNodeAfterFilterAndSort(node => {
+    gridApi.forEachNodeAfterFilterAndSort(node => {
       newRows.push(node.data);
     });
     onRowDataChanged(newRows);
-  }, [onRowDataChanged]);
+  }, [gridApi, onRowDataChanged]);
 
   // Theme is needed for react in angular tables. It can't access the theme provider otherwise
   return (
@@ -420,7 +445,7 @@ function DataTable(props) {
                 pagination={isPaginated}
                 paginationAutoPageSize={isFullLength}
                 paginationPageSize={MAX_VISIBLE_ROWS}
-                autoSizePadding="0"
+                autoSizePadding={0}
                 deltaRowDataMode={canReorder}
                 getRowNodeId={data => data.ident}
                 onRowDragEnd={canReorder ? onRowDragEnd : null}
@@ -464,7 +489,7 @@ function DataTable(props) {
       </div>
     </ThemeProvider>
   );
-}
+};
 
 DataTable.propTypes = {
   columnDefs: PropTypes.arrayOf(PropTypes.object).isRequired,
