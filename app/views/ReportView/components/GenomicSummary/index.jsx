@@ -350,7 +350,11 @@ const GenomicSummary = (props) => {
     }
 
     if (newMicrobialData) {
-      apiCalls.push(api.put(`/reports/${report.ident}/microbial`, newMicrobialData));
+      if (microbialData && microbialData.length) {
+        apiCalls.push(api.put(`/reports/${report.ident}/summary/microbial/${microbialData[0].ident}`, newMicrobialData));
+      } else {
+        apiCalls.push(api.post(`/reports/${report.ident}/summary/microbial`, newMicrobialData));
+      }
       setMicrobialData(newMicrobialData);
     } else {
       apiCalls.push({ request: () => null });
@@ -378,8 +382,8 @@ const GenomicSummary = (props) => {
     }
 
     let microbialUpdateData;
-    if (newMicrobialData && newMicrobialData.length) {
-      microbialUpdateData = newMicrobialData[0].species;
+    if (newMicrobialData) {
+      microbialUpdateData = newMicrobialData.species;
     } else if (microbialData && microbialData.length) {
       microbialUpdateData = microbialData[0].species;
     } else {
@@ -455,7 +459,7 @@ const GenomicSummary = (props) => {
         value: null,
       },
     ]);
-  }, [report, isSigned, history, microbialData, primaryBurdenData, print, setReport, signatureData]);
+  }, [isSigned, microbialData, primaryBurdenData, report,  print, signatureData, primaryComparator, setReport, history]);
 
   return (
     <div className="genomic-summary">
