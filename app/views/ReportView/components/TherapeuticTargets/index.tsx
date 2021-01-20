@@ -96,7 +96,6 @@ const Therapeutic = (props) => {
             onEdit={handleEditStart}
             canAdd={canEdit && !print}
             onAdd={handleEditStart}
-            reportIdent={report.ident}
             tableType="therapeutic"
             isPaginated={false}
             canReorder={canEdit && !print}
@@ -114,7 +113,6 @@ const Therapeutic = (props) => {
             onEdit={handleEditStart}
             canAdd={canEdit && !print}
             onAdd={handleEditStart}
-            reportIdent={report.ident}
             tableType="chemoresistance"
             isPaginated={false}
             canReorder={canEdit && !print}

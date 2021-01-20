@@ -191,7 +191,6 @@ const Expression = () => {
                 hiddenCols={hiddenCols}
                 setVisibleCols={handleVisibleColsChange}
                 setHiddenCols={handleHiddenColsChange}
-                reportIdent={report.ident}
                 canToggleColumns
               />
             ))}

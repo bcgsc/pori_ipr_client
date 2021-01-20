@@ -468,7 +468,6 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
                   <VariantChips
                     variants={variantFilter ? variants.filter(v => v.type === variantFilter) : variants}
                     canEdit={canEdit}
-                    reportIdent={report.ident}
                     onChipDeleted={handleChipDeleted}
                     onChipAdded={handleChipAdded}
                     isPrint={print}
@@ -493,7 +492,6 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
                   <VariantChips
                     variants={variantFilter ? variants.filter(v => v.type === variantFilter) : variants}
                     canEdit={canEdit}
-                    reportIdent={report.ident}
                     onChipDeleted={handleChipDeleted}
                     onChipAdded={handleChipAdded}
                   />
