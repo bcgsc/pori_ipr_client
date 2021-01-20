@@ -4,6 +4,7 @@ import React, {
 import { LinearProgress } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import orderBy from 'lodash.orderby';
+import { SnackbarContext } from '@bcgsc/react-snackbar-provider';
 
 import DataTable from '@/components/DataTable';
 import EditContext from '@/components/EditContext';
@@ -35,6 +36,7 @@ const Therapeutic = (props) => {
 
   const { canEdit } = useContext(EditContext);
   const { report } = useContext(ReportContext);
+  const snackbar = useContext(SnackbarContext);
 
   useEffect(() => {
     if (report) {
@@ -60,29 +62,70 @@ const Therapeutic = (props) => {
   };
 
   const handleEditClose = useCallback((newData) => {
-    setShowDialog(false);
-    let tableData;
-    let setter;
+    try {
+      setShowDialog(false);
+      let tableData;
+      let setter;
 
-    if (newData) {
-      if (newData.type === 'therapeutic') {
-        tableData = therapeuticData;
-        setter = setTherapeuticData;
-      } else if (newData.type === 'chemoresistance') {
-        tableData = chemoresistanceData;
-        setter = setChemoresistanceData;
+      if (newData) {
+        if (newData.type === 'therapeutic') {
+          tableData = therapeuticData;
+          setter = setTherapeuticData;
+        } else if (newData.type === 'chemoresistance') {
+          tableData = chemoresistanceData;
+          setter = setChemoresistanceData;
+        }
+        const tableIndex = tableData.findIndex(row => row.ident === newData.ident);
+        if (tableIndex !== -1) {
+          const newTable = [...orderBy(tableData, ['rank'], ['asc'])];
+          newTable[tableIndex] = newData;
+          setter(newTable);
+        } else {
+          setter(prevVal => [...prevVal, newData]);
+        }
       }
-      const tableIndex = tableData.findIndex(row => row.ident === newData.ident);
-      if (tableIndex !== -1) {
-        const newTable = [...orderBy(tableData, ['rank'], ['asc'])];
-        newTable[tableIndex] = newData;
-        setter(newTable);
-      } else {
-        setter(prevVal => [...prevVal, newData]);
-      }
+      setEditData(null);
+      snackbar.add('Row updated');
+    } catch (err) {
+      snackbar.add(`Error, row not updated: ${err}`);
     }
-    setEditData(null);
-  }, [chemoresistanceData, therapeuticData]);
+  }, [chemoresistanceData, snackbar, therapeuticData]);
+
+  const handleReorder = useCallback(async (newRow, newRank, tableType) => {
+    try {
+      let setter;
+      let data;
+      const oldRank = newRow.rank;
+
+      if (tableType === 'therapeutic') {
+        setter = setTherapeuticData;
+        data = therapeuticData;
+      } else {
+        setter = setChemoresistanceData;
+        data = chemoresistanceData;
+      }
+
+      const newData = data.map((row) => {
+        if (row.rank === oldRank) {
+          row.rank = newRank;
+          return row;
+        }
+
+        if (row.rank > oldRank && row.rank <= newRank) {
+          row.rank -= 1;
+        } else if (row.rank < oldRank && row.rank >= newRank) {
+          row.rank += 1;
+        }
+        return row;
+      });
+
+      await api.put(`/reports/${report.ident}/therapeutic-targets`, newData).request();
+      setter(newData);
+      snackbar.add('Row updated');
+    } catch (err) {
+      snackbar.add(`Error, row not updated: ${err}`);
+    }
+  }, [chemoresistanceData, therapeuticData, report, snackbar]);
 
   return (
     <div className="therapeutic">
@@ -99,9 +142,8 @@ const Therapeutic = (props) => {
             tableType="therapeutic"
             isPaginated={false}
             canReorder={canEdit && !print}
-            rowUpdateAPICall={(reportIdent, data) => api.put(`/reports/${reportIdent}/therapeutic-targets`, data)}
+            onReorder={handleReorder}
             canExport
-            patientId={report.patientId}
             print={print}
             Header={EvidenceHeader}
           />
@@ -116,9 +158,7 @@ const Therapeutic = (props) => {
             tableType="chemoresistance"
             isPaginated={false}
             canReorder={canEdit && !print}
-            rowUpdateAPICall={(reportIdent, data) => api.put(`/reports/${reportIdent}/therapeutic-targets`, data)}
             canExport
-            patientId={report.patientId}
             print={print}
             Header={EvidenceHeader}
           />

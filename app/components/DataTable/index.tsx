@@ -2,7 +2,6 @@ import React, {
   useRef, useState, useEffect, useCallback, useContext,
 } from 'react';
 import { AgGridReact } from '@ag-grid-community/react';
-import { SnackbarContext } from '@bcgsc/react-snackbar-provider';
 import { useGrid } from '@bcgsc/react-use-grid';
 import {
   Typography,
@@ -70,12 +69,10 @@ type DataTableType = {
   isFullLength?: boolean,
   /* Can the rows be reordered? */
   canReorder?: boolean,
-  /* API call when rows are reordered */
-  rowUpdateAPICall,
+  /* Callback when a row is reordered */
+  onReorder?: (newRow: Record<string, any>, newRank: number, tableType?: string) => void,
   /* Can the table rows be exported? */
   canExport?: boolean,
-  /* Patient ID used for row reordering */
-  patientId?: string,
   /* MUI theme passed for react in angular table compatibility */
   theme,
   /* Is the table being rendered for printing? */
@@ -107,9 +104,8 @@ const DataTable = ({
   isPaginated = true,
   isFullLength,
   canReorder,
-  rowUpdateAPICall,
+  onReorder,
   canExport,
-  patientId,
   theme,
   isPrint,
   highlightRow = null,
@@ -127,10 +123,16 @@ const DataTable = ({
     ColumnPickerOnClose.current = ref;
   };
 
-  const snackbar = useContext(SnackbarContext);
-
   const [showPopover, setShowPopover] = useState<boolean>(false);
   const [showReorder, setShowReorder] = useState<boolean>(false);
+
+  const defaultColDef = {
+    sortable: !showReorder,
+    resizable: true,
+    filter: !showReorder,
+    editable: false,
+    valueFormatter: params => (params.value === null ? '' : params.value),
+  };
 
   useEffect(() => {
     if (gridApi) {
@@ -214,7 +216,7 @@ const DataTable = ({
     }
   };
 
-  const toggleReorder = () => {
+  const toggleReorder = useCallback(() => {
     if (!showReorder) {
       columnDefs.forEach((col) => {
         col.sortable = false;
@@ -235,50 +237,12 @@ const DataTable = ({
       colApi.setColumnVisible('drag', false);
       setShowReorder(false);
     }
-  };
+  }, [colApi, columnDefs, gridApi, showReorder]);
 
   const onRowDragEnd = useCallback(async (event) => {
-    try {
-      snackbar.clear();
-      const oldRank = event.node.data.rank;
-      const newRank = event.overIndex;
+    onReorder(event.node.data, event.overIndex, tableType);
+  }, [onReorder, tableType]);
 
-      const newData = [];
-      gridApi.forEachNode(({ data: row }) => {
-        if (row.rank === oldRank) {
-          row.rank = newRank;
-          return newData.push(row);
-        }
-
-        if (row.rank > oldRank && row.rank <= newRank) {
-          row.rank -= 1;
-        } else if (row.rank < oldRank && row.rank >= newRank) {
-          row.rank += 1;
-        }
-        return newData.push(row);
-      });
-      newData.rank = event.overIndex;
-      const call = rowUpdateAPICall(report.ident, newData);
-      const updatedRows = await call.request();
-
-      if (updatedRows) {
-        gridApi.updateRowData({ update: updatedRows });
-        snackbar.add('Row update success');
-      }
-    } catch (err) {
-      console.error(err);
-      snackbar.add(`Rows were not updated: ${err}`);
-    }
-  }, [gridApi, report, rowUpdateAPICall, snackbar]);
-
-  const defaultColDef = {
-    sortable: !showReorder,
-    resizable: true,
-    filter: !showReorder,
-    editable: false,
-    valueFormatter: params => (params.value === null ? '' : params.value),
-  };
-    
   const renderColumnPicker = useCallback(() => {
     const popoverCloseHandler = () => {
       const {
@@ -355,17 +319,20 @@ const DataTable = ({
       columnKeys: colApi.getAllDisplayedColumns()
         .map(col => col.colId)
         .filter(col => col === 'Actions'),
-      fileName: `ipr_${patientId}_${report.ident}_${titleText.split(' ').join('_')}_${date}.tsv`,
+      fileName: `ipr_${report.patientId}_${report.ident}_${titleText.split(' ').join('_')}_${date}.tsv`,
     });
-  }, [colApi, gridApi, patientId, report, titleText]);
+  }, [colApi, gridApi, report, titleText]);
 
   const handleFilterAndSortChanged = useCallback(() => {
-    const newRows = [];
-    gridApi.forEachNodeAfterFilterAndSort((node) => {
-      newRows.push(node.data);
-    });
-    onRowDataChanged(newRows);
+    if (onRowDataChanged) {
+      const newRows = [];
+      gridApi.forEachNodeAfterFilterAndSort((node) => {
+        newRows.push(node.data);
+      });
+      onRowDataChanged(newRows);
+    }
   }, [gridApi, onRowDataChanged]);
+
 
   // Theme is needed for react in angular tables. It can't access the theme provider otherwise
   return (
