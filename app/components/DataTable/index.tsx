@@ -1,7 +1,6 @@
 import React, {
   useRef, useState, useEffect, useCallback, useContext,
 } from 'react';
-import PropTypes from 'prop-types';
 import { AgGridReact } from '@ag-grid-community/react';
 import { SnackbarContext } from '@bcgsc/react-snackbar-provider';
 import { useGrid } from '@bcgsc/react-use-grid';
@@ -15,11 +14,13 @@ import { ThemeProvider } from '@material-ui/core/styles';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import GetAppIcon from '@material-ui/icons/GetApp';
+
 import ColumnPicker from './components/ColumnPicker';
 import LinkCellRenderer from './components/LinkCellRenderer';
 import GeneCellRenderer from './components/GeneCellRenderer';
 import ActionCellRenderer from './components/ActionCellRenderer';
 import { getDate } from '../../utils/date';
+import ReportContext from '../../components/ReportContext';
 
 import './index.scss';
 
@@ -27,7 +28,66 @@ const MAX_VISIBLE_ROWS = 12;
 const MAX_TABLE_HEIGHT = '517px';
 
 type DataTableType = {
-  rowData,
+  /* Data populating table */
+  rowData: Record<string, any>[],
+  /* Callback function when rowData is changed within the DataTable */
+  onRowDataChanged,
+  /* Column definitions for rowData */
+  columnDefs: Record<string, any>[],
+  /* Table title */
+  titleText?: string,
+  /* String to filter rows by */
+  filterText?: string,
+  /* Can rows be edited? */
+  canEdit?: boolean,
+  /* Callback function when edit is started */
+  onEdit?: (row: Record<string, any>) => void,
+  /* Can rows be deleted? */
+  canDelete?: boolean,
+  /* Callback function when delete is called */
+  onDelete?: (row: Record<string, any>) => void,
+  /* Can rows be added to the table? */
+  canAdd?: boolean,
+  /* Callback function when add is called */
+  onAdd?: (row: Record<string, any>) => void,
+  /* Text shown next to the add row button */
+  addText?: string,
+  /* Needed for updating therapeutic tables
+     therapeutic or chemoresistance
+  */
+  tableType?: string,
+  /* List of column names that are visible */
+  visibleColumns?: string[],
+  /* Callback to sync multiple tables */
+  syncVisibleColumns?: (visible: string[]) => void,
+  /* Can the visible columns be toggled? */
+  canToggleColumns?: boolean,
+  /* Can the row details be viewed? */
+  canViewDetails?: boolean,
+  /* Should the table be paginated? */
+  isPaginated?: boolean,
+  /* Should the table span the whole container? */
+  isFullLength?: boolean,
+  /* Can the rows be reordered? */
+  canReorder?: boolean,
+  /* API call when rows are reordered */
+  rowUpdateAPICall,
+  /* Can the table rows be exported? */
+  canExport?: boolean,
+  /* Patient ID used for row reordering */
+  patientId?: string,
+  /* MUI theme passed for react in angular table compatibility */
+  theme,
+  /* Is the table being rendered for printing? */
+  isPrint?: boolean,
+  /* Row index to highlight */
+  highlightRow?: number,
+  /* Custom header cell renderer */
+  Header?: () => JSX.Element,
+};
+
+const DataTable = ({
+  rowData = [],
   onRowDataChanged,
   columnDefs,
   titleText,
@@ -39,13 +99,12 @@ type DataTableType = {
   canAdd,
   onAdd,
   addText,
-  reportIdent,
   tableType,
-  visibleColumns,
+  visibleColumns = [],
   syncVisibleColumns,
   canToggleColumns,
-  canViewDetails,
-  isPaginated,
+  canViewDetails = true,
+  isPaginated = true,
   isFullLength,
   canReorder,
   rowUpdateAPICall,
@@ -53,66 +112,12 @@ type DataTableType = {
   patientId,
   theme,
   isPrint,
-  highlightRow,
+  highlightRow = null,
   Header,
-};
-
-/**
- * @param {object} props props
- * @param {array} props.rowData table row data
- * @param {array} props.columnDefs column definitions for ag-grid
- * @param {string} props.titleText table title
- * @param {string} props.filterText text to filter the table on
- * @param {bool} props.canEdit can rows be edited?
- * @param {object} props.EditDialog Edit Dialog component
- * @param {string} props.reportIdent Ident of report (used for editing api calls)
- * @param {string} props.tableType type of table used for therapeutic targets
- * @param {array} props.visibleColumns array of column ids that are visible
- * @param {func} props.syncVisibleColumns function to propagate visible column changes
- * @param {bool} props.canToggleColumns can visible/hidden columns be toggled
- * @param {bool} props.canViewDetails can the detail dialog be shown
- * @param {bool} props.isPaginated should the table be paginated
- * @param {bool} props.canReorder can the rows be reordered
- * @param {func} props.rowUpdateAPICall API call for reordering rows
- * @param {bool} props.canExport can table data be exported to csv
- * @param {string} props.patientId patient identifer as readable string
- * @param {object} props.theme MUI theme passed for react in angular table compatibility
- * @return {*} JSX
- */
-const DataTable = (props) => {
-  const {
-    rowData,
-    onRowDataChanged,
-    columnDefs,
-    titleText,
-    filterText,
-    canEdit,
-    onEdit,
-    canDelete,
-    onDelete,
-    canAdd,
-    onAdd,
-    addText,
-    reportIdent,
-    tableType,
-    visibleColumns,
-    syncVisibleColumns,
-    canToggleColumns,
-    canViewDetails,
-    isPaginated,
-    isFullLength,
-    canReorder,
-    rowUpdateAPICall,
-    canExport,
-    patientId,
-    theme,
-    isPrint,
-    highlightRow,
-    Header,
-  } = props;
-
+}: DataTableType): JSX.Element => {
   const domLayout = isPrint ? 'print' : 'autoHeight';
-  const { gridApi, columnApi, onGridReady } = useGrid();
+  const { gridApi, colApi, onGridReady } = useGrid();
+  const { report } = useContext(ReportContext);
 
   const ColumnPickerOnClose = useRef();
   const gridDiv = useRef();
@@ -124,8 +129,8 @@ const DataTable = (props) => {
 
   const snackbar = useContext(SnackbarContext);
 
-  const [showPopover, setShowPopover] = useState(false);
-  const [showReorder, setShowReorder] = useState(false);
+  const [showPopover, setShowPopover] = useState<boolean>(false);
+  const [showReorder, setShowReorder] = useState<boolean>(false);
 
   useEffect(() => {
     if (gridApi) {
@@ -135,13 +140,13 @@ const DataTable = (props) => {
 
   // Triggers when syncVisibleColumns is called
   useEffect(() => {
-    if (columnApi && visibleColumns.length) {
-      const allCols = columnApi.getAllColumns().map(col => col.colId);
+    if (colApi && visibleColumns.length) {
+      const allCols = colApi.getAllColumns().map(col => col.colId);
       const hiddenColumns = allCols.filter(col => !visibleColumns.includes(col));
-      columnApi.setColumnsVisible(visibleColumns, true);
-      columnApi.setColumnsVisible(hiddenColumns, false);
+      colApi.setColumnsVisible(visibleColumns, true);
+      colApi.setColumnsVisible(hiddenColumns, false);
     }
-  }, [columnApi, visibleColumns]);
+  }, [colApi, visibleColumns]);
 
   useEffect(() => {
     if (gridApi) {
@@ -150,9 +155,9 @@ const DataTable = (props) => {
         rowNode.setSelected(true, true);
         gridApi.ensureIndexVisible(highlightRow, 'middle');
 
-        const [element] = document.querySelectorAll(`div[class="report__content"]`);
+        const [element] = document.querySelectorAll('div[class="report__content"]');
         element.scrollTo({
-          top: gridRef.eGridDiv.offsetTop,
+          top: gridRef.current.eGridDiv.offsetTop,
           left: 0,
           behavior: 'smooth',
         });
@@ -167,22 +172,22 @@ const DataTable = (props) => {
 
   const onFirstDataRendered = () => {
     if (syncVisibleColumns) {
-      const hiddenColumns = columnApi.getAllColumns()
+      const hiddenColumns = colApi.getAllColumns()
         .map(col => col.colId)
         .filter(col => !visibleColumns.includes(col));
 
-      columnApi.setColumnsVisible(visibleColumns, true);
-      columnApi.setColumnsVisible(hiddenColumns, false);
+      colApi.setColumnsVisible(visibleColumns, true);
+      colApi.setColumnsVisible(hiddenColumns, false);
     }
 
     if (rowData.length >= MAX_VISIBLE_ROWS && !isPrint && !isFullLength) {
-      gridDiv.style.height = MAX_TABLE_HEIGHT;
+      gridDiv.current.style.height = MAX_TABLE_HEIGHT;
       gridApi.setDomLayout('normal');
     }
 
     if (isFullLength) {
-      gridDiv.style.height = '100%';
-      gridDiv.style.flex = '1';
+      gridDiv.current.style.height = '100%';
+      gridDiv.current.style.flex = '1';
       gridApi.setDomLayout('normal');
     }
 
@@ -195,15 +200,15 @@ const DataTable = (props) => {
         cellStyle: { 'white-space': 'normal' },
       }));
       gridApi.setColumnDefs(newCols);
-      columnApi.setColumnVisible('Actions', false);
+      colApi.setColumnVisible('Actions', false);
       gridApi.sizeColumnsToFit();
     }
 
-    if (columnApi && !isFullLength) {
-      const visibleColumnIds = columnApi.getAllColumns()
+    if (colApi && !isFullLength) {
+      const visibleColumnIds = colApi.getAllColumns()
         .filter(col => !col.flex && col.visible)
         .map(col => col.colId);
-      columnApi.autoSizeColumns(visibleColumnIds);
+      colApi.autoSizeColumns(visibleColumnIds);
     } if (isFullLength) {
       gridApi.sizeColumnsToFit();
     }
@@ -218,7 +223,7 @@ const DataTable = (props) => {
       gridApi.setSortModel([{ colId: 'rank', sort: 'asc' }]);
       gridApi.setColumnDefs(columnDefs);
 
-      columnApi.setColumnVisible('drag', true);
+      colApi.setColumnVisible('drag', true);
       setShowReorder(true);
     } else {
       columnDefs.forEach((col) => {
@@ -227,12 +232,12 @@ const DataTable = (props) => {
       });
       gridApi.setColumnDefs(columnDefs);
 
-      columnApi.setColumnVisible('drag', false);
+      colApi.setColumnVisible('drag', false);
       setShowReorder(false);
     }
   };
 
-  const onRowDragEnd = async (event) => {
+  const onRowDragEnd = useCallback(async (event) => {
     try {
       snackbar.clear();
       const oldRank = event.node.data.rank;
@@ -253,7 +258,7 @@ const DataTable = (props) => {
         return newData.push(row);
       });
       newData.rank = event.overIndex;
-      const call = rowUpdateAPICall(reportIdent, newData);
+      const call = rowUpdateAPICall(report.ident, newData);
       const updatedRows = await call.request();
 
       if (updatedRows) {
@@ -264,7 +269,7 @@ const DataTable = (props) => {
       console.error(err);
       snackbar.add(`Rows were not updated: ${err}`);
     }
-  };
+  }, [gridApi, report, rowUpdateAPICall, snackbar]);
 
   const defaultColDef = {
     sortable: !showReorder,
@@ -274,20 +279,20 @@ const DataTable = (props) => {
     valueFormatter: params => (params.value === null ? '' : params.value),
   };
     
-  const renderColumnPicker = () => {
+  const renderColumnPicker = useCallback(() => {
     const popoverCloseHandler = () => {
       const {
         visibleCols: returnedVisibleCols,
       } = ColumnPickerOnClose.current();
       returnedVisibleCols.push('Actions');
-      const returnedHiddenCols = columnApi.getAllColumns()
+      const returnedHiddenCols = colApi.getAllColumns()
         .map(col => col.colId)
         .filter(col => !returnedVisibleCols.includes(col));
 
-      columnApi.setColumnsVisible(returnedVisibleCols, true);
-      columnApi.setColumnsVisible(returnedHiddenCols, false);
+      colApi.setColumnsVisible(returnedVisibleCols, true);
+      colApi.setColumnsVisible(returnedHiddenCols, false);
 
-      columnApi.autoSizeColumns(returnedVisibleCols);
+      colApi.autoSizeColumns(returnedVisibleCols);
       
       if (syncVisibleColumns) {
         syncVisibleColumns(returnedVisibleCols);
@@ -303,15 +308,15 @@ const DataTable = (props) => {
         <ColumnPicker
           className="data-view__options-menu"
           label="Configure Visible Columns"
-          columns={columnApi.getAllColumns()
+          columns={colApi.getAllColumns()
             .filter(col => col.colId !== 'Actions')
             .map((col) => {
               const parent = col.getOriginalParent();
               if (parent && parent.colGroupDef.headerName) {
                 const parentName = parent.colGroupDef.headerName;
-                col.name = `${parentName} ${columnApi.getDisplayNameForColumn(col)}`;
+                col.name = `${parentName} ${colApi.getDisplayNameForColumn(col)}`;
               } else {
-                col.name = columnApi.getDisplayNameForColumn(col);
+                col.name = colApi.getDisplayNameForColumn(col);
               }
               return col;
             })
@@ -321,7 +326,7 @@ const DataTable = (props) => {
       </Dialog>
     );
     return result;
-  };
+  }, [colApi, syncVisibleColumns]);
 
   const RowActionCellRenderer = (row) => {
     const handleEdit = useCallback(() => {
@@ -341,22 +346,22 @@ const DataTable = (props) => {
     );
   };
 
-  const handleCSVExport = () => {
+  const handleCSVExport = useCallback(() => {
     const date = getDate();
 
     gridApi.exportDataAsCsv({
       suppressQuotes: true,
       columnSeparator: '\t',
-      columnKeys: columnApi.getAllDisplayedColumns()
+      columnKeys: colApi.getAllDisplayedColumns()
         .map(col => col.colId)
         .filter(col => col === 'Actions'),
-      fileName: `ipr_${patientId}_${reportIdent}_${titleText.split(' ').join('_')}_${date}.tsv`,
+      fileName: `ipr_${patientId}_${report.ident}_${titleText.split(' ').join('_')}_${date}.tsv`,
     });
-  };
+  }, [colApi, gridApi, patientId, report, titleText]);
 
   const handleFilterAndSortChanged = useCallback(() => {
     const newRows = [];
-    gridApi.forEachNodeAfterFilterAndSort(node => {
+    gridApi.forEachNodeAfterFilterAndSort((node) => {
       newRows.push(node.data);
     });
     onRowDataChanged(newRows);
@@ -365,7 +370,7 @@ const DataTable = (props) => {
   // Theme is needed for react in angular tables. It can't access the theme provider otherwise
   return (
     <ThemeProvider theme={theme}>
-      <div className="data-table--padded" style={{ height: '100%' }}>
+      <div className="data-table--padded" style={{ height: isFullLength ? '100%' : '' }}>
         {Boolean(rowData.length) || canEdit ? (
           <>
             {titleText && (
@@ -456,7 +461,7 @@ const DataTable = (props) => {
                   canEdit,
                   canDelete,
                   canViewDetails,
-                  reportIdent,
+                  reportIdent: report ? report.ident : null,
                   tableType,
                 }}
                 frameworkComponents={{
@@ -489,55 +494,6 @@ const DataTable = (props) => {
       </div>
     </ThemeProvider>
   );
-};
-
-DataTable.propTypes = {
-  columnDefs: PropTypes.arrayOf(PropTypes.object).isRequired,
-  rowData: PropTypes.arrayOf(PropTypes.object),
-  titleText: PropTypes.string,
-  filterText: PropTypes.string,
-  canEdit: PropTypes.bool,
-  EditDialog: PropTypes.func,
-  canAdd: PropTypes.bool,
-  reportIdent: PropTypes.string.isRequired,
-  tableType: PropTypes.string,
-  visibleColumns: PropTypes.arrayOf(PropTypes.string),
-  syncVisibleColumns: PropTypes.func,
-  canToggleColumns: PropTypes.bool,
-  canViewDetails: PropTypes.bool,
-  isPaginated: PropTypes.bool,
-  canReorder: PropTypes.bool,
-  rowUpdateAPICall: PropTypes.func,
-  canExport: PropTypes.bool,
-  patientId: PropTypes.string,
-  // eslint-disable-next-line react/forbid-prop-types
-  theme: PropTypes.object,
-  isPrint: PropTypes.bool,
-  highlightRow: PropTypes.number || PropTypes.object,
-  onRowDataChanged: PropTypes.func,
-};
-
-DataTable.defaultProps = {
-  rowData: [],
-  filterText: '',
-  titleText: '',
-  canEdit: false,
-  EditDialog: () => null,
-  canAdd: false,
-  tableType: '',
-  visibleColumns: [],
-  syncVisibleColumns: null,
-  canToggleColumns: false,
-  canViewDetails: true,
-  isPaginated: true,
-  canReorder: false,
-  rowUpdateAPICall: () => {},
-  canExport: false,
-  patientId: '',
-  theme: {},
-  isPrint: false,
-  highlightRow: null,
-  onRowDataChanged: () => {},
 };
 
 export default DataTable;
