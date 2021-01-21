@@ -115,16 +115,12 @@ const DataTable = ({
   const { gridApi, colApi, onGridReady } = useGrid();
   const { report } = useContext(ReportContext);
 
-  const ColumnPickerOnClose = useRef();
   const gridDiv = useRef();
   const gridRef = useRef();
 
-  const setColumnPickerOnClose = (ref) => {
-    ColumnPickerOnClose.current = ref;
-  };
-
   const [showPopover, setShowPopover] = useState<boolean>(false);
   const [showReorder, setShowReorder] = useState<boolean>(false);
+  const [columnDisplayNames, setColumnDisplayNames] = useState<string[]>([]);
 
   const defaultColDef = {
     sortable: !showReorder,
@@ -171,6 +167,24 @@ const DataTable = ({
       }
     }
   }, [gridApi, highlightRow]);
+
+  useEffect(() => {
+    if (colApi) {
+      const names = colApi.getAllColumns()
+        .filter(col => col.colId !== 'Actions')
+        .map((col) => {
+          const parent = col.getOriginalParent();
+          if (parent && parent.colGroupDef.headerName) {
+            const parentName = parent.colGroupDef.headerName;
+            col.name = `${parentName} ${colApi.getDisplayNameForColumn(col)}`;
+          } else {
+            col.name = colApi.getDisplayNameForColumn(col);
+          }
+          return col;
+        });
+      setColumnDisplayNames(names);
+    }
+  }, [colApi]);
 
   const onFirstDataRendered = () => {
     if (syncVisibleColumns) {
@@ -243,53 +257,21 @@ const DataTable = ({
     onReorder(event.node.data, event.overIndex, tableType);
   }, [onReorder, tableType]);
 
-  const renderColumnPicker = useCallback(() => {
-    const popoverCloseHandler = () => {
-      const {
-        visibleCols: returnedVisibleCols,
-      } = ColumnPickerOnClose.current();
-      returnedVisibleCols.push('Actions');
-      const returnedHiddenCols = colApi.getAllColumns()
-        .map(col => col.colId)
-        .filter(col => !returnedVisibleCols.includes(col));
+  const handlePopoverClose = useCallback((returnedVisibleCols) => {
+    returnedVisibleCols.push('Actions');
+    const returnedHiddenCols = colApi.getAllColumns()
+      .map(col => col.colId)
+      .filter(col => !returnedVisibleCols.includes(col));
 
-      colApi.setColumnsVisible(returnedVisibleCols, true);
-      colApi.setColumnsVisible(returnedHiddenCols, false);
+    colApi.setColumnsVisible(returnedVisibleCols, true);
+    colApi.setColumnsVisible(returnedHiddenCols, false);
 
-      colApi.autoSizeColumns(returnedVisibleCols);
-      
-      if (syncVisibleColumns) {
-        syncVisibleColumns(returnedVisibleCols);
-      }
-      setShowPopover(prevVal => !prevVal);
-    };
-
-    const result = (
-      <Dialog
-        onClose={() => popoverCloseHandler()}
-        open
-      >
-        <ColumnPicker
-          className="data-view__options-menu"
-          label="Configure Visible Columns"
-          columns={colApi.getAllColumns()
-            .filter(col => col.colId !== 'Actions')
-            .map((col) => {
-              const parent = col.getOriginalParent();
-              if (parent && parent.colGroupDef.headerName) {
-                const parentName = parent.colGroupDef.headerName;
-                col.name = `${parentName} ${colApi.getDisplayNameForColumn(col)}`;
-              } else {
-                col.name = colApi.getDisplayNameForColumn(col);
-              }
-              return col;
-            })
-          }
-          onClose={setColumnPickerOnClose}
-        />
-      </Dialog>
-    );
-    return result;
+    colApi.autoSizeColumns(returnedVisibleCols);
+    
+    if (syncVisibleColumns) {
+      syncVisibleColumns(returnedVisibleCols);
+    }
+    setShowPopover(false);
   }, [colApi, syncVisibleColumns]);
 
   const RowActionCellRenderer = (row) => {
@@ -404,9 +386,14 @@ const DataTable = ({
               className="ag-theme-material data-table__container"
               ref={gridDiv}
             >
-              {showPopover
-                && renderColumnPicker()
-              }
+              {showPopover && (
+                <ColumnPicker
+                  className="data-view__options-menu"
+                  label="Configure Visible Columns"
+                  columns={columnDisplayNames}
+                  onClose={handlePopoverClose}
+                />
+              )}
               <AgGridReact
                 ref={gridRef}
                 columnDefs={columnDefs}
