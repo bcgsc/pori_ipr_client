@@ -1,13 +1,30 @@
 const webpack = require('webpack');
 const merge = require('webpack-merge');
 const common = require('./webpack.config.js');
-const { local } = require('../../env.json');
 
 const localConfig = {
   mode: 'development',
   plugins: [
     new webpack.DefinePlugin({
-      CONFIG: JSON.stringify(local),
+      CONFIG: JSON.stringify({
+        ATTRS: {
+          name: 'LOCAL',
+        },
+        STORAGE: {
+          REFERRER: 'IPR_URI',
+          KEYCLOAK: 'BCGSC_SSO',
+          DATABASE_TYPE: 'bcgsc',
+        },
+        ENDPOINTS: {
+          API: `http://${process.env.HOSTNAME}:8080/api`,
+          KEYCLOAK: 'https://keycloakdev01.bcgsc.ca/auth',
+          GRAPHKB: 'https://graphkbstaging.bcgsc.ca',
+        },
+        SSO: {
+          REALM: 'GSC',
+          CLIENT: 'IPR',
+        },
+      }),
     }),
   ],
 };
