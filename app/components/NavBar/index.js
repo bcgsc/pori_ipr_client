@@ -38,6 +38,11 @@ class NavBar {
       targetEvent: $event,
       clickOutsideToClose: true,
       parent: angular.element(document.body),
+      bindToController: true,
+      controllerAs: 'vm',
+      locals: {
+        CONFIG,
+      },
     });
   }
 

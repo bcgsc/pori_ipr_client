@@ -32,10 +32,14 @@ const prodConfig = {
           API: 'https://ipr-api.bcgsc.ca/api',
           KEYCLOAK: 'https://sso.bcgsc.ca/auth/',
           GRAPHKB: 'https://graphkb.bcgsc.ca',
+          TICKET_CREATION: 'https://www.bcgsc.ca/jira/secure/CreateIssue!default.jspa',
         },
         SSO: {
           REALM: 'GSC',
           CLIENT: 'IPR',
+        },
+        MISC: {
+          MAILTO: 'ipr@bcsgc.ca',
         },
       }),
     }),
