@@ -7,9 +7,6 @@ const devConfig = {
   plugins: [
     new webpack.DefinePlugin({
       CONFIG: JSON.stringify({
-        ATTRS: {
-          name: 'DEVELOPMENT',
-        },
         STORAGE: {
           REFERRER: 'IPR_URI',
           KEYCLOAK: 'BCGSC_SSO',
@@ -27,6 +24,8 @@ const devConfig = {
         },
         MISC: {
           MAILTO: 'ipr@bcsgc.ca',
+          ORGANIZATION: 'BCGSC',
+          ENV: 'DEVELOPMENT',
         },
       }),
     }),

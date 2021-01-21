@@ -20,9 +20,6 @@ const prodConfig = {
   plugins: [
     new webpack.DefinePlugin({
       CONFIG: JSON.stringify({
-        ATTRS: {
-          name: 'PRODUCTION',
-        },
         STORAGE: {
           REFERRER: 'IPR_URI',
           KEYCLOAK: 'BCGSC_SSO',
@@ -40,6 +37,8 @@ const prodConfig = {
         },
         MISC: {
           MAILTO: 'ipr@bcsgc.ca',
+          ORGANIZATION: 'BCGSC',
+          ENV: 'PRODUCTION',
         },
       }),
     }),
