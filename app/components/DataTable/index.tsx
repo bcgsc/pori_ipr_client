@@ -26,7 +26,7 @@ import './index.scss';
 const MAX_VISIBLE_ROWS = 12;
 const MAX_TABLE_HEIGHT = '517px';
 
-type DataTableType = {
+type DataTableProps = {
   /* Data populating table */
   rowData: Record<string, any>[],
   /* Callback function when rowData is changed within the DataTable */
@@ -110,7 +110,7 @@ const DataTable = ({
   isPrint,
   highlightRow = null,
   Header,
-}: DataTableType): JSX.Element => {
+}: DataTableProps): JSX.Element => {
   const domLayout = isPrint ? 'print' : 'autoHeight';
   const { gridApi, colApi, onGridReady } = useGrid();
   const { report } = useContext(ReportContext);
