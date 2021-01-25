@@ -118,8 +118,8 @@ const DataTable = ({
   const gridDiv = useRef();
   const gridRef = useRef();
 
-  const [showPopover, setShowPopover] = useState<boolean>(false);
-  const [showReorder, setShowReorder] = useState<boolean>(false);
+  const [showPopover, setShowPopover] = useState(false);
+  const [showReorder, setShowReorder] = useState(false);
   const [columnDisplayNames, setColumnDisplayNames] = useState<string[]>([]);
 
   const defaultColDef = {
