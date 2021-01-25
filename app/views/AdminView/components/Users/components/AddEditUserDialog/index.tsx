@@ -21,7 +21,7 @@ import {
 
 import './index.scss';
 
-type AddEditUserDialogType = {
+type AddEditUserDialogProps = {
   isOpen: boolean;
   onClose: (newData?: null | userType) => void;
   editData: null | userType;
@@ -31,7 +31,7 @@ const AddEditUserDialog = ({
   isOpen,
   onClose,
   editData,
-}: AddEditUserDialogType): JSX.Element => {
+}: AddEditUserDialogProps): JSX.Element => {
   const [username, setUsername] = useState<string>('');
   const [firstName, setFirstName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');

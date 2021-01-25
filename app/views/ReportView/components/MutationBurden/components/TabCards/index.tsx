@@ -19,7 +19,7 @@ const rankMapping = {
   quaternary: 3,
 };
 
-type TabCardsType = {
+type TabCardsProps = {
   comparators: comparatorType[];
   mutationBurden: mutationBurdenType[];
   type: string;
@@ -35,7 +35,7 @@ const TabCards = ({
   barplots,
   densities,
   legends,
-}: TabCardsType): JSX.Element => {
+}: TabCardsProps): JSX.Element => {
   const [tabValue, setTabValue] = useState<number>(0);
 
   const handleTabChange = (event, value: number): void => {

@@ -19,7 +19,7 @@ import UserAutocomplete from '../../../../../../components/UserAutocomplete';
 
 import './index.scss';
 
-type AddEditGroupDialogType = {
+type AddEditGroupDialogProps = {
   isOpen: boolean;
   onClose: (newData?: null | { name: string }) => void;
   editData: null | groupType;
@@ -40,7 +40,7 @@ const AddEditUserDialog = ({
   isOpen,
   onClose,
   editData,
-}: AddEditGroupDialogType): JSX.Element => {
+}: AddEditGroupDialogProps): JSX.Element => {
   const [groupName, setGroupName] = useState<string>('');
   const [errors, setErrors] = useState({
     groupName: false,
