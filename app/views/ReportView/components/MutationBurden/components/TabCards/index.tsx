@@ -20,12 +20,12 @@ const rankMapping = {
 };
 
 type TabCardsType = {
-  comparators: comparatorType[],
-  mutationBurden: mutationBurdenType[],
-  type: string,
-  barplots: imageType[],
-  densities: imageType[],
-  legends: imageType[],
+  comparators: comparatorType[];
+  mutationBurden: mutationBurdenType[];
+  type: string;
+  barplots: imageType[];
+  densities: imageType[];
+  legends: imageType[];
 };
 
 const TabCards = ({

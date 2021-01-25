@@ -28,59 +28,59 @@ const MAX_TABLE_HEIGHT = '517px';
 
 type DataTableProps = {
   /* Data populating table */
-  rowData: Record<string, any>[],
+  rowData: Record<string, any>[];
   /* Callback function when rowData is changed within the DataTable */
-  onRowDataChanged,
+  onRowDataChanged;
   /* Column definitions for rowData */
-  columnDefs: Record<string, any>[],
+  columnDefs: Record<string, any>[];
   /* Table title */
-  titleText?: string,
+  titleText?: string;
   /* String to filter rows by */
-  filterText?: string,
+  filterText?: string;
   /* Can rows be edited? */
-  canEdit?: boolean,
+  canEdit?: boolean;
   /* Callback function when edit is started */
-  onEdit?: (row: Record<string, any>) => void,
+  onEdit?: (row: Record<string, any>) => void;
   /* Can rows be deleted? */
-  canDelete?: boolean,
+  canDelete?: boolean;
   /* Callback function when delete is called */
-  onDelete?: (row: Record<string, any>) => void,
+  onDelete?: (row: Record<string, any>) => void;
   /* Can rows be added to the table? */
-  canAdd?: boolean,
+  canAdd?: boolean;
   /* Callback function when add is called */
-  onAdd?: (row: Record<string, any>) => void,
+  onAdd?: (row: Record<string, any>) => void;
   /* Text shown next to the add row button */
-  addText?: string,
+  addText?: string;
   /* Needed for updating therapeutic tables
      therapeutic or chemoresistance
   */
-  tableType?: string,
+  tableType?: string;
   /* List of column names that are visible */
-  visibleColumns?: string[],
+  visibleColumns?: string[];
   /* Callback to sync multiple tables */
-  syncVisibleColumns?: (visible: string[]) => void,
+  syncVisibleColumns?: (visible: string[]) => void;
   /* Can the visible columns be toggled? */
-  canToggleColumns?: boolean,
+  canToggleColumns?: boolean;
   /* Can the row details be viewed? */
-  canViewDetails?: boolean,
+  canViewDetails?: boolean;
   /* Should the table be paginated? */
-  isPaginated?: boolean,
+  isPaginated?: boolean;
   /* Should the table span the whole container? */
-  isFullLength?: boolean,
+  isFullLength?: boolean;
   /* Can the rows be reordered? */
-  canReorder?: boolean,
+  canReorder?: boolean;
   /* Callback when a row is reordered */
-  onReorder?: (newRow: Record<string, any>, newRank: number, tableType?: string) => void,
+  onReorder?: (newRow: Record<string, any>, newRank: number, tableType?: string) => void;
   /* Can the table rows be exported? */
-  canExport?: boolean,
+  canExport?: boolean;
   /* MUI theme passed for react in angular table compatibility */
-  theme,
+  theme;
   /* Is the table being rendered for printing? */
-  isPrint?: boolean,
+  isPrint?: boolean;
   /* Row index to highlight */
-  highlightRow?: number,
+  highlightRow?: number;
   /* Custom header cell renderer */
-  Header?: () => JSX.Element,
+  Header?: () => JSX.Element;
 };
 
 const DataTable = ({

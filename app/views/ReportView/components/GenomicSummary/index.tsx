@@ -62,8 +62,8 @@ const customTypeSort = (variant) => {
 };
 
 type GenomicSummaryProps = {
-  print: boolean,
-  loadedDispatch: (section: Record<'type', string>) => void,
+  print: boolean;
+  loadedDispatch: (section: Record<'type', string>) => void;
 };
 
 const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Element => {

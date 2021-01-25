@@ -22,9 +22,9 @@ import UserAutocomplete from '../../../../../../components/UserAutocomplete';
 import './index.scss';
 
 type AddEditProjectDialogType = {
-  isOpen: boolean,
-  onClose: (newData?: null | { name: string }) => void,
-  editData: null | projectType,
+  isOpen: boolean;
+  onClose: (newData?: null | { name: string }) => void;
+  editData: null | projectType;
 };
 
 const reducer = (state, action) => {

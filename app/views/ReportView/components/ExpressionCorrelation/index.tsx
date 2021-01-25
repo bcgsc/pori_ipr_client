@@ -16,9 +16,9 @@ import Image from '../../../../components/Image';
 import './index.scss';
 
 interface Color {
-  red: number,
-  green: number,
-  blue: number,
+  red: number;
+  green: number;
+  blue: number;
 }
 
 const LOWER_COLOR = {

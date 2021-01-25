@@ -5,8 +5,8 @@ import ReportContext from '../../../../../../components/ReportContext';
 import './index.scss';
 
 type ConfigTableProps = {
-  config: string,
-  isPrint: boolean,
+  config: string;
+  isPrint: boolean;
 };
 
 const ConfigTable = ({ config, isPrint }: ConfigTableProps): JSX.Element => {

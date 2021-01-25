@@ -14,11 +14,11 @@ import './index.scss';
 
 interface Props {
   /** Handles dialog close */
-  onClose: () => void,
+  onClose: () => void;
   /** Row object selected from table */
   selectedRow: SelectedRow,
   /** Dialog open state */
-  isOpen: boolean,
+  isOpen: boolean;
 }
 
 const ImageViewer = ({ onClose, selectedRow, isOpen }: Props): JSX.Element => {

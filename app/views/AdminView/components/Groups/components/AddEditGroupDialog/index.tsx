@@ -20,9 +20,9 @@ import UserAutocomplete from '../../../../../../components/UserAutocomplete';
 import './index.scss';
 
 type AddEditGroupDialogType = {
-  isOpen: boolean,
-  onClose: (newData?: null | { name: string }) => void,
-  editData: null | groupType,
+  isOpen: boolean;
+  onClose: (newData?: null | { name: string }) => void;
+  editData: null | groupType;
 };
 
 const reducer = (state, action) => {

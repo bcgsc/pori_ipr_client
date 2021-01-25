@@ -22,9 +22,9 @@ import {
 import './index.scss';
 
 type AddEditUserDialogType = {
-  isOpen: boolean,
-  onClose: (newData?: null | userType) => void,
-  editData: null | userType,
+  isOpen: boolean;
+  onClose: (newData?: null | userType) => void;
+  editData: null | userType;
 };
 
 const AddEditUserDialog = ({

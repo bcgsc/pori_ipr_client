@@ -15,9 +15,9 @@ import ConfirmContext from '../../../../../../components/ConfirmContext';
 import api from '../../../../../../services/api';
 
 type EventsEditDialogProps = {
-  isOpen: boolean,
-  onClose: (isSaved?: Record<string, unknown>) => void,
-  editData: Record<string, unknown>
+  isOpen: boolean;
+  onClose: (isSaved?: Record<string, unknown>) => void;
+  editData: Record<string, unknown>;
 };
 
 const EventsEditDialog = ({

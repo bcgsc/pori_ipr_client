@@ -16,11 +16,11 @@ import './index.scss';
 const NON_BREAKING_SPACE = '\u00A0';
 
 type SignatureCardProps = {
-  title: string,
-  signatures: null | Record<string, unknown | Record<string, unknown>>,
-  onClick: (arg0: boolean, arg1: string) => void,
-  type: 'author' | 'reviewer',
-  isPrint: boolean,
+  title: string;
+  signatures: null | Record<string, unknown | Record<string, unknown>>;
+  onClick: (arg0: boolean, arg1: string) => void;
+  type: 'author' | 'reviewer';
+  isPrint: boolean;
 };
 
 const SignatureCard = ({
