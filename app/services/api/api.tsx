@@ -32,7 +32,7 @@ class ApiCall {
   confirm: boolean;
 
   constructor(
-    endpoint: string;
+    endpoint: string,
     requestOptions: any,
     callOptions: {
       forceListReturn: boolean;

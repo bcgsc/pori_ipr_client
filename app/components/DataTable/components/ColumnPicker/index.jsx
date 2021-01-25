@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   MenuList,
   Checkbox,
@@ -22,11 +22,16 @@ const ColumnPicker = (props) => {
     label,
     columns,
     onClose,
+    isOpen,
   } = props;
 
-  const [visibleCols, setVisibleCols] = useState(
-    columns.filter(c => c.visible),
-  );
+  const [visibleCols, setVisibleCols] = useState([]);
+  
+  useEffect(() => {
+    if (columns) {
+      setVisibleCols(columns.filter(col => col.visible));
+    }
+  }, [columns]);
 
   const handleChange = (event, changedRow) => {
     if (event.target.checked) {
@@ -39,7 +44,7 @@ const ColumnPicker = (props) => {
   return (
     <Dialog
       onClose={() => onClose(visibleCols.map(col => col.colId))}
-      open
+      open={isOpen}
     >
       <MenuList className={`options-menu ${className || ''}`}>
         <div className="options-menu__label">
@@ -69,11 +74,13 @@ ColumnPicker.propTypes = {
   ).isRequired,
   className: PropTypes.string,
   onClose: PropTypes.func,
+  isOpen: PropTypes.bool,
 };
 
 ColumnPicker.defaultProps = {
   className: '',
   onClose: () => {},
+  isOpen: false,
 };
 
 

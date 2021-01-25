@@ -386,14 +386,13 @@ const DataTable = ({
               className="ag-theme-material data-table__container"
               ref={gridDiv}
             >
-              {showPopover && (
-                <ColumnPicker
-                  className="data-view__options-menu"
-                  label="Configure Visible Columns"
-                  columns={columnDisplayNames}
-                  onClose={handlePopoverClose}
-                />
-              )}
+              <ColumnPicker
+                className="data-view__options-menu"
+                label="Configure Visible Columns"
+                columns={columnDisplayNames}
+                onClose={handlePopoverClose}
+                isOpen={showPopover}
+              />
               <AgGridReact
                 ref={gridRef}
                 columnDefs={columnDefs}
