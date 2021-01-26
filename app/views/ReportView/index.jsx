@@ -61,6 +61,7 @@ const ReportView = () => {
       const getReport = async () => {
         try {
           const resp = await ReportService.getReport(params.ident);
+          await api.get('/templates', {}).request();
           setReport(resp);
           if (resp.type === 'genomic') {
             setSections(genomic);

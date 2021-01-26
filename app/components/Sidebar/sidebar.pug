@@ -52,6 +52,14 @@ div(layout="column", ng-class="{'sidebar--maximized': $ctrl.sidebarMaximized}").
     md-tooltip(ng-if="!$ctrl.sidebarMaximized", md-direction="right") Projects
     span(ng-class="{'sidebar__text--visible': $ctrl.sidebarMaximized}").sidebar__text.sidebar__text--transition Projects
 
+  a(layout="row", ng-if="$ctrl.admin", href="/template",
+      ng-class="{'sidebar__row--active': $ctrl.$window.location.pathname.includes('template')}"
+    ).sidebar__row
+    md-icon.sidebar__icon folder_shared
+    md-tooltip(ng-if="!$ctrl.sidebarMaximized", md-direction="right") Templates
+    span(ng-class="{'sidebar__text--visible': $ctrl.sidebarMaximized}").sidebar__text.sidebar__text--transition Templates
+
+
   span(flex)
   md-divider
   div(layout="row").sidebar__logos

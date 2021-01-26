@@ -29,6 +29,7 @@ const GermlineView = lazy(() => import('../GermlineView'));
 const AdminView = lazy(() => import('../AdminView'));
 const LinkOutView = lazy(() => import('../LinkOutView'));
 const PatientsView = lazy(() => import('../PatientsView'));
+const TemplateView = lazy(() => import('../TemplateView'));
 
 /**
  * Entry point to application. Handles routing, app theme, and logged in state.
@@ -131,6 +132,7 @@ const Main = (): JSX.Element => {
                   <AuthenticatedRoute component={PrintView} path="/print/:ident" isNavVisible={false} onToggleNav={setIsNavVisible} />
                   <AuthenticatedRoute component={GermlineView} path="/germline" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
                   <AuthenticatedRoute admin={adminUser} adminRequired component={AdminView} path="/admin" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
+                  <AuthenticatedRoute admin={adminUser} adminRequired component={TemplateView} path="/template" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
                 </Switch>
               </Suspense>
               <Snackbar
