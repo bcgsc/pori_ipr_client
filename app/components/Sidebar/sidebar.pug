@@ -18,7 +18,7 @@ div(layout="column", ng-class="{'sidebar--maximized': $ctrl.sidebarMaximized}").
     md-tooltip(ng-if="!$ctrl.sidebarMaximized", md-direction="right") Germline
     span(ng-class="{'sidebar__text--visible': $ctrl.sidebarMaximized}").sidebar__text.sidebar__text--transition Germline
 
-  a(layout="row", href="https://graphkb.bcgsc.ca", target="_blank" rel="noopener noreferrer").sidebar__row
+  a(layout="row", href="{{$ctrl.config.ENDPOINTS.GRAPHKB}}", target="_blank" rel="noopener noreferrer").sidebar__row
     md-icon.sidebar__icon menu_book
     md-tooltip(ng-if="!$ctrl.sidebarMaximized", md-direction="right") Graph Knowledgebase
     span(ng-class="{'sidebar__text--visible': $ctrl.sidebarMaximized}").sidebar__text.sidebar__text--transition Graph Knowledgebase
@@ -56,4 +56,4 @@ div(layout="column", ng-class="{'sidebar--maximized': $ctrl.sidebarMaximized}").
   md-divider
   div(layout="row").sidebar__logos
     img(src="img/gsclogo.svg").sidebar__image-logo
-    span(ng-class="{'sidebar__text--visible': $ctrl.sidebarMaximized}").sidebar__organization-text.sidebar__text--transition Genome Sciences Centre
+    span(ng-class="{'sidebar__text--visible': $ctrl.sidebarMaximized}").sidebar__organization-text.sidebar__text--transition IPR

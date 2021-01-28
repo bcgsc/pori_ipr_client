@@ -23,7 +23,7 @@ class NavBar {
 
   // CONFIG and VERSION are injected with webpack
   async $onInit() {
-    this.config = CONFIG.ATTRS.name;
+    this.config = CONFIG;
     this.version = VERSION;
   }
 
@@ -38,6 +38,11 @@ class NavBar {
       targetEvent: $event,
       clickOutsideToClose: true,
       parent: angular.element(document.body),
+      bindToController: true,
+      controllerAs: 'vm',
+      locals: {
+        CONFIG,
+      },
     });
   }
 
