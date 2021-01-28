@@ -37,7 +37,6 @@ const prodConfig = {
         },
         MISC: {
           MAILTO: 'ipr@bcsgc.ca',
-          ORGANIZATION: 'BCGSC',
           ENV: 'PRODUCTION',
         },
       }),

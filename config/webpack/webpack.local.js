@@ -24,7 +24,6 @@ const localConfig = {
         },
         MISC: {
           MAILTO: 'ipr@bcsgc.ca',
-          ORGANIZATION: 'BCGSC',
           ENV: 'LOCAL',
         },
       }),

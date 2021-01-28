@@ -24,7 +24,6 @@ const devConfig = {
         },
         MISC: {
           MAILTO: 'ipr@bcsgc.ca',
-          ORGANIZATION: 'BCGSC',
           ENV: 'DEVELOPMENT',
         },
       }),

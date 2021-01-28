@@ -24,7 +24,6 @@ const stagingConfig = {
         },
         MISC: {
           MAILTO: 'ipr@bcsgc.ca',
-          ORGANIZATION: 'BCGSC',
           ENV: 'STAGING',
         },
       }),

@@ -3,7 +3,7 @@ md-toolbar(ng-class="{'navbar--open': $ctrl.sidebarMaximized}").navbar
     md-button(ng-click="$ctrl.toggleSidebar()", ng-if="!$ctrl.sidebarMaximized").md-icon-button.navbar__menu
       md-icon.navbar__icon menu
     h2(flex).navbar__title
-      |  {{$ctrl.config.MISC.ORGANIZATION}} Integrated Pipeline Reports 
+      | Integrated Pipeline Reports 
       span.navbar__version v{{$ctrl.version}} &nbsp
       span(ng-if="$ctrl.config !== 'PRODUCTION'") [NON-PRODUCTION ENVIRONMENT: {{$ctrl.config.MISC.ENV}}]
 
