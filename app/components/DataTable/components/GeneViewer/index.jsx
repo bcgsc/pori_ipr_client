@@ -113,28 +113,24 @@ const GeneViewer = (props) => {
               <DataTable
                 rowData={geneData.kbMatches}
                 columnDefs={columnDefs}
-                reportIdent={reportIdent}
               />
             )}
             {tabValue === 1 && (
               <DataTable
                 rowData={geneData.smallMutations}
                 columnDefs={smallMutationsColumnDefs}
-                reportIdent={reportIdent}
               />
             )}
             {tabValue === 2 && (
               <DataTable
                 rowData={geneData.copyNumber}
                 columnDefs={copyNumberColumnDefs}
-                reportIdent={reportIdent}
               />
             )}
             {tabValue === 3 && (
               <DataTable
                 rowData={geneData.expRNA}
                 columnDefs={expressionColumnDefs}
-                reportIdent={reportIdent}
               />
             )}
             {tabValue === 4 && (

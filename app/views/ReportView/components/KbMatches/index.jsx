@@ -184,7 +184,6 @@ function KbMatches(props) {
                 syncVisibleColumns={syncVisibleColumns}
                 filterText={filterText}
                 canToggleColumns
-                reportIdent={report.ident}
                 isPrint={isPrint}
               />
             ))}
@@ -197,7 +196,6 @@ function KbMatches(props) {
                 rowData={unsyncedTableData.rowData || []}
                 titleText={unsyncedTableData.titleText}
                 filterText={filterText}
-                reportIdent={report.ident}
               />
             </div>
           )}

@@ -35,9 +35,9 @@ class ApiCall {
     endpoint: string,
     requestOptions: any,
     callOptions: {
-      forceListReturn: boolean,
-      forceRecordReturn: boolean,
-      name: string,
+      forceListReturn: boolean;
+      forceRecordReturn: boolean;
+      name: string;
       confirm: boolean
     },
   ) {

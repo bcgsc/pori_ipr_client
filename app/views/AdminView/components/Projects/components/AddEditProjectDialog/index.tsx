@@ -21,10 +21,10 @@ import UserAutocomplete from '../../../../../../components/UserAutocomplete';
 
 import './index.scss';
 
-type AddEditProjectDialogType = {
-  isOpen: boolean,
-  onClose: (newData?: null | { name: string }) => void,
-  editData: null | projectType,
+type AddEditProjectDialogProps = {
+  isOpen: boolean;
+  onClose: (newData?: null | { name: string }) => void;
+  editData: null | projectType;
 };
 
 const reducer = (state, action) => {
@@ -42,7 +42,7 @@ const AddEditProjectDialog = ({
   isOpen,
   onClose,
   editData,
-}: AddEditProjectDialogType): JSX.Element => {
+}: AddEditProjectDialogProps): JSX.Element => {
   const [projectName, setProjectName] = useState<string>('');
   const [errors, setErrors] = useState<{ projectName: boolean }>({
     projectName: false,
