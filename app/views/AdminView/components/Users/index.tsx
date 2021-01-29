@@ -2,7 +2,7 @@ import React, {
   useState, useEffect, useContext, useCallback,
 } from 'react';
 import { CircularProgress } from '@material-ui/core';
-import { SnackbarContext } from '@bcgsc/react-snackbar-provider';
+import { useSnackbar } from 'notistack';
 
 import api from '../../../../services/api';
 import DataTable from '../../../../components/DataTable';
@@ -18,7 +18,7 @@ const Users = (): JSX.Element => {
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [editData, setEditData] = useState<userType>();
 
-  const snackbar = useContext(SnackbarContext);
+  const snackbar = useSnackbar();
 
   useEffect(() => {
     const getData = async () => {
@@ -37,9 +37,9 @@ const Users = (): JSX.Element => {
       await api.del(`/user/${ident}`, {}, {}).request();
       const newUsers = users.filter(user => user.ident !== ident);
       setUsers(newUsers);
-      snackbar.add('User deleted');
+      snackbar.enqueueSnackbar('User deleted');
     } else {
-      snackbar.add('User not deleted');
+      snackbar.enqueueSnackbar('User not deleted');
     }
   }, [snackbar, users]);
 
@@ -56,10 +56,10 @@ const Users = (): JSX.Element => {
         const newUsers = [...users];
         newUsers[userIndex] = newData;
         setUsers(newUsers);
-        snackbar.add('User edited');
+        snackbar.enqueueSnackbar('User edited');
       } else {
         setUsers(prevVal => [...prevVal, newData]);
-        snackbar.add('User added');
+        snackbar.enqueueSnackbar('User added');
       }
     }
   }, [snackbar, users]);
