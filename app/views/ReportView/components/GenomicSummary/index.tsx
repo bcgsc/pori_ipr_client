@@ -143,7 +143,7 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
         const sorted = sortBy(output, [customTypeSort, 'geneVariant']);
         setVariants(sorted);
         setVariantCounts(counts);
-        loadedDispatch({ type: 'genomicSummary' });
+        loadedDispatch({ type: 'summary' });
       };
 
       getData();
