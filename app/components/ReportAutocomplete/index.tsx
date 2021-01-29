@@ -11,9 +11,9 @@ import api from '../../services/api';
 import './index.scss';
 
 type ReportAutocompleteProps = {
-  defaultValue?: string,
-  onSubmit: (report: Record<string, unknown>) => void,
-  label?: string,
+  defaultValue?: string;
+  onSubmit: (report: Record<string, unknown>) => void;
+  label?: string;
 }
 
 const ReportAutocomplete = ({

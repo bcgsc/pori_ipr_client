@@ -11,11 +11,11 @@ import {
 import './index.scss';
 
 type TumourSummaryEditProps = {
-  microbial: any,
-  report: any,
-  mutationBurden: any,
-  isOpen: any,
-  onClose: any,
+  microbial: any;
+  report: any;
+  mutationBurden: any;
+  isOpen: any;
+  onClose: any;
 };
 
 const TumourSummaryEdit = ({

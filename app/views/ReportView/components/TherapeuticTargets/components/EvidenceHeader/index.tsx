@@ -7,7 +7,7 @@ import InfoDialog from '../InfoDialog';
 import './index.scss';
 
 type EvidenceHeaderProps = {
-  displayName: string,
+  displayName: string;
 }
 
 const EvidenceHeader = ({ displayName }: EvidenceHeaderProps): JSX.Element => {

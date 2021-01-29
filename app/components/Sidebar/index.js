@@ -19,6 +19,7 @@ class Sidebar {
     this.$window = $window;
     this.pageAccess = {};
     this.pages = ['report', 'germline'];
+    this.config = CONFIG;
   }
 
   async $onChanges(changes) {

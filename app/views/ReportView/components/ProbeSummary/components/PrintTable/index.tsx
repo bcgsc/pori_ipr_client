@@ -3,8 +3,8 @@ import React from 'react';
 import './index.scss';
 
 type PrintTableProps = {
-  data: Array<Record<string, unknown>>,
-  headers: Array<string>,
+  data: Array<Record<string, unknown>>;
+  headers: Array<string>;
 };
 
 const PrintTable = ({ data, headers }: PrintTableProps): JSX.Element => (
