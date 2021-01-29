@@ -17,7 +17,7 @@ import ReportService from '@/services/reports/report.service';
 import EditContext from '@/components/EditContext';
 import ReportContext from '../../components/ReportContext';
 import ConfirmContext from '@/components/ConfirmContext';
-import { genomic, probe } from './sections';
+import allSections from './sections';
 import api from '@/services/api';
 
 import './index.scss';
@@ -52,7 +52,7 @@ const ReportView = () => {
 
   const [report, setReport] = useState();
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
-  const [sections, setSections] = useState();
+  const [visibleSections, setVisibleSections] = useState([]);
   const [isProbe, setIsProbe] = useState(false);
   const [isSigned, setIsSigned] = useState(false);
 
@@ -62,12 +62,12 @@ const ReportView = () => {
         try {
           const resp = await ReportService.getReport(params.ident);
           setReport(resp);
-          if (resp.type === 'genomic') {
-            setSections(genomic);
-          } else {
-            setSections(probe);
+          if (resp.template.name === 'probe') {
             setIsProbe(true);
+          } else {
+            setIsProbe(false);
           }
+          setVisibleSections(resp.template.sections);
         } catch {
           snackbar.add(`Report ${params.ident} not found`);
           history.push('/reports');
@@ -104,7 +104,7 @@ const ReportView = () => {
               <ReportToolbar
                 diagnosis={report.patientInformation.diagnosis}
                 patientId={report.patientId}
-                type={report.type}
+                type={report.template.name}
                 state={report.state}
                 isSidebarVisible={isSidebarVisible}
                 onSidebarToggle={setIsSidebarVisible}
@@ -255,8 +255,13 @@ const ReportView = () => {
               </Switch>
             </div>
           </div>
-          {Boolean(sections) && (
-            <ReportSidebar sections={sections} isSidebarVisible={isSidebarVisible} reportIdent={report.ident} />
+          {report && (
+            <ReportSidebar
+              visibleSections={report.template.sections || ['summary']}
+              allSections={allSections}
+              isSidebarVisible={isSidebarVisible}
+              reportIdent={report.ident}
+            />
           )}
         </div>
       </ConfirmContext.Provider>
