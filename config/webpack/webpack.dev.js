@@ -7,9 +7,6 @@ const devConfig = {
   plugins: [
     new webpack.DefinePlugin({
       CONFIG: JSON.stringify({
-        ATTRS: {
-          name: 'DEVELOPMENT',
-        },
         STORAGE: {
           REFERRER: 'IPR_URI',
           KEYCLOAK: 'BCGSC_SSO',
@@ -19,10 +16,15 @@ const devConfig = {
           API: 'https://iprdev-api.bcgsc.ca/api',
           KEYCLOAK: 'https://keycloakdev01.bcgsc.ca/auth',
           GRAPHKB: 'https://graphkbstaging.bcgsc.ca',
+          TICKET_CREATION: 'https://www.bcgsc.ca/jira/secure/CreateIssue!default.jspa',
         },
         SSO: {
           REALM: 'GSC',
           CLIENT: 'IPR',
+        },
+        MISC: {
+          MAILTO: 'ipr@bcsgc.ca',
+          ENV: 'DEVELOPMENT',
         },
       }),
     }),

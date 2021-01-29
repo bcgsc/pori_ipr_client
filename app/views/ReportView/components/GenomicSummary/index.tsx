@@ -62,8 +62,8 @@ const customTypeSort = (variant) => {
 };
 
 type GenomicSummaryProps = {
-  print: boolean,
-  loadedDispatch: (section: Record<'type', string>) => void,
+  print: boolean;
+  loadedDispatch: (section: Record<'type', string>) => void;
 };
 
 const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Element => {
@@ -468,7 +468,6 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
                   <VariantChips
                     variants={variantFilter ? variants.filter(v => v.type === variantFilter) : variants}
                     canEdit={canEdit}
-                    reportIdent={report.ident}
                     onChipDeleted={handleChipDeleted}
                     onChipAdded={handleChipAdded}
                     isPrint={print}
@@ -493,7 +492,6 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
                   <VariantChips
                     variants={variantFilter ? variants.filter(v => v.type === variantFilter) : variants}
                     canEdit={canEdit}
-                    reportIdent={report.ident}
                     onChipDeleted={handleChipDeleted}
                     onChipAdded={handleChipAdded}
                   />

@@ -8,7 +8,7 @@ import { TestInformationInterface } from './interfaces';
 import './index.scss';
 
 type TestInformationProps = {
-  data: TestInformationInterface,
+  data: TestInformationInterface;
 };
 
 const TestInformation = ({
