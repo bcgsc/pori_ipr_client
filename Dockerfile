@@ -1,8 +1,9 @@
 # Stage 0, "build-stage", based on Node.js, to build and compile the frontend
 FROM node:12 as build-stage
 
-ARG IPR_API_URL
+ARG API_BASE_URL
 ARG KEYCLOAK_URL
+ARG KEYCLOAK_REALM
 ARG GRAPHKB_URL
 
 WORKDIR /app

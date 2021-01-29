@@ -22,17 +22,17 @@ const prodConfig = {
       CONFIG: JSON.stringify({
         STORAGE: {
           REFERRER: 'IPR_URI',
-          KEYCLOAK: 'BCGSC_SSO',
+          KEYCLOAK: 'PORI_SSO',
           DATABASE_TYPE: 'bcgsc',
         },
         ENDPOINTS: {
-          API: process.env.IPR_API_URL || 'https://ipr-api.bcgsc.ca/api',
+          API: process.env.API_BASE_URL || 'https://ipr-api.bcgsc.ca/api',
           KEYCLOAK: process.env.KEYCLOAK_URL || 'https://sso.bcgsc.ca/auth/',
           GRAPHKB: process.env.GRAPHKB_URL || 'https://graphkb.bcgsc.ca',
           TICKET_CREATION: 'https://www.bcgsc.ca/jira/secure/CreateIssue!default.jspa',
         },
         SSO: {
-          REALM: 'GSC',
+          REALM: process.env.KEYCLOAK_REALM || 'PORI',
           CLIENT: 'IPR',
         },
         MISC: {
