@@ -95,7 +95,7 @@ const ProbeSummary = ({
         ]);
 
         if (loadedDispatch) {
-          loadedDispatch({ type: 'probeSummary' });
+          loadedDispatch({ type: 'summary' });
         }
       };
 

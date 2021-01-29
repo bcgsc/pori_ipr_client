@@ -1,4 +1,6 @@
-import React, { useEffect, useState, useReducer } from 'react';
+import React, {
+  useEffect, useState, useReducer, useCallback,
+} from 'react';
 import { useParams } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
 import { useTheme } from '@material-ui/core/styles';
@@ -20,10 +22,8 @@ import './index.scss';
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case 'genomicSummary':
-      return { ...state, genomicSummary: true };
-    case 'probeSummary':
-      return { ...state, probeSummary: true };
+    case 'summary':
+      return { ...state, summary: true };
     case 'analyst':
       return { ...state, analyst: true };
     case 'pathway':
@@ -36,8 +36,7 @@ const reducer = (state, action) => {
       return { ...state, appendices: true };
     default:
       return {
-        genomicSummary: false,
-        probeSummary: false,
+        summary: false,
         analyst: false,
         pathway: false,
         therapeutic: false,
@@ -52,15 +51,14 @@ const Print = () => {
   const theme = useTheme();
   const [report, setReport] = useState();
   const [reportSectionsLoaded, dispatch] = useReducer(reducer, {
-    genomicSummary: false,
-    probeSummary: false,
+    summary: false,
     analyst: false,
     pathway: false,
     therapeutic: false,
     slides: false,
     appendices: false,
   });
-  const [isProbe, setIsProbe] = useState(false);
+  const [sections, setSections] = useState([]);
   const [isPrintDialogShown, setIsPrintDialogShown] = useState(false);
 
   useEffect(() => {
@@ -68,10 +66,8 @@ const Print = () => {
       const getReport = async () => {
         const resp = await ReportService.getReport(params.ident);
         setReport(resp);
-
-        if (resp.type !== 'genomic') {
-          setIsProbe(true);
-        }
+        const { template: { sections: sectionsResp } } = resp;
+        setSections(sectionsResp);
       };
 
       getReport();
@@ -79,27 +75,61 @@ const Print = () => {
   }, [params.ident, report]);
 
   useEffect(() => {
-    let sections;
-    if (isProbe) {
-      sections = ['probeSummary', 'appendices'];
-    } else {
-      sections = ['genomicSummary', 'analyst', 'pathway', 'therapeutic', 'slides'];
-    }
     if (reportSectionsLoaded
+      && sections.length
       && Object.entries(reportSectionsLoaded).every(([section, loaded]) => loaded || !sections.includes(section))
       && !isPrintDialogShown) {
       window.print();
       setIsPrintDialogShown(true);
     }
-  }, [isPrintDialogShown, isProbe, reportSectionsLoaded]);
+  }, [isPrintDialogShown, report, reportSectionsLoaded, sections]);
 
-  const probeSections = () => (
+  const renderSections = useCallback(() => (
     <>
-      <ProbeSummary report={report} isPrint loadedDispatch={dispatch} />
-      <PageBreak report={report} />
-      <Appendices report={report} isPrint isProbe loadedDispatch={dispatch} />
+      {sections.includes('summary') && report.template.name === 'probe' && (
+        <>
+          <ProbeSummary report={report} isPrint loadedDispatch={dispatch} />
+          <PageBreak report={report} theme={theme} />
+        </>
+      )}
+      {sections.includes('summary') && report.template.name !== 'probe' && (
+        <>
+          <GenomicSummary print loadedDispatch={dispatch} />
+          <PageBreak report={report} theme={theme} />
+        </>
+      )}
+      {sections.includes('analyst-comments') && (
+        <>
+          <AnalystComments report={report} print loadedDispatch={dispatch} />
+          <PageBreak report={report} theme={theme} />
+        </>
+      )}
+      {sections.includes('pathway-analysis') && (
+        <>
+          <PathwayAnalysis report={report} print loadedDispatch={dispatch} />
+          <PageBreak report={report} theme={theme} />
+        </>
+      )}
+      {sections.includes('therapeutic-targets') && (
+        <>
+          <TherapeuticTargets print loadedDispatch={dispatch} />
+          <PageBreak report={report} theme={theme} />
+        </>
+      )}
+      {sections.includes('slides') && (
+        <>
+          <Slides report={report} print loadedDispatch={dispatch} theme={theme} />
+          <PageBreak report={report} theme={theme} />
+        </>
+      )}
+      {sections.includes('appendices') && (
+        <>
+          <Appendices report={report} isPrint isProbe loadedDispatch={dispatch} />
+          <PageBreak report={report} theme={theme} />
+        </>
+      )}
     </>
-  );
+  ), [report, theme, sections]);
 
   const genomicSections = () => (
     <>
@@ -111,7 +141,7 @@ const Print = () => {
       <PageBreak report={report} theme={theme} />
       <TherapeuticTargets print loadedDispatch={dispatch} />
       <PageBreak report={report} theme={theme} />
-      <Slides report={report} print loadedDispatch={dispatch} theme={theme}/>
+      <Slides report={report} print loadedDispatch={dispatch} theme={theme} />
     </>
   );
 
@@ -137,13 +167,7 @@ const Print = () => {
         {report ? (
           <>
             {titleBar()}
-            <>
-              {isProbe ? (
-                probeSections()
-              ) : (
-                genomicSections()
-              )}
-            </>
+            {renderSections()}
           </>
         ) : null}
       </div>
