@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import {
   Button,
   ListItemText,
@@ -10,20 +10,12 @@ import {
   FormControl,
 } from '@material-ui/core';
 
+import sections from './sections';
 import api from '@/services/api';
 
-const Template = () => {
-  const [name, setName] = useState('');
-  const [sections, setSections] = useState([]);
-
-  const handleSectionChange = useCallback(({ target: { value } }) => {
-    setSections(value);
-    // if (checked) {
-    //   setSections(prevVal => [...prevVal, ])
-    // } else {
-
-    // }
-  }, [sections]);
+const Template = (): JSX.Element => {
+  const [templateName, setTemplateName] = useState('');
+  const [selectedSections, setSelectedSections] = useState([]);
 
   return (
     <div>
@@ -35,24 +27,22 @@ const Template = () => {
           className="text-field-fix"
           title="Template name"
           label="Template name"
-          value={name}
-          onChange={(({ target: { value } }) => setName(value))}
+          value={templateName}
+          onChange={(({ target: { value } }) => setTemplateName(value))}
           variant="outlined"
         />
         <Select
           multiple
-          onChange={handleSectionChange}
-          value={sections}
-          renderValue={() => sections.join(', ')}
+          onChange={(({ target: { value } }) => setSelectedSections(value))}
+          value={selectedSections}
+          renderValue={() => selectedSections.map(section => section.name).join(', ')}
         >
-          <MenuItem value="summary">
-            <Checkbox checked={sections.includes('summary')} />
-            <ListItemText>Summary</ListItemText>
-          </MenuItem>
-          <MenuItem value="appendices">
-            <Checkbox checked={sections.includes('appendices')} />
-            <ListItemText>Appendices</ListItemText>
-          </MenuItem>
+          {sections.map(section => (
+            <MenuItem key={section.name} value={section}>
+              <Checkbox checked={selectedSections.includes(section)} />
+              <ListItemText>{section.name}</ListItemText>
+            </MenuItem>
+          ))}
         </Select>
       </FormControl>
     </div>
