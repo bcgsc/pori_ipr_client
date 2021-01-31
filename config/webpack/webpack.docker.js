@@ -19,6 +19,7 @@ const prodConfig = {
   },
   plugins: [
     new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify('production'),
       CONFIG: JSON.stringify({
         STORAGE: {
           REFERRER: 'IPR_URI',

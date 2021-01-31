@@ -27,3 +27,7 @@ jobs:
           yml: codecov.yml
           token: ${{ secrets.CODECOV_TOKEN }}
         if: matrix.node == 12
+  docker:
+    name: docker-build
+    steps:
+      - run: docker build --file Dockerfile --tag creisle/pori-graphkb-client .
