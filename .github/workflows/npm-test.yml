@@ -31,4 +31,5 @@ jobs:
     runs-on: ubuntu-latest
     name: docker-build
     steps:
-      - run: docker build --file Dockerfile --tag creisle/pori-graphkb-client .
+      - run: |
+          docker build --file Dockerfile --tag pori/ipr-client .
