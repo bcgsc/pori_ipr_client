@@ -31,5 +31,6 @@ jobs:
     runs-on: ubuntu-latest
     name: docker-build
     steps:
+      - uses: actions/checkout@v2
       - run: |
           docker build --file Dockerfile --tag pori/ipr-client .
