@@ -41,7 +41,7 @@ class NavBar {
       bindToController: true,
       controllerAs: 'vm',
       locals: {
-        CONFIG,
+        ENV: CONFIG.MISC.ENV,
       },
     });
   }
