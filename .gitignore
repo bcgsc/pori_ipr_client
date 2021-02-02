@@ -5,3 +5,4 @@ builds/*
 .vscode/*
 dist/*
 coverage/*
+statics/env-config.js
