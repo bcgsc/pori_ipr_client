@@ -1,52 +1,71 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
-  Button,
-  ListItemText,
-  Checkbox,
-  MenuItem,
-  TextField,
-  Select,
   Typography,
-  FormControl,
 } from '@material-ui/core';
 
-import sections from './sections';
-import api from '@/services/api';
+import api from '../../services/api';
+import AddEditTemplate from './components/AddEditTemplate';
+import DataTable from '@/components/DataTable';
+import columnDefs from './columnDefs';
 
-const Template = (): JSX.Element => {
-  const [templateName, setTemplateName] = useState('');
-  const [selectedSections, setSelectedSections] = useState([]);
+
+const TemplateView = (): JSX.Element => {
+  const [showDialog, setShowDialog] = useState(false);
+  const [templates, setTemplates] = useState([]);
+  const [selectedRow, setSelectedRow] = useState();
+
+  useEffect(() => {
+    const getData = async () => {
+      const templatesResp = await api.get('/templates', {}).request();
+      setTemplates(templatesResp);
+    };
+    getData();
+  }, []);
+
+  const handleEditStart = useCallback((rowData) => {
+    setShowDialog(true);
+    if (rowData) {
+      setSelectedRow(rowData);
+    }
+  }, []);
+
+  const handleDialogClose = useCallback((newData) => {
+    setShowDialog(false);
+    if (newData) {
+      const templateIndex = templates.findIndex(template => template.ident === newData.ident);
+      if (templateIndex !== -1) {
+        const newTemplates = [...templates];
+        newTemplates[templateIndex] = newData;
+        setTemplates(newTemplates);
+      } else {
+        setTemplates(prevVal => [...prevVal, newData]);
+      }
+    }
+    setSelectedRow(null);
+  }, [templates]);
 
   return (
     <div>
       <Typography variant="h3">
-        Create a new template
+        Template Management
       </Typography>
-      <FormControl variant="outlined">
-        <TextField
-          className="text-field-fix"
-          title="Template name"
-          label="Template name"
-          value={templateName}
-          onChange={(({ target: { value } }) => setTemplateName(value))}
-          variant="outlined"
-        />
-        <Select
-          multiple
-          onChange={(({ target: { value } }) => setSelectedSections(value))}
-          value={selectedSections}
-          renderValue={() => selectedSections.map(section => section.name).join(', ')}
-        >
-          {sections.map(section => (
-            <MenuItem key={section.name} value={section}>
-              <Checkbox checked={selectedSections.includes(section)} />
-              <ListItemText>{section.name}</ListItemText>
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+      <DataTable
+        rowData={templates}
+        columnDefs={columnDefs}
+        titleText="Templates"
+        canAdd
+        onAdd={handleEditStart}
+        addText="Create template"
+        canEdit
+        onEdit={handleEditStart}
+      />
+      <AddEditTemplate
+        isOpen={showDialog}
+        onClose={handleDialogClose}
+        editData={selectedRow}
+      />
     </div>
   );
 };
 
-export default Template;
+export default TemplateView;
