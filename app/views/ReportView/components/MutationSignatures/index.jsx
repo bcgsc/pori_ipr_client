@@ -3,7 +3,7 @@ import React, {
 } from 'react';
 import orderBy from 'lodash.orderby';
 import { LinearProgress, Typography } from '@material-ui/core';
-import { SnackbarContext } from '@bcgsc/react-snackbar-provider';
+import { useSnackbar } from 'notistack';
 
 import DataTable from '@/components/DataTable';
 import ReportContext from '../../../../components/ReportContext';
@@ -33,7 +33,7 @@ const MutationSignatures = () => {
   const [showDialog, setShowDialog] = useState(false);
   const [editData, setEditData] = useState();
 
-  const snackbar = useContext(SnackbarContext);
+  const snackbar = useSnackbar();
 
   useEffect(() => {
     if (report && report.ident) {

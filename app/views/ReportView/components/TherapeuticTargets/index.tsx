@@ -4,7 +4,7 @@ import React, {
 import { LinearProgress } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import orderBy from 'lodash.orderby';
-import { SnackbarContext } from '@bcgsc/react-snackbar-provider';
+import { useSnackbar } from 'notistack';
 
 import DataTable from '@/components/DataTable';
 import EditContext from '@/components/EditContext';
@@ -36,7 +36,7 @@ const Therapeutic = (props) => {
 
   const { canEdit } = useContext(EditContext);
   const { report } = useContext(ReportContext);
-  const snackbar = useContext(SnackbarContext);
+  const snackbar = useSnackbar();
 
   useEffect(() => {
     if (report) {
@@ -85,9 +85,9 @@ const Therapeutic = (props) => {
         }
       }
       setEditData(null);
-      snackbar.add('Row updated');
+      snackbar.enqueueSnackbar('Row updated');
     } catch (err) {
-      snackbar.add(`Error, row not updated: ${err}`);
+      snackbar.enqueueSnackbar(`Error, row not updated: ${err}`);
     }
   }, [chemoresistanceData, snackbar, therapeuticData]);
 
@@ -121,9 +121,9 @@ const Therapeutic = (props) => {
 
       await api.put(`/reports/${report.ident}/therapeutic-targets`, newData).request();
       setter(newData);
-      snackbar.add('Row updated');
+      snackbar.enqueueSnackbar('Row updated');
     } catch (err) {
-      snackbar.add(`Error, row not updated: ${err}`);
+      snackbar.enqueueSnackbar(`Error, row not updated: ${err}`);
     }
   }, [chemoresistanceData, therapeuticData, report, snackbar]);
 
