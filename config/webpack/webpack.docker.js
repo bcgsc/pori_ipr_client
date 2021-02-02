@@ -20,24 +20,22 @@ const prodConfig = {
   plugins: [
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('production'),
+      'window._env_': JSON.stringify({
+        KEYCLOAK_CLIENT_ID: 'IPR',
+        KEYCLOAK_REALM: 'PORI',
+        KEYCLOAK_URL: 'https://keycloakdev01.bcgsc.ca/auth',
+        API_BASE_URL: 'https://iprdev-api.bcgsc.ca/api',
+        GRAPHKB_URL: 'https://graphkbstaging.bcgsc.ca',
+        CONTACT_EMAIL: 'ipr@bcgsc.ca',
+        CONTACT_TICKET_URL: 'https://www.bcgsc.ca/jira/secure/CreateIssue!default.jspa',
+      }),
       CONFIG: JSON.stringify({
         STORAGE: {
           REFERRER: 'IPR_URI',
           KEYCLOAK: 'PORI_SSO',
           DATABASE_TYPE: 'bcgsc',
         },
-        ENDPOINTS: {
-          API: process.env.API_BASE_URL || 'https://ipr-api.bcgsc.ca/api',
-          KEYCLOAK: process.env.KEYCLOAK_URL || 'https://sso.bcgsc.ca/auth/',
-          GRAPHKB: process.env.GRAPHKB_URL || 'https://graphkb.bcgsc.ca',
-          TICKET_CREATION: 'https://www.bcgsc.ca/jira/secure/CreateIssue!default.jspa',
-        },
-        SSO: {
-          REALM: process.env.KEYCLOAK_REALM || 'PORI',
-          CLIENT: 'IPR',
-        },
         MISC: {
-          MAILTO: 'ipr@bcsgc.ca',
           ENV: 'PRODUCTION',
         },
       }),
