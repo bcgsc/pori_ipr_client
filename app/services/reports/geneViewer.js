@@ -10,7 +10,7 @@ const geneViewer = async (gene, reportIdent) => {
   };
 
   const response = await fetch(
-    `${CONFIG.ENDPOINTS.API}/reports/${reportIdent}/gene-viewer/${gene}`,
+    `${window._env_.API_BASE_URL}/reports/${reportIdent}/gene-viewer/${gene}`,
     options,
   );
 

@@ -9,7 +9,7 @@ const germlineDownload = async () => {
   };
 
   const response = await fetch(
-    `${CONFIG.ENDPOINTS.API}/export/germline-small-mutation-reports/batch/download?reviews=biofx,projects`,
+    `${window._env_.API_BASE_URL}/export/germline-small-mutation-reports/batch/download?reviews=biofx,projects`,
     options,
   );
 

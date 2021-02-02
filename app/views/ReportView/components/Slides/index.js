@@ -86,7 +86,7 @@ class Slides {
 
   setupUploader() {
     this.uploader = new this.FileUploader({
-      url: `${CONFIG.ENDPOINTS.API}/reports/${this.report.ident}/presentation/slide`,
+      url: `${window._env_.API_BASE_URL}/reports/${this.report.ident}/presentation/slide`,
     });
 
     this.uploader.headers.Authorization = this.token;

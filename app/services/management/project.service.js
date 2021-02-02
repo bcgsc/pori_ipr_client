@@ -2,7 +2,7 @@ import { $http } from 'ngimport';
 
 class ProjectService {
   constructor() {
-    this.api = `${CONFIG.ENDPOINTS.API}/project`;
+    this.api = `${window._env_.API_BASE_URL}/project`;
   }
 
   /**

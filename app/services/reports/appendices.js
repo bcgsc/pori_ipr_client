@@ -10,7 +10,7 @@ const getAppendices = async (reportIdent) => {
   };
 
   const response = await fetch(
-    `${CONFIG.ENDPOINTS.API}/reports/${reportIdent}/appendices`,
+    `${window._env_.API_BASE_URL}/reports/${reportIdent}/appendices`,
     options,
   );
 
@@ -30,7 +30,7 @@ const getTcgaAcronyms = async (reportIdent) => {
   };
 
   const response = await fetch(
-    `${CONFIG.ENDPOINTS.API}/reports/${reportIdent}/appendices/tcga`,
+    `${window._env_.API_BASE_URL}/reports/${reportIdent}/appendices/tcga`,
     options,
   );
 
