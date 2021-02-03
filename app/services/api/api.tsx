@@ -122,9 +122,6 @@ class ApiCall {
         API + this.endpoint,
         {
           ...this.requestOptions,
-          headers: {
-            'Content-type': 'application/json',
-          },
           signal: this.controller.signal,
         },
       );
