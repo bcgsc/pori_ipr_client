@@ -2,7 +2,7 @@ import React, {
   useRef, useState, useEffect, useCallback, useContext,
 } from 'react';
 import { AgGridReact } from '@ag-grid-community/react';
-import { useGrid } from '@bcgsc/react-use-grid';
+import useGrid from '@/components/hooks/useGrid';
 import {
   Typography,
   IconButton,

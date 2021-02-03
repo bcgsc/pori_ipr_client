@@ -8,7 +8,7 @@ import {
   Switch, Route, useRouteMatch, useParams, useHistory,
 } from 'react-router-dom';
 import { useTheme } from '@material-ui/core/styles';
-import { SnackbarContext } from '@bcgsc/react-snackbar-provider';
+import { useSnackbar } from 'notistack';
 
 import SecurityContext from '@/components/SecurityContext';
 import ReportToolbar from '@/components/ReportToolbar';
@@ -48,7 +48,7 @@ const ReportView = () => {
   const theme = useTheme();
   const history = useHistory();
   const { canEdit } = useContext(EditContext);
-  const snackbar = useContext(SnackbarContext);
+  const snackbar = useSnackbar();
 
   const [report, setReport] = useState();
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
@@ -69,7 +69,7 @@ const ReportView = () => {
           }
           setVisibleSections(resp.template.sections);
         } catch {
-          snackbar.add(`Report ${params.ident} not found`);
+          snackbar.enqueueSnackbar(`Report ${params.ident} not found`);
           history.push('/reports');
         }
       };

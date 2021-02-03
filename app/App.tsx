@@ -1,7 +1,7 @@
 /**
  * @module /App
  */
-import { SnackbarContextProvider as SnackbarProvider } from '@bcgsc/react-snackbar-provider';
+import { SnackbarProvider } from 'notistack';
 import ScopedCssBaseline from '@material-ui/core/ScopedCssBaseline';
 import {
   createMuiTheme,
