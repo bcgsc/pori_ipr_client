@@ -102,8 +102,8 @@ const ReportSidebar = (props) => {
 };
 
 ReportSidebar.propTypes = {
-  allSections: PropTypes.arrayOf(PropTypes.object).isRequired,
-  visibleSections: PropTypes.arrayOf(PropTypes.object).isRequired,
+  allSections: PropTypes.arrayOf(PropTypes.string).isRequired,
+  visibleSections: PropTypes.arrayOf(PropTypes.string).isRequired,
   isSidebarVisible: PropTypes.bool.isRequired,
   reportIdent: PropTypes.string.isRequired,
 };
