@@ -16,7 +16,6 @@ import Slides from '../ReportView/components/Slides';
 import Appendices from '../ReportView/components/Appendices';
 import PageBreak from '@/components/PageBreak';
 import startCase from '@/utils/startCase';
-import PrintLogo from '@/../statics/images/print_logo.svg';
 
 import './index.scss';
 
@@ -134,7 +133,9 @@ const Print = () => {
   const titleBar = () => (
     <div className="print__headers">
       <div className="print__header-left">
-        <img className="print__logo" src={PrintLogo} alt="" />
+        {report.template && report.template.headerImage && (
+          <img className="print__logo" src={report.template.headerImage.data} alt="" />
+        )}
       </div>
       <div className="print__header-right">
         <Typography variant="h1">
@@ -153,7 +154,7 @@ const Print = () => {
         {report ? (
           <>
             {titleBar()}
-            {renderSections()}
+            {renderSections}
           </>
         ) : null}
       </div>
