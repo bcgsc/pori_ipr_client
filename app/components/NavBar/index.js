@@ -41,7 +41,8 @@ class NavBar {
       bindToController: true,
       controllerAs: 'vm',
       locals: {
-        ENV: CONFIG.MISC.ENV,
+        CONTACT_EMAIL: window._env_.CONTACT_EMAIL,
+        CONTACT_TICKET_URL: window._env_.CONTACT_TICKET_URL,
       },
     });
   }

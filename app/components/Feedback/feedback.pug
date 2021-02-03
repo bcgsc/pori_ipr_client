@@ -15,9 +15,9 @@ md-dialog(layout="column", aria-label="Feedback", flex=50)
         h3 Internal Users
         p Please create a JIRA ticket under the DEVSU (Development Support) project containing your feedback or bug report.
         h3 External Users
-        a(href="mailto:{{vm.window._env_.CONTACT_EMAIL}}").feedback__link Click here to email {{vm.window._env_.CONTACT_EMAIL}} with your feedback or bug report.
+        a(href="mailto:{{vm.CONTACT_EMAIL}}").feedback__link Click here to email {{vm.CONTACT_EMAIL}} with your feedback or bug report.
 
 
     md-dialog-actions(layout="row", layout-align="end center")
       md-button(ng-click="cancel()").md-accent Close
-      md-button(href="{{vm.window._env_.CONTACT_TICKET_URL}}", target="_", ng-click="cancel()").md-accent Create Ticket
+      md-button(href="{{vm.CONTACT_TICKET_URL}}", target="_", ng-click="cancel()").md-accent Create Ticket
