@@ -12,7 +12,7 @@
   },
   "browserslist": "> 0.25%, not dead",
   "scripts": {
-    "env": "chmod +x ./config/env.sh && ./config/env.sh && mv env-config.js ./statics",
+    "env": "chmod +x ./config/env.sh && ./config/env.sh && mv ipr-env-config.js ./statics",
     "cypress:open": "cypress open",
     "build": "npm run build:prod",
     "build:docker": "webpack --mode production --config ./config/webpack/webpack.docker.js",
