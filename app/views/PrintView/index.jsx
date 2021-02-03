@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useState, useReducer, useCallback,
+  useEffect, useState, useReducer, useMemo,
 } from 'react';
 import { useParams } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
@@ -84,7 +84,7 @@ const Print = () => {
     }
   }, [isPrintDialogShown, report, reportSectionsLoaded, sections]);
 
-  const renderSections = useCallback(() => (
+  const renderSections = useMemo(() => (
     <>
       {sections.includes('summary') && report.template.name === 'probe' && (
         <>
@@ -130,20 +130,6 @@ const Print = () => {
       )}
     </>
   ), [report, theme, sections]);
-
-  const genomicSections = () => (
-    <>
-      <GenomicSummary print loadedDispatch={dispatch} />
-      <PageBreak report={report} theme={theme} />
-      <AnalystComments report={report} print loadedDispatch={dispatch} />
-      <PageBreak report={report} theme={theme} />
-      <PathwayAnalysis report={report} print loadedDispatch={dispatch} />
-      <PageBreak report={report} theme={theme} />
-      <TherapeuticTargets print loadedDispatch={dispatch} />
-      <PageBreak report={report} theme={theme} />
-      <Slides report={report} print loadedDispatch={dispatch} theme={theme} />
-    </>
-  );
 
   const titleBar = () => (
     <div className="print__headers">
