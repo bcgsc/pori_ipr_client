@@ -23,7 +23,7 @@ class NavBar {
 
   // CONFIG and VERSION are injected with webpack
   async $onInit() {
-    this.config = CONFIG;
+    this.env = CONFIG.MISC.ENV;
     this.version = VERSION;
   }
 
