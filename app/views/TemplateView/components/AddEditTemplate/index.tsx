@@ -9,7 +9,6 @@ import {
   IconButton,
   Button,
   ListItemText,
-  Input,
   Checkbox,
   MenuItem,
   TextField,
@@ -19,6 +18,7 @@ import {
   InputLabel,
 } from '@material-ui/core';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
+import { useSnackbar } from 'notistack';
 
 import { recordDefaults } from '@/common';
 import sections from '../../sections';
@@ -54,6 +54,8 @@ const AddEditTemplate = ({
   const [headerImage, setHeaderImage] = useState<Blob>();
   const [imagePreview, setImagePreview] = useState('');
   const [imageError, setImageError] = useState('');
+
+  const snackbar = useSnackbar();
 
   useEffect(() => {
     if (editData) {
@@ -92,25 +94,30 @@ const AddEditTemplate = ({
 
   const handleSubmit = useCallback(async () => {
     if (templateName && selectedSections.length) {
-      const newTemplate = new FormData();
+      try {
+        const newTemplate = new FormData();
 
-      newTemplate.append('name', templateName);
-      selectedSections.forEach((section) => {
-        newTemplate.append('sections', section.value);
-      });
-      if (headerImage) {
-        newTemplate.append('header', headerImage);
-      }
+        newTemplate.append('name', templateName);
+        selectedSections.forEach((section) => {
+          newTemplate.append('sections', section.value);
+        });
+        if (headerImage) {
+          newTemplate.append('header', headerImage);
+        }
 
-      let resp;
-      if (editData) {
-        resp = await api.put(`/templates/${editData.ident}`, newTemplate, {}, true).request();
-      } else {
-        resp = await api.post('/templates', newTemplate, {}, true).request();
+        let resp;
+        if (editData) {
+          resp = await api.put(`/templates/${editData.ident}`, newTemplate, {}, true).request();
+        } else {
+          resp = await api.post('/templates', newTemplate, {}, true).request();
+        }
+        snackbar.enqueueSnackbar(`Template ${editData ? 'updated' : 'created'} successfully`);
+        onClose(resp);
+      } catch (err) {
+        snackbar.enqueueSnackbar(`Error ${editData ? 'updating' : 'creating'} template: ${err}`);
       }
-      onClose(resp);
     }
-  }, [editData, headerImage, onClose, selectedSections, templateName]);
+  }, [editData, headerImage, onClose, selectedSections, snackbar, templateName]);
 
   return (
     <Dialog open={isOpen} onClose={() => onClose(null)}>

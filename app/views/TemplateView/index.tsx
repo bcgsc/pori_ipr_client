@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import {
   Typography,
 } from '@material-ui/core';
+import { useSnackbar } from 'notistack';
 
 import api from '../../services/api';
 import AddEditTemplate from './components/AddEditTemplate';
@@ -13,6 +14,8 @@ const TemplateView = (): JSX.Element => {
   const [showDialog, setShowDialog] = useState(false);
   const [templates, setTemplates] = useState([]);
   const [selectedRow, setSelectedRow] = useState();
+
+  const snackbar = useSnackbar();
 
   useEffect(() => {
     const getData = async () => {
@@ -44,20 +47,29 @@ const TemplateView = (): JSX.Element => {
     setSelectedRow(null);
   }, [templates]);
 
+  const handleDelete = useCallback(async (rowData) => {
+    try {
+      await api.del(`/templates/${rowData.ident}`, {}, {}).request();
+      setTemplates(prevVal => prevVal.filter(template => template.ident !== rowData.ident));
+      snackbar.enqueueSnackbar('Template deleted');
+    } catch (err) {
+      snackbar.enqueueSnackbar(`Error deleting template: ${err}`);
+    }
+  }, [snackbar]);
+
   return (
     <div>
-      <Typography variant="h3">
-        Template Management
-      </Typography>
       <DataTable
         rowData={templates}
         columnDefs={columnDefs}
-        titleText="Templates"
+        titleText="Template Management"
         canAdd
         onAdd={handleEditStart}
-        addText="Create template"
+        addText="Create Template"
         canEdit
         onEdit={handleEditStart}
+        canDelete
+        onDelete={handleDelete}
       />
       <AddEditTemplate
         isOpen={showDialog}
