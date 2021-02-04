@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { AgGridReact } from '@ag-grid-community/react';
 
 import columnDefs from './columnDefs';
+import startCase from '@/utils/startCase';
 import { isExternalMode } from '@/services/management/auth';
 import SecurityContext from '@/components/SecurityContext';
 import ReportService from '@/services/reports/report.service';
@@ -56,7 +57,7 @@ function ReportsTableComponent(props) {
       return {
         patientID: report.patientId,
         analysisBiopsy: report.biopsyName,
-        reportType: report.type === 'genomic' ? 'Genomic' : 'Targeted Gene',
+        reportType: report.template.name === 'probe' ? 'Targeted Gene' : startCase(report.template.name),
         state: report.state,
         caseType: report.patientInformation.caseType,
         project: report.projects.map(project => project.name).sort().join(', '),
