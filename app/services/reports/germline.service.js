@@ -2,8 +2,8 @@ import { $http } from 'ngimport';
 
 class GermlineService {
   constructor() {
-    this.baseApi = CONFIG.ENDPOINTS.API;
-    this.api = `${CONFIG.ENDPOINTS.API}/germline-small-mutation-reports`;
+    this.baseApi = window._env_.API_BASE_URL;
+    this.api = `${window._env_.API_BASE_URL}/germline-small-mutation-reports`;
   }
 
   /**
