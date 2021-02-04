@@ -48,7 +48,7 @@ const Main = (): JSX.Element => {
     if (authorizationToken) {
       const interceptor = {
         request: (fetchUrl, fetchConfig) => {
-          if (fetchUrl.startsWith(CONFIG.ENDPOINTS.API)) {
+          if (fetchUrl.startsWith(window._env_.API_BASE_URL)) {
             const newConfig = { ...fetchConfig };
 
             if (!newConfig.headers) {

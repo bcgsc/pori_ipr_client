@@ -2,7 +2,7 @@ import { $http } from 'ngimport';
 
 class TargetedGenesService {
   constructor() {
-    this.api = `${CONFIG.ENDPOINTS.API}/reports`;
+    this.api = `${window._env_.API_BASE_URL}/reports`;
   }
 
   async getAll(report) {

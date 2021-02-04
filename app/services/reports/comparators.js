@@ -10,7 +10,7 @@ const getComparators = async (reportIdent) => {
   };
 
   const response = await fetch(
-    `${CONFIG.ENDPOINTS.API}/reports/${reportIdent}/comparators`,
+    `${window._env_.API_BASE_URL}/reports/${reportIdent}/comparators`,
     options,
   );
 

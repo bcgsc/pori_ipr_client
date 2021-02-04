@@ -1,5 +1,9 @@
 import React, {
+<<<<<<< HEAD
   useEffect, useState, useReducer, useCallback,
+=======
+  useEffect, useState, useReducer, useMemo,
+>>>>>>> 93bc9e5ceaf83c1b24006d06dd716f3d60b0743e
 } from 'react';
 import { useParams } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
@@ -16,7 +20,6 @@ import Slides from '../ReportView/components/Slides';
 import Appendices from '../ReportView/components/Appendices';
 import PageBreak from '@/components/PageBreak';
 import startCase from '@/utils/startCase';
-import PrintLogo from '@/../statics/images/print_logo.svg';
 
 import './index.scss';
 
@@ -84,7 +87,11 @@ const Print = () => {
     }
   }, [isPrintDialogShown, report, reportSectionsLoaded, sections]);
 
+<<<<<<< HEAD
   const renderSections = useCallback(() => (
+=======
+  const renderSections = useMemo(() => (
+>>>>>>> 93bc9e5ceaf83c1b24006d06dd716f3d60b0743e
     <>
       {sections.includes('summary') && report.template.name === 'probe' && (
         <>
@@ -131,24 +138,12 @@ const Print = () => {
     </>
   ), [report, theme, sections]);
 
-  const genomicSections = () => (
-    <>
-      <GenomicSummary print loadedDispatch={dispatch} />
-      <PageBreak report={report} theme={theme} />
-      <AnalystComments report={report} print loadedDispatch={dispatch} />
-      <PageBreak report={report} theme={theme} />
-      <PathwayAnalysis report={report} print loadedDispatch={dispatch} />
-      <PageBreak report={report} theme={theme} />
-      <TherapeuticTargets print loadedDispatch={dispatch} />
-      <PageBreak report={report} theme={theme} />
-      <Slides report={report} print loadedDispatch={dispatch} theme={theme} />
-    </>
-  );
-
   const titleBar = () => (
     <div className="print__headers">
       <div className="print__header-left">
-        <img className="print__logo" src={PrintLogo} alt="" />
+        {report.template && report.template.headerImage && (
+          <img className="print__logo" src={report.template.headerImage.data} alt="" />
+        )}
       </div>
       <div className="print__header-right">
         <Typography variant="h1">
@@ -167,7 +162,7 @@ const Print = () => {
         {report ? (
           <>
             {titleBar()}
-            {renderSections()}
+            {renderSections}
           </>
         ) : null}
       </div>
