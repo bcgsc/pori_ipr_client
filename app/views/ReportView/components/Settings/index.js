@@ -19,6 +19,7 @@ const bindings = {
   showBindings: '<',
   history: '<',
   isSigned: '<',
+  templates: '<',
 };
 
 class Settings {
@@ -118,8 +119,8 @@ class Settings {
   }
 
   checkChange() {
-    if (this.report.type !== this.reportCache.type) {
-      this.newReportFields.type = this.report.type;
+    if (this.report.template.name !== this.reportCache.template.name) {
+      this.newReportFields.template = this.report.template.name;
       this.reportSettingsChanged = true;
     }
     if (this.report.state !== this.reportCache.state) {

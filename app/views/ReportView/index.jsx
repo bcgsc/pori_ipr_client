@@ -55,13 +55,15 @@ const ReportView = () => {
   const [visibleSections, setVisibleSections] = useState([]);
   const [isProbe, setIsProbe] = useState(false);
   const [isSigned, setIsSigned] = useState(false);
+  const [templates, setTemplates] = useState([]);
 
   useEffect(() => {
     if (!report) {
       const getReport = async () => {
         try {
           const resp = await ReportService.getReport(params.ident);
-          await api.get('/templates', {}).request();
+          const templatesResp = await api.get('/templates', {}).request();
+          setTemplates(templatesResp);
           setReport(resp);
           if (resp.template.name === 'probe') {
             setIsProbe(true);
@@ -218,7 +220,15 @@ const ReportView = () => {
                 />
                 <Route
                   render={routeProps => (
-                    <Settings {...routeProps} print={false} showBindings={!isProbe} report={report} canEdit={canEdit} isSigned={isSigned} />
+                    <Settings
+                      {...routeProps}
+                      print={false}
+                      showBindings={!isProbe}
+                      report={report}
+                      canEdit={canEdit}
+                      isSigned={isSigned}
+                      templates={templates}
+                    />
                   )}
                   path={`${path}/settings`}
                 />

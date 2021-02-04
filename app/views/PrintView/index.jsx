@@ -1,9 +1,5 @@
 import React, {
-<<<<<<< HEAD
-  useEffect, useState, useReducer, useCallback,
-=======
   useEffect, useState, useReducer, useMemo,
->>>>>>> 93bc9e5ceaf83c1b24006d06dd716f3d60b0743e
 } from 'react';
 import { useParams } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
@@ -87,11 +83,7 @@ const Print = () => {
     }
   }, [isPrintDialogShown, report, reportSectionsLoaded, sections]);
 
-<<<<<<< HEAD
-  const renderSections = useCallback(() => (
-=======
   const renderSections = useMemo(() => (
->>>>>>> 93bc9e5ceaf83c1b24006d06dd716f3d60b0743e
     <>
       {sections.includes('summary') && report.template.name === 'probe' && (
         <>
