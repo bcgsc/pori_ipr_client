@@ -96,6 +96,19 @@ const ReportSidebar = (props) => {
             </>
           </React.Fragment>
         ))}
+        <Link to={{ pathname: 'settings' }} className="report-sidebar__list-link">
+          <ListItem classes={{
+            root: `
+              report-sidebar__list-item
+              ${pathname.split('/').pop() === 'settings' ? 'report-sidebar__list-item--active' : ''}
+            `,
+          }}
+          >
+            <ListItemText>
+              Settings
+            </ListItemText>
+          </ListItem>
+        </Link>
       </List>
     </div>
   );
