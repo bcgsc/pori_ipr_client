@@ -53,6 +53,7 @@ const AddEditTemplate = ({
   const [selectedSections, setSelectedSections] = useState([]);
   const [headerImage, setHeaderImage] = useState<Blob>();
   const [imagePreview, setImagePreview] = useState('');
+  const [imageError, setImageError] = useState('');
 
   useEffect(() => {
     if (editData) {
@@ -77,6 +78,12 @@ const AddEditTemplate = ({
     const {
       target: { files },
     } = event;
+    if (!files[0].name.match(/\.(jpg|jpeg|png)$/)) {
+      setImageError('Please select a valid image (.jpg/.jpeg/.png)');
+      return;
+    }
+    setImageError('');
+
     setHeaderImage(files[0]);
     const fileReader = new FileReader();
     fileReader.readAsDataURL(files[0]);
@@ -111,7 +118,7 @@ const AddEditTemplate = ({
       <DialogContent>
         <FormControl fullWidth variant="outlined">
           <TextField
-            className="text-field-fix"
+            className="template__name"
             label="Template name"
             onChange={(({ target: { value } }) => setTemplateName(value))}
             required
@@ -121,10 +128,10 @@ const AddEditTemplate = ({
           />
         </FormControl>
         <FormControl required fullWidth variant="outlined">
-          <InputLabel className="sections__select" id="select-sections">Sections</InputLabel>
+          <InputLabel className="template__sections" id="select-sections">Sections</InputLabel>
           <Select
             autoWidth
-            className="sections__select"
+            className="template__sections"
             label="Sections"
             labelId="select-sections"
             multiple
@@ -140,9 +147,14 @@ const AddEditTemplate = ({
             ))}
           </Select>
         </FormControl>
-        <Typography>Printed Report Header Image (96px x 300px)</Typography>
+        <Typography variant="h5" className="template__image-text">
+          Print Report Header Image
+        </Typography>
+        <Typography variant="subtitle1" className="template__image-subtitle">
+          This will be resized to 300 x 96
+        </Typography>
         {imagePreview ? (
-          <>
+          <div className="template__image">
             <img
               height={96}
               width={300}
@@ -152,22 +164,40 @@ const AddEditTemplate = ({
             <IconButton onClick={handleImageDelete} className="image__delete">
               <HighlightOffIcon />
             </IconButton>
-          </>
+          </div>
         ) : (
-          <Input
-            onChange={handleImageUpload}
-            type="file"
-          />
+          <div className="template__upload">
+            <Button
+              variant="outlined"
+              component="label"
+              color="secondary"
+            >
+              Upload image
+              <input
+                accept=".png,.jpg,.jpeg"
+                onChange={handleImageUpload}
+                type="file"
+                hidden
+              />
+            </Button>
+            {imageError && (
+              <Typography color="error" className="template__upload-error">
+                {imageError}
+              </Typography>
+            )}
+          </div>
         )}
       </DialogContent>
       <DialogActions>
         <Button
           onClick={() => onClose(null)}
+          color="secondary"
         >
           Close
         </Button>
         <Button
           onClick={handleSubmit}
+          color="secondary"
         >
           Save
         </Button>
