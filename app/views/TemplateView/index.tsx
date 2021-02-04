@@ -62,7 +62,7 @@ const TemplateView = (): JSX.Element => {
       <DataTable
         rowData={templates}
         columnDefs={columnDefs}
-        titleText="Template Management"
+        titleText="Report Templates"
         canAdd
         onAdd={handleEditStart}
         addText="Create Template"
