@@ -25,12 +25,12 @@ const TemplateView = (): JSX.Element => {
     getData();
   }, []);
 
-  const handleEditStart = useCallback((rowData) => {
+  const handleEditStart = (rowData) => {
     setShowDialog(true);
     if (rowData) {
       setSelectedRow(rowData);
     }
-  }, []);
+  };
 
   const handleDialogClose = useCallback((newData) => {
     setShowDialog(false);
