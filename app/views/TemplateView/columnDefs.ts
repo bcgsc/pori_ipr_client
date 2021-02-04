@@ -6,9 +6,8 @@ const columnDefs = [
   },
   {
     headerName: 'Sections',
-    field: 'sections',
+    valueGetter: 'data.sections.join(", ")',
     hide: false,
-    cellRenderer: 'ArrayCellRenderer',
   },
   {
     headerName: 'Actions',
