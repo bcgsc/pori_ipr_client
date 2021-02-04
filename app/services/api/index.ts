@@ -12,6 +12,11 @@ const post = (endpoint, payload, callOptions, formData = false) => {
     method: 'POST',
     body: formData ? payload : JSON.stringify(payload),
   };
+  if (!formData) {
+    requestOptions.headers = {
+      'Content-type': 'application/json',
+    };
+  }
   return new ApiCall(endpoint, requestOptions, callOptions);
 };
 
@@ -28,6 +33,11 @@ const del = (endpoint, payload, callOptions, formData = false) => {
       method: 'DELETE',
     };
   }
+  if (!formData) {
+    requestOptions.headers = {
+      'Content-type': 'application/json',
+    };
+  }
   return new ApiCall(endpoint, requestOptions, callOptions);
 };
 
@@ -36,6 +46,11 @@ const put = (endpoint, payload, callOptions, formData = false) => {
     method: 'PUT',
     body: formData ? payload : JSON.stringify(payload),
   };
+  if (!formData) {
+    requestOptions.headers = {
+      'Content-type': 'application/json',
+    };
+  }
   return new ApiCall(endpoint, requestOptions, callOptions);
 };
 
