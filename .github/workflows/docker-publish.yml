@@ -14,4 +14,6 @@ jobs:
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       - run: |
-          docker build --file Dockerfile --tag creisle/pori-graphkb-client:${{ github.event.release.tag_name }} .
+          docker build --file Dockerfile --tag bcgsc/pori-ipr-client:latest --tag bcgsc/pori-ipr-client:${{ github.event.release.tag_name }} .
+      - run: docker push bcgsc/pori-ipr-client:latest
+      - run: docker push bcgsc/pori-ipr-client:${{ github.event.release.tag_name }}

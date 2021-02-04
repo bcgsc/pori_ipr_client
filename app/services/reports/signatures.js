@@ -10,7 +10,7 @@ const getSignatures = async (reportIdent) => {
   };
 
   const response = await fetch(
-    `${CONFIG.ENDPOINTS.API}/reports/${reportIdent}/signatures`,
+    `${window._env_.API_BASE_URL}/reports/${reportIdent}/signatures`,
     options,
   );
 
@@ -30,7 +30,7 @@ const sign = async (reportIdent, role) => {
   };
 
   const response = await fetch(
-    `${CONFIG.ENDPOINTS.API}/reports/${reportIdent}/signatures/sign/${role}`,
+    `${window._env_.API_BASE_URL}/reports/${reportIdent}/signatures/sign/${role}`,
     options,
   );
 
@@ -50,7 +50,7 @@ const revokeSignature = async (reportIdent, role) => {
   };
 
   const response = await fetch(
-    `${CONFIG.ENDPOINTS.API}/reports/${reportIdent}/signatures/revoke/${role}`,
+    `${window._env_.API_BASE_URL}/reports/${reportIdent}/signatures/revoke/${role}`,
     options,
   );
 

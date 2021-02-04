@@ -23,7 +23,7 @@ class NavBar {
 
   // CONFIG and VERSION are injected with webpack
   async $onInit() {
-    this.config = CONFIG;
+    this.env = CONFIG.MISC.ENV;
     this.version = VERSION;
   }
 
@@ -41,7 +41,8 @@ class NavBar {
       bindToController: true,
       controllerAs: 'vm',
       locals: {
-        CONFIG,
+        CONTACT_EMAIL: window._env_.CONTACT_EMAIL,
+        CONTACT_TICKET_URL: window._env_.CONTACT_TICKET_URL,
       },
     });
   }

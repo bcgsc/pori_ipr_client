@@ -24,7 +24,7 @@ class PathwayAnalysis {
     this.$mdToast = $mdToast;
     this.FileUploader = FileUploader;
   }
-  
+
   $onInit() {
     this.loading = true;
   }
@@ -110,7 +110,7 @@ class PathwayAnalysis {
 
           let selectedItem;
           $scope.uploader = new this.FileUploader({
-            url: `${CONFIG.ENDPOINTS.API}/reports/${this.report.ident}/summary/pathway-analysis`,
+            url: `${window._env_.API_BASE_URL}/reports/${this.report.ident}/summary/pathway-analysis`,
           });
 
           $scope.uploader.headers.Authorization = this.token;

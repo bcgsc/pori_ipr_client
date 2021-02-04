@@ -11,7 +11,7 @@ const kbAutocomplete = async (targetType, keyword) => {
   };
 
   const response = await fetch(
-    `${CONFIG.ENDPOINTS.API}/graphkb/${targetType}`,
+    `${window._env_.API_BASE_URL}/graphkb/${targetType}`,
     options,
   );
 

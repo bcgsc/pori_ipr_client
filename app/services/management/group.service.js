@@ -2,9 +2,9 @@ import { $http } from 'ngimport';
 
 class GroupService {
   constructor() {
-    this.api = `${CONFIG.ENDPOINTS.API}/user/group`;
+    this.api = `${window._env_.API_BASE_URL}/user/group`;
   }
-  
+
   /**
    * Retrieve all groups
    * @return {Promise} All response
@@ -87,5 +87,5 @@ class GroupService {
     return resp.data;
   }
 }
-    
+
 export default new GroupService();

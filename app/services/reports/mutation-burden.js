@@ -10,7 +10,7 @@ const getMutationBurden = async (reportIdent) => {
   };
 
   const response = await fetch(
-    `${CONFIG.ENDPOINTS.API}/reports/${reportIdent}/mutation-burden`,
+    `${window._env_.API_BASE_URL}/reports/${reportIdent}/mutation-burden`,
     options,
   );
 
@@ -31,7 +31,7 @@ const updateMutationBurden = async (reportIdent, mutationBurden) => {
   };
 
   const response = await fetch(
-    `${CONFIG.ENDPOINTS.API}/reports/${reportIdent}/mutation-burden`,
+    `${window._env_.API_BASE_URL}/reports/${reportIdent}/mutation-burden`,
     options,
   );
 

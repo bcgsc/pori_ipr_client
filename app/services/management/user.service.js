@@ -2,9 +2,9 @@ import { $http } from 'ngimport';
 
 class UserService {
   constructor() {
-    this.api = `${CONFIG.ENDPOINTS.API}/user`;
+    this.api = `${window._env_.API_BASE_URL}/user`;
   }
-  
+
   /**
    * Get all users (admin)
    * @return {Promise} all promise
@@ -25,7 +25,7 @@ class UserService {
     const { data } = await $http.put(`${this.api}/${user.ident}`, user);
     return data;
   }
-  
+
 
   /**
    * Create a new user account

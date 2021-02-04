@@ -5,9 +5,9 @@ import { $http } from 'ngimport';
 const externalGroups = ['clinician', 'collaborator', 'external analyst'];
 
 const keycloak = Keycloak({
-  'realm': CONFIG.SSO.REALM,
-  'clientId': CONFIG.SSO.CLIENT,
-  'url': CONFIG.ENDPOINTS.KEYCLOAK,
+  'realm': window._env_.KEYCLOAK_REALM,
+  'clientId': window._env_.KEYCLOAK_CLIENT_ID,
+  'url': window._env_.KEYCLOAK_URL,
 });
 
 const getReferrerUri = () => localStorage.getItem(CONFIG.STORAGE.REFERRER);
@@ -66,7 +66,7 @@ const getUser = async (token) => {
     if (token) {
       $http.defaults.headers.common.Authorization = token;
     }
-    const resp = await $http.get(`${CONFIG.ENDPOINTS.API}/user/me`);
+    const resp = await $http.get(`${window._env_.API_BASE_URL}/user/me`);
     return resp.data;
   } catch (err) {
     return null;
@@ -104,7 +104,7 @@ const isExternalMode = (user) => {
 
 const searchUsers = async (query) => {
   try {
-    const resp = await $http.get(`${CONFIG.ENDPOINTS.API}/user/search`, { params: { query } });
+    const resp = await $http.get(`${window._env_.API_BASE_URL}/user/search`, { params: { query } });
     return resp.data;
   } catch {
     return false;
