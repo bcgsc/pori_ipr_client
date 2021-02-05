@@ -30,7 +30,7 @@ type DataTableProps = {
   /* Data populating table */
   rowData: Record<string, any>[];
   /* Callback function when rowData is changed within the DataTable */
-  onRowDataChanged;
+  onRowDataChanged?: (row: Record<string, any>) => void;
   /* Column definitions for rowData */
   columnDefs: Record<string, any>[];
   /* Table title */
@@ -74,7 +74,7 @@ type DataTableProps = {
   /* Can the table rows be exported? */
   canExport?: boolean;
   /* MUI theme passed for react in angular table compatibility */
-  theme;
+  theme?: any;
   /* Is the table being rendered for printing? */
   isPrint?: boolean;
   /* Row index to highlight */
