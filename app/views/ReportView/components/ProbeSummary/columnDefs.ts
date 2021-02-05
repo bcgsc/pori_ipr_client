@@ -38,6 +38,11 @@ const eventsColumnDefs = [
     hide: false,
   },
   {
+    headerName: 'Sample',
+    field: 'sample',
+    hide: false,
+  },
+  {
     headerName: 'Comments',
     field: 'comments',
     flex: 1,
