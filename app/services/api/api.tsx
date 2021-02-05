@@ -12,9 +12,6 @@ import { theme } from '../../App';
 
 import errorHandler from '../errors/errorHandler';
 
-const {
-  ENDPOINTS: { API },
-} = CONFIG;
 
 class ApiCall {
   endpoint: string;
@@ -35,9 +32,9 @@ class ApiCall {
     endpoint: string,
     requestOptions: any,
     callOptions: {
-      forceListReturn: boolean,
-      forceRecordReturn: boolean,
-      name: string,
+      forceListReturn: boolean;
+      forceRecordReturn: boolean;
+      name: string;
       confirm: boolean
     },
   ) {
@@ -74,7 +71,7 @@ class ApiCall {
     const handleClose = async (isSaved) => {
       if (isSaved) {
         await fetch(
-          API + this.endpoint,
+          window._env_.API_BASE_URL + this.endpoint,
           {
             ...this.requestOptions,
             headers: {
@@ -119,7 +116,7 @@ class ApiCall {
 
     try {
       response = await fetch(
-        API + this.endpoint,
+        window._env_.API_BASE_URL + this.endpoint,
         {
           ...this.requestOptions,
           headers: {
@@ -138,7 +135,7 @@ class ApiCall {
 
       try {
         response = await fetch(
-          API + this.endpoint,
+          window._env_.API_BASE_URL + this.endpoint,
           {
             ...this.requestOptions,
             headers: {

@@ -9,7 +9,7 @@ import {
   Grid,
 } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
-import { SnackbarContext } from '@bcgsc/react-snackbar-provider';
+import { useSnackbar } from 'notistack';
 import sortBy from 'lodash.sortby';
 
 import api, { ApiCallSet } from '@/services/api';
@@ -62,15 +62,15 @@ const customTypeSort = (variant) => {
 };
 
 type GenomicSummaryProps = {
-  print: boolean,
-  loadedDispatch: (section: Record<'type', string>) => void,
+  print: boolean;
+  loadedDispatch: (section: Record<'type', string>) => void;
 };
 
 const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
   const { canEdit } = useContext(EditContext);
   const { isSigned } = useContext(ConfirmContext);
-  const snackbar = useContext(SnackbarContext);
+  const snackbar = useSnackbar();
   const history = useHistory();
 
   const [showPatientEdit, setShowPatientEdit] = useState<boolean>(false);
@@ -143,7 +143,7 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
         const sorted = sortBy(output, [customTypeSort, 'geneVariant']);
         setVariants(sorted);
         setVariantCounts(counts);
-        loadedDispatch({ type: 'genomicSummary' });
+        loadedDispatch({ type: 'summary' });
       };
 
       getData();
@@ -262,10 +262,10 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
 
       setVariantCounts(prevVal => ({ ...prevVal, [type]: prevVal[type] - 1 }));
       setVariants(prevVal => (prevVal.filter(val => val.ident !== chipIdent)));
-      snackbar.add('Entry deleted');
+      snackbar.enqueueSnackbar('Entry deleted');
     } catch (err) {
       console.error(err);
-      snackbar.add('Entry NOT deleted due to an error');
+      snackbar.enqueueSnackbar('Entry NOT deleted due to an error');
     }
   }, [report, isSigned, snackbar]);
 
@@ -278,10 +278,10 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
 
       setVariantCounts(prevVal => ({ ...prevVal, [categorizedVariantEntry.type]: prevVal[categorizedVariantEntry.type] + 1 }));
       setVariants(prevVal => ([...prevVal, categorizedVariantEntry]));
-      snackbar.add('Entry added');
+      snackbar.enqueueSnackbar('Entry added');
     } catch (err) {
       console.error(err);
-      snackbar.add('Entry NOT added due to an error');
+      snackbar.enqueueSnackbar('Entry NOT added due to an error');
     }
   }, [report, snackbar]);
 
@@ -468,7 +468,6 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
                   <VariantChips
                     variants={variantFilter ? variants.filter(v => v.type === variantFilter) : variants}
                     canEdit={canEdit}
-                    reportIdent={report.ident}
                     onChipDeleted={handleChipDeleted}
                     onChipAdded={handleChipAdded}
                     isPrint={print}
@@ -493,7 +492,6 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
                   <VariantChips
                     variants={variantFilter ? variants.filter(v => v.type === variantFilter) : variants}
                     canEdit={canEdit}
-                    reportIdent={report.ident}
                     onChipDeleted={handleChipDeleted}
                     onChipAdded={handleChipAdded}
                   />

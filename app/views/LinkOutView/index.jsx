@@ -6,7 +6,7 @@ const LinkOutView = () => {
   useEffect(() => {
     try {
       const [link] = window.location.href.match(/(?<=\/graphkb).+/g);
-      window.location.assign(`${CONFIG.ENDPOINTS.GRAPHKB}${link}`);
+      window.location.assign(`${window._env_.GRAPHKB_URL}${link}`);
     } catch (err) {
       setError(err);
     }

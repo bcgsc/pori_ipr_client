@@ -17,9 +17,9 @@ import ReadOnlyTextField from '../../../../components/ReadOnlyTextField';
 import './index.scss';
 
 type AppendicesProps = {
-  isProbe: boolean,
-  isPrint: boolean,
-  loadedDispatch: (section: { type: string }) => void
+  isProbe: boolean;
+  isPrint: boolean;
+  loadedDispatch: (section: { type: string }) => void;
 };
 
 const Appendices = ({ isProbe, isPrint, loadedDispatch }: AppendicesProps): JSX.Element => {

@@ -13,8 +13,8 @@ import api from '../../../../../../services/api';
 import './index.scss';
 
 type InfoDialogProps = {
-  isOpen: boolean,
-  onClose: () => void,
+  isOpen: boolean;
+  onClose: () => void;
 };
 
 const InfoDialog = ({ isOpen, onClose }: InfoDialogProps): JSX.Element => {

@@ -2,7 +2,7 @@ import React, {
   useState, useEffect, useContext, useCallback,
 } from 'react';
 import { CircularProgress } from '@material-ui/core';
-import { SnackbarContext } from '@bcgsc/react-snackbar-provider';
+import { useSnackbar } from 'notistack';
 
 import api from '../../../../services/api';
 import DataTable from '../../../../components/DataTable';
@@ -18,7 +18,7 @@ const Projects = (): JSX.Element => {
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [editData, setEditData] = useState<projectType | null>();
 
-  const snackbar = useContext(SnackbarContext);
+  const snackbar = useSnackbar();
 
   useEffect(() => {
     const getData = async () => {
@@ -42,9 +42,9 @@ const Projects = (): JSX.Element => {
       await api.del(`/project/${ident}`, {}, {}).request();
       const newProjects = projects.filter(project => project.ident !== ident);
       setProjects(newProjects);
-      snackbar.add('Project deleted');
+      snackbar.enqueueSnackbar('Project deleted');
     } else {
-      snackbar.add('Project not deleted');
+      snackbar.enqueueSnackbar('Project not deleted');
     }
   }, [snackbar, projects]);
 
@@ -56,15 +56,15 @@ const Projects = (): JSX.Element => {
         const newProjects = [...projects];
         newProjects[projectIndex] = newData;
         setProjects(newProjects);
-        snackbar.add('Project edited');
+        snackbar.enqueueSnackbar('Project edited');
       } else {
         setProjects(prevVal => [...prevVal, newData]);
-        snackbar.add('Project added');
+        snackbar.enqueueSnackbar('Project added');
       }
     }
     setEditData(null);
   }, [projects, snackbar]);
-  
+
   return (
     <div className="admin-table__container">
       {!loading && (

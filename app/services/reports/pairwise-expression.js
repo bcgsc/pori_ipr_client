@@ -10,7 +10,7 @@ const getPairwiseExpressionCorrelation = async (reportIdent) => {
   };
 
   const response = await fetch(
-    `${CONFIG.ENDPOINTS.API}/reports/${reportIdent}/pairwise-expression-correlation`,
+    `${window._env_.API_BASE_URL}/reports/${reportIdent}/pairwise-expression-correlation`,
     options,
   );
 

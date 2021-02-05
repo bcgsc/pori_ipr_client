@@ -96,7 +96,7 @@ function ActionCellRenderer(params) {
             size="small"
             aria-label="Open in GraphKB"
             title="Open in GraphKB"
-            href={`${CONFIG.ENDPOINTS.GRAPHKB}/view/Statement/${data.kbStatementId.replace('#', '')}`}
+            href={`${window._env_.GRAPHKB_URL}/view/Statement/${data.kbStatementId.replace('#', '')}`}
             target="_blank"
             rel="noreferrer noopener"
           >
@@ -127,7 +127,7 @@ function ActionCellRenderer(params) {
                 >
                   <a
                     className="action-cell-kb-statement__link"
-                    href={`${CONFIG.ENDPOINTS.GRAPHKB}/view/Statement/${statement.replace('#', '')}`}
+                    href={`${window._env_.GRAPHKB_URL}/view/Statement/${statement.replace('#', '')}`}
                     target="_blank"
                     rel="noreferrer noopener"
                   >

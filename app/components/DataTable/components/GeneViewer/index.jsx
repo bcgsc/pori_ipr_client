@@ -13,7 +13,7 @@ import {
   Tab,
   AppBar,
 } from '@material-ui/core';
-import SnackbarContext from '@bcgsc/react-snackbar-provider';
+import { useSnackbar } from 'notistack';
 import DataTable from '../..';
 import api from '../../../../services/api';
 import { columnDefs } from '@/views/ReportView/components/KbMatches/columnDefs';
@@ -40,10 +40,10 @@ const GeneViewer = (props) => {
     gene,
     reportIdent,
   } = props;
-  
+
   const [geneData, setGeneData] = useState();
   const [tabValue, setTabValue] = useState(0);
-  const snackbar = useContext(SnackbarContext);
+  const snackbar = useSnackbar();
 
   const handleClose = useCallback(() => {
     columnDefs[0].cellRendererParams = { link: true };
@@ -66,7 +66,7 @@ const GeneViewer = (props) => {
           const resp = await call.request();
           setGeneData(resp);
         } catch {
-          snackbar.add(`Error: gene viewer data does not exist for ${gene}`);
+          snackbar.enqueueSnackbar(`Error: gene viewer data does not exist for ${gene}`);
           handleClose(null);
         }
       };
@@ -113,28 +113,24 @@ const GeneViewer = (props) => {
               <DataTable
                 rowData={geneData.kbMatches}
                 columnDefs={columnDefs}
-                reportIdent={reportIdent}
               />
             )}
             {tabValue === 1 && (
               <DataTable
                 rowData={geneData.smallMutations}
                 columnDefs={smallMutationsColumnDefs}
-                reportIdent={reportIdent}
               />
             )}
             {tabValue === 2 && (
               <DataTable
                 rowData={geneData.copyNumber}
                 columnDefs={copyNumberColumnDefs}
-                reportIdent={reportIdent}
               />
             )}
             {tabValue === 3 && (
               <DataTable
                 rowData={geneData.expRNA}
                 columnDefs={expressionColumnDefs}
-                reportIdent={reportIdent}
               />
             )}
             {tabValue === 4 && (

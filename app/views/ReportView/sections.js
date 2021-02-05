@@ -1,4 +1,4 @@
-const genomic = [
+const sections = [
   {
     name: 'Summary',
     uri: 'summary',
@@ -101,42 +101,4 @@ const genomic = [
   },
 ];
 
-const probe = [
-  {
-    name: 'Summary',
-    uri: 'summary',
-    meta: false,
-    showChildren: false,
-    clinician: true,
-    children: [],
-  },
-  {
-    name: 'Knowledgebase Matches',
-    uri: 'kb-matches',
-    meta: false,
-    showChildren: false,
-    clinician: true,
-    children: [],
-  },
-  {
-    name: 'Appendices',
-    uri: 'appendices',
-    meta: false,
-    showChildren: false,
-    clinician: true,
-    children: [],
-  },
-  {
-    name: 'Report Settings',
-    uri: 'settings',
-    meta: true,
-    showChildren: false,
-    clinician: false,
-    children: [],
-  },
-];
-
-export {
-  genomic,
-  probe,
-};
+export default sections;

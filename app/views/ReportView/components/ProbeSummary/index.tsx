@@ -29,8 +29,8 @@ import PrintTable from './components/PrintTable';
 import './index.scss';
 
 type ProbeSummaryProps = {
-  loadedDispatch: (type: Record<string, unknown>) => void,
-  isPrint: boolean,
+  loadedDispatch: (type: Record<string, unknown>) => void;
+  isPrint: boolean;
 };
 
 const ProbeSummary = ({
@@ -95,7 +95,7 @@ const ProbeSummary = ({
         ]);
 
         if (loadedDispatch) {
-          loadedDispatch({ type: 'probeSummary' });
+          loadedDispatch({ type: 'summary' });
         }
       };
 

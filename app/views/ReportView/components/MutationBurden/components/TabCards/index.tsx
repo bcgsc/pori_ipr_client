@@ -9,7 +9,7 @@ import {
 } from '@material-ui/core';
 
 import { imageType, comparatorType, mutationBurdenType } from '../../types';
-
+import FrontPageTooltip from '../../../../../../components/FrontPageTooltip'; 
 import Image from '../../../../../../components/Image';
 
 const rankMapping = {
@@ -19,13 +19,13 @@ const rankMapping = {
   quaternary: 3,
 };
 
-type TabCardsType = {
-  comparators: comparatorType[],
-  mutationBurden: mutationBurdenType[],
-  type: string,
-  barplots: imageType[],
-  densities: imageType[],
-  legends: imageType[],
+type TabCardsProps = {
+  comparators: comparatorType[];
+  mutationBurden: mutationBurdenType[];
+  type: string;
+  barplots: imageType[];
+  densities: imageType[];
+  legends: imageType[];
 };
 
 const TabCards = ({
@@ -35,7 +35,7 @@ const TabCards = ({
   barplots,
   densities,
   legends,
-}: TabCardsType): JSX.Element => {
+}: TabCardsProps): JSX.Element => {
   const [tabValue, setTabValue] = useState<number>(0);
 
   const handleTabChange = (event, value: number): void => {
@@ -77,52 +77,76 @@ const TabCards = ({
       case 'SNV':
         return (
           <>
-            <Typography variant="body2" className="mutation-burden__comparator--padded">
-              Protein Coding SNVs (count):
-              {` ${burden.codingSnvCount}`}
-            </Typography>
-            <Typography variant="body2" className="mutation-burden__comparator--padded">
-              Protein Coding SNVs (percentile):
-              {` ${burden.codingSnvPercentile}`}
-            </Typography>
-            <Typography variant="body2" className="mutation-burden__comparator--padded">
-              Truncating Protein Coding SNVs (count):
-              {` ${burden.truncatingSnvCount}`}
-            </Typography>
+            <div className="mutation-burden__comparator-container">
+              <Typography variant="body2" className="mutation-burden__comparator--padded">
+                Protein Coding SNVs (count):
+                {` ${burden.codingSnvCount}`}
+              </Typography>
+            </div>
+            <div className="mutation-burden__comparator-container">
+              <Typography variant="body2" className="mutation-burden__comparator--padded">
+                Protein Coding SNVs (percentile):
+                {` ${burden.codingSnvPercentile}`}
+              </Typography>
+            </div>
+            <div className="mutation-burden__comparator-container">
+              <Typography variant="body2" className="mutation-burden__comparator--padded">
+                Truncating Protein Coding SNVs (count):
+                {` ${burden.truncatingSnvCount}`}
+              </Typography>
+            </div>
           </>
         );
       case 'Indel':
         return (
           <>
-            <Typography variant="body2" className="mutation-burden__comparator--padded">
-              Protein Coding Indels (count):
-              {` ${burden.codingIndelsCount}`}
-            </Typography>
-            <Typography variant="body2" className="mutation-burden__comparator--padded">
-              Protein Coding Indels (percentile):
-              {` ${burden.codingIndelPercentile}`}
-            </Typography>
-            <Typography variant="body2" className="mutation-burden__comparator--padded">
-              Frameshifting Protein Coding Indels (count):
-              {` ${burden.frameshiftIndelsCount}`}
-            </Typography>
+            <div className="mutation-burden__comparator-container">
+              <Typography variant="body2" className="mutation-burden__comparator--padded">
+                Protein Coding Indels (count):
+                {` ${burden.codingIndelsCount}`}
+              </Typography>
+            </div>
+            <div className="mutation-burden__comparator-container">
+              <Typography variant="body2" className="mutation-burden__comparator--padded">
+                Protein Coding Indels (percentile):
+                {` ${burden.codingIndelPercentile}`}
+              </Typography>
+            </div>
+            <div className="mutation-burden__comparator-container">
+              <Typography variant="body2" className="mutation-burden__comparator--padded">
+                Frameshifting Protein Coding Indels (count):
+                {` ${burden.frameshiftIndelsCount}`}
+              </Typography>
+            </div>
           </>
         );
       case 'SV':
         return (
           <>
-            <Typography variant="body2" className="mutation-burden__comparator--padded">
-              Structural Variants (count):
-              {` ${burden.qualitySvCount}`}
-            </Typography>
-            <Typography variant="body2" className="mutation-burden__comparator--padded">
-              Structural Variants (percentile):
-              {` ${burden.qualitySvPercentile}`}
-            </Typography>
-            <Typography variant="body2" className="mutation-burden__comparator--padded">
-              Expressed Structural Variants (count):
-              {` ${burden.qualitySvExpressedCount}`}
-            </Typography>
+            <div className="mutation-burden__comparator-container">
+              <Typography variant="body2" className="mutation-burden__comparator--padded" display="inline">
+                Structural Variants (count):
+                {` ${burden.qualitySvCount}`}
+              </Typography>
+              {burden.role === 'primary' && (
+                <FrontPageTooltip />
+              )}
+            </div>
+            <div className="mutation-burden__comparator-container">
+              <Typography variant="body2" className="mutation-burden__comparator--padded" display="inline">
+                Structural Variants (percentile):
+                {` ${burden.qualitySvPercentile}`}
+              </Typography>
+              {burden.role === 'primary' && (
+                <FrontPageTooltip />
+              )}
+            </div>
+            <div className="mutation-burden__comparator-container">
+              <Typography variant="body2" className="mutation-burden__comparator--padded">
+                Expressed Structural Variants (count):
+                {` ${burden.qualitySvExpressedCount}`}
+              </Typography>
+            </div>
           </>
         );
       default:

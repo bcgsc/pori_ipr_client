@@ -27,7 +27,7 @@ function ReportToolbar(props) {
       </Typography>
       <Typography display="inline" variant="h5" className="report__header--text-align-center">
         {patientId}
-        {` ${type === 'genomic' ? 'Genomic' : 'Targeted Gene'} Report`}
+        {` ${type === 'probe' ? 'Targeted Gene' : startCase(type)} Report`}
       </Typography>
       <Typography display="inline" variant="h5" className="report__header--text-align-right">
         {startCase(state)}

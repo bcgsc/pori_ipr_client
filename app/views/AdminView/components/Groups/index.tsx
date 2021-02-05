@@ -4,7 +4,7 @@ import React, {
 import {
   CircularProgress,
 } from '@material-ui/core';
-import { SnackbarContext } from '@bcgsc/react-snackbar-provider';
+import { useSnackbar } from 'notistack';
 
 import api from '../../../../services/api';
 import DataTable from '../../../../components/DataTable';
@@ -20,7 +20,7 @@ const Groups = (): JSX.Element => {
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [editData, setEditData] = useState<groupType | null>();
 
-  const snackbar = useContext(SnackbarContext);
+  const snackbar = useSnackbar();
 
   useEffect(() => {
     const getData = async () => {
@@ -39,9 +39,9 @@ const Groups = (): JSX.Element => {
       await api.del(`/user/group/${ident}`, {}, {}).request();
       const newGroups = groups.filter(group => group.ident !== ident);
       setGroups(newGroups);
-      snackbar.add('Group deleted');
+      snackbar.enqueueSnackbar('Group deleted');
     } else {
-      snackbar.add('Group not deleted');
+      snackbar.enqueueSnackbar('Group not deleted');
     }
   }, [snackbar, groups]);
 
@@ -58,10 +58,10 @@ const Groups = (): JSX.Element => {
         const newGroups = [...groups];
         newGroups[groupIndex] = newData;
         setGroups(newGroups);
-        snackbar.add('Group edited');
+        snackbar.enqueueSnackbar('Group edited');
       } else {
         setGroups(prevVal => [...prevVal, newData]);
-        snackbar.add('Group added');
+        snackbar.enqueueSnackbar('Group added');
       }
     }
     setEditData(null);
