@@ -204,7 +204,7 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
       setTumourSummary([
         {
           term: 'Tumour Content',
-          value: report.tumourContent,
+          value: `${report.tumourContent}%`,
         },
         {
           term: 'Subtype',
