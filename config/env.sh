@@ -38,7 +38,7 @@ do
     echo "$varname=$value (CUSTOM)"
   fi
   # Append configuration property to JS file
-  echo "  $varname: \'$value\'," >> $ENVJS_FILE
+  echo "  $varname: '$value'," >> $ENVJS_FILE
 done < $ENV_FILE
 
 echo "};" >> $ENVJS_FILE
