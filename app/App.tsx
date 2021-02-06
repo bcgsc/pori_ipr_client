@@ -75,7 +75,7 @@ function App() {
       <JssProvider jss={jss}>
         <MuiThemeProvider theme={theme}>
           <SnackbarProvider anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}>
-            <BrowserRouter>
+            <BrowserRouter basename={window._env_.PUBLIC_PATH}>
               <ScopedCssBaseline>
                 <MainView />
               </ScopedCssBaseline>

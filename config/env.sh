@@ -4,11 +4,12 @@
 
 echo "Creating env variables script: ./ipr-env-config.js"
 # Recreate config file
-rm -rf ./ipr-env-config.js
-touch ./ipr-env-config.js
+ENVJS_FILE=ipr-env-config.js
+rm -f $ENVJS_FILE
+touch $ENVJS_FILE
 
 # Add assignment
-echo "window._env_ = {" >> ./ipr-env-config.js
+echo "window._env_ = {" >> $ENVJS_FILE
 
 ENV_FILE=.env
 
@@ -37,9 +38,20 @@ do
     echo "$varname=$value (CUSTOM)"
   fi
   # Append configuration property to JS file
-  echo "  $varname: \"$value\"," >> ./ipr-env-config.js
+  echo "  $varname: \'$value\'," >> $ENVJS_FILE
 done < $ENV_FILE
 
-echo "}" >> ./ipr-env-config.js
+echo "};" >> $ENVJS_FILE
 
-cat ./ipr-env-config.js
+chmod a+x $ENVJS_FILE
+cat $ENVJS_FILE
+
+export INDEX_FILE="index.html"
+
+# now replace the static file instances of PUBLIC_PATH
+# adapted from here: https://dev.to/n1ru4l/configure-the-cra-public-url-post-build-with-node-js-and-express-4n8
+if [ -f $INDEX_FILE ];
+then
+  echo "REPLACE %PUBLIC_PATH% with $PUBLIC_PATH in $INDEX_FILE"
+  sed -i "s,\%PUBLIC_PATH\%,$PUBLIC_PATH,g" $INDEX_FILE
+fi
