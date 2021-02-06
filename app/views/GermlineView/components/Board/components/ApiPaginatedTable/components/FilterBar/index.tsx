@@ -5,15 +5,15 @@ import {
 
 import ParamsContext from '../../../ParamsContext';
 
-type FilterBarProps = {
-  onFilter: (isFiltered: boolean) => void,
-};
-
-const FilterBar = ({ onFilter }: FilterBarProps): JSX.Element => {
-  const { reviewFilter, setReviewFilter } = useContext(ParamsContext);
+const FilterBar = (): JSX.Element => {
+  const {
+    setReviewFilter,
+    setOffset,
+  } = useContext(ParamsContext);
 
   const handleReviewClicked = () => {
     setReviewFilter(prevVal => !prevVal);
+    setOffset(0);
   };
 
   return (
