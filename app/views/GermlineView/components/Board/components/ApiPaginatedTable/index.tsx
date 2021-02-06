@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { AgGridReact } from '@ag-grid-community/react';
-import { useGrid } from '@bcgsc/react-use-grid';
+import useGrid from '@/components/hooks/useGrid';
 
 import PaginationPanel from './components/PaginationPanel';
 import CheckboxCell from './components/CheckboxCell';

@@ -73,21 +73,29 @@ const PaginationPanel = ({
       <Typography className="pagination__text" variant="body2" display="inline">
         {`${offset + 1} to ${offset + limit} of ${totalRows}`}
       </Typography>
-      <IconButton size="small" disabled={offset === 0} onClick={handleFirstPageClick}>
-        <FirstPageIcon />
-      </IconButton>
-      <IconButton size="small" disabled={offset === 0} onClick={handleLeftClick}>
-        <ChevronLeftIcon />
-      </IconButton>
+      <div className="pagination__button">
+        <IconButton size="small" disabled={offset === 0} onClick={handleFirstPageClick}>
+          <FirstPageIcon />
+        </IconButton>
+      </div>
+      <div className="pagination__button">
+        <IconButton size="small" disabled={offset === 0} onClick={handleLeftClick}>
+          <ChevronLeftIcon />
+        </IconButton>
+      </div>
       <Typography className="pagination__text" variant="body2" display="inline">
-        {`Page ${Math.floor((offset / limit) + 1)} of ${Math.ceil((totalRows / limit) - 1)}`}
+        {`Page ${Math.ceil((offset / limit) + 1)} of ${Math.ceil((totalRows / limit))}`}
       </Typography>
-      <IconButton size="small" disabled={offset === totalRows - limit} onClick={handleRightClick}>
-        <ChevronRightIcon />
-      </IconButton>
-      <IconButton size="small" disabled={offset === totalRows - limit} onClick={handleLastPageClick}>
-        <LastPageIcon />
-      </IconButton>
+      <div className="pagination__button">
+        <IconButton size="small" disabled={offset >= totalRows - limit} onClick={handleRightClick}>
+          <ChevronRightIcon />
+        </IconButton>
+      </div>
+      <div className="pagination__button">
+        <IconButton size="small" disabled={offset >= totalRows - limit} onClick={handleLastPageClick}>
+          <LastPageIcon />
+        </IconButton>
+      </div>
     </div>
   );
 };
