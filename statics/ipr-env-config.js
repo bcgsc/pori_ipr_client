@@ -8,4 +8,6 @@ window._env_ = {
   GRAPHKB_URL: 'https://graphkbdev.bcgsc.ca',
   CONTACT_EMAIL: 'ipr@bcgsc.ca',
   CONTACT_TICKET_URL: 'https://www.bcgsc.ca/jira/projects/IPR',
+  IS_DEMO: '',
+  PUBLIC_PATH: '/',
 };

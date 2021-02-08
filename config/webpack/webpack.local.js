@@ -26,6 +26,7 @@ const localConfig = {
         CONTACT_EMAIL: 'ipr@bcgsc.ca',
         CONTACT_TICKET_URL: 'https://www.bcgsc.ca/jira/secure/CreateIssue!default.jspa',
         PUBLIC_PATH: '/',
+        IS_DEMO: false,
       }),
       'CONFIG': JSON.stringify({
         STORAGE: {

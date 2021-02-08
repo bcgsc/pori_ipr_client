@@ -11,7 +11,7 @@ import AlertDialog from '../../components/AlertDialog';
 import { theme } from '../../App';
 
 import errorHandler from '../errors/errorHandler';
-
+import SnackbarUtils from '../SnackbarUtils';
 
 class ApiCall {
   endpoint: string;
@@ -106,6 +106,12 @@ class ApiCall {
    */
   async request(confirm = false, ignoreAbort = false) {
     this.controller = new AbortController();
+
+    const { method } = this.requestOptions;
+    if (window._env_.IS_DEMO && ['POST', 'PUT', 'PATCH', 'DELETE'].includes(method.toUpperCase())) {
+      SnackbarUtils.warning('Write operations are disabled in DEMO mode. Changes will not submit');
+      return null;
+    }
 
     let response;
 
