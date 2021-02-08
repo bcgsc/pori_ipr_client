@@ -4,7 +4,7 @@ import useGrid from '@/components/hooks/useGrid';
 
 import PaginationPanel from './components/PaginationPanel';
 import CheckboxCell from './components/CheckboxCell';
-import FilterBar from './components/FilterBar';
+import ReviewFilter from './components/ReviewFilter';
 
 import './index.scss';
 
@@ -30,7 +30,6 @@ const ApiPaginatedTable = ({
 
   return (
     <div className="ag-theme-material paginated-table__container">
-      <FilterBar />
       <AgGridReact
         rowData={rowData}
         columnDefs={columnDefs}
@@ -38,6 +37,7 @@ const ApiPaginatedTable = ({
         onFirstDataRendered={onFirstDataRendered}
         frameworkComponents={{
           checkboxCellRenderer: CheckboxCell,
+          reviewFilter: ReviewFilter,
         }}
         suppressAnimationFrame
         suppressColumnVirtualisation

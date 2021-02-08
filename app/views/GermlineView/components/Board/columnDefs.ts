@@ -56,6 +56,7 @@ const columnDefs = [
     headerName: 'Exported',
     field: 'exported',
     cellRenderer: 'checkboxCellRenderer',
+    filter: 'reviewFilter',
     hide: false,
   },
   {
