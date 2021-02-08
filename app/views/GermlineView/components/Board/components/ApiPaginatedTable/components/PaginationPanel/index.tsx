@@ -11,7 +11,7 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import LastPageIcon from '@material-ui/icons/LastPage';
 import FirstPageIcon from '@material-ui/icons/FirstPage';
-import ParamsContext from '../../../ParamsContext';
+import ParamsContext, { ParamsContextType } from '../../../ParamsContext';
 
 import './index.scss';
 
@@ -24,7 +24,7 @@ const PaginationPanel = ({
 }: props): JSX.Element => {
   const {
     limit, setLimit, offset, setOffset,
-  } = useContext(ParamsContext);
+  } = useContext(ParamsContext) as ParamsContextType;
 
   const handleLimitChange = useCallback((event) => {
     setLimit(event.target.value);
@@ -40,7 +40,7 @@ const PaginationPanel = ({
 
   const handleLeftClick = useCallback(() => {
     if (offset > limit) {
-      setOffset(prevVal => prevVal - limit);
+      setOffset(offset - limit);
     } else {
       setOffset(0);
     }
@@ -48,7 +48,7 @@ const PaginationPanel = ({
 
   const handleRightClick = useCallback(() => {
     if (offset < totalRows - limit) {
-      setOffset(prevVal => prevVal + limit);
+      setOffset(offset + limit);
     } else {
       setOffset(totalRows - limit);
     }

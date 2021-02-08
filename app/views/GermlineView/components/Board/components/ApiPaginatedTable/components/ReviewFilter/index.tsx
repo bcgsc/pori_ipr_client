@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useCallback } from 'react';
 import {
   List,
   ListItem,
@@ -6,19 +6,19 @@ import {
   Typography,
 } from '@material-ui/core';
 
-import ParamsContext from '../../../ParamsContext';
+import ParamsContext, { ParamsContextType } from '../../../ParamsContext';
 
 const ReviewFilter = (): JSX.Element => {
   const {
     reviewFilter,
     setReviewFilter,
     setOffset,
-  } = useContext(ParamsContext);
+  } = useContext(ParamsContext) as ParamsContextType;
 
-  const handleReviewClicked = () => {
-    setReviewFilter(prevVal => !prevVal);
+  const handleReviewClicked = useCallback(() => {
+    setReviewFilter(!reviewFilter);
     setOffset(0);
-  };
+  }, [reviewFilter, setOffset, setReviewFilter]);
 
   return (
     <List>
