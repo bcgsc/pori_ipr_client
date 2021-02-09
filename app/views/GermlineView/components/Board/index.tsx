@@ -18,7 +18,10 @@ const Board = (): JSX.Element => {
       const {
         total: totalRowsResp,
         reports: reportsResp,
-      } = await api.get(`/germline-small-mutation-reports?limit=${limit}&offset=${offset}&reviewFilter=${reviewFilter}`, {}).request();
+      } = await api.get(
+        `/germline-small-mutation-reports?limit=${limit}&offset=${offset}${reviewFilter ? '&reviewType=biofx&exported=false' : ''}`,
+        {},
+      ).request();
       setReports(reportsResp);
       setTotalRows(totalRowsResp);
     };
