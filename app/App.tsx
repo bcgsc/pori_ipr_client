@@ -14,6 +14,7 @@ import { JssProvider } from 'react-jss';
 import { BrowserRouter } from 'react-router-dom';
 
 import MainView from './views/MainView/index';
+import { SnackbarUtilsConfigurator } from './services/SnackbarUtils';
 import cssTheme from './styles/_theme.scss';
 
 const theme = createMuiTheme({
@@ -75,7 +76,8 @@ function App() {
       <JssProvider jss={jss}>
         <MuiThemeProvider theme={theme}>
           <SnackbarProvider anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}>
-            <BrowserRouter>
+            <SnackbarUtilsConfigurator />
+            <BrowserRouter basename={window._env_.PUBLIC_PATH}>
               <ScopedCssBaseline>
                 <MainView />
               </ScopedCssBaseline>
