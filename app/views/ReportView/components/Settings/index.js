@@ -1,5 +1,5 @@
 import { angular2react } from 'angular2react';
-import { $rootScope } from 'ngimport';
+import { $rootScope, $timeout } from 'ngimport';
 
 import indefiniteArticle from '@/utils/indefiniteArticle';
 import toastCreator from '@/utils/toastCreator';
@@ -19,6 +19,7 @@ const bindings = {
   showBindings: '<',
   history: '<',
   isSigned: '<',
+  templates: '<',
 };
 
 class Settings {
@@ -118,8 +119,8 @@ class Settings {
   }
 
   checkChange() {
-    if (this.report.type !== this.reportCache.type) {
-      this.newReportFields.type = this.report.type;
+    if (this.report.template.name !== this.reportCache.template.name) {
+      this.newReportFields.template = this.report.template.name;
       this.reportSettingsChanged = true;
     }
     if (this.report.state !== this.reportCache.state) {
@@ -160,6 +161,13 @@ class Settings {
     $rootScope.$digest();
 
     this.$mdToast.show(toastCreator('Report settings have been updated.'));
+    // Page should be reloaded to account for the template change
+    // Timeout is added to allow the snackbar to be shown before reload
+    if (this.newReportFields.template) {
+      $timeout(() => {
+        window.location.reload();
+      }, 2000);
+    }
   }
 
   async deleteReport($event) {
