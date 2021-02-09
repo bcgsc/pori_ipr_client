@@ -215,7 +215,7 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
           value: microbial ? microbial.species : null,
         },
         {
-          term: 'Immune Infiltration',
+          term: 'CD8+ T Cell Score',
           value: tCell,
         },
         {
