@@ -5,10 +5,15 @@ section.meta
   div(layout="column").inlineSettings
     div(layout="row")
       md-input-container(flex)
-        label Report Type
-        md-select(ng-model="$ctrl.report.type", placeholder="Report Type", aria-label="Report Type", ng-disabled="true", required, md-on-close="$ctrl.checkChange()")
-          md-option(ng-value="'genomic'") Genomic Report
-          md-option(ng-value="'probe'") Targeted Gene Report
+        label Report Template
+        md-select(
+          ng-model="$ctrl.report.template.name",
+          placeholder="Report Template",
+          aria-label="Report Template",
+          required,
+          md-on-close="$ctrl.checkChange()"
+        )
+          md-option(ng-repeat="template in $ctrl.templates track by $index" ng-value="template.name") {{template.name}}
       md-input-container(flex)
         label Report State
         md-select(ng-model="$ctrl.report.state", placeholder="Report State", aria-label="Report State", required, md-on-close="$ctrl.checkChange()")

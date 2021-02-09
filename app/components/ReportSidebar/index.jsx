@@ -14,6 +14,7 @@ const ReportSidebar = (props) => {
     visibleSections,
     isSidebarVisible,
     reportIdent,
+    canEdit,
   } = props;
 
   const { pathname } = useLocation();
@@ -40,7 +41,7 @@ const ReportSidebar = (props) => {
         </ListItem>
         {allSections.map(section => (
           <React.Fragment key={section.name}>
-            {section.uri ? (
+            {section.uri && (
               <>
                 {visibleSections.includes(section.uri) && (
                   <Link to={{ pathname: section.uri }} className="report-sidebar__list-link">
@@ -58,7 +59,8 @@ const ReportSidebar = (props) => {
                   </Link>
                 )}
               </>
-            ) : (
+            )}
+            {section.children.some(child => visibleSections.includes(child.uri)) && (
               <ListItem classes={{ root: 'report-sidebar__list-item report-sidebar__list-item--no-hover' }}>
                 <ListItemText classes={{ primary: 'report-sidebar__list-item-text--bold' }}>
                   {section.name}
@@ -96,19 +98,21 @@ const ReportSidebar = (props) => {
             </>
           </React.Fragment>
         ))}
-        <Link to={{ pathname: 'settings' }} className="report-sidebar__list-link">
-          <ListItem classes={{
-            root: `
-              report-sidebar__list-item
-              ${pathname.split('/').pop() === 'settings' ? 'report-sidebar__list-item--active' : ''}
-            `,
-          }}
-          >
-            <ListItemText>
-              Settings
-            </ListItemText>
-          </ListItem>
-        </Link>
+        {canEdit && (
+          <Link to={{ pathname: 'settings' }} className="report-sidebar__list-link">
+            <ListItem classes={{
+              root: `
+                report-sidebar__list-item
+                ${pathname.split('/').pop() === 'settings' ? 'report-sidebar__list-item--active' : ''}
+              `,
+            }}
+            >
+              <ListItemText>
+                Settings
+              </ListItemText>
+            </ListItem>
+          </Link>
+        )}
       </List>
     </div>
   );
@@ -119,6 +123,7 @@ ReportSidebar.propTypes = {
   visibleSections: PropTypes.arrayOf(PropTypes.string).isRequired,
   isSidebarVisible: PropTypes.bool.isRequired,
   reportIdent: PropTypes.string.isRequired,
+  canEdit: PropTypes.bool.isRequired,
 };
 
 export default ReportSidebar;

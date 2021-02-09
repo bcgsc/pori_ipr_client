@@ -74,9 +74,6 @@ class ApiCall {
           window._env_.API_BASE_URL + this.endpoint,
           {
             ...this.requestOptions,
-            headers: {
-              'Content-type': 'application/json',
-            },
             signal: this.controller.signal,
           },
         );
@@ -125,9 +122,6 @@ class ApiCall {
         window._env_.API_BASE_URL + this.endpoint,
         {
           ...this.requestOptions,
-          headers: {
-            'Content-type': 'application/json',
-          },
           signal: this.controller.signal,
         },
       );
@@ -144,9 +138,6 @@ class ApiCall {
           window._env_.API_BASE_URL + this.endpoint,
           {
             ...this.requestOptions,
-            headers: {
-              'Content-type': 'application/json',
-            },
             signal: this.controller.signal,
             cache: 'reload',
           },
