@@ -3,4 +3,16 @@
     margin: 8px 8px 0;
     height: 100%;
   }
+
+  &__header {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &__action {
+    align-items: center;
+    display: flex;
+    justify-content: flex-end;
+  }
 }
