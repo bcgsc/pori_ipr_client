@@ -105,7 +105,7 @@ const TumourSummaryEdit = ({
           <>
             <TextField
               className="tumour-dialog__text-field"
-              label="Tumour Content"
+              label="Tumour Content (%)"
               value={newReportData.tumourContent}
               name="tumourContent"
               onChange={handleReportChange}

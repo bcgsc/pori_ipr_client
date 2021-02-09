@@ -204,7 +204,7 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
       setTumourSummary([
         {
           term: 'Tumour Content',
-          value: report.tumourContent,
+          value: `${report.tumourContent}%`,
         },
         {
           term: 'Subtype',
@@ -215,7 +215,7 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
           value: microbial ? microbial.species : null,
         },
         {
-          term: 'Immune Infiltration',
+          term: 'CD8+ T Cell Score',
           value: tCell,
         },
         {
