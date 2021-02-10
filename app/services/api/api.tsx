@@ -11,7 +11,7 @@ import AlertDialog from '../../components/AlertDialog';
 import { theme } from '../../App';
 
 import errorHandler from '../errors/errorHandler';
-
+import SnackbarUtils from '../SnackbarUtils';
 
 class ApiCall {
   endpoint: string;
@@ -74,9 +74,6 @@ class ApiCall {
           window._env_.API_BASE_URL + this.endpoint,
           {
             ...this.requestOptions,
-            headers: {
-              'Content-type': 'application/json',
-            },
             signal: this.controller.signal,
           },
         );
@@ -107,6 +104,12 @@ class ApiCall {
   async request(confirm = false, ignoreAbort = false) {
     this.controller = new AbortController();
 
+    const { method } = this.requestOptions;
+    if (window._env_.IS_DEMO && ['POST', 'PUT', 'PATCH', 'DELETE'].includes(method.toUpperCase())) {
+      SnackbarUtils.warning('Write operations are disabled in DEMO mode. Changes will not submit');
+      return null;
+    }
+
     let response;
 
     if (confirm) {
@@ -119,9 +122,6 @@ class ApiCall {
         window._env_.API_BASE_URL + this.endpoint,
         {
           ...this.requestOptions,
-          headers: {
-            'Content-type': 'application/json',
-          },
           signal: this.controller.signal,
         },
       );
@@ -138,9 +138,6 @@ class ApiCall {
           window._env_.API_BASE_URL + this.endpoint,
           {
             ...this.requestOptions,
-            headers: {
-              'Content-type': 'application/json',
-            },
             signal: this.controller.signal,
             cache: 'reload',
           },
