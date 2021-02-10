@@ -5,6 +5,7 @@ import orderBy from 'lodash.orderby';
 import { LinearProgress, Typography } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
 
+import DemoDescription from '@/components/DemoDescription';
 import DataTable from '@/components/DataTable';
 import ReportContext from '../../../../components/ReportContext';
 import EditContext from '@/components/EditContext';
@@ -90,6 +91,13 @@ const MutationSignatures = () => {
 
   return (
     <div>
+      <DemoDescription>
+        The pattern of specific base changes and base context of single nucleotide variants, small
+        insertions and deletions in the tumour, referred to as the mutation signature, is computed
+        and compared to patterns previously observed in a wide variety of tumour types. Signatures
+        that suggest a particular mutation etiology, such as exposure to a specific mutagen, are
+        noted.
+      </DemoDescription>
       {!isLoading ? (
         <>
           <Typography variant="h3" className="mutation-signature__title">
@@ -161,8 +169,8 @@ const MutationSignatures = () => {
           />
         </>
       ) : (
-        <LinearProgress />
-      )}
+          <LinearProgress />
+        )}
     </div>
   );
 };
