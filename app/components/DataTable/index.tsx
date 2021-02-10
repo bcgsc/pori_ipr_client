@@ -1,12 +1,12 @@
 import React, {
   useRef, useState, useEffect, useCallback, useContext,
 } from 'react';
+import PropTypes from 'prop-types';
 import { AgGridReact } from '@ag-grid-community/react';
 import useGrid from '@/components/hooks/useGrid';
 import {
   Typography,
   IconButton,
-  Dialog,
   Switch,
 } from '@material-ui/core';
 import { ThemeProvider } from '@material-ui/core/styles';
@@ -447,6 +447,64 @@ const DataTable = ({
       </div>
     </ThemeProvider>
   );
+};
+
+// PropTypes are defined for legacy angularjs -> react support
+DataTable.propTypes = {
+  /* Data populating table */
+  rowData: PropTypes.any,
+  /* Callback function when rowData is changed within the DataTable */
+  onRowDataChanged: PropTypes.any,
+  /* Column definitions for rowData */
+  columnDefs: PropTypes.any,
+  /* Table title */
+  titleText: PropTypes.string,
+  /* String to filter rows by */
+  filterText: PropTypes.string,
+  /* Can rows be edited? */
+  canEdit: PropTypes.bool,
+  /* Callback function when edit is started */
+  onEdit: PropTypes.any,
+  /* Can rows be deleted? */
+  canDelete: PropTypes.bool,
+  /* Callback function when delete is called */
+  onDelete: PropTypes.any,
+  /* Can rows be added to the table? */
+  canAdd: PropTypes.bool,
+  /* Callback function when add is called */
+  onAdd: PropTypes.any,
+  /* Text shown next to the add row button */
+  addText: PropTypes.string,
+  /* Needed for updating therapeutic tables
+     therapeutic or chemoresistance
+  */
+  tableType: PropTypes.string,
+  /* List of column names that are visible */
+  visibleColumns: PropTypes.array,
+  /* Callback to sync multiple tables */
+  syncVisibleColumns: PropTypes.any,
+  /* Can the visible columns be toggled? */
+  canToggleColumns: PropTypes.bool,
+  /* Can the row details be viewed? */
+  canViewDetails: PropTypes.bool,
+  /* Should the table be paginated? */
+  isPaginated: PropTypes.bool,
+  /* Should the table span the whole container? */
+  isFullLength: PropTypes.bool,
+  /* Can the rows be reordered? */
+  canReorder: PropTypes.bool,
+  /* Callback when a row is reordered */
+  onReorder: PropTypes.any,
+  /* Can the table rows be exported? */
+  canExport: PropTypes.bool,
+  /* MUI theme passed for react in angular table compatibility */
+  theme: PropTypes.any,
+  /* Is the table being rendered for printing? */
+  isPrint: PropTypes.bool,
+  /* Row index to highlight */
+  highlightRow: PropTypes.number,
+  /* Custom header cell renderer */
+  Header: PropTypes.any,
 };
 
 export default DataTable;
