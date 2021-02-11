@@ -12,7 +12,9 @@
   },
   "include": [
     "app/**/*.ts",
-    "app/**/*.tsx", "app/views/MainView/index.jsx"
+    "app/**/*.tsx",
+    "app/**/*.js",
+    "app/**/*.jsx",
   ],
   "compileOnSave": false,
   "allowJs": true
