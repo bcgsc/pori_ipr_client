@@ -89,7 +89,7 @@ const ProbeSummary = ({
             value: report.patientInformation.biopsySite,
           },
           {
-            label: 'Sex',
+            label: 'Gender',
             value: report.patientInformation.gender,
           },
         ]);
@@ -152,7 +152,7 @@ const ProbeSummary = ({
         value: newPatientData ? newPatientData.biopsySite : report.patientInformation.biopsySite,
       },
       {
-        label: 'Sex',
+        label: 'Gender',
         value: newPatientData ? newPatientData.gender : report.patientInformation.gender,
       },
     ]);
