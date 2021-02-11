@@ -6,12 +6,15 @@ import {
   LinearProgress,
 } from '@material-ui/core';
 
-import ReportContext from '../../../../components/ReportContext';
-import ImageService from '../../../../services/reports/image.service';
-import { getComparators } from '../../../../services/reports/comparators';
-import { getMutationBurden } from '../../../../services/reports/mutation-burden';
-import { imageType, comparatorType, mutationBurdenType } from './types';
+import DataTable from '@/components/DataTable';
+import ReportContext from '@/components/ReportContext';
+import Image from '@/components/Image';
+import api, { ApiCallSet } from '@/services/api';
+import {
+  imageType, comparatorType, mutationBurdenType, msiType,
+} from './types';
 import TabCards from './components/TabCards';
+import columnDefs from './columnDefs';
 
 import './index.scss';
 
@@ -89,17 +92,26 @@ const MutationBurden = (): JSX.Element => {
   const [images, setImages] = useState<Record<string, Record<string, imageType[]>>>();
   const [comparators, setComparators] = useState<comparatorType[]>([]);
   const [mutationBurden, setMutationBurden] = useState<mutationBurdenType[]>([]);
+  const [msi, setMsi] = useState<msiType[]>([]);
+  const [msiScatter, setMsiScatter] = useState<imageType>();
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     if (report) {
       const getData = async () => {
-        const [imagesResp, comparatorsResp, mutationBurdenResp] = await Promise.all([
-          ImageService.mutationBurden(report.ident),
-          getComparators(report.ident),
-          getMutationBurden(report.ident),
+        const calls = new ApiCallSet([
+          api.get(`/reports/${report.ident}/msi`, {}),
+          api.get(`/reports/${report.ident}/image/retrieve/msi.scatter`, {}),
+          api.get(`/reports/${report.ident}/image/mutation-burden`, {}),
+          api.get(`/reports/${report.ident}/comparators`, {}),
+          api.get(`/reports/${report.ident}/mutation-burden`, {}),
         ]);
+        const [
+          msiResp, msiScatterResp, imagesResp, comparatorsResp, mutationBurdenResp,
+        ] = await calls.request();
+        setMsi(msiResp);
+        setMsiScatter(msiScatterResp);
         setImages(processImages(imagesResp));
         setComparators(comparatorsResp);
         setMutationBurden(mutationBurdenResp);
@@ -162,6 +174,20 @@ const MutationBurden = (): JSX.Element => {
           </Typography>
         </div>
       )}
+      <Typography variant="h3">
+        Microsatellite Instability
+      </Typography>
+      {msiScatter && (
+        <Image
+          image={msiScatter}
+          showTitle
+          showCaption
+        />
+      )}
+      <DataTable
+        rowData={msi}
+        columnDefs={columnDefs}
+      />
     </div>
   );
 };
