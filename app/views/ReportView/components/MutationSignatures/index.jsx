@@ -169,8 +169,8 @@ const MutationSignatures = () => {
           />
         </>
       ) : (
-          <LinearProgress />
-        )}
+        <LinearProgress />
+      )}
     </div>
   );
 };
