@@ -62,14 +62,14 @@ const ReportAutocomplete = ({
           InputProps={{
             ...params.InputProps,
             endAdornment: (
-              <React.Fragment>
+              <>
                 {loading ? <CircularProgress color="inherit" size={20} /> : null}
                 {value && (
                   <Button onClick={handleSubmit}>
                     Add
                   </Button>
                 )}
-              </React.Fragment>
+              </>
             ),
           }}
         />

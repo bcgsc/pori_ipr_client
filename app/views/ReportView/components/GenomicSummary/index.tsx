@@ -451,7 +451,7 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
           </div>
 
           {print ? (
-            <React.Fragment>
+            <>
               <div className="genomic-summary__alterations">
                 <div className="genomic-summary__alterations-title">
                   <Typography variant="h3">
@@ -473,9 +473,9 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
                   />
                 </div>
               </div>
-            </React.Fragment>
+            </>
           ) : (
-            <React.Fragment>
+            <>
               <div className="genomic-summary__alterations">
                 <div className="genomic-summary__alterations-title">
                   <Typography variant="h3">
@@ -496,7 +496,7 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
                   />
                 </div>
               </div>
-            </React.Fragment>
+            </>
           )}
         </>
       )}
