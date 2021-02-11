@@ -188,13 +188,13 @@ class ApiCallSet {
   }
 
   abort() {
-    this.calls.forEach(controller => controller.abort());
+    this.calls.forEach((controller) => controller.abort());
   }
 
   showConfirm() {
     const handleClose = async (isSaved: boolean) => {
       if (isSaved) {
-        const promises = this.calls.map(call => call.request());
+        const promises = this.calls.map((call) => call.request());
         await Promise.all(promises);
         location.reload();
       }
@@ -222,7 +222,7 @@ class ApiCallSet {
       return;
     }
     // eslint-disable-next-line consistent-return
-    return Promise.all(this.calls.map(call => call.request()));
+    return Promise.all(this.calls.map((call) => call.request()));
   }
 }
 

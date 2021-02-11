@@ -37,7 +37,7 @@ const Groups = (): JSX.Element => {
     // eslint-disable-next-line no-restricted-globals
     if (confirm('Are you sure you want to remove this group?')) {
       await api.del(`/user/group/${ident}`, {}, {}).request();
-      const newGroups = groups.filter(group => group.ident !== ident);
+      const newGroups = groups.filter((group) => group.ident !== ident);
       setGroups(newGroups);
       snackbar.enqueueSnackbar('Group deleted');
     } else {
@@ -53,14 +53,14 @@ const Groups = (): JSX.Element => {
   const handleEditClose = useCallback((newData) => {
     setShowDialog(false);
     if (newData) {
-      const groupIndex = groups.findIndex(group => group.ident === newData.ident);
+      const groupIndex = groups.findIndex((group) => group.ident === newData.ident);
       if (groupIndex !== -1) {
         const newGroups = [...groups];
         newGroups[groupIndex] = newData;
         setGroups(newGroups);
         snackbar.enqueueSnackbar('Group edited');
       } else {
-        setGroups(prevVal => [...prevVal, newData]);
+        setGroups((prevVal) => [...prevVal, newData]);
         snackbar.enqueueSnackbar('Group added');
       }
     }

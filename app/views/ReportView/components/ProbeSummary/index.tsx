@@ -181,7 +181,7 @@ const ProbeSummary = ({
   const handleEditClose = useCallback((newData) => {
     setShowEventsDialog(false);
     if (newData) {
-      const eventsIndex = probeResults.findIndex(user => user.ident === newData.ident);
+      const eventsIndex = probeResults.findIndex((user) => user.ident === newData.ident);
       if (eventsIndex !== -1) {
         const newEvents = [...probeResults];
         newEvents[eventsIndex] = newData;
@@ -238,7 +238,7 @@ const ProbeSummary = ({
           {isPrint ? (
             <PrintTable
               data={report.sampleInfo}
-              headers={sampleColumnDefs.map(col => col.headerName)}
+              headers={sampleColumnDefs.map((col) => col.headerName)}
             />
           ) : (
             <DataTable

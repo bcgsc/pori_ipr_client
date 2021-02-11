@@ -16,7 +16,7 @@ type UserAutocompleteProps = {
   label: string;
   onSubmit?: (val: userType) => void;
   onChange?: (val: userType) => void;
-}
+};
 
 const UserAutocomplete = ({
   defaultValue,
@@ -72,9 +72,9 @@ const UserAutocomplete = ({
       classes={{ root: 'autocomplete', popper: 'autocomplete__popper' }}
       onChange={handleSelectedValueChange}
       options={options}
-      getOptionLabel={option => (option.firstName && option.lastName ? `${option.firstName} ${option.lastName}` : '')}
+      getOptionLabel={(option) => (option.firstName && option.lastName ? `${option.firstName} ${option.lastName}` : '')}
       value={value}
-      renderInput={params => (
+      renderInput={(params) => (
         <TextField
           {...params}
           label={label || 'User'}

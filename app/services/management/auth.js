@@ -78,7 +78,7 @@ const getUser = async (token) => {
  */
 const isAdmin = (user) => {
   try {
-    return user.groups.some(group => group.name.toLowerCase() === 'admin');
+    return user.groups.some((group) => group.name.toLowerCase() === 'admin');
   } catch {
     return false;
   }
@@ -96,7 +96,7 @@ const getUsername = ({ authorizationToken }) => {
 
 const isExternalMode = (user) => {
   try {
-    return user.groups.some(group => externalGroups.includes(group.name.toLowerCase()));
+    return user.groups.some((group) => externalGroups.includes(group.name.toLowerCase()));
   } catch (err) {
     return true;
   }

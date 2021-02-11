@@ -45,9 +45,9 @@ const EventsEditDialog = ({
 
     if (prop.includes('.')) {
       [prop, subprop] = prop.split('.');
-      setNewData(prevVal => ({ ...prevVal, [prop]: { [subprop]: value } }));
+      setNewData((prevVal) => ({ ...prevVal, [prop]: { [subprop]: value } }));
     } else {
-      setNewData(prevVal => ({ ...prevVal, [prop]: value }));
+      setNewData((prevVal) => ({ ...prevVal, [prop]: value }));
     }
 
     if (!editDataDirty) {

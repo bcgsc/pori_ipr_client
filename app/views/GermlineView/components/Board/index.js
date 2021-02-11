@@ -3,9 +3,9 @@ import { $rootScope } from 'ngimport';
 
 import toastCreator from '@/utils/toastCreator';
 import lazyInjector from '@/lazyInjector';
-import template from './germline-board.pug';
 import germlineDownload from '@/services/reports/germline';
 import GermlineService from '@/services/reports/germline.service';
+import template from './germline-board.pug';
 
 import './index.scss';
 
@@ -50,7 +50,7 @@ class Board {
 
   /* eslint-disable class-methods-use-this */
   hasReview(report, type) {
-    return report.reviews.find(review => review.type === type);
+    return report.reviews.find((review) => review.type === type);
   }
 
   async unsetExported(report) {
@@ -64,7 +64,7 @@ class Board {
       reportCache.biofxAssigned = report.biofxAssigned.ident;
 
       const result = await GermlineService.updateReport(reportCache.ident, reportCache);
-      const i = this.reports.findIndex(rep => rep.ident === reportCache.ident);
+      const i = this.reports.findIndex((rep) => rep.ident === reportCache.ident);
 
       this.reports[i] = result;
     } catch (err) {
@@ -72,7 +72,6 @@ class Board {
       this.$mdToast.show(toastCreator('Failed to update report exported status.'));
     }
   }
-
 
   /**
    * Update search criteria and trigger reload

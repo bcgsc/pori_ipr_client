@@ -14,7 +14,7 @@ type ReportAutocompleteProps = {
   defaultValue?: string;
   onSubmit: (report: Record<string, unknown>) => void;
   label?: string;
-}
+};
 
 const ReportAutocomplete = ({
   defaultValue,
@@ -50,9 +50,9 @@ const ReportAutocomplete = ({
       classes={{ root: 'autocomplete', popper: 'autocomplete__popper' }}
       onChange={(event, val) => setValue(val)}
       options={options}
-      getOptionLabel={option => (option.patientId ? `${option.patientId} (${option.ident})` : '')}
+      getOptionLabel={(option) => (option.patientId ? `${option.patientId} (${option.ident})` : '')}
       value={value}
-      renderInput={params => (
+      renderInput={(params) => (
         <TextField
           {...params}
           label={label || 'Report'}

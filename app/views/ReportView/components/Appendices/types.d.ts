@@ -20,7 +20,7 @@ type seqQCType = {
   'Sample Name': string;
   bioQC: string;
   labQC: string;
-}
+};
 
 type appendicesType = {
   config: string;

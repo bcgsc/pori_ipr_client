@@ -40,7 +40,7 @@ const Projects = (): JSX.Element => {
     // eslint-disable-next-line no-restricted-globals
     if (confirm('Are you sure you want to remove this project?')) {
       await api.del(`/project/${ident}`, {}, {}).request();
-      const newProjects = projects.filter(project => project.ident !== ident);
+      const newProjects = projects.filter((project) => project.ident !== ident);
       setProjects(newProjects);
       snackbar.enqueueSnackbar('Project deleted');
     } else {
@@ -51,14 +51,14 @@ const Projects = (): JSX.Element => {
   const handleEditClose = useCallback((newData) => {
     setShowDialog(false);
     if (newData) {
-      const projectIndex = projects.findIndex(project => project.ident === newData.ident);
+      const projectIndex = projects.findIndex((project) => project.ident === newData.ident);
       if (projectIndex !== -1) {
         const newProjects = [...projects];
         newProjects[projectIndex] = newData;
         setProjects(newProjects);
         snackbar.enqueueSnackbar('Project edited');
       } else {
-        setProjects(prevVal => [...prevVal, newData]);
+        setProjects((prevVal) => [...prevVal, newData]);
         snackbar.enqueueSnackbar('Project added');
       }
     }

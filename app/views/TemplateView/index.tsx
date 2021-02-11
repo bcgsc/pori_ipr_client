@@ -4,11 +4,10 @@ import {
 } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
 
+import DataTable from '@/components/DataTable';
 import api from '../../services/api';
 import AddEditTemplate from './components/AddEditTemplate';
-import DataTable from '@/components/DataTable';
 import columnDefs from './columnDefs';
-
 
 const TemplateView = (): JSX.Element => {
   const [showDialog, setShowDialog] = useState(false);
@@ -35,13 +34,13 @@ const TemplateView = (): JSX.Element => {
   const handleDialogClose = useCallback((newData) => {
     setShowDialog(false);
     if (newData) {
-      const templateIndex = templates.findIndex(template => template.ident === newData.ident);
+      const templateIndex = templates.findIndex((template) => template.ident === newData.ident);
       if (templateIndex !== -1) {
         const newTemplates = [...templates];
         newTemplates[templateIndex] = newData;
         setTemplates(newTemplates);
       } else {
-        setTemplates(prevVal => [...prevVal, newData]);
+        setTemplates((prevVal) => [...prevVal, newData]);
       }
     }
     setSelectedRow(null);
@@ -50,7 +49,7 @@ const TemplateView = (): JSX.Element => {
   const handleDelete = useCallback(async (rowData) => {
     try {
       await api.del(`/templates/${rowData.ident}`, {}, {}).request();
-      setTemplates(prevVal => prevVal.filter(template => template.ident !== rowData.ident));
+      setTemplates((prevVal) => prevVal.filter((template) => template.ident !== rowData.ident));
       snackbar.enqueueSnackbar('Template deleted');
     } catch (err) {
       snackbar.enqueueSnackbar(`Error deleting template: ${err}`);

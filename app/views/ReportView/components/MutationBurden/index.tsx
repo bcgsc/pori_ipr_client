@@ -85,7 +85,6 @@ const processImages = (images: Record<string, imageType>): Record<string, Record
   return {};
 };
 
-
 const MutationBurden = (): JSX.Element => {
   const { report } = useContext(ReportContext);
 

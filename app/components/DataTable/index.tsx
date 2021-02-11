@@ -19,7 +19,7 @@ import LinkCellRenderer from './components/LinkCellRenderer';
 import GeneCellRenderer from './components/GeneCellRenderer';
 import ActionCellRenderer from './components/ActionCellRenderer';
 import { getDate } from '../../utils/date';
-import ReportContext from '../../components/ReportContext';
+import ReportContext from '../ReportContext';
 
 import './index.scss';
 
@@ -127,7 +127,7 @@ const DataTable = ({
     resizable: true,
     filter: !showReorder,
     editable: false,
-    valueFormatter: params => (params.value === null ? '' : params.value),
+    valueFormatter: (params) => (params.value === null ? '' : params.value),
   };
 
   useEffect(() => {
@@ -139,8 +139,8 @@ const DataTable = ({
   // Triggers when syncVisibleColumns is called
   useEffect(() => {
     if (colApi && visibleColumns.length) {
-      const allCols = colApi.getAllColumns().map(col => col.colId);
-      const hiddenColumns = allCols.filter(col => !visibleColumns.includes(col));
+      const allCols = colApi.getAllColumns().map((col) => col.colId);
+      const hiddenColumns = allCols.filter((col) => !visibleColumns.includes(col));
       colApi.setColumnsVisible(visibleColumns, true);
       colApi.setColumnsVisible(hiddenColumns, false);
     }
@@ -162,7 +162,7 @@ const DataTable = ({
       } else {
         const selected = gridApi.getSelectedNodes();
         if (selected && selected.length) {
-          selected.forEach(node => node.setSelected(false));
+          selected.forEach((node) => node.setSelected(false));
         }
       }
     }
@@ -171,7 +171,7 @@ const DataTable = ({
   useEffect(() => {
     if (colApi) {
       const names = colApi.getAllColumns()
-        .filter(col => col.colId !== 'Actions')
+        .filter((col) => col.colId !== 'Actions')
         .map((col) => {
           const parent = col.getOriginalParent();
           if (parent && parent.colGroupDef.headerName) {
@@ -189,8 +189,8 @@ const DataTable = ({
   const onFirstDataRendered = () => {
     if (syncVisibleColumns) {
       const hiddenColumns = colApi.getAllColumns()
-        .map(col => col.colId)
-        .filter(col => !visibleColumns.includes(col));
+        .map((col) => col.colId)
+        .filter((col) => !visibleColumns.includes(col));
 
       colApi.setColumnsVisible(visibleColumns, true);
       colApi.setColumnsVisible(hiddenColumns, false);
@@ -208,7 +208,7 @@ const DataTable = ({
     }
 
     if (isPrint) {
-      const newCols = columnDefs.map(col => ({
+      const newCols = columnDefs.map((col) => ({
         ...col,
         wrapText: true,
         autoHeight: true,
@@ -222,8 +222,8 @@ const DataTable = ({
 
     if (colApi && !isFullLength) {
       const visibleColumnIds = colApi.getAllColumns()
-        .filter(col => !col.flex && col.visible)
-        .map(col => col.colId);
+        .filter((col) => !col.flex && col.visible)
+        .map((col) => col.colId);
       colApi.autoSizeColumns(visibleColumnIds);
     } if (isFullLength) {
       gridApi.sizeColumnsToFit();
@@ -260,8 +260,8 @@ const DataTable = ({
   const handlePopoverClose = useCallback((returnedVisibleCols) => {
     returnedVisibleCols.push('Actions');
     const returnedHiddenCols = colApi.getAllColumns()
-      .map(col => col.colId)
-      .filter(col => !returnedVisibleCols.includes(col));
+      .map((col) => col.colId)
+      .filter((col) => !returnedVisibleCols.includes(col));
 
     colApi.setColumnsVisible(returnedVisibleCols, true);
     colApi.setColumnsVisible(returnedHiddenCols, false);
@@ -299,8 +299,8 @@ const DataTable = ({
       suppressQuotes: true,
       columnSeparator: '\t',
       columnKeys: colApi.getAllDisplayedColumns()
-        .map(col => col.colId)
-        .filter(col => col === 'Actions'),
+        .map((col) => col.colId)
+        .filter((col) => col === 'Actions'),
       fileName: `ipr_${report.patientId}_${report.ident}_${titleText.split(' ').join('_')}_${date}.tsv`,
     });
   }, [colApi, gridApi, report, titleText]);
@@ -314,7 +314,6 @@ const DataTable = ({
       onRowDataChanged(newRows);
     }
   }, [gridApi, onRowDataChanged]);
-
 
   // Theme is needed for react in angular tables. It can't access the theme provider otherwise
   return (
@@ -345,7 +344,7 @@ const DataTable = ({
                   {canToggleColumns && !isPrint && (
                     <span className="data-table__action">
                       <IconButton
-                        onClick={() => setShowPopover(prevVal => !prevVal)}
+                        onClick={() => setShowPopover((prevVal) => !prevVal)}
                         className="data-table__icon-button"
                       >
                         <MoreHorizIcon />
@@ -405,7 +404,7 @@ const DataTable = ({
                 paginationPageSize={MAX_VISIBLE_ROWS}
                 autoSizePadding={0}
                 deltaRowDataMode={canReorder}
-                getRowNodeId={data => data.ident}
+                getRowNodeId={(data) => data.ident}
                 onRowDragEnd={canReorder ? onRowDragEnd : null}
                 editType="fullRow"
                 onFilterChanged={handleFilterAndSortChanged}

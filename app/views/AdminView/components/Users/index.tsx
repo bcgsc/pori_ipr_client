@@ -35,7 +35,7 @@ const Users = (): JSX.Element => {
     // eslint-disable-next-line no-restricted-globals
     if (confirm('Are you sure you want to remove this user?')) {
       await api.del(`/user/${ident}`, {}, {}).request();
-      const newUsers = users.filter(user => user.ident !== ident);
+      const newUsers = users.filter((user) => user.ident !== ident);
       setUsers(newUsers);
       snackbar.enqueueSnackbar('User deleted');
     } else {
@@ -51,14 +51,14 @@ const Users = (): JSX.Element => {
   const handleEditClose = useCallback((newData) => {
     setShowDialog(false);
     if (newData) {
-      const userIndex = users.findIndex(user => user.ident === newData.ident);
+      const userIndex = users.findIndex((user) => user.ident === newData.ident);
       if (userIndex !== -1) {
         const newUsers = [...users];
         newUsers[userIndex] = newData;
         setUsers(newUsers);
         snackbar.enqueueSnackbar('User edited');
       } else {
-        setUsers(prevVal => [...prevVal, newData]);
+        setUsers((prevVal) => [...prevVal, newData]);
         snackbar.enqueueSnackbar('User added');
       }
     }

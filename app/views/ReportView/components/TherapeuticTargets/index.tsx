@@ -8,11 +8,11 @@ import { useSnackbar } from 'notistack';
 
 import DataTable from '@/components/DataTable';
 import EditContext from '@/components/EditContext';
+import api from '@/services/api';
 import ReportContext from '../../../../components/ReportContext';
 import EditDialog from './components/EditDialog';
 import EvidenceHeader from './components/EvidenceHeader';
 import columnDefs from './columnDefs';
-import api from '@/services/api';
 
 /**
  * @param {object} props props
@@ -44,10 +44,10 @@ const Therapeutic = (props) => {
         const therapeuticResp = await api.get(`/reports/${report.ident}/therapeutic-targets`).request();
 
         setTherapeuticData(therapeuticResp.filter(
-          target => target.type === 'therapeutic',
+          (target) => target.type === 'therapeutic',
         ));
         setChemoresistanceData(therapeuticResp.filter(
-          target => target.type === 'chemoresistance',
+          (target) => target.type === 'chemoresistance',
         ));
         setLoading(false);
       };
@@ -75,13 +75,13 @@ const Therapeutic = (props) => {
           tableData = chemoresistanceData;
           setter = setChemoresistanceData;
         }
-        const tableIndex = tableData.findIndex(row => row.ident === newData.ident);
+        const tableIndex = tableData.findIndex((row) => row.ident === newData.ident);
         if (tableIndex !== -1) {
           const newTable = [...orderBy(tableData, ['rank'], ['asc'])];
           newTable[tableIndex] = newData;
           setter(newTable);
         } else {
-          setter(prevVal => [...prevVal, newData]);
+          setter((prevVal) => [...prevVal, newData]);
         }
       }
       setEditData(null);
