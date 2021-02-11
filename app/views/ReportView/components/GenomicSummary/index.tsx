@@ -201,6 +201,16 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
         tCell = null;
       }
 
+      let sigs: null | string;
+      if (signatures.length && signatures.find(sig => sig.selected)) {
+        sigs = signatures.filter(({ selected }) => selected)
+          .map(({ associations, signature }) => (
+            `${signature}${associations ? ` (${associations})` : ''}`
+          )).join(', ');
+      } else {
+        sigs = 'Nothing of clinical relevance';
+      }
+
       setTumourSummary([
         {
           term: 'Tumour Content',
@@ -220,11 +230,7 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
         },
         {
           term: 'Mutation Signature',
-          value: signatures
-            .filter(({ selected }) => selected)
-            .map(({ associations, signature }) => (
-              `${signature} (${associations})`
-            )).join(', '),
+          value: sigs,
           action: !print ? () => history.push('mutation-signatures') : null,
         },
         {
