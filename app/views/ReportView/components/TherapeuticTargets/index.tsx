@@ -8,6 +8,7 @@ import { useSnackbar } from 'notistack';
 
 import DataTable from '@/components/DataTable';
 import EditContext from '@/components/EditContext';
+import DemoDescription from '@/components/DemoDescription';
 import ReportContext from '../../../../components/ReportContext';
 import EditDialog from './components/EditDialog';
 import EvidenceHeader from './components/EvidenceHeader';
@@ -129,6 +130,12 @@ const Therapeutic = (props) => {
 
   return (
     <div className="therapeutic">
+      <DemoDescription>
+        Tumour alterations are reviewed and those representing the most likely potential therapeutic
+        targets are highlighted, with details on the associated therapy or general drug class, level
+        of evidence, and any relevant clinical trials. Potential caveats are also specified.
+        Alterations associated with potential resistance to relevant therapies are also documented.
+      </DemoDescription>
       {!loading && (
         <>
           <DataTable

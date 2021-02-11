@@ -2,12 +2,13 @@ import React, { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { Typography, Paper, LinearProgress } from '@material-ui/core';
 
-import DataTable from '../../../../components/DataTable';
+import DataTable from '@/components/DataTable';
 import columnDefs from './columnDefs';
 import { getComparators } from '@/services/reports/comparators';
+import DemoDescription from '@/components/DemoDescription';
 import ExpressionService from '@/services/reports/expression.service';
 import ImageService from '@/services/reports/image.service';
-import ReportContext from '../../../../components/ReportContext';
+import ReportContext from '@/components/ReportContext';
 import processExpression from './processData';
 
 import './index.scss';
@@ -134,6 +135,15 @@ const Expression = () => {
           <Typography variant="h1" className="expression__title">
             Expression Analysis
           </Typography>
+          <DemoDescription>
+            The most appropriate normal tissue and tumour tissues are chosen for expression
+            comparisons based on the tumour type and observed correlation with tissue data sets.
+            If no appropriate tissue comparator is available, for instance for rare tumours, an
+            average across all tissues is used. Expression is calculated as percentile and kIQR
+            (number of interquartile ranges) relative to comparator expression distributions.
+            Outlier expression refers to genes with very high or very low expression compared to
+            what is seen in other cancers of that type and also compared to relevant normal tissue.
+          </DemoDescription>
           <Typography variant="h3" className="expression__subtitle">
             Tissue Sites
           </Typography>
