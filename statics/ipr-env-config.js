@@ -1,5 +1,3 @@
-// This is a default so that webpack can copy it, it is overwritten post-build with dynamic variables
-
 window._env_ = {
   KEYCLOAK_CLIENT_ID: 'IPR',
   KEYCLOAK_REALM: 'GSC',
