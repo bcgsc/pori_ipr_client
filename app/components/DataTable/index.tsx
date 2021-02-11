@@ -28,11 +28,11 @@ const MAX_TABLE_HEIGHT = '517px';
 
 type DataTableProps = {
   /* Data populating table */
-  rowData: Record<string, any>[];
+  rowData: Record<string, unknown>[];
   /* Callback function when rowData is changed within the DataTable */
-  onRowDataChanged;
+  onRowDataChanged?: (rows: Record<string, unknown>[]) => void;
   /* Column definitions for rowData */
-  columnDefs: Record<string, any>[];
+  columnDefs: Record<string, unknown>[];
   /* Table title */
   titleText?: string;
   /* String to filter rows by */
@@ -40,15 +40,15 @@ type DataTableProps = {
   /* Can rows be edited? */
   canEdit?: boolean;
   /* Callback function when edit is started */
-  onEdit?: (row: Record<string, any>) => void;
+  onEdit?: (row: Record<string, unknown>) => void;
   /* Can rows be deleted? */
   canDelete?: boolean;
   /* Callback function when delete is called */
-  onDelete?: (row: Record<string, any>) => void;
+  onDelete?: (row: Record<string, unknown>) => void;
   /* Can rows be added to the table? */
   canAdd?: boolean;
   /* Callback function when add is called */
-  onAdd?: (row: Record<string, any>) => void;
+  onAdd?: (row: Record<string, unknown>) => void;
   /* Text shown next to the add row button */
   addText?: string;
   /* Needed for updating therapeutic tables
@@ -70,11 +70,11 @@ type DataTableProps = {
   /* Can the rows be reordered? */
   canReorder?: boolean;
   /* Callback when a row is reordered */
-  onReorder?: (newRow: Record<string, any>, newRank: number, tableType?: string) => void;
+  onReorder?: (newRow: Record<string, unknown>, newRank: number, tableType?: string) => void;
   /* Can the table rows be exported? */
   canExport?: boolean;
   /* MUI theme passed for react in angular table compatibility */
-  theme;
+  theme?: unknown;
   /* Is the table being rendered for printing? */
   isPrint?: boolean;
   /* Row index to highlight */
