@@ -90,7 +90,7 @@ function ActionCellRenderer(params) {
           <LibraryBooks />
         </IconButton>
       )}
-      {(data.kbStatementId && !Array.isArray(data.kbStatementId) && data.kbStatementId.match(/^#?-?\d+:-?\d+$/))
+      {(!window._env_.IS_DEMO && data.kbStatementId && !Array.isArray(data.kbStatementId) && data.kbStatementId.match(/^#?-?\d+:-?\d+$/))
         ? (
           <IconButton
             size="small"
@@ -104,7 +104,7 @@ function ActionCellRenderer(params) {
           </IconButton>
         ) : null
       }
-      {(data.kbStatementId && Array.isArray(data.kbStatementId) && data.kbStatementId.some(statement => statement.match(/^#?-?\d+:-?\d+$/)))
+      {(!window._env_.IS_DEMO && data.kbStatementId && Array.isArray(data.kbStatementId) && data.kbStatementId.some(statement => statement.match(/^#?-?\d+:-?\d+$/)))
         ? (
           <>
             <IconButton

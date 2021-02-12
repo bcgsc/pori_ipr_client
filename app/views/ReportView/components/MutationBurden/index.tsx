@@ -6,6 +6,7 @@ import {
   LinearProgress,
 } from '@material-ui/core';
 
+import DemoDescription from '@/components/DemoDescription';
 import DataTable from '@/components/DataTable';
 import ReportContext from '@/components/ReportContext';
 import Image from '@/components/Image';
@@ -137,6 +138,13 @@ const MutationBurden = (): JSX.Element => {
       <Typography variant="h3">
         Mutation Burden
       </Typography>
+      <DemoDescription>
+        This is reported in mutations per megabase in the genome. Additionally, the number of
+        protein coding alterations of each type are totaled and compared to other tumours of a
+        similar type. When a suitable tumour-specific cohort is not available for comparison,
+        these are compared to an “average” cohort which is not tumour type specific but rather
+        composed of all tumour types.
+      </DemoDescription>
       {Boolean(comparators.length) && Boolean(mutationBurden.length) && images && (
         <div className="mutation-burden__content">
           {['SNV', 'Indel', 'SV'].map((type) => {

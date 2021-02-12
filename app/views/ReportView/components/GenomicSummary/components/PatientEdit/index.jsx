@@ -124,7 +124,7 @@ const PatientEdit = (props) => {
             />
             <TextField
               className="patient-dialog__text-field"
-              label="Sex"
+              label="Gender"
               value={newPatientData.gender}
               name="gender"
               onChange={handlePatientChange}

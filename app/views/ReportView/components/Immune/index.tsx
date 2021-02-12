@@ -5,6 +5,7 @@ import Image from '../../../../components/Image';
 import ReportContext from '../../../../components/ReportContext';
 import api, { ApiCallSet } from '../../../../services/api';
 import { hlaColumnDefs, cellTypesColumnDefs } from './columnDefs';
+import DemoDescription from '@/components/DemoDescription';
 
 const Immune = () => {
   const { report } = useContext(ReportContext);
@@ -36,6 +37,14 @@ const Immune = () => {
 
   return (
     <div>
+      <DemoDescription>
+        Evidence for immune cells in the tumour sample, potentially representing tumour-infiltrating
+        lymphocytes, are predicted based on analysis of expression patterns in RNA data. The total
+        T cell score (T.cell.infiltration) represents the total of all T cell scores excluding the
+        negative regulatory T cells. The specific HLA alleles found in sequenced samples,
+        representing MHC class I types, are predicted based on alignment of DNA and RNA to databases
+        of known HLA sequences.
+      </DemoDescription>
       <DataTable
         columnDefs={cellTypesColumnDefs}
         rowData={cellTypes}
