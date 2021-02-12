@@ -10,7 +10,7 @@ const GenomicReportOverview = (): JSX.Element => (
     <Typography variant="h5">Report Overview</Typography>
     <div>
       <p>The Tumour Genome Analysis report provides a comprehensive description of the somatic genetic alterations present in a tumour. All genes in the genome are assessed for alterations of all types, including substitutions, deletions, gene fusions, amplification, and overexpression. Both known and novel alterations which affect genes of potential clinical relevance are included in the report. Germline variants are not generally included in this report.</p>
-      <p>The Tumour Genome Analysis report is developed by Canada's Michael Smith Genome Sciences Centre, part of the BC Cancer Agency. Contents should be regarded as purely investigational and are intended for research purposes only.</p>
+      <p>The Tumour Genome Analysis report is developed by Canada&apos;s Michael Smith Genome Sciences Centre, part of the BC Cancer Agency. Contents should be regarded as purely investigational and are intended for research purposes only.</p>
     </div>
 
     <Typography variant="h5">Methods Overview</Typography>
@@ -46,7 +46,7 @@ const GenomicReportOverview = (): JSX.Element => (
       </p>
       <p>
         <strong>Genomic events with potential therapeutic association:</strong>
-        The subset of alterations with specific therapeutic associations are identified using the Genome Sciences Centre's expert curated Knowledgebase, which integrates information from sources including cancer databases, drug databases, clinical tests, and the literature. Associations are listed by the level of evidence for the use of that drug in the context of the observed alteration, including those that are approved in this or other cancer types, and those that have early clinical or preclinical evidence.
+        The subset of alterations with specific therapeutic associations are identified using the Genome Sciences Centre&apos;s expert curated Knowledgebase, which integrates information from sources including cancer databases, drug databases, clinical tests, and the literature. Associations are listed by the level of evidence for the use of that drug in the context of the observed alteration, including those that are approved in this or other cancer types, and those that have early clinical or preclinical evidence.
       </p>
     </div>
   </div>

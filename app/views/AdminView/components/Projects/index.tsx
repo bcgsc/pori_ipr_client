@@ -1,5 +1,5 @@
 import React, {
-  useState, useEffect, useContext, useCallback,
+  useState, useEffect, useCallback,
 } from 'react';
 import { CircularProgress } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
@@ -10,13 +10,13 @@ import columnDefs from './columnDefs';
 import AddEditProjectDialog from './components/AddEditProjectDialog';
 
 import './index.scss';
-import { projectType } from '../../types';
+import { ProjectType } from '../../types';
 
 const Projects = (): JSX.Element => {
-  const [projects, setProjects] = useState<projectType[]>([]);
+  const [projects, setProjects] = useState<ProjectType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [editData, setEditData] = useState<projectType | null>();
+  const [editData, setEditData] = useState<ProjectType | null>();
 
   const snackbar = useSnackbar();
 

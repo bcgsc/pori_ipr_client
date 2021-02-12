@@ -8,7 +8,7 @@ import {
   CardContent,
 } from '@material-ui/core';
 
-import { imageType, comparatorType, mutationBurdenType } from '../../types';
+import { ImageType, ComparatorType, MutationBurdenType } from '../../types';
 import FrontPageTooltip from '../../../../../../components/FrontPageTooltip';
 import Image from '../../../../../../components/Image';
 
@@ -20,12 +20,12 @@ const rankMapping = {
 };
 
 type TabCardsProps = {
-  comparators: comparatorType[];
-  mutationBurden: mutationBurdenType[];
+  comparators: ComparatorType[];
+  mutationBurden: MutationBurdenType[];
   type: string;
-  barplots: imageType[];
-  densities: imageType[];
-  legends: imageType[];
+  barplots: ImageType[];
+  densities: ImageType[];
+  legends: ImageType[];
 };
 
 const TabCards = ({

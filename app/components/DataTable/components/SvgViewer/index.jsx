@@ -11,6 +11,8 @@ import {
 import { UncontrolledReactSVGPanZoom } from 'react-svg-pan-zoom';
 import InlineSVG from 'svg-inline-react';
 import AutoSizer from 'react-virtualized/dist/es/AutoSizer';
+// not ideal, but no errors are thrown and no render loops occur
+// eslint-disable-next-line import/no-cycle
 import DataTable from '../..';
 import columnDefs, { setHeaderName } from './columnDefs';
 

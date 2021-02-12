@@ -14,16 +14,18 @@ import {
   AppBar,
 } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
-import DataTable from '../..';
-import api from '../../../../services/api';
+import api from '@/services/api';
 import { columnDefs } from '@/views/ReportView/components/KbMatches/columnDefs';
 import { columnDefs as smallMutationsColumnDefs } from '@/views/ReportView/components/SmallMutations/columnDefs';
 import copyNumberColumnDefs from '@/views/ReportView/components/CopyNumber/columnDefs';
 import expressionColumnDefs from '@/views/ReportView/components/Expression/columnDefs';
 import structuralVariantsColumnDefs from '@/views/ReportView/components/StructuralVariants/columnDefs';
+import ReportContext from '@/components/ReportContext';
+// not ideal, but no errors are thrown and no render loops occur
+// eslint-disable-next-line import/no-cycle
+import DataTable from '../..';
 
 import './index.scss';
-
 
 /**
  * @param {object} props props
@@ -38,9 +40,9 @@ const GeneViewer = (props) => {
     onClose,
     isOpen,
     gene,
-    reportIdent,
   } = props;
 
+  const { report } = useContext(ReportContext);
   const [geneData, setGeneData] = useState();
   const [tabValue, setTabValue] = useState(0);
   const snackbar = useSnackbar();
@@ -62,7 +64,7 @@ const GeneViewer = (props) => {
     if (isOpen) {
       const getData = async () => {
         try {
-          const call = api.get(`/reports/${reportIdent}/gene-viewer/${gene}`);
+          const call = api.get(`/reports/${report.ident}/gene-viewer/${gene}`);
           const resp = await call.request();
           setGeneData(resp);
         } catch {
@@ -78,7 +80,7 @@ const GeneViewer = (props) => {
       structuralVariantsColumnDefs[0].cellRendererParams = { link: false };
       getData();
     }
-  }, [gene, handleClose, isOpen, reportIdent, snackbar]);
+  }, [gene, handleClose, isOpen, report, snackbar]);
 
   return (
     <Dialog
@@ -135,7 +137,7 @@ const GeneViewer = (props) => {
             )}
             {tabValue === 4 && (
               <div className="tab--center">
-                {geneData.expDensityGraph.map(graph => (
+                {geneData.expDensityGraph.map((graph) => (
                   <img
                     key={graph.ident}
                     src={`data:image/png;base64,${graph.data}`}
@@ -148,7 +150,6 @@ const GeneViewer = (props) => {
               <DataTable
                 rowData={geneData.structuralVariants}
                 columnDefs={structuralVariantsColumnDefs}
-                reportIdent={reportIdent}
               />
             )}
           </>
@@ -166,7 +167,6 @@ const GeneViewer = (props) => {
 GeneViewer.propTypes = {
   onClose: PropTypes.func.isRequired,
   gene: PropTypes.string.isRequired,
-  reportIdent: PropTypes.string.isRequired,
   isOpen: PropTypes.bool.isRequired,
 };
 

@@ -20,7 +20,7 @@ import {
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import { useSnackbar } from 'notistack';
 
-import { recordDefaults } from '@/common';
+import { RecordDefaults } from '@/common';
 import api from '@/services/api';
 import sections from '../../sections';
 
@@ -38,9 +38,9 @@ type AddEditTemplateProps = {
       format: string | null;
       type: string | null;
       updatedAt: string | null;
-    } & recordDefaults;
+    } & RecordDefaults;
     updatedAt: string | null;
-  } & recordDefaults;
+  } & RecordDefaults;
 };
 
 const AddEditTemplate = ({

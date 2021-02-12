@@ -20,7 +20,6 @@ import TargetedGenesService from '../../../../services/reports/targeted-genes.se
 import TestInformationService from '../../../../services/reports/test-information.service';
 import { formatDate } from '../../../../utils/date';
 import TestInformation from './components/TestInformation';
-import { TestInformationInterface } from './components/TestInformation/interfaces';
 import SignatureCard from '../../../../components/SignatureCard';
 import PatientEdit from '../GenomicSummary/components/PatientEdit';
 import EventsEditDialog from './components/EventsEditDialog';
@@ -120,7 +119,7 @@ const ProbeSummary = ({
     }
 
     const callSet = new ApiCallSet(apiCalls);
-    const [_, reportResp] = await callSet.request(isSigned);
+    const [, reportResp] = await callSet.request(isSigned);
 
     if (reportResp) {
       setReport({ ...reportResp, ...report });

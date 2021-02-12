@@ -16,7 +16,10 @@ import GetAppIcon from '@material-ui/icons/GetApp';
 
 import ColumnPicker from './components/ColumnPicker';
 import LinkCellRenderer from './components/LinkCellRenderer';
+// not ideal, but no errors are thrown and no render loops occur
+// eslint-disable-next-line import/no-cycle
 import GeneCellRenderer from './components/GeneCellRenderer';
+// eslint-disable-next-line import/no-cycle
 import ActionCellRenderer from './components/ActionCellRenderer';
 import { getDate } from '../../utils/date';
 import ReportContext from '../ReportContext';
@@ -287,6 +290,7 @@ const DataTable = ({
       <ActionCellRenderer
         onEdit={handleEdit}
         onDelete={handleDelete}
+        // eslint-disable-next-line react/jsx-props-no-spreading
         {...row}
       />
     );
@@ -449,6 +453,9 @@ const DataTable = ({
 };
 
 // PropTypes are defined for legacy angularjs -> react support
+// Default props are defined in the Type definition
+/* eslint-disable react/forbid-prop-types */
+/* eslint-disable react/require-default-props */
 DataTable.propTypes = {
   /* Data populating table */
   rowData: PropTypes.any,

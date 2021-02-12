@@ -1,5 +1,4 @@
-/* eslint-disable camelcase */
-type sampleInfoType = {
+type SampleInfoType = {
   'Biopsy Site': string;
   'Collection Date': string;
   'Patho TC': string;
@@ -8,7 +7,7 @@ type sampleInfoType = {
   'Sample Name': string;
 };
 
-type seqQCType = {
+type SeqQCType = {
   Coverage: string;
   Duplicate_Reads_Perc: number;
   Input_ng: string;
@@ -22,13 +21,13 @@ type seqQCType = {
   labQC: string;
 };
 
-type appendicesType = {
+type AppendicesType = {
   config: string;
-  sampleInfo: sampleInfoType[];
-  seqQC: seqQCType[];
+  sampleInfo: SampleInfoType[];
+  seqQC: SeqQCType[];
 };
 
-type tcgaType = {
+type TcgaType = {
   'Code Name': string;
   'Data Source': string;
   'Full Name': string;
@@ -36,7 +35,7 @@ type tcgaType = {
   'Tumour Count': string;
 };
 
-type comparatorType = {
+type ComparatorType = {
   analysisRole: string;
   createdAt: string;
   description: string | null;
@@ -48,9 +47,9 @@ type comparatorType = {
 };
 
 export {
-  sampleInfoType,
-  seqQCType,
-  appendicesType,
-  tcgaType,
-  comparatorType,
+  SampleInfoType,
+  SeqQCType,
+  AppendicesType,
+  TcgaType,
+  ComparatorType,
 };
