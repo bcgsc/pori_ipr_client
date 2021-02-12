@@ -88,7 +88,7 @@ const ProbeSummary = ({
             value: report.patientInformation.biopsySite,
           },
           {
-            label: 'Sex',
+            label: 'Gender',
             value: report.patientInformation.gender,
           },
         ]);
@@ -151,7 +151,7 @@ const ProbeSummary = ({
         value: newPatientData ? newPatientData.biopsySite : report.patientInformation.biopsySite,
       },
       {
-        label: 'Sex',
+        label: 'Gender',
         value: newPatientData ? newPatientData.gender : report.patientInformation.gender,
       },
     ]);
@@ -249,14 +249,6 @@ const ProbeSummary = ({
           )}
         </>
       )}
-      {report && testInformation && (
-        <div className="probe-summary__test-information">
-          <Typography variant="h3" className="probe-summary__test-information-title">
-            Test Information
-          </Typography>
-          <TestInformation data={testInformation} />
-        </div>
-      )}
       {report && probeResults && (
         <>
           <Typography variant="h3" display="inline">
@@ -284,6 +276,14 @@ const ProbeSummary = ({
             </div>
           )}
         </>
+      )}
+      {report && testInformation && (
+        <div className="probe-summary__test-information">
+          <Typography variant="h3" className="probe-summary__test-information-title">
+            Test Information
+          </Typography>
+          <TestInformation data={testInformation} />
+        </div>
       )}
       {report && (
         <span className="probe-summary__reviews">

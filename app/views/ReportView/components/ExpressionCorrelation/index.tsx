@@ -12,8 +12,10 @@ import DataTable from '../../../../components/DataTable';
 import columnDefs from './columnDefs';
 import { getPairwiseExpressionCorrelation } from '../../../../services/reports/pairwise-expression';
 import Image from '../../../../components/Image';
+import DemoDescription from '@/components/DemoDescription';
 
 import './index.scss';
+
 
 interface Color {
   red: number;
@@ -93,7 +95,7 @@ const ExpressionCorrelation = (): JSX.Element => {
       getData();
     }
   }, [report]);
-  
+
   useEffect(() => {
     Chart.pluginService.register({
       plugins: [ChartDataLabels],
@@ -213,6 +215,13 @@ const ExpressionCorrelation = (): JSX.Element => {
         <Typography variant="h3">
           Expression Correlation
         </Typography>
+        <DemoDescription>
+          The overall gene expression in the tumour is compared to a gene expression profiles from
+          variety of tumour types, either from internal or external curated datasets, using a
+          correlation approach, to highlight the most similar tumour types. In addition, the tumour
+          is compared to previously sequenced tumours to identify the most similar individual
+          samples. Subtyping based on gene expression is computed if applicable for the tumour type.
+        </DemoDescription>
         {plots && subtypePlots && (
           <>
             <div>

@@ -96,7 +96,7 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
   useEffect(() => {
     if (report) {
       const getData = async () => {
-        const call = api.get(`/reports/${report.ident}/immune-cell-types`);
+        const call = api.get(`/reports/${report.ident}/immune-cell-types`, {});
         const [
           microbialResp,
           variantsResp,
@@ -178,7 +178,7 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
           value: report.patientInformation.biopsySite,
         },
         {
-          label: 'Sex',
+          label: 'Gender',
           value: report.patientInformation.gender,
         },
       ]);
@@ -201,6 +201,16 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
         tCell = null;
       }
 
+      let sigs: null | string;
+      if (signatures.length && signatures.find(sig => sig.selected)) {
+        sigs = signatures.filter(({ selected }) => selected)
+          .map(({ associations, signature }) => (
+            `${signature}${associations ? ` (${associations})` : ''}`
+          )).join(', ');
+      } else {
+        sigs = 'Nothing of clinical relevance';
+      }
+
       setTumourSummary([
         {
           term: 'Tumour Content',
@@ -220,11 +230,7 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
         },
         {
           term: 'Mutation Signature',
-          value: signatures
-            .filter(({ selected }) => selected)
-            .map(({ associations, signature }) => (
-              `${signature} (${associations})`
-            )).join(', '),
+          value: sigs,
           action: !print ? () => history.push('mutation-signatures') : null,
         },
         {
@@ -256,6 +262,7 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
       const req = api.del(
         `/reports/${report.ident}/summary/genomic-alterations-identified/${chipIdent}`,
         { comment },
+        {},
       );
       await req.request(isSigned);
 
@@ -270,7 +277,7 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
 
   const handleChipAdded = useCallback(async (variant) => {
     try {
-      const req = api.post(`/reports/${report.ident}/summary/genomic-alterations-identified`, { geneVariant: variant });
+      const req = api.post(`/reports/${report.ident}/summary/genomic-alterations-identified`, { geneVariant: variant }, {});
       const newVariantEntry = await req.request();
 
       const categorizedVariantEntry = variantCategory(newVariantEntry);
@@ -293,17 +300,17 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
     }
 
     if (newPatientData) {
-      apiCalls.push(api.put(`/reports/${report.ident}/patient-information`, newPatientData));
+      apiCalls.push(api.put(`/reports/${report.ident}/patient-information`, newPatientData, {}));
     }
 
     if (newReportData) {
-      apiCalls.push(api.put(`/reports/${report.ident}`, newReportData));
+      apiCalls.push(api.put(`/reports/${report.ident}`, newReportData, {}));
     }
 
     const callSet = new ApiCallSet(apiCalls);
     await callSet.request(isSigned);
 
-    const reportResp = await api.get(`/reports/${report.ident}`).request();
+    const reportResp = await api.get(`/reports/${report.ident}`, {}).request();
     setReport(reportResp);
 
     setPatientInformation([
@@ -332,7 +339,7 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
         value: newPatientData ? newPatientData.biopsySite : report.patientInformation.biopsySite,
       },
       {
-        label: 'Sex',
+        label: 'Gender',
         value: newPatientData ? newPatientData.gender : report.patientInformation.gender,
       },
     ]);
@@ -348,25 +355,25 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
 
     if (newMicrobialData) {
       if (microbial) {
-        apiCalls.push(api.put(`/reports/${report.ident}/summary/microbial/${microbial.ident}`, newMicrobialData));
+        apiCalls.push(api.put(`/reports/${report.ident}/summary/microbial/${microbial.ident}`, newMicrobialData, {}));
       } else {
-        apiCalls.push(api.post(`/reports/${report.ident}/summary/microbial`, newMicrobialData));
+        apiCalls.push(api.post(`/reports/${report.ident}/summary/microbial`, newMicrobialData, {}));
       }
     } else {
       apiCalls.push({ request: () => null });
     }
 
     if (newReportData) {
-      apiCalls.push(api.put(`/reports/${report.ident}`, newReportData));
+      apiCalls.push(api.put(`/reports/${report.ident}`, newReportData, {}));
     } else {
       apiCalls.push({ request: () => null });
     }
 
     if (newMutationBurdenData) {
       if (primaryBurden) {
-        apiCalls.push(api.put(`/reports/${report.ident}/mutation-burden/${primaryBurden.ident}`, newMutationBurdenData));
+        apiCalls.push(api.put(`/reports/${report.ident}/mutation-burden/${primaryBurden.ident}`, newMutationBurdenData, {}));
       } else {
-        apiCalls.push(api.post(`/reports/${report.ident}/mutation-burden`, newMutationBurdenData));
+        apiCalls.push(api.post(`/reports/${report.ident}/mutation-burden`, newMutationBurdenData, {}));
       }
     }
 
