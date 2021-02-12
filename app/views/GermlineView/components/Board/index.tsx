@@ -4,9 +4,10 @@ import ApiPaginatedTable from './components/ApiPaginatedTable';
 import api from '../../../../services/api';
 import columnDefs from './columnDefs';
 import ParamsContext from './components/ParamsContext';
+import { GermlineReportType } from '../../types';
 
 const Board = (): JSX.Element => {
-  const [reports, setReports] = useState([]);
+  const [reports, setReports] = useState<GermlineReportType[]>([]);
   const [totalRows, setTotalRows] = useState<number>(0);
   const [limit, setLimit] = useState<number>(20);
   const [offset, setOffset] = useState<number>(0);

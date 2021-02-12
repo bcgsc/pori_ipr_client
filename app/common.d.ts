@@ -11,29 +11,29 @@ declare let CONFIG: {
   },
 };
 
-type recordDefaults = {
+type RecordDefaults = {
   ident: string;
   updatedAt: string | null;
   createdAt: string | null;
 };
 
-type userGroupMemberType = {
+type UserGroupMemberType = {
   createdAt: string;
   deletedAt: null | string;
   group_id: number;
   id: number;
   updatedAt: null | string;
   user_id: number;
-} & recordDefaults;
+} & RecordDefaults;
 
-type groupType = {
+type GroupType = {
   ident: string;
   name: string;
-  users: userGroupMemberType[];
-  owner: userType;
+  users: UserGroupMemberType[];
+  owner: UserType;
 };
 
-type userProjectsType = {
+type UserProjectsType = {
   ident: string;
   name: string;
   user_project: {
@@ -46,21 +46,21 @@ type userProjectsType = {
   },
 };
 
-type userType = {
+type UserType = {
   email: string;
   firstName: string;
-  groups: groupType[],
+  groups: GroupType[],
   lastLogin: null | string;
   lastName: string;
-  projects: userProjectsType[];
+  projects: UserProjectsType[];
   type: string;
   username: string;
-} & recordDefaults;
+} & RecordDefaults;
 
 export {
-  recordDefaults,
-  userType,
-  groupType,
-  userProjectsType,
-  userGroupMemberType,
+  RecordDefaults,
+  UserType,
+  GroupType,
+  UserProjectsType,
+  UserGroupMemberType,
 };
