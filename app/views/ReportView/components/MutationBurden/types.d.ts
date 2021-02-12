@@ -1,34 +1,28 @@
+import { recordDefaults } from '@/common';
+
 type imageType = {
   caption: string | null;
-  createdAt: string;
   data: string;
   filename: string;
   format: string;
-  ident: string;
   key: string;
   title: string | null;
-  updatedAt: string;
-};
+} & recordDefaults;
 
 type comparatorType = {
   analysisRole: string;
-  createdAt: string;
   description: string | null;
-  ident: string;
   name: string;
   size: number | null;
-  updatedAt: string;
   version: string | null;
-};
+} & recordDefaults;
 
 type mutationBurdenType = {
   codingIndelPercentile: number | null;
   codingIndelsCount: number | null;
   codingSnvCount: number | null;
   codingSnvPercentile: number | null;
-  createdAt: string;
   frameshiftIndelsCount: number | null;
-  ident: string;
   qualitySvCount: number | null;
   qualitySvExpressedCount: number | null;
   qualitySvPercentile: number | null;
@@ -37,11 +31,16 @@ type mutationBurdenType = {
   totalMutationsPerMb: number | null;
   totalSnvCount: number | null;
   truncatingSnvCount: number | null;
-  updatedAt: string | null;
-};
+} & recordDefaults;
+
+type msiType = {
+  score: number | null;
+  kbCategory: string | null;
+} & recordDefaults;
 
 export {
   imageType,
   comparatorType,
   mutationBurdenType,
+  msiType,
 };

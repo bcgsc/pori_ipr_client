@@ -26,9 +26,8 @@ class SmallMutations {
 
   async $onChanges(changes) {
     if (changes.report && changes.report.currentValue) {
-      this.smallMutations = await SmallMutationsService.all(this.report.ident);
-
-      this.processMutations(this.smallMutations);
+      const mutations = await SmallMutationsService.all(this.report.ident);
+      this.smallMutations = this.processMutations(mutations);
       this.loading = false;
       $rootScope.$digest();
     }
@@ -68,8 +67,7 @@ class SmallMutations {
       }
     }
 
-    // Set Small Mutations
-    this.smallMutations = mutations;
+    return mutations;
   }
 }
 

@@ -1,7 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const DashboardPlugin = require('webpack-dashboard/plugin');
 const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
@@ -81,10 +80,6 @@ module.exports = {
     },
   },
   plugins: [
-    new HtmlWebpackPlugin({
-      template: path.join(__dirname, '../../statics/index.html'),
-      inject: true,
-    }),
     new CopyWebpackPlugin({
       patterns: [
         {
@@ -96,6 +91,10 @@ module.exports = {
           from: path.join(__dirname, '../../statics/favicon/*'),
           to: 'img/',
           flatten: true,
+        },
+        {
+          from: path.join(__dirname, '../../statics/ipr-env-config.js'),
+          to: 'ipr-env-config.js',
         },
       ],
     }),
@@ -122,7 +121,7 @@ module.exports = {
     path: path.resolve(__dirname, '../../dist'),
     chunkFilename: '[name].[chunkhash].chunk.js',
     filename: '[name].bundle.js',
-    publicPath: '/',
+    publicPath: '', // makes scripts relative so base tag can work
   },
   devServer: {
     contentBase: path.join(__dirname, '../../dist'),
