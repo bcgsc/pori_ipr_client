@@ -80,7 +80,7 @@ const GeneViewer = (props) => {
       structuralVariantsColumnDefs[0].cellRendererParams = { link: false };
       getData();
     }
-  }, [gene, handleClose, isOpen, report, snackbar]);
+  }, [gene, handleClose, isOpen, report.ident, snackbar]);
 
   return (
     <Dialog
