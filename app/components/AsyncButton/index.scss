@@ -1,0 +1,32 @@
+.async-button {
+  &__container {
+    display: inline-block;
+  }
+
+  &__progress {
+    position: absolute;
+    opacity: 0;
+    transition: opacity 1s;
+    
+    &--visible {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+
+  &__success {
+    transition: opacity 1s;
+    position: absolute;
+    opacity: 0;
+
+    &--visible {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+
+  &__label {
+    transition: visibility 1s;
+    visibility: hidden;
+  }
+}
