@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useState, useContext, useCallback,
+  useEffect, useState,
 } from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -165,6 +165,11 @@ GeneViewer.propTypes = {
   onClose: PropTypes.func.isRequired,
   gene: PropTypes.string.isRequired,
   isOpen: PropTypes.bool.isRequired,
+  reportIdent: PropTypes.string,
+};
+
+GeneViewer.defaultProps = {
+  reportIdent: '',
 };
 
 export default GeneViewer;
