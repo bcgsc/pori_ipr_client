@@ -9,8 +9,8 @@ import {
 } from '@material-ui/core';
 
 import { ImageType, ComparatorType, MutationBurdenType } from '../../types';
-import FrontPageTooltip from '../../../../../../components/FrontPageTooltip';
-import Image from '../../../../../../components/Image';
+import FrontPageTooltip from '@/components/FrontPageTooltip';
+import Image from '@/components/Image';
 
 const rankMapping = {
   primary: 0,

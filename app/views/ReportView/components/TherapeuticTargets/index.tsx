@@ -10,7 +10,7 @@ import DataTable from '@/components/DataTable';
 import EditContext from '@/components/EditContext';
 import api from '@/services/api';
 import DemoDescription from '@/components/DemoDescription';
-import ReportContext from '../../../../components/ReportContext';
+import ReportContext from '@/components/ReportContext';
 import EditDialog from './components/EditDialog';
 import EvidenceHeader from './components/EvidenceHeader';
 import columnDefs from './columnDefs';

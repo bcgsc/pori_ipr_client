@@ -22,7 +22,7 @@ import GeneCellRenderer from './components/GeneCellRenderer';
 // eslint-disable-next-line import/no-cycle
 import ActionCellRenderer from './components/ActionCellRenderer';
 import { getDate } from '../../utils/date';
-import ReportContext from '../ReportContext';
+import ReportContext from '@/components/ReportContext';
 
 import './index.scss';
 

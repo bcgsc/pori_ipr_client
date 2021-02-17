@@ -6,8 +6,8 @@ import {
   Button,
 } from '@material-ui/core';
 
-import api from '../../services/api';
-import { UserType } from '../../common';
+import api from '@/services/api';
+import { UserType } from '@/common';
 
 import './index.scss';
 

@@ -1,11 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  Typography,
-} from '@material-ui/core';
 import { useSnackbar } from 'notistack';
 
 import DataTable from '@/components/DataTable';
-import api from '../../services/api';
+import api from '@/services/api';
 import AddEditTemplate from './components/AddEditTemplate';
 import columnDefs from './columnDefs';
 
