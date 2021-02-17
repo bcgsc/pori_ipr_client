@@ -10,9 +10,11 @@ import './index.scss';
 
 const ReportSidebar = (props) => {
   const {
-    sections,
+    allSections,
+    visibleSections,
     isSidebarVisible,
     reportIdent,
+    canEdit,
   } = props;
 
   const { pathname } = useLocation();
@@ -37,23 +39,28 @@ const ReportSidebar = (props) => {
             <PrintIcon />
           </Link>
         </ListItem>
-        {sections.map(section => (
+        {allSections.map(section => (
           <React.Fragment key={section.name}>
-            {section.uri ? (
-              <Link to={{ pathname: section.uri }} className="report-sidebar__list-link">
-                <ListItem classes={{
-                  root: `
-                    report-sidebar__list-item
-                    ${pathname.split('/').pop() === section.uri ? 'report-sidebar__list-item--active' : ''}
-                  `,
-                }}
-                >
-                  <ListItemText>
-                    {section.name}
-                  </ListItemText>
-                </ListItem>
-              </Link>
-            ) : (
+            {section.uri && (
+              <>
+                {visibleSections.includes(section.uri) && (
+                  <Link to={{ pathname: section.uri }} className="report-sidebar__list-link">
+                    <ListItem classes={{
+                      root: `
+                        report-sidebar__list-item
+                        ${pathname.split('/').pop() === section.uri ? 'report-sidebar__list-item--active' : ''}
+                      `,
+                    }}
+                    >
+                      <ListItemText>
+                        {section.name}
+                      </ListItemText>
+                    </ListItem>
+                  </Link>
+                )}
+              </>
+            )}
+            {section.children.some(child => visibleSections.includes(child.uri)) && (
               <ListItem classes={{ root: 'report-sidebar__list-item report-sidebar__list-item--no-hover' }}>
                 <ListItemText classes={{ primary: 'report-sidebar__list-item-text--bold' }}>
                   {section.name}
@@ -64,38 +71,59 @@ const ReportSidebar = (props) => {
               {Boolean(section.children.length) && (
                 <>
                   {section.children.map(child => (
-                    <Link
-                      key={child.uri}
-                      to={{ pathname: child.uri }}
-                      className="report-sidebar__list-link"
-                    >
-                      <ListItem classes={{
-                        root: `
-                          report-sidebar__list-item--indented
-                          ${pathname.split('/').pop() === child.uri ? 'report-sidebar__list-item--active' : ''}
-                        `,
-                      }}
-                      >
-                        <ListItemText>
-                          {child.name}
-                        </ListItemText>
-                      </ListItem>
-                    </Link>
+                    <>
+                      {visibleSections.includes(child.uri) && (
+                        <Link
+                          key={child.uri}
+                          to={{ pathname: child.uri }}
+                          className="report-sidebar__list-link"
+                        >
+                          <ListItem classes={{
+                            root: `
+                              report-sidebar__list-item--indented
+                              ${pathname.split('/').pop() === child.uri ? 'report-sidebar__list-item--active' : ''}
+                            `,
+                          }}
+                          >
+                            <ListItemText>
+                              {child.name}
+                            </ListItemText>
+                          </ListItem>
+                        </Link>
+                      )}
+                    </>
                   ))}
                 </>
               )}
             </>
           </React.Fragment>
         ))}
+        {canEdit && (
+          <Link to={{ pathname: 'settings' }} className="report-sidebar__list-link">
+            <ListItem classes={{
+              root: `
+                report-sidebar__list-item
+                ${pathname.split('/').pop() === 'settings' ? 'report-sidebar__list-item--active' : ''}
+              `,
+            }}
+            >
+              <ListItemText>
+                Settings
+              </ListItemText>
+            </ListItem>
+          </Link>
+        )}
       </List>
     </div>
   );
 };
 
 ReportSidebar.propTypes = {
-  sections: PropTypes.arrayOf(PropTypes.object).isRequired,
+  allSections: PropTypes.arrayOf(PropTypes.string).isRequired,
+  visibleSections: PropTypes.arrayOf(PropTypes.string).isRequired,
   isSidebarVisible: PropTypes.bool.isRequired,
   reportIdent: PropTypes.string.isRequired,
+  canEdit: PropTypes.bool.isRequired,
 };
 
 export default ReportSidebar;

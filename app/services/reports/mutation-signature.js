@@ -10,7 +10,7 @@ const getMutationSignatures = async (reportIdent) => {
   };
 
   const response = await fetch(
-    `${CONFIG.ENDPOINTS.API}/reports/${reportIdent}/mutation-signatures`,
+    `${window._env_.API_BASE_URL}/reports/${reportIdent}/mutation-signatures`,
     options,
   );
 
@@ -31,7 +31,7 @@ const updateMutationSignature = async (reportIdent, signatureIdent, newSignature
   };
 
   const response = await fetch(
-    `${CONFIG.ENDPOINTS.API}/reports/${reportIdent}/mutation-signatures/${signatureIdent}`,
+    `${window._env_.API_BASE_URL}/reports/${reportIdent}/mutation-signatures/${signatureIdent}`,
     options,
   );
 

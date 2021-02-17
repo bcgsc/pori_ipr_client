@@ -10,7 +10,7 @@ const getMicrobial = async (reportIdent) => {
   };
 
   const response = await fetch(
-    `${CONFIG.ENDPOINTS.API}/reports/${reportIdent}/summary/microbial`,
+    `${window._env_.API_BASE_URL}/reports/${reportIdent}/summary/microbial`,
     options,
   );
 
@@ -31,7 +31,7 @@ const updateMicrobial = async (reportIdent, microbial) => {
   };
 
   const response = await fetch(
-    `${CONFIG.ENDPOINTS.API}/reports/${reportIdent}/summary/microbial`,
+    `${window._env_.API_BASE_URL}/reports/${reportIdent}/summary/microbial`,
     options,
   );
 
@@ -39,7 +39,7 @@ const updateMicrobial = async (reportIdent, microbial) => {
     return response.json();
   }
   return errorHandler(response);
-}
+};
 
 export {
   getMicrobial,

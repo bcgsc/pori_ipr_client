@@ -4,10 +4,10 @@ interface PatientInformationInterface {
   caseType: 'Pediatric' | 'Adult',
   constitutionalProtocol: string | null,
   constitutionalSample: string | null,
-  createdAt: string,
+  createdAt: string;
   diagnosis: string | null,
   gender: string | null,
-  ident: string,
+  ident: string;
   physician: string | null,
   reportDate: string | null,
   tumourProtocol: string | null,
@@ -27,19 +27,23 @@ interface SampleInfoInterface {
 interface ReportContextInterface {
   /** Current report that's being viewed */
   report: {
-    alternateIdentifier?: string,
-    biopsyName?: string,
-    createdAt: string,
-    ident: string,
-    patientId: string,
+    alternateIdentifier?: string;
+    biopsyName?: string;
+    createdAt: string;
+    ident: string;
+    kbVersion: string;
+    patientId: string;
     patientInformation: PatientInformationInterface,
+    ploidy: string;
+    reportVersion: string;
     sampleInfo: Array<SampleInfoInterface>
-    state: string,
-    tumourContent?: number,
-    type: string,
+    state: string;
+    subtyping: string;
+    tumourContent?: number;
+    type: string;
   } | null,
   /** Set new current report */
-  setReport: Function,
+  setReport: (newValue: Record<string, unknown>) => void;
 }
 
 export {

@@ -8,7 +8,7 @@ import {
   Switch, Route, useRouteMatch, useParams, useHistory,
 } from 'react-router-dom';
 import { useTheme } from '@material-ui/core/styles';
-import { SnackbarContext } from '@bcgsc/react-snackbar-provider';
+import { useSnackbar } from 'notistack';
 
 import SecurityContext from '@/components/SecurityContext';
 import ReportToolbar from '@/components/ReportToolbar';
@@ -17,7 +17,7 @@ import ReportService from '@/services/reports/report.service';
 import EditContext from '@/components/EditContext';
 import ReportContext from '../../components/ReportContext';
 import ConfirmContext from '@/components/ConfirmContext';
-import { genomic, probe } from './sections';
+import allSections from './sections';
 import api from '@/services/api';
 
 import './index.scss';
@@ -40,7 +40,7 @@ const Expression = lazy(() => import('./components/Expression'));
 const Immune = lazy(() => import('./components/Immune'));
 const Appendices = lazy(() => import('./components/Appendices'));
 const Settings = lazy(() => import('./components/Settings'));
-const ProbeSummary = lazy(() => import('./components/ProbeSummary/index.tsx'));
+const ProbeSummary = lazy(() => import('./components/ProbeSummary'));
 
 const ReportView = () => {
   const { path } = useRouteMatch();
@@ -48,28 +48,31 @@ const ReportView = () => {
   const theme = useTheme();
   const history = useHistory();
   const { canEdit } = useContext(EditContext);
-  const snackbar = useContext(SnackbarContext);
+  const snackbar = useSnackbar();
 
   const [report, setReport] = useState();
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
-  const [sections, setSections] = useState();
+  const [visibleSections, setVisibleSections] = useState([]);
   const [isProbe, setIsProbe] = useState(false);
   const [isSigned, setIsSigned] = useState(false);
+  const [templates, setTemplates] = useState([]);
 
   useEffect(() => {
     if (!report) {
       const getReport = async () => {
         try {
           const resp = await ReportService.getReport(params.ident);
+          const templatesResp = await api.get('/templates', {}).request();
+          setTemplates(templatesResp);
           setReport(resp);
-          if (resp.type === 'genomic') {
-            setSections(genomic);
-          } else {
-            setSections(probe);
+          if (resp.template.name === 'probe') {
             setIsProbe(true);
+          } else {
+            setIsProbe(false);
           }
+          setVisibleSections(resp.template.sections);
         } catch {
-          snackbar.add(`Report ${params.ident} not found`);
+          snackbar.enqueueSnackbar(`Report ${params.ident} not found`);
           history.push('/reports');
         }
       };
@@ -104,7 +107,7 @@ const ReportView = () => {
               <ReportToolbar
                 diagnosis={report.patientInformation.diagnosis}
                 patientId={report.patientId}
-                type={report.type}
+                type={report.template.name}
                 state={report.state}
                 isSidebarVisible={isSidebarVisible}
                 onSidebarToggle={setIsSidebarVisible}
@@ -211,13 +214,21 @@ const ReportView = () => {
                 />
                 <Route
                   render={routeProps => (
-                    <Appendices {...routeProps} print={false} theme={theme} isProbe={isProbe} report={report} canEdit={canEdit} />
+                    <Appendices {...routeProps} isPrint={false} theme={theme} isProbe={isProbe} report={report} canEdit={canEdit} />
                   )}
                   path={`${path}/appendices`}
                 />
                 <Route
                   render={routeProps => (
-                    <Settings {...routeProps} print={false} showBindings={!isProbe} report={report} canEdit={canEdit} isSigned={isSigned} />
+                    <Settings
+                      {...routeProps}
+                      print={false}
+                      showBindings={!isProbe}
+                      report={report}
+                      canEdit={canEdit}
+                      isSigned={isSigned}
+                      templates={templates}
+                    />
                   )}
                   path={`${path}/settings`}
                 />
@@ -255,8 +266,14 @@ const ReportView = () => {
               </Switch>
             </div>
           </div>
-          {Boolean(sections) && (
-            <ReportSidebar sections={sections} isSidebarVisible={isSidebarVisible} reportIdent={report.ident} />
+          {report && (
+            <ReportSidebar
+              visibleSections={report.template.sections || ['summary']}
+              allSections={allSections}
+              isSidebarVisible={isSidebarVisible}
+              reportIdent={report.ident}
+              canEdit={canEdit}
+            />
           )}
         </div>
       </ConfirmContext.Provider>

@@ -26,9 +26,8 @@ class SmallMutations {
 
   async $onChanges(changes) {
     if (changes.report && changes.report.currentValue) {
-      this.smallMutations = await SmallMutationsService.all(this.report.ident);
-
-      this.processMutations(this.smallMutations);
+      const mutations = await SmallMutationsService.all(this.report.ident);
+      this.smallMutations = this.processMutations(mutations);
       this.loading = false;
       $rootScope.$digest();
     }
@@ -46,19 +45,19 @@ class SmallMutations {
     for (const row of Object.values(muts)) {
       let unknown = true;
       // Therapeutic? => clinical
-      if (row.kbMatches.some(m => m.category === 'therapeutic')) {
+      if (row.kbMatches.some((m) => m.category === 'therapeutic')) {
         mutations.clinical.push(row);
         unknown = false;
       }
 
       // Diagnostic || Prognostic? => nostic
-      if (row.kbMatches.some(m => (m.category === 'diagnostic' || m.category === 'prognostic'))) {
+      if (row.kbMatches.some((m) => (m.category === 'diagnostic' || m.category === 'prognostic'))) {
         mutations.nostic.push(row);
         unknown = false;
       }
 
       // Biological ? => Biological
-      if (row.kbMatches.some(m => m.category === 'biological')) {
+      if (row.kbMatches.some((m) => m.category === 'biological')) {
         mutations.biological.push(row);
         unknown = false;
       }
@@ -68,8 +67,7 @@ class SmallMutations {
       }
     }
 
-    // Set Small Mutations
-    this.smallMutations = mutations;
+    return mutations;
   }
 }
 

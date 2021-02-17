@@ -2,7 +2,7 @@ import { $http } from 'ngimport';
 
 class AlterationService {
   constructor() {
-    this.api = `${CONFIG.ENDPOINTS.API}/reports`;
+    this.api = `${window._env_.API_BASE_URL}/reports`;
   }
 
   baseUrl(report) {

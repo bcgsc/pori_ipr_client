@@ -1,4 +1,4 @@
-const toastCreator = message => ({
+const toastCreator = (message) => ({
   parent: angular.element(document.body),
   template: `
     <md-toast>

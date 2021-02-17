@@ -25,17 +25,17 @@ const processExpression = (input) => {
 
     // KB matches
     // Therapeutic? => clinical
-    if (row.kbMatches.some(m => m.category === 'therapeutic')) {
+    if (row.kbMatches.some((m) => m.category === 'therapeutic')) {
       expressions.clinical.push(row);
     }
 
     // Diagnostic || Prognostic? => nostic
-    if (row.kbMatches.some(m => m.category === 'diagnostic' || m.category === 'prognostic')) {
+    if (row.kbMatches.some((m) => m.category === 'diagnostic' || m.category === 'prognostic')) {
       expressions.nostic.push(row);
     }
 
     // Biological ? => Biological
-    if (row.kbMatches.some(m => m.category === 'biological')) {
+    if (row.kbMatches.some((m) => m.category === 'biological')) {
       expressions.biological.push(row);
     }
   }

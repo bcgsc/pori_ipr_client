@@ -32,7 +32,7 @@ const Image = (props) => {
         <>
           <span>
             {showTitle && (
-              <Typography>
+              <Typography variant="h3">
                 {title}
               </Typography>
             )}
@@ -44,7 +44,7 @@ const Image = (props) => {
               onClick={handleZoom}
             />
             {showCaption && (
-              <Typography>
+              <Typography className="image__caption" variant="caption">
                 {caption}
               </Typography>
             )}
@@ -53,7 +53,7 @@ const Image = (props) => {
             <div className="image__dialog-background" onClick={handleZoom} onKeyUp={handleZoom} role="dialog">
               <div className="image__dialog">
                 {showTitle && (
-                  <Typography>
+                  <Typography variant="h3">
                     {title}
                   </Typography>
                 )}
@@ -64,7 +64,7 @@ const Image = (props) => {
                   key={key}
                 />
                 {showCaption && (
-                  <Typography>
+                  <Typography className="image__caption" variant="caption">
                     {caption}
                   </Typography>
                 )}

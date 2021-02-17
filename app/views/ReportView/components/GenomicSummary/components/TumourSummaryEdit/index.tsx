@@ -10,15 +10,21 @@ import {
 
 import './index.scss';
 
-const TumourSummaryEdit = (props) => {
-  const {
-    microbial,
-    report,
-    mutationBurden,
-    isOpen,
-    onClose,
-  } = props;
+type TumourSummaryEditProps = {
+  microbial: any;
+  report: any;
+  mutationBurden: any;
+  isOpen: any;
+  onClose: any;
+};
 
+const TumourSummaryEdit = ({
+  microbial,
+  report,
+  mutationBurden,
+  isOpen,
+  onClose,
+}: TumourSummaryEditProps): JSX.Element => {
   const [newMicrobialData, setNewMicrobialData] = useState({});
   const [newReportData, setNewReportData] = useState({});
   const [newMutationBurdenData, setNewMutationBurdenData] = useState({});
@@ -51,7 +57,7 @@ const TumourSummaryEdit = (props) => {
 
   const handleMicrobialChange = (event) => {
     const { target: { value, name } } = event;
-    setNewMicrobialData(prevVal => ({ ...prevVal, [name]: value }));
+    setNewMicrobialData((prevVal) => ({ ...prevVal, [name]: value }));
 
     if (!microbialDirty) {
       setMicrobialDirty(true);
@@ -60,7 +66,7 @@ const TumourSummaryEdit = (props) => {
 
   const handleReportChange = (event) => {
     const { target: { value, name } } = event;
-    setNewReportData(prevVal => ({ ...prevVal, [name]: value }));
+    setNewReportData((prevVal) => ({ ...prevVal, [name]: value }));
 
     if (!reportDirty) {
       setReportDirty(true);
@@ -69,7 +75,7 @@ const TumourSummaryEdit = (props) => {
 
   const handleMutationBurdenChange = (event) => {
     const { target: { value, name } } = event;
-    setNewMutationBurdenData(prevVal => ({ ...prevVal, [name]: value }));
+    setNewMutationBurdenData((prevVal) => ({ ...prevVal, [name]: value }));
 
     if (!mutationBurdenDirty) {
       setMutationBurdenDirty(true);
@@ -99,7 +105,7 @@ const TumourSummaryEdit = (props) => {
           <>
             <TextField
               className="tumour-dialog__text-field"
-              label="Tumour Content"
+              label="Tumour Content (%)"
               value={newReportData.tumourContent}
               name="tumourContent"
               onChange={handleReportChange}
@@ -149,7 +155,7 @@ const TumourSummaryEdit = (props) => {
         </Button>
       </DialogActions>
     </Dialog>
-  )
-}
+  );
+};
 
 export default TumourSummaryEdit;

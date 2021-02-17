@@ -2,8 +2,8 @@ import { angular2react } from 'angular2react';
 import { $rootScope } from 'ngimport';
 
 import lazyInjector from '@/lazyInjector';
-import template from './sidebar.pug';
 import AclService from '@/services/management/acl.service';
+import template from './sidebar.pug';
 
 import './sidebar.scss';
 
@@ -19,6 +19,7 @@ class Sidebar {
     this.$window = $window;
     this.pageAccess = {};
     this.pages = ['report', 'germline'];
+    this.config = CONFIG;
   }
 
   async $onChanges(changes) {

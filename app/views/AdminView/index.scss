@@ -1,3 +1,5 @@
+@import '../../styles/variables';
+
 .adminContainer {
   background-color: rgb(200, 200, 200);
 }
@@ -188,6 +190,6 @@ div.adminSection md-content.diagTable {
 }
 
 .admin {
-  height: calc(100vh - 56px);
+  height: calc(100vh - #{$navbar-size});
   overflow-y: auto;
 }

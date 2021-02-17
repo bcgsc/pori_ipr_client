@@ -7,6 +7,8 @@ import {
 } from '@material-ui/core';
 import kbAutocomplete from '../../../../../../services/reports/kbAutocomplete';
 
+import './index.scss';
+
 /**
  * @param {object} props props
  * @param {string} defaultValue default text in input box
@@ -18,7 +20,7 @@ import kbAutocomplete from '../../../../../../services/reports/kbAutocomplete';
  * @param {number} minCharacters minimum amount of characters to hit API endpoint
  * @return {*} JSX
  */
-function AutocompleteHandler(props) {
+const AutocompleteHandler = (props) => {
   const {
     defaultValue,
     type,
@@ -60,12 +62,13 @@ function AutocompleteHandler(props) {
   const handleAutocompleteChange = useCallback((event, val) => {
     setValue(val);
     onChange(val, type);
-  }, [onChange]);
+  }, [onChange, type]);
 
   return (
     <Autocomplete
       autoHighlight
       disableOpenOnFocus
+      classes={{ popper: 'autocomplete__popper' }}
       onChange={handleAutocompleteChange}
       options={options}
       getOptionLabel={option => option.displayName || option}
@@ -93,7 +96,7 @@ function AutocompleteHandler(props) {
       )}
     />
   );
-}
+};
 
 AutocompleteHandler.propTypes = {
   defaultValue: PropTypes.string,
@@ -107,7 +110,7 @@ AutocompleteHandler.propTypes = {
 AutocompleteHandler.defaultProps = {
   defaultValue: '',
   required: false,
-  onChange: () => { },
+  onChange: () => {},
   minCharacters: 3,
 };
 

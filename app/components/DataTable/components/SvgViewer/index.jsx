@@ -11,7 +11,9 @@ import {
 import { UncontrolledReactSVGPanZoom } from 'react-svg-pan-zoom';
 import InlineSVG from 'svg-inline-react';
 import AutoSizer from 'react-virtualized/dist/es/AutoSizer';
-import DataTable from '../..';
+import { AgGridReact } from '@ag-grid-community/react';
+
+import LinkCellRenderer from '../LinkCellRenderer';
 import columnDefs, { setHeaderName } from './columnDefs';
 
 import './index.scss';
@@ -119,12 +121,17 @@ function SvgViewer(props) {
             )}
           </AutoSizer>
         )}
-        <DataTable
-          columnDefs={columnDefs}
-          rowData={rowData}
-          canViewDetails={false}
-        />
-        <Typography>
+        <div className="ag-theme-material">
+          <AgGridReact
+            columnDefs={columnDefs}
+            rowData={rowData}
+            domLayout="autoHeight"
+            frameworkComponents={{
+              LinkCellRenderer,
+            }}
+          />
+        </div>
+        <Typography variant="body2">
           {selectedRow.svgTitle}
         </Typography>
       </DialogContent>

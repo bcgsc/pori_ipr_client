@@ -38,23 +38,23 @@ const PatientEdit = (props) => {
     }
   }, [report]);
 
-  const handlePatientChange = (event) => {
+  const handlePatientChange = useCallback((event) => {
     const { target: { value, name } } = event;
-    setNewPatientData(prevVal => ({...prevVal, [name]: value }));
+    setNewPatientData(prevVal => ({ ...prevVal, [name]: value }));
 
     if (!patientDirty) {
       setPatientDirty(true);
     }
-  };
+  }, [patientDirty]);
 
-  const handleReportChange = (event) => {
+  const handleReportChange = useCallback((event) => {
     const { target: { value, name } } = event;
-    setNewReportData(prevVal => ({...prevVal, [name]: value }));
+    setNewReportData(prevVal => ({ ...prevVal, [name]: value }));
 
     if (!reportDirty) {
-      setReportDirty(true)
+      setReportDirty(true);
     }
-  };
+  }, [reportDirty]);
 
   const handleClose = useCallback((isSaved) => {
     if (isSaved) {
@@ -62,7 +62,7 @@ const PatientEdit = (props) => {
     } else {
       onClose(false);
     }
-  }, [newPatientData, newReportData])
+  }, [newPatientData, newReportData, onClose, patientDirty, reportDirty]);
 
   return (
     <Dialog open={isOpen}>
@@ -124,7 +124,7 @@ const PatientEdit = (props) => {
             />
             <TextField
               className="patient-dialog__text-field"
-              label="Sex"
+              label="Gender"
               value={newPatientData.gender}
               name="gender"
               onChange={handlePatientChange}
@@ -144,7 +144,7 @@ const PatientEdit = (props) => {
         </Button>
       </DialogActions>
     </Dialog>
-  )
-}
+  );
+};
 
 export default PatientEdit;

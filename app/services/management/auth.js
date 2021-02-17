@@ -5,9 +5,9 @@ import { $http } from 'ngimport';
 const externalGroups = ['clinician', 'collaborator', 'external analyst'];
 
 const keycloak = Keycloak({
-  'realm': CONFIG.SSO.REALM,
-  'clientId': CONFIG.SSO.CLIENT,
-  'url': CONFIG.ENDPOINTS.KEYCLOAK,
+  'realm': window._env_.KEYCLOAK_REALM,
+  'clientId': window._env_.KEYCLOAK_CLIENT_ID,
+  'url': window._env_.KEYCLOAK_URL,
 });
 
 const getReferrerUri = () => localStorage.getItem(CONFIG.STORAGE.REFERRER);
@@ -66,7 +66,7 @@ const getUser = async (token) => {
     if (token) {
       $http.defaults.headers.common.Authorization = token;
     }
-    const resp = await $http.get(`${CONFIG.ENDPOINTS.API}/user/me`);
+    const resp = await $http.get(`${window._env_.API_BASE_URL}/user/me`);
     return resp.data;
   } catch (err) {
     return null;
@@ -78,7 +78,7 @@ const getUser = async (token) => {
  */
 const isAdmin = (user) => {
   try {
-    return user.groups.some(group => group.name.toLowerCase() === 'admin');
+    return user.groups.some((group) => group.name.toLowerCase() === 'admin');
   } catch {
     return false;
   }
@@ -96,7 +96,7 @@ const getUsername = ({ authorizationToken }) => {
 
 const isExternalMode = (user) => {
   try {
-    return user.groups.some(group => externalGroups.includes(group.name.toLowerCase()));
+    return user.groups.some((group) => externalGroups.includes(group.name.toLowerCase()));
   } catch (err) {
     return true;
   }
@@ -104,7 +104,7 @@ const isExternalMode = (user) => {
 
 const searchUsers = async (query) => {
   try {
-    const resp = await $http.get(`${CONFIG.ENDPOINTS.API}/user/search`, { params: { query }});
+    const resp = await $http.get(`${window._env_.API_BASE_URL}/user/search`, { params: { query } });
     return resp.data;
   } catch {
     return false;
@@ -115,7 +115,14 @@ const login = async (referrerUri = null) => {
   setReferrerUri(referrerUri);
 
   const init = new Promise((resolve, reject) => {
-    const prom = keycloak.init({ onLoad: 'login-required' }); // setting promiseType = native does not work for later functions inside the closure
+    /* setting promiseType = native does not work for later functions inside the closure
+       checkLoginIframe: true breaks for some users in chrome causing an infinite loop
+       see: https://szoradi-balazs.medium.com/keycloak-login-infinite-loop-9005bcd9a915
+    */
+    const prom = keycloak.init({
+      onLoad: 'login-required',
+      checkLoginIframe: false,
+    });
     prom.success(resolve);
     prom.error(reject);
   });
@@ -129,6 +136,7 @@ const logout = async () => {
     await keycloak.logout({
       redirectUri: window.location.uri,
     });
+    return null;
   } catch (err) {
     delete localStorage[CONFIG.STORAGE.KEYCLOAK];
     delete $http.headers.Authorization;

@@ -15,6 +15,7 @@ import coalesceEntries from './coalesce';
 import AlterationService from '@/services/reports/alteration.service';
 import TargetedGenesService from '@/services/reports/targeted-genes.service';
 import ReportContext from '../../../../components/ReportContext';
+import DemoDescription from '@/components/DemoDescription';
 
 import './index.scss';
 
@@ -133,7 +134,7 @@ function KbMatches(props) {
       getData();
     }
   }, [report]);
-  
+
   const handleFilter = event => setFilterText(event.target.value);
 
   const syncVisibleColumns = (visible) => {
@@ -151,6 +152,14 @@ function KbMatches(props) {
 
   return (
     <>
+      <DemoDescription>
+        Tumour alterations with specific therapeutic, prognostic, diagnostic or biological
+        associations are identified using the knowledgebase GraphKB, which integrates information
+        from sources including cancer databases, drug databases, clinical tests, and the literature.
+        Associations are listed by the level of evidence for the use of that drug in the context of
+        the observed alteration, including those that are approved in this or other cancer types,
+        and those that have early clinical or preclinical evidence.
+      </DemoDescription>
       {report && syncedTableData && unsyncedTableData ? (
         <>
           {!isPrint && (
@@ -184,7 +193,6 @@ function KbMatches(props) {
                 syncVisibleColumns={syncVisibleColumns}
                 filterText={filterText}
                 canToggleColumns
-                reportIdent={report.ident}
                 isPrint={isPrint}
               />
             ))}
@@ -197,7 +205,6 @@ function KbMatches(props) {
                 rowData={unsyncedTableData.rowData || []}
                 titleText={unsyncedTableData.titleText}
                 filterText={filterText}
-                reportIdent={report.ident}
               />
             </div>
           )}

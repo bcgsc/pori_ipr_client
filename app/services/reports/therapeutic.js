@@ -11,7 +11,7 @@ export const therapeuticAdd = async (reportIdent, entry) => {
   };
 
   const response = await fetch(
-    `${CONFIG.ENDPOINTS.API}/reports/${reportIdent}/therapeutic-targets`,
+    `${window._env_.API_BASE_URL}/reports/${reportIdent}/therapeutic-targets`,
     options,
   );
 
@@ -31,7 +31,7 @@ export const therapeuticDelete = async (reportIdent, entryIdent) => {
   };
 
   const response = await fetch(
-    `${CONFIG.ENDPOINTS.API}/reports/${reportIdent}/therapeutic-targets/${entryIdent}`,
+    `${window._env_.API_BASE_URL}/reports/${reportIdent}/therapeutic-targets/${entryIdent}`,
     options,
   );
 
@@ -40,7 +40,6 @@ export const therapeuticDelete = async (reportIdent, entryIdent) => {
   }
   return errorHandler(response);
 };
-
 
 export const therapeuticUpdate = async (reportIdent, entryIdent, entry) => {
   const options = {
@@ -53,7 +52,7 @@ export const therapeuticUpdate = async (reportIdent, entryIdent, entry) => {
   };
 
   const response = await fetch(
-    `${CONFIG.ENDPOINTS.API}/reports/${reportIdent}/therapeutic-targets/${entryIdent}`,
+    `${window._env_.API_BASE_URL}/reports/${reportIdent}/therapeutic-targets/${entryIdent}`,
     options,
   );
 
@@ -75,7 +74,7 @@ export const therapeuticUpdateTable = async (reportIdent, entry) => {
   };
 
   const response = await fetch(
-    `${CONFIG.ENDPOINTS.API}/reports/${reportIdent}/therapeutic-targets`,
+    `${window._env_.API_BASE_URL}/reports/${reportIdent}/therapeutic-targets`,
     options,
   );
 
@@ -95,7 +94,7 @@ export const therapeuticGet = async (reportIdent) => {
   };
 
   const response = await fetch(
-    `${CONFIG.ENDPOINTS.API}/reports/${reportIdent}/therapeutic-targets`,
+    `${window._env_.API_BASE_URL}/reports/${reportIdent}/therapeutic-targets`,
     options,
   );
 

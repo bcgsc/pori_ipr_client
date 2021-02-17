@@ -9,6 +9,7 @@ import {
   Photo,
   LibraryBooks,
   OpenInNew,
+  Delete,
 } from '@material-ui/icons';
 import DetailDialog from '../DetailDialog';
 import SvgViewer from '../SvgViewer';
@@ -29,9 +30,11 @@ function ActionCellRenderer(params) {
     context: {
       canEdit,
       canViewDetails,
+      canDelete,
     },
     columnApi,
     onEdit,
+    onDelete,
   } = params;
 
   const [showDetailDialog, setShowDetailDialog] = useState(false);
@@ -49,7 +52,7 @@ function ActionCellRenderer(params) {
         }, {}),
       );
     }
-  }, [showDetailDialog]);
+  }, [columnApi, showDetailDialog]);
 
   const detailClick = () => {
     setShowDetailDialog(true);
@@ -87,13 +90,13 @@ function ActionCellRenderer(params) {
           <LibraryBooks />
         </IconButton>
       )}
-      {(data.kbStatementId && !Array.isArray(data.kbStatementId) && data.kbStatementId.match(/^#?-?\d+:-?\d+$/))
+      {(!window._env_.IS_DEMO && data.kbStatementId && !Array.isArray(data.kbStatementId) && data.kbStatementId.match(/^#?-?\d+:-?\d+$/))
         ? (
           <IconButton
             size="small"
             aria-label="Open in GraphKB"
             title="Open in GraphKB"
-            href={`${CONFIG.ENDPOINTS.GRAPHKB}/view/Statement/${data.kbStatementId.replace('#', '')}`}
+            href={`${window._env_.GRAPHKB_URL}/view/Statement/${data.kbStatementId.replace('#', '')}`}
             target="_blank"
             rel="noreferrer noopener"
           >
@@ -101,7 +104,7 @@ function ActionCellRenderer(params) {
           </IconButton>
         ) : null
       }
-      {(data.kbStatementId && Array.isArray(data.kbStatementId) && data.kbStatementId.some(statement => statement.match(/^#?-?\d+:-?\d+$/)))
+      {(!window._env_.IS_DEMO && data.kbStatementId && Array.isArray(data.kbStatementId) && data.kbStatementId.some(statement => statement.match(/^#?-?\d+:-?\d+$/)))
         ? (
           <>
             <IconButton
@@ -124,7 +127,7 @@ function ActionCellRenderer(params) {
                 >
                   <a
                     className="action-cell-kb-statement__link"
-                    href={`${CONFIG.ENDPOINTS.GRAPHKB}/view/Statement/${statement.replace('#', '')}`}
+                    href={`${window._env_.GRAPHKB_URL}/view/Statement/${statement.replace('#', '')}`}
                     target="_blank"
                     rel="noreferrer noopener"
                   >
@@ -144,11 +147,21 @@ function ActionCellRenderer(params) {
           columnMapping={columnMapping}
         />
       )}
+      {canDelete && (
+        <IconButton
+          size="small"
+          aria-label="Delete"
+          onClick={() => onDelete(data.ident)}
+          title="Delete"
+        >
+          <Delete />
+        </IconButton>
+      )}
       {canEdit && (
         <IconButton
           size="small"
           aria-label="Edit"
-          onClick={onEdit}
+          onClick={() => onEdit(data)}
           title="Edit"
         >
           <Edit />

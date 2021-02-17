@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useCallback, useContext } from 'react';
+import React, {
+  useState, useEffect, useCallback, useContext,
+} from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -12,28 +14,22 @@ import ReportContext from '../../../../../../components/ReportContext';
 import ConfirmContext from '../../../../../../components/ConfirmContext';
 import api from '../../../../../../services/api';
 
-type Props = {
-  isOpen: boolean,
-  onClose: Function,
-  editData: Array<{
-    gene: {
-      name: string,
-    },
-    variant: string,
-    comment: string | null,
-  }>
+type EventsEditDialogProps = {
+  isOpen: boolean;
+  onClose: (isSaved?: Record<string, unknown>) => void;
+  editData: Record<string, unknown>;
 };
 
-const EventsEditDialog: React.FC<Props> = ({
+const EventsEditDialog = ({
   editData,
   isOpen,
   onClose,
-}) => {
+}: EventsEditDialogProps): JSX.Element => {
   const { report } = useContext(ReportContext);
   const { isSigned } = useContext(ConfirmContext);
 
-  const [newData, setNewData] = useState<Array<any>>();
-  const [editDataDirty, setDataDirty] = useState<Boolean>(false);
+  const [newData, setNewData] = useState<Record<string, unknown | Record<string, unknown>>>();
+  const [editDataDirty, setDataDirty] = useState<boolean>(false);
 
   useEffect(() => {
     if (editData) {
@@ -49,9 +45,9 @@ const EventsEditDialog: React.FC<Props> = ({
 
     if (prop.includes('.')) {
       [prop, subprop] = prop.split('.');
-      setNewData(prevVal => ({ ...prevVal, [prop]: { [subprop]: value }}));
+      setNewData((prevVal) => ({ ...prevVal, [prop]: { [subprop]: value } }));
     } else {
-      setNewData(prevVal => ({...prevVal, [prop]: value }));
+      setNewData((prevVal) => ({ ...prevVal, [prop]: value }));
     }
 
     if (!editDataDirty) {
@@ -61,13 +57,13 @@ const EventsEditDialog: React.FC<Props> = ({
 
   const handleClose = useCallback(async (isSaved) => {
     if (isSaved && editDataDirty) {
-      const call = api.put(`/report/${report.ident}/probe-results/${newData.ident}`, newData, {});
-      await call.request(isSigned)
+      const call = api.put(`/reports/${report.ident}/probe-results/${newData.ident}`, newData, {});
+      await call.request(isSigned);
       onClose(newData);
     } else {
-      onClose(false);
+      onClose();
     }
-  }, [newData])
+  }, [editDataDirty, isSigned, newData, onClose, report.ident]);
 
   return (
     <Dialog open={isOpen}>
@@ -75,7 +71,7 @@ const EventsEditDialog: React.FC<Props> = ({
         Edit Event
       </DialogTitle>
       <DialogContent className="patient-dialog__content">
-        {newData && newData.gene && newData.gene.name && (
+        {newData?.gene?.name && (
           <>
             <TextField
               className="patient-dialog__text-field"
@@ -119,7 +115,7 @@ const EventsEditDialog: React.FC<Props> = ({
         </Button>
       </DialogActions>
     </Dialog>
-  )
-}
+  );
+};
 
 export default EventsEditDialog;

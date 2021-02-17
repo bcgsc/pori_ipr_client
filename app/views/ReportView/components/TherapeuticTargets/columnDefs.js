@@ -1,7 +1,7 @@
 const columnDefs = [{
   colId: 'drag',
   rowDrag: true,
-  rowDragText: params => params.rowNode.data.gene,
+  rowDragText: (params) => params.rowNode.data.gene,
   hide: true,
   pinned: 'left',
   suppressMenu: true,
@@ -26,6 +26,7 @@ const columnDefs = [{
   hide: true,
 }, {
   headerName: 'Evidence Level',
+  headerComponent: 'headerCellRenderer',
   field: 'evidenceLevel',
   hide: false,
 }, {

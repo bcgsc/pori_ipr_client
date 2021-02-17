@@ -26,16 +26,16 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 56px;
-  min-height: 56px;
+  height: $navbar-size;
+  min-height: $navbar-size;
   box-shadow: 0 2px 4px -1px rgba(0, 0, 0, .2), 0 4px 5px 0 rgba(0, 0, 0, .14), 0 1px 10px 0 rgba(0, 0, 0, .12);
   z-index: $navbar-z-index;
 
   // override default angularjs material styles
   @media (max-width: 959px) and (min-width: 0) and (orientation: landscape) {
     .md-toolbar-tools {
-      height: 56px;
-      max-height: 56px;
+      height: $navbar-size;
+      max-height: $navbar-size;
     }
   }
 
