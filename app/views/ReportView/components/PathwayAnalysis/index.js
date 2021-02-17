@@ -48,7 +48,6 @@ class PathwayAnalysis {
     }
   }
 
-
   async processSVG(svg) {
     // Get container div
     const svgImage = document.getElementById('svgImage');

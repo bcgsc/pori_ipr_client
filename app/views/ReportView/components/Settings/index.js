@@ -6,11 +6,11 @@ import toastCreator from '@/utils/toastCreator';
 import { searchUsers, getUser } from '@/services/management/auth';
 import { formatDate } from '@/utils/date';
 import lazyInjector from '@/lazyInjector';
+import ReportService from '@/services/reports/report.service';
+import api from '@/services/api';
 import template from './report-settings.pug';
 import addTemplate from './role-add.pug';
 import deleteTemplate from './report-delete.pug';
-import ReportService from '@/services/reports/report.service';
-import api from '@/services/api';
 
 import './index.scss';
 
@@ -57,7 +57,7 @@ class Settings {
 
   /* eslint-disable class-methods-use-this */
   roleFilter(filter) {
-    return puser => (puser.role === filter);
+    return (puser) => (puser.role === filter);
   }
 
   // Update Patient Information
@@ -151,7 +151,7 @@ class Settings {
 
     const call = api.put(`/reports/${this.report.ident}`, this.newReportFields);
     let resp;
-    if (this.isSigned && Object.keys(this.newReportFields).some(field => field !== 'state')) {
+    if (this.isSigned && Object.keys(this.newReportFields).some((field) => field !== 'state')) {
       resp = await call.request(true);
     } else {
       resp = await call.request();

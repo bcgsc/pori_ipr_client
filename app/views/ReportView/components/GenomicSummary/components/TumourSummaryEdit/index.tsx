@@ -57,7 +57,7 @@ const TumourSummaryEdit = ({
 
   const handleMicrobialChange = (event) => {
     const { target: { value, name } } = event;
-    setNewMicrobialData(prevVal => ({ ...prevVal, [name]: value }));
+    setNewMicrobialData((prevVal) => ({ ...prevVal, [name]: value }));
 
     if (!microbialDirty) {
       setMicrobialDirty(true);
@@ -66,7 +66,7 @@ const TumourSummaryEdit = ({
 
   const handleReportChange = (event) => {
     const { target: { value, name } } = event;
-    setNewReportData(prevVal => ({ ...prevVal, [name]: value }));
+    setNewReportData((prevVal) => ({ ...prevVal, [name]: value }));
 
     if (!reportDirty) {
       setReportDirty(true);
@@ -75,7 +75,7 @@ const TumourSummaryEdit = ({
 
   const handleMutationBurdenChange = (event) => {
     const { target: { value, name } } = event;
-    setNewMutationBurdenData(prevVal => ({ ...prevVal, [name]: value }));
+    setNewMutationBurdenData((prevVal) => ({ ...prevVal, [name]: value }));
 
     if (!mutationBurdenDirty) {
       setMutationBurdenDirty(true);

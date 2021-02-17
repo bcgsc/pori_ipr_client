@@ -8,9 +8,9 @@ import {
   CardContent,
 } from '@material-ui/core';
 
-import { imageType, comparatorType, mutationBurdenType } from '../../types';
-import FrontPageTooltip from '../../../../../../components/FrontPageTooltip'; 
-import Image from '../../../../../../components/Image';
+import { ImageType, ComparatorType, MutationBurdenType } from '../../types';
+import FrontPageTooltip from '@/components/FrontPageTooltip';
+import Image from '@/components/Image';
 
 const rankMapping = {
   primary: 0,
@@ -20,12 +20,12 @@ const rankMapping = {
 };
 
 type TabCardsProps = {
-  comparators: comparatorType[];
-  mutationBurden: mutationBurdenType[];
+  comparators: ComparatorType[];
+  mutationBurden: MutationBurdenType[];
   type: string;
-  barplots: imageType[];
-  densities: imageType[];
-  legends: imageType[];
+  barplots: ImageType[];
+  densities: ImageType[];
+  legends: ImageType[];
 };
 
 const TabCards = ({
@@ -189,7 +189,7 @@ const TabCards = ({
                 {rankMapping[roleName] === tabValue && (
                   <Card key={name} elevation={3} className="mutation-burden__group">
                     <CardHeader title={`Comparator: ${name} (${roleName})`} />
-                    {Boolean(barplotsByRole.length) && barplotsByRole.map(plot => (
+                    {Boolean(barplotsByRole.length) && barplotsByRole.map((plot) => (
                       <span key={plot.key} className="mutation-burden__image">
                         <Image
                           image={plot}

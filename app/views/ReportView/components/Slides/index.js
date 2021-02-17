@@ -70,7 +70,7 @@ class Slides {
     try {
       await this.$mdDialog.show(confirm);
       await SlidesService.remove(this.report.ident, slide.ident);
-      this.slides = this.slides.filter(entry => entry.ident !== slide.ident);
+      this.slides = this.slides.filter((entry) => entry.ident !== slide.ident);
     } catch (err) {
       this.$mdToast.show(toastCreator('No changes were made'));
     } finally {
@@ -82,7 +82,6 @@ class Slides {
   cancel() {
     this.$mdDialog.cancel('No changes were made');
   }
-
 
   setupUploader() {
     this.uploader = new this.FileUploader({

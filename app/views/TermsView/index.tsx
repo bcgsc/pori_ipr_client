@@ -28,7 +28,7 @@ const Terms = () => {
     <div className="about-page">
       <div className="about-page__content">
         <Typography variant="h4">
-              IPR Terms of Use
+          IPR Terms of Use
         </Typography>
         {sections}
       </div>

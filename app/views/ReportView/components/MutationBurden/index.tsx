@@ -12,14 +12,14 @@ import ReportContext from '@/components/ReportContext';
 import Image from '@/components/Image';
 import api, { ApiCallSet } from '@/services/api';
 import {
-  imageType, comparatorType, mutationBurdenType, msiType,
+  ImageType, ComparatorType, MutationBurdenType, MsiType,
 } from './types';
 import TabCards from './components/TabCards';
 import columnDefs from './columnDefs';
 
 import './index.scss';
 
-const processImages = (images: Record<string, imageType>): Record<string, Record<string, imageType[]>> => {
+const processImages = (images: Record<string, ImageType>): Record<string, Record<string, ImageType[]>> => {
   if (images) {
     const keyedImages = {
       indel: {
@@ -86,15 +86,14 @@ const processImages = (images: Record<string, imageType>): Record<string, Record
   return {};
 };
 
-
 const MutationBurden = (): JSX.Element => {
   const { report } = useContext(ReportContext);
 
-  const [images, setImages] = useState<Record<string, Record<string, imageType[]>>>();
-  const [comparators, setComparators] = useState<comparatorType[]>([]);
-  const [mutationBurden, setMutationBurden] = useState<mutationBurdenType[]>([]);
-  const [msi, setMsi] = useState<msiType[]>([]);
-  const [msiScatter, setMsiScatter] = useState<imageType>();
+  const [images, setImages] = useState<Record<string, Record<string, ImageType[]>>>();
+  const [comparators, setComparators] = useState<ComparatorType[]>([]);
+  const [mutationBurden, setMutationBurden] = useState<MutationBurdenType[]>([]);
+  const [msi, setMsi] = useState<MsiType[]>([]);
+  const [msiScatter, setMsiScatter] = useState<ImageType>();
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
 

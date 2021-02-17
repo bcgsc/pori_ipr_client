@@ -119,7 +119,7 @@ const AddEditUserDialog = ({
       }
 
       if (projects.length) {
-        const callSet = new ApiCallSet(projects.map(project => api.post(`/project/${project.ident}/user`, { user: createdResp.ident }, {})));
+        const callSet = new ApiCallSet(projects.map((project) => api.post(`/project/${project.ident}/user`, { user: createdResp.ident }, {})));
         await callSet.request();
         createdResp.projects = projects;
       } else {
@@ -127,7 +127,7 @@ const AddEditUserDialog = ({
       }
 
       if (groups.length) {
-        const callSet = new ApiCallSet(groups.map(group => api.post(`/user/group/${group.ident}/member`, { user: createdResp.ident }, {})));
+        const callSet = new ApiCallSet(groups.map((group) => api.post(`/user/group/${group.ident}/member`, { user: createdResp.ident }, {})));
         await callSet.request();
         createdResp.groups = groups;
       } else {
@@ -228,9 +228,9 @@ const AddEditUserDialog = ({
                 variant="outlined"
                 onChange={({ target: { value } }) => setProjects(value)}
                 className="add-user__select"
-                renderValue={(values: projectType[]) => `${values.map(val => val.name).join(', ')}`}
+                renderValue={(values: projectType[]) => `${values.map((val) => val.name).join(', ')}`}
               >
-                {projectOptions.map(project => (
+                {projectOptions.map((project) => (
                   <MenuItem key={project.name} value={project}>
                     <Checkbox checked={projects.includes(project)} />
                     <ListItemText>
@@ -255,9 +255,9 @@ const AddEditUserDialog = ({
                 variant="outlined"
                 onChange={({ target: { value } }) => setGroups(value)}
                 className="add-user__select"
-                renderValue={(values: groupType[]) => `${values.map(val => val.name).join(', ')}`}
+                renderValue={(values: groupType[]) => `${values.map((val) => val.name).join(', ')}`}
               >
-                {groupOptions.map(group => (
+                {groupOptions.map((group) => (
                   <MenuItem key={group.name} value={group}>
                     <Checkbox checked={groups.includes(group)} />
                     <ListItemText>

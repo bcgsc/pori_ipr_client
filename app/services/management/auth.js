@@ -78,7 +78,7 @@ const getUser = async (token) => {
  */
 const isAdmin = (user) => {
   try {
-    return user.groups.some(group => group.name.toLowerCase() === 'admin');
+    return user.groups.some((group) => group.name.toLowerCase() === 'admin');
   } catch {
     return false;
   }
@@ -96,7 +96,7 @@ const getUsername = ({ authorizationToken }) => {
 
 const isExternalMode = (user) => {
   try {
-    return user.groups.some(group => externalGroups.includes(group.name.toLowerCase()));
+    return user.groups.some((group) => externalGroups.includes(group.name.toLowerCase()));
   } catch (err) {
     return true;
   }
@@ -115,7 +115,14 @@ const login = async (referrerUri = null) => {
   setReferrerUri(referrerUri);
 
   const init = new Promise((resolve, reject) => {
-    const prom = keycloak.init({ onLoad: 'login-required' }); // setting promiseType = native does not work for later functions inside the closure
+    /* setting promiseType = native does not work for later functions inside the closure
+       checkLoginIframe: true breaks for some users in chrome causing an infinite loop
+       see: https://szoradi-balazs.medium.com/keycloak-login-infinite-loop-9005bcd9a915
+    */
+    const prom = keycloak.init({
+      onLoad: 'login-required',
+      checkLoginIframe: false,
+    });
     prom.success(resolve);
     prom.error(reject);
   });
