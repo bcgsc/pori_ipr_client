@@ -37,7 +37,7 @@ const AsyncButton = ({
   return (
     <div className="async-button__container">
       <Button
-        classes={{label: `${loadingStarted ? 'async-button__label' : 'async-button__label--visible'}`}}
+        classes={{ label: `${loadingStarted ? 'async-button__label' : ''}` }}
         onClick={handleClick}
         {...buttonProps}
       >
