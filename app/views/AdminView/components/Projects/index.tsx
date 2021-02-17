@@ -1,5 +1,5 @@
 import React, {
-  useState, useEffect, useContext, useCallback,
+  useState, useEffect, useCallback,
 } from 'react';
 import { CircularProgress } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
@@ -10,13 +10,13 @@ import columnDefs from './columnDefs';
 import AddEditProjectDialog from './components/AddEditProjectDialog';
 
 import './index.scss';
-import { projectType } from '../../types';
+import { ProjectType } from '../../types';
 
 const Projects = (): JSX.Element => {
-  const [projects, setProjects] = useState<projectType[]>([]);
+  const [projects, setProjects] = useState<ProjectType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [editData, setEditData] = useState<projectType | null>();
+  const [editData, setEditData] = useState<ProjectType | null>();
 
   const snackbar = useSnackbar();
 
@@ -40,7 +40,7 @@ const Projects = (): JSX.Element => {
     // eslint-disable-next-line no-restricted-globals
     if (confirm('Are you sure you want to remove this project?')) {
       await api.del(`/project/${ident}`, {}, {}).request();
-      const newProjects = projects.filter(project => project.ident !== ident);
+      const newProjects = projects.filter((project) => project.ident !== ident);
       setProjects(newProjects);
       snackbar.enqueueSnackbar('Project deleted');
     } else {
@@ -51,14 +51,14 @@ const Projects = (): JSX.Element => {
   const handleEditClose = useCallback((newData) => {
     setShowDialog(false);
     if (newData) {
-      const projectIndex = projects.findIndex(project => project.ident === newData.ident);
+      const projectIndex = projects.findIndex((project) => project.ident === newData.ident);
       if (projectIndex !== -1) {
         const newProjects = [...projects];
         newProjects[projectIndex] = newData;
         setProjects(newProjects);
         snackbar.enqueueSnackbar('Project edited');
       } else {
-        setProjects(prevVal => [...prevVal, newData]);
+        setProjects((prevVal) => [...prevVal, newData]);
         snackbar.enqueueSnackbar('Project added');
       }
     }

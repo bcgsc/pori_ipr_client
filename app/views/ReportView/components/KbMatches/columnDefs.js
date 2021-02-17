@@ -137,32 +137,32 @@ const columnDefs = [{
 }, {
   headerName: 'Oncogene',
   colId: 'oncogene',
-  valueGetter: params => getGeneProp(params, 'oncogene'),
+  valueGetter: (params) => getGeneProp(params, 'oncogene'),
   hide: true,
 }, {
   headerName: 'Tumour Suppressor Gene',
   colId: 'tumourSuppressor',
-  valueGetter: params => getGeneProp(params, 'tumourSuppressor'),
+  valueGetter: (params) => getGeneProp(params, 'tumourSuppressor'),
   hide: true,
 }, {
   headerName: 'Cancer Related Gene',
   colId: 'cancerRelated',
-  valueGetter: params => getGeneProp(params, 'cancerRelated'),
+  valueGetter: (params) => getGeneProp(params, 'cancerRelated'),
   hide: true,
 }, {
   headerName: 'Known Fusion Partner Gene',
   colId: 'knownFusionPartner',
-  valueGetter: params => getGeneProp(params, 'knownFusionPartner'),
+  valueGetter: (params) => getGeneProp(params, 'knownFusionPartner'),
   hide: true,
 }, {
   headerName: 'Known Small Mutation Gene',
   colId: 'knownSmallMutation',
-  valueGetter: params => getGeneProp(params, 'knownSmallMutation'),
+  valueGetter: (params) => getGeneProp(params, 'knownSmallMutation'),
   hide: true,
 }, {
   headerName: 'Therapeutic Associated Gene',
   colId: 'therapeuticAssociated',
-  valueGetter: params => getGeneProp(params, 'therapeuticAssociated'),
+  valueGetter: (params) => getGeneProp(params, 'therapeuticAssociated'),
   hide: true,
 }, {
   headerName: 'Actions',

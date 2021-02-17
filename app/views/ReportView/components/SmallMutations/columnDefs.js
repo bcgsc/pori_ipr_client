@@ -105,7 +105,7 @@ const columnDefs = [{
 }];
 
 const setHeaderName = (header, colId) => {
-  const index = columnDefs.findIndex(obj => obj.colId === colId);
+  const index = columnDefs.findIndex((obj) => obj.colId === colId);
   columnDefs[index].headerName = header;
 };
 

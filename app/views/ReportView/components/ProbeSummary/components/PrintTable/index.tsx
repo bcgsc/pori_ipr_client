@@ -13,7 +13,7 @@ const PrintTable = ({ data, headers }: PrintTableProps): JSX.Element => (
       <table className="table">
         <thead className="table__header">
           <tr>
-            {headers.map(val => (
+            {headers.map((val) => (
               <th key={val}>
                 {val}
               </th>
@@ -21,7 +21,7 @@ const PrintTable = ({ data, headers }: PrintTableProps): JSX.Element => (
           </tr>
         </thead>
         <tbody>
-          {data.map(val => (
+          {data.map((val) => (
             <tr key={val.Sample} className="table__row">
               <td>
                 {val.Sample}

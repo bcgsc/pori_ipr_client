@@ -10,7 +10,7 @@ const ProbeReportOverview = (): JSX.Element => (
     <Typography variant="h3">Test Summary</Typography>
     <p>
       <strong>The Report: </strong>
-      The Targeted Gene Report (TGR) provides results from a rapid analysis pipeline designed to identify specific somatic alterations in a select set of cancer-associated genes and gene fusion events. This rapid analysis is not a complete description of aberrations present in the tumour genome. The absence of a specific mutation in this report is not a guarantee that the mutation is not present in the patient's tumour. Germline variants are not included in this report.
+      The Targeted Gene Report (TGR) provides results from a rapid analysis pipeline designed to identify specific somatic alterations in a select set of cancer-associated genes and gene fusion events. This rapid analysis is not a complete description of aberrations present in the tumour genome. The absence of a specific mutation in this report is not a guarantee that the mutation is not present in the patient&apos;s tumour. Germline variants are not included in this report.
     </p>
     <p>
       <strong>Test Method: </strong>
@@ -24,7 +24,7 @@ const ProbeReportOverview = (): JSX.Element => (
       This report will generally be followed by a final report, which will provide a more comprehensive description of both previously observed and novel aberrations.
     </p>
     <p>
-      The TGR is developed by Canada's Michael Smith Genome Sciences Centre, part of the British Columbia Cancer Agency. Contents should be regarded as purely investigational and are intended for research purposes only.
+      The TGR is developed by Canada&apos;s Michael Smith Genome Sciences Centre, part of the British Columbia Cancer Agency. Contents should be regarded as purely investigational and are intended for research purposes only.
     </p>
   </div>
 );

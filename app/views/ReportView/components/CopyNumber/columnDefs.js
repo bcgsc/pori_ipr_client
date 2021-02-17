@@ -77,8 +77,8 @@ const columnDefs = [{
   valueGetter: 'data.gene.therapeuticAssociated || false',
   hide: true,
 }, {
-  headerName: 'Action',
-  colId: 'action',
+  headerName: 'Actions',
+  colId: 'actions',
   cellRenderer: 'ActionCellRenderer',
   pinned: 'right',
   sortable: false,
@@ -86,7 +86,7 @@ const columnDefs = [{
 }];
 
 export const setHeaderName = (header, colId) => {
-  const index = columnDefs.findIndex(obj => obj.colId === colId);
+  const index = columnDefs.findIndex((obj) => obj.colId === colId);
   columnDefs[index].headerName = header;
 };
 

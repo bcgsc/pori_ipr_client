@@ -6,27 +6,27 @@ import {
   Button,
 } from '@material-ui/core';
 
-import api from '../../services/api';
-import { userType } from '../../common';
+import api from '@/services/api';
+import { UserType } from '@/common';
 
 import './index.scss';
 
 type UserAutocompleteProps = {
-  defaultValue?: userType;
+  defaultValue: UserType;
   label: string;
-  onSubmit?: (val: userType) => void;
-  onChange?: (val: userType) => void;
-}
+  onSubmit: (val: UserType) => void;
+  onChange: (val: UserType) => void;
+};
 
 const UserAutocomplete = ({
-  defaultValue,
+  defaultValue = null,
   label,
-  onSubmit,
-  onChange,
+  onSubmit = null,
+  onChange = null,
 }: UserAutocompleteProps): JSX.Element => {
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [value, setValue] = useState<userType>({
+  const [value, setValue] = useState<UserType>({
     email: '',
     firstName: '',
     groups: [],
@@ -72,10 +72,11 @@ const UserAutocomplete = ({
       classes={{ root: 'autocomplete', popper: 'autocomplete__popper' }}
       onChange={handleSelectedValueChange}
       options={options}
-      getOptionLabel={option => (option.firstName && option.lastName ? `${option.firstName} ${option.lastName}` : '')}
+      getOptionLabel={(option) => (option.firstName && option.lastName ? `${option.firstName} ${option.lastName}` : '')}
       value={value}
-      renderInput={params => (
+      renderInput={(params) => (
         <TextField
+          // eslint-disable-next-line react/jsx-props-no-spreading
           {...params}
           label={label || 'User'}
           variant="outlined"
@@ -84,14 +85,14 @@ const UserAutocomplete = ({
           InputProps={{
             ...params.InputProps,
             endAdornment: (
-              <React.Fragment>
+              <>
                 {loading ? <CircularProgress color="inherit" size={20} /> : null}
                 {value && !onChange && (
                   <Button onClick={handleSubmit}>
                     Add
                   </Button>
                 )}
-              </React.Fragment>
+              </>
             ),
           }}
         />

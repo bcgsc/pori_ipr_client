@@ -1,18 +1,18 @@
 /* eslint-disable camelcase */
-import { userType, recordDefaults } from '../../common';
+import { UserType, RecordDefaults } from '../../common';
 
-type shortReportType = {
+type ShortReportType = {
   alternateIdentifier: string | null;
   patientId: string;
-} & recordDefaults;
+} & RecordDefaults;
 
-type projectType = {
+type ProjectType = {
   name: string;
-  reports: shortReportType[];
-  users: userType[];
-} & recordDefaults;
+  reports: ShortReportType[];
+  users: UserType[];
+} & RecordDefaults;
 
-type formErrorType = {
+type FormErrorType = {
   username: boolean;
   firstName: boolean;
   lastName: boolean;
@@ -20,7 +20,7 @@ type formErrorType = {
 };
 
 export {
-  shortReportType,
-  projectType,
-  formErrorType,
+  ShortReportType,
+  ProjectType,
+  FormErrorType,
 };

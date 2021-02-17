@@ -1,18 +1,18 @@
 {
   "extends": [
-    "airbnb",
+    "airbnb-typescript",
     "plugin:react/recommended",
     "plugin:react-hooks/recommended",
     "plugin:@typescript-eslint/recommended"
   ],
   "env": {
     "es6": true,
-    "node": true,
-    "cypress/globals": true
+    "node": true
   },
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "sourceType": "module"
+    "sourceType": "module",
+    "project": "./tsconfig.json"
   },
   "globals": {
     "angular": true,
@@ -26,7 +26,6 @@
   },
   "plugins": [
     "babel",
-    "cypress",
     "react",
     "react-hooks",
     "@typescript-eslint"
@@ -100,6 +99,7 @@
     "import/prefer-default-export": "warn",
     "class-methods-use-this": "off",
     "react/jsx-filename-extension": "off",
-    "@typescript-eslint/no-empty-function": "off"
+    "@typescript-eslint/no-empty-function": "off",
+    "react/jsx-indent": "error"
   }
 }

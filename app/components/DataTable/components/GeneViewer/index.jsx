@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useState, useContext, useCallback,
+  useEffect, useState,
 } from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -14,8 +14,9 @@ import {
   AppBar,
 } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
-import DataTable from '../..';
-import api from '../../../../services/api';
+import { AgGridReact } from '@ag-grid-community/react';
+
+import api from '@/services/api';
 import { columnDefs } from '@/views/ReportView/components/KbMatches/columnDefs';
 import { columnDefs as smallMutationsColumnDefs } from '@/views/ReportView/components/SmallMutations/columnDefs';
 import copyNumberColumnDefs from '@/views/ReportView/components/CopyNumber/columnDefs';
@@ -23,7 +24,6 @@ import expressionColumnDefs from '@/views/ReportView/components/Expression/colum
 import structuralVariantsColumnDefs from '@/views/ReportView/components/StructuralVariants/columnDefs';
 
 import './index.scss';
-
 
 /**
  * @param {object} props props
@@ -37,22 +37,13 @@ const GeneViewer = (props) => {
   const {
     onClose,
     isOpen,
-    gene,
     reportIdent,
+    gene,
   } = props;
 
+  const snackbar = useSnackbar();
   const [geneData, setGeneData] = useState();
   const [tabValue, setTabValue] = useState(0);
-  const snackbar = useSnackbar();
-
-  const handleClose = useCallback(() => {
-    columnDefs[0].cellRendererParams = { link: true };
-    smallMutationsColumnDefs[0].cellRendererParams = { link: true };
-    copyNumberColumnDefs[0].cellRendererParams = { link: true };
-    expressionColumnDefs[0].cellRendererParams = { link: true };
-    structuralVariantsColumnDefs[0].cellRendererParams = { link: true };
-    onClose();
-  }, [onClose]);
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
@@ -62,27 +53,20 @@ const GeneViewer = (props) => {
     if (isOpen) {
       const getData = async () => {
         try {
-          const call = api.get(`/reports/${reportIdent}/gene-viewer/${gene}`);
-          const resp = await call.request();
+          const resp = await api.get(`/reports/${reportIdent}/gene-viewer/${gene}`).request();
           setGeneData(resp);
         } catch {
           snackbar.enqueueSnackbar(`Error: gene viewer data does not exist for ${gene}`);
-          handleClose(null);
+          onClose(null);
         }
       };
-      // Don't show gene viewer link when in gene viewer
-      columnDefs[0].cellRendererParams = { link: false };
-      smallMutationsColumnDefs[0].cellRendererParams = { link: false };
-      copyNumberColumnDefs[0].cellRendererParams = { link: false };
-      expressionColumnDefs[0].cellRendererParams = { link: false };
-      structuralVariantsColumnDefs[0].cellRendererParams = { link: false };
       getData();
     }
-  }, [gene, handleClose, isOpen, reportIdent, snackbar]);
+  }, [gene, onClose, isOpen, reportIdent, snackbar]);
 
   return (
     <Dialog
-      onClose={handleClose}
+      onClose={onClose}
       open={isOpen}
       maxWidth="xl"
       fullWidth
@@ -110,32 +94,44 @@ const GeneViewer = (props) => {
         {geneData && (
           <>
             {tabValue === 0 && (
-              <DataTable
-                rowData={geneData.kbMatches}
-                columnDefs={columnDefs}
-              />
+              <div className="ag-theme-material">
+                <AgGridReact
+                  rowData={geneData.kbMatches}
+                  columnDefs={columnDefs}
+                  domLayout="autoHeight"
+                />
+              </div>
             )}
             {tabValue === 1 && (
-              <DataTable
-                rowData={geneData.smallMutations}
-                columnDefs={smallMutationsColumnDefs}
-              />
+              <div className="ag-theme-material">
+                <AgGridReact
+                  rowData={geneData.smallMutations}
+                  columnDefs={smallMutationsColumnDefs}
+                  domLayout="autoHeight"
+                />
+              </div>
             )}
             {tabValue === 2 && (
-              <DataTable
-                rowData={geneData.copyNumber}
-                columnDefs={copyNumberColumnDefs}
-              />
+              <div className="ag-theme-material">
+                <AgGridReact
+                  rowData={geneData.copyNumber}
+                  columnDefs={copyNumberColumnDefs}
+                  domLayout="autoHeight"
+                />
+              </div>
             )}
             {tabValue === 3 && (
-              <DataTable
-                rowData={geneData.expRNA}
-                columnDefs={expressionColumnDefs}
-              />
+              <div className="ag-theme-material">
+                <AgGridReact
+                  rowData={geneData.expRNA}
+                  columnDefs={expressionColumnDefs}
+                  domLayout="autoHeight"
+                />
+              </div>
             )}
             {tabValue === 4 && (
               <div className="tab--center">
-                {geneData.expDensityGraph.map(graph => (
+                {geneData.expDensityGraph.map((graph) => (
                   <img
                     key={graph.ident}
                     src={`data:image/png;base64,${graph.data}`}
@@ -145,17 +141,19 @@ const GeneViewer = (props) => {
               </div>
             )}
             {tabValue === 5 && (
-              <DataTable
-                rowData={geneData.structuralVariants}
-                columnDefs={structuralVariantsColumnDefs}
-                reportIdent={reportIdent}
-              />
+              <div className="ag-theme-material">
+                <AgGridReact
+                  rowData={geneData.structuralVariants}
+                  columnDefs={structuralVariantsColumnDefs}
+                  domLayout="autoHeight"
+                />
+              </div>
             )}
           </>
         )}
       </DialogContent>
       <DialogActions>
-        <Button color="primary" onClick={handleClose}>
+        <Button color="primary" onClick={onClose}>
           Close
         </Button>
       </DialogActions>
@@ -166,8 +164,12 @@ const GeneViewer = (props) => {
 GeneViewer.propTypes = {
   onClose: PropTypes.func.isRequired,
   gene: PropTypes.string.isRequired,
-  reportIdent: PropTypes.string.isRequired,
   isOpen: PropTypes.bool.isRequired,
+  reportIdent: PropTypes.string,
+};
+
+GeneViewer.defaultProps = {
+  reportIdent: '',
 };
 
 export default GeneViewer;

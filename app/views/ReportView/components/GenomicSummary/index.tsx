@@ -18,12 +18,12 @@ import { getComparators } from '@/services/reports/comparators';
 import { getMutationSignatures } from '@/services/reports/mutation-signature';
 import { getMutationBurden } from '@/services/reports/mutation-burden';
 import { formatDate } from '@/utils/date';
-import ReportContext from '../../../../components/ReportContext';
 import EditContext from '@/components/EditContext';
 import ConfirmContext from '@/components/ConfirmContext';
 import AlterationsService from '@/services/reports/genomic-alterations.service';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import DescriptionList from '@/components/DescriptionList';
+import ReportContext from '@/components/ReportContext';
 import VariantChips from './components/VariantChips';
 import VariantCounts from './components/VariantCounts';
 import PatientEdit from './components/PatientEdit';
@@ -257,7 +257,6 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
     }
   }, [history, microbial, microbial.species, primaryBurden, primaryComparator, print, report, signatures, tCellCd8]);
 
-
   const handleChipDeleted = useCallback(async (chipIdent, type, comment) => {
     try {
       const req = api.del(
@@ -267,8 +266,8 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
       );
       await req.request(isSigned);
 
-      setVariantCounts(prevVal => ({ ...prevVal, [type]: prevVal[type] - 1 }));
-      setVariants(prevVal => (prevVal.filter(val => val.ident !== chipIdent)));
+      setVariantCounts((prevVal) => ({ ...prevVal, [type]: prevVal[type] - 1 }));
+      setVariants((prevVal) => (prevVal.filter((val) => val.ident !== chipIdent)));
       snackbar.enqueueSnackbar('Entry deleted');
     } catch (err) {
       console.error(err);
@@ -283,8 +282,8 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
 
       const categorizedVariantEntry = variantCategory(newVariantEntry);
 
-      setVariantCounts(prevVal => ({ ...prevVal, [categorizedVariantEntry.type]: prevVal[categorizedVariantEntry.type] + 1 }));
-      setVariants(prevVal => ([...prevVal, categorizedVariantEntry]));
+      setVariantCounts((prevVal) => ({ ...prevVal, [categorizedVariantEntry.type]: prevVal[categorizedVariantEntry.type] + 1 }));
+      setVariants((prevVal) => ([...prevVal, categorizedVariantEntry]));
       snackbar.enqueueSnackbar('Entry added');
     } catch (err) {
       console.error(err);
@@ -459,7 +458,7 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
           </div>
 
           {print ? (
-            <React.Fragment>
+            <>
               <div className="genomic-summary__alterations">
                 <div className="genomic-summary__alterations-title">
                   <Typography variant="h3">
@@ -473,7 +472,7 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
                     onToggleFilter={setVariantFilter}
                   />
                   <VariantChips
-                    variants={variantFilter ? variants.filter(v => v.type === variantFilter) : variants}
+                    variants={variantFilter ? variants.filter((v) => v.type === variantFilter) : variants}
                     canEdit={canEdit}
                     onChipDeleted={handleChipDeleted}
                     onChipAdded={handleChipAdded}
@@ -481,9 +480,9 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
                   />
                 </div>
               </div>
-            </React.Fragment>
+            </>
           ) : (
-            <React.Fragment>
+            <>
               <div className="genomic-summary__alterations">
                 <div className="genomic-summary__alterations-title">
                   <Typography variant="h3">
@@ -497,14 +496,14 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
                     onToggleFilter={setVariantFilter}
                   />
                   <VariantChips
-                    variants={variantFilter ? variants.filter(v => v.type === variantFilter) : variants}
+                    variants={variantFilter ? variants.filter((v) => v.type === variantFilter) : variants}
                     canEdit={canEdit}
                     onChipDeleted={handleChipDeleted}
                     onChipAdded={handleChipAdded}
                   />
                 </div>
               </div>
-            </React.Fragment>
+            </>
           )}
         </>
       )}

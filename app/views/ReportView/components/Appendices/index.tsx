@@ -7,7 +7,7 @@ import {
 import api, { ApiCallSet } from '../../../../services/api';
 import DataTable from '../../../../components/DataTable';
 import ReportContext from '../../../../components/ReportContext';
-import { appendicesType, tcgaType, comparatorType } from './types';
+import { AppendicesType, TcgaType, ComparatorType } from './types';
 import { sampleInformationColumnDefs, sequencingProtocolInformationColumnDefs, tcgaAcronymsColumnDefs } from './columnDefs';
 import GenomicReportOverview from './components/GenomicReportOverview';
 import ProbeReportOverview from './components/ProbeReportOverview';
@@ -25,9 +25,9 @@ type AppendicesProps = {
 const Appendices = ({ isProbe, isPrint, loadedDispatch }: AppendicesProps): JSX.Element => {
   const { report } = useContext(ReportContext);
 
-  const [comparators, setComparators] = useState<comparatorType[]>([]);
-  const [appendices, setAppendices] = useState<appendicesType>();
-  const [tcga, setTcga] = useState<tcgaType[]>([]);
+  const [comparators, setComparators] = useState<ComparatorType[]>([]);
+  const [appendices, setAppendices] = useState<AppendicesType>();
+  const [tcga, setTcga] = useState<TcgaType[]>([]);
   const [analysisSummary, setAnalysisSummary] = useState<Record<string, unknown>[]>([]);
 
   useEffect(() => {

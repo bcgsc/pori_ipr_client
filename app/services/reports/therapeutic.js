@@ -41,7 +41,6 @@ export const therapeuticDelete = async (reportIdent, entryIdent) => {
   return errorHandler(response);
 };
 
-
 export const therapeuticUpdate = async (reportIdent, entryIdent, entry) => {
   const options = {
     method: 'PUT',

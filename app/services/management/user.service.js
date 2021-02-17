@@ -26,7 +26,6 @@ class UserService {
     return data;
   }
 
-
   /**
    * Create a new user account
    * @param {Object} user object to create

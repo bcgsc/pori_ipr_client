@@ -1,5 +1,5 @@
 import React, {
-  useState, useEffect, useContext, useCallback,
+  useState, useEffect, useCallback,
 } from 'react';
 import {
   CircularProgress,
@@ -10,15 +10,15 @@ import api from '../../../../services/api';
 import DataTable from '../../../../components/DataTable';
 import columnDefs from './columnDefs';
 import AddEditGroupDialog from './components/AddEditGroupDialog';
-import { groupType } from '../../../../common';
+import { GroupType } from '../../../../common';
 
 import './index.scss';
 
 const Groups = (): JSX.Element => {
-  const [groups, setGroups] = useState<groupType[]>([]);
+  const [groups, setGroups] = useState<GroupType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [editData, setEditData] = useState<groupType | null>();
+  const [editData, setEditData] = useState<GroupType | null>();
 
   const snackbar = useSnackbar();
 
@@ -37,7 +37,7 @@ const Groups = (): JSX.Element => {
     // eslint-disable-next-line no-restricted-globals
     if (confirm('Are you sure you want to remove this group?')) {
       await api.del(`/user/group/${ident}`, {}, {}).request();
-      const newGroups = groups.filter(group => group.ident !== ident);
+      const newGroups = groups.filter((group) => group.ident !== ident);
       setGroups(newGroups);
       snackbar.enqueueSnackbar('Group deleted');
     } else {
@@ -53,14 +53,14 @@ const Groups = (): JSX.Element => {
   const handleEditClose = useCallback((newData) => {
     setShowDialog(false);
     if (newData) {
-      const groupIndex = groups.findIndex(group => group.ident === newData.ident);
+      const groupIndex = groups.findIndex((group) => group.ident === newData.ident);
       if (groupIndex !== -1) {
         const newGroups = [...groups];
         newGroups[groupIndex] = newData;
         setGroups(newGroups);
         snackbar.enqueueSnackbar('Group edited');
       } else {
-        setGroups(prevVal => [...prevVal, newData]);
+        setGroups((prevVal) => [...prevVal, newData]);
         snackbar.enqueueSnackbar('Group added');
       }
     }
