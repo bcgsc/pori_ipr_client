@@ -84,6 +84,8 @@ type DataTableProps = {
   highlightRow?: number;
   /* Custom header cell renderer */
   Header?: () => JSX.Element;
+  /* Explicitly passed in report ident for AngularJS support outside of react tree */
+  reportIdent: string;
 };
 
 const DataTable = ({
@@ -113,6 +115,7 @@ const DataTable = ({
   isPrint,
   highlightRow = null,
   Header,
+  reportIdent = null,
 }: DataTableProps): JSX.Element => {
   const domLayout = isPrint ? 'print' : 'autoHeight';
   const { gridApi, colApi, onGridReady } = useGrid();
@@ -417,7 +420,7 @@ const DataTable = ({
                   canEdit,
                   canDelete,
                   canViewDetails,
-                  reportIdent: report ? report.ident : null,
+                  reportIdent: report ? report.ident : reportIdent,
                   tableType,
                 }}
                 frameworkComponents={{
@@ -511,6 +514,7 @@ DataTable.propTypes = {
   highlightRow: PropTypes.number,
   /* Custom header cell renderer */
   Header: PropTypes.any,
+  reportIdent: PropTypes.string,
 };
 
 export default DataTable;
