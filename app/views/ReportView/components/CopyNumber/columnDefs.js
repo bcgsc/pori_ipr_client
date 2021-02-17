@@ -77,8 +77,8 @@ const columnDefs = [{
   valueGetter: 'data.gene.therapeuticAssociated || false',
   hide: true,
 }, {
-  headerName: 'Action',
-  colId: 'action',
+  headerName: 'Actions',
+  colId: 'actions',
   cellRenderer: 'ActionCellRenderer',
   pinned: 'right',
   sortable: false,
