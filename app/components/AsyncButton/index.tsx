@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   Button,
+  ButtonProps,
   CircularProgress,
 } from '@material-ui/core';
 
@@ -12,8 +13,7 @@ type AsyncButtonProps = {
   children: string;
   isLoading: boolean;
   onClick: () => void;
-  buttonProps: unknown;
-};
+} & ButtonProps;
 
 const AsyncButton = ({
   children,

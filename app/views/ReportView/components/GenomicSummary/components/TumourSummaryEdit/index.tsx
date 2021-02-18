@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, {
+  useState, useEffect, useCallback, useContext,
+} from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -7,6 +9,10 @@ import {
   TextField,
   Button,
 } from '@material-ui/core';
+
+import api, { ApiCallSet } from '@/services/api';
+import ConfirmContext from '@/components/ConfirmContext';
+import AsyncButton from '@/components/AsyncButton';
 
 import './index.scss';
 
@@ -25,12 +31,15 @@ const TumourSummaryEdit = ({
   isOpen,
   onClose,
 }: TumourSummaryEditProps): JSX.Element => {
+  const { isSigned } = useContext(ConfirmContext);
+
   const [newMicrobialData, setNewMicrobialData] = useState({});
   const [newReportData, setNewReportData] = useState({});
   const [newMutationBurdenData, setNewMutationBurdenData] = useState({});
   const [microbialDirty, setMicrobialDirty] = useState(false);
   const [reportDirty, setReportDirty] = useState(false);
   const [mutationBurdenDirty, setMutationBurdenDirty] = useState(false);
+  const [isApiCalling, setIsApiCalling] = useState(false);
 
   useEffect(() => {
     if (microbial) {
@@ -82,18 +91,49 @@ const TumourSummaryEdit = ({
     }
   };
 
-  const handleClose = useCallback((isSaved) => {
+  const handleClose = useCallback(async (isSaved) => {
     if (isSaved) {
+      setIsApiCalling(true);
+      const apiCalls = [];
+
+      if (newMicrobialData) {
+        if (microbial) {
+          apiCalls.push(api.put(`/reports/${report.ident}/summary/microbial/${microbial.ident}`, newMicrobialData, {}));
+        } else {
+          apiCalls.push(api.post(`/reports/${report.ident}/summary/microbial`, newMicrobialData, {}));
+        }
+      } else {
+        apiCalls.push({ request: () => null });
+      }
+
+      if (newReportData) {
+        apiCalls.push(api.put(`/reports/${report.ident}`, newReportData, {}));
+      } else {
+        apiCalls.push({ request: () => null });
+      }
+
+      if (newMutationBurdenData) {
+        if (mutationBurden) {
+          apiCalls.push(api.put(`/reports/${report.ident}/mutation-burden/${mutationBurden.ident}`, newMutationBurdenData, {}));
+        } else {
+          apiCalls.push(api.post(`/reports/${report.ident}/mutation-burden`, newMutationBurdenData, {}));
+        }
+      }
+
+      const callSet = new ApiCallSet(apiCalls);
+      const [microbialResp, reportResp, primaryBurdenResp] = await callSet.request(isSigned);
+
+      setIsApiCalling(false);
       onClose(
         true,
-        microbialDirty ? newMicrobialData : null,
-        reportDirty ? newReportData : null,
-        mutationBurdenDirty ? newMutationBurdenData : null,
+        microbialDirty ? microbialResp : null,
+        reportDirty ? reportResp : null,
+        mutationBurdenDirty ? primaryBurdenResp : null,
       );
     } else {
       onClose(false);
     }
-  }, [newMicrobialData, newReportData, newMutationBurdenData, mutationBurdenDirty, microbialDirty, reportDirty, onClose]);
+  }, [newMicrobialData, newReportData, newMutationBurdenData, isSigned, onClose, microbialDirty, reportDirty, mutationBurdenDirty, microbial, report.ident, mutationBurden]);
 
   return (
     <Dialog open={isOpen}>
@@ -150,9 +190,9 @@ const TumourSummaryEdit = ({
         <Button onClick={() => handleClose(false)}>
           Close
         </Button>
-        <Button color="secondary" onClick={() => handleClose(true)}>
+        <AsyncButton color="secondary" onClick={() => handleClose(true)} isLoading={isApiCalling}>
           Save Changes
-        </Button>
+        </AsyncButton>
       </DialogActions>
     </Dialog>
   );
