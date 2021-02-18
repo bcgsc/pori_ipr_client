@@ -56,7 +56,7 @@ class AclService {
       }
     }
 
-    return user.groups.some(entry => resource.allow.includes(entry.name.toLowerCase()));
+    return user.groups.some((entry) => resource.allow.includes(entry.name.toLowerCase()));
   }
 
   /**
@@ -89,7 +89,7 @@ class AclService {
     });
 
     /* Get intersection of arrays, check allows first */
-    const allowsIntersection = userGroups.filter(userGroup => action.allow.includes(userGroup.toLowerCase()));
+    const allowsIntersection = userGroups.filter((userGroup) => action.allow.includes(userGroup.toLowerCase()));
 
     if (action.allow.includes('*')) {
       permission = true;
@@ -99,7 +99,7 @@ class AclService {
     }
 
     /* Get intersection of arrays, check rejects now */
-    const rejectsIntersection = userGroups.filter(userGroup => action.reject.includes(userGroup.toLowerCase()));
+    const rejectsIntersection = userGroups.filter((userGroup) => action.reject.includes(userGroup.toLowerCase()));
 
     /* Rejects takes priority over allows */
     if (rejectsIntersection && rejectsIntersection.length > 0) {
@@ -116,7 +116,7 @@ class AclService {
    */
   async inGroup(group) {
     const user = await getUser();
-    return user.groups.some(userGroup => group.toLowerCase() === userGroup.name.toLowerCase());
+    return user.groups.some((userGroup) => group.toLowerCase() === userGroup.name.toLowerCase());
   }
 
   /**

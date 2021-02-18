@@ -1,23 +1,23 @@
-import { recordDefaults } from '@/common';
+import { RecordDefaults } from '@/common';
 
-type imageType = {
+type ImageType = {
   caption: string | null;
   data: string;
   filename: string;
   format: string;
   key: string;
   title: string | null;
-} & recordDefaults;
+} & RecordDefaults;
 
-type comparatorType = {
+type ComparatorType = {
   analysisRole: string;
   description: string | null;
   name: string;
   size: number | null;
   version: string | null;
-} & recordDefaults;
+} & RecordDefaults;
 
-type mutationBurdenType = {
+type MutationBurdenType = {
   codingIndelPercentile: number | null;
   codingIndelsCount: number | null;
   codingSnvCount: number | null;
@@ -31,16 +31,16 @@ type mutationBurdenType = {
   totalMutationsPerMb: number | null;
   totalSnvCount: number | null;
   truncatingSnvCount: number | null;
-} & recordDefaults;
+} & RecordDefaults;
 
-type msiType = {
+type MsiType = {
   score: number | null;
   kbCategory: string | null;
-} & recordDefaults;
+} & RecordDefaults;
 
 export {
-  imageType,
-  comparatorType,
-  mutationBurdenType,
-  msiType,
+  ImageType,
+  ComparatorType,
+  MutationBurdenType,
+  MsiType,
 };

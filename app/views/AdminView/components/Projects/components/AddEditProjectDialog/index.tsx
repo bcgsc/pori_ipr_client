@@ -85,7 +85,7 @@ const AddEditProjectDialog = ({
         createdResp = await api.post('/project', newEntry, {}).request();
       }
 
-      await Promise.all(apiCallQueue.map(call => call.request()));
+      await Promise.all(apiCallQueue.map((call) => call.request()));
       const updatedProject = await api.get(`/project/${createdResp.ident}`, {}).request();
 
       onClose(updatedProject);
@@ -98,24 +98,24 @@ const AddEditProjectDialog = ({
 
   const handleReportDelete = useCallback((ident) => {
     apiCallQueueDispatch({ type: 'add', payload: api.del(`/project/${editData.ident}/reports`, { report: ident }, {}) });
-    const newReports = reports.filter(entry => entry.ident !== ident);
+    const newReports = reports.filter((entry) => entry.ident !== ident);
     setReports(newReports);
   }, [editData, reports]);
 
   const handleUserDelete = useCallback((ident) => {
     apiCallQueueDispatch({ type: 'add', payload: api.del(`/project/${editData.ident}/user`, { user: ident }, {}) });
-    const newUsers = users.filter(user => user.ident !== ident);
+    const newUsers = users.filter((user) => user.ident !== ident);
     setUsers(newUsers);
   }, [editData, users]);
 
   const handleUserSubmit = useCallback((user) => {
     apiCallQueueDispatch({ type: 'add', payload: api.post(`/project/${editData.ident}/user`, { user: user.ident }, {}) });
-    setUsers(prevVal => [...prevVal, user]);
+    setUsers((prevVal) => [...prevVal, user]);
   }, [editData]);
 
   const handleReportSubmit = useCallback((report) => {
     apiCallQueueDispatch({ type: 'add', payload: api.post(`/project/${editData.ident}/reports`, { report: report.ident }, {}) });
-    setReports(prevVal => [...prevVal, report]);
+    setReports((prevVal) => [...prevVal, report]);
   }, [editData]);
 
   return (

@@ -5,9 +5,9 @@ import CopyNumberService from '@/services/reports/copy-number.service';
 import ImageService from '@/services/reports/image.service';
 import lazyInjector from '@/lazyInjector';
 
+import { CNVSTATE, EXPLEVEL } from '@/constants';
 import template from './copy-number-analyses.pug';
 import columnDefs from './columnDefs';
-import { CNVSTATE, EXPLEVEL } from '@/constants';
 
 import './index.scss';
 
@@ -99,17 +99,17 @@ class CopyNumberAnalyses {
 
       // KB-matches
       // Therapeutic? => clinical
-      if (row.kbMatches.some(m => m.category === 'therapeutic')) {
+      if (row.kbMatches.some((m) => m.category === 'therapeutic')) {
         cnvGroups.clinical.push(row);
       }
 
       // Diagnostic || Prognostic? => nostic
-      if (row.kbMatches.some(m => m.category === 'diagnostic' || m.category === 'prognostic')) {
+      if (row.kbMatches.some((m) => m.category === 'diagnostic' || m.category === 'prognostic')) {
         cnvGroups.nostic.push(row);
       }
 
       // Biological ? => Biological
-      if (row.kbMatches.some(m => m.category === 'biological')) {
+      if (row.kbMatches.some((m) => m.category === 'biological')) {
         cnvGroups.biological.push(row);
       }
     }

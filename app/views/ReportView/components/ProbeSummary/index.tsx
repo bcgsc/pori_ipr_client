@@ -8,20 +8,19 @@ import {
 } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 
-import api, { ApiCallSet } from '../../../../services/api';
-import DataTable from '../../../../components/DataTable';
+import api, { ApiCallSet } from '@/services/api';
+import DataTable from '@/components/DataTable';
 import { sampleColumnDefs, eventsColumnDefs } from './columnDefs';
-import ReportContext from '../../../../components/ReportContext';
-import EditContext from '../../../../components/EditContext';
-import ConfirmContext from '../../../../components/ConfirmContext';
-import ReadOnlyTextField from '../../../../components/ReadOnlyTextField';
-import { getSignatures, sign, revokeSignature } from '../../../../services/reports/signatures';
-import TargetedGenesService from '../../../../services/reports/targeted-genes.service';
-import TestInformationService from '../../../../services/reports/test-information.service';
-import { formatDate } from '../../../../utils/date';
+import ReportContext from '@/components/ReportContext';
+import EditContext from '@/components/EditContext';
+import ConfirmContext from '@/components/ConfirmContext';
+import ReadOnlyTextField from '@/components/ReadOnlyTextField';
+import { getSignatures, sign, revokeSignature } from '@/services/reports/signatures';
+import TargetedGenesService from '@/services/reports/targeted-genes.service';
+import TestInformationService from '@/services/reports/test-information.service';
+import { formatDate } from '@/utils/date';
 import TestInformation from './components/TestInformation';
-import { TestInformationInterface } from './components/TestInformation/interfaces';
-import SignatureCard from '../../../../components/SignatureCard';
+import SignatureCard from '@/components/SignatureCard';
 import PatientEdit from '../GenomicSummary/components/PatientEdit';
 import EventsEditDialog from './components/EventsEditDialog';
 import PrintTable from './components/PrintTable';
@@ -120,7 +119,7 @@ const ProbeSummary = ({
     }
 
     const callSet = new ApiCallSet(apiCalls);
-    const [_, reportResp] = await callSet.request(isSigned);
+    const [, reportResp] = await callSet.request(isSigned);
 
     if (reportResp) {
       setReport({ ...reportResp, ...report });
@@ -181,7 +180,7 @@ const ProbeSummary = ({
   const handleEditClose = useCallback((newData) => {
     setShowEventsDialog(false);
     if (newData) {
-      const eventsIndex = probeResults.findIndex(user => user.ident === newData.ident);
+      const eventsIndex = probeResults.findIndex((user) => user.ident === newData.ident);
       if (eventsIndex !== -1) {
         const newEvents = [...probeResults];
         newEvents[eventsIndex] = newData;
@@ -238,7 +237,7 @@ const ProbeSummary = ({
           {isPrint ? (
             <PrintTable
               data={report.sampleInfo}
-              headers={sampleColumnDefs.map(col => col.headerName)}
+              headers={sampleColumnDefs.map((col) => col.headerName)}
             />
           ) : (
             <DataTable

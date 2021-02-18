@@ -103,8 +103,8 @@ const ExpressionCorrelation = (): JSX.Element => {
   }, []);
 
   const getGraphData = (rowData) => {
-    const labels = rowData.map(data => `${data.library} (${data.tumourContent}% TC)`);
-    const colors = rowData.map(data => `rgb(${Object.values(getColor(LOWER_COLOR, UPPER_COLOR, data.tumourContent / 100)).join(',')})`);
+    const labels = rowData.map((data) => `${data.library} (${data.tumourContent}% TC)`);
+    const colors = rowData.map((data) => `rgb(${Object.values(getColor(LOWER_COLOR, UPPER_COLOR, data.tumourContent / 100)).join(',')})`);
 
     const datasets = [
       {
@@ -116,7 +116,7 @@ const ExpressionCorrelation = (): JSX.Element => {
         barPercentage: 1,
         hoverBackgroundColor: colors,
         hoverBorderColor: colors,
-        data: rowData.map(data => data.correlation.toFixed(2)),
+        data: rowData.map((data) => data.correlation.toFixed(2)),
       },
     ];
     return {
@@ -257,7 +257,7 @@ const ExpressionCorrelation = (): JSX.Element => {
                     <Typography variant="h3" align="center" className="expression-correlation__header">
                       Subtype Plots
                     </Typography>
-                    {Object.values(subtypePlots).map(plot => (
+                    {Object.values(subtypePlots).map((plot) => (
                       <Image
                         key={plot.ident}
                         image={plot}

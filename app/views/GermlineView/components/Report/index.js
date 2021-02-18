@@ -195,9 +195,8 @@ class Report {
 
   /* eslint-disable class-methods-use-this */
   hasReview(report, type) {
-    return report.reviews.find(review => review.type === type);
+    return report.reviews.find((review) => review.type === type);
   }
-
 
   async getHistory($event, mode, v) {
     const input = {
@@ -247,7 +246,7 @@ class Report {
     }
 
     await Promise.all(
-      this.report.variants.map(variant => GermlineService.updateVariant(
+      this.report.variants.map((variant) => GermlineService.updateVariant(
         this.report.ident,
         variant.ident,
         updatedVariant,
@@ -282,7 +281,7 @@ class Report {
         { hidden: variant.hidden },
       );
       // Update report in memory with fresh result from API.
-      const i = this.report.variants.findIndex(v => v.ident === result.ident);
+      const i = this.report.variants.findIndex((v) => v.ident === result.ident);
       this.report.variants[i] = result;
     } catch (err) {
       this.$mdToast.show(toastCreator('Failed to update variant with visibility change'));
@@ -293,7 +292,7 @@ class Report {
     try {
       await GermlineService.removeReview(this.report.ident, review.ident);
       this.report.reviews.splice(
-        this.report.reviews.findIndex(rev => rev.ident === review.ident), 1,
+        this.report.reviews.findIndex((rev) => rev.ident === review.ident), 1,
       );
       this.$mdToast.show(toastCreator('Review removed successfully'));
       $rootScope.$digest();

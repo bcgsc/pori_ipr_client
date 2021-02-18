@@ -41,7 +41,6 @@ const updateMutationBurden = async (reportIdent, mutationBurden) => {
   return errorHandler(response);
 };
 
-
 export {
   getMutationBurden,
   updateMutationBurden,

@@ -64,19 +64,19 @@ class StructuralVariants {
     for (const row of Object.values(structVars)) {
       let uncharacterized = true;
       // Therapeutic? => clinical
-      if (row.kbMatches.some(m => m.category === 'therapeutic')) {
+      if (row.kbMatches.some((m) => m.category === 'therapeutic')) {
         svs.clinical.push(row);
         uncharacterized = false;
       }
 
       // Diagnostic || Prognostic? => nostic
-      if (row.kbMatches.some(m => m.category === 'diagnostic' || m.category === 'prognostic')) {
+      if (row.kbMatches.some((m) => m.category === 'diagnostic' || m.category === 'prognostic')) {
         svs.nostic.push(row);
         uncharacterized = false;
       }
 
       // Biological ? => Biological
-      if (row.kbMatches.some(m => m.category === 'biological')) {
+      if (row.kbMatches.some((m) => m.category === 'biological')) {
         svs.biological.push(row);
         uncharacterized = false;
       }

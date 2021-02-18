@@ -1,4 +1,5 @@
-import { ApiCall, ApiCallSet } from './api';
+import ApiCall from './ApiCall';
+import ApiCallSet from './ApiCallSet';
 
 const get = (endpoint, callOptions) => {
   const requestOptions = {

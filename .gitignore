@@ -5,3 +5,4 @@ builds/*
 .vscode/*
 dist/*
 coverage/*
+statics/ipr-env-config.js

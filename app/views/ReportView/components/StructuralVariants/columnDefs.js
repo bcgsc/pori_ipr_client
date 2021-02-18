@@ -27,7 +27,7 @@ const columnDefs = [{
 }, {
   headerName: 'Exons 5`/3`',
   colId: 'exons',
-  valueGetter: params => (params.data.exon1 && params.data.exon2
+  valueGetter: (params) => (params.data.exon1 && params.data.exon2
     ? `${params.data.exon1}:${params.data.exon2}`
     : (params.data.exon1 || params.data.exon2)),
   hide: false,
@@ -69,32 +69,32 @@ const columnDefs = [{
 }, {
   headerName: 'Oncogene',
   colId: 'oncogene',
-  valueGetter: params => (params.data.gene1.oncogene || params.data.gene2.oncogene || false),
+  valueGetter: (params) => (params.data.gene1.oncogene || params.data.gene2.oncogene || false),
   hide: true,
 }, {
   headerName: 'Tumour Suppressor Gene',
   colId: 'tumourSuppressor',
-  valueGetter: params => (params.data.gene1.tumourSuppressor || params.data.gene2.tumourSuppressor || false),
+  valueGetter: (params) => (params.data.gene1.tumourSuppressor || params.data.gene2.tumourSuppressor || false),
   hide: true,
 }, {
   headerName: 'Cancer Related Gene',
   colId: 'cancerRelated',
-  valueGetter: params => (params.data.gene1.cancerRelated || params.data.gene2.cancerRelated || false),
+  valueGetter: (params) => (params.data.gene1.cancerRelated || params.data.gene2.cancerRelated || false),
   hide: true,
 }, {
   headerName: 'Known Fusion Partner Gene',
   colId: 'knownFusionPartner',
-  valueGetter: params => (params.data.gene1.knownFusionPartner || params.data.gene2.knownFusionPartner || false),
+  valueGetter: (params) => (params.data.gene1.knownFusionPartner || params.data.gene2.knownFusionPartner || false),
   hide: true,
 }, {
   headerName: 'Known Small Mutation Gene',
   colId: 'knownSmallMutation',
-  valueGetter: params => (params.data.gene1.knownSmallMutation || params.data.gene2.knownSmallMutation || false),
+  valueGetter: (params) => (params.data.gene1.knownSmallMutation || params.data.gene2.knownSmallMutation || false),
   hide: true,
 }, {
   headerName: 'Therapeutic Associated Gene',
   colId: 'therapeuticAssociated',
-  valueGetter: params => (params.data.gene1.therapeuticAssociated || params.data.gene2.therapeuticAssociated || false),
+  valueGetter: (params) => (params.data.gene1.therapeuticAssociated || params.data.gene2.therapeuticAssociated || false),
   hide: true,
 }, {
   headerName: 'High Quality',
@@ -110,7 +110,7 @@ const columnDefs = [{
 }];
 
 export const setHeaderName = (header, colId) => {
-  const index = columnDefs.findIndex(obj => obj.colId === colId);
+  const index = columnDefs.findIndex((obj) => obj.colId === colId);
   columnDefs[index].headerName = header;
 };
 

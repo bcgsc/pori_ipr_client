@@ -8,7 +8,7 @@ import './index.scss';
 
 type EvidenceHeaderProps = {
   displayName: string;
-}
+};
 
 const EvidenceHeader = ({ displayName }: EvidenceHeaderProps): JSX.Element => {
   const [showDialog, setShowDialog] = useState<boolean>(false);

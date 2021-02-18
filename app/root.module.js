@@ -8,14 +8,11 @@ import 'angular-material/angular-material.min.css';
 import 'angular-sortable-view';
 import 'angular-file-upload';
 import 'ng-quill';
+import 'ngimport';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { CsvExportModule } from '@ag-grid-community/csv-export';
 import { react2angular } from 'react2angular';
-
-import ReactBootstrap from './index';
-import lazyInjector from './lazyInjector';
-import 'ngimport';
 
 import { NavBarComponent } from '@/components/NavBar';
 import { SidebarComponent } from '@/components/Sidebar';
@@ -35,6 +32,9 @@ import RoleCardComponent from '@/components/RoleCard';
 import PaginateComponent from '@/components/Paginate';
 import ReactTable from '@/components/DataTable';
 import PageBreak from '@/components/PageBreak';
+
+import ReactBootstrap from './index';
+import lazyInjector from './lazyInjector';
 
 import '@ag-grid-community/core/dist/styles/ag-grid.min.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-material.min.css';

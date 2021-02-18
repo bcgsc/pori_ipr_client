@@ -6,8 +6,8 @@ interface IProps {
   setUseSnackbarRef: (showSnackbar: WithSnackbarProps) => void
 }
 
-const InnerSnackbarUtilsConfigurator: React.FC<IProps> = (props: IProps) => {
-  props.setUseSnackbarRef(useSnackbar());
+const InnerSnackbarUtilsConfigurator: React.FC<IProps> = ({ setUseSnackbarRef }: IProps) => {
+  setUseSnackbarRef(useSnackbar());
   return null;
 };
 

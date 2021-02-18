@@ -20,7 +20,7 @@ const germlineDownload = async () => {
     if (!filenameHeader) {
       throw new Error('unable to get excel file from server');
     }
-    const [_, filename = 'germline_export.xlsx'] = filenameHeader.match(/filename=(.+)/) || [];
+    const [, filename = 'germline_export.xlsx'] = filenameHeader.match(/filename=(.+)/) || [];
 
     return { filename, blob };
   }

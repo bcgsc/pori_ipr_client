@@ -20,9 +20,9 @@ import {
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import { useSnackbar } from 'notistack';
 
-import { recordDefaults } from '@/common';
-import sections from '../../sections';
+import { RecordDefaults } from '@/common';
 import api from '@/services/api';
+import sections from '../../sections';
 
 import './index.scss';
 
@@ -38,10 +38,10 @@ type AddEditTemplateProps = {
       format: string | null;
       type: string | null;
       updatedAt: string | null;
-    } & recordDefaults;
+    } & RecordDefaults;
     updatedAt: string | null;
-  } & recordDefaults;
-}
+  } & RecordDefaults;
+};
 
 const AddEditTemplate = ({
   isOpen,
@@ -61,7 +61,7 @@ const AddEditTemplate = ({
     if (editData) {
       setDialogTitle('Edit Template');
       setTemplateName(editData.name);
-      setSelectedSections(sections.filter(section => editData.sections.includes(section.value)));
+      setSelectedSections(sections.filter((section) => editData.sections.includes(section.value)));
       setImagePreview(editData.headerImage.data);
     } else {
       setDialogTitle('Create a Template');
@@ -143,10 +143,10 @@ const AddEditTemplate = ({
             labelId="select-sections"
             multiple
             onChange={(({ target: { value } }) => setSelectedSections(value as string[]))}
-            renderValue={() => selectedSections.map(section => section.name).join(', ')}
+            renderValue={() => selectedSections.map((section) => section.name).join(', ')}
             value={selectedSections}
           >
-            {sections.map(section => (
+            {sections.map((section) => (
               <MenuItem key={section.name} value={section}>
                 <Checkbox checked={selectedSections.includes(section)} />
                 <ListItemText>{section.name}</ListItemText>

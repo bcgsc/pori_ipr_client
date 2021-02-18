@@ -31,7 +31,7 @@ class Discussion {
       ]);
       const [discussionsResp, userResp] = await promises;
       this.discussions = discussionsResp;
-      this.user = userResp.user;
+      this.user = userResp;
       this.loading = false;
       $rootScope.$digest();
     }
