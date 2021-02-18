@@ -111,7 +111,7 @@ const MutationBurden = (): JSX.Element => {
           msiResp, msiScatterResp, imagesResp, comparatorsResp, mutationBurdenResp,
         ] = await calls.request();
         setMsi(msiResp);
-        setMsiScatter(msiScatterResp);
+        setMsiScatter(msiScatterResp['msi.scatter']);
         setImages(processImages(imagesResp));
         setComparators(comparatorsResp);
         setMutationBurden(mutationBurdenResp);
