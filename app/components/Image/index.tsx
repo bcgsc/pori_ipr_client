@@ -57,8 +57,8 @@ const Image = ({
               key={key}
               onClick={handleZoom}
               onKeyUp={handleZoom}
-              height={`${height ? `${height}px` : undefined}`}
-              width={`${width ? `${width}px` : undefined}`}
+              height={height ? `${height}px` : undefined}
+              width={width ? `${width}px` : undefined}
             />
             {showCaption && (
               <Typography className="image__caption" variant="caption">
