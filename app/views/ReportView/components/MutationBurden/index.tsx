@@ -111,7 +111,7 @@ const MutationBurden = (): JSX.Element => {
           msiResp, msiScatterResp, imagesResp, comparatorsResp, mutationBurdenResp,
         ] = await calls.request();
         setMsi(msiResp);
-        setMsiScatter(msiScatterResp);
+        setMsiScatter(msiScatterResp['msi.scatter']);
         setImages(processImages(imagesResp));
         setComparators(comparatorsResp);
         setMutationBurden(mutationBurdenResp);
@@ -185,13 +185,16 @@ const MutationBurden = (): JSX.Element => {
         Microsatellite Instability
       </Typography>
       {msiScatter && (
-        <Image
-          image={msiScatter}
-          showTitle
-          showCaption
-        />
+        <div className="msi__image">
+          <Image
+            image={msiScatter}
+            showCaption
+            width={500}
+          />
+        </div>
       )}
       <DataTable
+        titleText="MSI Scores"
         rowData={msi}
         columnDefs={columnDefs}
       />
