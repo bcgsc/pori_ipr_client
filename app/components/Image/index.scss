@@ -12,7 +12,7 @@
   }
 
   &__dialog {
-    overflow-y: auto;
+    overflow: auto;
     height: fit-content;
     margin: auto;
     background-color: $palette__common--white;
