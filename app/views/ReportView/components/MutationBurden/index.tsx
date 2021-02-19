@@ -188,12 +188,13 @@ const MutationBurden = (): JSX.Element => {
         <div className="msi__image">
           <Image
             image={msiScatter}
-            showTitle
             showCaption
+            width={500}
           />
         </div>
       )}
       <DataTable
+        titleText="MSI Scores"
         rowData={msi}
         columnDefs={columnDefs}
       />
