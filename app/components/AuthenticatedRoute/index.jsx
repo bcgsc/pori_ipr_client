@@ -48,14 +48,15 @@ const AuthenticatedRoute = ({
     <>
       <Route
         {...rest}
-        render={props => (<ChildComponent admin={admin} {...props} />)}
+        render={(props) => (<ChildComponent admin={admin} {...props} />)}
       />
     </>
   );
 };
 
 AuthenticatedRoute.propTypes = {
-  component: PropTypes.node.isRequired,
+  // eslint-disable-next-line react/forbid-prop-types
+  component: PropTypes.object.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
   location: PropTypes.object,
   admin: PropTypes.bool,
