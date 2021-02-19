@@ -39,7 +39,7 @@ const ReportSidebar = (props) => {
             <PrintIcon />
           </Link>
         </ListItem>
-        {allSections.map(section => (
+        {allSections.map((section) => (
           <React.Fragment key={section.name}>
             {section.uri && (
               <>
@@ -60,7 +60,7 @@ const ReportSidebar = (props) => {
                 )}
               </>
             )}
-            {section.children.some(child => visibleSections.includes(child.uri)) && (
+            {section.children.some((child) => visibleSections.includes(child.uri)) && (
               <ListItem classes={{ root: 'report-sidebar__list-item report-sidebar__list-item--no-hover' }}>
                 <ListItemText classes={{ primary: 'report-sidebar__list-item-text--bold' }}>
                   {section.name}
@@ -70,8 +70,8 @@ const ReportSidebar = (props) => {
             <>
               {Boolean(section.children.length) && (
                 <>
-                  {section.children.map(child => (
-                    <>
+                  {section.children.map((child) => (
+                    <React.Fragment key={child.uri}>
                       {visibleSections.includes(child.uri) && (
                         <Link
                           key={child.uri}
@@ -91,7 +91,7 @@ const ReportSidebar = (props) => {
                           </ListItem>
                         </Link>
                       )}
-                    </>
+                    </React.Fragment>
                   ))}
                 </>
               )}
@@ -119,7 +119,7 @@ const ReportSidebar = (props) => {
 };
 
 ReportSidebar.propTypes = {
-  allSections: PropTypes.arrayOf(PropTypes.string).isRequired,
+  allSections: PropTypes.arrayOf(PropTypes.object).isRequired,
   visibleSections: PropTypes.arrayOf(PropTypes.string).isRequired,
   isSidebarVisible: PropTypes.bool.isRequired,
   reportIdent: PropTypes.string.isRequired,
