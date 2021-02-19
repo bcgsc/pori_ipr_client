@@ -185,11 +185,13 @@ const MutationBurden = (): JSX.Element => {
         Microsatellite Instability
       </Typography>
       {msiScatter && (
-        <Image
-          image={msiScatter}
-          showTitle
-          showCaption
-        />
+        <div className="msi__image">
+          <Image
+            image={msiScatter}
+            showTitle
+            showCaption
+          />
+        </div>
       )}
       <DataTable
         rowData={msi}
