@@ -17,6 +17,7 @@ const bindings = {
 class Sidebar {
   constructor($window) {
     this.$window = $window;
+    this.graphkb = window._env_.GRAPHKB_URL; // React context window object
     this.pageAccess = {};
     this.pages = ['report', 'germline'];
     this.config = CONFIG;
