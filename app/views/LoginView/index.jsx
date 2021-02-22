@@ -49,7 +49,7 @@ const Login = (props) => {
 
       retrieveUser();
     }
-  }, [authorizationToken]);
+  }, [authorizationToken, from, history, setAdminUser, setAuthorizationToken, setUserDetails]);
 
   return (null);
 };

@@ -18,7 +18,7 @@ div(layout="column", ng-class="{'sidebar--maximized': $ctrl.sidebarMaximized}").
     md-tooltip(ng-if="!$ctrl.sidebarMaximized", md-direction="right") Germline
     span(ng-class="{'sidebar__text--visible': $ctrl.sidebarMaximized}").sidebar__text.sidebar__text--transition Germline
 
-  a(layout="row", href="{{$ctrl.window._env_.GRAPHKB_URL}}", target="_blank" rel="noopener noreferrer").sidebar__row
+  a(layout="row", href="{{$ctrl.graphkb}}", target="_blank" rel="noopener noreferrer").sidebar__row
     md-icon.sidebar__icon menu_book
     md-tooltip(ng-if="!$ctrl.sidebarMaximized", md-direction="right") Graph Knowledgebase
     span(ng-class="{'sidebar__text--visible': $ctrl.sidebarMaximized}").sidebar__text.sidebar__text--transition Graph Knowledgebase
