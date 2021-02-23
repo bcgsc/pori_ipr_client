@@ -158,7 +158,7 @@ const EditDialog = ({
     }
   };
 
-  const handleNotesChange = (event) => {
+  const handleNotesChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setIsDirty(true);
     setNewData({
       payload: {

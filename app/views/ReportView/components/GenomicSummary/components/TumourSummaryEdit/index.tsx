@@ -64,7 +64,7 @@ const TumourSummaryEdit = ({
     }
   }, [mutationBurden]);
 
-  const handleMicrobialChange = (event) => {
+  const handleMicrobialChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target: { value, name } } = event;
     setNewMicrobialData((prevVal) => ({ ...prevVal, [name]: value }));
 
@@ -73,7 +73,7 @@ const TumourSummaryEdit = ({
     }
   };
 
-  const handleReportChange = (event) => {
+  const handleReportChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target: { value, name } } = event;
     setNewReportData((prevVal) => ({ ...prevVal, [name]: value }));
 
@@ -82,7 +82,7 @@ const TumourSummaryEdit = ({
     }
   };
 
-  const handleMutationBurdenChange = (event) => {
+  const handleMutationBurdenChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target: { value, name } } = event;
     setNewMutationBurdenData((prevVal) => ({ ...prevVal, [name]: value }));
 

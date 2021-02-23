@@ -37,7 +37,7 @@ const EventsEditDialog = ({
     }
   }, [editData]);
 
-  const handleDataChange = (event) => {
+  const handleDataChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { target: { value, name } } = event;
 
     let prop: string = name;

@@ -22,8 +22,8 @@ type PatientEditProps = {
   isOpen: boolean;
   onClose: (
     isSaved: boolean,
-    newPatientData: Record<string, unknown> | null,
-    newReportData: Record<string, unknown> | null
+    newPatientData?: Record<string, unknown> | null,
+    newReportData?: Record<string, unknown> | null
   ) => void;
 };
 
@@ -56,7 +56,7 @@ const PatientEdit = ({
     }
   }, [report]);
 
-  const handlePatientChange = useCallback((event) => {
+  const handlePatientChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const { target: { value, name } } = event;
     setNewPatientData((prevVal) => ({ ...prevVal, [name]: value }));
 
@@ -65,7 +65,7 @@ const PatientEdit = ({
     }
   }, [patientDirty]);
 
-  const handleReportChange = useCallback((event) => {
+  const handleReportChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const { target: { value, name } } = event;
     setNewReportData((prevVal) => ({ ...prevVal, [name]: value }));
 
