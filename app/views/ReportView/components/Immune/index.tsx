@@ -1,20 +1,17 @@
 import React, { useEffect, useState, useContext } from 'react';
 
-import DataTable from '../../../../components/DataTable';
-import Image from '../../../../components/Image';
-import ReportContext from '../../../../components/ReportContext';
-import api, { ApiCallSet } from '../../../../services/api';
-import { hlaColumnDefs, cellTypesColumnDefs } from './columnDefs';
 import DemoDescription from '@/components/DemoDescription';
-import AsyncButton from '@/components/AsyncButton';
+import DataTable from '@/components/DataTable';
+import Image from '@/components/Image';
+import ReportContext from '@/components/ReportContext';
+import api, { ApiCallSet } from '@/services/api';
+import { hlaColumnDefs, cellTypesColumnDefs } from './columnDefs';
 
-const Immune = () => {
+const Immune = (): JSX.Element => {
   const { report } = useContext(ReportContext);
   const [cellTypes, setCellTypes] = useState<Array<Record<string, unknown>>>([]);
   const [images, setImages] = useState<Record<string, unknown>>({});
   const [hlaTypes, setHlaTypes] = useState<Array<Record<string, unknown>>>([]);
-
-  const [apiCalling, setApiCalling] = useState(false);
 
   useEffect(() => {
     if (report) {
@@ -38,11 +35,6 @@ const Immune = () => {
     }
   }, [report]);
 
-  const handleClick = () => {
-    setApiCalling(true);
-    window.setTimeout(() => setApiCalling(false), 2000);
-  };
-
   return (
     <div>
       <DemoDescription>
@@ -53,9 +45,6 @@ const Immune = () => {
         representing MHC class I types, are predicted based on alignment of DNA and RNA to databases
         of known HLA sequences.
       </DemoDescription>
-      <AsyncButton onClick={handleClick} color="secondary" variant="outlined" isLoading={apiCalling}>
-        Test Button
-      </AsyncButton>
       <DataTable
         columnDefs={cellTypesColumnDefs}
         rowData={cellTypes}
