@@ -51,7 +51,7 @@ const Image = ({
               </Typography>
             )}
             <img
-              className={`${isZoomable && !isZoomed ? 'image__zoom--in' : ''}`}
+              className={`image ${isZoomable && !isZoomed ? 'image__zoom--in' : ''}`}
               src={`data:image/${format};base64,${data}`}
               alt={title}
               key={key}

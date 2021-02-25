@@ -20,3 +20,23 @@
     }
   }
 }
+
+.copy-number {
+  padding: 16px;
+  
+  &__circos {
+    display: flex;
+    justify-content: center;
+  }
+
+  &__graphs {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+  }
+
+  &__title {
+    padding: 8px;
+  }
+}
