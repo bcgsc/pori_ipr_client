@@ -138,14 +138,14 @@ const CopyNumber = (): JSX.Element => {
           {groupedCnvs && (
             <>
               {Object.entries(groupedCnvs).map(([key, value]) => (
-                <>
+                <React.Fragment key={key}>
                   <DataTable
                     canToggleColumns
                     columnDefs={columnDefs}
                     rowData={value}
                     titleText={titleMap[key]}
                   />
-                </>
+                </React.Fragment>
               ))}
             </>
           )}

@@ -1,26 +1,3 @@
-.cnvloh {
-  .container {
-    width: 1000px;
-    margin: 0 auto;
-
-    &:first-of-type {
-      width: 918px;
-    }
-
-    div {
-      margin-top: 20px;
-
-      span {
-        text-align: center;
-        padding-left: 8px;
-        font-weight: 600;
-        text-transform: uppercase;
-        font-size: 0.8em;
-      }
-    }
-  }
-}
-
 .copy-number {
   padding: 16px;
   
