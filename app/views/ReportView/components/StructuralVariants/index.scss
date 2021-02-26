@@ -1,3 +1,17 @@
 .margin-bottom-20 {
   margin: 0 0 20px;
 };
+
+.structural-variants {
+  padding: 16px;
+
+  &__title {
+    padding: 16px;
+  }
+
+  &__events {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+  }
+}

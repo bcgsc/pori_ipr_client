@@ -35,7 +35,7 @@ const MutationBurden = lazy(() => import('./components/MutationBurden'));
 const ExpressionCorrelation = lazy(() => import('./components/ExpressionCorrelation'));
 const SmallMutations = lazy(() => import('./components/SmallMutations'));
 const CopyNumber = lazy(() => import('./components/CopyNumber'));
-const StructuralVariants = lazy(() => import('./components/StructuralVariants'));
+const StructuralVariants = lazy(() => import('./components/StructuralVariants/index.tsx'));
 const Expression = lazy(() => import('./components/Expression'));
 const Immune = lazy(() => import('./components/Immune'));
 const Appendices = lazy(() => import('./components/Appendices'));

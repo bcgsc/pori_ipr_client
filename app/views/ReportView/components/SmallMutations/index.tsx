@@ -12,13 +12,22 @@ import MutationType from './types';
 
 import './index.scss';
 
+const titleMap = {
+  therapeutic: 'Variants of Therapeutic Relevance',
+  nostic: 'Variants of Prognostic or Diagnostic Relevance',
+  biological: 'Variants of Biological Relevance',
+  unknown: 'Variants of Unknown Significance',
+};
+
 const SmallMutations = (): JSX.Element => {
   const { report } = useContext(ReportContext);
   const [smallMutations, setSmallMutations] = useState<MutationType[]>([]);
-  const [therapeutic, setTherapeutic] = useState<MutationType[]>([]);
-  const [nostic, setNostic] = useState<MutationType[]>([]);
-  const [biological, setBiological] = useState<MutationType[]>([]);
-  const [unknown, setUnknown] = useState<MutationType[]>([]);
+  const [groupedSmallMutations, setGroupedSmallMutations] = useState({
+    therapeutic: [],
+    nostic: [],
+    biological: [],
+    unknown: [],
+  });
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -73,10 +82,7 @@ const SmallMutations = (): JSX.Element => {
       });
 
       setIsLoading(false);
-      setTherapeutic(mutations.therapeutic);
-      setNostic(mutations.nostic);
-      setBiological(mutations.biological);
-      setUnknown(mutations.unknown);
+      setGroupedSmallMutations(mutations);
     }
   }, [smallMutations]);
 
@@ -87,30 +93,15 @@ const SmallMutations = (): JSX.Element => {
       </Typography>
       {!isLoading ? (
         <>
-          <DataTable
-            canToggleColumns
-            columnDefs={columnDefs}
-            rowData={therapeutic}
-            titleText="Variants of Therapeutic Relevance"
-          />
-          <DataTable
-            canToggleColumns
-            columnDefs={columnDefs}
-            rowData={nostic}
-            titleText="Variants of Prognostic or Diagnostic Relevance"
-          />
-          <DataTable
-            canToggleColumns
-            columnDefs={columnDefs}
-            rowData={biological}
-            titleText="Variants of Biological Relevance"
-          />
-          <DataTable
-            canToggleColumns
-            columnDefs={columnDefs}
-            rowData={unknown}
-            titleText="Variants of Unknown Significance"
-          />
+          {Object.entries(groupedSmallMutations).map(([key, value]) => (
+            <DataTable
+              key={key}
+              canToggleColumns
+              columnDefs={columnDefs}
+              rowData={value}
+              titleText={titleMap[key]}
+            />
+          ))}
         </>
       ) : (
         <LinearProgress />
