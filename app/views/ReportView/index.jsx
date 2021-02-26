@@ -271,7 +271,6 @@ const ReportView = () => {
               visibleSections={visibleSections || ['summary']}
               allSections={allSections}
               isSidebarVisible={isSidebarVisible}
-              reportIdent={report.ident}
               canEdit={canEdit}
             />
           )}

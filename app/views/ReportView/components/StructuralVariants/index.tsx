@@ -13,6 +13,8 @@ import ReportContext from '@/components/ReportContext';
 import columnDefs from './columnDefs';
 import { ImageType } from '../MutationBurden/types';
 
+import './index.scss';
+
 const titleMap = {
   therapeutic: 'Gene Fusions of Potential Clinical Relevance',
   nostic: 'Gene Fusions of Prognostic or Diagnostic Relevance',

@@ -27,7 +27,6 @@ import { ReportComponent } from '@/views/GermlineView/components/Report';
 import DiscussionEntryComponent from '@/views/ReportView/components/Discussion/components/DiscussionEntry';
 import RoleCardComponent from '@/components/RoleCard';
 import PaginateComponent from '@/components/Paginate';
-import ReactTable from '@/components/DataTable';
 import PageBreak from '@/components/PageBreak';
 
 import ReactBootstrap from './index';
@@ -60,7 +59,6 @@ const rootModule = angular.module('root')
   .component('report', ReportComponent)
   .component('roleCard', RoleCardComponent)
   .component('paginate', PaginateComponent)
-  .component('reactTable', react2angular(ReactTable))
   .component('pageBreak', react2angular(PageBreak))
   .config(['$locationProvider', ($locationProvider) => {
     $locationProvider.html5Mode(true);

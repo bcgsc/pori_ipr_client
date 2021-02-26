@@ -23,17 +23,13 @@ const VISIBLE = 'visibleColsKb';
 
 /**
  * @param {*} props props
- * @param {object} tableData table data for all tables
- * @param {object} hiddenTableData table data for all tables hidden by default
- * @param {array} syncedColumnDefs column definitions to by synced across tables
- * @param {string} reportIdent report ident string
+ * @param {boolean} isPrint should the print view be rendered
  * @returns {*} JSX
  */
 function KbMatches(props) {
   const {
     isPrint,
   } = props;
-
 
   const [visibleColumns, setVisibleColumns] = useState(
     localStorage.getItem(VISIBLE)

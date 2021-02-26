@@ -25,7 +25,6 @@ import ReportContext from '@/components/ReportContext';
  * @param {object} props.editData data passed to edit
  * @param {bool} props.isOpen is the dialog open
  * @param {func} props.onClose onClose function
- * @param {string} props.reportIdent ident of current report
  * @param {string} props.tableType therapeutic | chemoresistant
  * @return {*} JSX
  */

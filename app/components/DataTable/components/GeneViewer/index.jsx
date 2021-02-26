@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useState,
+  useEffect, useState, useContext,
 } from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -17,6 +17,7 @@ import { useSnackbar } from 'notistack';
 import { AgGridReact } from '@ag-grid-community/react';
 
 import api from '@/services/api';
+import ReportContext from '@/components/ReportContext';
 import { columnDefs } from '@/views/ReportView/components/KbMatches/columnDefs';
 import { columnDefs as smallMutationsColumnDefs } from '@/views/ReportView/components/SmallMutations/columnDefs';
 import copyNumberColumnDefs from '@/views/ReportView/components/CopyNumber/columnDefs';
@@ -29,7 +30,6 @@ import './index.scss';
  * @param {object} props props
  * @param {func} props.onClose parent close handler
  * @param {string} props.gene gene name
- * @param {string} props.reportIdent current report ID for API calls
  * @param {bool} props.isOpen is open?
  * @return {*} JSX
  */
@@ -37,11 +37,12 @@ const GeneViewer = (props) => {
   const {
     onClose,
     isOpen,
-    reportIdent,
     gene,
   } = props;
 
   const snackbar = useSnackbar();
+  const { report } = useContext(ReportContext);
+
   const [geneData, setGeneData] = useState();
   const [tabValue, setTabValue] = useState(0);
 
@@ -53,7 +54,7 @@ const GeneViewer = (props) => {
     if (isOpen) {
       const getData = async () => {
         try {
-          const resp = await api.get(`/reports/${reportIdent}/gene-viewer/${gene}`).request();
+          const resp = await api.get(`/reports/${report.ident}/gene-viewer/${gene}`).request();
           setGeneData(resp);
         } catch {
           snackbar.enqueueSnackbar(`Error: gene viewer data does not exist for ${gene}`);
@@ -62,7 +63,7 @@ const GeneViewer = (props) => {
       };
       getData();
     }
-  }, [gene, onClose, isOpen, reportIdent, snackbar]);
+  }, [gene, onClose, isOpen, report, snackbar]);
 
   return (
     <Dialog
@@ -165,11 +166,6 @@ GeneViewer.propTypes = {
   onClose: PropTypes.func.isRequired,
   gene: PropTypes.string.isRequired,
   isOpen: PropTypes.bool.isRequired,
-  reportIdent: PropTypes.string,
-};
-
-GeneViewer.defaultProps = {
-  reportIdent: '',
 };
 
 export default GeneViewer;
