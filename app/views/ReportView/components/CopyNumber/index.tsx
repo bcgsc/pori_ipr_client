@@ -9,8 +9,9 @@ import ReportContext from '@/components/ReportContext';
 import api, { ApiCallSet } from '@/services/api';
 import { CNVSTATE, EXPLEVEL } from '@/constants';
 import Image from '@/components/Image';
+import ImageType from '@/components/Image/types';
+import CopyNumberType from './types';
 import columnDefs from './columnDefs';
-import { ImageType } from '../MutationBurden/types';
 
 import './index.scss';
 
@@ -29,7 +30,7 @@ const CopyNumber = (): JSX.Element => {
 
   const [isLoading, setIsLoading] = useState(true);
   const [images, setImages] = useState<Record<string, ImageType>>();
-  const [cnvs, setCnvs] = useState([]);
+  const [cnvs, setCnvs] = useState<CopyNumberType[]>([]);
   const [groupedCnvs, setGroupedCnvs] = useState({
     clinical: [],
     nostic: [],

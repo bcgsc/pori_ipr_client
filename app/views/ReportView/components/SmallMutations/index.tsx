@@ -57,25 +57,21 @@ const SmallMutations = (): JSX.Element => {
       smallMutations.forEach((row) => {
         let isUnknown = true;
 
-        // Therapeutic? => therapeutic
         if (row.kbMatches.some((m) => m.category === 'therapeutic')) {
           mutations.therapeutic.push(row);
           isUnknown = false;
         }
 
-        // Diagnostic || Prognostic? => nostic
         if (row.kbMatches.some((m) => (m.category === 'diagnostic' || m.category === 'prognostic'))) {
           mutations.nostic.push(row);
           isUnknown = false;
         }
 
-        // Biological ? => Biological
         if (row.kbMatches.some((m) => m.category === 'biological')) {
           mutations.biological.push(row);
           isUnknown = false;
         }
 
-        // Unknown
         if (isUnknown) {
           mutations.unknown.push(row);
         }

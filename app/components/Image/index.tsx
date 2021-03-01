@@ -1,21 +1,17 @@
 import React, { useState, useCallback } from 'react';
 import { Typography, Fade } from '@material-ui/core';
 
+import ImageType from './types';
+
 import './index.scss';
 
 type ImageProps = {
-  image: {
-    data;
-    title;
-    caption;
-    format;
-    key;
-  };
-  height;
-  width;
-  showTitle: boolean;
-  showCaption: boolean;
-  isZoomable: boolean;
+  image: ImageType;
+  height?: number;
+  width?: number;
+  showTitle?: boolean;
+  showCaption?: boolean;
+  isZoomable?: boolean;
 };
 
 const Image = ({
@@ -26,8 +22,8 @@ const Image = ({
     format,
     key,
   },
-  height,
-  width,
+  height = 0,
+  width = 0,
   showTitle = false,
   showCaption = false,
   isZoomable = true,

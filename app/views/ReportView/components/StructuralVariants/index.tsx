@@ -10,8 +10,9 @@ import api, { ApiCallSet } from '@/services/api';
 import DataTable from '@/components/DataTable';
 import Image from '@/components/Image';
 import ReportContext from '@/components/ReportContext';
+import ImageType from '@/components/Image/types';
 import columnDefs from './columnDefs';
-import { ImageType } from '../MutationBurden/types';
+import StructuralVariantType from './types';
 
 import './index.scss';
 
@@ -26,7 +27,7 @@ const StructuralVariants = (): JSX.Element => {
   const { report } = useContext(ReportContext);
 
   const [isLoading, setIsLoading] = useState(true);
-  const [svs, setSvs] = useState([]);
+  const [svs, setSvs] = useState<StructuralVariantType[]>([]);
   const [groupedSvs, setGroupedSvs] = useState({
     therapeutic: [],
     nostic: [],
@@ -65,25 +66,21 @@ const StructuralVariants = (): JSX.Element => {
       svs.forEach((row) => {
         let isUnknown = true;
 
-        // Therapeutic? => therapeutic
         if (row.kbMatches.some((m) => m.category === 'therapeutic')) {
           variants.therapeutic.push(row);
           isUnknown = false;
         }
 
-        // Diagnostic || Prognostic? => nostic
         if (row.kbMatches.some((m) => (m.category === 'diagnostic' || m.category === 'prognostic'))) {
           variants.nostic.push(row);
           isUnknown = false;
         }
 
-        // Biological ? => Biological
         if (row.kbMatches.some((m) => m.category === 'biological')) {
           variants.biological.push(row);
           isUnknown = false;
         }
 
-        // Unknown
         if (isUnknown) {
           variants.unknown.push(row);
         }
