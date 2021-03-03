@@ -64,18 +64,19 @@ const TabCards = ({
     };
 
     const tabs = comparators
-      .filter(({ analysisRole }) => analysisRole.includes('mutation burden'))
-      .map(({ analysisRole }) => {
-        const [roleName] = analysisRole.match(/(?<=\().+(?=\))/g);
-        if (!tabNames.includes(roleName)) {
-          tabNames.push(roleName);
+      .reduce((accumulator, { analysisRole }) => {
+        if (analysisRole.includes('mutation burden')) {
+          const [roleName] = analysisRole.match(/(?<=\().+(?=\))/g);
+          if (!tabNames.includes(roleName)) {
+            tabNames.push(roleName);
 
-          return (
-            <Tab key={analysisRole} label={roleName} />
-          );
+            accumulator.push((
+              <Tab key={analysisRole} label={roleName} />
+            ));
+          }
         }
-        return null;
-      });
+        return accumulator;
+      }, []);
     return tabs.sort(({ props: { label: labelA } }, { props: { label: labelB } }) => {
       const aValue = ordinalMapping[labelA];
       const bValue = ordinalMapping[labelB];
