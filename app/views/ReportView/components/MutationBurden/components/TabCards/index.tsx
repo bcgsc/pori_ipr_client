@@ -56,8 +56,14 @@ const TabCards = ({
 
   const getTabs = useCallback(() => {
     const tabNames = [];
+    const ordinalMapping = {
+      'primary': 1,
+      'secondary': 2,
+      'tertiary': 3,
+      'quaternary': 4,
+    };
 
-    return comparators
+    const tabs = comparators
       .filter(({ analysisRole }) => analysisRole.includes('mutation burden'))
       .map(({ analysisRole }) => {
         const [roleName] = analysisRole.match(/(?<=\().+(?=\))/g);
@@ -70,6 +76,18 @@ const TabCards = ({
         }
         return null;
       });
+    return tabs.sort(({ props: { label: labelA } }, { props: { label: labelB } }) => {
+      const aValue = ordinalMapping[labelA];
+      const bValue = ordinalMapping[labelB];
+
+      if (aValue > bValue) {
+        return 1;
+      }
+      if (aValue < bValue) {
+        return -1;
+      }
+      return 0;
+    });
   }, [comparators]);
 
   const getCardContent = useCallback((burden) => {
