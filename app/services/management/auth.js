@@ -114,19 +114,14 @@ const searchUsers = async (query) => {
 const login = async (referrerUri = null) => {
   setReferrerUri(referrerUri);
 
-  const init = new Promise((resolve, reject) => {
-    /* setting promiseType = native does not work for later functions inside the closure
-       checkLoginIframe: true breaks for some users in chrome causing an infinite loop
-       see: https://szoradi-balazs.medium.com/keycloak-login-infinite-loop-9005bcd9a915
-    */
-    const prom = keycloak.init({
-      onLoad: 'login-required',
-      checkLoginIframe: false,
-    });
-    prom.success(resolve);
-    prom.error(reject);
+  /* setting promiseType = native does not work for later functions inside the closure
+    checkLoginIframe: true breaks for some users in chrome causing an infinite loop
+    see: https://szoradi-balazs.medium.com/keycloak-login-infinite-loop-9005bcd9a915
+  */
+  await keycloak.init({
+    onLoad: 'login-required',
+    checkLoginIframe: false,
   });
-  await init;
 };
 
 const logout = async () => {
