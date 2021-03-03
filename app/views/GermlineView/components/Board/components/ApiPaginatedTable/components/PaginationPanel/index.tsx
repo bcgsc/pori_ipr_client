@@ -71,7 +71,7 @@ const PaginationPanel = ({
         </Select>
       </FormControl>
       <Typography className="pagination__text" variant="body2" display="inline">
-        {`${offset + 1} to ${offset + limit} of ${totalRows}`}
+        {`${offset + 1} to ${offset + limit > totalRows ? totalRows : offset + limit} of ${totalRows}`}
       </Typography>
       <div className="pagination__button">
         <IconButton size="small" disabled={offset === 0} onClick={handleFirstPageClick}>

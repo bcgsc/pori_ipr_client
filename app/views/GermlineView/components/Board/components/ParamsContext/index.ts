@@ -7,6 +7,8 @@ type ParamsContextType = {
   setOffset: (offset: number) => void;
   reviewFilter: boolean;
   setReviewFilter: (reviewFilter: boolean) => void;
+  searchText: string;
+  setSearchText: (searchText: string) => void;
 };
 
 const ParamsContext = React.createContext({
@@ -16,6 +18,8 @@ const ParamsContext = React.createContext({
   setOffset: (offset: number) => {},
   reviewFilter: false,
   setReviewFilter: (reviewFilter: boolean) => {},
+  searchText: '',
+  setSearchText: (searchText: string) => {},
 });
 
 export default ParamsContext;
