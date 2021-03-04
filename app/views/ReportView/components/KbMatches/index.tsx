@@ -1,7 +1,6 @@
 import React, {
   useState, useEffect, useContext, useCallback,
 } from 'react';
-import PropTypes from 'prop-types';
 import {
   TextField,
   InputAdornment,
@@ -13,8 +12,6 @@ import {
 import { useSnackbar } from 'notistack';
 
 import api, { ApiCallSet } from '@/services/api';
-import AlterationService from '@/services/reports/alteration.service';
-import TargetedGenesService from '@/services/reports/targeted-genes.service';
 import DemoDescription from '@/components/DemoDescription';
 import EditContext from '@/components/EditContext';
 import DataTable from '@/components/DataTable';
@@ -41,7 +38,7 @@ type KbMatchesProps = {
 };
 
 const KbMatches = ({
-  isPrint,
+  isPrint = false,
 }: KbMatchesProps): JSX.Element => {
   const { report } = useContext(ReportContext);
   const { canEdit } = useContext(EditContext);
@@ -103,14 +100,16 @@ const KbMatches = ({
     }
   }, [report]);
 
-  const handleFilter = (event) => setFilterText(event.target.value);
+  const handleFilter = (event: React.ChangeEvent<HTMLInputElement>) => (
+    setFilterText(event.target.value)
+  );
 
   const handleDelete = useCallback(async (row) => {
     try {
       // More than one ident coalesced into one row
       if (Array.isArray(row.ident)) {
         const apiCalls = new ApiCallSet();
-        row.ident.forEach((ident) => {
+        row.ident.forEach((ident: string) => {
           apiCalls.push(api.del(`/reports/${report.ident}/kb-matches/${ident}`, {}, {}));
         });
         await apiCalls.request();
@@ -185,14 +184,6 @@ const KbMatches = ({
       )}
     </div>
   );
-};
-
-KbMatches.propTypes = {
-  isPrint: PropTypes.bool,
-};
-
-KbMatches.defaultProps = {
-  isPrint: false,
 };
 
 export default KbMatches;

@@ -65,7 +65,6 @@ const ReportView = () => {
           const templatesResp = await api.get('/templates', {}).request();
           setTemplates(templatesResp);
           setReport(resp);
-          console.log(resp.template.name);
           if (resp.template.name === 'probe') {
             setIsProbe(true);
           } else {
