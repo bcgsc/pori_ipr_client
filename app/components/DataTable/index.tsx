@@ -85,7 +85,7 @@ type DataTableProps = {
   /* Custom header cell renderer */
   Header?: () => JSX.Element;
   /* Explicitly passed in report ident for AngularJS support outside of react tree */
-  reportIdent: string;
+  reportIdent?: string;
 };
 
 const DataTable = ({

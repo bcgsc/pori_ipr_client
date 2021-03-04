@@ -1,13 +1,13 @@
 import React, { useEffect, useState, useContext } from 'react';
 
-import DataTable from '../../../../components/DataTable';
-import Image from '../../../../components/Image';
-import ReportContext from '../../../../components/ReportContext';
-import api, { ApiCallSet } from '../../../../services/api';
-import { hlaColumnDefs, cellTypesColumnDefs } from './columnDefs';
 import DemoDescription from '@/components/DemoDescription';
+import DataTable from '@/components/DataTable';
+import Image from '@/components/Image';
+import ReportContext from '@/components/ReportContext';
+import api, { ApiCallSet } from '@/services/api';
+import { hlaColumnDefs, cellTypesColumnDefs } from './columnDefs';
 
-const Immune = () => {
+const Immune = (): JSX.Element => {
   const { report } = useContext(ReportContext);
   const [cellTypes, setCellTypes] = useState<Array<Record<string, unknown>>>([]);
   const [images, setImages] = useState<Record<string, unknown>>({});
