@@ -11,11 +11,11 @@ type ImageProps = {
     format;
     key;
   };
-  height;
-  width;
-  showTitle: boolean;
-  showCaption: boolean;
-  isZoomable: boolean;
+  height?: number;
+  width?: number;
+  showTitle?: boolean;
+  showCaption?: boolean;
+  isZoomable?: boolean;
 };
 
 const Image = ({
@@ -26,8 +26,8 @@ const Image = ({
     format,
     key,
   },
-  height,
-  width,
+  height = 0,
+  width = 0,
   showTitle = false,
   showCaption = false,
   isZoomable = true,

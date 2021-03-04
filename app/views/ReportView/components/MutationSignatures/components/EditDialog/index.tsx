@@ -16,23 +16,32 @@ import {
 } from '@material-ui/core';
 
 import api from '@/services/api';
+import AsyncButton from '@/components/AsyncButton';
+
+import ConfirmContext from '@/components/ConfirmContext';
+import ReportContext from '@/components/ReportContext';
+import SignatureType from '../../types';
 
 import './index.scss';
-import ReportContext from '../../../../../../components/ReportContext';
-import ConfirmContext from '@/components/ConfirmContext';
 
-const EditDialog = (props) => {
-  const {
-    editData,
-    isOpen,
-    onClose,
-    showErrorSnackbar,
-  } = props;
+type EditDialogProps = {
+  editData: SignatureType;
+  isOpen: boolean;
+  onClose: (newData?: SignatureType) => void;
+  showErrorSnackbar: (message: string) => void;
+};
 
+const EditDialog = ({
+  editData,
+  isOpen = false,
+  onClose,
+  showErrorSnackbar,
+}: EditDialogProps): JSX.Element => {
   const { report } = useContext(ReportContext);
   const { isSigned } = useContext(ConfirmContext);
   const [checkboxSelected, setCheckboxSelected] = useState(false);
   const [selectValue, setSelectValue] = useState('');
+  const [isApiCalling, setIsApiCalling] = useState(false);
 
   useEffect(() => {
     if (editData) {
@@ -41,25 +50,29 @@ const EditDialog = (props) => {
     }
   }, [editData]);
 
-  const handleCheckboxChange = (event) => {
+  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCheckboxSelected(event.target.checked);
   };
 
-  const handleSelectChange = (event) => {
+  const handleSelectChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectValue(event.target.value);
   };
 
   const handleSubmit = useCallback(async () => {
     if (checkboxSelected !== editData.selected || selectValue !== editData.kbCategory) {
+      setIsApiCalling(true);
       try {
         await api.put(
           `/reports/${report.ident}/mutation-signatures/${editData.ident}`,
           { selected: checkboxSelected, kbCategory: selectValue },
+          {},
         ).request(isSigned);
         onClose({ ...editData, selected: checkboxSelected, kbCategory: selectValue });
       } catch (err) {
         showErrorSnackbar(`Error updating signature: ${err.message}`);
         onClose();
+      } finally {
+        setIsApiCalling(false);
       }
     } else {
       onClose();
@@ -88,12 +101,12 @@ const EditDialog = (props) => {
           />
         </div>
         <DialogActions className="edit-dialog__actions">
-          <Button onClick={() => handleSubmit()}>
+          <Button onClick={handleSubmit}>
             Cancel
           </Button>
-          <Button color="secondary" onClick={() => handleSubmit()}>
+          <AsyncButton isLoading={isApiCalling} color="secondary" onClick={handleSubmit}>
             Save
-          </Button>
+          </AsyncButton>
         </DialogActions>
       </DialogContent>
     </Dialog>
