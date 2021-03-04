@@ -1,9 +1,6 @@
-import './index.scss';
-
 import React, {
   useState, useEffect, useCallback, useReducer, useContext,
 } from 'react';
-import PropTypes from 'prop-types';
 import {
   Button,
   Dialog,
@@ -14,29 +11,32 @@ import {
   TextField,
 } from '@material-ui/core';
 
-import AutocompleteHandler from '../AutocompleteHandler';
-import { therapeuticAdd, therapeuticDelete } from '../../../../../../services/reports/therapeutic';
+import { therapeuticAdd, therapeuticDelete } from '@/services/reports/therapeutic';
 import api from '@/services/api';
 import ConfirmContext from '@/components/ConfirmContext';
 import ReportContext from '@/components/ReportContext';
+import AsyncButton from '@/components/AsyncButton';
+import AutocompleteHandler from '../AutocompleteHandler';
 
-/**
- * @param {object} props props
- * @param {object} props.editData data passed to edit
- * @param {bool} props.isOpen is the dialog open
- * @param {func} props.onClose onClose function
- * @param {string} props.reportIdent ident of current report
- * @param {string} props.tableType therapeutic | chemoresistant
- * @return {*} JSX
- */
-const EditDialog = (props) => {
-  const {
-    editData,
-    isOpen,
-    onClose,
-    tableType,
-  } = props;
+import './index.scss';
 
+type EditDialogProps = {
+  /* Data passed to edit */
+  editData: Record<string, unknown>;
+  /* Is the dialog open? */
+  isOpen: boolean;
+  /* Function called to close dialog */
+  onClose: (newData?: null | Record<string, unknown>) => void;
+  /* Used to differenciate tables if multiple on a page */
+  tableType: string;
+};
+
+const EditDialog = ({
+  editData = {},
+  isOpen,
+  onClose,
+  tableType,
+}: EditDialogProps): JSX.Element => {
   const [newData, setNewData] = useReducer((state, action) => {
     const { type: actionType, payload } = action;
 
@@ -53,6 +53,8 @@ const EditDialog = (props) => {
   const [requiredFields] = useState(['variant', 'context', 'therapy']);
   const [errors, setErrors] = useState(null);
   const [isDirty, setIsDirty] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     if (newData.ident) {
@@ -67,7 +69,7 @@ const EditDialog = (props) => {
   }, [editData]);
 
   useEffect(() => {
-    const missing = requiredFields.filter(field => !newData[field]);
+    const missing = requiredFields.filter((field) => !newData[field]);
 
     if (missing.length) {
       setErrors(missing.reduce((acc, curr) => {
@@ -79,8 +81,8 @@ const EditDialog = (props) => {
     }
   }, [newData, requiredFields]);
 
-
   const handleSubmit = useCallback(async () => {
+    setIsSubmitting(true);
     const {
       ident,
       createdAt,
@@ -95,6 +97,7 @@ const EditDialog = (props) => {
         const returnedData = await api.put(
           `/reports/${report.ident}/therapeutic-targets/${editData.ident}`,
           combinedData,
+          {},
         ).request(isSigned);
         setIsDirty(false);
         onClose(returnedData);
@@ -109,10 +112,13 @@ const EditDialog = (props) => {
       }
     } catch (err) {
       console.error(err); // TODO: send to snackbar
+    } finally {
+      setIsSubmitting(false);
     }
   }, [newData, tableType, report, editData.ident, isSigned, onClose]);
 
   const handleDelete = useCallback(async () => {
+    setIsDeleting(true);
     try {
       await therapeuticDelete(
         report.ident,
@@ -121,6 +127,8 @@ const EditDialog = (props) => {
       onClose(null);
     } catch (err) {
       console.error('error', err); // TODO: send to snackbar
+    } finally {
+      setIsDeleting(false);
     }
   }, [onClose, newData.ident, report.ident]);
 
@@ -150,7 +158,7 @@ const EditDialog = (props) => {
     }
   };
 
-  const handleNotesChange = (event) => {
+  const handleNotesChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setIsDirty(true);
     setNewData({
       payload: {
@@ -217,34 +225,31 @@ const EditDialog = (props) => {
           />
         </FormControl>
         <DialogActions className="edit-dialog__actions">
-          {
-            newData.ident && (
-              <Button color="primary" onClick={handleDelete} className="edit-dialog__actions--delete">
-                Delete
-              </Button>
-            )
-          }
-          <Button color="primary" onClick={() => onClose()}>
+          {newData.ident && (
+            <AsyncButton
+              color="secondary"
+              onClick={handleDelete}
+              className="edit-dialog__actions--delete"
+              isLoading={isDeleting}
+            >
+              Delete
+            </AsyncButton>
+          )}
+          <Button color="secondary" onClick={() => onClose()}>
             Cancel
           </Button>
-          <Button color="primary" onClick={handleSubmit} disabled={Boolean(errors || !isDirty)}>
+          <AsyncButton
+            color="secondary"
+            onClick={handleSubmit}
+            disabled={Boolean(errors || !isDirty)}
+            isLoading={isSubmitting}
+          >
             Save
-          </Button>
+          </AsyncButton>
         </DialogActions>
       </DialogContent>
     </Dialog>
   );
-};
-
-EditDialog.propTypes = {
-  editData: PropTypes.objectOf(PropTypes.any),
-  isOpen: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
-  tableType: PropTypes.string.isRequired,
-};
-
-EditDialog.defaultProps = {
-  editData: {},
 };
 
 export default EditDialog;
