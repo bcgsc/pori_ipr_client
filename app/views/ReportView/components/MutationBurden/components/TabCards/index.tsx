@@ -161,12 +161,6 @@ const TabCards = ({
                 <FrontPageTooltip />
               )}
             </div>
-            <div className="mutation-burden__comparator-container">
-              <Typography variant="body2" className="mutation-burden__comparator--padded">
-                Expressed Structural Variants (count):
-                {` ${burden.qualitySvExpressedCount}`}
-              </Typography>
-            </div>
           </>
         );
       default:
