@@ -8,7 +8,7 @@ import {
   CardContent,
 } from '@material-ui/core';
 
-import { ImageType } from '@/common';
+import ImageType from '@/components/Image/types';
 import FrontPageTooltip from '@/components/FrontPageTooltip';
 import Image from '@/components/Image';
 import { ComparatorType, MutationBurdenType } from '../../types';
