@@ -12,7 +12,6 @@ import {
   InputAdornment,
 } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
-import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 
 import germlineDownload from '@/services/reports/germline';
 import useGrid from '@/components/hooks/useGrid';
@@ -37,7 +36,7 @@ const ApiPaginatedTable = ({
   const { gridApi, colApi, onGridReady } = useGrid();
   const history = useHistory();
   const snackbar = useSnackbar();
-  const { searchText, setSearchText } = useContext(ParamsContext);
+  const { setSearchText } = useContext(ParamsContext);
   const [tempSearchText, setTempSearchText] = useState('');
 
   const onFirstDataRendered = useCallback(() => {
@@ -113,7 +112,7 @@ const ApiPaginatedTable = ({
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
-                    <IconButton onClick={handleSearchSubmit}>
+                    <IconButton size="small" onClick={handleSearchSubmit}>
                       <SearchIcon />
                     </IconButton>
                   </InputAdornment>

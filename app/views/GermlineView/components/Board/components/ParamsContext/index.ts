@@ -11,15 +11,15 @@ type ParamsContextType = {
   setSearchText: (searchText: string) => void;
 };
 
-const ParamsContext = React.createContext({
+const ParamsContext = React.createContext<ParamsContextType>({
   limit: 20,
-  setLimit: (limit: number) => {},
+  setLimit: (limit) => {},
   offset: 0,
-  setOffset: (offset: number) => {},
+  setOffset: (offset) => {},
   reviewFilter: false,
-  setReviewFilter: (reviewFilter: boolean) => {},
+  setReviewFilter: (reviewFilter) => {},
   searchText: '',
-  setSearchText: (searchText: string) => {},
+  setSearchText: (searchText) => {},
 });
 
 export default ParamsContext;
