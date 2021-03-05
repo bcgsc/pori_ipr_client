@@ -8,9 +8,10 @@ import {
   CardContent,
 } from '@material-ui/core';
 
-import { ImageType, ComparatorType, MutationBurdenType } from '../../types';
+import { ImageType } from '@/common';
 import FrontPageTooltip from '@/components/FrontPageTooltip';
 import Image from '@/components/Image';
+import { ComparatorType, MutationBurdenType } from '../../types';
 
 const rankMapping = {
   primary: 0,
@@ -140,12 +141,6 @@ const TabCards = ({
               {burden.role === 'primary' && (
                 <FrontPageTooltip />
               )}
-            </div>
-            <div className="mutation-burden__comparator-container">
-              <Typography variant="body2" className="mutation-burden__comparator--padded">
-                Expressed Structural Variants (count):
-                {` ${burden.qualitySvExpressedCount}`}
-              </Typography>
             </div>
           </>
         );

@@ -100,6 +100,7 @@
     "class-methods-use-this": "off",
     "react/jsx-filename-extension": "off",
     "@typescript-eslint/no-empty-function": "off",
-    "react/jsx-indent": "error"
+    "react/jsx-indent": "error",
+    "react/require-default-props": "off"
   }
 }

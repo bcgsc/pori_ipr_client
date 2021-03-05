@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, {
+  useState, useEffect, useCallback, useContext,
+} from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -8,20 +10,36 @@ import {
   Button,
 } from '@material-ui/core';
 
+import api, { ApiCallSet } from '@/services/api';
+import ConfirmContext from '@/components/ConfirmContext';
+import AsyncButton from '@/components/AsyncButton';
+
 import './index.scss';
 
-const PatientEdit = (props) => {
-  const {
-    patientInformation,
-    report,
-    isOpen,
-    onClose,
-  } = props;
+type PatientEditProps = {
+  patientInformation: Record<string, unknown>;
+  report: Record<string, unknown>;
+  isOpen: boolean;
+  onClose: (
+    isSaved: boolean,
+    newPatientData?: Record<string, unknown> | null,
+    newReportData?: Record<string, unknown> | null
+  ) => void;
+};
+
+const PatientEdit = ({
+  patientInformation,
+  report,
+  isOpen,
+  onClose,
+}: PatientEditProps): JSX.Element => {
+  const { isSigned } = useContext(ConfirmContext);
 
   const [newPatientData, setNewPatientData] = useState();
   const [newReportData, setNewReportData] = useState();
   const [patientDirty, setPatientDirty] = useState(false);
   const [reportDirty, setReportDirty] = useState(false);
+  const [isApiCalling, setIsApiCalling] = useState(false);
 
   useEffect(() => {
     if (patientInformation) {
@@ -38,31 +56,46 @@ const PatientEdit = (props) => {
     }
   }, [report]);
 
-  const handlePatientChange = useCallback((event) => {
+  const handlePatientChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const { target: { value, name } } = event;
-    setNewPatientData(prevVal => ({ ...prevVal, [name]: value }));
+    setNewPatientData((prevVal) => ({ ...prevVal, [name]: value }));
 
     if (!patientDirty) {
       setPatientDirty(true);
     }
   }, [patientDirty]);
 
-  const handleReportChange = useCallback((event) => {
+  const handleReportChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const { target: { value, name } } = event;
-    setNewReportData(prevVal => ({ ...prevVal, [name]: value }));
+    setNewReportData((prevVal) => ({ ...prevVal, [name]: value }));
 
     if (!reportDirty) {
       setReportDirty(true);
     }
   }, [reportDirty]);
 
-  const handleClose = useCallback((isSaved) => {
+  const handleClose = useCallback(async (isSaved) => {
     if (isSaved) {
+      setIsApiCalling(true);
+      const apiCalls = [];
+
+      if (newPatientData) {
+        apiCalls.push(api.put(`/reports/${report.ident}/patient-information`, newPatientData, {}));
+      }
+
+      if (newReportData) {
+        apiCalls.push(api.put(`/reports/${report.ident}`, newReportData, {}));
+      }
+
+      const callSet = new ApiCallSet(apiCalls);
+      await callSet.request(isSigned);
+
+      setIsApiCalling(false);
       onClose(true, patientDirty ? newPatientData : null, reportDirty ? newReportData : null);
     } else {
       onClose(false);
     }
-  }, [newPatientData, newReportData, onClose, patientDirty, reportDirty]);
+  }, [newPatientData, newReportData, isSigned, onClose, patientDirty, reportDirty, report.ident]);
 
   return (
     <Dialog open={isOpen}>
@@ -139,9 +172,9 @@ const PatientEdit = (props) => {
         <Button onClick={() => handleClose(false)}>
           Close
         </Button>
-        <Button color="secondary" onClick={() => handleClose(true)}>
+        <AsyncButton color="secondary" onClick={() => handleClose(true)} isLoading={isApiCalling}>
           Save Changes
-        </Button>
+        </AsyncButton>
       </DialogActions>
     </Dialog>
   );
