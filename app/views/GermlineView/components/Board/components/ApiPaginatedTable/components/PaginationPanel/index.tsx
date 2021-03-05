@@ -15,13 +15,13 @@ import ParamsContext, { ParamsContextType } from '../../../ParamsContext';
 
 import './index.scss';
 
-type props = {
+type PaginationPanelProps = {
   totalRows: number,
-}
+};
 
 const PaginationPanel = ({
   totalRows,
-}: props): JSX.Element => {
+}: PaginationPanelProps): JSX.Element => {
   const {
     limit, setLimit, offset, setOffset,
   } = useContext(ParamsContext) as ParamsContextType;

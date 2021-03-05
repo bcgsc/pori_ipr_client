@@ -49,12 +49,21 @@ type UserProjectsType = {
 type UserType = {
   email: string;
   firstName: string;
-  groups: GroupType[],
+  groups: GroupType[];
   lastLogin: null | string;
   lastName: string;
   projects: UserProjectsType[];
   type: string;
   username: string;
+} & RecordDefaults;
+
+type ImageType = {
+  caption: string | null;
+  data: string;
+  filename: string;
+  format: string;
+  key: string;
+  title: string | null;
 } & RecordDefaults;
 
 export {
@@ -63,4 +72,5 @@ export {
   GroupType,
   UserProjectsType,
   UserGroupMemberType,
+  ImageType,
 };

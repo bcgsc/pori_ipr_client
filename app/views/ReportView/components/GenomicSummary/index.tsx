@@ -202,7 +202,7 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
       }
 
       let sigs: null | string;
-      if (signatures.length && signatures.find(sig => sig.selected)) {
+      if (signatures.length && signatures.find((sig) => sig.selected)) {
         sigs = signatures.filter(({ selected }) => selected)
           .map(({ associations, signature }) => (
             `${signature}${associations ? ` (${associations})` : ''}`
@@ -292,23 +292,11 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
   }, [report, snackbar]);
 
   const handlePatientEditClose = useCallback(async (isSaved, newPatientData, newReportData) => {
-    const apiCalls = [];
     setShowPatientEdit(false);
 
     if (!isSaved || (!newPatientData && !newReportData)) {
       return;
     }
-
-    if (newPatientData) {
-      apiCalls.push(api.put(`/reports/${report.ident}/patient-information`, newPatientData, {}));
-    }
-
-    if (newReportData) {
-      apiCalls.push(api.put(`/reports/${report.ident}`, newReportData, {}));
-    }
-
-    const callSet = new ApiCallSet(apiCalls);
-    await callSet.request(isSigned);
 
     const reportResp = await api.get(`/reports/${report.ident}`, {}).request();
     setReport(reportResp);
@@ -343,10 +331,9 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
         value: newPatientData ? newPatientData.gender : report.patientInformation.gender,
       },
     ]);
-  }, [isSigned, report, setReport]);
+  }, [report, setReport]);
 
-  const handleTumourSummaryEditClose = useCallback(async (isSaved, newMicrobialData, newReportData, newMutationBurdenData) => {
-    const apiCalls = [];
+  const handleTumourSummaryEditClose = (isSaved, newMicrobialData, newReportData, newMutationBurdenData) => {
     setShowTumourSummaryEdit(false);
 
     if (!isSaved || (!newMicrobialData && !newReportData && !newMutationBurdenData)) {
@@ -354,44 +341,17 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
     }
 
     if (newMicrobialData) {
-      if (microbial) {
-        apiCalls.push(api.put(`/reports/${report.ident}/summary/microbial/${microbial.ident}`, newMicrobialData, {}));
-      } else {
-        apiCalls.push(api.post(`/reports/${report.ident}/summary/microbial`, newMicrobialData, {}));
-      }
-    } else {
-      apiCalls.push({ request: () => null });
+      setMicrobial(newMicrobialData);
     }
 
     if (newReportData) {
-      apiCalls.push(api.put(`/reports/${report.ident}`, newReportData, {}));
-    } else {
-      apiCalls.push({ request: () => null });
+      setReport(newReportData);
     }
 
     if (newMutationBurdenData) {
-      if (primaryBurden) {
-        apiCalls.push(api.put(`/reports/${report.ident}/mutation-burden/${primaryBurden.ident}`, newMutationBurdenData, {}));
-      } else {
-        apiCalls.push(api.post(`/reports/${report.ident}/mutation-burden`, newMutationBurdenData, {}));
-      }
+      setPrimaryBurden(newMutationBurdenData);
     }
-
-    const callSet = new ApiCallSet(apiCalls);
-    const [microbialResp, reportResp, primaryBurdenResp] = await callSet.request(isSigned);
-
-    if (microbialResp) {
-      setMicrobial(microbialResp);
-    }
-
-    if (reportResp) {
-      setReport(reportResp);
-    }
-
-    if (primaryBurdenResp) {
-      setPrimaryBurden(primaryBurdenResp);
-    }
-  }, [isSigned, microbial, primaryBurden, report, setReport]);
+  };
 
   return (
     <div className="genomic-summary">

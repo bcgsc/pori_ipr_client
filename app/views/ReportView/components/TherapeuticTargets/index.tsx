@@ -42,7 +42,10 @@ const Therapeutic = (props) => {
   useEffect(() => {
     if (report) {
       const getData = async () => {
-        const therapeuticResp = await api.get(`/reports/${report.ident}/therapeutic-targets`).request();
+        const therapeuticResp = await api.get(
+          `/reports/${report.ident}/therapeutic-targets`,
+          {},
+        ).request();
 
         setTherapeuticData(therapeuticResp.filter(
           (target) => target.type === 'therapeutic',
@@ -84,9 +87,9 @@ const Therapeutic = (props) => {
         } else {
           setter((prevVal) => [...prevVal, newData]);
         }
+        snackbar.enqueueSnackbar('Row updated');
       }
       setEditData(null);
-      snackbar.enqueueSnackbar('Row updated');
     } catch (err) {
       snackbar.enqueueSnackbar(`Error, row not updated: ${err}`);
     }
