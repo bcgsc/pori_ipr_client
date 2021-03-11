@@ -105,7 +105,7 @@ const Print = () => {
       )}
       {sections.includes('pathway-analysis') && (
         <>
-          <PathwayAnalysis report={report} print loadedDispatch={dispatch} />
+          <PathwayAnalysis report={report} isPrint loadedDispatch={dispatch} />
           <PageBreak report={report} theme={theme} />
         </>
       )}
