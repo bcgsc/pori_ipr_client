@@ -25,7 +25,6 @@ const tables = {
  * @param {object} props props
  * @param {array} props.outliers list of outlier data
  * @param {string} props.titleText title of table
- * @param {string} props.reportIdent current report ID
  * @return {*} JSX
  */
 const Expression = () => {

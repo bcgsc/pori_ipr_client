@@ -9,20 +9,16 @@ import {
   IconButton,
   Switch,
 } from '@material-ui/core';
-import { ThemeProvider } from '@material-ui/core/styles';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import GetAppIcon from '@material-ui/icons/GetApp';
 
+import ReportContext from '@/components/ReportContext';
 import ColumnPicker from './components/ColumnPicker';
 import LinkCellRenderer from './components/LinkCellRenderer';
-// not ideal, but no errors are thrown and no render loops occur
-// eslint-disable-next-line import/no-cycle
 import GeneCellRenderer from './components/GeneCellRenderer';
-// eslint-disable-next-line import/no-cycle
 import ActionCellRenderer from './components/ActionCellRenderer';
 import { getDate } from '../../utils/date';
-import ReportContext from '@/components/ReportContext';
 
 import './index.scss';
 
@@ -76,16 +72,12 @@ type DataTableProps = {
   onReorder?: (newRow: Record<string, unknown>, newRank: number, tableType?: string) => void;
   /* Can the table rows be exported? */
   canExport?: boolean;
-  /* MUI theme passed for react in angular table compatibility */
-  theme?: unknown;
   /* Is the table being rendered for printing? */
   isPrint?: boolean;
   /* Row index to highlight */
   highlightRow?: number;
   /* Custom header cell renderer */
   Header?: () => JSX.Element;
-  /* Explicitly passed in report ident for AngularJS support outside of react tree */
-  reportIdent?: string;
 };
 
 const DataTable = ({
@@ -111,11 +103,9 @@ const DataTable = ({
   canReorder,
   onReorder,
   canExport,
-  theme,
   isPrint,
   highlightRow = null,
   Header,
-  reportIdent = null,
 }: DataTableProps): JSX.Element => {
   const domLayout = isPrint ? 'print' : 'autoHeight';
   const { gridApi, colApi, onGridReady } = useGrid();
@@ -322,136 +312,132 @@ const DataTable = ({
     }
   }, [gridApi, onRowDataChanged]);
 
-  // Theme is needed for react in angular tables. It can't access the theme provider otherwise
   return (
-    <ThemeProvider theme={theme}>
-      <div className="data-table--padded" style={{ height: isFullLength ? '100%' : '' }}>
-        {Boolean(rowData.length) || canEdit ? (
-          <>
-            {titleText && (
-              <div className="data-table__header-container">
-                <Typography variant="h3" className="data-table__header">
-                  {titleText}
-                </Typography>
-                <div>
-                  {canAdd && !isPrint && (
-                    <span className="data-table__action">
-                      <Typography display="inline">
-                        {addText || 'Add row'}
-                      </Typography>
-                      <IconButton
-                        onClick={() => onAdd(tableType ? { type: tableType } : null)}
-                        title="Add Row"
-                        className="data-table__icon-button"
-                      >
-                        <AddCircleOutlineIcon />
-                      </IconButton>
-                    </span>
-                  )}
-                  {canToggleColumns && !isPrint && (
-                    <span className="data-table__action">
-                      <IconButton
-                        onClick={() => setShowPopover((prevVal) => !prevVal)}
-                        className="data-table__icon-button"
-                      >
-                        <MoreHorizIcon />
-                      </IconButton>
-                    </span>
-                  )}
-                  {canExport && !isPrint && (
-                    <span className="data-table__action">
-                      <Typography display="inline">
-                        Export to TSV
-                      </Typography>
-                      <IconButton
-                        onClick={handleCSVExport}
-                        title="Export to CSV"
-                        className="data-table__icon-button"
-                      >
-                        <GetAppIcon />
-                      </IconButton>
-                    </span>
-                  )}
-                  {canReorder && !isPrint && (
-                    <span className="data-table__action">
-                      <Typography display="inline">
-                        Reorder Rows
-                      </Typography>
-                      <Switch
-                        checked={showReorder}
-                        onChange={toggleReorder}
-                        color="primary"
-                        title="Reorder Rows"
-                      />
-                    </span>
-                  )}
-                </div>
-              </div>
-            )}
-            <div
-              className="ag-theme-material data-table__container"
-              ref={gridDiv}
-            >
-              <ColumnPicker
-                className="data-view__options-menu"
-                label="Configure Visible Columns"
-                columns={columnDisplayNames}
-                onClose={handlePopoverClose}
-                isOpen={showPopover}
-              />
-              <AgGridReact
-                ref={gridRef}
-                columnDefs={columnDefs}
-                rowData={rowData}
-                defaultColDef={defaultColDef}
-                onGridReady={onGridReady}
-                domLayout={domLayout}
-                pagination={isPaginated}
-                paginationAutoPageSize={isFullLength}
-                paginationPageSize={MAX_VISIBLE_ROWS}
-                autoSizePadding={0}
-                deltaRowDataMode={canReorder}
-                getRowNodeId={(data) => data.ident}
-                onRowDragEnd={canReorder ? onRowDragEnd : null}
-                editType="fullRow"
-                onFilterChanged={handleFilterAndSortChanged}
-                onSortChanged={handleFilterAndSortChanged}
-                context={{
-                  canEdit,
-                  canDelete,
-                  canViewDetails,
-                  reportIdent: report ? report.ident : reportIdent,
-                  tableType,
-                }}
-                frameworkComponents={{
-                  LinkCellRenderer,
-                  GeneCellRenderer,
-                  ActionCellRenderer: RowActionCellRenderer,
-                  headerCellRenderer: Header,
-                }}
-                suppressAnimationFrame
-                suppressColumnVirtualisation
-                disableStaticMarkup // See https://github.com/ag-grid/ag-grid/issues/3727
-                onFirstDataRendered={onFirstDataRendered}
-              />
-            </div>
-          </>
-        ) : (
-          <>
+    <div className="data-table--padded" style={{ height: isFullLength ? '100%' : '' }}>
+      {Boolean(rowData.length) || canEdit ? (
+        <>
+          {titleText && (
             <div className="data-table__header-container">
               <Typography variant="h3" className="data-table__header">
                 {titleText}
               </Typography>
+              <div>
+                {canAdd && !isPrint && (
+                  <span className="data-table__action">
+                    <Typography display="inline">
+                      {addText || 'Add row'}
+                    </Typography>
+                    <IconButton
+                      onClick={() => onAdd(tableType ? { type: tableType } : null)}
+                      title="Add Row"
+                      className="data-table__icon-button"
+                    >
+                      <AddCircleOutlineIcon />
+                    </IconButton>
+                  </span>
+                )}
+                {canToggleColumns && !isPrint && (
+                  <span className="data-table__action">
+                    <IconButton
+                      onClick={() => setShowPopover((prevVal) => !prevVal)}
+                      className="data-table__icon-button"
+                    >
+                      <MoreHorizIcon />
+                    </IconButton>
+                  </span>
+                )}
+                {canExport && !isPrint && (
+                  <span className="data-table__action">
+                    <Typography display="inline">
+                      Export to TSV
+                    </Typography>
+                    <IconButton
+                      onClick={handleCSVExport}
+                      title="Export to CSV"
+                      className="data-table__icon-button"
+                    >
+                      <GetAppIcon />
+                    </IconButton>
+                  </span>
+                )}
+                {canReorder && !isPrint && (
+                  <span className="data-table__action">
+                    <Typography display="inline">
+                      Reorder Rows
+                    </Typography>
+                    <Switch
+                      checked={showReorder}
+                      onChange={toggleReorder}
+                      color="primary"
+                      title="Reorder Rows"
+                    />
+                  </span>
+                )}
+              </div>
             </div>
-            <div className="data-table__container">
-              <Typography variant="body1" align="center">
-                No data to display
-              </Typography>
-            </div>
-          </>
-        )}
-      </div>
-    </ThemeProvider>
+          )}
+          <div
+            className="ag-theme-material data-table__container"
+            ref={gridDiv}
+          >
+            <ColumnPicker
+              className="data-view__options-menu"
+              label="Configure Visible Columns"
+              columns={columnDisplayNames}
+              onClose={handlePopoverClose}
+              isOpen={showPopover}
+            />
+            <AgGridReact
+              ref={gridRef}
+              columnDefs={columnDefs}
+              rowData={rowData}
+              defaultColDef={defaultColDef}
+              onGridReady={onGridReady}
+              domLayout={domLayout}
+              pagination={isPaginated}
+              paginationAutoPageSize={isFullLength}
+              paginationPageSize={MAX_VISIBLE_ROWS}
+              autoSizePadding={0}
+              deltaRowDataMode={canReorder}
+              getRowNodeId={(data) => data.ident}
+              onRowDragEnd={canReorder ? onRowDragEnd : null}
+              editType="fullRow"
+              onFilterChanged={handleFilterAndSortChanged}
+              onSortChanged={handleFilterAndSortChanged}
+              context={{
+                canEdit,
+                canDelete,
+                canViewDetails,
+                tableType,
+              }}
+              frameworkComponents={{
+                LinkCellRenderer,
+                GeneCellRenderer,
+                ActionCellRenderer: RowActionCellRenderer,
+                headerCellRenderer: Header,
+              }}
+              suppressAnimationFrame
+              suppressColumnVirtualisation
+              disableStaticMarkup // See https://github.com/ag-grid/ag-grid/issues/3727
+              onFirstDataRendered={onFirstDataRendered}
+            />
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="data-table__header-container">
+            <Typography variant="h3" className="data-table__header">
+              {titleText}
+            </Typography>
+          </div>
+          <div className="data-table__container">
+            <Typography variant="body1" align="center">
+              No data to display
+            </Typography>
+          </div>
+        </>
+      )}
+    </div>
   );
 };
 
@@ -506,15 +492,12 @@ DataTable.propTypes = {
   onReorder: PropTypes.any,
   /* Can the table rows be exported? */
   canExport: PropTypes.bool,
-  /* MUI theme passed for react in angular table compatibility */
-  theme: PropTypes.any,
   /* Is the table being rendered for printing? */
   isPrint: PropTypes.bool,
   /* Row index to highlight */
   highlightRow: PropTypes.number,
   /* Custom header cell renderer */
   Header: PropTypes.any,
-  reportIdent: PropTypes.string,
 };
 
 export default DataTable;
