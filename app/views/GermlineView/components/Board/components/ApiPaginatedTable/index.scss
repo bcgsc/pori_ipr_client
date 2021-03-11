@@ -10,9 +10,19 @@
     justify-content: space-between;
   }
 
+  &__actions {
+    display: flex;
+    flex-direction: row;
+  }
+
   &__action {
     align-items: center;
     display: flex;
     justify-content: flex-end;
+    margin: 0 8px;
+  }
+
+  &__field {
+    margin: 10px 12px;
   }
 }
