@@ -1,92 +1,23 @@
 @import '../../../../styles/variables';
-@import '../../../../styles/theme';
 
-@mixin print-header {
-  margin: 2mm 0 1mm;
-  padding: 1.5mm 1mm;
-  background-color: $print-header;
-  color: black;
-  font-size: 14pt;
-  font-weight: 700;
-  text-transform: uppercase;
+.pathway {
+  padding: 16px;
 
-  >.md-subheader-inner {
-    // Override angularjs material library
-    padding: 0 !important;
-  }
-}
-
-@media print {
-  .pathway {
-    page-break-after: always;
-
-    &__header {
-      @include print-header;
-    }
-
-    &__container {
-      background-color: $palette__common--white;
-      page-break-after: always;
-    }
-
-    &__legend {
-      width: 70%;
-      height: 100%;
-      margin: 6mm 0;
-    }
+  &__button {
+    float: right;
+    z-index: $content-z-index;
   }
 
-  #pathway {
-    width: 100%;
-    height: calc(100vh - 164px);
-  }
-
-  #svgImage {
+  &__legend {
+    max-width: 100%;
     display: flex;
-    flex-grow: 1;
-  }
-}
+    padding: 32px;
 
-@media screen {
-  section.pathwayAnalysis {
-    padding: 0 60px 8px;
-
-    .upload {
-      padding: 10px 0 0 10px;
-
-      md-icon {
-        background-color: $palette__common--white;
-        cursor: pointer;
-
-        &:hover {
-          color: $palette__secondary--main;
-        }
-      }
-    }
-
-    .window {
-      min-height: 400px;
-      background-color: $palette__common--white;
-    }
-
-    #pathway {
-      width: 100%;
-      height: calc(100vh - 164px);
-    }
-
-    #svgImage {
+    &-button {
       display: flex;
-      flex-grow: 1;
-    }
-  }
-
-  md-dialog.pathway.edit {
-    div.dropZone {
-      padding: 25px 15px;
-      border: 2px solid $palette__grey--600;
-      background-color: $palette__grey--A100;
-      color: $palette__grey--600;
-      text-align: center;
+      height: 500px;
+      max-width: 800px;
+      margin: 40px;
     }
   }
 }
