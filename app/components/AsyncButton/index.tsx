@@ -10,12 +10,14 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import './index.scss';
 
 type AsyncButtonProps = {
-  children: string;
+  className?: string;
+  children;
   isLoading: boolean;
-  onClick: () => void;
+  onClick?: () => void;
 } & ButtonProps;
 
 const AsyncButton = ({
+  className,
   children,
   isLoading,
   onClick,
@@ -31,13 +33,16 @@ const AsyncButton = ({
 
   const handleClick = () => {
     setLoadingStarted(true);
-    onClick();
+    if (onClick) {
+      onClick();
+    }
   };
 
   return (
-    <div className="async-button__container">
+    <div className={`async-button__container ${className}`}>
       <Button
         classes={{ label: `${loadingStarted ? 'async-button__label' : ''}` }}
+        className="async-button"
         onClick={handleClick}
         {...buttonProps}
       >
