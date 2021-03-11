@@ -11,7 +11,7 @@ import ReportContext from '@/components/ReportContext';
 import EditContext from '@/components/EditContext';
 import ImageService from '@/services/reports/image.service';
 import { getMutationSignatures } from '@/services/reports/mutation-signature';
-import { ImageType } from '@/common';
+import ImageType from '@/components/Image/types';
 import EditDialog from './components/EditDialog';
 import SignatureType from './types';
 import columnDefs from './columnDefs';
