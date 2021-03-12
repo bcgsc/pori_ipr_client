@@ -30,13 +30,10 @@ function ReportsTableComponent(props) {
     gridApi.current = params.api;
     columnApi.current = params.columnApi;
 
-    const opts = {
-      all: true,
-      states: 'ready,active,uploaded,signedoff,archived,reviewed',
-    };
+    const opts = {};
 
-    if (adminUser) {
-      opts.states = 'ready,active,uploaded,signedoff,archived,reviewed,nonproduction';
+    if (!adminUser) {
+      opts.states = 'ready,active,uploaded,signedoff,archived,reviewed';
     }
 
     if (isExternalMode(userDetails)) {
