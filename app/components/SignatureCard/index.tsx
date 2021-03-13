@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useCallback } from 'react';
 import {
   Paper,
   Typography,
@@ -20,7 +20,7 @@ type SignatureCardProps = {
   signatures: null | Record<string, unknown | Record<string, unknown>>;
   onClick: (arg0: boolean, arg1: string) => void;
   type: 'author' | 'reviewer';
-  isPrint: boolean;
+  isPrint?: boolean;
 };
 
 const SignatureCard = ({
@@ -28,7 +28,7 @@ const SignatureCard = ({
   signatures,
   onClick,
   type,
-  isPrint,
+  isPrint = false,
 }: SignatureCardProps): JSX.Element => {
   const { canEdit } = useContext(EditContext);
   const [userSignature, setUserSignature] = useState<Record<string, unknown>>({});
@@ -50,6 +50,16 @@ const SignatureCard = ({
   const handleRevoke = () => {
     onClick(false, type);
   };
+
+  const renderDate = useCallback(() => {
+    if (type === 'author' && signatures.authorSignedAt) {
+      return formatDate(signatures.authorSignedAt, true);
+    }
+    if (type === 'reviewer' && signatures.reviewerSignedAt) {
+      return formatDate(signatures.reviewerSignedAt, true);
+    }
+    return '';
+  }, [signatures, type]);
 
   if (isPrint) {
     return (
@@ -74,9 +84,9 @@ const SignatureCard = ({
           <Typography variant="body2" display="inline">
             {'Date: '}
           </Typography>
-          {signatures?.ident ? (
+          {signatures?.ident && (type === 'author' ? signatures.authorSignature : signatures.reviewerSignature) ? (
             <Typography variant="body2" display="inline">
-              {type === 'author' ? formatDate(signatures.authorSignedAt, true) : formatDate(signatures.reviewerSignedAt, true)}
+              {renderDate()}
             </Typography>
           ) : (
             <Typography display="inline">
@@ -109,6 +119,7 @@ const SignatureCard = ({
               disableElevation
               startIcon={<GestureIcon />}
               color="inherit"
+              size="small"
             >
               Sign
             </Button>
@@ -119,9 +130,9 @@ const SignatureCard = ({
         <Typography variant="body2">
           Date
         </Typography>
-        {signatures?.ident ? (
+        {signatures?.ident && (type === 'author' ? signatures.authorSignature : signatures.reviewerSignature) ? (
           <Typography>
-            {type === 'author' ? formatDate(signatures.authorSignedAt, true) : formatDate(signatures.reviewerSignedAt, true)}
+            {renderDate()}
           </Typography>
         ) : (
           <Typography>
