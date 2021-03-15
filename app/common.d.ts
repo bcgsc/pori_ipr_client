@@ -52,7 +52,7 @@ type UserType = {
   groups: GroupType[];
   lastLogin: null | string;
   lastName: string;
-  projects: UserProjectsType[];
+  projects?: UserProjectsType[];
   type: string;
   username: string;
 } & RecordDefaults;

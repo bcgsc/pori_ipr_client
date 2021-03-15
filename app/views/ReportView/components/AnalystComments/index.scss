@@ -92,3 +92,21 @@
     }
   }
 }
+
+.analyst-comments {
+  padding: 16px;
+
+  &__user-text {
+    max-width: $readable-max;
+    margin: 32px auto;
+  }
+
+  &__fab {
+    float: right;
+  }
+
+  &__signatures {
+    max-width: $readable-max;
+    margin: 32px auto;
+  }
+}

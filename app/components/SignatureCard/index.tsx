@@ -1,4 +1,6 @@
-import React, { useContext, useState, useEffect, useCallback } from 'react';
+import React, {
+  useContext, useState, useEffect, useCallback,
+} from 'react';
 import {
   Paper,
   Typography,
@@ -10,6 +12,7 @@ import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 
 import EditContext from '../EditContext';
 import { formatDate } from '../../utils/date';
+import SignatureType from './types.d';
 
 import './index.scss';
 
@@ -17,7 +20,7 @@ const NON_BREAKING_SPACE = '\u00A0';
 
 type SignatureCardProps = {
   title: string;
-  signatures: null | Record<string, unknown | Record<string, unknown>>;
+  signatures: SignatureType;
   onClick: (arg0: boolean, arg1: string) => void;
   type: 'author' | 'reviewer';
   isPrint?: boolean;
@@ -155,3 +158,5 @@ const SignatureCard = ({
 };
 
 export default SignatureCard;
+
+export { SignatureType };

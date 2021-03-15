@@ -1,0 +1,139 @@
+import React, {
+  useEffect, useState, useContext, useCallback,
+} from 'react';
+import {
+  Typography,
+  Fab,
+  LinearProgress,
+} from '@material-ui/core';
+
+import EditIcon from '@material-ui/icons/Edit';
+
+import api, { ApiCallSet } from '@/services/api';
+import EditContext from '@/components/EditContext';
+import ReportContext from '@/components/ReportContext';
+import SignatureCard, { SignatureType } from '@/components/SignatureCard';
+import ConfirmContext from '@/components/ConfirmContext';
+import TextEditor from './components/TextEditor';
+
+import './index.scss';
+
+type AnalystCommentsProps = {
+  isPrint?: boolean;
+};
+
+const AnalystComments = ({
+  isPrint = false,
+}: AnalystCommentsProps): JSX.Element => {
+  const { report } = useContext(ReportContext);
+  const { canEdit } = useContext(EditContext);
+  const { setIsSigned } = useContext(ConfirmContext);
+
+  const [comments, setComments] = useState('');
+  const [signatures, setSignatures] = useState<SignatureType>();
+  const [isLoading, setIsLoading] = useState(true);
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
+
+  useEffect(() => {
+    if (report) {
+      const getData = async () => {
+        const apiCalls = new ApiCallSet([
+          api.get(`/reports/${report.ident}/summary/analyst-comments`, {}),
+          api.get(`/reports/${report.ident}/signatures`, {}),
+        ]);
+        const [commentsResp, signaturesResp] = await apiCalls.request();
+        setComments(commentsResp?.comments);
+        setSignatures(signaturesResp);
+        setIsLoading(false);
+      };
+      getData();
+    }
+  }, [report]);
+
+  const handleSign = useCallback(async (signed: boolean, role: 'author' | 'reviewer') => {
+    let newSignature;
+
+    if (signed) {
+      newSignature = await api.put(
+        `/reports/${report.ident}/signatures/sign/${role}`,
+        {},
+        {},
+      ).request();
+    } else {
+      newSignature = await api.put(
+        `/reports/${report.ident}/signatures/revoke/${role}`,
+        {},
+        {},
+      ).request();
+    }
+
+    setIsSigned(signed);
+    setSignatures(newSignature);
+  }, [report, setIsSigned]);
+
+  const handleEditorStart = () => {
+    setIsEditorOpen(true);
+  };
+
+  const handleEditorClose = useCallback(async (editedComments?: string) => {
+    setIsEditorOpen(false);
+    if (editedComments !== undefined) {
+      await api.put(
+        `/reports/${report.ident}/summary/analyst-comments`,
+        { comments: editedComments },
+        {},
+      ).request();
+      setComments(editedComments);
+    }
+  }, [report]);
+
+  return (
+    <div className="analyst-comments">
+      <Typography variant="h3">Analyst Comments</Typography>
+      {!isLoading ? (
+        <>
+          {!isPrint && canEdit && (
+            <>
+              <Fab
+                className="analyst-comments__fab"
+                color="secondary"
+                onClick={handleEditorStart}
+                size="small"
+              >
+                <EditIcon />
+              </Fab>
+              <TextEditor
+                isOpen={isEditorOpen}
+                analystComments={comments}
+                onClose={handleEditorClose}
+              />
+            </>
+          )}
+          <div
+            className="analyst-comments__user-text"
+            dangerouslySetInnerHTML={{ __html: comments }}
+          />
+          <div className="analyst-comments__signatures">
+            <Typography variant="h5">Signed By</Typography>
+            <SignatureCard
+              onClick={handleSign}
+              signatures={signatures}
+              title="Author"
+              type="author"
+            />
+            <SignatureCard
+              onClick={handleSign}
+              signatures={signatures}
+              title="Reviewer"
+              type="reviewer"
+            />
+          </div>
+        </>
+      ) : (
+        <LinearProgress />
+      )}
+    </div>
+  );
+};
+
+export default AnalystComments;
