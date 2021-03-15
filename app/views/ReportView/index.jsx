@@ -23,7 +23,7 @@ import allSections from './sections';
 import './index.scss';
 
 const GenomicSummary = lazy(() => import('./components/GenomicSummary'));
-const AnalystComments = lazy(() => import('./components/AnalystComments/index.tsx'));
+const AnalystComments = lazy(() => import('./components/AnalystComments'));
 const PathwayAnalysis = lazy(() => import('./components/PathwayAnalysis'));
 const TherapeuticTargets = lazy(() => import('./components/TherapeuticTargets'));
 const KbMatches = lazy(() => import('./components/KbMatches'));
