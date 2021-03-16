@@ -22,7 +22,11 @@
     "Keycloak": true,
     "io": true,
     "CONFIG": true,
-    "VERSION": true
+    "VERSION": true,
+    "jest": true,
+    "expect": true,
+    "test": true,
+    "describe": true
   },
   "plugins": [
     "babel",
