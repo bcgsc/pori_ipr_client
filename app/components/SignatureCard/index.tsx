@@ -87,15 +87,17 @@ const SignatureCard = ({
           <Typography variant="body2" display="inline">
             {'Date: '}
           </Typography>
-          {signatures?.ident && (type === 'author' ? signatures.authorSignature : signatures.reviewerSignature) ? (
-            <Typography variant="body2" display="inline">
-              {renderDate()}
-            </Typography>
-          ) : (
-            <Typography display="inline">
-              {NON_BREAKING_SPACE}
-            </Typography>
-          )}
+          {signatures?.ident
+            && (type === 'author' ? signatures?.authorSignature?.ident : signatures?.reviewerSignature?.ident)
+            ? (
+              <Typography variant="body2" display="inline">
+                {renderDate()}
+              </Typography>
+            ) : (
+              <Typography display="inline">
+                {NON_BREAKING_SPACE}
+              </Typography>
+            )}
         </div>
       </span>
     );
@@ -133,15 +135,17 @@ const SignatureCard = ({
         <Typography variant="body2">
           Date
         </Typography>
-        {signatures?.ident && (type === 'author' ? signatures.authorSignature : signatures.reviewerSignature) ? (
-          <Typography>
-            {renderDate()}
-          </Typography>
-        ) : (
-          <Typography>
-            {NON_BREAKING_SPACE}
-          </Typography>
-        )}
+        {signatures?.ident
+          && (type === 'author' ? signatures?.authorSignature?.ident : signatures?.reviewerSignature?.ident)
+          ? (
+            <Typography>
+              {renderDate()}
+            </Typography>
+          ) : (
+            <Typography>
+              {NON_BREAKING_SPACE}
+            </Typography>
+          )}
       </div>
       {userSignature?.ident && canEdit && (
         <div className="signatures__button">
