@@ -118,9 +118,19 @@ const KbMatches = ({
       }
 
       const newMatches = { ...groupedMatches };
-      let dataSet = newMatches[row.category];
-      dataSet = dataSet.filter((val) => val.ident !== row.ident);
-      newMatches[row.category] = dataSet;
+
+      // Therapeutic matches can also be in this/otherCancer
+      if (row.category === 'therapeutic') {
+        ['therapeutic', 'thisCancer', 'otherCancer'].forEach((category) => {
+          let dataSet = newMatches[category];
+          dataSet = dataSet.filter((val) => val.ident !== row.ident);
+          newMatches[category] = dataSet;
+        });
+      } else {
+        let dataSet = newMatches[row.category];
+        dataSet = dataSet.filter((val) => val.ident !== row.ident);
+        newMatches[row.category] = dataSet;
+      }
       setGroupedMatches(newMatches);
       snackbar.enqueueSnackbar('Row deleted', { variant: 'success' });
     } catch (err) {
