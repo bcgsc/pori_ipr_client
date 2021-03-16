@@ -17,7 +17,7 @@ const PatientsView = () => {
   useEffect(() => {
     if (patientId) {
       const getData = async () => {
-        const { reports } = await ReportService.allFiltered({ all: true, searchText: patientId });
+        const { reports } = await ReportService.allFiltered({ searchText: patientId });
         setRowData(reports.map((report) => {
           const [analyst] = report.users
             .filter(u => u.role === 'analyst' && !u.deletedAt)
