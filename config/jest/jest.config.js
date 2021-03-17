@@ -26,7 +26,7 @@ module.exports = {
     ],
   ],
   setupFilesAfterEnv: ['<rootDir>/config/jest/setup.js'],
-  testEnvironment: 'jest-environment-jsdom-sixteen',
+  testEnvironment: 'jsdom',
   testRegex: 'app.*__tests__.*.test.[jt]sx?$',
   testURL: 'http://0.0.0.0',
   transform: {
