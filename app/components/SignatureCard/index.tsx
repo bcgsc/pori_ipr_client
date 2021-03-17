@@ -21,7 +21,7 @@ const NON_BREAKING_SPACE = '\u00A0';
 type SignatureCardProps = {
   title: string;
   signatures: SignatureType;
-  onClick: (arg0: boolean, arg1: string) => void;
+  onClick: (isSigned: boolean, type: string) => void;
   type: 'author' | 'reviewer';
   isPrint?: boolean;
 };
