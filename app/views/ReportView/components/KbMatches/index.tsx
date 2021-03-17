@@ -117,26 +117,28 @@ const KbMatches = ({
         await api.del(`/reports/${report.ident}/kb-matches/${row.ident}`, {}, {}).request();
       }
 
-      const newMatches = { ...groupedMatches };
+      setGroupedMatches((oldMatches) => {
+        const newMatches = { ...oldMatches };
 
-      // Therapeutic matches can also be in this/otherCancer
-      if (row.category === 'therapeutic') {
-        ['therapeutic', 'thisCancer', 'otherCancer'].forEach((category) => {
-          let dataSet = newMatches[category];
+        // Therapeutic matches can also be in this/otherCancer
+        if (row.category === 'therapeutic') {
+          ['therapeutic', 'thisCancer', 'otherCancer'].forEach((category) => {
+            let dataSet = newMatches[category];
+            dataSet = dataSet.filter((val) => val.ident !== row.ident);
+            newMatches[category] = dataSet;
+          });
+        } else {
+          let dataSet = newMatches[row.category];
           dataSet = dataSet.filter((val) => val.ident !== row.ident);
-          newMatches[category] = dataSet;
-        });
-      } else {
-        let dataSet = newMatches[row.category];
-        dataSet = dataSet.filter((val) => val.ident !== row.ident);
-        newMatches[row.category] = dataSet;
-      }
-      setGroupedMatches(newMatches);
+          newMatches[row.category] = dataSet;
+        }
+        return newMatches;
+      });
       snackbar.enqueueSnackbar('Row deleted', { variant: 'success' });
     } catch (err) {
       snackbar.enqueueSnackbar(`Deletion failed: ${err}`, { variant: 'error' });
     }
-  }, [groupedMatches, report, snackbar]);
+  }, [report, snackbar]);
 
   return (
     <div>
