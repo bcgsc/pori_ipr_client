@@ -89,7 +89,12 @@ const AnalystComments = ({
 
   return (
     <div className="analyst-comments">
-      <Typography variant="h3">Analyst Comments</Typography>
+      <Typography
+        variant="h3"
+        className="analyst-comments__title"
+      >
+        Analyst Comments
+      </Typography>
       {!isLoading ? (
         <>
           {!isPrint && canEdit && (
@@ -114,18 +119,22 @@ const AnalystComments = ({
             dangerouslySetInnerHTML={{ __html: comments }}
           />
           <div className="analyst-comments__signatures">
-            <Typography variant="h5">Signed By</Typography>
+            {!isPrint && (
+              <Typography variant="h5">Signed By</Typography>
+            )}
             <SignatureCard
               onClick={handleSign}
               signatures={signatures}
-              title="Author"
+              title={isPrint ? 'Author Review' : 'Author'}
               type="author"
+              isPrint={isPrint}
             />
             <SignatureCard
               onClick={handleSign}
               signatures={signatures}
               title="Reviewer"
               type="reviewer"
+              isPrint={isPrint}
             />
           </div>
         </>

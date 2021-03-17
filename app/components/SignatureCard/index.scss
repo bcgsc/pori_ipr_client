@@ -21,13 +21,13 @@
 
   &-print {
     &__group {
-      display: inline-block;
-      width: 50%;
+      display: inline-flex;
+      flex-direction: column;
+      margin: 0 auto;
     }
 
     &__value {
       display: flex;
-      justify-content: flex-start;
 
       & > * {
         margin: 0 4px;

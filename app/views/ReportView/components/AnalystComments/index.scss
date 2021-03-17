@@ -18,3 +18,30 @@
     margin: 32px auto;
   }
 }
+
+@media print {
+  .analyst-comments {
+    padding: 0;
+
+    &__user-text {
+      padding: 4px 32px;
+      border: 1px solid black;
+      border-bottom: none;
+      margin: 8px auto 0;
+      max-width: $print-width;
+    }
+
+    &__signatures {
+      padding: 8px 0;
+      max-width: $print-width;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: row;
+      border: 1px solid black;
+    }
+
+    &__title {
+      margin: 8px 0;
+    }
+  }
+}

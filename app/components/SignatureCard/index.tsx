@@ -1,5 +1,5 @@
 import React, {
-  useContext, useState, useEffect, useCallback,
+  useContext, useState, useEffect, useMemo,
 } from 'react';
 import {
   Paper,
@@ -54,12 +54,12 @@ const SignatureCard = ({
     onClick(false, type);
   };
 
-  const renderDate = useCallback(() => {
-    if (type === 'author' && signatures.authorSignedAt) {
-      return formatDate(signatures.authorSignedAt, true);
+  const renderDate = useMemo(() => {
+    if (type === 'author' && signatures?.authorSignedAt) {
+      return formatDate(signatures?.authorSignedAt, true);
     }
-    if (type === 'reviewer' && signatures.reviewerSignedAt) {
-      return formatDate(signatures.reviewerSignedAt, true);
+    if (type === 'reviewer' && signatures?.reviewerSignedAt) {
+      return formatDate(signatures?.reviewerSignedAt, true);
     }
     return '';
   }, [signatures, type]);
@@ -89,13 +89,9 @@ const SignatureCard = ({
           </Typography>
           {signatures?.ident
             && (type === 'author' ? signatures?.authorSignature?.ident : signatures?.reviewerSignature?.ident)
-            ? (
+            && (
               <Typography variant="body2" display="inline">
-                {renderDate()}
-              </Typography>
-            ) : (
-              <Typography display="inline">
-                {NON_BREAKING_SPACE}
+                {renderDate}
               </Typography>
             )}
         </div>
@@ -139,7 +135,7 @@ const SignatureCard = ({
           && (type === 'author' ? signatures?.authorSignature?.ident : signatures?.reviewerSignature?.ident)
           ? (
             <Typography>
-              {renderDate()}
+              {renderDate}
             </Typography>
           ) : (
             <Typography>
