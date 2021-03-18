@@ -10,6 +10,7 @@ import {
   CircularProgress,
 } from '@material-ui/core';
 import PublishIcon from '@material-ui/icons/Publish';
+import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 
 import api from '@/services/api';
 import Image from '@/components/Image';
@@ -51,6 +52,7 @@ const PathwayAnalysis = ({
         ).request();
         setPathwayImage(pathwayImageResp);
 
+        pathwayImageResp.legend = 'custom';
         if (pathwayImageResp?.legend === 'v1') {
           setLegend('img/pathway_legend.png');
         } else if (pathwayImageResp?.legend === 'v2') {
@@ -75,7 +77,6 @@ const PathwayAnalysis = ({
     const {
       target: { files },
     } = event;
-    console.log(files);
     const [uploadedFile] = files;
     if (!uploadedFile.name.match(/\.svg$/)) {
       setImageError('Please select a valid image (.svg)');
@@ -89,29 +90,20 @@ const PathwayAnalysis = ({
 
       newPathway.append('pathway', uploadedFile);
 
-      let resp;
-      if (pathwayImage) {
-        resp = await api.put(
-          `/reports/${report.ident}/summary/pathway-analysis`,
-          newPathway,
-          {},
-          true,
-        ).request(isSigned);
-      } else {
-        resp = await api.post(
-          `/reports/${report.ident}/summary/pathway-analysis`,
-          newPathway,
-          {},
-          true,
-        ).request(isSigned);
-      }
-      setPathwayImage(resp);
+      const pathwayResp = await api.put(
+        `/reports/${report.ident}/summary/pathway-analysis`,
+        newPathway,
+        {},
+        true,
+      ).request(isSigned);
+      
+      setPathwayImage(pathwayResp);
       setIsPathwayLoading(false);
       snackbar.enqueueSnackbar('Pathway image uploaded successfully', { variant: 'success' });
     } catch (err) {
       snackbar.enqueueSnackbar(`Error uploading pathway image: ${err}`, { variant: 'error' });
     }
-  }, [isSigned, pathwayImage, report, snackbar]);
+  }, [isSigned, report, snackbar]);
 
   const handleLegendUpload = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
     const {
@@ -144,6 +136,16 @@ const PathwayAnalysis = ({
     }
   }, [isSigned, report, snackbar]);
 
+  const handleDeleteLegend = useCallback(async () => {
+    try {
+      await api.del(`/reports/${report.ident}/image/${legend.ident}`, {}, {}).request();
+      setLegend(null);
+      snackbar.enqueueSnackbar('Legend deleted', { variant: 'success' });
+    } catch (err) {
+      snackbar.enqueueSnackbar(`Error removing legend: ${err}`, { variant: 'error' });
+    }
+  }, [report, legend, snackbar]);
+
   return (
     <div className="pathway">
       <Typography variant="h3">Pathway Analysis</Typography>
@@ -154,8 +156,8 @@ const PathwayAnalysis = ({
               {pathwayImage?.pathway ? (
                 <IconButton
                   className="pathway__button"
-                  component="label"
                   color="secondary"
+                  component="label"
                 >
                   <PublishIcon />
                   <input
@@ -207,14 +209,9 @@ const PathwayAnalysis = ({
                 className="pathway__button"
                 component="label"
                 color="secondary"
+                onClick={handleDeleteLegend}
               >
-                <PublishIcon />
-                <input
-                  accept=".png,.jpg,.jpeg"
-                  onChange={handleLegendUpload}
-                  type="file"
-                  hidden
-                />
+                <HighlightOffIcon />
               </IconButton>
               <Image className="pathway__legend-image" image={legend} />
             </>
