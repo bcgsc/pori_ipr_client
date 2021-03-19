@@ -11,7 +11,6 @@ import './index.scss';
 function GeneCellRenderer(params) {
   const {
     value,
-    context: { reportIdent },
     link,
   } = params;
 
@@ -42,7 +41,6 @@ function GeneCellRenderer(params) {
                   <GeneViewer
                     isOpen={showGeneViewer === val}
                     gene={val}
-                    reportIdent={reportIdent}
                     onClose={() => setShowGeneViewer(false)}
                   />
                 )}

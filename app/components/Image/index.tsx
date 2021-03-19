@@ -1,16 +1,12 @@
 import React, { useState, useCallback } from 'react';
 import { Typography, Fade, Button } from '@material-ui/core';
 
+import ImageType from './types';
+
 import './index.scss';
 
 type ImageProps = {
-  image: {
-    data;
-    title;
-    caption;
-    format;
-    key;
-  };
+  image: ImageType;
   height?: number;
   width?: number;
   showTitle?: boolean;
