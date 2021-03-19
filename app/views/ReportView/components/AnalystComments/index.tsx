@@ -77,6 +77,10 @@ const AnalystComments = ({
 
   const handleEditorClose = useCallback(async (editedComments?: string) => {
     setIsEditorOpen(false);
+    // text returned when nothing is in editor
+    if (editedComments === '<p><br></p>') {
+      editedComments = '';
+    }
     if (editedComments !== undefined) {
       await api.put(
         `/reports/${report.ident}/summary/analyst-comments`,
@@ -114,29 +118,35 @@ const AnalystComments = ({
               />
             </>
           )}
-          <div
-            className="analyst-comments__user-text"
-            dangerouslySetInnerHTML={{ __html: comments }}
-          />
-          <div className="analyst-comments__signatures">
-            {!isPrint && (
-              <Typography variant="h5">Signed By</Typography>
-            )}
-            <SignatureCard
-              onClick={handleSign}
-              signatures={signatures}
-              title={isPrint ? 'Author Review' : 'Author'}
-              type="author"
-              isPrint={isPrint}
+          {comments ? (
+            <div
+              className="analyst-comments__user-text"
+              dangerouslySetInnerHTML={{ __html: comments }}
             />
-            <SignatureCard
-              onClick={handleSign}
-              signatures={signatures}
-              title="Reviewer"
-              type="reviewer"
-              isPrint={isPrint}
-            />
-          </div>
+          ) : (
+            <Typography align="center" variant="h5">No comments yet</Typography>
+          )}
+          {comments && (
+            <div className="analyst-comments__signatures">
+              {!isPrint && (
+                <Typography variant="h5">Signed By</Typography>
+              )}
+              <SignatureCard
+                onClick={handleSign}
+                signatures={signatures}
+                title={isPrint ? 'Author Review' : 'Author'}
+                type="author"
+                isPrint={isPrint}
+              />
+              <SignatureCard
+                onClick={handleSign}
+                signatures={signatures}
+                title="Reviewer"
+                type="reviewer"
+                isPrint={isPrint}
+              />
+            </div>
+          )}
         </>
       ) : (
         <LinearProgress />

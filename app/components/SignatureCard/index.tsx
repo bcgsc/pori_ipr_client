@@ -10,6 +10,7 @@ import {
 import GestureIcon from '@material-ui/icons/Gesture';
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 
+import { UserType } from '@/common';
 import EditContext from '../EditContext';
 import { formatDate } from '../../utils/date';
 import SignatureType from './types.d';
@@ -34,7 +35,7 @@ const SignatureCard = ({
   isPrint = false,
 }: SignatureCardProps): JSX.Element => {
   const { canEdit } = useContext(EditContext);
-  const [userSignature, setUserSignature] = useState<Record<string, unknown>>({});
+  const [userSignature, setUserSignature] = useState<UserType>();
 
   useEffect(() => {
     if (signatures && type) {

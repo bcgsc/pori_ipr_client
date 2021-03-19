@@ -7,7 +7,7 @@ type ConfirmContextType = {
 
 const ConfirmContext = React.createContext<ConfirmContextType>({
   isSigned: false,
-  setIsSigned: () => {},
+  setIsSigned: (isSigned) => {},
 });
 
 export default ConfirmContext;
