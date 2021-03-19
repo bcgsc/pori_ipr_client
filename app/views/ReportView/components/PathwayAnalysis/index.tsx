@@ -52,11 +52,10 @@ const PathwayAnalysis = ({
         ).request();
         setPathwayImage(pathwayImageResp);
 
-        pathwayImageResp.legend = 'custom';
         if (pathwayImageResp?.legend === 'v1') {
-          setLegend('img/pathway_legend.png');
+          setLegend('img/pathway_legend_v1.png');
         } else if (pathwayImageResp?.legend === 'v2') {
-          setLegend('img/pathway_legend.png');
+          setLegend('img/pathway_legend_v2.png');
         } else if (pathwayImageResp?.legend === 'custom') {
           const legendResp = await api.get(
             `/reports/${report.ident}/image/retrieve/pathwayAnalysis.legend`,
