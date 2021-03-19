@@ -70,7 +70,8 @@ const ReportView = () => {
           } else {
             setIsProbe(false);
           }
-          setVisibleSections(resp.template.sections);
+          const template = templatesResp.find((templ) => templ.name === resp.template.name);
+          setVisibleSections(template?.sections);
         } catch {
           snackbar.enqueueSnackbar(`Report ${params.ident} not found`);
           history.push('/reports');
