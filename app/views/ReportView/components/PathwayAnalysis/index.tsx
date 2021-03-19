@@ -19,6 +19,8 @@ import SvgImage from '@/components/SvgImage';
 import EditContext from '@/components/EditContext';
 import ConfirmContext from '@/components/ConfirmContext';
 import AsyncButton from '@/components/AsyncButton';
+import { ImageType } from '@/common';
+import PathwayImageType from './types';
 
 import './index.scss';
 
@@ -36,8 +38,8 @@ const PathwayAnalysis = ({
   const { canEdit } = useContext(EditContext);
   const { isSigned } = useContext(ConfirmContext);
 
-  const [pathwayImage, setPathwayImage] = useState<Record<string, unknown>>();
-  const [legend, setLegend] = useState<string | Record<string, unknown>>();
+  const [pathwayImage, setPathwayImage] = useState<PathwayImageType>();
+  const [legend, setLegend] = useState<string | ImageType>();
   const [imageError, setImageError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isPathwayLoading, setIsPathwayLoading] = useState(false);
@@ -52,6 +54,7 @@ const PathwayAnalysis = ({
         ).request();
         setPathwayImage(pathwayImageResp);
 
+        pathwayImageResp.legend = 'custom';
         if (pathwayImageResp?.legend === 'v1') {
           setLegend('img/pathway_legend_v1.png');
         } else if (pathwayImageResp?.legend === 'v2') {
