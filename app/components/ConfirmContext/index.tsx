@@ -1,8 +1,13 @@
 import React from 'react';
 
-const ConfirmContext = React.createContext({
+type ConfirmContextType = {
+  isSigned: boolean;
+  setIsSigned: (isSigned: boolean) => void;
+};
+
+const ConfirmContext = React.createContext<ConfirmContextType>({
   isSigned: false,
-  setIsSigned: () => {},
+  setIsSigned: (isSigned) => {},
 });
 
 export default ConfirmContext;

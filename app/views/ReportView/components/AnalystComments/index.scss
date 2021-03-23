@@ -1,94 +1,47 @@
 @import '../../../../styles/variables';
 @import '../../../../styles/theme';
 
-@mixin print-header {
-  background-color: $print-header;
-  color: black;
-  font-size: 14pt;
-  font-weight: 700;
-  margin: 2mm 0 1mm;
-  padding: 1.5mm 1mm;
-  text-transform: uppercase;
+.analyst-comments {
+  padding: 16px;
 
-  >.md-subheader-inner {
-    // Override angularjs material library
-    padding: 0 !important;
+  &__user-text {
+    max-width: $readable-max;
+    margin: 32px auto;
+  }
+
+  &__fab {
+    float: right;
+  }
+
+  &__signatures {
+    max-width: $readable-max;
+    margin: 32px auto;
   }
 }
 
 @media print {
-  .analyst {
-    &__header {
-      @include print-header;
+  .analyst-comments {
+    padding: 0;
+
+    &__user-text {
+      padding: 4px 32px;
+      border: 1px solid black;
+      border-bottom: none;
+      margin: 8px auto 0;
+      max-width: $print-width;
     }
 
-    &__comments {
-      border: .1mm solid $palette__grey--600;
-    }
-
-    &__bind {
-      padding: 0 3mm 3mm;
-    }
-
-    &__review-box {
-      margin: 2mm 0 0;
-      padding: 2mm;
-      border: .1mm solid $palette__grey--600;
-      font-size: 11pt;
-    }
-  }
-}
-
-
-@media screen {
-  .analyst {
-    &__edit {
-      padding: 0;
-      margin: 0 0 -24px;
+    &__signatures {
+      padding: 8px 0;
+      max-width: $print-width;
+      margin: 0 auto;
       display: flex;
-      justify-content: flex-end;
-
-      .edit-icon {
-        background-color: $palette__common--white;
-
-        &:not([disabled]):hover {
-          background-color: darken($palette__common--white, 8%);
-        }
-
-        md-icon {
-          color: $palette__common--black;
-          opacity: $icon-opacity;
-        }
-      }
+      flex-direction: row;
+      border: 1px solid black;
     }
 
-    &__comments {
-       margin: 16px auto;
-       padding: 4px 8px;
-       max-width: 700px;
-
-      img {
-        max-width: 100%;
-      }
-    }
-  }
-
-  .ql-editor {
-    p {
-      margin: 8px 0 !important;
-
-    }
-
-    max-height: 60vh;
-    overflow-y: auto;
-  }
-
-  .analystSignatures {
-    max-width: 700px;
-    margin: 0 auto;
-
-    span:first-of-type {
-      margin-right: 10px;
+    &__title {
+      margin: 8px 0;
     }
   }
 }
