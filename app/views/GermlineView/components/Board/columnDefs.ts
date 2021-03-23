@@ -1,4 +1,5 @@
 import { formatDate } from '@/utils/date';
+import { ValueGetterParams } from '@ag-grid-community/core';
 
 const columnDefs = [
   {
@@ -8,7 +9,9 @@ const columnDefs = [
   },
   {
     headerName: 'Project',
-    valueGetter: ({ data }) => data.projects.map(({ name }) => name).join(', '),
+    valueGetter: ({ data }: ValueGetterParams): string => (
+      data.projects.map(({ name }) => name).join(', ')
+    ),
     hide: false,
   },
   {
@@ -23,16 +26,17 @@ const columnDefs = [
   },
   {
     headerName: 'BioFX Reviewer',
-    valueGetter: ({ data }) => {
+    valueGetter: ({ data }: ValueGetterParams): string => {
       if (data.biofxAssigned) {
         return `${data.biofxAssigned.firstName} ${data.biofxAssigned.lastName}`;
       }
+      return null;
     },
     hide: false,
   },
   {
     headerName: 'BioFX Review',
-    valueGetter: ({ data }) => {
+    valueGetter: ({ data }: ValueGetterParams): boolean => {
       if (data.reviews.find(({ type }) => type === 'biofx')) {
         return true;
       }
@@ -43,7 +47,7 @@ const columnDefs = [
   },
   {
     headerName: 'Projects Review',
-    valueGetter: ({ data }) => {
+    valueGetter: ({ data }: ValueGetterParams): boolean => {
       if (data.reviews.find(({ type }) => type === 'projects')) {
         return true;
       }
@@ -56,12 +60,13 @@ const columnDefs = [
     headerName: 'Exported',
     field: 'exported',
     cellRenderer: 'checkboxCellRenderer',
+    cellRendererParams: { isExportCell: true },
     filter: 'reviewFilter',
     hide: false,
   },
   {
     headerName: 'Created',
-    valueGetter: ({ data }) => formatDate(data.createdAt),
+    valueGetter: ({ data }: ValueGetterParams): string => formatDate(data.createdAt),
     hide: false,
   },
 ];
