@@ -1,4 +1,6 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, {
+  useContext, useState, useEffect, useMemo,
+} from 'react';
 import {
   Paper,
   Typography,
@@ -8,8 +10,10 @@ import {
 import GestureIcon from '@material-ui/icons/Gesture';
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 
+import { UserType } from '@/common';
 import EditContext from '../EditContext';
 import { formatDate } from '../../utils/date';
+import SignatureType from './types.d';
 
 import './index.scss';
 
@@ -17,10 +21,10 @@ const NON_BREAKING_SPACE = '\u00A0';
 
 type SignatureCardProps = {
   title: string;
-  signatures: null | Record<string, unknown | Record<string, unknown>>;
-  onClick: (arg0: boolean, arg1: string) => void;
+  signatures: SignatureType;
+  onClick: (isSigned: boolean, type: string) => void;
   type: 'author' | 'reviewer';
-  isPrint: boolean;
+  isPrint?: boolean;
 };
 
 const SignatureCard = ({
@@ -28,10 +32,10 @@ const SignatureCard = ({
   signatures,
   onClick,
   type,
-  isPrint,
+  isPrint = false,
 }: SignatureCardProps): JSX.Element => {
   const { canEdit } = useContext(EditContext);
-  const [userSignature, setUserSignature] = useState<Record<string, unknown>>({});
+  const [userSignature, setUserSignature] = useState<UserType>();
 
   useEffect(() => {
     if (signatures && type) {
@@ -50,6 +54,16 @@ const SignatureCard = ({
   const handleRevoke = () => {
     onClick(false, type);
   };
+
+  const renderDate = useMemo(() => {
+    if (type === 'author' && signatures?.authorSignedAt) {
+      return formatDate(signatures?.authorSignedAt, true);
+    }
+    if (type === 'reviewer' && signatures?.reviewerSignedAt) {
+      return formatDate(signatures?.reviewerSignedAt, true);
+    }
+    return '';
+  }, [signatures, type]);
 
   if (isPrint) {
     return (
@@ -74,15 +88,13 @@ const SignatureCard = ({
           <Typography variant="body2" display="inline">
             {'Date: '}
           </Typography>
-          {signatures?.ident ? (
-            <Typography variant="body2" display="inline">
-              {type === 'author' ? formatDate(signatures.authorSignedAt, true) : formatDate(signatures.reviewerSignedAt, true)}
-            </Typography>
-          ) : (
-            <Typography display="inline">
-              {NON_BREAKING_SPACE}
-            </Typography>
-          )}
+          {signatures?.ident
+            && (type === 'author' ? signatures?.authorSignature?.ident : signatures?.reviewerSignature?.ident)
+            && (
+              <Typography variant="body2" display="inline">
+                {renderDate}
+              </Typography>
+            )}
         </div>
       </span>
     );
@@ -109,6 +121,7 @@ const SignatureCard = ({
               disableElevation
               startIcon={<GestureIcon />}
               color="inherit"
+              size="small"
             >
               Sign
             </Button>
@@ -119,15 +132,17 @@ const SignatureCard = ({
         <Typography variant="body2">
           Date
         </Typography>
-        {signatures?.ident ? (
-          <Typography>
-            {type === 'author' ? formatDate(signatures.authorSignedAt, true) : formatDate(signatures.reviewerSignedAt, true)}
-          </Typography>
-        ) : (
-          <Typography>
-            {NON_BREAKING_SPACE}
-          </Typography>
-        )}
+        {signatures?.ident
+          && (type === 'author' ? signatures?.authorSignature?.ident : signatures?.reviewerSignature?.ident)
+          ? (
+            <Typography>
+              {renderDate}
+            </Typography>
+          ) : (
+            <Typography>
+              {NON_BREAKING_SPACE}
+            </Typography>
+          )}
       </div>
       {userSignature?.ident && canEdit && (
         <div className="signatures__button">
@@ -144,3 +159,5 @@ const SignatureCard = ({
 };
 
 export default SignatureCard;
+
+export { SignatureType };

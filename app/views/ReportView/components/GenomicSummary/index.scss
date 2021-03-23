@@ -2,8 +2,18 @@
   margin: 20px auto;
   padding: 0 20px;
 
+  @media print {
+    margin: 0 auto;
+  }
+  
   &__patient-information {
     margin: 0 0 32px 0;
+
+    &-title {
+      @media print {
+        margin: 0 0 8px;
+      }
+    }
 
     &-content {
       padding: 0 16px;

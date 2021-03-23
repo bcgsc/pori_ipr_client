@@ -16,7 +16,6 @@ import { react2angular } from 'react2angular';
 
 import { NavBarComponent } from '@/components/NavBar';
 import { SidebarComponent } from '@/components/Sidebar';
-import { AnalystCommentsComponent } from '@/views/ReportView/components/AnalystComments';
 import { SlidesComponent } from '@/views/ReportView/components/Slides';
 import { DiscussionComponent } from '@/views/ReportView/components/Discussion';
 import { MicrobialComponent } from '@/views/ReportView/components/Microbial';
@@ -48,7 +47,6 @@ angular.module('root', [
 const rootModule = angular.module('root')
   .component('navBar', NavBarComponent)
   .component('sidebar', SidebarComponent)
-  .component('analystComments', AnalystCommentsComponent)
   .component('slides', SlidesComponent)
   .component('discussion', DiscussionComponent)
   .component('discussionEntry', DiscussionEntryComponent)
