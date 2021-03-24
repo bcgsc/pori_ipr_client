@@ -49,10 +49,10 @@ type UserProjectsType = {
 type UserType = {
   email: string;
   firstName: string;
-  groups: GroupType[];
+  groups?: GroupType[];
   lastLogin: null | string;
   lastName: string;
-  projects: UserProjectsType[];
+  projects?: UserProjectsType[];
   type: string;
   username: string;
 } & RecordDefaults;
