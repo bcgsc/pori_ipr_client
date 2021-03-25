@@ -9,7 +9,7 @@ import api from '@/services/api';
 import ReportContext from '../../components/ReportContext';
 import ReportService from '@/services/reports/report.service';
 import GenomicSummary from '../ReportView/components/GenomicSummary';
-import ProbeSummary from '../ReportView/components/ProbeSummary';
+import ProbeSummary from '../ReportView/components/PharmacoGenomicSummary';
 import AnalystComments from '../ReportView/components/AnalystComments';
 import PathwayAnalysis from '../ReportView/components/PathwayAnalysis';
 import TherapeuticTargets from '../ReportView/components/TherapeuticTargets/components/PrintTables';

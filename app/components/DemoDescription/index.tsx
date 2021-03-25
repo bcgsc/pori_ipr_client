@@ -4,16 +4,13 @@ import React from 'react';
 
 import Alert from '@material-ui/lab/Alert';
 
-
 type DemoDescriptionProps = {
-    children: React.ReactNode,
+  children: React.ReactNode,
 };
 
-const DemoDescription = (props: DemoDescriptionProps) => {
-  const {
-    children,
-  } = props;
-
+const DemoDescription = ({
+  children,
+}: DemoDescriptionProps): JSX.Element | null => {
   if (!window._env_.IS_DEMO) {
     return null;
   }

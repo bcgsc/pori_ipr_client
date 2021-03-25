@@ -40,7 +40,7 @@ const Expression = lazy(() => import('./components/Expression'));
 const Immune = lazy(() => import('./components/Immune'));
 const Appendices = lazy(() => import('./components/Appendices'));
 const Settings = lazy(() => import('./components/Settings'));
-const ProbeSummary = lazy(() => import('./components/ProbeSummary'));
+const ProbeSummary = lazy(() => import('./components/PharmacoGenomicSummary'));
 
 const ReportView = () => {
   const { path } = useRouteMatch();
