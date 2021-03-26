@@ -1,7 +1,6 @@
 import React, {
   useRef, useState, useEffect, useCallback, useContext,
 } from 'react';
-import PropTypes from 'prop-types';
 import { AgGridReact } from '@ag-grid-community/react';
 import useGrid from '@/components/hooks/useGrid';
 import {
@@ -111,8 +110,8 @@ const DataTable = ({
   const { gridApi, colApi, onGridReady } = useGrid();
   const { report } = useContext(ReportContext);
 
-  const gridDiv = useRef();
-  const gridRef = useRef();
+  const gridDiv = useRef<HTMLInputElement>();
+  const gridRef = useRef<AgGridReact>();
 
   const [showPopover, setShowPopover] = useState(false);
   const [showReorder, setShowReorder] = useState(false);
@@ -283,7 +282,6 @@ const DataTable = ({
       <ActionCellRenderer
         onEdit={handleEdit}
         onDelete={handleDelete}
-        // eslint-disable-next-line react/jsx-props-no-spreading
         {...row}
       />
     );
@@ -313,191 +311,115 @@ const DataTable = ({
   }, [gridApi, onRowDataChanged]);
 
   return (
-    <div className="data-table--padded" style={{ height: isFullLength ? '100%' : '' }}>
-      {Boolean(rowData.length) || canEdit ? (
-        <>
-          {titleText && (
-            <div className="data-table__header-container">
-              <Typography variant="h3" className="data-table__header">
-                {titleText}
-              </Typography>
-              <div>
-                {canAdd && !isPrint && (
-                  <span className="data-table__action">
-                    <Typography display="inline">
-                      {addText || 'Add row'}
-                    </Typography>
-                    <IconButton
-                      onClick={() => onAdd(tableType ? { type: tableType } : null)}
-                      title="Add Row"
-                      className="data-table__icon-button"
-                    >
-                      <AddCircleOutlineIcon />
-                    </IconButton>
-                  </span>
-                )}
-                {canToggleColumns && !isPrint && (
-                  <span className="data-table__action">
-                    <IconButton
-                      onClick={() => setShowPopover((prevVal) => !prevVal)}
-                      className="data-table__icon-button"
-                    >
-                      <MoreHorizIcon />
-                    </IconButton>
-                  </span>
-                )}
-                {canExport && !isPrint && (
-                  <span className="data-table__action">
-                    <Typography display="inline">
-                      Export to TSV
-                    </Typography>
-                    <IconButton
-                      onClick={handleCSVExport}
-                      title="Export to CSV"
-                      className="data-table__icon-button"
-                    >
-                      <GetAppIcon />
-                    </IconButton>
-                  </span>
-                )}
-                {canReorder && !isPrint && (
-                  <span className="data-table__action">
-                    <Typography display="inline">
-                      Reorder Rows
-                    </Typography>
-                    <Switch
-                      checked={showReorder}
-                      onChange={toggleReorder}
-                      color="primary"
-                      title="Reorder Rows"
-                    />
-                  </span>
-                )}
-              </div>
-            </div>
-          )}
-          <div
-            className="ag-theme-material data-table__container"
-            ref={gridDiv}
-          >
-            <ColumnPicker
-              className="data-view__options-menu"
-              label="Configure Visible Columns"
-              columns={columnDisplayNames}
-              onClose={handlePopoverClose}
-              isOpen={showPopover}
-            />
-            <AgGridReact
-              ref={gridRef}
-              columnDefs={columnDefs}
-              rowData={rowData}
-              defaultColDef={defaultColDef}
-              onGridReady={onGridReady}
-              domLayout={domLayout}
-              pagination={isPaginated}
-              paginationAutoPageSize={isFullLength}
-              paginationPageSize={MAX_VISIBLE_ROWS}
-              autoSizePadding={0}
-              deltaRowDataMode={canReorder}
-              getRowNodeId={(data) => data.ident}
-              onRowDragEnd={canReorder ? onRowDragEnd : null}
-              editType="fullRow"
-              onFilterChanged={handleFilterAndSortChanged}
-              onSortChanged={handleFilterAndSortChanged}
-              context={{
-                canEdit,
-                canDelete,
-                canViewDetails,
-                tableType,
-              }}
-              frameworkComponents={{
-                LinkCellRenderer,
-                GeneCellRenderer,
-                ActionCellRenderer: RowActionCellRenderer,
-                headerCellRenderer: Header,
-              }}
-              suppressAnimationFrame
-              suppressColumnVirtualisation
-              disableStaticMarkup // See https://github.com/ag-grid/ag-grid/issues/3727
-              onFirstDataRendered={onFirstDataRendered}
-            />
+    <div style={{ height: isFullLength ? '100%' : '' }}>
+      {titleText && (
+        <div className="data-table__header-container">
+          <Typography variant="h3" className="data-table__header">
+            {titleText}
+          </Typography>
+          <div>
+            {canAdd && !isPrint && (
+              <span className="data-table__action">
+                <Typography display="inline">
+                  {addText || 'Add row'}
+                </Typography>
+                <IconButton
+                  onClick={() => onAdd(tableType ? { type: tableType } : null)}
+                  title="Add Row"
+                  className="data-table__icon-button"
+                >
+                  <AddCircleOutlineIcon />
+                </IconButton>
+              </span>
+            )}
+            {canToggleColumns && !isPrint && (
+              <span className="data-table__action">
+                <IconButton
+                  onClick={() => setShowPopover((prevVal) => !prevVal)}
+                  className="data-table__icon-button"
+                >
+                  <MoreHorizIcon />
+                </IconButton>
+              </span>
+            )}
+            {canExport && !isPrint && (
+              <span className="data-table__action">
+                <Typography display="inline">
+                  Export to TSV
+                </Typography>
+                <IconButton
+                  onClick={handleCSVExport}
+                  title="Export to CSV"
+                  className="data-table__icon-button"
+                >
+                  <GetAppIcon />
+                </IconButton>
+              </span>
+            )}
+            {canReorder && !isPrint && (
+              <span className="data-table__action">
+                <Typography display="inline">
+                  Reorder Rows
+                </Typography>
+                <Switch
+                  checked={showReorder}
+                  onChange={toggleReorder}
+                  color="primary"
+                  title="Reorder Rows"
+                />
+              </span>
+            )}
           </div>
-        </>
-      ) : (
-        <>
-          <div className="data-table__header-container">
-            <Typography variant="h3" className="data-table__header">
-              {titleText}
-            </Typography>
-          </div>
-          <div className="data-table__container">
-            <Typography variant="body1" align="center">
-              No data to display
-            </Typography>
-          </div>
-        </>
+        </div>
       )}
+      <div
+        className="ag-theme-material data-table__container"
+        ref={gridDiv}
+      >
+        <ColumnPicker
+          className="data-view__options-menu"
+          label="Configure Visible Columns"
+          columns={columnDisplayNames}
+          onClose={handlePopoverClose}
+          isOpen={showPopover}
+        />
+        <AgGridReact
+          ref={gridRef}
+          columnDefs={columnDefs}
+          rowData={rowData}
+          defaultColDef={defaultColDef}
+          onGridReady={onGridReady}
+          domLayout={domLayout}
+          pagination={isPaginated}
+          paginationAutoPageSize={isFullLength}
+          paginationPageSize={MAX_VISIBLE_ROWS}
+          autoSizePadding={0}
+          deltaRowDataMode={canReorder}
+          getRowNodeId={(data) => data.ident}
+          onRowDragEnd={canReorder ? onRowDragEnd : null}
+          editType="fullRow"
+          onFilterChanged={handleFilterAndSortChanged}
+          onSortChanged={handleFilterAndSortChanged}
+          context={{
+            canEdit,
+            canDelete,
+            canViewDetails,
+            tableType,
+          }}
+          frameworkComponents={{
+            LinkCellRenderer,
+            GeneCellRenderer,
+            ActionCellRenderer: RowActionCellRenderer,
+            headerCellRenderer: Header,
+          }}
+          suppressAnimationFrame
+          suppressColumnVirtualisation
+          disableStaticMarkup // See https://github.com/ag-grid/ag-grid/issues/3727
+          onFirstDataRendered={onFirstDataRendered}
+        />
+      </div>
     </div>
   );
-};
-
-// PropTypes are defined for legacy angularjs -> react support
-// Default props are defined in the Type definition
-/* eslint-disable react/forbid-prop-types */
-/* eslint-disable react/require-default-props */
-DataTable.propTypes = {
-  /* Data populating table */
-  rowData: PropTypes.any,
-  /* Callback function when rowData is changed within the DataTable */
-  onRowDataChanged: PropTypes.any,
-  /* Column definitions for rowData */
-  columnDefs: PropTypes.any,
-  /* Table title */
-  titleText: PropTypes.string,
-  /* String to filter rows by */
-  filterText: PropTypes.string,
-  /* Can rows be edited? */
-  canEdit: PropTypes.bool,
-  /* Callback function when edit is started */
-  onEdit: PropTypes.any,
-  /* Can rows be deleted? */
-  canDelete: PropTypes.bool,
-  /* Callback function when delete is called */
-  onDelete: PropTypes.any,
-  /* Can rows be added to the table? */
-  canAdd: PropTypes.bool,
-  /* Callback function when add is called */
-  onAdd: PropTypes.any,
-  /* Text shown next to the add row button */
-  addText: PropTypes.string,
-  /* Needed for updating therapeutic tables
-     therapeutic or chemoresistance
-  */
-  tableType: PropTypes.string,
-  /* List of column names that are visible */
-  visibleColumns: PropTypes.array,
-  /* Callback to sync multiple tables */
-  syncVisibleColumns: PropTypes.any,
-  /* Can the visible columns be toggled? */
-  canToggleColumns: PropTypes.bool,
-  /* Can the row details be viewed? */
-  canViewDetails: PropTypes.bool,
-  /* Should the table be paginated? */
-  isPaginated: PropTypes.bool,
-  /* Should the table span the whole container? */
-  isFullLength: PropTypes.bool,
-  /* Can the rows be reordered? */
-  canReorder: PropTypes.bool,
-  /* Callback when a row is reordered */
-  onReorder: PropTypes.any,
-  /* Can the table rows be exported? */
-  canExport: PropTypes.bool,
-  /* Is the table being rendered for printing? */
-  isPrint: PropTypes.bool,
-  /* Row index to highlight */
-  highlightRow: PropTypes.number,
-  /* Custom header cell renderer */
-  Header: PropTypes.any,
 };
 
 export default DataTable;

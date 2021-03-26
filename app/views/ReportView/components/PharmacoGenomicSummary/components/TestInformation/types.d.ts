@@ -1,4 +1,4 @@
-interface TestInformationInterface {
+type TestInformationType = {
   createdAt: string;
   fusionGenes: string;
   fusionProbe: string;
@@ -9,8 +9,8 @@ interface TestInformationInterface {
   snpProbe: string;
   snpVars: string;
   updatedAt: string;
-}
+};
 
 export {
-  TestInformationInterface,
+  TestInformationType,
 };

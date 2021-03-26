@@ -15,14 +15,12 @@ import ReportContext from '@/components/ReportContext';
 import EditContext from '@/components/EditContext';
 import ConfirmContext from '@/components/ConfirmContext';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
-import { getSignatures, sign, revokeSignature } from '@/services/reports/signatures';
-import TestInformationService from '@/services/reports/test-information.service';
 import { formatDate } from '@/utils/date';
 import SignatureCard from '@/components/SignatureCard';
 import { sampleColumnDefs } from './columnDefs';
 import { columnDefs as pharmacoGenomicColumnDefs } from '../KbMatches/columnDefs';
 import { columnDefs as cancerColumnDefs } from '../SmallMutations/columnDefs';
-import TestInformation from './components/TestInformation';
+import TestInformation, { TestInformationType } from './components/TestInformation';
 import PatientEdit from '../GenomicSummary/components/PatientEdit';
 import PrintTable from './components/PrintTable';
 
@@ -41,7 +39,7 @@ const PharmacoGenomicSummary = ({
   const { canEdit } = useContext(EditContext);
   const { isSigned, setIsSigned } = useContext(ConfirmContext);
 
-  const [testInformation, setTestInformation] = useState<Record<string, unknown>[] | null>();
+  const [testInformation, setTestInformation] = useState<TestInformationType[] | null>();
   const [signatures, setSignatures] = useState<any | null>();
   const [pharmacoGenomic, setPharmacoGenomic] = useState<Record<string, unknown>[] | null>();
   const [cancerPredisposition, setCancerPredisposition] = useState<Record<string, unknown>[] | null>();
@@ -58,8 +56,8 @@ const PharmacoGenomicSummary = ({
           pharmacoGenomicResp,
           cancerPredispositionResp,
         ] = await Promise.all([
-          TestInformationService.retrieve(report.ident),
-          getSignatures(report.ident),
+          api.get(`/reports/${report.ident}/probe-results`, {}).request(),
+          api.get(`/reports/${report.ident}/signatures`, {}).request(),
           api.get(`/reports/${report.ident}/kb-matches?category=pharmacogenomic`, {}).request(),
           api.get(`/reports/${report.ident}/small-mutations`, {}).request(),
         ]);
@@ -164,18 +162,18 @@ const PharmacoGenomicSummary = ({
     ]);
   }, [isSigned, report, setReport]);
 
-  const handleSign = async (signed: boolean, role: 'author' | 'reviewer') => {
+  const handleSign = useCallback(async (signed: boolean, role: 'author' | 'reviewer') => {
     let newSignature;
 
     if (signed) {
-      newSignature = await sign(report.ident, role);
+      newSignature = await api.put(`/reports/${report.ident}/signatures/sign/${role}`, {}, {}).request();
     } else {
-      newSignature = await revokeSignature(report.ident, role);
+      newSignature = await api.put(`/reports/${report.ident}/signatures/revoke/${role}`, {}, {}).request();
     }
 
     setIsSigned(signed);
     setSignatures(newSignature);
-  };
+  }, [report, setIsSigned]);
 
   return (
     <div className="summary">

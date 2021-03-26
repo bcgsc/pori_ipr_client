@@ -3,12 +3,12 @@ import {
   Grid,
 } from '@material-ui/core';
 import ReadOnlyTextField from '../../../../../../components/ReadOnlyTextField';
-import { TestInformationInterface } from './interfaces';
+import { TestInformationType } from './types.d';
 
 import './index.scss';
 
 type TestInformationProps = {
-  data: TestInformationInterface;
+  data: TestInformationType;
 };
 
 const TestInformation = ({
@@ -66,5 +66,7 @@ const TestInformation = ({
     </Grid>
   </Grid>
 );
+
+export { TestInformationType };
 
 export default TestInformation;
