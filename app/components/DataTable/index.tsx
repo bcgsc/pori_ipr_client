@@ -17,6 +17,7 @@ import ColumnPicker from './components/ColumnPicker';
 import LinkCellRenderer from './components/LinkCellRenderer';
 import GeneCellRenderer from './components/GeneCellRenderer';
 import ActionCellRenderer from './components/ActionCellRenderer';
+import NoRowsOverlay from './components/NoRowsOverlay';
 import { getDate } from '../../utils/date';
 
 import './index.scss';
@@ -77,6 +78,8 @@ type DataTableProps = {
   highlightRow?: number;
   /* Custom header cell renderer */
   Header?: () => JSX.Element;
+  /* Margin size */
+  margin?: 'dense' | 'normal';
 };
 
 const DataTable = ({
@@ -105,6 +108,7 @@ const DataTable = ({
   isPrint,
   highlightRow = null,
   Header,
+  margin = 'normal',
 }: DataTableProps): JSX.Element => {
   const domLayout = isPrint ? 'print' : 'autoHeight';
   const { gridApi, colApi, onGridReady } = useGrid();
@@ -311,7 +315,10 @@ const DataTable = ({
   }, [gridApi, onRowDataChanged]);
 
   return (
-    <div style={{ height: isFullLength ? '100%' : '' }}>
+    <div
+      className={`${margin === 'normal' ? 'data-table--margin' : ''}`}
+      style={{ height: isFullLength ? '100%' : '' }}
+    >
       {titleText && (
         <div className="data-table__header-container">
           <Typography variant="h3" className="data-table__header">
@@ -400,6 +407,7 @@ const DataTable = ({
           editType="fullRow"
           onFilterChanged={handleFilterAndSortChanged}
           onSortChanged={handleFilterAndSortChanged}
+          noRowsOverlayComponent="NoRowsOverlay"
           context={{
             canEdit,
             canDelete,
@@ -411,6 +419,7 @@ const DataTable = ({
             GeneCellRenderer,
             ActionCellRenderer: RowActionCellRenderer,
             headerCellRenderer: Header,
+            NoRowsOverlay,
           }}
           suppressAnimationFrame
           suppressColumnVirtualisation

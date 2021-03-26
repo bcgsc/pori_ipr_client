@@ -16,7 +16,7 @@ import EditContext from '@/components/EditContext';
 import ConfirmContext from '@/components/ConfirmContext';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import { formatDate } from '@/utils/date';
-import SignatureCard from '@/components/SignatureCard';
+import SignatureCard, { SignatureType } from '@/components/SignatureCard';
 import { sampleColumnDefs } from './columnDefs';
 import { columnDefs as pharmacoGenomicColumnDefs } from '../KbMatches/columnDefs';
 import { columnDefs as cancerColumnDefs } from '../SmallMutations/columnDefs';
@@ -40,7 +40,7 @@ const PharmacoGenomicSummary = ({
   const { isSigned, setIsSigned } = useContext(ConfirmContext);
 
   const [testInformation, setTestInformation] = useState<TestInformationType[] | null>();
-  const [signatures, setSignatures] = useState<any | null>();
+  const [signatures, setSignatures] = useState<SignatureType | null>();
   const [pharmacoGenomic, setPharmacoGenomic] = useState<Record<string, unknown>[] | null>();
   const [cancerPredisposition, setCancerPredisposition] = useState<Record<string, unknown>[] | null>();
   const [patientInformation, setPatientInformation] = useState<Record<string, unknown>[] | null>();
