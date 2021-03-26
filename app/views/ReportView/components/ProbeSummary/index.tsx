@@ -287,9 +287,11 @@ const ProbeSummary = ({
       )}
       {report && (
         <span className="probe-summary__reviews">
-          <Typography variant="h3" className="probe-summary__reviews-title">
-            Reviews
-          </Typography>
+          {!isPrint && (
+            <Typography variant="h3" className="probe-summary__reviews-title">
+              Reviews
+            </Typography>
+          )}
           <div className={`${isPrint ? 'probe-summary__signatures' : ''}`}>
             <SignatureCard
               title={`${isPrint ? 'Manual Review' : 'Ready'}`}
