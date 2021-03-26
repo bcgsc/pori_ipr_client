@@ -21,16 +21,12 @@ import { PathwayAnalysisComponent } from '@/views/ReportView/components/PathwayA
 import { SlidesComponent } from '@/views/ReportView/components/Slides';
 import { DiscussionComponent } from '@/views/ReportView/components/Discussion';
 import { MicrobialComponent } from '@/views/ReportView/components/Microbial';
-import { SmallMutationsComponent } from '@/views/ReportView/components/SmallMutations';
-import { CopyNumberComponent } from '@/views/ReportView/components/CopyNumber';
-import { StructuralVariantsComponent } from '@/views/ReportView/components/StructuralVariants';
 import { SettingsComponent } from '@/views/ReportView/components/Settings';
 import { ReportComponent } from '@/views/GermlineView/components/Report';
 
 import DiscussionEntryComponent from '@/views/ReportView/components/Discussion/components/DiscussionEntry';
 import RoleCardComponent from '@/components/RoleCard';
 import PaginateComponent from '@/components/Paginate';
-import ReactTable from '@/components/DataTable';
 import PageBreak from '@/components/PageBreak';
 
 import ReactBootstrap from './index';
@@ -59,14 +55,10 @@ const rootModule = angular.module('root')
   .component('discussion', DiscussionComponent)
   .component('discussionEntry', DiscussionEntryComponent)
   .component('microbial', MicrobialComponent)
-  .component('smallMutations', SmallMutationsComponent)
-  .component('copyNumber', CopyNumberComponent)
-  .component('structuralVariants', StructuralVariantsComponent)
   .component('settings', SettingsComponent)
   .component('report', ReportComponent)
   .component('roleCard', RoleCardComponent)
   .component('paginate', PaginateComponent)
-  .component('reactTable', react2angular(ReactTable))
   .component('pageBreak', react2angular(PageBreak))
   .config(['$locationProvider', ($locationProvider) => {
     $locationProvider.html5Mode(true);

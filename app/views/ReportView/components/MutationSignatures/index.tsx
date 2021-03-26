@@ -7,11 +7,13 @@ import { useSnackbar } from 'notistack';
 
 import DemoDescription from '@/components/DemoDescription';
 import DataTable from '@/components/DataTable';
-import ReportContext from '../../../../components/ReportContext';
+import ReportContext from '@/components/ReportContext';
 import EditContext from '@/components/EditContext';
 import ImageService from '@/services/reports/image.service';
 import { getMutationSignatures } from '@/services/reports/mutation-signature';
+import ImageType from '@/components/Image/types';
 import EditDialog from './components/EditDialog';
+import SignatureType from './types';
 import columnDefs from './columnDefs';
 
 import './index.scss';
@@ -22,17 +24,17 @@ const imageKeys = [
   'mutSignature.barplot.sbs',
 ];
 
-const MutationSignatures = () => {
+const MutationSignatures = (): JSX.Element => {
   const { report } = useContext(ReportContext);
   const { canEdit } = useContext(EditContext);
-  const [images, setImages] = useState({});
-  const [sbsSignatures, setSbsSignatures] = useState([]);
-  const [dbsSignatures, setDbsSignatures] = useState([]);
-  const [idSignatures, setIdSignatures] = useState([]);
+  const [images, setImages] = useState<Record<string, ImageType>>({});
+  const [sbsSignatures, setSbsSignatures] = useState<SignatureType[]>([]);
+  const [dbsSignatures, setDbsSignatures] = useState<SignatureType[]>([]);
+  const [idSignatures, setIdSignatures] = useState<SignatureType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const [showDialog, setShowDialog] = useState(false);
-  const [editData, setEditData] = useState();
+  const [editData, setEditData] = useState<SignatureType | null>();
 
   const snackbar = useSnackbar();
 
@@ -47,9 +49,9 @@ const MutationSignatures = () => {
           getMutationSignatures(report.ident),
         ]);
         setImages(imageData);
-        setSbsSignatures(signatureData.filter(sig => !(new RegExp(/dbs|id/)).test(sig.signature.toLowerCase())));
-        setDbsSignatures(signatureData.filter(sig => (new RegExp(/dbs/)).test(sig.signature.toLowerCase())));
-        setIdSignatures(signatureData.filter(sig => (new RegExp(/id/)).test(sig.signature.toLowerCase())));
+        setSbsSignatures(signatureData.filter((sig) => !(new RegExp(/dbs|id/)).test(sig.signature.toLowerCase())));
+        setDbsSignatures(signatureData.filter((sig) => (new RegExp(/dbs/)).test(sig.signature.toLowerCase())));
+        setIdSignatures(signatureData.filter((sig) => (new RegExp(/id/)).test(sig.signature.toLowerCase())));
         setIsLoading(false);
       };
 
@@ -57,12 +59,12 @@ const MutationSignatures = () => {
     }
   }, [report]);
 
-  const handleEditStart = (rowData) => {
+  const handleEditStart = (rowData: SignatureType) => {
     setShowDialog(true);
     setEditData(rowData);
   };
 
-  const handleEditClose = useCallback((newData) => {
+  const handleEditClose = useCallback((newData?: SignatureType) => {
     setShowDialog(false);
     let newSignatures;
     let setter;
@@ -80,7 +82,7 @@ const MutationSignatures = () => {
         setter = setIdSignatures;
         newSignatures = orderBy(idSignatures, ['nnls', 'signature'], ['desc', 'asc']);
       }
-      const signatureIndex = newSignatures.findIndex(sig => sig.ident === newData.ident);
+      const signatureIndex = newSignatures.findIndex((sig) => sig.ident === newData.ident);
       if (signatureIndex !== -1) {
         newSignatures[signatureIndex] = newData;
         setter(newSignatures);
@@ -117,7 +119,7 @@ const MutationSignatures = () => {
               editData={editData}
               isOpen={showDialog}
               onClose={handleEditClose}
-              showErrorSnackbar={snackbar.add}
+              showErrorSnackbar={snackbar.enqueueSnackbar}
             />
           )}
           <DataTable

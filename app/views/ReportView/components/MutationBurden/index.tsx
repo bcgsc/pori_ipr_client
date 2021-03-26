@@ -10,9 +10,10 @@ import DemoDescription from '@/components/DemoDescription';
 import DataTable from '@/components/DataTable';
 import ReportContext from '@/components/ReportContext';
 import Image from '@/components/Image';
+import ImageType from '@/components/Image/types';
 import api, { ApiCallSet } from '@/services/api';
 import {
-  ImageType, ComparatorType, MutationBurdenType, MsiType,
+  ComparatorType, MutationBurdenType, MsiType,
 } from './types';
 import TabCards from './components/TabCards';
 import columnDefs from './columnDefs';

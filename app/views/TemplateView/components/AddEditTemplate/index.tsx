@@ -76,7 +76,7 @@ const AddEditTemplate = ({
     setImagePreview('');
   };
 
-  const handleImageUpload = (event) => {
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const {
       target: { files },
     } = event;

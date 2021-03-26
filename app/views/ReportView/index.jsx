@@ -15,10 +15,10 @@ import ReportToolbar from '@/components/ReportToolbar';
 import ReportSidebar from '@/components/ReportSidebar';
 import ReportService from '@/services/reports/report.service';
 import EditContext from '@/components/EditContext';
-import ReportContext from '../../components/ReportContext';
+import ReportContext from '@/components/ReportContext';
 import ConfirmContext from '@/components/ConfirmContext';
-import allSections from './sections';
 import api from '@/services/api';
+import allSections from './sections';
 
 import './index.scss';
 
@@ -116,7 +116,7 @@ const ReportView = () => {
             <div className="report__content">
               <Switch>
                 <Route
-                  render={routeProps => (
+                  render={(routeProps) => (
                     <>
                       {isProbe ? (
                         <ProbeSummary {...routeProps} print={false} report={report} canEdit={canEdit} />
@@ -128,7 +128,7 @@ const ReportView = () => {
                   path={`${path}/summary`}
                 />
                 <Route
-                  render={routeProps => (
+                  render={(routeProps) => (
                     <AnalystComments
                       {...routeProps}
                       print={false}
@@ -141,85 +141,85 @@ const ReportView = () => {
                   path={`${path}/analyst-comments`}
                 />
                 <Route
-                  render={routeProps => (
+                  render={(routeProps) => (
                     <TherapeuticTargets {...routeProps} print={false} />
                   )}
                   path={`${path}/therapeutic-targets`}
                 />
                 <Route
-                  render={routeProps => (
+                  render={(routeProps) => (
                     <KbMatches {...routeProps} print={false} />
                   )}
                   path={`${path}/kb-matches`}
                 />
                 <Route
-                  render={routeProps => (
+                  render={(routeProps) => (
                     <Discussion {...routeProps} print={false} report={report} canEdit={canEdit} />
                   )}
                   path={`${path}/discussion`}
                 />
                 <Route
-                  render={routeProps => (
+                  render={(routeProps) => (
                     <Microbial {...routeProps} print={false} report={report} canEdit={canEdit} />
                   )}
                   path={`${path}/microbial`}
                 />
                 <Route
-                  render={routeProps => (
+                  render={(routeProps) => (
                     <MutationSignatures {...routeProps} print={false} />
                   )}
                   path={`${path}/mutation-signatures`}
                 />
                 <Route
-                  render={routeProps => (
+                  render={(routeProps) => (
                     <MutationBurden {...routeProps} print={false} />
                   )}
                   path={`${path}/mutation-burden`}
                 />
                 <Route
-                  render={routeProps => (
+                  render={(routeProps) => (
                     <ExpressionCorrelation {...routeProps} print={false} />
                   )}
                   path={`${path}/expression-correlation`}
                 />
                 <Route
-                  render={routeProps => (
+                  render={(routeProps) => (
                     <SmallMutations {...routeProps} print={false} theme={theme} report={report} canEdit={canEdit} />
                   )}
                   path={`${path}/small-mutations`}
                 />
                 <Route
-                  render={routeProps => (
+                  render={(routeProps) => (
                     <CopyNumber {...routeProps} print={false} theme={theme} report={report} canEdit={canEdit} />
                   )}
                   path={`${path}/copy-number`}
                 />
                 <Route
-                  render={routeProps => (
+                  render={(routeProps) => (
                     <StructuralVariants {...routeProps} print={false} theme={theme} report={report} canEdit={canEdit} />
                   )}
                   path={`${path}/structural-variants`}
                 />
                 <Route
-                  render={routeProps => (
+                  render={(routeProps) => (
                     <Expression {...routeProps} print={false} />
                   )}
                   path={`${path}/expression`}
                 />
                 <Route
-                  render={routeProps => (
+                  render={(routeProps) => (
                     <Immune {...routeProps} print={false} />
                   )}
                   path={`${path}/immune`}
                 />
                 <Route
-                  render={routeProps => (
+                  render={(routeProps) => (
                     <Appendices {...routeProps} isPrint={false} theme={theme} isProbe={isProbe} report={report} canEdit={canEdit} />
                   )}
                   path={`${path}/appendices`}
                 />
                 <Route
-                  render={routeProps => (
+                  render={(routeProps) => (
                     <Settings
                       {...routeProps}
                       print={false}
@@ -234,10 +234,10 @@ const ReportView = () => {
                 />
                 {/* Need token for FileUpload API call */}
                 <SecurityContext.Consumer>
-                  {value => (
+                  {(value) => (
                     <>
                       <Route
-                        render={routeProps => (
+                        render={(routeProps) => (
                           <PathwayAnalysis
                             {...routeProps}
                             print={false}
@@ -249,7 +249,7 @@ const ReportView = () => {
                         path={`${path}/pathway-analysis`}
                       />
                       <Route
-                        render={routeProps => (
+                        render={(routeProps) => (
                           <Slides
                             {...routeProps}
                             print={false}
@@ -268,10 +268,9 @@ const ReportView = () => {
           </div>
           {report && (
             <ReportSidebar
-              visibleSections={report.template.sections || ['summary']}
+              visibleSections={visibleSections || ['summary']}
               allSections={allSections}
               isSidebarVisible={isSidebarVisible}
-              reportIdent={report.ident}
               canEdit={canEdit}
             />
           )}

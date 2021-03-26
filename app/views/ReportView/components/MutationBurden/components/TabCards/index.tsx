@@ -8,9 +8,10 @@ import {
   CardContent,
 } from '@material-ui/core';
 
-import { ImageType, ComparatorType, MutationBurdenType } from '../../types';
+import ImageType from '@/components/Image/types';
 import FrontPageTooltip from '@/components/FrontPageTooltip';
 import Image from '@/components/Image';
+import { ComparatorType, MutationBurdenType } from '../../types';
 
 const rankMapping = {
   primary: 0,
@@ -56,20 +57,39 @@ const TabCards = ({
 
   const getTabs = useCallback(() => {
     const tabNames = [];
+    const ordinalMapping = {
+      'primary': 1,
+      'secondary': 2,
+      'tertiary': 3,
+      'quaternary': 4,
+    };
 
-    return comparators
-      .filter(({ analysisRole }) => analysisRole.includes('mutation burden'))
-      .map(({ analysisRole }) => {
-        const [roleName] = analysisRole.match(/(?<=\().+(?=\))/g);
-        if (!tabNames.includes(roleName)) {
-          tabNames.push(roleName);
+    const tabs = comparators
+      .reduce((accumulator, { analysisRole }) => {
+        if (analysisRole.includes('mutation burden')) {
+          const [roleName] = analysisRole.match(/(?<=\().+(?=\))/g);
+          if (!tabNames.includes(roleName)) {
+            tabNames.push(roleName);
 
-          return (
-            <Tab key={analysisRole} label={roleName} />
-          );
+            accumulator.push((
+              <Tab key={analysisRole} label={roleName} />
+            ));
+          }
         }
-        return null;
-      });
+        return accumulator;
+      }, []);
+    return tabs.sort(({ props: { label: labelA } }, { props: { label: labelB } }) => {
+      const aValue = ordinalMapping[labelA];
+      const bValue = ordinalMapping[labelB];
+
+      if (aValue > bValue) {
+        return 1;
+      }
+      if (aValue < bValue) {
+        return -1;
+      }
+      return 0;
+    });
   }, [comparators]);
 
   const getCardContent = useCallback((burden) => {
@@ -140,12 +160,6 @@ const TabCards = ({
               {burden.role === 'primary' && (
                 <FrontPageTooltip />
               )}
-            </div>
-            <div className="mutation-burden__comparator-container">
-              <Typography variant="body2" className="mutation-burden__comparator--padded">
-                Expressed Structural Variants (count):
-                {` ${burden.qualitySvExpressedCount}`}
-              </Typography>
             </div>
           </>
         );

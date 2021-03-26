@@ -5,8 +5,10 @@ import { useParams } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
 import { useTheme } from '@material-ui/core/styles';
 
-import ReportContext from '../../components/ReportContext';
+import PageBreak from '@/components/PageBreak';
+import startCase from '@/utils/startCase';
 import ReportService from '@/services/reports/report.service';
+import ReportContext from '../../components/ReportContext';
 import GenomicSummary from '../ReportView/components/GenomicSummary';
 import ProbeSummary from '../ReportView/components/ProbeSummary';
 import AnalystComments from '../ReportView/components/AnalystComments';
@@ -14,8 +16,6 @@ import PathwayAnalysis from '../ReportView/components/PathwayAnalysis';
 import TherapeuticTargets from '../ReportView/components/TherapeuticTargets/components/PrintTables';
 import Slides from '../ReportView/components/Slides';
 import Appendices from '../ReportView/components/Appendices';
-import PageBreak from '@/components/PageBreak';
-import startCase from '@/utils/startCase';
 
 import './index.scss';
 
@@ -59,12 +59,14 @@ const Print = () => {
   });
   const [sections, setSections] = useState([]);
   const [isPrintDialogShown, setIsPrintDialogShown] = useState(false);
+  const [isProbe, setIsProbe] = useState(false);
 
   useEffect(() => {
     if (!report) {
       const getReport = async () => {
         const resp = await ReportService.getReport(params.ident);
         setReport(resp);
+        setIsProbe(resp.template.name === 'probe');
         const { template: { sections: sectionsResp } } = resp;
         setSections(sectionsResp);
       };
@@ -85,13 +87,13 @@ const Print = () => {
 
   const renderSections = useMemo(() => (
     <>
-      {sections.includes('summary') && report.template.name === 'probe' && (
+      {sections.includes('summary') && isProbe && (
         <>
           <ProbeSummary report={report} isPrint loadedDispatch={dispatch} />
           <PageBreak report={report} theme={theme} />
         </>
       )}
-      {sections.includes('summary') && report.template.name !== 'probe' && (
+      {sections.includes('summary') && !isProbe && (
         <>
           <GenomicSummary print loadedDispatch={dispatch} />
           <PageBreak report={report} theme={theme} />
@@ -123,12 +125,11 @@ const Print = () => {
       )}
       {sections.includes('appendices') && (
         <>
-          <Appendices report={report} isPrint isProbe loadedDispatch={dispatch} />
-          <PageBreak report={report} theme={theme} />
+          <Appendices report={report} isPrint isProbe={isProbe} loadedDispatch={dispatch} />
         </>
       )}
     </>
-  ), [report, theme, sections]);
+  ), [report, theme, sections, isProbe]);
 
   const titleBar = () => (
     <div className="print__headers">

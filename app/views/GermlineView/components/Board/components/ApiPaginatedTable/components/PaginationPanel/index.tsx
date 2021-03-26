@@ -15,13 +15,13 @@ import ParamsContext, { ParamsContextType } from '../../../ParamsContext';
 
 import './index.scss';
 
-type props = {
+type PaginationPanelProps = {
   totalRows: number,
-}
+};
 
 const PaginationPanel = ({
   totalRows,
-}: props): JSX.Element => {
+}: PaginationPanelProps): JSX.Element => {
   const {
     limit, setLimit, offset, setOffset,
   } = useContext(ParamsContext) as ParamsContextType;
@@ -71,7 +71,7 @@ const PaginationPanel = ({
         </Select>
       </FormControl>
       <Typography className="pagination__text" variant="body2" display="inline">
-        {`${offset + 1} to ${offset + limit} of ${totalRows}`}
+        {`${offset + 1} to ${offset + limit > totalRows ? totalRows : offset + limit} of ${totalRows}`}
       </Typography>
       <div className="pagination__button">
         <IconButton size="small" disabled={offset === 0} onClick={handleFirstPageClick}>

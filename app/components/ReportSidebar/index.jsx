@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { Link, useLocation } from 'react-router-dom';
 import {
   List, ListItem, ListItemText,
 } from '@material-ui/core';
 import PrintIcon from '@material-ui/icons/Print';
+
+import ReportContext from '@/components/ReportContext';
 
 import './index.scss';
 
@@ -13,11 +15,11 @@ const ReportSidebar = (props) => {
     allSections,
     visibleSections,
     isSidebarVisible,
-    reportIdent,
     canEdit,
   } = props;
 
   const { pathname } = useLocation();
+  const { report } = useContext(ReportContext);
 
   if (!isSidebarVisible) {
     return null;
@@ -31,7 +33,7 @@ const ReportSidebar = (props) => {
             Report Sections
           </ListItemText>
           <Link
-            to={{ pathname: `/print/${reportIdent}` }}
+            to={{ pathname: `/print/${report.ident}` }}
             target="_blank"
             rel="noopener noreferrer"
             className="report-sidebar__list-link report-sidebar__list-link--adornment"
@@ -122,7 +124,6 @@ ReportSidebar.propTypes = {
   allSections: PropTypes.arrayOf(PropTypes.object).isRequired,
   visibleSections: PropTypes.arrayOf(PropTypes.string).isRequired,
   isSidebarVisible: PropTypes.bool.isRequired,
-  reportIdent: PropTypes.string.isRequired,
   canEdit: PropTypes.bool.isRequired,
 };
 
