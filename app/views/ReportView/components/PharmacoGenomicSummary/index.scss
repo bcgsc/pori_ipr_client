@@ -23,6 +23,10 @@
     &-title {
       margin: 0 0 16px;
     }
+
+    &-text {
+      break-inside: avoid;
+    }
   }
 
   &__sample-information {

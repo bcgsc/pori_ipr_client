@@ -50,17 +50,18 @@ const PharmacoGenomicSummary = ({
   useEffect(() => {
     if (report && report.ident) {
       const getData = async () => {
+        const apiCalls = new ApiCallSet([
+          api.get(`/reports/${report.ident}/probe-test-information`, {}),
+          api.get(`/reports/${report.ident}/signatures`, {}),
+          api.get(`/reports/${report.ident}/kb-matches?category=pharmacogenomic`, {}),
+          api.get(`/reports/${report.ident}/small-mutations`, {}),
+        ]);
         const [
           testInformationData,
           signaturesData,
           pharmacoGenomicResp,
           cancerPredispositionResp,
-        ] = await Promise.all([
-          api.get(`/reports/${report.ident}/probe-results`, {}).request(),
-          api.get(`/reports/${report.ident}/signatures`, {}).request(),
-          api.get(`/reports/${report.ident}/kb-matches?category=pharmacogenomic`, {}).request(),
-          api.get(`/reports/${report.ident}/small-mutations`, {}).request(),
-        ]);
+        ] = await apiCalls.request();
 
         setTestInformation(testInformationData);
         setSignatures(signaturesData);
@@ -291,7 +292,7 @@ const PharmacoGenomicSummary = ({
                 Test Information
               </Typography>
               <TestInformation data={testInformation} />
-              <Typography className="summary--max-width">
+              <Typography className="summary--max-width summary__test-information-text">
                 The Pharmacogenomic and Cancer Predisposition Targeted Gene Report (PCP-TGR) provides results from a rapid analysis pipeline designed to identify known pharmacogenomic and pathogenic germline cancer predisposition variants in a select set of genes associated with drug toxicity and cancer predisposition. This rapid analysis is not a complete description of abberations associated with cancer predisposition or drug toxicity. The absence of a specific variant in this report is not a guarantee that the variant is not present. Somatic variants are not included in this report.
               </Typography>
             </div>
