@@ -1,7 +1,8 @@
 import React, {
-  useCallback, useContext, useState, useEffect,
+  useCallback, useContext, useState,
 } from 'react';
 import { AgGridReact } from '@ag-grid-community/react';
+import { RowClickedEvent, ColDef } from '@ag-grid-community/core';
 import { useHistory } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import GetAppIcon from '@material-ui/icons/GetApp';
@@ -23,7 +24,7 @@ import ParamsContext from '../ParamsContext';
 import './index.scss';
 
 type ApiPaginatedTableProps = {
-  columnDefs: Record<string, unknown>[],
+  columnDefs: ColDef[],
   rowData: Record<string, unknown>[],
   totalRows: number,
 };
@@ -41,12 +42,16 @@ const ApiPaginatedTable = ({
 
   const onFirstDataRendered = useCallback(() => {
     const visibleColumnIds = colApi.getAllColumns()
-      .filter((col) => !col.flex && col.visible)
-      .map((col) => col.colId);
+      .filter((col: ColDef) => !col.flex && col.visible)
+      .map((col: ColDef) => col.colId);
     colApi.autoSizeColumns(visibleColumnIds);
   }, [colApi]);
 
-  const onRowClicked = useCallback(({ event }) => {
+  const onRowClicked = useCallback(({ event }: RowClickedEvent): void => {
+    // don't navigate if a checkbox is clicked
+    if (event.target.localName === 'input') {
+      return;
+    }
     const selectedRow = gridApi.getSelectedRows();
     const [{ ident }] = selectedRow;
 
@@ -57,7 +62,7 @@ const ApiPaginatedTable = ({
     }
   }, [gridApi, history]);
 
-  const handleExport = useCallback(async () => {
+  const handleExport = useCallback(async (): Promise<void> => {
     try {
       const { filename, blob } = await germlineDownload();
       const url = URL.createObjectURL(blob);
@@ -89,7 +94,7 @@ const ApiPaginatedTable = ({
     setSearchText(tempSearchText);
   }, [setSearchText, tempSearchText]);
 
-  const handleSearchSubmitKeyPress = useCallback((event) => {
+  const handleSearchSubmitKeyPress = useCallback((event: React.KeyboardEvent): void => {
     if (event.key === 'Enter') {
       setSearchText(tempSearchText);
     }
