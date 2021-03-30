@@ -39,7 +39,6 @@ const PathwayAnalysis = ({
         ).request();
         setPathwayImage(pathwayImageResp);
 
-        pathwayImageResp.legend = 'custom';
         const type = pathwayImageResp?.legend;
         if (type === 'v1') {
           setLegend('img/pathway_legend_v1.png');

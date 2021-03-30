@@ -2,14 +2,13 @@ import React, {
   useContext, useCallback, useState, useEffect,
 } from 'react';
 import {
-  IconButton, Typography,
+  IconButton, Typography, Button, CircularProgress,
 } from '@material-ui/core';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import PublishIcon from '@material-ui/icons/Publish';
 import { useSnackbar } from 'notistack';
 
 import api from '@/services/api';
-import AsyncButton from '@/components/AsyncButton';
 import EditContext from '@/components/EditContext';
 import ReportContext from '@/components/ReportContext';
 import ConfirmContext from '@/components/ConfirmContext';
@@ -66,7 +65,9 @@ const Legend = ({
       setLegend(resp['pathwayAnalysis.legend']);
 
       setIsLegendLoading(false);
-      snackbar.enqueueSnackbar('Pathway image uploaded successfully', { variant: 'success' });
+      if (!isSigned) {
+        snackbar.enqueueSnackbar('Pathway image uploaded successfully', { variant: 'success' });
+      }
     } catch (err) {
       snackbar.enqueueSnackbar(`Error uploading pathway image: ${err}`, { variant: 'error' });
     }
@@ -109,22 +110,28 @@ const Legend = ({
       )}
       {/* Case where a custom legend is used but hasn't been uploaded yet */}
       {!legend && type === 'custom' && !isPrint && canEdit && (
-        <AsyncButton
+        <Button
           className="pathway__legend-button"
           component="label"
           color="secondary"
-          isLoading={isLegendLoading}
           variant="outlined"
         >
-          Upload Pathway Legend
-          <PublishIcon />
-          <input
-            accept=".png,.jpg,.jpeg"
-            onChange={handleLegendUpload}
-            type="file"
-            hidden
-          />
-        </AsyncButton>
+          {!isLegendLoading && (
+            <>
+              Upload Pathway Legend
+              <PublishIcon />
+              <input
+                accept=".png,.jpg,.jpeg"
+                onChange={handleLegendUpload}
+                type="file"
+                hidden
+              />
+            </>
+          )}
+          {isLegendLoading && (
+            <CircularProgress size="small" color="secondary" />
+          )}
+        </Button>
       )}
     </div>
   );

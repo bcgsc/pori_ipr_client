@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Button,
   ButtonProps,
@@ -26,17 +26,19 @@ const AsyncButton = ({
   const [loadingStarted, setLoadingStarted] = useState(false);
 
   useEffect(() => {
+    let timeoutReturn;
     if (!isLoading && loadingStarted) {
-      window.setTimeout(() => setLoadingStarted(false), 3000);
+      timeoutReturn = window.setTimeout(() => setLoadingStarted(false), 3000);
     }
+    return () => clearTimeout(timeoutReturn);
   }, [isLoading, loadingStarted]);
 
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     setLoadingStarted(true);
     if (onClick) {
       onClick();
     }
-  };
+  }, [onClick]);
 
   return (
     <div className={`async-button__container ${className}`}>

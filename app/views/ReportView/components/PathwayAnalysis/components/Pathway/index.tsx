@@ -5,11 +5,12 @@ import { useSnackbar } from 'notistack';
 import {
   IconButton,
   Typography,
+  Button,
+  CircularProgress,
 } from '@material-ui/core';
 import PublishIcon from '@material-ui/icons/Publish';
 
 import api from '@/services/api';
-import AsyncButton from '@/components/AsyncButton';
 import SvgImage from '@/components/SvgImage';
 import EditContext from '@/components/EditContext';
 import ReportContext from '@/components/ReportContext';
@@ -97,22 +98,28 @@ const Pathway = ({
               />
             </IconButton>
           ) : (
-            <AsyncButton
+            <Button
               className="pathway__legend-button"
               component="label"
               color="secondary"
-              isLoading={isPathwayLoading}
               variant="outlined"
             >
-              Upload Pathway Image
-              <PublishIcon />
-              <input
-                accept=".svg"
-                onChange={handlePathwayUpload}
-                type="file"
-                hidden
-              />
-            </AsyncButton>
+              {!isPathwayLoading && (
+                <>
+                  Upload Pathway Image
+                  <PublishIcon />
+                  <input
+                    accept=".svg"
+                    onChange={handlePathwayUpload}
+                    type="file"
+                    hidden
+                  />
+                </>
+              )}
+              {isPathwayLoading && (
+                <CircularProgress size="small" color="secondary" />
+              )}
+            </Button>
           )}
         </>
       )}
