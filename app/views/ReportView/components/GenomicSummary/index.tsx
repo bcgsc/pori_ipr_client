@@ -12,14 +12,9 @@ import { useSnackbar } from 'notistack';
 import sortBy from 'lodash.sortby';
 
 import api, { ApiCallSet } from '@/services/api';
-import { getMicrobial } from '@/services/reports/microbial';
-import { getComparators } from '@/services/reports/comparators';
-import { getMutationSignatures } from '@/services/reports/mutation-signature';
-import { getMutationBurden } from '@/services/reports/mutation-burden';
 import { formatDate } from '@/utils/date';
 import EditContext from '@/components/EditContext';
 import ConfirmContext from '@/components/ConfirmContext';
-import AlterationsService from '@/services/reports/genomic-alterations.service';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import DescriptionList from '@/components/DescriptionList';
 import ReportContext from '@/components/ReportContext';
@@ -115,6 +110,16 @@ const GenomicSummary = ({
   useEffect(() => {
     if (report) {
       const getData = async () => {
+        const apiCalls = new ApiCallSet([
+          api.get(`/reports/${report.ident}/summary/microbial`, {}),
+          api.get(`/reports/${report.ident}/summary/genomic-alterations-identified`, {}),
+          api.get(`/reports/${report.ident}/comparators`, {}),
+          api.get(`/reports/${report.ident}/mutation-signatures`, {}),
+          api.get(`/reports/${report.ident}/mutation-burden`, {}),
+          api.get(`/reports/${report.ident}/immune-cell-types`, {}),
+          api.get(`/reports/${report.ident}/msi`, {}),
+        ]);
+
         const [
           microbialResp,
           variantsResp,
@@ -123,15 +128,7 @@ const GenomicSummary = ({
           burdenResp,
           immuneResp,
           msiResp,
-        ] = await Promise.all([
-          getMicrobial(report.ident),
-          AlterationsService.all(report.ident),
-          getComparators(report.ident),
-          getMutationSignatures(report.ident),
-          getMutationBurden(report.ident),
-          api.get(`/reports/${report.ident}/immune-cell-types`, {}).request(),
-          api.get(`/reports/${report.ident}/msi`, {}).request(),
-        ]);
+        ] = await apiCalls.request();
 
         setPrimaryComparator(comparatorsResp.find(({ analysisRole }) => analysisRole === 'mutation burden (primary)'));
         setPrimaryBurden(burdenResp.find((entry: Record<string, unknown>) => entry.role === 'primary'));

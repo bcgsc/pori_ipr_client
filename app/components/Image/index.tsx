@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { Typography, Fade } from '@material-ui/core';
 
-import ImageType from './types';
+import ImageType from './types.d';
 
 import './index.scss';
 
