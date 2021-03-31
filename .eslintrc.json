@@ -26,7 +26,8 @@
     "jest": true,
     "expect": true,
     "test": true,
-    "describe": true
+    "describe": true,
+    "beforeEach": true
   },
   "plugins": [
     "babel",
