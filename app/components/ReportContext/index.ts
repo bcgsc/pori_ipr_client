@@ -1,7 +1,7 @@
 import React from 'react';
-import { ReportContextInterface } from './interfaces';
+import { ReportContextType } from './types';
 
-const ReportContext = React.createContext<ReportContextInterface>({
+const ReportContext = React.createContext<ReportContextType>({
   report: null,
   setReport: () => {},
 });
