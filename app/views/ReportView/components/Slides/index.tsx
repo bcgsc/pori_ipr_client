@@ -17,6 +17,7 @@ import { useSnackbar } from 'notistack';
 import api from '@/services/api';
 import ReportContext from '@/components/ReportContext';
 import EditContext from '@/components/EditContext';
+import ConfirmContext from '@/components/ConfirmContext';
 import UploadSlide from './components/UploadSlide';
 import SlideType from './types';
 
@@ -33,6 +34,7 @@ const Slides = ({
 }: SlidesProps): JSX.Element => {
   const { report } = useContext(ReportContext);
   const { canEdit } = useContext(EditContext);
+  const { isSigned } = useContext(ConfirmContext);
   const snackbar = useSnackbar();
 
   const [slides, setSlides] = useState<SlideType[]>([]);
@@ -58,19 +60,19 @@ const Slides = ({
     setTabValue(newValue);
   };
 
-  const handleSlideUpload = (newSlide) => {
+  const handleSlideUpload = (newSlide: SlideType) => {
     setSlides((prevSlides) => [...prevSlides, newSlide]);
   };
 
   const handleSlideDelete = useCallback(async (ident) => {
     try {
-      await api.del(`/reports/${report.ident}/presentation/slide/${ident}`, {}, {}).request();
+      await api.del(`/reports/${report.ident}/presentation/slide/${ident}`, {}, {}).request(isSigned);
       setSlides((prevSlides) => prevSlides.filter((slide) => slide.ident !== ident));
       snackbar.enqueueSnackbar('Slide deleted', { variant: 'success' });
     } catch (err) {
       snackbar.enqueueSnackbar(`Error deleting slide: ${err}`, { variant: 'error' });
     }
-  }, [report, snackbar]);
+  }, [report, snackbar, isSigned]);
 
   return (
     <div className="slides">
