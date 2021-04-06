@@ -77,18 +77,20 @@ const Slides = ({
       <Typography className="slides__title" variant="h3">Additional Information</Typography>
       {Boolean(slides.length) && !isLoading && (
         <>
-          <Paper elevation={0} variant="outlined">
-            <Tabs
-              value={tabValue}
-              onChange={handleTabChange}
-              indicatorColor="secondary"
-              textColor="secondary"
-            >
-              {slides.map((slide, index) => (
-                <Tab key={slide.name} value={index} label={slide.name} />
-              ))}
-            </Tabs>
-          </Paper>
+          {!isPrint && (
+            <Paper elevation={0} variant="outlined">
+              <Tabs
+                value={tabValue}
+                onChange={handleTabChange}
+                indicatorColor="secondary"
+                textColor="secondary"
+              >
+                {slides.map((slide, index) => (
+                  <Tab key={slide.name} value={index} label={slide.name} />
+                ))}
+              </Tabs>
+            </Paper>
+          )}
           {slides.map((slide, index) => (
             <Slide
               key={slide.name}

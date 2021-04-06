@@ -27,7 +27,7 @@ const AnalystComments = lazy(() => import('./components/AnalystComments'));
 const PathwayAnalysis = lazy(() => import('./components/PathwayAnalysis'));
 const TherapeuticTargets = lazy(() => import('./components/TherapeuticTargets'));
 const KbMatches = lazy(() => import('./components/KbMatches'));
-const Slides = lazy(() => import('./components/Slides/index.tsx'));
+const Slides = lazy(() => import('./components/Slides'));
 const Discussion = lazy(() => import('./components/Discussion'));
 const Microbial = lazy(() => import('./components/Microbial'));
 const MutationSignatures = lazy(() => import('./components/MutationSignatures'));
