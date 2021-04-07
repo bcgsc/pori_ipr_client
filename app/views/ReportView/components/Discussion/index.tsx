@@ -58,16 +58,20 @@ const Discussion = (): JSX.Element => {
       </div>
       {!isLoading && (
         <div className="discussion__content">
-          <div className="discussion__cards">
-            {comments.map((comment) => (
-              <CommentCard
-                key={comment.ident}
-                comment={comment}
-                onDelete={handleCommentDeleted}
-                onSave={handleCommentEdited}
-              />
-            ))}
-          </div>
+          {comments.length ? (
+            <div className="discussion__cards">
+              {comments.map((comment) => (
+                <CommentCard
+                  key={comment.ident}
+                  comment={comment}
+                  onDelete={handleCommentDeleted}
+                  onSave={handleCommentEdited}
+                />
+              ))}
+            </div>
+          ) : (
+            <Typography align="center" className="discussion__none">No comments yet</Typography>
+          )}
           <Divider />
           <AddComment
             onAdd={handleCommentAdded}
