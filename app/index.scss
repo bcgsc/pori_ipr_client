@@ -51,3 +51,8 @@ html body {
 .md-dialog-container {
   top: -$navbar-size !important;
 }
+
+// Fix for tooltip not accounting for AppBar
+.MuiTooltip-popper {
+  top: -$navbar-size !important;
+}

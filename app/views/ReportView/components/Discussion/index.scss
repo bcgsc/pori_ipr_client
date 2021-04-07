@@ -1,18 +1,19 @@
-@import '../../../../styles/variables';
+@import '../../../../styles/variables'; 
 
-section {
-  form {
-    margin: 10px 20px 0;
-    padding-bottom: 30px;
+.discussion {
+  padding: 16px;
 
-    textarea {
-      background-color: $black-03;
-      border: 1px solid $black-20;
-      padding: 5px;
-    }
+  &__content {
+    max-width: $readable-max;
+    min-width: 0;
+    margin: 0 auto;
+  }
 
-    md-input-container {
-      margin: 8px 0 4px;
-    }
+  &__title {
+    margin: 0 0 24px;
+  }
+
+  &__cards {
+    margin: 0 0 24px;
   }
 }
