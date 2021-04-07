@@ -60,12 +60,22 @@ const Pathway = ({
 
       newPathway.append('pathway', uploadedFile);
 
-      const pathwayResp = await api.put(
-        `/reports/${report.ident}/summary/pathway-analysis`,
-        newPathway,
-        {},
-        true,
-      ).request(isSigned);
+      let pathwayResp: PathwayImageType;
+      if (initialPathway) {
+        pathwayResp = await api.put(
+          `/reports/${report.ident}/summary/pathway-analysis`,
+          newPathway,
+          {},
+          true,
+        ).request(isSigned);
+      } else {
+        pathwayResp = await api.post(
+          `/reports/${report.ident}/summary/pathway-analysis`,
+          newPathway,
+          {},
+          true,
+        ).request(isSigned);
+      }
       
       setPathwayImage(pathwayResp);
       setIsPathwayLoading(false);
@@ -74,7 +84,7 @@ const Pathway = ({
     } catch (err) {
       snackbar.enqueueSnackbar(`Error uploading pathway image: ${err}`, { variant: 'error' });
     }
-  }, [isSigned, onChange, report, snackbar]);
+  }, [initialPathway, isSigned, onChange, report, snackbar]);
 
   return (
     <div>
