@@ -55,6 +55,7 @@ const UploadSlide = ({
       newSlide.append('file', file);
 
       const resp = await api.post(`/reports/${report.ident}/presentation/slide`, newSlide, {}, true).request(isSigned);
+      console.log(resp);
       snackbar.enqueueSnackbar('Slide uploaded successfully', { variant: 'success' });
       onUpload(resp);
     } catch (err) {
@@ -83,6 +84,7 @@ const UploadSlide = ({
         Select File
         <input
           accept=".png,.jpeg,.jpg,.gif"
+          data-testid="upload-slide__input"
           hidden
           onChange={handleImageUpload}
           type="file"
