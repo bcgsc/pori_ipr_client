@@ -13,6 +13,8 @@ import SlideType from '../../types';
 
 import './index.scss';
 
+const FILE_SIZE_LIMIT = 10000000;
+
 type UploadSlideProps = {
   onUpload: (newData: SlideType) => void;
 };
@@ -38,6 +40,10 @@ const UploadSlide = ({
     const [file] = files;
     if (!file?.name?.match(/\.(jpg|jpeg|png|gif)$/)) {
       setImageError('Please select a valid image (.jpg/.jpeg/.png/.gif)');
+      return;
+    }
+    if (file?.size > FILE_SIZE_LIMIT) {
+      setImageError('Please select an image < 10MB');
       return;
     }
     setImageError('');
