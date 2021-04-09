@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useState, useCallback, useContext,
+  useState, useCallback, useContext,
 } from 'react';
 import {
   Paper,
@@ -14,18 +14,18 @@ import EditIcon from '@material-ui/icons/Edit';
 import CloseIcon from '@material-ui/icons/Close';
 import { useSnackbar } from 'notistack';
 
-import EditContext from '@/components/EditContext';
 import ReportContext from '@/components/ReportContext';
 import SecurityContext from '@/components/SecurityContext';
 import api from '@/services/api';
 import { formatDate } from '@/utils/date';
+import CommentType from './types';
 
 import './index.scss';
 
 type CommentCardProps = {
-  comment;
-  onSave;
-  onDelete;
+  comment: CommentType;
+  onSave: (newComment: CommentType) => void;
+  onDelete: (ident: string) => void;
 };
 
 const CommentCard = ({
@@ -34,7 +34,6 @@ const CommentCard = ({
   onDelete,
 }: CommentCardProps): JSX.Element => {
   const { report } = useContext(ReportContext);
-  const { canEdit } = useContext(EditContext);
   const { userDetails, adminUser } = useContext(SecurityContext);
   const snackbar = useSnackbar();
   
@@ -102,7 +101,7 @@ const CommentCard = ({
           )}
         </Typography>
         <Typography display="inline" variant="caption">
-          {canEdit && (userDetails.username === comment.user.username || adminUser) ? (
+          {(userDetails.username === comment.user.username || adminUser) ? (
             <>
               <IconButton
                 classes={{ root: 'comment-card__edit-icon' }}
