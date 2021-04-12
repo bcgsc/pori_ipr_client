@@ -43,9 +43,28 @@ const eventsColumnDefs = [
     hide: false,
   },
   {
+    headerName: 'Tumour Ref Count',
+    field: 'tumourRefCount',
+    hide: false,
+  },
+  {
+    headerName: 'Tumour Alt Count',
+    field: 'tumourAltCount',
+    hide: false,
+  },
+  {
+    headerName: 'RNA Ref Count',
+    field: 'rnaRefCount',
+    hide: false,
+  },
+  {
+    headerName: 'RNA Alt Count',
+    field: 'rnaAltCount',
+    hide: false,
+  },
+  {
     headerName: 'Comments',
     field: 'comments',
-    flex: 1,
     hide: false,
   },
   {
