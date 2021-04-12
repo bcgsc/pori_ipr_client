@@ -16,11 +16,11 @@ import ConfirmContext from '@/components/ConfirmContext';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import { formatDate } from '@/utils/date';
 import SignatureCard, { SignatureType } from '@/components/SignatureCard';
+import PrintTable from '@/components/PrintTable';
 import { sampleColumnDefs, eventsColumnDefs } from './columnDefs';
 import TestInformation, { TestInformationType } from './components/TestInformation';
 import PatientEdit from '../GenomicSummary/components/PatientEdit';
 import EventsEditDialog from './components/EventsEditDialog';
-import PrintTable from './components/PrintTable';
 import ProbeResultsType from './types.d';
 
 import './index.scss';
@@ -271,7 +271,7 @@ const ProbeSummary = ({
         </>
       )}
       {report && report.sampleInfo && (
-        <>
+        <div className="probe-summary__sample-information">
           <Typography variant="h3" display="inline" className="probe-summary__sample-information-title">
             Sample Information
           </Typography>
@@ -289,11 +289,11 @@ const ProbeSummary = ({
               isPaginated={!isPrint}
             />
           )}
-        </>
+        </div>
       )}
       {report && probeResults && (
-        <>
-          <Typography variant="h3" display="inline">
+        <div className="probe-summary__events">
+          <Typography className="probe-summary__events-title" variant="h3" display="inline">
             Genomic Events with Potential Therapeutic Association
           </Typography>
           {probeResults.length ? (
@@ -328,7 +328,7 @@ const ProbeSummary = ({
               No Genomic Events were found
             </div>
           )}
-        </>
+        </div>
       )}
       {report && testInformation && (
         <div className="probe-summary__test-information">
