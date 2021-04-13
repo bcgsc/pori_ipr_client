@@ -278,8 +278,7 @@ const ProbeSummary = ({
           {isPrint ? (
             <PrintTable
               data={report.sampleInfo}
-              headers={sampleColumnDefs.map((col) => col.headerName)}
-              order={['Sample', 'Sample Name', 'Collection Date', 'Primary Site', 'Biopsy Site', 'Patho TC']}
+              columnDefs={sampleColumnDefs}
             />
           ) : (
             <DataTable
@@ -301,9 +300,9 @@ const ProbeSummary = ({
               {isPrint ? (
                 <PrintTable
                   data={printEvents}
-                  headers={eventsColumnDefs
-                    .filter((col) => col.headerName !== 'Actions')
-                    .map((col) => col.headerName)}
+                  columnDefs={eventsColumnDefs
+                    .filter((col) => col.headerName !== 'Actions')}
+                  order={['Genomic Events', 'Sample', 'Tumour Ref Count', 'Tumour Alt Count', 'RNA Ref Count', 'RNA Alt Count', 'Comments']}
                 />
               ) : (
                 <>
