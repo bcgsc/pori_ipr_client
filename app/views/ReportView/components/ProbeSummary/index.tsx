@@ -73,13 +73,14 @@ const ProbeSummary = ({
         probeResultsData.forEach((probe) => {
           smallMutationsData.forEach((mutation) => {
             if (probe.gene.name === mutation.gene.name) {
-              if (probe.sample.includes('DNA')) {
-                probe.tumourRefCount = mutation.tumourRefCount;
-                probe.tumourAltCount = mutation.tumourAltCount;
+              if (mutation.tumourRefCount !== null || mutation.tumourAltCount !== null) {
+                probe.tumourDna = `${mutation.tumourRefCount}/${mutation.tumourAltCount}`;
               }
-              if (probe.sample.includes('RNA')) {
-                probe.rnaRefCount = mutation.rnaRefCount;
-                probe.rnaAltCount = mutation.rnaAltCount;
+              if (mutation.rnaRefCount !== null || mutation.rnaAltCount !== null) {
+                probe.tumourRna = `${mutation.rnaRefCount}/${mutation.rnaAltCount}`;
+              }
+              if (mutation.normalRefCount !== null || mutation.normalAltCount !== null) {
+                probe.normalDna = `${mutation.normalRefCount}/${mutation.normalAltCount}`;
               }
             }
           });
@@ -302,7 +303,7 @@ const ProbeSummary = ({
                   data={printEvents}
                   columnDefs={eventsColumnDefs
                     .filter((col) => col.headerName !== 'Actions')}
-                  order={['Genomic Events', 'Sample', 'Tumour Ref Count', 'Tumour Alt Count', 'RNA Ref Count', 'RNA Alt Count', 'Comments']}
+                  order={['Genomic Events', 'Sample', 'Ref/Alt (Tumour DNA)', 'Ref/Alt (Tumour RNA)', 'Ref/Alt (Normal DNA)', 'Comments']}
                 />
               ) : (
                 <>
