@@ -271,26 +271,6 @@ const ProbeSummary = ({
           </div>
         </>
       )}
-      {report && report.sampleInfo && (
-        <div className="probe-summary__sample-information">
-          <Typography variant="h3" display="inline" className="probe-summary__sample-information-title">
-            Sample Information
-          </Typography>
-          {isPrint ? (
-            <PrintTable
-              data={report.sampleInfo}
-              columnDefs={sampleColumnDefs}
-            />
-          ) : (
-            <DataTable
-              columnDefs={sampleColumnDefs}
-              rowData={report.sampleInfo}
-              isPrint={isPrint}
-              isPaginated={!isPrint}
-            />
-          )}
-        </div>
-      )}
       {report && probeResults && (
         <div className="probe-summary__events">
           <Typography className="probe-summary__events-title" variant="h3" display="inline">
@@ -327,6 +307,26 @@ const ProbeSummary = ({
             <div className="probe-summary__none">
               No Genomic Events were found
             </div>
+          )}
+        </div>
+      )}
+      {report && report.sampleInfo && (
+        <div className="probe-summary__sample-information">
+          <Typography variant="h3" display="inline" className="probe-summary__sample-information-title">
+            Sample Information
+          </Typography>
+          {isPrint ? (
+            <PrintTable
+              data={report.sampleInfo}
+              columnDefs={sampleColumnDefs}
+            />
+          ) : (
+            <DataTable
+              columnDefs={sampleColumnDefs}
+              rowData={report.sampleInfo}
+              isPrint={isPrint}
+              isPaginated={!isPrint}
+            />
           )}
         </div>
       )}

@@ -1,6 +1,4 @@
-import React, { useContext } from 'react';
-
-import ReportContext from '../../../../../../components/ReportContext';
+import React from 'react';
 
 import './index.scss';
 
@@ -10,8 +8,6 @@ type ConfigTableProps = {
 };
 
 const ConfigTable = ({ config, isPrint }: ConfigTableProps): JSX.Element => {
-  const { report } = useContext(ReportContext);
-
   if (!isPrint) {
     return (
       <div className="config">
@@ -22,7 +18,7 @@ const ConfigTable = ({ config, isPrint }: ConfigTableProps): JSX.Element => {
   return (
     <table className="config__table">
       {config.split('\n').map((row) => (
-        <tr key={row}>
+        <tr key={row} className="config__row">
           <td>{row}</td>
         </tr>
       ))}
