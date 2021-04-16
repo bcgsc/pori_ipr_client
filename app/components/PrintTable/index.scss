@@ -22,6 +22,14 @@
 
     & td {
       padding: 10px 4px;
+      max-width: 300px;
+      overflow-wrap: break-word;
     }
+  }
+
+  &__none {
+    border-bottom: 1px solid $palette__text--hint;
+    padding: 10px 0;
+    text-align: center;
   }
 }

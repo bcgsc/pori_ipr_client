@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { ColDef } from '@ag-grid-community/core';
+import { Typography } from '@material-ui/core';
 
 import './index.scss';
 
@@ -13,7 +14,7 @@ type PrintTableProps = {
 };
 
 const PrintTable = ({
-  data,
+  data = [],
   columnDefs = [],
   order = [],
 }: PrintTableProps): JSX.Element => {
@@ -64,7 +65,7 @@ const PrintTable = ({
 
   return (
     <div>
-      {Boolean(data.length) && Boolean(columnDefs.length) && (
+      {Boolean(columnDefs.length) && (
         <table className="table">
           <thead className="table__header">
             <tr>
@@ -76,15 +77,25 @@ const PrintTable = ({
             </tr>
           </thead>
           <tbody>
-            {data.map((val, index) => (
-              <tr key={index} className="table__row">
-                {Object.entries(val).sort(rowSortFunc).map(([key, value]) => (
-                  <td key={key}>
-                    {value}
-                  </td>
+            {data.length ? (
+              <>
+                {data.map((val, index) => (
+                  <tr key={index} className="table__row">
+                    {Object.entries(val).sort(rowSortFunc).map(([key, value]) => (
+                      <td key={key}>
+                        {value}
+                      </td>
+                    ))}
+                  </tr>
                 ))}
+              </>
+            ) : (
+              <tr>
+                <td className="table__none" colSpan={columnDefs.length}>
+                  No Rows To Show
+                </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       )}

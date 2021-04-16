@@ -43,5 +43,9 @@
   .print {
     height: 100%;
     width: 8.5in;
+
+    & > * {
+      padding: 0px;
+    }
   }
 }

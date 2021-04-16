@@ -276,37 +276,29 @@ const ProbeSummary = ({
           <Typography className="probe-summary__events-title" variant="h3" display="inline">
             Genomic Events with Potential Therapeutic Association
           </Typography>
-          {probeResults.length ? (
-            <>
-              {isPrint ? (
-                <PrintTable
-                  data={printEvents}
-                  columnDefs={eventsColumnDefs
-                    .filter((col) => col.headerName !== 'Actions')}
-                  order={['Genomic Events', 'Sample', 'Ref/Alt (Tumour DNA)', 'Ref/Alt (Tumour RNA)', 'Ref/Alt (Normal DNA)', 'Comments']}
-                />
-              ) : (
-                <>
-                  <DataTable
-                    columnDefs={eventsColumnDefs}
-                    rowData={probeResults}
-                    canEdit={canEdit}
-                    onEdit={handleEditStart}
-                    isPrint={isPrint}
-                    isPaginated={!isPrint}
-                  />
-                  <EventsEditDialog
-                    isOpen={showEventsDialog}
-                    editData={editData}
-                    onClose={handleEditClose}
-                  />
-                </>
-              )}
-            </>
+          {isPrint ? (
+            <PrintTable
+              data={printEvents}
+              columnDefs={eventsColumnDefs
+                .filter((col) => col.headerName !== 'Actions')}
+              order={['Genomic Events', 'Sample', 'Ref/Alt (Tumour DNA)', 'Ref/Alt (Tumour RNA)', 'Ref/Alt (Normal DNA)', 'Comments']}
+            />
           ) : (
-            <div className="probe-summary__none">
-              No Genomic Events were found
-            </div>
+            <>
+              <DataTable
+                columnDefs={eventsColumnDefs}
+                rowData={probeResults}
+                canEdit={canEdit}
+                onEdit={handleEditStart}
+                isPrint={isPrint}
+                isPaginated={!isPrint}
+              />
+              <EventsEditDialog
+                isOpen={showEventsDialog}
+                editData={editData}
+                onClose={handleEditClose}
+              />
+            </>
           )}
         </div>
       )}
