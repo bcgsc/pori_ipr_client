@@ -66,7 +66,7 @@ const UploadSlide = ({
   }, [onUpload, slideName, snackbar, report]);
 
   return (
-    <>
+    <div className="upload">
       <TextField
         className="text-field-fix"
         color="secondary"
@@ -97,7 +97,7 @@ const UploadSlide = ({
           {imageError}
         </Typography>
       )}
-    </>
+    </div>
   );
 };
 
