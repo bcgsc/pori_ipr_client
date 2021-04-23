@@ -8,7 +8,6 @@ import { useSnackbar } from 'notistack';
 
 import api from '@/services/api';
 import ReportContext from '@/components/ReportContext';
-import ConfirmContext from '@/components/ConfirmContext';
 import SlideType from '../../types';
 
 import './index.scss';
@@ -24,7 +23,6 @@ const UploadSlide = ({
 }: UploadSlideProps): JSX.Element => {
   const snackbar = useSnackbar();
   const { report } = useContext(ReportContext);
-  const { isSigned } = useContext(ConfirmContext);
 
   const [slideName, setSlideName] = useState('');
   const [imageError, setImageError] = useState('');
@@ -54,14 +52,18 @@ const UploadSlide = ({
       newSlide.append('name', slideName);
       newSlide.append('file', file);
 
-      const resp = await api.post(`/reports/${report.ident}/presentation/slide`, newSlide, {}, true).request(isSigned);
-      console.log(resp);
+      const resp = await api.post(
+        `/reports/${report.ident}/presentation/slide`,
+        newSlide,
+        {},
+        true,
+      ).request();
       snackbar.enqueueSnackbar('Slide uploaded successfully', { variant: 'success' });
       onUpload(resp);
     } catch (err) {
       snackbar.enqueueSnackbar(`Error uploading slide: ${err}`, { variant: 'error' });
     }
-  }, [onUpload, slideName, snackbar, report, isSigned]);
+  }, [onUpload, slideName, snackbar, report]);
 
   return (
     <>

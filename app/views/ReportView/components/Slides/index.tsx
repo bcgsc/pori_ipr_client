@@ -34,7 +34,6 @@ const Slides = ({
 }: SlidesProps): JSX.Element => {
   const { report } = useContext(ReportContext);
   const { canEdit } = useContext(EditContext);
-  const { isSigned } = useContext(ConfirmContext);
   const snackbar = useSnackbar();
 
   const [slides, setSlides] = useState<SlideType[]>([]);
@@ -66,13 +65,13 @@ const Slides = ({
 
   const handleSlideDelete = useCallback(async (ident) => {
     try {
-      await api.del(`/reports/${report.ident}/presentation/slide/${ident}`, {}, {}).request(isSigned);
+      await api.del(`/reports/${report.ident}/presentation/slide/${ident}`, {}, {}).request();
       setSlides((prevSlides) => prevSlides.filter((slide) => slide.ident !== ident));
       snackbar.enqueueSnackbar('Slide deleted', { variant: 'success' });
     } catch (err) {
       snackbar.enqueueSnackbar(`Error deleting slide: ${err}`, { variant: 'error' });
     }
-  }, [report, snackbar, isSigned]);
+  }, [report, snackbar]);
 
   return (
     <div className="slides">
