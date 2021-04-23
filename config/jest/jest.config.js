@@ -50,6 +50,7 @@ module.exports = {
     'mjs',
     'ts',
     'tsx',
+    '.d.ts',
   ],
   setupFiles: [
     '<rootDir>/config/jest/windowEnvMock.js'
