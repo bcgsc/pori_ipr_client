@@ -64,12 +64,13 @@ const Legend = ({
       ).request();
       setLegend(resp['pathwayAnalysis.legend']);
 
-      setIsLegendLoading(false);
       if (!isSigned) {
         snackbar.enqueueSnackbar('Pathway image uploaded successfully', { variant: 'success' });
       }
     } catch (err) {
       snackbar.enqueueSnackbar(`Error uploading pathway image: ${err}`, { variant: 'error' });
+    } finally {
+      setIsLegendLoading(false);
     }
   }, [isSigned, report, snackbar]);
 
@@ -129,7 +130,7 @@ const Legend = ({
             </>
           )}
           {isLegendLoading && (
-            <CircularProgress size="small" color="secondary" />
+            <CircularProgress color="secondary" />
           )}
         </Button>
       )}
