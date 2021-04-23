@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
-import { Typography, Fade } from '@material-ui/core';
+import { Typography, Fade, Button } from '@material-ui/core';
 
-import ImageType from './types';
+import ImageType from './types.d';
 
 import './index.scss';
 
@@ -46,16 +46,20 @@ const Image = ({
                 {title}
               </Typography>
             )}
-            <img
-              className={`image ${isZoomable && !isZoomed ? 'image__zoom--in' : ''}`}
-              src={`data:image/${format};base64,${data}`}
-              alt={title}
-              key={key}
+            <Button
+              classes={{ root: 'image__button' }}
+              component="label"
               onClick={handleZoom}
-              onKeyUp={handleZoom}
-              height={height ? `${height}px` : undefined}
-              width={width ? `${width}px` : undefined}
-            />
+            >
+              <img
+                className={`image ${isZoomable && !isZoomed ? 'image__zoom--in' : ''}`}
+                src={`data:image/${format};base64,${data}`}
+                alt={title}
+                key={key}
+                height={height ? `${height}px` : undefined}
+                width={width ? `${width}px` : undefined}
+              />
+            </Button>
             {showCaption && (
               <Typography className="image__caption" variant="caption">
                 {caption}
@@ -63,25 +67,32 @@ const Image = ({
             )}
           </div>
           <Fade in={isZoomed}>
-            <div className="image__dialog-background" onClick={handleZoom} onKeyUp={handleZoom} role="dialog">
-              <div className="image__dialog">
-                {showTitle && (
-                  <Typography variant="h3">
-                    {title}
-                  </Typography>
-                )}
-                <img
-                  className={`${isZoomable && isZoomed ? 'image__zoom--out' : ''}`}
-                  src={`data:image/${format};base64,${data}`}
-                  alt={title}
-                  key={key}
-                />
-                {showCaption && (
-                  <Typography className="image__caption" variant="caption">
-                    {caption}
-                  </Typography>
-                )}
-              </div>
+            <div className="image__dialog-background" role="dialog">
+              <Button
+                classes={{ root: 'image__button' }}
+                className="image__dialog-button"
+                component="label"
+                onClick={handleZoom}
+              >
+                <div className="image__dialog">
+                  {showTitle && (
+                    <Typography variant="h3">
+                      {title}
+                    </Typography>
+                  )}
+                  <img
+                    className={`${isZoomable && isZoomed ? 'image__zoom--out' : ''}`}
+                    src={`data:image/${format};base64,${data}`}
+                    alt={title}
+                    key={key}
+                  />
+                  {showCaption && (
+                    <Typography className="image__caption" variant="caption">
+                      {caption}
+                    </Typography>
+                  )}
+                </div>
+              </Button>
             </div>
           </Fade>
         </>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Button,
   ButtonProps,
@@ -10,12 +10,14 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import './index.scss';
 
 type AsyncButtonProps = {
-  children: string;
+  className?: string;
+  children;
   isLoading: boolean;
-  onClick: () => void;
-} & ButtonProps;
+  onClick?: () => void;
+} & ButtonProps<'label', { component: 'label' }>;
 
 const AsyncButton = ({
+  className,
   children,
   isLoading,
   onClick,
@@ -24,20 +26,25 @@ const AsyncButton = ({
   const [loadingStarted, setLoadingStarted] = useState(false);
 
   useEffect(() => {
+    let timeoutReturn;
     if (!isLoading && loadingStarted) {
-      window.setTimeout(() => setLoadingStarted(false), 3000);
+      timeoutReturn = window.setTimeout(() => setLoadingStarted(false), 3000);
     }
+    return () => clearTimeout(timeoutReturn);
   }, [isLoading, loadingStarted]);
 
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     setLoadingStarted(true);
-    onClick();
-  };
+    if (onClick) {
+      onClick();
+    }
+  }, [onClick]);
 
   return (
-    <div className="async-button__container">
+    <div className={`async-button__container ${className}`}>
       <Button
         classes={{ label: `${loadingStarted ? 'async-button__label' : ''}` }}
+        className="async-button"
         onClick={handleClick}
         {...buttonProps}
       >
