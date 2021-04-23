@@ -25,7 +25,13 @@ import './index.scss';
 import AddUserCard from './components/AddUserCard';
 import AddUserDialog from './components/AddUserDialog';
 
-const Settings = (): JSX.Element => {
+type SettingsProps = {
+  isProbe?: boolean;
+};
+
+const Settings = ({
+  isProbe = false,
+}: SettingsProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
   const { canEdit } = useContext(EditContext);
 
@@ -98,84 +104,96 @@ const Settings = (): JSX.Element => {
       <Typography variant="h3">Settings</Typography>
       {!isLoading && (
         <>
-          <div>
-            <FormControl fullWidth>
-              <InputLabel id="settings-template">Report Template</InputLabel>
-              <Select
-                labelId="settings-template"
-                fullWidth
-                onChange={handleTemplateChange}
-                renderValue={(value) => value.name}
-                value={selectedTemplate}
-                variant="outlined"
-              >
-                {templates.map((template) => (
-                  <MenuItem key={template.ident} value={template}>
-                    {template.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl fullWidth>
-              <InputLabel id="settings-state">Report State</InputLabel>
-              <Select
-                labelId="settings-state"
-                fullWidth
-                onChange={handleStateChange}
-                value={selectedState}
-                variant="outlined"
-              >
-                <MenuItem value="ready">Ready for analysis</MenuItem>
-                <MenuItem value="active">Analysis underway</MenuItem>
-                <MenuItem value="reviewed">Reviewed</MenuItem>
-                <MenuItem value="archived">Archived</MenuItem>
-                <MenuItem value="nonproduction">Non-Production</MenuItem>
-              </Select>
-            </FormControl>
-            <div>
+          <div className="settings__box">
+            <div className="settings__inputs">
+              <FormControl variant="outlined">
+                <InputLabel id="settings-template">Report Template</InputLabel>
+                <Select
+                  labelId="settings-template"
+                  label="Report Template"
+                  onChange={handleTemplateChange}
+                  renderValue={(value) => value.name}
+                  value={selectedTemplate}
+                  variant="outlined"
+                >
+                  {templates.map((template) => (
+                    <MenuItem key={template.ident} value={template}>
+                      {template.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl variant="outlined">
+                <InputLabel id="settings-state">Report State</InputLabel>
+                <Select
+                  labelId="settings-state"
+                  label="Report State"
+                  onChange={handleStateChange}
+                  value={selectedState}
+                  variant="outlined"
+                >
+                  <MenuItem value="ready">Ready for analysis</MenuItem>
+                  <MenuItem value="active">Analysis underway</MenuItem>
+                  <MenuItem value="reviewed">Reviewed</MenuItem>
+                  <MenuItem value="archived">Archived</MenuItem>
+                  <MenuItem value="nonproduction">Non-Production</MenuItem>
+                </Select>
+              </FormControl>
               <TextField
+                classes={{ root: 'settings__text-field' }}
                 label="Report Version"
                 value={reportVersion}
                 variant="outlined"
               />
               <TextField
+                classes={{ root: 'settings__text-field' }}
                 label="Knowledgebase Version"
                 value={kbVersion}
                 variant="outlined"
               />
               <TextField
+                classes={{ root: 'settings__text-field' }}
                 disabled
                 label="Expression Matrix Version"
                 value={matrixVersion}
                 variant="outlined"
               />
             </div>
-          </div>
-          <div>
-            <Button variant="text">Delete Report</Button>
-            <Button variant="outlined" color="secondary">Update</Button>
+            <div className="settings__actions">
+              <Button
+                classes={{ root: 'settings__actions--warn' }}
+                variant="text"
+              >
+                Delete Report
+              </Button>
+              <Button variant="outlined" color="secondary">Update</Button>
+            </div>
           </div>
           <Divider />
           <Analysis />
-          <Divider />
-          <div>
-            <Typography variant="h3">User Associations</Typography>
-            <div>
-              {report.users.sort(usersSort).map((user) => (
-                <AssociationCard
-                  key={user.ident}
-                  user={user.user}
-                  role={user.role}
-                  onDelete={handleUserDelete}
+          {!isProbe && (
+            <>
+              <Divider />
+              <div>
+                <Typography variant="h3">User Associations</Typography>
+                <div>
+                  {report.users.sort(usersSort).map((user) => (
+                    <AssociationCard
+                      key={user.ident}
+                      user={user.user}
+                      role={user.role}
+                      onDelete={handleUserDelete}
+                    />
+                  ))}
+                </div>
+                <AddUserCard onAdd={() => setShowAddUserDialog(true)} />
+                <AddUserDialog
+                  isOpen={showAddUserDialog}
+                  onAdd={() => setShowAddUserDialog(false)}
                 />
-              ))}
-            </div>
-            <AddUserCard onAdd={() => setShowAddUserDialog(true)} />
-            <AddUserDialog
-              isOpen={showAddUserDialog}
-              onAdd={() => setShowAddUserDialog(false)}
-            />
-          </div>
+              </div>
+            </>
+          )}
         </>
       )}
       {isLoading && (

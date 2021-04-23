@@ -38,11 +38,11 @@ html body {
 }
 
 .text-field-fix {
-  margin: 20px 12px 10px;
+  margin: 20px 12px 10px !important;
   height: 40px;
 
   > * {
-    box-sizing: content-box;
+    box-sizing: content-box !important;
   }
 }
 

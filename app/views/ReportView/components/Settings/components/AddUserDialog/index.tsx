@@ -1,5 +1,5 @@
 import React, {
-  useState, useCallback, useContext,
+  useState, useCallback, useContext, useEffect,
 } from 'react';
 import {
   Button,
@@ -19,6 +19,8 @@ import ReportContext from '@/components/ReportContext';
 import snackbar from '@/services/SnackbarUtils';
 import { UserType } from '@/common';
 
+import './index.scss';
+
 type AddUserDialogProps = {
   isOpen: boolean;
   onAdd: (user?: UserType) => void;
@@ -30,8 +32,15 @@ const AddUserDialog = ({
 }: AddUserDialogProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
 
-  const [user, setUser] = useState();
+  const [user, setUser] = useState<UserType>();
   const [role, setRole] = useState('');
+
+  useEffect(() => {
+    if (!isOpen) {
+      setUser(null);
+      setRole('');
+    }
+  }, [isOpen]);
 
   const handleAddUser = useCallback(async () => {
     try {
@@ -57,7 +66,7 @@ const AddUserDialog = ({
   };
 
   return (
-    <Dialog open={isOpen} onClose={() => onAdd()}>
+    <Dialog fullWidth maxWidth="sm" open={isOpen} onClose={() => onAdd()}>
       <DialogTitle>
         Add User
       </DialogTitle>
@@ -66,12 +75,14 @@ const AddUserDialog = ({
           label="User"
           onChange={handleUserChange}
         />
-        <FormControl>
+        <FormControl variant="outlined" className="add-user__select">
           <InputLabel id="add-user-role">Role</InputLabel>
           <Select
             labelId="add-user-role"
-            value={role}
+            label="Role"
             onChange={handleRoleChange}
+            value={role}
+            variant="outlined"
           >
             <MenuItem value="clinician">Clinician</MenuItem>
             <MenuItem value="bioinformatician">Bioinformatician</MenuItem>

@@ -16,7 +16,7 @@ import './index.scss';
 
 type AssociationCardProps = {
   user: UserType;
-  onDelete: (user: UserType) => void;
+  onDelete: (user: UserType, role: string) => void;
   role: string;
 };
 
