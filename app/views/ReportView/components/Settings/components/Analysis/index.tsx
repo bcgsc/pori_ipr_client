@@ -10,6 +10,8 @@ import EditContext from '@/components/EditContext';
 import snackbar from '@/services/SnackbarUtils';
 import { formatDate } from '@/utils/date';
 
+import './index.scss';
+
 const Analysis = (): JSX.Element => {
   const { report } = useContext(ReportContext);
   const { canEdit } = useContext(EditContext);
@@ -25,17 +27,15 @@ const Analysis = (): JSX.Element => {
   }, [report]);
 
   return (
-    <div>
+    <div className="analysis">
       <Typography variant="h3">Analysis Status</Typography>
-      {report?.analysisStartedAt ? (
-        <div>
+      <div className="analysis__content">
+        {report?.analysisStartedAt ? (
           <Typography>
             Analysis started on:
             {` ${formatDate(report?.analysisStartedAt, true)}`}
           </Typography>
-        </div>
-      ) : (
-        <div>
+        ) : (
           <Button
             color="secondary"
             disabled={!canEdit}
@@ -44,8 +44,8 @@ const Analysis = (): JSX.Element => {
           >
             Start analysis
           </Button>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };

@@ -35,4 +35,12 @@
       box-sizing: content-box !important;
     }
   }
+
+  &__user-associations {
+    padding: 16px 0;
+  }
+
+  &__user-association-cards {
+    padding: 8px 0;
+  }
 }

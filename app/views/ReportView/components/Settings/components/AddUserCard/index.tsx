@@ -13,18 +13,17 @@ type AddUserCardProps = {
 const AddUserCard = ({
   onAdd,
 }: AddUserCardProps): JSX.Element => (
-  <Button
-    className="add-card"
-    color="secondary"
-    fullWidth
-    onClick={() => onAdd()}
-    variant="outlined"
-  >
-    <AddIcon />
-    <div>
-      <Typography>Add User</Typography>
-    </div>
-  </Button>
+  <div className="add-card">
+    <Button
+      className="add-card__button"
+      color="secondary"
+      onClick={() => onAdd()}
+      variant="outlined"
+    >
+      <AddIcon />
+      Add User
+    </Button>
+  </div>
 );
 
 export default AddUserCard;

@@ -174,9 +174,9 @@ const Settings = ({
           {!isProbe && (
             <>
               <Divider />
-              <div>
+              <div className="settings__user-associations">
                 <Typography variant="h3">User Associations</Typography>
-                <div>
+                <div className="settings__user-association-cards">
                   {report.users.sort(usersSort).map((user) => (
                     <AssociationCard
                       key={user.ident}
