@@ -223,12 +223,7 @@ const ReportView = () => {
                   render={(routeProps) => (
                     <Settings
                       {...routeProps}
-                      print={false}
-                      showBindings={!isProbe}
-                      report={report}
-                      canEdit={canEdit}
-                      isSigned={isSigned}
-                      templates={templates}
+                      isProbe={isProbe}
                     />
                   )}
                   path={`${path}/settings`}

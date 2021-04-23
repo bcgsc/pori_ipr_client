@@ -1,7 +1,10 @@
 @import '../../../../styles/theme';
+@import '../../../../styles/variables';
 
 .settings {
   padding: 16px;
+  max-width: $content-max;
+  margin: 0 auto;
 
   &__inputs {
     display: flex;
@@ -38,6 +41,10 @@
 
   &__user-associations {
     padding: 16px 0;
+
+    &--none {
+      margin: 4px 0;
+    }
   }
 
   &__user-association-cards {

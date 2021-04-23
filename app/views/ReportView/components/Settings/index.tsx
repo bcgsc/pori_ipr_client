@@ -88,6 +88,38 @@ const Settings = ({
       snackbar.error(`Error removing user: ${err}`);
     }
   }, [report, setReport]);
+  
+  const handleReportUpdate = useCallback(async () => {
+    const updateFields = {};
+
+    if (report.template !== selectedTemplate) {
+      updateFields.template = selectedTemplate;
+    }
+    if (report.state !== selectedState) {
+      updateFields.state = selectedState;
+    }
+    if (report.version !== reportVersion) {
+      updateFields.reportVersion = reportVersion;
+    }
+    if (report.kbVersion !== kbVersion) {
+      updateFields.kbVersion = kbVersion;
+    }
+    if (report.expression_matrix !== matrixVersion) {
+      updateFields.expression_matrix = matrixVersion;
+    }
+
+    try {
+      const newReport = await api.put(
+        `/reports/${report.ident}`,
+        updateFields,
+        {},
+      ).request();
+      setReport(newReport);
+      snackbar.success('Settings saved');
+    } catch (err) {
+      snackbar.error(`Error saving settings: ${err}`);
+    }
+  }, [kbVersion, matrixVersion, report, reportVersion, selectedState, selectedTemplate, setReport]);
 
   const usersSort = ({ role: roleA }, { role: roleB }) => {
     if (roleA > roleB) {
@@ -142,12 +174,14 @@ const Settings = ({
               <TextField
                 classes={{ root: 'settings__text-field' }}
                 label="Report Version"
+                onChange={(event) => setReportVersion(event.target.value)}
                 value={reportVersion}
                 variant="outlined"
               />
               <TextField
                 classes={{ root: 'settings__text-field' }}
                 label="Knowledgebase Version"
+                onChange={(event) => setKbVersion(event.target.value)}
                 value={kbVersion}
                 variant="outlined"
               />
@@ -155,6 +189,7 @@ const Settings = ({
                 classes={{ root: 'settings__text-field' }}
                 disabled
                 label="Expression Matrix Version"
+                onChange={(event) => setMatrixVersion(event.target.value)}
                 value={matrixVersion}
                 variant="outlined"
               />
@@ -166,7 +201,13 @@ const Settings = ({
               >
                 Delete Report
               </Button>
-              <Button variant="outlined" color="secondary">Update</Button>
+              <Button
+                color="secondary"
+                onClick={handleReportUpdate}
+                variant="outlined"
+              >
+                Update
+              </Button>
             </div>
           </div>
           <Divider />
@@ -175,16 +216,24 @@ const Settings = ({
             <>
               <Divider />
               <div className="settings__user-associations">
-                <Typography variant="h3">User Associations</Typography>
+                <Typography variant="h3">Assigned Users</Typography>
                 <div className="settings__user-association-cards">
-                  {report.users.sort(usersSort).map((user) => (
-                    <AssociationCard
-                      key={user.ident}
-                      user={user.user}
-                      role={user.role}
-                      onDelete={handleUserDelete}
-                    />
-                  ))}
+                  {report.users.length ? (
+                    <>
+                      {report.users.sort(usersSort).map((user) => (
+                        <AssociationCard
+                          key={user.ident}
+                          user={user.user}
+                          role={user.role}
+                          onDelete={handleUserDelete}
+                        />
+                      ))}
+                    </>
+                  ) : (
+                    <div className="settings__user-associations--none">
+                      <Typography align="center">No users have been assigned</Typography>
+                    </div>
+                  )}
                 </div>
                 <AddUserCard onAdd={() => setShowAddUserDialog(true)} />
                 <AddUserDialog
