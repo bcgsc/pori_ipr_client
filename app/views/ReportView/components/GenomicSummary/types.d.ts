@@ -1,4 +1,4 @@
-import { RecordDefaults } from '@/common.d';
+import { RecordDefaults } from '@/common';
 
 type MsiType = {
   score: number;

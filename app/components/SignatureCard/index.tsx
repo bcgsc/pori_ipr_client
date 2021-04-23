@@ -13,7 +13,7 @@ import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 import { UserType } from '@/common';
 import EditContext from '../EditContext';
 import { formatDate } from '../../utils/date';
-import SignatureType from './types.d';
+import SignatureType from './types';
 
 import './index.scss';
 

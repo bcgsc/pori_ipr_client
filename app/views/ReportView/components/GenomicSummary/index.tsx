@@ -28,9 +28,9 @@ import {
   GeneVariantType,
   TumourSummaryType,
   MicrobialType,
-} from './types.d';
-import { MutationBurdenType, ComparatorType } from '../MutationBurden/types.d';
-import MutationSignatureType from '../MutationSignatures/types.d';
+} from './types';
+import { MutationBurdenType, ComparatorType } from '../MutationBurden/types';
+import MutationSignatureType from '../MutationSignatures/types';
 import { ImmuneType } from '../Immune/types';
 
 import './index.scss';
