@@ -13,6 +13,12 @@
     }
   }
 
+  &__button {
+    &:hover {
+      background-color: transparent;
+    }
+  }
+
   &__dialog {
     overflow: auto;
     height: fit-content;
@@ -35,5 +41,9 @@
     z-index: 100;
     background-color: rgba(0, 0, 0, .5);
     overflow-y: auto;
+  }
+
+  &__dialog-button {
+    width: 100%;
   }
 }
