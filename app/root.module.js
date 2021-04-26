@@ -20,11 +20,9 @@ import { PathwayAnalysisComponent } from '@/views/ReportView/components/PathwayA
 import { SlidesComponent } from '@/views/ReportView/components/Slides';
 import { DiscussionComponent } from '@/views/ReportView/components/Discussion';
 import { MicrobialComponent } from '@/views/ReportView/components/Microbial';
-import { SettingsComponent } from '@/views/ReportView/components/Settings';
 import { ReportComponent } from '@/views/GermlineView/components/Report';
 
 import DiscussionEntryComponent from '@/views/ReportView/components/Discussion/components/DiscussionEntry';
-import RoleCardComponent from '@/components/RoleCard';
 import PaginateComponent from '@/components/Paginate';
 import PageBreak from '@/components/PageBreak';
 
@@ -53,9 +51,7 @@ const rootModule = angular.module('root')
   .component('discussion', DiscussionComponent)
   .component('discussionEntry', DiscussionEntryComponent)
   .component('microbial', MicrobialComponent)
-  .component('settings', SettingsComponent)
   .component('report', ReportComponent)
-  .component('roleCard', RoleCardComponent)
   .component('paginate', PaginateComponent)
   .component('pageBreak', react2angular(PageBreak))
   .config(['$locationProvider', ($locationProvider) => {
