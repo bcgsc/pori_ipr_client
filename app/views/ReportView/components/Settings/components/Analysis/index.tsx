@@ -8,7 +8,6 @@ import {
 import api from '@/services/api';
 import ReportContext from '@/components/ReportContext';
 import SecurityContext from '@/components/SecurityContext';
-import EditContext from '@/components/EditContext';
 import snackbar from '@/services/SnackbarUtils';
 import { formatDate } from '@/utils/date';
 

@@ -125,7 +125,7 @@ const Settings = ({
     }
   }, [kbVersion, matrixVersion, report, reportVersion, selectedState, selectedTemplate, setReport]);
 
-  const handleReportDelete = useCallback(async (isDeleted) => {
+  const handleReportDelete = useCallback(async (isDeleted: boolean) => {
     if (!isDeleted) {
       setShowDeleteReportDialog(false);
       return;

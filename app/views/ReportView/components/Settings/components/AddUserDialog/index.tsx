@@ -57,7 +57,7 @@ const AddUserDialog = ({
     }
   }, [report, onAdd, user, role, setReport]);
   
-  const handleUserChange = (newUser) => {
+  const handleUserChange = (newUser: UserType) => {
     setUser(newUser);
   };
 

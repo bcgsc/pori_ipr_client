@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Button, Typography,
+  Button,
 } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 
