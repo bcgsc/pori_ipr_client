@@ -1,6 +1,7 @@
 import React, {
   useState, useEffect, useContext, useCallback,
 } from 'react';
+import { useHistory } from 'react-router-dom';
 import {
   Typography,
   TextField,
@@ -24,6 +25,7 @@ import AssociationCard from './components/AssociationCard';
 import './index.scss';
 import AddUserCard from './components/AddUserCard';
 import AddUserDialog from './components/AddUserDialog';
+import DeleteReportDialog from './components/DeleteReportDialog';
 
 type SettingsProps = {
   isProbe?: boolean;
@@ -34,6 +36,7 @@ const Settings = ({
 }: SettingsProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
   const { canEdit } = useContext(EditContext);
+  const history = useHistory();
 
   const [templates, setTemplates] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState({ name: '', ident: '' });
@@ -43,6 +46,7 @@ const Settings = ({
   const [matrixVersion, setMatrixVersion] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [showAddUserDialog, setShowAddUserDialog] = useState(false);
+  const [showDeleteReportDialog, setShowDeleteReportDialog] = useState(false);
 
   useEffect(() => {
     if (report) {
@@ -121,6 +125,20 @@ const Settings = ({
     }
   }, [kbVersion, matrixVersion, report, reportVersion, selectedState, selectedTemplate, setReport]);
 
+  const handleReportDelete = useCallback(async (isDeleted) => {
+    if (!isDeleted) {
+      setShowDeleteReportDialog(false);
+      return;
+    }
+    try {
+      await api.del(`/reports/${report.ident}`, {}, {}).request();
+      snackbar.info('Report deleted');
+      history.push('/reports');
+    } catch (err) {
+      snackbar.error(`Error deleting report: ${err}`);
+    }
+  }, [report, history]);
+
   const usersSort = ({ role: roleA }, { role: roleB }) => {
     if (roleA > roleB) {
       return 1;
@@ -197,17 +215,24 @@ const Settings = ({
             <div className="settings__actions">
               <Button
                 classes={{ root: 'settings__actions--warn' }}
+                disabled={!canEdit}
+                onClick={() => setShowDeleteReportDialog(true)}
                 variant="text"
               >
                 Delete Report
               </Button>
               <Button
                 color="secondary"
+                disabled={!canEdit}
                 onClick={handleReportUpdate}
                 variant="outlined"
               >
                 Update
               </Button>
+              <DeleteReportDialog
+                isOpen={showDeleteReportDialog}
+                onClose={handleReportDelete}
+              />
             </div>
           </div>
           <Divider />

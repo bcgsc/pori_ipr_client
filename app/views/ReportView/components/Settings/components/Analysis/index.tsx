@@ -1,11 +1,13 @@
-import React, { useContext, useCallback } from 'react';
+import React, { useContext, useCallback, useMemo } from 'react';
 import {
   Button,
+  Tooltip,
   Typography,
 } from '@material-ui/core';
 
 import api from '@/services/api';
 import ReportContext from '@/components/ReportContext';
+import SecurityContext from '@/components/SecurityContext';
 import EditContext from '@/components/EditContext';
 import snackbar from '@/services/SnackbarUtils';
 import { formatDate } from '@/utils/date';
@@ -14,7 +16,7 @@ import './index.scss';
 
 const Analysis = (): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
-  const { canEdit } = useContext(EditContext);
+  const { userDetails, adminUser } = useContext(SecurityContext);
 
   const handleAnalysisStart = useCallback(async () => {
     try {
@@ -31,6 +33,13 @@ const Analysis = (): JSX.Element => {
     }
   }, [report, setReport]);
 
+  const isAssigned = useMemo(() => {
+    if (report.users.map((u) => u.user.username).includes(userDetails.username)) {
+      return true;
+    }
+    return false;
+  }, [report, userDetails]);
+
   return (
     <div className="analysis">
       <Typography variant="h3">Analysis Status</Typography>
@@ -41,14 +50,34 @@ const Analysis = (): JSX.Element => {
             {` ${formatDate(report?.analysisStartedAt, true)}`}
           </Typography>
         ) : (
-          <Button
-            color="secondary"
-            disabled={!canEdit}
-            onClick={handleAnalysisStart}
-            variant="outlined"
-          >
-            Start analysis
-          </Button>
+          <>
+            {!isAssigned && !adminUser ? (
+              <Tooltip
+                classes={{ popper: 'tooltip-fix' }}
+                placement="right"
+                title="Only assigned users can start the analysis"
+              >
+                <span>
+                  <Button
+                    color="secondary"
+                    disabled
+                    onClick={handleAnalysisStart}
+                    variant="outlined"
+                  >
+                    Start analysis
+                  </Button>
+                </span>
+              </Tooltip>
+            ) : (
+              <Button
+                color="secondary"
+                onClick={handleAnalysisStart}
+                variant="outlined"
+              >
+                Start analysis
+              </Button>
+            )}
+          </>
         )}
       </div>
     </div>
