@@ -62,7 +62,7 @@
     "no-multiple-empty-lines": "warn",
     "no-this-before-super": "warn",
     "no-unreachable": "warn",
-    "no-unused-vars": "warn",
+    "no-unused-vars": "off",
     "constructor-super": "warn",
     "valid-typeof": "warn",
     "no-else-return": "error",
@@ -77,7 +77,7 @@
     "no-useless-concat": "error",
     "no-useless-rename": "error",
     "max-len": "off",
-    "no-undef": "warn",
+    "no-undef": "off",
     "arrow-body-style": ["error", "as-needed"],
     "object-shorthand": ["error", "always"],
     "quote-props": ["error", "consistent"],
@@ -86,9 +86,6 @@
     "no-restricted-globals": "warn",
     "no-alert": "off",
     "prefer-destructuring": ["error", {"object": true, "array": true}],
-    "no-use-before-define": ["error", {
-        "functions": false
-    }],
     "indent": ["error", 2, { "SwitchCase": 1 }],
     "template-curly-spacing": ["error", "never"],
     "no-restricted-syntax": [
@@ -107,6 +104,8 @@
     "@typescript-eslint/no-empty-function": "off",
     "react/jsx-indent": "error",
     "react/jsx-props-no-spreading": "off",
-    "react/require-default-props": "off"
+    "react/require-default-props": "off",
+    "no-use-before-define": "off",
+    "@typescript-eslint/no-use-before-define": ["error"]
   }
 }
