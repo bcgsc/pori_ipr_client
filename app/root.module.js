@@ -18,7 +18,6 @@ import { NavBarComponent } from '@/components/NavBar';
 import { SidebarComponent } from '@/components/Sidebar';
 import { SlidesComponent } from '@/views/ReportView/components/Slides';
 import { DiscussionComponent } from '@/views/ReportView/components/Discussion';
-import { MicrobialComponent } from '@/views/ReportView/components/Microbial';
 import { SettingsComponent } from '@/views/ReportView/components/Settings';
 import { ReportComponent } from '@/views/GermlineView/components/Report';
 
@@ -50,7 +49,6 @@ const rootModule = angular.module('root')
   .component('slides', SlidesComponent)
   .component('discussion', DiscussionComponent)
   .component('discussionEntry', DiscussionEntryComponent)
-  .component('microbial', MicrobialComponent)
   .component('settings', SettingsComponent)
   .component('report', ReportComponent)
   .component('roleCard', RoleCardComponent)
