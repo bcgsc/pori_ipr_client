@@ -26,25 +26,23 @@ type SampleInfoType = {
 type ReportType = {
   alternateIdentifier?: string;
   biopsyName?: string;
-  createdAt: string;
-  ident: string;
   kbVersion: string;
   patientId: string;
-  patientInformation: PatientInformationType;
+  patientInformation: PatientInformationType,
   ploidy: string;
   reportVersion: string;
-  sampleInfo: Array<SampleInfoType>
+  sampleInfo: SampleInfoType[];
   state: string;
   subtyping: string;
   tumourContent?: number;
   type: string;
-};
+} & RecordDefaults;
 
 type ReportContextType = {
   /** Current report that's being viewed */
   report: ReportType | null,
   /** Set new current report */
-  setReport: (newValue: ReportType) => void;
+  setReport: (newReport: ReportType) => void;
 };
 
 export {
