@@ -49,4 +49,5 @@ export {
   PatientInformationType,
   ReportContextType,
   ReportType,
+  SampleInfoType,
 };

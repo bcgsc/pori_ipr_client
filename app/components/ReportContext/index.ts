@@ -1,5 +1,7 @@
 import React from 'react';
-import { ReportContextType } from './types';
+import {
+  ReportContextType, ReportType, PatientInformationType, SampleInfoType,
+} from './types';
 
 const ReportContext = React.createContext<ReportContextType>({
   report: null,
@@ -7,3 +9,9 @@ const ReportContext = React.createContext<ReportContextType>({
 });
 
 export default ReportContext;
+
+export {
+  ReportType,
+  PatientInformationType,
+  SampleInfoType,
+};

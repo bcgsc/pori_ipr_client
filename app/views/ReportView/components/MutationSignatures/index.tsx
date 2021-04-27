@@ -178,3 +178,5 @@ const MutationSignatures = (): JSX.Element => {
 };
 
 export default MutationSignatures;
+
+export { MutationSignatureType };
