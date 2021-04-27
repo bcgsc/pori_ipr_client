@@ -66,6 +66,17 @@ type ImageType = {
   title: string | null;
 } & RecordDefaults;
 
+type GeneType = {
+  cancerRelated: boolean;
+  drugTargetable: boolean;
+  knownFusionPartner: boolean;
+  knownSmallMutation: boolean;
+  name: string;
+  oncogene: boolean;
+  therapeuticAssociated: boolean;
+  tumourSuppressor: boolean;
+};
+
 export {
   RecordDefaults,
   UserType,
@@ -73,4 +84,5 @@ export {
   UserProjectsType,
   UserGroupMemberType,
   ImageType,
+  GeneType,
 };
