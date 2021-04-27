@@ -2,7 +2,6 @@ import React, {
   useEffect, useState, useCallback, useContext,
 } from 'react';
 import { useHistory } from 'react-router-dom';
-import PropTypes from 'prop-types';
 import {
   Typography,
   IconButton,
@@ -13,14 +12,9 @@ import { useSnackbar } from 'notistack';
 import sortBy from 'lodash.sortby';
 
 import api, { ApiCallSet } from '@/services/api';
-import { getMicrobial } from '@/services/reports/microbial';
-import { getComparators } from '@/services/reports/comparators';
-import { getMutationSignatures } from '@/services/reports/mutation-signature';
-import { getMutationBurden } from '@/services/reports/mutation-burden';
 import { formatDate } from '@/utils/date';
 import EditContext from '@/components/EditContext';
 import ConfirmContext from '@/components/ConfirmContext';
-import AlterationsService from '@/services/reports/genomic-alterations.service';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import DescriptionList from '@/components/DescriptionList';
 import ReportContext from '@/components/ReportContext';
@@ -28,6 +22,16 @@ import VariantChips from './components/VariantChips';
 import VariantCounts from './components/VariantCounts';
 import PatientEdit from './components/PatientEdit';
 import TumourSummaryEdit from './components/TumourSummaryEdit';
+import {
+  MsiType,
+  PatientInformationType,
+  GeneVariantType,
+  TumourSummaryType,
+  MicrobialType,
+} from './types';
+import { MutationBurdenType, ComparatorType } from '../MutationBurden/types';
+import MutationSignatureType from '../MutationSignatures/types';
+import { ImmuneType } from '../Immune/types';
 
 import './index.scss';
 
@@ -66,7 +70,10 @@ type GenomicSummaryProps = {
   loadedDispatch: (section: Record<'type', string>) => void;
 };
 
-const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Element => {
+const GenomicSummary = ({
+  print = false,
+  loadedDispatch,
+}: GenomicSummaryProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
   const { canEdit } = useContext(EditContext);
   const { isSigned } = useContext(ConfirmContext);
@@ -76,15 +83,22 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
   const [showPatientEdit, setShowPatientEdit] = useState<boolean>(false);
   const [showTumourSummaryEdit, setShowTumourSummaryEdit] = useState<boolean>(false);
 
-  const [patientInformation, setPatientInformation] = useState<Array<Record<string, unknown>>>();
-  const [signatures, setSignatures] = useState<Array<Record<string, unknown>>>([]);
-  const [tumourSummary, setTumourSummary] = useState<Array<Record<string, unknown>>>();
-  const [primaryBurden, setPrimaryBurden] = useState<Record<string, unknown>>();
-  const [variants, setVariants] = useState<Array<Record<string, unknown>>>();
+  const [patientInformation, setPatientInformation] = useState<PatientInformationType[]>();
+  const [signatures, setSignatures] = useState<MutationSignatureType[]>([]);
+  const [tumourSummary, setTumourSummary] = useState<TumourSummaryType[]>();
+  const [primaryBurden, setPrimaryBurden] = useState<MutationBurdenType>();
+  const [variants, setVariants] = useState<GeneVariantType[]>();
+  const [msi, setMsi] = useState<MsiType>();
 
-  const [microbial, setMicrobial] = useState<Record<string, unknown>>({ species: '' });
-  const [tCellCd8, setTCellCd8] = useState<Record<string, unknown>>();
-  const [primaryComparator, setPrimaryComparator] = useState<Record<string, unknown>>();
+  const [microbial, setMicrobial] = useState<MicrobialType>({
+    species: '',
+    integrationSite: '',
+    ident: '',
+    createdAt: null,
+    updatedAt: null,
+  });
+  const [tCellCd8, setTCellCd8] = useState<ImmuneType>();
+  const [primaryComparator, setPrimaryComparator] = useState<ComparatorType>();
   const [variantFilter, setVariantFilter] = useState<string>('');
   const [variantCounts, setVariantCounts] = useState({
     smallMutation: 0,
@@ -96,7 +110,16 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
   useEffect(() => {
     if (report) {
       const getData = async () => {
-        const call = api.get(`/reports/${report.ident}/immune-cell-types`, {});
+        const apiCalls = new ApiCallSet([
+          api.get(`/reports/${report.ident}/summary/microbial`, {}),
+          api.get(`/reports/${report.ident}/summary/genomic-alterations-identified`, {}),
+          api.get(`/reports/${report.ident}/comparators`, {}),
+          api.get(`/reports/${report.ident}/mutation-signatures`, {}),
+          api.get(`/reports/${report.ident}/mutation-burden`, {}),
+          api.get(`/reports/${report.ident}/immune-cell-types`, {}),
+          api.get(`/reports/${report.ident}/msi`, {}),
+        ]);
+
         const [
           microbialResp,
           variantsResp,
@@ -104,23 +127,21 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
           signaturesResp,
           burdenResp,
           immuneResp,
-        ] = await Promise.all([
-          getMicrobial(report.ident),
-          AlterationsService.all(report.ident),
-          getComparators(report.ident),
-          getMutationSignatures(report.ident),
-          getMutationBurden(report.ident),
-          call.request(),
-        ]);
+          msiResp,
+        ] = await apiCalls.request();
 
         setPrimaryComparator(comparatorsResp.find(({ analysisRole }) => analysisRole === 'mutation burden (primary)'));
         setPrimaryBurden(burdenResp.find((entry: Record<string, unknown>) => entry.role === 'primary'));
         setTCellCd8(immuneResp.find(({ cellType }) => cellType === 'T cells CD8'));
+        setSignatures(signaturesResp);
 
         if (microbialResp.length) {
           setMicrobial(microbialResp[0]);
         }
-        setSignatures(signaturesResp);
+
+        if (msiResp.length) {
+          setMsi(msiResp[0]);
+        }
 
         const output = [];
         const counts = {
@@ -143,7 +164,9 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
         const sorted = sortBy(output, [customTypeSort, 'geneVariant']);
         setVariants(sorted);
         setVariantCounts(counts);
-        loadedDispatch({ type: 'summary' });
+        if (loadedDispatch) {
+          loadedDispatch({ type: 'summary' });
+        }
       };
 
       getData();
@@ -211,6 +234,18 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
         sigs = 'Nothing of clinical relevance';
       }
 
+      let msiStatus: null | string;
+      if (msi) {
+        if (msi?.score < 20) {
+          msiStatus = 'MSS';
+        }
+        if (msi?.score >= 20) {
+          msiStatus = 'MSI';
+        }
+      } else {
+        msiStatus = null;
+      }
+
       setTumourSummary([
         {
           term: 'Tumour Content',
@@ -251,11 +286,11 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
         },
         {
           term: 'MSI Status',
-          value: null,
+          value: msiStatus,
         },
       ]);
     }
-  }, [history, microbial, microbial.species, primaryBurden, primaryComparator, print, report, signatures, tCellCd8]);
+  }, [history, microbial, microbial.species, primaryBurden, primaryComparator, print, report, signatures, tCellCd8, msi]);
 
   const handleChipDeleted = useCallback(async (chipIdent, type, comment) => {
     try {
@@ -469,17 +504,6 @@ const GenomicSummary = ({ print, loadedDispatch }: GenomicSummaryProps): JSX.Ele
       )}
     </div>
   );
-};
-
-GenomicSummary.propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types
-  print: PropTypes.bool,
-  loadedDispatch: PropTypes.func,
-};
-
-GenomicSummary.defaultProps = {
-  print: false,
-  loadedDispatch: () => {},
 };
 
 export default GenomicSummary;

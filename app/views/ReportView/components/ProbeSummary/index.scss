@@ -55,13 +55,27 @@
     margin: 0 auto;
 
     &__patient-information {
+      margin: 0 0 22px;
+
       &-title {
         margin: 0 0 16px;
       }
     }
 
     &__test-information {
-      margin: 16px 0;
+      margin: 22px 0;
+
+      &-title {
+        margin: 0 0 16px;
+      }
+    }
+
+    &__sample-information {
+      margin: 22px 0;
+    }
+
+    &__events {
+      margin: 22px 0;
 
       &-title {
         margin: 0 0 16px;

@@ -21,8 +21,8 @@ const ConfigTable = ({ config, isPrint }: ConfigTableProps): JSX.Element => {
   }
   return (
     <table className="config__table">
-      {config.split('\n').map((row) => (
-        <tr key={row}>
+      {config.split('\n').map((row, index) => (
+        <tr key={`${row}${index}`}>
           <td>{row}</td>
         </tr>
       ))}
