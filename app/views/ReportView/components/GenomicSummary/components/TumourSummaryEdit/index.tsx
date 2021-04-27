@@ -97,7 +97,7 @@ const TumourSummaryEdit = ({
       const apiCalls = [];
 
       if (newMicrobialData) {
-        if (microbial) {
+        if (microbial?.ident) {
           apiCalls.push(api.put(`/reports/${report.ident}/summary/microbial/${microbial.ident}`, newMicrobialData, {}));
         } else {
           apiCalls.push(api.post(`/reports/${report.ident}/summary/microbial`, newMicrobialData, {}));
@@ -113,7 +113,7 @@ const TumourSummaryEdit = ({
       }
 
       if (newMutationBurdenData) {
-        if (mutationBurden) {
+        if (mutationBurden?.ident) {
           apiCalls.push(api.put(`/reports/${report.ident}/mutation-burden/${mutationBurden.ident}`, newMutationBurdenData, {}));
         } else {
           apiCalls.push(api.post(`/reports/${report.ident}/mutation-burden`, newMutationBurdenData, {}));
