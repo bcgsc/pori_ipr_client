@@ -103,7 +103,7 @@ const Print = () => {
           )}
           {template?.sections.includes('analyst-comments') && (
             <>
-              <AnalystComments report={report} print loadedDispatch={dispatch} />
+              <AnalystComments report={report} isPrint loadedDispatch={dispatch} />
               <PageBreak report={report} theme={theme} />
             </>
           )}
@@ -121,7 +121,7 @@ const Print = () => {
           )}
           {template?.sections.includes('slides') && (
             <>
-              <Slides report={report} print loadedDispatch={dispatch} theme={theme} />
+              <Slides report={report} isPrint loadedDispatch={dispatch} theme={theme} />
               <PageBreak report={report} theme={theme} />
             </>
           )}

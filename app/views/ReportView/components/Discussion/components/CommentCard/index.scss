@@ -1,0 +1,47 @@
+@import '../../../../../../styles/variables';
+
+.comment-card {
+  margin: 12px auto;
+
+  &__toolbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 16px 6px;
+    
+    & > * {
+      flex-basis: 33%;
+    }
+
+    & > :first-child {
+      text-align: start;
+    }
+
+    & > :nth-child(2) {
+      text-align: center;
+    }
+
+    & > :last-child {
+      text-align: end;
+    }
+  }
+
+  &__body {
+    padding: 16px;
+    hyphens: auto;
+  }
+
+  &__edit-icon {
+    padding: 2px;
+    margin: 0 0 1px 1px;
+
+    .MuiSvgIcon-root {
+      font-size: 1rem;
+    }
+  }
+
+  &__edit {
+    & > * {
+      margin: 4px;
+    }
+  }
+}
