@@ -4,7 +4,7 @@
 .print {
   height: 100vh;
   overflow-y: auto;
-  width: 8.5in;
+  max-width: 8.5in;
   margin: auto;
 
   &__logo {

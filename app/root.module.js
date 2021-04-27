@@ -14,8 +14,6 @@ import { CsvExportModule } from '@ag-grid-community/csv-export';
 
 import { NavBarComponent } from '@/components/NavBar';
 import { SidebarComponent } from '@/components/Sidebar';
-import { PathwayAnalysisComponent } from '@/views/ReportView/components/PathwayAnalysis';
-import { MicrobialComponent } from '@/views/ReportView/components/Microbial';
 import { SettingsComponent } from '@/views/ReportView/components/Settings';
 import { ReportComponent } from '@/views/GermlineView/components/Report';
 
@@ -40,8 +38,6 @@ angular.module('root', [
 const rootModule = angular.module('root')
   .component('navBar', NavBarComponent)
   .component('sidebar', SidebarComponent)
-  .component('pathwayAnalysis', PathwayAnalysisComponent)
-  .component('microbial', MicrobialComponent)
   .component('settings', SettingsComponent)
   .component('report', ReportComponent)
   .component('roleCard', RoleCardComponent)
