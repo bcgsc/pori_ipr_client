@@ -13,7 +13,7 @@ import ImageService from '@/services/reports/image.service';
 import { getMutationSignatures } from '@/services/reports/mutation-signature';
 import ImageType from '@/components/Image/types';
 import EditDialog from './components/EditDialog';
-import MutationSignatureType from './types.d';
+import MutationSignatureType from './types';
 import columnDefs from './columnDefs';
 
 import './index.scss';

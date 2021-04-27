@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   ReportContextType, ReportType, PatientInformationType, SampleInfoType,
-} from './types.d';
+} from './types';
 
 const ReportContext = React.createContext<ReportContextType>({
   report: null,
