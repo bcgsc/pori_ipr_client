@@ -13,7 +13,7 @@ import ImageService from '@/services/reports/image.service';
 import { getMutationSignatures } from '@/services/reports/mutation-signature';
 import ImageType from '@/components/Image/types';
 import EditDialog from './components/EditDialog';
-import SignatureType from './types';
+import MutationSignatureType from './types';
 import columnDefs from './columnDefs';
 
 import './index.scss';
@@ -28,13 +28,13 @@ const MutationSignatures = (): JSX.Element => {
   const { report } = useContext(ReportContext);
   const { canEdit } = useContext(EditContext);
   const [images, setImages] = useState<Record<string, ImageType>>({});
-  const [sbsSignatures, setSbsSignatures] = useState<SignatureType[]>([]);
-  const [dbsSignatures, setDbsSignatures] = useState<SignatureType[]>([]);
-  const [idSignatures, setIdSignatures] = useState<SignatureType[]>([]);
+  const [sbsSignatures, setSbsSignatures] = useState<MutationSignatureType[]>([]);
+  const [dbsSignatures, setDbsSignatures] = useState<MutationSignatureType[]>([]);
+  const [idSignatures, setIdSignatures] = useState<MutationSignatureType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const [showDialog, setShowDialog] = useState(false);
-  const [editData, setEditData] = useState<SignatureType | null>();
+  const [editData, setEditData] = useState<MutationSignatureType | null>();
 
   const snackbar = useSnackbar();
 
@@ -59,12 +59,12 @@ const MutationSignatures = (): JSX.Element => {
     }
   }, [report]);
 
-  const handleEditStart = (rowData: SignatureType) => {
+  const handleEditStart = (rowData: MutationSignatureType) => {
     setShowDialog(true);
     setEditData(rowData);
   };
 
-  const handleEditClose = useCallback((newData?: SignatureType) => {
+  const handleEditClose = useCallback((newData?: MutationSignatureType) => {
     setShowDialog(false);
     let newSignatures;
     let setter;
@@ -178,3 +178,5 @@ const MutationSignatures = (): JSX.Element => {
 };
 
 export default MutationSignatures;
+
+export { MutationSignatureType };
