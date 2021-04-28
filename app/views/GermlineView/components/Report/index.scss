@@ -146,4 +146,12 @@ table.material-table {
 .germline-report {
   height: calc(100% - 56px);
   padding: 16px;
+
+  &__table {
+    height: 100%;
+  }
+
+  &__titles {
+    margin: 8px 0;
+  }
 }

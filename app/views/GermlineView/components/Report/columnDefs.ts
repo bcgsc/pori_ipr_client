@@ -87,7 +87,10 @@ const columnDefs = [
   {
     headerName: 'Notes',
     field: 'notes',
+    autoHeight: true,
+    wrapText: true,
     hide: false,
+    width: 300,
   },
   {
     headerName: 'Type',
@@ -95,16 +98,20 @@ const columnDefs = [
     hide: false,
   },
   {
-    autoHeight: true,
-    cellClass: 'cell-wrap-text',
     headerName: 'Patient History',
     field: 'patientHistory',
+    autoHeight: true,
+    wrapText: true,
     hide: false,
+    width: 400,
   },
   {
     headerName: 'Family History',
     field: 'familyHistory',
+    autoHeight: true,
+    wrapText: true,
     hide: false,
+    width: 400,
   },
   {
     headerName: 'Gene Expression RPKM',

@@ -56,3 +56,7 @@ html body {
 .MuiTooltip-popper {
   top: -$navbar-size !important;
 }
+
+.ag-cell-wrap-text {
+  word-break: break-word !important;
+}
