@@ -1,6 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import {
+  Button,
+  Checkbox,
+  FormControlLabel,
   LinearProgress,
   Typography,
 } from '@material-ui/core';
@@ -8,6 +11,10 @@ import { AgGridReact } from '@ag-grid-community/react';
 
 import useGrid from '@/components/hooks/useGrid';
 import api from '@/services/api';
+import ReportContext from '@/components/ReportContext';
+import ActionCellRenderer from '@/components/DataTable/components/ActionCellRenderer';
+import StrikethroughCell from './components/StrikethroughCell';
+import EditDialog from './components/EditDialog';
 import columnDefs from './columnDefs';
 
 import './index.scss';
@@ -15,9 +22,12 @@ import './index.scss';
 const GermlineReport = (): JSX.Element => {
   const { ident } = useParams();
   const { gridApi, colApi, onGridReady } = useGrid();
-
   const [report, setReport] = useState();
+
   const [isLoading, setIsLoading] = useState(true);
+  const [showAllColumns, setShowAllColumns] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [editData, setEditData] = useState();
 
   useEffect(() => {
     if (ident) {
@@ -31,7 +41,7 @@ const GermlineReport = (): JSX.Element => {
       };
       getData();
     }
-  }, [ident]);
+  }, [ident, setReport]);
 
   useEffect(() => {
     if (colApi) {
@@ -40,31 +50,112 @@ const GermlineReport = (): JSX.Element => {
     }
   }, [colApi]);
 
+  const handleShowAllColumns = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const { checked } = event.target;
+    setShowAllColumns(checked);
+
+    if (checked) {
+      colApi.applyColumnState({ defaultState: { hide: false } });
+    } else {
+      colApi.resetColumnState();
+    }
+  }, [colApi]);
+
+  const onEdit = (rowData) => {
+    setShowEditDialog(true);
+    setEditData(rowData);
+  };
+
+  const handleEditClose = useCallback((newRow) => {
+    if (newRow) {
+      const newVariants = [...report.variants];
+      const index = newVariants.findIndex((variant) => variant.ident === newRow.ident);
+      newVariants[index] = newRow;
+      setReport((prevVal) => ({ ...prevVal, variants: newVariants }));
+    }
+    setShowEditDialog(false);
+  }, [report]);
+
+  const RowActionCellRenderer = (row) => {
+    const handleEdit = useCallback(() => {
+      onEdit(row.node.data);
+    }, [row]);
+
+    return (
+      <ActionCellRenderer
+        onEdit={handleEdit}
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        {...row}
+      />
+    );
+  };
+
   return (
-    <div className="germline-report">
-      {!isLoading && (
-        <>
-          <div className="germline-report__titles">
-            <Typography variant="h3">Germline Report</Typography>
-            <Typography variant="h5">{`${report.patientId} - ${report.normalLibrary}`}</Typography>
-            <Typography variant="caption">Variants with a strikethrough will not be included in report exports</Typography>
-          </div>
-          <div className="ag-theme-material germline-report__table">
-            <AgGridReact
-              autoSizePadding={0}
-              columnDefs={columnDefs}
-              domLayout="autoHeight"
-              onGridReady={onGridReady}
-              suppressColumnVirtualisation
-              rowData={report.variants}
+    <ReportContext.Provider value={{ report, setReport }}>
+      <div className="germline-report">
+        {!isLoading && (
+          <>
+            <div className="germline-report__titles">
+              <Typography variant="h3">Germline Report</Typography>
+              <div className="germline-report__titles--flex">
+                <Typography display="inline" variant="h5">
+                  {`${report.patientId} - ${report.normalLibrary}`}
+                </Typography>
+                <Button color="secondary" variant="outlined">Remove report</Button>
+              </div>
+              <div className="germline-report__titles--flex">
+                <Typography display="inline" variant="caption">
+                  Variants with a strikethrough will not be included in report exports
+                </Typography>
+                <FormControlLabel
+                  control={(
+                    <Checkbox
+                      checked={showAllColumns}
+                      onChange={handleShowAllColumns}
+                      color="secondary"
+                    />
+                  )}
+                  label="Show all columns"
+                />
+              </div>
+            </div>
+            <div className="ag-theme-material germline-report__table">
+              <AgGridReact
+                autoSizePadding={0}
+                columnDefs={columnDefs}
+                domLayout="autoHeight"
+                onGridReady={onGridReady}
+                suppressColumnVirtualisation
+                rowData={report.variants}
+                rowClassRules={{
+                  'strikethrough': (params) => params.data.hidden,
+                  'low-score': (params) => params.data.score < 100,
+                }}
+                gridOptions={{
+                  rowClass: 'center-text',
+                }}
+                frameworkComponents={{
+                  'strikethroughCell': StrikethroughCell,
+                  'actionCell': RowActionCellRenderer,
+                }}
+                context={{
+                  canEdit: true,
+                  canDelete: false,
+                }}
+              />
+            </div>
+            <EditDialog
+              isOpen={showEditDialog}
+              onClose={handleEditClose}
+              rowData={editData}
             />
-          </div>
-        </>
-      )}
-      {isLoading && (
-        <LinearProgress color="secondary" />
-      )}
-    </div>
+          </>
+        )}
+        {isLoading && (
+          <LinearProgress color="secondary" />
+        )}
+      </div>
+    </ReportContext.Provider>
   );
 };
 

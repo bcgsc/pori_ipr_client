@@ -1,8 +1,24 @@
 const columnDefs = [
   {
+    headerName: '',
+    hide: false,
+    cellRenderer: 'strikethroughCell',
+    minWidth: 100,
+  },
+  {
     headerName: 'Flagged',
     field: 'flagged',
     hide: false,
+  },
+  {
+    headerName: 'ClinVar',
+    field: 'clinvar',
+    hide: true,
+  },
+  {
+    headerName: 'CGL Category',
+    field: 'cglCategory',
+    hide: true,
   },
   {
     headerName: 'GMAF',
@@ -65,6 +81,21 @@ const columnDefs = [
     hide: false,
   },
   {
+    headerName: 'Genomic Variant Reads',
+    field: 'genomicVariantReads',
+    hide: true,
+  },
+  {
+    headerName: 'RNA Variant Reads',
+    field: 'rnaVariantReads',
+    hide: true,
+  },
+  {
+    headerName: 'Gene Somatic Abberation?',
+    field: 'geneSomaticAbberation',
+    hide: true,
+  },
+  {
     headerName: 'Preferred Transcript',
     field: 'preferredTranscript',
     hide: false,
@@ -114,9 +145,41 @@ const columnDefs = [
     width: 400,
   },
   {
+    headerName: 'tgca_comp_norm_percentile',
+    field: 'tcgaCompNormPercentile',
+    hide: true,
+  },
+  {
+    headerName: 'tcga_comp_percentile',
+    field: 'tcgaCompPercentile',
+    hide: true,
+  },
+  {
+    headerName: 'gtex_comp_average_percentile',
+    field: 'gtexCompPercentile',
+    hide: true,
+  },
+  {
+    headerName: 'fc_bodymap',
+    field: 'fcBodymap',
+    hide: true,
+  },
+  {
+    headerName: 'Additional Info',
+    field: 'additionalInfo',
+    hide: true,
+  },
+  {
     headerName: 'Gene Expression RPKM',
     field: 'geneExpressionRpkm',
     hide: false,
+  },
+  {
+    headerName: 'Actions',
+    cellRenderer: 'actionCell',
+    pinned: 'right',
+    sortable: false,
+    suppressMenu: true,
   },
 ];
 

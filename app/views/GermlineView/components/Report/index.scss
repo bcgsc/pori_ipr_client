@@ -153,5 +153,27 @@ table.material-table {
 
   &__titles {
     margin: 8px 0;
+
+    &--flex {
+      display: flex;
+      justify-content: space-between;
+    }
+  }
+}
+
+.strikethrough {
+  & > * {
+    text-decoration: line-through;
+  }
+};
+
+.low-score {
+  background-color: #E57373 !important;
+}
+
+.center-text {
+  & > * {
+    display: flex !important;
+    align-items: center;
   }
 }
