@@ -15,6 +15,7 @@ import ReportContext from '@/components/ReportContext';
 import ActionCellRenderer from '@/components/DataTable/components/ActionCellRenderer';
 import StrikethroughCell from './components/StrikethroughCell';
 import EditDialog from './components/EditDialog';
+import Reviews from './components/Reviews';
 import columnDefs from './columnDefs';
 
 import './index.scss';
@@ -149,6 +150,7 @@ const GermlineReport = (): JSX.Element => {
               onClose={handleEditClose}
               rowData={editData}
             />
+            <Reviews />
           </>
         )}
         {isLoading && (
