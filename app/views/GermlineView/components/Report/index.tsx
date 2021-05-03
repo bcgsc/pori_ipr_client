@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import {
   Button,
   Checkbox,
@@ -13,6 +13,8 @@ import useGrid from '@/components/hooks/useGrid';
 import api from '@/services/api';
 import ReportContext from '@/components/ReportContext';
 import ActionCellRenderer from '@/components/DataTable/components/ActionCellRenderer';
+import AlertDialog from '@/components/AlertDialog';
+import snackbar from '@/services/SnackbarUtils';
 import StrikethroughCell from './components/StrikethroughCell';
 import EditDialog from './components/EditDialog';
 import Reviews from './components/Reviews';
@@ -22,12 +24,14 @@ import './index.scss';
 
 const GermlineReport = (): JSX.Element => {
   const { ident } = useParams();
-  const { gridApi, colApi, onGridReady } = useGrid();
+  const { colApi, onGridReady } = useGrid();
+  const history = useHistory();
   const [report, setReport] = useState();
 
   const [isLoading, setIsLoading] = useState(true);
   const [showAllColumns, setShowAllColumns] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showAlertDialog, setShowAlertDialog] = useState(false);
   const [editData, setEditData] = useState();
 
   useEffect(() => {
@@ -46,7 +50,7 @@ const GermlineReport = (): JSX.Element => {
 
   useEffect(() => {
     if (colApi) {
-      const colIds = colApi.getAllColumns().filter(col => !col.colDef.autoHeight).map(col => col.colId);
+      const colIds = colApi.getAllColumns().filter((col) => !col.colDef.autoHeight).map((col) => col.colId);
       colApi.autoSizeColumns(colIds, false);
     }
   }, [colApi]);
@@ -91,6 +95,19 @@ const GermlineReport = (): JSX.Element => {
     );
   };
 
+  const handleConfirmDelete = useCallback(async (confirm) => {
+    setShowAlertDialog(false);
+    if (confirm) {
+      try {
+        await api.del(`/germline-small-mutation-reports/${report.ident}`, {}, {}).request();
+        snackbar.success('Report deleted');
+        history.push('/germline');
+      } catch (err) {
+        snackbar.error(`Error deleting report: ${err}`);
+      }
+    }
+  }, [report, history]);
+
   return (
     <ReportContext.Provider value={{ report, setReport }}>
       <div className="germline-report">
@@ -102,8 +119,22 @@ const GermlineReport = (): JSX.Element => {
                 <Typography display="inline" variant="h5">
                   {`${report.patientId} - ${report.normalLibrary}`}
                 </Typography>
-                <Button color="secondary" variant="outlined">Remove report</Button>
+                <Button
+                  color="secondary"
+                  onClick={() => setShowAlertDialog(true)}
+                  variant="outlined"
+                >
+                  Remove report
+                </Button>
               </div>
+              <AlertDialog
+                isOpen={showAlertDialog}
+                onClose={handleConfirmDelete}
+                title="Confirm"
+                text="Are you sure you want to delete this report?"
+                confirmText="Confirm"
+                cancelText="Cancel"
+              />
               <div className="germline-report__titles--flex">
                 <Typography display="inline" variant="caption">
                   Variants with a strikethrough will not be included in report exports
