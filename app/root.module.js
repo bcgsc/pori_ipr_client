@@ -16,8 +16,6 @@ import { NavBarComponent } from '@/components/NavBar';
 import { SidebarComponent } from '@/components/Sidebar';
 import { ReportComponent } from '@/views/GermlineView/components/Report';
 
-import RoleCardComponent from '@/components/RoleCard';
-
 import ReactBootstrap from './index';
 import lazyInjector from './lazyInjector';
 
@@ -38,7 +36,6 @@ const rootModule = angular.module('root')
   .component('navBar', NavBarComponent)
   .component('sidebar', SidebarComponent)
   .component('report', ReportComponent)
-  .component('roleCard', RoleCardComponent)
   .config(['$locationProvider', ($locationProvider) => {
     $locationProvider.html5Mode(true);
   }])
