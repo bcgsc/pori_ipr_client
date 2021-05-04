@@ -4,6 +4,10 @@
 
   &__config {
     padding: 16px;
+
+    @media print {
+      word-break: break-all;
+    }
   }
 }
 

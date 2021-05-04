@@ -7,23 +7,16 @@ import 'ngstorage';
 import 'angular-material/angular-material.min.css';
 import 'angular-sortable-view';
 import 'angular-file-upload';
-import 'ng-quill';
 import 'ngimport';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { CsvExportModule } from '@ag-grid-community/csv-export';
-import { react2angular } from 'react2angular';
 
 import { NavBarComponent } from '@/components/NavBar';
 import { SidebarComponent } from '@/components/Sidebar';
-import { SlidesComponent } from '@/views/ReportView/components/Slides';
-import { DiscussionComponent } from '@/views/ReportView/components/Discussion';
-import { MicrobialComponent } from '@/views/ReportView/components/Microbial';
 import { ReportComponent } from '@/views/GermlineView/components/Report';
 
-import DiscussionEntryComponent from '@/views/ReportView/components/Discussion/components/DiscussionEntry';
-import PaginateComponent from '@/components/Paginate';
-import PageBreak from '@/components/PageBreak';
+import RoleCardComponent from '@/components/RoleCard';
 
 import ReactBootstrap from './index';
 import lazyInjector from './lazyInjector';
@@ -39,19 +32,13 @@ angular.module('root', [
   'ngSanitize',
   'angularFileUpload',
   'bcherny/ngimport',
-  'ngQuill',
 ]);
 
 const rootModule = angular.module('root')
   .component('navBar', NavBarComponent)
   .component('sidebar', SidebarComponent)
-  .component('slides', SlidesComponent)
-  .component('discussion', DiscussionComponent)
-  .component('discussionEntry', DiscussionEntryComponent)
-  .component('microbial', MicrobialComponent)
   .component('report', ReportComponent)
-  .component('paginate', PaginateComponent)
-  .component('pageBreak', react2angular(PageBreak))
+  .component('roleCard', RoleCardComponent)
   .config(['$locationProvider', ($locationProvider) => {
     $locationProvider.html5Mode(true);
   }])

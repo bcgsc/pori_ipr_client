@@ -52,7 +52,6 @@ const Analysis = (): JSX.Element => {
           <>
             {!isAssigned && !adminUser ? (
               <Tooltip
-                classes={{ popper: 'tooltip-fix' }}
                 placement="right"
                 title="Only assigned users can start the analysis"
               >

@@ -37,6 +37,7 @@ html body {
   cursor: pointer;
 }
 
+// Fix for https://github.com/mui-org/material-ui/issues/20461
 .text-field-fix {
   margin: 20px 12px 10px !important;
   height: 40px;
@@ -51,6 +52,7 @@ html body {
   top: -$navbar-size !important;
 }
 
-.tooltip-fix {
+// Fix for tooltip not accounting for AppBar
+.MuiTooltip-popper {
   top: -$navbar-size !important;
 }

@@ -1,6 +1,6 @@
 import { RecordDefaults } from '@/common';
 
-type SignatureType = {
+type MutationSignatureType = {
   associations: string | null;
   cancerTypes: string | null;
   features: string | null;
@@ -12,4 +12,4 @@ type SignatureType = {
   signature: string | null;
 } & RecordDefaults;
 
-export default SignatureType;
+export default MutationSignatureType;

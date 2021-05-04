@@ -74,7 +74,7 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: ['.js', '.jsx', '.ts', '.tsx'],
+    extensions: ['.js', '.jsx', '.ts', '.tsx', '.d.ts'],
     alias: {
       '@': APP_PATH,
     },
