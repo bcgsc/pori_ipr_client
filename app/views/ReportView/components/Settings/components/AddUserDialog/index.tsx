@@ -23,7 +23,7 @@ import './index.scss';
 
 type AddUserDialogProps = {
   isOpen: boolean;
-  onAdd: (user?: UserType) => void;
+  onAdd: () => void;
 };
 
 const AddUserDialog = ({
