@@ -57,3 +57,8 @@ type GermlineReportType = {
   sourceVersion: string;
   variants: VariantType[];
 } & RecordDefaults;
+
+export {
+  GermlineReportType,
+  VariantType,
+};

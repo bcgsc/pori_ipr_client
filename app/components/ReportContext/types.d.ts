@@ -1,4 +1,5 @@
 import { RecordDefaults } from '@/common';
+import { GermlineReportType } from '@/views/GermlineView/types';
 
 type PatientInformationType = {
   age: string | null;
@@ -40,9 +41,9 @@ type ReportType = {
 
 type ReportContextType = {
   /** Current report that's being viewed */
-  report: ReportType | null,
+  report: ReportType | GermlineReportType | null,
   /** Set new current report */
-  setReport: (newReport: ReportType) => void;
+  setReport: (newReport: ReportType | GermlineReportType) => void;
 };
 
 export {

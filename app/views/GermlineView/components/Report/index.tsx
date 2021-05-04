@@ -19,6 +19,7 @@ import StrikethroughCell from './components/StrikethroughCell';
 import EditDialog from './components/EditDialog';
 import Reviews from './components/Reviews';
 import columnDefs from './columnDefs';
+import { GermlineReportType } from '../../types';
 
 import './index.scss';
 
@@ -26,7 +27,7 @@ const GermlineReport = (): JSX.Element => {
   const { ident } = useParams();
   const { colApi, onGridReady } = useGrid();
   const history = useHistory();
-  const [report, setReport] = useState();
+  const [report, setReport] = useState<GermlineReportType>();
 
   const [isLoading, setIsLoading] = useState(true);
   const [showAllColumns, setShowAllColumns] = useState(false);
@@ -66,10 +67,10 @@ const GermlineReport = (): JSX.Element => {
     }
   }, [colApi]);
 
-  const onEdit = (rowData) => {
+  const onEdit = useCallback((rowData) => {
     setShowEditDialog(true);
     setEditData(rowData);
-  };
+  }, []);
 
   const handleEditClose = useCallback((newRow) => {
     if (newRow) {
@@ -81,19 +82,13 @@ const GermlineReport = (): JSX.Element => {
     setShowEditDialog(false);
   }, [report]);
 
-  const RowActionCellRenderer = (row) => {
-    const handleEdit = useCallback(() => {
-      onEdit(row.node.data);
-    }, [row]);
-
-    return (
-      <ActionCellRenderer
-        onEdit={handleEdit}
-        // eslint-disable-next-line react/jsx-props-no-spreading
-        {...row}
-      />
-    );
-  };
+  const RowActionCellRenderer = useCallback((row) => (
+    <ActionCellRenderer
+      onEdit={() => onEdit(row.node.data)}
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      {...row}
+    />
+  ), [onEdit]);
 
   const handleConfirmDelete = useCallback(async (confirm) => {
     setShowAlertDialog(false);

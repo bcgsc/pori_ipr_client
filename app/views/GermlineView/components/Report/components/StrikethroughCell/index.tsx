@@ -12,7 +12,7 @@ import snackbar from '@/services/SnackbarUtils';
 const StrikethroughCell = (params: ICellRendererParams): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
 
-  const [isHidden, setIsHidden] = useState(params.data.hidden);
+  const [isHidden, setIsHidden] = useState<boolean>(params.data.hidden);
 
   const handleChange = useCallback(async () => {
     try {
@@ -21,7 +21,7 @@ const StrikethroughCell = (params: ICellRendererParams): JSX.Element => {
         { hidden: !isHidden },
         {},
       ).request();
-      setIsHidden((prevVal: boolean) => !prevVal);
+      setIsHidden((prevVal) => !prevVal);
       setReport((prevVal) => {
         const index = prevVal.variants.findIndex((variant) => variant.ident === updatedVariant.ident);
         const newVariants = [...prevVal.variants];

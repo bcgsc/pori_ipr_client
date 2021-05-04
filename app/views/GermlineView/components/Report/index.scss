@@ -151,6 +151,7 @@ table.material-table {
     margin: 8px 0;
 
     &--flex {
+      align-items: center;
       display: flex;
       justify-content: space-between;
     }
