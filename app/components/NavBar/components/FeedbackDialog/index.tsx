@@ -41,10 +41,10 @@ const FeedbackDialog = ({
       <div className="feedback__section">
         <Typography variant="h5">External Users</Typography>
         <Link
-          href="mailto:ipr@bcgsc.ca"
+          href={`mailto:${window._env_.CONTACT_EMAIL}`}
           underline="always"
         >
-          Click here to email ipr@bcgsc.ca with your feedback or bug report.
+          {`Click here to email ${window._env_.CONTACT_EMAIL} with your feedback or bug report.`}
         </Link>
       </div>
     </DialogContent>
@@ -52,7 +52,7 @@ const FeedbackDialog = ({
       <Button onClick={onClose}>Close</Button>
       <Button
         color="secondary"
-        href="https://www.bcgsc.ca/jira/secure/CreateIssue!default.jspa"
+        href={window._env_.CONTACT_TICKET_URL}
         target="_blank"
       >
         Create Ticket
