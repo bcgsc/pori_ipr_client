@@ -12,7 +12,6 @@ import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { CsvExportModule } from '@ag-grid-community/csv-export';
 
-import { NavBarComponent } from '@/components/NavBar';
 import { SidebarComponent } from '@/components/Sidebar';
 import { SettingsComponent } from '@/views/ReportView/components/Settings';
 import { ReportComponent } from '@/views/GermlineView/components/Report';
@@ -36,7 +35,6 @@ angular.module('root', [
 ]);
 
 const rootModule = angular.module('root')
-  .component('navBar', NavBarComponent)
   .component('sidebar', SidebarComponent)
   .component('settings', SettingsComponent)
   .component('report', ReportComponent)
