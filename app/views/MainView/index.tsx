@@ -16,7 +16,7 @@ import SecurityContext from '@/components/SecurityContext';
 import EditContext from '@/components/EditContext';
 import SnackbarContext from '@/components/SnackbarContext';
 import NavBar from '@/components/NavBar';
-import Sidebar from '@/components/Sidebar';
+import Sidebar from '@/components/Sidebar/index.tsx';
 import AclService from '@/services/management/acl.service';
 
 import './index.scss';

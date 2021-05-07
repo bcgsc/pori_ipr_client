@@ -1,0 +1,19 @@
+@import '../../styles/variables';
+
+.sidebar {
+  &__minimize {
+    padding: 4px 4px;
+  }
+
+  &__paper {
+    width: $navbar-size !important;
+    background-color: $white-background !important;
+    z-index: $sidebar-z-index !important;
+    transition: width $transition-normal !important;
+
+    &--maximized {
+      width: $sidebar-size !important;
+      transition: width $transition-normal !important;
+    }
+  }
+}
