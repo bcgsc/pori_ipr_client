@@ -25,6 +25,7 @@ type SampleInfoType = {
 
 type ReportType = {
   alternateIdentifier?: string;
+  analysisStartedAt: string | null;
   biopsyName?: string;
   kbVersion: string;
   patientId: string;

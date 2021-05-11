@@ -14,10 +14,7 @@ import { CsvExportModule } from '@ag-grid-community/csv-export';
 
 import { NavBarComponent } from '@/components/NavBar';
 import { SidebarComponent } from '@/components/Sidebar';
-import { SettingsComponent } from '@/views/ReportView/components/Settings';
 import { ReportComponent } from '@/views/GermlineView/components/Report';
-
-import RoleCardComponent from '@/components/RoleCard';
 
 import ReactBootstrap from './index';
 import lazyInjector from './lazyInjector';
@@ -38,9 +35,7 @@ angular.module('root', [
 const rootModule = angular.module('root')
   .component('navBar', NavBarComponent)
   .component('sidebar', SidebarComponent)
-  .component('settings', SettingsComponent)
   .component('report', ReportComponent)
-  .component('roleCard', RoleCardComponent)
   .config(['$locationProvider', ($locationProvider) => {
     $locationProvider.html5Mode(true);
   }])
