@@ -73,7 +73,6 @@ const Reviews = (): JSX.Element => {
   const DeleteCellRenderer = useCallback((row) => (
     <DeleteCell
       onDelete={() => handleRowDelete(row)}
-      row={row}
     />
   ), [handleRowDelete]);
 

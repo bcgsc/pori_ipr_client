@@ -1,7 +1,7 @@
 import { formatDate } from '@/utils/date';
-import { ICellRendererParams } from '@ag-grid-community/core';
+import { ColDef, ICellRendererParams } from '@ag-grid-community/core';
 
-const columnDefs = [
+const columnDefs: ColDef[] = [
   {
     headerName: 'Reviewer',
     valueGetter: 'data.reviewer.firstName + " " + data.reviewer.lastName',

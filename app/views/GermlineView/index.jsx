@@ -8,14 +8,14 @@ import {
 import './index.scss';
 
 const Board = lazy(() => import('./components/Board'));
-const Report = lazy(() => import('./components/Report/index.tsx'));
+const Report = lazy(() => import('./components/Report'));
 
 const GermlineView = () => (
   <div className="germline__container">
     <Switch>
       <Route component={Board} exact path="/germline" />
       <Route
-        render={routeProps => (
+        render={(routeProps) => (
           <Report {...routeProps} />
         )}
         path="/germline/report/:ident"

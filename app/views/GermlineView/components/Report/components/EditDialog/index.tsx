@@ -17,7 +17,7 @@ import ReportContext from '@/components/ReportContext';
 type EditDialogProps = {
   isOpen: boolean;
   onClose: (patientHistory?: string, familyHistory?: string) => void;
-  rowData: Record<string, unknown>;
+  rowData: Record<string, string>;
 };
 
 const EditDialog = ({
@@ -39,7 +39,7 @@ const EditDialog = ({
 
   const handleSaveHistory = useCallback(async () => {
     try {
-      const updateFields = {};
+      const updateFields: Record<string, unknown> = {};
       if (patientHistory !== rowData.patientHistory) {
         updateFields.patientHistory = patientHistory;
       }
