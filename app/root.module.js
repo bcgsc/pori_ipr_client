@@ -12,7 +12,6 @@ import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { CsvExportModule } from '@ag-grid-community/csv-export';
 
-import { SidebarComponent } from '@/components/Sidebar';
 import { ReportComponent } from '@/views/GermlineView/components/Report';
 
 import ReactBootstrap from './index';
@@ -32,7 +31,6 @@ angular.module('root', [
 ]);
 
 const rootModule = angular.module('root')
-  .component('sidebar', SidebarComponent)
   .component('report', ReportComponent)
   .config(['$locationProvider', ($locationProvider) => {
     $locationProvider.html5Mode(true);
