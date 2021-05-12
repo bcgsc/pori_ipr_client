@@ -35,8 +35,10 @@
   width: 100%;
   transition: width $transition-normal !important;
 
-  &--minimized {
-    width: calc(100% - 240px) !important;
-    transition: width $transition-normal !important;
+  @media (min-width: $breakpoint-sm) {
+    &--minimized {
+      width: calc(100% - 240px) !important;
+      transition: width $transition-normal !important;
+    }
   }
 }
