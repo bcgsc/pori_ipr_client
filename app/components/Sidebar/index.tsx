@@ -8,7 +8,6 @@ import {
   Link,
   List,
   ListItem,
-  SvgIcon,
   Typography,
 } from '@material-ui/core';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
@@ -20,7 +19,7 @@ import PeopleIcon from '@material-ui/icons/People';
 import FolderSharedIcon from '@material-ui/icons/FolderShared';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 
-import GermlineIcon from '@/../statics/images/germline_icon.svg';
+import GermlineIcon from '@/statics/images/germline_icon.svg';
 import SidebarContext from '../SidebarContext';
 
 import './index.scss';
