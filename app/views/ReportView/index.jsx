@@ -39,7 +39,7 @@ const StructuralVariants = lazy(() => import('./components/StructuralVariants'))
 const Expression = lazy(() => import('./components/Expression'));
 const Immune = lazy(() => import('./components/Immune'));
 const Appendices = lazy(() => import('./components/Appendices'));
-const Settings = lazy(() => import('./components/Settings'));
+const Settings = lazy(() => import('./components/Settings/index.tsx'));
 const ProbeSummary = lazy(() => import('./components/ProbeSummary'));
 
 const ReportView = () => {
@@ -223,12 +223,7 @@ const ReportView = () => {
                   render={(routeProps) => (
                     <Settings
                       {...routeProps}
-                      print={false}
-                      showBindings={!isProbe}
-                      report={report}
-                      canEdit={canEdit}
-                      isSigned={isSigned}
-                      templates={templates}
+                      isProbe={isProbe}
                     />
                   )}
                   path={`${path}/settings`}
