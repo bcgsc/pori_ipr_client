@@ -5,11 +5,11 @@ import React, {
 } from 'react';
 import PropTypes from 'prop-types';
 import { AgGridReact } from '@ag-grid-community/react';
-import useGrid from '@/components/hooks/useGrid';
 import omit from 'lodash.omit';
 
-import ReportContext from '../../../../../../components/ReportContext';
+import useGrid from '@/hooks/useGrid';
 import { therapeuticGet } from '@/services/reports/therapeutic';
+import ReportContext from '../../../../../../components/ReportContext';
 
 import './index.scss';
 

@@ -9,7 +9,7 @@ import {
 } from '@material-ui/core';
 import { AgGridReact } from '@ag-grid-community/react';
 
-import useGrid from '@/components/hooks/useGrid';
+import useGrid from '@/hooks/useGrid';
 import api from '@/services/api';
 import ReportContext from '@/components/ReportContext';
 import ActionCellRenderer from '@/components/DataTable/components/ActionCellRenderer';

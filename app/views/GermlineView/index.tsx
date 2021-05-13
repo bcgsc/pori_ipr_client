@@ -10,7 +10,7 @@ import './index.scss';
 const Board = lazy(() => import('./components/Board'));
 const Report = lazy(() => import('./components/Report'));
 
-const GermlineView = () => (
+const GermlineView = (): JSX.Element => (
   <div className="germline__container">
     <Switch>
       <Route component={Board} exact path="/germline" />
