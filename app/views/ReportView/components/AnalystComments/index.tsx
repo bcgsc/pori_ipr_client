@@ -10,10 +10,10 @@ import {
 import EditIcon from '@material-ui/icons/Edit';
 
 import api, { ApiCallSet } from '@/services/api';
-import EditContext from '@/components/EditContext';
-import ReportContext from '@/components/ReportContext';
+import EditContext from '@/context/EditContext';
+import ReportContext from '@/context/ReportContext';
 import SignatureCard, { SignatureType } from '@/components/SignatureCard';
-import ConfirmContext from '@/components/ConfirmContext';
+import ConfirmContext from '@/context/ConfirmContext';
 import TextEditor from './components/TextEditor';
 
 import './index.scss';

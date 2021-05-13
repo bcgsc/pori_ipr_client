@@ -8,7 +8,7 @@ import {
 
 import api from '@/services/api';
 import { ImageType } from '@/components/Image';
-import ReportContext from '@/components/ReportContext';
+import ReportContext from '@/context/ReportContext';
 import PathwayImageType from './types';
 import Legend from './components/Legend';
 import Pathway from './components/Pathway';

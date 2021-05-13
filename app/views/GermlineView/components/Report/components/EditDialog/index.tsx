@@ -12,7 +12,7 @@ import {
 
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
-import ReportContext from '@/components/ReportContext';
+import ReportContext from '@/context/ReportContext';
 
 type EditDialogProps = {
   isOpen: boolean;

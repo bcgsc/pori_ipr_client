@@ -6,7 +6,7 @@ import { HorizontalBar, Chart } from 'react-chartjs-2';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Typography } from '@material-ui/core';
 
-import ReportContext from '../../../../components/ReportContext';
+import ReportContext from '../../../../context/ReportContext';
 import ImageService from '../../../../services/reports/image.service';
 import DataTable from '../../../../components/DataTable';
 import columnDefs from './columnDefs';

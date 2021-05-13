@@ -6,7 +6,7 @@ import { Typography } from '@material-ui/core';
 import { useTheme } from '@material-ui/core/styles';
 
 import api from '@/services/api';
-import ReportContext from '../../components/ReportContext';
+import ReportContext from '../../context/ReportContext';
 import ReportService from '@/services/reports/report.service';
 import GenomicSummary from '../ReportView/components/GenomicSummary';
 import ProbeSummary from '../ReportView/components/ProbeSummary';

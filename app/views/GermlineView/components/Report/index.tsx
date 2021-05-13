@@ -11,7 +11,7 @@ import { AgGridReact } from '@ag-grid-community/react';
 
 import useGrid from '@/hooks/useGrid';
 import api from '@/services/api';
-import ReportContext from '@/components/ReportContext';
+import ReportContext from '@/context/ReportContext';
 import ActionCellRenderer from '@/components/DataTable/components/ActionCellRenderer';
 import AlertDialog from '@/components/AlertDialog';
 import snackbar from '@/services/SnackbarUtils';

@@ -12,7 +12,7 @@ import {
 } from '@material-ui/core';
 import { AgGridReact } from '@ag-grid-community/react';
 
-import ReportContext from '@/components/ReportContext';
+import ReportContext from '@/context/ReportContext';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DeleteCell from './components/DeleteCell';

@@ -14,7 +14,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import CloseIcon from '@material-ui/icons/Close';
 import { useSnackbar } from 'notistack';
 
-import ReportContext from '@/components/ReportContext';
+import ReportContext from '@/context/ReportContext';
 import SecurityContext from '@/components/SecurityContext';
 import api from '@/services/api';
 import { formatDate } from '@/utils/date';

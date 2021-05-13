@@ -13,9 +13,9 @@ import { useSnackbar } from 'notistack';
 
 import api, { ApiCallSet } from '@/services/api';
 import DemoDescription from '@/components/DemoDescription';
-import EditContext from '@/components/EditContext';
+import EditContext from '@/context/EditContext';
 import DataTable from '@/components/DataTable';
-import ReportContext from '@/components/ReportContext';
+import ReportContext from '@/context/ReportContext';
 import { columnDefs, targetedColumnDefs } from './columnDefs';
 import coalesceEntries from './coalesce';
 

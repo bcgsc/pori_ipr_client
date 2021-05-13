@@ -7,8 +7,8 @@ import { useSnackbar } from 'notistack';
 
 import DemoDescription from '@/components/DemoDescription';
 import DataTable from '@/components/DataTable';
-import ReportContext from '@/components/ReportContext';
-import EditContext from '@/components/EditContext';
+import ReportContext from '@/context/ReportContext';
+import EditContext from '@/context/EditContext';
 import ImageService from '@/services/reports/image.service';
 import { getMutationSignatures } from '@/services/reports/mutation-signature';
 import ImageType from '@/components/Image/types';

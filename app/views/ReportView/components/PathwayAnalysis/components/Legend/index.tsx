@@ -9,9 +9,9 @@ import PublishIcon from '@material-ui/icons/Publish';
 import { useSnackbar } from 'notistack';
 
 import api from '@/services/api';
-import EditContext from '@/components/EditContext';
-import ReportContext from '@/components/ReportContext';
-import ConfirmContext from '@/components/ConfirmContext';
+import EditContext from '@/context/EditContext';
+import ReportContext from '@/context/ReportContext';
+import ConfirmContext from '@/context/ConfirmContext';
 import Image, { ImageType } from '@/components/Image';
 
 type LegendProps = {

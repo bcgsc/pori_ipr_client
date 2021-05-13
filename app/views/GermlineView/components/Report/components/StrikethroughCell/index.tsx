@@ -6,7 +6,7 @@ import StrikethroughSIcon from '@material-ui/icons/StrikethroughS';
 import { ICellRendererParams } from '@ag-grid-community/core';
 
 import api from '@/services/api';
-import ReportContext from '@/components/ReportContext';
+import ReportContext from '@/context/ReportContext';
 import snackbar from '@/services/SnackbarUtils';
 
 const StrikethroughCell = (params: ICellRendererParams): JSX.Element => {

@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 
-import ReportContext from '../../../../../../components/ReportContext';
+import ReportContext from '../../../../../../context/ReportContext';
 
 import './index.scss';
 
