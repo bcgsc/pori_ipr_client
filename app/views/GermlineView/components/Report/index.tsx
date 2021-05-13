@@ -15,11 +15,11 @@ import ReportContext from '@/context/ReportContext';
 import ActionCellRenderer from '@/components/DataTable/components/ActionCellRenderer';
 import AlertDialog from '@/components/AlertDialog';
 import snackbar from '@/services/SnackbarUtils';
+import { GermlineReportType } from '@/context/GermlineReportContext/types';
 import StrikethroughCell from './components/StrikethroughCell';
 import EditDialog from './components/EditDialog';
 import Reviews from './components/Reviews';
 import columnDefs from './columnDefs';
-import { GermlineReportType } from '../../types';
 
 import './index.scss';
 

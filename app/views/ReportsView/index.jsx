@@ -7,7 +7,7 @@ import { AgGridReact } from '@ag-grid-community/react';
 import columnDefs from './columnDefs';
 import startCase from '@/utils/startCase';
 import { isExternalMode } from '@/services/management/auth';
-import SecurityContext from '@/components/SecurityContext';
+import SecurityContext from '@/context/SecurityContext';
 import ReportService from '@/services/reports/report.service';
 
 import './index.scss';

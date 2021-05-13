@@ -4,7 +4,7 @@ import {
 } from '@testing-library/react';
 
 import ReportContext from '@/context/ReportContext';
-import SecurityContext from '@/components/SecurityContext';
+import SecurityContext from '@/context/SecurityContext';
 import { formatDate } from '@/utils/date';
 import CommentCard from '..';
 

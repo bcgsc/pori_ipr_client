@@ -1,5 +1,4 @@
 import { RecordDefaults } from '@/common';
-import { GermlineReportType } from '@/views/GermlineView/types';
 import React from 'react';
 
 type PatientInformationType = {
@@ -42,9 +41,9 @@ type ReportType = {
 
 type ReportContextType = {
   /** Current report that's being viewed */
-  report: ReportType | GermlineReportType | null,
+  report: ReportType | null,
   /** Set new current report */
-  setReport: React.Dispatch<React.SetStateAction<ReportType | GermlineReportType>>;
+  setReport: React.Dispatch<React.SetStateAction<ReportType>>;
 };
 
 export {
