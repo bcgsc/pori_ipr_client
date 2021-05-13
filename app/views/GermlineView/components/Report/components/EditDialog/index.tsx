@@ -12,7 +12,7 @@ import {
 
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
-import ReportContext from '@/context/ReportContext';
+import GermlineReportContext from '@/context/GermlineReportContext';
 
 type EditDialogProps = {
   isOpen: boolean;
@@ -25,7 +25,7 @@ const EditDialog = ({
   onClose,
   rowData,
 }: EditDialogProps): JSX.Element => {
-  const { report } = useContext(ReportContext);
+  const { report } = useContext(GermlineReportContext);
 
   const [patientHistory, setPatientHistory] = useState('');
   const [familyHistory, setFamilyHistory] = useState('');

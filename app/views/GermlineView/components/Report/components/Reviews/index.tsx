@@ -12,7 +12,7 @@ import {
 } from '@material-ui/core';
 import { AgGridReact } from '@ag-grid-community/react';
 
-import ReportContext from '@/context/ReportContext';
+import GermlineReportContext from '@/context/GermlineReportContext';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DeleteCell from './components/DeleteCell';
@@ -22,7 +22,7 @@ import '@/components/PrintTable/index.scss';
 import './index.scss';
 
 const Reviews = (): JSX.Element => {
-  const { report, setReport } = useContext(ReportContext);
+  const { report, setReport } = useContext(GermlineReportContext);
 
   const [isEditing, setIsEditing] = useState(false);
   const [newComment, setNewComment] = useState('');

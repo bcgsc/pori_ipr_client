@@ -11,7 +11,7 @@ import { AgGridReact } from '@ag-grid-community/react';
 
 import useGrid from '@/hooks/useGrid';
 import api from '@/services/api';
-import ReportContext from '@/context/ReportContext';
+import GermlineReportContext from '@/context/GermlineReportContext';
 import ActionCellRenderer from '@/components/DataTable/components/ActionCellRenderer';
 import AlertDialog from '@/components/AlertDialog';
 import snackbar from '@/services/SnackbarUtils';
@@ -104,7 +104,7 @@ const GermlineReport = (): JSX.Element => {
   }, [report, history]);
 
   return (
-    <ReportContext.Provider value={{ report, setReport }}>
+    <GermlineReportContext.Provider value={{ report, setReport }}>
       <div className="germline-report">
         {!isLoading && (
           <>
@@ -183,7 +183,7 @@ const GermlineReport = (): JSX.Element => {
           <LinearProgress color="secondary" />
         )}
       </div>
-    </ReportContext.Provider>
+    </GermlineReportContext.Provider>
   );
 };
 
