@@ -11,7 +11,7 @@ import PersonIcon from '@material-ui/icons/Person';
 
 import { UserType } from '@/common';
 import startCase from '@/utils/startCase';
-import EditContext from '@/components/EditContext';
+import EditContext from '@/context/EditContext';
 
 import './index.scss';
 

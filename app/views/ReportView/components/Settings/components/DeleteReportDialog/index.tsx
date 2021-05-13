@@ -9,7 +9,7 @@ import {
   Typography,
 } from '@material-ui/core';
 
-import ReportContext from '@/components/ReportContext';
+import ReportContext from '@/context/ReportContext';
 
 import './index.scss';
 
