@@ -9,7 +9,7 @@ import {
 } from '@material-ui/core';
 
 import api from '@/services/api';
-import ReportContext from '@/components/ReportContext';
+import ReportContext from '@/context/ReportContext';
 import Image, { ImageType } from '@/components/Image';
 
 const Microbial = (): JSX.Element => {

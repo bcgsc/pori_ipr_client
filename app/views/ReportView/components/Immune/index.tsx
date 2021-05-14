@@ -3,7 +3,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import DemoDescription from '@/components/DemoDescription';
 import DataTable from '@/components/DataTable';
 import Image, { ImageType } from '@/components/Image';
-import ReportContext from '@/components/ReportContext';
+import ReportContext from '@/context/ReportContext';
 import api, { ApiCallSet } from '@/services/api';
 import { hlaColumnDefs, cellTypesColumnDefs } from './columnDefs';
 import { ImmuneType, HlaType } from './types';

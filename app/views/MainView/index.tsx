@@ -12,9 +12,9 @@ import { $httpProvider } from 'ngimport';
 
 import SidebarContext from '@/components/SidebarContext';
 import AuthenticatedRoute from '@/components/AuthenticatedRoute';
-import SecurityContext from '@/components/SecurityContext';
-import EditContext from '@/components/EditContext';
-import SnackbarContext from '@/components/SnackbarContext';
+import SecurityContext from '@/context/SecurityContext';
+import EditContext from '@/context/EditContext';
+import SnackbarContext from '@/context/SnackbarContext';
 import NavBar from '@/components/NavBar';
 import Sidebar from '@/components/Sidebar';
 import AclService from '@/services/management/acl.service';

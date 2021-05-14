@@ -4,11 +4,11 @@ import React, {
 import { CircularProgress } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
 
-import api from '../../../../services/api';
-import DataTable from '../../../../components/DataTable';
+import api from '@/services/api';
+import DataTable from '@/components/DataTable';
+import { UserType } from '@/common';
 import columnDefs from './columnDefs';
 import AddEditUserDialog from './components/AddEditUserDialog';
-import { UserType } from '../../../../common';
 
 import './index.scss';
 

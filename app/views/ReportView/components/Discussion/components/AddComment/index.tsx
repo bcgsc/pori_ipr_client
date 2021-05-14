@@ -6,7 +6,7 @@ import {
 import { useSnackbar } from 'notistack';
 
 import api from '@/services/api';
-import ReportContext from '@/components/ReportContext';
+import ReportContext from '@/context/ReportContext';
 
 import './index.scss';
 

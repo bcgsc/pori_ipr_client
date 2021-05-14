@@ -15,7 +15,7 @@ import {
 
 import api from '@/services/api';
 import UserAutocomplete from '@/components/UserAutocomplete';
-import ReportContext from '@/components/ReportContext';
+import ReportContext from '@/context/ReportContext';
 import snackbar from '@/services/SnackbarUtils';
 import { UserType } from '@/common';
 

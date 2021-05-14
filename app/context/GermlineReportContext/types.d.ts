@@ -57,3 +57,16 @@ type GermlineReportType = {
   sourceVersion: string;
   variants: VariantType[];
 } & RecordDefaults;
+
+type GermlineReportContextType = {
+  /** Current report that's being viewed */
+  report: GermlineReportType | null,
+  /** Set new current report */
+  setReport: React.Dispatch<React.SetStateAction<GermlineReportType>>;
+};
+
+export {
+  GermlineReportContextType,
+  GermlineReportType,
+  VariantType,
+};

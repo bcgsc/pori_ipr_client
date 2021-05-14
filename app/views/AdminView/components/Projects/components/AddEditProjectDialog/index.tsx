@@ -11,20 +11,20 @@ import {
   FormControl,
 } from '@material-ui/core';
 
-import api from '../../../../../../services/api';
-import DataTable from '../../../../../../components/DataTable';
-import { projectType, shortReportType } from '../../../../types';
-import { userType } from '../../../../../../common';
+import api from '@/services/api';
+import DataTable from '@/components/DataTable';
+import { UserType } from '@/common';
+import ReportAutocomplete from '@/components/ReportAutocomplete';
+import UserAutocomplete from '@/components/UserAutocomplete';
+import { ProjectType, ShortReportType } from '../../../../types';
 import { userColumnDefs, reportColumnDefs } from './columnDefs';
-import ReportAutocomplete from '../../../../../../components/ReportAutocomplete';
-import UserAutocomplete from '../../../../../../components/UserAutocomplete';
 
 import './index.scss';
 
 type AddEditProjectDialogProps = {
   isOpen: boolean;
   onClose: (newData?: null | { name: string }) => void;
-  editData: null | projectType;
+  editData: null | ProjectType;
 };
 
 const reducer = (state, action) => {
@@ -48,8 +48,8 @@ const AddEditProjectDialog = ({
     projectName: false,
   });
   const [dialogTitle, setDialogTitle] = useState<string>('');
-  const [users, setUsers] = useState<userType[]>([]);
-  const [reports, setReports] = useState<shortReportType[]>([]);
+  const [users, setUsers] = useState<UserType[]>([]);
+  const [reports, setReports] = useState<ShortReportType[]>([]);
   const [apiCallQueue, apiCallQueueDispatch] = useReducer(reducer, []);
 
   useEffect(() => {

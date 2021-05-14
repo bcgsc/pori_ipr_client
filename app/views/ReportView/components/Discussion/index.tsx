@@ -5,7 +5,7 @@ import {
 } from '@material-ui/core';
 
 import api from '@/services/api';
-import ReportContext from '@/components/ReportContext';
+import ReportContext from '@/context/ReportContext';
 import CommentCard from './components/CommentCard';
 import AddComment from './components/AddComment';
 

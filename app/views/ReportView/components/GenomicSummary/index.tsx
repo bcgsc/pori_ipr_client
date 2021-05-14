@@ -13,11 +13,11 @@ import sortBy from 'lodash.sortby';
 
 import api, { ApiCallSet } from '@/services/api';
 import { formatDate } from '@/utils/date';
-import EditContext from '@/components/EditContext';
-import ConfirmContext from '@/components/ConfirmContext';
+import EditContext from '@/context/EditContext';
+import ConfirmContext from '@/context/ConfirmContext';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import DescriptionList from '@/components/DescriptionList';
-import ReportContext from '@/components/ReportContext';
+import ReportContext from '@/context/ReportContext';
 import VariantChips from './components/VariantChips';
 import VariantCounts from './components/VariantCounts';
 import PatientEdit from './components/PatientEdit';

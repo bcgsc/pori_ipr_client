@@ -14,17 +14,18 @@ import {
   InputLabel,
 } from '@material-ui/core';
 
-import api, { ApiCallSet } from '../../../../../../services/api';
+import api, { ApiCallSet } from '@/services/api';
+import { UserType, GroupType } from '@/common';
 import {
-  userType, projectType, groupType, formErrorType,
+  ProjectType, FormErrorType,
 } from '../../../../types';
 
 import './index.scss';
 
 type AddEditUserDialogProps = {
   isOpen: boolean;
-  onClose: (newData?: null | userType) => void;
-  editData: null | userType;
+  onClose: (newData?: null | UserType) => void;
+  editData: null | UserType;
 };
 
 const AddEditUserDialog = ({
@@ -37,12 +38,12 @@ const AddEditUserDialog = ({
   const [lastName, setLastName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [dbType, setDbType] = useState<string>(CONFIG.STORAGE.DATABASE_TYPE);
-  const [projects, setProjects] = useState<projectType[]>([]);
-  const [groups, setGroups] = useState<groupType[]>([]);
+  const [projects, setProjects] = useState<ProjectType[]>([]);
+  const [groups, setGroups] = useState<GroupType[]>([]);
 
-  const [projectOptions, setProjectOptions] = useState<projectType[]>([]);
-  const [groupOptions, setGroupOptions] = useState<groupType[]>([]);
-  const [errors, setErrors] = useState<formErrorType>({
+  const [projectOptions, setProjectOptions] = useState<ProjectType[]>([]);
+  const [groupOptions, setGroupOptions] = useState<GroupType[]>([]);
+  const [errors, setErrors] = useState<FormErrorType>({
     username: false,
     firstName: false,
     lastName: false,
@@ -228,7 +229,7 @@ const AddEditUserDialog = ({
                 variant="outlined"
                 onChange={({ target: { value } }) => setProjects(value)}
                 className="add-user__select"
-                renderValue={(values: projectType[]) => `${values.map((val) => val.name).join(', ')}`}
+                renderValue={(values: ProjectType[]) => `${values.map((val) => val.name).join(', ')}`}
               >
                 {projectOptions.map((project) => (
                   <MenuItem key={project.name} value={project}>
@@ -255,7 +256,7 @@ const AddEditUserDialog = ({
                 variant="outlined"
                 onChange={({ target: { value } }) => setGroups(value)}
                 className="add-user__select"
-                renderValue={(values: groupType[]) => `${values.map((val) => val.name).join(', ')}`}
+                renderValue={(values: GroupType[]) => `${values.map((val) => val.name).join(', ')}`}
               >
                 {groupOptions.map((group) => (
                   <MenuItem key={group.name} value={group}>

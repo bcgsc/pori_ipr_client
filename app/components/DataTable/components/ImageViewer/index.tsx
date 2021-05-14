@@ -1,13 +1,11 @@
 import React from 'react';
 import {
   Dialog,
-  DialogTitle,
   DialogContent,
   DialogActions,
-  Typography,
   Button,
 } from '@material-ui/core';
-import Image from '../../../Image';
+import Image from '@/components/Image';
 import { SelectedRow } from './interfaces';
 
 import './index.scss';

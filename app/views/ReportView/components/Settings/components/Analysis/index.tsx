@@ -6,8 +6,8 @@ import {
 } from '@material-ui/core';
 
 import api from '@/services/api';
-import ReportContext from '@/components/ReportContext';
-import SecurityContext from '@/components/SecurityContext';
+import ReportContext from '@/context/ReportContext';
+import SecurityContext from '@/context/SecurityContext';
 import snackbar from '@/services/SnackbarUtils';
 import { formatDate } from '@/utils/date';
 

@@ -5,7 +5,7 @@ import {
 } from '@material-ui/core';
 
 import DataTable from '@/components/DataTable';
-import ReportContext from '@/components/ReportContext';
+import ReportContext from '@/context/ReportContext';
 import api, { ApiCallSet } from '@/services/api';
 import { CNVSTATE, EXPLEVEL } from '@/constants';
 import Image from '@/components/Image';
