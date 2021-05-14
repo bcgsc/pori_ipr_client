@@ -87,17 +87,17 @@ module.exports = {
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: path.join(__dirname, '../../app/statics/images/*'),
+          from: path.join(APP_PATH, 'statics/images/*'),
           to: 'img/',
           flatten: true,
         },
         {
-          from: path.join(__dirname, '../../app/statics/favicon/*'),
+          from: path.join(APP_PATH, 'statics/favicon/*'),
           to: 'img/',
           flatten: true,
         },
         {
-          from: path.join(__dirname, '../../app/ipr-env-config.js'),
+          from: path.join(APP_PATH, 'ipr-env-config.js'),
           to: 'ipr-env-config.js',
         },
       ],
