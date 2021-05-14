@@ -9,7 +9,7 @@ import omit from 'lodash.omit';
 
 import useGrid from '@/hooks/useGrid';
 import { therapeuticGet } from '@/services/reports/therapeutic';
-import ReportContext from '../../../../../../context/ReportContext';
+import ReportContext from '@/context/ReportContext';
 
 import './index.scss';
 

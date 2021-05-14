@@ -1,4 +1,4 @@
-import ArrayCell from '../../../../components/DataTable/components/ArrayCellRenderer';
+import ArrayCell from '@/components/DataTable/components/ArrayCellRenderer';
 
 const getGeneProp = (params, property) => {
   const { data: { variant, variantType } } = params;

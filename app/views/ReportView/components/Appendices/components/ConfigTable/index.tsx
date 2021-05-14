@@ -1,6 +1,4 @@
-import React, { useContext } from 'react';
-
-import ReportContext from '../../../../../../context/ReportContext';
+import React from 'react';
 
 import './index.scss';
 
@@ -10,8 +8,6 @@ type ConfigTableProps = {
 };
 
 const ConfigTable = ({ config, isPrint }: ConfigTableProps): JSX.Element => {
-  const { report } = useContext(ReportContext);
-
   if (!isPrint) {
     return (
       <div className="config">

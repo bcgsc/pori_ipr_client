@@ -10,7 +10,7 @@ import EditIcon from '@material-ui/icons/Edit';
 
 import api, { ApiCallSet } from '@/services/api';
 import DataTable from '@/components/DataTable';
-import ReportContext, { ReportType, PatientInformationType, SampleInfoType } from '@/context/ReportContext';
+import ReportContext, { ReportType, PatientInformationType } from '@/context/ReportContext';
 import EditContext from '@/context/EditContext';
 import ConfirmContext from '@/context/ConfirmContext';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';

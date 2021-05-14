@@ -6,11 +6,11 @@ import {
 } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
 
-import api from '../../../../services/api';
-import DataTable from '../../../../components/DataTable';
+import api from '@/services/api';
+import DataTable from '@/components/DataTable';
+import { GroupType } from '@/common';
 import columnDefs from './columnDefs';
 import AddEditGroupDialog from './components/AddEditGroupDialog';
-import { GroupType } from '../../../../common';
 
 import './index.scss';
 

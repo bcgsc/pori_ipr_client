@@ -6,16 +6,15 @@ import { HorizontalBar, Chart } from 'react-chartjs-2';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Typography } from '@material-ui/core';
 
-import ReportContext from '../../../../context/ReportContext';
-import ImageService from '../../../../services/reports/image.service';
-import DataTable from '../../../../components/DataTable';
-import columnDefs from './columnDefs';
-import { getPairwiseExpressionCorrelation } from '../../../../services/reports/pairwise-expression';
-import Image from '../../../../components/Image';
+import ReportContext from '@/context/ReportContext';
+import ImageService from '@/services/reports/image.service';
+import DataTable from '@/components/DataTable';
+import { getPairwiseExpressionCorrelation } from '@/services/reports/pairwise-expression';
+import Image from '@/components/Image';
 import DemoDescription from '@/components/DemoDescription';
+import columnDefs from './columnDefs';
 
 import './index.scss';
-
 
 interface Color {
   red: number;
