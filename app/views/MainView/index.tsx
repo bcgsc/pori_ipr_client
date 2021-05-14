@@ -10,13 +10,13 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 import { CircularProgress, Snackbar } from '@material-ui/core';
 import { $httpProvider } from 'ngimport';
 
-import AuthenticatedRoute from '../../components/AuthenticatedRoute';
-import SecurityContext from '../../context/SecurityContext';
-import EditContext from '../../context/EditContext';
-import SnackbarContext from '../../context/SnackbarContext';
-import NavBar from '../../components/NavBar';
-import Sidebar from '../../components/Sidebar';
-import AclService from '../../services/management/acl.service';
+import AuthenticatedRoute from '@/components/AuthenticatedRoute';
+import SecurityContext from '@/context/SecurityContext';
+import EditContext from '@/context/EditContext';
+import SnackbarContext from '@/context/SnackbarContext';
+import NavBar from '@/components/NavBar';
+import Sidebar from '@/components/Sidebar';
+import AclService from '@/services/management/acl.service';
 
 import './index.scss';
 

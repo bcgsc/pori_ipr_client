@@ -12,4 +12,5 @@ export default GermlineReportContext;
 
 export {
   GermlineReportType,
+  VariantType,
 };
