@@ -41,6 +41,7 @@ const Immune = lazy(() => import('./components/Immune'));
 const Appendices = lazy(() => import('./components/Appendices'));
 const Settings = lazy(() => import('./components/Settings/index.tsx'));
 const ProbeSummary = lazy(() => import('./components/ProbeSummary'));
+const MinimalSummary = lazy(() => import('./components/MinimalSummary'));
 
 const ReportView = () => {
   const { path } = useRouteMatch();
@@ -119,10 +120,14 @@ const ReportView = () => {
                 <Route
                   render={(routeProps) => (
                     <>
-                      {isProbe ? (
+                      {report.template.name === 'probe' && (
                         <ProbeSummary {...routeProps} print={false} report={report} canEdit={canEdit} />
-                      ) : (
+                      )}
+                      {report.template.name === 'genomic' && (
                         <GenomicSummary {...routeProps} print={false} />
+                      )}
+                      {report.template.name === 'minimal' && (
+                        <MinimalSummary {...routeProps} isPrint={false} />
                       )}
                     </>
                   )}
