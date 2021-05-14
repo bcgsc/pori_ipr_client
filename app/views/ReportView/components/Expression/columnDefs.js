@@ -24,7 +24,7 @@ const columnDefs = [{
 }, {
   headerName: 'Normal Primary Site',
   children: [
-    { headerName: 'FC', field: 'primarySiteFoldChange', hide: false },
+    { headerName: 'FC', field: 'primarySiteFoldChange', hide: true },
     { headerName: 'Perc', field: 'primarySitePercentile', hide: false },
     { headerName: 'kIQR', field: 'primarySitekIQR', hide: false },
     { headerName: 'QC', field: 'primarySiteQC', hide: true },
@@ -33,7 +33,7 @@ const columnDefs = [{
 }, {
   headerName: 'Normal Biopsy Site',
   children: [
-    { headerName: 'FC', field: 'biopsySiteFoldChange', hide: false },
+    { headerName: 'FC', field: 'biopsySiteFoldChange', hide: true },
     { headerName: 'Perc', field: 'biopsySitePercentile', hide: false },
     { headerName: 'kIQR', field: 'biopsySitekIQR', hide: false },
     { headerName: 'QC', field: 'biopsySiteQC', hide: true },
