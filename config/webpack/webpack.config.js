@@ -120,7 +120,7 @@ module.exports = {
   },
   mode: 'development',
   devtool: 'inline-source-map',
-  entry: path.resolve(__dirname, '../../app/root.module.js'),
+  entry: path.resolve(APP_PATH, 'index.tsx'),
   output: {
     path: path.resolve(__dirname, '../../dist'),
     chunkFilename: '[name].[chunkhash].chunk.js',
