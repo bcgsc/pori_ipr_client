@@ -18,9 +18,9 @@ import ConfirmContext from '@/components/ConfirmContext';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import DescriptionList from '@/components/DescriptionList';
 import ReportContext from '@/components/ReportContext';
+import PatientInformation from '@/components/PatientInformation';
 import VariantChips from './components/VariantChips';
 import VariantCounts from './components/VariantCounts';
-import PatientEdit from './components/PatientEdit';
 import TumourSummaryEdit from './components/TumourSummaryEdit';
 import {
   MsiType,
@@ -174,41 +174,6 @@ const GenomicSummary = ({
   }, [loadedDispatch, report]);
 
   useEffect(() => {
-    if (report && report.patientInformation) {
-      setPatientInformation([
-        {
-          label: 'Alternate ID',
-          value: report.alternateIdentifier,
-        },
-        {
-          label: 'Report Date',
-          value: formatDate(report.createdAt),
-        },
-        {
-          label: 'Case Type',
-          value: report.patientInformation.caseType,
-        },
-        {
-          label: 'Physician',
-          value: report.patientInformation.physician,
-        },
-        {
-          label: 'Biopsy Name',
-          value: report.biopsyName,
-        },
-        {
-          label: 'Biopsy Details',
-          value: report.patientInformation.biopsySite,
-        },
-        {
-          label: 'Gender',
-          value: report.patientInformation.gender,
-        },
-      ]);
-    }
-  }, [report]);
-
-  useEffect(() => {
     if (report) {
       let svBurden: null | string;
       if (primaryBurden && primaryBurden.qualitySvCount !== null) {
@@ -326,48 +291,6 @@ const GenomicSummary = ({
     }
   }, [report, snackbar]);
 
-  const handlePatientEditClose = useCallback(async (isSaved, newPatientData, newReportData) => {
-    setShowPatientEdit(false);
-
-    if (!isSaved || (!newPatientData && !newReportData)) {
-      return;
-    }
-
-    const reportResp = await api.get(`/reports/${report.ident}`, {}).request();
-    setReport(reportResp);
-
-    setPatientInformation([
-      {
-        label: 'Alternate ID',
-        value: reportResp ? reportResp.alternateIdentifier : report.alternateIdentifier,
-      },
-      {
-        label: 'Report Date',
-        value: formatDate(report.createdAt),
-      },
-      {
-        label: 'Case Type',
-        value: newPatientData ? newPatientData.caseType : report.patientInformation.caseType,
-      },
-      {
-        label: 'Physician',
-        value: newPatientData ? newPatientData.physician : report.patientInformation.physician,
-      },
-      {
-        label: 'Biopsy Name',
-        value: reportResp ? reportResp.biopsyName : report.biopsyName,
-      },
-      {
-        label: 'Biopsy Details',
-        value: newPatientData ? newPatientData.biopsySite : report.patientInformation.biopsySite,
-      },
-      {
-        label: 'Gender',
-        value: newPatientData ? newPatientData.gender : report.patientInformation.gender,
-      },
-    ]);
-  }, [report, setReport]);
-
   const handleTumourSummaryEditClose = (isSaved, newMicrobialData, newReportData, newMutationBurdenData) => {
     setShowTumourSummaryEdit(false);
 
@@ -390,43 +313,12 @@ const GenomicSummary = ({
 
   return (
     <div className="genomic-summary">
-      {report && patientInformation && tumourSummary && (
+      {report && tumourSummary && (
         <>
-          <div className="genomic-summary__patient-information">
-            <div className="genomic-summary__patient-information-title">
-              <Typography variant="h3" display="inline">
-                Patient Information
-                {canEdit && !print && (
-                  <>
-                    <IconButton onClick={() => setShowPatientEdit(true)}>
-                      <EditIcon />
-                    </IconButton>
-                    <PatientEdit
-                      patientInformation={report.patientInformation}
-                      report={report}
-                      isOpen={Boolean(showPatientEdit)}
-                      onClose={handlePatientEditClose}
-                    />
-                  </>
-                )}
-              </Typography>
-            </div>
-            <Grid
-              alignItems="flex-end"
-              container
-              spacing={3}
-              className="genomic-summary__patient-information-content"
-            >
-              {patientInformation.map(({ label, value }) => (
-                <Grid key={label as string} item>
-                  <ReadOnlyTextField label={label}>
-                    {value}
-                  </ReadOnlyTextField>
-                </Grid>
-              ))}
-            </Grid>
-          </div>
-
+          <PatientInformation
+            isPrint={print}
+            patientInfo={report.patientInformation}
+          />
           <div className="genomic-summary__tumour-summary">
             <div className="genomic-summary__tumour-summary-title">
               <Typography variant="h3">

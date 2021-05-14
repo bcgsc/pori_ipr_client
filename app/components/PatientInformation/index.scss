@@ -1,0 +1,13 @@
+.patient-information {
+  margin: 0 0 32px 0;
+
+  &__title {
+    @media print {
+      margin: 0 0 8px;
+    }
+  }
+
+  &__content {
+    padding: 0 16px;
+  }
+}

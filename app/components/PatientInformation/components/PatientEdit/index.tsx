@@ -13,17 +13,19 @@ import {
 import api, { ApiCallSet } from '@/services/api';
 import ConfirmContext from '@/components/ConfirmContext';
 import AsyncButton from '@/components/AsyncButton';
+import { ReportType, PatientInformationType } from '@/components/ReportContext';
+import { EditableReportFieldsType } from '../../types';
 
 import './index.scss';
 
 type PatientEditProps = {
-  patientInformation: Record<string, unknown>;
-  report: Record<string, unknown>;
+  patientInformation: PatientInformationType;
+  report: ReportType;
   isOpen: boolean;
   onClose: (
     isSaved: boolean,
-    newPatientData?: Record<string, unknown> | null,
-    newReportData?: Record<string, unknown> | null
+    newPatientData?: PatientInformationType | null,
+    newReportData?: EditableReportFieldsType | null,
   ) => void;
 };
 
@@ -35,8 +37,8 @@ const PatientEdit = ({
 }: PatientEditProps): JSX.Element => {
   const { isSigned } = useContext(ConfirmContext);
 
-  const [newPatientData, setNewPatientData] = useState();
-  const [newReportData, setNewReportData] = useState();
+  const [newPatientData, setNewPatientData] = useState<PatientInformationType>();
+  const [newReportData, setNewReportData] = useState<EditableReportFieldsType>();
   const [patientDirty, setPatientDirty] = useState(false);
   const [reportDirty, setReportDirty] = useState(false);
   const [isApiCalling, setIsApiCalling] = useState(false);
