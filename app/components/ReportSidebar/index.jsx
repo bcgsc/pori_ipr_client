@@ -6,7 +6,7 @@ import {
 } from '@material-ui/core';
 import PrintIcon from '@material-ui/icons/Print';
 
-import ReportContext from '@/components/ReportContext';
+import ReportContext from '@/context/ReportContext';
 
 import './index.scss';
 

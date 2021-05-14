@@ -4,7 +4,7 @@ import {
 } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 
-import EditContext from '@/components/EditContext';
+import EditContext from '@/context/EditContext';
 
 import './index.scss';
 

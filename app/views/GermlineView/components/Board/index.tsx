@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 
+import { GermlineReportType } from '@/context/GermlineReportContext/types';
+import api from '@/services/api';
 import ApiPaginatedTable from './components/ApiPaginatedTable';
-import api from '../../../../services/api';
 import columnDefs from './columnDefs';
 import ParamsContext from './components/ParamsContext';
-import { GermlineReportType } from '../../types';
 
 const Board = (): JSX.Element => {
   const [reports, setReports] = useState<GermlineReportType[]>();

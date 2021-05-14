@@ -15,7 +15,7 @@ import {
 import SearchIcon from '@material-ui/icons/Search';
 
 import germlineDownload from '@/services/reports/germline';
-import useGrid from '@/components/hooks/useGrid';
+import useGrid from '@/hooks/useGrid';
 import PaginationPanel from './components/PaginationPanel';
 import CheckboxCell from './components/CheckboxCell';
 import ReviewFilter from './components/ReviewFilter';

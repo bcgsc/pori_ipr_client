@@ -3,7 +3,7 @@ import {
   render, screen, fireEvent, cleanup, act,
 } from '@testing-library/react';
 
-import ReportContext from '@/components/ReportContext';
+import ReportContext from '@/context/ReportContext';
 import AddComment from '..';
 
 const mockText = 'weather you can really use for everything you do';

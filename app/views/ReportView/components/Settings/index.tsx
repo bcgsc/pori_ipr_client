@@ -15,8 +15,8 @@ import {
 } from '@material-ui/core';
 
 import api from '@/services/api';
-import ReportContext from '@/components/ReportContext';
-import EditContext from '@/components/EditContext';
+import ReportContext from '@/context/ReportContext';
+import EditContext from '@/context/EditContext';
 import { UserType } from '@/common';
 import snackbar from '@/services/SnackbarUtils';
 import Analysis from './components/Analysis';

@@ -6,7 +6,7 @@ import {
   Route,
 } from 'react-router-dom';
 
-import SecurityContext from '@/components/SecurityContext';
+import SecurityContext from '@/context/SecurityContext';
 import { isAuthorized } from '@/services/management/auth';
 
 /**

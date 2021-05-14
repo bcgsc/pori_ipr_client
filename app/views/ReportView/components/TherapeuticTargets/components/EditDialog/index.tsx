@@ -13,8 +13,8 @@ import {
 
 import { therapeuticAdd, therapeuticDelete } from '@/services/reports/therapeutic';
 import api from '@/services/api';
-import ConfirmContext from '@/components/ConfirmContext';
-import ReportContext from '@/components/ReportContext';
+import ConfirmContext from '@/context/ConfirmContext';
+import ReportContext from '@/context/ReportContext';
 import AsyncButton from '@/components/AsyncButton';
 import AutocompleteHandler from '../AutocompleteHandler';
 

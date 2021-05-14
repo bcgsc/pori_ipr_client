@@ -1,4 +1,5 @@
 import { RecordDefaults } from '@/common';
+import React from 'react';
 
 type PatientInformationType = {
   age: string | null;
@@ -43,7 +44,7 @@ type ReportContextType = {
   /** Current report that's being viewed */
   report: ReportType | null,
   /** Set new current report */
-  setReport: (newReport: ReportType) => void;
+  setReport: React.Dispatch<React.SetStateAction<ReportType>>;
 };
 
 export {

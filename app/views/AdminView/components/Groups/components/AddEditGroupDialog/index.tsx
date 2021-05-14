@@ -11,18 +11,18 @@ import {
   FormControl,
 } from '@material-ui/core';
 
-import api from '../../../../../../services/api';
-import DataTable from '../../../../../../components/DataTable';
-import { groupType, userGroupMemberType, userType } from '../../../../../../common';
+import api from '@/services/api';
+import DataTable from '@/components/DataTable';
+import { GroupType, UserGroupMemberType, UserType } from '@/common';
+import UserAutocomplete from '@/components/UserAutocomplete';
 import columnDefs from './columnDefs';
-import UserAutocomplete from '../../../../../../components/UserAutocomplete';
 
 import './index.scss';
 
 type AddEditGroupDialogProps = {
   isOpen: boolean;
   onClose: (newData?: null | { name: string }) => void;
-  editData: null | groupType;
+  editData: null | GroupType;
 };
 
 const reducer = (state, action) => {
@@ -46,8 +46,8 @@ const AddEditUserDialog = ({
     groupName: false,
   });
   const [dialogTitle, setDialogTitle] = useState<string>('');
-  const [users, setUsers] = useState<userGroupMemberType[]>([]);
-  const [owner, setOwner] = useState<userType>();
+  const [users, setUsers] = useState<UserGroupMemberType[]>([]);
+  const [owner, setOwner] = useState<UserType>();
   const [apiCallQueue, apiCallQueueDispatch] = useReducer(reducer, []);
 
   useEffect(() => {
