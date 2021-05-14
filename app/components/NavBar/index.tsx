@@ -12,8 +12,8 @@ import MenuIcon from '@material-ui/icons/Menu';
 import PersonIcon from '@material-ui/icons/Person';
 
 import { logout } from '@/services/management/auth';
-import SecurityContext from '@/components/SecurityContext';
-import SidebarContext from '@/components/SidebarContext';
+import SecurityContext from '@/context/SecurityContext';
+import SidebarContext from '@/context/SidebarContext';
 import FeedbackDialog from './components/FeedbackDialog';
 
 import './index.scss';

@@ -1,4 +1,4 @@
-import React, { useContext, useState, useCallback } from 'react';
+import React, { useContext, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import {
   Drawer,
@@ -20,7 +20,7 @@ import FolderSharedIcon from '@material-ui/icons/FolderShared';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 
 import GermlineIcon from '@/statics/images/germline_icon.svg';
-import SidebarContext from '../SidebarContext';
+import SidebarContext from '@/context/SidebarContext';
 
 import './index.scss';
 

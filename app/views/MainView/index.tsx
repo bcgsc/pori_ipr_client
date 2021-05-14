@@ -10,8 +10,8 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 import { CircularProgress, Snackbar } from '@material-ui/core';
 import { $httpProvider } from 'ngimport';
 
-import SidebarContext from '@/components/SidebarContext';
 import AuthenticatedRoute from '@/components/AuthenticatedRoute';
+import SidebarContext from '@/context/SidebarContext';
 import SecurityContext from '@/context/SecurityContext';
 import EditContext from '@/context/EditContext';
 import SnackbarContext from '@/context/SnackbarContext';
