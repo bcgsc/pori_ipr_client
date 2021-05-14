@@ -2,9 +2,9 @@
 
 # source: https://www.freecodecamp.org/news/how-to-implement-runtime-environment-variables-with-create-react-app-docker-and-nginx-7f9d42a91d70/
 
-echo "Creating env variables script: app/ipr-env-config.js"
+echo "Creating env variables script: ./ipr-env-config.js"
 # Recreate config file
-ENVJS_FILE=app/ipr-env-config.js
+ENVJS_FILE=ipr-env-config.js
 rm -f $ENVJS_FILE
 touch $ENVJS_FILE
 
