@@ -15,20 +15,6 @@ module.exports = {
       {
         oneOf: [
           {
-            test: /\.pug$/,
-            include: path.join(__dirname, '../../app'),
-            exclude: /node_modules/,
-            use: [{
-              loader: 'apply-loader',
-              options: {
-                obj: {},
-              },
-            },
-            {
-              loader: 'pug-loader',
-            }],
-          },
-          {
             test: /\.(html)$/,
             use: {
               loader: 'html-loader',
@@ -108,10 +94,10 @@ module.exports = {
       VERSION: JSON.stringify(packageFile.version),
     }),
     new MomentLocalesPlugin(),
-    // new BundleAnalyzerPlugin({
-    //   defaultSizes: 'gzip',
-    //   excludeAssets: '.*\.hot-update\.js',
-    // }),
+    new BundleAnalyzerPlugin({
+      defaultSizes: 'gzip',
+      excludeAssets: '.*\.hot-update\.js',
+    }),
   ],
   optimization: {
     splitChunks: {

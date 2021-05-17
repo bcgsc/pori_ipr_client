@@ -15,7 +15,6 @@
     "project": "./tsconfig.json"
   },
   "globals": {
-    "angular": true,
     "app": true,
     "confirm": true,
     "alert": true,

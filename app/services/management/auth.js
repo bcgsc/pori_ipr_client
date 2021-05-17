@@ -1,6 +1,5 @@
 import Keycloak from 'keycloak-js';
 import * as jwt from 'jsonwebtoken';
-import { $http } from 'ngimport';
 
 import api from '@/services/api';
 
@@ -99,15 +98,6 @@ const isExternalMode = (user) => {
   }
 };
 
-const searchUsers = async (query) => {
-  try {
-    const resp = await $http.get(`${window._env_.API_BASE_URL}/user/search`, { params: { query } });
-    return resp.data;
-  } catch {
-    return false;
-  }
-};
-
 const login = async (referrerUri = null) => {
   setReferrerUri(referrerUri);
 
@@ -147,5 +137,4 @@ export {
   getUser,
   getUsername,
   isExternalMode,
-  searchUsers,
 };
