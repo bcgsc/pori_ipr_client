@@ -46,32 +46,11 @@ const Main = (): JSX.Element => {
 
   useEffect(() => {
     if (authorizationToken) {
-      const interceptor = {
-        request: (fetchUrl, fetchConfig) => {
-          if (fetchUrl.startsWith(window._env_.API_BASE_URL)) {
-            const newConfig = { ...fetchConfig };
-
-            if (!newConfig.headers) {
-              newConfig.headers = {};
-            }
-            newConfig.headers.Authorization = authorizationToken;
-            return [fetchUrl, newConfig];
-          }
-          return [fetchUrl, fetchConfig];
-        },
-      };
-
-      const unregister = fetchIntercept.register(interceptor);
-
       const getData = async () => {
         setCanEdit(await AclService.checkAction('report.edit'));
       };
-
       getData();
-
-      return unregister;
     }
-    return undefined;
   }, [authorizationToken]);
 
   const handleSnackbarClose = useCallback((event, reason) => {
