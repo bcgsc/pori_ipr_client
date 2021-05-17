@@ -9,8 +9,7 @@ import DemoDescription from '@/components/DemoDescription';
 import DataTable from '@/components/DataTable';
 import ReportContext from '@/context/ReportContext';
 import EditContext from '@/context/EditContext';
-import ImageService from '@/services/reports/image.service';
-import { getMutationSignatures } from '@/services/reports/mutation-signature';
+import api from '@/services/api';
 import ImageType from '@/components/Image/types';
 import EditDialog from './components/EditDialog';
 import MutationSignatureType from './types';
@@ -42,11 +41,8 @@ const MutationSignatures = (): JSX.Element => {
     if (report && report.ident) {
       const getData = async () => {
         const [imageData, signatureData] = await Promise.all([
-          ImageService.get(
-            report.ident,
-            imageKeys.join(','),
-          ),
-          getMutationSignatures(report.ident),
+          api.get(`/reports/${report.ident}/image/retrieve/${imageKeys.join(',')}`, {}).request(),
+          api.get(`/reports/${report.ident}/mutation-signatures`, {}).request(),
         ]);
         setImages(imageData);
         setSbsSignatures(signatureData.filter((sig) => !(new RegExp(/dbs|id/)).test(sig.signature.toLowerCase())));

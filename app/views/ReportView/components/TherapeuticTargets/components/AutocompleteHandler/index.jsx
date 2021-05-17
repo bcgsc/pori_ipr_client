@@ -5,7 +5,8 @@ import {
   TextField,
   CircularProgress,
 } from '@material-ui/core';
-import kbAutocomplete from '@/services/reports/kbAutocomplete';
+
+import api from '@/services/api';
 
 import './index.scss';
 
@@ -52,7 +53,7 @@ const AutocompleteHandler = (props) => {
       // Needed for KB API to process multiple words
       queryString = queryString.split(' ').filter(str => str.length >= minCharacters).join(' ');
 
-      const autocompleted = await kbAutocomplete(type, queryString);
+      const autocompleted = await api.get(`/graphkb/${type}`, { keyword: queryString }).request();
 
       setOptions(autocompleted);
       setLoading(false);

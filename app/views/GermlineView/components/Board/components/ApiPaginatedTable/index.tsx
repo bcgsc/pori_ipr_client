@@ -14,7 +14,7 @@ import {
 } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 
-import germlineDownload from '@/services/reports/germline';
+import api from '@/services/api';
 import useGrid from '@/hooks/useGrid';
 import PaginationPanel from './components/PaginationPanel';
 import CheckboxCell from './components/CheckboxCell';
@@ -64,7 +64,14 @@ const ApiPaginatedTable = ({
 
   const handleExport = useCallback(async (): Promise<void> => {
     try {
-      const { filename, blob } = await germlineDownload();
+      const response = await api.get(
+        '/export/germline-small-mutation-reports/batch/download?reviews=biofx,projects',
+        {},
+      ).request();
+      const blob = await response.blob();
+      const filenameHeader = response.headers.get('Content-Disposition');
+      const [, filename = 'germline_export.xlsx'] = filenameHeader.match(/filename=(.+)/) || [];
+
       const url = URL.createObjectURL(blob);
 
       const a = document.createElement('a');

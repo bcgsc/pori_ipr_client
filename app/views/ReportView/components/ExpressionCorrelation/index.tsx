@@ -6,10 +6,9 @@ import { HorizontalBar, Chart } from 'react-chartjs-2';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Typography } from '@material-ui/core';
 
+import api from '@/services/api';
 import ReportContext from '@/context/ReportContext';
-import ImageService from '@/services/reports/image.service';
 import DataTable from '@/components/DataTable';
-import { getPairwiseExpressionCorrelation } from '@/services/reports/pairwise-expression';
 import Image from '@/components/Image';
 import DemoDescription from '@/components/DemoDescription';
 import columnDefs from './columnDefs';
@@ -81,9 +80,9 @@ const ExpressionCorrelation = (): JSX.Element => {
     if (report) {
       const getData = async () => {
         const [plotData, subtypePlotData, pairwiseData] = await Promise.all([
-          ImageService.get(report.ident, 'expression.chart,expression.legend'),
-          ImageService.subtypePlots(report.ident),
-          getPairwiseExpressionCorrelation(report.ident),
+          api.get(`/reports/${report.ident}/image/retrieve/expression.chart,expression.legend`, {}).request(),
+          api.get(`/reports/${report.ident}/image/subtype-plots`, {}).request(),
+          api.get(`/reports/${report.ident}/pairwise-expression-correlation`, {}).request(),
         ]);
 
         setPlots(plotData);

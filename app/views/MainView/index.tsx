@@ -8,7 +8,6 @@ import React, {
 import fetchIntercept from 'fetch-intercept';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { CircularProgress, Snackbar } from '@material-ui/core';
-import { $httpProvider } from 'ngimport';
 
 import AuthenticatedRoute from '@/components/AuthenticatedRoute';
 import SidebarContext from '@/context/SidebarContext';
@@ -61,8 +60,6 @@ const Main = (): JSX.Element => {
           return [fetchUrl, fetchConfig];
         },
       };
-
-      $httpProvider.defaults.headers.common.Authorization = authorizationToken;
 
       const unregister = fetchIntercept.register(interceptor);
 

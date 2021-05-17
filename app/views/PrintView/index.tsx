@@ -7,7 +7,6 @@ import { useTheme } from '@material-ui/core/styles';
 
 import api from '@/services/api';
 import ReportContext from '@/context/ReportContext';
-import ReportService from '@/services/reports/report.service';
 import PageBreak from '@/components/PageBreak';
 import startCase from '@/utils/startCase';
 import GenomicSummary from '../ReportView/components/GenomicSummary';
@@ -64,7 +63,7 @@ const Print = () => {
   useEffect(() => {
     if (!report) {
       const getReport = async () => {
-        const reportResp = await ReportService.getReport(params.ident);
+        const reportResp = await api.get(`/reports/${params.ident}`, {}).request();
         const templatesResp = await api.get('/templates', {}).request();
 
         setTemplate(templatesResp.find((temp) => temp.name === reportResp.template.name));
