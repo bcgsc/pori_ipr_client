@@ -4,10 +4,7 @@
   "version": "6.1.1",
   "keywords": [],
   "license": "GPL-3.0",
-  "sideEffects": [
-    "./app/App.tsx",
-    "*.css"
-  ],
+  "sideEffects": false,
   "sasslintConfig": "config/sass-lint.yml",
   "engines": {
     "node": "~10.15.1",

@@ -66,6 +66,15 @@ const theme = createMuiTheme({
     h6: { fontSize: cssTheme.fontSizeH6 },
     subtitle1: { fontSize: cssTheme.fontSizeSubtitle1 },
   },
+  overrides: {
+    MuiCssBaseline: {
+      '@global': {
+        html: {
+          WebkitFontSmoothing: 'auto',
+        },
+      },
+    },
+  },
 });
 
 const generateClassName = createGenerateClassName({
