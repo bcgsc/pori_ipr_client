@@ -114,7 +114,7 @@ const ApiPaginatedTable = ({
         <div className="paginated-table__actions">
           <div className="paginated-table__action">
             <TextField
-              className="text-field-fix paginated-table__field"
+              className="paginated-table__field"
               size="small"
               label="Search by Patient ID"
               variant="outlined"

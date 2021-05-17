@@ -1,6 +1,5 @@
 @import './styles/variables';
 @import './styles/theme';
-@import '~@fontsource/roboto/index.css';
 
 * {
   box-sizing: border-box;
@@ -36,16 +35,6 @@ html body {
 
 .clickable {
   cursor: pointer;
-}
-
-// Fix for https://github.com/mui-org/material-ui/issues/20461
-.text-field-fix {
-  margin: 20px 12px 10px !important;
-  height: 40px;
-
-  > * {
-    box-sizing: content-box !important;
-  }
 }
 
 .ag-cell-wrap-text {

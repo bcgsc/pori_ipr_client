@@ -34,7 +34,6 @@ const AlertDialog = (props) => {
         </DialogContentText>
         {commentRequired && (
           <TextField
-            className="text-field-fix"
             value={commentInput}
             onChange={event => setCommentInput(event.target.value)}
             label="Comment"

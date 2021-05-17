@@ -55,6 +55,7 @@ module.exports = {
                 loader: 'file-loader',
                 options: {
                   name: 'font/[hash].[ext]',
+                  esModule: false,
                 },
               },
             ],

@@ -74,7 +74,6 @@ const VariantChips = (props) => {
             />
           ) : (
             <TextField
-              className="text-field-fix"
               value={addedVariant}
               type="text"
               size="small"
