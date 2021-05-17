@@ -2,12 +2,14 @@
  * @module /App
  */
 import { SnackbarProvider } from 'notistack';
-import ScopedCssBaseline from '@material-ui/core/ScopedCssBaseline';
+import CssBaseline from '@material-ui/core/CssBaseline';
 import {
   createMuiTheme,
   MuiThemeProvider,
+  createGenerateClassName,
+  jssPreset,
+  StylesProvider,
 } from '@material-ui/core/styles';
-import { createGenerateClassName, jssPreset, StylesProvider } from '@material-ui/styles';
 import { create } from 'jss';
 import React from 'react';
 import { JssProvider } from 'react-jss';
@@ -89,10 +91,9 @@ function App() {
         <MuiThemeProvider theme={theme}>
           <SnackbarProvider anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}>
             <SnackbarUtilsConfigurator />
+            <CssBaseline />
             <BrowserRouter basename={window._env_.PUBLIC_PATH}>
-              <ScopedCssBaseline>
-                <MainView />
-              </ScopedCssBaseline>
+              <MainView />
             </BrowserRouter>
           </SnackbarProvider>
         </MuiThemeProvider>

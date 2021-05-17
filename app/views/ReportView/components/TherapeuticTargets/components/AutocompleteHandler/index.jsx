@@ -8,8 +8,6 @@ import {
 
 import api from '@/services/api';
 
-import './index.scss';
-
 /**
  * @param {object} props props
  * @param {string} defaultValue default text in input box
