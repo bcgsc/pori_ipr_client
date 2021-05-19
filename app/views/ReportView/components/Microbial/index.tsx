@@ -12,6 +12,8 @@ import api from '@/services/api';
 import ReportContext from '@/context/ReportContext';
 import Image, { ImageType } from '@/components/Image';
 
+import './index.scss';
+
 const Microbial = (): JSX.Element => {
   const { report } = useContext(ReportContext);
 

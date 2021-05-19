@@ -77,12 +77,15 @@ const Expression = () => {
         ],
       ]);
     }
-  }, [report])
+  }, [report]);
 
   useEffect(() => {
     if (report && report.ident) {
       const getData = async () => {
-        const comparatorsResp = await getComparators(report.ident);
+        const comparatorsResp = await api.get(
+          `/reports/${report.ident}/comparators`,
+          {},
+        ).request();
 
         const diseaseExpression = comparatorsResp.find(({ analysisRole }) => (
           analysisRole === 'expression (disease)'
@@ -179,7 +182,7 @@ const Expression = () => {
               ))}
             </Paper>
           )}
-          {comparators && !Boolean(comparators.length) && (
+          {comparators && !comparators.length && (
             <Typography align="center">No comparator data to display</Typography>
           )}
         </div>
