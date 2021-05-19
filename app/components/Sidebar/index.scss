@@ -6,15 +6,15 @@
   }
 
   &__paper {
-    width: $navbar-size !important;
-    background-color: $white-background !important;
-    z-index: $sidebar-z-index !important;
-    transition: width $transition-normal !important;
+    width: $navbar-size;
+    background-color: $white-background;
+    z-index: $sidebar-z-index;
+    transition: width $transition-normal;
     overflow-x: hidden;
 
     &--maximized {
-      width: $sidebar-size !important;
-      transition: width $transition-normal !important;
+      width: $sidebar-size;
+      transition: width $transition-normal;
     }
   }
 
@@ -22,7 +22,7 @@
     min-width: calc($sidebar-size - 1);
     cursor: pointer;
     transition: background-color $transition-fast;
-    padding: 0 !important;
+    padding: 0;
 
     &--active {
       background-color: darken($white-background, 8);
@@ -38,7 +38,7 @@
       transition-property: background-color;
       display: flex;
       align-items: center;
-      text-decoration: none !important;
+      text-decoration: none;
     }
   }
 

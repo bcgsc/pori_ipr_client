@@ -169,7 +169,7 @@ const Sidebar = (): JSX.Element => {
         <ListItem
           className={`
             sidebar__list-item
-            ${pathname.includes('templates') ? 'sidebar__list-item--active' : ''}
+            ${pathname.includes('template') ? 'sidebar__list-item--active' : ''}
           `}
           disableGutters
         >
