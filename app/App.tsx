@@ -66,7 +66,18 @@ const theme = createMuiTheme({
     h6: { fontSize: cssTheme.fontSizeH6 },
     subtitle1: { fontSize: cssTheme.fontSizeSubtitle1 },
   },
+  // Dialog title header bug: https://github.com/mui-org/material-ui/issues/16569
+  props: {
+    MuiDialogTitle: {
+      disableTypography: true,
+    },
+  },
   overrides: {
+    MuiDialogTitle: {
+      root: {
+        fontSize: cssTheme.fontSizeH3,
+      },
+    },
     MuiCssBaseline: {
       '@global': {
         html: {
