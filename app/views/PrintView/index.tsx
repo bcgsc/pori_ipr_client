@@ -125,10 +125,7 @@ const Print = () => {
             </>
           )}
           {template?.sections.includes('appendices') && (
-            <>
-              <Appendices report={report} isPrint isProbe loadedDispatch={dispatch} />
-              <PageBreak report={report} theme={theme} />
-            </>
+            <Appendices report={report} isPrint isProbe loadedDispatch={dispatch} />
           )}
         </>
       );
