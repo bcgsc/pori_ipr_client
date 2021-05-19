@@ -4,7 +4,11 @@ import React, {
 import orderBy from 'lodash.orderby';
 import { HorizontalBar, Chart } from 'react-chartjs-2';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { Typography } from '@material-ui/core';
+import {
+  Typography,
+  Divider,
+  LinearProgress,
+} from '@material-ui/core';
 
 import api from '@/services/api';
 import ReportContext from '@/context/ReportContext';
@@ -68,6 +72,7 @@ const ExpressionCorrelation = (): JSX.Element => {
   const [subtypePlots, setSubtypePlots] = useState({});
   const [pairwiseExpression, setPairwiseExpression] = useState([]);
   const [modifiedRowData, setModifiedRowData] = useState();
+  const [isLoading, setIsLoading] = useState(true);
 
   const [barChartData, setBarChartData] = useState({
     labels: [],
@@ -88,6 +93,7 @@ const ExpressionCorrelation = (): JSX.Element => {
         setPlots(plotData);
         setSubtypePlots(subtypePlotData);
         setPairwiseExpression(orderBy(pairwiseData, ['correlation'], ['desc']).slice(0, 19));
+        setIsLoading(false);
       };
 
       getData();
@@ -220,79 +226,87 @@ const ExpressionCorrelation = (): JSX.Element => {
           is compared to previously sequenced tumours to identify the most similar individual
           samples. Subtyping based on gene expression is computed if applicable for the tumour type.
         </DemoDescription>
-        {plots && subtypePlots && (
+        {!isLoading && (
           <>
-            <div>
-              <div className="expression-correlation__expression-charts">
-                {plots['expression.chart'] && (
-                  <span>
-                    <Typography variant="h3" align="center" className="expression-correlation__header">
-                      Expression Chart
-                    </Typography>
-                    <Image
-                      image={plots['expression.chart']}
-                      showTitle
-                      showCaption
-                    />
-                  </span>
-                )}
-                {plots['expression.legend'] && (
-                  <span>
-                    <Typography variant="h3" align="center" className="expression-correlation__header">
-                      Expression Legend
-                    </Typography>
-                    <Image
-                      image={plots['expression.legend']}
-                      showTitle
-                      showCaption
-                    />
-                  </span>
-                )}
-              </div>
-              {Boolean(Object.values(subtypePlots).length) && (
-                <div className="expression-correlation__subtype">
-                  <span>
-                    <Typography variant="h3" align="center" className="expression-correlation__header">
-                      Subtype Plots
-                    </Typography>
-                    {Object.values(subtypePlots).map((plot) => (
-                      <Image
-                        key={plot.ident}
-                        image={plot}
-                        showTitle
-                        showCaption
-                      />
-                    ))}
-                  </span>
+            {plots && subtypePlots && (
+              <>
+                <div>
+                  <div className="expression-correlation__expression-charts">
+                    {plots['expression.chart'] && (
+                      <span>
+                        <Typography variant="h3" align="center" className="expression-correlation__header">
+                          Expression Chart
+                        </Typography>
+                        <Image
+                          image={plots['expression.chart']}
+                          showTitle
+                          showCaption
+                        />
+                      </span>
+                    )}
+                    {plots['expression.legend'] && (
+                      <span>
+                        <Typography variant="h3" align="center" className="expression-correlation__header">
+                          Expression Legend
+                        </Typography>
+                        <Image
+                          image={plots['expression.legend']}
+                          showTitle
+                          showCaption
+                        />
+                      </span>
+                    )}
+                  </div>
+                  <Divider />
+                  {Boolean(Object.values(subtypePlots).length) && (
+                    <div className="expression-correlation__subtype">
+                      <span>
+                        <Typography variant="h3" align="center" className="expression-correlation__header">
+                          Subtype Plots
+                        </Typography>
+                        {Object.values(subtypePlots).map((plot) => (
+                          <Image
+                            key={plot.ident}
+                            image={plot}
+                            showTitle
+                            showCaption
+                          />
+                        ))}
+                      </span>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-            {!Object.values(plots).length && !Object.values(subtypePlots).length && (
-              <Typography align="center">No expression correlation plots found</Typography>
+                {!Object.values(plots).length && !Object.values(subtypePlots).length && (
+                  <Typography align="center">No expression correlation plots found</Typography>
+                )}
+              </>
+            )}
+            {Boolean(Object.values(barChartData.datasets).length) && (
+              <span className="expression-correlation__chart-group">
+                <div className="expression-correlation__chart">
+                  <HorizontalBar
+                    ref={chartRef}
+                    data={barChartData}
+                    height={150 + (barChartData.datasets[0].data.length * 25)}
+                    options={options}
+                  />
+                </div>
+                {Boolean(pairwiseExpression.length) && (
+                  <DataTable
+                    rowData={pairwiseExpression}
+                    columnDefs={columnDefs}
+                    highlightRow={rowClicked}
+                    onRowDataChanged={handleRowDataChanged}
+                  />
+                )}
+              </span>
             )}
           </>
         )}
+        {isLoading && (
+          <LinearProgress />
+        )}
       </div>
-      {Boolean(Object.values(barChartData.datasets).length) && (
-        <span className="expression-correlation__chart-group">
-          <div className="expression-correlation__chart">
-            <HorizontalBar
-              ref={chartRef}
-              data={barChartData}
-              height={150 + (barChartData.datasets[0].data.length * 25)}
-              options={options}
-            />
-          </div>
-          {Boolean(pairwiseExpression.length) && (
-            <DataTable
-              rowData={pairwiseExpression}
-              columnDefs={columnDefs}
-              highlightRow={rowClicked}
-              onRowDataChanged={handleRowDataChanged}
-            />
-          )}
-        </span>
-      )}
     </>
   );
 };
