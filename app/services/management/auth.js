@@ -121,7 +121,6 @@ const logout = async () => {
     return null;
   } catch (err) {
     delete localStorage[CONFIG.STORAGE.KEYCLOAK];
-    delete $http.headers.Authorization;
     return err;
   }
 };
