@@ -15,7 +15,7 @@ import Image, { ImageType } from '@/components/Image';
 const Microbial = (): JSX.Element => {
   const { report } = useContext(ReportContext);
 
-  const [microbialImages, setMicrobialImages] = useState<Record<string, ImageType>>({});
+  const [microbialImages, setMicrobialImages] = useState<ImageType[]>([]);
   const [tabValue, setTabValue] = useState(0);
   const [direction, setDirection] = useState<'left' | 'right' | 'up' | 'down'>('right');
   const [isLoading, setIsLoading] = useState(true);
@@ -42,7 +42,7 @@ const Microbial = (): JSX.Element => {
   return (
     <div className="microbial">
       <Typography variant="h3">Microbial Integration</Typography>
-      {Boolean(Object.keys(microbialImages).length) && !isLoading && (
+      {Boolean(microbialImages.length) && !isLoading && (
         <div>
           <div className="microbial__tabs">
             <Paper elevation={0} variant="outlined">
@@ -52,14 +52,14 @@ const Microbial = (): JSX.Element => {
                 textColor="secondary"
                 value={tabValue}
               >
-                {Object.values(microbialImages).map((img, index) => (
+                {microbialImages.map((img, index) => (
                   <Tab key={img.ident} value={index} label={img.key.includes('genome') ? 'Genome' : 'Transcriptome'} />
                 ))}
               </Tabs>
             </Paper>
           </div>
           <div className="microbial__images">
-            {Object.values(microbialImages).map((img, index) => (
+            {microbialImages.map((img, index) => (
               <Slide
                 key={img.ident}
                 appear={false}
@@ -79,7 +79,7 @@ const Microbial = (): JSX.Element => {
           </div>
         </div>
       )}
-      {!Object.keys(microbialImages).length && !isLoading && (
+      {!microbialImages.length && !isLoading && (
         <Typography align="center" className="microbial__none">
           Microbial integration circos plots are not applicable for this case
         </Typography>
