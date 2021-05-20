@@ -4,15 +4,15 @@ import {
   Grid,
 } from '@material-ui/core';
 
-import api, { ApiCallSet } from '../../../../services/api';
-import DataTable from '../../../../components/DataTable';
-import ReportContext from '../../../../components/ReportContext';
+import api, { ApiCallSet } from '@/services/api';
+import DataTable from '@/components/DataTable';
+import ReportContext from '@/context/ReportContext';
+import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import { AppendicesType, TcgaType, ComparatorType } from './types';
 import { sampleInformationColumnDefs, sequencingProtocolInformationColumnDefs, tcgaAcronymsColumnDefs } from './columnDefs';
 import GenomicReportOverview from './components/GenomicReportOverview';
 import ProbeReportOverview from './components/ProbeReportOverview';
 import ConfigTable from './components/ConfigTable';
-import ReadOnlyTextField from '../../../../components/ReadOnlyTextField';
 
 import './index.scss';
 

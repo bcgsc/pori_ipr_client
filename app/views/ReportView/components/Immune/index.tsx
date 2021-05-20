@@ -2,16 +2,17 @@ import React, { useEffect, useState, useContext } from 'react';
 
 import DemoDescription from '@/components/DemoDescription';
 import DataTable from '@/components/DataTable';
-import Image from '@/components/Image';
-import ReportContext from '@/components/ReportContext';
+import Image, { ImageType } from '@/components/Image';
+import ReportContext from '@/context/ReportContext';
 import api, { ApiCallSet } from '@/services/api';
 import { hlaColumnDefs, cellTypesColumnDefs } from './columnDefs';
+import { ImmuneType, HlaType } from './types';
 
 const Immune = (): JSX.Element => {
   const { report } = useContext(ReportContext);
-  const [cellTypes, setCellTypes] = useState<Array<Record<string, unknown>>>([]);
-  const [images, setImages] = useState<Record<string, unknown>>({});
-  const [hlaTypes, setHlaTypes] = useState<Array<Record<string, unknown>>>([]);
+  const [cellTypes, setCellTypes] = useState<ImmuneType[]>([]);
+  const [images, setImages] = useState<Record<string, ImageType>>({});
+  const [hlaTypes, setHlaTypes] = useState<HlaType[]>([]);
 
   useEffect(() => {
     if (report) {

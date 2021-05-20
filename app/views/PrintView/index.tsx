@@ -6,8 +6,10 @@ import { Typography } from '@material-ui/core';
 import { useTheme } from '@material-ui/core/styles';
 
 import api from '@/services/api';
-import ReportContext from '../../components/ReportContext';
+import ReportContext from '@/context/ReportContext';
 import ReportService from '@/services/reports/report.service';
+import PageBreak from '@/components/PageBreak';
+import startCase from '@/utils/startCase';
 import GenomicSummary from '../ReportView/components/GenomicSummary';
 import ProbeSummary from '../ReportView/components/ProbeSummary';
 import AnalystComments from '../ReportView/components/AnalystComments';
@@ -15,8 +17,6 @@ import PathwayAnalysis from '../ReportView/components/PathwayAnalysis';
 import TherapeuticTargets from '../ReportView/components/TherapeuticTargets/components/PrintTables';
 import Slides from '../ReportView/components/Slides';
 import Appendices from '../ReportView/components/Appendices';
-import PageBreak from '@/components/PageBreak';
-import startCase from '@/utils/startCase';
 
 import './index.scss';
 
@@ -103,7 +103,7 @@ const Print = () => {
           )}
           {template?.sections.includes('analyst-comments') && (
             <>
-              <AnalystComments report={report} print loadedDispatch={dispatch} />
+              <AnalystComments report={report} isPrint loadedDispatch={dispatch} />
               <PageBreak report={report} theme={theme} />
             </>
           )}
@@ -121,7 +121,7 @@ const Print = () => {
           )}
           {template?.sections.includes('slides') && (
             <>
-              <Slides report={report} print loadedDispatch={dispatch} theme={theme} />
+              <Slides report={report} isPrint loadedDispatch={dispatch} theme={theme} />
               <PageBreak report={report} theme={theme} />
             </>
           )}

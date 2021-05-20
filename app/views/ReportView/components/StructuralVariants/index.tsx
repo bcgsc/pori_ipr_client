@@ -9,7 +9,7 @@ import {
 import api, { ApiCallSet } from '@/services/api';
 import DataTable from '@/components/DataTable';
 import Image from '@/components/Image';
-import ReportContext from '@/components/ReportContext';
+import ReportContext from '@/context/ReportContext';
 import ImageType from '@/components/Image/types';
 import columnDefs from './columnDefs';
 import StructuralVariantType from './types';

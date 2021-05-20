@@ -2,7 +2,8 @@ import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { Typography } from '@material-ui/core';
 import { MuiThemeProvider } from '@material-ui/core/styles';
-import ReportContext from '../ReportContext';
+
+import ReportContext from '@/context/ReportContext';
 
 import './index.scss';
 

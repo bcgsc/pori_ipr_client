@@ -10,13 +10,13 @@ import {
 import { useTheme } from '@material-ui/core/styles';
 import { useSnackbar } from 'notistack';
 
-import SecurityContext from '@/components/SecurityContext';
+import SecurityContext from '@/context/SecurityContext';
 import ReportToolbar from '@/components/ReportToolbar';
 import ReportSidebar from '@/components/ReportSidebar';
 import ReportService from '@/services/reports/report.service';
-import EditContext from '@/components/EditContext';
-import ReportContext from '@/components/ReportContext';
-import ConfirmContext from '@/components/ConfirmContext';
+import EditContext from '@/context/EditContext';
+import ReportContext from '@/context/ReportContext';
+import ConfirmContext from '@/context/ConfirmContext';
 import api from '@/services/api';
 import allSections from './sections';
 
@@ -39,7 +39,7 @@ const StructuralVariants = lazy(() => import('./components/StructuralVariants'))
 const Expression = lazy(() => import('./components/Expression'));
 const Immune = lazy(() => import('./components/Immune'));
 const Appendices = lazy(() => import('./components/Appendices'));
-const Settings = lazy(() => import('./components/Settings'));
+const Settings = lazy(() => import('./components/Settings/index.tsx'));
 const ProbeSummary = lazy(() => import('./components/ProbeSummary'));
 
 const ReportView = () => {
@@ -223,12 +223,7 @@ const ReportView = () => {
                   render={(routeProps) => (
                     <Settings
                       {...routeProps}
-                      print={false}
-                      showBindings={!isProbe}
-                      report={report}
-                      canEdit={canEdit}
-                      isSigned={isSigned}
-                      templates={templates}
+                      isProbe={isProbe}
                     />
                   )}
                   path={`${path}/settings`}

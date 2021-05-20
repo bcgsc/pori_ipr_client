@@ -3,7 +3,7 @@ import React, {
 } from 'react';
 import PropTypes from 'prop-types';
 import { AgGridReact } from '@ag-grid-community/react';
-import useGrid from '@/components/hooks/useGrid';
+import useGrid from '@/hooks/useGrid';
 import {
   Typography,
   IconButton,
@@ -13,7 +13,7 @@ import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import GetAppIcon from '@material-ui/icons/GetApp';
 
-import ReportContext from '@/components/ReportContext';
+import ReportContext from '@/context/ReportContext';
 import ColumnPicker from './components/ColumnPicker';
 import LinkCellRenderer from './components/LinkCellRenderer';
 import GeneCellRenderer from './components/GeneCellRenderer';

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 
-import SecurityContext from '@/components/SecurityContext';
+import SecurityContext from '@/context/SecurityContext';
 import {
   login, isAuthorized, getReferrerUri, keycloak, getUser, isAdmin,
 } from '@/services/management/auth';

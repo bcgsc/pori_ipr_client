@@ -8,7 +8,7 @@ import { getComparators } from '@/services/reports/comparators';
 import DemoDescription from '@/components/DemoDescription';
 import ExpressionService from '@/services/reports/expression.service';
 import ImageService from '@/services/reports/image.service';
-import ReportContext from '@/components/ReportContext';
+import ReportContext from '@/context/ReportContext';
 import processExpression from './processData';
 
 import './index.scss';

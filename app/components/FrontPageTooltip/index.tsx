@@ -8,7 +8,6 @@ import './index.scss';
 
 const FrontPageTooltip = (): JSX.Element => (
   <Tooltip
-    classes={{ popper: 'tooltip-fix' }}
     placement="right"
     title="This field is shown on the front page"
     enterTouchDelay={1}

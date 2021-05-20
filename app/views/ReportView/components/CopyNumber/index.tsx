@@ -5,7 +5,7 @@ import {
 } from '@material-ui/core';
 
 import DataTable from '@/components/DataTable';
-import ReportContext from '@/components/ReportContext';
+import ReportContext from '@/context/ReportContext';
 import api, { ApiCallSet } from '@/services/api';
 import { CNVSTATE, EXPLEVEL } from '@/constants';
 import Image from '@/components/Image';
@@ -153,15 +153,15 @@ const CopyNumber = (): JSX.Element => {
           <Typography variant="h3" className="copy-number__title">Copy Number & LOH</Typography>
           <div className="copy-number__graphs">
             {[...Array(5).keys()].map((index) => (
-              <React.Fragment key={index}>
-                {images?.[`cnv.${index}`] && (
+              <React.Fragment key={index + 1}>
+                {images?.[`cnv.${index + 1}`] && (
                   <Image
-                    image={images[`cnv.${index}`]}
+                    image={images[`cnv.${index + 1}`]}
                   />
                 )}
-                {images?.[`loh.${index}`] && (
+                {images?.[`loh.${index + 1}`] && (
                   <Image
-                    image={images[`loh.${index}`]}
+                    image={images[`loh.${index + 1}`]}
                   />
                 )}
               </React.Fragment>

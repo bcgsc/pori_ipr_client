@@ -1,0 +1,13 @@
+.upload {
+  display: flex;
+  margin: 0 0 0 8px;
+
+  &--error {
+    margin: 32px 22px;
+  }
+
+  &__button {
+    height: 56px;
+    margin: 0 16px;
+  }
+}

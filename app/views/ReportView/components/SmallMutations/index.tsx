@@ -6,7 +6,7 @@ import {
 
 import api from '@/services/api';
 import DataTable from '@/components/DataTable';
-import ReportContext from '@/components/ReportContext';
+import ReportContext from '@/context/ReportContext';
 import { columnDefs } from './columnDefs';
 import MutationType from './types';
 

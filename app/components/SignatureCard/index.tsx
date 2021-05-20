@@ -11,9 +11,9 @@ import GestureIcon from '@material-ui/icons/Gesture';
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 
 import { UserType } from '@/common';
-import EditContext from '../EditContext';
-import { formatDate } from '../../utils/date';
-import SignatureType from './types.d';
+import EditContext from '@/context/EditContext';
+import { formatDate } from '@/utils/date';
+import SignatureType from './types';
 
 import './index.scss';
 

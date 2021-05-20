@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { AgGridReact } from '@ag-grid-community/react';
-import useGrid from '@/components/hooks/useGrid';
+import useGrid from '@/hooks/useGrid';
 
 import ReportService from '@/services/reports/report.service';
 import columnDefs from '../ReportsView/columnDefs';

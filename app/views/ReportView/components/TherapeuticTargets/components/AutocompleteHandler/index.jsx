@@ -5,7 +5,7 @@ import {
   TextField,
   CircularProgress,
 } from '@material-ui/core';
-import kbAutocomplete from '../../../../../../services/reports/kbAutocomplete';
+import kbAutocomplete from '@/services/reports/kbAutocomplete';
 
 import './index.scss';
 

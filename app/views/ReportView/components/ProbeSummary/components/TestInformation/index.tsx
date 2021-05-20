@@ -2,7 +2,7 @@ import React from 'react';
 import {
   Grid,
 } from '@material-ui/core';
-import ReadOnlyTextField from '../../../../../../components/ReadOnlyTextField';
+import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import TestInformationType from './types.d';
 
 import './index.scss';

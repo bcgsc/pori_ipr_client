@@ -12,10 +12,10 @@ import { UserType } from '@/common';
 import './index.scss';
 
 type UserAutocompleteProps = {
-  defaultValue: UserType;
+  defaultValue?: UserType;
   label: string;
-  onSubmit: (val: UserType) => void;
-  onChange: (val: UserType) => void;
+  onSubmit?: (val: UserType) => void;
+  onChange?: (val: UserType) => void;
 };
 
 const UserAutocomplete = ({

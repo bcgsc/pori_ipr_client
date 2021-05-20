@@ -4,8 +4,8 @@ import React, {
 import { CircularProgress } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
 
-import api from '../../../../services/api';
-import DataTable from '../../../../components/DataTable';
+import api from '@/services/api';
+import DataTable from '@/components/DataTable';
 import columnDefs from './columnDefs';
 import AddEditProjectDialog from './components/AddEditProjectDialog';
 
