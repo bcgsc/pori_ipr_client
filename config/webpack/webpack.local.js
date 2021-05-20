@@ -9,7 +9,7 @@ const localConfig = {
   mode: 'development',
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, '../../statics/index.ejs'),
+      template: path.join(__dirname, '../../app/index.ejs'),
       inject: true,
       baseUrl: '/',
       minify: {

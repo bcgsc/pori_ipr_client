@@ -51,6 +51,10 @@ module.exports = {
             }],
           },
           {
+            test: /\.svg$/,
+            use: ['@svgr/webpack'],
+          },
+          {
             test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.svg$/],
             exclude: /node_modules/,
             loader: 'file-loader',
@@ -83,17 +87,17 @@ module.exports = {
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: path.join(__dirname, '../../statics/images/*'),
+          from: path.join(APP_PATH, 'statics/images/*'),
           to: 'img/',
           flatten: true,
         },
         {
-          from: path.join(__dirname, '../../statics/favicon/*'),
+          from: path.join(APP_PATH, 'statics/favicon/*'),
           to: 'img/',
           flatten: true,
         },
         {
-          from: path.join(__dirname, '../../statics/ipr-env-config.js'),
+          from: path.join(APP_PATH, 'ipr-env-config.js'),
           to: 'ipr-env-config.js',
         },
       ],

@@ -3,6 +3,7 @@ const webpack = require('webpack');
 const merge = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
+const { GenerateSW } = require('workbox-webpack-plugin');
 const common = require('./webpack.config.js');
 
 
@@ -22,7 +23,7 @@ const prodConfig = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, '../../statics/index.ejs'),
+      template: path.join(__dirname, '../../app/index.ejs'),
       inject: true,
       baseUrl: '%PUBLIC_PATH%',
       minify: {
@@ -43,6 +44,7 @@ const prodConfig = {
       }),
     }),
     new OptimizeCSSAssetsPlugin({}),
+    new GenerateSW(),
   ],
   resolve: {
     alias: {
