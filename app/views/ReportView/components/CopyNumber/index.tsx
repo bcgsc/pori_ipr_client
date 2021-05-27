@@ -29,7 +29,7 @@ const CopyNumber = (): JSX.Element => {
   const { report } = useContext(ReportContext);
 
   const [isLoading, setIsLoading] = useState(true);
-  const [images, setImages] = useState<Record<string, ImageType>>();
+  const [images, setImages] = useState<ImageType[]>([]);
   const [cnvs, setCnvs] = useState<CopyNumberType[]>([]);
   const [groupedCnvs, setGroupedCnvs] = useState({
     clinical: [],
@@ -128,14 +128,12 @@ const CopyNumber = (): JSX.Element => {
       {!isLoading ? (
         <>
           <Typography variant="h3" className="copy-number__title">Summary of Copy Number Events</Typography>
-          {images?.['cnvLoh.circos'] && (
-            <div className="copy-number__circos">
-              <Image
-                image={images['cnvLoh.circos']}
-                width={700}
-              />
-            </div>
-          )}
+          <div className="copy-number__circos">
+            <Image
+              image={images.find((img) => img.key === 'cnvLoh.circos')}
+              width={700}
+            />
+          </div>
           {groupedCnvs && (
             <>
               {Object.entries(groupedCnvs).map(([key, value]) => (
@@ -154,16 +152,12 @@ const CopyNumber = (): JSX.Element => {
           <div className="copy-number__graphs">
             {[...Array(5).keys()].map((index) => (
               <React.Fragment key={index + 1}>
-                {images?.[`cnv.${index + 1}`] && (
-                  <Image
-                    image={images[`cnv.${index + 1}`]}
-                  />
-                )}
-                {images?.[`loh.${index + 1}`] && (
-                  <Image
-                    image={images[`loh.${index + 1}`]}
-                  />
-                )}
+                <Image
+                  image={images.find((img) => img.key === `cnv.${index + 1}`)}
+                />
+                <Image
+                  image={images.find((img) => img.key === `loh.${index + 1}`)}
+                />
               </React.Fragment>
             ))}
           </div>

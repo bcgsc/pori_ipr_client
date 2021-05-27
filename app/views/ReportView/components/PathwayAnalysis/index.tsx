@@ -49,7 +49,7 @@ const PathwayAnalysis = ({
             `/reports/${report.ident}/image/retrieve/pathwayAnalysis.legend`,
             {},
           ).request();
-          setLegend(legendResp['pathwayAnalysis.legend']);
+          setLegend(legendResp[0]);
         }
 
         setIsLoading(false);
@@ -73,7 +73,7 @@ const PathwayAnalysis = ({
           `/reports/${report.ident}/image/retrieve/pathwayAnalysis.legend`,
           {},
         ).request();
-        setLegend(legendResp['pathwayAnalysis.legend']);
+        setLegend(legendResp[0]);
       }
     }
   }, [legend, report]);
