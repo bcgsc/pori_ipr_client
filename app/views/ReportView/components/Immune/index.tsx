@@ -55,13 +55,13 @@ const Immune = (): JSX.Element => {
       {Boolean(images.length) && (
         <div>
           <Image
-            image={images.find((img) => img.key === 'cibersort.combined_t-cell_scatter')}
+            image={images.find(({ key }) => key === 'cibersort.combined_t-cell_scatter')}
             showTitle
             showCaption
             isZoomable
           />
           <Image
-            image={images.find((img) => img.key === 'cibersort.cd8_positive_t-cell_scatter')}
+            image={images.find(({ key }) => key === 'cibersort.cd8_positive_t-cell_scatter')}
             showTitle
             showCaption
             isZoomable
@@ -77,13 +77,13 @@ const Immune = (): JSX.Element => {
       {Boolean(images.length) && (
         <div>
           <Image
-            image={images.find((img) => img.key === 'mixcr.circos_trb_vj_gene_usage')}
+            image={images.find(({ key }) => key === 'mixcr.circos_trb_vj_gene_usage')}
             showTitle
             showCaption
             isZoomable
           />
           <Image
-            image={images.find((img) => img.key === 'mixcr.dominance_vs_alpha_beta_t-cells_scatter')}
+            image={images.find(({ key }) => key === 'mixcr.dominance_vs_alpha_beta_t-cells_scatter')}
             showTitle
             showCaption
             isZoomable
