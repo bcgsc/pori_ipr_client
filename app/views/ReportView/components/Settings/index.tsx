@@ -79,14 +79,14 @@ const Settings = ({
     setSelectedState(event.target.value);
   };
 
-  const handleUserDelete = useCallback(async (user: UserType, role: string) => {
+  const handleUserDelete = useCallback(async (ident: string) => {
     try {
-      const newReport = await api.del(
-        `/reports/${report.ident}/user`,
-        { user: user.ident, role },
+      await api.del(
+        `/reports/${report.ident}/user/${ident}`,
+        {},
         {},
       ).request();
-      setReport(newReport);
+      setReport((prevVal) => ({ ...prevVal, users: prevVal.users.filter(user => user.ident !== ident) }));
       snackbar.success('User removed');
     } catch (err) {
       snackbar.error(`Error removing user: ${err}`);
@@ -248,8 +248,7 @@ const Settings = ({
                       {report.users.sort(usersSort).map((user) => (
                         <AssociationCard
                           key={user.ident}
-                          user={user.user}
-                          role={user.role}
+                          user={user}
                           onDelete={handleUserDelete}
                         />
                       ))}
