@@ -10,7 +10,7 @@ import ReportContext from '@/context/ReportContext';
 import ImageService from '@/services/reports/image.service';
 import DataTable from '@/components/DataTable';
 import { getPairwiseExpressionCorrelation } from '@/services/reports/pairwise-expression';
-import Image from '@/components/Image';
+import Image, { ImageType } from '@/components/Image';
 import DemoDescription from '@/components/DemoDescription';
 import columnDefs from './columnDefs';
 
@@ -65,8 +65,8 @@ const getLuminance = (color: Color): number => {
 const ExpressionCorrelation = (): JSX.Element => {
   const { report } = useContext(ReportContext);
 
-  const [plots, setPlots] = useState({});
-  const [subtypePlots, setSubtypePlots] = useState({});
+  const [plots, setPlots] = useState<ImageType[]>();
+  const [subtypePlots, setSubtypePlots] = useState<ImageType[]>();
   const [pairwiseExpression, setPairwiseExpression] = useState([]);
   const [modifiedRowData, setModifiedRowData] = useState();
 
@@ -225,38 +225,34 @@ const ExpressionCorrelation = (): JSX.Element => {
           <>
             <div>
               <div className="expression-correlation__expression-charts">
-                {plots['expression.chart'] && (
-                  <span>
-                    <Typography variant="h3" align="center" className="expression-correlation__header">
-                      Expression Chart
-                    </Typography>
-                    <Image
-                      image={plots['expression.chart']}
-                      showTitle
-                      showCaption
-                    />
-                  </span>
-                )}
-                {plots['expression.legend'] && (
-                  <span>
-                    <Typography variant="h3" align="center" className="expression-correlation__header">
-                      Expression Legend
-                    </Typography>
-                    <Image
-                      image={plots['expression.legend']}
-                      showTitle
-                      showCaption
-                    />
-                  </span>
-                )}
+                <span>
+                  <Typography variant="h3" align="center" className="expression-correlation__header">
+                    Expression Chart
+                  </Typography>
+                  <Image
+                    image={plots.find((plot) => plot.key === 'expression.chart')}
+                    showTitle
+                    showCaption
+                  />
+                </span>
+                <span>
+                  <Typography variant="h3" align="center" className="expression-correlation__header">
+                    Expression Legend
+                  </Typography>
+                  <Image
+                    image={plots.find((plot) => plot.key === 'expression.legend')}
+                    showTitle
+                    showCaption
+                  />
+                </span>
               </div>
-              {Boolean(Object.values(subtypePlots).length) && (
+              {Boolean(subtypePlots.length) && (
                 <div className="expression-correlation__subtype">
                   <span>
                     <Typography variant="h3" align="center" className="expression-correlation__header">
                       Subtype Plots
                     </Typography>
-                    {Object.values(subtypePlots).map((plot) => (
+                    {subtypePlots.map((plot) => (
                       <Image
                         key={plot.ident}
                         image={plot}

@@ -62,7 +62,7 @@ const Legend = ({
         `/reports/${report.ident}/image/retrieve/pathwayAnalysis.legend`,
         {},
       ).request();
-      setLegend(resp['pathwayAnalysis.legend']);
+      setLegend(resp[0]);
 
       if (!isSigned) {
         snackbar.enqueueSnackbar('Pathway image uploaded successfully', { variant: 'success' });

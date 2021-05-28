@@ -52,7 +52,7 @@ const Expression = () => {
           const processedOutliers = processExpression(outliers);
 
           const imageAttachedOutliers = Object.entries(processedOutliers).reduce((accumulator, [key, value]) => {
-            const newValues = value.map(val => ({ ...val, image: images[`expDensity.${val.gene.name}`] }));
+            const newValues = value.map((val) => ({ ...val, image: images.find((img) => img.key === `expDensity.${val.gene.name}`) }));
             accumulator[key] = newValues;
             return accumulator;
           }, {});
@@ -80,7 +80,7 @@ const Expression = () => {
         ],
       ]);
     }
-  }, [report])
+  }, [report]);
 
   useEffect(() => {
     if (report && report.ident) {
@@ -182,7 +182,7 @@ const Expression = () => {
               ))}
             </Paper>
           )}
-          {comparators && !Boolean(comparators.length) && (
+          {comparators && !comparators.length && (
             <Typography align="center">No comparator data to display</Typography>
           )}
         </div>
