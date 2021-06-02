@@ -6,14 +6,13 @@ import { HorizontalBar, Chart } from 'react-chartjs-2';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import {
   Typography,
-  Divider,
   LinearProgress,
 } from '@material-ui/core';
 
 import api from '@/services/api';
 import ReportContext from '@/context/ReportContext';
 import DataTable from '@/components/DataTable';
-import Image from '@/components/Image';
+import Image, { ImageType } from '@/components/Image';
 import DemoDescription from '@/components/DemoDescription';
 import columnDefs from './columnDefs';
 
@@ -68,8 +67,8 @@ const getLuminance = (color: Color): number => {
 const ExpressionCorrelation = (): JSX.Element => {
   const { report } = useContext(ReportContext);
 
-  const [plots, setPlots] = useState({});
-  const [subtypePlots, setSubtypePlots] = useState({});
+  const [plots, setPlots] = useState<ImageType[]>();
+  const [subtypePlots, setSubtypePlots] = useState<ImageType[]>();
   const [pairwiseExpression, setPairwiseExpression] = useState([]);
   const [modifiedRowData, setModifiedRowData] = useState();
   const [isLoading, setIsLoading] = useState(true);
@@ -228,79 +227,55 @@ const ExpressionCorrelation = (): JSX.Element => {
         </DemoDescription>
         {!isLoading && (
           <>
-            {plots && subtypePlots && (
-              <>
-                <div>
-                  <div className="expression-correlation__expression-charts">
-                    {plots['expression.chart'] && (
-                      <span>
-                        <Typography variant="h3" align="center" className="expression-correlation__header">
-                          Expression Chart
-                        </Typography>
-                        <Image
-                          image={plots['expression.chart']}
-                          showTitle
-                          showCaption
-                        />
-                      </span>
-                    )}
-                    {plots['expression.legend'] && (
-                      <span>
-                        <Typography variant="h3" align="center" className="expression-correlation__header">
-                          Expression Legend
-                        </Typography>
-                        <Image
-                          image={plots['expression.legend']}
-                          showTitle
-                          showCaption
-                        />
-                      </span>
-                    )}
-                  </div>
-                  <Divider />
-                  {Boolean(Object.values(subtypePlots).length) && (
-                    <div className="expression-correlation__subtype">
-                      <span>
-                        <Typography variant="h3" align="center" className="expression-correlation__header">
-                          Subtype Plots
-                        </Typography>
-                        {Object.values(subtypePlots).map((plot) => (
-                          <Image
-                            key={plot.ident}
-                            image={plot}
-                            showTitle
-                            showCaption
-                          />
-                        ))}
-                      </span>
-                    </div>
-                  )}
-                </div>
-                {!Object.values(plots).length && !Object.values(subtypePlots).length && (
-                  <Typography align="center">No expression correlation plots found</Typography>
-                )}
-              </>
-            )}
-            {Boolean(Object.values(barChartData.datasets).length) && (
-              <span className="expression-correlation__chart-group">
-                <div className="expression-correlation__chart">
-                  <HorizontalBar
-                    ref={chartRef}
-                    data={barChartData}
-                    height={150 + (barChartData.datasets[0].data.length * 25)}
-                    options={options}
+            <div>
+              <div className="expression-correlation__expression-charts">
+                <span>
+                  <Typography variant="h3" align="center" className="expression-correlation__header">
+                    Expression Chart
+                  </Typography>
+                  <Image
+                    image={plots.find((plot) => plot.key === 'expression.chart')}
+                    showTitle
+                    showCaption
                   />
-                </div>
-                {Boolean(pairwiseExpression.length) && (
-                  <DataTable
-                    rowData={pairwiseExpression}
-                    columnDefs={columnDefs}
-                    highlightRow={rowClicked}
-                    onRowDataChanged={handleRowDataChanged}
+                </span>
+                <span>
+                  <Typography variant="h3" align="center" className="expression-correlation__header">
+                    Expression Legend
+                  </Typography>
+                  <Image
+                    image={plots.find((plot) => plot.key === 'expression.legend')}
+                    showTitle
+                    showCaption
                   />
-                )}
-              </span>
-            )}
+                </span>
+              </div>
+              {Boolean(subtypePlots.length) && (
+                <div className="expression-correlation__subtype">
+                  <span>
+                    <Typography variant="h3" align="center" className="expression-correlation__header">
+                      Subtype Plots
+                    </Typography>
+                    {subtypePlots.map((plot) => (
+                      <Image
+                        key={plot.ident}
+                        image={plot}
+                        showTitle
+                        showCaption
+                      />
+                    ))}
+                  </span>
+                </div>
+              )}
+              {Boolean(pairwiseExpression.length) && (
+                <DataTable
+                  rowData={pairwiseExpression}
+                  columnDefs={columnDefs}
+                  highlightRow={rowClicked}
+                  onRowDataChanged={handleRowDataChanged}
+                />
+              )}
+            </div>
           </>
         )}
         {isLoading && (

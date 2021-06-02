@@ -26,7 +26,7 @@ const imageKeys = [
 const MutationSignatures = (): JSX.Element => {
   const { report } = useContext(ReportContext);
   const { canEdit } = useContext(EditContext);
-  const [images, setImages] = useState<Record<string, ImageType>>({});
+  const [images, setImages] = useState<ImageType[]>([]);
   const [sbsSignatures, setSbsSignatures] = useState<MutationSignatureType[]>([]);
   const [dbsSignatures, setDbsSignatures] = useState<MutationSignatureType[]>([]);
   const [idSignatures, setIdSignatures] = useState<MutationSignatureType[]>([]);
@@ -87,6 +87,20 @@ const MutationSignatures = (): JSX.Element => {
     setEditData(null);
   }, [dbsSignatures, idSignatures, sbsSignatures]);
 
+  const getImage = useCallback((key, isSmall) => {
+    const image = images.find((img) => img.key === key);
+    if (image) {
+      return (
+        <img
+          src={`data:image/${image.format};base64,${image.data}`}
+          alt={image.title}
+          className={`mutation-signature__image ${isSmall ? 'mutation-signature__image--small' : ''}`}
+        />
+      );
+    }
+    return null;
+  }, [images]);
+
   return (
     <div>
       <DemoDescription>
@@ -101,15 +115,9 @@ const MutationSignatures = (): JSX.Element => {
           <Typography variant="h3" className="mutation-signature__title">
             Single base substitution signatures
           </Typography>
-          {images['mutSignature.barplot.sbs'] && (
-            <div className="mutation-signature__images">
-              <img
-                src={`data:image/${images['mutSignature.barplot.sbs'].format};base64,${images['mutSignature.barplot.sbs'].data}`}
-                alt="Single base substitution barplot"
-                className="mutation-signature__image mutation-signature__image--small"
-              />
-            </div>
-          )}
+          <div className="mutation-signature__images">
+            {getImage('mutSignature.barplot.sbs', true)}
+          </div>
           {showDialog && (
             <EditDialog
               editData={editData}
@@ -128,15 +136,9 @@ const MutationSignatures = (): JSX.Element => {
           <Typography variant="h3" className="mutation-signature__title">
             Double base substitution signatures
           </Typography>
-          {images['mutSignature.barplot.dbs'] && (
-            <div className="mutation-signature__images">
-              <img
-                src={`data:image/${images['mutSignature.barplot.dbs'].format};base64,${images['mutSignature.barplot.dbs'].data}`}
-                alt="Double base substitution barplot"
-                className="mutation-signature__image"
-              />
-            </div>
-          )}
+          <div className="mutation-signature__images">
+            {getImage('mutSignature.barplot.dbs', false)}
+          </div>
           <DataTable
             rowData={dbsSignatures}
             columnDefs={columnDefs}
@@ -148,15 +150,9 @@ const MutationSignatures = (): JSX.Element => {
           <Typography variant="h3" className="mutation-signature__title">
             Indel Signatures
           </Typography>
-          {images['mutSignature.barplot.indels'] && (
-            <div className="mutation-signature__images">
-              <img
-                src={`data:image/${images['mutSignature.barplot.indels'].format};base64,${images['mutSignature.barplot.indels'].data}`}
-                alt="Indel barplot"
-                className="mutation-signature__image"
-              />
-            </div>
-          )}
+          <div className="mutation-signature__images">
+            {getImage('mutSignature.barplot.indels', false)}
+          </div>
           <DataTable
             rowData={idSignatures}
             columnDefs={columnDefs}

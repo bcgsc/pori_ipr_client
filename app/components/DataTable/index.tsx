@@ -296,9 +296,10 @@ const DataTable = ({
       suppressQuotes: true,
       columnSeparator: '\t',
       columnKeys: colApi.getAllDisplayedColumns()
-        .map((col) => col.colId)
-        .filter((col) => col === 'Actions'),
+        .filter((col) => col.name !== 'Actions' && col.colId !== 'Actions')
+        .map((col) => col.colId),
       fileName: `ipr_${report.patientId}_${report.ident}_${titleText.split(' ').join('_')}_${date}.tsv`,
+      processCellCallback: (({ value }) => (typeof value === 'string' ? value?.replace(/,/g, '') : value)),
     });
   }, [colApi, gridApi, report, titleText]);
 
