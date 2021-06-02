@@ -66,7 +66,7 @@ const ApiPaginatedTable = ({
     try {
       const response = await api.get(
         '/export/germline-small-mutation-reports/batch/download?reviews=biofx,projects',
-        {},
+        { raw: true },
       ).request();
       const blob = await response.blob();
       const filenameHeader = response.headers.get('Content-Disposition');
