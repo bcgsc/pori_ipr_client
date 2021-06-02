@@ -4,11 +4,11 @@ import React, {
 import PropTypes from 'prop-types';
 import { AgGridReact } from '@ag-grid-community/react';
 
-import columnDefs from './columnDefs';
 import startCase from '@/utils/startCase';
 import { isExternalMode } from '@/services/management/auth';
 import SecurityContext from '@/context/SecurityContext';
-import ReportService from '@/services/reports/report.service';
+import api from '@/services/api';
+import columnDefs from './columnDefs';
 
 import './index.scss';
 
@@ -30,22 +30,22 @@ function ReportsTableComponent(props) {
     gridApi.current = params.api;
     columnApi.current = params.columnApi;
 
-    const opts = {};
+    let states = '';
 
     if (!adminUser) {
-      opts.states = 'ready,active,uploaded,signedoff,archived,reviewed';
+      states = 'ready,active,uploaded,signedoff,archived,reviewed';
     }
 
     if (isExternalMode(userDetails)) {
-      opts.states = 'reviewed,archived';
+      states = 'reviewed,archived';
     }
 
-    const { reports } = await ReportService.allFiltered(opts);
+    const { reports } = await api.get(`/reports?states=${states}`, {}).request();
 
     setRowData(reports.map((report) => {
       const [analyst] = report.users
-        .filter(u => u.role === 'analyst' && !u.deletedAt)
-        .map(u => u.user);
+        .filter((u) => u.role === 'analyst' && !u.deletedAt)
+        .map((u) => u.user);
 
       if (!report.patientInformation) {
         report.patientInformation = {};
@@ -57,7 +57,7 @@ function ReportsTableComponent(props) {
         reportType: report.template.name === 'probe' ? 'Targeted Gene' : startCase(report.template.name),
         state: report.state,
         caseType: report.patientInformation.caseType,
-        project: report.projects.map(project => project.name).sort().join(', '),
+        project: report.projects.map((project) => project.name).sort().join(', '),
         physician: report.patientInformation.physician,
         analyst: analyst ? `${analyst.firstName} ${analyst.lastName}` : null,
         reportIdent: report.ident,
@@ -73,7 +73,7 @@ function ReportsTableComponent(props) {
     if (params.clientWidth >= MEDIUM_SCREEN_WIDTH_LOWER) {
       gridApi.current.sizeColumnsToFit();
     } else {
-      const allCols = columnApi.current.getAllColumns().map(col => col.colId);
+      const allCols = columnApi.current.getAllColumns().map((col) => col.colId);
       columnApi.current.autoSizeColumns(allCols);
     }
   };

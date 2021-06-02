@@ -40,8 +40,8 @@ const Image = ({
     <>
       {data && (
         <>
-          <div>
-            {showTitle && (
+          <div className="image">
+            {showTitle && title && (
               <Typography variant="h3">
                 {title}
               </Typography>
@@ -60,41 +60,42 @@ const Image = ({
                 width={width ? `${width}px` : undefined}
               />
             </Button>
-            {showCaption && (
+            {showCaption && caption && (
               <Typography className="image__caption" variant="caption">
                 {caption}
               </Typography>
             )}
           </div>
-          <Fade in={isZoomed}>
-            <div className="image__dialog-background" role="dialog">
-              <Button
-                classes={{ root: 'image__button' }}
-                className="image__dialog-button"
-                component="label"
+          {isZoomed && (
+            <Fade in={isZoomed}>
+              <button
+                className="image__dialog-background"
                 onClick={handleZoom}
+                type="button"
               >
-                <div className="image__dialog">
-                  {showTitle && (
+                <div
+                  className="image__dialog-button"
+                >
+                  {showTitle && title && (
                     <Typography variant="h3">
                       {title}
                     </Typography>
                   )}
                   <img
-                    className={`${isZoomable && isZoomed ? 'image__zoom--out' : ''}`}
+                    className={`image__data ${isZoomable && isZoomed ? 'image__zoom--out' : ''}`}
                     src={`data:image/${format};base64,${data}`}
                     alt={title}
                     key={key}
                   />
-                  {showCaption && (
+                  {showCaption && caption && (
                     <Typography className="image__caption" variant="caption">
                       {caption}
                     </Typography>
                   )}
                 </div>
-              </Button>
-            </div>
-          </Fade>
+              </button>
+            </Fade>
+          )}
         </>
       )}
     </>

@@ -8,7 +8,6 @@ import React, {
 import fetchIntercept from 'fetch-intercept';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { CircularProgress, Snackbar } from '@material-ui/core';
-import { $httpProvider } from 'ngimport';
 
 import AuthenticatedRoute from '@/components/AuthenticatedRoute';
 import SidebarContext from '@/context/SidebarContext';
@@ -47,34 +46,11 @@ const Main = (): JSX.Element => {
 
   useEffect(() => {
     if (authorizationToken) {
-      const interceptor = {
-        request: (fetchUrl, fetchConfig) => {
-          if (fetchUrl.startsWith(window._env_.API_BASE_URL)) {
-            const newConfig = { ...fetchConfig };
-
-            if (!newConfig.headers) {
-              newConfig.headers = {};
-            }
-            newConfig.headers.Authorization = authorizationToken;
-            return [fetchUrl, newConfig];
-          }
-          return [fetchUrl, fetchConfig];
-        },
-      };
-
-      $httpProvider.defaults.headers.common.Authorization = authorizationToken;
-
-      const unregister = fetchIntercept.register(interceptor);
-
       const getData = async () => {
         setCanEdit(await AclService.checkAction('report.edit'));
       };
-
       getData();
-
-      return unregister;
     }
-    return undefined;
   }, [authorizationToken]);
 
   const handleSnackbarClose = useCallback((event, reason) => {

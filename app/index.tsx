@@ -7,9 +7,5 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 
-const bootstrap = () => {
-  ReactDOM.render(<App />, document.getElementById('base'));
-  registerServiceWorker();
-};
-
-export default bootstrap;
+ReactDOM.render(<App />, document.getElementById('base'));
+registerServiceWorker();

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { AgGridReact } from '@ag-grid-community/react';
-import useGrid from '@/hooks/useGrid';
 
-import ReportService from '@/services/reports/report.service';
+import api from '@/services/api';
+import useGrid from '@/hooks/useGrid';
 import columnDefs from '../ReportsView/columnDefs';
 
 import '../ReportsView/index.scss';
@@ -17,11 +17,11 @@ const PatientsView = () => {
   useEffect(() => {
     if (patientId) {
       const getData = async () => {
-        const { reports } = await ReportService.allFiltered({ searchText: patientId });
+        const { reports } = await api.get('/reports', { searchText: patientId }).request();
         setRowData(reports.map((report) => {
           const [analyst] = report.users
-            .filter(u => u.role === 'analyst' && !u.deletedAt)
-            .map(u => u.user);
+            .filter((u) => u.role === 'analyst' && !u.deletedAt)
+            .map((u) => u.user);
 
           if (!report.patientInformation) {
             report.patientInformation = {};
@@ -33,14 +33,14 @@ const PatientsView = () => {
             reportType: report.type === 'genomic' ? 'Genomic' : 'Targeted Gene',
             state: report.state,
             caseType: report.patientInformation.caseType,
-            project: report.projects.map(project => project.name).sort().join(', '),
+            project: report.projects.map((project) => project.name).sort().join(', '),
             physician: report.patientInformation.physician,
             analyst: analyst ? `${analyst.firstName} ${analyst.lastName}` : null,
             reportIdent: report.ident,
             tumourType: report.patientInformation.diagnosis,
             date: report.createdAt,
           };
-        }).filter(report => (
+        }).filter((report) => (
           report.patientID === patientId || report.alternateIdentifier === patientId
         )));
       };
@@ -55,7 +55,7 @@ const PatientsView = () => {
     if (params.clientWidth >= MEDIUM_SCREEN_WIDTH_LOWER) {
       gridApi.sizeColumnsToFit();
     } else {
-      const allCols = columnApi.getAllColumns().map(col => col.colId);
+      const allCols = columnApi.getAllColumns().map((col) => col.colId);
       columnApi.autoSizeColumns(allCols);
     }
   };

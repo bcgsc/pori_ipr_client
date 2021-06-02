@@ -2,20 +2,30 @@
  * @module /App
  */
 import { SnackbarProvider } from 'notistack';
-import ScopedCssBaseline from '@material-ui/core/ScopedCssBaseline';
+import CssBaseline from '@material-ui/core/CssBaseline';
 import {
   createMuiTheme,
   MuiThemeProvider,
+  createGenerateClassName,
+  jssPreset,
+  StylesProvider,
 } from '@material-ui/core/styles';
-import { createGenerateClassName, jssPreset, StylesProvider } from '@material-ui/styles';
 import { create } from 'jss';
 import React from 'react';
 import { JssProvider } from 'react-jss';
 import { BrowserRouter } from 'react-router-dom';
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { CsvExportModule } from '@ag-grid-community/csv-export';
 
-import MainView from './views/MainView/index';
+import MainView from './views/MainView';
 import { SnackbarUtilsConfigurator } from './services/SnackbarUtils';
 import cssTheme from './styles/_theme.scss';
+
+import '@ag-grid-community/core/dist/styles/ag-grid.min.css';
+import '@ag-grid-community/core/dist/styles/ag-theme-material.min.css';
+import '@fontsource/roboto';
+import './styles/ag-grid.scss';
 
 const theme = createMuiTheme({
   direction: 'ltr',
@@ -56,6 +66,26 @@ const theme = createMuiTheme({
     h6: { fontSize: cssTheme.fontSizeH6 },
     subtitle1: { fontSize: cssTheme.fontSizeSubtitle1 },
   },
+  // Dialog title header bug: https://github.com/mui-org/material-ui/issues/16569
+  props: {
+    MuiDialogTitle: {
+      disableTypography: true,
+    },
+  },
+  overrides: {
+    MuiDialogTitle: {
+      root: {
+        fontSize: cssTheme.fontSizeH3,
+      },
+    },
+    MuiCssBaseline: {
+      '@global': {
+        html: {
+          WebkitFontSmoothing: 'auto',
+        },
+      },
+    },
+  },
 });
 
 const generateClassName = createGenerateClassName({
@@ -67,6 +97,11 @@ const jss = create({
   insertionPoint: 'jss-insertion-point',
 });
 
+ModuleRegistry.registerModules([
+  ClientSideRowModelModule,
+  CsvExportModule,
+]);
+
 /**
  * Entry point to application. Handles routing, app theme, and logged in state.
  */
@@ -77,10 +112,9 @@ function App() {
         <MuiThemeProvider theme={theme}>
           <SnackbarProvider anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}>
             <SnackbarUtilsConfigurator />
+            <CssBaseline />
             <BrowserRouter basename={window._env_.PUBLIC_PATH}>
-              <ScopedCssBaseline>
-                <MainView />
-              </ScopedCssBaseline>
+              <MainView />
             </BrowserRouter>
           </SnackbarProvider>
         </MuiThemeProvider>
