@@ -76,7 +76,7 @@ const Image = ({
                 <div
                   className="image__dialog-button"
                 >
-                  {showTitle && (
+                  {showTitle && title && (
                     <Typography variant="h3">
                       {title}
                     </Typography>
@@ -87,7 +87,7 @@ const Image = ({
                     alt={title}
                     key={key}
                   />
-                  {showCaption && (
+                  {showCaption && caption && (
                     <Typography className="image__caption" variant="caption">
                       {caption}
                     </Typography>
