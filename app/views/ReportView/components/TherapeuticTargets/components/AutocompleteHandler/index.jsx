@@ -51,9 +51,9 @@ const AutocompleteHandler = (props) => {
       // Needed for KB API to process multiple words
       queryString = queryString.split(' ').filter(str => str.length >= minCharacters).join(' ');
 
-      const autocompleted = await api.get(`/graphkb/${type}`, { keyword: queryString }).request();
+      const { result } = await api.post(`/graphkb/${type}`, { keyword: queryString }).request();
 
-      setOptions(autocompleted);
+      setOptions(result);
       setLoading(false);
     }
   };
