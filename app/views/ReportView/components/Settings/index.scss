@@ -14,6 +14,7 @@
 
     & > * {
       width: 49%;
+      margin: 8px 0;
     }
   }
 
@@ -26,16 +27,7 @@
     justify-content: space-between;
 
     &--warn {
-      color: $palette__error--light !important;
-    }
-  }
-
-  &__text-field {
-    margin: 20px 0 12px !important;
-    height: 40px;
-
-    > * {
-      box-sizing: content-box !important;
+      color: $palette__error--light;
     }
   }
 

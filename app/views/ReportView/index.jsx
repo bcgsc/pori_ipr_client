@@ -13,7 +13,6 @@ import { useSnackbar } from 'notistack';
 import SecurityContext from '@/context/SecurityContext';
 import ReportToolbar from '@/components/ReportToolbar';
 import ReportSidebar from '@/components/ReportSidebar';
-import ReportService from '@/services/reports/report.service';
 import EditContext from '@/context/EditContext';
 import ReportContext from '@/context/ReportContext';
 import ConfirmContext from '@/context/ConfirmContext';
@@ -61,7 +60,7 @@ const ReportView = () => {
     if (!report) {
       const getReport = async () => {
         try {
-          const resp = await ReportService.getReport(params.ident);
+          const resp = await api.get(`/reports/${params.ident}`, {}).request();
           const templatesResp = await api.get('/templates', {}).request();
           setTemplates(templatesResp);
           setReport(resp);

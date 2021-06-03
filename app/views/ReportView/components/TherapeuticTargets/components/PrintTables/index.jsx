@@ -8,7 +8,7 @@ import { AgGridReact } from '@ag-grid-community/react';
 import omit from 'lodash.omit';
 
 import useGrid from '@/hooks/useGrid';
-import { therapeuticGet } from '@/services/reports/therapeutic';
+import api from '@/services/api';
 import ReportContext from '@/context/ReportContext';
 
 import './index.scss';
@@ -70,7 +70,7 @@ const TherapeuticTable = (props) => {
   useEffect(() => {
     if (report) {
       const getData = async () => {
-        const resp = await therapeuticGet(report.ident);
+        const resp = await api.get(`/reports/${report.ident}/therapeutic-targets`, {}).request;
 
         if (resp.length) {
           // target and biomarker are objects and need to be strings to be displayed w/ag-grid

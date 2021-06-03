@@ -2,7 +2,7 @@
 
 .navbar {
   height: $navbar-size;
-  display: inline-block;
+  display: inline-flex;
   justify-content: space-between;
 
   &__left {
@@ -15,11 +15,11 @@
   }
 
   &__text {
-    margin: auto 4px !important;
+    margin: auto 4px;
   }
 
   &__button {
-    color: white !important;
+    color: white;
   }
 
   &__icon {
@@ -28,17 +28,17 @@
 }
 
 .MuiToolbar-gutters {
-  padding: 0 16px !important;
+  padding: 0 16px;
 }
 
 .appbar {
   width: 100%;
-  transition: width $transition-normal !important;
+  transition: width $transition-normal;
 
   @media (min-width: $breakpoint-sm) {
     &--minimized {
-      width: calc(100% - 240px) !important;
-      transition: width $transition-normal !important;
+      width: calc(100% - $navbar-size);
+      transition: width $transition-normal;
     }
   }
 }

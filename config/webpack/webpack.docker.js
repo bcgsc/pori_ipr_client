@@ -6,16 +6,7 @@ const path = require('path');
 const { GenerateSW } = require('workbox-webpack-plugin');
 const common = require('./webpack.config.js');
 
-
 const prodConfig = {
-  module: {
-    rules: [
-      {
-        test: /angular\.min\.js$/,
-        loader: 'exports-loader?angular',
-      },
-    ],
-  },
   mode: 'production',
   devtool: 'none',
   optimization: {
@@ -46,11 +37,6 @@ const prodConfig = {
     new OptimizeCSSAssetsPlugin({}),
     new GenerateSW(),
   ],
-  resolve: {
-    alias: {
-      angular: 'angular/angular.min.js',
-    },
-  },
 };
 module.exports = [
   merge(common, prodConfig),

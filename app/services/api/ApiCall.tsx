@@ -24,6 +24,8 @@ class ApiCall {
 
   forceRecordReturn: boolean;
 
+  raw: boolean;
+
   name: string;
 
   confirm: boolean;
@@ -34,6 +36,7 @@ class ApiCall {
     callOptions: {
       forceListReturn: boolean;
       forceRecordReturn: boolean;
+      raw: boolean;
       name: string;
       confirm: boolean
     },
@@ -41,6 +44,7 @@ class ApiCall {
     const {
       forceListReturn,
       forceRecordReturn,
+      raw,
       name,
       confirm,
     } = callOptions || {};
@@ -49,6 +53,7 @@ class ApiCall {
     this.controller = null;
     this.forceListReturn = forceListReturn;
     this.forceRecordReturn = forceRecordReturn;
+    this.raw = raw || false;
     this.name = name || endpoint;
     this.confirm = confirm || false;
   }
@@ -156,7 +161,7 @@ class ApiCall {
       return null;
     }
 
-    if (response.ok) {
+    if (response.ok && !this.raw) {
       let result = await response.json();
 
       if (this.forceListReturn && !Array.isArray(result)) {
@@ -169,6 +174,10 @@ class ApiCall {
       }
       return result;
     }
+    if (this.raw) {
+      return response;
+    }
+
     return errorHandler(response);
   }
 }

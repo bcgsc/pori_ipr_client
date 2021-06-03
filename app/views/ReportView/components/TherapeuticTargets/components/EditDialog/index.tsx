@@ -11,7 +11,6 @@ import {
   TextField,
 } from '@material-ui/core';
 
-import { therapeuticAdd, therapeuticDelete } from '@/services/reports/therapeutic';
 import api from '@/services/api';
 import ConfirmContext from '@/context/ConfirmContext';
 import ReportContext from '@/context/ReportContext';
@@ -102,10 +101,11 @@ const EditDialog = ({
         setIsDirty(false);
         onClose(returnedData);
       } else {
-        const returnedData = await therapeuticAdd(
-          report.ident,
+        const returnedData = await api.post(
+          `/reports/${report.ident}/therapeutic-targets`,
           combinedData,
-        );
+          {},
+        ).request(isSigned);
         setNewData({ type: 'replace', payload: {} });
         setIsDirty(false);
         onClose(returnedData);
@@ -120,17 +120,18 @@ const EditDialog = ({
   const handleDelete = useCallback(async () => {
     setIsDeleting(true);
     try {
-      await therapeuticDelete(
-        report.ident,
-        newData.ident,
-      );
+      await api.del(
+        `/reports/${report.ident}/therapeutic-targets/${newData.ident}`,
+        {},
+        {},
+      ).request(isSigned);
       onClose(null);
     } catch (err) {
       console.error('error', err); // TODO: send to snackbar
     } finally {
       setIsDeleting(false);
     }
-  }, [onClose, newData.ident, report.ident]);
+  }, [onClose, newData.ident, report.ident, isSigned]);
 
   const handleAutocompleteValueSelected = (selectedValue, typeName) => {
     setIsDirty(true);
