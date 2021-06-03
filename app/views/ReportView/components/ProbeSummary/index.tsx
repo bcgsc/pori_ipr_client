@@ -282,6 +282,7 @@ const ProbeSummary = ({
               columnDefs={eventsColumnDefs
                 .filter((col) => col.headerName !== 'Actions')}
               order={['Genomic Events', 'Sample', 'Ref/Alt (Tumour DNA)', 'Ref/Alt (Tumour RNA)', 'Ref/Alt (Normal DNA)', 'Comments']}
+              noRowsText="No Events Detected"
             />
           ) : (
             <>

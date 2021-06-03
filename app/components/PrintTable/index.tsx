@@ -11,12 +11,14 @@ type PrintTableProps = {
   /* order is only needed if it differs from the columnDef order */
   /* string of headerNames should be used */
   order?: string[];
+  noRowsText?: string;
 };
 
 const PrintTable = ({
   data = [],
   columnDefs = [],
   order = [],
+  noRowsText = '',
 }: PrintTableProps): JSX.Element => {
   const rowSortFunc = useCallback(([keyA], [keyB]): number => {
     const colA = columnDefs.find((col) => col.colId === keyA);
@@ -92,7 +94,7 @@ const PrintTable = ({
             ) : (
               <tr>
                 <td className="table__none" colSpan={columnDefs.length}>
-                  No Rows To Show
+                  {`${noRowsText || 'No Rows To Show'}`}
                 </td>
               </tr>
             )}

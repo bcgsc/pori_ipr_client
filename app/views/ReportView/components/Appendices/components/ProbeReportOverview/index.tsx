@@ -10,7 +10,9 @@ const ProbeReportOverview = (): JSX.Element => (
     <Typography variant="h3">Test Summary</Typography>
     <p>
       <strong>
-        The Targeted Gene Report (TGR) provides rapid identification of a select subset of cancer-associated events.
+        {'The Targeted Gene Report (TGR) provides rapid identification of a '}
+        <span className="overview--underlined">select subset</span>
+        {' of cancer-associated events.'}
         <ul>
           <li>
             This is not a complete description of mutations and fusions present in the tumour genome. A final comprehensive genomic report will generally follow.
