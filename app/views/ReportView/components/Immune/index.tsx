@@ -3,7 +3,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import DemoDescription from '@/components/DemoDescription';
 import DataTable from '@/components/DataTable';
 import Image, { ImageType } from '@/components/Image';
-import ReportContext from '@/components/ReportContext';
+import ReportContext from '@/context/ReportContext';
 import api, { ApiCallSet } from '@/services/api';
 import { hlaColumnDefs, cellTypesColumnDefs } from './columnDefs';
 import { ImmuneType, HlaType } from './types';
@@ -11,7 +11,7 @@ import { ImmuneType, HlaType } from './types';
 const Immune = (): JSX.Element => {
   const { report } = useContext(ReportContext);
   const [cellTypes, setCellTypes] = useState<ImmuneType[]>([]);
-  const [images, setImages] = useState<Record<string, ImageType>>({});
+  const [images, setImages] = useState<ImageType[]>([]);
   const [hlaTypes, setHlaTypes] = useState<HlaType[]>([]);
 
   useEffect(() => {
@@ -52,16 +52,16 @@ const Immune = (): JSX.Element => {
         titleText="Immune Cell Types"
         canViewDetails
       />
-      {Object.values(images).length > 0 && (
+      {Boolean(images.length) && (
         <div>
           <Image
-            image={images['cibersort.combined_t-cell_scatter']}
+            image={images.find(({ key }) => key === 'cibersort.combined_t-cell_scatter')}
             showTitle
             showCaption
             isZoomable
           />
           <Image
-            image={images['cibersort.cd8_positive_t-cell_scatter']}
+            image={images.find(({ key }) => key === 'cibersort.cd8_positive_t-cell_scatter')}
             showTitle
             showCaption
             isZoomable
@@ -74,16 +74,16 @@ const Immune = (): JSX.Element => {
         titleText="HLA Types"
         canViewDetails
       />
-      {Object.values(images).length > 0 && (
+      {Boolean(images.length) && (
         <div>
           <Image
-            image={images['mixcr.circos_trb_vj_gene_usage']}
+            image={images.find(({ key }) => key === 'mixcr.circos_trb_vj_gene_usage')}
             showTitle
             showCaption
             isZoomable
           />
           <Image
-            image={images['mixcr.dominance_vs_alpha_beta_t-cells_scatter']}
+            image={images.find(({ key }) => key === 'mixcr.dominance_vs_alpha_beta_t-cells_scatter')}
             showTitle
             showCaption
             isZoomable

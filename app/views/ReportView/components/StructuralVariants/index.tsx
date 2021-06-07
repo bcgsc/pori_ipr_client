@@ -9,7 +9,7 @@ import {
 import api, { ApiCallSet } from '@/services/api';
 import DataTable from '@/components/DataTable';
 import Image from '@/components/Image';
-import ReportContext from '@/components/ReportContext';
+import ReportContext from '@/context/ReportContext';
 import ImageType from '@/components/Image/types';
 import columnDefs from './columnDefs';
 import StructuralVariantType from './types';
@@ -34,7 +34,7 @@ const StructuralVariants = (): JSX.Element => {
     biological: [],
     unknown: [],
   });
-  const [images, setImages] = useState<Record<string, ImageType>>({});
+  const [images, setImages] = useState<ImageType[]>([]);
   const [tabIndex, setTabIndex] = useState(0);
 
   useEffect(() => {
@@ -100,26 +100,22 @@ const StructuralVariants = (): JSX.Element => {
       <Typography variant="h3">Structural Variation</Typography>
       {!isLoading ? (
         <>
-          {(images['circosSv.genome'] || images['circosSv.transcriptome']) && (
-            <>
-              <Typography variant="h3" className="structural-variants__title">
-                Summary of Structural Events
-              </Typography>
-              <Tabs centered value={tabIndex} onChange={handleTabChange}>
-                <Tab label="genome" />
-                <Tab label="transcriptome" />
-              </Tabs>
-              {tabIndex === 0 && (
-                <div className="structural-variants__events">
-                  <Image image={images['circosSv.genome']} />
-                </div>
-              )}
-              {tabIndex === 1 && (
-                <div className="structural-variants__events">
-                  <Image image={images['circosSv.transcriptome']} />
-                </div>
-              )}
-            </>
+          <Typography variant="h3" className="structural-variants__title">
+            Summary of Structural Events
+          </Typography>
+          <Tabs centered value={tabIndex} onChange={handleTabChange}>
+            <Tab label="genome" />
+            <Tab label="transcriptome" />
+          </Tabs>
+          {tabIndex === 0 && (
+            <div className="structural-variants__events">
+              <Image image={images.find((img) => img.key === 'circosSv.genome')} />
+            </div>
+          )}
+          {tabIndex === 1 && (
+            <div className="structural-variants__events">
+              <Image image={images.find((img) => img.key === 'circosSv.transcriptome')} />
+            </div>
           )}
           {Object.entries(groupedSvs).map(([key, value]) => (
             <DataTable

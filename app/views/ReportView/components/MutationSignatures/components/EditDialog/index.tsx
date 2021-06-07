@@ -18,8 +18,8 @@ import {
 import api from '@/services/api';
 import AsyncButton from '@/components/AsyncButton';
 
-import ConfirmContext from '@/components/ConfirmContext';
-import ReportContext from '@/components/ReportContext';
+import ConfirmContext from '@/context/ConfirmContext';
+import ReportContext from '@/context/ReportContext';
 import SignatureType from '../../types';
 
 import './index.scss';

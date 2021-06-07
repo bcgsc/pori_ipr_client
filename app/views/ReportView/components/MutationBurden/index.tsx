@@ -8,7 +8,7 @@ import {
 
 import DemoDescription from '@/components/DemoDescription';
 import DataTable from '@/components/DataTable';
-import ReportContext from '@/components/ReportContext';
+import ReportContext from '@/context/ReportContext';
 import Image from '@/components/Image';
 import ImageType from '@/components/Image/types';
 import api, { ApiCallSet } from '@/services/api';
@@ -20,7 +20,7 @@ import columnDefs from './columnDefs';
 
 import './index.scss';
 
-const processImages = (images: Record<string, ImageType>): Record<string, Record<string, ImageType[]>> => {
+const processImages = (images: ImageType[]): Record<string, Record<string, ImageType[]>> => {
   if (images) {
     const keyedImages = {
       indel: {
@@ -40,7 +40,7 @@ const processImages = (images: Record<string, ImageType>): Record<string, Record
       },
     };
 
-    Object.values(images).forEach((image) => {
+    images.forEach((image) => {
       const key = image.key.toLowerCase();
 
       if (key.includes('barplot')) {
@@ -112,7 +112,7 @@ const MutationBurden = (): JSX.Element => {
           msiResp, msiScatterResp, imagesResp, comparatorsResp, mutationBurdenResp,
         ] = await calls.request();
         setMsi(msiResp);
-        setMsiScatter(msiScatterResp['msi.scatter']);
+        setMsiScatter(msiScatterResp.find((img) => img.key === 'msi.scatter'));
         setImages(processImages(imagesResp));
         setComparators(comparatorsResp);
         setMutationBurden(mutationBurdenResp);
