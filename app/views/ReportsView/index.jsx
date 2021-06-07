@@ -40,7 +40,7 @@ function ReportsTableComponent(props) {
       states = 'reviewed,archived';
     }
 
-    const { reports } = await api.get(`/reports?states=${states}`, {}).request();
+    const { reports } = await api.get(`/reports${states ? `?states=${states}` : ''}`, {}).request();
 
     setRowData(reports.map((report) => {
       const [analyst] = report.users
