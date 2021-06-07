@@ -11,6 +11,7 @@ import EditIcon from '@material-ui/icons/Edit';
 
 import api, { ApiCallSet } from '@/services/api';
 import EditContext from '@/context/EditContext';
+import DemoDescription from '@/components/DemoDescription';
 import ReportContext from '@/context/ReportContext';
 import SignatureCard, { SignatureType } from '@/components/SignatureCard';
 import ConfirmContext from '@/context/ConfirmContext';
@@ -99,6 +100,9 @@ const AnalystComments = ({
       >
         Analyst Comments
       </Typography>
+      <DemoDescription>
+        This section is a manually curated textual summary of the main findings from tumour biopsy sequencing.
+      </DemoDescription>
       {!isLoading ? (
         <>
           {!isPrint && canEdit && (

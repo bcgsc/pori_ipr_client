@@ -16,6 +16,7 @@ import { formatDate } from '@/utils/date';
 import EditContext from '@/context/EditContext';
 import ConfirmContext from '@/context/ConfirmContext';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
+import DemoDescription from '@/components/DemoDescription';
 import DescriptionList from '@/components/DescriptionList';
 import ReportContext from '@/context/ReportContext';
 import VariantChips from './components/VariantChips';
@@ -390,6 +391,9 @@ const GenomicSummary = ({
 
   return (
     <div className="genomic-summary">
+      <DemoDescription>
+        The front page displays general patient and sample information, and provides a highlight of the key sequencing results.
+      </DemoDescription>
       {report && patientInformation && tumourSummary && (
         <>
           <div className="genomic-summary__patient-information">
