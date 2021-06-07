@@ -3,10 +3,11 @@
 
 .report {
   &__container {
+    height: 100%;
     display: flex;
     flex-direction: row;
-    height: -webkit-fill-available;
-    height: -moz-available;
+    min-height: -webkit-fill-available;
+    min-height: -moz-available;
   }
 
   &__content {
