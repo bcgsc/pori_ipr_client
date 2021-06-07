@@ -51,6 +51,7 @@ const CopyNumber = (): JSX.Element => {
         const [cnvsResp, imagesResp] = await apiCalls.request();
         setCnvs(cnvsResp);
         setImages(imagesResp);
+        setIsLoading(false);
       };
       getData();
     }
@@ -116,8 +117,6 @@ const CopyNumber = (): JSX.Element => {
           groups.biological.push(row);
         }
       });
-
-      setIsLoading(false);
       setGroupedCnvs(groups);
     }
   }, [cnvs]);
