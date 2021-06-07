@@ -78,7 +78,7 @@ const Slides = ({
     <div className="slides">
       <Typography className="slides__title" variant="h3">Additional Information</Typography>
       <DemoDescription>
-        This section allows a genome analyst to upload any supplementary images which may be support interpretation of the sequencing results.
+        This section allows a genome analyst to upload any supplementary images which may support interpretation of the sequencing results.
       </DemoDescription>
       {Boolean(slides.length) && !isLoading && (
         <>
