@@ -8,7 +8,7 @@ import {
 
 import api from '@/services/api';
 import { ImageType } from '@/components/Image';
-import ReportContext from '@/components/ReportContext';
+import ReportContext from '@/context/ReportContext';
 import PathwayImageType from './types';
 import Legend from './components/Legend';
 import Pathway from './components/Pathway';
@@ -49,7 +49,7 @@ const PathwayAnalysis = ({
             `/reports/${report.ident}/image/retrieve/pathwayAnalysis.legend`,
             {},
           ).request();
-          setLegend(legendResp['pathwayAnalysis.legend']);
+          setLegend(legendResp[0]);
         }
 
         setIsLoading(false);
@@ -73,7 +73,7 @@ const PathwayAnalysis = ({
           `/reports/${report.ident}/image/retrieve/pathwayAnalysis.legend`,
           {},
         ).request();
-        setLegend(legendResp['pathwayAnalysis.legend']);
+        setLegend(legendResp[0]);
       }
     }
   }, [legend, report]);

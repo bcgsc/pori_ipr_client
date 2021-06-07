@@ -1,6 +1,7 @@
 import Keycloak from 'keycloak-js';
 import * as jwt from 'jsonwebtoken';
-import { $http } from 'ngimport';
+
+import api from '@/services/api';
 
 const externalGroups = ['clinician', 'collaborator', 'external analyst'];
 
@@ -60,14 +61,9 @@ const isAuthorized = (authorizationToken) => {
 /**
  * Gets the user object from the api
  */
-const getUser = async (token) => {
+const getUser = async () => {
   try {
-    // Token passed on login
-    if (token) {
-      $http.defaults.headers.common.Authorization = token;
-    }
-    const resp = await $http.get(`${window._env_.API_BASE_URL}/user/me`);
-    return resp.data;
+    return api.get('/user/me').request();
   } catch (err) {
     return null;
   }
@@ -102,15 +98,6 @@ const isExternalMode = (user) => {
   }
 };
 
-const searchUsers = async (query) => {
-  try {
-    const resp = await $http.get(`${window._env_.API_BASE_URL}/user/search`, { params: { query } });
-    return resp.data;
-  } catch {
-    return false;
-  }
-};
-
 const login = async (referrerUri = null) => {
   setReferrerUri(referrerUri);
 
@@ -134,7 +121,6 @@ const logout = async () => {
     return null;
   } catch (err) {
     delete localStorage[CONFIG.STORAGE.KEYCLOAK];
-    delete $http.headers.Authorization;
     return err;
   }
 };
@@ -150,5 +136,4 @@ export {
   getUser,
   getUsername,
   isExternalMode,
-  searchUsers,
 };

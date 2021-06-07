@@ -15,20 +15,6 @@ module.exports = {
       {
         oneOf: [
           {
-            test: /\.pug$/,
-            include: path.join(__dirname, '../../app'),
-            exclude: /node_modules/,
-            use: [{
-              loader: 'apply-loader',
-              options: {
-                obj: {},
-              },
-            },
-            {
-              loader: 'pug-loader',
-            }],
-          },
-          {
             test: /\.(html)$/,
             use: {
               loader: 'html-loader',
@@ -51,6 +37,10 @@ module.exports = {
             }],
           },
           {
+            test: /\.svg$/,
+            use: ['@svgr/webpack'],
+          },
+          {
             test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.svg$/],
             exclude: /node_modules/,
             loader: 'file-loader',
@@ -65,6 +55,7 @@ module.exports = {
                 loader: 'file-loader',
                 options: {
                   name: 'font/[hash].[ext]',
+                  esModule: false,
                 },
               },
             ],
@@ -83,17 +74,17 @@ module.exports = {
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: path.join(__dirname, '../../statics/images/*'),
+          from: path.join(APP_PATH, 'statics/images/*'),
           to: 'img/',
           flatten: true,
         },
         {
-          from: path.join(__dirname, '../../statics/favicon/*'),
+          from: path.join(APP_PATH, 'statics/favicon/*'),
           to: 'img/',
           flatten: true,
         },
         {
-          from: path.join(__dirname, '../../statics/ipr-env-config.js'),
+          from: path.join(APP_PATH, 'ipr-env-config.js'),
           to: 'ipr-env-config.js',
         },
       ],
@@ -116,7 +107,7 @@ module.exports = {
   },
   mode: 'development',
   devtool: 'inline-source-map',
-  entry: path.resolve(__dirname, '../../app/root.module.js'),
+  entry: path.resolve(APP_PATH, 'index.tsx'),
   output: {
     path: path.resolve(__dirname, '../../dist'),
     chunkFilename: '[name].[chunkhash].chunk.js',

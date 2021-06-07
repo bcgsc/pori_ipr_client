@@ -15,9 +15,9 @@ import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import { useSnackbar } from 'notistack';
 
 import api from '@/services/api';
-import ReportContext from '@/components/ReportContext';
-import EditContext from '@/components/EditContext';
-import ConfirmContext from '@/components/ConfirmContext';
+import ReportContext from '@/context/ReportContext';
+import EditContext from '@/context/EditContext';
+import ConfirmContext from '@/context/ConfirmContext';
 import UploadSlide from './components/UploadSlide';
 import SlideType from './types';
 

@@ -14,8 +14,8 @@ import {
 } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 
-import germlineDownload from '@/services/reports/germline';
-import useGrid from '@/components/hooks/useGrid';
+import api from '@/services/api';
+import useGrid from '@/hooks/useGrid';
 import PaginationPanel from './components/PaginationPanel';
 import CheckboxCell from './components/CheckboxCell';
 import ReviewFilter from './components/ReviewFilter';
@@ -64,7 +64,14 @@ const ApiPaginatedTable = ({
 
   const handleExport = useCallback(async (): Promise<void> => {
     try {
-      const { filename, blob } = await germlineDownload();
+      const response = await api.get(
+        '/export/germline-small-mutation-reports/batch/download?reviews=biofx,projects',
+        { raw: true },
+      ).request();
+      const blob = await response.blob();
+      const filenameHeader = response.headers.get('Content-Disposition');
+      const [, filename = 'germline_export.xlsx'] = filenameHeader.match(/filename=(.+)/) || [];
+
       const url = URL.createObjectURL(blob);
 
       const a = document.createElement('a');
@@ -107,7 +114,7 @@ const ApiPaginatedTable = ({
         <div className="paginated-table__actions">
           <div className="paginated-table__action">
             <TextField
-              className="text-field-fix paginated-table__field"
+              className="paginated-table__field"
               size="small"
               label="Search by Patient ID"
               variant="outlined"

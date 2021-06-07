@@ -6,8 +6,9 @@ import { Typography } from '@material-ui/core';
 import { useTheme } from '@material-ui/core/styles';
 
 import api from '@/services/api';
-import ReportContext from '../../components/ReportContext';
-import ReportService from '@/services/reports/report.service';
+import ReportContext from '@/context/ReportContext';
+import PageBreak from '@/components/PageBreak';
+import startCase from '@/utils/startCase';
 import GenomicSummary from '../ReportView/components/GenomicSummary';
 import ProbeSummary from '../ReportView/components/ProbeSummary';
 import AnalystComments from '../ReportView/components/AnalystComments';
@@ -15,8 +16,6 @@ import PathwayAnalysis from '../ReportView/components/PathwayAnalysis';
 import TherapeuticTargets from '../ReportView/components/TherapeuticTargets/components/PrintTables';
 import Slides from '../ReportView/components/Slides';
 import Appendices from '../ReportView/components/Appendices';
-import PageBreak from '@/components/PageBreak';
-import startCase from '@/utils/startCase';
 
 import './index.scss';
 
@@ -64,7 +63,7 @@ const Print = () => {
   useEffect(() => {
     if (!report) {
       const getReport = async () => {
-        const reportResp = await ReportService.getReport(params.ident);
+        const reportResp = await api.get(`/reports/${params.ident}`, {}).request();
         const templatesResp = await api.get('/templates', {}).request();
 
         setTemplate(templatesResp.find((temp) => temp.name === reportResp.template.name));
@@ -126,10 +125,7 @@ const Print = () => {
             </>
           )}
           {template?.sections.includes('appendices') && (
-            <>
-              <Appendices report={report} isPrint isProbe loadedDispatch={dispatch} />
-              <PageBreak report={report} theme={theme} />
-            </>
+            <Appendices report={report} isPrint isProbe loadedDispatch={dispatch} />
           )}
         </>
       );

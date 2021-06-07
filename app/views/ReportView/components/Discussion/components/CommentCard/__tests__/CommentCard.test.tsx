@@ -3,8 +3,8 @@ import {
   render, screen, fireEvent, cleanup, act,
 } from '@testing-library/react';
 
-import ReportContext from '@/components/ReportContext';
-import SecurityContext from '@/components/SecurityContext';
+import ReportContext from '@/context/ReportContext';
+import SecurityContext from '@/context/SecurityContext';
 import { formatDate } from '@/utils/date';
 import CommentCard from '..';
 

@@ -1,0 +1,29 @@
+@import '../../../../../../styles/theme';
+
+.reviews {
+  margin: 12px 0;
+
+  &__add-new {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 8px 0;
+
+    & > * {
+      width: 30%;
+      margin: 0 4px;
+    }
+  }
+
+  &__button {
+    margin: 8px 4px;
+  }
+
+  &__buttons {
+    display: inline-flex;
+    
+    & > * {
+      margin: 0 4px;
+    }
+  }
+}

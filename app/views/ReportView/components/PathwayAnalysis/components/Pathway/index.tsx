@@ -12,9 +12,9 @@ import PublishIcon from '@material-ui/icons/Publish';
 
 import api from '@/services/api';
 import SvgImage from '@/components/SvgImage';
-import EditContext from '@/components/EditContext';
-import ReportContext from '@/components/ReportContext';
-import ConfirmContext from '@/components/ConfirmContext';
+import EditContext from '@/context/EditContext';
+import ReportContext from '@/context/ReportContext';
+import ConfirmContext from '@/context/ConfirmContext';
 import PathwayImageType from '../../types';
 
 type PathwayProps = {
