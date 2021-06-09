@@ -44,10 +44,6 @@
   &__none {
     padding: 16px;
   }
-
-  &__reviews {
-    page-break-inside: avoid;
-  }
 }
 
 @media print {
@@ -83,6 +79,10 @@
       &-title {
         margin: 0 0 16px;
       }
+    }
+
+    &__signatures {
+      page-break-inside: avoid;
     }
   }
 }
