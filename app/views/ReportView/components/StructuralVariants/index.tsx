@@ -7,6 +7,7 @@ import {
 } from '@material-ui/core';
 
 import api, { ApiCallSet } from '@/services/api';
+import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
 import Image from '@/components/Image';
 import ReportContext from '@/context/ReportContext';
@@ -40,14 +41,20 @@ const StructuralVariants = (): JSX.Element => {
   useEffect(() => {
     if (report) {
       const getData = async () => {
-        const apiCalls = new ApiCallSet([
-          api.get(`/reports/${report.ident}/structural-variants`, {}),
-          api.get(`/reports/${report.ident}/image/retrieve/circosSv.genome,circosSv.transcriptome`, {}),
-        ]);
-        const [svsResp, imagesResp] = await apiCalls.request();
+        try {
+          const apiCalls = new ApiCallSet([
+            api.get(`/reports/${report.ident}/structural-variants`, {}),
+            api.get(`/reports/${report.ident}/image/retrieve/circosSv.genome,circosSv.transcriptome`, {}),
+          ]);
+          const [svsResp, imagesResp] = await apiCalls.request();
 
-        setSvs(svsResp);
-        setImages(imagesResp);
+          setSvs(svsResp);
+          setImages(imagesResp);
+        } catch (err) {
+          snackbar.error(`Network error: ${err}`);
+        } finally {
+          setIsLoading(false);
+        }
       };
       getData();
     }
@@ -86,7 +93,6 @@ const StructuralVariants = (): JSX.Element => {
         }
       });
 
-      setIsLoading(false);
       setGroupedSvs(variants);
     }
   }, [svs]);

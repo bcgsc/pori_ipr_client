@@ -11,6 +11,7 @@ import {
 
 import api from '@/services/api';
 import ReportContext from '@/context/ReportContext';
+import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
 import Image, { ImageType } from '@/components/Image';
 import DemoDescription from '@/components/DemoDescription';
@@ -83,16 +84,21 @@ const ExpressionCorrelation = (): JSX.Element => {
   useEffect(() => {
     if (report) {
       const getData = async () => {
-        const [plotData, subtypePlotData, pairwiseData] = await Promise.all([
-          api.get(`/reports/${report.ident}/image/retrieve/expression.chart,expression.legend`, {}).request(),
-          api.get(`/reports/${report.ident}/image/subtype-plots`, {}).request(),
-          api.get(`/reports/${report.ident}/pairwise-expression-correlation`, {}).request(),
-        ]);
+        try {
+          const [plotData, subtypePlotData, pairwiseData] = await Promise.all([
+            api.get(`/reports/${report.ident}/image/retrieve/expression.chart,expression.legend`, {}).request(),
+            api.get(`/reports/${report.ident}/image/subtype-plots`, {}).request(),
+            api.get(`/reports/${report.ident}/pairwise-expression-correlation`, {}).request(),
+          ]);
 
-        setPlots(plotData);
-        setSubtypePlots(subtypePlotData);
-        setPairwiseExpression(orderBy(pairwiseData, ['correlation'], ['desc']).slice(0, 19));
-        setIsLoading(false);
+          setPlots(plotData);
+          setSubtypePlots(subtypePlotData);
+          setPairwiseExpression(orderBy(pairwiseData, ['correlation'], ['desc']).slice(0, 19));
+        } catch (err) {
+          snackbar.error(`Network error: ${err}`);
+        } finally {
+          setIsLoading(false);
+        }
       };
 
       getData();

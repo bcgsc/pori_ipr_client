@@ -6,6 +6,7 @@ import {
 
 import api from '@/services/api';
 import ReportContext from '@/context/ReportContext';
+import snackbar from '@/services/SnackbarUtils';
 import CommentCard from './components/CommentCard';
 import AddComment from './components/AddComment';
 
@@ -20,9 +21,14 @@ const Discussion = (): JSX.Element => {
   useEffect(() => {
     if (report) {
       const getData = async () => {
-        const commentsResp = await api.get(`/reports/${report.ident}/presentation/discussion`, {}).request();
-        setComments(commentsResp);
-        setIsLoading(false);
+        try {
+          const commentsResp = await api.get(`/reports/${report.ident}/presentation/discussion`, {}).request();
+          setComments(commentsResp);
+        } catch (err) {
+          snackbar.error(`Network error: ${err}`);
+        } finally {
+          setIsLoading(false);
+        }
       };
       getData();
     }

@@ -10,6 +10,7 @@ import {
 import EditIcon from '@material-ui/icons/Edit';
 
 import api, { ApiCallSet } from '@/services/api';
+import snackbar from '@/services/SnackbarUtils';
 import EditContext from '@/context/EditContext';
 import ReportContext from '@/context/ReportContext';
 import SignatureCard, { SignatureType } from '@/components/SignatureCard';
@@ -37,14 +38,19 @@ const AnalystComments = ({
   useEffect(() => {
     if (report) {
       const getData = async () => {
-        const apiCalls = new ApiCallSet([
-          api.get(`/reports/${report.ident}/summary/analyst-comments`, {}),
-          api.get(`/reports/${report.ident}/signatures`, {}),
-        ]);
-        const [commentsResp, signaturesResp] = await apiCalls.request();
-        setComments(commentsResp?.comments);
-        setSignatures(signaturesResp);
-        setIsLoading(false);
+        try {
+          const apiCalls = new ApiCallSet([
+            api.get(`/reports/${report.ident}/summary/analyst-comments`, {}),
+            api.get(`/reports/${report.ident}/signatures`, {}),
+          ]);
+          const [commentsResp, signaturesResp] = await apiCalls.request();
+          setComments(commentsResp?.comments);
+          setSignatures(signaturesResp);
+        } catch (err) {
+          snackbar.error(`Network error: ${err}`);
+        } finally {
+          setIsLoading(false);
+        }
       };
       getData();
     }

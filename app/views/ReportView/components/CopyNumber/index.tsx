@@ -10,6 +10,7 @@ import api, { ApiCallSet } from '@/services/api';
 import { CNVSTATE, EXPLEVEL } from '@/constants';
 import Image from '@/components/Image';
 import ImageType from '@/components/Image/types';
+import snackbar from '@/services/SnackbarUtils';
 import CopyNumberType from './types';
 import columnDefs from './columnDefs';
 
@@ -44,13 +45,19 @@ const CopyNumber = (): JSX.Element => {
   useEffect(() => {
     if (report) {
       const getData = async () => {
-        const apiCalls = new ApiCallSet([
-          api.get(`/reports/${report.ident}/copy-variants`, {}),
-          api.get(`/reports/${report.ident}/image/retrieve/cnvLoh.circos,cnv.1,cnv.2,cnv.3,cnv.4,cnv.5,loh.1,loh.2,loh.3,loh.4,loh.5`, {}),
-        ]);
-        const [cnvsResp, imagesResp] = await apiCalls.request();
-        setCnvs(cnvsResp);
-        setImages(imagesResp);
+        try {
+          const apiCalls = new ApiCallSet([
+            api.get(`/reports/${report.ident}/copy-variants`, {}),
+            api.get(`/reports/${report.ident}/image/retrieve/cnvLoh.circos,cnv.1,cnv.2,cnv.3,cnv.4,cnv.5,loh.1,loh.2,loh.3,loh.4,loh.5`, {}),
+          ]);
+          const [cnvsResp, imagesResp] = await apiCalls.request();
+          setCnvs(cnvsResp);
+          setImages(imagesResp);
+        } catch (err) {
+          snackbar.error(`Network error: ${err}`);
+        } finally {
+          setIsLoading(false);
+        }
       };
       getData();
     }
@@ -116,8 +123,6 @@ const CopyNumber = (): JSX.Element => {
           groups.biological.push(row);
         }
       });
-
-      setIsLoading(false);
       setGroupedCnvs(groups);
     }
   }, [cnvs]);
