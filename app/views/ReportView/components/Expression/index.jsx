@@ -1,14 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
-import PropTypes from 'prop-types';
 import { Typography, Paper, LinearProgress } from '@material-ui/core';
 
 import DataTable from '@/components/DataTable';
-import columnDefs from './columnDefs';
-import { getComparators } from '@/services/reports/comparators';
+import api from '@/services/api';
 import DemoDescription from '@/components/DemoDescription';
-import ExpressionService from '@/services/reports/expression.service';
-import ImageService from '@/services/reports/image.service';
 import ReportContext from '@/context/ReportContext';
+import columnDefs from './columnDefs';
 import processExpression from './processData';
 
 import './index.scss';
@@ -33,19 +30,19 @@ const Expression = () => {
   const [comparators, setComparators] = useState();
   const [expOutliers, setExpOutliers] = useState();
   const [visibleCols, setVisibleCols] = useState(
-    columnDefs.filter(c => !c.hide).map(c => c.field),
+    columnDefs.filter((c) => !c.hide).map((c) => c.field),
   );
 
   const [hiddenCols, setHiddenCols] = useState(
-    columnDefs.filter(c => c.hide).map(c => c.field),
+    columnDefs.filter((c) => c.hide).map((c) => c.field),
   );
 
   useEffect(() => {
     if (report && report.ident) {
       const getData = async () => {
         const [outliers, images] = await Promise.all([
-          ExpressionService.all(report.ident),
-          ImageService.expDensityGraphs(report.ident),
+          api.get(`/reports/${report.ident}/expression-variants`).request(),
+          api.get(`/reports/${report.ident}/image/expression-density-graphs`).request(),
         ]);
 
         if (outliers && outliers.length) {
@@ -85,7 +82,10 @@ const Expression = () => {
   useEffect(() => {
     if (report && report.ident) {
       const getData = async () => {
-        const comparatorsResp = await getComparators(report.ident);
+        const comparatorsResp = await api.get(
+          `/reports/${report.ident}/comparators`,
+          {},
+        ).request();
 
         const diseaseExpression = comparatorsResp.find(({ analysisRole }) => (
           analysisRole === 'expression (disease)'

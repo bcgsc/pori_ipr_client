@@ -68,7 +68,6 @@ const UploadSlide = ({
   return (
     <div className="upload">
       <TextField
-        className="text-field-fix"
         color="secondary"
         helperText="A slide name must be entered before a file can be selected (max 10MB)"
         label="Slide name"

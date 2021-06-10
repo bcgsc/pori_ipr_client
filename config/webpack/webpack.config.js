@@ -15,20 +15,6 @@ module.exports = {
       {
         oneOf: [
           {
-            test: /\.pug$/,
-            include: path.join(__dirname, '../../app'),
-            exclude: /node_modules/,
-            use: [{
-              loader: 'apply-loader',
-              options: {
-                obj: {},
-              },
-            },
-            {
-              loader: 'pug-loader',
-            }],
-          },
-          {
             test: /\.(html)$/,
             use: {
               loader: 'html-loader',
@@ -69,6 +55,7 @@ module.exports = {
                 loader: 'file-loader',
                 options: {
                   name: 'font/[hash].[ext]',
+                  esModule: false,
                 },
               },
             ],
@@ -120,7 +107,7 @@ module.exports = {
   },
   mode: 'development',
   devtool: 'inline-source-map',
-  entry: path.resolve(__dirname, '../../app/root.module.js'),
+  entry: path.resolve(APP_PATH, 'index.tsx'),
   output: {
     path: path.resolve(__dirname, '../../dist'),
     chunkFilename: '[name].[chunkhash].chunk.js',

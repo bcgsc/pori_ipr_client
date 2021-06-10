@@ -1,4 +1,5 @@
 import React, { useContext, useEffect } from 'react';
+import fetchIntercept from 'fetch-intercept';
 
 import SecurityContext from '@/context/SecurityContext';
 import {
@@ -30,7 +31,24 @@ const Login = (props) => {
     if (!isAuthorized(authorizationToken)) {
       const auth = async () => {
         await login(from);
+        const interceptor = {
+          request: (fetchUrl, fetchConfig) => {
+            if (fetchUrl.startsWith(window._env_.API_BASE_URL)) {
+              const newConfig = { ...fetchConfig };
+
+              if (!newConfig.headers) {
+                newConfig.headers = {};
+              }
+              newConfig.headers.Authorization = keycloak.token;
+              return [fetchUrl, newConfig];
+            }
+            return [fetchUrl, fetchConfig];
+          },
+        };
+
+        const unregister = fetchIntercept.register(interceptor);
         setAuthorizationToken(keycloak.token);
+        return unregister;
       };
 
       try {
