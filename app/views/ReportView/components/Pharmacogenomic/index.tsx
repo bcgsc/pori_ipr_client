@@ -30,7 +30,6 @@ const Pharmacogenomic = (): JSX.Element => {
         columnDefs={columnDefs}
         rowData={variants}
         titleText="Known and Novel Pharmacogenomic Variants"
-
       />
     </div>
   );

@@ -1,6 +1,7 @@
+import { ColDef, ValueGetterParams } from '@ag-grid-community/core';
 import ArrayCell from '@/components/DataTable/components/ArrayCellRenderer';
 
-const getGeneProp = (params, property) => {
+const getGeneProp = (params: ValueGetterParams, property: string) => {
   const { data: { variant, variantType } } = params;
   if (variantType === 'sv') {
     return variant.gene1[property] || variant.gene2[property] || false;
@@ -8,13 +9,13 @@ const getGeneProp = (params, property) => {
   return variant.gene[property] || false;
 };
 
-const columnDefs = [{
+const columnDefs: ColDef[] = [{
   headerName: 'Gene',
   cellRenderer: 'GeneCellRenderer',
   cellRendererParams: { link: true },
   colId: 'gene',
   hide: false,
-  valueGetter: (params) => {
+  valueGetter: (params: ValueGetterParams): string => {
     const { data: { variant } } = params;
 
     if (variant.gene) {
@@ -38,7 +39,7 @@ const columnDefs = [{
   colId: 'variant',
   hide: false,
   maxWidth: 300,
-  valueGetter: (params) => {
+  valueGetter: (params: ValueGetterParams): string => {
     const { data: { variant, variantType } } = params;
 
     if (variantType === 'cnv') {
@@ -130,7 +131,7 @@ const columnDefs = [{
   headerName: 'Zygosity',
   colId: 'zygosity',
   hide: true,
-  valueGetter: (params) => {
+  valueGetter: (params: ValueGetterParams): string => {
     const { data: { variant } } = params;
     return variant.zygosity;
   },
