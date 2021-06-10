@@ -213,12 +213,9 @@ const ReportView = () => {
                   )}
                   path={`${path}/immune`}
                 />
-                <Route
-                  render={(routeProps) => (
-                    <Pharmacogenomic {...routeProps} print={false} />
-                  )}
-                  path={`${path}/pharmacogenomic`}
-                />
+                <Route path={`${path}/pharmacogenomic`}>
+                  <Pharmacogenomic />
+                </Route>
                 <Route
                   render={(routeProps) => (
                     <Appendices {...routeProps} isPrint={false} theme={theme} isProbe={isProbe} report={report} canEdit={canEdit} />
