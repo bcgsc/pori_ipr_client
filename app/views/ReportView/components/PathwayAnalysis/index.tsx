@@ -9,6 +9,7 @@ import {
 import api from '@/services/api';
 import { ImageType } from '@/components/Image';
 import ReportContext from '@/context/ReportContext';
+import DemoDescription from '@/components/DemoDescription';
 import PathwayImageType from './types';
 import Legend from './components/Legend';
 import Pathway from './components/Pathway';
@@ -81,6 +82,9 @@ const PathwayAnalysis = ({
   return (
     <div className="pathway">
       <Typography variant="h3">Pathway Analysis</Typography>
+      <DemoDescription>
+        This section is for display of a graphical or visual summary of the sequencing results in the context of biological pathways. This enables the visualization of multiple genomic alterations affecting often diverse biological pathways.
+      </DemoDescription>
       {!isLoading ? (
         <>
           <Pathway
