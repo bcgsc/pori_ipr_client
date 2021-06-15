@@ -97,7 +97,7 @@ const Settings = ({
     const updateFields = {};
 
     if (report.template !== selectedTemplate) {
-      updateFields.template = selectedTemplate;
+      updateFields.template = selectedTemplate.name;
     }
     if (report.state !== selectedState) {
       updateFields.state = selectedState;
