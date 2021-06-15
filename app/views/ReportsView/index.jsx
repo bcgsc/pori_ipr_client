@@ -9,6 +9,7 @@ import { isExternalMode } from '@/services/management/auth';
 import SecurityContext from '@/context/SecurityContext';
 import api from '@/services/api';
 import columnDefs from './columnDefs';
+import LaunchCell from './components/LaunchCell';
 
 import './index.scss';
 
@@ -94,7 +95,7 @@ function ReportsTableComponent(props) {
     resizable: true,
     filter: true,
   };
-
+  
   return (
     <div className="ag-theme-material reports-table__container">
       <AgGridReact
@@ -107,6 +108,9 @@ function ReportsTableComponent(props) {
         onGridReady={onGridReady}
         onRowClicked={onRowClicked}
         onGridSizeChanged={onGridSizeChanged}
+        frameworkComponents={{
+          Launch: LaunchCell,
+        }}
       />
     </div>
   );

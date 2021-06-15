@@ -1,3 +1,5 @@
+import Launch from "@material-ui/icons/Launch";
+
 const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
 
 const dateCellRenderer = (params) => {
@@ -58,6 +60,15 @@ const columnDefs = [{
   field: 'date',
   sort: 'desc',
   cellRenderer: dateCellRenderer,
+},
+{
+  headerName: 'Open',
+  pinned: 'right',
+  cellRenderer: 'Launch',
+  sortable: false,
+  resizable: false,
+  suppressMenu: true,
+  width: 100,
 }];
 
 // Show physician to external users, analyst to internal
