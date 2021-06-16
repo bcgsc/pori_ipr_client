@@ -79,17 +79,6 @@ function ReportsTableComponent(props) {
     }
   };
 
-  const onRowClicked = ({ event }) => {
-    const selectedRow = gridApi.current.getSelectedRows();
-    const [{ reportIdent }] = selectedRow;
-
-    if (event.ctrlKey || event.metaKey) {
-      window.open(`/report/${reportIdent}/summary`, '_blank');
-    } else {
-      history.push({ pathname: `/report/${reportIdent}/summary` });
-    }
-  };
-
   const defaultColDef = {
     sortable: true,
     resizable: true,
@@ -100,17 +89,16 @@ function ReportsTableComponent(props) {
     <div className="ag-theme-material reports-table__container">
       <AgGridReact
         columnDefs={columnDefs}
-        rowData={rowData}
         defaultColDef={defaultColDef}
-        pagination
-        paginationAutoPageSize
-        rowSelection="single"
-        onGridReady={onGridReady}
-        onRowClicked={onRowClicked}
-        onGridSizeChanged={onGridSizeChanged}
         frameworkComponents={{
           Launch: LaunchCell,
         }}
+        onGridReady={onGridReady}
+        onGridSizeChanged={onGridSizeChanged}
+        pagination
+        paginationAutoPageSize
+        rowData={rowData}
+        rowSelection="single"
       />
     </div>
   );
