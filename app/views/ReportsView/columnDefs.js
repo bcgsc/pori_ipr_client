@@ -65,10 +65,11 @@ const columnDefs = [{
   headerName: 'Open',
   pinned: 'right',
   cellRenderer: 'Launch',
+  suppressSizeToFit: true,
   sortable: false,
   resizable: false,
   suppressMenu: true,
-  width: 100,
+  width: 50,
 }];
 
 // Show physician to external users, analyst to internal

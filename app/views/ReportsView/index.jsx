@@ -1,7 +1,6 @@
 import React, {
   useRef, useState, useContext,
 } from 'react';
-import PropTypes from 'prop-types';
 import { AgGridReact } from '@ag-grid-community/react';
 
 import startCase from '@/utils/startCase';
@@ -16,11 +15,7 @@ import './index.scss';
 /**
  * Report table containing all reports
  */
-function ReportsTableComponent(props) {
-  const {
-    history,
-  } = props;
-
+const ReportsTableComponent = () => {
   const gridApi = useRef();
   const columnApi = useRef();
 
@@ -74,8 +69,10 @@ function ReportsTableComponent(props) {
     if (params.clientWidth >= MEDIUM_SCREEN_WIDTH_LOWER) {
       gridApi.current.sizeColumnsToFit();
     } else {
-      const allCols = columnApi.current.getAllColumns().map((col) => col.colId);
-      columnApi.current.autoSizeColumns(allCols);
+      const colsToAutoSize = columnApi.current.getAllColumns()
+        .filter((col) => !col.pinned)
+        .map((col) => col.colId);
+      columnApi.current.autoSizeColumns(colsToAutoSize);
     }
   };
 
@@ -90,6 +87,7 @@ function ReportsTableComponent(props) {
       <AgGridReact
         columnDefs={columnDefs}
         defaultColDef={defaultColDef}
+        enableCellTextSelection
         frameworkComponents={{
           Launch: LaunchCell,
         }}
@@ -102,11 +100,6 @@ function ReportsTableComponent(props) {
       />
     </div>
   );
-}
-
-ReportsTableComponent.propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types
-  history: PropTypes.object.isRequired,
 };
 
 export default ReportsTableComponent;
