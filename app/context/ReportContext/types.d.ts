@@ -1,4 +1,5 @@
-import { RecordDefaults } from '@/common';
+import { RecordDefaults, UserType } from '@/common';
+import { ProjectType } from '@/views/AdminView/types';
 import React from 'react';
 
 type PatientInformationType = {
@@ -24,6 +25,16 @@ type SampleInfoType = {
   'Sample Name': string | null;
 };
 
+type TemplateType = {
+  ident: string;
+  name: string;
+};
+
+type UserRoleType = {
+  role: string;
+  user: UserType;
+} & RecordDefaults;
+
 type ReportType = {
   alternateIdentifier?: string;
   analysisStartedAt: string | null;
@@ -32,12 +43,15 @@ type ReportType = {
   patientId: string;
   patientInformation: PatientInformationType,
   ploidy: string;
+  projects?: ProjectType[];
   reportVersion: string;
   sampleInfo: SampleInfoType[];
   state: string;
   subtyping: string;
+  template: TemplateType;
   tumourContent?: number;
   type: string;
+  users: UserRoleType[];
 } & RecordDefaults;
 
 type ReportContextType = {
