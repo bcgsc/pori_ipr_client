@@ -40,6 +40,7 @@ const Immune = lazy(() => import('./components/Immune'));
 const Appendices = lazy(() => import('./components/Appendices'));
 const Settings = lazy(() => import('./components/Settings/index.tsx'));
 const ProbeSummary = lazy(() => import('./components/ProbeSummary'));
+const Pharmacogenomic = lazy(() => import('./components/Pharmacogenomic'));
 
 const ReportView = () => {
   const { path } = useRouteMatch();
@@ -212,6 +213,9 @@ const ReportView = () => {
                   )}
                   path={`${path}/immune`}
                 />
+                <Route path={`${path}/pharmacogenomic`}>
+                  <Pharmacogenomic />
+                </Route>
                 <Route
                   render={(routeProps) => (
                     <Appendices {...routeProps} isPrint={false} theme={theme} isProbe={isProbe} report={report} canEdit={canEdit} />
