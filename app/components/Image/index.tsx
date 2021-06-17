@@ -21,7 +21,7 @@ const Image = ({
     caption,
     format,
     key,
-  },
+  } = {} as ImageType,
   height = 0,
   width = 0,
   showTitle = false,

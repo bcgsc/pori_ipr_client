@@ -34,7 +34,9 @@ const StructuralVariants = (): JSX.Element => {
     biological: [],
     unknown: [],
   });
-  const [images, setImages] = useState<ImageType[]>([]);
+
+  const [genomeCircos, setGenomeCircos] = useState<ImageType>();
+  const [transcriptomeCircos, setTranscriptomeCircos] = useState<ImageType>();
   const [tabIndex, setTabIndex] = useState(0);
 
   useEffect(() => {
@@ -47,7 +49,8 @@ const StructuralVariants = (): JSX.Element => {
         const [svsResp, imagesResp] = await apiCalls.request();
 
         setSvs(svsResp);
-        setImages(imagesResp);
+        setGenomeCircos(imagesResp.find((img: ImageType) => img.key === 'circosSv.genome'));
+        setTranscriptomeCircos(imagesResp.find((img: ImageType) => img.key === 'circosSv.transcriptome'));
       };
       getData();
     }
@@ -103,19 +106,37 @@ const StructuralVariants = (): JSX.Element => {
           <Typography variant="h3" className="structural-variants__title">
             Summary of Structural Events
           </Typography>
-          <Tabs centered value={tabIndex} onChange={handleTabChange}>
-            <Tab label="genome" />
-            <Tab label="transcriptome" />
-          </Tabs>
-          {tabIndex === 0 && (
-            <div className="structural-variants__events">
-              <Image image={images.find((img) => img.key === 'circosSv.genome')} />
-            </div>
-          )}
-          {tabIndex === 1 && (
-            <div className="structural-variants__events">
-              <Image image={images.find((img) => img.key === 'circosSv.transcriptome')} />
-            </div>
+          {(genomeCircos || transcriptomeCircos) ? (
+            <>
+              <Tabs centered value={tabIndex} onChange={handleTabChange}>
+                <Tab label="genome" />
+                <Tab label="transcriptome" />
+              </Tabs>
+              {tabIndex === 0 && (
+                <>
+                  {genomeCircos ? (
+                    <div className="structural-variants__events">
+                      <Image image={genomeCircos} />
+                    </div>
+                  ) : (
+                    <Typography align="center">No Genomic Circos Plot Available</Typography>
+                  )}
+                </>
+              )}
+              {tabIndex === 1 && (
+                <>
+                  {transcriptomeCircos ? (
+                    <div className="structural-variants__events">
+                      <Image image={transcriptomeCircos} />
+                    </div>
+                  ) : (
+                    <Typography align="center">No Transcriptome Circos Plot Available</Typography>
+                  )}
+                </>
+              )}
+             </>
+          ) : (
+            <Typography align="center">No Circos Plots Available</Typography>
           )}
           {Object.entries(groupedSvs).map(([key, value]) => (
             <DataTable
