@@ -45,10 +45,7 @@ const prodConfig = {
       }),
     }),
     new OptimizeCSSAssetsPlugin({}),
-    new GenerateSW({
-      clientsClaim: true,
-      skipWaiting: true,
-    }),
+    new GenerateSW(),
   ],
 };
 module.exports = [
