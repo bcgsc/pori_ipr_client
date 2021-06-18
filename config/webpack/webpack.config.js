@@ -101,8 +101,19 @@ module.exports = {
     // }),
   ],
   optimization: {
+    moduleIds: 'hashed',
     splitChunks: {
-      chunks: 'all',
+      cacheGroups: {
+        default: false,
+        vendors: false,
+        // vendor chunk
+        vendor: {
+          // sync + async chunks
+          chunks: 'all',
+          // import file path containing node_modules
+          test: /node_modules/
+        }
+      }
     },
   },
   mode: 'development',
