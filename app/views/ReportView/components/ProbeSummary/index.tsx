@@ -271,6 +271,38 @@ const ProbeSummary = ({
           </div>
         </>
       )}
+      {report && probeResults && (
+        <div className="probe-summary__events">
+          <Typography className="probe-summary__events-title" variant="h3" display="inline">
+            Genomic Events with Potential Therapeutic Association
+          </Typography>
+          {isPrint ? (
+            <PrintTable
+              data={printEvents}
+              columnDefs={eventsColumnDefs
+                .filter((col) => col.headerName !== 'Actions')}
+              order={['Genomic Events', 'Sample', 'Ref/Alt (Tumour DNA)', 'Ref/Alt (Tumour RNA)', 'Ref/Alt (Normal DNA)', 'Comments']}
+              noRowsText="No Events Detected"
+            />
+          ) : (
+            <>
+              <DataTable
+                columnDefs={eventsColumnDefs}
+                rowData={probeResults}
+                canEdit={canEdit}
+                onEdit={handleEditStart}
+                isPrint={isPrint}
+                isPaginated={!isPrint}
+              />
+              <EventsEditDialog
+                isOpen={showEventsDialog}
+                editData={editData}
+                onClose={handleEditClose}
+              />
+            </>
+          )}
+        </div>
+      )}
       {report && report.sampleInfo && (
         <div className="probe-summary__sample-information">
           <Typography variant="h3" display="inline" className="probe-summary__sample-information-title">
@@ -288,45 +320,6 @@ const ProbeSummary = ({
               isPrint={isPrint}
               isPaginated={!isPrint}
             />
-          )}
-        </div>
-      )}
-      {report && probeResults && (
-        <div className="probe-summary__events">
-          <Typography className="probe-summary__events-title" variant="h3" display="inline">
-            Genomic Events with Potential Therapeutic Association
-          </Typography>
-          {probeResults.length ? (
-            <>
-              {isPrint ? (
-                <PrintTable
-                  data={printEvents}
-                  columnDefs={eventsColumnDefs
-                    .filter((col) => col.headerName !== 'Actions')}
-                  order={['Genomic Events', 'Sample', 'Ref/Alt (Tumour DNA)', 'Ref/Alt (Tumour RNA)', 'Ref/Alt (Normal DNA)', 'Comments']}
-                />
-              ) : (
-                <>
-                  <DataTable
-                    columnDefs={eventsColumnDefs}
-                    rowData={probeResults}
-                    canEdit={canEdit}
-                    onEdit={handleEditStart}
-                    isPrint={isPrint}
-                    isPaginated={!isPrint}
-                  />
-                  <EventsEditDialog
-                    isOpen={showEventsDialog}
-                    editData={editData}
-                    onClose={handleEditClose}
-                  />
-                </>
-              )}
-            </>
-          ) : (
-            <div className="probe-summary__none">
-              No Genomic Events were found
-            </div>
           )}
         </div>
       )}

@@ -171,8 +171,13 @@ const Appendices = ({ isProbe, isPrint, loadedDispatch }: AppendicesProps): JSX.
           Appendix D
         </Typography>
       )}
-      {appendices?.config && (
+      {appendices?.config && !isPrint && (
         <div className="appendices__config">
+          {isPrint && (
+            <Typography variant="h3" className="appendices__config-title">
+              Config
+            </Typography>
+          )}
           <strong>
             {`Genomic Report ${report.reportVersion}/${report.kbVersion}`}
           </strong>
