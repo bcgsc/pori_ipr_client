@@ -1,6 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const DashboardPlugin = require('webpack-dashboard/plugin');
 const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
@@ -95,6 +96,7 @@ module.exports = {
       VERSION: JSON.stringify(packageFile.version),
     }),
     new MomentLocalesPlugin(),
+    new CleanWebpackPlugin(),
     // new BundleAnalyzerPlugin({
     //   defaultSizes: 'gzip',
     //   excludeAssets: '.*\.hot-update\.js',
