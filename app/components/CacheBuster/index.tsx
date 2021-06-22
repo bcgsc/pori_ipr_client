@@ -36,8 +36,10 @@ const CacheBuster = ({
       if (response.ok) {
         const metaFile = await response.json();
         if (semverGreaterThan(metaFile.version, VERSION)) {
+          console.info('Version updated, clearing cache!')
           await clearCacheAndReload();
         }
+        console.info('App version up to date!');
       }
     }
     getData();
