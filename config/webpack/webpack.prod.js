@@ -45,9 +45,6 @@ const prodConfig = {
       }),
     }),
     new OptimizeCSSAssetsPlugin({}),
-    new GenerateSW({
-      exclude: ['/index.html/'],
-    }),
   ],
 };
 module.exports = [
