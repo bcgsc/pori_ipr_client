@@ -32,7 +32,7 @@ const CacheBuster = ({
 }) => {
   useEffect(() => {
     const getData = async () => {
-      const response = await fetch('meta.js');
+      const response = await fetch('meta.json');
       if (response.ok) {
         const metaFile = await response.json();
         if (semverGreaterThan(metaFile.version, VERSION)) {

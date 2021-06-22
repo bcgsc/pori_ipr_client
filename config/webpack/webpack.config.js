@@ -96,7 +96,9 @@ module.exports = {
       VERSION: JSON.stringify(packageFile.version),
     }),
     new MomentLocalesPlugin(),
-    new CleanWebpackPlugin(),
+    new CleanWebpackPlugin({
+      cleanOnceBeforeBuildPatterns: ['!dist/meta.json'],
+    }),
     // new BundleAnalyzerPlugin({
     //   defaultSizes: 'gzip',
     //   excludeAssets: '.*\.hot-update\.js',
