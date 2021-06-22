@@ -18,6 +18,7 @@ import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { CsvExportModule } from '@ag-grid-community/csv-export';
 
+import CacheBuster from './components/CacheBuster';
 import MainView from './views/MainView';
 import { SnackbarUtilsConfigurator } from './services/SnackbarUtils';
 import cssTheme from './styles/_theme.scss';
@@ -114,7 +115,9 @@ function App() {
             <SnackbarUtilsConfigurator />
             <CssBaseline />
             <BrowserRouter basename={window._env_.PUBLIC_PATH}>
-              <MainView />
+              <CacheBuster>
+                <MainView />
+              </CacheBuster>
             </BrowserRouter>
           </SnackbarProvider>
         </MuiThemeProvider>
