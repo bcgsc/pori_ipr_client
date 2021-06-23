@@ -110,10 +110,17 @@ module.exports = {
     // }),
   ],
   optimization: {
-    moduleIds: 'hashed',
+    runtimeChunk: 'single',
     splitChunks: {
-      chunks: 'all',
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          chunks: 'all',
+        },
+      },
     },
+    moduleIds: 'hashed',
   },
   mode: 'development',
   devtool: 'inline-source-map',
