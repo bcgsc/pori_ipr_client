@@ -33,8 +33,10 @@ const CacheBuster = ({
   useEffect(() => {
     const getData = async () => {
       const response = await fetch('meta.json');
+      console.log(response.ok);
       if (response.ok) {
         const metaFile = await response.json();
+        console.log(metaFile, VERSION);
         if (semverGreaterThan(metaFile.version, VERSION)) {
           console.info('Version updated, clearing cache!')
           await clearCacheAndReload();
