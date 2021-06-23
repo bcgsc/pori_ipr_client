@@ -30,6 +30,7 @@ const CopyNumber = (): JSX.Element => {
 
   const [isLoading, setIsLoading] = useState(true);
   const [images, setImages] = useState<ImageType[]>([]);
+  const [circos, setCircos] = useState<ImageType>();
   const [cnvs, setCnvs] = useState<CopyNumberType[]>([]);
   const [groupedCnvs, setGroupedCnvs] = useState({
     clinical: [],
@@ -49,7 +50,12 @@ const CopyNumber = (): JSX.Element => {
           api.get(`/reports/${report.ident}/image/retrieve/cnvLoh.circos,cnv.1,cnv.2,cnv.3,cnv.4,cnv.5,loh.1,loh.2,loh.3,loh.4,loh.5`, {}),
         ]);
         const [cnvsResp, imagesResp] = await apiCalls.request();
+
+        const circosIndex = imagesResp.findIndex((img) => img.key === 'cnvLoh.circos');
+        const [circosResp] = imagesResp.splice(circosIndex, 1);
+
         setCnvs(cnvsResp);
+        setCircos(circosResp);
         setImages(imagesResp);
         setIsLoading(false);
       };
@@ -127,12 +133,16 @@ const CopyNumber = (): JSX.Element => {
       {!isLoading ? (
         <>
           <Typography variant="h3" className="copy-number__title">Summary of Copy Number Events</Typography>
-          <div className="copy-number__circos">
-            <Image
-              image={images.find((img) => img.key === 'cnvLoh.circos')}
-              width={700}
-            />
-          </div>
+          {circos ? (
+            <div className="copy-number__circos">
+              <Image
+                image={circos}
+                width={700}
+              />
+            </div>
+          ) : (
+            <Typography align="center">No Circos Plot Available</Typography>
+          )}
           {groupedCnvs && (
             <>
               {Object.entries(groupedCnvs).map(([key, value]) => (
@@ -148,18 +158,22 @@ const CopyNumber = (): JSX.Element => {
             </>
           )}
           <Typography variant="h3" className="copy-number__title">Copy Number & LOH</Typography>
-          <div className="copy-number__graphs">
-            {[...Array(5).keys()].map((index) => (
-              <React.Fragment key={index + 1}>
-                <Image
-                  image={images.find((img) => img.key === `cnv.${index + 1}`)}
-                />
-                <Image
-                  image={images.find((img) => img.key === `loh.${index + 1}`)}
-                />
-              </React.Fragment>
-            ))}
-          </div>
+          {Boolean(images.length) ? (
+            <div className="copy-number__graphs">
+              {[...Array(5).keys()].map((index) => (
+                <React.Fragment key={index + 1}>
+                  <Image
+                    image={images.find((img) => img.key === `cnv.${index + 1}`)}
+                  />
+                  <Image
+                    image={images.find((img) => img.key === `loh.${index + 1}`)}
+                  />
+                </React.Fragment>
+              ))}
+            </div>
+          ) : (
+            <Typography align="center">No Copy Number & LOH Plots Available</Typography>
+          )}
         </>
       ) : (
         <LinearProgress />
