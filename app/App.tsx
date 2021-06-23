@@ -15,7 +15,6 @@ import React from 'react';
 import { JssProvider } from 'react-jss';
 import { BrowserRouter } from 'react-router-dom';
 
-import CacheBuster from './components/CacheBuster';
 import MainView from './views/MainView';
 import { SnackbarUtilsConfigurator } from './services/SnackbarUtils';
 import cssTheme from './styles/_theme.scss';
@@ -107,9 +106,7 @@ function App() {
             <SnackbarUtilsConfigurator />
             <CssBaseline />
             <BrowserRouter basename={window._env_.PUBLIC_PATH}>
-              <CacheBuster>
-                <MainView />
-              </CacheBuster>
+              <MainView />
             </BrowserRouter>
           </SnackbarProvider>
         </MuiThemeProvider>
