@@ -36,7 +36,7 @@ const CacheBuster = ({
       console.log(response.ok);
       if (response.ok) {
         const metaFile = await response.json();
-        console.log(metaFile, VERSION);
+        console.log(metaFile.version, VERSION);
         if (semverGreaterThan(metaFile.version, VERSION)) {
           console.info('Version updated, clearing cache!')
           await clearCacheAndReload();
