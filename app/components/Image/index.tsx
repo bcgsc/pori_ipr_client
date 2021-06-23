@@ -6,7 +6,7 @@ import ImageType from './types.d';
 import './index.scss';
 
 type ImageProps = {
-  image: ImageType;
+  image?: ImageType;
   height?: number;
   width?: number;
   showTitle?: boolean;
