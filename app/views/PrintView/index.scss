@@ -4,6 +4,7 @@
 .print {
   height: 100vh;
   overflow-y: auto;
+  overflow-x: hidden;
   max-width: 8.5in;
   margin: auto;
 
@@ -43,5 +44,9 @@
   .print {
     height: 100%;
     width: 8.5in;
+
+    & > * {
+      padding: 0px;
+    }
   }
 }
