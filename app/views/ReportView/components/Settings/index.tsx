@@ -51,9 +51,14 @@ const Settings = ({
   useEffect(() => {
     if (report) {
       const getData = async () => {
-        const templateResp = await api.get('/templates', {}).request();
-        setTemplates(templateResp);
-        setIsLoading(false);
+        try {
+          const templateResp = await api.get('/templates', {}).request();
+          setTemplates(templateResp);
+        } catch (err) {
+          snackbar.error(`Network error: ${err}`);
+        } finally {
+          setIsLoading(false);
+        }
       };
       getData();
     }

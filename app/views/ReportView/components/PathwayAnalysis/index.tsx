@@ -7,6 +7,7 @@ import {
 } from '@material-ui/core';
 
 import api from '@/services/api';
+import snackbar from '@/services/SnackbarUtils';
 import { ImageType } from '@/components/Image';
 import ReportContext from '@/context/ReportContext';
 import DemoDescription from '@/components/DemoDescription';
@@ -34,28 +35,32 @@ const PathwayAnalysis = ({
   useEffect(() => {
     if (report) {
       const getData = async () => {
-        const pathwayImageResp = await api.get(
-          `/reports/${report.ident}/summary/pathway-analysis`,
-          {},
-        ).request();
-        setPathwayImage(pathwayImageResp);
-
-        const type = pathwayImageResp?.legend;
-        if (type === 'v1') {
-          setLegend('img/pathway_legend_v1.png');
-        } else if (type === 'v2') {
-          setLegend('img/pathway_legend_v2.png');
-        } else if (type === 'custom') {
-          const legendResp = await api.get(
-            `/reports/${report.ident}/image/retrieve/pathwayAnalysis.legend`,
+        try {
+          const pathwayImageResp = await api.get(
+            `/reports/${report.ident}/summary/pathway-analysis`,
             {},
           ).request();
-          setLegend(legendResp[0]);
-        }
+          setPathwayImage(pathwayImageResp);
 
-        setIsLoading(false);
-        if (loadedDispatch) {
-          loadedDispatch({ type: 'pathway' });
+          const type = pathwayImageResp?.legend;
+          if (type === 'v1') {
+            setLegend('img/pathway_legend_v1.png');
+          } else if (type === 'v2') {
+            setLegend('img/pathway_legend_v2.png');
+          } else if (type === 'custom') {
+            const legendResp = await api.get(
+              `/reports/${report.ident}/image/retrieve/pathwayAnalysis.legend`,
+              {},
+            ).request();
+            setLegend(legendResp[0]);
+          }
+        } catch (err) {
+          snackbar.error(`Network error: ${err}`);
+        } finally {
+          setIsLoading(false);
+          if (loadedDispatch) {
+            loadedDispatch({ type: 'pathway' });
+          }
         }
       };
       getData();

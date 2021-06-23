@@ -12,9 +12,9 @@ import {
   LinearProgress,
 } from '@material-ui/core';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
-import { useSnackbar } from 'notistack';
 
 import api from '@/services/api';
+import snackbar from '@/services/SnackbarUtils';
 import ReportContext from '@/context/ReportContext';
 import EditContext from '@/context/EditContext';
 import DemoDescription from '@/components/DemoDescription';
@@ -35,7 +35,6 @@ const Slides = ({
 }: SlidesProps): JSX.Element => {
   const { report } = useContext(ReportContext);
   const { canEdit } = useContext(EditContext);
-  const snackbar = useSnackbar();
 
   const [slides, setSlides] = useState<SlideType[]>([]);
   const [tabValue, setTabValue] = useState(0);
@@ -45,11 +44,16 @@ const Slides = ({
   useEffect(() => {
     if (report) {
       const getData = async () => {
-        const slidesResp = await api.get(`/reports/${report.ident}/presentation/slide`, {}).request();
-        setSlides(slidesResp);
-        setIsLoading(false);
-        if (loadedDispatch) {
-          loadedDispatch({ type: 'slides' });
+        try {
+          const slidesResp = await api.get(`/reports/${report.ident}/presentation/slide`, {}).request();
+          setSlides(slidesResp);
+        } catch (err) {
+          snackbar.error(`Network error: ${err}`);
+        } finally {
+          setIsLoading(false);
+          if (loadedDispatch) {
+            loadedDispatch({ type: 'slides' });
+          }
         }
       };
       getData();
@@ -68,11 +72,11 @@ const Slides = ({
     try {
       await api.del(`/reports/${report.ident}/presentation/slide/${ident}`, {}, {}).request();
       setSlides((prevSlides) => prevSlides.filter((slide) => slide.ident !== ident));
-      snackbar.enqueueSnackbar('Slide deleted', { variant: 'success' });
+      snackbar.success('Slide deleted');
     } catch (err) {
-      snackbar.enqueueSnackbar(`Error deleting slide: ${err}`, { variant: 'error' });
+      snackbar.error(`Error deleting slide: ${err}`);
     }
-  }, [report, snackbar]);
+  }, [report]);
 
   return (
     <div className="slides">

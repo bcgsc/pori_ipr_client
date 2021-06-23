@@ -6,9 +6,9 @@ import {
   Typography,
   IconButton,
   Grid,
+  LinearProgress,
 } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
-import { useSnackbar } from 'notistack';
 import sortBy from 'lodash.sortby';
 
 import api, { ApiCallSet } from '@/services/api';
@@ -19,6 +19,7 @@ import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import DemoDescription from '@/components/DemoDescription';
 import DescriptionList from '@/components/DescriptionList';
 import ReportContext from '@/context/ReportContext';
+import snackbar from '@/services/SnackbarUtils';
 import VariantChips from './components/VariantChips';
 import VariantCounts from './components/VariantCounts';
 import PatientEdit from './components/PatientEdit';
@@ -78,11 +79,11 @@ const GenomicSummary = ({
   const { report, setReport } = useContext(ReportContext);
   const { canEdit } = useContext(EditContext);
   const { isSigned } = useContext(ConfirmContext);
-  const snackbar = useSnackbar();
   const history = useHistory();
 
-  const [showPatientEdit, setShowPatientEdit] = useState<boolean>(false);
-  const [showTumourSummaryEdit, setShowTumourSummaryEdit] = useState<boolean>(false);
+  const [showPatientEdit, setShowPatientEdit] = useState(false);
+  const [showTumourSummaryEdit, setShowTumourSummaryEdit] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [patientInformation, setPatientInformation] = useState<PatientInformationType[]>();
   const [signatures, setSignatures] = useState<MutationSignatureType[]>([]);
@@ -111,62 +112,68 @@ const GenomicSummary = ({
   useEffect(() => {
     if (report) {
       const getData = async () => {
-        const apiCalls = new ApiCallSet([
-          api.get(`/reports/${report.ident}/summary/microbial`, {}),
-          api.get(`/reports/${report.ident}/summary/genomic-alterations-identified`, {}),
-          api.get(`/reports/${report.ident}/comparators`, {}),
-          api.get(`/reports/${report.ident}/mutation-signatures`, {}),
-          api.get(`/reports/${report.ident}/mutation-burden`, {}),
-          api.get(`/reports/${report.ident}/immune-cell-types`, {}),
-          api.get(`/reports/${report.ident}/msi`, {}),
-        ]);
+        try {
+          const apiCalls = new ApiCallSet([
+            api.get(`/reports/${report.ident}/summary/microbial`, {}),
+            api.get(`/reports/${report.ident}/summary/genomic-alterations-identified`, {}),
+            api.get(`/reports/${report.ident}/comparators`, {}),
+            api.get(`/reports/${report.ident}/mutation-signatures`, {}),
+            api.get(`/reports/${report.ident}/mutation-burden`, {}),
+            api.get(`/reports/${report.ident}/immune-cell-types`, {}),
+            api.get(`/reports/${report.ident}/msi`, {}),
+          ]);
 
-        const [
-          microbialResp,
-          variantsResp,
-          comparatorsResp,
-          signaturesResp,
-          burdenResp,
-          immuneResp,
-          msiResp,
-        ] = await apiCalls.request();
+          const [
+            microbialResp,
+            variantsResp,
+            comparatorsResp,
+            signaturesResp,
+            burdenResp,
+            immuneResp,
+            msiResp,
+          ] = await apiCalls.request();
 
-        setPrimaryComparator(comparatorsResp.find(({ analysisRole }) => analysisRole === 'mutation burden (primary)'));
-        setPrimaryBurden(burdenResp.find((entry: Record<string, unknown>) => entry.role === 'primary'));
-        setTCellCd8(immuneResp.find(({ cellType }) => cellType === 'T cells CD8'));
-        setSignatures(signaturesResp);
+          setPrimaryComparator(comparatorsResp.find(({ analysisRole }) => analysisRole === 'mutation burden (primary)'));
+          setPrimaryBurden(burdenResp.find((entry: Record<string, unknown>) => entry.role === 'primary'));
+          setTCellCd8(immuneResp.find(({ cellType }) => cellType === 'T cells CD8'));
+          setSignatures(signaturesResp);
 
-        if (microbialResp.length) {
-          setMicrobial(microbialResp[0]);
-        }
-
-        if (msiResp.length) {
-          setMsi(msiResp[0]);
-        }
-
-        const output = [];
-        const counts = {
-          smallMutation: 0,
-          cnv: 0,
-          structuralVariant: 0,
-          expression: 0,
-        };
-
-        variantsResp.forEach((variant, k) => {
-          // Add processed Variant
-          output.push(variantCategory(variant));
-
-          // Update counts
-          if (!counts[variantsResp[k].type]) {
-            counts[variantsResp[k].type] = 0;
+          if (microbialResp.length) {
+            setMicrobial(microbialResp[0]);
           }
-          counts[variantsResp[k].type] += 1;
-        });
-        const sorted = sortBy(output, [customTypeSort, 'geneVariant']);
-        setVariants(sorted);
-        setVariantCounts(counts);
-        if (loadedDispatch) {
-          loadedDispatch({ type: 'summary' });
+
+          if (msiResp.length) {
+            setMsi(msiResp[0]);
+          }
+
+          const output = [];
+          const counts = {
+            smallMutation: 0,
+            cnv: 0,
+            structuralVariant: 0,
+            expression: 0,
+          };
+
+          variantsResp.forEach((variant, k) => {
+            // Add processed Variant
+            output.push(variantCategory(variant));
+
+            // Update counts
+            if (!counts[variantsResp[k].type]) {
+              counts[variantsResp[k].type] = 0;
+            }
+            counts[variantsResp[k].type] += 1;
+          });
+          const sorted = sortBy(output, [customTypeSort, 'geneVariant']);
+          setVariants(sorted);
+          setVariantCounts(counts);
+          if (loadedDispatch) {
+            loadedDispatch({ type: 'summary' });
+          }
+        } catch (err) {
+          snackbar.error(`Network error: ${err}`);
+        } finally {
+          setIsLoading(false);
         }
       };
 
@@ -304,12 +311,12 @@ const GenomicSummary = ({
 
       setVariantCounts((prevVal) => ({ ...prevVal, [type]: prevVal[type] - 1 }));
       setVariants((prevVal) => (prevVal.filter((val) => val.ident !== chipIdent)));
-      snackbar.enqueueSnackbar('Entry deleted');
+      snackbar.success('Entry deleted');
     } catch (err) {
       console.error(err);
-      snackbar.enqueueSnackbar('Entry NOT deleted due to an error');
+      snackbar.error('Entry NOT deleted due to an error');
     }
-  }, [report, isSigned, snackbar]);
+  }, [report, isSigned]);
 
   const handleChipAdded = useCallback(async (variant) => {
     try {
@@ -320,12 +327,12 @@ const GenomicSummary = ({
 
       setVariantCounts((prevVal) => ({ ...prevVal, [categorizedVariantEntry.type]: prevVal[categorizedVariantEntry.type] + 1 }));
       setVariants((prevVal) => ([...prevVal, categorizedVariantEntry]));
-      snackbar.enqueueSnackbar('Entry added');
+      snackbar.success('Entry added');
     } catch (err) {
       console.error(err);
-      snackbar.enqueueSnackbar('Entry NOT added due to an error');
+      snackbar.error('Entry NOT added due to an error');
     }
-  }, [report, snackbar]);
+  }, [report]);
 
   const handlePatientEditClose = useCallback(async (isSaved, newPatientData, newReportData) => {
     setShowPatientEdit(false);
@@ -391,11 +398,11 @@ const GenomicSummary = ({
 
   return (
     <div className="genomic-summary">
-      <DemoDescription>
-        The front page displays general patient and sample information, and provides a highlight of the key sequencing results.
-      </DemoDescription>
-      {report && patientInformation && tumourSummary && (
+      {report && patientInformation && tumourSummary && !isLoading && (
         <>
+          <DemoDescription>
+            The front page displays general patient and sample information, and provides a highlight of the key sequencing results.
+          </DemoDescription>
           <div className="genomic-summary__patient-information">
             <div className="genomic-summary__patient-information-title">
               <Typography variant="h3" display="inline">
@@ -505,6 +512,9 @@ const GenomicSummary = ({
             </>
           )}
         </>
+      )}
+      {isLoading && (
+        <LinearProgress color="secondary" />
       )}
     </div>
   );
