@@ -14,17 +14,14 @@ import { create } from 'jss';
 import React from 'react';
 import { JssProvider } from 'react-jss';
 import { BrowserRouter } from 'react-router-dom';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { CsvExportModule } from '@ag-grid-community/csv-export';
 
 import CacheBuster from './components/CacheBuster';
 import MainView from './views/MainView';
 import { SnackbarUtilsConfigurator } from './services/SnackbarUtils';
 import cssTheme from './styles/_theme.scss';
 
-import '@ag-grid-community/core/dist/styles/ag-grid.min.css';
-import '@ag-grid-community/core/dist/styles/ag-theme-material.min.css';
+import 'ag-grid-community/dist/styles/ag-grid.min.css';
+import 'ag-grid-community/dist/styles/ag-theme-material.min.css';
 import '@fontsource/roboto';
 import './styles/ag-grid.scss';
 
@@ -97,11 +94,6 @@ const jss = create({
   // We define a custom insertion point that JSS will look for injecting the styles in the DOM.
   insertionPoint: 'jss-insertion-point',
 });
-
-ModuleRegistry.registerModules([
-  ClientSideRowModelModule,
-  CsvExportModule,
-]);
 
 /**
  * Entry point to application. Handles routing, app theme, and logged in state.

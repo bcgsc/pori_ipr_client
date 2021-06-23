@@ -1,8 +1,8 @@
 import React, {
   useCallback, useContext, useState,
 } from 'react';
-import { AgGridReact } from '@ag-grid-community/react';
-import { RowClickedEvent, ColDef } from '@ag-grid-community/core';
+import { AgGridReact } from 'ag-grid-react';
+import { RowClickedEvent, ColDef } from 'ag-grid-community';
 import { useHistory } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import GetAppIcon from '@material-ui/icons/GetApp';

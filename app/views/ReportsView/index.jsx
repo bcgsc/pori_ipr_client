@@ -2,7 +2,7 @@ import React, {
   useRef, useState, useContext,
 } from 'react';
 import PropTypes from 'prop-types';
-import { AgGridReact } from '@ag-grid-community/react';
+import { AgGridReact } from 'ag-grid-react';
 
 import startCase from '@/utils/startCase';
 import { isExternalMode } from '@/services/management/auth';

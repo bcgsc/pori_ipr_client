@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
-import { AgGridReact } from '@ag-grid-community/react';
+import { AgGridReact } from 'ag-grid-react';
 
 import api from '@/services/api';
 import useGrid from '@/hooks/useGrid';

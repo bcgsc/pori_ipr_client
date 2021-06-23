@@ -11,7 +11,7 @@ import {
 import { UncontrolledReactSVGPanZoom } from 'react-svg-pan-zoom';
 import InlineSVG from 'svg-inline-react';
 import AutoSizer from 'react-virtualized/dist/es/AutoSizer';
-import { AgGridReact } from '@ag-grid-community/react';
+import { AgGridReact } from 'ag-grid-react';
 
 import LinkCellRenderer from '../LinkCellRenderer';
 import columnDefs, { setHeaderName } from './columnDefs';

@@ -14,7 +14,7 @@ import {
   AppBar,
 } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
-import { AgGridReact } from '@ag-grid-community/react';
+import { AgGridReact } from 'ag-grid-react';
 
 import api from '@/services/api';
 import ReportContext from '@/context/ReportContext';

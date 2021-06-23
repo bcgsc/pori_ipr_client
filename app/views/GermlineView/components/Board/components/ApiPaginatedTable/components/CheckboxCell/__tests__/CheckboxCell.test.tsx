@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { ICellRendererParams } from '@ag-grid-community/core';
+import { ICellRendererParams } from 'ag-grid-community';
 
 import CheckboxCell from '..';
 
