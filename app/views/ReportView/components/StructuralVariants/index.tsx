@@ -144,6 +144,7 @@ const StructuralVariants = (): JSX.Element => {
               columnDefs={columnDefs}
               rowData={value}
               titleText={titleMap[key]}
+              canToggleColumns
             />
           ))}
         </>
