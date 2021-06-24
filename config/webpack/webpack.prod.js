@@ -2,8 +2,8 @@ const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const webpack = require('webpack');
 const merge = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CompressionWebpackPlugin = require('compression-webpack-plugin');
 const path = require('path');
-const { GenerateSW } = require('workbox-webpack-plugin');
 const common = require('./webpack.config.js');
 
 const prodConfig = {
@@ -45,6 +45,7 @@ const prodConfig = {
       }),
     }),
     new OptimizeCSSAssetsPlugin({}),
+    new CompressionWebpackPlugin(),
   ],
 };
 module.exports = [
