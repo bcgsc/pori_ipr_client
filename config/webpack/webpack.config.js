@@ -4,7 +4,6 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const DashboardPlugin = require('webpack-dashboard/plugin');
 const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
-const { GenerateSW } = require('workbox-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const packageFile = require('../../package.json');
 
@@ -98,15 +97,10 @@ module.exports = {
     }),
     new MomentLocalesPlugin(),
     new CleanWebpackPlugin(),
-    new GenerateSW({
-      skipWaiting: true,
-      clientsClaim: true,
-      exclude: ['/\.map$/'],
-    }),
-    new BundleAnalyzerPlugin({
-      defaultSizes: 'gzip',
-      excludeAssets: '.*\.hot-update\.js',
-    }),
+    // new BundleAnalyzerPlugin({
+    //   defaultSizes: 'gzip',
+    //   excludeAssets: '.*\.hot-update\.js',
+    // }),
   ],
   optimization: {
     runtimeChunk: 'single',

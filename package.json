@@ -77,8 +77,7 @@
     "webpack-cli": "~3.3.11",
     "webpack-dashboard": "~3.0.7",
     "webpack-dev-server": "~3.11.0",
-    "whatwg-fetch": "~3.0.0",
-    "workbox-webpack-plugin": "~6.1.2"
+    "whatwg-fetch": "~3.0.0"
   },
   "dependencies": {
     "@ag-grid-community/client-side-row-model": "~25.3.0",
