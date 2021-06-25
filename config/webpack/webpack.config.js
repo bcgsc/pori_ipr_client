@@ -101,24 +101,18 @@ module.exports = {
     new GenerateSW({
       skipWaiting: true,
       clientsClaim: true,
-      navigateFallback: 'index.html',
       exclude: ['/\.map$/'],
     }),
-    // new BundleAnalyzerPlugin({
-    //   defaultSizes: 'gzip',
-    //   excludeAssets: '.*\.hot-update\.js',
-    // }),
+    new BundleAnalyzerPlugin({
+      defaultSizes: 'gzip',
+      excludeAssets: '.*\.hot-update\.js',
+    }),
   ],
   optimization: {
     runtimeChunk: 'single',
     splitChunks: {
-      cacheGroups: {
-        vendor: {
-          test: /[\\/]node_modules[\\/]/,
-          name: 'vendors',
-          chunks: 'all',
-        },
-      },
+      chunks: 'all',
+      minSize: 1000 * 600,
     },
     moduleIds: 'hashed',
   },

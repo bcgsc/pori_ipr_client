@@ -45,7 +45,9 @@ const prodConfig = {
       }),
     }),
     new OptimizeCSSAssetsPlugin({}),
-    new CompressionWebpackPlugin(),
+    new CompressionWebpackPlugin({
+      algorithm: 'gzip',
+    }),
   ],
 };
 module.exports = [
