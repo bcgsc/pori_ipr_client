@@ -101,6 +101,8 @@ module.exports = {
     new GenerateSW({
       skipWaiting: true,
       clientsClaim: true,
+      navigateFallback: 'index.html',
+      exclude: ['/index.html/'],
     }),
     // new BundleAnalyzerPlugin({
     //   defaultSizes: 'gzip',
