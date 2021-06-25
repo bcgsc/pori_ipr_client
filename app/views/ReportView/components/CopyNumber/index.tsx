@@ -56,8 +56,8 @@ const CopyNumber = (): JSX.Element => {
           const circosIndex = imagesResp.findIndex((img) => img.key === 'cnvLoh.circos');
           const [circosResp] = imagesResp.splice(circosIndex, 1);
 
-          setCircos(circosResp);
           setCnvs(cnvsResp);
+          setCircos(circosResp);
           setImages(imagesResp);
         } catch (err) {
           snackbar.error(`Network error: ${err}`);

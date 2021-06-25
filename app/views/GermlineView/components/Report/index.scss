@@ -2,7 +2,8 @@
 @import '../../../../styles/variables';
 
 .germline-report {
-  height: calc(100% - 56px);
+  height: 100%;
+  overflow: auto;
   padding: 16px;
 
   &__titles {
