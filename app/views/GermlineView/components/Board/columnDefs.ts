@@ -1,5 +1,5 @@
 import { formatDate } from '@/utils/date';
-import { ValueGetterParams } from 'ag-grid-community';
+import { ValueGetterParams } from '@ag-grid-community/core';
 
 const columnDefs = [
   {

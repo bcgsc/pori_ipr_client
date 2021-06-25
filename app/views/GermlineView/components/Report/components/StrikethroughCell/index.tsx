@@ -3,7 +3,7 @@ import {
   IconButton,
 } from '@material-ui/core';
 import StrikethroughSIcon from '@material-ui/icons/StrikethroughS';
-import { ICellRendererParams } from 'ag-grid-community';
+import { ICellRendererParams } from '@ag-grid-community/core';
 
 import api from '@/services/api';
 import GermlineReportContext from '@/context/GermlineReportContext';

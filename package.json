@@ -81,6 +81,9 @@
     "workbox-webpack-plugin": "~6.1.2"
   },
   "dependencies": {
+    "@ag-grid-community/client-side-row-model": "~25.3.0",
+    "@ag-grid-community/csv-export": "~25.3.0",
+    "@ag-grid-community/react": "~25.3.0",
     "@babel/polyfill": "~7.0.0",
     "@fontsource/roboto": "~4.3.0",
     "@material-ui/core": "~4.11.3",
@@ -88,8 +91,6 @@
     "@material-ui/lab": "~4.0.0-alpha.44",
     "@material-ui/styles": "~4.9.13",
     "@types/prop-types": "~15.7.2",
-    "ag-grid-community": "~25.3.0",
-    "ag-grid-react": "~25.3.0",
     "chart.js": "~2.7.3",
     "chartjs-plugin-datalabels": "~0.7.0",
     "fetch-intercept": "~2.3.1",

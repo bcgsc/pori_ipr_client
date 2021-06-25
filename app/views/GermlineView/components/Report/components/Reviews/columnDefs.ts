@@ -1,5 +1,5 @@
 import { formatDate } from '@/utils/date';
-import { ColDef, ICellRendererParams } from 'ag-grid-community';
+import { ColDef, ICellRendererParams } from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
   {

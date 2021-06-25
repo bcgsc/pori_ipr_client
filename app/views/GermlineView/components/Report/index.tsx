@@ -7,7 +7,7 @@ import {
   LinearProgress,
   Typography,
 } from '@material-ui/core';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridReact } from '@ag-grid-community/react';
 
 import useGrid from '@/hooks/useGrid';
 import api from '@/services/api';

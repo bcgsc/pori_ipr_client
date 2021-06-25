@@ -3,7 +3,7 @@ import {
   Checkbox,
 } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
-import { ICellRendererParams } from 'ag-grid-community';
+import { ICellRendererParams } from '@ag-grid-community/core';
 
 import api from '@/services/api';
 

@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { ColDef } from 'ag-grid-community';
+import { ColDef } from '@ag-grid-community/core';
 import { Typography } from '@material-ui/core';
 
 import './index.scss';

@@ -19,8 +19,8 @@ import MainView from './views/MainView';
 import { SnackbarUtilsConfigurator } from './services/SnackbarUtils';
 import cssTheme from './styles/_theme.scss';
 
-import 'ag-grid-community/dist/styles/ag-grid.min.css';
-import 'ag-grid-community/dist/styles/ag-theme-material.min.css';
+import '@ag-grid-community/core/dist/styles/ag-grid.min.css';
+import '@ag-grid-community/core/dist/styles/ag-theme-material.min.css';
 import '@fontsource/roboto';
 import './styles/ag-grid.scss';
 
