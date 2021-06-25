@@ -97,10 +97,10 @@ module.exports = {
     }),
     new MomentLocalesPlugin(),
     new CleanWebpackPlugin(),
-    new BundleAnalyzerPlugin({
-      defaultSizes: 'gzip',
-      excludeAssets: '.*\.hot-update\.js',
-    }),
+    // new BundleAnalyzerPlugin({
+    //   defaultSizes: 'gzip',
+    //   excludeAssets: '.*\.hot-update\.js',
+    // }),
   ],
   optimization: {
     runtimeChunk: 'single',
