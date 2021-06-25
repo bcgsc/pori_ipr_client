@@ -5,6 +5,7 @@ import orderBy from 'lodash.orderby';
 import { HorizontalBar, Chart } from 'react-chartjs-2';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import {
+  Divider,
   Typography,
   LinearProgress,
 } from '@material-ui/core';
@@ -273,14 +274,27 @@ const ExpressionCorrelation = (): JSX.Element => {
                   </span>
                 </div>
               )}
-              {Boolean(pairwiseExpression.length) && (
-                <DataTable
-                  rowData={pairwiseExpression}
-                  columnDefs={columnDefs}
-                  highlightRow={rowClicked}
-                  onRowDataChanged={handleRowDataChanged}
-                />
-              )}
+              <Divider />
+              <span className="expression-correlation__chart-group">
+                {Boolean(Object.values(barChartData.datasets).length) && (
+                  <div className="expression-correlation__chart">
+                    <HorizontalBar
+                      ref={chartRef}
+                      data={barChartData}
+                      height={150 + (barChartData.datasets[0].data.length * 25)}
+                      options={options}
+                    />
+                  </div>
+                )}
+                {Boolean(pairwiseExpression.length) && (
+                  <DataTable
+                    rowData={pairwiseExpression}
+                    columnDefs={columnDefs}
+                    highlightRow={rowClicked}
+                    onRowDataChanged={handleRowDataChanged}
+                  />
+                )}
+              </span>
             </div>
           </>
         )}
