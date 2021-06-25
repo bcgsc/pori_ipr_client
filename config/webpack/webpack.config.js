@@ -97,9 +97,7 @@ module.exports = {
       VERSION: JSON.stringify(packageFile.version),
     }),
     new MomentLocalesPlugin(),
-    new CleanWebpackPlugin({
-      cleanOnceBeforeBuildPatterns: ['!dist/meta.json'],
-    }),
+    new CleanWebpackPlugin(),
     new GenerateSW({
       skipWaiting: true,
       clientsClaim: true,
