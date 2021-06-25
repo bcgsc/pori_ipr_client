@@ -97,16 +97,16 @@ module.exports = {
     }),
     new MomentLocalesPlugin(),
     new CleanWebpackPlugin(),
-    // new BundleAnalyzerPlugin({
-    //   defaultSizes: 'gzip',
-    //   excludeAssets: '.*\.hot-update\.js',
-    // }),
+    new BundleAnalyzerPlugin({
+      defaultSizes: 'gzip',
+      excludeAssets: '.*\.hot-update\.js',
+    }),
   ],
   optimization: {
     runtimeChunk: 'single',
     splitChunks: {
       chunks: 'all',
-      minSize: 1000 * 600,
+      minSize: 1000 * 500,
     },
     moduleIds: 'hashed',
   },
