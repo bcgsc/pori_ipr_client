@@ -102,7 +102,7 @@ module.exports = {
       skipWaiting: true,
       clientsClaim: true,
       navigateFallback: 'index.html',
-      exclude: ['/index.html/'],
+      exclude: ['/\.map$/'],
     }),
     // new BundleAnalyzerPlugin({
     //   defaultSizes: 'gzip',
