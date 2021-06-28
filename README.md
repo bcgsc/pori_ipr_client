@@ -1,10 +1,10 @@
 # Integrated Pipeline Reports (IPR) Client
 
-![Build Status](https://www.bcgsc.ca/bamboo/plugins/servlet/wittified/build-status/IPR-IPRWP117) ![build](https://github.com/bcgsc/pori_ipr_client/workflows/build/badge.svg?branch=master) ![node versions](https://img.shields.io/badge/node-10%20%7C%2012%20%7C%2014-blue)
+![Build Status](https://www.bcgsc.ca/bamboo/plugins/servlet/wittified/build-status/PORI-IPRCLI) ![build](https://github.com/bcgsc/pori_ipr_client/workflows/build/badge.svg?branch=master) ![node versions](https://img.shields.io/badge/node-12%20%7C%2014-blue)
 
 IPR is part of the [platform for oncogenomic reporting and interpretation](https://github.com/bcgsc/pori).
 
-The IPR client is designed to consume API data from IPR's API. The primary function is the production and management of POG Genomic and Targeted Gene reports.
+The IPR client is designed to consume API data from IPR's API. The primary function is the production and management of Genomic and Targeted Gene reports.
 
 This project only includes the report functionality. Tracking and biopsy input are available in the IPR-Tracking application.
 
