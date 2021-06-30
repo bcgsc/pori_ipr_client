@@ -70,7 +70,7 @@ const TherapeuticTable = (props) => {
   useEffect(() => {
     if (report) {
       const getData = async () => {
-        const resp = await api.get(`/reports/${report.ident}/therapeutic-targets`, {}).request;
+        const resp = await api.get(`/reports/${report.ident}/therapeutic-targets`, {}).request();
 
         if (resp.length) {
           // target and biomarker are objects and need to be strings to be displayed w/ag-grid
