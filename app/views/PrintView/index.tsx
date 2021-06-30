@@ -4,6 +4,7 @@ import React, {
 import { useParams } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
 import { useTheme } from '@material-ui/core/styles';
+import { Previewer } from 'pagedjs';
 
 import api from '@/services/api';
 import ReportContext from '@/context/ReportContext';
@@ -79,8 +80,13 @@ const Print = () => {
       && template?.sections.length
       && Object.entries(reportSectionsLoaded).every(([section, loaded]) => loaded || !template?.sections.includes(section))
       && !isPrintDialogShown) {
-      window.print();
-      setIsPrintDialogShown(true);
+      const showPrint = async () => {
+        let paged = new Previewer();
+        await paged.preview(document.getElementById('root'), [], document.body);
+        window.print();
+        setIsPrintDialogShown(true);
+      }
+      showPrint();
     }
   }, [isPrintDialogShown, report, reportSectionsLoaded, template]);
 
