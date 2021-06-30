@@ -82,7 +82,7 @@ const Print = () => {
       && !isPrintDialogShown) {
       const showPrint = async () => {
         let paged = new Previewer();
-        await paged.preview(document.getElementById('root'), [], document.body);
+        await paged.preview(document.getElementById('root'), ['index.css'], document.body);
         window.print();
         setIsPrintDialogShown(true);
       }

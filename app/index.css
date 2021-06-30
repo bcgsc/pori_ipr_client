@@ -1,0 +1,10 @@
+@media print {
+  @page {
+    size: letter;
+    margin: .4in;
+
+    @top-right {
+      content: "Page " counter(page) " of " counter(pages);
+    }
+  }
+}

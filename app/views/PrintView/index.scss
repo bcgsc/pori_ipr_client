@@ -36,16 +36,15 @@
 }
 
 :root {
-  --pagedjs-margin-right: .4in !important;
-  --pagedjs-margin-left: .4in !important;
-  --pagedjs-margin-top: .4in !important;
-  --pagedjs-margin-bottom: .4in !important;
+  // --pagedjs-margin-right: .4in !important;
+  // --pagedjs-margin-left: .4in !important;
+  // --pagedjs-margin-top: .4in !important;
+  // --pagedjs-margin-bottom: .4in !important;
 }
 
 @media print {
   .print {
     height: 100%;
-    counter-reset: page 1;
 
     & > * {
       padding: 0px;
@@ -53,7 +52,7 @@
   }
 
   @page {
-    size: 8.5in 11in;
+    size: A0;
 
     @bottom-center {
       content: "test text here";
