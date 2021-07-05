@@ -3,7 +3,7 @@
     size: letter;
     margin: .4in;
 
-    @top-right {
+    @bottom-right {
       content: "Page " counter(page) " of " counter(pages);
     }
   }
