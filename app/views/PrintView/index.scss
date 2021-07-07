@@ -35,27 +35,12 @@
   }
 }
 
-:root {
-  // --pagedjs-margin-right: .4in !important;
-  // --pagedjs-margin-left: .4in !important;
-  // --pagedjs-margin-top: .4in !important;
-  // --pagedjs-margin-bottom: .4in !important;
-}
-
 @media print {
   .print {
     height: 100%;
 
     & > * {
       padding: 0px;
-    }
-  }
-
-  @page {
-    size: A0;
-
-    @bottom-center {
-      content: "test text here";
     }
   }
 }
