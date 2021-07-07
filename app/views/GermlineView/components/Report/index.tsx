@@ -156,6 +156,7 @@ const GermlineReport = (): JSX.Element => {
                 autoSizePadding={0}
                 columnDefs={columnDefs}
                 domLayout="autoHeight"
+                enableCellTextSelection
                 onGridReady={onGridReady}
                 suppressColumnVirtualisation
                 rowData={report.variants}
