@@ -17,6 +17,9 @@ import PathwayAnalysis from '../ReportView/components/PathwayAnalysis';
 import TherapeuticTargets from '../ReportView/components/TherapeuticTargets/components/PrintTables';
 import Slides from '../ReportView/components/Slides';
 import Appendices from '../ReportView/components/Appendices';
+import RunningLeft from './components/RunningLeft';
+import RunningCenter from './components/RunningCenter';
+import RunningRight from './components/RunningRight';
 
 import './index.scss';
 
@@ -167,6 +170,9 @@ const Print = () => {
       <div className="print">
         {report ? (
           <>
+            <RunningLeft className="running-left" />
+            <RunningCenter className="running-center" />
+            <RunningRight className="running-right" />
             {titleBar}
             {renderSections}
           </>

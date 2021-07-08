@@ -1,10 +1,36 @@
 @media print {
+  .running-left {
+    position: running(run-left);
+  }
+
+  .running-center {
+    position: running(run-center);
+  }
+
+  .running-right {
+    position: running(run-right);
+  }
+
   @page {
     size: letter;
     margin: .4in;
 
     @bottom-right {
       content: "Page " counter(page) " of " counter(pages);
+      font-size: .75rem;
+    }
+
+    @top-left {
+      content: element(run-left);
+    }
+
+    @top-center {
+      content: element(run-center);
+      width: 3in;
+    }
+
+    @top-right {
+      content: element(run-right);
     }
   }
 }
