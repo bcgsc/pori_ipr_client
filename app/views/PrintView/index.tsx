@@ -100,37 +100,37 @@ const Print = () => {
           {template?.sections.includes('summary') && report.template.name === 'probe' && (
             <>
               <ProbeSummary report={report} isPrint loadedDispatch={dispatch} />
-              <PageBreak report={report} theme={theme} />
+              <PageBreak />
             </>
           )}
           {template?.sections.includes('summary') && report.template.name !== 'probe' && (
             <>
               <GenomicSummary print loadedDispatch={dispatch} />
-              <PageBreak report={report} theme={theme} />
+              <PageBreak />
             </>
           )}
           {template?.sections.includes('analyst-comments') && (
             <>
               <AnalystComments report={report} isPrint loadedDispatch={dispatch} />
-              <PageBreak report={report} theme={theme} />
+              <PageBreak />
             </>
           )}
           {template?.sections.includes('pathway-analysis') && (
             <>
               <PathwayAnalysis report={report} print loadedDispatch={dispatch} />
-              <PageBreak report={report} theme={theme} />
+              <PageBreak />
             </>
           )}
           {template?.sections.includes('therapeutic-targets') && (
             <>
               <TherapeuticTargets print loadedDispatch={dispatch} />
-              <PageBreak report={report} theme={theme} />
+              <PageBreak />
             </>
           )}
           {template?.sections.includes('slides') && (
             <>
               <Slides report={report} isPrint loadedDispatch={dispatch} theme={theme} />
-              <PageBreak report={report} theme={theme} />
+              <PageBreak />
             </>
           )}
           {template?.sections.includes('appendices') && (
