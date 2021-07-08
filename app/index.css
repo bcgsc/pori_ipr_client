@@ -11,6 +11,10 @@
     position: running(run-right);
   }
 
+  .page-break {
+    break-before: page;
+  }
+
   @page {
     size: letter;
     margin: .4in;

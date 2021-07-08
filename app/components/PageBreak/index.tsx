@@ -1,19 +1,5 @@
-import React, { useContext } from 'react';
+import React from 'react';
 
-import ReportContext from '@/context/ReportContext';
-
-import './index.scss';
-
-const PageBreak = (): JSX.Element => {
-  const { report } = useContext(ReportContext);
-
-  return (
-    <>
-      {report && (
-        <span className="page-break" />
-      )}
-    </>
-  );
-};
+const PageBreak = (): JSX.Element => <span className="page-break" />;
 
 export default PageBreak;
