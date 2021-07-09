@@ -5,10 +5,13 @@ const CacheBuster = ({
 }) => {
   useEffect(() => {
     const delCaches = async () => {
-      const cacheKeys = await caches.keys();
-      if ('caches' in window && cacheKeys.length) {
-        cacheKeys.forEach(async (key) => caches.delete(key));
-        window.location.reload();
+      if ('caches' in window) {
+        const cacheKeys = await caches.keys();
+
+        if (cacheKeys.length) {
+          cacheKeys.forEach(async (key) => caches.delete(key));
+          window.location.reload();
+        }
       }
     }
     delCaches();
