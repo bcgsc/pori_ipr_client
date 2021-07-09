@@ -6,7 +6,7 @@ import ImageType from './types.d';
 import './index.scss';
 
 type ImageProps = {
-  image: ImageType;
+  image?: ImageType;
   height?: number;
   width?: number;
   showTitle?: boolean;
@@ -21,7 +21,7 @@ const Image = ({
     caption,
     format,
     key,
-  },
+  } = {} as ImageType,
   height = 0,
   width = 0,
   showTitle = false,

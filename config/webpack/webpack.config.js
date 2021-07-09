@@ -101,6 +101,7 @@ module.exports = {
     // }),
   ],
   optimization: {
+    moduleIds: 'hashed',
     splitChunks: {
       chunks: 'all',
     },
