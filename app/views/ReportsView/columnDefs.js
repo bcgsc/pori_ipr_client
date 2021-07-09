@@ -1,5 +1,3 @@
-import Launch from "@material-ui/icons/Launch";
-
 const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
 
 const dateCellRenderer = (params) => {

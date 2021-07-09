@@ -86,5 +86,4 @@ export {
   UserGroupMemberType,
   ImageType,
   GeneType,
-  TemplateType,
 };
