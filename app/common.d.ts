@@ -48,6 +48,7 @@ type UserProjectsType = {
 
 type UserType = {
   email: string;
+  deletedAt: null | string;
   firstName: string;
   groups?: GroupType[];
   lastLogin: null | string;
