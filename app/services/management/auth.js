@@ -1,5 +1,5 @@
 import Keycloak from 'keycloak-js';
-import * as jwt from 'jsonwebtoken';
+import jwtDecode from 'jwt-decode';
 
 import api from '@/services/api';
 
@@ -26,7 +26,7 @@ const setReferrerUri = (uri) => {
  */
 const isExpired = (token) => {
   try {
-    const expiry = jwt.decode(token).exp;
+    const expiry = jwtDecode(token).exp;
     return !Number.isNaN(expiry) && (expiry * 1000) < (new Date()).getTime();
   } catch (err) {
     return false;
@@ -38,7 +38,7 @@ const isExpired = (token) => {
  */
 const validToken = (token) => {
   try {
-    const decoded = jwt.decode(token);
+    const decoded = jwtDecode(token);
     return !!decoded;
   } catch (err) {
     return false;
@@ -85,7 +85,7 @@ const isAdmin = (user) => {
  */
 const getUsername = ({ authorizationToken }) => {
   if (authorizationToken) {
-    return jwt.decode(authorizationToken).preferred_username;
+    return jwtDecode(authorizationToken).preferred_username;
   }
   return null;
 };
