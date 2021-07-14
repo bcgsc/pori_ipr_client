@@ -6,7 +6,7 @@ import React, { useState, useEffect } from 'react';
  * @param {string} props.link target link
  * @return {*} JSX
  */
-function LinkCellRenderer(params) {
+function EnsemblCellRenderer(params) {
   const {
     value,
   } = params;
@@ -34,4 +34,4 @@ function LinkCellRenderer(params) {
   );
 }
 
-export default LinkCellRenderer;
+export default EnsemblCellRenderer;
