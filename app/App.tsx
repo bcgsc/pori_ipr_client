@@ -20,6 +20,7 @@ import { CsvExportModule } from '@ag-grid-community/csv-export';
 
 import MainView from './views/MainView';
 import { SnackbarUtilsConfigurator } from './services/SnackbarUtils';
+import CacheBuster from './components/CacheBuster';
 import cssTheme from './styles/_theme.scss';
 
 import '@ag-grid-community/core/dist/styles/ag-grid.min.css';
@@ -91,6 +92,7 @@ const theme = createMuiTheme({
 const generateClassName = createGenerateClassName({
   productionPrefix: 'ipr',
 });
+
 const jss = create({
   ...jssPreset(),
   // We define a custom insertion point that JSS will look for injecting the styles in the DOM.
@@ -114,7 +116,9 @@ function App() {
             <SnackbarUtilsConfigurator />
             <CssBaseline />
             <BrowserRouter basename={window._env_.PUBLIC_PATH}>
-              <MainView />
+              <CacheBuster>
+                <MainView />
+              </CacheBuster>
             </BrowserRouter>
           </SnackbarProvider>
         </MuiThemeProvider>
