@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import NewTabLink from '@/components/NewTabLink';
 import { ICellRendererParams } from '@ag-grid-community/core';
 
-type CivicCellRendererProps = ICellRendererParams;
+type CivicCellRendererProps = ICellRendererParams['data'];
 
 const CivicCellRenderer = ({
   data,
