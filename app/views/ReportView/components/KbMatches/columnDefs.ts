@@ -165,6 +165,16 @@ const columnDefs = [{
   valueGetter: (params) => getGeneProp(params, 'therapeuticAssociated'),
   hide: true,
 }, {
+  headerName: 'External Source',
+  colId: 'externalSource',
+  cellRenderer: 'CivicCellRenderer',
+  hide: false,
+}, {
+  headerName: 'External Statement ID',
+  colId: 'externalStatementId',
+  field: 'externalStatementId',
+  hide: true,
+}, {
   headerName: 'Actions',
   colId: 'Actions',
   cellRenderer: 'ActionCellRenderer',
