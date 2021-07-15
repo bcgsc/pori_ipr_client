@@ -21,9 +21,15 @@ const CivicCellRenderer = ({
     }
   }, [data]);
 
-  return (
-    <NewTabLink link={link} text={text} />
-  );
+  if (link) {
+    return (
+      <NewTabLink link={link} text={text} />
+    );
+  } else {
+    return (
+      <div>{text}</div>
+    )
+  }
 }
 
 export default CivicCellRenderer;
