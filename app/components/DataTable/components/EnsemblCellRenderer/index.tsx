@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from 'react';
 
-/**
- * @param {object} params params
- * @param {string} params.value display text
- * @param {string} props.link target link
- * @return {*} JSX
- */
-function EnsemblCellRenderer(params) {
-  const {
-    value,
-  } = params;
+import NewTabLink from '@/components/NewTabLink';
+import { ICellRendererParams } from '@ag-grid-community/core';
 
+type EnsemblCellRendererProps = ICellRendererParams;
+
+const EnsemblCellRenderer = ({
+  value,
+}: EnsemblCellRendererProps): JSX.Element => {
   const [link, setLink] = useState('');
   const [text, setText] = useState('');
 
@@ -28,9 +25,7 @@ function EnsemblCellRenderer(params) {
   }, [value]);
 
   return (
-    <a href={link} target="_blank" rel="noopener noreferrer">
-      {text}
-    </a>
+    <NewTabLink link={link} text={text} />
   );
 }
 

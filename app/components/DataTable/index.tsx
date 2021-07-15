@@ -17,6 +17,7 @@ import GetAppIcon from '@material-ui/icons/GetApp';
 import ReportContext from '@/context/ReportContext';
 import ColumnPicker from './components/ColumnPicker';
 import EnsemblCellRenderer from './components/EnsemblCellRenderer';
+import CivicCellRenderer from './components/CivicCellRenderer';
 import GeneCellRenderer from './components/GeneCellRenderer';
 import ActionCellRenderer from './components/ActionCellRenderer';
 import { getDate } from '../../utils/date';
@@ -414,6 +415,7 @@ const DataTable = ({
               }}
               frameworkComponents={{
                 EnsemblCellRenderer,
+                CivicCellRenderer,
                 GeneCellRenderer,
                 ActionCellRenderer: RowActionCellRenderer,
                 headerCellRenderer: Header,

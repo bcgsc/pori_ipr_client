@@ -127,7 +127,7 @@ function SvgViewer(props) {
             rowData={rowData}
             domLayout="autoHeight"
             frameworkComponents={{
-              LinkCellRenderer,
+              EnsemblCellRenderer,
             }}
           />
         </div>
