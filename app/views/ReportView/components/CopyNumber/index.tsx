@@ -10,6 +10,7 @@ import api, { ApiCallSet } from '@/services/api';
 import { CNVSTATE, EXPLEVEL } from '@/constants';
 import Image from '@/components/Image';
 import ImageType from '@/components/Image/types';
+import snackbar from '@/services/SnackbarUtils';
 import CopyNumberType from './types';
 import columnDefs from './columnDefs';
 
@@ -45,19 +46,24 @@ const CopyNumber = (): JSX.Element => {
   useEffect(() => {
     if (report) {
       const getData = async () => {
-        const apiCalls = new ApiCallSet([
-          api.get(`/reports/${report.ident}/copy-variants`, {}),
-          api.get(`/reports/${report.ident}/image/retrieve/cnvLoh.circos,cnv.1,cnv.2,cnv.3,cnv.4,cnv.5,loh.1,loh.2,loh.3,loh.4,loh.5`, {}),
-        ]);
-        const [cnvsResp, imagesResp] = await apiCalls.request();
+        try {
+          const apiCalls = new ApiCallSet([
+            api.get(`/reports/${report.ident}/copy-variants`, {}),
+            api.get(`/reports/${report.ident}/image/retrieve/cnvLoh.circos,cnv.1,cnv.2,cnv.3,cnv.4,cnv.5,loh.1,loh.2,loh.3,loh.4,loh.5`, {}),
+          ]);
+          const [cnvsResp, imagesResp] = await apiCalls.request();
 
-        const circosIndex = imagesResp.findIndex((img) => img.key === 'cnvLoh.circos');
-        const [circosResp] = imagesResp.splice(circosIndex, 1);
+          const circosIndex = imagesResp.findIndex((img) => img.key === 'cnvLoh.circos');
+          const [circosResp] = imagesResp.splice(circosIndex, 1);
 
-        setCnvs(cnvsResp);
-        setCircos(circosResp);
-        setImages(imagesResp);
-        setIsLoading(false);
+          setCnvs(cnvsResp);
+          setCircos(circosResp);
+          setImages(imagesResp);
+        } catch (err) {
+          snackbar.error(`Network error: ${err}`);
+        } finally {
+          setIsLoading(false);
+        }
       };
       getData();
     }

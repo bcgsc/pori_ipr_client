@@ -48,6 +48,10 @@ const sections = [
     value: 'immune',
   },
   {
+    name: 'Pharmacogenomic',
+    value: 'pharmacogenomic',
+  },
+  {
     name: 'Small Mutations',
     value: 'small-mutations',
   },

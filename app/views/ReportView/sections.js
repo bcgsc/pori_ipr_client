@@ -64,6 +64,16 @@ const sections = [
     ],
   },
   {
+    name: 'Germline',
+    meta: false,
+    showChildren: false,
+    clinician: true,
+    category: true,
+    children: [
+      { name: 'Pharmacogenomic', uri: 'pharmacogenomic' },
+    ],
+  },
+  {
     name: 'Somatic',
     meta: false,
     showChildren: false,

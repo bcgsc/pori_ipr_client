@@ -9,9 +9,9 @@ import {
 import {
   FilterList,
 } from '@material-ui/icons';
-import { useSnackbar } from 'notistack';
 
 import api, { ApiCallSet } from '@/services/api';
+import snackbar from '@/services/SnackbarUtils';
 import DemoDescription from '@/components/DemoDescription';
 import EditContext from '@/context/EditContext';
 import DataTable from '@/components/DataTable';
@@ -42,7 +42,6 @@ const KbMatches = ({
 }: KbMatchesProps): JSX.Element => {
   const { report } = useContext(ReportContext);
   const { canEdit } = useContext(EditContext);
-  const snackbar = useSnackbar();
 
   const [isLoading, setIsLoading] = useState(true);
   const [filterText, setFilterText] = useState('');
@@ -60,40 +59,45 @@ const KbMatches = ({
   useEffect(() => {
     if (report) {
       const getData = async () => {
-        const baseUri = `/reports/${report.ident}/kb-matches`;
-        const apiCalls = new ApiCallSet([
-          api.get(`${baseUri}?approvedTherapy=false&category=therapeutic`, {}),
-          api.get(`${baseUri}?approvedTherapy=false&category=biological`, {}),
-          api.get(`${baseUri}?approvedTherapy=false&category=diagnostic`, {}),
-          api.get(`${baseUri}?approvedTherapy=false&category=prognostic`, {}),
-          api.get(`${baseUri}?category=unknown,novel`, {}),
-          api.get(`${baseUri}?approvedTherapy=true&category=therapeutic&matchedCancer=true`, {}),
-          api.get(`${baseUri}?approvedTherapy=true&category=therapeutic&matchedCancer=false`, {}),
-          api.get(`/reports/${report.ident}/probe-results`, {}),
-        ]);
+        try {
+          const baseUri = `/reports/${report.ident}/kb-matches`;
+          const apiCalls = new ApiCallSet([
+            api.get(`${baseUri}?approvedTherapy=false&category=therapeutic`, {}),
+            api.get(`${baseUri}?approvedTherapy=false&category=biological`, {}),
+            api.get(`${baseUri}?approvedTherapy=false&category=diagnostic`, {}),
+            api.get(`${baseUri}?approvedTherapy=false&category=prognostic`, {}),
+            api.get(`${baseUri}?category=unknown,novel`, {}),
+            api.get(`${baseUri}?approvedTherapy=true&category=therapeutic&matchedCancer=true`, {}),
+            api.get(`${baseUri}?approvedTherapy=true&category=therapeutic&matchedCancer=false`, {}),
+            api.get(`/reports/${report.ident}/probe-results`, {}),
+          ]);
 
-        const [
-          therapeuticResp,
-          biologicalResp,
-          diagnosticResp,
-          prognosticResp,
-          unknownResp,
-          thisCancerResp,
-          otherCancerResp,
-          targetedGenesResp,
-        ] = await apiCalls.request();
+          const [
+            therapeuticResp,
+            biologicalResp,
+            diagnosticResp,
+            prognosticResp,
+            unknownResp,
+            thisCancerResp,
+            otherCancerResp,
+            targetedGenesResp,
+          ] = await apiCalls.request();
 
-        setGroupedMatches({
-          thisCancer: coalesceEntries(thisCancerResp),
-          otherCancer: coalesceEntries(otherCancerResp),
-          therapeutic: coalesceEntries(therapeuticResp),
-          biological: coalesceEntries(biologicalResp),
-          diagnostic: coalesceEntries(diagnosticResp),
-          prognostic: coalesceEntries(prognosticResp),
-          unknown: coalesceEntries(unknownResp),
-          targetedGenes: targetedGenesResp,
-        });
-        setIsLoading(false);
+          setGroupedMatches({
+            thisCancer: coalesceEntries(thisCancerResp),
+            otherCancer: coalesceEntries(otherCancerResp),
+            therapeutic: coalesceEntries(therapeuticResp),
+            biological: coalesceEntries(biologicalResp),
+            diagnostic: coalesceEntries(diagnosticResp),
+            prognostic: coalesceEntries(prognosticResp),
+            unknown: coalesceEntries(unknownResp),
+            targetedGenes: targetedGenesResp,
+          });
+        } catch (err) {
+          snackbar.error(`Network error: ${err}`);
+        } finally {
+          setIsLoading(false);
+        }
       };
 
       getData();
@@ -134,11 +138,11 @@ const KbMatches = ({
         }
         return newMatches;
       });
-      snackbar.enqueueSnackbar('Row deleted', { variant: 'success' });
+      snackbar.success('Row deleted');
     } catch (err) {
-      snackbar.enqueueSnackbar(`Deletion failed: ${err}`, { variant: 'error' });
+      snackbar.error(`Deletion failed: ${err}`);
     }
-  }, [report, snackbar]);
+  }, [report]);
 
   return (
     <div>

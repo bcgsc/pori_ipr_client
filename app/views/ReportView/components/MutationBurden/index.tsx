@@ -9,6 +9,7 @@ import {
 import DemoDescription from '@/components/DemoDescription';
 import DataTable from '@/components/DataTable';
 import ReportContext from '@/context/ReportContext';
+import snackbar from '@/services/SnackbarUtils';
 import Image from '@/components/Image';
 import ImageType from '@/components/Image/types';
 import api, { ApiCallSet } from '@/services/api';
@@ -101,22 +102,27 @@ const MutationBurden = (): JSX.Element => {
   useEffect(() => {
     if (report) {
       const getData = async () => {
-        const calls = new ApiCallSet([
-          api.get(`/reports/${report.ident}/msi`, {}),
-          api.get(`/reports/${report.ident}/image/retrieve/msi.scatter`, {}),
-          api.get(`/reports/${report.ident}/image/mutation-burden`, {}),
-          api.get(`/reports/${report.ident}/comparators`, {}),
-          api.get(`/reports/${report.ident}/mutation-burden`, {}),
-        ]);
-        const [
-          msiResp, msiScatterResp, imagesResp, comparatorsResp, mutationBurdenResp,
-        ] = await calls.request();
-        setMsi(msiResp);
-        setMsiScatter(msiScatterResp.find((img) => img.key === 'msi.scatter'));
-        setImages(processImages(imagesResp));
-        setComparators(comparatorsResp);
-        setMutationBurden(mutationBurdenResp);
-        setIsLoading(false);
+        try {
+          const calls = new ApiCallSet([
+            api.get(`/reports/${report.ident}/msi`, {}),
+            api.get(`/reports/${report.ident}/image/retrieve/msi.scatter`, {}),
+            api.get(`/reports/${report.ident}/image/mutation-burden`, {}),
+            api.get(`/reports/${report.ident}/comparators`, {}),
+            api.get(`/reports/${report.ident}/mutation-burden`, {}),
+          ]);
+          const [
+            msiResp, msiScatterResp, imagesResp, comparatorsResp, mutationBurdenResp,
+          ] = await calls.request();
+          setMsi(msiResp);
+          setMsiScatter(msiScatterResp.find((img) => img.key === 'msi.scatter'));
+          setImages(processImages(imagesResp));
+          setComparators(comparatorsResp);
+          setMutationBurden(mutationBurdenResp);
+        } catch (err) {
+          snackbar.error(`Network error: ${err}`);
+        } finally {
+          setIsLoading(false);
+        }
       };
 
       getData();

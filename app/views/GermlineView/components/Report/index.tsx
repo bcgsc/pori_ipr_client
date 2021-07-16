@@ -38,12 +38,17 @@ const GermlineReport = (): JSX.Element => {
   useEffect(() => {
     if (ident) {
       const getData = async () => {
-        const reportResp = await api.get(
-          `/germline-small-mutation-reports/${ident}`,
-          {},
-        ).request();
-        setReport(reportResp);
-        setIsLoading(false);
+        try {
+          const reportResp = await api.get(
+            `/germline-small-mutation-reports/${ident}`,
+            {},
+          ).request();
+          setReport(reportResp);
+        } catch (err) {
+          snackbar.error(`Network error: ${err}`);
+        } finally {
+          setIsLoading(false);
+        }
       };
       getData();
     }
@@ -151,6 +156,7 @@ const GermlineReport = (): JSX.Element => {
                 autoSizePadding={0}
                 columnDefs={columnDefs}
                 domLayout="autoHeight"
+                enableCellTextSelection
                 onGridReady={onGridReady}
                 suppressColumnVirtualisation
                 rowData={report.variants}

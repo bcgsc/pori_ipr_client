@@ -5,6 +5,7 @@ import {
 } from '@material-ui/core';
 
 import api from '@/services/api';
+import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
 import ReportContext from '@/context/ReportContext';
 import { columnDefs } from './columnDefs';
@@ -28,17 +29,22 @@ const SmallMutations = (): JSX.Element => {
     biological: [],
     unknown: [],
   });
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (report) {
-      setIsLoading(true);
       const getData = async () => {
-        const smallMutationsResp = await api.get(
-          `/reports/${report.ident}/small-mutations`,
-          {},
-        ).request();
-        setSmallMutations(smallMutationsResp);
+        try {
+          const smallMutationsResp = await api.get(
+            `/reports/${report.ident}/small-mutations`,
+            {},
+          ).request();
+          setSmallMutations(smallMutationsResp);
+        } catch (err) {
+          snackbar.error(`Network error: ${err}`);
+        } finally {
+          setIsLoading(false);
+        }
       };
       getData();
     }
@@ -77,7 +83,6 @@ const SmallMutations = (): JSX.Element => {
         }
       });
 
-      setIsLoading(false);
       setGroupedSmallMutations(mutations);
     }
   }, [smallMutations]);

@@ -3,6 +3,7 @@ import React, {
 } from 'react';
 import PropTypes from 'prop-types';
 import { AgGridReact } from '@ag-grid-community/react';
+import { ColDef } from '@ag-grid-community/core';
 import useGrid from '@/hooks/useGrid';
 import {
   Typography,
@@ -31,7 +32,7 @@ type DataTableProps = {
   /* Callback function when rowData is changed within the DataTable */
   onRowDataChanged?: (rows: Record<string, unknown>[]) => void;
   /* Column definitions for rowData */
-  columnDefs: Record<string, unknown>[];
+  columnDefs: ColDef[];
   /* Table title */
   titleText?: string;
   /* String to filter rows by */

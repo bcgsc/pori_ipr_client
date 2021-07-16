@@ -3,13 +3,13 @@ import React, {
 } from 'react';
 import orderBy from 'lodash.orderby';
 import { LinearProgress, Typography } from '@material-ui/core';
-import { useSnackbar } from 'notistack';
 
 import DemoDescription from '@/components/DemoDescription';
 import DataTable from '@/components/DataTable';
 import ReportContext from '@/context/ReportContext';
 import EditContext from '@/context/EditContext';
 import api from '@/services/api';
+import snackbar from '@/services/SnackbarUtils';
 import ImageType from '@/components/Image/types';
 import EditDialog from './components/EditDialog';
 import MutationSignatureType from './types';
@@ -35,20 +35,23 @@ const MutationSignatures = (): JSX.Element => {
   const [showDialog, setShowDialog] = useState(false);
   const [editData, setEditData] = useState<MutationSignatureType | null>();
 
-  const snackbar = useSnackbar();
-
   useEffect(() => {
     if (report && report.ident) {
       const getData = async () => {
-        const [imageData, signatureData] = await Promise.all([
-          api.get(`/reports/${report.ident}/image/retrieve/${imageKeys.join(',')}`, {}).request(),
-          api.get(`/reports/${report.ident}/mutation-signatures`, {}).request(),
-        ]);
-        setImages(imageData);
-        setSbsSignatures(signatureData.filter((sig) => !(new RegExp(/dbs|id/)).test(sig.signature.toLowerCase())));
-        setDbsSignatures(signatureData.filter((sig) => (new RegExp(/dbs/)).test(sig.signature.toLowerCase())));
-        setIdSignatures(signatureData.filter((sig) => (new RegExp(/id/)).test(sig.signature.toLowerCase())));
-        setIsLoading(false);
+        try {
+          const [imageData, signatureData] = await Promise.all([
+            api.get(`/reports/${report.ident}/image/retrieve/${imageKeys.join(',')}`, {}).request(),
+            api.get(`/reports/${report.ident}/mutation-signatures`, {}).request(),
+          ]);
+          setImages(imageData);
+          setSbsSignatures(signatureData.filter((sig) => !(new RegExp(/dbs|id/)).test(sig.signature.toLowerCase())));
+          setDbsSignatures(signatureData.filter((sig) => (new RegExp(/dbs/)).test(sig.signature.toLowerCase())));
+          setIdSignatures(signatureData.filter((sig) => (new RegExp(/id/)).test(sig.signature.toLowerCase())));
+        } catch (err) {
+          snackbar.error(`Network error: ${err}`);
+        } finally {
+          setIsLoading(false);
+        }
       };
 
       getData();
@@ -123,7 +126,7 @@ const MutationSignatures = (): JSX.Element => {
               editData={editData}
               isOpen={showDialog}
               onClose={handleEditClose}
-              showErrorSnackbar={snackbar.enqueueSnackbar}
+              showErrorSnackbar={snackbar.error}
             />
           )}
           <DataTable

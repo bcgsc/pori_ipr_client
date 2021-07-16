@@ -5,7 +5,6 @@ import React, {
   useEffect,
   useCallback,
 } from 'react';
-import fetchIntercept from 'fetch-intercept';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { CircularProgress, Snackbar } from '@material-ui/core';
 

@@ -9,6 +9,7 @@ import {
 } from '@material-ui/core';
 
 import api from '@/services/api';
+import snackbar from '@/services/SnackbarUtils';
 import ReportContext from '@/context/ReportContext';
 import Image, { ImageType } from '@/components/Image';
 
@@ -25,13 +26,18 @@ const Microbial = (): JSX.Element => {
   useEffect(() => {
     if (report) {
       const getData = async () => {
-        const microbialImagesResp = await api.get(
-          `/reports/${report.ident}/image/retrieve/microbial.circos.genome,microbial.circos.transcriptome`,
-          {},
-        ).request();
+        try {
+          const microbialImagesResp = await api.get(
+            `/reports/${report.ident}/image/retrieve/microbial.circos.genome,microbial.circos.transcriptome`,
+            {},
+          ).request();
 
-        setMicrobialImages(microbialImagesResp);
-        setIsLoading(false);
+          setMicrobialImages(microbialImagesResp);
+        } catch (err) {
+          snackbar.error(`Network error: ${err}`);
+        } finally {
+          setIsLoading(false);
+        }
       };
       getData();
     }
