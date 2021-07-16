@@ -14,6 +14,7 @@ import {
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 
 import api from '@/services/api';
+import AlertDialog from '@/components/AlertDialog';
 import snackbar from '@/services/SnackbarUtils';
 import ReportContext from '@/context/ReportContext';
 import EditContext from '@/context/EditContext';
@@ -36,6 +37,7 @@ const Slides = ({
   const { report } = useContext(ReportContext);
   const { canEdit } = useContext(EditContext);
 
+  const [showAlert, setShowAlert] = useState(false);
   const [slides, setSlides] = useState<SlideType[]>([]);
   const [tabValue, setTabValue] = useState(0);
   const [direction, setDirection] = useState<'left' | 'right' | 'up' | 'down'>('right');
@@ -78,6 +80,13 @@ const Slides = ({
     }
   }, [report]);
 
+  const handleAlertClose = (confirmed: boolean, ident: string) => {
+    setShowAlert(false);
+    if (confirmed) {
+      handleSlideDelete(ident);
+    }
+  };
+
   return (
     <div className="slides">
       <Typography className="slides__title" variant="h3">Additional Information</Typography>
@@ -101,38 +110,46 @@ const Slides = ({
             </Paper>
           )}
           {slides.map((slide, index) => (
-            <Slide
-              key={slide.name}
-              appear={false}
-              in={index === tabValue}
-              direction={direction}
-              mountOnEnter
-              unmountOnExit
-              onEntering={() => setDirection('left')}
-              onExiting={() => setDirection('right')}
-            >
-              <div className="slides__slide-content">
-                <Typography variant="h5" className="slides__title">
-                  {slide.name}
-                </Typography>
-                <div className="slides__slide-container">
-                  <img
-                    alt={slide.name}
-                    className="slides__image"
-                    src={`data:${slide.object_type};base64, ${slide.object}`}
-                  />
-                  {canEdit && !isPrint && (
-                    <IconButton
-                      className="slides__slide-action"
-                      onClick={() => handleSlideDelete(slide.ident)}
-                      size="small"
-                    >
-                      <HighlightOffIcon />
-                    </IconButton>
-                  )}
+            <>
+              <Slide
+                key={slide.name}
+                appear={false}
+                in={index === tabValue}
+                direction={direction}
+                mountOnEnter
+                unmountOnExit
+                onEntering={() => setDirection('left')}
+                onExiting={() => setDirection('right')}
+              >
+                <div className="slides__slide-content">
+                  <Typography variant="h5" className="slides__title">
+                    {slide.name}
+                  </Typography>
+                  <div className="slides__slide-container">
+                    <img
+                      alt={slide.name}
+                      className="slides__image"
+                      src={`data:${slide.object_type};base64, ${slide.object}`}
+                    />
+                    {canEdit && !isPrint && (
+                      <IconButton
+                        className="slides__slide-action"
+                        onClick={() => setShowAlert(true)}
+                        size="small"
+                      >
+                        <HighlightOffIcon />
+                      </IconButton>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </Slide>
+              </Slide>
+              <AlertDialog
+                isOpen={showAlert}
+                onClose={(confirmed: boolean) => handleAlertClose(confirmed, slide.ident)}
+                text="Are you sure you want to delete this slide?"
+                title="Confirm"
+              />
+            </>
           ))}
         </>
       )}

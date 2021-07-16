@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import {
   Dialog,
   DialogActions,
@@ -10,17 +9,25 @@ import {
   TextField,
 } from '@material-ui/core';
 
-const AlertDialog = (props) => {
-  const {
-    isOpen,
-    onClose,
-    title,
-    text,
-    commentRequired,
-    confirmText,
-    cancelText,
-  } = props;
+type AlertDialogProps = {
+  isOpen: boolean;
+  onClose: (confirmed: boolean, commentInput?: string) => void;
+  title: string;
+  text: string;
+  commentRequired?: boolean;
+  confirmText?: string;
+  cancelText?: string;
+};
 
+const AlertDialog = ({
+  isOpen,
+  onClose,
+  title,
+  text,
+  commentRequired = false,
+  confirmText = 'Confirm',
+  cancelText = 'Cancel',
+}: AlertDialogProps): JSX.Element => {
   const [commentInput, setCommentInput] = useState('');
 
   return (
@@ -35,7 +42,7 @@ const AlertDialog = (props) => {
         {commentRequired && (
           <TextField
             value={commentInput}
-            onChange={event => setCommentInput(event.target.value)}
+            onChange={(event) => setCommentInput(event.target.value)}
             label="Comment"
             required
             fullWidth
@@ -58,22 +65,6 @@ const AlertDialog = (props) => {
       </DialogActions>
     </Dialog>
   );
-};
-
-AlertDialog.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
-  title: PropTypes.string,
-  text: PropTypes.string.isRequired,
-  confirmText: PropTypes.string,
-  cancelText: PropTypes.string.isRequired,
-  commentRequired: PropTypes.bool,
-};
-
-AlertDialog.defaultProps = {
-  title: '',
-  confirmText: '',
-  commentRequired: false,
 };
 
 export default AlertDialog;
