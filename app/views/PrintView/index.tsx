@@ -4,6 +4,7 @@ import React, {
 import { useParams } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
 import { useTheme } from '@material-ui/core/styles';
+import { Previewer } from 'pagedjs';
 
 import api from '@/services/api';
 import ReportContext from '@/context/ReportContext';
@@ -16,6 +17,9 @@ import PathwayAnalysis from '../ReportView/components/PathwayAnalysis';
 import TherapeuticTargets from '../ReportView/components/TherapeuticTargets/components/PrintTables';
 import Slides from '../ReportView/components/Slides';
 import Appendices from '../ReportView/components/Appendices';
+import RunningLeft from './components/RunningLeft';
+import RunningCenter from './components/RunningCenter';
+import RunningRight from './components/RunningRight';
 
 import './index.scss';
 
@@ -79,8 +83,13 @@ const Print = () => {
       && template?.sections.length
       && Object.entries(reportSectionsLoaded).every(([section, loaded]) => loaded || !template?.sections.includes(section))
       && !isPrintDialogShown) {
-      window.print();
-      setIsPrintDialogShown(true);
+      const showPrint = async () => {
+        let paged = new Previewer();
+        await paged.preview(document.getElementById('root'), ['index.css'], document.body);
+        window.print();
+        setIsPrintDialogShown(true);
+      }
+      showPrint();
     }
   }, [isPrintDialogShown, report, reportSectionsLoaded, template]);
 
@@ -91,41 +100,41 @@ const Print = () => {
           {template?.sections.includes('summary') && report.template.name === 'probe' && (
             <>
               <ProbeSummary report={report} isPrint loadedDispatch={dispatch} />
-              <PageBreak report={report} theme={theme} />
+              <PageBreak />
             </>
           )}
           {template?.sections.includes('summary') && report.template.name !== 'probe' && (
             <>
               <GenomicSummary print loadedDispatch={dispatch} />
-              <PageBreak report={report} theme={theme} />
+              <PageBreak />
             </>
           )}
           {template?.sections.includes('analyst-comments') && (
             <>
               <AnalystComments report={report} isPrint loadedDispatch={dispatch} />
-              <PageBreak report={report} theme={theme} />
+              <PageBreak />
             </>
           )}
           {template?.sections.includes('pathway-analysis') && (
             <>
-              <PathwayAnalysis report={report} print loadedDispatch={dispatch} />
-              <PageBreak report={report} theme={theme} />
+              <PathwayAnalysis report={report} isPrint loadedDispatch={dispatch} />
+              <PageBreak />
             </>
           )}
           {template?.sections.includes('therapeutic-targets') && (
             <>
               <TherapeuticTargets print loadedDispatch={dispatch} />
-              <PageBreak report={report} theme={theme} />
+              <PageBreak />
             </>
           )}
           {template?.sections.includes('slides') && (
             <>
               <Slides report={report} isPrint loadedDispatch={dispatch} theme={theme} />
-              <PageBreak report={report} theme={theme} />
+              <PageBreak />
             </>
           )}
           {template?.sections.includes('appendices') && (
-            <Appendices report={report} isPrint isProbe loadedDispatch={dispatch} />
+            <Appendices report={report} isPrint isProbe={report.template.name === 'probe'} loadedDispatch={dispatch} />
           )}
         </>
       );
@@ -161,6 +170,9 @@ const Print = () => {
       <div className="print">
         {report ? (
           <>
+            <RunningLeft className="running-left" />
+            <RunningCenter className="running-center" />
+            <RunningRight className="running-right" />
             {titleBar}
             {renderSections}
           </>

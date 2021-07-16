@@ -2,11 +2,10 @@
 @import '../../styles/theme';
 
 .print {
-  height: 100vh;
+  height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
   max-width: 8.5in;
-  margin: auto;
 
   &__logo {
     width: 100%;
@@ -36,14 +35,9 @@
   }
 }
 
-@page {
-  margin: 10mm;
-}
-
 @media print {
   .print {
     height: 100%;
-    width: 8.5in;
 
     & > * {
       padding: 0px;

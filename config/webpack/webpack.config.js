@@ -88,6 +88,10 @@ module.exports = {
           from: path.join(APP_PATH, 'ipr-env-config.js'),
           to: 'ipr-env-config.js',
         },
+        {
+          from: path.join(APP_PATH, 'index.css'),
+          to: 'index.css',
+        }
       ],
     }),
     new webpack.HotModuleReplacementPlugin(),
