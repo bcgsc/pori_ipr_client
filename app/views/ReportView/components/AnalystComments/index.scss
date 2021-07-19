@@ -24,11 +24,14 @@
     padding: 0;
 
     &__user-text {
-      padding: 4px 32px;
-      border: 1px solid black;
-      border-bottom: none;
+      padding: 8px 32px;
       margin: 8px auto 0;
       max-width: $print-width;
+
+       & > * {
+         display: block;
+         margin: 8px 0;
+       }
     }
 
     &__signatures {

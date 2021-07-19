@@ -2,11 +2,6 @@
 @import '../../styles/theme';
 
 .print {
-  height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
-  max-width: 8.5in;
-
   &__logo {
     width: 100%;
   }
@@ -31,16 +26,6 @@
     
     & > * {
       margin: 1mm;
-    }
-  }
-}
-
-@media print {
-  .print {
-    height: 100%;
-
-    & > * {
-      padding: 0px;
     }
   }
 }
