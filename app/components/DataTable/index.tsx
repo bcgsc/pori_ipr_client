@@ -14,6 +14,7 @@ import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import GetAppIcon from '@material-ui/icons/GetApp';
 
+import DemoDescription from '@/components/DemoDescription';
 import ReportContext from '@/context/ReportContext';
 import ColumnPicker from './components/ColumnPicker';
 import LinkCellRenderer from './components/LinkCellRenderer';
@@ -79,6 +80,8 @@ type DataTableProps = {
   highlightRow?: number;
   /* Custom header cell renderer */
   Header?: () => JSX.Element;
+  /* Text to render in an info bubble below the table header and above the table itself */
+  demoDescription?: string,
 };
 
 const DataTable = ({
@@ -107,6 +110,7 @@ const DataTable = ({
   isPrint,
   highlightRow = null,
   Header,
+  demoDescription = '',
 }: DataTableProps): JSX.Element => {
   const domLayout = isPrint ? 'print' : 'autoHeight';
   const { gridApi, colApi, onGridReady } = useGrid();
@@ -378,6 +382,11 @@ const DataTable = ({
               </div>
             </div>
           )}
+          {Boolean(demoDescription) && (
+            <DemoDescription>
+              {demoDescription}
+            </DemoDescription>
+          )}
           <div
             className="ag-theme-material data-table__container"
             ref={gridDiv}
@@ -432,6 +441,11 @@ const DataTable = ({
               {titleText}
             </Typography>
           </div>
+          {Boolean(demoDescription) && (
+            <DemoDescription>
+              {demoDescription}
+            </DemoDescription>
+          )}
           <div className="data-table__container">
             <Typography variant="body1" align="center">
               No data to display
