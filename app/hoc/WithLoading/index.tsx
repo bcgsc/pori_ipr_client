@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 
 import {
   LinearProgress,
@@ -13,16 +13,16 @@ const WithLoading = (WrappedCompenent: React.FunctionComponent<WrappedComponentP
   const HOC = (props: WithLoadingHOCPropsType) => {
     const [isLoading, setIsLoading] = useState(true);
 
-    const setLoadingState = (isWrappedComponentLoading: boolean) => {
+    const setLoadingState = useCallback((isWrappedComponentLoading: boolean) => {
       setIsLoading(isWrappedComponentLoading);
-    };
+    }, []);
 
     return (
       <>
         {isLoading && (
           <LinearProgress color="secondary" />
         )}
-        <WrappedCompenent {...props} setLoading={setLoadingState} />
+        <WrappedCompenent {...props} isLoading={isLoading} setIsLoading={setLoadingState} />
       </>
     );
   };
