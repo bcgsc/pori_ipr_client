@@ -4,7 +4,7 @@ const merge = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const common = require('./webpack.config.js');
 
-const devConfig = {
+const devConfig = (env) => ({
   mode: 'development',
   plugins: [
     new HtmlWebpackPlugin({
@@ -25,7 +25,7 @@ const devConfig = {
         CONTACT_EMAIL: 'ipr@bcgsc.ca',
         CONTACT_TICKET_URL: 'https://www.bcgsc.ca/jira/secure/CreateIssue!default.jspa',
         PUBLIC_PATH: '/',
-        IS_DEMO: false,
+        IS_DEMO: env ? env.IS_DEMO || false : false,
       }),
       'CONFIG': JSON.stringify({
         STORAGE: {
@@ -39,7 +39,8 @@ const devConfig = {
       }),
     }),
   ],
-};
-module.exports = [
-  merge(common, devConfig),
+});
+
+module.exports = (env) => [
+  merge(common, devConfig(env)),
 ];

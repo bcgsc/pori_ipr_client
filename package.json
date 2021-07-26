@@ -19,6 +19,7 @@
     "build:dev": "webpack --mode production --config ./config/webpack/webpack.dev.js",
     "build:staging": "webpack --mode production --config ./config/webpack/webpack.staging.js",
     "start": "npm run env; npm run start:dev",
+    "start:demo": "npm run env; webpack-dev-server --env.IS_DEMO=true --config ./config/webpack/webpack.dev.js",
     "start:local": "npm run env; webpack-dev-server --config ./config/webpack/webpack.local.js",
     "start:dev": "npm run env; webpack-dev-server --config ./config/webpack/webpack.dev.js",
     "start:prod": "npm run env; webpack-dev-server --config ./config/webpack/webpack.prod.js",
