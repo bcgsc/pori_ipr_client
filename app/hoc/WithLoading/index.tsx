@@ -20,7 +20,7 @@ const WithLoading = (WrappedCompenent: React.FunctionComponent<WrappedComponentP
     return (
       <>
         {isLoading && (
-          <LinearProgress color="secondary" />
+          <LinearProgress color="primary" />
         )}
         <WrappedCompenent {...props} isLoading={isLoading} setIsLoading={setLoadingState} />
       </>

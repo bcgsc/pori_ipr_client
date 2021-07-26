@@ -202,4 +202,4 @@ const KbMatches = ({
   );
 };
 
-export default withLoading(KbMatches);
+export default KbMatches;
