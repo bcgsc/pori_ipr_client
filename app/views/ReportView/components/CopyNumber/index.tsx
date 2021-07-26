@@ -26,7 +26,7 @@ const TITLE_MAP = {
   lowExp: 'Lowly Expressed Tumour Suppressors with Copy Losses',
 };
 
-const getInfoDescription = (relevance) => `Copy variants where the variant matched 1 or more statements of ${relevance} relevance in the knowledge base matches section. Details on these matches can be seen in the knowledge base matches section of this report.`;
+const getInfoDescription = (relevance: string) => `Copy variants where the variant matched 1 or more statements of ${relevance} relevance in the knowledge base matches section. Details on these matches can be seen in the knowledge base matches section of this report.`;
 
 const INFO_BUBBLES = {
   biological: getInfoDescription('biological'),
