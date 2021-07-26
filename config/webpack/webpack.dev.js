@@ -42,5 +42,5 @@ const devConfig = (env) => ({
 });
 
 module.exports = (env) => [
-  merge(common, devConfig(env)),
+  merge(common(env), devConfig(env)),
 ];

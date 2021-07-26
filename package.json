@@ -24,7 +24,8 @@
     "start:dev": "npm run env; webpack-dev-server --config ./config/webpack/webpack.dev.js",
     "start:prod": "npm run env; webpack-dev-server --config ./config/webpack/webpack.prod.js",
     "start:staging": "npm run env; webpack-dev-server --config ./config/webpack/webpack.staging.js",
-    "test": "NODE_ENV=test jest --config config/jest/jest.config.js"
+    "test": "NODE_ENV=test jest --config config/jest/jest.config.js",
+    "analyze": "npm run env; webpack-dev-server --env.ANALYZE=true --config ./config/webpack/webpack.prod.js"
   },
   "devDependencies": {
     "@babel/core": "~7.1.6",
