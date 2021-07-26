@@ -1,15 +1,24 @@
 import ApiCall from './ApiCall';
 import ApiCallSet from './ApiCallSet';
+import { CallOptionsType } from './types';
 
-const get = (endpoint, callOptions) => {
-  const requestOptions = {
+const get = (
+  endpoint: string,
+  callOptions: CallOptionsType = null,
+): ApiCall => {
+  const requestOptions: RequestInit = {
     method: 'GET',
   };
   return new ApiCall(endpoint, requestOptions, callOptions);
 };
 
-const post = (endpoint, payload, callOptions, formData = false) => {
-  const requestOptions = {
+const post = (
+  endpoint: string,
+  payload: BodyInit,
+  callOptions: CallOptionsType = null,
+  formData = false,
+): ApiCall => {
+  const requestOptions: RequestInit = {
     method: 'POST',
     body: formData ? payload : JSON.stringify(payload),
   };
@@ -21,8 +30,13 @@ const post = (endpoint, payload, callOptions, formData = false) => {
   return new ApiCall(endpoint, requestOptions, callOptions);
 };
 
-const del = (endpoint, payload, callOptions, formData = false) => {
-  let requestOptions;
+const del = (
+  endpoint: string,
+  payload: BodyInit,
+  callOptions: CallOptionsType = null,
+  formData = false,
+): ApiCall => {
+  let requestOptions: RequestInit;
 
   if (payload) {
     requestOptions = {
@@ -42,8 +56,13 @@ const del = (endpoint, payload, callOptions, formData = false) => {
   return new ApiCall(endpoint, requestOptions, callOptions);
 };
 
-const put = (endpoint, payload, callOptions, formData = false) => {
-  const requestOptions = {
+const put = (
+  endpoint: string,
+  payload: BodyInit,
+  callOptions: CallOptionsType = null,
+  formData = false,
+): ApiCall => {
+  const requestOptions: RequestInit = {
     method: 'PUT',
     body: formData ? payload : JSON.stringify(payload),
   };

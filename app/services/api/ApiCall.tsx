@@ -3,22 +3,22 @@ import ReactDOM from 'react-dom';
 import {
   MuiThemeProvider,
 } from '@material-ui/core/styles';
+
 import {
   BadRequestError,
 } from '../errors/errors';
-
 import AlertDialog from '../../components/AlertDialog';
 import { theme } from '../../App';
-
 import errorHandler from '../errors/errorHandler';
 import SnackbarUtils from '../SnackbarUtils';
+import { RequestReturnType } from './types';
 
 class ApiCall {
   endpoint: string;
 
-  requestOptions: any;
+  requestOptions: RequestInit;
 
-  controller: any;
+  controller: AbortController;
 
   forceListReturn: boolean;
 
@@ -32,8 +32,8 @@ class ApiCall {
 
   constructor(
     endpoint: string,
-    requestOptions: any,
-    callOptions: {
+    requestOptions: RequestInit,
+    callOptions?: {
       forceListReturn: boolean;
       forceRecordReturn: boolean;
       raw: boolean;
@@ -61,19 +61,19 @@ class ApiCall {
   /**
      * Cancel this fetch request
      */
-  abort() {
+  abort(): void {
     if (this.controller) {
       this.controller.abort();
       this.controller = null;
     }
   }
 
-  isFinished() {
+  isFinished(): boolean {
     return !this.controller;
   }
 
-  showConfirm() {
-    const handleClose = async (isSaved) => {
+  showConfirm(): void {
+    const handleClose = async (isSaved: boolean) => {
       if (isSaved) {
         await fetch(
           window._env_.API_BASE_URL + this.endpoint,
@@ -106,7 +106,7 @@ class ApiCall {
    * Makes the fetch request and awaits the response or error. Also handles the redirect to error
    * or login pages
    */
-  async request(confirm = false, ignoreAbort = false) {
+  async request(confirm = false, ignoreAbort = false): Promise<RequestReturnType> {
     this.controller = new AbortController();
 
     const { method } = this.requestOptions;
