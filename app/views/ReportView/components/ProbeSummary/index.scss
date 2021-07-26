@@ -44,10 +44,6 @@
   &__none {
     padding: 16px;
   }
-
-  &__reviews {
-    page-break-inside: avoid;
-  }
 }
 
 @media print {
@@ -71,15 +67,22 @@
     }
 
     &__sample-information {
-      margin: 22px 0;
+      margin: 24px 0;
     }
 
     &__events {
-      margin: 22px 0;
+      margin: 28px 0;
+      border: 2px solid black;
+      border-radius: 4px;
+      padding: 8px;
 
       &-title {
         margin: 0 0 16px;
       }
+    }
+
+    &__signatures {
+      page-break-inside: avoid;
     }
   }
 }

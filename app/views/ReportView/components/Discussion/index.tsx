@@ -6,6 +6,8 @@ import {
 
 import api from '@/services/api';
 import ReportContext from '@/context/ReportContext';
+import snackbar from '@/services/SnackbarUtils';
+import DemoDescription from '@/components/DemoDescription';
 import CommentCard from './components/CommentCard';
 import AddComment from './components/AddComment';
 
@@ -20,9 +22,14 @@ const Discussion = (): JSX.Element => {
   useEffect(() => {
     if (report) {
       const getData = async () => {
-        const commentsResp = await api.get(`/reports/${report.ident}/presentation/discussion`, {}).request();
-        setComments(commentsResp);
-        setIsLoading(false);
+        try {
+          const commentsResp = await api.get(`/reports/${report.ident}/presentation/discussion`, {}).request();
+          setComments(commentsResp);
+        } catch (err) {
+          snackbar.error(`Network error: ${err}`);
+        } finally {
+          setIsLoading(false);
+        }
       };
       getData();
     }
@@ -55,6 +62,11 @@ const Discussion = (): JSX.Element => {
         >
           Tumour Board Discussion Notes
         </Typography>
+        <DemoDescription>
+          This section is for the reporting of notes from the molecular tumour board discussion.
+          These generally include a summary of the points of discussion and any therapies that will
+          be pursued based on the sequencing results.
+        </DemoDescription>
       </div>
       {!isLoading && (
         <div className="discussion__content">

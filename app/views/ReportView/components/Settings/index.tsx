@@ -17,7 +17,7 @@ import {
 import api from '@/services/api';
 import ReportContext from '@/context/ReportContext';
 import EditContext from '@/context/EditContext';
-import { UserType } from '@/common';
+import DemoDescription from '@/components/DemoDescription';
 import snackbar from '@/services/SnackbarUtils';
 import Analysis from './components/Analysis';
 import AssociationCard from './components/AssociationCard';
@@ -51,9 +51,14 @@ const Settings = ({
   useEffect(() => {
     if (report) {
       const getData = async () => {
-        const templateResp = await api.get('/templates', {}).request();
-        setTemplates(templateResp);
-        setIsLoading(false);
+        try {
+          const templateResp = await api.get('/templates', {}).request();
+          setTemplates(templateResp);
+        } catch (err) {
+          snackbar.error(`Network error: ${err}`);
+        } finally {
+          setIsLoading(false);
+        }
       };
       getData();
     }
@@ -152,6 +157,9 @@ const Settings = ({
   return (
     <div className="settings">
       <Typography variant="h3">Settings</Typography>
+      <DemoDescription>
+        This section of the report is used for managing the report state, user assignments, and time tracking.
+      </DemoDescription>
       {!isLoading && (
         <>
           <div className="settings__box">
