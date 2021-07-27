@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 
@@ -19,7 +18,7 @@ describe('CivicCellRenderer', () => {
     render(
       <CivicCellRenderer
         data={mockCivicData}
-      />
+      />,
     );
     expect(await screen.findByText('CIVIC')).toBeInTheDocument();
   });
@@ -28,7 +27,7 @@ describe('CivicCellRenderer', () => {
     render(
       <CivicCellRenderer
         data={mockCivicData}
-      />
+      />,
     );
     expect(
       await screen.findByRole('link', { name: mockCivicData.externalSource }),
@@ -39,7 +38,7 @@ describe('CivicCellRenderer', () => {
     render(
       <CivicCellRenderer
         data={mockCivicData}
-      />
+      />,
     );
     
     expect(
@@ -51,7 +50,7 @@ describe('CivicCellRenderer', () => {
     render(
       <CivicCellRenderer
         data={mockNonCivicData}
-      />
+      />,
     );
     expect(await screen.findByText(mockNonCivicData.externalSource)).toBeInTheDocument();
   });
@@ -60,7 +59,7 @@ describe('CivicCellRenderer', () => {
     render(
       <CivicCellRenderer
         data={mockNonCivicData}
-      />
+      />,
     );
     expect(screen.queryByRole('link', { name: mockNonCivicData.externalSource })).toBeNull();
   });
