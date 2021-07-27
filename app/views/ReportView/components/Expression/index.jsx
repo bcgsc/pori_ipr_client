@@ -10,12 +10,22 @@ import processExpression from './processData';
 
 import './index.scss';
 
-const tables = {
+const TITLE_MAP = {
   clinical: 'Expression Level Outliers of Potential Clinical Relevance',
   nostic: 'Expression Level Outliers of Prognostic or Diagnostic Relevance',
   biological: 'Expression Level Outliers of Biological Relevance',
   upreg_onco: 'Up-Regulated Oncogenes',
   downreg_tsg: 'Down-Regulated Tumour Suppressor Genes',
+};
+
+const getInfoDescription = (relevance) => `Expression level variants where the variant matched 1 or more statements of ${relevance} relevance in the knowledge base matches section. Details on these matches can be seen in the knowledge base matches section of this report.`;
+
+const INFO_BUBBLES = {
+  biological: getInfoDescription('biological'),
+  nostic: getInfoDescription('prognostic or diagnostic'),
+  clinical: getInfoDescription('therapeutic'),
+  upreg_onco: 'High expression level outliers in known oncogenes.',
+  downreg_tsg: 'Low expression level outliers in known tumour suppressor genes.',
 };
 
 /**
@@ -190,7 +200,7 @@ const Expression = () => {
       <>
         {expOutliers ? (
           <>
-            {Object.entries(tables).map(([key, titleText]) => (
+            {Object.entries(TITLE_MAP).map(([key, titleText]) => (
               <DataTable
                 key={key}
                 columnDefs={columnDefs}
@@ -201,6 +211,7 @@ const Expression = () => {
                 setVisibleCols={handleVisibleColsChange}
                 setHiddenCols={handleHiddenColsChange}
                 canToggleColumns
+                demoDescription={INFO_BUBBLES[key]}
               />
             ))}
           </>
