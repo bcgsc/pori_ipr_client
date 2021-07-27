@@ -146,7 +146,7 @@ const Therapeutic = ({
             canReorder={canEdit && !print}
             onReorder={handleReorder}
             canExport
-            print={print}
+            isPrint={print}
             Header={EvidenceHeader}
           />
           <DataTable
@@ -161,7 +161,7 @@ const Therapeutic = ({
             isPaginated={false}
             canReorder={canEdit && !print}
             canExport
-            print={print}
+            isPrint={print}
             Header={EvidenceHeader}
           />
           {showDialog && (

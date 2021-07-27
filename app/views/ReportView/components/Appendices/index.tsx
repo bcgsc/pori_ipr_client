@@ -181,7 +181,8 @@ const Appendices = ({ isProbe, isPrint, loadedDispatch }: AppendicesProps): JSX.
               Appendix D
             </Typography>
           )}
-          {appendices?.config && (
+          {/* Config is disabled in print reports for now due to feedback */}
+          {appendices?.config && !isPrint && (
             <div className="appendices__config">
               <strong>
                 {`Genomic Report ${report.reportVersion}/${report.kbVersion}`}

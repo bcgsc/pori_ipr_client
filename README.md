@@ -67,4 +67,4 @@ A demo site is available at https://pori-demo.bcgsc.ca
 ## Contributing
 
 Contributions are welcome! Before doing so, please open an issue with the feature that would be added.
-In addition, make sure that the code that is being added is linted using the rules in our .tslintrc file.
+In addition, make sure that the code that is being added is linted using the rules in our .eslintrc file.
