@@ -17,11 +17,20 @@ import StructuralVariantType from './types';
 
 import './index.scss';
 
-const titleMap = {
+const TITLE_MAP = {
   therapeutic: 'Gene Fusions of Potential Clinical Relevance',
   nostic: 'Gene Fusions of Prognostic or Diagnostic Relevance',
   biological: 'Gene Fusions of Biological Relevance',
   unknown: 'Structural Variants of Unknown Significance',
+};
+
+const getInfoDescription = (relevance: string) => `Structural variants where the mutation matched 1 or more statements of ${relevance} relevance in the knowledge base matches section. Details on these matches can be seen in the knowledge base matches section of this report.`;
+
+const INFO_BUBBLES = {
+  biological: getInfoDescription('biological'),
+  nostic: getInfoDescription('prognostic or diagnostic'),
+  therapeutic: getInfoDescription('therapeutic'),
+  unknown: 'Structural variants where the mutation did not match any knowledge base statements of therapeutic, biological, diagnostic, or prognostic relevance.',
 };
 
 const StructuralVariants = (): JSX.Element => {
@@ -149,8 +158,9 @@ const StructuralVariants = (): JSX.Element => {
               key={key}
               columnDefs={columnDefs}
               rowData={value}
-              titleText={titleMap[key]}
+              titleText={TITLE_MAP[key]}
               canToggleColumns
+              demoDescription={INFO_BUBBLES[key]}
             />
           ))}
         </>
