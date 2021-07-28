@@ -5,12 +5,12 @@ import CivicCellRenderer from '..';
 
 const mockCivicData = {
   externalSource: 'CIVIC',
-  externalStatementId: 521,
+  externalStatementId: '521',
 };
 
 const mockNonCivicData = {
   externalSource: 'GKB',
-  externalStatementId: 1100,
+  externalStatementId: '1100',
 };
 
 describe('CivicCellRenderer', () => {

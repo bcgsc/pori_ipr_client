@@ -171,7 +171,6 @@ const columnDefs = [{
   hide: false,
 }, {
   headerName: 'External Statement ID',
-  colId: 'externalStatementId',
   field: 'externalStatementId',
   hide: true,
 }, {

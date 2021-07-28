@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import NewTabLink from '@/components/NewTabLink';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { ICellRendererParams } from '@ag-grid-community/core';
 
 type CivicCellRendererProps = ICellRendererParams['data'];
@@ -13,9 +14,9 @@ const CivicCellRenderer = ({
 
   useEffect(() => {
     if (data?.externalSource?.toLowerCase() === 'civic'
-      && typeof data?.externalStatementId === 'number') {
-        setLink(`https://civicdb.org/links/evidence/${data.externalStatementId}`);
-        setText(data.externalSource);
+      && !Number.isNaN(parseInt(data.externalStatementId, 10))) {
+      setLink(`https://civicdb.org/links/evidence/${parseInt(data.externalStatementId, 10)}`);
+      setText(data.externalSource);
     } else {
       setText(data.externalSource);
     }
@@ -25,11 +26,10 @@ const CivicCellRenderer = ({
     return (
       <NewTabLink link={link} text={text} />
     );
-  } else {
-    return (
-      <div>{text}</div>
-    )
   }
-}
+  return (
+    <div>{text}</div>
+  );
+};
 
 export default CivicCellRenderer;
