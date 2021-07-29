@@ -4,7 +4,7 @@ import { CallOptionsType } from './types';
 
 const get = (
   endpoint: string,
-  callOptions: CallOptionsType = null,
+  callOptions?: CallOptionsType,
 ): ApiCall => {
   const requestOptions: RequestInit = {
     method: 'GET',
@@ -15,8 +15,8 @@ const get = (
 const post = (
   endpoint: string,
   payload: BodyInit,
-  callOptions: CallOptionsType = null,
-  formData = false,
+  callOptions?: CallOptionsType,
+  formData?: boolean,
 ): ApiCall => {
   const requestOptions: RequestInit = {
     method: 'POST',
@@ -33,8 +33,8 @@ const post = (
 const del = (
   endpoint: string,
   payload: BodyInit,
-  callOptions: CallOptionsType = null,
-  formData = false,
+  callOptions?: CallOptionsType,
+  formData?: boolean,
 ): ApiCall => {
   let requestOptions: RequestInit;
 
@@ -59,8 +59,8 @@ const del = (
 const put = (
   endpoint: string,
   payload: BodyInit,
-  callOptions: CallOptionsType = null,
-  formData = false,
+  callOptions?: CallOptionsType,
+  formData?: boolean,
 ): ApiCall => {
   const requestOptions: RequestInit = {
     method: 'PUT',
