@@ -8,6 +8,11 @@ type WrappedComponentProps = Record<string, unknown>;
 type WithLoadingHOCPropsType = Record<string, unknown>;
 type WithLoadingReturnType = (props: WithLoadingHOCPropsType) => JSX.Element;
 
+type WithLoadingInjectedProps = {
+  isLoading: boolean;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
 const WithLoading = (WrappedCompenent: React.FunctionComponent<WrappedComponentProps>)
 : WithLoadingReturnType => {
   const HOC = (props: WithLoadingHOCPropsType) => {
@@ -29,5 +34,7 @@ const WithLoading = (WrappedCompenent: React.FunctionComponent<WrappedComponentP
 
   return HOC;
 };
+
+export { WithLoadingInjectedProps };
 
 export default WithLoading;

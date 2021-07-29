@@ -14,7 +14,7 @@ import snackbar from '@/services/SnackbarUtils';
 import DemoDescription from '@/components/DemoDescription';
 import EditContext from '@/context/EditContext';
 import DataTable from '@/components/DataTable';
-import withLoading from '@/hoc/WithLoading';
+import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import ReportContext from '@/context/ReportContext';
 import { columnDefs, targetedColumnDefs } from './columnDefs';
 import coalesceEntries from './coalesce';
@@ -35,9 +35,7 @@ const titleMap = {
 type KbMatchesProps = {
   /* Should the print version be displayed? */
   isPrint?: boolean;
-  setIsLoading: any;
-  isLoading: any;
-};
+} & WithLoadingInjectedProps;
 
 const KbMatches = ({
   isPrint = false,
