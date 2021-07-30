@@ -136,8 +136,8 @@ const Pathway = ({
       {pathwayImage?.pathway && (
         <SvgImage image={pathwayImage.pathway} isPrint={isPrint} />
       )}
-      {!pathwayImage && !canEdit && (
-        <Typography variant="h5" align="center">Pathway Not Yet Analyzed</Typography>
+      {!pathwayImage && (!canEdit || isPrint) && (
+        <Typography align="center">Pathway Not Yet Analyzed</Typography>
       )}
     </div>
   );
