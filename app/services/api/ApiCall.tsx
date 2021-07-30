@@ -106,7 +106,7 @@ class ApiCall {
    * Makes the fetch request and awaits the response or error. Also handles the redirect to error
    * or login pages
    */
-  async request(confirm = false, ignoreAbort = false): Promise<RequestReturnType> {
+  async request(confirm = false, ignoreAbort = false) {
     this.controller = new AbortController();
 
     const { method } = this.requestOptions;

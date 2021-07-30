@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
 import {
   Typography,
-  LinearProgress,
 } from '@material-ui/core';
 
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
-import DemoDescription from '@/components/DemoDescription';
 import ReportContext from '@/context/ReportContext';
+import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import { columnDefs } from './columnDefs';
 import MutationType from './types';
 
@@ -30,7 +29,12 @@ const INFO_BUBBLES = {
   unknown: 'Small mutations where the mutation did not match any knowledge base statements of therapeutic, biological, diagnostic, or prognostic relevance.',
 };
 
-const SmallMutations = (): JSX.Element => {
+type SmallMutationsProps = WithLoadingInjectedProps;
+
+const SmallMutations = ({
+  isLoading,
+  setIsLoading,
+}: SmallMutationsProps): JSX.Element => {
   const { report } = useContext(ReportContext);
   const [smallMutations, setSmallMutations] = useState<MutationType[]>([]);
   const [groupedSmallMutations, setGroupedSmallMutations] = useState({
@@ -39,7 +43,6 @@ const SmallMutations = (): JSX.Element => {
     biological: [],
     unknown: [],
   });
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (report) {
@@ -47,7 +50,6 @@ const SmallMutations = (): JSX.Element => {
         try {
           const smallMutationsResp = await api.get(
             `/reports/${report.ident}/small-mutations`,
-            {},
           ).request();
           setSmallMutations(smallMutationsResp);
         } catch (err) {
@@ -58,7 +60,7 @@ const SmallMutations = (): JSX.Element => {
       };
       getData();
     }
-  }, [report]);
+  }, [report, setIsLoading]);
 
   // Categorize small mutations
   useEffect(() => {
@@ -102,7 +104,7 @@ const SmallMutations = (): JSX.Element => {
       <Typography variant="h3">
         Small Mutations
       </Typography>
-      {!isLoading ? (
+      {!isLoading && (
         <>
           {Object.entries(groupedSmallMutations).map(([key, value]) => (
             <DataTable
@@ -115,8 +117,6 @@ const SmallMutations = (): JSX.Element => {
             />
           ))}
         </>
-      ) : (
-        <LinearProgress />
       )}
     </div>
   );

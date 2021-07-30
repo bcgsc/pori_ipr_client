@@ -14,13 +14,13 @@ const get = (
 
 const post = (
   endpoint: string,
-  payload: BodyInit,
+  payload: BodyInit | Record<string, unknown>,
   callOptions?: CallOptionsType,
   formData?: boolean,
 ): ApiCall => {
   const requestOptions: RequestInit = {
     method: 'POST',
-    body: formData ? payload : JSON.stringify(payload),
+    body: formData ? payload as BodyInit : JSON.stringify(payload),
   };
   if (!formData) {
     requestOptions.headers = {
@@ -32,7 +32,7 @@ const post = (
 
 const del = (
   endpoint: string,
-  payload: BodyInit,
+  payload: BodyInit | Record<string, unknown>,
   callOptions?: CallOptionsType,
   formData?: boolean,
 ): ApiCall => {
@@ -41,7 +41,7 @@ const del = (
   if (payload) {
     requestOptions = {
       method: 'DELETE',
-      body: formData ? payload : JSON.stringify(payload),
+      body: formData ? payload as BodyInit : JSON.stringify(payload),
     };
   } else {
     requestOptions = {
@@ -58,13 +58,13 @@ const del = (
 
 const put = (
   endpoint: string,
-  payload: BodyInit,
+  payload: BodyInit | Record<string, unknown>,
   callOptions?: CallOptionsType,
   formData?: boolean,
 ): ApiCall => {
   const requestOptions: RequestInit = {
     method: 'PUT',
-    body: formData ? payload : JSON.stringify(payload),
+    body: formData ? payload as BodyInit : JSON.stringify(payload),
   };
   if (!formData) {
     requestOptions.headers = {

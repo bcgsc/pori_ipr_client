@@ -79,7 +79,7 @@ type DataTableProps = {
   /* Row index to highlight */
   highlightRow?: number;
   /* Custom header cell renderer */
-  Header?: () => JSX.Element;
+  Header?: ({ displayName: string }) => JSX.Element;
   /* Text to render in an info bubble below the table header and above the table itself */
   demoDescription?: string,
 };
