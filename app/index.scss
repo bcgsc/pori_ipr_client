@@ -37,16 +37,14 @@ html body {
   cursor: pointer;
 }
 
-.text-field-fix {
-  margin: 20px 12px 10px;
-  height: 40px;
-
-  > * {
-    box-sizing: content-box;
-  }
+.ag-cell-wrap-text {
+  word-break: break-word !important;
 }
 
-// Fix for dialog not accounting for AppBar
-.md-dialog-container {
-  top: -$navbar-size !important;
+.ag-center-cols-clipper {
+  min-height: 50px !important;
+}
+
+.ag-theme-material {
+  -webkit-font-smoothing: auto !important;
 }

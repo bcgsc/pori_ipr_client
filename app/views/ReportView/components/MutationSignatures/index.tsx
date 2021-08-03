@@ -3,17 +3,16 @@ import React, {
 } from 'react';
 import orderBy from 'lodash.orderby';
 import { LinearProgress, Typography } from '@material-ui/core';
-import { useSnackbar } from 'notistack';
 
 import DemoDescription from '@/components/DemoDescription';
 import DataTable from '@/components/DataTable';
-import ReportContext from '@/components/ReportContext';
-import EditContext from '@/components/EditContext';
-import ImageService from '@/services/reports/image.service';
-import { getMutationSignatures } from '@/services/reports/mutation-signature';
+import ReportContext from '@/context/ReportContext';
+import EditContext from '@/context/EditContext';
+import api from '@/services/api';
+import snackbar from '@/services/SnackbarUtils';
 import ImageType from '@/components/Image/types';
 import EditDialog from './components/EditDialog';
-import SignatureType from './types';
+import MutationSignatureType from './types';
 import columnDefs from './columnDefs';
 
 import './index.scss';
@@ -27,44 +26,44 @@ const imageKeys = [
 const MutationSignatures = (): JSX.Element => {
   const { report } = useContext(ReportContext);
   const { canEdit } = useContext(EditContext);
-  const [images, setImages] = useState<Record<string, ImageType>>({});
-  const [sbsSignatures, setSbsSignatures] = useState<SignatureType[]>([]);
-  const [dbsSignatures, setDbsSignatures] = useState<SignatureType[]>([]);
-  const [idSignatures, setIdSignatures] = useState<SignatureType[]>([]);
+  const [images, setImages] = useState<ImageType[]>([]);
+  const [sbsSignatures, setSbsSignatures] = useState<MutationSignatureType[]>([]);
+  const [dbsSignatures, setDbsSignatures] = useState<MutationSignatureType[]>([]);
+  const [idSignatures, setIdSignatures] = useState<MutationSignatureType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const [showDialog, setShowDialog] = useState(false);
-  const [editData, setEditData] = useState<SignatureType | null>();
-
-  const snackbar = useSnackbar();
+  const [editData, setEditData] = useState<MutationSignatureType | null>();
 
   useEffect(() => {
     if (report && report.ident) {
       const getData = async () => {
-        const [imageData, signatureData] = await Promise.all([
-          ImageService.get(
-            report.ident,
-            imageKeys.join(','),
-          ),
-          getMutationSignatures(report.ident),
-        ]);
-        setImages(imageData);
-        setSbsSignatures(signatureData.filter((sig) => !(new RegExp(/dbs|id/)).test(sig.signature.toLowerCase())));
-        setDbsSignatures(signatureData.filter((sig) => (new RegExp(/dbs/)).test(sig.signature.toLowerCase())));
-        setIdSignatures(signatureData.filter((sig) => (new RegExp(/id/)).test(sig.signature.toLowerCase())));
-        setIsLoading(false);
+        try {
+          const [imageData, signatureData] = await Promise.all([
+            api.get(`/reports/${report.ident}/image/retrieve/${imageKeys.join(',')}`, {}).request(),
+            api.get(`/reports/${report.ident}/mutation-signatures`, {}).request(),
+          ]);
+          setImages(imageData);
+          setSbsSignatures(signatureData.filter((sig) => !(new RegExp(/dbs|id/)).test(sig.signature.toLowerCase())));
+          setDbsSignatures(signatureData.filter((sig) => (new RegExp(/dbs/)).test(sig.signature.toLowerCase())));
+          setIdSignatures(signatureData.filter((sig) => (new RegExp(/id/)).test(sig.signature.toLowerCase())));
+        } catch (err) {
+          snackbar.error(`Network error: ${err}`);
+        } finally {
+          setIsLoading(false);
+        }
       };
 
       getData();
     }
   }, [report]);
 
-  const handleEditStart = (rowData: SignatureType) => {
+  const handleEditStart = (rowData: MutationSignatureType) => {
     setShowDialog(true);
     setEditData(rowData);
   };
 
-  const handleEditClose = useCallback((newData?: SignatureType) => {
+  const handleEditClose = useCallback((newData?: MutationSignatureType) => {
     setShowDialog(false);
     let newSignatures;
     let setter;
@@ -91,6 +90,20 @@ const MutationSignatures = (): JSX.Element => {
     setEditData(null);
   }, [dbsSignatures, idSignatures, sbsSignatures]);
 
+  const getImage = useCallback((key, isSmall) => {
+    const image = images.find((img) => img.key === key);
+    if (image) {
+      return (
+        <img
+          src={`data:image/${image.format};base64,${image.data}`}
+          alt={image.title}
+          className={`mutation-signature__image ${isSmall ? 'mutation-signature__image--small' : ''}`}
+        />
+      );
+    }
+    return null;
+  }, [images]);
+
   return (
     <div>
       <DemoDescription>
@@ -105,21 +118,15 @@ const MutationSignatures = (): JSX.Element => {
           <Typography variant="h3" className="mutation-signature__title">
             Single base substitution signatures
           </Typography>
-          {images['mutSignature.barplot.sbs'] && (
-            <div className="mutation-signature__images">
-              <img
-                src={`data:image/${images['mutSignature.barplot.sbs'].format};base64,${images['mutSignature.barplot.sbs'].data}`}
-                alt="Single base substitution barplot"
-                className="mutation-signature__image mutation-signature__image--small"
-              />
-            </div>
-          )}
+          <div className="mutation-signature__images">
+            {getImage('mutSignature.barplot.sbs', true)}
+          </div>
           {showDialog && (
             <EditDialog
               editData={editData}
               isOpen={showDialog}
               onClose={handleEditClose}
-              showErrorSnackbar={snackbar.enqueueSnackbar}
+              showErrorSnackbar={snackbar.error}
             />
           )}
           <DataTable
@@ -132,15 +139,9 @@ const MutationSignatures = (): JSX.Element => {
           <Typography variant="h3" className="mutation-signature__title">
             Double base substitution signatures
           </Typography>
-          {images['mutSignature.barplot.dbs'] && (
-            <div className="mutation-signature__images">
-              <img
-                src={`data:image/${images['mutSignature.barplot.dbs'].format};base64,${images['mutSignature.barplot.dbs'].data}`}
-                alt="Double base substitution barplot"
-                className="mutation-signature__image"
-              />
-            </div>
-          )}
+          <div className="mutation-signature__images">
+            {getImage('mutSignature.barplot.dbs', false)}
+          </div>
           <DataTable
             rowData={dbsSignatures}
             columnDefs={columnDefs}
@@ -152,15 +153,9 @@ const MutationSignatures = (): JSX.Element => {
           <Typography variant="h3" className="mutation-signature__title">
             Indel Signatures
           </Typography>
-          {images['mutSignature.barplot.indels'] && (
-            <div className="mutation-signature__images">
-              <img
-                src={`data:image/${images['mutSignature.barplot.indels'].format};base64,${images['mutSignature.barplot.indels'].data}`}
-                alt="Indel barplot"
-                className="mutation-signature__image"
-              />
-            </div>
-          )}
+          <div className="mutation-signature__images">
+            {getImage('mutSignature.barplot.indels', false)}
+          </div>
           <DataTable
             rowData={idSignatures}
             columnDefs={columnDefs}
@@ -178,3 +173,5 @@ const MutationSignatures = (): JSX.Element => {
 };
 
 export default MutationSignatures;
+
+export { MutationSignatureType };

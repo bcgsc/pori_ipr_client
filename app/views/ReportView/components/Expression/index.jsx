@@ -1,24 +1,31 @@
 import React, { useState, useEffect, useContext } from 'react';
-import PropTypes from 'prop-types';
 import { Typography, Paper, LinearProgress } from '@material-ui/core';
 
 import DataTable from '@/components/DataTable';
-import columnDefs from './columnDefs';
-import { getComparators } from '@/services/reports/comparators';
+import api from '@/services/api';
 import DemoDescription from '@/components/DemoDescription';
-import ExpressionService from '@/services/reports/expression.service';
-import ImageService from '@/services/reports/image.service';
-import ReportContext from '@/components/ReportContext';
+import ReportContext from '@/context/ReportContext';
+import columnDefs from './columnDefs';
 import processExpression from './processData';
 
 import './index.scss';
 
-const tables = {
+const TITLE_MAP = {
   clinical: 'Expression Level Outliers of Potential Clinical Relevance',
   nostic: 'Expression Level Outliers of Prognostic or Diagnostic Relevance',
   biological: 'Expression Level Outliers of Biological Relevance',
   upreg_onco: 'Up-Regulated Oncogenes',
   downreg_tsg: 'Down-Regulated Tumour Suppressor Genes',
+};
+
+const getInfoDescription = (relevance) => `Expression level variants where the variant matched 1 or more statements of ${relevance} relevance in the knowledge base matches section. Details on these matches can be seen in the knowledge base matches section of this report.`;
+
+const INFO_BUBBLES = {
+  biological: getInfoDescription('biological'),
+  nostic: getInfoDescription('prognostic or diagnostic'),
+  clinical: getInfoDescription('therapeutic'),
+  upreg_onco: 'High expression level outliers in known oncogenes.',
+  downreg_tsg: 'Low expression level outliers in known tumour suppressor genes.',
 };
 
 /**
@@ -33,26 +40,26 @@ const Expression = () => {
   const [comparators, setComparators] = useState();
   const [expOutliers, setExpOutliers] = useState();
   const [visibleCols, setVisibleCols] = useState(
-    columnDefs.filter(c => !c.hide).map(c => c.field),
+    columnDefs.filter((c) => !c.hide).map((c) => c.field),
   );
 
   const [hiddenCols, setHiddenCols] = useState(
-    columnDefs.filter(c => c.hide).map(c => c.field),
+    columnDefs.filter((c) => c.hide).map((c) => c.field),
   );
 
   useEffect(() => {
     if (report && report.ident) {
       const getData = async () => {
         const [outliers, images] = await Promise.all([
-          ExpressionService.all(report.ident),
-          ImageService.expDensityGraphs(report.ident),
+          api.get(`/reports/${report.ident}/expression-variants`).request(),
+          api.get(`/reports/${report.ident}/image/expression-density-graphs`).request(),
         ]);
 
         if (outliers && outliers.length) {
           const processedOutliers = processExpression(outliers);
 
           const imageAttachedOutliers = Object.entries(processedOutliers).reduce((accumulator, [key, value]) => {
-            const newValues = value.map(val => ({ ...val, image: images[`expDensity.${val.gene.name}`] }));
+            const newValues = value.map((val) => ({ ...val, image: images.find((img) => img.key === `expDensity.${val.gene.name}`) }));
             accumulator[key] = newValues;
             return accumulator;
           }, {});
@@ -80,12 +87,15 @@ const Expression = () => {
         ],
       ]);
     }
-  }, [report])
+  }, [report]);
 
   useEffect(() => {
     if (report && report.ident) {
       const getData = async () => {
-        const comparatorsResp = await getComparators(report.ident);
+        const comparatorsResp = await api.get(
+          `/reports/${report.ident}/comparators`,
+          {},
+        ).request();
 
         const diseaseExpression = comparatorsResp.find(({ analysisRole }) => (
           analysisRole === 'expression (disease)'
@@ -182,7 +192,7 @@ const Expression = () => {
               ))}
             </Paper>
           )}
-          {comparators && !Boolean(comparators.length) && (
+          {comparators && !comparators.length && (
             <Typography align="center">No comparator data to display</Typography>
           )}
         </div>
@@ -190,7 +200,7 @@ const Expression = () => {
       <>
         {expOutliers ? (
           <>
-            {Object.entries(tables).map(([key, titleText]) => (
+            {Object.entries(TITLE_MAP).map(([key, titleText]) => (
               <DataTable
                 key={key}
                 columnDefs={columnDefs}
@@ -201,6 +211,7 @@ const Expression = () => {
                 setVisibleCols={handleVisibleColsChange}
                 setHiddenCols={handleHiddenColsChange}
                 canToggleColumns
+                demoDescription={INFO_BUBBLES[key]}
               />
             ))}
           </>

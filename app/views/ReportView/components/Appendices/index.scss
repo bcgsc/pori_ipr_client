@@ -4,6 +4,14 @@
 
   &__config {
     padding: 16px;
+
+    @media print {
+      word-break: break-all;
+    }
+
+    &-title {
+      margin: 0 0 8px;
+    }
   }
 }
 

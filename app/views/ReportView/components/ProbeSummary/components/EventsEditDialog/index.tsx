@@ -10,9 +10,9 @@ import {
   Button,
 } from '@material-ui/core';
 
-import ReportContext from '../../../../../../components/ReportContext';
-import ConfirmContext from '../../../../../../components/ConfirmContext';
-import api from '../../../../../../services/api';
+import ReportContext from '@/context/ReportContext';
+import ConfirmContext from '@/context/ConfirmContext';
+import api from '@/services/api';
 
 type EventsEditDialogProps = {
   isOpen: boolean;

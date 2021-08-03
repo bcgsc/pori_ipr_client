@@ -2,32 +2,25 @@ import React, {
   useState, useEffect, useContext, useCallback,
 } from 'react';
 import { LinearProgress } from '@material-ui/core';
-import PropTypes from 'prop-types';
 import orderBy from 'lodash.orderby';
-import { useSnackbar } from 'notistack';
 
 import DataTable from '@/components/DataTable';
-import EditContext from '@/components/EditContext';
+import EditContext from '@/context/EditContext';
 import api from '@/services/api';
+import snackbar from '@/services/SnackbarUtils';
 import DemoDescription from '@/components/DemoDescription';
-import ReportContext from '@/components/ReportContext';
+import ReportContext from '@/context/ReportContext';
 import EditDialog from './components/EditDialog';
 import EvidenceHeader from './components/EvidenceHeader';
 import columnDefs from './columnDefs';
 
-/**
- * @param {object} props props
- * @param {bool} props.canEdit can user edit report?
- * @param {array} props.therapeuticTargets therapeutic and chemoresistance row data
- * @param {bool} props.print is this the print version?
- * @param {report} props.report report object
- * @return {*} JSX
- */
-const Therapeutic = (props) => {
-  const {
-    print,
-  } = props;
+type TherapeuticProps = {
+  print?: boolean;
+};
 
+const Therapeutic = ({
+  print = false,
+}: TherapeuticProps): JSX.Element => {
   const [therapeuticData, setTherapeuticData] = useState([]);
   const [chemoresistanceData, setChemoresistanceData] = useState([]);
 
@@ -37,7 +30,6 @@ const Therapeutic = (props) => {
 
   const { canEdit } = useContext(EditContext);
   const { report } = useContext(ReportContext);
-  const snackbar = useSnackbar();
 
   useEffect(() => {
     if (report) {
@@ -87,13 +79,13 @@ const Therapeutic = (props) => {
         } else {
           setter((prevVal) => [...prevVal, newData]);
         }
-        snackbar.enqueueSnackbar('Row updated');
+        snackbar.success('Row updated');
       }
       setEditData(null);
     } catch (err) {
-      snackbar.enqueueSnackbar(`Error, row not updated: ${err}`);
+      snackbar.error(`Error, row not updated: ${err}`);
     }
-  }, [chemoresistanceData, snackbar, therapeuticData]);
+  }, [chemoresistanceData, therapeuticData]);
 
   const handleReorder = useCallback(async (newRow, newRank, tableType) => {
     try {
@@ -123,13 +115,13 @@ const Therapeutic = (props) => {
         return row;
       });
 
-      await api.put(`/reports/${report.ident}/therapeutic-targets`, newData).request();
+      await api.put(`/reports/${report.ident}/therapeutic-targets`, newData, {}).request();
       setter(newData);
-      snackbar.enqueueSnackbar('Row updated');
+      snackbar.success('Row updated');
     } catch (err) {
-      snackbar.enqueueSnackbar(`Error, row not updated: ${err}`);
+      snackbar.error(`Error, row not updated: ${err}`);
     }
-  }, [chemoresistanceData, therapeuticData, report, snackbar]);
+  }, [chemoresistanceData, therapeuticData, report]);
 
   return (
     <div className="therapeutic">
@@ -154,7 +146,7 @@ const Therapeutic = (props) => {
             canReorder={canEdit && !print}
             onReorder={handleReorder}
             canExport
-            print={print}
+            isPrint={print}
             Header={EvidenceHeader}
           />
           <DataTable
@@ -169,7 +161,7 @@ const Therapeutic = (props) => {
             isPaginated={false}
             canReorder={canEdit && !print}
             canExport
-            print={print}
+            isPrint={print}
             Header={EvidenceHeader}
           />
           {showDialog && (
@@ -187,14 +179,6 @@ const Therapeutic = (props) => {
       )}
     </div>
   );
-};
-
-Therapeutic.propTypes = {
-  print: PropTypes.bool,
-};
-
-Therapeutic.defaultProps = {
-  print: false,
 };
 
 export default Therapeutic;

@@ -5,16 +5,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 const common = require('./webpack.config.js');
 
-
 const prodConfig = {
-  module: {
-    rules: [
-      {
-        test: /angular\.min\.js$/,
-        loader: 'exports-loader?angular',
-      },
-    ],
-  },
   mode: 'production',
   devtool: 'none',
   optimization: {
@@ -22,7 +13,7 @@ const prodConfig = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, '../../statics/index.ejs'),
+      template: path.join(__dirname, '../../app/index.ejs'),
       inject: true,
       baseUrl: '%PUBLIC_PATH%',
       minify: {
@@ -44,11 +35,6 @@ const prodConfig = {
     }),
     new OptimizeCSSAssetsPlugin({}),
   ],
-  resolve: {
-    alias: {
-      angular: 'angular/angular.min.js',
-    },
-  },
 };
 module.exports = [
   merge(common, prodConfig),

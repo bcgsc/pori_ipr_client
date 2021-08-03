@@ -58,6 +58,16 @@ const columnDefs = [{
   field: 'date',
   sort: 'desc',
   cellRenderer: dateCellRenderer,
+},
+{
+  headerName: 'Open',
+  pinned: 'right',
+  cellRenderer: 'Launch',
+  suppressSizeToFit: true,
+  sortable: false,
+  resizable: false,
+  suppressMenu: true,
+  width: 50,
 }];
 
 // Show physician to external users, analyst to internal

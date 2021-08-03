@@ -5,30 +5,30 @@ import {
   Typography,
   IconButton,
   Grid,
+  LinearProgress,
 } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 
 import api, { ApiCallSet } from '@/services/api';
+import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
-import { sampleColumnDefs, eventsColumnDefs } from './columnDefs';
-import ReportContext from '@/components/ReportContext';
-import EditContext from '@/components/EditContext';
-import ConfirmContext from '@/components/ConfirmContext';
+import ReportContext, { ReportType, PatientInformationType } from '@/context/ReportContext';
+import EditContext from '@/context/EditContext';
+import ConfirmContext from '@/context/ConfirmContext';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
-import { getSignatures, sign, revokeSignature } from '@/services/reports/signatures';
-import TargetedGenesService from '@/services/reports/targeted-genes.service';
-import TestInformationService from '@/services/reports/test-information.service';
 import { formatDate } from '@/utils/date';
-import TestInformation from './components/TestInformation';
-import SignatureCard from '@/components/SignatureCard';
+import SignatureCard, { SignatureType } from '@/components/SignatureCard';
+import PrintTable from '@/components/PrintTable';
+import { sampleColumnDefs, eventsColumnDefs } from './columnDefs';
+import TestInformation, { TestInformationType } from './components/TestInformation';
 import PatientEdit from '../GenomicSummary/components/PatientEdit';
 import EventsEditDialog from './components/EventsEditDialog';
-import PrintTable from './components/PrintTable';
+import ProbeResultsType from './types.d';
 
 import './index.scss';
 
 type ProbeSummaryProps = {
-  loadedDispatch: (type: Record<string, unknown>) => void;
+  loadedDispatch: ({ 'type': string }) => void;
   isPrint: boolean;
 };
 
@@ -40,61 +40,94 @@ const ProbeSummary = ({
   const { canEdit } = useContext(EditContext);
   const { isSigned, setIsSigned } = useContext(ConfirmContext);
 
-  const [testInformation, setTestInformation] = useState<Array<TestInformationInterface> | null>();
-  const [signatures, setSignatures] = useState<any | null>();
-  const [probeResults, setProbeResults] = useState<Array<Record<string, unknown>> | null>();
-  const [patientInformation, setPatientInformation] = useState<Array<Record<string, unknown>> | null>();
+  const [testInformation, setTestInformation] = useState<TestInformationType | null>();
+  const [signatures, setSignatures] = useState<SignatureType | null>();
+  const [probeResults, setProbeResults] = useState<ProbeResultsType[] | null>();
+  const [patientInformation, setPatientInformation] = useState<{
+    label: string;
+    value: string | null;
+  }[] | null>();
+  const [printEvents, setPrintEvents] = useState([]);
   const [editData, setEditData] = useState();
+  const [isLoading, setIsLoading] = useState(true);
 
-  const [showPatientEdit, setShowPatientEdit] = useState<boolean>(false);
-  const [showEventsDialog, setShowEventsDialog] = useState<boolean>(false);
+  const [showPatientEdit, setShowPatientEdit] = useState(false);
+  const [showEventsDialog, setShowEventsDialog] = useState(false);
 
   useEffect(() => {
-    if (report && report.ident) {
+    if (report?.ident) {
       const getData = async () => {
-        const [testInformationData, signaturesData, probeResultsData] = await Promise.all([
-          TestInformationService.retrieve(report.ident),
-          getSignatures(report.ident),
-          TargetedGenesService.getAll(report.ident),
-        ]);
+        try {
+          const apiCalls = new ApiCallSet([
+            api.get(`/reports/${report.ident}/probe-test-information`, {}),
+            api.get(`/reports/${report.ident}/signatures`, {}),
+            api.get(`/reports/${report.ident}/probe-results`, {}),
+            api.get(`/reports/${report.ident}/small-mutations`, {}),
+          ]);
+          const [
+            testInformationData,
+            signaturesData,
+            probeResultsData,
+            smallMutationsData,
+          ] = await apiCalls.request();
 
-        setTestInformation(testInformationData);
-        setSignatures(signaturesData);
-        setProbeResults(probeResultsData);
+          setTestInformation(testInformationData);
+          setSignatures(signaturesData);
 
-        setPatientInformation([
-          {
-            label: 'Alternate ID',
-            value: report.alternateIdentifier,
-          },
-          {
-            label: 'Report Date',
-            value: formatDate(report.createdAt),
-          },
-          {
-            label: 'Case Type',
-            value: report.patientInformation.caseType,
-          },
-          {
-            label: 'Physician',
-            value: report.patientInformation.physician,
-          },
-          {
-            label: 'Biopsy Name',
-            value: report.biopsyName,
-          },
-          {
-            label: 'Biopsy Details',
-            value: report.patientInformation.biopsySite,
-          },
-          {
-            label: 'Gender',
-            value: report.patientInformation.gender,
-          },
-        ]);
+          probeResultsData.forEach((probe) => {
+            smallMutationsData.forEach((mutation) => {
+              if (probe.gene.name === mutation.gene.name) {
+                if (mutation.tumourRefCount !== null || mutation.tumourAltCount !== null) {
+                  probe.tumourDna = `${mutation.tumourRefCount}/${mutation.tumourAltCount}`;
+                }
+                if (mutation.rnaRefCount !== null || mutation.rnaAltCount !== null) {
+                  probe.tumourRna = `${mutation.rnaRefCount}/${mutation.rnaAltCount}`;
+                }
+                if (mutation.normalRefCount !== null || mutation.normalAltCount !== null) {
+                  probe.normalDna = `${mutation.normalRefCount}/${mutation.normalAltCount}`;
+                }
+              }
+            });
+          });
+          setProbeResults(probeResultsData);
 
-        if (loadedDispatch) {
-          loadedDispatch({ type: 'summary' });
+          setPatientInformation([
+            {
+              label: 'Alternate ID',
+              value: report.alternateIdentifier,
+            },
+            {
+              label: 'Report Date',
+              value: formatDate(report.createdAt),
+            },
+            {
+              label: 'Case Type',
+              value: report.patientInformation.caseType,
+            },
+            {
+              label: 'Physician',
+              value: report.patientInformation.physician,
+            },
+            {
+              label: 'Biopsy Name',
+              value: report.biopsyName,
+            },
+            {
+              label: 'Biopsy Details',
+              value: report.patientInformation.biopsySite,
+            },
+            {
+              label: 'Gender',
+              value: report.patientInformation.gender,
+            },
+          ]);
+        } catch (err) {
+          snackbar.error(`Network error: ${err}`);
+        } finally {
+          setIsLoading(false);
+          if (loadedDispatch) {
+            loadedDispatch({ type: 'summary' });
+          }
         }
       };
 
@@ -102,7 +135,24 @@ const ProbeSummary = ({
     }
   }, [loadedDispatch, report]);
 
-  const handlePatientEditClose = useCallback(async (isSaved, newPatientData, newReportData) => {
+  useEffect(() => {
+    if (probeResults && isPrint) {
+      setPrintEvents(probeResults.map((probe) => (
+        eventsColumnDefs.reduce((accumulator, current) => {
+          if (current.field) {
+            accumulator[current.field] = probe[current.field];
+          }
+          return accumulator;
+        }, { events: `${probe.gene.name} (${probe.variant})` })
+      )));
+    }
+  }, [probeResults, isPrint]);
+
+  const handlePatientEditClose = useCallback(async (
+    isSaved: boolean,
+    newPatientData: PatientInformationType,
+    newReportData: ReportType,
+  ) => {
     const apiCalls = [];
     setShowPatientEdit(false);
 
@@ -158,12 +208,12 @@ const ProbeSummary = ({
   }, [isSigned, report, setReport]);
 
   const handleSign = async (signed: boolean, role: 'author' | 'reviewer') => {
-    let newSignature;
+    let newSignature: SignatureType;
 
     if (signed) {
-      newSignature = await sign(report.ident, role);
+      newSignature = await api.put(`/reports/${report.ident}/signatures/sign/${role}`, {}, {}).request();
     } else {
-      newSignature = await revokeSignature(report.ident, role);
+      newSignature = await api.put(`/reports/${report.ident}/signatures/revoke/${role}`, {}, {}).request();
     }
 
     setIsSigned(signed);
@@ -191,124 +241,142 @@ const ProbeSummary = ({
 
   return (
     <div className="probe-summary">
-      {report && patientInformation && (
+      {!isLoading && (
         <>
-          <div className="probe-summary__patient-information">
-            <div className="probe-summary__patient-information-title">
-              <Typography variant="h3" display="inline">
-                Patient Information
-                {canEdit && !isPrint && (
-                  <>
-                    <IconButton onClick={() => setShowPatientEdit(true)}>
-                      <EditIcon />
-                    </IconButton>
-                    <PatientEdit
-                      patientInformation={report.patientInformation}
-                      report={report}
-                      isOpen={Boolean(showPatientEdit)}
-                      onClose={handlePatientEditClose}
-                    />
-                  </>
-                )}
-              </Typography>
-            </div>
-            <Grid
-              alignItems="flex-end"
-              container
-              spacing={3}
-              className="probe-summary__patient-information-content"
-            >
-              {patientInformation.map(({ label, value }) => (
-                <Grid key={label} item>
-                  <ReadOnlyTextField label={label}>
-                    {value}
-                  </ReadOnlyTextField>
-                </Grid>
-              ))}
-            </Grid>
-          </div>
-        </>
-      )}
-      {report && report.sampleInfo && (
-        <>
-          <Typography variant="h3" display="inline" className="probe-summary__sample-information-title">
-            Sample Information
-          </Typography>
-          {isPrint ? (
-            <PrintTable
-              data={report.sampleInfo}
-              headers={sampleColumnDefs.map((col) => col.headerName)}
-            />
-          ) : (
-            <DataTable
-              columnDefs={sampleColumnDefs}
-              rowData={report.sampleInfo}
-              isPrint={isPrint}
-              isPaginated={!isPrint}
-            />
-          )}
-        </>
-      )}
-      {report && probeResults && (
-        <>
-          <Typography variant="h3" display="inline">
-            Genomic Events with Potential Therapeutic Association
-          </Typography>
-          {probeResults.length ? (
+          {report && patientInformation && (
             <>
-              <DataTable
-                columnDefs={eventsColumnDefs}
-                rowData={probeResults}
-                canEdit={canEdit}
-                onEdit={handleEditStart}
-                isPrint={isPrint}
-                isPaginated={!isPrint}
-              />
-              <EventsEditDialog
-                isOpen={showEventsDialog}
-                editData={editData}
-                onClose={handleEditClose}
-              />
+              <div className="probe-summary__patient-information">
+                <div className="probe-summary__patient-information-title">
+                  <Typography variant="h3" display="inline">
+                    Patient Information
+                    {canEdit && !isPrint && (
+                      <>
+                        <IconButton onClick={() => setShowPatientEdit(true)}>
+                          <EditIcon />
+                        </IconButton>
+                        <PatientEdit
+                          patientInformation={report.patientInformation}
+                          report={report}
+                          isOpen={Boolean(showPatientEdit)}
+                          onClose={handlePatientEditClose}
+                        />
+                      </>
+                    )}
+                  </Typography>
+                </div>
+                <Grid
+                  alignItems="flex-end"
+                  container
+                  spacing={3}
+                  className="probe-summary__patient-information-content"
+                >
+                  {patientInformation.map(({ label, value }) => (
+                    <Grid key={label} item>
+                      <ReadOnlyTextField label={label}>
+                        {value}
+                      </ReadOnlyTextField>
+                    </Grid>
+                  ))}
+                </Grid>
+              </div>
             </>
-          ) : (
-            <div className="probe-summary__none">
-              No Genomic Events were found
+          )}
+          {report && report.sampleInfo && (
+            <div className="probe-summary__sample-information">
+              <Typography variant="h3" display="inline" className="probe-summary__sample-information-title">
+                Sample Information
+              </Typography>
+              {isPrint ? (
+                <PrintTable
+                  data={report.sampleInfo}
+                  columnDefs={sampleColumnDefs}
+                />
+              ) : (
+                <DataTable
+                  columnDefs={sampleColumnDefs}
+                  rowData={report.sampleInfo}
+                  isPrint={isPrint}
+                  isPaginated={!isPrint}
+                />
+              )}
             </div>
+          )}
+          {report && probeResults && (
+            <div className="probe-summary__events">
+              <Typography className="probe-summary__events-title" variant="h3" display="inline">
+                Genomic Events with Potential Therapeutic Association
+              </Typography>
+              {probeResults.length ? (
+                <>
+                  {isPrint ? (
+                    <PrintTable
+                      data={printEvents}
+                      columnDefs={eventsColumnDefs
+                        .filter((col) => col.headerName !== 'Actions')}
+                      order={['Genomic Events', 'Sample', 'Ref/Alt (Tumour DNA)', 'Ref/Alt (Tumour RNA)', 'Ref/Alt (Normal DNA)', 'Comments']}
+                    />
+                  ) : (
+                    <>
+                      <DataTable
+                        columnDefs={eventsColumnDefs}
+                        rowData={probeResults}
+                        canEdit={canEdit}
+                        onEdit={handleEditStart}
+                        isPrint={isPrint}
+                        isPaginated={!isPrint}
+                      />
+                      <EventsEditDialog
+                        isOpen={showEventsDialog}
+                        editData={editData}
+                        onClose={handleEditClose}
+                      />
+                    </>
+                  )}
+                </>
+              ) : (
+                <div className="probe-summary__none">
+                  No Genomic Events were found
+                </div>
+              )}
+            </div>
+          )}
+          {report && testInformation && (
+            <div className="probe-summary__test-information">
+              <Typography variant="h3" className="probe-summary__test-information-title">
+                Test Information
+              </Typography>
+              <TestInformation data={testInformation} />
+            </div>
+          )}
+          {report && (
+            <span className="probe-summary__reviews">
+              {!isPrint && (
+                <Typography variant="h3" className="probe-summary__reviews-title">
+                  Reviews
+                </Typography>
+              )}
+              <div className={`${isPrint ? 'probe-summary__signatures' : ''}`}>
+                <SignatureCard
+                  title={`${isPrint ? 'Manual Review' : 'Ready'}`}
+                  signatures={signatures}
+                  onClick={handleSign}
+                  type="author"
+                  isPrint={isPrint}
+                />
+                <SignatureCard
+                  title="Reviewer"
+                  signatures={signatures}
+                  onClick={handleSign}
+                  type="reviewer"
+                  isPrint={isPrint}
+                />
+              </div>
+            </span>
           )}
         </>
       )}
-      {report && testInformation && (
-        <div className="probe-summary__test-information">
-          <Typography variant="h3" className="probe-summary__test-information-title">
-            Test Information
-          </Typography>
-          <TestInformation data={testInformation} />
-        </div>
-      )}
-      {report && (
-        <span className="probe-summary__reviews">
-          {!isPrint && (
-            <Typography variant="h3" className="probe-summary__reviews-title">
-              Reviews
-            </Typography>
-          )}
-          <div className={`${isPrint ? 'probe-summary__signatures' : ''}`}>
-            <SignatureCard
-              title={`${isPrint ? 'Manual Review' : 'Ready'}`}
-              signatures={signatures}
-              onClick={handleSign}
-              type="author"
-              isPrint={isPrint}
-            />
-            <SignatureCard
-              title="Reviewer"
-              signatures={signatures}
-              onClick={handleSign}
-              type="reviewer"
-              isPrint={isPrint}
-            />
-          </div>
-        </span>
+      {isLoading && (
+        <LinearProgress color="secondary" />
       )}
     </div>
   );

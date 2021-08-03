@@ -1,76 +1,44 @@
 @import '../../styles/variables';
 
-.md-toolbar-tools {
-  padding: 0 10px;
-  background-color: $primary;
-  color: $white;
-
-  > .md-button:first-child {
-    margin-left: -2px;
-  }
-
-  md-icon {
-    &.clickable {
-      outline: 0;
-      cursor: pointer;
-    }
-
-    &.margin-right-15 {
-      margin-right: 15px;
-    }
-  }
-}
-
 .navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
   height: $navbar-size;
-  min-height: $navbar-size;
-  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, .2), 0 4px 5px 0 rgba(0, 0, 0, .14), 0 1px 10px 0 rgba(0, 0, 0, .12);
-  z-index: $navbar-z-index;
+  display: inline-flex;
+  justify-content: space-between;
 
-  // override default angularjs material styles
-  @media (max-width: 959px) and (min-width: 0) and (orientation: landscape) {
-    .md-toolbar-tools {
-      height: $navbar-size;
-      max-height: $navbar-size;
-    }
+  &__left {
+    height: 100%;
+    display: inline-flex;
   }
 
-  &#{&} {
-    transition-duration: .3s;
-    transition-property: left, width;
+  &__middle {
+    display: inline-flex;
   }
 
-  &--open {
-    left: 240px;
-    width: calc(100% - 240px);
+  &__text {
+    margin: auto 4px;
   }
 
-  &__title {
-    margin-left: 17px;
-    font-weight: 400;
-  }
-
-  &__menu {
-    padding: 8px 0;
+  &__button {
+    color: white;
   }
 
   &__icon {
-    color: $white;
+    margin: 0 4px;
   }
+}
 
-  &__version {
-    font-size: 12px;
-  }
+.MuiToolbar-gutters {
+  padding: 0 16px;
+}
 
-  &__person {
-    margin: 0 8px 2px 0;
-  }
+.appbar {
+  width: 100%;
+  transition: width $transition-normal;
 
-  &__user {
-    padding: 0 12px;
+  @media (min-width: $breakpoint-sm) {
+    &--minimized {
+      width: calc(100% - $navbar-size);
+      transition: width $transition-normal;
+    }
   }
 }

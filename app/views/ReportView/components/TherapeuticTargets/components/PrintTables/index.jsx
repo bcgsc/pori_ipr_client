@@ -5,11 +5,11 @@ import React, {
 } from 'react';
 import PropTypes from 'prop-types';
 import { AgGridReact } from '@ag-grid-community/react';
-import useGrid from '@/components/hooks/useGrid';
 import omit from 'lodash.omit';
 
-import ReportContext from '../../../../../../components/ReportContext';
-import { therapeuticGet } from '@/services/reports/therapeutic';
+import useGrid from '@/hooks/useGrid';
+import api from '@/services/api';
+import ReportContext from '@/context/ReportContext';
 
 import './index.scss';
 
@@ -70,7 +70,7 @@ const TherapeuticTable = (props) => {
   useEffect(() => {
     if (report) {
       const getData = async () => {
-        const resp = await therapeuticGet(report.ident);
+        const resp = await api.get(`/reports/${report.ident}/therapeutic-targets`, {}).request;
 
         if (resp.length) {
           // target and biomarker are objects and need to be strings to be displayed w/ag-grid

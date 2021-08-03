@@ -8,7 +8,7 @@ import {
   DialogActions,
 } from '@material-ui/core';
 
-import api from '../../../../../../services/api';
+import api from '@/services/api';
 
 import './index.scss';
 

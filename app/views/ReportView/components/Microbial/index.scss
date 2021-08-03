@@ -1,9 +1,15 @@
-.bg-white {
-  background-color: white;
-}
-
 .microbial {
+  padding: 16px;
+
+  &__tabs {
+    padding: 16px 16px 0;
+  }
+
+  &__images {
+    padding: 16px;
+  }
+
   &__none {
-    margin: 32px auto;
+    padding: 16px;
   }
 }

@@ -17,7 +17,7 @@ import { useSnackbar } from 'notistack';
 import { AgGridReact } from '@ag-grid-community/react';
 
 import api from '@/services/api';
-import ReportContext from '@/components/ReportContext';
+import ReportContext from '@/context/ReportContext';
 import { columnDefs } from '@/views/ReportView/components/KbMatches/columnDefs';
 import { columnDefs as smallMutationsColumnDefs } from '@/views/ReportView/components/SmallMutations/columnDefs';
 import copyNumberColumnDefs from '@/views/ReportView/components/CopyNumber/columnDefs';

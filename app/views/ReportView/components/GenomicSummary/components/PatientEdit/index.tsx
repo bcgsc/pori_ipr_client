@@ -11,7 +11,7 @@ import {
 } from '@material-ui/core';
 
 import api, { ApiCallSet } from '@/services/api';
-import ConfirmContext from '@/components/ConfirmContext';
+import ConfirmContext from '@/context/ConfirmContext';
 import AsyncButton from '@/components/AsyncButton';
 
 import './index.scss';

@@ -5,17 +5,18 @@ import {
 } from '@material-ui/core';
 
 import DataTable from '@/components/DataTable';
-import ReportContext from '@/components/ReportContext';
+import ReportContext from '@/context/ReportContext';
 import api, { ApiCallSet } from '@/services/api';
 import { CNVSTATE, EXPLEVEL } from '@/constants';
 import Image from '@/components/Image';
 import ImageType from '@/components/Image/types';
+import snackbar from '@/services/SnackbarUtils';
 import CopyNumberType from './types';
 import columnDefs from './columnDefs';
 
 import './index.scss';
 
-const titleMap = {
+const TITLE_MAP = {
   clinical: 'CNVs of Potential Clinical Relevance',
   nostic: 'CNVs of Prognostic or Diagnostic Relevance',
   biological: 'CNVs of Biological Relevance',
@@ -25,11 +26,25 @@ const titleMap = {
   lowExp: 'Lowly Expressed Tumour Suppressors with Copy Losses',
 };
 
+const getInfoDescription = (relevance: string) => `Copy variants where the variant matched 1 or more statements of ${relevance} relevance in the knowledge base matches section. Details on these matches can be seen in the knowledge base matches section of this report.`;
+
+const INFO_BUBBLES = {
+  biological: getInfoDescription('biological'),
+  nostic: getInfoDescription('prognostic or diagnostic'),
+  clinical: getInfoDescription('therapeutic'),
+  amplifications: 'Copy number amplifications in known oncogenes.',
+  deletions: 'Homozygous (deep) deletions in known tumour supressor genes.',
+  highExp: 'Copy number gains in known oncogenes which are also highly expressed',
+  lowExp: 'Copy number losses in known tumour supressor genes which are also lowly expressed.',
+};
+
+
 const CopyNumber = (): JSX.Element => {
   const { report } = useContext(ReportContext);
 
   const [isLoading, setIsLoading] = useState(true);
-  const [images, setImages] = useState<Record<string, ImageType>>();
+  const [images, setImages] = useState<ImageType[]>([]);
+  const [circos, setCircos] = useState<ImageType>();
   const [cnvs, setCnvs] = useState<CopyNumberType[]>([]);
   const [groupedCnvs, setGroupedCnvs] = useState({
     clinical: [],
@@ -44,13 +59,24 @@ const CopyNumber = (): JSX.Element => {
   useEffect(() => {
     if (report) {
       const getData = async () => {
-        const apiCalls = new ApiCallSet([
-          api.get(`/reports/${report.ident}/copy-variants`, {}),
-          api.get(`/reports/${report.ident}/image/retrieve/cnvLoh.circos,cnv.1,cnv.2,cnv.3,cnv.4,cnv.5,loh.1,loh.2,loh.3,loh.4,loh.5`, {}),
-        ]);
-        const [cnvsResp, imagesResp] = await apiCalls.request();
-        setCnvs(cnvsResp);
-        setImages(imagesResp);
+        try {
+          const apiCalls = new ApiCallSet([
+            api.get(`/reports/${report.ident}/copy-variants`, {}),
+            api.get(`/reports/${report.ident}/image/retrieve/cnvLoh.circos,cnv.1,cnv.2,cnv.3,cnv.4,cnv.5,loh.1,loh.2,loh.3,loh.4,loh.5`, {}),
+          ]);
+          const [cnvsResp, imagesResp] = await apiCalls.request();
+
+          const circosIndex = imagesResp.findIndex((img) => img.key === 'cnvLoh.circos');
+          const [circosResp] = imagesResp.splice(circosIndex, 1);
+
+          setCnvs(cnvsResp);
+          setCircos(circosResp);
+          setImages(imagesResp);
+        } catch (err) {
+          snackbar.error(`Network error: ${err}`);
+        } finally {
+          setIsLoading(false);
+        }
       };
       getData();
     }
@@ -116,8 +142,6 @@ const CopyNumber = (): JSX.Element => {
           groups.biological.push(row);
         }
       });
-
-      setIsLoading(false);
       setGroupedCnvs(groups);
     }
   }, [cnvs]);
@@ -128,13 +152,15 @@ const CopyNumber = (): JSX.Element => {
       {!isLoading ? (
         <>
           <Typography variant="h3" className="copy-number__title">Summary of Copy Number Events</Typography>
-          {images?.['cnvLoh.circos'] && (
+          {circos ? (
             <div className="copy-number__circos">
               <Image
-                image={images['cnvLoh.circos']}
+                image={circos}
                 width={700}
               />
             </div>
+          ) : (
+            <Typography align="center">No Circos Plot Available</Typography>
           )}
           {groupedCnvs && (
             <>
@@ -144,29 +170,30 @@ const CopyNumber = (): JSX.Element => {
                     canToggleColumns
                     columnDefs={columnDefs}
                     rowData={value}
-                    titleText={titleMap[key]}
+                    titleText={TITLE_MAP[key]}
+                    demoDescription={INFO_BUBBLES[key]}
                   />
                 </React.Fragment>
               ))}
             </>
           )}
-          <Typography variant="h3" className="copy-number__title">Copy Number & LOH</Typography>
-          <div className="copy-number__graphs">
-            {[...Array(5).keys()].map((index) => (
-              <React.Fragment key={index}>
-                {images?.[`cnv.${index}`] && (
+          <Typography variant="h3" className="copy-number__title">Copy Number &amp; LOH</Typography>
+          {images.length ? (
+            <div className="copy-number__graphs">
+              {[...Array(5).keys()].map((index) => (
+                <React.Fragment key={index + 1}>
                   <Image
-                    image={images[`cnv.${index}`]}
+                    image={images.find((img) => img.key === `cnv.${index + 1}`)}
                   />
-                )}
-                {images?.[`loh.${index}`] && (
                   <Image
-                    image={images[`loh.${index}`]}
+                    image={images.find((img) => img.key === `loh.${index + 1}`)}
                   />
-                )}
-              </React.Fragment>
-            ))}
-          </div>
+                </React.Fragment>
+              ))}
+            </div>
+          ) : (
+            <Typography align="center">No Copy Number &amp; LOH Plots Available</Typography>
+          )}
         </>
       ) : (
         <LinearProgress />

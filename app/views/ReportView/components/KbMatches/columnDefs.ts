@@ -1,4 +1,4 @@
-import ArrayCell from '../../../../components/DataTable/components/ArrayCellRenderer';
+import ArrayCell from '@/components/DataTable/components/ArrayCellRenderer';
 
 const getGeneProp = (params, property) => {
   const { data: { variant, variantType } } = params;
@@ -163,6 +163,15 @@ const columnDefs = [{
   headerName: 'Therapeutic Associated Gene',
   colId: 'therapeuticAssociated',
   valueGetter: (params) => getGeneProp(params, 'therapeuticAssociated'),
+  hide: true,
+}, {
+  headerName: 'External Source',
+  colId: 'externalSource',
+  cellRenderer: 'CivicCellRenderer',
+  hide: false,
+}, {
+  headerName: 'External Statement ID',
+  field: 'externalStatementId',
   hide: true,
 }, {
   headerName: 'Actions',

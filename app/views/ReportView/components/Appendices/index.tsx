@@ -2,17 +2,19 @@ import React, { useState, useEffect, useContext } from 'react';
 import {
   Typography,
   Grid,
+  LinearProgress,
 } from '@material-ui/core';
 
-import api, { ApiCallSet } from '../../../../services/api';
-import DataTable from '../../../../components/DataTable';
-import ReportContext from '../../../../components/ReportContext';
+import api, { ApiCallSet } from '@/services/api';
+import snackbar from '@/services/SnackbarUtils';
+import DataTable from '@/components/DataTable';
+import ReportContext from '@/context/ReportContext';
+import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import { AppendicesType, TcgaType, ComparatorType } from './types';
 import { sampleInformationColumnDefs, sequencingProtocolInformationColumnDefs, tcgaAcronymsColumnDefs } from './columnDefs';
 import GenomicReportOverview from './components/GenomicReportOverview';
 import ProbeReportOverview from './components/ProbeReportOverview';
 import ConfigTable from './components/ConfigTable';
-import ReadOnlyTextField from '../../../../components/ReadOnlyTextField';
 
 import './index.scss';
 
@@ -29,23 +31,29 @@ const Appendices = ({ isProbe, isPrint, loadedDispatch }: AppendicesProps): JSX.
   const [appendices, setAppendices] = useState<AppendicesType>();
   const [tcga, setTcga] = useState<TcgaType[]>([]);
   const [analysisSummary, setAnalysisSummary] = useState<Record<string, unknown>[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (report) {
       const getData = async () => {
-        const callSet = new ApiCallSet([
-          api.get(`/reports/${report.ident}/appendices`, {}),
-          api.get(`/reports/${report.ident}/appendices/tcga`, {}),
-          api.get(`/reports/${report.ident}/comparators`, {}),
-        ]);
-        const [appendicesResp, tcgaResp, comparatorsResp] = await callSet.request();
+        try {
+          const callSet = new ApiCallSet([
+            api.get(`/reports/${report.ident}/appendices`, {}),
+            api.get(`/reports/${report.ident}/appendices/tcga`, {}),
+            api.get(`/reports/${report.ident}/comparators`, {}),
+          ]);
+          const [appendicesResp, tcgaResp, comparatorsResp] = await callSet.request();
 
-        setAppendices(appendicesResp);
-        setTcga(tcgaResp);
-        setComparators(comparatorsResp);
-
-        if (loadedDispatch) {
-          loadedDispatch({ type: 'appendices' });
+          setAppendices(appendicesResp);
+          setTcga(tcgaResp);
+          setComparators(comparatorsResp);
+        } catch (err) {
+          snackbar.error(`Network error: ${err}`);
+        } finally {
+          setIsLoading(false);
+          if (loadedDispatch) {
+            loadedDispatch({ type: 'appendices' });
+          }
         }
       };
 
@@ -85,102 +93,110 @@ const Appendices = ({ isProbe, isPrint, loadedDispatch }: AppendicesProps): JSX.
 
   return (
     <div className="appendices">
-      {!isPrint && (
+      {!isLoading && (
         <>
-          <Typography variant="h1">
-            Appendix A
-          </Typography>
-          <div className="analysis-summary">
-            <Typography variant="h3">
-              Analysis Summary
-            </Typography>
-            <Grid
-              alignItems="flex-end"
-              container
-              spacing={3}
-              className="analysis-summary__content"
-            >
-              {analysisSummary.map(({ label, value }) => (
-                <Grid key={label as string} item>
-                  <ReadOnlyTextField label={label}>
-                    {value}
-                  </ReadOnlyTextField>
+          {!isPrint && (
+            <>
+              <Typography variant="h1">
+                Appendix A
+              </Typography>
+              <div className="analysis-summary">
+                <Typography variant="h3">
+                  Analysis Summary
+                </Typography>
+                <Grid
+                  alignItems="flex-end"
+                  container
+                  spacing={3}
+                  className="analysis-summary__content"
+                >
+                  {analysisSummary.map(({ label, value }) => (
+                    <Grid key={label as string} item>
+                      <ReadOnlyTextField label={label}>
+                        {value}
+                      </ReadOnlyTextField>
+                    </Grid>
+                  ))}
                 </Grid>
-              ))}
-            </Grid>
-          </div>
-          {appendices?.sampleInfo && (
-            <DataTable
-              columnDefs={sampleInformationColumnDefs}
-              rowData={appendices.sampleInfo}
-              titleText="Sample Information"
-            />
+              </div>
+              {appendices?.sampleInfo && (
+                <DataTable
+                  columnDefs={sampleInformationColumnDefs}
+                  rowData={appendices.sampleInfo}
+                  titleText="Sample Information"
+                />
+              )}
+              {appendices?.seqQC && (
+                <DataTable
+                  columnDefs={sequencingProtocolInformationColumnDefs}
+                  rowData={appendices.seqQC}
+                  titleText="Sequencing Protocol Information"
+                />
+              )}
+              <Typography variant="h1">
+                Appendix B
+              </Typography>
+              {Boolean(tcga.length) && (
+                <DataTable
+                  columnDefs={tcgaAcronymsColumnDefs}
+                  rowData={tcga}
+                  titleText="TCGA Acronyms"
+                />
+              )}
+            </>
           )}
-          {appendices?.seqQC && (
-            <DataTable
-              columnDefs={sequencingProtocolInformationColumnDefs}
-              rowData={appendices.seqQC}
-              titleText="Sequencing Protocol Information"
-            />
+          {!isPrint && (
+            <Typography variant="h1">
+              Appendix C
+            </Typography>
           )}
-          <Typography variant="h1">
-            Appendix B
-          </Typography>
-          {Boolean(tcga.length) && (
-            <DataTable
-              columnDefs={tcgaAcronymsColumnDefs}
-              rowData={tcga}
-              titleText="TCGA Acronyms"
-            />
+          {isPrint && (
+            <div className="analysis-summary">
+              <Typography variant="h3">
+                Analysis Summary
+              </Typography>
+              <Grid
+                alignItems="flex-end"
+                container
+                spacing={3}
+                className="analysis-summary__content"
+              >
+                {analysisSummary.map(({ label, value }) => (
+                  <Grid key={label as string} item>
+                    <ReadOnlyTextField label={label}>
+                      {value}
+                    </ReadOnlyTextField>
+                  </Grid>
+                ))}
+              </Grid>
+            </div>
+          )}
+          {isProbe ? (
+            <ProbeReportOverview />
+          ) : (
+            <GenomicReportOverview />
+          )}
+          {!isPrint && (
+            <Typography variant="h1">
+              Appendix D
+            </Typography>
+          )}
+          {/* Config is disabled in print reports for now due to feedback */}
+          {appendices?.config && !isPrint && (
+            <div className="appendices__config">
+              <strong>
+                {`Genomic Report ${report.reportVersion}/${report.kbVersion}`}
+              </strong>
+              <ConfigTable
+                config={appendices.config}
+                isPrint={isPrint}
+              />
+            </div>
           )}
         </>
       )}
-      {!isPrint && (
-        <Typography variant="h1">
-          Appendix C
-        </Typography>
-      )}
-      {isPrint && (
-        <div className="analysis-summary">
-          <Typography variant="h3">
-            Analysis Summary
-          </Typography>
-          <Grid
-            alignItems="flex-end"
-            container
-            spacing={3}
-            className="analysis-summary__content"
-          >
-            {analysisSummary.map(({ label, value }) => (
-              <Grid key={label as string} item>
-                <ReadOnlyTextField label={label}>
-                  {value}
-                </ReadOnlyTextField>
-              </Grid>
-            ))}
-          </Grid>
-        </div>
-      )}
-      {isProbe ? (
-        <ProbeReportOverview />
-      ) : (
-        <GenomicReportOverview />
-      )}
-      {!isPrint && (
-        <Typography variant="h1">
-          Appendix D
-        </Typography>
-      )}
-      {appendices?.config && (
-        <div className="appendices__config">
-          <strong>
-            {`Genomic Report ${report.reportVersion}/${report.kbVersion}`}
-          </strong>
-          <ConfigTable
-            config={appendices.config}
-            isPrint={isPrint}
-          />
-        </div>
+      {isLoading && (
+        <LinearProgress color="secondary" />
       )}
     </div>
   );

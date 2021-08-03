@@ -4,18 +4,21 @@ import React, {
 import orderBy from 'lodash.orderby';
 import { HorizontalBar, Chart } from 'react-chartjs-2';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { Typography } from '@material-ui/core';
+import {
+  Divider,
+  Typography,
+  LinearProgress,
+} from '@material-ui/core';
 
-import ReportContext from '../../../../components/ReportContext';
-import ImageService from '../../../../services/reports/image.service';
-import DataTable from '../../../../components/DataTable';
-import columnDefs from './columnDefs';
-import { getPairwiseExpressionCorrelation } from '../../../../services/reports/pairwise-expression';
-import Image from '../../../../components/Image';
+import api from '@/services/api';
+import ReportContext from '@/context/ReportContext';
+import snackbar from '@/services/SnackbarUtils';
+import DataTable from '@/components/DataTable';
+import Image, { ImageType } from '@/components/Image';
 import DemoDescription from '@/components/DemoDescription';
+import columnDefs from './columnDefs';
 
 import './index.scss';
-
 
 interface Color {
   red: number;
@@ -66,10 +69,11 @@ const getLuminance = (color: Color): number => {
 const ExpressionCorrelation = (): JSX.Element => {
   const { report } = useContext(ReportContext);
 
-  const [plots, setPlots] = useState({});
-  const [subtypePlots, setSubtypePlots] = useState({});
+  const [plots, setPlots] = useState<ImageType[]>();
+  const [subtypePlots, setSubtypePlots] = useState<ImageType[]>();
   const [pairwiseExpression, setPairwiseExpression] = useState([]);
   const [modifiedRowData, setModifiedRowData] = useState();
+  const [isLoading, setIsLoading] = useState(true);
 
   const [barChartData, setBarChartData] = useState({
     labels: [],
@@ -81,15 +85,21 @@ const ExpressionCorrelation = (): JSX.Element => {
   useEffect(() => {
     if (report) {
       const getData = async () => {
-        const [plotData, subtypePlotData, pairwiseData] = await Promise.all([
-          ImageService.get(report.ident, 'expression.chart,expression.legend'),
-          ImageService.subtypePlots(report.ident),
-          getPairwiseExpressionCorrelation(report.ident),
-        ]);
+        try {
+          const [plotData, subtypePlotData, pairwiseData] = await Promise.all([
+            api.get(`/reports/${report.ident}/image/retrieve/expression.chart,expression.legend`, {}).request(),
+            api.get(`/reports/${report.ident}/image/subtype-plots`, {}).request(),
+            api.get(`/reports/${report.ident}/pairwise-expression-correlation`, {}).request(),
+          ]);
 
-        setPlots(plotData);
-        setSubtypePlots(subtypePlotData);
-        setPairwiseExpression(orderBy(pairwiseData, ['correlation'], ['desc']).slice(0, 19));
+          setPlots(plotData);
+          setSubtypePlots(subtypePlotData);
+          setPairwiseExpression(orderBy(pairwiseData, ['correlation'], ['desc']).slice(0, 19));
+        } catch (err) {
+          snackbar.error(`Network error: ${err}`);
+        } finally {
+          setIsLoading(false);
+        }
       };
 
       getData();
@@ -222,42 +232,38 @@ const ExpressionCorrelation = (): JSX.Element => {
           is compared to previously sequenced tumours to identify the most similar individual
           samples. Subtyping based on gene expression is computed if applicable for the tumour type.
         </DemoDescription>
-        {plots && subtypePlots && (
+        {!isLoading && (
           <>
             <div>
               <div className="expression-correlation__expression-charts">
-                {plots['expression.chart'] && (
-                  <span>
-                    <Typography variant="h3" align="center" className="expression-correlation__header">
-                      Expression Chart
-                    </Typography>
-                    <Image
-                      image={plots['expression.chart']}
-                      showTitle
-                      showCaption
-                    />
-                  </span>
-                )}
-                {plots['expression.legend'] && (
-                  <span>
-                    <Typography variant="h3" align="center" className="expression-correlation__header">
-                      Expression Legend
-                    </Typography>
-                    <Image
-                      image={plots['expression.legend']}
-                      showTitle
-                      showCaption
-                    />
-                  </span>
-                )}
+                <span>
+                  <Typography variant="h3" align="center" className="expression-correlation__header">
+                    Expression Chart
+                  </Typography>
+                  <Image
+                    image={plots.find((plot) => plot.key === 'expression.chart')}
+                    showTitle
+                    showCaption
+                  />
+                </span>
+                <span>
+                  <Typography variant="h3" align="center" className="expression-correlation__header">
+                    Expression Legend
+                  </Typography>
+                  <Image
+                    image={plots.find((plot) => plot.key === 'expression.legend')}
+                    showTitle
+                    showCaption
+                  />
+                </span>
               </div>
-              {Boolean(Object.values(subtypePlots).length) && (
+              {Boolean(subtypePlots.length) && (
                 <div className="expression-correlation__subtype">
                   <span>
                     <Typography variant="h3" align="center" className="expression-correlation__header">
                       Subtype Plots
                     </Typography>
-                    {Object.values(subtypePlots).map((plot) => (
+                    {subtypePlots.map((plot) => (
                       <Image
                         key={plot.ident}
                         image={plot}
@@ -268,33 +274,34 @@ const ExpressionCorrelation = (): JSX.Element => {
                   </span>
                 </div>
               )}
+              <Divider />
+              <span className="expression-correlation__chart-group">
+                {Boolean(Object.values(barChartData.datasets).length) && (
+                  <div className="expression-correlation__chart">
+                    <HorizontalBar
+                      ref={chartRef}
+                      data={barChartData}
+                      height={150 + (barChartData.datasets[0].data.length * 25)}
+                      options={options}
+                    />
+                  </div>
+                )}
+                {Boolean(pairwiseExpression.length) && (
+                  <DataTable
+                    rowData={pairwiseExpression}
+                    columnDefs={columnDefs}
+                    highlightRow={rowClicked}
+                    onRowDataChanged={handleRowDataChanged}
+                  />
+                )}
+              </span>
             </div>
-            {!Object.values(plots).length && !Object.values(subtypePlots).length && (
-              <Typography align="center">No expression correlation plots found</Typography>
-            )}
           </>
         )}
+        {isLoading && (
+          <LinearProgress />
+        )}
       </div>
-      {Boolean(Object.values(barChartData.datasets).length) && (
-        <span className="expression-correlation__chart-group">
-          <div className="expression-correlation__chart">
-            <HorizontalBar
-              ref={chartRef}
-              data={barChartData}
-              height={150 + (barChartData.datasets[0].data.length * 25)}
-              options={options}
-            />
-          </div>
-          {Boolean(pairwiseExpression.length) && (
-            <DataTable
-              rowData={pairwiseExpression}
-              columnDefs={columnDefs}
-              highlightRow={rowClicked}
-              onRowDataChanged={handleRowDataChanged}
-            />
-          )}
-        </span>
-      )}
     </>
   );
 };

@@ -1,6 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const DashboardPlugin = require('webpack-dashboard/plugin');
 const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
@@ -14,20 +15,6 @@ module.exports = {
     rules: [
       {
         oneOf: [
-          {
-            test: /\.pug$/,
-            include: path.join(__dirname, '../../app'),
-            exclude: /node_modules/,
-            use: [{
-              loader: 'apply-loader',
-              options: {
-                obj: {},
-              },
-            },
-            {
-              loader: 'pug-loader',
-            }],
-          },
           {
             test: /\.(html)$/,
             use: {
@@ -51,6 +38,10 @@ module.exports = {
             }],
           },
           {
+            test: /\.svg$/,
+            use: ['@svgr/webpack'],
+          },
+          {
             test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.svg$/],
             exclude: /node_modules/,
             loader: 'file-loader',
@@ -65,6 +56,7 @@ module.exports = {
                 loader: 'file-loader',
                 options: {
                   name: 'font/[hash].[ext]',
+                  esModule: false,
                 },
               },
             ],
@@ -74,7 +66,7 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: ['.js', '.jsx', '.ts', '.tsx'],
+    extensions: ['.js', '.jsx', '.ts', '.tsx', '.d.ts'],
     alias: {
       '@': APP_PATH,
     },
@@ -83,19 +75,23 @@ module.exports = {
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: path.join(__dirname, '../../statics/images/*'),
+          from: path.join(APP_PATH, 'statics/images/*'),
           to: 'img/',
           flatten: true,
         },
         {
-          from: path.join(__dirname, '../../statics/favicon/*'),
+          from: path.join(APP_PATH, 'statics/favicon/*'),
           to: 'img/',
           flatten: true,
         },
         {
-          from: path.join(__dirname, '../../statics/ipr-env-config.js'),
+          from: path.join(APP_PATH, 'ipr-env-config.js'),
           to: 'ipr-env-config.js',
         },
+        {
+          from: path.join(APP_PATH, 'index.css'),
+          to: 'index.css',
+        }
       ],
     }),
     new webpack.HotModuleReplacementPlugin(),
@@ -104,19 +100,23 @@ module.exports = {
       VERSION: JSON.stringify(packageFile.version),
     }),
     new MomentLocalesPlugin(),
+    new CleanWebpackPlugin(),
     // new BundleAnalyzerPlugin({
     //   defaultSizes: 'gzip',
     //   excludeAssets: '.*\.hot-update\.js',
     // }),
   ],
   optimization: {
+    runtimeChunk: 'single',
     splitChunks: {
       chunks: 'all',
+      minSize: 1000 * 500,
     },
+    moduleIds: 'hashed',
   },
   mode: 'development',
   devtool: 'inline-source-map',
-  entry: path.resolve(__dirname, '../../app/root.module.js'),
+  entry: path.resolve(APP_PATH, 'index.tsx'),
   output: {
     path: path.resolve(__dirname, '../../dist'),
     chunkFilename: '[name].[chunkhash].chunk.js',

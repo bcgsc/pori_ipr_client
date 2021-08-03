@@ -10,13 +10,12 @@ import {
 import { useTheme } from '@material-ui/core/styles';
 import { useSnackbar } from 'notistack';
 
-import SecurityContext from '@/components/SecurityContext';
+import SecurityContext from '@/context/SecurityContext';
 import ReportToolbar from '@/components/ReportToolbar';
 import ReportSidebar from '@/components/ReportSidebar';
-import ReportService from '@/services/reports/report.service';
-import EditContext from '@/components/EditContext';
-import ReportContext from '@/components/ReportContext';
-import ConfirmContext from '@/components/ConfirmContext';
+import EditContext from '@/context/EditContext';
+import ReportContext from '@/context/ReportContext';
+import ConfirmContext from '@/context/ConfirmContext';
 import api from '@/services/api';
 import allSections from './sections';
 
@@ -40,7 +39,8 @@ const Expression = lazy(() => import('./components/Expression'));
 const Immune = lazy(() => import('./components/Immune'));
 const Appendices = lazy(() => import('./components/Appendices'));
 const Settings = lazy(() => import('./components/Settings'));
-const ProbeSummary = lazy(() => import('./components/PharmacoGenomicSummary'));
+const ProbeSummary = lazy(() => import('./components/ProbeSummary'));
+const Pharmacogenomic = lazy(() => import('./components/Pharmacogenomic'));
 
 const ReportView = () => {
   const { path } = useRouteMatch();
@@ -61,7 +61,7 @@ const ReportView = () => {
     if (!report) {
       const getReport = async () => {
         try {
-          const resp = await ReportService.getReport(params.ident);
+          const resp = await api.get(`/reports/${params.ident}`, {}).request();
           const templatesResp = await api.get('/templates', {}).request();
           setTemplates(templatesResp);
           setReport(resp);
@@ -213,6 +213,9 @@ const ReportView = () => {
                   )}
                   path={`${path}/immune`}
                 />
+                <Route path={`${path}/pharmacogenomic`}>
+                  <Pharmacogenomic />
+                </Route>
                 <Route
                   render={(routeProps) => (
                     <Appendices {...routeProps} isPrint={false} theme={theme} isProbe={isProbe} report={report} canEdit={canEdit} />
@@ -223,12 +226,7 @@ const ReportView = () => {
                   render={(routeProps) => (
                     <Settings
                       {...routeProps}
-                      print={false}
-                      showBindings={!isProbe}
-                      report={report}
-                      canEdit={canEdit}
-                      isSigned={isSigned}
-                      templates={templates}
+                      isProbe={isProbe}
                     />
                   )}
                   path={`${path}/settings`}

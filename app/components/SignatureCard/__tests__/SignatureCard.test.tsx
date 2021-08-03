@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 
-import EditContext from '@/components/EditContext';
+import EditContext from '@/context/EditContext';
 import SignatureCard from '..';
 import { mockNullData, mockNullObjectData, mockObjectData } from './mockData';
 
