@@ -10,12 +10,11 @@ import api from '@/services/api';
 import ReportContext from '@/context/ReportContext';
 import PageBreak from '@/components/PageBreak';
 import startCase from '@/utils/startCase';
-import GenomicSummary from '../ReportView/components/GenomicSummary';
-import ProbeSummary from '../ReportView/components/PharmacoGenomicSummary';
 import AnalystComments from '../ReportView/components/AnalystComments';
 import PathwayAnalysis from '../ReportView/components/PathwayAnalysis';
 import TherapeuticTargets from '../ReportView/components/TherapeuticTargets/components/PrintTables';
 import Slides from '../ReportView/components/Slides';
+import Summary from '../ReportView/components/Summary';
 import Appendices from '../ReportView/components/Appendices';
 import RunningLeft from './components/RunningLeft';
 import RunningCenter from './components/RunningCenter';
@@ -49,7 +48,7 @@ const reducer = (state, action) => {
   }
 };
 
-const Print = () => {
+const Print = (): JSX.Element => {
   const params = useParams();
   const theme = useTheme();
   const [report, setReport] = useState();
@@ -88,7 +87,7 @@ const Print = () => {
         await paged.preview(document.getElementById('root'), ['index.css'], document.body);
         window.print();
         setIsPrintDialogShown(true);
-      }
+      };
       showPrint();
     }
   }, [isPrintDialogShown, report, reportSectionsLoaded, template]);
@@ -97,15 +96,9 @@ const Print = () => {
     if (report && template) {
       return (
         <>
-          {template?.sections.includes('summary') && report.template.name === 'probe' && (
+          {template?.sections.includes('summary') && (
             <>
-              <ProbeSummary report={report} isPrint loadedDispatch={dispatch} />
-              <PageBreak />
-            </>
-          )}
-          {template?.sections.includes('summary') && report.template.name !== 'probe' && (
-            <>
-              <GenomicSummary print loadedDispatch={dispatch} />
+              <Summary templateName={report.template.name} isPrint loadedDispatch={dispatch} />
               <PageBreak />
             </>
           )}

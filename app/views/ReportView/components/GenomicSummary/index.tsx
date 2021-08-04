@@ -68,12 +68,12 @@ const customTypeSort = (variant) => {
 };
 
 type GenomicSummaryProps = {
-  print: boolean;
+  isPrint: boolean;
   loadedDispatch: (section: Record<'type', string>) => void;
 };
 
 const GenomicSummary = ({
-  print = false,
+  isPrint = false,
   loadedDispatch,
 }: GenomicSummaryProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
@@ -274,7 +274,7 @@ const GenomicSummary = ({
         {
           term: 'Mutation Signature',
           value: sigs,
-          action: !print ? () => history.push('mutation-signatures') : null,
+          action: !isPrint ? () => history.push('mutation-signatures') : null,
         },
         {
           term: 'Mutation Burden',
@@ -285,11 +285,11 @@ const GenomicSummary = ({
           value: svBurden,
         },
         {
-          term: `HR Deficiency${print ? '*' : ''}`,
+          term: `HR Deficiency${isPrint ? '*' : ''}`,
           value: null,
         },
         {
-          term: `SV Burden${print ? '*' : ''}`,
+          term: `SV Burden${isPrint ? '*' : ''}`,
           value: null,
         },
         {
@@ -298,7 +298,7 @@ const GenomicSummary = ({
         },
       ]);
     }
-  }, [history, microbial, microbial.species, primaryBurden, primaryComparator, print, report, signatures, tCellCd8, msi]);
+  }, [history, microbial, microbial.species, primaryBurden, primaryComparator, isPrint, report, signatures, tCellCd8, msi]);
 
   const handleChipDeleted = useCallback(async (chipIdent, type, comment) => {
     try {
@@ -407,7 +407,7 @@ const GenomicSummary = ({
             <div className="genomic-summary__patient-information-title">
               <Typography variant="h3" display="inline">
                 Patient Information
-                {canEdit && !print && (
+                {canEdit && !isPrint && (
                   <>
                     <IconButton onClick={() => setShowPatientEdit(true)}>
                       <EditIcon />
@@ -442,7 +442,7 @@ const GenomicSummary = ({
             <div className="genomic-summary__tumour-summary-title">
               <Typography variant="h3">
                 Tumour Summary
-                {canEdit && !print && (
+                {canEdit && !isPrint && (
                   <>
                     <IconButton onClick={() => setShowTumourSummaryEdit(true)}>
                       <EditIcon />
@@ -463,7 +463,7 @@ const GenomicSummary = ({
             </div>
           </div>
 
-          {print ? (
+          {isPrint ? (
             <>
               <div className="genomic-summary__alterations">
                 <div className="genomic-summary__alterations-title">
@@ -482,7 +482,7 @@ const GenomicSummary = ({
                     canEdit={canEdit}
                     onChipDeleted={handleChipDeleted}
                     onChipAdded={handleChipAdded}
-                    isPrint={print}
+                    isPrint={isPrint}
                   />
                 </div>
               </div>
