@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 const common = require('./webpack.config.js');
 
-const stagingConfig = {
+const stagingConfig = (env) => ({
   mode: 'development',
   plugins: [
     new HtmlWebpackPlugin({
@@ -39,7 +39,8 @@ const stagingConfig = {
       }),
     }),
   ],
-};
-module.exports = [
-  merge(common, stagingConfig),
+});
+
+module.exports = (env) => [
+  merge(common(env), stagingConfig(env)),
 ];

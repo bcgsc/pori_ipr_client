@@ -5,7 +5,7 @@ const path = require('path');
 const common = require('./webpack.config.js');
 
 
-const localConfig = {
+const localConfig = (env) => ({
   mode: 'development',
   plugins: [
     new HtmlWebpackPlugin({
@@ -40,7 +40,8 @@ const localConfig = {
       }),
     }),
   ],
-};
-module.exports = [
-  merge(common, localConfig),
+});
+
+module.exports = (env) => [
+  merge(common(env), localConfig(env)),
 ];
