@@ -415,6 +415,7 @@ const DataTable = ({
               editType="fullRow"
               onFilterChanged={handleFilterAndSortChanged}
               onSortChanged={handleFilterAndSortChanged}
+              noRowsOverlayComponent="NoRowsOverlay"
               context={{
                 canEdit,
                 canDelete,
@@ -427,6 +428,7 @@ const DataTable = ({
                 GeneCellRenderer,
                 ActionCellRenderer: RowActionCellRenderer,
                 headerCellRenderer: Header,
+                NoRowsOverlay,
               }}
               suppressAnimationFrame
               suppressColumnVirtualisation
@@ -454,55 +456,6 @@ const DataTable = ({
           </div>
         </>
       )}
-      <div
-        className="ag-theme-material data-table__container"
-        ref={gridDiv}
-      >
-        <ColumnPicker
-          className="data-view__options-menu"
-          label="Configure Visible Columns"
-          columns={columnDisplayNames}
-          onClose={handlePopoverClose}
-          isOpen={showPopover}
-        />
-        <AgGridReact
-          ref={gridRef}
-          columnDefs={columnDefs}
-          rowData={rowData}
-          defaultColDef={defaultColDef}
-          onGridReady={onGridReady}
-          domLayout={domLayout}
-          pagination={isPaginated}
-          paginationAutoPageSize={isFullLength}
-          paginationPageSize={MAX_VISIBLE_ROWS}
-          autoSizePadding={0}
-          deltaRowDataMode={canReorder}
-          getRowNodeId={(data) => data.ident}
-          onRowDragEnd={canReorder ? onRowDragEnd : null}
-          editType="fullRow"
-          onFilterChanged={handleFilterAndSortChanged}
-          onSortChanged={handleFilterAndSortChanged}
-          noRowsOverlayComponent="NoRowsOverlay"
-          context={{
-            canEdit,
-            canDelete,
-            canViewDetails,
-            tableType,
-          }}
-          frameworkComponents={{
-            EnsemblCellRenderer,
-            CivicCellRenderer,
-            GeneCellRenderer,
-            ActionCellRenderer: RowActionCellRenderer,
-            headerCellRenderer: Header,
-            NoRowsOverlay,
-          }}
-          suppressAnimationFrame
-          suppressColumnVirtualisation
-          disableStaticMarkup // See https://github.com/ag-grid/ag-grid/issues/3727
-          onFirstDataRendered={onFirstDataRendered}
-        />
-      </div>
     </div>
   );
 };
