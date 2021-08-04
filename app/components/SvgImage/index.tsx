@@ -44,9 +44,9 @@ const SvgImage = ({
       /* Regex finds style="prop: value" and replaces with the attr prop="value" */
       setProcessedImage(
         image.replace(
-          /style=(("(?:[^"\\]|\\.)*")|('(?:[^'\\]|\\.)*'))/g,
+          /(?<=<svg[^>]*?)style=((\\?"(?:[^"\\]|\\.)*?\\?")|(\\?'(?:[^'\\]|\\.)*?\\?'))/g,
           replacer,
-        )
+        ),
       );
     }
     return () => setProcessedImage('');
