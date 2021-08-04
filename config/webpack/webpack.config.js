@@ -10,7 +10,7 @@ const packageFile = require('../../package.json');
 const BASE_DIR = path.resolve(__dirname, '../..');
 const APP_PATH = path.resolve(BASE_DIR, 'app');
 
-module.exports = {
+module.exports = (env) => ({
   module: {
     rules: [
       {
@@ -101,10 +101,11 @@ module.exports = {
     }),
     new MomentLocalesPlugin(),
     new CleanWebpackPlugin(),
-    // new BundleAnalyzerPlugin({
-    //   defaultSizes: 'gzip',
-    //   excludeAssets: '.*\.hot-update\.js',
-    // }),
+    new BundleAnalyzerPlugin({
+      analyzerMode: env && env.ANALYZE ? 'server' : 'disabled',
+      defaultSizes: 'gzip',
+      excludeAssets: '.*\.hot-update\.js',
+    }),
   ],
   optimization: {
     runtimeChunk: 'single',
@@ -133,4 +134,4 @@ module.exports = {
     publicPath: '/',
     historyApiFallback: true,
   },
-};
+});
