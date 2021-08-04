@@ -349,13 +349,13 @@ const ProbeSummary = ({
             </div>
           )}
           {report && (
-            <span className="probe-summary__reviews">
+            <div className="probe-summary__reviews">
               {!isPrint && (
                 <Typography variant="h3" className="probe-summary__reviews-title">
                   Reviews
                 </Typography>
               )}
-              <div className={`${isPrint ? 'probe-summary__signatures' : ''}`}>
+              <div className="probe-summary__signatures">
                 <SignatureCard
                   title={`${isPrint ? 'Manual Review' : 'Ready'}`}
                   signatures={signatures}
@@ -371,7 +371,7 @@ const ProbeSummary = ({
                   isPrint={isPrint}
                 />
               </div>
-            </span>
+            </div>
           )}
         </>
       )}

@@ -45,13 +45,13 @@
 
   &__reviews {
     &-title {
-      margin: 0 0 32px;
+      margin: 0 0 24px;
     }
   }
 
   &__signatures {
-    margin: 0 8px;
-    border: 1px solid black;
+    max-width: $readable-max;
+    margin: 0 auto;
   }
 
   &__none {
@@ -89,6 +89,13 @@
       &-title {
         margin: 0 0 16px;
       }
+    }
+
+    &__signatures {
+      border: 1px solid black;
+      display: flex;
+      margin: 0 8px;
+      max-width: none;
     }
   }
 }

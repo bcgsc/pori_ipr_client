@@ -297,11 +297,11 @@ const PharmacoGenomicSummary = ({
               </Typography>
             </div>
           )}
-          <span className="summary__reviews">
+          <div className="summary__reviews">
             <Typography variant="h3" className="summary__reviews-title">
               Reviews
             </Typography>
-            <div className={`${isPrint ? 'summary__signatures' : ''}`}>
+            <div className="summary__signatures">
               <SignatureCard
                 title={`${isPrint ? 'Manual Review' : 'Ready'}`}
                 signatures={signatures}
@@ -317,7 +317,7 @@ const PharmacoGenomicSummary = ({
                 isPrint={isPrint}
               />
             </div>
-          </span>
+          </div>
         </>
       )}
     </div>

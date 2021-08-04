@@ -28,17 +28,13 @@
 
   &__reviews {
     &-title {
-      margin: 0 0 32px;
+      margin: 0 0 24px;
     }
   }
 
   &__signatures {
-    padding: 8px 0;
-    max-width: $print-width;
+    max-width: $readable-max;
     margin: 0 auto;
-    display: flex;
-    flex-direction: row;
-    border: 1px solid black;
   }
 
   &__none {
@@ -83,6 +79,10 @@
 
     &__signatures {
       page-break-inside: avoid;
+      border: 1px solid black;
+      display: flex;
+      margin: 0 8px;
+      max-width: none;
     }
   }
 }
