@@ -16,7 +16,6 @@ const Login = (props) => {
     authorizationToken,
     setAuthorizationToken,
     setUserDetails,
-    setAdminUser,
   } = useContext(SecurityContext);
 
   let from;
@@ -60,14 +59,12 @@ const Login = (props) => {
       const retrieveUser = async () => {
         const user = await getUser(authorizationToken);
         setUserDetails(user);
-        const admin = isAdmin(user);
-        setAdminUser(admin);
         history.push(from);
       };
 
       retrieveUser();
     }
-  }, [authorizationToken, from, history, setAdminUser, setAuthorizationToken, setUserDetails]);
+  }, [authorizationToken, from, history, setAuthorizationToken, setUserDetails]);
 
   return (null);
 };

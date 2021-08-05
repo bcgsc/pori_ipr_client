@@ -8,6 +8,7 @@ import {
 import api from '@/services/api';
 import ReportContext from '@/context/ReportContext';
 import SecurityContext from '@/context/SecurityContext';
+import { useResource } from '@/context/ResourceContext';
 import snackbar from '@/services/SnackbarUtils';
 import { formatDate } from '@/utils/date';
 
@@ -15,7 +16,8 @@ import './index.scss';
 
 const Analysis = (): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
-  const { userDetails, adminUser } = useContext(SecurityContext);
+  const { userDetails } = useContext(SecurityContext);
+  const { adminAccess } = useResource();
 
   const handleAnalysisStart = useCallback(async () => {
     try {
@@ -50,7 +52,7 @@ const Analysis = (): JSX.Element => {
           </Typography>
         ) : (
           <>
-            {!isAssigned && !adminUser ? (
+            {!isAssigned && !adminAccess ? (
               <Tooltip
                 placement="right"
                 title="Only assigned users can start the analysis"

@@ -7,15 +7,17 @@ import {
 } from 'react-router-dom';
 
 import SecurityContext from '@/context/SecurityContext';
+import { useResource } from '@/context/ResourceContext';
 import { isAuthorized } from '@/services/management/auth';
 
 /**
  * @returns {Route} a route component which checks authorization on render or redirects to login
  */
 const AuthenticatedRoute = ({
-  component: Component, adminRequired, admin, isNavVisible, onToggleNav, ...rest
+  component: Component, adminRequired, showNav, onToggleNav, ...rest
 }) => {
   const { authorizationToken } = useContext(SecurityContext);
+  const { adminAccess } = useResource();
   const authOk = isAuthorized(authorizationToken);
 
   let ChildComponent = null;
@@ -31,14 +33,14 @@ const AuthenticatedRoute = ({
         />
       );
     };
-  } else if (!admin && adminRequired) {
+  } else if (!adminAccess && adminRequired) {
     ChildComponent = () => (
       <Redirect to="/" />
     );
   } else {
     ChildComponent = Component;
   }
-  if (isNavVisible) {
+  if (showNav) {
     onToggleNav(true);
   } else {
     onToggleNav(false);
@@ -48,23 +50,27 @@ const AuthenticatedRoute = ({
     <>
       <Route
         {...rest}
-        render={(props) => (<ChildComponent admin={admin} {...props} />)}
+        render={(props) => (<ChildComponent {...props} />)}
       />
     </>
   );
 };
 
 AuthenticatedRoute.propTypes = {
+  adminRequired: PropTypes.bool,
   // eslint-disable-next-line react/forbid-prop-types
   component: PropTypes.object.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
   location: PropTypes.object,
-  admin: PropTypes.bool,
+  onToggleNav: PropTypes.func,
+  showNav: PropTypes.bool,
 };
 
 AuthenticatedRoute.defaultProps = {
+  adminRequired: false,
   location: null,
-  admin: false,
+  onToggleNav: () => {},
+  showNav: false,
 };
 
 export default AuthenticatedRoute;

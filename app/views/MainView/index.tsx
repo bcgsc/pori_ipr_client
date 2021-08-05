@@ -35,7 +35,6 @@ const TemplateView = lazy(() => import('../TemplateView'));
 const Main = (): JSX.Element => {
   const [authorizationToken, setAuthorizationToken] = useState('');
   const [userDetails, setUserDetails] = useState('');
-  const [adminUser, setAdminUser] = useState(false);
   const [sidebarMaximized, setSidebarMaximized] = useState(false);
   const [isNavVisible, setIsNavVisible] = useState(true);
   const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
@@ -52,7 +51,7 @@ const Main = (): JSX.Element => {
   return (
     <SecurityContext.Provider
       value={{
-        authorizationToken, setAuthorizationToken, userDetails, setUserDetails, adminUser, setAdminUser,
+        authorizationToken, setAuthorizationToken, userDetails, setUserDetails,
       }}
     >
       <EditContextProvider>
@@ -71,17 +70,8 @@ const Main = (): JSX.Element => {
                 <section className={`${isNavVisible ? 'main__content' : ''} ${sidebarMaximized ? 'main__content--maximized' : ''}`}>
                   {isNavVisible ? (
                     <>
-                      <NavBar
-                        sidebarMaximized={sidebarMaximized}
-                        setSidebarMaximized={setSidebarMaximized}
-                        user={userDetails}
-                      />
-                      <Sidebar
-                        sidebarMaximized={sidebarMaximized}
-                        setSidebarMaximized={setSidebarMaximized}
-                        user={userDetails}
-                        admin={adminUser}
-                      />
+                      <NavBar />
+                      <Sidebar />
                     </>
                   ) : null}
                   <Suspense fallback={(<CircularProgress color="secondary" />)}>
@@ -91,15 +81,15 @@ const Main = (): JSX.Element => {
                       <Route path="/" exact>
                         <Redirect to={{ pathname: '/reports' }} />
                       </Route>
-                      <AuthenticatedRoute component={TermsView} path="/terms" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
-                      <AuthenticatedRoute admin={adminUser} component={ReportsView} path="/reports" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
-                      <AuthenticatedRoute exact admin={adminUser} component={PatientsView} path="/reports/patients/:patientId" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
+                      <AuthenticatedRoute component={TermsView} path="/terms" />
+                      <AuthenticatedRoute component={ReportsView} path="/reports" />
+                      <AuthenticatedRoute exact component={PatientsView} path="/reports/patients/:patientId" />
                       <Redirect exact from="/report/:ident/(genomic|probe)/summary" to="/report/:ident/summary" />
-                      <AuthenticatedRoute component={ReportView} path="/report/:ident" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
-                      <AuthenticatedRoute component={PrintView} path="/print/:ident" isNavVisible={false} onToggleNav={setIsNavVisible} />
-                      <AuthenticatedRoute component={GermlineView} path="/germline" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
-                      <AuthenticatedRoute admin={adminUser} adminRequired component={AdminView} path="/admin" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
-                      <AuthenticatedRoute admin={adminUser} adminRequired component={TemplateView} path="/template" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
+                      <AuthenticatedRoute component={ReportView} path="/report/:ident" />
+                      <AuthenticatedRoute component={PrintView} path="/print/:ident" showNav={false} onToggleNav={setIsNavVisible} />
+                      <AuthenticatedRoute component={GermlineView} path="/germline" />
+                      <AuthenticatedRoute adminRequired component={AdminView} path="/admin" />
+                      <AuthenticatedRoute adminRequired component={TemplateView} path="/template" />
                     </Switch>
                   </Suspense>
                   <Snackbar

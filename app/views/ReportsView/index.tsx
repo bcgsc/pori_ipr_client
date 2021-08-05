@@ -7,6 +7,7 @@ import { ColumnState } from '@ag-grid-community/core';
 import startCase from '@/utils/startCase';
 import useGrid from '@/hooks/useGrid';
 import { isExternalMode } from '@/services/management/auth';
+import { useResource } from '@/context/ResourceContext';
 import SecurityContext from '@/context/SecurityContext';
 import api from '@/services/api';
 import { ReportType } from '@/context/ReportContext';
@@ -25,7 +26,8 @@ const ReportsTableComponent = (): JSX.Element => {
     onGridReady,
   } = useGrid();
 
-  const { userDetails, adminUser } = useContext(SecurityContext);
+  const { userDetails } = useContext(SecurityContext);
+  const { adminAccess } = useResource();
   const [rowData, setRowData] = useState<ReportType[]>();
 
   useEffect(() => {
@@ -33,7 +35,7 @@ const ReportsTableComponent = (): JSX.Element => {
       const getData = async () => {
         let states = '';
 
-        if (!adminUser) {
+        if (!adminAccess) {
           states = 'ready,active,uploaded,signedoff,archived,reviewed';
         }
 
@@ -65,7 +67,7 @@ const ReportsTableComponent = (): JSX.Element => {
       };
       getData();
     }
-  }, [adminUser, userDetails, rowData]);
+  }, [adminAccess, userDetails, rowData]);
 
   const onGridSizeChanged = useCallback((params) => {
     const MEDIUM_SCREEN_WIDTH_LOWER = 992;

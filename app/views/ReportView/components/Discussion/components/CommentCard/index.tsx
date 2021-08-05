@@ -16,6 +16,7 @@ import { useSnackbar } from 'notistack';
 
 import ReportContext from '@/context/ReportContext';
 import SecurityContext from '@/context/SecurityContext';
+import { useResource } from '@/context/ResourceContext';
 import api from '@/services/api';
 import { formatDate } from '@/utils/date';
 import CommentType from './types';
@@ -34,7 +35,8 @@ const CommentCard = ({
   onDelete,
 }: CommentCardProps): JSX.Element => {
   const { report } = useContext(ReportContext);
-  const { userDetails, adminUser } = useContext(SecurityContext);
+  const { userDetails } = useContext(SecurityContext);
+  const { adminAccess } = useResource();
   const snackbar = useSnackbar();
   
   const [isEditing, setIsEditing] = useState(false);
@@ -101,7 +103,7 @@ const CommentCard = ({
           )}
         </Typography>
         <Typography display="inline" variant="caption">
-          {(userDetails.username === comment.user.username || adminUser) ? (
+          {(userDetails.username === comment.user.username || adminAccess) ? (
             <>
               <IconButton
                 classes={{ root: 'comment-card__edit-icon' }}
