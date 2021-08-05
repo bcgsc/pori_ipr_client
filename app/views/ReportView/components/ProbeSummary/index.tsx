@@ -13,7 +13,7 @@ import api, { ApiCallSet } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
 import ReportContext, { ReportType, PatientInformationType } from '@/context/ReportContext';
-import { useEdit } from '@/context/EditContext';
+import useEdit from '@/hooks/useEdit';
 import ConfirmContext from '@/context/ConfirmContext';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import { formatDate } from '@/utils/date';

@@ -12,7 +12,7 @@ import { useSnackbar } from 'notistack';
 import SecurityContext from '@/context/SecurityContext';
 import ReportToolbar from '@/components/ReportToolbar';
 import ReportSidebar from '@/components/ReportSidebar';
-import { useEdit } from '@/context/EditContext';
+import useEdit from '@/hooks/useEdit';
 import ReportContext from '@/context/ReportContext';
 import ConfirmContext from '@/context/ConfirmContext';
 import api from '@/services/api';

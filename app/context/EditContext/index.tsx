@@ -1,6 +1,6 @@
-import React, { createContext, ReactChild, useContext } from 'react';
+import React, { createContext, ReactChild } from 'react';
 
-import useActions from '@/hooks/useActions';
+import { useActions } from '@/hooks/useEdit';
 import EditContextInterface from './interfaces';
 
 const EditContext = createContext<EditContextInterface>({
@@ -21,11 +21,9 @@ const EditContextProvider = ({ children }: EditContextProviderProps): JSX.Elemen
   );
 };
 
-const useEdit = (): EditContextInterface => useContext(EditContext);
-
 export {
+  EditContextInterface,
   EditContextProvider,
-  useEdit,
 };
 
 export default EditContext;

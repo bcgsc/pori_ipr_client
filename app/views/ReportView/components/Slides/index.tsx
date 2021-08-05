@@ -17,7 +17,7 @@ import api from '@/services/api';
 import AlertDialog from '@/components/AlertDialog';
 import snackbar from '@/services/SnackbarUtils';
 import ReportContext from '@/context/ReportContext';
-import { useEdit } from '@/context/EditContext';
+import useEdit from '@/hooks/useEdit';
 import DemoDescription from '@/components/DemoDescription';
 
 import UploadSlide from './components/UploadSlide';

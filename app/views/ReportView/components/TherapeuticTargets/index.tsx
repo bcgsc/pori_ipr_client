@@ -5,7 +5,7 @@ import { LinearProgress } from '@material-ui/core';
 import orderBy from 'lodash.orderby';
 
 import DataTable from '@/components/DataTable';
-import { useEdit } from '@/context/EditContext';
+import useEdit from '@/hooks/useEdit';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DemoDescription from '@/components/DemoDescription';

@@ -9,7 +9,7 @@ import PublishIcon from '@material-ui/icons/Publish';
 import { useSnackbar } from 'notistack';
 
 import api from '@/services/api';
-import { useEdit } from '@/context/EditContext';
+import useEdit from '@/hooks/useEdit';
 import ReportContext from '@/context/ReportContext';
 import ConfirmContext from '@/context/ConfirmContext';
 import Image, { ImageType } from '@/components/Image';

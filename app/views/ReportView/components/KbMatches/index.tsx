@@ -13,7 +13,7 @@ import {
 import api, { ApiCallSet } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DemoDescription from '@/components/DemoDescription';
-import { useEdit } from '@/context/EditContext';
+import useEdit from '@/hooks/useEdit';
 import DataTable from '@/components/DataTable';
 import ReportContext from '@/context/ReportContext';
 import { columnDefs, targetedColumnDefs } from './columnDefs';

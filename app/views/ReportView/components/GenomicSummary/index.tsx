@@ -13,7 +13,7 @@ import sortBy from 'lodash.sortby';
 
 import api, { ApiCallSet } from '@/services/api';
 import { formatDate } from '@/utils/date';
-import { useEdit } from '@/context/EditContext';
+import useEdit from '@/hooks/useEdit';
 import ConfirmContext from '@/context/ConfirmContext';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import DemoDescription from '@/components/DemoDescription';

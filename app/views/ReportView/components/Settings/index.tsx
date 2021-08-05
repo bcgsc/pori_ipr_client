@@ -16,7 +16,7 @@ import {
 
 import api from '@/services/api';
 import ReportContext from '@/context/ReportContext';
-import { useEdit } from '@/context/EditContext';
+import useEdit from '@/hooks/useEdit';
 import DemoDescription from '@/components/DemoDescription';
 import snackbar from '@/services/SnackbarUtils';
 import Analysis from './components/Analysis';

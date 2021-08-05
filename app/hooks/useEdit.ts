@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 
 import SecurityContext from '@/context/SecurityContext';
 import checkAccess from '@/utils/checkAccess';
+import EditContext, { EditContextInterface } from '@/context/EditContext';
 
 const EDIT_ACCESS = ['*'];
 const EDIT_BLOCK = ['clinician', 'colaborator'];
@@ -26,4 +27,8 @@ const useActions = (): UseActionsReturnType => {
   return { canEdit };
 };
 
-export default useActions;
+const useEdit = (): EditContextInterface => useContext(EditContext);
+
+export default useEdit;
+
+export { useActions };
