@@ -1,8 +1,6 @@
 import Keycloak from 'keycloak-js';
 import jwtDecode from 'jwt-decode';
 
-import api from '@/services/api';
-
 const keycloak = Keycloak({
   'realm': window._env_.KEYCLOAK_REALM,
   'clientId': window._env_.KEYCLOAK_CLIENT_ID,
@@ -57,17 +55,6 @@ const isAuthorized = (authorizationToken) => {
 };
 
 /**
- * Gets the user object from the api
- */
-const getUser = async () => {
-  try {
-    return api.get('/user/me').request();
-  } catch (err) {
-    return null;
-  }
-};
-
-/**
  * Primarily used for display when logged in
  */
 const getUsername = ({ authorizationToken }) => {
@@ -111,6 +98,5 @@ export {
   keycloak,
   getReferrerUri,
   setReferrerUri,
-  getUser,
   getUsername,
 };

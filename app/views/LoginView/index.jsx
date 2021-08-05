@@ -3,7 +3,7 @@ import fetchIntercept from 'fetch-intercept';
 
 import SecurityContext from '@/context/SecurityContext';
 import {
-  login, isAuthorized, getReferrerUri, keycloak, getUser,
+  login, isAuthorized, getReferrerUri, keycloak,
 } from '@/services/management/auth';
 
 const Login = (props) => {
@@ -57,7 +57,7 @@ const Login = (props) => {
       }
     } else {
       const retrieveUser = async () => {
-        const user = await getUser(authorizationToken);
+        const user = await api.get('/user/me').request();
         setUserDetails(user);
         history.push(from);
       };
