@@ -5,7 +5,7 @@ import checkAccess from '@/utils/checkAccess';
 import EditContext, { EditContextInterface } from '@/context/EditContext';
 
 const EDIT_ACCESS = ['*'];
-const EDIT_BLOCK = ['clinician', 'colaborator'];
+const EDIT_BLOCK = ['clinician', 'collaborator'];
 
 type UseActionsReturnType = {
   canEdit: boolean;
