@@ -1,9 +1,9 @@
-import React, { useContext, useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import fetchIntercept from 'fetch-intercept';
 
 import SecurityContext from '@/context/SecurityContext';
 import {
-  login, isAuthorized, getReferrerUri, keycloak, getUser, isAdmin,
+  login, isAuthorized, getReferrerUri, keycloak, getUser,
 } from '@/services/management/auth';
 
 const Login = (props) => {

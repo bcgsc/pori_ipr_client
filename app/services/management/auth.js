@@ -3,8 +3,6 @@ import jwtDecode from 'jwt-decode';
 
 import api from '@/services/api';
 
-const externalGroups = ['clinician', 'collaborator', 'external analyst'];
-
 const keycloak = Keycloak({
   'realm': window._env_.KEYCLOAK_REALM,
   'clientId': window._env_.KEYCLOAK_CLIENT_ID,
@@ -70,17 +68,6 @@ const getUser = async () => {
 };
 
 /**
- * Returns true if the user has been sucessfully authenticated and the token is valid
- */
-const isAdmin = (user) => {
-  try {
-    return user.groups.some((group) => group.name.toLowerCase() === 'admin');
-  } catch {
-    return false;
-  }
-};
-
-/**
  * Primarily used for display when logged in
  */
 const getUsername = ({ authorizationToken }) => {
@@ -88,14 +75,6 @@ const getUsername = ({ authorizationToken }) => {
     return jwtDecode(authorizationToken).preferred_username;
   }
   return null;
-};
-
-const isExternalMode = (user) => {
-  try {
-    return user.groups.some((group) => externalGroups.includes(group.name.toLowerCase()));
-  } catch (err) {
-    return true;
-  }
 };
 
 const login = async (referrerUri = null) => {
@@ -127,7 +106,6 @@ const logout = async () => {
 
 export {
   isAuthorized,
-  isAdmin,
   login,
   logout,
   keycloak,
@@ -135,5 +113,4 @@ export {
   setReferrerUri,
   getUser,
   getUsername,
-  isExternalMode,
 };
