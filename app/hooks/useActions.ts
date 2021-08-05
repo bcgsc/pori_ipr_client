@@ -1,8 +1,10 @@
 import { useState, useEffect, useContext } from 'react';
 
 import SecurityContext from '@/context/SecurityContext';
+import checkAccess from '@/utils/checkAccess';
 
-const EDIT_BLACKLIST = ['clinician', 'colaborator'];
+const EDIT_ACCESS = ['*'];
+const EDIT_BLOCK = ['clinician', 'colaborator'];
 
 type UseActionsReturnType = {
   canEdit: boolean;
@@ -15,7 +17,7 @@ const useActions = (): UseActionsReturnType => {
 
   useEffect(() => {
     if (userDetails) {
-      if (!userDetails.groups.some((group) => EDIT_BLACKLIST.includes(group.name))) {
+      if (checkAccess(userDetails.groups, EDIT_ACCESS, EDIT_BLOCK)) {
         setCanEdit(true);
       }
     }

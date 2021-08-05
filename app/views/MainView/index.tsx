@@ -2,7 +2,6 @@ import React, {
   lazy,
   Suspense,
   useState,
-  useEffect,
   useCallback,
 } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
@@ -12,10 +11,10 @@ import AuthenticatedRoute from '@/components/AuthenticatedRoute';
 import SidebarContext from '@/context/SidebarContext';
 import SecurityContext from '@/context/SecurityContext';
 import { EditContextProvider } from '@/context/EditContext';
+import { ResourceContextProvider } from '@/context/ResourceContext';
 import SnackbarContext from '@/context/SnackbarContext';
 import NavBar from '@/components/NavBar';
 import Sidebar from '@/components/Sidebar';
-import AclService from '@/services/management/acl.service';
 
 import './index.scss';
 
@@ -57,65 +56,67 @@ const Main = (): JSX.Element => {
       }}
     >
       <EditContextProvider>
-        <SnackbarContext.Provider
-          value={{
-            isSnackbarOpen, setIsSnackbarOpen, snackbarMessage, setSnackbarMessage,
-          }}
-        >
-          <SidebarContext.Provider
+        <ResourceContextProvider>
+          <SnackbarContext.Provider
             value={{
-              sidebarMaximized, setSidebarMaximized,
+              isSnackbarOpen, setIsSnackbarOpen, snackbarMessage, setSnackbarMessage,
             }}
           >
-            <div>
-              <section className={`${isNavVisible ? 'main__content' : ''} ${sidebarMaximized ? 'main__content--maximized' : ''}`}>
-                {isNavVisible ? (
-                  <>
-                    <NavBar
-                      sidebarMaximized={sidebarMaximized}
-                      setSidebarMaximized={setSidebarMaximized}
-                      user={userDetails}
-                    />
-                    <Sidebar
-                      sidebarMaximized={sidebarMaximized}
-                      setSidebarMaximized={setSidebarMaximized}
-                      user={userDetails}
-                      admin={adminUser}
-                    />
-                  </>
-                ) : null}
-                <Suspense fallback={(<CircularProgress color="secondary" />)}>
-                  <Switch>
-                    <Route component={LoginView} path="/login" />
-                    <Route component={LinkOutView} path="/graphkb" />
-                    <Route path="/" exact>
-                      <Redirect to={{ pathname: '/reports' }} />
-                    </Route>
-                    <AuthenticatedRoute component={TermsView} path="/terms" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
-                    <AuthenticatedRoute admin={adminUser} component={ReportsView} path="/reports" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
-                    <AuthenticatedRoute exact admin={adminUser} component={PatientsView} path="/reports/patients/:patientId" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
-                    <Redirect exact from="/report/:ident/(genomic|probe)/summary" to="/report/:ident/summary" />
-                    <AuthenticatedRoute component={ReportView} path="/report/:ident" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
-                    <AuthenticatedRoute component={PrintView} path="/print/:ident" isNavVisible={false} onToggleNav={setIsNavVisible} />
-                    <AuthenticatedRoute component={GermlineView} path="/germline" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
-                    <AuthenticatedRoute admin={adminUser} adminRequired component={AdminView} path="/admin" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
-                    <AuthenticatedRoute admin={adminUser} adminRequired component={TemplateView} path="/template" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
-                  </Switch>
-                </Suspense>
-                <Snackbar
-                  open={isSnackbarOpen}
-                  message={snackbarMessage}
-                  autoHideDuration={3500}
-                  onClose={handleSnackbarClose}
-                  anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                  }}
-                />
-              </section>
-            </div>
-          </SidebarContext.Provider>
-        </SnackbarContext.Provider>
+            <SidebarContext.Provider
+              value={{
+                sidebarMaximized, setSidebarMaximized,
+              }}
+            >
+              <div>
+                <section className={`${isNavVisible ? 'main__content' : ''} ${sidebarMaximized ? 'main__content--maximized' : ''}`}>
+                  {isNavVisible ? (
+                    <>
+                      <NavBar
+                        sidebarMaximized={sidebarMaximized}
+                        setSidebarMaximized={setSidebarMaximized}
+                        user={userDetails}
+                      />
+                      <Sidebar
+                        sidebarMaximized={sidebarMaximized}
+                        setSidebarMaximized={setSidebarMaximized}
+                        user={userDetails}
+                        admin={adminUser}
+                      />
+                    </>
+                  ) : null}
+                  <Suspense fallback={(<CircularProgress color="secondary" />)}>
+                    <Switch>
+                      <Route component={LoginView} path="/login" />
+                      <Route component={LinkOutView} path="/graphkb" />
+                      <Route path="/" exact>
+                        <Redirect to={{ pathname: '/reports' }} />
+                      </Route>
+                      <AuthenticatedRoute component={TermsView} path="/terms" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
+                      <AuthenticatedRoute admin={adminUser} component={ReportsView} path="/reports" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
+                      <AuthenticatedRoute exact admin={adminUser} component={PatientsView} path="/reports/patients/:patientId" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
+                      <Redirect exact from="/report/:ident/(genomic|probe)/summary" to="/report/:ident/summary" />
+                      <AuthenticatedRoute component={ReportView} path="/report/:ident" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
+                      <AuthenticatedRoute component={PrintView} path="/print/:ident" isNavVisible={false} onToggleNav={setIsNavVisible} />
+                      <AuthenticatedRoute component={GermlineView} path="/germline" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
+                      <AuthenticatedRoute admin={adminUser} adminRequired component={AdminView} path="/admin" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
+                      <AuthenticatedRoute admin={adminUser} adminRequired component={TemplateView} path="/template" isNavVisible={isNavVisible} onToggleNav={setIsNavVisible} />
+                    </Switch>
+                  </Suspense>
+                  <Snackbar
+                    open={isSnackbarOpen}
+                    message={snackbarMessage}
+                    autoHideDuration={3500}
+                    onClose={handleSnackbarClose}
+                    anchorOrigin={{
+                      vertical: 'bottom',
+                      horizontal: 'left',
+                    }}
+                  />
+                </section>
+              </div>
+            </SidebarContext.Provider>
+          </SnackbarContext.Provider>
+        </ResourceContextProvider>
       </EditContextProvider>
     </SecurityContext.Provider>
   );

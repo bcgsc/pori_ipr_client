@@ -21,14 +21,14 @@ import DashboardIcon from '@material-ui/icons/Dashboard';
 
 import GermlineIcon from '@/statics/images/germline_icon.svg';
 import SidebarContext from '@/context/SidebarContext';
-import useResources from '@/hooks/useResources';
+import { useResource } from '@/context/ResourceContext';
 
 import './index.scss';
 
 const Sidebar = (): JSX.Element => {
   const { pathname } = useLocation();
   const { sidebarMaximized, setSidebarMaximized } = useContext(SidebarContext);
-  const { germlineAccess, reportAccess, adminAccess } = useResources();
+  const { germlineAccess, reportAccess, adminAccess } = useResource();
 
   const handleSidebarClose = useCallback(() => {
     setSidebarMaximized(false);
