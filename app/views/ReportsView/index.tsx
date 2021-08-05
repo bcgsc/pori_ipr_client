@@ -7,7 +7,7 @@ import { ColumnState } from '@ag-grid-community/core';
 import startCase from '@/utils/startCase';
 import useGrid from '@/hooks/useGrid';
 import { isExternalMode } from '@/services/management/auth';
-import { useResource } from '@/context/ResourceContext';
+import useResource from '@/hooks/useResource';
 import SecurityContext from '@/context/SecurityContext';
 import api from '@/services/api';
 import { ReportType } from '@/context/ReportContext';

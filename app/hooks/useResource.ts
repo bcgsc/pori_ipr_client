@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 
 import SecurityContext from '@/context/SecurityContext';
+import ResourceContext, { ResourceContextType } from '@/context/ResourceContext';
 import checkAccess from '@/utils/checkAccess';
 
 const GERMLINE_ACCESS = ['admin', 'analyst', 'bioinformatician', 'projects', 'manager'];
@@ -42,4 +43,8 @@ const useResources = (): UseResourcesReturnType => {
   return { germlineAccess, reportAccess, adminAccess };
 };
 
-export default useResources;
+const useResource = (): ResourceContextType => useContext(ResourceContext);
+
+export { useResources };
+
+export default useResource;

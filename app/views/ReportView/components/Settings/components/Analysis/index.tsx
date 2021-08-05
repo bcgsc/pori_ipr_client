@@ -8,7 +8,7 @@ import {
 import api from '@/services/api';
 import ReportContext from '@/context/ReportContext';
 import SecurityContext from '@/context/SecurityContext';
-import { useResource } from '@/context/ResourceContext';
+import useResource from '@/hooks/useResource';
 import snackbar from '@/services/SnackbarUtils';
 import { formatDate } from '@/utils/date';
 

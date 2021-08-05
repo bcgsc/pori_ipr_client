@@ -1,6 +1,6 @@
-import React, { createContext, ReactChild, useContext } from 'react';
+import React, { createContext, ReactChild } from 'react';
 
-import useResources from '@/hooks/useResources';
+import { useResources } from '@/hooks/useResource';
 import ResourceContextType from './types';
 
 const ResourceContext = createContext<ResourceContextType>({
@@ -23,11 +23,9 @@ const ResourceContextProvider = ({ children }: ResourceContextProviderProps): JS
   );
 };
 
-const useResource = (): ResourceContextType => useContext(ResourceContext);
-
 export {
   ResourceContextProvider,
-  useResource,
+  ResourceContextType,
 };
 
 export default ResourceContext;

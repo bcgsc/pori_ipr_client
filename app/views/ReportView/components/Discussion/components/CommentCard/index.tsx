@@ -16,7 +16,7 @@ import { useSnackbar } from 'notistack';
 
 import ReportContext from '@/context/ReportContext';
 import SecurityContext from '@/context/SecurityContext';
-import { useResource } from '@/context/ResourceContext';
+import useResource from '@/hooks/useResource';
 import api from '@/services/api';
 import { formatDate } from '@/utils/date';
 import CommentType from './types';

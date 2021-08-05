@@ -21,7 +21,7 @@ import DashboardIcon from '@material-ui/icons/Dashboard';
 
 import GermlineIcon from '@/statics/images/germline_icon.svg';
 import SidebarContext from '@/context/SidebarContext';
-import { useResource } from '@/context/ResourceContext';
+import useResource from '@/hooks/useResource';
 
 import './index.scss';
 

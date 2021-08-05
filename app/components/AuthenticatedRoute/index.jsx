@@ -7,7 +7,7 @@ import {
 } from 'react-router-dom';
 
 import SecurityContext from '@/context/SecurityContext';
-import { useResource } from '@/context/ResourceContext';
+import useResource from '@/hooks/useResource';
 import { isAuthorized } from '@/services/management/auth';
 
 /**
