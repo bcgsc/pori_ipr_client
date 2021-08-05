@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import {
   Button,
   Card,
@@ -11,7 +11,7 @@ import PersonIcon from '@material-ui/icons/Person';
 
 import { UserType, RecordDefaults } from '@/common';
 import startCase from '@/utils/startCase';
-import EditContext from '@/context/EditContext';
+import { useEdit } from '@/context/EditContext';
 
 import './index.scss';
 
@@ -27,7 +27,7 @@ const AssociationCard = ({
   user,
   onDelete,
 }: AssociationCardProps): JSX.Element => {
-  const { canEdit } = useContext(EditContext);
+  const { canEdit } = useEdit();
 
   return (
     <Card className="association-card">

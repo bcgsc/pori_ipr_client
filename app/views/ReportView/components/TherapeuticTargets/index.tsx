@@ -5,7 +5,7 @@ import { LinearProgress } from '@material-ui/core';
 import orderBy from 'lodash.orderby';
 
 import DataTable from '@/components/DataTable';
-import EditContext from '@/context/EditContext';
+import { useEdit } from '@/context/EditContext';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DemoDescription from '@/components/DemoDescription';
@@ -28,7 +28,7 @@ const Therapeutic = ({
   const [editData, setEditData] = useState();
   const [loading, setLoading] = useState<boolean>(true);
 
-  const { canEdit } = useContext(EditContext);
+  const { canEdit } = useEdit();
   const { report } = useContext(ReportContext);
 
   useEffect(() => {

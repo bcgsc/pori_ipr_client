@@ -11,7 +11,7 @@ import { CircularProgress, Snackbar } from '@material-ui/core';
 import AuthenticatedRoute from '@/components/AuthenticatedRoute';
 import SidebarContext from '@/context/SidebarContext';
 import SecurityContext from '@/context/SecurityContext';
-import EditContext from '@/context/EditContext';
+import { EditContextProvider } from '@/context/EditContext';
 import SnackbarContext from '@/context/SnackbarContext';
 import NavBar from '@/components/NavBar';
 import Sidebar from '@/components/Sidebar';
@@ -35,22 +35,12 @@ const TemplateView = lazy(() => import('../TemplateView'));
  */
 const Main = (): JSX.Element => {
   const [authorizationToken, setAuthorizationToken] = useState('');
-  const [canEdit, setCanEdit] = useState(false);
   const [userDetails, setUserDetails] = useState('');
   const [adminUser, setAdminUser] = useState(false);
   const [sidebarMaximized, setSidebarMaximized] = useState(false);
   const [isNavVisible, setIsNavVisible] = useState(true);
   const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
-
-  useEffect(() => {
-    if (authorizationToken) {
-      const getData = async () => {
-        setCanEdit(await AclService.checkAction('report.edit'));
-      };
-      getData();
-    }
-  }, [authorizationToken]);
 
   const handleSnackbarClose = useCallback((event, reason) => {
     if (reason === 'clickaway') {
@@ -66,11 +56,7 @@ const Main = (): JSX.Element => {
         authorizationToken, setAuthorizationToken, userDetails, setUserDetails, adminUser, setAdminUser,
       }}
     >
-      <EditContext.Provider
-        value={{
-          canEdit, setCanEdit,
-        }}
-      >
+      <EditContextProvider>
         <SnackbarContext.Provider
           value={{
             isSnackbarOpen, setIsSnackbarOpen, snackbarMessage, setSnackbarMessage,
@@ -130,7 +116,7 @@ const Main = (): JSX.Element => {
             </div>
           </SidebarContext.Provider>
         </SnackbarContext.Provider>
-      </EditContext.Provider>
+      </EditContextProvider>
     </SecurityContext.Provider>
   );
 };

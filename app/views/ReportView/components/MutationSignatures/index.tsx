@@ -25,7 +25,7 @@ const imageKeys = [
 
 const MutationSignatures = (): JSX.Element => {
   const { report } = useContext(ReportContext);
-  const { canEdit } = useContext(EditContext);
+  const { canEdit } = useEdit();
   const [images, setImages] = useState<ImageType[]>([]);
   const [sbsSignatures, setSbsSignatures] = useState<MutationSignatureType[]>([]);
   const [dbsSignatures, setDbsSignatures] = useState<MutationSignatureType[]>([]);

@@ -17,7 +17,7 @@ import api from '@/services/api';
 import AlertDialog from '@/components/AlertDialog';
 import snackbar from '@/services/SnackbarUtils';
 import ReportContext from '@/context/ReportContext';
-import EditContext from '@/context/EditContext';
+import { useEdit } from '@/context/EditContext';
 import DemoDescription from '@/components/DemoDescription';
 
 import UploadSlide from './components/UploadSlide';
@@ -35,7 +35,7 @@ const Slides = ({
   loadedDispatch,
 }: SlidesProps): JSX.Element => {
   const { report } = useContext(ReportContext);
-  const { canEdit } = useContext(EditContext);
+  const { canEdit } = useEdit();
 
   const [showAlert, setShowAlert] = useState(false);
   const [slides, setSlides] = useState<SlideType[]>([]);

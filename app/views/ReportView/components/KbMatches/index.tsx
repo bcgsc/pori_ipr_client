@@ -13,7 +13,7 @@ import {
 import api, { ApiCallSet } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DemoDescription from '@/components/DemoDescription';
-import EditContext from '@/context/EditContext';
+import { useEdit } from '@/context/EditContext';
 import DataTable from '@/components/DataTable';
 import ReportContext from '@/context/ReportContext';
 import { columnDefs, targetedColumnDefs } from './columnDefs';
@@ -41,7 +41,7 @@ const KbMatches = ({
   isPrint = false,
 }: KbMatchesProps): JSX.Element => {
   const { report } = useContext(ReportContext);
-  const { canEdit } = useContext(EditContext);
+  const { canEdit } = useEdit();
 
   const [isLoading, setIsLoading] = useState(true);
   const [filterText, setFilterText] = useState('');

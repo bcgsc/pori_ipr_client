@@ -2,7 +2,6 @@ import React, {
   lazy,
   useEffect,
   useState,
-  useContext,
 } from 'react';
 import {
   Switch, Route, useRouteMatch, useParams, useHistory,
@@ -13,7 +12,7 @@ import { useSnackbar } from 'notistack';
 import SecurityContext from '@/context/SecurityContext';
 import ReportToolbar from '@/components/ReportToolbar';
 import ReportSidebar from '@/components/ReportSidebar';
-import EditContext from '@/context/EditContext';
+import { useEdit } from '@/context/EditContext';
 import ReportContext from '@/context/ReportContext';
 import ConfirmContext from '@/context/ConfirmContext';
 import api from '@/services/api';
@@ -47,7 +46,7 @@ const ReportView = () => {
   const params = useParams();
   const theme = useTheme();
   const history = useHistory();
-  const { canEdit } = useContext(EditContext);
+  const { canEdit } = useEdit();
   const snackbar = useSnackbar();
 
   const [report, setReport] = useState();

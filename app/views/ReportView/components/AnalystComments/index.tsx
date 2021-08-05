@@ -11,7 +11,7 @@ import EditIcon from '@material-ui/icons/Edit';
 
 import api, { ApiCallSet } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
-import EditContext from '@/context/EditContext';
+import { useEdit } from '@/context/EditContext';
 import DemoDescription from '@/components/DemoDescription';
 import ReportContext from '@/context/ReportContext';
 import SignatureCard, { SignatureType } from '@/components/SignatureCard';
@@ -28,8 +28,8 @@ const AnalystComments = ({
   isPrint = false,
 }: AnalystCommentsProps): JSX.Element => {
   const { report } = useContext(ReportContext);
-  const { canEdit } = useContext(EditContext);
   const { setIsSigned } = useContext(ConfirmContext);
+  const { canEdit } = useEdit();
 
   const [comments, setComments] = useState('');
   const [signatures, setSignatures] = useState<SignatureType>();
