@@ -7,17 +7,27 @@ import {
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
+import DemoDescription from '@/components/DemoDescription';
 import ReportContext from '@/context/ReportContext';
 import { columnDefs } from './columnDefs';
 import MutationType from './types';
 
 import './index.scss';
 
-const titleMap = {
+const TITLE_MAP = {
   therapeutic: 'Variants of Therapeutic Relevance',
   nostic: 'Variants of Prognostic or Diagnostic Relevance',
   biological: 'Variants of Biological Relevance',
   unknown: 'Variants of Unknown Significance',
+};
+
+const getInfoDescription = (relevance: string) => `Small mutations where the mutation matched 1 or more statements of ${relevance} relevance in the knowledge base matches section. Details on these matches can be seen in the knowledge base matches section of this report.`;
+
+const INFO_BUBBLES = {
+  biological: getInfoDescription('biological'),
+  nostic: getInfoDescription('prognostic or diagnostic'),
+  therapeutic: getInfoDescription('therapeutic'),
+  unknown: 'Small mutations where the mutation did not match any knowledge base statements of therapeutic, biological, diagnostic, or prognostic relevance.',
 };
 
 const SmallMutations = (): JSX.Element => {
@@ -100,7 +110,8 @@ const SmallMutations = (): JSX.Element => {
               canToggleColumns
               columnDefs={columnDefs}
               rowData={value}
-              titleText={titleMap[key]}
+              titleText={TITLE_MAP[key]}
+              demoDescription={INFO_BUBBLES[key]}
             />
           ))}
         </>
