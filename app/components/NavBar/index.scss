@@ -37,7 +37,7 @@
 
   @media (min-width: $breakpoint-sm) {
     &--minimized {
-      width: calc(100% - $navbar-size);
+      width: calc(100% - #{$sidebar-size});
       transition: width $transition-normal;
     }
   }
