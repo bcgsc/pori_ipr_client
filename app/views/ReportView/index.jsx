@@ -7,18 +7,21 @@ import {
   Switch, Route, useRouteMatch, useParams, useHistory,
 } from 'react-router-dom';
 import { useTheme } from '@material-ui/core/styles';
-import { useSnackbar } from 'notistack';
 
 import SecurityContext from '@/context/SecurityContext';
 import ReportToolbar from '@/components/ReportToolbar';
 import ReportSidebar from '@/components/ReportSidebar';
 import useEdit from '@/hooks/useEdit';
+import useExternalMode from '@/hooks/useExternalMode';
 import ReportContext from '@/context/ReportContext';
 import ConfirmContext from '@/context/ConfirmContext';
 import api from '@/services/api';
+import snackbar from '@/services/SnackbarUtils';
 import allSections from './sections';
 
 import './index.scss';
+
+const EXTERNAL_ALLOWED_STATES = ['reviewed', 'archived'];
 
 const GenomicSummary = lazy(() => import('./components/GenomicSummary'));
 const AnalystComments = lazy(() => import('./components/AnalystComments'));
@@ -47,7 +50,7 @@ const ReportView = () => {
   const theme = useTheme();
   const history = useHistory();
   const { canEdit } = useEdit();
-  const snackbar = useSnackbar();
+  const isExternalMode = useExternalMode();
 
   const [report, setReport] = useState();
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
@@ -72,14 +75,25 @@ const ReportView = () => {
           const template = templatesResp.find((templ) => templ.name === resp.template.name);
           setVisibleSections(template?.sections);
         } catch {
-          snackbar.enqueueSnackbar(`Report ${params.ident} not found`);
+          snackbar.error(`Report ${params.ident} not found`);
           history.push('/reports');
         }
       };
 
       getReport();
     }
-  }, [history, params.ident, report, snackbar]);
+  }, [history, params.ident, report]);
+
+  /* External users should only be allowed to access certain states
+     Send them back to /reports if the report state isn't allowed */
+  useEffect(() => {
+    if (report) {
+      if (!EXTERNAL_ALLOWED_STATES.includes(report.state) && isExternalMode) {
+        snackbar.error('User does not have access to this report');
+        history.push('/reports');
+      }
+    }
+  }, [report, isExternalMode, history]);
 
   useEffect(() => {
     if (report) {

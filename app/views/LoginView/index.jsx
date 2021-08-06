@@ -5,6 +5,7 @@ import SecurityContext from '@/context/SecurityContext';
 import {
   login, isAuthorized, getReferrerUri, keycloak,
 } from '@/services/management/auth';
+import api from '@/services/api';
 
 const Login = (props) => {
   const {
