@@ -8,12 +8,14 @@ const EXTERNAL_GROUPS = ['clinician', 'collaborator', 'external analyst'];
 const useExternalMode = (): boolean => {
   const { userDetails } = useContext(SecurityContext);
 
-  const [isExternalMode, setIsExternalMode] = useState(true);
+  const [isExternalMode, setIsExternalMode] = useState<boolean>();
 
   useEffect(() => {
     if (userDetails) {
       if (!checkAccess(userDetails.groups, EXTERNAL_GROUPS, [])) {
         setIsExternalMode(false);
+      } else {
+        setIsExternalMode(true);
       }
     }
   }, [userDetails]);

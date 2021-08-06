@@ -31,7 +31,7 @@ const ReportsTableComponent = (): JSX.Element => {
   const [rowData, setRowData] = useState<ReportType[]>();
 
   useEffect(() => {
-    if (!rowData) {
+    if (isExternalMode !== undefined) {
       const getData = async () => {
         let states = '';
 
@@ -67,7 +67,7 @@ const ReportsTableComponent = (): JSX.Element => {
       };
       getData();
     }
-  }, [adminAccess, rowData, isExternalMode]);
+  }, [adminAccess, isExternalMode]);
 
   const onGridSizeChanged = useCallback((params) => {
     const MEDIUM_SCREEN_WIDTH_LOWER = 992;
