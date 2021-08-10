@@ -1,9 +1,7 @@
 import React, {
-  useEffect, useState, useContext, useRef,
+  useEffect, useState, useContext,
 } from 'react';
 import orderBy from 'lodash.orderby';
-import { HorizontalBar, Chart } from 'react-chartjs-2';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
 import {
   Divider,
   Typography,
@@ -13,11 +11,9 @@ import {
 import api from '@/services/api';
 import ReportContext from '@/context/ReportContext';
 import snackbar from '@/services/SnackbarUtils';
-import DataTable from '@/components/DataTable';
 import Image, { ImageType } from '@/components/Image';
 import DemoDescription from '@/components/DemoDescription';
-import columnDefs from './columnDefs';
-
+import CorrelationPlot from './components/CorrelationPlot';
 import './index.scss';
 
 const ExpressionCorrelation = (): JSX.Element => {
@@ -26,15 +22,7 @@ const ExpressionCorrelation = (): JSX.Element => {
   const [plots, setPlots] = useState<ImageType[]>();
   const [subtypePlots, setSubtypePlots] = useState<ImageType[]>();
   const [pairwiseExpression, setPairwiseExpression] = useState([]);
-  const [modifiedRowData, setModifiedRowData] = useState();
   const [isLoading, setIsLoading] = useState(true);
-
-  const [barChartData, setBarChartData] = useState({
-    labels: [],
-    datasets: [],
-  });
-  const [rowClicked, setRowClicked] = useState();
-  const chartRef = useRef();
 
   useEffect(() => {
     if (report) {
@@ -59,10 +47,6 @@ const ExpressionCorrelation = (): JSX.Element => {
       getData();
     }
   }, [report]);
-
-  const handleRowDataChanged = (newData) => {
-    setModifiedRowData(newData);
-  };
 
   return (
     <>
@@ -120,26 +104,9 @@ const ExpressionCorrelation = (): JSX.Element => {
                 </div>
               )}
               <Divider />
-              <span className="expression-correlation__chart-group">
-                {Boolean(Object.values(barChartData.datasets).length) && (
-                  <div className="expression-correlation__chart">
-                    <HorizontalBar
-                      ref={chartRef}
-                      data={barChartData}
-                      height={150 + (barChartData.datasets[0].data.length * 25)}
-                      options={options}
-                    />
-                  </div>
-                )}
-                {Boolean(pairwiseExpression.length) && (
-                  <DataTable
-                    rowData={pairwiseExpression}
-                    columnDefs={columnDefs}
-                    highlightRow={rowClicked}
-                    onRowDataChanged={handleRowDataChanged}
-                  />
-                )}
-              </span>
+              <CorrelationPlot
+                pairwiseExpression={pairwiseExpression}
+              />
             </div>
           </>
         )}

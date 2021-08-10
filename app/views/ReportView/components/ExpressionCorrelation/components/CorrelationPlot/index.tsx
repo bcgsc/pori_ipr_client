@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import orderBy from 'lodash.orderby';
+import React, { useEffect, useState, useRef } from 'react';
 import { HorizontalBar, Chart } from 'react-chartjs-2';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+
+import DataTable from '@/components/DataTable';
+import columnDefs from './columnDefs';
 
 interface Color {
   red: number;
@@ -72,8 +74,22 @@ const getGraphData = (rowData) => {
   };
 };
 
+type CorrelationPlotProps = {
+  pairwiseExpression: any[];
+};
 
-const CorrelationPlot = (): JSX.Element => {
+const CorrelationPlot = ({
+  pairwiseExpression,
+}: CorrelationPlotProps): JSX.Element => {
+  const [modifiedRowData, setModifiedRowData] = useState();
+  const [barChartData, setBarChartData] = useState({
+    labels: [],
+    datasets: [],
+  });
+  const [rowClicked, setRowClicked] = useState();
+
+  const chartRef = useRef();
+
   useEffect(() => {
     Chart.pluginService.register({
       plugins: [ChartDataLabels],
@@ -91,6 +107,10 @@ const CorrelationPlot = (): JSX.Element => {
       setBarChartData(getGraphData(modifiedRowData));
     }
   }, [modifiedRowData]);
+
+  const handleRowDataChanged = (newData) => {
+    setModifiedRowData(newData);
+  };
 
   const options = {
     responsive: true,
@@ -161,7 +181,26 @@ const CorrelationPlot = (): JSX.Element => {
   };
 
   return (
-
+    <span className="expression-correlation__chart-group">
+      {Boolean(Object.values(barChartData.datasets).length) && (
+        <div className="expression-correlation__chart">
+          <HorizontalBar
+            ref={chartRef}
+            data={barChartData}
+            height={150 + (barChartData.datasets[0].data.length * 25)}
+            options={options}
+          />
+        </div>
+      )}
+      {Boolean(pairwiseExpression.length) && (
+        <DataTable
+          rowData={pairwiseExpression}
+          columnDefs={columnDefs}
+          highlightRow={rowClicked}
+          onRowDataChanged={handleRowDataChanged}
+        />
+      )}
+    </span>
   );
 };
 
