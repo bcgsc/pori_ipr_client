@@ -108,11 +108,10 @@ const Slides = ({
             </Paper>
           )}
           {slides.map((slide, index) => (
-            <>
+            <React.Fragment key={slide.name}>
               {!isPrint ? (
                 <>
                   <SlideTransition
-                    key={slide.name}
                     appear={false}
                     in={index === tabValue}
                     direction={direction}
@@ -137,12 +136,11 @@ const Slides = ({
                 </>
               ) : (
                 <Slide
-                  key={slide.name}
                   isPrint
                   slide={slide}
                 />
               )}
-            </>
+            </React.Fragment>
           ))}
         </>
       )}
