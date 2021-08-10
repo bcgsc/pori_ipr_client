@@ -11,7 +11,6 @@ import AlertDialog from '../../components/AlertDialog';
 import { theme } from '../../App';
 import errorHandler from '../errors/errorHandler';
 import SnackbarUtils from '../SnackbarUtils';
-import { RequestReturnType } from './types';
 
 class ApiCall {
   endpoint: string;
