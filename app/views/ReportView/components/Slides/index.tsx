@@ -6,12 +6,10 @@ import {
   Tabs,
   Tab,
   Paper,
-  Slide,
+  Slide as SlideTransition,
   Divider,
-  IconButton,
   LinearProgress,
 } from '@material-ui/core';
-import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 
 import api from '@/services/api';
 import AlertDialog from '@/components/AlertDialog';
@@ -19,7 +17,7 @@ import snackbar from '@/services/SnackbarUtils';
 import ReportContext from '@/context/ReportContext';
 import EditContext from '@/context/EditContext';
 import DemoDescription from '@/components/DemoDescription';
-
+import Slide from './components/Slide';
 import UploadSlide from './components/UploadSlide';
 import SlideType from './types';
 
@@ -111,44 +109,39 @@ const Slides = ({
           )}
           {slides.map((slide, index) => (
             <>
-              <Slide
-                key={slide.name}
-                appear={false}
-                in={index === tabValue}
-                direction={direction}
-                mountOnEnter
-                unmountOnExit
-                onEntering={() => setDirection('left')}
-                onExiting={() => setDirection('right')}
-              >
-                <div className="slides__slide-content">
-                  <Typography variant="h5" className="slides__title">
-                    {slide.name}
-                  </Typography>
-                  <div className="slides__slide-container">
-                    <img
-                      alt={slide.name}
-                      className="slides__image"
-                      src={`data:${slide.object_type};base64, ${slide.object}`}
-                    />
-                    {canEdit && !isPrint && (
-                      <IconButton
-                        className="slides__slide-action"
-                        onClick={() => setShowAlert(true)}
-                        size="small"
-                      >
-                        <HighlightOffIcon />
-                      </IconButton>
-                    )}
-                  </div>
-                </div>
-              </Slide>
-              <AlertDialog
-                isOpen={showAlert}
-                onClose={(confirmed: boolean) => handleAlertClose(confirmed, slide.ident)}
-                text="Are you sure you want to delete this slide?"
-                title="Confirm"
-              />
+              {!isPrint ? (
+                <>
+                  <SlideTransition
+                    key={slide.name}
+                    appear={false}
+                    in={index === tabValue}
+                    direction={direction}
+                    mountOnEnter
+                    unmountOnExit
+                    onEntering={() => setDirection('left')}
+                    onExiting={() => setDirection('right')}
+                  >
+                    <div>
+                      <Slide
+                        slide={slide}
+                        onDelete={() => setShowAlert(true)}
+                      />
+                    </div>
+                  </SlideTransition>
+                  <AlertDialog
+                    isOpen={showAlert}
+                    onClose={(confirmed: boolean) => handleAlertClose(confirmed, slide.ident)}
+                    text="Are you sure you want to delete this slide?"
+                    title="Confirm"
+                  />
+                </>
+              ) : (
+                <Slide
+                  key={slide.name}
+                  isPrint
+                  slide={slide}
+                />
+              )}
             </>
           ))}
         </>
