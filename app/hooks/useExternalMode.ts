@@ -3,7 +3,7 @@ import { useState, useEffect, useContext } from 'react';
 import SecurityContext from '@/context/SecurityContext';
 import checkAccess from '@/utils/checkAccess';
 
-const EXTERNAL_GROUPS = ['clinician', 'collaborator', 'external analyst'];
+const EXTERNAL_GROUPS = ['clinician', 'collaborator'];
 
 const useExternalMode = (): boolean => {
   const { userDetails } = useContext(SecurityContext);
