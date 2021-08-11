@@ -152,6 +152,13 @@ const DataTable = ({
     if (gridApi) {
       if (highlightRow !== null) {
         const rowNode = gridApi.getDisplayedRowAtIndex(highlightRow);
+        const pageSize = gridApi.paginationGetPageSize();
+        const navigateToPage = Math.floor((highlightRow) / pageSize);
+        
+        if (navigateToPage !== gridApi.paginationGetCurrentPage()) {
+          gridApi.paginationGoToPage(navigateToPage);
+        }
+
         rowNode.setSelected(true, true);
         gridApi.ensureIndexVisible(highlightRow, 'middle');
 
