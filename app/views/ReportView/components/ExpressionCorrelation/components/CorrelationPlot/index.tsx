@@ -1,54 +1,23 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { HorizontalBar, Chart } from 'react-chartjs-2';
+import { HorizontalBar } from 'react-chartjs-2';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 import DataTable from '@/components/DataTable';
+import { getColor, getLuminance } from './colors';
 import columnDefs from './columnDefs';
 
-interface Color {
-  red: number;
-  green: number;
-  blue: number;
-}
+import './index.scss';
 
+const LUMINANCE_THRESHOLD = 186;
 const LOWER_COLOR = {
   red: 134,
   green: 244,
   blue: 207,
 };
-
 const UPPER_COLOR = {
   red: 25,
   green: 96,
   blue: 121,
-};
-
-const getColor = (lowerColor: Color, upperColor: Color, ratio: number): Color => {
-  const newColor = {
-    red: Math.floor(lowerColor.red + ratio * (upperColor.red - lowerColor.red)),
-    green: Math.floor(lowerColor.green + ratio * (upperColor.green - lowerColor.green)),
-    blue: Math.floor(lowerColor.blue + ratio * (upperColor.blue - lowerColor.blue)),
-  };
-
-  return newColor;
-};
-
-const LUMINANCE_THRESHOLD = 186;
-
-/** Values are from RGB -> Luma formula: Y = 0.2126 R + 0.7152 G + 0.0722 B */
-const getLuminance = (color: Color): number => {
-  /** Compute sRGB, then linear RGB */
-  for (let col of Object.values(color)) {
-    col /= 255;
-    if (col <= 0.03928) {
-      col /= 12.92;
-    } else {
-      col = ((col + 0.055) / 1.055) ** 2.4;
-    }
-  }
-
-  /** Calculate luminance from linear RGB */
-  return 0.2126 * color.red + 0.7152 * color.green + 0.0722 * color.blue;
 };
 
 const getGraphData = (rowData) => {
@@ -89,12 +58,6 @@ const CorrelationPlot = ({
   const [rowClicked, setRowClicked] = useState();
 
   const chartRef = useRef();
-
-  useEffect(() => {
-    Chart.pluginService.register({
-      plugins: [ChartDataLabels],
-    });
-  }, []);
 
   useEffect(() => {
     if (pairwiseExpression.length) {
@@ -181,26 +144,29 @@ const CorrelationPlot = ({
   };
 
   return (
-    <span className="expression-correlation__chart-group">
+    <div className="correlation-plot__group">
       {Boolean(Object.values(barChartData.datasets).length) && (
-        <div className="expression-correlation__chart">
+        <div className="correlation-plot__chart">
           <HorizontalBar
             ref={chartRef}
             data={barChartData}
             height={150 + (barChartData.datasets[0].data.length * 25)}
             options={options}
+            plugins={[ChartDataLabels]}
           />
         </div>
       )}
       {Boolean(pairwiseExpression.length) && (
-        <DataTable
-          rowData={pairwiseExpression}
-          columnDefs={columnDefs}
-          highlightRow={rowClicked}
-          onRowDataChanged={handleRowDataChanged}
-        />
+        <div className="correlation-plot__table">
+          <DataTable
+            rowData={pairwiseExpression}
+            columnDefs={columnDefs}
+            highlightRow={rowClicked}
+            onRowDataChanged={handleRowDataChanged}
+          />
+        </div>
       )}
-    </span>
+    </div>
   );
 };
 
