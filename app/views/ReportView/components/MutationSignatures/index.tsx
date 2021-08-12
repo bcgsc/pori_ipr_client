@@ -2,7 +2,7 @@ import React, {
   useEffect, useState, useContext, useCallback,
 } from 'react';
 import orderBy from 'lodash.orderby';
-import { LinearProgress, Typography } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 
 import DemoDescription from '@/components/DemoDescription';
 import DataTable from '@/components/DataTable';
@@ -11,6 +11,7 @@ import EditContext from '@/context/EditContext';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import ImageType from '@/components/Image/types';
+import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import EditDialog from './components/EditDialog';
 import MutationSignatureType from './types';
 import columnDefs from './columnDefs';
@@ -23,14 +24,18 @@ const imageKeys = [
   'mutSignature.barplot.sbs',
 ];
 
-const MutationSignatures = (): JSX.Element => {
+type MutationSignaturesProps = WithLoadingInjectedProps;
+
+const MutationSignatures = ({
+  isLoading,
+  setIsLoading,
+}: MutationSignaturesProps): JSX.Element => {
   const { report } = useContext(ReportContext);
   const { canEdit } = useContext(EditContext);
   const [images, setImages] = useState<ImageType[]>([]);
   const [sbsSignatures, setSbsSignatures] = useState<MutationSignatureType[]>([]);
   const [dbsSignatures, setDbsSignatures] = useState<MutationSignatureType[]>([]);
   const [idSignatures, setIdSignatures] = useState<MutationSignatureType[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
 
   const [showDialog, setShowDialog] = useState(false);
   const [editData, setEditData] = useState<MutationSignatureType | null>();
@@ -40,8 +45,8 @@ const MutationSignatures = (): JSX.Element => {
       const getData = async () => {
         try {
           const [imageData, signatureData] = await Promise.all([
-            api.get(`/reports/${report.ident}/image/retrieve/${imageKeys.join(',')}`, {}).request(),
-            api.get(`/reports/${report.ident}/mutation-signatures`, {}).request(),
+            api.get(`/reports/${report.ident}/image/retrieve/${imageKeys.join(',')}`).request(),
+            api.get(`/reports/${report.ident}/mutation-signatures`).request(),
           ]);
           setImages(imageData);
           setSbsSignatures(signatureData.filter((sig) => !(new RegExp(/dbs|id/)).test(sig.signature.toLowerCase())));
@@ -56,7 +61,7 @@ const MutationSignatures = (): JSX.Element => {
 
       getData();
     }
-  }, [report]);
+  }, [report, setIsLoading]);
 
   const handleEditStart = (rowData: MutationSignatureType) => {
     setShowDialog(true);
@@ -113,7 +118,7 @@ const MutationSignatures = (): JSX.Element => {
         that suggest a particular mutation etiology, such as exposure to a specific mutagen, are
         noted.
       </DemoDescription>
-      {!isLoading ? (
+      {!isLoading && (
         <>
           <Typography variant="h3" className="mutation-signature__title">
             Single base substitution signatures
@@ -165,8 +170,6 @@ const MutationSignatures = (): JSX.Element => {
             canToggleColumns
           />
         </>
-      ) : (
-        <LinearProgress />
       )}
     </div>
   );

@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from 'react';
 import {
   Typography,
   Grid,
-  LinearProgress,
 } from '@material-ui/core';
 
 import api, { ApiCallSet } from '@/services/api';
@@ -10,6 +9,7 @@ import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
 import ReportContext from '@/context/ReportContext';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
+import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import { AppendicesType, TcgaType, ComparatorType } from './types';
 import { sampleInformationColumnDefs, sequencingProtocolInformationColumnDefs, tcgaAcronymsColumnDefs } from './columnDefs';
 import GenomicReportOverview from './components/GenomicReportOverview';
@@ -22,16 +22,21 @@ type AppendicesProps = {
   isProbe: boolean;
   isPrint: boolean;
   loadedDispatch: (section: { type: string }) => void;
-};
+} & WithLoadingInjectedProps;
 
-const Appendices = ({ isProbe, isPrint, loadedDispatch }: AppendicesProps): JSX.Element => {
+const Appendices = ({
+  isProbe,
+  isPrint,
+  loadedDispatch,
+  isLoading,
+  setIsLoading,
+}: AppendicesProps): JSX.Element => {
   const { report } = useContext(ReportContext);
 
   const [comparators, setComparators] = useState<ComparatorType[]>([]);
   const [appendices, setAppendices] = useState<AppendicesType>();
   const [tcga, setTcga] = useState<TcgaType[]>([]);
   const [analysisSummary, setAnalysisSummary] = useState<Record<string, unknown>[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (report) {
@@ -59,7 +64,7 @@ const Appendices = ({ isProbe, isPrint, loadedDispatch }: AppendicesProps): JSX.
 
       getData();
     }
-  }, [loadedDispatch, report]);
+  }, [loadedDispatch, report, setIsLoading]);
 
   useEffect(() => {
     if (report && comparators.length) {
@@ -194,9 +199,6 @@ const Appendices = ({ isProbe, isPrint, loadedDispatch }: AppendicesProps): JSX.
             </div>
           )}
         </>
-      )}
-      {isLoading && (
-        <LinearProgress color="secondary" />
       )}
     </div>
   );

@@ -39,6 +39,7 @@ type ReportType = {
   alternateIdentifier?: string;
   analysisStartedAt: string | null;
   biopsyName?: string;
+  expression_matrix: string;
   kbVersion: string;
   patientId: string;
   patientInformation: PatientInformationType,
