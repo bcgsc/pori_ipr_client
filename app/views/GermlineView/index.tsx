@@ -5,10 +5,12 @@ import {
   Switch, Route,
 } from 'react-router-dom';
 
+import withLoading from '@/hoc/WithLoading';
+
 import './index.scss';
 
 const Board = lazy(() => import('./components/Board'));
-const Report = lazy(() => import('./components/Report'));
+const Report = withLoading(lazy(() => import('./components/Report')));
 
 const GermlineView = (): JSX.Element => (
   <div className="germline__container">

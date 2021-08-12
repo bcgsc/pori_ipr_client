@@ -3,28 +3,31 @@ import ReactDOM from 'react-dom';
 import {
   MuiThemeProvider,
 } from '@material-ui/core/styles';
+
+import ApiCall from './ApiCall';
 import AlertDialog from '../../components/AlertDialog';
 import { theme } from '../../App';
+import { RequestReturnType } from './types';
 
 /**
  * Set of Api calls to be co-requested and co-aborted
  */
 class ApiCallSet {
-  calls: Array<any>;
+  calls: ApiCall[];
 
   constructor(calls = []) {
     this.calls = calls;
   }
 
-  push(call) {
+  push(call: ApiCall): void {
     this.calls.push(call);
   }
 
-  abort() {
+  abort(): void {
     this.calls.forEach((controller) => controller.abort());
   }
 
-  showConfirm() {
+  showConfirm(): void {
     const handleClose = async (isSaved: boolean) => {
       if (isSaved) {
         const promises = this.calls.map((call) => call.request());
@@ -49,7 +52,7 @@ class ApiCallSet {
     );
   }
 
-  async request(confirm = false) {
+  async request(confirm = false): Promise<RequestReturnType[] | void> {
     if (confirm) {
       this.showConfirm();
       return;

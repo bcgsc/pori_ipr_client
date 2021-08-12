@@ -5,7 +5,6 @@ import orderBy from 'lodash.orderby';
 import {
   Divider,
   Typography,
-  LinearProgress,
 } from '@material-ui/core';
 
 import api from '@/services/api';
@@ -13,25 +12,30 @@ import ReportContext from '@/context/ReportContext';
 import snackbar from '@/services/SnackbarUtils';
 import Image, { ImageType } from '@/components/Image';
 import DemoDescription from '@/components/DemoDescription';
+import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import CorrelationPlot from './components/CorrelationPlot';
 import './index.scss';
 
-const ExpressionCorrelation = (): JSX.Element => {
+type ExpressionCorrelationProps = WithLoadingInjectedProps;
+
+const ExpressionCorrelation = ({
+  isLoading,
+  setIsLoading,
+}: ExpressionCorrelationProps): JSX.Element => {
   const { report } = useContext(ReportContext);
 
   const [plots, setPlots] = useState<ImageType[]>();
   const [subtypePlots, setSubtypePlots] = useState<ImageType[]>();
   const [pairwiseExpression, setPairwiseExpression] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (report) {
       const getData = async () => {
         try {
           const [plotData, subtypePlotData, pairwiseData] = await Promise.all([
-            api.get(`/reports/${report.ident}/image/retrieve/expression.chart,expression.legend,scpPlot`, {}).request(),
-            api.get(`/reports/${report.ident}/image/subtype-plots`, {}).request(),
-            api.get(`/reports/${report.ident}/pairwise-expression-correlation`, {}).request(),
+            api.get(`/reports/${report.ident}/image/retrieve/expression.chart,expression.legend,scpPlot`).request(),
+            api.get(`/reports/${report.ident}/image/subtype-plots`).request(),
+            api.get(`/reports/${report.ident}/pairwise-expression-correlation`).request(),
           ]);
 
           setPlots(plotData);
@@ -46,7 +50,7 @@ const ExpressionCorrelation = (): JSX.Element => {
 
       getData();
     }
-  }, [report]);
+  }, [report, setIsLoading]);
 
   return (
     <>
@@ -121,9 +125,6 @@ const ExpressionCorrelation = (): JSX.Element => {
               />
             </div>
           </>
-        )}
-        {isLoading && (
-          <LinearProgress />
         )}
       </div>
     </>
