@@ -7,7 +7,6 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import {
   Divider,
   Typography,
-  LinearProgress,
 } from '@material-ui/core';
 
 import api from '@/services/api';
@@ -16,6 +15,7 @@ import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
 import Image, { ImageType } from '@/components/Image';
 import DemoDescription from '@/components/DemoDescription';
+import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import columnDefs from './columnDefs';
 
 import './index.scss';
@@ -66,14 +66,18 @@ const getLuminance = (color: Color): number => {
   return 0.2126 * color.red + 0.7152 * color.green + 0.0722 * color.blue;
 };
 
-const ExpressionCorrelation = (): JSX.Element => {
+type ExpressionCorrelationProps = WithLoadingInjectedProps;
+
+const ExpressionCorrelation = ({
+  isLoading,
+  setIsLoading,
+}: ExpressionCorrelationProps): JSX.Element => {
   const { report } = useContext(ReportContext);
 
   const [plots, setPlots] = useState<ImageType[]>();
   const [subtypePlots, setSubtypePlots] = useState<ImageType[]>();
   const [pairwiseExpression, setPairwiseExpression] = useState([]);
   const [modifiedRowData, setModifiedRowData] = useState();
-  const [isLoading, setIsLoading] = useState(true);
 
   const [barChartData, setBarChartData] = useState({
     labels: [],
@@ -87,9 +91,9 @@ const ExpressionCorrelation = (): JSX.Element => {
       const getData = async () => {
         try {
           const [plotData, subtypePlotData, pairwiseData] = await Promise.all([
-            api.get(`/reports/${report.ident}/image/retrieve/expression.chart,expression.legend`, {}).request(),
-            api.get(`/reports/${report.ident}/image/subtype-plots`, {}).request(),
-            api.get(`/reports/${report.ident}/pairwise-expression-correlation`, {}).request(),
+            api.get(`/reports/${report.ident}/image/retrieve/expression.chart,expression.legend`).request(),
+            api.get(`/reports/${report.ident}/image/subtype-plots`).request(),
+            api.get(`/reports/${report.ident}/pairwise-expression-correlation`).request(),
           ]);
 
           setPlots(plotData);
@@ -104,7 +108,7 @@ const ExpressionCorrelation = (): JSX.Element => {
 
       getData();
     }
-  }, [report]);
+  }, [report, setIsLoading]);
 
   useEffect(() => {
     Chart.pluginService.register({
@@ -297,9 +301,6 @@ const ExpressionCorrelation = (): JSX.Element => {
               </span>
             </div>
           </>
-        )}
-        {isLoading && (
-          <LinearProgress />
         )}
       </div>
     </>

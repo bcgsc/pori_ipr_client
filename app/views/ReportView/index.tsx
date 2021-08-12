@@ -16,33 +16,34 @@ import ReportSidebar from '@/components/ReportSidebar';
 import EditContext from '@/context/EditContext';
 import ReportContext from '@/context/ReportContext';
 import ConfirmContext from '@/context/ConfirmContext';
+import withLoading from '@/hoc/WithLoading';
 import api from '@/services/api';
 import allSections from './sections';
 
 import './index.scss';
 
-const GenomicSummary = lazy(() => import('./components/GenomicSummary'));
-const AnalystComments = lazy(() => import('./components/AnalystComments'));
-const PathwayAnalysis = lazy(() => import('./components/PathwayAnalysis'));
-const TherapeuticTargets = lazy(() => import('./components/TherapeuticTargets'));
-const KbMatches = lazy(() => import('./components/KbMatches'));
-const Slides = lazy(() => import('./components/Slides'));
-const Discussion = lazy(() => import('./components/Discussion'));
-const Microbial = lazy(() => import('./components/Microbial'));
-const MutationSignatures = lazy(() => import('./components/MutationSignatures'));
-const MutationBurden = lazy(() => import('./components/MutationBurden'));
-const ExpressionCorrelation = lazy(() => import('./components/ExpressionCorrelation'));
-const SmallMutations = lazy(() => import('./components/SmallMutations'));
-const CopyNumber = lazy(() => import('./components/CopyNumber'));
-const StructuralVariants = lazy(() => import('./components/StructuralVariants'));
-const Expression = lazy(() => import('./components/Expression'));
-const Immune = lazy(() => import('./components/Immune'));
-const Appendices = lazy(() => import('./components/Appendices'));
-const Settings = lazy(() => import('./components/Settings/index.tsx'));
-const ProbeSummary = lazy(() => import('./components/ProbeSummary'));
-const Pharmacogenomic = lazy(() => import('./components/Pharmacogenomic'));
+const GenomicSummary = withLoading(lazy(() => import('./components/GenomicSummary')));
+const AnalystComments = withLoading(lazy(() => import('./components/AnalystComments')));
+const PathwayAnalysis = withLoading(lazy(() => import('./components/PathwayAnalysis')));
+const TherapeuticTargets = withLoading(lazy(() => import('./components/TherapeuticTargets')));
+const KbMatches = withLoading(lazy(() => import('./components/KbMatches')));
+const Slides = withLoading(lazy(() => import('./components/Slides')));
+const Discussion = withLoading(lazy(() => import('./components/Discussion')));
+const Microbial = withLoading(lazy(() => import('./components/Microbial')));
+const MutationSignatures = withLoading(lazy(() => import('./components/MutationSignatures')));
+const MutationBurden = withLoading(lazy(() => import('./components/MutationBurden')));
+const ExpressionCorrelation = withLoading(lazy(() => import('./components/ExpressionCorrelation')));
+const SmallMutations = withLoading(lazy(() => import('./components/SmallMutations')));
+const CopyNumber = withLoading(lazy(() => import('./components/CopyNumber')));
+const StructuralVariants = withLoading(lazy(() => import('./components/StructuralVariants')));
+const Expression = withLoading(lazy(() => import('./components/Expression')));
+const Immune = withLoading(lazy(() => import('./components/Immune')));
+const Appendices = withLoading(lazy(() => import('./components/Appendices')));
+const Settings = withLoading(lazy(() => import('./components/Settings')));
+const ProbeSummary = withLoading(lazy(() => import('./components/ProbeSummary')));
+const Pharmacogenomic = withLoading(lazy(() => import('./components/Pharmacogenomic')));
 
-const ReportView = () => {
+const ReportView = (): JSX.Element => {
   const { path } = useRouteMatch();
   const params = useParams();
   const theme = useTheme();
