@@ -78,6 +78,11 @@ type GeneType = {
   tumourSuppressor: boolean;
 };
 
+type KbMatchType = {
+  ident: string;
+  category: string;
+};
+
 export {
   RecordDefaults,
   UserType,
@@ -86,4 +91,5 @@ export {
   UserGroupMemberType,
   ImageType,
   GeneType,
+  KbMatchType,
 };

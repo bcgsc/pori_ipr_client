@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import {
   Typography,
-  LinearProgress,
 } from '@material-ui/core';
 
 import DataTable from '@/components/DataTable';
@@ -11,6 +10,7 @@ import { CNVSTATE, EXPLEVEL } from '@/constants';
 import Image from '@/components/Image';
 import ImageType from '@/components/Image/types';
 import snackbar from '@/services/SnackbarUtils';
+import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import CopyNumberType from './types';
 import columnDefs from './columnDefs';
 
@@ -38,11 +38,14 @@ const INFO_BUBBLES = {
   lowExp: 'Copy number losses in known tumour supressor genes which are also lowly expressed.',
 };
 
+type CopyNumberProps = WithLoadingInjectedProps;
 
-const CopyNumber = (): JSX.Element => {
+const CopyNumber = ({
+  isLoading,
+  setIsLoading,
+}: CopyNumberProps): JSX.Element => {
   const { report } = useContext(ReportContext);
 
-  const [isLoading, setIsLoading] = useState(true);
   const [images, setImages] = useState<ImageType[]>([]);
   const [circos, setCircos] = useState<ImageType>();
   const [cnvs, setCnvs] = useState<CopyNumberType[]>([]);
@@ -80,7 +83,7 @@ const CopyNumber = (): JSX.Element => {
       };
       getData();
     }
-  }, [report]);
+  }, [report, setIsLoading]);
 
   useEffect(() => {
     if (cnvs.length) {
@@ -149,7 +152,7 @@ const CopyNumber = (): JSX.Element => {
   return (
     <div className="copy-number">
       <Typography variant="h3">Copy Number Analyses</Typography>
-      {!isLoading ? (
+      {!isLoading && (
         <>
           <Typography variant="h3" className="copy-number__title">Summary of Copy Number Events</Typography>
           {circos ? (
@@ -195,8 +198,6 @@ const CopyNumber = (): JSX.Element => {
             <Typography align="center">No Copy Number &amp; LOH Plots Available</Typography>
           )}
         </>
-      ) : (
-        <LinearProgress />
       )}
     </div>
   );

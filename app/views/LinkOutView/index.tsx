@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import { Typography } from '@material-ui/core';
 
-const LinkOutView = () => {
+const LinkOutView = (): JSX.Element => {
   const [error, setError] = useState();
 
   useEffect(() => {

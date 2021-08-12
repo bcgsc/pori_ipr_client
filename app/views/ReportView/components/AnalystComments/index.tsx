@@ -4,7 +4,6 @@ import React, {
 import {
   Typography,
   Fab,
-  LinearProgress,
 } from '@material-ui/core';
 
 import EditIcon from '@material-ui/icons/Edit';
@@ -16,16 +15,19 @@ import DemoDescription from '@/components/DemoDescription';
 import ReportContext from '@/context/ReportContext';
 import SignatureCard, { SignatureType } from '@/components/SignatureCard';
 import ConfirmContext from '@/context/ConfirmContext';
+import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import TextEditor from './components/TextEditor';
 
 import './index.scss';
 
 type AnalystCommentsProps = {
   isPrint?: boolean;
-};
+} & WithLoadingInjectedProps;
 
 const AnalystComments = ({
   isPrint = false,
+  isLoading,
+  setIsLoading,
 }: AnalystCommentsProps): JSX.Element => {
   const { report } = useContext(ReportContext);
   const { setIsSigned } = useContext(ConfirmContext);
@@ -33,7 +35,6 @@ const AnalystComments = ({
 
   const [comments, setComments] = useState('');
   const [signatures, setSignatures] = useState<SignatureType>();
-  const [isLoading, setIsLoading] = useState(true);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
 
   useEffect(() => {
@@ -55,7 +56,7 @@ const AnalystComments = ({
       };
       getData();
     }
-  }, [report]);
+  }, [report, setIsLoading]);
 
   const handleSign = useCallback(async (signed: boolean, role: 'author' | 'reviewer') => {
     let newSignature;
@@ -109,7 +110,7 @@ const AnalystComments = ({
       <DemoDescription>
         This section is a manually curated textual summary of the main findings from tumour biopsy sequencing.
       </DemoDescription>
-      {!isLoading ? (
+      {!isLoading && (
         <>
           {!isPrint && canEdit && (
             <>
@@ -158,8 +159,6 @@ const AnalystComments = ({
             </div>
           )}
         </>
-      ) : (
-        <LinearProgress />
       )}
     </div>
   );

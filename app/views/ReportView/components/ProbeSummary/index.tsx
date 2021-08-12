@@ -5,7 +5,6 @@ import {
   Typography,
   IconButton,
   Grid,
-  LinearProgress,
 } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 
@@ -19,6 +18,7 @@ import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import { formatDate } from '@/utils/date';
 import SignatureCard, { SignatureType } from '@/components/SignatureCard';
 import PrintTable from '@/components/PrintTable';
+import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import { sampleColumnDefs, eventsColumnDefs } from './columnDefs';
 import TestInformation, { TestInformationType } from './components/TestInformation';
 import PatientEdit from '../GenomicSummary/components/PatientEdit';
@@ -30,11 +30,13 @@ import './index.scss';
 type ProbeSummaryProps = {
   loadedDispatch: ({ 'type': string }) => void;
   isPrint: boolean;
-};
+} & WithLoadingInjectedProps;
 
 const ProbeSummary = ({
   loadedDispatch,
+  isLoading,
   isPrint,
+  setIsLoading,
 }: ProbeSummaryProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
   const { isSigned, setIsSigned } = useContext(ConfirmContext);
@@ -49,7 +51,6 @@ const ProbeSummary = ({
   }[] | null>();
   const [printEvents, setPrintEvents] = useState([]);
   const [editData, setEditData] = useState();
-  const [isLoading, setIsLoading] = useState(true);
 
   const [showPatientEdit, setShowPatientEdit] = useState(false);
   const [showEventsDialog, setShowEventsDialog] = useState(false);
@@ -59,10 +60,10 @@ const ProbeSummary = ({
       const getData = async () => {
         try {
           const apiCalls = new ApiCallSet([
-            api.get(`/reports/${report.ident}/probe-test-information`, {}),
-            api.get(`/reports/${report.ident}/signatures`, {}),
-            api.get(`/reports/${report.ident}/probe-results`, {}),
-            api.get(`/reports/${report.ident}/small-mutations`, {}),
+            api.get(`/reports/${report.ident}/probe-test-information`),
+            api.get(`/reports/${report.ident}/signatures`),
+            api.get(`/reports/${report.ident}/probe-results`),
+            api.get(`/reports/${report.ident}/small-mutations`),
           ]);
           const [
             testInformationData,
@@ -133,7 +134,7 @@ const ProbeSummary = ({
 
       getData();
     }
-  }, [loadedDispatch, report]);
+  }, [loadedDispatch, report, setIsLoading]);
 
   useEffect(() => {
     if (probeResults && isPrint) {
@@ -161,11 +162,11 @@ const ProbeSummary = ({
     }
 
     if (newPatientData) {
-      apiCalls.push(api.put(`/reports/${report.ident}/patient-information`, newPatientData, {}));
+      apiCalls.push(api.put(`/reports/${report.ident}/patient-information`, newPatientData));
     }
 
     if (newReportData) {
-      apiCalls.push(api.put(`/reports/${report.ident}`, newReportData, {}));
+      apiCalls.push(api.put(`/reports/${report.ident}`, newReportData));
     }
 
     const callSet = new ApiCallSet(apiCalls);
@@ -208,12 +209,12 @@ const ProbeSummary = ({
   }, [isSigned, report, setReport]);
 
   const handleSign = async (signed: boolean, role: 'author' | 'reviewer') => {
-    let newSignature: SignatureType;
+    let newSignature;
 
     if (signed) {
-      newSignature = await api.put(`/reports/${report.ident}/signatures/sign/${role}`, {}, {}).request();
+      newSignature = await api.put(`/reports/${report.ident}/signatures/sign/${role}`, {}).request();
     } else {
-      newSignature = await api.put(`/reports/${report.ident}/signatures/revoke/${role}`, {}, {}).request();
+      newSignature = await api.put(`/reports/${report.ident}/signatures/revoke/${role}`, {}).request();
     }
 
     setIsSigned(signed);
@@ -374,9 +375,6 @@ const ProbeSummary = ({
             </span>
           )}
         </>
-      )}
-      {isLoading && (
-        <LinearProgress color="secondary" />
       )}
     </div>
   );

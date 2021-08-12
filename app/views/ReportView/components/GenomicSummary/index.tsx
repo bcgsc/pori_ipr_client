@@ -69,11 +69,15 @@ const customTypeSort = (variant) => {
 
 type GenomicSummaryProps = {
   print: boolean;
+  setIsLoading: (isLoading: boolean) => void;
+  isLoading: boolean;
   loadedDispatch: (section: Record<'type', string>) => void;
 };
 
 const GenomicSummary = ({
   print = false,
+  setIsLoading,
+  isLoading,
   loadedDispatch,
 }: GenomicSummaryProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
@@ -83,7 +87,6 @@ const GenomicSummary = ({
 
   const [showPatientEdit, setShowPatientEdit] = useState(false);
   const [showTumourSummaryEdit, setShowTumourSummaryEdit] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   const [patientInformation, setPatientInformation] = useState<PatientInformationType[]>();
   const [signatures, setSignatures] = useState<MutationSignatureType[]>([]);
@@ -179,7 +182,7 @@ const GenomicSummary = ({
 
       getData();
     }
-  }, [loadedDispatch, report]);
+  }, [loadedDispatch, report, setIsLoading]);
 
   useEffect(() => {
     if (report && report.patientInformation) {
@@ -512,9 +515,6 @@ const GenomicSummary = ({
             </>
           )}
         </>
-      )}
-      {isLoading && (
-        <LinearProgress color="secondary" />
       )}
     </div>
   );

@@ -8,16 +8,21 @@ import api from '@/services/api';
 import ReportContext from '@/context/ReportContext';
 import snackbar from '@/services/SnackbarUtils';
 import DemoDescription from '@/components/DemoDescription';
+import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import CommentCard from './components/CommentCard';
 import AddComment from './components/AddComment';
 
 import './index.scss';
 
-const Discussion = (): JSX.Element => {
+type DiscussionProps = WithLoadingInjectedProps;
+
+const Discussion = ({
+  isLoading,
+  setIsLoading,
+}: DiscussionProps): JSX.Element => {
   const { report } = useContext(ReportContext);
 
   const [comments, setComments] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (report) {
@@ -33,7 +38,7 @@ const Discussion = (): JSX.Element => {
       };
       getData();
     }
-  }, [report]);
+  }, [report, setIsLoading]);
 
   const handleCommentEdited = (newComment) => {
     setComments((prevComments) => prevComments.reduce((accumulator, current) => {

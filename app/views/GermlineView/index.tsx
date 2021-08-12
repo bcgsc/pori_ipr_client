@@ -5,11 +5,12 @@ import {
 
 import useExternalMode from '@/hooks/useExternalMode';
 import snackbar from '@/services/SnackbarUtils';
+import withLoading from '@/hoc/WithLoading';
 
 import './index.scss';
 
 const Board = lazy(() => import('./components/Board'));
-const Report = lazy(() => import('./components/Report'));
+const Report = withLoading(lazy(() => import('./components/Report')));
 
 const GermlineView = (): JSX.Element => {
   const isExternalMode = useExternalMode();

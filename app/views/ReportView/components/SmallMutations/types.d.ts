@@ -1,4 +1,4 @@
-import { RecordDefaults } from '@/common';
+import { RecordDefaults, KbMatchType } from '@/common';
 
 type MutationType = {
   altSeq: string | null;
@@ -8,7 +8,7 @@ type MutationType = {
   germline: string | null;
   hgvsCds: string | null;
   hgvsProtein: string | null;
-  kbMatches: Record<string, unknown>[];
+  kbMatches: KbMatchType[];
   ncbiBuild: string | null;
   normalAltCount: number | null;
   normalDepth: number | null;

@@ -1,5 +1,6 @@
 import { useContext, useEffect } from 'react';
 import fetchIntercept from 'fetch-intercept';
+import { RouteChildrenProps } from 'react-router-dom';
 
 import SecurityContext from '@/context/SecurityContext';
 import {
@@ -7,7 +8,7 @@ import {
 } from '@/services/management/auth';
 import api from '@/services/api';
 
-const Login = (props) => {
+const Login = (props: RouteChildrenProps): null => {
   const {
     history,
     location,
@@ -65,6 +66,7 @@ const Login = (props) => {
 
       retrieveUser();
     }
+    return undefined;
   }, [authorizationToken, from, history, setAuthorizationToken, setUserDetails]);
 
   return (null);

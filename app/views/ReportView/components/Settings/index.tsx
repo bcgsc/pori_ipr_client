@@ -19,20 +19,23 @@ import ReportContext from '@/context/ReportContext';
 import useEdit from '@/hooks/useEdit';
 import DemoDescription from '@/components/DemoDescription';
 import snackbar from '@/services/SnackbarUtils';
+import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import Analysis from './components/Analysis';
 import AssociationCard from './components/AssociationCard';
-
-import './index.scss';
 import AddUserCard from './components/AddUserCard';
 import AddUserDialog from './components/AddUserDialog';
 import DeleteReportDialog from './components/DeleteReportDialog';
 
+import './index.scss';
+
 type SettingsProps = {
   isProbe?: boolean;
-};
+} & WithLoadingInjectedProps;
 
 const Settings = ({
   isProbe = false,
+  isLoading,
+  setIsLoading,
 }: SettingsProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
   const { canEdit } = useEdit();
@@ -44,7 +47,6 @@ const Settings = ({
   const [reportVersion, setReportVersion] = useState('');
   const [kbVersion, setKbVersion] = useState('');
   const [matrixVersion, setMatrixVersion] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
   const [showAddUserDialog, setShowAddUserDialog] = useState(false);
   const [showDeleteReportDialog, setShowDeleteReportDialog] = useState(false);
 
@@ -52,7 +54,7 @@ const Settings = ({
     if (report) {
       const getData = async () => {
         try {
-          const templateResp = await api.get('/templates', {}).request();
+          const templateResp = await api.get('/templates').request();
           setTemplates(templateResp);
         } catch (err) {
           snackbar.error(`Network error: ${err}`);
@@ -62,7 +64,7 @@ const Settings = ({
       };
       getData();
     }
-  }, [report]);
+  }, [report, setIsLoading]);
 
   useEffect(() => {
     if (report) {
@@ -89,9 +91,11 @@ const Settings = ({
       await api.del(
         `/reports/${report.ident}/user/${ident}`,
         {},
-        {},
       ).request();
-      setReport((prevVal) => ({ ...prevVal, users: prevVal.users.filter(user => user.ident !== ident) }));
+      setReport((prevVal) => ({
+        ...prevVal,
+        users: prevVal.users.filter((user) => user.ident !== ident),
+      }));
       snackbar.success('User removed');
     } catch (err) {
       snackbar.error(`Error removing user: ${err}`);
@@ -121,7 +125,6 @@ const Settings = ({
       const newReport = await api.put(
         `/reports/${report.ident}`,
         updateFields,
-        {},
       ).request();
       setReport(newReport);
       snackbar.success('Settings saved');
@@ -136,7 +139,7 @@ const Settings = ({
       return;
     }
     try {
-      await api.del(`/reports/${report.ident}`, {}, {}).request();
+      await api.del(`/reports/${report.ident}`, {}).request();
       snackbar.info('Report deleted');
       history.push('/reports');
     } catch (err) {
@@ -276,9 +279,6 @@ const Settings = ({
             </>
           )}
         </>
-      )}
-      {isLoading && (
-        <LinearProgress color="secondary" />
       )}
     </div>
   );

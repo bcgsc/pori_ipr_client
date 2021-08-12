@@ -1,9 +1,4 @@
-import { RecordDefaults } from '@/common';
-
-type KbMatchType = {
-  ident: string;
-  category: string;
-};
+import { RecordDefaults, KbMatchType } from '@/common';
 
 type StructuralVariantType = {
   breakpoint: string | null;
