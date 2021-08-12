@@ -1,6 +1,10 @@
 @import '../../../../../../styles/variables';
 
 .correlation-plot {
+  &__group {
+    padding: 8px 0;
+  }
+
   &__chart {
     position: relative;
     width: 60%;

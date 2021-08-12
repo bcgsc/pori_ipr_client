@@ -29,7 +29,7 @@ const ExpressionCorrelation = (): JSX.Element => {
       const getData = async () => {
         try {
           const [plotData, subtypePlotData, pairwiseData] = await Promise.all([
-            api.get(`/reports/${report.ident}/image/retrieve/expression.chart,expression.legend`, {}).request(),
+            api.get(`/reports/${report.ident}/image/retrieve/expression.chart,expression.legend,scpPlot`, {}).request(),
             api.get(`/reports/${report.ident}/image/subtype-plots`, {}).request(),
             api.get(`/reports/${report.ident}/pairwise-expression-correlation`, {}).request(),
           ]);
@@ -109,6 +109,17 @@ const ExpressionCorrelation = (): JSX.Element => {
             <CorrelationPlot
               pairwiseExpression={pairwiseExpression}
             />
+            <Divider />
+            <Typography className="expression-correlation__title" variant="h3">
+              SCOPE
+            </Typography>
+            <div className="expression-correlation__scp-plot">
+              <Image
+                image={plots.find((plot) => plot.key === 'scpPlot')}
+                showTitle
+                showCaption
+              />
+            </div>
           </>
         )}
         {isLoading && (
