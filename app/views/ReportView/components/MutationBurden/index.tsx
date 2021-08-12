@@ -3,7 +3,6 @@ import React, {
 } from 'react';
 import {
   Typography,
-  LinearProgress,
 } from '@material-ui/core';
 
 import DemoDescription from '@/components/DemoDescription';
@@ -13,6 +12,7 @@ import snackbar from '@/services/SnackbarUtils';
 import Image from '@/components/Image';
 import ImageType from '@/components/Image/types';
 import api, { ApiCallSet } from '@/services/api';
+import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import {
   ComparatorType, MutationBurdenType, MsiType,
 } from './types';
@@ -88,7 +88,12 @@ const processImages = (images: ImageType[]): Record<string, Record<string, Image
   return {};
 };
 
-const MutationBurden = (): JSX.Element => {
+type MutationBurdenProps = WithLoadingInjectedProps;
+
+const MutationBurden = ({
+  isLoading,
+  setIsLoading,
+}: MutationBurdenProps): JSX.Element => {
   const { report } = useContext(ReportContext);
 
   const [images, setImages] = useState<Record<string, Record<string, ImageType[]>>>();
@@ -97,18 +102,16 @@ const MutationBurden = (): JSX.Element => {
   const [msi, setMsi] = useState<MsiType[]>([]);
   const [msiScatter, setMsiScatter] = useState<ImageType>();
 
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-
   useEffect(() => {
     if (report) {
       const getData = async () => {
         try {
           const calls = new ApiCallSet([
-            api.get(`/reports/${report.ident}/msi`, {}),
-            api.get(`/reports/${report.ident}/image/retrieve/msi.scatter`, {}),
-            api.get(`/reports/${report.ident}/image/mutation-burden`, {}),
-            api.get(`/reports/${report.ident}/comparators`, {}),
-            api.get(`/reports/${report.ident}/mutation-burden`, {}),
+            api.get(`/reports/${report.ident}/msi`),
+            api.get(`/reports/${report.ident}/image/retrieve/msi.scatter`),
+            api.get(`/reports/${report.ident}/image/mutation-burden`),
+            api.get(`/reports/${report.ident}/comparators`),
+            api.get(`/reports/${report.ident}/mutation-burden`),
           ]);
           const [
             msiResp, msiScatterResp, imagesResp, comparatorsResp, mutationBurdenResp,
@@ -127,7 +130,7 @@ const MutationBurden = (): JSX.Element => {
 
       getData();
     }
-  }, [report]);
+  }, [report, setIsLoading]);
 
   const getSectionHeader = (type) => {
     if (type === 'SNV') {
@@ -151,60 +154,61 @@ const MutationBurden = (): JSX.Element => {
         these are compared to an “average” cohort which is not tumour type specific but rather
         composed of all tumour types.
       </DemoDescription>
-      {Boolean(comparators.length) && Boolean(mutationBurden.length) && images && (
-        <div className="mutation-burden__content">
-          {['SNV', 'Indel', 'SV'].map((type) => {
-            const barplots = images[type.toLowerCase()].barplot;
-            const densities = images[type.toLowerCase()].density;
-            const legends = images[type.toLowerCase()].legend;
+      {!isLoading && (
+        <>
+          {Boolean(comparators.length) && Boolean(mutationBurden.length) && images && (
+            <div className="mutation-burden__content">
+              {['SNV', 'Indel', 'SV'].map((type) => {
+                const barplots = images[type.toLowerCase()].barplot;
+                const densities = images[type.toLowerCase()].density;
+                const legends = images[type.toLowerCase()].legend;
 
-            return (
-              <React.Fragment key={type}>
-                <div className="mutation-burden__comparator">
-                  <Typography variant="h3">
-                    {getSectionHeader(type)}
-                  </Typography>
-                </div>
-                <TabCards
-                  type={type}
-                  comparators={comparators}
-                  mutationBurden={mutationBurden}
-                  barplots={barplots}
-                  densities={densities}
-                  legends={legends}
-                />
-              </React.Fragment>
-            );
-          })}
-        </div>
-      )}
-      {isLoading && (
-        <LinearProgress />
-      )}
-      {(!comparators.length || !mutationBurden.length || !images) && !isLoading && (
-        <div>
-          <Typography variant="h5" align="center">
-            No Mutation Burden data found
+                return (
+                  <React.Fragment key={type}>
+                    <div className="mutation-burden__comparator">
+                      <Typography variant="h3">
+                        {getSectionHeader(type)}
+                      </Typography>
+                    </div>
+                    <TabCards
+                      type={type}
+                      comparators={comparators}
+                      mutationBurden={mutationBurden}
+                      barplots={barplots}
+                      densities={densities}
+                      legends={legends}
+                    />
+                  </React.Fragment>
+                );
+              })}
+            </div>
+          )}
+          {(!comparators.length || !mutationBurden.length || !images) && !isLoading && (
+            <div>
+              <Typography variant="h5" align="center">
+                No Mutation Burden data found
+              </Typography>
+            </div>
+          )}
+          <Typography variant="h3">
+            Microsatellite Instability
           </Typography>
-        </div>
-      )}
-      <Typography variant="h3">
-        Microsatellite Instability
-      </Typography>
-      {msiScatter && (
-        <div className="msi__image">
-          <Image
-            image={msiScatter}
-            showCaption
-            width={500}
+          {msiScatter && (
+            <div className="msi__image">
+              <Image
+                image={msiScatter}
+                showCaption
+                width={500}
+              />
+            </div>
+          )}
+          <DataTable
+            titleText="MSI Scores"
+            rowData={msi}
+            columnDefs={columnDefs}
           />
-        </div>
+        </>
       )}
-      <DataTable
-        titleText="MSI Scores"
-        rowData={msi}
-        columnDefs={columnDefs}
-      />
     </div>
   );
 };

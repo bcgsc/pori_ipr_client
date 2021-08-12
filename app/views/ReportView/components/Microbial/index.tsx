@@ -5,23 +5,27 @@ import {
   Tabs,
   Slide,
   Paper,
-  LinearProgress,
 } from '@material-ui/core';
 
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import ReportContext from '@/context/ReportContext';
 import Image, { ImageType } from '@/components/Image';
+import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 
 import './index.scss';
 
-const Microbial = (): JSX.Element => {
+type MicrobialProps = WithLoadingInjectedProps;
+
+const Microbial = ({
+  isLoading,
+  setIsLoading,
+}: MicrobialProps): JSX.Element => {
   const { report } = useContext(ReportContext);
 
   const [microbialImages, setMicrobialImages] = useState<ImageType[]>([]);
   const [tabValue, setTabValue] = useState(0);
   const [direction, setDirection] = useState<'left' | 'right' | 'up' | 'down'>('right');
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (report) {
@@ -29,7 +33,6 @@ const Microbial = (): JSX.Element => {
         try {
           const microbialImagesResp = await api.get(
             `/reports/${report.ident}/image/retrieve/microbial.circos.genome,microbial.circos.transcriptome`,
-            {},
           ).request();
 
           setMicrobialImages(microbialImagesResp);
@@ -41,7 +44,7 @@ const Microbial = (): JSX.Element => {
       };
       getData();
     }
-  }, [report]);
+  }, [report, setIsLoading]);
 
   const handleTabChange = (event: React.ChangeEvent<HTMLInputElement>, newValue: number) => {
     setTabValue(newValue);
@@ -91,9 +94,6 @@ const Microbial = (): JSX.Element => {
         <Typography align="center" className="microbial__none">
           Microbial integration circos plots are not applicable for this case
         </Typography>
-      )}
-      {isLoading && (
-        <LinearProgress />
       )}
     </div>
   );

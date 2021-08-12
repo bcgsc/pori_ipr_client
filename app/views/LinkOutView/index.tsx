@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-const LinkOutView = () => {
+const LinkOutView = (): JSX.Element => {
   const [error, setError] = useState();
 
   useEffect(() => {

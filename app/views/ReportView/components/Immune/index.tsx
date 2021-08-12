@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { LinearProgress } from '@material-ui/core';
 
 import DemoDescription from '@/components/DemoDescription';
 import DataTable from '@/components/DataTable';
@@ -7,28 +6,32 @@ import Image, { ImageType } from '@/components/Image';
 import ReportContext from '@/context/ReportContext';
 import api, { ApiCallSet } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
+import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import { hlaColumnDefs, cellTypesColumnDefs } from './columnDefs';
 import { ImmuneType, HlaType } from './types';
 
-const Immune = (): JSX.Element => {
+type ImmuneProps = WithLoadingInjectedProps;
+
+const Immune = ({
+  isLoading,
+  setIsLoading,
+}: ImmuneProps): JSX.Element => {
   const { report } = useContext(ReportContext);
 
   const [cellTypes, setCellTypes] = useState<ImmuneType[]>([]);
   const [images, setImages] = useState<ImageType[]>([]);
   const [hlaTypes, setHlaTypes] = useState<HlaType[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (report) {
       const getData = async () => {
         try {
           const apiCalls = new ApiCallSet([
-            api.get(`/reports/${report.ident}/immune-cell-types`, {}),
+            api.get(`/reports/${report.ident}/immune-cell-types`),
             api.get(
               `/reports/${report.ident}/image/retrieve/cibersort.combined_t-cell_scatter,cibersort.cd8_positive_t-cell_scatter,mixcr.circos_trb_vj_gene_usage,mixcr.dominiance_vs_alpha_beta_t-cells_scatter`,
-              {},
             ),
-            api.get(`/reports/${report.ident}/hla-types`, {}),
+            api.get(`/reports/${report.ident}/hla-types`),
           ]);
 
           const [cellTypesResp, imagesResp, hlaTypesResp] = await apiCalls.request();
@@ -44,7 +47,7 @@ const Immune = (): JSX.Element => {
 
       getData();
     }
-  }, [report]);
+  }, [report, setIsLoading]);
 
   return (
     <div>
@@ -103,9 +106,6 @@ const Immune = (): JSX.Element => {
             </div>
           )}
         </>
-      )}
-      {isLoading && (
-        <LinearProgress color="secondary" />
       )}
     </div>
   );
