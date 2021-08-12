@@ -2,7 +2,7 @@
   padding: 16px;
 
   &__header {
-    margin: 0 0 12px;
+    margin: 12px 0;
   }
 
   &__expression-charts {
@@ -17,5 +17,9 @@
     justify-content: space-around;
     flex-wrap: wrap;
     margin: 24px 0;
+  }
+
+  &__title {
+    margin: 16px 0;
   }
 }

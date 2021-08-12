@@ -51,9 +51,6 @@ const ExpressionCorrelation = (): JSX.Element => {
   return (
     <>
       <div className="expression-correlation">
-        <Typography variant="h3">
-          Expression Correlation
-        </Typography>
         <DemoDescription>
           The overall gene expression in the tumour is compared to a gene expression profiles from
           variety of tumour types, either from internal or external curated datasets, using a
@@ -64,6 +61,7 @@ const ExpressionCorrelation = (): JSX.Element => {
         {!isLoading && (
           <>
             <div>
+              <Typography variant="h3">Sample-Sample Expression Correlation</Typography>
               <div className="expression-correlation__expression-charts">
                 <span>
                   <Typography variant="h3" align="center" className="expression-correlation__header">
@@ -86,28 +84,31 @@ const ExpressionCorrelation = (): JSX.Element => {
                   />
                 </span>
               </div>
-              {Boolean(subtypePlots.length) && (
-                <div className="expression-correlation__subtype">
-                  <span>
-                    <Typography variant="h3" align="center" className="expression-correlation__header">
-                      Subtype Plots
-                    </Typography>
-                    {subtypePlots.map((plot) => (
-                      <Image
-                        key={plot.ident}
-                        image={plot}
-                        showTitle
-                        showCaption
-                      />
-                    ))}
-                  </span>
-                </div>
-              )}
-              <Divider />
-              <CorrelationPlot
-                pairwiseExpression={pairwiseExpression}
-              />
             </div>
+            {Boolean(subtypePlots.length) && (
+              <div className="expression-correlation__subtype">
+                <span>
+                  <Typography variant="h3" align="center" className="expression-correlation__header">
+                    Subtype Plots
+                  </Typography>
+                  {subtypePlots.map((plot) => (
+                    <Image
+                      key={plot.ident}
+                      image={plot}
+                      showTitle
+                      showCaption
+                    />
+                  ))}
+                </span>
+              </div>
+            )}
+            <Divider />
+            <Typography className="expression-correlation__title" variant="h3">
+              Pairwise Expression Correlation
+            </Typography>
+            <CorrelationPlot
+              pairwiseExpression={pairwiseExpression}
+            />
           </>
         )}
         {isLoading && (
