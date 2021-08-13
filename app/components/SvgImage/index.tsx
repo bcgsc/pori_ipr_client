@@ -3,7 +3,7 @@ import React, {
 } from 'react';
 import { UncontrolledReactSVGPanZoom } from 'react-svg-pan-zoom';
 import InlineSVG from 'svg-inline-react';
-import AutoSizer from 'react-virtualized/dist/es/AutoSizer';
+import AutoSizer from 'react-virtualized/dist/commonjs/AutoSizer';
 
 import './index.scss';
 
@@ -28,8 +28,8 @@ const SvgImage = ({
     if (processedImage) {
       const svg = new DOMParser().parseFromString(processedImage, 'image/svg+xml');
       const [svgElem] = svg.getElementsByTagName('svg');
-      setSvgHeight(svgElem?.height.baseVal.value || PRINT_WIDTH);
-      setSvgWidth(svgElem?.width.baseVal.value || PRINT_WIDTH);
+      setSvgHeight(svgElem?.height?.baseVal?.value || PRINT_WIDTH);
+      setSvgWidth(svgElem?.width?.baseVal?.value || PRINT_WIDTH);
     }
   }, [processedImage]);
 
