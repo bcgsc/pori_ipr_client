@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
 import {
-  LinearProgress,
   Typography,
   Tabs,
   Tab,
@@ -19,7 +18,7 @@ import StructuralVariantType from './types';
 import './index.scss';
 
 const TITLE_MAP = {
-  therapeutic: 'Gene Fusions of Potential Clinical Relevance',
+  therapeutic: 'Gene Fusions of Potential Therapeutic Relevance',
   nostic: 'Gene Fusions of Prognostic or Diagnostic Relevance',
   biological: 'Gene Fusions of Biological Relevance',
   unknown: 'Structural Variants of Unknown Significance',
