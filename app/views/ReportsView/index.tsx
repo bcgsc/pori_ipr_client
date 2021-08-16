@@ -31,7 +31,7 @@ const ReportsTableComponent = (): JSX.Element => {
   const [rowData, setRowData] = useState<ReportType[]>();
 
   useEffect(() => {
-    if (isExternalMode !== undefined) {
+    if (!rowData && isExternalMode !== undefined) {
       const getData = async () => {
         let states = '';
 
