@@ -2,8 +2,10 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 
 import {
+  styleExpectedValue,
+  styleUnchangedExpectedValue,
   mockSVGNormal,
-  mockSVGStyle,
+  mockSVGWithStyle,
   mockSVGStyleInOtherTags,
   mockSVGWithXMLTag,
   mockSVGFormatError,
@@ -25,11 +27,13 @@ describe('SvgImage', () => {
   test('It renders an SVG with style tags', async () => {
     render(
       <SvgImage
-        image={mockSVGStyle}
+        image={mockSVGWithStyle}
       />,
     );
 
-    expect(await screen.findByTestId('mock')).toBeInTheDocument();
+    const svg = await screen.findByTestId('mock');
+    expect(svg).toBeInTheDocument();
+    expect(svg).toHaveAttribute(styleExpectedValue.key, styleExpectedValue.value);
   });
 
   test('It renders an SVG with style tags in other tags', async () => {
@@ -39,10 +43,16 @@ describe('SvgImage', () => {
       />,
     );
 
-    expect(await screen.findByTestId('mock')).toBeInTheDocument();
+    const svg = await screen.findByTestId('mock');
+
+    expect(svg).toBeInTheDocument();
+    expect(svg).toHaveAttribute(styleExpectedValue.key, styleExpectedValue.value);
+
+    expect(await screen.findByTestId('other'))
+      .toHaveAttribute(styleUnchangedExpectedValue.key, styleUnchangedExpectedValue.value);
   });
 
-  test('It renders an SVG with an XML tag', async () => {
+  test('It renders an SVG with an XML tag without crashing', async () => {
     render(
       <SvgImage
         image={mockSVGWithXMLTag}
