@@ -17,7 +17,7 @@ import columnDefs from './columnDefs';
 import './index.scss';
 
 const TITLE_MAP = {
-  clinical: 'CNVs of Potential Clinical Relevance',
+  clinical: 'CNVs of Potential Therapeutic Relevance',
   nostic: 'CNVs of Prognostic or Diagnostic Relevance',
   biological: 'CNVs of Biological Relevance',
   amplifications: 'Commonly Amplified Oncogenes with Copy Gains',
@@ -26,7 +26,9 @@ const TITLE_MAP = {
   lowExp: 'Lowly Expressed Tumour Suppressors with Copy Losses',
 };
 
-const getInfoDescription = (relevance: string) => `Copy variants where the variant matched 1 or more statements of ${relevance} relevance in the knowledge base matches section. Details on these matches can be seen in the knowledge base matches section of this report.`;
+const getInfoDescription = (relevance: string) => `Copy variants where the variant matched 1 or 
+more statements of ${relevance} relevance in the knowledge base matches section. Details on these 
+matches can be seen in the knowledge base matches section of this report.`;
 
 const INFO_BUBBLES = {
   biological: getInfoDescription('biological'),
@@ -64,8 +66,8 @@ const CopyNumber = ({
       const getData = async () => {
         try {
           const apiCalls = new ApiCallSet([
-            api.get(`/reports/${report.ident}/copy-variants`, {}),
-            api.get(`/reports/${report.ident}/image/retrieve/cnvLoh.circos,cnv.1,cnv.2,cnv.3,cnv.4,cnv.5,loh.1,loh.2,loh.3,loh.4,loh.5`, {}),
+            api.get(`/reports/${report.ident}/copy-variants`),
+            api.get(`/reports/${report.ident}/image/retrieve/cnvLoh.circos,cnv.1,cnv.2,cnv.3,cnv.4,cnv.5,loh.1,loh.2,loh.3,loh.4,loh.5`),
           ]);
           const [cnvsResp, imagesResp] = await apiCalls.request();
 
