@@ -21,12 +21,14 @@ import DashboardIcon from '@material-ui/icons/Dashboard';
 
 import GermlineIcon from '@/statics/images/germline_icon.svg';
 import SidebarContext from '@/context/SidebarContext';
+import useResource from '@/hooks/useResource';
 
 import './index.scss';
 
 const Sidebar = (): JSX.Element => {
   const { pathname } = useLocation();
   const { sidebarMaximized, setSidebarMaximized } = useContext(SidebarContext);
+  const { germlineAccess, reportAccess, adminAccess } = useResource();
 
   const handleSidebarClose = useCallback(() => {
     setSidebarMaximized(false);
@@ -41,43 +43,47 @@ const Sidebar = (): JSX.Element => {
       </div>
       <Divider />
       <List disablePadding>
-        <ListItem
-          className={`
-            sidebar__list-item
-            ${pathname.includes('report') && !pathname.includes('germline') ? 'sidebar__list-item--active' : ''}
-          `}
-          disableGutters
-        >
-          <Link className="sidebar__link" href="/reports">
-            <AssignmentIcon color="action" />
-            <Typography
-              display="inline"
-              className={`
-              sidebar__text
-              ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}
-              `}
-            >
-              Reports
-            </Typography>
-          </Link>
-        </ListItem>
-        <ListItem
-          className={`
-            sidebar__list-item
-            ${pathname.includes('germline') ? 'sidebar__list-item--active' : ''}
-          `}
-          disableGutters
-        >
-          <Link className="sidebar__link" href="/germline">
-            <GermlineIcon className="sidebar__custom-icon" />
-            <Typography
-              display="inline"
-              className={`sidebar__text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
-            >
-              Germline
-            </Typography>
-          </Link>
-        </ListItem>
+        {reportAccess && (
+          <ListItem
+            className={`
+              sidebar__list-item
+              ${pathname.includes('report') && !pathname.includes('germline') ? 'sidebar__list-item--active' : ''}
+            `}
+            disableGutters
+          >
+            <Link className="sidebar__link" href="/reports">
+              <AssignmentIcon color="action" />
+              <Typography
+                display="inline"
+                className={`
+                sidebar__text
+                ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}
+                `}
+              >
+                Reports
+              </Typography>
+            </Link>
+          </ListItem>
+        )}
+        {germlineAccess && (
+          <ListItem
+            className={`
+              sidebar__list-item
+              ${pathname.includes('germline') ? 'sidebar__list-item--active' : ''}
+            `}
+            disableGutters
+          >
+            <Link className="sidebar__link" href="/germline">
+              <GermlineIcon className="sidebar__custom-icon" />
+              <Typography
+                display="inline"
+                className={`sidebar__text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
+              >
+                Germline
+              </Typography>
+            </Link>
+          </ListItem>
+        )}
         <ListItem
           className="sidebar__list-item"
           disableGutters
@@ -114,75 +120,79 @@ const Sidebar = (): JSX.Element => {
             </Typography>
           </Link>
         </ListItem>
-        <Divider />
-        <ListItem
-          className={`
-            sidebar__list-item
-            ${pathname.includes('users') ? 'sidebar__list-item--active' : ''}
-          `}
-          disableGutters
-        >
-          <Link className="sidebar__link" href="/admin/users">
-            <PersonIcon color="action" />
-            <Typography
-              display="inline"
-              className={`sidebar__text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
+        {adminAccess && (
+          <>
+            <Divider />
+            <ListItem
+              className={`
+                sidebar__list-item
+                ${pathname.includes('users') ? 'sidebar__list-item--active' : ''}
+              `}
+              disableGutters
             >
-              Users
-            </Typography>
-          </Link>
-        </ListItem>
-        <ListItem
-          className={`
-            sidebar__list-item
-            ${pathname.includes('groups') ? 'sidebar__list-item--active' : ''}
-          `}
-          disableGutters
-        >
-          <Link className="sidebar__link" href="/admin/groups">
-            <PeopleIcon color="action" />
-            <Typography
-              display="inline"
-              className={`sidebar__text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
+              <Link className="sidebar__link" href="/admin/users">
+                <PersonIcon color="action" />
+                <Typography
+                  display="inline"
+                  className={`sidebar__text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
+                >
+                  Users
+                </Typography>
+              </Link>
+            </ListItem>
+            <ListItem
+              className={`
+                sidebar__list-item
+                ${pathname.includes('groups') ? 'sidebar__list-item--active' : ''}
+              `}
+              disableGutters
             >
-              Groups
-            </Typography>
-          </Link>
-        </ListItem>
-        <ListItem
-          className={`
-            sidebar__list-item
-            ${pathname.includes('projects') ? 'sidebar__list-item--active' : ''}
-          `}
-          disableGutters
-        >
-          <Link className="sidebar__link" href="/admin/projects">
-            <FolderSharedIcon color="action" />
-            <Typography
-              display="inline"
-              className={`sidebar__text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
+              <Link className="sidebar__link" href="/admin/groups">
+                <PeopleIcon color="action" />
+                <Typography
+                  display="inline"
+                  className={`sidebar__text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
+                >
+                  Groups
+                </Typography>
+              </Link>
+            </ListItem>
+            <ListItem
+              className={`
+                sidebar__list-item
+                ${pathname.includes('projects') ? 'sidebar__list-item--active' : ''}
+              `}
+              disableGutters
             >
-              Projects
-            </Typography>
-          </Link>
-        </ListItem>
-        <ListItem
-          className={`
-            sidebar__list-item
-            ${pathname.includes('template') ? 'sidebar__list-item--active' : ''}
-          `}
-          disableGutters
-        >
-          <Link className="sidebar__link" href="/template">
-            <DashboardIcon color="action" />
-            <Typography
-              display="inline"
-              className={`sidebar__text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
+              <Link className="sidebar__link" href="/admin/projects">
+                <FolderSharedIcon color="action" />
+                <Typography
+                  display="inline"
+                  className={`sidebar__text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
+                >
+                  Projects
+                </Typography>
+              </Link>
+            </ListItem>
+            <ListItem
+              className={`
+                sidebar__list-item
+                ${pathname.includes('template') ? 'sidebar__list-item--active' : ''}
+              `}
+              disableGutters
             >
-              Templates
-            </Typography>
-          </Link>
-        </ListItem>
+              <Link className="sidebar__link" href="/template">
+                <DashboardIcon color="action" />
+                <Typography
+                  display="inline"
+                  className={`sidebar__text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
+                >
+                  Templates
+                </Typography>
+              </Link>
+            </ListItem>
+          </>
+        )}
       </List>
     </div>
   );

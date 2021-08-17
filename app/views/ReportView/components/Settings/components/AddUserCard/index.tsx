@@ -1,10 +1,10 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import {
   Button,
 } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 
-import EditContext from '@/context/EditContext';
+import useEdit from '@/hooks/useEdit';
 
 import './index.scss';
 
@@ -15,7 +15,7 @@ type AddUserCardProps = {
 const AddUserCard = ({
   onAdd,
 }: AddUserCardProps): JSX.Element => {
-  const { canEdit } = useContext(EditContext);
+  const { canEdit } = useEdit();
 
   return (
     <div className="add-card">

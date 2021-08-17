@@ -12,7 +12,7 @@ import PublishIcon from '@material-ui/icons/Publish';
 
 import api from '@/services/api';
 import SvgImage from '@/components/SvgImage';
-import EditContext from '@/context/EditContext';
+import useEdit from '@/hooks/useEdit';
 import ReportContext from '@/context/ReportContext';
 import ConfirmContext from '@/context/ConfirmContext';
 import PathwayImageType from '../../types';
@@ -28,9 +28,9 @@ const Pathway = ({
   isPrint = false,
   onChange,
 }: PathwayProps): JSX.Element => {
-  const { canEdit } = useContext(EditContext);
   const { isSigned } = useContext(ConfirmContext);
   const { report } = useContext(ReportContext);
+  const { canEdit } = useEdit();
   const snackbar = useSnackbar();
 
   const [pathwayImage, setPathwayImage] = useState<PathwayImageType>();
