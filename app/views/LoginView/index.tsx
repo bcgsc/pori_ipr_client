@@ -4,8 +4,9 @@ import { RouteChildrenProps } from 'react-router-dom';
 
 import SecurityContext from '@/context/SecurityContext';
 import {
-  login, isAuthorized, getReferrerUri, keycloak, getUser, isAdmin,
+  login, isAuthorized, getReferrerUri, keycloak,
 } from '@/services/management/auth';
+import api from '@/services/api';
 
 const Login = (props: RouteChildrenProps): null => {
   const {
@@ -17,7 +18,6 @@ const Login = (props: RouteChildrenProps): null => {
     authorizationToken,
     setAuthorizationToken,
     setUserDetails,
-    setAdminUser,
   } = useContext(SecurityContext);
 
   let from;
@@ -59,17 +59,15 @@ const Login = (props: RouteChildrenProps): null => {
       }
     } else {
       const retrieveUser = async () => {
-        const user = await getUser(authorizationToken);
+        const user = await api.get('/user/me').request();
         setUserDetails(user);
-        const admin = isAdmin(user);
-        setAdminUser(admin);
         history.push(from);
       };
 
       retrieveUser();
     }
     return undefined;
-  }, [authorizationToken, from, history, setAdminUser, setAuthorizationToken, setUserDetails]);
+  }, [authorizationToken, from, history, setAuthorizationToken, setUserDetails]);
 
   return (null);
 };

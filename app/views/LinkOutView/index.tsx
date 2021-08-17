@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
+import { Typography } from '@material-ui/core';
+
 const LinkOutView = (): JSX.Element => {
   const [error, setError] = useState();
 
@@ -13,18 +15,17 @@ const LinkOutView = (): JSX.Element => {
   }, []);
 
   return (
-    <>
+    <Typography align="center">
       {error ? (
-        <div>
-          An error has occured redirecting to GraphKB:
-          {error}
-        </div>
+        <>
+          {`An error has occured redirecting to GraphKB: ${error.message}`}
+        </>
       ) : (
-        <div>
+        <>
           Redirecting...
-        </div>
+        </>
       )}
-    </>
+    </Typography>
   );
 };
 

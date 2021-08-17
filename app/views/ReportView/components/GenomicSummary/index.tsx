@@ -13,7 +13,7 @@ import sortBy from 'lodash.sortby';
 
 import api, { ApiCallSet } from '@/services/api';
 import { formatDate } from '@/utils/date';
-import EditContext from '@/context/EditContext';
+import useEdit from '@/hooks/useEdit';
 import ConfirmContext from '@/context/ConfirmContext';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import DemoDescription from '@/components/DemoDescription';
@@ -81,7 +81,7 @@ const GenomicSummary = ({
   loadedDispatch,
 }: GenomicSummaryProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
-  const { canEdit } = useContext(EditContext);
+  const { canEdit } = useEdit();
   const { isSigned } = useContext(ConfirmContext);
   const history = useHistory();
 
