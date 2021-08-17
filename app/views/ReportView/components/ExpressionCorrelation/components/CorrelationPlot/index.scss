@@ -1,0 +1,27 @@
+@import '../../../../../../styles/variables';
+
+.correlation-plot {
+  &__group {
+    padding: 8px 0;
+  }
+
+  &__chart {
+    position: relative;
+    width: 60%;
+    margin: 0 auto;
+
+    @media (min-width: $breakpoint-med) {
+      width: none;
+    }
+  }
+
+  @media (min-width: $breakpoint-med) {
+    &__group {
+      display: flex;
+    }
+
+    &__table {
+      width: 50%;
+    }
+  }
+}
