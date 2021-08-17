@@ -5,8 +5,6 @@ const SecurityContext = React.createContext({
   setAuthorizationToken: () => {},
   userDetails: '',
   setUserDetails: () => {},
-  adminUser: '',
-  setAdminUser: () => {},
 });
 
 export default SecurityContext;

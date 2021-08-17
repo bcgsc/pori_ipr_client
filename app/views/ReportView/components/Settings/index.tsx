@@ -16,7 +16,7 @@ import {
 
 import api from '@/services/api';
 import ReportContext from '@/context/ReportContext';
-import EditContext from '@/context/EditContext';
+import useEdit from '@/hooks/useEdit';
 import DemoDescription from '@/components/DemoDescription';
 import snackbar from '@/services/SnackbarUtils';
 import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
@@ -38,7 +38,7 @@ const Settings = ({
   setIsLoading,
 }: SettingsProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
-  const { canEdit } = useContext(EditContext);
+  const { canEdit } = useEdit();
   const history = useHistory();
 
   const [templates, setTemplates] = useState([]);

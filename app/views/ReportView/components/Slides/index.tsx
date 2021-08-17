@@ -6,20 +6,19 @@ import {
   Tabs,
   Tab,
   Paper,
-  Slide,
+  Slide as SlideTransition,
   Divider,
-  IconButton,
   LinearProgress,
 } from '@material-ui/core';
-import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 
 import api from '@/services/api';
 import AlertDialog from '@/components/AlertDialog';
 import snackbar from '@/services/SnackbarUtils';
 import ReportContext from '@/context/ReportContext';
-import EditContext from '@/context/EditContext';
+import useEdit from '@/hooks/useEdit';
 import DemoDescription from '@/components/DemoDescription';
 import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import Slide from './components/Slide';
 
 import UploadSlide from './components/UploadSlide';
 import SlideType from './types';
@@ -38,7 +37,7 @@ const Slides = ({
   setIsLoading,
 }: SlidesProps): JSX.Element => {
   const { report } = useContext(ReportContext);
-  const { canEdit } = useContext(EditContext);
+  const { canEdit } = useEdit();
 
   const [showAlert, setShowAlert] = useState(false);
   const [slides, setSlides] = useState<SlideType[]>([]);
@@ -74,7 +73,7 @@ const Slides = ({
 
   const handleSlideDelete = useCallback(async (ident) => {
     try {
-      await api.del(`/reports/${report.ident}/presentation/slide/${ident}`, {}, {}).request();
+      await api.del(`/reports/${report.ident}/presentation/slide/${ident}`, {}).request();
       setSlides((prevSlides) => prevSlides.filter((slide) => slide.ident !== ident));
       snackbar.success('Slide deleted');
     } catch (err) {
@@ -115,64 +114,57 @@ const Slides = ({
               )}
               {slides.map((slide, index) => (
                 <React.Fragment key={slide.name}>
-                  <Slide
-                    key={slide.name}
-                    appear={false}
-                    in={index === tabValue}
-                    direction={direction}
-                    mountOnEnter
-                    unmountOnExit
-                    onEntering={() => setDirection('left')}
-                    onExiting={() => setDirection('right')}
-                  >
-                    <div className="slides__slide-content">
-                      <Typography variant="h5" className="slides__title">
-                        {slide.name}
-                      </Typography>
-                      <div className="slides__slide-container">
-                        <img
-                          alt={slide.name}
-                          className="slides__image"
-                          src={`data:${slide.object_type};base64, ${slide.object}`}
-                        />
-                        {canEdit && !isPrint && (
-                          <IconButton
-                            className="slides__slide-action"
-                            onClick={() => setShowAlert(true)}
-                            size="small"
-                          >
-                            <HighlightOffIcon />
-                          </IconButton>
-                        )}
-                      </div>
-                    </div>
-                  </Slide>
-                  <AlertDialog
-                    isOpen={showAlert}
-                    onClose={(confirmed: boolean) => handleAlertClose(confirmed, slide.ident)}
-                    text="Are you sure you want to delete this slide?"
-                    title="Confirm"
-                  />
+                  {!isPrint ? (
+                    <>
+                      <SlideTransition
+                        appear={false}
+                        in={index === tabValue}
+                        direction={direction}
+                        mountOnEnter
+                        unmountOnExit
+                        onEntering={() => setDirection('left')}
+                        onExiting={() => setDirection('right')}
+                      >
+                        <div>
+                          <Slide
+                            slide={slide}
+                            onDelete={() => setShowAlert(true)}
+                          />
+                        </div>
+                      </SlideTransition>
+                      <AlertDialog
+                        isOpen={showAlert}
+                        onClose={(confirmed: boolean) => handleAlertClose(confirmed, slide.ident)}
+                        text="Are you sure you want to delete this slide?"
+                        title="Confirm"
+                      />
+                    </>
+                  ) : (
+                    <Slide
+                      isPrint
+                      slide={slide}
+                    />
+                  )}
                 </React.Fragment>
               ))}
             </>
           )}
-          {!slides.length && (
-            <div className="slides__none">
-              <Typography align="center">No slides available</Typography>
-            </div>
-          )}
-          {canEdit && !isPrint && (
-            <>
-              <Divider />
-              <div className="slides__upload">
-                <Typography variant="h4" className="slides__upload-title">Add New Slide</Typography>
-                <UploadSlide
-                  onUpload={handleSlideUpload}
-                />
-              </div>
-            </>
-          )}
+        </>
+      )}
+      {!slides.length && !isLoading && (
+        <div className="slides__none">
+          <Typography align="center">No slides available</Typography>
+        </div>
+      )}
+      {canEdit && !isPrint && (
+        <>
+          <Divider />
+          <div className="slides__upload">
+            <Typography variant="h4" className="slides__upload-title">Add New Slide</Typography>
+            <UploadSlide
+              onUpload={handleSlideUpload}
+            />
+          </div>
         </>
       )}
     </div>

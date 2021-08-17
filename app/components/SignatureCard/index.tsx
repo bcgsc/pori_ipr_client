@@ -1,5 +1,5 @@
 import React, {
-  useContext, useState, useEffect, useMemo,
+  useState, useEffect, useMemo,
 } from 'react';
 import {
   Paper,
@@ -11,7 +11,7 @@ import GestureIcon from '@material-ui/icons/Gesture';
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 
 import { UserType } from '@/common';
-import EditContext from '@/context/EditContext';
+import useEdit from '@/hooks/useEdit';
 import { formatDate } from '@/utils/date';
 import SignatureType from './types';
 
@@ -34,7 +34,7 @@ const SignatureCard = ({
   type,
   isPrint = false,
 }: SignatureCardProps): JSX.Element => {
-  const { canEdit } = useContext(EditContext);
+  const { canEdit } = useEdit();
   const [userSignature, setUserSignature] = useState<UserType>();
 
   useEffect(() => {
