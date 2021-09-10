@@ -11,12 +11,12 @@ import ReportContext from '@/context/ReportContext';
 import { GeneType } from '@/common';
 
 type GeneAutocompleteProps = {
-  defaultValue: GeneType | null;
+  defaultValue?: GeneType;
   onChange: (newData: GeneType) => void;
 };
 
 const GeneAutocomplete = ({
-  defaultValue,
+  defaultValue = null,
   onChange,
 }: GeneAutocompleteProps): JSX.Element => {
   const { report } = useContext(ReportContext);
