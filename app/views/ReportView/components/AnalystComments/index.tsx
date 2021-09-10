@@ -5,8 +5,8 @@ import {
   Typography,
   Fab,
 } from '@material-ui/core';
-
 import EditIcon from '@material-ui/icons/Edit';
+import sanitizeHtml from 'sanitize-html';
 
 import api, { ApiCallSet } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
@@ -42,11 +42,15 @@ const AnalystComments = ({
       const getData = async () => {
         try {
           const apiCalls = new ApiCallSet([
-            api.get(`/reports/${report.ident}/summary/analyst-comments`, {}),
-            api.get(`/reports/${report.ident}/signatures`, {}),
+            api.get(`/reports/${report.ident}/summary/analyst-comments`),
+            api.get(`/reports/${report.ident}/signatures`),
           ]);
           const [commentsResp, signaturesResp] = await apiCalls.request();
-          setComments(commentsResp?.comments);
+          if (commentsResp?.comments) {
+            setComments(sanitizeHtml(commentsResp?.comments, {
+              allowedSchemes: [],
+            }));
+          }
           setSignatures(signaturesResp);
         } catch (err) {
           snackbar.error(`Network error: ${err}`);
@@ -65,12 +69,10 @@ const AnalystComments = ({
       newSignature = await api.put(
         `/reports/${report.ident}/signatures/sign/${role}`,
         {},
-        {},
       ).request();
     } else {
       newSignature = await api.put(
         `/reports/${report.ident}/signatures/revoke/${role}`,
-        {},
         {},
       ).request();
     }
@@ -90,12 +92,13 @@ const AnalystComments = ({
       editedComments = '';
     }
     if (editedComments !== undefined) {
-      await api.put(
+      const commentsResp = await api.put(
         `/reports/${report.ident}/summary/analyst-comments`,
         { comments: editedComments },
-        {},
       ).request();
-      setComments(editedComments);
+      setComments(sanitizeHtml(commentsResp?.comments, {
+        allowedSchemes: [],
+      }));
     }
   }, [report]);
 
