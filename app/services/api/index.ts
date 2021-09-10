@@ -1,17 +1,26 @@
 import ApiCall from './ApiCall';
 import ApiCallSet from './ApiCallSet';
+import { CallOptionsType } from './types';
 
-const get = (endpoint, callOptions) => {
-  const requestOptions = {
+const get = (
+  endpoint: string,
+  callOptions?: CallOptionsType,
+): ApiCall => {
+  const requestOptions: RequestInit = {
     method: 'GET',
   };
   return new ApiCall(endpoint, requestOptions, callOptions);
 };
 
-const post = (endpoint, payload, callOptions, formData = false) => {
-  const requestOptions = {
+const post = (
+  endpoint: string,
+  payload: BodyInit | Record<string, unknown>,
+  callOptions?: CallOptionsType,
+  formData?: boolean,
+): ApiCall => {
+  const requestOptions: RequestInit = {
     method: 'POST',
-    body: formData ? payload : JSON.stringify(payload),
+    body: formData ? payload as BodyInit : JSON.stringify(payload),
   };
   if (!formData) {
     requestOptions.headers = {
@@ -21,13 +30,18 @@ const post = (endpoint, payload, callOptions, formData = false) => {
   return new ApiCall(endpoint, requestOptions, callOptions);
 };
 
-const del = (endpoint, payload, callOptions, formData = false) => {
-  let requestOptions;
+const del = (
+  endpoint: string,
+  payload: BodyInit | Record<string, unknown>,
+  callOptions?: CallOptionsType,
+  formData?: boolean,
+): ApiCall => {
+  let requestOptions: RequestInit;
 
   if (payload) {
     requestOptions = {
       method: 'DELETE',
-      body: formData ? payload : JSON.stringify(payload),
+      body: formData ? payload as BodyInit : JSON.stringify(payload),
     };
   } else {
     requestOptions = {
@@ -42,10 +56,15 @@ const del = (endpoint, payload, callOptions, formData = false) => {
   return new ApiCall(endpoint, requestOptions, callOptions);
 };
 
-const put = (endpoint, payload, callOptions, formData = false) => {
-  const requestOptions = {
+const put = (
+  endpoint: string,
+  payload: BodyInit | Record<string, unknown>,
+  callOptions?: CallOptionsType,
+  formData?: boolean,
+): ApiCall => {
+  const requestOptions: RequestInit = {
     method: 'PUT',
-    body: formData ? payload : JSON.stringify(payload),
+    body: formData ? payload as BodyInit : JSON.stringify(payload),
   };
   if (!formData) {
     requestOptions.headers = {

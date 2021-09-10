@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import {
   Typography,
-  LinearProgress,
 } from '@material-ui/core';
 
 import DataTable from '@/components/DataTable';
@@ -11,13 +10,14 @@ import { CNVSTATE, EXPLEVEL } from '@/constants';
 import Image from '@/components/Image';
 import ImageType from '@/components/Image/types';
 import snackbar from '@/services/SnackbarUtils';
+import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import CopyNumberType from './types';
 import columnDefs from './columnDefs';
 
 import './index.scss';
 
-const titleMap = {
-  clinical: 'CNVs of Potential Clinical Relevance',
+const TITLE_MAP = {
+  clinical: 'CNVs of Potential Therapeutic Relevance',
   nostic: 'CNVs of Prognostic or Diagnostic Relevance',
   biological: 'CNVs of Biological Relevance',
   amplifications: 'Commonly Amplified Oncogenes with Copy Gains',
@@ -26,10 +26,28 @@ const titleMap = {
   lowExp: 'Lowly Expressed Tumour Suppressors with Copy Losses',
 };
 
-const CopyNumber = (): JSX.Element => {
+const getInfoDescription = (relevance: string) => `Copy variants where the variant matched 1 or 
+more statements of ${relevance} relevance in the knowledge base matches section. Details on these 
+matches can be seen in the knowledge base matches section of this report.`;
+
+const INFO_BUBBLES = {
+  biological: getInfoDescription('biological'),
+  nostic: getInfoDescription('prognostic or diagnostic'),
+  clinical: getInfoDescription('therapeutic'),
+  amplifications: 'Copy number amplifications in known oncogenes.',
+  deletions: 'Homozygous (deep) deletions in known tumour supressor genes.',
+  highExp: 'Copy number gains in known oncogenes which are also highly expressed',
+  lowExp: 'Copy number losses in known tumour supressor genes which are also lowly expressed.',
+};
+
+type CopyNumberProps = WithLoadingInjectedProps;
+
+const CopyNumber = ({
+  isLoading,
+  setIsLoading,
+}: CopyNumberProps): JSX.Element => {
   const { report } = useContext(ReportContext);
 
-  const [isLoading, setIsLoading] = useState(true);
   const [images, setImages] = useState<ImageType[]>([]);
   const [circos, setCircos] = useState<ImageType>();
   const [cnvs, setCnvs] = useState<CopyNumberType[]>([]);
@@ -48,8 +66,8 @@ const CopyNumber = (): JSX.Element => {
       const getData = async () => {
         try {
           const apiCalls = new ApiCallSet([
-            api.get(`/reports/${report.ident}/copy-variants`, {}),
-            api.get(`/reports/${report.ident}/image/retrieve/cnvLoh.circos,cnv.1,cnv.2,cnv.3,cnv.4,cnv.5,loh.1,loh.2,loh.3,loh.4,loh.5`, {}),
+            api.get(`/reports/${report.ident}/copy-variants`),
+            api.get(`/reports/${report.ident}/image/retrieve/cnvLoh.circos,cnv.1,cnv.2,cnv.3,cnv.4,cnv.5,loh.1,loh.2,loh.3,loh.4,loh.5`),
           ]);
           const [cnvsResp, imagesResp] = await apiCalls.request();
 
@@ -67,7 +85,7 @@ const CopyNumber = (): JSX.Element => {
       };
       getData();
     }
-  }, [report]);
+  }, [report, setIsLoading]);
 
   useEffect(() => {
     if (cnvs.length) {
@@ -136,7 +154,7 @@ const CopyNumber = (): JSX.Element => {
   return (
     <div className="copy-number">
       <Typography variant="h3">Copy Number Analyses</Typography>
-      {!isLoading ? (
+      {!isLoading && (
         <>
           <Typography variant="h3" className="copy-number__title">Summary of Copy Number Events</Typography>
           {circos ? (
@@ -157,14 +175,15 @@ const CopyNumber = (): JSX.Element => {
                     canToggleColumns
                     columnDefs={columnDefs}
                     rowData={value}
-                    titleText={titleMap[key]}
+                    titleText={TITLE_MAP[key]}
+                    demoDescription={INFO_BUBBLES[key]}
                   />
                 </React.Fragment>
               ))}
             </>
           )}
-          <Typography variant="h3" className="copy-number__title">Copy Number & LOH</Typography>
-          {Boolean(images.length) ? (
+          <Typography variant="h3" className="copy-number__title">Copy Number &amp; LOH</Typography>
+          {images.length ? (
             <div className="copy-number__graphs">
               {[...Array(5).keys()].map((index) => (
                 <React.Fragment key={index + 1}>
@@ -178,11 +197,9 @@ const CopyNumber = (): JSX.Element => {
               ))}
             </div>
           ) : (
-            <Typography align="center">No Copy Number & LOH Plots Available</Typography>
+            <Typography align="center">No Copy Number &amp; LOH Plots Available</Typography>
           )}
         </>
-      ) : (
-        <LinearProgress />
       )}
     </div>
   );

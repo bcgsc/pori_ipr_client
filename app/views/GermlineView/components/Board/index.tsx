@@ -2,11 +2,18 @@ import React, { useEffect, useState } from 'react';
 
 import { GermlineReportType } from '@/context/GermlineReportContext/types';
 import api from '@/services/api';
+import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import snackbar from '@/services/SnackbarUtils';
 import ApiPaginatedTable from './components/ApiPaginatedTable';
 import columnDefs from './columnDefs';
 import ParamsContext from './components/ParamsContext';
 
-const Board = (): JSX.Element => {
+type BoardProps = WithLoadingInjectedProps;
+
+const Board = ({
+  isLoading,
+  setIsLoading,
+}: BoardProps): JSX.Element => {
   const [reports, setReports] = useState<GermlineReportType[]>();
   const [totalRows, setTotalRows] = useState<number>(0);
   const [limit, setLimit] = useState<number>(20);
@@ -16,18 +23,23 @@ const Board = (): JSX.Element => {
 
   useEffect(() => {
     const getData = async () => {
-      const {
-        total: totalRowsResp,
-        reports: reportsResp,
-      } = await api.get(
-        `/germline-small-mutation-reports?limit=${limit}&offset=${offset}${reviewFilter ? '&reviewType=biofx&exported=false' : ''}${searchText ? `&patientId=${searchText}` : ''}`,
-        {},
-      ).request();
-      setReports(reportsResp);
-      setTotalRows(totalRowsResp);
+      try {
+        const {
+          total: totalRowsResp,
+          reports: reportsResp,
+        } = await api.get(
+          `/germline-small-mutation-reports?limit=${limit}&offset=${offset}${reviewFilter ? '&reviewType=biofx&exported=false' : ''}${searchText ? `&patientId=${searchText}` : ''}`,
+        ).request();
+        setReports(reportsResp);
+        setTotalRows(totalRowsResp);
+      } catch (err) {
+        snackbar.error(`Network error: ${err}`);
+      } finally {
+        setIsLoading(false);
+      }
     };
     getData();
-  }, [limit, offset, reviewFilter, searchText]);
+  }, [limit, offset, reviewFilter, searchText, setIsLoading]);
 
   return (
     <ParamsContext.Provider
@@ -35,7 +47,7 @@ const Board = (): JSX.Element => {
         limit, setLimit, offset, setOffset, reviewFilter, setReviewFilter, searchText, setSearchText,
       }}
     >
-      {reports && (
+      {!isLoading && (
         <ApiPaginatedTable
           rowData={reports}
           columnDefs={columnDefs}

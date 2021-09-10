@@ -1,26 +1,40 @@
 import React, { useState, useEffect, useContext } from 'react';
 import {
   Typography,
-  LinearProgress,
 } from '@material-ui/core';
 
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
 import ReportContext from '@/context/ReportContext';
+import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import { columnDefs } from './columnDefs';
 import MutationType from './types';
 
 import './index.scss';
 
-const titleMap = {
+const TITLE_MAP = {
   therapeutic: 'Variants of Therapeutic Relevance',
   nostic: 'Variants of Prognostic or Diagnostic Relevance',
   biological: 'Variants of Biological Relevance',
   unknown: 'Variants of Unknown Significance',
 };
 
-const SmallMutations = (): JSX.Element => {
+const getInfoDescription = (relevance: string) => `Small mutations where the mutation matched 1 or more statements of ${relevance} relevance in the knowledge base matches section. Details on these matches can be seen in the knowledge base matches section of this report.`;
+
+const INFO_BUBBLES = {
+  biological: getInfoDescription('biological'),
+  nostic: getInfoDescription('prognostic or diagnostic'),
+  therapeutic: getInfoDescription('therapeutic'),
+  unknown: 'Small mutations where the mutation did not match any knowledge base statements of therapeutic, biological, diagnostic, or prognostic relevance.',
+};
+
+type SmallMutationsProps = WithLoadingInjectedProps;
+
+const SmallMutations = ({
+  isLoading,
+  setIsLoading,
+}: SmallMutationsProps): JSX.Element => {
   const { report } = useContext(ReportContext);
   const [smallMutations, setSmallMutations] = useState<MutationType[]>([]);
   const [groupedSmallMutations, setGroupedSmallMutations] = useState({
@@ -29,7 +43,6 @@ const SmallMutations = (): JSX.Element => {
     biological: [],
     unknown: [],
   });
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (report) {
@@ -37,7 +50,6 @@ const SmallMutations = (): JSX.Element => {
         try {
           const smallMutationsResp = await api.get(
             `/reports/${report.ident}/small-mutations`,
-            {},
           ).request();
           setSmallMutations(smallMutationsResp);
         } catch (err) {
@@ -48,7 +60,7 @@ const SmallMutations = (): JSX.Element => {
       };
       getData();
     }
-  }, [report]);
+  }, [report, setIsLoading]);
 
   // Categorize small mutations
   useEffect(() => {
@@ -92,7 +104,7 @@ const SmallMutations = (): JSX.Element => {
       <Typography variant="h3">
         Small Mutations
       </Typography>
-      {!isLoading ? (
+      {!isLoading && (
         <>
           {Object.entries(groupedSmallMutations).map(([key, value]) => (
             <DataTable
@@ -100,12 +112,11 @@ const SmallMutations = (): JSX.Element => {
               canToggleColumns
               columnDefs={columnDefs}
               rowData={value}
-              titleText={titleMap[key]}
+              titleText={TITLE_MAP[key]}
+              demoDescription={INFO_BUBBLES[key]}
             />
           ))}
         </>
-      ) : (
-        <LinearProgress />
       )}
     </div>
   );

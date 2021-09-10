@@ -13,7 +13,7 @@ import InlineSVG from 'svg-inline-react';
 import AutoSizer from 'react-virtualized/dist/es/AutoSizer';
 import { AgGridReact } from '@ag-grid-community/react';
 
-import LinkCellRenderer from '../LinkCellRenderer';
+import EnsemblCellRenderer from '../EnsemblCellRenderer';
 import columnDefs, { setHeaderName } from './columnDefs';
 
 import './index.scss';
@@ -127,7 +127,7 @@ function SvgViewer(props) {
             rowData={rowData}
             domLayout="autoHeight"
             frameworkComponents={{
-              LinkCellRenderer,
+              EnsemblCellRenderer,
             }}
           />
         </div>

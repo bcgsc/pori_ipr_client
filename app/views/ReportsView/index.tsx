@@ -1,13 +1,14 @@
 import React, {
-  useState, useContext, useEffect, useCallback,
+  useState, useEffect, useCallback,
 } from 'react';
 import { AgGridReact } from '@ag-grid-community/react';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { ColumnState } from '@ag-grid-community/core';
 
 import startCase from '@/utils/startCase';
 import useGrid from '@/hooks/useGrid';
-import { isExternalMode } from '@/services/management/auth';
-import SecurityContext from '@/context/SecurityContext';
+import useExternalMode from '@/hooks/useExternalMode';
+import useResource from '@/hooks/useResource';
 import api from '@/services/api';
 import { ReportType } from '@/context/ReportContext';
 import columnDefs from './columnDefs';
@@ -25,19 +26,20 @@ const ReportsTableComponent = (): JSX.Element => {
     onGridReady,
   } = useGrid();
 
-  const { userDetails, adminUser } = useContext(SecurityContext);
+  const { adminAccess } = useResource();
+  const isExternalMode = useExternalMode();
   const [rowData, setRowData] = useState<ReportType[]>();
 
   useEffect(() => {
-    if (!rowData) {
+    if (!rowData && isExternalMode !== undefined) {
       const getData = async () => {
         let states = '';
 
-        if (!adminUser) {
+        if (!adminAccess) {
           states = 'ready,active,uploaded,signedoff,archived,reviewed';
         }
 
-        if (isExternalMode(userDetails)) {
+        if (isExternalMode) {
           states = 'reviewed,archived';
         }
 
@@ -65,7 +67,7 @@ const ReportsTableComponent = (): JSX.Element => {
       };
       getData();
     }
-  }, [adminUser, userDetails, rowData]);
+  }, [adminAccess, isExternalMode]);
 
   const onGridSizeChanged = useCallback((params) => {
     const MEDIUM_SCREEN_WIDTH_LOWER = 992;

@@ -15,6 +15,10 @@
     "app/**/*.tsx",
     "app/**/*.js",
     "app/**/*.jsx",
+    "app/**/*.test.ts",
+    "app/**/*.test.tsx",
+    "app/**/*.test.js",
+    "app/**/*.test.jsx"
   ],
   "compileOnSave": false,
   "allowJs": true

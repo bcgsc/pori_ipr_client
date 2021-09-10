@@ -1,6 +1,7 @@
 import { EXPLEVEL } from '@/constants';
+import { ExpOutliersType, ProcessedExpressionOutliers } from './types';
 
-const processExpression = (input) => {
+const processExpression = (input: ExpOutliersType[]): ProcessedExpressionOutliers => {
   const expressions = {
     clinical: [],
     nostic: [],

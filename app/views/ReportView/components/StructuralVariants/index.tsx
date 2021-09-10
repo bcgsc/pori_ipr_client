@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
 import {
-  LinearProgress,
   Typography,
   Tabs,
   Tab,
@@ -12,22 +11,36 @@ import DataTable from '@/components/DataTable';
 import Image from '@/components/Image';
 import ReportContext from '@/context/ReportContext';
 import ImageType from '@/components/Image/types';
+import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import columnDefs from './columnDefs';
 import StructuralVariantType from './types';
 
 import './index.scss';
 
-const titleMap = {
-  therapeutic: 'Gene Fusions of Potential Clinical Relevance',
+const TITLE_MAP = {
+  therapeutic: 'Gene Fusions of Potential Therapeutic Relevance',
   nostic: 'Gene Fusions of Prognostic or Diagnostic Relevance',
   biological: 'Gene Fusions of Biological Relevance',
   unknown: 'Structural Variants of Unknown Significance',
 };
 
-const StructuralVariants = (): JSX.Element => {
+const getInfoDescription = (relevance: string) => `Structural variants where the mutation matched 1 or more statements of ${relevance} relevance in the knowledge base matches section. Details on these matches can be seen in the knowledge base matches section of this report.`;
+
+const INFO_BUBBLES = {
+  biological: getInfoDescription('biological'),
+  nostic: getInfoDescription('prognostic or diagnostic'),
+  therapeutic: getInfoDescription('therapeutic'),
+  unknown: 'Structural variants where the mutation did not match any knowledge base statements of therapeutic, biological, diagnostic, or prognostic relevance.',
+};
+
+type StructuralVariantsProps = WithLoadingInjectedProps;
+
+const StructuralVariants = ({
+  isLoading,
+  setIsLoading,
+}: StructuralVariantsProps): JSX.Element => {
   const { report } = useContext(ReportContext);
 
-  const [isLoading, setIsLoading] = useState(true);
   const [svs, setSvs] = useState<StructuralVariantType[]>([]);
   const [groupedSvs, setGroupedSvs] = useState({
     therapeutic: [],
@@ -45,8 +58,8 @@ const StructuralVariants = (): JSX.Element => {
       const getData = async () => {
         try {
           const apiCalls = new ApiCallSet([
-            api.get(`/reports/${report.ident}/structural-variants`, {}),
-            api.get(`/reports/${report.ident}/image/retrieve/circosSv.genome,circosSv.transcriptome`, {}),
+            api.get(`/reports/${report.ident}/structural-variants`),
+            api.get(`/reports/${report.ident}/image/retrieve/circosSv.genome,circosSv.transcriptome`),
           ]);
           const [svsResp, imagesResp] = await apiCalls.request();
 
@@ -61,7 +74,7 @@ const StructuralVariants = (): JSX.Element => {
       };
       getData();
     }
-  }, [report]);
+  }, [report, setIsLoading]);
 
   // Categorize variants
   useEffect(() => {
@@ -107,7 +120,7 @@ const StructuralVariants = (): JSX.Element => {
   return (
     <div className="structural-variants">
       <Typography variant="h3">Structural Variation</Typography>
-      {!isLoading ? (
+      {!isLoading && (
         <>
           <Typography variant="h3" className="structural-variants__title">
             Summary of Structural Events
@@ -140,7 +153,7 @@ const StructuralVariants = (): JSX.Element => {
                   )}
                 </>
               )}
-             </>
+            </>
           ) : (
             <Typography align="center">No Circos Plots Available</Typography>
           )}
@@ -149,13 +162,12 @@ const StructuralVariants = (): JSX.Element => {
               key={key}
               columnDefs={columnDefs}
               rowData={value}
-              titleText={titleMap[key]}
+              titleText={TITLE_MAP[key]}
               canToggleColumns
+              demoDescription={INFO_BUBBLES[key]}
             />
           ))}
         </>
-      ) : (
-        <LinearProgress />
       )}
     </div>
   );
