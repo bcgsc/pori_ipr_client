@@ -46,9 +46,13 @@ const AnalystComments = ({
             api.get(`/reports/${report.ident}/signatures`),
           ]);
           const [commentsResp, signaturesResp] = await apiCalls.request();
+
           if (commentsResp?.comments) {
             setComments(sanitizeHtml(commentsResp?.comments, {
               allowedSchemes: [],
+              allowedAttributes: {
+                '*': ['style'],
+              },
             }));
           }
           setSignatures(signaturesResp);
