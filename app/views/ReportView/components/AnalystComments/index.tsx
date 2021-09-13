@@ -41,11 +41,10 @@ const AnalystComments = ({
     if (report) {
       const getData = async () => {
         try {
-          const apiCalls = new ApiCallSet([
-            api.get(`/reports/${report.ident}/summary/analyst-comments`),
-            api.get(`/reports/${report.ident}/signatures`),
+          const [commentsResp, signaturesResp] = await Promise.all([
+            api.get(`/reports/${report.ident}/summary/analyst-comments`).request(),
+            api.get(`/reports/${report.ident}/signatures`).request(),
           ]);
-          const [commentsResp, signaturesResp] = await apiCalls.request();
 
           if (commentsResp?.comments) {
             setComments(sanitizeHtml(commentsResp?.comments, {
@@ -102,6 +101,9 @@ const AnalystComments = ({
       ).request();
       setComments(sanitizeHtml(commentsResp?.comments, {
         allowedSchemes: [],
+        allowedAttributes: {
+          '*': ['style'],
+        },
       }));
     }
   }, [report]);
