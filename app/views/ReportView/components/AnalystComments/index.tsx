@@ -8,7 +8,7 @@ import {
 import EditIcon from '@material-ui/icons/Edit';
 import sanitizeHtml from 'sanitize-html';
 
-import api, { ApiCallSet } from '@/services/api';
+import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import useEdit from '@/hooks/useEdit';
 import DemoDescription from '@/components/DemoDescription';

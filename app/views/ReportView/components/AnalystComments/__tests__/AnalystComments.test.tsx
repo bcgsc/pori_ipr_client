@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+import { when, resetAllWhenMocks } from 'jest-when';
 
 import { withReportContext } from '@/test/testHelpers';
 import withLoading from '@/hoc/WithLoading';
@@ -19,13 +20,16 @@ const mockComments2 = {
   comments: '<div style="color: red;">test</div>',
 };
 
-jest.mock('@/services/api', () => ({
-  get: jest.fn(() => ({ request: jest.fn(() => mockComments) })),
-}));
+jest.mock('@/services/api');
 
 describe('AnalystComments', () => {
+  beforeEach(() => resetAllWhenMocks())
+
   test('Img tags are sanitized', async () => {
-    api.get.mockReturnValue({ request: jest.fn(() => mockComments) });
+    when(api.get)
+      .mockImplementation(() => ({ request: async () => null }))
+      .calledWith(`/reports/${mockReport.ident}/summary/analyst-comments`)
+      .mockImplementation(() => ({ request: async () => mockComments }));
 
     const Component = withLoading(withReportContext(AnalystComments, mockReport));
     render(
@@ -37,7 +41,10 @@ describe('AnalystComments', () => {
   });
 
   test('Style tags are still present', async () => {
-    api.get.mockReturnValue({ request: jest.fn(() => mockComments2) });
+    when(api.get)
+      .mockImplementation(() => ({ request: async () => null }))
+      .calledWith(`/reports/${mockReport.ident}/summary/analyst-comments`)
+      .mockImplementation(() => ({ request: async () => mockComments2 }));
 
     const Component = withLoading(withReportContext(AnalystComments, mockReport));
     render(
