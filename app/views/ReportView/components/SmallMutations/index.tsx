@@ -7,7 +7,7 @@ import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
 import ReportContext from '@/context/ReportContext';
-import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import { columnDefs } from './columnDefs';
 import MutationType from './types';
 
@@ -122,4 +122,4 @@ const SmallMutations = ({
   );
 };
 
-export default SmallMutations;
+export default withLoading(SmallMutations);

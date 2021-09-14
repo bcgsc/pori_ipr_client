@@ -8,7 +8,6 @@ import {
   Paper,
   Slide as SlideTransition,
   Divider,
-  LinearProgress,
 } from '@material-ui/core';
 
 import api from '@/services/api';
@@ -17,7 +16,7 @@ import snackbar from '@/services/SnackbarUtils';
 import ReportContext from '@/context/ReportContext';
 import useEdit from '@/hooks/useEdit';
 import DemoDescription from '@/components/DemoDescription';
-import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import Slide from './components/Slide';
 
 import UploadSlide from './components/UploadSlide';
@@ -171,4 +170,4 @@ const Slides = ({
   );
 };
 
-export default Slides;
+export default withLoading(Slides);

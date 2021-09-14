@@ -10,7 +10,7 @@ import { CNVSTATE, EXPLEVEL } from '@/constants';
 import Image from '@/components/Image';
 import ImageType from '@/components/Image/types';
 import snackbar from '@/services/SnackbarUtils';
-import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import CopyNumberType from './types';
 import columnDefs from './columnDefs';
 
@@ -205,4 +205,4 @@ const CopyNumber = ({
   );
 };
 
-export default CopyNumber;
+export default withLoading(CopyNumber);

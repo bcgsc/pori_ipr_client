@@ -18,7 +18,7 @@ import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import { formatDate } from '@/utils/date';
 import SignatureCard, { SignatureType } from '@/components/SignatureCard';
 import PrintTable from '@/components/PrintTable';
-import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import { sampleColumnDefs, eventsColumnDefs } from './columnDefs';
 import TestInformation, { TestInformationType } from './components/TestInformation';
 import PatientEdit from '../GenomicSummary/components/PatientEdit';
@@ -380,4 +380,4 @@ const ProbeSummary = ({
   );
 };
 
-export default ProbeSummary;
+export default withLoading(ProbeSummary);

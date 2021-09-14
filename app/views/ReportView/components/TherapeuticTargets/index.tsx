@@ -9,7 +9,7 @@ import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DemoDescription from '@/components/DemoDescription';
 import ReportContext from '@/context/ReportContext';
-import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import EditDialog from './components/EditDialog';
 import EvidenceHeader from './components/EvidenceHeader';
 import columnDefs from './columnDefs';
@@ -183,4 +183,4 @@ const Therapeutic = ({
   );
 };
 
-export default Therapeutic;
+export default withLoading(Therapeutic);
