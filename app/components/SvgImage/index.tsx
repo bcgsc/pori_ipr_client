@@ -60,7 +60,7 @@ const SvgImage = ({
     <div className="svg-image">
       {processedImage && svgHeight && svgWidth && (
         <AutoSizer disableHeight defaultWidth={PRINT_WIDTH} onResize={handleFit}>
-          {({ width }) => (
+          {({ width = PRINT_WIDTH }) => (
             <UncontrolledReactSVGPanZoom
               ref={Viewer}
               /*

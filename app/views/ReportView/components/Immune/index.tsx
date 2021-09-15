@@ -6,7 +6,7 @@ import Image, { ImageType } from '@/components/Image';
 import ReportContext from '@/context/ReportContext';
 import api, { ApiCallSet } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
-import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import { hlaColumnDefs, cellTypesColumnDefs } from './columnDefs';
 import { ImmuneType, HlaType } from './types';
 
@@ -111,4 +111,4 @@ const Immune = ({
   );
 };
 
-export default Immune;
+export default withLoading(Immune);
