@@ -54,16 +54,15 @@ const AddEditUserDialog = ({
 
   useEffect(() => {
     const getData = async () => {
-      const callSet = new ApiCallSet([
-        api.get('/project', {}),
-        api.get('/user/group', {}),
+      const [projectsResp, groupsResp] = await Promise.all([
+        api.get('/project').request(),
+        api.get('/user/group').request(),
       ]);
-      const [projectsResp, groupsResp] = await callSet.request();
       setProjectOptions(projectsResp);
       setGroupOptions(groupsResp);
     };
     getData();
-  }, []);
+  }, [editData]);
 
   useEffect(() => {
     if (editData) {
@@ -82,8 +81,8 @@ const AddEditUserDialog = ({
       setFirstName(editFirstName);
       setLastName(editLastName);
       setEmail(editEmail);
-      setProjects(editProjects);
-      setGroups(editGroups);
+      setProjects(projectOptions.filter((project) => editProjects.some((editProject) => editProject.name === project.name)));
+      setGroups(groupOptions.filter((group) => editGroups.some((editGroup) => editGroup.name === group.name)));
       setDbType(editDbType);
     } else {
       setDialogTitle('Add user');
@@ -95,7 +94,7 @@ const AddEditUserDialog = ({
       setGroups([]);
       setDbType(CONFIG.STORAGE.DATABASE_TYPE);
     }
-  }, [editData]);
+  }, [editData, groupOptions, projectOptions]);
 
   const handleClose = useCallback(async () => {
     if (username.length && firstName.length && lastName.length && email.length) {
@@ -114,9 +113,9 @@ const AddEditUserDialog = ({
 
       let createdResp;
       if (editData) {
-        createdResp = await api.put(`/user/${editData.ident}`, newEntry, {}).request();
+        createdResp = await api.put(`/user/${editData.ident}`, newEntry).request();
       } else {
-        createdResp = await api.post('/user', newEntry, {}).request();
+        createdResp = await api.post('/user', newEntry).request();
       }
 
       if (projects.length) {
