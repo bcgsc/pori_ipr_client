@@ -20,6 +20,10 @@ const TestInformation = ({
     snpGenes,
     snpProbe,
     snpVars,
+    germlineGenes,
+    germlineVars,
+    pharmacogenomicGenes,
+    pharmacogenomicVars,
   },
 }: TestInformationProps): JSX.Element => (
   <Grid direction="row" container>
@@ -51,6 +55,16 @@ const TestInformation = ({
           {snpVars}
         </ReadOnlyTextField>
       </Grid>
+      <Grid item>
+        <ReadOnlyTextField isUnderlined={false} label="Cancer Predisposition Genes Screened">
+          {germlineGenes}
+        </ReadOnlyTextField>
+      </Grid>
+      <Grid item>
+        <ReadOnlyTextField isUnderlined={false} label="Cancer Predisposition Variants Screened">
+          {germlineVars}
+        </ReadOnlyTextField>
+      </Grid>
     </Grid>
     <Grid direction="column" container className="grid--third">
       <Grid item>
@@ -61,6 +75,16 @@ const TestInformation = ({
       <Grid item>
         <ReadOnlyTextField isUnderlined={false} label="Fusion Variants Screened">
           {fusionVars}
+        </ReadOnlyTextField>
+      </Grid>
+      <Grid item>
+        <ReadOnlyTextField isUnderlined={false} label="Pharmacogenomic Genes Screened">
+          {pharmacogenomicGenes}
+        </ReadOnlyTextField>
+      </Grid>
+      <Grid item>
+        <ReadOnlyTextField isUnderlined={false} label="Pharmacogenomic Variants Screened">
+          {pharmacogenomicVars}
         </ReadOnlyTextField>
       </Grid>
     </Grid>

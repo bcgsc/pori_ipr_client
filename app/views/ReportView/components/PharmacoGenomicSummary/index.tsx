@@ -17,6 +17,8 @@ import ConfirmContext from '@/context/ConfirmContext';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import { formatDate } from '@/utils/date';
 import SignatureCard, { SignatureType } from '@/components/SignatureCard';
+import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import snackbar from '@/services/SnackbarUtils';
 import { sampleColumnDefs } from './columnDefs';
 import { columnDefs as pharmacoGenomicColumnDefs } from '../KbMatches/columnDefs';
 import { columnDefs as cancerColumnDefs } from '../SmallMutations/columnDefs';
@@ -29,11 +31,12 @@ import './index.scss';
 type PharmacoGenomicSummaryProps = {
   loadedDispatch: (type: Record<string, unknown>) => void;
   isPrint: boolean;
-};
+} & WithLoadingInjectedProps;
 
 const PharmacoGenomicSummary = ({
   loadedDispatch,
   isPrint,
+  setIsLoading,
 }: PharmacoGenomicSummaryProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
   const { canEdit } = useContext(EditContext);
@@ -50,63 +53,69 @@ const PharmacoGenomicSummary = ({
   useEffect(() => {
     if (report && report.ident) {
       const getData = async () => {
-        const apiCalls = new ApiCallSet([
-          api.get(`/reports/${report.ident}/probe-test-information`, {}),
-          api.get(`/reports/${report.ident}/signatures`, {}),
-          api.get(`/reports/${report.ident}/kb-matches?category=pharmacogenomic`, {}),
-          api.get(`/reports/${report.ident}/small-mutations`, {}),
-        ]);
-        const [
-          testInformationData,
-          signaturesData,
-          pharmacoGenomicResp,
-          cancerPredispositionResp,
-        ] = await apiCalls.request();
+        try {
+          const apiCalls = new ApiCallSet([
+            api.get(`/reports/${report.ident}/probe-test-information`),
+            api.get(`/reports/${report.ident}/signatures`),
+            api.get(`/reports/${report.ident}/kb-matches?category=pharmacogenomic`),
+            api.get(`/reports/${report.ident}/small-mutations`),
+          ]);
+          const [
+            testInformationData,
+            signaturesData,
+            pharmacoGenomicResp,
+            cancerPredispositionResp,
+          ] = await apiCalls.request();
 
-        setTestInformation(testInformationData);
-        setSignatures(signaturesData);
-        setPharmacoGenomic(pharmacoGenomicResp);
-        setCancerPredisposition(cancerPredispositionResp.filter((row) => row.germline));
+          setTestInformation(testInformationData);
+          setSignatures(signaturesData);
+          setPharmacoGenomic(pharmacoGenomicResp);
+          setCancerPredisposition(cancerPredispositionResp.filter((row) => row.germline));
 
-        setPatientInformation([
-          {
-            label: 'Alternate ID',
-            value: report.alternateIdentifier,
-          },
-          {
-            label: 'Report Date',
-            value: formatDate(report.createdAt),
-          },
-          {
-            label: 'Case Type',
-            value: report.patientInformation.caseType,
-          },
-          {
-            label: 'Physician',
-            value: report.patientInformation.physician,
-          },
-          {
-            label: 'Biopsy Name',
-            value: report.biopsyName,
-          },
-          {
-            label: 'Biopsy Details',
-            value: report.patientInformation.biopsySite,
-          },
-          {
-            label: 'Gender',
-            value: report.patientInformation.gender,
-          },
-        ]);
+          setPatientInformation([
+            {
+              label: 'Alternate ID',
+              value: report.alternateIdentifier,
+            },
+            {
+              label: 'Report Date',
+              value: formatDate(report.createdAt),
+            },
+            {
+              label: 'Case Type',
+              value: report.patientInformation.caseType,
+            },
+            {
+              label: 'Physician',
+              value: report.patientInformation.physician,
+            },
+            {
+              label: 'Biopsy Name',
+              value: report.biopsyName,
+            },
+            {
+              label: 'Biopsy Details',
+              value: report.patientInformation.biopsySite,
+            },
+            {
+              label: 'Gender',
+              value: report.patientInformation.gender,
+            },
+          ]);
 
-        if (loadedDispatch) {
-          loadedDispatch({ type: 'summary' });
+          if (loadedDispatch) {
+            loadedDispatch({ type: 'summary' });
+          }
+        } catch (err) {
+          snackbar.error(`Network error: ${err}`);
+        } finally {
+          setIsLoading(false);
         }
       };
 
       getData();
     }
-  }, [loadedDispatch, report]);
+  }, [loadedDispatch, report, setIsLoading]);
 
   const handlePatientEditClose = useCallback(async (isSaved, newPatientData, newReportData) => {
     const apiCalls = [];
@@ -324,4 +333,4 @@ const PharmacoGenomicSummary = ({
   );
 };
 
-export default PharmacoGenomicSummary;
+export default withLoading(PharmacoGenomicSummary);

@@ -6,7 +6,6 @@ import {
   Typography,
   IconButton,
   Grid,
-  LinearProgress,
 } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import sortBy from 'lodash.sortby';
@@ -117,13 +116,13 @@ const GenomicSummary = ({
       const getData = async () => {
         try {
           const apiCalls = new ApiCallSet([
-            api.get(`/reports/${report.ident}/summary/microbial`, {}),
-            api.get(`/reports/${report.ident}/summary/genomic-alterations-identified`, {}),
-            api.get(`/reports/${report.ident}/comparators`, {}),
-            api.get(`/reports/${report.ident}/mutation-signatures`, {}),
-            api.get(`/reports/${report.ident}/mutation-burden`, {}),
-            api.get(`/reports/${report.ident}/immune-cell-types`, {}),
-            api.get(`/reports/${report.ident}/msi`, {}),
+            api.get(`/reports/${report.ident}/summary/microbial`),
+            api.get(`/reports/${report.ident}/summary/genomic-alterations-identified`),
+            api.get(`/reports/${report.ident}/comparators`),
+            api.get(`/reports/${report.ident}/mutation-signatures`),
+            api.get(`/reports/${report.ident}/mutation-burden`),
+            api.get(`/reports/${report.ident}/immune-cell-types`),
+            api.get(`/reports/${report.ident}/msi`),
           ]);
 
           const [
