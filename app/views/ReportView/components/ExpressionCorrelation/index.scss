@@ -2,7 +2,7 @@
   padding: 16px;
 
   &__header {
-    margin: 0 0 12px;
+    margin: 12px 0;
   }
 
   &__expression-charts {
@@ -19,9 +19,7 @@
     margin: 24px 0;
   }
 
-  &__chart {
-    position: relative;
-    width: 50%;
-    margin: 0 auto;
+  &__title {
+    margin: 16px 0;
   }
 }

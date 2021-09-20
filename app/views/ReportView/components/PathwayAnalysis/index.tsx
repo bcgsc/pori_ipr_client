@@ -3,7 +3,6 @@ import React, {
 } from 'react';
 import {
   Typography,
-  LinearProgress,
 } from '@material-ui/core';
 
 import api from '@/services/api';
@@ -11,6 +10,7 @@ import snackbar from '@/services/SnackbarUtils';
 import { ImageType } from '@/components/Image';
 import ReportContext from '@/context/ReportContext';
 import DemoDescription from '@/components/DemoDescription';
+import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import PathwayImageType from './types';
 import Legend from './components/Legend';
 import Pathway from './components/Pathway';
@@ -20,17 +20,18 @@ import './index.scss';
 type PathwayAnalysisProps = {
   isPrint?: boolean;
   loadedDispatch?: (type: Record<'type', string>) => void;
-};
+} & WithLoadingInjectedProps;
 
 const PathwayAnalysis = ({
+  isLoading,
   isPrint = false,
   loadedDispatch,
+  setIsLoading,
 }: PathwayAnalysisProps): JSX.Element => {
   const { report } = useContext(ReportContext);
 
   const [pathwayImage, setPathwayImage] = useState<PathwayImageType>();
   const [legend, setLegend] = useState<string | ImageType>();
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (report) {
@@ -38,7 +39,6 @@ const PathwayAnalysis = ({
         try {
           const pathwayImageResp = await api.get(
             `/reports/${report.ident}/summary/pathway-analysis`,
-            {},
           ).request();
           setPathwayImage(pathwayImageResp);
 
@@ -50,7 +50,6 @@ const PathwayAnalysis = ({
           } else if (type === 'custom') {
             const legendResp = await api.get(
               `/reports/${report.ident}/image/retrieve/pathwayAnalysis.legend`,
-              {},
             ).request();
             setLegend(legendResp[0]);
           }
@@ -65,7 +64,7 @@ const PathwayAnalysis = ({
       };
       getData();
     }
-  }, [loadedDispatch, report]);
+  }, [loadedDispatch, report, setIsLoading]);
 
   const handlePathwayChange = useCallback(async (newPathway) => {
     if (!legend) {
@@ -77,7 +76,6 @@ const PathwayAnalysis = ({
       } else if (type === 'custom') {
         const legendResp = await api.get(
           `/reports/${report.ident}/image/retrieve/pathwayAnalysis.legend`,
-          {},
         ).request();
         setLegend(legendResp[0]);
       }
@@ -90,7 +88,7 @@ const PathwayAnalysis = ({
       <DemoDescription>
         This section is for display of a graphical or visual summary of the sequencing results in the context of biological pathways. This enables the visualization of multiple genomic alterations affecting often diverse biological pathways.
       </DemoDescription>
-      {!isLoading ? (
+      {!isLoading && (
         <>
           <Pathway
             initialPathway={pathwayImage}
@@ -103,8 +101,6 @@ const PathwayAnalysis = ({
             isPrint={isPrint}
           />
         </>
-      ) : (
-        <LinearProgress />
       )}
     </div>
   );

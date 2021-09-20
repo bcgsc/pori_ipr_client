@@ -1,56 +1,61 @@
 import React, {
   useState, useEffect, useContext, useCallback,
 } from 'react';
-import { LinearProgress } from '@material-ui/core';
 import orderBy from 'lodash.orderby';
 
 import DataTable from '@/components/DataTable';
-import EditContext from '@/context/EditContext';
+import useEdit from '@/hooks/useEdit';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DemoDescription from '@/components/DemoDescription';
 import ReportContext from '@/context/ReportContext';
+import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import EditDialog from './components/EditDialog';
 import EvidenceHeader from './components/EvidenceHeader';
 import columnDefs from './columnDefs';
 
 type TherapeuticProps = {
   print?: boolean;
-};
+} & WithLoadingInjectedProps;
 
 const Therapeutic = ({
+  isLoading,
   print = false,
+  setIsLoading,
 }: TherapeuticProps): JSX.Element => {
   const [therapeuticData, setTherapeuticData] = useState([]);
   const [chemoresistanceData, setChemoresistanceData] = useState([]);
 
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [editData, setEditData] = useState();
-  const [loading, setLoading] = useState<boolean>(true);
 
-  const { canEdit } = useContext(EditContext);
+  const { canEdit } = useEdit();
   const { report } = useContext(ReportContext);
 
   useEffect(() => {
     if (report) {
       const getData = async () => {
-        const therapeuticResp = await api.get(
-          `/reports/${report.ident}/therapeutic-targets`,
-          {},
-        ).request();
+        try {
+          const therapeuticResp = await api.get(
+            `/reports/${report.ident}/therapeutic-targets`,
+          ).request();
 
-        setTherapeuticData(therapeuticResp.filter(
-          (target) => target.type === 'therapeutic',
-        ));
-        setChemoresistanceData(therapeuticResp.filter(
-          (target) => target.type === 'chemoresistance',
-        ));
-        setLoading(false);
+          setTherapeuticData(therapeuticResp.filter(
+            (target) => target.type === 'therapeutic',
+          ));
+          setChemoresistanceData(therapeuticResp.filter(
+            (target) => target.type === 'chemoresistance',
+          ));
+        } catch (err) {
+          snackbar.error(`Network error: ${err}`);
+        } finally {
+          setIsLoading(false);
+        }
       };
 
       getData();
     }
-  }, [report]);
+  }, [report, setIsLoading]);
 
   const handleEditStart = (rowData) => {
     setShowDialog(true);
@@ -131,7 +136,7 @@ const Therapeutic = ({
         of evidence, and any relevant clinical trials. Potential caveats are also specified.
         Alterations associated with potential resistance to relevant therapies are also documented.
       </DemoDescription>
-      {!loading && (
+      {!isLoading && (
         <>
           <DataTable
             titleText="Potential Therapeutic Targets"
@@ -173,9 +178,6 @@ const Therapeutic = ({
             />
           )}
         </>
-      )}
-      {loading && (
-        <LinearProgress />
       )}
     </div>
   );

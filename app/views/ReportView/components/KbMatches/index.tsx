@@ -4,7 +4,6 @@ import React, {
 import {
   TextField,
   InputAdornment,
-  LinearProgress,
 } from '@material-ui/core';
 import {
   FilterList,
@@ -13,8 +12,9 @@ import {
 import api, { ApiCallSet } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DemoDescription from '@/components/DemoDescription';
-import EditContext from '@/context/EditContext';
+import useEdit from '@/hooks/useEdit';
 import DataTable from '@/components/DataTable';
+import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import ReportContext from '@/context/ReportContext';
 import { columnDefs, targetedColumnDefs } from './columnDefs';
 import coalesceEntries from './coalesce';
@@ -35,15 +35,16 @@ const titleMap = {
 type KbMatchesProps = {
   /* Should the print version be displayed? */
   isPrint?: boolean;
-};
+} & WithLoadingInjectedProps;
 
 const KbMatches = ({
   isPrint = false,
+  setIsLoading,
+  isLoading,
 }: KbMatchesProps): JSX.Element => {
   const { report } = useContext(ReportContext);
-  const { canEdit } = useContext(EditContext);
+  const { canEdit } = useEdit();
 
-  const [isLoading, setIsLoading] = useState(true);
   const [filterText, setFilterText] = useState('');
   const [groupedMatches, setGroupedMatches] = useState({
     therapeutic: [],
@@ -102,7 +103,7 @@ const KbMatches = ({
 
       getData();
     }
-  }, [report]);
+  }, [report, setIsLoading]);
 
   const handleFilter = (event: React.ChangeEvent<HTMLInputElement>) => (
     setFilterText(event.target.value)
@@ -145,17 +146,17 @@ const KbMatches = ({
   }, [report]);
 
   return (
-    <div>
-      <DemoDescription>
-        Tumour alterations with specific therapeutic, prognostic, diagnostic or biological
-        associations are identified using the knowledgebase GraphKB, which integrates information
-        from sources including cancer databases, drug databases, clinical tests, and the literature.
-        Associations are listed by the level of evidence for the use of that drug in the context of
-        the observed alteration, including those that are approved in this or other cancer types,
-        and those that have early clinical or preclinical evidence.
-      </DemoDescription>
-      {!isLoading ? (
-        <>
+    <>
+      {!isLoading && (
+        <div>
+          <DemoDescription>
+            Tumour alterations with specific therapeutic, prognostic, diagnostic or biological
+            associations are identified using the knowledgebase GraphKB, which integrates information
+            from sources including cancer databases, drug databases, clinical tests, and the literature.
+            Associations are listed by the level of evidence for the use of that drug in the context of
+            the observed alteration, including those that are approved in this or other cancer types,
+            and those that have early clinical or preclinical evidence.
+          </DemoDescription>
           {!isPrint && (
             <div className="kb-matches__filter">
               <TextField
@@ -175,7 +176,6 @@ const KbMatches = ({
               />
             </div>
           )}
-
           <div>
             {Object.entries(groupedMatches).map(([key, value]) => (
               <React.Fragment key={key}>
@@ -194,11 +194,9 @@ const KbMatches = ({
               </React.Fragment>
             ))}
           </div>
-        </>
-      ) : (
-        <LinearProgress />
+        </div>
       )}
-    </div>
+    </>
   );
 };
 

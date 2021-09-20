@@ -80,7 +80,7 @@ type DataTableProps = {
   /* Row index to highlight */
   highlightRow?: number;
   /* Custom header cell renderer */
-  Header?: () => JSX.Element;
+  Header?: ({ displayName: string }) => JSX.Element;
   /* Text to render in an info bubble below the table header and above the table itself */
   demoDescription?: string,
 };
@@ -152,6 +152,13 @@ const DataTable = ({
     if (gridApi) {
       if (highlightRow !== null) {
         const rowNode = gridApi.getDisplayedRowAtIndex(highlightRow);
+        const pageSize = gridApi.paginationGetPageSize();
+        const navigateToPage = Math.floor((highlightRow) / pageSize);
+        
+        if (navigateToPage !== gridApi.paginationGetCurrentPage()) {
+          gridApi.paginationGoToPage(navigateToPage);
+        }
+
         rowNode.setSelected(true, true);
         gridApi.ensureIndexVisible(highlightRow, 'middle');
 

@@ -4,7 +4,6 @@ import {
   Button,
   Checkbox,
   FormControlLabel,
-  LinearProgress,
   Typography,
 } from '@material-ui/core';
 import { AgGridReact } from '@ag-grid-community/react';
@@ -16,6 +15,7 @@ import ActionCellRenderer from '@/components/DataTable/components/ActionCellRend
 import AlertDialog from '@/components/AlertDialog';
 import snackbar from '@/services/SnackbarUtils';
 import { GermlineReportType } from '@/context/GermlineReportContext/types';
+import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import StrikethroughCell from './components/StrikethroughCell';
 import EditDialog from './components/EditDialog';
 import Reviews from './components/Reviews';
@@ -23,13 +23,17 @@ import columnDefs from './columnDefs';
 
 import './index.scss';
 
-const GermlineReport = (): JSX.Element => {
+type GermlineReportProps = WithLoadingInjectedProps;
+
+const GermlineReport = ({
+  isLoading,
+  setIsLoading,
+}: GermlineReportProps): JSX.Element => {
   const { ident } = useParams();
   const { colApi, onGridReady } = useGrid();
   const history = useHistory();
   const [report, setReport] = useState<GermlineReportType>();
 
-  const [isLoading, setIsLoading] = useState(true);
   const [showAllColumns, setShowAllColumns] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showAlertDialog, setShowAlertDialog] = useState(false);
@@ -41,7 +45,6 @@ const GermlineReport = (): JSX.Element => {
         try {
           const reportResp = await api.get(
             `/germline-small-mutation-reports/${ident}`,
-            {},
           ).request();
           setReport(reportResp);
         } catch (err) {
@@ -52,7 +55,7 @@ const GermlineReport = (): JSX.Element => {
       };
       getData();
     }
-  }, [ident, setReport]);
+  }, [ident, setReport, setIsLoading]);
 
   useEffect(() => {
     if (colApi) {
@@ -99,7 +102,7 @@ const GermlineReport = (): JSX.Element => {
     setShowAlertDialog(false);
     if (confirm) {
       try {
-        await api.del(`/germline-small-mutation-reports/${report.ident}`, {}, {}).request();
+        await api.del(`/germline-small-mutation-reports/${report.ident}`, {}).request();
         snackbar.success('Report deleted');
         history.push('/germline');
       } catch (err) {
@@ -184,9 +187,6 @@ const GermlineReport = (): JSX.Element => {
             />
             <Reviews />
           </>
-        )}
-        {isLoading && (
-          <LinearProgress color="secondary" />
         )}
       </div>
     </GermlineReportContext.Provider>
