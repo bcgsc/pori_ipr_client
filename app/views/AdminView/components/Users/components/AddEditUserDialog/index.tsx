@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -215,9 +216,9 @@ const AddEditUserDialog = ({
             <MenuItem value="local">local</MenuItem>
           </Select>
         </FormControl>
-        <FormControl fullWidth variant="outlined">
-          {Boolean(projectOptions.length) && (
-            <>
+        {projectOptions.length && groupOptions.length ? (
+          <>
+            <FormControl fullWidth variant="outlined">
               <InputLabel className="add-user__select" id="projects-select">Projects</InputLabel>
               <Select
                 id="projects-select"
@@ -239,12 +240,8 @@ const AddEditUserDialog = ({
                   </MenuItem>
                 ))}
               </Select>
-            </>
-          )}
-        </FormControl>
-        <FormControl fullWidth variant="outlined">
-          {Boolean(groupOptions.length) && (
-            <>
+            </FormControl>
+            <FormControl fullWidth variant="outlined">
               <InputLabel className="add-user__select" id="groups-select">Groups</InputLabel>
               <Select
                 id="groups-select"
@@ -266,9 +263,13 @@ const AddEditUserDialog = ({
                   </MenuItem>
                 ))}
               </Select>
-            </>
-          )}
-        </FormControl>
+            </FormControl>
+          </>
+        ) : (
+          <div className="add-user__loading">
+            <CircularProgress />
+          </div>
+        )}
       </DialogContent>
       <DialogActions className="edit-dialog__actions">
         <Button color="primary" onClick={() => onClose()}>
