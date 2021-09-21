@@ -11,6 +11,21 @@ declare let CONFIG: {
   },
 };
 
+declare global {
+  interface Window {
+    _env_: {
+      KEYCLOAK_CLIENT_ID: string;
+      KEYCLOAK_REALM: string;
+      KEYCLOAK_URL: string;
+      GRAPHKB_URL: string;
+      API_BASE_URL: string;
+      CONTACT_EMAIL: string;
+      CONTACT_TICKET_URL: string;
+      IS_DEMO: boolean;
+    };
+  }
+}
+
 type RecordDefaults = {
   ident: string;
   updatedAt: string | null;
