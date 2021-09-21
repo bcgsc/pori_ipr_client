@@ -27,6 +27,7 @@ const LaunchCell = (params: LaunchCellProps): JSX.Element => {
     <LaunchIcon
       className="launch-cell"
       color="action"
+      data-testid="launch-cell"
       onClick={handleClick}
       onMouseUp={handleClick}
     />
