@@ -5,17 +5,21 @@ import { useHistory } from 'react-router-dom';
 
 import './index.scss';
 
-const LaunchCell = (params: ICellRendererParams): JSX.Element => {
+type LaunchCellProps = {
+  url: (ident: string) => string;
+} & ICellRendererParams;
+
+const LaunchCell = (params: LaunchCellProps): JSX.Element => {
   const history = useHistory();
 
   const handleClick = useCallback((event) => {
-    const { reportIdent } = params.data;
+    const reportIdent = params.data.reportIdent ?? params.data.ident;
 
     // event.button is 1 when middle click is pressed
     if (event.ctrlKey || event.metaKey || event.button === 1) {
-      window.open(`/report/${reportIdent}/summary`, '_blank');
+      window.open(params.url(reportIdent), '_blank');
     } else {
-      history.push({ pathname: `/report/${reportIdent}/summary` });
+      history.push({ pathname: params.url(reportIdent) });
     }
   }, [history, params]);
 

@@ -63,6 +63,9 @@ const columnDefs = [{
   headerName: 'Open',
   pinned: 'right',
   cellRenderer: 'Launch',
+  cellRendererParams: {
+    url: (ident) => `/report/${ident}/summary`,
+  },
   suppressSizeToFit: true,
   sortable: false,
   resizable: false,
