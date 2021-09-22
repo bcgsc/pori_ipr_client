@@ -11,32 +11,36 @@ import {
   OpenInNew,
   Delete,
 } from '@material-ui/icons';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { ICellRendererParams } from '@ag-grid-community/core';
+
 import DetailDialog from '../DetailDialog';
 import SvgViewer from '../SvgViewer';
 import ImageViewer from '../ImageViewer';
 
 import './index.scss';
 
-/**
- * @param {object} params params
- * @param {string} params.value display text
- * @param {string} props.link target link
- * @param {function} props.onEdit handler which is trigger on the user clicking the edit icon for this row
- * @return {*} JSX
- */
-function ActionCellRenderer(params) {
-  const {
-    data,
-    context: {
-      canEdit,
-      canViewDetails,
-      canDelete,
-    },
-    columnApi,
-    onEdit,
-    onDelete,
-  } = params;
+type ActionCellRendererProps = {
+  context?: {
+    canEdit?: boolean;
+    canViewDetails?: boolean;
+    canDelete?: boolean;
+  };
+  onEdit?: (data) => void;
+  onDelete?: (data: string) => void;
+} & ICellRendererParams;
 
+const ActionCellRenderer = ({
+  data,
+  context: {
+    canEdit,
+    canViewDetails,
+    canDelete,
+  } = {},
+  columnApi,
+  onEdit,
+  onDelete,
+}: ActionCellRendererProps): JSX.Element => {
   const [showDetailDialog, setShowDetailDialog] = useState(false);
   const [showSvgViewer, setShowSvgViewer] = useState(false);
   const [showImageViewer, setShowImageViewer] = useState(false);
@@ -47,7 +51,7 @@ function ActionCellRenderer(params) {
     if (showDetailDialog) {
       setColumnMapping(
         columnApi.getAllColumns().reduce((accumulator, current) => {
-          accumulator[current.colId] = columnApi.getDisplayNameForColumn(current);
+          accumulator[current.getColId()] = columnApi.getDisplayNameForColumn(current, null);
           return accumulator;
         }, {}),
       );
@@ -82,9 +86,10 @@ function ActionCellRenderer(params) {
     <>
       {canViewDetails && (
         <IconButton
-          size="small"
           aria-label="View Details"
+          data-testid="view-details"
           onClick={detailClick}
+          size="small"
           title="View Details"
         >
           <LibraryBooks />
@@ -93,18 +98,18 @@ function ActionCellRenderer(params) {
       {(!window._env_.IS_DEMO && data.kbStatementId && !Array.isArray(data.kbStatementId) && data.kbStatementId.match(/^#?-?\d+:-?\d+$/))
         ? (
           <IconButton
-            size="small"
             aria-label="Open in GraphKB"
-            title="Open in GraphKB"
+            data-testid="graphkb"
             href={`${window._env_.GRAPHKB_URL}/view/Statement/${data.kbStatementId.replace('#', '')}`}
-            target="_blank"
             rel="noreferrer noopener"
+            size="small"
+            target="_blank"
+            title="Open in GraphKB"
           >
             <OpenInNew />
           </IconButton>
-        ) : null
-      }
-      {(!window._env_.IS_DEMO && data.kbStatementId && Array.isArray(data.kbStatementId) && data.kbStatementId.some(statement => statement.match(/^#?-?\d+:-?\d+$/)))
+        ) : null}
+      {(!window._env_.IS_DEMO && data.kbStatementId && Array.isArray(data.kbStatementId) && data.kbStatementId.some((statement) => statement.match(/^#?-?\d+:-?\d+$/)))
         ? (
           <>
             <IconButton
@@ -120,7 +125,7 @@ function ActionCellRenderer(params) {
               open={Boolean(anchorEl)}
               onClose={handleMenuClose}
             >
-              {data.kbStatementId.filter(statement => statement.match(/^#?-?\d+:-?\d+$/)).map(statement => (
+              {data.kbStatementId.filter((statement) => statement.match(/^#?-?\d+:-?\d+$/)).map((statement) => (
                 <MenuItem
                   key={statement}
                   onClick={handleMenuClose}
@@ -137,8 +142,7 @@ function ActionCellRenderer(params) {
               ))}
             </Menu>
           </>
-        ) : null
-      }
+        ) : null}
       {showDetailDialog && (
         <DetailDialog
           isOpen={showDetailDialog}
@@ -149,9 +153,10 @@ function ActionCellRenderer(params) {
       )}
       {canDelete && (
         <IconButton
-          size="small"
           aria-label="Delete"
+          data-testid="delete"
           onClick={() => onDelete(data.ident)}
+          size="small"
           title="Delete"
         >
           <Delete />
@@ -159,9 +164,10 @@ function ActionCellRenderer(params) {
       )}
       {canEdit && (
         <IconButton
-          size="small"
           aria-label="Edit"
+          data-testid="edit"
           onClick={() => onEdit(data)}
+          size="small"
           title="Edit"
         >
           <Edit />
@@ -169,9 +175,10 @@ function ActionCellRenderer(params) {
       )}
       {data.svg && (
         <IconButton
-          size="small"
           aria-label="View Fusion Diagram"
-          onClick={() => setShowSvgViewer(prevVal => !prevVal)}
+          data-testid="fusion"
+          onClick={() => setShowSvgViewer((prevVal) => !prevVal)}
+          size="small"
           title="View Fusion Diagram"
         >
           <Photo />
@@ -186,9 +193,10 @@ function ActionCellRenderer(params) {
       )}
       {data.image && (
         <IconButton
-          size="small"
           aria-label="View Image"
-          onClick={() => setShowImageViewer(prevVal => !prevVal)}
+          data-testid="image"
+          onClick={() => setShowImageViewer((prevVal) => !prevVal)}
+          size="small"
           title="View Image"
         >
           <Photo />
@@ -203,6 +211,6 @@ function ActionCellRenderer(params) {
       )}
     </>
   );
-}
+};
 
 export default ActionCellRenderer;
