@@ -6,7 +6,6 @@ import {
   Typography,
   IconButton,
   Grid,
-  LinearProgress,
 } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import sortBy from 'lodash.sortby';
@@ -20,6 +19,7 @@ import DemoDescription from '@/components/DemoDescription';
 import DescriptionList from '@/components/DescriptionList';
 import ReportContext from '@/context/ReportContext';
 import snackbar from '@/services/SnackbarUtils';
+import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import VariantChips from './components/VariantChips';
 import VariantCounts from './components/VariantCounts';
 import PatientEdit from './components/PatientEdit';
@@ -68,17 +68,15 @@ const customTypeSort = (variant) => {
 };
 
 type GenomicSummaryProps = {
-  print: boolean;
-  setIsLoading: (isLoading: boolean) => void;
-  isLoading: boolean;
   loadedDispatch: (section: Record<'type', string>) => void;
-};
+  print: boolean;
+} & WithLoadingInjectedProps;
 
 const GenomicSummary = ({
-  print = false,
-  setIsLoading,
   isLoading,
   loadedDispatch,
+  print = false,
+  setIsLoading,
 }: GenomicSummaryProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
   const { canEdit } = useEdit();
@@ -520,4 +518,4 @@ const GenomicSummary = ({
   );
 };
 
-export default GenomicSummary;
+export default withLoading(GenomicSummary);

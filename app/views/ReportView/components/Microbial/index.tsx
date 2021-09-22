@@ -11,7 +11,7 @@ import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import ReportContext from '@/context/ReportContext';
 import Image, { ImageType } from '@/components/Image';
-import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 
 import './index.scss';
 
@@ -99,4 +99,4 @@ const Microbial = ({
   );
 };
 
-export default Microbial;
+export default withLoading(Microbial);

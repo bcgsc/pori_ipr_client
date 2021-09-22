@@ -11,7 +11,6 @@ import {
   Divider,
   FormControl,
   InputLabel,
-  LinearProgress,
 } from '@material-ui/core';
 
 import api from '@/services/api';
@@ -19,7 +18,7 @@ import ReportContext from '@/context/ReportContext';
 import useEdit from '@/hooks/useEdit';
 import DemoDescription from '@/components/DemoDescription';
 import snackbar from '@/services/SnackbarUtils';
-import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import Analysis from './components/Analysis';
 import AssociationCard from './components/AssociationCard';
 import AddUserCard from './components/AddUserCard';
@@ -284,4 +283,4 @@ const Settings = ({
   );
 };
 
-export default Settings;
+export default withLoading(Settings);
