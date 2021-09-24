@@ -9,7 +9,7 @@ import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
 import ReportContext from '@/context/ReportContext';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
-import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import { AppendicesType, TcgaType, ComparatorType } from './types';
 import { sampleInformationColumnDefs, sequencingProtocolInformationColumnDefs, tcgaAcronymsColumnDefs } from './columnDefs';
 import GenomicReportOverview from './components/GenomicReportOverview';
@@ -204,4 +204,4 @@ const Appendices = ({
   );
 };
 
-export default Appendices;
+export default withLoading(Appendices);

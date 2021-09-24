@@ -5,7 +5,7 @@ import DataTable from '@/components/DataTable';
 import api from '@/services/api';
 import DemoDescription from '@/components/DemoDescription';
 import ReportContext from '@/context/ReportContext';
-import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import { ImageType } from '@/components/Image';
 import columnDefs from './columnDefs';
 import processExpression from './processData';
@@ -223,4 +223,4 @@ const Expression = ({
   );
 };
 
-export default Expression;
+export default withLoading(Expression);

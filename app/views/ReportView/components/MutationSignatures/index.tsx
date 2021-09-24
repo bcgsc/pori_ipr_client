@@ -11,7 +11,7 @@ import useEdit from '@/hooks/useEdit';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import ImageType from '@/components/Image/types';
-import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import EditDialog from './components/EditDialog';
 import MutationSignatureType from './types';
 import columnDefs from './columnDefs';
@@ -175,6 +175,6 @@ const MutationSignatures = ({
   );
 };
 
-export default MutationSignatures;
+export default withLoading(MutationSignatures);
 
 export { MutationSignatureType };

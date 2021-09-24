@@ -14,7 +14,7 @@ import snackbar from '@/services/SnackbarUtils';
 import DemoDescription from '@/components/DemoDescription';
 import useEdit from '@/hooks/useEdit';
 import DataTable from '@/components/DataTable';
-import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import ReportContext from '@/context/ReportContext';
 import { columnDefs, targetedColumnDefs } from './columnDefs';
 import coalesceEntries from './coalesce';
@@ -200,4 +200,4 @@ const KbMatches = ({
   );
 };
 
-export default KbMatches;
+export default withLoading(KbMatches);
