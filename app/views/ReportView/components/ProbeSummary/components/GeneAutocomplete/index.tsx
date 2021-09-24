@@ -40,7 +40,7 @@ const GeneAutocomplete = ({
     }
   }, [defaultValue]);
 
-  const handleInputChange = async ({ target: { value: queryValue } }) => {
+  const handleInputChange = useCallback(async ({ target: { value: queryValue } }) => {
     if (queryValue) {
       setOptions(genes.filter((gene) => (
         gene.name.toLowerCase().includes(queryValue.toLowerCase())
@@ -48,12 +48,15 @@ const GeneAutocomplete = ({
     } else {
       setOptions(genes);
     }
-  };
+  }, [genes]);
 
   const handleAutocompleteChange = useCallback((event, val) => {
+    if (val === null) {
+      setOptions(genes);
+    }
     setValue(val);
     onChange(val);
-  }, [onChange]);
+  }, [onChange, genes]);
 
   return (
     <Autocomplete
@@ -62,7 +65,7 @@ const GeneAutocomplete = ({
       onChange={handleAutocompleteChange}
       options={options}
       getOptionLabel={(option) => option.name || ''}
-      value={value || {}}
+      value={value || null}
       renderInput={(params) => (
         <TextField
           // eslint-disable-next-line react/jsx-props-no-spreading
