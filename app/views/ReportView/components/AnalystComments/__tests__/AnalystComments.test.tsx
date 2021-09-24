@@ -5,7 +5,7 @@ import { when, resetAllWhenMocks } from 'jest-when';
 import { withReportContext } from '@/test/testHelpers';
 import withLoading from '@/hoc/WithLoading';
 import { ReportType } from '@/context/ReportContext';
-import api from '@/services/api';
+import api, { ApiCall } from '@/services/api';
 import AnalystComments from '..';
 
 const mockReport = {
@@ -23,10 +23,10 @@ const mockComments2 = {
 jest.mock('@/services/api');
 
 describe('AnalystComments', () => {
-  beforeEach(() => resetAllWhenMocks())
+  beforeEach(() => resetAllWhenMocks());
 
   test('Img tags are sanitized', async () => {
-    when(api.get)
+    when(api.get as (endpoint: string) => Partial<ApiCall>)
       .mockImplementation(() => ({ request: async () => null }))
       .calledWith(`/reports/${mockReport.ident}/summary/analyst-comments`)
       .mockImplementation(() => ({ request: async () => mockComments }));
@@ -41,7 +41,7 @@ describe('AnalystComments', () => {
   });
 
   test('Style tags are still present', async () => {
-    when(api.get)
+    when(api.get as (endpoint: string) => Partial<ApiCall>)
       .mockImplementation(() => ({ request: async () => null }))
       .calledWith(`/reports/${mockReport.ident}/summary/analyst-comments`)
       .mockImplementation(() => ({ request: async () => mockComments2 }));
