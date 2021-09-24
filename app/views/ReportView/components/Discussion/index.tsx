@@ -8,7 +8,7 @@ import api from '@/services/api';
 import ReportContext from '@/context/ReportContext';
 import snackbar from '@/services/SnackbarUtils';
 import DemoDescription from '@/components/DemoDescription';
-import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import CommentCard from './components/CommentCard';
 import AddComment from './components/AddComment';
 
@@ -99,4 +99,4 @@ const Discussion = ({
   );
 };
 
-export default Discussion;
+export default withLoading(Discussion);

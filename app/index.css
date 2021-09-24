@@ -16,7 +16,7 @@
   }
 
   @page {
-    size: letter;
+    size: 9in 11.5in;
     margin: .4in;
 
     @bottom-right {

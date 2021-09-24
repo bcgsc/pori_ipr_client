@@ -15,7 +15,7 @@ import DemoDescription from '@/components/DemoDescription';
 import ReportContext from '@/context/ReportContext';
 import SignatureCard, { SignatureType } from '@/components/SignatureCard';
 import ConfirmContext from '@/context/ConfirmContext';
-import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import TextEditor from './components/TextEditor';
 
 import './index.scss';
@@ -173,4 +173,4 @@ const AnalystComments = ({
   );
 };
 
-export default AnalystComments;
+export default withLoading(AnalystComments);
