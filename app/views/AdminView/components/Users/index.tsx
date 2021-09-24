@@ -22,7 +22,7 @@ const Users = (): JSX.Element => {
 
   useEffect(() => {
     const getData = async () => {
-      const usersResp = await api.get('/user', {}).request();
+      const usersResp = await api.get('/user').request();
 
       setUsers(usersResp);
       setLoading(false);
@@ -31,10 +31,10 @@ const Users = (): JSX.Element => {
     getData();
   }, []);
 
-  const handleDelete = useCallback(async (ident) => {
+  const handleDelete = useCallback(async ({ ident }) => {
     // eslint-disable-next-line no-restricted-globals
     if (confirm('Are you sure you want to remove this user?')) {
-      await api.del(`/user/${ident}`, {}, {}).request();
+      await api.del(`/user/${ident}`, {}).request();
       const newUsers = users.filter((user) => user.ident !== ident);
       setUsers(newUsers);
       snackbar.enqueueSnackbar('User deleted');

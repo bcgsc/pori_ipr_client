@@ -95,7 +95,7 @@ const AddEditUserDialog = ({
     }
   }, [groupName, owner, editData, apiCallQueue, onClose]);
 
-  const handleDeleteUser = useCallback((ident) => {
+  const handleDeleteUser = useCallback(({ ident }) => {
     apiCallQueueDispatch({ type: 'add', payload: api.del(`/user/group/${editData.ident}/member`, { user: ident }, {}) });
     const newUsers = users.filter((user) => user.ident !== ident);
     setUsers(newUsers);
