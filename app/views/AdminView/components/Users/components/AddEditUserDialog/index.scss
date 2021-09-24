@@ -10,4 +10,9 @@
   &__form-container {
     flex-direction: row;
   }
+
+  &__loading {
+    display: flex;
+    justify-content: center;
+  }
 }

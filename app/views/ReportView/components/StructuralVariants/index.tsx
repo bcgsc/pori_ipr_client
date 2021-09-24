@@ -11,7 +11,7 @@ import DataTable from '@/components/DataTable';
 import Image from '@/components/Image';
 import ReportContext from '@/context/ReportContext';
 import ImageType from '@/components/Image/types';
-import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import columnDefs from './columnDefs';
 import StructuralVariantType from './types';
 
@@ -173,4 +173,4 @@ const StructuralVariants = ({
   );
 };
 
-export default StructuralVariants;
+export default withLoading(StructuralVariants);

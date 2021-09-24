@@ -116,7 +116,7 @@ const TherapeuticTable = (props) => {
       
       getData();
     }
-  }, [report]);
+  }, [report, loadedDispatch]);
 
   useEffect(() => {
     if (therapeuticRowData.length) {

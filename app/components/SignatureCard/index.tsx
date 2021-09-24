@@ -19,7 +19,7 @@ import './index.scss';
 
 const NON_BREAKING_SPACE = '\u00A0';
 
-type SignatureCardProps = {
+export type SignatureCardProps = {
   title: string;
   signatures: SignatureType;
   onClick: (isSigned: boolean, type: string) => void;
