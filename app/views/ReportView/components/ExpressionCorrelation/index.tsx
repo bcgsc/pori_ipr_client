@@ -12,7 +12,7 @@ import ReportContext from '@/context/ReportContext';
 import snackbar from '@/services/SnackbarUtils';
 import Image, { ImageType } from '@/components/Image';
 import DemoDescription from '@/components/DemoDescription';
-import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import CorrelationPlot from './components/CorrelationPlot';
 import './index.scss';
 
@@ -131,4 +131,4 @@ const ExpressionCorrelation = ({
   );
 };
 
-export default ExpressionCorrelation;
+export default withLoading(ExpressionCorrelation);
