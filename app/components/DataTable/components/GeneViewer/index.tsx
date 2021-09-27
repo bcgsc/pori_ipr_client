@@ -23,27 +23,25 @@ import { columnDefs as smallMutationsColumnDefs } from '@/views/ReportView/compo
 import copyNumberColumnDefs from '@/views/ReportView/components/CopyNumber/columnDefs';
 import expressionColumnDefs from '@/views/ReportView/components/Expression/columnDefs';
 import structuralVariantsColumnDefs from '@/views/ReportView/components/StructuralVariants/columnDefs';
+import { GeneViewerType } from './types';
 
 import './index.scss';
 
-/**
- * @param {object} props props
- * @param {func} props.onClose parent close handler
- * @param {string} props.gene gene name
- * @param {bool} props.isOpen is open?
- * @return {*} JSX
- */
-const GeneViewer = (props) => {
-  const {
-    onClose,
-    isOpen,
-    gene,
-  } = props;
+type GeneViewerProps = {
+  onClose: () => void;
+  isOpen: boolean;
+  gene: string;
+};
 
+const GeneViewer = ({
+  onClose,
+  isOpen,
+  gene,
+}: GeneViewerProps): JSX.Element => {
   const snackbar = useSnackbar();
   const { report } = useContext(ReportContext);
 
-  const [geneData, setGeneData] = useState();
+  const [geneData, setGeneData] = useState<GeneViewerType>();
   const [tabValue, setTabValue] = useState(0);
 
   const handleTabChange = (event, newValue) => {
@@ -58,7 +56,7 @@ const GeneViewer = (props) => {
           setGeneData(resp);
         } catch {
           snackbar.enqueueSnackbar(`Error: gene viewer data does not exist for ${gene}`);
-          onClose(null);
+          onClose();
         }
       };
       getData();

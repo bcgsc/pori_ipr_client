@@ -12,8 +12,8 @@ import Image from '@/components/Image';
 import ReportContext from '@/context/ReportContext';
 import ImageType from '@/components/Image/types';
 import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import { StructuralVariantType } from '@/common';
 import columnDefs from './columnDefs';
-import StructuralVariantType from './types';
 
 import './index.scss';
 

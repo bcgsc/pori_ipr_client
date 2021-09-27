@@ -11,7 +11,7 @@ import Image from '@/components/Image';
 import ImageType from '@/components/Image/types';
 import snackbar from '@/services/SnackbarUtils';
 import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
-import CopyNumberType from './types';
+import { CopyNumberType } from '@/common';
 import columnDefs from './columnDefs';
 
 import './index.scss';
