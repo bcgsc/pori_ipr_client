@@ -1,7 +1,6 @@
 import React, {
   useEffect, useState, useContext,
 } from 'react';
-import PropTypes from 'prop-types';
 import {
   Dialog,
   DialogTitle,
@@ -44,7 +43,7 @@ const GeneViewer = ({
   const [geneData, setGeneData] = useState<GeneViewerType>();
   const [tabValue, setTabValue] = useState(0);
 
-  const handleTabChange = (event, newValue) => {
+  const handleTabChange = (event, newValue: number) => {
     setTabValue(newValue);
   };
 
@@ -158,12 +157,6 @@ const GeneViewer = ({
       </DialogActions>
     </Dialog>
   );
-};
-
-GeneViewer.propTypes = {
-  onClose: PropTypes.func.isRequired,
-  gene: PropTypes.string.isRequired,
-  isOpen: PropTypes.bool.isRequired,
 };
 
 export default GeneViewer;
