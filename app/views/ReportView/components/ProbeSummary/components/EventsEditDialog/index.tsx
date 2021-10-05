@@ -13,11 +13,13 @@ import {
 import ReportContext from '@/context/ReportContext';
 import ConfirmContext from '@/context/ConfirmContext';
 import api from '@/services/api';
+import { GeneType } from '@/common';
+import GeneAutocomplete from '../GeneAutocomplete';
 
 type EventsEditDialogProps = {
   isOpen: boolean;
   onClose: (isSaved?: Record<string, unknown>) => void;
-  editData: Record<string, unknown>;
+  editData: Record<string, string | GeneType>;
 };
 
 const EventsEditDialog = ({
@@ -28,8 +30,8 @@ const EventsEditDialog = ({
   const { report } = useContext(ReportContext);
   const { isSigned } = useContext(ConfirmContext);
 
-  const [newData, setNewData] = useState<Record<string, unknown | Record<string, unknown>>>();
-  const [editDataDirty, setDataDirty] = useState<boolean>(false);
+  const [newData, setNewData] = useState<Record<string, string | GeneType>>();
+  const [editDataDirty, setEditDataDirty] = useState<boolean>(false);
 
   useEffect(() => {
     if (editData) {
@@ -37,29 +39,42 @@ const EventsEditDialog = ({
     }
   }, [editData]);
 
-  const handleDataChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { target: { value, name } } = event;
-
-    let prop: string = name;
-    let subprop: string | null;
-
-    if (prop.includes('.')) {
-      [prop, subprop] = prop.split('.');
-      setNewData((prevVal) => ({ ...prevVal, [prop]: { [subprop]: value } }));
-    } else {
-      setNewData((prevVal) => ({ ...prevVal, [prop]: value }));
+  useEffect(() => {
+    if (!isOpen) {
+      setEditDataDirty(false);
     }
+  }, [isOpen]);
 
+  const handleDataChange = useCallback((
+    { target: { value, name } }: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setNewData((prevVal) => ({ ...prevVal, [name]: value }));
     if (!editDataDirty) {
-      setDataDirty(true);
+      setEditDataDirty(true);
+    }
+  }, [editDataDirty]);
+
+  const handleAutocompleteChange = (newGene: GeneType) => {
+    setNewData((prevVal) => ({ ...prevVal, gene: newGene }));
+    if (!editDataDirty) {
+      setEditDataDirty(true);
     }
   };
 
   const handleClose = useCallback(async (isSaved) => {
     if (isSaved && editDataDirty) {
-      const call = api.put(`/reports/${report.ident}/probe-results/${newData.ident}`, newData, {});
-      await call.request(isSigned);
-      onClose(newData);
+      const putData = {
+        comments: newData.comments,
+        variant: newData.variant,
+        gene: newData?.gene?.ident,
+      };
+
+      const returnData = await api.put(
+        `/reports/${report.ident}/probe-results/${newData.ident}`,
+        putData,
+      ).request(isSigned);
+
+      onClose(returnData);
     } else {
       onClose();
     }
@@ -71,40 +86,32 @@ const EventsEditDialog = ({
         Edit Event
       </DialogTitle>
       <DialogContent className="patient-dialog__content">
-        {newData?.gene?.name && (
-          <>
-            <TextField
-              className="patient-dialog__text-field"
-              label="Gene"
-              value={newData.gene.name}
-              name="gene.name"
-              onChange={handleDataChange}
-              variant="outlined"
-              multiline
-              fullWidth
-            />
-            <TextField
-              className="patient-dialog__text-field"
-              label="Variant"
-              value={newData.variant}
-              name="variant"
-              onChange={handleDataChange}
-              variant="outlined"
-              multiline
-              fullWidth
-            />
-            <TextField
-              className="patient-dialog__text-field"
-              label="comments"
-              value={newData.comments}
-              name="comments"
-              onChange={handleDataChange}
-              variant="outlined"
-              multiline
-              fullWidth
-            />
-          </>
-        )}
+        <>
+          <GeneAutocomplete
+            defaultValue={newData?.gene as GeneType}
+            onChange={handleAutocompleteChange}
+          />
+          <TextField
+            className="patient-dialog__text-field"
+            label="Variant"
+            value={newData?.variant}
+            name="variant"
+            onChange={handleDataChange}
+            variant="outlined"
+            multiline
+            fullWidth
+          />
+          <TextField
+            className="patient-dialog__text-field"
+            label="comments"
+            value={newData?.comments}
+            name="comments"
+            onChange={handleDataChange}
+            variant="outlined"
+            multiline
+            fullWidth
+          />
+        </>
       </DialogContent>
       <DialogActions>
         <Button onClick={() => handleClose(false)}>
