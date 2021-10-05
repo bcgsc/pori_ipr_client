@@ -10,7 +10,7 @@ import snackbar from '@/services/SnackbarUtils';
 import { ImageType } from '@/components/Image';
 import ReportContext from '@/context/ReportContext';
 import DemoDescription from '@/components/DemoDescription';
-import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import PathwayImageType from './types';
 import Legend from './components/Legend';
 import Pathway from './components/Pathway';
@@ -106,4 +106,4 @@ const PathwayAnalysis = ({
   );
 };
 
-export default PathwayAnalysis;
+export default withLoading(PathwayAnalysis);

@@ -3,7 +3,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import api from '@/services/api';
 import DataTable from '@/components/DataTable';
 import ReportContext from '@/context/ReportContext';
-import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import snackbar from '@/services/SnackbarUtils';
 import columnDefs from './columnDefs';
 
@@ -49,4 +49,4 @@ const Pharmacogenomic = ({
   );
 };
 
-export default Pharmacogenomic;
+export default withLoading(Pharmacogenomic);

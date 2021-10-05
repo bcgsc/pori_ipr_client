@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useState, useReducer, useMemo,
+  useEffect, useState, useReducer, useMemo, lazy,
 } from 'react';
 import { useParams } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
@@ -10,18 +10,19 @@ import api from '@/services/api';
 import ReportContext from '@/context/ReportContext';
 import PageBreak from '@/components/PageBreak';
 import startCase from '@/utils/startCase';
-import GenomicSummary from '../ReportView/components/GenomicSummary';
-import ProbeSummary from '../ReportView/components/ProbeSummary';
-import AnalystComments from '../ReportView/components/AnalystComments';
-import PathwayAnalysis from '../ReportView/components/PathwayAnalysis';
-import TherapeuticTargets from '../ReportView/components/TherapeuticTargets/components/PrintTables';
-import Slides from '../ReportView/components/Slides';
-import Appendices from '../ReportView/components/Appendices';
 import RunningLeft from './components/RunningLeft';
 import RunningCenter from './components/RunningCenter';
 import RunningRight from './components/RunningRight';
 
 import './index.scss';
+
+const GenomicSummary = lazy(() => import('../ReportView/components/GenomicSummary'));
+const ProbeSummary = lazy(() => import('../ReportView/components/ProbeSummary'));
+const AnalystComments = lazy(() => import('../ReportView/components/AnalystComments'));
+const PathwayAnalysis = lazy(() => import('../ReportView/components/PathwayAnalysis'));
+const TherapeuticTargets = lazy(() => import('../ReportView/components/TherapeuticTargets/components/PrintTables'));
+const Slides = lazy(() => import('../ReportView/components/Slides'));
+const Appendices = lazy(() => import('../ReportView/components/Appendices'));
 
 const reducer = (state, action) => {
   switch (action.type) {
