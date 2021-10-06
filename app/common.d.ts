@@ -122,6 +122,7 @@ type StructuralVariantType = {
   eventType: string | null;
   exon1: string | null;
   exon2: string | null;
+  frame: string | null;
   gene1: Record<string, unknown> | null;
   gene2: Record<string, unknown> | null;
   highQuality: boolean;
