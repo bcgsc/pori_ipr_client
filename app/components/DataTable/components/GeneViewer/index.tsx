@@ -12,10 +12,10 @@ import {
   Tab,
   AppBar,
 } from '@material-ui/core';
-import { useSnackbar } from 'notistack';
 import { AgGridReact } from '@ag-grid-community/react';
 
 import api from '@/services/api';
+import snackbar from '@/services/SnackbarUtils';
 import ReportContext from '@/context/ReportContext';
 import { columnDefs } from '@/views/ReportView/components/KbMatches/columnDefs';
 import { columnDefs as smallMutationsColumnDefs } from '@/views/ReportView/components/SmallMutations/columnDefs';
@@ -37,7 +37,6 @@ const GeneViewer = ({
   isOpen,
   gene,
 }: GeneViewerProps): JSX.Element => {
-  const snackbar = useSnackbar();
   const { report } = useContext(ReportContext);
 
   const [geneData, setGeneData] = useState<GeneViewerType>();
@@ -54,13 +53,13 @@ const GeneViewer = ({
           const resp = await api.get(`/reports/${report.ident}/gene-viewer/${gene}`).request();
           setGeneData(resp);
         } catch {
-          snackbar.enqueueSnackbar(`Error: gene viewer data does not exist for ${gene}`);
+          snackbar.error(`Error: gene viewer data does not exist for ${gene}`);
           onClose();
         }
       };
       getData();
     }
-  }, [gene, onClose, isOpen, report, snackbar]);
+  }, [gene, onClose, isOpen, report]);
 
   return (
     <Dialog
