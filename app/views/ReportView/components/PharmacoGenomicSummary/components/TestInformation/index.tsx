@@ -13,13 +13,9 @@ type TestInformationProps = {
 
 const TestInformation = ({
   data: {
-    fusionGenes,
     fusionProbe,
-    fusionVars,
     kbVersion,
-    snpGenes,
     snpProbe,
-    snpVars,
     germlineGenes,
     germlineVars,
     pharmacogenomicGenes,
@@ -46,16 +42,6 @@ const TestInformation = ({
     </Grid>
     <Grid direction="column" container className="grid--third">
       <Grid item>
-        <ReadOnlyTextField isUnderlined={false} label="Genes Screened">
-          {snpGenes}
-        </ReadOnlyTextField>
-      </Grid>
-      <Grid item>
-        <ReadOnlyTextField isUnderlined={false} label="Variants Screened">
-          {snpVars}
-        </ReadOnlyTextField>
-      </Grid>
-      <Grid item>
         <ReadOnlyTextField isUnderlined={false} label="Cancer Predisposition Genes Screened">
           {germlineGenes}
         </ReadOnlyTextField>
@@ -67,16 +53,6 @@ const TestInformation = ({
       </Grid>
     </Grid>
     <Grid direction="column" container className="grid--third">
-      <Grid item>
-        <ReadOnlyTextField isUnderlined={false} label="Fusion Genes Screened">
-          {fusionGenes}
-        </ReadOnlyTextField>
-      </Grid>
-      <Grid item>
-        <ReadOnlyTextField isUnderlined={false} label="Fusion Variants Screened">
-          {fusionVars}
-        </ReadOnlyTextField>
-      </Grid>
       <Grid item>
         <ReadOnlyTextField isUnderlined={false} label="Pharmacogenomic Genes Screened">
           {pharmacogenomicGenes}
