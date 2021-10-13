@@ -11,8 +11,8 @@ import useExternalMode from '@/hooks/useExternalMode';
 import useResource from '@/hooks/useResource';
 import api from '@/services/api';
 import { ReportType } from '@/context/ReportContext';
+import LaunchCell from '@/components/LaunchCell';
 import columnDefs from './columnDefs';
-import LaunchCell from './components/LaunchCell';
 
 import './index.scss';
 
@@ -67,7 +67,7 @@ const ReportsTableComponent = (): JSX.Element => {
       };
       getData();
     }
-  }, [adminAccess, isExternalMode]);
+  }, [adminAccess, isExternalMode, rowData]);
 
   const onGridSizeChanged = useCallback((params) => {
     const MEDIUM_SCREEN_WIDTH_LOWER = 992;

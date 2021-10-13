@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import { GermlineReportType } from '@/context/GermlineReportContext/types';
 import api from '@/services/api';
-import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import snackbar from '@/services/SnackbarUtils';
 import ApiPaginatedTable from './components/ApiPaginatedTable';
 import columnDefs from './columnDefs';
@@ -58,4 +58,4 @@ const Board = ({
   );
 };
 
-export default Board;
+export default withLoading(Board);

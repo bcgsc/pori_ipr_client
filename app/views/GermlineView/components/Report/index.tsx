@@ -15,7 +15,7 @@ import ActionCellRenderer from '@/components/DataTable/components/ActionCellRend
 import AlertDialog from '@/components/AlertDialog';
 import snackbar from '@/services/SnackbarUtils';
 import { GermlineReportType } from '@/context/GermlineReportContext/types';
-import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import StrikethroughCell from './components/StrikethroughCell';
 import EditDialog from './components/EditDialog';
 import Reviews from './components/Reviews';
@@ -193,4 +193,4 @@ const GermlineReport = ({
   );
 };
 
-export default GermlineReport;
+export default withLoading(GermlineReport);
