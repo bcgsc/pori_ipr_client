@@ -19,6 +19,7 @@ import DemoDescription from '@/components/DemoDescription';
 import DescriptionList from '@/components/DescriptionList';
 import ReportContext from '@/context/ReportContext';
 import snackbar from '@/services/SnackbarUtils';
+import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import VariantChips from './components/VariantChips';
 import VariantCounts from './components/VariantCounts';
 import PatientEdit from './components/PatientEdit';
@@ -71,7 +72,7 @@ type GenomicSummaryProps = {
   setIsLoading: (isLoading: boolean) => void;
   isLoading: boolean;
   loadedDispatch: (section: Record<'type', string>) => void;
-};
+} & WithLoadingInjectedProps;
 
 const GenomicSummary = ({
   isPrint = false,
@@ -518,4 +519,4 @@ const GenomicSummary = ({
   );
 };
 
-export default GenomicSummary;
+export default withLoading(GenomicSummary);

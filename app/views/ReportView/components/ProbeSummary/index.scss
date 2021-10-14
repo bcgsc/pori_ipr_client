@@ -14,6 +14,7 @@
 
   &__test-information {
     margin: 0 0 32px;
+    page-break-inside: avoid;
 
     &-title {
       margin: 0 0 16px;
@@ -56,6 +57,7 @@
 
     &__test-information {
       margin: 22px 0;
+      page-break-inside: avoid;
 
       &-title {
         margin: 0 0 16px;

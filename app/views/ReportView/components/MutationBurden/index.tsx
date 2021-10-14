@@ -12,7 +12,7 @@ import snackbar from '@/services/SnackbarUtils';
 import Image from '@/components/Image';
 import ImageType from '@/components/Image/types';
 import api, { ApiCallSet } from '@/services/api';
-import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import {
   ComparatorType, MutationBurdenType, MsiType,
 } from './types';
@@ -213,4 +213,4 @@ const MutationBurden = ({
   );
 };
 
-export default MutationBurden;
+export default withLoading(MutationBurden);

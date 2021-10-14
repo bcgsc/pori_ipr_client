@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useState, useReducer, useMemo,
+  useEffect, useState, useReducer, useMemo, lazy,
 } from 'react';
 import { useParams } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
@@ -10,17 +10,18 @@ import api from '@/services/api';
 import ReportContext from '@/context/ReportContext';
 import PageBreak from '@/components/PageBreak';
 import startCase from '@/utils/startCase';
-import AnalystComments from '../ReportView/components/AnalystComments';
-import PathwayAnalysis from '../ReportView/components/PathwayAnalysis';
-import TherapeuticTargets from '../ReportView/components/TherapeuticTargets/components/PrintTables';
-import Slides from '../ReportView/components/Slides';
 import Summary from '../ReportView/components/Summary';
-import Appendices from '../ReportView/components/Appendices';
 import RunningLeft from './components/RunningLeft';
 import RunningCenter from './components/RunningCenter';
 import RunningRight from './components/RunningRight';
 
 import './index.scss';
+
+const AnalystComments = lazy(() => import('../ReportView/components/AnalystComments'));
+const PathwayAnalysis = lazy(() => import('../ReportView/components/PathwayAnalysis'));
+const TherapeuticTargets = lazy(() => import('../ReportView/components/TherapeuticTargets/components/PrintTables'));
+const Slides = lazy(() => import('../ReportView/components/Slides'));
+const Appendices = lazy(() => import('../ReportView/components/Appendices'));
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -83,7 +84,7 @@ const Print = (): JSX.Element => {
       && Object.entries(reportSectionsLoaded).every(([section, loaded]) => loaded || !template?.sections.includes(section))
       && !isPrintDialogShown) {
       const showPrint = async () => {
-        let paged = new Previewer();
+        const paged = new Previewer();
         await paged.preview(document.getElementById('root'), ['index.css'], document.body);
         window.print();
         setIsPrintDialogShown(true);
