@@ -20,7 +20,7 @@ const GenomicSummary = lazy(() => import('../ReportView/components/GenomicSummar
 const ProbeSummary = lazy(() => import('../ReportView/components/ProbeSummary'));
 const AnalystComments = lazy(() => import('../ReportView/components/AnalystComments'));
 const PathwayAnalysis = lazy(() => import('../ReportView/components/PathwayAnalysis'));
-const TherapeuticTargets = lazy(() => import('../ReportView/components/TherapeuticTargets/components/PrintTables'));
+const TherapeuticTargets = lazy(() => import('../ReportView/components/TherapeuticTargets'));
 const Slides = lazy(() => import('../ReportView/components/Slides'));
 const Appendices = lazy(() => import('../ReportView/components/Appendices'));
 
@@ -50,7 +50,7 @@ const reducer = (state, action) => {
   }
 };
 
-const Print = () => {
+const Print = (): JSX.Element => {
   const params = useParams();
   const theme = useTheme();
   const [report, setReport] = useState();
@@ -85,11 +85,11 @@ const Print = () => {
       && Object.entries(reportSectionsLoaded).every(([section, loaded]) => loaded || !template?.sections.includes(section))
       && !isPrintDialogShown) {
       const showPrint = async () => {
-        let paged = new Previewer();
+        const paged = new Previewer();
         await paged.preview(document.getElementById('root'), ['index.css'], document.body);
         window.print();
         setIsPrintDialogShown(true);
-      }
+      };
       showPrint();
     }
   }, [isPrintDialogShown, report, reportSectionsLoaded, template]);
@@ -124,7 +124,7 @@ const Print = () => {
           )}
           {template?.sections.includes('therapeutic-targets') && (
             <>
-              <TherapeuticTargets print loadedDispatch={dispatch} />
+              <TherapeuticTargets isPrint loadedDispatch={dispatch} />
               <PageBreak />
             </>
           )}
