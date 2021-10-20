@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Typography, Paper } from '@material-ui/core';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { ColDef, ColGroupDef } from '@ag-grid-community/core';
 
 import DataTable from '@/components/DataTable';
 import api from '@/services/api';
@@ -49,7 +51,18 @@ const Expression = ({
   const [comparators, setComparators] = useState<ComparatorsType>();
   const [expOutliers, setExpOutliers] = useState<ProcessedExpressionOutliers>();
   const [visibleCols, setVisibleCols] = useState<string[]>(
-    columnDefs.filter((c) => !c.hide).map((c) => c.field),
+    columnDefs.reduce((accumulator: string[], current) => {
+      if (current.hide === false) {
+        accumulator.push(current.field ?? current.colId);
+      } else if (current.children?.length) {
+        current.children.forEach((child) => {
+          if (child.hide === false) {
+            accumulator.push(child.field ?? child.colId);
+          }
+        });
+      }
+      return accumulator;
+    }, []),
   );
 
   useEffect(() => {
@@ -61,6 +74,18 @@ const Expression = ({
         ]);
 
         if (outliers && outliers.length) {
+          /* Show either RPKM or TPM columns based on which is populated */
+          for (const { tpm, rpkm } of outliers) {
+            if (tpm !== null) {
+              setVisibleCols((prevVal) => [...prevVal, 'tpm']);
+              break;
+            }
+            if (rpkm !== null) {
+              setVisibleCols((prevVal) => [...prevVal, 'rpkm']);
+              break;
+            }
+          }
+
           const processedOutliers: ProcessedExpressionOutliers = processExpression(outliers);
 
           const imageAttachedOutliers = Object.entries(processedOutliers)
@@ -164,6 +189,7 @@ const Expression = ({
             <Paper elevation={0} className="expression__box">
               {tissueSites.map((site, index) => (
                 <span
+                  // eslint-disable-next-line react/no-array-index-key
                   key={index}
                   className="expression__box-column"
                 >
