@@ -28,7 +28,7 @@ const TestInformation = ({
   },
   isPharmacogenomic,
 }: TestInformationProps): JSX.Element => (
-  <Grid direction="row" container>
+  <Grid className="grid" direction="row" container>
     <Grid direction="column" container className="grid--third">
       <Grid item>
         <ReadOnlyTextField isUnderlined={false} label="Variant Probe Version">
