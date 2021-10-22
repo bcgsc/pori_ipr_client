@@ -15,6 +15,4 @@ type TestInformationType = {
   updatedAt: string;
 };
 
-export {
-  TestInformationType,
-};
+export default TestInformationType;

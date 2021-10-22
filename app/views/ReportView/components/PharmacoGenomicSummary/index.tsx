@@ -20,10 +20,10 @@ import SignatureCard, { SignatureType } from '@/components/SignatureCard';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import snackbar from '@/services/SnackbarUtils';
 import PrintTable from '@/components/PrintTable';
+import TestInformation, { TestInformationType } from '@/components/TestInformation';
 import { sampleColumnDefs } from './columnDefs';
 import { columnDefs as pharmacoGenomicColumnDefs } from '../KbMatches/columnDefs';
 import { columnDefs as cancerColumnDefs } from '../SmallMutations/columnDefs';
-import TestInformation, { TestInformationType } from './components/TestInformation';
 import PatientEdit from '../GenomicSummary/components/PatientEdit';
 
 import './index.scss';
@@ -300,7 +300,10 @@ const PharmacoGenomicSummary = ({
               <Typography variant="h3" className="summary__test-information-title">
                 Test Information
               </Typography>
-              <TestInformation data={testInformation} />
+              <TestInformation
+                data={testInformation}
+                isPharmacogenomic
+              />
               <Typography className="summary--max-width summary__test-information-text">
                 The Pharmacogenomic and Cancer Predisposition Targeted Gene Report (PCP-TGR) provides results from a rapid analysis pipeline designed to identify known pharmacogenomic and pathogenic germline cancer predisposition variants in a select set of genes associated with drug toxicity and cancer predisposition. This rapid analysis is not a complete description of abberations associated with cancer predisposition or drug toxicity. The absence of a specific variant in this report is not a guarantee that the variant is not present. Somatic variants are not included in this report.
               </Typography>
