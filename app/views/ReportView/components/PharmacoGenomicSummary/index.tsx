@@ -19,12 +19,12 @@ import { formatDate } from '@/utils/date';
 import SignatureCard, { SignatureType } from '@/components/SignatureCard';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import snackbar from '@/services/SnackbarUtils';
+import PrintTable from '@/components/PrintTable';
 import { sampleColumnDefs } from './columnDefs';
 import { columnDefs as pharmacoGenomicColumnDefs } from '../KbMatches/columnDefs';
 import { columnDefs as cancerColumnDefs } from '../SmallMutations/columnDefs';
 import TestInformation, { TestInformationType } from './components/TestInformation';
 import PatientEdit from '../GenomicSummary/components/PatientEdit';
-import PrintTable from './components/PrintTable';
 
 import './index.scss';
 
@@ -234,8 +234,8 @@ const PharmacoGenomicSummary = ({
               </Typography>
               {isPrint ? (
                 <PrintTable
+                  columnDefs={sampleColumnDefs}
                   data={report.sampleInfo}
-                  headers={sampleColumnDefs.map((col) => col.headerName)}
                 />
               ) : (
                 <DataTable
