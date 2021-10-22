@@ -21,15 +21,17 @@ import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import snackbar from '@/services/SnackbarUtils';
 import PrintTable from '@/components/PrintTable';
 import TestInformation, { TestInformationType } from '@/components/TestInformation';
+import { KbMatchType } from '@/common';
 import { sampleColumnDefs } from './columnDefs';
 import { columnDefs as pharmacoGenomicColumnDefs } from '../KbMatches/columnDefs';
 import { columnDefs as cancerColumnDefs } from '../SmallMutations/columnDefs';
 import PatientEdit from '../GenomicSummary/components/PatientEdit';
+import SmallMutationType from '../SmallMutations/types';
 
 import './index.scss';
 
 type PharmacoGenomicSummaryProps = {
-  loadedDispatch: (type: Record<string, unknown>) => void;
+  loadedDispatch: (type: { type: string }) => void;
   isPrint: boolean;
 } & WithLoadingInjectedProps;
 
@@ -42,13 +44,16 @@ const PharmacoGenomicSummary = ({
   const { canEdit } = useContext(EditContext);
   const { isSigned, setIsSigned } = useContext(ConfirmContext);
 
-  const [testInformation, setTestInformation] = useState<TestInformationType[] | null>();
+  const [testInformation, setTestInformation] = useState<TestInformationType>();
   const [signatures, setSignatures] = useState<SignatureType | null>();
-  const [pharmacoGenomic, setPharmacoGenomic] = useState<Record<string, unknown>[] | null>();
-  const [cancerPredisposition, setCancerPredisposition] = useState<Record<string, unknown>[] | null>();
-  const [patientInformation, setPatientInformation] = useState<Record<string, unknown>[] | null>();
+  const [pharmacoGenomic, setPharmacoGenomic] = useState<KbMatchType[]>([]);
+  const [cancerPredisposition, setCancerPredisposition] = useState<SmallMutationType[]>([]);
+  const [patientInformation, setPatientInformation] = useState<{
+    label: string;
+    value: string | null;
+  }[] | null>();
 
-  const [showPatientEdit, setShowPatientEdit] = useState<boolean>(false);
+  const [showPatientEdit, setShowPatientEdit] = useState(false);
 
   useEffect(() => {
     if (report && report.ident) {
@@ -126,11 +131,11 @@ const PharmacoGenomicSummary = ({
     }
 
     if (newPatientData) {
-      apiCalls.push(api.put(`/reports/${report.ident}/patient-information`, newPatientData, {}));
+      apiCalls.push(api.put(`/reports/${report.ident}/patient-information`, newPatientData));
     }
 
     if (newReportData) {
-      apiCalls.push(api.put(`/reports/${report.ident}`, newReportData, {}));
+      apiCalls.push(api.put(`/reports/${report.ident}`, newReportData));
     }
 
     const callSet = new ApiCallSet(apiCalls);
@@ -173,12 +178,12 @@ const PharmacoGenomicSummary = ({
   }, [isSigned, report, setReport]);
 
   const handleSign = useCallback(async (signed: boolean, role: 'author' | 'reviewer') => {
-    let newSignature;
+    let newSignature: SignatureType;
 
     if (signed) {
-      newSignature = await api.put(`/reports/${report.ident}/signatures/sign/${role}`, {}, {}).request();
+      newSignature = await api.put(`/reports/${report.ident}/signatures/sign/${role}`, {}).request();
     } else {
-      newSignature = await api.put(`/reports/${report.ident}/signatures/revoke/${role}`, {}, {}).request();
+      newSignature = await api.put(`/reports/${report.ident}/signatures/revoke/${role}`, {}).request();
     }
 
     setIsSigned(signed);
@@ -247,54 +252,50 @@ const PharmacoGenomicSummary = ({
               )}
             </>
           )}
-          {pharmacoGenomic && (
-            <div className="summary__pharmacogenomic">
-              <Typography variant="h3" display="inline">
-                Pharmacogenomic Variants
-              </Typography>
-              {pharmacoGenomic.length ? (
-                <>
-                  <DataTable
-                    columnDefs={pharmacoGenomicColumnDefs}
-                    rowData={pharmacoGenomic}
-                    isPrint={isPrint}
-                    isPaginated={!isPrint}
-                  />
-                  <Alert className="summary--max-width" severity="warning">
-                    Positive Pharmacogenomic Result: At least one pharmacogenomic variant was identified in this sample. Further clinical testing to determine risk of toxicity is recommended for this patient.
-                  </Alert>
-                </>
-              ) : (
-                <div className="summary__none">
-                  No pharmacogenomic variants found
-                </div>
-              )}
-            </div>
-          )}
-          {cancerPredisposition && (
-            <div className="summary__cancer-predisposition">
-              <Typography variant="h3" display="inline">
-                Cancer Predisposition Variants
-              </Typography>
-              {cancerPredisposition.length ? (
-                <>
-                  <DataTable
-                    columnDefs={cancerColumnDefs}
-                    rowData={cancerPredisposition}
-                    isPrint={isPrint}
-                    isPaginated={!isPrint}
-                  />
-                  <Alert className="summary--max-width" severity="warning">
-                    Positive Cancer Predisposition Result: At least one pathogenic cancer predisposition variant was identified in this sample. A referral to the Hereditary Cancer Program is recommended for this patient.
-                  </Alert>
-                </>
-              ) : (
-                <div className="summary__none">
-                  No cancer predisposition variants found
-                </div>
-              )}
-            </div>
-          )}
+          <div className="summary__pharmacogenomic">
+            <Typography variant="h3" display="inline">
+              Pharmacogenomic Variants
+            </Typography>
+            {pharmacoGenomic.length ? (
+              <>
+                <DataTable
+                  columnDefs={pharmacoGenomicColumnDefs}
+                  rowData={pharmacoGenomic}
+                  isPrint={isPrint}
+                  isPaginated={!isPrint}
+                />
+                <Alert className="summary--max-width" severity="warning">
+                  Positive Pharmacogenomic Result: At least one pharmacogenomic variant was identified in this sample. Further clinical testing to determine risk of toxicity is recommended for this patient.
+                </Alert>
+              </>
+            ) : (
+              <div className="summary__none">
+                No pharmacogenomic variants found
+              </div>
+            )}
+          </div>
+          <div className="summary__cancer-predisposition">
+            <Typography variant="h3" display="inline">
+              Cancer Predisposition Variants
+            </Typography>
+            {cancerPredisposition.length ? (
+              <>
+                <DataTable
+                  columnDefs={cancerColumnDefs}
+                  rowData={cancerPredisposition}
+                  isPrint={isPrint}
+                  isPaginated={!isPrint}
+                />
+                <Alert className="summary--max-width" severity="warning">
+                  Positive Cancer Predisposition Result: At least one pathogenic cancer predisposition variant was identified in this sample. A referral to the Hereditary Cancer Program is recommended for this patient.
+                </Alert>
+              </>
+            ) : (
+              <div className="summary__none">
+                No cancer predisposition variants found
+              </div>
+            )}
+          </div>
           {testInformation && (
             <div className="summary__test-information">
               <Typography variant="h3" className="summary__test-information-title">
