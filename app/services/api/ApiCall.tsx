@@ -12,22 +12,22 @@ import { theme } from '../../App';
 import errorHandler from '../errors/errorHandler';
 import SnackbarUtils from '../SnackbarUtils';
 
-class ApiCall {
-  endpoint: string;
+class ApiCall<T> {
+  private controller: AbortController;
 
-  requestOptions: RequestInit;
+  public endpoint: string;
 
-  controller: AbortController;
+  public requestOptions: RequestInit;
 
-  forceListReturn: boolean;
+  public forceListReturn: boolean;
 
-  forceRecordReturn: boolean;
+  public forceRecordReturn: boolean;
 
-  raw: boolean;
+  public raw: boolean;
 
-  name: string;
+  public name: string;
 
-  confirm: boolean;
+  public confirm: boolean;
 
   constructor(
     endpoint: string,
@@ -105,7 +105,7 @@ class ApiCall {
    * Makes the fetch request and awaits the response or error. Also handles the redirect to error
    * or login pages
    */
-  async request(confirm = false, ignoreAbort = false) {
+  async request(confirm = false, ignoreAbort = false): Promise<T> {
     this.controller = new AbortController();
 
     const { method } = this.requestOptions;

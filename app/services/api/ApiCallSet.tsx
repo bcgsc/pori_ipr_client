@@ -7,19 +7,18 @@ import {
 import ApiCall from './ApiCall';
 import AlertDialog from '../../components/AlertDialog';
 import { theme } from '../../App';
-import { RequestReturnType } from './types';
 
 /**
  * Set of Api calls to be co-requested and co-aborted
  */
 class ApiCallSet {
-  calls: ApiCall[];
+  private calls: ApiCall<any>[];
 
   constructor(calls = []) {
     this.calls = calls;
   }
 
-  push(call: ApiCall): void {
+  push<T>(call: ApiCall<T>): void {
     this.calls.push(call);
   }
 
@@ -52,7 +51,7 @@ class ApiCallSet {
     );
   }
 
-  async request(confirm = false): Promise<RequestReturnType[] | void> {
+  async request(confirm = false): Promise<any[]> {
     if (confirm) {
       this.showConfirm();
       return;

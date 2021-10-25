@@ -2,22 +2,22 @@ import ApiCall from './ApiCall';
 import ApiCallSet from './ApiCallSet';
 import { CallOptionsType } from './types';
 
-const get = (
+const get = <T>(
   endpoint: string,
   callOptions?: CallOptionsType,
-): ApiCall => {
+): ApiCall<T> => {
   const requestOptions: RequestInit = {
     method: 'GET',
   };
-  return new ApiCall(endpoint, requestOptions, callOptions);
+  return new ApiCall<T>(endpoint, requestOptions, callOptions);
 };
 
-const post = (
+const post = <T>(
   endpoint: string,
   payload: BodyInit | Record<string, unknown>,
   callOptions?: CallOptionsType,
   formData?: boolean,
-): ApiCall => {
+): ApiCall<T> => {
   const requestOptions: RequestInit = {
     method: 'POST',
     body: formData ? payload as BodyInit : JSON.stringify(payload),
@@ -27,15 +27,15 @@ const post = (
       'Content-type': 'application/json',
     };
   }
-  return new ApiCall(endpoint, requestOptions, callOptions);
+  return new ApiCall<T>(endpoint, requestOptions, callOptions);
 };
 
-const del = (
+const del = <T>(
   endpoint: string,
   payload: BodyInit | Record<string, unknown>,
   callOptions?: CallOptionsType,
   formData?: boolean,
-): ApiCall => {
+): ApiCall<T> => {
   let requestOptions: RequestInit;
 
   if (payload) {
@@ -53,15 +53,15 @@ const del = (
       'Content-type': 'application/json',
     };
   }
-  return new ApiCall(endpoint, requestOptions, callOptions);
+  return new ApiCall<T>(endpoint, requestOptions, callOptions);
 };
 
-const put = (
+const put = <T>(
   endpoint: string,
   payload: BodyInit | Record<string, unknown>,
   callOptions?: CallOptionsType,
   formData?: boolean,
-): ApiCall => {
+): ApiCall<T> => {
   const requestOptions: RequestInit = {
     method: 'PUT',
     body: formData ? payload as BodyInit : JSON.stringify(payload),
@@ -71,7 +71,7 @@ const put = (
       'Content-type': 'application/json',
     };
   }
-  return new ApiCall(endpoint, requestOptions, callOptions);
+  return new ApiCall<T>(endpoint, requestOptions, callOptions);
 };
 
 export default {
