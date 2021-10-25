@@ -65,11 +65,10 @@ const CopyNumber = ({
     if (report) {
       const getData = async () => {
         try {
-          const apiCalls = new ApiCallSet([
-            api.get(`/reports/${report.ident}/copy-variants`),
-            api.get(`/reports/${report.ident}/image/retrieve/cnvLoh.circos,cnv.1,cnv.2,cnv.3,cnv.4,cnv.5,loh.1,loh.2,loh.3,loh.4,loh.5`),
+          const [cnvsResp, imagesResp] = await Promise.all([
+            api.get<CopyNumberType[]>(`/reports/${report.ident}/copy-variants`).request(),
+            api.get<ImageType[]>(`/reports/${report.ident}/image/retrieve/cnvLoh.circos,cnv.1,cnv.2,cnv.3,cnv.4,cnv.5,loh.1,loh.2,loh.3,loh.4,loh.5`).request(),
           ]);
-          const [cnvsResp, imagesResp] = await apiCalls.request();
 
           const circosIndex = imagesResp.findIndex((img) => img.key === 'cnvLoh.circos');
           const [circosResp] = imagesResp.splice(circosIndex, 1);

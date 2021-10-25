@@ -120,16 +120,22 @@ const AddEditUserDialog = ({
       }
 
       if (projects.length) {
-        const callSet = new ApiCallSet(projects.map((project) => api.post(`/project/${project.ident}/user`, { user: createdResp.ident }, {})));
-        await callSet.request();
+        const callSet = [];
+        projects.forEach((project) => (
+          callSet.push(api.post(`/project/${project.ident}/user`, { user: createdResp.ident }).request())
+        ));
+        await Promise.all(callSet);
         createdResp.projects = projects;
       } else {
         createdResp.projects = [];
       }
 
       if (groups.length) {
-        const callSet = new ApiCallSet(groups.map((group) => api.post(`/user/group/${group.ident}/member`, { user: createdResp.ident }, {})));
-        await callSet.request();
+        const callSet = [];
+        groups.forEach((group) => (
+          callSet.push(api.post(`/user/group/${group.ident}/member`, { user: createdResp.ident }).request())
+        ));
+        await Promise.all(callSet);
         createdResp.groups = groups;
       } else {
         createdResp.groups = [];

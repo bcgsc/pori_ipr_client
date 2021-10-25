@@ -4,7 +4,7 @@ import DemoDescription from '@/components/DemoDescription';
 import DataTable from '@/components/DataTable';
 import Image, { ImageType } from '@/components/Image';
 import ReportContext from '@/context/ReportContext';
-import api, { ApiCallSet } from '@/services/api';
+import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import { hlaColumnDefs, cellTypesColumnDefs } from './columnDefs';
@@ -26,15 +26,14 @@ const Immune = ({
     if (report) {
       const getData = async () => {
         try {
-          const apiCalls = new ApiCallSet([
-            api.get(`/reports/${report.ident}/immune-cell-types`),
-            api.get(
+          const [cellTypesResp, imagesResp, hlaTypesResp] = await Promise.all([
+            api.get<ImmuneType[]>(`/reports/${report.ident}/immune-cell-types`).request(),
+            api.get<ImageType[]>(
               `/reports/${report.ident}/image/retrieve/cibersort.combined_t-cell_scatter,cibersort.cd8_positive_t-cell_scatter,mixcr.circos_trb_vj_gene_usage,mixcr.dominiance_vs_alpha_beta_t-cells_scatter`,
-            ),
-            api.get(`/reports/${report.ident}/hla-types`),
+            ).request(),
+            api.get<HlaType[]>(`/reports/${report.ident}/hla-types`).request(),
           ]);
 
-          const [cellTypesResp, imagesResp, hlaTypesResp] = await apiCalls.request();
           setCellTypes(cellTypesResp);
           setImages(imagesResp);
           setHlaTypes(hlaTypesResp);

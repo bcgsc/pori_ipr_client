@@ -42,12 +42,11 @@ const Appendices = ({
     if (report) {
       const getData = async () => {
         try {
-          const callSet = new ApiCallSet([
-            api.get(`/reports/${report.ident}/appendices`, {}),
-            api.get(`/reports/${report.ident}/appendices/tcga`, {}),
-            api.get(`/reports/${report.ident}/comparators`, {}),
+          const [appendicesResp, tcgaResp, comparatorsResp] = await Promise.all([
+            api.get<AppendicesType>(`/reports/${report.ident}/appendices`).request(),
+            api.get<TcgaType[]>(`/reports/${report.ident}/appendices/tcga`).request(),
+            api.get<ComparatorType[]>(`/reports/${report.ident}/comparators`).request(),
           ]);
-          const [appendicesResp, tcgaResp, comparatorsResp] = await callSet.request();
 
           setAppendices(appendicesResp);
           setTcga(tcgaResp);

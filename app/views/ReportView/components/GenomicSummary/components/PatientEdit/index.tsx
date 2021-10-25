@@ -80,11 +80,11 @@ const PatientEdit = ({
       const apiCalls = [];
 
       if (newPatientData) {
-        apiCalls.push(api.put(`/reports/${report.ident}/patient-information`, newPatientData, {}));
+        apiCalls.push(api.put(`/reports/${report.ident}/patient-information`, newPatientData));
       }
 
       if (newReportData) {
-        apiCalls.push(api.put(`/reports/${report.ident}`, newReportData, {}));
+        apiCalls.push(api.put(`/reports/${report.ident}`, newReportData));
       }
 
       const callSet = new ApiCallSet(apiCalls);

@@ -106,16 +106,16 @@ const MutationBurden = ({
     if (report) {
       const getData = async () => {
         try {
-          const calls = new ApiCallSet([
-            api.get(`/reports/${report.ident}/msi`),
-            api.get(`/reports/${report.ident}/image/retrieve/msi.scatter`),
-            api.get(`/reports/${report.ident}/image/mutation-burden`),
-            api.get(`/reports/${report.ident}/comparators`),
-            api.get(`/reports/${report.ident}/mutation-burden`),
-          ]);
           const [
             msiResp, msiScatterResp, imagesResp, comparatorsResp, mutationBurdenResp,
-          ] = await calls.request();
+          ] = await Promise.all([
+            api.get<MsiType[]>(`/reports/${report.ident}/msi`).request(),
+            api.get<ImageType[]>(`/reports/${report.ident}/image/retrieve/msi.scatter`).request(),
+            api.get<ImageType[]>(`/reports/${report.ident}/image/mutation-burden`).request(),
+            api.get<ComparatorType[]>(`/reports/${report.ident}/comparators`).request(),
+            api.get<MutationBurdenType[]>(`/reports/${report.ident}/mutation-burden`).request(),
+          ]);
+
           setMsi(msiResp);
           setMsiScatter(msiScatterResp.find((img) => img.key === 'msi.scatter'));
           setImages(processImages(imagesResp));

@@ -31,7 +31,7 @@ const Microbial = ({
     if (report) {
       const getData = async () => {
         try {
-          const microbialImagesResp = await api.get(
+          const microbialImagesResp = await api.get<ImageType[]>(
             `/reports/${report.ident}/image/retrieve/microbial.circos.genome,microbial.circos.transcriptome`,
           ).request();
 

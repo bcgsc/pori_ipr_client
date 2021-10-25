@@ -23,6 +23,7 @@ import { sampleColumnDefs, eventsColumnDefs } from './columnDefs';
 import TestInformation, { TestInformationType } from './components/TestInformation';
 import PatientEdit from '../GenomicSummary/components/PatientEdit';
 import EventsEditDialog from './components/EventsEditDialog';
+import SmallMutationsType from '../SmallMutations/types';
 import ProbeResultsType from './types.d';
 
 import './index.scss';
@@ -42,9 +43,9 @@ const ProbeSummary = ({
   const { isSigned, setIsSigned } = useContext(ConfirmContext);
   const { canEdit } = useEdit();
 
-  const [testInformation, setTestInformation] = useState<TestInformationType | null>();
+  const [testInformation, setTestInformation] = useState<TestInformationType>();
   const [signatures, setSignatures] = useState<SignatureType | null>();
-  const [probeResults, setProbeResults] = useState<ProbeResultsType[] | null>();
+  const [probeResults, setProbeResults] = useState<ProbeResultsType[]>();
   const [patientInformation, setPatientInformation] = useState<{
     label: string;
     value: string | null;
@@ -59,18 +60,17 @@ const ProbeSummary = ({
     if (report?.ident) {
       const getData = async () => {
         try {
-          const apiCalls = new ApiCallSet([
-            api.get(`/reports/${report.ident}/probe-test-information`),
-            api.get(`/reports/${report.ident}/signatures`),
-            api.get(`/reports/${report.ident}/probe-results`),
-            api.get(`/reports/${report.ident}/small-mutations`),
-          ]);
           const [
             testInformationData,
             signaturesData,
             probeResultsData,
             smallMutationsData,
-          ] = await apiCalls.request();
+          ] = await Promise.all([
+            api.get<TestInformationType>(`/reports/${report.ident}/probe-test-information`).request(),
+            api.get<SignatureType>(`/reports/${report.ident}/signatures`).request(),
+            api.get<ProbeResultsType[]>(`/reports/${report.ident}/probe-results`).request(),
+            api.get<SmallMutationsType[]>(`/reports/${report.ident}/small-mutations`).request(),
+          ]);
 
           setTestInformation(testInformationData);
           setSignatures(signaturesData);

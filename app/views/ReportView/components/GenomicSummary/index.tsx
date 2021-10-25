@@ -10,14 +10,14 @@ import {
 import EditIcon from '@material-ui/icons/Edit';
 import sortBy from 'lodash.sortby';
 
-import api, { ApiCallSet } from '@/services/api';
+import api from '@/services/api';
 import { formatDate } from '@/utils/date';
 import useEdit from '@/hooks/useEdit';
 import ConfirmContext from '@/context/ConfirmContext';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import DemoDescription from '@/components/DemoDescription';
 import DescriptionList from '@/components/DescriptionList';
-import ReportContext from '@/context/ReportContext';
+import ReportContext, { ReportType } from '@/context/ReportContext';
 import snackbar from '@/services/SnackbarUtils';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import VariantChips from './components/VariantChips';
@@ -114,16 +114,6 @@ const GenomicSummary = ({
     if (report) {
       const getData = async () => {
         try {
-          const apiCalls = new ApiCallSet([
-            api.get(`/reports/${report.ident}/summary/microbial`, {}),
-            api.get(`/reports/${report.ident}/summary/genomic-alterations-identified`, {}),
-            api.get(`/reports/${report.ident}/comparators`, {}),
-            api.get(`/reports/${report.ident}/mutation-signatures`, {}),
-            api.get(`/reports/${report.ident}/mutation-burden`, {}),
-            api.get(`/reports/${report.ident}/immune-cell-types`, {}),
-            api.get(`/reports/${report.ident}/msi`, {}),
-          ]);
-
           const [
             microbialResp,
             variantsResp,
@@ -132,7 +122,15 @@ const GenomicSummary = ({
             burdenResp,
             immuneResp,
             msiResp,
-          ] = await apiCalls.request();
+          ] = await Promise.all([
+            api.get<MicrobialType[]>(`/reports/${report.ident}/summary/microbial`).request(),
+            api.get<GeneVariantType[]>(`/reports/${report.ident}/summary/genomic-alterations-identified`).request(),
+            api.get<ComparatorType[]>(`/reports/${report.ident}/comparators`).request(),
+            api.get<MutationSignatureType[]>(`/reports/${report.ident}/mutation-signatures`).request(),
+            api.get<MutationBurdenType[]>(`/reports/${report.ident}/mutation-burden`).request(),
+            api.get<ImmuneType[]>(`/reports/${report.ident}/immune-cell-types`).request(),
+            api.get<MsiType[]>(`/reports/${report.ident}/msi`).request(),
+          ]);
 
           setPrimaryComparator(comparatorsResp.find(({ analysisRole }) => analysisRole === 'mutation burden (primary)'));
           setPrimaryBurden(burdenResp.find((entry: Record<string, unknown>) => entry.role === 'primary'));
@@ -306,7 +304,6 @@ const GenomicSummary = ({
       const req = api.del(
         `/reports/${report.ident}/summary/genomic-alterations-identified/${chipIdent}`,
         { comment },
-        {},
       );
       await req.request(isSigned);
 
@@ -321,7 +318,7 @@ const GenomicSummary = ({
 
   const handleChipAdded = useCallback(async (variant) => {
     try {
-      const req = api.post(`/reports/${report.ident}/summary/genomic-alterations-identified`, { geneVariant: variant }, {});
+      const req = api.post(`/reports/${report.ident}/summary/genomic-alterations-identified`, { geneVariant: variant });
       const newVariantEntry = await req.request();
 
       const categorizedVariantEntry = variantCategory(newVariantEntry);
@@ -342,7 +339,7 @@ const GenomicSummary = ({
       return;
     }
 
-    const reportResp = await api.get(`/reports/${report.ident}`, {}).request();
+    const reportResp = await api.get<ReportType>(`/reports/${report.ident}`).request();
     setReport(reportResp);
 
     setPatientInformation([

@@ -10,6 +10,7 @@ import {
 } from '@material-ui/icons';
 
 import api, { ApiCallSet } from '@/services/api';
+import { KbMatchType } from '@/common';
 import snackbar from '@/services/SnackbarUtils';
 import DemoDescription from '@/components/DemoDescription';
 import useEdit from '@/hooks/useEdit';
@@ -62,17 +63,6 @@ const KbMatches = ({
       const getData = async () => {
         try {
           const baseUri = `/reports/${report.ident}/kb-matches`;
-          const apiCalls = new ApiCallSet([
-            api.get(`${baseUri}?approvedTherapy=false&category=therapeutic`, {}),
-            api.get(`${baseUri}?approvedTherapy=false&category=biological`, {}),
-            api.get(`${baseUri}?approvedTherapy=false&category=diagnostic`, {}),
-            api.get(`${baseUri}?approvedTherapy=false&category=prognostic`, {}),
-            api.get(`${baseUri}?category=unknown,novel`, {}),
-            api.get(`${baseUri}?approvedTherapy=true&category=therapeutic&matchedCancer=true`, {}),
-            api.get(`${baseUri}?approvedTherapy=true&category=therapeutic&matchedCancer=false`, {}),
-            api.get(`/reports/${report.ident}/probe-results`, {}),
-          ]);
-
           const [
             therapeuticResp,
             biologicalResp,
@@ -82,7 +72,16 @@ const KbMatches = ({
             thisCancerResp,
             otherCancerResp,
             targetedGenesResp,
-          ] = await apiCalls.request();
+          ] = await Promise.all([
+            api.get<KbMatchType[]>(`${baseUri}?approvedTherapy=false&category=therapeutic`).request(),
+            api.get<KbMatchType[]>(`${baseUri}?approvedTherapy=false&category=biological`).request(),
+            api.get<KbMatchType[]>(`${baseUri}?approvedTherapy=false&category=diagnostic`).request(),
+            api.get<KbMatchType[]>(`${baseUri}?approvedTherapy=false&category=prognostic`).request(),
+            api.get<KbMatchType[]>(`${baseUri}?category=unknown,novel`).request(),
+            api.get<KbMatchType[]>(`${baseUri}?approvedTherapy=true&category=therapeutic&matchedCancer=true`).request(),
+            api.get<KbMatchType[]>(`${baseUri}?approvedTherapy=true&category=therapeutic&matchedCancer=false`).request(),
+            api.get<KbMatchType[]>(`/reports/${report.ident}/probe-results`).request(),
+          ]);
 
           setGroupedMatches({
             thisCancer: coalesceEntries(thisCancerResp),
@@ -113,13 +112,13 @@ const KbMatches = ({
     try {
       // More than one ident coalesced into one row
       if (Array.isArray(row.ident)) {
-        const apiCalls = new ApiCallSet();
+        const apiCalls = [];
         row.ident.forEach((ident: string) => {
-          apiCalls.push(api.del(`/reports/${report.ident}/kb-matches/${ident}`, {}, {}));
+          apiCalls.push(api.del(`/reports/${report.ident}/kb-matches/${ident}`, {}).request());
         });
-        await apiCalls.request();
+        await Promise.all(apiCalls);
       } else {
-        await api.del(`/reports/${report.ident}/kb-matches/${row.ident}`, {}, {}).request();
+        await api.del(`/reports/${report.ident}/kb-matches/${row.ident}`, {}).request();
       }
 
       setGroupedMatches((oldMatches) => {

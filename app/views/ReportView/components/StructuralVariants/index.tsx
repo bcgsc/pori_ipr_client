@@ -57,11 +57,10 @@ const StructuralVariants = ({
     if (report) {
       const getData = async () => {
         try {
-          const apiCalls = new ApiCallSet([
-            api.get(`/reports/${report.ident}/structural-variants`),
-            api.get(`/reports/${report.ident}/image/retrieve/circosSv.genome,circosSv.transcriptome`),
+          const [svsResp, imagesResp] = await Promise.all([
+            api.get<StructuralVariantType[]>(`/reports/${report.ident}/structural-variants`).request(),
+            api.get<ImageType[]>(`/reports/${report.ident}/image/retrieve/circosSv.genome,circosSv.transcriptome`).request(),
           ]);
-          const [svsResp, imagesResp] = await apiCalls.request();
 
           setSvs(svsResp);
           setGenomeCircos(imagesResp.find((img: ImageType) => img.key === 'circosSv.genome'));
