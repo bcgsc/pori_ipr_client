@@ -33,11 +33,11 @@ class ApiCall<T> {
     endpoint: string,
     requestOptions: RequestInit,
     callOptions?: {
-      forceListReturn: boolean;
-      forceRecordReturn: boolean;
-      raw: boolean;
-      name: string;
-      confirm: boolean
+      forceListReturn?: boolean;
+      forceRecordReturn?: boolean;
+      raw?: boolean;
+      name?: string;
+      confirm?: boolean
     },
   ) {
     const {
