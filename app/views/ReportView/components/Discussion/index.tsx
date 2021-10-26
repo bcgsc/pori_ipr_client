@@ -11,6 +11,7 @@ import DemoDescription from '@/components/DemoDescription';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import CommentCard from './components/CommentCard';
 import AddComment from './components/AddComment';
+import DiscussionType from './types';
 
 import './index.scss';
 
@@ -22,13 +23,15 @@ const Discussion = ({
 }: DiscussionProps): JSX.Element => {
   const { report } = useContext(ReportContext);
 
-  const [comments, setComments] = useState([]);
+  const [comments, setComments] = useState<DiscussionType[]>([]);
 
   useEffect(() => {
     if (report) {
       const getData = async () => {
         try {
-          const commentsResp = await api.get(`/reports/${report.ident}/presentation/discussion`, {}).request();
+          const commentsResp = await api.get<DiscussionType[]>(
+            `/reports/${report.ident}/presentation/discussion`,
+          ).request();
           setComments(commentsResp);
         } catch (err) {
           snackbar.error(`Network error: ${err}`);

@@ -42,8 +42,8 @@ const AnalystComments = ({
       const getData = async () => {
         try {
           const [commentsResp, signaturesResp] = await Promise.all([
-            api.get(`/reports/${report.ident}/summary/analyst-comments`).request(),
-            api.get(`/reports/${report.ident}/signatures`).request(),
+            api.get<{ comments: string }>(`/reports/${report.ident}/summary/analyst-comments`).request(),
+            api.get<SignatureType>(`/reports/${report.ident}/signatures`).request(),
           ]);
 
           if (commentsResp?.comments) {
@@ -95,7 +95,7 @@ const AnalystComments = ({
       editedComments = '';
     }
     if (editedComments !== undefined) {
-      const commentsResp = await api.put(
+      const commentsResp = await api.put<{ comments: string }>(
         `/reports/${report.ident}/summary/analyst-comments`,
         { comments: editedComments },
       ).request();

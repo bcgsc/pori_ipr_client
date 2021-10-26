@@ -14,15 +14,15 @@ import './index.scss';
 
 const Users = (): JSX.Element => {
   const [users, setUsers] = useState<UserType[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [showDialog, setShowDialog] = useState<boolean>(false);
+  const [loading, setLoading] = useState(true);
+  const [showDialog, setShowDialog] = useState(false);
   const [editData, setEditData] = useState<UserType>();
 
   const snackbar = useSnackbar();
 
   useEffect(() => {
     const getData = async () => {
-      const usersResp = await api.get('/user').request();
+      const usersResp = await api.get<UserType[]>('/user').request();
 
       setUsers(usersResp);
       setLoading(false);

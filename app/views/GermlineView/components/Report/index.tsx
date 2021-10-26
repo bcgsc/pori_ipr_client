@@ -43,7 +43,7 @@ const GermlineReport = ({
     if (ident) {
       const getData = async () => {
         try {
-          const reportResp = await api.get(
+          const reportResp = await api.get<GermlineReportType>(
             `/germline-small-mutation-reports/${ident}`,
           ).request();
           setReport(reportResp);

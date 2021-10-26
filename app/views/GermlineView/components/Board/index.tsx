@@ -27,7 +27,7 @@ const Board = ({
         const {
           total: totalRowsResp,
           reports: reportsResp,
-        } = await api.get(
+        } = await api.get<{ total: number, reports: GermlineReportType[] }>(
           `/germline-small-mutation-reports?limit=${limit}&offset=${offset}${reviewFilter ? '&reviewType=biofx&exported=false' : ''}${searchText ? `&patientId=${searchText}` : ''}`,
         ).request();
         setReports(reportsResp);

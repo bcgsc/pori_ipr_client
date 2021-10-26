@@ -14,15 +14,15 @@ import { ProjectType } from '../../types';
 
 const Projects = (): JSX.Element => {
   const [projects, setProjects] = useState<ProjectType[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [showDialog, setShowDialog] = useState<boolean>(false);
+  const [loading, setLoading] = useState(true);
+  const [showDialog, setShowDialog] = useState(false);
   const [editData, setEditData] = useState<ProjectType | null>();
 
   const snackbar = useSnackbar();
 
   useEffect(() => {
     const getData = async () => {
-      const projectsResp = await api.get('/project?admin=true').request();
+      const projectsResp = await api.get<ProjectType[]>('/project?admin=true').request();
 
       setProjects(projectsResp);
       setLoading(false);

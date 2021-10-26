@@ -16,15 +16,15 @@ import './index.scss';
 
 const Groups = (): JSX.Element => {
   const [groups, setGroups] = useState<GroupType[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [showDialog, setShowDialog] = useState<boolean>(false);
+  const [loading, setLoading] = useState(true);
+  const [showDialog, setShowDialog] = useState(false);
   const [editData, setEditData] = useState<GroupType | null>();
 
   const snackbar = useSnackbar();
 
   useEffect(() => {
     const getData = async () => {
-      const groupsResp = await api.get('/user/group').request();
+      const groupsResp = await api.get<GroupType[]>('/user/group').request();
 
       setGroups(groupsResp);
       setLoading(false);

@@ -13,6 +13,7 @@ import {
   TissueSitesType,
   ComparatorsType,
   ProcessedExpressionOutliers,
+  ExpOutliersType,
 } from './types';
 
 import './index.scss';
@@ -56,8 +57,8 @@ const Expression = ({
     if (report && report.ident) {
       const getData = async () => {
         const [outliers, images] = await Promise.all([
-          api.get(`/reports/${report.ident}/expression-variants`).request(),
-          api.get(`/reports/${report.ident}/image/expression-density-graphs`).request(),
+          api.get<ExpOutliersType[]>(`/reports/${report.ident}/expression-variants`).request(),
+          api.get<ImageType[]>(`/reports/${report.ident}/image/expression-density-graphs`).request(),
         ]);
 
         if (outliers && outliers.length) {

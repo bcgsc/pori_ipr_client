@@ -86,7 +86,7 @@ const AddEditProjectDialog = ({
       }
 
       await Promise.all(apiCallQueue.map((call) => call.request()));
-      const updatedProject = await api.get(`/project/${createdResp.ident}`).request();
+      const updatedProject = await api.get<ProjectType>(`/project/${createdResp.ident}`).request();
 
       onClose(updatedProject);
     } else {

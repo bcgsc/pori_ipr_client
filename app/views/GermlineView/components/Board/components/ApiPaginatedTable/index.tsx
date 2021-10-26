@@ -2,6 +2,7 @@ import React, {
   useCallback, useContext, useState,
 } from 'react';
 import { AgGridReact } from '@ag-grid-community/react';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { ColDef } from '@ag-grid-community/core';
 import { useSnackbar } from 'notistack';
 import GetAppIcon from '@material-ui/icons/GetApp';
@@ -48,7 +49,7 @@ const ApiPaginatedTable = ({
 
   const handleExport = useCallback(async (): Promise<void> => {
     try {
-      const response = await api.get(
+      const response = await api.get<Response>(
         '/export/germline-small-mutation-reports/batch/download?reviews=biofx,projects',
         { raw: true },
       ).request();

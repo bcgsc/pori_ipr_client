@@ -28,7 +28,7 @@ const ReportsTableComponent = (): JSX.Element => {
 
   const { adminAccess } = useResource();
   const isExternalMode = useExternalMode();
-  const [rowData, setRowData] = useState<ReportType[]>();
+  const [rowData, setRowData] = useState<Partial<ReportType>[]>();
 
   useEffect(() => {
     if (!rowData && isExternalMode !== undefined) {
@@ -43,7 +43,7 @@ const ReportsTableComponent = (): JSX.Element => {
           states = 'reviewed,archived';
         }
 
-        const { reports } = await api.get(`/reports${states ? `?states=${states}` : ''}`, {}).request();
+        const { reports } = await api.get<{ reports: ReportType[] }>(`/reports${states ? `?states=${states}` : ''}`).request();
 
         setRowData(reports.map((report: ReportType) => {
           const [analyst] = report.users

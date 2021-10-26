@@ -5,17 +5,18 @@ import DataTable from '@/components/DataTable';
 import api from '@/services/api';
 import AddEditTemplate from './components/AddEditTemplate';
 import columnDefs from './columnDefs';
+import TemplateType from './types';
 
 const TemplateView = (): JSX.Element => {
   const [showDialog, setShowDialog] = useState(false);
-  const [templates, setTemplates] = useState([]);
+  const [templates, setTemplates] = useState<TemplateType[]>([]);
   const [selectedRow, setSelectedRow] = useState();
 
   const snackbar = useSnackbar();
 
   useEffect(() => {
     const getData = async () => {
-      const templatesResp = await api.get('/templates', {}).request();
+      const templatesResp = await api.get<TemplateType[]>('/templates', {}).request();
       setTemplates(templatesResp);
     };
     getData();

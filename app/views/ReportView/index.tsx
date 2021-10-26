@@ -13,10 +13,12 @@ import ReportToolbar from '@/components/ReportToolbar';
 import ReportSidebar from '@/components/ReportSidebar';
 import useEdit from '@/hooks/useEdit';
 import useExternalMode from '@/hooks/useExternalMode';
-import ReportContext from '@/context/ReportContext';
+import ReportContext, { ReportType } from '@/context/ReportContext';
 import ConfirmContext from '@/context/ConfirmContext';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
+import { SignatureType } from '@/components/SignatureCard';
+import TemplateType from '../TemplateView/types';
 import allSections from './sections';
 
 import './index.scss';
@@ -46,15 +48,15 @@ const Pharmacogenomic = lazy(() => import('./components/Pharmacogenomic'));
 
 const ReportView = (): JSX.Element => {
   const { path } = useRouteMatch();
-  const params = useParams();
+  const { ident } = useParams();
   const theme = useTheme();
   const history = useHistory();
   const { canEdit } = useEdit();
   const isExternalMode = useExternalMode();
 
-  const [report, setReport] = useState();
+  const [report, setReport] = useState<ReportType>();
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
-  const [visibleSections, setVisibleSections] = useState([]);
+  const [visibleSections, setVisibleSections] = useState<string[]>([]);
   const [isProbe, setIsProbe] = useState(false);
   const [isSigned, setIsSigned] = useState(false);
 
@@ -62,8 +64,8 @@ const ReportView = (): JSX.Element => {
     if (!report) {
       const getReport = async () => {
         try {
-          const resp = await api.get(`/reports/${params.ident}`).request();
-          const templatesResp = await api.get('/templates').request();
+          const resp = await api.get<ReportType>(`/reports/${ident}`).request();
+          const templatesResp = await api.get<TemplateType[]>('/templates').request();
           setReport(resp);
           if (resp.template.name === 'probe') {
             setIsProbe(true);
@@ -73,14 +75,14 @@ const ReportView = (): JSX.Element => {
           const template = templatesResp.find((templ) => templ.name === resp.template.name);
           setVisibleSections(template?.sections);
         } catch {
-          snackbar.error(`Report ${params.ident} not found`);
+          snackbar.error(`Report ${ident} not found`);
           history.push('/reports');
         }
       };
 
       getReport();
     }
-  }, [history, params.ident, report]);
+  }, [history, ident, report]);
 
   /* External users should only be allowed to access certain states
      Send them back to /reports if the report state isn't allowed */
@@ -96,8 +98,7 @@ const ReportView = (): JSX.Element => {
   useEffect(() => {
     if (report) {
       const getSignatures = async () => {
-        const req = api.get(`/reports/${params.ident}/signatures`);
-        const resp = await req.request();
+        const resp = await api.get<SignatureType>(`/reports/${ident}/signatures`).request();
         if (resp && ((resp.reviewerSignature && resp.reviewerSignature.ident)
           || (resp.authorSignature && resp.authorSignature.ident))) {
           setIsSigned(true);
@@ -106,7 +107,7 @@ const ReportView = (): JSX.Element => {
 
       getSignatures();
     }
-  }, [params.ident, report]);
+  }, [ident, report]);
 
   return (
     <ReportContext.Provider value={{ report, setReport }}>

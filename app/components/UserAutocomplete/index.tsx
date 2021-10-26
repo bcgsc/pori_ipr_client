@@ -24,7 +24,7 @@ const UserAutocomplete = ({
   onSubmit = null,
   onChange = null,
 }: UserAutocompleteProps): JSX.Element => {
-  const [options, setOptions] = useState([]);
+  const [options, setOptions] = useState<UserType[]>([]);
   const [loading, setLoading] = useState(false);
   const [value, setValue] = useState<UserType>({
     email: '',
@@ -38,6 +38,7 @@ const UserAutocomplete = ({
     ident: '',
     updatedAt: '',
     createdAt: '',
+    deletedAt: null,
   });
 
   useEffect(() => {
@@ -48,7 +49,7 @@ const UserAutocomplete = ({
 
   const handleInputChange = async ({ target: { value: queryValue } }) => {
     setLoading(true);
-    const autocompleted = await api.get(`/user/search?query=${queryValue}`, {}).request();
+    const autocompleted = await api.get<UserType[]>(`/user/search?query=${queryValue}`).request();
 
     setOptions(autocompleted);
     setLoading(false);

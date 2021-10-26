@@ -7,9 +7,10 @@ import { useTheme } from '@material-ui/core/styles';
 import { Previewer } from 'pagedjs';
 
 import api from '@/services/api';
-import ReportContext from '@/context/ReportContext';
+import ReportContext, { ReportType } from '@/context/ReportContext';
 import PageBreak from '@/components/PageBreak';
 import startCase from '@/utils/startCase';
+import TemplateType from '../TemplateView/types';
 import RunningLeft from './components/RunningLeft';
 import RunningCenter from './components/RunningCenter';
 import RunningRight from './components/RunningRight';
@@ -50,10 +51,10 @@ const reducer = (state, action) => {
   }
 };
 
-const Print = () => {
-  const params = useParams();
+const Print = (): JSX.Element => {
+  const { ident } = useParams();
   const theme = useTheme();
-  const [report, setReport] = useState();
+  const [report, setReport] = useState<ReportType>();
   const [reportSectionsLoaded, dispatch] = useReducer(reducer, {
     summary: false,
     analyst: false,
@@ -62,14 +63,14 @@ const Print = () => {
     slides: false,
     appendices: false,
   });
-  const [template, setTemplate] = useState();
+  const [template, setTemplate] = useState<TemplateType>();
   const [isPrintDialogShown, setIsPrintDialogShown] = useState(false);
 
   useEffect(() => {
     if (!report) {
       const getReport = async () => {
-        const reportResp = await api.get(`/reports/${params.ident}`, {}).request();
-        const templatesResp = await api.get('/templates', {}).request();
+        const reportResp = await api.get<ReportType>(`/reports/${ident}`).request();
+        const templatesResp = await api.get<TemplateType[]>('/templates').request();
 
         setTemplate(templatesResp.find((temp) => temp.name === reportResp.template.name));
         setReport(reportResp);
@@ -77,7 +78,7 @@ const Print = () => {
 
       getReport();
     }
-  }, [params.ident, report]);
+  }, [ident, report]);
 
   useEffect(() => {
     if (reportSectionsLoaded
@@ -85,11 +86,11 @@ const Print = () => {
       && Object.entries(reportSectionsLoaded).every(([section, loaded]) => loaded || !template?.sections.includes(section))
       && !isPrintDialogShown) {
       const showPrint = async () => {
-        let paged = new Previewer();
+        const paged = new Previewer();
         await paged.preview(document.getElementById('root'), ['index.css'], document.body);
         window.print();
         setIsPrintDialogShown(true);
-      }
+      };
       showPrint();
     }
   }, [isPrintDialogShown, report, reportSectionsLoaded, template]);

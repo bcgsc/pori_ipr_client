@@ -7,6 +7,7 @@ import {
   login, isAuthorized, getReferrerUri, keycloak,
 } from '@/services/management/auth';
 import api from '@/services/api';
+import { UserType } from '@/common';
 
 const Login = (props: RouteChildrenProps): null => {
   const {
@@ -59,7 +60,7 @@ const Login = (props: RouteChildrenProps): null => {
       }
     } else {
       const retrieveUser = async () => {
-        const user = await api.get('/user/me').request();
+        const user = await api.get<UserType>('/user/me').request();
         setUserDetails(user);
         history.push(from);
       };

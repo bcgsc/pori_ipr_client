@@ -4,6 +4,7 @@ import { AgGridReact } from '@ag-grid-community/react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { RowClickedEvent } from '@ag-grid-community/core';
 
+import { ReportType } from '@/context/ReportContext';
 import api from '@/services/api';
 import useGrid from '@/hooks/useGrid';
 import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
@@ -20,14 +21,14 @@ const PatientsView = ({
 }: PatientsViewProps): JSX.Element => {
   const { patientId } = useParams();
   const history = useHistory();
-  const [rowData, setRowData] = useState();
+  const [rowData, setRowData] = useState<Partial<ReportType>[]>([]);
   const { gridApi, colApi, onGridReady } = useGrid();
 
   useEffect(() => {
     if (patientId) {
       const getData = async () => {
         try {
-          const { reports } = await api.get(`/reports?searchText=${patientId}`).request();
+          const { reports } = await api.get<{ reports: ReportType[] }>(`/reports?searchText=${patientId}`).request();
           setRowData(reports.map((report) => {
             const [analyst] = report.users
               .filter((u) => u.role === 'analyst' && !u.deletedAt)

@@ -6,7 +6,8 @@ import {
   Button,
 } from '@material-ui/core';
 
-import api from '../../services/api';
+import api from '@/services/api';
+import { ReportType } from '@/context/ReportContext';
 
 import './index.scss';
 
@@ -21,7 +22,7 @@ const ReportAutocomplete = ({
   onSubmit,
   label = '',
 }: ReportAutocompleteProps): JSX.Element => {
-  const [options, setOptions] = useState([]);
+  const [options, setOptions] = useState<ReportType[]>([]);
   const [loading, setLoading] = useState(false);
   const [value, setValue] = useState({});
 
@@ -33,7 +34,7 @@ const ReportAutocomplete = ({
 
   const handleInputChange = async ({ target: { value: queryValue } }) => {
     setLoading(true);
-    const autocompleted = await api.get(`/reports?searchText=${queryValue}`, {}).request();
+    const autocompleted = await api.get<{ reports: ReportType[] }>(`/reports?searchText=${queryValue}`).request();
 
     setOptions(autocompleted.reports);
     setLoading(false);

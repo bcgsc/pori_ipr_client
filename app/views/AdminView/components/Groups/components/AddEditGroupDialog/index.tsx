@@ -79,13 +79,13 @@ const AddEditUserDialog = ({
 
       let createdResp;
       if (editData) {
-        createdResp = await api.put(`/user/group/${editData.ident}`, newEntry, {}).request();
+        createdResp = await api.put(`/user/group/${editData.ident}`, newEntry).request();
       } else {
-        createdResp = await api.post('/user/group', newEntry, {}).request();
+        createdResp = await api.post('/user/group', newEntry).request();
       }
 
       await Promise.all(apiCallQueue.map((call) => call.request()));
-      const updatedGroup = await api.get(`/user/group/${createdResp.ident}`, {}).request();
+      const updatedGroup = await api.get<GroupType>(`/user/group/${createdResp.ident}`).request();
 
       onClose(updatedGroup);
     } else {
@@ -96,7 +96,7 @@ const AddEditUserDialog = ({
   }, [groupName, owner, editData, apiCallQueue, onClose]);
 
   const handleDeleteUser = useCallback(({ ident }) => {
-    apiCallQueueDispatch({ type: 'add', payload: api.del(`/user/group/${editData.ident}/member`, { user: ident }, {}) });
+    apiCallQueueDispatch({ type: 'add', payload: api.del(`/user/group/${editData.ident}/member`, { user: ident }) });
     const newUsers = users.filter((user) => user.ident !== ident);
     setUsers(newUsers);
   }, [editData, users]);
@@ -108,7 +108,7 @@ const AddEditUserDialog = ({
   };
 
   const handleAddUser = useCallback(async (user) => {
-    apiCallQueueDispatch({ type: 'add', payload: api.post(`/user/group/${editData.ident}/member`, { user: user.ident }, {}) });
+    apiCallQueueDispatch({ type: 'add', payload: api.post(`/user/group/${editData.ident}/member`, { user: user.ident }) });
     setUsers((prevVal) => [...prevVal, user]);
   }, [editData]);
 

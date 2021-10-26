@@ -56,8 +56,8 @@ const AddEditUserDialog = ({
   useEffect(() => {
     const getData = async () => {
       const [projectsResp, groupsResp] = await Promise.all([
-        api.get('/project').request(),
-        api.get('/user/group').request(),
+        api.get<ProjectType[]>('/project').request(),
+        api.get<GroupType[]>('/user/group').request(),
       ]);
       setProjectOptions(projectsResp);
       setGroupOptions(groupsResp);
