@@ -5,6 +5,7 @@ import DataTable from '@/components/DataTable';
 import ReportContext from '@/context/ReportContext';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import snackbar from '@/services/SnackbarUtils';
+import { KbMatchType } from '@/common';
 import columnDefs from './columnDefs';
 
 type PharmacogenomicProps = WithLoadingInjectedProps;
@@ -15,13 +16,13 @@ const Pharmacogenomic = ({
 }: PharmacogenomicProps): JSX.Element => {
   const { report } = useContext(ReportContext);
 
-  const [variants, setVariants] = useState();
+  const [variants, setVariants] = useState<KbMatchType[]>([]);
 
   useEffect(() => {
     if (report) {
       const getData = async () => {
         try {
-          const variantsResp = await api.get(
+          const variantsResp = await api.get<KbMatchType[]>(
             `/reports/${report.ident}/kb-matches?category=pharmacogenomic`,
           ).request();
           setVariants(variantsResp);

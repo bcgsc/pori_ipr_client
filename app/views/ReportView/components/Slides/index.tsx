@@ -47,7 +47,7 @@ const Slides = ({
     if (report) {
       const getData = async () => {
         try {
-          const slidesResp = await api.get(`/reports/${report.ident}/presentation/slide`).request();
+          const slidesResp = await api.get<SlideType[]>(`/reports/${report.ident}/presentation/slide`).request();
           setSlides(slidesResp);
         } catch (err) {
           snackbar.error(`Network error: ${err}`);

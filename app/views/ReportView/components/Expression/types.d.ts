@@ -1,4 +1,6 @@
-import { GeneType, RecordDefaults, KbMatchType } from '@/common';
+import {
+  GeneType, RecordDefaults, KbMatchType, ComparatorType,
+} from '@/common';
 
 type KeyValType = {
   key: string;
@@ -7,7 +9,7 @@ type KeyValType = {
 
 type TissueSitesType = KeyValType[][];
 
-type ComparatorsType = KeyValType[];
+type FormattedComparatorsType = KeyValType[];
 
 type ExpOutliersType = {
   biopsySiteFoldChange: number | null;
@@ -44,8 +46,9 @@ type ProcessedExpressionOutliers = {
 };
 
 export {
-  ComparatorsType,
+  FormattedComparatorsType,
   ExpOutliersType,
   ProcessedExpressionOutliers,
   TissueSitesType,
+  ComparatorType,
 };

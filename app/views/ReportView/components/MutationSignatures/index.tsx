@@ -18,7 +18,7 @@ import columnDefs from './columnDefs';
 
 import './index.scss';
 
-const imageKeys = [
+const IMAGE_KEYS = [
   'mutSignature.barplot.dbs',
   'mutSignature.barplot.indels',
   'mutSignature.barplot.sbs',
@@ -45,8 +45,8 @@ const MutationSignatures = ({
       const getData = async () => {
         try {
           const [imageData, signatureData] = await Promise.all([
-            api.get(`/reports/${report.ident}/image/retrieve/${imageKeys.join(',')}`).request(),
-            api.get(`/reports/${report.ident}/mutation-signatures`).request(),
+            api.get<ImageType[]>(`/reports/${report.ident}/image/retrieve/${IMAGE_KEYS.join(',')}`).request(),
+            api.get<MutationSignatureType[]>(`/reports/${report.ident}/mutation-signatures`).request(),
           ]);
           setImages(imageData);
           setSbsSignatures(signatureData.filter((sig) => !(new RegExp(/dbs|id/)).test(sig.signature.toLowerCase())));

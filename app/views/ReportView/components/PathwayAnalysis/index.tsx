@@ -37,7 +37,7 @@ const PathwayAnalysis = ({
     if (report) {
       const getData = async () => {
         try {
-          const pathwayImageResp = await api.get(
+          const pathwayImageResp = await api.get<PathwayImageType>(
             `/reports/${report.ident}/summary/pathway-analysis`,
           ).request();
           setPathwayImage(pathwayImageResp);
@@ -48,7 +48,7 @@ const PathwayAnalysis = ({
           } else if (type === 'v2') {
             setLegend('img/pathway_legend_v2.png');
           } else if (type === 'custom') {
-            const legendResp = await api.get(
+            const legendResp = await api.get<ImageType>(
               `/reports/${report.ident}/image/retrieve/pathwayAnalysis.legend`,
             ).request();
             setLegend(legendResp[0]);
@@ -74,7 +74,7 @@ const PathwayAnalysis = ({
       } else if (type === 'v2') {
         setLegend('img/pathway_legend_v2.png');
       } else if (type === 'custom') {
-        const legendResp = await api.get(
+        const legendResp = await api.get<ImageType>(
           `/reports/${report.ident}/image/retrieve/pathwayAnalysis.legend`,
         ).request();
         setLegend(legendResp[0]);

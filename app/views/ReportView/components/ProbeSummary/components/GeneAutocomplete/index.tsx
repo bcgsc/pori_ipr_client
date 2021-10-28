@@ -27,7 +27,7 @@ const GeneAutocomplete = ({
 
   useEffect(() => {
     const getData = async () => {
-      const genesResp = await api.get(`/reports/${report.ident}/genes`).request();
+      const genesResp = await api.get<GeneType[]>(`/reports/${report.ident}/genes`).request();
       setGenes(genesResp);
       setOptions(genesResp);
     };

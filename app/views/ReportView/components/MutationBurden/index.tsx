@@ -11,7 +11,7 @@ import ReportContext from '@/context/ReportContext';
 import snackbar from '@/services/SnackbarUtils';
 import Image from '@/components/Image';
 import ImageType from '@/components/Image/types';
-import api, { ApiCallSet } from '@/services/api';
+import api from '@/services/api';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import {
   ComparatorType, MutationBurdenType, MsiType,

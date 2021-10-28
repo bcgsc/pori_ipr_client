@@ -9,6 +9,7 @@ import {
 } from '@material-ui/core';
 
 import api from '@/services/api';
+import EvidenceLevelType from './types';
 
 import './index.scss';
 
@@ -18,12 +19,14 @@ type InfoDialogProps = {
 };
 
 const InfoDialog = ({ isOpen, onClose }: InfoDialogProps): JSX.Element => {
-  const [evidenceLevels, setEvidenceLevels] = useState([]);
+  const [evidenceLevels, setEvidenceLevels] = useState<EvidenceLevelType[]>([]);
 
   useEffect(() => {
     if (isOpen) {
       const getData = async () => {
-        const evidenceLevelsResp = await api.get('/graphkb/evidence-levels', {}).request();
+        const evidenceLevelsResp = await api.get<{ result: EvidenceLevelType[] }>(
+          '/graphkb/evidence-levels',
+        ).request();
         if (evidenceLevelsResp) {
           setEvidenceLevels(evidenceLevelsResp.result);
         }

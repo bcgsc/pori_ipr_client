@@ -78,6 +78,14 @@ type GeneType = {
   tumourSuppressor: boolean;
 };
 
+type ComparatorType = {
+  analysisRole: string;
+  description: string | null;
+  name: string;
+  size: number | null;
+  version: string | null;
+} & RecordDefaults;
+
 type KbMatchType = {
   ident: string;
   category: string;
@@ -92,4 +100,5 @@ export {
   ImageType,
   GeneType,
   KbMatchType,
+  ComparatorType,
 };

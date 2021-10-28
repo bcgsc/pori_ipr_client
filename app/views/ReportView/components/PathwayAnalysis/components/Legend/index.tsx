@@ -58,7 +58,7 @@ const Legend = ({
 
       await api.post(`/reports/${report.ident}/image`, newLegend, {}, true).request(isSigned);
 
-      const resp = await api.get(
+      const resp = await api.get<ImageType>(
         `/reports/${report.ident}/image/retrieve/pathwayAnalysis.legend`,
         {},
       ).request();

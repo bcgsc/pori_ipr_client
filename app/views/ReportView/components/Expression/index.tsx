@@ -11,7 +11,8 @@ import columnDefs from './columnDefs';
 import processExpression from './processData';
 import {
   TissueSitesType,
-  ComparatorsType,
+  FormattedComparatorsType,
+  ComparatorType,
   ProcessedExpressionOutliers,
   ExpOutliersType,
 } from './types';
@@ -47,7 +48,7 @@ const Expression = ({
 }: ExpressionProps): JSX.Element => {
   const { report } = useContext(ReportContext);
   const [tissueSites, setTissueSites] = useState<TissueSitesType>();
-  const [comparators, setComparators] = useState<ComparatorsType>();
+  const [comparators, setComparators] = useState<FormattedComparatorsType>();
   const [expOutliers, setExpOutliers] = useState<ProcessedExpressionOutliers>();
   const [visibleCols, setVisibleCols] = useState<string[]>(
     columnDefs.filter((c) => !c.hide).map((c) => c.field),
@@ -102,7 +103,7 @@ const Expression = ({
   useEffect(() => {
     if (report && report.ident) {
       const getData = async () => {
-        const comparatorsResp = await api.get(
+        const comparatorsResp = await api.get<ComparatorType[]>(
           `/reports/${report.ident}/comparators`,
         ).request();
 
@@ -165,6 +166,7 @@ const Expression = ({
             <Paper elevation={0} className="expression__box">
               {tissueSites.map((site, index) => (
                 <span
+                  // eslint-disable-next-line react/no-array-index-key
                   key={index}
                   className="expression__box-column"
                 >

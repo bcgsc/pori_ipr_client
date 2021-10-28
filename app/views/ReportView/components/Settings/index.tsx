@@ -19,6 +19,7 @@ import useEdit from '@/hooks/useEdit';
 import DemoDescription from '@/components/DemoDescription';
 import snackbar from '@/services/SnackbarUtils';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import TemplateType from '@/views/TemplateView/types';
 import Analysis from './components/Analysis';
 import AssociationCard from './components/AssociationCard';
 import AddUserCard from './components/AddUserCard';
@@ -40,7 +41,7 @@ const Settings = ({
   const { canEdit } = useEdit();
   const history = useHistory();
 
-  const [templates, setTemplates] = useState([]);
+  const [templates, setTemplates] = useState<TemplateType[]>([]);
   const [selectedTemplate, setSelectedTemplate] = useState({ name: '', ident: '' });
   const [selectedState, setSelectedState] = useState('');
   const [reportVersion, setReportVersion] = useState('');
@@ -53,7 +54,7 @@ const Settings = ({
     if (report) {
       const getData = async () => {
         try {
-          const templateResp = await api.get('/templates').request();
+          const templateResp = await api.get<TemplateType[]>('/templates').request();
           setTemplates(templateResp);
         } catch (err) {
           snackbar.error(`Network error: ${err}`);

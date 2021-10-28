@@ -48,7 +48,7 @@ const SmallMutations = ({
     if (report) {
       const getData = async () => {
         try {
-          const smallMutationsResp = await api.get(
+          const smallMutationsResp = await api.get<MutationType[]>(
             `/reports/${report.ident}/small-mutations`,
           ).request();
           setSmallMutations(smallMutationsResp);

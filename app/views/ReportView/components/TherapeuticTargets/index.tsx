@@ -13,6 +13,7 @@ import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import EditDialog from './components/EditDialog';
 import EvidenceHeader from './components/EvidenceHeader';
 import columnDefs from './columnDefs';
+import TherapeuticType from './types';
 
 type TherapeuticProps = {
   print?: boolean;
@@ -23,10 +24,10 @@ const Therapeutic = ({
   print = false,
   setIsLoading,
 }: TherapeuticProps): JSX.Element => {
-  const [therapeuticData, setTherapeuticData] = useState([]);
-  const [chemoresistanceData, setChemoresistanceData] = useState([]);
+  const [therapeuticData, setTherapeuticData] = useState<TherapeuticType[]>([]);
+  const [chemoresistanceData, setChemoresistanceData] = useState<TherapeuticType[]>([]);
 
-  const [showDialog, setShowDialog] = useState<boolean>(false);
+  const [showDialog, setShowDialog] = useState(false);
   const [editData, setEditData] = useState();
 
   const { canEdit } = useEdit();
@@ -36,7 +37,7 @@ const Therapeutic = ({
     if (report) {
       const getData = async () => {
         try {
-          const therapeuticResp = await api.get(
+          const therapeuticResp = await api.get<TherapeuticType[]>(
             `/reports/${report.ident}/therapeutic-targets`,
           ).request();
 

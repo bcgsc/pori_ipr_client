@@ -1,12 +1,4 @@
-import { RecordDefaults } from '@/common';
-
-type ComparatorType = {
-  analysisRole: string;
-  description: string | null;
-  name: string;
-  size: number | null;
-  version: string | null;
-} & RecordDefaults;
+import { RecordDefaults, ComparatorType } from '@/common';
 
 type MutationBurdenType = {
   codingIndelPercentile: number | null;
@@ -30,7 +22,7 @@ type MsiType = {
 } & RecordDefaults;
 
 export {
-  ComparatorType,
   MutationBurdenType,
   MsiType,
+  ComparatorType,
 };

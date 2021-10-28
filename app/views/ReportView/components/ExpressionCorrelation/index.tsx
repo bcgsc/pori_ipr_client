@@ -14,6 +14,8 @@ import Image, { ImageType } from '@/components/Image';
 import DemoDescription from '@/components/DemoDescription';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import CorrelationPlot from './components/CorrelationPlot';
+import CorrelationType from './types.d';
+
 import './index.scss';
 
 type ExpressionCorrelationProps = WithLoadingInjectedProps;
@@ -26,16 +28,16 @@ const ExpressionCorrelation = ({
 
   const [plots, setPlots] = useState<ImageType[]>();
   const [subtypePlots, setSubtypePlots] = useState<ImageType[]>();
-  const [pairwiseExpression, setPairwiseExpression] = useState([]);
+  const [pairwiseExpression, setPairwiseExpression] = useState<CorrelationType[]>([]);
 
   useEffect(() => {
     if (report) {
       const getData = async () => {
         try {
           const [plotData, subtypePlotData, pairwiseData] = await Promise.all([
-            api.get(`/reports/${report.ident}/image/retrieve/expression.chart,expression.legend,scpPlot`).request(),
-            api.get(`/reports/${report.ident}/image/subtype-plots`).request(),
-            api.get(`/reports/${report.ident}/pairwise-expression-correlation`).request(),
+            api.get<ImageType[]>(`/reports/${report.ident}/image/retrieve/expression.chart,expression.legend,scpPlot`).request(),
+            api.get<ImageType[]>(`/reports/${report.ident}/image/subtype-plots`).request(),
+            api.get<CorrelationType[]>(`/reports/${report.ident}/pairwise-expression-correlation`).request(),
           ]);
 
           setPlots(plotData);
