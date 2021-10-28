@@ -1,6 +1,6 @@
 import { RecordDefaults } from '@/common';
 
-type TherapeuticTargetType = {
+type TherapeuticType = {
   context: string;
   contextGraphkbId: string | null;
   evidenceLevel: string;
@@ -10,11 +10,11 @@ type TherapeuticTargetType = {
   kbStatementIds: string | null;
   notes: string | null;
   rank: number;
-  therapy: string;
+  therapy: string | null;
   therapyGraphkbId: string | null;
-  type: 'therapeutic' | 'chemoresistance';
+  type: string;
   variant: string;
   variantGraphkbId: string | null;
 } & RecordDefaults;
 
-export default TherapeuticTargetType;
+export default TherapeuticType;
