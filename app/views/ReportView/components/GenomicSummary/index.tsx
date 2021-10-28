@@ -301,11 +301,10 @@ const GenomicSummary = ({
 
   const handleChipDeleted = useCallback(async (chipIdent, type, comment) => {
     try {
-      const req = api.del(
+      api.del(
         `/reports/${report.ident}/summary/genomic-alterations-identified/${chipIdent}`,
         { comment },
-      );
-      await req.request(isSigned);
+      ).request(isSigned);
 
       setVariantCounts((prevVal) => ({ ...prevVal, [type]: prevVal[type] - 1 }));
       setVariants((prevVal) => (prevVal.filter((val) => val.ident !== chipIdent)));

@@ -30,12 +30,12 @@ const post = <T>(
   return new ApiCall<T>(endpoint, requestOptions, callOptions);
 };
 
-const del = <T>(
+const del = (
   endpoint: string,
   payload: BodyInit | Record<string, unknown>,
   callOptions?: CallOptionsType,
   formData?: boolean,
-): ApiCall<T> => {
+): ApiCall<null> => {
   let requestOptions: RequestInit;
 
   if (payload) {
@@ -53,7 +53,7 @@ const del = <T>(
       'Content-type': 'application/json',
     };
   }
-  return new ApiCall<T>(endpoint, requestOptions, callOptions);
+  return new ApiCall<null>(endpoint, requestOptions, callOptions);
 };
 
 const put = <T>(
