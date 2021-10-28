@@ -13,6 +13,7 @@ import {
 import api, { ApiCallSet } from '@/services/api';
 import ConfirmContext from '@/context/ConfirmContext';
 import AsyncButton from '@/components/AsyncButton';
+import { PatientInformationType, ReportType } from '@/context/ReportContext';
 
 import './index.scss';
 
@@ -80,11 +81,11 @@ const PatientEdit = ({
       const apiCalls = [];
 
       if (newPatientData) {
-        apiCalls.push(api.put(`/reports/${report.ident}/patient-information`, newPatientData));
+        apiCalls.push(api.put<PatientInformationType>(`/reports/${report.ident}/patient-information`, newPatientData));
       }
 
       if (newReportData) {
-        apiCalls.push(api.put(`/reports/${report.ident}`, newReportData));
+        apiCalls.push(api.put<ReportType>(`/reports/${report.ident}`, newReportData));
       }
 
       const callSet = new ApiCallSet(apiCalls);

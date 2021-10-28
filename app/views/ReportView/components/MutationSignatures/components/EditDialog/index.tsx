@@ -62,10 +62,9 @@ const EditDialog = ({
     if (checkboxSelected !== editData.selected || selectValue !== editData.kbCategory) {
       setIsApiCalling(true);
       try {
-        await api.put(
+        await api.put<SignatureType>(
           `/reports/${report.ident}/mutation-signatures/${editData.ident}`,
           { selected: checkboxSelected, kbCategory: selectValue },
-          {},
         ).request(isSigned);
         onClose({ ...editData, selected: checkboxSelected, kbCategory: selectValue });
       } catch (err) {

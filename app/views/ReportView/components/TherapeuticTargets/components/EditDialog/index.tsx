@@ -18,6 +18,7 @@ import AsyncButton from '@/components/AsyncButton';
 import AutocompleteHandler from '../AutocompleteHandler';
 
 import './index.scss';
+import TherapeuticTargetType from '../../types';
 
 type EditDialogProps = {
   /* Data passed to edit */
@@ -93,18 +94,16 @@ const EditDialog = ({
 
     try {
       if (newData.ident) { // existing option
-        const returnedData = await api.put(
+        const returnedData = await api.put<TherapeuticTargetType>(
           `/reports/${report.ident}/therapeutic-targets/${editData.ident}`,
           combinedData,
-          {},
         ).request(isSigned);
         setIsDirty(false);
         onClose(returnedData);
       } else {
-        const returnedData = await api.post(
+        const returnedData = await api.post<TherapeuticTargetType>(
           `/reports/${report.ident}/therapeutic-targets`,
           combinedData,
-          {},
         ).request(isSigned);
         setNewData({ type: 'replace', payload: {} });
         setIsDirty(false);

@@ -15,7 +15,7 @@ import {
   InputLabel,
 } from '@material-ui/core';
 
-import api, { ApiCallSet } from '@/services/api';
+import api from '@/services/api';
 import { UserType, GroupType } from '@/common';
 import {
   ProjectType, FormErrorType,
@@ -112,11 +112,11 @@ const AddEditUserDialog = ({
         type: dbType,
       };
 
-      let createdResp;
+      let createdResp: UserType;
       if (editData) {
-        createdResp = await api.put(`/user/${editData.ident}`, newEntry).request();
+        createdResp = await api.put<UserType>(`/user/${editData.ident}`, newEntry).request();
       } else {
-        createdResp = await api.post('/user', newEntry).request();
+        createdResp = await api.post<UserType>('/user', newEntry).request();
       }
 
       if (projects.length) {
@@ -125,7 +125,7 @@ const AddEditUserDialog = ({
           callSet.push(api.post(`/project/${project.ident}/user`, { user: createdResp.ident }).request())
         ));
         await Promise.all(callSet);
-        createdResp.projects = projects;
+        createdResp.projects = projects.map((project) => ({ ident: project.ident, name: project.name }));
       } else {
         createdResp.projects = [];
       }

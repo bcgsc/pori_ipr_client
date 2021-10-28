@@ -36,14 +36,6 @@ type GroupType = {
 type UserProjectsType = {
   ident: string;
   name: string;
-  user_project: {
-    createdAt: string;
-    deletedAt: null | string;
-    id: number;
-    project_id: number;
-    updatedAt: null | string;
-    user_id: number;
-  },
 };
 
 type UserType = {

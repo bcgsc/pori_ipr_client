@@ -78,11 +78,11 @@ const AddEditProjectDialog = ({
         name: projectName,
       };
 
-      let createdResp;
+      let createdResp: ProjectType;
       if (editData) {
-        createdResp = await api.put(`/project/${editData.ident}`, newEntry).request();
+        createdResp = await api.put<ProjectType>(`/project/${editData.ident}`, newEntry).request();
       } else {
-        createdResp = await api.post('/project', newEntry).request();
+        createdResp = await api.post<ProjectType>('/project', newEntry).request();
       }
 
       await Promise.all(apiCallQueue.map((call) => call.request()));

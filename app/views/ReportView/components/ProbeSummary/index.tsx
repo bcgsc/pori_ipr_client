@@ -162,11 +162,11 @@ const ProbeSummary = ({
     }
 
     if (newPatientData) {
-      apiCalls.push(api.put(`/reports/${report.ident}/patient-information`, newPatientData));
+      apiCalls.push(api.put<PatientInformationType>(`/reports/${report.ident}/patient-information`, newPatientData));
     }
 
     if (newReportData) {
-      apiCalls.push(api.put(`/reports/${report.ident}`, newReportData));
+      apiCalls.push(api.put<ReportType>(`/reports/${report.ident}`, newReportData));
     }
 
     const callSet = new ApiCallSet(apiCalls);
@@ -209,12 +209,12 @@ const ProbeSummary = ({
   }, [isSigned, report, setReport]);
 
   const handleSign = async (signed: boolean, role: 'author' | 'reviewer') => {
-    let newSignature;
+    let newSignature: SignatureType;
 
     if (signed) {
-      newSignature = await api.put(`/reports/${report.ident}/signatures/sign/${role}`, {}).request();
+      newSignature = await api.put<SignatureType>(`/reports/${report.ident}/signatures/sign/${role}`, {}).request();
     } else {
-      newSignature = await api.put(`/reports/${report.ident}/signatures/revoke/${role}`, {}).request();
+      newSignature = await api.put<SignatureType>(`/reports/${report.ident}/signatures/revoke/${role}`, {}).request();
     }
 
     setIsSigned(signed);

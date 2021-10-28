@@ -14,7 +14,7 @@ type AsyncButtonProps = {
   children;
   isLoading: boolean;
   onClick?: () => void;
-} & ButtonProps<'label', { component: 'label' }>;
+} & ButtonProps<'label', { component?: 'label' }>;
 
 const AsyncButton = ({
   className,

@@ -67,10 +67,9 @@ const CommentCard = ({
 
   const handleEditSave = useCallback(async () => {
     try {
-      const newComment = await api.put(
+      const newComment = await api.put<CommentType>(
         `/reports/${report.ident}/presentation/discussion/${comment.ident}`,
         { body: editedComment },
-        {},
       ).request();
       onSave(newComment);
       snackbar.enqueueSnackbar('Comment saved', { variant: 'success' });

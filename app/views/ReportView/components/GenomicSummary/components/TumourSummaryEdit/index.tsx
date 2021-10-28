@@ -13,6 +13,9 @@ import {
 import api, { ApiCallSet } from '@/services/api';
 import ConfirmContext from '@/context/ConfirmContext';
 import AsyncButton from '@/components/AsyncButton';
+import { ReportType } from '@/context/ReportContext';
+import { MicrobialType } from '../../types';
+import { MutationBurdenType } from '../../../MutationBurden/types';
 
 import './index.scss';
 
@@ -98,25 +101,25 @@ const TumourSummaryEdit = ({
 
       if (newMicrobialData) {
         if (microbial?.ident) {
-          apiCalls.push(api.put(`/reports/${report.ident}/summary/microbial/${microbial.ident}`, newMicrobialData));
+          apiCalls.push(api.put<MicrobialType>(`/reports/${report.ident}/summary/microbial/${microbial.ident}`, newMicrobialData));
         } else {
-          apiCalls.push(api.post(`/reports/${report.ident}/summary/microbial`, newMicrobialData));
+          apiCalls.push(api.post<MicrobialType>(`/reports/${report.ident}/summary/microbial`, newMicrobialData));
         }
       } else {
         apiCalls.push({ request: () => null });
       }
 
       if (newReportData) {
-        apiCalls.push(api.put(`/reports/${report.ident}`, newReportData));
+        apiCalls.push(api.put<ReportType>(`/reports/${report.ident}`, newReportData));
       } else {
         apiCalls.push({ request: () => null });
       }
 
       if (newMutationBurdenData) {
         if (mutationBurden?.ident) {
-          apiCalls.push(api.put(`/reports/${report.ident}/mutation-burden/${mutationBurden.ident}`, newMutationBurdenData));
+          apiCalls.push(api.put<MutationBurdenType>(`/reports/${report.ident}/mutation-burden/${mutationBurden.ident}`, newMutationBurdenData));
         } else {
-          apiCalls.push(api.post(`/reports/${report.ident}/mutation-burden`, newMutationBurdenData));
+          apiCalls.push(api.post<MutationBurdenType>(`/reports/${report.ident}/mutation-burden`, newMutationBurdenData));
         }
       }
 

@@ -12,11 +12,11 @@ import {
 
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
-import GermlineReportContext from '@/context/GermlineReportContext';
+import GermlineReportContext, { VariantType } from '@/context/GermlineReportContext';
 
 type EditDialogProps = {
   isOpen: boolean;
-  onClose: (patientHistory?: string, familyHistory?: string) => void;
+  onClose: (newVariant?: VariantType) => void;
   rowData: Record<string, string>;
 };
 
@@ -47,10 +47,9 @@ const EditDialog = ({
         updateFields.familyHistory = familyHistory;
       }
 
-      const newVariant = await api.put(
+      const newVariant = await api.put<VariantType>(
         `/germline-small-mutation-reports/${report.ident}/variants/${rowData.ident}`,
         updateFields,
-        {},
       ).request();
       snackbar.success('Details saved');
       onClose(newVariant);

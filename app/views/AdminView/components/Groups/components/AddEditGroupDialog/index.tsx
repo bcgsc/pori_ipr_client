@@ -77,11 +77,11 @@ const AddEditUserDialog = ({
         owner: owner.ident,
       };
 
-      let createdResp;
+      let createdResp: GroupType;
       if (editData) {
-        createdResp = await api.put(`/user/group/${editData.ident}`, newEntry).request();
+        createdResp = await api.put<GroupType>(`/user/group/${editData.ident}`, newEntry).request();
       } else {
-        createdResp = await api.post('/user/group', newEntry).request();
+        createdResp = await api.post<GroupType>('/user/group', newEntry).request();
       }
 
       await Promise.all(apiCallQueue.map((call) => call.request()));

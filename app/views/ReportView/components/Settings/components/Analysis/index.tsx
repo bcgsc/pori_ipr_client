@@ -6,7 +6,7 @@ import {
 } from '@material-ui/core';
 
 import api from '@/services/api';
-import ReportContext from '@/context/ReportContext';
+import ReportContext, { ReportType } from '@/context/ReportContext';
 import SecurityContext from '@/context/SecurityContext';
 import useResource from '@/hooks/useResource';
 import snackbar from '@/services/SnackbarUtils';
@@ -22,7 +22,7 @@ const Analysis = (): JSX.Element => {
   const handleAnalysisStart = useCallback(async () => {
     try {
       const date = new Date();
-      const newReport = await api.put(
+      const newReport = await api.put<ReportType>(
         `/reports/${report.ident}`,
         { analysisStartedAt: date.toISOString() },
         {},

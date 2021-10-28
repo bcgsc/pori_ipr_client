@@ -57,19 +57,18 @@ const Pathway = ({
 
     try {
       const newPathway = new FormData();
-
       newPathway.append('pathway', uploadedFile);
 
       let pathwayResp: PathwayImageType;
       if (initialPathway) {
-        pathwayResp = await api.put(
+        pathwayResp = await api.put<PathwayImageType>(
           `/reports/${report.ident}/summary/pathway-analysis`,
           newPathway,
           {},
           true,
         ).request(isSigned);
       } else {
-        pathwayResp = await api.post(
+        pathwayResp = await api.post<PathwayImageType>(
           `/reports/${report.ident}/summary/pathway-analysis`,
           newPathway,
           {},

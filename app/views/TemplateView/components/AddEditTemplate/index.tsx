@@ -23,6 +23,7 @@ import { useSnackbar } from 'notistack';
 import { RecordDefaults } from '@/common';
 import api from '@/services/api';
 import sections from '../../sections';
+import TemplateType from '../../types';
 
 import './index.scss';
 
@@ -107,9 +108,9 @@ const AddEditTemplate = ({
 
         let resp;
         if (editData) {
-          resp = await api.put(`/templates/${editData.ident}`, newTemplate, {}, true).request();
+          resp = await api.put<TemplateType>(`/templates/${editData.ident}`, newTemplate, {}, true).request();
         } else {
-          resp = await api.post('/templates', newTemplate, {}, true).request();
+          resp = await api.post<TemplateType>('/templates', newTemplate, {}, true).request();
         }
         snackbar.enqueueSnackbar(`Template ${editData ? 'updated' : 'created'} successfully`);
         onClose(resp);

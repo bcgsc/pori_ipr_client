@@ -14,7 +14,7 @@ import {
 } from '@material-ui/core';
 
 import api from '@/services/api';
-import ReportContext from '@/context/ReportContext';
+import ReportContext, { ReportType } from '@/context/ReportContext';
 import useEdit from '@/hooks/useEdit';
 import DemoDescription from '@/components/DemoDescription';
 import snackbar from '@/services/SnackbarUtils';
@@ -122,7 +122,7 @@ const Settings = ({
     }
 
     try {
-      const newReport = await api.put(
+      const newReport = await api.put<ReportType>(
         `/reports/${report.ident}`,
         updateFields,
       ).request();

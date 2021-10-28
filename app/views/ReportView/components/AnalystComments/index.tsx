@@ -66,15 +66,15 @@ const AnalystComments = ({
   }, [report, setIsLoading]);
 
   const handleSign = useCallback(async (signed: boolean, role: 'author' | 'reviewer') => {
-    let newSignature;
+    let newSignature: SignatureType;
 
     if (signed) {
-      newSignature = await api.put(
+      newSignature = await api.put<SignatureType>(
         `/reports/${report.ident}/signatures/sign/${role}`,
         {},
       ).request();
     } else {
-      newSignature = await api.put(
+      newSignature = await api.put<SignatureType>(
         `/reports/${report.ident}/signatures/revoke/${role}`,
         {},
       ).request();

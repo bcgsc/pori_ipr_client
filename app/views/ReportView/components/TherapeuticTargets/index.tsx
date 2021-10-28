@@ -121,7 +121,7 @@ const Therapeutic = ({
         return row;
       });
 
-      await api.put(`/reports/${report.ident}/therapeutic-targets`, newData, {}).request();
+      await api.put<TherapeuticType>(`/reports/${report.ident}/therapeutic-targets`, newData).request();
       setter(newData);
       snackbar.success('Row updated');
     } catch (err) {

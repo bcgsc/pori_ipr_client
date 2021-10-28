@@ -3,8 +3,10 @@ import {
   Checkbox,
 } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { ICellRendererParams } from '@ag-grid-community/core';
 
+import { GermlineReportType } from '@/context/GermlineReportContext';
 import api from '@/services/api';
 
 import './index.scss';
@@ -24,7 +26,7 @@ const CheckboxCell = ({
   const handleUnexport = async (): Promise<void> => {
     if (value) {
       try {
-        const resp = await api.put(`/germline-small-mutation-reports/${data.ident}`, { exported: false }, {}).request();
+        const resp = await api.put<GermlineReportType>(`/germline-small-mutation-reports/${data.ident}`, { exported: false }, {}).request();
         node.setData(resp);
         snackbar.enqueueSnackbar('Export removed', { variant: 'success' });
       } catch (err) {

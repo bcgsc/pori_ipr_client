@@ -15,10 +15,11 @@ import ConfirmContext from '@/context/ConfirmContext';
 import api from '@/services/api';
 import { GeneType } from '@/common';
 import GeneAutocomplete from '../GeneAutocomplete';
+import ProbeResultsType from '../../types';
 
 type EventsEditDialogProps = {
   isOpen: boolean;
-  onClose: (isSaved?: Record<string, unknown>) => void;
+  onClose: (isSaved?: ProbeResultsType) => void;
   editData: Record<string, string | GeneType>;
 };
 
@@ -69,7 +70,7 @@ const EventsEditDialog = ({
         gene: newData?.gene?.ident,
       };
 
-      const returnData = await api.put(
+      const returnData = await api.put<ProbeResultsType>(
         `/reports/${report.ident}/probe-results/${newData.ident}`,
         putData,
       ).request(isSigned);

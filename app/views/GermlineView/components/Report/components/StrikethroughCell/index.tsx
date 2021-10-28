@@ -3,10 +3,11 @@ import {
   IconButton,
 } from '@material-ui/core';
 import StrikethroughSIcon from '@material-ui/icons/StrikethroughS';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { ICellRendererParams } from '@ag-grid-community/core';
 
 import api from '@/services/api';
-import GermlineReportContext from '@/context/GermlineReportContext';
+import GermlineReportContext, { VariantType } from '@/context/GermlineReportContext';
 import snackbar from '@/services/SnackbarUtils';
 
 const StrikethroughCell = (params: ICellRendererParams): JSX.Element => {
@@ -16,10 +17,9 @@ const StrikethroughCell = (params: ICellRendererParams): JSX.Element => {
 
   const handleChange = useCallback(async () => {
     try {
-      const updatedVariant = await api.put(
+      const updatedVariant = await api.put<VariantType>(
         `/germline-small-mutation-reports/${report.ident}/variants/${params.data.ident}`,
         { hidden: !isHidden },
-        {},
       ).request();
       setIsHidden((prevVal) => !prevVal);
       setReport((prevVal) => {
