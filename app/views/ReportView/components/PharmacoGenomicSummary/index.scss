@@ -19,6 +19,7 @@
 
   &__test-information {
     margin: 0 0 32px;
+    break-inside: avoid;
 
     &-title {
       margin: 0 0 16px;
@@ -75,6 +76,7 @@
 
     &__test-information {
       margin: 16px 0;
+      break-inside: avoid;
 
       &-title {
         margin: 0 0 16px;
