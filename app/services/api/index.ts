@@ -58,7 +58,7 @@ const del = (
 
 const put = <T>(
   endpoint: string,
-  payload: BodyInit | Record<string, unknown>,
+  payload: BodyInit | Record<string, unknown> | Record<string, unknown>[],
   callOptions?: CallOptionsType,
   formData?: boolean,
 ): ApiCall<T> => {
