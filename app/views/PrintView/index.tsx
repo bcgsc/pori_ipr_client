@@ -19,7 +19,7 @@ import './index.scss';
 
 const AnalystComments = lazy(() => import('../ReportView/components/AnalystComments'));
 const PathwayAnalysis = lazy(() => import('../ReportView/components/PathwayAnalysis'));
-const TherapeuticTargets = lazy(() => import('../ReportView/components/TherapeuticTargets/components/PrintTables'));
+const TherapeuticTargets = lazy(() => import('../ReportView/components/TherapeuticTargets'));
 const Slides = lazy(() => import('../ReportView/components/Slides'));
 const Appendices = lazy(() => import('../ReportView/components/Appendices'));
 
@@ -117,7 +117,7 @@ const Print = (): JSX.Element => {
           )}
           {template?.sections.includes('therapeutic-targets') && (
             <>
-              <TherapeuticTargets print loadedDispatch={dispatch} />
+              <TherapeuticTargets isPrint loadedDispatch={dispatch} />
               <PageBreak />
             </>
           )}
