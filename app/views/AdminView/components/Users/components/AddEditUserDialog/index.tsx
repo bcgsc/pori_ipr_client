@@ -122,7 +122,7 @@ const AddEditUserDialog = ({
       if (projects.length) {
         const callSet = [];
         projects.forEach((project) => (
-          callSet.push(api.post(`/project/${project.ident}/user`, { user: createdResp.ident }).request())
+          callSet.push(api.post<ProjectType>(`/project/${project.ident}/user`, { user: createdResp.ident }).request())
         ));
         await Promise.all(callSet);
         createdResp.projects = projects.map((project) => ({ ident: project.ident, name: project.name }));
@@ -133,7 +133,7 @@ const AddEditUserDialog = ({
       if (groups.length) {
         const callSet = [];
         groups.forEach((group) => (
-          callSet.push(api.post(`/user/group/${group.ident}/member`, { user: createdResp.ident }).request())
+          callSet.push(api.post<GroupType>(`/user/group/${group.ident}/member`, { user: createdResp.ident }).request())
         ));
         await Promise.all(callSet);
         createdResp.groups = groups;

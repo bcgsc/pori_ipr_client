@@ -7,6 +7,7 @@ import { useSnackbar } from 'notistack';
 
 import api from '@/services/api';
 import ReportContext from '@/context/ReportContext';
+import DiscussionType from '../../types';
 
 import './index.scss';
 
@@ -28,10 +29,9 @@ const AddComment = ({
 
   const handleAddComment = useCallback(async () => {
     try {
-      const newComment = await api.post(
+      const newComment = await api.post<DiscussionType>(
         `/reports/${report.ident}/presentation/discussion`,
         { body: comment },
-        {},
       ).request();
       snackbar.enqueueSnackbar('Comment added', { variant: 'success' });
       onAdd(newComment);

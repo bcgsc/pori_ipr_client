@@ -15,7 +15,7 @@ import {
 
 import api from '@/services/api';
 import UserAutocomplete from '@/components/UserAutocomplete';
-import ReportContext from '@/context/ReportContext';
+import ReportContext, { ReportType } from '@/context/ReportContext';
 import snackbar from '@/services/SnackbarUtils';
 import { UserType } from '@/common';
 
@@ -44,7 +44,7 @@ const AddUserDialog = ({
 
   const handleAddUser = useCallback(async () => {
     try {
-      const newReport = await api.post(
+      const newReport = await api.post<ReportType>(
         `/reports/${report.ident}/user`,
         { user: user.ident, role },
         {},

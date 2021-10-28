@@ -49,7 +49,7 @@ const AutocompleteHandler = (props) => {
 
       // Find all query strings that are 3 characters or longer.
       // Needed for KB API to process multiple words
-      queryString = queryString.split(' ').filter(str => str.length >= minCharacters).join(' ');
+      queryString = queryString.split(' ').filter((str) => str.length >= minCharacters).join(' ');
 
       const { result } = await api.post(`/graphkb/${type}`, { keyword: queryString }).request();
 

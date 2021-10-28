@@ -12,7 +12,7 @@ import {
 } from '@material-ui/core';
 import { AgGridReact } from '@ag-grid-community/react';
 
-import GermlineReportContext from '@/context/GermlineReportContext';
+import GermlineReportContext, { ReviewType } from '@/context/GermlineReportContext';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DeleteCell from './components/DeleteCell';
@@ -37,10 +37,9 @@ const Reviews = (): JSX.Element => {
 
   const handleAddReview = useCallback(async () => {
     try {
-      const newReview = await api.post(
+      const newReview = await api.post<ReviewType>(
         `/germline-small-mutation-reports/${report.ident}/reviews`,
         { type: newType, comment: newComment },
-        {},
       ).request();
       setReport((prevVal) => ({
         ...prevVal,
@@ -57,7 +56,6 @@ const Reviews = (): JSX.Element => {
     try {
       api.del(
         `/germline-small-mutation-reports/${report.ident}/reviews/${row.data.ident}`,
-        {},
         {},
       ).request();
       setReport((prevVal) => ({

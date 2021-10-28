@@ -52,7 +52,7 @@ const UploadSlide = ({
       newSlide.append('name', slideName);
       newSlide.append('file', file);
 
-      const resp = await api.post(
+      const resp = await api.post<SlideType>(
         `/reports/${report.ident}/presentation/slide`,
         newSlide,
         {},

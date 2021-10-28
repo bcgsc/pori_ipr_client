@@ -68,5 +68,6 @@ type GermlineReportContextType = {
 export {
   GermlineReportContextType,
   GermlineReportType,
+  ReviewType,
   VariantType,
 };

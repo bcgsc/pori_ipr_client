@@ -56,7 +56,7 @@ const Legend = ({
       const newLegend = new FormData();
       newLegend.append('pathwayAnalysis.legend', uploadedFile);
 
-      await api.post(`/reports/${report.ident}/image`, newLegend, {}, true).request(isSigned);
+      await api.post<ImageType>(`/reports/${report.ident}/image`, newLegend, {}, true).request(isSigned);
 
       const resp = await api.get<ImageType>(
         `/reports/${report.ident}/image/retrieve/pathwayAnalysis.legend`,
@@ -76,7 +76,7 @@ const Legend = ({
 
   const handleDeleteLegend = useCallback(async () => {
     try {
-      await api.del(`/reports/${report.ident}/image/${legend.ident}`, {}, {}).request();
+      await api.del(`/reports/${report.ident}/image/${legend.ident}`, {}).request();
       setLegend(null);
       snackbar.enqueueSnackbar('Legend deleted', { variant: 'success' });
     } catch (err) {

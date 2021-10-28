@@ -37,7 +37,7 @@ import { ImmuneType } from '../Immune/types';
 
 import './index.scss';
 
-const variantCategory = (variant) => {
+const variantCategory = (variant: GeneVariantType): GeneVariantType => {
   // small mutations
   if (/[:(][gcp]\./.exec(variant.geneVariant)) {
     variant.type = 'smallMutation';
@@ -60,7 +60,7 @@ const variantCategory = (variant) => {
   return variant;
 };
 
-const customTypeSort = (variant) => {
+const customTypeSort = (variant: GeneVariantType): number => {
   if (variant.type === 'smallMutation') return 0;
   if (variant.type === 'cnv') return 1;
   if (variant.type === 'structuralVariant') return 2;
@@ -318,8 +318,10 @@ const GenomicSummary = ({
 
   const handleChipAdded = useCallback(async (variant) => {
     try {
-      const req = api.post(`/reports/${report.ident}/summary/genomic-alterations-identified`, { geneVariant: variant });
-      const newVariantEntry = await req.request();
+      const newVariantEntry = await api.post<GeneVariantType>(
+        `/reports/${report.ident}/summary/genomic-alterations-identified`,
+        { geneVariant: variant },
+      ).request();
 
       const categorizedVariantEntry = variantCategory(newVariantEntry);
 
