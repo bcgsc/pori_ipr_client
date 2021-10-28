@@ -14,7 +14,20 @@ import Image, { ImageType } from '@/components/Image';
 import DemoDescription from '@/components/DemoDescription';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import CorrelationPlot from './components/CorrelationPlot';
+import PlotByKey from './components/PlotByKey';
+
 import './index.scss';
+
+const IMAGE_KEYS = [
+  'expression.chart',
+  'expression.legend',
+  'expression.spearman.cser',
+  'expression.spearman.hartwig',
+  'expression.spearman.target',
+  'expression.spearman.tcga',
+  'expression.spearman.gtex',
+  'scpPlot',
+];
 
 type ExpressionCorrelationProps = WithLoadingInjectedProps;
 
@@ -24,8 +37,8 @@ const ExpressionCorrelation = ({
 }: ExpressionCorrelationProps): JSX.Element => {
   const { report } = useContext(ReportContext);
 
-  const [plots, setPlots] = useState<ImageType[]>();
-  const [subtypePlots, setSubtypePlots] = useState<ImageType[]>();
+  const [plots, setPlots] = useState<ImageType[]>([]);
+  const [subtypePlots, setSubtypePlots] = useState<ImageType[]>([]);
   const [pairwiseExpression, setPairwiseExpression] = useState([]);
 
   useEffect(() => {
@@ -33,7 +46,9 @@ const ExpressionCorrelation = ({
       const getData = async () => {
         try {
           const [plotData, subtypePlotData, pairwiseData] = await Promise.all([
-            api.get(`/reports/${report.ident}/image/retrieve/expression.chart,expression.legend,scpPlot`).request(),
+            api.get(
+              `/reports/${report.ident}/image/${IMAGE_KEYS.join(',')}`,
+            ).request(),
             api.get(`/reports/${report.ident}/image/subtype-plots`).request(),
             api.get(`/reports/${report.ident}/pairwise-expression-correlation`).request(),
           ]);
@@ -51,6 +66,10 @@ const ExpressionCorrelation = ({
       getData();
     }
   }, [report, setIsLoading]);
+
+  useEffect(() => {
+
+  }, []);
 
   return (
     <>
@@ -71,20 +90,18 @@ const ExpressionCorrelation = ({
                   <Typography variant="h3" align="center" className="expression-correlation__header">
                     Expression Chart
                   </Typography>
-                  <Image
-                    image={plots.find((plot) => plot.key === 'expression.chart')}
-                    showTitle
-                    showCaption
+                  <PlotByKey
+                    accessor="expression.chart"
+                    plots={plots}
                   />
                 </span>
                 <span>
                   <Typography variant="h3" align="center" className="expression-correlation__header">
                     Expression Legend
                   </Typography>
-                  <Image
-                    image={plots.find((plot) => plot.key === 'expression.legend')}
-                    showTitle
-                    showCaption
+                  <PlotByKey
+                    accessor="expression.legend"
+                    plots={plots}
                   />
                 </span>
               </div>
@@ -118,10 +135,9 @@ const ExpressionCorrelation = ({
               SCOPE
             </Typography>
             <div className="expression-correlation__scp-plot">
-              <Image
-                image={plots.find((plot) => plot.key === 'scpPlot')}
-                showTitle
-                showCaption
+              <PlotByKey
+                plots={plots}
+                accessor="scpPlot"
               />
             </div>
           </>
