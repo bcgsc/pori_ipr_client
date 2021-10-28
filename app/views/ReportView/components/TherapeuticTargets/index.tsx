@@ -2,6 +2,7 @@ import React, {
   useState, useEffect, useContext, useCallback,
 } from 'react';
 import orderBy from 'lodash.orderby';
+import { Typography } from '@material-ui/core';
 
 import DataTable from '@/components/DataTable';
 import useEdit from '@/hooks/useEdit';
@@ -10,21 +11,56 @@ import snackbar from '@/services/SnackbarUtils';
 import DemoDescription from '@/components/DemoDescription';
 import ReportContext from '@/context/ReportContext';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import PrintTable from '@/components/PrintTable';
 import EditDialog from './components/EditDialog';
 import EvidenceHeader from './components/EvidenceHeader';
 import columnDefs from './columnDefs';
+import TherapeuticType from './types';
+
+import './index.scss';
+
+const removeExtraProps = (data: TherapeuticType[]): Partial<TherapeuticType>[] => data.map(({
+  gene, variant, therapy, context, evidenceLevel, notes,
+}) => ({
+  gene,
+  variant,
+  therapy,
+  context,
+  evidenceLevel,
+  notes,
+}));
+
+const filterType = (
+  data: TherapeuticType[],
+  type1: string,
+  type2: string,
+): [TherapeuticType[], TherapeuticType[]] => data.reduce((accumulator, current) => {
+  if (current.type === type1) {
+    accumulator[0].push(current);
+  }
+  if (current.type === type2) {
+    accumulator[1].push(current);
+  }
+  return accumulator;
+}, [[], []]);
 
 type TherapeuticProps = {
-  print?: boolean;
+  isPrint?: boolean;
 } & WithLoadingInjectedProps;
 
 const Therapeutic = ({
   isLoading,
-  print = false,
+  isPrint = false,
   setIsLoading,
 }: TherapeuticProps): JSX.Element => {
-  const [therapeuticData, setTherapeuticData] = useState([]);
-  const [chemoresistanceData, setChemoresistanceData] = useState([]);
+  const [
+    therapeuticData,
+    setTherapeuticData,
+  ] = useState<TherapeuticType[] | Partial<TherapeuticType>[]>([]);
+  const [
+    chemoresistanceData,
+    setChemoresistanceData,
+  ] = useState<TherapeuticType[] | Partial<TherapeuticType>[]>([]);
 
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [editData, setEditData] = useState();
@@ -40,12 +76,17 @@ const Therapeutic = ({
             `/reports/${report.ident}/therapeutic-targets`,
           ).request();
 
-          setTherapeuticData(therapeuticResp.filter(
-            (target) => target.type === 'therapeutic',
-          ));
-          setChemoresistanceData(therapeuticResp.filter(
-            (target) => target.type === 'chemoresistance',
-          ));
+          const [
+            filteredTherapeutic,
+            filteredChemoresistance,
+          ] = filterType(therapeuticResp, 'therapeutic', 'chemoresistance');
+          if (isPrint) {
+            setTherapeuticData(removeExtraProps(filteredTherapeutic));
+            setChemoresistanceData(removeExtraProps(filteredChemoresistance));
+          } else {
+            setTherapeuticData(filteredTherapeutic);
+            setChemoresistanceData(filteredChemoresistance);
+          }
         } catch (err) {
           snackbar.error(`Network error: ${err}`);
         } finally {
@@ -55,7 +96,7 @@ const Therapeutic = ({
 
       getData();
     }
-  }, [report, setIsLoading]);
+  }, [report, setIsLoading, isPrint]);
 
   const handleEditStart = (rowData) => {
     setShowDialog(true);
@@ -65,8 +106,8 @@ const Therapeutic = ({
   const handleEditClose = useCallback((newData) => {
     try {
       setShowDialog(false);
-      let tableData;
-      let setter;
+      let tableData: TherapeuticType[] | Partial<TherapeuticType>[];
+      let setter: React.Dispatch<React.SetStateAction<TherapeuticType[]>>;
 
       if (newData) {
         if (newData.type === 'therapeutic') {
@@ -94,8 +135,8 @@ const Therapeutic = ({
 
   const handleReorder = useCallback(async (newRow, newRank, tableType) => {
     try {
-      let setter;
-      let data;
+      let setter: React.Dispatch<React.SetStateAction<TherapeuticType[] | Partial<TherapeuticType>[]>>;
+      let data: TherapeuticType[] | Partial<TherapeuticType>[];
       const oldRank = newRow.rank;
 
       if (tableType === 'therapeutic') {
@@ -120,13 +161,40 @@ const Therapeutic = ({
         return row;
       });
 
-      await api.put(`/reports/${report.ident}/therapeutic-targets`, newData, {}).request();
+      await api.put(`/reports/${report.ident}/therapeutic-targets`, newData).request();
       setter(newData);
       snackbar.success('Row updated');
     } catch (err) {
       snackbar.error(`Error, row not updated: ${err}`);
     }
   }, [chemoresistanceData, therapeuticData, report]);
+
+  if (isPrint) {
+    return (
+      <div>
+        <Typography
+          className="therapeutic-print__title"
+          variant="h3"
+        >
+          Potential Therapeutic Targets
+        </Typography>
+        <PrintTable
+          data={therapeuticData}
+          columnDefs={columnDefs}
+        />
+        <Typography
+          className="therapeutic-print__title"
+          variant="h3"
+        >
+          Potential Chemoresistance
+        </Typography>
+        <PrintTable
+          data={chemoresistanceData}
+          columnDefs={columnDefs}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="therapeutic">
@@ -142,31 +210,29 @@ const Therapeutic = ({
             titleText="Potential Therapeutic Targets"
             columnDefs={columnDefs}
             rowData={therapeuticData}
-            canEdit={canEdit && !print}
+            canEdit={canEdit}
             onEdit={handleEditStart}
-            canAdd={canEdit && !print}
+            canAdd={canEdit}
             onAdd={handleEditStart}
             tableType="therapeutic"
             isPaginated={false}
-            canReorder={canEdit && !print}
+            canReorder={canEdit}
             onReorder={handleReorder}
             canExport
-            isPrint={print}
             Header={EvidenceHeader}
           />
           <DataTable
             titleText="Potential Chemoresistance"
             columnDefs={columnDefs}
             rowData={chemoresistanceData}
-            canEdit={canEdit && !print}
+            canEdit={canEdit}
             onEdit={handleEditStart}
-            canAdd={canEdit && !print}
+            canAdd={canEdit}
             onAdd={handleEditStart}
             tableType="chemoresistance"
             isPaginated={false}
-            canReorder={canEdit && !print}
+            canReorder={canEdit}
             canExport
-            isPrint={print}
             Header={EvidenceHeader}
           />
           {showDialog && (
