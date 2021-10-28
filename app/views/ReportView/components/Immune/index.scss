@@ -1,0 +1,12 @@
+@import '../../../../styles/variables';
+
+.immune {
+  &__cibersort-images {
+    @media (min-width: $breakpoint-lg) {
+      display: inline-flex;
+    }
+    & > * {
+      margin: 8px;
+    }
+  }
+}
