@@ -7,11 +7,13 @@ import { ImageType } from '@/common';
 type PlotByKeyProps = {
   accessor: string;
   plots: ImageType[];
+  [rest: string]: any;
 };
 
 const PlotByKey = ({
   accessor,
   plots,
+  ...rest
 }: PlotByKeyProps): JSX.Element => {
   const [plotFound, setPlotFound] = useState<ImageType>();
 
@@ -29,6 +31,7 @@ const PlotByKey = ({
           image={plotFound}
           showTitle
           showCaption
+          {...rest}
         />
       ) : (
         <Typography align="center">
