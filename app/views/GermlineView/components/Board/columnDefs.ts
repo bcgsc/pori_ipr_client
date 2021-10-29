@@ -69,6 +69,19 @@ const columnDefs = [
     valueGetter: ({ data }: ValueGetterParams): string => formatDate(data.createdAt),
     hide: false,
   },
+  {
+    headerName: 'Open',
+    pinned: 'right',
+    cellRenderer: 'Launch',
+    cellRendererParams: {
+      url: (ident: string): string => `/germline/report/${ident}`,
+    },
+    suppressSizeToFit: true,
+    sortable: false,
+    resizable: false,
+    suppressMenu: true,
+    width: 50,
+  },
 ];
 
 export default columnDefs;

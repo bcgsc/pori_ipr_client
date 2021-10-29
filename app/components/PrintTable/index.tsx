@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { ColDef } from '@ag-grid-community/core';
-import { Typography } from '@material-ui/core';
 
 import './index.scss';
 
@@ -66,16 +66,19 @@ const PrintTable = ({
   }, [columnDefs.length, order]);
 
   return (
-    <div>
+    <div className="table-container">
       {Boolean(columnDefs.length) && (
         <table className="table">
           <thead className="table__header">
             <tr>
-              {columnDefs.sort(headerSortFunc).map((col) => (
-                <th key={col.headerName}>
-                  {col.headerName}
-                </th>
-              ))}
+              {columnDefs
+                .filter((col) => (col.headerName && col.headerName !== 'Actions'))
+                .sort(headerSortFunc)
+                .map((col) => (
+                  <th key={col.headerName}>
+                    {col.headerName}
+                  </th>
+                ))}
             </tr>
           </thead>
           <tbody>
