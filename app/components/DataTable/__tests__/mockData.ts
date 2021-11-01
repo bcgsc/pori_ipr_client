@@ -22,7 +22,19 @@ const mockColumnDefs = [{
   hide: false,
 }];
 
+const mockTitleText = 'This is a table with a title';
+
+const mockFilterText = 'password123';
+
+const mockVisibleColumns = ['password', 'email'];
+
+const mockDemoDescription = 'This is a test demo description';
+
 export {
   mockRowData,
   mockColumnDefs,
+  mockTitleText,
+  mockFilterText,
+  mockVisibleColumns,
+  mockDemoDescription,
 };
