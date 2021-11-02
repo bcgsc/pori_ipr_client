@@ -6,8 +6,8 @@ import {
   Typography,
   IconButton,
   Grid,
-} from '@material-ui/core';
-import EditIcon from '@material-ui/icons/Edit';
+} from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
 import sortBy from 'lodash.sortby';
 
 import api, { ApiCallSet } from '@/services/api';
@@ -410,7 +410,7 @@ const GenomicSummary = ({
                 Patient Information
                 {canEdit && !print && (
                   <>
-                    <IconButton onClick={() => setShowPatientEdit(true)}>
+                    <IconButton onClick={() => setShowPatientEdit(true)} size="large">
                       <EditIcon />
                     </IconButton>
                     <PatientEdit
@@ -445,7 +445,7 @@ const GenomicSummary = ({
                 Tumour Summary
                 {canEdit && !print && (
                   <>
-                    <IconButton onClick={() => setShowTumourSummaryEdit(true)}>
+                    <IconButton onClick={() => setShowTumourSummaryEdit(true)} size="large">
                       <EditIcon />
                     </IconButton>
                     <TumourSummaryEdit

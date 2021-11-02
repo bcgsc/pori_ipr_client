@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import LaunchIcon from '@material-ui/icons/Launch';
+import LaunchIcon from '@mui/icons-material/Launch';
 import { ICellRendererParams } from '@ag-grid-community/core';
 import { useHistory } from 'react-router-dom';
 

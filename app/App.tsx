@@ -2,13 +2,10 @@
  * @module /App
  */
 import { SnackbarProvider } from 'notistack';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import {
-  createMuiTheme,
-  ThemeProvider,
-  createGenerateClassName,
-  jssPreset,
-} from '@material-ui/core/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import { createTheme, ThemeProvider, Theme, StyledEngineProvider, adaptV4Theme } from '@mui/material/styles';
+import createGenerateClassName from '@mui/styles/createGenerateClassName';
+import jssPreset from '@mui/styles/jssPreset';
 import { create } from 'jss';
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
@@ -26,7 +23,14 @@ import '@ag-grid-community/core/dist/styles/ag-theme-material.min.css';
 import '@fontsource/roboto';
 import './styles/ag-grid.scss';
 
-const theme = createMuiTheme({
+
+declare module '@mui/styles/defaultTheme' {
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  interface DefaultTheme extends Theme {}
+}
+
+
+const theme = createTheme(adaptV4Theme({
   direction: 'ltr',
   palette: {
     primary: {
@@ -85,7 +89,7 @@ const theme = createMuiTheme({
       },
     },
   },
-});
+}));
 
 const generateClassName = createGenerateClassName({
   productionPrefix: 'ipr',
@@ -107,17 +111,19 @@ ModuleRegistry.registerModules([
  */
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <SnackbarProvider anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}>
-        <SnackbarUtilsConfigurator />
-        <CssBaseline />
-        <BrowserRouter basename={window._env_.PUBLIC_PATH}>
-          <CacheBuster>
-            <MainView />
-          </CacheBuster>
-        </BrowserRouter>
-      </SnackbarProvider>
-    </ThemeProvider>
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={theme}>
+        <SnackbarProvider anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}>
+          <SnackbarUtilsConfigurator />
+          <CssBaseline />
+          <BrowserRouter basename={window._env_.PUBLIC_PATH}>
+            <CacheBuster>
+              <MainView />
+            </CacheBuster>
+          </BrowserRouter>
+        </SnackbarProvider>
+      </ThemeProvider>
+    </StyledEngineProvider>
   );
 }
 

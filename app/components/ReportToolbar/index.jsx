@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import {
   Typography,
   IconButton,
-} from '@material-ui/core';
-import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
-import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
+} from '@mui/material';
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import startCase from '@/utils/startCase';
 
 import './index.scss';
@@ -36,7 +36,7 @@ function ReportToolbar(props) {
         onClick={() => onSidebarToggle(!isSidebarVisible)}
         title={`${isSidebarVisible ? 'Close' : 'Open'} Sidebar`}
         className="report__header--max-width"
-      >
+        size="large">
         {isSidebarVisible
           ? (
             <KeyboardArrowRightIcon />

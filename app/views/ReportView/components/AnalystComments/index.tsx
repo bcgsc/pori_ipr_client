@@ -4,8 +4,8 @@ import React, {
 import {
   Typography,
   Fab,
-} from '@material-ui/core';
-import EditIcon from '@material-ui/icons/Edit';
+} from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
 import sanitizeHtml from 'sanitize-html';
 
 import api from '@/services/api';

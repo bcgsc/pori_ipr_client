@@ -1,10 +1,10 @@
 import React, {
   useState, useEffect, useContext, useCallback,
 } from 'react';
-import { Autocomplete } from '@material-ui/lab';
+import { Autocomplete } from '@mui/material';
 import {
   TextField,
-} from '@material-ui/core';
+} from '@mui/material';
 
 import api from '@/services/api';
 import ReportContext from '@/context/ReportContext';

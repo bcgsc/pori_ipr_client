@@ -1,8 +1,8 @@
 import React, { useState, useContext, useCallback } from 'react';
 import {
   IconButton,
-} from '@material-ui/core';
-import StrikethroughSIcon from '@material-ui/icons/StrikethroughS';
+} from '@mui/material';
+import StrikethroughSIcon from '@mui/icons-material/StrikethroughS';
 import { ICellRendererParams } from '@ag-grid-community/core';
 
 import api from '@/services/api';
@@ -35,7 +35,7 @@ const StrikethroughCell = (params: ICellRendererParams): JSX.Element => {
   }, [isHidden, params, report, setReport]);
 
   return (
-    <IconButton onClick={handleChange}>
+    <IconButton onClick={handleChange} size="large">
       <StrikethroughSIcon fontSize="small" />
     </IconButton>
   );

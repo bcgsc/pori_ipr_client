@@ -4,10 +4,10 @@ import React, {
 import {
   TextField,
   InputAdornment,
-} from '@material-ui/core';
+} from '@mui/material';
 import {
   FilterList,
-} from '@material-ui/icons';
+} from '@mui/icons-material';
 
 import api, { ApiCallSet } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';

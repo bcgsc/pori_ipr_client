@@ -6,7 +6,7 @@ import {
   Card,
   CardHeader,
   CardContent,
-} from '@material-ui/core';
+} from '@mui/material';
 
 import ImageType from '@/components/Image/types';
 import FrontPageTooltip from '@/components/FrontPageTooltip';
@@ -169,72 +169,70 @@ const TabCards = ({
     }
   }, [type]);
 
-  return (
-    <>
-      <div className="mutation-burden__tab-control">
-        <Tabs value={tabValue} onChange={(event, value) => handleTabChange(event, value)}>
-          {getTabs()}
-        </Tabs>
-      </div>
-      <div className="mutation-burden__images">
-        {comparators
-          .filter(({ analysisRole }) => analysisRole.includes('mutation burden'))
-          .map(({ analysisRole, name }) => {
-            if (type === 'SV'
-              && comparators.some(({ analysisRole: role }) => role.includes('mutation burden SV'))
-              && !analysisRole.includes('mutation burden SV')) {
-              return null;
-            }
+  return <>
+    <div className="mutation-burden__tab-control">
+      <Tabs value={tabValue} onChange={(event, value) => handleTabChange(event, value)}>
+        {getTabs()}
+      </Tabs>
+    </div>
+    <div className="mutation-burden__images">
+      {comparators
+        .filter(({ analysisRole }) => analysisRole.includes('mutation burden'))
+        .map(({ analysisRole, name }) => {
+          if (type === 'SV'
+            && comparators.some(({ analysisRole: role }) => role.includes('mutation burden SV'))
+            && !analysisRole.includes('mutation burden SV')) {
+            return null;
+          }
 
-            if (type !== 'SV'
-              && analysisRole.includes('mutation burden SV')) {
-              return null;
-            }
+          if (type !== 'SV'
+            && analysisRole.includes('mutation burden SV')) {
+            return null;
+          }
 
-            const [roleName] = analysisRole.match(/(?<=\().+(?=\))/g);
-            const mutationBurdenRole = mutationBurden.find(({ role }) => role === roleName);
+          const [roleName] = analysisRole.match(/(?<=\().+(?=\))/g);
+          const mutationBurdenRole = mutationBurden.find(({ role }) => role === roleName);
 
-            const barplotsByRole = getImages(barplots, roleName);
-            const densitiesByRole = getImages(densities, roleName);
-            const legendsByRole = getImages(legends, roleName);
+          const barplotsByRole = getImages(barplots, roleName);
+          const densitiesByRole = getImages(densities, roleName);
+          const legendsByRole = getImages(legends, roleName);
 
-            return (
-              <React.Fragment key={analysisRole}>
-                {rankMapping[roleName] === tabValue && (
-                  <Card key={name} elevation={3} className="mutation-burden__group">
-                    <CardHeader title={`Comparator: ${name} (${roleName})`} />
-                    {Boolean(barplotsByRole.length) && barplotsByRole.map((plot) => (
-                      <span key={plot.key} className="mutation-burden__image">
-                        <Image
-                          image={plot}
-                          showTitle
-                          showCaption
-                        />
-                      </span>
-                    ))}
-                    {Boolean(densitiesByRole.length) && densitiesByRole.map((plot, index) => (
-                      <span key={plot.key} className="mutation-burden__pair">
-                        <Typography>{plot.title}</Typography>
-                        <Image image={plot} />
-                        {legendsByRole[index] && (
-                          <Image image={legendsByRole[index]} />
-                        )}
-                        <Typography>{plot.caption}</Typography>
-                      </span>
-                    ))}
-                    {mutationBurdenRole && (
-                      <CardContent>
-                        {getCardContent(mutationBurdenRole)}
-                      </CardContent>
-                    )}
-                  </Card>
-                )}
-              </React.Fragment>
-            );
-          })}
-      </div>
-    </>
-  );
+          return (
+            <React.Fragment key={analysisRole}>
+              {rankMapping[roleName] === tabValue && (
+                <Card key={name} elevation={3} className="mutation-burden__group">
+                  <CardHeader title={`Comparator: ${name} (${roleName})`} />
+                  {Boolean(barplotsByRole.length) && barplotsByRole.map((plot) => (
+                    <span key={plot.key} className="mutation-burden__image">
+                      <Image
+                        image={plot}
+                        showTitle
+                        showCaption
+                      />
+                    </span>
+                  ))}
+                  {Boolean(densitiesByRole.length) && densitiesByRole.map((plot, index) => (
+                    <span key={plot.key} className="mutation-burden__pair">
+                      <Typography>{plot.title}</Typography>
+                      <Image image={plot} />
+                      {legendsByRole[index] && (
+                        <Image image={legendsByRole[index]} />
+                      )}
+                      <Typography>{plot.caption}</Typography>
+                    </span>
+                  ))}
+                  {mutationBurdenRole && (
+                    <CardContent>
+                      {getCardContent(mutationBurdenRole)}
+                    </CardContent>
+                  )}
+                </Card>
+              )}
+            </React.Fragment>
+          );
+        })}
+    </div>
+  </>;
 };
 
 export default TabCards;

@@ -6,7 +6,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-} from '@material-ui/core';
+} from '@mui/material';
 
 import api from '@/services/api';
 
@@ -34,7 +34,7 @@ const InfoDialog = ({ isOpen, onClose }: InfoDialogProps): JSX.Element => {
 
   return (
     <Dialog open={isOpen} onClose={onClose} maxWidth="sm" fullWidth className="edit-dialog">
-      <DialogTitle disableTypography>
+      <DialogTitle>
         <Typography variant="h3">
           Evidence Levels
         </Typography>

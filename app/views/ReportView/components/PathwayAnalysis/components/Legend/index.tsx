@@ -3,9 +3,9 @@ import React, {
 } from 'react';
 import {
   IconButton, Typography, Button, CircularProgress,
-} from '@material-ui/core';
-import HighlightOffIcon from '@material-ui/icons/HighlightOff';
-import PublishIcon from '@material-ui/icons/Publish';
+} from '@mui/material';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import PublishIcon from '@mui/icons-material/Publish';
 import { useSnackbar } from 'notistack';
 
 import api from '@/services/api';
@@ -102,7 +102,7 @@ const Legend = ({
               component="label"
               color="secondary"
               onClick={handleDeleteLegend}
-            >
+              size="large">
               <HighlightOffIcon />
             </IconButton>
           )}

@@ -12,7 +12,7 @@ import {
   Tabs,
   Tab,
   AppBar,
-} from '@material-ui/core';
+} from '@mui/material';
 import { useSnackbar } from 'notistack';
 import { AgGridReact } from '@ag-grid-community/react';
 

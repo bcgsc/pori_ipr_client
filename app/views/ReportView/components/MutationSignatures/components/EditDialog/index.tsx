@@ -13,7 +13,7 @@ import {
   FormControl,
   FormControlLabel,
   InputLabel,
-} from '@material-ui/core';
+} from '@mui/material';
 
 import api from '@/services/api';
 import AsyncButton from '@/components/AsyncButton';

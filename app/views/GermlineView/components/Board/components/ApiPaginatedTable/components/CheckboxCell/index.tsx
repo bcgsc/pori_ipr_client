@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   Checkbox,
-} from '@material-ui/core';
+} from '@mui/material';
 import { useSnackbar } from 'notistack';
 import { ICellRendererParams } from '@ag-grid-community/core';
 

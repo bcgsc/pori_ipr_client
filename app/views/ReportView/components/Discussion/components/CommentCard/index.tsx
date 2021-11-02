@@ -9,9 +9,9 @@ import {
   IconButton,
   Typography,
   TextField,
-} from '@material-ui/core';
-import EditIcon from '@material-ui/icons/Edit';
-import CloseIcon from '@material-ui/icons/Close';
+} from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import CloseIcon from '@mui/icons-material/Close';
 import { useSnackbar } from 'notistack';
 
 import ReportContext from '@/context/ReportContext';

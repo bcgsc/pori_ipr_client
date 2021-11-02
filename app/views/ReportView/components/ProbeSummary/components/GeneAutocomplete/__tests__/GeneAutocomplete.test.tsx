@@ -38,13 +38,13 @@ jest.mock('@/services/api', () => ({
   get: jest.fn(() => ({ request: jest.fn(() => mockGeneOptions) })),
 }));
 
-const withReportContext = (Component) => function ReportContextHOC(props) {
+const withReportContext = (Component) => (function ReportContextHOC(props) {
   return (
     <ReportContext.Provider value={{ report: mockReport, setReport: () => {} }}>
       <Component {...props} />
     </ReportContext.Provider>
   );
-};
+});
 
 describe('GeneAutocomplete', () => {
   test('A default value is shown', async () => {

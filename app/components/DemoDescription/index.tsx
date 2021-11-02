@@ -2,7 +2,7 @@ import './index.scss';
 
 import React from 'react';
 
-import Alert from '@material-ui/lab/Alert';
+import Alert from '@mui/material/Alert';
 
 type DemoDescriptionProps = {
   children: React.ReactNode,

@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   Grid,
-} from '@material-ui/core';
+} from '@mui/material';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import TestInformationType from './types.d';
 

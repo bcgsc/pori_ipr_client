@@ -7,9 +7,9 @@ import {
   MenuItem,
   Toolbar,
   Typography,
-} from '@material-ui/core';
-import MenuIcon from '@material-ui/icons/Menu';
-import PersonIcon from '@material-ui/icons/Person';
+} from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import PersonIcon from '@mui/icons-material/Person';
 
 import { logout } from '@/services/management/auth';
 import SecurityContext from '@/context/SecurityContext';
@@ -50,7 +50,7 @@ const NavBar = (): JSX.Element => {
             className="navbar__button"
             edge="start"
             onClick={handleExpandSidebar}
-          >
+            size="large">
             <MenuIcon />
           </IconButton>
           <Typography

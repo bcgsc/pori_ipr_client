@@ -3,9 +3,9 @@ import {
   Button,
   ButtonProps,
   CircularProgress,
-} from '@material-ui/core';
+} from '@mui/material';
 
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 import './index.scss';
 
