@@ -5,14 +5,12 @@ import { SnackbarProvider } from 'notistack';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import {
   createMuiTheme,
-  MuiThemeProvider,
+  ThemeProvider,
   createGenerateClassName,
   jssPreset,
-  StylesProvider,
 } from '@material-ui/core/styles';
 import { create } from 'jss';
 import React from 'react';
-import { JssProvider } from 'react-jss';
 import { BrowserRouter } from 'react-router-dom';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
@@ -109,21 +107,17 @@ ModuleRegistry.registerModules([
  */
 function App() {
   return (
-    <StylesProvider generateClassName={generateClassName} injectFirst>
-      <JssProvider jss={jss}>
-        <MuiThemeProvider theme={theme}>
-          <SnackbarProvider anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}>
-            <SnackbarUtilsConfigurator />
-            <CssBaseline />
-            <BrowserRouter basename={window._env_.PUBLIC_PATH}>
-              <CacheBuster>
-                <MainView />
-              </CacheBuster>
-            </BrowserRouter>
-          </SnackbarProvider>
-        </MuiThemeProvider>
-      </JssProvider>
-    </StylesProvider>
+    <ThemeProvider theme={theme}>
+      <SnackbarProvider anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}>
+        <SnackbarUtilsConfigurator />
+        <CssBaseline />
+        <BrowserRouter basename={window._env_.PUBLIC_PATH}>
+          <CacheBuster>
+            <MainView />
+          </CacheBuster>
+        </BrowserRouter>
+      </SnackbarProvider>
+    </ThemeProvider>
   );
 }
 
