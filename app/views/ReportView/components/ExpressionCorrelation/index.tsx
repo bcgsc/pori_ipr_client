@@ -78,58 +78,58 @@ const ExpressionCorrelation = ({
   }, [report, setIsLoading]);
 
   return (
-    <>
-      <div className="expression-correlation">
-        <DemoDescription>
-          The overall gene expression in the tumour is compared to a gene expression profiles from
-          variety of tumour types, either from internal or external curated datasets, using a
-          correlation approach, to highlight the most similar tumour types. In addition, the tumour
-          is compared to previously sequenced tumours to identify the most similar individual
-          samples. Subtyping based on gene expression is computed if applicable for the tumour type.
-        </DemoDescription>
-        {!isLoading && (
-          <>
-            <div>
-              <Typography variant="h3">Sample-Sample Expression Correlation</Typography>
-              <div className="expression-correlation__expression-charts">
-                {TOP_EXPRESSION_KEYS.map((group) => (
-                  <div key={group.key}>
-                    <Typography variant="h3" align="center" className="expression-correlation__header">
-                      {group.title}
-                    </Typography>
-                    <PlotByKey
-                      accessor={group.key}
-                      plots={plots}
-                    />
-                  </div>
+    <div className="expression-correlation">
+      <DemoDescription>
+        The overall gene expression in the tumour is compared to a gene expression profiles from
+        variety of tumour types, either from internal or external curated datasets, using a
+        correlation approach, to highlight the most similar tumour types. In addition, the tumour
+        is compared to previously sequenced tumours to identify the most similar individual
+        samples. Subtyping based on gene expression is computed if applicable for the tumour type.
+      </DemoDescription>
+      {!isLoading && (
+        <>
+          <Typography variant="h3">Sample-Sample Expression Correlation</Typography>
+          <div className="expression-correlation__expression-charts">
+            {TOP_EXPRESSION_KEYS.map((group) => (
+              <div key={group.key}>
+                <Typography variant="h3" align="center" className="expression-correlation__header">
+                  {group.title}
+                </Typography>
+                <PlotByKey
+                  accessor={group.key}
+                  plots={plots}
+                />
+              </div>
+            ))}
+          </div>
+          {/* This section should only appear if there's data */}
+          {Boolean(subtypePlots.length) && (
+            <>
+              <Typography variant="h3" className="expression-correlation__header">
+                Subtyping
+              </Typography>
+              <div className="expression-correlation__subtype">
+                {subtypePlots.map((plot) => (
+                  <Image
+                    key={plot.ident}
+                    image={plot}
+                    showTitle
+                    showCaption
+                  />
                 ))}
               </div>
-            </div>
-            {Boolean(subtypePlots.length) && (
-              <div className="expression-correlation__subtype">
-                <span>
-                  <Typography variant="h3" align="center" className="expression-correlation__header">
-                    Subtype Plots
-                  </Typography>
-                  {subtypePlots.map((plot) => (
-                    <Image
-                      key={plot.ident}
-                      image={plot}
-                      showTitle
-                      showCaption
-                    />
-                  ))}
-                </span>
-              </div>
-            )}
-            <Divider />
-            <Typography className="expression-correlation__title" variant="h3">
-              Pairwise Expression Correlation
-            </Typography>
-            <CorrelationPlot
-              pairwiseExpression={pairwiseExpression}
-            />
-            <Divider />
+            </>
+          )}
+          <Divider />
+          <Typography className="expression-correlation__title" variant="h3">
+            Pairwise Expression Correlation
+          </Typography>
+          <CorrelationPlot
+            pairwiseExpression={pairwiseExpression}
+          />
+          <Divider />
+          {/* This section should only appear if there's data */}
+          {plots?.length && plots.find((plot) => plot.key === 'scpPlot') && (
             <div className="expression-correlation__section">
               <Typography className="expression-correlation__title" variant="h3">
                 SCOPE
@@ -141,26 +141,25 @@ const ExpressionCorrelation = ({
                 />
               </div>
             </div>
-            <Divider />
-            <div className="expression-correlation__expression-charts">
-              {BOTTOM_EXPRESSION_KEYS.map((group) => (
-                <div key={group.key}>
-                  <Typography variant="h3" align="center" className="expression-correlation__header">
-                    {group.title}
-                  </Typography>
-                  <PlotByKey
-                    accessor={group.key}
-                    plots={plots}
-                    height={500}
-                    width={500}
-                  />
-                </div>
-              ))}
-            </div>
-          </>
-        )}
-      </div>
-    </>
+          )}
+          <Divider />
+          <Typography variant="h3">Additional Sample-Sample Expression Correlation</Typography>
+          <div className="expression-correlation__expression-charts">
+            {BOTTOM_EXPRESSION_KEYS.map((group) => (
+              <div key={group.key}>
+                <Typography variant="h3" align="center" className="expression-correlation__header">
+                  {group.title}
+                </Typography>
+                <PlotByKey
+                  accessor={group.key}
+                  plots={plots}
+                />
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
   );
 };
 
