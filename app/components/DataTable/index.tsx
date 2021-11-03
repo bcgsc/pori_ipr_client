@@ -20,6 +20,7 @@ import EnsemblCellRenderer from './components/EnsemblCellRenderer';
 import CivicCellRenderer from './components/CivicCellRenderer';
 import GeneCellRenderer from './components/GeneCellRenderer';
 import ActionCellRenderer from './components/ActionCellRenderer';
+import NoRowsOverlay from './components/NoRowsOverlay';
 import { getDate } from '../../utils/date';
 
 import './index.scss';
@@ -296,7 +297,6 @@ const DataTable = ({
       <ActionCellRenderer
         onEdit={handleEdit}
         onDelete={handleDelete}
-        // eslint-disable-next-line react/jsx-props-no-spreading
         {...row}
       />
     );
@@ -429,6 +429,7 @@ const DataTable = ({
               editType="fullRow"
               onFilterChanged={handleFilterAndSortChanged}
               onSortChanged={handleFilterAndSortChanged}
+              noRowsOverlayComponent="NoRowsOverlay"
               context={{
                 canEdit,
                 canDelete,
@@ -441,6 +442,7 @@ const DataTable = ({
                 GeneCellRenderer,
                 ActionCellRenderer: RowActionCellRenderer,
                 headerCellRenderer: Header,
+                NoRowsOverlay,
               }}
               suppressAnimationFrame
               suppressColumnVirtualisation
