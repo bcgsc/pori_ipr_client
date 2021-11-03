@@ -1,4 +1,7 @@
-const columnDefs = [{
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { ColDef, ColGroupDef } from '@ag-grid-community/core';
+
+const columnDefs: Array<ColDef | ColGroupDef> = [{
   headerName: 'Gene',
   field: 'gene.name',
   cellRenderer: 'GeneCellRenderer',
@@ -42,7 +45,7 @@ const columnDefs = [{
 }, {
   headerName: 'RPKM',
   field: 'rpkm',
-  hide: false,
+  hide: true,
 }, {
   headerName: 'TPM',
   field: 'tpm',

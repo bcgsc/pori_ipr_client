@@ -10,17 +10,16 @@ import api from '@/services/api';
 import ReportContext from '@/context/ReportContext';
 import PageBreak from '@/components/PageBreak';
 import startCase from '@/utils/startCase';
+import Summary from '../ReportView/components/Summary';
 import RunningLeft from './components/RunningLeft';
 import RunningCenter from './components/RunningCenter';
 import RunningRight from './components/RunningRight';
 
 import './index.scss';
 
-const GenomicSummary = lazy(() => import('../ReportView/components/GenomicSummary'));
-const ProbeSummary = lazy(() => import('../ReportView/components/ProbeSummary'));
 const AnalystComments = lazy(() => import('../ReportView/components/AnalystComments'));
 const PathwayAnalysis = lazy(() => import('../ReportView/components/PathwayAnalysis'));
-const TherapeuticTargets = lazy(() => import('../ReportView/components/TherapeuticTargets/components/PrintTables'));
+const TherapeuticTargets = lazy(() => import('../ReportView/components/TherapeuticTargets'));
 const Slides = lazy(() => import('../ReportView/components/Slides'));
 const Appendices = lazy(() => import('../ReportView/components/Appendices'));
 
@@ -50,7 +49,7 @@ const reducer = (state, action) => {
   }
 };
 
-const Print = () => {
+const Print = (): JSX.Element => {
   const params = useParams();
   const theme = useTheme();
   const [report, setReport] = useState();
@@ -85,11 +84,11 @@ const Print = () => {
       && Object.entries(reportSectionsLoaded).every(([section, loaded]) => loaded || !template?.sections.includes(section))
       && !isPrintDialogShown) {
       const showPrint = async () => {
-        let paged = new Previewer();
+        const paged = new Previewer();
         await paged.preview(document.getElementById('root'), ['index.css'], document.body);
         window.print();
         setIsPrintDialogShown(true);
-      }
+      };
       showPrint();
     }
   }, [isPrintDialogShown, report, reportSectionsLoaded, template]);
@@ -98,15 +97,9 @@ const Print = () => {
     if (report && template) {
       return (
         <>
-          {template?.sections.includes('summary') && report.template.name === 'probe' && (
+          {template?.sections.includes('summary') && (
             <>
-              <ProbeSummary report={report} isPrint loadedDispatch={dispatch} />
-              <PageBreak />
-            </>
-          )}
-          {template?.sections.includes('summary') && report.template.name !== 'probe' && (
-            <>
-              <GenomicSummary print loadedDispatch={dispatch} />
+              <Summary templateName={report.template.name} isPrint loadedDispatch={dispatch} />
               <PageBreak />
             </>
           )}
@@ -124,7 +117,7 @@ const Print = () => {
           )}
           {template?.sections.includes('therapeutic-targets') && (
             <>
-              <TherapeuticTargets print loadedDispatch={dispatch} />
+              <TherapeuticTargets isPrint loadedDispatch={dispatch} />
               <PageBreak />
             </>
           )}
