@@ -50,7 +50,8 @@ const NavBar = (): JSX.Element => {
             className="navbar__button"
             edge="start"
             onClick={handleExpandSidebar}
-            size="large">
+            size="large"
+          >
             <MenuIcon />
           </IconButton>
           <Typography

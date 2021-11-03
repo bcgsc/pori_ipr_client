@@ -102,7 +102,8 @@ const Legend = ({
               component="label"
               color="secondary"
               onClick={handleDeleteLegend}
-              size="large">
+              size="large"
+            >
               <HighlightOffIcon />
             </IconButton>
           )}

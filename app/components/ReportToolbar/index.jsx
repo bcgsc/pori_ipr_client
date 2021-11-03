@@ -36,7 +36,8 @@ function ReportToolbar(props) {
         onClick={() => onSidebarToggle(!isSidebarVisible)}
         title={`${isSidebarVisible ? 'Close' : 'Open'} Sidebar`}
         className="report__header--max-width"
-        size="large">
+        size="large"
+      >
         {isSidebarVisible
           ? (
             <KeyboardArrowRightIcon />

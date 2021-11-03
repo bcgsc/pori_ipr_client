@@ -98,7 +98,7 @@ const AnalystComments = ({
       const commentsResp = await api.put(
         `/reports/${report.ident}/summary/analyst-comments`,
         { comments: editedComments },
-      ).request();
+      ).request(true);
       setComments(sanitizeHtml(commentsResp?.comments, {
         allowedSchemes: [],
         allowedAttributes: {

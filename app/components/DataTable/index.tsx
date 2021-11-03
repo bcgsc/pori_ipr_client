@@ -361,7 +361,8 @@ const DataTable = ({
                     <IconButton
                       onClick={(event) => setMenuAnchor(event.currentTarget)}
                       className="data-table__icon-button"
-                      size="large">
+                      size="large"
+                    >
                       <MoreHorizIcon />
                     </IconButton>
                     <Menu
