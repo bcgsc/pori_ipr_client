@@ -19,13 +19,13 @@ import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import { SignatureType } from '@/components/SignatureCard';
 import TemplateType from '../TemplateView/types';
+import Summary from './components/Summary';
 import allSections from './sections';
 
 import './index.scss';
 
 const EXTERNAL_ALLOWED_STATES = ['reviewed', 'archived'];
 
-const GenomicSummary = lazy(() => import('./components/GenomicSummary'));
 const AnalystComments = lazy(() => import('./components/AnalystComments'));
 const PathwayAnalysis = lazy(() => import('./components/PathwayAnalysis'));
 const TherapeuticTargets = lazy(() => import('./components/TherapeuticTargets'));
@@ -43,7 +43,6 @@ const Expression = lazy(() => import('./components/Expression'));
 const Immune = lazy(() => import('./components/Immune'));
 const Appendices = lazy(() => import('./components/Appendices'));
 const Settings = lazy(() => import('./components/Settings'));
-const ProbeSummary = lazy(() => import('./components/ProbeSummary'));
 const Pharmacogenomic = lazy(() => import('./components/Pharmacogenomic'));
 
 const ReportView = (): JSX.Element => {
@@ -128,18 +127,20 @@ const ReportView = (): JSX.Element => {
             )}
             <div className="report__content">
               <Switch>
-                <Route
-                  render={(routeProps) => (
-                    <>
-                      {isProbe ? (
-                        <ProbeSummary {...routeProps} print={false} report={report} canEdit={canEdit} />
-                      ) : (
-                        <GenomicSummary {...routeProps} print={false} />
-                      )}
-                    </>
-                  )}
-                  path={`${path}/summary`}
-                />
+                {report && (
+                  <Route
+                    render={(routeProps) => (
+                      <Summary
+                        {...routeProps}
+                        templateName={report.template.name}
+                        isPrint={false}
+                        report={report}
+                        canEdit={canEdit}
+                      />
+                    )}
+                    path={`${path}/summary`}
+                  />
+                )}
                 <Route
                   render={(routeProps) => (
                     <AnalystComments

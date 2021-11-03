@@ -11,14 +11,13 @@ import ReportContext, { ReportType } from '@/context/ReportContext';
 import PageBreak from '@/components/PageBreak';
 import startCase from '@/utils/startCase';
 import TemplateType from '../TemplateView/types';
+import Summary from '../ReportView/components/Summary';
 import RunningLeft from './components/RunningLeft';
 import RunningCenter from './components/RunningCenter';
 import RunningRight from './components/RunningRight';
 
 import './index.scss';
 
-const GenomicSummary = lazy(() => import('../ReportView/components/GenomicSummary'));
-const ProbeSummary = lazy(() => import('../ReportView/components/ProbeSummary'));
 const AnalystComments = lazy(() => import('../ReportView/components/AnalystComments'));
 const PathwayAnalysis = lazy(() => import('../ReportView/components/PathwayAnalysis'));
 const TherapeuticTargets = lazy(() => import('../ReportView/components/TherapeuticTargets'));
@@ -99,15 +98,9 @@ const Print = (): JSX.Element => {
     if (report && template) {
       return (
         <>
-          {template?.sections.includes('summary') && report.template.name === 'probe' && (
+          {template?.sections.includes('summary') && (
             <>
-              <ProbeSummary report={report} isPrint loadedDispatch={dispatch} />
-              <PageBreak />
-            </>
-          )}
-          {template?.sections.includes('summary') && report.template.name !== 'probe' && (
-            <>
-              <GenomicSummary print loadedDispatch={dispatch} />
+              <Summary templateName={report.template.name} isPrint loadedDispatch={dispatch} />
               <PageBreak />
             </>
           )}
