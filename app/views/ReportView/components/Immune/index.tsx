@@ -16,7 +16,7 @@ const IMAGE_KEYS = [
   'cibersort.combined_t-cell_scatter',
   'cibersort.cd8_positive_t-cell_scatter',
   'mixcr.circos_trb_vj_gene_usage',
-  'mixcr.dominiance_vs_alpha_beta_t-cells_scatter',
+  'mixcr.dominance_vs_alpha_beta_t-cells_scatter',
 ];
 
 type ImmuneProps = WithLoadingInjectedProps;
