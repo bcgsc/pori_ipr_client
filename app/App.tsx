@@ -75,6 +75,17 @@ const theme = createTheme({
         },
       },
     },
+    MuiButton: {
+      defaultProps: {
+        color: 'inherit',
+      },
+    },
+    MuiTabs: {
+      defaultProps: {
+        indicatorColor: 'secondary',
+        textColor: 'secondary',
+      },
+    },
   },
 });
 

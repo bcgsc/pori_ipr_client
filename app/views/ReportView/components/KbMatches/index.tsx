@@ -165,7 +165,7 @@ const KbMatches = ({
                 variant="outlined"
                 value={filterText}
                 onChange={handleFilter}
-                margin="dense"
+                fullWidth
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
