@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import {
   Typography,
@@ -20,6 +20,19 @@ function ReportToolbar(props) {
     onSidebarToggle,
   } = props;
 
+  const reportTitle = useMemo(() => {
+    if (type === 'probe') {
+      return 'Targeted Gene';
+    }
+    if (type === 'genomic') {
+      return 'Genomic';
+    }
+    if (type === 'pharmacogenomic') {
+      return 'Pharmacogenomic and Germline Targeted Gene';
+    }
+    return '';
+  }, [type]);
+
   return (
     <span className="report__header">
       <Typography display="inline" variant="h5" className="report__header--text-align-left">
@@ -27,7 +40,7 @@ function ReportToolbar(props) {
       </Typography>
       <Typography display="inline" variant="h5" className="report__header--text-align-center">
         {patientId}
-        {` ${type === 'probe' ? 'Targeted Gene' : startCase(type)} Report`}
+        {` ${reportTitle} Report`}
       </Typography>
       <Typography display="inline" variant="h5" className="report__header--text-align-right">
         {startCase(state)}

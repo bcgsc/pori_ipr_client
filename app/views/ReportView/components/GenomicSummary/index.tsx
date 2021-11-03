@@ -68,15 +68,17 @@ const customTypeSort = (variant) => {
 };
 
 type GenomicSummaryProps = {
+  isPrint: boolean;
+  setIsLoading: (isLoading: boolean) => void;
+  isLoading: boolean;
   loadedDispatch: (section: Record<'type', string>) => void;
-  print: boolean;
 } & WithLoadingInjectedProps;
 
 const GenomicSummary = ({
+  isPrint = false,
+  setIsLoading,
   isLoading,
   loadedDispatch,
-  print = false,
-  setIsLoading,
 }: GenomicSummaryProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
   const { canEdit } = useEdit();
@@ -115,13 +117,13 @@ const GenomicSummary = ({
       const getData = async () => {
         try {
           const apiCalls = new ApiCallSet([
-            api.get(`/reports/${report.ident}/summary/microbial`, {}),
-            api.get(`/reports/${report.ident}/summary/genomic-alterations-identified`, {}),
-            api.get(`/reports/${report.ident}/comparators`, {}),
-            api.get(`/reports/${report.ident}/mutation-signatures`, {}),
-            api.get(`/reports/${report.ident}/mutation-burden`, {}),
-            api.get(`/reports/${report.ident}/immune-cell-types`, {}),
-            api.get(`/reports/${report.ident}/msi`, {}),
+            api.get(`/reports/${report.ident}/summary/microbial`),
+            api.get(`/reports/${report.ident}/summary/genomic-alterations-identified`),
+            api.get(`/reports/${report.ident}/comparators`),
+            api.get(`/reports/${report.ident}/mutation-signatures`),
+            api.get(`/reports/${report.ident}/mutation-burden`),
+            api.get(`/reports/${report.ident}/immune-cell-types`),
+            api.get(`/reports/${report.ident}/msi`),
           ]);
 
           const [
@@ -275,7 +277,7 @@ const GenomicSummary = ({
         {
           term: 'Mutation Signature',
           value: sigs,
-          action: !print ? () => history.push('mutation-signatures') : null,
+          action: !isPrint ? () => history.push('mutation-signatures') : null,
         },
         {
           term: 'Mutation Burden',
@@ -286,11 +288,11 @@ const GenomicSummary = ({
           value: svBurden,
         },
         {
-          term: `HR Deficiency${print ? '*' : ''}`,
+          term: `HR Deficiency${isPrint ? '*' : ''}`,
           value: null,
         },
         {
-          term: `SV Burden${print ? '*' : ''}`,
+          term: `SV Burden${isPrint ? '*' : ''}`,
           value: null,
         },
         {
@@ -299,14 +301,13 @@ const GenomicSummary = ({
         },
       ]);
     }
-  }, [history, microbial, microbial.species, primaryBurden, primaryComparator, print, report, signatures, tCellCd8, msi]);
+  }, [history, microbial, microbial.species, primaryBurden, primaryComparator, isPrint, report, signatures, tCellCd8, msi]);
 
   const handleChipDeleted = useCallback(async (chipIdent, type, comment) => {
     try {
       const req = api.del(
         `/reports/${report.ident}/summary/genomic-alterations-identified/${chipIdent}`,
         { comment },
-        {},
       );
       await req.request(isSigned);
 
@@ -321,7 +322,7 @@ const GenomicSummary = ({
 
   const handleChipAdded = useCallback(async (variant) => {
     try {
-      const req = api.post(`/reports/${report.ident}/summary/genomic-alterations-identified`, { geneVariant: variant }, {});
+      const req = api.post(`/reports/${report.ident}/summary/genomic-alterations-identified`, { geneVariant: variant });
       const newVariantEntry = await req.request();
 
       const categorizedVariantEntry = variantCategory(newVariantEntry);
@@ -342,7 +343,7 @@ const GenomicSummary = ({
       return;
     }
 
-    const reportResp = await api.get(`/reports/${report.ident}`, {}).request();
+    const reportResp = await api.get(`/reports/${report.ident}`).request();
     setReport(reportResp);
 
     setPatientInformation([
@@ -408,7 +409,7 @@ const GenomicSummary = ({
             <div className="genomic-summary__patient-information-title">
               <Typography variant="h3" display="inline">
                 Patient Information
-                {canEdit && !print && (
+                {canEdit && !isPrint && (
                   <>
                     <IconButton onClick={() => setShowPatientEdit(true)} size="large">
                       <EditIcon />
@@ -443,7 +444,7 @@ const GenomicSummary = ({
             <div className="genomic-summary__tumour-summary-title">
               <Typography variant="h3">
                 Tumour Summary
-                {canEdit && !print && (
+                {canEdit && !isPrint && (
                   <>
                     <IconButton onClick={() => setShowTumourSummaryEdit(true)} size="large">
                       <EditIcon />
@@ -464,7 +465,7 @@ const GenomicSummary = ({
             </div>
           </div>
 
-          {print ? (
+          {isPrint ? (
             <>
               <div className="genomic-summary__alterations">
                 <div className="genomic-summary__alterations-title">
@@ -483,7 +484,7 @@ const GenomicSummary = ({
                     canEdit={canEdit}
                     onChipDeleted={handleChipDeleted}
                     onChipAdded={handleChipAdded}
-                    isPrint={print}
+                    isPrint={isPrint}
                   />
                 </div>
               </div>
