@@ -106,7 +106,7 @@ const AddEditTemplate = ({
           newTemplate.append('header', headerImage);
         }
 
-        let resp;
+        let resp: TemplateType;
         if (editData) {
           resp = await api.put<TemplateType>(`/templates/${editData.ident}`, newTemplate, {}, true).request();
         } else {
