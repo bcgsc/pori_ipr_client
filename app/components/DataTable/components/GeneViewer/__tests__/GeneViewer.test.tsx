@@ -4,7 +4,6 @@ import {
   screen, render, waitFor,
 } from '@testing-library/react';
 
-import snackbar from '@/services/SnackbarUtils';
 import ReportContext, { ReportType } from '@/context/ReportContext';
 import api, { ApiCall } from '@/services/api';
 import GeneViewer from '..';
