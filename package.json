@@ -105,7 +105,7 @@
     "chart.js": "~2.7.3",
     "chartjs-plugin-datalabels": "~0.7.0",
     "fetch-intercept": "~2.3.1",
-    "jest-when": "~3.3.1",
+    "jest-when": "~3.4.2",
     "jss": "~10.6.0",
     "jwt-decode": "~3.1.2",
     "keycloak-js": "~10.0.2",
