@@ -1,8 +1,13 @@
 @import '../../../../styles/variables';
 
-.probe-summary {
+.summary {
   margin: 20px auto;
   padding: 0 20px;
+
+  &--max-width {
+    max-width: $readable-max;
+    margin: 8px auto 0;
+  }
 
   &__patient-information {
     margin: 0 0 32px;
@@ -14,10 +19,14 @@
 
   &__test-information {
     margin: 0 0 32px;
-    page-break-inside: avoid;
+    break-inside: avoid;
 
     &-title {
       margin: 0 0 16px;
+    }
+
+    &-text {
+      break-inside: avoid;
     }
   }
 
@@ -25,6 +34,14 @@
     &-title {
       margin: 0 0 32px;
     }
+  }
+
+  &__pharmacogenomic {
+    margin: 16px 0;
+  }
+
+  &__cancer-predisposition {
+    margin: 16px 0;
   }
 
   &__reviews {
@@ -41,46 +58,42 @@
   &__none {
     padding: 16px;
   }
+
+  &__reviews {
+    page-break-inside: avoid;
+  }
 }
 
 @media print {
-  .probe-summary {
+  .summary {
     margin: 0 auto;
 
     &__patient-information {
-      margin: 0 0 22px;
-
       &-title {
         margin: 0 0 16px;
       }
     }
 
     &__test-information {
-      margin: 22px 0;
-      page-break-inside: avoid;
+      margin: 16px 0;
+      break-inside: avoid;
 
       &-title {
         margin: 0 0 16px;
       }
+
+      &-text {
+        break-inside: avoid;
+      }
     }
 
-    &__sample-information {
-      margin: 24px 0;
-    }
-
-    &__events {
-      margin: 28px 0;
-      border: 2px solid black;
-      border-radius: 4px;
-      padding: 8px;
-
+    &__reviews {
       &-title {
         margin: 0 0 16px;
       }
     }
 
     &__signatures {
-      page-break-inside: avoid;
       border: 1px solid black;
       display: flex;
       margin: 0 8px;
