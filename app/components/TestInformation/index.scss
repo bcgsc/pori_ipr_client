@@ -1,4 +1,6 @@
 .grid {
+  page-break-inside: avoid;
+
   &--third {
     width: 33%;
     align-items: center;

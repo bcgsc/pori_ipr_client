@@ -156,16 +156,14 @@ const CorrelationPlot = ({
           />
         </div>
       )}
-      {Boolean(pairwiseExpression.length) && (
-        <div className="correlation-plot__table">
-          <DataTable
-            rowData={pairwiseExpression}
-            columnDefs={columnDefs}
-            highlightRow={rowClicked}
-            onRowDataChanged={handleRowDataChanged}
-          />
-        </div>
-      )}
+      <div className="correlation-plot__table">
+        <DataTable
+          rowData={pairwiseExpression}
+          columnDefs={columnDefs}
+          highlightRow={rowClicked}
+          onRowDataChanged={handleRowDataChanged}
+        />
+      </div>
     </div>
   );
 };

@@ -24,7 +24,7 @@ const Groups = (): JSX.Element => {
 
   useEffect(() => {
     const getData = async () => {
-      const groupsResp = await api.get('/user/group', {}).request();
+      const groupsResp = await api.get('/user/group').request();
 
       setGroups(groupsResp);
       setLoading(false);
@@ -33,10 +33,10 @@ const Groups = (): JSX.Element => {
     getData();
   }, []);
 
-  const handleDelete = useCallback(async (ident) => {
+  const handleDelete = useCallback(async ({ ident }) => {
     // eslint-disable-next-line no-restricted-globals
     if (confirm('Are you sure you want to remove this group?')) {
-      await api.del(`/user/group/${ident}`, {}, {}).request();
+      await api.del(`/user/group/${ident}`, {}).request();
       const newGroups = groups.filter((group) => group.ident !== ident);
       setGroups(newGroups);
       snackbar.enqueueSnackbar('Group deleted');

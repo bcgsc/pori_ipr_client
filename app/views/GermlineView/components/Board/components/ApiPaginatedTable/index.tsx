@@ -2,8 +2,7 @@ import React, {
   useCallback, useContext, useState,
 } from 'react';
 import { AgGridReact } from '@ag-grid-community/react';
-import { RowClickedEvent, ColDef } from '@ag-grid-community/core';
-import { useHistory } from 'react-router-dom';
+import { ColDef } from '@ag-grid-community/core';
 import { useSnackbar } from 'notistack';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import {
@@ -16,6 +15,7 @@ import SearchIcon from '@material-ui/icons/Search';
 
 import api from '@/services/api';
 import useGrid from '@/hooks/useGrid';
+import LaunchCell from '@/components/LaunchCell';
 import PaginationPanel from './components/PaginationPanel';
 import CheckboxCell from './components/CheckboxCell';
 import ReviewFilter from './components/ReviewFilter';
@@ -34,8 +34,7 @@ const ApiPaginatedTable = ({
   rowData,
   totalRows,
 }: ApiPaginatedTableProps): JSX.Element => {
-  const { gridApi, colApi, onGridReady } = useGrid();
-  const history = useHistory();
+  const { colApi, onGridReady } = useGrid();
   const snackbar = useSnackbar();
   const { setSearchText } = useContext(ParamsContext);
   const [tempSearchText, setTempSearchText] = useState('');
@@ -46,21 +45,6 @@ const ApiPaginatedTable = ({
       .map((col: ColDef) => col.colId);
     colApi.autoSizeColumns(visibleColumnIds);
   }, [colApi]);
-
-  const onRowClicked = useCallback(({ event }: RowClickedEvent): void => {
-    // don't navigate if a checkbox is clicked
-    if (event.target.localName === 'input') {
-      return;
-    }
-    const selectedRow = gridApi.getSelectedRows();
-    const [{ ident }] = selectedRow;
-
-    if (event.ctrlKey || event.metaKey) {
-      window.open(`/germline/report/${ident}`, '_blank');
-    } else {
-      history.push({ pathname: `/germline/report/${ident}` });
-    }
-  }, [gridApi, history]);
 
   const handleExport = useCallback(async (): Promise<void> => {
     try {
@@ -146,10 +130,10 @@ const ApiPaginatedTable = ({
         disableStaticMarkup // See https://github.com/ag-grid/ag-grid/issues/3727
         onGridReady={onGridReady}
         onFirstDataRendered={onFirstDataRendered}
-        onRowClicked={onRowClicked}
         frameworkComponents={{
           checkboxCellRenderer: CheckboxCell,
           reviewFilter: ReviewFilter,
+          Launch: LaunchCell,
         }}
         suppressAnimationFrame
         suppressColumnVirtualisation

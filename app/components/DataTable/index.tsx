@@ -1,18 +1,17 @@
 import React, {
   useRef, useState, useEffect, useCallback, useContext,
 } from 'react';
-import PropTypes from 'prop-types';
 import { AgGridReact } from '@ag-grid-community/react';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { ColDef } from '@ag-grid-community/core';
 import useGrid from '@/hooks/useGrid';
 import {
-  Typography,
   IconButton,
-  Switch,
+  Menu,
+  MenuItem,
+  Typography,
 } from '@material-ui/core';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
-import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import GetAppIcon from '@material-ui/icons/GetApp';
 
 import DemoDescription from '@/components/DemoDescription';
 import ReportContext from '@/context/ReportContext';
@@ -21,6 +20,7 @@ import EnsemblCellRenderer from './components/EnsemblCellRenderer';
 import CivicCellRenderer from './components/CivicCellRenderer';
 import GeneCellRenderer from './components/GeneCellRenderer';
 import ActionCellRenderer from './components/ActionCellRenderer';
+import NoRowsOverlay from './components/NoRowsOverlay';
 import { getDate } from '../../utils/date';
 
 import './index.scss';
@@ -101,13 +101,13 @@ const DataTable = ({
   tableType,
   visibleColumns = [],
   syncVisibleColumns,
-  canToggleColumns,
+  canToggleColumns = true,
   canViewDetails = true,
   isPaginated = true,
   isFullLength,
   canReorder,
   onReorder,
-  canExport,
+  canExport = true,
   isPrint,
   highlightRow = null,
   Header,
@@ -117,10 +117,11 @@ const DataTable = ({
   const { gridApi, colApi, onGridReady } = useGrid();
   const { report } = useContext(ReportContext);
 
-  const gridDiv = useRef();
-  const gridRef = useRef();
+  const gridDiv = useRef<HTMLDivElement>();
+  const gridRef = useRef<AgGridReact>();
 
   const [showPopover, setShowPopover] = useState(false);
+  const [menuAnchor, setMenuAnchor] = useState<HTMLElement>();
   const [showReorder, setShowReorder] = useState(false);
   const [columnDisplayNames, setColumnDisplayNames] = useState<string[]>([]);
 
@@ -195,7 +196,7 @@ const DataTable = ({
     }
   }, [colApi]);
 
-  const onFirstDataRendered = () => {
+  const onFirstDataRendered = useCallback(() => {
     if (syncVisibleColumns) {
       const hiddenColumns = colApi.getAllColumns()
         .map((col) => col.colId)
@@ -237,7 +238,7 @@ const DataTable = ({
     } if (isFullLength) {
       gridApi.sizeColumnsToFit();
     }
-  };
+  }, [colApi, columnDefs, gridApi, isFullLength, isPrint, rowData.length, syncVisibleColumns, visibleColumns]);
 
   const toggleReorder = useCallback(() => {
     if (!showReorder) {
@@ -296,13 +297,12 @@ const DataTable = ({
       <ActionCellRenderer
         onEdit={handleEdit}
         onDelete={handleDelete}
-        // eslint-disable-next-line react/jsx-props-no-spreading
         {...row}
       />
     );
   };
 
-  const handleCSVExport = useCallback(() => {
+  const handleTSVExport = useCallback(() => {
     const date = getDate();
 
     gridApi.exportDataAsCsv({
@@ -326,6 +326,26 @@ const DataTable = ({
     }
   }, [gridApi, onRowDataChanged]);
 
+  const handleMenuItemClick = useCallback((action) => {
+    switch (action) {
+      case 'add':
+        onAdd(tableType ? { type: tableType } : null);
+        break;
+      case 'toggle':
+        setShowPopover(true);
+        break;
+      case 'export':
+        handleTSVExport();
+        break;
+      case 'reorder':
+        toggleReorder();
+        break;
+      default:
+        break;
+    }
+    setMenuAnchor(null);
+  }, [handleTSVExport, onAdd, tableType, toggleReorder]);
+
   return (
     <div className="data-table--padded" style={{ height: isFullLength ? '100%' : '' }}>
       {Boolean(rowData.length) || canEdit ? (
@@ -336,55 +356,40 @@ const DataTable = ({
                 {titleText}
               </Typography>
               <div>
-                {canAdd && !isPrint && (
-                  <span className="data-table__action">
-                    <Typography display="inline">
-                      {addText || 'Add row'}
-                    </Typography>
-                    <IconButton
-                      onClick={() => onAdd(tableType ? { type: tableType } : null)}
-                      title="Add Row"
-                      className="data-table__icon-button"
-                    >
-                      <AddCircleOutlineIcon />
-                    </IconButton>
-                  </span>
-                )}
-                {canToggleColumns && !isPrint && (
+                {(canAdd || canToggleColumns || canExport || canReorder) && (
                   <span className="data-table__action">
                     <IconButton
-                      onClick={() => setShowPopover((prevVal) => !prevVal)}
+                      onClick={(event) => setMenuAnchor(event.currentTarget)}
                       className="data-table__icon-button"
                     >
                       <MoreHorizIcon />
                     </IconButton>
-                  </span>
-                )}
-                {canExport && !isPrint && (
-                  <span className="data-table__action">
-                    <Typography display="inline">
-                      Export to TSV
-                    </Typography>
-                    <IconButton
-                      onClick={handleCSVExport}
-                      title="Export to CSV"
-                      className="data-table__icon-button"
+                    <Menu
+                      anchorEl={menuAnchor}
+                      open={Boolean(menuAnchor)}
+                      onClose={() => setMenuAnchor(null)}
                     >
-                      <GetAppIcon />
-                    </IconButton>
-                  </span>
-                )}
-                {canReorder && !isPrint && (
-                  <span className="data-table__action">
-                    <Typography display="inline">
-                      Reorder Rows
-                    </Typography>
-                    <Switch
-                      checked={showReorder}
-                      onChange={toggleReorder}
-                      color="primary"
-                      title="Reorder Rows"
-                    />
+                      {canAdd && (
+                        <MenuItem onClick={() => handleMenuItemClick('add')}>
+                          {addText || 'Add row'}
+                        </MenuItem>
+                      )}
+                      {canToggleColumns && (
+                        <MenuItem onClick={() => handleMenuItemClick('toggle')}>
+                          Toggle Columns
+                        </MenuItem>
+                      )}
+                      {canExport && (
+                        <MenuItem onClick={() => handleMenuItemClick('export')}>
+                          Export to TSV
+                        </MenuItem>
+                      )}
+                      {canReorder && (
+                        <MenuItem onClick={() => handleMenuItemClick('reorder')}>
+                          Reorder Rows
+                        </MenuItem>
+                      )}
+                    </Menu>
                   </span>
                 )}
               </div>
@@ -423,6 +428,7 @@ const DataTable = ({
               editType="fullRow"
               onFilterChanged={handleFilterAndSortChanged}
               onSortChanged={handleFilterAndSortChanged}
+              noRowsOverlayComponent="NoRowsOverlay"
               context={{
                 canEdit,
                 canDelete,
@@ -435,6 +441,7 @@ const DataTable = ({
                 GeneCellRenderer,
                 ActionCellRenderer: RowActionCellRenderer,
                 headerCellRenderer: Header,
+                NoRowsOverlay,
               }}
               suppressAnimationFrame
               suppressColumnVirtualisation
@@ -464,65 +471,6 @@ const DataTable = ({
       )}
     </div>
   );
-};
-
-// PropTypes are defined for legacy angularjs -> react support
-// Default props are defined in the Type definition
-/* eslint-disable react/forbid-prop-types */
-/* eslint-disable react/require-default-props */
-DataTable.propTypes = {
-  /* Data populating table */
-  rowData: PropTypes.any,
-  /* Callback function when rowData is changed within the DataTable */
-  onRowDataChanged: PropTypes.any,
-  /* Column definitions for rowData */
-  columnDefs: PropTypes.any,
-  /* Table title */
-  titleText: PropTypes.string,
-  /* String to filter rows by */
-  filterText: PropTypes.string,
-  /* Can rows be edited? */
-  canEdit: PropTypes.bool,
-  /* Callback function when edit is started */
-  onEdit: PropTypes.any,
-  /* Can rows be deleted? */
-  canDelete: PropTypes.bool,
-  /* Callback function when delete is called */
-  onDelete: PropTypes.any,
-  /* Can rows be added to the table? */
-  canAdd: PropTypes.bool,
-  /* Callback function when add is called */
-  onAdd: PropTypes.any,
-  /* Text shown next to the add row button */
-  addText: PropTypes.string,
-  /* Needed for updating therapeutic tables
-     therapeutic or chemoresistance
-  */
-  tableType: PropTypes.string,
-  /* List of column names that are visible */
-  visibleColumns: PropTypes.array,
-  /* Callback to sync multiple tables */
-  syncVisibleColumns: PropTypes.any,
-  /* Can the visible columns be toggled? */
-  canToggleColumns: PropTypes.bool,
-  /* Can the row details be viewed? */
-  canViewDetails: PropTypes.bool,
-  /* Should the table be paginated? */
-  isPaginated: PropTypes.bool,
-  /* Should the table span the whole container? */
-  isFullLength: PropTypes.bool,
-  /* Can the rows be reordered? */
-  canReorder: PropTypes.bool,
-  /* Callback when a row is reordered */
-  onReorder: PropTypes.any,
-  /* Can the table rows be exported? */
-  canExport: PropTypes.bool,
-  /* Is the table being rendered for printing? */
-  isPrint: PropTypes.bool,
-  /* Row index to highlight */
-  highlightRow: PropTypes.number,
-  /* Custom header cell renderer */
-  Header: PropTypes.any,
 };
 
 export default DataTable;

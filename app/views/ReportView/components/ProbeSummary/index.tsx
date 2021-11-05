@@ -18,9 +18,9 @@ import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import { formatDate } from '@/utils/date';
 import SignatureCard, { SignatureType } from '@/components/SignatureCard';
 import PrintTable from '@/components/PrintTable';
+import TestInformation, { TestInformationType } from '@/components/TestInformation';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import { sampleColumnDefs, eventsColumnDefs } from './columnDefs';
-import TestInformation, { TestInformationType } from './components/TestInformation';
 import PatientEdit from '../GenomicSummary/components/PatientEdit';
 import EventsEditDialog from './components/EventsEditDialog';
 import ProbeResultsType from './types.d';
@@ -346,17 +346,20 @@ const ProbeSummary = ({
               <Typography variant="h3" className="probe-summary__test-information-title">
                 Test Information
               </Typography>
-              <TestInformation data={testInformation} />
+              <TestInformation
+                data={testInformation}
+                isPharmacogenomic={false}
+              />
             </div>
           )}
           {report && (
-            <span className="probe-summary__reviews">
+            <div className="probe-summary__reviews">
               {!isPrint && (
                 <Typography variant="h3" className="probe-summary__reviews-title">
                   Reviews
                 </Typography>
               )}
-              <div className={`${isPrint ? 'probe-summary__signatures' : ''}`}>
+              <div className="probe-summary__signatures">
                 <SignatureCard
                   title={`${isPrint ? 'Manual Review' : 'Ready'}`}
                   signatures={signatures}
@@ -372,7 +375,7 @@ const ProbeSummary = ({
                   isPrint={isPrint}
                 />
               </div>
-            </span>
+            </div>
           )}
         </>
       )}
