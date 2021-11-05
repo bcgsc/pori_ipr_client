@@ -12,7 +12,7 @@ import './index.scss';
 type ColumnPickerProps = {
   className?: string;
   label?: string;
-  columns: Column[],
+  columns: Partial<Column> & { name: string, isVisible: () => boolean }[],
   onClose: (colIds: string[]) => void,
   isOpen: boolean;
 };

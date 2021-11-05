@@ -27,6 +27,7 @@ describe('ColumnPicker', () => {
         columns={mockColumns}
         isOpen
         label={mockLabel}
+        onClose={() => {}}
       />,
     );
     expect(asFragment()).toMatchSnapshot();
@@ -38,6 +39,7 @@ describe('ColumnPicker', () => {
         columns={mockColumns}
         isOpen={false}
         label={mockLabel}
+        onClose={() => {}}
       />,
     );
     expect(screen.queryByRole('presentation')).toBeNull();
@@ -49,6 +51,7 @@ describe('ColumnPicker', () => {
         columns={mockColumns}
         isOpen
         label={mockLabel}
+        onClose={() => {}}
       />,
     );
     expect(await screen.findByText(mockLabel)).toBeInTheDocument();
@@ -60,10 +63,11 @@ describe('ColumnPicker', () => {
         columns={mockColumns}
         isOpen
         label={mockLabel}
+        onClose={() => {}}
       />,
     );
 
-    (await screen.findAllByRole('checkbox')).forEach((checkbox, index) => {
+    (await screen.findAllByRole('checkbox')).forEach((checkbox: HTMLInputElement, index) => {
       expect(checkbox.checked).toEqual(mockColumns[index].visible);
     });
   });
@@ -74,10 +78,11 @@ describe('ColumnPicker', () => {
         columns={mockColumns}
         isOpen
         label={mockLabel}
+        onClose={() => {}}
       />,
     );
 
-    (await screen.findAllByRole('checkbox')).forEach((checkbox, index) => {
+    (await screen.findAllByRole('checkbox')).forEach((checkbox: HTMLInputElement, index) => {
       fireEvent.click(checkbox);
       expect(checkbox.checked).toEqual(!mockColumns[index].visible);
     });

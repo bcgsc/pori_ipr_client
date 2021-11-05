@@ -14,7 +14,7 @@ const mockSelectedRow = {
   },
   svg: '<svg><g>test SVG</g></svg>',
   svgTitle: 'This is the text that appears',
-} as unknown as StructuralVariantType;
+} as Partial<StructuralVariantType>;
 
 describe('SvgViewer', () => {
   test('It matches the snapshot', () => {

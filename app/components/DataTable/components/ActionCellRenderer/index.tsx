@@ -28,7 +28,7 @@ type ActionCellRendererProps = {
   };
   onEdit?: (data) => void;
   onDelete?: (data: string) => void;
-} & ICellRendererParams;
+} & Partial<ICellRendererParams>;
 
 const ActionCellRenderer = ({
   data,

@@ -29,12 +29,17 @@ const mockColumnMapping = {
   detectedIn: 'Detected In',
 };
 
+const defaultProps = {
+  isOpen: true,
+  onClose: () => {},
+};
+
 describe('DetailDialog', () => {
   test('It matches the snapshot', () => {
     const { asFragment } = render(
       <DetailDialog
-        isOpen
         selectedRow={mockData}
+        {...defaultProps}
       />,
     );
     expect(asFragment()).toMatchSnapshot();
@@ -43,8 +48,8 @@ describe('DetailDialog', () => {
   test('Keys and values are all shown', () => {
     render(
       <DetailDialog
-        isOpen
         selectedRow={mockData}
+        {...defaultProps}
       />,
     );
     Object.entries(mockData).forEach(([key, val]) => {
@@ -71,8 +76,8 @@ describe('DetailDialog', () => {
   test('Array values are shown', () => {
     render(
       <DetailDialog
-        isOpen
         selectedRow={mockArrayData}
+        {...defaultProps}
       />,
     );
 
@@ -88,8 +93,8 @@ describe('DetailDialog', () => {
     render(
       <DetailDialog
         columnMapping={mockColumnMapping}
-        isOpen
         selectedRow={mockData}
+        {...defaultProps}
       />,
     );
 
@@ -100,8 +105,8 @@ describe('DetailDialog', () => {
   test('Certain fields are filtered from being shown', () => {
     render(
       <DetailDialog
-        isOpen
         selectedRow={mockFilteredData}
+        {...defaultProps}
       />,
     );
 

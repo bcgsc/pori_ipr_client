@@ -31,7 +31,7 @@ const getFrameText = (frame: string): string => {
 
 type SvgViewerProps = {
   onClose: () => void;
-  selectedRow: StructuralVariantType;
+  selectedRow: Partial<StructuralVariantType>;
   isOpen: boolean;
 };
 

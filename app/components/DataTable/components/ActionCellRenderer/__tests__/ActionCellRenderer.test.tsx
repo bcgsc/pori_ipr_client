@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
+import { ColumnApi } from '@ag-grid-community/core';
 
 import ActionCellRenderer from '..';
 
@@ -34,7 +35,7 @@ describe('ActionCellRenderer', () => {
   test('It shows the detail dialog when the icon is clicked', async () => {
     const mockColumnApi = {
       getAllColumns: jest.fn(() => []),
-    };
+    } as unknown as ColumnApi;
 
     render(
       <ActionCellRenderer
