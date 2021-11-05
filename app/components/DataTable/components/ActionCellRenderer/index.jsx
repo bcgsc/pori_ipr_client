@@ -78,129 +78,131 @@ function ActionCellRenderer(params) {
     setAnchorEl(null);
   };
 
-  return <>
-    {canViewDetails && (
-      <IconButton
-        size="small"
-        aria-label="View Details"
-        onClick={detailClick}
-        title="View Details"
-      >
-        <LibraryBooks />
-      </IconButton>
-    )}
-    {(!window._env_.IS_DEMO && data.kbStatementId && !Array.isArray(data.kbStatementId) && data.kbStatementId.match(/^#?-?\d+:-?\d+$/))
-      ? (
+  return (
+    <>
+      {canViewDetails && (
         <IconButton
           size="small"
-          aria-label="Open in GraphKB"
-          title="Open in GraphKB"
-          href={`${window._env_.GRAPHKB_URL}/view/Statement/${data.kbStatementId.replace('#', '')}`}
-          target="_blank"
-          rel="noreferrer noopener"
+          aria-label="View Details"
+          onClick={detailClick}
+          title="View Details"
         >
-          <OpenInNew />
+          <LibraryBooks />
         </IconButton>
-      ) : null
-    }
-    {(!window._env_.IS_DEMO && data.kbStatementId && Array.isArray(data.kbStatementId) && data.kbStatementId.some(statement => statement.match(/^#?-?\d+:-?\d+$/)))
-      ? (
-        <>
+      )}
+      {(!window._env_.IS_DEMO && data.kbStatementId && !Array.isArray(data.kbStatementId) && data.kbStatementId.match(/^#?-?\d+:-?\d+$/))
+        ? (
           <IconButton
             size="small"
             aria-label="Open in GraphKB"
             title="Open in GraphKB"
-            onClick={handleMenuOpen}
+            href={`${window._env_.GRAPHKB_URL}/view/Statement/${data.kbStatementId.replace('#', '')}`}
+            target="_blank"
+            rel="noreferrer noopener"
           >
             <OpenInNew />
           </IconButton>
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleMenuClose}
-          >
-            {data.kbStatementId.filter(statement => statement.match(/^#?-?\d+:-?\d+$/)).map(statement => (
-              <MenuItem
-                key={statement}
-                onClick={handleMenuClose}
-              >
-                <a
-                  className="action-cell-kb-statement__link"
-                  href={`${window._env_.GRAPHKB_URL}/view/Statement/${statement.replace('#', '')}`}
-                  target="_blank"
-                  rel="noreferrer noopener"
+        ) : null
+      }
+      {(!window._env_.IS_DEMO && data.kbStatementId && Array.isArray(data.kbStatementId) && data.kbStatementId.some(statement => statement.match(/^#?-?\d+:-?\d+$/)))
+        ? (
+          <>
+            <IconButton
+              size="small"
+              aria-label="Open in GraphKB"
+              title="Open in GraphKB"
+              onClick={handleMenuOpen}
+            >
+              <OpenInNew />
+            </IconButton>
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleMenuClose}
+            >
+              {data.kbStatementId.filter(statement => statement.match(/^#?-?\d+:-?\d+$/)).map(statement => (
+                <MenuItem
+                  key={statement}
+                  onClick={handleMenuClose}
                 >
-                  {statement}
-                </a>
-              </MenuItem>
-            ))}
-          </Menu>
-        </>
-      ) : null
-    }
-    {showDetailDialog && (
-      <DetailDialog
-        isOpen={showDetailDialog}
-        selectedRow={data}
-        onClose={handleDetailClose}
-        columnMapping={columnMapping}
-      />
-    )}
-    {canDelete && (
-      <IconButton
-        size="small"
-        aria-label="Delete"
-        onClick={() => onDelete(data.ident)}
-        title="Delete"
-      >
-        <Delete />
-      </IconButton>
-    )}
-    {canEdit && (
-      <IconButton
-        size="small"
-        aria-label="Edit"
-        onClick={() => onEdit(data)}
-        title="Edit"
-      >
-        <Edit />
-      </IconButton>
-    )}
-    {data.svg && (
-      <IconButton
-        size="small"
-        aria-label="View Fusion Diagram"
-        onClick={() => setShowSvgViewer(prevVal => !prevVal)}
-        title="View Fusion Diagram"
-      >
-        <Photo />
-      </IconButton>
-    )}
-    {showSvgViewer && (
-      <SvgViewer
-        isOpen={showSvgViewer}
-        selectedRow={data}
-        onClose={handleSvgViewerClose}
-      />
-    )}
-    {data.image && (
-      <IconButton
-        size="small"
-        aria-label="View Image"
-        onClick={() => setShowImageViewer(prevVal => !prevVal)}
-        title="View Image"
-      >
-        <Photo />
-      </IconButton>
-    )}
-    {showImageViewer && (
-      <ImageViewer
-        isOpen={showImageViewer}
-        selectedRow={data}
-        onClose={handleImageViewerClose}
-      />
-    )}
-  </>;
+                  <a
+                    className="action-cell-kb-statement__link"
+                    href={`${window._env_.GRAPHKB_URL}/view/Statement/${statement.replace('#', '')}`}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                  >
+                    {statement}
+                  </a>
+                </MenuItem>
+              ))}
+            </Menu>
+          </>
+        ) : null
+      }
+      {showDetailDialog && (
+        <DetailDialog
+          isOpen={showDetailDialog}
+          selectedRow={data}
+          onClose={handleDetailClose}
+          columnMapping={columnMapping}
+        />
+      )}
+      {canDelete && (
+        <IconButton
+          size="small"
+          aria-label="Delete"
+          onClick={() => onDelete(data.ident)}
+          title="Delete"
+        >
+          <Delete />
+        </IconButton>
+      )}
+      {canEdit && (
+        <IconButton
+          size="small"
+          aria-label="Edit"
+          onClick={() => onEdit(data)}
+          title="Edit"
+        >
+          <Edit />
+        </IconButton>
+      )}
+      {data.svg && (
+        <IconButton
+          size="small"
+          aria-label="View Fusion Diagram"
+          onClick={() => setShowSvgViewer(prevVal => !prevVal)}
+          title="View Fusion Diagram"
+        >
+          <Photo />
+        </IconButton>
+      )}
+      {showSvgViewer && (
+        <SvgViewer
+          isOpen={showSvgViewer}
+          selectedRow={data}
+          onClose={handleSvgViewerClose}
+        />
+      )}
+      {data.image && (
+        <IconButton
+          size="small"
+          aria-label="View Image"
+          onClick={() => setShowImageViewer(prevVal => !prevVal)}
+          title="View Image"
+        >
+          <Photo />
+        </IconButton>
+      )}
+      {showImageViewer && (
+        <ImageViewer
+          isOpen={showImageViewer}
+          selectedRow={data}
+          onClose={handleImageViewerClose}
+        />
+      )}
+    </>
+  );
 }
 
 export default ActionCellRenderer;
