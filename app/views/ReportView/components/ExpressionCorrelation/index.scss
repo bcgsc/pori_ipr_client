@@ -10,6 +10,10 @@
     justify-content: space-around;
     flex-wrap: wrap;
     margin: 24px 0;
+
+    & > * {
+      margin: 0 0 24px;
+    }
   }
 
   &__subtype {
@@ -20,6 +24,10 @@
   }
 
   &__title {
+    margin: 16px 0;
+  }
+
+  &__section {
     margin: 16px 0;
   }
 }

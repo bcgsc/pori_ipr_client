@@ -10,6 +10,15 @@ import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import { hlaColumnDefs, cellTypesColumnDefs } from './columnDefs';
 import { ImmuneType, HlaType } from './types';
 
+import './index.scss';
+
+const IMAGE_KEYS = [
+  'cibersort.combined_t-cell_scatter',
+  'cibersort.cd8_positive_t-cell_scatter',
+  'mixcr.circos_trb_vj_gene_usage',
+  'mixcr.dominance_vs_alpha_beta_t-cells_scatter',
+];
+
 type ImmuneProps = WithLoadingInjectedProps;
 
 const Immune = ({
@@ -29,7 +38,7 @@ const Immune = ({
           const [cellTypesResp, imagesResp, hlaTypesResp] = await Promise.all([
             api.get<ImmuneType[]>(`/reports/${report.ident}/immune-cell-types`).request(),
             api.get<ImageType[]>(
-              `/reports/${report.ident}/image/retrieve/cibersort.combined_t-cell_scatter,cibersort.cd8_positive_t-cell_scatter,mixcr.circos_trb_vj_gene_usage,mixcr.dominiance_vs_alpha_beta_t-cells_scatter`,
+              `/reports/${report.ident}/image/retrieve/${IMAGE_KEYS.join(',')}`,
             ).request(),
             api.get<HlaType[]>(`/reports/${report.ident}/hla-types`).request(),
           ]);
@@ -67,18 +76,22 @@ const Immune = ({
             canViewDetails
           />
           {Boolean(images.length) && (
-            <div>
+            <div className="immune__images">
               <Image
-                image={images.find(({ key }) => key === 'cibersort.combined_t-cell_scatter')}
-                showTitle
-                showCaption
+                height={500}
+                image={images.find(({ key }) => key === 'cibersort.cd8_positive_t-cell_scatter')}
                 isZoomable
+                showCaption
+                showTitle
+                width={500}
               />
               <Image
-                image={images.find(({ key }) => key === 'cibersort.cd8_positive_t-cell_scatter')}
-                showTitle
-                showCaption
+                height={500}
+                image={images.find(({ key }) => key === 'cibersort.combined_t-cell_scatter')}
                 isZoomable
+                showCaption
+                showTitle
+                width={500}
               />
             </div>
           )}
@@ -89,18 +102,22 @@ const Immune = ({
             canViewDetails
           />
           {Boolean(images.length) && (
-            <div>
+            <div className="immune__images">
               <Image
+                height={500}
                 image={images.find(({ key }) => key === 'mixcr.circos_trb_vj_gene_usage')}
-                showTitle
-                showCaption
                 isZoomable
+                showCaption
+                showTitle
+                width={500}
               />
               <Image
+                height={500}
                 image={images.find(({ key }) => key === 'mixcr.dominance_vs_alpha_beta_t-cells_scatter')}
-                showTitle
-                showCaption
                 isZoomable
+                showCaption
+                showTitle
+                width={500}
               />
             </div>
           )}

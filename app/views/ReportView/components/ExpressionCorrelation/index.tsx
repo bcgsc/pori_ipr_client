@@ -15,8 +15,26 @@ import DemoDescription from '@/components/DemoDescription';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import CorrelationPlot from './components/CorrelationPlot';
 import CorrelationType from './types.d';
+import PlotByKey from './components/PlotByKey';
 
 import './index.scss';
+
+const LEGACY_EXPRESSION_KEYS = [
+  { key: 'expression.chart', title: 'Expression Chart' },
+  { key: 'expression.legend', title: 'Expression Legend' },
+];
+
+const IMAGE_KEYS = [
+  { key: 'scpPlot', title: 'SCOPE' },
+];
+
+const EXPRESSION_KEYS = [
+  { key: 'expression.spearman.tcga', title: 'TCGA' },
+  { key: 'expression.spearman.target', title: 'TARGET' },
+  { key: 'expression.spearman.hartwig', title: 'HARTWIG' },
+  { key: 'expression.spearman.cser', title: 'CSER' },
+  { key: 'expression.spearman.gtex', title: 'GTEX' },
+];
 
 type ExpressionCorrelationProps = WithLoadingInjectedProps;
 
@@ -34,8 +52,14 @@ const ExpressionCorrelation = ({
     if (report) {
       const getData = async () => {
         try {
+          const allKeys = [
+            ...IMAGE_KEYS.map((group) => group.key),
+            ...LEGACY_EXPRESSION_KEYS.map((group) => group.key),
+            ...EXPRESSION_KEYS.map((group) => group.key),
+          ].join(',');
+
           const [plotData, subtypePlotData, pairwiseData] = await Promise.all([
-            api.get<ImageType[]>(`/reports/${report.ident}/image/retrieve/expression.chart,expression.legend,scpPlot`).request(),
+            api.get<ImageType[]>(`/reports/${report.ident}/image/retrieve/${allKeys}`).request(),
             api.get<ImageType[]>(`/reports/${report.ident}/image/subtype-plots`).request(),
             api.get<CorrelationType[]>(`/reports/${report.ident}/pairwise-expression-correlation`).request(),
           ]);
@@ -54,49 +78,75 @@ const ExpressionCorrelation = ({
     }
   }, [report, setIsLoading]);
 
-  return (
+  const sampleExpressionCharts = (keySet: { key: string, title: string }[]): JSX.Element => (
     <>
-      <div className="expression-correlation">
-        <DemoDescription>
-          The overall gene expression in the tumour is compared to a gene expression profiles from
-          variety of tumour types, either from internal or external curated datasets, using a
-          correlation approach, to highlight the most similar tumour types. In addition, the tumour
-          is compared to previously sequenced tumours to identify the most similar individual
-          samples. Subtyping based on gene expression is computed if applicable for the tumour type.
-        </DemoDescription>
-        {!isLoading && (
-          <>
-            <div>
-              <Typography variant="h3">Sample-Sample Expression Correlation</Typography>
-              <div className="expression-correlation__expression-charts">
-                <span>
-                  <Typography variant="h3" align="center" className="expression-correlation__header">
-                    Expression Chart
-                  </Typography>
-                  <Image
-                    image={plots.find((plot) => plot.key === 'expression.chart')}
-                    showTitle
-                    showCaption
-                  />
-                </span>
-                <span>
-                  <Typography variant="h3" align="center" className="expression-correlation__header">
-                    Expression Legend
-                  </Typography>
-                  <Image
-                    image={plots.find((plot) => plot.key === 'expression.legend')}
-                    showTitle
-                    showCaption
-                  />
-                </span>
-              </div>
+      {keySet.map((group) => (
+        <div key={group.key}>
+          <Typography variant="h3" align="center" className="expression-correlation__header">
+            {group.title}
+          </Typography>
+          <PlotByKey
+            accessor={group.key}
+            plots={plots}
+          />
+        </div>
+      ))}
+    </>
+  );
+
+  return (
+    <div className="expression-correlation">
+      <DemoDescription>
+        The overall gene expression in the tumour is compared to a gene expression profiles from
+        variety of tumour types, either from internal or external curated datasets, using a
+        correlation approach, to highlight the most similar tumour types. In addition, the tumour
+        is compared to previously sequenced tumours to identify the most similar individual
+        samples. Subtyping based on gene expression is computed if applicable for the tumour type.
+      </DemoDescription>
+      {!isLoading && (
+        <>
+          <Typography variant="h3">
+            Pairwise Expression Correlation
+          </Typography>
+          <CorrelationPlot
+            pairwiseExpression={pairwiseExpression}
+          />
+          <Divider />
+          <div className="expression-correlation__section">
+            <Typography variant="h3">Sample-Sample Expression Correlation</Typography>
+            <div className="expression-correlation__expression-charts">
+              {sampleExpressionCharts(plots.find((plot) => plot.key === 'expression.chart')
+                ? LEGACY_EXPRESSION_KEYS
+                : EXPRESSION_KEYS)
+              }
             </div>
-            {Boolean(subtypePlots.length) && (
-              <div className="expression-correlation__subtype">
-                <span>
-                  <Typography variant="h3" align="center" className="expression-correlation__header">
-                    Subtype Plots
-                  </Typography>
+          </div>
+          {/* This section should only appear if there's data */}
+          {Boolean(plots?.length) && plots.find((plot) => plot.key === 'scpPlot') && (
+            <>
+              <Divider />
+              <div className="expression-correlation__section">
+                <Typography className="expression-correlation__title" variant="h3">
+                  SCOPE
+                </Typography>
+                <div className="expression-correlation__scp-plot">
+                  <PlotByKey
+                    plots={plots}
+                    accessor="scpPlot"
+                  />
+                </div>
+              </div>
+            </>
+          )}
+          {/* This section should only appear if there's data */}
+          {Boolean(subtypePlots.length) && (
+            <>
+              <Divider />
+              <div className="expression-correlation__section">
+                <Typography variant="h3" className="expression-correlation__header">
+                  Subtyping
+                </Typography>
+                <div className="expression-correlation__subtype">
                   {subtypePlots.map((plot) => (
                     <Image
                       key={plot.ident}
@@ -105,31 +155,13 @@ const ExpressionCorrelation = ({
                       showCaption
                     />
                   ))}
-                </span>
+                </div>
               </div>
-            )}
-            <Divider />
-            <Typography className="expression-correlation__title" variant="h3">
-              Pairwise Expression Correlation
-            </Typography>
-            <CorrelationPlot
-              pairwiseExpression={pairwiseExpression}
-            />
-            <Divider />
-            <Typography className="expression-correlation__title" variant="h3">
-              SCOPE
-            </Typography>
-            <div className="expression-correlation__scp-plot">
-              <Image
-                image={plots.find((plot) => plot.key === 'scpPlot')}
-                showTitle
-                showCaption
-              />
-            </div>
-          </>
-        )}
-      </div>
-    </>
+            </>
+          )}
+        </>
+      )}
+    </div>
   );
 };
 
