@@ -77,7 +77,7 @@ const ProbeSummary = ({
 
           probeResultsData.forEach((probe) => {
             smallMutationsData.forEach((mutation) => {
-              if (probe.gene.name === mutation.gene.name) {
+              if (probe.gene.name === mutation.gene.name && probe.variant.includes(mutation.proteinChange)) {
                 if (mutation.tumourRefCount !== null || mutation.tumourAltCount !== null) {
                   probe.tumourDna = `${mutation.tumourRefCount}/${mutation.tumourAltCount}`;
                 }
