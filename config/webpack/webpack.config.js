@@ -3,7 +3,6 @@ const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const DashboardPlugin = require('webpack-dashboard/plugin');
-const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const packageFile = require('../../package.json');
 
@@ -44,22 +43,23 @@ module.exports = (env) => ({
           {
             test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.svg$/],
             exclude: /node_modules/,
-            loader: 'file-loader',
-            options: {
-              name: 'img/[name].[hash:8].[ext]',
+            type: 'asset/resource',
+            generator: {
+              filename: 'img/[name].[hash:8].[ext]',
             },
           },
           {
             test: /\.woff(2)?$/,
-            use: [
-              {
-                loader: 'file-loader',
-                options: {
-                  name: 'font/[hash].[ext]',
-                  esModule: false,
-                },
-              },
-            ],
+            type: 'asset/resource',
+            generator: {
+              filename: 'font/[hash].[ext]',
+            },
+          },
+          {
+            test: /\.m?js/,
+            resolve: {
+              fullySpecified: false,
+            },
           },
         ],
       },
@@ -99,7 +99,6 @@ module.exports = (env) => ({
     new webpack.DefinePlugin({
       VERSION: JSON.stringify(packageFile.version),
     }),
-    new MomentLocalesPlugin(),
     new CleanWebpackPlugin(),
     new BundleAnalyzerPlugin({
       analyzerMode: env && env.ANALYZE ? 'server' : 'disabled',
@@ -113,7 +112,6 @@ module.exports = (env) => ({
       chunks: 'all',
       minSize: 1000 * 500,
     },
-    moduleIds: 'hashed',
   },
   mode: 'development',
   devtool: 'inline-source-map',
