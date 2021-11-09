@@ -2,7 +2,6 @@ const path = require('path');
 const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const DashboardPlugin = require('webpack-dashboard/plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const packageFile = require('../../package.json');
 
@@ -26,7 +25,12 @@ module.exports = (env) => ({
             use: [
               'style-loader',
               'css-loader',
-              'sass-loader',
+              {
+                loader: 'sass-loader',
+                options: {
+                  sassOptions: { quietDeps: true },
+                }
+              },
             ],
           },
           {
@@ -94,8 +98,6 @@ module.exports = (env) => ({
         }
       ],
     }),
-    new webpack.HotModuleReplacementPlugin(),
-    new DashboardPlugin({ port: 3000 }),
     new webpack.DefinePlugin({
       VERSION: JSON.stringify(packageFile.version),
     }),
@@ -123,13 +125,14 @@ module.exports = (env) => ({
     publicPath: '', // makes scripts relative so base tag can work
   },
   devServer: {
-    contentBase: path.join(__dirname, '../../dist'),
-    compress: true,
+    static: {
+      directory: path.join(__dirname, '../../dist'),
+      publicPath: '/',
+    },
     port: 3000,
     host: process.env.HOSTNAME || '0.0.0.0',
     hot: true,
     allowedHosts: ['.phage.bcgsc.ca'],
-    publicPath: '/',
     historyApiFallback: true,
   },
 });
