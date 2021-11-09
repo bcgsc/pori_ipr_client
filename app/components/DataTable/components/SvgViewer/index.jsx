@@ -7,7 +7,7 @@ import {
   DialogActions,
   Typography,
   Button,
-} from '@material-ui/core';
+} from '@mui/material';
 import { UncontrolledReactSVGPanZoom } from 'react-svg-pan-zoom';
 import InlineSVG from 'svg-inline-react';
 import AutoSizer from 'react-virtualized/dist/es/AutoSizer';

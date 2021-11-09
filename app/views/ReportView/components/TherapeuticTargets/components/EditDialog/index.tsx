@@ -9,7 +9,7 @@ import {
   DialogTitle,
   FormControl,
   TextField,
-} from '@material-ui/core';
+} from '@mui/material';
 
 import api from '@/services/api';
 import ConfirmContext from '@/context/ConfirmContext';

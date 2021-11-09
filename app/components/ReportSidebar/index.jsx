@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { Link, useLocation } from 'react-router-dom';
 import {
   List, ListItem, ListItemText,
-} from '@material-ui/core';
-import PrintIcon from '@material-ui/icons/Print';
+} from '@mui/material';
+import PrintIcon from '@mui/icons-material/Print';
 
 import ReportContext from '@/context/ReportContext';
 

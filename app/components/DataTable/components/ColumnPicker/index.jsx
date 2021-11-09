@@ -3,7 +3,7 @@ import {
   MenuList,
   Checkbox,
   Dialog,
-} from '@material-ui/core';
+} from '@mui/material';
 import PropTypes from 'prop-types';
 
 import './index.scss';

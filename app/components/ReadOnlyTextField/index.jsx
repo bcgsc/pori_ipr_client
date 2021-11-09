@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   TextField, Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 
 import './index.scss';
 

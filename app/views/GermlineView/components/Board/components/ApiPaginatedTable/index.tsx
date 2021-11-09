@@ -4,14 +4,14 @@ import React, {
 import { AgGridReact } from '@ag-grid-community/react';
 import { ColDef } from '@ag-grid-community/core';
 import { useSnackbar } from 'notistack';
-import GetAppIcon from '@material-ui/icons/GetApp';
+import GetAppIcon from '@mui/icons-material/GetApp';
 import {
   Typography,
   IconButton,
   TextField,
   InputAdornment,
-} from '@material-ui/core';
-import SearchIcon from '@material-ui/icons/Search';
+} from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 
 import api from '@/services/api';
 import useGrid from '@/hooks/useGrid';
@@ -118,7 +118,7 @@ const ApiPaginatedTable = ({
           </div>
           <div className="paginated-table__action">
             <Typography display="inline">Download Export</Typography>
-            <IconButton onClick={handleExport}>
+            <IconButton onClick={handleExport} size="large">
               <GetAppIcon />
             </IconButton>
           </div>

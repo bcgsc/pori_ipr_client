@@ -3,14 +3,14 @@ import {
   IconButton,
   Menu,
   MenuItem,
-} from '@material-ui/core';
+} from '@mui/material';
 import {
   Edit,
   Photo,
   LibraryBooks,
   OpenInNew,
   Delete,
-} from '@material-ui/icons';
+} from '@mui/icons-material';
 import DetailDialog from '../DetailDialog';
 import SvgViewer from '../SvgViewer';
 import ImageViewer from '../ImageViewer';

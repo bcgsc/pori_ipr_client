@@ -5,7 +5,7 @@ import {
   Checkbox,
   FormControlLabel,
   Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 import { AgGridReact } from '@ag-grid-community/react';
 
 import useGrid from '@/hooks/useGrid';

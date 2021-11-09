@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Typography, Paper } from '@material-ui/core';
+import { Typography, Paper } from '@mui/material';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { ColDef, ColGroupDef } from '@ag-grid-community/core';
 

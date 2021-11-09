@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import {
   Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 
 import DataTable from '@/components/DataTable';
 import ReportContext from '@/context/ReportContext';

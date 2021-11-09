@@ -2,17 +2,9 @@
  * @module /App
  */
 import { SnackbarProvider } from 'notistack';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import {
-  createMuiTheme,
-  MuiThemeProvider,
-  createGenerateClassName,
-  jssPreset,
-  StylesProvider,
-} from '@material-ui/core/styles';
-import { create } from 'jss';
+import CssBaseline from '@mui/material/CssBaseline';
+import { createTheme, ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
 import React from 'react';
-import { JssProvider } from 'react-jss';
 import { BrowserRouter } from 'react-router-dom';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
@@ -28,7 +20,7 @@ import '@ag-grid-community/core/dist/styles/ag-theme-material.min.css';
 import '@fontsource/roboto';
 import './styles/ag-grid.scss';
 
-const theme = createMuiTheme({
+const theme = createTheme({
   direction: 'ltr',
   palette: {
     primary: {
@@ -52,7 +44,6 @@ const theme = createMuiTheme({
     text: {
       primary: cssTheme.textPrimary,
       secondary: cssTheme.textSecondary,
-      hint: cssTheme.textHint,
       disabled: cssTheme.textDisabled,
     },
   },
@@ -67,36 +58,35 @@ const theme = createMuiTheme({
     h6: { fontSize: cssTheme.fontSizeH6 },
     subtitle1: { fontSize: cssTheme.fontSizeSubtitle1 },
   },
-  // Dialog title header bug: https://github.com/mui-org/material-ui/issues/16569
-  props: {
-    MuiDialogTitle: {
-      disableTypography: true,
-    },
-  },
-  overrides: {
-    MuiDialogTitle: {
-      root: {
-        fontSize: cssTheme.fontSizeH3,
-      },
-    },
+  components: {
     MuiCssBaseline: {
-      '@global': {
-        html: {
-          WebkitFontSmoothing: 'auto',
+      styleOverrides: {
+        '@global': {
+          html: {
+            WebkitFontSmoothing: 'auto',
+          },
         },
       },
     },
+    MuiDialogTitle: {
+      styleOverrides: {
+        root: {
+          fontSize: cssTheme.fontSizeH2,
+        },
+      },
+    },
+    MuiButton: {
+      defaultProps: {
+        color: 'inherit',
+      },
+    },
+    MuiTabs: {
+      defaultProps: {
+        indicatorColor: 'secondary',
+        textColor: 'secondary',
+      },
+    },
   },
-});
-
-const generateClassName = createGenerateClassName({
-  productionPrefix: 'ipr',
-});
-
-const jss = create({
-  ...jssPreset(),
-  // We define a custom insertion point that JSS will look for injecting the styles in the DOM.
-  insertionPoint: 'jss-insertion-point',
 });
 
 ModuleRegistry.registerModules([
@@ -109,21 +99,19 @@ ModuleRegistry.registerModules([
  */
 function App() {
   return (
-    <StylesProvider generateClassName={generateClassName} injectFirst>
-      <JssProvider jss={jss}>
-        <MuiThemeProvider theme={theme}>
-          <SnackbarProvider anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}>
-            <SnackbarUtilsConfigurator />
-            <CssBaseline />
-            <BrowserRouter basename={window._env_.PUBLIC_PATH}>
-              <CacheBuster>
-                <MainView />
-              </CacheBuster>
-            </BrowserRouter>
-          </SnackbarProvider>
-        </MuiThemeProvider>
-      </JssProvider>
-    </StylesProvider>
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={theme}>
+        <SnackbarProvider anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}>
+          <SnackbarUtilsConfigurator />
+          <CssBaseline />
+          <BrowserRouter basename={window._env_.PUBLIC_PATH}>
+            <CacheBuster>
+              <MainView />
+            </CacheBuster>
+          </BrowserRouter>
+        </SnackbarProvider>
+      </ThemeProvider>
+    </StyledEngineProvider>
   );
 }
 

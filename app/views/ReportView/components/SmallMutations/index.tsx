@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import {
   Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';

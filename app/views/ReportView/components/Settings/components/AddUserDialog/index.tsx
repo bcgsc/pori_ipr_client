@@ -11,7 +11,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
-} from '@material-ui/core';
+} from '@mui/material';
 
 import api from '@/services/api';
 import UserAutocomplete from '@/components/UserAutocomplete';

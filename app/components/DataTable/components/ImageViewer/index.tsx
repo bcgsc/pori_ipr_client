@@ -4,7 +4,7 @@ import {
   DialogContent,
   DialogActions,
   Button,
-} from '@material-ui/core';
+} from '@mui/material';
 import Image from '@/components/Image';
 import { SelectedRow } from './interfaces';
 

@@ -2,8 +2,8 @@ import React, {
   useEffect, useState, useReducer, useMemo, lazy,
 } from 'react';
 import { useParams } from 'react-router-dom';
-import { Typography } from '@material-ui/core';
-import { useTheme } from '@material-ui/core/styles';
+import { Typography } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { Previewer } from 'pagedjs';
 
 import api from '@/services/api';
