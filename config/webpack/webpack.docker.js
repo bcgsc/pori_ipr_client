@@ -7,7 +7,7 @@ const common = require('./webpack.config.js');
 
 const prodConfig = (env) => ({
   mode: 'production',
-  devtool: 'none',
+  devtool: undefined,
   optimization: {
     usedExports: true,
   },
