@@ -95,7 +95,11 @@ const CommentCard = ({
         <Typography display="inline" variant="caption">
           {formatDate(comment.createdAt, true)}
           {comment.updatedAt !== comment.createdAt && (
-            <Tooltip placement="right-end" title={`Edited on ${formatDate(comment.updatedAt, true)}`}>
+            <Tooltip
+              describeChild
+              placement="right-end"
+              title={`Edited on ${formatDate(comment.updatedAt, true)}`}
+            >
               <span>
                 *
               </span>

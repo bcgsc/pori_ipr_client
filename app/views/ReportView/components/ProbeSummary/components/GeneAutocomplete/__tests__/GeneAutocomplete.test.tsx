@@ -67,12 +67,12 @@ describe('GeneAutocomplete', () => {
         onChange={() => {}}
       />,
     );
+    fireEvent.click(await screen.findByRole('button'));
     
-    (await screen.findByRole('textbox')).focus();
-    
-    mockGeneOptions.forEach((option) => {
-      expect(screen.getByText(option.name)).toBeTruthy();
-    });
+    const elems = await Promise.all(mockGeneOptions.map((option) => (
+      screen.findByText(option.name)
+    )));
+    elems.forEach((elem) => expect(elem).toBeInTheDocument());
   });
 
   test('Options are filtered by input text', async () => {
@@ -101,7 +101,7 @@ describe('GeneAutocomplete', () => {
     fireEvent.change(await screen.findByRole('textbox'), { target: { value: 'TP' } });
     fireEvent.click(await screen.findByText(mockGene.name));
     fireEvent.change(await screen.findByRole('textbox'), { target: { value: '' } });
-    (await screen.findByRole('textbox')).focus();
+    fireEvent.click(await screen.findByRole('button'));
 
     mockGeneOptions.forEach((option) => {
       expect(screen.getByText(option.name)).toBeTruthy();
