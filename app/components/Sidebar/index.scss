@@ -19,7 +19,7 @@
   }
 
   &__list-item {
-    min-width: calc($sidebar-size - 1);
+    min-width: calc($sidebar-size - 1px);
     cursor: pointer;
     transition: background-color $transition-fast;
     padding: 0;
