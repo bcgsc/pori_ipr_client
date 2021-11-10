@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import NewTabLink from '@/components/NewTabLink';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { ICellRendererParams } from '@ag-grid-community/core';
 
 type EnsemblCellRendererProps = ICellRendererParams;
@@ -27,6 +28,6 @@ const EnsemblCellRenderer = ({
   return (
     <NewTabLink link={link} text={text} />
   );
-}
+};
 
 export default EnsemblCellRenderer;

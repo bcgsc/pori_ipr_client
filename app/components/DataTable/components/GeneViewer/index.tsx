@@ -1,7 +1,6 @@
 import React, {
   useEffect, useState, useContext,
 } from 'react';
-import PropTypes from 'prop-types';
 import {
   Dialog,
   DialogTitle,
@@ -13,40 +12,37 @@ import {
   Tab,
   AppBar,
 } from '@material-ui/core';
-import { useSnackbar } from 'notistack';
 import { AgGridReact } from '@ag-grid-community/react';
 
 import api from '@/services/api';
+import snackbar from '@/services/SnackbarUtils';
 import ReportContext from '@/context/ReportContext';
 import { columnDefs } from '@/views/ReportView/components/KbMatches/columnDefs';
 import { columnDefs as smallMutationsColumnDefs } from '@/views/ReportView/components/SmallMutations/columnDefs';
 import copyNumberColumnDefs from '@/views/ReportView/components/CopyNumber/columnDefs';
 import expressionColumnDefs from '@/views/ReportView/components/Expression/columnDefs';
 import structuralVariantsColumnDefs from '@/views/ReportView/components/StructuralVariants/columnDefs';
+import { GeneViewerType } from './types';
 
 import './index.scss';
 
-/**
- * @param {object} props props
- * @param {func} props.onClose parent close handler
- * @param {string} props.gene gene name
- * @param {bool} props.isOpen is open?
- * @return {*} JSX
- */
-const GeneViewer = (props) => {
-  const {
-    onClose,
-    isOpen,
-    gene,
-  } = props;
+type GeneViewerProps = {
+  onClose: () => void;
+  isOpen: boolean;
+  gene: string;
+};
 
-  const snackbar = useSnackbar();
+const GeneViewer = ({
+  onClose,
+  isOpen,
+  gene,
+}: GeneViewerProps): JSX.Element => {
   const { report } = useContext(ReportContext);
 
-  const [geneData, setGeneData] = useState();
+  const [geneData, setGeneData] = useState<GeneViewerType>();
   const [tabValue, setTabValue] = useState(0);
 
-  const handleTabChange = (event, newValue) => {
+  const handleTabChange = (event, newValue: number) => {
     setTabValue(newValue);
   };
 
@@ -57,13 +53,13 @@ const GeneViewer = (props) => {
           const resp = await api.get(`/reports/${report.ident}/gene-viewer/${gene}`).request();
           setGeneData(resp);
         } catch {
-          snackbar.enqueueSnackbar(`Error: gene viewer data does not exist for ${gene}`);
-          onClose(null);
+          snackbar.error(`Error: gene viewer data does not exist for ${gene}`);
+          onClose();
         }
       };
       getData();
     }
-  }, [gene, onClose, isOpen, report, snackbar]);
+  }, [gene, onClose, isOpen, report]);
 
   return (
     <Dialog
@@ -160,12 +156,6 @@ const GeneViewer = (props) => {
       </DialogActions>
     </Dialog>
   );
-};
-
-GeneViewer.propTypes = {
-  onClose: PropTypes.func.isRequired,
-  gene: PropTypes.string.isRequired,
-  isOpen: PropTypes.bool.isRequired,
 };
 
 export default GeneViewer;
