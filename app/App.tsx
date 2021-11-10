@@ -13,13 +13,14 @@ import { CsvExportModule } from '@ag-grid-community/csv-export';
 import MainView from './views/MainView';
 import { SnackbarUtilsConfigurator } from './services/SnackbarUtils';
 import CacheBuster from './components/CacheBuster';
-import cssTheme from './styles/_theme.scss';
+import cssTheme from './styles/_theme.module.scss';
 
 import '@ag-grid-community/core/dist/styles/ag-grid.min.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-material.min.css';
 import '@fontsource/roboto';
 import './styles/ag-grid.scss';
 
+console.log(cssTheme);
 const theme = createTheme({
   direction: 'ltr',
   palette: {
