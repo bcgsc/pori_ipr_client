@@ -1,4 +1,4 @@
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const webpack = require('webpack');
 const merge = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -10,6 +10,9 @@ const prodConfig = (env) => ({
   devtool: undefined,
   optimization: {
     usedExports: true,
+    minimizer: [
+      new CssMinimizerPlugin(),
+    ],
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -33,7 +36,6 @@ const prodConfig = (env) => ({
         },
       }),
     }),
-    new OptimizeCSSAssetsPlugin({}),
   ],
 });
 
