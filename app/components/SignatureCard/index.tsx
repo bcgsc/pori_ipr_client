@@ -160,4 +160,4 @@ const SignatureCard = ({
 
 export default SignatureCard;
 
-export { SignatureType };
+export type { SignatureType };

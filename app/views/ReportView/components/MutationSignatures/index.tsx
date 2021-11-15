@@ -177,4 +177,4 @@ const MutationSignatures = ({
 
 export default withLoading(MutationSignatures);
 
-export { MutationSignatureType };
+export type { MutationSignatureType };

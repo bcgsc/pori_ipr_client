@@ -104,6 +104,6 @@ const TestInformation = ({
   </Grid>
 );
 
-export { TestInformationType };
+export type { TestInformationType };
 
 export default TestInformation;
