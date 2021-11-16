@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -8,17 +7,16 @@ import {
   Typography,
   Button,
 } from '@mui/material';
-import { UncontrolledReactSVGPanZoom } from 'react-svg-pan-zoom';
-import InlineSVG from 'svg-inline-react';
-import AutoSizer from 'react-virtualized/dist/es/AutoSizer';
 import { AgGridReact } from '@ag-grid-community/react';
 
+import SvgImage from '@/components/SvgImage';
+import { StructuralVariantType } from '@/common';
 import EnsemblCellRenderer from '../EnsemblCellRenderer';
 import columnDefs, { setHeaderName } from './columnDefs';
 
 import './index.scss';
 
-const getFrameText = (frame) => {
+const getFrameText = (frame: string): string => {
   switch (frame) {
     case 'OUT':
       return 'Out of frame';
@@ -31,35 +29,21 @@ const getFrameText = (frame) => {
   }
 };
 
-/**
- * @param {object} props props
- * @param {func} props.onClose parent close handler
- * @param {object} props.selectedRow current row object
- * @param {bool} props.isOpen is open?
- * @return {*} JSX
- */
-function SvgViewer(props) {
-  const {
-    onClose,
-    selectedRow,
-    isOpen,
-  } = props;
+type SvgViewerProps = {
+  onClose: () => void;
+  selectedRow: Partial<StructuralVariantType>;
+  isOpen: boolean;
+};
 
-  const [svgSize, setSvgSize] = useState({
-    height: 500,
-    width: 500,
-  });
+const SvgViewer = ({
+  onClose,
+  selectedRow,
+  isOpen,
+}: SvgViewerProps): JSX.Element => {
   const [rowData, setRowData] = useState([]);
 
   useEffect(() => {
     if (selectedRow.svg) {
-      const svg = new DOMParser().parseFromString(selectedRow.svg, 'image/svg+xml');
-      const [svgElem] = svg.getElementsByTagName('svg');
-      setSvgSize({
-        height: svgElem.height.baseVal.value,
-        width: svgElem.width.baseVal.value,
-      });
-
       setRowData([{
         ...selectedRow,
         position: '5`',
@@ -84,15 +68,15 @@ function SvgViewer(props) {
     }
   }, [selectedRow]);
 
-  const handleClose = (value) => {
-    onClose(value);
-  };
+  const handleClose = useCallback(() => {
+    onClose();
+  }, [onClose]);
 
   return (
     <Dialog
       onClose={handleClose}
       open={isOpen}
-      maxWidth="xl"
+      maxWidth="lg"
       fullWidth
     >
       <DialogTitle>
@@ -104,22 +88,9 @@ function SvgViewer(props) {
       </DialogTitle>
       <DialogContent>
         {selectedRow.svg && (
-          <AutoSizer disableHeight>
-            {({ width }) => (
-              <UncontrolledReactSVGPanZoom
-                width={width}
-                height={svgSize.height}
-                background="#FFFFFF"
-                detectAutoPan={false}
-                customMiniature={() => null}
-                toolbarProps={{ position: 'left' }}
-              >
-                <svg width={svgSize.width} height={svgSize.height}>
-                  <InlineSVG src={selectedRow.svg} raw />
-                </svg>
-              </UncontrolledReactSVGPanZoom>
-            )}
-          </AutoSizer>
+          <SvgImage
+            image={selectedRow.svg}
+          />
         )}
         <div className="ag-theme-material">
           <AgGridReact
@@ -142,12 +113,6 @@ function SvgViewer(props) {
       </DialogActions>
     </Dialog>
   );
-}
-
-SvgViewer.propTypes = {
-  onClose: PropTypes.func.isRequired,
-  selectedRow: PropTypes.objectOf(PropTypes.any).isRequired,
-  isOpen: PropTypes.bool.isRequired,
 };
 
 export default SvgViewer;

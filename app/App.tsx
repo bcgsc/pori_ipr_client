@@ -6,6 +6,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { createTheme, ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { CsvExportModule } from '@ag-grid-community/csv-export';
@@ -15,7 +16,9 @@ import { SnackbarUtilsConfigurator } from './services/SnackbarUtils';
 import CacheBuster from './components/CacheBuster';
 import cssTheme from './styles/_theme.module.scss';
 
+// eslint-disable-next-line import/no-extraneous-dependencies
 import '@ag-grid-community/core/dist/styles/ag-grid.min.css';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import '@ag-grid-community/core/dist/styles/ag-theme-material.min.css';
 import '@fontsource/roboto';
 import './styles/ag-grid.scss';
