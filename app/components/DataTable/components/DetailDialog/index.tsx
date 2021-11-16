@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -10,6 +9,13 @@ import './index.scss';
 
 const { compare } = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
 
+type DetailDialogProps = {
+  onClose: (value: string) => void,
+  selectedRow,
+  isOpen: boolean,
+  columnMapping?: Record<string, string>,
+};
+
 /**
  * @param {object} props props
  * @param {func} props.onClose callback function to run on close
@@ -18,20 +24,14 @@ const { compare } = new Intl.Collator(undefined, { numeric: true, sensitivity: '
  * @param {object} props.columnMapping mapping object for displayed col names
  * @return {*} jsx
  */
-function DetailDialog(props) {
-  const {
-    onClose,
-    selectedRow,
-    isOpen,
-    columnMapping,
-  } = props;
-
-  const handleClose = (value) => {
-    onClose(value);
-  };
-
-  const printRow = rows => Object.entries(rows)
-    .sort(compare)
+const DetailDialog = ({
+  onClose,
+  selectedRow,
+  isOpen,
+  columnMapping = {},
+}: DetailDialogProps): JSX.Element => {
+  const renderRow = (rows) => Object.entries(rows)
+    .sort(([a], [b]) => compare(a, b))
     .map(([key, value], index, rowEntries) => {
       if (['ident', 'svg', 'svgTitle', 'image'].includes(key) || value === null) {
         return null;
@@ -55,7 +55,7 @@ function DetailDialog(props) {
                         ? (
                           <>
                             <Divider />
-                            {printRow(arrVal)}
+                            {renderRow(arrVal)}
                           </>
                         )
                         : (
@@ -70,7 +70,7 @@ function DetailDialog(props) {
             ) : null}
             <div className="detail-dialog__row">
               <Typography variant="subtitle2" display="inline">
-                {']'}
+                ]
               </Typography>
             </div>
             <Divider />
@@ -87,7 +87,7 @@ function DetailDialog(props) {
               </Typography>
             </div>
             <div className="detail-dialog__inner-row">
-              {printRow(value)}
+              {renderRow(value)}
             </div>
             <div className="detail-dialog__row">
               <Typography variant="subtitle2">
@@ -114,28 +114,16 @@ function DetailDialog(props) {
       );
     });
 
-
   return (
-    <Dialog onClose={handleClose} open={isOpen}>
+    <Dialog onClose={onClose} open={isOpen}>
       <DialogTitle>
         Detailed View
       </DialogTitle>
       <DialogContent>
-        {printRow(selectedRow)}
+        {renderRow(selectedRow)}
       </DialogContent>
     </Dialog>
   );
-}
-
-DetailDialog.propTypes = {
-  onClose: PropTypes.func.isRequired,
-  selectedRow: PropTypes.objectOf(PropTypes.any).isRequired,
-  isOpen: PropTypes.bool.isRequired,
-  columnMapping: PropTypes.objectOf(PropTypes.string),
-};
-
-DetailDialog.defaultProps = {
-  columnMapping: {},
 };
 
 export default DetailDialog;

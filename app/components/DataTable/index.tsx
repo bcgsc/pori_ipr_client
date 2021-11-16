@@ -415,6 +415,7 @@ const DataTable = ({
               ref={gridRef}
               columnDefs={columnDefs}
               rowData={rowData}
+              data-testid="grid"
               defaultColDef={defaultColDef}
               onGridReady={onGridReady}
               domLayout={domLayout}

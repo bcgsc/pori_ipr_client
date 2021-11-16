@@ -7,9 +7,9 @@ import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
 import ReportContext from '@/context/ReportContext';
+import { SmallMutationType } from '@/common';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import { columnDefs } from './columnDefs';
-import MutationType from './types';
 
 import './index.scss';
 
@@ -36,7 +36,7 @@ const SmallMutations = ({
   setIsLoading,
 }: SmallMutationsProps): JSX.Element => {
   const { report } = useContext(ReportContext);
-  const [smallMutations, setSmallMutations] = useState<MutationType[]>([]);
+  const [smallMutations, setSmallMutations] = useState<SmallMutationType[]>([]);
   const [groupedSmallMutations, setGroupedSmallMutations] = useState({
     therapeutic: [],
     nostic: [],
