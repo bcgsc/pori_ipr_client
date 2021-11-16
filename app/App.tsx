@@ -23,7 +23,6 @@ import '@ag-grid-community/core/dist/styles/ag-theme-material.min.css';
 import '@fontsource/roboto';
 import './styles/ag-grid.scss';
 
-console.log(cssTheme);
 const theme = createTheme({
   direction: 'ltr',
   palette: {
