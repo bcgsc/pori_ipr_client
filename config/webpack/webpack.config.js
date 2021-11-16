@@ -116,7 +116,7 @@ module.exports = (env) => ({
     },
   },
   mode: 'development',
-  // devtool: 'inline-source-map',
+  devtool: 'cheap-module-source-map',
   entry: path.resolve(APP_PATH, 'index.tsx'),
   output: {
     path: path.resolve(__dirname, '../../dist'),
