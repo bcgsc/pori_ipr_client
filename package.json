@@ -139,6 +139,9 @@
     "webpack-merge": "~4.2.2"
   },
   "resolutions": {
-    "immer": "~9.0.6"
+    "immer": "~9.0.6",
+    "trim": "^1.0.0",
+    "browserslist": "~4.16.5",
+    "glob-parent": "~5.1.2"
   }
 }
