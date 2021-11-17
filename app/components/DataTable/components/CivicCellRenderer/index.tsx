@@ -17,11 +17,11 @@ const CivicCellRenderer = ({
   } = data;
 
   const [link, setLink] = useState('');
-  const [links, setLinks] = useState([]);
+  const [links, setLinks] = useState<string[]>([]);
   const [text, setText] = useState('');
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl, setAnchorEl] = useState<Element>(null);
 
-  const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => setAnchorEl(event.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
 
   useEffect(() => {
