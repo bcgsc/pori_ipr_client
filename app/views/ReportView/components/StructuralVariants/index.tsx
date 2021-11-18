@@ -71,6 +71,7 @@ const StructuralVariants = ({
           const [svsResp, imagesResp] = await apiCalls.request() as [StructuralVariantType[], ImageType[]];
 
           if (svsResp?.length) {
+            const nextVisible = [];
             for (const respRow of svsResp) {
               const {
                 gene1: {
@@ -87,14 +88,39 @@ const StructuralVariants = ({
                 },
               } = respRow;
               if (tpm1 !== null || tpm2 !== null) {
-                setVisibleCols((prevVal) => [...prevVal, 'tpm']);
+                nextVisible.push('tpm');
                 break;
               }
               if (rpkm1 !== null || rpkm2 !== null) {
-                setVisibleCols((prevVal) => [...prevVal, 'rpkm']);
+                nextVisible.push('rpkm');
                 break;
               }
             }
+            for (const respRow of svsResp) {
+              const {
+                gene1: {
+                  expressionVariants: {
+                    primarySiteFoldChange: primarySiteFoldChange1,
+                    primarySitekIQR: primarySitekIQR1,
+                  },
+                },
+                gene2: {
+                  expressionVariants: {
+                    primarySiteFoldChange: primarySiteFoldChange2,
+                    primarySitekIQR: primarySitekIQR2,
+                  },
+                },
+              } = respRow;
+              if (primarySiteFoldChange1 !== null || primarySiteFoldChange2 !== null) {
+                nextVisible.push('primarySiteFoldChange');
+                break;
+              }
+              if (primarySitekIQR1 !== null || primarySitekIQR2 !== null) {
+                nextVisible.push('primarySitekIQR');
+                break;
+              }
+            }
+            setVisibleCols((prevVal) => [...prevVal, ...nextVisible]);
           }
 
           setSvs(svsResp);

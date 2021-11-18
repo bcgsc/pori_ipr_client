@@ -60,7 +60,7 @@ const columnDefs = [{
   headerName: 'Expression (normal FC) 5`/3`',
   colId: 'primarySiteFoldChange',
   valueGetter: createGeneRelatedValueGetter('expressionVariants', ' / ', 'primarySiteFoldChange'),
-  hide: false,
+  hide: true,
 }, {
   headerName: 'Expression (Perc) 5`/3`',
   colId: 'diseasePercentile',
@@ -75,6 +75,7 @@ const columnDefs = [{
   headerName: 'Expression (kIQR) 5`/3',
   colId: 'primarySitekIQR',
   valueGetter: createGeneRelatedValueGetter('expressionVariants', ' / ', 'primarySitekIQR'),
+  hide: true,
 }, {
   headerName: 'Oncogene',
   colId: 'oncogene',

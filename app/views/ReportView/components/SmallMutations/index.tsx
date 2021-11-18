@@ -60,6 +60,7 @@ const SmallMutations = ({
 
           // Hide some columns if no values are returned
           if (smallMutationsResp?.length) {
+            const nextVisible = [];
             for (const {
               gene: {
                 expressionVariants: {
@@ -69,14 +70,33 @@ const SmallMutations = ({
             } of smallMutationsResp) {
               /* Show either RPKM or TPM columns based on which is populated */
               if (tpm !== null) {
-                setVisibleCols((prevVal) => [...prevVal, 'tpm']);
+                nextVisible.push('tpm');
                 break;
               }
               if (rpkm !== null) {
-                setVisibleCols((prevVal) => [...prevVal, 'rpkm']);
+                nextVisible.push('rpkm');
                 break;
               }
             }
+            /* Show either Normal or kIQR columns based on which is populated */
+            for (const {
+              gene: {
+                expressionVariants: {
+                  primarySiteFoldChange, primarySitekIQR,
+                },
+              },
+            } of smallMutationsResp) {
+              /* Show either RPKM or TPM columns based on which is populated */
+              if (primarySiteFoldChange !== null) {
+                nextVisible.push('primarySiteFoldChange');
+                break;
+              }
+              if (primarySitekIQR !== null) {
+                nextVisible.push('primarySitekIQR');
+                break;
+              }
+            }
+            setVisibleCols((prevVal) => [...prevVal, ...nextVisible]);
           }
 
           setSmallMutations(smallMutationsResp);

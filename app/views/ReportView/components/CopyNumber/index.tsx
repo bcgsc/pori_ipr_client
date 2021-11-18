@@ -27,8 +27,8 @@ const TITLE_MAP = {
 };
 
 const getInfoDescription = (relevance: string) => `Copy variants where the variant matched 1 or
-more statements of ${relevance} relevance in the knowledge base matches section. Details on these
-matches can be seen in the knowledge base matches section of this report.`;
+ more statements of ${relevance} relevance in the knowledge base matches section. Details on these
+ matches can be seen in the knowledge base matches section of this report.`;
 
 const INFO_BUBBLES = {
   biological: getInfoDescription('biological'),
@@ -79,6 +79,7 @@ const CopyNumber = ({
           const [cnvsResp, imagesResp] = await apiCalls.request() as [CopyNumberType[], ImageType[]];
 
           if (cnvsResp?.length) {
+            const nextVisible = [];
             for (const {
               gene: {
                 expressionVariants: {
@@ -88,14 +89,32 @@ const CopyNumber = ({
             } of cnvsResp) {
               /* Show either RPKM or TPM columns based on which is populated */
               if (tpm !== null) {
-                setVisibleCols((prevVal) => [...prevVal, 'tpm']);
+                nextVisible.push('tpm');
                 break;
               }
               if (rpkm !== null) {
-                setVisibleCols((prevVal) => [...prevVal, 'rpkm']);
+                nextVisible.push('rpkm');
                 break;
               }
             }
+            /* Show either Normal or kIQR columns based on which is populated */
+            for (const {
+              gene: {
+                expressionVariants: {
+                  primarySiteFoldChange, primarySitekIQR,
+                },
+              },
+            } of cnvsResp) {
+              if (primarySiteFoldChange !== null) {
+                nextVisible.push('primarySiteFoldChange');
+                break;
+              }
+              if (primarySitekIQR !== null) {
+                nextVisible.push('primarySitekIQR');
+                break;
+              }
+            }
+            setVisibleCols((prevVal) => [...prevVal, ...nextVisible]);
           }
 
           const circosIndex = imagesResp.findIndex((img) => img.key === 'cnvLoh.circos');

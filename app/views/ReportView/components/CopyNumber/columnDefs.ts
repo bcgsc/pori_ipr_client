@@ -44,7 +44,7 @@ const columnDefs: ColDef[] = [{
   headerName: 'Expression (Normal FC)',
   colId: 'primarySiteFoldChange',
   valueGetter: 'data.gene.expressionVariants.primarySiteFoldChange',
-  hide: false,
+  hide: true,
 }, {
   headerName: 'Expression (Perc)',
   colId: 'diseasePercentile',
@@ -59,7 +59,7 @@ const columnDefs: ColDef[] = [{
   headerName: 'Expression (kIQR)',
   colId: 'primarySitekIQR',
   valueGetter: 'data.gene.expressionVariants.primarySitekIQR',
-  hide: false,
+  hide: true,
 }, {
   headerName: 'Oncogene',
   colId: 'oncogene',

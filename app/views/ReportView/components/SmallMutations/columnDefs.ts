@@ -64,7 +64,7 @@ const columnDefs: ColDef[] = [{
   headerName: 'Expression (FC normal)',
   colId: 'primarySiteFoldChange',
   valueGetter: 'data.gene.expressionVariants.primarySiteFoldChange',
-  // hide: true,
+  hide: true,
 }, {
   headerName: 'Expression (TPM)',
   colId: 'tpm',
@@ -74,11 +74,11 @@ const columnDefs: ColDef[] = [{
   headerName: 'Expression (Perc Disease)',
   colId: 'diseasePercentile',
   valueGetter: 'data.gene.expressionVariants.diseasePercentile',
-  // hide: true,
 }, {
   headerName: 'Expression (kIQR)',
   colId: 'primarySitekIQR',
   valueGetter: 'data.gene.expressionVariants.primarySitekIQR',
+  hide: true,
 }, {
   headerName: 'Actions',
   colId: 'actions',
