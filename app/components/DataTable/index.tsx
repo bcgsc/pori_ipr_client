@@ -27,6 +27,7 @@ import './index.scss';
 
 const MAX_VISIBLE_ROWS = 12;
 const MAX_TABLE_HEIGHT = '517px';
+const PAGE_TOP_OFFSET = 56 + 57;
 
 type DataTableProps = {
   /* Data populating table */
@@ -165,7 +166,7 @@ const DataTable = ({
 
         const [element] = document.querySelectorAll('div[class="report__content"]');
         element.scrollTo({
-          top: gridRef.current.eGridDiv.offsetTop,
+          top: gridRef.current.eGridDiv.offsetTop - PAGE_TOP_OFFSET,
           left: 0,
           behavior: 'smooth',
         });

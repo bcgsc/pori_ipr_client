@@ -23,17 +23,18 @@ const UPPER_COLOR = {
 const getGraphData = (rowData) => {
   const labels = rowData.map((data) => `${data.library} (${data.tumourContent}% TC)`);
   const colors = rowData.map((data) => `rgb(${Object.values(getColor(LOWER_COLOR, UPPER_COLOR, data.tumourContent / 100)).join(',')})`);
+  const allWhite = rowData.map(() => '#FFFFFF');
 
   const datasets = [
     {
       label: '',
       backgroundColor: colors,
-      borderColor: rowData.map(() => '#FFFFFF'),
+      borderColor: allWhite,
       borderWidth: 2,
       borderSkipped: 'left',
       barPercentage: 1,
       hoverBackgroundColor: colors,
-      hoverBorderColor: colors,
+      hoverBorderColor: allWhite,
       data: rowData.map((data) => data.correlation.toFixed(2)),
     },
   ];
@@ -85,6 +86,7 @@ const CorrelationPlot = ({
           setRowClicked(null);
           const newColors = chartRef.current.config.data.datasets[0].borderColor.map(() => '#FFFFFF');
           chartRef.current.config.data.datasets[0].borderColor = newColors;
+          chartRef.current.config.data.datasets[0].hoverBorderColor = newColors;
           chartRef.current.update();
         } else {
           setRowClicked(context.index);
@@ -95,6 +97,7 @@ const CorrelationPlot = ({
             return '#FFFFFF';
           });
           chartRef.current.config.data.datasets[0].borderColor = newColors;
+          chartRef.current.config.data.datasets[0].hoverBorderColor = newColors;
           chartRef.current.update();
         }
       }
