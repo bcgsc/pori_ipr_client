@@ -1,4 +1,7 @@
-const columnDefs = [{
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { ColDef } from '@ag-grid-community/core';
+
+const columnDefs: ColDef[] = [{
   headerName: 'Gene',
   field: 'gene.name',
   hide: false,
@@ -54,20 +57,31 @@ const columnDefs = [{
   hide: true,
 }, {
   headerName: 'Expression (RPKM)',
-  field: 'gene.expressionVariants.rpkm',
-  hide: false,
+  colId: 'rpkm',
+  valueGetter: 'data.gene.expressionVariants.rpkm',
+  hide: true,
 }, {
   headerName: 'Expression (FC normal)',
-  colId: 'foldChange',
-  field: 'gene.expressionVariants.primarySiteFoldChange',
-  hide: false,
+  colId: 'primarySiteFoldChange',
+  valueGetter: 'data.gene.expressionVariants.primarySiteFoldChange',
+  // hide: true,
+}, {
+  headerName: 'Expression (TPM)',
+  colId: 'tpm',
+  valueGetter: 'data.gene.expressionVariants.tpm',
+  hide: true,
 }, {
   headerName: 'Expression (Perc Disease)',
   colId: 'diseasePercentile',
-  field: 'gene.expressionVariants.diseasePercentile',
-  hide: false,
+  valueGetter: 'data.gene.expressionVariants.diseasePercentile',
+  // hide: true,
+}, {
+  headerName: 'Expression (kIQR)',
+  colId: 'primarySitekIQR',
+  valueGetter: 'data.gene.expressionVariants.primarySitekIQR',
 }, {
   headerName: 'Actions',
+  colId: 'actions',
   cellRenderer: 'ActionCellRenderer',
   pinned: 'right',
   sortable: false,

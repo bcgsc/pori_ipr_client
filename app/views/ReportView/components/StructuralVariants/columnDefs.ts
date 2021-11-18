@@ -55,7 +55,7 @@ const columnDefs = [{
   headerName: 'Expression (RPKM) 5`/3`',
   colId: 'rpkm',
   valueGetter: createGeneRelatedValueGetter('expressionVariants', ' / ', 'rpkm'),
-  hide: false,
+  hide: true,
 }, {
   headerName: 'Expression (normal FC) 5`/3`',
   colId: 'primarySiteFoldChange',
@@ -66,6 +66,15 @@ const columnDefs = [{
   colId: 'diseasePercentile',
   valueGetter: createGeneRelatedValueGetter('expressionVariants', ' / ', 'diseasePercentile'),
   hide: false,
+}, {
+  headerName: 'Expression (TPM) 5`/3',
+  colId: 'tpm',
+  valueGetter: createGeneRelatedValueGetter('expressionVariants', ' / ', 'tpm'),
+  hide: true,
+}, {
+  headerName: 'Expression (kIQR) 5`/3',
+  colId: 'primarySitekIQR',
+  valueGetter: createGeneRelatedValueGetter('expressionVariants', ' / ', 'primarySitekIQR'),
 }, {
   headerName: 'Oncogene',
   colId: 'oncogene',
@@ -104,6 +113,7 @@ const columnDefs = [{
 }, {
   headerName: 'Actions',
   cellRenderer: 'ActionCellRenderer',
+  colId: 'actions',
   pinned: 'right',
   sortable: false,
   suppressMenu: true,

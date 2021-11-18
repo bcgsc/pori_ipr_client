@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from 'react';
 import {
   Typography,
 } from '@material-ui/core';
-
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
@@ -43,6 +42,13 @@ const SmallMutations = ({
     biological: [],
     unknown: [],
   });
+  const [visibleCols, setVisibleCols] = useState<string[]>(
+    columnDefs.reduce((accumulator: string[], current) => {
+      if (current.hide === false || !current.hide) {
+        accumulator.push(current.field ?? current.colId);
+      } return accumulator;
+    }, []),
+  );
 
   useEffect(() => {
     if (report) {
@@ -51,6 +57,28 @@ const SmallMutations = ({
           const smallMutationsResp = await api.get(
             `/reports/${report.ident}/small-mutations`,
           ).request();
+
+          // Hide some columns if no values are returned
+          if (smallMutationsResp?.length) {
+            for (const {
+              gene: {
+                expressionVariants: {
+                  tpm, rpkm,
+                },
+              },
+            } of smallMutationsResp) {
+              /* Show either RPKM or TPM columns based on which is populated */
+              if (tpm !== null) {
+                setVisibleCols((prevVal) => [...prevVal, 'tpm']);
+                break;
+              }
+              if (rpkm !== null) {
+                setVisibleCols((prevVal) => [...prevVal, 'rpkm']);
+                break;
+              }
+            }
+          }
+
           setSmallMutations(smallMutationsResp);
         } catch (err) {
           snackbar.error(`Network error: ${err}`);
@@ -99,6 +127,8 @@ const SmallMutations = ({
     }
   }, [smallMutations]);
 
+  const handleVisibleColsChange = (change) => setVisibleCols(change);
+
   return (
     <div className="small-mutations">
       <Typography variant="h3">
@@ -113,6 +143,8 @@ const SmallMutations = ({
               columnDefs={columnDefs}
               rowData={value}
               titleText={TITLE_MAP[key]}
+              syncVisibleColumns={handleVisibleColsChange}
+              visibleColumns={visibleCols}
               demoDescription={INFO_BUBBLES[key]}
             />
           ))}

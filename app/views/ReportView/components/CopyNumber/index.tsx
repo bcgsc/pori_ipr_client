@@ -26,8 +26,8 @@ const TITLE_MAP = {
   lowExp: 'Lowly Expressed Tumour Suppressors with Copy Losses',
 };
 
-const getInfoDescription = (relevance: string) => `Copy variants where the variant matched 1 or 
-more statements of ${relevance} relevance in the knowledge base matches section. Details on these 
+const getInfoDescription = (relevance: string) => `Copy variants where the variant matched 1 or
+more statements of ${relevance} relevance in the knowledge base matches section. Details on these
 matches can be seen in the knowledge base matches section of this report.`;
 
 const INFO_BUBBLES = {
@@ -60,6 +60,13 @@ const CopyNumber = ({
     highExp: [],
     lowExp: [],
   });
+  const [visibleCols, setVisibleCols] = useState<string[]>(
+    columnDefs.reduce((accumulator: string[], current) => {
+      if (current.hide === false || !current.hide) {
+        accumulator.push(current.field ?? current.colId);
+      } return accumulator;
+    }, []),
+  );
 
   useEffect(() => {
     if (report) {
@@ -69,7 +76,27 @@ const CopyNumber = ({
             api.get(`/reports/${report.ident}/copy-variants`),
             api.get(`/reports/${report.ident}/image/retrieve/cnvLoh.circos,cnv.1,cnv.2,cnv.3,cnv.4,cnv.5,loh.1,loh.2,loh.3,loh.4,loh.5`),
           ]);
-          const [cnvsResp, imagesResp] = await apiCalls.request();
+          const [cnvsResp, imagesResp] = await apiCalls.request() as [CopyNumberType[], ImageType[]];
+
+          if (cnvsResp?.length) {
+            for (const {
+              gene: {
+                expressionVariants: {
+                  tpm, rpkm,
+                },
+              },
+            } of cnvsResp) {
+              /* Show either RPKM or TPM columns based on which is populated */
+              if (tpm !== null) {
+                setVisibleCols((prevVal) => [...prevVal, 'tpm']);
+                break;
+              }
+              if (rpkm !== null) {
+                setVisibleCols((prevVal) => [...prevVal, 'rpkm']);
+                break;
+              }
+            }
+          }
 
           const circosIndex = imagesResp.findIndex((img) => img.key === 'cnvLoh.circos');
           const [circosResp] = imagesResp.splice(circosIndex, 1);
@@ -151,6 +178,8 @@ const CopyNumber = ({
     }
   }, [cnvs]);
 
+  const handleVisibleColsChange = (change) => setVisibleCols(change);
+
   return (
     <div className="copy-number">
       <Typography variant="h3">Copy Number Analyses</Typography>
@@ -177,6 +206,8 @@ const CopyNumber = ({
                     rowData={value}
                     titleText={TITLE_MAP[key]}
                     demoDescription={INFO_BUBBLES[key]}
+                    visibleColumns={visibleCols}
+                    syncVisibleColumns={handleVisibleColsChange}
                   />
                 </React.Fragment>
               ))}
