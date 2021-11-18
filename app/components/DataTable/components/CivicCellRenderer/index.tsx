@@ -3,7 +3,9 @@ import React, { useState, useEffect } from 'react';
 import NewTabLink from '@/components/NewTabLink';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { ICellRendererParams } from '@ag-grid-community/core';
-import { IconButton, Menu, MenuItem } from '@material-ui/core';
+import {
+  Button, IconButton, Menu, MenuItem,
+} from '@material-ui/core';
 import { OpenInNew } from '@material-ui/icons';
 
 type CivicCellRendererProps = ICellRendererParams['data'];
@@ -45,8 +47,8 @@ const CivicCellRenderer = ({
             setLinks(externalStatementId);
           } else {
             setLink(`https://civicdb.org/links/evidence/${intId}`);
+            setText(externalSource);
           }
-          setText(externalSource);
         } else {
           setText(externalSource);
         }
@@ -66,15 +68,20 @@ const CivicCellRenderer = ({
   if (links.length > 1) {
     return (
       <>
-        <span>{text}</span>
-        <IconButton
-          size="small"
+        <span>{text ? `${text},` : '' }</span>
+        <button
+          type="button"
+          style={{
+            backgroundColor: 'unset',
+            border: 'none',
+          }}
           aria-label="Open in CIViC"
           title="Open in CIViC"
+          className="new-tab-link"
           onClick={handleMenuOpen}
         >
-          <OpenInNew />
-        </IconButton>
+          CIViC
+        </button>
         <Menu
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}

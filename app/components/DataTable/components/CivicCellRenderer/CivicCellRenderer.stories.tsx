@@ -16,10 +16,15 @@ export default {
 const Template = (args) => <CivicCellRenderer {...args} />;
 
 export const WithinGrid = ({
-  data = [{
-    externalSource: ['IPRKB', 'GraphKB', 'CIViC'],
-    externalStatementId: ['uuid-iprkb', 'uuid-kb', '1100', '1110', '1111'],
-  }],
+  data = [
+    {
+      externalSource: ['IPRKB', 'GraphKB', 'CIViC'],
+      externalStatementId: ['uuid-iprkb', 'uuid-kb', '1100', '1110', '1111'],
+    }, {
+      externalSource: 'CIViC',
+      externalStatementId: '1100',
+    },
+  ],
 }: CivicCellRendererProps): JSX.Element => (
   <div className="ag-theme-material">
     <AgGridReact
