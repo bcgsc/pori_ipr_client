@@ -36,7 +36,7 @@ describe('SvgViewer', () => {
         selectedRow={mockSelectedRow}
       />,
     );
-    expect(await screen.findByRole('presentation')).toBeInTheDocument();
+    expect(await screen.findAllByRole('presentation')).toHaveLength(2);
   });
 
   test('onClose is called', async () => {
