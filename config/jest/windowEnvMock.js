@@ -6,4 +6,5 @@ window._env_ = {
   API_BASE_URL: process.env.API_BASE_URL || "https://iprdev-api.bcgsc.ca/api",
   CONTACT_EMAIL: process.env.CONTACT_EMAIL || "ipr@bcgsc.ca",
   CONTACT_TICKET_URL: process.env.CONTACT_TICKET_URL || "https://www.bcgsc.ca/jira/projects/IPR",
+  IS_DEMO: process.env.IS_DEMO || false,
 };
