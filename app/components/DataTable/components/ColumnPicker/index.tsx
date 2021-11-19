@@ -3,7 +3,7 @@ import {
   MenuList,
   Checkbox,
   Dialog,
-} from '@material-ui/core';
+} from '@mui/material';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Column } from '@ag-grid-community/core';
 

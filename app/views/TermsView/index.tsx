@@ -2,7 +2,7 @@ import './index.scss';
 
 import {
   Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 import React from 'react';
 
 import sectionData from './sectionData';

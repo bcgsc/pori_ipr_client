@@ -3,7 +3,7 @@ import {
   Typography,
   Tabs,
   Tab,
-} from '@material-ui/core';
+} from '@mui/material';
 
 import api, { ApiCallSet } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';

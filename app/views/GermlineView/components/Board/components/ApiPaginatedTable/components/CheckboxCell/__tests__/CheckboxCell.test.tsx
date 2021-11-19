@@ -1,11 +1,17 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+} from '@testing-library/react';
 import { ICellRendererParams } from '@ag-grid-community/core';
 
 import CheckboxCell from '..';
 
 const mockData = {
   ident: '025ff-e225a',
+  exported: true,
 };
 
 const mockNode = {
@@ -15,10 +21,7 @@ const mockNode = {
 const mockRestParams = {} as unknown as ICellRendererParams;
 
 jest.mock('@/services/api', () => ({
-  __esmodule: true,
-  default: 'api',
-  ApiCall: jest.fn(),
-  ApiCallSet: jest.fn(),
+  put: () => ({ request: async () => ({ body: mockData }) }),
 }));
 
 jest.mock('notistack', () => ({
@@ -54,7 +57,12 @@ describe('TextEditor', () => {
     expect(await screen.findByRole('checkbox', { checked: false })).toBeInTheDocument();
   });
 
-  test('The export cell checkbox can be unchecked', async () => {
+  test('The export cell checkbox calls setData when unchecking', async () => {
+    const mockSetData = jest.fn();
+    const mockNode = {
+      setData: mockSetData,
+    } as unknown as ICellRendererParams['node'];
+
     render(
       <CheckboxCell
         isExportCell
@@ -65,10 +73,15 @@ describe('TextEditor', () => {
       />,
     );
     fireEvent.click(await screen.findByRole('checkbox', { checked: true }));
-    expect(await screen.findByRole('checkbox', { checked: false })).toBeInTheDocument();
+    waitFor(() => expect(mockSetData).toHaveBeenCalledTimes(1));
   });
 
-  test('The non-export cell checkbox can not be unchecked', async () => {
+  test('The non-export cell checkbox does not call setData on click', async () => {
+    const mockSetData = jest.fn();
+    const mockNode = {
+      setData: mockSetData,
+    } as unknown as ICellRendererParams['node'];
+
     render(
       <CheckboxCell
         isExportCell={false}
@@ -79,6 +92,6 @@ describe('TextEditor', () => {
       />,
     );
     fireEvent.click(await screen.findByRole('checkbox', { checked: true }));
-    expect(await screen.findByRole('checkbox', { checked: true })).toBeInTheDocument();
+    expect(mockSetData).toHaveBeenCalledTimes(0);
   });
 });

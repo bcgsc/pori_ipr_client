@@ -5,7 +5,7 @@ import {
   Tabs,
   Slide,
   Paper,
-} from '@material-ui/core';
+} from '@mui/material';
 
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';

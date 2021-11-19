@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 
 import {
   LinearProgress,
-} from '@material-ui/core';
+} from '@mui/material';
 
 type WrappedComponentProps = Record<string, unknown>;
 type WithLoadingHOCPropsType = Record<string, unknown>;

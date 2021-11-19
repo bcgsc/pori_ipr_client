@@ -8,7 +8,7 @@ import {
   Paper,
   Slide as SlideTransition,
   Divider,
-} from '@material-ui/core';
+} from '@mui/material';
 
 import api from '@/services/api';
 import AlertDialog from '@/components/AlertDialog';

@@ -2,8 +2,8 @@ import React, { useContext } from 'react';
 import {
   IconButton,
   Typography,
-} from '@material-ui/core';
-import HighlightOffIcon from '@material-ui/icons/HighlightOff';
+} from '@mui/material';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 
 import EditContext from '@/context/EditContext';
 import SlideType from '../../types';

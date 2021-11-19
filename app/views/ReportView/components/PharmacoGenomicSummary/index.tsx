@@ -5,9 +5,9 @@ import {
   Typography,
   IconButton,
   Grid,
-} from '@material-ui/core';
-import EditIcon from '@material-ui/icons/Edit';
-import Alert from '@material-ui/lab/Alert';
+} from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import Alert from '@mui/material/Alert';
 
 import api, { ApiCallSet } from '@/services/api';
 import DataTable from '@/components/DataTable';
@@ -202,7 +202,7 @@ const PharmacoGenomicSummary = ({
                     Patient Information
                     {canEdit && !isPrint && (
                       <>
-                        <IconButton onClick={() => setShowPatientEdit(true)}>
+                        <IconButton onClick={() => setShowPatientEdit(true)} size="large">
                           <EditIcon />
                         </IconButton>
                         <PatientEdit

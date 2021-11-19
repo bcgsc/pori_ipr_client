@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Typography, Fade, Button } from '@material-ui/core';
+import { Typography, Fade, Button } from '@mui/material';
 
 import ImageType from './types.d';
 
