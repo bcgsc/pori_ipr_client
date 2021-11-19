@@ -69,30 +69,19 @@ const SmallMutations = ({
               },
             } of smallMutationsResp) {
               /* Show either RPKM or TPM columns based on which is populated */
-              if (tpm !== null) {
+              if (tpm !== null && !nextVisible.includes('tpm')) {
                 nextVisible.push('tpm');
-                break;
               }
-              if (rpkm !== null) {
+              if (rpkm !== null && !nextVisible.includes('rpkm')) {
                 nextVisible.push('rpkm');
-                break;
               }
-            }
-            /* Show either Normal or kIQR columns based on which is populated */
-            for (const {
-              gene: {
-                expressionVariants: {
-                  primarySiteFoldChange, primarySitekIQR,
-                },
-              },
-            } of smallMutationsResp) {
-              /* Show either RPKM or TPM columns based on which is populated */
-              if (primarySiteFoldChange !== null) {
+              if (primarySiteFoldChange !== null && !nextVisible.includes('primarySiteFoldChange')) {
                 nextVisible.push('primarySiteFoldChange');
-                break;
               }
-              if (primarySitekIQR !== null) {
+              if (primarySitekIQR !== null && !nextVisible.includes('primarySitekIQR')) {
                 nextVisible.push('primarySitekIQR');
+              }
+              if (nextVisible.length === 2) {
                 break;
               }
             }

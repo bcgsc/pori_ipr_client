@@ -78,45 +78,32 @@ const StructuralVariants = ({
                   expressionVariants: {
                     rpkm: rpkm1,
                     tpm: tpm1,
-                  },
-                },
-                gene2: {
-                  expressionVariants: {
-                    rpkm: rpkm2,
-                    tpm: tpm2,
-                  },
-                },
-              } = respRow;
-              if (tpm1 !== null || tpm2 !== null) {
-                nextVisible.push('tpm');
-                break;
-              }
-              if (rpkm1 !== null || rpkm2 !== null) {
-                nextVisible.push('rpkm');
-                break;
-              }
-            }
-            for (const respRow of svsResp) {
-              const {
-                gene1: {
-                  expressionVariants: {
                     primarySiteFoldChange: primarySiteFoldChange1,
                     primarySitekIQR: primarySitekIQR1,
                   },
                 },
                 gene2: {
                   expressionVariants: {
+                    rpkm: rpkm2,
+                    tpm: tpm2,
                     primarySiteFoldChange: primarySiteFoldChange2,
                     primarySitekIQR: primarySitekIQR2,
                   },
                 },
               } = respRow;
-              if (primarySiteFoldChange1 !== null || primarySiteFoldChange2 !== null) {
-                nextVisible.push('primarySiteFoldChange');
-                break;
+              if ((tpm1 !== null || tpm2 !== null) && !nextVisible.includes('tpm')) {
+                nextVisible.push('tpm');
               }
-              if (primarySitekIQR1 !== null || primarySitekIQR2 !== null) {
+              if ((rpkm1 !== null || rpkm2 !== null) && !nextVisible.includes('rpkm')) {
+                nextVisible.push('rpkm');
+              }
+              if ((primarySiteFoldChange1 !== null || primarySiteFoldChange2 !== null) && !nextVisible.includes('primarySiteFoldChange')) {
+                nextVisible.push('primarySiteFoldChange');
+              }
+              if ((primarySitekIQR1 !== null || primarySitekIQR2 !== null) && !nextVisible.includes('primarySitekIQR')) {
                 nextVisible.push('primarySitekIQR');
+              }
+              if (nextVisible.length === 2) {
                 break;
               }
             }
