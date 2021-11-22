@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-} from '@material-ui/core';
+} from '@mui/material';
 
 import 'react-quill/dist/quill.snow.css';
 

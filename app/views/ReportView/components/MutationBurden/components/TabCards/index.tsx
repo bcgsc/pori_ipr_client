@@ -6,7 +6,7 @@ import {
   Card,
   CardHeader,
   CardContent,
-} from '@material-ui/core';
+} from '@mui/material';
 
 import ImageType from '@/components/Image/types';
 import FrontPageTooltip from '@/components/FrontPageTooltip';

@@ -4,7 +4,7 @@ import React, {
   useState,
 } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
-import { CircularProgress } from '@material-ui/core';
+import { CircularProgress } from '@mui/material';
 
 import AuthenticatedRoute from '@/components/AuthenticatedRoute';
 import SidebarContext from '@/context/SidebarContext';

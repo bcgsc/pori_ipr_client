@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { Typography } from '@material-ui/core';
-import FilterListIcon from '@material-ui/icons/FilterList';
+import { Typography } from '@mui/material';
+import FilterListIcon from '@mui/icons-material/FilterList';
 
 import './index.scss';
 

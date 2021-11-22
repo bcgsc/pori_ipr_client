@@ -46,7 +46,7 @@ describe('ActionCellRenderer', () => {
     );
 
     fireEvent.click(await screen.findByTestId('view-details'));
-    expect(await screen.findByRole('presentation')).toBeInTheDocument();
+    expect(await screen.findAllByRole('presentation')).toHaveLength(2);
   });
 
   test('It shows a link to GraphKB when a single entry exists', async () => {

@@ -7,7 +7,7 @@ import {
   DialogTitle,
   Button,
   TextField,
-} from '@material-ui/core';
+} from '@mui/material';
 
 type AlertDialogProps = {
   isOpen: boolean;

@@ -4,7 +4,7 @@ exports[`LaunchCell It renders and matches the snapshot 1`] = `
 <DocumentFragment>
   <svg
     aria-hidden="true"
-    class="MuiSvgIcon-root launch-cell MuiSvgIcon-colorAction"
+    class="MuiSvgIcon-root MuiSvgIcon-colorAction MuiSvgIcon-fontSizeMedium launch-cell css-11pbyhm-MuiSvgIcon-root"
     data-testid="launch-cell"
     focusable="false"
     viewBox="0 0 24 24"

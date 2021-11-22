@@ -3,14 +3,14 @@ import {
   IconButton,
   Menu,
   MenuItem,
-} from '@material-ui/core';
+} from '@mui/material';
 import {
   Edit,
   Photo,
   LibraryBooks,
   OpenInNew,
   Delete,
-} from '@material-ui/icons';
+} from '@mui/icons-material';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { ICellRendererParams } from '@ag-grid-community/core';
 
