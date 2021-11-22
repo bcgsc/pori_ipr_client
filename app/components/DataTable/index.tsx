@@ -10,8 +10,8 @@ import {
   Menu,
   MenuItem,
   Typography,
-} from '@material-ui/core';
-import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
+} from '@mui/material';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 
 import DemoDescription from '@/components/DemoDescription';
 import ReportContext from '@/context/ReportContext';
@@ -361,6 +361,7 @@ const DataTable = ({
                     <IconButton
                       onClick={(event) => setMenuAnchor(event.currentTarget)}
                       className="data-table__icon-button"
+                      size="large"
                     >
                       <MoreHorizIcon />
                     </IconButton>
@@ -415,6 +416,7 @@ const DataTable = ({
               ref={gridRef}
               columnDefs={columnDefs}
               rowData={rowData}
+              data-testid="grid"
               defaultColDef={defaultColDef}
               onGridReady={onGridReady}
               domLayout={domLayout}

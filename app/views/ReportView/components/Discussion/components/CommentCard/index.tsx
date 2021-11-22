@@ -9,9 +9,9 @@ import {
   IconButton,
   Typography,
   TextField,
-} from '@material-ui/core';
-import EditIcon from '@material-ui/icons/Edit';
-import CloseIcon from '@material-ui/icons/Close';
+} from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import CloseIcon from '@mui/icons-material/Close';
 import { useSnackbar } from 'notistack';
 
 import ReportContext from '@/context/ReportContext';
@@ -94,7 +94,11 @@ const CommentCard = ({
         <Typography display="inline" variant="caption">
           {formatDate(comment.createdAt, true)}
           {comment.updatedAt !== comment.createdAt && (
-            <Tooltip placement="right-end" title={`Edited on ${formatDate(comment.updatedAt, true)}`}>
+            <Tooltip
+              describeChild
+              placement="right-end"
+              title={`Edited on ${formatDate(comment.updatedAt, true)}`}
+            >
               <span>
                 *
               </span>

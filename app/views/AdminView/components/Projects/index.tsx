@@ -1,7 +1,7 @@
 import React, {
   useState, useEffect, useCallback,
 } from 'react';
-import { CircularProgress } from '@material-ui/core';
+import { CircularProgress } from '@mui/material';
 import { useSnackbar } from 'notistack';
 
 import api from '@/services/api';

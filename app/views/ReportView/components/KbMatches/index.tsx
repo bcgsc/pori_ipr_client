@@ -4,10 +4,10 @@ import React, {
 import {
   TextField,
   InputAdornment,
-} from '@material-ui/core';
+} from '@mui/material';
 import {
   FilterList,
-} from '@material-ui/icons';
+} from '@mui/icons-material';
 
 import api, { ApiCallSet } from '@/services/api';
 import { KbMatchType } from '@/common';
@@ -164,7 +164,7 @@ const KbMatches = ({
                 variant="outlined"
                 value={filterText}
                 onChange={handleFilter}
-                margin="dense"
+                fullWidth
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">

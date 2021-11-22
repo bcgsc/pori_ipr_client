@@ -6,8 +6,8 @@ import {
   CardContent,
   Divider,
   Typography,
-} from '@material-ui/core';
-import PersonIcon from '@material-ui/icons/Person';
+} from '@mui/material';
+import PersonIcon from '@mui/icons-material/Person';
 
 import { UserType, RecordDefaults } from '@/common';
 import startCase from '@/utils/startCase';

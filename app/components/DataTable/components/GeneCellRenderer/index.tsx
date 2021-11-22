@@ -1,24 +1,23 @@
 import React, { useState } from 'react';
+
 import GeneViewer from '../GeneViewer';
 
 import './index.scss';
 
-/**
- * @param {object} params params
- * @param {string} params.value display text
- * @return {*} JSX
- */
-function GeneCellRenderer(params) {
-  const {
-    value,
-    link,
-  } = params;
+type GeneCellRendererProps = {
+  value: string;
+  link?: boolean;
+};
 
+const GeneCellRenderer = ({
+  value,
+  link = false,
+}: GeneCellRendererProps): JSX.Element => {
   const [showGeneViewer, setShowGeneViewer] = useState(false);
 
   return (
     <>
-      {value && value.split(/\s*::\s*|,\s/).map((val, index) => (
+      {value && value.split(/\s*::\s*|,\s?/).map((val, index) => (
         <React.Fragment key={index}>
           {index > 0 && (
             <span>
@@ -30,8 +29,8 @@ function GeneCellRenderer(params) {
               <span
                 tabIndex={0}
                 role="button"
-                onClick={() => setShowGeneViewer(val)}
-                onKeyDown={() => setShowGeneViewer(val)}
+                onClick={() => setShowGeneViewer(true)}
+                onKeyDown={() => setShowGeneViewer(true)}
                 className="gene__text"
               >
                 {val}
@@ -39,7 +38,7 @@ function GeneCellRenderer(params) {
               <>
                 {showGeneViewer && (
                   <GeneViewer
-                    isOpen={showGeneViewer === val}
+                    isOpen={showGeneViewer}
                     gene={val}
                     onClose={() => setShowGeneViewer(false)}
                   />
@@ -55,6 +54,6 @@ function GeneCellRenderer(params) {
       ))}
     </>
   );
-}
+};
 
 export default GeneCellRenderer;

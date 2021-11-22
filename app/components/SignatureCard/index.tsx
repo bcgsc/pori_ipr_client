@@ -6,9 +6,9 @@ import {
   Typography,
   IconButton,
   Button,
-} from '@material-ui/core';
-import GestureIcon from '@material-ui/icons/Gesture';
-import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
+} from '@mui/material';
+import GestureIcon from '@mui/icons-material/Gesture';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 
 import { UserType } from '@/common';
 import useEdit from '@/hooks/useEdit';

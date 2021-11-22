@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { Autocomplete } from '@material-ui/lab';
+import { Autocomplete } from '@mui/material';
 import {
   TextField,
   CircularProgress,
-} from '@material-ui/core';
+} from '@mui/material';
 
 import api from '@/services/api';
 

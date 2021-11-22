@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import {
   Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 
 import ReportContext from '@/context/ReportContext';
 

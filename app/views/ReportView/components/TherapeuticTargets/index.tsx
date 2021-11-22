@@ -2,7 +2,7 @@ import React, {
   useState, useEffect, useContext, useCallback,
 } from 'react';
 import orderBy from 'lodash.orderby';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 
 import DataTable from '@/components/DataTable';
 import useEdit from '@/hooks/useEdit';

@@ -8,7 +8,7 @@ import {
   DialogContent,
   TextField,
   Button,
-} from '@material-ui/core';
+} from '@mui/material';
 
 import ReportContext from '@/context/ReportContext';
 import ConfirmContext from '@/context/ConfirmContext';

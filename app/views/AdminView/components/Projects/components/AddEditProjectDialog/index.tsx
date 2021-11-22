@@ -9,7 +9,7 @@ import {
   DialogTitle,
   TextField,
   FormControl,
-} from '@material-ui/core';
+} from '@mui/material';
 
 import api from '@/services/api';
 import DataTable from '@/components/DataTable';

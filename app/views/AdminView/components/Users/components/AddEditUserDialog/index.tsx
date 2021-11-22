@@ -13,7 +13,7 @@ import {
   ListItemText,
   Checkbox,
   InputLabel,
-} from '@material-ui/core';
+} from '@mui/material';
 
 import api from '@/services/api';
 import { UserType, GroupType } from '@/common';
