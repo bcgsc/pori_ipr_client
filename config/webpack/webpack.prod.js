@@ -1,6 +1,6 @@
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const webpack = require('webpack');
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CompressionWebpackPlugin = require('compression-webpack-plugin');
 const path = require('path');
@@ -8,7 +8,7 @@ const common = require('./webpack.config.js');
 
 const prodConfig = (env) => ({
   mode: 'production',
-  devtool: undefined,
+  devtool: 'source-map',
   optimization: {
     usedExports: true,
     minimizer: [
@@ -53,6 +53,7 @@ const prodConfig = (env) => ({
   ],
 });
 
-module.exports = (env) => [
-  merge(common(env), prodConfig(env)),
-];
+// module.exports = (env) => [
+//   merge(common(env), prodConfig(env)),
+// ];
+module.exports = merge(common({}), {mode: 'production'});
