@@ -84,6 +84,9 @@ const Reviews = (): JSX.Element => {
           columnDefs={columnDefs}
           domLayout="autoHeight"
           rowData={report.reviews}
+          defaultColDef={{
+            resizable: true,
+          }}
           frameworkComponents={{
             'deleteCell': DeleteCellRenderer,
           }}
