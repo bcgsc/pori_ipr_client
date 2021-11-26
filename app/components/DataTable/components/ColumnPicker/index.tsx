@@ -3,10 +3,19 @@ import {
   MenuList,
   Checkbox,
   Dialog,
-} from '@material-ui/core';
-import PropTypes from 'prop-types';
+} from '@mui/material';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { Column } from '@ag-grid-community/core';
 
 import './index.scss';
+
+type ColumnPickerProps = {
+  className?: string;
+  label?: string;
+  columns: Partial<Column> & { name: string, isVisible: () => boolean }[],
+  onClose: (colIds: string[]) => void,
+  isOpen: boolean;
+};
 
 /**
  * @param {object} props props
@@ -16,20 +25,18 @@ import './index.scss';
  * @param {func} props.onClose callback function to execute on close
  * @return {*} JSX
  */
-const ColumnPicker = (props) => {
-  const {
-    className,
-    label,
-    columns,
-    onClose,
-    isOpen,
-  } = props;
-
+const ColumnPicker = ({
+  className,
+  label,
+  columns,
+  onClose,
+  isOpen,
+}: ColumnPickerProps): JSX.Element => {
   const [visibleCols, setVisibleCols] = useState([]);
   
   useEffect(() => {
     if (columns) {
-      setVisibleCols(columns.filter(col => col.visible));
+      setVisibleCols(columns.filter((col) => col.isVisible()));
     }
   }, [columns]);
 
@@ -37,26 +44,26 @@ const ColumnPicker = (props) => {
     if (event.target.checked) {
       setVisibleCols(visibleCols.concat(changedRow));
     } else {
-      setVisibleCols(visibleCols.filter((col => col.name !== changedRow.name)));
+      setVisibleCols(visibleCols.filter((col) => col.name !== changedRow.name));
     }
   };
 
   return (
     <Dialog
-      onClose={() => onClose(visibleCols.map(col => col.colId))}
+      onClose={() => onClose(visibleCols.map((col) => col.colId))}
       open={isOpen}
     >
       <MenuList className={`options-menu ${className || ''}`}>
         <div className="options-menu__label">
           {label}
         </div>
-        {columns.map(row => (
+        {columns.map((row) => (
           <div key={row.name}>
             <div className="options-menu__content">
               <Checkbox
                 color="primary"
-                checked={visibleCols.some(col => row.name === col.name)}
-                onChange={event => handleChange(event, row)}
+                checked={visibleCols.some((col) => row.name === col.name)}
+                onChange={(event) => handleChange(event, row)}
               />
               {row.name}
             </div>
@@ -66,22 +73,5 @@ const ColumnPicker = (props) => {
     </Dialog>
   );
 };
-
-ColumnPicker.propTypes = {
-  label: PropTypes.string.isRequired,
-  columns: PropTypes.arrayOf(
-    PropTypes.object,
-  ).isRequired,
-  className: PropTypes.string,
-  onClose: PropTypes.func,
-  isOpen: PropTypes.bool,
-};
-
-ColumnPicker.defaultProps = {
-  className: '',
-  onClose: () => {},
-  isOpen: false,
-};
-
 
 export default ColumnPicker;

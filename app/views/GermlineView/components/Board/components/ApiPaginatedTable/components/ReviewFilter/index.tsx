@@ -4,7 +4,7 @@ import {
   ListItem,
   Checkbox,
   Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 
 import ParamsContext, { ParamsContextType } from '../../../ParamsContext';
 

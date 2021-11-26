@@ -9,15 +9,15 @@ import {
   ListItem,
   Typography,
   Link as MuiLink,
-} from '@material-ui/core';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import AssignmentIcon from '@material-ui/icons/Assignment';
-import MenuBookIcon from '@material-ui/icons/MenuBook';
-import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
-import PersonIcon from '@material-ui/icons/Person';
-import PeopleIcon from '@material-ui/icons/People';
-import FolderSharedIcon from '@material-ui/icons/FolderShared';
-import DashboardIcon from '@material-ui/icons/Dashboard';
+} from '@mui/material';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import PersonIcon from '@mui/icons-material/Person';
+import PeopleIcon from '@mui/icons-material/People';
+import FolderSharedIcon from '@mui/icons-material/FolderShared';
+import DashboardIcon from '@mui/icons-material/Dashboard';
 
 import GermlineIcon from '@/statics/images/germline_icon.svg';
 import SidebarContext from '@/context/SidebarContext';
@@ -37,7 +37,7 @@ const Sidebar = (): JSX.Element => {
   const drawer = (
     <div>
       <div className="sidebar__minimize">
-        <IconButton onClick={handleSidebarClose}>
+        <IconButton onClick={handleSidebarClose} size="large">
           <ChevronLeftIcon />
         </IconButton>
       </div>
@@ -210,7 +210,7 @@ const Sidebar = (): JSX.Element => {
           {drawer}
         </Drawer>
       </Hidden>
-      <Hidden xsDown>
+      <Hidden smDown>
         <Drawer
           classes={{ paper: `sidebar__paper ${sidebarMaximized ? 'sidebar__paper--maximized' : ''}` }}
           variant="permanent"

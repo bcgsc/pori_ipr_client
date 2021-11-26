@@ -6,7 +6,7 @@ import React, {
 import {
   Switch, Route, useRouteMatch, useParams, useHistory,
 } from 'react-router-dom';
-import { useTheme } from '@material-ui/core/styles';
+import { useTheme } from '@mui/material/styles';
 
 import SecurityContext from '@/context/SecurityContext';
 import ReportToolbar from '@/components/ReportToolbar';

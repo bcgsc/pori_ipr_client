@@ -6,8 +6,8 @@ import {
   ListItemText,
   IconButton,
   Divider,
-} from '@material-ui/core';
-import LaunchIcon from '@material-ui/icons/Launch';
+} from '@mui/material';
+import LaunchIcon from '@mui/icons-material/Launch';
 
 import './index.scss';
 

@@ -81,7 +81,7 @@
     "arrow-body-style": ["error", "as-needed"],
     "object-shorthand": ["error", "always"],
     "quote-props": ["error", "consistent"],
-    "no-underscore-dangle": ["warn"],
+    "no-underscore-dangle": ["warn", {"allow": ["_env_"]}],
     "no-param-reassign": "off",
     "no-restricted-globals": "warn",
     "no-alert": "off",

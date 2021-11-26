@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import {
   Typography,
   Divider,
-} from '@material-ui/core';
+} from '@mui/material';
 
 import api from '@/services/api';
 import ReportContext from '@/context/ReportContext';

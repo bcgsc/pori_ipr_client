@@ -9,7 +9,7 @@ import {
   Select,
   TextField,
   Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 import { AgGridReact } from '@ag-grid-community/react';
 
 import GermlineReportContext from '@/context/GermlineReportContext';
@@ -84,6 +84,9 @@ const Reviews = (): JSX.Element => {
           columnDefs={columnDefs}
           domLayout="autoHeight"
           rowData={report.reviews}
+          defaultColDef={{
+            resizable: true,
+          }}
           frameworkComponents={{
             'deleteCell': DeleteCellRenderer,
           }}
