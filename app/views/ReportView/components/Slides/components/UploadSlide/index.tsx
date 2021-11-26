@@ -3,7 +3,7 @@ import {
   Typography,
   Button,
   TextField,
-} from '@material-ui/core';
+} from '@mui/material';
 import { useSnackbar } from 'notistack';
 
 import api from '@/services/api';

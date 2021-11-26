@@ -5,8 +5,8 @@ import {
   Typography,
   IconButton,
   Grid,
-} from '@material-ui/core';
-import EditIcon from '@material-ui/icons/Edit';
+} from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
 
 import api, { ApiCallSet } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
@@ -252,7 +252,7 @@ const ProbeSummary = ({
                     Patient Information
                     {canEdit && !isPrint && (
                       <>
-                        <IconButton onClick={() => setShowPatientEdit(true)}>
+                        <IconButton onClick={() => setShowPatientEdit(true)} size="large">
                           <EditIcon />
                         </IconButton>
                         <PatientEdit

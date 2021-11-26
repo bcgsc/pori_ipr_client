@@ -8,7 +8,7 @@ import {
   DialogContent,
   TextField,
   Button,
-} from '@material-ui/core';
+} from '@mui/material';
 
 import api, { ApiCallSet } from '@/services/api';
 import ConfirmContext from '@/context/ConfirmContext';

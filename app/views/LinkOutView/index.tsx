@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 
 const LinkOutView = (): JSX.Element => {
   const [error, setError] = useState();

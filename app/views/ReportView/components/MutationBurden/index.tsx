@@ -3,7 +3,7 @@ import React, {
 } from 'react';
 import {
   Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 
 import DemoDescription from '@/components/DemoDescription';
 import DataTable from '@/components/DataTable';

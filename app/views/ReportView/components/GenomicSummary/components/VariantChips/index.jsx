@@ -2,10 +2,10 @@ import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import {
   Chip, TextField, InputAdornment, IconButton,
-} from '@material-ui/core';
-import DoneIcon from '@material-ui/icons/Done';
-import AddIcon from '@material-ui/icons/AddCircle';
-import CloseIcon from '@material-ui/icons/Close';
+} from '@mui/material';
+import DoneIcon from '@mui/icons-material/Done';
+import AddIcon from '@mui/icons-material/AddCircle';
+import CloseIcon from '@mui/icons-material/Close';
 import AlertDialog from '@/components/AlertDialog';
 
 import './index.scss';
@@ -86,11 +86,11 @@ const VariantChips = (props) => {
                 endAdornment: (
                   <InputAdornment position="end">
                     {addedVariant && (
-                      <IconButton onClick={() => handleAddInputClose(true)}>
+                      <IconButton onClick={() => handleAddInputClose(true)} size="large">
                         <DoneIcon />
                       </IconButton>
                     )}
-                    <IconButton onClick={() => handleAddInputClose(false)}>
+                    <IconButton onClick={() => handleAddInputClose(false)} size="large">
                       <CloseIcon />
                     </IconButton>
                   </InputAdornment>

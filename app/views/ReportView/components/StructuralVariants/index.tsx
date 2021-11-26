@@ -3,7 +3,7 @@ import {
   Typography,
   Tabs,
   Tab,
-} from '@material-ui/core';
+} from '@mui/material';
 
 import api, { ApiCallSet } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
@@ -11,9 +11,9 @@ import DataTable from '@/components/DataTable';
 import Image from '@/components/Image';
 import ReportContext from '@/context/ReportContext';
 import ImageType from '@/components/Image/types';
+import { StructuralVariantType } from '@/common';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import columnDefs from './columnDefs';
-import StructuralVariantType from './types';
 
 import './index.scss';
 

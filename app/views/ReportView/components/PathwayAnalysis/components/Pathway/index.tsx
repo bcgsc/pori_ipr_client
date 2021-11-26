@@ -7,8 +7,8 @@ import {
   Typography,
   Button,
   CircularProgress,
-} from '@material-ui/core';
-import PublishIcon from '@material-ui/icons/Publish';
+} from '@mui/material';
+import PublishIcon from '@mui/icons-material/Publish';
 
 import api from '@/services/api';
 import SvgImage from '@/components/SvgImage';
@@ -98,7 +98,7 @@ const Pathway = ({
               className="pathway__button"
               color="secondary"
               component="label"
-            >
+              size="large">
               <PublishIcon />
               <input
                 accept=".svg"
