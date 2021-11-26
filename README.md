@@ -1,6 +1,7 @@
 # Integrated Pipeline Reports (IPR) Client
 
-![Build Status](https://www.bcgsc.ca/bamboo/plugins/servlet/wittified/build-status/PORI-IPRCLI) ![build](https://github.com/bcgsc/pori_ipr_client/workflows/build/badge.svg?branch=master) ![node versions](https://img.shields.io/badge/node-12%20%7C%2014-blue)
+![Build Status](https://www.bcgsc.ca/bamboo/plugins/servlet/wittified/build-status/PORI-IPRCLI) ![build](https://github.com/bcgsc/pori_ipr_client/workflows/build/badge.svg?branch=master) ![node versions](https://img.shields.io/badge/node-12%20%7C%2014%20%7C%2016-blue) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5728424.svg)](https://doi.org/10.5281/zenodo.5728424)
+
 
 ## Table of Contents
 
