@@ -1,14 +1,14 @@
 import React, { useContext, useCallback } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   Drawer,
   Divider,
   Hidden,
   IconButton,
-  Link,
   List,
   ListItem,
   Typography,
+  Link as MuiLink,
 } from '@material-ui/core';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import AssignmentIcon from '@material-ui/icons/Assignment';
@@ -51,7 +51,7 @@ const Sidebar = (): JSX.Element => {
             `}
             disableGutters
           >
-            <Link className="sidebar__link" href="/reports">
+            <Link className="sidebar__link" to="/reports">
               <AssignmentIcon color="action" />
               <Typography
                 display="inline"
@@ -73,7 +73,7 @@ const Sidebar = (): JSX.Element => {
             `}
             disableGutters
           >
-            <Link className="sidebar__link" href="/germline">
+            <Link className="sidebar__link" to="/germline">
               <GermlineIcon className="sidebar__custom-icon" />
               <Typography
                 display="inline"
@@ -88,7 +88,7 @@ const Sidebar = (): JSX.Element => {
           className="sidebar__list-item"
           disableGutters
         >
-          <Link
+          <MuiLink
             className="sidebar__link"
             href={window._env_.GRAPHKB_URL}
             rel="noopener noreferrer"
@@ -101,7 +101,7 @@ const Sidebar = (): JSX.Element => {
             >
               Graph Knowledgebase
             </Typography>
-          </Link>
+          </MuiLink>
         </ListItem>
         <ListItem
           className={`
@@ -110,7 +110,7 @@ const Sidebar = (): JSX.Element => {
           `}
           disableGutters
         >
-          <Link className="sidebar__link" href="/terms">
+          <Link className="sidebar__link" to="/terms">
             <HelpOutlineIcon color="action" />
             <Typography
               display="inline"
@@ -130,7 +130,7 @@ const Sidebar = (): JSX.Element => {
               `}
               disableGutters
             >
-              <Link className="sidebar__link" href="/admin/users">
+              <Link className="sidebar__link" to="/admin/users">
                 <PersonIcon color="action" />
                 <Typography
                   display="inline"
@@ -147,7 +147,7 @@ const Sidebar = (): JSX.Element => {
               `}
               disableGutters
             >
-              <Link className="sidebar__link" href="/admin/groups">
+              <Link className="sidebar__link" to="/admin/groups">
                 <PeopleIcon color="action" />
                 <Typography
                   display="inline"
@@ -164,7 +164,7 @@ const Sidebar = (): JSX.Element => {
               `}
               disableGutters
             >
-              <Link className="sidebar__link" href="/admin/projects">
+              <Link className="sidebar__link" to="/admin/projects">
                 <FolderSharedIcon color="action" />
                 <Typography
                   display="inline"
@@ -181,7 +181,7 @@ const Sidebar = (): JSX.Element => {
               `}
               disableGutters
             >
-              <Link className="sidebar__link" href="/template">
+              <Link className="sidebar__link" to="/template">
                 <DashboardIcon color="action" />
                 <Typography
                   display="inline"
