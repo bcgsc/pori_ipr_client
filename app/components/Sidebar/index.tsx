@@ -3,12 +3,14 @@ import { Link, useLocation } from 'react-router-dom';
 import {
   Drawer,
   Divider,
-  Hidden,
   IconButton,
   List,
   ListItem,
   Typography,
   Link as MuiLink,
+  useMediaQuery,
+  Theme,
+  DrawerProps,
 } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import AssignmentIcon from '@mui/icons-material/Assignment';
@@ -33,6 +35,8 @@ const Sidebar = (): JSX.Element => {
   const handleSidebarClose = useCallback(() => {
     setSidebarMaximized(false);
   }, [setSidebarMaximized]);
+
+  const showMenuOnLeft = useMediaQuery((theme: Theme) => theme.breakpoints.up('sm'), { noSsr: true });
 
   const drawer = (
     <div>
@@ -197,27 +201,27 @@ const Sidebar = (): JSX.Element => {
     </div>
   );
 
+  let drawerProps: DrawerProps = {
+    variant: 'temporary',
+    anchor: 'left',
+    open: sidebarMaximized,
+    onClose: () => setSidebarMaximized(false),
+  };
+
+  if (showMenuOnLeft) {
+    drawerProps = {
+      variant: 'permanent',
+    };
+  }
+
   return (
     <nav>
-      <Hidden smUp>
-        <Drawer
-          anchor="left"
-          classes={{ paper: `sidebar__paper ${sidebarMaximized ? 'sidebar__paper--maximized' : ''}` }}
-          open={sidebarMaximized}
-          onClose={() => setSidebarMaximized(false)}
-          variant="temporary"
-        >
-          {drawer}
-        </Drawer>
-      </Hidden>
-      <Hidden smDown>
-        <Drawer
-          classes={{ paper: `sidebar__paper ${sidebarMaximized ? 'sidebar__paper--maximized' : ''}` }}
-          variant="permanent"
-        >
-          {drawer}
-        </Drawer>
-      </Hidden>
+      <Drawer
+        {...drawerProps}
+        classes={{ paper: `sidebar__paper ${sidebarMaximized ? 'sidebar__paper--maximized' : ''}` }}
+      >
+        {drawer}
+      </Drawer>
     </nav>
   );
 };
