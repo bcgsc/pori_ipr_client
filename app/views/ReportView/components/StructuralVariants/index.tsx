@@ -52,6 +52,13 @@ const StructuralVariants = ({
   const [genomeCircos, setGenomeCircos] = useState<ImageType>();
   const [transcriptomeCircos, setTranscriptomeCircos] = useState<ImageType>();
   const [tabIndex, setTabIndex] = useState(0);
+  const [visibleCols, setVisibleCols] = useState<string[]>(
+    columnDefs.reduce((accumulator: string[], current) => {
+      if (current.hide === false || !current.hide) {
+        accumulator.push(current.field ?? current.colId);
+      } return accumulator;
+    }, []),
+  );
 
   useEffect(() => {
     if (report) {
@@ -61,7 +68,47 @@ const StructuralVariants = ({
             api.get(`/reports/${report.ident}/structural-variants`),
             api.get(`/reports/${report.ident}/image/retrieve/circosSv.genome,circosSv.transcriptome`),
           ]);
-          const [svsResp, imagesResp] = await apiCalls.request();
+          const [svsResp, imagesResp] = await apiCalls.request() as [StructuralVariantType[], ImageType[]];
+
+          if (svsResp?.length) {
+            const nextVisible = [];
+            for (const respRow of svsResp) {
+              const {
+                gene1: {
+                  expressionVariants: {
+                    rpkm: rpkm1,
+                    tpm: tpm1,
+                    primarySiteFoldChange: primarySiteFoldChange1,
+                    primarySitekIQR: primarySitekIQR1,
+                  },
+                },
+                gene2: {
+                  expressionVariants: {
+                    rpkm: rpkm2,
+                    tpm: tpm2,
+                    primarySiteFoldChange: primarySiteFoldChange2,
+                    primarySitekIQR: primarySitekIQR2,
+                  },
+                },
+              } = respRow;
+              if ((tpm1 !== null || tpm2 !== null) && !nextVisible.includes('tpm')) {
+                nextVisible.push('tpm');
+              }
+              if ((rpkm1 !== null || rpkm2 !== null) && !nextVisible.includes('rpkm')) {
+                nextVisible.push('rpkm');
+              }
+              if ((primarySiteFoldChange1 !== null || primarySiteFoldChange2 !== null) && !nextVisible.includes('primarySiteFoldChange')) {
+                nextVisible.push('primarySiteFoldChange');
+              }
+              if ((primarySitekIQR1 !== null || primarySitekIQR2 !== null) && !nextVisible.includes('primarySitekIQR')) {
+                nextVisible.push('primarySitekIQR');
+              }
+              if (nextVisible.length === 2) {
+                break;
+              }
+            }
+            setVisibleCols((prevVal) => [...prevVal, ...nextVisible]);
+          }
 
           setSvs(svsResp);
           setGenomeCircos(imagesResp.find((img: ImageType) => img.key === 'circosSv.genome'));
@@ -117,6 +164,8 @@ const StructuralVariants = ({
     setTabIndex(newValue);
   };
 
+  const handleVisibleColsChange = (change) => setVisibleCols(change);
+
   return (
     <div className="structural-variants">
       <Typography variant="h3">Structural Variation</Typography>
@@ -163,6 +212,8 @@ const StructuralVariants = ({
               columnDefs={columnDefs}
               rowData={value}
               titleText={TITLE_MAP[key]}
+              visibleColumns={visibleCols}
+              syncVisibleColumns={handleVisibleColsChange}
               canToggleColumns
               demoDescription={INFO_BUBBLES[key]}
             />

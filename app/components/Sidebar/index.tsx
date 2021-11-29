@@ -1,14 +1,16 @@
 import React, { useContext, useCallback } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   Drawer,
   Divider,
-  Hidden,
   IconButton,
-  Link,
   List,
   ListItem,
   Typography,
+  Link as MuiLink,
+  useMediaQuery,
+  Theme,
+  DrawerProps,
 } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import AssignmentIcon from '@mui/icons-material/Assignment';
@@ -34,6 +36,8 @@ const Sidebar = (): JSX.Element => {
     setSidebarMaximized(false);
   }, [setSidebarMaximized]);
 
+  const showMenuOnLeft = useMediaQuery((theme: Theme) => theme.breakpoints.up('sm'), { noSsr: true });
+
   const drawer = (
     <div>
       <div className="sidebar__minimize">
@@ -51,7 +55,7 @@ const Sidebar = (): JSX.Element => {
             `}
             disableGutters
           >
-            <Link className="sidebar__link" href="/reports">
+            <Link className="sidebar__link" to="/reports">
               <AssignmentIcon color="action" />
               <Typography
                 display="inline"
@@ -73,7 +77,7 @@ const Sidebar = (): JSX.Element => {
             `}
             disableGutters
           >
-            <Link className="sidebar__link" href="/germline">
+            <Link className="sidebar__link" to="/germline">
               <GermlineIcon className="sidebar__custom-icon" />
               <Typography
                 display="inline"
@@ -88,7 +92,7 @@ const Sidebar = (): JSX.Element => {
           className="sidebar__list-item"
           disableGutters
         >
-          <Link
+          <MuiLink
             className="sidebar__link"
             href={window._env_.GRAPHKB_URL}
             rel="noopener noreferrer"
@@ -101,7 +105,7 @@ const Sidebar = (): JSX.Element => {
             >
               Graph Knowledgebase
             </Typography>
-          </Link>
+          </MuiLink>
         </ListItem>
         <ListItem
           className={`
@@ -110,7 +114,7 @@ const Sidebar = (): JSX.Element => {
           `}
           disableGutters
         >
-          <Link className="sidebar__link" href="/terms">
+          <Link className="sidebar__link" to="/terms">
             <HelpOutlineIcon color="action" />
             <Typography
               display="inline"
@@ -130,7 +134,7 @@ const Sidebar = (): JSX.Element => {
               `}
               disableGutters
             >
-              <Link className="sidebar__link" href="/admin/users">
+              <Link className="sidebar__link" to="/admin/users">
                 <PersonIcon color="action" />
                 <Typography
                   display="inline"
@@ -147,7 +151,7 @@ const Sidebar = (): JSX.Element => {
               `}
               disableGutters
             >
-              <Link className="sidebar__link" href="/admin/groups">
+              <Link className="sidebar__link" to="/admin/groups">
                 <PeopleIcon color="action" />
                 <Typography
                   display="inline"
@@ -164,7 +168,7 @@ const Sidebar = (): JSX.Element => {
               `}
               disableGutters
             >
-              <Link className="sidebar__link" href="/admin/projects">
+              <Link className="sidebar__link" to="/admin/projects">
                 <FolderSharedIcon color="action" />
                 <Typography
                   display="inline"
@@ -181,7 +185,7 @@ const Sidebar = (): JSX.Element => {
               `}
               disableGutters
             >
-              <Link className="sidebar__link" href="/template">
+              <Link className="sidebar__link" to="/template">
                 <DashboardIcon color="action" />
                 <Typography
                   display="inline"
@@ -197,27 +201,27 @@ const Sidebar = (): JSX.Element => {
     </div>
   );
 
+  let drawerProps: DrawerProps = {
+    variant: 'temporary',
+    anchor: 'left',
+    open: sidebarMaximized,
+    onClose: () => setSidebarMaximized(false),
+  };
+
+  if (showMenuOnLeft) {
+    drawerProps = {
+      variant: 'permanent',
+    };
+  }
+
   return (
     <nav>
-      <Hidden smUp>
-        <Drawer
-          anchor="left"
-          classes={{ paper: `sidebar__paper ${sidebarMaximized ? 'sidebar__paper--maximized' : ''}` }}
-          open={sidebarMaximized}
-          onClose={() => setSidebarMaximized(false)}
-          variant="temporary"
-        >
-          {drawer}
-        </Drawer>
-      </Hidden>
-      <Hidden smDown>
-        <Drawer
-          classes={{ paper: `sidebar__paper ${sidebarMaximized ? 'sidebar__paper--maximized' : ''}` }}
-          variant="permanent"
-        >
-          {drawer}
-        </Drawer>
-      </Hidden>
+      <Drawer
+        {...drawerProps}
+        classes={{ paper: `sidebar__paper ${sidebarMaximized ? 'sidebar__paper--maximized' : ''}` }}
+      >
+        {drawer}
+      </Drawer>
     </nav>
   );
 };
