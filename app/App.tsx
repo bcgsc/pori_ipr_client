@@ -98,6 +98,13 @@ ModuleRegistry.registerModules([
 ]);
 
 /**
+ * this is the subfolder (if any) that the application is deployed under
+ * @note a properly formatted 'basename' cannot have a trailing slash
+ * https://v5.reactrouter.com/web/api/BrowserRouter/basename-string
+ */
+const basename = window._env_.PUBLIC_PATH.endsWith('/') ? window._env_.PUBLIC_PATH.slice(0, -1) : window._env_.PUBLIC_PATH;
+
+/**
  * Entry point to application. Handles routing, app theme, and logged in state.
  */
 function App() {
@@ -107,7 +114,7 @@ function App() {
         <SnackbarProvider anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}>
           <SnackbarUtilsConfigurator />
           <CssBaseline />
-          <BrowserRouter basename={window._env_.PUBLIC_PATH}>
+          <BrowserRouter basename={basename}>
             <CacheBuster>
               <MainView />
             </CacheBuster>

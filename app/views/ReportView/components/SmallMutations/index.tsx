@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import {
-  Typography,
-} from '@mui/material';
+import { Typography } from '@mui/material';
 
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
@@ -43,6 +41,13 @@ const SmallMutations = ({
     biological: [],
     unknown: [],
   });
+  const [visibleCols, setVisibleCols] = useState<string[]>(
+    columnDefs.reduce((accumulator: string[], current) => {
+      if (current.hide === false || !current.hide) {
+        accumulator.push(current.field ?? current.colId);
+      } return accumulator;
+    }, []),
+  );
 
   useEffect(() => {
     if (report) {
@@ -51,6 +56,37 @@ const SmallMutations = ({
           const smallMutationsResp = await api.get(
             `/reports/${report.ident}/small-mutations`,
           ).request();
+
+          // Hide some columns if no values are returned
+          if (smallMutationsResp?.length) {
+            const nextVisible = [];
+            for (const {
+              gene: {
+                expressionVariants: {
+                  tpm, rpkm, primarySiteFoldChange, primarySitekIQR,
+                },
+              },
+            } of smallMutationsResp) {
+              /* Show either RPKM or TPM columns based on which is populated */
+              if (tpm !== null && !nextVisible.includes('tpm')) {
+                nextVisible.push('tpm');
+              }
+              if (rpkm !== null && !nextVisible.includes('rpkm')) {
+                nextVisible.push('rpkm');
+              }
+              if (primarySiteFoldChange !== null && !nextVisible.includes('primarySiteFoldChange')) {
+                nextVisible.push('primarySiteFoldChange');
+              }
+              if (primarySitekIQR !== null && !nextVisible.includes('primarySitekIQR')) {
+                nextVisible.push('primarySitekIQR');
+              }
+              if (nextVisible.length === 2) {
+                break;
+              }
+            }
+            setVisibleCols((prevVal) => [...prevVal, ...nextVisible]);
+          }
+
           setSmallMutations(smallMutationsResp);
         } catch (err) {
           snackbar.error(`Network error: ${err}`);
@@ -99,6 +135,8 @@ const SmallMutations = ({
     }
   }, [smallMutations]);
 
+  const handleVisibleColsChange = (change) => setVisibleCols(change);
+
   return (
     <div className="small-mutations">
       <Typography variant="h3">
@@ -113,6 +151,8 @@ const SmallMutations = ({
               columnDefs={columnDefs}
               rowData={value}
               titleText={TITLE_MAP[key]}
+              syncVisibleColumns={handleVisibleColsChange}
+              visibleColumns={visibleCols}
               demoDescription={INFO_BUBBLES[key]}
             />
           ))}
