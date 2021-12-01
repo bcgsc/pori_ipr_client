@@ -14,7 +14,7 @@ import { CsvExportModule } from '@ag-grid-community/csv-export';
 import MainView from './views/MainView';
 import { SnackbarUtilsConfigurator } from './services/SnackbarUtils';
 import CacheBuster from './components/CacheBuster';
-import cssTheme from './styles/_theme.scss';
+import cssTheme from './styles/_theme.module.scss';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import '@ag-grid-community/core/dist/styles/ag-grid.min.css';

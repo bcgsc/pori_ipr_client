@@ -104,4 +104,4 @@ const Image = ({
 
 export default Image;
 
-export { ImageType };
+export type { ImageType };

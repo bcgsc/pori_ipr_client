@@ -3,7 +3,7 @@ import React, {
 } from 'react';
 import { UncontrolledReactSVGPanZoom } from 'react-svg-pan-zoom';
 import InlineSVG from 'svg-inline-react';
-import AutoSizer from 'react-virtualized/dist/commonjs/AutoSizer';
+import AutoSizer from 'react-virtualized-auto-sizer';
 
 import './index.scss';
 

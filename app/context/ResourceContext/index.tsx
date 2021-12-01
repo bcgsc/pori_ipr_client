@@ -23,9 +23,12 @@ const ResourceContextProvider = ({ children }: ResourceContextProviderProps): JS
   );
 };
 
-export {
-  ResourceContextProvider,
+export type {
   ResourceContextType,
 };
+
+export {
+  ResourceContextProvider,
+}
 
 export default ResourceContext;

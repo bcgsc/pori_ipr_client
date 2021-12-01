@@ -21,9 +21,12 @@ const EditContextProvider = ({ children }: EditContextProviderProps): JSX.Elemen
   );
 };
 
-export {
+export type {
   EditContextInterface,
-  EditContextProvider,
 };
+
+export {
+  EditContextProvider,
+}
 
 export default EditContext;

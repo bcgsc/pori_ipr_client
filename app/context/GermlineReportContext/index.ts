@@ -10,7 +10,7 @@ const GermlineReportContext = React.createContext<GermlineReportContextType>({
 
 export default GermlineReportContext;
 
-export {
+export type {
   GermlineReportType,
   VariantType,
 };
