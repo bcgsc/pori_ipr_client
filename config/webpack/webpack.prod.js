@@ -53,7 +53,6 @@ const prodConfig = (env) => ({
   ],
 });
 
-// module.exports = (env) => [
-//   merge(common(env), prodConfig(env)),
-// ];
-module.exports = merge(common({}), {mode: 'production'});
+module.exports = (env) => [
+  merge(common(env), prodConfig(env)),
+];
