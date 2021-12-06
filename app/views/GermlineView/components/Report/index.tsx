@@ -1,13 +1,16 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import {
-  Button,
   Checkbox,
   FormControlLabel,
   Typography,
+  IconButton,
+  Menu,
+  MenuItem,
+  DialogProps,
 } from '@mui/material';
 import { AgGridReact } from '@ag-grid-community/react';
-
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import useGrid from '@/hooks/useGrid';
 import api from '@/services/api';
 import GermlineReportContext from '@/context/GermlineReportContext';
@@ -20,7 +23,7 @@ import StrikethroughCell from './components/StrikethroughCell';
 import EditDialog from './components/EditDialog';
 import Reviews from './components/Reviews';
 import columnDefs from './columnDefs';
-
+import { getDate } from '@/utils/date';
 import './index.scss';
 
 type GermlineReportProps = WithLoadingInjectedProps;
@@ -29,8 +32,8 @@ const GermlineReport = ({
   isLoading,
   setIsLoading,
 }: GermlineReportProps): JSX.Element => {
-  const { ident } = useParams();
-  const { colApi, onGridReady } = useGrid();
+  const { ident } = useParams<{ ident: string }>();
+  const { gridApi, colApi, onGridReady } = useGrid();
   const history = useHistory();
   const [report, setReport] = useState<GermlineReportType>();
 
@@ -38,6 +41,8 @@ const GermlineReport = ({
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showAlertDialog, setShowAlertDialog] = useState(false);
   const [editData, setEditData] = useState();
+
+  const [menuAnchor, setMenuAnchor] = useState<HTMLElement>();
 
   useEffect(() => {
     if (ident) {
@@ -98,8 +103,10 @@ const GermlineReport = ({
     />
   ), [onEdit]);
 
-  const handleConfirmDelete = useCallback(async (confirm) => {
+  const handleClose = useCallback(async (confirm) => {
     setShowAlertDialog(false);
+    setMenuAnchor(null);
+    // This could be an event or boolean
     if (confirm) {
       try {
         await api.del(`/germline-small-mutation-reports/${report.ident}`, {}).request();
@@ -110,6 +117,34 @@ const GermlineReport = ({
       }
     }
   }, [report, history]);
+
+  const handleTSVExport = useCallback(() => {
+    const date = getDate();
+
+    gridApi.exportDataAsCsv({
+      suppressQuotes: true,
+      columnSeparator: '\t',
+      columnKeys: colApi.getAllDisplayedColumns()
+        .filter((col) => col.colDef.headerName !== 'Actions' && col.colDef.headerName)
+        .map((col) => col.colId),
+      fileName: `ipr_${report.patientId}_${report.ident}_germline_${date}.tsv`,
+      processCellCallback: (({ value }) => (typeof value === 'string' ? value?.replace(/,/g, '') : value)),
+    });
+  }, [colApi, gridApi, report]);
+
+  const handleMenuItemClick = useCallback((action) => {
+    switch (action) {
+      case 'delete':
+        console.log('Delete')
+        break;
+      case 'export':
+        handleTSVExport();
+        break;
+      default:
+        break;
+    }
+    setMenuAnchor(null);
+  }, [handleTSVExport]);
 
   return (
     <GermlineReportContext.Provider value={{ report, setReport }}>
@@ -122,17 +157,33 @@ const GermlineReport = ({
                 <Typography display="inline" variant="h5">
                   {`${report.patientId} - ${report.normalLibrary}`}
                 </Typography>
-                <Button
-                  color="secondary"
-                  onClick={() => setShowAlertDialog(true)}
-                  variant="outlined"
-                >
-                  Remove report
-                </Button>
+                <>
+                  <span className="data-table__action">
+                    <IconButton
+                      onClick={(event) => setMenuAnchor(event.currentTarget)}
+                      className="data-table__icon-button"
+                      size="large"
+                    >
+                      <MoreHorizIcon />
+                    </IconButton>
+                    <Menu
+                      anchorEl={menuAnchor}
+                      open={Boolean(menuAnchor)}
+                      onClose={() => setMenuAnchor(null)}
+                    >
+                      <MenuItem onClick={() => setShowAlertDialog(true)}>
+                        Remove report
+                      </MenuItem>
+                      <MenuItem onClick={() => handleMenuItemClick('export')}>
+                        Export to TSV
+                      </MenuItem>
+                    </Menu>
+                  </span>
+                </>
               </div>
               <AlertDialog
                 isOpen={showAlertDialog}
-                onClose={handleConfirmDelete}
+                onClose={handleClose}
                 title="Confirm"
                 text="Are you sure you want to delete this report?"
                 confirmText="Confirm"
