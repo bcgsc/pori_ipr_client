@@ -31,11 +31,7 @@ const AlertDialog = ({
 }: AlertDialogProps): JSX.Element => {
   const [commentInput, setCommentInput] = useState('');
 
-  const handleClose = useCallback<DialogProps['onClose']>((evt, _reason) => {
-    if (typeof evt === 'boolean') {
-      onClose(evt);
-      return;
-    }
+  const handleClose = useCallback(() => {
     onClose(false);
   }, [onClose])
 
@@ -50,6 +46,7 @@ const AlertDialog = ({
         </DialogContentText>
         {commentRequired && (
           <TextField
+            id="alert-dialog__comment"
             value={commentInput}
             onChange={(event) => setCommentInput(event.target.value)}
             label="Comment"
