@@ -103,7 +103,7 @@ const GermlineReport = ({
     />
   ), [onEdit]);
 
-  const handleClose = useCallback(async (confirm) => {
+  const handleDeleteAlertClose = useCallback(async (confirm) => {
     setShowAlertDialog(false);
     setMenuAnchor(null);
     // This could be an event or boolean
@@ -119,8 +119,8 @@ const GermlineReport = ({
   }, [report, history]);
 
   const handleTSVExport = useCallback(() => {
+    setMenuAnchor(null);
     const date = getDate();
-
     gridApi.exportDataAsCsv({
       suppressQuotes: true,
       columnSeparator: '\t',
@@ -131,20 +131,6 @@ const GermlineReport = ({
       processCellCallback: (({ value }) => (typeof value === 'string' ? value?.replace(/,/g, '') : value)),
     });
   }, [colApi, gridApi, report]);
-
-  const handleMenuItemClick = useCallback((action) => {
-    switch (action) {
-      case 'delete':
-        console.log('Delete')
-        break;
-      case 'export':
-        handleTSVExport();
-        break;
-      default:
-        break;
-    }
-    setMenuAnchor(null);
-  }, [handleTSVExport]);
 
   return (
     <GermlineReportContext.Provider value={{ report, setReport }}>
@@ -174,7 +160,7 @@ const GermlineReport = ({
                       <MenuItem onClick={() => setShowAlertDialog(true)}>
                         Remove report
                       </MenuItem>
-                      <MenuItem onClick={() => handleMenuItemClick('export')}>
+                      <MenuItem onClick={() => handleTSVExport()}>
                         Export to TSV
                       </MenuItem>
                     </Menu>
@@ -183,7 +169,7 @@ const GermlineReport = ({
               </div>
               <AlertDialog
                 isOpen={showAlertDialog}
-                onClose={handleClose}
+                onClose={handleDeleteAlertClose}
                 title="Confirm"
                 text="Are you sure you want to delete this report?"
                 confirmText="Confirm"
