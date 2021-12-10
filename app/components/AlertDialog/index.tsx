@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   Dialog,
+  DialogProps,
   DialogActions,
   DialogContent,
   DialogContentText,
@@ -9,7 +10,7 @@ import {
   TextField,
 } from '@mui/material';
 
-type AlertDialogProps = {
+interface AlertDialogProps extends Omit<DialogProps, 'open'> {
   isOpen: boolean;
   onClose: (confirmed: boolean, commentInput?: string) => void;
   title: string;
@@ -30,8 +31,12 @@ const AlertDialog = ({
 }: AlertDialogProps): JSX.Element => {
   const [commentInput, setCommentInput] = useState('');
 
+  const handleClose = useCallback(() => {
+    onClose(false);
+  }, [onClose])
+
   return (
-    <Dialog open={isOpen} onClose={onClose}>
+    <Dialog open={isOpen} onClose={handleClose}>
       <DialogTitle>
         {title}
       </DialogTitle>
@@ -41,6 +46,7 @@ const AlertDialog = ({
         </DialogContentText>
         {commentRequired && (
           <TextField
+            id="alert-dialog__comment"
             value={commentInput}
             onChange={(event) => setCommentInput(event.target.value)}
             label="Comment"
