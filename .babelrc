@@ -1,73 +1,71 @@
 {
-  "presets": [["@babel/preset-env", {
-    "useBuiltIns": "usage",
-    "modules": "auto",
-    "corejs": 3
-  }],
-  "@babel/preset-react",
-  "@babel/preset-typescript"],
-  "plugins": [
-    "@babel/plugin-proposal-optional-chaining",
-    "@babel/plugin-syntax-dynamic-import"
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "useBuiltIns": "usage",
+        "modules": "auto",
+        "corejs": 3
+      }
+    ],
+    "@babel/preset-react",
+    "@babel/preset-typescript"
   ],
   "env": {
-    "test": {
-      "plugins": ["@babel/plugin-transform-modules-commonjs"]
-    },
     "production": {
       "plugins": [
-        ["transform-imports", {
-          "@material-ui/core": {
-            "transform": "@material-ui/core/esm/${member}",
-            "preventFullImport": true
-          },
-          "@material-ui/icons": {
-            "transform": "@material-ui/icons/esm/${member}",
-            "preventFullImport": true
+        [
+          "babel-plugin-direct-import",
+          {
+            "modules": [
+              "@mui/system",
+              "@mui/material",
+              "@mui/icons-material"
+            ]
           }
-        }]
+        ]
       ]
     },
     "staging": {
       "plugins": [
-        ["transform-imports", {
-          "@material-ui/core": {
-            "transform": "@material-ui/core/esm/${member}",
-            "preventFullImport": true
-          },
-          "@material-ui/icons": {
-            "transform": "@material-ui/icons/esm/${member}",
-            "preventFullImport": true
+        [
+          "babel-plugin-direct-import",
+          {
+            "modules": [
+              "@mui/system",
+              "@mui/material",
+              "@mui/icons-material"
+            ]
           }
-        }]
+        ]
       ]
     },
     "development": {
       "plugins": [
-        ["transform-imports", {
-          "@material-ui/core": {
-            "transform": "@material-ui/core/esm/${member}",
-            "preventFullImport": true
-          },
-          "@material-ui/icons": {
-            "transform": "@material-ui/icons/esm/${member}",
-            "preventFullImport": true
+        [
+          "babel-plugin-direct-import",
+          {
+            "modules": [
+              "@mui/system",
+              "@mui/material",
+              "@mui/icons-material"
+            ]
           }
-        }]
+        ]
       ]
     },
     "local": {
       "plugins": [
-        ["transform-imports", {
-          "@material-ui/core": {
-            "transform": "@material-ui/core/esm/${member}",
-            "preventFullImport": true
-          },
-          "@material-ui/icons": {
-            "transform": "@material-ui/icons/esm/${member}",
-            "preventFullImport": true
+        [
+          "babel-plugin-direct-import",
+          {
+            "modules": [
+              "@mui/system",
+              "@mui/material",
+              "@mui/icons-material"
+            ]
           }
-        }]
+        ]
       ]
     }
   }
