@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   Grid,
-} from '@material-ui/core';
+} from '@mui/material';
 import ReadOnlyTextField from '../ReadOnlyTextField';
 import TestInformationType from './types';
 
@@ -104,6 +104,6 @@ const TestInformation = ({
   </Grid>
 );
 
-export { TestInformationType };
+export type { TestInformationType };
 
 export default TestInformation;

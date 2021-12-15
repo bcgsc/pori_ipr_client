@@ -1,12 +1,13 @@
 {
   "presets": [["@babel/preset-env", {
     "useBuiltIns": "usage",
-    "modules": false,
-    "corejs": 2
+    "modules": "auto",
+    "corejs": 3
   }],
   "@babel/preset-react",
   "@babel/preset-typescript"],
   "plugins": [
+    "@babel/plugin-proposal-optional-chaining",
     "@babel/plugin-syntax-dynamic-import"
   ],
   "env": {

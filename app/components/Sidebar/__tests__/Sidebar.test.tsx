@@ -1,7 +1,8 @@
 import React from 'react';
 import { screen, render } from '@testing-library/react';
 import { StaticRouter } from 'react-router-dom';
-import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
+import mediaQuery from 'css-mediaquery';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 import Sidebar from '..';
 import ResourceContext from '../../../context/ResourceContext';
 
@@ -12,19 +13,37 @@ const permissions = {
   adminAccess: true,
 };
 
-// otherwise nothing will render due to the `Hidden` component
-// https://github.com/enzymejs/enzyme/issues/2179#issuecomment-529320192
-const theme = createMuiTheme({ props: { MuiWithWidth: { initialWidth: 'md' } } });
+const theme = createTheme();
+
+// https://mui.com/components/use-media-query/#testing
+function createMatchMedia(width: number) {
+  return (query: string): MediaQueryList => ({
+    matches: mediaQuery.match(query, {
+      width,
+    }),
+    addListener: () => {},
+    removeListener: () => {},
+    media: '',
+    onchange: () => {},
+    addEventListener: () => {},
+    removeEventListener: () => {},
+    dispatchEvent: () => true,
+  });
+}
+
+beforeAll(() => {
+  window.matchMedia = createMatchMedia(1000);
+});
 
 test('includes basename in links when provided', async () => {
   render(
-    <MuiThemeProvider theme={theme}>
+    <ThemeProvider theme={theme}>
       <ResourceContext.Provider value={permissions}>
         <StaticRouter location="/ipr" context={context} basename="/ipr">
           <Sidebar />
         </StaticRouter>
       </ResourceContext.Provider>
-    </MuiThemeProvider>,
+    </ThemeProvider>,
   );
 
   let link = (await screen.findByText('Reports')).closest('a');
@@ -39,13 +58,13 @@ test('includes basename in links when provided', async () => {
 
 test('has valid links when no basename provided', async () => {
   render(
-    <MuiThemeProvider theme={theme}>
+    <ThemeProvider theme={theme}>
       <ResourceContext.Provider value={permissions}>
         <StaticRouter location="/" context={context} basename="">
           <Sidebar />
         </StaticRouter>
       </ResourceContext.Provider>
-    </MuiThemeProvider>,
+    </ThemeProvider>,
   );
 
   let link = (await screen.findByText('Reports')).closest('a');

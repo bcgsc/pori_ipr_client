@@ -3,7 +3,7 @@ import {
   Button,
   Tooltip,
   Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 
 import api from '@/services/api';
 import ReportContext from '@/context/ReportContext';

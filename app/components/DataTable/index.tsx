@@ -10,8 +10,8 @@ import {
   Menu,
   MenuItem,
   Typography,
-} from '@material-ui/core';
-import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
+} from '@mui/material';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 
 import DemoDescription from '@/components/DemoDescription';
 import ReportContext from '@/context/ReportContext';
@@ -27,6 +27,7 @@ import './index.scss';
 
 const MAX_VISIBLE_ROWS = 12;
 const MAX_TABLE_HEIGHT = '517px';
+const PAGE_TOP_OFFSET = 56 + 57;
 
 type DataTableProps = {
   /* Data populating table */
@@ -165,7 +166,7 @@ const DataTable = ({
 
         const [element] = document.querySelectorAll('div[class="report__content"]');
         element.scrollTo({
-          top: gridRef.current.eGridDiv.offsetTop,
+          top: gridRef.current.eGridDiv.offsetTop - PAGE_TOP_OFFSET,
           left: 0,
           behavior: 'smooth',
         });
@@ -361,6 +362,7 @@ const DataTable = ({
                     <IconButton
                       onClick={(event) => setMenuAnchor(event.currentTarget)}
                       className="data-table__icon-button"
+                      size="large"
                     >
                       <MoreHorizIcon />
                     </IconButton>
@@ -415,6 +417,7 @@ const DataTable = ({
               ref={gridRef}
               columnDefs={columnDefs}
               rowData={rowData}
+              data-testid="grid"
               defaultColDef={defaultColDef}
               onGridReady={onGridReady}
               domLayout={domLayout}

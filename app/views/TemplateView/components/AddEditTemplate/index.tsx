@@ -16,8 +16,8 @@ import {
   Select,
   FormControl,
   InputLabel,
-} from '@material-ui/core';
-import HighlightOffIcon from '@material-ui/icons/HighlightOff';
+} from '@mui/material';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { useSnackbar } from 'notistack';
 
 import { RecordDefaults } from '@/common';
@@ -168,7 +168,7 @@ const AddEditTemplate = ({
               alt="Header preview"
               src={imagePreview}
             />
-            <IconButton onClick={handleImageDelete} className="image__delete">
+            <IconButton onClick={handleImageDelete} className="image__delete" size="large">
               <HighlightOffIcon />
             </IconButton>
           </div>

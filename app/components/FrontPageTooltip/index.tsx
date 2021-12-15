@@ -1,8 +1,8 @@
 import React from 'react';
 import {
   Tooltip,
-} from '@material-ui/core';
-import FlareIcon from '@material-ui/icons/Flare';
+} from '@mui/material';
+import FlareIcon from '@mui/icons-material/Flare';
 
 import './index.scss';
 

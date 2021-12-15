@@ -7,7 +7,7 @@ import {
   DialogTitle,
   Link,
   Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 
 import './index.scss';
 

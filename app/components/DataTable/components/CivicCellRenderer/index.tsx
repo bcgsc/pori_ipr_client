@@ -3,10 +3,7 @@ import React, { useState, useEffect } from 'react';
 import NewTabLink from '@/components/NewTabLink';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { ICellRendererParams } from '@ag-grid-community/core';
-import {
-  Button, IconButton, Menu, MenuItem,
-} from '@material-ui/core';
-import { OpenInNew } from '@material-ui/icons';
+import { Menu, MenuItem } from '@mui/material';
 
 type CivicCellRendererProps = ICellRendererParams['data'];
 

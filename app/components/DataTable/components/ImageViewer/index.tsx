@@ -1,28 +1,32 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
   Dialog,
   DialogContent,
   DialogActions,
   Button,
-} from '@material-ui/core';
-import Image from '@/components/Image';
-import { SelectedRow } from './interfaces';
+} from '@mui/material';
+
+import Image, { ImageType } from '@/components/Image';
 
 import './index.scss';
 
-interface Props {
+type ImageViewerProps = {
   /** Handles dialog close */
   onClose: () => void;
   /** Row object selected from table */
-  selectedRow: SelectedRow,
+  selectedRow: { image: ImageType },
   /** Dialog open state */
   isOpen: boolean;
-}
+};
 
-const ImageViewer = ({ onClose, selectedRow, isOpen }: Props): JSX.Element => {
-  const handleClose = (): void => {
+const ImageViewer = ({
+  onClose,
+  selectedRow,
+  isOpen,
+}: ImageViewerProps): JSX.Element => {
+  const handleClose = useCallback((): void => {
     onClose();
-  };
+  }, [onClose]);
 
   return (
     <Dialog

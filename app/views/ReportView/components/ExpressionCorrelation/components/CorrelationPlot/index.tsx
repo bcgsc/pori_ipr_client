@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { HorizontalBar } from 'react-chartjs-2';
+import { Bar } from 'react-chartjs-2';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 import DataTable from '@/components/DataTable';
@@ -23,17 +23,18 @@ const UPPER_COLOR = {
 const getGraphData = (rowData) => {
   const labels = rowData.map((data) => `${data.library} (${data.tumourContent}% TC)`);
   const colors = rowData.map((data) => `rgb(${Object.values(getColor(LOWER_COLOR, UPPER_COLOR, data.tumourContent / 100)).join(',')})`);
+  const allWhite = rowData.map(() => '#FFFFFF');
 
   const datasets = [
     {
       label: '',
       backgroundColor: colors,
-      borderColor: rowData.map(() => '#FFFFFF'),
+      borderColor: allWhite,
       borderWidth: 2,
       borderSkipped: 'left',
       barPercentage: 1,
       hoverBackgroundColor: colors,
-      hoverBorderColor: colors,
+      hoverBorderColor: allWhite,
       data: rowData.map((data) => data.correlation.toFixed(2)),
     },
   ];
@@ -78,45 +79,44 @@ const CorrelationPlot = ({
   const options = {
     responsive: true,
     maintainAspectRatio: false,
+    indexAxis: 'y',
     onClick: (event, [context]) => {
       if (context && chartRef.current) {
-        if (rowClicked === context._index) {
+        if (rowClicked === context.index) {
           setRowClicked(null);
-          const newColors = chartRef.current.chartInstance.config.data.datasets[0].borderColor.map(() => '#FFFFFF');
-          chartRef.current.chartInstance.config.data.datasets[0].borderColor = newColors;
-          chartRef.current.chartInstance.update();
+          const newColors = chartRef.current.config.data.datasets[0].borderColor.map(() => '#FFFFFF');
+          chartRef.current.config.data.datasets[0].borderColor = newColors;
+          chartRef.current.config.data.datasets[0].hoverBorderColor = newColors;
+          chartRef.current.update();
         } else {
-          setRowClicked(context._index);
-          const newColors = chartRef.current.chartInstance.config.data.datasets[0].borderColor.map((color, index) => {
-            if (index === context._index) {
+          setRowClicked(context.index);
+          const newColors = chartRef.current.config.data.datasets[0].borderColor.map((color, index) => {
+            if (index === context.index) {
               return '#000000';
             }
             return '#FFFFFF';
           });
-          chartRef.current.chartInstance.config.data.datasets[0].borderColor = newColors;
-          chartRef.current.chartInstance.update();
+          chartRef.current.config.data.datasets[0].borderColor = newColors;
+          chartRef.current.config.data.datasets[0].hoverBorderColor = newColors;
+          chartRef.current.update();
         }
       }
     },
-    legend: {
-      display: false,
-    },
     scales: {
-      xAxes: [{
-        ticks: {
-          beginAtZero: true,
-        },
-        scaleLabel: {
+      x: {
+        title: {
+          text: 'Correlation',
           display: true,
-          labelString: 'Correlation',
         },
-      }],
-      yAxes: [{
-        scaleLabel: {
+        display: true,
+      },
+      y: {
+        title: {
+          text: 'Libraries',
           display: true,
-          labelString: 'Libraries',
         },
-      }],
+        display: true,
+      },
     },
     plugins: {
       datalabels: {
@@ -133,6 +133,9 @@ const CorrelationPlot = ({
         align: 'end',
         clamp: true,
       },
+      legend: {
+        display: false,
+      },
     },
     title: {
       display: true,
@@ -147,7 +150,7 @@ const CorrelationPlot = ({
     <div className="correlation-plot__group">
       {Boolean(Object.values(barChartData.datasets).length) && (
         <div className="correlation-plot__chart">
-          <HorizontalBar
+          <Bar
             ref={chartRef}
             data={barChartData}
             height={150 + (barChartData.datasets[0].data.length * 25)}

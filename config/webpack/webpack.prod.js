@@ -1,6 +1,6 @@
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const webpack = require('webpack');
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CompressionWebpackPlugin = require('compression-webpack-plugin');
 const path = require('path');
@@ -8,9 +8,12 @@ const common = require('./webpack.config.js');
 
 const prodConfig = (env) => ({
   mode: 'production',
-  devtool: 'none',
+  devtool: 'source-map',
   optimization: {
     usedExports: true,
+    minimizer: [
+      new CssMinimizerPlugin(),
+    ],
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -44,7 +47,6 @@ const prodConfig = (env) => ({
         },
       }),
     }),
-    new OptimizeCSSAssetsPlugin({}),
     new CompressionWebpackPlugin({
       algorithm: 'gzip',
     }),

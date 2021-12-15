@@ -1,8 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {
-  MuiThemeProvider,
-} from '@material-ui/core/styles';
+import { ThemeProvider, Theme, StyledEngineProvider } from '@mui/material/styles';
 
 import {
   BadRequestError,
@@ -87,16 +85,18 @@ class ApiCall {
     };
 
     ReactDOM.render(
-      <MuiThemeProvider theme={theme}>
-        <AlertDialog
-          isOpen
-          onClose={handleClose}
-          title="Confirm Action"
-          text="Editing this report will remove analyst signatures. Continue?"
-          confirmText="OK"
-          cancelText="cancel"
-        />
-      </MuiThemeProvider>,
+      <StyledEngineProvider injectFirst>
+        <ThemeProvider theme={theme}>
+          <AlertDialog
+            isOpen
+            onClose={handleClose}
+            title="Confirm Action"
+            text="Editing this report will remove analyst signatures. Continue?"
+            confirmText="OK"
+            cancelText="cancel"
+          />
+        </ThemeProvider>
+      </StyledEngineProvider>,
       document.getElementById('alert-dialog'),
     );
   }

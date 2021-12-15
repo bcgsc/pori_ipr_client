@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
-import { IconButton } from '@material-ui/core';
-import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
+import { IconButton } from '@mui/material';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
 import InfoDialog from '../InfoDialog';
 
