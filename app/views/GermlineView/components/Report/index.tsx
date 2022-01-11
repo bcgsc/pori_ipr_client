@@ -106,7 +106,6 @@ const GermlineReport = ({
   const handleDeleteAlertClose = useCallback(async (confirm) => {
     setShowAlertDialog(false);
     setMenuAnchor(null);
-    // This could be an event or boolean
     if (confirm) {
       try {
         await api.del(`/germline-small-mutation-reports/${report.ident}`, {}).request();
