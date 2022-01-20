@@ -1,8 +1,0 @@
-node_modules/*
-builds/*
-.idea/*
-.*DS_Store
-.vscode/*
-dist/*
-coverage/*
-app/ipr-env-config.js
