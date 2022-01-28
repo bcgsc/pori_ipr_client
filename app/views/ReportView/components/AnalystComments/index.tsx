@@ -22,11 +22,13 @@ import './index.scss';
 
 type AnalystCommentsProps = {
   isPrint?: boolean;
+  isSigned?: boolean;
 } & WithLoadingInjectedProps;
 
 const AnalystComments = ({
   isPrint = false,
   isLoading,
+  isSigned,
   setIsLoading,
 }: AnalystCommentsProps): JSX.Element => {
   const { report } = useContext(ReportContext);
@@ -98,15 +100,19 @@ const AnalystComments = ({
       const commentsResp = await api.put(
         `/reports/${report.ident}/summary/analyst-comments`,
         { comments: editedComments },
-      ).request(true);
-      setComments(sanitizeHtml(commentsResp?.comments, {
-        allowedSchemes: [],
-        allowedAttributes: {
-          '*': ['style'],
-        },
-      }));
+      ).request(isSigned);
+
+      // If signed, the dialog that opens up will refesh the page instead
+      if (!isSigned) {
+        setComments(sanitizeHtml(commentsResp?.comments, {
+          allowedSchemes: [],
+          allowedAttributes: {
+            '*': ['style'],
+          },
+        }));
+      }
     }
-  }, [report]);
+  }, [report, isSigned]);
 
   return (
     <div className="analyst-comments">
