@@ -22,6 +22,7 @@ declare global {
       CONTACT_EMAIL: string;
       CONTACT_TICKET_URL: string;
       IS_DEMO: boolean;
+      PUBLIC_PATH: string;
     };
   }
 }
