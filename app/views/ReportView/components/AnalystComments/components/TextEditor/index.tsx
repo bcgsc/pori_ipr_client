@@ -40,6 +40,11 @@ const modules = {
 
     ['link'],
   ],
+  clipboard: {
+    // https://github.com/zenoamaro/react-quill/issues/281
+    // https://stackoverflow.com/questions/63678128/how-to-prevent-react-quill-to-insert-a-new-line-before-list-when-re-loading-cont
+    matchVisual: false,
+  }
 };
 
 const TextEditor = ({
@@ -54,7 +59,7 @@ const TextEditor = ({
   }, [analystComments]);
 
   return (
-    <Dialog maxWidth="lg" open={isOpen} onClose={onClose}>
+    <Dialog fullWidth maxWidth="lg" open={isOpen} onClose={onClose}>
       <DialogTitle>Edit Comments</DialogTitle>
       <DialogContent>
         <ReactQuill
