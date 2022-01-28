@@ -56,18 +56,17 @@ const columnDefs = [
     hide: false,
   },
   {
-    headerName: 'dbSNP',
     field: 'dbSnpIds',
     hide: false,
-    valueGetter: ({ data: { dbSnpIds, clinvarIds, cosmicIds } }) => `${dbSnpIds}/${clinvarIds}/${cosmicIds}`
   },
   {
     field: 'clinvarIds',
-    hide: true,
+    minWidth: 80,
+    hide: false,
   },
   {
     field: 'cosmicIds',
-    hide: true,
+    hide: false,
   },
   {
     headerName: 'Ref',
