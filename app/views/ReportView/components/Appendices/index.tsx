@@ -12,8 +12,7 @@ import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import { AppendicesType, TcgaType, ComparatorType } from './types';
 import { sampleInformationColumnDefs, sequencingProtocolInformationColumnDefs, tcgaAcronymsColumnDefs } from './columnDefs';
-import GenomicReportOverview from './components/GenomicReportOverview';
-import ProbeReportOverview from './components/ProbeReportOverview';
+import ReportOverview from './components/ReportOverview';
 import ConfigTable from './components/ConfigTable';
 
 import './index.scss';
@@ -22,10 +21,11 @@ type AppendicesProps = {
   isProbe: boolean;
   isPrint: boolean;
   loadedDispatch: (section: { type: string }) => void;
+  canEdit: boolean;
 } & WithLoadingInjectedProps;
 
 const Appendices = ({
-  isProbe,
+  canEdit,
   isPrint,
   loadedDispatch,
   isLoading,
@@ -35,6 +35,8 @@ const Appendices = ({
 
   const [comparators, setComparators] = useState<ComparatorType[]>([]);
   const [appendices, setAppendices] = useState<AppendicesType>();
+  const [appendixCText, setAppendixCText] = useState('');
+  const [isNewAppendixC, setIsNewAppendixC] = useState(false);
   const [tcga, setTcga] = useState<TcgaType[]>([]);
   const [analysisSummary, setAnalysisSummary] = useState<Record<string, unknown>[]>([]);
 
@@ -42,10 +44,20 @@ const Appendices = ({
     if (report) {
       const getData = async () => {
         try {
+          const appendixCResp = await api.get(`/templates/${report.template.ident}/appendix`).request();
+          setAppendixCText(appendixCResp?.text);
+        } catch (e) {
+          if (e.message === 'Not Found') {
+            setIsNewAppendixC(true);
+          } else {
+            snackbar.error(`Network error: ${e}`);
+          }
+        }
+        try {
           const callSet = new ApiCallSet([
-            api.get(`/reports/${report.ident}/appendices`, {}),
-            api.get(`/reports/${report.ident}/appendices/tcga`, {}),
-            api.get(`/reports/${report.ident}/comparators`, {}),
+            api.get(`/reports/${report.ident}/appendices`),
+            api.get(`/reports/${report.ident}/appendices/tcga`),
+            api.get(`/reports/${report.ident}/comparators`),
           ]);
           const [appendicesResp, tcgaResp, comparatorsResp] = await callSet.request();
 
@@ -176,11 +188,13 @@ const Appendices = ({
               </Grid>
             </div>
           )}
-          {isProbe ? (
-            <ProbeReportOverview />
-          ) : (
-            <GenomicReportOverview />
-          )}
+          <ReportOverview
+            templateId={report.template.ident}
+            isNew={isNewAppendixC}
+            text={appendixCText}
+            isPrint={isPrint}
+            canEdit={canEdit}
+          />
           {!isPrint && (
             <Typography variant="h1">
               Appendix D
