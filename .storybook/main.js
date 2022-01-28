@@ -1,6 +1,9 @@
 const custom = require('../config/webpack/webpack.config');
 
 module.exports = {
+  core: {
+    builder: "webpack5",
+  },
   stories: [
     "../app/**/*.stories.@(js|jsx|ts|tsx)",
   ],
