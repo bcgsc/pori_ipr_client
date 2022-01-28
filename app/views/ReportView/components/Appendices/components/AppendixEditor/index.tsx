@@ -1,5 +1,5 @@
 import React, {
-  useState, useCallback
+  useState, useCallback,
 } from 'react';
 import ReactQuill, { ReactQuillProps } from 'react-quill';
 import {
@@ -21,7 +21,7 @@ const defaultQuillProps: ReactQuillProps = {
       [{ 'script': 'sub' }, { 'script': 'super' }],
       [{ 'indent': '-1' }, { 'indent': '+1' }],
       [{ 'header': [1, 2, 3, false] }],
-      ['clean']
+      ['clean'],
     ],
     clipboard: {
       // https://github.com/zenoamaro/react-quill/issues/281
@@ -30,13 +30,13 @@ const defaultQuillProps: ReactQuillProps = {
     },
   },
   style: {
-    fontFamily: "Roboto",
-    width: "100%",
-  }
+    fontFamily: 'Roboto',
+    width: '100%',
+  },
 };
 
 type AppendixEditorProps = {
-  appendixText: string;
+  text: string;
   isOpen: boolean;
   // Returns null if nothing is edited
   onClose: (editedText?: string) => void;
@@ -44,7 +44,7 @@ type AppendixEditorProps = {
 };
 
 const AppendixEditor = ({
-  appendixText,
+  text,
   isOpen,
   onClose,
   title = 'Edit Appendix',
@@ -53,9 +53,9 @@ const AppendixEditor = ({
   const [isDirty, setIsDirty] = useState(false);
 
   const handleOnEdit = useCallback((nextValue, _delta, source) => {
-    if (!isDirty && source !== 'api') { setIsDirty(true) }
+    if (!isDirty && source !== 'api') { setIsDirty(true); }
     setEditedText(nextValue);
-  }, []);
+  }, [isDirty]);
 
   const handleOnSave = useCallback(() => {
     if (!isDirty) {
@@ -63,7 +63,7 @@ const AppendixEditor = ({
       return;
     }
     onClose(editedText);
-  }, [editedText]);
+  }, [isDirty, onClose, editedText]);
 
   return (
     <Dialog fullWidth maxWidth="lg" open={isOpen} onClose={() => onClose(null)}>
@@ -73,8 +73,9 @@ const AppendixEditor = ({
           <ReactQuill
             {...defaultQuillProps}
             theme="snow"
-            defaultValue={appendixText}
+            defaultValue={text}
             onChange={handleOnEdit}
+
           />
         </div>
       </DialogContent>
@@ -87,3 +88,4 @@ const AppendixEditor = ({
 };
 
 export default AppendixEditor;
+export { AppendixEditorProps };
