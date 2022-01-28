@@ -205,6 +205,9 @@ const GermlineReport = ({
                 }}
                 gridOptions={{
                   rowClass: 'center-text',
+                  defaultColDef: {
+                    resizable: true,
+                  },
                 }}
                 frameworkComponents={{
                   'strikethroughCell': StrikethroughCell,
