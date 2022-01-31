@@ -6,3 +6,4 @@ builds/*
 dist/*
 coverage/*
 app/ipr-env-config.js
+storybook-static/*
