@@ -195,42 +195,40 @@ const PharmacoGenomicSummary = ({
       {report && (
         <>
           {patientInformation && (
-            <>
-              <div className="summary__patient-information">
-                <div className="summary__patient-information-title">
-                  <Typography variant="h3" display="inline">
-                    Patient Information
-                    {canEdit && !isPrint && (
-                      <>
-                        <IconButton onClick={() => setShowPatientEdit(true)} size="large">
-                          <EditIcon />
-                        </IconButton>
-                        <PatientEdit
-                          patientInformation={report.patientInformation}
-                          report={report}
-                          isOpen={Boolean(showPatientEdit)}
-                          onClose={handlePatientEditClose}
-                        />
-                      </>
-                    )}
-                  </Typography>
-                </div>
-                <Grid
-                  alignItems="flex-end"
-                  container
-                  spacing={3}
-                  className="summary__patient-information-content"
-                >
-                  {patientInformation.map(({ label, value }) => (
-                    <Grid key={label} item>
-                      <ReadOnlyTextField label={label}>
-                        {value}
-                      </ReadOnlyTextField>
-                    </Grid>
-                  ))}
-                </Grid>
+            <div className="summary__patient-information">
+              <div className="summary__patient-information-title">
+                <Typography variant="h3" display="inline">
+                  Patient Information
+                  {canEdit && !isPrint && (
+                  <>
+                    <IconButton onClick={() => setShowPatientEdit(true)} size="large">
+                      <EditIcon />
+                    </IconButton>
+                    <PatientEdit
+                      patientInformation={report.patientInformation}
+                      report={report}
+                      isOpen={Boolean(showPatientEdit)}
+                      onClose={handlePatientEditClose}
+                    />
+                  </>
+                  )}
+                </Typography>
               </div>
-            </>
+              <Grid
+                alignItems="flex-end"
+                container
+                spacing={3}
+                className="summary__patient-information-content"
+              >
+                {patientInformation.map(({ label, value }) => (
+                  <Grid key={label} item>
+                    <ReadOnlyTextField label={label}>
+                      {value}
+                    </ReadOnlyTextField>
+                  </Grid>
+                ))}
+              </Grid>
+            </div>
           )}
           {report?.sampleInfo && (
             <>

@@ -88,7 +88,7 @@ const Reviews = (): JSX.Element => {
             resizable: true,
           }}
           frameworkComponents={{
-            'deleteCell': DeleteCellRenderer,
+            deleteCell: DeleteCellRenderer,
           }}
         />
       </div>

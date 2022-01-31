@@ -118,8 +118,7 @@ const ExpressionCorrelation = ({
             <div className="expression-correlation__expression-charts">
               {sampleExpressionCharts(plots.find((plot) => plot.key === 'expression.chart')
                 ? LEGACY_EXPRESSION_KEYS
-                : EXPRESSION_KEYS)
-              }
+                : EXPRESSION_KEYS)}
             </div>
           </div>
           {/* This section should only appear if there's data */}

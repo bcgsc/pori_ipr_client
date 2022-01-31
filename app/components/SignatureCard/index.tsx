@@ -114,18 +114,16 @@ const SignatureCard = ({
           </Typography>
         )}
         {!userSignature?.ident && canEdit && (
-          <>
-            <Button
-              onClick={handleSign}
-              variant="text"
-              disableElevation
-              startIcon={<GestureIcon />}
-              color="inherit"
-              size="small"
-            >
-              Sign
-            </Button>
-          </>
+          <Button
+            onClick={handleSign}
+            variant="text"
+            disableElevation
+            startIcon={<GestureIcon />}
+            color="inherit"
+            size="small"
+          >
+            Sign
+          </Button>
         )}
       </div>
       <div className="signatures__date">

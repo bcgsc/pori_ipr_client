@@ -18,7 +18,7 @@ interface AlertDialogProps extends Omit<DialogProps, 'open'> {
   commentRequired?: boolean;
   confirmText?: string;
   cancelText?: string;
-};
+}
 
 const AlertDialog = ({
   isOpen,
@@ -33,7 +33,7 @@ const AlertDialog = ({
 
   const handleClose = useCallback(() => {
     onClose(false);
-  }, [onClose])
+  }, [onClose]);
 
   return (
     <Dialog open={isOpen} onClose={handleClose}>

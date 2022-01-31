@@ -13,7 +13,7 @@ const CacheBuster = ({
           window.location.reload();
         }
       }
-    }
+    };
     delCaches();
   }, []);
 

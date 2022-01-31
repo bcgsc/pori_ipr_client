@@ -76,7 +76,7 @@ const Pathway = ({
           true,
         ).request(isSigned);
       }
-      
+
       setPathwayImage(pathwayResp);
       setIsPathwayLoading(false);
       onChange(pathwayResp);
@@ -98,7 +98,8 @@ const Pathway = ({
               className="pathway__button"
               color="secondary"
               component="label"
-              size="large">
+              size="large"
+            >
               <PublishIcon />
               <input
                 accept=".svg"

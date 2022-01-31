@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { Autocomplete } from '@mui/material';
 import {
+  Autocomplete,
   TextField,
   CircularProgress,
 } from '@mui/material';
@@ -49,7 +49,7 @@ const AutocompleteHandler = (props) => {
 
       // Find all query strings that are 3 characters or longer.
       // Needed for KB API to process multiple words
-      queryString = queryString.split(' ').filter(str => str.length >= minCharacters).join(' ');
+      queryString = queryString.split(' ').filter((str) => str.length >= minCharacters).join(' ');
 
       const { result } = await api.post(`/graphkb/${type}`, { keyword: queryString }).request();
 
@@ -70,10 +70,10 @@ const AutocompleteHandler = (props) => {
       classes={{ popper: 'autocomplete__popper' }}
       onChange={handleAutocompleteChange}
       options={options}
-      getOptionLabel={option => option.displayName || option}
+      getOptionLabel={(option) => option.displayName || option}
       value={value}
       noOptionsText={`Input ${minCharacters} character${minCharacters > 1 ? 's' : ''} for autocomplete`}
-      renderInput={params => (
+      renderInput={(params) => (
         <TextField
           {...params}
           label={label}
@@ -86,9 +86,9 @@ const AutocompleteHandler = (props) => {
           InputProps={{
             ...params.InputProps,
             endAdornment: (
-              <React.Fragment>
+              <>
                 {loading ? <CircularProgress color="inherit" size={20} /> : null}
-              </React.Fragment>
+              </>
             ),
           }}
         />

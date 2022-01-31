@@ -160,9 +160,7 @@ describe('CommentCard', () => {
       </SecurityContext.Provider>,
     );
     await act(async () => fireEvent.click(screen.queryAllByRole('button')[0]));
-    await act(async () => fireEvent.change(
-      await screen.findByRole('textbox'), { target: { value: mockEditedText } },
-    ));
+    await act(async () => fireEvent.change(await screen.findByRole('textbox'), { target: { value: mockEditedText } }));
     await act(async () => fireEvent.click(await screen.findByRole('button', { name: 'Cancel' })));
 
     expect(screen.queryByRole('textbox')).toBeNull();
@@ -186,9 +184,7 @@ describe('CommentCard', () => {
       </ReportContext.Provider>,
     );
     await act(async () => fireEvent.click(screen.queryAllByRole('button')[0]));
-    await act(async () => fireEvent.change(
-      await screen.findByRole('textbox'), { target: { value: mockEditedText } },
-    ));
+    await act(async () => fireEvent.change(await screen.findByRole('textbox'), { target: { value: mockEditedText } }));
     await act(async () => fireEvent.click(await screen.findByRole('button', { name: 'Save' })));
 
     expect(screen.queryByRole('textbox')).toBeNull();

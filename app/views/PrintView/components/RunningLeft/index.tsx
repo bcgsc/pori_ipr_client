@@ -18,7 +18,7 @@ const RunningLeft = ({
     <Typography className={className} variant="caption">
       {report.patientId}
     </Typography>
-  )
+  );
 };
 
 export default RunningLeft;

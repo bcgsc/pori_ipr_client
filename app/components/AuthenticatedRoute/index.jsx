@@ -47,12 +47,10 @@ const AuthenticatedRoute = ({
   }
 
   return (
-    <>
-      <Route
-        {...rest}
-        render={(props) => (<ChildComponent {...props} />)}
-      />
-    </>
+    <Route
+      {...rest}
+      render={(props) => (<ChildComponent {...props} />)}
+    />
   );
 };
 

@@ -58,10 +58,10 @@ const TabCards = ({
   const getTabs = useCallback(() => {
     const tabNames = [];
     const ordinalMapping = {
-      'primary': 1,
-      'secondary': 2,
-      'tertiary': 3,
-      'quaternary': 4,
+      primary: 1,
+      secondary: 2,
+      tertiary: 3,
+      quaternary: 4,
     };
 
     const tabs = comparators

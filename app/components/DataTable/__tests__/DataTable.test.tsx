@@ -60,7 +60,7 @@ describe('DataTable', () => {
         rowData={mockRowData}
         columnDefs={mockColumnDefs}
         titleText={mockTitleText}
-      />
+      />,
     );
 
     expect(await screen.findByText(mockTitleText)).toBeInTheDocument();
@@ -72,12 +72,12 @@ describe('DataTable', () => {
         rowData={mockRowData}
         columnDefs={mockColumnDefs}
         filterText={mockFilterText}
-      />
+      />,
     );
 
     // Row that should be shown
     let elems = await Promise.all(
-      Object.values(mockRowData[1]).map((val) => screen.findByText(val))
+      Object.values(mockRowData[1]).map((val) => screen.findByText(val)),
     );
     for (const elem of elems) {
       expect(elem).not.toBeNull();
@@ -85,7 +85,7 @@ describe('DataTable', () => {
 
     // Row that should not be shown
     elems = await Promise.all(
-      Object.values(mockRowData[0]).map((val) => screen.queryByText(val))
+      Object.values(mockRowData[0]).map((val) => screen.queryByText(val)),
     );
     for (const elem of elems) {
       expect(elem).toBeNull();
@@ -98,7 +98,7 @@ describe('DataTable', () => {
         rowData={mockRowData}
         columnDefs={mockColumnDefs}
         visibleColumns={mockVisibleColumns}
-      />
+      />,
     );
 
     waitFor(() => expect(screen.queryByText(mockColumnDefs[0].headerName)).toBeNull());
@@ -112,7 +112,7 @@ describe('DataTable', () => {
         rowData={mockRowData}
         columnDefs={mockColumnDefs}
         visibleColumns={[]}
-      />
+      />,
     );
 
     waitFor(() => {
@@ -128,7 +128,7 @@ describe('DataTable', () => {
         rowData={mockRowData}
         columnDefs={mockColumnDefs}
         demoDescription={mockDemoDescription}
-      />
+      />,
     );
     waitFor(() => expect(screen.getByText(mockDemoDescription)).toBeInTheDocument());
   });

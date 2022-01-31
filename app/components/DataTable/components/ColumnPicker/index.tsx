@@ -33,7 +33,7 @@ const ColumnPicker = ({
   isOpen,
 }: ColumnPickerProps): JSX.Element => {
   const [visibleCols, setVisibleCols] = useState([]);
-  
+
   useEffect(() => {
     if (columns) {
       setVisibleCols(columns.filter((col) => col.isVisible()));

@@ -56,7 +56,7 @@ const AddUserDialog = ({
       snackbar.error(`Error adding user: ${err}`);
     }
   }, [report, onAdd, user, role, setReport]);
-  
+
   const handleUserChange = (newUser: UserType) => {
     setUser(newUser);
   };

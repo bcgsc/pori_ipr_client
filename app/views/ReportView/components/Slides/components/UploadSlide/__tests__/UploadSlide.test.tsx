@@ -41,9 +41,7 @@ describe('UploadSlide', () => {
         onUpload={() => {}}
       />,
     );
-    await act(async () => fireEvent.change(
-      await screen.findByRole('textbox'), { target: { value: mockInputText } },
-    ));
+    await act(async () => fireEvent.change(await screen.findByRole('textbox'), { target: { value: mockInputText } }));
     expect(await screen.findByRole('button')).not.toHaveClass('Mui-disabled');
   });
 
@@ -56,16 +54,12 @@ describe('UploadSlide', () => {
       />,
     );
 
-    await act(async () => fireEvent.change(
-      await screen.findByRole('textbox'), { target: { value: mockInputText } },
-    ));
-    await act(async () => fireEvent.change(
-      await screen.findByTestId('upload-slide__input'), {
-        target: {
-          files: [new File([mockFileContent], mockFileName, { type: 'text/html' })],
-        },
+    await act(async () => fireEvent.change(await screen.findByRole('textbox'), { target: { value: mockInputText } }));
+    await act(async () => fireEvent.change(await screen.findByTestId('upload-slide__input'), {
+      target: {
+        files: [new File([mockFileContent], mockFileName, { type: 'text/html' })],
       },
-    ));
+    }));
 
     expect(onUpload).not.toHaveBeenCalled();
     expect(
@@ -86,16 +80,12 @@ describe('UploadSlide', () => {
       </ReportContext.Provider>,
     );
 
-    await act(async () => fireEvent.change(
-      await screen.findByRole('textbox'), { target: { value: mockInputText } },
-    ));
-    await act(async () => fireEvent.change(
-      await screen.findByTestId('upload-slide__input'), {
-        target: {
-          files: [uploadFile],
-        },
+    await act(async () => fireEvent.change(await screen.findByRole('textbox'), { target: { value: mockInputText } }));
+    await act(async () => fireEvent.change(await screen.findByTestId('upload-slide__input'), {
+      target: {
+        files: [uploadFile],
       },
-    ));
+    }));
 
     expect(onUpload).toHaveBeenCalledTimes(1);
     expect(onUpload).toHaveBeenCalledWith(expect.objectContaining({

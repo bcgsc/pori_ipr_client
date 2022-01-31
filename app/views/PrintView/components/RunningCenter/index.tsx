@@ -9,12 +9,10 @@ type RunningCenterProps = {
 
 const RunningCenter = ({
   className,
-}: RunningCenterProps): JSX.Element => {
-  return (
-    <Typography className={className} variant="caption">
-      BCCA Confidential - For Research Purposes Only
-    </Typography>
-  );
-};
+}: RunningCenterProps): JSX.Element => (
+  <Typography className={className} variant="caption">
+    BCCA Confidential - For Research Purposes Only
+  </Typography>
+);
 
 export default RunningCenter;

@@ -46,27 +46,25 @@ const DetailDialog = ({
               </Typography>
             </div>
             {value.length ? (
-              <>
-                <div className="detail-dialog__inner-row">
-                  {value.map(((arrVal, innerIndex) => (
-                    // eslint-disable-next-line react/no-array-index-key
-                    <React.Fragment key={innerIndex}>
-                      {typeof arrVal === 'object' && arrVal !== null
-                        ? (
-                          <>
-                            <Divider />
-                            {renderRow(arrVal)}
-                          </>
-                        )
-                        : (
-                          <Typography variant="body2">
-                            {arrVal || 'null'}
-                          </Typography>
-                        )}
-                    </React.Fragment>
-                  )))}
-                </div>
-              </>
+              <div className="detail-dialog__inner-row">
+                {value.map(((arrVal, innerIndex) => (
+                  // eslint-disable-next-line react/no-array-index-key
+                  <React.Fragment key={innerIndex}>
+                    {typeof arrVal === 'object' && arrVal !== null
+                      ? (
+                        <>
+                          <Divider />
+                          {renderRow(arrVal)}
+                        </>
+                      )
+                      : (
+                        <Typography variant="body2">
+                          {arrVal || 'null'}
+                        </Typography>
+                      )}
+                  </React.Fragment>
+                )))}
+              </div>
             ) : null}
             <div className="detail-dialog__row">
               <Typography variant="subtitle2" display="inline">

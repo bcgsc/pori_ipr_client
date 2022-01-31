@@ -35,15 +35,13 @@ const GeneCellRenderer = ({
               >
                 {val}
               </span>
-              <>
-                {showGeneViewer && (
-                  <GeneViewer
-                    isOpen={showGeneViewer}
-                    gene={val}
-                    onClose={() => setShowGeneViewer(false)}
-                  />
-                )}
-              </>
+              {showGeneViewer && (
+              <GeneViewer
+                isOpen={showGeneViewer}
+                gene={val}
+                onClose={() => setShowGeneViewer(false)}
+              />
+              )}
             </>
           ) : (
             <span>

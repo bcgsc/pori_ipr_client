@@ -2,9 +2,9 @@ import Keycloak from 'keycloak-js';
 import jwtDecode from 'jwt-decode';
 
 const keycloak = Keycloak({
-  'realm': window._env_.KEYCLOAK_REALM,
-  'clientId': window._env_.KEYCLOAK_CLIENT_ID,
-  'url': window._env_.KEYCLOAK_URL,
+  realm: window._env_.KEYCLOAK_REALM,
+  clientId: window._env_.KEYCLOAK_CLIENT_ID,
+  url: window._env_.KEYCLOAK_URL,
 });
 
 const getReferrerUri = () => localStorage.getItem(CONFIG.STORAGE.REFERRER);

@@ -134,7 +134,7 @@ const AddEditUserDialog = ({
       } else {
         createdResp.groups = [];
       }
-      
+
       onClose(createdResp);
     } else {
       setErrors({

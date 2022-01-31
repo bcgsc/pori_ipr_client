@@ -27,6 +27,6 @@ export type {
 
 export {
   EditContextProvider,
-}
+};
 
 export default EditContext;

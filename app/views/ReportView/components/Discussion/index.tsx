@@ -50,7 +50,7 @@ const Discussion = ({
       return accumulator;
     }, []));
   };
-  
+
   const handleCommentAdded = (newComment) => {
     setComments((prevComments) => [...prevComments, newComment]);
   };

@@ -87,7 +87,7 @@ const ReportsTableComponent = (): JSX.Element => {
     resizable: true,
     filter: true,
   };
-  
+
   return (
     <div className="ag-theme-material reports-table__container">
       <AgGridReact

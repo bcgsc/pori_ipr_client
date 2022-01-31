@@ -1,4 +1,6 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import React, {
+  useEffect, useState, useCallback, useRef,
+} from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import {
   Checkbox,
@@ -19,11 +21,11 @@ import AlertDialog from '@/components/AlertDialog';
 import snackbar from '@/services/SnackbarUtils';
 import { GermlineReportType } from '@/context/GermlineReportContext/types';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import { getDate } from '@/utils/date';
 import StrikethroughCell from './components/StrikethroughCell';
 import EditDialog from './components/EditDialog';
 import Reviews from './components/Reviews';
 import columnDefs from './columnDefs';
-import { getDate } from '@/utils/date';
 import './index.scss';
 
 type GermlineReportProps = WithLoadingInjectedProps;
@@ -142,29 +144,27 @@ const GermlineReport = ({
                 <Typography display="inline" variant="h5">
                   {`${report.patientId} - ${report.normalLibrary}`}
                 </Typography>
-                <>
-                  <span className="data-table__action">
-                    <IconButton
-                      onClick={(event) => setMenuAnchor(event.currentTarget)}
-                      className="data-table__icon-button"
-                      size="large"
-                    >
-                      <MoreHorizIcon />
-                    </IconButton>
-                    <Menu
-                      anchorEl={menuAnchor}
-                      open={Boolean(menuAnchor)}
-                      onClose={() => setMenuAnchor(null)}
-                    >
-                      <MenuItem onClick={() => setShowAlertDialog(true)}>
-                        Remove report
-                      </MenuItem>
-                      <MenuItem onClick={() => handleTSVExport()}>
-                        Export to TSV
-                      </MenuItem>
-                    </Menu>
-                  </span>
-                </>
+                <span className="data-table__action">
+                  <IconButton
+                    onClick={(event) => setMenuAnchor(event.currentTarget)}
+                    className="data-table__icon-button"
+                    size="large"
+                  >
+                    <MoreHorizIcon />
+                  </IconButton>
+                  <Menu
+                    anchorEl={menuAnchor}
+                    open={Boolean(menuAnchor)}
+                    onClose={() => setMenuAnchor(null)}
+                  >
+                    <MenuItem onClick={() => setShowAlertDialog(true)}>
+                      Remove report
+                    </MenuItem>
+                    <MenuItem onClick={() => handleTSVExport()}>
+                      Export to TSV
+                    </MenuItem>
+                  </Menu>
+                </span>
               </div>
               <AlertDialog
                 isOpen={showAlertDialog}
@@ -200,15 +200,15 @@ const GermlineReport = ({
                 suppressColumnVirtualisation
                 rowData={report.variants}
                 rowClassRules={{
-                  'strikethrough': (params) => params.data.hidden,
+                  strikethrough: (params) => params.data.hidden,
                   'low-score': (params) => params.data.score < 100,
                 }}
                 gridOptions={{
                   rowClass: 'center-text',
                 }}
                 frameworkComponents={{
-                  'strikethroughCell': StrikethroughCell,
-                  'actionCell': RowActionCellRenderer,
+                  strikethroughCell: StrikethroughCell,
+                  actionCell: RowActionCellRenderer,
                 }}
                 context={{
                   canEdit: true,

@@ -68,7 +68,7 @@ describe('GeneAutocomplete', () => {
       />,
     );
     fireEvent.click(await screen.findByRole('button'));
-    
+
     const elems = await Promise.all(mockGeneOptions.map((option) => (
       screen.findByText(option.name)
     )));

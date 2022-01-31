@@ -100,7 +100,7 @@ const Settings = ({
       snackbar.error(`Error removing user: ${err}`);
     }
   }, [report, setReport]);
-  
+
   const handleReportUpdate = useCallback(async () => {
     const updateFields = {};
 

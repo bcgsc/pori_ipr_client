@@ -29,6 +29,6 @@ export type {
 
 export {
   ResourceContextProvider,
-}
+};
 
 export default ResourceContext;

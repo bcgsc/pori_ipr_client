@@ -12,7 +12,7 @@ import {
 } from './mockData';
 import SvgImage from '..';
 
-jest.mock('react-virtualized-auto-sizer', () => ({ children }) => children({ height: 600, width: 600}));
+jest.mock('react-virtualized-auto-sizer', () => ({ children }) => children({ height: 600, width: 600 }));
 
 describe('SvgImage', () => {
   test('It renders a normal SVG', async () => {

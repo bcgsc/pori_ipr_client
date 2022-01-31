@@ -38,7 +38,7 @@ const CommentCard = ({
   const { userDetails } = useContext(SecurityContext);
   const { adminAccess } = useResource();
   const snackbar = useSnackbar();
-  
+
   const [isEditing, setIsEditing] = useState(false);
   const [editedComment, setEditedComment] = useState('');
 

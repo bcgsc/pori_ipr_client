@@ -40,7 +40,7 @@ describe('CivicCellRenderer', () => {
         data={mockCivicData}
       />,
     );
-    
+
     expect(
       await screen.findByRole('link', { name: 'CIVIC' }),
     ).toHaveAttribute('href', `https://civicdb.org/links/evidence/${mockCivicData.externalStatementId}`);

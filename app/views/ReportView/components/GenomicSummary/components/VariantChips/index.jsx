@@ -44,14 +44,14 @@ const VariantChips = (props) => {
     if (event.keyCode === ENTER_KEYCODE) {
       handleAddInputClose(true);
     }
-  }
+  };
 
   return (
     <div>
       <div>
         {Boolean(variants.length) && (
           <>
-            {variants.map(variant => (
+            {variants.map((variant) => (
               <React.Fragment key={variant.geneVariant}>
                 <Chip
                   label={variant.geneVariant}
@@ -81,7 +81,7 @@ const VariantChips = (props) => {
               variant="outlined"
               label="Gene name (alteration)"
               onKeyDown={handleEnterPressed}
-              onChange={event => setAddedVariant(event.target.value)}
+              onChange={(event) => setAddedVariant(event.target.value)}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">

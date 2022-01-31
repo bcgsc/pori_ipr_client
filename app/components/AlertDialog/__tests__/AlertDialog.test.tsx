@@ -8,44 +8,43 @@ describe('AlertDialog', () => {
   test('It renders', () => {
     component = render(
       <AlertDialog
-        isOpen={true}
+        isOpen
         onClose={() => { }}
-        title='Dialog Title'
-        text='Mock dialog text'
-      />
+        title="Dialog Title"
+        text="Mock dialog text"
+      />,
     );
     const { getByText } = component;
-    expect(getByText('Dialog Title')).toBeInTheDocument()
-    expect(getByText('Mock dialog text')).toBeInTheDocument()
+    expect(getByText('Dialog Title')).toBeInTheDocument();
+    expect(getByText('Mock dialog text')).toBeInTheDocument();
   });
 
   test('It allows custom confirm and cancel text', () => {
     component = render(
       <AlertDialog
-        isOpen={true}
+        isOpen
         onClose={() => { }}
-        title='Dialog Title'
-        text='Mock dialog text'
-        confirmText='yas'
-        cancelText='nyet'
-      />
+        title="Dialog Title"
+        text="Mock dialog text"
+        confirmText="yas"
+        cancelText="nyet"
+      />,
     );
     const { getByText } = component;
-    expect(getByText('yas')).toBeInTheDocument()
-    expect(getByText('nyet')).toBeInTheDocument()
-  })
-
+    expect(getByText('yas')).toBeInTheDocument();
+    expect(getByText('nyet')).toBeInTheDocument();
+  });
 
   test('It calls onClose with the correct params when confirm is clicked', () => {
     const mockOnClose = jest.fn();
 
     component = render(
       <AlertDialog
-        isOpen={true}
+        isOpen
         onClose={mockOnClose}
-        title='Dialog Title'
-        text='Mock dialog text'
-      />
+        title="Dialog Title"
+        text="Mock dialog text"
+      />,
     );
     const { getByText } = component;
     const confirmButton = getByText(/confirm/i);
@@ -60,11 +59,11 @@ describe('AlertDialog', () => {
 
     component = render(
       <AlertDialog
-        isOpen={true}
+        isOpen
         onClose={mockOnClose}
-        title='Dialog Title'
-        text='Mock dialog text'
-      />
+        title="Dialog Title"
+        text="Mock dialog text"
+      />,
     );
     const { getByText } = component;
     const cancelButton = getByText(/cancel/i);
@@ -79,12 +78,12 @@ describe('AlertDialog', () => {
 
     component = render(
       <AlertDialog
-        isOpen={true}
+        isOpen
         onClose={mockOnClose}
-        title='Dialog Title'
-        text='Mock dialog text'
-        commentRequired={true}
-      />
+        title="Dialog Title"
+        text="Mock dialog text"
+        commentRequired
+      />,
     );
     const { getByText } = component;
     expect(getByText(/confirm/i)).toBeDisabled();
@@ -94,12 +93,12 @@ describe('AlertDialog', () => {
     const mockOnClose = jest.fn();
     component = render(
       <AlertDialog
-        isOpen={true}
+        isOpen
         onClose={mockOnClose}
-        title='Dialog Title'
-        text='Mock dialog text'
-        commentRequired={true}
-      />
+        title="Dialog Title"
+        text="Mock dialog text"
+        commentRequired
+      />,
     );
     const { getByText, getByLabelText } = component;
     const input = getByLabelText(/comment/i);
