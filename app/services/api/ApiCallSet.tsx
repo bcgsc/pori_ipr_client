@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { ThemeProvider, Theme, StyledEngineProvider } from '@mui/material/styles';
+import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
 
 import ApiCall from './ApiCall';
 import AlertDialog from '../../components/AlertDialog';
-import { theme } from '../../App';
+import { theme } from '../../theme';
 import { RequestReturnType } from './types';
 
 /**
