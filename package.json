@@ -101,6 +101,7 @@
     "@mui/lab": "~5.0.0-alpha.54",
     "@mui/material": "~5.0.6",
     "@mui/styles": "~5.0.2",
+    "@mui/system": "~5.3.0",
     "@storybook/addon-actions": "~6.3.12",
     "@storybook/react": "~6.3.12",
     "@types/prop-types": "~15.7.4",
