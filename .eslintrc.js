@@ -6,6 +6,7 @@ module.exports = {
     "plugin:@typescript-eslint/recommended"
   ],
   "env": {
+    "browser": true,
     "es6": true,
     "node": true
   },
