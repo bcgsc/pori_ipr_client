@@ -1,5 +1,4 @@
 /* eslint-disable camelcase */
-declare module '*.scss';
 
 declare let CONFIG: {
   ATTRS: {
@@ -14,6 +13,7 @@ declare let CONFIG: {
 declare global {
   interface Window {
     _env_: {
+      PUBLIC_PATH: string;
       KEYCLOAK_CLIENT_ID: string;
       KEYCLOAK_REALM: string;
       KEYCLOAK_URL: string;
