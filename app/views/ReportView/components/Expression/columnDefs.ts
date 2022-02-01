@@ -84,6 +84,7 @@ const columnDefs: Array<ColDef | ColGroupDef> = [{
   headerName: 'Actions',
   cellRenderer: 'ActionCellRenderer',
   pinned: 'right',
+  colId: 'actions',
   sortable: false,
   suppressMenu: true,
 }];
