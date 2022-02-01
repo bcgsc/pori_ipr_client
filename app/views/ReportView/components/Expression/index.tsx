@@ -1,8 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Typography, Paper } from '@mui/material';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { ColDef, ColGroupDef } from '@ag-grid-community/core';
-
 import DataTable from '@/components/DataTable';
 import api from '@/services/api';
 import DemoDescription from '@/components/DemoDescription';
@@ -27,9 +24,9 @@ const TITLE_MAP = {
   downreg_tsg: 'Down-Regulated Tumour Suppressor Genes',
 };
 
-const getInfoDescription = (relevance: string) => `Expression level variants 
-where the variant matched 1 or more statements of ${relevance} relevance in 
-the knowledge base matches section. Details on these matches can be seen in the 
+const getInfoDescription = (relevance: string) => `Expression level variants
+where the variant matched 1 or more statements of ${relevance} relevance in
+the knowledge base matches section. Details on these matches can be seen in the
 knowledge base matches section of this report.`;
 
 const INFO_BUBBLES = {
@@ -52,14 +49,14 @@ const Expression = ({
   const [expOutliers, setExpOutliers] = useState<ProcessedExpressionOutliers>();
   const [visibleCols, setVisibleCols] = useState<string[]>(
     columnDefs.reduce((accumulator: string[], current) => {
-      if (current.hide === false) {
-        accumulator.push(current.field ?? current.colId);
-      } else if (current.children?.length) {
+      if (current.children?.length) {
         current.children.forEach((child) => {
-          if (child.hide === false) {
+          if (child.hide !== true) {
             accumulator.push(child.field ?? child.colId);
           }
         });
+      } else if (current.hide !== true) {
+        accumulator.push(current.field ?? current.colId);
       }
       return accumulator;
     }, []),
@@ -87,13 +84,17 @@ const Expression = ({
           }
 
           const processedOutliers: ProcessedExpressionOutliers = processExpression(outliers);
-
           const imageAttachedOutliers = Object.entries(processedOutliers)
             .reduce((accumulator, [key, value]) => {
-              const newValues = value.map((val) => ({
-                ...val,
-                image: images.find((img: ImageType) => img.key === `expDensity.${val.gene.name}`),
-              }));
+              const newValues = value.map((val) => {
+                return ({
+                  ...val,
+                  image: images.find((img: ImageType) => {
+                    let matcher = new RegExp(`expDensity.(histogram|(violin.(tcga|gtex|cser|hartwig|pediatric))).${val.gene.name}`);
+                    return matcher.test(img.key);
+                  }),
+                })
+              });
 
               accumulator[key] = newValues;
               return accumulator;
