@@ -71,6 +71,7 @@ const sections = [
     category: true,
     children: [
       { name: 'Pharmacogenomic', uri: 'pharmacogenomic' },
+      { name: 'Cancer Predisposition', uri: 'cancer-predisposition' },
     ],
   },
   {
