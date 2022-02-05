@@ -59,20 +59,24 @@ const PharmacoGenomicSummary = ({
     if (report && report.ident) {
       const getData = async () => {
         try {
+          const probeTestInfoResp = await api.get(`/reports/${report.ident}/probe-test-information`).request();
+          setTestInformation(probeTestInfoResp);
+        } catch (err) {
+          snackbar.error(`Error getting probe-test-information: ${err}`);
+        }
+
+        try {
           const apiCalls = new ApiCallSet([
-            api.get(`/reports/${report.ident}/probe-test-information`),
             api.get(`/reports/${report.ident}/signatures`),
             api.get(`/reports/${report.ident}/kb-matches?category=pharmacogenomic`),
             api.get(`/reports/${report.ident}/small-mutations`),
           ]);
           const [
-            testInformationData,
             signaturesData,
             pharmacoGenomicResp,
             cancerPredispositionResp,
           ] = await apiCalls.request();
 
-          setTestInformation(testInformationData);
           setSignatures(signaturesData);
           setPharmacoGenomic(pharmacoGenomicResp);
           setCancerPredisposition(cancerPredispositionResp.filter((row) => row.germline));
@@ -195,42 +199,40 @@ const PharmacoGenomicSummary = ({
       {report && (
         <>
           {patientInformation && (
-            <>
-              <div className="summary__patient-information">
-                <div className="summary__patient-information-title">
-                  <Typography variant="h3" display="inline">
-                    Patient Information
-                    {canEdit && !isPrint && (
-                      <>
-                        <IconButton onClick={() => setShowPatientEdit(true)} size="large">
-                          <EditIcon />
-                        </IconButton>
-                        <PatientEdit
-                          patientInformation={report.patientInformation}
-                          report={report}
-                          isOpen={Boolean(showPatientEdit)}
-                          onClose={handlePatientEditClose}
-                        />
-                      </>
-                    )}
-                  </Typography>
-                </div>
-                <Grid
-                  alignItems="flex-end"
-                  container
-                  spacing={3}
-                  className="summary__patient-information-content"
-                >
-                  {patientInformation.map(({ label, value }) => (
-                    <Grid key={label} item>
-                      <ReadOnlyTextField label={label}>
-                        {value}
-                      </ReadOnlyTextField>
-                    </Grid>
-                  ))}
-                </Grid>
+            <div className="summary__patient-information">
+              <div className="summary__patient-information-title">
+                <Typography variant="h3" display="inline">
+                  Patient Information
+                  {canEdit && !isPrint && (
+                    <>
+                      <IconButton onClick={() => setShowPatientEdit(true)} size="large">
+                        <EditIcon />
+                      </IconButton>
+                      <PatientEdit
+                        patientInformation={report.patientInformation}
+                        report={report}
+                        isOpen={Boolean(showPatientEdit)}
+                        onClose={handlePatientEditClose}
+                      />
+                    </>
+                  )}
+                </Typography>
               </div>
-            </>
+              <Grid
+                alignItems="flex-end"
+                container
+                spacing={3}
+                className="summary__patient-information-content"
+              >
+                {patientInformation.map(({ label, value }) => (
+                  <Grid key={label} item>
+                    <ReadOnlyTextField label={label}>
+                      {value}
+                    </ReadOnlyTextField>
+                  </Grid>
+                ))}
+              </Grid>
+            </div>
           )}
           {report?.sampleInfo && (
             <>
