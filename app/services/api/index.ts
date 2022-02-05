@@ -1,5 +1,4 @@
-import ApiCall from './ApiCall';
-import ApiCallSet from './ApiCallSet';
+import { ApiCall } from './ApiCall';
 import { CallOptionsType } from './types';
 
 const get = (
@@ -81,7 +80,5 @@ export default {
   put,
 };
 
-export {
-  ApiCall,
-  ApiCallSet,
-};
+export { ApiCall };
+export { default as ApiCallSet } from './ApiCallSet';

@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { ThemeProvider, Theme, StyledEngineProvider } from '@mui/material/styles';
+import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
 
 import {
   BadRequestError,
 } from '../errors/errors';
 import AlertDialog from '../../components/AlertDialog';
-import { theme } from '../../App';
+import theme from '../../appTheme';
 import errorHandler from '../errors/errorHandler';
 import SnackbarUtils from '../SnackbarUtils';
 
@@ -181,4 +181,5 @@ class ApiCall {
   }
 }
 
-export default ApiCall;
+export { ApiCall };
+export type { ApiCall as ApiCallType };
