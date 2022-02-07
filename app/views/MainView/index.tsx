@@ -2,6 +2,7 @@ import React, {
   lazy,
   Suspense,
   useState,
+  useMemo,
 } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { CircularProgress } from '@mui/material';
@@ -36,19 +37,19 @@ const Main = (): JSX.Element => {
   const [sidebarMaximized, setSidebarMaximized] = useState(false);
   const [isNavVisible, setIsNavVisible] = useState(true);
 
+  const secContextVal = useMemo(() => ({
+    authorizationToken, setAuthorizationToken, userDetails, setUserDetails,
+  }), [authorizationToken, setAuthorizationToken, userDetails, setUserDetails]);
+
+  const sideBarContextVal = useMemo(() => ({
+    sidebarMaximized, setSidebarMaximized,
+  }), [sidebarMaximized, setSidebarMaximized]);
+
   return (
-    <SecurityContext.Provider
-      value={{
-        authorizationToken, setAuthorizationToken, userDetails, setUserDetails,
-      }}
-    >
+    <SecurityContext.Provider value={secContextVal}>
       <EditContextProvider>
         <ResourceContextProvider>
-          <SidebarContext.Provider
-            value={{
-              sidebarMaximized, setSidebarMaximized,
-            }}
-          >
+          <SidebarContext.Provider value={sideBarContextVal}>
             <div>
               <section className={`${isNavVisible ? 'main__content' : ''} ${sidebarMaximized ? 'main__content--maximized' : ''}`}>
                 {isNavVisible ? (
