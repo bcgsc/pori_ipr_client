@@ -24,8 +24,16 @@ const PrintTable = ({
     const colA = columnDefs.find((col) => col.colId === keyA);
     const colB = columnDefs.find((col) => col.colId === keyB);
 
-    let indexA = order.findIndex((key) => key === colA?.headerName);
-    let indexB = order.findIndex((key) => key === colB?.headerName);
+    let indexA;
+    let indexB;
+
+    if (order?.length > 0) {
+      indexA = order.findIndex((key) => key === colA?.headerName);
+      indexB = order.findIndex((key) => key === colB?.headerName);
+    } else {
+      indexA = columnDefs.findIndex((colD) => colD.field === colA.field);
+      indexB = columnDefs.findIndex((colD) => colD.field === colB.field);
+    }
 
     // -1 would sort the column first. Put not found columns last instead
     if (indexA === -1) {
@@ -45,8 +53,16 @@ const PrintTable = ({
   }, [columnDefs, order]);
 
   const headerSortFunc = useCallback((columnA, columnB): number => {
-    let indexA = order.findIndex((key) => key === columnA.headerName && columnA.colId);
-    let indexB = order.findIndex((key) => key === columnB.headerName && columnB.colId);
+    let indexA;
+    let indexB;
+
+    if (order?.length > 0) {
+      indexA = order.findIndex((key) => key === columnA.headerName && columnA.colId);
+      indexB = order.findIndex((key) => key === columnB.headerName && columnB.colId);
+    } else {
+      indexA = columnDefs.findIndex((col) => col.headerName === columnA.headerName && columnA.colId);
+      indexB = columnDefs.findIndex((col) => col.headerName === columnB.headerName && columnB.colId);
+    }
 
     // -1 would sort the column first. Put not found columns last instead
     if (indexA === -1) {
@@ -63,7 +79,7 @@ const PrintTable = ({
       return 1;
     }
     return 0;
-  }, [columnDefs.length, order]);
+  }, [columnDefs, order]);
 
   return (
     <div className="table-container">
