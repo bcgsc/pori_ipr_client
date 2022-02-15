@@ -24,9 +24,7 @@ import TestInformation, { TestInformationType } from '@/components/TestInformati
 import { KbMatchType } from '@/common';
 import { sampleColumnDefs } from './columnDefs';
 import { columnDefs as pharmacoGenomicColumnDefs } from '../KbMatches/columnDefs';
-import { columnDefs as cancerColumnDefs } from '../SmallMutations/columnDefs';
 import PatientEdit from '../GenomicSummary/components/PatientEdit';
-import SmallMutationType from '../SmallMutations/types';
 
 import './index.scss';
 
@@ -47,7 +45,7 @@ const PharmacoGenomicSummary = ({
   const [testInformation, setTestInformation] = useState<TestInformationType>();
   const [signatures, setSignatures] = useState<SignatureType | null>();
   const [pharmacoGenomic, setPharmacoGenomic] = useState<KbMatchType[]>([]);
-  const [cancerPredisposition, setCancerPredisposition] = useState<SmallMutationType[]>([]);
+  const [cancerPredisposition, setCancerPredisposition] = useState<KbMatchType[]>([]);
   const [patientInformation, setPatientInformation] = useState<{
     label: string;
     value: string | null;
@@ -69,17 +67,19 @@ const PharmacoGenomicSummary = ({
           const apiCalls = new ApiCallSet([
             api.get(`/reports/${report.ident}/signatures`),
             api.get(`/reports/${report.ident}/kb-matches?category=pharmacogenomic`),
-            api.get(`/reports/${report.ident}/small-mutations`),
+            api.get(`/reports/${report.ident}/kb-matches?category=cancer predisposition`),
           ]);
+
           const [
             signaturesData,
             pharmacoGenomicResp,
             cancerPredispositionResp,
-          ] = await apiCalls.request();
+          ] = await apiCalls.request() as [SignatureType, KbMatchType[], KbMatchType[]];
 
           setSignatures(signaturesData);
           setPharmacoGenomic(pharmacoGenomicResp);
-          setCancerPredisposition(cancerPredispositionResp.filter((row) => row.germline));
+          // Assumed to be germline when it gets to this part, so filtering no longer necessary
+          setCancerPredisposition(cancerPredispositionResp);
 
           setPatientInformation([
             {
@@ -283,7 +283,8 @@ const PharmacoGenomicSummary = ({
             {cancerPredisposition.length ? (
               <>
                 <DataTable
-                  columnDefs={cancerColumnDefs}
+                  // Shares same column definitions as pharmacogenomic
+                  columnDefs={pharmacoGenomicColumnDefs}
                   rowData={cancerPredisposition}
                   isPrint={isPrint}
                   isPaginated={!isPrint}
