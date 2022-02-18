@@ -27,7 +27,7 @@ const CivicCellRenderer = ({
     if (data) {
       if (Array.isArray(externalSource)) {
         const numOnly = /^\d+$/;
-        if (externalSource.map((es) => es.toLowerCase()).includes('civic')) {
+        if (externalSource.map((es) => es?.toLowerCase()).includes('civic')) {
           // TODO: Assume all numeric for now that it is civic ids, more types of external sources to come
           setLinks(externalStatementId.filter((id) => numOnly.test(id)));
           setText(externalSource.filter((src) => src?.toLowerCase() !== 'civic').join(', '));
@@ -65,7 +65,7 @@ const CivicCellRenderer = ({
   if (links.length > 1) {
     return (
       <>
-        <span>{text ? `${text},` : '' }</span>
+        <span>{text ? `${text},` : ''}</span>
         <button
           type="button"
           style={{
