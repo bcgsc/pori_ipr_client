@@ -1,12 +1,5 @@
 import ArrayCell from '@/components/DataTable/components/ArrayCellRenderer';
-
-const getGeneProp = (params, property) => {
-  const { data: { variant, variantType } } = params;
-  if (variantType === 'sv') {
-    return variant.gene1[property] || variant.gene2[property] || false;
-  }
-  return variant.gene[property] || false;
-};
+import getGeneProp from '@/utils/getGeneProp';
 
 const columnDefs = [{
   headerName: 'Gene',
@@ -45,15 +38,11 @@ const columnDefs = [{
       return `${variant.gene.name} ${variant.cnvState}`;
     }
     if (variantType === 'sv') {
-      return `(${
-        variant.gene1.name || '?'
-      },${
-        variant.gene2.name || '?'
-      }):fusion(e.${
-        variant.exon1 || '?'
-      },e.${
-        variant.exon2 || '?'
-      })`;
+      return `(${variant.gene1.name || '?'
+        },${variant.gene2.name || '?'
+        }):fusion(e.${variant.exon1 || '?'
+        },e.${variant.exon2 || '?'
+        })`;
     }
     if (variantType === 'mut') {
       return `${variant.gene.name}:${variant.proteinChange}`;
