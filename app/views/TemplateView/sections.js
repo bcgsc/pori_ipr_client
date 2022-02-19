@@ -52,6 +52,10 @@ const sections = [
     value: 'pharmacogenomic',
   },
   {
+    name: 'CancerPredisposition',
+    value: 'cancer-predisposition',
+  },
+  {
     name: 'Small Mutations',
     value: 'small-mutations',
   },
