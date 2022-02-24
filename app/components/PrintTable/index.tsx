@@ -31,8 +31,8 @@ const PrintTable = ({
       indexA = order.findIndex((key) => key === colA?.headerName);
       indexB = order.findIndex((key) => key === colB?.headerName);
     } else {
-      indexA = columnDefs.findIndex((colD) => colD.field === colA.field);
-      indexB = columnDefs.findIndex((colD) => colD.field === colB.field);
+      indexA = columnDefs.findIndex((colD) => colD?.field === colA?.field);
+      indexB = columnDefs.findIndex((colD) => colD?.field === colB?.field);
     }
 
     // -1 would sort the column first. Put not found columns last instead
