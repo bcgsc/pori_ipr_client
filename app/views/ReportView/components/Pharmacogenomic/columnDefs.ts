@@ -1,13 +1,6 @@
 import { ColDef, ValueGetterParams } from '@ag-grid-community/core';
 import ArrayCell from '@/components/DataTable/components/ArrayCellRenderer';
-
-const getGeneProp = (params: ValueGetterParams, property: string) => {
-  const { data: { variant, variantType } } = params;
-  if (variantType === 'sv') {
-    return variant.gene1[property] || variant.gene2[property] || false;
-  }
-  return variant.gene[property] || false;
-};
+import getGeneProp from '@/utils/getGeneProp';
 
 const columnDefs: ColDef[] = [{
   headerName: 'Gene',

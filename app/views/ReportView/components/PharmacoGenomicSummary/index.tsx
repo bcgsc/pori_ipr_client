@@ -22,8 +22,7 @@ import snackbar from '@/services/SnackbarUtils';
 import PrintTable from '@/components/PrintTable';
 import TestInformation, { TestInformationType } from '@/components/TestInformation';
 import { KbMatchType } from '@/common';
-import { sampleColumnDefs } from './columnDefs';
-import { columnDefs as pharmacoGenomicColumnDefs } from '../KbMatches/columnDefs';
+import { sampleColumnDefs, pharmacoGenomicColumnDefs } from './columnDefs';
 import PatientEdit from '../GenomicSummary/components/PatientEdit';
 
 import './index.scss';
