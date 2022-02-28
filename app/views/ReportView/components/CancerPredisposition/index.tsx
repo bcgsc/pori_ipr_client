@@ -24,7 +24,7 @@ const CancerPredisposition = ({
           const variantsResp = await api.get(
             `/reports/${report.ident}/kb-matches?category=cancer predisposition`,
           ).request();
-          setVariants(variantsResp);
+          setVariants(variantsResp.filter((varObj) => varObj.variant?.germline));
         } catch (err) {
           snackbar.error(`Network error: ${err}`);
         } finally {
