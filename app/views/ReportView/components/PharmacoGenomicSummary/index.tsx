@@ -1,5 +1,5 @@
 import React, {
-  useState, useEffect, useContext, useCallback,
+  useState, useEffect, useContext, useCallback, useMemo,
 } from 'react';
 import {
   Typography,
@@ -22,7 +22,7 @@ import snackbar from '@/services/SnackbarUtils';
 import PrintTable from '@/components/PrintTable';
 import TestInformation, { TestInformationType } from '@/components/TestInformation';
 import { KbMatchType } from '@/common';
-import { sampleColumnDefs, pharmacoGenomicColumnDefs } from './columnDefs';
+import { sampleColumnDefs, pharmacoGenomicColumnDefs, pharmacoGenomicPrintColumnDefs } from './columnDefs';
 import PatientEdit from '../GenomicSummary/components/PatientEdit';
 
 import './index.scss';
@@ -193,6 +193,39 @@ const PharmacoGenomicSummary = ({
     setSignatures(newSignature);
   }, [report, setIsSigned]);
 
+  const pharmacogenomicSection = useMemo(() => {
+    let component = (
+      <div className="summary__none">
+        No pharmacogenomic variants found
+      </div>
+    );
+    if (pharmacoGenomic.length > 0) {
+      if (isPrint) {
+        component = (
+          <PrintTable
+            columnDefs={pharmacoGenomicPrintColumnDefs}
+            data={pharmacoGenomic}
+          />
+        );
+      } else {
+        component = (
+          <>
+            <DataTable
+              columnDefs={pharmacoGenomicColumnDefs}
+              rowData={pharmacoGenomic}
+              isPrint={isPrint}
+              isPaginated={!isPrint}
+            />
+            <Alert className="summary--max-width" severity="warning">
+              Positive Pharmacogenomic Result: At least one pharmacogenomic variant was identified in this sample. Further clinical testing to determine risk of toxicity is recommended for this patient.
+            </Alert>
+          </>
+        );
+      }
+    }
+    return component;
+  }, [pharmacoGenomic, isPrint]);
+
   return (
     <div className="summary">
       {report && (
@@ -257,23 +290,7 @@ const PharmacoGenomicSummary = ({
             <Typography variant="h3" display="inline">
               Pharmacogenomic Variants
             </Typography>
-            {pharmacoGenomic.length ? (
-              <>
-                <DataTable
-                  columnDefs={pharmacoGenomicColumnDefs}
-                  rowData={pharmacoGenomic}
-                  isPrint={isPrint}
-                  isPaginated={!isPrint}
-                />
-                <Alert className="summary--max-width" severity="warning">
-                  Positive Pharmacogenomic Result: At least one pharmacogenomic variant was identified in this sample. Further clinical testing to determine risk of toxicity is recommended for this patient.
-                </Alert>
-              </>
-            ) : (
-              <div className="summary__none">
-                No pharmacogenomic variants found
-              </div>
-            )}
+            {pharmacogenomicSection}
           </div>
           <div className="summary__cancer-predisposition">
             <Typography variant="h3" display="inline">
