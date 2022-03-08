@@ -42,7 +42,7 @@ const CancerPredisposition = ({
           canViewDetails
           columnDefs={columnDefs}
           rowData={variants}
-          titleText="Known Cancer Predisposition Variants"
+          titleText="Known Cancer Predisposition Variants from Targeted Gene Report"
         />
       )}
     </div>
