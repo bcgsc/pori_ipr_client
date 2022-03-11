@@ -22,7 +22,13 @@ import snackbar from '@/services/SnackbarUtils';
 import PrintTable from '@/components/PrintTable';
 import TestInformation, { TestInformationType } from '@/components/TestInformation';
 import { KbMatchType } from '@/common';
-import { sampleColumnDefs, pharmacoGenomicColumnDefs, pharmacoGenomicPrintColumnDefs } from './columnDefs';
+import {
+  sampleColumnDefs,
+  pharmacoGenomicColumnDefs,
+  pharmacoGenomicPrintColumnDefs,
+  cancerPredisColumnDefs,
+  cancerPredisPrintColumnDefs,
+} from './columnDefs';
 import PatientEdit from '../GenomicSummary/components/PatientEdit';
 
 import './index.scss';
@@ -226,6 +232,38 @@ const PharmacoGenomicSummary = ({
     return component;
   }, [pharmacoGenomic, isPrint]);
 
+  const cancerPredispositionSection = useMemo(() => {
+    let component = (
+      <div className="summary__none">
+        No cancer predisposition variants found
+      </div>
+    );
+    if (isPrint) {
+      component = (
+        <PrintTable
+          columnDefs={cancerPredisPrintColumnDefs}
+          data={cancerPredisposition}
+        />
+      );
+    } else if (cancerPredisposition.length > 0) {
+      component = (
+        <>
+          <DataTable
+            // Shares same column definitions as pharmacogenomic
+            columnDefs={cancerPredisColumnDefs}
+            rowData={cancerPredisposition}
+            isPrint={isPrint}
+            isPaginated={!isPrint}
+          />
+          <Alert className="summary--max-width" severity="warning">
+            Positive Cancer Predisposition Result: At least one pathogenic cancer predisposition variant was identified in this sample. A referral to the Hereditary Cancer Program is recommended for this patient.
+          </Alert>
+        </>
+      );
+    }
+    return component;
+  }, [cancerPredisposition, isPrint]);
+
   return (
     <div className="summary">
       {report && (
@@ -296,24 +334,7 @@ const PharmacoGenomicSummary = ({
             <Typography variant="h3" display="inline">
               Cancer Predisposition Variants
             </Typography>
-            {cancerPredisposition.length ? (
-              <>
-                <DataTable
-                  // Shares same column definitions as pharmacogenomic
-                  columnDefs={pharmacoGenomicColumnDefs}
-                  rowData={cancerPredisposition}
-                  isPrint={isPrint}
-                  isPaginated={!isPrint}
-                />
-                <Alert className="summary--max-width" severity="warning">
-                  Positive Cancer Predisposition Result: At least one pathogenic cancer predisposition variant was identified in this sample. A referral to the Hereditary Cancer Program is recommended for this patient.
-                </Alert>
-              </>
-            ) : (
-              <div className="summary__none">
-                No cancer predisposition variants found
-              </div>
-            )}
+            {cancerPredispositionSection}
           </div>
           {testInformation && (
             <div className="summary__test-information">
