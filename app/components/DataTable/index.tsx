@@ -20,6 +20,7 @@ import EnsemblCellRenderer from './components/EnsemblCellRenderer';
 import CivicCellRenderer from './components/CivicCellRenderer';
 import GeneCellRenderer from './components/GeneCellRenderer';
 import ActionCellRenderer from './components/ActionCellRenderer';
+import AppendixCellRenderer from './components/AppendixCellRenderer';
 import NoRowsOverlay from './components/NoRowsOverlay';
 import { getDate } from '../../utils/date';
 
@@ -156,7 +157,7 @@ const DataTable = ({
         const rowNode = gridApi.getDisplayedRowAtIndex(highlightRow);
         const pageSize = gridApi.paginationGetPageSize();
         const navigateToPage = Math.floor((highlightRow) / pageSize);
-        
+
         if (navigateToPage !== gridApi.paginationGetCurrentPage()) {
           gridApi.paginationGoToPage(navigateToPage);
         }
@@ -278,7 +279,7 @@ const DataTable = ({
     colApi.setColumnsVisible(returnedHiddenCols, false);
 
     colApi.autoSizeColumns(returnedVisibleCols);
-    
+
     if (syncVisibleColumns) {
       syncVisibleColumns(returnedVisibleCols);
     }
@@ -439,6 +440,7 @@ const DataTable = ({
                 tableType,
               }}
               frameworkComponents={{
+                AppendixCellRenderer,
                 EnsemblCellRenderer,
                 CivicCellRenderer,
                 GeneCellRenderer,

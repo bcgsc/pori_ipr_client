@@ -20,6 +20,7 @@ const columnDefs: ColDef[] = [
   {
     headerName: 'Appendix Text',
     valueGetter: ({ data }) => data.appendix?.text,
+    cellRenderer: 'AppendixCellRenderer',
     flex: 1,
     autoHeight: true,
     wrapText: true,
