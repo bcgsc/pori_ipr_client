@@ -42,7 +42,7 @@ const Pharmacogenomic = ({
           canViewDetails
           columnDefs={columnDefs}
           rowData={variants}
-          titleText="Known and Novel Pharmacogenomic Variants"
+          titleText="Known Pharmacogenomic Variants from Targeted Gene Report"
         />
       )}
     </div>
