@@ -13,7 +13,6 @@ exports[`DataTable It matches the snapshot 1`] = `
       >
         <div
           class="ag-root-wrapper ag-layout-auto-height ag-ltr"
-          ref="eRootWrapper"
         >
           
                 
@@ -43,16 +42,13 @@ exports[`DataTable It matches the snapshot 1`] = `
               <!--AG-HEADER-ROOT-->
               <div
                 class="ag-header ag-focus-managed ag-pivot-off"
-                ref="headerRoot"
+                ref="gridHeader"
                 role="presentation"
                 style="height: 57px; min-height: 57px;"
                 unselectable="on"
               >
-                
-            
                 <div
                   class="ag-pinned-left-header ag-hidden"
-                  ref="ePinnedLeftHeader"
                   role="presentation"
                   style="width: 0px; max-width: 0px; min-width: 0px;"
                 >
@@ -63,18 +59,15 @@ exports[`DataTable It matches the snapshot 1`] = `
                     style="top: 0px; height: 56px; width: 0px;"
                   />
                 </div>
-                
-            
                 <div
                   class="ag-header-viewport"
-                  ref="eHeaderViewport"
                   role="presentation"
                 >
                   
-                
+            
                   <div
                     class="ag-header-container"
-                    ref="eHeaderContainer"
+                    ref="eCenterContainer"
                     role="rowgroup"
                     style="width: 600px;"
                   >
@@ -87,7 +80,7 @@ exports[`DataTable It matches the snapshot 1`] = `
                       <div
                         aria-colindex="1"
                         aria-sort="none"
-                        class="ag-header-cell ag-focus-managed ag-header-cell-sortable"
+                        class="ag-header-cell ag-header-cell-sortable ag-focus-managed"
                         col-id="username"
                         role="columnheader"
                         style="width: 200px; left: 0px;"
@@ -101,12 +94,8 @@ exports[`DataTable It matches the snapshot 1`] = `
                           ref="eResize"
                           role="presentation"
                         />
-                        
-            
-                        <!--AG-CHECKBOX-->
                         <div
-                          class="ag-header-select-all ag-labeled ag-label-align-right ag-checkbox ag-input-field ag-hidden"
-                          ref="cbSelectAll"
+                          class="ag-labeled ag-label-align-right ag-checkbox ag-input-field ag-header-select-all ag-hidden"
                           role="presentation"
                         >
                           
@@ -128,7 +117,7 @@ exports[`DataTable It matches the snapshot 1`] = `
                             <input
                               aria-label="Press Space to toggle all rows selection (unchecked)"
                               class="ag-input-field-input ag-checkbox-input"
-                              id="ag-22-input"
+                              id="ag-25-input"
                               ref="eInput"
                               tabindex="-1"
                               type="checkbox"
@@ -244,7 +233,7 @@ exports[`DataTable It matches the snapshot 1`] = `
                       <div
                         aria-colindex="2"
                         aria-sort="none"
-                        class="ag-header-cell ag-focus-managed ag-header-cell-sortable"
+                        class="ag-header-cell ag-header-cell-sortable ag-focus-managed"
                         col-id="password"
                         role="columnheader"
                         style="width: 200px; left: 200px;"
@@ -258,12 +247,8 @@ exports[`DataTable It matches the snapshot 1`] = `
                           ref="eResize"
                           role="presentation"
                         />
-                        
-            
-                        <!--AG-CHECKBOX-->
                         <div
-                          class="ag-header-select-all ag-labeled ag-label-align-right ag-checkbox ag-input-field ag-hidden"
-                          ref="cbSelectAll"
+                          class="ag-labeled ag-label-align-right ag-checkbox ag-input-field ag-header-select-all ag-hidden"
                           role="presentation"
                         >
                           
@@ -285,7 +270,7 @@ exports[`DataTable It matches the snapshot 1`] = `
                             <input
                               aria-label="Press Space to toggle all rows selection (unchecked)"
                               class="ag-input-field-input ag-checkbox-input"
-                              id="ag-25-input"
+                              id="ag-28-input"
                               ref="eInput"
                               tabindex="-1"
                               type="checkbox"
@@ -401,7 +386,7 @@ exports[`DataTable It matches the snapshot 1`] = `
                       <div
                         aria-colindex="3"
                         aria-sort="none"
-                        class="ag-header-cell ag-focus-managed ag-header-cell-sortable"
+                        class="ag-header-cell ag-header-cell-sortable ag-focus-managed"
                         col-id="email"
                         role="columnheader"
                         style="width: 200px; left: 400px;"
@@ -415,12 +400,8 @@ exports[`DataTable It matches the snapshot 1`] = `
                           ref="eResize"
                           role="presentation"
                         />
-                        
-            
-                        <!--AG-CHECKBOX-->
                         <div
-                          class="ag-header-select-all ag-labeled ag-label-align-right ag-checkbox ag-input-field ag-hidden"
-                          ref="cbSelectAll"
+                          class="ag-labeled ag-label-align-right ag-checkbox ag-input-field ag-header-select-all ag-hidden"
                           role="presentation"
                         >
                           
@@ -442,7 +423,7 @@ exports[`DataTable It matches the snapshot 1`] = `
                             <input
                               aria-label="Press Space to toggle all rows selection (unchecked)"
                               class="ag-input-field-input ag-checkbox-input"
-                              id="ag-28-input"
+                              id="ag-31-input"
                               ref="eInput"
                               tabindex="-1"
                               type="checkbox"
@@ -558,13 +539,10 @@ exports[`DataTable It matches the snapshot 1`] = `
                     </div>
                   </div>
                   
-            
+        
                 </div>
-                
-            
                 <div
                   class="ag-pinned-right-header ag-hidden"
-                  ref="ePinnedRightHeader"
                   role="presentation"
                   style="width: 0px; max-width: 0px; min-width: 0px;"
                 >
@@ -575,8 +553,6 @@ exports[`DataTable It matches the snapshot 1`] = `
                     style="top: 0px; height: 56px; width: 0px;"
                   />
                 </div>
-                
-        
               </div>
               
         
@@ -661,22 +637,20 @@ exports[`DataTable It matches the snapshot 1`] = `
                   unselectable="on"
                 >
                   <div
-                    aria-label="Press SPACE to select this row."
                     aria-rowindex="2"
-                    class="ag-row ag-row-no-focus ag-row-even ag-row-level-0 ag-row-position-absolute ag-row-first"
-                    comp-id="30"
+                    class="ag-row-even ag-row-no-focus ag-row ag-row-level-0 ag-row-position-absolute ag-row-first"
+                    comp-id="33"
                     role="row"
                     row-index="0"
-                    style="height: 48px; transform: translateY(0px); "
+                    style="transform: translateY(0px); height: 48px;"
                   />
                   <div
-                    aria-label="Press SPACE to select this row."
                     aria-rowindex="3"
-                    class="ag-row ag-row-no-focus ag-row-odd ag-row-level-0 ag-row-position-absolute ag-row-last"
-                    comp-id="31"
+                    class="ag-row-odd ag-row-no-focus ag-row ag-row-level-0 ag-row-position-absolute ag-row-last"
+                    comp-id="34"
                     role="row"
                     row-index="1"
-                    style="height: 48px; transform: translateY(48px); "
+                    style="transform: translateY(48px); height: 48px;"
                   />
                 </div>
                 
@@ -708,21 +682,20 @@ exports[`DataTable It matches the snapshot 1`] = `
                       unselectable="on"
                     >
                       <div
-                        aria-label="Press SPACE to select this row."
                         aria-rowindex="2"
-                        class="ag-row ag-row-no-focus ag-row-even ag-row-level-0 ag-row-position-absolute ag-row-first"
-                        comp-id="32"
+                        class="ag-row-even ag-row-no-focus ag-row ag-row-level-0 ag-row-position-absolute ag-row-first"
+                        comp-id="35"
                         role="row"
                         row-index="0"
-                        style="height: 48px; transform: translateY(0px); "
+                        style="transform: translateY(0px); height: 48px;"
                       >
                         <div
                           aria-colindex="1"
-                          class="ag-cell ag-cell-not-inline-editing ag-cell-auto-height ag-cell-value"
+                          class="ag-cell ag-cell-not-inline-editing ag-cell-normal-height ag-cell-value"
                           col-id="username"
-                          comp-id="33"
+                          comp-id="38"
                           role="gridcell"
-                          style="width: 200px; left: 0px;  "
+                          style="left: 0px; width: 200px;"
                           tabindex="-1"
                           unselectable="on"
                         >
@@ -730,11 +703,11 @@ exports[`DataTable It matches the snapshot 1`] = `
                         </div>
                         <div
                           aria-colindex="2"
-                          class="ag-cell ag-cell-not-inline-editing ag-cell-auto-height ag-cell-value"
+                          class="ag-cell ag-cell-not-inline-editing ag-cell-normal-height ag-cell-value"
                           col-id="password"
-                          comp-id="34"
+                          comp-id="39"
                           role="gridcell"
-                          style="width: 200px; left: 200px;  "
+                          style="left: 200px; width: 200px;"
                           tabindex="-1"
                           unselectable="on"
                         >
@@ -742,11 +715,11 @@ exports[`DataTable It matches the snapshot 1`] = `
                         </div>
                         <div
                           aria-colindex="3"
-                          class="ag-cell ag-cell-not-inline-editing ag-cell-auto-height ag-cell-value"
+                          class="ag-cell ag-cell-not-inline-editing ag-cell-normal-height ag-cell-value"
                           col-id="email"
-                          comp-id="35"
+                          comp-id="40"
                           role="gridcell"
-                          style="width: 200px; left: 400px;  "
+                          style="left: 400px; width: 200px;"
                           tabindex="-1"
                           unselectable="on"
                         >
@@ -754,21 +727,20 @@ exports[`DataTable It matches the snapshot 1`] = `
                         </div>
                       </div>
                       <div
-                        aria-label="Press SPACE to select this row."
                         aria-rowindex="3"
-                        class="ag-row ag-row-no-focus ag-row-odd ag-row-level-0 ag-row-position-absolute ag-row-last"
+                        class="ag-row-odd ag-row-no-focus ag-row ag-row-level-0 ag-row-position-absolute ag-row-last"
                         comp-id="36"
                         role="row"
                         row-index="1"
-                        style="height: 48px; transform: translateY(48px); "
+                        style="transform: translateY(48px); height: 48px;"
                       >
                         <div
                           aria-colindex="1"
-                          class="ag-cell ag-cell-not-inline-editing ag-cell-auto-height ag-cell-value"
+                          class="ag-cell ag-cell-not-inline-editing ag-cell-normal-height ag-cell-value"
                           col-id="username"
-                          comp-id="37"
+                          comp-id="42"
                           role="gridcell"
-                          style="width: 200px; left: 0px;  "
+                          style="left: 0px; width: 200px;"
                           tabindex="-1"
                           unselectable="on"
                         >
@@ -776,11 +748,11 @@ exports[`DataTable It matches the snapshot 1`] = `
                         </div>
                         <div
                           aria-colindex="2"
-                          class="ag-cell ag-cell-not-inline-editing ag-cell-auto-height ag-cell-value"
+                          class="ag-cell ag-cell-not-inline-editing ag-cell-normal-height ag-cell-value"
                           col-id="password"
-                          comp-id="38"
+                          comp-id="43"
                           role="gridcell"
-                          style="width: 200px; left: 200px;  "
+                          style="left: 200px; width: 200px;"
                           tabindex="-1"
                           unselectable="on"
                         >
@@ -788,11 +760,11 @@ exports[`DataTable It matches the snapshot 1`] = `
                         </div>
                         <div
                           aria-colindex="3"
-                          class="ag-cell ag-cell-not-inline-editing ag-cell-auto-height ag-cell-value"
+                          class="ag-cell ag-cell-not-inline-editing ag-cell-normal-height ag-cell-value"
                           col-id="email"
-                          comp-id="39"
+                          comp-id="44"
                           role="gridcell"
-                          style="width: 200px; left: 400px;  "
+                          style="left: 400px; width: 200px;"
                           tabindex="-1"
                           unselectable="on"
                         >
@@ -818,22 +790,20 @@ exports[`DataTable It matches the snapshot 1`] = `
                   unselectable="on"
                 >
                   <div
-                    aria-label="Press SPACE to select this row."
                     aria-rowindex="2"
-                    class="ag-row ag-row-no-focus ag-row-even ag-row-level-0 ag-row-position-absolute ag-row-first"
-                    comp-id="40"
+                    class="ag-row-even ag-row-no-focus ag-row ag-row-level-0 ag-row-position-absolute ag-row-first"
+                    comp-id="37"
                     role="row"
                     row-index="0"
-                    style="height: 48px; transform: translateY(0px); "
+                    style="transform: translateY(0px); height: 48px;"
                   />
                   <div
-                    aria-label="Press SPACE to select this row."
                     aria-rowindex="3"
-                    class="ag-row ag-row-no-focus ag-row-odd ag-row-level-0 ag-row-position-absolute ag-row-last"
+                    class="ag-row-odd ag-row-no-focus ag-row ag-row-level-0 ag-row-position-absolute ag-row-last"
                     comp-id="41"
                     role="row"
                     row-index="1"
-                    style="height: 48px; transform: translateY(48px); "
+                    style="transform: translateY(48px); height: 48px;"
                   />
                 </div>
                 
@@ -997,22 +967,20 @@ exports[`DataTable It matches the snapshot 1`] = `
                 
           <!--AG-PAGINATION-->
           <div
-            aria-describedby="ag-17-start-page ag-17-start-page-number ag-17-of-page ag-17-of-page-number ag-17-first-row ag-17-to ag-17-last-row ag-17-of ag-17-row-count"
-            aria-live="polite"
             class="ag-paging-panel ag-unselectable"
-            id="ag-17"
+            id="ag-20"
           >
             
                 
             <span
-              aria-hidden="true"
               class="ag-paging-row-summary-panel"
+              role="status"
             >
               
                     
               <span
                 class="ag-paging-row-summary-panel-number"
-                id="ag-17-first-row"
+                id="ag-20-first-row"
                 ref="lbFirstRowOnPage"
               >
                 1
@@ -1020,7 +988,7 @@ exports[`DataTable It matches the snapshot 1`] = `
               
                     
               <span
-                id="ag-17-to"
+                id="ag-20-to"
               >
                 to
               </span>
@@ -1028,7 +996,7 @@ exports[`DataTable It matches the snapshot 1`] = `
                     
               <span
                 class="ag-paging-row-summary-panel-number"
-                id="ag-17-last-row"
+                id="ag-20-last-row"
                 ref="lbLastRowOnPage"
               >
                 2
@@ -1036,7 +1004,7 @@ exports[`DataTable It matches the snapshot 1`] = `
               
                     
               <span
-                id="ag-17-of"
+                id="ag-20-of"
               >
                 of
               </span>
@@ -1044,7 +1012,7 @@ exports[`DataTable It matches the snapshot 1`] = `
                     
               <span
                 class="ag-paging-row-summary-panel-number"
-                id="ag-17-row-count"
+                id="ag-20-row-count"
                 ref="lbRecordCount"
               >
                 2
@@ -1093,13 +1061,13 @@ exports[`DataTable It matches the snapshot 1`] = `
               
                     
               <span
-                aria-hidden="true"
                 class="ag-paging-description"
+                role="status"
               >
                 
                         
                 <span
-                  id="ag-17-start-page"
+                  id="ag-20-start-page"
                 >
                   Page
                 </span>
@@ -1107,7 +1075,7 @@ exports[`DataTable It matches the snapshot 1`] = `
                         
                 <span
                   class="ag-paging-number"
-                  id="ag-17-start-page-number"
+                  id="ag-20-start-page-number"
                   ref="lbCurrent"
                 >
                   1
@@ -1115,7 +1083,7 @@ exports[`DataTable It matches the snapshot 1`] = `
                 
                         
                 <span
-                  id="ag-17-of-page"
+                  id="ag-20-of-page"
                 >
                   of
                 </span>
@@ -1123,7 +1091,7 @@ exports[`DataTable It matches the snapshot 1`] = `
                         
                 <span
                   class="ag-paging-number"
-                  id="ag-17-of-page-number"
+                  id="ag-20-of-page-number"
                   ref="lbTotal"
                 >
                   1
