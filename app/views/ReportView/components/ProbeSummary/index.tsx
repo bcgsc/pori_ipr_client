@@ -79,13 +79,13 @@ const ProbeSummary = ({
             smallMutationsData.forEach((mutation) => {
               if (probe.gene.name === mutation.gene.name && probe.variant.includes(mutation.proteinChange)) {
                 if (mutation.tumourRefCount !== null || mutation.tumourAltCount !== null) {
-                  probe.tumourDna = `${mutation.tumourRefCount}/${mutation.tumourAltCount}`;
+                  probe.tumourDna = `${mutation.tumourAltCount}/${mutation.tumourDepth}`;
                 }
                 if (mutation.rnaRefCount !== null || mutation.rnaAltCount !== null) {
-                  probe.tumourRna = `${mutation.rnaRefCount}/${mutation.rnaAltCount}`;
+                  probe.tumourRna = `${mutation.rnaAltCount}/${mutation.rnaDepth}`;
                 }
                 if (mutation.normalRefCount !== null || mutation.normalAltCount !== null) {
-                  probe.normalDna = `${mutation.normalRefCount}/${mutation.normalAltCount}`;
+                  probe.normalDna = `${mutation.normalAltCount}/${mutation.normalDepth}`;
                 }
               }
             });
