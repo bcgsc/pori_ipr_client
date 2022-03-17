@@ -57,19 +57,19 @@ const eventsColumnDefs = [
     hide: false,
   },
   {
-    headerName: 'Ref/Alt (Tumour DNA)',
+    headerName: 'Alt/Total (Tumour DNA)',
     colId: 'tumourDna',
     field: 'tumourDna',
     hide: false,
   },
   {
-    headerName: 'Ref/Alt (Tumour RNA)',
+    headerName: 'Alt/Total (Tumour RNA)',
     colId: 'tumourRna',
     field: 'tumourRna',
     hide: false,
   },
   {
-    headerName: 'Ref/Alt (Normal DNA)',
+    headerName: 'Alt/Total (Normal DNA)',
     colId: 'normalDna',
     field: 'normalDna',
     hide: false,
