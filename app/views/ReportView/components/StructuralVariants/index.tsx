@@ -1,8 +1,11 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, {
+  useState, useEffect, useContext, useMemo,
+} from 'react';
 import {
   Typography,
   Tabs,
   Tab,
+  useTheme,
 } from '@mui/material';
 
 import api, { ApiCallSet } from '@/services/api';
@@ -40,7 +43,7 @@ const StructuralVariants = ({
   setIsLoading,
 }: StructuralVariantsProps): JSX.Element => {
   const { report } = useContext(ReportContext);
-
+  const theme = useTheme();
   const [svs, setSvs] = useState<StructuralVariantType[]>([]);
   const [groupedSvs, setGroupedSvs] = useState({
     therapeutic: [],
@@ -160,6 +163,12 @@ const StructuralVariants = ({
     }
   }, [svs]);
 
+  const STRUCTURAL_VAR_IMG_PROPS = useMemo(() => ({
+    style: {
+      maxHeight: `calc(100vh - ${theme.mixins.toolbar.minHeight as number * 3}px)`,
+    },
+  }), [theme.mixins?.toolbar?.minHeight]);
+
   const handleTabChange = (event: React.ChangeEvent<HTMLInputElement>, newValue: number) => {
     setTabIndex(newValue);
   };
@@ -181,26 +190,28 @@ const StructuralVariants = ({
                 <Tab label="transcriptome" />
               </Tabs>
               {tabIndex === 0 && (
-                <>
-                  {genomeCircos ? (
-                    <div className="structural-variants__events">
-                      <Image image={genomeCircos} />
-                    </div>
-                  ) : (
-                    <Typography align="center">No Genomic Circos Plot Available</Typography>
-                  )}
-                </>
+                genomeCircos ? (
+                  <div className="structural-variants__events">
+                    <Image
+                      image={genomeCircos}
+                      imgProps={STRUCTURAL_VAR_IMG_PROPS}
+                    />
+                  </div>
+                ) : (
+                  <Typography align="center">No Genomic Circos Plot Available</Typography>
+                )
               )}
               {tabIndex === 1 && (
-                <>
-                  {transcriptomeCircos ? (
-                    <div className="structural-variants__events">
-                      <Image image={transcriptomeCircos} />
-                    </div>
-                  ) : (
-                    <Typography align="center">No Transcriptome Circos Plot Available</Typography>
-                  )}
-                </>
+                transcriptomeCircos ? (
+                  <div className="structural-variants__events">
+                    <Image
+                      image={transcriptomeCircos}
+                      imgProps={STRUCTURAL_VAR_IMG_PROPS}
+                    />
+                  </div>
+                ) : (
+                  <Typography align="center">No Transcriptome Circos Plot Available</Typography>
+                )
               )}
             </>
           ) : (
