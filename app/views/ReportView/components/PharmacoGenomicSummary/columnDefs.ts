@@ -45,17 +45,17 @@ const COMMON_COL_DEFS = [
     maxWidth: 300,
   },
   {
-    headerName: 'Alt/Ref',
-    colId: 'Alt/Ref',
+    headerName: 'Alt/Total',
+    colId: 'Alt/Total',
     valueGetter: (params) => {
       const { data: { variant } } = params;
-      let refText = variant.tumourRefCount ?? variant.rnaRefCount;
+      let totalText = variant.tumourDepth ?? variant.rnaDepth;
       let altText = variant.tumourAltCount ?? variant.rnaAltCount;
       if (variant?.germline) {
-        refText = variant.normalRefCount;
+        totalText = variant.normalDepth;
         altText = variant.normalAltCount;
       }
-      return `${refText}/${altText}`;
+      return `${altText}/${totalText}`;
     },
   },
   {
