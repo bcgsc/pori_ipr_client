@@ -157,7 +157,7 @@ const Appendices = ({
                 <DataTable
                   columnDefs={tcgaAcronymsColumnDefs}
                   rowData={tcga}
-                  titleText="TCGA Acronyms"
+                  titleText="TCGA Acronyms for Genomic Report"
                 />
               )}
             </>
