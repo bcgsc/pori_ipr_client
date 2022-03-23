@@ -40,6 +40,7 @@ const COMMON_COL_DEFS = [
   {
     headerName: 'Observed Variant (protein)',
     colId: 'variant.hgvsProtein',
+    valueGetter: ({ data }) => data?.variant?.hgvsProtein,
     hide: false,
     minWidth: 190,
     maxWidth: 300,
