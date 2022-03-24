@@ -61,7 +61,7 @@ const columnDefs: Array<ColDef | ColGroupDef> = [{
   valueGetter: 'data.gene.tumourSuppressor || false',
   hide: true,
 }, {
-  headerName: 'Cancer Related Gene',
+  headerName: 'In Knowledgebase Gene',
   colId: 'cancerRelated',
   valueGetter: 'data.gene.cancerRelated || false',
   hide: true,
