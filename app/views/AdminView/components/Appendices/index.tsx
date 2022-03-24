@@ -21,15 +21,20 @@ function Appendices(): JSX.Element {
 
   // Grab templates
   useEffect(() => {
+    let cancelled = false;
     const getTemplates = async () => {
       const templatesResp = await api.get('/templates').request();
-      setTemplates(templatesResp);
+      if (!cancelled) {
+        setTemplates(templatesResp);
+      }
     };
     getTemplates();
+    return function cleanup() { cancelled = true; };
   }, []);
 
   // Grab template appendices
   useEffect(() => {
+    let cancelled = false;
     const templateIdToObj = {};
     const getAppendices = async () => {
       const promises = await Promise.all(templates
@@ -40,16 +45,19 @@ function Appendices(): JSX.Element {
         .map(async (templateId) => api.get(`/templates/${templateId}/appendix`, { raw: true }).request()));
       const responses = await Promise.all(promises.map((p) => p.json()));
 
-      responses.forEach((resp, i) => {
-        if (!resp.error) {
-          templateIdToObj[templates[i].ident].appendix = resp;
-        }
-      });
-      const nextAppendices = Object.values(templateIdToObj) as TemplateWithAppendix[];
-      setAppendices(nextAppendices);
-      setIsLoading(false);
+      if (!cancelled) {
+        responses.forEach((resp, i) => {
+          if (!resp.error) {
+            templateIdToObj[templates[i].ident].appendix = resp;
+          }
+        });
+        const nextAppendices = Object.values(templateIdToObj) as TemplateWithAppendix[];
+        setAppendices(nextAppendices);
+        setIsLoading(false);
+      }
     };
     getAppendices();
+    return function cleanup() { cancelled = true; };
   }, [templates]);
 
   const handleOnEdit = useCallback((rowData) => {
@@ -58,11 +66,12 @@ function Appendices(): JSX.Element {
   }, []);
 
   const handleEditClose = useCallback(async (nextData) => {
+    let cancelled = false;
+    const isNew = !editingData?.appendix;
     if (nextData) {
       const sanitizedText = sanitizeHtml(nextData);
-      if (!editingData?.appendix) {
-        const res = await api.post(`/templates/${editingData.ident}/appendix`, { text: sanitizedText }).request();
-        // Find appendix in state, update
+      const res = await (isNew ? api.post : api.put)(`/templates/${editingData.ident}/appendix`, { text: sanitizedText }).request();
+      if (!cancelled) {
         setAppendices((currAppendices) => {
           const index = currAppendices.findIndex((app) => app.ident === editingData.ident);
           const nextAppendices = [...currAppendices];
@@ -72,25 +81,12 @@ function Appendices(): JSX.Element {
           };
           return nextAppendices;
         });
-        snackbar.success('Appendix successfully created.');
-        setIsEditing(false);
-      } else {
-        const res = await api.put(`/templates/${editingData.ident}/appendix`, { text: sanitizedText }).request();
-        // Find appendix in state, update
-        setAppendices((currAppendices) => {
-          const index = currAppendices.findIndex((app) => app.ident === editingData.ident);
-          const nextAppendices = [...currAppendices];
-          nextAppendices[index] = {
-            ...nextAppendices[index],
-            appendix: res,
-          };
-          return nextAppendices;
-        });
-        snackbar.success('Appendix successfully updated.');
+        snackbar.success(isNew ? 'Appendix successfully created.' : 'Appendix successfully updated.');
         setIsEditing(false);
       }
     }
     setIsEditing(false);
+    return function cleanup() { cancelled = true; };
   }, [editingData?.appendix, editingData?.ident]);
 
   return (
@@ -103,7 +99,6 @@ function Appendices(): JSX.Element {
             titleText="Appendices"
             canEdit
             onEdit={handleOnEdit}
-
           />
           <AppendixEditor
             isOpen={isEditing}

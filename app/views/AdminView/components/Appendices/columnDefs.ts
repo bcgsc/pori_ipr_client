@@ -5,21 +5,19 @@ const columnDefs: ColDef[] = [
   {
     headerName: 'Name',
     field: 'name',
-    hide: false,
   },
   {
     headerName: 'Org',
     field: 'organization',
-    hide: false,
   },
   {
     headerName: 'Created',
     valueGetter: ({ data }) => formatDate(data.createdAt),
-    hide: false,
+    minWidth: 90,
   },
   {
     headerName: 'Appendix Text',
-    valueGetter: ({ data }) => data.appendix?.text,
+    cellRenderer: ({ data }) => data.appendix?.text || '',
     flex: 1,
     autoHeight: true,
     wrapText: true,
