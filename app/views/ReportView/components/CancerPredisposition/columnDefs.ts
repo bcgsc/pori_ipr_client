@@ -39,15 +39,11 @@ const columnDefs: ColDef[] = [{
       return `${variant.gene.name} ${variant.cnvState}`;
     }
     if (variantType === 'sv') {
-      return `(${
-        variant.gene1.name || '?'
-      },${
-        variant.gene2.name || '?'
-      }):fusion(e.${
-        variant.exon1 || '?'
-      },e.${
-        variant.exon2 || '?'
-      })`;
+      return `(${variant.gene1.name || '?'
+        },${variant.gene2.name || '?'
+        }):fusion(e.${variant.exon1 || '?'
+        },e.${variant.exon2 || '?'
+        })`;
     }
     if (variantType === 'mut') {
       return `${variant.gene.name}:${variant.proteinChange}`;
@@ -139,7 +135,7 @@ const columnDefs: ColDef[] = [{
   valueGetter: (params) => getGeneProp(params, 'tumourSuppressor'),
   hide: true,
 }, {
-  headerName: 'Cancer Related Gene',
+  headerName: 'In Knowledgebase Gene',
   colId: 'cancerRelated',
   valueGetter: (params) => getGeneProp(params, 'cancerRelated'),
   hide: true,

@@ -206,7 +206,7 @@ const pharmacoGenomicColumnDefs = [
     hide: true,
   },
   {
-    headerName: 'Cancer Related Gene',
+    headerName: 'In Knowledgebase Gene',
     colId: 'cancerRelated',
     valueGetter: (params) => getGeneProp(params, 'cancerRelated'),
     hide: true,
