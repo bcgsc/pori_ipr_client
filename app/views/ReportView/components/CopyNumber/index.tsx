@@ -1,6 +1,9 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, {
+  useEffect, useState, useContext, useMemo,
+} from 'react';
 import {
   Typography,
+  useTheme,
 } from '@mui/material';
 
 import DataTable from '@/components/DataTable';
@@ -47,7 +50,7 @@ const CopyNumber = ({
   setIsLoading,
 }: CopyNumberProps): JSX.Element => {
   const { report } = useContext(ReportContext);
-
+  const theme = useTheme();
   const [images, setImages] = useState<ImageType[]>([]);
   const [circos, setCircos] = useState<ImageType>();
   const [cnvs, setCnvs] = useState<CopyNumberType[]>([]);
@@ -187,6 +190,10 @@ const CopyNumber = ({
     }
   }, [cnvs]);
 
+  const COPY_NUMBER_VAR_IMG_STYLE = useMemo(() => ({
+    maxHeight: `calc(100vh - ${theme.mixins.toolbar.minHeight as number * 3}px)`,
+  }), [theme.mixins?.toolbar?.minHeight]);
+
   const handleVisibleColsChange = (change) => setVisibleCols(change);
 
   return (
@@ -200,6 +207,7 @@ const CopyNumber = ({
               <Image
                 image={circos}
                 width={700}
+                imgStyle={COPY_NUMBER_VAR_IMG_STYLE}
               />
             </div>
           ) : (
