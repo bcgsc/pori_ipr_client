@@ -35,11 +35,13 @@ const TestInformation = ({
           {snpProbe}
         </ReadOnlyTextField>
       </Grid>
-      <Grid item>
-        <ReadOnlyTextField isUnderlined={false} label="Fusion Probe Version">
-          {fusionProbe}
-        </ReadOnlyTextField>
-      </Grid>
+      {!isPharmacogenomic && (
+        <Grid item>
+          <ReadOnlyTextField isUnderlined={false} label="Fusion Probe Version">
+            {fusionProbe}
+          </ReadOnlyTextField>
+        </Grid>
+      )}
       <Grid item>
         <ReadOnlyTextField isUnderlined={false} label="Knowledgebase Version">
           {kbVersion}
