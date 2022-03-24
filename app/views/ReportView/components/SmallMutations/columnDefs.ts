@@ -17,11 +17,10 @@ const columnDefs: ColDef[] = [{
   hide: false,
 }, {
   headerName: 'Location',
-  valueGetter: ({ data }) => data.chromosome && `${data.chromosome}:${data.startPosition}${
-    data.endPosition && data.startPosition !== data.endPosition
+  valueGetter: ({ data }) => data.chromosome && `${data.chromosome}:${data.startPosition}${data.endPosition && data.startPosition !== data.endPosition
       ? `-${data.endPosition}`
       : ''
-  }`,
+    }`,
   hide: false,
 }, {
   headerName: 'Zygosity',
@@ -97,7 +96,7 @@ const columnDefs: ColDef[] = [{
   valueGetter: 'data.gene.tumourSuppressor || false',
   hide: true,
 }, {
-  headerName: 'Cancer Related Gene',
+  headerName: 'In Knowledgebase Gene',
   colId: 'cancerRelated',
   valueGetter: 'data.gene.cancerRelated || false',
   hide: true,
