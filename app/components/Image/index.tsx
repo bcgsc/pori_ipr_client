@@ -12,8 +12,8 @@ type ImageProps = {
   showTitle?: boolean;
   showCaption?: boolean;
   isZoomable?: boolean;
-  /** Props to the img tag directly */
-  imgProps?: React.ComponentPropsWithoutRef<'img'>;
+  /** Style to apply to img tag */
+  imgStyle?: React.ComponentPropsWithoutRef<'img'>['style'];
 };
 
 const Image = ({
@@ -29,7 +29,7 @@ const Image = ({
   showTitle = false,
   showCaption = false,
   isZoomable = true,
-  imgProps = {},
+  imgStyle = {},
 }: ImageProps): JSX.Element => {
   const [isZoomed, setIsZoomed] = useState(false);
 
@@ -60,7 +60,7 @@ const Image = ({
               key={key}
               height={Number.isInteger(height) ? `${height}px` : height}
               width={Number.isInteger(width) ? `${height}px` : width}
-              {...imgProps}
+              style={imgStyle}
             />
           </Button>
           {showCaption && caption && (

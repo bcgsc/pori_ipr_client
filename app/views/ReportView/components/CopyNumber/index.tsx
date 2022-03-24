@@ -190,10 +190,8 @@ const CopyNumber = ({
     }
   }, [cnvs]);
 
-  const STRUCTURAL_VAR_IMG_PROPS = useMemo(() => ({
-    style: {
-      maxHeight: `calc(100vh - ${theme.mixins.toolbar.minHeight as number * 3}px)`,
-    },
+  const COPY_NUMBER_VAR_IMG_STYLE = useMemo(() => ({
+    maxHeight: `calc(100vh - ${theme.mixins.toolbar.minHeight as number * 3}px)`,
   }), [theme.mixins?.toolbar?.minHeight]);
 
   const handleVisibleColsChange = (change) => setVisibleCols(change);
@@ -209,7 +207,7 @@ const CopyNumber = ({
               <Image
                 image={circos}
                 width={700}
-                imgProps={STRUCTURAL_VAR_IMG_PROPS}
+                imgStyle={COPY_NUMBER_VAR_IMG_STYLE}
               />
             </div>
           ) : (

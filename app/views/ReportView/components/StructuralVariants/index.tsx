@@ -163,10 +163,8 @@ const StructuralVariants = ({
     }
   }, [svs]);
 
-  const STRUCTURAL_VAR_IMG_PROPS = useMemo(() => ({
-    style: {
-      maxHeight: `calc(100vh - ${theme.mixins.toolbar.minHeight as number * 3}px)`,
-    },
+  const STRUCTURAL_VAR_IMG_STYLE = useMemo(() => ({
+    maxHeight: `calc(100vh - ${theme.mixins.toolbar.minHeight as number * 3}px)`,
   }), [theme.mixins?.toolbar?.minHeight]);
 
   const handleTabChange = (event: React.ChangeEvent<HTMLInputElement>, newValue: number) => {
@@ -194,7 +192,7 @@ const StructuralVariants = ({
                   <div className="structural-variants__events">
                     <Image
                       image={genomeCircos}
-                      imgProps={STRUCTURAL_VAR_IMG_PROPS}
+                      imgStyle={STRUCTURAL_VAR_IMG_STYLE}
                     />
                   </div>
                 ) : (
@@ -206,7 +204,7 @@ const StructuralVariants = ({
                   <div className="structural-variants__events">
                     <Image
                       image={transcriptomeCircos}
-                      imgProps={STRUCTURAL_VAR_IMG_PROPS}
+                      imgStyle={STRUCTURAL_VAR_IMG_STYLE}
                     />
                   </div>
                 ) : (
