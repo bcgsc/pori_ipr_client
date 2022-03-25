@@ -9,6 +9,8 @@ type TestInformationType = {
   kbVersion: string;
   pharmacogenomicGenes: string;
   pharmacogenomicVars: string;
+  cancerGenes: string;
+  cancerVars: string;
   snpGenes: string;
   snpProbe: string;
   snpVars: string;

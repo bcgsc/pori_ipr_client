@@ -21,8 +21,8 @@ const TestInformation = ({
     snpGenes,
     snpProbe,
     snpVars,
-    germlineGenes,
-    germlineVars,
+    cancerVars,
+    cancerGenes,
     pharmacogenomicGenes,
     pharmacogenomicVars,
   },
@@ -35,11 +35,13 @@ const TestInformation = ({
           {snpProbe}
         </ReadOnlyTextField>
       </Grid>
-      <Grid item>
-        <ReadOnlyTextField isUnderlined={false} label="Fusion Probe Version">
-          {fusionProbe}
-        </ReadOnlyTextField>
-      </Grid>
+      {!isPharmacogenomic && (
+        <Grid item>
+          <ReadOnlyTextField isUnderlined={false} label="Fusion Probe Version">
+            {fusionProbe}
+          </ReadOnlyTextField>
+        </Grid>
+      )}
       <Grid item>
         <ReadOnlyTextField isUnderlined={false} label="Knowledgebase Version">
           {kbVersion}
@@ -51,12 +53,12 @@ const TestInformation = ({
         <Grid direction="column" container className="grid--third">
           <Grid item>
             <ReadOnlyTextField isUnderlined={false} label="Cancer Predisposition Genes Screened">
-              {germlineGenes}
+              {cancerGenes}
             </ReadOnlyTextField>
           </Grid>
           <Grid item>
             <ReadOnlyTextField isUnderlined={false} label="Cancer Predisposition Variants Screened">
-              {germlineVars}
+              {cancerVars}
             </ReadOnlyTextField>
           </Grid>
         </Grid>
