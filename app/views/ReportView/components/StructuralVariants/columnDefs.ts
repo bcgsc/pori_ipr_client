@@ -87,7 +87,7 @@ const columnDefs = [{
   valueGetter: (params) => (params.data.gene1.tumourSuppressor || params.data.gene2.tumourSuppressor || false),
   hide: true,
 }, {
-  headerName: 'Cancer Related Gene',
+  headerName: 'In Knowledgebase Gene',
   colId: 'cancerRelated',
   valueGetter: (params) => (params.data.gene1.cancerRelated || params.data.gene2.cancerRelated || false),
   hide: true,
