@@ -9,6 +9,8 @@ import {
   FilterList,
 } from '@mui/icons-material';
 
+import partition from 'lodash.partition';
+
 import api, { ApiCallSet } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DemoDescription from '@/components/DemoDescription';
@@ -29,7 +31,8 @@ const titleMap = {
   prognostic: 'Prognostic Alterations',
   biological: 'Biological Alterations',
   unknown: 'Other Alterations',
-  targetedGenes: 'Detected Alterations From Targeted Gene Report',
+  targetedGermlineGenes: 'Detected Alterations from Pharmacogenomic and Cancer Predisposition Targeted Gene Report',
+  targetedSomaticGenes: 'Detected Alterations From Somatic Targeted Gene Report',
 };
 
 type KbMatchesProps = {
@@ -54,7 +57,8 @@ const KbMatches = ({
     unknown: [],
     thisCancer: [],
     otherCancer: [],
-    targetedGenes: [],
+    targetedGermlineGenes: [],
+    targetedSomaticGenes: [],
   });
 
   useEffect(() => {
@@ -84,6 +88,8 @@ const KbMatches = ({
             targetedGenesResp,
           ] = await apiCalls.request();
 
+          const [targetedGermlineGenes, targetedSomaticGenes] = partition(targetedGenesResp, (tg) => /germline/.test(tg?.sample));
+
           setGroupedMatches({
             thisCancer: coalesceEntries(thisCancerResp),
             otherCancer: coalesceEntries(otherCancerResp),
@@ -92,7 +98,8 @@ const KbMatches = ({
             diagnostic: coalesceEntries(diagnosticResp),
             prognostic: coalesceEntries(prognosticResp),
             unknown: coalesceEntries(unknownResp),
-            targetedGenes: targetedGenesResp,
+            targetedGermlineGenes,
+            targetedSomaticGenes,
           });
         } catch (err) {
           snackbar.error(`Network error: ${err}`);
@@ -145,58 +152,62 @@ const KbMatches = ({
     }
   }, [report]);
 
-  return (
-    <>
-      {!isLoading && (
-        <div>
-          <DemoDescription>
-            Tumour alterations with specific therapeutic, prognostic, diagnostic or biological
-            associations are identified using the knowledgebase GraphKB, which integrates information
-            from sources including cancer databases, drug databases, clinical tests, and the literature.
-            Associations are listed by the level of evidence for the use of that drug in the context of
-            the observed alteration, including those that are approved in this or other cancer types,
-            and those that have early clinical or preclinical evidence.
-          </DemoDescription>
-          {!isPrint && (
-            <div className="kb-matches__filter">
-              <TextField
-                label="Filter Table Text"
-                type="text"
-                variant="outlined"
-                value={filterText}
-                onChange={handleFilter}
-                fullWidth
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <FilterList color="action" />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </div>
-          )}
-          <div>
-            {Object.entries(groupedMatches).map(([key, value]) => (
-              <React.Fragment key={key}>
-                {(report.template.name !== 'probe' || key !== 'targetedGenes') && (
-                  <DataTable
-                    canDelete={canEdit}
-                    canToggleColumns
-                    columnDefs={key === 'targetedGenes' ? targetedColumnDefs : columnDefs}
-                    filterText={filterText}
-                    isPrint={isPrint}
-                    onDelete={handleDelete}
-                    rowData={value}
-                    titleText={titleMap[key]}
-                  />
-                )}
-              </React.Fragment>
-            ))}
-          </div>
-        </div>
+  const kbMatchedTables = Object.entries(groupedMatches).map(([key, value]) => (
+    <React.Fragment key={key}>
+      {(report?.template.name !== 'probe'
+        || (key !== 'targetedSomaticGenes' && key !== 'targetedGermlineGenes')
+      ) && (
+      <DataTable
+        canDelete={canEdit}
+        canToggleColumns
+        columnDefs={(key === 'targetedSomaticGenes' || key === 'targetedGermlineGenes')
+          ? targetedColumnDefs
+          : columnDefs}
+        filterText={filterText}
+        isPrint={isPrint}
+        onDelete={handleDelete}
+        rowData={value}
+        titleText={titleMap[key]}
+      />
       )}
-    </>
+    </React.Fragment>
+  ));
+
+  return (
+    !isLoading && (
+    <div>
+      <DemoDescription>
+        Tumour alterations with specific therapeutic, prognostic, diagnostic or biological
+        associations are identified using the knowledgebase GraphKB, which integrates information
+        from sources including cancer databases, drug databases, clinical tests, and the literature.
+        Associations are listed by the level of evidence for the use of that drug in the context of
+        the observed alteration, including those that are approved in this or other cancer types,
+        and those that have early clinical or preclinical evidence.
+      </DemoDescription>
+      {!isPrint && (
+      <div className="kb-matches__filter">
+        <TextField
+          label="Filter Table Text"
+          type="text"
+          variant="outlined"
+          value={filterText}
+          onChange={handleFilter}
+          fullWidth
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <FilterList color="action" />
+              </InputAdornment>
+            ),
+          }}
+        />
+      </div>
+      )}
+      <div>
+        {kbMatchedTables}
+      </div>
+    </div>
+    )
   );
 };
 
