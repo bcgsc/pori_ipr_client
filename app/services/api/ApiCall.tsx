@@ -9,6 +9,7 @@ import AlertDialog from '../../components/AlertDialog';
 import theme from '../../appTheme';
 import errorHandler from '../errors/errorHandler';
 import SnackbarUtils from '../SnackbarUtils';
+import { CallOptionsType } from './types';
 
 class ApiCall {
   endpoint: string;
@@ -30,13 +31,7 @@ class ApiCall {
   constructor(
     endpoint: string,
     requestOptions: RequestInit,
-    callOptions?: {
-      forceListReturn: boolean;
-      forceRecordReturn: boolean;
-      raw: boolean;
-      name: string;
-      confirm: boolean
-    },
+    callOptions: CallOptionsType,
   ) {
     const {
       forceListReturn,
