@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { CircularProgress, Fab } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import api from '@/services/api';
-import AppendixEditor from '../AppendixEditor';
+import AppendixEditor from '@/components/AppendixEditor';
 import snackbar from '@/services/SnackbarUtils';
 import sanitizeHtml from 'sanitize-html';
 import './index.scss';
@@ -58,28 +58,32 @@ const ReportOverview = ({
   return (
     <div className="overview">
       {isLoading ? <CircularProgress color="inherit" size={20} />
-        : <>
-          {(canEdit && !isEditing && !isPrint) &&
-            <Fab
-              className="overview__fab"
-              onClick={() => setIsEditing(true)}
-              size="small"
-              color="secondary"
-            >
-              <EditIcon />
-            </Fab>
-          }
-          {
-            canEdit &&
-            <AppendixEditor
-              isOpen={isEditing}
-              onClose={handleEditClose}
-              text={appendixText}
-            />
-          }
-          {<div dangerouslySetInnerHTML={{ __html: appendixText }} />}
-        </>
-      }
+        : (
+          <>
+            {(canEdit && !isEditing && !isPrint)
+              && (
+                <Fab
+                  className="overview__fab"
+                  onClick={() => setIsEditing(true)}
+                  size="small"
+                  color="secondary"
+                >
+                  <EditIcon />
+                </Fab>
+              )}
+            {
+              canEdit
+              && (
+                <AppendixEditor
+                  isOpen={isEditing}
+                  onClose={handleEditClose}
+                  text={appendixText}
+                />
+              )
+            }
+            <div dangerouslySetInnerHTML={{ __html: appendixText }} />
+          </>
+        )}
     </div>
   );
 };
