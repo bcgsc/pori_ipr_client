@@ -121,8 +121,8 @@ const pharmacoGenomicPrintColumnDefs = [
   ...COMMON_COL_DEFS,
   {
     headerName: 'Therapy',
-    colId: 'Therapy',
-    field: 'therapy',
+    colId: 'context',
+    field: 'context',
   },
   {
     headerName: 'Evidence',
@@ -140,7 +140,8 @@ const pharmacoGenomicPrintColumnDefs = [
 const pharmacoGenomicColumnDefs = [
   ...COMMON_COL_DEFS,
   {
-    field: 'therapy',
+    headerName: 'Therapy',
+    field: 'context',
     minWidth: 90,
   },
   {
