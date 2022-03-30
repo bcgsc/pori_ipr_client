@@ -189,9 +189,20 @@ type ExpOutliersType = {
   tpm: number | null;
 } & RecordDefaults;
 
+type TemplateType = {
+  ident: string;
+  name: string;
+};
+
+type AppendixType = RecordDefaults & {
+  text: string;
+};
+
 export {
   RecordDefaults,
   UserType,
+  TemplateType,
+  AppendixType,
   GroupType,
   UserProjectsType,
   UserGroupMemberType,

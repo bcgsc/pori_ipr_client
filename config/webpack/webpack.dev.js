@@ -1,8 +1,10 @@
 const path = require('path');
 const webpack = require('webpack');
 const { merge } = require('webpack-merge');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const common = require('./webpack.config.js');
+const BASE_DIR = path.resolve(__dirname, '../..');
 
 const devConfig = (env) => ({
   mode: 'development',

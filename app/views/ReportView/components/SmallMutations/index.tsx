@@ -57,8 +57,11 @@ const SmallMutations = ({
             `/reports/${report.ident}/small-mutations`,
           ).request();
 
+          let filteredSmallMutResp;
+
           // Hide some columns if no values are returned
           if (smallMutationsResp?.length) {
+            filteredSmallMutResp = smallMutationsResp.filter(({ germline }) => !germline);
             const nextVisible = [];
             for (const {
               gene: {
@@ -66,7 +69,7 @@ const SmallMutations = ({
                   tpm, rpkm, primarySiteFoldChange, primarySitekIQR,
                 },
               },
-            } of smallMutationsResp) {
+            } of filteredSmallMutResp) {
               /* Show either RPKM or TPM columns based on which is populated */
               if (tpm !== null && !nextVisible.includes('tpm')) {
                 nextVisible.push('tpm');
@@ -87,7 +90,7 @@ const SmallMutations = ({
             setVisibleCols((prevVal) => [...prevVal, ...nextVisible]);
           }
 
-          setSmallMutations(smallMutationsResp);
+          setSmallMutations(filteredSmallMutResp);
         } catch (err) {
           snackbar.error(`Network error: ${err}`);
         } finally {

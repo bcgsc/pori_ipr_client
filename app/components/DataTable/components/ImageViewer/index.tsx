@@ -10,11 +10,13 @@ import Image, { ImageType } from '@/components/Image';
 
 import './index.scss';
 
+type ImageDataProp = { image: ImageType } | { image: ImageType[] };
+
 type ImageViewerProps = {
   /** Handles dialog close */
   onClose: () => void;
   /** Row object selected from table */
-  selectedRow: { image: ImageType },
+  selectedRow: ImageDataProp,
   /** Dialog open state */
   isOpen: boolean;
 };
@@ -28,6 +30,29 @@ const ImageViewer = ({
     onClose();
   }, [onClose]);
 
+  let renderedImage;
+  if (selectedRow.image) {
+    if (Array.isArray(selectedRow.image)) {
+      renderedImage = selectedRow.image.map((img) => (
+        <Image
+          image={img}
+          showTitle
+          showCaption
+          isZoomable={false}
+        />
+      ));
+    } else {
+      renderedImage = (
+        <Image
+          image={selectedRow.image}
+          showTitle
+          showCaption
+          isZoomable={false}
+        />
+      );
+    }
+  }
+
   return (
     <Dialog
       onClose={handleClose}
@@ -35,14 +60,7 @@ const ImageViewer = ({
       maxWidth="xl"
     >
       <DialogContent>
-        {selectedRow.image && (
-          <Image
-            image={selectedRow.image}
-            showTitle
-            showCaption
-            isZoomable={false}
-          />
-        )}
+        {renderedImage}
       </DialogContent>
       <DialogActions>
         <Button color="primary" onClick={handleClose}>

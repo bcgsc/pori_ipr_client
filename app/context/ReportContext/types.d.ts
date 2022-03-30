@@ -1,4 +1,4 @@
-import { RecordDefaults, UserType } from '@/common';
+import { RecordDefaults, UserType, TemplateType } from '@/common';
 import { ProjectType } from '@/views/AdminView/types';
 import React from 'react';
 
@@ -23,11 +23,6 @@ type SampleInfoType = {
   'Primary Site': string | null;
   Sample: string | null;
   'Sample Name': string | null;
-};
-
-type TemplateType = {
-  ident: string;
-  name: string;
 };
 
 type UserRoleType = {

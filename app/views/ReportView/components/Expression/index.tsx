@@ -86,16 +86,13 @@ const Expression = ({
           const processedOutliers: ProcessedExpressionOutliers = processExpression(outliers);
           const imageAttachedOutliers = Object.entries(processedOutliers)
             .reduce((accumulator, [key, value]) => {
-              const newValues = value.map((val) => {
-                return ({
-                  ...val,
-                  image: images.find((img: ImageType) => {
-                    let matcher = new RegExp(`expDensity.(histogram|(violin.(tcga|gtex|cser|hartwig|pediatric))).${val.gene.name}`);
-                    return matcher.test(img.key);
-                  }),
-                })
-              });
-
+              const newValues = value.map((val) => ({
+                ...val,
+                image: images.filter((img: ImageType) => {
+                  const matcher = new RegExp(`expDensity.(histogram|(violin.(tcga|gtex|cser|hartwig|pediatric))).${val.gene.name}`);
+                  return matcher.test(img.key);
+                }),
+              }));
               accumulator[key] = newValues;
               return accumulator;
             }, {} as ProcessedExpressionOutliers);
@@ -167,87 +164,79 @@ const Expression = ({
     setVisibleCols(change);
   };
 
-  return (
+  return (!isLoading && (
     <>
-      {!isLoading && (
-        <>
-          <div className="expression--padded">
-            <Typography variant="h1" className="expression__title">
-              Expression Analysis
-            </Typography>
-            <DemoDescription>
-              The most appropriate normal tissue and tumour tissues are chosen for expression
-              comparisons based on the tumour type and observed correlation with tissue data sets.
-              If no appropriate tissue comparator is available, for instance for rare tumours, an
-              average across all tissues is used. Expression is calculated as percentile and kIQR
-              (number of interquartile ranges) relative to comparator expression distributions.
-              Outlier expression refers to genes with very high or very low expression compared to
-              what is seen in other cancers of that type and also compared to relevant normal tissue.
-            </DemoDescription>
-            <Typography variant="h3" className="expression__subtitle">
-              Tissue Sites
-            </Typography>
-            <Paper elevation={0} className="expression__box">
-              {tissueSites.map((site, index) => (
-                <span
-                  // eslint-disable-next-line react/no-array-index-key
-                  key={index}
-                  className="expression__box-column"
-                >
-                  {site.map(({ key, value }) => (
-                    <div key={key} className="expression__box-row">
-                      <Typography display="inline" className="expression__key">
-                        {`${key}: `}
-                      </Typography>
-                      <Typography display="inline" className="expression__value">
-                        {value}
-                      </Typography>
-                    </div>
-                  ))}
-                </span>
+      <div className="expression--padded">
+        <Typography variant="h1" className="expression__title">
+          Expression Analysis
+        </Typography>
+        <DemoDescription>
+          The most appropriate normal tissue and tumour tissues are chosen for expression
+          comparisons based on the tumour type and observed correlation with tissue data sets.
+          If no appropriate tissue comparator is available, for instance for rare tumours, an
+          average across all tissues is used. Expression is calculated as percentile and kIQR
+          (number of interquartile ranges) relative to comparator expression distributions.
+          Outlier expression refers to genes with very high or very low expression compared to
+          what is seen in other cancers of that type and also compared to relevant normal tissue.
+        </DemoDescription>
+        <Typography variant="h3" className="expression__subtitle">
+          Tissue Sites
+        </Typography>
+        <Paper elevation={0} className="expression__box">
+          {tissueSites.map((site, index) => (
+            <span
+              // eslint-disable-next-line react/no-array-index-key
+              key={index}
+              className="expression__box-column"
+            >
+              {site.map(({ key, value }) => (
+                <div key={key} className="expression__box-row">
+                  <Typography display="inline" className="expression__key">
+                    {`${key}: `}
+                  </Typography>
+                  <Typography display="inline" className="expression__value">
+                    {value}
+                  </Typography>
+                </div>
               ))}
-            </Paper>
-            <Typography variant="h3" className="expression__subtitle">
-              Expression Correlation Summary and Comparator Choices
-            </Typography>
-            {comparators && (
-              <Paper elevation={0} className="expression__comparator-box" square>
-                {comparators.map(({ key, value }) => (
-                  <div key={key} className="expression__comparator-column">
-                    <Typography className="expression__comparator-value--padded">
-                      {key}
-                    </Typography>
-                    <Typography className="expression__comparator-value--padded">
-                      {value}
-                    </Typography>
-                  </div>
-                ))}
-              </Paper>
-            )}
-            {comparators && !comparators.length && (
-              <Typography align="center">No comparator data to display</Typography>
-            )}
-          </div>
-          {expOutliers && (
-            <>
-              {Object.entries(TITLE_MAP).map(([key, titleText]) => (
-                <DataTable
-                  key={key}
-                  columnDefs={columnDefs}
-                  rowData={expOutliers[key]}
-                  titleText={titleText}
-                  visibleColumns={visibleCols}
-                  syncVisibleColumns={handleVisibleColsChange}
-                  canToggleColumns
-                  demoDescription={INFO_BUBBLES[key]}
-                />
-              ))}
-            </>
-          )}
-        </>
-      )}
+            </span>
+          ))}
+        </Paper>
+        <Typography variant="h3" className="expression__subtitle">
+          Expression Correlation Summary and Comparator Choices
+        </Typography>
+        {comparators && (
+          <Paper elevation={0} className="expression__comparator-box" square>
+            {comparators.map(({ key, value }) => (
+              <div key={key} className="expression__comparator-column">
+                <Typography className="expression__comparator-value--padded">
+                  {key}
+                </Typography>
+                <Typography className="expression__comparator-value--padded">
+                  {value}
+                </Typography>
+              </div>
+            ))}
+          </Paper>
+        )}
+        {comparators && !comparators.length && (
+          <Typography align="center">No comparator data to display</Typography>
+        )}
+      </div>
+      {expOutliers && (Object.entries(TITLE_MAP).map(([key, titleText]) => (
+        <DataTable
+          key={key}
+          columnDefs={columnDefs}
+          rowData={expOutliers[key]}
+          titleText={titleText}
+          visibleColumns={visibleCols}
+          syncVisibleColumns={handleVisibleColsChange}
+          canToggleColumns
+          demoDescription={INFO_BUBBLES[key]}
+        />
+      )))}
     </>
-  );
+  ));
 };
 
 export default withLoading(Expression);

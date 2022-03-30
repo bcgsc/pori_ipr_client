@@ -20,6 +20,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import PeopleIcon from '@mui/icons-material/People';
 import FolderSharedIcon from '@mui/icons-material/FolderShared';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import FilePresentIcon from '@mui/icons-material/FilePresent';
 
 import GermlineIcon from '@/statics/images/germline_icon.svg';
 import SidebarContext from '@/context/SidebarContext';
@@ -192,6 +193,23 @@ const Sidebar = (): JSX.Element => {
                   className={`sidebar__text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
                 >
                   Templates
+                </Typography>
+              </Link>
+            </ListItem>
+            <ListItem
+              className={`
+                sidebar__list-item
+                ${pathname.includes('admin/appendices') ? 'sidebar__list-item--active' : ''}
+              `}
+              disableGutters
+            >
+              <Link className="sidebar__link" to="/admin/appendices">
+                <FilePresentIcon color="action" />
+                <Typography
+                  display="inline"
+                  className={`sidebar__text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
+                >
+                  Appendices
                 </Typography>
               </Link>
             </ListItem>

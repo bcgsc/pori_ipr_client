@@ -40,9 +40,50 @@ const VariantChips = (props) => {
     setAddedVariant('');
   }, [onChipAdded, addedVariant]);
 
-  const handleEnterPressed = (event) => {
+  const handleEnterPressed = useCallback((event) => {
     if (event.keyCode === ENTER_KEYCODE) {
       handleAddInputClose(true);
+    }
+  }, [handleAddInputClose]);
+
+  let newGeneAlterationButton = null;
+  if (canEdit && !isPrint) {
+    if (!showAddInput) {
+      newGeneAlterationButton = (
+        <Chip
+          label="Add new entry"
+          className="variant variant__add"
+          onDelete={() => setShowAddInput(true)}
+          deleteIcon={<AddIcon />}
+        />
+      );
+    } else {
+      newGeneAlterationButton = (
+        <TextField
+          value={addedVariant}
+          type="text"
+          size="small"
+          margin="dense"
+          variant="outlined"
+          label="Gene name (alteration)"
+          onKeyDown={handleEnterPressed}
+          onChange={(event) => setAddedVariant(event.target.value)}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                {addedVariant && (
+                  <IconButton onClick={() => handleAddInputClose(true)} size="large">
+                    <DoneIcon />
+                  </IconButton>
+                )}
+                <IconButton onClick={() => handleAddInputClose(false)} size="large">
+                  <CloseIcon />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+        />
+      );
     }
   }
 
@@ -51,10 +92,10 @@ const VariantChips = (props) => {
       <div>
         {Boolean(variants.length) && (
           <>
-            {variants.map(variant => (
+            {variants.map((variant) => (
               <React.Fragment key={variant.geneVariant}>
                 <Chip
-                  label={variant.geneVariant}
+                  label={`${variant.geneVariant} ${variant.germline ? '(germline)' : ''}`}
                   className={`variant variant--${variant.type}`}
                   onDelete={canEdit && !isPrint ? () => setShowDeleteAlert(variant) : null}
                 />
@@ -63,43 +104,7 @@ const VariantChips = (props) => {
           </>
         )}
       </div>
-      {canEdit && !isPrint && (
-        <>
-          {!showAddInput ? (
-            <Chip
-              label="Add new entry"
-              className="variant variant__add"
-              onDelete={() => setShowAddInput(true)}
-              deleteIcon={<AddIcon />}
-            />
-          ) : (
-            <TextField
-              value={addedVariant}
-              type="text"
-              size="small"
-              margin="dense"
-              variant="outlined"
-              label="Gene name (alteration)"
-              onKeyDown={handleEnterPressed}
-              onChange={event => setAddedVariant(event.target.value)}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    {addedVariant && (
-                      <IconButton onClick={() => handleAddInputClose(true)} size="large">
-                        <DoneIcon />
-                      </IconButton>
-                    )}
-                    <IconButton onClick={() => handleAddInputClose(false)} size="large">
-                      <CloseIcon />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-          )}
-        </>
-      )}
+      {newGeneAlterationButton}
       <AlertDialog
         isOpen={Boolean(showDeleteAlert)}
         onClose={handleDeleteDialogClose}
