@@ -263,9 +263,9 @@ const cancerPredisPrintColumnDefs = [
     colId: 'context',
   },
   {
-    headerName: 'Evidence',
-    field: 'evidenceLevel',
-    colId: 'evidenceLevel',
+    headerName: 'Source',
+    field: 'externalSource',
+    colId: 'externalSource',
   },
 ];
 const cancerPredisColumnDefs = [
@@ -274,8 +274,8 @@ const cancerPredisColumnDefs = [
     field: 'context',
   },
   {
-    headerName: 'Evidence',
-    field: 'evidenceLevel',
+    headerName: 'Source',
+    field: 'externalSource',
     minWidth: 90,
   },
   ACTIONS_COL_DEF,
