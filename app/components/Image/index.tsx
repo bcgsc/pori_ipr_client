@@ -39,14 +39,14 @@ const Image = ({
     }
   }, [isZoomable]);
 
-  return (
-    data && (
+  if (data) {
+    return (
       <>
         <div className="image">
           {showTitle && title && (
-            <Typography variant="h3">
-              {title}
-            </Typography>
+          <Typography variant="h3">
+            {title}
+          </Typography>
           )}
           <Button
             classes={{ root: 'image__button' }}
@@ -64,44 +64,45 @@ const Image = ({
             />
           </Button>
           {showCaption && caption && (
-            <Typography className="image__caption" variant="caption">
-              {caption}
-            </Typography>
+          <Typography className="image__caption" variant="caption">
+            {caption}
+          </Typography>
           )}
         </div>
         {isZoomed && (
-          <Fade in={isZoomed}>
-            <button
-              className="image__dialog-background"
-              onClick={handleZoom}
-              type="button"
+        <Fade in={isZoomed}>
+          <button
+            className="image__dialog-background"
+            onClick={handleZoom}
+            type="button"
+          >
+            <div
+              className="image__dialog-button"
             >
-              <div
-                className="image__dialog-button"
-              >
-                {showTitle && title && (
-                  <Typography variant="h3">
-                    {title}
-                  </Typography>
-                )}
-                <img
-                  className={`image__data ${isZoomable && isZoomed ? 'image__zoom--out' : ''}`}
-                  src={`data:image/${format};base64,${data}`}
-                  alt={title}
-                  key={key}
-                />
-                {showCaption && caption && (
-                  <Typography className="image__caption" variant="caption">
-                    {caption}
-                  </Typography>
-                )}
-              </div>
-            </button>
-          </Fade>
+              {showTitle && title && (
+              <Typography variant="h3">
+                {title}
+              </Typography>
+              )}
+              <img
+                className={`image__data ${isZoomable && isZoomed ? 'image__zoom--out' : ''}`}
+                src={`data:image/${format};base64,${data}`}
+                alt={title}
+                key={key}
+              />
+              {showCaption && caption && (
+              <Typography className="image__caption" variant="caption">
+                {caption}
+              </Typography>
+              )}
+            </div>
+          </button>
+        </Fade>
         )}
       </>
-    )
-  );
+    );
+  }
+  return null;
 };
 
 export default Image;

@@ -205,29 +205,34 @@ const PharmacoGenomicSummary = ({
         No pharmacogenomic variants found
       </div>
     );
+
     if (pharmacoGenomic.length > 0) {
+      let tableComponent = null;
       if (isPrint) {
-        component = (
+        tableComponent = (
           <PrintTable
             columnDefs={pharmacoGenomicPrintColumnDefs}
             data={pharmacoGenomic}
           />
         );
       } else {
-        component = (
-          <>
-            <DataTable
-              columnDefs={pharmacoGenomicColumnDefs}
-              rowData={pharmacoGenomic}
-              isPrint={isPrint}
-              isPaginated={!isPrint}
-            />
-            <Alert className="summary--max-width" severity="warning">
-              Positive Pharmacogenomic Result: At least one pharmacogenomic variant was identified in this sample. Further clinical testing to determine risk of toxicity is recommended for this patient.
-            </Alert>
-          </>
+        tableComponent = (
+          <DataTable
+            columnDefs={pharmacoGenomicColumnDefs}
+            rowData={pharmacoGenomic}
+            isPrint={isPrint}
+            isPaginated={!isPrint}
+          />
         );
       }
+      component = (
+        <>
+          {tableComponent}
+          <Alert className="summary--max-width" severity="warning">
+            Positive Pharmacogenomic Result: At least one pharmacogenomic variant was identified in this sample. Further clinical testing to determine risk of toxicity is recommended for this patient.
+          </Alert>
+        </>
+      );
     }
     return component;
   }, [pharmacoGenomic, isPrint]);
@@ -238,23 +243,28 @@ const PharmacoGenomicSummary = ({
         No cancer predisposition variants found
       </div>
     );
-    if (isPrint) {
-      component = (
-        <PrintTable
-          columnDefs={cancerPredisPrintColumnDefs}
-          data={cancerPredisposition}
-        />
-      );
-    } else if (cancerPredisposition.length > 0) {
-      component = (
-        <>
+    if (cancerPredisposition.length > 0) {
+      let tableComponent = null;
+      if (isPrint) {
+        tableComponent = (
+          <PrintTable
+            columnDefs={cancerPredisPrintColumnDefs}
+            data={cancerPredisposition}
+          />
+        );
+      } else {
+        tableComponent = (
           <DataTable
-            // Shares same column definitions as pharmacogenomic
             columnDefs={cancerPredisColumnDefs}
             rowData={cancerPredisposition}
             isPrint={isPrint}
             isPaginated={!isPrint}
           />
+        );
+      }
+      component = (
+        <>
+          {tableComponent}
           <Alert className="summary--max-width" severity="warning">
             Positive Cancer Predisposition Result: At least one pathogenic cancer predisposition variant was identified in this sample. A referral to the Hereditary Cancer Program is recommended for this patient.
           </Alert>
