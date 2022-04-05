@@ -35,6 +35,8 @@ const EXPRESSION_KEYS = [
   { key: 'expression.spearman.gtex', title: 'GTEX' },
 ];
 
+const DEFAULT_IMG_WIDTH = 800;
+
 type ExpressionCorrelationProps = WithLoadingInjectedProps;
 
 const ExpressionCorrelation = ({
@@ -89,6 +91,7 @@ const ExpressionCorrelation = ({
           <PlotByKey
             accessor={group.key}
             plots={plots}
+            width={DEFAULT_IMG_WIDTH}
           />
         </div>
       ))}
@@ -118,8 +121,7 @@ const ExpressionCorrelation = ({
             <div className="expression-correlation__expression-charts">
               {sampleExpressionCharts(plots.find((plot) => plot.key === 'expression.chart')
                 ? LEGACY_EXPRESSION_KEYS
-                : EXPRESSION_KEYS)
-              }
+                : EXPRESSION_KEYS)}
             </div>
           </div>
           {/* This section should only appear if there's data */}
@@ -134,6 +136,7 @@ const ExpressionCorrelation = ({
                   <PlotByKey
                     plots={plots}
                     accessor="scpPlot"
+                    width={DEFAULT_IMG_WIDTH}
                   />
                 </div>
               </div>
@@ -154,6 +157,7 @@ const ExpressionCorrelation = ({
                       image={plot}
                       showTitle
                       showCaption
+                      width={DEFAULT_IMG_WIDTH}
                     />
                   ))}
                 </div>
