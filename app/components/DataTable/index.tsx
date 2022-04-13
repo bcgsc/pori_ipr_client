@@ -156,7 +156,7 @@ const DataTable = ({
         const rowNode = gridApi.getDisplayedRowAtIndex(highlightRow);
         const pageSize = gridApi.paginationGetPageSize();
         const navigateToPage = Math.floor((highlightRow) / pageSize);
-        
+
         if (navigateToPage !== gridApi.paginationGetCurrentPage()) {
           gridApi.paginationGoToPage(navigateToPage);
         }
@@ -278,7 +278,7 @@ const DataTable = ({
     colApi.setColumnsVisible(returnedHiddenCols, false);
 
     colApi.autoSizeColumns(returnedVisibleCols);
-    
+
     if (syncVisibleColumns) {
       syncVisibleColumns(returnedVisibleCols);
     }
@@ -424,7 +424,7 @@ const DataTable = ({
               pagination={isPaginated}
               paginationAutoPageSize={isFullLength}
               paginationPageSize={MAX_VISIBLE_ROWS}
-              autoSizePadding={0}
+              autoSizePadding={1}
               deltaRowDataMode={canReorder}
               getRowNodeId={(data) => data.ident}
               onRowDragEnd={canReorder ? onRowDragEnd : null}
