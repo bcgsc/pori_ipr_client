@@ -82,6 +82,8 @@ const ActionCellRenderer = ({
     setAnchorEl(null);
   };
 
+  const hasImageData = Array.isArray(data.image) ? data.image.length > 0 : data.image;
+
   return (
     <>
       {canViewDetails && (
@@ -191,7 +193,7 @@ const ActionCellRenderer = ({
           onClose={handleSvgViewerClose}
         />
       )}
-      {data.image && (
+      {hasImageData && (
         <IconButton
           aria-label="View Image"
           data-testid="image"

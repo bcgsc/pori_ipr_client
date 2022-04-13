@@ -1,7 +1,7 @@
 @import '../../../../styles/variables';
 
 .immune {
-  &__cibersort-images {
+  &__images {
     @media (min-width: $breakpoint-lg) {
       display: inline-flex;
     }
