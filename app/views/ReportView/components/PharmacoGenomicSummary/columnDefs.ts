@@ -56,7 +56,7 @@ const COMMON_COL_DEFS = [
         totalText = variant.normalDepth;
         altText = variant.normalAltCount;
       }
-      return `${altText}/${totalText}`;
+      return (altText && totalText) ? `${altText}/${totalText}` : '';
     },
   },
   {
