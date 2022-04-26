@@ -41,6 +41,7 @@
   .slides {
     &__slide {
       &-content {
+        break-inside: avoid;
         padding: 0 16px;
       }
     }
