@@ -80,7 +80,10 @@ const Users = (): JSX.Element => {
             titleText="Users"
             onDelete={handleDelete}
             onEdit={handleEditStart}
-            onAdd={() => setShowDialog(true)}
+            onAdd={() => {
+              setEditData(null);
+              setShowDialog(true);
+            }}
           />
           {showDialog && (
             <AddEditUserDialog
