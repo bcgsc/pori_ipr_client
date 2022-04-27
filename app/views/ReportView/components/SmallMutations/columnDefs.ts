@@ -18,9 +18,9 @@ const columnDefs: ColDef[] = [{
 }, {
   headerName: 'Location',
   valueGetter: ({ data }) => data.chromosome && `${data.chromosome}:${data.startPosition}${data.endPosition && data.startPosition !== data.endPosition
-      ? `-${data.endPosition}`
-      : ''
-    }`,
+    ? `-${data.endPosition}`
+    : ''
+  }`,
   hide: false,
 }, {
   headerName: 'Zygosity',
@@ -40,7 +40,7 @@ const columnDefs: ColDef[] = [{
   hide: false,
 }, {
   headerName: 'Ref/Alt DNA',
-  valueGetter: ({ data }) => `${data.tumourRefCount} / ${data.tumourAltCount}`,
+  valueGetter: ({ data }) => (data.tumourRefCount && data.tumourAltCount ? `${data.tumourRefCount} / ${data.tumourAltCount}` : ''),
   hide: false,
 }, {
   headerName: 'HGVSp',
