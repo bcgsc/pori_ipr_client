@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useState, useContext,
+  useEffect, useState, useContext, useMemo,
 } from 'react';
 import orderBy from 'lodash.orderby';
 import {
@@ -27,8 +27,9 @@ const IMAGE_KEYS = [
   { key: 'scpPlot', title: 'SCOPE' },
 ];
 
-const EXPRESSION_KEYS = [
+const EXPRESSION_KEYS_TO_GET = [
   { key: 'expression.spearman.tcga', title: 'TCGA' },
+  { key: 'expression.spearman.pediatric', title: 'PEDIATRIC' },
   { key: 'expression.spearman.target', title: 'TARGET' },
   { key: 'expression.spearman.hartwig', title: 'HARTWIG' },
   { key: 'expression.spearman.cser', title: 'CSER' },
@@ -54,7 +55,7 @@ const ExpressionCorrelation = ({
           const allKeys = [
             ...IMAGE_KEYS.map((group) => group.key),
             ...LEGACY_EXPRESSION_KEYS.map((group) => group.key),
-            ...EXPRESSION_KEYS.map((group) => group.key),
+            ...EXPRESSION_KEYS_TO_GET.map((group) => group.key),
           ].join(',');
 
           const [plotData, subtypePlotData, pairwiseData] = await Promise.all([
@@ -95,6 +96,16 @@ const ExpressionCorrelation = ({
     </>
   );
 
+  // If Target exists, and pediatric does not, display target, else filter out target
+  const EXPRESSION_KEYS = useMemo(() => {
+    const hasPediatricData = plots.find(({ key }) => key === 'expression.spearman.pediatric');
+    const hasTargetData = plots.find(({ key }) => key === 'expression.spearman.target');
+    if (!hasPediatricData && hasTargetData) {
+      return EXPRESSION_KEYS_TO_GET;
+    }
+    return EXPRESSION_KEYS_TO_GET.filter(({ key }) => key !== 'expression.spearman.target');
+  }, [plots]);
+
   return (
     <div className="expression-correlation">
       <DemoDescription>
@@ -118,8 +129,7 @@ const ExpressionCorrelation = ({
             <div className="expression-correlation__expression-charts">
               {sampleExpressionCharts(plots.find((plot) => plot.key === 'expression.chart')
                 ? LEGACY_EXPRESSION_KEYS
-                : EXPRESSION_KEYS)
-              }
+                : EXPRESSION_KEYS)}
             </div>
           </div>
           {/* This section should only appear if there's data */}
