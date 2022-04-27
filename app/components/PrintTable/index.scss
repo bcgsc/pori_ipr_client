@@ -19,6 +19,7 @@
   &__row {
     font-size: 10pt;
     border-bottom: 1px solid $palette__text--hint;
+    page-break-inside: avoid;
 
     & td {
       padding: 10px 4px;
