@@ -25,6 +25,16 @@ declare global {
       PUBLIC_PATH: string;
     };
   }
+  let CONFIG: {
+    ATTRS: {
+      NAME: string;
+    },
+    STORAGE: {
+      REFERRER: string;
+      KEYCLOAK: string;
+      DATABASE_TYPE: string;
+    },
+  };
 }
 
 type RecordDefaults = {

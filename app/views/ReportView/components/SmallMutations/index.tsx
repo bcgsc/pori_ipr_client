@@ -57,7 +57,7 @@ const SmallMutations = ({
             `/reports/${report.ident}/small-mutations`,
           ).request();
 
-          let filteredSmallMutResp;
+          let filteredSmallMutResp = [];
 
           // Hide some columns if no values are returned
           if (smallMutationsResp?.length) {
@@ -89,7 +89,6 @@ const SmallMutations = ({
             }
             setVisibleCols((prevVal) => [...prevVal, ...nextVisible]);
           }
-
           setSmallMutations(filteredSmallMutResp);
         } catch (err) {
           snackbar.error(`Network error: ${err}`);

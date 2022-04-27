@@ -56,7 +56,7 @@ const COMMON_COL_DEFS = [
         totalText = variant.normalDepth;
         altText = variant.normalAltCount;
       }
-      return `${altText}/${totalText}`;
+      return (altText && totalText) ? `${altText}/${totalText}` : '';
     },
   },
   {
@@ -117,6 +117,13 @@ const sampleColumnDefs = [
   },
 ];
 
+const PHARMACOGEN_EVIDENCE_VAL_GETTER = ({ data: { evidenceLevel, reference } }) => {
+  if (reference && !evidenceLevel) {
+    return reference;
+  }
+  return evidenceLevel;
+};
+
 const pharmacoGenomicPrintColumnDefs = [
   ...COMMON_COL_DEFS,
   {
@@ -128,7 +135,7 @@ const pharmacoGenomicPrintColumnDefs = [
     headerName: 'Evidence',
     colId: 'evidenceLevel',
     field: 'evidenceLevel',
-    cellRendererFramework: ArrayCell('evidenceLevel', false),
+    valueGetter: PHARMACOGEN_EVIDENCE_VAL_GETTER,
   },
   {
     headerName: 'External Source',
@@ -149,7 +156,7 @@ const pharmacoGenomicColumnDefs = [
     colId: 'evidenceLevel',
     field: 'evidenceLevel',
     minWidth: 90,
-    cellRendererFramework: ArrayCell('evidenceLevel', false),
+    valueGetter: PHARMACOGEN_EVIDENCE_VAL_GETTER,
   },
   {
     field: 'externalSource',
