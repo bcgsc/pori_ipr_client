@@ -24,8 +24,8 @@ const Image = ({
     format,
     key,
   } = {} as ImageType,
-  height = undefined,
-  width = undefined,
+  height: heightProp = undefined,
+  width: widthProp = undefined,
   showTitle = false,
   showCaption = false,
   isZoomable = true,
@@ -38,6 +38,15 @@ const Image = ({
       setIsZoomed((prevVal) => !prevVal);
     }
   }, [isZoomable]);
+
+  let height = heightProp;
+  let width = widthProp;
+  if (heightProp && Number.isInteger(heightProp)) {
+    height = `${heightProp}px`;
+  }
+  if (widthProp && Number.isInteger(widthProp)) {
+    width = `${widthProp}px`;
+  }
 
   if (data) {
     return (
@@ -58,8 +67,8 @@ const Image = ({
               src={`data:image/${format};base64,${data}`}
               alt={title}
               key={key}
-              height={Number.isInteger(height) ? `${height}px` : height}
-              width={Number.isInteger(width) ? `${height}px` : width}
+              height={height}
+              width={width}
               style={imgStyle}
             />
           </Button>
