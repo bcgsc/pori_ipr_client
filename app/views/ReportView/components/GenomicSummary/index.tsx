@@ -20,9 +20,9 @@ import DescriptionList from '@/components/DescriptionList';
 import ReportContext from '@/context/ReportContext';
 import snackbar from '@/services/SnackbarUtils';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import PatientEdit from '@/components/PatientEdit';
 import VariantChips from './components/VariantChips';
 import VariantCounts from './components/VariantCounts';
-import PatientEdit from './components/PatientEdit';
 import TumourSummaryEdit from './components/TumourSummaryEdit';
 import {
   MsiType,
@@ -192,6 +192,10 @@ const GenomicSummary = ({
           value: report.alternateIdentifier,
         },
         {
+          label: 'Pediatric Patient IDs',
+          value: report.pediatricIds,
+        },
+        {
           label: 'Report Date',
           value: formatDate(report.createdAt),
         },
@@ -352,6 +356,10 @@ const GenomicSummary = ({
         value: reportResp ? reportResp.alternateIdentifier : report.alternateIdentifier,
       },
       {
+        label: 'Pediatric Patient IDs',
+        value: reportResp ? reportResp.pediatricIds : report.pediatricIds,
+      },
+      {
         label: 'Report Date',
         value: formatDate(report.createdAt),
       },
@@ -466,52 +474,48 @@ const GenomicSummary = ({
           </div>
 
           {isPrint ? (
-            <>
-              <div className="genomic-summary__alterations">
-                <div className="genomic-summary__alterations-title">
-                  <Typography variant="h3">
-                    Key Genomic and Transcriptomic Alterations Identified
-                  </Typography>
-                </div>
-                <div className="genomic-summary__alterations-content">
-                  <VariantCounts
-                    filter={variantFilter}
-                    counts={variantCounts}
-                    onToggleFilter={setVariantFilter}
-                  />
-                  <VariantChips
-                    variants={variantFilter ? variants.filter((v) => v.type === variantFilter) : variants}
-                    canEdit={canEdit}
-                    onChipDeleted={handleChipDeleted}
-                    onChipAdded={handleChipAdded}
-                    isPrint={isPrint}
-                  />
-                </div>
+            <div className="genomic-summary__alterations">
+              <div className="genomic-summary__alterations-title">
+                <Typography variant="h3">
+                  Key Genomic and Transcriptomic Alterations Identified
+                </Typography>
               </div>
-            </>
+              <div className="genomic-summary__alterations-content">
+                <VariantCounts
+                  filter={variantFilter}
+                  counts={variantCounts}
+                  onToggleFilter={setVariantFilter}
+                />
+                <VariantChips
+                  variants={variantFilter ? variants.filter((v) => v.type === variantFilter) : variants}
+                  canEdit={canEdit}
+                  onChipDeleted={handleChipDeleted}
+                  onChipAdded={handleChipAdded}
+                  isPrint={isPrint}
+                />
+              </div>
+            </div>
           ) : (
-            <>
-              <div className="genomic-summary__alterations">
-                <div className="genomic-summary__alterations-title">
-                  <Typography variant="h3">
-                    Key Genomic and Transcriptomic Alterations Identified
-                  </Typography>
-                </div>
-                <div className="genomic-summary__alterations-content">
-                  <VariantCounts
-                    filter={variantFilter}
-                    counts={variantCounts}
-                    onToggleFilter={setVariantFilter}
-                  />
-                  <VariantChips
-                    variants={variantFilter ? variants.filter((v) => v.type === variantFilter) : variants}
-                    canEdit={canEdit}
-                    onChipDeleted={handleChipDeleted}
-                    onChipAdded={handleChipAdded}
-                  />
-                </div>
+            <div className="genomic-summary__alterations">
+              <div className="genomic-summary__alterations-title">
+                <Typography variant="h3">
+                  Key Genomic and Transcriptomic Alterations Identified
+                </Typography>
               </div>
-            </>
+              <div className="genomic-summary__alterations-content">
+                <VariantCounts
+                  filter={variantFilter}
+                  counts={variantCounts}
+                  onToggleFilter={setVariantFilter}
+                />
+                <VariantChips
+                  variants={variantFilter ? variants.filter((v) => v.type === variantFilter) : variants}
+                  canEdit={canEdit}
+                  onChipDeleted={handleChipDeleted}
+                  onChipAdded={handleChipAdded}
+                />
+              </div>
+            </div>
           )}
         </>
       )}
