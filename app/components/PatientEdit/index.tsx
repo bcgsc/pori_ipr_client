@@ -81,7 +81,12 @@ const PatientEdit = ({
       const apiCalls = [];
 
       if (newPatientData) {
-        apiCalls.push(api.put(`/reports/${report.ident}/patient-information`, newPatientData, {}));
+        const {
+          caseType, biopsySite, physician, gender,
+        } = newPatientData;
+        apiCalls.push(api.put(`/reports/${report.ident}/patient-information`, {
+          caseType, biopsySite, physician, gender,
+        }, {}));
       }
 
       if (newReportData) {
