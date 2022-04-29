@@ -32,6 +32,7 @@ type UserRoleType = {
 
 type ReportType = {
   alternateIdentifier?: string;
+  pediatricIds?: string;
   analysisStartedAt: string | null;
   biopsyName?: string;
   expression_matrix: string;
