@@ -22,6 +22,7 @@ import snackbar from '@/services/SnackbarUtils';
 import PrintTable from '@/components/PrintTable';
 import TestInformation, { TestInformationType } from '@/components/TestInformation';
 import { KbMatchType } from '@/common';
+import PatientEdit from '@/components/PatientEdit';
 import {
   sampleColumnDefs,
   pharmacoGenomicColumnDefs,
@@ -29,7 +30,6 @@ import {
   cancerPredisColumnDefs,
   cancerPredisPrintColumnDefs,
 } from './columnDefs';
-import PatientEdit from '../GenomicSummary/components/PatientEdit';
 
 import './index.scss';
 
@@ -90,6 +90,10 @@ const PharmacoGenomicSummary = ({
             {
               label: 'Alternate ID',
               value: report.alternateIdentifier,
+            },
+            {
+              label: 'Pediatric Patient IDs',
+              value: report.pediatricIds,
             },
             {
               label: 'Report Date',
@@ -158,6 +162,10 @@ const PharmacoGenomicSummary = ({
       {
         label: 'Alternate ID',
         value: newReportData ? newReportData.alternateIdentifier : report.alternateIdentifier,
+      },
+      {
+        label: 'Pediatric Patient IDs',
+        value: newReportData ? newReportData.pediatricIds : report.pediatricIds,
       },
       {
         label: 'Report Date',
