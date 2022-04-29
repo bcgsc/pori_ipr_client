@@ -322,6 +322,18 @@ const PharmacoGenomicSummary = ({
               </Grid>
             </div>
           )}
+          <div className="summary__pharmacogenomic">
+            <Typography variant="h3" display="inline">
+              Pharmacogenomic Variants
+            </Typography>
+            {pharmacogenomicSection}
+          </div>
+          <div className="summary__cancer-predisposition">
+            <Typography variant="h3" display="inline">
+              Cancer Predisposition Variants
+            </Typography>
+            {cancerPredispositionSection}
+          </div>
           {report?.sampleInfo && (
             <>
               <Typography variant="h3" display="inline" className="summary__sample-information-title">
@@ -342,18 +354,6 @@ const PharmacoGenomicSummary = ({
               )}
             </>
           )}
-          <div className="summary__pharmacogenomic">
-            <Typography variant="h3" display="inline">
-              Pharmacogenomic Variants
-            </Typography>
-            {pharmacogenomicSection}
-          </div>
-          <div className="summary__cancer-predisposition">
-            <Typography variant="h3" display="inline">
-              Cancer Predisposition Variants
-            </Typography>
-            {cancerPredispositionSection}
-          </div>
           {testInformation && (
             <div className="summary__test-information">
               <Typography variant="h3" className="summary__test-information-title">

@@ -16,14 +16,15 @@
   }
 
   &__header-left {
-    width: 35%;
+    min-width: 300px;
+    max-width: 300px;
   }
 
   &__header-right {
     display: flex;
     flex-direction: column;
     margin: auto auto auto 10mm;
-    
+
     & > * {
       margin: 1mm;
     }
