@@ -35,8 +35,8 @@ const PatientEdit = ({
 }: PatientEditProps): JSX.Element => {
   const { isSigned } = useContext(ConfirmContext);
 
-  const [newPatientData, setNewPatientData] = useState();
-  const [newReportData, setNewReportData] = useState();
+  const [newPatientData, setNewPatientData] = useState<PatientEditProps['patientInformation']>();
+  const [newReportData, setNewReportData] = useState(null);
   const [patientDirty, setPatientDirty] = useState(false);
   const [reportDirty, setReportDirty] = useState(false);
   const [isApiCalling, setIsApiCalling] = useState(false);
@@ -51,6 +51,7 @@ const PatientEdit = ({
     if (report) {
       setNewReportData({
         alternateIdentifier: report.alternateIdentifier,
+        pediatricIds: report.pediatricIds,
         biopsyName: report.biopsyName,
       });
     }
@@ -80,7 +81,12 @@ const PatientEdit = ({
       const apiCalls = [];
 
       if (newPatientData) {
-        apiCalls.push(api.put(`/reports/${report.ident}/patient-information`, newPatientData, {}));
+        const {
+          caseType, biopsySite, physician, gender,
+        } = newPatientData;
+        apiCalls.push(api.put(`/reports/${report.ident}/patient-information`, {
+          caseType, biopsySite, physician, gender,
+        }, {}));
       }
 
       if (newReportData) {
@@ -110,6 +116,16 @@ const PatientEdit = ({
               label="Alternate ID"
               value={newReportData.alternateIdentifier}
               name="alternateIdentifier"
+              onChange={handleReportChange}
+              variant="outlined"
+              multiline
+              fullWidth
+            />
+            <TextField
+              className="patient-dialog__text-field"
+              label="Pediatric Patient IDs"
+              value={newReportData.pediatricIds}
+              name="pediatricIds"
               onChange={handleReportChange}
               variant="outlined"
               multiline

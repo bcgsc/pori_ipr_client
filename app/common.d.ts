@@ -25,6 +25,16 @@ declare global {
       PUBLIC_PATH: string;
     };
   }
+  let CONFIG: {
+    ATTRS: {
+      NAME: string;
+    },
+    STORAGE: {
+      REFERRER: string;
+      KEYCLOAK: string;
+      DATABASE_TYPE: string;
+    },
+  };
 }
 
 type RecordDefaults = {
@@ -190,9 +200,12 @@ type ExpOutliersType = {
 } & RecordDefaults;
 
 type TemplateType = {
-  ident: string;
   name: string;
-};
+  headerImage: ImageType;
+  logoImage: ImageType;
+  organization: string;
+  sections: string[];
+} & RecordDefaults;
 
 type AppendixType = RecordDefaults & {
   text: string;
