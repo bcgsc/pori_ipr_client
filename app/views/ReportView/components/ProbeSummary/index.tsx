@@ -20,8 +20,8 @@ import SignatureCard, { SignatureType } from '@/components/SignatureCard';
 import PrintTable from '@/components/PrintTable';
 import TestInformation, { TestInformationType } from '@/components/TestInformation';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import PatientEdit from '@/components/PatientEdit';
 import { sampleColumnDefs, eventsColumnDefs } from './columnDefs';
-import PatientEdit from '../GenomicSummary/components/PatientEdit';
 import EventsEditDialog from './components/EventsEditDialog';
 import ProbeResultsType from './types.d';
 
@@ -97,6 +97,10 @@ const ProbeSummary = ({
             {
               label: 'Alternate ID',
               value: report.alternateIdentifier,
+            },
+            {
+              label: 'Pediatric Patient IDs',
+              value: report.pediatricIds,
             },
             {
               label: 'Report Date',
@@ -181,6 +185,10 @@ const ProbeSummary = ({
       {
         label: 'Alternate ID',
         value: newReportData ? newReportData.alternateIdentifier : report.alternateIdentifier,
+      },
+      {
+        label: 'Pediatric Patient IDs',
+        value: newReportData ? newReportData.pediatricIds : report.pediatricIds,
       },
       {
         label: 'Report Date',
