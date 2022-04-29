@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, {
+  useState, useEffect, useContext, useMemo,
+} from 'react';
 import {
   Typography,
   Grid,
@@ -108,6 +110,8 @@ const Appendices = ({
     }
   }, [comparators, report]);
 
+  const isPharmacogenomic = useMemo(() => report?.template?.name === 'pharmacogenomic', [report?.template?.name]);
+
   return (
     <div className="appendices">
       {!isLoading && (
@@ -117,6 +121,7 @@ const Appendices = ({
               <Typography variant="h1">
                 Appendix A
               </Typography>
+              {!isPharmacogenomic && (
               <div className="analysis-summary">
                 <Typography variant="h3">
                   Analysis Summary
@@ -136,6 +141,7 @@ const Appendices = ({
                   ))}
                 </Grid>
               </div>
+              )}
               {appendices?.sampleInfo && (
                 <DataTable
                   columnDefs={sampleInformationColumnDefs}
@@ -167,7 +173,7 @@ const Appendices = ({
               Appendix C
             </Typography>
           )}
-          {isPrint && (
+          {(isPrint && !isPharmacogenomic) && (
             <div className="analysis-summary">
               <Typography variant="h3">
                 Analysis Summary
