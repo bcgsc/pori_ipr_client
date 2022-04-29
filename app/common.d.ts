@@ -200,9 +200,12 @@ type ExpOutliersType = {
 } & RecordDefaults;
 
 type TemplateType = {
-  ident: string;
   name: string;
-};
+  headerImage: ImageType;
+  logoImage: ImageType;
+  organization: string;
+  sections: string[];
+} & RecordDefaults;
 
 type AppendixType = RecordDefaults & {
   text: string;
