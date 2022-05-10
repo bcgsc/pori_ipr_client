@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useState, useContext, useCallback,
+  useEffect, useState, useContext, useCallback, useMemo,
 } from 'react';
 import { useSnackbar } from 'notistack';
 import {
@@ -59,6 +59,7 @@ const Pathway = ({
       const newPathway = new FormData();
 
       newPathway.append('pathway', uploadedFile);
+      newPathway.set('legend', 'v2');
 
       let pathwayResp: PathwayImageType;
       if (initialPathway) {
@@ -76,7 +77,7 @@ const Pathway = ({
           true,
         ).request(isSigned);
       }
-      
+
       setPathwayImage(pathwayResp);
       setIsPathwayLoading(false);
       onChange(pathwayResp);
@@ -86,53 +87,61 @@ const Pathway = ({
     }
   }, [initialPathway, isSigned, onChange, report, snackbar]);
 
+  const pathwayUpload = useMemo(() => {
+    let component = null;
+    if (canEdit && !isPrint) {
+      component = (
+        <Button
+          className="pathway__legend-button"
+          component="label"
+          color="secondary"
+          variant="outlined"
+        >
+          {!isPathwayLoading && (
+          <>
+            Upload Pathway Image
+            <PublishIcon />
+            <input
+              accept=".svg"
+              onChange={handlePathwayUpload}
+              type="file"
+              hidden
+            />
+          </>
+          )}
+          {isPathwayLoading && (
+          <CircularProgress size="small" color="secondary" />
+          )}
+        </Button>
+      );
+      if (pathwayImage?.pathway) {
+        component = (
+          <IconButton
+            className="pathway__button"
+            color="secondary"
+            component="label"
+            size="large"
+          >
+            <PublishIcon />
+            <input
+              accept=".svg"
+              onChange={handlePathwayUpload}
+              type="file"
+              hidden
+            />
+          </IconButton>
+        );
+      }
+    }
+    return component;
+  }, [handlePathwayUpload, canEdit, isPrint, pathwayImage?.pathway, isPathwayLoading]);
+
   return (
     <div>
       {imageError && (
         <Typography align="center" color="error">{imageError}</Typography>
       )}
-      {canEdit && !isPrint && (
-        <>
-          {pathwayImage?.pathway ? (
-            <IconButton
-              className="pathway__button"
-              color="secondary"
-              component="label"
-              size="large">
-              <PublishIcon />
-              <input
-                accept=".svg"
-                onChange={handlePathwayUpload}
-                type="file"
-                hidden
-              />
-            </IconButton>
-          ) : (
-            <Button
-              className="pathway__legend-button"
-              component="label"
-              color="secondary"
-              variant="outlined"
-            >
-              {!isPathwayLoading && (
-                <>
-                  Upload Pathway Image
-                  <PublishIcon />
-                  <input
-                    accept=".svg"
-                    onChange={handlePathwayUpload}
-                    type="file"
-                    hidden
-                  />
-                </>
-              )}
-              {isPathwayLoading && (
-                <CircularProgress size="small" color="secondary" />
-              )}
-            </Button>
-          )}
-        </>
-      )}
+      {pathwayUpload}
       {pathwayImage?.pathway && (
         <SvgImage image={pathwayImage.pathway} isPrint={isPrint} />
       )}
