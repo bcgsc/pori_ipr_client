@@ -24,7 +24,7 @@ const GeneAutocomplete = ({
   const { report } = useContext(ReportContext);
   const [isLoading, setIsLoading] = useState(true);
   const [options, setOptions] = useState<GeneType[]>([]);
-  const [text, setText] = useState<string>(value?.name);
+  const [text, setText] = useState<string>(value?.name || '');
   const [debouncedText] = useDebounce(text, 500);
   const snackbar = useSnackbar();
 
