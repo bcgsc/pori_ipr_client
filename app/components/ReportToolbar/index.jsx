@@ -7,6 +7,10 @@ import {
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import startCase from '@/utils/startCase';
+import {
+  REPORT_TYPE_TO_TITLE,
+  REPORT_TYPE_TO_SUFFIX,
+} from '@/constants';
 
 import './index.scss';
 
@@ -21,16 +25,10 @@ function ReportToolbar(props) {
   } = props;
 
   const reportTitle = useMemo(() => {
-    if (type === 'probe') {
-      return 'Targeted Gene';
-    }
-    if (type === 'genomic') {
-      return 'Genomic';
-    }
-    if (type === 'pharmacogenomic') {
-      return 'Pharmacogenomic and Germline Targeted Gene';
-    }
-    return '';
+    const titleFirstPart = REPORT_TYPE_TO_SUFFIX[type];
+    const titleSecondPart = REPORT_TYPE_TO_TITLE[type];
+    if (!titleFirstPart && !titleSecondPart) return '';
+    return `${titleFirstPart}${titleFirstPart ? ` - ${titleSecondPart}` : titleSecondPart}`;
   }, [type]);
 
   return (
