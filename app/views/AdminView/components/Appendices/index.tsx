@@ -1,5 +1,5 @@
 import React, {
-  useState, useEffect, useMemo, useCallback,
+  useState, useEffect, useCallback,
 } from 'react';
 import { CircularProgress } from '@mui/material';
 import { RecordDefaults, AppendixType } from '@/common';

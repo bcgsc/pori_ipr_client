@@ -9,7 +9,7 @@ import PublishIcon from '@mui/icons-material/Publish';
 import { useSnackbar } from 'notistack';
 
 import api from '@/services/api';
-import useEdit from '@/hooks/useEdit';
+import { useUser } from '@/context/UserContext';
 import ReportContext from '@/context/ReportContext';
 import ConfirmContext from '@/context/ConfirmContext';
 import Image, { ImageType } from '@/components/Image';
@@ -25,7 +25,7 @@ const Legend = ({
   type,
   isPrint = false,
 }: LegendProps): JSX.Element => {
-  const { canEdit } = useEdit();
+  const { canEdit } = useUser();
   const { report } = useContext(ReportContext);
   const { isSigned } = useContext(ConfirmContext);
   const snackbar = useSnackbar();

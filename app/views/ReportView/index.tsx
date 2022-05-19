@@ -11,7 +11,7 @@ import { useTheme } from '@mui/material/styles';
 import SecurityContext from '@/context/SecurityContext';
 import ReportToolbar from '@/components/ReportToolbar';
 import ReportSidebar from '@/components/ReportSidebar';
-import useEdit from '@/hooks/useEdit';
+import { useUser } from '@/context/UserContext';
 import useExternalMode from '@/hooks/useExternalMode';
 import ReportContext from '@/context/ReportContext';
 import ConfirmContext from '@/context/ConfirmContext';
@@ -49,7 +49,7 @@ const ReportView = (): JSX.Element => {
   const params = useParams();
   const theme = useTheme();
   const history = useHistory();
-  const { canEdit } = useEdit();
+  const { canEdit } = useUser();
   const isExternalMode = useExternalMode();
 
   const [report, setReport] = useState();

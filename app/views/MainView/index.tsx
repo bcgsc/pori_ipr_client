@@ -10,7 +10,7 @@ import { CircularProgress } from '@mui/material';
 import AuthenticatedRoute from '@/components/AuthenticatedRoute';
 import SidebarContext from '@/context/SidebarContext';
 import SecurityContext from '@/context/SecurityContext';
-import { EditContextProvider } from '@/context/EditContext';
+import { UserContextProvider } from '@/context/UserContext';
 import { ResourceContextProvider } from '@/context/ResourceContext';
 import NavBar from '@/components/NavBar';
 import Sidebar from '@/components/Sidebar';
@@ -47,7 +47,7 @@ const Main = (): JSX.Element => {
 
   return (
     <SecurityContext.Provider value={secContextVal}>
-      <EditContextProvider>
+      <UserContextProvider>
         <ResourceContextProvider>
           <SidebarContext.Provider value={sideBarContextVal}>
             <div>
@@ -80,7 +80,7 @@ const Main = (): JSX.Element => {
             </div>
           </SidebarContext.Provider>
         </ResourceContextProvider>
-      </EditContextProvider>
+      </UserContextProvider>
     </SecurityContext.Provider>
   );
 };
