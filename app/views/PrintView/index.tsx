@@ -12,6 +12,10 @@ import PageBreak from '@/components/PageBreak';
 import startCase from '@/utils/startCase';
 import { ReportType } from '@/context/ReportContext/types';
 import { TemplateType } from '@/common';
+import {
+  REPORT_TYPE_TO_TITLE,
+  REPORT_TYPE_TO_SUFFIX,
+} from '@/constants';
 import Summary from '../ReportView/components/Summary';
 import RunningLeft from './components/RunningLeft';
 import RunningCenter from './components/RunningCenter';
@@ -24,16 +28,6 @@ const PathwayAnalysis = lazy(() => import('../ReportView/components/PathwayAnaly
 const TherapeuticTargets = lazy(() => import('../ReportView/components/TherapeuticTargets'));
 const Slides = lazy(() => import('../ReportView/components/Slides'));
 const Appendices = lazy(() => import('../ReportView/components/Appendices'));
-
-const REPORT_TYPE_TO_PRINT_TITLE = {
-  probe: 'Targeted Gene Report',
-  pharmacogenomic: 'Pharmacogenomic and Cancer Predisposition Targeted Gene Report',
-};
-
-const REPORT_TYPE_TO_PRINT_SUFFIX = {
-  probe: 'Somatic',
-  pharmacogenomic: 'Germline',
-};
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -152,9 +146,9 @@ const Print = (): JSX.Element => {
 
   const titleBar = useMemo(() => {
     if (report && template) {
-      const printTitle = REPORT_TYPE_TO_PRINT_TITLE[template.name];
+      const printTitle = REPORT_TYPE_TO_TITLE[template.name];
       const headerSubtitle = report.patientId;
-      const headerSubtitleSuffix = REPORT_TYPE_TO_PRINT_SUFFIX[template.name];
+      const headerSubtitleSuffix = REPORT_TYPE_TO_SUFFIX[template.name];
       return (
         <div className="print__headers">
           <div className="print__header-left">
@@ -163,7 +157,7 @@ const Print = (): JSX.Element => {
             )}
           </div>
           <div className="print__header-right">
-            {printTitle && <Typography variant="h1">{printTitle}</Typography>}
+            {printTitle && (<Typography variant="h1">{`${printTitle} Report`}</Typography>)}
             <Typography variant="h2">
               {`${headerSubtitle}${headerSubtitleSuffix ? ` - ${headerSubtitleSuffix}` : ''}`}
             </Typography>
