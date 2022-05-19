@@ -234,7 +234,7 @@ const ReportView = (): JSX.Element => {
                 </Route>
                 <Route
                   render={(routeProps) => (
-                    <Appendices {...routeProps} isPrint={false} theme={theme} isProbe={isProbe} report={report} canEdit={canEdit} />
+                    <Appendices {...routeProps} isPrint={false} theme={theme} isProbe={isProbe} report={report} />
                   )}
                   path={`${path}/appendices`}
                 />
