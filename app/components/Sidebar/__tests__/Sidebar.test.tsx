@@ -9,7 +9,7 @@ import ResourceContext from '../../../context/ResourceContext';
 const context = {};
 const permissions = {
   germlineAccess: true,
-  reportAccess: true,
+  reportsAccess: true,
   adminAccess: true,
 };
 

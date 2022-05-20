@@ -8,14 +8,14 @@ import ResourceContextType from './types';
 
 const GERMLINE_ACCESS = ['admin', 'analyst', 'bioinformatician', 'projects', 'manager'];
 const GERMLINE_BLOCK = ['clinician', 'collaborator'];
-const REPORT_ACCESS = ['*'];
-const REPORT_BLOCK = [];
+const REPORTS_ACCESS = ['*'];
+const REPORTS_BLOCK = [];
 const ADMIN_ACCESS = ['admin'];
 const ADMIN_BLOCK = [];
 
 type UseResourcesReturnType = {
   germlineAccess: boolean;
-  reportAccess: boolean;
+  reportsAccess: boolean;
   adminAccess: boolean;
 };
 
@@ -23,7 +23,7 @@ const useResources = (): UseResourcesReturnType => {
   const { userDetails } = useContext(SecurityContext);
 
   const [germlineAccess, setGermlineAccess] = useState(false);
-  const [reportAccess, setReportAccess] = useState(false);
+  const [reportsAccess, setReportsAccess] = useState(false);
   const [adminAccess, setAdminAccess] = useState(false);
 
   useEffect(() => {
@@ -32,8 +32,8 @@ const useResources = (): UseResourcesReturnType => {
         setGermlineAccess(true);
       }
 
-      if (checkAccess(userDetails.groups, REPORT_ACCESS, REPORT_BLOCK)) {
-        setReportAccess(true);
+      if (checkAccess(userDetails.groups, REPORTS_ACCESS, REPORTS_BLOCK)) {
+        setReportsAccess(true);
       }
 
       if (checkAccess(userDetails.groups, ADMIN_ACCESS, ADMIN_BLOCK)) {
@@ -43,13 +43,13 @@ const useResources = (): UseResourcesReturnType => {
   }, [userDetails?.groups]);
 
   return {
-    germlineAccess, reportAccess, adminAccess,
+    germlineAccess, reportsAccess, adminAccess,
   };
 };
 
 const ResourceContext = createContext<ResourceContextType>({
   germlineAccess: false,
-  reportAccess: false,
+  reportsAccess: false,
   adminAccess: false,
 });
 
@@ -59,16 +59,16 @@ type ResourceContextProviderProps = {
 
 const ResourceContextProvider = ({ children }: ResourceContextProviderProps): JSX.Element => {
   const {
-    germlineAccess, reportAccess, adminAccess,
+    germlineAccess, reportsAccess, adminAccess,
   } = useResources();
 
   const providerValue = useMemo(() => ({
     germlineAccess,
-    reportAccess,
+    reportsAccess,
     adminAccess,
   }), [
     germlineAccess,
-    reportAccess,
+    reportsAccess,
     adminAccess,
   ]);
 
