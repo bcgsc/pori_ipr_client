@@ -11,6 +11,7 @@ const permissions = {
   germlineAccess: true,
   reportsAccess: true,
   adminAccess: true,
+  reportSettingAccess: true,
 };
 
 const theme = createTheme();

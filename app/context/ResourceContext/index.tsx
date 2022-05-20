@@ -17,6 +17,7 @@ type UseResourcesReturnType = {
   germlineAccess: boolean;
   reportsAccess: boolean;
   adminAccess: boolean;
+  reportSettingAccess: boolean;
 };
 
 const useResources = (): UseResourcesReturnType => {
@@ -25,6 +26,7 @@ const useResources = (): UseResourcesReturnType => {
   const [germlineAccess, setGermlineAccess] = useState(false);
   const [reportsAccess, setReportsAccess] = useState(false);
   const [adminAccess, setAdminAccess] = useState(false);
+  const [reportSettingAccess, setReportSettingAccess] = useState(false);
 
   useEffect(() => {
     if (userDetails?.groups) {
@@ -39,11 +41,14 @@ const useResources = (): UseResourcesReturnType => {
       if (checkAccess(userDetails.groups, ADMIN_ACCESS, ADMIN_BLOCK)) {
         setAdminAccess(true);
       }
+      if (checkAccess(userDetails.groups, [...ADMIN_ACCESS, 'manager'], ADMIN_BLOCK)) {
+        setReportSettingAccess(true);
+      }
     }
   }, [userDetails?.groups]);
 
   return {
-    germlineAccess, reportsAccess, adminAccess,
+    germlineAccess, reportsAccess, adminAccess, reportSettingAccess,
   };
 };
 
@@ -51,6 +56,7 @@ const ResourceContext = createContext<ResourceContextType>({
   germlineAccess: false,
   reportsAccess: false,
   adminAccess: false,
+  reportSettingAccess: false,
 });
 
 type ResourceContextProviderProps = {
@@ -59,17 +65,19 @@ type ResourceContextProviderProps = {
 
 const ResourceContextProvider = ({ children }: ResourceContextProviderProps): JSX.Element => {
   const {
-    germlineAccess, reportsAccess, adminAccess,
+    germlineAccess, reportsAccess, adminAccess, reportSettingAccess,
   } = useResources();
 
   const providerValue = useMemo(() => ({
     germlineAccess,
     reportsAccess,
     adminAccess,
+    reportSettingAccess,
   }), [
     germlineAccess,
     reportsAccess,
     adminAccess,
+    reportSettingAccess,
   ]);
 
   return (
