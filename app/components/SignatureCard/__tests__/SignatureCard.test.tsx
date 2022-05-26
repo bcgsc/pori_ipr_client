@@ -1,21 +1,21 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 
-import EditContext from '@/context/EditContext';
+import UserContext from '@/context/UserContext';
 import SignatureCard from '..';
 import { mockNullData, mockNullObjectData, mockObjectData } from './mockData';
 
 describe('SignatureCard', () => {
   test('Author and sign button are visible', async () => {
     render(
-      <EditContext.Provider value={{ canEdit: true, setCanEdit: () => {} }}>
+      <UserContext.Provider value={{ canEdit: true, setCanEdit: () => {} }}>
         <SignatureCard
           title="Author"
           type="author"
           signatures={null}
           onClick={() => {}}
         />
-      </EditContext.Provider>,
+      </UserContext.Provider>,
     );
     expect(await screen.findByText('Author')).toBeInTheDocument();
     expect(await screen.findByRole('button', { name: 'Sign' })).toBeInTheDocument();
@@ -23,14 +23,14 @@ describe('SignatureCard', () => {
 
   test('Sign button is not visible without edit permissions', async () => {
     render(
-      <EditContext.Provider value={{ canEdit: false, setCanEdit: () => {} }}>
+      <UserContext.Provider value={{ canEdit: false, setCanEdit: () => {} }}>
         <SignatureCard
           title="Author"
           type="author"
           signatures={null}
           onClick={() => {}}
         />
-      </EditContext.Provider>,
+      </UserContext.Provider>,
     );
     expect(screen.queryByRole('button', { name: 'Sign' })).not.toBeInTheDocument();
   });
@@ -38,14 +38,14 @@ describe('SignatureCard', () => {
   test('Sign button calls onClick', async () => {
     const handleClick = jest.fn();
     render(
-      <EditContext.Provider value={{ canEdit: true, setCanEdit: () => {} }}>
+      <UserContext.Provider value={{ canEdit: true, setCanEdit: () => {} }}>
         <SignatureCard
           title="Author"
           type="author"
           signatures={null}
           onClick={handleClick}
         />
-      </EditContext.Provider>,
+      </UserContext.Provider>,
     );
     fireEvent.click(await screen.findByRole('button', { name: 'Sign' }));
 
@@ -54,14 +54,14 @@ describe('SignatureCard', () => {
 
   test('Sign button is visible when reviewerSignature is null', async () => {
     render(
-      <EditContext.Provider value={{ canEdit: true, setCanEdit: () => {} }}>
+      <UserContext.Provider value={{ canEdit: true, setCanEdit: () => {} }}>
         <SignatureCard
           title="Reviewer"
           type="reviewer"
           signatures={mockNullData}
           onClick={() => {}}
         />
-      </EditContext.Provider>,
+      </UserContext.Provider>,
     );
 
     expect(await screen.findByRole('button', { name: 'Sign' })).toBeInTheDocument();
@@ -69,14 +69,14 @@ describe('SignatureCard', () => {
 
   test('Sign button is visible when reviewerSignature has null data', async () => {
     render(
-      <EditContext.Provider value={{ canEdit: true, setCanEdit: () => {} }}>
+      <UserContext.Provider value={{ canEdit: true, setCanEdit: () => {} }}>
         <SignatureCard
           title="Reviewer"
           type="reviewer"
           signatures={mockNullObjectData}
           onClick={() => {}}
         />
-      </EditContext.Provider>,
+      </UserContext.Provider>,
     );
 
     expect(await screen.findByRole('button', { name: 'Sign' })).toBeInTheDocument();
@@ -84,14 +84,14 @@ describe('SignatureCard', () => {
 
   test('Reviewer name & remove signature button are visible', async () => {
     render(
-      <EditContext.Provider value={{ canEdit: true, setCanEdit: () => {} }}>
+      <UserContext.Provider value={{ canEdit: true, setCanEdit: () => {} }}>
         <SignatureCard
           title="Reviewer"
           type="reviewer"
           signatures={mockObjectData}
           onClick={() => {}}
         />
-      </EditContext.Provider>,
+      </UserContext.Provider>,
     );
 
     expect(screen.queryByRole('button', { name: 'Sign' })).not.toBeInTheDocument();
@@ -100,7 +100,7 @@ describe('SignatureCard', () => {
 
   test('No buttons are visible in print view', async () => {
     render(
-      <EditContext.Provider value={{ canEdit: true, setCanEdit: () => {} }}>
+      <UserContext.Provider value={{ canEdit: true, setCanEdit: () => {} }}>
         <SignatureCard
           title="Reviewer"
           type="reviewer"
@@ -108,7 +108,7 @@ describe('SignatureCard', () => {
           onClick={() => {}}
           isPrint
         />
-      </EditContext.Provider>,
+      </UserContext.Provider>,
     );
 
     expect(screen.queryByRole('button')).not.toBeInTheDocument();

@@ -12,6 +12,7 @@ import DataTable from '@/components/DataTable';
 import ReportContext from '@/context/ReportContext';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import { useUser } from '@/context/UserContext';
 import { AppendicesType, TcgaType, ComparatorType } from './types';
 import { sampleInformationColumnDefs, sequencingProtocolInformationColumnDefs, tcgaAcronymsColumnDefs } from './columnDefs';
 import ReportOverview from './components/ReportOverview';
@@ -20,14 +21,11 @@ import ConfigTable from './components/ConfigTable';
 import './index.scss';
 
 type AppendicesProps = {
-  isProbe: boolean;
   isPrint: boolean;
   loadedDispatch: (section: { type: string }) => void;
-  canEdit: boolean;
 } & WithLoadingInjectedProps;
 
 const Appendices = ({
-  canEdit,
   isPrint,
   loadedDispatch,
   isLoading,
@@ -41,6 +39,7 @@ const Appendices = ({
   const [isNewAppendixC, setIsNewAppendixC] = useState(false);
   const [tcga, setTcga] = useState<TcgaType[]>([]);
   const [analysisSummary, setAnalysisSummary] = useState<Record<string, unknown>[]>([]);
+  const { isAdmin } = useUser();
 
   useEffect(() => {
     if (report) {
@@ -199,7 +198,7 @@ const Appendices = ({
             isNew={isNewAppendixC}
             text={appendixCText}
             isPrint={isPrint}
-            canEdit={canEdit}
+            canEdit={isAdmin}
           />
           {!isPrint && (
             <Typography variant="h1">

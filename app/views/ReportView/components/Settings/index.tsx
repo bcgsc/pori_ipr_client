@@ -15,7 +15,7 @@ import {
 
 import api from '@/services/api';
 import ReportContext from '@/context/ReportContext';
-import useEdit from '@/hooks/useEdit';
+import { useUser } from '@/context/UserContext';
 import DemoDescription from '@/components/DemoDescription';
 import snackbar from '@/services/SnackbarUtils';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
@@ -37,7 +37,7 @@ const Settings = ({
   setIsLoading,
 }: SettingsProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
-  const { canEdit } = useEdit();
+  const { canEdit } = useUser();
   const history = useHistory();
 
   const [templates, setTemplates] = useState([]);
@@ -100,7 +100,7 @@ const Settings = ({
       snackbar.error(`Error removing user: ${err}`);
     }
   }, [report, setReport]);
-  
+
   const handleReportUpdate = useCallback(async () => {
     const updateFields = {};
 

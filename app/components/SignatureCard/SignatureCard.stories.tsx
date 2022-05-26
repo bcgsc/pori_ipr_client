@@ -2,7 +2,7 @@ import React from 'react';
 import { action } from '@storybook/addon-actions';
 import { Story } from '@storybook/react/types-6-0';
 
-import EditContext from '@/context/EditContext';
+import UserContext from '@/context/UserContext';
 import SignatureCard, { SignatureCardProps } from '.';
 
 export default {
@@ -11,9 +11,9 @@ export default {
 };
 
 const Template = (args) => (
-  <EditContext.Provider value={{ canEdit: true }}>
+  <UserContext.Provider value={{ canEdit: true }}>
     <SignatureCard {...args} />
-  </EditContext.Provider>
+  </UserContext.Provider>
 );
 
 export const Unsigned: Story<SignatureCardProps> = Template.bind({});
