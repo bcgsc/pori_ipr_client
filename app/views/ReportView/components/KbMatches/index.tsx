@@ -9,8 +9,6 @@ import {
   FilterList,
 } from '@mui/icons-material';
 
-import partition from 'lodash.partition';
-
 import api, { ApiCallSet } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DemoDescription from '@/components/DemoDescription';
@@ -75,6 +73,8 @@ const KbMatches = ({
             api.get(`${baseUri}?approvedTherapy=true&category=therapeutic&matchedCancer=true`, {}),
             api.get(`${baseUri}?approvedTherapy=true&category=therapeutic&matchedCancer=false`, {}),
             api.get(`/reports/${report.ident}/probe-results`, {}),
+            api.get(`${baseUri}?category=pharmacogenomic`, {}),
+            api.get(`${baseUri}?category=cancer predisposition`, {}),
           ]);
 
           const [
@@ -85,10 +85,10 @@ const KbMatches = ({
             unknownResp,
             thisCancerResp,
             otherCancerResp,
-            targetedGenesResp,
+            targetedSomaticGenesResp,
+            pharmacogenomicResp,
+            cancerPredisResp,
           ] = await apiCalls.request();
-
-          const [targetedGermlineGenes, targetedSomaticGenes] = partition(targetedGenesResp, (tg) => /germline/.test(tg?.sample));
 
           setGroupedMatches({
             thisCancer: coalesceEntries(thisCancerResp),
@@ -98,8 +98,11 @@ const KbMatches = ({
             diagnostic: coalesceEntries(diagnosticResp),
             prognostic: coalesceEntries(prognosticResp),
             unknown: coalesceEntries(unknownResp),
-            targetedGermlineGenes,
-            targetedSomaticGenes,
+            targetedGermlineGenes: coalesceEntries([
+              ...pharmacogenomicResp,
+              ...cancerPredisResp.filter(({ variant }) => variant?.germline),
+            ]),
+            targetedSomaticGenes: targetedSomaticGenesResp.filter((tg) => /germline/.test(tg?.sample)),
           });
         } catch (err) {
           snackbar.error(`Network error: ${err}`);
