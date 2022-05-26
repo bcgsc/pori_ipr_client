@@ -11,7 +11,21 @@ const CNVSTATE = {
   AMP: ['Amp', 'amplification'],
 };
 
+const REPORT_TYPE_TO_TITLE = {
+  genomic: 'Genomic',
+  probe: 'Targeted Gene',
+  pharmacogenomic: 'Pharmacogenomic and Cancer Predisposition Targeted Gene',
+};
+
+const REPORT_TYPE_TO_SUFFIX = {
+  genomic: '',
+  probe: 'Somatic',
+  pharmacogenomic: 'Germline',
+};
+
 export {
+  REPORT_TYPE_TO_TITLE,
+  REPORT_TYPE_TO_SUFFIX,
   EXPLEVEL,
   CNVSTATE,
 };
