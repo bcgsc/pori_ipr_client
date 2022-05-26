@@ -1,5 +1,5 @@
 import React, {
-  useState, useEffect, useMemo, useCallback,
+  useState, useEffect, useCallback,
 } from 'react';
 import { CircularProgress } from '@mui/material';
 import { RecordDefaults, AppendixType } from '@/common';
@@ -69,7 +69,21 @@ function Appendices(): JSX.Element {
     let cancelled = false;
     const isNew = !editingData?.appendix;
     if (nextData) {
-      const sanitizedText = sanitizeHtml(nextData);
+      const sanitizedText = sanitizeHtml(nextData, {
+        allowedAttributes: {
+          a: ['href', 'target', 'rel'],
+        },
+        transformTags: {
+          a: (_tagName, attribs) => ({
+            tagName: 'a',
+            attribs: {
+              href: attribs.href,
+              target: '_blankk',
+              rel: 'noopener noreferrer',
+            },
+          }),
+        },
+      });
       const res = await (isNew ? api.post : api.put)(`/templates/${editingData.ident}/appendix`, { text: sanitizedText }).request();
       if (!cancelled) {
         setAppendices((currAppendices) => {

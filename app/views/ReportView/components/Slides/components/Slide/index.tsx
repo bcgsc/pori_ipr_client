@@ -5,7 +5,7 @@ import {
 } from '@mui/material';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 
-import EditContext from '@/context/EditContext';
+import UserContext from '@/context/UserContext';
 import SlideType from '../../types';
 
 type SlideProps = {
@@ -19,7 +19,7 @@ const Slide = ({
   onDelete = () => {},
   isPrint = false,
 }: SlideProps): JSX.Element => {
-  const { canEdit } = useContext(EditContext);
+  const { canEdit } = useContext(UserContext);
 
   return (
     <div className="slides__slide-content">
