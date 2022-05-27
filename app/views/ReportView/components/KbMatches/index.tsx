@@ -14,7 +14,7 @@ import partition from 'lodash.partition';
 import api, { ApiCallSet } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DemoDescription from '@/components/DemoDescription';
-import useEdit from '@/hooks/useEdit';
+import { useUser } from '@/context/UserContext';
 import DataTable from '@/components/DataTable';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import ReportContext from '@/context/ReportContext';
@@ -46,7 +46,7 @@ const KbMatches = ({
   isLoading,
 }: KbMatchesProps): JSX.Element => {
   const { report } = useContext(ReportContext);
-  const { canEdit } = useEdit();
+  const { canEdit } = useUser();
 
   const [filterText, setFilterText] = useState('');
   const [groupedMatches, setGroupedMatches] = useState({

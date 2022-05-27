@@ -11,7 +11,7 @@ import PersonIcon from '@mui/icons-material/Person';
 
 import { UserType, RecordDefaults } from '@/common';
 import startCase from '@/utils/startCase';
-import useEdit from '@/hooks/useEdit';
+import { useUser } from '@/context/UserContext';
 
 import './index.scss';
 
@@ -27,7 +27,7 @@ const AssociationCard = ({
   user,
   onDelete,
 }: AssociationCardProps): JSX.Element => {
-  const { canEdit } = useEdit();
+  const { canEdit } = useUser();
 
   return (
     <Card className="association-card">
