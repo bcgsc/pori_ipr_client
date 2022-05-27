@@ -4,7 +4,7 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
-import useEdit from '@/hooks/useEdit';
+import { useUser } from '@/context/UserContext';
 
 import './index.scss';
 
@@ -15,7 +15,7 @@ type AddUserCardProps = {
 const AddUserCard = ({
   onAdd,
 }: AddUserCardProps): JSX.Element => {
-  const { canEdit } = useEdit();
+  const { canEdit } = useUser();
 
   return (
     <div className="add-card">
