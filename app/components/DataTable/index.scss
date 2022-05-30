@@ -14,6 +14,9 @@
 
   &__container {
     margin: 8px 0;
+    .ag-row:last-child {
+      border-bottom: none;
+    }
   }
 
   &__header-container {
