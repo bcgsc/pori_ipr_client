@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
-  render, screen, fireEvent,
+  render, screen, fireEvent, waitFor,
 } from '@testing-library/react';
 
 import ReportContext, { ReportType } from '@/context/ReportContext';
@@ -35,12 +35,24 @@ const mockReport = {
 } as ReportType;
 
 jest.mock('@/services/api', () => ({
-  get: jest.fn(() => ({ request: jest.fn(() => mockGeneOptions) })),
+  get: jest.fn((url) => ({
+    request: jest.fn(() => {
+      const [, params] = url.split('?');
+      const search = new URLSearchParams(params).get('search');
+      if (search) {
+        return mockGeneOptions.filter(({ name }) => name.includes(search));
+      }
+      return mockGeneOptions;
+    }),
+  })),
 }));
 
 const withReportContext = (Component) => (function ReportContextHOC(props) {
+  const contextValue = useMemo(() => ({
+    report: mockReport, setReport: () => { },
+  }), []);
   return (
-    <ReportContext.Provider value={{ report: mockReport, setReport: () => {} }}>
+    <ReportContext.Provider value={contextValue}>
       <Component {...props} />
     </ReportContext.Provider>
   );
@@ -51,7 +63,7 @@ describe('GeneAutocomplete', () => {
     const Component = withReportContext(GeneAutocomplete);
     render(
       <Component
-        defaultValue={mockGene}
+        value={mockGene}
         onChange={() => {}}
       />,
     );
@@ -61,66 +73,67 @@ describe('GeneAutocomplete', () => {
 
   test('Options are shown when focused', async () => {
     const Component = withReportContext(GeneAutocomplete);
-    render(
+    const { getByText, findByRole } = render(
       <Component
-        defaultValue={mockGene}
         onChange={() => {}}
       />,
     );
-    fireEvent.click(await screen.findByRole('button'));
-    
-    const elems = await Promise.all(mockGeneOptions.map((option) => (
-      screen.findByText(option.name)
-    )));
-    elems.forEach((elem) => expect(elem).toBeInTheDocument());
+    const geneButton = await findByRole('button');
+    fireEvent.click(geneButton);
+    await waitFor(() => {
+      mockGeneOptions.map(({ name }) => expect(getByText(name)).toBeInTheDocument());
+    });
   });
 
   test('Options are filtered by input text', async () => {
     const Component = withReportContext(GeneAutocomplete);
-    render(
+    const { findByRole, queryByText } = render(
       <Component
-        defaultValue={mockGene}
+        value={mockGene}
         onChange={() => {}}
       />,
     );
 
-    fireEvent.change(await screen.findByRole('textbox'), { target: { value: 'TP' } });
-
-    expect(await screen.findByText(mockGene.name)).toBeInTheDocument();
-    expect(screen.queryByText(mockGene2.name)).toBeNull();
+    fireEvent.change(await findByRole('textbox'), { target: { value: 'EG' } });
+    await waitFor(() => {
+      expect(queryByText(mockGene2.name)).toBeInTheDocument();
+      expect(queryByText(mockGene.name)).not.toBeInTheDocument();
+    });
   });
 
   test('Options are reset when there is no input text', async () => {
     const Component = withReportContext(GeneAutocomplete);
-    render(
+    const { findByRole, findByText, getByText } = render(
       <Component
         onChange={() => {}}
       />,
     );
 
-    fireEvent.change(await screen.findByRole('textbox'), { target: { value: 'TP' } });
-    fireEvent.click(await screen.findByText(mockGene.name));
-    fireEvent.change(await screen.findByRole('textbox'), { target: { value: '' } });
-    fireEvent.click(await screen.findByRole('button'));
+    const textInput = await findByRole('textbox');
+    fireEvent.change(textInput, { target: { value: 'TP' } });
+    fireEvent.click(await findByText(mockGene.name));
+    fireEvent.change(textInput, { target: { value: '' } });
+    const dropdownButton = await findByRole('button');
+    fireEvent.click(dropdownButton);
 
-    mockGeneOptions.forEach((option) => {
-      expect(screen.getByText(option.name)).toBeTruthy();
+    await waitFor(() => {
+      mockGeneOptions.map(({ name }) => expect(getByText(name)).toBeInTheDocument());
     });
   });
 
-  test('Clicking the autocomplete option fills the textbox and fires onChange', async () => {
+  test('Clicking the autocomplete option fires onChange with the correct params', async () => {
     const mockOnChange = jest.fn();
     const Component = withReportContext(GeneAutocomplete);
-    render(
+    const { findByRole, findByText } = render(
       <Component
         onChange={mockOnChange}
       />,
     );
+    const textInput = await findByRole('textbox');
+    fireEvent.change(textInput, { target: { value: 'TP' } });
 
-    fireEvent.change(await screen.findByRole('textbox'), { target: { value: 'TP' } });
-    fireEvent.click(await screen.findByText(mockGene.name));
-
-    expect(await screen.findByRole('textbox')).toHaveValue(mockGene.name);
+    const option = await findByText(mockGene.name);
+    fireEvent.click(option);
 
     expect(mockOnChange).toHaveBeenCalledTimes(1);
     expect(mockOnChange).toHaveBeenCalledWith(mockGene);
