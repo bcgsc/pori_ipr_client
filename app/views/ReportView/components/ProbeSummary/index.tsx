@@ -217,25 +217,30 @@ const ProbeSummary = ({
     ]);
   }, [isSigned, report, setReport]);
 
-  const handleSign = async (signed: boolean, role: 'author' | 'reviewer') => {
-    let newSignature;
+  const handleSign = useCallback((signed: boolean, role: 'author' | 'reviewer') => {
+    let cancelled;
+    const sign = async (s: boolean, r: 'author' | 'reviewer') => {
+      let newSignature;
+      if (s) {
+        newSignature = await api.put(`/reports/${report.ident}/signatures/sign/${r}`, {}).request();
+      } else {
+        newSignature = await api.put(`/reports/${report.ident}/signatures/revoke/${r}`, {}).request();
+      }
+      if (!cancelled) {
+        setIsSigned(signed);
+        setSignatures(newSignature);
+      }
+    };
+    sign(signed, role);
+    return function cleanup() { cancelled = true; };
+  }, [report.ident, setIsSigned]);
 
-    if (signed) {
-      newSignature = await api.put(`/reports/${report.ident}/signatures/sign/${role}`, {}).request();
-    } else {
-      newSignature = await api.put(`/reports/${report.ident}/signatures/revoke/${role}`, {}).request();
-    }
-
-    setIsSigned(signed);
-    setSignatures(newSignature);
-  };
-
-  const handleEditStart = (rowData) => {
+  const handleEditStart = useCallback((rowData) => {
     setShowEventsDialog(true);
     if (rowData) {
       setEditData(rowData);
     }
-  };
+  }, []);
 
   const handleEditClose = useCallback((newData) => {
     setShowEventsDialog(false);
