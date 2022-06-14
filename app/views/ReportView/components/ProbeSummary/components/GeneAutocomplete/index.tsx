@@ -5,58 +5,60 @@ import {
   Autocomplete,
   TextField,
 } from '@mui/material';
+import { useDebounce } from 'use-debounce';
 
 import api from '@/services/api';
 import ReportContext from '@/context/ReportContext';
 import { GeneType } from '@/common';
+import { useSnackbar } from 'notistack';
 
 type GeneAutocompleteProps = {
-  defaultValue?: GeneType;
+  value?: GeneType;
   onChange: (newData: GeneType) => void;
 };
 
 const GeneAutocomplete = ({
-  defaultValue = null,
+  value = null,
   onChange,
 }: GeneAutocompleteProps): JSX.Element => {
   const { report } = useContext(ReportContext);
-
+  const [isLoading, setIsLoading] = useState(true);
   const [options, setOptions] = useState<GeneType[]>([]);
-  const [value, setValue] = useState<GeneType>();
-  const [genes, setGenes] = useState<GeneType[]>([]);
+  const [text, setText] = useState<string>(value?.name || '');
+  const [debouncedText] = useDebounce(text, 500);
+  const snackbar = useSnackbar();
+
+  useEffect(() => {
+    setText((prevVal) => {
+      if (!value?.name) { return ''; }
+      if (prevVal !== value?.name) { return value?.name; }
+      return prevVal;
+    });
+  }, [value?.name]);
 
   useEffect(() => {
     const getData = async () => {
-      const genesResp = await api.get(`/reports/${report.ident}/genes`).request();
-      setGenes(genesResp);
-      setOptions(genesResp);
+      try {
+        setIsLoading(true);
+        const genesResp = await api.get(`/reports/${report.ident}/genes/?search=${debouncedText}`).request();
+        setOptions(genesResp);
+      } catch (e) {
+        snackbar.enqueueSnackbar('Error getting Genes for Report');
+      } finally {
+        setIsLoading(false);
+      }
     };
     getData();
-  }, [report]);
+  }, [report, snackbar, debouncedText]);
 
-  useEffect(() => {
-    if (defaultValue) {
-      setValue(defaultValue);
-    }
-  }, [defaultValue]);
-
-  const handleInputChange = useCallback(async ({ target: { value: queryValue } }) => {
-    if (queryValue) {
-      setOptions(genes.filter((gene) => (
-        gene.name.toLowerCase().includes(queryValue.toLowerCase())
-      )));
-    } else {
-      setOptions(genes);
-    }
-  }, [genes]);
-
-  const handleAutocompleteChange = useCallback((event, val) => {
-    if (val === null) {
-      setOptions(genes);
-    }
-    setValue(val);
+  const handleAutocompleteChange = useCallback((_event, val) => {
     onChange(val);
-  }, [onChange, genes]);
+  }, [onChange]);
+
+  const handleTextChange = useCallback((evt) => {
+    const nextText = evt?.target.value;
+    setText((prevText) => (prevText === nextText ? prevText : nextText));
+  }, []);
 
   return (
     <Autocomplete
@@ -64,16 +66,17 @@ const GeneAutocomplete = ({
       classes={{ root: 'autocomplete', popper: 'autocomplete__popper' }}
       onChange={handleAutocompleteChange}
       options={options}
+      loading={isLoading}
       getOptionLabel={(option) => option.name || ''}
+      isOptionEqualToValue={(opt, val) => opt?.name === val?.name}
       value={value || null}
       renderInput={(params) => (
         <TextField
-          // eslint-disable-next-line react/jsx-props-no-spreading
           {...params}
           label="Gene"
           variant="outlined"
           margin="normal"
-          onChange={handleInputChange}
+          onChange={handleTextChange}
         />
       )}
     />
