@@ -33,7 +33,21 @@ const ReportOverview = ({
   const handleEditClose = useCallback(async (updatedText?: string) => {
     if (updatedText) {
       setIsLoading(true);
-      const sanitizedText = sanitizeHtml(updatedText);
+      const sanitizedText = sanitizeHtml(updatedText, {
+        allowedAttributes: {
+          a: ['href', 'target', 'rel'],
+        },
+        transformTags: {
+          a: (_tagName, attribs) => ({
+            tagName: 'a',
+            attribs: {
+              href: attribs.href,
+              target: '_blankk',
+              rel: 'noopener noreferrer',
+            },
+          }),
+        },
+      });
       try {
         if (isNew) {
           const res = await api.post(`/templates/${templateId}/appendix`, { text: sanitizedText }).request();

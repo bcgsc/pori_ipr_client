@@ -10,7 +10,7 @@ import sanitizeHtml from 'sanitize-html';
 
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
-import useEdit from '@/hooks/useEdit';
+import { useUser } from '@/context/UserContext';
 import DemoDescription from '@/components/DemoDescription';
 import ReportContext from '@/context/ReportContext';
 import SignatureCard, { SignatureType } from '@/components/SignatureCard';
@@ -33,7 +33,7 @@ const AnalystComments = ({
 }: AnalystCommentsProps): JSX.Element => {
   const { report } = useContext(ReportContext);
   const { setIsSigned } = useContext(ConfirmContext);
-  const { canEdit } = useEdit();
+  const { canEdit } = useUser();
 
   const [comments, setComments] = useState('');
   const [signatures, setSignatures] = useState<SignatureType>();

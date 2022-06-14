@@ -12,7 +12,7 @@ import Alert from '@mui/material/Alert';
 import api, { ApiCallSet } from '@/services/api';
 import DataTable from '@/components/DataTable';
 import ReportContext from '@/context/ReportContext';
-import EditContext from '@/context/EditContext';
+import UserContext from '@/context/UserContext';
 import ConfirmContext from '@/context/ConfirmContext';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import { formatDate } from '@/utils/date';
@@ -44,7 +44,7 @@ const PharmacoGenomicSummary = ({
   setIsLoading,
 }: PharmacoGenomicSummaryProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
-  const { canEdit } = useContext(EditContext);
+  const { canEdit } = useContext(UserContext);
   const { isSigned, setIsSigned } = useContext(ConfirmContext);
 
   const [testInformation, setTestInformation] = useState<TestInformationType>();
