@@ -1,20 +1,26 @@
 import React from 'react';
 import { screen, render, fireEvent } from '@testing-library/react';
 
-import ColumnPicker from '..';
+import { ColumnPicker } from '..';
 
 const mockColumns = [
   {
     colId: 'username',
-    isVisible: () => true,
+    getColId: () => 'username',
     name: 'username',
-    visible: true,
+    isVisible: () => true,
   },
   {
     colId: 'password',
-    isVisible: () => false,
+    getColId: () => 'password',
     name: 'password',
-    visible: false,
+    isVisible: () => false,
+  },
+  {
+    colId: 'email',
+    getColId: () => 'email',
+    name: 'email address',
+    isVisible: () => false,
   },
 ];
 
@@ -57,7 +63,7 @@ describe('ColumnPicker', () => {
     expect(await screen.findByText(mockLabel)).toBeInTheDocument();
   });
 
-  test('The checkboxes have the correct states', async () => {
+  test('The checkboxes have the correct starting states', async () => {
     render(
       <ColumnPicker
         columns={mockColumns}
@@ -68,7 +74,7 @@ describe('ColumnPicker', () => {
     );
 
     (await screen.findAllByRole('checkbox')).forEach((checkbox: HTMLInputElement, index) => {
-      expect(checkbox.checked).toEqual(mockColumns[index].visible);
+      expect(checkbox.checked).toEqual(mockColumns[index].isVisible());
     });
   });
 
@@ -84,7 +90,45 @@ describe('ColumnPicker', () => {
 
     (await screen.findAllByRole('checkbox')).forEach((checkbox: HTMLInputElement, index) => {
       fireEvent.click(checkbox);
-      expect(checkbox.checked).toEqual(!mockColumns[index].visible);
+      expect(checkbox.checked).toEqual(!mockColumns[index].isVisible());
+    });
+  });
+
+  describe('When visibleColumn prop is provided', () => {
+    test('Use the visibleColumn prop as initial checkbox state', async () => {
+      const { findAllByRole } = render(
+        <ColumnPicker
+          columns={mockColumns}
+          visibleColumnIds={['password']}
+          isOpen
+          label={mockLabel}
+          onClose={() => { }}
+        />,
+      );
+      const checkboxes = await findAllByRole('checkbox');
+      checkboxes.forEach((checkbox: HTMLInputElement, index) => {
+        if (index === 1) {
+          expect(checkbox.checked).toEqual(true);
+        } else {
+          expect(checkbox.checked).toEqual(false);
+        }
+      });
+    });
+
+    test('The checkboxes are controlled internally', () => {
+      const { getByLabelText } = render(
+        <ColumnPicker
+          columns={mockColumns}
+          visibleColumnIds={['password']}
+          isOpen
+          label={mockLabel}
+          onClose={() => { }}
+        />,
+      );
+      const usernameCheckbox = getByLabelText('username');
+      expect((usernameCheckbox as HTMLInputElement).checked).toEqual(false);
+      fireEvent.click(usernameCheckbox);
+      expect((usernameCheckbox as HTMLInputElement).checked).toEqual(true);
     });
   });
 });

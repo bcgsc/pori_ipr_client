@@ -1,5 +1,6 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import LaunchIcon from '@mui/icons-material/Launch';
+import { Link } from '@mui/material';
 import { ICellRendererParams } from '@ag-grid-community/core';
 import { useHistory } from 'react-router-dom';
 
@@ -9,28 +10,36 @@ type LaunchCellProps = {
   url: (ident: string) => string;
 } & ICellRendererParams;
 
-const LaunchCell = (params: LaunchCellProps): JSX.Element => {
+const LaunchCell = ({
+  data: {
+    reportIdent,
+    ident,
+  },
+  url,
+}: LaunchCellProps): JSX.Element => {
   const history = useHistory();
-
+  const linkHref = useMemo(() => url(reportIdent ?? ident), [reportIdent, ident, url]);
   const handleClick = useCallback((event) => {
-    const reportIdent = params.data.reportIdent ?? params.data.ident;
-
+    event.preventDefault();
     // event.button is 1 when middle click is pressed
     if (event.ctrlKey || event.metaKey || event.button === 1) {
-      window.open(params.url(reportIdent), '_blank');
+      window.open(linkHref, '_blank');
     } else {
-      history.push({ pathname: params.url(reportIdent) });
+      history.push({ pathname: linkHref });
     }
-  }, [history, params]);
+  }, [history, linkHref]);
 
   return (
-    <LaunchIcon
-      className="launch-cell"
-      color="action"
-      data-testid="launch-cell"
+    <Link
+      href={linkHref}
       onClick={handleClick}
-      onMouseUp={handleClick}
-    />
+    >
+      <LaunchIcon
+        className="launch-cell"
+        color="action"
+        data-testid="launch-cell"
+      />
+    </Link>
   );
 };
 

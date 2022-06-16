@@ -1,15 +1,47 @@
+/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable react/prop-types */
 import React from 'react';
 import { screen, render, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Router } from 'react-router-dom';
+import { AgGridReact } from '@ag-grid-community/react';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+
 import { createMemoryHistory } from 'history';
 
 import LaunchCell from '..';
 
+const LaunchCellWithAgGrid = ({
+  urlFn = () => {},
+  mockData = [{
+    reportIdent: '244aabfa-956b0cf9-04388-bbf4',
+  }],
+}) => (
+  <AgGridReact
+    columnDefs={[
+      {
+        cellRenderer: 'Launch',
+        cellRendererParams: {
+          url: urlFn,
+        },
+      },
+    ]}
+    rowData={mockData}
+    frameworkComponents={{
+      Launch: LaunchCell,
+    }}
+    suppressColumnVirtualisation
+    modules={[ClientSideRowModelModule]}
+  />
+);
+
 describe('LaunchCell', () => {
   test('It renders and matches the snapshot', () => {
+    const mockUrl = jest.fn();
     const { asFragment } = render(
       <MemoryRouter>
-        <LaunchCell />
+        <LaunchCellWithAgGrid
+          urlFn={mockUrl}
+        />
       </MemoryRouter>,
     );
 
@@ -19,7 +51,7 @@ describe('LaunchCell', () => {
   test('It renders the icon', async () => {
     render(
       <MemoryRouter>
-        <LaunchCell />
+        <LaunchCellWithAgGrid />
       </MemoryRouter>,
     );
 
@@ -32,11 +64,8 @@ describe('LaunchCell', () => {
 
     render(
       <MemoryRouter>
-        <LaunchCell
-          url={mockUrl}
-          data={{
-            reportIdent: mockIdent,
-          }}
+        <LaunchCellWithAgGrid
+          urlFn={mockUrl}
         />
       </MemoryRouter>,
     );
@@ -54,11 +83,8 @@ describe('LaunchCell', () => {
 
     render(
       <Router history={history}>
-        <LaunchCell
-          url={mockUrl}
-          data={{
-            ident: mockIdent,
-          }}
+        <LaunchCellWithAgGrid
+          urlFn={mockUrl}
         />
       </Router>,
     );
@@ -70,23 +96,18 @@ describe('LaunchCell', () => {
 
   test('It opens a new tab with a middle click', async () => {
     const mockUrl = jest.fn();
-    const mockIdent = '244aabfa-956b0cf9-04388-bbf4';
-
     const openSpy = jest.spyOn(window, 'open').mockImplementation(() => undefined);
 
     render(
       <MemoryRouter>
-        <LaunchCell
-          url={mockUrl}
-          data={{
-            reportIdent: mockIdent,
-          }}
+        <LaunchCellWithAgGrid
+          urlFn={mockUrl}
         />
       </MemoryRouter>,
     );
     fireEvent.click(await screen.findByTestId('launch-cell'), { button: 1 });
 
     expect(openSpy).toHaveBeenCalledTimes(1);
-    expect(openSpy).toHaveBeenCalledWith(mockUrl(mockIdent), '_blank');
+    expect(openSpy).toHaveBeenCalledWith(mockUrl('244aabfa-956b0cf9-04388-bbf4'), '_blank');
   });
 });
