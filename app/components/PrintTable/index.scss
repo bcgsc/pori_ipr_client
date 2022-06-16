@@ -33,6 +33,12 @@
     padding: 10px 0;
     text-align: center;
   }
+
+  &__cell {
+    &--skip {
+      display: none;
+    }
+  }
 }
 
 .table-container {
