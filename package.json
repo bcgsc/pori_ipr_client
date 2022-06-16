@@ -40,6 +40,7 @@
     "@babel/preset-typescript": "~7.16.0",
     "@storybook/addon-essentials": "~6.3.12",
     "@storybook/addon-links": "~6.3.12",
+    "@storybook/builder-webpack5": "^6.3.13",
     "@storybook/cli": "~6.3.12",
     "@storybook/manager-webpack5": "^6.3.12",
     "@svgr/webpack": "~5.5.0",
