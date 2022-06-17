@@ -13,6 +13,7 @@ import snackbar from '@/services/SnackbarUtils';
 import Image, { ImageType } from '@/components/Image';
 import DemoDescription from '@/components/DemoDescription';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import partition from 'lodash.partition';
 import CorrelationPlot from './components/CorrelationPlot';
 import PlotByKey from './components/PlotByKey';
 
@@ -27,7 +28,7 @@ const IMAGE_KEYS = [
   { key: 'scpPlot', title: 'SCOPE' },
 ];
 
-const EXPRESSION_KEYS_TO_GET = [
+const SAMPLE_EXPRESSION_KEYS_TO_GET = [
   { key: 'expression.spearman.tcga', title: 'TCGA' },
   { key: 'expression.spearman.pediatric', title: 'PEDIATRIC' },
   { key: 'expression.spearman.target', title: 'TARGET' },
@@ -36,7 +37,37 @@ const EXPRESSION_KEYS_TO_GET = [
   { key: 'expression.spearman.gtex', title: 'GTEX' },
 ];
 
+const DISEASE_SPECIFIC_EXPRESSION_KEYS_TO_GET = [
+  { key: 'expression.spearman.brca.molecular', title: '' },
+  { key: 'expression.spearman.brca.receptor', title: '' },
+];
+
 const DEFAULT_IMG_WIDTH = 800;
+
+type ExpressionChartProps = {
+  plotData: ImageType[],
+  keySet: { key: string, title: string }[],
+};
+
+const ExpressionChart = ({
+  plotData,
+  keySet,
+}: ExpressionChartProps): JSX.Element => (
+  <>
+    {keySet.map((group) => (
+      <div key={group.key}>
+        <Typography variant="h3" align="center" className="expression-correlation__header">
+          {group.title}
+        </Typography>
+        <PlotByKey
+          accessor={group.key}
+          plots={plotData}
+          width={DEFAULT_IMG_WIDTH}
+        />
+      </div>
+    ))}
+  </>
+);
 
 type ExpressionCorrelationProps = WithLoadingInjectedProps;
 
@@ -46,7 +77,8 @@ const ExpressionCorrelation = ({
 }: ExpressionCorrelationProps): JSX.Element => {
   const { report } = useContext(ReportContext);
 
-  const [plots, setPlots] = useState<ImageType[]>([]);
+  const [samplePlots, setSamplePlots] = useState<ImageType[]>([]);
+  const [diseaseSpecificPlots, setDiseaseSpecificPlots] = useState<ImageType[]>([]);
   const [subtypePlots, setSubtypePlots] = useState<ImageType[]>([]);
   const [pairwiseExpression, setPairwiseExpression] = useState([]);
 
@@ -57,18 +89,19 @@ const ExpressionCorrelation = ({
           const allKeys = [
             ...IMAGE_KEYS.map((group) => group.key),
             ...LEGACY_EXPRESSION_KEYS.map((group) => group.key),
-            ...EXPRESSION_KEYS_TO_GET.map((group) => group.key),
+            ...SAMPLE_EXPRESSION_KEYS_TO_GET.map((group) => group.key),
+            ...DISEASE_SPECIFIC_EXPRESSION_KEYS_TO_GET.map((group) => group.key),
           ].join(',');
 
           const [plotData, subtypePlotData, pairwiseData] = await Promise.all([
-            api.get(
-              `/reports/${report.ident}/image/retrieve/${allKeys}`,
-            ).request(),
+            api.get(`/reports/${report.ident}/image/retrieve/${allKeys}`).request(),
             api.get(`/reports/${report.ident}/image/subtype-plots`).request(),
             api.get(`/reports/${report.ident}/pairwise-expression-correlation`).request(),
           ]);
 
-          setPlots(plotData);
+          const [diseaseSpecificPlotData, samplePlotData] = partition(plotData, (pd) => /brca/.test(pd.key));
+          setSamplePlots(samplePlotData);
+          setDiseaseSpecificPlots(diseaseSpecificPlotData);
           setSubtypePlots(subtypePlotData);
           setPairwiseExpression(orderBy(pairwiseData, ['correlation'], ['desc']).slice(0, 19));
         } catch (err) {
@@ -82,32 +115,17 @@ const ExpressionCorrelation = ({
     }
   }, [report, setIsLoading]);
 
-  const sampleExpressionCharts = (keySet: { key: string, title: string }[]): JSX.Element => (
-    <>
-      {keySet.map((group) => (
-        <div key={group.key}>
-          <Typography variant="h3" align="center" className="expression-correlation__header">
-            {group.title}
-          </Typography>
-          <PlotByKey
-            accessor={group.key}
-            plots={plots}
-            width={DEFAULT_IMG_WIDTH}
-          />
-        </div>
-      ))}
-    </>
-  );
-
   // If Target exists, and pediatric does not, display target, else filter out target
-  const EXPRESSION_KEYS = useMemo(() => {
-    const hasPediatricData = plots.find(({ key }) => key === 'expression.spearman.pediatric');
-    const hasTargetData = plots.find(({ key }) => key === 'expression.spearman.target');
+  const SAMPLE_EXPRESSION_KEYS = useMemo(() => {
+    const hasPediatricData = samplePlots.find(({ key }) => key === 'expression.spearman.pediatric');
+    const hasTargetData = samplePlots.find(({ key }) => key === 'expression.spearman.target');
     if (!hasPediatricData && hasTargetData) {
-      return EXPRESSION_KEYS_TO_GET;
+      return SAMPLE_EXPRESSION_KEYS_TO_GET;
     }
-    return EXPRESSION_KEYS_TO_GET.filter(({ key }) => key !== 'expression.spearman.target');
-  }, [plots]);
+    return SAMPLE_EXPRESSION_KEYS_TO_GET.filter(({ key }) => key !== 'expression.spearman.target');
+  }, [samplePlots]);
+
+  const useLegacyExpressionKeys = useMemo(() => (!!samplePlots.find((plot) => plot.key === 'expression.chart')), [samplePlots]);
 
   return (
     <div className="expression-correlation">
@@ -128,15 +146,26 @@ const ExpressionCorrelation = ({
           />
           <Divider />
           <div className="expression-correlation__section">
+            <Typography variant="h3">Disease Specific Expression Correlation</Typography>
+          </div>
+          <div className="expression-correlation__expression-charts">
+            <ExpressionChart
+              keySet={DISEASE_SPECIFIC_EXPRESSION_KEYS_TO_GET}
+              plotData={diseaseSpecificPlots}
+            />
+          </div>
+          <Divider />
+          <div className="expression-correlation__section">
             <Typography variant="h3">Sample-Sample Expression Correlation</Typography>
             <div className="expression-correlation__expression-charts">
-              {sampleExpressionCharts(plots.find((plot) => plot.key === 'expression.chart')
-                ? LEGACY_EXPRESSION_KEYS
-                : EXPRESSION_KEYS)}
+              <ExpressionChart
+                keySet={useLegacyExpressionKeys ? LEGACY_EXPRESSION_KEYS : SAMPLE_EXPRESSION_KEYS}
+                plotData={samplePlots}
+              />
             </div>
           </div>
           {/* This section should only appear if there's data */}
-          {Boolean(plots?.length) && plots.find((plot) => plot.key === 'scpPlot') && (
+          {Boolean(samplePlots?.length) && samplePlots.find((plot) => plot.key === 'scpPlot') && (
             <>
               <Divider />
               <div className="expression-correlation__section">

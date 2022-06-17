@@ -3,7 +3,7 @@ import {
   fireEvent, render, screen,
 } from '@testing-library/react';
 
-import EditContext from '@/context/EditContext';
+import UserContext from '@/context/UserContext';
 import Slide from '..';
 import SlideType from '../../../types';
 
@@ -45,12 +45,12 @@ describe('Slide', () => {
 
   test('The delete button is shown when the user can edit', async () => {
     render(
-      <EditContext.Provider value={{ canEdit: true, setCanEdit: () => {} }}>
+      <UserContext.Provider value={{ canEdit: true, setCanEdit: () => {} }}>
         <Slide
           isPrint={false}
           slide={mockSlide}
         />
-      </EditContext.Provider>,
+      </UserContext.Provider>,
     );
 
     expect(await screen.findByRole('button')).toBeInTheDocument();
@@ -58,12 +58,12 @@ describe('Slide', () => {
 
   test('The delete button is not shown when the user can not edit', () => {
     render(
-      <EditContext.Provider value={{ canEdit: false, setCanEdit: () => {} }}>
+      <UserContext.Provider value={{ canEdit: false, setCanEdit: () => {} }}>
         <Slide
           isPrint={false}
           slide={mockSlide}
         />
-      </EditContext.Provider>,
+      </UserContext.Provider>,
     );
 
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
@@ -71,12 +71,12 @@ describe('Slide', () => {
 
   test('The delete button is not shown in the print view', () => {
     render(
-      <EditContext.Provider value={{ canEdit: true, setCanEdit: () => {} }}>
+      <UserContext.Provider value={{ canEdit: true, setCanEdit: () => {} }}>
         <Slide
           isPrint
           slide={mockSlide}
         />
-      </EditContext.Provider>,
+      </UserContext.Provider>,
     );
 
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
@@ -86,13 +86,13 @@ describe('Slide', () => {
     const mockDelete = jest.fn();
 
     render(
-      <EditContext.Provider value={{ canEdit: true, setCanEdit: () => {} }}>
+      <UserContext.Provider value={{ canEdit: true, setCanEdit: () => {} }}>
         <Slide
           isPrint={false}
           onDelete={mockDelete}
           slide={mockSlide}
         />
-      </EditContext.Provider>,
+      </UserContext.Provider>,
     );
     fireEvent.click(await screen.findByRole('button'));
 

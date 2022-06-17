@@ -1,5 +1,5 @@
 import React, {
-  useRef, useState, useEffect, useCallback, useContext,
+  useRef, useState, useEffect, useCallback, useContext, useMemo,
 } from 'react';
 import { AgGridReact } from '@ag-grid-community/react';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -15,7 +15,7 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 
 import DemoDescription from '@/components/DemoDescription';
 import ReportContext from '@/context/ReportContext';
-import ColumnPicker from './components/ColumnPicker';
+import { ColumnPicker, ColumnPickerProps } from './components/ColumnPicker';
 import EnsemblCellRenderer from './components/EnsemblCellRenderer';
 import CivicCellRenderer from './components/CivicCellRenderer';
 import GeneCellRenderer from './components/GeneCellRenderer';
@@ -124,7 +124,7 @@ const DataTable = ({
   const [showPopover, setShowPopover] = useState(false);
   const [menuAnchor, setMenuAnchor] = useState<HTMLElement>();
   const [showReorder, setShowReorder] = useState(false);
-  const [columnDisplayNames, setColumnDisplayNames] = useState<string[]>([]);
+  const [columnWithNames, setColumnWithNames] = useState<ColumnPickerProps['columns']>([]);
 
   const defaultColDef = {
     sortable: !showReorder,
@@ -147,6 +147,7 @@ const DataTable = ({
       const hiddenColumns = allCols.filter((col) => !visibleColumns.includes(col));
       colApi.setColumnsVisible(visibleColumns, true);
       colApi.setColumnsVisible(hiddenColumns, false);
+      colApi.autoSizeColumns(visibleColumns);
     }
   }, [colApi, visibleColumns]);
 
@@ -182,10 +183,10 @@ const DataTable = ({
   useEffect(() => {
     if (colApi) {
       const names = colApi.getAllColumns()
-        .filter((col) => col.colId !== 'Actions')
+        .filter((col) => col.colId.toLowerCase() !== 'actions')
         .map((col) => {
           const parent = col.getOriginalParent();
-          if (parent && parent.colGroupDef.headerName) {
+          if (parent?.colGroupDef.headerName) {
             const parentName = parent.colGroupDef.headerName;
             col.name = `${parentName} ${colApi.getDisplayNameForColumn(col)}`;
           } else {
@@ -193,7 +194,7 @@ const DataTable = ({
           }
           return col;
         });
-      setColumnDisplayNames(names);
+      setColumnWithNames(names);
     }
   }, [colApi]);
 
@@ -285,23 +286,13 @@ const DataTable = ({
     setShowPopover(false);
   }, [colApi, syncVisibleColumns]);
 
-  const RowActionCellRenderer = (row) => {
-    const handleEdit = useCallback(() => {
-      onEdit(row.node.data);
-    }, [row]);
-
-    const handleDelete = useCallback(() => {
-      onDelete(row.node.data);
-    }, [row]);
-
-    return (
-      <ActionCellRenderer
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-        {...row}
-      />
-    );
-  };
+  const RowActionCellRenderer = useCallback((row) => (
+    <ActionCellRenderer
+      onEdit={() => onEdit(row.node.data)}
+      onDelete={() => onDelete(row.node.data)}
+      {...row}
+    />
+  ), [onEdit, onDelete]);
 
   const handleTSVExport = useCallback(() => {
     const date = getDate();
@@ -346,6 +337,13 @@ const DataTable = ({
     }
     setMenuAnchor(null);
   }, [handleTSVExport, onAdd, tableType, toggleReorder]);
+
+  const visibleColumnIds = useMemo(() => {
+    if (visibleColumns.length > 0) {
+      return visibleColumns;
+    }
+    return columnWithNames.filter((col) => col.isVisible()).map((col) => col.getColId());
+  }, [columnWithNames, visibleColumns]);
 
   return (
     <div className="data-table--padded" style={{ height: isFullLength ? '100%' : '' }}>
@@ -409,7 +407,8 @@ const DataTable = ({
             <ColumnPicker
               className="data-view__options-menu"
               label="Configure Visible Columns"
-              columns={columnDisplayNames}
+              columns={columnWithNames}
+              visibleColumnIds={visibleColumnIds}
               onClose={handlePopoverClose}
               isOpen={showPopover}
             />

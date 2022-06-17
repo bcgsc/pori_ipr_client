@@ -88,7 +88,7 @@ const EventsEditDialog = ({
       <DialogContent className="patient-dialog__content">
         <>
           <GeneAutocomplete
-            defaultValue={newData?.gene as GeneType}
+            value={newData?.gene as GeneType}
             onChange={handleAutocompleteChange}
           />
           <TextField

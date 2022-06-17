@@ -16,11 +16,11 @@ const defaultQuillProps: ReactQuillProps = {
   modules: {
     toolbar: [
       ['bold', 'italic', 'underline', 'strike'],
-      ['blockquote', 'code-block'],
-      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-      [{ 'script': 'sub' }, { 'script': 'super' }],
-      [{ 'indent': '-1' }, { 'indent': '+1' }],
-      [{ 'header': [1, 2, 3, false] }],
+      ['blockquote', 'code-block', 'link'],
+      [{ list: 'ordered' }, { list: 'bullet' }],
+      [{ script: 'sub' }, { script: 'super' }],
+      [{ indent: '-1' }, { indent: '+1' }],
+      [{ header: [1, 2, 3, false] }],
       ['clean'],
     ],
     clipboard: {

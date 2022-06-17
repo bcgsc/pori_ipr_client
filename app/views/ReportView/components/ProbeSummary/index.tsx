@@ -12,7 +12,7 @@ import api, { ApiCallSet } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
 import ReportContext, { ReportType, PatientInformationType } from '@/context/ReportContext';
-import useEdit from '@/hooks/useEdit';
+import { useUser } from '@/context/UserContext';
 import ConfirmContext from '@/context/ConfirmContext';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import { formatDate } from '@/utils/date';
@@ -40,7 +40,7 @@ const ProbeSummary = ({
 }: ProbeSummaryProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
   const { isSigned, setIsSigned } = useContext(ConfirmContext);
-  const { canEdit } = useEdit();
+  const { canEdit } = useUser();
 
   const [testInformation, setTestInformation] = useState<TestInformationType | null>();
   const [signatures, setSignatures] = useState<SignatureType | null>();
@@ -217,25 +217,30 @@ const ProbeSummary = ({
     ]);
   }, [isSigned, report, setReport]);
 
-  const handleSign = async (signed: boolean, role: 'author' | 'reviewer') => {
-    let newSignature;
+  const handleSign = useCallback((signed: boolean, role: 'author' | 'reviewer') => {
+    let cancelled;
+    const sign = async (s: boolean, r: 'author' | 'reviewer') => {
+      let newSignature;
+      if (s) {
+        newSignature = await api.put(`/reports/${report.ident}/signatures/sign/${r}`, {}).request();
+      } else {
+        newSignature = await api.put(`/reports/${report.ident}/signatures/revoke/${r}`, {}).request();
+      }
+      if (!cancelled) {
+        setIsSigned(signed);
+        setSignatures(newSignature);
+      }
+    };
+    sign(signed, role);
+    return function cleanup() { cancelled = true; };
+  }, [report.ident, setIsSigned]);
 
-    if (signed) {
-      newSignature = await api.put(`/reports/${report.ident}/signatures/sign/${role}`, {}).request();
-    } else {
-      newSignature = await api.put(`/reports/${report.ident}/signatures/revoke/${role}`, {}).request();
-    }
-
-    setIsSigned(signed);
-    setSignatures(newSignature);
-  };
-
-  const handleEditStart = (rowData) => {
+  const handleEditStart = useCallback((rowData) => {
     setShowEventsDialog(true);
     if (rowData) {
       setEditData(rowData);
     }
-  };
+  }, []);
 
   const handleEditClose = useCallback((newData) => {
     setShowEventsDialog(false);

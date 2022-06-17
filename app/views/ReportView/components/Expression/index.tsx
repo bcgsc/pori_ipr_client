@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, {
+  useState, useEffect, useContext,
+} from 'react';
 import { Typography, Paper } from '@mui/material';
 import DataTable from '@/components/DataTable';
 import api from '@/services/api';
@@ -37,6 +39,19 @@ const INFO_BUBBLES = {
   downreg_tsg: 'Low expression level outliers in known tumour suppressor genes.',
 };
 
+/**
+ * @returns initial visible column ids based on column definitions
+ */
+const getVisibleColsFromColDefReducer = (accumulated, current): string[] => {
+  if ('children' in current) {
+    return accumulated.concat(current.children.reduce(getVisibleColsFromColDefReducer, []));
+  }
+  if (current.hide !== true) {
+    return accumulated.concat(current.field ?? current.colId);
+  }
+  return accumulated;
+};
+
 type ExpressionProps = WithLoadingInjectedProps;
 
 const Expression = ({
@@ -48,18 +63,7 @@ const Expression = ({
   const [comparators, setComparators] = useState<ComparatorsType>();
   const [expOutliers, setExpOutliers] = useState<ProcessedExpressionOutliers>();
   const [visibleCols, setVisibleCols] = useState<string[]>(
-    columnDefs.reduce((accumulator: string[], current) => {
-      if (current.children?.length) {
-        current.children.forEach((child) => {
-          if (child.hide !== true) {
-            accumulator.push(child.field ?? child.colId);
-          }
-        });
-      } else if (current.hide !== true) {
-        accumulator.push(current.field ?? current.colId);
-      }
-      return accumulator;
-    }, []),
+    columnDefs.reduce(getVisibleColsFromColDefReducer, []),
   );
 
   useEffect(() => {
@@ -160,10 +164,6 @@ const Expression = ({
     }
   }, [report]);
 
-  const handleVisibleColsChange = (change) => {
-    setVisibleCols(change);
-  };
-
   return (!isLoading && (
     <>
       <div className="expression--padded">
@@ -230,7 +230,7 @@ const Expression = ({
           rowData={expOutliers[key]}
           titleText={titleText}
           visibleColumns={visibleCols}
-          syncVisibleColumns={handleVisibleColsChange}
+          syncVisibleColumns={setVisibleCols}
           canToggleColumns
           demoDescription={INFO_BUBBLES[key]}
         />
