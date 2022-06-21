@@ -163,9 +163,7 @@ const KbMatches = ({
       <DataTable
         canDelete={canEdit}
         canToggleColumns
-        columnDefs={(key === 'targetedSomaticGenes' || key === 'targetedGermlineGenes')
-          ? targetedColumnDefs
-          : columnDefs}
+        columnDefs={(key === 'targetedSomaticGenes') ? targetedColumnDefs : columnDefs}
         filterText={filterText}
         isPrint={isPrint}
         onDelete={handleDelete}
