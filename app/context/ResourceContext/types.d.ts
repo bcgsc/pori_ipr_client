@@ -1,7 +1,8 @@
 type ResourceContextType = {
   germlineAccess: boolean;
-  reportAccess: boolean;
+  reportsAccess: boolean;
   adminAccess: boolean;
+  reportSettingAccess: boolean;
 };
 
 export default ResourceContextType;
