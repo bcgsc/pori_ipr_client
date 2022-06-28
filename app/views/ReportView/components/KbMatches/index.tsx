@@ -102,7 +102,7 @@ const KbMatches = ({
               ...pharmacogenomicResp,
               ...cancerPredisResp.filter(({ variant }) => variant?.germline),
             ]),
-            targetedSomaticGenes: targetedSomaticGenesResp.filter((tg) => /germline/.test(tg?.sample)),
+            targetedSomaticGenes: targetedSomaticGenesResp.filter((tg) => !/germline/.test(tg?.sample)),
           });
         } catch (err) {
           snackbar.error(`Network error: ${err}`);
