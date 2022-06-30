@@ -31,7 +31,7 @@ import './index.scss';
 const Sidebar = (): JSX.Element => {
   const { pathname } = useLocation();
   const { sidebarMaximized, setSidebarMaximized } = useContext(SidebarContext);
-  const { germlineAccess, reportAccess, adminAccess } = useResource();
+  const { germlineAccess, reportsAccess, adminAccess } = useResource();
 
   const handleSidebarClose = useCallback(() => {
     setSidebarMaximized(false);
@@ -48,7 +48,7 @@ const Sidebar = (): JSX.Element => {
       </div>
       <Divider />
       <List disablePadding>
-        {reportAccess && (
+        {reportsAccess && (
           <ListItem
             className={`
               sidebar__list-item
