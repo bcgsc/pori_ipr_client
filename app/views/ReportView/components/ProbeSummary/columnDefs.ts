@@ -41,7 +41,7 @@ const eventsColumnDefs = [
   {
     headerName: 'Genomic Events',
     colId: 'events',
-    valueGetter: 'data.gene.name + " (" + data.variant + ")"',
+    valueGetter: ({ data }) => data.variant,
     hide: false,
   },
   {
