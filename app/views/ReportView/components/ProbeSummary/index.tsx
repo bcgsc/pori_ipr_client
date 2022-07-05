@@ -49,7 +49,6 @@ const ProbeSummary = ({
     label: string;
     value: string | null;
   }[] | null>();
-  const [printEvents, setPrintEvents] = useState([]);
   const [editData, setEditData] = useState();
 
   const [showPatientEdit, setShowPatientEdit] = useState(false);
@@ -140,19 +139,6 @@ const ProbeSummary = ({
       getData();
     }
   }, [loadedDispatch, report, setIsLoading]);
-
-  useEffect(() => {
-    if (probeResults && isPrint) {
-      setPrintEvents(probeResults.map((probe) => (
-        eventsColumnDefs.reduce((accumulator, current) => {
-          if (current.field) {
-            accumulator[current.field] = probe[current.field];
-          }
-          return accumulator;
-        }, { events: `${probe.gene.name} (${probe.variant})` })
-      )));
-    }
-  }, [probeResults, isPrint]);
 
   const handlePatientEditClose = useCallback(async (
     isSaved: boolean,
@@ -259,7 +245,7 @@ const ProbeSummary = ({
     if (isPrint) {
       probeResultSection = (
         <PrintTable
-          data={printEvents}
+          data={probeResults}
           columnDefs={eventsColumnDefs.filter((col) => col.headerName !== 'Actions')}
           order={['Genomic Events', 'Sample', 'Alt/Total (Tumour DNA)', 'Alt/Total (Tumour RNA)', 'Alt/Total (Normal DNA)', 'Comments']}
         />
