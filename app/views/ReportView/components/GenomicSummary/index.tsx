@@ -124,6 +124,7 @@ const GenomicSummary = ({
             api.get(`/reports/${report.ident}/mutation-burden`),
             api.get(`/reports/${report.ident}/immune-cell-types`),
             api.get(`/reports/${report.ident}/msi`),
+            api.get(`/reports/${report.ident}/tmbur-mutation-burden`),
           ]);
 
           const [
@@ -134,6 +135,7 @@ const GenomicSummary = ({
             burdenResp,
             immuneResp,
             msiResp,
+            tmburResp,
           ] = await apiCalls.request();
 
           setPrimaryComparator(comparatorsResp.find(({ analysisRole }) => analysisRole === 'mutation burden (primary)'));
@@ -174,7 +176,7 @@ const GenomicSummary = ({
             loadedDispatch({ type: 'summary' });
           }
         } catch (err) {
-          snackbar.error(`Network error: ${err}`);
+          snackbar.error(`Network error: ${err?.message ?? err}`);
         } finally {
           setIsLoading(false);
         }
@@ -302,6 +304,12 @@ const GenomicSummary = ({
         {
           term: 'MSI Status',
           value: msiStatus,
+        },
+        {
+          term: 'Genome SNV TMB', // float
+        },
+        {
+          term: 'Genome Indel TMB', // float
         },
       ]);
     }

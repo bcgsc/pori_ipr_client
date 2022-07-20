@@ -14,7 +14,7 @@ import ImageType from '@/components/Image/types';
 import api, { ApiCallSet } from '@/services/api';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import {
-  ComparatorType, MutationBurdenType, MsiType,
+  ComparatorType, MutationBurdenType, MsiType, TMBurType,
 } from './types';
 import TabCards from './components/TabCards';
 import columnDefs from './columnDefs';
@@ -99,6 +99,7 @@ const MutationBurden = ({
   const [images, setImages] = useState<Record<string, Record<string, ImageType[]>>>();
   const [comparators, setComparators] = useState<ComparatorType[]>([]);
   const [mutationBurden, setMutationBurden] = useState<MutationBurdenType[]>([]);
+  const [TMBur, setTMBur] = useState<TMBurType[]>([]);
   const [msi, setMsi] = useState<MsiType[]>([]);
   const [msiScatter, setMsiScatter] = useState<ImageType>();
 
@@ -112,15 +113,17 @@ const MutationBurden = ({
             api.get(`/reports/${report.ident}/image/mutation-burden`),
             api.get(`/reports/${report.ident}/comparators`),
             api.get(`/reports/${report.ident}/mutation-burden`),
+            api.get(`/reports/${report.ident}/tmbur-mutation-burden`),
           ]);
           const [
-            msiResp, msiScatterResp, imagesResp, comparatorsResp, mutationBurdenResp,
+            msiResp, msiScatterResp, imagesResp, comparatorsResp, mutationBurdenResp, tmburResp,
           ] = await calls.request();
           setMsi(msiResp);
           setMsiScatter(msiScatterResp.find((img) => img.key === 'msi.scatter'));
           setImages(processImages(imagesResp));
           setComparators(comparatorsResp);
           setMutationBurden(mutationBurdenResp);
+          setTMBur(tmburResp);
         } catch (err) {
           snackbar.error(`Network error: ${err}`);
         } finally {
