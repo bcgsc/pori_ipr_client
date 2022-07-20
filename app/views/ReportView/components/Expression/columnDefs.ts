@@ -49,10 +49,10 @@ const columnDefs: Array<ColDef | ColGroupDef> = [{
   headerName: 'Internal Pancancer',
   children: [
     { headerName: 'FC', field: 'internalPancancerFoldChange', hide: true },
-    { headerName: 'Perc', field: 'internalPancancerFoldChangePercentile', hide: false },
-    { headerName: 'kIQR', field: 'internalPancancerFoldChangekIQR', hide: false },
-    { headerName: 'QC', field: 'internalPancancerFoldChangeQC', hide: true },
-    { headerName: 'Z-Score', field: 'internalPancancerFoldChangeZScore', hide: true },
+    { headerName: 'Perc', field: 'internalPancancerPercentile', hide: false },
+    { headerName: 'kIQR', field: 'internalPancancerkIQR', hide: false },
+    { headerName: 'QC', field: 'internalPancancerQC', hide: true },
+    { headerName: 'Z-Score', field: 'internalPancancerZScore', hide: true },
   ],
 },
 {
