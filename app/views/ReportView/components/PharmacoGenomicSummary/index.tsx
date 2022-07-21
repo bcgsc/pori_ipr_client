@@ -82,9 +82,9 @@ const PharmacoGenomicSummary = ({
           ] = await apiCalls.request() as [SignatureType, KbMatchType[], KbMatchType[]];
 
           setSignatures(signaturesData);
-          setPharmacoGenomic(pharmacoGenomicResp);
+          setPharmacoGenomic(pharmacoGenomicResp.filter(({ variant }) => variant.germline));
           // Assumed to be germline when it gets to this part, so filtering no longer necessary
-          setCancerPredisposition(cancerPredispositionResp);
+          setCancerPredisposition(cancerPredispositionResp.filter(({ variant }) => variant.germline));
 
           setPatientInformation([
             {

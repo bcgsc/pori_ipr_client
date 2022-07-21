@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useState, useRef,
+  useEffect, useState, useRef, useMemo,
 } from 'react';
 import { UncontrolledReactSVGPanZoom } from 'react-svg-pan-zoom';
 import InlineSVG from 'svg-inline-react';
@@ -10,7 +10,14 @@ import './index.scss';
 type SvgImageProps = {
   image: string;
   isPrint?: boolean;
+  printOrientation: 'portrait' | 'landscape';
 };
+
+// These should be same as index.css under @page
+// Accounts for padding via magical numbers 32 and 16
+const INCH_TO_PX = 96;
+const MAX_PRINT_WIDTH = Math.floor((9 - 0.4 * 2) * INCH_TO_PX) - 32;
+const MAX_PRINT_HEIGHT = Math.floor((11.5 - 0.4 * 2) * INCH_TO_PX) - 16;
 
 const PRINT_WIDTH = 816;
 const ICON_WIDTH = 48;
@@ -18,6 +25,8 @@ const ICON_WIDTH = 48;
 const SvgImage = ({
   image,
   isPrint = false,
+  // Only applicable when in print mode
+  printOrientation = 'portrait',
 }: SvgImageProps): JSX.Element => {
   const Viewer = useRef();
   const [svgHeight, setSvgHeight] = useState<number>();
@@ -56,33 +65,89 @@ const SvgImage = ({
     Viewer?.current?.fitToViewer();
   };
 
+  const svgComponent = useMemo(() => {
+    if (processedImage && svgHeight && svgWidth) {
+      return (
+        <AutoSizer disableHeight defaultWidth={PRINT_WIDTH} onResize={handleFit}>
+          {({ width = PRINT_WIDTH }) => {
+            if (isPrint) {
+              let overHeightRatio = svgHeight / MAX_PRINT_HEIGHT;
+              let overWidthRatio = svgWidth / MAX_PRINT_WIDTH;
+              if (printOrientation === 'landscape') {
+                overHeightRatio = svgHeight / MAX_PRINT_WIDTH;
+                overWidthRatio = svgHeight / MAX_PRINT_WIDTH;
+              }
+              let nextRatio = 1;
+
+              if (overHeightRatio > 1 && overWidthRatio > 1) {
+                // Both over, find higher ratio
+                nextRatio = Math.max(overHeightRatio, overWidthRatio);
+              } else if (overHeightRatio > 1) {
+                nextRatio = overHeightRatio;
+              } else if (overWidthRatio > 1) {
+                nextRatio = overWidthRatio;
+              }
+
+              const nextHeight = svgHeight / nextRatio;
+              const nextWidth = svgWidth / nextRatio;
+
+              const svgStyle = {
+                transformOrigin: 'top left',
+                transform: printOrientation === 'landscape' ? `rotate(90deg) translate(0, -${nextHeight}px)` : '',
+              };
+
+              return (
+                <div style={svgStyle}>
+                  <UncontrolledReactSVGPanZoom
+                    ref={Viewer}
+                    width={svgWidth > nextWidth ? nextWidth : svgWidth}
+                    height={svgHeight > nextHeight ? nextHeight : svgHeight}
+                    background="#FFFFFF"
+                    detectAutoPan={false}
+                    defaultTool="auto"
+                    customMiniature={() => null}
+                    customToolbar={() => null}
+                    toolbarProps={{ position: 'left' }}
+                  >
+                    <svg width={svgWidth} height={svgHeight}>
+                      <InlineSVG src={processedImage} raw />
+                    </svg>
+                  </UncontrolledReactSVGPanZoom>
+                </div>
+              );
+            }
+
+            return (
+              <UncontrolledReactSVGPanZoom
+                ref={Viewer}
+                /*
+                   48px is removed since with a float icon to the right
+                   then the SVG is moved down too far.
+                */
+                width={width - ICON_WIDTH}
+                height={svgHeight}
+                background="#FFFFFF"
+                detectAutoPan={false}
+                defaultTool="auto"
+                customMiniature={() => null}
+                customToolbar={isPrint ? () => null : undefined}
+                toolbarProps={{ position: 'left' }}
+              >
+                <svg width={svgWidth} height={svgHeight}>
+                  <InlineSVG src={processedImage} raw />
+                </svg>
+              </UncontrolledReactSVGPanZoom>
+            );
+          }}
+        </AutoSizer>
+      );
+    }
+    return null;
+  }, [isPrint, printOrientation, processedImage, svgHeight, svgWidth]);
+
   return (
     <div className="svg-image">
-      {processedImage && svgHeight && svgWidth && (
-        <AutoSizer disableHeight defaultWidth={PRINT_WIDTH} onResize={handleFit}>
-          {({ width = PRINT_WIDTH }) => (
-            <UncontrolledReactSVGPanZoom
-              ref={Viewer}
-              /*
-                 48px is removed since with a float icon to the right
-                 then the SVG is moved down too far.
-              */
-              width={width - ICON_WIDTH}
-              height={svgHeight}
-              background="#FFFFFF"
-              detectAutoPan={false}
-              defaultTool="auto"
-              customMiniature={() => null}
-              customToolbar={isPrint ? () => null : undefined}
-              toolbarProps={{ position: 'left' }}
-            >
-              <svg width={svgWidth} height={svgHeight}>
-                <InlineSVG src={processedImage} raw />
-              </svg>
-            </UncontrolledReactSVGPanZoom>
-          )}
-        </AutoSizer>
-      )}
+      {svgComponent}
     </div>
   );
 };

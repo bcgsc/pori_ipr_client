@@ -24,8 +24,9 @@ const columnDefs: Array<ColDef | ColGroupDef> = [{
     { headerName: 'FC', field: 'diseaseFoldChange', hide: true },
     { headerName: 'Z-Score', field: 'diseaseZScore', hide: true },
   ],
-}, {
-  headerName: 'Normal Primary Site',
+},
+{
+  headerName: 'Primary Site',
   children: [
     { headerName: 'FC', field: 'primarySiteFoldChange', hide: true },
     { headerName: 'Perc', field: 'primarySitePercentile', hide: false },
@@ -33,8 +34,9 @@ const columnDefs: Array<ColDef | ColGroupDef> = [{
     { headerName: 'QC', field: 'primarySiteQC', hide: true },
     { headerName: 'Z-Score', field: 'primarySiteZScore', hide: true },
   ],
-}, {
-  headerName: 'Normal Biopsy Site',
+},
+{
+  headerName: 'Biopsy Site',
   children: [
     { headerName: 'FC', field: 'biopsySiteFoldChange', hide: true },
     { headerName: 'Perc', field: 'biopsySitePercentile', hide: false },
@@ -42,7 +44,18 @@ const columnDefs: Array<ColDef | ColGroupDef> = [{
     { headerName: 'QC', field: 'biopsySiteQC', hide: true },
     { headerName: 'Z-Score', field: 'biopsySiteZScore', hide: true },
   ],
-}, {
+},
+{
+  headerName: 'Internal Pancancer',
+  children: [
+    { headerName: 'FC', field: 'internalPancancerFoldChange', hide: true },
+    { headerName: 'Perc', field: 'internalPancancerPercentile', hide: false },
+    { headerName: 'kIQR', field: 'internalPancancerkIQR', hide: false },
+    { headerName: 'QC', field: 'internalPancancerQC', hide: true },
+    { headerName: 'Z-Score', field: 'internalPancancerZScore', hide: true },
+  ],
+},
+{
   headerName: 'RPKM',
   field: 'rpkm',
   hide: true,
