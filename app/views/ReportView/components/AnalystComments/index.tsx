@@ -13,7 +13,7 @@ import snackbar from '@/services/SnackbarUtils';
 import { useUser } from '@/context/UserContext';
 import DemoDescription from '@/components/DemoDescription';
 import ReportContext from '@/context/ReportContext';
-import SignatureCard, { SignatureType } from '@/components/SignatureCard';
+import SignatureCard, { SignatureType, SignatureUserType } from '@/components/SignatureCard';
 import ConfirmContext from '@/context/ConfirmContext';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import TextEditor from './components/TextEditor';
@@ -67,7 +67,7 @@ const AnalystComments = ({
     }
   }, [report, setIsLoading]);
 
-  const handleSign = useCallback(async (signed: boolean, role: 'author' | 'reviewer') => {
+  const handleSign = useCallback(async (signed: boolean, role: SignatureUserType) => {
     let newSignature;
 
     if (signed) {
@@ -169,6 +169,13 @@ const AnalystComments = ({
                 signatures={signatures}
                 title="Reviewer"
                 type="reviewer"
+                isPrint={isPrint}
+              />
+              <SignatureCard
+                onClick={handleSign}
+                signatures={signatures}
+                title="Creator"
+                type="creator"
                 isPrint={isPrint}
               />
             </div>

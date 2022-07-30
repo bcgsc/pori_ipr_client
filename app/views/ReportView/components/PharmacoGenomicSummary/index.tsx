@@ -16,7 +16,7 @@ import UserContext from '@/context/UserContext';
 import ConfirmContext from '@/context/ConfirmContext';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import { formatDate } from '@/utils/date';
-import SignatureCard, { SignatureType } from '@/components/SignatureCard';
+import SignatureCard, { SignatureType, SignatureUserType } from '@/components/SignatureCard';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import snackbar from '@/services/SnackbarUtils';
 import PrintTable from '@/components/PrintTable';
@@ -194,7 +194,7 @@ const PharmacoGenomicSummary = ({
     ]);
   }, [isSigned, report, setReport]);
 
-  const handleSign = useCallback(async (signed: boolean, role: 'author' | 'reviewer') => {
+  const handleSign = useCallback(async (signed: boolean, role: SignatureUserType) => {
     let newSignature: SignatureType;
 
     if (signed) {
@@ -385,6 +385,13 @@ const PharmacoGenomicSummary = ({
                 signatures={signatures}
                 onClick={handleSign}
                 type="reviewer"
+                isPrint={isPrint}
+              />
+              <SignatureCard
+                title="Creator"
+                signatures={signatures}
+                onClick={handleSign}
+                type="creator"
                 isPrint={isPrint}
               />
             </div>
