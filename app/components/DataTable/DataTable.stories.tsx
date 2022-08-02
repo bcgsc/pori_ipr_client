@@ -53,6 +53,24 @@ const DEFAULT_PROPS = {
       column_d: 'data_d_08',
     },
     {
+      column_a: 'data_a03',
+      column_b: 'data_b01',
+      column_c: 'data_c_09',
+      column_d: 'data_d_11',
+    },
+    {
+      column_a: 'data_a03',
+      column_b: 'data_b02',
+      column_c: 'data_c_09',
+      column_d: 'data_d_12',
+    },
+    {
+      column_a: 'data_a03',
+      column_b: 'data_b02',
+      column_c: 'data_c_09',
+      column_d: 'data_d_13',
+    },
+    {
       column_a: 'data_a02',
       column_b: 'data_b01',
       column_c: 'data_c_07',
@@ -69,24 +87,6 @@ const DEFAULT_PROPS = {
       column_b: 'data_b01',
       column_c: 'data_c_09',
       column_d: 'data_d_10',
-    },
-    {
-      column_a: 'data_a03',
-      column_b: 'data_b01',
-      column_c: 'data_c_09',
-      column_d: 'data_d_11',
-    },
-    {
-      column_a: 'data_a03',
-      column_b: 'data_b01',
-      column_c: 'data_c_09',
-      column_d: 'data_d_12',
-    },
-    {
-      column_a: 'data_a03',
-      column_b: 'data_b01',
-      column_c: 'data_c_09',
-      column_d: 'data_d_13',
     },
     {
       column_a: 'data_a03',
