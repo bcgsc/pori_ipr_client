@@ -77,7 +77,7 @@ const ColumnPicker = ({
                     onChange={(event) => handleChange(event, row?.getColId())}
                   />
                 )}
-                label={row.name}
+                label={row.name ? row.name : row.getColId()}
               />
             </div>
           </div>
