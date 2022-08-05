@@ -3,7 +3,7 @@ import React, {
 } from 'react';
 import { AgGridReact } from '@ag-grid-community/react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { ColDef, RowNode } from '@ag-grid-community/core';
+import { ColDef, RowNode, RowSpanParams } from '@ag-grid-community/core';
 import cloneDeep from 'lodash/cloneDeep';
 import useGrid from '@/hooks/useGrid';
 import {
@@ -30,6 +30,9 @@ const MAX_VISIBLE_ROWS = 12;
 const MAX_TABLE_HEIGHT = '517px';
 const PAGE_TOP_OFFSET = 56 + 57;
 
+/**
+ * Given colDefs, calculates rowSpan for each columnDef based on the current displayedRows on the table
+ */
 const getRowspanColDefs = (colDefs: ColDef[], displayedRows: RowNode[], colsToCollapse: string[]): ColDef[] => {
   const nextColDefs: ColDef[] = cloneDeep(colDefs);
   const keysToRowSpan = {};
