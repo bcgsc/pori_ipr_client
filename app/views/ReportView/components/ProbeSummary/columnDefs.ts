@@ -41,7 +41,12 @@ const eventsColumnDefs = [
   {
     headerName: 'Genomic Events',
     colId: 'events',
-    valueGetter: 'data.gene.name + " (" + data.variant + ")"',
+    valueGetter: ({ data }) => {
+      if (/^(enst)|(nm_)/i.test(data.variant)) {
+        return `${data.gene.name} (${data.variant})`;
+      }
+      return data.variant;
+    },
     hide: false,
   },
   {
