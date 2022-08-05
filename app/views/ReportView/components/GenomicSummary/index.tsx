@@ -25,13 +25,14 @@ import VariantChips from './components/VariantChips';
 import VariantCounts from './components/VariantCounts';
 import TumourSummaryEdit from './components/TumourSummaryEdit';
 import {
-  MsiType,
   PatientInformationType,
   GeneVariantType,
   TumourSummaryType,
   MicrobialType,
 } from './types';
-import { MutationBurdenType, ComparatorType } from '../MutationBurden/types';
+import {
+  MutationBurdenType, ComparatorType, MsiType, TmburType,
+} from '../MutationBurden/types';
 import MutationSignatureType from '../MutationSignatures/types';
 import { ImmuneType } from '../Immune/types';
 
@@ -94,6 +95,7 @@ const GenomicSummary = ({
   const [primaryBurden, setPrimaryBurden] = useState<MutationBurdenType>();
   const [variants, setVariants] = useState<GeneVariantType[]>();
   const [msi, setMsi] = useState<MsiType>();
+  const [tmburMutBur, setTmburMutBur] = useState<TmburType>();
 
   const [microbial, setMicrobial] = useState<MicrobialType>({
     species: '',
@@ -149,6 +151,10 @@ const GenomicSummary = ({
 
           if (msiResp.length) {
             setMsi(msiResp[0]);
+          }
+
+          if (tmburResp.length) {
+            setTmburMutBur(tmburResp[0]);
           }
 
           const output = [];
@@ -307,13 +313,15 @@ const GenomicSummary = ({
         },
         {
           term: 'Genome SNV TMB', // float
+          value: tmburMutBur?.genomeSnvTmb,
         },
         {
           term: 'Genome Indel TMB', // float
+          value: tmburMutBur?.genomeIndelTmb,
         },
       ]);
     }
-  }, [history, microbial, microbial.species, primaryBurden, primaryComparator, isPrint, report, signatures, tCellCd8, msi]);
+  }, [history, microbial, microbial.species, primaryBurden, primaryComparator, isPrint, report, signatures, tCellCd8, msi, tmburMutBur]);
 
   const handleChipDeleted = useCallback(async (chipIdent, type, comment) => {
     try {

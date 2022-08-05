@@ -1,8 +1,14 @@
 import React, {
-  useEffect, useState, useContext,
+  useEffect, useState, useContext, useMemo,
 } from 'react';
 import {
   Typography,
+  Card,
+  CardHeader,
+  CardContent,
+  Table,
+  TableCell,
+  TableRow,
 } from '@mui/material';
 
 import DemoDescription from '@/components/DemoDescription';
@@ -14,7 +20,7 @@ import ImageType from '@/components/Image/types';
 import api, { ApiCallSet } from '@/services/api';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import {
-  ComparatorType, MutationBurdenType, MsiType, TMBurType,
+  ComparatorType, MutationBurdenType, MsiType, TmburType,
 } from './types';
 import TabCards from './components/TabCards';
 import columnDefs from './columnDefs';
@@ -88,6 +94,23 @@ const processImages = (images: ImageType[]): Record<string, Record<string, Image
   return {};
 };
 
+const TMBUR_FIELD_TO_LABEL = {
+  nonNBasesIn1To22AndXAndY: 'Non-N bases in 1-22,X,Y',
+  totalGenomeSnvs: 'Total genome SNVs',
+  totalGenomeIndels: 'Total genome Indels',
+  genomeSnvTmb: 'Genome SNV TMB',
+  genomeIndelTmb: 'Genome Indel TMB',
+  cdsBasesIn1To22AndXAndY: 'CDS bases in 1-22,X,Y',
+  cdsSnvs: 'CDS SNVs',
+  cdsIndels: 'CDS Indels',
+  cdsSnvTmb: 'CDS SNV TMB',
+  cdsIndelTmb: 'CDS Indel TMBs',
+  proteinSnvs: 'Protein SNVs',
+  proteinIndels: 'Protein INDELs',
+  proteinSnvTmb: 'Protein SNV TMB',
+  proteinIndelTmb: 'Protein Indel TMB',
+};
+
 type MutationBurdenProps = WithLoadingInjectedProps;
 
 const MutationBurden = ({
@@ -99,7 +122,7 @@ const MutationBurden = ({
   const [images, setImages] = useState<Record<string, Record<string, ImageType[]>>>();
   const [comparators, setComparators] = useState<ComparatorType[]>([]);
   const [mutationBurden, setMutationBurden] = useState<MutationBurdenType[]>([]);
-  const [TMBur, setTMBur] = useState<TMBurType[]>([]);
+  const [tmburMutBur, setTmburMutBur] = useState<TmburType>();
   const [msi, setMsi] = useState<MsiType[]>([]);
   const [msiScatter, setMsiScatter] = useState<ImageType>();
 
@@ -123,7 +146,7 @@ const MutationBurden = ({
           setImages(processImages(imagesResp));
           setComparators(comparatorsResp);
           setMutationBurden(mutationBurdenResp);
-          setTMBur(tmburResp);
+          setTmburMutBur(tmburResp[0]);
         } catch (err) {
           snackbar.error(`Network error: ${err}`);
         } finally {
@@ -144,6 +167,53 @@ const MutationBurden = ({
     }
     return 'Structural Variants (SV)';
   };
+
+  const tmBurSection = useMemo(() => {
+    let sectionContent = null;
+    let fieldLabel = null;
+    if (tmburMutBur?.ident) {
+      sectionContent = Object.entries(tmburMutBur).map(([fieldName, fieldValue]) => {
+        fieldLabel = TMBUR_FIELD_TO_LABEL[fieldName];
+        return (
+          fieldLabel ? (
+            <TableRow>
+              <TableCell style={{ border: 'none' }}>
+                <Typography variant="body2">{fieldLabel}</Typography>
+              </TableCell>
+              <TableCell style={{ border: 'none' }}>
+                <Typography variant="body2">{fieldValue}</Typography>
+              </TableCell>
+            </TableRow>
+          ) : null
+        );
+      });
+    } else {
+      return (
+        <Typography variant="h5" align="center">
+          No TMBur data found
+        </Typography>
+      );
+    }
+    return (
+      <>
+        <Typography variant="h3">
+          TMBur
+        </Typography>
+        <div className="mutation-burden__content">
+          <div className="mutation-burden__tmbur">
+            <Card className="mutation-burden__group" elevation={3}>
+              <CardHeader title="TMBur" />
+              <CardContent>
+                <Table size="small">
+                  {sectionContent}
+                </Table>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </>
+    );
+  }, [tmburMutBur]);
 
   return (
     <div className="mutation-burden">
@@ -184,6 +254,7 @@ const MutationBurden = ({
                   </React.Fragment>
                 );
               })}
+              {tmburMutBur && tmBurSection}
             </div>
           )}
           {(!comparators.length || !mutationBurden.length || !images) && !isLoading && (
