@@ -112,6 +112,7 @@
     "jss": "~10.6.0",
     "jwt-decode": "~3.1.2",
     "keycloak-js": "~10.0.2",
+    "lodash.capitalize": "^4.2.1",
     "lodash.differenceby": "~4.8.0",
     "lodash.get": "~4.4.2",
     "lodash.omit": "~4.5.0",
