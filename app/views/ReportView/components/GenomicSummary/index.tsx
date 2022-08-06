@@ -153,8 +153,8 @@ const GenomicSummary = ({
             setMsi(msiResp[0]);
           }
 
-          if (tmburResp.length) {
-            setTmburMutBur(tmburResp[0]);
+          if (tmburResp) {
+            setTmburMutBur(tmburResp);
           }
 
           const output = [];

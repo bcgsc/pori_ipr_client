@@ -146,7 +146,7 @@ const MutationBurden = ({
           setImages(processImages(imagesResp));
           setComparators(comparatorsResp);
           setMutationBurden(mutationBurdenResp);
-          setTmburMutBur(tmburResp[0]);
+          setTmburMutBur(tmburResp);
         } catch (err) {
           snackbar.error(`Network error: ${err}`);
         } finally {
