@@ -13,9 +13,11 @@ import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import { UserType } from '@/common';
 import { useUser } from '@/context/UserContext';
 import { formatDate } from '@/utils/date';
-import SignatureType from './types';
+import { SignatureType, SignatureUserType } from './types';
 
 import './index.scss';
+
+export type { SignatureUserType } from './types';
 
 const NON_BREAKING_SPACE = '\u00A0';
 
@@ -23,7 +25,7 @@ export type SignatureCardProps = {
   title: string;
   signatures: SignatureType;
   onClick: (isSigned: boolean, type: string) => void;
-  type: 'author' | 'reviewer';
+  type: SignatureUserType;
   isPrint?: boolean;
 };
 
@@ -41,8 +43,10 @@ const SignatureCard = ({
     if (signatures && type) {
       if (type === 'author') {
         setUserSignature(signatures.authorSignature);
-      } else {
+      } else if (type === 'reviewer') {
         setUserSignature(signatures.reviewerSignature);
+      } else if (type === 'creator') {
+        setUserSignature(signatures.creatorSignature);
       }
     }
   }, [signatures, type]);
@@ -56,14 +60,32 @@ const SignatureCard = ({
   };
 
   const renderDate = useMemo(() => {
-    if (type === 'author' && signatures?.authorSignedAt) {
-      return formatDate(signatures?.authorSignedAt, true);
+    if (signatures?.ident) {
+      let formattedDate = '';
+      if (type === 'author' && signatures.authorSignedAt) {
+        formattedDate = formatDate(signatures.authorSignedAt, true);
+      }
+      if (type === 'reviewer' && signatures.reviewerSignedAt) {
+        formattedDate = formatDate(signatures.reviewerSignedAt, true);
+      }
+      if (type === 'creator' && signatures.creatorSignedAt) {
+        formattedDate = formatDate(signatures.creatorSignedAt, true);
+      }
+      if (isPrint) {
+        return (
+          <Typography variant="body2" display="inline">
+            {formattedDate}
+          </Typography>
+        );
+      }
+      return (
+        <Typography>
+          {formattedDate}
+        </Typography>
+      );
     }
-    if (type === 'reviewer' && signatures?.reviewerSignedAt) {
-      return formatDate(signatures?.reviewerSignedAt, true);
-    }
-    return '';
-  }, [signatures, type]);
+    return null;
+  }, [signatures, type, isPrint]);
 
   if (isPrint) {
     return (
@@ -88,13 +110,7 @@ const SignatureCard = ({
           <Typography variant="body2" display="inline">
             {'Date: '}
           </Typography>
-          {signatures?.ident
-            && (type === 'author' ? signatures?.authorSignature?.ident : signatures?.reviewerSignature?.ident)
-            && (
-              <Typography variant="body2" display="inline">
-                {renderDate}
-              </Typography>
-            )}
+          {renderDate}
         </div>
       </span>
     );
@@ -130,17 +146,11 @@ const SignatureCard = ({
         <Typography variant="body2">
           Date
         </Typography>
-        {signatures?.ident
-          && (type === 'author' ? signatures?.authorSignature?.ident : signatures?.reviewerSignature?.ident)
-          ? (
-            <Typography>
-              {renderDate}
-            </Typography>
-          ) : (
-            <Typography>
-              {NON_BREAKING_SPACE}
-            </Typography>
-          )}
+        {renderDate ?? (
+        <Typography>
+          {NON_BREAKING_SPACE}
+        </Typography>
+        )}
       </div>
       {userSignature?.ident && canEdit && (
         <div className="signatures__button">
