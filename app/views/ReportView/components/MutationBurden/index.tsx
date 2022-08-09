@@ -104,12 +104,12 @@ const TMBUR_FIELD_TO_LABEL = {
   cdsBasesIn1To22AndXAndY: 'CDS bases in 1-22,X,Y',
   cdsSnvs: 'CDS SNVs',
   cdsIndels: 'CDS Indels',
-  cdsSnvTmb: 'CDS SNV TMB',
-  cdsIndelTmb: 'CDS Indel TMBs',
+  cdsSnvTmb: 'CDS SNV TMB (mut/mb)',
+  cdsIndelTmb: 'CDS Indel TMBs (mut/mb)',
   proteinSnvs: 'Protein SNVs',
   proteinIndels: 'Protein INDELs',
-  proteinSnvTmb: 'Protein SNV TMB',
-  proteinIndelTmb: 'Protein Indel TMB',
+  proteinSnvTmb: 'Protein SNV TMB (mut/mb)',
+  proteinIndelTmb: 'Protein Indel TMB (mut/mb)',
 };
 
 type MutationBurdenProps = WithLoadingInjectedProps;
