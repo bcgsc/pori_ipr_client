@@ -16,7 +16,7 @@ import { useUser } from '@/context/UserContext';
 import ConfirmContext from '@/context/ConfirmContext';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import { formatDate } from '@/utils/date';
-import SignatureCard, { SignatureType } from '@/components/SignatureCard';
+import SignatureCard, { SignatureType, SignatureUserType } from '@/components/SignatureCard';
 import PrintTable from '@/components/PrintTable';
 import TestInformation, { TestInformationType } from '@/components/TestInformation';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
@@ -203,9 +203,9 @@ const ProbeSummary = ({
     ]);
   }, [isSigned, report, setReport]);
 
-  const handleSign = useCallback((signed: boolean, role: 'author' | 'reviewer') => {
+  const handleSign = useCallback((signed: boolean, role: SignatureUserType) => {
     let cancelled;
-    const sign = async (s: boolean, r: 'author' | 'reviewer') => {
+    const sign = async (s: boolean, r: SignatureUserType) => {
       let newSignature;
       if (s) {
         newSignature = await api.put(`/reports/${report.ident}/signatures/sign/${r}`, {}).request();
@@ -376,6 +376,13 @@ const ProbeSummary = ({
                   signatures={signatures}
                   onClick={handleSign}
                   type="reviewer"
+                  isPrint={isPrint}
+                />
+                <SignatureCard
+                  title="Creator"
+                  signatures={signatures}
+                  onClick={handleSign}
+                  type="creator"
                   isPrint={isPrint}
                 />
               </div>
