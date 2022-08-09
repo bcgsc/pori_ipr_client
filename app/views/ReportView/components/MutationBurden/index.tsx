@@ -98,8 +98,9 @@ const TMBUR_FIELD_TO_LABEL = {
   nonNBasesIn1To22AndXAndY: 'Non-N bases in 1-22,X,Y',
   totalGenomeSnvs: 'Total genome SNVs',
   totalGenomeIndels: 'Total genome Indels',
-  genomeSnvTmb: 'Genome SNV TMB',
-  genomeIndelTmb: 'Genome Indel TMB',
+  genomeSnvTmb: 'Genome SNV TMB (mut/mb)',
+  genomeIndelTmb: 'Genome Indel TMB (mut/mb)',
+  genomeTmb: 'Genome TMB (mut/mb) ',
   cdsBasesIn1To22AndXAndY: 'CDS bases in 1-22,X,Y',
   cdsSnvs: 'CDS SNVs',
   cdsIndels: 'CDS Indels',
@@ -146,7 +147,12 @@ const MutationBurden = ({
           setImages(processImages(imagesResp));
           setComparators(comparatorsResp);
           setMutationBurden(mutationBurdenResp);
-          setTmburMutBur(tmburResp);
+
+          // tmburResp additions
+          setTmburMutBur({
+            ...tmburResp,
+            genomeTmb: parseFloat((tmburResp.genomeSnvTmb + tmburResp.genomeIndelTmb).toFixed(12)),
+          });
         } catch (err) {
           snackbar.error(`Network error: ${err}`);
         } finally {
@@ -170,12 +176,11 @@ const MutationBurden = ({
 
   const tmBurSection = useMemo(() => {
     let sectionContent = null;
-    let fieldLabel = null;
     if (tmburMutBur?.ident) {
-      sectionContent = Object.entries(tmburMutBur).map(([fieldName, fieldValue]) => {
-        fieldLabel = TMBUR_FIELD_TO_LABEL[fieldName];
+      sectionContent = Object.entries(TMBUR_FIELD_TO_LABEL).map(([fieldName, fieldLabel]) => {
+        const fieldValue = tmburMutBur[fieldName];
         return (
-          fieldLabel ? (
+          fieldValue ? (
             <TableRow>
               <TableCell style={{ border: 'none' }}>
                 <Typography variant="body2">{fieldLabel}</Typography>

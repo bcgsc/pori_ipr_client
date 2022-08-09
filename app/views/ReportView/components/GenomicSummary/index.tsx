@@ -312,12 +312,19 @@ const GenomicSummary = ({
           value: msiStatus,
         },
         {
-          term: 'Genome SNV TMB', // float
+          term: 'Genome SNV TMB (mut/mb)', // float
           value: tmburMutBur?.genomeSnvTmb,
         },
         {
-          term: 'Genome Indel TMB', // float
+          term: 'Genome Indel TMB (mut/mb)', // float
           value: tmburMutBur?.genomeIndelTmb,
+        },
+        {
+          term: 'Genome TMB (mut/mb)', // float
+          // Forced to do this due to javascript floating point issues
+          value: parseFloat((
+            Number(tmburMutBur?.genomeSnvTmb) + Number(tmburMutBur?.genomeIndelTmb)
+          ).toFixed(12)),
         },
       ]);
     }
