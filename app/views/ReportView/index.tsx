@@ -1,6 +1,7 @@
 import React, {
   lazy,
   useEffect,
+  useMemo,
   useState,
 } from 'react';
 import {
@@ -13,7 +14,7 @@ import ReportToolbar from '@/components/ReportToolbar';
 import ReportSidebar from '@/components/ReportSidebar';
 import { useUser } from '@/context/UserContext';
 import useExternalMode from '@/hooks/useExternalMode';
-import ReportContext from '@/context/ReportContext';
+import ReportContext, { ReportType } from '@/context/ReportContext';
 import ConfirmContext from '@/context/ConfirmContext';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
@@ -46,13 +47,15 @@ const CancerPredisposition = lazy(() => import('./components/CancerPredispositio
 
 const ReportView = (): JSX.Element => {
   const { path } = useRouteMatch();
-  const params = useParams();
+  const params = useParams<{
+    ident: string,
+  }>();
   const theme = useTheme();
   const history = useHistory();
   const { canEdit } = useUser();
   const isExternalMode = useExternalMode();
 
-  const [report, setReport] = useState();
+  const [report, setReport] = useState<ReportType>();
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [visibleSections, setVisibleSections] = useState([]);
   const [isProbe, setIsProbe] = useState(false);
@@ -108,9 +111,12 @@ const ReportView = (): JSX.Element => {
     }
   }, [params.ident, report]);
 
+  const reportValue = useMemo(() => ({ report, setReport }), [report, setReport]);
+  const isSignedValue = useMemo(() => ({ isSigned, setIsSigned }), [isSigned, setIsSigned]);
+
   return (
-    <ReportContext.Provider value={{ report, setReport }}>
-      <ConfirmContext.Provider value={{ isSigned, setIsSigned }}>
+    <ReportContext.Provider value={reportValue}>
+      <ConfirmContext.Provider value={isSignedValue}>
         {/* alert-dialog has a dialog attach to it upon report edit after signed */}
         <div id="alert-dialog" />
         <div className="report__container">
