@@ -1,10 +1,5 @@
 import { RecordDefaults } from '@/common';
 
-type MsiType = {
-  score: number;
-  kbCategory: null | string;
-};
-
 type PatientInformationType = {
   label: string;
   value: string | null;
@@ -27,7 +22,6 @@ type MicrobialType = {
 } & RecordDefaults;
 
 export {
-  MsiType,
   PatientInformationType,
   TumourSummaryType,
   GeneVariantType,

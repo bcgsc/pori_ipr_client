@@ -5,13 +5,15 @@ import { ColDef, ValueGetterParams } from '@ag-grid-community/core';
 
 import './index.scss';
 
-type PrintTableProps = {
+export type PrintTableProps = {
   data: Record<string, unknown>[];
   /* colId must be defined if sorting by order */
   columnDefs: ColDef[];
   /* order is only needed if it differs from the columnDef order */
   /* string of headerNames should be used */
   order?: string[];
+  /* string of fieldNames for columns to be collapsed */
+  collapseableCols?: string[];
   noRowsText?: string;
 };
 
@@ -24,6 +26,7 @@ const PrintTable = ({
   columnDefs = [],
   order = [],
   noRowsText = '',
+  collapseableCols = null,
 }: PrintTableProps): JSX.Element => {
   const sortedColDefs = useMemo(() => columnDefs
     .filter((col) => (col.headerName && col.hide !== true && col.headerName !== 'Actions'))
@@ -32,11 +35,11 @@ const PrintTable = ({
       let indexB;
 
       if (order?.length > 0) {
-        indexA = order.findIndex((key) => key === columnA.headerName && columnA.colId);
-        indexB = order.findIndex((key) => key === columnB.headerName && columnB.colId);
+        indexA = order.findIndex((key) => (key === columnA.headerName));
+        indexB = order.findIndex((key) => (key === columnB.headerName));
       } else {
-        indexA = columnDefs.findIndex((col) => col.headerName === columnA.headerName && columnA.colId);
-        indexB = columnDefs.findIndex((col) => col.headerName === columnB.headerName && columnB.colId);
+        indexA = columnDefs.findIndex((col) => (col.headerName === columnA.headerName));
+        indexB = columnDefs.findIndex((col) => (col.headerName === columnB.headerName));
       }
 
       // -1 would sort the column first. Put not found columns last instead
@@ -56,7 +59,7 @@ const PrintTable = ({
       return 0;
     }), [columnDefs, order]);
 
-  const sortedData = useMemo(() => {
+  const sortedDataRows = useMemo(() => {
     let component = (
       <tr>
         <td className="table__none" colSpan={sortedColDefs.length}>
@@ -67,18 +70,61 @@ const PrintTable = ({
 
     if (data.length > 0) {
       const massagedData = [];
-      data.forEach((dataRow) => {
-        const row = [];
-        sortedColDefs.forEach((colD) => {
+      /* Multiple-spam columns params */
+      let currRowKey = '';
+      let prevRowKey = '';
+      let countBack = 1;
+
+      const colIdxsToCombine = {};
+      const rowIdxsToSkip = {};
+      const rowIdxsToExpand = {};
+
+      (collapseableCols?.length > 0 ? [...data].sort((aRow, bRow) => {
+        const aKey = collapseableCols.map((val) => aRow[val]);
+        const bKey = collapseableCols.map((val) => bRow[val]);
+        if (aKey === bKey) return 0;
+        return aKey > bKey ? 1 : -1;
+      }) : data).forEach((dataRow, rowIdx) => {
+        const rowData = [];
+        currRowKey = '';
+
+        sortedColDefs.forEach((colD, cellIdx) => {
+          // Data section
           const columnIdentifier = colD.colId || colD.field;
           let cellValue = dataRow[columnIdentifier];
-
           if (colD.valueGetter && typeof colD.valueGetter === 'function') {
             cellValue = colD.valueGetter({ data: dataRow } as ValueGetterParams);
           }
-          row.push(cellValue);
+
+          // Collapseable column check section
+          const { field } = colD;
+          if (collapseableCols && field && collapseableCols.includes(field)) {
+            currRowKey = currRowKey.concat(cellValue as string);
+            if (!colIdxsToCombine[cellIdx]) {
+              colIdxsToCombine[cellIdx] = true;
+            }
+          }
+
+          rowData.push(cellValue);
         });
-        massagedData.push(row);
+
+        // Check which rows & cols to collapse into each other
+        if (collapseableCols) {
+          if (currRowKey !== prevRowKey) {
+            prevRowKey = currRowKey;
+            countBack = 1;
+          } else {
+            rowIdxsToSkip[rowIdx] = true;
+            if (!rowIdxsToExpand[rowIdx - countBack]) {
+              rowIdxsToExpand[rowIdx - countBack] = 2;
+            } else {
+              rowIdxsToExpand[rowIdx - countBack] += 1;
+            }
+            countBack += 1;
+          }
+        }
+
+        massagedData.push(rowData);
       });
       component = (
         <>
@@ -92,10 +138,41 @@ const PrintTable = ({
           }
         </>
       );
+      if (collapseableCols) {
+        component = (
+          <>
+            {
+              massagedData.map((row, rowIdx) => (
+                <tr key={rowIdx} className="table__row">
+                  {/* eslint-disable-next-line react/no-array-index-key */}
+                  {row.map((value, cellIdx) => {
+                    let clsNames = 'table__cell';
+                    let rowSpan = 1;
+                    if (rowIdxsToSkip[rowIdx] && colIdxsToCombine[cellIdx]) {
+                      clsNames += '--skip';
+                    }
+                    if (rowIdxsToExpand[rowIdx] && colIdxsToCombine[cellIdx]) {
+                      rowSpan = rowIdxsToExpand[rowIdx];
+                    }
+                    return (
+                      <td
+                        rowSpan={rowSpan}
+                        className={clsNames}
+                        key={`${rowIdx}-${cellIdx}-${value}`}
+                      >
+                        {value}
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))
+            }
+          </>
+        );
+      }
     }
-
     return component;
-  }, [sortedColDefs, noRowsText, data]);
+  }, [sortedColDefs, noRowsText, data, collapseableCols]);
 
   return (
     <div className="table-container">
@@ -111,7 +188,7 @@ const PrintTable = ({
             </tr>
           </thead>
           <tbody>
-            {sortedData}
+            {sortedDataRows}
           </tbody>
         </table>
       )}
