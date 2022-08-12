@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "ipr-client",
-  "version": "6.12.0",
+  "version": "6.13.1",
   "keywords": [],
   "license": "GPL-3.0",
   "sideEffects": false,
@@ -114,7 +114,7 @@
     "jss": "~10.6.0",
     "jwt-decode": "~3.1.2",
     "keycloak-js": "~10.0.2",
-    "lodash": "^4.17.21",
+    "lodash.capitalize": "^4.2.1",
     "lodash.differenceby": "~4.8.0",
     "lodash.get": "~4.4.2",
     "lodash.omit": "~4.5.0",
