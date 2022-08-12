@@ -25,13 +25,14 @@ import VariantChips from './components/VariantChips';
 import VariantCounts from './components/VariantCounts';
 import TumourSummaryEdit from './components/TumourSummaryEdit';
 import {
-  MsiType,
   PatientInformationType,
   GeneVariantType,
   TumourSummaryType,
   MicrobialType,
 } from './types';
-import { MutationBurdenType, ComparatorType } from '../MutationBurden/types';
+import {
+  MutationBurdenType, ComparatorType, MsiType, TmburType,
+} from '../MutationBurden/types';
 import MutationSignatureType from '../MutationSignatures/types';
 import { ImmuneType } from '../Immune/types';
 
@@ -94,6 +95,7 @@ const GenomicSummary = ({
   const [primaryBurden, setPrimaryBurden] = useState<MutationBurdenType>();
   const [variants, setVariants] = useState<GeneVariantType[]>();
   const [msi, setMsi] = useState<MsiType>();
+  const [tmburMutBur, setTmburMutBur] = useState<TmburType>();
 
   const [microbial, setMicrobial] = useState<MicrobialType>({
     species: '',
@@ -124,6 +126,7 @@ const GenomicSummary = ({
             api.get(`/reports/${report.ident}/mutation-burden`),
             api.get(`/reports/${report.ident}/immune-cell-types`),
             api.get(`/reports/${report.ident}/msi`),
+            api.get(`/reports/${report.ident}/tmbur-mutation-burden`),
           ]);
 
           const [
@@ -134,6 +137,7 @@ const GenomicSummary = ({
             burdenResp,
             immuneResp,
             msiResp,
+            tmburResp,
           ] = await apiCalls.request();
 
           setPrimaryComparator(comparatorsResp.find(({ analysisRole }) => analysisRole === 'mutation burden (primary)'));
@@ -147,6 +151,10 @@ const GenomicSummary = ({
 
           if (msiResp.length) {
             setMsi(msiResp[0]);
+          }
+
+          if (tmburResp) {
+            setTmburMutBur(tmburResp);
           }
 
           const output = [];
@@ -174,7 +182,7 @@ const GenomicSummary = ({
             loadedDispatch({ type: 'summary' });
           }
         } catch (err) {
-          snackbar.error(`Network error: ${err}`);
+          snackbar.error(`Network error: ${err?.message ?? err}`);
         } finally {
           setIsLoading(false);
         }
@@ -303,9 +311,23 @@ const GenomicSummary = ({
           term: 'MSI Status',
           value: msiStatus,
         },
+        {
+          term: 'Genome SNV TMB (mut/mb)', // float
+          value: tmburMutBur?.genomeIndelTmb.toString(),
+        },
+        {
+          term: 'Genome Indel TMB (mut/mb)', // float
+          value: tmburMutBur?.genomeIndelTmb.toString(),
+        },
+        {
+          term: 'Genome TMB (mut/mb)', // float
+          // Forced to do this due to javascript floating point issues
+          value:
+            tmburMutBur ? (tmburMutBur.genomeSnvTmb + tmburMutBur.genomeIndelTmb).toFixed(4) : '',
+        },
       ]);
     }
-  }, [history, microbial, microbial.species, primaryBurden, primaryComparator, isPrint, report, signatures, tCellCd8, msi]);
+  }, [history, microbial, microbial.species, primaryBurden, primaryComparator, isPrint, report, signatures, tCellCd8, msi, tmburMutBur]);
 
   const handleChipDeleted = useCallback(async (chipIdent, type, comment) => {
     try {
