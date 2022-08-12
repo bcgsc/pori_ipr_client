@@ -1,8 +1,14 @@
 import React, {
-  useEffect, useState, useContext,
+  useEffect, useState, useContext, useMemo,
 } from 'react';
 import {
   Typography,
+  Card,
+  CardHeader,
+  CardContent,
+  Table,
+  TableCell,
+  TableRow,
 } from '@mui/material';
 
 import DemoDescription from '@/components/DemoDescription';
@@ -14,7 +20,7 @@ import ImageType from '@/components/Image/types';
 import api, { ApiCallSet } from '@/services/api';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import {
-  ComparatorType, MutationBurdenType, MsiType,
+  ComparatorType, MutationBurdenType, MsiType, TmburType,
 } from './types';
 import TabCards from './components/TabCards';
 import columnDefs from './columnDefs';
@@ -88,6 +94,24 @@ const processImages = (images: ImageType[]): Record<string, Record<string, Image
   return {};
 };
 
+const TMBUR_FIELD_TO_LABEL = {
+  nonNBasesIn1To22AndXAndY: 'Non-N bases in 1-22,X,Y',
+  totalGenomeSnvs: 'Total genome SNVs',
+  totalGenomeIndels: 'Total genome Indels',
+  genomeSnvTmb: 'Genome SNV TMB (mut/mb)',
+  genomeIndelTmb: 'Genome Indel TMB (mut/mb)',
+  genomeTmb: 'Genome TMB (mut/mb) ',
+  cdsBasesIn1To22AndXAndY: 'CDS bases in 1-22,X,Y',
+  cdsSnvs: 'CDS SNVs',
+  cdsIndels: 'CDS Indels',
+  cdsSnvTmb: 'CDS SNV TMB (mut/mb)',
+  cdsIndelTmb: 'CDS Indel TMBs (mut/mb)',
+  proteinSnvs: 'Protein SNVs',
+  proteinIndels: 'Protein INDELs',
+  proteinSnvTmb: 'Protein SNV TMB (mut/mb)',
+  proteinIndelTmb: 'Protein Indel TMB (mut/mb)',
+};
+
 type MutationBurdenProps = WithLoadingInjectedProps;
 
 const MutationBurden = ({
@@ -99,6 +123,7 @@ const MutationBurden = ({
   const [images, setImages] = useState<Record<string, Record<string, ImageType[]>>>();
   const [comparators, setComparators] = useState<ComparatorType[]>([]);
   const [mutationBurden, setMutationBurden] = useState<MutationBurdenType[]>([]);
+  const [tmburMutBur, setTmburMutBur] = useState<TmburType>();
   const [msi, setMsi] = useState<MsiType[]>([]);
   const [msiScatter, setMsiScatter] = useState<ImageType>();
 
@@ -112,15 +137,22 @@ const MutationBurden = ({
             api.get(`/reports/${report.ident}/image/mutation-burden`),
             api.get(`/reports/${report.ident}/comparators`),
             api.get(`/reports/${report.ident}/mutation-burden`),
+            api.get(`/reports/${report.ident}/tmbur-mutation-burden`),
           ]);
           const [
-            msiResp, msiScatterResp, imagesResp, comparatorsResp, mutationBurdenResp,
+            msiResp, msiScatterResp, imagesResp, comparatorsResp, mutationBurdenResp, tmburResp,
           ] = await calls.request();
           setMsi(msiResp);
           setMsiScatter(msiScatterResp.find((img) => img.key === 'msi.scatter'));
           setImages(processImages(imagesResp));
           setComparators(comparatorsResp);
           setMutationBurden(mutationBurdenResp);
+
+          // tmburResp additions
+          setTmburMutBur({
+            ...tmburResp,
+            genomeTmb: parseFloat((tmburResp.genomeSnvTmb + tmburResp.genomeIndelTmb).toFixed(12)),
+          });
         } catch (err) {
           snackbar.error(`Network error: ${err}`);
         } finally {
@@ -141,6 +173,52 @@ const MutationBurden = ({
     }
     return 'Structural Variants (SV)';
   };
+
+  const tmBurSection = useMemo(() => {
+    let sectionContent = null;
+    if (tmburMutBur?.ident) {
+      sectionContent = Object.entries(TMBUR_FIELD_TO_LABEL).map(([fieldName, fieldLabel]) => {
+        const fieldValue = tmburMutBur[fieldName];
+        return (
+          fieldValue ? (
+            <TableRow>
+              <TableCell style={{ border: 'none' }}>
+                <Typography variant="body2">{fieldLabel}</Typography>
+              </TableCell>
+              <TableCell style={{ border: 'none' }}>
+                <Typography variant="body2">{fieldValue}</Typography>
+              </TableCell>
+            </TableRow>
+          ) : null
+        );
+      });
+    } else {
+      return (
+        <Typography variant="h5" align="center">
+          No TMBur data found
+        </Typography>
+      );
+    }
+    return (
+      <>
+        <Typography variant="h3">
+          TMBur
+        </Typography>
+        <div className="mutation-burden__content">
+          <div className="mutation-burden__tmbur">
+            <Card className="mutation-burden__group" elevation={3}>
+              <CardHeader title="TMBur" />
+              <CardContent>
+                <Table size="small">
+                  {sectionContent}
+                </Table>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </>
+    );
+  }, [tmburMutBur]);
 
   return (
     <div className="mutation-burden">
@@ -181,6 +259,7 @@ const MutationBurden = ({
                   </React.Fragment>
                 );
               })}
+              {tmburMutBur && tmBurSection}
             </div>
           )}
           {(!comparators.length || !mutationBurden.length || !images) && !isLoading && (

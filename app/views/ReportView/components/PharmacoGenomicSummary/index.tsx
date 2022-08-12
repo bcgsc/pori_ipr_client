@@ -23,6 +23,7 @@ import PrintTable from '@/components/PrintTable';
 import TestInformation, { TestInformationType } from '@/components/TestInformation';
 import { KbMatchType } from '@/common';
 import PatientEdit from '@/components/PatientEdit';
+import capitalize from 'lodash.capitalize';
 import {
   sampleColumnDefs,
   pharmacoGenomicColumnDefs,
@@ -30,7 +31,6 @@ import {
   cancerPredisColumnDefs,
   cancerPredisPrintColumnDefs,
 } from './columnDefs';
-
 import './index.scss';
 
 type PharmacoGenomicSummaryProps = {
@@ -282,6 +282,28 @@ const PharmacoGenomicSummary = ({
     return component;
   }, [cancerPredisposition, isPrint]);
 
+  const reviewSignatures = useMemo(() => {
+    let order: SignatureUserType[] = ['author', 'reviewer', 'creator'];
+    if (isPrint) {
+      order = ['creator', 'author', 'reviewer'];
+    }
+    return order.map((sigType) => {
+      let title: string = sigType;
+      if (sigType === 'author') {
+        title = isPrint ? 'Manual Review' : 'Ready';
+      }
+      return (
+        <SignatureCard
+          onClick={handleSign}
+          signatures={signatures}
+          title={capitalize(title)}
+          type={sigType}
+          isPrint={isPrint}
+        />
+      );
+    });
+  }, [handleSign, isPrint, signatures]);
+
   return (
     <div className="summary">
       {report && (
@@ -373,27 +395,7 @@ const PharmacoGenomicSummary = ({
               Reviews
             </Typography>
             <div className="summary__signatures">
-              <SignatureCard
-                title={`${isPrint ? 'Manual Review' : 'Ready'}`}
-                signatures={signatures}
-                onClick={handleSign}
-                type="author"
-                isPrint={isPrint}
-              />
-              <SignatureCard
-                title="Reviewer"
-                signatures={signatures}
-                onClick={handleSign}
-                type="reviewer"
-                isPrint={isPrint}
-              />
-              <SignatureCard
-                title="Creator"
-                signatures={signatures}
-                onClick={handleSign}
-                type="creator"
-                isPrint={isPrint}
-              />
+              {reviewSignatures}
             </div>
           </div>
         </>
