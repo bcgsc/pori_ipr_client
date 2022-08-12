@@ -21,8 +21,8 @@ import PrintTable from '@/components/PrintTable';
 import TestInformation, { TestInformationType } from '@/components/TestInformation';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import PatientEdit from '@/components/PatientEdit';
+import EventsEditDialog from '@/components/EventsEditDialog';
 import { sampleColumnDefs, eventsColumnDefs } from './columnDefs';
-import EventsEditDialog from './components/EventsEditDialog';
 import ProbeResultsType from './types.d';
 
 import './index.scss';
