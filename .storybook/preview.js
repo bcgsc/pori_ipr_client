@@ -1,7 +1,5 @@
 import React from 'react';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { addDecorator } from "@storybook/react";
-import { withThemes } from "@react-theming/storybook-addon";
+import { ThemeProvider } from '@mui/material/styles';
 import theme from '../app/appTheme';
 
 export const parameters = {
@@ -14,10 +12,8 @@ export const parameters = {
   },
 }
 
-const providerFn = ({ theme, children }) => {
-  const serialTheme = JSON.parse(JSON.stringify(theme));
-  const muiTheme = createTheme(serialTheme);
-  return <ThemeProvider theme={muiTheme}>{children}</ThemeProvider>;
+const withThemeProvider = (Story, context) => {
+  return <ThemeProvider theme={theme}><Story {...context}/></ThemeProvider>;
 };
 
-addDecorator(withThemes(null, [theme], { providerFn }));
+export const decorators = [withThemeProvider];
