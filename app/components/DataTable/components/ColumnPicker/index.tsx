@@ -66,18 +66,18 @@ const ColumnPicker = ({
         <div className="options-menu__label">
           {label}
         </div>
-        {columns.map((row) => (
-          <div key={row.name}>
+        {columns.map((col) => (
+          <div key={col.name}>
             <div className="options-menu__content">
               <FormControlLabel
                 control={(
                   <Checkbox
                     color="primary"
-                    checked={visibleCols.includes(row?.getColId())}
-                    onChange={(event) => handleChange(event, row?.getColId())}
+                    checked={visibleCols.includes(col?.getColId())}
+                    onChange={(event) => handleChange(event, col?.getColId())}
                   />
                 )}
-                label={row.name}
+                label={col.name ? col.name : col.getColId()}
               />
             </div>
           </div>
