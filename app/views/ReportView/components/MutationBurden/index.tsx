@@ -137,10 +137,10 @@ const MutationBurden = ({
             api.get(`/reports/${report.ident}/image/mutation-burden`),
             api.get(`/reports/${report.ident}/comparators`),
             api.get(`/reports/${report.ident}/mutation-burden`),
-            api.get(`/reports/${report.ident}/tmbur-mutation-burden`),
+            // api.get(`/reports/${report.ident}/tmbur-mutation-burden`),
           ]);
           const [
-            msiResp, msiScatterResp, imagesResp, comparatorsResp, mutationBurdenResp, tmburResp,
+            msiResp, msiScatterResp, imagesResp, comparatorsResp, mutationBurdenResp,
           ] = await calls.request();
           setMsi(msiResp);
           setMsiScatter(msiScatterResp.find((img) => img.key === 'msi.scatter'));
@@ -148,11 +148,18 @@ const MutationBurden = ({
           setComparators(comparatorsResp);
           setMutationBurden(mutationBurdenResp);
 
-          // tmburResp additions
-          setTmburMutBur({
-            ...tmburResp,
-            genomeTmb: parseFloat((tmburResp.genomeSnvTmb + tmburResp.genomeIndelTmb).toFixed(12)),
-          });
+          try {
+            const tmBurCall = api.get(`/reports/${report.ident}/tmbur-mutation-burden`);
+            const tmburResp = await tmBurCall.request();
+            // tmburResp additions
+            setTmburMutBur({
+              ...tmburResp,
+              genomeTmb: parseFloat((tmburResp.genomeSnvTmb + tmburResp.genomeIndelTmb).toFixed(12)),
+            });
+          } catch (e) {
+            // tmbur does not exist in records before this implementation, and no backfill will be done on the backend, silent fail this
+            console.error('tmbur-mutation-burden call error', e?.message);
+          }
         } catch (err) {
           snackbar.error(`Network error: ${err}`);
         } finally {
