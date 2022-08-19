@@ -1,5 +1,5 @@
 import React, {
-  useState, useEffect, useContext, useCallback,
+  useState, useEffect, useContext, useCallback, useMemo,
 } from 'react';
 import {
   Typography,
@@ -7,7 +7,7 @@ import {
   Grid,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-
+import capitalize from 'lodash.capitalize';
 import api, { ApiCallSet } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
@@ -277,6 +277,28 @@ const ProbeSummary = ({
     );
   }
 
+  const reviewSignatures = useMemo(() => {
+    let order: SignatureUserType[] = ['author', 'reviewer', 'creator'];
+    if (isPrint) {
+      order = ['creator', 'author', 'reviewer'];
+    }
+    return order.map((sigType) => {
+      let title: string = sigType;
+      if (sigType === 'author') {
+        title = isPrint ? 'Manual Review' : 'Ready';
+      }
+      return (
+        <SignatureCard
+          onClick={handleSign}
+          signatures={signatures}
+          title={capitalize(title)}
+          type={sigType}
+          isPrint={isPrint}
+        />
+      );
+    });
+  }, [handleSign, isPrint, signatures]);
+
   return (
     <div className="probe-summary">
       {!isLoading && (
@@ -364,27 +386,7 @@ const ProbeSummary = ({
                 </Typography>
               )}
               <div className="probe-summary__signatures">
-                <SignatureCard
-                  title={`${isPrint ? 'Manual Review' : 'Ready'}`}
-                  signatures={signatures}
-                  onClick={handleSign}
-                  type="author"
-                  isPrint={isPrint}
-                />
-                <SignatureCard
-                  title="Reviewer"
-                  signatures={signatures}
-                  onClick={handleSign}
-                  type="reviewer"
-                  isPrint={isPrint}
-                />
-                <SignatureCard
-                  title="Creator"
-                  signatures={signatures}
-                  onClick={handleSign}
-                  type="creator"
-                  isPrint={isPrint}
-                />
+                {reviewSignatures}
               </div>
             </div>
           )}
