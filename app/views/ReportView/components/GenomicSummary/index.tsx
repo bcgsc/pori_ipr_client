@@ -126,7 +126,6 @@ const GenomicSummary = ({
             api.get(`/reports/${report.ident}/mutation-burden`),
             api.get(`/reports/${report.ident}/immune-cell-types`),
             api.get(`/reports/${report.ident}/msi`),
-            api.get(`/reports/${report.ident}/tmbur-mutation-burden`),
           ]);
 
           const [
@@ -137,8 +136,18 @@ const GenomicSummary = ({
             burdenResp,
             immuneResp,
             msiResp,
-            tmburResp,
           ] = await apiCalls.request();
+
+          try {
+            const tmBurCall = api.get(`/reports/${report.ident}/tmbur-mutation-burden`);
+            const tmburResp = await tmBurCall.request();
+            if (tmburResp) {
+              setTmburMutBur(tmburResp);
+            }
+          } catch (e) {
+            // tmbur does not exist in records before this implementation, and no backfill will be done on the backend, silent fail this
+            console.error('tmbur-mutation-burden call error', e?.message);
+          }
 
           setPrimaryComparator(comparatorsResp.find(({ analysisRole }) => analysisRole === 'mutation burden (primary)'));
           setPrimaryBurden(burdenResp.find((entry: Record<string, unknown>) => entry.role === 'primary'));
@@ -151,10 +160,6 @@ const GenomicSummary = ({
 
           if (msiResp.length) {
             setMsi(msiResp[0]);
-          }
-
-          if (tmburResp) {
-            setTmburMutBur(tmburResp);
           }
 
           const output = [];
@@ -190,7 +195,7 @@ const GenomicSummary = ({
 
       getData();
     }
-  }, [loadedDispatch, report, setIsLoading]);
+  }, [loadedDispatch, report, setIsLoading, isPrint]);
 
   useEffect(() => {
     if (report && report.patientInformation) {
@@ -313,11 +318,11 @@ const GenomicSummary = ({
         },
         {
           term: 'Genome SNV TMB (mut/mb)', // float
-          value: tmburMutBur?.genomeIndelTmb.toString(),
+          value: tmburMutBur ? tmburMutBur.genomeIndelTmb.toString() : '',
         },
         {
           term: 'Genome Indel TMB (mut/mb)', // float
-          value: tmburMutBur?.genomeIndelTmb.toString(),
+          value: tmburMutBur ? tmburMutBur.genomeIndelTmb.toString() : '',
         },
         {
           term: 'Genome TMB (mut/mb)', // float

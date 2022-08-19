@@ -17,6 +17,20 @@
     .ag-row:last-child {
       border-bottom: none;
     }
+
+    .cell-span, .cell-span--last {
+      display: flex;
+      align-items: center;
+      background-color: white;
+      // Importants are to override default behavior of the grid
+      border-bottom: 1px solid
+        var(--ag-row-border-color, var(--ag-secondary-border-color, var(--ag-border-color, #e2e2e2))) !important;
+    }
+
+    .cell-span--last {
+      // Importants are to override default behavior of the grid
+      border-bottom: none !important;
+    }
   }
 
   &__header-container {
