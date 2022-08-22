@@ -1,38 +1,36 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import PropTypes from 'prop-types';
-import { Autocomplete } from '@mui/material';
 import {
   TextField,
   CircularProgress,
+  Autocomplete,
 } from '@mui/material';
 
 import api from '@/services/api';
 
-/**
- * @param {object} props props
- * @param {string} defaultValue default text in input box
- * @param {string} type type used for API autocomplete
- * @param {string} label text box label text
- * @param {bool} required is this field required
- * @param {func} onChange callback when value is selected
- * @param {string} error form error text
- * @param {number} minCharacters minimum amount of characters to hit API endpoint
- * @return {*} JSX
- */
-const AutocompleteHandler = (props) => {
+type AutocompleteHandlerProps = {
+  defaultValue: unknown;
+  type: string;
+  label: string;
+  required: boolean;
+  onChange: (selectedValue: unknown, typeName: string) => void;
+  error: string;
+  minCharacters: number;
+};
+
+const AutocompleteHandler = (props: AutocompleteHandlerProps) => {
   const {
-    defaultValue,
+    defaultValue = '',
     type,
     label,
-    required,
-    onChange,
+    required = false,
+    onChange = () => { },
     error,
-    minCharacters,
+    minCharacters = 3,
   } = props;
 
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState(null);
 
   useEffect(() => {
     if (defaultValue) {
@@ -49,15 +47,15 @@ const AutocompleteHandler = (props) => {
 
       // Find all query strings that are 3 characters or longer.
       // Needed for KB API to process multiple words
-      queryString = queryString.split(' ').filter(str => str.length >= minCharacters).join(' ');
+      queryString = queryString.split(' ').filter((str) => str.length >= minCharacters).join(' ');
       const { result } = await api.get(`/graphkb/${type}?search=${queryString}`).request();
 
-      setOptions(result);
+      setOptions(result ?? []);
       setLoading(false);
     }
   };
 
-  const handleAutocompleteChange = useCallback((event, val) => {
+  const handleAutocompleteChange = useCallback((_event, val) => {
     setValue(val);
     onChange(val, type);
   }, [onChange, type]);
@@ -69,10 +67,10 @@ const AutocompleteHandler = (props) => {
       classes={{ popper: 'autocomplete__popper' }}
       onChange={handleAutocompleteChange}
       options={options}
-      getOptionLabel={option => option.displayName || option}
+      getOptionLabel={(option) => option.displayName || option}
       value={value}
       noOptionsText={`Input ${minCharacters} character${minCharacters > 1 ? 's' : ''} for autocomplete`}
-      renderInput={params => (
+      renderInput={(params) => (
         <TextField
           {...params}
           label={label}
@@ -85,9 +83,7 @@ const AutocompleteHandler = (props) => {
           InputProps={{
             ...params.InputProps,
             endAdornment: (
-              <React.Fragment>
-                {loading ? <CircularProgress color="inherit" size={20} /> : null}
-              </React.Fragment>
+              loading ? <CircularProgress color="inherit" size={20} /> : null
             ),
           }}
         />
@@ -96,20 +92,8 @@ const AutocompleteHandler = (props) => {
   );
 };
 
-AutocompleteHandler.propTypes = {
-  defaultValue: PropTypes.string,
-  type: PropTypes.string.isRequired,
-  label: PropTypes.string.isRequired,
-  required: PropTypes.bool,
-  onChange: PropTypes.func,
-  minCharacters: PropTypes.number,
-};
-
-AutocompleteHandler.defaultProps = {
-  defaultValue: '',
-  required: false,
-  onChange: () => { },
-  minCharacters: 3,
+export {
+  AutocompleteHandler,
 };
 
 export default AutocompleteHandler;
