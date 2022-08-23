@@ -139,8 +139,7 @@ const GenomicSummary = ({
           ] = await apiCalls.request();
 
           try {
-            const tmBurCall = api.get(`/reports/${report.ident}/tmbur-mutation-burden`);
-            const tmburResp = await tmBurCall.request();
+            const tmburResp = await api.get(`/reports/${report.ident}/tmbur-mutation-burden`).request();
             if (tmburResp) {
               setTmburMutBur(tmburResp);
             }
