@@ -327,7 +327,7 @@ const GenomicSummary = ({
           term: 'Genome TMB (mut/mb)', // float
           // Forced to do this due to javascript floating point issues
           value:
-            tmburMutBur ? (tmburMutBur.genomeSnvTmb + tmburMutBur.genomeIndelTmb).toFixed(4) : '',
+            tmburMutBur ? (tmburMutBur.genomeSnvTmb + tmburMutBur.genomeIndelTmb).toFixed(2) : '',
         },
       ]);
     }
