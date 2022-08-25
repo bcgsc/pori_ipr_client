@@ -16,13 +16,14 @@ import UserContext from '@/context/UserContext';
 import ConfirmContext from '@/context/ConfirmContext';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import { formatDate } from '@/utils/date';
-import SignatureCard, { SignatureType } from '@/components/SignatureCard';
+import SignatureCard, { SignatureType, SignatureUserType } from '@/components/SignatureCard';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import snackbar from '@/services/SnackbarUtils';
 import PrintTable from '@/components/PrintTable';
 import TestInformation, { TestInformationType } from '@/components/TestInformation';
 import { KbMatchType } from '@/common';
 import PatientEdit from '@/components/PatientEdit';
+import capitalize from 'lodash.capitalize';
 import {
   sampleColumnDefs,
   pharmacoGenomicColumnDefs,
@@ -30,7 +31,6 @@ import {
   cancerPredisColumnDefs,
   cancerPredisPrintColumnDefs,
 } from './columnDefs';
-
 import './index.scss';
 
 type PharmacoGenomicSummaryProps = {
@@ -194,7 +194,7 @@ const PharmacoGenomicSummary = ({
     ]);
   }, [isSigned, report, setReport]);
 
-  const handleSign = useCallback(async (signed: boolean, role: 'author' | 'reviewer') => {
+  const handleSign = useCallback(async (signed: boolean, role: SignatureUserType) => {
     let newSignature: SignatureType;
 
     if (signed) {
@@ -281,6 +281,28 @@ const PharmacoGenomicSummary = ({
     }
     return component;
   }, [cancerPredisposition, isPrint]);
+
+  const reviewSignatures = useMemo(() => {
+    let order: SignatureUserType[] = ['author', 'reviewer', 'creator'];
+    if (isPrint) {
+      order = ['creator', 'author', 'reviewer'];
+    }
+    return order.map((sigType) => {
+      let title: string = sigType;
+      if (sigType === 'author') {
+        title = isPrint ? 'Manual Review' : 'Ready';
+      }
+      return (
+        <SignatureCard
+          onClick={handleSign}
+          signatures={signatures}
+          title={capitalize(title)}
+          type={sigType}
+          isPrint={isPrint}
+        />
+      );
+    });
+  }, [handleSign, isPrint, signatures]);
 
   return (
     <div className="summary">
@@ -373,20 +395,7 @@ const PharmacoGenomicSummary = ({
               Reviews
             </Typography>
             <div className="summary__signatures">
-              <SignatureCard
-                title={`${isPrint ? 'Manual Review' : 'Ready'}`}
-                signatures={signatures}
-                onClick={handleSign}
-                type="author"
-                isPrint={isPrint}
-              />
-              <SignatureCard
-                title="Reviewer"
-                signatures={signatures}
-                onClick={handleSign}
-                type="reviewer"
-                isPrint={isPrint}
-              />
+              {reviewSignatures}
             </div>
           </div>
         </>

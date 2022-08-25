@@ -17,6 +17,7 @@ const columnDefs = [{
       ? `${variant.gene1.name}, ${variant.gene2.name}`
       : variant.gene1.name || variant.gene2.name;
   },
+  sort: 'asc',
 },
 {
   headerName: 'Known Variant',
@@ -39,10 +40,10 @@ const columnDefs = [{
     }
     if (variantType === 'sv') {
       return `(${variant.gene1.name || '?'
-        },${variant.gene2.name || '?'
-        }):fusion(e.${variant.exon1 || '?'
-        },e.${variant.exon2 || '?'
-        })`;
+      },${variant.gene2.name || '?'
+      }):fusion(e.${variant.exon1 || '?'
+      },e.${variant.exon2 || '?'
+      })`;
     }
     if (variantType === 'mut') {
       return `${variant.gene.name}:${variant.proteinChange}`;
@@ -103,12 +104,6 @@ const columnDefs = [{
   field: 'inferred',
   valueGetter: 'data.inferred || false',
   hide: true,
-},
-{
-  headerName: 'Sample',
-  field: 'sample',
-  cellRendererFramework: ArrayCell('sample', false),
-  hide: false,
 },
 {
   headerName: 'Review Status',
@@ -177,6 +172,7 @@ const targetedColumnDefs = [{
   field: 'gene.name',
   cellRenderer: 'GeneCellRenderer',
   hide: false,
+  sort: 'asc',
 },
 {
   headerName: 'Variant',

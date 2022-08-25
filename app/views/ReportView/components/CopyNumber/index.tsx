@@ -86,7 +86,7 @@ const CopyNumber = ({
             for (const {
               gene: {
                 expressionVariants: {
-                  tpm, rpkm, primarySiteFoldChange, primarySitekIQR,
+                  tpm, rpkm, primarySiteFoldChange, diseasekIQR,
                 },
               },
             } of cnvsResp) {
@@ -100,8 +100,8 @@ const CopyNumber = ({
               if (primarySiteFoldChange !== null && !nextVisible.includes('primarySiteFoldChange')) {
                 nextVisible.push('primarySiteFoldChange');
               }
-              if (primarySitekIQR !== null && !nextVisible.includes('primarySitekIQR')) {
-                nextVisible.push('primarySitekIQR');
+              if (diseasekIQR !== null && !nextVisible.includes('diseasekIQR')) {
+                nextVisible.push('diseasekIQR');
               }
               if (nextVisible.length === 2) {
                 break;

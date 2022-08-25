@@ -1,10 +1,12 @@
 import { RecordDefaults, UserType } from '@/common';
 
-type SignatureType = ({
+export type SignatureType = ({
   authorSignature: null | UserType;
   authorSignedAt: null | string;
   reviewerSignature: null | UserType;
   reviewerSignedAt: null | string;
+  creatorSignature: null | UserType;
+  creatorSignedAt: null | string;
 } & RecordDefaults) | null;
 
-export default SignatureType;
+export type SignatureUserType = 'author' | 'reviewer' | 'creator';

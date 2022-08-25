@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useState, useContext, useCallback,
+  useEffect, useState, useContext, useCallback, useMemo,
 } from 'react';
 import {
   Typography,
@@ -13,9 +13,10 @@ import snackbar from '@/services/SnackbarUtils';
 import { useUser } from '@/context/UserContext';
 import DemoDescription from '@/components/DemoDescription';
 import ReportContext from '@/context/ReportContext';
-import SignatureCard, { SignatureType } from '@/components/SignatureCard';
+import SignatureCard, { SignatureType, SignatureUserType } from '@/components/SignatureCard';
 import ConfirmContext from '@/context/ConfirmContext';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import capitalize from 'lodash.capitalize';
 import TextEditor from './components/TextEditor';
 
 import './index.scss';
@@ -67,7 +68,7 @@ const AnalystComments = ({
     }
   }, [report, setIsLoading]);
 
-  const handleSign = useCallback(async (signed: boolean, role: 'author' | 'reviewer') => {
+  const handleSign = useCallback(async (signed: boolean, role: SignatureUserType) => {
     let newSignature;
 
     if (signed) {
@@ -114,6 +115,29 @@ const AnalystComments = ({
     }
   }, [report, isSigned]);
 
+  const signatureSection = useMemo(() => {
+    if (!comments) return null;
+    let order: SignatureUserType[] = ['author', 'reviewer', 'creator'];
+    if (isPrint) {
+      order = ['creator', 'author', 'reviewer'];
+    }
+    return order.map((sigType) => {
+      let title: string = sigType;
+      if (sigType === 'author' && isPrint) {
+        title = 'Author Review';
+      }
+      return (
+        <SignatureCard
+          onClick={handleSign}
+          signatures={signatures}
+          title={capitalize(title)}
+          type={sigType}
+          isPrint={isPrint}
+        />
+      );
+    });
+  }, [isPrint, handleSign, comments, signatures]);
+
   return (
     <div className="analyst-comments">
       <Typography
@@ -157,20 +181,7 @@ const AnalystComments = ({
               {!isPrint && (
                 <Typography variant="h5">Signed By</Typography>
               )}
-              <SignatureCard
-                onClick={handleSign}
-                signatures={signatures}
-                title={isPrint ? 'Author Review' : 'Author'}
-                type="author"
-                isPrint={isPrint}
-              />
-              <SignatureCard
-                onClick={handleSign}
-                signatures={signatures}
-                title="Reviewer"
-                type="reviewer"
-                isPrint={isPrint}
-              />
+              {signatureSection}
             </div>
           )}
         </>

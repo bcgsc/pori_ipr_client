@@ -1,5 +1,5 @@
 import React, {
-  useState, useEffect, useContext, useCallback,
+  useState, useEffect, useContext, useCallback, useMemo,
 } from 'react';
 import {
   Typography,
@@ -7,7 +7,7 @@ import {
   Grid,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-
+import capitalize from 'lodash.capitalize';
 import api, { ApiCallSet } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
@@ -16,7 +16,7 @@ import { useUser } from '@/context/UserContext';
 import ConfirmContext from '@/context/ConfirmContext';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import { formatDate } from '@/utils/date';
-import SignatureCard, { SignatureType } from '@/components/SignatureCard';
+import SignatureCard, { SignatureType, SignatureUserType } from '@/components/SignatureCard';
 import PrintTable from '@/components/PrintTable';
 import TestInformation, { TestInformationType } from '@/components/TestInformation';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
@@ -49,7 +49,6 @@ const ProbeSummary = ({
     label: string;
     value: string | null;
   }[] | null>();
-  const [printEvents, setPrintEvents] = useState([]);
   const [editData, setEditData] = useState();
 
   const [showPatientEdit, setShowPatientEdit] = useState(false);
@@ -141,19 +140,6 @@ const ProbeSummary = ({
     }
   }, [loadedDispatch, report, setIsLoading]);
 
-  useEffect(() => {
-    if (probeResults && isPrint) {
-      setPrintEvents(probeResults.map((probe) => (
-        eventsColumnDefs.reduce((accumulator, current) => {
-          if (current.field) {
-            accumulator[current.field] = probe[current.field];
-          }
-          return accumulator;
-        }, { events: `${probe.gene.name} (${probe.variant})` })
-      )));
-    }
-  }, [probeResults, isPrint]);
-
   const handlePatientEditClose = useCallback(async (
     isSaved: boolean,
     newPatientData: PatientInformationType,
@@ -217,9 +203,9 @@ const ProbeSummary = ({
     ]);
   }, [isSigned, report, setReport]);
 
-  const handleSign = useCallback((signed: boolean, role: 'author' | 'reviewer') => {
+  const handleSign = useCallback((signed: boolean, role: SignatureUserType) => {
     let cancelled;
-    const sign = async (s: boolean, r: 'author' | 'reviewer') => {
+    const sign = async (s: boolean, r: SignatureUserType) => {
       let newSignature;
       if (s) {
         newSignature = await api.put(`/reports/${report.ident}/signatures/sign/${r}`, {}).request();
@@ -259,7 +245,7 @@ const ProbeSummary = ({
     if (isPrint) {
       probeResultSection = (
         <PrintTable
-          data={printEvents}
+          data={probeResults}
           columnDefs={eventsColumnDefs.filter((col) => col.headerName !== 'Actions')}
           order={['Genomic Events', 'Sample', 'Alt/Total (Tumour DNA)', 'Alt/Total (Tumour RNA)', 'Alt/Total (Normal DNA)', 'Comments']}
         />
@@ -290,6 +276,28 @@ const ProbeSummary = ({
       </div>
     );
   }
+
+  const reviewSignatures = useMemo(() => {
+    let order: SignatureUserType[] = ['author', 'reviewer', 'creator'];
+    if (isPrint) {
+      order = ['creator', 'author', 'reviewer'];
+    }
+    return order.map((sigType) => {
+      let title: string = sigType;
+      if (sigType === 'author') {
+        title = isPrint ? 'Manual Review' : 'Ready';
+      }
+      return (
+        <SignatureCard
+          onClick={handleSign}
+          signatures={signatures}
+          title={capitalize(title)}
+          type={sigType}
+          isPrint={isPrint}
+        />
+      );
+    });
+  }, [handleSign, isPrint, signatures]);
 
   return (
     <div className="probe-summary">
@@ -378,20 +386,7 @@ const ProbeSummary = ({
                 </Typography>
               )}
               <div className="probe-summary__signatures">
-                <SignatureCard
-                  title={`${isPrint ? 'Manual Review' : 'Ready'}`}
-                  signatures={signatures}
-                  onClick={handleSign}
-                  type="author"
-                  isPrint={isPrint}
-                />
-                <SignatureCard
-                  title="Reviewer"
-                  signatures={signatures}
-                  onClick={handleSign}
-                  type="reviewer"
-                  isPrint={isPrint}
-                />
+                {reviewSignatures}
               </div>
             </div>
           )}
