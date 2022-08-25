@@ -105,7 +105,7 @@ const TMBUR_FIELD_TO_LABEL = {
   cdsSnvs: 'CDS SNVs',
   cdsIndels: 'CDS Indels',
   cdsSnvTmb: 'CDS SNV TMB (mut/mb)',
-  cdsIndelTmb: 'CDS Indel TMBs (mut/mb)',
+  cdsIndelTmb: 'CDS Indel TMB (mut/mb)',
   proteinSnvs: 'Protein SNVs',
   proteinIndels: 'Protein INDELs',
   proteinSnvTmb: 'Protein SNV TMB (mut/mb)',
@@ -149,8 +149,7 @@ const MutationBurden = ({
           setMutationBurden(mutationBurdenResp);
 
           try {
-            const tmBurCall = api.get(`/reports/${report.ident}/tmbur-mutation-burden`);
-            const tmburResp = await tmBurCall.request();
+            const tmburResp = await api.get(`/reports/${report.ident}/tmbur-mutation-burden`).request();
             // tmburResp additions
             setTmburMutBur({
               ...tmburResp,
