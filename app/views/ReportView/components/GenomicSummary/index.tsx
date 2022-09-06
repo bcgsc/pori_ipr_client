@@ -155,7 +155,7 @@ const GenomicSummary = ({
           setSignatures(signaturesResp);
 
           if (microbialResp.length) {
-            setMicrobial(microbialResp[0]);
+            setMicrobial(microbialResp);
           }
 
           if (msiResp.length) {
@@ -285,7 +285,7 @@ const GenomicSummary = ({
         },
         {
           term: 'Microbial Species',
-          value: microbial ? microbial.species : null,
+          value: microbial ? Array.prototype.map.call(microbial, (item) => item.species).join(', ') : null,
         },
         {
           term: 'CD8+ T Cell Score',
