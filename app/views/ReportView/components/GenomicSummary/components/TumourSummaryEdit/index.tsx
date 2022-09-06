@@ -98,9 +98,10 @@ const TumourSummaryEdit = ({
 
       if (newMicrobialData) {
         if (microbial?.ident) {
-          apiCalls.push(api.put(`/reports/${report.ident}/summary/microbial/${microbial.ident}`, newMicrobialData, {}));
+          // TODO: Commented out due to DEVSU-1866 high priority, remove when better implementation has been discussed
+          // apiCalls.push(api.put(`/reports/${report.ident}/summary/microbial/${microbial.ident}`, newMicrobialData, {}));
         } else {
-          apiCalls.push(api.post(`/reports/${report.ident}/summary/microbial`, newMicrobialData, {}));
+          // apiCalls.push(api.post(`/reports/${report.ident}/summary/microbial`, newMicrobialData, {}));
         }
       } else {
         apiCalls.push({ request: () => null });
