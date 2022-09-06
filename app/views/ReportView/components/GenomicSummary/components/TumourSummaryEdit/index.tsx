@@ -98,10 +98,9 @@ const TumourSummaryEdit = ({
 
       if (newMicrobialData) {
         if (microbial?.ident) {
-          // TODO: Commented out due to DEVSU-1866 high priority, remove when better implementation has been discussed
-          // apiCalls.push(api.put(`/reports/${report.ident}/summary/microbial/${microbial.ident}`, newMicrobialData, {}));
+          apiCalls.push(api.put(`/reports/${report.ident}/summary/microbial/${microbial.ident}`, newMicrobialData, {}));
         } else {
-          // apiCalls.push(api.post(`/reports/${report.ident}/summary/microbial`, newMicrobialData, {}));
+          apiCalls.push(api.post(`/reports/${report.ident}/summary/microbial`, newMicrobialData, {}));
         }
       } else {
         apiCalls.push({ request: () => null });
@@ -164,7 +163,8 @@ const TumourSummaryEdit = ({
               multiline
               fullWidth
             />
-            <TextField
+            {/* TODO: Commented out due to DEVSU-1866 high priority, remove when better implementation has been discussed
+               <TextField
               className="tumour-dialog__text-field"
               label="Microbial Species"
               value={newMicrobialData.species}
@@ -173,7 +173,7 @@ const TumourSummaryEdit = ({
               variant="outlined"
               multiline
               fullWidth
-            />
+            /> */}
             <TextField
               className="tumour-dialog__text-field"
               label="Mutation Burden (Mut/Mb)"
