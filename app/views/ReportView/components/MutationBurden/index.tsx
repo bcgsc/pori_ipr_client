@@ -137,10 +137,13 @@ const MutationBurden = ({
             api.get(`/reports/${report.ident}/image/mutation-burden`),
             api.get(`/reports/${report.ident}/comparators`),
             api.get(`/reports/${report.ident}/mutation-burden`),
-            // api.get(`/reports/${report.ident}/tmbur-mutation-burden`),
           ]);
           const [
-            msiResp, msiScatterResp, imagesResp, comparatorsResp, mutationBurdenResp,
+            msiResp,
+            msiScatterResp,
+            imagesResp,
+            comparatorsResp,
+            mutationBurdenResp,
           ] = await calls.request();
           setMsi(msiResp);
           setMsiScatter(msiScatterResp.find((img) => img.key === 'msi.scatter'));
@@ -226,6 +229,76 @@ const MutationBurden = ({
     );
   }, [tmburMutBur]);
 
+  const mutationBurdenSection = useMemo(() => {
+    if (isLoading) {
+      return null;
+    }
+    if (Boolean(comparators.length) && Boolean(mutationBurden.length) && images) {
+      return (
+        <div className="mutation-burden__content">
+          {['SNV', 'Indel', 'SV'].map((type) => {
+            const barplots = images[type.toLowerCase()].barplot;
+            const densities = images[type.toLowerCase()].density;
+            const legends = images[type.toLowerCase()].legend;
+
+            return (
+              <React.Fragment key={type}>
+                <div className="mutation-burden__comparator">
+                  <Typography variant="h3">
+                    {getSectionHeader(type)}
+                  </Typography>
+                </div>
+                <TabCards
+                  type={type}
+                  comparators={comparators}
+                  mutationBurden={mutationBurden}
+                  barplots={barplots}
+                  densities={densities}
+                  legends={legends}
+                />
+              </React.Fragment>
+            );
+          })}
+          {tmburMutBur && tmBurSection}
+        </div>
+      );
+    }
+    return (
+      <div>
+        <Typography variant="h5" align="center">
+          No Mutation Burden data found
+        </Typography>
+      </div>
+    );
+  }, [comparators, images, isLoading, mutationBurden, tmBurSection, tmburMutBur]);
+
+  const msiSection = useMemo(() => {
+    if (isLoading) {
+      return null;
+    }
+    return (
+      <>
+        <Typography variant="h3">
+          Microsatellite Instability
+        </Typography>
+        {msiScatter && (
+          <div className="msi__image">
+            <Image
+              image={msiScatter}
+              showCaption
+              width={500}
+            />
+          </div>
+        )}
+        <DataTable
+          titleText="MSI Scores"
+          rowData={msi}
+          columnDefs={columnDefs}
+        />
+      </>
+    );
+  }, [msiScatter, msi, isLoading]);
+
   return (
     <div className="mutation-burden">
       <Typography variant="h3">
@@ -238,62 +311,8 @@ const MutationBurden = ({
         these are compared to an “average” cohort which is not tumour type specific but rather
         composed of all tumour types.
       </DemoDescription>
-      {!isLoading && (
-        <>
-          {Boolean(comparators.length) && Boolean(mutationBurden.length) && images && (
-            <div className="mutation-burden__content">
-              {['SNV', 'Indel', 'SV'].map((type) => {
-                const barplots = images[type.toLowerCase()].barplot;
-                const densities = images[type.toLowerCase()].density;
-                const legends = images[type.toLowerCase()].legend;
-
-                return (
-                  <React.Fragment key={type}>
-                    <div className="mutation-burden__comparator">
-                      <Typography variant="h3">
-                        {getSectionHeader(type)}
-                      </Typography>
-                    </div>
-                    <TabCards
-                      type={type}
-                      comparators={comparators}
-                      mutationBurden={mutationBurden}
-                      barplots={barplots}
-                      densities={densities}
-                      legends={legends}
-                    />
-                  </React.Fragment>
-                );
-              })}
-              {tmburMutBur && tmBurSection}
-            </div>
-          )}
-          {(!comparators.length || !mutationBurden.length || !images) && !isLoading && (
-            <div>
-              <Typography variant="h5" align="center">
-                No Mutation Burden data found
-              </Typography>
-            </div>
-          )}
-          <Typography variant="h3">
-            Microsatellite Instability
-          </Typography>
-          {msiScatter && (
-            <div className="msi__image">
-              <Image
-                image={msiScatter}
-                showCaption
-                width={500}
-              />
-            </div>
-          )}
-          <DataTable
-            titleText="MSI Scores"
-            rowData={msi}
-            columnDefs={columnDefs}
-          />
-        </>
-      )}
+      {mutationBurdenSection}
+      {msiSection}
     </div>
   );
 };
