@@ -216,6 +216,15 @@ const EditDialog = ({
           />
         </FormControl>
         <FormControl fullWidth>
+          <AutocompleteHandler
+            defaultValue={newData.iprEvidenceLevel}
+            type="iprEvidenceLevel"
+            label="IPR Evidence Level"
+            onChange={handleAutocompleteValueSelected}
+            minCharacters={1}
+          />
+        </FormControl>
+        <FormControl fullWidth>
           <TextField
             label="Notes"
             variant="outlined"

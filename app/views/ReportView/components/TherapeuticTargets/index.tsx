@@ -20,13 +20,14 @@ import TherapeuticType from './types';
 import './index.scss';
 
 const removeExtraProps = (data: TherapeuticType[]): Partial<TherapeuticType>[] => data.map(({
-  gene, variant, therapy, context, evidenceLevel, notes,
+  gene, variant, therapy, context, evidenceLevel, iprEvidenceLevel, notes,
 }) => ({
   gene,
   variant,
   therapy,
   context,
   evidenceLevel,
+  iprEvidenceLevel,
   notes,
 }));
 
