@@ -313,7 +313,7 @@ const GenomicSummary = ({
         },
         {
           term: 'MSI Status',
-          value: msiStatus,
+          value: !tmburMutBur ? msiStatus : null,
         },
         {
           term: 'Genome TMB (mut/mb)', // float
