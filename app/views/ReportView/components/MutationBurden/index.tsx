@@ -105,7 +105,7 @@ const TMBUR_FIELD_TO_LABEL = {
   cdsSnvs: 'CDS SNVs',
   cdsIndels: 'CDS Indels',
   cdsSnvTmb: 'CDS SNV TMB (mut/mb)',
-  cdsIndelTmb: 'CDS Indel TMBs (mut/mb)',
+  cdsIndelTmb: 'CDS Indel TMB (mut/mb)',
   proteinSnvs: 'Protein SNVs',
   proteinIndels: 'Protein INDELs',
   proteinSnvTmb: 'Protein SNV TMB (mut/mb)',

@@ -106,12 +106,6 @@ const columnDefs = [{
   hide: true,
 },
 {
-  headerName: 'Sample',
-  field: 'sample',
-  cellRendererFramework: ArrayCell('sample', false),
-  hide: false,
-},
-{
   headerName: 'Review Status',
   field: 'reviewStatus',
   hide: true,

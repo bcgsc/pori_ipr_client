@@ -316,18 +316,10 @@ const GenomicSummary = ({
           value: msiStatus,
         },
         {
-          term: 'Genome SNV TMB (mut/mb)', // float
-          value: tmburMutBur ? tmburMutBur.genomeIndelTmb.toString() : '',
-        },
-        {
-          term: 'Genome Indel TMB (mut/mb)', // float
-          value: tmburMutBur ? tmburMutBur.genomeIndelTmb.toString() : '',
-        },
-        {
           term: 'Genome TMB (mut/mb)', // float
           // Forced to do this due to javascript floating point issues
           value:
-            tmburMutBur ? (tmburMutBur.genomeSnvTmb + tmburMutBur.genomeIndelTmb).toFixed(4) : '',
+            tmburMutBur ? (tmburMutBur.genomeSnvTmb + tmburMutBur.genomeIndelTmb).toFixed(2) : '',
         },
       ]);
     }
