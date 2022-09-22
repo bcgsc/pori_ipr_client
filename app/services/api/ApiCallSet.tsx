@@ -7,6 +7,12 @@ import AlertDialog from '../../components/AlertDialog';
 import theme from '../../appTheme';
 import { RequestReturnType } from './types';
 
+const saveChanges = async (calls) => {
+  const promises = calls.map((call) => call.request());
+  await Promise.all(promises);
+  location.reload();
+};
+
 /**
  * Set of Api calls to be co-requested and co-aborted
  */
@@ -26,12 +32,17 @@ class ApiCallSet {
   }
 
   showConfirm(): void {
-    const handleClose = async (isSaved: boolean) => {
-      if (isSaved) {
-        const promises = this.calls.map((call) => call.request());
-        await Promise.all(promises);
-        location.reload();
+    const handleClose = async (saveSignatures: boolean) => {
+      if (saveSignatures) {
+        // this.push(api.put(`/reports/${report.ident}/signatures/revoke/author`));
+        // new ApiCall(`/reports/${report.ident}/signatures/revoke/author`,);
+        await saveChanges(this.calls);
       }
+      ReactDOM.unmountComponentAtNode(document.getElementById('alert-dialog'));
+    };
+
+    const handleDeny = async () => {
+      await saveChanges(this.calls);
       ReactDOM.unmountComponentAtNode(document.getElementById('alert-dialog'));
     };
 
@@ -41,10 +52,12 @@ class ApiCallSet {
           <AlertDialog
             isOpen
             onClose={handleClose}
+            onDeny={handleDeny}
             title="Confirm Action"
             text="Editing this report will remove analyst signatures. Continue?"
-            confirmText="OK"
-            cancelText="cancel"
+            confirmText="Yes"
+            denyText="No"
+            cancelText="Cancel"
           />
         </ThemeProvider>
       </StyledEngineProvider>,

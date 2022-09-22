@@ -79,16 +79,21 @@ class ApiCall {
       ReactDOM.unmountComponentAtNode(document.getElementById('alert-dialog'));
     };
 
+    const handleDeny = async () => {
+    };
+
     ReactDOM.render(
       <StyledEngineProvider injectFirst>
         <ThemeProvider theme={theme}>
           <AlertDialog
             isOpen
             onClose={handleClose}
+            onDeny={handleDeny}
             title="Confirm Action"
-            text="Editing this report will remove analyst signatures. Continue?"
-            confirmText="OK"
-            cancelText="cancel"
+            text="Do you wish ro remove Ready and Reviewer signatures?"
+            confirmText="Yes"
+            denyText="No"
+            cancelText="Cancel"
           />
         </ThemeProvider>
       </StyledEngineProvider>,
