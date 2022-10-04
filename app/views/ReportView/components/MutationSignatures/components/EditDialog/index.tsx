@@ -20,6 +20,7 @@ import AsyncButton from '@/components/AsyncButton';
 
 import ConfirmContext from '@/context/ConfirmContext';
 import ReportContext from '@/context/ReportContext';
+import useConfirmDialog from '@/hooks/useConfirmDialog';
 import SignatureType from '../../types';
 
 import './index.scss';
@@ -37,6 +38,7 @@ const EditDialog = ({
   onClose,
   showErrorSnackbar,
 }: EditDialogProps): JSX.Element => {
+  const { showConfirmDialog } = useConfirmDialog();
   const { report } = useContext(ReportContext);
   const { isSigned } = useContext(ConfirmContext);
   const [checkboxSelected, setCheckboxSelected] = useState(false);
@@ -61,12 +63,17 @@ const EditDialog = ({
   const handleSubmit = useCallback(async () => {
     if (checkboxSelected !== editData.selected || selectValue !== editData.kbCategory) {
       setIsApiCalling(true);
+      const req = api.put(
+        `/reports/${report.ident}/mutation-signatures/${editData.ident}`,
+        { selected: checkboxSelected, kbCategory: selectValue },
+        {},
+      );
       try {
-        await api.put(
-          `/reports/${report.ident}/mutation-signatures/${editData.ident}`,
-          { selected: checkboxSelected, kbCategory: selectValue },
-          {},
-        ).request(isSigned);
+        if (isSigned) {
+          showConfirmDialog(req);
+        } else {
+          await req.request();
+        }
         onClose({ ...editData, selected: checkboxSelected, kbCategory: selectValue });
       } catch (err) {
         showErrorSnackbar(`Error updating signature: ${err.message}`);
@@ -77,7 +84,7 @@ const EditDialog = ({
     } else {
       onClose();
     }
-  }, [checkboxSelected, editData, selectValue, report, isSigned, onClose, showErrorSnackbar]);
+  }, [checkboxSelected, editData, selectValue, report, isSigned, onClose, showErrorSnackbar, showConfirmDialog]);
 
   return (
     <Dialog open={isOpen} maxWidth="sm" fullWidth className="edit-dialog">

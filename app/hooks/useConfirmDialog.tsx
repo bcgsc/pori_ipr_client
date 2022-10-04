@@ -1,35 +1,47 @@
 import AlertDialog from '@/components/AlertDialog';
 import ReportContext from '@/context/ReportContext';
+import api from '@/services/api';
 import React, { useCallback, useContext } from 'react';
 import ReactDOM from 'react-dom';
+import snackbar from '@/services/SnackbarUtils';
+
+const textDict = {
+  probe: 'Do you wish to remove Ready and Reviewer signatures?',
+  pharmacogenomic: 'Do you wish to remove Ready and Reviewer signatures?',
+  genomic: 'Do you wish to remove Author and Reviewer signatures?',
+};
 
 const useConfirmDialog = () => {
   const { report } = useContext(ReportContext);
 
   const showDialog = useCallback((calls) => {
-    const callPromises = (Array.isArray(calls) ? calls : [calls]).map((call) => call.request());
+    const callPromises = (Array.isArray(calls) ? calls : [calls]);
 
     const handleClose = async (removeSignatures: boolean) => {
-      console.log('🚀 ~ file: useConfirmDialog.tsx ~ line 8 ~ useConfirmDialog ~ report', report);
-
       if (removeSignatures) {
-        console.log('yes remove sigs do your shit');
-        // Remove the signatures
-      }
-      try {
-        const res = await Promise.all(callPromises);
-      } catch (e) {
+        callPromises.push(api.put(`/reports/${report.ident}/signatures/revoke/author`, {}));
+        callPromises.push(api.put(`/reports/${report.ident}/signatures/revoke/reviewer`, {}));
 
+        try {
+          await Promise.all(callPromises.map((promise) => promise.request()));
+        } catch (e) {
+          snackbar.error(`Error: ${e}`);
+        }
       }
 
-      console.log('🚀 ~ file: useConfirmDialog.tsx ~ line 18 ~ handleClose ~ res', res);
       ReactDOM.unmountComponentAtNode(document.getElementById('alert-dialog'));
     };
 
     const handleDeny = async () => {
-      console.log('denied');
-      const res = await Promise.all(callPromises);
-      console.log('handleDeny', res);
+      try {
+        await Promise.all(callPromises.map((promise) => promise.request()));
+      } catch (e) {
+        snackbar.error(`Error: ${e}`);
+      }
+
+      window.location.reload();
+
+      ReactDOM.unmountComponentAtNode(document.getElementById('alert-dialog'));
     };
 
     ReactDOM.render(
@@ -38,9 +50,9 @@ const useConfirmDialog = () => {
         onClose={handleClose}
         onDeny={handleDeny}
         title="Confirm Action"
-        text="Do you wish to remove analyst and reviewer signatures as well?"
+        text={textDict[report?.template.name]}
         denyText="No"
-        confirmText="OK"
+        confirmText="Yes"
         cancelText="cancel"
       />,
       document.getElementById('alert-dialog'),

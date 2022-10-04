@@ -64,48 +64,11 @@ class ApiCall {
     return !this.controller;
   }
 
-  showConfirm(): void {
-    const handleClose = async (isSaved: boolean) => {
-      if (isSaved) {
-        await fetch(
-          window._env_.API_BASE_URL + this.endpoint,
-          {
-            ...this.requestOptions,
-            signal: this.controller.signal,
-          },
-        );
-        location.reload();
-      }
-      ReactDOM.unmountComponentAtNode(document.getElementById('alert-dialog'));
-    };
-
-    const handleDeny = async () => {
-    };
-
-    ReactDOM.render(
-      <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={theme}>
-          <AlertDialog
-            isOpen
-            onClose={handleClose}
-            onDeny={handleDeny}
-            title="Confirm Action"
-            text="Do you wish ro remove Ready and Reviewer signatures?"
-            confirmText="Yes"
-            denyText="No"
-            cancelText="Cancel"
-          />
-        </ThemeProvider>
-      </StyledEngineProvider>,
-      document.getElementById('alert-dialog'),
-    );
-  }
-
   /**
    * Makes the fetch request and awaits the response or error. Also handles the redirect to error
    * or login pages
    */
-  async request(confirm = false, ignoreAbort = false) {
+  async request() {
     this.controller = new AbortController();
 
     const { method } = this.requestOptions;
@@ -116,11 +79,6 @@ class ApiCall {
 
     let response;
 
-    if (confirm) {
-      this.showConfirm();
-      return null;
-    }
-
     try {
       response = await fetch(
         window._env_.API_BASE_URL + this.endpoint,
@@ -130,9 +88,6 @@ class ApiCall {
         },
       );
     } catch (err) {
-      if (err.name === 'AbortError' && ignoreAbort) {
-        return null;
-      }
       console.error(err);
       console.error('Fetch error. Re-trying Request with cache-busting');
       this.controller = new AbortController();
@@ -147,9 +102,6 @@ class ApiCall {
           },
         );
       } catch (err2) {
-        if (err2.name === 'AbortError' && ignoreAbort) {
-          return null;
-        }
         console.error(err2);
         throw err2;
       }
