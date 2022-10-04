@@ -7,8 +7,7 @@ import {
   Grid,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import useConfirmDialog from '@/hooks/useConfirmDialog';
-import capitalize from 'lodash.capitalize';
+
 import api, { ApiCallSet } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
@@ -19,89 +18,93 @@ import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import { formatDate } from '@/utils/date';
 import SignatureCard, { SignatureType, SignatureUserType } from '@/components/SignatureCard';
 import PrintTable from '@/components/PrintTable';
-import TestInformation, { TestInformationType } from '@/components/TestInformation';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import PatientEdit from '@/components/PatientEdit';
 import EventsEditDialog from '@/components/EventsEditDialog';
-import { sampleColumnDefs, eventsColumnDefs } from './columnDefs';
-import ProbeResultsType from './types.d';
+import capitalize from 'lodash.capitalize';
+import { clinicalAssociationColDefs, cancerRelevanceColDefs, sampleColumnDefs } from './columnDefs';
+import RapidResultsType from './types.d';
 
 import './index.scss';
 
-type ProbeSummaryProps = {
+/**
+ * TODO: Fix this up as updates come in
+ * Patient Info (obtained by report)
+ * Tumour Summary (aggregate)
+ *    Initial tumour content (report.tumourContent?)
+ *    Mutation burden (/mutation-burden)
+ *    MSI status (/msi)
+ * Genomic Events with Potential Clinical Association (unknown)
+ * Genomic Events with Potential Cancer Relevance (unknown)
+ * Other Variants in Cancer Related Genes (unknown)
+ * Signatures (obtained by signatures)
+ * Sample Information (obtained by report)
+ */
+type RapidSummaryProps = {
   loadedDispatch: ({ type: string }) => void;
   isPrint: boolean;
 } & WithLoadingInjectedProps;
 
-const ProbeSummary = ({
+const RapidSummary = ({
   loadedDispatch,
   isLoading,
   isPrint,
   setIsLoading,
-}: ProbeSummaryProps): JSX.Element => {
+}: RapidSummaryProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
   const { isSigned, setIsSigned } = useContext(ConfirmContext);
   const { canEdit } = useUser();
 
-  const [testInformation, setTestInformation] = useState<TestInformationType | null>();
   const [signatures, setSignatures] = useState<SignatureType | null>();
-  const [probeResults, setProbeResults] = useState<ProbeResultsType[] | null>();
-  const { showConfirmDialog } = useConfirmDialog();
+  const [clinicalAssociationResults, setClinicalAssociationResults] = useState<RapidResultsType[] | null>();
+  const [cancerRelevanceResults, setCancerRelevanceResults] = useState<RapidResultsType[] | null>();
   const [patientInformation, setPatientInformation] = useState<{
     label: string;
     value: string | null;
   }[] | null>();
   const [editData, setEditData] = useState();
+  const [otherMutationsResults, setOtherMutationsResults] = useState(null);
 
   const [showPatientEdit, setShowPatientEdit] = useState(false);
-  const [showEventsDialog, setShowEventsDialog] = useState(false);
+  const [showClinicalAssociationEventsDialog, setShowClinicalAssociationEventsDialog] = useState(false);
+  const [showCancerRelevanceEventsDialog, setShowCancerRelevanceEventsDialog] = useState(false);
 
   useEffect(() => {
     if (report?.ident) {
       const getData = async () => {
         try {
+          // Small mutation, copy number, sv, msi, tmb needed
           const apiCalls = new ApiCallSet([
-            api.get(`/reports/${report.ident}/probe-test-information`),
             api.get(`/reports/${report.ident}/signatures`),
-            api.get(`/reports/${report.ident}/probe-results`),
+            // TODO: not implemented on the backend yet
+            api.get(`/reports/${report.ident}/rapid-results`),
+            api.get(`/reports/${report.ident}/clinical-association`),
+            api.get(`/reports/${report.ident}/cancer-relevance`),
             api.get(`/reports/${report.ident}/small-mutations`),
+            api.get(`/reports/${report.ident}/other-mutations`),
           ]);
           const [
-            testInformationData,
             signaturesData,
-            probeResultsData,
+            rapidResultsData,
+            clinicalAssociationData,
+            cancerRelevanceData,
             smallMutationsData,
+            otherMutationsData,
           ] = await apiCalls.request();
 
-          setTestInformation(testInformationData);
           setSignatures(signaturesData);
 
-          probeResultsData.forEach((probe) => {
-            smallMutationsData.forEach((mutation) => {
-              if (probe.gene.name === mutation.gene.name && probe.variant.includes(mutation.proteinChange)) {
-                probe.tumourDna = (mutation.tumourRefCount !== null && mutation.tumourAltCount !== null)
-                  ? `${mutation.tumourAltCount}/${mutation.tumourDepth}`
-                  : '';
-                probe.tumourRna = (mutation.rnaRefCount !== null && mutation.rnaAltCount !== null)
-                  ? `${mutation.rnaAltCount}/${mutation.rnaDepth}`
-                  : '';
-
-                probe.normalDna = (mutation.normalRefCount !== null && mutation.normalAltCount !== null)
-                  ? `${mutation.normalAltCount}/${mutation.normalDepth}`
-                  : '';
-              }
-            });
+          rapidResultsData.forEach((rapid) => {
+            // TODO: placeholder, probe report builds probe results with small-mutation calls
+            smallMutationsData.forEach((mutation) => {});
           });
-          setProbeResults(probeResultsData);
+          setClinicalAssociationResults(clinicalAssociationData);
+          setCancerRelevanceResults(cancerRelevanceData);
 
           setPatientInformation([
             {
               label: 'Alternate ID',
               value: report.alternateIdentifier,
-            },
-            {
-              label: 'Pediatric Patient IDs',
-              value: report.pediatricIds,
             },
             {
               label: 'Report Date',
@@ -128,6 +131,8 @@ const ProbeSummary = ({
               value: report.patientInformation.gender,
             },
           ]);
+
+          setOtherMutationsResults(otherMutationsData);
         } catch (err) {
           snackbar.error(`Network error: ${err}`);
         } finally {
@@ -163,13 +168,7 @@ const ProbeSummary = ({
     }
 
     const callSet = new ApiCallSet(apiCalls);
-    let reportResp;
-
-    if (isSigned) {
-      showConfirmDialog(callSet);
-    } else {
-      [, reportResp] = await callSet.request();
-    }
+    const [, reportResp] = await callSet.request(isSigned);
 
     if (reportResp) {
       setReport({ ...reportResp, ...report });
@@ -179,10 +178,6 @@ const ProbeSummary = ({
       {
         label: 'Alternate ID',
         value: newReportData ? newReportData.alternateIdentifier : report.alternateIdentifier,
-      },
-      {
-        label: 'Pediatric Patient IDs',
-        value: newReportData ? newReportData.pediatricIds : report.pediatricIds,
       },
       {
         label: 'Report Date',
@@ -229,61 +224,126 @@ const ProbeSummary = ({
     return function cleanup() { cancelled = true; };
   }, [report.ident, setIsSigned]);
 
-  const handleEditStart = useCallback((rowData) => {
-    setShowEventsDialog(true);
+  const handleClinicalAssociationEditStart = useCallback((rowData) => {
+    setShowClinicalAssociationEventsDialog(true);
     if (rowData) {
       setEditData(rowData);
     }
   }, []);
 
-  const handleEditClose = useCallback((newData) => {
-    setShowEventsDialog(false);
+  const handleClinicalAssociationEditClose = useCallback((newData) => {
+    setShowClinicalAssociationEventsDialog(false);
     if (newData) {
-      const eventsIndex = probeResults.findIndex((user) => user.ident === newData.ident);
-      if (eventsIndex !== -1) {
-        const newEvents = [...probeResults];
-        newEvents[eventsIndex] = newData;
-        setProbeResults(newEvents);
-      }
+      setClinicalAssociationResults((existingResults) => {
+        const newEvents = [...existingResults];
+        const eventsIndex = existingResults.findIndex((user) => user.ident === newData.ident);
+        if (eventsIndex !== -1) {
+          newEvents[eventsIndex] = newData;
+        }
+        return newEvents;
+      });
     }
-  }, [probeResults]);
+  }, []);
 
-  let probeResultSection;
-  if (probeResults?.length > 0) {
+  let clinicalAssociationSection;
+  if (clinicalAssociationResults?.length > 0) {
     if (isPrint) {
-      probeResultSection = (
+      clinicalAssociationSection = (
         <PrintTable
-          data={probeResults}
-          columnDefs={eventsColumnDefs.filter((col) => col.headerName !== 'Actions')}
-          order={['Genomic Events', 'Sample', 'Alt/Total (Tumour DNA)', 'Alt/Total (Tumour RNA)', 'Alt/Total (Normal DNA)', 'Comments']}
+          data={clinicalAssociationResults}
+          columnDefs={clinicalAssociationColDefs.filter((col) => col.headerName !== 'Actions')}
         />
       );
     } else {
-      probeResultSection = (
+      clinicalAssociationSection = (
         <>
           <DataTable
-            columnDefs={eventsColumnDefs}
-            rowData={probeResults}
+            columnDefs={clinicalAssociationColDefs}
+            rowData={clinicalAssociationResults}
             canEdit={canEdit}
-            onEdit={handleEditStart}
+            onEdit={handleClinicalAssociationEditStart}
             isPrint={isPrint}
             isPaginated={!isPrint}
           />
           <EventsEditDialog
-            isOpen={showEventsDialog}
+            isOpen={showClinicalAssociationEventsDialog}
             editData={editData}
-            onClose={handleEditClose}
+            onClose={handleClinicalAssociationEditClose}
           />
         </>
       );
     }
   } else {
-    probeResultSection = (
-      <div className="probe-summary__none">
-        No Genomic Events were found
+    clinicalAssociationSection = (
+      <div className="rapid-summary__none">
+        No Genomic Events with Potential Clinical Association were found.
       </div>
     );
   }
+
+  const handleCancerRelevanceEditStart = useCallback((rowData) => {
+    setShowClinicalAssociationEventsDialog(true);
+    if (rowData) {
+      setEditData(rowData);
+    }
+  }, []);
+
+  const handleCancerRelevanceEditClose = useCallback((newData) => {
+    setShowCancerRelevanceEventsDialog(false);
+    if (newData) {
+      setCancerRelevanceResults((existingResults) => {
+        const newEvents = [...existingResults];
+        const eventsIndex = existingResults.findIndex((user) => user.ident === newData.ident);
+        if (eventsIndex !== -1) {
+          newEvents[eventsIndex] = newData;
+        }
+        return newEvents;
+      });
+    }
+  }, []);
+
+  let cancerRelevanceSection;
+  if (clinicalAssociationResults?.length > 0) {
+    if (isPrint) {
+      cancerRelevanceSection = (
+        <PrintTable
+          data={cancerRelevanceResults}
+          columnDefs={cancerRelevanceColDefs.filter((col) => col.headerName !== 'Actions')}
+        />
+      );
+    } else {
+      cancerRelevanceSection = (
+        <>
+          <DataTable
+            columnDefs={cancerRelevanceColDefs}
+            rowData={cancerRelevanceResults}
+            canEdit={canEdit}
+            onEdit={handleCancerRelevanceEditStart}
+            isPrint={isPrint}
+            isPaginated={!isPrint}
+          />
+          <EventsEditDialog
+            isOpen={showCancerRelevanceEventsDialog}
+            editData={editData}
+            onClose={handleCancerRelevanceEditClose}
+          />
+        </>
+      );
+    }
+  } else {
+    cancerRelevanceSection = (
+      <div className="rapid-summary__none">
+        No Genomic Events with Potential Cancer Relevance found.
+      </div>
+    );
+  }
+
+  // TODO: figure out which API call gets this data
+  const otherVariantsSection = useMemo(() => (
+    <Grid container spacing={1} direction="row">
+      {otherMutationsResults.map((result) => <Grid xs={4} md={2} item>{result}</Grid>)}
+    </Grid>
+  ), [otherMutationsResults]);
 
   const reviewSignatures = useMemo(() => {
     let order: SignatureUserType[] = ['author', 'reviewer', 'creator'];
@@ -308,12 +368,12 @@ const ProbeSummary = ({
   }, [handleSign, isPrint, signatures]);
 
   return (
-    <div className="probe-summary">
+    <div className="rapid-summary">
       {!isLoading && (
         <>
           {report && patientInformation && (
-            <div className="probe-summary__patient-information">
-              <div className="probe-summary__patient-information-title">
+            <div className="rapid-summary__patient-information">
+              <div className="rapid-summary__patient-information-title">
                 <Typography variant="h3" display="inline">
                   Patient Information
                   {canEdit && !isPrint && (
@@ -335,7 +395,7 @@ const ProbeSummary = ({
                 alignItems="flex-end"
                 container
                 spacing={3}
-                className="probe-summary__patient-information-content"
+                className="rapid-summary__patient-information-content"
               >
                 {patientInformation.map(({ label, value }) => (
                   <Grid key={label} item>
@@ -348,8 +408,8 @@ const ProbeSummary = ({
             </div>
           )}
           {report && report.sampleInfo && (
-            <div className="probe-summary__sample-information">
-              <Typography variant="h3" display="inline" className="probe-summary__sample-information-title">
+            <div className="rapid-summary__sample-information">
+              <Typography variant="h3" display="inline" className="rapid-summary__sample-information-title">
                 Sample Information
               </Typography>
               {isPrint ? (
@@ -367,33 +427,31 @@ const ProbeSummary = ({
               )}
             </div>
           )}
-          {report && probeResults && (
-            <div className="probe-summary__events">
-              <Typography className="probe-summary__events-title" variant="h3" display="inline">
-                Genomic Events with Potential Therapeutic Association
+          {report && clinicalAssociationResults && (
+            <div className="rapid-summary__events">
+              <Typography className="rapid-summary__events-title" variant="h3" display="inline">
+                Genomic Events with Potential Clinical Association
               </Typography>
-              {probeResultSection}
+              {clinicalAssociationSection}
             </div>
           )}
-          {report && testInformation && (
-            <div className="probe-summary__test-information">
-              <Typography variant="h3" className="probe-summary__test-information-title">
-                Test Information
+          {report && cancerRelevanceResults && (
+            <div className="rapid-summary__events">
+              <Typography className="rapid-summary__events-title" variant="h3" display="inline">
+                Genomic Events with Potential Cancer Relevance
               </Typography>
-              <TestInformation
-                data={testInformation}
-                isPharmacogenomic={false}
-              />
+              {cancerRelevanceSection}
             </div>
           )}
+          {otherVariantsSection}
           {report && (
-            <div className="probe-summary__reviews">
+            <div className="rapid-summary__reviews">
               {!isPrint && (
-                <Typography variant="h3" className="probe-summary__reviews-title">
+                <Typography variant="h3" className="rapid-summary__reviews-title">
                   Reviews
                 </Typography>
               )}
-              <div className="probe-summary__signatures">
+              <div className="rapid-summary__signatures">
                 {reviewSignatures}
               </div>
             </div>
@@ -404,4 +462,4 @@ const ProbeSummary = ({
   );
 };
 
-export default withLoading(ProbeSummary);
+export default withLoading(RapidSummary);
