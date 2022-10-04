@@ -10,6 +10,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import Alert from '@mui/material/Alert';
 
 import api, { ApiCallSet } from '@/services/api';
+import useConfirmDialog from '@/hooks/useConfirmDialog';
 import DataTable from '@/components/DataTable';
 import ReportContext from '@/context/ReportContext';
 import UserContext from '@/context/UserContext';
@@ -46,6 +47,7 @@ const PharmacoGenomicSummary = ({
   const { report, setReport } = useContext(ReportContext);
   const { canEdit } = useContext(UserContext);
   const { isSigned, setIsSigned } = useContext(ConfirmContext);
+  const { showConfirmDialog } = useConfirmDialog();
 
   const [testInformation, setTestInformation] = useState<TestInformationType>();
   const [signatures, setSignatures] = useState<SignatureType | null>();
@@ -152,7 +154,14 @@ const PharmacoGenomicSummary = ({
     }
 
     const callSet = new ApiCallSet(apiCalls);
-    const [, reportResp] = await callSet.request(isSigned);
+
+    let reportResp;
+
+    if (isSigned) {
+      showConfirmDialog(callSet);
+    } else {
+      [, reportResp] = await callSet.request();
+    }
 
     if (reportResp) {
       setReport({ ...reportResp, ...report });

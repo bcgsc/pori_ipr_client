@@ -12,9 +12,11 @@ import {
 } from '@mui/material';
 
 import api from '@/services/api';
+import useConfirmDialog from '@/hooks/useConfirmDialog';
 import ConfirmContext from '@/context/ConfirmContext';
 import ReportContext from '@/context/ReportContext';
 import AsyncButton from '@/components/AsyncButton';
+import snackbar from '@/services/SnackbarUtils';
 import AutocompleteHandler from '../AutocompleteHandler';
 
 import './index.scss';
@@ -54,6 +56,7 @@ const EditDialog = ({
   const [isDirty, setIsDirty] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const { showConfirmDialog } = useConfirmDialog();
 
   useEffect(() => {
     if (newData.ident) {
@@ -93,41 +96,58 @@ const EditDialog = ({
 
     try {
       if (newData.ident) { // existing option
-        const returnedData = await api.put(
+        const putTherapeuticTargetsCall = api.put(
           `/reports/${report.ident}/therapeutic-targets/${editData.ident}`,
           combinedData,
           {},
-        ).request(isSigned);
+        );
+        let returnedData;
+        if (isSigned) {
+          showConfirmDialog(putTherapeuticTargetsCall);
+        } else {
+          returnedData = await putTherapeuticTargetsCall.request();
+        }
+
         setIsDirty(false);
         onClose(returnedData);
       } else {
-        const returnedData = await api.post(
+        const putTherapeuticTargetsCall = api.post(
           `/reports/${report.ident}/therapeutic-targets`,
           combinedData,
           {},
-        ).request(isSigned);
+        );
+        let returnedData;
+        if (isSigned) {
+          showConfirmDialog(putTherapeuticTargetsCall);
+        } else {
+          returnedData = await putTherapeuticTargetsCall.request();
+        }
         setNewData({ type: 'replace', payload: {} });
         setIsDirty(false);
         onClose(returnedData);
       }
     } catch (err) {
-      console.error(err); // TODO: send to snackbar
+      snackbar.error(`Error: ${err}`);
     } finally {
       setIsSubmitting(false);
     }
-  }, [newData, tableType, report, editData.ident, isSigned, onClose]);
+  }, [newData, tableType, report, editData.ident, isSigned, onClose, showConfirmDialog]);
 
   const handleDelete = useCallback(async () => {
     setIsDeleting(true);
     try {
-      await api.del(
+      const delTherapeuticTargets = api.del(
         `/reports/${report.ident}/therapeutic-targets/${newData.ident}`,
         {},
-        {},
-      ).request(isSigned);
+      );
+      if (isSigned) {
+        showConfirmDialog(delTherapeuticTargets);
+      } else {
+        await delTherapeuticTargets.request();
+      }
       onClose(null);
     } catch (err) {
-      console.error('error', err); // TODO: send to snackbar
+      snackbar.error(`Error: ${err}`);
     } finally {
       setIsDeleting(false);
     }
