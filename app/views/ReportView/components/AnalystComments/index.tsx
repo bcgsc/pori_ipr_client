@@ -21,7 +21,6 @@ import useConfirmDialog from '@/hooks/useConfirmDialog';
 import TextEditor from './components/TextEditor';
 
 import './index.scss';
-import useConfirmDialog from '@/hooks/useConfirmDialog';
 
 type AnalystCommentsProps = {
   isPrint?: boolean;
