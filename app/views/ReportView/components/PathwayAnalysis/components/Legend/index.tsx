@@ -7,6 +7,7 @@ import {
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import PublishIcon from '@mui/icons-material/Publish';
 import { useSnackbar } from 'notistack';
+import useConfirmDialog from '@/hooks/useConfirmDialog';
 
 import api from '@/services/api';
 import { useUser } from '@/context/UserContext';
@@ -28,6 +29,7 @@ const Legend = ({
   const { canEdit } = useUser();
   const { report } = useContext(ReportContext);
   const { isSigned } = useContext(ConfirmContext);
+  const { showConfirmDialog } = useConfirmDialog();
   const snackbar = useSnackbar();
 
   const [imageError, setImageError] = useState('');
@@ -56,7 +58,13 @@ const Legend = ({
       const newLegend = new FormData();
       newLegend.append('pathwayAnalysis.legend', uploadedFile);
 
-      await api.post(`/reports/${report.ident}/image`, newLegend, {}, true).request(isSigned);
+      const imageAPICall = api.post(`/reports/${report.ident}/image`, newLegend, {}, true);
+
+      if (isSigned) {
+        showConfirmDialog(imageAPICall);
+      } else {
+        await imageAPICall.request();
+      }
 
       const resp = await api.get(
         `/reports/${report.ident}/image/retrieve/pathwayAnalysis.legend`,

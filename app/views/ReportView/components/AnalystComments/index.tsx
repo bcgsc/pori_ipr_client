@@ -17,6 +17,7 @@ import SignatureCard, { SignatureType, SignatureUserType } from '@/components/Si
 import ConfirmContext from '@/context/ConfirmContext';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import capitalize from 'lodash.capitalize';
+import useConfirmDialog from '@/hooks/useConfirmDialog';
 import TextEditor from './components/TextEditor';
 
 import './index.scss';
@@ -106,10 +107,8 @@ const AnalystComments = ({
       );
 
       if (isSigned) {
-        showConfirmDialog([commentCall]);
+        showConfirmDialog(commentCall);
       } else {
-        console.log('🚀 ~ file: index.tsx ~ line 120 ~ handleEditorClose ~ else');
-
         // If signed, the dialog that opens up will refesh the page instead
         const commentsResp = await commentCall.request();
         setComments(sanitizeHtml(commentsResp?.comments, {
