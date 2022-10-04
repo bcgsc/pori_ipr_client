@@ -162,7 +162,11 @@ const Print = (): JSX.Element => {
               {`${headerSubtitle}${headerSubtitleSuffix ? ` - ${headerSubtitleSuffix}` : ''}`}
             </Typography>
             <Typography variant="h5">
-              {`${startCase(report.biopsyName || 'No Biopsy Name')} - ${startCase(report.patientInformation.diagnosis)} (${report.patientInformation.tumourSample})`}
+              {`${startCase(report.biopsyName || 'No Biopsy Name')} ${
+                report.patientInformation.diagnosis ? `- ${startCase(report.patientInformation.diagnosis)}` : ''
+              } ${
+                report.patientInformation.tumourSample ? `(${report.patientInformation.tumourSample})` : ''
+              }`}
             </Typography>
           </div>
         </div>
