@@ -13,6 +13,7 @@ import {
 import api, { ApiCallSet } from '@/services/api';
 import ConfirmContext from '@/context/ConfirmContext';
 import AsyncButton from '@/components/AsyncButton';
+import useConfirmDialog from '@/hooks/useConfirmDialog';
 
 import './index.scss';
 
@@ -34,7 +35,7 @@ const PatientEdit = ({
   onClose,
 }: PatientEditProps): JSX.Element => {
   const { isSigned } = useContext(ConfirmContext);
-
+  const { showConfirmDialog } = useConfirmDialog();
   const [newPatientData, setNewPatientData] = useState<PatientEditProps['patientInformation']>();
   const [newReportData, setNewReportData] = useState(null);
   const [patientDirty, setPatientDirty] = useState(false);
@@ -94,14 +95,18 @@ const PatientEdit = ({
       }
 
       const callSet = new ApiCallSet(apiCalls);
-      await callSet.request(isSigned);
 
-      setIsApiCalling(false);
-      onClose(true, patientDirty ? newPatientData : null, reportDirty ? newReportData : null);
+      if (isSigned) {
+        showConfirmDialog(callSet);
+      } else {
+        await callSet.request();
+        setIsApiCalling(false);
+        onClose(true, patientDirty ? newPatientData : null, reportDirty ? newReportData : null);
+      }
     } else {
       onClose(false);
     }
-  }, [newPatientData, newReportData, isSigned, onClose, patientDirty, reportDirty, report.ident]);
+  }, [newPatientData, newReportData, isSigned, onClose, patientDirty, reportDirty, report.ident, showConfirmDialog]);
 
   return (
     <Dialog open={isOpen}>

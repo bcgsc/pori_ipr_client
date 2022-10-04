@@ -7,6 +7,7 @@ import {
   Grid,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+import useConfirmDialog from '@/hooks/useConfirmDialog';
 import capitalize from 'lodash.capitalize';
 import api, { ApiCallSet } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
@@ -45,6 +46,7 @@ const ProbeSummary = ({
   const [testInformation, setTestInformation] = useState<TestInformationType | null>();
   const [signatures, setSignatures] = useState<SignatureType | null>();
   const [probeResults, setProbeResults] = useState<ProbeResultsType[] | null>();
+  const { showConfirmDialog } = useConfirmDialog();
   const [patientInformation, setPatientInformation] = useState<{
     label: string;
     value: string | null;
@@ -161,7 +163,13 @@ const ProbeSummary = ({
     }
 
     const callSet = new ApiCallSet(apiCalls);
-    const [, reportResp] = await callSet.request(isSigned);
+    let reportResp;
+
+    if (isSigned) {
+      showConfirmDialog(callSet);
+    } else {
+      [, reportResp] = await callSet.request();
+    }
 
     if (reportResp) {
       setReport({ ...reportResp, ...report });

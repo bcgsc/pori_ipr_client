@@ -85,3 +85,4 @@ const AlertDialog = ({
 };
 
 export default AlertDialog;
+export { AlertDialogProps };
