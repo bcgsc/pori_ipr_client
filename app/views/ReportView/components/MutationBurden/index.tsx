@@ -312,7 +312,7 @@ const MutationBurden = ({
         composed of all tumour types.
       </DemoDescription>
       {mutationBurdenSection}
-      {tmburMutBur ? null : msiSection}
+      {msiSection}
     </div>
   );
 };
