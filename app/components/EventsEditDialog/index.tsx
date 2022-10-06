@@ -81,9 +81,8 @@ const EventsEditDialog = ({
         showConfirmDialog(apiCall);
       } else {
         returnData = await apiCall.request();
+        onClose(returnData);
       }
-
-      onClose(returnData);
     } else {
       onClose();
     }
