@@ -101,15 +101,13 @@ const EditDialog = ({
           combinedData,
           {},
         );
-        let returnedData;
         if (isSigned) {
           showConfirmDialog(putTherapeuticTargetsCall);
         } else {
-          returnedData = await putTherapeuticTargetsCall.request();
+          const returnedData = await putTherapeuticTargetsCall.request();
+          setIsDirty(false);
+          onClose(returnedData);
         }
-
-        setIsDirty(false);
-        onClose(returnedData);
       } else {
         const putTherapeuticTargetsCall = api.post(
           `/reports/${report.ident}/therapeutic-targets`,
