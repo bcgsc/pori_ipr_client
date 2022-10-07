@@ -73,8 +73,8 @@ const EditDialog = ({
           showConfirmDialog(req);
         } else {
           await req.request();
+          onClose({ ...editData, selected: checkboxSelected, kbCategory: selectValue });
         }
-        onClose({ ...editData, selected: checkboxSelected, kbCategory: selectValue });
       } catch (err) {
         showErrorSnackbar(`Error updating signature: ${err.message}`);
         onClose();

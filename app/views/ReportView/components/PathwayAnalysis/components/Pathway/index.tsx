@@ -63,7 +63,6 @@ const Pathway = ({
       newPathway.append('pathway', uploadedFile);
       newPathway.set('legend', 'v2');
 
-      let pathwayResp: PathwayImageType;
       let pathwayCall;
 
       if (initialPathway) {
@@ -85,17 +84,16 @@ const Pathway = ({
       if (isSigned) {
         showConfirmDialog(pathwayCall);
       } else {
-        pathwayResp = await pathwayCall.request();
+        const pathwayResp = await pathwayCall.request();
+        setPathwayImage(pathwayResp);
+        setIsPathwayLoading(false);
+        onChange(pathwayResp);
+        snackbar.enqueueSnackbar('Pathway image uploaded successfully', { variant: 'success' });
       }
-
-      setPathwayImage(pathwayResp);
-      setIsPathwayLoading(false);
-      onChange(pathwayResp);
-      snackbar.enqueueSnackbar('Pathway image uploaded successfully', { variant: 'success' });
     } catch (err) {
       snackbar.enqueueSnackbar(`Error uploading pathway image: ${err}`, { variant: 'error' });
     }
-  }, [initialPathway, isSigned, onChange, report, snackbar]);
+  }, [initialPathway, isSigned, onChange, report, snackbar, showConfirmDialog]);
 
   const pathwayUpload = useMemo(() => {
     let component = null;

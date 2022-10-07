@@ -35,13 +35,11 @@ const useConfirmDialog = () => {
     const handleDeny = async () => {
       try {
         await Promise.all(callPromises.map((promise) => promise.request()));
+        window.location.reload();
+        ReactDOM.unmountComponentAtNode(document.getElementById('alert-dialog'));
       } catch (e) {
         snackbar.error(`Error: ${e}`);
       }
-
-      window.location.reload();
-
-      ReactDOM.unmountComponentAtNode(document.getElementById('alert-dialog'));
     };
 
     ReactDOM.render(

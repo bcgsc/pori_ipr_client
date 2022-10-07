@@ -163,53 +163,52 @@ const ProbeSummary = ({
     }
 
     const callSet = new ApiCallSet(apiCalls);
-    let reportResp;
 
     if (isSigned) {
       showConfirmDialog(callSet);
     } else {
-      [, reportResp] = await callSet.request();
-    }
+      const [, reportResp] = await callSet.request();
 
-    if (reportResp) {
-      setReport({ ...reportResp, ...report });
+      if (reportResp) {
+        setReport({ ...reportResp, ...report });
+      }
+  
+      setPatientInformation([
+        {
+          label: 'Alternate ID',
+          value: newReportData ? newReportData.alternateIdentifier : report.alternateIdentifier,
+        },
+        {
+          label: 'Pediatric Patient IDs',
+          value: newReportData ? newReportData.pediatricIds : report.pediatricIds,
+        },
+        {
+          label: 'Report Date',
+          value: formatDate(report.createdAt),
+        },
+        {
+          label: 'Case Type',
+          value: newPatientData ? newPatientData.caseType : report.patientInformation.caseType,
+        },
+        {
+          label: 'Physician',
+          value: newPatientData ? newPatientData.physician : report.patientInformation.physician,
+        },
+        {
+          label: 'Biopsy Name',
+          value: newReportData ? newReportData.biopsyName : report.biopsyName,
+        },
+        {
+          label: 'Biopsy Details',
+          value: newPatientData ? newPatientData.biopsySite : report.patientInformation.biopsySite,
+        },
+        {
+          label: 'Gender',
+          value: newPatientData ? newPatientData.gender : report.patientInformation.gender,
+        },
+      ]);
     }
-
-    setPatientInformation([
-      {
-        label: 'Alternate ID',
-        value: newReportData ? newReportData.alternateIdentifier : report.alternateIdentifier,
-      },
-      {
-        label: 'Pediatric Patient IDs',
-        value: newReportData ? newReportData.pediatricIds : report.pediatricIds,
-      },
-      {
-        label: 'Report Date',
-        value: formatDate(report.createdAt),
-      },
-      {
-        label: 'Case Type',
-        value: newPatientData ? newPatientData.caseType : report.patientInformation.caseType,
-      },
-      {
-        label: 'Physician',
-        value: newPatientData ? newPatientData.physician : report.patientInformation.physician,
-      },
-      {
-        label: 'Biopsy Name',
-        value: newReportData ? newReportData.biopsyName : report.biopsyName,
-      },
-      {
-        label: 'Biopsy Details',
-        value: newPatientData ? newPatientData.biopsySite : report.patientInformation.biopsySite,
-      },
-      {
-        label: 'Gender',
-        value: newPatientData ? newPatientData.gender : report.patientInformation.gender,
-      },
-    ]);
-  }, [isSigned, report, setReport]);
+  }, [isSigned, report, setReport, showConfirmDialog]);
 
   const handleSign = useCallback((signed: boolean, role: SignatureUserType) => {
     let cancelled;

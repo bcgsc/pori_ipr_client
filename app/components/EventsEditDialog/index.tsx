@@ -76,14 +76,12 @@ const EventsEditDialog = ({
         putData,
       );
 
-      let returnData;
       if (isSigned) {
         showConfirmDialog(apiCall);
       } else {
-        returnData = await apiCall.request();
+        const returnData = await apiCall.request();
+        onClose(returnData);
       }
-
-      onClose(returnData);
     } else {
       onClose();
     }

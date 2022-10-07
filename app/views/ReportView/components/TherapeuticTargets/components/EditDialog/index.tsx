@@ -101,30 +101,27 @@ const EditDialog = ({
           combinedData,
           {},
         );
-        let returnedData;
         if (isSigned) {
           showConfirmDialog(putTherapeuticTargetsCall);
         } else {
-          returnedData = await putTherapeuticTargetsCall.request();
+          const returnedData = await putTherapeuticTargetsCall.request();
+          setIsDirty(false);
+          onClose(returnedData);
         }
-
-        setIsDirty(false);
-        onClose(returnedData);
       } else {
         const putTherapeuticTargetsCall = api.post(
           `/reports/${report.ident}/therapeutic-targets`,
           combinedData,
           {},
         );
-        let returnedData;
         if (isSigned) {
           showConfirmDialog(putTherapeuticTargetsCall);
         } else {
-          returnedData = await putTherapeuticTargetsCall.request();
+          const returnedData = await putTherapeuticTargetsCall.request();
+          setNewData({ type: 'replace', payload: {} });
+          setIsDirty(false);
+          onClose(returnedData);
         }
-        setNewData({ type: 'replace', payload: {} });
-        setIsDirty(false);
-        onClose(returnedData);
       }
     } catch (err) {
       snackbar.error(`Error: ${err}`);
@@ -144,8 +141,8 @@ const EditDialog = ({
         showConfirmDialog(delTherapeuticTargets);
       } else {
         await delTherapeuticTargets.request();
+        onClose(null);
       }
-      onClose(null);
     } catch (err) {
       snackbar.error(`Error: ${err}`);
     } finally {

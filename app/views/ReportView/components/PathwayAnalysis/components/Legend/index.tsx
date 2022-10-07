@@ -64,15 +64,11 @@ const Legend = ({
         showConfirmDialog(imageAPICall);
       } else {
         await imageAPICall.request();
-      }
-
-      const resp = await api.get(
-        `/reports/${report.ident}/image/retrieve/pathwayAnalysis.legend`,
-        {},
-      ).request();
-      setLegend(resp[0]);
-
-      if (!isSigned) {
+        const resp = await api.get(
+          `/reports/${report.ident}/image/retrieve/pathwayAnalysis.legend`,
+          {},
+        ).request();
+        setLegend(resp[0]);
         snackbar.enqueueSnackbar('Pathway image uploaded successfully', { variant: 'success' });
       }
     } catch (err) {
@@ -80,7 +76,7 @@ const Legend = ({
     } finally {
       setIsLegendLoading(false);
     }
-  }, [isSigned, report, snackbar]);
+  }, [isSigned, report, snackbar, showConfirmDialog]);
 
   const handleDeleteLegend = useCallback(async () => {
     try {

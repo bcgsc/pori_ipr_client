@@ -338,10 +338,10 @@ const GenomicSummary = ({
         showConfirmDialog(req);
       } else {
         await req.request();
+        setVariantCounts((prevVal) => ({ ...prevVal, [type]: prevVal[type] - 1 }));
+        setVariants((prevVal) => (prevVal.filter((val) => val.ident !== chipIdent)));
+        snackbar.success('Entry deleted');
       }
-      setVariantCounts((prevVal) => ({ ...prevVal, [type]: prevVal[type] - 1 }));
-      setVariants((prevVal) => (prevVal.filter((val) => val.ident !== chipIdent)));
-      snackbar.success('Entry deleted');
     } catch (err) {
       console.error(err);
       snackbar.error('Entry NOT deleted due to an error');
