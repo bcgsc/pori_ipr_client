@@ -24,6 +24,7 @@ const useConfirmDialog = () => {
 
         try {
           await Promise.all(callPromises.map((promise) => promise.request()));
+          window.location.reload();
         } catch (e) {
           snackbar.error(`Error: ${e}`);
         }
