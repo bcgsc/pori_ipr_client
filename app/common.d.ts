@@ -207,6 +207,12 @@ type TemplateType = {
   sections: string[];
 } & RecordDefaults;
 
+type TumourSummaryType = {
+  term: string;
+  value: string | null;
+  action?: () => void | null;
+};
+
 type AppendixType = RecordDefaults & {
   text: string;
 };
@@ -226,4 +232,5 @@ export {
   StructuralVariantType,
   SmallMutationType,
   ExpOutliersType,
+  TumourSummaryType,
 };
