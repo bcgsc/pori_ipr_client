@@ -23,7 +23,7 @@ import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import PatientEdit from '@/components/PatientEdit';
 import VariantChips from './components/VariantChips';
 import VariantCounts from './components/VariantCounts';
-import TumourSummaryEdit from './components/TumourSummaryEdit';
+import TumourSummaryEdit from '@/components/TumourSummaryEdit';
 import {
   PatientInformationType,
   GeneVariantType,
