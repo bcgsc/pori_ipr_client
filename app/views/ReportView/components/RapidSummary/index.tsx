@@ -51,7 +51,7 @@ type RapidSummaryProps = {
 const RapidSummary = ({
   loadedDispatch,
   isLoading,
-  isPrint,
+  isPrint = false,
   setIsLoading,
 }: RapidSummaryProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
@@ -83,31 +83,31 @@ const RapidSummary = ({
           const apiCalls = new ApiCallSet([
             api.get(`/reports/${report.ident}/signatures`),
             // TODO: not implemented on the backend yet
-            api.get(`/reports/${report.ident}/rapid-results`),
-            api.get(`/reports/${report.ident}/clinical-association`),
-            api.get(`/reports/${report.ident}/cancer-relevance`),
+            // api.get(`/reports/${report.ident}/rapid-results`),
+            // api.get(`/reports/${report.ident}/clinical-association`),
+            // api.get(`/reports/${report.ident}/cancer-relevance`),
             api.get(`/reports/${report.ident}/small-mutations`),
-            api.get(`/reports/${report.ident}/other-mutations`),
+            // api.get(`/reports/${report.ident}/other-mutations`),
             api.get(`/reports/${report.ident}/tmbur-mutation-burden`),
           ]);
           const [
             signaturesData,
-            rapidResultsData,
-            clinicalAssociationData,
-            cancerRelevanceData,
+            // rapidResultsData,
+            // clinicalAssociationData,
+            // cancerRelevanceData,
             smallMutationsData,
-            otherMutationsData,
+            // otherMutationsData,
             burdenData,
           ] = await apiCalls.request();
 
           setSignatures(signaturesData);
 
-          rapidResultsData.forEach((rapid) => {
-            // TODO: placeholder, probe report builds probe results with small-mutation calls
-            smallMutationsData.forEach((mutation) => { });
-          });
-          setClinicalAssociationResults(clinicalAssociationData);
-          setCancerRelevanceResults(cancerRelevanceData);
+          // rapidResultsData.forEach((rapid) => {
+          //   // TODO: placeholder, probe report builds probe results with small-mutation calls
+          //   smallMutationsData.forEach((mutation) => { });
+          // });
+          // setClinicalAssociationResults(clinicalAssociationData);
+          // setCancerRelevanceResults(cancerRelevanceData);
           setMutationBurden(burdenData);
           setPatientInformation([
             {
@@ -140,7 +140,7 @@ const RapidSummary = ({
             },
           ]);
 
-          setOtherMutationsResults(otherMutationsData);
+          // setOtherMutationsResults(otherMutationsData);
         } catch (err) {
           snackbar.error(`Network error: ${err}`);
         } finally {
@@ -292,18 +292,18 @@ const RapidSummary = ({
           <Typography variant="h3">
             Tumour Summary
             {canEdit && !isPrint && (
-            <>
-              <IconButton onClick={() => setShowTumourSummaryEdit(true)} size="large">
-                <EditIcon />
-              </IconButton>
-              <TumourSummaryEdit
-                microbial={null}
-                report={report}
-                mutationBurden={mutationBurden}
-                isOpen={showTumourSummaryEdit}
-                onClose={handleTumourSummaryEditClose}
-              />
-            </>
+              <>
+                <IconButton onClick={() => setShowTumourSummaryEdit(true)} size="large">
+                  <EditIcon />
+                </IconButton>
+                <TumourSummaryEdit
+                  microbial={null}
+                  report={report}
+                  mutationBurden={mutationBurden}
+                  isOpen={showTumourSummaryEdit}
+                  onClose={handleTumourSummaryEditClose}
+                />
+              </>
             )}
           </Typography>
         </div>
@@ -431,31 +431,70 @@ const RapidSummary = ({
   // TODO: figure out which API call gets this data
   const otherVariantsSection = useMemo(() => (
     <Grid container spacing={1} direction="row">
-      {otherMutationsResults.map((result) => <Grid xs={4} md={2} item>{result}</Grid>)}
+      {otherMutationsResults?.map((result) => <Grid xs={4} md={2} item>{result}</Grid>)}
     </Grid>
   ), [otherMutationsResults]);
 
-  const reviewSignatures = useMemo(() => {
+  const reviewSignaturesSection = useMemo(() => {
+    if (!report) return null;
     let order: SignatureUserType[] = ['author', 'reviewer', 'creator'];
     if (isPrint) {
       order = ['creator', 'author', 'reviewer'];
     }
-    return order.map((sigType) => {
-      let title: string = sigType;
-      if (sigType === 'author') {
-        title = isPrint ? 'Manual Review' : 'Ready';
-      }
-      return (
-        <SignatureCard
-          onClick={handleSign}
-          signatures={signatures}
-          title={capitalize(title)}
-          type={sigType}
-          isPrint={isPrint}
-        />
-      );
-    });
-  }, [handleSign, isPrint, signatures]);
+    const component = (
+      <div className="rapid-summary__reviews">
+        {!isPrint && (
+          <Typography variant="h3" className="rapid-summary__reviews-title">
+            Reviews
+          </Typography>
+        )}
+        <div className="rapid-summary__signatures">
+          {
+            order.map((sigType) => {
+              let title: string = sigType;
+              if (sigType === 'author') {
+                title = isPrint ? 'Manual Review' : 'Ready';
+              }
+              return (
+                <SignatureCard
+                  onClick={handleSign}
+                  signatures={signatures}
+                  title={capitalize(title)}
+                  type={sigType}
+                  isPrint={isPrint}
+                />
+              );
+            })
+          }
+        </div>
+      </div>
+    );
+    return component;
+  }, [report, handleSign, isPrint, signatures]);
+
+  const sampleInfoSection = useMemo(() => {
+    if (!report || !report.sampleInfo) { return null; }
+    return (
+      <div className="rapid-summary__sample-information">
+        <Typography variant="h3" display="inline" className="rapid-summary__sample-information-title">
+          Sample Information
+        </Typography>
+        {isPrint ? (
+          <PrintTable
+            data={report.sampleInfo}
+            columnDefs={sampleColumnDefs}
+          />
+        ) : (
+          <DataTable
+            columnDefs={sampleColumnDefs}
+            rowData={report.sampleInfo}
+            isPrint={isPrint}
+            isPaginated={!isPrint}
+          />
+        )}
+      </div>
+    );
+  }, [report, isPrint]);
 
   return (
     <div className="rapid-summary">
@@ -519,38 +558,12 @@ const RapidSummary = ({
             </div>
           )}
           {otherVariantsSection}
-          {report && (
-            <div className="rapid-summary__reviews">
-              {!isPrint && (
-                <Typography variant="h3" className="rapid-summary__reviews-title">
-                  Reviews
-                </Typography>
-              )}
-              <div className="rapid-summary__signatures">
-                {reviewSignatures}
-              </div>
-            </div>
-          )}
-          {report && report.sampleInfo && (
-            <div className="rapid-summary__sample-information">
-              <Typography variant="h3" display="inline" className="rapid-summary__sample-information-title">
-                Sample Information
-              </Typography>
-              {isPrint ? (
-                <PrintTable
-                  data={report.sampleInfo}
-                  columnDefs={sampleColumnDefs}
-                />
-              ) : (
-                <DataTable
-                  columnDefs={sampleColumnDefs}
-                  rowData={report.sampleInfo}
-                  isPrint={isPrint}
-                  isPaginated={!isPrint}
-                />
-              )}
-            </div>
-          )}
+          {
+            isPrint ? reviewSignaturesSection : sampleInfoSection
+          }
+          {
+            isPrint ? sampleInfoSection : reviewSignaturesSection
+          }
         </>
       )}
     </div>
