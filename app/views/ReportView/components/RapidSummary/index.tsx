@@ -22,10 +22,14 @@ import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import PatientEdit from '@/components/PatientEdit';
 import EventsEditDialog from '@/components/EventsEditDialog';
 import capitalize from 'lodash.capitalize';
-import { clinicalAssociationColDefs, cancerRelevanceColDefs, sampleColumnDefs } from './columnDefs';
-import RapidResultsType from './types.d';
 
 import './index.scss';
+import TumourSummaryEdit from '@/components/TumourSummaryEdit';
+import DescriptionList from '@/components/DescriptionList';
+import { TumourSummaryType } from '@/common';
+import { clinicalAssociationColDefs, cancerRelevanceColDefs, sampleColumnDefs } from './columnDefs';
+import RapidResultsType from './types.d';
+import { TmburType } from '../MutationBurden/types';
 
 /**
  * TODO: Fix this up as updates come in
@@ -33,7 +37,6 @@ import './index.scss';
  * Tumour Summary (aggregate)
  *    Initial tumour content (report.tumourContent?)
  *    Mutation burden (/mutation-burden)
- *    MSI status (/msi)
  * Genomic Events with Potential Clinical Association (unknown)
  * Genomic Events with Potential Cancer Relevance (unknown)
  * Other Variants in Cancer Related Genes (unknown)
@@ -62,10 +65,13 @@ const RapidSummary = ({
     label: string;
     value: string | null;
   }[] | null>();
+  const [tumourSummary, setTumourSummary] = useState<TumourSummaryType[]>();
+  const [mutationBurden, setMutationBurden] = useState<TmburType>();
   const [editData, setEditData] = useState();
   const [otherMutationsResults, setOtherMutationsResults] = useState(null);
 
   const [showPatientEdit, setShowPatientEdit] = useState(false);
+  const [showTumourSummaryEdit, setShowTumourSummaryEdit] = useState(false);
   const [showClinicalAssociationEventsDialog, setShowClinicalAssociationEventsDialog] = useState(false);
   const [showCancerRelevanceEventsDialog, setShowCancerRelevanceEventsDialog] = useState(false);
 
@@ -73,7 +79,7 @@ const RapidSummary = ({
     if (report?.ident) {
       const getData = async () => {
         try {
-          // Small mutation, copy number, sv, msi, tmb needed
+          // Small mutation, copy number, sv, tmb needed
           const apiCalls = new ApiCallSet([
             api.get(`/reports/${report.ident}/signatures`),
             // TODO: not implemented on the backend yet
@@ -82,6 +88,7 @@ const RapidSummary = ({
             api.get(`/reports/${report.ident}/cancer-relevance`),
             api.get(`/reports/${report.ident}/small-mutations`),
             api.get(`/reports/${report.ident}/other-mutations`),
+            api.get(`/reports/${report.ident}/tmbur-mutation-burden`),
           ]);
           const [
             signaturesData,
@@ -90,17 +97,18 @@ const RapidSummary = ({
             cancerRelevanceData,
             smallMutationsData,
             otherMutationsData,
+            burdenData,
           ] = await apiCalls.request();
 
           setSignatures(signaturesData);
 
           rapidResultsData.forEach((rapid) => {
             // TODO: placeholder, probe report builds probe results with small-mutation calls
-            smallMutationsData.forEach((mutation) => {});
+            smallMutationsData.forEach((mutation) => { });
           });
           setClinicalAssociationResults(clinicalAssociationData);
           setCancerRelevanceResults(cancerRelevanceData);
-
+          setMutationBurden(burdenData);
           setPatientInformation([
             {
               label: 'Alternate ID',
@@ -146,6 +154,37 @@ const RapidSummary = ({
       getData();
     }
   }, [loadedDispatch, report, setIsLoading]);
+
+  useEffect(() => {
+    let msiStatus: null | string;
+    if (mutationBurden) {
+      const { msiScore } = mutationBurden;
+      if (msiScore < 20) {
+        msiStatus = 'MSS';
+      }
+      if (msiScore >= 20) {
+        msiStatus = 'MSI';
+      }
+    } else {
+      msiStatus = null;
+    }
+    setTumourSummary([
+      {
+        term: 'Initial Tumour Content',
+        value: `${report.tumourContent}%`,
+      },
+      {
+        term: 'Mutation Burden',
+        value: mutationBurden
+          ? `${parseFloat((mutationBurden.genomeSnvTmb + mutationBurden.genomeIndelTmb).toFixed(12))} mut/Mb`
+          : null,
+      },
+      {
+        term: 'MSI Status',
+        value: msiStatus,
+      },
+    ]);
+  }, [mutationBurden, report.tumourContent]);
 
   const handlePatientEditClose = useCallback(async (
     isSaved: boolean,
@@ -223,6 +262,57 @@ const RapidSummary = ({
     sign(signed, role);
     return function cleanup() { cancelled = true; };
   }, [report.ident, setIsSigned]);
+
+  const handleTumourSummaryEditClose = useCallback((
+    isSaved,
+    newMicrobialData,
+    newReportData,
+    newMutationBurdenData,
+  ) => {
+    setShowTumourSummaryEdit(false);
+
+    if (!isSaved || (!newMicrobialData && !newReportData && !newMutationBurdenData)) {
+      return;
+    }
+
+    if (newReportData) {
+      setReport(newReportData);
+    }
+
+    if (newMutationBurdenData) {
+      setMutationBurden(newMutationBurdenData);
+    }
+  }, [setReport]);
+
+  let tumourSummarySection = null;
+  if (tumourSummary) {
+    tumourSummarySection = (
+      <>
+        <div className="rapid-summary__tumour-summary-title">
+          <Typography variant="h3">
+            Tumour Summary
+            {canEdit && !isPrint && (
+            <>
+              <IconButton onClick={() => setShowTumourSummaryEdit(true)} size="large">
+                <EditIcon />
+              </IconButton>
+              <TumourSummaryEdit
+                microbial={null}
+                report={report}
+                mutationBurden={mutationBurden}
+                isOpen={showTumourSummaryEdit}
+                onClose={handleTumourSummaryEditClose}
+              />
+            </>
+            )}
+          </Typography>
+        </div>
+        <div className="rapid-summary__tumour-summary-content">
+          <DescriptionList entries={tumourSummary} />
+        </div>
+      </>
+    );
+  }
 
   const handleClinicalAssociationEditStart = useCallback((rowData) => {
     setShowClinicalAssociationEventsDialog(true);
@@ -407,24 +497,9 @@ const RapidSummary = ({
               </Grid>
             </div>
           )}
-          {report && report.sampleInfo && (
-            <div className="rapid-summary__sample-information">
-              <Typography variant="h3" display="inline" className="rapid-summary__sample-information-title">
-                Sample Information
-              </Typography>
-              {isPrint ? (
-                <PrintTable
-                  data={report.sampleInfo}
-                  columnDefs={sampleColumnDefs}
-                />
-              ) : (
-                <DataTable
-                  columnDefs={sampleColumnDefs}
-                  rowData={report.sampleInfo}
-                  isPrint={isPrint}
-                  isPaginated={!isPrint}
-                />
-              )}
+          {report && tumourSummary && (
+            <div className="rapid-summary__tumour-summary">
+              {tumourSummarySection}
             </div>
           )}
           {report && clinicalAssociationResults && (
@@ -454,6 +529,26 @@ const RapidSummary = ({
               <div className="rapid-summary__signatures">
                 {reviewSignatures}
               </div>
+            </div>
+          )}
+          {report && report.sampleInfo && (
+            <div className="rapid-summary__sample-information">
+              <Typography variant="h3" display="inline" className="rapid-summary__sample-information-title">
+                Sample Information
+              </Typography>
+              {isPrint ? (
+                <PrintTable
+                  data={report.sampleInfo}
+                  columnDefs={sampleColumnDefs}
+                />
+              ) : (
+                <DataTable
+                  columnDefs={sampleColumnDefs}
+                  rowData={report.sampleInfo}
+                  isPrint={isPrint}
+                  isPaginated={!isPrint}
+                />
+              )}
             </div>
           )}
         </>
