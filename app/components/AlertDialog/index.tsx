@@ -13,27 +13,31 @@ import {
 interface AlertDialogProps extends Omit<DialogProps, 'open'> {
   isOpen: boolean;
   onClose: (confirmed: boolean, commentInput?: string) => void;
+  onDeny?: () => void;
   title: string;
   text: string;
   commentRequired?: boolean;
   confirmText?: string;
+  denyText?: string;
   cancelText?: string;
-};
+}
 
 const AlertDialog = ({
   isOpen,
   onClose,
+  onDeny = null,
   title,
   text,
   commentRequired = false,
   confirmText = 'Confirm',
+  denyText = 'Deny',
   cancelText = 'Cancel',
 }: AlertDialogProps): JSX.Element => {
   const [commentInput, setCommentInput] = useState('');
 
   const handleClose = useCallback(() => {
     onClose(false);
-  }, [onClose])
+  }, [onClose]);
 
   return (
     <Dialog open={isOpen} onClose={handleClose}>
@@ -60,6 +64,13 @@ const AlertDialog = ({
         <Button onClick={() => onClose(false)}>
           {cancelText}
         </Button>
+        {Boolean(onDeny) && (
+          <Button
+            onClick={() => (onDeny())}
+          >
+            {denyText}
+          </Button>
+        )}
         {Boolean(confirmText) && (
           <Button
             disabled={commentRequired && !commentInput}
@@ -74,3 +85,4 @@ const AlertDialog = ({
 };
 
 export default AlertDialog;
+export { AlertDialogProps };
