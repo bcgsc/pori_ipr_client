@@ -5,6 +5,7 @@ const COMMON_COL_DEFS = [
   {
     headerName: 'Gene',
     colId: 'gene',
+    field: 'gene',
     hide: false,
     minWidth: 70,
     valueGetter: (params) => {
@@ -29,6 +30,7 @@ const COMMON_COL_DEFS = [
   {
     headerName: 'Observed Variant (DNA)',
     colId: 'variant',
+    field: 'variant',
     hide: false,
     maxWidth: 300,
     width: 130,
@@ -40,6 +42,7 @@ const COMMON_COL_DEFS = [
   {
     headerName: 'Observed Variant (protein)',
     colId: 'variant.hgvsProtein',
+    field: 'variant.hgvsProtein',
     valueGetter: ({ data }) => data?.variant?.hgvsProtein,
     hide: false,
     minWidth: 190,
@@ -48,6 +51,7 @@ const COMMON_COL_DEFS = [
   {
     headerName: 'Alt/Total',
     colId: 'Alt/Total',
+    field: 'Alt/Total',
     valueGetter: (params) => {
       const { data: { variant } } = params;
       let totalText = variant.tumourDepth ?? variant.rnaDepth;

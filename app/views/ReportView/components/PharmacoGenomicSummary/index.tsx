@@ -225,6 +225,7 @@ const PharmacoGenomicSummary = ({
       if (isPrint) {
         tableComponent = (
           <PrintTable
+            collapseableCols={['gene', 'variant', 'variant.hgvsProtein', 'Alt/Total']}
             columnDefs={pharmacoGenomicPrintColumnDefs}
             data={pharmacoGenomic}
           />
