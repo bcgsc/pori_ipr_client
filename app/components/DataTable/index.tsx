@@ -57,19 +57,21 @@ const getRowspanColDefs = (colDefs: ColDef[], displayedRows: RowNode[], colsToCo
       keysToRowSpan[rowKey] += 1;
     }
   });
-
-  let prevRowKey = '';
-  let prevRowIndex = -1;
   nextColDefs.forEach((cd) => {
+    let prevRowKey = '';
+    let prevRowIndex = -1;
     // eslint-disable-next-line no-param-reassign -- we deepcloned the coldefs, so no data pollution
     cd.rowSpan = (params) => {
+      const keysToRowSpanCopy = cloneDeep(keysToRowSpan);
+      const collapseFieldToValueGetterCopy = cloneDeep(collapseFieldToValueGetter);
+
       const { node: { rowIndex } } = params;
 
       let rowKey = '';
       colsToCollapse.forEach((colField) => {
         // Check if value getter exists
-        if (collapseFieldToValueGetter[colField]) {
-          rowKey = rowKey.concat(collapseFieldToValueGetter[colField](params));
+        if (collapseFieldToValueGetterCopy[colField]) {
+          rowKey = rowKey.concat(collapseFieldToValueGetterCopy[colField](params));
         } else {
           rowKey = rowKey.concat(params.data[colField]);
         }
@@ -81,13 +83,12 @@ const getRowspanColDefs = (colDefs: ColDef[], displayedRows: RowNode[], colsToCo
           prevRowKey = rowKey;
         } else {
           // Old Key
-          keysToRowSpan[rowKey] = 0;
+          keysToRowSpanCopy[rowKey] = 0;
         }
         prevRowIndex = rowIndex;
       }
-
-      if (colsToCollapse.includes(cd.field) && keysToRowSpan[rowKey] > 0) {
-        return keysToRowSpan[rowKey];
+      if (colsToCollapse.includes(cd.field) && keysToRowSpanCopy[rowKey] > 0) {
+        return keysToRowSpanCopy[rowKey];
       }
       return 1;
     };
@@ -454,11 +455,14 @@ const DataTable = ({
   }, [handleTSVExport, onAdd, tableType, toggleReorder]);
 
   const handlePaginationChanged = useCallback((params) => {
+    const {
+      api, newData, newPage, columnApi,
+    } = params;
     // Case for when rows are supposed to be collapsed
-    if (collapseColumnFields?.length > 0 && (params.newData || params.newPage)) {
-      params.api.setColumnDefs(getRowspanColDefs(columnDefs, params.api.getRenderedNodes(), collapseColumnFields));
-      params.api.redrawRows();
-      params.columnApi.autoSizeAllColumns();
+    if (collapseColumnFields?.length > 0 && (newData || newPage)) {
+      api.setColumnDefs(getRowspanColDefs(columnDefs, api.getRenderedNodes(), collapseColumnFields));
+      api.redrawRows();
+      columnApi.autoSizeAllColumns();
     }
   }, [columnDefs, collapseColumnFields]);
 
