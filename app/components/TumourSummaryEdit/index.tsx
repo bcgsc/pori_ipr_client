@@ -13,6 +13,7 @@ import {
 import api, { ApiCallSet } from '@/services/api';
 import ConfirmContext from '@/context/ConfirmContext';
 import AsyncButton from '@/components/AsyncButton';
+import useConfirmDialog from '@/hooks/useConfirmDialog';
 
 import './index.scss';
 
@@ -32,6 +33,7 @@ const TumourSummaryEdit = ({
   onClose,
 }: TumourSummaryEditProps): JSX.Element => {
   const { isSigned } = useContext(ConfirmContext);
+  const { showConfirmDialog } = useConfirmDialog();
 
   const [newMicrobialData, setNewMicrobialData] = useState({});
   const [newReportData, setNewReportData] = useState({});
@@ -121,19 +123,23 @@ const TumourSummaryEdit = ({
       }
 
       const callSet = new ApiCallSet(apiCalls);
-      const [microbialResp, reportResp, primaryBurdenResp] = await callSet.request(isSigned);
 
-      setIsApiCalling(false);
-      onClose(
-        true,
-        microbialDirty ? microbialResp : null,
-        reportDirty ? reportResp : null,
-        mutationBurdenDirty ? primaryBurdenResp : null,
-      );
+      if (isSigned) {
+        showConfirmDialog(callSet);
+      } else {
+        const [microbialResp, reportResp, primaryBurdenResp] = await callSet.request();
+        setIsApiCalling(false);
+        onClose(
+          true,
+          microbialDirty ? microbialResp : null,
+          reportDirty ? reportResp : null,
+          mutationBurdenDirty ? primaryBurdenResp : null,
+        );
+      }
     } else {
       onClose(false);
     }
-  }, [newMicrobialData, newReportData, newMutationBurdenData, isSigned, onClose, microbialDirty, reportDirty, mutationBurdenDirty, microbial, report.ident, mutationBurden]);
+  }, [newMicrobialData, newReportData, newMutationBurdenData, isSigned, onClose, microbialDirty, reportDirty, mutationBurdenDirty, microbial, report.ident, mutationBurden, showConfirmDialog]);
 
   return (
     <Dialog open={isOpen}>

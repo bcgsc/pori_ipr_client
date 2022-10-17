@@ -21,6 +21,7 @@ import ReportContext from '@/context/ReportContext';
 import snackbar from '@/services/SnackbarUtils';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import PatientEdit from '@/components/PatientEdit';
+import useConfirmDialog from '@/hooks/useConfirmDialog';
 import VariantChips from './components/VariantChips';
 import VariantCounts from './components/VariantCounts';
 import TumourSummaryEdit from '@/components/TumourSummaryEdit';
@@ -84,6 +85,7 @@ const GenomicSummary = ({
   const { report, setReport } = useContext(ReportContext);
   const { canEdit } = useUser();
   const { isSigned } = useContext(ConfirmContext);
+  const { showConfirmDialog } = useConfirmDialog();
   const history = useHistory();
 
   const [showPatientEdit, setShowPatientEdit] = useState(false);
@@ -331,16 +333,20 @@ const GenomicSummary = ({
         `/reports/${report.ident}/summary/genomic-alterations-identified/${chipIdent}`,
         { comment },
       );
-      await req.request(isSigned);
 
-      setVariantCounts((prevVal) => ({ ...prevVal, [type]: prevVal[type] - 1 }));
-      setVariants((prevVal) => (prevVal.filter((val) => val.ident !== chipIdent)));
-      snackbar.success('Entry deleted');
+      if (isSigned) {
+        showConfirmDialog(req);
+      } else {
+        await req.request();
+        setVariantCounts((prevVal) => ({ ...prevVal, [type]: prevVal[type] - 1 }));
+        setVariants((prevVal) => (prevVal.filter((val) => val.ident !== chipIdent)));
+        snackbar.success('Entry deleted');
+      }
     } catch (err) {
       console.error(err);
       snackbar.error('Entry NOT deleted due to an error');
     }
-  }, [report, isSigned]);
+  }, [report, isSigned, showConfirmDialog]);
 
   const handleChipAdded = useCallback(async (variant) => {
     try {

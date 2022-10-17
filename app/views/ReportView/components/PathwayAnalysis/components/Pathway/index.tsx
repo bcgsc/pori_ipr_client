@@ -11,6 +11,7 @@ import {
 import PublishIcon from '@mui/icons-material/Publish';
 
 import api from '@/services/api';
+import useConfirmDialog from '@/hooks/useConfirmDialog';
 import SvgImage from '@/components/SvgImage';
 import { useUser } from '@/context/UserContext';
 import ReportContext from '@/context/ReportContext';
@@ -31,6 +32,7 @@ const Pathway = ({
   const { isSigned } = useContext(ConfirmContext);
   const { report } = useContext(ReportContext);
   const { canEdit } = useUser();
+  const { showConfirmDialog } = useConfirmDialog();
   const snackbar = useSnackbar();
 
   const [pathwayImage, setPathwayImage] = useState<PathwayImageType>();
@@ -61,31 +63,37 @@ const Pathway = ({
       newPathway.append('pathway', uploadedFile);
       newPathway.set('legend', 'v2');
 
-      let pathwayResp: PathwayImageType;
+      let pathwayCall;
+
       if (initialPathway) {
-        pathwayResp = await api.put(
+        pathwayCall = api.put(
           `/reports/${report.ident}/summary/pathway-analysis`,
           newPathway,
           {},
           true,
-        ).request(isSigned);
+        );
       } else {
-        pathwayResp = await api.post(
+        pathwayCall = api.post(
           `/reports/${report.ident}/summary/pathway-analysis`,
           newPathway,
           {},
           true,
-        ).request(isSigned);
+        );
       }
 
-      setPathwayImage(pathwayResp);
-      setIsPathwayLoading(false);
-      onChange(pathwayResp);
-      snackbar.enqueueSnackbar('Pathway image uploaded successfully', { variant: 'success' });
+      if (isSigned) {
+        showConfirmDialog(pathwayCall);
+      } else {
+        const pathwayResp = await pathwayCall.request();
+        setPathwayImage(pathwayResp);
+        setIsPathwayLoading(false);
+        onChange(pathwayResp);
+        snackbar.enqueueSnackbar('Pathway image uploaded successfully', { variant: 'success' });
+      }
     } catch (err) {
       snackbar.enqueueSnackbar(`Error uploading pathway image: ${err}`, { variant: 'error' });
     }
-  }, [initialPathway, isSigned, onChange, report, snackbar]);
+  }, [initialPathway, isSigned, onChange, report, snackbar, showConfirmDialog]);
 
   const pathwayUpload = useMemo(() => {
     let component = null;
