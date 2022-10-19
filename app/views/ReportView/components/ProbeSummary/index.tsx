@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import useConfirmDialog from '@/hooks/useConfirmDialog';
-import capitalize from 'lodash.capitalize';
+import capitalize from 'lodash/capitalize';
 import api, { ApiCallSet } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
@@ -172,7 +172,7 @@ const ProbeSummary = ({
       if (reportResp) {
         setReport({ ...reportResp, ...report });
       }
-  
+
       setPatientInformation([
         {
           label: 'Alternate ID',
