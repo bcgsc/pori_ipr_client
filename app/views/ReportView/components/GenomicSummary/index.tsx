@@ -8,7 +8,7 @@ import {
   Grid,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import sortBy from 'lodash.sortby';
+import sortBy from 'lodash/sortBy';
 
 import api, { ApiCallSet } from '@/services/api';
 import { formatDate } from '@/utils/date';
@@ -99,13 +99,13 @@ const GenomicSummary = ({
   const [msi, setMsi] = useState<MsiType>();
   const [tmburMutBur, setTmburMutBur] = useState<TmburType>();
 
-  const [microbial, setMicrobial] = useState<MicrobialType>({
+  const [microbial, setMicrobial] = useState<MicrobialType[]>([{
     species: '',
     integrationSite: '',
     ident: '',
     createdAt: null,
     updatedAt: null,
-  });
+  }]);
   const [tCellCd8, setTCellCd8] = useState<ImmuneType>();
   const [primaryComparator, setPrimaryComparator] = useState<ComparatorType>();
   const [variantFilter, setVariantFilter] = useState<string>('');
@@ -138,7 +138,15 @@ const GenomicSummary = ({
             burdenResp,
             immuneResp,
             msiResp,
-          ] = await apiCalls.request();
+          ] = await apiCalls.request() as [
+            MicrobialType[],
+            GeneVariantType[],
+            ComparatorType[],
+            MutationSignatureType[],
+            MutationBurdenType[],
+            ImmuneType[],
+            MsiType[],
+          ];
 
           try {
             const tmburResp = await api.get(`/reports/${report.ident}/tmbur-mutation-burden`).request();
@@ -156,7 +164,7 @@ const GenomicSummary = ({
           setSignatures(signaturesResp);
 
           if (microbialResp.length) {
-            setMicrobial(microbialResp[0]);
+            setMicrobial(microbialResp);
           }
 
           if (msiResp.length) {
@@ -286,7 +294,13 @@ const GenomicSummary = ({
         },
         {
           term: 'Microbial Species',
-          value: microbial ? microbial.species : null,
+          value: microbial ? microbial.map(({ species, integrationSite }) => {
+            let integrationSection = '';
+            if (integrationSite) {
+              integrationSection = integrationSite.toLowerCase() === 'yes' ? ' (integration)' : ' (no integration)';
+            }
+            return `${species}${integrationSection}`;
+          }).join(', ') : null,
         },
         {
           term: 'CD8+ T Cell Score',
@@ -325,7 +339,7 @@ const GenomicSummary = ({
         },
       ]);
     }
-  }, [history, microbial, microbial.species, primaryBurden, primaryComparator, isPrint, report, signatures, tCellCd8, msi, tmburMutBur]);
+  }, [history, microbial, primaryBurden, primaryComparator, isPrint, report, signatures, tCellCd8, msi, tmburMutBur]);
 
   const handleChipDeleted = useCallback(async (chipIdent, type, comment) => {
     try {
