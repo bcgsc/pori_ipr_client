@@ -3,7 +3,7 @@ import React, {
 } from 'react';
 import { AgGridReact } from '@ag-grid-community/react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { ColDef, RowNode, RowSpanParams } from '@ag-grid-community/core';
+import { ColDef, RowNode } from '@ag-grid-community/core';
 import cloneDeep from 'lodash/cloneDeep';
 import useGrid from '@/hooks/useGrid';
 import {
@@ -36,10 +36,20 @@ const PAGE_TOP_OFFSET = 56 + 57;
 const getRowspanColDefs = (colDefs: ColDef[], displayedRows: RowNode[], colsToCollapse: string[]): ColDef[] => {
   const nextColDefs: ColDef[] = cloneDeep(colDefs);
   const keysToRowSpan = {};
-  displayedRows.forEach((row) => {
+  const collapseFieldToValueGetter = {};
+  colsToCollapse.forEach((col) => {
+    const valGetterFunc = colDefs.find(({ field, colId }) => col === field || col === colId).valueGetter;
+    if (valGetterFunc) { collapseFieldToValueGetter[col] = valGetterFunc; }
+  });
+  displayedRows.forEach(({ data }) => {
     let rowKey = '';
     colsToCollapse.forEach((colField) => {
-      rowKey = rowKey.concat(row.data[colField]);
+      // See if valueGetter exists
+      if (collapseFieldToValueGetter[colField]) {
+        rowKey = rowKey.concat(collapseFieldToValueGetter[colField]({ data }));
+      } else {
+        rowKey = rowKey.concat(data[colField]);
+      }
     });
     if (!keysToRowSpan[rowKey]) {
       keysToRowSpan[rowKey] = 1;
@@ -47,17 +57,24 @@ const getRowspanColDefs = (colDefs: ColDef[], displayedRows: RowNode[], colsToCo
       keysToRowSpan[rowKey] += 1;
     }
   });
-
-  let prevRowKey = '';
-  let prevRowIndex = -1;
   nextColDefs.forEach((cd) => {
+    let prevRowKey = '';
+    let prevRowIndex = -1;
     // eslint-disable-next-line no-param-reassign -- we deepcloned the coldefs, so no data pollution
     cd.rowSpan = (params) => {
+      const keysToRowSpanCopy = cloneDeep(keysToRowSpan);
+      const collapseFieldToValueGetterCopy = cloneDeep(collapseFieldToValueGetter);
+
       const { node: { rowIndex } } = params;
 
       let rowKey = '';
       colsToCollapse.forEach((colField) => {
-        rowKey = rowKey.concat(params.data[colField]);
+        // Check if value getter exists
+        if (collapseFieldToValueGetterCopy[colField]) {
+          rowKey = rowKey.concat(collapseFieldToValueGetterCopy[colField](params));
+        } else {
+          rowKey = rowKey.concat(params.data[colField]);
+        }
       });
 
       if (rowIndex !== prevRowIndex) {
@@ -66,25 +83,25 @@ const getRowspanColDefs = (colDefs: ColDef[], displayedRows: RowNode[], colsToCo
           prevRowKey = rowKey;
         } else {
           // Old Key
-          keysToRowSpan[rowKey] = 0;
+          keysToRowSpanCopy[rowKey] = 0;
         }
         prevRowIndex = rowIndex;
       }
-
-      if (colsToCollapse.includes(cd.field) && keysToRowSpan[rowKey] > 0) {
-        return keysToRowSpan[rowKey];
+      if (colsToCollapse.includes(cd.field) && keysToRowSpanCopy[rowKey] > 0) {
+        return keysToRowSpanCopy[rowKey];
       }
       return 1;
     };
 
     // eslint-disable-next-line no-param-reassign
     cd.cellClass = (params) => {
-      const span = params.colDef.rowSpan(params);
-      const numRows = params.api.getRenderedNodes().length;
-      const pageNum = params.api.paginationGetCurrentPage();
-      const pageSize = params.api.paginationGetPageSize();
+      const { api, colDef, rowIndex } = params;
+      const span = colDef.rowSpan(params);
+      const numRows = api.getRenderedNodes().length;
+      const pageNum = api.paginationGetCurrentPage();
+      const pageSize = api.paginationGetPageSize();
       if (span > 1) {
-        return span + params.rowIndex - (pageNum * pageSize) === numRows ? 'cell-span--last' : 'cell-span';
+        return span + rowIndex - (pageNum * pageSize) === numRows ? 'cell-span--last' : 'cell-span';
       }
       return '';
     };
@@ -438,10 +455,14 @@ const DataTable = ({
   }, [handleTSVExport, onAdd, tableType, toggleReorder]);
 
   const handlePaginationChanged = useCallback((params) => {
+    const {
+      api, newData, newPage, columnApi,
+    } = params;
     // Case for when rows are supposed to be collapsed
-    if (collapseColumnFields?.length > 0 && (params.newData || params.newPage)) {
-      params.api.setColumnDefs(getRowspanColDefs(columnDefs, params.api.getRenderedNodes(), collapseColumnFields));
-      params.columnApi.autoSizeAllColumns();
+    if (collapseColumnFields?.length > 0 && (newData || newPage)) {
+      api.setColumnDefs(getRowspanColDefs(columnDefs, api.getRenderedNodes(), collapseColumnFields));
+      api.redrawRows();
+      columnApi.autoSizeAllColumns();
     }
   }, [columnDefs, collapseColumnFields]);
 
