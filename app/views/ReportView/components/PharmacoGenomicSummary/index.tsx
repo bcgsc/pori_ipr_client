@@ -24,7 +24,7 @@ import PrintTable from '@/components/PrintTable';
 import TestInformation, { TestInformationType } from '@/components/TestInformation';
 import { KbMatchType } from '@/common';
 import PatientEdit from '@/components/PatientEdit';
-import capitalize from 'lodash.capitalize';
+import capitalize from 'lodash/capitalize';
 import {
   sampleColumnDefs,
   pharmacoGenomicColumnDefs,

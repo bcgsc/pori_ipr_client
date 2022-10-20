@@ -1,7 +1,7 @@
 import React, {
   useEffect, useState, useContext, useCallback,
 } from 'react';
-import orderBy from 'lodash.orderby';
+import orderBy from 'lodash/orderBy';
 import { Typography } from '@mui/material';
 
 import DemoDescription from '@/components/DemoDescription';

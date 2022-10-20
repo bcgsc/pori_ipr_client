@@ -16,7 +16,7 @@ import ReportContext from '@/context/ReportContext';
 import SignatureCard, { SignatureType, SignatureUserType } from '@/components/SignatureCard';
 import ConfirmContext from '@/context/ConfirmContext';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
-import capitalize from 'lodash.capitalize';
+import capitalize from 'lodash/capitalize';
 import useConfirmDialog from '@/hooks/useConfirmDialog';
 import TextEditor from './components/TextEditor';
 
