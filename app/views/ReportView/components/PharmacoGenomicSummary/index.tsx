@@ -162,7 +162,7 @@ const PharmacoGenomicSummary = ({
       if (reportResp) {
         setReport({ ...reportResp, ...report });
       }
-  
+
       setPatientInformation([
         {
           label: 'Alternate ID',
@@ -234,6 +234,7 @@ const PharmacoGenomicSummary = ({
         tableComponent = (
           <DataTable
             columnDefs={pharmacoGenomicColumnDefs}
+            collapseColumnFields={['gene', 'variant', 'variant.hgvsProtein', 'Alt/Total']}
             rowData={pharmacoGenomic}
             isPrint={isPrint}
             isPaginated={!isPrint}
