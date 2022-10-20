@@ -7,6 +7,7 @@ import {
   Grid,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+import useConfirmDialog from '@/hooks/useConfirmDialog';
 import capitalize from 'lodash.capitalize';
 import api, { ApiCallSet } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
@@ -45,6 +46,7 @@ const ProbeSummary = ({
   const [testInformation, setTestInformation] = useState<TestInformationType | null>();
   const [signatures, setSignatures] = useState<SignatureType | null>();
   const [probeResults, setProbeResults] = useState<ProbeResultsType[] | null>();
+  const { showConfirmDialog } = useConfirmDialog();
   const [patientInformation, setPatientInformation] = useState<{
     label: string;
     value: string | null;
@@ -161,47 +163,52 @@ const ProbeSummary = ({
     }
 
     const callSet = new ApiCallSet(apiCalls);
-    const [, reportResp] = await callSet.request(isSigned);
 
-    if (reportResp) {
-      setReport({ ...reportResp, ...report });
+    if (isSigned) {
+      showConfirmDialog(callSet);
+    } else {
+      const [, reportResp] = await callSet.request();
+
+      if (reportResp) {
+        setReport({ ...reportResp, ...report });
+      }
+  
+      setPatientInformation([
+        {
+          label: 'Alternate ID',
+          value: newReportData ? newReportData.alternateIdentifier : report.alternateIdentifier,
+        },
+        {
+          label: 'Pediatric Patient IDs',
+          value: newReportData ? newReportData.pediatricIds : report.pediatricIds,
+        },
+        {
+          label: 'Report Date',
+          value: formatDate(report.createdAt),
+        },
+        {
+          label: 'Case Type',
+          value: newPatientData ? newPatientData.caseType : report.patientInformation.caseType,
+        },
+        {
+          label: 'Physician',
+          value: newPatientData ? newPatientData.physician : report.patientInformation.physician,
+        },
+        {
+          label: 'Biopsy Name',
+          value: newReportData ? newReportData.biopsyName : report.biopsyName,
+        },
+        {
+          label: 'Biopsy Details',
+          value: newPatientData ? newPatientData.biopsySite : report.patientInformation.biopsySite,
+        },
+        {
+          label: 'Gender',
+          value: newPatientData ? newPatientData.gender : report.patientInformation.gender,
+        },
+      ]);
     }
-
-    setPatientInformation([
-      {
-        label: 'Alternate ID',
-        value: newReportData ? newReportData.alternateIdentifier : report.alternateIdentifier,
-      },
-      {
-        label: 'Pediatric Patient IDs',
-        value: newReportData ? newReportData.pediatricIds : report.pediatricIds,
-      },
-      {
-        label: 'Report Date',
-        value: formatDate(report.createdAt),
-      },
-      {
-        label: 'Case Type',
-        value: newPatientData ? newPatientData.caseType : report.patientInformation.caseType,
-      },
-      {
-        label: 'Physician',
-        value: newPatientData ? newPatientData.physician : report.patientInformation.physician,
-      },
-      {
-        label: 'Biopsy Name',
-        value: newReportData ? newReportData.biopsyName : report.biopsyName,
-      },
-      {
-        label: 'Biopsy Details',
-        value: newPatientData ? newPatientData.biopsySite : report.patientInformation.biopsySite,
-      },
-      {
-        label: 'Gender',
-        value: newPatientData ? newPatientData.gender : report.patientInformation.gender,
-      },
-    ]);
-  }, [isSigned, report, setReport]);
+  }, [isSigned, report, setReport, showConfirmDialog]);
 
   const handleSign = useCallback((signed: boolean, role: SignatureUserType) => {
     let cancelled;
