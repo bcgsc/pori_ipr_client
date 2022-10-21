@@ -1,7 +1,7 @@
 import React, {
   useEffect, useState, useContext, useMemo,
 } from 'react';
-import orderBy from 'lodash.orderby';
+import orderBy from 'lodash/orderBy';
 import {
   Divider,
   Typography,
@@ -13,7 +13,7 @@ import snackbar from '@/services/SnackbarUtils';
 import Image, { ImageType } from '@/components/Image';
 import DemoDescription from '@/components/DemoDescription';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
-import partition from 'lodash.partition';
+import partition from 'lodash/partition';
 import CorrelationPlot from './components/CorrelationPlot';
 import PlotByKey from './components/PlotByKey';
 
