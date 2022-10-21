@@ -153,3 +153,29 @@ CollapsedRows.args = {
   ...DEFAULT_PROPS,
   collapseColumnFields: ['column_a', 'column_b'],
 };
+
+export const CollapsedRowsWithValueGetters: Story<DataTableProps> = Template.bind({});
+CollapsedRowsWithValueGetters.args = {
+  ...DEFAULT_PROPS,
+  columnDefs: [
+    {
+      field: 'column_a',
+      headerName: 'Col_A',
+      valueGetter: (params) => params.data.column_a,
+    },
+    {
+      field: 'column_b',
+      headerName: 'Col_B',
+      valueGetter: (params) => params.data.column_b,
+    },
+    {
+      field: 'column_c',
+      headerName: 'Col_C',
+    },
+    {
+      field: 'column_d',
+      headerName: 'Col_D',
+    },
+  ],
+  collapseColumnFields: ['column_a', 'column_b'],
+};

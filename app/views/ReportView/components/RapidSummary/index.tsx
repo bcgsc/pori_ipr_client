@@ -21,7 +21,7 @@ import PrintTable from '@/components/PrintTable';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import PatientEdit from '@/components/PatientEdit';
 import EventsEditDialog from '@/components/EventsEditDialog';
-import capitalize from 'lodash.capitalize';
+import capitalize from 'lodash/capitalize';
 
 import './index.scss';
 import TumourSummaryEdit from '@/components/TumourSummaryEdit';

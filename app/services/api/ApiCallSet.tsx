@@ -19,7 +19,7 @@ class ApiCallSet {
     this.calls.forEach((controller) => controller.abort());
   }
 
-  async request(): Promise<RequestReturnType[] | void> {
+  async request(): Promise<RequestReturnType[]> {
     return Promise.all(this.calls.map((call) => call.request()));
   }
 }
