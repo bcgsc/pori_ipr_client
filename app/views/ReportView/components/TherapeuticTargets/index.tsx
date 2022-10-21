@@ -1,7 +1,7 @@
 import React, {
   useState, useEffect, useContext, useCallback,
 } from 'react';
-import orderBy from 'lodash.orderby';
+import orderBy from 'lodash/orderBy';
 import { Typography } from '@mui/material';
 
 import DataTable from '@/components/DataTable';

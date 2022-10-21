@@ -8,7 +8,7 @@ import {
   Grid,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import sortBy from 'lodash.sortby';
+import sortBy from 'lodash/sortBy';
 
 import api, { ApiCallSet } from '@/services/api';
 import { formatDate } from '@/utils/date';
@@ -21,6 +21,7 @@ import ReportContext from '@/context/ReportContext';
 import snackbar from '@/services/SnackbarUtils';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import PatientEdit from '@/components/PatientEdit';
+import useConfirmDialog from '@/hooks/useConfirmDialog';
 import VariantChips from './components/VariantChips';
 import VariantCounts from './components/VariantCounts';
 import TumourSummaryEdit from './components/TumourSummaryEdit';
@@ -84,6 +85,7 @@ const GenomicSummary = ({
   const { report, setReport } = useContext(ReportContext);
   const { canEdit } = useUser();
   const { isSigned } = useContext(ConfirmContext);
+  const { showConfirmDialog } = useConfirmDialog();
   const history = useHistory();
 
   const [showPatientEdit, setShowPatientEdit] = useState(false);
@@ -97,13 +99,13 @@ const GenomicSummary = ({
   const [msi, setMsi] = useState<MsiType>();
   const [tmburMutBur, setTmburMutBur] = useState<TmburType>();
 
-  const [microbial, setMicrobial] = useState<MicrobialType>({
+  const [microbial, setMicrobial] = useState<MicrobialType[]>([{
     species: '',
     integrationSite: '',
     ident: '',
     createdAt: null,
     updatedAt: null,
-  });
+  }]);
   const [tCellCd8, setTCellCd8] = useState<ImmuneType>();
   const [primaryComparator, setPrimaryComparator] = useState<ComparatorType>();
   const [variantFilter, setVariantFilter] = useState<string>('');
@@ -136,7 +138,15 @@ const GenomicSummary = ({
             burdenResp,
             immuneResp,
             msiResp,
-          ] = await apiCalls.request();
+          ] = await apiCalls.request() as [
+            MicrobialType[],
+            GeneVariantType[],
+            ComparatorType[],
+            MutationSignatureType[],
+            MutationBurdenType[],
+            ImmuneType[],
+            MsiType[],
+          ];
 
           try {
             const tmburResp = await api.get(`/reports/${report.ident}/tmbur-mutation-burden`).request();
@@ -154,7 +164,7 @@ const GenomicSummary = ({
           setSignatures(signaturesResp);
 
           if (microbialResp.length) {
-            setMicrobial(microbialResp[0]);
+            setMicrobial(microbialResp);
           }
 
           if (msiResp.length) {
@@ -284,7 +294,13 @@ const GenomicSummary = ({
         },
         {
           term: 'Microbial Species',
-          value: microbial ? microbial.species : null,
+          value: microbial ? microbial.map(({ species, integrationSite }) => {
+            let integrationSection = '';
+            if (integrationSite) {
+              integrationSection = integrationSite.toLowerCase() === 'yes' ? ' (integration)' : ' (no integration)';
+            }
+            return `${species}${integrationSection}`;
+          }).join(', ') : null,
         },
         {
           term: 'CD8+ T Cell Score',
@@ -313,17 +329,17 @@ const GenomicSummary = ({
         },
         {
           term: 'MSI Status',
-          value: msiStatus,
+          value: msiStatus ?? null,
         },
         {
           term: 'Genome TMB (mut/mb)', // float
           // Forced to do this due to javascript floating point issues
           value:
-            tmburMutBur ? (tmburMutBur.genomeSnvTmb + tmburMutBur.genomeIndelTmb).toFixed(2) : '',
+            tmburMutBur ? (tmburMutBur.genomeSnvTmb + tmburMutBur.genomeIndelTmb).toFixed(2) : null,
         },
       ]);
     }
-  }, [history, microbial, microbial.species, primaryBurden, primaryComparator, isPrint, report, signatures, tCellCd8, msi, tmburMutBur]);
+  }, [history, microbial, primaryBurden, primaryComparator, isPrint, report, signatures, tCellCd8, msi, tmburMutBur]);
 
   const handleChipDeleted = useCallback(async (chipIdent, type, comment) => {
     try {
@@ -331,16 +347,20 @@ const GenomicSummary = ({
         `/reports/${report.ident}/summary/genomic-alterations-identified/${chipIdent}`,
         { comment },
       );
-      await req.request(isSigned);
 
-      setVariantCounts((prevVal) => ({ ...prevVal, [type]: prevVal[type] - 1 }));
-      setVariants((prevVal) => (prevVal.filter((val) => val.ident !== chipIdent)));
-      snackbar.success('Entry deleted');
+      if (isSigned) {
+        showConfirmDialog(req);
+      } else {
+        await req.request();
+        setVariantCounts((prevVal) => ({ ...prevVal, [type]: prevVal[type] - 1 }));
+        setVariants((prevVal) => (prevVal.filter((val) => val.ident !== chipIdent)));
+        snackbar.success('Entry deleted');
+      }
     } catch (err) {
       console.error(err);
       snackbar.error('Entry NOT deleted due to an error');
     }
-  }, [report, isSigned]);
+  }, [report, isSigned, showConfirmDialog]);
 
   const handleChipAdded = useCallback(async (variant) => {
     try {

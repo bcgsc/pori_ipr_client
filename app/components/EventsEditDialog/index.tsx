@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 
 import ReportContext from '@/context/ReportContext';
+import useConfirmDialog from '@/hooks/useConfirmDialog';
 import ConfirmContext from '@/context/ConfirmContext';
 import api from '@/services/api';
 import { GeneType } from '@/common';
@@ -29,6 +30,7 @@ const EventsEditDialog = ({
 }: EventsEditDialogProps): JSX.Element => {
   const { report } = useContext(ReportContext);
   const { isSigned } = useContext(ConfirmContext);
+  const { showConfirmDialog } = useConfirmDialog();
 
   const [newData, setNewData] = useState<Record<string, string | GeneType>>();
   const [editDataDirty, setEditDataDirty] = useState<boolean>(false);
@@ -69,16 +71,21 @@ const EventsEditDialog = ({
         gene: newData?.gene?.ident,
       };
 
-      const returnData = await api.put(
+      const apiCall = api.put(
         `/reports/${report.ident}/probe-results/${newData.ident}`,
         putData,
-      ).request(isSigned);
+      );
 
-      onClose(returnData);
+      if (isSigned) {
+        showConfirmDialog(apiCall);
+      } else {
+        const returnData = await apiCall.request();
+        onClose(returnData);
+      }
     } else {
       onClose();
     }
-  }, [editDataDirty, isSigned, newData, onClose, report.ident]);
+  }, [editDataDirty, isSigned, newData, onClose, report.ident, showConfirmDialog]);
 
   return (
     <Dialog open={isOpen}>
