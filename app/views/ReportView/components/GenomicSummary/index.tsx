@@ -24,11 +24,10 @@ import PatientEdit from '@/components/PatientEdit';
 import useConfirmDialog from '@/hooks/useConfirmDialog';
 import VariantChips from './components/VariantChips';
 import VariantCounts from './components/VariantCounts';
-import TumourSummaryEdit from './components/TumourSummaryEdit';
+import TumourSummaryEdit from '@/components/TumourSummaryEdit';
 import {
   PatientInformationType,
   GeneVariantType,
-  TumourSummaryType,
   MicrobialType,
 } from './types';
 import {
@@ -38,6 +37,7 @@ import MutationSignatureType from '../MutationSignatures/types';
 import { ImmuneType } from '../Immune/types';
 
 import './index.scss';
+import { TumourSummaryType } from '@/common';
 
 const variantCategory = (variant) => {
   // small mutations
