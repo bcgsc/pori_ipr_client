@@ -2,18 +2,18 @@ const clinicalAssociationColDefs = [
   {
     headerName: 'Genomic Events',
     colId: 'events',
-    valueGetter: ({ data }) => {
-      if (/^(enst)|(nm_)/i.test(data.variant)) {
-        return `${data.gene.name} (${data.variant})`;
-      }
-      return data.variant;
-    },
+    valueGetter: ({ data: { kbVariant } }) => kbVariant,
     hide: false,
   },
   {
     headerName: 'Alt/Total (Tumour DNA)',
-    colId: 'tumourDna',
-    field: 'tumourDna',
+    colId: 'Alt/Total (Tumour DNA)',
+    valueGetter: ({ data: { variant: { tumourAltCount, tumourDepth } } }) => {
+      if (tumourAltCount && tumourDepth) {
+        return `${tumourAltCount}/${tumourDepth}`;
+      }
+      return '';
+    },
     hide: false,
   },
   {
@@ -28,18 +28,18 @@ const cancerRelevanceColDefs = [
   {
     headerName: 'Genomic Events',
     colId: 'events',
-    valueGetter: ({ data }) => {
-      if (/^(enst)|(nm_)/i.test(data.variant)) {
-        return `${data.gene.name} (${data.variant})`;
-      }
-      return data.variant;
-    },
+    valueGetter: ({ data: { kbVariant } }) => kbVariant,
     hide: false,
   },
   {
     headerName: 'Alt/Total (Tumour DNA)',
-    colId: 'tumourDna',
-    field: 'tumourDna',
+    colId: 'Alt/Total (Tumour DNA)',
+    valueGetter: ({ data: { variant: { tumourAltCount, tumourDepth } } }) => {
+      if (tumourAltCount && tumourDepth) {
+        return `${tumourAltCount}/${tumourDepth}`;
+      }
+      return '';
+    },
     hide: false,
   },
 ];
