@@ -9,7 +9,7 @@ const clinicalAssociationColDefs = [
     headerName: 'Alt/Total (Tumour DNA)',
     colId: 'Alt/Total (Tumour DNA)',
     valueGetter: ({ data: { variant: { tumourAltCount, tumourDepth } } }) => {
-      if (tumourAltCount && tumourDepth) {
+      if (tumourAltCount !== null && tumourDepth !== null) {
         return `${tumourAltCount}/${tumourDepth}`;
       }
       return '';
@@ -35,7 +35,7 @@ const cancerRelevanceColDefs = [
     headerName: 'Alt/Total (Tumour DNA)',
     colId: 'Alt/Total (Tumour DNA)',
     valueGetter: ({ data: { variant: { tumourAltCount, tumourDepth } } }) => {
-      if (tumourAltCount && tumourDepth) {
+      if (tumourAltCount !== null && tumourDepth !== null) {
         return `${tumourAltCount}/${tumourDepth}`;
       }
       return '';

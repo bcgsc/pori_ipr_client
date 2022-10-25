@@ -22,13 +22,28 @@ import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import PatientEdit from '@/components/PatientEdit';
 import EventsEditDialog from '@/components/EventsEditDialog';
 import capitalize from 'lodash/capitalize';
+import sortedUniqBy from 'lodash/uniqBy';
+import get from 'lodash/get';
 
 import './index.scss';
 import TumourSummaryEdit from '@/components/TumourSummaryEdit';
 import DescriptionList from '@/components/DescriptionList';
 import { KbMatchType, TumourSummaryType } from '@/common';
+import useConfirmDialog from '@/hooks/useConfirmDialog';
 import { clinicalAssociationColDefs, cancerRelevanceColDefs, sampleColumnDefs } from './columnDefs';
 import { TmburType } from '../MutationBurden/types';
+
+function getUniqueRecordsByFields<Row>(records: Row[], fields: string[]) {
+  // Sort Rows
+  const sorted = records.sort((a, b) => {
+    const aKey = fields.map((field) => get(a, field)).join('');
+    const bKey = fields.map((field) => get(b, field)).join('');
+    if (aKey < bKey) { return -1; }
+    if (aKey > bKey) { return 1; }
+    return 0;
+  });
+  return sortedUniqBy(sorted, (entry) => fields.map((f) => get(entry, f)).join());
+}
 
 /**
  * TODO: Fix this up as updates come in
@@ -56,6 +71,7 @@ const RapidSummary = ({
   const { report, setReport } = useContext(ReportContext);
   const { isSigned, setIsSigned } = useContext(ConfirmContext);
   const { canEdit } = useUser();
+  const { showConfirmDialog } = useConfirmDialog();
 
   const [signatures, setSignatures] = useState<SignatureType | null>();
   const [therapeuticAssociationResults, setTherapeuticAssociationResults] = useState<KbMatchType[] | null>();
@@ -110,8 +126,17 @@ const RapidSummary = ({
           //   // TODO: placeholder, probe report builds probe results with small-mutation calls
           //   smallMutationsData.forEach((mutation) => { });
           // });
-          setTherapeuticAssociationResults(therapeuticAssociationData);
-          setCancerRelevanceResults(cancerRelevanceData);
+          setTherapeuticAssociationResults(getUniqueRecordsByFields(therapeuticAssociationData, [
+            'kbVariant',
+            'variant.tumourAltCount',
+            'variant.tumourDepth',
+            'relevance',
+          ]));
+          setCancerRelevanceResults(getUniqueRecordsByFields(cancerRelevanceData, [
+            'kbVariant',
+            'variant.tumourAltCount',
+            'variant.tumourDepth',
+          ]));
           setMutationBurden(burdenData);
           setPatientInformation([
             {
@@ -211,43 +236,48 @@ const RapidSummary = ({
     }
 
     const callSet = new ApiCallSet(apiCalls);
-    const [, reportResp] = await callSet.request(isSigned);
 
-    if (reportResp) {
-      setReport({ ...reportResp, ...report });
+    if (isSigned) {
+      showConfirmDialog(callSet);
+    } else {
+      const [, reportResp] = await callSet.request() as [unknown, ReportType];
+
+      if (reportResp) {
+        setReport({ ...reportResp, ...report });
+      }
+
+      setPatientInformation([
+        {
+          label: 'Alternate ID',
+          value: newReportData ? newReportData.alternateIdentifier : report.alternateIdentifier,
+        },
+        {
+          label: 'Report Date',
+          value: formatDate(report.createdAt),
+        },
+        {
+          label: 'Case Type',
+          value: newPatientData ? newPatientData.caseType : report.patientInformation.caseType,
+        },
+        {
+          label: 'Physician',
+          value: newPatientData ? newPatientData.physician : report.patientInformation.physician,
+        },
+        {
+          label: 'Biopsy Name',
+          value: newReportData ? newReportData.biopsyName : report.biopsyName,
+        },
+        {
+          label: 'Biopsy Details',
+          value: newPatientData ? newPatientData.biopsySite : report.patientInformation.biopsySite,
+        },
+        {
+          label: 'Gender',
+          value: newPatientData ? newPatientData.gender : report.patientInformation.gender,
+        },
+      ]);
     }
-
-    setPatientInformation([
-      {
-        label: 'Alternate ID',
-        value: newReportData ? newReportData.alternateIdentifier : report.alternateIdentifier,
-      },
-      {
-        label: 'Report Date',
-        value: formatDate(report.createdAt),
-      },
-      {
-        label: 'Case Type',
-        value: newPatientData ? newPatientData.caseType : report.patientInformation.caseType,
-      },
-      {
-        label: 'Physician',
-        value: newPatientData ? newPatientData.physician : report.patientInformation.physician,
-      },
-      {
-        label: 'Biopsy Name',
-        value: newReportData ? newReportData.biopsyName : report.biopsyName,
-      },
-      {
-        label: 'Biopsy Details',
-        value: newPatientData ? newPatientData.biopsySite : report.patientInformation.biopsySite,
-      },
-      {
-        label: 'Gender',
-        value: newPatientData ? newPatientData.gender : report.patientInformation.gender,
-      },
-    ]);
-  }, [isSigned, report, setReport]);
+  }, [isSigned, report, setReport, showConfirmDialog]);
 
   const handleSign = useCallback((signed: boolean, role: SignatureUserType) => {
     let cancelled;
