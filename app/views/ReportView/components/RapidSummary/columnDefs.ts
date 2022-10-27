@@ -1,8 +1,8 @@
 const clinicalAssociationColDefs = [
   {
     headerName: 'Genomic Events',
-    colId: 'events',
-    valueGetter: ({ data: { kbVariant } }) => kbVariant,
+    colId: 'genomicEvents',
+    field: 'genomicEvents',
     hide: false,
   },
   {
@@ -27,8 +27,8 @@ const clinicalAssociationColDefs = [
 const cancerRelevanceColDefs = [
   {
     headerName: 'Genomic Events',
-    colId: 'events',
-    valueGetter: ({ data: { kbVariant } }) => kbVariant,
+    colId: 'genomicEvents',
+    field: 'genomicEvents',
     hide: false,
   },
   {

@@ -24,6 +24,7 @@ import EventsEditDialog from '@/components/EventsEditDialog';
 import capitalize from 'lodash/capitalize';
 import sortedUniqBy from 'lodash/uniqBy';
 import get from 'lodash/get';
+import orderBy from 'lodash/orderBy';
 
 import './index.scss';
 import TumourSummaryEdit from '@/components/TumourSummaryEdit';
@@ -33,16 +34,87 @@ import useConfirmDialog from '@/hooks/useConfirmDialog';
 import { clinicalAssociationColDefs, cancerRelevanceColDefs, sampleColumnDefs } from './columnDefs';
 import { TmburType } from '../MutationBurden/types';
 
-function getUniqueRecordsByFields<Row>(records: Row[], fields: string[]) {
-  // Sort Rows
-  const sorted = records.sort((a, b) => {
+/**
+ * Applies an aggregated value to object
+ * @param object object in question
+ * @param field aggregated field name
+ * @param valueGetter function to get value to be set to field
+ */
+function aggregateFieldToObject(object, field, valueGetter) {
+  return ({
+    ...object,
+    [field]: valueGetter(object),
+  });
+}
+
+/**
+ * @param row KbMatch data
+ * @returns correct genomic event to be displayed
+ */
+function getGenomicEvent(row: KbMatchType) {
+  const { variant: { hgvsProtein, hgvsCds, hgvsGenomic } } = row;
+  if (hgvsProtein) { return hgvsProtein; }
+  if (hgvsCds) { return hgvsCds; }
+  return hgvsGenomic;
+}
+
+function sortObjectArrayByFields<Row>(records: Row[], fields: string[]) {
+  return records.sort((a, b) => {
     const aKey = fields.map((field) => get(a, field)).join('');
     const bKey = fields.map((field) => get(b, field)).join('');
     if (aKey < bKey) { return -1; }
     if (aKey > bKey) { return 1; }
     return 0;
   });
-  return sortedUniqBy(sorted, (entry) => fields.map((f) => get(entry, f)).join());
+}
+
+function combineClinAssocWithContext(records: KbMatchType[], fields: string[]) {
+  const sorted = sortObjectArrayByFields(records, fields);
+
+  const nextRecords = [];
+  let prevRowKey = '';
+  const contextDict = new Set();
+
+  sorted.forEach((row, idx) => {
+    if (idx === 0) {
+      prevRowKey = fields.map((field) => get(row, field)).join('');
+    }
+    const rowKey = fields.map((field) => get(row, field)).join('');
+    const { context } = row;
+
+    if (rowKey !== prevRowKey) {
+      prevRowKey = rowKey;
+      nextRecords.push({
+        ...sorted[idx - 1],
+        relevance: `${sorted[idx - 1].relevance} to ${orderBy(
+          Array.from(contextDict),
+          [(cont) => cont[0].toLowerCase()],
+          ['asc'],
+        ).join(', ')}`,
+      });
+      contextDict.clear();
+    }
+
+    contextDict.add(context);
+
+    // Last entry
+    if (idx === sorted.length - 1) {
+      nextRecords.push({
+        ...sorted[idx - 1],
+        relevance: `${sorted[idx - 1].relevance} to ${orderBy(
+          Array.from(contextDict),
+          [(cont) => cont[0].toLowerCase()],
+          ['asc'],
+        ).join(', ')}`,
+      });
+    }
+  });
+
+  return nextRecords;
+}
+
+function getUniqueRecordsByFields<Row>(records: Row[], fields: string[]) {
+  return sortedUniqBy(sortObjectArrayByFields(records, fields), (entry) => fields.map((f) => get(entry, f)).join());
 }
 
 /**
@@ -126,17 +198,28 @@ const RapidSummary = ({
           //   // TODO: placeholder, probe report builds probe results with small-mutation calls
           //   smallMutationsData.forEach((mutation) => { });
           // });
-          setTherapeuticAssociationResults(getUniqueRecordsByFields(therapeuticAssociationData, [
-            'kbVariant',
-            'variant.tumourAltCount',
-            'variant.tumourDepth',
-            'relevance',
-          ]));
-          setCancerRelevanceResults(getUniqueRecordsByFields(cancerRelevanceData, [
-            'kbVariant',
-            'variant.tumourAltCount',
-            'variant.tumourDepth',
-          ]));
+          setTherapeuticAssociationResults(
+            combineClinAssocWithContext(
+              therapeuticAssociationData.map((row) => aggregateFieldToObject(row, 'genomicEvents', getGenomicEvent)),
+              [
+                'genomicEvents',
+                'variant.tumourAltCount',
+                'variant.tumourDepth',
+                'relevance',
+              ],
+            ),
+          );
+          setCancerRelevanceResults(
+            getUniqueRecordsByFields(
+              cancerRelevanceData.map((row) => aggregateFieldToObject(row, 'genomicEvents', getGenomicEvent)),
+              [
+                'genomicEvents',
+                'variant.tumourAltCount',
+                'variant.tumourDepth',
+              ],
+            ),
+          );
+
           setMutationBurden(burdenData);
           setPatientInformation([
             {
