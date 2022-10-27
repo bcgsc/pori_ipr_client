@@ -94,6 +94,13 @@ const columnDefs: ColDef[] = [{
   hide: false,
 },
 {
+  headerName: 'IPR Evidence Level',
+  colId: 'iprEvidenceLevel',
+  field: 'iprEvidenceLevel',
+  cellRendererFramework: ArrayCell('iprEvidenceLevel', false),
+  hide: false,
+},
+{
   headerName: 'Matched Cancer',
   field: 'matchedCancer',
   cellRendererFramework: ArrayCell('matchedCancer', false),
