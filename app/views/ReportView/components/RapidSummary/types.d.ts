@@ -1,5 +1,7 @@
 import { RecordDefaults } from '@/common';
 
-type RapidResultsType = RecordDefaults;
+type RapidResultsType = {
+  // TODO: update type here
+} & RecordDefaults;
 
 export default RapidResultsType;
