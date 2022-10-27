@@ -104,10 +104,61 @@ type GeneType = {
   tumourSuppressor: boolean;
 };
 
+type KbMatchVariantType = {
+  gene: GeneType;
+  transcript: string;
+  proteinChange: string;
+  chromosome: string;
+  startPosition: number;
+  endPosition: number;
+  refSeq: string;
+  altSeq: string;
+  zygosity: string;
+  tumourAltCount: number;
+  tumourRefCount: number;
+  tumourDepth: number;
+  rnaAltCount: number;
+  rnaRefCount: number;
+  rnaDepth: number;
+  normalAltCount: number;
+  normalRefCount: number;
+  normalDepth: number;
+  hgvsProtein: string;
+  hgvsCds: string;
+  hgvsGenomic: string;
+  ncbiBuild: string;
+  germline: boolean;
+  tumourAltCopies: number;
+  tumourRefCopies: number;
+  library: string;
+} & RecordDefaults;
+
 type KbMatchType = {
-  ident: string;
   category: string;
-};
+  approvedTherapy: boolean;
+  kbVariant: string;
+  disease: string;
+  relevance: string;
+  context: string;
+  status: string;
+  reference: string;
+  sample: string;
+  inferred: boolean;
+  evidenceLevel: string;
+  iprEvidenceLevel: string;
+  matchedCancer: boolean;
+  pmidRef: string;
+  variantType: string;
+  kbVariantId: string;
+  kbStatementId: string;
+  kbData: {
+    inferred: boolean;
+  }
+  externalSource: string;
+  externalStatementId: string;
+  reviewStatus: string;
+  variant: KbMatchVariantType;
+} & RecordDefaults;
 
 type CopyNumberType = {
   chromosomeBand: string | null;
