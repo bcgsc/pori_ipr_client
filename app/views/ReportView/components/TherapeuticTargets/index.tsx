@@ -1,7 +1,7 @@
 import React, {
   useState, useEffect, useContext, useCallback,
 } from 'react';
-import orderBy from 'lodash.orderby';
+import orderBy from 'lodash/orderBy';
 import { Typography } from '@mui/material';
 
 import DataTable from '@/components/DataTable';
@@ -20,13 +20,14 @@ import TherapeuticType from './types';
 import './index.scss';
 
 const removeExtraProps = (data: TherapeuticType[]): Partial<TherapeuticType>[] => data.map(({
-  gene, variant, therapy, context, evidenceLevel, notes,
+  gene, variant, therapy, context, evidenceLevel, iprEvidenceLevel, notes,
 }) => ({
   gene,
   variant,
   therapy,
   context,
   evidenceLevel,
+  iprEvidenceLevel,
   notes,
 }));
 

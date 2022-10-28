@@ -10,6 +10,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import Alert from '@mui/material/Alert';
 
 import api, { ApiCallSet } from '@/services/api';
+import useConfirmDialog from '@/hooks/useConfirmDialog';
 import DataTable from '@/components/DataTable';
 import ReportContext from '@/context/ReportContext';
 import UserContext from '@/context/UserContext';
@@ -23,7 +24,7 @@ import PrintTable from '@/components/PrintTable';
 import TestInformation, { TestInformationType } from '@/components/TestInformation';
 import { KbMatchType } from '@/common';
 import PatientEdit from '@/components/PatientEdit';
-import capitalize from 'lodash.capitalize';
+import capitalize from 'lodash/capitalize';
 import {
   sampleColumnDefs,
   pharmacoGenomicColumnDefs,
@@ -46,6 +47,7 @@ const PharmacoGenomicSummary = ({
   const { report, setReport } = useContext(ReportContext);
   const { canEdit } = useContext(UserContext);
   const { isSigned, setIsSigned } = useContext(ConfirmContext);
+  const { showConfirmDialog } = useConfirmDialog();
 
   const [testInformation, setTestInformation] = useState<TestInformationType>();
   const [signatures, setSignatures] = useState<SignatureType | null>();
@@ -152,47 +154,51 @@ const PharmacoGenomicSummary = ({
     }
 
     const callSet = new ApiCallSet(apiCalls);
-    const [, reportResp] = await callSet.request(isSigned);
 
-    if (reportResp) {
-      setReport({ ...reportResp, ...report });
+    if (isSigned) {
+      showConfirmDialog(callSet);
+    } else {
+      const [, reportResp] = await callSet.request();
+      if (reportResp) {
+        setReport({ ...reportResp, ...report });
+      }
+
+      setPatientInformation([
+        {
+          label: 'Alternate ID',
+          value: newReportData ? newReportData.alternateIdentifier : report.alternateIdentifier,
+        },
+        {
+          label: 'Pediatric Patient IDs',
+          value: newReportData ? newReportData.pediatricIds : report.pediatricIds,
+        },
+        {
+          label: 'Report Date',
+          value: formatDate(report.createdAt),
+        },
+        {
+          label: 'Case Type',
+          value: newPatientData ? newPatientData.caseType : report.patientInformation.caseType,
+        },
+        {
+          label: 'Physician',
+          value: newPatientData ? newPatientData.physician : report.patientInformation.physician,
+        },
+        {
+          label: 'Biopsy Name',
+          value: newReportData ? newReportData.biopsyName : report.biopsyName,
+        },
+        {
+          label: 'Biopsy Details',
+          value: newPatientData ? newPatientData.biopsySite : report.patientInformation.biopsySite,
+        },
+        {
+          label: 'Gender',
+          value: newPatientData ? newPatientData.gender : report.patientInformation.gender,
+        },
+      ]);
     }
-
-    setPatientInformation([
-      {
-        label: 'Alternate ID',
-        value: newReportData ? newReportData.alternateIdentifier : report.alternateIdentifier,
-      },
-      {
-        label: 'Pediatric Patient IDs',
-        value: newReportData ? newReportData.pediatricIds : report.pediatricIds,
-      },
-      {
-        label: 'Report Date',
-        value: formatDate(report.createdAt),
-      },
-      {
-        label: 'Case Type',
-        value: newPatientData ? newPatientData.caseType : report.patientInformation.caseType,
-      },
-      {
-        label: 'Physician',
-        value: newPatientData ? newPatientData.physician : report.patientInformation.physician,
-      },
-      {
-        label: 'Biopsy Name',
-        value: newReportData ? newReportData.biopsyName : report.biopsyName,
-      },
-      {
-        label: 'Biopsy Details',
-        value: newPatientData ? newPatientData.biopsySite : report.patientInformation.biopsySite,
-      },
-      {
-        label: 'Gender',
-        value: newPatientData ? newPatientData.gender : report.patientInformation.gender,
-      },
-    ]);
-  }, [isSigned, report, setReport]);
+  }, [isSigned, report, setReport, showConfirmDialog]);
 
   const handleSign = useCallback(async (signed: boolean, role: SignatureUserType) => {
     let newSignature: SignatureType;
@@ -219,6 +225,7 @@ const PharmacoGenomicSummary = ({
       if (isPrint) {
         tableComponent = (
           <PrintTable
+            collapseableCols={['gene', 'variant', 'variant.hgvsProtein', 'Alt/Total']}
             columnDefs={pharmacoGenomicPrintColumnDefs}
             data={pharmacoGenomic}
           />
@@ -227,6 +234,7 @@ const PharmacoGenomicSummary = ({
         tableComponent = (
           <DataTable
             columnDefs={pharmacoGenomicColumnDefs}
+            collapseColumnFields={['gene', 'variant', 'variant.hgvsProtein', 'Alt/Total']}
             rowData={pharmacoGenomic}
             isPrint={isPrint}
             isPaginated={!isPrint}

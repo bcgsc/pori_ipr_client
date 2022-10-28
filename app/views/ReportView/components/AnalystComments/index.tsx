@@ -16,7 +16,8 @@ import ReportContext from '@/context/ReportContext';
 import SignatureCard, { SignatureType, SignatureUserType } from '@/components/SignatureCard';
 import ConfirmContext from '@/context/ConfirmContext';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
-import capitalize from 'lodash.capitalize';
+import capitalize from 'lodash/capitalize';
+import useConfirmDialog from '@/hooks/useConfirmDialog';
 import TextEditor from './components/TextEditor';
 
 import './index.scss';
@@ -35,6 +36,7 @@ const AnalystComments = ({
   const { report } = useContext(ReportContext);
   const { setIsSigned } = useContext(ConfirmContext);
   const { canEdit } = useUser();
+  const { showConfirmDialog } = useConfirmDialog();
 
   const [comments, setComments] = useState('');
   const [signatures, setSignatures] = useState<SignatureType>();
@@ -98,13 +100,16 @@ const AnalystComments = ({
       editedComments = '';
     }
     if (editedComments !== undefined) {
-      const commentsResp = await api.put(
+      const commentCall = api.put(
         `/reports/${report.ident}/summary/analyst-comments`,
         { comments: editedComments },
-      ).request(isSigned);
+      );
 
-      // If signed, the dialog that opens up will refesh the page instead
-      if (!isSigned) {
+      if (isSigned) {
+        showConfirmDialog(commentCall);
+      } else {
+        // If signed, the dialog that opens up will refesh the page instead
+        const commentsResp = await commentCall.request();
         setComments(sanitizeHtml(commentsResp?.comments, {
           allowedSchemes: [],
           allowedAttributes: {
@@ -113,7 +118,7 @@ const AnalystComments = ({
         }));
       }
     }
-  }, [report, isSigned]);
+  }, [report, isSigned, showConfirmDialog]);
 
   const signatureSection = useMemo(() => {
     if (!comments) return null;
@@ -128,6 +133,7 @@ const AnalystComments = ({
       }
       return (
         <SignatureCard
+          key={sigType}
           onClick={handleSign}
           signatures={signatures}
           title={capitalize(title)}

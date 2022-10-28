@@ -5,12 +5,6 @@ type PatientInformationType = {
   value: string | null;
 };
 
-type TumourSummaryType = {
-  term: string;
-  value: string | null;
-  action?: () => void | null;
-};
-
 type GeneVariantType = {
   geneVariant: string;
   type?: string;
@@ -23,7 +17,6 @@ type MicrobialType = {
 
 export {
   PatientInformationType,
-  TumourSummaryType,
   GeneVariantType,
   MicrobialType,
 };
