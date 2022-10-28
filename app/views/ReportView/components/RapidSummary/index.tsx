@@ -80,7 +80,7 @@ function combineClinAssocWithContext(records: KbMatchType[], fields: string[]) {
       prevRowKey = fields.map((field) => get(row, field)).join('');
     }
     const rowKey = fields.map((field) => get(row, field)).join('');
-    const { context } = row;
+    const { context, iprEvidenceLevel } = row;
 
     if (rowKey !== prevRowKey) {
       prevRowKey = rowKey;
@@ -95,7 +95,11 @@ function combineClinAssocWithContext(records: KbMatchType[], fields: string[]) {
       contextDict.clear();
     }
 
-    contextDict.add(context);
+    let contextText = context.replace(/ *\[[^)]*\] */g, '');
+    if (iprEvidenceLevel) {
+      contextText = `${contextText} (${iprEvidenceLevel})`;
+    }
+    contextDict.add(contextText);
 
     // Last entry
     if (idx === sorted.length - 1) {
