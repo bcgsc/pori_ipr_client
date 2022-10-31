@@ -30,6 +30,11 @@ const columnDefs = [{
   field: 'evidenceLevel',
   hide: false,
 }, {
+  headerName: 'IPR Evidence Level',
+  headerComponent: 'headerCellRenderer',
+  field: 'iprEvidenceLevel',
+  hide: false,
+}, {
   headerName: 'Notes',
   field: 'notes',
   hide: false,

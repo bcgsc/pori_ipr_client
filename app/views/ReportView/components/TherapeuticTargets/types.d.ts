@@ -4,6 +4,7 @@ type TherapeuticType = {
   context: string;
   contextGraphkbId: string | null;
   evidenceLevel: string;
+  iprEvidenceLevel: string | null;
   evidenceLevelGraphkbId: string | null;
   gene: string;
   geneGraphkbId: string | null;

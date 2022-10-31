@@ -22,14 +22,100 @@ import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import PatientEdit from '@/components/PatientEdit';
 import EventsEditDialog from '@/components/EventsEditDialog';
 import capitalize from 'lodash/capitalize';
+import sortedUniqBy from 'lodash/uniqBy';
+import get from 'lodash/get';
+import orderBy from 'lodash/orderBy';
 
 import './index.scss';
 import TumourSummaryEdit from '@/components/TumourSummaryEdit';
 import DescriptionList from '@/components/DescriptionList';
-import { TumourSummaryType } from '@/common';
+import { KbMatchType, TumourSummaryType } from '@/common';
+import useConfirmDialog from '@/hooks/useConfirmDialog';
 import { clinicalAssociationColDefs, cancerRelevanceColDefs, sampleColumnDefs } from './columnDefs';
-import RapidResultsType from './types.d';
 import { TmburType } from '../MutationBurden/types';
+
+/**
+ * Applies an aggregated value to object
+ * @param object object in question
+ * @param field aggregated field name
+ * @param valueGetter function to get value to be set to field
+ */
+function aggregateFieldToObject(object, field, valueGetter) {
+  return ({
+    ...object,
+    [field]: valueGetter(object),
+  });
+}
+
+/**
+ * @param row KbMatch data
+ * @returns correct genomic event to be displayed
+ */
+function getGenomicEvent(row: KbMatchType) {
+  const { variant: { hgvsProtein, hgvsCds, hgvsGenomic } } = row;
+  if (hgvsProtein) { return hgvsProtein; }
+  if (hgvsCds) { return hgvsCds; }
+  return hgvsGenomic;
+}
+
+function sortObjectArrayByFields<Row>(records: Row[], fields: string[]) {
+  return records.sort((a, b) => {
+    const aKey = fields.map((field) => get(a, field)).join('');
+    const bKey = fields.map((field) => get(b, field)).join('');
+    if (aKey < bKey) { return -1; }
+    if (aKey > bKey) { return 1; }
+    return 0;
+  });
+}
+
+function combineClinAssocWithContext(records: KbMatchType[], fields: string[]) {
+  const sorted = sortObjectArrayByFields(records, fields);
+
+  const nextRecords = [];
+  let prevRowKey = '';
+  const contextDict = new Set();
+
+  sorted.forEach((row, idx) => {
+    if (idx === 0) {
+      prevRowKey = fields.map((field) => get(row, field)).join('');
+    }
+    const rowKey = fields.map((field) => get(row, field)).join('');
+    const { context } = row;
+
+    if (rowKey !== prevRowKey) {
+      prevRowKey = rowKey;
+      nextRecords.push({
+        ...sorted[idx - 1],
+        relevance: `${sorted[idx - 1].relevance} to ${orderBy(
+          Array.from(contextDict),
+          [(cont) => cont[0].toLowerCase()],
+          ['asc'],
+        ).join(', ')}`,
+      });
+      contextDict.clear();
+    }
+
+    contextDict.add(context);
+
+    // Last entry
+    if (idx === sorted.length - 1) {
+      nextRecords.push({
+        ...sorted[idx - 1],
+        relevance: `${sorted[idx - 1].relevance} to ${orderBy(
+          Array.from(contextDict),
+          [(cont) => cont[0].toLowerCase()],
+          ['asc'],
+        ).join(', ')}`,
+      });
+    }
+  });
+
+  return nextRecords;
+}
+
+function getUniqueRecordsByFields<Row>(records: Row[], fields: string[]) {
+  return sortedUniqBy(sortObjectArrayByFields(records, fields), (entry) => fields.map((f) => get(entry, f)).join());
+}
 
 /**
  * TODO: Fix this up as updates come in
@@ -57,10 +143,11 @@ const RapidSummary = ({
   const { report, setReport } = useContext(ReportContext);
   const { isSigned, setIsSigned } = useContext(ConfirmContext);
   const { canEdit } = useUser();
+  const { showConfirmDialog } = useConfirmDialog();
 
   const [signatures, setSignatures] = useState<SignatureType | null>();
-  const [clinicalAssociationResults, setClinicalAssociationResults] = useState<RapidResultsType[] | null>();
-  const [cancerRelevanceResults, setCancerRelevanceResults] = useState<RapidResultsType[] | null>();
+  const [therapeuticAssociationResults, setTherapeuticAssociationResults] = useState<KbMatchType[] | null>();
+  const [cancerRelevanceResults, setCancerRelevanceResults] = useState<KbMatchType[] | null>();
   const [patientInformation, setPatientInformation] = useState<{
     label: string;
     value: string | null;
@@ -68,7 +155,9 @@ const RapidSummary = ({
   const [tumourSummary, setTumourSummary] = useState<TumourSummaryType[]>();
   const [mutationBurden, setMutationBurden] = useState<TmburType>();
   const [editData, setEditData] = useState();
-  const [otherMutationsResults, setOtherMutationsResults] = useState(null);
+
+  // TODO: awaiting orders
+  // const [otherMutationsResults, setOtherMutationsResults] = useState(null);
 
   const [showPatientEdit, setShowPatientEdit] = useState(false);
   const [showTumourSummaryEdit, setShowTumourSummaryEdit] = useState(false);
@@ -82,32 +171,55 @@ const RapidSummary = ({
           // Small mutation, copy number, sv, tmb needed
           const apiCalls = new ApiCallSet([
             api.get(`/reports/${report.ident}/signatures`),
-            // TODO: not implemented on the backend yet
-            // api.get(`/reports/${report.ident}/rapid-results`),
-            // api.get(`/reports/${report.ident}/clinical-association`),
-            // api.get(`/reports/${report.ident}/cancer-relevance`),
-            api.get(`/reports/${report.ident}/small-mutations`),
-            // api.get(`/reports/${report.ident}/other-mutations`),
+            api.get(`/reports/${report.ident}/kb-matches?rapidTable=therapeuticAssociation`),
+            api.get(`/reports/${report.ident}/kb-matches?rapidTable=cancerRelevance`),
             api.get(`/reports/${report.ident}/tmbur-mutation-burden`),
+            // TODO?: api.get(`/reports/${report.ident}/small-mutations`),
+            // TODO:  api.get(`/reports/${report.ident}/other-mutations`),
           ]);
           const [
             signaturesData,
-            // rapidResultsData,
-            // clinicalAssociationData,
-            // cancerRelevanceData,
-            smallMutationsData,
-            // otherMutationsData,
+            therapeuticAssociationData,
+            cancerRelevanceData,
             burdenData,
-          ] = await apiCalls.request();
+            // TODO: smallMutationsData,
+            // TODO: otherMutationsData,
+          ] = await apiCalls.request() as [
+            SignatureType,
+            KbMatchType[],
+            KbMatchType[],
+            TmburType,
+          ];
 
           setSignatures(signaturesData);
 
+          // TODO: not sure about small mutations yet
           // rapidResultsData.forEach((rapid) => {
           //   // TODO: placeholder, probe report builds probe results with small-mutation calls
           //   smallMutationsData.forEach((mutation) => { });
           // });
-          // setClinicalAssociationResults(clinicalAssociationData);
-          // setCancerRelevanceResults(cancerRelevanceData);
+          setTherapeuticAssociationResults(
+            combineClinAssocWithContext(
+              therapeuticAssociationData.map((row) => aggregateFieldToObject(row, 'genomicEvents', getGenomicEvent)),
+              [
+                'genomicEvents',
+                'variant.tumourAltCount',
+                'variant.tumourDepth',
+                'relevance',
+              ],
+            ),
+          );
+          setCancerRelevanceResults(
+            getUniqueRecordsByFields(
+              cancerRelevanceData.map((row) => aggregateFieldToObject(row, 'genomicEvents', getGenomicEvent)),
+              [
+                'genomicEvents',
+                'variant.tumourAltCount',
+                'variant.tumourDepth',
+              ],
+            ),
+          );
+
           setMutationBurden(burdenData);
           setPatientInformation([
             {
@@ -207,43 +319,48 @@ const RapidSummary = ({
     }
 
     const callSet = new ApiCallSet(apiCalls);
-    const [, reportResp] = await callSet.request(isSigned);
 
-    if (reportResp) {
-      setReport({ ...reportResp, ...report });
+    if (isSigned) {
+      showConfirmDialog(callSet);
+    } else {
+      const [, reportResp] = await callSet.request() as [unknown, ReportType];
+
+      if (reportResp) {
+        setReport({ ...reportResp, ...report });
+      }
+
+      setPatientInformation([
+        {
+          label: 'Alternate ID',
+          value: newReportData ? newReportData.alternateIdentifier : report.alternateIdentifier,
+        },
+        {
+          label: 'Report Date',
+          value: formatDate(report.createdAt),
+        },
+        {
+          label: 'Case Type',
+          value: newPatientData ? newPatientData.caseType : report.patientInformation.caseType,
+        },
+        {
+          label: 'Physician',
+          value: newPatientData ? newPatientData.physician : report.patientInformation.physician,
+        },
+        {
+          label: 'Biopsy Name',
+          value: newReportData ? newReportData.biopsyName : report.biopsyName,
+        },
+        {
+          label: 'Biopsy Details',
+          value: newPatientData ? newPatientData.biopsySite : report.patientInformation.biopsySite,
+        },
+        {
+          label: 'Gender',
+          value: newPatientData ? newPatientData.gender : report.patientInformation.gender,
+        },
+      ]);
     }
-
-    setPatientInformation([
-      {
-        label: 'Alternate ID',
-        value: newReportData ? newReportData.alternateIdentifier : report.alternateIdentifier,
-      },
-      {
-        label: 'Report Date',
-        value: formatDate(report.createdAt),
-      },
-      {
-        label: 'Case Type',
-        value: newPatientData ? newPatientData.caseType : report.patientInformation.caseType,
-      },
-      {
-        label: 'Physician',
-        value: newPatientData ? newPatientData.physician : report.patientInformation.physician,
-      },
-      {
-        label: 'Biopsy Name',
-        value: newReportData ? newReportData.biopsyName : report.biopsyName,
-      },
-      {
-        label: 'Biopsy Details',
-        value: newPatientData ? newPatientData.biopsySite : report.patientInformation.biopsySite,
-      },
-      {
-        label: 'Gender',
-        value: newPatientData ? newPatientData.gender : report.patientInformation.gender,
-      },
-    ]);
-  }, [isSigned, report, setReport]);
+  }, [isSigned, report, setReport, showConfirmDialog]);
 
   const handleSign = useCallback((signed: boolean, role: SignatureUserType) => {
     let cancelled;
@@ -324,7 +441,7 @@ const RapidSummary = ({
   const handleClinicalAssociationEditClose = useCallback((newData) => {
     setShowClinicalAssociationEventsDialog(false);
     if (newData) {
-      setClinicalAssociationResults((existingResults) => {
+      setTherapeuticAssociationResults((existingResults) => {
         const newEvents = [...existingResults];
         const eventsIndex = existingResults.findIndex((user) => user.ident === newData.ident);
         if (eventsIndex !== -1) {
@@ -336,11 +453,11 @@ const RapidSummary = ({
   }, []);
 
   let clinicalAssociationSection;
-  if (clinicalAssociationResults?.length > 0) {
+  if (therapeuticAssociationResults?.length > 0) {
     if (isPrint) {
       clinicalAssociationSection = (
         <PrintTable
-          data={clinicalAssociationResults}
+          data={therapeuticAssociationResults}
           columnDefs={clinicalAssociationColDefs.filter((col) => col.headerName !== 'Actions')}
         />
       );
@@ -349,7 +466,7 @@ const RapidSummary = ({
         <>
           <DataTable
             columnDefs={clinicalAssociationColDefs}
-            rowData={clinicalAssociationResults}
+            rowData={therapeuticAssociationResults}
             canEdit={canEdit}
             onEdit={handleClinicalAssociationEditStart}
             isPrint={isPrint}
@@ -393,7 +510,7 @@ const RapidSummary = ({
   }, []);
 
   let cancerRelevanceSection;
-  if (clinicalAssociationResults?.length > 0) {
+  if (therapeuticAssociationResults?.length > 0) {
     if (isPrint) {
       cancerRelevanceSection = (
         <PrintTable
@@ -428,12 +545,12 @@ const RapidSummary = ({
     );
   }
 
-  // TODO: figure out which API call gets this data
-  const otherVariantsSection = useMemo(() => (
-    <Grid container spacing={1} direction="row">
-      {otherMutationsResults?.map((result) => <Grid xs={4} md={2} item>{result}</Grid>)}
-    </Grid>
-  ), [otherMutationsResults]);
+  // TODO: No need for this table yet
+  // const otherVariantsSection = useMemo(() => (
+  //   <Grid container spacing={1} direction="row">
+  //     {otherMutationsResults?.map((result) => <Grid xs={4} md={2} item>{result}</Grid>)}
+  //   </Grid>
+  // ), [otherMutationsResults]);
 
   const reviewSignaturesSection = useMemo(() => {
     if (!report) return null;
@@ -541,10 +658,10 @@ const RapidSummary = ({
               {tumourSummarySection}
             </div>
           )}
-          {report && clinicalAssociationResults && (
+          {report && therapeuticAssociationResults && (
             <div className="rapid-summary__events">
               <Typography className="rapid-summary__events-title" variant="h3" display="inline">
-                Genomic Events with Potential Clinical Association
+                Genomic Events with Clinical Association
               </Typography>
               {clinicalAssociationSection}
             </div>
@@ -552,12 +669,19 @@ const RapidSummary = ({
           {report && cancerRelevanceResults && (
             <div className="rapid-summary__events">
               <Typography className="rapid-summary__events-title" variant="h3" display="inline">
-                Genomic Events with Potential Cancer Relevance
+                Genomic Events with Cancer Relevance
               </Typography>
               {cancerRelevanceSection}
             </div>
           )}
-          {otherVariantsSection}
+          {/* {report && otherVariantsResults && (
+            <div className="rapid-summary__events">
+              <Typography className="rapid-summary__events-title" variant="h3" display="inline">
+                Other Variants in Cancer-Related Genes
+              </Typography>
+              {otherVariantsSection}
+            </div>
+          )} */}
           {
             isPrint ? reviewSignaturesSection : sampleInfoSection
           }
