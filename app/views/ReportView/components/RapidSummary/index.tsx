@@ -52,7 +52,27 @@ function aggregateFieldToObject(object, field, valueGetter) {
  * @returns correct genomic event to be displayed
  */
 function getGenomicEvent(row: KbMatchType) {
-  const { variant: { hgvsProtein, hgvsCds, hgvsGenomic } } = row;
+  const { variantType } = row;
+
+  if (variantType === 'cnv') {
+    const { variant: { gene, cnvState } } = row as KbMatchType<'cnv'>;
+    return `${gene.name} ${cnvState}`;
+  }
+  if (variantType === 'sv') {
+    const {
+      variant: {
+        gene1, gene2, exon1, exon2,
+      },
+    } = row as KbMatchType<'sv'>;
+    return `(${gene1.name || '?'
+    },${gene2.name || '?'
+    }):fusion(e.${exon1 || '?'
+    },e.${exon2 || '?'
+    })`;
+  }
+
+  // variantType === mut and others
+  const { variant: { hgvsProtein, hgvsCds, hgvsGenomic } } = row as KbMatchType<'mut'>;
   if (hgvsProtein) { return hgvsProtein; }
   if (hgvsCds) { return hgvsCds; }
   return hgvsGenomic;

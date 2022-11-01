@@ -104,36 +104,15 @@ type GeneType = {
   tumourSuppressor: boolean;
 };
 
-type KbMatchVariantType = {
-  gene: GeneType;
-  transcript: string;
-  proteinChange: string;
-  chromosome: string;
-  startPosition: number;
-  endPosition: number;
-  refSeq: string;
-  altSeq: string;
-  zygosity: string;
-  tumourAltCount: number;
-  tumourRefCount: number;
-  tumourDepth: number;
-  rnaAltCount: number;
-  rnaRefCount: number;
-  rnaDepth: number;
-  normalAltCount: number;
-  normalRefCount: number;
-  normalDepth: number;
-  hgvsProtein: string;
-  hgvsCds: string;
-  hgvsGenomic: string;
-  ncbiBuild: string;
-  germline: boolean;
-  tumourAltCopies: number;
-  tumourRefCopies: number;
-  library: string;
-} & RecordDefaults;
+type VariantType = keyof VariantMap;
 
-type KbMatchType = {
+type VariantMap = {
+  'cnv': CopyNumberType
+  'mut': SmallMutationType
+  'sv': StructuralVariantType
+};
+
+type KbMatchType<T extends VariantType = VariantType> = {
   category: string;
   approvedTherapy: boolean;
   kbVariant: string;
@@ -148,7 +127,7 @@ type KbMatchType = {
   iprEvidenceLevel: string;
   matchedCancer: boolean;
   pmidRef: string;
-  variantType: string;
+  variantType: T;
   kbVariantId: string;
   kbStatementId: string;
   kbData: {
@@ -157,7 +136,7 @@ type KbMatchType = {
   externalSource: string;
   externalStatementId: string;
   reviewStatus: string;
-  variant: KbMatchVariantType;
+  variant: VariantMap[T];
 } & RecordDefaults;
 
 type CopyNumberType = {
@@ -185,8 +164,8 @@ type StructuralVariantType = {
   exon1: string | null;
   exon2: string | null;
   frame: string | null;
-  gene1: Record<string, unknown> | null;
-  gene2: Record<string, unknown> | null;
+  gene1: GeneType | null;
+  gene2: GeneType | null;
   highQuality: boolean;
   kbMatches: null | KbMatchType[];
   mavis_product_id: number | null;
@@ -202,11 +181,13 @@ type SmallMutationType = {
   altSeq: string | null;
   chromosome: number | null;
   endPosition: number | null;
-  gene: Record<string, unknown>;
+  gene: GeneType;
   germline: string | null;
   hgvsCds: string | null;
+  hgvsGenomic: string | null;
   hgvsProtein: string | null;
   kbMatches: KbMatchType[];
+  library: string | null;
   ncbiBuild: string | null;
   normalAltCount: number | null;
   normalDepth: number | null;
@@ -218,8 +199,10 @@ type SmallMutationType = {
   rnaRefCount: number | null;
   startPosition: number | null;
   transcript: string | null;
+  tumourAltCopies: number | null;
   tumourAltCount: number | null;
   tumourDepth: number | null;
+  tumourRefCopies: number | null;
   tumourRefCount: number | null;
   zygosity: string | null;
 } & RecordDefaults;
