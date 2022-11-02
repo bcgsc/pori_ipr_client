@@ -108,16 +108,17 @@ function combineClinAssocWithContext(records: KbMatchType[], fields: string[]) {
         ...sorted[idx - 1],
         relevance: `${sorted[idx - 1].relevance} to ${orderBy(
           Array.from(contextDict),
-          [(cont) => cont[0].toLowerCase()],
+          [(cont) => cont.toLowerCase()],
           ['asc'],
         ).join(', ')}`,
       });
       contextDict.clear();
     }
 
+    // Removes content between and including square brackets for drugs
     let contextText = context.replace(/ *\[[^)]*\] */g, '');
     if (iprEvidenceLevel) {
-      contextText = `${contextText} (${iprEvidenceLevel})`;
+      contextText = `${contextText.toLowerCase()} (${iprEvidenceLevel})`;
     }
     contextDict.add(contextText);
 
@@ -127,7 +128,7 @@ function combineClinAssocWithContext(records: KbMatchType[], fields: string[]) {
         ...sorted[idx - 1],
         relevance: `${sorted[idx - 1].relevance} to ${orderBy(
           Array.from(contextDict),
-          [(cont) => cont[0].toLowerCase()],
+          [(cont) => cont.toLowerCase()],
           ['asc'],
         ).join(', ')}`,
       });
