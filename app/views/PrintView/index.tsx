@@ -33,8 +33,8 @@ const reducer = (state, action) => {
   switch (action.type) {
     case 'summary':
       return { ...state, summary: true };
-    case 'analyst':
-      return { ...state, analyst: true };
+    case 'analyst-comments':
+      return { ...state, 'analyst-comments': true };
     case 'pathway':
       return { ...state, pathway: true };
     case 'therapeutic':
@@ -46,7 +46,7 @@ const reducer = (state, action) => {
     default:
       return {
         summary: false,
-        analyst: false,
+        'analyst-comments': false,
         pathway: false,
         therapeutic: false,
         slides: false,
@@ -63,7 +63,7 @@ const Print = (): JSX.Element => {
   const [report, setReport] = useState<ReportType>(null);
   const [reportSectionsLoaded, dispatch] = useReducer(reducer, {
     summary: false,
-    analyst: false,
+    'analyst-comments': false,
     pathway: false,
     therapeutic: false,
     slides: false,

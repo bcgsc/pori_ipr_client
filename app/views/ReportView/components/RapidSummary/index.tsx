@@ -599,6 +599,7 @@ const RapidSummary = ({
               }
               return (
                 <SignatureCard
+                  key={sigType}
                   onClick={handleSign}
                   signatures={signatures}
                   title={capitalize(title)}
