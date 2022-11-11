@@ -484,6 +484,7 @@ const RapidSummary = ({
         <PrintTable
           data={therapeuticAssociationResults}
           columnDefs={clinicalAssociationColDefs.filter((col) => col.headerName !== 'Actions')}
+          fullWidth
         />
       );
     } else {
@@ -541,6 +542,7 @@ const RapidSummary = ({
         <PrintTable
           data={cancerRelevanceResults}
           columnDefs={cancerRelevanceColDefs.filter((col) => col.headerName !== 'Actions')}
+          fullWidth
         />
       );
     } else {
@@ -626,6 +628,7 @@ const RapidSummary = ({
           <PrintTable
             data={report.sampleInfo}
             columnDefs={sampleColumnDefs}
+            fullWidth
           />
         ) : (
           <DataTable
@@ -640,7 +643,7 @@ const RapidSummary = ({
   }, [report, isPrint]);
 
   return (
-    <div className="rapid-summary">
+    <div className={`rapid-summary${isPrint ? '--print' : ''}`}>
       {!isLoading && (
         <>
           {report && patientInformation && (
