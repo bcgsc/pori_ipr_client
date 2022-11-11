@@ -4,6 +4,10 @@
   border-collapse: collapse;
   margin: 8px;
 
+  &--full-width {
+    width: 100%;
+  }
+
   &__header {
     font-size: 9pt;
     text-align: left;
