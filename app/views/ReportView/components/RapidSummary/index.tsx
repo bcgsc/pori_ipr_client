@@ -90,10 +90,33 @@ function sortObjectArrayByFields<Row>(records: Row[], fields: string[]) {
 
 function combineClinAssocWithContext(records: KbMatchType[], fields: string[]) {
   const sorted = sortObjectArrayByFields(records, fields);
+  /**
+   *
+   * @param drugDict Object with maps for IPR-A and IPR-B
+   * @returns concatenated drug names with iprevidencelevel, with IPR-B level drugs not appearing if already in IPR-A
+   */
+  const getDrugNames = (drugDict: {
+    'IPR-A': Set<string>,
+    'IPR-B': Set<string>
+  }) => [
+    ...orderBy(
+      Array.from(drugDict['IPR-A']),
+      [(cont) => cont[0].toLowerCase()],
+      ['asc'],
+    ).map((drugName) => `${drugName} (IPR-A)`),
+    ...orderBy(
+      Array.from(drugDict['IPR-B']).filter((drugName) => !drugDict['IPR-A'].has(drugName)),
+      [(cont) => cont[0].toLowerCase()],
+      ['asc'],
+    ).map((drugName) => `${drugName} (IPR-B)`),
+  ].join(', ');
 
   const nextRecords = [];
   let prevRowKey = '';
-  const contextDict = new Set();
+  const contextDict = {
+    'IPR-A': new Set<string>(),
+    'IPR-B': new Set<string>(),
+  };
 
   sorted.forEach((row, idx) => {
     if (idx === 0) {
@@ -106,31 +129,23 @@ function combineClinAssocWithContext(records: KbMatchType[], fields: string[]) {
       prevRowKey = rowKey;
       nextRecords.push({
         ...sorted[idx - 1],
-        relevance: `${sorted[idx - 1].relevance} to ${orderBy(
-          Array.from(contextDict),
-          [(cont) => cont.toLowerCase()],
-          ['asc'],
-        ).join(', ')}`,
+        relevance: `${sorted[idx - 1].relevance} to ${getDrugNames(contextDict)}`,
       });
-      contextDict.clear();
+      contextDict['IPR-A'].clear();
+      contextDict['IPR-B'].clear();
     }
 
     // Removes content between and including square brackets for drugs
-    let contextText = context.replace(/ *\[[^)]*\] */g, '');
+    const contextText = context.replace(/ *\[[^)]*\] */g, '');
     if (iprEvidenceLevel) {
-      contextText = `${contextText.toLowerCase()} (${iprEvidenceLevel})`;
+      contextDict[iprEvidenceLevel].add(contextText.toLowerCase());
     }
-    contextDict.add(contextText);
 
     // Last entry
     if (idx === sorted.length - 1) {
       nextRecords.push({
         ...sorted[idx - 1],
-        relevance: `${sorted[idx - 1].relevance} to ${orderBy(
-          Array.from(contextDict),
-          [(cont) => cont.toLowerCase()],
-          ['asc'],
-        ).join(', ')}`,
+        relevance: `${sorted[idx - 1].relevance} to ${getDrugNames(contextDict)}`,
       });
     }
   });
