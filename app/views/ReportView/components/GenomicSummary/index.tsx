@@ -22,9 +22,9 @@ import snackbar from '@/services/SnackbarUtils';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import PatientEdit from '@/components/PatientEdit';
 import useConfirmDialog from '@/hooks/useConfirmDialog';
+import TumourSummaryEdit from '@/components/TumourSummaryEdit';
 import VariantChips from './components/VariantChips';
 import VariantCounts from './components/VariantCounts';
-import TumourSummaryEdit from '@/components/TumourSummaryEdit';
 import {
   PatientInformationType,
   GeneVariantType,
@@ -115,6 +115,8 @@ const GenomicSummary = ({
     structuralVariant: 0,
     expression: 0,
   });
+
+  const classNamePrefix = isPrint ? 'genomic-summary--print' : 'genomic-summary';
 
   useEffect(() => {
     if (report) {
@@ -445,14 +447,14 @@ const GenomicSummary = ({
   };
 
   return (
-    <div className="genomic-summary">
+    <div className={classNamePrefix}>
       {report && patientInformation && tumourSummary && !isLoading && (
         <>
           <DemoDescription>
             The front page displays general patient and sample information, and provides a highlight of the key sequencing results.
           </DemoDescription>
-          <div className="genomic-summary__patient-information">
-            <div className="genomic-summary__patient-information-title">
+          <div className={`${classNamePrefix}__patient-information`}>
+            <div className={`${classNamePrefix}__patient-information-title`}>
               <Typography variant="h3" display="inline">
                 Patient Information
                 {canEdit && !isPrint && (
@@ -474,7 +476,7 @@ const GenomicSummary = ({
               alignItems="flex-end"
               container
               spacing={3}
-              className="genomic-summary__patient-information-content"
+              className={`${classNamePrefix}__patient-information-content`}
             >
               {patientInformation.map(({ label, value }) => (
                 <Grid key={label as string} item>
@@ -486,8 +488,8 @@ const GenomicSummary = ({
             </Grid>
           </div>
 
-          <div className="genomic-summary__tumour-summary">
-            <div className="genomic-summary__tumour-summary-title">
+          <div className={`${classNamePrefix}__tumour-summary`}>
+            <div className={`${classNamePrefix}__tumour-summary-title`}>
               <Typography variant="h3">
                 Tumour Summary
                 {canEdit && !isPrint && (
@@ -506,19 +508,19 @@ const GenomicSummary = ({
                 )}
               </Typography>
             </div>
-            <div className="genomic-summary__tumour-summary-content">
+            <div className={`${classNamePrefix}__tumour-summary-content`}>
               <DescriptionList entries={tumourSummary} />
             </div>
           </div>
 
           {isPrint ? (
-            <div className="genomic-summary__alterations">
-              <div className="genomic-summary__alterations-title">
+            <div className={`${classNamePrefix}__alterations`}>
+              <div className={`${classNamePrefix}__alterations-title`}>
                 <Typography variant="h3">
                   Key Genomic and Transcriptomic Alterations Identified
                 </Typography>
               </div>
-              <div className="genomic-summary__alterations-content">
+              <div className={`${classNamePrefix}__alterations-content`}>
                 <VariantCounts
                   filter={variantFilter}
                   counts={variantCounts}
@@ -534,13 +536,13 @@ const GenomicSummary = ({
               </div>
             </div>
           ) : (
-            <div className="genomic-summary__alterations">
-              <div className="genomic-summary__alterations-title">
+            <div className={`${classNamePrefix}__alterations`}>
+              <div className={`${classNamePrefix}__alterations-title`}>
                 <Typography variant="h3">
                   Key Genomic and Transcriptomic Alterations Identified
                 </Typography>
               </div>
-              <div className="genomic-summary__alterations-content">
+              <div className={`${classNamePrefix}__alterations-content`}>
                 <VariantCounts
                   filter={variantFilter}
                   counts={variantCounts}
