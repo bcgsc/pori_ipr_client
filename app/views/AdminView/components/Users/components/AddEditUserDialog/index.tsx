@@ -18,6 +18,7 @@ import {
 import { useForm, Controller } from 'react-hook-form';
 import api, { ApiCallSet } from '@/services/api';
 import { UserType, GroupType } from '@/common';
+import snackbar from '@/services/SnackbarUtils';
 import {
   ProjectType,
 } from '../../../../types';
@@ -124,43 +125,62 @@ const AddEditUserDialog = ({
         username,
         type,
       };
-      // User Section
-      const addEditResp = editData
-        ? await api.put(`/user/${editData.ident}`, userReq).request()
-        : await api.post('/user', userReq).request();
 
-      // Project Section
-      if (dirtyFields.projects) {
-        const existingProjects = editData.projects.map(({ ident }) => ident);
+      try {
+        const addEditResp = editData
+          ? await api.put(`/user/${editData.ident}`, userReq).request()
+          : await api.post('/user', userReq).request();
 
-        const toAddProjs = projects.filter((projectId) => !existingProjects.includes(projectId));
-        const toRemoveProjs = existingProjects.filter((projectId) => !projects.includes(projectId));
+        // Project Section
+        if (dirtyFields.projects && editData) {
+          const existingProjects = editData.projects.map(({ ident }) => ident);
 
-        const callSet = new ApiCallSet([
-          ...toAddProjs.map((projectId) => api.post(`/project/${projectId}/user`, { user: addEditResp.ident }, {})),
-          ...toRemoveProjs.map((projectId) => api.del(`/project/${projectId}/user`, { user: addEditResp.ident }, {})),
-        ]);
-        await callSet.request();
+          const toAddProjs = projects.filter((projectId) => !existingProjects.includes(projectId));
+          const toRemoveProjs = existingProjects.filter((projectId) => !projects.includes(projectId));
+
+          const callSet = new ApiCallSet([
+            ...toAddProjs.map((projectId) => api.post(`/project/${projectId}/user`, { user: addEditResp.ident }, {})),
+            ...toRemoveProjs.map((projectId) => api.del(`/project/${projectId}/user`, { user: addEditResp.ident }, {})),
+          ]);
+          try {
+            await callSet.request();
+          } catch (e) {
+            throw { ...e, errorType: 'project' };
+          }
+        }
+
+        // Groups Section
+        if (dirtyFields.groups && editData) {
+          const existingGroups = editData.groups.map(({ ident }) => ident);
+
+          const toAddGroups = groups.filter((groupId) => !existingGroups.includes(groupId));
+          const toRemoveGroups = existingGroups.filter((groupId) => !groups.includes(groupId));
+
+          const callSet = new ApiCallSet([
+            ...toAddGroups.map((groupId) => api.post(`/user/group/${groupId}/member`, { user: addEditResp.ident }, {})),
+            ...toRemoveGroups.map((groupId) => api.del(`/user/group/${groupId}/member`, { user: addEditResp.ident }, {})),
+          ]);
+          try {
+            await callSet.request();
+          } catch (e) {
+            throw { ...e, errorType: 'group' };
+          }
+        }
+        addEditResp.projects = projectOptions.filter(({ ident }) => projects.includes(ident));
+        addEditResp.groups = groupOptions.filter(({ ident }) => groups.includes(ident));
+
+        snackbar.success(`User successfully ${editData ? 'updated' : 'created'}`);
+        onClose(addEditResp);
+      } catch (e) {
+        if (e.errorType) {
+          snackbar.error(`Error setting ${e.errorType}s related to user`);
+        } else {
+          snackbar.error(`Error ${editData ? 'editing' : 'creating'} user`);
+        }
+        console.error(e);
       }
-
-      // Groups Section
-      if (dirtyFields.groups) {
-        const existingGroups = editData.groups.map(({ ident }) => ident);
-
-        const toAddGroups = groups.filter((groupId) => !existingGroups.includes(groupId));
-        const toRemoveGroups = existingGroups.filter((groupId) => !groups.includes(groupId));
-
-        const callSet = new ApiCallSet([
-          ...toAddGroups.map((groupId) => api.post(`/user/group/${groupId}/member`, { user: addEditResp.ident }, {})),
-          ...toRemoveGroups.map((groupId) => api.del(`/user/group/${groupId}/member`, { user: addEditResp.ident }, {})),
-        ]);
-        await callSet.request();
-      }
-
-      addEditResp.projects = projectOptions.filter(({ ident }) => projects.includes(ident));
-      addEditResp.groups = groupOptions.filter(({ ident }) => groups.includes(ident));
-      onClose(addEditResp);
     }
+
     onClose(null);
   }, [dirtyFields, editData, onClose, projectOptions, groupOptions]);
 
