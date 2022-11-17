@@ -56,13 +56,11 @@ const Users = (): JSX.Element => {
         const newUsers = [...users];
         newUsers[userIndex] = newData;
         setUsers(newUsers);
-        snackbar.enqueueSnackbar('User edited');
       } else {
         setUsers((prevVal) => [...prevVal, newData]);
-        snackbar.enqueueSnackbar('User added');
       }
     }
-  }, [snackbar, users]);
+  }, [users]);
 
   return (
     <div className="admin-table__container">
