@@ -322,13 +322,13 @@ const RapidSummary = ({
     }
     setTumourSummary([
       {
-        term: 'Initial Tumour Content',
+        term: 'Pathology Tumour Content',
         value: `${report.tumourContent}%`,
       },
       {
-        term: 'Mutation Burden',
+        term: 'Genome TMB (mut/mb)',
         value: mutationBurden
-          ? `${parseFloat((mutationBurden.genomeSnvTmb + mutationBurden.genomeIndelTmb).toFixed(12))} mut/Mb`
+          ? `${parseFloat((mutationBurden.genomeSnvTmb + mutationBurden.genomeIndelTmb).toFixed(12))}`
           : null,
       },
       {
