@@ -550,7 +550,7 @@ const RapidSummary = ({
   }, []);
 
   let cancerRelevanceSection;
-  if (therapeuticAssociationResults?.length > 0) {
+  if (cancerRelevanceResults?.length > 0) {
     if (isPrint) {
       cancerRelevanceSection = (
         <PrintTable
