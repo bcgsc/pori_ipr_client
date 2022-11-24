@@ -17,6 +17,18 @@ const clinicalAssociationColDefs = [
     hide: false,
   },
   {
+    headerName: 'VAF',
+    colId: 'variant.tumourDepth',
+    field: 'variant.tumourDepth',
+    valueGetter: ({ data: { variant: { tumourAltCount, tumourDepth } } }) => {
+      if (tumourAltCount && tumourDepth) {
+        return (tumourAltCount / tumourDepth).toFixed(2);
+      }
+      return '';
+    },
+    hide: false,
+  },
+  {
     headerName: 'Potential Clinical Association',
     colId: 'relevance',
     field: 'relevance',
@@ -37,6 +49,18 @@ const cancerRelevanceColDefs = [
     valueGetter: ({ data: { variant: { tumourAltCount, tumourDepth } } }) => {
       if (tumourAltCount && tumourDepth) {
         return `${tumourAltCount}/${tumourDepth}`;
+      }
+      return '';
+    },
+    hide: false,
+  },
+  {
+    headerName: 'VAF',
+    colId: 'variant.tumourDepth',
+    field: 'variant.tumourDepth',
+    valueGetter: ({ data: { variant: { tumourAltCount, tumourDepth } } }) => {
+      if (tumourAltCount && tumourDepth) {
+        return (tumourAltCount / tumourDepth).toFixed(2);
       }
       return '';
     },
