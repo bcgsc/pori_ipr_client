@@ -323,7 +323,9 @@ const RapidSummary = ({
     setTumourSummary([
       {
         term: 'Pathology Tumour Content',
-        value: `${report.tumourContent}%`,
+        value: `${
+          report.sampleInfo.find((samp) => samp?.Sample?.toLowerCase() === 'tumour')['Patho TC'] ?? ''
+        }`,
       },
       {
         term: 'Genome TMB (mut/mb)',
@@ -336,7 +338,7 @@ const RapidSummary = ({
         value: msiStatus,
       },
     ]);
-  }, [mutationBurden, report.tumourContent]);
+  }, [mutationBurden, report.sampleInfo]);
 
   const handlePatientEditClose = useCallback(async (
     isSaved: boolean,
