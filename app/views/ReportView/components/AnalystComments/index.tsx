@@ -25,6 +25,7 @@ import './index.scss';
 type AnalystCommentsProps = {
   isPrint?: boolean;
   isSigned?: boolean;
+  loadedDispatch?: (type: Record<'type', string>) => void;
 } & WithLoadingInjectedProps;
 
 const AnalystComments = ({
@@ -32,6 +33,7 @@ const AnalystComments = ({
   isLoading,
   isSigned,
   setIsLoading,
+  loadedDispatch,
 }: AnalystCommentsProps): JSX.Element => {
   const { report } = useContext(ReportContext);
   const { setIsSigned } = useContext(ConfirmContext);
@@ -64,11 +66,14 @@ const AnalystComments = ({
           snackbar.error(`Network error: ${err}`);
         } finally {
           setIsLoading(false);
+          if (loadedDispatch) {
+            loadedDispatch({ type: 'analyst-comments' });
+          }
         }
       };
       getData();
     }
-  }, [report, setIsLoading]);
+  }, [report, setIsLoading, loadedDispatch]);
 
   const handleSign = useCallback(async (signed: boolean, role: SignatureUserType) => {
     let newSignature;

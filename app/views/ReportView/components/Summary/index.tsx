@@ -7,7 +7,9 @@ const RapidSummary = lazy(() => import('../RapidSummary'));
 
 type SummaryProps = {
   templateName: string;
-  props: Record<string, unknown>;
+  isPrint: boolean;
+  loadedDispatch?: (type: Record<'type', string>) => void;
+  [x: string]: unknown;
 };
 
 const Summary = ({
