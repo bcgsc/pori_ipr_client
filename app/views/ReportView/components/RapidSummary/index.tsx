@@ -322,13 +322,15 @@ const RapidSummary = ({
     }
     setTumourSummary([
       {
-        term: 'Initial Tumour Content',
-        value: `${report.tumourContent}%`,
+        term: 'Pathology Tumour Content',
+        value: `${
+          report.sampleInfo.find((samp) => samp?.Sample?.toLowerCase() === 'tumour')['Patho TC'] ?? ''
+        }`,
       },
       {
-        term: 'Mutation Burden',
+        term: 'Genome TMB (mut/mb)',
         value: mutationBurden
-          ? `${parseFloat((mutationBurden.genomeSnvTmb + mutationBurden.genomeIndelTmb).toFixed(12))} mut/Mb`
+          ? `${parseFloat((mutationBurden.genomeSnvTmb + mutationBurden.genomeIndelTmb).toFixed(12))}`
           : null,
       },
       {
@@ -336,7 +338,7 @@ const RapidSummary = ({
         value: msiStatus,
       },
     ]);
-  }, [mutationBurden, report.tumourContent]);
+  }, [mutationBurden, report.sampleInfo]);
 
   const handlePatientEditClose = useCallback(async (
     isSaved: boolean,
