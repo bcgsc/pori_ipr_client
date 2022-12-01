@@ -15,6 +15,7 @@ export type PrintTableProps = {
   /* string of fieldNames for columns to be collapsed */
   collapseableCols?: string[];
   noRowsText?: string;
+  fullWidth?: boolean;
 };
 
 /**
@@ -27,6 +28,7 @@ const PrintTable = ({
   order = [],
   noRowsText = '',
   collapseableCols = null,
+  fullWidth = false,
 }: PrintTableProps): JSX.Element => {
   const sortedColDefs = useMemo(() => columnDefs
     .filter((col) => (col.headerName && col.hide !== true && col.headerName !== 'Actions'))
@@ -177,7 +179,7 @@ const PrintTable = ({
   return (
     <div className="table-container">
       {Boolean(columnDefs.length) && (
-        <table className="table">
+        <table className={`table ${fullWidth ? 'table--full-width' : ''}`}>
           <thead className="table__header">
             <tr>
               {sortedColDefs.map((col) => (

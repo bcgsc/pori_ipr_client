@@ -34,10 +34,10 @@
   }
 }
 
-@media print {
-  .rapid-summary {
-    margin: 0 auto;
+.rapid-summary--print {
+  margin: 0 auto;
 
+  .rapid-summary {
     &__patient-information {
       margin: 0 0 22px;
 

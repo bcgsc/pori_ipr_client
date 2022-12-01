@@ -1,6 +1,6 @@
 @import '../../../../styles/variables';
 
-.summary {
+.summary, .summary--print {
   margin: 20px auto;
   padding: 0 20px;
 
@@ -64,40 +64,30 @@
   }
 }
 
-@media print {
-  .summary {
-    margin: 0 auto;
 
-    &__patient-information {
-      &-title {
-        margin: 0 0 16px;
-      }
+.summary--print {
+  margin: 0 auto;
+
+  &__patient-information {
+    &-title {
+      margin: 0 0 16px;
     }
+  }
 
-    &__test-information {
-      margin: 16px 0;
-      break-inside: avoid;
+  &__test-information {
+    margin: 16px 0;
+  }
 
-      &-title {
-        margin: 0 0 16px;
-      }
-
-      &-text {
-        break-inside: avoid;
-      }
+  &__reviews {
+    &-title {
+      margin: 0 0 16px;
     }
+  }
 
-    &__reviews {
-      &-title {
-        margin: 0 0 16px;
-      }
-    }
-
-    &__signatures {
-      border: 1px solid black;
-      display: flex;
-      margin: 0 8px;
-      max-width: none;
-    }
+  &__signatures {
+    border: 1px solid black;
+    display: flex;
+    margin: 0 8px;
+    max-width: none;
   }
 }

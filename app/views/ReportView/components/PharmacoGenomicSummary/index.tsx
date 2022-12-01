@@ -60,6 +60,8 @@ const PharmacoGenomicSummary = ({
 
   const [showPatientEdit, setShowPatientEdit] = useState(false);
 
+  const classNamePrefix = isPrint ? 'summary--print' : 'summary';
+
   useEffect(() => {
     if (report && report.ident) {
       const getData = async () => {
@@ -215,7 +217,7 @@ const PharmacoGenomicSummary = ({
 
   const pharmacogenomicSection = useMemo(() => {
     let component = (
-      <div className="summary__none">
+      <div className={`${classNamePrefix}__none`}>
         No pharmacogenomic variants found
       </div>
     );
@@ -244,18 +246,18 @@ const PharmacoGenomicSummary = ({
       component = (
         <>
           {tableComponent}
-          <Alert className="summary--max-width" severity="warning">
+          <Alert className={`${classNamePrefix}--max-width`} severity="warning">
             Positive Pharmacogenomic Result: At least one pharmacogenomic variant was identified in this sample. Further clinical testing to determine risk of toxicity is recommended for this patient.
           </Alert>
         </>
       );
     }
     return component;
-  }, [pharmacoGenomic, isPrint]);
+  }, [pharmacoGenomic, classNamePrefix, isPrint]);
 
   const cancerPredispositionSection = useMemo(() => {
     let component = (
-      <div className="summary__none">
+      <div className={`${classNamePrefix}__none`}>
         No cancer predisposition variants found
       </div>
     );
@@ -288,7 +290,7 @@ const PharmacoGenomicSummary = ({
       );
     }
     return component;
-  }, [cancerPredisposition, isPrint]);
+  }, [cancerPredisposition, classNamePrefix, isPrint]);
 
   const reviewSignatures = useMemo(() => {
     let order: SignatureUserType[] = ['author', 'reviewer', 'creator'];
@@ -313,12 +315,12 @@ const PharmacoGenomicSummary = ({
   }, [handleSign, isPrint, signatures]);
 
   return (
-    <div className="summary">
+    <div className={classNamePrefix}>
       {report && (
         <>
           {patientInformation && (
-            <div className="summary__patient-information">
-              <div className="summary__patient-information-title">
+            <div className={`${classNamePrefix}__patient-information`}>
+              <div className={`${classNamePrefix}__patient-information-title`}>
                 <Typography variant="h3" display="inline">
                   Patient Information
                   {canEdit && !isPrint && (
@@ -340,7 +342,7 @@ const PharmacoGenomicSummary = ({
                 alignItems="flex-end"
                 container
                 spacing={3}
-                className="summary__patient-information-content"
+                className={`${classNamePrefix}__patient-information-content`}
               >
                 {patientInformation.map(({ label, value }) => (
                   <Grid key={label} item>
@@ -352,13 +354,13 @@ const PharmacoGenomicSummary = ({
               </Grid>
             </div>
           )}
-          <div className="summary__pharmacogenomic">
+          <div className={`${classNamePrefix}__pharmacogenomic`}>
             <Typography variant="h3" display="inline">
               Pharmacogenomic Variants
             </Typography>
             {pharmacogenomicSection}
           </div>
-          <div className="summary__cancer-predisposition">
+          <div className={`${classNamePrefix}__cancer-predisposition`}>
             <Typography variant="h3" display="inline">
               Cancer Predisposition Variants
             </Typography>
@@ -366,7 +368,7 @@ const PharmacoGenomicSummary = ({
           </div>
           {report?.sampleInfo && (
             <>
-              <Typography variant="h3" display="inline" className="summary__sample-information-title">
+              <Typography variant="h3" display="inline" className={`${classNamePrefix}__sample-information-title`}>
                 Sample Information
               </Typography>
               {isPrint ? (
@@ -385,24 +387,24 @@ const PharmacoGenomicSummary = ({
             </>
           )}
           {testInformation && (
-            <div className="summary__test-information">
-              <Typography variant="h3" className="summary__test-information-title">
+            <div className={`${classNamePrefix}__test-information`}>
+              <Typography variant="h3" className={`${classNamePrefix}__test-information-title`}>
                 Test Information
               </Typography>
               <TestInformation
                 data={testInformation}
                 isPharmacogenomic
               />
-              <Typography className="summary--max-width summary__test-information-text">
+              <Typography className={`${classNamePrefix}--max-width ${classNamePrefix}__test-information-text`}>
                 The Pharmacogenomic and Cancer Predisposition Targeted Gene Report (PCP-TGR) provides results from a rapid analysis pipeline designed to identify known pharmacogenomic and pathogenic germline cancer predisposition variants in a select set of genes associated with drug toxicity and cancer predisposition. This rapid analysis is not a complete description of abberations associated with cancer predisposition or drug toxicity. The absence of a specific variant in this report is not a guarantee that the variant is not present. Somatic variants are not included in this report.
               </Typography>
             </div>
           )}
-          <div className="summary__reviews">
-            <Typography variant="h3" className="summary__reviews-title">
+          <div className={`${classNamePrefix}__reviews`}>
+            <Typography variant="h3" className={`${classNamePrefix}__reviews-title`}>
               Reviews
             </Typography>
-            <div className="summary__signatures">
+            <div className={`${classNamePrefix}__signatures`}>
               {reviewSignatures}
             </div>
           </div>
