@@ -65,6 +65,16 @@ const columnDefs = [
     hide: false,
   },
   {
+    cellRenderer: 'checkboxCellRenderer',
+    headerName: 'CGL Review Result',
+    valueGetter: ({ data }: ValueGetterParams): boolean => {
+      if (data.reviews.find(({ type }) => type === 'cgl')) {
+        return true;
+      }
+      return false;
+    },
+  },
+  {
     headerName: 'Created',
     valueGetter: ({ data }: ValueGetterParams): string => formatDate(data.createdAt),
     hide: false,
