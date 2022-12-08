@@ -1,4 +1,6 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import React, {
+  useEffect, useState, useCallback, useRef,
+} from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import {
   Checkbox,
@@ -17,13 +19,13 @@ import GermlineReportContext from '@/context/GermlineReportContext';
 import ActionCellRenderer from '@/components/DataTable/components/ActionCellRenderer';
 import AlertDialog from '@/components/AlertDialog';
 import snackbar from '@/services/SnackbarUtils';
-import { GermlineReportType } from '@/context/GermlineReportContext/types';
+import { GermlineReportType, VariantType } from '@/context/GermlineReportContext/types';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import { getDate } from '@/utils/date';
 import StrikethroughCell from './components/StrikethroughCell';
 import EditDialog from './components/EditDialog';
 import Reviews from './components/Reviews';
 import columnDefs from './columnDefs';
-import { getDate } from '@/utils/date';
 import './index.scss';
 
 type GermlineReportProps = WithLoadingInjectedProps;
@@ -40,7 +42,7 @@ const GermlineReport = ({
   const [showAllColumns, setShowAllColumns] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showAlertDialog, setShowAlertDialog] = useState(false);
-  const [editData, setEditData] = useState();
+  const [editData, setEditData] = useState<VariantType>();
 
   const [menuAnchor, setMenuAnchor] = useState<HTMLElement>();
 
@@ -142,29 +144,27 @@ const GermlineReport = ({
                 <Typography display="inline" variant="h5">
                   {`${report.patientId} - ${report.normalLibrary}`}
                 </Typography>
-                <>
-                  <span className="data-table__action">
-                    <IconButton
-                      onClick={(event) => setMenuAnchor(event.currentTarget)}
-                      className="data-table__icon-button"
-                      size="large"
-                    >
-                      <MoreHorizIcon />
-                    </IconButton>
-                    <Menu
-                      anchorEl={menuAnchor}
-                      open={Boolean(menuAnchor)}
-                      onClose={() => setMenuAnchor(null)}
-                    >
-                      <MenuItem onClick={() => setShowAlertDialog(true)}>
-                        Remove report
-                      </MenuItem>
-                      <MenuItem onClick={() => handleTSVExport()}>
-                        Export to TSV
-                      </MenuItem>
-                    </Menu>
-                  </span>
-                </>
+                <span className="data-table__action">
+                  <IconButton
+                    onClick={(event) => setMenuAnchor(event.currentTarget)}
+                    className="data-table__icon-button"
+                    size="large"
+                  >
+                    <MoreHorizIcon />
+                  </IconButton>
+                  <Menu
+                    anchorEl={menuAnchor}
+                    open={Boolean(menuAnchor)}
+                    onClose={() => setMenuAnchor(null)}
+                  >
+                    <MenuItem onClick={() => setShowAlertDialog(true)}>
+                      Remove report
+                    </MenuItem>
+                    <MenuItem onClick={() => handleTSVExport()}>
+                      Export to TSV
+                    </MenuItem>
+                  </Menu>
+                </span>
               </div>
               <AlertDialog
                 isOpen={showAlertDialog}
@@ -200,7 +200,7 @@ const GermlineReport = ({
                 suppressColumnVirtualisation
                 rowData={report.variants}
                 rowClassRules={{
-                  'strikethrough': (params) => params.data.hidden,
+                  strikethrough: (params) => params.data.hidden,
                   'low-score': (params) => params.data.score < 100,
                 }}
                 gridOptions={{
@@ -210,8 +210,8 @@ const GermlineReport = ({
                   },
                 }}
                 frameworkComponents={{
-                  'strikethroughCell': StrikethroughCell,
-                  'actionCell': RowActionCellRenderer,
+                  strikethroughCell: StrikethroughCell,
+                  actionCell: RowActionCellRenderer,
                 }}
                 context={{
                   canEdit: true,
