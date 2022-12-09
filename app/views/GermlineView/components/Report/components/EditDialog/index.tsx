@@ -1,5 +1,5 @@
 import React, {
-  useCallback, useContext,
+  useCallback, useContext, useEffect,
 } from 'react';
 import {
   Button,
@@ -40,8 +40,15 @@ const EditDialog = ({
   const {
     handleSubmit,
     control,
+    reset,
     formState: { isDirty, dirtyFields },
   } = useForm();
+
+  useEffect(() => {
+    if (rowData) {
+      reset({ ...rowData });
+    }
+  }, [reset, rowData]);
 
   const saveHistory = useCallback(async (data) => {
     try {
@@ -58,17 +65,23 @@ const EditDialog = ({
         {},
       ).request();
       snackbar.success('Details saved');
+      reset();
       onClose(newVariant);
     } catch (err) {
       snackbar.error(`Error saving details: ${err}`);
     }
-  }, [onClose, report, rowData, dirtyFields]);
+  }, [onClose, report, rowData, dirtyFields, reset]);
+
+  const handleOnClose = useCallback(() => {
+    onClose();
+    reset();
+  }, [reset, onClose]);
 
   return (
     <Dialog
       fullWidth
       maxWidth="sm"
-      onClose={() => onClose()}
+      onClose={handleOnClose}
       open={isOpen}
     >
       <DialogTitle>
@@ -86,7 +99,6 @@ const EditDialog = ({
               multiline
               onChange={onChange}
               value={value}
-              defaultValue={rowData.patientHistory}
               variant="outlined"
             />
           )}
@@ -102,7 +114,6 @@ const EditDialog = ({
               multiline
               onChange={onChange}
               value={value}
-              defaultValue={rowData.familyHistory}
               variant="outlined"
             />
           )}
@@ -119,7 +130,6 @@ const EditDialog = ({
                 labelId="cglReviewResult"
                 onChange={onChange}
                 value={value ?? ''}
-                defaultValue={rowData.cglReviewResult}
                 variant="outlined"
               >
                 {CGL_REVIEW_RESULTS_OPTIONS.map((option) => <MenuItem key={option} value={option}>{option}</MenuItem>)}
@@ -135,7 +145,6 @@ const EditDialog = ({
               <FormLabel>Returned to Clinician</FormLabel>
               <RadioGroup
                 onChange={onChange}
-                defaultValue={rowData.returnedToClinician}
                 value={value ?? null}
               >
                 <FormControlLabel value="yes" control={<Radio />} label="Yes" />
@@ -146,13 +155,12 @@ const EditDialog = ({
         />
         <Controller
           control={control}
-          name="referralHCP"
+          name="referralHcp"
           render={({ field: { onChange, value } }) => (
             <FormControl fullWidth margin="normal">
               <FormLabel>Referral HCP</FormLabel>
               <RadioGroup
                 onChange={onChange}
-                defaultValue={rowData.referralHcp}
                 value={value ?? null}
               >
                 <FormControlLabel value="yes" control={<Radio />} label="Yes" />
@@ -163,13 +171,12 @@ const EditDialog = ({
         />
         <Controller
           control={control}
-          name="knownToHCP"
+          name="knownToHcp"
           render={({ field: { onChange, value } }) => (
             <FormControl fullWidth margin="normal">
               <FormLabel>Known to HCP</FormLabel>
               <RadioGroup
                 onChange={onChange}
-                defaultValue={rowData.knownToHcp}
                 value={value ?? null}
               >
                 <FormControlLabel value="yes" control={<Radio />} label="Yes" />
@@ -188,15 +195,14 @@ const EditDialog = ({
               margin="normal"
               multiline
               onChange={onChange}
-              value={value}
-              defaultValue={rowData.reasonNoHcpReferral}
+              value={value ?? ''}
               variant="outlined"
             />
           )}
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => onClose()}>Cancel</Button>
+        <Button onClick={handleOnClose}>Cancel</Button>
         <Button
           color="secondary"
           disabled={!isDirty}
