@@ -16,6 +16,7 @@ import {
   REPORT_TYPE_TO_TITLE,
   REPORT_TYPE_TO_SUFFIX,
 } from '@/constants';
+import getImageDataURI from '@/utils/getImageDataURI';
 import Summary from '../ReportView/components/Summary';
 import RunningLeft from './components/RunningLeft';
 import RunningCenter from './components/RunningCenter';
@@ -153,7 +154,7 @@ const Print = (): JSX.Element => {
         <div className="print__headers">
           <div className="print__header-left">
             {template?.headerImage && (
-              <img className="print__logo" src={template.headerImage.data} alt="" />
+              <img className="print__logo" src={getImageDataURI(template.headerImage)} alt="" />
             )}
           </div>
           <div className="print__header-right">
