@@ -52,7 +52,27 @@ function aggregateFieldToObject(object, field, valueGetter) {
  * @returns correct genomic event to be displayed
  */
 function getGenomicEvent(row: KbMatchType) {
-  const { variant: { hgvsProtein, hgvsCds, hgvsGenomic } } = row;
+  const { variantType } = row;
+
+  if (variantType === 'cnv') {
+    const { variant: { gene, cnvState } } = row as KbMatchType<'cnv'>;
+    return `${gene.name} ${cnvState}`;
+  }
+  if (variantType === 'sv') {
+    const {
+      variant: {
+        gene1, gene2, exon1, exon2,
+      },
+    } = row as KbMatchType<'sv'>;
+    return `(${gene1.name || '?'
+    },${gene2.name || '?'
+    }):fusion(e.${exon1 || '?'
+    },e.${exon2 || '?'
+    })`;
+  }
+
+  // variantType === mut and others
+  const { variant: { hgvsProtein, hgvsCds, hgvsGenomic } } = row as KbMatchType<'mut'>;
   if (hgvsProtein) { return hgvsProtein; }
   if (hgvsCds) { return hgvsCds; }
   return hgvsGenomic;
@@ -70,42 +90,62 @@ function sortObjectArrayByFields<Row>(records: Row[], fields: string[]) {
 
 function combineClinAssocWithContext(records: KbMatchType[], fields: string[]) {
   const sorted = sortObjectArrayByFields(records, fields);
+  /**
+   *
+   * @param drugDict Object with maps for IPR-A and IPR-B
+   * @returns concatenated drug names with iprevidencelevel, with IPR-B level drugs not appearing if already in IPR-A
+   */
+  const getDrugNames = (drugDict: {
+    'IPR-A': Set<string>,
+    'IPR-B': Set<string>
+  }) => [
+    ...orderBy(
+      Array.from(drugDict['IPR-A']),
+      [(cont) => cont[0].toLowerCase()],
+      ['asc'],
+    ).map((drugName) => `${drugName} (IPR-A)`),
+    ...orderBy(
+      Array.from(drugDict['IPR-B']).filter((drugName) => !drugDict['IPR-A'].has(drugName)),
+      [(cont) => cont[0].toLowerCase()],
+      ['asc'],
+    ).map((drugName) => `${drugName} (IPR-B)`),
+  ].join(', ');
 
   const nextRecords = [];
   let prevRowKey = '';
-  const contextDict = new Set();
+  const contextDict = {
+    'IPR-A': new Set<string>(),
+    'IPR-B': new Set<string>(),
+  };
 
   sorted.forEach((row, idx) => {
     if (idx === 0) {
       prevRowKey = fields.map((field) => get(row, field)).join('');
     }
     const rowKey = fields.map((field) => get(row, field)).join('');
-    const { context } = row;
+    const { context, iprEvidenceLevel } = row;
 
     if (rowKey !== prevRowKey) {
       prevRowKey = rowKey;
       nextRecords.push({
         ...sorted[idx - 1],
-        relevance: `${sorted[idx - 1].relevance} to ${orderBy(
-          Array.from(contextDict),
-          [(cont) => cont[0].toLowerCase()],
-          ['asc'],
-        ).join(', ')}`,
+        relevance: `${sorted[idx - 1].relevance} to ${getDrugNames(contextDict)}`,
       });
-      contextDict.clear();
+      contextDict['IPR-A'].clear();
+      contextDict['IPR-B'].clear();
     }
 
-    contextDict.add(context);
+    // Removes content between and including square brackets for drugs
+    const contextText = context.replace(/ *\[[^)]*\] */g, '');
+    if (iprEvidenceLevel) {
+      contextDict[iprEvidenceLevel].add(contextText.toLowerCase());
+    }
 
     // Last entry
     if (idx === sorted.length - 1) {
       nextRecords.push({
         ...sorted[idx - 1],
-        relevance: `${sorted[idx - 1].relevance} to ${orderBy(
-          Array.from(contextDict),
-          [(cont) => cont[0].toLowerCase()],
-          ['asc'],
-        ).join(', ')}`,
+        relevance: `${sorted[idx - 1].relevance} to ${getDrugNames(contextDict)}`,
       });
     }
   });
@@ -178,49 +218,68 @@ const RapidSummary = ({
             // TODO:  api.get(`/reports/${report.ident}/other-mutations`),
           ]);
           const [
-            signaturesData,
-            therapeuticAssociationData,
-            cancerRelevanceData,
-            burdenData,
+            signaturesResp,
+            therapeuticAssociationResp,
+            cancerRelevanceResp,
+            burdenResp,
             // TODO: smallMutationsData,
             // TODO: otherMutationsData,
-          ] = await apiCalls.request() as [
-            SignatureType,
-            KbMatchType[],
-            KbMatchType[],
-            TmburType,
+          ] = await apiCalls.request(true) as [
+            PromiseSettledResult<SignatureType>,
+            PromiseSettledResult<KbMatchType[]>,
+            PromiseSettledResult<KbMatchType[]>,
+            PromiseSettledResult<TmburType>,
           ];
 
-          setSignatures(signaturesData);
+          if (signaturesResp.status === 'fulfilled') {
+            setSignatures(signaturesResp.value);
+          } else if (!isPrint) {
+            snackbar.error(signaturesResp.reason?.content?.error?.message);
+          }
 
           // TODO: not sure about small mutations yet
           // rapidResultsData.forEach((rapid) => {
           //   // TODO: placeholder, probe report builds probe results with small-mutation calls
           //   smallMutationsData.forEach((mutation) => { });
           // });
-          setTherapeuticAssociationResults(
-            combineClinAssocWithContext(
-              therapeuticAssociationData.map((row) => aggregateFieldToObject(row, 'genomicEvents', getGenomicEvent)),
-              [
-                'genomicEvents',
-                'variant.tumourAltCount',
-                'variant.tumourDepth',
-                'relevance',
-              ],
-            ),
-          );
-          setCancerRelevanceResults(
-            getUniqueRecordsByFields(
-              cancerRelevanceData.map((row) => aggregateFieldToObject(row, 'genomicEvents', getGenomicEvent)),
-              [
-                'genomicEvents',
-                'variant.tumourAltCount',
-                'variant.tumourDepth',
-              ],
-            ),
-          );
 
-          setMutationBurden(burdenData);
+          if (therapeuticAssociationResp.status === 'fulfilled') {
+            setTherapeuticAssociationResults(
+              combineClinAssocWithContext(
+                therapeuticAssociationResp.value.map((row) => aggregateFieldToObject(row, 'genomicEvents', getGenomicEvent)),
+                [
+                  'genomicEvents',
+                  'variant.tumourAltCount',
+                  'variant.tumourDepth',
+                  'relevance',
+                ],
+              ),
+            );
+          } else if (!isPrint) {
+            snackbar.error(therapeuticAssociationResp.reason?.content?.error?.message);
+          }
+
+          if (cancerRelevanceResp.status === 'fulfilled') {
+            setCancerRelevanceResults(
+              getUniqueRecordsByFields(
+                cancerRelevanceResp.value.map((row) => aggregateFieldToObject(row, 'genomicEvents', getGenomicEvent)),
+                [
+                  'genomicEvents',
+                  'variant.tumourAltCount',
+                  'variant.tumourDepth',
+                ],
+              ),
+            );
+          } else if (!isPrint) {
+            snackbar.error(cancerRelevanceResp.reason?.content?.error?.message);
+          }
+
+          if (burdenResp.status === 'fulfilled') {
+            setMutationBurden(burdenResp.value);
+          } else if (!isPrint) {
+            snackbar.error(burdenResp.reason?.content?.error?.message);
+          }
+
           setPatientInformation([
             {
               label: 'Alternate ID',
@@ -254,7 +313,7 @@ const RapidSummary = ({
 
           // setOtherMutationsResults(otherMutationsData);
         } catch (err) {
-          snackbar.error(`Network error: ${err}`);
+          snackbar.error(`Unknown error: ${err}`);
         } finally {
           setIsLoading(false);
           if (loadedDispatch) {
@@ -265,7 +324,7 @@ const RapidSummary = ({
 
       getData();
     }
-  }, [loadedDispatch, report, setIsLoading]);
+  }, [loadedDispatch, report, setIsLoading, isPrint]);
 
   useEffect(() => {
     let msiStatus: null | string;
@@ -282,13 +341,15 @@ const RapidSummary = ({
     }
     setTumourSummary([
       {
-        term: 'Initial Tumour Content',
-        value: `${report.tumourContent}%`,
+        term: 'Pathology Tumour Content',
+        value: `${
+          report.sampleInfo.find((samp) => samp?.Sample?.toLowerCase() === 'tumour')['Patho TC'] ?? ''
+        }`,
       },
       {
-        term: 'Mutation Burden',
+        term: 'Genome TMB (mut/mb)',
         value: mutationBurden
-          ? `${parseFloat((mutationBurden.genomeSnvTmb + mutationBurden.genomeIndelTmb).toFixed(12))} mut/Mb`
+          ? `${parseFloat((mutationBurden.genomeSnvTmb + mutationBurden.genomeIndelTmb).toFixed(12))}`
           : null,
       },
       {
@@ -296,7 +357,7 @@ const RapidSummary = ({
         value: msiStatus,
       },
     ]);
-  }, [mutationBurden, report.tumourContent]);
+  }, [mutationBurden, report.sampleInfo]);
 
   const handlePatientEditClose = useCallback(async (
     isSaved: boolean,
@@ -459,6 +520,7 @@ const RapidSummary = ({
         <PrintTable
           data={therapeuticAssociationResults}
           columnDefs={clinicalAssociationColDefs.filter((col) => col.headerName !== 'Actions')}
+          fullWidth
         />
       );
     } else {
@@ -510,12 +572,13 @@ const RapidSummary = ({
   }, []);
 
   let cancerRelevanceSection;
-  if (therapeuticAssociationResults?.length > 0) {
+  if (cancerRelevanceResults?.length > 0) {
     if (isPrint) {
       cancerRelevanceSection = (
         <PrintTable
           data={cancerRelevanceResults}
           columnDefs={cancerRelevanceColDefs.filter((col) => col.headerName !== 'Actions')}
+          fullWidth
         />
       );
     } else {
@@ -574,6 +637,7 @@ const RapidSummary = ({
               }
               return (
                 <SignatureCard
+                  key={sigType}
                   onClick={handleSign}
                   signatures={signatures}
                   title={capitalize(title)}
@@ -600,6 +664,7 @@ const RapidSummary = ({
           <PrintTable
             data={report.sampleInfo}
             columnDefs={sampleColumnDefs}
+            fullWidth
           />
         ) : (
           <DataTable
@@ -614,7 +679,7 @@ const RapidSummary = ({
   }, [report, isPrint]);
 
   return (
-    <div className="rapid-summary">
+    <div className={`rapid-summary${isPrint ? '--print' : ''}`}>
       {!isLoading && (
         <>
           {report && patientInformation && (

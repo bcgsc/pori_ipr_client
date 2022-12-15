@@ -56,6 +56,8 @@ const ProbeSummary = ({
   const [showPatientEdit, setShowPatientEdit] = useState(false);
   const [showEventsDialog, setShowEventsDialog] = useState(false);
 
+  const classNamePrefix = isPrint ? 'probe-summary--print' : 'probe-summary';
+
   useEffect(() => {
     if (report?.ident) {
       const getData = async () => {
@@ -278,7 +280,7 @@ const ProbeSummary = ({
     }
   } else {
     probeResultSection = (
-      <div className="probe-summary__none">
+      <div className={`${classNamePrefix}__none`}>
         No Genomic Events were found
       </div>
     );
@@ -307,12 +309,12 @@ const ProbeSummary = ({
   }, [handleSign, isPrint, signatures]);
 
   return (
-    <div className="probe-summary">
+    <div className={classNamePrefix}>
       {!isLoading && (
         <>
           {report && patientInformation && (
-            <div className="probe-summary__patient-information">
-              <div className="probe-summary__patient-information-title">
+            <div className={`${classNamePrefix}__patient-information`}>
+              <div className={`${classNamePrefix}__patient-information-title`}>
                 <Typography variant="h3" display="inline">
                   Patient Information
                   {canEdit && !isPrint && (
@@ -334,7 +336,7 @@ const ProbeSummary = ({
                 alignItems="flex-end"
                 container
                 spacing={3}
-                className="probe-summary__patient-information-content"
+                className={`${classNamePrefix}__patient-information-content`}
               >
                 {patientInformation.map(({ label, value }) => (
                   <Grid key={label} item>
@@ -347,8 +349,8 @@ const ProbeSummary = ({
             </div>
           )}
           {report && report.sampleInfo && (
-            <div className="probe-summary__sample-information">
-              <Typography variant="h3" display="inline" className="probe-summary__sample-information-title">
+            <div className={`${classNamePrefix}__sample-information`}>
+              <Typography variant="h3" display="inline" className={`${classNamePrefix}__sample-information-title`}>
                 Sample Information
               </Typography>
               {isPrint ? (
@@ -367,16 +369,16 @@ const ProbeSummary = ({
             </div>
           )}
           {report && probeResults && (
-            <div className="probe-summary__events">
-              <Typography className="probe-summary__events-title" variant="h3" display="inline">
+            <div className={`${classNamePrefix}__events`}>
+              <Typography className={`${classNamePrefix}__events-title`} variant="h3" display="inline">
                 Genomic Events with Potential Therapeutic Association
               </Typography>
               {probeResultSection}
             </div>
           )}
           {report && testInformation && (
-            <div className="probe-summary__test-information">
-              <Typography variant="h3" className="probe-summary__test-information-title">
+            <div className={`${classNamePrefix}__test-information`}>
+              <Typography variant="h3" className={`${classNamePrefix}__test-information-title`}>
                 Test Information
               </Typography>
               <TestInformation
@@ -386,13 +388,13 @@ const ProbeSummary = ({
             </div>
           )}
           {report && (
-            <div className="probe-summary__reviews">
+            <div className={`${classNamePrefix}__reviews`}>
               {!isPrint && (
-                <Typography variant="h3" className="probe-summary__reviews-title">
+                <Typography variant="h3" className={`${classNamePrefix}__reviews-title`}>
                   Reviews
                 </Typography>
               )}
-              <div className="probe-summary__signatures">
+              <div className={`${classNamePrefix}__signatures`}>
                 {reviewSignatures}
               </div>
             </div>
