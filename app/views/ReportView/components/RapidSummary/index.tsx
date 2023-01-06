@@ -218,49 +218,68 @@ const RapidSummary = ({
             // TODO:  api.get(`/reports/${report.ident}/other-mutations`),
           ]);
           const [
-            signaturesData,
-            therapeuticAssociationData,
-            cancerRelevanceData,
-            burdenData,
+            signaturesResp,
+            therapeuticAssociationResp,
+            cancerRelevanceResp,
+            burdenResp,
             // TODO: smallMutationsData,
             // TODO: otherMutationsData,
-          ] = await apiCalls.request() as [
-            SignatureType,
-            KbMatchType[],
-            KbMatchType[],
-            TmburType,
+          ] = await apiCalls.request(true) as [
+            PromiseSettledResult<SignatureType>,
+            PromiseSettledResult<KbMatchType[]>,
+            PromiseSettledResult<KbMatchType[]>,
+            PromiseSettledResult<TmburType>,
           ];
 
-          setSignatures(signaturesData);
+          if (signaturesResp.status === 'fulfilled') {
+            setSignatures(signaturesResp.value);
+          } else if (!isPrint) {
+            snackbar.error(signaturesResp.reason?.content?.error?.message);
+          }
 
           // TODO: not sure about small mutations yet
           // rapidResultsData.forEach((rapid) => {
           //   // TODO: placeholder, probe report builds probe results with small-mutation calls
           //   smallMutationsData.forEach((mutation) => { });
           // });
-          setTherapeuticAssociationResults(
-            combineClinAssocWithContext(
-              therapeuticAssociationData.map((row) => aggregateFieldToObject(row, 'genomicEvents', getGenomicEvent)),
-              [
-                'genomicEvents',
-                'variant.tumourAltCount',
-                'variant.tumourDepth',
-                'relevance',
-              ],
-            ),
-          );
-          setCancerRelevanceResults(
-            getUniqueRecordsByFields(
-              cancerRelevanceData.map((row) => aggregateFieldToObject(row, 'genomicEvents', getGenomicEvent)),
-              [
-                'genomicEvents',
-                'variant.tumourAltCount',
-                'variant.tumourDepth',
-              ],
-            ),
-          );
 
-          setMutationBurden(burdenData);
+          if (therapeuticAssociationResp.status === 'fulfilled') {
+            setTherapeuticAssociationResults(
+              combineClinAssocWithContext(
+                therapeuticAssociationResp.value.map((row) => aggregateFieldToObject(row, 'genomicEvents', getGenomicEvent)),
+                [
+                  'genomicEvents',
+                  'variant.tumourAltCount',
+                  'variant.tumourDepth',
+                  'relevance',
+                ],
+              ),
+            );
+          } else if (!isPrint) {
+            snackbar.error(therapeuticAssociationResp.reason?.content?.error?.message);
+          }
+
+          if (cancerRelevanceResp.status === 'fulfilled') {
+            setCancerRelevanceResults(
+              getUniqueRecordsByFields(
+                cancerRelevanceResp.value.map((row) => aggregateFieldToObject(row, 'genomicEvents', getGenomicEvent)),
+                [
+                  'genomicEvents',
+                  'variant.tumourAltCount',
+                  'variant.tumourDepth',
+                ],
+              ),
+            );
+          } else if (!isPrint) {
+            snackbar.error(cancerRelevanceResp.reason?.content?.error?.message);
+          }
+
+          if (burdenResp.status === 'fulfilled') {
+            setMutationBurden(burdenResp.value);
+          } else if (!isPrint) {
+            snackbar.error(burdenResp.reason?.content?.error?.message);
+          }
+
           setPatientInformation([
             {
               label: 'Alternate ID',
@@ -294,7 +313,7 @@ const RapidSummary = ({
 
           // setOtherMutationsResults(otherMutationsData);
         } catch (err) {
-          snackbar.error(`Network error: ${err}`);
+          snackbar.error(`Unknown error: ${err}`);
         } finally {
           setIsLoading(false);
           if (loadedDispatch) {
@@ -305,7 +324,7 @@ const RapidSummary = ({
 
       getData();
     }
-  }, [loadedDispatch, report, setIsLoading]);
+  }, [loadedDispatch, report, setIsLoading, isPrint]);
 
   useEffect(() => {
     let msiStatus: null | string;
