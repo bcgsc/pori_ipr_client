@@ -8,7 +8,8 @@
     "baseUrl": "./",
     "paths": {
       "@/*": ["app/*"]
-    }
+    },
+    "lib": ["ES2020.Promise", "DOM"]
   },
   "include": [
     "app/**/*.ts",
