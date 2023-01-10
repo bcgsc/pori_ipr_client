@@ -88,7 +88,7 @@ const Reviews = (): JSX.Element => {
             resizable: true,
           }}
           frameworkComponents={{
-            'deleteCell': DeleteCellRenderer,
+            deleteCell: DeleteCellRenderer,
           }}
         />
       </div>
@@ -125,6 +125,7 @@ const Reviews = (): JSX.Element => {
                 >
                   <MenuItem value="biofx">BioFX</MenuItem>
                   <MenuItem value="projects">Projects</MenuItem>
+                  <MenuItem value="cgl">CGL</MenuItem>
                 </Select>
               </FormControl>
               <div className="reviews__buttons">
