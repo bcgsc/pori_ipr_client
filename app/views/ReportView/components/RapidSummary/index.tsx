@@ -31,7 +31,9 @@ import TumourSummaryEdit from '@/components/TumourSummaryEdit';
 import DescriptionList from '@/components/DescriptionList';
 import { KbMatchType, TumourSummaryType } from '@/common';
 import useConfirmDialog from '@/hooks/useConfirmDialog';
-import { clinicalAssociationColDefs, cancerRelevanceColDefs, sampleColumnDefs } from './columnDefs';
+import {
+  clinicalAssociationColDefs, cancerRelevanceColDefs, sampleColumnDefs, unknownSignificanceColDefs,
+} from './columnDefs';
 import { TmburType } from '../MutationBurden/types';
 
 /**
@@ -163,9 +165,9 @@ function getUniqueRecordsByFields<Row>(records: Row[], fields: string[]) {
  * Tumour Summary (aggregate)
  *    Initial tumour content (report.tumourContent?)
  *    Mutation burden (/mutation-burden)
- * Genomic Events with Potential Clinical Association (unknown)
- * Genomic Events with Potential Cancer Relevance (unknown)
- * Other Variants in Cancer Related Genes (unknown)
+ * Genomic Events with Potential Clinical Association
+ * Genomic Events with Potential Cancer Relevance
+ * Genomic Events with Unknown Significance
  * Signatures (obtained by signatures)
  * Sample Information (obtained by report)
  */
@@ -188,6 +190,7 @@ const RapidSummary = ({
   const [signatures, setSignatures] = useState<SignatureType | null>();
   const [therapeuticAssociationResults, setTherapeuticAssociationResults] = useState<KbMatchType[] | null>();
   const [cancerRelevanceResults, setCancerRelevanceResults] = useState<KbMatchType[] | null>();
+  const [unknownSignificanceResults, setUnknownSignificanceResults] = useState<KbMatchType[] | null>();
   const [patientInformation, setPatientInformation] = useState<{
     label: string;
     value: string | null;
@@ -195,9 +198,6 @@ const RapidSummary = ({
   const [tumourSummary, setTumourSummary] = useState<TumourSummaryType[]>();
   const [mutationBurden, setMutationBurden] = useState<TmburType>();
   const [editData, setEditData] = useState();
-
-  // TODO: awaiting orders
-  // const [otherMutationsResults, setOtherMutationsResults] = useState(null);
 
   const [showPatientEdit, setShowPatientEdit] = useState(false);
   const [showTumourSummaryEdit, setShowTumourSummaryEdit] = useState(false);
@@ -213,19 +213,20 @@ const RapidSummary = ({
             api.get(`/reports/${report.ident}/signatures`),
             api.get(`/reports/${report.ident}/kb-matches?rapidTable=therapeuticAssociation`),
             api.get(`/reports/${report.ident}/kb-matches?rapidTable=cancerRelevance`),
+            api.get(`/reports/${report.ident}/kb-matches?rapidTable=unknownSignificance`),
             api.get(`/reports/${report.ident}/tmbur-mutation-burden`),
             // TODO?: api.get(`/reports/${report.ident}/small-mutations`),
-            // TODO:  api.get(`/reports/${report.ident}/other-mutations`),
           ]);
           const [
             signaturesResp,
             therapeuticAssociationResp,
             cancerRelevanceResp,
+            unknownSignificanceResp,
             burdenResp,
             // TODO: smallMutationsData,
-            // TODO: otherMutationsData,
           ] = await apiCalls.request(true) as [
             PromiseSettledResult<SignatureType>,
+            PromiseSettledResult<KbMatchType[]>,
             PromiseSettledResult<KbMatchType[]>,
             PromiseSettledResult<KbMatchType[]>,
             PromiseSettledResult<TmburType>,
@@ -274,6 +275,12 @@ const RapidSummary = ({
             snackbar.error(cancerRelevanceResp.reason?.content?.error?.message);
           }
 
+          if (unknownSignificanceResp.status === 'fulfilled') {
+            setUnknownSignificanceResults(unknownSignificanceResp.value);
+          } else if (!isPrint) {
+            snackbar.error(unknownSignificanceResp.reason?.content?.error?.message);
+          }
+
           if (burdenResp.status === 'fulfilled') {
             setMutationBurden(burdenResp.value);
           } else if (!isPrint) {
@@ -310,8 +317,6 @@ const RapidSummary = ({
               value: report.patientInformation.gender,
             },
           ]);
-
-          // setOtherMutationsResults(otherMutationsData);
         } catch (err) {
           snackbar.error(`Unknown error: ${err}`);
         } finally {
@@ -608,12 +613,33 @@ const RapidSummary = ({
     );
   }
 
-  // TODO: No need for this table yet
-  // const otherVariantsSection = useMemo(() => (
-  //   <Grid container spacing={1} direction="row">
-  //     {otherMutationsResults?.map((result) => <Grid xs={4} md={2} item>{result}</Grid>)}
-  //   </Grid>
-  // ), [otherMutationsResults]);
+  let unkownSignificanceSection;
+  if (unknownSignificanceResults?.length > 0) {
+    if (isPrint) {
+      cancerRelevanceSection = (
+        <PrintTable
+          data={unknownSignificanceResults}
+          columnDefs={unknownSignificanceColDefs.filter((col) => col.headerName !== 'Actions')}
+          fullWidth
+        />
+      );
+    } else {
+      unkownSignificanceSection = (
+        <DataTable
+          columnDefs={unknownSignificanceColDefs}
+          rowData={unknownSignificanceResults}
+          isPrint={isPrint}
+          isPaginated={!isPrint}
+        />
+      );
+    }
+  } else {
+    cancerRelevanceSection = (
+      <div className="rapid-summary__none">
+        No Genomic Events with Potential Cancer Relevance found.
+      </div>
+    );
+  }
 
   const reviewSignaturesSection = useMemo(() => {
     if (!report) return null;
@@ -739,14 +765,14 @@ const RapidSummary = ({
               {cancerRelevanceSection}
             </div>
           )}
-          {/* {report && otherVariantsResults && (
+          {report && unknownSignificanceResults && (
             <div className="rapid-summary__events">
               <Typography className="rapid-summary__events-title" variant="h3" display="inline">
-                Other Variants in Cancer-Related Genes
+                Genomic Events with Unkown Significance
               </Typography>
-              {otherVariantsSection}
+              {unkownSignificanceSection}
             </div>
-          )} */}
+          )}
           {
             isPrint ? reviewSignaturesSection : sampleInfoSection
           }
