@@ -19,7 +19,10 @@ class ApiCallSet {
     this.calls.forEach((controller) => controller.abort());
   }
 
-  async request(): Promise<RequestReturnType[]> {
+  async request(settled = false): Promise<PromiseSettledResult<RequestReturnType>[] | RequestReturnType[]> {
+    if (settled) {
+      return Promise.allSettled(this.calls.map((call) => call.request()));
+    }
     return Promise.all(this.calls.map((call) => call.request()));
   }
 }

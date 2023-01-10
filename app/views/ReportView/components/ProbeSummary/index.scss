@@ -72,6 +72,7 @@
   }
 
   &__events {
+    page-break-inside: avoid;
     margin: 28px 0;
     border: 2px solid black;
     border-radius: 4px;
