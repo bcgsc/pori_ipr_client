@@ -27,7 +27,7 @@ const AdminView = lazy(() => import('../AdminView'));
 const LinkOutView = lazy(() => import('../LinkOutView'));
 const PatientsView = lazy(() => import('../PatientsView'));
 const TemplateView = lazy(() => import('../TemplateView'));
-const ProjectsView = lazy(() => import('../AdminView/components/Projects'));
+const ProjectsView = lazy(() => import('../ProjectsView'));
 
 /**
  * Entry point to application. Handles routing, app theme, and logged in state.
