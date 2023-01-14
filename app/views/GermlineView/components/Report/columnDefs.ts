@@ -175,12 +175,25 @@ const columnDefs = [
   {
     headerName: 'Additional Info',
     field: 'additionalInfo',
+    width: 900,
+    autoHeight: true,
+    wrapText: true,
     hide: true,
   },
   {
     headerName: 'Gene Expression RPKM',
     field: 'geneExpressionRpkm',
     hide: false,
+  },
+  {
+    headerName: 'Reported in PCP-TGR',
+    field: 'previouslyReported',
+    cellStyle: {
+      display: 'flex',
+      alignItems: 'center',
+      placeContent: 'center',
+    },
+    cellRenderer: 'checkboxCell',
   },
   {
     headerName: 'Actions',
