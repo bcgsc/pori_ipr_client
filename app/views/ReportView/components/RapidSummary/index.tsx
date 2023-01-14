@@ -31,8 +31,9 @@ import TumourSummaryEdit from '@/components/TumourSummaryEdit';
 import DescriptionList from '@/components/DescriptionList';
 import { KbMatchType, TumourSummaryType } from '@/common';
 import useConfirmDialog from '@/hooks/useConfirmDialog';
+import { Box } from '@mui/system';
 import {
-  clinicalAssociationColDefs, cancerRelevanceColDefs, sampleColumnDefs, unknownSignificanceColDefs,
+  clinicalAssociationColDefs, cancerRelevanceColDefs, sampleColumnDefs,
 } from './columnDefs';
 import { TmburType } from '../MutationBurden/types';
 
@@ -613,33 +614,30 @@ const RapidSummary = ({
     );
   }
 
-  let unkownSignificanceSection;
-  if (unknownSignificanceResults?.length > 0) {
-    if (isPrint) {
-      cancerRelevanceSection = (
-        <PrintTable
-          data={unknownSignificanceResults}
-          columnDefs={unknownSignificanceColDefs.filter((col) => col.headerName !== 'Actions')}
-          fullWidth
-        />
-      );
-    } else {
-      unkownSignificanceSection = (
-        <DataTable
-          columnDefs={unknownSignificanceColDefs}
-          rowData={unknownSignificanceResults}
-          isPrint={isPrint}
-          isPaginated={!isPrint}
-        />
+  const unknownSignificanceSection = useMemo(() => {
+    if (unknownSignificanceResults?.length > 0) {
+      return (
+        <Box display="flex" flexDirection="row" flexWrap="wrap" margin="1rem 0 1rem 0">
+          {
+            (unknownSignificanceResults as KbMatchType<'mut'>[]).map((entry) => (
+              <Box
+                display="inline-block"
+                padding={1}
+                minWidth="150px"
+              >
+                <Typography variant="h6" fontWeight="fontWeightBold">{entry.variant.hgvsProtein}</Typography>
+              </Box>
+            ))
+          }
+        </Box>
       );
     }
-  } else {
-    cancerRelevanceSection = (
+    return (
       <div className="rapid-summary__none">
-        No Genomic Events with Potential Cancer Relevance found.
+        No Genomic Events with Unknown Relevance found.
       </div>
     );
-  }
+  }, [unknownSignificanceResults]);
 
   const reviewSignaturesSection = useMemo(() => {
     if (!report) return null;
@@ -768,9 +766,9 @@ const RapidSummary = ({
           {report && unknownSignificanceResults && (
             <div className="rapid-summary__events">
               <Typography className="rapid-summary__events-title" variant="h3" display="inline">
-                Genomic Events with Unkown Significance
+                Genomic Events with Unknown Significance
               </Typography>
-              {unkownSignificanceSection}
+              {unknownSignificanceSection}
             </div>
           )}
           {

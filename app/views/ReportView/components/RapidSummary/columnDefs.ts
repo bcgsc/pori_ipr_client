@@ -68,13 +68,6 @@ const cancerRelevanceColDefs = [
   },
 ];
 
-const unknownSignificanceColDefs = [
-  {
-    headerName: 'Variant Name',
-    field: 'variant.hgvsProtein',
-  },
-];
-
 const sampleColumnDefs = [
   {
     headerName: 'Sample',
@@ -118,5 +111,4 @@ export {
   sampleColumnDefs,
   clinicalAssociationColDefs,
   cancerRelevanceColDefs,
-  unknownSignificanceColDefs,
 };
