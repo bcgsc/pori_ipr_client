@@ -193,7 +193,12 @@ const columnDefs = [
       alignItems: 'center',
       placeContent: 'center',
     },
-    cellRenderer: 'checkboxCell',
+    valueGetter: ({ data: { previouslyReported } }) => {
+      if (previouslyReported) {
+        return previouslyReported;
+      }
+      return 'not set';
+    },
   },
   {
     headerName: 'Actions',

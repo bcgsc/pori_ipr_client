@@ -31,51 +31,6 @@ import './index.scss';
 
 type GermlineReportProps = WithLoadingInjectedProps;
 
-const CheckboxCellRenderer = ({
-  context: {
-    reportId,
-  },
-  data: {
-    previouslyReported,
-    ident,
-  },
-}: Partial<ICellRendererParams>) => {
-  const [checked, setChecked] = useState(false);
-
-  useEffect(() => {
-    if (previouslyReported?.toLowerCase() === 'yes') {
-      setChecked(true);
-    }
-  }, [previouslyReported]);
-
-  const handleCheck = useCallback(async (value) => {
-    if (value) {
-      try {
-        const resp = await api.put(
-          `/germline-small-mutation-reports/${reportId}/variants/${ident}`,
-          { previouslyReported: previouslyReported === 'yes' ? 'no' : 'yes' },
-        ).request();
-
-        if (resp) {
-          setChecked(true);
-          snackbar.success('Variant updated');
-        }
-      } catch (e) {
-        snackbar.error(`Error updating variant: ${e}`);
-      }
-    }
-  }, [ident, reportId, previouslyReported]);
-
-  return (
-    <Checkbox
-      // TODO: re-enable once API is ready to allow edit
-      disabled
-      checked={checked}
-      onClick={handleCheck}
-    />
-  );
-};
-
 const GermlineReport = ({
   isLoading,
   setIsLoading,
@@ -262,7 +217,6 @@ const GermlineReport = ({
                 frameworkComponents={{
                   strikethroughCell: StrikethroughCell,
                   actionCell: RowActionCellRenderer,
-                  checkboxCell: CheckboxCellRenderer,
                 }}
                 context={{
                   canEdit: true,
