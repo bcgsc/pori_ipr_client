@@ -40,13 +40,21 @@ const columnDefs: ColDef[] = [{
   hide: false,
 },
 {
-  headerName: 'Ref/Alt count DNA',
-  valueGetter: ({ data }) => (data.tumourRefCount && data.tumourAltCount ? `${data.tumourRefCount} / ${data.tumourAltCount}` : ''),
+  headerName: 'Alt/Total count DNA',
+  valueGetter: ({ data }) => (
+    data.tumourDepth !== null && data.tumourAltCount !== null
+      ? `${data.tumourAltCount} / ${data.tumourDepth}`
+      : ''
+  ),
   hide: false,
 },
 {
-  headerName: 'Alt/Ref copies DNA',
-  valueGetter: ({ data }) => (data.tumourRefCopies && data.tumourAltCopies ? `${data.tumourAltCopies} / ${data.tumourRefCopies}` : ''),
+  headerName: 'Alt/Total copies DNA',
+  valueGetter: ({ data }) => (
+    data.tumourAltCopies !== null && data.tumourRefCopies !== null
+      ? `${data.tumourAltCopies} / ${data.tumourRefCopies + data.tumourAltCopies}`
+      : ''
+  ),
   hide: false,
 },
 {
