@@ -14,6 +14,7 @@ type VariantType = {
   additionalInfo: string | null;
   alteration: string | null;
   cglCategory: string | null;
+  cglReviewResult: 'pathogenic' | 'likely pathogenic' | 'VUS' | 'likely benign' | 'benign' | null;
   chromosome: string | null;
   clinvar: string | null;
   dbSnp: string | null;
@@ -29,11 +30,16 @@ type VariantType = {
   hgvsProtein: string | null;
   hidden: boolean;
   impact: string | null;
+  knownToHcp: 'yes' | 'no' | null;
   notes: string | null;
   patientHistory: string | null;
   position: string | null;
   preferredTranscript: boolean;
+  previouslyReported: string | null;
+  reasonNoHcpReferral: string | null;
   reference: string | null;
+  referralHcp: 'yes' | 'no' | null;
+  returnedToClinician: 'yes' | 'no' | null;
   rnaVariantReads: string | null;
   score: string | null;
   tcgaCompNormPercentile: string | null;

@@ -175,12 +175,50 @@ const columnDefs = [
   {
     headerName: 'Additional Info',
     field: 'additionalInfo',
+    width: 900,
+    autoHeight: true,
+    wrapText: true,
     hide: true,
   },
   {
     headerName: 'Gene Expression RPKM',
     field: 'geneExpressionRpkm',
     hide: false,
+  },
+  {
+    headerName: 'CGL Review Result',
+    field: 'cglReviewResult',
+  },
+  {
+    headerName: 'Variant Returned to Clinician',
+    field: 'returnedToClinician',
+  },
+  {
+    headerName: 'Referral HCP',
+    field: 'referralHcp',
+  },
+  {
+    headerName: 'Known To HCP',
+    field: 'knownToHcp',
+  },
+  {
+    headerName: 'No HCP Referral Reason',
+    field: 'reasonNoHcpReferral',
+  },
+  {
+    headerName: 'Reported in PCP-TGR',
+    field: 'previouslyReported',
+    cellStyle: {
+      display: 'flex',
+      alignItems: 'center',
+      placeContent: 'center',
+    },
+    valueGetter: ({ data: { previouslyReported } }) => {
+      if (previouslyReported) {
+        return previouslyReported;
+      }
+      return 'not set';
+    },
   },
   {
     headerName: 'Actions',
