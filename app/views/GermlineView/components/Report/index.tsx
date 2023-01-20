@@ -20,7 +20,7 @@ import GermlineReportContext from '@/context/GermlineReportContext';
 import ActionCellRenderer from '@/components/DataTable/components/ActionCellRenderer';
 import AlertDialog from '@/components/AlertDialog';
 import snackbar from '@/services/SnackbarUtils';
-import { GermlineReportType } from '@/context/GermlineReportContext/types';
+import { GermlineReportType, VariantType } from '@/context/GermlineReportContext/types';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import { getDate } from '@/utils/date';
 import StrikethroughCell from './components/StrikethroughCell';
@@ -43,7 +43,7 @@ const GermlineReport = ({
   const [showAllColumns, setShowAllColumns] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showAlertDialog, setShowAlertDialog] = useState(false);
-  const [editData, setEditData] = useState();
+  const [editData, setEditData] = useState<VariantType>();
 
   const [menuAnchor, setMenuAnchor] = useState<HTMLElement>();
 

@@ -186,6 +186,26 @@ const columnDefs = [
     hide: false,
   },
   {
+    headerName: 'CGL Review Result',
+    field: 'cglReviewResult',
+  },
+  {
+    headerName: 'Variant Returned to Clinician',
+    field: 'returnedToClinician',
+  },
+  {
+    headerName: 'Referral HCP',
+    field: 'referralHcp',
+  },
+  {
+    headerName: 'Known To HCP',
+    field: 'knownToHcp',
+  },
+  {
+    headerName: 'No HCP Referral Reason',
+    field: 'reasonNoHcpReferral',
+  },
+  {
     headerName: 'Reported in PCP-TGR',
     field: 'previouslyReported',
     cellStyle: {
