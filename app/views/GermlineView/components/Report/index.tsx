@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useState, useCallback, useRef,
+  useEffect, useState, useCallback, useMemo,
 } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import {
@@ -9,9 +9,10 @@ import {
   IconButton,
   Menu,
   MenuItem,
-  DialogProps,
+  Button,
 } from '@mui/material';
 import { AgGridReact } from '@ag-grid-community/react';
+import { ICellRendererParams } from '@ag-grid-community/core';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import useGrid from '@/hooks/useGrid';
 import api from '@/services/api';
@@ -46,6 +47,8 @@ const GermlineReport = ({
 
   const [menuAnchor, setMenuAnchor] = useState<HTMLElement>();
 
+  const germlineReportContextValue = useMemo(() => ({ report, setReport }), [report]);
+
   useEffect(() => {
     if (ident) {
       const getData = async () => {
@@ -66,7 +69,7 @@ const GermlineReport = ({
 
   useEffect(() => {
     if (colApi) {
-      const colIds = colApi.getAllColumns().filter((col) => !col.colDef.autoHeight).map((col) => col.colId);
+      const colIds = colApi.getAllColumns().filter((col) => !col.getColDef().autoHeight).map((col) => col.getColId());
       colApi.autoSizeColumns(colIds, false);
     }
   }, [colApi]);
@@ -80,7 +83,9 @@ const GermlineReport = ({
     } else {
       colApi.resetColumnState();
     }
-  }, [colApi]);
+
+    gridApi.resetRowHeights();
+  }, [colApi, gridApi]);
 
   const onEdit = useCallback((rowData) => {
     setShowEditDialog(true);
@@ -126,15 +131,15 @@ const GermlineReport = ({
       suppressQuotes: true,
       columnSeparator: '\t',
       columnKeys: colApi.getAllDisplayedColumns()
-        .filter((col) => col.colDef.headerName !== 'Actions' && col.colDef.headerName)
-        .map((col) => col.colId),
+        .filter((col) => col.getColDef().headerName !== 'Actions' && col.getColDef().headerName)
+        .map((col) => col.getColId()),
       fileName: `ipr_${report.patientId}_${report.ident}_germline_${date}.tsv`,
       processCellCallback: (({ value }) => (typeof value === 'string' ? value?.replace(/,/g, '') : value)),
     });
   }, [colApi, gridApi, report]);
 
   return (
-    <GermlineReportContext.Provider value={{ report, setReport }}>
+    <GermlineReportContext.Provider value={germlineReportContextValue}>
       <div className="germline-report">
         {!isLoading && (
           <>
@@ -216,6 +221,7 @@ const GermlineReport = ({
                 context={{
                   canEdit: true,
                   canDelete: false,
+                  reportId: report.ident,
                 }}
               />
             </div>
