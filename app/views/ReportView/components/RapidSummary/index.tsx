@@ -551,7 +551,7 @@ const RapidSummary = ({
   } else {
     clinicalAssociationSection = (
       <div className="rapid-summary__none">
-        No Genomic Events with Potential Clinical Association were found.
+        No Therapeutic Association in Matched Tumour Type found.
       </div>
     );
   }
@@ -609,7 +609,7 @@ const RapidSummary = ({
   } else {
     cancerRelevanceSection = (
       <div className="rapid-summary__none">
-        No Genomic Events with Potential Cancer Relevance found.
+        No Variants with Cancer Relevance found.
       </div>
     );
   }
@@ -634,7 +634,7 @@ const RapidSummary = ({
     }
     return (
       <div className="rapid-summary__none">
-        No Genomic Events with Unknown Relevance found.
+        No Variants of Uncertain Significance found.
       </div>
     );
   }, [unknownSignificanceResults]);
@@ -750,7 +750,7 @@ const RapidSummary = ({
           {report && therapeuticAssociationResults && (
             <div className="rapid-summary__events">
               <Typography className="rapid-summary__events-title" variant="h3" display="inline">
-                Genomic Events with Clinical Association
+                Therapeutic Association in Matched Tumour Type
               </Typography>
               {clinicalAssociationSection}
             </div>
@@ -758,7 +758,7 @@ const RapidSummary = ({
           {report && cancerRelevanceResults && (
             <div className="rapid-summary__events">
               <Typography className="rapid-summary__events-title" variant="h3" display="inline">
-                Genomic Events with Cancer Relevance
+                Variants with Cancer Relevance
               </Typography>
               {cancerRelevanceSection}
             </div>
@@ -766,7 +766,7 @@ const RapidSummary = ({
           {report && unknownSignificanceResults && (
             <div className="rapid-summary__events">
               <Typography className="rapid-summary__events-title" variant="h3" display="inline">
-                Genomic Events with Unknown Significance
+                Variants of Uncertain Significance
               </Typography>
               {unknownSignificanceSection}
             </div>
