@@ -20,8 +20,9 @@ import {
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { useSnackbar } from 'notistack';
 
-import { RecordDefaults } from '@/common';
+import { ImageType, RecordDefaults } from '@/common';
 import api from '@/services/api';
+import getImageDataURI from '@/utils/getImageDataURI';
 import sections from '../../sections';
 
 import './index.scss';
@@ -32,13 +33,7 @@ type AddEditTemplateProps = {
   editData: {
     name: string;
     sections: string[];
-    headerImage: {
-      data: string | null;
-      fileName: string | null;
-      format: string | null;
-      type: string | null;
-      updatedAt: string | null;
-    } & RecordDefaults;
+    headerImage: ImageType
     updatedAt: string | null;
   } & RecordDefaults;
 };
@@ -62,7 +57,7 @@ const AddEditTemplate = ({
       setDialogTitle('Edit Template');
       setTemplateName(editData.name);
       setSelectedSections(sections.filter((section) => editData.sections.includes(section.value)));
-      setImagePreview(editData.headerImage.data);
+      setImagePreview(getImageDataURI(editData.headerImage));
     } else {
       setDialogTitle('Create a Template');
       setTemplateName('');
@@ -103,6 +98,8 @@ const AddEditTemplate = ({
         });
         if (headerImage) {
           newTemplate.append('header', headerImage);
+        } else {
+          newTemplate.append('header', '');
         }
 
         let resp;

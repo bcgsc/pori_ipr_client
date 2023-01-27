@@ -1,4 +1,6 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import React, {
+  useEffect, useState, useCallback, useMemo,
+} from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import {
   Checkbox,
@@ -7,9 +9,10 @@ import {
   IconButton,
   Menu,
   MenuItem,
-  DialogProps,
+  Button,
 } from '@mui/material';
 import { AgGridReact } from '@ag-grid-community/react';
+import { ICellRendererParams } from '@ag-grid-community/core';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import useGrid from '@/hooks/useGrid';
 import api from '@/services/api';
@@ -17,13 +20,13 @@ import GermlineReportContext from '@/context/GermlineReportContext';
 import ActionCellRenderer from '@/components/DataTable/components/ActionCellRenderer';
 import AlertDialog from '@/components/AlertDialog';
 import snackbar from '@/services/SnackbarUtils';
-import { GermlineReportType } from '@/context/GermlineReportContext/types';
+import { GermlineReportType, VariantType } from '@/context/GermlineReportContext/types';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import { getDate } from '@/utils/date';
 import StrikethroughCell from './components/StrikethroughCell';
 import EditDialog from './components/EditDialog';
 import Reviews from './components/Reviews';
 import columnDefs from './columnDefs';
-import { getDate } from '@/utils/date';
 import './index.scss';
 
 type GermlineReportProps = WithLoadingInjectedProps;
@@ -40,9 +43,11 @@ const GermlineReport = ({
   const [showAllColumns, setShowAllColumns] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showAlertDialog, setShowAlertDialog] = useState(false);
-  const [editData, setEditData] = useState();
+  const [editData, setEditData] = useState<VariantType>();
 
   const [menuAnchor, setMenuAnchor] = useState<HTMLElement>();
+
+  const germlineReportContextValue = useMemo(() => ({ report, setReport }), [report]);
 
   useEffect(() => {
     if (ident) {
@@ -64,7 +69,7 @@ const GermlineReport = ({
 
   useEffect(() => {
     if (colApi) {
-      const colIds = colApi.getAllColumns().filter((col) => !col.colDef.autoHeight).map((col) => col.colId);
+      const colIds = colApi.getAllColumns().filter((col) => !col.getColDef().autoHeight).map((col) => col.getColId());
       colApi.autoSizeColumns(colIds, false);
     }
   }, [colApi]);
@@ -78,7 +83,9 @@ const GermlineReport = ({
     } else {
       colApi.resetColumnState();
     }
-  }, [colApi]);
+
+    gridApi.resetRowHeights();
+  }, [colApi, gridApi]);
 
   const onEdit = useCallback((rowData) => {
     setShowEditDialog(true);
@@ -124,15 +131,15 @@ const GermlineReport = ({
       suppressQuotes: true,
       columnSeparator: '\t',
       columnKeys: colApi.getAllDisplayedColumns()
-        .filter((col) => col.colDef.headerName !== 'Actions' && col.colDef.headerName)
-        .map((col) => col.colId),
+        .filter((col) => col.getColDef().headerName !== 'Actions' && col.getColDef().headerName)
+        .map((col) => col.getColId()),
       fileName: `ipr_${report.patientId}_${report.ident}_germline_${date}.tsv`,
       processCellCallback: (({ value }) => (typeof value === 'string' ? value?.replace(/,/g, '') : value)),
     });
   }, [colApi, gridApi, report]);
 
   return (
-    <GermlineReportContext.Provider value={{ report, setReport }}>
+    <GermlineReportContext.Provider value={germlineReportContextValue}>
       <div className="germline-report">
         {!isLoading && (
           <>
@@ -142,29 +149,27 @@ const GermlineReport = ({
                 <Typography display="inline" variant="h5">
                   {`${report.patientId} - ${report.normalLibrary}`}
                 </Typography>
-                <>
-                  <span className="data-table__action">
-                    <IconButton
-                      onClick={(event) => setMenuAnchor(event.currentTarget)}
-                      className="data-table__icon-button"
-                      size="large"
-                    >
-                      <MoreHorizIcon />
-                    </IconButton>
-                    <Menu
-                      anchorEl={menuAnchor}
-                      open={Boolean(menuAnchor)}
-                      onClose={() => setMenuAnchor(null)}
-                    >
-                      <MenuItem onClick={() => setShowAlertDialog(true)}>
-                        Remove report
-                      </MenuItem>
-                      <MenuItem onClick={() => handleTSVExport()}>
-                        Export to TSV
-                      </MenuItem>
-                    </Menu>
-                  </span>
-                </>
+                <span className="data-table__action">
+                  <IconButton
+                    onClick={(event) => setMenuAnchor(event.currentTarget)}
+                    className="data-table__icon-button"
+                    size="large"
+                  >
+                    <MoreHorizIcon />
+                  </IconButton>
+                  <Menu
+                    anchorEl={menuAnchor}
+                    open={Boolean(menuAnchor)}
+                    onClose={() => setMenuAnchor(null)}
+                  >
+                    <MenuItem onClick={() => setShowAlertDialog(true)}>
+                      Remove report
+                    </MenuItem>
+                    <MenuItem onClick={() => handleTSVExport()}>
+                      Export to TSV
+                    </MenuItem>
+                  </Menu>
+                </span>
               </div>
               <AlertDialog
                 isOpen={showAlertDialog}
@@ -200,7 +205,7 @@ const GermlineReport = ({
                 suppressColumnVirtualisation
                 rowData={report.variants}
                 rowClassRules={{
-                  'strikethrough': (params) => params.data.hidden,
+                  strikethrough: (params) => params.data.hidden,
                   'low-score': (params) => params.data.score < 100,
                 }}
                 gridOptions={{
@@ -210,12 +215,13 @@ const GermlineReport = ({
                   },
                 }}
                 frameworkComponents={{
-                  'strikethroughCell': StrikethroughCell,
-                  'actionCell': RowActionCellRenderer,
+                  strikethroughCell: StrikethroughCell,
+                  actionCell: RowActionCellRenderer,
                 }}
                 context={{
                   canEdit: true,
                   canDelete: false,
+                  reportId: report.ident,
                 }}
               />
             </div>
