@@ -22,146 +22,84 @@ import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import PatientEdit from '@/components/PatientEdit';
 import EventsEditDialog from '@/components/EventsEditDialog';
 import capitalize from 'lodash/capitalize';
-import sortedUniqBy from 'lodash/uniqBy';
-import get from 'lodash/get';
 import orderBy from 'lodash/orderBy';
 
 import './index.scss';
 import TumourSummaryEdit from '@/components/TumourSummaryEdit';
 import DescriptionList from '@/components/DescriptionList';
-import { KbMatchType, TumourSummaryType } from '@/common';
+import {
+  CopyNumberType, KbMatchType, SmallMutationType, StructuralVariantType, TumourSummaryType,
+} from '@/common';
 import useConfirmDialog from '@/hooks/useConfirmDialog';
 import { Box } from '@mui/system';
 import {
-  clinicalAssociationColDefs, cancerRelevanceColDefs, sampleColumnDefs,
+  clinicalAssociationColDefs, cancerRelevanceColDefs, sampleColumnDefs, getGenomicEvent,
 } from './columnDefs';
 import { TmburType } from '../MutationBurden/types';
 
-/**
- * Applies an aggregated value to object
- * @param object object in question
- * @param field aggregated field name
- * @param valueGetter function to get value to be set to field
- */
-function aggregateFieldToObject(object, field, valueGetter) {
-  return ({
-    ...object,
-    [field]: valueGetter(object),
-  });
-}
+type RapidVariantType = CopyNumberType | SmallMutationType | StructuralVariantType;
 
-/**
- * @param row KbMatch data
- * @returns correct genomic event to be displayed
- */
-function getGenomicEvent(row: KbMatchType) {
-  const { variantType } = row;
-
-  if (variantType === 'cnv') {
-    const { variant: { gene, cnvState } } = row as KbMatchType<'cnv'>;
-    return `${gene.name} ${cnvState}`;
-  }
-  if (variantType === 'sv') {
-    const {
-      variant: {
-        gene1, gene2, exon1, exon2,
-      },
-    } = row as KbMatchType<'sv'>;
-    return `(${gene1.name || '?'
-    },${gene2.name || '?'
-    }):fusion(e.${exon1 || '?'
-    },e.${exon2 || '?'
-    })`;
-  }
-
-  // variantType === mut and others
-  const { variant: { hgvsProtein, hgvsCds, hgvsGenomic } } = row as KbMatchType<'mut'>;
-  if (hgvsProtein) { return hgvsProtein; }
-  if (hgvsCds) { return hgvsCds; }
-  return hgvsGenomic;
-}
-
-function sortObjectArrayByFields<Row>(records: Row[], fields: string[]) {
-  return records.sort((a, b) => {
-    const aKey = fields.map((field) => get(a, field)).join('');
-    const bKey = fields.map((field) => get(b, field)).join('');
-    if (aKey < bKey) { return -1; }
-    if (aKey > bKey) { return 1; }
-    return 0;
-  });
-}
-
-function combineClinAssocWithContext(records: KbMatchType[], fields: string[]) {
-  const sorted = sortObjectArrayByFields(records, fields);
-  /**
-   *
-   * @param drugDict Object with maps for IPR-A and IPR-B
-   * @returns concatenated drug names with iprevidencelevel, with IPR-B level drugs not appearing if already in IPR-A
-   */
-  const getDrugNames = (drugDict: {
-    'IPR-A': Set<string>,
-    'IPR-B': Set<string>
-  }) => [
-    ...orderBy(
-      Array.from(drugDict['IPR-A']),
-      [(cont) => cont[0].toLowerCase()],
-      ['asc'],
-    ).map((drugName) => `${drugName} (IPR-A)`),
-    ...orderBy(
-      Array.from(drugDict['IPR-B']).filter((drugName) => !drugDict['IPR-A'].has(drugName)),
-      [(cont) => cont[0].toLowerCase()],
-      ['asc'],
-    ).map((drugName) => `${drugName} (IPR-B)`),
-  ].join(', ');
-
-  const nextRecords = [];
-  let prevRowKey = '';
-  const contextDict = {
-    'IPR-A': new Set<string>(),
-    'IPR-B': new Set<string>(),
+const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
+  const iprRelevanceDict = {
+    'IPR-A': new Set(),
+    'IPR-B': new Set(),
   };
 
-  sorted.forEach((row, idx) => {
-    if (idx === 0) {
-      prevRowKey = fields.map((field) => get(row, field)).join('');
-    }
-    const rowKey = fields.map((field) => get(row, field)).join('');
-    const { context, iprEvidenceLevel } = row;
+  const removeSquareBrackets = (kbm: KbMatchType) => {
+    iprRelevanceDict[kbm.iprEvidenceLevel].add(kbm.context.replace(/ *\[[^)]*\] */g, '').toLowerCase());
+  };
 
-    if (rowKey !== prevRowKey) {
-      prevRowKey = rowKey;
-      nextRecords.push({
-        ...sorted[idx - 1],
-        relevance: `${sorted[idx - 1].relevance} to ${getDrugNames(contextDict)}`,
-      });
-      contextDict['IPR-A'].clear();
-      contextDict['IPR-B'].clear();
-    }
+  orderBy(
+    kbMatches,
+    ['iprEvidenceLevel', 'context'],
+  ).forEach(removeSquareBrackets);
 
-    // Removes content between and including square brackets for drugs
-    const contextText = context.replace(/ *\[[^)]*\] */g, '');
-    if (iprEvidenceLevel) {
-      contextDict[iprEvidenceLevel].add(contextText.toLowerCase());
-    }
+  return iprRelevanceDict;
+};
 
-    // Last entry
-    if (idx === sorted.length - 1) {
-      nextRecords.push({
-        ...sorted[idx - 1],
-        relevance: `${sorted[idx - 1].relevance} to ${getDrugNames(contextDict)}`,
-      });
+const getVariantRelevanceDict = (variant: RapidVariantType) => {
+  const relevanceDict: Record<string, KbMatchType[]> = {};
+  variant.kbMatches.forEach((match) => {
+    if (!relevanceDict[match.relevance]) {
+      relevanceDict[match.relevance] = [match];
+    } else {
+      relevanceDict[match.relevance].push(match);
     }
   });
+  return relevanceDict;
+};
 
-  return nextRecords;
-}
+const processPotentialClinicalAssociation = (variant: RapidVariantType) => Object.entries(getVariantRelevanceDict(variant))
+  .map(([relevanceKey, kbMatches]) => {
+    const iprEvidenceDict = splitIprEvidenceLevels(kbMatches);
 
-function getUniqueRecordsByFields<Row>(records: Row[], fields: string[]) {
-  return sortedUniqBy(sortObjectArrayByFields(records, fields), (entry) => fields.map((f) => get(entry, f)).join());
-}
+    const combinedDrugList = [
+      ...orderBy(
+        Array.from(iprEvidenceDict['IPR-A']),
+        [(cont) => cont[0].toLowerCase()],
+      ).map((drugName) => `${drugName} (IPR-A)`),
+      ...orderBy(
+        Array.from(iprEvidenceDict['IPR-B']),
+        [(cont) => cont[0].toLowerCase()],
+      ).filter((drugName) => !iprEvidenceDict['IPR-A'].has(drugName)).map((drugName) => `${drugName} (IPR-B)`),
+    ].join(', ');
+
+    return ({
+      ...variant,
+      ident: `${variant.ident}-${relevanceKey}`,
+      potentialClinicalAssociation: `${relevanceKey} to ${combinedDrugList}`,
+    });
+  });
+
+const splitVariantsByRelevance = (data: RapidVariantType[]): RapidVariantType[] => {
+  const returnData = [];
+  data.forEach((variant) => {
+    returnData.push(...processPotentialClinicalAssociation(variant));
+  });
+  return returnData;
+};
 
 /**
- * TODO: Fix this up as updates come in
  * Patient Info (obtained by report)
  * Tumour Summary (aggregate)
  *    Initial tumour content (report.tumourContent?)
@@ -189,9 +127,9 @@ const RapidSummary = ({
   const { showConfirmDialog } = useConfirmDialog();
 
   const [signatures, setSignatures] = useState<SignatureType | null>();
-  const [therapeuticAssociationResults, setTherapeuticAssociationResults] = useState<KbMatchType[] | null>();
-  const [cancerRelevanceResults, setCancerRelevanceResults] = useState<KbMatchType[] | null>();
-  const [unknownSignificanceResults, setUnknownSignificanceResults] = useState<KbMatchType[] | null>();
+  const [therapeuticAssociationResults, setTherapeuticAssociationResults] = useState<RapidVariantType[] | null>();
+  const [cancerRelevanceResults, setCancerRelevanceResults] = useState<RapidVariantType[] | null>();
+  const [unknownSignificanceResults, setUnknownSignificanceResults] = useState<RapidVariantType[] | null>();
   const [patientInformation, setPatientInformation] = useState<{
     label: string;
     value: string | null;
@@ -209,14 +147,12 @@ const RapidSummary = ({
     if (report?.ident) {
       const getData = async () => {
         try {
-          // Small mutation, copy number, sv, tmb needed
           const apiCalls = new ApiCallSet([
             api.get(`/reports/${report.ident}/signatures`),
-            api.get(`/reports/${report.ident}/kb-matches?rapidTable=therapeuticAssociation`),
-            api.get(`/reports/${report.ident}/kb-matches?rapidTable=cancerRelevance`),
-            api.get(`/reports/${report.ident}/kb-matches?rapidTable=unknownSignificance`),
+            api.get(`/reports/${report.ident}/variants?rapidTable=therapeuticAssociation`),
+            api.get(`/reports/${report.ident}/variants?rapidTable=cancerRelevance`),
+            api.get(`/reports/${report.ident}/variants?rapidTable=unknownSignificance`),
             api.get(`/reports/${report.ident}/tmbur-mutation-burden`),
-            // TODO?: api.get(`/reports/${report.ident}/small-mutations`),
           ]);
           const [
             signaturesResp,
@@ -224,12 +160,11 @@ const RapidSummary = ({
             cancerRelevanceResp,
             unknownSignificanceResp,
             burdenResp,
-            // TODO: smallMutationsData,
           ] = await apiCalls.request(true) as [
             PromiseSettledResult<SignatureType>,
-            PromiseSettledResult<KbMatchType[]>,
-            PromiseSettledResult<KbMatchType[]>,
-            PromiseSettledResult<KbMatchType[]>,
+            PromiseSettledResult<RapidVariantType[]>,
+            PromiseSettledResult<RapidVariantType[]>,
+            PromiseSettledResult<RapidVariantType[]>,
             PromiseSettledResult<TmburType>,
           ];
 
@@ -239,39 +174,16 @@ const RapidSummary = ({
             snackbar.error(signaturesResp.reason?.content?.error?.message);
           }
 
-          // TODO: not sure about small mutations yet
-          // rapidResultsData.forEach((rapid) => {
-          //   // TODO: placeholder, probe report builds probe results with small-mutation calls
-          //   smallMutationsData.forEach((mutation) => { });
-          // });
-
           if (therapeuticAssociationResp.status === 'fulfilled') {
             setTherapeuticAssociationResults(
-              combineClinAssocWithContext(
-                therapeuticAssociationResp.value.map((row) => aggregateFieldToObject(row, 'genomicEvents', getGenomicEvent)),
-                [
-                  'genomicEvents',
-                  'variant.tumourAltCount',
-                  'variant.tumourDepth',
-                  'relevance',
-                ],
-              ),
+              splitVariantsByRelevance(therapeuticAssociationResp.value),
             );
           } else if (!isPrint) {
             snackbar.error(therapeuticAssociationResp.reason?.content?.error?.message);
           }
 
           if (cancerRelevanceResp.status === 'fulfilled') {
-            setCancerRelevanceResults(
-              getUniqueRecordsByFields(
-                cancerRelevanceResp.value.map((row) => aggregateFieldToObject(row, 'genomicEvents', getGenomicEvent)),
-                [
-                  'genomicEvents',
-                  'variant.tumourAltCount',
-                  'variant.tumourDepth',
-                ],
-              ),
-            );
+            setCancerRelevanceResults(cancerRelevanceResp.value);
           } else if (!isPrint) {
             snackbar.error(cancerRelevanceResp.reason?.content?.error?.message);
           }
@@ -320,6 +232,7 @@ const RapidSummary = ({
           ]);
         } catch (err) {
           snackbar.error(`Unknown error: ${err}`);
+          console.error(err);
         } finally {
           setIsLoading(false);
           if (loadedDispatch) {
@@ -551,7 +464,7 @@ const RapidSummary = ({
   } else {
     clinicalAssociationSection = (
       <div className="rapid-summary__none">
-        No Genomic Events with Potential Clinical Association were found.
+        No Therapeutic Association in Matched Tumour Type found.
       </div>
     );
   }
@@ -609,7 +522,7 @@ const RapidSummary = ({
   } else {
     cancerRelevanceSection = (
       <div className="rapid-summary__none">
-        No Genomic Events with Potential Cancer Relevance found.
+        No Variants with Cancer Relevance found.
       </div>
     );
   }
@@ -619,13 +532,16 @@ const RapidSummary = ({
       return (
         <Box display="flex" flexDirection="row" flexWrap="wrap" margin="1rem 0 1rem 0">
           {
-            (unknownSignificanceResults as KbMatchType<'mut'>[]).map((entry) => (
+            (unknownSignificanceResults).map((entry) => (
               <Box
                 display="inline-block"
                 padding={1}
                 minWidth="150px"
+                key={entry.ident}
               >
-                <Typography variant="h6" fontWeight="fontWeightBold">{entry.variant.hgvsProtein}</Typography>
+                <Typography variant="h6" fontWeight="fontWeightBold">
+                  {getGenomicEvent({ data: entry })}
+                </Typography>
               </Box>
             ))
           }
@@ -634,7 +550,7 @@ const RapidSummary = ({
     }
     return (
       <div className="rapid-summary__none">
-        No Genomic Events with Unknown Relevance found.
+        No Variants of Uncertain Significance found.
       </div>
     );
   }, [unknownSignificanceResults]);
@@ -750,7 +666,7 @@ const RapidSummary = ({
           {report && therapeuticAssociationResults && (
             <div className="rapid-summary__events">
               <Typography className="rapid-summary__events-title" variant="h3" display="inline">
-                Genomic Events with Clinical Association
+                Therapeutic Association in Matched Tumour Type
               </Typography>
               {clinicalAssociationSection}
             </div>
@@ -758,7 +674,7 @@ const RapidSummary = ({
           {report && cancerRelevanceResults && (
             <div className="rapid-summary__events">
               <Typography className="rapid-summary__events-title" variant="h3" display="inline">
-                Genomic Events with Cancer Relevance
+                Variants with Cancer Relevance
               </Typography>
               {cancerRelevanceSection}
             </div>
@@ -766,7 +682,7 @@ const RapidSummary = ({
           {report && unknownSignificanceResults && (
             <div className="rapid-summary__events">
               <Typography className="rapid-summary__events-title" variant="h3" display="inline">
-                Genomic Events with Unknown Significance
+                Variants of Uncertain Significance
               </Typography>
               {unknownSignificanceSection}
             </div>
@@ -781,6 +697,14 @@ const RapidSummary = ({
       )}
     </div>
   );
+};
+
+export {
+  splitVariantsByRelevance,
+  getVariantRelevanceDict,
+  processPotentialClinicalAssociation,
+  splitIprEvidenceLevels,
+  RapidVariantType,
 };
 
 export default withLoading(RapidSummary);
