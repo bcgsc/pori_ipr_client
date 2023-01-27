@@ -104,15 +104,7 @@ type GeneType = {
   tumourSuppressor: boolean;
 };
 
-type VariantType = keyof VariantMap;
-
-type VariantMap = {
-  'cnv': CopyNumberType
-  'mut': SmallMutationType
-  'sv': StructuralVariantType
-};
-
-type KbMatchType<T extends VariantType = VariantType> = {
+type KbMatchType = {
   category: string;
   approvedTherapy: boolean;
   kbVariant: string;
@@ -127,7 +119,7 @@ type KbMatchType<T extends VariantType = VariantType> = {
   iprEvidenceLevel: string;
   matchedCancer: boolean;
   pmidRef: string;
-  variantType: T;
+  variantType: 'cnv' | 'mut' | 'sv';
   kbVariantId: string;
   kbStatementId: string;
   kbData: {
@@ -136,7 +128,6 @@ type KbMatchType<T extends VariantType = VariantType> = {
   externalSource: string;
   externalStatementId: string;
   reviewStatus: string;
-  variant: VariantMap[T];
 } & RecordDefaults;
 
 type CopyNumberType = {
@@ -147,7 +138,7 @@ type CopyNumberType = {
   end: number | null;
   gene: GeneType | null;
   kbCategory: string | null;
-  kbMatches: KbMatchType[];
+  kbMatches: null | KbMatchType[];
   log2Cna: string | null;
   lohState: string | null;
   size: number | null;

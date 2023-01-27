@@ -1,14 +1,42 @@
+/**
+ * @param row KbMatch data
+ * @returns correct genomic event to be displayed
+ */
+const getGenomicEvent = ({ data }) => {
+  const { variantType } = data;
+  if (variantType === 'cnv') {
+    const { gene, cnvState } = data;
+    return `${gene.name} ${cnvState}`;
+  }
+  if (variantType === 'sv') {
+    const {
+      gene1, gene2, exon1, exon2,
+    } = data;
+    return `(${gene1.name || '?'
+    },${gene2.name || '?'
+    }):fusion(e.${exon1 || '?'
+    },e.${exon2 || '?'
+    })`;
+  }
+
+  // variantType === mut and others
+  const { hgvsProtein, hgvsCds, hgvsGenomic } = data;
+  if (hgvsProtein) { return hgvsProtein; }
+  if (hgvsCds) { return hgvsCds; }
+  return hgvsGenomic;
+};
+
 const clinicalAssociationColDefs = [
   {
     headerName: 'Genomic Events',
-    colId: 'genomicEvents',
-    field: 'genomicEvents',
+    colId: 'Genomic Events',
+    valueGetter: getGenomicEvent,
     hide: false,
   },
   {
     headerName: 'Alt/Total (Tumour DNA)',
     colId: 'Alt/Total (Tumour DNA)',
-    valueGetter: ({ data: { variant: { tumourAltCount, tumourDepth } } }) => {
+    valueGetter: ({ data: { tumourAltCount, tumourDepth } }) => {
       if (tumourAltCount !== null && tumourDepth !== null) {
         return `${tumourAltCount}/${tumourDepth}`;
       }
@@ -18,9 +46,9 @@ const clinicalAssociationColDefs = [
   },
   {
     headerName: 'VAF',
-    colId: 'variant.tumourDepth',
-    field: 'variant.tumourDepth',
-    valueGetter: ({ data: { variant: { tumourAltCount, tumourDepth } } }) => {
+    colId: 'tumourDepth',
+    field: 'tumourDepth',
+    valueGetter: ({ data: { tumourAltCount, tumourDepth } }) => {
       if (tumourAltCount && tumourDepth) {
         return (tumourAltCount / tumourDepth).toFixed(2);
       }
@@ -30,8 +58,8 @@ const clinicalAssociationColDefs = [
   },
   {
     headerName: 'Potential Clinical Association',
-    colId: 'relevance',
-    field: 'relevance',
+    colId: 'potentialClinicalAssociation',
+    field: 'potentialClinicalAssociation',
     hide: false,
   },
 ];
@@ -41,12 +69,13 @@ const cancerRelevanceColDefs = [
     headerName: 'Genomic Events',
     colId: 'genomicEvents',
     field: 'genomicEvents',
+    valueGetter: getGenomicEvent,
     hide: false,
   },
   {
     headerName: 'Alt/Total (Tumour DNA)',
     colId: 'Alt/Total (Tumour DNA)',
-    valueGetter: ({ data: { variant: { tumourAltCount, tumourDepth } } }) => {
+    valueGetter: ({ data: { tumourAltCount, tumourDepth } }) => {
       if (tumourAltCount && tumourDepth) {
         return `${tumourAltCount}/${tumourDepth}`;
       }
@@ -58,7 +87,7 @@ const cancerRelevanceColDefs = [
     headerName: 'VAF',
     colId: 'variant.tumourDepth',
     field: 'variant.tumourDepth',
-    valueGetter: ({ data: { variant: { tumourAltCount, tumourDepth } } }) => {
+    valueGetter: ({ data: { tumourAltCount, tumourDepth } }) => {
       if (tumourAltCount && tumourDepth) {
         return (tumourAltCount / tumourDepth).toFixed(2);
       }
@@ -111,4 +140,5 @@ export {
   sampleColumnDefs,
   clinicalAssociationColDefs,
   cancerRelevanceColDefs,
+  getGenomicEvent,
 };
