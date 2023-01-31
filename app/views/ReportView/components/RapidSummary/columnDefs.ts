@@ -62,6 +62,11 @@ const clinicalAssociationColDefs = [
     field: 'potentialClinicalAssociation',
     hide: false,
   },
+  {
+    headerName: 'Comments',
+    field: 'comments',
+    hide: false,
+  },
 ];
 
 const cancerRelevanceColDefs = [
@@ -93,6 +98,11 @@ const cancerRelevanceColDefs = [
       }
       return '';
     },
+    hide: false,
+  },
+  {
+    headerName: 'Comments',
+    field: 'comments',
     hide: false,
   },
 ];
