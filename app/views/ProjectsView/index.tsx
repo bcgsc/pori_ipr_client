@@ -1,22 +1,26 @@
 import React, {
-  useState, useEffect, useCallback,
+  useState, useEffect, useCallback, lazy,
 } from 'react';
 import { CircularProgress } from '@mui/material';
 import { useSnackbar } from 'notistack';
 
 import api from '@/services/api';
 import DataTable from '@/components/DataTable';
-import columnDefs from './columnDefs';
-import AddEditProjectDialog from './components/AddEditProjectDialog';
+import { useUser } from '@/context/UserContext';
+import { adminColDefs, readOnlyColDefs } from './columnDefs';
 
 import './index.scss';
-import { ProjectType } from '../../types';
+import { ProjectType } from '../AdminView/types';
+
+const AddEditProjectDialog = lazy(() => import('./components/AddEditProjectDialog'));
 
 const Projects = (): JSX.Element => {
   const [projects, setProjects] = useState<ProjectType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [editData, setEditData] = useState<ProjectType | null>();
+
+  const { isAdmin } = useUser();
 
   const snackbar = useSnackbar();
 
@@ -71,16 +75,16 @@ const Projects = (): JSX.Element => {
         <>
           <DataTable
             rowData={projects}
-            columnDefs={columnDefs}
+            columnDefs={isAdmin ? adminColDefs : readOnlyColDefs}
             canViewDetails={false}
             isPaginated
             isFullLength
-            canEdit
+            canEdit={isAdmin}
+            canAdd={isAdmin}
+            canDelete={isAdmin}
             onEdit={handleEditStart}
-            canAdd
             onAdd={() => setShowDialog(true)}
             addText="Add project"
-            canDelete
             onDelete={handleDelete}
             titleText="Projects"
           />
