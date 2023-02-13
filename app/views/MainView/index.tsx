@@ -27,6 +27,7 @@ const AdminView = lazy(() => import('../AdminView'));
 const LinkOutView = lazy(() => import('../LinkOutView'));
 const PatientsView = lazy(() => import('../PatientsView'));
 const TemplateView = lazy(() => import('../TemplateView'));
+const ProjectsView = lazy(() => import('../ProjectsView'));
 
 /**
  * Entry point to application. Handles routing, app theme, and logged in state.
@@ -72,6 +73,7 @@ const Main = (): JSX.Element => {
                     <AuthenticatedRoute component={ReportView} path="/report/:ident" />
                     <AuthenticatedRoute component={PrintView} path="/print/:ident" showNav={false} onToggleNav={setIsNavVisible} />
                     <AuthenticatedRoute component={GermlineView} path="/germline" />
+                    <AuthenticatedRoute component={ProjectsView} path="/projects" />
                     <AuthenticatedRoute adminRequired component={AdminView} path="/admin" />
                     <AuthenticatedRoute adminRequired component={TemplateView} path="/template" />
                   </Switch>
