@@ -16,7 +16,7 @@ import DataTable from '@/components/DataTable';
 import { UserType } from '@/common';
 import ReportAutocomplete from '@/components/ReportAutocomplete';
 import UserAutocomplete from '@/components/UserAutocomplete';
-import { ProjectType, ShortReportType } from '../../../../types';
+import { ProjectType, ShortReportType } from '../../../AdminView/types';
 import { userColumnDefs, reportColumnDefs } from './columnDefs';
 
 import './index.scss';
@@ -119,7 +119,7 @@ const AddEditProjectDialog = ({
   }, [editData]);
 
   return (
-    <Dialog open={isOpen} onClose={onClose} maxWidth="sm" fullWidth className="edit-dialog">
+    <Dialog open={isOpen} onClose={() => onClose(null)} maxWidth="sm" fullWidth className="edit-dialog">
       <DialogTitle>{dialogTitle}</DialogTitle>
       <DialogContent>
         <FormControl fullWidth classes={{ root: 'add-user__form-container' }} variant="outlined">
@@ -163,7 +163,7 @@ const AddEditProjectDialog = ({
         )}
       </DialogContent>
       <DialogActions className="edit-dialog__actions">
-        <Button color="primary" onClick={() => onClose()}>
+        <Button color="primary" onClick={() => onClose(null)}>
           Cancel
         </Button>
         <Button color="primary" onClick={handleClose}>

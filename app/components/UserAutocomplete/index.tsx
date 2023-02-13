@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Autocomplete } from '@mui/material';
 import {
+  Autocomplete,
   TextField,
   CircularProgress,
   Button,
@@ -14,8 +14,8 @@ import './index.scss';
 type UserAutocompleteProps = {
   defaultValue?: UserType;
   label: string;
-  onSubmit?: (val: UserType) => void;
-  onChange?: (val: UserType) => void;
+  onSubmit?: (val: Partial<UserType>) => void;
+  onChange?: (val: Partial<UserType>) => void;
 };
 
 const UserAutocomplete = ({
@@ -26,19 +26,7 @@ const UserAutocomplete = ({
 }: UserAutocompleteProps): JSX.Element => {
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [value, setValue] = useState<UserType>({
-    email: '',
-    firstName: '',
-    groups: [],
-    lastLogin: null,
-    lastName: '',
-    projects: [],
-    type: '',
-    username: '',
-    ident: '',
-    updatedAt: '',
-    createdAt: '',
-  });
+  const [value, setValue] = useState<Partial<UserType>>(null);
 
   useEffect(() => {
     if (defaultValue) {
@@ -58,7 +46,7 @@ const UserAutocomplete = ({
     onSubmit(value);
   }, [onSubmit, value]);
 
-  const handleSelectedValueChange = useCallback((event, val) => {
+  const handleSelectedValueChange = useCallback((_event, val) => {
     setValue(val);
     if (onChange) {
       onChange(val);
@@ -68,7 +56,6 @@ const UserAutocomplete = ({
   return (
     <Autocomplete
       autoHighlight
-      disableOpenOnFocus
       classes={{ root: 'autocomplete', popper: 'autocomplete__popper' }}
       onChange={handleSelectedValueChange}
       options={options}

@@ -1,6 +1,6 @@
 /* eslint-disable react/display-name */
 import { PropTypes } from 'prop-types';
-import React, { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 import {
   Redirect,
   Route,
@@ -20,26 +20,26 @@ const AuthenticatedRoute = ({
   const { adminAccess } = useResource();
   const authOk = isAuthorized(authorizationToken);
 
-  let ChildComponent = null;
-
-  if (!authOk) {
-    ChildComponent = (props) => {
-      const { location } = props;
-      return (
-        <Redirect to={{
-          pathname: '/login',
-          state: { from: location },
-        }}
-        />
+  const ChildComponent = useMemo(() => {
+    if (!authOk) {
+      return (props) => {
+        const { location } = props;
+        return (
+          <Redirect to={{
+            pathname: '/login',
+            state: { from: location },
+          }}
+          />
+        );
+      };
+    } if (!adminAccess && adminRequired) {
+      return () => (
+        <Redirect to="/" />
       );
-    };
-  } else if (!adminAccess && adminRequired) {
-    ChildComponent = () => (
-      <Redirect to="/" />
-    );
-  } else {
-    ChildComponent = Component;
-  }
+    }
+    return Component;
+  }, [Component, adminAccess, adminRequired, authOk]);
+
   if (showNav) {
     onToggleNav(true);
   } else {
@@ -47,12 +47,10 @@ const AuthenticatedRoute = ({
   }
 
   return (
-    <>
-      <Route
-        {...rest}
-        render={(props) => (<ChildComponent {...props} />)}
-      />
-    </>
+    <Route
+      {...rest}
+      render={(props) => (<ChildComponent {...props} />)}
+    />
   );
 };
 

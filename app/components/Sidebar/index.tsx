@@ -1,4 +1,4 @@
-import React, { useContext, useCallback } from 'react';
+import React, { useContext, useCallback, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   Drawer,
@@ -39,185 +39,201 @@ const Sidebar = (): JSX.Element => {
 
   const showMenuOnLeft = useMediaQuery((theme: Theme) => theme.breakpoints.up('sm'), { noSsr: true });
 
-  const drawer = (
-    <div>
-      <div className="sidebar__minimize">
-        <IconButton onClick={handleSidebarClose} size="large">
-          <ChevronLeftIcon />
-        </IconButton>
-      </div>
-      <Divider />
-      <List disablePadding>
-        {reportsAccess && (
+  const drawer = useMemo(() => {
+    let adminSection = null;
+
+    if (adminAccess) {
+      adminSection = (
+        <>
           <ListItem
             className={`
-              sidebar__list-item
-              ${pathname.includes('report') && !pathname.includes('germline') ? 'sidebar__list-item--active' : ''}
-            `}
+                sidebar__list-item
+                ${pathname.includes('users') ? 'sidebar__list-item--active' : ''}
+              `}
             disableGutters
           >
-            <Link className="sidebar__link" to="/reports">
-              <AssignmentIcon color="action" />
-              <Typography
-                display="inline"
-                className={`
-                sidebar__text
-                ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}
-                `}
-              >
-                Reports
-              </Typography>
-            </Link>
-          </ListItem>
-        )}
-        {germlineAccess && (
-          <ListItem
-            className={`
-              sidebar__list-item
-              ${pathname.includes('germline') ? 'sidebar__list-item--active' : ''}
-            `}
-            disableGutters
-          >
-            <Link className="sidebar__link" to="/germline">
-              <GermlineIcon className="sidebar__custom-icon" />
+            <Link className="sidebar__link" to="/admin/users">
+              <PersonIcon color="action" />
               <Typography
                 display="inline"
                 className={`sidebar__text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
               >
-                Germline
+                Users
               </Typography>
             </Link>
           </ListItem>
-        )}
-        <ListItem
-          className="sidebar__list-item"
-          disableGutters
-        >
-          <MuiLink
-            className="sidebar__link"
-            href={window._env_.GRAPHKB_URL}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            <MenuBookIcon color="action" />
-            <Typography
-              display="inline"
-              className={`sidebar__text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
-            >
-              Graph Knowledgebase
-            </Typography>
-          </MuiLink>
-        </ListItem>
-        <ListItem
-          className={`
-            sidebar__list-item
-            ${pathname.includes('terms') ? 'sidebar__list-item--active' : ''}
-          `}
-          disableGutters
-        >
-          <Link className="sidebar__link" to="/terms">
-            <HelpOutlineIcon color="action" />
-            <Typography
-              display="inline"
-              className={`sidebar__text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
-            >
-              Terms of Use
-            </Typography>
-          </Link>
-        </ListItem>
-        {adminAccess && (
-          <>
-            <Divider />
-            <ListItem
-              className={`
-                sidebar__list-item
-                ${pathname.includes('users') ? 'sidebar__list-item--active' : ''}
-              `}
-              disableGutters
-            >
-              <Link className="sidebar__link" to="/admin/users">
-                <PersonIcon color="action" />
-                <Typography
-                  display="inline"
-                  className={`sidebar__text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
-                >
-                  Users
-                </Typography>
-              </Link>
-            </ListItem>
-            <ListItem
-              className={`
+          <ListItem
+            className={`
                 sidebar__list-item
                 ${pathname.includes('groups') ? 'sidebar__list-item--active' : ''}
               `}
-              disableGutters
-            >
-              <Link className="sidebar__link" to="/admin/groups">
-                <PeopleIcon color="action" />
-                <Typography
-                  display="inline"
-                  className={`sidebar__text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
-                >
-                  Groups
-                </Typography>
-              </Link>
-            </ListItem>
-            <ListItem
-              className={`
+            disableGutters
+          >
+            <Link className="sidebar__link" to="/admin/groups">
+              <PeopleIcon color="action" />
+              <Typography
+                display="inline"
+                className={`sidebar__text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
+              >
+                Groups
+              </Typography>
+            </Link>
+          </ListItem>
+          <ListItem
+            className={`
                 sidebar__list-item
                 ${pathname.includes('projects') ? 'sidebar__list-item--active' : ''}
               `}
-              disableGutters
-            >
-              <Link className="sidebar__link" to="/admin/projects">
-                <FolderSharedIcon color="action" />
-                <Typography
-                  display="inline"
-                  className={`sidebar__text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
-                >
-                  Projects
-                </Typography>
-              </Link>
-            </ListItem>
-            <ListItem
-              className={`
-                sidebar__list-item
-                ${pathname.includes('template') ? 'sidebar__list-item--active' : ''}
-              `}
-              disableGutters
-            >
-              <Link className="sidebar__link" to="/template">
-                <DashboardIcon color="action" />
-                <Typography
-                  display="inline"
-                  className={`sidebar__text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
-                >
-                  Templates
-                </Typography>
-              </Link>
-            </ListItem>
-            <ListItem
-              className={`
+            disableGutters
+          >
+            <Link className="sidebar__link" to="/admin/projects">
+              <FolderSharedIcon color="action" />
+              <Typography
+                display="inline"
+                className={`sidebar__text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
+              >
+                Projects
+              </Typography>
+            </Link>
+          </ListItem>
+          <ListItem
+            className={`sidebar__list-item ${pathname.includes('template') ? 'sidebar__list-item--active' : ''}`}
+            disableGutters
+          >
+            <Link className="sidebar__link" to="/template">
+              <DashboardIcon color="action" />
+              <Typography
+                display="inline"
+                className={`sidebar__text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
+              >
+                Templates
+              </Typography>
+            </Link>
+          </ListItem>
+          <ListItem
+            className={`
                 sidebar__list-item
                 ${pathname.includes('admin/appendices') ? 'sidebar__list-item--active' : ''}
               `}
+            disableGutters
+          >
+            <Link className="sidebar__link" to="/admin/appendices">
+              <FilePresentIcon color="action" />
+              <Typography
+                display="inline"
+                className={`sidebar__text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
+              >
+                Appendices
+              </Typography>
+            </Link>
+          </ListItem>
+        </>
+      );
+    } else {
+      adminSection = (
+        <ListItem
+          className={`
+            sidebar__list-item
+            ${pathname.includes('projects') ? 'sidebar__list-item--active' : ''}
+          `}
+          disableGutters
+        >
+          <Link className="sidebar__link" to="/projects">
+            <FolderSharedIcon color="action" />
+            <Typography
+              display="inline"
+              className={`sidebar__text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
+            >
+              Projects
+            </Typography>
+          </Link>
+        </ListItem>
+      );
+    }
+
+    return (
+      <div>
+        <div className="sidebar__minimize">
+          <IconButton onClick={handleSidebarClose} size="large">
+            <ChevronLeftIcon />
+          </IconButton>
+        </div>
+        <Divider />
+        <List disablePadding>
+          {reportsAccess && (
+            <ListItem
+              className={`
+              sidebar__list-item
+              ${pathname.includes('report') && !pathname.includes('germline') ? 'sidebar__list-item--active' : ''}
+            `}
               disableGutters
             >
-              <Link className="sidebar__link" to="/admin/appendices">
-                <FilePresentIcon color="action" />
+              <Link className="sidebar__link" to="/reports">
+                <AssignmentIcon color="action" />
                 <Typography
                   display="inline"
                   className={`sidebar__text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
                 >
-                  Appendices
+                  Reports
                 </Typography>
               </Link>
             </ListItem>
-          </>
-        )}
-      </List>
-    </div>
-  );
+          )}
+          {germlineAccess && (
+            <ListItem
+              className={`sidebar__list-item ${pathname.includes('germline') ? 'sidebar__list-item--active' : ''}`}
+              disableGutters
+            >
+              <Link className="sidebar__link" to="/germline">
+                <GermlineIcon className="sidebar__custom-icon" />
+                <Typography
+                  display="inline"
+                  className={`sidebar__text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
+                >
+                  Germline
+                </Typography>
+              </Link>
+            </ListItem>
+          )}
+          <ListItem
+            className="sidebar__list-item"
+            disableGutters
+          >
+            <MuiLink
+              className="sidebar__link"
+              href={window._env_.GRAPHKB_URL}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <MenuBookIcon color="action" />
+              <Typography
+                display="inline"
+                className={`sidebar__text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
+              >
+                Graph Knowledgebase
+              </Typography>
+            </MuiLink>
+          </ListItem>
+          <ListItem
+            className={`sidebar__list-item ${pathname.includes('terms') ? 'sidebar__list-item--active' : ''}`}
+            disableGutters
+          >
+            <Link className="sidebar__link" to="/terms">
+              <HelpOutlineIcon color="action" />
+              <Typography
+                display="inline"
+                className={`sidebar__text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
+              >
+                Terms of Use
+              </Typography>
+            </Link>
+          </ListItem>
+          <Divider />
+          {adminSection}
+        </List>
+      </div>
+    );
+  }, [adminAccess, germlineAccess, handleSidebarClose, pathname, reportsAccess, sidebarMaximized]);
 
   let drawerProps: DrawerProps = {
     variant: 'temporary',
