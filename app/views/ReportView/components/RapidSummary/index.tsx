@@ -7,6 +7,7 @@ import {
   Grid,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+import cloneDeep from 'lodash/cloneDeep';
 
 import api, { ApiCallSet } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
@@ -20,7 +21,6 @@ import SignatureCard, { SignatureType, SignatureUserType } from '@/components/Si
 import PrintTable from '@/components/PrintTable';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import PatientEdit from '@/components/PatientEdit';
-import EventsEditDialog from '@/components/EventsEditDialog';
 import capitalize from 'lodash/capitalize';
 import orderBy from 'lodash/orderBy';
 
@@ -28,16 +28,16 @@ import './index.scss';
 import TumourSummaryEdit from '@/components/TumourSummaryEdit';
 import DescriptionList from '@/components/DescriptionList';
 import {
-  CopyNumberType, KbMatchType, SmallMutationType, StructuralVariantType, TumourSummaryType,
+  KbMatchType, TumourSummaryType,
 } from '@/common';
 import useConfirmDialog from '@/hooks/useConfirmDialog';
 import { Box } from '@mui/system';
 import {
-  clinicalAssociationColDefs, cancerRelevanceColDefs, sampleColumnDefs, getGenomicEvent,
+  therapeuticAssociationColDefs, cancerRelevanceColDefs, sampleColumnDefs, getGenomicEvent,
 } from './columnDefs';
 import { TmburType } from '../MutationBurden/types';
-
-type RapidVariantType = CopyNumberType | SmallMutationType | StructuralVariantType;
+import VariantEditDialog from './components/VariantEditDialog';
+import { RapidVariantType } from './types';
 
 const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
   const iprRelevanceDict = {
@@ -140,7 +140,7 @@ const RapidSummary = ({
 
   const [showPatientEdit, setShowPatientEdit] = useState(false);
   const [showTumourSummaryEdit, setShowTumourSummaryEdit] = useState(false);
-  const [showClinicalAssociationEventsDialog, setShowClinicalAssociationEventsDialog] = useState(false);
+  const [showMatchedTumourEditDialog, setShowMatchedTumourEditDialog] = useState(false);
   const [showCancerRelevanceEventsDialog, setShowCancerRelevanceEventsDialog] = useState(false);
 
   useEffect(() => {
@@ -411,58 +411,62 @@ const RapidSummary = ({
     );
   }
 
-  const handleClinicalAssociationEditStart = useCallback((rowData) => {
-    setShowClinicalAssociationEventsDialog(true);
+  const handleMatchedTumourEditStart = useCallback((rowData) => {
+    setShowMatchedTumourEditDialog(true);
     if (rowData) {
       setEditData(rowData);
     }
   }, []);
 
-  const handleClinicalAssociationEditClose = useCallback((newData) => {
-    setShowClinicalAssociationEventsDialog(false);
+  const handleMatchedTumourEditClose = useCallback((newData) => {
+    setShowMatchedTumourEditDialog(false);
+
     if (newData) {
       setTherapeuticAssociationResults((existingResults) => {
-        const newEvents = [...existingResults];
-        const eventsIndex = existingResults.findIndex((user) => user.ident === newData.ident);
+        const newEvents = cloneDeep(existingResults);
+        const eventsIndex = existingResults.findIndex((user) => user.ident.includes(newData.ident));
         if (eventsIndex !== -1) {
-          newEvents[eventsIndex] = newData;
+          newEvents[eventsIndex] = {
+            ...newEvents[eventsIndex],
+            comments: newData.comments,
+          };
         }
         return newEvents;
       });
     }
   }, []);
 
-  let clinicalAssociationSection;
+  let therapeuticAssociationSection;
   if (therapeuticAssociationResults?.length > 0) {
     if (isPrint) {
-      clinicalAssociationSection = (
+      therapeuticAssociationSection = (
         <PrintTable
           data={therapeuticAssociationResults}
-          columnDefs={clinicalAssociationColDefs.filter((col) => col.headerName !== 'Actions')}
+          columnDefs={therapeuticAssociationColDefs.filter((col) => col.headerName !== 'Actions')}
           fullWidth
         />
       );
     } else {
-      clinicalAssociationSection = (
+      therapeuticAssociationSection = (
         <>
           <DataTable
-            columnDefs={clinicalAssociationColDefs}
+            columnDefs={therapeuticAssociationColDefs}
             rowData={therapeuticAssociationResults}
             canEdit={canEdit}
-            onEdit={handleClinicalAssociationEditStart}
+            onEdit={handleMatchedTumourEditStart}
             isPrint={isPrint}
             isPaginated={!isPrint}
           />
-          <EventsEditDialog
-            isOpen={showClinicalAssociationEventsDialog}
+          <VariantEditDialog
+            open={showMatchedTumourEditDialog}
             editData={editData}
-            onClose={handleClinicalAssociationEditClose}
+            onClose={handleMatchedTumourEditClose}
           />
         </>
       );
     }
   } else {
-    clinicalAssociationSection = (
+    therapeuticAssociationSection = (
       <div className="rapid-summary__none">
         No Therapeutic Association in Matched Tumour Type found.
       </div>
@@ -470,7 +474,7 @@ const RapidSummary = ({
   }
 
   const handleCancerRelevanceEditStart = useCallback((rowData) => {
-    setShowClinicalAssociationEventsDialog(true);
+    setShowCancerRelevanceEventsDialog(true);
     if (rowData) {
       setEditData(rowData);
     }
@@ -511,8 +515,8 @@ const RapidSummary = ({
             isPrint={isPrint}
             isPaginated={!isPrint}
           />
-          <EventsEditDialog
-            isOpen={showCancerRelevanceEventsDialog}
+          <VariantEditDialog
+            open={showCancerRelevanceEventsDialog}
             editData={editData}
             onClose={handleCancerRelevanceEditClose}
           />
@@ -668,7 +672,7 @@ const RapidSummary = ({
               <Typography className="rapid-summary__events-title" variant="h3" display="inline">
                 Therapeutic Association in Matched Tumour Type
               </Typography>
-              {clinicalAssociationSection}
+              {therapeuticAssociationSection}
             </div>
           )}
           {report && cancerRelevanceResults && (
@@ -704,7 +708,6 @@ export {
   getVariantRelevanceDict,
   processPotentialClinicalAssociation,
   splitIprEvidenceLevels,
-  RapidVariantType,
 };
 
 export default withLoading(RapidSummary);
