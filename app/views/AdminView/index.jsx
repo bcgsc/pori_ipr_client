@@ -9,7 +9,7 @@ import './index.scss';
 
 const Users = lazy(() => import('./components/Users/index.tsx'));
 const Groups = lazy(() => import('./components/Groups/index.tsx'));
-const Projects = lazy(() => import('./components/Projects/index.tsx'));
+const Projects = lazy(() => import('../ProjectsView/index.tsx'));
 const Appendices = lazy(() => import('./components/Appendices/index'));
 
 const AdminView = () => (

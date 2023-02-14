@@ -1,29 +1,29 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Autocomplete } from '@mui/material';
 import {
+  Autocomplete,
   TextField,
   CircularProgress,
   Button,
 } from '@mui/material';
-
+import { ReportType } from '@/context/ReportContext';
 import api from '../../services/api';
 
 import './index.scss';
 
 type ReportAutocompleteProps = {
-  defaultValue: string;
+  defaultValue?: ReportType;
   onSubmit: (report: Record<string, unknown>) => void;
   label: string;
 };
 
 const ReportAutocomplete = ({
-  defaultValue = '',
+  defaultValue,
   onSubmit,
   label = '',
 }: ReportAutocompleteProps): JSX.Element => {
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [value, setValue] = useState({});
+  const [value, setValue] = useState<ReportType>(null);
 
   useEffect(() => {
     if (defaultValue) {
@@ -46,9 +46,8 @@ const ReportAutocomplete = ({
   return (
     <Autocomplete
       autoHighlight
-      disableOpenOnFocus
       classes={{ root: 'autocomplete', popper: 'autocomplete__popper' }}
-      onChange={(event, val) => setValue(val)}
+      onChange={(_event, val) => setValue(val)}
       options={options}
       getOptionLabel={(option) => (option.patientId ? `${option.patientId} (${option.ident})` : '')}
       value={value}
