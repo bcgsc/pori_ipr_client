@@ -37,6 +37,8 @@ declare global {
   };
 }
 
+type VariantType = 'cnv' | 'mut' | 'sv';
+
 type RecordDefaults = {
   ident: string;
   updatedAt: string | null;
@@ -119,7 +121,7 @@ type KbMatchType = {
   iprEvidenceLevel: string;
   matchedCancer: boolean;
   pmidRef: string;
-  variantType: 'cnv' | 'mut' | 'sv';
+  variantType: VariantType;
   kbVariantId: string;
   kbStatementId: string;
   kbData: {
@@ -134,6 +136,7 @@ type CopyNumberType = {
   chromosomeBand: string | null;
   cna: string | null;
   cnvState: string | null;
+  comments: string | null;
   copyChange: number | null;
   end: number | null;
   gene: GeneType | null;
@@ -143,10 +146,12 @@ type CopyNumberType = {
   lohState: string | null;
   size: number | null;
   start: number | null;
+  variantType: VariantType;
 } & RecordDefaults;
 
 type StructuralVariantType = {
   breakpoint: string | null;
+  comments: string | null;
   conventionalName: string | null;
   ctermGene: string | null;
   ctermTranscript: string | null;
@@ -166,11 +171,13 @@ type StructuralVariantType = {
   omicSupport: boolean;
   svg: string | null;
   svgTitle: string | null;
+  variantType: VariantType;
 } & RecordDefaults;
 
 type SmallMutationType = {
   altSeq: string | null;
   chromosome: number | null;
+  comments: string | null;
   endPosition: number | null;
   gene: GeneType;
   germline: string | null;
@@ -195,6 +202,7 @@ type SmallMutationType = {
   tumourDepth: number | null;
   tumourRefCopies: number | null;
   tumourRefCount: number | null;
+  variantType: VariantType;
   zygosity: string | null;
 } & RecordDefaults;
 
@@ -222,6 +230,7 @@ type ExpOutliersType = {
   rnaReads: number | null;
   rpkm: number | null;
   tpm: number | null;
+  variantType: VariantType;
 } & RecordDefaults;
 
 type TemplateType = {

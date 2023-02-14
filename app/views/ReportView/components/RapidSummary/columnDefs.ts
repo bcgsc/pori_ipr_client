@@ -26,7 +26,7 @@ const getGenomicEvent = ({ data }) => {
   return hgvsGenomic;
 };
 
-const clinicalAssociationColDefs = [
+const therapeuticAssociationColDefs = [
   {
     headerName: 'Genomic Events',
     colId: 'Genomic Events',
@@ -67,6 +67,15 @@ const clinicalAssociationColDefs = [
     field: 'comments',
     hide: false,
   },
+  {
+    headerName: 'Actions',
+    colId: 'Actions',
+    cellRenderer: 'ActionCellRenderer',
+    pinned: 'right',
+    hide: false,
+    sortable: false,
+    suppressMenu: true,
+  },
 ];
 
 const cancerRelevanceColDefs = [
@@ -104,6 +113,15 @@ const cancerRelevanceColDefs = [
     headerName: 'Comments',
     field: 'comments',
     hide: false,
+  },
+  {
+    headerName: 'Actions',
+    colId: 'Actions',
+    cellRenderer: 'ActionCellRenderer',
+    pinned: 'right',
+    hide: false,
+    sortable: false,
+    suppressMenu: true,
   },
 ];
 
@@ -148,7 +166,7 @@ const sampleColumnDefs = [
 
 export {
   sampleColumnDefs,
-  clinicalAssociationColDefs,
+  therapeuticAssociationColDefs,
   cancerRelevanceColDefs,
   getGenomicEvent,
 };
