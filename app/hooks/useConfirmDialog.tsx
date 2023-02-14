@@ -9,6 +9,7 @@ const textDict = {
   probe: 'Do you wish to remove Ready and Reviewer signatures?',
   pharmacogenomic: 'Do you wish to remove Ready and Reviewer signatures?',
   genomic: 'Do you wish to remove Author and Reviewer signatures?',
+  rapid: 'Do you wish to remove Author and Reviewer signatures?',
 };
 
 const useConfirmDialog = () => {
