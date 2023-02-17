@@ -90,8 +90,8 @@ const columnDefs: ColDef[] = [{
   valueGetter: 'data.gene.expressionVariants.diseasePercentile',
 }, {
   headerName: 'Expression (kIQR)',
-  colId: 'primarySitekIQR',
-  valueGetter: 'data.gene.expressionVariants.primarySitekIQR',
+  colId: 'diseasekIQR',
+  valueGetter: 'data.gene.expressionVariants.diseasekIQR',
   hide: true,
 }, {
   headerName: 'Actions',
