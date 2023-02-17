@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, {
+  useState, useEffect, useContext, useMemo,
+} from 'react';
 import { Typography } from '@mui/material';
 
 import api from '@/services/api';
@@ -66,7 +68,7 @@ const SmallMutations = ({
             for (const {
               gene: {
                 expressionVariants: {
-                  tpm, rpkm, primarySiteFoldChange, primarySitekIQR,
+                  tpm, rpkm, primarySiteFoldChange, diseasekIQR,
                 },
               },
             } of filteredSmallMutResp) {
@@ -80,8 +82,8 @@ const SmallMutations = ({
               if (primarySiteFoldChange !== null && !nextVisible.includes('primarySiteFoldChange')) {
                 nextVisible.push('primarySiteFoldChange');
               }
-              if (primarySitekIQR !== null && !nextVisible.includes('primarySitekIQR')) {
-                nextVisible.push('primarySitekIQR');
+              if (diseasekIQR !== null && !nextVisible.includes('diseasekIQR')) {
+                nextVisible.push('diseasekIQR');
               }
               if (nextVisible.length === 2) {
                 break;
@@ -139,27 +141,25 @@ const SmallMutations = ({
 
   const handleVisibleColsChange = (change) => setVisibleCols(change);
 
+  const dataTables = useMemo(() => Object.entries(groupedSmallMutations).map(([key, value]) => (
+    <DataTable
+      key={key}
+      canToggleColumns
+      columnDefs={columnDefs}
+      rowData={value}
+      titleText={TITLE_MAP[key]}
+      syncVisibleColumns={handleVisibleColsChange}
+      visibleColumns={visibleCols}
+      demoDescription={INFO_BUBBLES[key]}
+    />
+  )), [groupedSmallMutations, visibleCols]);
+
   return (
     <div className="small-mutations">
       <Typography variant="h3">
         Small Mutations
       </Typography>
-      {!isLoading && (
-        <>
-          {Object.entries(groupedSmallMutations).map(([key, value]) => (
-            <DataTable
-              key={key}
-              canToggleColumns
-              columnDefs={columnDefs}
-              rowData={value}
-              titleText={TITLE_MAP[key]}
-              syncVisibleColumns={handleVisibleColsChange}
-              visibleColumns={visibleCols}
-              demoDescription={INFO_BUBBLES[key]}
-            />
-          ))}
-        </>
-      )}
+      { !isLoading ? dataTables : null }
     </div>
   );
 };
