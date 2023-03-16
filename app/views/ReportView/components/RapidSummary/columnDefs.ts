@@ -3,11 +3,12 @@
  * @returns correct genomic event to be displayed
  */
 const getGenomicEvent = ({ data }) => {
-  const { variantType } = data;
+  const { variantType, kbCategory } = data;
   if (variantType === 'cnv') {
     const { gene, cnvState } = data;
     return `${gene.name} ${cnvState}`;
   }
+
   if (variantType === 'sv') {
     const {
       gene1, gene2, exon1, exon2,
@@ -17,6 +18,10 @@ const getGenomicEvent = ({ data }) => {
     }):fusion(e.${exon1 || '?'
     },e.${exon2 || '?'
     })`;
+  }
+
+  if (variantType === 'msi') {
+    return kbCategory;
   }
 
   // variantType === mut and others
