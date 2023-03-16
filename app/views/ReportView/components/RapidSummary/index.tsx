@@ -229,6 +229,10 @@ const RapidSummary = ({
               label: 'Gender',
               value: report.patientInformation.gender,
             },
+            {
+              label: 'Tumour type for matching',
+              value: report.oncotreeTumourType,
+            },
           ]);
         } catch (err) {
           snackbar.error(`Unknown error: ${err}`);
@@ -337,6 +341,10 @@ const RapidSummary = ({
         {
           label: 'Gender',
           value: newPatientData ? newPatientData.gender : report.patientInformation.gender,
+        },
+        {
+          label: 'Tumour type for matching',
+          value: newReportData ? newReportData.oncotreeTumourType : report.oncotreeTumourType,
         },
       ]);
     }
