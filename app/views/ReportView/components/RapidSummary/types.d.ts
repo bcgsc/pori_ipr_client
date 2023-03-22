@@ -1,7 +1,9 @@
-import { RecordDefaults } from '@/common';
+import {
+  CopyNumberType, SmallMutationType, StructuralVariantType,
+} from '@/common';
 
-type RapidResultsType = {
-  // TODO: update type here
-} & RecordDefaults;
+type RapidVariantType = CopyNumberType | SmallMutationType | StructuralVariantType;
 
-export default RapidResultsType;
+export {
+  RapidVariantType,
+};

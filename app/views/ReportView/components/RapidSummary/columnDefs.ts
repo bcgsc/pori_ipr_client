@@ -3,11 +3,12 @@
  * @returns correct genomic event to be displayed
  */
 const getGenomicEvent = ({ data }) => {
-  const { variantType } = data;
+  const { variantType, kbCategory } = data;
   if (variantType === 'cnv') {
     const { gene, cnvState } = data;
     return `${gene.name} ${cnvState}`;
   }
+
   if (variantType === 'sv') {
     const {
       gene1, gene2, exon1, exon2,
@@ -19,6 +20,10 @@ const getGenomicEvent = ({ data }) => {
     })`;
   }
 
+  if (variantType === 'msi') {
+    return kbCategory;
+  }
+
   // variantType === mut and others
   const { hgvsProtein, hgvsCds, hgvsGenomic } = data;
   if (hgvsProtein) { return hgvsProtein; }
@@ -26,7 +31,7 @@ const getGenomicEvent = ({ data }) => {
   return hgvsGenomic;
 };
 
-const clinicalAssociationColDefs = [
+const therapeuticAssociationColDefs = [
   {
     headerName: 'Genomic Events',
     colId: 'Genomic Events',
@@ -45,12 +50,11 @@ const clinicalAssociationColDefs = [
     hide: false,
   },
   {
-    headerName: 'VAF',
-    colId: 'tumourDepth',
-    field: 'tumourDepth',
+    headerName: 'VAF %',
+    colId: 'tumourAltCount/tumourDepth',
     valueGetter: ({ data: { tumourAltCount, tumourDepth } }) => {
       if (tumourAltCount && tumourDepth) {
-        return (tumourAltCount / tumourDepth).toFixed(2);
+        return ((tumourAltCount / tumourDepth) * 100).toFixed(0);
       }
       return '';
     },
@@ -61,6 +65,20 @@ const clinicalAssociationColDefs = [
     colId: 'potentialClinicalAssociation',
     field: 'potentialClinicalAssociation',
     hide: false,
+  },
+  {
+    headerName: 'Comments',
+    field: 'comments',
+    hide: false,
+  },
+  {
+    headerName: 'Actions',
+    colId: 'Actions',
+    cellRenderer: 'ActionCellRenderer',
+    pinned: 'right',
+    hide: false,
+    sortable: false,
+    suppressMenu: true,
   },
 ];
 
@@ -84,16 +102,29 @@ const cancerRelevanceColDefs = [
     hide: false,
   },
   {
-    headerName: 'VAF',
-    colId: 'variant.tumourDepth',
-    field: 'variant.tumourDepth',
+    headerName: 'VAF %',
+    colId: 'tumourAltCount/tumourDepth',
     valueGetter: ({ data: { tumourAltCount, tumourDepth } }) => {
       if (tumourAltCount && tumourDepth) {
-        return (tumourAltCount / tumourDepth).toFixed(2);
+        return ((tumourAltCount / tumourDepth) * 100).toFixed(0);
       }
       return '';
     },
     hide: false,
+  },
+  {
+    headerName: 'Comments',
+    field: 'comments',
+    hide: false,
+  },
+  {
+    headerName: 'Actions',
+    colId: 'Actions',
+    cellRenderer: 'ActionCellRenderer',
+    pinned: 'right',
+    hide: false,
+    sortable: false,
+    suppressMenu: true,
   },
 ];
 
@@ -138,7 +169,7 @@ const sampleColumnDefs = [
 
 export {
   sampleColumnDefs,
-  clinicalAssociationColDefs,
+  therapeuticAssociationColDefs,
   cancerRelevanceColDefs,
   getGenomicEvent,
 };

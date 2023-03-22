@@ -8,6 +8,7 @@ import {
   DialogContent,
   TextField,
   Button,
+  TextFieldProps,
 } from '@mui/material';
 
 import api, { ApiCallSet } from '@/services/api';
@@ -16,10 +17,45 @@ import AsyncButton from '@/components/AsyncButton';
 import useConfirmDialog from '@/hooks/useConfirmDialog';
 
 import './index.scss';
+import { ReportType } from '@/context/ReportContext';
+
+const PatientEditField = ({
+  value, onChange, label, name,
+}: TextFieldProps) => (
+  <TextField
+    className="patient-dialog__text-field"
+    label={label}
+    value={value}
+    name={name}
+    onChange={onChange}
+    variant="outlined"
+    multiline
+    fullWidth
+  />
+);
+
+const FIELD_TO_DISPLAY_NAME = {
+  alternateIdentifier: 'Alternate ID',
+  biopsySite: 'Biopsy Site',
+  biopsyName: 'Biopsy Name',
+  caseType: 'Case Type',
+  physician: 'Physician',
+  gender: 'Gender',
+  pediatricIds: 'Pediatric Patient IDs',
+  oncotreeTumourType: 'Tumour type for matching',
+};
+
+const DEFAULT_PATIENT_FIELDS_TO_UPDATE = ['caseType', 'physician', 'biopsySite', 'gender'];
+
+const DEFAULT_REPORT_FIELDS_TO_UPDATE = ['alternateIdentifier', 'pediatricIds', 'biopsyName'];
+const REPORT_FIELDS_TO_UPDATE = {
+  default: DEFAULT_REPORT_FIELDS_TO_UPDATE,
+  rapid: [...DEFAULT_REPORT_FIELDS_TO_UPDATE, 'oncotreeTumourType'],
+};
 
 type PatientEditProps = {
   patientInformation: Record<string, unknown>;
-  report: Record<string, unknown>;
+  report: ReportType;
   isOpen: boolean;
   onClose: (
     isSaved: boolean,
@@ -36,7 +72,7 @@ const PatientEdit = ({
 }: PatientEditProps): JSX.Element => {
   const { isSigned } = useContext(ConfirmContext);
   const { showConfirmDialog } = useConfirmDialog();
-  const [newPatientData, setNewPatientData] = useState<PatientEditProps['patientInformation']>();
+  const [newPatientData, setNewPatientData] = useState<PatientEditProps['patientInformation']>(null);
   const [newReportData, setNewReportData] = useState(null);
   const [patientDirty, setPatientDirty] = useState(false);
   const [reportDirty, setReportDirty] = useState(false);
@@ -50,11 +86,13 @@ const PatientEdit = ({
 
   useEffect(() => {
     if (report) {
-      setNewReportData({
-        alternateIdentifier: report.alternateIdentifier,
-        pediatricIds: report.pediatricIds,
-        biopsyName: report.biopsyName,
-      });
+      setNewReportData(() => Object.entries(report).filter(([key]) => {
+        const allowedFields = REPORT_FIELDS_TO_UPDATE[report.template.name] ?? REPORT_FIELDS_TO_UPDATE.default;
+        return allowedFields.includes(key);
+      }).reduce((acc, [key, val]) => ({
+        ...acc,
+        [key]: val,
+      }), {}));
     }
   }, [report]);
 
@@ -113,82 +151,32 @@ const PatientEdit = ({
       <DialogTitle>
         Edit Patient Information
       </DialogTitle>
-      <DialogContent className="patient-dialog__content">
-        {newPatientData && newReportData && (
-          <>
-            <TextField
-              className="patient-dialog__text-field"
-              label="Alternate ID"
-              value={newReportData.alternateIdentifier}
-              name="alternateIdentifier"
-              onChange={handleReportChange}
-              variant="outlined"
-              multiline
-              fullWidth
-            />
-            <TextField
-              className="patient-dialog__text-field"
-              label="Pediatric Patient IDs"
-              value={newReportData.pediatricIds}
-              name="pediatricIds"
-              onChange={handleReportChange}
-              variant="outlined"
-              multiline
-              fullWidth
-            />
-            <TextField
-              className="patient-dialog__text-field"
-              label="Case Type"
-              value={newPatientData.caseType}
-              name="caseType"
-              onChange={handlePatientChange}
-              variant="outlined"
-              multiline
-              fullWidth
-            />
-            <TextField
-              className="patient-dialog__text-field"
-              label="Physician"
-              value={newPatientData.physician}
-              name="physician"
-              onChange={handlePatientChange}
-              variant="outlined"
-              multiline
-              fullWidth
-            />
-            <TextField
-              className="patient-dialog__text-field"
-              label="Biopsy Name"
-              value={newReportData.biopsyName}
-              name="biopsyName"
-              onChange={handleReportChange}
-              variant="outlined"
-              multiline
-              fullWidth
-            />
-            <TextField
-              className="patient-dialog__text-field"
-              label="Biopsy Details"
-              value={newPatientData.biopsySite}
-              name="biopsySite"
-              onChange={handlePatientChange}
-              variant="outlined"
-              multiline
-              fullWidth
-            />
-            <TextField
-              className="patient-dialog__text-field"
-              label="Gender"
-              value={newPatientData.gender}
-              name="gender"
-              onChange={handlePatientChange}
-              variant="outlined"
-              multiline
-              fullWidth
-            />
-          </>
-        )}
-      </DialogContent>
+      {newPatientData && newReportData && (
+        <DialogContent className="patient-dialog__content">
+          {
+            (REPORT_FIELDS_TO_UPDATE[report.template.name] ?? DEFAULT_REPORT_FIELDS_TO_UPDATE).map((fieldName) => (
+              <PatientEditField
+                value={newReportData[fieldName]}
+                onChange={handleReportChange}
+                label={FIELD_TO_DISPLAY_NAME[fieldName]}
+                name={fieldName}
+                key={fieldName}
+              />
+            ))
+          }
+          {
+            DEFAULT_PATIENT_FIELDS_TO_UPDATE.map((fieldName) => (
+              <PatientEditField
+                value={newPatientData[fieldName]}
+                onChange={handlePatientChange}
+                label={FIELD_TO_DISPLAY_NAME[fieldName]}
+                name={fieldName}
+                key={fieldName}
+              />
+            ))
+          }
+        </DialogContent>
+      )}
       <DialogActions>
         <Button onClick={() => handleClose(false)}>
           Close
