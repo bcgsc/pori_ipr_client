@@ -1,3 +1,11 @@
+class CoalesceEntriesError extends Error {
+  constructor(error) {
+    super(`Error coalescing entry: ${error.message}`);
+    this.name = 'CoalesceEntriesError';
+    this.stack = error.stack;
+  }
+}
+
 /**
  * Merges duplicated entries based on gene, context, and variant
  * @param {array} entries kb matches to be coalesced
@@ -47,27 +55,31 @@ const coalesceEntries = (entries) => {
   };
 
   const buckets = {};
-
-  entries.forEach((entry) => {
-    const bucketKey = getBucketKey(entry);
-    if (!buckets[bucketKey]) {
-      buckets[bucketKey] = {
-        ...entry, reference: entry.reference.split(';'),
-      };
-    } else {
-      Object.entries(entry).forEach(([key, value]) => {
-        if (Array.isArray(buckets[bucketKey][key])) {
-          if (!buckets[bucketKey][key].includes(value)) {
-            buckets[bucketKey][key].push(value);
+  try {
+    entries.forEach((entry) => {
+      const bucketKey = getBucketKey(entry);
+      if (!buckets[bucketKey]) {
+        buckets[bucketKey] = {
+          ...entry,
+          reference: entry.reference ? entry.reference.split(';') : '',
+        };
+      } else {
+        Object.entries(entry).forEach(([key, value]) => {
+          if (Array.isArray(buckets[bucketKey][key])) {
+            if (!buckets[bucketKey][key].includes(value)) {
+              buckets[bucketKey][key].push(value);
+            }
+          } else if (typeof buckets[bucketKey][key] !== 'object' && buckets[bucketKey][key] !== value) {
+            buckets[bucketKey][key] = [buckets[bucketKey][key], value];
           }
-        } else if (typeof buckets[bucketKey][key] !== 'object' && buckets[bucketKey][key] !== value) {
-          buckets[bucketKey][key] = [buckets[bucketKey][key], value];
-        }
-      });
-    }
-  });
+        });
+      }
+    });
 
-  return Object.values(buckets);
+    return Object.values(buckets);
+  } catch (e) {
+    throw (new CoalesceEntriesError(e));
+  }
 };
 
 export default coalesceEntries;
