@@ -53,16 +53,15 @@ const CivicCellRenderer = ({
     }
   }, [data, externalStatementId, externalSource]);
 
-  const menuItems = links.map((linkId) => (
-    <MenuItem
-      key={linkId}
-      onClick={handleMenuClose}
-    >
-      <NewTabLink link={`https://civicdb.org/links/evidence/${linkId}`} text={linkId} />
-    </MenuItem>
-  ));
-
   if (links.length > 1) {
+    const menuItems = links.map((linkId) => (
+      <MenuItem
+        key={linkId}
+        onClick={handleMenuClose}
+      >
+        <NewTabLink link={`https://civicdb.org/links/evidence/${linkId}`} text={linkId} />
+      </MenuItem>
+    ));
     return (
       <>
         <span>{text ? `${text},` : ''}</span>
@@ -71,6 +70,8 @@ const CivicCellRenderer = ({
           style={{
             backgroundColor: 'unset',
             border: 'none',
+            padding: 0,
+            fontFamily: 'inherit',
           }}
           aria-label="Open in CIViC"
           title="Open in CIViC"
