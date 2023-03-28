@@ -6,9 +6,13 @@ import './index.scss';
 
 const RenderArrayCell = (field: string, isLink: boolean): (cellParams: ICellRendererParams) => JSX.Element => {
   if (isLink) {
-    return function ArrayCell(cellParams) {
-      if (Array.isArray(cellParams.data[field])) {
-        const cellData = [...cellParams.data[field]].sort();
+    return function ArrayCell({ data }: ICellRendererParams) {
+      if (Array.isArray(data[field])) {
+        const cellData = [...data[field]].sort();
+        if (!/(pmid:)|(#)/.test(cellData[0])) {
+          return <span>{cellData.join(', ')}</span>;
+        }
+
         const firstVal = cellData[0].replace(/(pmid:)|(#)/, '');
 
         return (
@@ -33,15 +37,15 @@ const RenderArrayCell = (field: string, isLink: boolean): (cellParams: ICellRend
       }
       return (
         <div>
-          {cellParams.data[field]}
+          {data[field]}
         </div>
       );
     };
   }
 
-  return function ArrayCell(cellParams) {
-    if (Array.isArray(cellParams.data[field])) {
-      const cellData = [...cellParams.data[field]].sort();
+  return function ArrayCell({ data }: ICellRendererParams) {
+    if (Array.isArray(data[field])) {
+      const cellData = [...data[field]].sort();
       const [firstVal] = cellData;
 
       if (typeof firstVal === 'string') {
@@ -61,7 +65,7 @@ const RenderArrayCell = (field: string, isLink: boolean): (cellParams: ICellRend
     }
     return (
       <div>
-        {`${cellParams.data[field] === null ? '' : cellParams.data[field]}`}
+        {`${data[field] === null ? '' : data[field]}`}
       </div>
     );
   };
