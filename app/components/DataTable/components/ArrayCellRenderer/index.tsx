@@ -4,29 +4,45 @@ import { ICellRendererParams } from '@ag-grid-community/core';
 
 import './index.scss';
 
+const urlRegex = /^(?:https?:\/\/)?(?:[\w-]+\.)+[a-z]{2,}(?:\/[\w\-\.\/]*)*$/i;
+
 const RenderArrayCell = (field: string, isLink: boolean): (cellParams: ICellRendererParams) => JSX.Element => {
   if (isLink) {
     return function ArrayCell({ data }: ICellRendererParams) {
       if (Array.isArray(data[field])) {
         const cellData = [...data[field]].sort();
-        if (!/(pmid:)|(#)/.test(cellData[0])) {
-          return <span>{cellData.join(', ')}</span>;
+
+        const firstVal = cellData[0]?.replace(/(pmid:)|(#)/, '');
+
+        let link = firstVal;
+        let validLink = false;
+
+        // firstVal might be non-link
+        if (firstVal.match(/^\d+$/)) {
+          link = `https://ncbi.nlm.nih.gov/pubmed/${firstVal}`;
+          validLink = true;
+        } else if (urlRegex.test(firstVal)) {
+          validLink = true;
         }
 
-        const firstVal = cellData[0].replace(/(pmid:)|(#)/, '');
+        let linkComponent = firstVal;
 
-        return (
-          <div>
+        if (validLink) {
+          linkComponent = (
             <a
               className="array-cell__link"
-              href={(firstVal.match(/^\d+$/))
-                ? `https://ncbi.nlm.nih.gov/pubmed/${firstVal}`
-                : `http://${firstVal}`}
+              href={link}
               rel="noopener noreferrer"
               target="_blank"
             >
               {firstVal}
             </a>
+          );
+        }
+
+        return (
+          <div>
+            {linkComponent}
             {cellData.length > 1 && (
               <>
                 …
