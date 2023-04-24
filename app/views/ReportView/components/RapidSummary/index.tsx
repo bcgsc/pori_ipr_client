@@ -678,7 +678,7 @@ const RapidSummary = ({
           {report && therapeuticAssociationResults && (
             <div className="rapid-summary__events">
               <Typography className="rapid-summary__events-title" variant="h3" display="inline">
-                Therapeutic Association in Matched Tumour Type
+                Variants with Clinical Evidence for Treatment in This Tumour Type
               </Typography>
               {therapeuticAssociationSection}
             </div>
