@@ -1,14 +1,19 @@
 import ArrayCell from '@/components/DataTable/components/ArrayCellRenderer';
 import getGeneProp from '@/utils/getGeneProp';
+import { ColDef } from '@ag-grid-community/core';
 
-const columnDefs = [{
+const columnDefs: ColDef[] = [{
   headerName: 'Gene',
   cellRenderer: 'GeneCellRenderer',
   cellRendererParams: { link: true },
   colId: 'gene',
   hide: false,
   valueGetter: (params) => {
-    const { data: { variant } } = params;
+    const { data: { variant, variantType } } = params;
+    // msi doesn't have gene field
+    if (variantType === 'msi') {
+      return '';
+    }
 
     if (variant.gene) {
       return variant.gene.name;
@@ -48,6 +53,11 @@ const columnDefs = [{
     if (variantType === 'mut') {
       return `${variant.gene.name}:${variant.proteinChange}`;
     }
+
+    if (variantType === 'msi') {
+      return variant.kbCategory;
+    }
+
     return `${variant.gene.name} ${variant.expressionState}`;
   },
 },
@@ -76,8 +86,11 @@ const columnDefs = [{
   headerName: 'PMID',
   colId: 'reference',
   field: 'reference',
-  hide: false,
+  wrapText: true,
+  autoHeight: true,
+  width: 600,
   cellRendererFramework: ArrayCell('reference', true),
+  hide: false,
 },
 {
   headerName: 'Category',

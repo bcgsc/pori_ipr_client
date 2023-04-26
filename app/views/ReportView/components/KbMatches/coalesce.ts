@@ -30,27 +30,36 @@ const coalesceEntries = (entries) => {
     if (variantType === 'mut') {
       return `${variant.gene.name}:${variant.proteinChange}`;
     }
+
+    if (variantType === 'msi') {
+      return variant.kbCategory;
+    }
+
     return `${variant.gene.name} ${variant.expressionState}`;
   };
 
   const getBucketKey = (entry, delimiter = '||') => {
-    if (entry.variant.gene1) {
-      const {
-        context,
-        variantType,
-        variant,
-        variant: { gene1: { name: gene1Name }, gene2: { name: gene2Name } },
-      } = entry;
-      const variantName = getVariantName(variant, variantType);
-      return `${gene1Name}${delimiter}${gene2Name}${delimiter}${context}${delimiter}${variantName}`;
-    }
     const {
       context,
       variant,
       variantType,
-      variant: { gene: { name: geneName } },
     } = entry;
     const variantName = getVariantName(variant, variantType);
+    if (entry.variant.gene1) {
+      const {
+        variant: { gene1: { name: gene1Name }, gene2: { name: gene2Name } },
+      } = entry;
+      return `${gene1Name}${delimiter}${gene2Name}${delimiter}${context}${delimiter}${variantName}`;
+    }
+
+    if (entry.variantType === 'msi') {
+      const { kbCategory } = variant;
+      return `${kbCategory}${delimiter}${context}${delimiter}${variantName}`;
+    }
+
+    const {
+      variant: { gene: { name: geneName } },
+    } = entry;
     return `${geneName}${delimiter}${context}${delimiter}${variantName}`;
   };
 
