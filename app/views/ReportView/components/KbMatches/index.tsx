@@ -105,7 +105,13 @@ const KbMatches = ({
             targetedSomaticGenes: targetedSomaticGenesResp.filter((tg) => !/germline/.test(tg?.sample)),
           });
         } catch (err) {
-          snackbar.error(`Network error: ${err}`);
+          if (err.name === 'CoalesceEntriesError') {
+            snackbar.error(err.message);
+            console.error(err);
+          } else {
+            snackbar.error(`Network error: ${err}`);
+            console.error(err);
+          }
         } finally {
           setIsLoading(false);
         }
