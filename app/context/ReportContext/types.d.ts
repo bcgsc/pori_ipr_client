@@ -15,6 +15,7 @@ type PatientInformationType = {
   tumourProtocol: string | null;
   tumourSample: string | null;
   oncotreeTumourType?: string | null;
+  kbDiseaseMatch?: string | null;
 } & RecordDefaults;
 
 type SampleInfoType = {
@@ -51,6 +52,7 @@ type ReportType = {
   type: string;
   users: UserRoleType[];
   oncotreeTumourType: string;
+  kbDiseaseMatch: string;
 } & RecordDefaults;
 
 type ReportContextType = {
