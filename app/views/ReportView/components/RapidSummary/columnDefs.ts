@@ -41,9 +41,16 @@ const therapeuticAssociationColDefs = [
   {
     headerName: 'Alt/Total (Tumour)',
     colId: 'Alt/Total (Tumour)',
-    valueGetter: ({ data: { tumourAltCount, tumourDepth } }) => {
+    valueGetter: ({
+      data: {
+        tumourAltCount, tumourDepth, rnaAltCount, rnaDepth,
+      },
+    }) => {
       if (tumourAltCount !== null && tumourDepth !== null) {
         return `${tumourAltCount}/${tumourDepth}`;
+      }
+      if (rnaAltCount !== null && rnaDepth !== null) {
+        return `${rnaAltCount}/${rnaDepth}`;
       }
       return '';
     },
@@ -53,7 +60,7 @@ const therapeuticAssociationColDefs = [
     headerName: 'VAF %',
     colId: 'tumourAltCount/tumourDepth',
     valueGetter: ({ data: { tumourAltCount, tumourDepth } }) => {
-      if (tumourAltCount && tumourDepth) {
+      if (tumourAltCount !== null && tumourDepth !== null) {
         return ((tumourAltCount / tumourDepth) * 100).toFixed(0);
       }
       return '';
