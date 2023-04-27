@@ -54,5 +54,10 @@ module.exports = {
   ],
   setupFiles: [
     '<rootDir>/config/jest/windowEnvMock.js'
-  ]
+  ],
+  globals: {
+    'ts-jest': {
+      isolatedModules: true
+    }
+  }
 };
