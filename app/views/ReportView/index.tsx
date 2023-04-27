@@ -75,8 +75,8 @@ const ReportView = (): JSX.Element => {
           }
           const template = templatesResp.find((templ) => templ.name === resp.template.name);
           setVisibleSections(template?.sections);
-        } catch {
-          snackbar.error(`Report ${params.ident} not found`);
+        } catch (getReportErr) {
+          snackbar.error(`Cannot access report ${params.ident}, reason: ${getReportErr?.message} `);
           history.push('/reports');
         }
       };
