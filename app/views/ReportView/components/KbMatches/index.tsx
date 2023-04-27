@@ -163,20 +163,23 @@ const KbMatches = ({
 
   const kbMatchedTables = Object.entries(groupedMatches).map(([key, value]) => (
     <React.Fragment key={key}>
-      {(report?.template.name !== 'probe'
-        || (key !== 'targetedSomaticGenes' && key !== 'targetedGermlineGenes')
-      ) && (
-      <DataTable
-        canDelete={canEdit}
-        canToggleColumns
-        columnDefs={(key === 'targetedSomaticGenes') ? targetedColumnDefs : columnDefs}
-        filterText={filterText}
-        isPrint={isPrint}
-        onDelete={handleDelete}
-        rowData={value}
-        titleText={titleMap[key]}
-      />
-      )}
+      {
+        (
+          (report?.template.name !== 'probe' && report?.template.name !== 'rapid')
+          || (key !== 'targetedSomaticGenes' && key !== 'targetedGermlineGenes')
+        ) && (
+          <DataTable
+            canDelete={canEdit}
+            canToggleColumns
+            columnDefs={(key === 'targetedSomaticGenes') ? targetedColumnDefs : columnDefs}
+            filterText={filterText}
+            isPrint={isPrint}
+            onDelete={handleDelete}
+            rowData={value}
+            titleText={titleMap[key]}
+          />
+        )
+      }
     </React.Fragment>
   ));
 
