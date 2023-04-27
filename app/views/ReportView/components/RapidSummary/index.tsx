@@ -231,7 +231,7 @@ const RapidSummary = ({
             },
             {
               label: 'Tumour type for matching',
-              value: report.oncotreeTumourType,
+              value: report.kbDiseaseMatch,
             },
           ]);
         } catch (err) {
@@ -344,7 +344,7 @@ const RapidSummary = ({
         },
         {
           label: 'Tumour type for matching',
-          value: newReportData ? newReportData.oncotreeTumourType : report.oncotreeTumourType,
+          value: newReportData ? newReportData.kbDiseaseMatch : report.kbDiseaseMatch,
         },
       ]);
     }
