@@ -42,7 +42,7 @@ const FIELD_TO_DISPLAY_NAME = {
   physician: 'Physician',
   gender: 'Gender',
   pediatricIds: 'Pediatric Patient IDs',
-  oncotreeTumourType: 'Tumour type for matching',
+  kbDiseaseMatch: 'Tumour type for matching',
 };
 
 const DEFAULT_PATIENT_FIELDS_TO_UPDATE = ['caseType', 'physician', 'biopsySite', 'gender'];
@@ -50,7 +50,7 @@ const DEFAULT_PATIENT_FIELDS_TO_UPDATE = ['caseType', 'physician', 'biopsySite',
 const DEFAULT_REPORT_FIELDS_TO_UPDATE = ['alternateIdentifier', 'pediatricIds', 'biopsyName'];
 const REPORT_FIELDS_TO_UPDATE = {
   default: DEFAULT_REPORT_FIELDS_TO_UPDATE,
-  rapid: [...DEFAULT_REPORT_FIELDS_TO_UPDATE, 'oncotreeTumourType'],
+  rapid: [...DEFAULT_REPORT_FIELDS_TO_UPDATE, 'kbDiseaseMatch'],
 };
 
 type PatientEditProps = {
