@@ -101,7 +101,7 @@ const cancerRelevanceColDefs = [
     headerName: 'Alt/Total (Tumour)',
     colId: 'Alt/Total (Tumour)',
     valueGetter: ({ data: { tumourAltCount, tumourDepth } }) => {
-      if (tumourAltCount && tumourDepth) {
+      if (tumourAltCount !== null && tumourDepth !== null) {
         return `${tumourAltCount}/${tumourDepth}`;
       }
       return '';
