@@ -31,7 +31,7 @@ const coalesceEntries = (entries) => {
       return `${variant.gene.name}:${variant.proteinChange}`;
     }
 
-    if (variantType === 'msi') {
+    if (variantType === 'msi' || variantType === 'tmb') {
       return variant.kbCategory;
     }
 
