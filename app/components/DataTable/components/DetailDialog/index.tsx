@@ -61,7 +61,6 @@ const ObjectAttributes = ({
 
   // === obj is Array ===
   if (Array.isArray(obj)) {
-    console.log('is array:', obj);
     const inner = obj.map((mappedVal, idx) => {
       const mappedValIsArray = Array.isArray(mappedVal);
       const rowKey = `${mappedVal.toString()}-${idx}`;
@@ -69,7 +68,7 @@ const ObjectAttributes = ({
       // Value is primitive
       if (!mappedValIsArray && typeof mappedVal !== 'object') {
         return (
-          <div className="detail-dialog__row">
+          <div key={rowKey} className="detail-dialog__row">
             <Typography variant="subtitle2">
               {mappedVal || 'null'}
             </Typography>
@@ -126,7 +125,11 @@ const ObjectAttributes = ({
     const inner = Object.entries(obj)
       .sort(([a], [b]) => compare(a, b))
       .map(([key, mappedVal], index) => {
-        if (mappedVal === null || mappedVal === undefined) {
+        if (
+          ['ident', 'svg', 'svgTitle', 'image'].includes(key)
+          || mappedVal === null
+          || mappedVal === undefined
+        ) {
           return null;
         }
 
