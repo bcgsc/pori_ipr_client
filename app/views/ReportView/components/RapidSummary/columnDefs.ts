@@ -20,7 +20,7 @@ const getGenomicEvent = ({ data }) => {
     })`;
   }
 
-  if (variantType === 'msi') {
+  if (variantType === 'msi' || variantType === 'tmb') {
     return kbCategory;
   }
 

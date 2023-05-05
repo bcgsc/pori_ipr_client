@@ -52,7 +52,7 @@ const coalesceEntries = (entries) => {
       return `${gene1Name}${delimiter}${gene2Name}${delimiter}${context}${delimiter}${variantName}`;
     }
 
-    if (entry.variantType === 'msi') {
+    if (entry.variantType === 'msi' || entry.variantType === 'tmb') {
       const { kbCategory } = variant;
       return `${kbCategory}${delimiter}${context}${delimiter}${variantName}`;
     }
