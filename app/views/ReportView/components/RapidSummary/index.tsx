@@ -28,14 +28,13 @@ import './index.scss';
 import TumourSummaryEdit from '@/components/TumourSummaryEdit';
 import DescriptionList from '@/components/DescriptionList';
 import {
-  KbMatchType, TumourSummaryType,
+  KbMatchType, TumourSummaryType, TmburType,
 } from '@/common';
 import useConfirmDialog from '@/hooks/useConfirmDialog';
 import { Box } from '@mui/system';
 import {
   therapeuticAssociationColDefs, cancerRelevanceColDefs, sampleColumnDefs, getGenomicEvent,
 } from './columnDefs';
-import { TmburType } from '../MutationBurden/types';
 import VariantEditDialog from './components/VariantEditDialog';
 import { RapidVariantType } from './types';
 
