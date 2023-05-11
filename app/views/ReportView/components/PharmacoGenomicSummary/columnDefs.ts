@@ -54,8 +54,14 @@ const COMMON_COL_DEFS = [
     field: 'Alt/Total',
     valueGetter: (params) => {
       const { data: { variant } } = params;
-      let totalText = variant.tumourDepth ?? variant.rnaDepth;
-      let altText = variant.tumourAltCount ?? variant.rnaAltCount;
+      let totalText = variant.rnaDepth;
+      let altText = variant.rnaAltCount;
+
+      if (variant.tumourDepth !== null && variant.tumourAltCount !== null) {
+        totalText = variant.tumourDepth;
+        altText = variant.tumourAltCount;
+      }
+
       if (variant?.germline) {
         totalText = variant.normalDepth;
         altText = variant.normalAltCount;
