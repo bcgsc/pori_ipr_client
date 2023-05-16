@@ -19,8 +19,9 @@ import Image from '@/components/Image';
 import ImageType from '@/components/Image/types';
 import api, { ApiCallSet } from '@/services/api';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import { MutationBurdenType } from '@/common';
 import {
-  ComparatorType, MutationBurdenType, MsiType, TmburType,
+  ComparatorType, MsiType, TmburType,
 } from './types';
 import TabCards from './components/TabCards';
 import columnDefs from './columnDefs';
@@ -144,7 +145,13 @@ const MutationBurden = ({
             imagesResp,
             comparatorsResp,
             mutationBurdenResp,
-          ] = await calls.request();
+          ] = await calls.request() as [
+            MsiType[],
+            ImageType[],
+            ImageType[],
+            ComparatorType[],
+            MutationBurdenType[],
+          ];
           setMsi(msiResp);
           setMsiScatter(msiScatterResp.find((img) => img.key === 'msi.scatter'));
           setImages(processImages(imagesResp));

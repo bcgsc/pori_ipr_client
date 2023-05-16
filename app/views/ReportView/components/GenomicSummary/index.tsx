@@ -23,21 +23,21 @@ import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import PatientEdit from '@/components/PatientEdit';
 import useConfirmDialog from '@/hooks/useConfirmDialog';
 import TumourSummaryEdit from '@/components/TumourSummaryEdit';
+import {
+  TumourSummaryType, MicrobialType, ImmuneType, MutationBurdenType,
+} from '@/common';
 import VariantChips from './components/VariantChips';
 import VariantCounts from './components/VariantCounts';
 import {
   PatientInformationType,
   GeneVariantType,
-  MicrobialType,
 } from './types';
 import {
-  MutationBurdenType, ComparatorType, MsiType, TmburType,
+  ComparatorType, MsiType, TmburType,
 } from '../MutationBurden/types';
 import MutationSignatureType from '../MutationSignatures/types';
-import { ImmuneType } from '../Immune/types';
 
 import './index.scss';
-import { TumourSummaryType } from '@/common';
 
 const variantCategory = (variant) => {
   // small mutations
