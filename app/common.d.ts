@@ -247,6 +247,34 @@ type TumourSummaryType = {
   action?: () => void | null;
 };
 
+type MutationBurdenType = {
+  codingIndelPercentile: number | null;
+  codingIndelsCount: number | null;
+  codingSnvCount: number | null;
+  codingSnvPercentile: number | null;
+  frameshiftIndelsCount: number | null;
+  qualitySvCount: number | null;
+  qualitySvExpressedCount: number | null;
+  qualitySvPercentile: number | null;
+  role: string;
+  totalIndelCount: number | null;
+  totalMutationsPerMb: number | null;
+  totalSnvCount: number | null;
+  truncatingSnvCount: number | null;
+} & RecordDefaults;
+
+type ImmuneType = {
+  cellType: string | null;
+  kbCategory: string | null;
+  percentile: number | null;
+  score: number | null;
+} & RecordDefaults;
+
+type MicrobialType = {
+  integrationSite: string | null;
+  species: string | null;
+} & RecordDefaults;
+
 type AppendixType = RecordDefaults & {
   text: string;
 };
@@ -267,4 +295,7 @@ export {
   SmallMutationType,
   ExpOutliersType,
   TumourSummaryType,
+  MutationBurdenType,
+  ImmuneType,
+  MicrobialType,
 };

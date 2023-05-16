@@ -1,12 +1,5 @@
 import { RecordDefaults } from '@/common';
 
-type ImmuneType = {
-  cellType: string | null;
-  kbCategory: string | null;
-  percentile: number | null;
-  score: number | null;
-} & RecordDefaults;
-
 type HlaType = {
   a1: string;
   a2: string;
@@ -22,6 +15,5 @@ type HlaType = {
 } & RecordDefaults;
 
 export {
-  ImmuneType,
   HlaType,
 };
