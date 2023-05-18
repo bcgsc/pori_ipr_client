@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import {
-  TextField, Typography,
-} from '@mui/material';
+import { Typography } from '@mui/material';
 
 import './index.scss';
 
