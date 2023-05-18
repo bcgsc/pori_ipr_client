@@ -3,14 +3,9 @@ import PropTypes from 'prop-types';
 import { Typography } from '@mui/material';
 import FilterListIcon from '@mui/icons-material/FilterList';
 
-import './index.scss';
+import { VARIANT_TO_DISPLAY_NAME } from '../../common';
 
-const nameMapping = {
-  cnv: 'Copy Number Variants',
-  smallMutation: 'Small Mutations',
-  structuralVariant: 'Structural Variants',
-  expression: 'Expression Outliers',
-};
+import './index.scss';
 
 const VariantCounts = (props) => {
   const {
@@ -42,7 +37,7 @@ const VariantCounts = (props) => {
             >
               <span className="variant-counts__key">
                 <Typography display="inline">
-                  {nameMapping[key] || key}
+                  {VARIANT_TO_DISPLAY_NAME[key] || key}
                 </Typography>
                 {filter === key && (
                   <FilterListIcon className="variant-counts__icon" />
