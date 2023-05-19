@@ -20,7 +20,7 @@ const getGenomicEvent = ({ data }) => {
     })`;
   }
 
-  if (variantType === 'msi') {
+  if (variantType === 'msi' || variantType === 'tmb') {
     return kbCategory;
   }
 
@@ -46,10 +46,10 @@ const therapeuticAssociationColDefs = [
         tumourAltCount, tumourDepth, rnaAltCount, rnaDepth,
       },
     }) => {
-      if (tumourAltCount !== null && tumourDepth !== null) {
+      if ((tumourAltCount && tumourDepth) || (tumourAltCount === 0 || tumourDepth === 0)) {
         return `${tumourAltCount}/${tumourDepth}`;
       }
-      if (rnaAltCount !== null && rnaDepth !== null) {
+      if ((rnaAltCount && rnaDepth) || (rnaAltCount === 0 || rnaDepth === 0)) {
         return `${rnaAltCount}/${rnaDepth}`;
       }
       return '';
@@ -59,9 +59,16 @@ const therapeuticAssociationColDefs = [
   {
     headerName: 'VAF %',
     colId: 'tumourAltCount/tumourDepth',
-    valueGetter: ({ data: { tumourAltCount, tumourDepth } }) => {
-      if (tumourAltCount !== null && tumourDepth !== null) {
+    valueGetter: ({
+      data: {
+        tumourAltCount, tumourDepth, rnaAltCount, rnaDepth,
+      },
+    }) => {
+      if ((tumourAltCount && tumourDepth) || (tumourAltCount === 0 || tumourDepth === 0)) {
         return ((tumourAltCount / tumourDepth) * 100).toFixed(0);
+      }
+      if ((rnaAltCount && rnaDepth) || (rnaAltCount === 0 || rnaDepth === 0)) {
+        return `${rnaAltCount}/${rnaDepth}`;
       }
       return '';
     },
@@ -101,7 +108,7 @@ const cancerRelevanceColDefs = [
     headerName: 'Alt/Total (Tumour)',
     colId: 'Alt/Total (Tumour)',
     valueGetter: ({ data: { tumourAltCount, tumourDepth } }) => {
-      if (tumourAltCount !== null && tumourDepth !== null) {
+      if ((tumourAltCount && tumourDepth) || (tumourAltCount === 0 || tumourDepth === 0)) {
         return `${tumourAltCount}/${tumourDepth}`;
       }
       return '';
@@ -112,7 +119,7 @@ const cancerRelevanceColDefs = [
     headerName: 'VAF %',
     colId: 'tumourAltCount/tumourDepth',
     valueGetter: ({ data: { tumourAltCount, tumourDepth } }) => {
-      if (tumourAltCount && tumourDepth) {
+      if ((tumourAltCount && tumourDepth) || (tumourAltCount === 0 || tumourDepth === 0)) {
         return ((tumourAltCount / tumourDepth) * 100).toFixed(0);
       }
       return '';

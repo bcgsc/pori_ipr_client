@@ -19,8 +19,9 @@ import Image from '@/components/Image';
 import ImageType from '@/components/Image/types';
 import api, { ApiCallSet } from '@/services/api';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import { TmburType, MsiType } from '@/common';
 import {
-  ComparatorType, MutationBurdenType, MsiType, TmburType,
+  ComparatorType, MutationBurdenType,
 } from './types';
 import TabCards from './components/TabCards';
 import columnDefs from './columnDefs';
