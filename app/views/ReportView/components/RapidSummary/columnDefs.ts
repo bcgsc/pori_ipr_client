@@ -75,14 +75,14 @@ const therapeuticAssociationColDefs = [
     hide: false,
   },
   {
-    headerName: 'Potential Clinical Association',
-    colId: 'potentialClinicalAssociation',
-    field: 'potentialClinicalAssociation',
+    headerName: 'Comments',
+    field: 'comments',
     hide: false,
   },
   {
-    headerName: 'Comments',
-    field: 'comments',
+    headerName: 'Potential Clinical Association',
+    colId: 'potentialClinicalAssociation',
+    field: 'potentialClinicalAssociation',
     hide: false,
   },
   {
