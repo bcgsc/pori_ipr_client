@@ -24,8 +24,9 @@ import PatientEdit from '@/components/PatientEdit';
 import useConfirmDialog from '@/hooks/useConfirmDialog';
 import TumourSummaryEdit from '@/components/TumourSummaryEdit';
 import {
-  TumourSummaryType, MicrobialType, ImmuneType, MutationBurdenType,
+  TumourSummaryType, MicrobialType, ImmuneType, MutationBurdenType, TmburType, MsiType,
 } from '@/common';
+
 import VariantChips from './components/VariantChips';
 import VariantCounts from './components/VariantCounts';
 import {
@@ -33,7 +34,7 @@ import {
   GeneVariantType,
 } from './types';
 import {
-  ComparatorType, MsiType, TmburType,
+  ComparatorType,
 } from '../MutationBurden/types';
 import MutationSignatureType from '../MutationSignatures/types';
 

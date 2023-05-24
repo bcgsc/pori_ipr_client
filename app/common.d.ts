@@ -37,7 +37,16 @@ declare global {
   };
 }
 
-type VariantType = 'cnv' | 'mut' | 'sv';
+type AnyVariantType = 'cnv' | 'mut' | 'sv' | 'exp' | 'msi' | 'tmb';
+
+type VariantTypeMap<T> =
+  T extends 'cnv' ? CopyNumberType :
+    T extends 'mut' ? SmallMutationType :
+      T extends 'sv' ? StructuralVariantType:
+        T extends 'exp' ? ExpOutliersType :
+          T extends 'msi' ? MsiType :
+            T extends 'tmb' ? TmburType:
+              never;
 
 type RecordDefaults = {
   ident: string;
@@ -106,7 +115,7 @@ type GeneType = {
   tumourSuppressor: boolean;
 };
 
-type KbMatchType = {
+type KbMatchType<T extends AnyVariantType = AnyVariantType> = {
   category: string;
   approvedTherapy: boolean;
   kbVariant: string;
@@ -121,7 +130,8 @@ type KbMatchType = {
   iprEvidenceLevel: string;
   matchedCancer: boolean;
   pmidRef: string;
-  variantType: VariantType;
+  variantType: T;
+  variant: VariantTypeMap<T>;
   kbVariantId: string;
   kbStatementId: string;
   kbData: {
@@ -141,12 +151,10 @@ type CopyNumberType = {
   end: number | null;
   gene: GeneType | null;
   kbCategory: string | null;
-  kbMatches: null | KbMatchType[];
   log2Cna: string | null;
   lohState: string | null;
   size: number | null;
   start: number | null;
-  variantType: VariantType;
 } & RecordDefaults;
 
 type StructuralVariantType = {
@@ -163,7 +171,6 @@ type StructuralVariantType = {
   gene1: GeneType | null;
   gene2: GeneType | null;
   highQuality: boolean;
-  kbMatches: null | KbMatchType[];
   mavis_product_id: number | null;
   name: string | null;
   ntermGene: string | null;
@@ -171,7 +178,6 @@ type StructuralVariantType = {
   omicSupport: boolean;
   svg: string | null;
   svgTitle: string | null;
-  variantType: VariantType;
 } & RecordDefaults;
 
 type SmallMutationType = {
@@ -184,7 +190,6 @@ type SmallMutationType = {
   hgvsCds: string | null;
   hgvsGenomic: string | null;
   hgvsProtein: string | null;
-  kbMatches: KbMatchType[];
   library: string | null;
   ncbiBuild: string | null;
   normalAltCount: number | null;
@@ -202,7 +207,6 @@ type SmallMutationType = {
   tumourDepth: number | null;
   tumourRefCopies: number | null;
   tumourRefCount: number | null;
-  variantType: VariantType;
   zygosity: string | null;
 } & RecordDefaults;
 
@@ -220,7 +224,6 @@ type ExpOutliersType = {
   expressionState: string | null;
   gene: GeneType;
   kbCategory: string | null;
-  kbMatches: KbMatchType[];
   location: number | null;
   primarySiteFoldChange: number | null;
   primarySitePercentile: number | null;
@@ -230,7 +233,36 @@ type ExpOutliersType = {
   rnaReads: number | null;
   rpkm: number | null;
   tpm: number | null;
-  variantType: VariantType;
+} & RecordDefaults;
+
+type TmburType = {
+  cdsBasesIn1To22AndXAndY: string;
+  cdsIndels: number;
+  cdsIndelTmb: number;
+  cdsSnvs: number,
+  cdsSnvTmb: number;
+  comments: string;
+  genomeSnvTmb: number;
+  genomeIndelTmb: number;
+  kbCategory: string | null;
+  kbMatches: KbMatchType[];
+  msiScore: number;
+  nonNBasesIn1To22AndXAndY: string;
+  normal: string;
+  proteinIndels: number;
+  proteinIndelTmb: number;
+  proteinSnvs: number;
+  proteinSnvTmb: number;
+  totalGenomeIndels: number;
+  totalGenomeSnvs: number;
+  tumour: string;
+  variantType: 'tmb';
+} & RecordDefaults;
+
+type MsiType = {
+  score: number | null;
+  kbCategory: string | null;
+  variantType: 'msi';
 } & RecordDefaults;
 
 type TemplateType = {
@@ -284,6 +316,7 @@ export {
   UserType,
   TemplateType,
   AppendixType,
+  AnyVariantType,
   GroupType,
   UserProjectsType,
   UserGroupMemberType,
@@ -295,6 +328,8 @@ export {
   SmallMutationType,
   ExpOutliersType,
   TumourSummaryType,
+  TmburType,
+  MsiType,
   MutationBurdenType,
   ImmuneType,
   MicrobialType,

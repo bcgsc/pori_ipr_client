@@ -112,6 +112,12 @@ const Print = (): JSX.Element => {
               <PageBreak />
             </>
           )}
+          {template?.sections.includes('therapeutic-targets') && (
+            <>
+              <TherapeuticTargets isPrint loadedDispatch={dispatch} />
+              <PageBreak />
+            </>
+          )}
           {template?.sections.includes('analyst-comments') && (
             <>
               <AnalystComments report={report} isPrint loadedDispatch={dispatch} />
@@ -121,12 +127,6 @@ const Print = (): JSX.Element => {
           {template?.sections.includes('pathway-analysis') && (
             <>
               <PathwayAnalysis report={report} isPrint loadedDispatch={dispatch} />
-              <PageBreak />
-            </>
-          )}
-          {template?.sections.includes('therapeutic-targets') && (
-            <>
-              <TherapeuticTargets isPrint loadedDispatch={dispatch} />
               <PageBreak />
             </>
           )}

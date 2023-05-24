@@ -35,7 +35,6 @@ import { Box } from '@mui/system';
 import {
   therapeuticAssociationColDefs, cancerRelevanceColDefs, sampleColumnDefs, getGenomicEvent,
 } from './columnDefs';
-import { TmburType } from '../MutationBurden/types';
 import VariantEditDialog from './components/VariantEditDialog';
 import { RapidVariantType } from './types';
 
