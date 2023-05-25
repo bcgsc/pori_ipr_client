@@ -75,14 +75,14 @@ const therapeuticAssociationColDefs = [
     hide: false,
   },
   {
-    headerName: 'Potential Clinical Association',
-    colId: 'potentialClinicalAssociation',
-    field: 'potentialClinicalAssociation',
+    headerName: 'Comments',
+    field: 'comments',
     hide: false,
   },
   {
-    headerName: 'Comments',
-    field: 'comments',
+    headerName: 'Potential Clinical Association',
+    colId: 'potentialClinicalAssociation',
+    field: 'potentialClinicalAssociation',
     hide: false,
   },
   {
@@ -107,9 +107,16 @@ const cancerRelevanceColDefs = [
   {
     headerName: 'Alt/Total (Tumour)',
     colId: 'Alt/Total (Tumour)',
-    valueGetter: ({ data: { tumourAltCount, tumourDepth } }) => {
+    valueGetter: ({
+      data: {
+        tumourAltCount, tumourDepth, rnaAltCount, rnaDepth,
+      },
+    }) => {
       if ((tumourAltCount && tumourDepth) || (tumourAltCount === 0 || tumourDepth === 0)) {
         return `${tumourAltCount}/${tumourDepth}`;
+      }
+      if ((rnaAltCount && rnaDepth) || (rnaAltCount === 0 || rnaDepth === 0)) {
+        return `${rnaAltCount}/${rnaDepth}`;
       }
       return '';
     },
