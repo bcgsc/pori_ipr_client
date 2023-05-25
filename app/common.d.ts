@@ -116,30 +116,30 @@ type GeneType = {
 };
 
 type KbMatchType<T extends AnyVariantType = AnyVariantType> = {
-  category: string;
   approvedTherapy: boolean;
-  kbVariant: string;
-  disease: string;
-  relevance: string;
+  category: string;
   context: string;
-  status: string;
-  reference: string;
-  sample: string;
-  inferred: boolean;
+  disease: string;
   evidenceLevel: string;
-  iprEvidenceLevel: string;
-  matchedCancer: boolean;
-  pmidRef: string;
-  variantType: T;
-  variant: VariantTypeMap<T>;
-  kbVariantId: string;
-  kbStatementId: string;
-  kbData: {
-    inferred: boolean;
-  }
   externalSource: string;
   externalStatementId: string;
+  inferred: boolean;
+  iprEvidenceLevel: string;
+  kbData: {
+    inferred: boolean;
+  } | null;
+  kbStatementId: string;
+  kbVariant: string;
+  kbVariantId: string;
+  matchedCancer: boolean;
+  pmidRef: string;
+  reference: string;
+  relevance: string;
   reviewStatus: string;
+  sample: string | null;
+  status: string | null;
+  variant?: VariantTypeMap<T>;
+  variantType: T;
 } & RecordDefaults;
 
 type CopyNumberType = {
@@ -151,10 +151,12 @@ type CopyNumberType = {
   end: number | null;
   gene: GeneType | null;
   kbCategory: string | null;
+  kbMatches?: VariantTypeMap<'cnv'>[];
   log2Cna: string | null;
   lohState: string | null;
   size: number | null;
   start: number | null;
+  variantType: 'cnv';
 } & RecordDefaults;
 
 type StructuralVariantType = {
@@ -171,6 +173,7 @@ type StructuralVariantType = {
   gene1: GeneType | null;
   gene2: GeneType | null;
   highQuality: boolean;
+  kbMatches?: KbMatchType<'sv'>[];
   mavis_product_id: number | null;
   name: string | null;
   ntermGene: string | null;
@@ -178,6 +181,7 @@ type StructuralVariantType = {
   omicSupport: boolean;
   svg: string | null;
   svgTitle: string | null;
+  variantType: 'sv';
 } & RecordDefaults;
 
 type SmallMutationType = {
@@ -190,6 +194,7 @@ type SmallMutationType = {
   hgvsCds: string | null;
   hgvsGenomic: string | null;
   hgvsProtein: string | null;
+  kbMatches?: KbMatchType<'mut'>[];
   library: string | null;
   ncbiBuild: string | null;
   normalAltCount: number | null;
@@ -208,6 +213,7 @@ type SmallMutationType = {
   tumourRefCopies: number | null;
   tumourRefCount: number | null;
   zygosity: string | null;
+  variantType: 'mut';
 } & RecordDefaults;
 
 type ExpOutliersType = {
@@ -233,6 +239,7 @@ type ExpOutliersType = {
   rnaReads: number | null;
   rpkm: number | null;
   tpm: number | null;
+  variantType: 'exp';
 } & RecordDefaults;
 
 type TmburType = {

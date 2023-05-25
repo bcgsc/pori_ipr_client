@@ -28,7 +28,7 @@ import './index.scss';
 import TumourSummaryEdit from '@/components/TumourSummaryEdit';
 import DescriptionList from '@/components/DescriptionList';
 import {
-  KbMatchType, TumourSummaryType, ImmuneType, MicrobialType,
+  KbMatchType, TumourSummaryType, ImmuneType, MicrobialType, TmburType,
 } from '@/common';
 import useConfirmDialog from '@/hooks/useConfirmDialog';
 import { Box } from '@mui/system';
