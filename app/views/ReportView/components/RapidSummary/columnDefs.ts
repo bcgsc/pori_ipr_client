@@ -68,7 +68,7 @@ const therapeuticAssociationColDefs = [
         return ((tumourAltCount / tumourDepth) * 100).toFixed(0);
       }
       if ((rnaAltCount && rnaDepth) || (rnaAltCount === 0 || rnaDepth === 0)) {
-        return `${rnaAltCount}/${rnaDepth}`;
+        return `N/A (RNA): ${((rnaAltCount / rnaDepth) * 100).toFixed(0)}`;
       }
       return '';
     },
