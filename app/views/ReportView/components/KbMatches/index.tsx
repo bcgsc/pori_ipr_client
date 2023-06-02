@@ -1,5 +1,5 @@
 import React, {
-  useState, useEffect, useContext, useCallback,
+  useState, useEffect, useContext, useCallback, useMemo,
 } from 'react';
 import {
   TextField,
@@ -23,7 +23,7 @@ import coalesceEntries from './coalesce';
 
 import './index.scss';
 
-const titleMap = {
+const TITLE_MAP = {
   thisCancer: 'Therapies Approved In This Cancer Type',
   otherCancer: 'Therapies Approved In Other Cancer Type',
   therapeutic: 'Therapeutic Alterations',
@@ -166,27 +166,27 @@ const KbMatches = ({
     }
   }, [report]);
 
-  const kbMatchedTables = Object.entries(groupedMatches).map(([key, value]) => (
+  const kbMatchedTables = useMemo(() => Object.keys(TITLE_MAP).map((key) => (
     <React.Fragment key={key}>
       {
-        (
-          (report?.template.name !== 'probe' && report?.template.name !== 'rapid')
-          || (key !== 'targetedSomaticGenes' && key !== 'targetedGermlineGenes')
-        ) && (
-          <DataTable
-            canDelete={canEdit}
-            canToggleColumns
-            columnDefs={(key === 'targetedSomaticGenes') ? targetedColumnDefs : columnDefs}
-            filterText={debouncedFilterText}
-            isPrint={isPrint}
-            onDelete={handleDelete}
-            rowData={value}
-            titleText={titleMap[key]}
-          />
-        )
-      }
+          (
+            (report?.template.name !== 'probe' && report?.template.name !== 'rapid')
+            || (key !== 'targetedSomaticGenes' && key !== 'targetedGermlineGenes')
+          ) && (
+            <DataTable
+              canDelete={canEdit}
+              canToggleColumns
+              columnDefs={(key === 'targetedSomaticGenes') ? targetedColumnDefs : columnDefs}
+              filterText={debouncedFilterText}
+              isPrint={isPrint}
+              onDelete={handleDelete}
+              rowData={groupedMatches[key]}
+              titleText={TITLE_MAP[key]}
+            />
+          )
+        }
     </React.Fragment>
-  ));
+  )), [canEdit, debouncedFilterText, groupedMatches, handleDelete, isPrint, report?.template.name]);
 
   return (
     !isLoading && (
