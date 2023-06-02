@@ -1,4 +1,6 @@
-/* Checks a user's access given an allowList and a blockList */
+/*
+  Checks if a user is allowed access, given an allow and block list, with allow list taking precedence
+*/
 const checkAccess = (
   groups: { ident: string, name: string }[],
   allowList: string[],
@@ -6,12 +8,9 @@ const checkAccess = (
 ): boolean => {
   const groupNames = groups.map((group) => group.name.toLowerCase());
 
-  /* blockList takes priority over allowList */
-  if ((groupNames.some((groupName) => allowList.includes(groupName)) || allowList.includes('*'))
-    && groupNames.every((groupName) => !blockList.includes(groupName))) {
-    return true;
-  }
-  return false;
+  const isAllowed = allowList.includes('*') || allowList.some((group) => groupNames.includes(group.toLowerCase()));
+  const isBlocked = blockList.some((group) => groupNames.includes(group.toLowerCase()));
+  return isAllowed || !isBlocked;
 };
 
 export default checkAccess;
