@@ -28,7 +28,7 @@ import './index.scss';
 import TumourSummaryEdit from '@/components/TumourSummaryEdit';
 import DescriptionList from '@/components/DescriptionList';
 import {
-  KbMatchType, TumourSummaryType, TmburType,
+  KbMatchType, TumourSummaryType, ImmuneType, MicrobialType, TmburType,
 } from '@/common';
 import useConfirmDialog from '@/hooks/useConfirmDialog';
 import { Box } from '@mui/system';
@@ -134,7 +134,9 @@ const RapidSummary = ({
     value: string | null;
   }[] | null>();
   const [tumourSummary, setTumourSummary] = useState<TumourSummaryType[]>();
-  const [mutationBurden, setMutationBurden] = useState<TmburType>();
+  const [tmburMutBur, setTmburMutBur] = useState<TmburType>();
+  const [tCellCd8, setTCellCd8] = useState<ImmuneType>();
+  const [microbial, setMicrobial] = useState<MicrobialType[]>();
   const [editData, setEditData] = useState();
 
   const [showPatientEdit, setShowPatientEdit] = useState(false);
@@ -152,19 +154,25 @@ const RapidSummary = ({
             api.get(`/reports/${report.ident}/variants?rapidTable=cancerRelevance`),
             api.get(`/reports/${report.ident}/variants?rapidTable=unknownSignificance`),
             api.get(`/reports/${report.ident}/tmbur-mutation-burden`),
+            api.get(`/reports/${report.ident}/immune-cell-types`),
+            api.get(`/reports/${report.ident}/summary/microbial`),
           ]);
           const [
             signaturesResp,
             therapeuticAssociationResp,
             cancerRelevanceResp,
             unknownSignificanceResp,
-            burdenResp,
+            tmBurdenResp,
+            immuneResp,
+            microbialResp,
           ] = await apiCalls.request(true) as [
             PromiseSettledResult<SignatureType>,
             PromiseSettledResult<RapidVariantType[]>,
             PromiseSettledResult<RapidVariantType[]>,
             PromiseSettledResult<RapidVariantType[]>,
             PromiseSettledResult<TmburType>,
+            PromiseSettledResult<ImmuneType[]>,
+            PromiseSettledResult<MicrobialType[]>,
           ];
 
           if (signaturesResp.status === 'fulfilled') {
@@ -193,10 +201,22 @@ const RapidSummary = ({
             snackbar.error(unknownSignificanceResp.reason?.content?.error?.message);
           }
 
-          if (burdenResp.status === 'fulfilled') {
-            setMutationBurden(burdenResp.value);
+          if (tmBurdenResp.status === 'fulfilled') {
+            setTmburMutBur(tmBurdenResp.value);
           } else if (!isPrint) {
-            snackbar.error(burdenResp.reason?.content?.error?.message);
+            snackbar.error(tmBurdenResp.reason?.content?.error?.message);
+          }
+
+          if (immuneResp.status === 'fulfilled') {
+            setTCellCd8(immuneResp.value.find(({ cellType }) => cellType === 'T cells CD8'));
+          } else if (!isPrint) {
+            snackbar.error(immuneResp.reason?.content?.error?.message);
+          }
+
+          if (microbialResp.status === 'fulfilled') {
+            setMicrobial(microbialResp.value);
+          } else if (!isPrint) {
+            snackbar.error(microbialResp.reason?.content?.error?.message);
           }
 
           setPatientInformation([
@@ -250,8 +270,8 @@ const RapidSummary = ({
 
   useEffect(() => {
     let msiStatus: null | string;
-    if (mutationBurden) {
-      const { msiScore } = mutationBurden;
+    if (tmburMutBur) {
+      const { msiScore } = tmburMutBur;
       if (msiScore < 20) {
         msiStatus = 'MSS';
       }
@@ -269,9 +289,29 @@ const RapidSummary = ({
         }`,
       },
       {
+        term: 'M1M2 Score',
+        value: `${report.m1m2Score}`,
+      },
+      {
+        term: 'Microbial Species',
+        value: microbial ? microbial.map(({ species, integrationSite }) => {
+          let integrationSection = '';
+          if (integrationSite) {
+            integrationSection = integrationSite.toLowerCase() === 'yes' ? ' (integration)' : ' (no integration)';
+          }
+          return `${species}${integrationSection}`;
+        }).join(', ') : null,
+      },
+      {
+        term: 'CD8+ T Cell Score',
+        value: typeof tCellCd8?.score === 'number'
+          ? `${tCellCd8.score} ${tCellCd8.percentile ? `(${tCellCd8.percentile}%)` : ''}`
+          : null,
+      },
+      {
         term: 'Genome TMB (mut/mb)',
-        value: mutationBurden
-          ? `${parseFloat((mutationBurden.genomeSnvTmb + mutationBurden.genomeIndelTmb).toFixed(12))}`
+        value: tmburMutBur
+          ? `${parseFloat((tmburMutBur.genomeSnvTmb + tmburMutBur.genomeIndelTmb).toFixed(12))}`
           : null,
       },
       {
@@ -279,7 +319,7 @@ const RapidSummary = ({
         value: msiStatus,
       },
     ]);
-  }, [mutationBurden, report.sampleInfo]);
+  }, [microbial, tmburMutBur, report.m1m2Score, report.sampleInfo, report.tumourContent, tCellCd8?.percentile, tCellCd8?.score]);
 
   const handlePatientEditClose = useCallback(async (
     isSaved: boolean,
@@ -371,20 +411,19 @@ const RapidSummary = ({
     isSaved,
     newMicrobialData,
     newReportData,
-    newMutationBurdenData,
   ) => {
     setShowTumourSummaryEdit(false);
 
-    if (!isSaved || (!newMicrobialData && !newReportData && !newMutationBurdenData)) {
+    if (!isSaved || (!newMicrobialData && !newReportData)) {
       return;
+    }
+
+    if (newMicrobialData) {
+      setMicrobial(newMicrobialData);
     }
 
     if (newReportData) {
       setReport(newReportData);
-    }
-
-    if (newMutationBurdenData) {
-      setMutationBurden(newMutationBurdenData);
     }
   }, [setReport]);
 
@@ -401,9 +440,9 @@ const RapidSummary = ({
                   <EditIcon />
                 </IconButton>
                 <TumourSummaryEdit
-                  microbial={null}
+                  microbial={microbial}
                   report={report}
-                  mutationBurden={mutationBurden}
+                  mutationBurden={null}
                   isOpen={showTumourSummaryEdit}
                   onClose={handleTumourSummaryEditClose}
                 />
