@@ -11,7 +11,8 @@ import {
 import ImageType from '@/components/Image/types';
 import FrontPageTooltip from '@/components/FrontPageTooltip';
 import Image from '@/components/Image';
-import { ComparatorType, MutationBurdenType } from '../../types';
+import { MutationBurdenType } from '@/common';
+import { ComparatorType } from '../../types';
 
 const rankMapping = {
   primary: 0,
@@ -58,10 +59,10 @@ const TabCards = ({
   const getTabs = useCallback(() => {
     const tabNames = [];
     const ordinalMapping = {
-      'primary': 1,
-      'secondary': 2,
-      'tertiary': 3,
-      'quaternary': 4,
+      primary: 1,
+      secondary: 2,
+      tertiary: 3,
+      quaternary: 4,
     };
 
     const tabs = comparators

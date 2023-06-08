@@ -19,8 +19,7 @@ import useConfirmDialog from '@/hooks/useConfirmDialog';
 
 import './index.scss';
 import { ReportType } from '@/context/ReportContext';
-import { MutationBurdenType } from '../../../MutationBurden/types';
-import { MicrobialType } from '../../types';
+import { MicrobialType, MutationBurdenType } from '@/common';
 
 type TumourSummaryEditProps = {
   microbial: MicrobialType[];

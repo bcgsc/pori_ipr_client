@@ -7,8 +7,9 @@ import ReportContext from '@/context/ReportContext';
 import api, { ApiCallSet } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import { ImmuneType } from '@/common';
 import { hlaColumnDefs, cellTypesColumnDefs } from './columnDefs';
-import { ImmuneType, HlaType } from './types';
+import { HlaType } from './types';
 
 import './index.scss';
 
