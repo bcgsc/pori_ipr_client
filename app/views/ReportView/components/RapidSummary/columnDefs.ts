@@ -68,7 +68,7 @@ const therapeuticAssociationColDefs = [
         return ((tumourAltCount / tumourDepth) * 100).toFixed(0);
       }
       if ((rnaAltCount && rnaDepth) || (rnaAltCount === 0 || rnaDepth === 0)) {
-        return `${rnaAltCount}/${rnaDepth}`;
+        return 'N/A (RNA)';
       }
       return '';
     },
@@ -125,9 +125,16 @@ const cancerRelevanceColDefs = [
   {
     headerName: 'VAF %',
     colId: 'tumourAltCount/tumourDepth',
-    valueGetter: ({ data: { tumourAltCount, tumourDepth } }) => {
+    valueGetter: ({
+      data: {
+        tumourAltCount, tumourDepth, rnaAltCount, rnaDepth,
+      },
+    }) => {
       if ((tumourAltCount && tumourDepth) || (tumourAltCount === 0 || tumourDepth === 0)) {
         return ((tumourAltCount / tumourDepth) * 100).toFixed(0);
+      }
+      if ((rnaAltCount && rnaDepth) || (rnaAltCount === 0 || rnaDepth === 0)) {
+        return 'N/A (RNA)';
       }
       return '';
     },
