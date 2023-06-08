@@ -58,7 +58,7 @@ describe('ArrayCellRenderer', () => {
 
     const elem = await screen.findByText(mockLinkArrayData.test[0]);
 
-    expect(elem).toHaveAttribute('href', `http://${mockLinkArrayData.test[0]}`);
-    expect(screen.queryByText(`http://${mockLinkArrayData.test[1]}`)).toBeNull();
+    expect(elem).toHaveAttribute('href', `${mockLinkArrayData.test[0]}`);
+    expect(screen.queryByText(`${mockLinkArrayData.test[1]}`)).toBeNull();
   });
 });
