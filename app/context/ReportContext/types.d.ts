@@ -53,6 +53,7 @@ type ReportType = {
   users: UserRoleType[];
   oncotreeTumourType: string;
   kbDiseaseMatch: string;
+  m1m2Score: number;
 } & RecordDefaults;
 
 type ReportContextType = {

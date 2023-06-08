@@ -10,13 +10,7 @@ type GeneVariantType = {
   type?: string;
 } & RecordDefaults;
 
-type MicrobialType = {
-  integrationSite: string | null;
-  species: string | null;
-} & RecordDefaults;
-
 export {
   PatientInformationType,
   GeneVariantType,
-  MicrobialType,
 };
