@@ -489,6 +489,7 @@ const RapidSummary = ({
         <PrintTable
           data={therapeuticAssociationResults}
           columnDefs={therapeuticAssociationColDefs.filter((col) => col.headerName !== 'Actions')}
+          collapseableCols={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth', 'comments']}
           fullWidth
         />
       );
@@ -499,6 +500,7 @@ const RapidSummary = ({
             columnDefs={therapeuticAssociationColDefs}
             rowData={therapeuticAssociationResults}
             canEdit={canEdit}
+            collapseColumnFields={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth', 'comments']}
             onEdit={handleMatchedTumourEditStart}
             isPrint={isPrint}
             isPaginated={!isPrint}
@@ -547,6 +549,7 @@ const RapidSummary = ({
         <PrintTable
           data={cancerRelevanceResults}
           columnDefs={cancerRelevanceColDefs.filter((col) => col.headerName !== 'Actions')}
+          collapseableCols={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth']}
           fullWidth
         />
       );
@@ -557,6 +560,7 @@ const RapidSummary = ({
             columnDefs={cancerRelevanceColDefs}
             rowData={cancerRelevanceResults}
             canEdit={canEdit}
+            collapseColumnFields={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth']}
             onEdit={handleCancerRelevanceEditStart}
             isPrint={isPrint}
             isPaginated={!isPrint}
