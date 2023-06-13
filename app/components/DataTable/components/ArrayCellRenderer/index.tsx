@@ -4,25 +4,45 @@ import { ICellRendererParams } from '@ag-grid-community/core';
 
 import './index.scss';
 
+const urlRegex = /^(?:https?:\/\/)?(?:[\w-]+\.)+[a-z]{2,}(?:\/[\w\-\.\/]*)*$/i;
+
 const RenderArrayCell = (field: string, isLink: boolean): (cellParams: ICellRendererParams) => JSX.Element => {
   if (isLink) {
-    return function ArrayCell(cellParams) {
-      if (Array.isArray(cellParams.data[field])) {
-        const cellData = [...cellParams.data[field]].sort();
-        const firstVal = cellData[0].replace(/(pmid:)|(#)/, '');
+    return function ArrayCell({ data }: ICellRendererParams) {
+      if (Array.isArray(data[field])) {
+        const cellData = [...data[field]].sort();
 
-        return (
-          <div>
+        const firstVal = cellData[0]?.replace(/(pmid:)|(#)/, '');
+
+        let link = firstVal;
+        let validLink = false;
+
+        // firstVal might be non-link
+        if (firstVal.match(/^\d+$/)) {
+          link = `https://ncbi.nlm.nih.gov/pubmed/${firstVal}`;
+          validLink = true;
+        } else if (urlRegex.test(firstVal)) {
+          validLink = true;
+        }
+
+        let linkComponent = firstVal;
+
+        if (validLink) {
+          linkComponent = (
             <a
               className="array-cell__link"
-              href={(firstVal.match(/^\d+$/))
-                ? `https://ncbi.nlm.nih.gov/pubmed/${firstVal}`
-                : `http://${firstVal}`}
+              href={link}
               rel="noopener noreferrer"
               target="_blank"
             >
               {firstVal}
             </a>
+          );
+        }
+
+        return (
+          <div>
+            {linkComponent}
             {cellData.length > 1 && (
               <>
                 …
@@ -33,15 +53,15 @@ const RenderArrayCell = (field: string, isLink: boolean): (cellParams: ICellRend
       }
       return (
         <div>
-          {cellParams.data[field]}
+          {data[field]}
         </div>
       );
     };
   }
 
-  return function ArrayCell(cellParams) {
-    if (Array.isArray(cellParams.data[field])) {
-      const cellData = [...cellParams.data[field]].sort();
+  return function ArrayCell({ data }: ICellRendererParams) {
+    if (Array.isArray(data[field])) {
+      const cellData = [...data[field]].sort();
       const [firstVal] = cellData;
 
       if (typeof firstVal === 'string') {
@@ -61,7 +81,7 @@ const RenderArrayCell = (field: string, isLink: boolean): (cellParams: ICellRend
     }
     return (
       <div>
-        {`${cellParams.data[field] === null ? '' : cellParams.data[field]}`}
+        {`${data[field] === null ? '' : data[field]}`}
       </div>
     );
   };

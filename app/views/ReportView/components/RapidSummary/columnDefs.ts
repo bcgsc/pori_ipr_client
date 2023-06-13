@@ -34,13 +34,15 @@ const getGenomicEvent = ({ data }) => {
 const therapeuticAssociationColDefs = [
   {
     headerName: 'Genomic Events',
-    colId: 'Genomic Events',
+    colId: 'genomicEvents',
+    field: 'genomicEvents',
     valueGetter: getGenomicEvent,
     hide: false,
   },
   {
     headerName: 'Alt/Total (Tumour)',
     colId: 'Alt/Total (Tumour)',
+    field: 'Alt/Total (Tumour)',
     valueGetter: ({
       data: {
         tumourAltCount, tumourDepth, rnaAltCount, rnaDepth,
@@ -58,6 +60,7 @@ const therapeuticAssociationColDefs = [
   },
   {
     headerName: 'VAF %',
+    field: 'tumourAltCount/tumourDepth',
     colId: 'tumourAltCount/tumourDepth',
     valueGetter: ({
       data: {
@@ -68,21 +71,21 @@ const therapeuticAssociationColDefs = [
         return ((tumourAltCount / tumourDepth) * 100).toFixed(0);
       }
       if ((rnaAltCount && rnaDepth) || (rnaAltCount === 0 || rnaDepth === 0)) {
-        return `${rnaAltCount}/${rnaDepth}`;
+        return 'N/A (RNA)';
       }
       return '';
     },
     hide: false,
   },
   {
-    headerName: 'Potential Clinical Association',
-    colId: 'potentialClinicalAssociation',
-    field: 'potentialClinicalAssociation',
+    headerName: 'Comments',
+    field: 'comments',
     hide: false,
   },
   {
-    headerName: 'Comments',
-    field: 'comments',
+    headerName: 'Potential Clinical Association',
+    colId: 'potentialClinicalAssociation',
+    field: 'potentialClinicalAssociation',
     hide: false,
   },
   {
@@ -107,6 +110,7 @@ const cancerRelevanceColDefs = [
   {
     headerName: 'Alt/Total (Tumour)',
     colId: 'Alt/Total (Tumour)',
+    field: 'Alt/Total (Tumour)',
     valueGetter: ({
       data: {
         tumourAltCount, tumourDepth, rnaAltCount, rnaDepth,
@@ -125,9 +129,17 @@ const cancerRelevanceColDefs = [
   {
     headerName: 'VAF %',
     colId: 'tumourAltCount/tumourDepth',
-    valueGetter: ({ data: { tumourAltCount, tumourDepth } }) => {
+    field: 'tumourAltCount/tumourDepth',
+    valueGetter: ({
+      data: {
+        tumourAltCount, tumourDepth, rnaAltCount, rnaDepth,
+      },
+    }) => {
       if ((tumourAltCount && tumourDepth) || (tumourAltCount === 0 || tumourDepth === 0)) {
         return ((tumourAltCount / tumourDepth) * 100).toFixed(0);
+      }
+      if ((rnaAltCount && rnaDepth) || (rnaAltCount === 0 || rnaDepth === 0)) {
+        return 'N/A (RNA)';
       }
       return '';
     },
