@@ -3,6 +3,7 @@ import React, {
 } from 'react';
 import {
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -12,6 +13,7 @@ import {
 } from '@mui/material';
 
 import api from '@/services/api';
+import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
 import { UserType } from '@/common';
 import ReportAutocomplete from '@/components/ReportAutocomplete';
@@ -51,6 +53,25 @@ const AddEditProjectDialog = ({
   const [users, setUsers] = useState<UserType[]>([]);
   const [reports, setReports] = useState<ShortReportType[]>([]);
   const [apiCallQueue, apiCallQueueDispatch] = useReducer(reducer, []);
+
+  const [isReportsLoading, setIsReportsLoading] = useState(true);
+
+  useEffect(() => {
+    if (isOpen) {
+      const getData = async () => {
+        try {
+          const resp = await api.get(`/project/${editData.ident}/reports`).request();
+          setReports(resp);
+        } catch (err) {
+          console.error(err);
+          snackbar.error(`Error: failed to get reports`);
+        } finally {
+          setIsReportsLoading(false);
+        }
+      };
+      getData();
+    }
+  }, [onClose, isOpen, editData.ident]);
 
   useEffect(() => {
     if (editData) {
@@ -152,6 +173,9 @@ const AddEditProjectDialog = ({
               onSubmit={handleReportSubmit}
               label="Add Report"
             />
+            { isReportsLoading 
+              ? <CircularProgress />
+              : (
             <DataTable
               rowData={reports}
               columnDefs={reportColumnDefs}
@@ -159,6 +183,7 @@ const AddEditProjectDialog = ({
               onDelete={handleReportDelete}
               canDelete
             />
+              )}
           </>
         )}
       </DialogContent>
