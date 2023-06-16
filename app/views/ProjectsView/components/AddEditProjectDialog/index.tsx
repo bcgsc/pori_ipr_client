@@ -78,13 +78,11 @@ const AddEditProjectDialog = ({
       const {
         name: editName,
         users: editUsers,
-        reports: editReports,
       } = editData;
 
       setDialogTitle('Edit project');
       setProjectName(editName);
       setUsers(editUsers);
-      setReports(editReports);
     } else {
       setDialogTitle('Add project');
       setProjectName('');
