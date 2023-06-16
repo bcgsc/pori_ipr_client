@@ -10,6 +10,7 @@ import {
   DialogTitle,
   TextField,
   FormControl,
+  Typography,
 } from '@mui/material';
 
 import api from '@/services/api';
@@ -156,6 +157,9 @@ const AddEditProjectDialog = ({
         </FormControl>
         {editData && (
           <>
+            <Typography className="edit-dialog__section-title" variant="h3">
+              Users
+            </Typography>
             <UserAutocomplete
               onSubmit={handleUserSubmit}
               label="Add User"
@@ -167,6 +171,9 @@ const AddEditProjectDialog = ({
               onDelete={handleUserDelete}
               canDelete
             />
+            <Typography className="edit-dialog__section-title" variant="h3">
+              Reports
+            </Typography>
             <ReportAutocomplete
               onSubmit={handleReportSubmit}
               label="Add Report"
@@ -174,13 +181,13 @@ const AddEditProjectDialog = ({
             { isReportsLoading 
               ? <CircularProgress />
               : (
-            <DataTable
-              rowData={reports}
-              columnDefs={reportColumnDefs}
-              canViewDetails={false}
-              onDelete={handleReportDelete}
-              canDelete
-            />
+                <DataTable
+                  rowData={reports}
+                  columnDefs={reportColumnDefs}
+                  canViewDetails={false}
+                  onDelete={handleReportDelete}
+                  canDelete
+                />
               )}
           </>
         )}
