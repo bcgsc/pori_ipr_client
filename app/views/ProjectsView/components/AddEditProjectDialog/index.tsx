@@ -3,15 +3,18 @@ import React, {
 } from 'react';
 import {
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   TextField,
   FormControl,
+  Typography,
 } from '@mui/material';
 
 import api from '@/services/api';
+import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
 import { UserType } from '@/common';
 import ReportAutocomplete from '@/components/ReportAutocomplete';
@@ -52,18 +55,35 @@ const AddEditProjectDialog = ({
   const [reports, setReports] = useState<ShortReportType[]>([]);
   const [apiCallQueue, apiCallQueueDispatch] = useReducer(reducer, []);
 
+  const [isReportsLoading, setIsReportsLoading] = useState(true);
+
+  useEffect(() => {
+    if (isOpen) {
+      const getData = async () => {
+        try {
+          const resp = await api.get(`/project/${editData.ident}/reports`).request();
+          setReports(resp);
+        } catch (err) {
+          console.error(err);
+          snackbar.error(`Error: failed to get reports`);
+        } finally {
+          setIsReportsLoading(false);
+        }
+      };
+      getData();
+    }
+  }, [onClose, isOpen, editData.ident]);
+
   useEffect(() => {
     if (editData) {
       const {
         name: editName,
         users: editUsers,
-        reports: editReports,
       } = editData;
 
       setDialogTitle('Edit project');
       setProjectName(editName);
       setUsers(editUsers);
-      setReports(editReports);
     } else {
       setDialogTitle('Add project');
       setProjectName('');
@@ -137,6 +157,9 @@ const AddEditProjectDialog = ({
         </FormControl>
         {editData && (
           <>
+            <Typography className="edit-dialog__section-title" variant="h3">
+              Users
+            </Typography>
             <UserAutocomplete
               onSubmit={handleUserSubmit}
               label="Add User"
@@ -148,17 +171,24 @@ const AddEditProjectDialog = ({
               onDelete={handleUserDelete}
               canDelete
             />
+            <Typography className="edit-dialog__section-title" variant="h3">
+              Reports
+            </Typography>
             <ReportAutocomplete
               onSubmit={handleReportSubmit}
               label="Add Report"
             />
-            <DataTable
-              rowData={reports}
-              columnDefs={reportColumnDefs}
-              canViewDetails={false}
-              onDelete={handleReportDelete}
-              canDelete
-            />
+            { isReportsLoading 
+              ? <CircularProgress />
+              : (
+                <DataTable
+                  rowData={reports}
+                  columnDefs={reportColumnDefs}
+                  canViewDetails={false}
+                  onDelete={handleReportDelete}
+                  canDelete
+                />
+              )}
           </>
         )}
       </DialogContent>
