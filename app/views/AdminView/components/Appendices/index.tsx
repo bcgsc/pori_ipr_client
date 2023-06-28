@@ -3,7 +3,7 @@ import React, {
 } from 'react';
 import { CircularProgress } from '@mui/material';
 import { RecordDefaults, AppendixType } from '@/common';
-import AppendixEditor from '@/components/AppendixEditor';
+import IPRWYSIWYGEditor from '@/components/IPRWYSIWYGEditor';
 import sanitizeHtml from 'sanitize-html';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
@@ -114,7 +114,8 @@ function Appendices(): JSX.Element {
             canEdit
             onEdit={handleOnEdit}
           />
-          <AppendixEditor
+          <IPRWYSIWYGEditor
+            title="Edit Appendix"
             isOpen={isEditing}
             text={editingData?.appendix?.text}
             onClose={handleEditClose}
