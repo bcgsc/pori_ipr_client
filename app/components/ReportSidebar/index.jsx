@@ -43,24 +43,20 @@ const ReportSidebar = (props) => {
         </ListItem>
         {allSections.map((section) => (
           <React.Fragment key={section.name}>
-            {section.uri && (
-              <>
-                {visibleSections.includes(section.uri) && (
-                  <Link to={{ pathname: section.uri }} className="report-sidebar__list-link">
-                    <ListItem classes={{
-                      root: `
-                        report-sidebar__list-item
-                        ${pathname.split('/').pop() === section.uri ? 'report-sidebar__list-item--active' : ''}
-                      `,
-                    }}
-                    >
-                      <ListItemText>
-                        {section.name}
-                      </ListItemText>
-                    </ListItem>
-                  </Link>
-                )}
-              </>
+            {section.uri && visibleSections.includes(section.uri) && (
+              <Link to={({ pathname: pn }) => `${pn.replace(/\/[^\/]*$/, '')}/${section.uri}`} className="report-sidebar__list-link">
+                <ListItem classes={{
+                  root: `
+                    report-sidebar__list-item
+                    ${pathname.split('/').pop() === section.uri ? 'report-sidebar__list-item--active' : ''}
+                  `,
+                }}
+                >
+                  <ListItemText>
+                    {section.name}
+                  </ListItemText>
+                </ListItem>
+              </Link>
             )}
             {section.children.some((child) => visibleSections.includes(child.uri)) && (
               <ListItem classes={{ root: 'report-sidebar__list-item report-sidebar__list-item--no-hover' }}>
@@ -69,35 +65,31 @@ const ReportSidebar = (props) => {
                 </ListItemText>
               </ListItem>
             )}
-            <>
-              {Boolean(section.children.length) && (
-                <>
-                  {section.children.map((child) => (
-                    <React.Fragment key={child.uri}>
-                      {visibleSections.includes(child.uri) && (
-                        <Link
-                          key={child.uri}
-                          to={{ pathname: child.uri }}
-                          className="report-sidebar__list-link"
-                        >
-                          <ListItem classes={{
-                            root: `
-                              report-sidebar__list-item--indented
-                              ${pathname.split('/').pop() === child.uri ? 'report-sidebar__list-item--active' : ''}
-                            `,
-                          }}
-                          >
-                            <ListItemText>
-                              {child.name}
-                            </ListItemText>
-                          </ListItem>
-                        </Link>
-                      )}
-                    </React.Fragment>
-                  ))}
-                </>
-              )}
-            </>
+            {Boolean(section.children.length) && (
+              section.children.map((child) => (
+                <React.Fragment key={child.uri}>
+                  {visibleSections.includes(child.uri) && (
+                  <Link
+                    key={child.uri}
+                    to={({ pathname: pn }) => `${pn.replace(/\/[^\/]*$/, '')}/${child.uri}`}
+                    className="report-sidebar__list-link"
+                  >
+                    <ListItem classes={{
+                      root: `
+                        report-sidebar__list-item--indented
+                        ${pathname.split('/').pop() === child.uri ? 'report-sidebar__list-item--active' : ''}
+                      `,
+                    }}
+                    >
+                      <ListItemText>
+                        {child.name}
+                      </ListItemText>
+                    </ListItem>
+                  </Link>
+                  )}
+                </React.Fragment>
+              ))
+            )}
           </React.Fragment>
         ))}
         {canEdit && (
