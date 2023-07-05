@@ -2,10 +2,10 @@ import React, {
   createContext, ReactChild, useMemo, useContext,
 } from 'react';
 import SecurityContext from '@/context/SecurityContext';
-import checkAccess from '@/utils/checkAccess';
+import { checkAccess } from '@/utils/checkAccess';
 import UserContextInterface from './interfaces';
 
-const EDIT_ACCESS = ['*'];
+const EDIT_ACCESS = ['admin', 'analyst', 'bioinformatician', 'projects', 'manager'];
 const EDIT_BLOCK = ['clinician', 'collaborator'];
 
 const UserContext = createContext<UserContextInterface>({
