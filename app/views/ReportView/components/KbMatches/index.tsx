@@ -9,6 +9,8 @@ import {
   FilterList,
 } from '@mui/icons-material';
 
+import { useDebounce } from 'use-debounce';
+
 import api, { ApiCallSet } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DemoDescription from '@/components/DemoDescription';
@@ -33,6 +35,8 @@ const titleMap = {
   targetedSomaticGenes: 'Detected Alterations From Somatic Targeted Gene Report',
 };
 
+const FILTER_DEBOUNCE_TIME = 500; // ms before input text for filter refreshes for tables
+
 type KbMatchesProps = {
   /* Should the print version be displayed? */
   isPrint?: boolean;
@@ -47,6 +51,7 @@ const KbMatches = ({
   const { canEdit } = useUser();
 
   const [filterText, setFilterText] = useState('');
+  const [debouncedFilterText] = useDebounce(filterText, FILTER_DEBOUNCE_TIME);
   const [groupedMatches, setGroupedMatches] = useState({
     therapeutic: [],
     biological: [],
@@ -172,7 +177,7 @@ const KbMatches = ({
             canDelete={canEdit}
             canToggleColumns
             columnDefs={(key === 'targetedSomaticGenes') ? targetedColumnDefs : columnDefs}
-            filterText={filterText}
+            filterText={debouncedFilterText}
             isPrint={isPrint}
             onDelete={handleDelete}
             rowData={value}
