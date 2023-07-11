@@ -99,40 +99,45 @@ const AnalystComments = ({
   };
 
   const handleEditorClose = useCallback(async (editedComments?: string) => {
-    setIsEditorOpen(false);
-    if (editedComments) {
-      const sanitizedText = sanitizeHtml(editedComments, {
-        allowedAttributes: {
-          a: ['href', 'target', 'rel'],
-        },
-        transformTags: {
-          a: (_tagName, attribs) => ({
-            tagName: 'a',
-            attribs: {
-              href: attribs.href,
-              target: '_blankk',
-              rel: 'noopener noreferrer',
-            },
-          }),
-        },
-      });
-      const commentCall = api.put(
-        `/reports/${report.ident}/summary/analyst-comments`,
-        { comments: sanitizedText },
-      );
-
-      if (isSigned) {
-        showConfirmDialog(commentCall);
-      } else {
-        // If signed, the dialog that opens up will refesh the page instead
-        const commentsResp = await commentCall.request();
-        setComments(sanitizeHtml(commentsResp?.comments, {
-          allowedSchemes: [],
+    try {
+      if (editedComments) {
+        const sanitizedText = sanitizeHtml(editedComments, {
           allowedAttributes: {
-            '*': ['style'],
+            a: ['href', 'target', 'rel'],
           },
-        }));
+          transformTags: {
+            a: (_tagName, attribs) => ({
+              tagName: 'a',
+              attribs: {
+                href: attribs.href,
+                target: '_blankk',
+                rel: 'noopener noreferrer',
+              },
+            }),
+          },
+        });
+        const commentCall = api.put(
+          `/reports/${report.ident}/summary/analyst-comments`,
+          { comments: sanitizedText },
+        );
+
+        if (isSigned) {
+          showConfirmDialog(commentCall);
+        } else {
+          // If signed, the dialog that opens up will refesh the page instead
+          const commentsResp = await commentCall.request();
+          setComments(sanitizeHtml(commentsResp?.comments, {
+            allowedSchemes: [],
+            allowedAttributes: {
+              '*': ['style'],
+            },
+          }));
+        }
       }
+    } catch (e) {
+      snackbar.error(`Error saving edit: ${e.message ?? e}`);
+    } finally {
+      setIsEditorOpen(false);
     }
   }, [report, isSigned, showConfirmDialog]);
 
