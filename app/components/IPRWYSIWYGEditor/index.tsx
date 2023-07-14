@@ -9,7 +9,7 @@ import {
   DialogContent,
   DialogActions,
 } from '@mui/material';
-import 'react-quill/dist/quill.snow.css';
+
 import './index.scss';
 
 const defaultQuillProps: ReactQuillProps = {
@@ -29,13 +29,9 @@ const defaultQuillProps: ReactQuillProps = {
       matchVisual: false,
     },
   },
-  style: {
-    fontFamily: 'Roboto',
-    width: '100%',
-  },
 };
 
-type AppendixEditorProps = {
+type IPRWYSIWYGEditorProps = {
   text: string;
   isOpen: boolean;
   // Returns null if nothing is edited
@@ -43,12 +39,12 @@ type AppendixEditorProps = {
   title?: string;
 };
 
-const AppendixEditor = ({
+const IPRWYSIWYGEditor = ({
   text,
   isOpen,
   onClose,
-  title = 'Edit Appendix',
-}: AppendixEditorProps): JSX.Element => {
+  title = 'IPR WYSIWYG Editor',
+}: IPRWYSIWYGEditorProps): JSX.Element => {
   const [editedText, setEditedText] = useState('');
   const [isDirty, setIsDirty] = useState(false);
 
@@ -69,13 +65,12 @@ const AppendixEditor = ({
     <Dialog fullWidth maxWidth="lg" open={isOpen} onClose={() => onClose(null)}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
-        <div className="AppendixEditor__container">
+        <div>
           <ReactQuill
             {...defaultQuillProps}
             theme="snow"
             defaultValue={text}
             onChange={handleOnEdit}
-
           />
         </div>
       </DialogContent>
@@ -87,5 +82,5 @@ const AppendixEditor = ({
   );
 };
 
-export default AppendixEditor;
-export { AppendixEditorProps };
+export default IPRWYSIWYGEditor;
+export { IPRWYSIWYGEditorProps };

@@ -18,7 +18,7 @@ import ConfirmContext from '@/context/ConfirmContext';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import capitalize from 'lodash/capitalize';
 import useConfirmDialog from '@/hooks/useConfirmDialog';
-import TextEditor from './components/TextEditor';
+import IPRWYSIWYGEditor from '@/components/IPRWYSIWYGEditor';
 
 import './index.scss';
 
@@ -100,14 +100,25 @@ const AnalystComments = ({
 
   const handleEditorClose = useCallback(async (editedComments?: string) => {
     setIsEditorOpen(false);
-    // text returned when nothing is in editor
-    if (editedComments === '<p><br></p>') {
-      editedComments = '';
-    }
-    if (editedComments !== undefined) {
+    if (editedComments) {
+      const sanitizedText = sanitizeHtml(editedComments, {
+        allowedAttributes: {
+          a: ['href', 'target', 'rel'],
+        },
+        transformTags: {
+          a: (_tagName, attribs) => ({
+            tagName: 'a',
+            attribs: {
+              href: attribs.href,
+              target: '_blankk',
+              rel: 'noopener noreferrer',
+            },
+          }),
+        },
+      });
       const commentCall = api.put(
         `/reports/${report.ident}/summary/analyst-comments`,
-        { comments: editedComments },
+        { comments: sanitizedText },
       );
 
       if (isSigned) {
@@ -172,9 +183,10 @@ const AnalystComments = ({
               >
                 <EditIcon />
               </Fab>
-              <TextEditor
+              <IPRWYSIWYGEditor
                 isOpen={isEditorOpen}
-                analystComments={comments}
+                text={comments}
+                title="Edit Comments"
                 onClose={handleEditorClose}
               />
             </>

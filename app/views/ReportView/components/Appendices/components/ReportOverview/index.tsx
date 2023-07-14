@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { CircularProgress, Fab } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import api from '@/services/api';
-import AppendixEditor from '@/components/AppendixEditor';
+import IPRWYSIWYGEditor from '@/components/IPRWYSIWYGEditor';
 import snackbar from '@/services/SnackbarUtils';
 import sanitizeHtml from 'sanitize-html';
 import './index.scss';
@@ -88,7 +88,8 @@ const ReportOverview = ({
             {
               canEdit
               && (
-                <AppendixEditor
+                <IPRWYSIWYGEditor
+                  title="Edit Appendix"
                   isOpen={isEditing}
                   onClose={handleEditClose}
                   text={appendixText}

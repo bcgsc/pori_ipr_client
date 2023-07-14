@@ -3,7 +3,7 @@ import {
   render, screen, fireEvent, cleanup,
 } from '@testing-library/react';
 
-import TextEditor from '..';
+import IPRWYSIWYGEditor from '../index';
 
 const mockText = 'test value <h1>header</h1>';
 
@@ -12,8 +12,8 @@ describe('TextEditor', () => {
 
   test('Provided text is visible', async () => {
     render(
-      <TextEditor
-        analystComments={mockText}
+      <IPRWYSIWYGEditor
+        text={mockText}
         isOpen
         onClose={() => {}}
       />,
@@ -25,8 +25,8 @@ describe('TextEditor', () => {
   test('Close function is called', () => {
     const handleClose = jest.fn();
     render(
-      <TextEditor
-        analystComments={mockText}
+      <IPRWYSIWYGEditor
+        text={mockText}
         isOpen
         onClose={handleClose}
       />,
