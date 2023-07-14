@@ -3,15 +3,15 @@ import React, {
 } from 'react';
 import SecurityContext from '@/context/SecurityContext';
 
-import checkAccess from '@/utils/checkAccess';
+import { checkAccess, ALL_ROLES } from '@/utils/checkAccess';
 import ResourceContextType from './types';
 
 const GERMLINE_ACCESS = ['admin', 'analyst', 'bioinformatician', 'projects', 'manager'];
-const GERMLINE_BLOCK = ['clinician', 'collaborator'];
+const GERMLINE_BLOCK = ALL_ROLES;
 const REPORTS_ACCESS = ['*'];
 const REPORTS_BLOCK = [];
 const ADMIN_ACCESS = ['admin'];
-const ADMIN_BLOCK = [];
+const ADMIN_BLOCK = ALL_ROLES;
 
 type UseResourcesReturnType = {
   germlineAccess: boolean;
