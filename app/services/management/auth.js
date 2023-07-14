@@ -2,9 +2,9 @@ import Keycloak from 'keycloak-js';
 import jwtDecode from 'jwt-decode';
 
 const keycloak = Keycloak({
-  'realm': window._env_.KEYCLOAK_REALM,
-  'clientId': window._env_.KEYCLOAK_CLIENT_ID,
-  'url': window._env_.KEYCLOAK_URL,
+  realm: window._env_.KEYCLOAK_REALM,
+  clientId: window._env_.KEYCLOAK_CLIENT_ID,
+  url: window._env_.KEYCLOAK_URL,
 });
 
 const getReferrerUri = () => localStorage.getItem(CONFIG.STORAGE.REFERRER);
@@ -68,20 +68,23 @@ const login = async (referrerUri = null) => {
   setReferrerUri(referrerUri);
 
   /* setting promiseType = native does not work for later functions inside the closure
-    checkLoginIframe: true breaks for some users in chrome causing an infinite loop
-    see: https://szoradi-balazs.medium.com/keycloak-login-infinite-loop-9005bcd9a915
+  checkLoginIframe: true breaks for some users in chrome causing an infinite loop
+  see: https://szoradi-balazs.medium.com/keycloak-login-infinite-loop-9005bcd9a915
   */
-  await keycloak.init({
-    onLoad: 'login-required',
-    checkLoginIframe: false,
-  });
+  if (!keycloak.authenticated === undefined || !keycloak.authenticated) {
+    await keycloak.init({
+      onLoad: 'login-required',
+      checkLoginIframe: false,
+    });
+  } else {
+    await keycloak.updateToken(Number.MAX_SAFE_INTEGER);
+  }
 };
 
 const logout = async () => {
   try {
-    await keycloak.init();
     delete localStorage[CONFIG.STORAGE.KEYCLOAK];
-    await keycloak.logout({
+    await keycloak?.logout({
       redirectUri: window.location.uri,
     });
     return null;
