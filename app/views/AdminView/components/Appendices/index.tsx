@@ -79,7 +79,7 @@ function Appendices(): JSX.Element {
               tagName: 'a',
               attribs: {
                 href: attribs.href,
-                target: '_blankk',
+                target: '_blank',
                 rel: 'noopener noreferrer',
               },
             }),
