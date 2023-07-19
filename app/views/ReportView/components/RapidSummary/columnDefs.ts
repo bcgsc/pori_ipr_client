@@ -31,6 +31,17 @@ const getGenomicEvent = ({ data }) => {
   return hgvsGenomic;
 };
 
+const ACTIONS_COLDEF = {
+  headerName: 'Actions',
+  colId: 'Actions',
+  cellRenderer: 'ActionCellRenderer',
+  pinned: 'right',
+  hide: false,
+  sortable: false,
+  suppressMenu: true,
+  minWidth: 88,
+};
+
 const therapeuticAssociationColDefs = [
   {
     headerName: 'Genomic Events',
@@ -89,13 +100,7 @@ const therapeuticAssociationColDefs = [
     hide: false,
   },
   {
-    headerName: 'Actions',
-    colId: 'Actions',
-    cellRenderer: 'ActionCellRenderer',
-    pinned: 'right',
-    hide: false,
-    sortable: false,
-    suppressMenu: true,
+    ...ACTIONS_COLDEF,
   },
 ];
 
@@ -151,13 +156,7 @@ const cancerRelevanceColDefs = [
     hide: false,
   },
   {
-    headerName: 'Actions',
-    colId: 'Actions',
-    cellRenderer: 'ActionCellRenderer',
-    pinned: 'right',
-    hide: false,
-    sortable: false,
-    suppressMenu: true,
+    ...ACTIONS_COLDEF,
   },
 ];
 
