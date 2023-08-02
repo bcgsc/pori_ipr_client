@@ -3,9 +3,17 @@ import React, {
   Suspense,
   useState,
   useMemo,
+  useEffect,
+  useCallback,
+  useRef,
+  memo,
 } from 'react';
-import { Route, Switch, Redirect } from 'react-router-dom';
-import { CircularProgress } from '@mui/material';
+import {
+  Route, Switch, Redirect, useHistory,
+} from 'react-router-dom';
+import {
+  CircularProgress, Button, Dialog, DialogContent, DialogTitle, DialogActions,
+} from '@mui/material';
 
 import AuthenticatedRoute from '@/components/AuthenticatedRoute';
 import SidebarContext from '@/context/SidebarContext';
@@ -14,7 +22,8 @@ import { UserContextProvider } from '@/context/UserContext';
 import { ResourceContextProvider } from '@/context/ResourceContext';
 import NavBar from '@/components/NavBar';
 import Sidebar from '@/components/Sidebar';
-
+import snackbar from '@/services/SnackbarUtils';
+import { keycloak } from '@/services/management/auth';
 import './index.scss';
 
 const LoginView = lazy(() => import('../LoginView'));
@@ -28,6 +37,82 @@ const LinkOutView = lazy(() => import('../LinkOutView'));
 const PatientsView = lazy(() => import('../PatientsView'));
 const TemplateView = lazy(() => import('../TemplateView'));
 const ProjectsView = lazy(() => import('../ProjectsView'));
+
+// What fraction of TIME ELAPSED should the user be notified of expiring token
+const TIMEOUT_FRACTION = 0.9;
+
+type TimeoutModalPropTypes = {
+  authorizationToken: string;
+  setAuthorizationToken: React.Dispatch<React.SetStateAction<string>>;
+};
+
+const TimeoutModal = memo(({ authorizationToken, setAuthorizationToken }: TimeoutModalPropTypes) => {
+  const { location: { key: locationKey } } = useHistory();
+  const [open, setIsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const timerRef = useRef(null);
+
+  // Refresh token everytime user navigates the page, much cleaner than if they did ANY action
+  useEffect(() => {
+    const refresh = async () => {
+      if (keycloak.authenticated) {
+        await keycloak.updateToken(Number.MAX_SAFE_INTEGER);
+        setAuthorizationToken(() => keycloak.token);
+      }
+    };
+    refresh();
+  }, [locationKey, setAuthorizationToken]);
+
+  // First load is untracked, until authorizationToken changes
+  useEffect(() => {
+    if (authorizationToken) {
+      const timeout = ((keycloak.tokenParsed.exp * 1000 - Date.now()) * TIMEOUT_FRACTION);
+
+      timerRef.current = setTimeout(() => { setIsOpen(true); }, timeout);
+    }
+    return () => {
+      if (timerRef.current) { clearTimeout(timerRef.current); }
+    };
+  }, [authorizationToken]);
+
+  const handleClose = useCallback((_evt, reason) => {
+    if (reason !== 'backdropClick') { setIsOpen(false); }
+  }, []);
+
+  const handleConfirm = useCallback(async () => {
+    const timeoutTime = ((keycloak.tokenParsed.exp * 1000) - Date.now());
+    try {
+      setIsLoading(true);
+      await keycloak?.updateToken(timeoutTime > 0 ? timeoutTime : 0);
+      setAuthorizationToken(keycloak.token);
+      setIsOpen(false);
+    } catch (e) {
+      snackbar.error(`Unable to refresh: ${e?.message}`);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [setAuthorizationToken]);
+
+  return (
+    <Dialog open={open} onClose={handleClose} onBackdropClick={null}>
+      <DialogTitle>Session Timeout Notification</DialogTitle>
+      <DialogContent>
+        <p>Your session is about to expire, would you like to remain logged in?</p>
+      </DialogContent>
+      <DialogActions>
+        <Button disabled={isLoading} onClick={() => setIsOpen(false)}>Close</Button>
+        <Button
+          disabled={isLoading}
+          onClick={handleConfirm}
+          color="primary"
+          variant="contained"
+        >
+          {isLoading ? <CircularProgress color="inherit" size={24} /> : 'Yes'}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+});
 
 /**
  * Entry point to application. Handles routing, app theme, and logged in state.
@@ -60,6 +145,7 @@ const Main = (): JSX.Element => {
                   </>
                 ) : null}
                 <Suspense fallback={(<CircularProgress color="secondary" />)}>
+                  <TimeoutModal authorizationToken={authorizationToken} setAuthorizationToken={setAuthorizationToken} />
                   <Switch>
                     <Route component={LoginView} path="/login" />
                     <Route component={LinkOutView} path="/graphkb" />
