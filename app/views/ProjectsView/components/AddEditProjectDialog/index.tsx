@@ -1,5 +1,5 @@
 import React, {
-  useState, useEffect, useCallback, useReducer,
+  useState, useEffect, useCallback,
 } from 'react';
 import {
   Button,
@@ -30,16 +30,15 @@ type AddEditProjectDialogProps = {
   editData: null | ProjectType;
 };
 
-const reducer = (state, action) => {
-  switch (action.type) {
-    case 'add':
-      return [...state, action.payload];
-    case 'reset':
-      return [];
-    default:
-      return state;
-  }
-};
+function getIdentDiff(originalArray, updatedArray) {
+  const addedObjects = updatedArray.filter((updatedObj) => !originalArray.find((originalObj) => originalObj.ident === updatedObj.ident));
+  const removedObjects = originalArray.filter((originalObj) => !updatedArray.find((updatedObj) => updatedObj.ident === originalObj.ident));
+
+  return {
+    added: addedObjects,
+    removed: removedObjects,
+  };
+}
 
 const AddEditProjectDialog = ({
   isOpen,
@@ -47,13 +46,14 @@ const AddEditProjectDialog = ({
   editData,
 }: AddEditProjectDialogProps): JSX.Element => {
   const [projectName, setProjectName] = useState<string>('');
+  const [projectDesc, setProjectDesc] = useState<string>('');
   const [errors, setErrors] = useState<{ projectName: boolean }>({
     projectName: false,
   });
   const [dialogTitle, setDialogTitle] = useState<string>('');
   const [users, setUsers] = useState<UserType[]>([]);
   const [reports, setReports] = useState<ShortReportType[]>([]);
-  const [apiCallQueue, apiCallQueueDispatch] = useReducer(reducer, []);
+  const [existingReports, setExistingReports] = useState<ShortReportType[]>([]);
 
   const [isReportsLoading, setIsReportsLoading] = useState(true);
 
@@ -62,33 +62,43 @@ const AddEditProjectDialog = ({
       const getData = async () => {
         try {
           const resp = await api.get(`/project/${editData.ident}/reports`).request();
+          // Existing reports is solely for calculating difference for submit API call
+          setExistingReports(resp);
           setReports(resp);
         } catch (err) {
           console.error(err);
-          snackbar.error(`Error: failed to get reports`);
+          snackbar.error('Error: failed to get reports');
         } finally {
           setIsReportsLoading(false);
         }
       };
-      getData();
-    }
-  }, [onClose, isOpen, editData.ident]);
 
+      if (editData?.ident) {
+        getData();
+      } else {
+        setIsReportsLoading(false);
+      }
+    }
+  }, [onClose, isOpen, editData?.ident]);
+
+  // Populate initial data, if any
   useEffect(() => {
     if (editData) {
       const {
         name: editName,
         users: editUsers,
+        description: editDesc,
       } = editData;
 
       setDialogTitle('Edit project');
-      setProjectName(editName);
+      setProjectName(editName ?? '');
+      setProjectDesc(editDesc ?? '');
       setUsers(editUsers);
     } else {
       setDialogTitle('Add project');
       setProjectName('');
+      setProjectDesc('');
       setUsers([]);
-      setReports([]);
     }
   }, [editData]);
 
@@ -96,47 +106,70 @@ const AddEditProjectDialog = ({
     if (projectName.length) {
       const newEntry = {
         name: projectName,
+        description: projectDesc,
       };
 
-      let createdResp;
+      // Update project specific fields
+      let projectUpdateCall;
       if (editData) {
-        createdResp = await api.put(`/project/${editData.ident}`, newEntry).request();
+        projectUpdateCall = api.put(`/project/${editData.ident}`, newEntry);
       } else {
-        createdResp = await api.post('/project', newEntry).request();
+        projectUpdateCall = api.post('/project', newEntry);
       }
 
-      await Promise.all(apiCallQueue.map((call) => call.request()));
-      const updatedProject = await api.get(`/project/${createdResp.ident}`).request();
+      try {
+        const projectUpdateResp = await projectUpdateCall.request();
 
-      onClose(updatedProject);
+        // Handle relationships to projects
+        const { added: usersToAdd, removed: usersToRemove } = getIdentDiff(editData.users ?? [], users);
+        const { added: reportsToAdd, removed: reportsToRemove } = getIdentDiff(existingReports ?? [], reports);
+
+        const apiCallQueue = [];
+        usersToAdd.forEach((u) => apiCallQueue.push(api.post(`/project/${projectUpdateResp.ident}/user`, { user: u.ident })));
+        usersToRemove.forEach((u) => apiCallQueue.push(api.del(`/project/${projectUpdateResp.ident}/user`, { user: u.ident })));
+        reportsToAdd.forEach((r) => apiCallQueue.push(api.post(`/project/${projectUpdateResp.ident}/reports`, { report: r.ident })));
+        reportsToRemove.forEach((r) => apiCallQueue.push(api.del(`/project/${projectUpdateResp.ident}/reports`, { report: r.ident })));
+
+        await Promise.all(apiCallQueue.map((call) => call.request()));
+
+        // Obtain new project
+        const updatedProject = await api.get(`/project/${projectUpdateResp.ident}`).request();
+        onClose(updatedProject);
+      } catch (e) {
+        snackbar.error(`Error ${editData ? 'editing' : 'creating'} report, ${e?.message}`);
+      }
     } else {
       setErrors({
         projectName: true,
       });
     }
-  }, [projectName, editData, apiCallQueue, onClose]);
+  }, [projectName, projectDesc, editData, users, existingReports, reports, onClose]);
 
   const handleReportDelete = useCallback(({ ident }) => {
-    apiCallQueueDispatch({ type: 'add', payload: api.del(`/project/${editData.ident}/reports`, { report: ident }) });
-    const newReports = reports.filter((entry) => entry.ident !== ident);
-    setReports(newReports);
-  }, [editData, reports]);
+    setReports((oldReports) => oldReports.filter((entry) => entry.ident !== ident));
+  }, []);
 
   const handleUserDelete = useCallback(({ ident }) => {
-    apiCallQueueDispatch({ type: 'add', payload: api.del(`/project/${editData.ident}/user`, { user: ident }) });
-    const newUsers = users.filter((user) => user.ident !== ident);
-    setUsers(newUsers);
-  }, [editData, users]);
+    setUsers((oldUsers) => oldUsers.filter((entry) => entry.ident !== ident));
+  }, []);
 
-  const handleUserSubmit = useCallback((user) => {
-    apiCallQueueDispatch({ type: 'add', payload: api.post(`/project/${editData.ident}/user`, { user: user.ident }) });
-    setUsers((prevVal) => [...prevVal, user]);
-  }, [editData]);
+  const handleUserAdd = useCallback((user) => {
+    setUsers((prevVal) => {
+      if (!prevVal.find(({ ident }) => user.ident === ident)) {
+        return [...prevVal, user];
+      }
+      return prevVal;
+    });
+  }, []);
 
-  const handleReportSubmit = useCallback((report) => {
-    apiCallQueueDispatch({ type: 'add', payload: api.post(`/project/${editData.ident}/reports`, { report: report.ident }) });
-    setReports((prevVal) => [...prevVal, report]);
-  }, [editData]);
+  const handleReportAdd = useCallback((report) => {
+    setReports((prevVal) => {
+      if (!prevVal.find(({ ident }) => report.ident === ident)) {
+        return [...prevVal, report];
+      }
+      return prevVal;
+    });
+  }, []);
 
   return (
     <Dialog open={isOpen} onClose={() => onClose(null)} maxWidth="sm" fullWidth className="edit-dialog">
@@ -155,42 +188,49 @@ const AddEditProjectDialog = ({
             required
           />
         </FormControl>
-        {editData && (
-          <>
-            <Typography className="edit-dialog__section-title" variant="h3">
-              Users
-            </Typography>
-            <UserAutocomplete
-              onSubmit={handleUserSubmit}
-              label="Add User"
-            />
+        <FormControl fullWidth classes={{ root: 'add-user__form-container' }} variant="outlined">
+          <TextField
+            value={projectDesc}
+            fullWidth
+            onChange={({ target: { value } }) => setProjectDesc(value)}
+            label="Project Description"
+            variant="outlined"
+            className="add-user__text-field"
+          />
+        </FormControl>
+
+        <Typography className="edit-dialog__section-title" variant="h3">
+          Users
+        </Typography>
+        <UserAutocomplete
+          onSubmit={handleUserAdd}
+          label="Add User"
+        />
+        <DataTable
+          rowData={users}
+          columnDefs={userColumnDefs}
+          canViewDetails={false}
+          onDelete={handleUserDelete}
+          canDelete
+        />
+        <Typography className="edit-dialog__section-title" variant="h3">
+          Reports
+        </Typography>
+        <ReportAutocomplete
+          onSubmit={handleReportAdd}
+          label="Add Report"
+        />
+        { isReportsLoading
+          ? <CircularProgress />
+          : (
             <DataTable
-              rowData={users}
-              columnDefs={userColumnDefs}
+              rowData={reports}
+              columnDefs={reportColumnDefs}
               canViewDetails={false}
-              onDelete={handleUserDelete}
+              onDelete={handleReportDelete}
               canDelete
             />
-            <Typography className="edit-dialog__section-title" variant="h3">
-              Reports
-            </Typography>
-            <ReportAutocomplete
-              onSubmit={handleReportSubmit}
-              label="Add Report"
-            />
-            { isReportsLoading 
-              ? <CircularProgress />
-              : (
-                <DataTable
-                  rowData={reports}
-                  columnDefs={reportColumnDefs}
-                  canViewDetails={false}
-                  onDelete={handleReportDelete}
-                  canDelete
-                />
-              )}
-          </>
-        )}
+          )}
       </DialogContent>
       <DialogActions className="edit-dialog__actions">
         <Button color="primary" onClick={() => onClose(null)}>

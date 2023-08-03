@@ -24,6 +24,12 @@ import snackbar from '@/services/SnackbarUtils';
 import GermlineReportContext, { VariantType } from '@/context/GermlineReportContext';
 
 const CGL_REVIEW_RESULTS_OPTIONS = ['pathogenic', 'likely pathogenic', 'VUS', 'likely benign', 'benign'];
+const PREVIOUSLY_REPORTED_OPTIONS = ['yes', 'no', null];
+const PREVIOUSLY_REPORTED_OPTION_LABELS = {
+  yes: 'Yes',
+  no: 'No',
+  null: 'Unset',
+};
 
 type EditDialogProps = {
   isOpen: boolean;
@@ -182,6 +188,29 @@ const EditDialog = ({
                 <FormControlLabel value="yes" control={<Radio />} label="Yes" />
                 <FormControlLabel value="no" control={<Radio />} label="No" />
               </RadioGroup>
+            </FormControl>
+          )}
+        />
+        <Controller
+          control={control}
+          name="previouslyReported"
+          defaultValue={null}
+          // React yells at this because "null" in this library gets treated the same as "undefined"
+          render={({ field: { onChange, value } }) => (
+            <FormControl fullWidth margin="normal">
+              <FormLabel>Reported in PCP-TGR</FormLabel>
+              <Select
+                value={value}
+                onChange={onChange}
+                displayEmpty
+              >
+                {PREVIOUSLY_REPORTED_OPTIONS
+                  .map((option) => (
+                    <MenuItem key={option} value={option}>
+                      {PREVIOUSLY_REPORTED_OPTION_LABELS[option]}
+                    </MenuItem>
+                  ))}
+              </Select>
             </FormControl>
           )}
         />
