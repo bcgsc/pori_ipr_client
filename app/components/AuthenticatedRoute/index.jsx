@@ -32,7 +32,9 @@ const AuthenticatedRoute = ({
           />
         );
       };
-    } if (!adminAccess && adminRequired) {
+    }
+
+    if (!adminAccess && adminRequired) {
       return () => (
         <Redirect to="/" />
       );

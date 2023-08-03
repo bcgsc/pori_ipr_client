@@ -8,6 +8,7 @@ type ShortReportType = {
 
 type ProjectType = {
   name: string;
+  description: string;
   reports: ShortReportType[];
   users: UserType[];
 } & RecordDefaults;
