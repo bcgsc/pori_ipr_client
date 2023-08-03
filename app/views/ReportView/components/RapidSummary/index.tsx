@@ -290,7 +290,9 @@ const RapidSummary = ({
       },
       {
         term: 'M1M2 Score',
-        value: `${report.m1m2Score}`,
+        value: report.m1m2Score !== null
+          ? `${report.m1m2Score}`
+          : null,
       },
       {
         term: 'Microbial Species',
