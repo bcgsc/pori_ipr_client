@@ -44,6 +44,11 @@ const ACTIONS_COLDEF = {
 
 const therapeuticAssociationColDefs = [
   {
+    headerName: 'Display Name',
+    field: 'displayName',
+    hide: false,
+  },
+  {
     headerName: 'Genomic Events',
     colId: 'genomicEvents',
     field: 'genomicEvents',
@@ -106,6 +111,11 @@ const therapeuticAssociationColDefs = [
 
 const cancerRelevanceColDefs = [
   {
+    headerName: 'Display Name',
+    field: 'displayName',
+    hide: false,
+  },
+  {
     headerName: 'Genomic Events',
     colId: 'genomicEvents',
     field: 'genomicEvents',
@@ -161,6 +171,11 @@ const cancerRelevanceColDefs = [
 ];
 
 const sampleColumnDefs = [
+  {
+    headerName: 'Display Name',
+    field: 'displayName',
+    hide: false,
+  },
   {
     headerName: 'Sample',
     colId: 'Sample',
