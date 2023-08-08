@@ -1,21 +1,20 @@
 import { useState, useEffect, useContext } from 'react';
 
 import SecurityContext from '@/context/SecurityContext';
-import checkAccess from '@/utils/checkAccess';
 
 const EXTERNAL_GROUPS = ['clinician', 'collaborator'];
 
 const useExternalMode = (): boolean => {
   const { userDetails } = useContext(SecurityContext);
 
-  const [isExternalMode, setIsExternalMode] = useState<boolean>();
+  const [isExternalMode, setIsExternalMode] = useState<boolean>(null);
 
   useEffect(() => {
     if (userDetails) {
-      if (!checkAccess(userDetails.groups, EXTERNAL_GROUPS, [])) {
-        setIsExternalMode(false);
-      } else {
+      if (userDetails.groups.some((g) => EXTERNAL_GROUPS.includes(g.name))) {
         setIsExternalMode(true);
+      } else {
+        setIsExternalMode(false);
       }
     }
   }, [userDetails]);

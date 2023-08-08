@@ -3,7 +3,7 @@ import React, {
 } from 'react';
 import { CircularProgress } from '@mui/material';
 import { RecordDefaults, AppendixType } from '@/common';
-import AppendixEditor from '@/components/AppendixEditor';
+import IPRWYSIWYGEditor from '@/components/IPRWYSIWYGEditor';
 import sanitizeHtml from 'sanitize-html';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
@@ -68,38 +68,44 @@ function Appendices(): JSX.Element {
   const handleEditClose = useCallback(async (nextData) => {
     let cancelled = false;
     const isNew = !editingData?.appendix;
-    if (nextData) {
-      const sanitizedText = sanitizeHtml(nextData, {
-        allowedAttributes: {
-          a: ['href', 'target', 'rel'],
-        },
-        transformTags: {
-          a: (_tagName, attribs) => ({
-            tagName: 'a',
-            attribs: {
-              href: attribs.href,
-              target: '_blankk',
-              rel: 'noopener noreferrer',
-            },
-          }),
-        },
-      });
-      const res = await (isNew ? api.post : api.put)(`/templates/${editingData.ident}/appendix`, { text: sanitizedText }).request();
-      if (!cancelled) {
-        setAppendices((currAppendices) => {
-          const index = currAppendices.findIndex((app) => app.ident === editingData.ident);
-          const nextAppendices = [...currAppendices];
-          nextAppendices[index] = {
-            ...nextAppendices[index],
-            appendix: res,
-          };
-          return nextAppendices;
+    try {
+      if (nextData) {
+        const sanitizedText = sanitizeHtml(nextData, {
+          allowedAttributes: {
+            a: ['href', 'target', 'rel'],
+          },
+          transformTags: {
+            a: (_tagName, attribs) => ({
+              tagName: 'a',
+              attribs: {
+                href: attribs.href,
+                target: '_blank',
+                rel: 'noopener noreferrer',
+              },
+            }),
+          },
         });
-        snackbar.success(isNew ? 'Appendix successfully created.' : 'Appendix successfully updated.');
-        setIsEditing(false);
+        const res = await (isNew ? api.post : api.put)(`/templates/${editingData.ident}/appendix`, { text: sanitizedText }).request();
+        if (!cancelled) {
+          setAppendices((currAppendices) => {
+            const index = currAppendices.findIndex((app) => app.ident === editingData.ident);
+            const nextAppendices = [...currAppendices];
+            nextAppendices[index] = {
+              ...nextAppendices[index],
+              appendix: res,
+            };
+            return nextAppendices;
+          });
+          snackbar.success(isNew ? 'Appendix successfully created.' : 'Appendix successfully updated.');
+          setIsEditing(false);
+        }
       }
+    } catch (e) {
+      snackbar.error(`Error editing appendix: ${e.message ?? e}`);
+    } finally {
+      setIsEditing(false);
     }
-    setIsEditing(false);
+
     return function cleanup() { cancelled = true; };
   }, [editingData?.appendix, editingData?.ident]);
 
@@ -114,7 +120,8 @@ function Appendices(): JSX.Element {
             canEdit
             onEdit={handleOnEdit}
           />
-          <AppendixEditor
+          <IPRWYSIWYGEditor
+            title="Edit Appendix"
             isOpen={isEditing}
             text={editingData?.appendix?.text}
             onClose={handleEditClose}
