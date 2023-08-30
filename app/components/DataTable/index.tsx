@@ -25,6 +25,7 @@ import NoRowsOverlay from './components/NoRowsOverlay';
 import { getDate } from '../../utils/date';
 
 import './index.scss';
+import KbMatchesActionCellRenderer from './components/KbMatchesActionCellRenderer';
 
 const MAX_VISIBLE_ROWS = 12;
 const MAX_TABLE_HEIGHT = '517px';
@@ -172,7 +173,6 @@ const DataTable = ({
   rowData = [],
   onRowDataChanged,
   columnDefs: colDefs,
-  // columnDefs,
   titleText,
   filterText,
   canEdit,
@@ -566,6 +566,7 @@ const DataTable = ({
                 CivicCellRenderer,
                 GeneCellRenderer,
                 ActionCellRenderer: RowActionCellRenderer,
+                KbMatchesActionCellRenderer,
                 headerCellRenderer: Header,
                 NoRowsOverlay,
               }}

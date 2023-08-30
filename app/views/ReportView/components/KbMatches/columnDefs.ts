@@ -180,7 +180,7 @@ const columnDefs: ColDef[] = [{
 }, {
   headerName: 'Actions',
   colId: 'Actions',
-  cellRenderer: 'ActionCellRenderer',
+  cellRenderer: 'KbMatchesActionCellRenderer',
   pinned: 'right',
   hide: false,
   sortable: false,
