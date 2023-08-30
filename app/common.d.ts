@@ -37,17 +37,6 @@ declare global {
   };
 }
 
-type AnyVariantType = 'cnv' | 'mut' | 'sv' | 'exp' | 'msi' | 'tmb';
-
-type VariantTypeMap<T> =
-  T extends 'cnv' ? CopyNumberType :
-    T extends 'mut' ? SmallMutationType :
-      T extends 'sv' ? StructuralVariantType:
-        T extends 'exp' ? ExpOutliersType :
-          T extends 'msi' ? MsiType :
-            T extends 'tmb' ? TmburType:
-              never;
-
 type RecordDefaults = {
   ident: string;
   updatedAt: string | null;
@@ -114,6 +103,17 @@ type GeneType = {
   therapeuticAssociated: boolean;
   tumourSuppressor: boolean;
 };
+
+type AnyVariantType = 'cnv' | 'mut' | 'sv' | 'exp' | 'msi' | 'tmb';
+
+type VariantTypeMap<T extends AnyVariantType> = {
+  'cnv': CopyNumberType;
+  'mut': SmallMutationType;
+  'sv': StructuralVariantType;
+  'exp': ExpOutliersType;
+  'msi': MsiType;
+  'tmb': TmburType;
+}[T];
 
 type KbMatchType<T extends AnyVariantType = AnyVariantType> = {
   approvedTherapy: boolean;
