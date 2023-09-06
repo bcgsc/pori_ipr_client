@@ -30,7 +30,7 @@ type ActionCellRendererProps = {
   };
   onEdit?: (data) => void;
   onDelete?: (data: string) => void;
-  displayMode: 'tableCell' | 'menu';
+  displayMode?: 'tableCell' | 'menu';
 } & Partial<ICellRendererParams>;
 
 const WrapperComponent = ({
