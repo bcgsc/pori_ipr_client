@@ -62,8 +62,6 @@ describe('ActionCellRenderer', () => {
 
     // Assert that the window.open function was called with the expected URL and target
     expect(window.open).toHaveBeenCalledWith(`${window._env_.GRAPHKB_URL}/view/Statement/123456`, '_blank');
-    // expect(await screen.findByTestId('graphkb'))
-    //   .toHaveAttribute('href', `${window._env_.GRAPHKB_URL}/view/Statement/155:863`);
   });
 
   test('It shows a link to GraphKB when multiple entries exist', async () => {
