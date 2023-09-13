@@ -24,7 +24,7 @@
     "start:dev": "npm run env; webpack-dev-server --config ./config/webpack/webpack.dev.js",
     "start:prod": "npm run env; webpack-dev-server --config ./config/webpack/webpack.prod.js",
     "start:staging": "npm run env; webpack-dev-server --config ./config/webpack/webpack.staging.js",
-    "test": "NODE_ENV=test jest --config config/jest/jest.config.js --maxWorkers=100% --watch",
+    "test": "NODE_ENV=test jest --config config/jest/jest.config.js --maxWorkers=100%",
     "test-local": "NODE_ENV=test jest --config config/jest/jest.config.js --maxWorkers=100% --watch --coverage=false",
     "analyze": "npm run env; webpack-dev-server --env ANALYZE=true --config ./config/webpack/webpack.prod.js",
     "storybook": "start-storybook -p 6006",
