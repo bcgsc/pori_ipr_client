@@ -1,4 +1,6 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {
+  useCallback, useEffect, useMemo, useState,
+} from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -41,7 +43,6 @@ const SvgViewer = ({
   isOpen,
 }: SvgViewerProps): JSX.Element => {
   const [rowData, setRowData] = useState([]);
-
   useEffect(() => {
     if (selectedRow.svg) {
       setRowData([{
@@ -66,7 +67,18 @@ const SvgViewer = ({
       setHeaderName(`Type: ${selectedRow.eventType}`, 'ensemblHeader');
       setHeaderName(`Predicted: ${getFrameText(selectedRow.frame)}`, 'predictedHeader');
     }
-  }, [selectedRow]);
+  }, [selectedRow, selectedRow.svg]);
+
+  const svgImage = useMemo(() => {
+    if (selectedRow.svg) {
+      return (
+        <SvgImage
+          image={selectedRow.svg}
+        />
+      );
+    }
+    return null;
+  }, [selectedRow.svg]);
 
   const handleClose = useCallback(() => {
     onClose();
@@ -87,11 +99,7 @@ const SvgViewer = ({
         </span>
       </DialogTitle>
       <DialogContent>
-        {selectedRow.svg && (
-          <SvgImage
-            image={selectedRow.svg}
-          />
-        )}
+        {svgImage}
         <div className="ag-theme-material">
           <AgGridReact
             columnDefs={columnDefs}

@@ -1,7 +1,8 @@
+/* global CONFIG */
 import Keycloak from 'keycloak-js';
 import jwtDecode from 'jwt-decode';
 
-const keycloak = Keycloak({
+const keycloak = new Keycloak({
   realm: window._env_.KEYCLOAK_REALM,
   clientId: window._env_.KEYCLOAK_CLIENT_ID,
   url: window._env_.KEYCLOAK_URL,
@@ -77,7 +78,11 @@ const login = async (referrerUri = null) => {
       checkLoginIframe: false,
     });
   } else {
-    await keycloak.updateToken(Number.MAX_SAFE_INTEGER);
+    try {
+      await keycloak.updateToken(Number.MAX_SAFE_INTEGER);
+    } catch (e) {
+      console.error(e);
+    }
   }
 };
 
