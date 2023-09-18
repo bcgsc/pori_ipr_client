@@ -54,6 +54,7 @@ type ReportType = {
   oncotreeTumourType: string;
   kbDiseaseMatch: string;
   m1m2Score: number;
+  captiv8Score: number;
 } & RecordDefaults;
 
 type ReportContextType = {
