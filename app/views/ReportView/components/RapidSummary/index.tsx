@@ -295,6 +295,12 @@ const RapidSummary = ({
           : null,
       },
       {
+        term: 'Captiv 8 Score',
+        value: report.captiv8Score !== null
+          ? `${report.captiv8Score}`
+          : null,
+      },
+      {
         term: 'Microbial Species',
         value: microbial ? microbial.map(({ species, integrationSite }) => {
           let integrationSection = '';
@@ -321,7 +327,7 @@ const RapidSummary = ({
         value: msiStatus,
       },
     ]);
-  }, [microbial, tmburMutBur, report.m1m2Score, report.sampleInfo, report.tumourContent, tCellCd8?.percentile, tCellCd8?.score]);
+  }, [microbial, tmburMutBur, report.m1m2Score, report.sampleInfo, report.tumourContent, tCellCd8?.percentile, tCellCd8?.score, report.captiv8Score]);
 
   const handlePatientEditClose = useCallback(async (
     isSaved: boolean,
