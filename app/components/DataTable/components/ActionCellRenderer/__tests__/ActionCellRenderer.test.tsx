@@ -50,6 +50,7 @@ describe('ActionCellRenderer', () => {
   });
 
   test('It links to GraphKB when a single entry exists', async () => {
+    const openSpy = jest.spyOn(window, 'open').mockImplementation();
     render(
       <ActionCellRenderer
         data={{
@@ -61,7 +62,7 @@ describe('ActionCellRenderer', () => {
     fireEvent.click(screen.getByTestId('graphkb'));
 
     // Assert that the window.open function was called with the expected URL and target
-    expect(window.open).toHaveBeenCalledWith(`${window._env_.GRAPHKB_URL}/view/Statement/123456`, '_blank');
+    expect(openSpy).toHaveBeenCalledWith(`${window._env_.GRAPHKB_URL}/view/Statement/155:863`, '_blank');
   });
 
   test('It shows a link to GraphKB when multiple entries exist', async () => {
@@ -76,8 +77,8 @@ describe('ActionCellRenderer', () => {
 
     fireEvent.click(await screen.findByRole('button'));
 
-    statements.forEach((statement) => {
-      expect(screen.getByText(statement))
+    statements.forEach(async (statement) => {
+      expect(await screen.findByText(statement))
         .toHaveAttribute('href', `${window._env_.GRAPHKB_URL}/view/Statement/${statement.replace('#', '')}`);
     });
   });

@@ -37,6 +37,7 @@ const WrapperComponent = ({
   displayMode,
   children,
   onClick = () => {},
+  ...rest
 }: {
   displayMode: ActionCellRendererProps['displayMode'];
   children: React.ReactNode;
@@ -44,7 +45,7 @@ const WrapperComponent = ({
 }) => {
   if (displayMode === 'menu') {
     return (
-      <MenuItem onClick={onClick}>
+      <MenuItem onClick={onClick} {...rest}>
         {children}
       </MenuItem>
     );
@@ -53,11 +54,11 @@ const WrapperComponent = ({
   // We don't deal with multiple nodes for now
   if (Array.isArray(children)) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
-    return <>{children}</>;
+    return <span {...rest}>{children}</span>;
   }
 
   if (React.isValidElement(children)) {
-    return React.cloneElement(children, { onClick });
+    return React.cloneElement(children, { onClick, ...rest });
   }
   return null;
 };
@@ -193,11 +194,10 @@ const ActionCellRenderer = ({
   return (
     <>
       {canViewDetails && (
-        <WrapperComponent onClick={detailClick} displayMode={displayMode}>
+        <WrapperComponent data-testid="view-details" onClick={detailClick} displayMode={displayMode}>
           {displayMode === 'tableCell' ? (
             <IconButton
               aria-label="View Details"
-              data-testid="view-details"
               size="small"
               title="View Details"
             >
@@ -216,11 +216,10 @@ const ActionCellRenderer = ({
       )}
       {openGraphKbButton}
       {canDelete && (
-        <WrapperComponent onClick={handleDelete} displayMode={displayMode}>
+        <WrapperComponent data-testid="delete" onClick={handleDelete} displayMode={displayMode}>
           {displayMode === 'tableCell' ? (
             <IconButton
               aria-label="Delete"
-              data-testid="delete"
               size="small"
               title="Delete"
             >
@@ -230,11 +229,10 @@ const ActionCellRenderer = ({
         </WrapperComponent>
       )}
       {canEdit && (
-        <WrapperComponent onClick={handleEdit} displayMode={displayMode}>
+        <WrapperComponent data-testid="edit" onClick={handleEdit} displayMode={displayMode}>
           {displayMode === 'tableCell' ? (
             <IconButton
               aria-label="Edit"
-              data-testid="edit"
               size="small"
               title="Edit"
             >
@@ -244,11 +242,10 @@ const ActionCellRenderer = ({
         </WrapperComponent>
       )}
       {data.svg && (
-        <WrapperComponent onClick={() => setShowSvgViewer((prevVal) => !prevVal)} displayMode={displayMode}>
+        <WrapperComponent data-testid="fusion" onClick={() => setShowSvgViewer((prevVal) => !prevVal)} displayMode={displayMode}>
           {displayMode === 'tableCell' ? (
             <IconButton
               aria-label="View Fusion Diagram"
-              data-testid="fusion"
               size="small"
               title="View Fusion Diagram"
             >
@@ -265,11 +262,10 @@ const ActionCellRenderer = ({
         />
       )}
       {hasImageData && (
-        <WrapperComponent onClick={() => setShowImageViewer((prevVal) => !prevVal)} displayMode={displayMode}>
+        <WrapperComponent data-testid="image" onClick={() => setShowImageViewer((prevVal) => !prevVal)} displayMode={displayMode}>
           {displayMode === 'tableCell' ? (
             <IconButton
               aria-label="View Image"
-              data-testid="image"
               size="small"
               title="View Image"
             >
