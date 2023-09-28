@@ -26,7 +26,7 @@ import './index.scss';
 import ProbeResultsType from '../ProbeSummary/types';
 
 const TITLE_MAP = {
-  highCancer: 'Therapeutic Alterations with High-Level Clinical Evidence in this Tumour Type',
+  highEvidence: 'Therapeutic Alterations with High-Level Clinical Evidence in this Tumour Type',
   therapeutic: 'Therapeutic Alterations',
   diagnostic: 'Diagnostic Alterations',
   prognostic: 'Prognostic Alterations',
@@ -59,7 +59,7 @@ const KbMatches = ({
     diagnostic: [],
     prognostic: [],
     unknown: [],
-    highCancer: [],
+    highEvidence: [],
     targetedGermlineGenes: [],
     targetedSomaticGenes: [],
   });
@@ -87,7 +87,7 @@ const KbMatches = ({
             diagnosticResp,
             prognosticResp,
             unknownResp,
-            highCancerResp,
+            highEvidenceResp,
             targetedSomaticGenesResp,
             pharmacogenomicResp,
             cancerPredisResp,
@@ -104,7 +104,7 @@ const KbMatches = ({
           ];
 
           setGroupedMatches({
-            highCancer: coalesceEntries(highCancerResp),
+            highEvidence: coalesceEntries(highEvidenceResp),
             therapeutic: coalesceEntries(therapeuticResp),
             biological: coalesceEntries(biologicalResp),
             diagnostic: coalesceEntries(diagnosticResp),
