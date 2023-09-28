@@ -112,9 +112,9 @@ const ActionCellRenderer = ({
     setAnchorEl(event.currentTarget);
   };
 
-  const handleMenuClose = () => {
+  const handleMenuClose = useCallback(() => {
     setAnchorEl(null);
-  };
+  }, []);
 
   const handleDelete = useCallback(() => {
     onDelete(data.ident);
@@ -151,9 +151,9 @@ const ActionCellRenderer = ({
       }
       if (Array.isArray(data.kbStatementId) && data.kbStatementId.some((statement) => statement.match(/^#?-?\d+:-?\d+$/))) {
         return (
-          <WrapperComponent onClick={handleMenuOpen} displayMode={displayMode}>
-            {
-              displayMode === 'tableCell' ? (
+          <>
+            <WrapperComponent onClick={handleMenuOpen} displayMode={displayMode}>
+              {displayMode === 'tableCell' ? (
                 <IconButton
                   size="small"
                   aria-label="Open in GraphKB"
@@ -161,8 +161,9 @@ const ActionCellRenderer = ({
                 >
                   <OpenInNew />
                 </IconButton>
-              ) : 'Open in GraphKB'
-            }
+              ) : 'Open in GraphKB'}
+            </WrapperComponent>
+
             <Menu
               anchorEl={anchorEl}
               open={Boolean(anchorEl)}
@@ -171,7 +172,6 @@ const ActionCellRenderer = ({
               {data.kbStatementId.filter((statement) => statement.match(/^#?-?\d+:-?\d+$/)).map((statement) => (
                 <MenuItem
                   key={statement}
-                  onClick={handleMenuClose}
                 >
                   <a
                     className="action-cell-kb-statement__link"
@@ -184,12 +184,12 @@ const ActionCellRenderer = ({
                 </MenuItem>
               ))}
             </Menu>
-          </WrapperComponent>
+          </>
         );
       }
     }
     return null;
-  }, [anchorEl, data.kbStatementId, displayMode]);
+  }, [anchorEl, data.kbStatementId, displayMode, handleMenuClose]);
 
   return (
     <>
