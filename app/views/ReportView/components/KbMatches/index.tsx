@@ -1,5 +1,5 @@
 import React, {
-  useState, useEffect, useContext, useCallback,
+  useState, useEffect, useContext, useCallback, useMemo,
 } from 'react';
 import {
   TextField,
@@ -18,14 +18,15 @@ import { useUser } from '@/context/UserContext';
 import DataTable from '@/components/DataTable';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import ReportContext from '@/context/ReportContext';
+import { KbMatchType } from '@/common';
 import { columnDefs, targetedColumnDefs } from './columnDefs';
 import coalesceEntries from './coalesce';
 
 import './index.scss';
+import ProbeResultsType from '../ProbeSummary/types';
 
-const titleMap = {
-  thisCancer: 'Therapies Approved In This Cancer Type',
-  otherCancer: 'Therapies Approved In Other Cancer Type',
+const TITLE_MAP = {
+  highEvidence: 'Therapeutic Alterations with High-Level Clinical Evidence in this Tumour Type',
   therapeutic: 'Therapeutic Alterations',
   diagnostic: 'Diagnostic Alterations',
   prognostic: 'Prognostic Alterations',
@@ -58,8 +59,7 @@ const KbMatches = ({
     diagnostic: [],
     prognostic: [],
     unknown: [],
-    thisCancer: [],
-    otherCancer: [],
+    highEvidence: [],
     targetedGermlineGenes: [],
     targetedSomaticGenes: [],
   });
@@ -75,8 +75,7 @@ const KbMatches = ({
             api.get(`${baseUri}?approvedTherapy=false&category=diagnostic`, {}),
             api.get(`${baseUri}?approvedTherapy=false&category=prognostic`, {}),
             api.get(`${baseUri}?category=unknown,novel`, {}),
-            api.get(`${baseUri}?approvedTherapy=true&category=therapeutic&matchedCancer=true`, {}),
-            api.get(`${baseUri}?approvedTherapy=true&category=therapeutic&matchedCancer=false`, {}),
+            api.get(`${baseUri}?approvedTherapy=true&category=therapeutic&matchedCancer=true&iprEvidenceLevel=IPR-A,IPR-B`, {}),
             api.get(`/reports/${report.ident}/probe-results`, {}),
             api.get(`${baseUri}?category=pharmacogenomic`, {}),
             api.get(`${baseUri}?category=cancer predisposition`, {}),
@@ -88,16 +87,24 @@ const KbMatches = ({
             diagnosticResp,
             prognosticResp,
             unknownResp,
-            thisCancerResp,
-            otherCancerResp,
+            highEvidenceResp,
             targetedSomaticGenesResp,
             pharmacogenomicResp,
             cancerPredisResp,
-          ] = await apiCalls.request();
+          ] = await apiCalls.request() as [
+            KbMatchType[],
+            KbMatchType[],
+            KbMatchType[],
+            KbMatchType[],
+            KbMatchType[],
+            KbMatchType[],
+            ProbeResultsType[],
+            KbMatchType[],
+            KbMatchType[],
+          ];
 
           setGroupedMatches({
-            thisCancer: coalesceEntries(thisCancerResp),
-            otherCancer: coalesceEntries(otherCancerResp),
+            highEvidence: coalesceEntries(highEvidenceResp),
             therapeutic: coalesceEntries(therapeuticResp),
             biological: coalesceEntries(biologicalResp),
             diagnostic: coalesceEntries(diagnosticResp),
@@ -105,7 +112,7 @@ const KbMatches = ({
             unknown: coalesceEntries(unknownResp),
             targetedGermlineGenes: coalesceEntries([
               ...pharmacogenomicResp,
-              ...cancerPredisResp.filter(({ variant }) => variant?.germline),
+              ...cancerPredisResp.filter(({ variant }) => (variant as any)?.germline),
             ]),
             targetedSomaticGenes: targetedSomaticGenesResp.filter((tg) => !/germline/.test(tg?.sample)),
           });
@@ -166,27 +173,27 @@ const KbMatches = ({
     }
   }, [report]);
 
-  const kbMatchedTables = Object.entries(groupedMatches).map(([key, value]) => (
+  const kbMatchedTables = useMemo(() => Object.keys(TITLE_MAP).map((key) => (
     <React.Fragment key={key}>
       {
-        (
-          (report?.template.name !== 'probe' && report?.template.name !== 'rapid')
-          || (key !== 'targetedSomaticGenes' && key !== 'targetedGermlineGenes')
-        ) && (
-          <DataTable
-            canDelete={canEdit}
-            canToggleColumns
-            columnDefs={(key === 'targetedSomaticGenes') ? targetedColumnDefs : columnDefs}
-            filterText={debouncedFilterText}
-            isPrint={isPrint}
-            onDelete={handleDelete}
-            rowData={value}
-            titleText={titleMap[key]}
-          />
-        )
-      }
+          (
+            (report?.template.name !== 'probe' && report?.template.name !== 'rapid')
+            || (key !== 'targetedSomaticGenes' && key !== 'targetedGermlineGenes')
+          ) && (
+            <DataTable
+              canDelete={canEdit}
+              canToggleColumns
+              columnDefs={(key === 'targetedSomaticGenes') ? targetedColumnDefs : columnDefs}
+              filterText={debouncedFilterText}
+              isPrint={isPrint}
+              onDelete={handleDelete}
+              rowData={groupedMatches[key]}
+              titleText={TITLE_MAP[key]}
+            />
+          )
+        }
     </React.Fragment>
-  ));
+  )), [canEdit, debouncedFilterText, groupedMatches, handleDelete, isPrint, report?.template.name]);
 
   return (
     !isLoading && (
