@@ -27,15 +27,17 @@ module.exports = {
   ],
   setupFilesAfterEnv: ['<rootDir>/config/jest/setup.js'],
   testEnvironment: 'jsdom',
+  testEnvironmentOptions: {
+    url: 'http://0.0.0.0',
+  },
   testRegex: 'app.*__tests__.*.test.[jt]sx?$',
-  testURL: 'http://0.0.0.0',
   transform: {
     '^.+\\.([jt]sx?)$': '<rootDir>/node_modules/babel-jest',
     '^.+\\.s?css$': '<rootDir>/config/jest/cssTransform.js',
     '^(?!.*\\.([jt]sx?|css|json)$)': '<rootDir>/config/jest/fileTransform.js',
   },
   transformIgnorePatterns: [
-    '<rootDir>/node_modules/(?!@material-ui).+(jsx?)$',
+    '<rootDir>/node_modules/(?!@mui).+(jsx?)$',
   ],
   moduleNameMapper: {
     '@/(.*)$': '<rootDir>/app/$1',
@@ -53,6 +55,11 @@ module.exports = {
     'd.ts',
   ],
   setupFiles: [
-    '<rootDir>/config/jest/windowEnvMock.js'
-  ]
+    '<rootDir>/config/jest/windowEnvMock.js',
+  ],
+  globals: {
+    'ts-jest': {
+      isolatedModules: true,
+    },
+  },
 };
