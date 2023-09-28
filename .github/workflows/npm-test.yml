@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [12, 14, 16]
+        node: [16, 18, 20]
     name: node-${{ matrix.node }}
     steps:
       - uses: actions/checkout@v2
@@ -21,12 +21,10 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           files: coverage/junit.xml
-        if: matrix.node == 12
       - uses: codecov/codecov-action@v1
         with:
           yml: codecov.yml
           token: ${{ secrets.CODECOV_TOKEN }}
-        if: matrix.node == 12
   docker:
     runs-on: ubuntu-latest
     name: docker-build

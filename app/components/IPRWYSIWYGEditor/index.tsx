@@ -12,14 +12,27 @@ import {
 
 import './index.scss';
 
+const ALLOWED_FORMATS = [
+  'align',
+  'blockquote',
+  'bold',
+  'code-block',
+  'direction',
+  'header',
+  'italic',
+  'list',
+  'script',
+  'strike',
+  'underline',
+];
+
 const defaultQuillProps: ReactQuillProps = {
   modules: {
     toolbar: [
       ['bold', 'italic', 'underline', 'strike'],
-      ['blockquote', 'code-block', 'link'],
+      ['blockquote', 'code-block'],
       [{ list: 'ordered' }, { list: 'bullet' }],
       [{ script: 'sub' }, { script: 'super' }],
-      [{ indent: '-1' }, { indent: '+1' }],
       [{ header: [1, 2, 3, false] }],
       ['clean'],
     ],
@@ -71,6 +84,7 @@ const IPRWYSIWYGEditor = ({
             theme="snow"
             defaultValue={text}
             onChange={handleOnEdit}
+            formats={ALLOWED_FORMATS}
           />
         </div>
       </DialogContent>
