@@ -68,7 +68,7 @@ describe('GeneAutocomplete', () => {
       />,
     );
 
-    expect(await screen.findByRole('textbox')).toHaveValue(mockGene.name);
+    expect(await screen.findByRole('combobox')).toHaveValue(mockGene.name);
   });
 
   test('Options are shown when focused', async () => {
@@ -94,7 +94,7 @@ describe('GeneAutocomplete', () => {
       />,
     );
 
-    fireEvent.change(await findByRole('textbox'), { target: { value: 'EG' } });
+    fireEvent.change(await findByRole('combobox'), { target: { value: 'EG' } });
     await waitFor(() => {
       expect(queryByText(mockGene2.name)).toBeInTheDocument();
       expect(queryByText(mockGene.name)).not.toBeInTheDocument();
@@ -109,7 +109,7 @@ describe('GeneAutocomplete', () => {
       />,
     );
 
-    const textInput = await findByRole('textbox');
+    const textInput = await findByRole('combobox');
     fireEvent.change(textInput, { target: { value: 'TP' } });
     fireEvent.click(await findByText(mockGene.name));
     fireEvent.change(textInput, { target: { value: '' } });
@@ -129,7 +129,7 @@ describe('GeneAutocomplete', () => {
         onChange={mockOnChange}
       />,
     );
-    const textInput = await findByRole('textbox');
+    const textInput = await findByRole('combobox');
     fireEvent.change(textInput, { target: { value: 'TP' } });
 
     const option = await findByText(mockGene.name);
