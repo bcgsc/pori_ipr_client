@@ -40,6 +40,7 @@ const ProjectsView = lazy(() => import('../ProjectsView'));
 
 // What fraction of TIME ELAPSED should the user be notified of expiring token
 const TIMEOUT_FRACTION = 0.9;
+const MIN_TIMEOUT = 60000;
 
 type TimeoutModalPropTypes = {
   authorizationToken: string;
@@ -66,7 +67,10 @@ const TimeoutModal = memo(({ authorizationToken, setAuthorizationToken }: Timeou
   // First load is untracked, until authorizationToken changes
   useEffect(() => {
     if (authorizationToken) {
-      const timeout = ((keycloak.tokenParsed.exp * 1000 - Date.now()) * TIMEOUT_FRACTION);
+      // Depending on KC setting, whichever one of these token expire will cause a 400 for refresh, so we take the lower one
+      const leastTimeToExp = (Math.min(keycloak.tokenParsed.exp, keycloak.refreshTokenParsed.exp) * 1000 - Date.now()) * TIMEOUT_FRACTION;
+      // Minimum 1 min timeout timer
+      const timeout = Math.max(leastTimeToExp, MIN_TIMEOUT);
 
       timerRef.current = setTimeout(() => { setIsOpen(true); }, timeout);
     }

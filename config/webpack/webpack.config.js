@@ -29,7 +29,7 @@ module.exports = (env) => ({
                 loader: 'sass-loader',
                 options: {
                   sassOptions: { quietDeps: true },
-                }
+                },
               },
             ],
           },
@@ -81,12 +81,12 @@ module.exports = (env) => ({
         {
           from: path.join(APP_PATH, 'statics/images/*'),
           to: 'img/',
-          flatten: true,
+          context: path.join(APP_PATH, 'statics/images'),
         },
         {
           from: path.join(APP_PATH, 'statics/favicon/*'),
           to: 'img/',
-          flatten: true,
+          context: path.join(APP_PATH, 'statics/favicon'),
         },
         {
           from: path.join(APP_PATH, 'ipr-env-config.js'),
@@ -95,7 +95,7 @@ module.exports = (env) => ({
         {
           from: path.join(APP_PATH, 'index.css'),
           to: 'index.css',
-        }
+        },
       ],
     }),
     new webpack.DefinePlugin({

@@ -2,10 +2,12 @@ const mockRowData = [{
   username: 'pattredes',
   password: 'hunter2',
   email: 'usul@arrakis.dune',
+  ident: 'uuid1',
 }, {
   username: 'mmartin',
   password: 'password123',
   email: 'matewmartin@victokia.com',
+  ident: 'uuid2',
 }];
 
 const mockColumnDefs = [{
@@ -19,6 +21,10 @@ const mockColumnDefs = [{
 }, {
   headerName: 'Email',
   field: 'email',
+  hide: false,
+}, {
+  headerName: 'ident',
+  field: 'ident',
   hide: false,
 }];
 

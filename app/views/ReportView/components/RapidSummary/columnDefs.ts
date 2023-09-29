@@ -3,9 +3,11 @@
  * @returns correct genomic event to be displayed
  */
 const getGenomicEvent = ({ data }) => {
-  const { variantType, kbCategory } = data;
+  const {
+    gene, proteinChange, variantType, kbCategory,
+  } = data;
   if (variantType === 'cnv') {
-    const { gene, cnvState } = data;
+    const { cnvState } = data;
     return `${gene.name} ${cnvState}`;
   }
 
@@ -24,11 +26,25 @@ const getGenomicEvent = ({ data }) => {
     return kbCategory;
   }
 
-  // variantType === mut and others
+  if (variantType === 'mut') {
+    return `${gene.name}:${proteinChange}`;
+  }
+
   const { hgvsProtein, hgvsCds, hgvsGenomic } = data;
   if (hgvsProtein) { return hgvsProtein; }
   if (hgvsCds) { return hgvsCds; }
   return hgvsGenomic;
+};
+
+const ACTIONS_COLDEF = {
+  headerName: 'Actions',
+  colId: 'Actions',
+  cellRenderer: 'ActionCellRenderer',
+  pinned: 'right',
+  hide: false,
+  sortable: false,
+  suppressMenu: true,
+  minWidth: 88,
 };
 
 const therapeuticAssociationColDefs = [
@@ -94,13 +110,7 @@ const therapeuticAssociationColDefs = [
     hide: false,
   },
   {
-    headerName: 'Actions',
-    colId: 'Actions',
-    cellRenderer: 'ActionCellRenderer',
-    pinned: 'right',
-    hide: false,
-    sortable: false,
-    suppressMenu: true,
+    ...ACTIONS_COLDEF,
   },
 ];
 
@@ -161,13 +171,7 @@ const cancerRelevanceColDefs = [
     hide: false,
   },
   {
-    headerName: 'Actions',
-    colId: 'Actions',
-    cellRenderer: 'ActionCellRenderer',
-    pinned: 'right',
-    hide: false,
-    sortable: false,
-    suppressMenu: true,
+    ...ACTIONS_COLDEF,
   },
 ];
 

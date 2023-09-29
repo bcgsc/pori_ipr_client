@@ -61,7 +61,7 @@ exports[`DataTable It matches the snapshot 1`] = `
                     
             <!--AG-GRID-BODY-->
             <div
-              aria-colcount="3"
+              aria-colcount="4"
               aria-rowcount="3"
               class="ag-root ag-unselectable ag-layout-auto-height"
               ref="gridBody"
@@ -106,13 +106,13 @@ exports[`DataTable It matches the snapshot 1`] = `
                     class="ag-header-container"
                     ref="eHeaderContainer"
                     role="rowgroup"
-                    style="width: 600px;"
+                    style="width: 800px;"
                   >
                     <div
                       aria-rowindex="1"
                       class="ag-header-row ag-header-row-column"
                       role="row"
-                      style="top: 0px; height: 56px; width: 600px;"
+                      style="top: 0px; height: 56px; width: 800px;"
                     >
                       <div
                         aria-colindex="1"
@@ -585,6 +585,163 @@ exports[`DataTable It matches the snapshot 1`] = `
         
                         </div>
                       </div>
+                      <div
+                        aria-colindex="4"
+                        aria-sort="none"
+                        class="ag-header-cell ag-focus-managed ag-header-cell-sortable"
+                        col-id="ident"
+                        role="columnheader"
+                        style="width: 200px; left: 600px;"
+                        tabindex="-1"
+                        unselectable="on"
+                      >
+                        
+            
+                        <div
+                          class="ag-header-cell-resize"
+                          ref="eResize"
+                          role="presentation"
+                        />
+                        
+            
+                        <!--AG-CHECKBOX-->
+                        <div
+                          class="ag-header-select-all ag-labeled ag-label-align-right ag-checkbox ag-input-field ag-hidden"
+                          ref="cbSelectAll"
+                          role="presentation"
+                        >
+                          
+                
+                          <div
+                            class="ag-input-field-label ag-label ag-hidden ag-checkbox-label"
+                            ref="eLabel"
+                            role="presentation"
+                          />
+                          
+                
+                          <div
+                            class="ag-wrapper ag-input-wrapper ag-checkbox-input-wrapper"
+                            ref="eWrapper"
+                            role="presentation"
+                          >
+                            
+                    
+                            <input
+                              aria-label="Press Space to toggle all rows selection (unchecked)"
+                              class="ag-input-field-input ag-checkbox-input"
+                              id="ag-31-input"
+                              ref="eInput"
+                              tabindex="-1"
+                              type="checkbox"
+                            />
+                            
+                
+                          </div>
+                          
+            
+                        </div>
+                        
+        
+                        <div
+                          class="ag-cell-label-container ag-header-cell-sorted-none"
+                          role="presentation"
+                        >
+                          
+            
+                          <span
+                            aria-hidden="true"
+                            class="ag-header-icon ag-header-cell-menu-button"
+                            ref="eMenu"
+                          >
+                            <span
+                              class="ag-icon ag-icon-menu"
+                              role="presentation"
+                              unselectable="on"
+                            />
+                          </span>
+                          
+            
+                          <div
+                            class="ag-header-cell-label"
+                            ref="eLabel"
+                            role="presentation"
+                            unselectable="on"
+                          >
+                            
+                
+                            <span
+                              class="ag-header-cell-text"
+                              ref="eText"
+                              unselectable="on"
+                            >
+                              ident
+                            </span>
+                            
+                
+                            <span
+                              aria-hidden="true"
+                              class="ag-header-icon ag-header-label-icon ag-filter-icon ag-hidden"
+                              ref="eFilter"
+                            >
+                              <span
+                                class="ag-icon ag-icon-filter"
+                                role="presentation"
+                                unselectable="on"
+                              />
+                            </span>
+                            
+                
+                            <span
+                              aria-hidden="true"
+                              class="ag-header-icon ag-header-label-icon ag-sort-order ag-hidden"
+                              ref="eSortOrder"
+                            />
+                            
+                
+                            <span
+                              aria-hidden="true"
+                              class="ag-header-icon ag-header-label-icon ag-sort-ascending-icon ag-hidden"
+                              ref="eSortAsc"
+                            >
+                              <span
+                                class="ag-icon ag-icon-asc"
+                                role="presentation"
+                                unselectable="on"
+                              />
+                            </span>
+                            
+                
+                            <span
+                              aria-hidden="true"
+                              class="ag-header-icon ag-header-label-icon ag-sort-descending-icon ag-hidden"
+                              ref="eSortDesc"
+                            >
+                              <span
+                                class="ag-icon ag-icon-desc"
+                                role="presentation"
+                                unselectable="on"
+                              />
+                            </span>
+                            
+                
+                            <span
+                              aria-hidden="true"
+                              class="ag-header-icon ag-header-label-icon ag-sort-none-icon ag-hidden"
+                              ref="eSortNone"
+                            >
+                              <span
+                                class="ag-icon ag-icon-none"
+                                role="presentation"
+                                unselectable="on"
+                              />
+                            </span>
+                            
+            
+                          </div>
+                          
+        
+                        </div>
+                      </div>
                     </div>
                   </div>
                   
@@ -643,7 +800,7 @@ exports[`DataTable It matches the snapshot 1`] = `
                     class="ag-floating-top-container"
                     ref="eContainer"
                     role="presentation"
-                    style="width: 600px;"
+                    style="width: 800px;"
                     unselectable="on"
                   />
                   
@@ -694,8 +851,9 @@ exports[`DataTable It matches the snapshot 1`] = `
                     aria-label="Press SPACE to select this row."
                     aria-rowindex="2"
                     class="ag-row ag-row-no-focus ag-row-even ag-row-level-0 ag-row-position-absolute ag-row-first"
-                    comp-id="30"
+                    comp-id="33"
                     role="row"
+                    row-id="uuid1"
                     row-index="0"
                     style="height: 48px; transform: translateY(0px); "
                   />
@@ -703,8 +861,9 @@ exports[`DataTable It matches the snapshot 1`] = `
                     aria-label="Press SPACE to select this row."
                     aria-rowindex="3"
                     class="ag-row ag-row-no-focus ag-row-odd ag-row-level-0 ag-row-position-absolute ag-row-last"
-                    comp-id="31"
+                    comp-id="34"
                     role="row"
+                    row-id="uuid2"
                     row-index="1"
                     style="height: 48px; transform: translateY(48px); "
                   />
@@ -734,15 +893,16 @@ exports[`DataTable It matches the snapshot 1`] = `
                       class="ag-center-cols-container"
                       ref="eContainer"
                       role="rowgroup"
-                      style="width: 600px; height: 96px;"
+                      style="width: 800px; height: 96px;"
                       unselectable="on"
                     >
                       <div
                         aria-label="Press SPACE to select this row."
                         aria-rowindex="2"
                         class="ag-row ag-row-no-focus ag-row-even ag-row-level-0 ag-row-position-absolute ag-row-first"
-                        comp-id="32"
+                        comp-id="35"
                         role="row"
+                        row-id="uuid1"
                         row-index="0"
                         style="height: 48px; transform: translateY(0px); "
                       >
@@ -750,7 +910,7 @@ exports[`DataTable It matches the snapshot 1`] = `
                           aria-colindex="1"
                           class="ag-cell ag-cell-not-inline-editing ag-cell-auto-height ag-cell-value"
                           col-id="username"
-                          comp-id="33"
+                          comp-id="36"
                           role="gridcell"
                           style="width: 200px; left: 0px;  "
                           tabindex="-1"
@@ -762,7 +922,7 @@ exports[`DataTable It matches the snapshot 1`] = `
                           aria-colindex="2"
                           class="ag-cell ag-cell-not-inline-editing ag-cell-auto-height ag-cell-value"
                           col-id="password"
-                          comp-id="34"
+                          comp-id="37"
                           role="gridcell"
                           style="width: 200px; left: 200px;  "
                           tabindex="-1"
@@ -774,7 +934,7 @@ exports[`DataTable It matches the snapshot 1`] = `
                           aria-colindex="3"
                           class="ag-cell ag-cell-not-inline-editing ag-cell-auto-height ag-cell-value"
                           col-id="email"
-                          comp-id="35"
+                          comp-id="38"
                           role="gridcell"
                           style="width: 200px; left: 400px;  "
                           tabindex="-1"
@@ -782,13 +942,26 @@ exports[`DataTable It matches the snapshot 1`] = `
                         >
                           usul@arrakis.dune
                         </div>
+                        <div
+                          aria-colindex="4"
+                          class="ag-cell ag-cell-not-inline-editing ag-cell-auto-height ag-cell-value"
+                          col-id="ident"
+                          comp-id="39"
+                          role="gridcell"
+                          style="width: 200px; left: 600px;  "
+                          tabindex="-1"
+                          unselectable="on"
+                        >
+                          uuid1
+                        </div>
                       </div>
                       <div
                         aria-label="Press SPACE to select this row."
                         aria-rowindex="3"
                         class="ag-row ag-row-no-focus ag-row-odd ag-row-level-0 ag-row-position-absolute ag-row-last"
-                        comp-id="36"
+                        comp-id="40"
                         role="row"
+                        row-id="uuid2"
                         row-index="1"
                         style="height: 48px; transform: translateY(48px); "
                       >
@@ -796,7 +969,7 @@ exports[`DataTable It matches the snapshot 1`] = `
                           aria-colindex="1"
                           class="ag-cell ag-cell-not-inline-editing ag-cell-auto-height ag-cell-value"
                           col-id="username"
-                          comp-id="37"
+                          comp-id="41"
                           role="gridcell"
                           style="width: 200px; left: 0px;  "
                           tabindex="-1"
@@ -808,7 +981,7 @@ exports[`DataTable It matches the snapshot 1`] = `
                           aria-colindex="2"
                           class="ag-cell ag-cell-not-inline-editing ag-cell-auto-height ag-cell-value"
                           col-id="password"
-                          comp-id="38"
+                          comp-id="42"
                           role="gridcell"
                           style="width: 200px; left: 200px;  "
                           tabindex="-1"
@@ -820,13 +993,25 @@ exports[`DataTable It matches the snapshot 1`] = `
                           aria-colindex="3"
                           class="ag-cell ag-cell-not-inline-editing ag-cell-auto-height ag-cell-value"
                           col-id="email"
-                          comp-id="39"
+                          comp-id="43"
                           role="gridcell"
                           style="width: 200px; left: 400px;  "
                           tabindex="-1"
                           unselectable="on"
                         >
                           matewmartin@victokia.com
+                        </div>
+                        <div
+                          aria-colindex="4"
+                          class="ag-cell ag-cell-not-inline-editing ag-cell-auto-height ag-cell-value"
+                          col-id="ident"
+                          comp-id="44"
+                          role="gridcell"
+                          style="width: 200px; left: 600px;  "
+                          tabindex="-1"
+                          unselectable="on"
+                        >
+                          uuid2
                         </div>
                       </div>
                     </div>
@@ -851,8 +1036,9 @@ exports[`DataTable It matches the snapshot 1`] = `
                     aria-label="Press SPACE to select this row."
                     aria-rowindex="2"
                     class="ag-row ag-row-no-focus ag-row-even ag-row-level-0 ag-row-position-absolute ag-row-first"
-                    comp-id="40"
+                    comp-id="45"
                     role="row"
+                    row-id="uuid1"
                     row-index="0"
                     style="height: 48px; transform: translateY(0px); "
                   />
@@ -860,8 +1046,9 @@ exports[`DataTable It matches the snapshot 1`] = `
                     aria-label="Press SPACE to select this row."
                     aria-rowindex="3"
                     class="ag-row ag-row-no-focus ag-row-odd ag-row-level-0 ag-row-position-absolute ag-row-last"
-                    comp-id="41"
+                    comp-id="46"
                     role="row"
+                    row-id="uuid2"
                     row-index="1"
                     style="height: 48px; transform: translateY(48px); "
                   />
@@ -915,7 +1102,7 @@ exports[`DataTable It matches the snapshot 1`] = `
                     class="ag-floating-bottom-container"
                     ref="eContainer"
                     role="presentation"
-                    style="width: 600px;"
+                    style="width: 800px;"
                     unselectable="on"
                   />
                   
@@ -971,7 +1158,7 @@ exports[`DataTable It matches the snapshot 1`] = `
                   <div
                     class="ag-body-horizontal-scroll-container"
                     ref="eContainer"
-                    style="height: 0px; max-height: 0px; min-height: 0px; width: 600px;"
+                    style="height: 0px; max-height: 0px; min-height: 0px; width: 800px;"
                   />
                   
             
