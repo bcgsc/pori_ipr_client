@@ -3,14 +3,14 @@ import { when, resetAllWhenMocks } from 'jest-when';
 import {
   screen, render, waitFor,
 } from '@testing-library/react';
-
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import ReportContext, { ReportType } from '@/context/ReportContext';
 import api, { ApiCall } from '@/services/api';
 import GeneViewer from '..';
 
 const mockGene = 'TP53';
 const mockErrorGene = 'NonExistent25';
-
 const mockGeneResults = {
   copyNumber: [],
   expDensityGraph: [],
@@ -37,7 +37,12 @@ const withReportContext = (Component) => function ReportContextHOC(props) {
 
 describe('GeneViewer', () => {
   let Component;
-
+  beforeAll(() => {
+    jest.resetModules();
+    ModuleRegistry.registerModules([
+      ClientSideRowModelModule,
+    ]);
+  });
   beforeEach(() => {
     Component = withReportContext(GeneViewer);
     resetAllWhenMocks();
