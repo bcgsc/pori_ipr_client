@@ -2,7 +2,7 @@ import React, {
   useEffect, useState, useRef, useMemo, useCallback,
 } from 'react';
 import { UncontrolledReactSVGPanZoom } from 'react-svg-pan-zoom';
-import InlineSVG from 'svg-inline-react';
+import InlineSVG from 'react-inlinesvg';
 import AutoSizer from 'react-virtualized-auto-sizer';
 
 import './index.scss';
@@ -74,7 +74,7 @@ const SvgImage = ({
               let overWidthRatio = svgWidth / MAX_PRINT_WIDTH;
               if (printOrientation === 'landscape') {
                 overHeightRatio = svgHeight / MAX_PRINT_WIDTH;
-                overWidthRatio = svgHeight / MAX_PRINT_WIDTH;
+                overWidthRatio = svgWidth / MAX_PRINT_HEIGHT;
               }
               let nextRatio = 1;
 
@@ -90,29 +90,17 @@ const SvgImage = ({
               const nextHeight = svgHeight / nextRatio;
               const nextWidth = svgWidth / nextRatio;
 
-              const svgStyle = {
-                transformOrigin: 'top left',
-                transform: printOrientation === 'landscape' ? `rotate(90deg) translate(0, -${nextHeight}px)` : '',
-              };
-
               return (
-                <div style={svgStyle}>
-                  <UncontrolledReactSVGPanZoom
-                    ref={Viewer}
-                    width={svgWidth > nextWidth ? nextWidth : svgWidth}
-                    height={svgHeight > nextHeight ? nextHeight : svgHeight}
-                    background="#FFFFFF"
-                    detectAutoPan={false}
-                    defaultTool="auto"
-                    customMiniature={() => null}
-                    customToolbar={() => null}
-                    toolbarProps={{ position: 'left' }}
-                  >
-                    <svg width={svgWidth} height={svgHeight}>
-                      <InlineSVG src={processedImage} raw />
-                    </svg>
-                  </UncontrolledReactSVGPanZoom>
-                </div>
+                <InlineSVG
+                  src={processedImage}
+                  transform={`
+                    scale(${1 / nextRatio})
+                    translate(
+                      -${(svgWidth - nextWidth) / 2 + 48}
+                      -${(svgHeight - nextHeight) / 2}
+                    )
+                  `}
+                />
               );
             }
             return (
@@ -128,11 +116,11 @@ const SvgImage = ({
                 detectAutoPan={false}
                 defaultTool="auto"
                 customMiniature={() => null}
-                customToolbar={isPrint ? () => null : undefined}
+                customToolbar={undefined}
                 toolbarProps={{ position: 'left' }}
               >
                 <svg width={svgWidth} height={svgHeight}>
-                  <InlineSVG src={processedImage} raw />
+                  <InlineSVG src={processedImage} />
                 </svg>
               </UncontrolledReactSVGPanZoom>
             );
