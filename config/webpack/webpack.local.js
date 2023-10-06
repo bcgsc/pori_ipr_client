@@ -20,7 +20,7 @@ const localConfig = (env) => ({
       'window._env_': JSON.stringify({
         KEYCLOAK_CLIENT_ID: 'IPR',
         KEYCLOAK_REALM: 'GSC',
-        KEYCLOAK_URL: 'https://keycloakdev01.bcgsc.ca/auth',
+        KEYCLOAK_URL: 'https://keycloakdev.bcgsc.ca/auth',
         API_BASE_URL: `http://${process.env.HOSTNAME}:8080/api`,
         GRAPHKB_URL: 'https://graphkbstaging.bcgsc.ca',
         CONTACT_EMAIL: 'ipr@bcgsc.ca',
