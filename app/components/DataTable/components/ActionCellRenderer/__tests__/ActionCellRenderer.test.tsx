@@ -2,7 +2,8 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ColumnApi } from '@ag-grid-community/core';
 
-import ActionCellRenderer from '..';
+import { act } from 'react-dom/test-utils';
+import { ActionCellRenderer } from '..';
 
 // eslint-disable-next-line react/display-name
 jest.mock('../../SvgViewer', () => (() => (<div role="presentation" />)));
@@ -67,7 +68,7 @@ describe('ActionCellRenderer', () => {
 
   test('It shows a link to GraphKB when multiple entries exist', async () => {
     const statements = ['#155:863', '#120:109'];
-    render(
+    const { getByText } = render(
       <ActionCellRenderer
         data={{
           kbStatementId: statements,
@@ -75,12 +76,12 @@ describe('ActionCellRenderer', () => {
       />,
     );
 
-    fireEvent.click(await screen.findByRole('button'));
-
-    statements.forEach(async (statement) => {
-      expect(await screen.findByText(statement))
-        .toHaveAttribute('href', `${window._env_.GRAPHKB_URL}/view/Statement/${statement.replace('#', '')}`);
+    await act(async () => {
+      fireEvent.click(await screen.findByRole('button'));
     });
+
+    expect(getByText(statements[0])).toHaveAttribute('href', `${window._env_.GRAPHKB_URL}/view/Statement/155:863`);
+    expect(getByText(statements[1])).toHaveAttribute('href', `${window._env_.GRAPHKB_URL}/view/Statement/120:109`);
   });
 
   test('It shows the delete icon when allowed', async () => {

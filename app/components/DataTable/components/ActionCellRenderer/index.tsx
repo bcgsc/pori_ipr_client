@@ -34,7 +34,7 @@ type ActionCellRendererProps = {
 } & Partial<ICellRendererParams>;
 
 const WrapperComponent = ({
-  displayMode,
+  displayMode = 'tableCell',
   children,
   onClick = () => {},
   ...rest
@@ -58,7 +58,11 @@ const WrapperComponent = ({
   }
 
   if (React.isValidElement(children)) {
-    return React.cloneElement(children, { onClick, ...rest });
+    const newProps = {
+      onClick,
+      ...rest,
+    };
+    return React.cloneElement(children, newProps);
   }
   return null;
 };
