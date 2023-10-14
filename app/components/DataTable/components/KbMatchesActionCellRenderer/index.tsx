@@ -1,11 +1,12 @@
 import {
-  IconButton, Menu, MenuItem, CircularProgress,
+  IconButton, Menu, MenuItem,
 } from '@mui/material';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import React, { useState, useCallback } from 'react';
 import api from '@/services/api';
 import { KbMatchType } from '@/common';
 import { useParams } from 'react-router-dom';
+import snackbar from '@/services/SnackbarUtils';
 import {
   ActionCellRendererProps,
   ActionCellRenderer,
@@ -17,52 +18,85 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
   const { ident: reportId } = useParams<{ ident: string }>();
   const { data } = props;
   const {
-    context,
-    variant: {
-      ident: variantId,
-    },
+    kbStatementId,
+    iprEvidenceLevel,
   } = data as KbMatchType;
   const [menuAnchor, setMenuAnchor] = useState<HTMLElement>();
+  const [subMenuAnchor, setSubMenuAnchor] = useState<HTMLElement>();
+  const [therapeuticTargetType, setTherapeuticTargetType] = useState<TherapeuticTargetType>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [iprEvidenceLevels, setIprEvidenceLevels] = useState(null);
 
-  const handleUpdateTherapeuticTargets = useCallback((type: TherapeuticTargetType) => async () => {
+  const isMult = Array.isArray(kbStatementId);
+
+  const handleUpdateTherapeuticTargets = useCallback((type: TherapeuticTargetType, selectedKbStatementId?: string) => async () => {
+    if (!kbStatementId) { return null; }
     setIsLoading(true);
-    let exists = false;
-
     try {
-      await api.get(`/reports/${reportId}/therapeutic-targets/${variantId}`).request();
-      exists = true;
+      let evidenceLevelsResp;
+      let iprEvidenceLevelRid = null;
+      if (!iprEvidenceLevels && iprEvidenceLevel) {
+        evidenceLevelsResp = await api.get('/graphkb/evidence-levels', {}).request();
+        setIprEvidenceLevels(evidenceLevelsResp.result ?? null);
+        iprEvidenceLevelRid = evidenceLevelsResp?.result.find((res) => res.displayName === iprEvidenceLevel)?.['@rid'];
+      }
+      const { result } = await api.get(`/graphkb/statements/${(selectedKbStatementId ?? kbStatementId as string).replace('#', '')}`, {}).request();
+
+      if (result) {
+        const variant = result[0].conditions.find((r) => r['@class'].toLowerCase().includes('variant'));
+        const therapy = result[0].conditions.find((r) => r['@class'].toLowerCase().includes('therapy'));
+        const context = result[0].relevance;
+
+        if (!variant || !therapy || !context) {
+          throw new Error(`Required Graphkb fields not populated on GraphKB: ${!variant ? ' variant' : ''}${!therapy ? ' therapy' : ''}${!context ? ' context' : ''}`);
+        }
+
+        // Add to targets regardless if it already exists, we don't know at this point without making another API call to search for all these params
+        const newData = {
+          type,
+          gene: variant.reference1 && variant.reference2
+            ? `${variant.reference1.displayName}, ${variant.reference2.displayName}`
+            : variant.reference1.displayName || variant.reference2.displayName,
+          variant: variant['@class'].toLowerCase() === 'positionalvariant'
+            ? variant.displayName.split(':').slice(1).join()
+            : variant.type.displayName,
+          variantGraphkbId: variant['@rid'],
+          therapy: therapy.displayName,
+          therapyGraphkbId: therapy['@rid'],
+          context: context.displayName,
+          contextGraphkbId: context['@rid'],
+          evidenceLevel: null,
+          evidenceLevelGraphkbId: null,
+        };
+
+        if (iprEvidenceLevelRid) {
+          newData.evidenceLevel = iprEvidenceLevel;
+          newData.evidenceLevelGraphkbId = iprEvidenceLevelRid;
+        }
+
+        await api.post(`/reports/${reportId}/therapeutic-targets`, newData).request();
+        snackbar.success(`Successfully added ${selectedKbStatementId ?? kbStatementId} to potential ${type}`);
+      }
     } catch (e) {
       if (e.status === 404) {
-        exists = false;
+        snackbar.error(`Cannot find record, ${e.message}`);
       } else {
+        snackbar.error(e.message);
         console.error(e);
       }
-    }
-
-    try {
-      let call = api.post(`/reports/${reportId}/therapeutic-targets/${variantId}`, {
-        type,
-        context,
-      });
-
-      if (exists) {
-        call = api.put(`/reports/${reportId}/therapeutic-targets/${variantId}`, {
-          type,
-          context,
-        });
-      }
-
-      const response = await call.request();
-      console.log('🚀 ~ file: index.tsx:34 ~ handleUpdateTherapeuticTargets ~ response:', response);
-    } catch (error) {
-      console.log('🚀 ~ file: index.tsx:36 ~ handleUpdateTherapeuticTargets ~ error:', error);
-      // Handle the error here...
     } finally {
       setMenuAnchor(null);
+      setSubMenuAnchor(null);
       setIsLoading(false);
     }
-  }, [context, reportId, variantId]);
+    return null;
+  }, [iprEvidenceLevels, iprEvidenceLevel, kbStatementId, reportId]);
+
+  const handleMultiTargets = useCallback((evt, type) => {
+    setSubMenuAnchor(evt.currentTarget);
+    setTherapeuticTargetType(type);
+    return null;
+  }, []);
 
   return (
     <>
@@ -72,23 +106,50 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
       >
         <MoreHorizIcon />
       </IconButton>
-      {
-        isLoading ? <CircularProgress /> : (
+      <Menu
+        anchorEl={menuAnchor}
+        open={Boolean(menuAnchor)}
+        onClose={() => setMenuAnchor(null)}
+      >
+        <MenuItem
+          disabled={isLoading}
+          onClick={isMult
+            ? (evt) => handleMultiTargets(evt, 'therapeutic')
+            : handleUpdateTherapeuticTargets('therapeutic')}
+        >
+          Add to Potential Therapeutic Targets
+        </MenuItem>
+        <MenuItem
+          disabled={isLoading}
+          onClick={isMult
+            ? (evt) => handleMultiTargets(evt, 'chemoresistance')
+            : handleUpdateTherapeuticTargets('chemoresistance')}
+        >
+          Add to Potential Chemoresistance
+        </MenuItem>
+        {
+          isMult && (
           <Menu
-            anchorEl={menuAnchor}
-            open={Boolean(menuAnchor)}
-            onClose={() => setMenuAnchor(null)}
+            anchorEl={subMenuAnchor}
+            open={Boolean(subMenuAnchor)}
+            onClose={() => setSubMenuAnchor(null)}
           >
-            <MenuItem onClick={handleUpdateTherapeuticTargets('therapeutic')}>
-              Add to Potential Therapeutic Targets
-            </MenuItem>
-            <MenuItem onClick={handleUpdateTherapeuticTargets('chemoresistance')}>
-              Add to Potential Chemoresistance
-            </MenuItem>
-            <ActionCellRenderer displayMode="menu" {...props} />
+            {
+              kbStatementId.map((kbId) => (
+                <MenuItem
+                  key={kbId}
+                  disabled={isLoading}
+                  onClick={handleUpdateTherapeuticTargets(therapeuticTargetType, kbId)}
+                >
+                  {kbId}
+                </MenuItem>
+              ))
+            }
           </Menu>
-        )
-      }
+          )
+        }
+        <ActionCellRenderer displayMode="menu" {...props} />
+      </Menu>
     </>
   );
 };
