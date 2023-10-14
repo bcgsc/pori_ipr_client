@@ -2,7 +2,7 @@ import React, {
   useEffect, useState, useRef, useMemo, useCallback,
 } from 'react';
 import { UncontrolledReactSVGPanZoom } from 'react-svg-pan-zoom';
-import InlineSVG from 'svg-inline-react';
+import InlineSVG from 'react-inlinesvg';
 import AutoSizer from 'react-virtualized-auto-sizer';
 
 import './index.scss';
@@ -10,14 +10,14 @@ import './index.scss';
 type SvgImageProps = {
   image: string;
   isPrint?: boolean;
-  printOrientation?: 'portrait' | 'landscape';
+  printOrientation?: 'portrait' | 'landscape' | 'auto';
 };
 
 // These should be same as index.css under @page
 // Accounts for padding via magical numbers 32 and 16
 const INCH_TO_PX = 96;
 const MAX_PRINT_WIDTH = Math.floor((9 - 0.4 * 2) * INCH_TO_PX) - 32;
-const MAX_PRINT_HEIGHT = Math.floor((11.5 - 0.4 * 2) * INCH_TO_PX) - 16;
+const MAX_PRINT_HEIGHT = Math.floor((11.5 - 0.4 * 2) * INCH_TO_PX) - 64;
 
 const PRINT_WIDTH = 816;
 const ICON_WIDTH = 48;
@@ -70,16 +70,34 @@ const SvgImage = ({
         <AutoSizer disableHeight onResize={handleFit}>
           {({ width = PRINT_WIDTH }) => {
             if (isPrint) {
-              let overHeightRatio = svgHeight / MAX_PRINT_HEIGHT;
-              let overWidthRatio = svgWidth / MAX_PRINT_WIDTH;
-              if (printOrientation === 'landscape') {
-                overHeightRatio = svgHeight / MAX_PRINT_WIDTH;
-                overWidthRatio = svgHeight / MAX_PRINT_WIDTH;
+              let overHeightRatio;
+              let overWidthRatio;
+
+              switch (printOrientation) {
+                case 'landscape':
+                  overHeightRatio = svgHeight / MAX_PRINT_WIDTH;
+                  overWidthRatio = svgWidth / MAX_PRINT_HEIGHT;
+                  break;
+                case 'auto':
+                  if (svgWidth > svgHeight) {
+                    overHeightRatio = svgHeight / MAX_PRINT_WIDTH;
+                    overWidthRatio = svgWidth / MAX_PRINT_HEIGHT;
+                  } else {
+                    overHeightRatio = svgHeight / MAX_PRINT_HEIGHT;
+                    overWidthRatio = svgWidth / MAX_PRINT_WIDTH;
+                  }
+                  break;
+                default:
+                  // portrait
+                  overHeightRatio = svgHeight / MAX_PRINT_HEIGHT;
+                  overWidthRatio = svgWidth / MAX_PRINT_WIDTH;
+                  break;
               }
+
               let nextRatio = 1;
 
               if (overHeightRatio > 1 && overWidthRatio > 1) {
-              // Both over, find higher ratio
+                // Both over, find higher ratio
                 nextRatio = Math.max(overHeightRatio, overWidthRatio);
               } else if (overHeightRatio > 1) {
                 nextRatio = overHeightRatio;
@@ -87,32 +105,24 @@ const SvgImage = ({
                 nextRatio = overWidthRatio;
               }
 
-              const nextHeight = svgHeight / nextRatio;
-              const nextWidth = svgWidth / nextRatio;
+              let transformCss = '';
 
-              const svgStyle = {
-                transformOrigin: 'top left',
-                transform: printOrientation === 'landscape' ? `rotate(90deg) translate(0, -${nextHeight}px)` : '',
-              };
+              if (
+                printOrientation === 'landscape'
+                || (printOrientation === 'auto' && svgWidth > svgHeight)
+              ) {
+                transformCss = `rotate(90) translate(0 -${svgHeight * nextRatio})`;
+              }
 
               return (
-                <div style={svgStyle}>
-                  <UncontrolledReactSVGPanZoom
-                    ref={Viewer}
-                    width={svgWidth > nextWidth ? nextWidth : svgWidth}
-                    height={svgHeight > nextHeight ? nextHeight : svgHeight}
-                    background="#FFFFFF"
-                    detectAutoPan={false}
-                    defaultTool="auto"
-                    customMiniature={() => null}
-                    customToolbar={() => null}
-                    toolbarProps={{ position: 'left' }}
-                  >
-                    <svg width={svgWidth} height={svgHeight}>
-                      <InlineSVG src={processedImage} raw />
-                    </svg>
-                  </UncontrolledReactSVGPanZoom>
-                </div>
+                <InlineSVG
+                  src={processedImage}
+                  transform-origin="top left"
+                  transform={`
+                    scale(${1 / nextRatio})
+                    ${transformCss}
+                  `}
+                />
               );
             }
             return (
@@ -128,11 +138,11 @@ const SvgImage = ({
                 detectAutoPan={false}
                 defaultTool="auto"
                 customMiniature={() => null}
-                customToolbar={isPrint ? () => null : undefined}
+                customToolbar={undefined}
                 toolbarProps={{ position: 'left' }}
               >
                 <svg width={svgWidth} height={svgHeight}>
-                  <InlineSVG src={processedImage} raw />
+                  <InlineSVG src={processedImage} />
                 </svg>
               </UncontrolledReactSVGPanZoom>
             );

@@ -173,7 +173,7 @@ const DataTable = ({
   rowData = [],
   onRowDataChanged,
   columnDefs: colDefs,
-  titleText,
+  titleText = '',
   filterText,
   canEdit,
   onEdit,
