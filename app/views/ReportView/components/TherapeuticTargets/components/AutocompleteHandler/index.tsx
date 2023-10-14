@@ -63,7 +63,6 @@ const AutocompleteHandler = (props: AutocompleteHandlerProps) => {
   return (
     <Autocomplete
       autoHighlight
-      disableOpenOnFocus
       classes={{ popper: 'autocomplete__popper' }}
       onChange={handleAutocompleteChange}
       options={options}

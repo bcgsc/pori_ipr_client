@@ -128,7 +128,7 @@ type KbMatchType<T extends AnyVariantType = AnyVariantType> = {
   kbData: {
     inferred: boolean;
   } | null;
-  kbStatementId: string;
+  kbStatementId: string | string[];
   kbVariant: string;
   kbVariantId: string;
   matchedCancer: boolean;
