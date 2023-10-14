@@ -39,6 +39,8 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
         evidenceLevelsResp = await api.get('/graphkb/evidence-levels', {}).request();
         setIprEvidenceLevels(evidenceLevelsResp.result ?? null);
         iprEvidenceLevelRid = evidenceLevelsResp?.result.find((res) => res.displayName === iprEvidenceLevel)?.['@rid'];
+      } else {
+        iprEvidenceLevelRid = iprEvidenceLevels.find((res) => res.displayName === iprEvidenceLevel)?.['@rid'];
       }
       const { result } = await api.get(`/graphkb/statements/${(selectedKbStatementId ?? kbStatementId as string).replace('#', '')}`, {}).request();
 
