@@ -13,12 +13,12 @@ const columnDefs = [
   {
     headerName: 'ClinVar',
     field: 'clinvar',
-    hide: true,
+    hide: false,
   },
   {
     headerName: 'CGL Category',
     field: 'cglCategory',
-    hide: true,
+    hide: false,
   },
   {
     headerName: 'GMAF',
@@ -128,7 +128,7 @@ const columnDefs = [
     field: 'notes',
     autoHeight: true,
     wrapText: true,
-    hide: false,
+    hide: true,
     width: 300,
   },
   {
@@ -141,7 +141,7 @@ const columnDefs = [
     field: 'patientHistory',
     autoHeight: true,
     wrapText: true,
-    hide: false,
+    hide: true,
     width: 400,
   },
   {
@@ -149,7 +149,7 @@ const columnDefs = [
     field: 'familyHistory',
     autoHeight: true,
     wrapText: true,
-    hide: false,
+    hide: true,
     width: 400,
   },
   {
