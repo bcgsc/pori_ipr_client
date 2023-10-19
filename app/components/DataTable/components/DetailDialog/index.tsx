@@ -63,10 +63,10 @@ const ObjectAttributes = ({
   if (Array.isArray(obj)) {
     const inner = obj.map((mappedVal, idx) => {
       const mappedValIsArray = Array.isArray(mappedVal);
-      const rowKey = `${mappedVal.toString()}-${idx}`;
+      const rowKey = `${mappedVal?.toString()}-${idx}`;
 
-      // Value is primitive
-      if (!mappedValIsArray && typeof mappedVal !== 'object') {
+      // Value is primitive or null
+      if (!mappedValIsArray && (typeof mappedVal !== 'object' || mappedVal === null)) {
         return (
           <div key={rowKey} className="detail-dialog__row">
             <Typography variant="subtitle2">

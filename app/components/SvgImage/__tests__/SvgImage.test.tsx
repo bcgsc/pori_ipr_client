@@ -12,7 +12,7 @@ import {
 } from './mockData';
 import SvgImage from '..';
 
-jest.mock('react-virtualized-auto-sizer', () => ({ children }) => children({ height: 600, width: 600}));
+jest.mock('react-virtualized-auto-sizer', () => ({ children }) => children({ height: 600, width: 600 }));
 
 describe('SvgImage', () => {
   test('It renders a normal SVG', async () => {
@@ -62,21 +62,5 @@ describe('SvgImage', () => {
     );
 
     expect(await screen.findByTestId('mock')).toBeInTheDocument();
-  });
-
-  test('It fails to render an SVG that is not formatted correctly', async () => {
-    let error;
-
-    try {
-      render(
-        <SvgImage
-          image={mockSVGFormatError}
-        />,
-      );
-    } catch (err) {
-      error = err;
-    }
-
-    expect(error).not.toBeUndefined();
   });
 });

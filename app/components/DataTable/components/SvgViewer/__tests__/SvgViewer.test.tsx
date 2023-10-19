@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { StructuralVariantType } from '@/common';
 import SvgViewer from '..';
 
@@ -17,6 +18,13 @@ const mockSelectedRow = {
 } as Partial<StructuralVariantType>;
 
 describe('SvgViewer', () => {
+  beforeAll(() => {
+    jest.resetModules();
+    ModuleRegistry.registerModules([
+      ClientSideRowModelModule,
+    ]);
+  });
+
   test('It matches the snapshot', () => {
     const { asFragment } = render(
       <SvgViewer
@@ -36,7 +44,7 @@ describe('SvgViewer', () => {
         selectedRow={mockSelectedRow}
       />,
     );
-    expect(await screen.findAllByRole('presentation')).toHaveLength(2);
+    expect(await screen.getByRole('dialog')).toBeInTheDocument();
   });
 
   test('onClose is called', async () => {

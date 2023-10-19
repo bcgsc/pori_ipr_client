@@ -335,6 +335,12 @@ const GenomicSummary = ({
           value: msiStatus ?? null,
         },
         {
+          term: 'Captiv 8 Score',
+          value: report.captiv8Score !== null
+            ? `${report.captiv8Score}`
+            : null,
+        },
+        {
           term: 'Genome TMB (mut/mb)', // float
           // Forced to do this due to javascript floating point issues
           value:
@@ -342,7 +348,7 @@ const GenomicSummary = ({
         },
       ]);
     }
-  }, [history, microbial, primaryBurden, primaryComparator, isPrint, report, signatures, tCellCd8, msi, tmburMutBur]);
+  }, [history, microbial, primaryBurden, primaryComparator, isPrint, report, signatures, tCellCd8, msi, tmburMutBur, report.captiv8Score]);
 
   const handleChipDeleted = useCallback(async (chipIdent, type, comment) => {
     try {
