@@ -77,6 +77,11 @@ const columnDefs = [{
   valueGetter: createGeneRelatedValueGetter('expressionVariants', ' / ', 'primarySitekIQR'),
   hide: true,
 }, {
+  headerName: 'Expression (Z-score) 5`/3',
+  colId: 'primarySiteZscore',
+  valueGetter: createGeneRelatedValueGetter('expressionVariants', ' / ', 'primarySiteZscore'),
+  hide: false,
+}, {
   headerName: 'Oncogene',
   colId: 'oncogene',
   valueGetter: (params) => (params.data.gene1.oncogene || params.data.gene2.oncogene || false),
