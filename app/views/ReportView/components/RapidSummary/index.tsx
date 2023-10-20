@@ -591,31 +591,31 @@ const RapidSummary = ({
 
   const unknownSignificanceSection = useMemo(() => {
     if (unknownSignificanceResults?.length > 0) {
+      const sortedVUS = unknownSignificanceResults.sort(({ displayName: displayNameA }, { displayName: displayNameB }) => {
+        if (displayNameA < displayNameB) {
+          return -1;
+        }
+        if (displayNameA > displayNameB) {
+          return 1;
+        }
+        return 0;
+      });
+
       return (
-        <Box display="flex" flexDirection="row" flexWrap="wrap" margin="1rem 0 1rem 0">
-          {
-            (unknownSignificanceResults).sort(({ displayName: displayNameA }, { displayName: displayNameB }) => {
-              if (displayNameA < displayNameB) {
-                return -1;
-              }
-              if (displayNameA > displayNameB) {
-                return 1;
-              }
-              return 0;
-            }).map((entry) => (
-              <Box
-                display="inline-block"
-                padding={1}
-                minWidth="150px"
-                key={entry.ident}
-              >
-                <Typography variant="h6" fontWeight="fontWeightBold">
-                  {getGenomicEvent({ data: entry })}
-                </Typography>
-              </Box>
-            ))
-          }
-        </Box>
+        <section className="rapid-summary__unknown-significance">
+          {sortedVUS.map((entry) => (
+            <Box
+              display="inline-block"
+              padding={1}
+              minWidth="150px"
+              key={entry.ident}
+            >
+              <Typography variant="h6">
+                {getGenomicEvent({ data: entry })}
+              </Typography>
+            </Box>
+          ))}
+        </section>
       );
     }
     return (
