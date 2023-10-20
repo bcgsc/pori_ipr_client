@@ -19,7 +19,7 @@ const columnDefs: Array<ColDef | ColGroupDef> = [{
   headerName: 'Disease',
   children: [
     { headerName: 'Perc', field: 'diseasePercentile', hide: false },
-    { headerName: 'kIQR', field: 'diseasekIQR', hide: false },
+    { headerName: 'kIQR', field: 'diseasekIQR', hide: true },
     { headerName: 'QC', field: 'diseaseQC', hide: false },
     { headerName: 'FC', field: 'diseaseFoldChange', hide: true },
     { headerName: 'Z-Score', field: 'diseaseZScore', hide: false },

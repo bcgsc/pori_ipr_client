@@ -78,8 +78,8 @@ const columnDefs = [{
   hide: true,
 }, {
   headerName: 'Expression (Z-score) 5`/3',
-  colId: 'primarySiteZscore',
-  valueGetter: createGeneRelatedValueGetter('expressionVariants', ' / ', 'primarySiteZscore'),
+  colId: 'primarySiteZScore',
+  valueGetter: createGeneRelatedValueGetter('expressionVariants', ' / ', 'primarySiteZScore'),
   hide: false,
 }, {
   headerName: 'Oncogene',

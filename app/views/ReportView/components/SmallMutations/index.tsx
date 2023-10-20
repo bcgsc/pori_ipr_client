@@ -68,7 +68,7 @@ const SmallMutations = ({
             for (const {
               gene: {
                 expressionVariants: {
-                  tpm, rpkm, primarySiteFoldChange, diseasekIQR,
+                  tpm, rpkm, primarySiteFoldChange,
                 },
               },
             } of filteredSmallMutResp) {
