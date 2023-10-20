@@ -80,6 +80,11 @@ const columnDefs: ColDef[] = [{
   valueGetter: 'data.gene.expressionVariants.primarySiteFoldChange',
   hide: true,
 }, {
+  headerName: 'Primary Site Z-Score',
+  colId: 'primarySiteZScore',
+  valueGetter: 'data.gene.expressionVariants.primarySiteZScore',
+  hide: true,
+}, {
   headerName: 'Expression (TPM)',
   colId: 'tpm',
   valueGetter: 'data.gene.expressionVariants.tpm',
@@ -92,6 +97,11 @@ const columnDefs: ColDef[] = [{
   headerName: 'Expression (kIQR)',
   colId: 'diseasekIQR',
   valueGetter: 'data.gene.expressionVariants.diseasekIQR',
+  hide: true,
+}, {
+  headerName: 'Disease Z-score',
+  colId: 'diseaseZScore',
+  valueGetter: 'data.gene.expressionVariants.diseaseZScore',
   hide: true,
 }, {
   headerName: 'Actions',

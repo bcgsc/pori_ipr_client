@@ -150,6 +150,15 @@ const Print = (): JSX.Element => {
       const printTitle = REPORT_TYPE_TO_TITLE[template.name];
       const headerSubtitle = report.patientId;
       const headerSubtitleSuffix = REPORT_TYPE_TO_SUFFIX[template.name];
+
+      let biopsyText = startCase(report?.biopsyName || 'No Biopsy Name');
+      if (report?.patientInformation?.diagnosis) {
+        biopsyText = biopsyText.concat(`- ${startCase(report.patientInformation.diagnosis)}`);
+      }
+      if (report?.patientInformation?.tumourSample && report?.patientInformation?.tumourSample.toLowerCase() !== 'undetermined') {
+        biopsyText = biopsyText.concat(`(${report.patientInformation.tumourSample})`);
+      }
+
       return (
         <div className="print__headers">
           <div className="print__header-left">
@@ -163,11 +172,7 @@ const Print = (): JSX.Element => {
               {`${headerSubtitle}${headerSubtitleSuffix ? ` - ${headerSubtitleSuffix}` : ''}`}
             </Typography>
             <Typography variant="h5">
-              {`${startCase(report.biopsyName || 'No Biopsy Name')} ${
-                report.patientInformation.diagnosis ? `- ${startCase(report.patientInformation.diagnosis)}` : ''
-              } ${
-                report.patientInformation.tumourSample ? `(${report.patientInformation.tumourSample})` : ''
-              }`}
+              {biopsyText}
             </Typography>
           </div>
         </div>
