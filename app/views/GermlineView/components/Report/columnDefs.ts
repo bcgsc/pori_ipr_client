@@ -56,15 +56,18 @@ const columnDefs = [
     hide: false,
   },
   {
+    headerName: 'dbSnpIds',
     field: 'dbSnpIds',
     hide: false,
   },
   {
+    headerName: 'clinvarIds',
     field: 'clinvarIds',
     minWidth: 80,
     hide: false,
   },
   {
+    headerName: 'cosmicIds',
     field: 'cosmicIds',
     hide: false,
   },

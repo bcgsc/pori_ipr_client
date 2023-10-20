@@ -594,7 +594,15 @@ const RapidSummary = ({
       return (
         <Box display="flex" flexDirection="row" flexWrap="wrap" margin="1rem 0 1rem 0">
           {
-            (unknownSignificanceResults).map((entry) => (
+            (unknownSignificanceResults).sort(({ displayName: displayNameA }, { displayName: displayNameB }) => {
+              if (displayNameA < displayNameB) {
+                return -1;
+              }
+              if (displayNameA > displayNameB) {
+                return 1;
+              }
+              return 0;
+            }).map((entry) => (
               <Box
                 display="inline-block"
                 padding={1}
