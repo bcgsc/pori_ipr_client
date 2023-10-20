@@ -171,18 +171,6 @@ const cancerRelevanceColDefs = [
 
 const sampleColumnDefs = [
   {
-    headerName: 'Display Name',
-    field: 'displayName',
-    hide: false,
-  },
-  {
-    headerName: 'Genomic Events',
-    colId: 'genomicEvents',
-    field: 'genomicEvents',
-    valueGetter: getGenomicEvent,
-    hide: false,
-  },
-  {
     headerName: 'Sample',
     colId: 'Sample',
     field: 'Sample',
