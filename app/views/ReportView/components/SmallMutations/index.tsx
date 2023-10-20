@@ -82,9 +82,6 @@ const SmallMutations = ({
               if (primarySiteFoldChange !== null && !nextVisible.includes('primarySiteFoldChange')) {
                 nextVisible.push('primarySiteFoldChange');
               }
-              if (diseasekIQR !== null && !nextVisible.includes('diseasekIQR')) {
-                nextVisible.push('diseasekIQR');
-              }
               if (nextVisible.length === 2) {
                 break;
               }
