@@ -555,6 +555,7 @@ const DataTable = ({
               getRowNodeId={(data) => data.ident}
               onRowDragEnd={canReorder ? onRowDragEnd : null}
               editType="fullRow"
+              enableCellTextSelection
               onFilterChanged={handleFilterAndSortChanged}
               onSortChanged={handleFilterAndSortChanged}
               noRowsOverlayComponent="NoRowsOverlay"
