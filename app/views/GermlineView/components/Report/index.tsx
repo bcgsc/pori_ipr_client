@@ -132,7 +132,7 @@ const GermlineReport = ({
         .filter((col) => col.getColDef().headerName !== 'Actions' && col.getColDef().headerName)
         .map((col) => col.getColId()),
       fileName: `ipr_${report.patientId}_${report.ident}_germline_${date}.tsv`,
-      processCellCallback: (({ value }) => (typeof value === 'string' ? value?.replace(/,/g, '') : value)),
+      processCellCallback: (({ value }) => (typeof value === 'string' ? value?.replace(/[,\n]/g, ' ') : value)),
     });
   }, [colApi, gridApi, report]);
 

@@ -68,7 +68,7 @@ const SmallMutations = ({
             for (const {
               gene: {
                 expressionVariants: {
-                  tpm, rpkm, primarySiteFoldChange, diseasekIQR,
+                  tpm, rpkm, primarySiteFoldChange,
                 },
               },
             } of filteredSmallMutResp) {
@@ -81,9 +81,6 @@ const SmallMutations = ({
               }
               if (primarySiteFoldChange !== null && !nextVisible.includes('primarySiteFoldChange')) {
                 nextVisible.push('primarySiteFoldChange');
-              }
-              if (diseasekIQR !== null && !nextVisible.includes('diseasekIQR')) {
-                nextVisible.push('diseasekIQR');
               }
               if (nextVisible.length === 2) {
                 break;
