@@ -1,12 +1,6 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
-
 import {
   BadRequestError,
 } from '../errors/errors';
-import AlertDialog from '../../components/AlertDialog';
-import theme from '../../appTheme';
 import errorHandler from '../errors/errorHandler';
 import SnackbarUtils from '../SnackbarUtils';
 import { CallOptionsType } from './types';
