@@ -13,7 +13,7 @@ import './index.scss';
 type ColumnPickerProps = {
   className?: string;
   label?: string;
-  columns: (Partial<Column> & { name: string })[],
+  columns: (Partial<Column> & { name?: string })[],
   // If controlled by external, supply the visible columns
   visibleColumnIds?: string[];
   onClose: (colIds: string[]) => void,
