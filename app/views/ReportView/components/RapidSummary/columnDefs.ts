@@ -4,8 +4,12 @@
  */
 const getGenomicEvent = ({ data }) => {
   const {
-    gene, proteinChange, variantType, kbCategory,
+    gene, proteinChange, variantType, kbCategory, displayName,
   } = data;
+  if (displayName) {
+    return displayName;
+  }
+
   if (variantType === 'cnv') {
     const { cnvState } = data;
     return `${gene.name} ${cnvState}`;
@@ -48,11 +52,6 @@ const ACTIONS_COLDEF = {
 };
 
 const therapeuticAssociationColDefs = [
-  {
-    headerName: 'Display Name',
-    field: 'displayName',
-    hide: false,
-  },
   {
     headerName: 'Genomic Events',
     colId: 'genomicEvents',
@@ -116,11 +115,6 @@ const therapeuticAssociationColDefs = [
 
 const cancerRelevanceColDefs = [
   {
-    headerName: 'Display Name',
-    field: 'displayName',
-    hide: false,
-  },
-  {
     headerName: 'Genomic Events',
     colId: 'genomicEvents',
     field: 'genomicEvents',
@@ -176,11 +170,6 @@ const cancerRelevanceColDefs = [
 ];
 
 const sampleColumnDefs = [
-  {
-    headerName: 'Display Name',
-    field: 'displayName',
-    hide: false,
-  },
   {
     headerName: 'Sample',
     colId: 'Sample',
