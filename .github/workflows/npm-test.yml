@@ -23,7 +23,7 @@ jobs:
           files: coverage/junit.xml
       - uses: codecov/codecov-action@v3
         with:
-          yml: codecov.yml
+          file: codecov.yml
           token: ${{ secrets.CODECOV_TOKEN }}
   docker:
     runs-on: ubuntu-latest
