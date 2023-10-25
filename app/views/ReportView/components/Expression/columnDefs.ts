@@ -19,10 +19,10 @@ const columnDefs: Array<ColDef | ColGroupDef> = [{
   headerName: 'Disease',
   children: [
     { headerName: 'Perc', field: 'diseasePercentile', hide: false },
-    { headerName: 'kIQR', field: 'diseasekIQR', hide: false },
+    { headerName: 'kIQR', field: 'diseasekIQR', hide: true },
     { headerName: 'QC', field: 'diseaseQC', hide: false },
     { headerName: 'FC', field: 'diseaseFoldChange', hide: true },
-    { headerName: 'Z-Score', field: 'diseaseZScore', hide: true },
+    { headerName: 'Z-Score', field: 'diseaseZScore', hide: false },
   ],
 },
 {
@@ -30,9 +30,9 @@ const columnDefs: Array<ColDef | ColGroupDef> = [{
   children: [
     { headerName: 'FC', field: 'primarySiteFoldChange', hide: true },
     { headerName: 'Perc', field: 'primarySitePercentile', hide: false },
-    { headerName: 'kIQR', field: 'primarySitekIQR', hide: false },
+    { headerName: 'kIQR', field: 'primarySitekIQR', hide: true },
     { headerName: 'QC', field: 'primarySiteQC', hide: true },
-    { headerName: 'Z-Score', field: 'primarySiteZScore', hide: true },
+    { headerName: 'Z-Score', field: 'primarySiteZScore', hide: false },
   ],
 },
 {
@@ -40,9 +40,9 @@ const columnDefs: Array<ColDef | ColGroupDef> = [{
   children: [
     { headerName: 'FC', field: 'biopsySiteFoldChange', hide: true },
     { headerName: 'Perc', field: 'biopsySitePercentile', hide: false },
-    { headerName: 'kIQR', field: 'biopsySitekIQR', hide: false },
+    { headerName: 'kIQR', field: 'biopsySitekIQR', hide: true },
     { headerName: 'QC', field: 'biopsySiteQC', hide: true },
-    { headerName: 'Z-Score', field: 'biopsySiteZScore', hide: true },
+    { headerName: 'Z-Score', field: 'biopsySiteZScore', hide: false },
   ],
 },
 {
@@ -50,9 +50,9 @@ const columnDefs: Array<ColDef | ColGroupDef> = [{
   children: [
     { headerName: 'FC', field: 'internalPancancerFoldChange', hide: true },
     { headerName: 'Perc', field: 'internalPancancerPercentile', hide: false },
-    { headerName: 'kIQR', field: 'internalPancancerkIQR', hide: false },
+    { headerName: 'kIQR', field: 'internalPancancerkIQR', hide: true },
     { headerName: 'QC', field: 'internalPancancerQC', hide: true },
-    { headerName: 'Z-Score', field: 'internalPancancerZScore', hide: true },
+    { headerName: 'Z-Score', field: 'internalPancancerZScore', hide: false },
   ],
 },
 {
