@@ -15,7 +15,7 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import useGrid from '@/hooks/useGrid';
 import api from '@/services/api';
 import GermlineReportContext from '@/context/GermlineReportContext';
-import ActionCellRenderer from '@/components/DataTable/components/ActionCellRenderer';
+import { ActionCellRenderer } from '@/components/DataTable/components/ActionCellRenderer';
 import AlertDialog from '@/components/AlertDialog';
 import snackbar from '@/services/SnackbarUtils';
 import { GermlineReportType, VariantType } from '@/context/GermlineReportContext/types';

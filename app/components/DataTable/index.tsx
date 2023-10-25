@@ -2,8 +2,12 @@ import React, {
   useRef, useState, useEffect, useCallback, useContext, useMemo,
 } from 'react';
 import { AgGridReact } from '@ag-grid-community/react';
+import { AgGridReact as AgGridReactType } from '@ag-grid-community/react/lib/agGridReact';
+
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { ColDef, RowNode } from '@ag-grid-community/core';
+import {
+  ColDef, Column, RowNode, RowSpanParams,
+} from '@ag-grid-community/core';
 import cloneDeep from 'lodash/cloneDeep';
 import useGrid from '@/hooks/useGrid';
 import {
@@ -25,10 +29,10 @@ import NoRowsOverlay from './components/NoRowsOverlay';
 import { getDate } from '../../utils/date';
 
 import './index.scss';
+import KbMatchesActionCellRenderer from './components/KbMatchesActionCellRenderer';
 
 const MAX_VISIBLE_ROWS = 12;
 const MAX_TABLE_HEIGHT = '517px';
-const PAGE_TOP_OFFSET = 56 + 57;
 
 /**
  * Given colDefs, calculates rowSpan for each columnDef based on the current displayedRows on the table
@@ -96,7 +100,9 @@ const getRowspanColDefs = (colDefs: ColDef[], displayedRows: RowNode[], colsToCo
     // eslint-disable-next-line no-param-reassign
     cd.cellClass = (params) => {
       const { api, colDef, rowIndex } = params;
-      const span = colDef.rowSpan(params);
+      // CellClassParams actually contains column attribute
+      // see https://www.ag-grid.com/javascript-data-grid/cell-styles/#cell-class
+      const span = colDef.rowSpan(params as unknown as RowSpanParams);
       const numRows = api.getRenderedNodes().length;
       const pageNum = api.paginationGetCurrentPage();
       const pageSize = api.paginationGetPageSize();
@@ -161,7 +167,7 @@ type DataTableProps = {
   /* Row index to highlight */
   highlightRow?: number;
   /* Custom header cell renderer */
-  Header?: ({ displayName: string }) => JSX.Element;
+  Header?: ({ displayName }: { displayName: string }) => JSX.Element;
   /* Text to render in an info bubble below the table header and above the table itself */
   demoDescription?: string,
   /* Column fields to collapse, this will build the key that will combine these column values to be collapsed */
@@ -202,12 +208,12 @@ const DataTable = ({
   const { report } = useContext(ReportContext);
 
   const gridDiv = useRef<HTMLDivElement>();
-  const gridRef = useRef<AgGridReact>();
+  const gridRef = useRef<AgGridReactType>();
 
   const [showPopover, setShowPopover] = useState(false);
   const [menuAnchor, setMenuAnchor] = useState<HTMLElement>();
   const [showReorder, setShowReorder] = useState(false);
-  const [columnWithNames, setColumnWithNames] = useState<ColumnPickerProps['columns']>([]);
+  const [columnWithNames, setColumnWithNames] = useState<Column[] | ColumnPickerProps['columns']>([]);
 
   const defaultColDef = useMemo(() => ({
     sortable: !showReorder,
@@ -276,13 +282,6 @@ const DataTable = ({
 
         rowNode.setSelected(true, true);
         gridApi.ensureIndexVisible(highlightRow, 'middle');
-
-        const [element] = document.querySelectorAll('div[class="report__content"]');
-        element.scrollTo({
-          top: gridRef.current.eGridDiv.offsetTop - PAGE_TOP_OFFSET,
-          left: 0,
-          behavior: 'smooth',
-        });
       } else {
         const selected = gridApi.getSelectedNodes();
         if (selected && selected.length) {
@@ -298,16 +297,19 @@ const DataTable = ({
   useEffect(() => {
     if (colApi) {
       const names = colApi.getAllColumns()
-        .filter((col) => col.colId.toLowerCase() !== 'actions')
+        .filter((col) => col.getColId().toLowerCase() !== 'actions')
         .map((col) => {
           const parent = col.getOriginalParent();
-          if (parent?.colGroupDef.headerName) {
-            const parentName = parent.colGroupDef.headerName;
-            col.name = `${parentName} ${colApi.getDisplayNameForColumn(col)}`;
+          const nextCol: ColumnPickerProps['columns'][number] = col;
+          if (parent?.getColGroupDef().headerName) {
+            const parentName = parent.getColGroupDef().headerName;
+            // eslint-disable-next-line no-param-reassign
+            nextCol.name = `${parentName} ${colApi.getDisplayNameForColumn(col, null)}`;
           } else {
-            col.name = colApi.getDisplayNameForColumn(col);
+            // eslint-disable-next-line no-param-reassign
+            nextCol.name = colApi.getDisplayNameForColumn(col, null);
           }
-          return col;
+          return nextCol;
         });
       setColumnWithNames(names);
     }
@@ -316,7 +318,7 @@ const DataTable = ({
   const onFirstDataRendered = useCallback(() => {
     if (syncVisibleColumns) {
       const hiddenColumns = colApi.getAllColumns()
-        .map((col) => col.colId)
+        .map((col) => col.getColId())
         .filter((col) => !visibleColumns.includes(col));
 
       colApi.setColumnsVisible(visibleColumns, true);
@@ -349,8 +351,8 @@ const DataTable = ({
 
     if (colApi && !isFullLength) {
       const visibleColumnIds = colApi.getAllColumns()
-        .filter((col) => !col.flex && col.visible)
-        .map((col) => col.colId);
+        .filter((col) => (!col.getFlex() && col.isVisible()))
+        .map((col) => col.getColId());
       colApi.autoSizeColumns(visibleColumnIds);
     } if (isFullLength) {
       gridApi.sizeColumnsToFit();
@@ -387,7 +389,7 @@ const DataTable = ({
   const handlePopoverClose = useCallback((returnedVisibleCols) => {
     returnedVisibleCols.push('Actions');
     const returnedHiddenCols = colApi.getAllColumns()
-      .map((col) => col.colId)
+      .map((col) => col.getColId())
       .filter((col) => !returnedVisibleCols.includes(col));
 
     colApi.setColumnsVisible(returnedVisibleCols, true);
@@ -416,8 +418,11 @@ const DataTable = ({
       suppressQuotes: true,
       columnSeparator: '\t',
       columnKeys: colApi.getAllDisplayedColumns()
-        .filter((col) => col.name !== 'Actions' && col.colId !== 'Actions')
-        .map((col) => col.colId),
+        .filter((col) => {
+          const colD = col.getColDef();
+          return (colD?.headerName === 'Actions' || colD?.field === 'Actions' || col.getColId() === 'Actions');
+        })
+        .map((col) => col.getColId()),
       fileName: `ipr_${report.patientId}_${report.ident}_${titleText.split(' ').join('_')}_${date}.tsv`,
       processCellCallback: (({ value }) => (typeof value === 'string' ? value?.replace(/,/g, '') : value)),
     });
@@ -530,7 +535,7 @@ const DataTable = ({
             <ColumnPicker
               className="data-view__options-menu"
               label="Configure Visible Columns"
-              columns={columnWithNames}
+              columns={columnWithNames as ColumnPickerProps['columns']}
               visibleColumnIds={visibleColumnIds}
               onClose={handlePopoverClose}
               isOpen={showPopover}
@@ -551,6 +556,7 @@ const DataTable = ({
               getRowNodeId={(data) => data.ident}
               onRowDragEnd={canReorder ? onRowDragEnd : null}
               editType="fullRow"
+              enableCellTextSelection
               onFilterChanged={handleFilterAndSortChanged}
               onSortChanged={handleFilterAndSortChanged}
               noRowsOverlayComponent="NoRowsOverlay"
@@ -565,6 +571,7 @@ const DataTable = ({
                 CivicCellRenderer,
                 GeneCellRenderer,
                 ActionCellRenderer: RowActionCellRenderer,
+                KbMatchesActionCellRenderer,
                 headerCellRenderer: Header,
                 NoRowsOverlay,
               }}
