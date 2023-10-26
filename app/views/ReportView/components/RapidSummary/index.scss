@@ -32,6 +32,13 @@
   &__none {
     padding: 16px;
   }
+
+  &__unknown-significance {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    grid-gap: 1rem;
+    margin: 1rem 0;
+  }
 }
 
 .rapid-summary--print {

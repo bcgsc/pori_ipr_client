@@ -768,7 +768,7 @@ exports[`DataTable It matches the snapshot 1`] = `
               
         
               <div
-                class="ag-floating-top"
+                class="ag-floating-top ag-selectable"
                 ref="eTop"
                 role="presentation"
                 style="min-height: 0px; height: 0px; display: none; overflow-y: hidden;"
@@ -832,7 +832,7 @@ exports[`DataTable It matches the snapshot 1`] = `
               
         
               <div
-                class="ag-body-viewport ag-layout-auto-height ag-row-no-animation"
+                class="ag-body-viewport ag-selectable ag-layout-auto-height ag-row-no-animation"
                 ref="eBodyViewport"
                 role="presentation"
               >
@@ -908,51 +908,127 @@ exports[`DataTable It matches the snapshot 1`] = `
                       >
                         <div
                           aria-colindex="1"
-                          class="ag-cell ag-cell-not-inline-editing ag-cell-auto-height ag-cell-value"
+                          aria-describedby="cell-36"
+                          class="ag-cell ag-cell-not-inline-editing ag-cell-auto-height"
                           col-id="username"
                           comp-id="36"
                           role="gridcell"
                           style="width: 200px; left: 0px;  "
                           tabindex="-1"
-                          unselectable="on"
                         >
-                          pattredes
+                          <div
+                            class="ag-cell-wrapper"
+                            ref="eCellWrapper"
+                            role="presentation"
+                          >
+                            
+            
+                            <span
+                              class="ag-cell-value"
+                              id="cell-36"
+                              ref="eCellValue"
+                              role="presentation"
+                            >
+                              
+                pattredes
+            
+                            </span>
+                            
+        
+                          </div>
                         </div>
                         <div
                           aria-colindex="2"
-                          class="ag-cell ag-cell-not-inline-editing ag-cell-auto-height ag-cell-value"
+                          aria-describedby="cell-37"
+                          class="ag-cell ag-cell-not-inline-editing ag-cell-auto-height"
                           col-id="password"
                           comp-id="37"
                           role="gridcell"
                           style="width: 200px; left: 200px;  "
                           tabindex="-1"
-                          unselectable="on"
                         >
-                          hunter2
+                          <div
+                            class="ag-cell-wrapper"
+                            ref="eCellWrapper"
+                            role="presentation"
+                          >
+                            
+            
+                            <span
+                              class="ag-cell-value"
+                              id="cell-37"
+                              ref="eCellValue"
+                              role="presentation"
+                            >
+                              
+                hunter2
+            
+                            </span>
+                            
+        
+                          </div>
                         </div>
                         <div
                           aria-colindex="3"
-                          class="ag-cell ag-cell-not-inline-editing ag-cell-auto-height ag-cell-value"
+                          aria-describedby="cell-38"
+                          class="ag-cell ag-cell-not-inline-editing ag-cell-auto-height"
                           col-id="email"
                           comp-id="38"
                           role="gridcell"
                           style="width: 200px; left: 400px;  "
                           tabindex="-1"
-                          unselectable="on"
                         >
-                          usul@arrakis.dune
+                          <div
+                            class="ag-cell-wrapper"
+                            ref="eCellWrapper"
+                            role="presentation"
+                          >
+                            
+            
+                            <span
+                              class="ag-cell-value"
+                              id="cell-38"
+                              ref="eCellValue"
+                              role="presentation"
+                            >
+                              
+                usul@arrakis.dune
+            
+                            </span>
+                            
+        
+                          </div>
                         </div>
                         <div
                           aria-colindex="4"
-                          class="ag-cell ag-cell-not-inline-editing ag-cell-auto-height ag-cell-value"
+                          aria-describedby="cell-39"
+                          class="ag-cell ag-cell-not-inline-editing ag-cell-auto-height"
                           col-id="ident"
                           comp-id="39"
                           role="gridcell"
                           style="width: 200px; left: 600px;  "
                           tabindex="-1"
-                          unselectable="on"
                         >
-                          uuid1
+                          <div
+                            class="ag-cell-wrapper"
+                            ref="eCellWrapper"
+                            role="presentation"
+                          >
+                            
+            
+                            <span
+                              class="ag-cell-value"
+                              id="cell-39"
+                              ref="eCellValue"
+                              role="presentation"
+                            >
+                              
+                uuid1
+            
+                            </span>
+                            
+        
+                          </div>
                         </div>
                       </div>
                       <div
@@ -967,51 +1043,127 @@ exports[`DataTable It matches the snapshot 1`] = `
                       >
                         <div
                           aria-colindex="1"
-                          class="ag-cell ag-cell-not-inline-editing ag-cell-auto-height ag-cell-value"
+                          aria-describedby="cell-41"
+                          class="ag-cell ag-cell-not-inline-editing ag-cell-auto-height"
                           col-id="username"
                           comp-id="41"
                           role="gridcell"
                           style="width: 200px; left: 0px;  "
                           tabindex="-1"
-                          unselectable="on"
                         >
-                          mmartin
+                          <div
+                            class="ag-cell-wrapper"
+                            ref="eCellWrapper"
+                            role="presentation"
+                          >
+                            
+            
+                            <span
+                              class="ag-cell-value"
+                              id="cell-41"
+                              ref="eCellValue"
+                              role="presentation"
+                            >
+                              
+                mmartin
+            
+                            </span>
+                            
+        
+                          </div>
                         </div>
                         <div
                           aria-colindex="2"
-                          class="ag-cell ag-cell-not-inline-editing ag-cell-auto-height ag-cell-value"
+                          aria-describedby="cell-42"
+                          class="ag-cell ag-cell-not-inline-editing ag-cell-auto-height"
                           col-id="password"
                           comp-id="42"
                           role="gridcell"
                           style="width: 200px; left: 200px;  "
                           tabindex="-1"
-                          unselectable="on"
                         >
-                          password123
+                          <div
+                            class="ag-cell-wrapper"
+                            ref="eCellWrapper"
+                            role="presentation"
+                          >
+                            
+            
+                            <span
+                              class="ag-cell-value"
+                              id="cell-42"
+                              ref="eCellValue"
+                              role="presentation"
+                            >
+                              
+                password123
+            
+                            </span>
+                            
+        
+                          </div>
                         </div>
                         <div
                           aria-colindex="3"
-                          class="ag-cell ag-cell-not-inline-editing ag-cell-auto-height ag-cell-value"
+                          aria-describedby="cell-43"
+                          class="ag-cell ag-cell-not-inline-editing ag-cell-auto-height"
                           col-id="email"
                           comp-id="43"
                           role="gridcell"
                           style="width: 200px; left: 400px;  "
                           tabindex="-1"
-                          unselectable="on"
                         >
-                          matewmartin@victokia.com
+                          <div
+                            class="ag-cell-wrapper"
+                            ref="eCellWrapper"
+                            role="presentation"
+                          >
+                            
+            
+                            <span
+                              class="ag-cell-value"
+                              id="cell-43"
+                              ref="eCellValue"
+                              role="presentation"
+                            >
+                              
+                matewmartin@victokia.com
+            
+                            </span>
+                            
+        
+                          </div>
                         </div>
                         <div
                           aria-colindex="4"
-                          class="ag-cell ag-cell-not-inline-editing ag-cell-auto-height ag-cell-value"
+                          aria-describedby="cell-44"
+                          class="ag-cell ag-cell-not-inline-editing ag-cell-auto-height"
                           col-id="ident"
                           comp-id="44"
                           role="gridcell"
                           style="width: 200px; left: 600px;  "
                           tabindex="-1"
-                          unselectable="on"
                         >
-                          uuid2
+                          <div
+                            class="ag-cell-wrapper"
+                            ref="eCellWrapper"
+                            role="presentation"
+                          >
+                            
+            
+                            <span
+                              class="ag-cell-value"
+                              id="cell-44"
+                              ref="eCellValue"
+                              role="presentation"
+                            >
+                              
+                uuid2
+            
+                            </span>
+                            
+        
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -1070,7 +1222,7 @@ exports[`DataTable It matches the snapshot 1`] = `
               
         
               <div
-                class="ag-floating-bottom"
+                class="ag-floating-bottom ag-selectable"
                 ref="eBottom"
                 role="presentation"
                 style="min-height: 0px; height: 0px; display: none; overflow-y: hidden;"

@@ -103,9 +103,6 @@ const StructuralVariants = ({
               if ((primarySiteFoldChange1 !== null || primarySiteFoldChange2 !== null) && !nextVisible.includes('primarySiteFoldChange')) {
                 nextVisible.push('primarySiteFoldChange');
               }
-              if ((primarySitekIQR1 !== null || primarySitekIQR2 !== null) && !nextVisible.includes('primarySitekIQR')) {
-                nextVisible.push('primarySitekIQR');
-              }
               if (nextVisible.length === 2) {
                 break;
               }

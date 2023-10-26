@@ -10,13 +10,19 @@ class CoalesceEntriesError extends Error {
   }
 }
 
+type CoalesceEntriesResult<T extends KbMatchType[]> = Array<{
+  [K in keyof T[number]]: T[number][K] extends Array<infer U>
+    ? U[]
+    : T[number][K];
+}>;
+
 /**
  * Merges duplicated entries based on gene, context, and variant
  * @param {array} entries kb matches to be coalesced
  * @returns {array} bucketed entries post merge
  */
-const coalesceEntries = (entries: KbMatchType[]) => {
-  function getVariantName<T extends AnyVariantType>(variant: KbMatchType<T>['variant'], variantType: T) {
+const coalesceEntries = <T extends KbMatchType[]>(entries: T): CoalesceEntriesResult<T> => {
+  function getVariantName<V extends AnyVariantType>(variant: KbMatchType<V>['variant'], variantType: V) {
     if (variantType === 'cnv') {
       const { gene: { name }, cnvState } = variant as KbMatchType<'cnv'>['variant'];
       return `${name} ${cnvState}`;

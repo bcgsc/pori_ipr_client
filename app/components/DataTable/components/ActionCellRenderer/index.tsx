@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, {
+  useState, useEffect, useMemo, useCallback,
+} from 'react';
 import {
   IconButton,
   Menu,
@@ -28,7 +30,42 @@ type ActionCellRendererProps = {
   };
   onEdit?: (data) => void;
   onDelete?: (data: string) => void;
+  displayMode?: 'tableCell' | 'menu';
 } & Partial<ICellRendererParams>;
+
+const WrapperComponent = ({
+  displayMode = 'tableCell',
+  children,
+  onClick = () => {},
+  ...rest
+}: {
+  displayMode: ActionCellRendererProps['displayMode'];
+  children: React.ReactNode;
+  onClick?: React.MouseEventHandler;
+}) => {
+  if (displayMode === 'menu') {
+    return (
+      <MenuItem onClick={onClick} {...rest}>
+        {children}
+      </MenuItem>
+    );
+  }
+
+  // We don't deal with multiple nodes for now
+  if (Array.isArray(children)) {
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    return <span {...rest}>{children}</span>;
+  }
+
+  if (React.isValidElement(children)) {
+    const newProps = {
+      onClick,
+      ...rest,
+    };
+    return React.cloneElement(children, newProps);
+  }
+  return null;
+};
 
 const ActionCellRenderer = ({
   data,
@@ -40,6 +77,7 @@ const ActionCellRenderer = ({
   columnApi,
   onEdit,
   onDelete,
+  displayMode = 'tableCell',
 }: ActionCellRendererProps): JSX.Element => {
   const [showDetailDialog, setShowDetailDialog] = useState(false);
   const [showSvgViewer, setShowSvgViewer] = useState(false);
@@ -78,50 +116,58 @@ const ActionCellRenderer = ({
     setAnchorEl(event.currentTarget);
   };
 
-  const handleMenuClose = () => {
+  const handleMenuClose = useCallback(() => {
     setAnchorEl(null);
-  };
+  }, []);
+
+  const handleDelete = useCallback(() => {
+    onDelete(data.ident);
+  }, [data.ident, onDelete]);
+
+  const handleEdit = useCallback(() => {
+    onEdit(data);
+  }, [data, onEdit]);
 
   const hasImageData = Array.isArray(data.image) ? data.image.length > 0 : data.image;
 
-  return (
-    <>
-      {canViewDetails && (
-        <IconButton
-          aria-label="View Details"
-          data-testid="view-details"
-          onClick={detailClick}
-          size="small"
-          title="View Details"
-        >
-          <LibraryBooks />
-        </IconButton>
-      )}
-      {(!window._env_.IS_DEMO && data.kbStatementId && !Array.isArray(data.kbStatementId) && data.kbStatementId.match(/^#?-?\d+:-?\d+$/))
-        ? (
-          <IconButton
-            aria-label="Open in GraphKB"
+  const openGraphKbButton = useMemo(() => {
+    if (!window._env_.IS_DEMO && data.kbStatementId) {
+      if (!Array.isArray(data.kbStatementId) && data.kbStatementId.match(/^#?-?\d+:-?\d+$/)) {
+        return (
+          <WrapperComponent
             data-testid="graphkb"
-            href={`${window._env_.GRAPHKB_URL}/view/Statement/${data.kbStatementId.replace('#', '')}`}
-            rel="noreferrer noopener"
-            size="small"
-            target="_blank"
-            title="Open in GraphKB"
+            onClick={() => window.open(`${window._env_.GRAPHKB_URL}/view/Statement/${data.kbStatementId.replace('#', '')}`, '_blank')}
+            displayMode={displayMode}
           >
-            <OpenInNew />
-          </IconButton>
-        ) : null}
-      {(!window._env_.IS_DEMO && data.kbStatementId && Array.isArray(data.kbStatementId) && data.kbStatementId.some((statement) => statement.match(/^#?-?\d+:-?\d+$/)))
-        ? (
+            {
+              displayMode === 'tableCell' ? (
+                <IconButton
+                  aria-label="Open in GraphKB"
+                  size="small"
+                  title="Open in GraphKB"
+                >
+                  <OpenInNew />
+                </IconButton>
+              ) : 'Open in GraphKB'
+            }
+          </WrapperComponent>
+        );
+      }
+      if (Array.isArray(data.kbStatementId) && data.kbStatementId.some((statement) => statement.match(/^#?-?\d+:-?\d+$/))) {
+        return (
           <>
-            <IconButton
-              size="small"
-              aria-label="Open in GraphKB"
-              title="Open in GraphKB"
-              onClick={handleMenuOpen}
-            >
-              <OpenInNew />
-            </IconButton>
+            <WrapperComponent onClick={handleMenuOpen} displayMode={displayMode}>
+              {displayMode === 'tableCell' ? (
+                <IconButton
+                  size="small"
+                  aria-label="Open in GraphKB"
+                  title="Open in GraphKB"
+                >
+                  <OpenInNew />
+                </IconButton>
+              ) : 'Open in GraphKB'}
+            </WrapperComponent>
+
             <Menu
               anchorEl={anchorEl}
               open={Boolean(anchorEl)}
@@ -130,7 +176,6 @@ const ActionCellRenderer = ({
               {data.kbStatementId.filter((statement) => statement.match(/^#?-?\d+:-?\d+$/)).map((statement) => (
                 <MenuItem
                   key={statement}
-                  onClick={handleMenuClose}
                 >
                   <a
                     className="action-cell-kb-statement__link"
@@ -144,7 +189,27 @@ const ActionCellRenderer = ({
               ))}
             </Menu>
           </>
-        ) : null}
+        );
+      }
+    }
+    return null;
+  }, [anchorEl, data.kbStatementId, displayMode, handleMenuClose]);
+
+  return (
+    <>
+      {canViewDetails && (
+        <WrapperComponent data-testid="view-details" onClick={detailClick} displayMode={displayMode}>
+          {displayMode === 'tableCell' ? (
+            <IconButton
+              aria-label="View Details"
+              size="small"
+              title="View Details"
+            >
+              <LibraryBooks />
+            </IconButton>
+          ) : 'View Details'}
+        </WrapperComponent>
+      )}
       {showDetailDialog && (
         <DetailDialog
           isOpen={showDetailDialog}
@@ -153,38 +218,45 @@ const ActionCellRenderer = ({
           columnMapping={columnMapping}
         />
       )}
+      {openGraphKbButton}
       {canDelete && (
-        <IconButton
-          aria-label="Delete"
-          data-testid="delete"
-          onClick={() => onDelete(data.ident)}
-          size="small"
-          title="Delete"
-        >
-          <Delete />
-        </IconButton>
+        <WrapperComponent data-testid="delete" onClick={handleDelete} displayMode={displayMode}>
+          {displayMode === 'tableCell' ? (
+            <IconButton
+              aria-label="Delete"
+              size="small"
+              title="Delete"
+            >
+              <Delete />
+            </IconButton>
+          ) : 'Delete Row'}
+        </WrapperComponent>
       )}
       {canEdit && (
-        <IconButton
-          aria-label="Edit"
-          data-testid="edit"
-          onClick={() => onEdit(data)}
-          size="small"
-          title="Edit"
-        >
-          <Edit />
-        </IconButton>
+        <WrapperComponent data-testid="edit" onClick={handleEdit} displayMode={displayMode}>
+          {displayMode === 'tableCell' ? (
+            <IconButton
+              aria-label="Edit"
+              size="small"
+              title="Edit"
+            >
+              <Edit />
+            </IconButton>
+          ) : 'Edit Row'}
+        </WrapperComponent>
       )}
       {data.svg && (
-        <IconButton
-          aria-label="View Fusion Diagram"
-          data-testid="fusion"
-          onClick={() => setShowSvgViewer((prevVal) => !prevVal)}
-          size="small"
-          title="View Fusion Diagram"
-        >
-          <Photo />
-        </IconButton>
+        <WrapperComponent data-testid="fusion" onClick={() => setShowSvgViewer((prevVal) => !prevVal)} displayMode={displayMode}>
+          {displayMode === 'tableCell' ? (
+            <IconButton
+              aria-label="View Fusion Diagram"
+              size="small"
+              title="View Fusion Diagram"
+            >
+              <Photo />
+            </IconButton>
+          ) : 'View Fusion Diagram'}
+        </WrapperComponent>
       )}
       {showSvgViewer && (
         <SvgViewer
@@ -194,15 +266,17 @@ const ActionCellRenderer = ({
         />
       )}
       {hasImageData && (
-        <IconButton
-          aria-label="View Image"
-          data-testid="image"
-          onClick={() => setShowImageViewer((prevVal) => !prevVal)}
-          size="small"
-          title="View Image"
-        >
-          <Photo />
-        </IconButton>
+        <WrapperComponent data-testid="image" onClick={() => setShowImageViewer((prevVal) => !prevVal)} displayMode={displayMode}>
+          {displayMode === 'tableCell' ? (
+            <IconButton
+              aria-label="View Image"
+              size="small"
+              title="View Image"
+            >
+              <Photo />
+            </IconButton>
+          ) : 'View Image'}
+        </WrapperComponent>
       )}
       {showImageViewer && (
         <ImageViewer
@@ -215,4 +289,8 @@ const ActionCellRenderer = ({
   );
 };
 
+export {
+  ActionCellRendererProps,
+  ActionCellRenderer,
+};
 export default ActionCellRenderer;
