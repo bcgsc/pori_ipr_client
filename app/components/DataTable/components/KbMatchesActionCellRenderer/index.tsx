@@ -2,21 +2,26 @@ import {
   IconButton, Menu, MenuItem,
 } from '@mui/material';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useContext } from 'react';
 import api from '@/services/api';
 import { KbMatchType } from '@/common';
 import { useParams } from 'react-router-dom';
 import snackbar from '@/services/SnackbarUtils';
+import ReportContext from '@/context/ReportContext';
 import {
   ActionCellRendererProps,
   ActionCellRenderer,
 } from '../ActionCellRenderer';
 
+const REPORT_TYPES_TO_SHOW_EXTRA_MENU = ['genomic'];
+
 type TherapeuticTargetType = 'therapeutic' | 'chemoresistance';
 
 const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
   const { ident: reportId } = useParams<{ ident: string }>();
+  const { report: { template: { name: reportType } } } = useContext(ReportContext);
   const { data } = props;
+
   const {
     kbStatementId,
     iprEvidenceLevel,
@@ -100,6 +105,10 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
     return null;
   }, []);
 
+  if (!REPORT_TYPES_TO_SHOW_EXTRA_MENU.includes(reportType)) {
+    return <ActionCellRenderer {...props} />;
+  }
+
   return (
     <>
       <IconButton
@@ -114,7 +123,8 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
         onClose={() => setMenuAnchor(null)}
       >
         <MenuItem
-          disabled={isLoading}
+          // disabled={isLoading}
+          disabled
           onClick={isMult
             ? (evt) => handleMultiTargets(evt, 'therapeutic')
             : handleUpdateTherapeuticTargets('therapeutic')}
@@ -122,7 +132,8 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
           Add to Potential Therapeutic Targets
         </MenuItem>
         <MenuItem
-          disabled={isLoading}
+          // disabled={isLoading}
+          disabled
           onClick={isMult
             ? (evt) => handleMultiTargets(evt, 'chemoresistance')
             : handleUpdateTherapeuticTargets('chemoresistance')}
