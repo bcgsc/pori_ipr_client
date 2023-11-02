@@ -129,7 +129,7 @@ const Sidebar = (): JSX.Element => {
           </ListItem>
         </>
       );
-    } else {
+    } else if (!adminAccess && reportsAccess) {
       adminSection = (
         <ListItem
           className={`
