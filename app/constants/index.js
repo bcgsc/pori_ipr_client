@@ -15,6 +15,7 @@ const REPORT_TYPE_TO_TITLE = {
   genomic: 'Genomic',
   probe: 'Targeted Gene',
   pharmacogenomic: 'Pharmacogenomic and Cancer Predisposition Targeted Gene',
+  rapid: 'Targeted Gene',
 };
 
 const REPORT_TYPE_TO_SUFFIX = {
