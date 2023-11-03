@@ -58,12 +58,20 @@ const columnDefs = [
   {
     headerName: 'dbSnpIds',
     field: 'dbSnpIds',
+    cellRenderer: 'linkOutCell',
+    cellRendererParams: {
+      linkKey: 'dbSnp',
+    },
     hide: false,
   },
   {
     headerName: 'clinvarIds',
     field: 'clinvarIds',
     minWidth: 80,
+    cellRenderer: 'linkOutCell',
+    cellRendererParams: {
+      linkKey: 'clinvar',
+    },
     hide: false,
   },
   {
