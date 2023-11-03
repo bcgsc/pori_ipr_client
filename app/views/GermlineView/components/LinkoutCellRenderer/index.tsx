@@ -5,6 +5,7 @@ import { ICellRendererParams } from '@ag-grid-community/core';
 const LINK_KEY_TO_URI = {
   clinvar: 'https://www.ncbi.nlm.nih.gov/clinvar/variation/',
   dbSnp: 'https://www.ncbi.nlm.nih.gov/snp/',
+  cosmic: 'https://cancer.sanger.ac.uk/cosmic/search?q=',
 };
 interface LinkoutCellRendererParams extends ICellRendererParams {
   linkKey: string;

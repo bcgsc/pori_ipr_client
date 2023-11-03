@@ -77,6 +77,10 @@ const columnDefs = [
   {
     headerName: 'cosmicIds',
     field: 'cosmicIds',
+    cellRenderer: 'linkOutCell',
+    cellRendererParams: {
+      linkKey: 'cosmic',
+    },
     hide: false,
   },
   {
