@@ -420,7 +420,7 @@ const DataTable = ({
       columnKeys: colApi.getAllDisplayedColumns()
         .filter((col) => {
           const colD = col.getColDef();
-          return (colD?.headerName === 'Actions' || colD?.field === 'Actions' || col.getColId() === 'Actions');
+          return !(colD?.headerName === 'Actions' || colD?.field === 'Actions' || col.getColId() === 'Actions');
         })
         .map((col) => col.getColId()),
       fileName: `ipr_${report.patientId}_${report.ident}_${titleText.split(' ').join('_')}_${date}.tsv`,
