@@ -26,12 +26,12 @@
   visibility: hidden;
 }
 
+// https://github.com/zenoamaro/react-quill/issues/394#issuecomment-748069734
 .ql-clipboard {
-  left: -100000px;
-  height: 1px;
-  overflow-y: hidden;
-  position: absolute;
-  top: 50%;
+  position: fixed !important;
+  left: 50% !important;
+  top: 50% !important;
+  display: none;
 }
 
 .ql-clipboard p {
