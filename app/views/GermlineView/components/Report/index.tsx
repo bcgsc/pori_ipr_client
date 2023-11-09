@@ -26,6 +26,7 @@ import EditDialog from './components/EditDialog';
 import Reviews from './components/Reviews';
 import columnDefs from './columnDefs';
 import './index.scss';
+import LinkoutCellRenderer from '../LinkoutCellRenderer';
 
 type GermlineReportProps = WithLoadingInjectedProps;
 
@@ -65,12 +66,11 @@ const GermlineReport = ({
     }
   }, [ident, setReport, setIsLoading]);
 
-  useEffect(() => {
-    if (colApi) {
-      const colIds = colApi.getAllColumns().filter((col) => !col.getColDef().autoHeight).map((col) => col.getColId());
-      colApi.autoSizeColumns(colIds, false);
-    }
-  }, [colApi]);
+  const handleGridReady = useCallback((params) => {
+    const { columnApi } = params;
+    columnApi.autoSizeAllColumns();
+    onGridReady(params);
+  }, [onGridReady]);
 
   const handleShowAllColumns = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const { checked } = event.target;
@@ -204,9 +204,15 @@ const GermlineReport = ({
                 columnDefs={columnDefs}
                 domLayout="autoHeight"
                 enableCellTextSelection
-                onGridReady={onGridReady}
+                onGridReady={handleGridReady}
                 suppressColumnVirtualisation
                 rowData={report.variants}
+                onFirstDataRendered={(params) => {
+                  const colIds = params.columnApi
+                    .getAllDisplayedColumns()
+                    .map((col) => col.getColId());
+                  params.columnApi.autoSizeColumns(colIds);
+                }}
                 rowClassRules={{
                   strikethrough: (params) => params.data.hidden,
                   'low-score': (params) => params.data.score < 100,
@@ -220,6 +226,7 @@ const GermlineReport = ({
                 frameworkComponents={{
                   strikethroughCell: StrikethroughCell,
                   actionCell: RowActionCellRenderer,
+                  linkOutCell: LinkoutCellRenderer,
                 }}
                 context={{
                   canEdit: true,
