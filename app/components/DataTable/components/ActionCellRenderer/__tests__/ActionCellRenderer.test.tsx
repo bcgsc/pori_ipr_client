@@ -66,9 +66,11 @@ describe('ActionCellRenderer', () => {
     expect(openSpy).toHaveBeenCalledWith(`${window._env_.GRAPHKB_URL}/view/Statement/155:863`, '_blank');
   });
 
-  test('It shows a link to GraphKB when multiple entries exist', async () => {
+  test('It opens a new window to GraphKB table view when multiple entries exist', async () => {
     const statements = ['#155:863', '#120:109'];
-    const { getByText } = render(
+    const originalOpen = window.open;
+    window.open = jest.fn();
+    const { findByRole } = render(
       <ActionCellRenderer
         data={{
           kbStatementId: statements,
@@ -77,11 +79,17 @@ describe('ActionCellRenderer', () => {
     );
 
     await act(async () => {
-      fireEvent.click(await screen.findByRole('button'));
+      fireEvent.click(await findByRole('button'));
     });
 
-    expect(getByText(statements[0])).toHaveAttribute('href', `${window._env_.GRAPHKB_URL}/view/Statement/155:863`);
-    expect(getByText(statements[1])).toHaveAttribute('href', `${window._env_.GRAPHKB_URL}/view/Statement/120:109`);
+    const sortedStatementIds = [...new Set(statements)].sort();
+    const complexParam = btoa(JSON.stringify({ target: sortedStatementIds }));
+    const searchParams = new URLSearchParams();
+    searchParams.set('complex', complexParam);
+    searchParams.set('@class', 'statement');
+    const urlParams = searchParams.toString();
+    expect(window.open).toHaveBeenCalledWith(`${window._env_.GRAPHKB_URL}/data/table?${urlParams}`, '_blank');
+    window.open = originalOpen;
   });
 
   test('It shows the delete icon when allowed', async () => {
