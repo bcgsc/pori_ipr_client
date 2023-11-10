@@ -111,7 +111,7 @@ const splitVariantsByRelevance = (data: RapidVariantType[]): RapidVariantType[] 
  * Sample Information (obtained by report)
  */
 type RapidSummaryProps = {
-  loadedDispatch: ({ type: string }) => void;
+  loadedDispatch: ({ type }: { type: string }) => void;
   isPrint: boolean;
 } & WithLoadingInjectedProps;
 
@@ -516,7 +516,7 @@ const RapidSummary = ({
           />
           <VariantEditDialog
             open={showMatchedTumourEditDialog}
-            fields={[FIELDS.comments, FIELDS.kbmatches]}
+            fields={[FIELDS.comments, FIELDS.kbMatches]}
             editData={editData}
             onClose={handleMatchedTumourEditClose}
           />

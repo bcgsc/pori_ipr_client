@@ -83,7 +83,7 @@ const VARIANT_TYPE_TO_API_MAP = {
 
 enum FIELDS {
   'comments',
-  'kbmatches',
+  'kbMatches',
 }
 
 interface VariantEditDialogProps extends DialogProps {
@@ -130,10 +130,18 @@ const VariantEditDialog = ({
 
   const handleSave = useCallback(async () => {
     if (editDataDirty) {
-      const putData = {
-        comments: data?.comments,
-      };
+      const putData: {
+        comments?: string;
+        kbMatches?: KbMatchType[];
+      } = {};
 
+      if (fields.includes(FIELDS.comments) && data?.comments) {
+        putData.comments = data?.comments;
+      }
+
+      if (fields.includes(FIELDS.kbMatches) && data?.kbMatches) {
+        putData.kbMatches = data?.kbMatches;
+      }
       let variantId = data?.ident;
 
       // The relevance was appeneded to Id due to row concatenation, needs to be removed here to call API
@@ -162,12 +170,13 @@ const VariantEditDialog = ({
     isSigned,
     showConfirmDialog,
     onClose,
+    fields,
   ]);
 
   const handleDialogClose = useCallback(() => onClose(null), [onClose]);
 
   const kbMatchesField = () => {
-    if (!fields.includes(FIELDS.kbmatches)) {
+    if (!fields.includes(FIELDS.kbMatches)) {
       return null;
     }
     return (
