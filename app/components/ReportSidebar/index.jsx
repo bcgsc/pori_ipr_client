@@ -1,8 +1,9 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link, useLocation } from 'react-router-dom';
 import {
-  List, ListItem, ListItemText,
+  IconButton,
+  List, ListItem, ListItemText, Menu, MenuItem, Typography,
 } from '@mui/material';
 import PrintIcon from '@mui/icons-material/Print';
 
@@ -21,6 +22,16 @@ const ReportSidebar = (props) => {
   const { pathname } = useLocation();
   const { report } = useContext(ReportContext);
 
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handlePrintMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePrintMenuClose = () => {
+    setAnchorEl(null);
+  };
+
   if (!isSidebarVisible) {
     return null;
   }
@@ -32,14 +43,36 @@ const ReportSidebar = (props) => {
           <ListItemText classes={{ root: 'report-sidebar__list-title', primary: 'report-sidebar__list-title-text' }}>
             Report Sections
           </ListItemText>
-          <Link
-            to={{ pathname: `/print/${report.ident}` }}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="report-sidebar__list-link report-sidebar__list-link--adornment"
-          >
+          <IconButton onClick={handlePrintMenuOpen}>
             <PrintIcon />
-          </Link>
+          </IconButton>
+          <Menu
+            anchorEl={anchorEl}
+            keepMounted
+            open={Boolean(anchorEl)}
+            onClose={handlePrintMenuClose}
+          >
+            <MenuItem>
+              <Link
+                to={{ pathname: `/print/${report.ident}` }}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="report-sidebar__list-link"
+              >
+                <Typography>Stable</Typography>
+              </Link>
+            </MenuItem>
+            <MenuItem>
+              <Link
+                to={{ pathname: `/printBeta/${report.ident}` }}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="report-sidebar__list-link"
+              >
+                <Typography>Beta</Typography>
+              </Link>
+            </MenuItem>
+          </Menu>
         </ListItem>
         {allSections.map((section) => (
           <React.Fragment key={section.name}>
