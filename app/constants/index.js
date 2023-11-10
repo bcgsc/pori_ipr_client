@@ -22,6 +22,7 @@ const REPORT_TYPE_TO_SUFFIX = {
   genomic: '',
   probe: 'Somatic',
   pharmacogenomic: 'Germline',
+  rapid: '',
 };
 
 export {
