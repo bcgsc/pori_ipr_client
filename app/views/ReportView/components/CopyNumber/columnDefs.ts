@@ -61,6 +61,11 @@ const columnDefs: ColDef[] = [{
   valueGetter: 'data.gene.expressionVariants.diseasekIQR',
   hide: true,
 }, {
+  headerName: 'Expression (Zscore)',
+  colId: 'diseaseZScore',
+  valueGetter: 'data.gene.expressionVariants.diseaseZScore',
+  hide: false,
+}, {
   headerName: 'Oncogene',
   colId: 'oncogene',
   valueGetter: 'data.gene.oncogene || false',
