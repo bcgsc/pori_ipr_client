@@ -2,7 +2,7 @@ import {
   KbMatchType,
 } from '@/common';
 
-const getVariantRelevanceDict = (kbMatches: RapidVariantType['kbMatches']) => {
+const getVariantRelevanceDict = (kbMatches: KbMatchType[]) => {
   const relevanceDict: Record<string, KbMatchType[]> = {};
   kbMatches.forEach((match) => {
     if (!relevanceDict[match.relevance]) {
