@@ -54,7 +54,7 @@ const columnDefs: ColDef[] = [{
   headerName: 'Expression (TPM)',
   colId: 'tpm',
   valueGetter: 'data.gene.expressionVariants.tpm',
-  hide: true,
+  hide: false,
 }, {
   headerName: 'Expression (kIQR)',
   colId: 'diseasekIQR',
