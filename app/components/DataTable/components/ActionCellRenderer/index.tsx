@@ -3,7 +3,6 @@ import React, {
 } from 'react';
 import {
   IconButton,
-  Menu,
   MenuItem,
 } from '@mui/material';
 import {
@@ -83,7 +82,6 @@ const ActionCellRenderer = ({
   const [showSvgViewer, setShowSvgViewer] = useState(false);
   const [showImageViewer, setShowImageViewer] = useState(false);
   const [columnMapping, setColumnMapping] = useState({});
-  const [anchorEl, setAnchorEl] = useState(null);
 
   useEffect(() => {
     if (showDetailDialog) {
@@ -112,13 +110,19 @@ const ActionCellRenderer = ({
     setShowImageViewer(false);
   };
 
-  const handleMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+  const handleSingleGraphKbLink = useCallback(() => {
+    window.open(`${window._env_.GRAPHKB_URL}/view/Statement/${data.kbStatementId.replace('#', '')}`, '_blank');
+  }, [data.kbStatementId]);
 
-  const handleMenuClose = useCallback(() => {
-    setAnchorEl(null);
-  }, []);
+  const handleMultGraphKbLink = useCallback(() => {
+    const sortedStatementIds = [...new Set(data.kbStatementId)].sort();
+    const complexParam = btoa(JSON.stringify({ target: sortedStatementIds }));
+    const searchParams = new URLSearchParams();
+    searchParams.set('complex', complexParam);
+    searchParams.set('@class', 'statement');
+    const urlParams = searchParams.toString();
+    window.open(`${window._env_.GRAPHKB_URL}/data/table?${urlParams}`, '_blank');
+  }, [data.kbStatementId]);
 
   const handleDelete = useCallback(() => {
     onDelete(data.ident);
@@ -136,7 +140,7 @@ const ActionCellRenderer = ({
         return (
           <WrapperComponent
             data-testid="graphkb"
-            onClick={() => window.open(`${window._env_.GRAPHKB_URL}/view/Statement/${data.kbStatementId.replace('#', '')}`, '_blank')}
+            onClick={handleSingleGraphKbLink}
             displayMode={displayMode}
           >
             {
@@ -155,45 +159,22 @@ const ActionCellRenderer = ({
       }
       if (Array.isArray(data.kbStatementId) && data.kbStatementId.some((statement) => statement.match(/^#?-?\d+:-?\d+$/))) {
         return (
-          <>
-            <WrapperComponent onClick={handleMenuOpen} displayMode={displayMode}>
-              {displayMode === 'tableCell' ? (
-                <IconButton
-                  size="small"
-                  aria-label="Open in GraphKB"
-                  title="Open in GraphKB"
-                >
-                  <OpenInNew />
-                </IconButton>
-              ) : 'Open in GraphKB'}
-            </WrapperComponent>
-
-            <Menu
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              onClose={handleMenuClose}
-            >
-              {data.kbStatementId.filter((statement) => statement.match(/^#?-?\d+:-?\d+$/)).map((statement) => (
-                <MenuItem
-                  key={statement}
-                >
-                  <a
-                    className="action-cell-kb-statement__link"
-                    href={`${window._env_.GRAPHKB_URL}/view/Statement/${statement.replace('#', '')}`}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                  >
-                    {statement}
-                  </a>
-                </MenuItem>
-              ))}
-            </Menu>
-          </>
+          <WrapperComponent onClick={handleMultGraphKbLink} displayMode={displayMode}>
+            {displayMode === 'tableCell' ? (
+              <IconButton
+                size="small"
+                aria-label="Open in GraphKB"
+                title="Open in GraphKB"
+              >
+                <OpenInNew />
+              </IconButton>
+            ) : 'Open in GraphKB'}
+          </WrapperComponent>
         );
       }
     }
     return null;
-  }, [anchorEl, data.kbStatementId, displayMode, handleMenuClose]);
+  }, [data.kbStatementId, displayMode, handleSingleGraphKbLink, handleMultGraphKbLink]);
 
   return (
     <>

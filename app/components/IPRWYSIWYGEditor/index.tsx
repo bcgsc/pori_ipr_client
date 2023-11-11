@@ -78,15 +78,14 @@ const IPRWYSIWYGEditor = ({
     <Dialog fullWidth maxWidth="lg" open={isOpen} onClose={() => onClose(null)}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
-        <div>
-          <ReactQuill
-            {...defaultQuillProps}
-            theme="snow"
-            defaultValue={text}
-            onChange={handleOnEdit}
-            formats={ALLOWED_FORMATS}
-          />
-        </div>
+        <ReactQuill
+          {...defaultQuillProps}
+          theme="snow"
+          defaultValue={text}
+          onChange={handleOnEdit}
+          formats={ALLOWED_FORMATS}
+          scrollingContainer="html" // https://github.com/zenoamaro/react-quill/issues/394#issuecomment-748069734
+        />
       </DialogContent>
       <DialogActions>
         <Button onClick={() => onClose()}>Close</Button>
