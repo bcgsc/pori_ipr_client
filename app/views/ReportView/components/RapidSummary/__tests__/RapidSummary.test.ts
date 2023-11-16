@@ -15,7 +15,7 @@ describe('Rapid Report', () => {
 
     describe('getVariantRelevanceDict', () => {
       test('Should return an object with relevance as keys, and kbMatches as values', () => {
-        const relevanceDict = getVariantRelevanceDict(testData1[0]);
+        const relevanceDict = getVariantRelevanceDict(testData1[0].kbMatches);
         expect(Object.keys(relevanceDict).length).toBe(2);
         expect(Object.keys(relevanceDict)).toContain('reactive');
         expect(Object.keys(relevanceDict)).toContain('sensitivity');

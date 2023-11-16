@@ -35,17 +35,21 @@ import { Box } from '@mui/system';
 import {
   therapeuticAssociationColDefs, cancerRelevanceColDefs, sampleColumnDefs, getGenomicEvent,
 } from './columnDefs';
-import VariantEditDialog from './components/VariantEditDialog';
+import { VariantEditDialog, FIELDS } from './components/VariantEditDialog';
 import { RapidVariantType } from './types';
+import { getVariantRelevanceDict } from './utils';
 
 const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
-  const iprRelevanceDict = {
-    'IPR-A': new Set(),
-    'IPR-B': new Set(),
-  };
+  const iprRelevanceDict = {};
+
+  kbMatches.forEach(({ iprEvidenceLevel }) => {
+    if (!iprRelevanceDict[iprEvidenceLevel]) {
+      iprRelevanceDict[iprEvidenceLevel] = new Set();
+    }
+  });
 
   const removeSquareBrackets = (kbm: KbMatchType) => {
-    iprRelevanceDict[kbm.iprEvidenceLevel].add(kbm.context.replace(/ *\[[^)]*\] */g, '').toLowerCase());
+    iprRelevanceDict[kbm.iprEvidenceLevel]?.add(kbm.context.replace(/ *\[[^)]*\] */g, '').toLowerCase());
   };
 
   orderBy(
@@ -56,31 +60,28 @@ const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
   return iprRelevanceDict;
 };
 
-const getVariantRelevanceDict = (variant: RapidVariantType) => {
-  const relevanceDict: Record<string, KbMatchType[]> = {};
-  variant.kbMatches.forEach((match) => {
-    if (!relevanceDict[match.relevance]) {
-      relevanceDict[match.relevance] = [match];
-    } else {
-      relevanceDict[match.relevance].push(match);
-    }
-  });
-  return relevanceDict;
-};
-
-const processPotentialClinicalAssociation = (variant: RapidVariantType) => Object.entries(getVariantRelevanceDict(variant))
+const processPotentialClinicalAssociation = (variant: RapidVariantType) => Object.entries(getVariantRelevanceDict(variant.kbMatches))
   .map(([relevanceKey, kbMatches]) => {
     const iprEvidenceDict = splitIprEvidenceLevels(kbMatches);
+    if (!iprEvidenceDict['IPR-A']) {
+      iprEvidenceDict['IPR-A'] = new Set();
+    }
+    if (!iprEvidenceDict['IPR-B']) {
+      iprEvidenceDict['IPR-B'] = new Set();
+    }
+    const iprAlist = orderBy(
+      Array.from(iprEvidenceDict['IPR-A']),
+      [(cont) => cont[0].toLowerCase()],
+    ).map((drugName) => `${drugName} (IPR-A)`);
+
+    const iprBlist = orderBy(
+      Array.from(iprEvidenceDict['IPR-B']),
+      [(cont) => cont[0].toLowerCase()],
+    ).filter((drugName) => !iprEvidenceDict['IPR-A'].has(drugName)).map((drugName) => `${drugName} (IPR-B)`);
 
     const combinedDrugList = [
-      ...orderBy(
-        Array.from(iprEvidenceDict['IPR-A']),
-        [(cont) => cont[0].toLowerCase()],
-      ).map((drugName) => `${drugName} (IPR-A)`),
-      ...orderBy(
-        Array.from(iprEvidenceDict['IPR-B']),
-        [(cont) => cont[0].toLowerCase()],
-      ).filter((drugName) => !iprEvidenceDict['IPR-A'].has(drugName)).map((drugName) => `${drugName} (IPR-B)`),
+      ...iprAlist,
+      ...iprBlist,
     ].join(', ');
 
     return ({
@@ -110,7 +111,7 @@ const splitVariantsByRelevance = (data: RapidVariantType[]): RapidVariantType[] 
  * Sample Information (obtained by report)
  */
 type RapidSummaryProps = {
-  loadedDispatch: ({ type: string }) => void;
+  loadedDispatch: ({ type }: { type: string }) => void;
   isPrint: boolean;
 } & WithLoadingInjectedProps;
 
@@ -515,6 +516,7 @@ const RapidSummary = ({
           />
           <VariantEditDialog
             open={showMatchedTumourEditDialog}
+            fields={[FIELDS.comments, FIELDS.kbMatches]}
             editData={editData}
             onClose={handleMatchedTumourEditClose}
           />
