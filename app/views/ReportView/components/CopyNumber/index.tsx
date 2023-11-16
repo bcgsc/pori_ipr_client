@@ -86,14 +86,10 @@ const CopyNumber = ({
             for (const {
               gene: {
                 expressionVariants: {
-                  tpm, rpkm, primarySiteFoldChange,
+                  rpkm, primarySiteFoldChange,
                 },
               },
             } of cnvsResp) {
-              /* Show either RPKM or TPM columns based on which is populated */
-              if (tpm !== null && !nextVisible.includes('tpm')) {
-                nextVisible.push('tpm');
-              }
               if (rpkm !== null && !nextVisible.includes('rpkm')) {
                 nextVisible.push('rpkm');
               }
