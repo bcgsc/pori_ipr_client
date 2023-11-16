@@ -45,7 +45,7 @@ const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
   };
 
   const removeSquareBrackets = (kbm: KbMatchType) => {
-    iprRelevanceDict[kbm.iprEvidenceLevel].add(kbm.context.replace(/ *\[[^)]*\] */g, '').toLowerCase());
+    iprRelevanceDict[kbm.iprEvidenceLevel]?.add(kbm.context.replace(/ *\[[^)]*\] */g, '').toLowerCase());
   };
 
   orderBy(
