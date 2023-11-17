@@ -35,52 +35,65 @@ import { Box } from '@mui/system';
 import {
   therapeuticAssociationColDefs, cancerRelevanceColDefs, sampleColumnDefs, getGenomicEvent,
 } from './columnDefs';
-import VariantEditDialog from './components/VariantEditDialog';
+import { VariantEditDialog, FIELDS } from './components/VariantEditDialog';
 import { RapidVariantType } from './types';
+import { getVariantRelevanceDict } from './utils';
 
 const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
-  const iprRelevanceDict = {
-    'IPR-A': new Set(),
-    'IPR-B': new Set(),
-  };
+  const iprRelevanceDict = {};
 
-  const removeSquareBrackets = (kbm: KbMatchType) => {
-    iprRelevanceDict[kbm.iprEvidenceLevel].add(kbm.context.replace(/ *\[[^)]*\] */g, '').toLowerCase());
-  };
+  kbMatches.forEach(({ iprEvidenceLevel }) => {
+    if (!iprRelevanceDict[iprEvidenceLevel]) {
+      iprRelevanceDict[iprEvidenceLevel] = new Set();
+    }
+  });
 
   orderBy(
     kbMatches,
     ['iprEvidenceLevel', 'context'],
-  ).forEach(removeSquareBrackets);
+  ).forEach(({ iprEvidenceLevel, context }: KbMatchType) => {
+    // Remove square brackets and add to dictionary
+    if (iprEvidenceLevel && context) {
+      iprRelevanceDict[iprEvidenceLevel].add(context.replace(/ *\[[^)]*\] */g, '').toLowerCase());
+    }
+  });
 
   return iprRelevanceDict;
 };
 
-const getVariantRelevanceDict = (variant: RapidVariantType) => {
-  const relevanceDict: Record<string, KbMatchType[]> = {};
-  variant.kbMatches.forEach((match) => {
-    if (!relevanceDict[match.relevance]) {
-      relevanceDict[match.relevance] = [match];
-    } else {
-      relevanceDict[match.relevance].push(match);
-    }
-  });
-  return relevanceDict;
-};
-
-const processPotentialClinicalAssociation = (variant: RapidVariantType) => Object.entries(getVariantRelevanceDict(variant))
+const processPotentialClinicalAssociation = (variant: RapidVariantType) => Object.entries(getVariantRelevanceDict(variant.kbMatches))
   .map(([relevanceKey, kbMatches]) => {
     const iprEvidenceDict = splitIprEvidenceLevels(kbMatches);
 
+    if (!iprEvidenceDict['IPR-A']) {
+      iprEvidenceDict['IPR-A'] = new Set();
+    }
+    if (!iprEvidenceDict['IPR-B']) {
+      iprEvidenceDict['IPR-B'] = new Set();
+    }
+
+    const iprAArr = Array.from(iprEvidenceDict['IPR-A']);
+    const iprBArr = Array.from(iprEvidenceDict['IPR-B']);
+
+    let iprAlist = [];
+    if (iprAArr.length > 0) {
+      iprAlist = orderBy(
+        iprAArr,
+        [(cont) => cont[0].toLowerCase()],
+      ).map((drugName) => `${drugName} (IPR-A)`);
+    }
+
+    let iprBlist = [];
+    if (iprBArr.length > 0) {
+      iprBlist = orderBy(
+        iprBArr,
+        [(cont) => cont[0].toLowerCase()],
+      ).filter((drugName) => !iprEvidenceDict['IPR-A'].has(drugName)).map((drugName) => `${drugName} (IPR-B)`);
+    }
+
     const combinedDrugList = [
-      ...orderBy(
-        Array.from(iprEvidenceDict['IPR-A']),
-        [(cont) => cont[0].toLowerCase()],
-      ).map((drugName) => `${drugName} (IPR-A)`),
-      ...orderBy(
-        Array.from(iprEvidenceDict['IPR-B']),
-        [(cont) => cont[0].toLowerCase()],
-      ).filter((drugName) => !iprEvidenceDict['IPR-A'].has(drugName)).map((drugName) => `${drugName} (IPR-B)`),
+      ...iprAlist,
+      ...iprBlist,
     ].join(', ');
 
     return ({
@@ -110,7 +123,7 @@ const splitVariantsByRelevance = (data: RapidVariantType[]): RapidVariantType[] 
  * Sample Information (obtained by report)
  */
 type RapidSummaryProps = {
-  loadedDispatch: ({ type: string }) => void;
+  loadedDispatch: ({ type }: { type: string }) => void;
   isPrint: boolean;
 } & WithLoadingInjectedProps;
 
@@ -285,7 +298,7 @@ const RapidSummary = ({
       {
         term: 'Pathology Tumour Content',
         value: `${
-          report.sampleInfo.find((samp) => samp?.Sample?.toLowerCase() === 'tumour')['Patho TC'] ?? ''
+          report.sampleInfo?.find((samp) => samp?.Sample?.toLowerCase() === 'tumour')['Patho TC'] ?? ''
         }`,
       },
       {
@@ -295,7 +308,7 @@ const RapidSummary = ({
           : null,
       },
       {
-        term: 'Captiv 8 Score',
+        term: 'CAPTIV-8 Score',
         value: report.captiv8Score !== null
           ? `${report.captiv8Score}`
           : null,
@@ -515,6 +528,7 @@ const RapidSummary = ({
           />
           <VariantEditDialog
             open={showMatchedTumourEditDialog}
+            fields={[FIELDS.comments, FIELDS.kbMatches]}
             editData={editData}
             onClose={handleMatchedTumourEditClose}
           />

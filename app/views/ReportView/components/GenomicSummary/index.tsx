@@ -433,7 +433,7 @@ const GenomicSummary = ({
     ]);
   }, [report, setReport]);
 
-  const handleTumourSummaryEditClose = (isSaved, newMicrobialData, newReportData, newMutationBurdenData) => {
+  const handleTumourSummaryEditClose = (isSaved: boolean, newMicrobialData, newReportData, newMutationBurdenData) => {
     setShowTumourSummaryEdit(false);
 
     if (!isSaved || (!newMicrobialData && !newReportData && !newMutationBurdenData)) {

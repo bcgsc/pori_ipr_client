@@ -26,12 +26,15 @@ type TumourSummaryEditProps = {
   report: ReportType;
   mutationBurden: MutationBurdenType;
   isOpen: boolean;
-  onClose: any;
+  onClose: (isSaved: boolean, newMicrobialData?: any, newReportData?: any, newMutationBurdenData?: any) => void;
 };
 
 const TumourSummaryEdit = ({
   microbial,
   report,
+  report: {
+    template: { name: reportType },
+  },
   mutationBurden,
   isOpen,
   onClose,
@@ -159,7 +162,7 @@ const TumourSummaryEdit = ({
       setNewMicrobialData((currData) => [...currData, {
         species: target.value,
         integrationSite: 'No',
-      }]);
+      } as MicrobialType]);
       setMicrobialDirty(true);
     }
   }, []);
@@ -182,73 +185,95 @@ const TumourSummaryEdit = ({
     setMicrobialDirty(true);
   }, []);
 
+  let reportDataSection = null;
+  let micbDataSection = null;
+  let mutBurDataSection = null;
+
+  if (newReportData) {
+    if (reportType === 'genomic') {
+      reportDataSection = (
+        <>
+          <TextField
+            className="tumour-dialog__text-field"
+            label="Tumour Content (%)"
+            value={newReportData.tumourContent ?? ''}
+            name="tumourContent"
+            onChange={handleReportChange}
+            variant="outlined"
+            multiline
+            fullWidth
+          />
+          <TextField
+            className="tumour-dialog__text-field"
+            label="Subtyping"
+            value={newReportData.subtyping ?? ''}
+            name="subtyping"
+            onChange={handleReportChange}
+            variant="outlined"
+            multiline
+            fullWidth
+          />
+        </>
+      );
+    }
+  }
+
+  if (newMicrobialData) {
+    micbDataSection = (
+      <Autocomplete
+        className="tumour-dialog__text-field"
+        multiple
+        options={[]}
+        freeSolo
+        value={newMicrobialData}
+        disableClearable
+        renderTags={(value) => value.map(({ species, integrationSite }, idx) => (
+          <Chip
+            // eslint-disable-next-line react/no-array-index-key
+            key={`${species}-${idx}`}
+            tabIndex={-1}
+            label={`${species}${integrationSite.toLowerCase() === 'yes' ? ' | (integration)' : ' | (no integration)'}`}
+            onClick={() => handleClicked(idx)}
+            onDelete={() => handleDelete(idx)}
+          />
+        ))}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="Microbial Species"
+            name="species"
+            helperText="Press enter to confirm new entry, click chip to toggle integration status"
+            onKeyDown={handleKeyDown}
+          />
+        )}
+      />
+    );
+  }
+
+  if (newMutationBurdenData) {
+    mutBurDataSection = (
+      <TextField
+        className="tumour-dialog__text-field"
+        label="Mutation Burden (Mut/Mb)"
+        value={newMutationBurdenData.totalMutationsPerMb}
+        name="totalMutationsPerMb"
+        onChange={handleMutationBurdenChange}
+        variant="outlined"
+        multiline
+        fullWidth
+      />
+    );
+  }
+
   return (
     <Dialog open={isOpen}>
       <DialogTitle>
         Edit Tumour Summary
       </DialogTitle>
       <DialogContent className="tumour-dialog__content">
-        {newMicrobialData && newReportData && newMutationBurdenData && (
-          <>
-            <TextField
-              className="tumour-dialog__text-field"
-              label="Tumour Content (%)"
-              value={newReportData.tumourContent ?? ''}
-              name="tumourContent"
-              onChange={handleReportChange}
-              variant="outlined"
-              multiline
-              fullWidth
-            />
-            <TextField
-              className="tumour-dialog__text-field"
-              label="Subtyping"
-              value={newReportData.subtyping ?? ''}
-              name="subtyping"
-              onChange={handleReportChange}
-              variant="outlined"
-              multiline
-              fullWidth
-            />
-            <Autocomplete
-              className="tumour-dialog__text-field"
-              multiple
-              options={[]}
-              freeSolo
-              value={newMicrobialData}
-              disableClearable
-              renderTags={(value) => value.map(({ species, integrationSite }, idx) => (
-                <Chip
-                  // eslint-disable-next-line react/no-array-index-key
-                  key={`${species}-${idx}`}
-                  tabIndex={-1}
-                  label={`${species}${integrationSite.toLowerCase() === 'yes' ? ' | (integration)' : ' | (no integration)'}`}
-                  onClick={() => handleClicked(idx)}
-                  onDelete={() => handleDelete(idx)}
-                />
-              ))}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Microbial Species"
-                  name="species"
-                  helperText="Press enter to confirm new entry, click chip to toggle integration status"
-                  onKeyDown={handleKeyDown}
-                />
-              )}
-            />
-            <TextField
-              className="tumour-dialog__text-field"
-              label="Mutation Burden (Mut/Mb)"
-              value={newMutationBurdenData.totalMutationsPerMb}
-              name="totalMutationsPerMb"
-              onChange={handleMutationBurdenChange}
-              variant="outlined"
-              multiline
-              fullWidth
-            />
-          </>
-        )}
+        {reportDataSection}
+        {micbDataSection}
+        {mutBurDataSection}
       </DialogContent>
       <DialogActions>
         <Button onClick={() => handleClose(false)}>

@@ -80,23 +80,16 @@ const StructuralVariants = ({
                 gene1: {
                   expressionVariants: {
                     rpkm: rpkm1,
-                    tpm: tpm1,
                     primarySiteFoldChange: primarySiteFoldChange1,
-                    primarySitekIQR: primarySitekIQR1,
                   },
                 },
                 gene2: {
                   expressionVariants: {
                     rpkm: rpkm2,
-                    tpm: tpm2,
                     primarySiteFoldChange: primarySiteFoldChange2,
-                    primarySitekIQR: primarySitekIQR2,
                   },
                 },
               } = respRow;
-              if ((tpm1 !== null || tpm2 !== null) && !nextVisible.includes('tpm')) {
-                nextVisible.push('tpm');
-              }
               if ((rpkm1 !== null || rpkm2 !== null) && !nextVisible.includes('rpkm')) {
                 nextVisible.push('rpkm');
               }

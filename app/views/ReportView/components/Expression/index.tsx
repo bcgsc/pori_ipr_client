@@ -75,12 +75,7 @@ const Expression = ({
         ]);
 
         if (outliers && outliers.length) {
-          /* Show either RPKM or TPM columns based on which is populated */
-          for (const { tpm, rpkm } of outliers) {
-            if (tpm !== null) {
-              setVisibleCols((prevVal) => [...prevVal, 'tpm']);
-              break;
-            }
+          for (const { rpkm } of outliers) {
             if (rpkm !== null) {
               setVisibleCols((prevVal) => [...prevVal, 'rpkm']);
               break;

@@ -62,7 +62,7 @@ const columnDefs: Array<ColDef | ColGroupDef> = [{
 }, {
   headerName: 'TPM',
   field: 'tpm',
-  hide: true,
+  hide: false,
 }, {
   headerName: 'Oncogene',
   colId: 'oncogene',

@@ -70,7 +70,7 @@ const columnDefs = [{
   headerName: 'Expression (TPM) 5`/3',
   colId: 'tpm',
   valueGetter: createGeneRelatedValueGetter('expressionVariants', ' / ', 'tpm'),
-  hide: true,
+  hide: false,
 }, {
   headerName: 'Expression (kIQR) 5`/3',
   colId: 'primarySitekIQR',

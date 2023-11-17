@@ -86,22 +86,15 @@ const CopyNumber = ({
             for (const {
               gene: {
                 expressionVariants: {
-                  tpm, rpkm, primarySiteFoldChange, diseasekIQR,
+                  rpkm, primarySiteFoldChange,
                 },
               },
             } of cnvsResp) {
-              /* Show either RPKM or TPM columns based on which is populated */
-              if (tpm !== null && !nextVisible.includes('tpm')) {
-                nextVisible.push('tpm');
-              }
               if (rpkm !== null && !nextVisible.includes('rpkm')) {
                 nextVisible.push('rpkm');
               }
               if (primarySiteFoldChange !== null && !nextVisible.includes('primarySiteFoldChange')) {
                 nextVisible.push('primarySiteFoldChange');
-              }
-              if (diseasekIQR !== null && !nextVisible.includes('diseasekIQR')) {
-                nextVisible.push('diseasekIQR');
               }
               if (nextVisible.length === 2) {
                 break;
