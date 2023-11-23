@@ -17,6 +17,8 @@ import {
   REPORT_TYPE_TO_SUFFIX,
 } from '@/constants';
 import getImageDataURI from '@/utils/getImageDataURI';
+import { SummaryProps } from '@/commonComponents';
+
 import Summary from '../ReportView/components/Summary';
 import RunningLeft from './components/RunningLeft';
 import RunningCenter from './components/RunningCenter';
@@ -56,7 +58,13 @@ const reducer = (state, action) => {
   }
 };
 
-const Print = (): JSX.Element => {
+type PrintPropTypes = {
+  printVersion: SummaryProps['printVersion'];
+};
+
+const Print = ({
+  printVersion,
+}: PrintPropTypes): JSX.Element => {
   const params = useParams<{
     ident: string;
   }>();
@@ -108,7 +116,7 @@ const Print = (): JSX.Element => {
         <>
           {template?.sections.includes('summary') && (
             <>
-              <Summary templateName={report.template.name} isPrint loadedDispatch={dispatch} />
+              <Summary templateName={report.template.name} isPrint printVersion={printVersion} loadedDispatch={dispatch} />
               <PageBreak />
             </>
           )}
@@ -143,7 +151,7 @@ const Print = (): JSX.Element => {
       );
     }
     return null;
-  }, [report, theme, template]);
+  }, [report, theme, template, printVersion]);
 
   const titleBar = useMemo(() => {
     if (report && template) {
@@ -157,6 +165,22 @@ const Print = (): JSX.Element => {
       }
       if (report?.patientInformation?.tumourSample && report?.patientInformation?.tumourSample.toLowerCase() !== 'undetermined') {
         biopsyText = biopsyText.concat(`(${report.patientInformation.tumourSample})`);
+      }
+
+      if (printVersion === 'beta') {
+        return (
+          <div className="print__headers">
+            <div className="print__header-left">
+              {template?.headerImage && (
+                <img className="print__logo" src={getImageDataURI(template.headerImage)} alt="" />
+              )}
+            </div>
+            <div className="print__header-right">
+              <Typography variant="body2">{`${printTitle ? `${printTitle} Report: ` : ''} ${headerSubtitle}${headerSubtitleSuffix ? ` - ${headerSubtitleSuffix}` : ''}`}</Typography>
+              <Typography variant="body2">{biopsyText}</Typography>
+            </div>
+          </div>
+        );
       }
 
       return (
@@ -179,7 +203,7 @@ const Print = (): JSX.Element => {
       );
     }
     return null;
-  }, [report, template]);
+  }, [report, template, printVersion]);
 
   const reportContextValue = useMemo(() => ({ report, setReport }), [report, setReport]);
 

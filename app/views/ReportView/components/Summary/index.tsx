@@ -1,16 +1,10 @@
+import { SummaryProps } from '@/commonComponents';
 import React, { lazy } from 'react';
 
 const GenomicSummary = lazy(() => import('../GenomicSummary'));
 const ProbeSummary = lazy(() => import('../ProbeSummary'));
 const PharmacoGenomicSummary = lazy(() => import('../PharmacoGenomicSummary'));
 const RapidSummary = lazy(() => import('../RapidSummary'));
-
-type SummaryProps = {
-  templateName: string;
-  isPrint: boolean;
-  loadedDispatch?: (type: Record<'type', string>) => void;
-  [x: string]: unknown;
-};
 
 const Summary = ({
   templateName,
