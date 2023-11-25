@@ -122,11 +122,11 @@ const PrintTitleBar = ({
 };
 
 type PrintPropTypes = {
-  printVersion: SummaryProps['printVersion'];
+  printVersion?: SummaryProps['printVersion'];
 };
 
 const Print = ({
-  printVersion,
+  printVersion = 'stable',
 }: PrintPropTypes): JSX.Element => {
   const params = useParams<{
     ident: string;

@@ -1,11 +1,15 @@
 import React, {
-  useEffect, useState, useCallback, useContext,
+  useEffect, useState, useCallback, useContext, useMemo,
 } from 'react';
 import { useHistory } from 'react-router-dom';
 import {
   Typography,
   IconButton,
   Grid,
+  TableCell,
+  Table,
+  TableRow,
+  Box,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import sortBy from 'lodash/sortBy';
@@ -26,6 +30,7 @@ import TumourSummaryEdit from '@/components/TumourSummaryEdit';
 import {
   TumourSummaryType, MicrobialType, ImmuneType, MutationBurdenType, TmburType, MsiType,
 } from '@/common';
+import { SummaryProps } from '@/commonComponents';
 
 import VariantChips from './components/VariantChips';
 import VariantCounts from './components/VariantCounts';
@@ -70,15 +75,11 @@ const customTypeSort = (variant) => {
   return 3;
 };
 
-type GenomicSummaryProps = {
-  isPrint: boolean;
-  setIsLoading: (isLoading: boolean) => void;
-  isLoading: boolean;
-  loadedDispatch: (section: Record<'type', string>) => void;
-} & WithLoadingInjectedProps;
+type GenomicSummaryProps = Omit<SummaryProps, 'templateName'> & WithLoadingInjectedProps;
 
 const GenomicSummary = ({
   isPrint = false,
+  printVersion = null,
   setIsLoading,
   isLoading,
   loadedDispatch,
@@ -117,7 +118,7 @@ const GenomicSummary = ({
     expression: 0,
   });
 
-  const classNamePrefix = isPrint ? 'genomic-summary--print' : 'genomic-summary';
+  const classNamePrefix = printVersion ? 'genomic-summary--print' : 'genomic-summary';
 
   useEffect(() => {
     if (report) {
@@ -433,7 +434,7 @@ const GenomicSummary = ({
     ]);
   }, [report, setReport]);
 
-  const handleTumourSummaryEditClose = (isSaved: boolean, newMicrobialData, newReportData, newMutationBurdenData) => {
+  const handleTumourSummaryEditClose = useCallback((isSaved: boolean, newMicrobialData, newReportData, newMutationBurdenData) => {
     setShowTumourSummaryEdit(false);
 
     if (!isSaved || (!newMicrobialData && !newReportData && !newMutationBurdenData)) {
@@ -451,119 +452,249 @@ const GenomicSummary = ({
     if (newMutationBurdenData) {
       setPrimaryBurden(newMutationBurdenData);
     }
-  };
+  }, [setReport]);
+
+  const patientInfoSection = useMemo(() => {
+    if (!patientInformation || !report) {
+      return null;
+    }
+
+    let patientEditButton = null;
+    if (canEdit && !printVersion) {
+      patientEditButton = (
+        <>
+          <IconButton onClick={() => setShowPatientEdit(true)} size="large">
+            <EditIcon />
+          </IconButton>
+          <PatientEdit
+            patientInformation={report.patientInformation}
+            report={report}
+            isOpen={Boolean(showPatientEdit)}
+            onClose={handlePatientEditClose}
+          />
+        </>
+      );
+    }
+
+    let dataSection = (
+      <Grid
+        alignItems="flex-end"
+        container
+        spacing={3}
+        className={`${classNamePrefix}__patient-information-content`}
+      >
+        {patientInformation.map(({ label, value }) => (
+          <Grid key={label as string} item>
+            <ReadOnlyTextField label={label}>
+              {value}
+            </ReadOnlyTextField>
+          </Grid>
+        ))}
+      </Grid>
+    );
+
+    let titleSection = (
+      <div className={`${classNamePrefix}__patient-information-title`}>
+        <Typography variant="h3" display="inline">
+          Patient Information
+          {patientEditButton}
+        </Typography>
+      </div>
+    );
+
+    if (printVersion === 'beta') {
+      titleSection = (
+        <div className={`${classNamePrefix}__patient-information-title`}>
+          <Typography variant="h5" fontWeight="bold" display="inline">
+            Patient Information
+          </Typography>
+        </div>
+      );
+      dataSection = (
+        <Table padding="none" size="small">
+          {patientInformation.map(({ label, value }) => (
+            <TableRow>
+              <TableCell><Typography variant="body2" fontWeight="bold">{label}</Typography></TableCell>
+              <TableCell>{value}</TableCell>
+            </TableRow>
+          ))}
+        </Table>
+      );
+    }
+
+    return (
+      <div className={`${classNamePrefix}__patient-information`}>
+        {titleSection}
+        {dataSection}
+      </div>
+    );
+  }, [canEdit, classNamePrefix, handlePatientEditClose, patientInformation, report, showPatientEdit, printVersion]);
+
+  const tumourSummarySection = useMemo(() => {
+    if (!tumourSummary || !report) {
+      return null;
+    }
+
+    let tumourEditButton = null;
+    if (canEdit && !printVersion) {
+      tumourEditButton = (
+        <>
+          <IconButton onClick={() => setShowTumourSummaryEdit(true)} size="large">
+            <EditIcon />
+          </IconButton>
+          <TumourSummaryEdit
+            microbial={microbial}
+            report={report}
+            mutationBurden={primaryBurden}
+            isOpen={showTumourSummaryEdit}
+            onClose={handleTumourSummaryEditClose}
+          />
+        </>
+      );
+    }
+
+    let titleSection = (
+      <div className={`${classNamePrefix}__tumour-summary-title`}>
+        <Typography variant="h3" display="inline">
+          Tumour Summary
+          {tumourEditButton}
+        </Typography>
+      </div>
+    );
+
+    let dataSection = (
+      <div className={`${classNamePrefix}__tumour-summary-content`}>
+        <DescriptionList entries={tumourSummary} />
+      </div>
+    );
+
+    if (printVersion === 'beta') {
+      // Do beta thing here
+      titleSection = (
+        <div className={`${classNamePrefix}__tumour-summary-title`}>
+          <Typography variant="h5" fontWeight="bold" display="inline">Tumour Summary</Typography>
+        </div>
+      );
+      dataSection = (
+        <Table padding="none" size="small">
+          {tumourSummary.map(({ term, value }) => (
+            <TableRow>
+              <TableCell><Typography variant="body2" fontWeight="bold">{term}</Typography></TableCell>
+              <TableCell sx={{ paddingLeft: 3 }}>{value}</TableCell>
+            </TableRow>
+          ))}
+        </Table>
+      );
+    }
+
+    return (
+      <div className={`${classNamePrefix}__tumour-summary`}>
+        {titleSection}
+        {dataSection}
+      </div>
+    );
+  }, [canEdit, classNamePrefix, handleTumourSummaryEditClose, microbial, primaryBurden, report, showTumourSummaryEdit, tumourSummary, printVersion]);
+
+  const alterationsSection = useMemo(() => {
+    let titleSection = (
+      <Typography variant="h3">
+        Key Genomic and Transcriptomic Alterations Identified
+      </Typography>
+    );
+    let dataSection = (
+      <>
+        <VariantCounts
+          filter={variantFilter}
+          counts={variantCounts}
+          onToggleFilter={setVariantFilter}
+        />
+        <VariantChips
+          variants={variantFilter ? variants.filter((v) => v.type === variantFilter) : variants}
+          canEdit={canEdit}
+          onChipDeleted={handleChipDeleted}
+          onChipAdded={handleChipAdded}
+          isPrint={Boolean(printVersion)}
+        />
+      </>
+    );
+
+    if (printVersion === 'beta') {
+      // TODO: return different layout when finalized
+      titleSection = (
+        <Typography variant="h5" fontWeight="bold" display="inline">Key Genomic and Transcriptomic Alterations Identified</Typography>
+      );
+      if (variants) {
+        const uniqueTypesArray = [...new Set(variants.map(({ type }) => type))].sort();
+
+        dataSection = (
+          <Table padding="none" size="small">
+            {uniqueTypesArray.map((variantType) => (
+              <TableRow>
+                <TableCell><Typography variant="body2" fontWeight="bold">{variantType}</Typography></TableCell>
+                <TableCell sx={{ paddingLeft: 3 }}>
+                  {
+                    variants
+                      .filter(({ type }) => type === variantType)
+                      .map(({ geneVariant }) => <Box sx={{ padding: 0.5, display: 'inline-block' }}>{geneVariant}</Box>)
+                  }
+                </TableCell>
+              </TableRow>
+            ))}
+          </Table>
+        );
+      }
+    }
+
+    return (
+      <div className={`${classNamePrefix}__alterations`}>
+        <div className={`${classNamePrefix}__alterations-title`}>
+          {titleSection}
+        </div>
+        <div className={`${classNamePrefix}__alterations-content`}>
+          {dataSection}
+        </div>
+      </div>
+    );
+  }, [canEdit, classNamePrefix, handleChipAdded, handleChipDeleted, printVersion, variantCounts, variantFilter, variants]);
+
+  if (isLoading || !report || !patientInformation || !tumourSummary) {
+    return null;
+  }
+
+  if (printVersion === 'beta') {
+    return (
+      <div className={classNamePrefix}>
+        <DemoDescription>
+          The front page displays general patient and sample information, and provides a highlight of the key sequencing results.
+        </DemoDescription>
+        <Box
+          sx={{
+            display: 'flex',
+            placeContent: 'space-between',
+          }}
+        >
+          <Box sx={{ width: '45%' }}>
+            {patientInfoSection}
+          </Box>
+          <Box sx={{ minWidth: '45%', maxWidth: '54%' }}>
+            {tumourSummarySection}
+          </Box>
+        </Box>
+        {alterationsSection}
+      </div>
+    );
+  }
 
   return (
     <div className={classNamePrefix}>
-      {report && patientInformation && tumourSummary && !isLoading && (
+      {report && patientInformation && tumourSummary && (
         <>
           <DemoDescription>
             The front page displays general patient and sample information, and provides a highlight of the key sequencing results.
           </DemoDescription>
-          <div className={`${classNamePrefix}__patient-information`}>
-            <div className={`${classNamePrefix}__patient-information-title`}>
-              <Typography variant="h3" display="inline">
-                Patient Information
-                {canEdit && !isPrint && (
-                  <>
-                    <IconButton onClick={() => setShowPatientEdit(true)} size="large">
-                      <EditIcon />
-                    </IconButton>
-                    <PatientEdit
-                      patientInformation={report.patientInformation}
-                      report={report}
-                      isOpen={Boolean(showPatientEdit)}
-                      onClose={handlePatientEditClose}
-                    />
-                  </>
-                )}
-              </Typography>
-            </div>
-            <Grid
-              alignItems="flex-end"
-              container
-              spacing={3}
-              className={`${classNamePrefix}__patient-information-content`}
-            >
-              {patientInformation.map(({ label, value }) => (
-                <Grid key={label as string} item>
-                  <ReadOnlyTextField label={label}>
-                    {value}
-                  </ReadOnlyTextField>
-                </Grid>
-              ))}
-            </Grid>
-          </div>
-
-          <div className={`${classNamePrefix}__tumour-summary`}>
-            <div className={`${classNamePrefix}__tumour-summary-title`}>
-              <Typography variant="h3">
-                Tumour Summary
-                {canEdit && !isPrint && (
-                  <>
-                    <IconButton onClick={() => setShowTumourSummaryEdit(true)} size="large">
-                      <EditIcon />
-                    </IconButton>
-                    <TumourSummaryEdit
-                      microbial={microbial}
-                      report={report}
-                      mutationBurden={primaryBurden}
-                      isOpen={showTumourSummaryEdit}
-                      onClose={handleTumourSummaryEditClose}
-                    />
-                  </>
-                )}
-              </Typography>
-            </div>
-            <div className={`${classNamePrefix}__tumour-summary-content`}>
-              <DescriptionList entries={tumourSummary} />
-            </div>
-          </div>
-
-          {isPrint ? (
-            <div className={`${classNamePrefix}__alterations`}>
-              <div className={`${classNamePrefix}__alterations-title`}>
-                <Typography variant="h3">
-                  Key Genomic and Transcriptomic Alterations Identified
-                </Typography>
-              </div>
-              <div className={`${classNamePrefix}__alterations-content`}>
-                <VariantCounts
-                  filter={variantFilter}
-                  counts={variantCounts}
-                  onToggleFilter={setVariantFilter}
-                />
-                <VariantChips
-                  variants={variantFilter ? variants.filter((v) => v.type === variantFilter) : variants}
-                  canEdit={canEdit}
-                  onChipDeleted={handleChipDeleted}
-                  onChipAdded={handleChipAdded}
-                  isPrint={isPrint}
-                />
-              </div>
-            </div>
-          ) : (
-            <div className={`${classNamePrefix}__alterations`}>
-              <div className={`${classNamePrefix}__alterations-title`}>
-                <Typography variant="h3">
-                  Key Genomic and Transcriptomic Alterations Identified
-                </Typography>
-              </div>
-              <div className={`${classNamePrefix}__alterations-content`}>
-                <VariantCounts
-                  filter={variantFilter}
-                  counts={variantCounts}
-                  onToggleFilter={setVariantFilter}
-                />
-                <VariantChips
-                  variants={variantFilter ? variants.filter((v) => v.type === variantFilter) : variants}
-                  canEdit={canEdit}
-                  onChipDeleted={handleChipDeleted}
-                  onChipAdded={handleChipAdded}
-                />
-              </div>
-            </div>
-          )}
+          {patientInfoSection}
+          {tumourSummarySection}
+          {alterationsSection}
         </>
       )}
     </div>

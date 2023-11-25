@@ -32,7 +32,7 @@
   margin: 0 auto;
   padding: 0 20px;
 
-  &__patient-information {
+  &__patient-information, &__tumour-summary, &__alterations {
     &-title {
       margin: 0 0 8px;
     }
