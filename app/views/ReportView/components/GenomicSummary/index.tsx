@@ -6,9 +6,6 @@ import {
   Typography,
   IconButton,
   Grid,
-  TableCell,
-  Table,
-  TableRow,
   Box,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
@@ -31,6 +28,7 @@ import {
   TumourSummaryType, MicrobialType, ImmuneType, MutationBurdenType, TmburType, MsiType,
 } from '@/common';
 import { SummaryProps } from '@/commonComponents';
+import SummaryPrintTable from '@/components/SummaryPrintTable';
 
 import VariantChips from './components/VariantChips';
 import VariantCounts from './components/VariantCounts';
@@ -511,14 +509,11 @@ const GenomicSummary = ({
         </div>
       );
       dataSection = (
-        <Table padding="none" size="small">
-          {patientInformation.map(({ label, value }) => (
-            <TableRow>
-              <TableCell><Typography variant="body2" fontWeight="bold">{label}</Typography></TableCell>
-              <TableCell>{value}</TableCell>
-            </TableRow>
-          ))}
-        </Table>
+        <SummaryPrintTable
+          data={patientInformation}
+          labelKey="label"
+          valueKey="value"
+        />
       );
     }
 
@@ -569,21 +564,17 @@ const GenomicSummary = ({
     );
 
     if (printVersion === 'beta') {
-      // Do beta thing here
       titleSection = (
         <div className={`${classNamePrefix}__tumour-summary-title`}>
           <Typography variant="h5" fontWeight="bold" display="inline">Tumour Summary</Typography>
         </div>
       );
       dataSection = (
-        <Table padding="none" size="small">
-          {tumourSummary.map(({ term, value }) => (
-            <TableRow>
-              <TableCell><Typography variant="body2" fontWeight="bold">{term}</Typography></TableCell>
-              <TableCell sx={{ paddingLeft: 3 }}>{value}</TableCell>
-            </TableRow>
-          ))}
-        </Table>
+        <SummaryPrintTable
+          data={tumourSummary}
+          labelKey="term"
+          valueKey="value"
+        />
       );
     }
 
@@ -619,28 +610,25 @@ const GenomicSummary = ({
     );
 
     if (printVersion === 'beta') {
-      // TODO: return different layout when finalized
       titleSection = (
         <Typography variant="h5" fontWeight="bold" display="inline">Key Genomic and Transcriptomic Alterations Identified</Typography>
       );
       if (variants) {
         const uniqueTypesArray = [...new Set(variants.map(({ type }) => type))].sort();
-
+        const categorizedDataArray = [];
+        uniqueTypesArray.forEach((variantType) => {
+          categorizedDataArray.push({
+            key: variantType,
+            value: variants.filter(({ type }) => type === variantType),
+          });
+        });
         dataSection = (
-          <Table padding="none" size="small">
-            {uniqueTypesArray.map((variantType) => (
-              <TableRow>
-                <TableCell><Typography variant="body2" fontWeight="bold">{variantType}</Typography></TableCell>
-                <TableCell sx={{ paddingLeft: 3 }}>
-                  {
-                    variants
-                      .filter(({ type }) => type === variantType)
-                      .map(({ geneVariant }) => <Box sx={{ padding: 0.5, display: 'inline-block' }}>{geneVariant}</Box>)
-                  }
-                </TableCell>
-              </TableRow>
-            ))}
-          </Table>
+          <SummaryPrintTable
+            data={categorizedDataArray}
+            labelKey="key"
+            valueKey="value"
+            renderValue={(val) => val.map(({ geneVariant }) => <Box sx={{ padding: 0.5, display: 'inline-block' }}>{geneVariant}</Box>)}
+          />
         );
       }
     }
