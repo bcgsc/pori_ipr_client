@@ -40,10 +40,10 @@ const columnDefs: ColDef[] = [{
     }
     if (variantType === 'sv') {
       return `(${variant.gene1.name || '?'
-        },${variant.gene2.name || '?'
-        }):fusion(e.${variant.exon1 || '?'
-        },e.${variant.exon2 || '?'
-        })`;
+      },${variant.gene2.name || '?'
+      }):fusion(e.${variant.exon1 || '?'
+      },e.${variant.exon2 || '?'
+      })`;
     }
     if (variantType === 'mut') {
       return `${variant.gene.name}:${variant.proteinChange}`;
@@ -143,8 +143,8 @@ const columnDefs: ColDef[] = [{
   hide: true,
 }, {
   headerName: 'In Knowledgebase Gene',
-  colId: 'cancerRelated',
-  valueGetter: (params) => getGeneProp(params, 'cancerRelated'),
+  colId: 'kbStatementRelated',
+  valueGetter: (params) => getGeneProp(params, 'kbStatementRelated'),
   hide: true,
 }, {
   headerName: 'Known Fusion Partner Gene',
