@@ -94,7 +94,7 @@ type ImageType = {
 } & RecordDefaults;
 
 type GeneType = {
-  cancerRelated: boolean;
+  kbStatementRelated: boolean;
   drugTargetable: boolean;
   knownFusionPartner: boolean;
   knownSmallMutation: boolean;
