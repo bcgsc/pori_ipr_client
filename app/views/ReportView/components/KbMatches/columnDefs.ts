@@ -150,8 +150,8 @@ const columnDefs: ColDef[] = [{
   hide: true,
 }, {
   headerName: 'In Knowledgebase Gene',
-  colId: 'cancerRelated',
-  valueGetter: (params) => getGeneProp(params, 'cancerRelated'),
+  colId: 'kbStatementRelated',
+  valueGetter: (params) => getGeneProp(params, 'kbStatementRelated'),
   hide: true,
 }, {
   headerName: 'Known Fusion Partner Gene',
