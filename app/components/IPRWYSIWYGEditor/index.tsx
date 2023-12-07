@@ -1,47 +1,163 @@
 import React, {
-  useState, useCallback,
+  forwardRef, useCallback, useEffect,
 } from 'react';
-import ReactQuill, { ReactQuillProps } from 'react-quill';
 import {
   Button,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
+  ToggleButton,
+  ToggleButtonProps,
+  ToggleButtonGroup,
+  Stack,
+  Box,
 } from '@mui/material';
-
 import './index.scss';
+import {
+  useEditor, EditorContent, Editor,
+} from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import {
+  Code,
+  FormatBold, FormatClear, FormatItalic, FormatListBulleted, FormatListNumbered, FormatQuote, FormatStrikethrough, FormatUnderlined, Redo, Undo,
+} from '@mui/icons-material';
 
-const ALLOWED_FORMATS = [
-  'align',
-  'blockquote',
-  'bold',
-  'code-block',
-  'direction',
-  'header',
-  'italic',
-  'list',
-  'script',
-  'strike',
-  'underline',
+const extensions = [
+  StarterKit,
 ];
 
-const defaultQuillProps: ReactQuillProps = {
-  modules: {
-    toolbar: [
-      ['bold', 'italic', 'underline', 'strike'],
-      ['blockquote', 'code-block'],
-      [{ list: 'ordered' }, { list: 'bullet' }],
-      [{ script: 'sub' }, { script: 'super' }],
-      [{ header: [1, 2, 3, false] }],
-      ['clean'],
-    ],
-    clipboard: {
-      // https://github.com/zenoamaro/react-quill/issues/281
-      // https://stackoverflow.com/questions/63678128/how-to-prevent-react-quill-to-insert-a-new-line-before-list-when-re-loading-cont
-      matchVisual: false,
-    },
-  },
+const MenuBarButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
+  (props, ref) => <ToggleButton ref={ref} {...props} size="small" />,
+);
+
+type MenuBarProps = {
+  editor: Editor
+};
+const MenuBar = ({
+  editor,
+}: MenuBarProps) => {
+  if (!editor) {
+    return null;
+  }
+
+  return (
+    <Box className="IPRWYSIWYGEditor__toolbar">
+      <Stack direction="row" spacing={1}>
+        <ToggleButtonGroup aria-label="Text formatting">
+          <MenuBarButton
+            onClick={() => editor.chain().focus().toggleBold().run()}
+            value="bold"
+            className={editor.isActive('bold') ? 'is-active' : ''}
+            selected={editor.isActive('bold')}
+          >
+            <FormatBold />
+          </MenuBarButton>
+          <MenuBarButton
+            onClick={() => editor.chain().focus().toggleItalic().run()}
+            value="italic"
+            selected={editor.isActive('italic')}
+          >
+            <FormatItalic />
+          </MenuBarButton>
+          <MenuBarButton
+            onClick={() => editor.chain().focus().toggleCode().run()}
+            value="underline"
+            selected={editor.isActive('underline')}
+          >
+            <FormatUnderlined />
+          </MenuBarButton>
+          <MenuBarButton
+            onClick={() => editor.chain().focus().toggleStrike().run()}
+            value="strike"
+            selected={editor.isActive('strike')}
+          >
+            <FormatStrikethrough />
+          </MenuBarButton>
+        </ToggleButtonGroup>
+        <ToggleButtonGroup>
+          <MenuBarButton
+            onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+            selected={editor.isActive('code')}
+            value="code"
+          >
+            <Code />
+          </MenuBarButton>
+          <MenuBarButton
+            value="blockquote"
+            onClick={() => editor.chain().focus().toggleBlockquote().run()}
+            selected={editor.isActive('blockquote')}
+          >
+            <FormatQuote />
+          </MenuBarButton>
+        </ToggleButtonGroup>
+
+        <ToggleButtonGroup>
+          <MenuBarButton
+            value="heading1"
+            onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+            selected={editor.isActive('heading', { level: 1 })}
+          >
+            h1
+          </MenuBarButton>
+          <MenuBarButton
+            value="heading2"
+            onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+            selected={editor.isActive('heading', { level: 2 })}
+          >
+            h2
+          </MenuBarButton>
+          <MenuBarButton
+            value="heading3"
+            onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+            selected={editor.isActive('heading', { level: 3 })}
+          >
+            h3
+          </MenuBarButton>
+        </ToggleButtonGroup>
+
+        <ToggleButtonGroup>
+          <MenuBarButton
+            value="bulletList"
+            onClick={() => editor.chain().focus().toggleBulletList().run()}
+            selected={editor.isActive('bulletList')}
+          >
+            <FormatListBulleted />
+          </MenuBarButton>
+          <MenuBarButton
+            value="orderedList"
+            onClick={() => editor.chain().focus().toggleOrderedList().run()}
+            selected={editor.isActive('orderedList')}
+          >
+            <FormatListNumbered />
+          </MenuBarButton>
+        </ToggleButtonGroup>
+        <ToggleButtonGroup>
+          <MenuBarButton
+            value="unsetAllMarks"
+            aria-label="Clear all formats of selections"
+            onClick={() => editor.chain().focus().clearNodes().run()}
+          >
+            <FormatClear />
+          </MenuBarButton>
+        </ToggleButtonGroup>
+        <ToggleButtonGroup>
+          <MenuBarButton
+            value="undo"
+            onClick={() => editor.chain().focus().undo().run()}
+          >
+            <Undo />
+          </MenuBarButton>
+          <MenuBarButton
+            value="redo"
+            onClick={() => editor.chain().focus().redo().run()}
+          >
+            <Redo />
+          </MenuBarButton>
+        </ToggleButtonGroup>
+      </Stack>
+    </Box>
+  );
 };
 
 type IPRWYSIWYGEditorProps = {
@@ -58,34 +174,28 @@ const IPRWYSIWYGEditor = ({
   onClose,
   title = 'IPR WYSIWYG Editor',
 }: IPRWYSIWYGEditorProps): JSX.Element => {
-  const [editedText, setEditedText] = useState('');
-  const [isDirty, setIsDirty] = useState(false);
+  const editor = useEditor({
+    extensions,
+  });
 
-  const handleOnEdit = useCallback((nextValue, _delta, source) => {
-    if (!isDirty && source !== 'api') { setIsDirty(true); }
-    setEditedText(nextValue);
-  }, [isDirty]);
+  useEffect(() => {
+    if (editor && text) {
+      editor.commands.setContent(text);
+    }
+  }, [text, editor]);
 
   const handleOnSave = useCallback(() => {
-    if (!isDirty) {
-      onClose(null);
-      return;
+    if (editor) {
+      onClose(editor.getHTML());
     }
-    onClose(editedText);
-  }, [isDirty, onClose, editedText]);
+  }, [editor, onClose]);
 
   return (
     <Dialog fullWidth maxWidth="lg" open={isOpen} onClose={() => onClose(null)}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
-        <ReactQuill
-          {...defaultQuillProps}
-          theme="snow"
-          defaultValue={text}
-          onChange={handleOnEdit}
-          formats={ALLOWED_FORMATS}
-          scrollingContainer="html" // https://github.com/zenoamaro/react-quill/issues/394#issuecomment-748069734
-        />
+        <MenuBar editor={editor} />
+        <EditorContent editor={editor} className="IPRWYSIWYGEditor__content" />
       </DialogContent>
       <DialogActions>
         <Button onClick={() => onClose()}>Close</Button>
