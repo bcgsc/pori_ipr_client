@@ -166,7 +166,7 @@ const AnalystComments = ({
   }, [isPrint, handleSign, comments, signatures]);
 
   return (
-    <div className="analyst-comments">
+    <div className={isPrint ? 'analyst-comments--print' : 'analyst-comments'}>
       <Typography
         variant="h3"
         className="analyst-comments__title"
