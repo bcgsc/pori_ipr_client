@@ -214,31 +214,48 @@ const TumourSummaryEdit = ({
   }, []);
 
   const reportDataSection = useMemo(() => {
-    if (newReportData && reportType === 'genomic') {
-      return (
-        <>
+    if (newReportData) {
+      if (reportType === 'genomic') {
+        return (
+          <>
+            <TextField
+              className="tumour-dialog__text-field"
+              label="Tumour Content (%)"
+              value={newReportData.tumourContent ?? ''}
+              name="tumourContent"
+              onChange={handleReportChange}
+              variant="outlined"
+              multiline
+              fullWidth
+            />
+            <TextField
+              className="tumour-dialog__text-field"
+              label="Subtyping"
+              value={newReportData.subtyping ?? ''}
+              name="subtyping"
+              onChange={handleReportChange}
+              variant="outlined"
+              multiline
+              fullWidth
+            />
+          </>
+        );
+      }
+      if (reportType === 'rapid') {
+        return (
           <TextField
             className="tumour-dialog__text-field"
-            label="Tumour Content (%)"
-            value={newReportData.tumourContent ?? ''}
-            name="tumourContent"
+            label="Captiv 8 Score"
+            value={newReportData.captiv8Score}
+            name="captiv8Score"
             onChange={handleReportChange}
             variant="outlined"
             multiline
             fullWidth
+            type="number"
           />
-          <TextField
-            className="tumour-dialog__text-field"
-            label="Subtyping"
-            value={newReportData.subtyping ?? ''}
-            name="subtyping"
-            onChange={handleReportChange}
-            variant="outlined"
-            multiline
-            fullWidth
-          />
-        </>
-      );
+        );
+      }
     }
     return null;
   }, [handleReportChange, newReportData, reportType]);
