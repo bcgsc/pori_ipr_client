@@ -1,5 +1,5 @@
 import React, {
-  useState, useEffect, useCallback, useContext,
+  useState, useEffect, useCallback, useContext, useMemo,
 } from 'react';
 import {
   Dialog,
@@ -19,12 +19,13 @@ import useConfirmDialog from '@/hooks/useConfirmDialog';
 
 import './index.scss';
 import { ReportType } from '@/context/ReportContext';
-import { MicrobialType, MutationBurdenType } from '@/common';
+import { MicrobialType, MutationBurdenType, TmburType } from '@/common';
 
 type TumourSummaryEditProps = {
   microbial: MicrobialType[];
   report: ReportType;
   mutationBurden: MutationBurdenType;
+  tmburMutBur?: TmburType;
   isOpen: boolean;
   onClose: (isSaved: boolean, newMicrobialData?: any, newReportData?: any, newMutationBurdenData?: any) => void;
 };
@@ -36,6 +37,7 @@ const TumourSummaryEdit = ({
     template: { name: reportType },
   },
   mutationBurden,
+  tmburMutBur,
   isOpen,
   onClose,
 }: TumourSummaryEditProps): JSX.Element => {
@@ -45,9 +47,11 @@ const TumourSummaryEdit = ({
   const [newMicrobialData, setNewMicrobialData] = useState(cloneDeep(microbial));
   const [newReportData, setNewReportData] = useState<Partial<ReportType>>(null);
   const [newMutationBurdenData, setNewMutationBurdenData] = useState<Partial<MutationBurdenType>>(null);
+  const [newTmburMutData, setNewTmburMutData] = useState<Partial<TmburType>>(null);
   const [microbialDirty, setMicrobialDirty] = useState(false);
   const [reportDirty, setReportDirty] = useState(false);
   const [mutationBurdenDirty, setMutationBurdenDirty] = useState(false);
+  const [tmburMutDirty, setTmburMutDirty] = useState(false);
   const [isApiCalling, setIsApiCalling] = useState(false);
 
   useEffect(() => {
@@ -67,23 +71,34 @@ const TumourSummaryEdit = ({
     }
   }, [mutationBurden]);
 
-  const handleReportChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    if (tmburMutBur) {
+      setNewTmburMutData({
+        genomeSnvTmb: tmburMutBur.genomeSnvTmb,
+        genomeIndelTmb: tmburMutBur.genomeIndelTmb,
+      });
+    }
+  }, [tmburMutBur]);
+
+  const handleReportChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const { target: { value, name } } = event;
     setNewReportData((prevVal) => ({ ...prevVal, [name]: value }));
+    setReportDirty(true);
+  }, []);
 
-    if (!reportDirty) {
-      setReportDirty(true);
-    }
-  };
-
-  const handleMutationBurdenChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMutationBurdenChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const { target: { value, name } } = event;
     setNewMutationBurdenData((prevVal) => ({ ...prevVal, [name]: value }));
+    setMutationBurdenDirty(true);
+  }, []);
 
-    if (!mutationBurdenDirty) {
-      setMutationBurdenDirty(true);
-    }
-  };
+  const handleTmburChange = useCallback(({ target: { value, name } }) => {
+    setNewTmburMutData((tmb) => ({
+      ...tmb,
+      [name]: value,
+    }));
+    setTmburMutDirty(true);
+  }, []);
 
   const handleClose = useCallback(async (isSaved) => {
     if (isSaved) {
@@ -149,7 +164,20 @@ const TumourSummaryEdit = ({
     } else {
       onClose(false);
     }
-  }, [newMicrobialData, newReportData, newMutationBurdenData, isSigned, onClose, microbialDirty, reportDirty, mutationBurdenDirty, microbial, report.ident, mutationBurden, showConfirmDialog]);
+  }, [
+    newMicrobialData,
+    newReportData,
+    newMutationBurdenData,
+    isSigned,
+    onClose,
+    microbialDirty,
+    reportDirty,
+    mutationBurdenDirty,
+    microbial,
+    report.ident,
+    mutationBurden,
+    showConfirmDialog,
+  ]);
 
   const handleKeyDown = useCallback(({ code, target }) => {
     if (code === 'Backspace' && !target.value) {
@@ -185,13 +213,9 @@ const TumourSummaryEdit = ({
     setMicrobialDirty(true);
   }, []);
 
-  let reportDataSection = null;
-  let micbDataSection = null;
-  let mutBurDataSection = null;
-
-  if (newReportData) {
-    if (reportType === 'genomic') {
-      reportDataSection = (
+  const reportDataSection = useMemo(() => {
+    if (newReportData && reportType === 'genomic') {
+      return (
         <>
           <TextField
             className="tumour-dialog__text-field"
@@ -216,54 +240,94 @@ const TumourSummaryEdit = ({
         </>
       );
     }
-  }
+    return null;
+  }, [handleReportChange, newReportData, reportType]);
 
-  if (newMicrobialData) {
-    micbDataSection = (
-      <Autocomplete
-        className="tumour-dialog__text-field"
-        multiple
-        options={[]}
-        freeSolo
-        value={newMicrobialData}
-        disableClearable
-        renderTags={(value) => value.map(({ species, integrationSite }, idx) => (
-          <Chip
-            // eslint-disable-next-line react/no-array-index-key
-            key={`${species}-${idx}`}
-            tabIndex={-1}
-            label={`${species}${integrationSite.toLowerCase() === 'yes' ? ' | (integration)' : ' | (no integration)'}`}
-            onClick={() => handleClicked(idx)}
-            onDelete={() => handleDelete(idx)}
-          />
-        ))}
-        renderInput={(params) => (
+  const micbDataSection = useMemo(() => {
+    if (newMicrobialData) {
+      return (
+        <Autocomplete
+          className="tumour-dialog__text-field"
+          multiple
+          options={[]}
+          freeSolo
+          value={newMicrobialData}
+          disableClearable
+          renderTags={(value) => value.map(({ species, integrationSite }, idx) => (
+            <Chip
+              // eslint-disable-next-line react/no-array-index-key
+              key={`${species}-${idx}`}
+              tabIndex={-1}
+              label={`${species}${integrationSite.toLowerCase() === 'yes' ? ' | (integration)' : ' | (no integration)'}`}
+              onClick={() => handleClicked(idx)}
+              onDelete={() => handleDelete(idx)}
+            />
+          ))}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Microbial Species"
+              name="species"
+              helperText="Press enter to confirm new entry, click chip to toggle integration status"
+              onKeyDown={handleKeyDown}
+            />
+          )}
+        />
+      );
+    }
+    return null;
+  }, [handleClicked, handleDelete, handleKeyDown, newMicrobialData]);
+
+  const mutBurDataSection = useMemo(() => {
+    if (newMutationBurdenData) {
+      return (
+        <TextField
+          className="tumour-dialog__text-field"
+          label="Mutation Burden (Mut/Mb)"
+          value={newMutationBurdenData.totalMutationsPerMb}
+          name="totalMutationsPerMb"
+          onChange={handleMutationBurdenChange}
+          variant="outlined"
+          multiline
+          fullWidth
+          type="number"
+        />
+      );
+    }
+    return null;
+  }, [newMutationBurdenData, handleMutationBurdenChange]);
+
+  const tmburMutBurSection = useMemo(() => {
+    if (newTmburMutData) {
+      return (
+        <>
           <TextField
-            {...params}
-            label="Microbial Species"
-            name="species"
-            helperText="Press enter to confirm new entry, click chip to toggle integration status"
-            onKeyDown={handleKeyDown}
+            className="tumour-dialog__text-field"
+            label="genomeSnvTmb"
+            value={newTmburMutData.genomeSnvTmb}
+            name="genomeSnvTmb"
+            onChange={handleTmburChange}
+            variant="outlined"
+            multiline
+            fullWidth
+            type="number"
           />
-        )}
-      />
-    );
-  }
-
-  if (newMutationBurdenData) {
-    mutBurDataSection = (
-      <TextField
-        className="tumour-dialog__text-field"
-        label="Mutation Burden (Mut/Mb)"
-        value={newMutationBurdenData.totalMutationsPerMb}
-        name="totalMutationsPerMb"
-        onChange={handleMutationBurdenChange}
-        variant="outlined"
-        multiline
-        fullWidth
-      />
-    );
-  }
+          <TextField
+            className="tumour-dialog__text-field"
+            label="genomeIndelTmb"
+            value={newTmburMutData.genomeIndelTmb}
+            name="genomeIndelTmb"
+            onChange={handleTmburChange}
+            variant="outlined"
+            multiline
+            fullWidth
+            type="number"
+          />
+        </>
+      );
+    }
+    return null;
+  }, [newTmburMutData, handleTmburChange]);
 
   return (
     <Dialog open={isOpen}>
@@ -274,6 +338,7 @@ const TumourSummaryEdit = ({
         {reportDataSection}
         {micbDataSection}
         {mutBurDataSection}
+        {tmburMutBurSection}
       </DialogContent>
       <DialogActions>
         <Button onClick={() => handleClose(false)}>
@@ -285,7 +350,7 @@ const TumourSummaryEdit = ({
           </Button>
         )}
         {!isSigned && (
-          <AsyncButton color="secondary" onClick={() => handleClose(true)} isLoading={isApiCalling}>
+          <AsyncButton component="label" color="secondary" onClick={() => handleClose(true)} isLoading={isApiCalling}>
             Save Changes
           </AsyncButton>
         )}

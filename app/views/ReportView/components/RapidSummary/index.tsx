@@ -464,6 +464,7 @@ const RapidSummary = ({
                   microbial={microbial}
                   report={report}
                   mutationBurden={null}
+                  tmburMutBur={tmburMutBur}
                   isOpen={showTumourSummaryEdit}
                   onClose={handleTumourSummaryEditClose}
                 />
