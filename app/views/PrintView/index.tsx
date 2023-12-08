@@ -166,6 +166,15 @@ const Print = ({
       const showPrint = async () => {
         const paged = new Previewer();
         await paged.preview(document.getElementById('root'), ['index.css'], document.body);
+        document.title = `${report.patientId}_${report.template.name}_${new Date().toLocaleString('en-US', {
+          year: 'numeric',
+          month: 'numeric',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: 'numeric',
+          second: 'numeric',
+          hour12: false,
+        }).replace(', ', '-')}`;
         window.print();
         setIsPrintDialogShown(true);
       };
