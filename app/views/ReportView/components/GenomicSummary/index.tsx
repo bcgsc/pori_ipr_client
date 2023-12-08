@@ -17,7 +17,7 @@ import ConfirmContext from '@/context/ConfirmContext';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import DemoDescription from '@/components/DemoDescription';
 import DescriptionList from '@/components/DescriptionList';
-import ReportContext from '@/context/ReportContext';
+import ReportContext, { ReportType } from '@/context/ReportContext';
 import snackbar from '@/services/SnackbarUtils';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import PatientEdit from '@/components/PatientEdit';
@@ -433,10 +433,16 @@ const GenomicSummary = ({
     ]);
   }, [report, setReport]);
 
-  const handleTumourSummaryEditClose = (isSaved: boolean, newMicrobialData, newReportData, newMutationBurdenData) => {
+  const handleTumourSummaryEditClose = (
+    isSaved: boolean,
+    newMicrobialData: MicrobialType[],
+    newReportData: ReportType,
+    newMutationBurdenData: MutationBurdenType,
+    newTmBurMutBurData: TmburType,
+  ) => {
     setShowTumourSummaryEdit(false);
 
-    if (!isSaved || (!newMicrobialData && !newReportData && !newMutationBurdenData)) {
+    if (!isSaved || (!newMicrobialData && !newReportData && !newMutationBurdenData && !newTmBurMutBurData)) {
       return;
     }
 
@@ -450,6 +456,10 @@ const GenomicSummary = ({
 
     if (newMutationBurdenData) {
       setPrimaryBurden(newMutationBurdenData);
+    }
+
+    if (newTmBurMutBurData) {
+      setTmburMutBur(newTmBurMutBurData);
     }
   };
 
