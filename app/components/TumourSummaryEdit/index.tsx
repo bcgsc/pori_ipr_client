@@ -20,6 +20,7 @@ import useConfirmDialog from '@/hooks/useConfirmDialog';
 import './index.scss';
 import { ReportType } from '@/context/ReportContext';
 import { MicrobialType, MutationBurdenType, TmburType } from '@/common';
+import snackbar from '@/services/SnackbarUtils';
 
 type TumourSummaryEditProps = {
   microbial: MicrobialType[];
@@ -27,7 +28,13 @@ type TumourSummaryEditProps = {
   mutationBurden: MutationBurdenType;
   tmburMutBur?: TmburType;
   isOpen: boolean;
-  onClose: (isSaved: boolean, newMicrobialData?: any, newReportData?: any, newMutationBurdenData?: any) => void;
+  onClose: (
+    isSaved: boolean,
+    newMicrobialData?: Partial<MicrobialType>,
+    newReportData?: Partial<ReportType>,
+    newMutationBurdenData?: Partial<MutationBurdenType>,
+    newTmBurMutBurData?: Partial<TmburType>,
+  ) => void;
 };
 
 const TumourSummaryEdit = ({
@@ -59,6 +66,7 @@ const TumourSummaryEdit = ({
       setNewReportData({
         tumourContent: report.tumourContent,
         subtyping: report.subtyping,
+        captiv8Score: report.captiv8Score,
       });
     }
   }, [report]);
@@ -95,12 +103,13 @@ const TumourSummaryEdit = ({
   const handleTmburChange = useCallback(({ target: { value, name } }) => {
     setNewTmburMutData((tmb) => ({
       ...tmb,
-      [name]: value,
+      [name]: parseFloat(value),
     }));
     setTmburMutDirty(true);
   }, []);
 
   const handleClose = useCallback(async (isSaved) => {
+    let callSet = null;
     if (isSaved) {
       setIsApiCalling(true);
       const apiCalls = [];
@@ -142,41 +151,61 @@ const TumourSummaryEdit = ({
         apiCalls.push({ request: () => null });
       }
 
-      const callSet = new ApiCallSet(apiCalls);
+      if (tmburMutDirty && newTmburMutData && tmburMutBur?.ident) {
+        apiCalls.push(api.put(`/reports/${report.ident}/tmbur-mutation-burden/${tmburMutBur.ident}`, newTmburMutData, {}));
+      } else {
+        apiCalls.push({ request: () => null });
+      }
+
+      callSet = new ApiCallSet(apiCalls);
 
       if (isSigned) {
         showConfirmDialog(callSet);
         setIsApiCalling(false);
       } else {
-        const resp = await callSet.request();
-        const primaryBurdenResp = resp.pop();
-        const reportResp = resp.pop();
-        // Too complicated between delete/update/new, might as well grab updated micb species for report again
-        const microbialResp = await api.get(`/reports/${report.ident}/summary/microbial`).request();
-        setIsApiCalling(false);
-        onClose(
-          true,
-          microbialDirty ? microbialResp : null,
-          reportDirty ? reportResp : null,
-          mutationBurdenDirty ? primaryBurdenResp : null,
-        );
+        try {
+          const resp = await callSet.request();
+          const tmburMutResp = resp.pop();
+          const primaryBurdenResp = resp.pop();
+          const reportResp = resp.pop();
+
+          // Too complicated between delete/update/new, might as well grab updated micb species for report again
+          const microbialResp = await api.get(`/reports/${report.ident}/summary/microbial`).request();
+
+          onClose(
+            true,
+            microbialDirty ? microbialResp : null,
+            reportDirty ? reportResp : null,
+            mutationBurdenDirty ? primaryBurdenResp : null,
+            tmburMutDirty ? tmburMutResp : null,
+          );
+        } catch (callSetError) {
+          snackbar.error(callSetError);
+          console.error(callSetError);
+        } finally {
+          setIsApiCalling(false);
+        }
       }
     } else {
       onClose(false);
     }
+    return () => callSet.abort();
   }, [
-    newMicrobialData,
-    newReportData,
-    newMutationBurdenData,
-    isSigned,
-    onClose,
     microbialDirty,
     reportDirty,
+    newReportData,
     mutationBurdenDirty,
+    newMutationBurdenData,
+    tmburMutDirty,
+    newTmburMutData,
+    isSigned,
+    newMicrobialData,
     microbial,
-    report.ident,
-    mutationBurden,
+    report?.ident,
+    mutationBurden?.ident,
+    tmburMutBur?.ident,
     showConfirmDialog,
+    onClose,
   ]);
 
   const handleKeyDown = useCallback(({ code, target }) => {
@@ -250,7 +279,6 @@ const TumourSummaryEdit = ({
             name="captiv8Score"
             onChange={handleReportChange}
             variant="outlined"
-            multiline
             fullWidth
             type="number"
           />
@@ -305,7 +333,6 @@ const TumourSummaryEdit = ({
           name="totalMutationsPerMb"
           onChange={handleMutationBurdenChange}
           variant="outlined"
-          multiline
           fullWidth
           type="number"
         />
@@ -325,7 +352,6 @@ const TumourSummaryEdit = ({
             name="genomeSnvTmb"
             onChange={handleTmburChange}
             variant="outlined"
-            multiline
             fullWidth
             type="number"
           />
@@ -336,7 +362,6 @@ const TumourSummaryEdit = ({
             name="genomeIndelTmb"
             onChange={handleTmburChange}
             variant="outlined"
-            multiline
             fullWidth
             type="number"
           />
