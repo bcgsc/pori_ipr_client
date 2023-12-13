@@ -30,10 +30,10 @@ type TumourSummaryEditProps = {
   isOpen: boolean;
   onClose: (
     isSaved: boolean,
-    newMicrobialData?: Partial<MicrobialType>,
-    newReportData?: Partial<ReportType>,
-    newMutationBurdenData?: Partial<MutationBurdenType>,
-    newTmBurMutBurData?: Partial<TmburType>,
+    newMicrobialData?: MicrobialType[],
+    newReportData?: ReportType,
+    newMutationBurdenData?: MutationBurdenType,
+    newTmBurMutBurData?: TmburType,
   ) => void;
 };
 
@@ -152,7 +152,7 @@ const TumourSummaryEdit = ({
       }
 
       if (tmburMutDirty && newTmburMutData && tmburMutBur?.ident) {
-        apiCalls.push(api.put(`/reports/${report.ident}/tmbur-mutation-burden/${tmburMutBur.ident}`, newTmburMutData, {}));
+        apiCalls.push(api.put(`/reports/${report.ident}/tmbur-mutation-burden`, newTmburMutData, {}));
       } else {
         apiCalls.push({ request: () => null });
       }
@@ -171,7 +171,7 @@ const TumourSummaryEdit = ({
 
           // Too complicated between delete/update/new, might as well grab updated micb species for report again
           const microbialResp = await api.get(`/reports/${report.ident}/summary/microbial`).request();
-
+          snackbar.success('Successfully updated Tumour Summary');
           onClose(
             true,
             microbialDirty ? microbialResp : null,
@@ -180,7 +180,7 @@ const TumourSummaryEdit = ({
             tmburMutDirty ? tmburMutResp : null,
           );
         } catch (callSetError) {
-          snackbar.error(callSetError);
+          snackbar.error(`Error updating Tumour Summary: ${callSetError?.message}`);
           console.error(callSetError);
         } finally {
           setIsApiCalling(false);
