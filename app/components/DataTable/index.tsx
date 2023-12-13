@@ -24,7 +24,7 @@ import { ColumnPicker, ColumnPickerProps } from './components/ColumnPicker';
 import EnsemblCellRenderer from './components/EnsemblCellRenderer';
 import CivicCellRenderer from './components/CivicCellRenderer';
 import GeneCellRenderer from './components/GeneCellRenderer';
-import ActionCellRenderer from './components/ActionCellRenderer';
+import { ActionCellRenderer } from './components/ActionCellRenderer';
 import NoRowsOverlay from './components/NoRowsOverlay';
 import { getDate } from '../../utils/date';
 
