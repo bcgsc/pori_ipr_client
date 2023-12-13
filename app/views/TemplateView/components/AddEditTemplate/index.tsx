@@ -96,10 +96,9 @@ const AddEditTemplate = ({
         selectedSections.forEach((section) => {
           newTemplate.append('sections', section.value);
         });
+
         if (headerImage) {
           newTemplate.append('header', headerImage);
-        } else {
-          newTemplate.append('header', '');
         }
 
         let resp;
