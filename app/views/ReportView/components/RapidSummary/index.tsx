@@ -432,10 +432,12 @@ const RapidSummary = ({
     isSaved,
     newMicrobialData,
     newReportData,
+    _mutBurData,
+    newTmBurMutBurData,
   ) => {
     setShowTumourSummaryEdit(false);
 
-    if (!isSaved || (!newMicrobialData && !newReportData)) {
+    if (!isSaved || (!newMicrobialData && !newReportData && !newTmBurMutBurData)) {
       return;
     }
 
@@ -445,6 +447,10 @@ const RapidSummary = ({
 
     if (newReportData) {
       setReport(newReportData);
+    }
+
+    if (newTmBurMutBurData) {
+      setTmburMutBur(newTmBurMutBurData);
     }
   }, [setReport]);
 
@@ -464,6 +470,7 @@ const RapidSummary = ({
                   microbial={microbial}
                   report={report}
                   mutationBurden={null}
+                  tmburMutBur={tmburMutBur}
                   isOpen={showTumourSummaryEdit}
                   onClose={handleTumourSummaryEditClose}
                 />
