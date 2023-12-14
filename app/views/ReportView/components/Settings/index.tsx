@@ -195,7 +195,7 @@ const Settings = ({
                   <MenuItem value="ready">Ready for analysis</MenuItem>
                   <MenuItem value="active">Analysis underway</MenuItem>
                   <MenuItem value="reviewed">Reviewed</MenuItem>
-                  <MenuItem value="archived">Archived</MenuItem>
+                  <MenuItem value="completed">Completed</MenuItem>
                   <MenuItem value="nonproduction">Non-Production</MenuItem>
                 </Select>
               </FormControl>
