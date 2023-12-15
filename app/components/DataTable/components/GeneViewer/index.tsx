@@ -24,7 +24,21 @@ import expressionColumnDefs from '@/views/ReportView/components/Expression/colum
 import structuralVariantsColumnDefs from '@/views/ReportView/components/StructuralVariants/columnDefs';
 import { GeneViewerType } from './types';
 
+import KbMatchesActionCellRenderer from '../KbMatchesActionCellRenderer';
+import { ActionCellRenderer } from '../ActionCellRenderer';
+import NoRowsOverlay from '../NoRowsOverlay';
+
 import './index.scss';
+
+const defaultTableOptions = {
+  frameworkComponents: {
+    ActionCellRenderer,
+    KbMatchesActionCellRenderer,
+    NoRowsOverlay,
+  },
+  noRowsOverlayComponent: 'NoRowsOverlay',
+  enableCellTextSelection: true,
+};
 
 type GeneViewerProps = {
   isLink: boolean;
@@ -106,40 +120,44 @@ const GeneViewer = ({
           {geneData && (
           <>
             {tabValue === 0 && (
-            <div className="ag-theme-material">
-              <AgGridReact
-                rowData={geneData.kbMatches}
-                columnDefs={columnDefs}
-                domLayout="autoHeight"
-              />
-            </div>
+              <div className="ag-theme-material">
+                <AgGridReact
+                  rowData={geneData.kbMatches}
+                  columnDefs={columnDefs}
+                  domLayout="autoHeight"
+                  {...defaultTableOptions}
+                />
+              </div>
             )}
             {tabValue === 1 && (
-            <div className="ag-theme-material">
-              <AgGridReact
-                rowData={geneData.smallMutations}
-                columnDefs={smallMutationsColumnDefs}
-                domLayout="autoHeight"
-              />
-            </div>
+              <div className="ag-theme-material">
+                <AgGridReact
+                  rowData={geneData.smallMutations}
+                  columnDefs={smallMutationsColumnDefs}
+                  domLayout="autoHeight"
+                  {...defaultTableOptions}
+                />
+              </div>
             )}
             {tabValue === 2 && (
-            <div className="ag-theme-material">
-              <AgGridReact
-                rowData={geneData.copyNumber}
-                columnDefs={copyNumberColumnDefs}
-                domLayout="autoHeight"
-              />
-            </div>
+              <div className="ag-theme-material">
+                <AgGridReact
+                  rowData={geneData.copyNumber}
+                  columnDefs={copyNumberColumnDefs}
+                  domLayout="autoHeight"
+                  {...defaultTableOptions}
+                />
+              </div>
             )}
             {tabValue === 3 && (
-            <div className="ag-theme-material">
-              <AgGridReact
-                rowData={geneData.expRNA}
-                columnDefs={expressionColumnDefs}
-                domLayout="autoHeight"
-              />
-            </div>
+              <div className="ag-theme-material">
+                <AgGridReact
+                  rowData={geneData.expRNA}
+                  columnDefs={expressionColumnDefs}
+                  domLayout="autoHeight"
+                  {...defaultTableOptions}
+                />
+              </div>
             )}
             {tabValue === 4 && (
             <div className="tab--center">
@@ -153,13 +171,14 @@ const GeneViewer = ({
             </div>
             )}
             {tabValue === 5 && (
-            <div className="ag-theme-material">
-              <AgGridReact
-                rowData={geneData.structuralVariants}
-                columnDefs={structuralVariantsColumnDefs}
-                domLayout="autoHeight"
-              />
-            </div>
+              <div className="ag-theme-material">
+                <AgGridReact
+                  rowData={geneData.structuralVariants}
+                  columnDefs={structuralVariantsColumnDefs}
+                  domLayout="autoHeight"
+                  {...defaultTableOptions}
+                />
+              </div>
             )}
           </>
           )}
