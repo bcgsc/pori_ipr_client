@@ -1,7 +1,7 @@
 import React from 'react';
 import { when, resetAllWhenMocks } from 'jest-when';
 import {
-  screen, render, waitFor,
+  screen, render, waitFor, fireEvent, act,
 } from '@testing-library/react';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
@@ -52,30 +52,63 @@ describe('GeneViewer', () => {
     const { asFragment } = render(
       <Component
         gene={mockGene}
-        isOpen
       />,
     );
 
     expect(asFragment()).toMatchSnapshot();
   });
 
-  test('It calls onClose if the gene does not exist', async () => {
+  test('It renders the gene name', async () => {
+    render(
+      <Component
+        gene={mockGene}
+      />,
+    );
+
+    expect(await screen.findByText(mockGene)).toBeInTheDocument();
+  });
+
+  test('It renders the gene and the link button, if isLink prop is given', async () => {
+    render(
+      <Component
+        gene={mockGene}
+        isLink
+      />,
+    );
+
+    expect(await screen.findByText(mockGene)).toBeInTheDocument();
+    expect(screen.getByRole('button')).toBeInTheDocument();
+  });
+
+  test('It renders a modal when the gene name is clicked', async () => {
+    render(
+      <Component
+        gene={mockGene}
+        isLink
+      />,
+    );
+    await fireEvent.click(screen.getByRole('button'));
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+  });
+
+  test('It closes the dialog if gene does not exist', async () => {
     when(api.get as (endpoint: string) => Partial<ApiCall>)
       .calledWith(`/reports/${mockReport.ident}/gene-viewer/${mockErrorGene}`)
       .mockImplementation(() => ({ request: async () => { throw new Error(); } }));
 
-    const mockOnClose = jest.fn();
-
     render(
       <Component
         gene={mockErrorGene}
-        isOpen
-        onClose={mockOnClose}
+        isLink
       />,
     );
-
-    await waitFor(() => expect(mockOnClose).toHaveBeenCalledTimes(1));
-    await waitFor(() => expect(mockOnClose).toHaveBeenCalledWith());
+    const button = await screen.findByText(mockErrorGene);
+    await act(async () => fireEvent.click(button));
+    const dialog = screen.getByRole('dialog');
+    expect(dialog).toBeInTheDocument();
+    await waitFor(() => {
+      expect(dialog).not.toBeInTheDocument();
+    });
   });
 
   test('Tabs are all shown', async () => {
@@ -86,10 +119,11 @@ describe('GeneViewer', () => {
     render(
       <Component
         gene={mockGene}
-        isOpen
-        onClose={() => {}}
       />,
     );
+
+    const button = await screen.findByText(mockGene);
+    await act(async () => fireEvent.click(button));
 
     const promises = [];
     for (const key of Object.keys(mockGeneResults)) {

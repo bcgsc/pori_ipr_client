@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useState, useContext,
+  useEffect, useState, useContext, useCallback,
 } from 'react';
 import {
   Dialog,
@@ -55,9 +55,9 @@ const GeneViewer = ({
   const [geneData, setGeneData] = useState<GeneViewerType>();
   const [tabValue, setTabValue] = useState(0);
 
-  const handleTabChange = (event, newValue: number) => {
+  const handleTabChange = useCallback((_event, newValue: number) => {
     setTabValue(newValue);
-  };
+  }, []);
 
   useEffect(() => {
     if (isOpen && gene) {
