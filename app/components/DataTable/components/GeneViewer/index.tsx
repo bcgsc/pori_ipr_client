@@ -190,7 +190,6 @@ const GeneViewer = ({
         </DialogActions>
       </Dialog>
     </>
-
   );
 };
 

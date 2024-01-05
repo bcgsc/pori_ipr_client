@@ -29,6 +29,7 @@ const mockReport = {
 
 const withReportContext = (Component) => function ReportContextHOC(props) {
   return (
+    // eslint-disable-next-line react/jsx-no-constructed-context-values
     <ReportContext.Provider value={{ report: mockReport, setReport: () => {} }}>
       <Component {...props} />
     </ReportContext.Provider>
@@ -87,7 +88,9 @@ describe('GeneViewer', () => {
         isLink
       />,
     );
-    await fireEvent.click(screen.getByRole('button'));
+    act(() => {
+      fireEvent.click(screen.getByRole('button'));
+    });
     expect(screen.getByRole('dialog')).toBeInTheDocument();
   });
 
@@ -103,7 +106,9 @@ describe('GeneViewer', () => {
       />,
     );
     const button = await screen.findByText(mockErrorGene);
-    await act(async () => fireEvent.click(button));
+    act(() => {
+      fireEvent.click(button);
+    });
     const dialog = screen.getByRole('dialog');
     expect(dialog).toBeInTheDocument();
     await waitFor(() => {
@@ -119,19 +124,20 @@ describe('GeneViewer', () => {
     render(
       <Component
         gene={mockGene}
+        isLink
       />,
     );
 
     const button = await screen.findByText(mockGene);
-    await act(async () => fireEvent.click(button));
 
-    const promises = [];
+    act(() => {
+      fireEvent.click(button);
+    });
+
+    await screen.getByRole('dialog');
+
     for (const key of Object.keys(mockGeneResults)) {
-      promises.push(screen.findByText(key, { exact: false }));
-    }
-    const resolved = await Promise.all(promises);
-    for (const elem of resolved) {
-      expect(elem).toBeInTheDocument();
+      screen.getByText(key, { exact: false });
     }
   });
 });
