@@ -6,10 +6,10 @@ import ReactDOM from 'react-dom';
 import snackbar from '@/services/SnackbarUtils';
 
 const textDict = {
-  probe: 'Making this change will cause signatures to be removed. do you want to proceed?',
-  pharmacogenomic: 'Making this change will cause signatures to be removed. do you want to proceed?',
-  genomic: 'Making this change will cause the reviewer and analyst signatures to be removed. do you want to proceed?',
-  rapid: 'Making this change will cause the reviewer and analyst signatures to be removed. do you want to proceed?',
+  probe: 'Making this change will cause signatures to be removed. Do you want to proceed?',
+  pharmacogenomic: 'Making this change will cause signatures to be removed. Do you want to proceed?',
+  genomic: 'Making this change will cause the reviewer and analyst signatures to be removed. Do you want to proceed?',
+  rapid: 'Making this change will cause the reviewer and analyst signatures to be removed. Do you want to proceed?',
 };
 
 const useConfirmDialog = () => {
