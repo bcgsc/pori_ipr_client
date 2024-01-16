@@ -24,7 +24,21 @@ import expressionColumnDefs from '@/views/ReportView/components/Expression/colum
 import structuralVariantsColumnDefs from '@/views/ReportView/components/StructuralVariants/columnDefs';
 import { GeneViewerType } from './types';
 
+import KbMatchesActionCellRenderer from '../KbMatchesActionCellRenderer';
+import { ActionCellRenderer } from '../ActionCellRenderer';
+import NoRowsOverlay from '../NoRowsOverlay';
+
 import './index.scss';
+
+const defaultTableOptions = {
+  frameworkComponents: {
+    ActionCellRenderer,
+    KbMatchesActionCellRenderer,
+    NoRowsOverlay,
+  },
+  noRowsOverlayComponent: 'NoRowsOverlay',
+  enableCellTextSelection: true,
+};
 
 type GeneViewerProps = {
   onClose: () => void;
@@ -96,6 +110,7 @@ const GeneViewer = ({
                   rowData={geneData.kbMatches}
                   columnDefs={columnDefs}
                   domLayout="autoHeight"
+                  {...defaultTableOptions}
                 />
               </div>
             )}
@@ -105,6 +120,7 @@ const GeneViewer = ({
                   rowData={geneData.smallMutations}
                   columnDefs={smallMutationsColumnDefs}
                   domLayout="autoHeight"
+                  {...defaultTableOptions}
                 />
               </div>
             )}
@@ -114,6 +130,7 @@ const GeneViewer = ({
                   rowData={geneData.copyNumber}
                   columnDefs={copyNumberColumnDefs}
                   domLayout="autoHeight"
+                  {...defaultTableOptions}
                 />
               </div>
             )}
@@ -123,6 +140,7 @@ const GeneViewer = ({
                   rowData={geneData.expRNA}
                   columnDefs={expressionColumnDefs}
                   domLayout="autoHeight"
+                  {...defaultTableOptions}
                 />
               </div>
             )}
@@ -143,6 +161,7 @@ const GeneViewer = ({
                   rowData={geneData.structuralVariants}
                   columnDefs={structuralVariantsColumnDefs}
                   domLayout="autoHeight"
+                  {...defaultTableOptions}
                 />
               </div>
             )}

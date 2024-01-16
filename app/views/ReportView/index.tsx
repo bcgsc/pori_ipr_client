@@ -23,7 +23,7 @@ import allSections from './sections';
 
 import './index.scss';
 
-const EXTERNAL_ALLOWED_STATES = ['reviewed', 'archived'];
+const EXTERNAL_ALLOWED_STATES = ['reviewed', 'completed'];
 
 const AnalystComments = lazy(() => import('./components/AnalystComments'));
 const PathwayAnalysis = lazy(() => import('./components/PathwayAnalysis'));
