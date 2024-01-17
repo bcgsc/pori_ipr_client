@@ -637,7 +637,11 @@ const GenomicSummary = ({
             data={categorizedDataArray}
             labelKey="key"
             valueKey="value"
-            renderValue={(val) => val.map(({ geneVariant }) => <Box sx={{ padding: 0.5, display: 'inline-block' }}>{geneVariant}</Box>)}
+            renderValue={(val) => val.map(({ geneVariant }) => (
+              <Box sx={{ paddingLeft: 0.75, display: 'inline-block' }}>
+                <Typography variant="caption">{geneVariant}</Typography>
+              </Box>
+            ))}
           />
         );
       }
