@@ -166,11 +166,15 @@ const Print = ({
       const showPrint = async () => {
         const paged = new Previewer();
         await paged.preview(document.getElementById('root'), ['index.css'], document.body);
-        document.title = `${report.patientId}_${report.template.name}_${new Date().toLocaleString('en-US', {
-          year: 'numeric',
-          month: 'numeric',
-          day: 'numeric',
-        }).replace(', ', '-')}`;
+        const currentDate = new Date();
+        const year = currentDate.getFullYear();
+        const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+        const day = currentDate.getDate().toString().padStart(2, '0');
+        const { timeZone } = new Intl.DateTimeFormat().resolvedOptions();
+
+        const formattedDate = `${year}-${month}-${day}-${timeZone.replace(/\//g, '_')}`;
+
+        document.title = `${report.patientId}_${report.template.name}_${formattedDate}`;
         window.print();
         setIsPrintDialogShown(true);
       };
