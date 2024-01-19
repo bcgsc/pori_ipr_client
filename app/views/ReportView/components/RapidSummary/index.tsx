@@ -492,23 +492,22 @@ const RapidSummary = ({
     }
   }, []);
 
-  const handleMatchedTumourEditClose = useCallback((newData) => {
-    setShowMatchedTumourEditDialog(false);
-
+  const handleMatchedTumourEditClose = useCallback(async (newData: boolean) => {
     if (newData) {
-      setTherapeuticAssociationResults((existingResults) => {
-        const newEvents = cloneDeep(existingResults);
-        const eventsIndex = existingResults.findIndex((user) => user.ident.includes(newData.ident));
-        if (eventsIndex !== -1) {
-          newEvents[eventsIndex] = {
-            ...newEvents[eventsIndex],
-            comments: newData.comments,
-          };
-        }
-        return newEvents;
-      });
+      // Call API again to get updated data
+      try {
+        const updateResp = await api.get(`/reports/${report.ident}/variants?rapidTable=therapeuticAssociation`).request();
+        setTherapeuticAssociationResults(
+          splitVariantsByRelevance(updateResp),
+        );
+        setShowMatchedTumourEditDialog(false);
+      } catch (e) {
+        snackbar.error(`Refetching of therapeutic association data failed: ${e.message ? e.message : e}`);
+      }
+    } else {
+      setShowMatchedTumourEditDialog(false);
     }
-  }, []);
+  }, [report.ident]);
 
   let therapeuticAssociationSection;
   if (therapeuticAssociationResults?.length > 0) {
@@ -557,19 +556,21 @@ const RapidSummary = ({
     }
   }, []);
 
-  const handleCancerRelevanceEditClose = useCallback((newData) => {
+  const handleCancerRelevanceEditClose = useCallback(async (newData) => {
     setShowCancerRelevanceEventsDialog(false);
     if (newData) {
-      setCancerRelevanceResults((existingResults) => {
-        const newEvents = [...existingResults];
-        const eventsIndex = existingResults.findIndex((user) => user.ident === newData.ident);
-        if (eventsIndex !== -1) {
-          newEvents[eventsIndex] = newData;
-        }
-        return newEvents;
-      });
+      try {
+        const updateResp = await api.get(`/reports/${report.ident}/variants?rapidTable=cancerRelevance`).request();
+        setCancerRelevanceResults(updateResp);
+      } catch (e) {
+        snackbar.error(`Refetching of cancer relevance data failed: ${e.message ? e.message : e}`);
+      } finally {
+        setShowCancerRelevanceEventsDialog(false);
+      }
+    } else {
+      setShowCancerRelevanceEventsDialog(false);
     }
-  }, []);
+  }, [report.ident]);
 
   let cancerRelevanceSection;
   if (cancerRelevanceResults?.length > 0) {
