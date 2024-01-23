@@ -135,6 +135,7 @@ const PatientEdit = ({
       const callSet = new ApiCallSet(apiCalls);
 
       if (isSigned) {
+        setIsApiCalling(false);
         showConfirmDialog(callSet);
       } else {
         await callSet.request();

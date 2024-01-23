@@ -2,12 +2,8 @@
 
 exports[`GeneCellRenderer It matches the snapshot 1`] = `
 <DocumentFragment>
-  <span
-    class="gene__text"
-    role="button"
-    tabindex="0"
-  >
-    EGFR
-  </span>
+  <div
+    role="presentation"
+  />
 </DocumentFragment>
 `;
