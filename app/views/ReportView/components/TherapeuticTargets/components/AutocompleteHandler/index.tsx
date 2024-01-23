@@ -11,10 +11,10 @@ type AutocompleteHandlerProps = {
   defaultValue: unknown;
   type: string;
   label: string;
-  required: boolean;
+  required?: boolean;
   onChange: (selectedValue: unknown, typeName: string) => void;
-  error: string;
-  minCharacters: number;
+  error?: string;
+  minCharacters?: number;
 };
 
 const AutocompleteHandler = (props: AutocompleteHandlerProps) => {
@@ -24,7 +24,7 @@ const AutocompleteHandler = (props: AutocompleteHandlerProps) => {
     label,
     required = false,
     onChange = () => { },
-    error,
+    error = '',
     minCharacters = 3,
   } = props;
 
