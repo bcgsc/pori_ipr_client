@@ -197,7 +197,7 @@ const Print = ({
           )}
           {template?.sections.includes('pathway-analysis') && (
             <>
-              <PathwayAnalysis report={report} isPrint loadedDispatch={dispatch} />
+              <PathwayAnalysis report={report} isPrint printVersion={printVersion} loadedDispatch={dispatch} />
               <PageBreak />
             </>
           )}

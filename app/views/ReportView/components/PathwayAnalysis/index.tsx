@@ -16,15 +16,18 @@ import Legend from './components/Legend';
 import Pathway from './components/Pathway';
 
 import './index.scss';
+import { PrintVersion } from '@/commonComponents';
 
 type PathwayAnalysisProps = {
   isPrint?: boolean;
+  printVersion?: PrintVersion;
   loadedDispatch?: (type: Record<'type', string>) => void;
 } & WithLoadingInjectedProps;
 
 const PathwayAnalysis = ({
   isLoading,
   isPrint = false,
+  printVersion,
   loadedDispatch,
   setIsLoading,
 }: PathwayAnalysisProps): JSX.Element => {
