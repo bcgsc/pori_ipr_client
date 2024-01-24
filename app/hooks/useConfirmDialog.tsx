@@ -6,10 +6,10 @@ import ReactDOM from 'react-dom';
 import snackbar from '@/services/SnackbarUtils';
 
 const textDict = {
-  probe: 'Do you wish to remove Ready and Reviewer signatures?',
-  pharmacogenomic: 'Do you wish to remove Ready and Reviewer signatures?',
-  genomic: 'Do you wish to remove Author and Reviewer signatures?',
-  rapid: 'Do you wish to remove Author and Reviewer signatures?',
+  probe: 'Making this change will cause signatures to be removed. Do you want to proceed?',
+  pharmacogenomic: 'Making this change will cause signatures to be removed. Do you want to proceed?',
+  genomic: 'Making this change will cause the reviewer and analyst signatures to be removed. Do you want to proceed?',
+  rapid: 'Making this change will cause the reviewer and analyst signatures to be removed. Do you want to proceed?',
 };
 
 const useConfirmDialog = () => {
@@ -18,40 +18,26 @@ const useConfirmDialog = () => {
   const showDialog = useCallback((calls) => {
     const callPromises = (Array.isArray(calls) ? calls : [calls]);
 
-    const handleClose = async (removeSignatures: boolean) => {
+    const handleClose = async (removeSignatures: boolean = false) => {
       if (removeSignatures) {
-        callPromises.push(api.put(`/reports/${report.ident}/signatures/revoke/author`, {}));
-        callPromises.push(api.put(`/reports/${report.ident}/signatures/revoke/reviewer`, {}));
-
         try {
           await Promise.all(callPromises.map((promise) => promise.request()));
           window.location.reload();
         } catch (e) {
           snackbar.error(`Error: ${e}`);
+        } finally {
+          ReactDOM.unmountComponentAtNode(document.getElementById('alert-dialog'));
         }
       }
-
       ReactDOM.unmountComponentAtNode(document.getElementById('alert-dialog'));
-    };
-
-    const handleDeny = async () => {
-      try {
-        await Promise.all(callPromises.map((promise) => promise.request()));
-        window.location.reload();
-        ReactDOM.unmountComponentAtNode(document.getElementById('alert-dialog'));
-      } catch (e) {
-        snackbar.error(`Error: ${e}`);
-      }
     };
 
     ReactDOM.render(
       <AlertDialog
         isOpen
         onClose={handleClose}
-        onDeny={handleDeny}
         title="Confirm Action"
         text={textDict[report?.template.name]}
-        denyText="No"
         confirmText="Yes"
         cancelText="cancel"
       />,

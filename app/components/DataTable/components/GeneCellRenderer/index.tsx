@@ -12,48 +12,22 @@ type GeneCellRendererProps = {
 const GeneCellRenderer = ({
   value,
   link = false,
-}: GeneCellRendererProps): JSX.Element => {
-  const [showGeneViewer, setShowGeneViewer] = useState(false);
+}: GeneCellRendererProps) => (
+  value && value.split(/\s*::\s*|,\s?/).map((val, index) => (
+    // eslint-disable-next-line react/no-array-index-key
+    <React.Fragment key={`${val}_${index}`}>
+      {index > 0 && (
+        <span>
+          {value.includes(' :: ') ? ' :: ' : ', '}
+        </span>
+      )}
+      <GeneViewer
+        isLink={link}
+        gene={val}
+      />
+    </React.Fragment>
+  ))
 
-  return (
-    <>
-      {value && value.split(/\s*::\s*|,\s?/).map((val, index) => (
-        <React.Fragment key={index}>
-          {index > 0 && (
-            <span>
-              {value.includes(' :: ') ? ' :: ' : ', '}
-            </span>
-          )}
-          {link ? (
-            <>
-              <span
-                tabIndex={0}
-                role="button"
-                onClick={() => setShowGeneViewer(true)}
-                onKeyDown={() => setShowGeneViewer(true)}
-                className="gene__text"
-              >
-                {val}
-              </span>
-              <>
-                {showGeneViewer && (
-                  <GeneViewer
-                    isOpen={showGeneViewer}
-                    gene={val}
-                    onClose={() => setShowGeneViewer(false)}
-                  />
-                )}
-              </>
-            </>
-          ) : (
-            <span>
-              {val}
-            </span>
-          )}
-        </React.Fragment>
-      ))}
-    </>
-  );
-};
+);
 
 export default GeneCellRenderer;

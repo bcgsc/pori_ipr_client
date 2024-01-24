@@ -1,3 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`GeneViewer It matches the snapshot 1`] = `<DocumentFragment />`;
+exports[`GeneViewer It matches the snapshot 1`] = `
+<DocumentFragment>
+  <span>
+    TP53
+  </span>
+</DocumentFragment>
+`;
