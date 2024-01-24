@@ -411,6 +411,14 @@ const DataTable = ({
     />
   ), [onEdit, onDelete]);
 
+  const RowKbMatchesActionCellRenderer = useCallback((row) => (
+    <KbMatchesActionCellRenderer
+      onEdit={() => onEdit(row.node.data)}
+      onDelete={() => onDelete(row.node.data)}
+      {...row}
+    />
+  ), [onEdit, onDelete]);
+
   const handleTSVExport = useCallback(() => {
     const date = getDate();
 
@@ -571,7 +579,7 @@ const DataTable = ({
                 CivicCellRenderer,
                 GeneCellRenderer,
                 ActionCellRenderer: RowActionCellRenderer,
-                KbMatchesActionCellRenderer,
+                KbMatchesActionCellRenderer: RowKbMatchesActionCellRenderer,
                 headerCellRenderer: Header,
                 NoRowsOverlay,
               }}
