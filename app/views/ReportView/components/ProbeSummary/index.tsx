@@ -7,7 +7,6 @@ import {
   Grid,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import useConfirmDialog from '@/hooks/useConfirmDialog';
 import capitalize from 'lodash/capitalize';
 import api, { ApiCallSet } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
@@ -40,13 +39,12 @@ const ProbeSummary = ({
   setIsLoading,
 }: ProbeSummaryProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
-  const { isSigned, setIsSigned } = useContext(ConfirmContext);
+  const { setIsSigned } = useContext(ConfirmContext);
   const { canEdit } = useUser();
 
   const [testInformation, setTestInformation] = useState<TestInformationType | null>();
   const [signatures, setSignatures] = useState<SignatureType | null>();
   const [probeResults, setProbeResults] = useState<ProbeResultsType[] | null>();
-  const { showConfirmDialog } = useConfirmDialog();
   const [patientInformation, setPatientInformation] = useState<{
     label: string;
     value: string | null;
@@ -144,37 +142,21 @@ const ProbeSummary = ({
     }
   }, [loadedDispatch, report, setIsLoading]);
 
-  const handlePatientEditClose = useCallback(async (
-    isSaved: boolean,
+  const handlePatientEditClose = useCallback((
     newPatientData: PatientInformationType,
     newReportData: ReportType,
   ) => {
-    const apiCalls = [];
     setShowPatientEdit(false);
 
-    if (!isSaved || (!newPatientData && !newReportData)) {
+    if (!newPatientData && !newReportData) {
       return;
     }
 
-    if (newPatientData) {
-      apiCalls.push(api.put(`/reports/${report.ident}/patient-information`, newPatientData));
-    }
-
     if (newReportData) {
-      apiCalls.push(api.put(`/reports/${report.ident}`, newReportData));
+      setReport((oldReport) => ({ ...oldReport, ...newReportData }));
     }
 
-    const callSet = new ApiCallSet(apiCalls);
-
-    if (isSigned) {
-      showConfirmDialog(callSet);
-    } else {
-      const [, reportResp] = await callSet.request();
-
-      if (reportResp) {
-        setReport({ ...reportResp, ...report });
-      }
-
+    if (newPatientData) {
       setPatientInformation([
         {
           label: 'Alternate ID',
@@ -210,7 +192,7 @@ const ProbeSummary = ({
         },
       ]);
     }
-  }, [isSigned, report, setReport, showConfirmDialog]);
+  }, [report, setReport]);
 
   const handleSign = useCallback((signed: boolean, role: SignatureUserType) => {
     let cancelled;
