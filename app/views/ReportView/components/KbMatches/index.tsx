@@ -155,15 +155,15 @@ const KbMatches = ({
 
         // Therapeutic matches can also be in this/otherCancer
         if (row.category === 'therapeutic') {
-          ['therapeutic', 'thisCancer', 'otherCancer'].forEach((category) => {
+          ['therapeutic', 'highEvidence'].forEach((category) => {
             let dataSet = newMatches[category];
             dataSet = dataSet.filter((val) => val.ident !== row.ident);
-            newMatches[category] = dataSet;
+            newMatches[category] = dataSet ?? [];
           });
         } else {
           let dataSet = newMatches[row.category];
           dataSet = dataSet.filter((val) => val.ident !== row.ident);
-          newMatches[row.category] = dataSet;
+          newMatches[row.category] = dataSet ?? [];
         }
         return newMatches;
       });
