@@ -216,7 +216,7 @@ const RapidSummary = ({
 
           if (tmBurdenResp.status === 'fulfilled') {
             setTmburMutBur(tmBurdenResp.value);
-          } else if (!isPrint) {
+          } else if (!isPrint && tmBurdenResp.reason.content?.status !== 404) {
             snackbar.error(tmBurdenResp.reason?.content?.error?.message);
           }
 
