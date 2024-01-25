@@ -32,6 +32,7 @@ import {
   cancerPredisPrintColumnDefs,
 } from './columnDefs';
 import './index.scss';
+import TestInformationEditDialog from './components/TestInformationEditDialog';
 
 type PharmacoGenomicSummaryProps = {
   loadedDispatch: (type: { type: string }) => void;
@@ -57,6 +58,7 @@ const PharmacoGenomicSummary = ({
   }[] | null>();
 
   const [showPatientEdit, setShowPatientEdit] = useState(false);
+  const [showTestInfoEdit, setTestInfoEdit] = useState(false);
 
   const classNamePrefix = isPrint ? 'summary--print' : 'summary';
 
@@ -189,6 +191,10 @@ const PharmacoGenomicSummary = ({
     }
   }, [report, setReport]);
 
+  const handleSampleInfoEditClose = useCallback(() => {
+    // Handle state updates here
+  }, []);
+
   const handleSign = useCallback(async (signed: boolean, role: SignatureUserType) => {
     let newSignature: SignatureType;
 
@@ -301,6 +307,40 @@ const PharmacoGenomicSummary = ({
     });
   }, [handleSign, isPrint, signatures]);
 
+  const testInformationSection = useMemo(() => {
+    if (!testInformation) { return null; }
+    let editButton = null;
+    if (!isPrint && canEdit) {
+      editButton = (
+        <>
+          <IconButton onClick={() => setTestInfoEdit(true)} size="large">
+            <EditIcon />
+          </IconButton>
+          <TestInformationEditDialog
+            data={testInformation}
+            isOpen={Boolean(showTestInfoEdit)}
+            onClose={() => setTestInfoEdit(false)}
+          />
+        </>
+      );
+    }
+    return (
+      <div className={`${classNamePrefix}__test-information`}>
+        <Typography variant="h3" className={`${classNamePrefix}__test-information-title`}>
+          Test Information
+          {editButton}
+        </Typography>
+        <TestInformation
+          data={testInformation}
+          isPharmacogenomic
+        />
+        <Typography className={`${classNamePrefix}--max-width ${classNamePrefix}__test-information-text`}>
+          The Pharmacogenomic and Cancer Predisposition Targeted Gene Report (PCP-TGR) provides results from a rapid analysis pipeline designed to identify known pharmacogenomic and pathogenic germline cancer predisposition variants in a select set of genes associated with drug toxicity and cancer predisposition. This rapid analysis is not a complete description of abberations associated with cancer predisposition or drug toxicity. The absence of a specific variant in this report is not a guarantee that the variant is not present. Somatic variants are not included in this report.
+        </Typography>
+      </div>
+    );
+  }, [testInformation, isPrint, canEdit, classNamePrefix, showTestInfoEdit]);
+
   return (
     <div className={classNamePrefix}>
       {report && (
@@ -373,20 +413,7 @@ const PharmacoGenomicSummary = ({
               )}
             </>
           )}
-          {testInformation && (
-            <div className={`${classNamePrefix}__test-information`}>
-              <Typography variant="h3" className={`${classNamePrefix}__test-information-title`}>
-                Test Information
-              </Typography>
-              <TestInformation
-                data={testInformation}
-                isPharmacogenomic
-              />
-              <Typography className={`${classNamePrefix}--max-width ${classNamePrefix}__test-information-text`}>
-                The Pharmacogenomic and Cancer Predisposition Targeted Gene Report (PCP-TGR) provides results from a rapid analysis pipeline designed to identify known pharmacogenomic and pathogenic germline cancer predisposition variants in a select set of genes associated with drug toxicity and cancer predisposition. This rapid analysis is not a complete description of abberations associated with cancer predisposition or drug toxicity. The absence of a specific variant in this report is not a guarantee that the variant is not present. Somatic variants are not included in this report.
-              </Typography>
-            </div>
-          )}
+          {testInformationSection}
           <div className={`${classNamePrefix}__reviews`}>
             <Typography variant="h3" className={`${classNamePrefix}__reviews-title`}>
               Reviews
