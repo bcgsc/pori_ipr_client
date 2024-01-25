@@ -15,7 +15,7 @@ import DeleteIcon from '@mui/icons-material/HighlightOff';
 import ReportContext from '@/context/ReportContext';
 import ConfirmContext from '@/context/ConfirmContext';
 import useConfirmDialog from '@/hooks/useConfirmDialog';
-import api from '@/services/api';
+import api, { ApiCallSet } from '@/services/api';
 import { KbMatchType } from '@/common';
 import { Box } from '@mui/system';
 import { RapidVariantType } from '../../types';
@@ -88,7 +88,7 @@ enum FIELDS {
 
 interface VariantEditDialogProps extends DialogProps {
   editData: RapidVariantType & { potentialClinicalAssociation?: string };
-  onClose: (newData: RapidVariantType) => void;
+  onClose: (newData: boolean) => void;
   fields?: Array<FIELDS>;
 }
 
@@ -130,48 +130,43 @@ const VariantEditDialog = ({
 
   const handleSave = useCallback(async () => {
     if (editDataDirty) {
-      const putData: {
-        comments?: string;
-        kbMatches?: KbMatchType[];
-      } = {};
-
-      if (fields.includes(FIELDS.comments) && data?.comments) {
-        putData.comments = data?.comments;
-      }
-
-      if (fields.includes(FIELDS.kbMatches) && data?.kbMatches) {
-        putData.kbMatches = data?.kbMatches;
-      }
       let variantId = data?.ident;
-
       // The relevance was appeneded to Id due to row concatenation, needs to be removed here to call API
       if ((data).potentialClinicalAssociation) {
         variantId = variantId.substr(0, variantId.lastIndexOf('-'));
       }
 
-      const apiCall = api.put(
-        `/reports/${report.ident}/${VARIANT_TYPE_TO_API_MAP[data.variantType]}/${variantId}`,
-        putData,
-      );
+      const calls = [];
+
+      if (fields.includes(FIELDS.comments) && data?.comments) {
+        calls.push(api.put(
+          `/reports/${report.ident}/${VARIANT_TYPE_TO_API_MAP[data.variantType]}/${variantId}`,
+          {
+            comments: data.comments,
+          },
+        ));
+      }
+
+      if (fields.includes(FIELDS.kbMatches) && data?.kbMatches) {
+        const existingIds = editData.kbMatches.map(({ ident }) => ident);
+        const remainingIds = new Set(data.kbMatches.map(({ ident }) => ident));
+        existingIds.filter((id) => !remainingIds.has(id)).forEach((kbMatchId) => {
+          calls.push(api.del(`/reports/${report.ident}/kb-matches/${kbMatchId}`, {}));
+        });
+      }
+
+      const callSet = new ApiCallSet(calls);
 
       if (isSigned) {
-        showConfirmDialog(apiCall);
+        showConfirmDialog(callSet);
       } else {
-        const returnData = await apiCall.request();
-        onClose(returnData);
+        await callSet.request();
+        onClose(true);
       }
     } else {
       onClose(null);
     }
-  }, [
-    editDataDirty,
-    data,
-    report.ident,
-    isSigned,
-    showConfirmDialog,
-    onClose,
-    fields,
-  ]);
+  }, [editDataDirty, data, fields, isSigned, report.ident, editData, showConfirmDialog, onClose]);
 
   const handleDialogClose = useCallback(() => onClose(null), [onClose]);
 
