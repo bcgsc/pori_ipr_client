@@ -32,7 +32,7 @@ import {
   cancerPredisPrintColumnDefs,
 } from './columnDefs';
 import './index.scss';
-import TestInformationEditDialog from './components/TestInformationEditDialog';
+import { TestInformationEditDialog, TestInformationEditDialogProps } from './components/TestInformationEditDialog';
 
 type PharmacoGenomicSummaryProps = {
   loadedDispatch: (type: { type: string }) => void;
@@ -191,8 +191,11 @@ const PharmacoGenomicSummary = ({
     }
   }, [report, setReport]);
 
-  const handleSampleInfoEditClose = useCallback(() => {
-    // Handle state updates here
+  const handleTestInfoEditClose = useCallback<TestInformationEditDialogProps['onClose']>((data) => {
+    if (data) {
+      setTestInformation(data);
+    }
+    setTestInfoEdit(false);
   }, []);
 
   const handleSign = useCallback(async (signed: boolean, role: SignatureUserType) => {
@@ -319,7 +322,7 @@ const PharmacoGenomicSummary = ({
           <TestInformationEditDialog
             data={testInformation}
             isOpen={Boolean(showTestInfoEdit)}
-            onClose={() => setTestInfoEdit(false)}
+            onClose={handleTestInfoEditClose}
           />
         </>
       );
@@ -339,7 +342,7 @@ const PharmacoGenomicSummary = ({
         </Typography>
       </div>
     );
-  }, [testInformation, isPrint, canEdit, classNamePrefix, showTestInfoEdit]);
+  }, [testInformation, isPrint, canEdit, classNamePrefix, showTestInfoEdit, handleTestInfoEditClose]);
 
   return (
     <div className={classNamePrefix}>

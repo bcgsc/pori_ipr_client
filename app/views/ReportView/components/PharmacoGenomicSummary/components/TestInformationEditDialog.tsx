@@ -1,13 +1,19 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useContext, useEffect } from 'react';
 import {
   Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField,
 } from '@mui/material';
+import { useForm } from 'react-hook-form';
 import { TestInformationType } from '@/components/TestInformation';
+import api from '@/services/api';
+import ReportContext from '@/context/ReportContext';
+import snackbar from '@/services/SnackbarUtils';
+
+type TestInformationForm = TestInformationType;
 
 type TestInformationEditDialogProps = {
   data: TestInformationType;
   isOpen: boolean;
-  onClose: () => void;
+  onClose: (data: TestInformationType | null) => void;
 };
 
 const TestInformationEditDialog = ({
@@ -15,53 +21,67 @@ const TestInformationEditDialog = ({
   isOpen,
   onClose,
 }: TestInformationEditDialogProps) => {
-  // Input field states
-  const [genesScreened, setGenesScreened] = useState('');
-  const [variantsScreened, setVariantsScreened] = useState('');
+  const { report: { ident: reportId } } = useContext(ReportContext);
+  const {
+    register, handleSubmit, formState: { dirtyFields }, setValue,
+  } = useForm<TestInformationForm>({
+    mode: 'onBlur',
+    defaultValues: {
+      pharmacogenomicGenes: 0,
+      pharmacogenomicVars: 0,
+    },
+  });
 
-  // Input change handlers
-  const handleGenesScreenedChange = (event) => setGenesScreened(event.target.value);
-  const handleVariantsScreenedChange = (event) => setVariantsScreened(event.target.value);
+  useEffect(() => {
+    if (data) {
+      setValue('pharmacogenomicGenes', Number(data.pharmacogenomicGenes));
+      setValue('pharmacogenomicVars', Number(data.pharmacogenomicVars));
+    }
+  }, [data, setValue]);
 
-  // Open and Close actions
   const handleClose = useCallback(() => {
     onClose(null);
   }, [onClose]);
 
-  const handleConfirm = useCallback(async () => {
-    // API calls here
-    onClose(true);
-  }, [onClose]);
+  const handleConfirm = useCallback(async (values: Pick<TestInformationType, 'pharmacogenomicGenes' | 'pharmacogenomicVars'>) => {
+    if (Object.keys(dirtyFields).length > 0) {
+      try {
+        const resp = await api.put(`/reports/${reportId}/probe-test-information`, { ...values }).request();
+        snackbar.success('Successfully edited test information');
+        onClose(resp);
+      } catch (e) {
+        snackbar.error('Failed to edit test information: ', e.message ?? e);
+        onClose(null);
+      }
+    } else {
+      onClose(null);
+    }
+  }, [onClose, reportId, dirtyFields]);
 
   return (
-    <Dialog open={isOpen} onClose={handleClose}>
-      <DialogTitle>Test Information</DialogTitle>
+    <Dialog fullWidth open={isOpen} onClose={handleClose}>
+      <DialogTitle>Edit Test Information</DialogTitle>
       <DialogContent>
         <TextField
-          autoFocus
           margin="dense"
-          id="genesScreened"
           label="Pharmacogenomic Genes Screened"
           type="number"
-          value={genesScreened}
-          onChange={handleGenesScreenedChange}
           fullWidth
+          {...register('pharmacogenomicGenes', { required: true, valueAsNumber: true })}
         />
         <TextField
           margin="dense"
-          id="variantsScreened"
           label="Pharmacogenomic Variants Screened"
           type="number"
-          value={variantsScreened}
-          onChange={handleVariantsScreenedChange}
           fullWidth
+          {...register('pharmacogenomicVars', { required: true, valueAsNumber: true })}
         />
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>
           Cancel
         </Button>
-        <Button onClick={handleConfirm} color="secondary">
+        <Button onClick={handleSubmit(handleConfirm)} color="secondary">
           Save
         </Button>
       </DialogActions>
@@ -70,3 +90,4 @@ const TestInformationEditDialog = ({
 };
 
 export default TestInformationEditDialog;
+export { TestInformationEditDialogProps, TestInformationEditDialog };
