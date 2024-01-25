@@ -342,37 +342,22 @@ const RapidSummary = ({
     ]);
   }, [microbial, tmburMutBur, report.m1m2Score, report.sampleInfo, report.tumourContent, tCellCd8?.percentile, tCellCd8?.score, report.captiv8Score]);
 
-  const handlePatientEditClose = useCallback(async (
+  const handlePatientEditClose = useCallback((
     isSaved: boolean,
     newPatientData: PatientInformationType,
     newReportData: ReportType,
   ) => {
-    const apiCalls = [];
     setShowPatientEdit(false);
 
-    if (!isSaved || (!newPatientData && !newReportData)) {
+    if (!newPatientData && !newReportData) {
       return;
     }
 
-    if (newPatientData) {
-      apiCalls.push(api.put(`/reports/${report.ident}/patient-information`, newPatientData));
-    }
-
     if (newReportData) {
-      apiCalls.push(api.put(`/reports/${report.ident}`, newReportData));
+      setReport((oldReport) => ({ ...oldReport, ...newReportData }));
     }
 
-    const callSet = new ApiCallSet(apiCalls);
-
-    if (isSigned) {
-      showConfirmDialog(callSet);
-    } else {
-      const [, reportResp] = await callSet.request() as [unknown, ReportType];
-
-      if (reportResp) {
-        setReport({ ...reportResp, ...report });
-      }
-
+    if (newPatientData) {
       setPatientInformation([
         {
           label: 'Alternate ID',
@@ -408,7 +393,7 @@ const RapidSummary = ({
         },
       ]);
     }
-  }, [isSigned, report, setReport, showConfirmDialog]);
+  }, [report, setReport]);
 
   const handleSign = useCallback((signed: boolean, role: SignatureUserType) => {
     let cancelled;

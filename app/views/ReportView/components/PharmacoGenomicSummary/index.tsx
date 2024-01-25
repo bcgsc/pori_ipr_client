@@ -10,9 +10,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import Alert from '@mui/material/Alert';
 
 import api, { ApiCallSet } from '@/services/api';
-import useConfirmDialog from '@/hooks/useConfirmDialog';
 import DataTable from '@/components/DataTable';
-import ReportContext from '@/context/ReportContext';
+import ReportContext, { PatientInformationType, ReportType } from '@/context/ReportContext';
 import UserContext from '@/context/UserContext';
 import ConfirmContext from '@/context/ConfirmContext';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
@@ -46,8 +45,7 @@ const PharmacoGenomicSummary = ({
 }: PharmacoGenomicSummaryProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
   const { canEdit } = useContext(UserContext);
-  const { isSigned, setIsSigned } = useContext(ConfirmContext);
-  const { showConfirmDialog } = useConfirmDialog();
+  const { setIsSigned } = useContext(ConfirmContext);
 
   const [testInformation, setTestInformation] = useState<TestInformationType>();
   const [signatures, setSignatures] = useState<SignatureType | null>();
@@ -139,32 +137,21 @@ const PharmacoGenomicSummary = ({
     }
   }, [loadedDispatch, report, setIsLoading]);
 
-  const handlePatientEditClose = useCallback(async (isSaved, newPatientData, newReportData) => {
-    const apiCalls = [];
+  const handlePatientEditClose = useCallback((
+    newPatientData: PatientInformationType,
+    newReportData: ReportType,
+  ) => {
     setShowPatientEdit(false);
 
-    if (!isSaved || (!newPatientData && !newReportData)) {
+    if (!newPatientData && !newReportData) {
       return;
     }
 
-    if (newPatientData) {
-      apiCalls.push(api.put(`/reports/${report.ident}/patient-information`, newPatientData));
-    }
-
     if (newReportData) {
-      apiCalls.push(api.put(`/reports/${report.ident}`, newReportData));
+      setReport((oldReport) => ({ ...oldReport, ...newReportData }));
     }
 
-    const callSet = new ApiCallSet(apiCalls);
-
-    if (isSigned) {
-      showConfirmDialog(callSet);
-    } else {
-      const [, reportResp] = await callSet.request();
-      if (reportResp) {
-        setReport({ ...reportResp, ...report });
-      }
-
+    if (newPatientData) {
       setPatientInformation([
         {
           label: 'Alternate ID',
@@ -200,7 +187,7 @@ const PharmacoGenomicSummary = ({
         },
       ]);
     }
-  }, [isSigned, report, setReport, showConfirmDialog]);
+  }, [report, setReport]);
 
   const handleSign = useCallback(async (signed: boolean, role: SignatureUserType) => {
     let newSignature: SignatureType;

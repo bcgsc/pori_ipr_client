@@ -18,7 +18,7 @@ import ConfirmContext from '@/context/ConfirmContext';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import DemoDescription from '@/components/DemoDescription';
 import DescriptionList from '@/components/DescriptionList';
-import ReportContext, { ReportType } from '@/context/ReportContext';
+import ReportContext, { PatientInformationType, ReportType } from '@/context/ReportContext';
 import snackbar from '@/services/SnackbarUtils';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import PatientEdit from '@/components/PatientEdit';
@@ -33,7 +33,6 @@ import SummaryPrintTable from '@/components/SummaryPrintTable';
 import VariantChips from './components/VariantChips';
 import VariantCounts from './components/VariantCounts';
 import {
-  PatientInformationType,
   GeneVariantType,
 } from './types';
 import {
@@ -91,7 +90,10 @@ const GenomicSummary = ({
   const [showPatientEdit, setShowPatientEdit] = useState(false);
   const [showTumourSummaryEdit, setShowTumourSummaryEdit] = useState(false);
 
-  const [patientInformation, setPatientInformation] = useState<PatientInformationType[]>();
+  const [patientInformation, setPatientInformation] = useState<{
+    label: string;
+    value: string | null;
+  }[] | null>();
   const [signatures, setSignatures] = useState<MutationSignatureType[]>([]);
   const [tumourSummary, setTumourSummary] = useState<TumourSummaryType[]>();
   const [primaryBurden, setPrimaryBurden] = useState<MutationBurdenType>();
@@ -386,50 +388,56 @@ const GenomicSummary = ({
     }
   }, [report]);
 
-  const handlePatientEditClose = useCallback(async (isSaved, newPatientData, newReportData) => {
+  const handlePatientEditClose = useCallback((
+    newPatientData: PatientInformationType,
+    newReportData: ReportType,
+  ) => {
     setShowPatientEdit(false);
 
-    if (!isSaved || (!newPatientData && !newReportData)) {
+    if (!newPatientData && !newReportData) {
       return;
     }
 
-    const reportResp = await api.get(`/reports/${report.ident}`).request();
-    setReport(reportResp);
+    if (newReportData) {
+      setReport((oldReport) => ({ ...oldReport, ...newReportData }));
+    }
 
-    setPatientInformation([
-      {
-        label: 'Alternate ID',
-        value: reportResp ? reportResp.alternateIdentifier : report.alternateIdentifier,
-      },
-      {
-        label: 'Pediatric Patient IDs',
-        value: reportResp ? reportResp.pediatricIds : report.pediatricIds,
-      },
-      {
-        label: 'Report Date',
-        value: formatDate(report.createdAt),
-      },
-      {
-        label: 'Case Type',
-        value: newPatientData ? newPatientData.caseType : report.patientInformation.caseType,
-      },
-      {
-        label: 'Physician',
-        value: newPatientData ? newPatientData.physician : report.patientInformation.physician,
-      },
-      {
-        label: 'Biopsy Name',
-        value: reportResp ? reportResp.biopsyName : report.biopsyName,
-      },
-      {
-        label: 'Biopsy Details',
-        value: newPatientData ? newPatientData.biopsySite : report.patientInformation.biopsySite,
-      },
-      {
-        label: 'Gender',
-        value: newPatientData ? newPatientData.gender : report.patientInformation.gender,
-      },
-    ]);
+    if (newPatientData) {
+      setPatientInformation([
+        {
+          label: 'Alternate ID',
+          value: newReportData ? newReportData.alternateIdentifier : report.alternateIdentifier,
+        },
+        {
+          label: 'Pediatric Patient IDs',
+          value: newReportData ? newReportData.pediatricIds : report.pediatricIds,
+        },
+        {
+          label: 'Report Date',
+          value: formatDate(report.createdAt),
+        },
+        {
+          label: 'Case Type',
+          value: newPatientData ? newPatientData.caseType : report.patientInformation.caseType,
+        },
+        {
+          label: 'Physician',
+          value: newPatientData ? newPatientData.physician : report.patientInformation.physician,
+        },
+        {
+          label: 'Biopsy Name',
+          value: newReportData ? newReportData.biopsyName : report.biopsyName,
+        },
+        {
+          label: 'Biopsy Details',
+          value: newPatientData ? newPatientData.biopsySite : report.patientInformation.biopsySite,
+        },
+        {
+          label: 'Gender',
+          value: newPatientData ? newPatientData.gender : report.patientInformation.gender,
+        },
+      ]);
+    }
   }, [report, setReport]);
 
   const handleTumourSummaryEditClose = useCallback((
