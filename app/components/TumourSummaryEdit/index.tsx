@@ -77,7 +77,7 @@ const TumourSummaryEdit = ({
         totalMutationsPerMb: mutationBurden.totalMutationsPerMb,
       });
     }
-  }, [mutationBurden]);
+  }, [mutationBurden, mutationBurden.totalMutationsPerMb]);
 
   useEffect(() => {
     if (tmburMutBur) {
