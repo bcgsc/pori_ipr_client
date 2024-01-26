@@ -559,7 +559,6 @@ const GenomicSummary = ({
             microbial={microbial}
             report={report}
             mutationBurden={primaryBurden}
-            tmburMutBur={tmburMutBur}
             isOpen={showTumourSummaryEdit}
             onClose={handleTumourSummaryEditClose}
           />
@@ -603,7 +602,7 @@ const GenomicSummary = ({
         {dataSection}
       </div>
     );
-  }, [canEdit, classNamePrefix, handleTumourSummaryEditClose, microbial, primaryBurden, tmburMutBur, report, showTumourSummaryEdit, tumourSummary, printVersion]);
+  }, [canEdit, classNamePrefix, handleTumourSummaryEditClose, microbial, primaryBurden, report, showTumourSummaryEdit, tumourSummary, printVersion]);
 
   const alterationsSection = useMemo(() => {
     let titleSection = (
