@@ -36,11 +36,11 @@ const ReportsTableComponent = (): JSX.Element => {
         let states = '';
 
         if (!adminAccess) {
-          states = 'ready,active,uploaded,signedoff,archived,reviewed';
+          states = 'ready,active,uploaded,signedoff,completed,reviewed';
         }
 
         if (isExternalMode) {
-          states = 'reviewed,archived';
+          states = 'reviewed,completed';
         }
 
         const { reports } = await api.get(`/reports${states ? `?states=${states}` : ''}`, {}).request();

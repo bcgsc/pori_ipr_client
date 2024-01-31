@@ -7,8 +7,8 @@ type TestInformationType = {
   germlineVars: string;
   ident: string;
   kbVersion: string;
-  pharmacogenomicGenes: string;
-  pharmacogenomicVars: string;
+  pharmacogenomicGenes: number;
+  pharmacogenomicVars: number;
   cancerGenes: string;
   cancerVars: string;
   snpGenes: string;

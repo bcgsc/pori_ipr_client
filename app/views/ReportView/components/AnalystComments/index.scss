@@ -17,10 +17,8 @@
     max-width: $readable-max;
     margin: 32px auto;
   }
-}
 
-@media print {
-  .analyst-comments {
+  &--print {
     padding: 0;
 
     &__user-text {
@@ -28,10 +26,10 @@
       margin: 8px auto 0;
       max-width: $print-width;
 
-       & > * {
-         display: block;
-         margin: 8px 0;
-       }
+      & > * {
+        display: block;
+        margin: 8px 0;
+      }
     }
 
     &__signatures {

@@ -78,8 +78,8 @@ const columnDefs = [{
   hide: true,
 }, {
   headerName: 'Expression (Z-score) 5`/3',
-  colId: 'primarySiteZScore',
-  valueGetter: createGeneRelatedValueGetter('expressionVariants', ' / ', 'primarySiteZScore'),
+  colId: 'diseaseZScore',
+  valueGetter: createGeneRelatedValueGetter('expressionVariants', ' / ', 'diseaseZScore'),
   hide: false,
 }, {
   headerName: 'Oncogene',
@@ -93,8 +93,8 @@ const columnDefs = [{
   hide: true,
 }, {
   headerName: 'In Knowledgebase Gene',
-  colId: 'cancerRelated',
-  valueGetter: (params) => (params.data.gene1.cancerRelated || params.data.gene2.cancerRelated || false),
+  colId: 'kbStatementRelated',
+  valueGetter: (params) => (params.data.gene1.kbStatementRelated || params.data.gene2.kbStatementRelated || false),
   hide: true,
 }, {
   headerName: 'Known Fusion Partner Gene',

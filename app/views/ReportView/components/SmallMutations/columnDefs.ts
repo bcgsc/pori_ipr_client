@@ -100,7 +100,7 @@ const columnDefs: ColDef[] = [{
   hide: true,
 }, {
   headerName: 'Expression (Z-score)',
-  colId: 'diseaseZscore',
+  colId: 'diseaseZScore',
   valueGetter: 'data.gene.expressionVariants.diseaseZScore',
   hide: false,
 }, {
@@ -122,8 +122,8 @@ const columnDefs: ColDef[] = [{
   hide: true,
 }, {
   headerName: 'In Knowledgebase Gene',
-  colId: 'cancerRelated',
-  valueGetter: 'data.gene.cancerRelated || false',
+  colId: 'kbStatementRelated',
+  valueGetter: 'data.gene.kbStatementRelated || false',
   hide: true,
 }, {
   headerName: 'Known Fusion Partner Gene',

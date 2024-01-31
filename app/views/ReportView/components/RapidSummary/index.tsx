@@ -216,7 +216,7 @@ const RapidSummary = ({
 
           if (tmBurdenResp.status === 'fulfilled') {
             setTmburMutBur(tmBurdenResp.value);
-          } else if (!isPrint) {
+          } else if (!isPrint && tmBurdenResp.reason.content?.status !== 404) {
             snackbar.error(tmBurdenResp.reason?.content?.error?.message);
           }
 
@@ -342,37 +342,22 @@ const RapidSummary = ({
     ]);
   }, [microbial, tmburMutBur, report.m1m2Score, report.sampleInfo, report.tumourContent, tCellCd8?.percentile, tCellCd8?.score, report.captiv8Score]);
 
-  const handlePatientEditClose = useCallback(async (
+  const handlePatientEditClose = useCallback((
     isSaved: boolean,
     newPatientData: PatientInformationType,
     newReportData: ReportType,
   ) => {
-    const apiCalls = [];
     setShowPatientEdit(false);
 
-    if (!isSaved || (!newPatientData && !newReportData)) {
+    if (!newPatientData && !newReportData) {
       return;
     }
 
-    if (newPatientData) {
-      apiCalls.push(api.put(`/reports/${report.ident}/patient-information`, newPatientData));
-    }
-
     if (newReportData) {
-      apiCalls.push(api.put(`/reports/${report.ident}`, newReportData));
+      setReport((oldReport) => ({ ...oldReport, ...newReportData }));
     }
 
-    const callSet = new ApiCallSet(apiCalls);
-
-    if (isSigned) {
-      showConfirmDialog(callSet);
-    } else {
-      const [, reportResp] = await callSet.request() as [unknown, ReportType];
-
-      if (reportResp) {
-        setReport({ ...reportResp, ...report });
-      }
-
+    if (newPatientData) {
       setPatientInformation([
         {
           label: 'Alternate ID',
@@ -408,7 +393,7 @@ const RapidSummary = ({
         },
       ]);
     }
-  }, [isSigned, report, setReport, showConfirmDialog]);
+  }, [report, setReport]);
 
   const handleSign = useCallback((signed: boolean, role: SignatureUserType) => {
     let cancelled;
@@ -432,10 +417,12 @@ const RapidSummary = ({
     isSaved,
     newMicrobialData,
     newReportData,
+    _mutBurData,
+    newTmBurMutBurData,
   ) => {
     setShowTumourSummaryEdit(false);
 
-    if (!isSaved || (!newMicrobialData && !newReportData)) {
+    if (!isSaved || (!newMicrobialData && !newReportData && !newTmBurMutBurData)) {
       return;
     }
 
@@ -445,6 +432,10 @@ const RapidSummary = ({
 
     if (newReportData) {
       setReport(newReportData);
+    }
+
+    if (newTmBurMutBurData) {
+      setTmburMutBur(newTmBurMutBurData);
     }
   }, [setReport]);
 
@@ -464,6 +455,7 @@ const RapidSummary = ({
                   microbial={microbial}
                   report={report}
                   mutationBurden={null}
+                  tmburMutBur={tmburMutBur}
                   isOpen={showTumourSummaryEdit}
                   onClose={handleTumourSummaryEditClose}
                 />
@@ -485,23 +477,22 @@ const RapidSummary = ({
     }
   }, []);
 
-  const handleMatchedTumourEditClose = useCallback((newData) => {
-    setShowMatchedTumourEditDialog(false);
-
+  const handleMatchedTumourEditClose = useCallback(async (newData: boolean) => {
     if (newData) {
-      setTherapeuticAssociationResults((existingResults) => {
-        const newEvents = cloneDeep(existingResults);
-        const eventsIndex = existingResults.findIndex((user) => user.ident.includes(newData.ident));
-        if (eventsIndex !== -1) {
-          newEvents[eventsIndex] = {
-            ...newEvents[eventsIndex],
-            comments: newData.comments,
-          };
-        }
-        return newEvents;
-      });
+      // Call API again to get updated data
+      try {
+        const updateResp = await api.get(`/reports/${report.ident}/variants?rapidTable=therapeuticAssociation`).request();
+        setTherapeuticAssociationResults(
+          splitVariantsByRelevance(updateResp),
+        );
+        setShowMatchedTumourEditDialog(false);
+      } catch (e) {
+        snackbar.error(`Refetching of therapeutic association data failed: ${e.message ? e.message : e}`);
+      }
+    } else {
+      setShowMatchedTumourEditDialog(false);
     }
-  }, []);
+  }, [report.ident]);
 
   let therapeuticAssociationSection;
   if (therapeuticAssociationResults?.length > 0) {
@@ -550,19 +541,21 @@ const RapidSummary = ({
     }
   }, []);
 
-  const handleCancerRelevanceEditClose = useCallback((newData) => {
+  const handleCancerRelevanceEditClose = useCallback(async (newData) => {
     setShowCancerRelevanceEventsDialog(false);
     if (newData) {
-      setCancerRelevanceResults((existingResults) => {
-        const newEvents = [...existingResults];
-        const eventsIndex = existingResults.findIndex((user) => user.ident === newData.ident);
-        if (eventsIndex !== -1) {
-          newEvents[eventsIndex] = newData;
-        }
-        return newEvents;
-      });
+      try {
+        const updateResp = await api.get(`/reports/${report.ident}/variants?rapidTable=cancerRelevance`).request();
+        setCancerRelevanceResults(updateResp);
+      } catch (e) {
+        snackbar.error(`Refetching of cancer relevance data failed: ${e.message ? e.message : e}`);
+      } finally {
+        setShowCancerRelevanceEventsDialog(false);
+      }
+    } else {
+      setShowCancerRelevanceEventsDialog(false);
     }
-  }, []);
+  }, [report.ident]);
 
   let cancerRelevanceSection;
   if (cancerRelevanceResults?.length > 0) {

@@ -71,6 +71,7 @@ const EditDialog = ({
       try {
         if (isSigned) {
           showConfirmDialog(req);
+          setIsApiCalling(false);
         } else {
           await req.request();
           onClose({ ...editData, selected: checkboxSelected, kbCategory: selectValue });

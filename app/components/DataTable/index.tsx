@@ -24,7 +24,7 @@ import { ColumnPicker, ColumnPickerProps } from './components/ColumnPicker';
 import EnsemblCellRenderer from './components/EnsemblCellRenderer';
 import CivicCellRenderer from './components/CivicCellRenderer';
 import GeneCellRenderer from './components/GeneCellRenderer';
-import ActionCellRenderer from './components/ActionCellRenderer';
+import { ActionCellRenderer } from './components/ActionCellRenderer';
 import NoRowsOverlay from './components/NoRowsOverlay';
 import { getDate } from '../../utils/date';
 
@@ -411,6 +411,14 @@ const DataTable = ({
     />
   ), [onEdit, onDelete]);
 
+  const RowKbMatchesActionCellRenderer = useCallback((row) => (
+    <KbMatchesActionCellRenderer
+      onEdit={() => onEdit(row.node.data)}
+      onDelete={() => onDelete(row.node.data)}
+      {...row}
+    />
+  ), [onEdit, onDelete]);
+
   const handleTSVExport = useCallback(() => {
     const date = getDate();
 
@@ -571,7 +579,7 @@ const DataTable = ({
                 CivicCellRenderer,
                 GeneCellRenderer,
                 ActionCellRenderer: RowActionCellRenderer,
-                KbMatchesActionCellRenderer,
+                KbMatchesActionCellRenderer: RowKbMatchesActionCellRenderer,
                 headerCellRenderer: Header,
                 NoRowsOverlay,
               }}

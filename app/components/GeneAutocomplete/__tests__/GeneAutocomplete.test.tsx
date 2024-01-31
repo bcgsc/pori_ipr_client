@@ -8,7 +8,7 @@ import GeneAutocomplete from '..';
 
 const mockGene = {
   name: 'TP53',
-  cancerRelated: true,
+  kbStatementRelated: true,
   drugTargetable: true,
   knownFusionPartner: false,
   knownSmallMutation: false,
@@ -19,7 +19,7 @@ const mockGene = {
 
 const mockGene2 = {
   name: 'EGFR',
-  cancerRelated: false,
+  kbStatementRelated: false,
   drugTargetable: false,
   knownFusionPartner: true,
   knownSmallMutation: true,

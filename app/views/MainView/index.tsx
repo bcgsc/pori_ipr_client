@@ -25,12 +25,14 @@ import Sidebar from '@/components/Sidebar';
 import snackbar from '@/services/SnackbarUtils';
 import { keycloak } from '@/services/management/auth';
 import './index.scss';
+import { Box } from '@mui/system';
 
 const LoginView = lazy(() => import('../LoginView'));
 const TermsView = lazy(() => import('../TermsView'));
 const ReportsView = lazy(() => import('../ReportsView'));
 const ReportView = lazy(() => import('../ReportView'));
 const PrintView = lazy(() => import('../PrintView'));
+const BetaPrintView = (props) => <PrintView {...props} printVersion="beta" />;
 const GermlineView = lazy(() => import('../GermlineView'));
 const AdminView = lazy(() => import('../AdminView'));
 const LinkOutView = lazy(() => import('../LinkOutView'));
@@ -148,7 +150,19 @@ const Main = (): JSX.Element => {
                     <Sidebar />
                   </>
                 ) : null}
-                <Suspense fallback={(<CircularProgress color="secondary" />)}>
+                <Suspense fallback={(
+                  <Box
+                    sx={{
+                      position: 'fixed',
+                      top: '50%',
+                      left: '50%',
+                      transform: 'translate(-50%, -50%)',
+                    }}
+                  >
+                    <CircularProgress color="secondary" />
+                  </Box>
+                  )}
+                >
                   <TimeoutModal authorizationToken={authorizationToken} setAuthorizationToken={setAuthorizationToken} />
                   <Switch>
                     <Route component={LoginView} path="/login" />
@@ -162,6 +176,7 @@ const Main = (): JSX.Element => {
                     <Redirect exact from="/report/:ident/(genomic|probe)/summary" to="/report/:ident/summary" />
                     <AuthenticatedRoute component={ReportView} path="/report/:ident" />
                     <AuthenticatedRoute component={PrintView} path="/print/:ident" showNav={false} onToggleNav={setIsNavVisible} />
+                    <AuthenticatedRoute component={BetaPrintView} path="/printBeta/:ident" showNav={false} onToggleNav={setIsNavVisible} />
                     <AuthenticatedRoute component={GermlineView} path="/germline" />
                     <AuthenticatedRoute component={ProjectsView} path="/projects" />
                     <AuthenticatedRoute adminRequired component={AdminView} path="/admin" />

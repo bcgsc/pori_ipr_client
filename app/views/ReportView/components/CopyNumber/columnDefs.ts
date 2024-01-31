@@ -77,8 +77,8 @@ const columnDefs: ColDef[] = [{
   hide: true,
 }, {
   headerName: 'In Knowledgebase Gene',
-  colId: 'cancerRelated',
-  valueGetter: 'data.gene.cancerRelated || false',
+  colId: 'kbStatementRelated',
+  valueGetter: 'data.gene.kbStatementRelated || false',
   hide: true,
 }, {
   headerName: 'Known Fusion Partner Gene',

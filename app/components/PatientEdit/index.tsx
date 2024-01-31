@@ -58,7 +58,6 @@ type PatientEditProps = {
   report: ReportType;
   isOpen: boolean;
   onClose: (
-    isSaved: boolean,
     newPatientData?: Record<string, unknown> | null,
     newReportData?: Record<string, unknown> | null
   ) => void;
@@ -135,14 +134,15 @@ const PatientEdit = ({
       const callSet = new ApiCallSet(apiCalls);
 
       if (isSigned) {
+        setIsApiCalling(false);
         showConfirmDialog(callSet);
       } else {
         await callSet.request();
         setIsApiCalling(false);
-        onClose(true, patientDirty ? newPatientData : null, reportDirty ? newReportData : null);
+        onClose(patientDirty ? newPatientData : null, reportDirty ? newReportData : null);
       }
     } else {
-      onClose(false);
+      onClose();
     }
   }, [newPatientData, newReportData, isSigned, onClose, patientDirty, reportDirty, report.ident, showConfirmDialog]);
 

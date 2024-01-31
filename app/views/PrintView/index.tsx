@@ -17,6 +17,8 @@ import {
   REPORT_TYPE_TO_SUFFIX,
 } from '@/constants';
 import getImageDataURI from '@/utils/getImageDataURI';
+import { SummaryProps } from '@/commonComponents';
+
 import Summary from '../ReportView/components/Summary';
 import RunningLeft from './components/RunningLeft';
 import RunningCenter from './components/RunningCenter';
@@ -56,7 +58,76 @@ const reducer = (state, action) => {
   }
 };
 
-const Print = (): JSX.Element => {
+type PrintTitleBarProps = {
+  report: ReportType;
+  title: string;
+  subtitle: string;
+  subtitleSuffix: string;
+  headerImageURI: string;
+  printVersion?: SummaryProps['printVersion'];
+};
+
+const PrintTitleBar = ({
+  report,
+  title,
+  subtitle,
+  subtitleSuffix,
+  headerImageURI,
+  printVersion = 'stable',
+}: PrintTitleBarProps) => {
+  if (!report) { return null; }
+
+  let biopsyText = startCase(report?.biopsyName || 'No Biopsy Name');
+  if (report?.patientInformation?.diagnosis) {
+    biopsyText = biopsyText.concat(`- ${startCase(report.patientInformation.diagnosis)}`);
+  }
+  if (report?.patientInformation?.tumourSample && report?.patientInformation?.tumourSample.toLowerCase() !== 'undetermined') {
+    biopsyText = biopsyText.concat(`(${report.patientInformation.tumourSample})`);
+  }
+
+  if (printVersion === 'beta') {
+    return (
+      <div className="printbeta__headers">
+        <div className="printbeta__header-left">
+          {headerImageURI && (
+            <img className="printbeta__logo" src={headerImageURI} alt="" />
+          )}
+        </div>
+        <div className="printbeta__header-right">
+          <Typography variant="body2">{`${title ? `${title} Report: ` : ''} ${subtitle}${subtitleSuffix ? ` - ${subtitleSuffix}` : ''}`}</Typography>
+          <Typography variant="body2">{biopsyText}</Typography>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="print__headers">
+      <div className="print__header-left">
+        {headerImageURI && (
+          <img className="print__logo" src={headerImageURI} alt="" />
+        )}
+      </div>
+      <div className="print__header-right">
+        {title && (<Typography variant="h1">{`${title} Report`}</Typography>)}
+        <Typography variant="h2">
+          {`${subtitle}${subtitleSuffix ? ` - ${subtitleSuffix}` : ''}`}
+        </Typography>
+        <Typography variant="h5">
+          {biopsyText}
+        </Typography>
+      </div>
+    </div>
+  );
+};
+
+type PrintPropTypes = {
+  printVersion?: SummaryProps['printVersion'];
+};
+
+const Print = ({
+  printVersion = 'stable',
+}: PrintPropTypes): JSX.Element => {
   const params = useParams<{
     ident: string;
   }>();
@@ -95,6 +166,18 @@ const Print = (): JSX.Element => {
       const showPrint = async () => {
         const paged = new Previewer();
         await paged.preview(document.getElementById('root'), ['index.css'], document.body);
+        const currentDate = new Date();
+        const year = currentDate.getFullYear();
+        const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+        const day = currentDate.getDate().toString().padStart(2, '0');
+        const hours = currentDate.getHours().toString().padStart(2, '0');
+        const minutes = currentDate.getMinutes().toString().padStart(2, '0');
+        const seconds = currentDate.getSeconds().toString().padStart(2, '0');
+        const { timeZone } = new Intl.DateTimeFormat().resolvedOptions();
+
+        const formattedDate = `${year}-${month}-${day}-${hours}:${minutes}:${seconds}-${timeZone.replace(/\//g, '_')}`;
+
+        document.title = `${report.patientId}_${report.template.name}_${formattedDate}`;
         window.print();
         setIsPrintDialogShown(true);
       };
@@ -108,7 +191,7 @@ const Print = (): JSX.Element => {
         <>
           {template?.sections.includes('summary') && (
             <>
-              <Summary templateName={report.template.name} isPrint loadedDispatch={dispatch} />
+              <Summary templateName={report.template.name} isPrint printVersion={printVersion} loadedDispatch={dispatch} />
               <PageBreak />
             </>
           )}
@@ -143,55 +226,26 @@ const Print = (): JSX.Element => {
       );
     }
     return null;
-  }, [report, theme, template]);
-
-  const titleBar = useMemo(() => {
-    if (report && template) {
-      const printTitle = REPORT_TYPE_TO_TITLE[template.name];
-      const headerSubtitle = report.patientId;
-      const headerSubtitleSuffix = REPORT_TYPE_TO_SUFFIX[template.name];
-
-      let biopsyText = startCase(report?.biopsyName || 'No Biopsy Name');
-      if (report?.patientInformation?.diagnosis) {
-        biopsyText = biopsyText.concat(`- ${startCase(report.patientInformation.diagnosis)}`);
-      }
-      if (report?.patientInformation?.tumourSample && report?.patientInformation?.tumourSample.toLowerCase() !== 'undetermined') {
-        biopsyText = biopsyText.concat(`(${report.patientInformation.tumourSample})`);
-      }
-
-      return (
-        <div className="print__headers">
-          <div className="print__header-left">
-            {template?.headerImage && (
-              <img className="print__logo" src={getImageDataURI(template.headerImage)} alt="" />
-            )}
-          </div>
-          <div className="print__header-right">
-            {printTitle && (<Typography variant="h1">{`${printTitle} Report`}</Typography>)}
-            <Typography variant="h2">
-              {`${headerSubtitle}${headerSubtitleSuffix ? ` - ${headerSubtitleSuffix}` : ''}`}
-            </Typography>
-            <Typography variant="h5">
-              {biopsyText}
-            </Typography>
-          </div>
-        </div>
-      );
-    }
-    return null;
-  }, [report, template]);
+  }, [report, theme, template, printVersion]);
 
   const reportContextValue = useMemo(() => ({ report, setReport }), [report, setReport]);
 
   return (
     <ReportContext.Provider value={reportContextValue}>
-      <div className="print">
+      <div className={`${printVersion === 'beta' ? 'printbeta' : 'print'}`}>
         {report ? (
           <>
             <RunningLeft className="running-left" />
             <RunningCenter className="running-center" />
             <RunningRight className="running-right" />
-            {titleBar}
+            <PrintTitleBar
+              report={report}
+              title={REPORT_TYPE_TO_TITLE[template?.name]}
+              subtitle={report.patientId}
+              subtitleSuffix={REPORT_TYPE_TO_SUFFIX[template?.name]}
+              headerImageURI={getImageDataURI(template?.headerImage)}
+              printVersion={printVersion}
+            />
             {renderSections}
           </>
         ) : null}

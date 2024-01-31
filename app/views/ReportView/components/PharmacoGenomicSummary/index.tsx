@@ -10,9 +10,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import Alert from '@mui/material/Alert';
 
 import api, { ApiCallSet } from '@/services/api';
-import useConfirmDialog from '@/hooks/useConfirmDialog';
 import DataTable from '@/components/DataTable';
-import ReportContext from '@/context/ReportContext';
+import ReportContext, { PatientInformationType, ReportType } from '@/context/ReportContext';
 import UserContext from '@/context/UserContext';
 import ConfirmContext from '@/context/ConfirmContext';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
@@ -33,6 +32,7 @@ import {
   cancerPredisPrintColumnDefs,
 } from './columnDefs';
 import './index.scss';
+import { TestInformationEditDialog, TestInformationEditDialogProps } from './components/TestInformationEditDialog';
 
 type PharmacoGenomicSummaryProps = {
   loadedDispatch: (type: { type: string }) => void;
@@ -46,8 +46,7 @@ const PharmacoGenomicSummary = ({
 }: PharmacoGenomicSummaryProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
   const { canEdit } = useContext(UserContext);
-  const { isSigned, setIsSigned } = useContext(ConfirmContext);
-  const { showConfirmDialog } = useConfirmDialog();
+  const { setIsSigned } = useContext(ConfirmContext);
 
   const [testInformation, setTestInformation] = useState<TestInformationType>();
   const [signatures, setSignatures] = useState<SignatureType | null>();
@@ -59,6 +58,7 @@ const PharmacoGenomicSummary = ({
   }[] | null>();
 
   const [showPatientEdit, setShowPatientEdit] = useState(false);
+  const [showTestInfoEdit, setTestInfoEdit] = useState(false);
 
   const classNamePrefix = isPrint ? 'summary--print' : 'summary';
 
@@ -139,32 +139,21 @@ const PharmacoGenomicSummary = ({
     }
   }, [loadedDispatch, report, setIsLoading]);
 
-  const handlePatientEditClose = useCallback(async (isSaved, newPatientData, newReportData) => {
-    const apiCalls = [];
+  const handlePatientEditClose = useCallback((
+    newPatientData: PatientInformationType,
+    newReportData: ReportType,
+  ) => {
     setShowPatientEdit(false);
 
-    if (!isSaved || (!newPatientData && !newReportData)) {
+    if (!newPatientData && !newReportData) {
       return;
     }
 
-    if (newPatientData) {
-      apiCalls.push(api.put(`/reports/${report.ident}/patient-information`, newPatientData));
-    }
-
     if (newReportData) {
-      apiCalls.push(api.put(`/reports/${report.ident}`, newReportData));
+      setReport((oldReport) => ({ ...oldReport, ...newReportData }));
     }
 
-    const callSet = new ApiCallSet(apiCalls);
-
-    if (isSigned) {
-      showConfirmDialog(callSet);
-    } else {
-      const [, reportResp] = await callSet.request();
-      if (reportResp) {
-        setReport({ ...reportResp, ...report });
-      }
-
+    if (newPatientData) {
       setPatientInformation([
         {
           label: 'Alternate ID',
@@ -200,7 +189,14 @@ const PharmacoGenomicSummary = ({
         },
       ]);
     }
-  }, [isSigned, report, setReport, showConfirmDialog]);
+  }, [report, setReport]);
+
+  const handleTestInfoEditClose = useCallback<TestInformationEditDialogProps['onClose']>((data) => {
+    if (data) {
+      setTestInformation(data);
+    }
+    setTestInfoEdit(false);
+  }, []);
 
   const handleSign = useCallback(async (signed: boolean, role: SignatureUserType) => {
     let newSignature: SignatureType;
@@ -314,6 +310,40 @@ const PharmacoGenomicSummary = ({
     });
   }, [handleSign, isPrint, signatures]);
 
+  const testInformationSection = useMemo(() => {
+    if (!testInformation) { return null; }
+    let editButton = null;
+    if (!isPrint && canEdit) {
+      editButton = (
+        <>
+          <IconButton onClick={() => setTestInfoEdit(true)} size="large">
+            <EditIcon />
+          </IconButton>
+          <TestInformationEditDialog
+            data={testInformation}
+            isOpen={Boolean(showTestInfoEdit)}
+            onClose={handleTestInfoEditClose}
+          />
+        </>
+      );
+    }
+    return (
+      <div className={`${classNamePrefix}__test-information`}>
+        <Typography variant="h3" className={`${classNamePrefix}__test-information-title`}>
+          Test Information
+          {editButton}
+        </Typography>
+        <TestInformation
+          data={testInformation}
+          isPharmacogenomic
+        />
+        <Typography className={`${classNamePrefix}--max-width ${classNamePrefix}__test-information-text`}>
+          The Pharmacogenomic and Cancer Predisposition Targeted Gene Report (PCP-TGR) provides results from a rapid analysis pipeline designed to identify known pharmacogenomic and pathogenic germline cancer predisposition variants in a select set of genes associated with drug toxicity and cancer predisposition. This rapid analysis is not a complete description of abberations associated with cancer predisposition or drug toxicity. The absence of a specific variant in this report is not a guarantee that the variant is not present. Somatic variants are not included in this report.
+        </Typography>
+      </div>
+    );
+  }, [testInformation, isPrint, canEdit, classNamePrefix, showTestInfoEdit, handleTestInfoEditClose]);
+
   return (
     <div className={classNamePrefix}>
       {report && (
@@ -386,20 +416,7 @@ const PharmacoGenomicSummary = ({
               )}
             </>
           )}
-          {testInformation && (
-            <div className={`${classNamePrefix}__test-information`}>
-              <Typography variant="h3" className={`${classNamePrefix}__test-information-title`}>
-                Test Information
-              </Typography>
-              <TestInformation
-                data={testInformation}
-                isPharmacogenomic
-              />
-              <Typography className={`${classNamePrefix}--max-width ${classNamePrefix}__test-information-text`}>
-                The Pharmacogenomic and Cancer Predisposition Targeted Gene Report (PCP-TGR) provides results from a rapid analysis pipeline designed to identify known pharmacogenomic and pathogenic germline cancer predisposition variants in a select set of genes associated with drug toxicity and cancer predisposition. This rapid analysis is not a complete description of abberations associated with cancer predisposition or drug toxicity. The absence of a specific variant in this report is not a guarantee that the variant is not present. Somatic variants are not included in this report.
-              </Typography>
-            </div>
-          )}
+          {testInformationSection}
           <div className={`${classNamePrefix}__reviews`}>
             <Typography variant="h3" className={`${classNamePrefix}__reviews-title`}>
               Reviews

@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useState, useContext,
+  useEffect, useState, useContext, useCallback,
 } from 'react';
 import {
   Dialog,
@@ -24,71 +24,100 @@ import expressionColumnDefs from '@/views/ReportView/components/Expression/colum
 import structuralVariantsColumnDefs from '@/views/ReportView/components/StructuralVariants/columnDefs';
 import { GeneViewerType } from './types';
 
+import KbMatchesActionCellRenderer from '../KbMatchesActionCellRenderer';
+import { ActionCellRenderer } from '../ActionCellRenderer';
+import NoRowsOverlay from '../NoRowsOverlay';
+
 import './index.scss';
 
+const defaultTableOptions = {
+  frameworkComponents: {
+    ActionCellRenderer,
+    KbMatchesActionCellRenderer,
+    NoRowsOverlay,
+  },
+  noRowsOverlayComponent: 'NoRowsOverlay',
+  enableCellTextSelection: true,
+};
+
 type GeneViewerProps = {
-  onClose: () => void;
-  isOpen: boolean;
+  isLink: boolean;
   gene: string;
 };
 
 const GeneViewer = ({
-  onClose,
-  isOpen,
   gene,
+  isLink = false,
 }: GeneViewerProps): JSX.Element => {
   const { report } = useContext(ReportContext);
 
+  const [isOpen, setIsOpen] = useState(false);
   const [geneData, setGeneData] = useState<GeneViewerType>();
   const [tabValue, setTabValue] = useState(0);
 
-  const handleTabChange = (event, newValue: number) => {
+  const handleTabChange = useCallback((_event, newValue: number) => {
     setTabValue(newValue);
-  };
+  }, []);
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && gene) {
       const getData = async () => {
         try {
           const resp = await api.get(`/reports/${report.ident}/gene-viewer/${gene}`).request();
           setGeneData(resp);
         } catch {
           snackbar.error(`Error: gene viewer data does not exist for ${gene}`);
-          onClose();
+          setIsOpen(false);
         }
       };
       getData();
     }
-  }, [gene, onClose, isOpen, report]);
+  }, [gene, isOpen, report]);
+
+  if (!gene) return null;
+
+  if (!isLink) {
+    return <span>{gene}</span>;
+  }
 
   return (
-    <Dialog
-      onClose={onClose}
-      open={isOpen}
-      maxWidth="xl"
-      fullWidth
-    >
-      <DialogTitle>
-        <span className="dialog__title">
-          <Typography variant="h5" align="center">
-            Gene Viewer
-          </Typography>
-        </span>
-      </DialogTitle>
-      <DialogContent>
-        <AppBar position="static" elevation={0} color="transparent">
-          <Tabs
-            value={tabValue}
-            onChange={handleTabChange}
-            variant="scrollable"
-            scrollButtons="auto"
-          >
-            {geneData && Object.entries(geneData).map(([key, value]) => (
-              <Tab key={key} label={`${key} (${value.length})`} />
-            ))}
-          </Tabs>
-        </AppBar>
-        {geneData && (
+    <>
+      <span
+        tabIndex={0}
+        role="button"
+        onClick={() => setIsOpen(true)}
+        onKeyDown={() => setIsOpen(true)}
+        className="gene__text"
+      >
+        {gene}
+      </span>
+      <Dialog
+        onClose={() => setIsOpen(false)}
+        open={isOpen}
+        maxWidth="xl"
+        fullWidth
+      >
+        <DialogTitle>
+          <span className="dialog__title">
+            <Typography variant="h5" align="center">
+              Gene Viewer
+            </Typography>
+          </span>
+        </DialogTitle>
+        <DialogContent>
+          <AppBar position="static" elevation={0} color="transparent">
+            <Tabs
+              value={tabValue}
+              onChange={handleTabChange}
+              variant="scrollable"
+              scrollButtons="auto"
+            >
+              {geneData && Object.entries(geneData).map(([key, value]) => (
+                <Tab key={key} label={`${key} (${value.length})`} />
+              ))}
+            </Tabs>
+          </AppBar>
+          {geneData && (
           <>
             {tabValue === 0 && (
               <div className="ag-theme-material">
@@ -96,6 +125,7 @@ const GeneViewer = ({
                   rowData={geneData.kbMatches}
                   columnDefs={columnDefs}
                   domLayout="autoHeight"
+                  {...defaultTableOptions}
                 />
               </div>
             )}
@@ -105,6 +135,7 @@ const GeneViewer = ({
                   rowData={geneData.smallMutations}
                   columnDefs={smallMutationsColumnDefs}
                   domLayout="autoHeight"
+                  {...defaultTableOptions}
                 />
               </div>
             )}
@@ -114,6 +145,7 @@ const GeneViewer = ({
                   rowData={geneData.copyNumber}
                   columnDefs={copyNumberColumnDefs}
                   domLayout="autoHeight"
+                  {...defaultTableOptions}
                 />
               </div>
             )}
@@ -123,19 +155,20 @@ const GeneViewer = ({
                   rowData={geneData.expRNA}
                   columnDefs={expressionColumnDefs}
                   domLayout="autoHeight"
+                  {...defaultTableOptions}
                 />
               </div>
             )}
             {tabValue === 4 && (
-              <div className="tab--center">
-                {geneData.expDensityGraph.map((graph) => (
-                  <img
-                    key={graph.ident}
-                    src={`data:image/png;base64,${graph.data}`}
-                    alt="Expression Density Graph"
-                  />
-                ))}
-              </div>
+            <div className="tab--center">
+              {geneData.expDensityGraph.map((graph) => (
+                <img
+                  key={graph.ident}
+                  src={`data:image/png;base64,${graph.data}`}
+                  alt="Expression Density Graph"
+                />
+              ))}
+            </div>
             )}
             {tabValue === 5 && (
               <div className="ag-theme-material">
@@ -143,18 +176,20 @@ const GeneViewer = ({
                   rowData={geneData.structuralVariants}
                   columnDefs={structuralVariantsColumnDefs}
                   domLayout="autoHeight"
+                  {...defaultTableOptions}
                 />
               </div>
             )}
           </>
-        )}
-      </DialogContent>
-      <DialogActions>
-        <Button color="primary" onClick={onClose}>
-          Close
-        </Button>
-      </DialogActions>
-    </Dialog>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button color="primary" onClick={() => setIsOpen(false)}>
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 };
 

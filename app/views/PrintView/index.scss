@@ -30,3 +30,31 @@
     }
   }
 }
+
+.printbeta {
+  &__logo {
+    max-width: 150px;
+  }
+
+  &__headers {
+    display: flex;
+    width: 100%;
+    padding: 1mm 0;
+    margin: 4mm 0;
+  }
+
+  &__header-left {
+    display: flex;
+    align-items: center;
+  }
+
+  &__header-right {
+    display: flex;
+    flex-direction: column;
+    margin: auto auto auto 10mm;
+
+    &>* {
+      margin: 1mm;
+    }
+  }
+}

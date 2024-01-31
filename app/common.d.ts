@@ -94,7 +94,7 @@ type ImageType = {
 } & RecordDefaults;
 
 type GeneType = {
-  cancerRelated: boolean;
+  kbStatementRelated: boolean;
   drugTargetable: boolean;
   knownFusionPartner: boolean;
   knownSmallMutation: boolean;
@@ -148,6 +148,7 @@ type CopyNumberType = {
   cnvState: string | null;
   comments: string | null;
   copyChange: number | null;
+  displayName: string | null;
   end: number | null;
   gene: GeneType | null;
   kbCategory: string | null;
@@ -166,6 +167,7 @@ type StructuralVariantType = {
   ctermGene: string | null;
   ctermTranscript: string | null;
   detectedIn: string | null;
+  displayName: string | null;
   eventType: string | null;
   exon1: string | null;
   exon2: string | null;
@@ -188,6 +190,7 @@ type SmallMutationType = {
   altSeq: string | null;
   chromosome: number | null;
   comments: string | null;
+  displayName: string | null;
   endPosition: number | null;
   gene: GeneType;
   germline: string | null;

@@ -103,6 +103,7 @@ const EditDialog = ({
         );
         if (isSigned) {
           showConfirmDialog(putTherapeuticTargetsCall);
+          setIsSubmitting(false);
         } else {
           const returnedData = await putTherapeuticTargetsCall.request();
           setIsDirty(false);
@@ -116,6 +117,7 @@ const EditDialog = ({
         );
         if (isSigned) {
           showConfirmDialog(putTherapeuticTargetsCall);
+          setIsSubmitting(false);
         } else {
           const returnedData = await putTherapeuticTargetsCall.request();
           setNewData({ type: 'replace', payload: {} });
@@ -139,6 +141,7 @@ const EditDialog = ({
       );
       if (isSigned) {
         showConfirmDialog(delTherapeuticTargets);
+        setIsSubmitting(false);
       } else {
         await delTherapeuticTargets.request();
         onClose(null);
@@ -148,7 +151,7 @@ const EditDialog = ({
     } finally {
       setIsDeleting(false);
     }
-  }, [onClose, newData.ident, report.ident, isSigned]);
+  }, [onClose, newData.ident, report.ident, isSigned, showConfirmDialog]);
 
   const handleAutocompleteValueSelected = (selectedValue, typeName) => {
     setIsDirty(true);
