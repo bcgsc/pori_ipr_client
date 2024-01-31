@@ -444,12 +444,12 @@ const GenomicSummary = ({
     isSaved: boolean,
     newMicrobialData: MicrobialType[],
     newReportData: ReportType,
-    newMutationBurdenData: MutationBurdenType,
+    newPrimaryBurdenData: MutationBurdenType,
     newTmBurMutBurData: TmburType,
   ) => {
     setShowTumourSummaryEdit(false);
 
-    if (!isSaved || (!newMicrobialData && !newReportData && !newMutationBurdenData && !newTmBurMutBurData)) {
+    if (!isSaved || (!newMicrobialData && !newReportData && !newPrimaryBurdenData && !newTmBurMutBurData)) {
       return;
     }
 
@@ -461,8 +461,8 @@ const GenomicSummary = ({
       setReport(newReportData);
     }
 
-    if (newMutationBurdenData) {
-      setPrimaryBurden(newMutationBurdenData);
+    if (newPrimaryBurdenData) {
+      setPrimaryBurden(newPrimaryBurdenData);
     }
 
     if (newTmBurMutBurData) {
