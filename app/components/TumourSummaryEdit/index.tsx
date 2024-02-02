@@ -75,6 +75,7 @@ const TumourSummaryEdit = ({
     if (mutationBurden) {
       setNewMutationBurdenData({
         totalMutationsPerMb: mutationBurden.totalMutationsPerMb,
+        qualitySvCount: mutationBurden.qualitySvCount,
       });
     }
   }, [mutationBurden]);
@@ -326,16 +327,28 @@ const TumourSummaryEdit = ({
   const mutBurDataSection = useMemo(() => {
     if (newMutationBurdenData) {
       return (
-        <TextField
-          className="tumour-dialog__text-field"
-          label="Mutation Burden (Mut/Mb)"
-          value={newMutationBurdenData.totalMutationsPerMb}
-          name="totalMutationsPerMb"
-          onChange={handleMutationBurdenChange}
-          variant="outlined"
-          fullWidth
-          type="number"
-        />
+        <>
+          <TextField
+            className="tumour-dialog__text-field"
+            label="Mutation Burden (Mut/Mb)"
+            value={newMutationBurdenData.totalMutationsPerMb}
+            name="totalMutationsPerMb"
+            onChange={handleMutationBurdenChange}
+            variant="outlined"
+            fullWidth
+            type="number"
+          />
+          <TextField
+            className="tumour-dialog__text-field"
+            label="SV Burden (POG average)"
+            value={newMutationBurdenData.qualitySvCount}
+            name="qualitySvCount"
+            onChange={handleMutationBurdenChange}
+            variant="outlined"
+            fullWidth
+            type="number"
+          />
+        </>
       );
     }
     return null;
