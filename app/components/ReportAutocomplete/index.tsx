@@ -6,9 +6,11 @@ import {
   Button,
 } from '@mui/material';
 import { ReportType } from '@/context/ReportContext';
-import api from '../../services/api';
 
 import './index.scss';
+import { useDebounce } from 'use-debounce';
+import { useSnackbar } from 'notistack';
+import api from '../../services/api';
 
 type ReportAutocompleteProps = {
   defaultValue?: ReportType;
@@ -24,6 +26,9 @@ const ReportAutocomplete = ({
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [value, setValue] = useState<ReportType>(null);
+  const [text, setText] = useState<string>(defaultValue?.patientId || '');
+  const [debouncedText] = useDebounce(text, 500);
+  const snackbar = useSnackbar();
 
   useEffect(() => {
     if (defaultValue) {
@@ -31,13 +36,34 @@ const ReportAutocomplete = ({
     }
   }, [defaultValue]);
 
-  const handleInputChange = async ({ target: { value: queryValue } }) => {
-    setLoading(true);
-    const autocompleted = await api.get(`/reports?searchText=${queryValue}`, {}).request();
+  useEffect(() => {
+    setText((prevVal) => {
+      if (!value?.patientId) { return ''; }
+      if (prevVal !== value?.patientId) { return value?.patientId; }
+      return prevVal;
+    });
+  }, [value?.patientId]);
 
-    setOptions(autocompleted.reports);
-    setLoading(false);
-  };
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        setLoading(true);
+        const reportsResp = await api.get(`/reports?searchText=${debouncedText}`).request();
+        setOptions(reportsResp.reports);
+      } catch (e) {
+        snackbar.enqueueSnackbar('Error getting report autocomplete data');
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (debouncedText) {
+      getData();
+    }
+  }, [snackbar, debouncedText]);
+
+  const handleTextChange = useCallback(({ target: { value: nextText } }) => {
+    setText((prevText) => (prevText === nextText ? prevText : nextText));
+  }, []);
 
   const handleSubmit = useCallback(async () => {
     onSubmit(value);
@@ -58,7 +84,7 @@ const ReportAutocomplete = ({
           label={label || 'Report'}
           variant="outlined"
           margin="normal"
-          onChange={handleInputChange}
+          onChange={handleTextChange}
           InputProps={{
             ...params.InputProps,
             endAdornment: (

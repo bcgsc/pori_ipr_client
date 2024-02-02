@@ -100,7 +100,7 @@ const columnDefs: ColDef[] = [{
   hide: true,
 }, {
   headerName: 'Expression (Z-score)',
-  colId: 'diseaseZscore',
+  colId: 'diseaseZScore',
   valueGetter: 'data.gene.expressionVariants.diseaseZScore',
   hide: false,
 }, {
