@@ -1,10 +1,10 @@
 import React, {
-  createContext, ReactChild, useContext, useState, useEffect, useMemo,
+  createContext, ReactChild, useState, useEffect, useMemo, useContext,
 } from 'react';
-import SecurityContext from '@/context/SecurityContext';
-
 import { checkAccess, ALL_ROLES } from '@/utils/checkAccess';
+import useSecurity from '@/hooks/useSecurity';
 import ResourceContextType from './types';
+import ReportContext from '../ReportContext';
 
 const GERMLINE_ACCESS = ['admin', 'analyst', 'bioinformatician', 'projects', 'manager'];
 const GERMLINE_BLOCK = ALL_ROLES;
@@ -13,42 +13,57 @@ const REPORTS_BLOCK = [];
 const ADMIN_ACCESS = ['admin'];
 const ADMIN_BLOCK = ALL_ROLES;
 
-type UseResourcesReturnType = {
-  germlineAccess: boolean;
-  reportsAccess: boolean;
-  adminAccess: boolean;
-  reportSettingAccess: boolean;
-};
-
-const useResources = (): UseResourcesReturnType => {
-  const { userDetails } = useContext(SecurityContext);
+const useResources = (): ResourceContextType => {
+  const { userDetails: { groups, ident: userIdent } } = useSecurity();
+  const { report } = useContext(ReportContext);
 
   const [germlineAccess, setGermlineAccess] = useState(false);
   const [reportsAccess, setReportsAccess] = useState(false);
+  const [reportEditAccess, setReportEditAccess] = useState(false);
   const [adminAccess, setAdminAccess] = useState(false);
   const [reportSettingAccess, setReportSettingAccess] = useState(false);
 
+  // Check user group first to see which resources they can access
   useEffect(() => {
-    if (userDetails?.groups) {
-      if (checkAccess(userDetails.groups, GERMLINE_ACCESS, GERMLINE_BLOCK)) {
+    if (groups) {
+      if (checkAccess(groups, GERMLINE_ACCESS, GERMLINE_BLOCK)) {
         setGermlineAccess(true);
       }
 
-      if (checkAccess(userDetails.groups, REPORTS_ACCESS, REPORTS_BLOCK)) {
+      if (checkAccess(groups, REPORTS_ACCESS, REPORTS_BLOCK)) {
         setReportsAccess(true);
       }
 
-      if (checkAccess(userDetails.groups, ADMIN_ACCESS, ADMIN_BLOCK)) {
+      if (checkAccess(groups, ADMIN_ACCESS, ADMIN_BLOCK)) {
         setAdminAccess(true);
       }
-      if (checkAccess(userDetails.groups, [...ADMIN_ACCESS, 'manager'], ADMIN_BLOCK)) {
+
+      if (checkAccess(groups, [...ADMIN_ACCESS, 'manager'], ADMIN_BLOCK)) {
         setReportSettingAccess(true);
+        setReportEditAccess(true);
       }
     }
-  }, [userDetails?.groups]);
+  }, [groups]);
+
+  /**
+   * Check report specific permissions if user isn't admin
+   */
+  useEffect(() => {
+    if (!adminAccess) {
+      if (report && report.users.some(({ ident: i }) => i === userIdent)) {
+        setReportEditAccess(true);
+      } else {
+        setReportEditAccess(false);
+      }
+    }
+  }, [report, userIdent, adminAccess]);
 
   return {
-    germlineAccess, reportsAccess, adminAccess, reportSettingAccess,
+    germlineAccess,
+    reportsAccess,
+    adminAccess,
+    reportSettingAccess,
+    reportEditAccess,
   };
 };
 
@@ -57,6 +72,7 @@ const ResourceContext = createContext<ResourceContextType>({
   reportsAccess: false,
   adminAccess: false,
   reportSettingAccess: false,
+  reportEditAccess: false,
 });
 
 type ResourceContextProviderProps = {
@@ -65,7 +81,7 @@ type ResourceContextProviderProps = {
 
 const ResourceContextProvider = ({ children }: ResourceContextProviderProps): JSX.Element => {
   const {
-    germlineAccess, reportsAccess, adminAccess, reportSettingAccess,
+    germlineAccess, reportsAccess, adminAccess, reportSettingAccess, reportEditAccess,
   } = useResources();
 
   const providerValue = useMemo(() => ({
@@ -73,11 +89,13 @@ const ResourceContextProvider = ({ children }: ResourceContextProviderProps): JS
     reportsAccess,
     adminAccess,
     reportSettingAccess,
+    reportEditAccess,
   }), [
     germlineAccess,
     reportsAccess,
     adminAccess,
     reportSettingAccess,
+    reportEditAccess,
   ]);
 
   return (

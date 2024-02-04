@@ -27,7 +27,6 @@ const checkAccess = (
   blockList: string[] = ALL_ROLES,
 ): boolean => {
   const groupNames = groups.map((group) => group.name.toLowerCase());
-
   const isAllowed = allowList.includes('*') || allowList.some((group) => groupNames.includes(group.toLowerCase()));
   const isBlocked = blockList.some((group) => groupNames.includes(group.toLowerCase()));
   return isAllowed || !isBlocked;

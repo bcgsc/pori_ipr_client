@@ -15,7 +15,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useSnackbar } from 'notistack';
 
 import ReportContext from '@/context/ReportContext';
-import SecurityContext from '@/context/SecurityContext';
+import useSecurity from '@/hooks/useSecurity';
 import useResource from '@/hooks/useResource';
 import api from '@/services/api';
 import { formatDate } from '@/utils/date';
@@ -35,10 +35,10 @@ const CommentCard = ({
   onDelete,
 }: CommentCardProps): JSX.Element => {
   const { report } = useContext(ReportContext);
-  const { userDetails } = useContext(SecurityContext);
+  const { userDetails } = useSecurity();
   const { adminAccess } = useResource();
   const snackbar = useSnackbar();
-  
+
   const [isEditing, setIsEditing] = useState(false);
   const [editedComment, setEditedComment] = useState('');
 

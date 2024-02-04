@@ -55,6 +55,7 @@ type ReportType = {
   kbDiseaseMatch: string;
   m1m2Score: number;
   captiv8Score: number;
+  appendix?: string;
 } & RecordDefaults;
 
 type ReportContextType = {
