@@ -76,6 +76,7 @@ const TumourSummaryEdit = ({
       setNewMutationBurdenData({
         totalMutationsPerMb: mutationBurden.totalMutationsPerMb,
         qualitySvCount: mutationBurden.qualitySvCount,
+        qualitySvPercentile: mutationBurden.qualitySvPercentile,
       });
     }
   }, [mutationBurden]);
@@ -343,6 +344,16 @@ const TumourSummaryEdit = ({
             label="SV Burden (POG average)"
             value={newMutationBurdenData.qualitySvCount}
             name="qualitySvCount"
+            onChange={handleMutationBurdenChange}
+            variant="outlined"
+            fullWidth
+            type="number"
+          />
+          <TextField
+            className="tumour-dialog__text-field"
+            label="SV Burden (Percentile)"
+            value={newMutationBurdenData.qualitySvPercentile}
+            name="qualitySvPercentile"
             onChange={handleMutationBurdenChange}
             variant="outlined"
             fullWidth
