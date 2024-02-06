@@ -197,6 +197,7 @@ const GenomicSummary = ({
           setVariants(sorted);
           setVariantCounts(counts);
           if (loadedDispatch) {
+            // TODO
             loadedDispatch({ type: 'summary' });
           }
         } catch (err) {

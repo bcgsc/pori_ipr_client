@@ -28,7 +28,7 @@ import './index.scss';
 import TumourSummaryEdit from '@/components/TumourSummaryEdit';
 import DescriptionList from '@/components/DescriptionList';
 import {
-  KbMatchType, TumourSummaryType, ImmuneType, MicrobialType, TmburType,
+  KbMatchType, TumourSummaryType, ImmuneType, MutationBurdenType, MicrobialType, TmburType,
 } from '@/common';
 import useConfirmDialog from '@/hooks/useConfirmDialog';
 import { Box } from '@mui/system';
@@ -147,6 +147,7 @@ const RapidSummary = ({
     value: string | null;
   }[] | null>();
   const [tumourSummary, setTumourSummary] = useState<TumourSummaryType[]>();
+  const [primaryBurden, setPrimaryBurden] = useState<MutationBurdenType>();
   const [tmburMutBur, setTmburMutBur] = useState<TmburType>();
   const [tCellCd8, setTCellCd8] = useState<ImmuneType>();
   const [microbial, setMicrobial] = useState<MicrobialType[]>();
@@ -187,6 +188,20 @@ const RapidSummary = ({
             PromiseSettledResult<ImmuneType[]>,
             PromiseSettledResult<MicrobialType[]>,
           ];
+
+          try {
+            const burdenResp = await api.get(`/reports/${report.ident}/mutation-burden`).request();
+            if (burdenResp[0].qualitySvCount == null) {
+              setPrimaryBurden(null);
+              console.log(burdenResp[0]);
+            } else {
+              setPrimaryBurden(burdenResp[0]);
+              console.log(burdenResp[0]);
+            }
+          } catch (e) {
+            // mutation burden does not exist in records before this implementation, and no backfill will be done on the backend, silent fail this
+            console.error('mutation-burden call error', e?.message);
+          }
 
           if (signaturesResp.status === 'fulfilled') {
             setSignatures(signaturesResp.value);
@@ -294,6 +309,14 @@ const RapidSummary = ({
     } else {
       msiStatus = null;
     }
+
+    let svBurden: null | string;
+    if (primaryBurden && primaryBurden.qualitySvCount !== null) {
+      svBurden = `${primaryBurden.qualitySvCount} ${primaryBurden.qualitySvPercentile ? `(${primaryBurden.qualitySvPercentile}%)` : ''}`;
+    } else {
+      svBurden = null;
+    }
+
     setTumourSummary([
       {
         term: 'Pathology Tumour Content',
@@ -330,6 +353,10 @@ const RapidSummary = ({
           : null,
       },
       {
+        term: 'SV Burden (POG Average)',
+        value: svBurden,
+      },
+      {
         term: 'Genome TMB (mut/mb)',
         value: tmburMutBur
           ? `${parseFloat((tmburMutBur.genomeSnvTmb + tmburMutBur.genomeIndelTmb).toFixed(12))}`
@@ -340,9 +367,10 @@ const RapidSummary = ({
         value: msiStatus,
       },
     ]);
-  }, [microbial, tmburMutBur, report.m1m2Score, report.sampleInfo, report.tumourContent, tCellCd8?.percentile, tCellCd8?.score, report.captiv8Score]);
+  }, [microbial, primaryBurden, tmburMutBur, report.m1m2Score, report.sampleInfo, report.tumourContent, tCellCd8?.percentile, tCellCd8?.score, report.captiv8Score]);
 
   const handlePatientEditClose = useCallback((
+    // TODO: Argument not being used, leading to OnClose flag on line 744 having too few arguments
     isSaved: boolean,
     newPatientData: PatientInformationType,
     newReportData: ReportType,
@@ -417,12 +445,12 @@ const RapidSummary = ({
     isSaved,
     newMicrobialData,
     newReportData,
-    _mutBurData,
+    newMutationBurdenData: MutationBurdenType,
     newTmBurMutBurData,
   ) => {
     setShowTumourSummaryEdit(false);
 
-    if (!isSaved || (!newMicrobialData && !newReportData && !newTmBurMutBurData)) {
+    if (!isSaved || (!newMicrobialData && !newReportData && !newMutationBurdenData && !newTmBurMutBurData)) {
       return;
     }
 
@@ -432,6 +460,10 @@ const RapidSummary = ({
 
     if (newReportData) {
       setReport(newReportData);
+    }
+
+    if (newMutationBurdenData) {
+      setPrimaryBurden(newMutationBurdenData);
     }
 
     if (newTmBurMutBurData) {
@@ -454,7 +486,7 @@ const RapidSummary = ({
                 <TumourSummaryEdit
                   microbial={microbial}
                   report={report}
-                  mutationBurden={null}
+                  mutationBurden={primaryBurden}
                   tmburMutBur={tmburMutBur}
                   isOpen={showTumourSummaryEdit}
                   onClose={handleTumourSummaryEditClose}
