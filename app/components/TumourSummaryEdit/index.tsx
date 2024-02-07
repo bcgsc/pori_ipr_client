@@ -339,23 +339,18 @@ const TumourSummaryEdit = ({
     return null;
   }, [handleClicked, handleDelete, handleKeyDown, newMicrobialData]);
 
-  const mutBurDataSection = useMemo(() => {
-    if (reportType === 'genomic') {
-      return (
-        <TextField
-          className="tumour-dialog__text-field"
-          label="Mutation Burden (Mut/Mb)"
-          value={newMutationBurdenData?.totalMutationsPerMb ?? 0}
-          name="totalMutationsPerMb"
-          onChange={handleMutationBurdenChange}
-          variant="outlined"
-          fullWidth
-          type="number"
-        />
-      );
-    }
-    return null;
-  }, [newMutationBurdenData?.totalMutationsPerMb, reportType, handleMutationBurdenChange]);
+  const mutBurDataSection = (
+    <TextField
+      className="tumour-dialog__text-field"
+      label="Mutation Burden (Mut/Mb)"
+      value={newMutationBurdenData?.totalMutationsPerMb ?? 0}
+      name="totalMutationsPerMb"
+      onChange={handleMutationBurdenChange}
+      variant="outlined"
+      fullWidth
+      type="number"
+    />
+  );
 
   const tmburMutBurSection = useMemo(() => {
     if (reportType === 'rapid') {
