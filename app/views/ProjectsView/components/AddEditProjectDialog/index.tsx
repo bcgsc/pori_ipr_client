@@ -121,7 +121,7 @@ const AddEditProjectDialog = ({
         const projectUpdateResp = await projectUpdateCall.request();
 
         // Handle relationships to projects
-        const { added: usersToAdd, removed: usersToRemove } = getIdentDiff(editData.users ?? [], users);
+        const { added: usersToAdd, removed: usersToRemove } = getIdentDiff(editData?.users ?? [], users);
         const { added: reportsToAdd, removed: reportsToRemove } = getIdentDiff(existingReports ?? [], reports);
 
         const apiCallQueue = [];
@@ -136,6 +136,7 @@ const AddEditProjectDialog = ({
         const updatedProject = await api.get(`/project/${projectUpdateResp.ident}`).request();
         onClose(updatedProject);
       } catch (e) {
+        console.error('handleClose ~ e:', e);
         snackbar.error(`Error ${editData ? 'editing' : 'creating'} report, ${e?.message}`);
       }
     } else {
