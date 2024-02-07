@@ -12,7 +12,7 @@ import DataTable from '@/components/DataTable';
 import ReportContext from '@/context/ReportContext';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
-import { useUser } from '@/context/UserContext';
+import useResource from '@/hooks/useResource';
 import { AppendicesType, TcgaType, ComparatorType } from './types';
 import { sampleInformationColumnDefs, sequencingProtocolInformationColumnDefs, tcgaAcronymsColumnDefs } from './columnDefs';
 import ReportOverview from './components/ReportOverview';
@@ -39,7 +39,7 @@ const Appendices = ({
   const [isNewAppendixC, setIsNewAppendixC] = useState(false);
   const [tcga, setTcga] = useState<TcgaType[]>([]);
   const [analysisSummary, setAnalysisSummary] = useState<Record<string, unknown>[]>([]);
-  const { isAdmin } = useUser();
+  const { adminAccess, reportEditAccess } = useResource();
 
   useEffect(() => {
     if (report) {
@@ -60,7 +60,7 @@ const Appendices = ({
             api.get(`/reports/${report.ident}/appendices/tcga`),
             api.get(`/reports/${report.ident}/comparators`),
           ]);
-          const [appendicesResp, tcgaResp, comparatorsResp] = await callSet.request();
+          const [appendicesResp, tcgaResp, comparatorsResp] = await callSet.request() as [AppendicesType, TcgaType[], ComparatorType[]];
 
           setAppendices(appendicesResp);
           setTcga(tcgaResp);
@@ -194,11 +194,14 @@ const Appendices = ({
             </div>
           )}
           <ReportOverview
-            templateId={report.template.ident}
-            isNew={isNewAppendixC}
-            text={appendixCText}
             isPrint={isPrint}
-            canEdit={isAdmin}
+            isNewTemplate={isNewAppendixC}
+            templateId={report.template.ident}
+            templateSpecificText={appendixCText}
+            reportId={report.ident}
+            reportSpecificText={report.appendix}
+            canEditTemplateAppendix={adminAccess}
+            canEditReportAppendix={reportEditAccess}
           />
           {!isPrint && (
             <Typography variant="h1">
