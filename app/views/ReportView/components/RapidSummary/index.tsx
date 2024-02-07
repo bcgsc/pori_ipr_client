@@ -193,10 +193,9 @@ const RapidSummary = ({
             const burdenResp = await api.get(`/reports/${report.ident}/mutation-burden`).request();
             if (burdenResp[0].qualitySvCount == null) {
               setPrimaryBurden(null);
-              console.log(burdenResp[0]);
             } else {
               setPrimaryBurden(burdenResp[0]);
-              console.log(burdenResp[0]);
+              console.log(burdenResp[0]); // For debug purpose
             }
           } catch (e) {
             // mutation burden does not exist in records before this implementation, and no backfill will be done on the backend, silent fail this

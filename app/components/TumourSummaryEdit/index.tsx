@@ -10,8 +10,6 @@ import {
   Button,
   Chip,
   Autocomplete,
-  Select,
-  MenuItem,
 } from '@mui/material';
 import cloneDeep from 'lodash/cloneDeep';
 import api, { ApiCallSet } from '@/services/api';
@@ -150,6 +148,7 @@ const TumourSummaryEdit = ({
         if (mutationBurden?.ident) {
           apiCalls.push(api.put(`/reports/${report.ident}/mutation-burden/${mutationBurden.ident}`, newMutationBurdenData, {}));
         } else {
+          newMutationBurdenData.role = 'primary'; // Default role of new mutation burden data for reports with no existing analysis per ClinInfo team
           apiCalls.push(api.post(`/reports/${report.ident}/mutation-burden`, newMutationBurdenData, {}));
         }
       } else {
@@ -333,22 +332,6 @@ const TumourSummaryEdit = ({
       return (
         <>
           <TextField
-            className="tumour-dialog__drop-down"
-            label="Mutation Analysis Role"
-            value={newMutationBurdenData.role}
-            name="role"
-            onChange={handleMutationBurdenChange}
-            variant="outlined"
-            select
-            fullWidth
-          >
-            <MenuItem value={null}>-Select Role-</MenuItem>
-            <MenuItem value={'primary'}>Primary</MenuItem>
-            <MenuItem value={'secondary'}>Secondary</MenuItem>
-            <MenuItem value={'tertiary'}>Tertiary</MenuItem>
-            <MenuItem value={'quarternary'}>Quarternary</MenuItem>
-          </TextField>
-          <TextField
             className="tumour-dialog__text-field"
             label="Mutation Burden (Mut/Mb)"
             value={newMutationBurdenData.totalMutationsPerMb}
@@ -383,22 +366,6 @@ const TumourSummaryEdit = ({
     }
     return (
       <>
-        <TextField
-          className="tumour-dialog__drop-down"
-          label="Mutation Analysis Role"
-          value={null}
-          name="role"
-          onChange={handleMutationBurdenChange}
-          variant="outlined"
-          select
-          fullWidth
-        >
-          <MenuItem value={null}>-Select Role-</MenuItem>
-          <MenuItem value={'primary'}>Primary</MenuItem>
-          <MenuItem value={'secondary'}>Secondary</MenuItem>
-          <MenuItem value={'tertiary'}>Tertiary</MenuItem>
-          <MenuItem value={'quarternary'}>Quarternary</MenuItem>
-        </TextField>
         <TextField
           className="tumour-dialog__text-field"
           label="Mutation Burden (Mut/Mb)"
