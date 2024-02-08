@@ -195,7 +195,6 @@ const RapidSummary = ({
               setPrimaryBurden(null);
             } else {
               setPrimaryBurden(burdenResp[0]);
-              console.log(burdenResp[0]); // For debug purpose
             }
           } catch (e) {
             // mutation burden does not exist in records before this implementation, and no backfill will be done on the backend, silent fail this
