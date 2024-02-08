@@ -216,4 +216,4 @@ const ReportOverview = ({
 };
 
 export default ReportOverview;
-export { ReportOverviewProps };
+export { ReportOverview, ReportOverviewProps };

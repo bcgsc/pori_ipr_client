@@ -11,11 +11,7 @@ type SecurityContextType = {
 const SecurityContext = React.createContext<SecurityContextType>({
   authorizationToken: '',
   setAuthorizationToken: () => {},
-  userDetails: {
-    firstName: null,
-    lastName: null,
-    username: null,
-  },
+  userDetails: {},
   setUserDetails: () => {},
 });
 

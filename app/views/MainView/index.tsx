@@ -125,7 +125,17 @@ const TimeoutModal = memo(({ authorizationToken, setAuthorizationToken }: Timeou
  */
 const Main = (): JSX.Element => {
   const [authorizationToken, setAuthorizationToken] = useState('');
-  const [userDetails, setUserDetails] = useState<SecurityContextType['userDetails']>(null);
+  const [userDetails, setUserDetails] = useState<SecurityContextType['userDetails']>({
+    firstName: null,
+    lastName: null,
+    username: null,
+    groups: [],
+    email: null,
+    deletedAt: null,
+    lastLogin: null,
+    projects: [],
+    type: null,
+  });
   const [sidebarMaximized, setSidebarMaximized] = useState(false);
   const [isNavVisible, setIsNavVisible] = useState(true);
 
