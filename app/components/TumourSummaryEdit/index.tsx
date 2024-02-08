@@ -353,34 +353,29 @@ const TumourSummaryEdit = ({
   );
 
   const tmburMutBurSection = useMemo(() => {
-    if (reportType === 'rapid') {
-      return (
-        <>
-          <TextField
-            className="tumour-dialog__text-field"
-            label="genomeSnvTmb"
-            value={newTmburMutData?.genomeSnvTmb ?? 0}
-            name="genomeSnvTmb"
-            onChange={handleTmburChange}
-            variant="outlined"
-            fullWidth
-            type="number"
-          />
-          <TextField
-            className="tumour-dialog__text-field"
-            label="genomeIndelTmb"
-            value={newTmburMutData?.genomeIndelTmb ?? 0}
-            name="genomeIndelTmb"
-            onChange={handleTmburChange}
-            variant="outlined"
-            fullWidth
-            type="number"
-          />
-        </>
-      );
-    }
-    return null;
-  }, [reportType, newTmburMutData?.genomeSnvTmb, newTmburMutData?.genomeIndelTmb, handleTmburChange]);
+    <>
+      <TextField
+        className="tumour-dialog__text-field"
+        label="genomeSnvTmb"
+        value={newTmburMutData?.genomeSnvTmb ?? 0}
+        name="genomeSnvTmb"
+        onChange={handleTmburChange}
+        variant="outlined"
+        fullWidth
+        type="number"
+      />
+      <TextField
+        className="tumour-dialog__text-field"
+        label="genomeIndelTmb"
+        value={newTmburMutData?.genomeIndelTmb ?? 0}
+        name="genomeIndelTmb"
+        onChange={handleTmburChange}
+        variant="outlined"
+        fullWidth
+        type="number"
+      />
+    </>;
+  }, [newTmburMutData?.genomeSnvTmb, newTmburMutData?.genomeIndelTmb, handleTmburChange]);
 
   return (
     <Dialog open={isOpen}>
