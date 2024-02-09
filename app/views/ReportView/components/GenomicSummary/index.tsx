@@ -164,7 +164,7 @@ const GenomicSummary = ({
 
           setPrimaryComparator(comparatorsResp.find(({ analysisRole }) => analysisRole === 'mutation burden (primary)'));
           setPrimaryBurden(burdenResp.find((entry: Record<string, unknown>) => entry.role === 'primary'));
-          setTCellCd8(immuneResp.find(({ cellType }) => cellType === 'T cells CD8'));
+          setTCellCd8(immuneResp.find(({cellType})  => cellType === 'T cells CD8'));
           setSignatures(signaturesResp);
 
           if (microbialResp.length) {
@@ -445,12 +445,13 @@ const GenomicSummary = ({
     isSaved: boolean,
     newMicrobialData: MicrobialType[],
     newReportData: ReportType,
+    newTCellCd8Data: ImmuneType,
     newMutationBurdenData: MutationBurdenType,
     newTmBurMutBurData: TmburType,
   ) => {
     setShowTumourSummaryEdit(false);
 
-    if (!isSaved || (!newMicrobialData && !newReportData && !newMutationBurdenData && !newTmBurMutBurData)) {
+    if (!isSaved || (!newMicrobialData && !newReportData && !newTCellCd8Data && !newMutationBurdenData && !newTmBurMutBurData)) {
       return;
     }
 
@@ -460,6 +461,10 @@ const GenomicSummary = ({
 
     if (newReportData) {
       setReport(newReportData);
+    }
+
+    if (newTCellCd8Data) {
+      setTCellCd8(newTCellCd8Data)
     }
 
     if (newMutationBurdenData) {
