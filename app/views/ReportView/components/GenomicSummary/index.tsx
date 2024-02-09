@@ -564,6 +564,7 @@ const GenomicSummary = ({
           <TumourSummaryEdit
             microbial={microbial}
             report={report}
+            tCellCd8={tCellCd8}
             mutationBurden={primaryBurden}
             tmburMutBur={tmburMutBur}
             isOpen={showTumourSummaryEdit}
