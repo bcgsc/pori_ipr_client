@@ -226,8 +226,8 @@ const TumourSummaryEdit = ({
           onClose(
             true,
             microbialDirty ? microbialResp : null,
-            tCellCd8Dirty ? immuneResp.find(({cellType})  => cellType === 'T cells CD8') : null,
             reportDirty ? reportResp : null,
+            tCellCd8Dirty ? immuneResp.find(({cellType})  => cellType === 'T cells CD8') : null,
             mutationBurdenDirty ? mutationBurdenResp.find((mb) => mb.role === 'primary') : null,
             tmburMutDirty ? tmburMutResp : null,
           );
