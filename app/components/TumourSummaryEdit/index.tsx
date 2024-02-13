@@ -19,7 +19,9 @@ import useConfirmDialog from '@/hooks/useConfirmDialog';
 
 import './index.scss';
 import { ReportType } from '@/context/ReportContext';
-import { ImmuneType, MicrobialType, MutationBurdenType, TmburType } from '@/common';
+import {
+  ImmuneType, MicrobialType, MutationBurdenType, TmburType,
+} from '@/common';
 import snackbar from '@/services/SnackbarUtils';
 
 type TumourSummaryEditProps = {
@@ -227,7 +229,7 @@ const TumourSummaryEdit = ({
             true,
             microbialDirty ? microbialResp : null,
             reportDirty ? reportResp : null,
-            tCellCd8Dirty ? immuneResp.find(({cellType})  => cellType === 'T cells CD8') : null,
+            tCellCd8Dirty ? immuneResp.find(({ cellType }) => cellType === 'T cells CD8') : null,
             mutationBurdenDirty ? mutationBurdenResp.find((mb) => mb.role === 'primary') : null,
             tmburMutDirty ? tmburMutResp : null,
           );
@@ -378,96 +380,90 @@ const TumourSummaryEdit = ({
     return null;
   }, [handleClicked, handleDelete, handleKeyDown, newMicrobialData]);
 
-  const tCellCd8DataSection = useMemo(() => {
-    return (
-      <>
-        <TextField
-          className="tumour-dialog__text-field"
-          label="CD8+ T Cell Score"
-          value={newTCellCd8Data?.score ?? 0}
-          name="score"
-          onChange={handleTCellCd8Change}
-          variant="outlined"
-          fullWidth
-          type="number"
-        />
-        <TextField
-          className="tumour-dialog__text-field"
-          label="CD8+ T Cell Percentile"
-          value={newTCellCd8Data?.percentile ?? 0}
-          name="percentile"
-          onChange={handleTCellCd8Change}
-          variant="outlined"
-          fullWidth
-          type="number"
-        />
-      </>
-    )
-  }, [newTCellCd8Data, handleTCellCd8Change])
+  const tCellCd8DataSection = useMemo(() => (
+    <>
+      <TextField
+        className="tumour-dialog__text-field"
+        label="CD8+ T Cell Score"
+        value={newTCellCd8Data?.score ?? null}
+        name="score"
+        onChange={handleTCellCd8Change}
+        variant="outlined"
+        fullWidth
+        type="number"
+      />
+      <TextField
+        className="tumour-dialog__text-field"
+        label="CD8+ T Cell Percentile"
+        value={newTCellCd8Data?.percentile ?? null}
+        name="percentile"
+        onChange={handleTCellCd8Change}
+        variant="outlined"
+        fullWidth
+        type="number"
+      />
+    </>
+  ), [newTCellCd8Data, handleTCellCd8Change]);
 
-  const mutBurDataSection = useMemo(() => {
-    return (
-      <>
-        <TextField
-          className="tumour-dialog__text-field"
-          label="Mutation Burden (Mut/Mb)"
-          value={newMutationBurdenData?.totalMutationsPerMb ?? 0}
-          name="totalMutationsPerMb"
-          onChange={handleMutationBurdenChange}
-          variant="outlined"
-          fullWidth
-          type="number"
-        />
-        <TextField
-          className="tumour-dialog__text-field"
-          label="SV Burden (POG average)"
-          value={newMutationBurdenData?.qualitySvCount ?? 0}
-          name="qualitySvCount"
-          onChange={handleMutationBurdenChange}
-          variant="outlined"
-          fullWidth
-          type="number"
-        />
-        <TextField
-          className="tumour-dialog__text-field"
-          label="SV Burden (Percentile)"
-          value={newMutationBurdenData?.qualitySvPercentile ?? 0}
-          name="qualitySvPercentile"
-          onChange={handleMutationBurdenChange}
-          variant="outlined"
-          fullWidth
-          type="number"
-        />
-      </>
-    );
-  }, [newMutationBurdenData, handleMutationBurdenChange]);
+  const mutBurDataSection = useMemo(() => (
+    <>
+      <TextField
+        className="tumour-dialog__text-field"
+        label="Mutation Burden (Mut/Mb)"
+        value={newMutationBurdenData?.totalMutationsPerMb ?? null}
+        name="totalMutationsPerMb"
+        onChange={handleMutationBurdenChange}
+        variant="outlined"
+        fullWidth
+        type="number"
+      />
+      <TextField
+        className="tumour-dialog__text-field"
+        label="SV Burden (POG average)"
+        value={newMutationBurdenData?.qualitySvCount ?? null}
+        name="qualitySvCount"
+        onChange={handleMutationBurdenChange}
+        variant="outlined"
+        fullWidth
+        type="number"
+      />
+      <TextField
+        className="tumour-dialog__text-field"
+        label="SV Burden (Percentile)"
+        value={newMutationBurdenData?.qualitySvPercentile ?? null}
+        name="qualitySvPercentile"
+        onChange={handleMutationBurdenChange}
+        variant="outlined"
+        fullWidth
+        type="number"
+      />
+    </>
+  ), [newMutationBurdenData, handleMutationBurdenChange]);
 
-  const tmburMutBurSection = useMemo(() => {
-    return (
-      <>
-        <TextField
-          className="tumour-dialog__text-field"
-          label="genomeSnvTmb"
-          value={newTmburMutData?.genomeSnvTmb ?? 0}
-          name="genomeSnvTmb"
-          onChange={handleTmburChange}
-          variant="outlined"
-          fullWidth
-          type="number"
-        />
-        <TextField
-          className="tumour-dialog__text-field"
-          label="genomeIndelTmb"
-          value={newTmburMutData?.genomeIndelTmb ?? 0}
-          name="genomeIndelTmb"
-          onChange={handleTmburChange}
-          variant="outlined"
-          fullWidth
-          type="number"
-        />
-      </>
-    );
-  }, [newTmburMutData, handleTmburChange]);
+  const tmburMutBurSection = useMemo(() => (
+    <>
+      <TextField
+        className="tumour-dialog__text-field"
+        label="genomeSnvTmb"
+        value={newTmburMutData?.genomeSnvTmb ?? null}
+        name="genomeSnvTmb"
+        onChange={handleTmburChange}
+        variant="outlined"
+        fullWidth
+        type="number"
+      />
+      <TextField
+        className="tumour-dialog__text-field"
+        label="genomeIndelTmb"
+        value={newTmburMutData?.genomeIndelTmb ?? null}
+        name="genomeIndelTmb"
+        onChange={handleTmburChange}
+        variant="outlined"
+        fullWidth
+        type="number"
+      />
+    </>
+  ), [newTmburMutData, handleTmburChange]);
 
   return (
     <Dialog open={isOpen}>
