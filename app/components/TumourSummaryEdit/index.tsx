@@ -74,7 +74,10 @@ const TumourSummaryEdit = ({
   useEffect(() => {
     if (mutationBurden) {
       setNewMutationBurdenData({
+        role: mutationBurden.role,
         totalMutationsPerMb: mutationBurden.totalMutationsPerMb,
+        qualitySvCount: mutationBurden.qualitySvCount,
+        qualitySvPercentile: mutationBurden.qualitySvPercentile,
       });
     }
   }, [mutationBurden]);
@@ -339,25 +342,47 @@ const TumourSummaryEdit = ({
     return null;
   }, [handleClicked, handleDelete, handleKeyDown, newMicrobialData]);
 
-  const mutBurDataSection = (
-    <TextField
-      className="tumour-dialog__text-field"
-      label="Mutation Burden (Mut/Mb)"
-      value={newMutationBurdenData?.totalMutationsPerMb ?? 0}
-      name="totalMutationsPerMb"
-      onChange={handleMutationBurdenChange}
-      variant="outlined"
-      fullWidth
-      type="number"
-    />
-  );
+  const mutBurDataSection = useMemo(() => (
+    <>
+      <TextField
+        className="tumour-dialog__text-field"
+        label="Mutation Burden (Mut/Mb)"
+        value={newMutationBurdenData?.totalMutationsPerMb ?? null}
+        name="totalMutationsPerMb"
+        onChange={handleMutationBurdenChange}
+        variant="outlined"
+        fullWidth
+        type="number"
+      />
+      <TextField
+        className="tumour-dialog__text-field"
+        label="SV Burden (POG average)"
+        value={newMutationBurdenData?.qualitySvCount ?? null}
+        name="qualitySvCount"
+        onChange={handleMutationBurdenChange}
+        variant="outlined"
+        fullWidth
+        type="number"
+      />
+      <TextField
+        className="tumour-dialog__text-field"
+        label="SV Burden (Percentile)"
+        value={newMutationBurdenData?.qualitySvPercentile ?? null}
+        name="qualitySvPercentile"
+        onChange={handleMutationBurdenChange}
+        variant="outlined"
+        fullWidth
+        type="number"
+      />
+    </>
+  ), [newMutationBurdenData, handleMutationBurdenChange]);
 
   const tmburMutBurSection = useMemo(() => {
     <>
       <TextField
         className="tumour-dialog__text-field"
         label="genomeSnvTmb"
-        value={newTmburMutData?.genomeSnvTmb ?? 0}
+        value={newTmburMutData?.genomeSnvTmb ?? null}
         name="genomeSnvTmb"
         onChange={handleTmburChange}
         variant="outlined"
@@ -367,7 +392,7 @@ const TumourSummaryEdit = ({
       <TextField
         className="tumour-dialog__text-field"
         label="genomeIndelTmb"
-        value={newTmburMutData?.genomeIndelTmb ?? 0}
+        value={newTmburMutData?.genomeIndelTmb ?? null}
         name="genomeIndelTmb"
         onChange={handleTmburChange}
         variant="outlined"
