@@ -9,7 +9,7 @@ import {
 } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
 
-import SecurityContext from '@/context/SecurityContext';
+import { SecurityContext } from '@/context/SecurityContext';
 import ReportToolbar from '@/components/ReportToolbar';
 import ReportSidebar from '@/components/ReportSidebar';
 import { useUser } from '@/context/UserContext';
