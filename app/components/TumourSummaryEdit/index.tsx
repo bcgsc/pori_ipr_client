@@ -342,42 +342,40 @@ const TumourSummaryEdit = ({
     return null;
   }, [handleClicked, handleDelete, handleKeyDown, newMicrobialData]);
 
-  const mutBurDataSection = useMemo(() => {
-    return (
-      <>
-        <TextField
-          className="tumour-dialog__text-field"
-          label="Mutation Burden (Mut/Mb)"
-          value={newMutationBurdenData?.totalMutationsPerMb ?? null}
-          name="totalMutationsPerMb"
-          onChange={handleMutationBurdenChange}
-          variant="outlined"
-          fullWidth
-          type="number"
-        />
-        <TextField
-          className="tumour-dialog__text-field"
-          label="SV Burden (POG average)"
-          value={newMutationBurdenData?.qualitySvCount ?? null}
-          name="qualitySvCount"
-          onChange={handleMutationBurdenChange}
-          variant="outlined"
-          fullWidth
-          type="number"
-        />
-        <TextField
-          className="tumour-dialog__text-field"
-          label="SV Burden (Percentile)"
-          value={newMutationBurdenData?.qualitySvPercentile ?? null}
-          name="qualitySvPercentile"
-          onChange={handleMutationBurdenChange}
-          variant="outlined"
-          fullWidth
-          type="number"
-        />
-      </>
-    );
-  }, [newMutationBurdenData, handleMutationBurdenChange]);
+  const mutBurDataSection = useMemo(() => (
+    <>
+      <TextField
+        className="tumour-dialog__text-field"
+        label="Mutation Burden (Mut/Mb)"
+        value={newMutationBurdenData?.totalMutationsPerMb ?? null}
+        name="totalMutationsPerMb"
+        onChange={handleMutationBurdenChange}
+        variant="outlined"
+        fullWidth
+        type="number"
+      />
+      <TextField
+        className="tumour-dialog__text-field"
+        label="SV Burden (POG average)"
+        value={newMutationBurdenData?.qualitySvCount ?? null}
+        name="qualitySvCount"
+        onChange={handleMutationBurdenChange}
+        variant="outlined"
+        fullWidth
+        type="number"
+      />
+      <TextField
+        className="tumour-dialog__text-field"
+        label="SV Burden (Percentile)"
+        value={newMutationBurdenData?.qualitySvPercentile ?? null}
+        name="qualitySvPercentile"
+        onChange={handleMutationBurdenChange}
+        variant="outlined"
+        fullWidth
+        type="number"
+      />
+    </>
+  ), [newMutationBurdenData, handleMutationBurdenChange]);
 
   const tmburMutBurSection = useMemo(() => {
     <>
