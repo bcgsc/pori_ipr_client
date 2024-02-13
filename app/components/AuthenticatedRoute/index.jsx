@@ -1,12 +1,12 @@
 /* eslint-disable react/display-name */
 import { PropTypes } from 'prop-types';
-import React, { useContext, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import {
   Redirect,
   Route,
 } from 'react-router-dom';
 
-import SecurityContext from '@/context/SecurityContext';
+import useSecurity from '@/hooks/useSecurity';
 import useResource from '@/hooks/useResource';
 import { isAuthorized } from '@/services/management/auth';
 
@@ -16,7 +16,7 @@ import { isAuthorized } from '@/services/management/auth';
 const AuthenticatedRoute = ({
   component: Component, adminRequired, showNav, onToggleNav, ...rest
 }) => {
-  const { authorizationToken } = useContext(SecurityContext);
+  const { authorizationToken } = useSecurity();
   const { adminAccess } = useResource();
   const authOk = isAuthorized(authorizationToken);
 

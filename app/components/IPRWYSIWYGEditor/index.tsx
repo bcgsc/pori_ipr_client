@@ -186,7 +186,7 @@ const IPRWYSIWYGEditor = ({
 
   const handleOnSave = useCallback(() => {
     if (editor) {
-      onClose(editor.getHTML());
+      onClose(editor.isEmpty ? '' : editor.getHTML());
     }
   }, [editor, onClose]);
 

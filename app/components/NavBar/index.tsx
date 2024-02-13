@@ -12,14 +12,14 @@ import MenuIcon from '@mui/icons-material/Menu';
 import PersonIcon from '@mui/icons-material/Person';
 
 import { logout } from '@/services/management/auth';
-import SecurityContext from '@/context/SecurityContext';
+import useSecurity from '@/hooks/useSecurity';
 import SidebarContext from '@/context/SidebarContext';
 import FeedbackDialog from './components/FeedbackDialog';
 
 import './index.scss';
 
 const NavBar = (): JSX.Element => {
-  const { userDetails } = useContext(SecurityContext);
+  const { userDetails } = useSecurity();
   const { sidebarMaximized, setSidebarMaximized } = useContext(SidebarContext);
 
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>();

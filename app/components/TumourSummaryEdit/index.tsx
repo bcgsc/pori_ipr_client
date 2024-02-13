@@ -140,25 +140,26 @@ const TumourSummaryEdit = ({
 
       if (reportDirty && newReportData) {
         apiCalls.push(api.put(`/reports/${report.ident}`, newReportData, {}));
-      } else {
-        apiCalls.push({ request: () => null });
       }
 
       if (mutationBurdenDirty && newMutationBurdenData) {
         if (mutationBurden?.ident) {
           apiCalls.push(api.put(`/reports/${report.ident}/mutation-burden/${mutationBurden.ident}`, newMutationBurdenData, {}));
         } else {
-          // Default role of new mutation burden data for reports with no existing analysis per ClinInfo team
-          apiCalls.push(api.post(`/reports/${report.ident}/mutation-burden`, { ...newMutationBurdenData, role: 'primary' }, {}));
+          apiCalls.push(api.post(
+            `/reports/${report.ident}/mutation-burden`,
+            { ...newMutationBurdenData, role: 'primary' },
+            {},
+          ));
         }
-      } else {
-        apiCalls.push({ request: () => null });
       }
 
-      if (tmburMutDirty && newTmburMutData && tmburMutBur?.ident) {
-        apiCalls.push(api.put(`/reports/${report.ident}/tmbur-mutation-burden`, newTmburMutData, {}));
-      } else {
-        apiCalls.push({ request: () => null });
+      if (tmburMutDirty && newTmburMutData) {
+        if (tmburMutBur?.ident) {
+          apiCalls.push(api.put(`/reports/${report.ident}/tmbur-mutation-burden`, newTmburMutData, {}));
+        } else {
+          apiCalls.push(api.post(`/reports/${report.ident}/tmbur-mutation-burden`, newTmburMutData, {}));
+        }
       }
 
       callSet = new ApiCallSet(apiCalls);
@@ -168,19 +169,33 @@ const TumourSummaryEdit = ({
         setIsApiCalling(false);
       } else {
         try {
-          const resp = await callSet.request();
-          const tmburMutResp = resp.pop();
-          const primaryBurdenResp = resp.pop();
-          const reportResp = resp.pop();
+          await callSet.request();
+
+          let microbialResp = null;
+          let tmburMutResp = null;
+          let mutationBurdenResp = null;
+          let reportResp = null;
 
           // Too complicated between delete/update/new, might as well grab updated micb species for report again
-          const microbialResp = await api.get(`/reports/${report.ident}/summary/microbial`).request();
+          if (microbialDirty) {
+            microbialResp = await api.get(`/reports/${report.ident}/summary/microbial`).request();
+          }
+          if (tmburMutDirty) {
+            tmburMutResp = await api.get(`/reports/${report.ident}/tmbur-mutation-burden`).request();
+          }
+          if (mutationBurdenDirty) {
+            mutationBurdenResp = await api.get(`/reports/${report.ident}/mutation-burden/`).request();
+          }
+          if (reportDirty) {
+            reportResp = await api.get(`/reports/${report.ident}`).request();
+          }
+
           snackbar.success('Successfully updated Tumour Summary');
           onClose(
             true,
             microbialDirty ? microbialResp : null,
             reportDirty ? reportResp : null,
-            mutationBurdenDirty ? primaryBurdenResp : null,
+            mutationBurdenDirty ? mutationBurdenResp.find((mb) => mb.role === 'primary') : null,
             tmburMutDirty ? tmburMutResp : null,
           );
         } catch (callSetError) {
@@ -365,31 +380,29 @@ const TumourSummaryEdit = ({
   }, [newMutationBurdenData, handleMutationBurdenChange]);
 
   const tmburMutBurSection = useMemo(() => {
-    return (
-      <>
-        <TextField
-          className="tumour-dialog__text-field"
-          label="genomeSnvTmb"
-          value={newTmburMutData?.genomeSnvTmb ?? null}
-          name="genomeSnvTmb"
-          onChange={handleTmburChange}
-          variant="outlined"
-          fullWidth
-          type="number"
-        />
-        <TextField
-          className="tumour-dialog__text-field"
-          label="genomeIndelTmb"
-          value={newTmburMutData?.genomeIndelTmb ?? null}
-          name="genomeIndelTmb"
-          onChange={handleTmburChange}
-          variant="outlined"
-          fullWidth
-          type="number"
-        />
-      </>
-    );
-  }, [newTmburMutData, handleTmburChange]);
+    <>
+      <TextField
+        className="tumour-dialog__text-field"
+        label="genomeSnvTmb"
+        value={newTmburMutData?.genomeSnvTmb ?? 0}
+        name="genomeSnvTmb"
+        onChange={handleTmburChange}
+        variant="outlined"
+        fullWidth
+        type="number"
+      />
+      <TextField
+        className="tumour-dialog__text-field"
+        label="genomeIndelTmb"
+        value={newTmburMutData?.genomeIndelTmb ?? 0}
+        name="genomeIndelTmb"
+        onChange={handleTmburChange}
+        variant="outlined"
+        fullWidth
+        type="number"
+      />
+    </>;
+  }, [newTmburMutData?.genomeSnvTmb, newTmburMutData?.genomeIndelTmb, handleTmburChange]);
 
   return (
     <Dialog open={isOpen}>

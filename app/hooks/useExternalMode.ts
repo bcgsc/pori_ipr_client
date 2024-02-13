@@ -1,11 +1,10 @@
-import { useState, useEffect, useContext } from 'react';
-
-import SecurityContext from '@/context/SecurityContext';
+import { useState, useEffect } from 'react';
+import useSecurity from '@/hooks/useSecurity';
 
 const EXTERNAL_GROUPS = ['clinician', 'collaborator'];
 
 const useExternalMode = (): boolean => {
-  const { userDetails } = useContext(SecurityContext);
+  const { userDetails } = useSecurity();
 
   const [isExternalMode, setIsExternalMode] = useState<boolean>(null);
 
