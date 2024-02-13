@@ -19,19 +19,23 @@ import useConfirmDialog from '@/hooks/useConfirmDialog';
 
 import './index.scss';
 import { ReportType } from '@/context/ReportContext';
-import { MicrobialType, MutationBurdenType, TmburType } from '@/common';
+import {
+  ImmuneType, MicrobialType, MutationBurdenType, TmburType,
+} from '@/common';
 import snackbar from '@/services/SnackbarUtils';
 
 type TumourSummaryEditProps = {
   microbial: MicrobialType[];
   report: ReportType;
+  tCellCd8: ImmuneType;
   mutationBurden: MutationBurdenType;
-  tmburMutBur?: TmburType;
+  tmburMutBur: TmburType;
   isOpen: boolean;
   onClose: (
     isSaved: boolean,
     newMicrobialData?: MicrobialType[],
     newReportData?: ReportType,
+    newTCellCd8Data?: ImmuneType,
     newMutationBurdenData?: MutationBurdenType,
     newTmBurMutBurData?: TmburType,
   ) => void;
@@ -43,6 +47,7 @@ const TumourSummaryEdit = ({
   report: {
     template: { name: reportType },
   },
+  tCellCd8,
   mutationBurden,
   tmburMutBur,
   isOpen,
@@ -53,10 +58,12 @@ const TumourSummaryEdit = ({
 
   const [newMicrobialData, setNewMicrobialData] = useState(cloneDeep(microbial));
   const [newReportData, setNewReportData] = useState<Partial<ReportType>>(null);
+  const [newTCellCd8Data, setNewTCellCd8Data] = useState<Partial<ImmuneType>>(null);
   const [newMutationBurdenData, setNewMutationBurdenData] = useState<Partial<MutationBurdenType>>(null);
   const [newTmburMutData, setNewTmburMutData] = useState<Partial<TmburType>>(null);
   const [microbialDirty, setMicrobialDirty] = useState(false);
   const [reportDirty, setReportDirty] = useState(false);
+  const [tCellCd8Dirty, setTCellCd8Dirty] = useState(false);
   const [mutationBurdenDirty, setMutationBurdenDirty] = useState(false);
   const [tmburMutDirty, setTmburMutDirty] = useState(false);
   const [isApiCalling, setIsApiCalling] = useState(false);
@@ -70,6 +77,15 @@ const TumourSummaryEdit = ({
       });
     }
   }, [report]);
+
+  useEffect(() => {
+    if (tCellCd8) {
+      setNewTCellCd8Data({
+        score: tCellCd8.score,
+        percentile: tCellCd8.percentile,
+      });
+    }
+  }, [tCellCd8]);
 
   useEffect(() => {
     if (mutationBurden) {
@@ -95,6 +111,12 @@ const TumourSummaryEdit = ({
     const { target: { value, name } } = event;
     setNewReportData((prevVal) => ({ ...prevVal, [name]: value }));
     setReportDirty(true);
+  }, []);
+
+  const handleTCellCd8Change = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const { target: { value, name } } = event;
+    setNewTCellCd8Data((prevVal) => ({ ...prevVal, [name]: value }));
+    setTCellCd8Dirty(true);
   }, []);
 
   const handleMutationBurdenChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
@@ -142,6 +164,16 @@ const TumourSummaryEdit = ({
         apiCalls.push(api.put(`/reports/${report.ident}`, newReportData, {}));
       }
 
+      if (tCellCd8Dirty && newTCellCd8Data) {
+        if (tCellCd8?.ident) {
+          apiCalls.push(api.put(`/reports/${report.ident}/immune-cell-types/${tCellCd8.ident}`, newTCellCd8Data, {}));
+        } else {
+          apiCalls.push(api.post(`/reports/${report.ident}/immune-cell-types`, { ...newTCellCd8Data, cellType: 'T cells CD8' }, {}));
+        }
+      } else {
+        apiCalls.push({ request: () => null });
+      }
+
       if (mutationBurdenDirty && newMutationBurdenData) {
         if (mutationBurden?.ident) {
           apiCalls.push(api.put(`/reports/${report.ident}/mutation-burden/${mutationBurden.ident}`, newMutationBurdenData, {}));
@@ -172,19 +204,22 @@ const TumourSummaryEdit = ({
           await callSet.request();
 
           let microbialResp = null;
+          let immuneResp = null;
           let tmburMutResp = null;
           let mutationBurdenResp = null;
           let reportResp = null;
 
-          // Too complicated between delete/update/new, might as well grab updated micb species for report again
           if (microbialDirty) {
             microbialResp = await api.get(`/reports/${report.ident}/summary/microbial`).request();
+          }
+          if (tCellCd8Dirty) {
+            immuneResp = await api.get(`/reports/${report.ident}/immune-cell-types`).request();
           }
           if (tmburMutDirty) {
             tmburMutResp = await api.get(`/reports/${report.ident}/tmbur-mutation-burden`).request();
           }
           if (mutationBurdenDirty) {
-            mutationBurdenResp = await api.get(`/reports/${report.ident}/mutation-burden/`).request();
+            mutationBurdenResp = await api.get(`/reports/${report.ident}/mutation-burden`).request();
           }
           if (reportDirty) {
             reportResp = await api.get(`/reports/${report.ident}`).request();
@@ -195,6 +230,7 @@ const TumourSummaryEdit = ({
             true,
             microbialDirty ? microbialResp : null,
             reportDirty ? reportResp : null,
+            tCellCd8Dirty ? immuneResp.find(({ cellType }) => cellType === 'T cells CD8') : null,
             mutationBurdenDirty ? mutationBurdenResp.find((mb) => mb.role === 'primary') : null,
             tmburMutDirty ? tmburMutResp : null,
           );
@@ -213,6 +249,8 @@ const TumourSummaryEdit = ({
     microbialDirty,
     reportDirty,
     newReportData,
+    tCellCd8Dirty,
+    newTCellCd8Data,
     mutationBurdenDirty,
     newMutationBurdenData,
     tmburMutDirty,
@@ -221,6 +259,7 @@ const TumourSummaryEdit = ({
     newMicrobialData,
     microbial,
     report?.ident,
+    tCellCd8?.ident,
     mutationBurden?.ident,
     tmburMutBur?.ident,
     showConfirmDialog,
@@ -342,6 +381,31 @@ const TumourSummaryEdit = ({
     return null;
   }, [handleClicked, handleDelete, handleKeyDown, newMicrobialData]);
 
+  const tCellCd8DataSection = useMemo(() => (
+    <>
+      <TextField
+        className="tumour-dialog__text-field"
+        label="CD8+ T Cell Score"
+        value={newTCellCd8Data?.score ?? null}
+        name="score"
+        onChange={handleTCellCd8Change}
+        variant="outlined"
+        fullWidth
+        type="number"
+      />
+      <TextField
+        className="tumour-dialog__text-field"
+        label="CD8+ T Cell Percentile"
+        value={newTCellCd8Data?.percentile ?? null}
+        name="percentile"
+        onChange={handleTCellCd8Change}
+        variant="outlined"
+        fullWidth
+        type="number"
+      />
+    </>
+  ), [newTCellCd8Data, handleTCellCd8Change]);
+
   const mutBurDataSection = useMemo(() => (
     <>
       <TextField
@@ -377,7 +441,7 @@ const TumourSummaryEdit = ({
     </>
   ), [newMutationBurdenData, handleMutationBurdenChange]);
 
-  const tmburMutBurSection = useMemo(() => {
+  const tmburMutBurSection = useMemo(() => (
     <>
       <TextField
         className="tumour-dialog__text-field"
@@ -399,8 +463,8 @@ const TumourSummaryEdit = ({
         fullWidth
         type="number"
       />
-    </>;
-  }, [newTmburMutData?.genomeSnvTmb, newTmburMutData?.genomeIndelTmb, handleTmburChange]);
+    </>
+  ), [newTmburMutData?.genomeSnvTmb, newTmburMutData?.genomeIndelTmb, handleTmburChange]);
 
   return (
     <Dialog open={isOpen}>
@@ -410,6 +474,7 @@ const TumourSummaryEdit = ({
       <DialogContent className="tumour-dialog__content">
         {reportDataSection}
         {micbDataSection}
+        {tCellCd8DataSection}
         {mutBurDataSection}
         {tmburMutBurSection}
       </DialogContent>

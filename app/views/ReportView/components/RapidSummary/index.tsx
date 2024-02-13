@@ -443,12 +443,13 @@ const RapidSummary = ({
     isSaved,
     newMicrobialData,
     newReportData,
+    newTCellCd8Data: ImmuneType,
     newMutationBurdenData: MutationBurdenType,
     newTmBurMutBurData,
   ) => {
     setShowTumourSummaryEdit(false);
 
-    if (!isSaved || (!newMicrobialData && !newReportData && !newMutationBurdenData && !newTmBurMutBurData)) {
+    if (!isSaved || (!newMicrobialData && !newReportData && !newTCellCd8Data && !newMutationBurdenData && !newTmBurMutBurData)) {
       return;
     }
 
@@ -458,6 +459,10 @@ const RapidSummary = ({
 
     if (newReportData) {
       setReport(newReportData);
+    }
+
+    if (newTCellCd8Data) {
+      setTCellCd8(newTCellCd8Data)
     }
 
     if (newMutationBurdenData) {
@@ -484,6 +489,7 @@ const RapidSummary = ({
                 <TumourSummaryEdit
                   microbial={microbial}
                   report={report}
+                  tCellCd8={tCellCd8}
                   mutationBurden={primaryBurden}
                   tmburMutBur={tmburMutBur}
                   isOpen={showTumourSummaryEdit}
