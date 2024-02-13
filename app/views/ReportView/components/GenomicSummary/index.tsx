@@ -164,7 +164,7 @@ const GenomicSummary = ({
 
           setPrimaryComparator(comparatorsResp.find(({ analysisRole }) => analysisRole === 'mutation burden (primary)'));
           setPrimaryBurden(burdenResp.find((entry: Record<string, unknown>) => entry.role === 'primary'));
-          setTCellCd8(immuneResp.find(({cellType})  => cellType === 'T cells CD8'));
+          setTCellCd8(immuneResp.find(({ cellType }) => cellType === 'T cells CD8'));
           setSignatures(signaturesResp);
 
           if (microbialResp.length) {

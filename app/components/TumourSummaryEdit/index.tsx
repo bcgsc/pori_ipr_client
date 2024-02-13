@@ -463,7 +463,7 @@ const TumourSummaryEdit = ({
         fullWidth
         type="number"
       />
-    </>;
+    </>
   ), [newTmburMutData?.genomeSnvTmb, newTmburMutData?.genomeIndelTmb, handleTmburChange]);
 
   return (
