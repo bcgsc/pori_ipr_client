@@ -162,8 +162,6 @@ const TumourSummaryEdit = ({
 
       if (reportDirty && newReportData) {
         apiCalls.push(api.put(`/reports/${report.ident}`, newReportData, {}));
-      } else {
-        apiCalls.push({ request: () => null });
       }
 
       if (tCellCd8Dirty && newTCellCd8Data) {
@@ -180,17 +178,20 @@ const TumourSummaryEdit = ({
         if (mutationBurden?.ident) {
           apiCalls.push(api.put(`/reports/${report.ident}/mutation-burden/${mutationBurden.ident}`, newMutationBurdenData, {}));
         } else {
-          // Default role of new mutation burden data for reports with no existing analysis per ClinInfo team
-          apiCalls.push(api.post(`/reports/${report.ident}/mutation-burden`, { ...newMutationBurdenData, role: 'primary' }, {}));
+          apiCalls.push(api.post(
+            `/reports/${report.ident}/mutation-burden`,
+            { ...newMutationBurdenData, role: 'primary' },
+            {},
+          ));
         }
-      } else {
-        apiCalls.push({ request: () => null });
       }
 
-      if (tmburMutDirty && newTmburMutData && tmburMutBur?.ident) {
-        apiCalls.push(api.put(`/reports/${report.ident}/tmbur-mutation-burden`, newTmburMutData, {}));
-      } else {
-        apiCalls.push({ request: () => null });
+      if (tmburMutDirty && newTmburMutData) {
+        if (tmburMutBur?.ident) {
+          apiCalls.push(api.put(`/reports/${report.ident}/tmbur-mutation-burden`, newTmburMutData, {}));
+        } else {
+          apiCalls.push(api.post(`/reports/${report.ident}/tmbur-mutation-burden`, newTmburMutData, {}));
+        }
       }
 
       callSet = new ApiCallSet(apiCalls);
@@ -462,8 +463,8 @@ const TumourSummaryEdit = ({
         fullWidth
         type="number"
       />
-    </>
-  ), [newTmburMutData, handleTmburChange]);
+    </>;
+  ), [newTmburMutData?.genomeSnvTmb, newTmburMutData?.genomeIndelTmb, handleTmburChange]);
 
   return (
     <Dialog open={isOpen}>

@@ -1,7 +1,7 @@
 import React, {
   createContext, ReactChild, useMemo, useContext,
 } from 'react';
-import SecurityContext from '@/context/SecurityContext';
+import useSecurity from '@/hooks/useSecurity';
 import { checkAccess } from '@/utils/checkAccess';
 import UserContextInterface from './interfaces';
 
@@ -18,7 +18,7 @@ type UserContextProviderProps = {
 };
 
 const UserContextProvider = ({ children }: UserContextProviderProps): JSX.Element => {
-  const { userDetails } = useContext(SecurityContext);
+  const { userDetails } = useSecurity();
 
   const canEdit = useMemo(() => {
     if (userDetails && checkAccess(userDetails.groups, EDIT_ACCESS, EDIT_BLOCK)) {

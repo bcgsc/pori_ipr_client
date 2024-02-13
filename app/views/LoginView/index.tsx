@@ -1,8 +1,8 @@
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import fetchIntercept from 'fetch-intercept';
 import { RouteChildrenProps } from 'react-router-dom';
 
-import SecurityContext from '@/context/SecurityContext';
+import useSecurity from '@/hooks/useSecurity';
 import {
   login, isAuthorized, getReferrerUri, keycloak,
 } from '@/services/management/auth';
@@ -18,7 +18,7 @@ const Login = (props: RouteChildrenProps): null => {
     authorizationToken,
     setAuthorizationToken,
     setUserDetails,
-  } = useContext(SecurityContext);
+  } = useSecurity();
 
   let from;
 

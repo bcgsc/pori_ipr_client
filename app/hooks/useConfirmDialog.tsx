@@ -1,6 +1,5 @@
 import AlertDialog from '@/components/AlertDialog';
 import ReportContext from '@/context/ReportContext';
-import api from '@/services/api';
 import React, { useCallback, useContext } from 'react';
 import ReactDOM from 'react-dom';
 import snackbar from '@/services/SnackbarUtils';
