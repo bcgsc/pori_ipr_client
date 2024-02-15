@@ -86,11 +86,22 @@ const columnDefs: ColDef[] = [{
   headerName: 'PMID',
   colId: 'reference',
   field: 'reference',
-  wrapText: true,
-  autoHeight: true,
-  width: 600,
   cellRendererFramework: ArrayCell('reference', true),
   hide: false,
+},
+{
+  headerName: 'Recruitment Status',
+  hide: false,
+  valueGetter: (params) => {
+    const { data: { relevance, kbData } } = params;
+    if (kbData?.recruitment_status) {
+      if (relevance === 'eligibility') {
+        return `${kbData.recruitment_status}`;
+      }
+      return 'N/A';
+    }
+    return '';
+  },
 },
 {
   headerName: 'Category',

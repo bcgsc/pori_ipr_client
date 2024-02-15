@@ -127,6 +127,7 @@ type KbMatchType<T extends AnyVariantType = AnyVariantType> = {
   iprEvidenceLevel: string;
   kbData: {
     inferred: boolean;
+    recruitment_status: string;
   } | null;
   kbStatementId: string;
   kbVariant: string;
