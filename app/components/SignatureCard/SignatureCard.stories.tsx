@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { action } from '@storybook/addon-actions';
 import { Story } from '@storybook/react/types-6-0';
 
-import UserContext from '@/context/UserContext';
+import ReportContext from '@/context/ReportContext';
 import SignatureCard, { SignatureCardProps } from '.';
 
 export default {
@@ -10,11 +10,19 @@ export default {
   component: SignatureCard,
 };
 
-const Template = (args) => (
-  <UserContext.Provider value={{ canEdit: true }}>
-    <SignatureCard {...args} />
-  </UserContext.Provider>
-);
+const Template = (args) => {
+  const value = useMemo(() => ({
+    canEdit: true,
+    report: null,
+    setReport: () => { },
+  }), []);
+
+  return (
+    <ReportContext.Provider value={value}>
+      <SignatureCard {...args} />
+    </ReportContext.Provider>
+  );
+};
 
 export const Unsigned: Story<SignatureCardProps> = Template.bind({});
 
