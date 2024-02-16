@@ -4,6 +4,7 @@ import {
 } from './types';
 
 const ReportContext = React.createContext<ReportContextType>({
+  canEdit: false,
   report: null,
   setReport: () => {},
 });

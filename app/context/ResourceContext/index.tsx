@@ -1,10 +1,9 @@
 import React, {
-  createContext, ReactChild, useState, useEffect, useMemo, useContext,
+  createContext, ReactChild, useState, useEffect, useMemo,
 } from 'react';
 import { checkAccess, ALL_ROLES } from '@/utils/checkAccess';
 import useSecurity from '@/hooks/useSecurity';
 import ResourceContextType from './types';
-import ReportContext from '../ReportContext';
 
 const GERMLINE_ACCESS = ['admin', 'analyst', 'bioinformatician', 'projects', 'manager'];
 const GERMLINE_BLOCK = ALL_ROLES;
@@ -14,8 +13,7 @@ const ADMIN_ACCESS = ['admin'];
 const ADMIN_BLOCK = ALL_ROLES;
 
 const useResources = (): ResourceContextType => {
-  const { userDetails: { groups, ident: userIdent } } = useSecurity();
-  const { report } = useContext(ReportContext);
+  const { userDetails: { groups } } = useSecurity();
 
   const [germlineAccess, setGermlineAccess] = useState(false);
   const [reportsAccess, setReportsAccess] = useState(false);
@@ -44,19 +42,6 @@ const useResources = (): ResourceContextType => {
       }
     }
   }, [groups]);
-
-  /**
-   * Check report specific permissions if user isn't admin
-   */
-  useEffect(() => {
-    if (!adminAccess) {
-      if (report && report.users.some(({ ident: i }) => i === userIdent)) {
-        setReportEditAccess(true);
-      } else {
-        setReportEditAccess(false);
-      }
-    }
-  }, [report, userIdent, adminAccess]);
 
   return {
     germlineAccess,

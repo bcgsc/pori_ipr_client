@@ -31,7 +31,7 @@ const Appendices = ({
   isLoading,
   setIsLoading,
 }: AppendicesProps): JSX.Element => {
-  const { report } = useContext(ReportContext);
+  const { canEdit: reportEditAccess, report } = useContext(ReportContext);
 
   const [comparators, setComparators] = useState<ComparatorType[]>([]);
   const [appendices, setAppendices] = useState<AppendicesType>();
@@ -39,7 +39,7 @@ const Appendices = ({
   const [isNewAppendixC, setIsNewAppendixC] = useState(false);
   const [tcga, setTcga] = useState<TcgaType[]>([]);
   const [analysisSummary, setAnalysisSummary] = useState<Record<string, unknown>[]>([]);
-  const { adminAccess, reportEditAccess } = useResource();
+  const { adminAccess } = useResource();
 
   useEffect(() => {
     if (report) {

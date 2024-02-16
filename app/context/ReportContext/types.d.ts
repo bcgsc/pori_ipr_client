@@ -5,7 +5,7 @@ import React from 'react';
 type PatientInformationType = {
   age: string | null;
   biopsySite: string | null;
-  caseType: 'Pediatric' | 'Adult';
+  caseType: 'Pediatric' | 'Adult' | null;
   constitutionalProtocol: string | null;
   constitutionalSample: string | null;
   diagnosis: string | null;
@@ -59,6 +59,8 @@ type ReportType = {
 } & RecordDefaults;
 
 type ReportContextType = {
+  /** Is current report editable by user */
+  canEdit: boolean;
   /** Current report that's being viewed */
   report: ReportType | null,
   /** Set new current report */
