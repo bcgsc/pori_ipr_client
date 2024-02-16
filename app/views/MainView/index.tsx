@@ -17,7 +17,7 @@ import {
 
 import AuthenticatedRoute from '@/components/AuthenticatedRoute';
 import SidebarContext from '@/context/SidebarContext';
-import SecurityContext from '@/context/SecurityContext';
+import { SecurityContext, SecurityContextType } from '@/context/SecurityContext';
 import { UserContextProvider } from '@/context/UserContext';
 import { ResourceContextProvider } from '@/context/ResourceContext';
 import NavBar from '@/components/NavBar';
@@ -125,11 +125,21 @@ const TimeoutModal = memo(({ authorizationToken, setAuthorizationToken }: Timeou
  */
 const Main = (): JSX.Element => {
   const [authorizationToken, setAuthorizationToken] = useState('');
-  const [userDetails, setUserDetails] = useState('');
+  const [userDetails, setUserDetails] = useState<SecurityContextType['userDetails']>({
+    firstName: null,
+    lastName: null,
+    username: null,
+    groups: [],
+    email: null,
+    deletedAt: null,
+    lastLogin: null,
+    projects: [],
+    type: null,
+  });
   const [sidebarMaximized, setSidebarMaximized] = useState(false);
   const [isNavVisible, setIsNavVisible] = useState(true);
 
-  const secContextVal = useMemo(() => ({
+  const secContextVal = useMemo<SecurityContextType>(() => ({
     authorizationToken, setAuthorizationToken, userDetails, setUserDetails,
   }), [authorizationToken, setAuthorizationToken, userDetails, setUserDetails]);
 

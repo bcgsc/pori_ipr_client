@@ -7,7 +7,7 @@ import {
 
 import api from '@/services/api';
 import ReportContext from '@/context/ReportContext';
-import SecurityContext from '@/context/SecurityContext';
+import useSecurity from '@/hooks/useSecurity';
 import useResource from '@/hooks/useResource';
 import snackbar from '@/services/SnackbarUtils';
 import { formatDate } from '@/utils/date';
@@ -16,7 +16,7 @@ import './index.scss';
 
 const Analysis = (): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
-  const { userDetails } = useContext(SecurityContext);
+  const { userDetails } = useSecurity();
   const { adminAccess } = useResource();
 
   const handleAnalysisStart = useCallback(async () => {

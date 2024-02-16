@@ -5,7 +5,8 @@ import {
   CircularProgress,
   Button,
 } from '@mui/material';
-
+import { useDebounce } from 'use-debounce';
+import { useSnackbar } from 'notistack';
 import api from '@/services/api';
 import { UserType } from '@/common';
 
@@ -27,6 +28,9 @@ const UserAutocomplete = ({
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [value, setValue] = useState<Partial<UserType>>(null);
+  const [text, setText] = useState<string>((value ? `${value.firstName} ${value.lastName}` : '') || '');
+  const [debouncedText] = useDebounce(text, 500);
+  const snackbar = useSnackbar();
 
   useEffect(() => {
     if (defaultValue) {
@@ -34,12 +38,35 @@ const UserAutocomplete = ({
     }
   }, [defaultValue]);
 
-  const handleInputChange = async ({ target: { value: queryValue } }) => {
-    setLoading(true);
-    const autocompleted = await api.get(`/user/search?query=${queryValue}`, {}).request();
+  useEffect(() => {
+    setText((prevVal) => {
+      if (!value?.firstName) { return ''; }
+      if (prevVal !== `${value.firstName} ${value.lastName}`) {
+        return `${value.firstName} ${value.lastName}`;
+      }
+      return prevVal;
+    });
+  }, [value?.firstName, value?.lastName]);
 
-    setOptions(autocompleted);
-    setLoading(false);
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        setLoading(true);
+        const autocompleted = await api.get(`/user/search?query=${debouncedText}`, {}).request();
+        setOptions(autocompleted);
+      } catch (e) {
+        snackbar.enqueueSnackbar('Error getting user autocomplete data');
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (debouncedText) {
+      getData();
+    }
+  }, [snackbar, debouncedText]);
+
+  const handleTextChange = async ({ target: { value: nextText } }) => {
+    setText((prevText) => (prevText === nextText ? prevText : nextText));
   };
 
   const handleSubmit = useCallback(() => {
@@ -68,7 +95,7 @@ const UserAutocomplete = ({
           label={label || 'User'}
           variant="outlined"
           margin="normal"
-          onChange={handleInputChange}
+          onChange={handleTextChange}
           InputProps={{
             ...params.InputProps,
             endAdornment: (

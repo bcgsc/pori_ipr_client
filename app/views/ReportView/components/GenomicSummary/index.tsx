@@ -197,6 +197,7 @@ const GenomicSummary = ({
           setVariants(sorted);
           setVariantCounts(counts);
           if (loadedDispatch) {
+            // TODO
             loadedDispatch({ type: 'summary' });
           }
         } catch (err) {
@@ -444,12 +445,13 @@ const GenomicSummary = ({
     isSaved: boolean,
     newMicrobialData: MicrobialType[],
     newReportData: ReportType,
+    newTCellCd8Data: ImmuneType,
     newMutationBurdenData: MutationBurdenType,
     newTmBurMutBurData: TmburType,
   ) => {
     setShowTumourSummaryEdit(false);
 
-    if (!isSaved || (!newMicrobialData && !newReportData && !newMutationBurdenData && !newTmBurMutBurData)) {
+    if (!isSaved || (!newMicrobialData && !newReportData && !newTCellCd8Data && !newMutationBurdenData && !newTmBurMutBurData)) {
       return;
     }
 
@@ -459,6 +461,10 @@ const GenomicSummary = ({
 
     if (newReportData) {
       setReport(newReportData);
+    }
+
+    if (newTCellCd8Data) {
+      setTCellCd8(newTCellCd8Data)
     }
 
     if (newMutationBurdenData) {
@@ -558,6 +564,7 @@ const GenomicSummary = ({
           <TumourSummaryEdit
             microbial={microbial}
             report={report}
+            tCellCd8={tCellCd8}
             mutationBurden={primaryBurden}
             tmburMutBur={tmburMutBur}
             isOpen={showTumourSummaryEdit}
