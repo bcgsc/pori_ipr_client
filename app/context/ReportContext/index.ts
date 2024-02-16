@@ -12,6 +12,7 @@ const ReportContext = React.createContext<ReportContextType>({
 export default ReportContext;
 
 export type {
+  ReportContextType,
   ReportType,
   PatientInformationType,
   SampleInfoType,

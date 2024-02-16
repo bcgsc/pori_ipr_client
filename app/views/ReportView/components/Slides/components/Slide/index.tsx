@@ -1,11 +1,11 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import {
   IconButton,
   Typography,
 } from '@mui/material';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 
-import UserContext from '@/context/UserContext';
+import useReport from '@/hooks/useReport';
 import SlideType from '../../types';
 
 type SlideProps = {
@@ -19,7 +19,7 @@ const Slide = ({
   onDelete = () => {},
   isPrint = false,
 }: SlideProps): JSX.Element => {
-  const { canEdit } = useContext(UserContext);
+  const { canEdit } = useReport();
 
   return (
     <div className="slides__slide-content">

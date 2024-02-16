@@ -12,7 +12,7 @@ import api, { ApiCallSet } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
 import ReportContext, { ReportType, PatientInformationType } from '@/context/ReportContext';
-import { useUser } from '@/context/UserContext';
+import useReport from '@/hooks/useReport';
 import ConfirmContext from '@/context/ConfirmContext';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import { formatDate } from '@/utils/date';
@@ -40,7 +40,7 @@ const ProbeSummary = ({
 }: ProbeSummaryProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
   const { setIsSigned } = useContext(ConfirmContext);
-  const { canEdit } = useUser();
+  const { canEdit } = useReport();
 
   const [testInformation, setTestInformation] = useState<TestInformationType | null>();
   const [signatures, setSignatures] = useState<SignatureType | null>();

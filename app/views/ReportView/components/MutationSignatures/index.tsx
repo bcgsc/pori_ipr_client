@@ -7,7 +7,7 @@ import { Typography } from '@mui/material';
 import DemoDescription from '@/components/DemoDescription';
 import DataTable from '@/components/DataTable';
 import ReportContext from '@/context/ReportContext';
-import { useUser } from '@/context/UserContext';
+import useReport from '@/hooks/useReport';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import ImageType from '@/components/Image/types';
@@ -31,7 +31,7 @@ const MutationSignatures = ({
   setIsLoading,
 }: MutationSignaturesProps): JSX.Element => {
   const { report } = useContext(ReportContext);
-  const { canEdit } = useUser();
+  const { canEdit } = useReport();
   const [images, setImages] = useState<ImageType[]>([]);
   const [sbsSignatures, setSbsSignatures] = useState<MutationSignatureType[]>([]);
   const [dbsSignatures, setDbsSignatures] = useState<MutationSignatureType[]>([]);
