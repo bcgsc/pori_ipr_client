@@ -13,7 +13,7 @@ import PublishIcon from '@mui/icons-material/Publish';
 import api from '@/services/api';
 import useConfirmDialog from '@/hooks/useConfirmDialog';
 import SvgImage from '@/components/SvgImage';
-import { useUser } from '@/context/UserContext';
+import useReport from '@/hooks/useReport';
 import ReportContext from '@/context/ReportContext';
 import ConfirmContext from '@/context/ConfirmContext';
 import PathwayImageType from '../../types';
@@ -31,7 +31,7 @@ const Pathway = ({
 }: PathwayProps): JSX.Element => {
   const { isSigned } = useContext(ConfirmContext);
   const { report } = useContext(ReportContext);
-  const { canEdit } = useUser();
+  const { canEdit } = useReport();
   const { showConfirmDialog } = useConfirmDialog();
   const snackbar = useSnackbar();
 

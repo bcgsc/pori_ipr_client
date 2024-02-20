@@ -5,7 +5,7 @@ import orderBy from 'lodash/orderBy';
 import { Typography } from '@mui/material';
 
 import DataTable from '@/components/DataTable';
-import { useUser } from '@/context/UserContext';
+import useReport from '@/hooks/useReport';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DemoDescription from '@/components/DemoDescription';
@@ -66,7 +66,7 @@ const Therapeutic = ({
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [editData, setEditData] = useState();
 
-  const { canEdit } = useUser();
+  const { canEdit } = useReport();
   const { report } = useContext(ReportContext);
 
   useEffect(() => {

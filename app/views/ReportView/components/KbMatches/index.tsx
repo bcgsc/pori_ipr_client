@@ -14,7 +14,7 @@ import { useDebounce } from 'use-debounce';
 import api, { ApiCallSet } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DemoDescription from '@/components/DemoDescription';
-import { useUser } from '@/context/UserContext';
+import useReport from '@/hooks/useReport';
 import DataTable from '@/components/DataTable';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import ReportContext from '@/context/ReportContext';
@@ -49,7 +49,7 @@ const KbMatches = ({
   isLoading,
 }: KbMatchesProps): JSX.Element => {
   const { report } = useContext(ReportContext);
-  const { canEdit } = useUser();
+  const { canEdit } = useReport();
 
   const [filterText, setFilterText] = useState('');
   const [debouncedFilterText] = useDebounce(filterText, FILTER_DEBOUNCE_TIME);

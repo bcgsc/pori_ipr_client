@@ -4,6 +4,7 @@ import {
 } from './types';
 
 const ReportContext = React.createContext<ReportContextType>({
+  canEdit: false,
   report: null,
   setReport: () => {},
 });
@@ -11,6 +12,7 @@ const ReportContext = React.createContext<ReportContextType>({
 export default ReportContext;
 
 export type {
+  ReportContextType,
   ReportType,
   PatientInformationType,
   SampleInfoType,

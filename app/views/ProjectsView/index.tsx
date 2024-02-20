@@ -6,7 +6,7 @@ import { useSnackbar } from 'notistack';
 
 import api from '@/services/api';
 import DataTable from '@/components/DataTable';
-import { useUser } from '@/context/UserContext';
+import useResource from '@/hooks/useResource';
 import { adminColDefs, readOnlyColDefs } from './columnDefs';
 
 import './index.scss';
@@ -20,7 +20,7 @@ const Projects = (): JSX.Element => {
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [editData, setEditData] = useState<ProjectType | null>();
 
-  const { isAdmin } = useUser();
+  const { adminAccess } = useResource();
 
   const snackbar = useSnackbar();
 
@@ -75,13 +75,13 @@ const Projects = (): JSX.Element => {
         <>
           <DataTable
             rowData={projects}
-            columnDefs={isAdmin ? adminColDefs : readOnlyColDefs}
+            columnDefs={adminAccess ? adminColDefs : readOnlyColDefs}
             canViewDetails={false}
             isPaginated
             isFullLength
-            canEdit={isAdmin}
-            canAdd={isAdmin}
-            canDelete={isAdmin}
+            canEdit={adminAccess}
+            canAdd={adminAccess}
+            canDelete={adminAccess}
             onEdit={handleEditStart}
             onAdd={() => setShowDialog(true)}
             addText="Add project"

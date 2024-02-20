@@ -3,7 +3,7 @@ import {
   fireEvent, render, screen,
 } from '@testing-library/react';
 
-import UserContext from '@/context/UserContext';
+import ReportContext from '@/context/ReportContext';
 import Slide from '..';
 import SlideType from '../../../types';
 
@@ -45,12 +45,12 @@ describe('Slide', () => {
 
   test('The delete button is shown when the user can edit', async () => {
     render(
-      <UserContext.Provider value={{ canEdit: true, setCanEdit: () => {} }}>
+      <ReportContext.Provider value={{ canEdit: true, report: null, setReport: () => {} }}>
         <Slide
           isPrint={false}
           slide={mockSlide}
         />
-      </UserContext.Provider>,
+      </ReportContext.Provider>,
     );
 
     expect(await screen.findByRole('button')).toBeInTheDocument();
@@ -58,12 +58,12 @@ describe('Slide', () => {
 
   test('The delete button is not shown when the user can not edit', () => {
     render(
-      <UserContext.Provider value={{ canEdit: false, setCanEdit: () => {} }}>
+      <ReportContext.Provider value={{ canEdit: false, setCanEdit: () => {} }}>
         <Slide
           isPrint={false}
           slide={mockSlide}
         />
-      </UserContext.Provider>,
+      </ReportContext.Provider>,
     );
 
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
@@ -71,12 +71,12 @@ describe('Slide', () => {
 
   test('The delete button is not shown in the print view', () => {
     render(
-      <UserContext.Provider value={{ canEdit: true, setCanEdit: () => {} }}>
+      <ReportContext.Provider value={{ canEdit: true, report: null, setReport: () => {} }}>
         <Slide
           isPrint
           slide={mockSlide}
         />
-      </UserContext.Provider>,
+      </ReportContext.Provider>,
     );
 
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
@@ -86,13 +86,13 @@ describe('Slide', () => {
     const mockDelete = jest.fn();
 
     render(
-      <UserContext.Provider value={{ canEdit: true, setCanEdit: () => {} }}>
+      <ReportContext.Provider value={{ canEdit: true, report: null, setReport: () => {} }}>
         <Slide
           isPrint={false}
           onDelete={mockDelete}
           slide={mockSlide}
         />
-      </UserContext.Provider>,
+      </ReportContext.Provider>,
     );
     fireEvent.click(await screen.findByRole('button'));
 

@@ -12,12 +12,13 @@ import { useTheme } from '@mui/material/styles';
 import { SecurityContext } from '@/context/SecurityContext';
 import ReportToolbar from '@/components/ReportToolbar';
 import ReportSidebar from '@/components/ReportSidebar';
-import { useUser } from '@/context/UserContext';
 import useExternalMode from '@/hooks/useExternalMode';
 import ReportContext, { ReportType } from '@/context/ReportContext';
 import ConfirmContext from '@/context/ConfirmContext';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
+import useResource from '@/hooks/useResource';
+import useSecurity from '@/hooks/useSecurity';
 import Summary from './components/Summary';
 import allSections from './sections';
 
@@ -52,10 +53,11 @@ const ReportView = (): JSX.Element => {
   }>();
   const theme = useTheme();
   const history = useHistory();
-  const { canEdit } = useUser();
   const isExternalMode = useExternalMode();
+  const { reportEditAccess, adminAccess } = useResource();
+  const { userDetails: { ident: userIdent } } = useSecurity();
 
-  const [report, setReport] = useState<ReportType>();
+  const [report, setReport] = useState<ReportType>(null);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [visibleSections, setVisibleSections] = useState([]);
   const [isProbe, setIsProbe] = useState(false);
@@ -111,8 +113,25 @@ const ReportView = (): JSX.Element => {
     }
   }, [params.ident, report]);
 
-  const reportValue = useMemo(() => ({ report, setReport }), [report, setReport]);
+  const reportValue = useMemo(() => {
+    if (!report) { return null; }
+    let canEdit = reportEditAccess;
+    /**
+     * Check report specific permissions if user isn't admin or overall report access
+     */
+    if (!adminAccess && !reportEditAccess) {
+      if (report.users && report.users.some(({ user: { ident: i } }) => i === userIdent)) {
+        canEdit = true;
+      } else {
+        canEdit = false;
+      }
+    }
+
+    return ({ canEdit, report, setReport });
+  }, [report, setReport, adminAccess, reportEditAccess, userIdent]);
   const isSignedValue = useMemo(() => ({ isSigned, setIsSigned }), [isSigned, setIsSigned]);
+
+  if (!report) { return null; }
 
   return (
     <ReportContext.Provider value={reportValue}>
@@ -141,7 +160,7 @@ const ReportView = (): JSX.Element => {
                         templateName={report.template.name}
                         isPrint={false}
                         report={report}
-                        canEdit={canEdit}
+                        canEdit={reportValue.canEdit}
                       />
                     )}
                     path={`${path}/summary`}
@@ -153,7 +172,7 @@ const ReportView = (): JSX.Element => {
                       {...routeProps}
                       print={false}
                       report={report}
-                      canEdit={canEdit}
+                      canEdit={reportValue.canEdit}
                       setIsSigned={setIsSigned}
                       isSigned={isSigned}
                     />
@@ -174,13 +193,13 @@ const ReportView = (): JSX.Element => {
                 />
                 <Route
                   render={(routeProps) => (
-                    <Discussion {...routeProps} print={false} report={report} canEdit={canEdit} />
+                    <Discussion {...routeProps} print={false} report={report} canEdit={reportValue.canEdit} />
                   )}
                   path={`${path}/discussion`}
                 />
                 <Route
                   render={(routeProps) => (
-                    <Microbial {...routeProps} print={false} report={report} canEdit={canEdit} />
+                    <Microbial {...routeProps} print={false} report={report} canEdit={reportValue.canEdit} />
                   )}
                   path={`${path}/microbial`}
                 />
@@ -204,19 +223,19 @@ const ReportView = (): JSX.Element => {
                 />
                 <Route
                   render={(routeProps) => (
-                    <SmallMutations {...routeProps} print={false} theme={theme} report={report} canEdit={canEdit} />
+                    <SmallMutations {...routeProps} print={false} theme={theme} report={report} canEdit={reportValue.canEdit} />
                   )}
                   path={`${path}/small-mutations`}
                 />
                 <Route
                   render={(routeProps) => (
-                    <CopyNumber {...routeProps} print={false} theme={theme} report={report} canEdit={canEdit} />
+                    <CopyNumber {...routeProps} print={false} theme={theme} report={report} canEdit={reportValue.canEdit} />
                   )}
                   path={`${path}/copy-number`}
                 />
                 <Route
                   render={(routeProps) => (
-                    <StructuralVariants {...routeProps} print={false} theme={theme} report={report} canEdit={canEdit} />
+                    <StructuralVariants {...routeProps} print={false} theme={theme} report={report} canEdit={reportValue.canEdit} />
                   )}
                   path={`${path}/structural-variants`}
                 />
@@ -264,7 +283,7 @@ const ReportView = (): JSX.Element => {
                             print={false}
                             token={value.authorizationToken}
                             report={report}
-                            canEdit={canEdit}
+                            canEdit={reportValue.canEdit}
                           />
                         )}
                         path={`${path}/pathway-analysis`}
@@ -276,7 +295,7 @@ const ReportView = (): JSX.Element => {
                             print={false}
                             token={value.authorizationToken}
                             report={report}
-                            canEdit={canEdit}
+                            canEdit={reportValue.canEdit}
                           />
                         )}
                         path={`${path}/slides`}
@@ -292,7 +311,7 @@ const ReportView = (): JSX.Element => {
               visibleSections={visibleSections || ['summary']}
               allSections={allSections}
               isSidebarVisible={isSidebarVisible}
-              canEdit={canEdit}
+              canEdit={reportValue.canEdit}
             />
           )}
         </div>

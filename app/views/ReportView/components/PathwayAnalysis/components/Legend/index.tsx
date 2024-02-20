@@ -10,7 +10,7 @@ import { useSnackbar } from 'notistack';
 import useConfirmDialog from '@/hooks/useConfirmDialog';
 
 import api from '@/services/api';
-import { useUser } from '@/context/UserContext';
+import useReport from '@/hooks/useReport';
 import ReportContext from '@/context/ReportContext';
 import ConfirmContext from '@/context/ConfirmContext';
 import Image, { ImageType } from '@/components/Image';
@@ -26,7 +26,7 @@ const Legend = ({
   type,
   isPrint = false,
 }: LegendProps): JSX.Element => {
-  const { canEdit } = useUser();
+  const { canEdit } = useReport();
   const { report } = useContext(ReportContext);
   const { isSigned } = useContext(ConfirmContext);
   const { showConfirmDialog } = useConfirmDialog();

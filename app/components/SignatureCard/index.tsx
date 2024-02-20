@@ -11,7 +11,7 @@ import GestureIcon from '@mui/icons-material/Gesture';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 
 import { UserType } from '@/common';
-import { useUser } from '@/context/UserContext';
+import useReport from '@/hooks/useReport';
 import { formatDate } from '@/utils/date';
 import { SignatureType, SignatureUserType } from './types';
 
@@ -36,7 +36,7 @@ const SignatureCard = ({
   type,
   isPrint = false,
 }: SignatureCardProps): JSX.Element => {
-  const { canEdit } = useUser();
+  const { canEdit } = useReport();
   const [userSignature, setUserSignature] = useState<UserType>();
 
   useEffect(() => {
