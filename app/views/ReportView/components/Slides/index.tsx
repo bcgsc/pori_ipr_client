@@ -14,7 +14,7 @@ import api from '@/services/api';
 import AlertDialog from '@/components/AlertDialog';
 import snackbar from '@/services/SnackbarUtils';
 import ReportContext from '@/context/ReportContext';
-import { useUser } from '@/context/UserContext';
+import useReport from '@/hooks/useReport';
 import DemoDescription from '@/components/DemoDescription';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import Slide from './components/Slide';
@@ -36,7 +36,7 @@ const Slides = ({
   setIsLoading,
 }: SlidesProps): JSX.Element => {
   const { report } = useContext(ReportContext);
-  const { canEdit } = useUser();
+  const { canEdit } = useReport();
 
   const [showAlert, setShowAlert] = useState(false);
   const [slides, setSlides] = useState<SlideType[]>([]);

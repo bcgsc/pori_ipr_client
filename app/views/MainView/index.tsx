@@ -18,7 +18,6 @@ import {
 import AuthenticatedRoute from '@/components/AuthenticatedRoute';
 import SidebarContext from '@/context/SidebarContext';
 import { SecurityContext, SecurityContextType } from '@/context/SecurityContext';
-import { UserContextProvider } from '@/context/UserContext';
 import { ResourceContextProvider } from '@/context/ResourceContext';
 import NavBar from '@/components/NavBar';
 import Sidebar from '@/components/Sidebar';
@@ -149,55 +148,53 @@ const Main = (): JSX.Element => {
 
   return (
     <SecurityContext.Provider value={secContextVal}>
-      <UserContextProvider>
-        <ResourceContextProvider>
-          <SidebarContext.Provider value={sideBarContextVal}>
-            <div>
-              <section className={`${isNavVisible ? 'main__content' : ''} ${sidebarMaximized ? 'main__content--maximized' : ''}`}>
-                {isNavVisible ? (
-                  <>
-                    <NavBar />
-                    <Sidebar />
-                  </>
-                ) : null}
-                <Suspense fallback={(
-                  <Box
-                    sx={{
-                      position: 'fixed',
-                      top: '50%',
-                      left: '50%',
-                      transform: 'translate(-50%, -50%)',
-                    }}
-                  >
-                    <CircularProgress color="secondary" />
-                  </Box>
-                  )}
+      <ResourceContextProvider>
+        <SidebarContext.Provider value={sideBarContextVal}>
+          <div>
+            <section className={`${isNavVisible ? 'main__content' : ''} ${sidebarMaximized ? 'main__content--maximized' : ''}`}>
+              {isNavVisible ? (
+                <>
+                  <NavBar />
+                  <Sidebar />
+                </>
+              ) : null}
+              <Suspense fallback={(
+                <Box
+                  sx={{
+                    position: 'fixed',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                  }}
                 >
-                  <TimeoutModal authorizationToken={authorizationToken} setAuthorizationToken={setAuthorizationToken} />
-                  <Switch>
-                    <Route component={LoginView} path="/login" />
-                    <Route component={LinkOutView} path="/graphkb" />
-                    <Route path="/" exact>
-                      <Redirect to={{ pathname: '/reports' }} />
-                    </Route>
-                    <AuthenticatedRoute component={TermsView} path="/terms" />
-                    <AuthenticatedRoute component={ReportsView} path="/reports" />
-                    <AuthenticatedRoute exact component={PatientsView} path="/reports/patients/:patientId" />
-                    <Redirect exact from="/report/:ident/(genomic|probe)/summary" to="/report/:ident/summary" />
-                    <AuthenticatedRoute component={ReportView} path="/report/:ident" />
-                    <AuthenticatedRoute component={PrintView} path="/print/:ident" showNav={false} onToggleNav={setIsNavVisible} />
-                    <AuthenticatedRoute component={BetaPrintView} path="/printBeta/:ident" showNav={false} onToggleNav={setIsNavVisible} />
-                    <AuthenticatedRoute component={GermlineView} path="/germline" />
-                    <AuthenticatedRoute component={ProjectsView} path="/projects" />
-                    <AuthenticatedRoute adminRequired component={AdminView} path="/admin" />
-                    <AuthenticatedRoute adminRequired component={TemplateView} path="/template" />
-                  </Switch>
-                </Suspense>
-              </section>
-            </div>
-          </SidebarContext.Provider>
-        </ResourceContextProvider>
-      </UserContextProvider>
+                  <CircularProgress color="secondary" />
+                </Box>
+                )}
+              >
+                <TimeoutModal authorizationToken={authorizationToken} setAuthorizationToken={setAuthorizationToken} />
+                <Switch>
+                  <Route component={LoginView} path="/login" />
+                  <Route component={LinkOutView} path="/graphkb" />
+                  <Route path="/" exact>
+                    <Redirect to={{ pathname: '/reports' }} />
+                  </Route>
+                  <AuthenticatedRoute component={TermsView} path="/terms" />
+                  <AuthenticatedRoute component={ReportsView} path="/reports" />
+                  <AuthenticatedRoute exact component={PatientsView} path="/reports/patients/:patientId" />
+                  <Redirect exact from="/report/:ident/(genomic|probe)/summary" to="/report/:ident/summary" />
+                  <AuthenticatedRoute component={ReportView} path="/report/:ident" />
+                  <AuthenticatedRoute component={PrintView} path="/print/:ident" showNav={false} onToggleNav={setIsNavVisible} />
+                  <AuthenticatedRoute component={BetaPrintView} path="/printBeta/:ident" showNav={false} onToggleNav={setIsNavVisible} />
+                  <AuthenticatedRoute component={GermlineView} path="/germline" />
+                  <AuthenticatedRoute component={ProjectsView} path="/projects" />
+                  <AuthenticatedRoute adminRequired component={AdminView} path="/admin" />
+                  <AuthenticatedRoute adminRequired component={TemplateView} path="/template" />
+                </Switch>
+              </Suspense>
+            </section>
+          </div>
+        </SidebarContext.Provider>
+      </ResourceContextProvider>
     </SecurityContext.Provider>
   );
 };

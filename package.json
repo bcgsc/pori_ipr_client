@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "ipr-client",
-  "version": "6.26.0",
+  "version": "6.27.0",
   "keywords": [],
   "license": "GPL-3.0",
   "sideEffects": false,
@@ -109,6 +109,7 @@
     "@mui/system": "~5.14.8",
     "@storybook/addon-actions": "~7.4.0",
     "@storybook/react": "^7.4.0",
+    "@tiptap/extension-underline": "^2.2.3",
     "@tiptap/pm": "^2.1.12",
     "@tiptap/react": "^2.1.12",
     "@tiptap/starter-kit": "^2.1.12",

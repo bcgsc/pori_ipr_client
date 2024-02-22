@@ -14,6 +14,7 @@ import {
   Box,
 } from '@mui/material';
 import './index.scss';
+import Underline from '@tiptap/extension-underline';
 import {
   useEditor, EditorContent, Editor,
 } from '@tiptap/react';
@@ -25,6 +26,7 @@ import {
 
 const extensions = [
   StarterKit,
+  Underline,
 ];
 
 const MenuBarButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
@@ -61,7 +63,7 @@ const MenuBar = ({
             <FormatItalic />
           </MenuBarButton>
           <MenuBarButton
-            onClick={() => editor.chain().focus().toggleCode().run()}
+            onClick={() => editor.chain().focus().toggleUnderline().run()}
             value="underline"
             selected={editor.isActive('underline')}
           >
