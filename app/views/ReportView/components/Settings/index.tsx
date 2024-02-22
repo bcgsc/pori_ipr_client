@@ -1,5 +1,5 @@
 import React, {
-  useState, useEffect, useContext, useCallback,
+  useState, useEffect, useCallback,
 } from 'react';
 import { useHistory } from 'react-router-dom';
 import {
@@ -14,8 +14,8 @@ import {
 } from '@mui/material';
 
 import api from '@/services/api';
-import ReportContext from '@/context/ReportContext';
-import { useUser } from '@/context/UserContext';
+import useReport from '@/hooks/useReport';
+import useResource from '@/hooks/useResource';
 import DemoDescription from '@/components/DemoDescription';
 import snackbar from '@/services/SnackbarUtils';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
@@ -36,8 +36,11 @@ const Settings = ({
   isLoading,
   setIsLoading,
 }: SettingsProps): JSX.Element => {
-  const { report, setReport } = useContext(ReportContext);
-  const { canEdit } = useUser();
+  /**
+   * Does not matter if they have report access, they need to be in admin or manager role to edit this section
+   */
+  const { reportEditAccess: canEdit } = useResource();
+  const { report, setReport } = useReport();
   const history = useHistory();
 
   const [templates, setTemplates] = useState([]);

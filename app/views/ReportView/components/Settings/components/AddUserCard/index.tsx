@@ -4,7 +4,7 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
-import { useUser } from '@/context/UserContext';
+import useResource from '@/hooks/useResource';
 
 import './index.scss';
 
@@ -15,14 +15,14 @@ type AddUserCardProps = {
 const AddUserCard = ({
   onAdd,
 }: AddUserCardProps): JSX.Element => {
-  const { canEdit } = useUser();
+  const { reportEditAccess } = useResource();
 
   return (
     <div className="add-card">
       <Button
         className="add-card__button"
         color="secondary"
-        disabled={!canEdit}
+        disabled={!reportEditAccess}
         onClick={() => onAdd()}
         variant="outlined"
       >

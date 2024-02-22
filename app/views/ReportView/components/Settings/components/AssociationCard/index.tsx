@@ -11,7 +11,7 @@ import PersonIcon from '@mui/icons-material/Person';
 
 import { UserType, RecordDefaults } from '@/common';
 import startCase from '@/utils/startCase';
-import { useUser } from '@/context/UserContext';
+import useResource from '@/hooks/useResource';
 
 import './index.scss';
 
@@ -27,7 +27,7 @@ const AssociationCard = ({
   user,
   onDelete,
 }: AssociationCardProps): JSX.Element => {
-  const { canEdit } = useUser();
+  const { reportEditAccess } = useResource();
 
   return (
     <Card className="association-card">
@@ -49,7 +49,7 @@ const AssociationCard = ({
       <CardActions className="association-card__actions">
         <Button
           color="secondary"
-          disabled={!canEdit}
+          disabled={!reportEditAccess}
           onClick={() => onDelete(user.ident)}
         >
           Remove
