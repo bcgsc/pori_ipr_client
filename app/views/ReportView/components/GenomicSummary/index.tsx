@@ -610,7 +610,7 @@ const GenomicSummary = ({
         {dataSection}
       </div>
     );
-  }, [canEdit, classNamePrefix, handleTumourSummaryEditClose, microbial, primaryBurden, tmburMutBur, report, showTumourSummaryEdit, tumourSummary, printVersion]);
+  }, [canEdit, classNamePrefix, handleTumourSummaryEditClose, microbial, tCellCd8, primaryBurden, tmburMutBur, report, showTumourSummaryEdit, tumourSummary, printVersion]);
 
   const alterationsSection = useMemo(() => {
     let titleSection = (
