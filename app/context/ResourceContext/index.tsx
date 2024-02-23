@@ -36,7 +36,7 @@ const useResources = (): ResourceContextType => {
         setAdminAccess(true);
       }
 
-      if (checkAccess(groups, [...ADMIN_ACCESS, 'manager'], ADMIN_BLOCK)) {
+      if (checkAccess(groups, [...ADMIN_ACCESS, 'manager', 'Report Manager'], ADMIN_BLOCK)) {
         setReportSettingAccess(true);
         setReportEditAccess(true);
       }
