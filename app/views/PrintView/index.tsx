@@ -176,14 +176,14 @@ const Print = ({
         const seconds = currentDate.getSeconds().toString().padStart(2, '0');
         let serverName;
         switch (process.env.NODE_ENV) {
-          case 'production':
-            serverName = '';
-            break;
           case 'development':
             serverName = '_iprdev';
             break;
-          default:
+          case 'staging':
             serverName = '_iprstaging';
+            break;
+          default:
+            serverName = '';
             break;
         }
         const formattedDate = `${year}-${month}-${day}_${hours}h${minutes}m${seconds}s`;
