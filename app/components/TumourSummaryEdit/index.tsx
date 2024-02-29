@@ -236,7 +236,6 @@ const TumourSummaryEdit = ({
           );
         } catch (callSetError) {
           snackbar.error(`Error updating Tumour Summary: ${callSetError?.message}`);
-          console.error(callSetError);
         } finally {
           setIsApiCalling(false);
         }

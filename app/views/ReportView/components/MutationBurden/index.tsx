@@ -101,7 +101,7 @@ const TMBUR_FIELD_TO_LABEL = {
   totalGenomeIndels: 'Total genome Indels',
   genomeSnvTmb: 'Genome SNV TMB (mut/mb)',
   genomeIndelTmb: 'Genome Indel TMB (mut/mb)',
-  genomeTmb: 'Genome TMB (mut/mb) ',
+  genomeTmb: 'Genome TMB (mut/mb)',
   cdsBasesIn1To22AndXAndY: 'CDS bases in 1-22,X,Y',
   cdsSnvs: 'CDS SNVs',
   cdsIndels: 'CDS Indels',
