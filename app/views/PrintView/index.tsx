@@ -174,13 +174,21 @@ const Print = ({
         const hours = currentDate.getHours().toString().padStart(2, '0');
         const minutes = currentDate.getMinutes().toString().padStart(2, '0');
         const seconds = currentDate.getSeconds().toString().padStart(2, '0');
-        // const serverName = process.env.NODE_ENV === 'production' ? '' : process.env.NODE_ENV === 'development' ? '_iprdev' : '_iprstaging';
-
+        let serverName;
+        switch (process.env.NODE_ENV) {
+          case 'production':
+            serverName = '';
+            break;
+          case 'development':
+            serverName = '_iprdev';
+            break;
+          default:
+            serverName = '_iprstaging';
+            break;
+        }
         const formattedDate = `${year}-${month}-${day}_${hours}h${minutes}m${seconds}s`;
 
-        // document.title = `${report.patientId}${serverName}_${report.template.name}_report_${formattedDate}`;
-        document.title = `${report.patientId}_${templateName}_report_${formattedDate}`;
-
+        document.title = `${report.patientId}${serverName}_${templateName}_report_${formattedDate}`;
         window.print();
         setIsPrintDialogShown(true);
       };
