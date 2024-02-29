@@ -560,11 +560,11 @@ const DataTable = ({
               paginationAutoPageSize={isFullLength}
               paginationPageSize={MAX_VISIBLE_ROWS}
               autoSizePadding={1}
-              deltaRowDataMode={canReorder}
+              immutableData={canReorder}
               getRowNodeId={(data) => data.ident}
               onRowDragEnd={canReorder ? onRowDragEnd : null}
               editType="fullRow"
-              enableCellTextSelection
+              enableCellTextSelection={!showReorder}
               onFilterChanged={handleFilterAndSortChanged}
               onSortChanged={handleFilterAndSortChanged}
               noRowsOverlayComponent="NoRowsOverlay"
