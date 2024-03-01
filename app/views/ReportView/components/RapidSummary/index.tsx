@@ -134,7 +134,6 @@ const RapidSummary = ({
   const { report, setReport } = useContext(ReportContext);
   const { setIsSigned } = useContext(ConfirmContext);
   const { canEdit } = useReport();
-  // const { showConfirmDialog } = useConfirmDialog();
 
   const [signatures, setSignatures] = useState<SignatureType | null>();
   const [therapeuticAssociationResults, setTherapeuticAssociationResults] = useState<RapidVariantType[] | null>();
