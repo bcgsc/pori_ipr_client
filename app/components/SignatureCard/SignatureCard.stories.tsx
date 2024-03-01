@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { action } from '@storybook/addon-actions';
-import { Story } from '@storybook/react/types-6-0';
+import { StoryFn } from '@storybook/react';
 
 import ReportContext from '@/context/ReportContext';
 import SignatureCard, { SignatureCardProps } from '.';
@@ -24,7 +24,7 @@ const Template = (args) => {
   );
 };
 
-export const Unsigned: Story<SignatureCardProps> = Template.bind({});
+export const Unsigned: StoryFn<SignatureCardProps> = Template.bind({});
 
 Unsigned.args = {
   title: 'Author',
@@ -36,7 +36,7 @@ Unsigned.args = {
 
 const signedAt = '2021-12-02T22:05:15.326Z';
 
-export const Signed: Story<SignatureCardProps> = Template.bind({});
+export const Signed: StoryFn<SignatureCardProps> = Template.bind({});
 
 Signed.args = {
   title: 'Author',
@@ -59,6 +59,8 @@ Signed.args = {
     reviewerSignature: null,
     reviewerSignedAt: null,
     updatedAt: signedAt,
+    creatorSignature: null,
+    creatorSignedAt: signedAt,
   },
   type: 'author',
   isPrint: false,
