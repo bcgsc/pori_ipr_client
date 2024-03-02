@@ -255,6 +255,8 @@ type TmburType = {
   comments: string;
   genomeSnvTmb: number;
   genomeIndelTmb: number;
+  adjustedTmb: number;
+  adjustedTmbComment: string;
   kbCategory: string | null;
   kbMatches: KbMatchType[];
   msiScore: number;

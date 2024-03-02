@@ -103,6 +103,8 @@ const TumourSummaryEdit = ({
       setNewTmburMutData({
         genomeSnvTmb: tmburMutBur.genomeSnvTmb,
         genomeIndelTmb: tmburMutBur.genomeIndelTmb,
+        adjustedTmb: tmburMutBur.adjustedTmb,
+        adjustedTmbComment: tmburMutBur.adjustedTmbComment,
       });
     }
   }, [tmburMutBur]);
@@ -462,8 +464,28 @@ const TumourSummaryEdit = ({
         fullWidth
         type="number"
       />
+      <TextField
+        className="tumour-dialog__text-field"
+        label="Adjusted TMB"
+        value={newTmburMutData?.adjustedTmb ?? null}
+        name="adjustedTmb"
+        onChange={handleTmburChange}
+        variant="outlined"
+        fullWidth
+        type="number"
+      />
+      <TextField
+        className="tumour-dialog__text-field"
+        label="Adjusted TMB Comment"
+        value={newTmburMutData?.adjustedTmbComment ?? null}
+        name="adjustedTmbComment"
+        onChange={handleTmburChange}
+        variant="outlined"
+        fullWidth
+        type="text"
+      />
     </>
-  ), [newTmburMutData?.genomeSnvTmb, newTmburMutData?.genomeIndelTmb, handleTmburChange]);
+  ), [newTmburMutData?.genomeSnvTmb, newTmburMutData?.genomeIndelTmb, newTmburMutData?.adjustedTmb, newTmburMutData?.adjustedTmbComment, handleTmburChange]);
 
   return (
     <Dialog open={isOpen}>

@@ -349,7 +349,12 @@ const GenomicSummary = ({
           term: 'Genome TMB (mut/mb)', // float
           // Forced to do this due to javascript floating point issues
           value:
-            tmburMutBur ? (tmburMutBur.genomeSnvTmb + tmburMutBur.genomeIndelTmb).toFixed(2) : null,
+            tmburMutBur ? tmburMutBur?.adjustedTmb.toFixed(2) ?? (tmburMutBur.genomeSnvTmb + tmburMutBur.genomeIndelTmb).toFixed(2) : null,
+        },
+        {
+          term: 'Adjusted TMB Comment',
+          value:
+            tmburMutBur ? tmburMutBur?.adjustedTmbComment : null,
         },
       ]);
     }

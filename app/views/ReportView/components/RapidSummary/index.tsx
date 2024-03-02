@@ -352,9 +352,12 @@ const RapidSummary = ({
       },
       {
         term: 'Genome TMB (mut/mb)',
-        value: tmburMutBur
-          ? `${parseFloat((tmburMutBur.genomeSnvTmb + tmburMutBur.genomeIndelTmb).toFixed(12))}`
-          : null,
+        value: tmburMutBur ? tmburMutBur?.adjustedTmb.toFixed(2) ?? (tmburMutBur.genomeSnvTmb + tmburMutBur.genomeIndelTmb).toFixed(2) : null,
+      },
+      {
+        term: 'Adjusted TMB Comment',
+        value:
+          tmburMutBur ? tmburMutBur?.adjustedTmbComment : null,
       },
       {
         term: 'MSI Status',

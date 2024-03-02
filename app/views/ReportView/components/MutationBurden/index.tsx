@@ -102,6 +102,7 @@ const TMBUR_FIELD_TO_LABEL = {
   genomeSnvTmb: 'Genome SNV TMB (mut/mb)',
   genomeIndelTmb: 'Genome Indel TMB (mut/mb)',
   genomeTmb: 'Genome TMB (mut/mb)',
+  adjustedTmbComment: 'Adjusted TMB Comment',
   cdsBasesIn1To22AndXAndY: 'CDS bases in 1-22,X,Y',
   cdsSnvs: 'CDS SNVs',
   cdsIndels: 'CDS Indels',
@@ -163,7 +164,7 @@ const MutationBurden = ({
             // tmburResp additions
             setTmburMutBur({
               ...tmburResp,
-              genomeTmb: parseFloat((tmburResp.genomeSnvTmb + tmburResp.genomeIndelTmb).toFixed(12)),
+              genomeTmb: tmburResp?.adjustedTmb ?? parseFloat((tmburResp.genomeSnvTmb + tmburResp.genomeIndelTmb).toFixed(12)),
             });
           } catch (e) {
             // tmbur does not exist in records before this implementation, and no backfill will be done on the backend, silent fail this
