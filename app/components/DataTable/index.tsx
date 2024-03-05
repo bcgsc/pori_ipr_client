@@ -325,7 +325,7 @@ const DataTable = ({
       colApi.setColumnsVisible(hiddenColumns, false);
     }
 
-    if (rowData.length >= MAX_VISIBLE_ROWS && !isPrint && !isFullLength) {
+    if (rowData.length >= MAX_VISIBLE_ROWS && !isPrint && isFullLength) {
       gridDiv.current.style.height = MAX_TABLE_HEIGHT;
       gridApi?.setDomLayout('normal');
     }
