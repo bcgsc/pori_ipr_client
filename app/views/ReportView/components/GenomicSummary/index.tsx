@@ -359,7 +359,7 @@ const GenomicSummary = ({
         },
       ]);
     }
-  }, [history, microbial, primaryBurden, primaryComparator, isPrint, report, signatures, tCellCd8, msi, tmburMutBur, tumourSummary, report.captiv8Score]);
+  }, [history, microbial, primaryBurden, primaryComparator, isPrint, report, signatures, tCellCd8, msi, tmburMutBur, report.captiv8Score]);
 
   const handleChipDeleted = useCallback(async (chipIdent, type, comment) => {
     try {
