@@ -165,10 +165,8 @@ const MutationBurden = ({
             // tmburResp additions
             setTmburMutBur({
               ...tmburResp,
-              genomeSnvTmb: !tmburMutBur?.tmbHidden ? tmburResp.genomeSnvTmb : null,
-              genomeIndelTmb: !tmburMutBur?.tmbHidden ? tmburResp.genomeIndelTmb : null,
-              genomeTmb: tmburResp && !tmburMutBur?.tmbHidden ? parseFloat((tmburResp.genomeSnvTmb + tmburResp.genomeIndelTmb).toFixed(12)) : null,
-              adjustedTmb: tmburResp?.adjustedTmb && !tmburMutBur?.tmbHidden ? tmburResp?.adjustedTmb : null,
+              genomeTmb: tmburResp ? parseFloat((tmburResp.genomeSnvTmb + tmburResp.genomeIndelTmb).toFixed(12)) : null,
+              adjustedTmb: tmburResp?.adjustedTmb ?? null,
             });
           } catch (e) {
             // tmbur does not exist in records before this implementation, and no backfill will be done on the backend, silent fail this
