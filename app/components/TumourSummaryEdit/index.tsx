@@ -10,7 +10,11 @@ import {
   Button,
   Chip,
   Autocomplete,
+  FormControlLabel,
+  Checkbox,
 } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { pink } from '@mui/material/colors';
 import cloneDeep from 'lodash/cloneDeep';
 import api, { ApiCallSet } from '@/services/api';
 import ConfirmContext from '@/context/ConfirmContext';
@@ -103,6 +107,9 @@ const TumourSummaryEdit = ({
       setNewTmburMutData({
         genomeSnvTmb: tmburMutBur.genomeSnvTmb,
         genomeIndelTmb: tmburMutBur.genomeIndelTmb,
+        adjustedTmb: tmburMutBur.adjustedTmb,
+        adjustedTmbComment: tmburMutBur.adjustedTmbComment,
+        tmbHidden: tmburMutBur.tmbHidden,
       });
     }
   }, [tmburMutBur]);
@@ -133,8 +140,29 @@ const TumourSummaryEdit = ({
     setTmburMutDirty(true);
   }, []);
 
+  const handleAdjustedTmbCommentChange = useCallback(({ target: { value, name } }) => {
+    setNewTmburMutData((tmb) => ({
+      ...tmb,
+      [name]: value,
+    }));
+    setTmburMutDirty(true);
+  }, []);
+
+  const handleAdjustedTmbVisibleChange = useCallback(({ target: { checked, name } }) => {
+    setNewTmburMutData((tmb) => ({
+      ...tmb,
+      [name]: checked,
+    }));
+    setTmburMutDirty(true);
+  }, []);
+
   const handleClose = useCallback(async (isSaved) => {
     let callSet = null;
+    if (!!newTmburMutData.adjustedTmb && !newTmburMutData.adjustedTmbComment) {
+      snackbar.warning('Please add a comment on the adjusted TMB');
+      isSaved = false;
+      onClose(false);
+    }
     if (isSaved) {
       setIsApiCalling(true);
       const apiCalls = [];
@@ -462,8 +490,49 @@ const TumourSummaryEdit = ({
         fullWidth
         type="number"
       />
+      <TextField
+        className="tumour-dialog__text-field"
+        label="Adjusted TMB"
+        value={newTmburMutData?.adjustedTmb ?? null}
+        name="adjustedTmb"
+        onChange={handleTmburChange}
+        variant="outlined"
+        fullWidth
+        type="number"
+      />
+      <TextField
+        className="tumour-dialog__text-field"
+        label="Adjusted TMB Comment"
+        value={newTmburMutData?.adjustedTmbComment ?? ''}
+        name="adjustedTmbComment"
+        disabled={!newTmburMutData?.adjustedTmb && !newTmburMutData?.adjustedTmbComment}
+        required={!!newTmburMutData?.adjustedTmb}
+        onChange={handleAdjustedTmbCommentChange}
+        variant="outlined"
+        fullWidth
+        type="text"
+      />
+      <FormControlLabel
+        className="tumour-dialog__check-box"
+        control={(
+          <Checkbox
+            icon={<Visibility />}
+            checkedIcon={<VisibilityOff />}
+            checked={newTmburMutData?.tmbHidden}
+            name="tmbHidden"
+            onChange={handleAdjustedTmbVisibleChange}
+            sx={{
+              color: 'default',
+              '&.Mui-checked': {
+                color: pink[800],
+              },
+            }}
+          />
+        )}
+        label="Show/Hide TMB Score"
+      />
     </>
-  ), [newTmburMutData?.genomeSnvTmb, newTmburMutData?.genomeIndelTmb, handleTmburChange]);
+  ), [newTmburMutData?.genomeSnvTmb, newTmburMutData?.genomeIndelTmb, newTmburMutData?.adjustedTmb, newTmburMutData?.adjustedTmbComment, newTmburMutData?.tmbHidden, handleTmburChange, handleAdjustedTmbCommentChange, handleAdjustedTmbVisibleChange]);
 
   return (
     <Dialog open={isOpen}>
