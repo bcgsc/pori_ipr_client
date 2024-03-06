@@ -351,13 +351,15 @@ const RapidSummary = ({
         value: svBurden,
       },
       {
-        term: 'Genome TMB (mut/mb)',
-        value: tmburMutBur ? tmburMutBur?.adjustedTmb.toFixed(2) ?? (tmburMutBur.genomeSnvTmb + tmburMutBur.genomeIndelTmb).toFixed(2) : null,
+        term:
+          tmburMutBur?.adjustedTmb ? 'Adjusted TMB' : 'Genome TMB (mut/mb)',
+        value:
+          tmburMutBur && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmb?.toFixed(2) ?? (tmburMutBur.genomeSnvTmb + tmburMutBur.genomeIndelTmb).toFixed(2) : null,
       },
       {
         term: 'Adjusted TMB Comment',
         value:
-          tmburMutBur ? tmburMutBur?.adjustedTmbComment : null,
+          tmburMutBur?.adjustedTmbComment && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmbComment : null,
       },
       {
         term: 'MSI Status',

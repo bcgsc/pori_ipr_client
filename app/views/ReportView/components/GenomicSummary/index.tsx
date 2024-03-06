@@ -346,19 +346,20 @@ const GenomicSummary = ({
             : null,
         },
         {
-          term: 'Genome TMB (mut/mb)', // float
+          term:
+            tmburMutBur?.adjustedTmb ? 'Adjusted TMB (mut/mb)' : 'Genome TMB (mut/mb)', // float
           // Forced to do this due to javascript floating point issues
           value:
-            tmburMutBur ? tmburMutBur?.adjustedTmb.toFixed(2) ?? (tmburMutBur.genomeSnvTmb + tmburMutBur.genomeIndelTmb).toFixed(2) : null,
+            tmburMutBur && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmb?.toFixed(2) ?? (tmburMutBur.genomeSnvTmb + tmburMutBur.genomeIndelTmb).toFixed(2) : null,
         },
         {
           term: 'Adjusted TMB Comment',
           value:
-            tmburMutBur ? tmburMutBur?.adjustedTmbComment : null,
+            tmburMutBur?.adjustedTmbComment && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmbComment : null,
         },
       ]);
     }
-  }, [history, microbial, primaryBurden, primaryComparator, isPrint, report, signatures, tCellCd8, msi, tmburMutBur, report.captiv8Score]);
+  }, [history, microbial, primaryBurden, primaryComparator, isPrint, report, signatures, tCellCd8, msi, tmburMutBur, tumourSummary, report.captiv8Score]);
 
   const handleChipDeleted = useCallback(async (chipIdent, type, comment) => {
     try {
