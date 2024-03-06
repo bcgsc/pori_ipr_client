@@ -2,6 +2,7 @@ import { SummaryProps } from '@/commonComponents';
 import React, { lazy } from 'react';
 
 const GenomicSummary = lazy(() => import('../GenomicSummary'));
+const KeyAlterations = lazy(() => import('../GenomicSummary/components/KeyAlterations'));
 const ProbeSummary = lazy(() => import('../ProbeSummary'));
 const PharmacoGenomicSummary = lazy(() => import('../PharmacoGenomicSummary'));
 const RapidSummary = lazy(() => import('../RapidSummary'));
@@ -28,8 +29,23 @@ const Summary = ({
     );
   }
 
+  if (templateName === 'genomicPatientandTumour') {
+    return (
+      <GenomicSummary {...props} />
+    );
+  }
+
+  if (templateName === 'genomicAlterations') {
+    return (
+      <KeyAlterations />
+    );
+  }
+
   return (
-    <GenomicSummary {...props} />
+    <>
+      <GenomicSummary {...props} />
+      <KeyAlterations />
+    </>
   );
 };
 

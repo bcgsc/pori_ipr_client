@@ -1,0 +1,22 @@
+// Shared styling between both versions
+.genomic-summary, .genomic-summary--print {
+  &__alterations {
+    margin: 0 0 32px 0;
+  }
+}
+
+.genomic-summary {
+  margin: 20px auto;
+  padding: 0 20px;
+}
+
+.genomic-summary--print {
+  margin: 0 auto;
+  padding: 0 20px;
+
+  &__alterations {
+    &-title {
+      margin: 0 0 8px;
+    }
+  }
+}

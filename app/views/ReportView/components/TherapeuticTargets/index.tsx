@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import React, {
   useState, useEffect, useContext, useCallback,
 } from 'react';
@@ -208,6 +209,7 @@ const Therapeutic = ({
           Potential Therapeutic Targets
         </Typography>
         <PrintTable
+          fullWidth
           data={therapeuticData}
           columnDefs={columnDefs}
         />
@@ -218,6 +220,7 @@ const Therapeutic = ({
           Potential Chemoresistance
         </Typography>
         <PrintTable
+          fullWidth
           data={chemoresistanceData}
           columnDefs={columnDefs}
         />
