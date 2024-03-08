@@ -321,7 +321,7 @@ const GenomicSummary = ({
         },
         {
           term: 'Mutation Burden',
-          value: primaryBurden && primaryBurden.totalMutationsPerMb !== null ? `${primaryBurden.totalMutationsPerMb} mut/Mb` : null,
+          value: primaryBurden && primaryBurden.totalMutationsPerMb !== null && (!tmburMutBur?.adjustedTmb || tmburMutBur.tmbHidden === true) ? `${primaryBurden.totalMutationsPerMb} Mut/Mb` : null,
         },
         {
           term: `SV Burden (${primaryComparator ? primaryComparator.name : 'primary'})`,
@@ -347,7 +347,7 @@ const GenomicSummary = ({
         },
         {
           term:
-            tmburMutBur?.adjustedTmb ? 'Adjusted TMB (mut/mb)' : 'Genome TMB (mut/mb)', // float
+            tmburMutBur?.adjustedTmb ? 'Adjusted TMB (Mut/Mb)' : 'Genome TMB (Mut/Mb)', // float
           // Forced to do this due to javascript floating point issues
           value:
             tmburMutBur && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmb?.toFixed(2) ?? (tmburMutBur.genomeSnvTmb + tmburMutBur.genomeIndelTmb).toFixed(2) : null,
