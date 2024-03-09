@@ -37,14 +37,14 @@ const Summary = ({
 
   if (templateName === 'genomicAlterations') {
     return (
-      <KeyAlterations />
+      <KeyAlterations {...props} />
     );
   }
 
   return (
     <>
       <GenomicSummary {...props} />
-      <KeyAlterations />
+      <KeyAlterations {...props} />
     </>
   );
 };
