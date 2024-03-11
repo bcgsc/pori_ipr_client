@@ -35,8 +35,9 @@
 
   &__none {
     border-bottom: 1px solid $palette__text--hint;
-    padding: 10px 0;
+    padding: 3px 4px;
     text-align: center;
+    border-bottom: 0.5px solid lightgray;
   }
 
   &__cell {
