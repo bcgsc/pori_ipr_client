@@ -8,6 +8,7 @@ import {
 
 import DataTable from '@/components/DataTable';
 import ReportContext from '@/context/ReportContext';
+import useReport from '@/hooks/useReport';
 import api, { ApiCallSet } from '@/services/api';
 import { CNVSTATE, EXPLEVEL } from '@/constants';
 import Image from '@/components/Image';
@@ -15,6 +16,7 @@ import ImageType from '@/components/Image/types';
 import snackbar from '@/services/SnackbarUtils';
 import { CopyNumberType } from '@/common';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import EditDialog from './components/EditDialog';
 import columnDefs from './columnDefs';
 
 import './index.scss';
@@ -50,6 +52,7 @@ const CopyNumber = ({
   setIsLoading,
 }: CopyNumberProps): JSX.Element => {
   const { report } = useContext(ReportContext);
+  const { canEdit } = useReport();
   const theme = useTheme();
   const [images, setImages] = useState<ImageType[]>([]);
   const [circos, setCircos] = useState<ImageType>();
@@ -70,6 +73,8 @@ const CopyNumber = ({
       } return accumulator;
     }, []),
   );
+  const [showDialog, setShowDialog] = useState(false);
+  const [editData, setEditData] = useState<CopyNumberType | null>();
 
   useEffect(() => {
     if (report) {
@@ -187,6 +192,16 @@ const CopyNumber = ({
     maxHeight: `calc(100vh - ${theme.mixins.toolbar.minHeight as number * 3}px)`,
   }), [theme.mixins?.toolbar?.minHeight]);
 
+  const handleEditStart = (rowData: CopyNumberType) => {
+    setShowDialog(true);
+    setEditData(rowData);
+  };
+
+  const handleEditClose = () => {
+    setShowDialog(false);
+    setEditData(null);
+  };
+
   const handleVisibleColsChange = (change) => setVisibleCols(change);
 
   return (
@@ -195,6 +210,14 @@ const CopyNumber = ({
       {!isLoading && (
         <>
           <Typography variant="h3" className="copy-number__title">Summary of Copy Number Events</Typography>
+          {showDialog && (
+            <EditDialog
+              editData={editData}
+              isOpen={showDialog}
+              onClose={handleEditClose}
+              showErrorSnackbar={snackbar.error}
+            />
+          )}
           {circos ? (
             <div className="copy-number__circos">
               <Image
@@ -218,6 +241,8 @@ const CopyNumber = ({
                     demoDescription={INFO_BUBBLES[key]}
                     visibleColumns={visibleCols}
                     syncVisibleColumns={handleVisibleColsChange}
+                    canEdit={canEdit}
+                    onEdit={handleEditStart}
                   />
                 </React.Fragment>
               ))}
