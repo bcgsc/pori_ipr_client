@@ -13,9 +13,11 @@ import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
 import Image from '@/components/Image';
 import ReportContext from '@/context/ReportContext';
+import useReport from '@/hooks/useReport';
 import ImageType from '@/components/Image/types';
 import { StructuralVariantType } from '@/common';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import EditDialog from './components/EditDialog';
 import columnDefs from './columnDefs';
 
 import './index.scss';
@@ -43,6 +45,7 @@ const StructuralVariants = ({
   setIsLoading,
 }: StructuralVariantsProps): JSX.Element => {
   const { report } = useContext(ReportContext);
+  const { canEdit } = useReport();
   const theme = useTheme();
   const [svs, setSvs] = useState<StructuralVariantType[]>([]);
   const [groupedSvs, setGroupedSvs] = useState({
@@ -62,6 +65,9 @@ const StructuralVariants = ({
       } return accumulator;
     }, []),
   );
+
+  const [showDialog, setShowDialog] = useState(false);
+  const [editData, setEditData] = useState<StructuralVariantType | null>();
 
   useEffect(() => {
     if (report) {
@@ -161,6 +167,16 @@ const StructuralVariants = ({
     setTabIndex(newValue);
   };
 
+  const handleEditStart = (rowData: StructuralVariantType) => {
+    setShowDialog(true);
+    setEditData(rowData);
+  };
+
+  const handleEditClose = () => {
+    setShowDialog(false);
+    setEditData(null);
+  };
+
   const handleVisibleColsChange = (change) => setVisibleCols(change);
 
   return (
@@ -171,6 +187,14 @@ const StructuralVariants = ({
           <Typography variant="h3" className="structural-variants__title">
             Summary of Structural Events
           </Typography>
+          {showDialog && (
+            <EditDialog
+              editData={editData}
+              isOpen={showDialog}
+              onClose={handleEditClose}
+              showErrorSnackbar={snackbar.error}
+            />
+          )}
           {(genomeCircos || transcriptomeCircos) ? (
             <>
               <Tabs centered value={tabIndex} onChange={handleTabChange}>
@@ -215,6 +239,8 @@ const StructuralVariants = ({
               syncVisibleColumns={handleVisibleColsChange}
               canToggleColumns
               demoDescription={INFO_BUBBLES[key]}
+              canEdit={canEdit}
+              onEdit={handleEditStart}
             />
           ))}
         </>

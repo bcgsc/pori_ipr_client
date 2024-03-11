@@ -4,10 +4,14 @@ import React, {
 import { Typography, Paper } from '@mui/material';
 import DataTable from '@/components/DataTable';
 import api from '@/services/api';
+import snackbar from '@/services/SnackbarUtils';
 import DemoDescription from '@/components/DemoDescription';
 import ReportContext from '@/context/ReportContext';
+import useReport from '@/hooks/useReport';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import { ImageType } from '@/components/Image';
+import { ExpOutliersType } from '@/common';
+import EditDialog from './components/EditDialog';
 import columnDefs from './columnDefs';
 import processExpression from './processData';
 import {
@@ -59,12 +63,16 @@ const Expression = ({
   setIsLoading,
 }: ExpressionProps): JSX.Element => {
   const { report } = useContext(ReportContext);
+  const { canEdit } = useReport();
   const [tissueSites, setTissueSites] = useState<TissueSitesType>();
   const [comparators, setComparators] = useState<ComparatorsType>();
   const [expOutliers, setExpOutliers] = useState<ProcessedExpressionOutliers>();
   const [visibleCols, setVisibleCols] = useState<string[]>(
     columnDefs.reduce(getVisibleColsFromColDefReducer, []),
   );
+
+  const [showDialog, setShowDialog] = useState(false);
+  const [editData, setEditData] = useState<ExpOutliersType | null>();
 
   useEffect(() => {
     if (report && report.ident) {
@@ -159,6 +167,16 @@ const Expression = ({
     }
   }, [report]);
 
+  const handleEditStart = (rowData: ExpOutliersType) => {
+    setShowDialog(true);
+    setEditData(rowData);
+  };
+
+  const handleEditClose = () => {
+    setShowDialog(false);
+    setEditData(null);
+  };
+
   return (!isLoading && (
     <>
       <div className="expression--padded">
@@ -218,6 +236,14 @@ const Expression = ({
           <Typography align="center">No comparator data to display</Typography>
         )}
       </div>
+      {showDialog && (
+      <EditDialog
+        editData={editData}
+        isOpen={showDialog}
+        onClose={handleEditClose}
+        showErrorSnackbar={snackbar.error}
+      />
+      )}
       {expOutliers && (Object.entries(TITLE_MAP).map(([key, titleText]) => (
         <DataTable
           key={key}
@@ -228,6 +254,8 @@ const Expression = ({
           syncVisibleColumns={setVisibleCols}
           canToggleColumns
           demoDescription={INFO_BUBBLES[key]}
+          canEdit={canEdit}
+          onEdit={handleEditStart}
         />
       )))}
     </>
