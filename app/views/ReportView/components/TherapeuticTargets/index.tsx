@@ -49,11 +49,13 @@ const filterType = (
 
 type TherapeuticProps = {
   isPrint?: boolean;
+  printVersion?: 'stable' | 'beta' | null;
 } & WithLoadingInjectedProps;
 
 const Therapeutic = ({
   isLoading,
   isPrint = false,
+  printVersion = null,
   setIsLoading,
 }: TherapeuticProps): JSX.Element => {
   const [
@@ -199,9 +201,9 @@ const Therapeutic = ({
     }
   }, [chemoresistanceData, therapeuticData, report]);
 
-  if (isPrint) {
+  if (isPrint && printVersion === 'stable') {
     return (
-      <div>
+      <div className="therapeutic-print">
         <Typography
           className="therapeutic-print__title"
           variant="h3"
@@ -216,6 +218,38 @@ const Therapeutic = ({
         <Typography
           className="therapeutic-print__title"
           variant="h3"
+        >
+          Potential Chemoresistance
+        </Typography>
+        <PrintTable
+          fullWidth
+          data={chemoresistanceData}
+          columnDefs={columnDefs}
+        />
+      </div>
+    );
+  }
+
+  if (isPrint && printVersion === 'beta') {
+    return (
+      <div className="therapeutic-print">
+        <Typography
+          fontWeight="bold"
+          variant="h5"
+          display="inline"
+        >
+          Potential Therapeutic Targets
+        </Typography>
+        <PrintTable
+          fullWidth
+          data={therapeuticData}
+          columnDefs={columnDefs}
+        />
+        <br />
+        <Typography
+          fontWeight="bold"
+          variant="h5"
+          display="inline"
         >
           Potential Chemoresistance
         </Typography>

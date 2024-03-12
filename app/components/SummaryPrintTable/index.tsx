@@ -18,7 +18,7 @@ const SummaryPrintTable = ({
   renderValue = null,
 }: SummaryPrintTableProps) => (
   <Table padding="none" size="small">
-    {data.map(({ [labelKey]: label, [valueKey]: value }) => (
+    {data.filter((key) => (key.value !== null && key.value !== '')).map(({ [labelKey]: label, [valueKey]: value }) => (
       <TableRow>
         <TableCell><Typography variant="body2" fontWeight="bold">{label}</Typography></TableCell>
         <TableCell sx={{ paddingLeft: 1 }}>

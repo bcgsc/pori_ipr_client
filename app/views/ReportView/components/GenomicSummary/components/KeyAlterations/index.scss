@@ -15,6 +15,9 @@
   padding: 0 20px;
 
   &__alterations {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    
     &-title {
       margin: 0 0 8px;
     }

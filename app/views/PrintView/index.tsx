@@ -207,10 +207,7 @@ const Print = ({
             <Summary templateName="genomicPatientandTumour" isPrint printVersion={printVersion} loadedDispatch={dispatch} />
           )}
           {template?.sections.includes('therapeutic-targets') && (
-            <>
-              <TherapeuticTargets isPrint loadedDispatch={dispatch} />
-              <PageBreak />
-            </>
+            <TherapeuticTargets isPrint printVersion={printVersion} loadedDispatch={dispatch} />
           )}
           {template?.sections.includes('summary') && template?.name === 'genomic' && ( // Continuing key alterations after therapeutic targets for genomic reports
             <>
