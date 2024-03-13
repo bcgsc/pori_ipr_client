@@ -13,7 +13,6 @@ import sortBy from 'lodash/sortBy';
 
 import api, { ApiCallSet } from '@/services/api';
 import { formatDate } from '@/utils/date';
-import useReport from '@/hooks/useReport';
 import ConfirmContext from '@/context/ConfirmContext';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import DemoDescription from '@/components/DemoDescription';
@@ -27,8 +26,8 @@ import TumourSummaryEdit from '@/components/TumourSummaryEdit';
 import {
   TumourSummaryType, MicrobialType, ImmuneType, MutationBurdenType, TmburType, MsiType,
 } from '@/common';
-import { SummaryProps } from '@/commonComponents';
 import SummaryPrintTable from '@/components/SummaryPrintTable';
+import useReport from '@/hooks/useReport';
 
 import VariantChips from './components/VariantChips';
 import VariantCounts from './components/VariantCounts';
@@ -72,7 +71,11 @@ const customTypeSort = (variant) => {
   return 3;
 };
 
-type GenomicSummaryProps = Omit<SummaryProps, 'templateName'> & WithLoadingInjectedProps;
+type GenomicSummaryProps = {
+  loadedDispatch?: ({ type }: { type: string }) => void;
+  isPrint: boolean;
+  printVersion?: 'stable' | 'beta' | null;
+} & WithLoadingInjectedProps;
 
 const GenomicSummary = ({
   isPrint = false,
@@ -318,7 +321,7 @@ const GenomicSummary = ({
         },
         {
           term: 'Mutation Burden',
-          value: primaryBurden && primaryBurden.totalMutationsPerMb !== null ? `${primaryBurden.totalMutationsPerMb} mut/Mb` : null,
+          value: primaryBurden && primaryBurden.totalMutationsPerMb !== null && (!tmburMutBur?.adjustedTmb || tmburMutBur.tmbHidden === true) ? `${primaryBurden.totalMutationsPerMb} Mut/Mb` : null,
         },
         {
           term: `SV Burden (${primaryComparator ? primaryComparator.name : 'primary'})`,
@@ -343,10 +346,16 @@ const GenomicSummary = ({
             : null,
         },
         {
-          term: 'Genome TMB (mut/mb)', // float
+          term:
+            tmburMutBur?.adjustedTmb ? 'Adjusted TMB (Mut/Mb)' : 'Genome TMB (Mut/Mb)', // float
           // Forced to do this due to javascript floating point issues
           value:
-            tmburMutBur ? (tmburMutBur.genomeSnvTmb + tmburMutBur.genomeIndelTmb).toFixed(2) : null,
+            tmburMutBur && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmb?.toFixed(2) ?? (tmburMutBur.genomeSnvTmb + tmburMutBur.genomeIndelTmb).toFixed(2) : null,
+        },
+        {
+          term: 'Adjusted TMB Comment',
+          value:
+            tmburMutBur?.adjustedTmbComment && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmbComment : null,
         },
       ]);
     }
@@ -368,7 +377,6 @@ const GenomicSummary = ({
         snackbar.success('Entry deleted');
       }
     } catch (err) {
-      console.error(err);
       snackbar.error('Entry NOT deleted due to an error');
     }
   }, [report, isSigned, showConfirmDialog]);
@@ -384,7 +392,6 @@ const GenomicSummary = ({
       setVariants((prevVal) => ([...prevVal, categorizedVariantEntry]));
       snackbar.success('Entry added');
     } catch (err) {
-      console.error(err);
       snackbar.error('Entry NOT added due to an error');
     }
   }, [report]);
@@ -610,7 +617,7 @@ const GenomicSummary = ({
         {dataSection}
       </div>
     );
-  }, [canEdit, classNamePrefix, handleTumourSummaryEditClose, microbial, primaryBurden, tmburMutBur, report, showTumourSummaryEdit, tumourSummary, printVersion]);
+  }, [canEdit, classNamePrefix, handleTumourSummaryEditClose, microbial, tCellCd8, primaryBurden, tmburMutBur, report, showTumourSummaryEdit, tumourSummary, printVersion]);
 
   const alterationsSection = useMemo(() => {
     let titleSection = (

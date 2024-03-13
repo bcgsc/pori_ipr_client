@@ -3,6 +3,7 @@ import React, {
 } from 'react';
 import orderBy from 'lodash/orderBy';
 import { Typography } from '@mui/material';
+import { cloneDeep } from 'lodash';
 
 import DataTable from '@/components/DataTable';
 import useReport from '@/hooks/useReport';
@@ -64,7 +65,26 @@ const Therapeutic = ({
   ] = useState<TherapeuticType[] | Partial<TherapeuticType>[]>([]);
 
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [editData, setEditData] = useState();
+  const [editData, setEditData] = useState<TherapeuticType>({
+    ident: null,
+    createdAt: null,
+    updatedAt: null,
+    type: null,
+    rank: null,
+    gene: null,
+    geneGraphkbId: null,
+    variant: null,
+    variantGraphkbId: null,
+    therapy: null,
+    therapyGraphkbId: null,
+    context: null,
+    contextGraphkbId: null,
+    evidenceLevel: null,
+    iprEvidenceLevel: null,
+    evidenceLevelGraphkbId: null,
+    kbStatementIds: null,
+    notes: null,
+  });
 
   const { canEdit } = useReport();
   const { report } = useContext(ReportContext);
@@ -108,7 +128,7 @@ const Therapeutic = ({
     try {
       setShowDialog(false);
       let tableData: TherapeuticType[] | Partial<TherapeuticType>[];
-      let setter: React.Dispatch<React.SetStateAction<TherapeuticType[]>>;
+      let setter: React.Dispatch<React.SetStateAction<TherapeuticType[] | Partial<TherapeuticType>[]>>;
 
       if (newData) {
         if (newData.type === 'therapeutic') {
@@ -142,11 +162,18 @@ const Therapeutic = ({
 
       if (tableType === 'therapeutic') {
         setter = setTherapeuticData;
-        data = therapeuticData;
+        data = cloneDeep(therapeuticData);
       } else {
         setter = setChemoresistanceData;
-        data = chemoresistanceData;
+        data = cloneDeep(chemoresistanceData);
       }
+
+      // For datafixes on the front-end, bugs introduced due to data inconsistencies between indexed by 0 or 1
+      // This forces indexed by 0
+      data = data.sort((a, b) => a.rank - b.rank).map((row, idx) => {
+        row.rank = idx;
+        return row;
+      });
 
       const newData = data.map((row) => {
         if (row.rank === oldRank) {
@@ -162,6 +189,7 @@ const Therapeutic = ({
         return row;
       });
 
+      // @ts-expect-error - specialized data object vs a general API call
       await api.put(`/reports/${report.ident}/therapeutic-targets`, newData).request();
       setter(newData);
       snackbar.success('Row updated');

@@ -166,6 +166,7 @@ const Print = ({
       const showPrint = async () => {
         const paged = new Previewer();
         await paged.preview(document.getElementById('root'), ['index.css'], document.body);
+        const templateName = report.template.name === 'probe' ? 'targeted_gene' : report.template.name;
         const currentDate = new Date();
         const year = currentDate.getFullYear();
         const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
@@ -173,11 +174,21 @@ const Print = ({
         const hours = currentDate.getHours().toString().padStart(2, '0');
         const minutes = currentDate.getMinutes().toString().padStart(2, '0');
         const seconds = currentDate.getSeconds().toString().padStart(2, '0');
-        const { timeZone } = new Intl.DateTimeFormat().resolvedOptions();
+        let serverName;
+        switch (process.env.NODE_ENV) {
+          case 'development':
+            serverName = '_iprdev';
+            break;
+          case 'staging':
+            serverName = '_iprstaging';
+            break;
+          default:
+            serverName = '';
+            break;
+        }
+        const formattedDate = `${year}-${month}-${day}_${hours}h${minutes}m${seconds}s`;
 
-        const formattedDate = `${year}-${month}-${day}-${hours}:${minutes}:${seconds}-${timeZone.replace(/\//g, '_')}`;
-
-        document.title = `${report.patientId}_${report.template.name}_${formattedDate}`;
+        document.title = `${report.patientId}${serverName}_${templateName}_report_${formattedDate}`;
         window.print();
         setIsPrintDialogShown(true);
       };
@@ -228,7 +239,11 @@ const Print = ({
     return null;
   }, [report, theme, template, printVersion]);
 
-  const reportContextValue = useMemo(() => ({ report, setReport }), [report, setReport]);
+  const reportContextValue = useMemo(() => ({
+    canEdit: false,
+    report,
+    setReport,
+  }), [report, setReport]);
 
   return (
     <ReportContext.Provider value={reportContextValue}>

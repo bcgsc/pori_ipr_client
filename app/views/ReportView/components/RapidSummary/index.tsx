@@ -7,7 +7,6 @@ import {
   Grid,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import cloneDeep from 'lodash/cloneDeep';
 
 import api, { ApiCallSet } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
@@ -30,7 +29,6 @@ import DescriptionList from '@/components/DescriptionList';
 import {
   KbMatchType, TumourSummaryType, ImmuneType, MutationBurdenType, MicrobialType, TmburType,
 } from '@/common';
-import useConfirmDialog from '@/hooks/useConfirmDialog';
 import { Box } from '@mui/system';
 import {
   therapeuticAssociationColDefs, cancerRelevanceColDefs, sampleColumnDefs, getGenomicEvent,
@@ -134,9 +132,8 @@ const RapidSummary = ({
   setIsLoading,
 }: RapidSummaryProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
-  const { isSigned, setIsSigned } = useContext(ConfirmContext);
+  const { setIsSigned } = useContext(ConfirmContext);
   const { canEdit } = useReport();
-  const { showConfirmDialog } = useConfirmDialog();
 
   const [signatures, setSignatures] = useState<SignatureType | null>();
   const [therapeuticAssociationResults, setTherapeuticAssociationResults] = useState<RapidVariantType[] | null>();
@@ -281,7 +278,6 @@ const RapidSummary = ({
           ]);
         } catch (err) {
           snackbar.error(`Unknown error: ${err}`);
-          console.error(err);
         } finally {
           setIsLoading(false);
           if (loadedDispatch) {
@@ -351,14 +347,23 @@ const RapidSummary = ({
           : null,
       },
       {
+        term: 'Mutation Burden',
+        value: primaryBurden && primaryBurden.totalMutationsPerMb !== null && (!tmburMutBur?.adjustedTmb || tmburMutBur.tmbHidden === true) ? `${primaryBurden.totalMutationsPerMb} Mut/Mb` : null,
+      },
+      {
         term: 'SV Burden (POG Average)',
         value: svBurden,
       },
       {
-        term: 'Genome TMB (mut/mb)',
-        value: tmburMutBur
-          ? `${parseFloat((tmburMutBur.genomeSnvTmb + tmburMutBur.genomeIndelTmb).toFixed(12))}`
-          : null,
+        term:
+          tmburMutBur?.adjustedTmb ? 'Adjusted TMB (Mut/Mb)' : 'Genome TMB (Mut/Mb)',
+        value:
+          tmburMutBur && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmb?.toFixed(2) ?? (tmburMutBur.genomeSnvTmb + tmburMutBur.genomeIndelTmb).toFixed(2) : null,
+      },
+      {
+        term: 'Adjusted TMB Comment',
+        value:
+          tmburMutBur?.adjustedTmbComment && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmbComment : null,
       },
       {
         term: 'MSI Status',
@@ -368,8 +373,6 @@ const RapidSummary = ({
   }, [microbial, primaryBurden, tmburMutBur, report.m1m2Score, report.sampleInfo, report.tumourContent, tCellCd8?.percentile, tCellCd8?.score, report.captiv8Score]);
 
   const handlePatientEditClose = useCallback((
-    // TODO: Argument not being used, leading to OnClose flag on line 744 having too few arguments
-    isSaved: boolean,
     newPatientData: PatientInformationType,
     newReportData: ReportType,
   ) => {

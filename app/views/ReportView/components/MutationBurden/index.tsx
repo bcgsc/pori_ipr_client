@@ -99,18 +99,20 @@ const TMBUR_FIELD_TO_LABEL = {
   nonNBasesIn1To22AndXAndY: 'Non-N bases in 1-22,X,Y',
   totalGenomeSnvs: 'Total genome SNVs',
   totalGenomeIndels: 'Total genome Indels',
-  genomeSnvTmb: 'Genome SNV TMB (mut/mb)',
-  genomeIndelTmb: 'Genome Indel TMB (mut/mb)',
-  genomeTmb: 'Genome TMB (mut/mb) ',
+  genomeSnvTmb: 'Genome SNV TMB (Mut/Mb)',
+  genomeIndelTmb: 'Genome Indel TMB (Mut/Mb)',
+  genomeTmb: 'Genome TMB (Mut/Mb)',
+  adjustedTmb: 'Adjusted TMB (Mut/Mb)',
+  adjustedTmbComment: 'Adjusted TMB Comment',
   cdsBasesIn1To22AndXAndY: 'CDS bases in 1-22,X,Y',
   cdsSnvs: 'CDS SNVs',
   cdsIndels: 'CDS Indels',
-  cdsSnvTmb: 'CDS SNV TMB (mut/mb)',
-  cdsIndelTmb: 'CDS Indel TMB (mut/mb)',
+  cdsSnvTmb: 'CDS SNV TMB (Mut/Mb)',
+  cdsIndelTmb: 'CDS Indel TMB (Mut/Mb)',
   proteinSnvs: 'Protein SNVs',
   proteinIndels: 'Protein INDELs',
-  proteinSnvTmb: 'Protein SNV TMB (mut/mb)',
-  proteinIndelTmb: 'Protein Indel TMB (mut/mb)',
+  proteinSnvTmb: 'Protein SNV TMB (Mut/Mb)',
+  proteinIndelTmb: 'Protein Indel TMB (Mut/Mb)',
 };
 
 type MutationBurdenProps = WithLoadingInjectedProps;
@@ -163,7 +165,8 @@ const MutationBurden = ({
             // tmburResp additions
             setTmburMutBur({
               ...tmburResp,
-              genomeTmb: parseFloat((tmburResp.genomeSnvTmb + tmburResp.genomeIndelTmb).toFixed(12)),
+              genomeTmb: tmburResp ? parseFloat((tmburResp.genomeSnvTmb + tmburResp.genomeIndelTmb).toFixed(12)) : null,
+              adjustedTmb: tmburResp?.adjustedTmb ?? null,
             });
           } catch (e) {
             // tmbur does not exist in records before this implementation, and no backfill will be done on the backend, silent fail this
@@ -178,7 +181,7 @@ const MutationBurden = ({
 
       getData();
     }
-  }, [report, setIsLoading]);
+  }, [report, setIsLoading, tmburMutBur?.tmbHidden]);
 
   const getSectionHeader = (type) => {
     if (type === 'SNV') {
@@ -201,7 +204,7 @@ const MutationBurden = ({
               <TableCell style={{ border: 'none' }}>
                 <Typography variant="body2">{fieldLabel}</Typography>
               </TableCell>
-              <TableCell style={{ border: 'none' }}>
+              <TableCell style={{ border: 'none', overflowWrap: 'normal', maxWidth: '250px' }}>
                 <Typography variant="body2">{fieldValue}</Typography>
               </TableCell>
             </TableRow>
