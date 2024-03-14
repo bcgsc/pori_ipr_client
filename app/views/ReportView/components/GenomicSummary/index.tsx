@@ -319,10 +319,10 @@ const GenomicSummary = ({
           value: sigs,
           action: !isPrint ? () => history.push('mutation-signatures') : null,
         },
-        {
-          term: 'Mutation Burden',
-          value: primaryBurden && primaryBurden.totalMutationsPerMb !== null && (!tmburMutBur?.adjustedTmb || tmburMutBur.tmbHidden === true) ? `${primaryBurden.totalMutationsPerMb} Mut/Mb` : null,
-        },
+        // {
+        //   term: 'Mutation Burden',
+        //   value: primaryBurden && primaryBurden.totalMutationsPerMb !== null && (!tmburMutBur?.adjustedTmb || tmburMutBur.tmbHidden === true) ? `${primaryBurden.totalMutationsPerMb} Mut/Mb` : null,
+        // },
         {
           term: `SV Burden (${primaryComparator ? primaryComparator.name : 'primary'})`,
           value: svBurden,
