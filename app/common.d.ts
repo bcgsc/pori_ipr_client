@@ -314,6 +314,8 @@ type ImmuneType = {
   kbCategory: string | null;
   percentile: number | null;
   score: number | null;
+  pedsScore: number | null;
+  pedsScoreComment: string | null;
 } & RecordDefaults;
 
 type MicrobialType = {
