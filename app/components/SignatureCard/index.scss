@@ -20,10 +20,12 @@
   }
 
   &-print {
+
     &__group {
       display: inline-flex;
       flex-direction: column;
       margin: 0 auto;
+      max-width: 33%;
     }
 
     &__value {
