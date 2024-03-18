@@ -234,6 +234,7 @@ const Therapeutic = ({
     return (
       <div className="therapeutic-print">
         <Typography
+          className="therapeutic-print__title"
           fontWeight="bold"
           variant="h5"
           display="inline"
@@ -247,6 +248,7 @@ const Therapeutic = ({
         />
         <br />
         <Typography
+          className="therapeutic-print__title"
           fontWeight="bold"
           variant="h5"
           display="inline"

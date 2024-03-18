@@ -1,25 +1,29 @@
 // Shared styling between both versions
-.genomic-summary, .genomic-summary--print {
-  &__alterations {
+.key-alterations, .key-alterations-print {
+  &__stable {
     margin: 0 0 32px 0;
   }
 }
 
-.genomic-summary {
+.key-alterations {
   margin: 20px auto;
   padding: 0 20px;
 }
 
-.genomic-summary--print {
+.key-alterations-print {
   margin: 0 auto;
   padding: 0 20px;
 
-  &__alterations {
+  &__stable {
     break-inside: avoid;
     page-break-inside: avoid;
     
     &-title {
       margin: 0 0 8px;
+    }
+
+    &-content {
+      padding: 0 16px;
     }
   }
 }

@@ -78,7 +78,7 @@ const KeyAlterations = ({
     expression: 0,
   });
 
-  const classNamePrefix = printVersion ? 'genomic-summary--print' : 'genomic-summary';
+  const classNamePrefix = printVersion ? 'key-alterations-print' : 'key-alterations';
 
   useEffect(() => {
     if (report) {
@@ -162,12 +162,14 @@ const KeyAlterations = ({
 
   const alterationsSection = useMemo(() => {
     let titleSection = (
-      <Typography variant="h3">
-        Key Genomic and Transcriptomic Alterations Identified
-      </Typography>
+      <div className={`${classNamePrefix}__stable-title`}>
+        <Typography variant="h3">
+          Key Genomic and Transcriptomic Alterations Identified
+        </Typography>
+      </div>
     );
     let dataSection = (
-      <>
+      <div className={`${classNamePrefix}__stable-content`}>
         <VariantCounts
           filter={variantFilter}
           counts={variantCounts}
@@ -180,7 +182,7 @@ const KeyAlterations = ({
           onChipAdded={handleChipAdded}
           isPrint={Boolean(printVersion)}
         />
-      </>
+      </div>
     );
 
     if (printVersion === 'beta') {
@@ -212,13 +214,9 @@ const KeyAlterations = ({
     }
 
     return (
-      <div className={`${classNamePrefix}__alterations`}>
-        <div className={`${classNamePrefix}__alterations-title`}>
-          {titleSection}
-        </div>
-        <div className={`${classNamePrefix}__alterations-content`}>
-          {dataSection}
-        </div>
+      <div className={`${classNamePrefix}__stable`}>
+        {titleSection}
+        {dataSection}
       </div>
     );
   }, [canEdit, classNamePrefix, handleChipAdded, handleChipDeleted, printVersion, variantCounts, variantFilter, variants]);
