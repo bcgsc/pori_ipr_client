@@ -15,8 +15,6 @@
   padding: 0 20px;
 
   &__stable {
-    break-inside: avoid;
-    page-break-inside: avoid;
     
     &-title {
       margin: 0 0 8px;
@@ -25,5 +23,17 @@
     &-content {
       padding: 0 16px;
     }
+  }
+
+  &__beta {
+
+    &-content {
+      margin-top: 8px;
+    }
+  }
+
+  &__render {
+    break-inside: avoid;
+    page-break-inside: avoid;
   }
 }

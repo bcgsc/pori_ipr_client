@@ -199,22 +199,24 @@ const KeyAlterations = ({
           });
         });
         dataSection = (
-          <SummaryPrintTable
-            data={categorizedDataArray}
-            labelKey="key"
-            valueKey="value"
-            renderValue={(val) => val.map(({ geneVariant }) => (
-              <Box sx={{ paddingLeft: 0.75, display: 'inline-block' }}>
-                <Typography variant="caption">{geneVariant}</Typography>
-              </Box>
-            ))}
-          />
+          <div className={`${classNamePrefix}__beta-content`}>
+            <SummaryPrintTable
+              data={categorizedDataArray}
+              labelKey="key"
+              valueKey="value"
+              renderValue={(val) => val.map(({ geneVariant }) => (
+                <Box sx={{ paddingLeft: 0.75, display: 'inline-block' }}>
+                  <Typography variant="caption">{geneVariant}</Typography>
+                </Box>
+              ))}
+            />
+          </div>
         );
       }
     }
 
     return (
-      <div className={`${classNamePrefix}__stable`}>
+      <div className={`${classNamePrefix}__render`}>
         {titleSection}
         {dataSection}
       </div>
