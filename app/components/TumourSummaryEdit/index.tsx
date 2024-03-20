@@ -87,6 +87,7 @@ const TumourSummaryEdit = ({
       setNewTCellCd8Data({
         score: tCellCd8.score,
         percentile: tCellCd8.percentile,
+        percentileHidden: tCellCd8.percentileHidden,
       });
     }
   }, [tCellCd8]);
@@ -123,6 +124,14 @@ const TumourSummaryEdit = ({
   const handleTCellCd8Change = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const { target: { value, name } } = event;
     setNewTCellCd8Data((prevVal) => ({ ...prevVal, [name]: value }));
+    setTCellCd8Dirty(true);
+  }, []);
+
+  const handleTCellCd8PercentileVisibleChange = useCallback(({ target: { checked, name } }) => {
+    setNewTCellCd8Data((prevVal) => ({
+      ...prevVal,
+      [name]: checked,
+    }));
     setTCellCd8Dirty(true);
   }, []);
 
@@ -430,8 +439,27 @@ const TumourSummaryEdit = ({
         fullWidth
         type="number"
       />
+      <FormControlLabel
+        className="tumour-dialog__check-box"
+        control={(
+          <Checkbox
+            icon={<Visibility />}
+            checkedIcon={<VisibilityOff />}
+            checked={newTCellCd8Data?.percentileHidden}
+            name="percentileHidden"
+            onChange={handleTCellCd8PercentileVisibleChange}
+            sx={{
+              color: 'default',
+              '&.Mui-checked': {
+                color: pink[800],
+              },
+            }}
+          />
+        )}
+        label="Show/Hide CD8+ T Cell Percentile"
+      />
     </>
-  ), [newTCellCd8Data, handleTCellCd8Change]);
+  ), [newTCellCd8Data?.score, newTCellCd8Data?.percentile, newTCellCd8Data?.percentileHidden, handleTCellCd8Change, handleTCellCd8PercentileVisibleChange]);
 
   const mutBurDataSection = useMemo(() => (
     <>
