@@ -167,7 +167,7 @@ const TumourSummaryEdit = ({
 
   const handleClose = useCallback(async (isSaved) => {
     let callSet = null;
-    if (!!newTmburMutData.adjustedTmb && !newTmburMutData.adjustedTmbComment) {
+    if (!!newTmburMutData?.adjustedTmb && !newTmburMutData?.adjustedTmbComment) {
       snackbar.warning('Please add a comment on the adjusted TMB');
       isSaved = false;
       onClose(false);
@@ -443,6 +443,7 @@ const TumourSummaryEdit = ({
         className="tumour-dialog__check-box"
         control={(
           <Checkbox
+            size="small"
             icon={<Visibility />}
             checkedIcon={<VisibilityOff />}
             checked={newTCellCd8Data?.percentileHidden}
@@ -453,10 +454,11 @@ const TumourSummaryEdit = ({
               '&.Mui-checked': {
                 color: pink[800],
               },
+              marginLeft: 1,
             }}
           />
         )}
-        label="Show/Hide CD8+ T Cell Percentile"
+        label={<div className="checkbox-label">Show/Hide CD8+ Percentile</div>}
       />
     </>
   ), [newTCellCd8Data?.score, newTCellCd8Data?.percentile, newTCellCd8Data?.percentileHidden, handleTCellCd8Change, handleTCellCd8PercentileVisibleChange]);
@@ -544,6 +546,7 @@ const TumourSummaryEdit = ({
         className="tumour-dialog__check-box"
         control={(
           <Checkbox
+            size="small"
             icon={<Visibility />}
             checkedIcon={<VisibilityOff />}
             checked={newTmburMutData?.tmbHidden}
@@ -554,10 +557,11 @@ const TumourSummaryEdit = ({
               '&.Mui-checked': {
                 color: pink[800],
               },
+              marginLeft: 1,
             }}
           />
         )}
-        label="Show/Hide TMB Score"
+        label={<div className="checkbox-label">Show/Hide TMB Information</div>}
       />
     </>
   ), [newTmburMutData?.genomeSnvTmb, newTmburMutData?.genomeIndelTmb, newTmburMutData?.adjustedTmb, newTmburMutData?.adjustedTmbComment, newTmburMutData?.tmbHidden, handleTmburChange, handleAdjustedTmbCommentChange, handleAdjustedTmbVisibleChange]);
