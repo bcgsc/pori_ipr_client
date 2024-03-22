@@ -15,6 +15,21 @@ const cellTypesColumnDefs = [
     hide: false,
   },
   {
+    headerName: 'Pediatric Score',
+    field: 'pedsScore',
+    hide: false,
+  },
+  {
+    headerName: 'Pediatric Percentile',
+    field: 'pedsPercentile',
+    hide: false,
+  },
+  {
+    headerName: 'Pediatric Comment',
+    field: 'pedsScoreComment',
+    hide: false,
+  },
+  {
     headerName: 'Knowledgebase Category',
     field: 'kbCategory',
     hide: false,
