@@ -87,6 +87,9 @@ const TumourSummaryEdit = ({
       setNewTCellCd8Data({
         score: tCellCd8.score,
         percentile: tCellCd8.percentile,
+        pedsScore: tCellCd8.pedsScore,
+        pedsPercentile: tCellCd8.pedsPercentile,
+        pedsScoreComment: tCellCd8.pedsScoreComment,
       });
     }
   }, [tCellCd8]);
@@ -126,6 +129,22 @@ const TumourSummaryEdit = ({
     setTCellCd8Dirty(true);
   }, []);
 
+  const handlePedsCd8tChange = useCallback(({ target: { value, name } }) => {
+    setNewTCellCd8Data((cd8t) => ({
+      ...cd8t,
+      [name]: parseFloat(value),
+    }));
+    setTCellCd8Dirty(true);
+  }, []);
+
+  const handlePedsCd8tCommentChange = useCallback(({ target: { value, name } }) => {
+    setNewTCellCd8Data((cd8t) => ({
+      ...cd8t,
+      [name]: value,
+    }));
+    setTCellCd8Dirty(true);
+  }, []);
+
   const handleMutationBurdenChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const { target: { value, name } } = event;
     setNewMutationBurdenData((prevVal) => ({ ...prevVal, [name]: value }));
@@ -158,8 +177,13 @@ const TumourSummaryEdit = ({
 
   const handleClose = useCallback(async (isSaved) => {
     let callSet = null;
-    if (!!newTmburMutData.adjustedTmb && !newTmburMutData.adjustedTmbComment) {
+    if (!!newTmburMutData?.adjustedTmb && !newTmburMutData?.adjustedTmbComment) {
       snackbar.warning('Please add a comment on the adjusted TMB');
+      isSaved = false;
+      onClose(false);
+    }
+    if (!!newTCellCd8Data?.pedsScore && !newTCellCd8Data?.pedsScoreComment) {
+      snackbar.warning('Please add a comment on the added pediatric CD8+ t cell score');
       isSaved = false;
       onClose(false);
     }
@@ -430,8 +454,42 @@ const TumourSummaryEdit = ({
         fullWidth
         type="number"
       />
+      <TextField
+        className="tumour-dialog__text-field"
+        label="Pediatric CD8+ T Cell Score"
+        value={newTCellCd8Data?.pedsScore ?? null}
+        name="pedsScore"
+        disabled={report.patientInformation.caseType !== 'Pediatric'}
+        onChange={handlePedsCd8tChange}
+        variant="outlined"
+        fullWidth
+        type="number"
+      />
+      <TextField
+        className="tumour-dialog__text-field"
+        label="Pediatric CD8+ T Cell Percentile"
+        value={newTCellCd8Data?.pedsPercentile ?? null}
+        name="pedsPercentile"
+        disabled={report.patientInformation.caseType !== 'Pediatric'}
+        onChange={handlePedsCd8tChange}
+        variant="outlined"
+        fullWidth
+        type="number"
+      />
+      <TextField
+        className="tumour-dialog__text-field"
+        label="Pediatric CD8+ T Cell Comment"
+        value={newTCellCd8Data?.pedsScoreComment ?? ''}
+        name="pedsScoreComment"
+        disabled={!newTCellCd8Data?.pedsScore && !newTCellCd8Data?.pedsScoreComment}
+        required={!!newTCellCd8Data?.pedsScore}
+        onChange={handlePedsCd8tCommentChange}
+        variant="outlined"
+        fullWidth
+        type="text"
+      />
     </>
-  ), [newTCellCd8Data, handleTCellCd8Change]);
+  ), [newTCellCd8Data?.score, newTCellCd8Data?.percentile, newTCellCd8Data?.pedsScore, newTCellCd8Data?.pedsPercentile, newTCellCd8Data?.pedsScoreComment, handleTCellCd8Change, report.patientInformation.caseType, handlePedsCd8tChange, handlePedsCd8tCommentChange]);
 
   const mutBurDataSection = useMemo(() => (
     <>

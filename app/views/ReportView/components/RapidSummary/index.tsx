@@ -311,6 +311,16 @@ const RapidSummary = ({
       svBurden = null;
     }
 
+    let tCell: null | string;
+    if (tCellCd8 && typeof tCellCd8.score === 'number') {
+      if (!!tCellCd8.pedsScore && !!tCellCd8.pedsPercentile) {
+        tCell = `${tCellCd8.pedsScore} ${tCellCd8.pedsPercentile ? `(${tCellCd8.pedsPercentile}%)` : ''}`;
+      }
+      tCell = `${tCellCd8.score} ${tCellCd8.percentile ? `(${tCellCd8.percentile}%)` : ''}`;
+    } else {
+      tCell = null;
+    }
+
     setTumourSummary([
       {
         term: 'Pathology Tumour Content',
@@ -341,10 +351,9 @@ const RapidSummary = ({
         }).join(', ') : null,
       },
       {
-        term: 'CD8+ T Cell Score',
-        value: typeof tCellCd8?.score === 'number'
-          ? `${tCellCd8.score} ${tCellCd8.percentile ? `(${tCellCd8.percentile}%)` : ''}`
-          : null,
+        term:
+          tCellCd8?.pedsScore ? 'Pediatric CD8+ T Cell Score' : 'CD8+ T Cell Score',
+        value: tCell,
       },
       {
         term: 'SV Burden (POG Average)',
@@ -366,7 +375,7 @@ const RapidSummary = ({
         value: msiStatus,
       },
     ]);
-  }, [microbial, primaryBurden, tmburMutBur, report.m1m2Score, report.sampleInfo, report.tumourContent, tCellCd8?.percentile, tCellCd8?.score, report.captiv8Score]);
+  }, [microbial, primaryBurden, tmburMutBur, report.m1m2Score, report.sampleInfo, report.tumourContent, report.captiv8Score, tCellCd8]);
 
   const handlePatientEditClose = useCallback((
     newPatientData: PatientInformationType,

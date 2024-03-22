@@ -264,7 +264,11 @@ const GenomicSummary = ({
 
       let tCell: null | string;
       if (tCellCd8 && typeof tCellCd8.score === 'number') {
-        tCell = `${tCellCd8.score} ${tCellCd8.percentile ? `(${tCellCd8.percentile}%)` : ''}`;
+        if (tCellCd8.pedsScore) {
+          tCell = `${tCellCd8.pedsScore} ${tCellCd8.pedsPercentile ? `(${tCellCd8.pedsPercentile}%)` : ''}`;
+        } else {
+          tCell = `${tCellCd8.score} ${tCellCd8.percentile ? `(${tCellCd8.percentile}%)` : ''}`;
+        }
       } else {
         tCell = null;
       }
@@ -311,8 +315,14 @@ const GenomicSummary = ({
           }).join(', ') : null,
         },
         {
-          term: 'CD8+ T Cell Score',
+          term:
+            tCellCd8?.pedsScore ? 'Pediatric CD8+ T Cell Score' : 'CD8+ T Cell Score',
           value: tCell,
+        },
+        {
+          term: 'Pediatric CD8+ T Cell Comment',
+          value:
+            tCellCd8?.pedsScoreComment ? tCellCd8?.pedsScoreComment : null,
         },
         {
           term: 'Mutation Signature',
