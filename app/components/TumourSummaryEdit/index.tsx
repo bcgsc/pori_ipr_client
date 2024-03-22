@@ -130,7 +130,7 @@ const TumourSummaryEdit = ({
     setTCellCd8Dirty(true);
   }, []);
 
-const handleTCellCd8PercentileVisibleChange = useCallback(({ target: { checked, name } }) => {
+  const handleTCellCd8PercentileVisibleChange = useCallback(({ target: { checked, name } }) => {
     setNewTCellCd8Data((prevVal) => ({
       ...prevVal,
       [name]: checked,
@@ -520,45 +520,6 @@ const handleTCellCd8PercentileVisibleChange = useCallback(({ target: { checked, 
       />
     </>
   ), [newTCellCd8Data?.score, newTCellCd8Data?.percentile, newTCellCd8Data?.percentileHidden, newTCellCd8Data?.pedsScore, newTCellCd8Data?.pedsPercentile, newTCellCd8Data?.pedsScoreComment, handleTCellCd8Change, handleTCellCd8PercentileVisibleChange, report.patientInformation.caseType, handlePedsCd8tChange, handlePedsCd8tCommentChange]);
-
-  const mutBurDataSection = useMemo(() => (
-    <>
-      <TextField
-        className="tumour-dialog__text-field"
-        label="Pediatric CD8+ T Cell Score"
-        value={newTCellCd8Data?.pedsScore ?? null}
-        name="pedsScore"
-        disabled={report.patientInformation.caseType !== 'Pediatric'}
-        onChange={handlePedsCd8tChange}
-        variant="outlined"
-        fullWidth
-        type="number"
-      />
-      <TextField
-        className="tumour-dialog__text-field"
-        label="Pediatric CD8+ T Cell Percentile"
-        value={newTCellCd8Data?.pedsPercentile ?? null}
-        name="pedsPercentile"
-        disabled={report.patientInformation.caseType !== 'Pediatric'}
-        onChange={handlePedsCd8tChange}
-        variant="outlined"
-        fullWidth
-        type="number"
-      />
-      <TextField
-        className="tumour-dialog__text-field"
-        label="Pediatric CD8+ T Cell Comment"
-        value={newTCellCd8Data?.pedsScoreComment ?? ''}
-        name="pedsScoreComment"
-        disabled={!newTCellCd8Data?.pedsScore && !newTCellCd8Data?.pedsScoreComment}
-        required={!!newTCellCd8Data?.pedsScore}
-        onChange={handlePedsCd8tCommentChange}
-        variant="outlined"
-        fullWidth
-        type="text"
-      />
-    </>
-  ), [newTCellCd8Data?.score, newTCellCd8Data?.percentile, newTCellCd8Data?.pedsScore, newTCellCd8Data?.pedsPercentile, newTCellCd8Data?.pedsScoreComment, handleTCellCd8Change, report.patientInformation.caseType, handlePedsCd8tChange, handlePedsCd8tCommentChange]);
 
   const mutBurDataSection = useMemo(() => (
     <>

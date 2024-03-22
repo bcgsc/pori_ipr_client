@@ -261,7 +261,7 @@ const GenomicSummary = ({
       } else {
         svBurden = null;
       }
-      
+
       let tCell: null | string;
       if (tCellCd8 && typeof tCellCd8.score === 'number') {
         if (tCellCd8.pedsScore) {
