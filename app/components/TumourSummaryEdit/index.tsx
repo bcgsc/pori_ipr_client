@@ -88,6 +88,9 @@ const TumourSummaryEdit = ({
         score: tCellCd8.score,
         percentile: tCellCd8.percentile,
         percentileHidden: tCellCd8.percentileHidden,
+        pedsScore: tCellCd8.pedsScore,
+        pedsPercentile: tCellCd8.pedsPercentile,
+        pedsScoreComment: tCellCd8.pedsScoreComment,
       });
     }
   }, [tCellCd8]);
@@ -127,10 +130,26 @@ const TumourSummaryEdit = ({
     setTCellCd8Dirty(true);
   }, []);
 
-  const handleTCellCd8PercentileVisibleChange = useCallback(({ target: { checked, name } }) => {
+const handleTCellCd8PercentileVisibleChange = useCallback(({ target: { checked, name } }) => {
     setNewTCellCd8Data((prevVal) => ({
       ...prevVal,
       [name]: checked,
+    }));
+    setTCellCd8Dirty(true);
+  }, []);
+
+  const handlePedsCd8tChange = useCallback(({ target: { value, name } }) => {
+    setNewTCellCd8Data((cd8t) => ({
+      ...cd8t,
+      [name]: parseFloat(value),
+    }));
+    setTCellCd8Dirty(true);
+  }, []);
+
+  const handlePedsCd8tCommentChange = useCallback(({ target: { value, name } }) => {
+    setNewTCellCd8Data((cd8t) => ({
+      ...cd8t,
+      [name]: value,
     }));
     setTCellCd8Dirty(true);
   }, []);
@@ -169,6 +188,11 @@ const TumourSummaryEdit = ({
     let callSet = null;
     if (!!newTmburMutData?.adjustedTmb && !newTmburMutData?.adjustedTmbComment) {
       snackbar.warning('Please add a comment on the adjusted TMB');
+      isSaved = false;
+      onClose(false);
+    }
+    if (!!newTCellCd8Data?.pedsScore && !newTCellCd8Data?.pedsScoreComment) {
+      snackbar.warning('Please add a comment on the added pediatric CD8+ t cell score');
       isSaved = false;
       onClose(false);
     }
@@ -460,21 +484,84 @@ const TumourSummaryEdit = ({
         )}
         label={<div className="checkbox-label">Show/Hide CD8+ Percentile</div>}
       />
+      <TextField
+        className="tumour-dialog__text-field"
+        label="Pediatric CD8+ T Cell Score"
+        value={newTCellCd8Data?.pedsScore ?? null}
+        name="pedsScore"
+        disabled={report.patientInformation.caseType !== 'Pediatric'}
+        onChange={handlePedsCd8tChange}
+        variant="outlined"
+        fullWidth
+        type="number"
+      />
+      <TextField
+        className="tumour-dialog__text-field"
+        label="Pediatric CD8+ T Cell Percentile"
+        value={newTCellCd8Data?.pedsPercentile ?? null}
+        name="pedsPercentile"
+        disabled={report.patientInformation.caseType !== 'Pediatric'}
+        onChange={handlePedsCd8tChange}
+        variant="outlined"
+        fullWidth
+        type="number"
+      />
+      <TextField
+        className="tumour-dialog__text-field"
+        label="Pediatric CD8+ T Cell Comment"
+        value={newTCellCd8Data?.pedsScoreComment ?? ''}
+        name="pedsScoreComment"
+        disabled={!newTCellCd8Data?.pedsScore && !newTCellCd8Data?.pedsScoreComment}
+        required={!!newTCellCd8Data?.pedsScore}
+        onChange={handlePedsCd8tCommentChange}
+        variant="outlined"
+        fullWidth
+        type="text"
+      />
     </>
-  ), [newTCellCd8Data?.score, newTCellCd8Data?.percentile, newTCellCd8Data?.percentileHidden, handleTCellCd8Change, handleTCellCd8PercentileVisibleChange]);
+  ), [newTCellCd8Data?.score, newTCellCd8Data?.percentile, newTCellCd8Data?.percentileHidden, newTCellCd8Data?.pedsScore, newTCellCd8Data?.pedsPercentile, newTCellCd8Data?.pedsScoreComment, handleTCellCd8Change, handleTCellCd8PercentileVisibleChange, report.patientInformation.caseType, handlePedsCd8tChange, handlePedsCd8tCommentChange]);
 
   const mutBurDataSection = useMemo(() => (
     <>
       <TextField
         className="tumour-dialog__text-field"
-        label="Mutation Burden (Mut/Mb)"
-        value={newMutationBurdenData?.totalMutationsPerMb ?? null}
-        name="totalMutationsPerMb"
-        onChange={handleMutationBurdenChange}
+        label="Pediatric CD8+ T Cell Score"
+        value={newTCellCd8Data?.pedsScore ?? null}
+        name="pedsScore"
+        disabled={report.patientInformation.caseType !== 'Pediatric'}
+        onChange={handlePedsCd8tChange}
         variant="outlined"
         fullWidth
         type="number"
       />
+      <TextField
+        className="tumour-dialog__text-field"
+        label="Pediatric CD8+ T Cell Percentile"
+        value={newTCellCd8Data?.pedsPercentile ?? null}
+        name="pedsPercentile"
+        disabled={report.patientInformation.caseType !== 'Pediatric'}
+        onChange={handlePedsCd8tChange}
+        variant="outlined"
+        fullWidth
+        type="number"
+      />
+      <TextField
+        className="tumour-dialog__text-field"
+        label="Pediatric CD8+ T Cell Comment"
+        value={newTCellCd8Data?.pedsScoreComment ?? ''}
+        name="pedsScoreComment"
+        disabled={!newTCellCd8Data?.pedsScore && !newTCellCd8Data?.pedsScoreComment}
+        required={!!newTCellCd8Data?.pedsScore}
+        onChange={handlePedsCd8tCommentChange}
+        variant="outlined"
+        fullWidth
+        type="text"
+      />
+    </>
+  ), [newTCellCd8Data?.score, newTCellCd8Data?.percentile, newTCellCd8Data?.pedsScore, newTCellCd8Data?.pedsPercentile, newTCellCd8Data?.pedsScoreComment, handleTCellCd8Change, report.patientInformation.caseType, handlePedsCd8tChange, handlePedsCd8tCommentChange]);
+
+  const mutBurDataSection = useMemo(() => (
+    <>
       <TextField
         className="tumour-dialog__text-field"
         label="SV Burden (POG average)"
