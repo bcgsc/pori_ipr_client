@@ -18,7 +18,7 @@ const RunningRight = ({
     <Typography className={className} variant="caption">
       {report.patientInformation.diagnosis}
     </Typography>
-  )
+  );
 };
 
 export default RunningRight;

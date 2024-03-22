@@ -1,14 +1,17 @@
 @media print {
   .running-left {
     position: running(run-left);
+    font-size: .65rem;
   }
 
   .running-center {
     position: running(run-center);
+    font-size: .65rem;
   }
 
   .running-right {
     position: running(run-right);
+    font-size: .65rem;
   }
 
   .page-break {

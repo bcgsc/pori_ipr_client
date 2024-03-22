@@ -1,0 +1,39 @@
+// Shared styling between both versions
+.key-alterations, .key-alterations-print {
+  &__stable {
+    margin: 0 0 32px 0;
+  }
+}
+
+.key-alterations {
+  margin: 20px auto;
+  padding: 0 20px;
+}
+
+.key-alterations-print {
+  margin: 0 auto;
+  padding: 0 20px;
+
+  &__stable {
+    
+    &-title {
+      margin: 0 0 8px;
+    }
+
+    &-content {
+      padding: 0 16px;
+    }
+  }
+
+  &__beta {
+
+    &-content {
+      margin-top: 8px;
+    }
+  }
+
+  &__render {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}

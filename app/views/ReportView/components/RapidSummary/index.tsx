@@ -195,6 +195,7 @@ const RapidSummary = ({
             }
           } catch (e) {
             // mutation burden does not exist in records before this implementation, and no backfill will be done on the backend, silent fail this
+            // eslint-disable-next-line no-console
             console.error('mutation-burden call error', e?.message);
           }
 
