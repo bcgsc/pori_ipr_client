@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import React, {
   useState, useEffect, useContext, useCallback,
 } from 'react';
@@ -48,11 +49,13 @@ const filterType = (
 
 type TherapeuticProps = {
   isPrint?: boolean;
+  printVersion?: 'stable' | 'beta' | null;
 } & WithLoadingInjectedProps;
 
 const Therapeutic = ({
   isLoading,
   isPrint = false,
+  printVersion = null,
   setIsLoading,
 }: TherapeuticProps): JSX.Element => {
   const [
@@ -198,9 +201,9 @@ const Therapeutic = ({
     }
   }, [chemoresistanceData, therapeuticData, report]);
 
-  if (isPrint) {
+  if (isPrint && printVersion === 'stable') {
     return (
-      <div>
+      <div className="therapeutic-print">
         <Typography
           className="therapeutic-print__title"
           variant="h3"
@@ -208,6 +211,7 @@ const Therapeutic = ({
           Potential Therapeutic Targets
         </Typography>
         <PrintTable
+          fullWidth
           data={therapeuticData}
           columnDefs={columnDefs}
         />
@@ -218,6 +222,41 @@ const Therapeutic = ({
           Potential Chemoresistance
         </Typography>
         <PrintTable
+          fullWidth
+          data={chemoresistanceData}
+          columnDefs={columnDefs}
+        />
+      </div>
+    );
+  }
+
+  if (isPrint && printVersion === 'beta') {
+    return (
+      <div className="therapeutic-print">
+        <Typography
+          className="therapeutic-print__title"
+          fontWeight="bold"
+          variant="h5"
+          display="inline"
+        >
+          Potential Therapeutic Targets
+        </Typography>
+        <PrintTable
+          fullWidth
+          data={therapeuticData}
+          columnDefs={columnDefs}
+        />
+        <br />
+        <Typography
+          className="therapeutic-print__title"
+          fontWeight="bold"
+          variant="h5"
+          display="inline"
+        >
+          Potential Chemoresistance
+        </Typography>
+        <PrintTable
+          fullWidth
           data={chemoresistanceData}
           columnDefs={columnDefs}
         />
