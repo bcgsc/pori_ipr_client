@@ -347,10 +347,6 @@ const RapidSummary = ({
           : null,
       },
       {
-        term: 'Mutation Burden',
-        value: primaryBurden && primaryBurden.totalMutationsPerMb !== null && (!tmburMutBur?.adjustedTmb || tmburMutBur.tmbHidden === true) ? `${primaryBurden.totalMutationsPerMb} Mut/Mb` : null,
-      },
-      {
         term: 'SV Burden (POG Average)',
         value: svBurden,
       },
