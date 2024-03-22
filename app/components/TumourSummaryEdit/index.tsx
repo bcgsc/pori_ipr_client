@@ -177,12 +177,12 @@ const TumourSummaryEdit = ({
 
   const handleClose = useCallback(async (isSaved) => {
     let callSet = null;
-    if (!!newTmburMutData.adjustedTmb && !newTmburMutData.adjustedTmbComment) {
+    if (!!newTmburMutData?.adjustedTmb && !newTmburMutData?.adjustedTmbComment) {
       snackbar.warning('Please add a comment on the adjusted TMB');
       isSaved = false;
       onClose(false);
     }
-    if (!!newTCellCd8Data.pedsScore && !newTCellCd8Data.pedsScoreComment) {
+    if (!!newTCellCd8Data?.pedsScore && !newTCellCd8Data?.pedsScoreComment) {
       snackbar.warning('Please add a comment on the added pediatric CD8+ t cell score');
       isSaved = false;
       onClose(false);
