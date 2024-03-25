@@ -26,14 +26,14 @@ const Projects = (): JSX.Element => {
 
   useEffect(() => {
     const getData = async () => {
-      const projectsResp = await api.get('/project?admin=true').request();
+      const projectsResp = await api.get(`/project?admin=${adminAccess}`).request();
 
       setProjects(projectsResp);
       setLoading(false);
     };
 
     getData();
-  }, []);
+  }, [adminAccess]);
 
   const handleEditStart = (rowData) => {
     setShowDialog(true);
@@ -41,7 +41,7 @@ const Projects = (): JSX.Element => {
   };
 
   const handleDelete = useCallback(async ({ ident }) => {
-    // eslint-disable-next-line no-restricted-globals
+    // eslint-disable-next-line no-restricted-globals, no-alert
     if (confirm('Are you sure you want to remove this project?')) {
       await api.del(`/project/${ident}`, {}).request();
       const newProjects = projects.filter((project) => project.ident !== ident);
