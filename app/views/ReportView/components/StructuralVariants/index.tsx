@@ -17,7 +17,7 @@ import useReport from '@/hooks/useReport';
 import ImageType from '@/components/Image/types';
 import { StructuralVariantType } from '@/common';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
-import EditDialog from './components/EditDialog';
+import VariantEditDialog from '@/components/VariantEditDialog';
 import columnDefs from './columnDefs';
 
 import './index.scss';
@@ -188,8 +188,9 @@ const StructuralVariants = ({
             Summary of Structural Events
           </Typography>
           {showDialog && (
-            <EditDialog
+            <VariantEditDialog
               editData={editData}
+              variantType="sv"
               isOpen={showDialog}
               onClose={handleEditClose}
               showErrorSnackbar={snackbar.error}

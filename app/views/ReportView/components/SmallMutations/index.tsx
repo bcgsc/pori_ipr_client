@@ -10,7 +10,7 @@ import ReportContext from '@/context/ReportContext';
 import useReport from '@/hooks/useReport';
 import { SmallMutationType } from '@/common';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
-import EditDialog from './components/EditDialog';
+import VariantEditDialog from '@/components/VariantEditDialog';
 import { columnDefs } from './columnDefs';
 
 import './index.scss';
@@ -174,8 +174,9 @@ const SmallMutations = ({
             Small Mutations
           </Typography>
           {showDialog && (
-            <EditDialog
+            <VariantEditDialog
               editData={editData}
+              variantType="snv"
               isOpen={showDialog}
               onClose={handleEditClose}
               showErrorSnackbar={snackbar.error}

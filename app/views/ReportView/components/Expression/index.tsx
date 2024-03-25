@@ -11,7 +11,7 @@ import useReport from '@/hooks/useReport';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import { ImageType } from '@/components/Image';
 import { ExpOutliersType } from '@/common';
-import EditDialog from './components/EditDialog';
+import VariantEditDialog from '@/components/VariantEditDialog';
 import columnDefs from './columnDefs';
 import processExpression from './processData';
 import {
@@ -237,8 +237,9 @@ const Expression = ({
         )}
       </div>
       {showDialog && (
-      <EditDialog
+      <VariantEditDialog
         editData={editData}
+        variantType="exp"
         isOpen={showDialog}
         onClose={handleEditClose}
         showErrorSnackbar={snackbar.error}
