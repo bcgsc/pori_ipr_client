@@ -16,7 +16,7 @@ import ImageType from '@/components/Image/types';
 import snackbar from '@/services/SnackbarUtils';
 import { CopyNumberType } from '@/common';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
-import EditDialog from './components/EditDialog';
+import VariantEditDialog from '@/components/VariantEditDialog';
 import columnDefs from './columnDefs';
 
 import './index.scss';
@@ -211,8 +211,9 @@ const CopyNumber = ({
         <>
           <Typography variant="h3" className="copy-number__title">Summary of Copy Number Events</Typography>
           {showDialog && (
-            <EditDialog
+            <VariantEditDialog
               editData={editData}
+              variantType="cnv"
               isOpen={showDialog}
               onClose={handleEditClose}
               showErrorSnackbar={snackbar.error}

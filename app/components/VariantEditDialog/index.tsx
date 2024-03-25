@@ -16,24 +16,28 @@ import ConfirmContext from '@/context/ConfirmContext';
 import ReportContext from '@/context/ReportContext';
 import snackbar from '@/services/SnackbarUtils';
 import useConfirmDialog from '@/hooks/useConfirmDialog';
-import { CopyNumberType } from '@/common';
-import { GeneVariantType } from '../../../GenomicSummary/types';
+import {
+  CopyNumberType, SmallMutationType, StructuralVariantType, ExpOutliersType,
+} from '@/common';
+import { GeneVariantType } from '@/views/ReportView/components/GenomicSummary/types';
 
 import './index.scss';
 
-type EditDialogProps = {
-  editData: CopyNumberType;
-  isOpen: boolean;
-  onClose: (newData?: CopyNumberType) => void;
-  showErrorSnackbar: (message: string) => void;
-};
+  type VariantEditDialogProps = {
+    editData: SmallMutationType | CopyNumberType | StructuralVariantType | ExpOutliersType;
+    variantType: string;
+    isOpen: boolean;
+    onClose: (newData?: SmallMutationType | CopyNumberType | StructuralVariantType | ExpOutliersType) => void;
+    showErrorSnackbar: (message: string) => void;
+  };
 
-const EditDialog = ({
+const VariantEditDialog = ({
   editData,
+  variantType,
   isOpen = false,
   onClose,
   showErrorSnackbar,
-}: EditDialogProps): JSX.Element => {
+}: VariantEditDialogProps): JSX.Element => {
   const { showConfirmDialog } = useConfirmDialog();
   const { report } = useContext(ReportContext);
   const { isSigned } = useContext(ConfirmContext);
@@ -43,10 +47,29 @@ const EditDialog = ({
 
   useEffect(() => {
     if (editData) {
-      const newVariant = `${editData?.gene.name} (${editData?.cnvState})`;
-      setVariant(newVariant);
+      let newVariant;
+      switch (variantType) {
+        case 'snv':
+          newVariant = `${editData?.gene.name}:${editData?.proteinChange}`;
+          setVariant(newVariant);
+          break;
+        case 'cnv':
+          newVariant = `${editData?.gene.name} (${editData?.cnvState})`;
+          setVariant(newVariant);
+          break;
+        case 'sv':
+          newVariant = `${editData?.displayName}`;
+          setVariant(newVariant);
+          break;
+        case 'exp':
+          newVariant = `${editData?.gene.name} (${editData?.expressionState})`;
+          setVariant(newVariant);
+          break;
+        default:
+          break;
+      }
     }
-  }, [editData]);
+  }, [editData, variantType]);
 
   useEffect(() => {
     async function fetchVariants() {
@@ -114,4 +137,4 @@ const EditDialog = ({
   );
 };
 
-export default EditDialog;
+export default VariantEditDialog;
