@@ -130,7 +130,7 @@ module.exports = (env) => ({
       publicPath: '/',
     },
     port: 3000,
-    host: 'localhost' || '0.0.0.0',
+    host: process.env.HOSTNAME || '0.0.0.0',
     hot: true,
     allowedHosts: ['.phage.bcgsc.ca'],
     historyApiFallback: true,
