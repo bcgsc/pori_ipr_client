@@ -205,9 +205,12 @@ const KeyAlterations = ({
               labelKey="key"
               valueKey="value"
               renderValue={(val) => val.map(({ geneVariant }) => (
-                <Box sx={{ paddingLeft: 0.75, display: 'inline-block' }}>
-                  <Typography variant="caption">{geneVariant}</Typography>
-                </Box>
+                <>
+                  <Box sx={{ paddingLeft: 0.75, display: 'inline-block' }}>
+                    <Typography variant="caption">{geneVariant}</Typography>
+                  </Box>
+                  ,
+                </>
               ))}
             />
           </div>
