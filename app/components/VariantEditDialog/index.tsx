@@ -95,8 +95,8 @@ const VariantEditDialog = ({
         } else {
           await req.request();
           onClose({ ...editData });
+          snackbar.success('Variant added to key alterations.');
         }
-        snackbar.success('Variant added to key alterations.');
       } catch (err) {
         showErrorSnackbar(`Error updating key alterations: ${err.message}`);
         onClose();
@@ -114,17 +114,17 @@ const VariantEditDialog = ({
   }, [onClose]);
 
   return (
-    <Dialog open={isOpen} maxWidth="sm" fullWidth className="edit-dialog">
+    <Dialog open={isOpen} maxWidth="sm" fullWidth className="variant-edit-dialog">
       <DialogTitle>Key Alterations Edit</DialogTitle>
       <DialogContent>
-        <div className="edit-dialog__body">
+        <div className="variant-edit-dialog__body">
           <p>
             Variant:
             {' '}
             {variant}
           </p>
         </div>
-        <DialogActions className="edit-dialog__actions">
+        <DialogActions className="variant-edit-dialog__actions">
           <AsyncButton isLoading={isApiCalling} color="secondary" onClick={handleSubmit} component="label">
             Add to Summary
           </AsyncButton>
