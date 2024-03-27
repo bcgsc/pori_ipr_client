@@ -38,7 +38,7 @@ const useConfirmDialog = () => {
         title="Confirm Action"
         text={textDict[report?.template.name]}
         confirmText="Yes"
-        cancelText="cancel"
+        cancelText="Cancel"
       />,
       document.getElementById('alert-dialog'),
     );
