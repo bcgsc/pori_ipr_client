@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import {
   Table, TableCell, TableRow, Typography,
 } from '@mui/material';
@@ -20,7 +21,15 @@ const SummaryPrintTable = ({
   <Table padding="none" size="small">
     {data.filter((key) => (key.value !== null && key.value !== '')).map(({ [labelKey]: label, [valueKey]: value }) => (
       <TableRow>
-        <TableCell><Typography variant="body2" fontWeight="bold">{label}</Typography></TableCell>
+        <TableCell>
+          <Typography variant="body2" fontWeight="bold">
+            {label === 'cnv' ? 'CNV'
+              : label === 'smallMutation' ? 'Small Mutation'
+                : label === 'structuralVariant' ? 'Structural Variant'
+                  : label === 'expression' ? 'Expression'
+                    : label}
+          </Typography>
+        </TableCell>
         <TableCell sx={{ paddingLeft: 1 }}>
           {renderValue ? renderValue(value) : value}
         </TableCell>

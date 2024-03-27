@@ -11,7 +11,7 @@ const RunningCenter = ({
   className,
 }: RunningCenterProps): JSX.Element => (
   <Typography className={className} variant="caption">
-    BCCA Confidential - For Research Purposes Only
+    BC Cancer Confidential - For Research Purposes Only
   </Typography>
 );
 

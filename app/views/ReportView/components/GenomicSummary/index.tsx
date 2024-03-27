@@ -275,7 +275,7 @@ const GenomicSummary = ({
           value: msiStatus ?? null,
         },
         {
-          term: 'Captiv 8 Score',
+          term: 'CAPTIV-8 Score',
           value: report.captiv8Score !== null
             ? `${report.captiv8Score}`
             : null,
