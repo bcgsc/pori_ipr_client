@@ -87,6 +87,7 @@ const TumourSummaryEdit = ({
       setNewTCellCd8Data({
         score: tCellCd8.score,
         percentile: tCellCd8.percentile,
+        percentileHidden: tCellCd8.percentileHidden,
         pedsScore: tCellCd8.pedsScore,
         pedsPercentile: tCellCd8.pedsPercentile,
         pedsScoreComment: tCellCd8.pedsScoreComment,
@@ -126,6 +127,14 @@ const TumourSummaryEdit = ({
   const handleTCellCd8Change = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const { target: { value, name } } = event;
     setNewTCellCd8Data((prevVal) => ({ ...prevVal, [name]: value }));
+    setTCellCd8Dirty(true);
+  }, []);
+
+  const handleTCellCd8PercentileVisibleChange = useCallback(({ target: { checked, name } }) => {
+    setNewTCellCd8Data((prevVal) => ({
+      ...prevVal,
+      [name]: checked,
+    }));
     setTCellCd8Dirty(true);
   }, []);
 
@@ -454,6 +463,27 @@ const TumourSummaryEdit = ({
         fullWidth
         type="number"
       />
+      <FormControlLabel
+        className="tumour-dialog__check-box"
+        control={(
+          <Checkbox
+            size="small"
+            icon={<Visibility />}
+            checkedIcon={<VisibilityOff />}
+            checked={newTCellCd8Data?.percentileHidden}
+            name="percentileHidden"
+            onChange={handleTCellCd8PercentileVisibleChange}
+            sx={{
+              color: 'default',
+              '&.Mui-checked': {
+                color: pink[800],
+              },
+              marginLeft: 1,
+            }}
+          />
+        )}
+        label={<div className="checkbox-label">Show/Hide CD8+ Percentile</div>}
+      />
       <TextField
         className="tumour-dialog__text-field"
         label="Pediatric CD8+ T Cell Score"
@@ -489,7 +519,7 @@ const TumourSummaryEdit = ({
         type="text"
       />
     </>
-  ), [newTCellCd8Data?.score, newTCellCd8Data?.percentile, newTCellCd8Data?.pedsScore, newTCellCd8Data?.pedsPercentile, newTCellCd8Data?.pedsScoreComment, handleTCellCd8Change, report.patientInformation.caseType, handlePedsCd8tChange, handlePedsCd8tCommentChange]);
+  ), [newTCellCd8Data?.score, newTCellCd8Data?.percentile, newTCellCd8Data?.percentileHidden, newTCellCd8Data?.pedsScore, newTCellCd8Data?.pedsPercentile, newTCellCd8Data?.pedsScoreComment, handleTCellCd8Change, handleTCellCd8PercentileVisibleChange, report.patientInformation.caseType, handlePedsCd8tChange, handlePedsCd8tCommentChange]);
 
   const mutBurDataSection = useMemo(() => (
     <>
@@ -564,6 +594,7 @@ const TumourSummaryEdit = ({
         className="tumour-dialog__check-box"
         control={(
           <Checkbox
+            size="small"
             icon={<Visibility />}
             checkedIcon={<VisibilityOff />}
             checked={newTmburMutData?.tmbHidden}
@@ -574,10 +605,11 @@ const TumourSummaryEdit = ({
               '&.Mui-checked': {
                 color: pink[800],
               },
+              marginLeft: 1,
             }}
           />
         )}
-        label="Show/Hide TMB Score"
+        label={<div className="checkbox-label">Show/Hide TMB Information</div>}
       />
     </>
   ), [newTmburMutData?.genomeSnvTmb, newTmburMutData?.genomeIndelTmb, newTmburMutData?.adjustedTmb, newTmburMutData?.adjustedTmbComment, newTmburMutData?.tmbHidden, handleTmburChange, handleAdjustedTmbCommentChange, handleAdjustedTmbVisibleChange]);

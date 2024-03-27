@@ -194,9 +194,9 @@ const GenomicSummary = ({
       let tCell: null | string;
       if (tCellCd8 && typeof tCellCd8.score === 'number') {
         if (tCellCd8.pedsScore) {
-          tCell = `${tCellCd8.pedsScore} ${tCellCd8.pedsPercentile ? `(${tCellCd8.pedsPercentile}%)` : ''}`;
+          tCell = `${tCellCd8.pedsScore} ${tCellCd8.pedsPercentile && !tCellCd8.percentileHidden ? `(${tCellCd8.pedsPercentile}%)` : ''}`;
         } else {
-          tCell = `${tCellCd8.score} ${tCellCd8.percentile ? `(${tCellCd8.percentile}%)` : ''}`;
+          tCell = `${tCellCd8.score} ${tCellCd8.percentile && !tCellCd8.percentileHidden ? `(${tCellCd8.percentile}%)` : ''}`;
         }
       } else {
         tCell = null;

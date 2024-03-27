@@ -314,10 +314,11 @@ const RapidSummary = ({
 
     let tCell: null | string;
     if (tCellCd8 && typeof tCellCd8.score === 'number') {
-      if (!!tCellCd8.pedsScore && !!tCellCd8.pedsPercentile) {
-        tCell = `${tCellCd8.pedsScore} ${tCellCd8.pedsPercentile ? `(${tCellCd8.pedsPercentile}%)` : ''}`;
+      if (tCellCd8.pedsScore) {
+        tCell = `${tCellCd8.pedsScore} ${tCellCd8.pedsPercentile && !tCellCd8.percentileHidden ? `(${tCellCd8.pedsPercentile}%)` : ''}`;
+      } else {
+        tCell = `${tCellCd8.score} ${tCellCd8.percentile && !tCellCd8.percentileHidden ? `(${tCellCd8.percentile}%)` : ''}`;
       }
-      tCell = `${tCellCd8.score} ${tCellCd8.percentile ? `(${tCellCd8.percentile}%)` : ''}`;
     } else {
       tCell = null;
     }
@@ -357,6 +358,15 @@ const RapidSummary = ({
         value: tCell,
       },
       {
+        term: 'Pediatric CD8+ T Cell Comment',
+        value:
+          tCellCd8?.pedsScoreComment ? tCellCd8?.pedsScoreComment : null,
+      },
+      {
+        term: 'Mutation Burden',
+        value: primaryBurden && primaryBurden.totalMutationsPerMb !== null && (!tmburMutBur?.adjustedTmb || tmburMutBur.tmbHidden === true) ? `${primaryBurden.totalMutationsPerMb} Mut/Mb` : null,
+      },
+      {
         term: 'SV Burden (POG Average)',
         value: svBurden,
       },
@@ -376,7 +386,8 @@ const RapidSummary = ({
         value: msiStatus,
       },
     ]);
-  }, [microbial, primaryBurden, tmburMutBur, report.m1m2Score, report.sampleInfo, report.tumourContent, report.captiv8Score, tCellCd8]);
+  }, [microbial, primaryBurden, tmburMutBur, report.m1m2Score, report.sampleInfo, report.tumourContent, tCellCd8.percentile, tCellCd8.score, report.captiv8Score,
+    tCellCd8.percentileHidden, tCellCd8, tCellCd8.pedsScoreComment, tmburMutBur.adjustedTmb, tmburMutBur.tmbHidden, tCellCd8.pedsScore, tCellCd8.pedsPercentile]);
 
   const handlePatientEditClose = useCallback((
     newPatientData: PatientInformationType,
