@@ -321,6 +321,7 @@ type ImmuneType = {
   pedsPercentile: number | null;
   pedsScore: number | null;
   pedsScoreComment: string | null;
+  percentileHidden: boolean;
 } & RecordDefaults;
 
 type MicrobialType = {
