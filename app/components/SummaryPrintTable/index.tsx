@@ -1,7 +1,7 @@
-/* eslint-disable no-nested-ternary */
 import {
   Table, TableCell, TableRow, Typography,
 } from '@mui/material';
+import { Dictionary } from 'lodash';
 import React from 'react';
 
 type SummaryPrintTableProps = {
@@ -10,6 +10,15 @@ type SummaryPrintTableProps = {
   valueKey: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   renderValue?: (value: any) => unknown;
+};
+
+const variantTypes = ['cnv', 'smallMutation', 'structuralVariant', 'expression'];
+
+const variantToStrings: Dictionary<string> = {
+  cnv: 'CNV',
+  smallMutation: 'Small Mutation',
+  structuralVariant: 'Structural Variant',
+  expression: 'Expression',
 };
 
 const SummaryPrintTable = ({
@@ -22,13 +31,7 @@ const SummaryPrintTable = ({
     {data.filter((key) => (key.value !== null && key.value !== '')).map(({ [labelKey]: label, [valueKey]: value }) => (
       <TableRow>
         <TableCell>
-          <Typography variant="body2" fontWeight="bold">
-            {label === 'cnv' ? 'CNV'
-              : label === 'smallMutation' ? 'Small Mutation'
-                : label === 'structuralVariant' ? 'Structural Variant'
-                  : label === 'expression' ? 'Expression'
-                    : label}
-          </Typography>
+          <Typography variant="body2" fontWeight="bold">{variantTypes.includes(String(label)) ? variantToStrings[String(label)] : label}</Typography>
         </TableCell>
         <TableCell sx={{ paddingLeft: 1 }}>
           {renderValue ? renderValue(value) : value}

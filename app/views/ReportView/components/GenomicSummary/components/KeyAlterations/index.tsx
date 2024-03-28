@@ -204,12 +204,12 @@ const KeyAlterations = ({
               data={categorizedDataArray}
               labelKey="key"
               valueKey="value"
-              renderValue={(val) => val.map(({ geneVariant }) => (
+              renderValue={(val) => val.map(({ geneVariant }, index, arr) => (
                 <>
                   <Box sx={{ paddingLeft: 0.75, display: 'inline-block' }}>
                     <Typography variant="caption">{geneVariant}</Typography>
                   </Box>
-                  ,
+                  {(index < arr.length - 1 ? ', ' : '')}
                 </>
               ))}
             />
