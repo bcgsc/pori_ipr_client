@@ -156,6 +156,7 @@ type CopyNumberType = {
   kbMatches?: KbMatchType<'cnv'>[];
   log2Cna: string | null;
   lohState: string | null;
+  selected: boolean;
   size: number | null;
   start: number | null;
   variantType: 'cnv';
@@ -182,6 +183,7 @@ type StructuralVariantType = {
   ntermGene: string | null;
   ntermTranscript: string | null;
   omicSupport: boolean;
+  selected: boolean;
   svg: string | null;
   svgTitle: string | null;
   variantType: 'sv';
@@ -209,6 +211,7 @@ type SmallMutationType = {
   rnaAltCount: number | null;
   rnaDepth: number | null;
   rnaRefCount: number | null;
+  selected: boolean;
   startPosition: number | null;
   transcript: string | null;
   tumourAltCopies: number | null;
@@ -242,11 +245,14 @@ type ExpOutliersType = {
   primarySitekIQR: number | null;
   rnaReads: number | null;
   rpkm: number | null;
+  selected: boolean;
   tpm: number | null;
   variantType: 'exp';
 } & RecordDefaults;
 
 type TmburType = {
+  adjustedTmb: number | null;
+  adjustedTmbComment: string | null;
   cdsBasesIn1To22AndXAndY: string;
   cdsIndels: number;
   cdsIndelTmb: number;
@@ -255,8 +261,6 @@ type TmburType = {
   comments: string;
   genomeSnvTmb: number;
   genomeIndelTmb: number;
-  adjustedTmb: number | null;
-  adjustedTmbComment: string | null;
   tmbHidden: boolean;
   kbCategory: string | null;
   kbMatches: KbMatchType[];

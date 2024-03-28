@@ -16,7 +16,7 @@ const readOnlyColDefs = [
   },
   {
     headerName: 'Number of reports',
-    valueGetter: ({ data }) => data?.reports?.length,
+    valueGetter: ({ data }) => Number(data?.reportCount),
   },
   {
     headerName: 'Number of users',
