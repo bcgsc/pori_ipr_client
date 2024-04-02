@@ -94,7 +94,7 @@ const PrintTitleBar = ({
           )}
         </div>
         <div className="printbeta__header-right">
-          <Typography variant="body2">{`${title ? `${title} Report: ` : ''} ${subtitle}${subtitleSuffix ? ` - ${subtitleSuffix}` : ''}`}</Typography>
+          <Typography variant="h2">{`${title ? `${title} Report: ` : ''} ${subtitle}${subtitleSuffix ? ` - ${subtitleSuffix}` : ''}`}</Typography>
           <Typography variant="body2">{biopsyText}</Typography>
         </div>
       </div>
