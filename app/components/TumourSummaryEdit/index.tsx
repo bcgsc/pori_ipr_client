@@ -99,7 +99,6 @@ const TumourSummaryEdit = ({
     if (mutationBurden) {
       setNewMutationBurdenData({
         role: mutationBurden.role,
-        totalMutationsPerMb: mutationBurden.totalMutationsPerMb,
         qualitySvCount: mutationBurden.qualitySvCount,
         qualitySvPercentile: mutationBurden.qualitySvPercentile,
       });
