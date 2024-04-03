@@ -254,7 +254,7 @@ const GenomicSummary = ({
             tCellCd8?.pedsScoreComment ? tCellCd8?.pedsScoreComment : null,
         },
         {
-          term: 'Mutation Signature',
+          term: 'Mutation Signatures',
           value: sigs,
           action: !isPrint ? () => history.push('mutation-signatures') : null,
         },
