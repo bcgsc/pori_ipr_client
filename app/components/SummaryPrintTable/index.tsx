@@ -18,7 +18,7 @@ const variantToStrings: Dictionary<string> = {
   cnv: 'CNV',
   smallMutation: 'Small Mutation',
   structuralVariant: 'Structural Variant',
-  expression: 'Expression',
+  expression: 'Expression Outlier',
 };
 
 const SummaryPrintTable = ({
@@ -31,7 +31,7 @@ const SummaryPrintTable = ({
     {data.filter((key) => (key.value !== null && key.value !== '')).map(({ [labelKey]: label, [valueKey]: value }) => (
       <TableRow>
         <TableCell>
-          <Typography variant="body2" fontWeight="bold">{variantTypes.includes(String(label)) ? variantToStrings[String(label)] : label}</Typography>
+          <Typography variant="body2" fontWeight="bold">{variantTypes.includes(String(label)) ? `${variantToStrings[String(label)]}${Object.values(value).length > 1 ? 's' : ''}` : label}</Typography>
         </TableCell>
         <TableCell sx={{ paddingLeft: 1 }}>
           {renderValue ? renderValue(value) : value}
