@@ -7,8 +7,10 @@ import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
 import ReportContext from '@/context/ReportContext';
+import useReport from '@/hooks/useReport';
 import { SmallMutationType } from '@/common';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import VariantEditDialog from '@/components/VariantEditDialog';
 import { columnDefs } from './columnDefs';
 
 import './index.scss';
@@ -36,6 +38,7 @@ const SmallMutations = ({
   setIsLoading,
 }: SmallMutationsProps): JSX.Element => {
   const { report } = useContext(ReportContext);
+  const { canEdit } = useReport();
   const [smallMutations, setSmallMutations] = useState<SmallMutationType[]>([]);
   const [groupedSmallMutations, setGroupedSmallMutations] = useState({
     therapeutic: [],
@@ -50,6 +53,9 @@ const SmallMutations = ({
       } return accumulator;
     }, []),
   );
+
+  const [showDialog, setShowDialog] = useState(false);
+  const [editData, setEditData] = useState<SmallMutationType | null>();
 
   useEffect(() => {
     if (report) {
@@ -68,6 +74,7 @@ const SmallMutations = ({
             for (const {
               gene: {
                 expressionVariants: {
+                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
                   tpm, rpkm, primarySiteFoldChange,
                 },
               },
@@ -132,6 +139,16 @@ const SmallMutations = ({
     }
   }, [smallMutations]);
 
+  const handleEditStart = (rowData: SmallMutationType) => {
+    setShowDialog(true);
+    setEditData(rowData);
+  };
+
+  const handleEditClose = () => {
+    setShowDialog(false);
+    setEditData(null);
+  };
+
   const handleVisibleColsChange = (change) => setVisibleCols(change);
 
   const dataTables = useMemo(() => Object.entries(groupedSmallMutations).map(([key, value]) => (
@@ -144,15 +161,30 @@ const SmallMutations = ({
       syncVisibleColumns={handleVisibleColsChange}
       visibleColumns={visibleCols}
       demoDescription={INFO_BUBBLES[key]}
+      canEdit={canEdit}
+      onEdit={handleEditStart}
     />
-  )), [groupedSmallMutations, visibleCols]);
+  )), [canEdit, groupedSmallMutations, visibleCols]);
 
   return (
     <div className="small-mutations">
-      <Typography variant="h3">
-        Small Mutations
-      </Typography>
-      { !isLoading ? dataTables : null }
+      {!isLoading && (
+        <>
+          <Typography variant="h3">
+            Small Mutations
+          </Typography>
+          {showDialog && (
+            <VariantEditDialog
+              editData={editData}
+              variantType="snv"
+              isOpen={showDialog}
+              onClose={handleEditClose}
+              showErrorSnackbar={snackbar.error}
+            />
+          )}
+          { dataTables }
+        </>
+      )}
     </div>
   );
 };

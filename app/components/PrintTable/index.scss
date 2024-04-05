@@ -23,20 +23,22 @@
 
   &__row {
     font-size: 10pt;
-    border-bottom: 1px solid $palette__text--hint;
-    page-break-inside: avoid;
+    border-bottom: 0.5px solid lightgray;
 
     & td {
-      padding: 10px 4px;
+      padding: 3px 4px;
       max-width: 300px;
       overflow-wrap: break-word;
+      break-inside: avoid;
     }
   }
 
   &__none {
     border-bottom: 1px solid $palette__text--hint;
-    padding: 10px 0;
+    padding: 3px 4px;
     text-align: center;
+    border-bottom: 0.5px solid lightgray;
+    font-size: 10pt;
   }
 
   &__cell {
