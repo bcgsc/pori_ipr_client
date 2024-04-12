@@ -326,9 +326,7 @@ const RapidSummary = ({
     setTumourSummary([
       {
         term: 'Pathology Tumour Content',
-        value: `${
-          report.sampleInfo?.find((samp) => samp?.Sample?.toLowerCase() === 'tumour')['Patho TC'] ?? ''
-        }`,
+        value: `${report.sampleInfo?.find((samp) => samp?.Sample?.toLowerCase() === 'tumour')['Patho TC'] ?? ''}`,
       },
       {
         term: 'M1M2 Score',
@@ -386,8 +384,8 @@ const RapidSummary = ({
         value: msiStatus,
       },
     ]);
-  }, [microbial, primaryBurden, tmburMutBur, report.m1m2Score, report.sampleInfo, report.tumourContent, tCellCd8.percentile, tCellCd8.score, report.captiv8Score,
-    tCellCd8.percentileHidden, tCellCd8, tCellCd8.pedsScoreComment, tmburMutBur.adjustedTmb, tmburMutBur.tmbHidden, tCellCd8.pedsScore, tCellCd8.pedsPercentile]);
+  }, [microbial, primaryBurden, tmburMutBur, report.m1m2Score, report.sampleInfo, report.tumourContent, tCellCd8?.percentile, tCellCd8?.score, report.captiv8Score,
+    tCellCd8?.percentileHidden, tCellCd8, tCellCd8?.pedsScoreComment, tmburMutBur?.adjustedTmb, tmburMutBur?.tmbHidden, tCellCd8?.pedsScore, tCellCd8?.pedsPercentile]);
 
   const handlePatientEditClose = useCallback((
     newPatientData: PatientInformationType,
