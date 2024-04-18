@@ -93,7 +93,7 @@ const Legend = ({
       {imageError && (
         <Typography align="center" color="error">{imageError}</Typography>
       )}
-      {/* Case where v1 or v2 legend is used */}
+      {/* Case where v1 or v2 or v3 legend is used */}
       {legend && typeof legend === 'string' && (
         <img src={legend} className="pathway__legend" alt="Pathway Legend" />
       )}
