@@ -47,6 +47,8 @@ const PathwayAnalysis = ({
             setLegend('img/pathway_legend_v1.png');
           } else if (type === 'v2') {
             setLegend('img/pathway_legend_v2.png');
+          } else if (type === 'v3') {
+            setLegend('img/pathway_legend_v3.png');
           } else if (type === 'custom') {
             const legendResp = await api.get(
               `/reports/${report.ident}/image/retrieve/pathwayAnalysis.legend`,
@@ -73,6 +75,8 @@ const PathwayAnalysis = ({
         setLegend('img/pathway_legend_v1.png');
       } else if (type === 'v2') {
         setLegend('img/pathway_legend_v2.png');
+      } else if (type === 'v3') {
+        setLegend('img/pathway_legend_v3.png');
       } else if (type === 'custom') {
         const legendResp = await api.get(
           `/reports/${report.ident}/image/retrieve/pathwayAnalysis.legend`,

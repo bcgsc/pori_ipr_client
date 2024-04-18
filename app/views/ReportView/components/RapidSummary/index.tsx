@@ -335,7 +335,7 @@ const RapidSummary = ({
           : null,
       },
       {
-        term: 'CAPTIV-8 Score',
+        term: 'Preliminary CAPTIV-8 Score',
         value: report.captiv8Score !== null
           ? `${report.captiv8Score}`
           : null,

@@ -391,7 +391,7 @@ const TumourSummaryEdit = ({
         return (
           <TextField
             className="tumour-dialog__text-field"
-            label="CAPTIV-8 Score"
+            label="Preliminary CAPTIV-8 Score"
             value={newReportData.captiv8Score}
             name="captiv8Score"
             onChange={handleReportChange}
