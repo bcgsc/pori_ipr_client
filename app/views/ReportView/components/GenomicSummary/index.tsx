@@ -9,11 +9,9 @@ import {
   Box,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import sortBy from 'lodash/sortBy';
 
 import api, { ApiCallSet } from '@/services/api';
 import { formatDate } from '@/utils/date';
-import ConfirmContext from '@/context/ConfirmContext';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import DemoDescription from '@/components/DemoDescription';
 import DescriptionList from '@/components/DescriptionList';
@@ -21,7 +19,6 @@ import ReportContext, { PatientInformationType, ReportType } from '@/context/Rep
 import snackbar from '@/services/SnackbarUtils';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import PatientEdit from '@/components/PatientEdit';
-import useConfirmDialog from '@/hooks/useConfirmDialog';
 import TumourSummaryEdit from '@/components/TumourSummaryEdit';
 import {
   TumourSummaryType, MicrobialType, ImmuneType, MutationBurdenType, TmburType, MsiType,
@@ -29,47 +26,12 @@ import {
 import SummaryPrintTable from '@/components/SummaryPrintTable';
 import useReport from '@/hooks/useReport';
 
-import VariantChips from './components/VariantChips';
-import VariantCounts from './components/VariantCounts';
-import {
-  GeneVariantType,
-} from './types';
 import {
   ComparatorType,
 } from '../MutationBurden/types';
 import MutationSignatureType from '../MutationSignatures/types';
 
 import './index.scss';
-
-const variantCategory = (variant) => {
-  // small mutations
-  if (/[:(][gcp]\./.exec(variant.geneVariant)) {
-    variant.type = 'smallMutation';
-    return variant;
-  }
-  // Structural Variants
-  if (variant.geneVariant.includes('::') || variant.geneVariant.includes('fusion')) {
-    variant.type = 'structuralVariant';
-    return variant;
-  }
-  // Expression Outliers
-  if (variant.geneVariant.toLowerCase().includes('express')
-    || variant.geneVariant.toLowerCase().includes('outlier')
-    || variant.geneVariant.toLowerCase().includes('percentile')
-  ) {
-    variant.type = 'expression';
-    return variant;
-  }
-  variant.type = 'cnv';
-  return variant;
-};
-
-const customTypeSort = (variant) => {
-  if (variant.type === 'smallMutation') return 0;
-  if (variant.type === 'cnv') return 1;
-  if (variant.type === 'structuralVariant') return 2;
-  return 3;
-};
 
 type GenomicSummaryProps = {
   loadedDispatch?: ({ type }: { type: string }) => void;
@@ -86,8 +48,6 @@ const GenomicSummary = ({
 }: GenomicSummaryProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
   const { canEdit } = useReport();
-  const { isSigned } = useContext(ConfirmContext);
-  const { showConfirmDialog } = useConfirmDialog();
   const history = useHistory();
 
   const [showPatientEdit, setShowPatientEdit] = useState(false);
@@ -100,7 +60,6 @@ const GenomicSummary = ({
   const [signatures, setSignatures] = useState<MutationSignatureType[]>([]);
   const [tumourSummary, setTumourSummary] = useState<TumourSummaryType[]>();
   const [primaryBurden, setPrimaryBurden] = useState<MutationBurdenType>();
-  const [variants, setVariants] = useState<GeneVariantType[]>();
   const [msi, setMsi] = useState<MsiType>();
   const [tmburMutBur, setTmburMutBur] = useState<TmburType>();
 
@@ -113,13 +72,6 @@ const GenomicSummary = ({
   }]);
   const [tCellCd8, setTCellCd8] = useState<ImmuneType>();
   const [primaryComparator, setPrimaryComparator] = useState<ComparatorType>();
-  const [variantFilter, setVariantFilter] = useState<string>('');
-  const [variantCounts, setVariantCounts] = useState({
-    smallMutation: 0,
-    cnv: 0,
-    structuralVariant: 0,
-    expression: 0,
-  });
 
   const classNamePrefix = printVersion ? 'genomic-summary--print' : 'genomic-summary';
 
@@ -129,7 +81,6 @@ const GenomicSummary = ({
         try {
           const apiCalls = new ApiCallSet([
             api.get(`/reports/${report.ident}/summary/microbial`),
-            api.get(`/reports/${report.ident}/summary/genomic-alterations-identified`),
             api.get(`/reports/${report.ident}/comparators`),
             api.get(`/reports/${report.ident}/mutation-signatures`),
             api.get(`/reports/${report.ident}/mutation-burden`),
@@ -139,7 +90,6 @@ const GenomicSummary = ({
 
           const [
             microbialResp,
-            variantsResp,
             comparatorsResp,
             signaturesResp,
             burdenResp,
@@ -147,7 +97,6 @@ const GenomicSummary = ({
             msiResp,
           ] = await apiCalls.request() as [
             MicrobialType[],
-            GeneVariantType[],
             ComparatorType[],
             MutationSignatureType[],
             MutationBurdenType[],
@@ -162,6 +111,7 @@ const GenomicSummary = ({
             }
           } catch (e) {
             // tmbur does not exist in records before this implementation, and no backfill will be done on the backend, silent fail this
+            // eslint-disable-next-line no-console
             console.error('tmbur-mutation-burden call error', e?.message);
           }
 
@@ -178,27 +128,6 @@ const GenomicSummary = ({
             setMsi(msiResp[0]);
           }
 
-          const output = [];
-          const counts = {
-            smallMutation: 0,
-            cnv: 0,
-            structuralVariant: 0,
-            expression: 0,
-          };
-
-          variantsResp.forEach((variant, k) => {
-            // Add processed Variant
-            output.push(variantCategory(variant));
-
-            // Update counts
-            if (!counts[variantsResp[k].type]) {
-              counts[variantsResp[k].type] = 0;
-            }
-            counts[variantsResp[k].type] += 1;
-          });
-          const sorted = sortBy(output, [customTypeSort, 'geneVariant']);
-          setVariants(sorted);
-          setVariantCounts(counts);
           if (loadedDispatch) {
             // TODO
             loadedDispatch({ type: 'summary' });
@@ -264,7 +193,11 @@ const GenomicSummary = ({
 
       let tCell: null | string;
       if (tCellCd8 && typeof tCellCd8.score === 'number') {
-        tCell = `${tCellCd8.score} ${tCellCd8.percentile ? `(${tCellCd8.percentile}%)` : ''}`;
+        if (tCellCd8.pedsScore) {
+          tCell = `${tCellCd8.pedsScore} ${tCellCd8.pedsPercentile && !tCellCd8.percentileHidden ? `(${tCellCd8.pedsPercentile}%)` : ''}`;
+        } else {
+          tCell = `${tCellCd8.score} ${tCellCd8.percentile && !tCellCd8.percentileHidden ? `(${tCellCd8.percentile}%)` : ''}`;
+        }
       } else {
         tCell = null;
       }
@@ -311,17 +244,23 @@ const GenomicSummary = ({
           }).join(', ') : null,
         },
         {
-          term: 'CD8+ T Cell Score',
+          term:
+            tCellCd8?.pedsScore ? 'Pediatric CD8+ T Cell Score' : 'CD8+ T Cell Score',
           value: tCell,
         },
         {
-          term: 'Mutation Signature',
+          term: 'Pediatric CD8+ T Cell Comment',
+          value:
+            tCellCd8?.pedsScoreComment ? tCellCd8?.pedsScoreComment : null,
+        },
+        {
+          term: 'Mutation Signatures',
           value: sigs,
           action: !isPrint ? () => history.push('mutation-signatures') : null,
         },
         {
           term: 'Mutation Burden',
-          value: primaryBurden && primaryBurden.totalMutationsPerMb !== null ? `${primaryBurden.totalMutationsPerMb} mut/Mb` : null,
+          value: primaryBurden && primaryBurden.totalMutationsPerMb !== null && (!tmburMutBur?.adjustedTmb || tmburMutBur.tmbHidden === true) ? `${primaryBurden.totalMutationsPerMb} Mut/Mb` : null,
         },
         {
           term: `SV Burden (${primaryComparator ? primaryComparator.name : 'primary'})`,
@@ -340,55 +279,26 @@ const GenomicSummary = ({
           value: msiStatus ?? null,
         },
         {
-          term: 'Captiv 8 Score',
+          term: 'CAPTIV-8 Score',
           value: report.captiv8Score !== null
             ? `${report.captiv8Score}`
             : null,
         },
         {
-          term: 'Genome TMB (mut/mb)', // float
+          term:
+            tmburMutBur?.adjustedTmb ? 'Adjusted TMB (Mut/Mb)' : 'Genome TMB (Mut/Mb)', // float
           // Forced to do this due to javascript floating point issues
           value:
-            tmburMutBur ? (tmburMutBur.genomeSnvTmb + tmburMutBur.genomeIndelTmb).toFixed(2) : null,
+            tmburMutBur && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmb?.toFixed(2) ?? (tmburMutBur.genomeSnvTmb + tmburMutBur.genomeIndelTmb).toFixed(2) : null,
+        },
+        {
+          term: 'Adjusted TMB Comment',
+          value:
+            tmburMutBur?.adjustedTmbComment && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmbComment : null,
         },
       ]);
     }
   }, [history, microbial, primaryBurden, primaryComparator, isPrint, report, signatures, tCellCd8, msi, tmburMutBur, report.captiv8Score]);
-
-  const handleChipDeleted = useCallback(async (chipIdent, type, comment) => {
-    try {
-      const req = api.del(
-        `/reports/${report.ident}/summary/genomic-alterations-identified/${chipIdent}`,
-        { comment },
-      );
-
-      if (isSigned) {
-        showConfirmDialog(req);
-      } else {
-        await req.request();
-        setVariantCounts((prevVal) => ({ ...prevVal, [type]: prevVal[type] - 1 }));
-        setVariants((prevVal) => (prevVal.filter((val) => val.ident !== chipIdent)));
-        snackbar.success('Entry deleted');
-      }
-    } catch (err) {
-      snackbar.error('Entry NOT deleted due to an error');
-    }
-  }, [report, isSigned, showConfirmDialog]);
-
-  const handleChipAdded = useCallback(async (variant) => {
-    try {
-      const req = api.post(`/reports/${report.ident}/summary/genomic-alterations-identified`, { geneVariant: variant });
-      const newVariantEntry = await req.request();
-
-      const categorizedVariantEntry = variantCategory(newVariantEntry);
-
-      setVariantCounts((prevVal) => ({ ...prevVal, [categorizedVariantEntry.type]: prevVal[categorizedVariantEntry.type] + 1 }));
-      setVariants((prevVal) => ([...prevVal, categorizedVariantEntry]));
-      snackbar.success('Entry added');
-    } catch (err) {
-      snackbar.error('Entry NOT added due to an error');
-    }
-  }, [report]);
 
   const handlePatientEditClose = useCallback((
     newPatientData: PatientInformationType,
@@ -613,69 +523,6 @@ const GenomicSummary = ({
     );
   }, [canEdit, classNamePrefix, handleTumourSummaryEditClose, microbial, tCellCd8, primaryBurden, tmburMutBur, report, showTumourSummaryEdit, tumourSummary, printVersion]);
 
-  const alterationsSection = useMemo(() => {
-    let titleSection = (
-      <Typography variant="h3">
-        Key Genomic and Transcriptomic Alterations Identified
-      </Typography>
-    );
-    let dataSection = (
-      <>
-        <VariantCounts
-          filter={variantFilter}
-          counts={variantCounts}
-          onToggleFilter={setVariantFilter}
-        />
-        <VariantChips
-          variants={variantFilter ? variants.filter((v) => v.type === variantFilter) : variants}
-          canEdit={canEdit}
-          onChipDeleted={handleChipDeleted}
-          onChipAdded={handleChipAdded}
-          isPrint={Boolean(printVersion)}
-        />
-      </>
-    );
-
-    if (printVersion === 'beta') {
-      titleSection = (
-        <Typography variant="h5" fontWeight="bold" display="inline">Key Genomic and Transcriptomic Alterations Identified</Typography>
-      );
-      if (variants) {
-        const uniqueTypesArray = [...new Set(variants.map(({ type }) => type))].sort();
-        const categorizedDataArray = [];
-        uniqueTypesArray.forEach((variantType) => {
-          categorizedDataArray.push({
-            key: variantType,
-            value: variants.filter(({ type }) => type === variantType),
-          });
-        });
-        dataSection = (
-          <SummaryPrintTable
-            data={categorizedDataArray}
-            labelKey="key"
-            valueKey="value"
-            renderValue={(val) => val.map(({ geneVariant }) => (
-              <Box sx={{ paddingLeft: 0.75, display: 'inline-block' }}>
-                <Typography variant="caption">{geneVariant}</Typography>
-              </Box>
-            ))}
-          />
-        );
-      }
-    }
-
-    return (
-      <div className={`${classNamePrefix}__alterations`}>
-        <div className={`${classNamePrefix}__alterations-title`}>
-          {titleSection}
-        </div>
-        <div className={`${classNamePrefix}__alterations-content`}>
-          {dataSection}
-        </div>
-      </div>
-    );
-  }, [canEdit, classNamePrefix, handleChipAdded, handleChipDeleted, printVersion, variantCounts, variantFilter, variants]);
-
   if (isLoading || !report || !patientInformation || !tumourSummary) {
     return null;
   }
@@ -699,7 +546,6 @@ const GenomicSummary = ({
             {tumourSummarySection}
           </Box>
         </Box>
-        {alterationsSection}
       </div>
     );
   }
@@ -713,7 +559,6 @@ const GenomicSummary = ({
           </DemoDescription>
           {patientInfoSection}
           {tumourSummarySection}
-          {alterationsSection}
         </>
       )}
     </div>

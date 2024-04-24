@@ -1,6 +1,7 @@
 import {
   Table, TableCell, TableRow, Typography,
 } from '@mui/material';
+import { Dictionary } from 'lodash';
 import React from 'react';
 
 type SummaryPrintTableProps = {
@@ -11,6 +12,15 @@ type SummaryPrintTableProps = {
   renderValue?: (value: any) => unknown;
 };
 
+const variantTypes = ['cnv', 'smallMutation', 'structuralVariant', 'expression'];
+
+const variantToStrings: Dictionary<string> = {
+  cnv: 'CNV',
+  smallMutation: 'Small Mutation',
+  structuralVariant: 'Structural Variant',
+  expression: 'Expression Outlier',
+};
+
 const SummaryPrintTable = ({
   data,
   labelKey,
@@ -18,9 +28,11 @@ const SummaryPrintTable = ({
   renderValue = null,
 }: SummaryPrintTableProps) => (
   <Table padding="none" size="small">
-    {data.map(({ [labelKey]: label, [valueKey]: value }) => (
+    {data.filter((key) => (key.value !== null && key.value !== '')).map(({ [labelKey]: label, [valueKey]: value }) => (
       <TableRow>
-        <TableCell><Typography variant="body2" fontWeight="bold">{label}</Typography></TableCell>
+        <TableCell>
+          <Typography variant="body2" fontWeight="bold">{variantTypes.includes(String(label)) ? `${variantToStrings[String(label)]}${Object.values(value).length > 1 ? 's' : ''}` : label}</Typography>
+        </TableCell>
         <TableCell sx={{ paddingLeft: 1 }}>
           {renderValue ? renderValue(value) : value}
         </TableCell>

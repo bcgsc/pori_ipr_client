@@ -6,4 +6,14 @@
   &__text-field {
     margin: 12px 0;
   }
+
+  &__check-box {
+    color: gray;
+    margin-top: -12px;
+    font-size: 2;
+  }
+}
+
+.checkbox-label {
+  font-size: 10pt;
 }

@@ -49,9 +49,9 @@ const MutationSignatures = ({
             api.get(`/reports/${report.ident}/mutation-signatures`).request(),
           ]);
           setImages(imageData);
-          setSbsSignatures(signatureData.filter((sig) => !(new RegExp(/dbs|id/)).test(sig.signature.toLowerCase())));
-          setDbsSignatures(signatureData.filter((sig) => (new RegExp(/dbs/)).test(sig.signature.toLowerCase())));
-          setIdSignatures(signatureData.filter((sig) => (new RegExp(/id/)).test(sig.signature.toLowerCase())));
+          setSbsSignatures(signatureData.filter((sig) => !(/dbs|id/).test(sig.signature.toLowerCase())));
+          setDbsSignatures(signatureData.filter((sig) => (/dbs/).test(sig.signature.toLowerCase())));
+          setIdSignatures(signatureData.filter((sig) => (/id/).test(sig.signature.toLowerCase())));
         } catch (err) {
           snackbar.error(`Network error: ${err}`);
         } finally {

@@ -195,6 +195,7 @@ const RapidSummary = ({
             }
           } catch (e) {
             // mutation burden does not exist in records before this implementation, and no backfill will be done on the backend, silent fail this
+            // eslint-disable-next-line no-console
             console.error('mutation-burden call error', e?.message);
           }
 
@@ -311,12 +312,21 @@ const RapidSummary = ({
       svBurden = null;
     }
 
+    let tCell: null | string;
+    if (tCellCd8 && typeof tCellCd8.score === 'number') {
+      if (tCellCd8.pedsScore) {
+        tCell = `${tCellCd8.pedsScore} ${tCellCd8.pedsPercentile && !tCellCd8.percentileHidden ? `(${tCellCd8.pedsPercentile}%)` : ''}`;
+      } else {
+        tCell = `${tCellCd8.score} ${tCellCd8.percentile && !tCellCd8.percentileHidden ? `(${tCellCd8.percentile}%)` : ''}`;
+      }
+    } else {
+      tCell = null;
+    }
+
     setTumourSummary([
       {
         term: 'Pathology Tumour Content',
-        value: `${
-          report.sampleInfo?.find((samp) => samp?.Sample?.toLowerCase() === 'tumour')['Patho TC'] ?? ''
-        }`,
+        value: `${report.sampleInfo?.find((samp) => samp?.Sample?.toLowerCase() === 'tumour')['Patho TC'] ?? ''}`,
       },
       {
         term: 'M1M2 Score',
@@ -325,7 +335,7 @@ const RapidSummary = ({
           : null,
       },
       {
-        term: 'CAPTIV-8 Score',
+        term: 'Preliminary CAPTIV-8 Score',
         value: report.captiv8Score !== null
           ? `${report.captiv8Score}`
           : null,
@@ -341,27 +351,41 @@ const RapidSummary = ({
         }).join(', ') : null,
       },
       {
-        term: 'CD8+ T Cell Score',
-        value: typeof tCellCd8?.score === 'number'
-          ? `${tCellCd8.score} ${tCellCd8.percentile ? `(${tCellCd8.percentile}%)` : ''}`
-          : null,
+        term:
+          tCellCd8?.pedsScore ? 'Pediatric CD8+ T Cell Score' : 'CD8+ T Cell Score',
+        value: tCell,
+      },
+      {
+        term: 'Pediatric CD8+ T Cell Comment',
+        value:
+          tCellCd8?.pedsScoreComment ? tCellCd8?.pedsScoreComment : null,
+      },
+      {
+        term: 'Mutation Burden',
+        value: primaryBurden && primaryBurden.totalMutationsPerMb !== null && (!tmburMutBur?.adjustedTmb || tmburMutBur.tmbHidden === true) ? `${primaryBurden.totalMutationsPerMb} Mut/Mb` : null,
       },
       {
         term: 'SV Burden (POG Average)',
         value: svBurden,
       },
       {
-        term: 'Genome TMB (mut/mb)',
-        value: tmburMutBur
-          ? `${parseFloat((tmburMutBur.genomeSnvTmb + tmburMutBur.genomeIndelTmb).toFixed(12))}`
-          : null,
+        term:
+          tmburMutBur?.adjustedTmb ? 'Adjusted TMB (Mut/Mb)' : 'Genome TMB (Mut/Mb)',
+        value:
+          tmburMutBur && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmb?.toFixed(2) ?? (tmburMutBur.genomeSnvTmb + tmburMutBur.genomeIndelTmb).toFixed(2) : null,
+      },
+      {
+        term: 'Adjusted TMB Comment',
+        value:
+          tmburMutBur?.adjustedTmbComment && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmbComment : null,
       },
       {
         term: 'MSI Status',
         value: msiStatus,
       },
     ]);
-  }, [microbial, primaryBurden, tmburMutBur, report.m1m2Score, report.sampleInfo, report.tumourContent, tCellCd8?.percentile, tCellCd8?.score, report.captiv8Score]);
+  }, [microbial, primaryBurden, tmburMutBur, report.m1m2Score, report.sampleInfo, report.tumourContent, tCellCd8?.percentile, tCellCd8?.score, report.captiv8Score,
+    tCellCd8?.percentileHidden, tCellCd8, tCellCd8?.pedsScoreComment, tmburMutBur?.adjustedTmb, tmburMutBur?.tmbHidden, tCellCd8?.pedsScore, tCellCd8?.pedsPercentile]);
 
   const handlePatientEditClose = useCallback((
     newPatientData: PatientInformationType,
