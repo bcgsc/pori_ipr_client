@@ -56,6 +56,7 @@ const customTypeSort = (variant) => {
 };
 
   type KeyAlterationsProps = {
+    loadedDispatch?: ({ type }: { type: string }) => void;
     isPrint: boolean;
     printVersion?: 'stable' | 'beta' | null;
   } & WithLoadingInjectedProps;
@@ -64,6 +65,8 @@ const KeyAlterations = ({
   isPrint = false,
   printVersion = null,
   setIsLoading,
+  isLoading,
+  loadedDispatch,
 }: KeyAlterationsProps): JSX.Element => {
   const { report } = useContext(ReportContext);
   const { canEdit } = useReport();
@@ -114,6 +117,11 @@ const KeyAlterations = ({
           const sorted = sortBy(output, [customTypeSort, 'geneVariant']);
           setVariants(sorted);
           setVariantCounts(counts);
+
+          if (loadedDispatch) {
+            // TODO
+            loadedDispatch({ type: 'alterations' });
+          }
         } catch (err) {
           snackbar.error(`Network error: ${err?.message ?? err}`);
         } finally {
@@ -123,7 +131,7 @@ const KeyAlterations = ({
 
       getData();
     }
-  }, [report, setIsLoading, isPrint]);
+  }, [loadedDispatch, report, setIsLoading, isPrint]);
 
   const handleChipDeleted = useCallback(async (chipIdent, type, comment) => {
     try {
@@ -225,6 +233,10 @@ const KeyAlterations = ({
       </div>
     );
   }, [canEdit, classNamePrefix, handleChipAdded, handleChipDeleted, printVersion, variantCounts, variantFilter, variants]);
+
+  if (isLoading || !report || !alterationsSection) {
+    return null;
+  }
 
   return (
     <div className={classNamePrefix}>

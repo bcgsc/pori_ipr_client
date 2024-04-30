@@ -36,6 +36,8 @@ const reducer = (state, action) => {
   switch (action.type) {
     case 'summary':
       return { ...state, summary: true };
+    case 'alterations':
+      return { ...state, alterations: true };
     case 'analyst-comments':
       return { ...state, 'analyst-comments': true };
     case 'pathway':
@@ -49,6 +51,7 @@ const reducer = (state, action) => {
     default:
       return {
         summary: false,
+        alterations: false,
         'analyst-comments': false,
         pathway: false,
         therapeutic: false,
@@ -135,6 +138,7 @@ const Print = ({
   const [report, setReport] = useState<ReportType>(null);
   const [reportSectionsLoaded, dispatch] = useReducer(reducer, {
     summary: false,
+    alterations: false,
     'analyst-comments': false,
     pathway: false,
     therapeutic: false,
@@ -189,6 +193,19 @@ const Print = ({
         const formattedDate = `${year}-${month}-${day}_${hours}h${minutes}m${seconds}s`;
 
         document.title = `${report.patientId}${serverName}_${templateName}_report_${formattedDate}`;
+
+        // TEMPORARY FIX: Reload page once to ensure that all components render before print dialog - DEVSU-2153
+        const reloadOnce = () => {
+          const reloadCount = sessionStorage.getItem('reloadCount');
+          if (parseInt(reloadCount, 10) < 2 || reloadCount == null) {
+            sessionStorage.setItem('reloadCount', String(parseInt(reloadCount, 10) + 1));
+            window.location.reload();
+          } else {
+            sessionStorage.removeItem('reloadCount');
+          }
+        };
+        reloadOnce();
+
         window.print();
         setIsPrintDialogShown(true);
       };
@@ -211,7 +228,7 @@ const Print = ({
           )}
           {template?.sections.includes('summary') && template?.name === 'genomic' && ( // Continuing key alterations after therapeutic targets for genomic reports
             <>
-              <Summary templateName="genomicAlterations" isPrint printVersion={printVersion} />
+              <Summary templateName="genomicAlterations" isPrint printVersion={printVersion} loadedDispatch={dispatch} />
               <PageBreak />
             </>
           )}
