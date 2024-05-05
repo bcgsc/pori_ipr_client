@@ -11,19 +11,20 @@ const Summary = ({
   templateName,
   ...props
 }: SummaryProps): JSX.Element => {
-  if (templateName === 'probe') {
+  const summarySection = props.visibleSections.find(element => ['summary-genomic', 'summary-tgr', 'summary-pcp', 'summary-probe'].includes(element));
+  if (summarySection === 'summary-probe') {
     return (
       <ProbeSummary {...props} />
     );
   }
 
-  if (templateName === 'pharmacogenomic') {
+  if (summarySection === 'summary-pcp') {
     return (
       <PharmacoGenomicSummary {...props} />
     );
   }
 
-  if (templateName === 'rapid') {
+  if (summarySection === 'summary-tgr') {
     return (
       <RapidSummary {...props} />
     );
@@ -41,6 +42,7 @@ const Summary = ({
     );
   }
 
+  // default - summary-genomic
   return (
     <>
       <GenomicSummary {...props} />

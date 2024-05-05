@@ -69,6 +69,7 @@ const ReportView = (): JSX.Element => {
         try {
           const resp = await api.get(`/reports/${params.ident}`).request();
           const templatesResp = await api.get('/templates').request();
+          console.log('get template and report');
           setReport(resp);
           if (resp.template.name === 'probe') {
             setIsProbe(true);
@@ -161,6 +162,7 @@ const ReportView = (): JSX.Element => {
                         isPrint={false}
                         report={report}
                         canEdit={reportValue.canEdit}
+                        visibleSections={visibleSections}
                       />
                     )}
                     path={`${path}/summary`}
