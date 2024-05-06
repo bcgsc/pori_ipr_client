@@ -37,6 +37,7 @@ type ReportType = {
   pediatricIds?: string;
   analysisStartedAt: string | null;
   biopsyName?: string;
+  createdBy?: UserType;
   expression_matrix: string;
   kbVersion: string;
   patientId: string;
