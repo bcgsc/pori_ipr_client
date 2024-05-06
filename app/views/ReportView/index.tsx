@@ -12,20 +12,17 @@ import { useTheme } from '@mui/material/styles';
 import { SecurityContext } from '@/context/SecurityContext';
 import ReportToolbar from '@/components/ReportToolbar';
 import ReportSidebar from '@/components/ReportSidebar';
-import useExternalMode from '@/hooks/useExternalMode';
 import ReportContext, { ReportType } from '@/context/ReportContext';
 import ConfirmContext from '@/context/ConfirmContext';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import useResource from '@/hooks/useResource';
-import NONPRODUCTION_ACCESS from '@/hooks/useResource';
-import UNREVIEWED_ACCESS from '@/hooks/useResource';
 import useSecurity from '@/hooks/useSecurity';
 import Summary from './components/Summary';
 import allSections from './sections';
 import './index.scss';
 
-const { adminAccess, unreviewedAccess, nonproductionAccess } = useResource();
+const { adminAccess } = useResource();
 
 const AnalystComments = lazy(() => import('./components/AnalystComments'));
 const PathwayAnalysis = lazy(() => import('./components/PathwayAnalysis'));

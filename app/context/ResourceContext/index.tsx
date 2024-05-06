@@ -8,8 +8,8 @@ import ResourceContextType from './types';
 // TODO: determine whether bioinformaticians need nonprod or germline access;
 // determine whether report managers do
 // TODO: rename bioinformatician role?
-const GERMLINE_ACCESS = ['admin', 'manager', 'bioinformatician', 'Germline Access'];
-const UNREVIEWED_ACCESS = ['admin', 'manager', 'report-manager', 'bioinformatician', 'Unreviewed Access'];
+const GERMLINE_ACCESS = ['admin', 'manager', 'bioinformatician', 'germline access'];
+const UNREVIEWED_ACCESS = ['admin', 'manager', 'report manager', 'bioinformatician', 'unreviewed access'];
 const NONPRODUCTION_ACCESS = ['admin', 'manager', 'bioinformatician', 'non-production access'];
 
 const GERMLINE_BLOCK = ALL_ROLES;
@@ -51,7 +51,7 @@ const useResources = (): ResourceContextType => {
         setAdminAccess(true);
       }
 
-      if (checkAccess(groups, [...ADMIN_ACCESS, 'manager', 'Report Manager'], ADMIN_BLOCK)) {
+      if (checkAccess(groups, [...ADMIN_ACCESS, 'manager', 'report manager'], ADMIN_BLOCK)) {
         setReportSettingAccess(true);
         setReportEditAccess(true);
       }
