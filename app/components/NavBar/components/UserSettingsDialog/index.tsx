@@ -79,7 +79,7 @@ const UserSettingsDialog = ({
       <DialogContent>
         <div>
           <FormControlLabel
-            label="Allow email notifications?"
+            label={`Allow email notifications to be sent to ${editData.email}`}
             control={
               <Checkbox checked={checkboxSelected} onChange={handleCheckboxChange} />
             }
