@@ -49,7 +49,7 @@ const filterType = (
 
 type TherapeuticProps = {
   isPrint?: boolean;
-  printVersion?: 'stable' | 'beta' | null;
+  printVersion?: 'standardLayout' | 'condensedLayout' | null;
 } & WithLoadingInjectedProps;
 
 const Therapeutic = ({
@@ -201,7 +201,7 @@ const Therapeutic = ({
     }
   }, [chemoresistanceData, therapeuticData, report]);
 
-  if (isPrint && printVersion === 'stable') {
+  if (isPrint && printVersion === 'standardLayout') {
     return (
       <div className="therapeutic-print">
         <Typography
@@ -230,7 +230,7 @@ const Therapeutic = ({
     );
   }
 
-  if (isPrint && printVersion === 'beta') {
+  if (isPrint && printVersion === 'condensedLayout') {
     return (
       <div className="therapeutic-print">
         <Typography

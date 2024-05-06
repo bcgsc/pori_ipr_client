@@ -36,7 +36,7 @@ import './index.scss';
 type GenomicSummaryProps = {
   loadedDispatch?: ({ type }: { type: string }) => void;
   isPrint: boolean;
-  printVersion?: 'stable' | 'beta' | null;
+  printVersion?: 'standardLayout' | 'condensedLayout' | null;
 } & WithLoadingInjectedProps;
 
 const GenomicSummary = ({
@@ -435,7 +435,7 @@ const GenomicSummary = ({
       </div>
     );
 
-    if (printVersion === 'beta') {
+    if (printVersion === 'condensedLayout') {
       titleSection = (
         <div className={`${classNamePrefix}__patient-information-title`}>
           <Typography variant="h5" fontWeight="bold" display="inline">
@@ -500,7 +500,7 @@ const GenomicSummary = ({
       </div>
     );
 
-    if (printVersion === 'beta') {
+    if (printVersion === 'condensedLayout') {
       titleSection = (
         <div className={`${classNamePrefix}__tumour-summary-title`}>
           <Typography variant="h5" fontWeight="bold" display="inline">Tumour Summary</Typography>
@@ -527,7 +527,7 @@ const GenomicSummary = ({
     return null;
   }
 
-  if (printVersion === 'beta') {
+  if (printVersion === 'condensedLayout') {
     return (
       <div className={classNamePrefix}>
         <DemoDescription>

@@ -73,7 +73,7 @@ const PrintTitleBar = ({
   subtitle,
   subtitleSuffix,
   headerImageURI,
-  printVersion = 'stable',
+  printVersion = 'standardLayout',
 }: PrintTitleBarProps) => {
   if (!report) { return null; }
 
@@ -85,15 +85,15 @@ const PrintTitleBar = ({
     biopsyText = biopsyText.concat(`(${report.patientInformation.tumourSample})`);
   }
 
-  if (printVersion === 'beta') {
+  if (printVersion === 'condensedLayout') {
     return (
-      <div className="printbeta__headers">
-        <div className="printbeta__header-left">
+      <div className="condensedLayout__headers">
+        <div className="condensedLayout__header-left">
           {headerImageURI && (
-            <img className="printbeta__logo" src={headerImageURI} alt="" />
+            <img className="condensedLayout__logo" src={headerImageURI} alt="" />
           )}
         </div>
-        <div className="printbeta__header-right">
+        <div className="condensedLayout__header-right">
           <Typography variant="h2">{`${title ? `${title} Report: ` : ''} ${subtitle}${subtitleSuffix ? ` - ${subtitleSuffix}` : ''}`}</Typography>
           <Typography variant="body2">{biopsyText}</Typography>
         </div>
@@ -126,7 +126,7 @@ type PrintPropTypes = {
 };
 
 const Print = ({
-  printVersion = 'stable',
+  printVersion = 'standardLayout',
 }: PrintPropTypes): JSX.Element => {
   const params = useParams<{
     ident: string;
@@ -250,7 +250,7 @@ const Print = ({
 
   return (
     <ReportContext.Provider value={reportContextValue}>
-      <div className={`${printVersion === 'beta' ? 'printbeta' : 'print'}`}>
+      <div className={`${printVersion === 'condensedLayout' ? 'condensedLayout' : 'print'}`}>
         {report ? (
           <>
             <RunningLeft className="running-left" />
