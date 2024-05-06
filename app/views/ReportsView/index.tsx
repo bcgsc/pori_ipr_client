@@ -26,22 +26,27 @@ const ReportsTableComponent = (): JSX.Element => {
     onGridReady,
   } = useGrid();
 
-  const { adminAccess } = useResource();
+  const { adminAccess, unreviewedAccess, nonproductionAccess } = useResource();
   const isExternalMode = useExternalMode();
   const [rowData, setRowData] = useState<ReportType[]>();
 
   useEffect(() => {
     if (!rowData && isExternalMode !== undefined) {
       const getData = async () => {
-        let states = '';
+        let allStates = ['signedoff', 'nonproduction', 'uploaded', 'reviewed', 'completed', 'ready', 'active']
+        let unreviewedStates = ['nonproduction', 'uploaded', 'ready', 'active'];
+        let nonproductionStates = ['nonproduction'];
 
-        if (!adminAccess) {
-          states = 'ready,active,uploaded,signedoff,completed,reviewed';
+        let statesArray = allStates;
+
+        if (!nonproductionAccess) {
+          statesArray = statesArray.filter(elem => !nonproductionStates.includes(elem));
         }
 
-        if (isExternalMode) {
-          states = 'reviewed,completed';
+        if (!unreviewedAccess) {
+          statesArray = statesArray.filter(elem => !unreviewedStates.includes(elem));
         }
+        const states = statesArray.join(",");
 
         const { reports } = await api.get(`/reports${states ? `?states=${states}` : ''}`, {}).request();
 
@@ -87,7 +92,7 @@ const ReportsTableComponent = (): JSX.Element => {
     resizable: true,
     filter: true,
   };
-  
+
   return (
     <div className="ag-theme-material reports-table__container">
       <AgGridReact

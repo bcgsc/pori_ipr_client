@@ -5,8 +5,16 @@ import { checkAccess, ALL_ROLES } from '@/utils/checkAccess';
 import useSecurity from '@/hooks/useSecurity';
 import ResourceContextType from './types';
 
-const GERMLINE_ACCESS = ['admin', 'analyst', 'bioinformatician', 'projects', 'manager'];
+// TODO: determine whether bioinformaticians need nonprod or germline access;
+// determine whether report managers do
+// TODO: rename bioinformatician role?
+const GERMLINE_ACCESS = ['admin', 'manager', 'bioinformatician', 'Germline Access'];
+const UNREVIEWED_ACCESS = ['admin', 'manager', 'report-manager', 'bioinformatician', 'Unreviewed Access'];
+const NONPRODUCTION_ACCESS = ['admin', 'manager', 'bioinformatician', 'non-production access'];
+
 const GERMLINE_BLOCK = ALL_ROLES;
+const UNREVIEWED_ACCESS_BLOCK = [];
+const NONPRODUCTION_ACCESS_BLOCK = [];
 const REPORTS_ACCESS = ['*'];
 const REPORTS_BLOCK = [];
 const ADMIN_ACCESS = ['admin'];
@@ -20,9 +28,13 @@ const useResources = (): ResourceContextType => {
   const [reportEditAccess, setReportEditAccess] = useState(false);
   const [adminAccess, setAdminAccess] = useState(false);
   const [reportSettingAccess, setReportSettingAccess] = useState(false);
+  const [unreviewedAccess, setUnreviewedAccess] = useState(false);
+  const [nonproductionAccess, setNonproductionAccess] = useState(false);
 
   // Check user group first to see which resources they can access
   useEffect(() => {
+    console.log('at 26');
+    console.dir(groups);
     if (groups) {
       if (checkAccess(groups, GERMLINE_ACCESS, GERMLINE_BLOCK)) {
         setGermlineAccess(true);
@@ -40,6 +52,13 @@ const useResources = (): ResourceContextType => {
         setReportSettingAccess(true);
         setReportEditAccess(true);
       }
+      if (checkAccess(groups, UNREVIEWED_ACCESS, UNREVIEWED_ACCESS_BLOCK)) {
+        setUnreviewedAccess(true);
+      }
+      if (checkAccess(groups, NONPRODUCTION_ACCESS, NONPRODUCTION_ACCESS_BLOCK)) {
+        setNonproductionAccess(true);
+      }
+
     }
   }, [groups]);
 
@@ -49,6 +68,8 @@ const useResources = (): ResourceContextType => {
     adminAccess,
     reportSettingAccess,
     reportEditAccess,
+    unreviewedAccess,
+    nonproductionAccess,
   };
 };
 
@@ -58,6 +79,8 @@ const ResourceContext = createContext<ResourceContextType>({
   adminAccess: false,
   reportSettingAccess: false,
   reportEditAccess: false,
+  unreviewedAccess: false,
+  nonproductionAccess: false,
 });
 
 type ResourceContextProviderProps = {
@@ -66,7 +89,7 @@ type ResourceContextProviderProps = {
 
 const ResourceContextProvider = ({ children }: ResourceContextProviderProps): JSX.Element => {
   const {
-    germlineAccess, reportsAccess, adminAccess, reportSettingAccess, reportEditAccess,
+    germlineAccess, reportsAccess, adminAccess, reportSettingAccess, reportEditAccess, unreviewedAccess, nonproductionAccess,
   } = useResources();
 
   const providerValue = useMemo(() => ({
@@ -75,12 +98,16 @@ const ResourceContextProvider = ({ children }: ResourceContextProviderProps): JS
     adminAccess,
     reportSettingAccess,
     reportEditAccess,
+    unreviewedAccess,
+    nonproductionAccess,
   }), [
     germlineAccess,
     reportsAccess,
     adminAccess,
     reportSettingAccess,
     reportEditAccess,
+    unreviewedAccess,
+    nonproductionAccess,
   ]);
 
   return (
