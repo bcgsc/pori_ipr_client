@@ -18,13 +18,14 @@ import ConfirmContext from '@/context/ConfirmContext';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import useResource from '@/hooks/useResource';
+import NONPRODUCTION_ACCESS from '@/hooks/useResource';
+import UNREVIEWED_ACCESS from '@/hooks/useResource';
 import useSecurity from '@/hooks/useSecurity';
 import Summary from './components/Summary';
 import allSections from './sections';
-
 import './index.scss';
 
-const EXTERNAL_ALLOWED_STATES = ['reviewed', 'completed'];
+const { adminAccess, unreviewedAccess, nonproductionAccess } = useResource();
 
 const AnalystComments = lazy(() => import('./components/AnalystComments'));
 const PathwayAnalysis = lazy(() => import('./components/PathwayAnalysis'));
@@ -53,8 +54,7 @@ const ReportView = (): JSX.Element => {
   }>();
   const theme = useTheme();
   const history = useHistory();
-  const isExternalMode = useExternalMode();
-  const { reportEditAccess, adminAccess } = useResource();
+  const { reportEditAccess, adminAccess, nonproductionAccess, unreviewedAccess, nonproductionStates, unreviewedStates } = useResource();
   const { userDetails: { ident: userIdent } } = useSecurity();
 
   const [report, setReport] = useState<ReportType>(null);
@@ -91,12 +91,16 @@ const ReportView = (): JSX.Element => {
      Send them back to /reports if the report state isn't allowed */
   useEffect(() => {
     if (report) {
-      if (!EXTERNAL_ALLOWED_STATES.includes(report.state) && isExternalMode) {
+      if (unreviewedStates.includes(report.state) && !unreviewedAccess) {
+        snackbar.error('User does not have access to this report');
+        history.push('/reports');
+      }
+      if (nonproductionStates.includes(report.state) && !nonproductionAccess) {
         snackbar.error('User does not have access to this report');
         history.push('/reports');
       }
     }
-  }, [report, isExternalMode, history]);
+  }, [report, unreviewedAccess, nonproductionAccess, history]);
 
   useEffect(() => {
     if (report) {

@@ -7,7 +7,6 @@ import { ColumnState } from '@ag-grid-community/core';
 
 import startCase from '@/utils/startCase';
 import useGrid from '@/hooks/useGrid';
-import useExternalMode from '@/hooks/useExternalMode';
 import useResource from '@/hooks/useResource';
 import api from '@/services/api';
 import { ReportType } from '@/context/ReportContext';
@@ -26,16 +25,12 @@ const ReportsTableComponent = (): JSX.Element => {
     onGridReady,
   } = useGrid();
 
-  const { adminAccess, unreviewedAccess, nonproductionAccess } = useResource();
-  const isExternalMode = useExternalMode();
+  const { adminAccess, unreviewedAccess, nonproductionAccess, allStates, unreviewedStates, nonproductionStates } = useResource();
   const [rowData, setRowData] = useState<ReportType[]>();
 
   useEffect(() => {
-    if (!rowData && isExternalMode !== undefined) {
+    if (!rowData) {
       const getData = async () => {
-        let allStates = ['signedoff', 'nonproduction', 'uploaded', 'reviewed', 'completed', 'ready', 'active']
-        let unreviewedStates = ['nonproduction', 'uploaded', 'ready', 'active'];
-        let nonproductionStates = ['nonproduction'];
 
         let statesArray = allStates;
 
@@ -72,7 +67,7 @@ const ReportsTableComponent = (): JSX.Element => {
       };
       getData();
     }
-  }, [adminAccess, isExternalMode, rowData]);
+  }, [adminAccess, nonproductionAccess, unreviewedAccess, rowData]);
 
   const onGridSizeChanged = useCallback((params) => {
     const MEDIUM_SCREEN_WIDTH_LOWER = 992;

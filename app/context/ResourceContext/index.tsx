@@ -15,6 +15,11 @@ const NONPRODUCTION_ACCESS = ['admin', 'manager', 'bioinformatician', 'non-produ
 const GERMLINE_BLOCK = ALL_ROLES;
 const UNREVIEWED_ACCESS_BLOCK = [];
 const NONPRODUCTION_ACCESS_BLOCK = [];
+
+const ALL_STATES = ['signedoff', 'nonproduction', 'uploaded', 'reviewed', 'completed', 'ready', 'active'];
+const UNREVIEWED_STATES = ['uploaded', 'ready', 'active']; // TODO decide if nonproduction should go in unreviewed as well
+const NONPRODUCTION_STATES = ['nonproduction'];
+
 const REPORTS_ACCESS = ['*'];
 const REPORTS_BLOCK = [];
 const ADMIN_ACCESS = ['admin'];
@@ -33,8 +38,6 @@ const useResources = (): ResourceContextType => {
 
   // Check user group first to see which resources they can access
   useEffect(() => {
-    console.log('at 26');
-    console.dir(groups);
     if (groups) {
       if (checkAccess(groups, GERMLINE_ACCESS, GERMLINE_BLOCK)) {
         setGermlineAccess(true);
@@ -70,6 +73,9 @@ const useResources = (): ResourceContextType => {
     reportEditAccess,
     unreviewedAccess,
     nonproductionAccess,
+    allStates: ALL_STATES,
+    unreviewedStates: UNREVIEWED_STATES,
+    nonproductionStates: NONPRODUCTION_STATES,
   };
 };
 
@@ -81,6 +87,9 @@ const ResourceContext = createContext<ResourceContextType>({
   reportEditAccess: false,
   unreviewedAccess: false,
   nonproductionAccess: false,
+  allStates: ALL_STATES,
+  unreviewedStates: UNREVIEWED_STATES,
+  nonproductionStates: NONPRODUCTION_STATES,
 });
 
 type ResourceContextProviderProps = {
@@ -90,6 +99,9 @@ type ResourceContextProviderProps = {
 const ResourceContextProvider = ({ children }: ResourceContextProviderProps): JSX.Element => {
   const {
     germlineAccess, reportsAccess, adminAccess, reportSettingAccess, reportEditAccess, unreviewedAccess, nonproductionAccess,
+    allStates,
+    unreviewedStates,
+    nonproductionStates,
   } = useResources();
 
   const providerValue = useMemo(() => ({
@@ -100,6 +112,9 @@ const ResourceContextProvider = ({ children }: ResourceContextProviderProps): JS
     reportEditAccess,
     unreviewedAccess,
     nonproductionAccess,
+    allStates,
+    unreviewedStates,
+    nonproductionStates,
   }), [
     germlineAccess,
     reportsAccess,
@@ -108,6 +123,9 @@ const ResourceContextProvider = ({ children }: ResourceContextProviderProps): JS
     reportEditAccess,
     unreviewedAccess,
     nonproductionAccess,
+    allStates,
+    unreviewedStates,
+    nonproductionStates,
   ]);
 
   return (
