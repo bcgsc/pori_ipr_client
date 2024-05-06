@@ -11,6 +11,7 @@ import {
   Divider,
   FormControl,
   InputLabel,
+  SelectChangeEvent,
 } from '@mui/material';
 
 import api from '@/services/api';
@@ -49,6 +50,12 @@ const Settings = ({
   const [reportVersion, setReportVersion] = useState('');
   const [kbVersion, setKbVersion] = useState('');
   const [matrixVersion, setMatrixVersion] = useState('');
+  const [reportCreator, setReportCreator] = useState({
+    ident: '',
+    firstName: '',
+    lastName: '',
+    email: '',
+  });
   const [showAddUserDialog, setShowAddUserDialog] = useState(false);
   const [showDeleteReportDialog, setShowDeleteReportDialog] = useState(false);
 
@@ -75,16 +82,18 @@ const Settings = ({
       setReportVersion(report.reportVersion);
       setKbVersion(report.kbVersion);
       setMatrixVersion(report.expression_matrix);
+      setReportCreator(report.createdBy);
     }
   }, [report]);
 
-  const handleTemplateChange = (
-    event: React.ChangeEvent<{ value: { name: string, ident: string } }>,
-  ) => {
-    setSelectedTemplate(event.target.value);
+  const handleTemplateChange = (event: SelectChangeEvent<{
+    name: string;
+    ident: string;
+  }>) => {
+    setSelectedTemplate(event.target.value as { name: string; ident: string; });
   };
 
-  const handleStateChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleStateChange = (event: SelectChangeEvent<string>) => {
     setSelectedState(event.target.value);
   };
 
@@ -105,7 +114,13 @@ const Settings = ({
   }, [report, setReport]);
 
   const handleReportUpdate = useCallback(async () => {
-    const updateFields = {};
+    const updateFields: {
+      template? : string;
+      state?: string;
+      reportVersion?: string;
+      kbVersion?: string;
+      expression_matrix?: string;
+    } = {};
 
     if (report.template !== selectedTemplate) {
       updateFields.template = selectedTemplate.name;
@@ -113,7 +128,7 @@ const Settings = ({
     if (report.state !== selectedState) {
       updateFields.state = selectedState;
     }
-    if (report.version !== reportVersion) {
+    if (report.reportVersion !== reportVersion) {
       updateFields.reportVersion = reportVersion;
     }
     if (report.kbVersion !== kbVersion) {
@@ -222,6 +237,13 @@ const Settings = ({
                 label="Expression Matrix Version"
                 onChange={(event) => setMatrixVersion(event.target.value)}
                 value={matrixVersion}
+                variant="outlined"
+              />
+              <TextField
+                classes={{ root: 'settings__text-field' }}
+                disabled
+                label="Report Creator"
+                value={`${reportCreator.firstName} ${reportCreator.lastName} ${reportCreator.email ? `(${reportCreator.email})` : ''}`}
                 variant="outlined"
               />
             </div>
