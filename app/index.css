@@ -31,13 +31,23 @@
       content: element(run-left);
     }
 
-    @top-center {
+    @bottom-center {
       content: element(run-center);
       width: 3in;
     }
 
     @top-right {
       content: element(run-right);
+    }
+  }
+
+  @page :first {
+    @top-left {
+      content: none;
+    }
+
+    @top-right {
+      content: none;
     }
   }
 }
