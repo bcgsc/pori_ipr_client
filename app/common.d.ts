@@ -82,6 +82,7 @@ type UserType = {
   projects?: UserProjectsType[];
   type: string;
   username: string;
+  allowNotifications: boolean;
 } & RecordDefaults;
 
 type ImageType = {
