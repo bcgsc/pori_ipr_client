@@ -50,30 +50,26 @@ const UserSettingsDialog = ({
   };
 
   const handleSubmit = useCallback(async () => {
-    if (checkboxSelected !== editData.allowNotifications) {
-      setIsApiCalling(true);
-      const req = api.put(
-        `/user/${editData.ident}`,
-        { allowNotifications: checkboxSelected },
-        {},
-      );
-      try {
-        if (isSigned) {
-          showConfirmDialog(req);
-          setIsApiCalling(false);
-        } else {
-          await req.request();
-          onClose({ ...editData, allowNotifications: checkboxSelected });
-          snackbar.success('User Settings updated successfully.');
-        }
-      } catch (err) {
-        showErrorSnackbar(`Error updating user settings: ${err.message}`);
-        onClose();
-      } finally {
+    setIsApiCalling(true);
+    const req = api.put(
+      `/user/${editData.ident}`,
+      { allowNotifications: checkboxSelected },
+      {},
+    );
+    try {
+      if (isSigned) {
+        showConfirmDialog(req);
         setIsApiCalling(false);
+      } else {
+        await req.request();
+        onClose({ ...editData, allowNotifications: checkboxSelected });
+        snackbar.success('User Settings updated successfully.');
       }
-    } else {
+    } catch (err) {
+      showErrorSnackbar(`Error updating user settings: ${err.message}`);
       onClose();
+    } finally {
+      setIsApiCalling(false);
     }
   }, [checkboxSelected, editData, isSigned, showConfirmDialog, onClose, showErrorSnackbar]);
 
@@ -83,7 +79,7 @@ const UserSettingsDialog = ({
       <DialogContent>
         <div>
           <FormControlLabel
-            label="Allow email notifications?"
+            label={`Allow email notifications to be sent to ${editData.email}`}
             control={
               <Checkbox checked={checkboxSelected} onChange={handleCheckboxChange} />
             }
