@@ -122,29 +122,6 @@ const ReportOverview = ({
     }
     return (
       <>
-        {(canEditTemplateAppendix && !isEditingTemplate && !isPrint)
-            && (
-              <Fab
-                className="overview__fab"
-                variant="extended"
-                onClick={() => setIsEditingTemplate(true)}
-                color="secondary"
-              >
-                <EditIcon sx={{ mr: 1 }} />
-                Template Appendix
-              </Fab>
-            )}
-        {
-            canEditTemplateAppendix
-            && (
-              <IPRWYSIWYGEditor
-                title="Edit Appendix"
-                isOpen={isEditingTemplate}
-                onClose={handleEditTemplateClose}
-                text={templateAppendixText}
-              />
-            )
-          }
         <div dangerouslySetInnerHTML={{ __html: templateAppendixText }} />
       </>
     );
@@ -164,17 +141,17 @@ const ReportOverview = ({
     return (
       <>
         {(canEditReportAppendix && !isEditingReport && !isPrint)
-            && (
-              <Fab
-                className="overview__fab"
-                variant="extended"
-                onClick={() => setIsEditingReport(true)}
-                color="secondary"
-              >
-                <EditIcon sx={{ mr: 1 }} />
-                Report Appendix
-              </Fab>
-            )}
+          && (
+            <Fab
+              className="overview__fab"
+              variant="extended"
+              onClick={() => setIsEditingReport(true)}
+              color="secondary"
+            >
+              <EditIcon sx={{ mr: 1 }} />
+              Add text to this report's appendix
+            </Fab>
+          )}
         {canEditReportAppendix && (
           <IPRWYSIWYGEditor
             title="Edit Appendix"
