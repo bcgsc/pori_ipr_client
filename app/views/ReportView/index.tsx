@@ -22,8 +22,6 @@ import Summary from './components/Summary';
 import allSections from './sections';
 import './index.scss';
 
-const { adminAccess } = useResource();
-
 const AnalystComments = lazy(() => import('./components/AnalystComments'));
 const PathwayAnalysis = lazy(() => import('./components/PathwayAnalysis'));
 const TherapeuticTargets = lazy(() => import('./components/TherapeuticTargets'));
@@ -89,11 +87,11 @@ const ReportView = (): JSX.Element => {
   useEffect(() => {
     if (report) {
       if (unreviewedStates.includes(report.state) && !unreviewedAccess) {
-        snackbar.error('User does not have access to this report');
+        snackbar.error('User does not have access to this report; it is unreviewed');
         history.push('/reports');
       }
       if (nonproductionStates.includes(report.state) && !nonproductionAccess) {
-        snackbar.error('User does not have access to this report');
+        snackbar.error('User does not have access to this report; it is nonproduction');
         history.push('/reports');
       }
     }
