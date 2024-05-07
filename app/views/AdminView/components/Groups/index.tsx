@@ -38,18 +38,6 @@ const Groups = (): JSX.Element => {
     getData();
   }, []);
 
-  const handleDelete = useCallback(async ({ ident }) => {
-    // eslint-disable-next-line no-restricted-globals
-    if (confirm('Are you sure you want to remove this group?')) {
-      await api.del(`/user/group/${ident}`, {}).request();
-      const newGroups = groups.filter((group) => group.ident !== ident);
-      setGroups(newGroups);
-      snackbar.enqueueSnackbar('Group deleted');
-    } else {
-      snackbar.enqueueSnackbar('Group not deleted');
-    }
-  }, [snackbar, groups]);
-
   const handleEditStart = (rowData) => {
     setShowDialog(true);
     setEditData(rowData);
@@ -59,15 +47,10 @@ const Groups = (): JSX.Element => {
     setShowDialog(false);
     if (newData) {
       const groupIndex = groups.findIndex((group) => group.ident === newData.ident);
-      if (groupIndex !== -1) {
-        const newGroups = [...groups];
-        newGroups[groupIndex] = newData;
-        setGroups(newGroups);
-        snackbar.enqueueSnackbar('Group edited');
-      } else {
-        setGroups((prevVal) => [...prevVal, newData]);
-        snackbar.enqueueSnackbar('Group added');
-      }
+      const newGroups = [...groups];
+      newGroups[groupIndex] = newData;
+      setGroups(newGroups);
+      snackbar.enqueueSnackbar('Group edited');
     }
     setEditData(null);
   }, [groups, snackbar]);
@@ -83,11 +66,6 @@ const Groups = (): JSX.Element => {
             isFullLength
             canEdit
             onEdit={handleEditStart}
-            canAdd
-            onAdd={() => setShowDialog(true)}
-            addText="Add group"
-            canDelete
-            onDelete={handleDelete}
             titleText="Groups"
           />
           {showDialog && (

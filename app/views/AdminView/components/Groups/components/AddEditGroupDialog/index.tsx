@@ -51,6 +51,8 @@ const AddEditUserDialog = ({
   const [apiCallQueue, apiCallQueueDispatch] = useReducer(reducer, []);
 
   useEffect(() => {
+    console.dir(editData);
+    console.dir(groupName);
     if (editData) {
       const {
         name: editName,
@@ -58,7 +60,7 @@ const AddEditUserDialog = ({
         owner: editOwner,
       } = editData;
 
-      setDialogTitle('Edit group');
+      setDialogTitle(`Edit ${editData.name} group members`);
       setGroupName(editName);
       setUsers(editUsers);
       setOwner(editOwner);
@@ -116,24 +118,6 @@ const AddEditUserDialog = ({
     <Dialog open={isOpen} onClose={onClose} maxWidth="sm" fullWidth className="edit-dialog">
       <DialogTitle>{dialogTitle}</DialogTitle>
       <DialogContent>
-        <FormControl fullWidth classes={{ root: 'add-user__form-container' }} variant="outlined">
-          <TextField
-            value={groupName}
-            fullWidth
-            onChange={({ target: { value } }) => setGroupName(value)}
-            label="Group Name"
-            variant="outlined"
-            error={errors.groupName}
-            helperText={errors.groupName ? 'Group name is required' : null}
-            className="add-user__text-field"
-            required
-          />
-        </FormControl>
-        <UserAutocomplete
-          defaultValue={owner || null}
-          onChange={handleOwnerChange}
-          label="Group owner"
-        />
         {editData && (
           <>
             <UserAutocomplete
