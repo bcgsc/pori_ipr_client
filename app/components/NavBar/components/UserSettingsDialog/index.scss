@@ -1,0 +1,17 @@
+.feedback {
+  &__section {
+    margin: 24px 0;
+
+    &:first-of-type {
+      margin: 0 0 24px;
+    }
+
+    &:last-of-type {
+      margin: 24px 0 16px;
+    }
+
+    & > :first-child {
+      margin: 8px 0;
+    }
+  }
+}
