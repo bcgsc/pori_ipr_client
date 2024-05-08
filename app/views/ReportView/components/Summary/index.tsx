@@ -36,6 +36,7 @@ const Summary = ({
     );
   }
 
+  // default - summary-genomic or summary
   if (templateName === 'genomicPatientandTumour') {
     return (
       <GenomicSummary {...props} />
@@ -48,7 +49,6 @@ const Summary = ({
     );
   }
 
-  // default - summary-genomic or summary
   return (
     <>
       <GenomicSummary {...props} />
