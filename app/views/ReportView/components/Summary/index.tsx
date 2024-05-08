@@ -13,7 +13,11 @@ const Summary = ({
   ...props
 }: SummaryProps): JSX.Element => {
   // TODO remove backup template name checks when data is updated in prod
-  const summarySection = visibleSections.find(element => ['summary-genomic', 'summary-tgr', 'summary-pcp', 'summary-probe'].includes(element));
+  let summarySection;
+  if (visibleSections) {
+    summarySection = visibleSections.find(element => ['summary-genomic', 'summary-tgr', 'summary-pcp', 'summary-probe'].includes(element));
+  }
+
   if (summarySection === 'summary-probe' || templateName === 'probe') {
     return (
       <ProbeSummary {...props} />
