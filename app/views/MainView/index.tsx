@@ -22,7 +22,7 @@ import { ResourceContextProvider } from '@/context/ResourceContext';
 import NavBar from '@/components/NavBar';
 import Sidebar from '@/components/Sidebar';
 import snackbar from '@/services/SnackbarUtils';
-import { keycloak } from '@/services/management/auth';
+import { keycloak, logout } from '@/services/management/auth';
 import './index.scss';
 import { Box } from '@mui/system';
 
@@ -105,14 +105,14 @@ const TimeoutModal = memo(({ authorizationToken, setAuthorizationToken }: Timeou
         <p>Your session is about to expire, would you like to remain logged in?</p>
       </DialogContent>
       <DialogActions>
-        <Button disabled={isLoading} onClick={() => setIsOpen(false)}>Close</Button>
+        <Button disabled={isLoading} onClick={logout}>Logout</Button>
         <Button
           disabled={isLoading}
           onClick={handleConfirm}
           color="primary"
           variant="contained"
         >
-          {isLoading ? <CircularProgress color="inherit" size={24} /> : 'Yes'}
+          {isLoading ? <CircularProgress color="inherit" size={24} /> : 'Stay logged in'}
         </Button>
       </DialogActions>
     </Dialog>
