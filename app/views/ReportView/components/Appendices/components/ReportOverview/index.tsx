@@ -11,7 +11,6 @@ import './index.scss';
 
 type ReportOverviewProps = {
   canEditReportAppendix: boolean;
-  canEditTemplateAppendix: boolean;
   isNewTemplate: boolean;
   templateSpecificText: string;
   reportId: string;
@@ -27,11 +26,9 @@ const ReportOverview = ({
   reportId,
   reportSpecificText,
   canEditReportAppendix,
-  canEditTemplateAppendix,
   templateId,
 }: ReportOverviewProps): JSX.Element => {
   const [isLoading, setIsLoading] = useState(false);
-  const [isEditingTemplate, setIsEditingTemplate] = useState(false);
   const [isEditingReport, setIsEditingReport] = useState(false);
   const [templateAppendixText, setTemplateAppendixText] = useState('');
   const [reportAppendixText, setReportAppendixText] = useState('');
@@ -43,45 +40,6 @@ const ReportOverview = ({
   useEffect(() => {
     setReportAppendixText(reportSpecificText);
   }, [reportSpecificText]);
-
-  const handleEditTemplateClose = useCallback(async (updatedText?: string) => {
-    if (updatedText || updatedText === '') {
-      setIsLoading(true);
-      const sanitizedText = sanitizeHtml(updatedText, {
-        allowedAttributes: {
-          a: ['href', 'target', 'rel'],
-        },
-        transformTags: {
-          a: (_tagName, attribs) => ({
-            tagName: 'a',
-            attribs: {
-              href: attribs.href,
-              target: '_blank',
-              rel: 'noopener noreferrer',
-            },
-          }),
-        },
-      });
-      try {
-        if (isNewTemplate) {
-          const res = await api.post(`/templates/${templateId}/appendix`, { text: sanitizedText }).request();
-          setTemplateAppendixText(res?.text);
-          snackbar.success('Template Appendix successfully created.');
-        } else {
-          const res = await api.put(`/templates/${templateId}/appendix`, { text: sanitizedText }).request();
-          setTemplateAppendixText(res?.text);
-          snackbar.success('Template Appendix successfully updated.');
-        }
-      } catch (e) {
-        snackbar.error(`Network error: ${e}`);
-      } finally {
-        setIsLoading(false);
-        setIsEditingTemplate(false);
-      }
-    } else {
-      setIsEditingTemplate(false);
-    }
-  }, [isNewTemplate, templateId]);
 
   const handleEditReportClose = useCallback(async (updatedText?: string) => {
     if (updatedText || updatedText === '') {
@@ -121,37 +79,9 @@ const ReportOverview = ({
       return <CircularProgress color="inherit" size={20} />;
     }
     return (
-      <>
-        {(canEditTemplateAppendix && !isEditingTemplate && !isPrint)
-            && (
-              <Fab
-                className="overview__fab"
-                variant="extended"
-                onClick={() => setIsEditingTemplate(true)}
-                color="secondary"
-              >
-                <EditIcon sx={{ mr: 1 }} />
-                Template Appendix
-              </Fab>
-            )}
-        {
-            canEditTemplateAppendix
-            && (
-              <IPRWYSIWYGEditor
-                title="Edit Appendix"
-                isOpen={isEditingTemplate}
-                onClose={handleEditTemplateClose}
-                text={templateAppendixText}
-              />
-            )
-          }
-        <div dangerouslySetInnerHTML={{ __html: templateAppendixText }} />
-      </>
+      <div dangerouslySetInnerHTML={{ __html: templateAppendixText }} />
     );
   }, [
-    canEditTemplateAppendix,
-    handleEditTemplateClose,
-    isEditingTemplate,
     isLoading,
     isPrint,
     templateAppendixText,
@@ -164,17 +94,17 @@ const ReportOverview = ({
     return (
       <>
         {(canEditReportAppendix && !isEditingReport && !isPrint)
-            && (
-              <Fab
-                className="overview__fab"
-                variant="extended"
-                onClick={() => setIsEditingReport(true)}
-                color="secondary"
-              >
-                <EditIcon sx={{ mr: 1 }} />
-                Report Appendix
-              </Fab>
-            )}
+          && (
+            <Fab
+              className="overview__fab"
+              variant="extended"
+              onClick={() => setIsEditingReport(true)}
+              color="secondary"
+            >
+              <EditIcon sx={{ mr: 1 }} />
+              Add text to this report&apos;s appendix
+            </Fab>
+          )}
         {canEditReportAppendix && (
           <IPRWYSIWYGEditor
             title="Edit Appendix"
@@ -195,7 +125,7 @@ const ReportOverview = ({
     reportAppendixText,
   ]);
 
-  const showDivider = (!isPrint && canEditReportAppendix && canEditTemplateAppendix)
+  const showDivider = (!isPrint && canEditReportAppendix)
     || (isPrint && reportSpecificText);
 
   return (
