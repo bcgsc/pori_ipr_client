@@ -11,7 +11,7 @@ import Alert from '@mui/material/Alert';
 
 import api, { ApiCallSet } from '@/services/api';
 import DataTable from '@/components/DataTable';
-import { PatientInformationType, ReportType } from '@/context/ReportContext';
+import ReportContext, { PatientInformationType, ReportType } from '@/context/ReportContext';
 import useReport from '@/hooks/useReport';
 import ConfirmContext from '@/context/ConfirmContext';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
@@ -44,7 +44,11 @@ const PharmacoGenomicSummary = ({
   isPrint,
   setIsLoading,
 }: PharmacoGenomicSummaryProps): JSX.Element => {
-  const { canEdit, report, setReport } = useReport();
+  const { report, setReport } = useContext(ReportContext);
+  let { canEdit } = useReport();
+  if (report.state === 'completed') {
+    canEdit = false;
+  }
   const { setIsSigned } = useContext(ConfirmContext);
 
   const [testInformation, setTestInformation] = useState<TestInformationType>();
