@@ -32,6 +32,7 @@ const useResources = (): ResourceContextType => {
   const [reportsAccess, setReportsAccess] = useState(false);
   const [reportEditAccess, setReportEditAccess] = useState(false);
   const [adminAccess, setAdminAccess] = useState(false);
+  const [managerAccess, setManagerAccess] = useState(false);
   const [reportSettingAccess, setReportSettingAccess] = useState(false);
   const [unreviewedAccess, setUnreviewedAccess] = useState(false);
   const [nonproductionAccess, setNonproductionAccess] = useState(false);
@@ -49,6 +50,10 @@ const useResources = (): ResourceContextType => {
 
       if (checkAccess(groups, ADMIN_ACCESS, ADMIN_BLOCK)) {
         setAdminAccess(true);
+      }
+
+      if (checkAccess(groups, [...ADMIN_ACCESS, 'manager'], ADMIN_BLOCK)) {
+        setManagerAccess(true);
       }
 
       if (checkAccess(groups, [...ADMIN_ACCESS, 'manager', 'report manager'], ADMIN_BLOCK)) {
@@ -69,6 +74,7 @@ const useResources = (): ResourceContextType => {
     germlineAccess,
     reportsAccess,
     adminAccess,
+    managerAccess,
     reportSettingAccess,
     reportEditAccess,
     unreviewedAccess,
@@ -83,6 +89,7 @@ const ResourceContext = createContext<ResourceContextType>({
   germlineAccess: false,
   reportsAccess: false,
   adminAccess: false,
+  managerAccess: false,
   reportSettingAccess: false,
   reportEditAccess: false,
   unreviewedAccess: false,
@@ -98,7 +105,7 @@ type ResourceContextProviderProps = {
 
 const ResourceContextProvider = ({ children }: ResourceContextProviderProps): JSX.Element => {
   const {
-    germlineAccess, reportsAccess, adminAccess, reportSettingAccess, reportEditAccess, unreviewedAccess, nonproductionAccess,
+    germlineAccess, reportsAccess, adminAccess, managerAccess, reportSettingAccess, reportEditAccess, unreviewedAccess, nonproductionAccess,
     allStates,
     unreviewedStates,
     nonproductionStates,
@@ -108,6 +115,7 @@ const ResourceContextProvider = ({ children }: ResourceContextProviderProps): JS
     germlineAccess,
     reportsAccess,
     adminAccess,
+    managerAccess,
     reportSettingAccess,
     reportEditAccess,
     unreviewedAccess,
@@ -119,6 +127,7 @@ const ResourceContextProvider = ({ children }: ResourceContextProviderProps): JS
     germlineAccess,
     reportsAccess,
     adminAccess,
+    managerAccess,
     reportSettingAccess,
     reportEditAccess,
     unreviewedAccess,

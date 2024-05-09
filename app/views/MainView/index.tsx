@@ -187,8 +187,8 @@ const Main = (): JSX.Element => {
                   <AuthenticatedRoute component={BetaPrintView} path="/printBeta/:ident" showNav={false} onToggleNav={setIsNavVisible} />
                   <AuthenticatedRoute component={GermlineView} path="/germline" />
                   <AuthenticatedRoute component={ProjectsView} path="/projects" />
-                  <AuthenticatedRoute adminRequired component={AdminView} path="/admin" />
-                  <AuthenticatedRoute adminRequired component={TemplateView} path="/template" />
+                  <AuthenticatedRoute managerRequired component={AdminView} path="/admin" />
+                  <AuthenticatedRoute managerRequired component={TemplateView} path="/template" />
                 </Switch>
               </Suspense>
             </section>

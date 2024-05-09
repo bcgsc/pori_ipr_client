@@ -2,6 +2,7 @@ type ResourceContextType = {
   germlineAccess: boolean;
   reportsAccess: boolean;
   adminAccess: boolean;
+  managerAccess: boolean;
   reportSettingAccess: boolean;
   reportEditAccess: boolean;
   unreviewedAccess: boolean;
