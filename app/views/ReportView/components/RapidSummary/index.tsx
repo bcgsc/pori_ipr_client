@@ -133,7 +133,10 @@ const RapidSummary = ({
 }: RapidSummaryProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
   const { setIsSigned } = useContext(ConfirmContext);
-  const { canEdit } = useReport();
+  let { canEdit } = useReport();
+  if (report.state === 'completed') {
+    canEdit = false;
+  }
 
   const [signatures, setSignatures] = useState<SignatureType | null>();
   const [therapeuticAssociationResults, setTherapeuticAssociationResults] = useState<RapidVariantType[] | null>();

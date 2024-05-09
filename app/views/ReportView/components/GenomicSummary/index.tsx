@@ -47,7 +47,10 @@ const GenomicSummary = ({
   loadedDispatch,
 }: GenomicSummaryProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
-  const { canEdit } = useReport();
+  let { canEdit } = useReport();
+  if (report.state === 'completed') {
+    canEdit = false;
+  }
   const history = useHistory();
 
   const [showPatientEdit, setShowPatientEdit] = useState(false);
