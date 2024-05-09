@@ -6,7 +6,6 @@ import {
   List, ListItem, ListItemText, Menu, MenuItem, Typography,
 } from '@mui/material';
 import PrintIcon from '@mui/icons-material/Print';
-
 import ReportContext from '@/context/ReportContext';
 
 import './index.scss';
@@ -16,12 +15,10 @@ const ReportSidebar = (props) => {
     allSections,
     visibleSections,
     isSidebarVisible,
-    canEdit,
   } = props;
 
   const { pathname } = useLocation();
   const { report } = useContext(ReportContext);
-
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handlePrintMenuOpen = (event) => {
@@ -148,21 +145,19 @@ const ReportSidebar = (props) => {
             )}
           </React.Fragment>
         ))}
-        {canEdit && (
-          <Link to={{ pathname: 'settings' }} className="report-sidebar__list-link">
-            <ListItem classes={{
-              root: `
+        <Link to={{ pathname: 'settings' }} className="report-sidebar__list-link">
+          <ListItem classes={{
+            root: `
                 report-sidebar__list-item
                 ${pathname.split('/').pop() === 'settings' ? 'report-sidebar__list-item--active' : ''}
               `,
-            }}
-            >
-              <ListItemText>
-                Settings
-              </ListItemText>
-            </ListItem>
-          </Link>
-        )}
+          }}
+          >
+            <ListItemText>
+              Settings
+            </ListItemText>
+          </ListItem>
+        </Link>
       </List>
     </div>
   );
@@ -172,7 +167,6 @@ ReportSidebar.propTypes = {
   allSections: PropTypes.arrayOf(PropTypes.object).isRequired,
   visibleSections: PropTypes.arrayOf(PropTypes.string).isRequired,
   isSidebarVisible: PropTypes.bool.isRequired,
-  canEdit: PropTypes.bool.isRequired,
 };
 
 export default ReportSidebar;
