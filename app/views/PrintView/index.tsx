@@ -197,21 +197,21 @@ const Print = ({
   }, [isPrintDialogShown, report, reportSectionsLoaded, template]);
 
   const renderSections = useMemo(() => {
-    if (report && template) {
+    if (report && template) { // TODO remove checks on 'summary' and template name once data updated in prod
       return (
         <>
-          {template?.sections.includes('summary') && template?.name !== 'genomic' && (
-            <Summary templateName={report.template.name} isPrint printVersion={printVersion} loadedDispatch={dispatch} />
+          {((template?.sections.includes('summary') && template?.name !== 'genomic') || (!template?.sections.includes('summary-genomic') && !template?.sections.includes('summary'))) && (
+            <Summary visibleSections={template?.sections} templateName={report.template.name} isPrint printVersion={printVersion} loadedDispatch={dispatch} />
           )}
-          {template?.sections.includes('summary') && template?.name === 'genomic' && ( // Splitting the patient info and tumour summary sections from alterations for genomic reports to insert therapeutic targets
-            <Summary templateName="genomicPatientandTumour" isPrint printVersion={printVersion} loadedDispatch={dispatch} />
+          {((template?.sections.includes('summary') && template?.name === 'genomic') || template?.sections.includes('summary-genomic')) && ( // Splitting the patient info and tumour summary sections from alterations for genomic reports to insert therapeutic targets
+            <Summary visibleSections={template?.sections} templateName="genomicPatientandTumour" isPrint printVersion={printVersion} loadedDispatch={dispatch} />
           )}
           {template?.sections.includes('therapeutic-targets') && (
             <TherapeuticTargets isPrint printVersion={printVersion} loadedDispatch={dispatch} />
           )}
-          {template?.sections.includes('summary') && template?.name === 'genomic' && ( // Continuing key alterations after therapeutic targets for genomic reports
+          {((template?.sections.includes('summary') && template?.name === 'genomic') || template?.sections.includes('summary-genomic')) && ( // Continuing key alterations after therapeutic targets for genomic reports
             <>
-              <Summary templateName="genomicAlterations" isPrint printVersion={printVersion} />
+              <Summary visibleSections={template?.sections} templateName="genomicAlterations" isPrint printVersion={printVersion} />
               <PageBreak />
             </>
           )}
