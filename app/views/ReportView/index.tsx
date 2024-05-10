@@ -164,6 +164,7 @@ const ReportView = (): JSX.Element => {
                         isPrint={false}
                         report={report}
                         canEdit={reportValue.canEdit}
+                        visibleSections={visibleSections}
                       />
                     )}
                     path={`${path}/summary`}
