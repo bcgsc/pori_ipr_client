@@ -12,6 +12,7 @@ import {
   ActionCellRendererProps,
   ActionCellRenderer,
 } from '../ActionCellRenderer';
+import TherapeuticType from '@/views/ReportView/components/TherapeuticTargets/types';
 
 const REPORT_TYPES_TO_SHOW_EXTRA_MENU = ['genomic'];
 
@@ -35,6 +36,12 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
   const isMult = Array.isArray(kbStatementId);
 
   const handleUpdateTherapeuticTargets = useCallback((type: TherapeuticTargetType, selectedKbStatementId?: string) => async () => {
+    const therapeuticResp = await api.get(`/reports/${reportId}/therapeutic-targets`, {}).request();
+    let availableTherapeuticTargets: Partial<TherapeuticType>[];
+    if (therapeuticResp) {
+      availableTherapeuticTargets = therapeuticResp?.map(({ ident, createdAt, updatedAt, rank, geneGraphkbId, iprEvidenceLevel, kbStatementIds, notes, ...therapeuticTarget }) => therapeuticTarget);
+    }
+    
     if (!kbStatementId) { return null; }
     setIsLoading(true);
     try {
@@ -59,7 +66,7 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
         }
 
         // Add to targets regardless if it already exists, we don't know at this point without making another API call to search for all these params
-        const newData = {
+        const newData: Partial<TherapeuticType> = {
           type,
           gene: variant.reference1 && variant.reference2
             ? `${variant.reference1.displayName}, ${variant.reference2.displayName}`
@@ -81,8 +88,13 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
           newData.evidenceLevelGraphkbId = iprEvidenceLevelRid;
         }
 
-        await api.post(`/reports/${reportId}/therapeutic-targets`, newData).request();
-        snackbar.success(`Successfully added ${selectedKbStatementId ?? kbStatementId} to potential ${type}`);
+        if (!availableTherapeuticTargets.some(t => t.gene === newData.gene && t.variant === newData.variant && t.evidenceLevel === newData.evidenceLevel)) {
+          await api.post(`/reports/${reportId}/therapeutic-targets`, newData).request();
+          snackbar.success(`Successfully added ${selectedKbStatementId ?? kbStatementId} to potential ${type}`);
+        } else {
+          snackbar.error('Statement already added to potential therapeutic targets.');
+          return null;
+        } 
       }
     } catch (e) {
       if (e.status === 404) {
@@ -123,8 +135,7 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
         onClose={() => setMenuAnchor(null)}
       >
         <MenuItem
-          // disabled={isLoading}
-          disabled
+          disabled={isLoading}
           onClick={isMult
             ? (evt) => handleMultiTargets(evt, 'therapeutic')
             : handleUpdateTherapeuticTargets('therapeutic')}
@@ -132,8 +143,7 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
           Add to Potential Therapeutic Targets
         </MenuItem>
         <MenuItem
-          // disabled={isLoading}
-          disabled
+          disabled={isLoading}
           onClick={isMult
             ? (evt) => handleMultiTargets(evt, 'chemoresistance')
             : handleUpdateTherapeuticTargets('chemoresistance')}
