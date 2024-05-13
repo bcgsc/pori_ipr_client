@@ -8,11 +8,11 @@ import { KbMatchType } from '@/common';
 import { useParams } from 'react-router-dom';
 import snackbar from '@/services/SnackbarUtils';
 import ReportContext from '@/context/ReportContext';
+import TherapeuticType from '@/views/ReportView/components/TherapeuticTargets/types';
 import {
   ActionCellRendererProps,
   ActionCellRenderer,
 } from '../ActionCellRenderer';
-import TherapeuticType from '@/views/ReportView/components/TherapeuticTargets/types';
 
 const REPORT_TYPES_TO_SHOW_EXTRA_MENU = ['genomic'];
 
@@ -39,9 +39,11 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
     const therapeuticResp = await api.get(`/reports/${reportId}/therapeutic-targets`, {}).request();
     let availableTherapeuticTargets: Partial<TherapeuticType>[];
     if (therapeuticResp) {
-      availableTherapeuticTargets = therapeuticResp?.map(({ ident, createdAt, updatedAt, rank, geneGraphkbId, iprEvidenceLevel, kbStatementIds, notes, ...therapeuticTarget }) => therapeuticTarget);
+      availableTherapeuticTargets = therapeuticResp?.map(({
+        ident, createdAt, updatedAt, rank, geneGraphkbId, kbStatementIds, notes, ...therapeuticTarget
+      }) => therapeuticTarget);
     }
-    
+
     if (!kbStatementId) { return null; }
     setIsLoading(true);
     try {
@@ -88,20 +90,19 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
           newData.evidenceLevelGraphkbId = iprEvidenceLevelRid;
         }
 
-        if (!availableTherapeuticTargets.some(t => t.gene === newData.gene && t.variant === newData.variant && t.evidenceLevel === newData.evidenceLevel)) {
+        if (!availableTherapeuticTargets.some((t) => t.gene === newData.gene && t.type === newData.type && t.variant === newData.variant && t.therapy === newData.therapy && t.evidenceLevel === newData.evidenceLevel)) {
           await api.post(`/reports/${reportId}/therapeutic-targets`, newData).request();
           snackbar.success(`Successfully added ${selectedKbStatementId ?? kbStatementId} to potential ${type}`);
         } else {
           snackbar.error('Statement already added to potential therapeutic targets.');
           return null;
-        } 
+        }
       }
     } catch (e) {
       if (e.status === 404) {
         snackbar.error(`Cannot find record, ${e.message}`);
       } else {
         snackbar.error(e.message);
-        console.error(e);
       }
     } finally {
       setMenuAnchor(null);

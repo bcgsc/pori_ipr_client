@@ -17,7 +17,7 @@ import ConfirmContext from '@/context/ConfirmContext';
 import ReportContext from '@/context/ReportContext';
 import AsyncButton from '@/components/AsyncButton';
 import snackbar from '@/services/SnackbarUtils';
-import AutocompleteHandler from '../AutocompleteHandler';
+import { AutocompleteHandler } from '../AutocompleteHandler';
 
 import './index.scss';
 
