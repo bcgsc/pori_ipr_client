@@ -33,7 +33,7 @@ type AddEditTemplateProps = {
   editData: {
     name: string;
     sections: string[];
-    headerImage: ImageType
+    headerImage: ImageType | null;
     updatedAt: string | null;
   } & RecordDefaults;
 };
@@ -57,7 +57,9 @@ const AddEditTemplate = ({
       setDialogTitle('Edit Template');
       setTemplateName(editData.name);
       setSelectedSections(sections.filter((section) => editData.sections.includes(section.value)));
-      setImagePreview(getImageDataURI(editData.headerImage));
+      if (editData.headerImage){
+        setImagePreview(getImageDataURI(editData.headerImage));
+      }
     } else {
       setDialogTitle('Create a Template');
       setTemplateName('');
@@ -92,10 +94,12 @@ const AddEditTemplate = ({
       try {
         const newTemplate = new FormData();
 
-        newTemplate.append('name', templateName);
+      newTemplate.append('name', templateName);
         selectedSections.forEach((section) => {
           newTemplate.append('sections', section.value);
         });
+
+        console.log(newTemplate);
 
         if (headerImage) {
           newTemplate.append('header', headerImage);
@@ -111,6 +115,8 @@ const AddEditTemplate = ({
         onClose(resp);
       } catch (err) {
         snackbar.enqueueSnackbar(`Error ${editData ? 'updating' : 'creating'} template: ${err}`);
+        console.log(selectedSections);
+        console.log(editData.sections);
       }
     }
   }, [editData, headerImage, onClose, selectedSections, snackbar, templateName]);
