@@ -11,6 +11,8 @@ type TherapeuticType = {
   kbStatementIds: string | null;
   notes: string | null;
   rank: number;
+  signature: string | null;
+  signatureGraphkbId: string | null;
   therapy: string | null;
   therapyGraphkbId: string | null;
   type: string;
