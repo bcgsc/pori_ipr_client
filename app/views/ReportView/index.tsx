@@ -118,6 +118,9 @@ const ReportView = (): JSX.Element => {
     /**
      * Check report specific permissions if user isn't admin or overall report access
      */
+    if (report.state === 'completed') {
+      canEdit = false;
+    }
     if (!adminAccess && !reportEditAccess) {
       if (report.users && report.users.some(({ user: { ident: i } }) => i === userIdent)) {
         canEdit = true;
@@ -160,6 +163,7 @@ const ReportView = (): JSX.Element => {
                         isPrint={false}
                         report={report}
                         canEdit={reportValue.canEdit}
+                        visibleSections={visibleSections}
                       />
                     )}
                     path={`${path}/summary`}
@@ -310,7 +314,6 @@ const ReportView = (): JSX.Element => {
               visibleSections={visibleSections || ['summary']}
               allSections={allSections}
               isSidebarVisible={isSidebarVisible}
-              canEdit={reportValue.canEdit}
             />
           )}
         </div>

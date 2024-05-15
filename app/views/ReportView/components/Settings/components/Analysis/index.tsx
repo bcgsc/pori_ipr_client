@@ -18,6 +18,10 @@ const Analysis = (): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
   const { userDetails } = useSecurity();
   const { adminAccess } = useResource();
+  let { reportEditAccess: canEdit } = useResource();
+  if (report.state === 'completed') {
+    canEdit = false;
+  }
 
   const handleAnalysisStart = useCallback(async () => {
     try {
@@ -70,6 +74,7 @@ const Analysis = (): JSX.Element => {
               </Tooltip>
             ) : (
               <Button
+                disabled={!canEdit}
                 color="secondary"
                 onClick={handleAnalysisStart}
                 variant="outlined"
