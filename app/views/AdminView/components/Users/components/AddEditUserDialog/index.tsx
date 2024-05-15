@@ -172,10 +172,15 @@ const AddEditUserDialog = ({
         snackbar.success(`User successfully ${editData ? 'updated' : 'created'}`);
         onClose(addEditResp);
       } catch (e) {
+        let content = '';
+        if (e.content?.error?.message) {
+          content = `: ${e.content.error.message}`;
+        }
         if (e.errorType) {
-          snackbar.error(`Error setting ${e.errorType}s related to user`);
+          snackbar.error(`Error setting ${e.errorType}s related to user${content}`);
         } else {
-          snackbar.error(`Error ${editData ? 'editing' : 'creating'} user`);
+          console.dir(e);
+          snackbar.error(`Error ${editData ? 'editing' : 'creating'} user${content}`);
         }
         console.error(e);
       }
