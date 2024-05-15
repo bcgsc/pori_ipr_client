@@ -73,6 +73,25 @@ const UserSettingsDialog = ({
     }
   }, [checkboxSelected, editData, isSigned, showConfirmDialog, onClose, showErrorSnackbar]);
 
+  const handleTestEmail = useCallback(async () => {
+    setIsApiCalling(true);
+    const req = api.get(
+      '/email',
+      {},
+    );
+
+    try {
+      await req.request();
+      onClose();
+      snackbar.success('Test email sent successfully.');
+    } catch (err) {
+      showErrorSnackbar(`Error sending test email: ${err.message}`);
+      onClose();
+    } finally {
+      setIsApiCalling(false);
+    }
+  }, [onClose, showErrorSnackbar]);
+
   return (
     <Dialog open={isOpen} maxWidth="sm" fullWidth className="edit-dialog">
       <DialogTitle>Edit User Settings</DialogTitle>
@@ -85,11 +104,14 @@ const UserSettingsDialog = ({
             }
           />
         </div>
+        <AsyncButton isLoading={isApiCalling} color="primary" variant="contained" onClick={handleTestEmail}>
+          Send me a test notification
+        </AsyncButton>
         <DialogActions className="edit-dialog__actions">
           <Button onClick={handleSubmit}>
             Cancel
           </Button>
-          <AsyncButton isLoading={isApiCalling} color="secondary" onClick={handleSubmit}>
+          <AsyncButton isLoading={isApiCalling} color="primary" onClick={handleSubmit}>
             Save
           </AsyncButton>
         </DialogActions>
