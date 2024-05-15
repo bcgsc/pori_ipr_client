@@ -28,7 +28,7 @@ import ProbeResultsType from './types.d';
 import './index.scss';
 
 type ProbeSummaryProps = {
-  loadedDispatch: ({ type: string }) => void;
+  loadedDispatch: (type: { type: string }) => void;
   isPrint: boolean;
 } & WithLoadingInjectedProps;
 
@@ -39,8 +39,11 @@ const ProbeSummary = ({
   setIsLoading,
 }: ProbeSummaryProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
+  let { canEdit } = useReport();
+  if (report.state === 'completed') {
+    canEdit = false;
+  }
   const { setIsSigned } = useContext(ConfirmContext);
-  const { canEdit } = useReport();
 
   const [testInformation, setTestInformation] = useState<TestInformationType | null>();
   const [signatures, setSignatures] = useState<SignatureType | null>();

@@ -6,7 +6,6 @@ import {
   List, ListItem, ListItemText, Menu, MenuItem, Typography,
 } from '@mui/material';
 import PrintIcon from '@mui/icons-material/Print';
-
 import ReportContext from '@/context/ReportContext';
 
 import './index.scss';
@@ -16,12 +15,10 @@ const ReportSidebar = (props) => {
     allSections,
     visibleSections,
     isSidebarVisible,
-    canEdit,
   } = props;
 
   const { pathname } = useLocation();
   const { report } = useContext(ReportContext);
-
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handlePrintMenuOpen = (event) => {
@@ -77,7 +74,7 @@ const ReportSidebar = (props) => {
         {allSections.map((section) => (
           <React.Fragment key={section.name}>
             {section.uri && visibleSections.includes(section.uri) && (
-              <Link to={({ pathname: pn }) => `${pn.replace(/\/[^\/]*$/, '')}/${section.uri}`} className="report-sidebar__list-link">
+              <Link to={({ pathname: pn }) => `${pn.replace(/\/[^/]*$/, '')}/${section.uri}`} className="report-sidebar__list-link">
                 <ListItem classes={{
                   root: `
                     report-sidebar__list-item
@@ -104,7 +101,7 @@ const ReportSidebar = (props) => {
                   {visibleSections.includes(child.uri) && (
                   <Link
                     key={child.uri}
-                    to={({ pathname: pn }) => `${pn.replace(/\/[^\/]*$/, '')}/${child.uri}`}
+                    to={({ pathname: pn }) => `${pn.replace(/\/[^/]*$/, '')}/${child.uri}`}
                     className="report-sidebar__list-link"
                   >
                     <ListItem classes={{
@@ -125,21 +122,19 @@ const ReportSidebar = (props) => {
             )}
           </React.Fragment>
         ))}
-        {canEdit && (
-          <Link to={{ pathname: 'settings' }} className="report-sidebar__list-link">
-            <ListItem classes={{
-              root: `
+        <Link to={{ pathname: 'settings' }} className="report-sidebar__list-link">
+          <ListItem classes={{
+            root: `
                 report-sidebar__list-item
                 ${pathname.split('/').pop() === 'settings' ? 'report-sidebar__list-item--active' : ''}
               `,
-            }}
-            >
-              <ListItemText>
-                Settings
-              </ListItemText>
-            </ListItem>
-          </Link>
-        )}
+          }}
+          >
+            <ListItemText>
+              Settings
+            </ListItemText>
+          </ListItem>
+        </Link>
       </List>
     </div>
   );
@@ -149,7 +144,6 @@ ReportSidebar.propTypes = {
   allSections: PropTypes.arrayOf(PropTypes.object).isRequired,
   visibleSections: PropTypes.arrayOf(PropTypes.string).isRequired,
   isSidebarVisible: PropTypes.bool.isRequired,
-  canEdit: PropTypes.bool.isRequired,
 };
 
 export default ReportSidebar;

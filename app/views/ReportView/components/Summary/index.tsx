@@ -9,26 +9,34 @@ const RapidSummary = lazy(() => import('../RapidSummary'));
 
 const Summary = ({
   templateName,
+  visibleSections,
   ...props
 }: SummaryProps): JSX.Element => {
-  if (templateName === 'probe') {
+  // TODO remove backup template name checks when data is updated in prod
+  let summarySection;
+  if (visibleSections) {
+    summarySection = visibleSections.find(element => ['summary-genomic', 'summary-tgr', 'summary-pcp', 'summary-probe'].includes(element));
+  }
+
+  if (summarySection === 'summary-probe' || templateName === 'probe') {
     return (
       <ProbeSummary {...props} />
     );
   }
 
-  if (templateName === 'pharmacogenomic') {
+  if (summarySection === 'summary-pcp' || templateName === 'pharmacogenomic') {
     return (
       <PharmacoGenomicSummary {...props} />
     );
   }
 
-  if (templateName === 'rapid') {
+  if (summarySection === 'summary-tgr' || templateName === 'rapid') {
     return (
       <RapidSummary {...props} />
     );
   }
 
+  // default - summary-genomic or summary
   if (templateName === 'genomicPatientandTumour') {
     return (
       <GenomicSummary {...props} />

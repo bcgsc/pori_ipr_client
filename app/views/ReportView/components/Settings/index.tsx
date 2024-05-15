@@ -11,6 +11,7 @@ import {
   Divider,
   FormControl,
   InputLabel,
+  SelectChangeEvent,
 } from '@mui/material';
 
 import api from '@/services/api';
@@ -39,8 +40,13 @@ const Settings = ({
   /**
    * Does not matter if they have report access, they need to be in admin or manager role to edit this section
    */
-  const { reportEditAccess: canEdit } = useResource();
   const { report, setReport } = useReport();
+  const { reportEditAccess } = useResource();
+  let { canEdit } = useReport();
+  if (report.state === 'completed') {
+    canEdit = false;
+  }
+
   const history = useHistory();
 
   const [templates, setTemplates] = useState([]);
@@ -49,6 +55,12 @@ const Settings = ({
   const [reportVersion, setReportVersion] = useState('');
   const [kbVersion, setKbVersion] = useState('');
   const [matrixVersion, setMatrixVersion] = useState('');
+  const [reportCreator, setReportCreator] = useState({
+    ident: '',
+    firstName: '',
+    lastName: '',
+    email: '',
+  });
   const [showAddUserDialog, setShowAddUserDialog] = useState(false);
   const [showDeleteReportDialog, setShowDeleteReportDialog] = useState(false);
 
@@ -75,16 +87,18 @@ const Settings = ({
       setReportVersion(report.reportVersion);
       setKbVersion(report.kbVersion);
       setMatrixVersion(report.expression_matrix);
+      setReportCreator(report.createdBy);
     }
   }, [report]);
 
-  const handleTemplateChange = (
-    event: React.ChangeEvent<{ value: { name: string, ident: string } }>,
-  ) => {
-    setSelectedTemplate(event.target.value);
+  const handleTemplateChange = (event: SelectChangeEvent<{
+    name: string;
+    ident: string;
+  }>) => {
+    setSelectedTemplate(event.target.value as { name: string; ident: string; });
   };
 
-  const handleStateChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleStateChange = (event: SelectChangeEvent<string>) => {
     setSelectedState(event.target.value);
   };
 
@@ -105,7 +119,13 @@ const Settings = ({
   }, [report, setReport]);
 
   const handleReportUpdate = useCallback(async () => {
-    const updateFields = {};
+    const updateFields: {
+      template? : string;
+      state?: string;
+      reportVersion?: string;
+      kbVersion?: string;
+      expression_matrix?: string;
+    } = {};
 
     if (report.template !== selectedTemplate) {
       updateFields.template = selectedTemplate.name;
@@ -113,7 +133,7 @@ const Settings = ({
     if (report.state !== selectedState) {
       updateFields.state = selectedState;
     }
-    if (report.version !== reportVersion) {
+    if (report.reportVersion !== reportVersion) {
       updateFields.reportVersion = reportVersion;
     }
     if (report.kbVersion !== kbVersion) {
@@ -172,6 +192,7 @@ const Settings = ({
               <FormControl variant="outlined">
                 <InputLabel id="settings-template">Report Template</InputLabel>
                 <Select
+                  disabled={!canEdit}
                   labelId="settings-template"
                   label="Report Template"
                   onChange={handleTemplateChange}
@@ -189,6 +210,7 @@ const Settings = ({
               <FormControl variant="outlined">
                 <InputLabel id="settings-state">Report State</InputLabel>
                 <Select
+                  disabled={!reportEditAccess}
                   labelId="settings-state"
                   label="Report State"
                   onChange={handleStateChange}
@@ -203,6 +225,7 @@ const Settings = ({
                 </Select>
               </FormControl>
               <TextField
+                disabled={!canEdit}
                 classes={{ root: 'settings__text-field' }}
                 label="Report Version"
                 onChange={(event) => setReportVersion(event.target.value)}
@@ -210,6 +233,7 @@ const Settings = ({
                 variant="outlined"
               />
               <TextField
+                disabled={!canEdit}
                 classes={{ root: 'settings__text-field' }}
                 label="Knowledgebase Version"
                 onChange={(event) => setKbVersion(event.target.value)}
@@ -224,6 +248,13 @@ const Settings = ({
                 value={matrixVersion}
                 variant="outlined"
               />
+              <TextField
+                classes={{ root: 'settings__text-field' }}
+                disabled
+                label="Report Creator"
+                value={`${reportCreator.firstName} ${reportCreator.lastName} ${reportCreator.email ? `(${reportCreator.email})` : ''}`}
+                variant="outlined"
+              />
             </div>
             <div className="settings__actions">
               <Button
@@ -235,8 +266,8 @@ const Settings = ({
                 Delete Report
               </Button>
               <Button
+                disabled={!reportEditAccess}
                 color="secondary"
-                disabled={!canEdit}
                 onClick={handleReportUpdate}
                 variant="outlined"
               >
