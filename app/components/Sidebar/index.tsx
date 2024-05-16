@@ -31,7 +31,7 @@ import './index.scss';
 const Sidebar = (): JSX.Element => {
   const { pathname } = useLocation();
   const { sidebarMaximized, setSidebarMaximized } = useContext(SidebarContext);
-  const { germlineAccess, reportsAccess, managerAccess } = useResource();
+  const { germlineAccess, reportsAccess, managerAccess, adminAccess } = useResource();
 
   const handleSidebarClose = useCallback(() => {
     setSidebarMaximized(false);
@@ -42,7 +42,7 @@ const Sidebar = (): JSX.Element => {
   const drawer = useMemo(() => {
     let adminSection = null;
 
-    if (managerAccess) {
+    if (managerAccess || adminAccess) {
       adminSection = (
         <>
           <ListItem

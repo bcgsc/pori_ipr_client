@@ -12,6 +12,13 @@ const permissions = {
   reportsAccess: true,
   adminAccess: true,
   reportSettingAccess: true,
+  managerAccess: false,
+  reportEditAccess: false,
+  unreviewedAccess: false,
+  nonproductionAccess: false,
+  allStates: [],
+  unreviewedStates: [],
+  nonproductionStates: [],
 };
 
 const theme = createTheme();
