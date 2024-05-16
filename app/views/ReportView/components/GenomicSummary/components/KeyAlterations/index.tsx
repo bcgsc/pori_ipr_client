@@ -57,7 +57,7 @@ const customTypeSort = (variant) => {
 
   type KeyAlterationsProps = {
     isPrint: boolean;
-    printVersion?: 'stable' | 'beta' | null;
+    printVersion?: 'standardLayout' | 'condensedLayout' | null;
   } & WithLoadingInjectedProps;
 
 const KeyAlterations = ({
@@ -162,14 +162,14 @@ const KeyAlterations = ({
 
   const alterationsSection = useMemo(() => {
     let titleSection = (
-      <div className={`${classNamePrefix}__stable-title`}>
+      <div className={`${classNamePrefix}__standardLayout-title`}>
         <Typography variant="h3">
           Key Genomic and Transcriptomic Alterations Identified
         </Typography>
       </div>
     );
     let dataSection = (
-      <div className={`${classNamePrefix}__stable-content`}>
+      <div className={`${classNamePrefix}__standardLayout-content`}>
         <VariantCounts
           filter={variantFilter}
           counts={variantCounts}
@@ -185,7 +185,7 @@ const KeyAlterations = ({
       </div>
     );
 
-    if (printVersion === 'beta') {
+    if (printVersion === 'condensedLayout') {
       titleSection = (
         <Typography variant="h5" fontWeight="bold" display="inline">Key Genomic and Transcriptomic Alterations Identified</Typography>
       );
@@ -199,7 +199,7 @@ const KeyAlterations = ({
           });
         });
         dataSection = (
-          <div className={`${classNamePrefix}__beta-content`}>
+          <div className={`${classNamePrefix}__condensedLayout-content`}>
             <SummaryPrintTable
               data={categorizedDataArray}
               labelKey="key"
