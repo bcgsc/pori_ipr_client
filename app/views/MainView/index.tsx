@@ -31,7 +31,7 @@ const TermsView = lazy(() => import('../TermsView'));
 const ReportsView = lazy(() => import('../ReportsView'));
 const ReportView = lazy(() => import('../ReportView'));
 const PrintView = lazy(() => import('../PrintView'));
-const BetaPrintView = (props) => <PrintView {...props} printVersion="beta" />;
+const CondensedPrintView = (props) => <PrintView {...props} printVersion="condensedLayout" />;
 const GermlineView = lazy(() => import('../GermlineView'));
 const AdminView = lazy(() => import('../AdminView'));
 const LinkOutView = lazy(() => import('../LinkOutView'));
@@ -184,7 +184,7 @@ const Main = (): JSX.Element => {
                   <Redirect exact from="/report/:ident/(genomic|probe)/summary" to="/report/:ident/summary" />
                   <AuthenticatedRoute component={ReportView} path="/report/:ident" />
                   <AuthenticatedRoute component={PrintView} path="/print/:ident" showNav={false} onToggleNav={setIsNavVisible} />
-                  <AuthenticatedRoute component={BetaPrintView} path="/printBeta/:ident" showNav={false} onToggleNav={setIsNavVisible} />
+                  <AuthenticatedRoute component={CondensedPrintView} path="/condensedLayoutPrint/:ident" showNav={false} onToggleNav={setIsNavVisible} />
                   <AuthenticatedRoute component={GermlineView} path="/germline" />
                   <AuthenticatedRoute component={ProjectsView} path="/projects" />
                   <AuthenticatedRoute managerRequired component={AdminView} path="/admin" />
