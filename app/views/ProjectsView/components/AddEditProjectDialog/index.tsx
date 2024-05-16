@@ -14,7 +14,6 @@ import {
   Typography,
 } from '@mui/material';
 
-import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
