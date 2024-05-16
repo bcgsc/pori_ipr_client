@@ -25,9 +25,16 @@
     font-size: 10pt;
     border-bottom: 0.5px solid lightgray;
 
+    & td:first-child, td:nth-child(2){
+      padding: 3px 4px;
+      width: 80px;
+      overflow-wrap: break-word;
+      break-inside: avoid;
+    }
+
     & td {
       padding: 3px 4px;
-      max-width: 300px;
+      width: 150px;
       overflow-wrap: break-word;
       break-inside: avoid;
     }
