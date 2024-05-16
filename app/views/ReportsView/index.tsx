@@ -67,7 +67,7 @@ const ReportsTableComponent = (): JSX.Element => {
       };
       getData();
     }
-  }, [adminAccess, nonproductionAccess, unreviewedAccess, rowData]);
+  }, [adminAccess, allStates, nonproductionStates, unreviewedStates, nonproductionAccess, unreviewedAccess, rowData]);
 
   const onGridSizeChanged = useCallback((params) => {
     const MEDIUM_SCREEN_WIDTH_LOWER = 992;
