@@ -4,11 +4,11 @@ import { ColDef } from '@ag-grid-community/core';
 const columnDefs: ColDef[] = [
   {
     headerName: 'Name',
-    field: 'name',
+    field: 'template.name',
   },
   {
     headerName: 'Org',
-    field: 'organization',
+    field: 'template.organization',
   },
   {
     headerName: 'Created',
@@ -16,11 +16,20 @@ const columnDefs: ColDef[] = [
     minWidth: 90,
   },
   {
+    headerName: 'Updated',
+    valueGetter: ({ data }) => formatDate(data.updatedAt),
+    minWidth: 90,
+  },
+  {
     headerName: 'Appendix Text',
-    cellRenderer: ({ data }) => data.appendix?.text || '',
+    cellRenderer: ({ data }) => data.text || '',
     flex: 1,
     autoHeight: true,
     wrapText: true,
+  },
+  {
+    headerName: 'Project',
+    field: 'project.name',
   },
   {
     headerName: 'Actions',

@@ -330,15 +330,10 @@ type MicrobialType = {
   species: string | null;
 } & RecordDefaults;
 
-type AppendixType = RecordDefaults & {
-  text: string;
-};
-
 export {
   RecordDefaults,
   UserType,
   TemplateType,
-  AppendixType,
   AnyVariantType,
   GroupType,
   UserProjectsType,

@@ -45,7 +45,14 @@ const Appendices = ({
     if (report) {
       const getData = async () => {
         try {
-          const appendixCResp = await api.get(`/templates/${report.template.ident}/appendix`).request();
+          let primaryProjectId;
+          report.projects.map((p) => {
+            if (!p.reportProject.additionalProject) {
+              primaryProjectId = p.ident;
+            }
+            return p.ident;
+          });
+          const appendixCResp = await api.get(`/appendix?templateId=${report.template.ident}&projectId=${primaryProjectId}`).request();
           setAppendixCText(appendixCResp?.text);
         } catch (e) {
           if (e.message === 'Not Found') {
