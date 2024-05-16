@@ -95,7 +95,7 @@ const ReportView = (): JSX.Element => {
         history.push('/reports');
       }
     }
-  }, [report, unreviewedAccess, nonproductionAccess, history]);
+  }, [report, unreviewedAccess, unreviewedStates, nonproductionAccess, nonproductionStates, history]);
 
   useEffect(() => {
     if (report) {
