@@ -7,6 +7,7 @@ import { useSnackbar } from 'notistack';
 import api from '@/services/api';
 import DataTable from '@/components/DataTable';
 import useResource from '@/hooks/useResource';
+import useSecurity from '@/hooks/useSecurity';
 import { adminColDefs, readOnlyColDefs } from './columnDefs';
 
 import './index.scss';
@@ -15,25 +16,33 @@ import { ProjectType } from '../AdminView/types';
 const AddEditProjectDialog = lazy(() => import('./components/AddEditProjectDialog'));
 
 const Projects = (): JSX.Element => {
+  const { userDetails } = useSecurity();
   const [projects, setProjects] = useState<ProjectType[]>([]);
+  const [editableProjects, setEditableProjects] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [editData, setEditData] = useState<ProjectType | null>();
 
-  const { adminAccess } = useResource();
+  const { adminAccess, managerAccess } = useResource();
 
   const snackbar = useSnackbar();
+  console.log('here in porjects view');
 
   useEffect(() => {
     const getData = async () => {
-      const projectsResp = await api.get(`/project?admin=${adminAccess}`).request();
-
+      let projectsResp;
+      if (adminAccess) {
+        projectsResp = await api.get(`/project?admin=${adminAccess}`).request();
+      } else {
+        projectsResp = await api.get(`/project?admin=False`).request();
+      }
       setProjects(projectsResp);
+      setEditableProjects(userDetails.projects.map(elem => elem.ident));
       setLoading(false);
     };
 
     getData();
-  }, [adminAccess]);
+  }, [adminAccess, userDetails]);
 
   const handleEditStart = (rowData) => {
     setShowDialog(true);
@@ -74,13 +83,13 @@ const Projects = (): JSX.Element => {
       {!loading && (
         <>
           <DataTable
-            rowData={projects}
-            columnDefs={adminAccess ? adminColDefs : readOnlyColDefs}
+            rowData={projects.filter(elem => editableProjects.includes(elem.ident))}
+            columnDefs={managerAccess ? adminColDefs : readOnlyColDefs}
             canViewDetails={false}
             isPaginated
             isFullLength
-            canEdit={adminAccess}
             canAdd={adminAccess}
+            canEdit={managerAccess}
             canDelete={adminAccess}
             onEdit={handleEditStart}
             onAdd={() => setShowDialog(true)}
