@@ -200,7 +200,7 @@ const AddEditProjectDialog = ({
             label="Project Description"
             variant="outlined"
             className="add-user__text-field"
-            disabled={!adminAccess}
+            disabled={!managerAccess}
           />
         </FormControl>
 
