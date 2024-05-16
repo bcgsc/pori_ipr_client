@@ -49,7 +49,7 @@ const filterType = (
 
 type TherapeuticProps = {
   isPrint?: boolean;
-  printVersion?: 'stable' | 'beta' | null;
+  printVersion?: 'standardLayout' | 'condensedLayout' | null;
 } & WithLoadingInjectedProps;
 
 const Therapeutic = ({
@@ -92,35 +92,35 @@ const Therapeutic = ({
   const { canEdit } = useReport();
   const { report } = useContext(ReportContext);
 
-  useEffect(() => {
+  const getData = useCallback(async () => {
     if (report) {
-      const getData = async () => {
-        try {
-          const therapeuticResp = await api.get(
-            `/reports/${report.ident}/therapeutic-targets`,
-          ).request();
+      try {
+        const therapeuticResp = await api.get(
+          `/reports/${report.ident}/therapeutic-targets`,
+        ).request();
 
-          const [
-            filteredTherapeutic,
-            filteredChemoresistance,
-          ] = filterType(therapeuticResp, 'therapeutic', 'chemoresistance');
-          if (isPrint) {
-            setTherapeuticData(removeExtraProps(filteredTherapeutic));
-            setChemoresistanceData(removeExtraProps(filteredChemoresistance));
-          } else {
-            setTherapeuticData(filteredTherapeutic);
-            setChemoresistanceData(filteredChemoresistance);
-          }
-        } catch (err) {
-          snackbar.error(`Network error: ${err}`);
-        } finally {
-          setIsLoading(false);
+        const [
+          filteredTherapeutic,
+          filteredChemoresistance,
+        ] = filterType(therapeuticResp, 'therapeutic', 'chemoresistance');
+        if (isPrint) {
+          setTherapeuticData(removeExtraProps(filteredTherapeutic));
+          setChemoresistanceData(removeExtraProps(filteredChemoresistance));
+        } else {
+          setTherapeuticData(filteredTherapeutic);
+          setChemoresistanceData(filteredChemoresistance);
         }
-      };
-
-      getData();
+      } catch (err) {
+        snackbar.error(`Network error: ${err}`);
+      } finally {
+        setIsLoading(false);
+      }
     }
   }, [report, setIsLoading, isPrint]);
+
+  useEffect(() => {
+    getData();
+  }, [getData]);
 
   const handleEditStart = (rowData) => {
     setShowDialog(true);
@@ -152,10 +152,14 @@ const Therapeutic = ({
         snackbar.success('Row updated');
       }
       setEditData(null);
+
+      // Update state to reflect new data after entry deleted
+      getData();
+      snackbar.success('Therapeutic option successfully deleted.');
     } catch (err) {
       snackbar.error(`Error, row not updated: ${err}`);
     }
-  }, [chemoresistanceData, therapeuticData]);
+  }, [chemoresistanceData, getData, therapeuticData]);
 
   const handleReorder = useCallback(async (newRow, newRank, tableType) => {
     try {
@@ -201,7 +205,7 @@ const Therapeutic = ({
     }
   }, [chemoresistanceData, therapeuticData, report]);
 
-  if (isPrint && printVersion === 'stable') {
+  if (isPrint && printVersion === 'standardLayout') {
     return (
       <div className="therapeutic-print">
         <Typography
@@ -230,7 +234,7 @@ const Therapeutic = ({
     );
   }
 
-  if (isPrint && printVersion === 'beta') {
+  if (isPrint && printVersion === 'condensedLayout') {
     return (
       <div className="therapeutic-print">
         <Typography
