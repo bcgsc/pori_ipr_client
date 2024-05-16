@@ -33,6 +33,48 @@ const ReportSidebar = (props) => {
     return null;
   }
 
+  const standardPrintOption = () => (
+    <MenuItem>
+      <Link
+        to={{ pathname: `/print/${report.ident}` }}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="report-sidebar__list-link"
+      >
+        <Typography>Standard Layout</Typography>
+      </Link>
+    </MenuItem>
+  );
+
+  const condensedPrintOption = () => (
+    <MenuItem>
+      <Link
+        to={{ pathname: `/condensedLayoutPrint/${report.ident}` }}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="report-sidebar__list-link"
+      >
+        <Typography>Condensed Layout</Typography>
+      </Link>
+    </MenuItem>
+  );
+
+  const printOptions = () => {
+    if (report.template.name === 'genomic') {
+      return (
+        <>
+          {standardPrintOption()}
+          {condensedPrintOption()}
+        </>
+      );
+    }
+    return (
+      <>
+        {standardPrintOption()}
+      </>
+    );
+  };
+
   return (
     <div className="report-sidebar">
       <List dense classes={{ root: 'report-sidebar__list' }}>
@@ -49,26 +91,7 @@ const ReportSidebar = (props) => {
             open={Boolean(anchorEl)}
             onClose={handlePrintMenuClose}
           >
-            <MenuItem>
-              <Link
-                to={{ pathname: `/print/${report.ident}` }}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="report-sidebar__list-link"
-              >
-                <Typography>Stable</Typography>
-              </Link>
-            </MenuItem>
-            <MenuItem>
-              <Link
-                to={{ pathname: `/printBeta/${report.ident}` }}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="report-sidebar__list-link"
-              >
-                <Typography>Beta</Typography>
-              </Link>
-            </MenuItem>
+            {printOptions()}
           </Menu>
         </ListItem>
         {allSections.map((section) => (
