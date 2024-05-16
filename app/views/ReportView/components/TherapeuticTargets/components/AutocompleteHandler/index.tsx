@@ -25,7 +25,7 @@ const AutocompleteHandler = (props: AutocompleteHandlerProps) => {
     required = false,
     onChange = () => { },
     error = '',
-    minCharacters = 3,
+    minCharacters = 1,
   } = props;
 
   const [options, setOptions] = useState([]);

@@ -33,7 +33,7 @@ type AddEditTemplateProps = {
   editData: {
     name: string;
     sections: string[];
-    headerImage: ImageType
+    headerImage: ImageType | null;
     updatedAt: string | null;
   } & RecordDefaults;
 };
@@ -57,7 +57,9 @@ const AddEditTemplate = ({
       setDialogTitle('Edit Template');
       setTemplateName(editData.name);
       setSelectedSections(sections.filter((section) => editData.sections.includes(section.value)));
-      setImagePreview(getImageDataURI(editData.headerImage));
+      if (editData.headerImage) {
+        setImagePreview(getImageDataURI(editData.headerImage));
+      }
     } else {
       setDialogTitle('Create a Template');
       setTemplateName('');
@@ -88,11 +90,12 @@ const AddEditTemplate = ({
   };
 
   const handleSubmit = useCallback(async () => {
-    if (templateName && selectedSections.length) {
+    if (templateName && selectedSections.length > 1) {
       try {
         const newTemplate = new FormData();
 
         newTemplate.append('name', templateName);
+
         selectedSections.forEach((section) => {
           newTemplate.append('sections', section.value);
         });
@@ -106,6 +109,34 @@ const AddEditTemplate = ({
           resp = await api.put(`/templates/${editData.ident}`, newTemplate, {}, true).request();
         } else {
           resp = await api.post('/templates', newTemplate, {}, true).request();
+        }
+        snackbar.enqueueSnackbar(`Template ${editData ? 'updated' : 'created'} successfully`);
+        onClose(resp);
+      } catch (err) {
+        snackbar.enqueueSnackbar(`Error ${editData ? 'updating' : 'creating'} template: ${err}`);
+      }
+    } else if (templateName && selectedSections.length) {
+      try {
+        interface TemplatePayload extends Record<string, unknown> {
+          name: string,
+          sections: string[],
+          header?: string,
+        }
+
+        const newData: TemplatePayload = {
+          name: templateName,
+          sections: [selectedSections[0].value],
+        };
+
+        if (headerImage) {
+          newData.header = JSON.stringify(headerImage);
+        }
+
+        let resp;
+        if (editData) {
+          resp = await api.put(`/templates/${editData.ident}`, newData, {}, false).request();
+        } else {
+          resp = await api.post('/templates', newData, {}, false).request();
         }
         snackbar.enqueueSnackbar(`Template ${editData ? 'updated' : 'created'} successfully`);
         onClose(resp);
