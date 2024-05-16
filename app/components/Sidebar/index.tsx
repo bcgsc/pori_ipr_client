@@ -233,7 +233,7 @@ const Sidebar = (): JSX.Element => {
         </List>
       </div>
     );
-  }, [managerAccess, germlineAccess, handleSidebarClose, pathname, reportsAccess, sidebarMaximized]);
+  }, [adminAccess, managerAccess, germlineAccess, handleSidebarClose, pathname, reportsAccess, sidebarMaximized]);
 
   let drawerProps: DrawerProps = {
     variant: 'temporary',

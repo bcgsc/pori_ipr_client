@@ -26,7 +26,6 @@ const Projects = (): JSX.Element => {
   const { adminAccess, managerAccess } = useResource();
 
   const snackbar = useSnackbar();
-  console.log('here in porjects view');
 
   useEffect(() => {
     const getData = async () => {
