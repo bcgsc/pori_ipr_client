@@ -1,21 +1,9 @@
 const ALL_ROLES = [
   'admin',
-  'Analyst',
-  'BioApps',
-  'Bioinformatician',
-  'Biopsies',
-  'Biospecimen Core',
-  'Clinician',
-  'Collaborator',
-  'Demo',
-  'External Analyst',
-  'LIMS',
+  'bioinformatician',
   'manager',
   'non-production access',
-  'Pipelines',
-  'Projects',
-  'Report Manager',
-  'Research',
+  'report manager',
 ];
 
 /*
