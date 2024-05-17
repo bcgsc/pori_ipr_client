@@ -9,14 +9,6 @@
     margin: 8px auto 0;
   }
 
-  &__patient-information {
-    margin: 0 0 32px;
-
-    &-content {
-      padding: 0 16px;
-    }
-  }
-
   &__test-information {
     margin: 0 0 32px;
     break-inside: avoid;
@@ -67,12 +59,6 @@
 
 .summary--print {
   margin: 0 auto;
-
-  &__patient-information {
-    &-title {
-      margin: 0 0 16px;
-    }
-  }
 
   &__test-information {
     margin: 16px 0;

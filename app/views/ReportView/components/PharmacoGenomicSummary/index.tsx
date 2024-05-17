@@ -1,28 +1,24 @@
 import React, {
-  useState, useEffect, useContext, useCallback, useMemo,
+  useState, useEffect, useContext, useCallback, useMemo, lazy,
 } from 'react';
 import {
   Typography,
   IconButton,
-  Grid,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import Alert from '@mui/material/Alert';
 
 import api, { ApiCallSet } from '@/services/api';
 import DataTable from '@/components/DataTable';
-import ReportContext, { PatientInformationType, ReportType } from '@/context/ReportContext';
+import ReportContext from '@/context/ReportContext';
 import useReport from '@/hooks/useReport';
 import ConfirmContext from '@/context/ConfirmContext';
-import ReadOnlyTextField from '@/components/ReadOnlyTextField';
-import { formatDate } from '@/utils/date';
 import SignatureCard, { SignatureType, SignatureUserType } from '@/components/SignatureCard';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import snackbar from '@/services/SnackbarUtils';
 import PrintTable from '@/components/PrintTable';
 import TestInformation, { TestInformationType } from '@/components/TestInformation';
 import { KbMatchType } from '@/common';
-import PatientEdit from '@/components/PatientEdit';
 import capitalize from 'lodash/capitalize';
 import {
   sampleColumnDefs,
@@ -34,6 +30,8 @@ import {
 import './index.scss';
 import { TestInformationEditDialog, TestInformationEditDialogProps } from './components/TestInformationEditDialog';
 
+const PatientInformation = lazy(() => import('../PatientInformation'));
+
 type PharmacoGenomicSummaryProps = {
   loadedDispatch: (type: { type: string }) => void;
   isPrint: boolean;
@@ -44,7 +42,7 @@ const PharmacoGenomicSummary = ({
   isPrint,
   setIsLoading,
 }: PharmacoGenomicSummaryProps): JSX.Element => {
-  const { report, setReport } = useContext(ReportContext);
+  const { report } = useContext(ReportContext);
   let { canEdit } = useReport();
   if (report.state === 'completed') {
     canEdit = false;
@@ -55,12 +53,6 @@ const PharmacoGenomicSummary = ({
   const [signatures, setSignatures] = useState<SignatureType | null>();
   const [pharmacoGenomic, setPharmacoGenomic] = useState<KbMatchType[]>([]);
   const [cancerPredisposition, setCancerPredisposition] = useState<KbMatchType[]>([]);
-  const [patientInformation, setPatientInformation] = useState<{
-    label: string;
-    value: string | null;
-  }[] | null>();
-
-  const [showPatientEdit, setShowPatientEdit] = useState(false);
   const [showTestInfoEdit, setTestInfoEdit] = useState(false);
 
   const classNamePrefix = isPrint ? 'summary--print' : 'summary';
@@ -93,41 +85,6 @@ const PharmacoGenomicSummary = ({
           // Assumed to be germline when it gets to this part, so filtering no longer necessary
           setCancerPredisposition(cancerPredispositionResp.filter(({ variant }) => variant.germline));
 
-          setPatientInformation([
-            {
-              label: 'Alternate ID',
-              value: report.alternateIdentifier,
-            },
-            {
-              label: 'Pediatric Patient IDs',
-              value: report.pediatricIds,
-            },
-            {
-              label: 'Report Date',
-              value: formatDate(report.createdAt),
-            },
-            {
-              label: 'Case Type',
-              value: report.patientInformation.caseType,
-            },
-            {
-              label: 'Physician',
-              value: report.patientInformation.physician,
-            },
-            {
-              label: 'Biopsy Name',
-              value: report.biopsyName,
-            },
-            {
-              label: 'Biopsy Details',
-              value: report.patientInformation.biopsySite,
-            },
-            {
-              label: 'Gender',
-              value: report.patientInformation.gender,
-            },
-          ]);
-
           if (loadedDispatch) {
             loadedDispatch({ type: 'summary' });
           }
@@ -141,58 +98,6 @@ const PharmacoGenomicSummary = ({
       getData();
     }
   }, [loadedDispatch, report, setIsLoading]);
-
-  const handlePatientEditClose = useCallback((
-    newPatientData: PatientInformationType,
-    newReportData: ReportType,
-  ) => {
-    setShowPatientEdit(false);
-
-    if (!newPatientData && !newReportData) {
-      return;
-    }
-
-    if (newReportData) {
-      setReport((oldReport) => ({ ...oldReport, ...newReportData }));
-    }
-
-    if (newPatientData) {
-      setPatientInformation([
-        {
-          label: 'Alternate ID',
-          value: newReportData ? newReportData.alternateIdentifier : report.alternateIdentifier,
-        },
-        {
-          label: 'Pediatric Patient IDs',
-          value: newReportData ? newReportData.pediatricIds : report.pediatricIds,
-        },
-        {
-          label: 'Report Date',
-          value: formatDate(report.createdAt),
-        },
-        {
-          label: 'Case Type',
-          value: newPatientData ? newPatientData.caseType : report.patientInformation.caseType,
-        },
-        {
-          label: 'Physician',
-          value: newPatientData ? newPatientData.physician : report.patientInformation.physician,
-        },
-        {
-          label: 'Biopsy Name',
-          value: newReportData ? newReportData.biopsyName : report.biopsyName,
-        },
-        {
-          label: 'Biopsy Details',
-          value: newPatientData ? newPatientData.biopsySite : report.patientInformation.biopsySite,
-        },
-        {
-          label: 'Gender',
-          value: newPatientData ? newPatientData.gender : report.patientInformation.gender,
-        },
-      ]);
-    }
-  }, [report, setReport]);
 
   const handleTestInfoEditClose = useCallback<TestInformationEditDialogProps['onClose']>((data) => {
     if (data) {
@@ -351,41 +256,12 @@ const PharmacoGenomicSummary = ({
     <div className={classNamePrefix}>
       {report && (
         <>
-          {patientInformation && (
-            <div className={`${classNamePrefix}__patient-information`}>
-              <div className={`${classNamePrefix}__patient-information-title`}>
-                <Typography variant="h3" display="inline">
-                  Patient Information
-                  {canEdit && !isPrint && (
-                    <>
-                      <IconButton onClick={() => setShowPatientEdit(true)} size="large">
-                        <EditIcon />
-                      </IconButton>
-                      <PatientEdit
-                        patientInformation={report.patientInformation}
-                        report={report}
-                        isOpen={Boolean(showPatientEdit)}
-                        onClose={handlePatientEditClose}
-                      />
-                    </>
-                  )}
-                </Typography>
-              </div>
-              <Grid
-                alignItems="flex-end"
-                container
-                spacing={3}
-                className={`${classNamePrefix}__patient-information-content`}
-              >
-                {patientInformation.map(({ label, value }) => (
-                  <Grid key={label} item>
-                    <ReadOnlyTextField label={label}>
-                      {value}
-                    </ReadOnlyTextField>
-                  </Grid>
-                ))}
-              </Grid>
-            </div>
+          {report && (
+            <PatientInformation
+              canEdit={canEdit}
+              isPrint={isPrint}
+              loadedDispatch={loadedDispatch}
+            />
           )}
           <div className={`${classNamePrefix}__pharmacogenomic`}>
             <Typography variant="h3" display="inline">
