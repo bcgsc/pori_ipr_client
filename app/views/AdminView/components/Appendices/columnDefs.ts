@@ -3,12 +3,12 @@ import { ColDef } from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
   {
-    headerName: 'Name',
+    headerName: 'Tamplate Name',
     field: 'template.name',
   },
   {
-    headerName: 'Org',
-    field: 'template.organization',
+    headerName: 'Project',
+    cellRenderer: ({ data }) => data.project.name || 'default appendix text',
   },
   {
     headerName: 'Created',
@@ -26,10 +26,6 @@ const columnDefs: ColDef[] = [
     flex: 1,
     autoHeight: true,
     wrapText: true,
-  },
-  {
-    headerName: 'Project',
-    field: 'project.name',
   },
   {
     headerName: 'Actions',
