@@ -36,7 +36,11 @@ const Projects = (): JSX.Element => {
         projectsResp = await api.get('/project?admin=False').request();
       }
       setProjects(projectsResp);
-      setEditableProjects(userDetails.projects.map(elem => elem.ident));
+      if (adminAccess) {
+        setEditableProjects(projectsResp.map(elem => elem.ident));
+      } else {
+        setEditableProjects(userDetails.projects.map(elem => elem.ident));
+      }
       setLoading(false);
     };
 
