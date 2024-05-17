@@ -22,7 +22,7 @@ const columnDefs: ColDef[] = [
   },
   {
     headerName: 'Appendix Text',
-    cellRenderer: ({ data }) => data.text || '',
+    cellRenderer: ({ data }) => `${data.text.substring(0,300)}....` || '',
     flex: 1,
     autoHeight: true,
     wrapText: true,
