@@ -1,5 +1,5 @@
 import React, {
-  useState, useEffect, useContext, useCallback, useMemo, lazy,
+  useState, useEffect, useContext, useCallback, useMemo,
 } from 'react';
 import {
   Typography,
@@ -29,8 +29,8 @@ import { VariantEditDialog, FIELDS } from './components/VariantEditDialog';
 import { RapidVariantType } from './types';
 import { getVariantRelevanceDict } from './utils';
 
-const PatientInformation = lazy(() => import('../PatientInformation'));
-const TumourSummary = lazy(() => import('../TumourSummary'));
+import PatientInformation from '../PatientInformation';
+import TumourSummary from '../TumourSummary';
 
 const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
   const iprRelevanceDict = {};

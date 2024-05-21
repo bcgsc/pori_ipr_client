@@ -13,17 +13,21 @@ import { formatDate } from '@/utils/date';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import PatientEdit from '@/components/PatientEdit';
 import snackbar from '@/services/SnackbarUtils';
+import SummaryPrintTable from '@/components/SummaryPrintTable';
+import './index.scss';
 
 type PatientInformationProps = {
   loadedDispatch: ({ type }: { type: string }) => void;
   canEdit: boolean;
   isPrint: boolean;
+  printVersion?: 'standardLayout' | 'condensedLayout' | null;
 } & WithLoadingInjectedProps;
 
 const PatientInformation = ({
   loadedDispatch,
   canEdit,
   isPrint,
+  printVersion,
   setIsLoading,
 }: PatientInformationProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
@@ -43,6 +47,10 @@ const PatientInformation = ({
             {
               label: 'Alternate ID',
               value: report.alternateIdentifier,
+            },
+            {
+              label: 'Pediatric Patient IDs',
+              value: report.pediatricIds,
             },
             {
               label: 'Report Date',
@@ -67,10 +75,6 @@ const PatientInformation = ({
             {
               label: 'Gender',
               value: report.patientInformation.gender,
-            },
-            {
-              label: 'Tumour type for matching',
-              value: report.kbDiseaseMatch,
             },
           ]);
         } catch (err) {
@@ -108,6 +112,10 @@ const PatientInformation = ({
           value: newReportData ? newReportData.alternateIdentifier : report.alternateIdentifier,
         },
         {
+          label: 'Pediatric Patient IDs',
+          value: newReportData ? newReportData.pediatricIds : report.pediatricIds,
+        },
+        {
           label: 'Report Date',
           value: formatDate(report.createdAt),
         },
@@ -131,16 +139,31 @@ const PatientInformation = ({
           label: 'Gender',
           value: newPatientData ? newPatientData.gender : report.patientInformation.gender,
         },
-        {
-          label: 'Tumour type for matching',
-          value: newReportData ? newReportData.kbDiseaseMatch : report.kbDiseaseMatch,
-        },
       ]);
     }
   }, [report, setReport]);
 
+  if (isPrint && printVersion === 'condensedLayout') {
+    return (
+      <div className={`${classNamePrefix}`}>
+        <div className={`${classNamePrefix}__title`}>
+          <Typography variant="h5" fontWeight="bold" display="inline">
+            Patient Information
+          </Typography>
+        </div>
+        {report && patientInformation && (
+          <SummaryPrintTable
+            data={patientInformation}
+            labelKey="label"
+            valueKey="value"
+          />
+        )}
+      </div>
+    );
+  }
+
   return (
-    <div>
+    <div className={`${classNamePrefix}`}>
       <div className={`${classNamePrefix}__title`}>
         <Typography variant="h3">
           Patient Information

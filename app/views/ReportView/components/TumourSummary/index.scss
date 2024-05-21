@@ -5,7 +5,13 @@
 }
 
 .tumour-summary--print {
+  padding-bottom: 32px;
+
   &__title {
     margin: 0 0 8px;
+  }
+
+  &__content {
+    padding: 0 16px;
   }
 }

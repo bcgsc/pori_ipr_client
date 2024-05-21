@@ -1,5 +1,5 @@
 import React, {
-  useState, useEffect, useContext, useCallback, useMemo, lazy,
+  useState, useEffect, useContext, useCallback, useMemo,
 } from 'react';
 import {
   Typography,
@@ -21,7 +21,7 @@ import ProbeResultsType from './types.d';
 
 import './index.scss';
 
-const PatientInformation = lazy(() => import('../PatientInformation'));
+import PatientInformation from '../PatientInformation';
 
 type ProbeSummaryProps = {
   loadedDispatch: (type: { type: string }) => void;
@@ -100,7 +100,6 @@ const ProbeSummary = ({
       getData();
     }
   }, [loadedDispatch, report, setIsLoading]);
-
 
   const handleSign = useCallback((signed: boolean, role: SignatureUserType) => {
     let cancelled;

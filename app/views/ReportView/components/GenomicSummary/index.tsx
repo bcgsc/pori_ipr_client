@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useState, useContext, lazy,
+  useEffect, useState, useContext,
 } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Box } from '@mui/material';
@@ -20,8 +20,9 @@ import MutationSignatureType from '../MutationSignatures/types';
 
 import './index.scss';
 
-const PatientInformation = lazy(() => import('../PatientInformation'));
-const TumourSummary = lazy(() => import('../TumourSummary'));
+import PatientInformation from '../PatientInformation';
+
+import TumourSummary from '../TumourSummary';
 
 type GenomicSummaryProps = {
   loadedDispatch?: ({ type }: { type: string }) => void;
@@ -268,6 +269,7 @@ const GenomicSummary = ({
               <PatientInformation
                 canEdit={canEdit}
                 isPrint={isPrint}
+                printVersion={printVersion}
                 loadedDispatch={loadedDispatch}
               />
             )}
@@ -277,6 +279,7 @@ const GenomicSummary = ({
               <TumourSummary
                 canEdit={canEdit}
                 isPrint={isPrint}
+                printVersion={printVersion}
                 tumourSummary={tumourSummary}
               />
             )}
@@ -297,6 +300,7 @@ const GenomicSummary = ({
             <PatientInformation
               canEdit={canEdit}
               isPrint={isPrint}
+              printVersion={printVersion}
               loadedDispatch={loadedDispatch}
             />
           )}
@@ -304,6 +308,7 @@ const GenomicSummary = ({
             <TumourSummary
               canEdit={canEdit}
               isPrint={isPrint}
+              printVersion={printVersion}
               tumourSummary={tumourSummary}
             />
           )}

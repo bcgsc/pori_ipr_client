@@ -12,16 +12,20 @@ import {
 } from '@/common';
 import TumourSummaryEdit from '@/components/TumourSummaryEdit';
 import DescriptionList from '@/components/DescriptionList';
+import SummaryPrintTable from '@/components/SummaryPrintTable';
+import './index.scss';
 
 type TumourSummaryProps = {
   canEdit: boolean;
   isPrint: boolean;
+  printVersion?: 'standardLayout' | 'condensedLayout' | null;
   tumourSummary: TumourSummaryType[];
 };
 
 const TumourSummary = ({
   canEdit,
   isPrint,
+  printVersion,
   tumourSummary,
 }: TumourSummaryProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
@@ -75,8 +79,23 @@ const TumourSummary = ({
     }
   }, [setReport]);
 
+  if (isPrint && printVersion === 'condensedLayout') {
+    return (
+      <div className={`${classNamePrefix}`}>
+        <div className={`${classNamePrefix}__title`}>
+          <Typography variant="h5" fontWeight="bold" display="inline">Tumour Summary</Typography>
+        </div>
+        <SummaryPrintTable
+          data={tumourSummary}
+          labelKey="term"
+          valueKey="value"
+        />
+      </div>
+    );
+  }
+
   return (
-    <>
+    <div className={`${classNamePrefix}`}>
       <div className={`${classNamePrefix}__title`}>
         <Typography variant="h3">
           Tumour Summary
@@ -101,7 +120,7 @@ const TumourSummary = ({
       <div className={`${classNamePrefix}__content`}>
         <DescriptionList entries={tumourSummary} />
       </div>
-    </>
+    </div>
   );
 };
 

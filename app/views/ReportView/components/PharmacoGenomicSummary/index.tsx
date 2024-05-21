@@ -1,5 +1,5 @@
 import React, {
-  useState, useEffect, useContext, useCallback, useMemo, lazy,
+  useState, useEffect, useContext, useCallback, useMemo,
 } from 'react';
 import {
   Typography,
@@ -30,7 +30,7 @@ import {
 import './index.scss';
 import { TestInformationEditDialog, TestInformationEditDialogProps } from './components/TestInformationEditDialog';
 
-const PatientInformation = lazy(() => import('../PatientInformation'));
+import PatientInformation from '../PatientInformation';
 
 type PharmacoGenomicSummaryProps = {
   loadedDispatch: (type: { type: string }) => void;
