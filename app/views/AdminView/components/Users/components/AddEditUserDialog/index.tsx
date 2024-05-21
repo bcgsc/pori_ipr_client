@@ -128,9 +128,14 @@ const AddEditUserDialog = ({
       };
 
       try {
-        const addEditResp = editData
-          ? await api.put(`/user/${editData.ident}`, userReq).request()
-          : await api.post('/user', userReq).request();
+        let addEditResp;
+        try {
+          addEditResp = editData
+            ? await api.put(`/user/${editData.ident}`, userReq).request()
+            : await api.post('/user', userReq).request();
+        } catch (e) {
+          throw { ...e, errorType: 'user detail' };
+        }
 
         // Project Section
         if (dirtyFields.projects) {
