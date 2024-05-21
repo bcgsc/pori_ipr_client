@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
+// TODO when creating new user, projects and groups aren't created
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   Button,
@@ -132,9 +133,11 @@ const AddEditUserDialog = ({
           : await api.post('/user', userReq).request();
 
         // Project Section
-        if (dirtyFields.projects && editData) {
-          const existingProjects = editData.projects.map(({ ident }) => ident);
-
+        if (dirtyFields.projects) {
+          let existingProjects = [];
+          if (editData) {
+            existingProjects = editData.projects.map(({ ident }) => ident);
+          }
           const toAddProjs = projects.filter((projectId) => !existingProjects.includes(projectId));
           const toRemoveProjs = existingProjects.filter((projectId) => !projects.includes(projectId));
 
@@ -150,8 +153,11 @@ const AddEditUserDialog = ({
         }
 
         // Groups Section
-        if (dirtyFields.groups && editData) {
-          const existingGroups = editData.groups.map(({ ident }) => ident);
+        if (dirtyFields.groups) {
+          let existingGroups = [];
+          if (editData) {
+            existingGroups = editData.groups.map(({ ident }) => ident);
+          }
 
           const toAddGroups = groups.filter((groupId) => !existingGroups.includes(groupId));
           const toRemoveGroups = existingGroups.filter((groupId) => !groups.includes(groupId));
@@ -179,10 +185,8 @@ const AddEditUserDialog = ({
         if (e.errorType) {
           snackbar.error(`Error setting ${e.errorType}s related to user${content}`);
         } else {
-          console.dir(e);
           snackbar.error(`Error ${editData ? 'editing' : 'creating'} user${content}`);
         }
-        console.error(e);
       }
     }
 
