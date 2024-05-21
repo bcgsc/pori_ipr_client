@@ -1,14 +1,6 @@
 // Shared styling between both versions
 .genomic-summary, .genomic-summary--print {
-  &__patient-information {
-    margin: 0 0 32px 0;
-
-    &-content {
-      padding: 0 16px;
-    }
-  }
-
-  &__tumour-summary, &__alterations {
+  &__alterations {
     margin: 0 0 32px 0;
   }
 
@@ -31,10 +23,4 @@
 .genomic-summary--print {
   margin: 0 auto;
   padding: 0 20px;
-
-  &__patient-information, &__tumour-summary {
-    &-title {
-      margin: 0 0 8px;
-    }
-  }
 }
