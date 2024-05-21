@@ -5,8 +5,21 @@ import { checkAccess, ALL_ROLES } from '@/utils/checkAccess';
 import useSecurity from '@/hooks/useSecurity';
 import ResourceContextType from './types';
 
-const GERMLINE_ACCESS = ['admin', 'analyst', 'bioinformatician', 'projects', 'manager'];
+// TODO: determine whether bioinformaticians need nonprod or germline access;
+// determine whether report managers do
+// TODO: rename bioinformatician role?
+const GERMLINE_ACCESS = ['admin', 'manager', 'bioinformatician', 'germline access'];
+const UNREVIEWED_ACCESS = ['admin', 'manager', 'report manager', 'bioinformatician', 'unreviewed access'];
+const NONPRODUCTION_ACCESS = ['admin', 'manager', 'bioinformatician', 'non-production access'];
+
 const GERMLINE_BLOCK = ALL_ROLES;
+const UNREVIEWED_ACCESS_BLOCK = [];
+const NONPRODUCTION_ACCESS_BLOCK = [];
+
+const ALL_STATES = ['signedoff', 'nonproduction', 'uploaded', 'reviewed', 'completed', 'ready', 'active'];
+const UNREVIEWED_STATES = ['uploaded', 'ready', 'active']; // TODO decide if nonproduction should go in unreviewed as well
+const NONPRODUCTION_STATES = ['nonproduction'];
+
 const REPORTS_ACCESS = ['*'];
 const REPORTS_BLOCK = [];
 const ADMIN_ACCESS = ['admin'];
@@ -19,7 +32,10 @@ const useResources = (): ResourceContextType => {
   const [reportsAccess, setReportsAccess] = useState(false);
   const [reportEditAccess, setReportEditAccess] = useState(false);
   const [adminAccess, setAdminAccess] = useState(false);
+  const [managerAccess, setManagerAccess] = useState(false);
   const [reportSettingAccess, setReportSettingAccess] = useState(false);
+  const [unreviewedAccess, setUnreviewedAccess] = useState(false);
+  const [nonproductionAccess, setNonproductionAccess] = useState(false);
 
   // Check user group first to see which resources they can access
   useEffect(() => {
@@ -36,10 +52,21 @@ const useResources = (): ResourceContextType => {
         setAdminAccess(true);
       }
 
-      if (checkAccess(groups, [...ADMIN_ACCESS, 'manager', 'Report Manager'], ADMIN_BLOCK)) {
+      if (checkAccess(groups, [...ADMIN_ACCESS, 'manager'], ADMIN_BLOCK)) {
+        setManagerAccess(true);
+      }
+
+      if (checkAccess(groups, [...ADMIN_ACCESS, 'manager', 'report manager'], ADMIN_BLOCK)) {
         setReportSettingAccess(true);
         setReportEditAccess(true);
       }
+      if (checkAccess(groups, UNREVIEWED_ACCESS, UNREVIEWED_ACCESS_BLOCK)) {
+        setUnreviewedAccess(true);
+      }
+      if (checkAccess(groups, NONPRODUCTION_ACCESS, NONPRODUCTION_ACCESS_BLOCK)) {
+        setNonproductionAccess(true);
+      }
+
     }
   }, [groups]);
 
@@ -47,8 +74,14 @@ const useResources = (): ResourceContextType => {
     germlineAccess,
     reportsAccess,
     adminAccess,
+    managerAccess,
     reportSettingAccess,
     reportEditAccess,
+    unreviewedAccess,
+    nonproductionAccess,
+    allStates: ALL_STATES,
+    unreviewedStates: UNREVIEWED_STATES,
+    nonproductionStates: NONPRODUCTION_STATES,
   };
 };
 
@@ -56,8 +89,14 @@ const ResourceContext = createContext<ResourceContextType>({
   germlineAccess: false,
   reportsAccess: false,
   adminAccess: false,
+  managerAccess: false,
   reportSettingAccess: false,
   reportEditAccess: false,
+  unreviewedAccess: false,
+  nonproductionAccess: false,
+  allStates: ALL_STATES,
+  unreviewedStates: UNREVIEWED_STATES,
+  nonproductionStates: NONPRODUCTION_STATES,
 });
 
 type ResourceContextProviderProps = {
@@ -66,21 +105,36 @@ type ResourceContextProviderProps = {
 
 const ResourceContextProvider = ({ children }: ResourceContextProviderProps): JSX.Element => {
   const {
-    germlineAccess, reportsAccess, adminAccess, reportSettingAccess, reportEditAccess,
+    germlineAccess, reportsAccess, adminAccess, managerAccess, reportSettingAccess, reportEditAccess, unreviewedAccess, nonproductionAccess,
+    allStates,
+    unreviewedStates,
+    nonproductionStates,
   } = useResources();
 
   const providerValue = useMemo(() => ({
     germlineAccess,
     reportsAccess,
     adminAccess,
+    managerAccess,
     reportSettingAccess,
     reportEditAccess,
+    unreviewedAccess,
+    nonproductionAccess,
+    allStates,
+    unreviewedStates,
+    nonproductionStates,
   }), [
     germlineAccess,
     reportsAccess,
     adminAccess,
+    managerAccess,
     reportSettingAccess,
     reportEditAccess,
+    unreviewedAccess,
+    nonproductionAccess,
+    allStates,
+    unreviewedStates,
+    nonproductionStates,
   ]);
 
   return (

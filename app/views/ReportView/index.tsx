@@ -12,7 +12,6 @@ import { useTheme } from '@mui/material/styles';
 import { SecurityContext } from '@/context/SecurityContext';
 import ReportToolbar from '@/components/ReportToolbar';
 import ReportSidebar from '@/components/ReportSidebar';
-import useExternalMode from '@/hooks/useExternalMode';
 import ReportContext, { ReportType } from '@/context/ReportContext';
 import ConfirmContext from '@/context/ConfirmContext';
 import api from '@/services/api';
@@ -21,10 +20,7 @@ import useResource from '@/hooks/useResource';
 import useSecurity from '@/hooks/useSecurity';
 import Summary from './components/Summary';
 import allSections from './sections';
-
 import './index.scss';
-
-const EXTERNAL_ALLOWED_STATES = ['reviewed', 'completed'];
 
 const AnalystComments = lazy(() => import('./components/AnalystComments'));
 const PathwayAnalysis = lazy(() => import('./components/PathwayAnalysis'));
@@ -53,8 +49,7 @@ const ReportView = (): JSX.Element => {
   }>();
   const theme = useTheme();
   const history = useHistory();
-  const isExternalMode = useExternalMode();
-  const { reportEditAccess, adminAccess } = useResource();
+  const { reportEditAccess, adminAccess, nonproductionAccess, unreviewedAccess, nonproductionStates, unreviewedStates } = useResource();
   const { userDetails: { ident: userIdent } } = useSecurity();
 
   const [report, setReport] = useState<ReportType>(null);
@@ -91,12 +86,16 @@ const ReportView = (): JSX.Element => {
      Send them back to /reports if the report state isn't allowed */
   useEffect(() => {
     if (report) {
-      if (!EXTERNAL_ALLOWED_STATES.includes(report.state) && isExternalMode) {
-        snackbar.error('User does not have access to this report');
+      if (unreviewedStates.includes(report.state) && !unreviewedAccess) {
+        snackbar.error('User does not have access to this report; it is unreviewed');
+        history.push('/reports');
+      }
+      if (nonproductionStates.includes(report.state) && !nonproductionAccess) {
+        snackbar.error('User does not have access to this report; it is nonproduction');
         history.push('/reports');
       }
     }
-  }, [report, isExternalMode, history]);
+  }, [report, unreviewedAccess, unreviewedStates, nonproductionAccess, nonproductionStates, history]);
 
   useEffect(() => {
     if (report) {

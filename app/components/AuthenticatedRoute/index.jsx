@@ -14,10 +14,10 @@ import { isAuthorized } from '@/services/management/auth';
  * @returns {Route} a route component which checks authorization on render or redirects to login
  */
 const AuthenticatedRoute = ({
-  component: Component, adminRequired, showNav, onToggleNav, ...rest
+  component: Component, managerRequired, showNav, onToggleNav, ...rest
 }) => {
   const { authorizationToken } = useSecurity();
-  const { adminAccess } = useResource();
+  const { managerAccess, adminAccess } = useResource();
   const authOk = isAuthorized(authorizationToken);
 
   const ChildComponent = useMemo(() => {
@@ -34,13 +34,13 @@ const AuthenticatedRoute = ({
       };
     }
 
-    if (!adminAccess && adminRequired) {
+    if (!managerAccess && managerRequired) {
       return () => (
         <Redirect to="/" />
       );
     }
     return Component;
-  }, [Component, adminAccess, adminRequired, authOk]);
+  }, [Component, adminAccess, managerAccess, managerRequired, authOk]);
 
   if (showNav) {
     onToggleNav(true);
@@ -57,7 +57,7 @@ const AuthenticatedRoute = ({
 };
 
 AuthenticatedRoute.propTypes = {
-  adminRequired: PropTypes.bool,
+  managerRequired: PropTypes.bool,
   // eslint-disable-next-line react/forbid-prop-types
   component: PropTypes.object.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
@@ -67,7 +67,7 @@ AuthenticatedRoute.propTypes = {
 };
 
 AuthenticatedRoute.defaultProps = {
-  adminRequired: false,
+  managerRequired: false,
   location: null,
   onToggleNav: () => {},
   showNav: false,

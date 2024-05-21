@@ -1,3 +1,4 @@
+// TODO fix api permissions/error text for adding users to project
 import React, {
   useState, useEffect, useCallback,
 } from 'react';
@@ -21,7 +22,7 @@ import ReportAutocomplete from '@/components/ReportAutocomplete';
 import UserAutocomplete from '@/components/UserAutocomplete';
 import { ProjectType, ShortReportType } from '../../../AdminView/types';
 import { userColumnDefs, reportColumnDefs } from './columnDefs';
-
+import useResource from '@/hooks/useResource';
 import './index.scss';
 
 type AddEditProjectDialogProps = {
@@ -56,7 +57,7 @@ const AddEditProjectDialog = ({
   const [existingReports, setExistingReports] = useState<ShortReportType[]>([]);
 
   const [isReportsLoading, setIsReportsLoading] = useState(true);
-
+  const { adminAccess, managerAccess } = useResource();
   useEffect(() => {
     if (isOpen) {
       const getData = async () => {
@@ -137,7 +138,7 @@ const AddEditProjectDialog = ({
         onClose(updatedProject);
       } catch (e) {
         console.error('handleClose ~ e:', e);
-        snackbar.error(`Error ${editData ? 'editing' : 'creating'} report, ${e?.message}`);
+        snackbar.error(`Error ${editData ? 'editing' : 'creating'} project, ${e?.content?.error?.message}`);
       }
     } else {
       setErrors({
@@ -186,17 +187,19 @@ const AddEditProjectDialog = ({
             error={errors.projectName}
             helperText={errors.projectName ? 'Project name is required' : null}
             className="add-user__text-field"
+            disabled={!adminAccess}
             required
           />
         </FormControl>
         <FormControl fullWidth classes={{ root: 'add-user__form-container' }} variant="outlined">
           <TextField
-            value={projectDesc}
+            value={projectDesc || "no project description"}
             fullWidth
             onChange={({ target: { value } }) => setProjectDesc(value)}
             label="Project Description"
             variant="outlined"
             className="add-user__text-field"
+            disabled={!managerAccess}
           />
         </FormControl>
 
@@ -217,11 +220,11 @@ const AddEditProjectDialog = ({
         <Typography className="edit-dialog__section-title" variant="h3">
           Reports
         </Typography>
-        <ReportAutocomplete
+        {adminAccess && <ReportAutocomplete
           onSubmit={handleReportAdd}
           label="Add Report"
-        />
-        { isReportsLoading
+        />}
+        {isReportsLoading
           ? <CircularProgress />
           : (
             <DataTable

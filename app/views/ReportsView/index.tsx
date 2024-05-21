@@ -7,7 +7,6 @@ import { ColumnState } from '@ag-grid-community/core';
 
 import startCase from '@/utils/startCase';
 import useGrid from '@/hooks/useGrid';
-import useExternalMode from '@/hooks/useExternalMode';
 import useResource from '@/hooks/useResource';
 import api from '@/services/api';
 import { ReportType } from '@/context/ReportContext';
@@ -26,22 +25,23 @@ const ReportsTableComponent = (): JSX.Element => {
     onGridReady,
   } = useGrid();
 
-  const { adminAccess } = useResource();
-  const isExternalMode = useExternalMode();
+  const { adminAccess, unreviewedAccess, nonproductionAccess, allStates, unreviewedStates, nonproductionStates } = useResource();
   const [rowData, setRowData] = useState<ReportType[]>();
 
   useEffect(() => {
-    if (!rowData && isExternalMode !== undefined) {
+    if (!rowData) {
       const getData = async () => {
-        let states = '';
 
-        if (!adminAccess) {
-          states = 'ready,active,uploaded,signedoff,completed,reviewed';
+        let statesArray = allStates;
+
+        if (!nonproductionAccess) {
+          statesArray = statesArray.filter(elem => !nonproductionStates.includes(elem));
         }
 
-        if (isExternalMode) {
-          states = 'reviewed,completed';
+        if (!unreviewedAccess) {
+          statesArray = statesArray.filter(elem => !unreviewedStates.includes(elem));
         }
+        const states = statesArray.join(",");
 
         const { reports } = await api.get(`/reports${states ? `?states=${states}` : ''}`, {}).request();
 
@@ -67,7 +67,7 @@ const ReportsTableComponent = (): JSX.Element => {
       };
       getData();
     }
-  }, [adminAccess, isExternalMode, rowData]);
+  }, [adminAccess, allStates, nonproductionStates, unreviewedStates, nonproductionAccess, unreviewedAccess, rowData]);
 
   const onGridSizeChanged = useCallback((params) => {
     const MEDIUM_SCREEN_WIDTH_LOWER = 992;
@@ -87,7 +87,7 @@ const ReportsTableComponent = (): JSX.Element => {
     resizable: true,
     filter: true,
   };
-  
+
   return (
     <div className="ag-theme-material reports-table__container">
       <AgGridReact

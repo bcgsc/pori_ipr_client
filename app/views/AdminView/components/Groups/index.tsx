@@ -14,6 +14,8 @@ import AddEditGroupDialog from './components/AddEditGroupDialog';
 
 import './index.scss';
 
+const ALL_ACCESS = ['admin', 'manager', 'report manager', 'bioinformatician', 'read access', 'germline access', 'non-production access', 'unreviewed access'];
+
 const Groups = (): JSX.Element => {
   const [groups, setGroups] = useState<GroupType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -24,26 +26,16 @@ const Groups = (): JSX.Element => {
 
   useEffect(() => {
     const getData = async () => {
-      const groupsResp = await api.get('/user/group').request();
-
+      let groupsResp = await api.get('/user/group').request();
+      groupsResp = groupsResp.filter((group) => ALL_ACCESS.includes(group.name.toLowerCase()));
+      groupsResp.sort((a, b) => ALL_ACCESS.indexOf(a.name.toLowerCase()) - ALL_ACCESS.indexOf(b.name.toLowerCase()));
+      console.dir(groupsResp);
       setGroups(groupsResp);
       setLoading(false);
     };
 
     getData();
   }, []);
-
-  const handleDelete = useCallback(async ({ ident }) => {
-    // eslint-disable-next-line no-restricted-globals
-    if (confirm('Are you sure you want to remove this group?')) {
-      await api.del(`/user/group/${ident}`, {}).request();
-      const newGroups = groups.filter((group) => group.ident !== ident);
-      setGroups(newGroups);
-      snackbar.enqueueSnackbar('Group deleted');
-    } else {
-      snackbar.enqueueSnackbar('Group not deleted');
-    }
-  }, [snackbar, groups]);
 
   const handleEditStart = (rowData) => {
     setShowDialog(true);
@@ -54,15 +46,10 @@ const Groups = (): JSX.Element => {
     setShowDialog(false);
     if (newData) {
       const groupIndex = groups.findIndex((group) => group.ident === newData.ident);
-      if (groupIndex !== -1) {
-        const newGroups = [...groups];
-        newGroups[groupIndex] = newData;
-        setGroups(newGroups);
-        snackbar.enqueueSnackbar('Group edited');
-      } else {
-        setGroups((prevVal) => [...prevVal, newData]);
-        snackbar.enqueueSnackbar('Group added');
-      }
+      const newGroups = [...groups];
+      newGroups[groupIndex] = newData;
+      setGroups(newGroups);
+      snackbar.enqueueSnackbar('Group edited');
     }
     setEditData(null);
   }, [groups, snackbar]);
@@ -78,11 +65,6 @@ const Groups = (): JSX.Element => {
             isFullLength
             canEdit
             onEdit={handleEditStart}
-            canAdd
-            onAdd={() => setShowDialog(true)}
-            addText="Add group"
-            canDelete
-            onDelete={handleDelete}
             titleText="Groups"
           />
           {showDialog && (

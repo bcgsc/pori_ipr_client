@@ -20,7 +20,6 @@ const CheckboxCell = ({
   node,
 }: CheckboxCellProps): JSX.Element => {
   const snackbar = useSnackbar();
-
   const handleUnexport = useCallback(async (): Promise<void> => {
     if (value) {
       try {
