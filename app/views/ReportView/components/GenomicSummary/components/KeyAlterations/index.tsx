@@ -117,15 +117,13 @@ const KeyAlterations = ({
           const sorted = sortBy(output, [customTypeSort, 'geneVariant']);
           setVariants(sorted);
           setVariantCounts(counts);
-
-          if (loadedDispatch) {
-            // TODO
-            loadedDispatch({ type: 'alterations' });
-          }
         } catch (err) {
           snackbar.error(`Network error: ${err?.message ?? err}`);
         } finally {
           setIsLoading(false);
+          if (loadedDispatch) {
+            loadedDispatch({ type: 'alterations' });
+          }
         }
       };
 
