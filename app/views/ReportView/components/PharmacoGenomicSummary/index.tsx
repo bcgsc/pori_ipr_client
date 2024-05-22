@@ -35,12 +35,14 @@ import PatientInformation from '../PatientInformation';
 type PharmacoGenomicSummaryProps = {
   loadedDispatch: (type: { type: string }) => void;
   isPrint: boolean;
+  printVersion?: 'standardLayout' | 'condensedLayout' | null;
 } & WithLoadingInjectedProps;
 
 const PharmacoGenomicSummary = ({
   loadedDispatch,
   isPrint,
   setIsLoading,
+  printVersion = null,
 }: PharmacoGenomicSummaryProps): JSX.Element => {
   const { report } = useContext(ReportContext);
   let { canEdit } = useReport();
@@ -86,7 +88,7 @@ const PharmacoGenomicSummary = ({
           setCancerPredisposition(cancerPredispositionResp.filter(({ variant }) => variant.germline));
 
           if (loadedDispatch) {
-            loadedDispatch({ type: 'summary' });
+            loadedDispatch({ type: 'summary-pcp' });
           }
         } catch (err) {
           snackbar.error(`Network error: ${err}`);
@@ -261,6 +263,7 @@ const PharmacoGenomicSummary = ({
               canEdit={canEdit}
               isPrint={isPrint}
               loadedDispatch={loadedDispatch}
+              printVersion={printVersion}
             />
           )}
           <div className={`${classNamePrefix}__pharmacogenomic`}>

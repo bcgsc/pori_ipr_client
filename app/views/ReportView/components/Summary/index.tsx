@@ -1,11 +1,11 @@
 import { SummaryProps } from '@/commonComponents';
-import React, { lazy } from 'react';
+import React from 'react';
 
-const GenomicSummary = lazy(() => import('../GenomicSummary'));
-const KeyAlterations = lazy(() => import('../GenomicSummary/components/KeyAlterations'));
-const ProbeSummary = lazy(() => import('../ProbeSummary'));
-const PharmacoGenomicSummary = lazy(() => import('../PharmacoGenomicSummary'));
-const RapidSummary = lazy(() => import('../RapidSummary'));
+import GenomicSummary from '../GenomicSummary';
+import KeyAlterations from '../GenomicSummary/components/KeyAlterations';
+import ProbeSummary from '../ProbeSummary';
+import PharmacoGenomicSummary from '../PharmacoGenomicSummary';
+import RapidSummary from '../RapidSummary';
 
 const Summary = ({
   templateName,

@@ -4,6 +4,7 @@ import React, {
 import {
   Typography,
 } from '@mui/material';
+import DemoDescription from '@/components/DemoDescription';
 
 import api, { ApiCallSet } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
@@ -118,6 +119,7 @@ const splitVariantsByRelevance = (data: RapidVariantType[]): RapidVariantType[] 
 type RapidSummaryProps = {
   loadedDispatch: ({ type }: { type: string }) => void;
   isPrint: boolean;
+  printVersion?: 'standardLayout' | 'condensedLayout' | null;
 } & WithLoadingInjectedProps;
 
 const RapidSummary = ({
@@ -125,6 +127,7 @@ const RapidSummary = ({
   isLoading,
   isPrint = false,
   setIsLoading,
+  printVersion = null,
 }: RapidSummaryProps): JSX.Element => {
   const { report } = useContext(ReportContext);
   const { setIsSigned } = useContext(ConfirmContext);
@@ -239,7 +242,7 @@ const RapidSummary = ({
         } finally {
           setIsLoading(false);
           if (loadedDispatch) {
-            loadedDispatch({ type: 'summary' });
+            loadedDispatch({ type: 'summary-tgr' });
           }
         }
       };
@@ -586,6 +589,75 @@ const RapidSummary = ({
       </div>
     );
   }, [report, isPrint]);
+  const classNamePrefix = printVersion ? 'rapid-summary--print' : 'rapid-summary';
+
+  if (printVersion === 'condensedLayout') {
+    return (
+      <div className={classNamePrefix}>
+        <DemoDescription>
+          The front page displays general patient and sample information, and provides a highlight of the key sequencing results.
+        </DemoDescription>
+        <Box
+          sx={{
+            display: 'flex',
+            placeContent: 'space-between',
+          }}
+        >
+          <Box sx={{ width: '45%' }}>
+            {report && (
+              <PatientInformation
+                canEdit={canEdit}
+                isPrint={isPrint}
+                printVersion={printVersion}
+                loadedDispatch={loadedDispatch}
+              />
+            )}
+          </Box>
+          <Box sx={{ minWidth: '45%', maxWidth: '54%' }}>
+            {report && tumourSummary && (
+              <TumourSummary
+                canEdit={canEdit}
+                isPrint={isPrint}
+                printVersion={printVersion}
+                tumourSummary={tumourSummary}
+                loadedDispatch={loadedDispatch}
+              />
+            )}
+          </Box>
+        </Box>
+        {report && therapeuticAssociationResults && (
+        <div className="rapid-summary__events">
+          <Typography className="rapid-summary__events-title" variant="h3" display="inline">
+            Variants with Clinical Evidence for Treatment in This Tumour Type
+          </Typography>
+          {therapeuticAssociationSection}
+        </div>
+        )}
+        {report && cancerRelevanceResults && (
+        <div className="rapid-summary__events">
+          <Typography className="rapid-summary__events-title" variant="h3" display="inline">
+            Variants with Cancer Relevance
+          </Typography>
+          {cancerRelevanceSection}
+        </div>
+        )}
+        {report && unknownSignificanceResults && (
+        <div className="rapid-summary__events">
+          <Typography className="rapid-summary__events-title" variant="h3" display="inline">
+            Variants of Uncertain Significance
+          </Typography>
+          {unknownSignificanceSection}
+        </div>
+        )}
+        {
+            isPrint ? reviewSignaturesSection : sampleInfoSection
+          }
+        {
+            isPrint ? sampleInfoSection : reviewSignaturesSection
+          }
+      </div>
+    );
+  }
 
   return (
     <div className={`rapid-summary${isPrint ? '--print' : ''}`}>
@@ -595,6 +667,7 @@ const RapidSummary = ({
             <PatientInformation
               canEdit={canEdit}
               isPrint={isPrint}
+              printVersion={printVersion}
               loadedDispatch={loadedDispatch}
             />
           )}
@@ -602,7 +675,9 @@ const RapidSummary = ({
             <TumourSummary
               canEdit={canEdit}
               isPrint={isPrint}
+              printVersion={printVersion}
               tumourSummary={tumourSummary}
+              loadedDispatch={loadedDispatch}
             />
           )}
           {report && therapeuticAssociationResults && (
