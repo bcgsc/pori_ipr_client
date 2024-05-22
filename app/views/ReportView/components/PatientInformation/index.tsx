@@ -10,7 +10,6 @@ import EditIcon from '@mui/icons-material/Edit';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import ReportContext, { ReportType, PatientInformationType } from '@/context/ReportContext';
 import { formatDate } from '@/utils/date';
-import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import PatientEdit from '@/components/PatientEdit';
 import snackbar from '@/services/SnackbarUtils';
 import SummaryPrintTable from '@/components/SummaryPrintTable';
@@ -21,14 +20,13 @@ type PatientInformationProps = {
   canEdit: boolean;
   isPrint: boolean;
   printVersion?: 'standardLayout' | 'condensedLayout' | null;
-} & WithLoadingInjectedProps;
+};
 
 const PatientInformation = ({
   loadedDispatch,
   canEdit,
   isPrint,
   printVersion,
-  setIsLoading,
 }: PatientInformationProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
   const [showPatientEdit, setShowPatientEdit] = useState(false);
@@ -80,7 +78,6 @@ const PatientInformation = ({
         } catch (err) {
           snackbar.error(`Unknown error: ${err}`);
         } finally {
-          setIsLoading(false);
           if (loadedDispatch) {
             loadedDispatch({ type: 'patient-and-tumour' });
           }
@@ -89,7 +86,7 @@ const PatientInformation = ({
 
       getData();
     }
-  }, [loadedDispatch, report, setIsLoading, isPrint]);
+  }, [loadedDispatch, report, isPrint]);
 
   const handlePatientEditClose = useCallback((
     newPatientData: PatientInformationType,
@@ -202,4 +199,4 @@ const PatientInformation = ({
   );
 };
 
-export default withLoading(PatientInformation);
+export default PatientInformation;
