@@ -280,6 +280,7 @@ const GenomicSummary = ({
                 isPrint={isPrint}
                 printVersion={printVersion}
                 tumourSummary={tumourSummary}
+                loadedDispatch={loadedDispatch}
               />
             )}
           </Box>
@@ -309,6 +310,7 @@ const GenomicSummary = ({
               isPrint={isPrint}
               printVersion={printVersion}
               tumourSummary={tumourSummary}
+              loadedDispatch={loadedDispatch}
             />
           )}
         </>

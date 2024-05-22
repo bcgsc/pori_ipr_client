@@ -620,10 +620,41 @@ const RapidSummary = ({
                 isPrint={isPrint}
                 printVersion={printVersion}
                 tumourSummary={tumourSummary}
+                loadedDispatch={loadedDispatch}
               />
             )}
           </Box>
         </Box>
+        {report && therapeuticAssociationResults && (
+        <div className="rapid-summary__events">
+          <Typography className="rapid-summary__events-title" variant="h3" display="inline">
+            Variants with Clinical Evidence for Treatment in This Tumour Type
+          </Typography>
+          {therapeuticAssociationSection}
+        </div>
+        )}
+        {report && cancerRelevanceResults && (
+        <div className="rapid-summary__events">
+          <Typography className="rapid-summary__events-title" variant="h3" display="inline">
+            Variants with Cancer Relevance
+          </Typography>
+          {cancerRelevanceSection}
+        </div>
+        )}
+        {report && unknownSignificanceResults && (
+        <div className="rapid-summary__events">
+          <Typography className="rapid-summary__events-title" variant="h3" display="inline">
+            Variants of Uncertain Significance
+          </Typography>
+          {unknownSignificanceSection}
+        </div>
+        )}
+        {
+            isPrint ? reviewSignaturesSection : sampleInfoSection
+          }
+        {
+            isPrint ? sampleInfoSection : reviewSignaturesSection
+          }
       </div>
     );
   }
@@ -646,6 +677,7 @@ const RapidSummary = ({
               isPrint={isPrint}
               printVersion={printVersion}
               tumourSummary={tumourSummary}
+              loadedDispatch={loadedDispatch}
             />
           )}
           {report && therapeuticAssociationResults && (
