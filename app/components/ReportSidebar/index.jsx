@@ -59,21 +59,12 @@ const ReportSidebar = (props) => {
     </MenuItem>
   );
 
-  const printOptions = () => {
-    if (report.template.name === 'genomic') {
-      return (
-        <>
-          {standardPrintOption()}
-          {condensedPrintOption()}
-        </>
-      );
-    }
-    return (
-      <>
-        {standardPrintOption()}
-      </>
-    );
-  };
+  const printOptions = () => (
+    <>
+      {standardPrintOption()}
+      {condensedPrintOption()}
+    </>
+  );
 
   return (
     <div className="report-sidebar">
