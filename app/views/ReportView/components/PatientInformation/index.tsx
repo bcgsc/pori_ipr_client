@@ -183,20 +183,20 @@ const PatientInformation = ({
         </Typography>
       </div>
       {report && patientInformation && (
-      <Grid
-        alignItems="flex-end"
-        container
-        spacing={3}
-        className={`${classNamePrefix}__content`}
-      >
-        {patientInformation.map(({ label, value }) => (
-          <Grid key={label} item>
-            <ReadOnlyTextField label={label}>
-              {value}
-            </ReadOnlyTextField>
-          </Grid>
-        ))}
-      </Grid>
+        <Grid
+          alignItems="flex-end"
+          container
+          spacing={3}
+          className={`${classNamePrefix}__content`}
+        >
+          {patientInformation.map(({ label, value }) => (
+            <Grid key={label} item>
+              <ReadOnlyTextField label={label}>
+                {value}
+              </ReadOnlyTextField>
+            </Grid>
+          ))}
+        </Grid>
       )}
     </div>
   );

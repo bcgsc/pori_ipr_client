@@ -26,6 +26,7 @@ import PatientInformation from '../PatientInformation';
 type ProbeSummaryProps = {
   loadedDispatch: (type: { type: string }) => void;
   isPrint: boolean;
+  printVersion: null | string;
 } & WithLoadingInjectedProps;
 
 const ProbeSummary = ({
@@ -33,6 +34,7 @@ const ProbeSummary = ({
   isLoading,
   isPrint,
   setIsLoading,
+  printVersion = null,
 }: ProbeSummaryProps): JSX.Element => {
   const { report } = useContext(ReportContext);
   let { canEdit } = useReport();
@@ -205,6 +207,7 @@ const ProbeSummary = ({
             <PatientInformation
               canEdit={canEdit}
               isPrint={isPrint}
+              printVersion={printVersion}
               loadedDispatch={loadedDispatch}
             />
           )}

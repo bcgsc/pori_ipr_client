@@ -12,6 +12,7 @@ const Summary = ({
   visibleSections,
   ...props
 }: SummaryProps): JSX.Element => {
+
   // TODO remove backup template name checks when data is updated in prod
   let summarySection;
   if (visibleSections) {
