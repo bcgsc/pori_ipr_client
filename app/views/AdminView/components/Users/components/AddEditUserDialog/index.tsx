@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-  Button,
   CircularProgress,
   Dialog,
   DialogActions,
@@ -19,6 +18,7 @@ import { useForm, Controller } from 'react-hook-form';
 import api, { ApiCallSet } from '@/services/api';
 import { UserType, GroupType } from '@/common';
 import snackbar from '@/services/SnackbarUtils';
+import AsyncButton from '@/components/AsyncButton';
 import {
   ProjectType,
 } from '../../../../types';
@@ -72,6 +72,7 @@ const AddEditUserDialog = ({
   const [projectOptions, setProjectOptions] = useState<ProjectType[]>([]);
   const [groupOptions, setGroupOptions] = useState<GroupType[]>([]);
   const [dialogTitle, setDialogTitle] = useState<string>('');
+  const [isApiCalling, setIsApiCalling] = useState(false);
 
   // Grab project and groups
   useEffect(() => {
@@ -107,6 +108,7 @@ const AddEditUserDialog = ({
   }, [editData, groupOptions, projectOptions, setValue]);
 
   const handleClose = useCallback(async (formData: UserForm) => {
+    setIsApiCalling(true);
     const {
       firstName,
       lastName,
@@ -179,6 +181,7 @@ const AddEditUserDialog = ({
         addEditResp.projects = projectOptions.filter(({ ident }) => projects.includes(ident));
         addEditResp.groups = groupOptions.filter(({ ident }) => groups.includes(ident));
 
+        setIsApiCalling(false);
         snackbar.success(`User successfully ${editData ? 'updated' : 'created'}`);
         onClose(addEditResp);
       } catch (e) {
@@ -351,12 +354,12 @@ const AddEditUserDialog = ({
         )}
       </DialogContent>
       <DialogActions className="edit-dialog__actions">
-        <Button color="primary" onClick={() => onClose(null)}>
+        <AsyncButton isLoading={isApiCalling} color="primary" onClick={() => onClose(null)}>
           Cancel
-        </Button>
-        <Button color="primary" onClick={handleSubmit(handleClose)}>
+        </AsyncButton>
+        <AsyncButton isLoading={isApiCalling} color="primary" onClick={handleSubmit(handleClose)}>
           Save
-        </Button>
+        </AsyncButton>
       </DialogActions>
     </Dialog>
   );
