@@ -204,18 +204,6 @@ const Print = ({
 
         document.title = `${report.patientId}${serverName}_${templateName}_report_${formattedDate}`;
 
-        // TEMPORARY FIX: Reload page once to ensure that all components render before print dialog - DEVSU-2153
-        const reloadOnce = () => {
-          const reloadCount = sessionStorage.getItem('reloadCount');
-          if (parseInt(reloadCount, 10) < 2 || reloadCount == null) {
-            sessionStorage.setItem('reloadCount', String(parseInt(reloadCount, 10) + 1));
-            window.location.reload();
-          } else {
-            sessionStorage.removeItem('reloadCount');
-          }
-        };
-        reloadOnce();
-
         window.print();
         setIsPrintDialogShown(true);
       };
