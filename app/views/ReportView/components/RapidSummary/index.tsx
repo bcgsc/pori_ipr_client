@@ -6,7 +6,6 @@ import {
 } from '@mui/material';
 import DemoDescription from '@/components/DemoDescription';
 
-
 import api, { ApiCallSet } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
@@ -33,7 +32,6 @@ import { getVariantRelevanceDict } from './utils';
 
 import PatientInformation from '../PatientInformation';
 import TumourSummary from '../TumourSummary';
-import { propsToClassKey } from '@mui/styles';
 
 const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
   const iprRelevanceDict = {};
@@ -121,7 +119,7 @@ const splitVariantsByRelevance = (data: RapidVariantType[]): RapidVariantType[] 
 type RapidSummaryProps = {
   loadedDispatch: ({ type }: { type: string }) => void;
   isPrint: boolean;
-  printVersion: null | string;
+  printVersion?: 'standardLayout' | 'condensedLayout' | null;
 } & WithLoadingInjectedProps;
 
 const RapidSummary = ({
