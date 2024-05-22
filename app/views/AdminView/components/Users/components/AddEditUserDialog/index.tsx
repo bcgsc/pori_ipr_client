@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-  Button,
   CircularProgress,
   Dialog,
   DialogActions,
@@ -19,6 +18,7 @@ import { useForm, Controller } from 'react-hook-form';
 import api, { ApiCallSet } from '@/services/api';
 import { UserType, GroupType } from '@/common';
 import snackbar from '@/services/SnackbarUtils';
+import AsyncButton from '@/components/AsyncButton';
 import {
   ProjectType,
 } from '../../../../types';
@@ -72,6 +72,7 @@ const AddEditUserDialog = ({
   const [projectOptions, setProjectOptions] = useState<ProjectType[]>([]);
   const [groupOptions, setGroupOptions] = useState<GroupType[]>([]);
   const [dialogTitle, setDialogTitle] = useState<string>('');
+  const [isApiCalling, setIsApiCalling] = useState(false);
 
   // Grab project and groups
   useEffect(() => {
@@ -107,6 +108,7 @@ const AddEditUserDialog = ({
   }, [editData, groupOptions, projectOptions, setValue]);
 
   const handleClose = useCallback(async (formData: UserForm) => {
+    setIsApiCalling(true);
     const {
       firstName,
       lastName,
@@ -127,14 +129,21 @@ const AddEditUserDialog = ({
       };
 
       try {
-        const addEditResp = editData
-          ? await api.put(`/user/${editData.ident}`, userReq).request()
-          : await api.post('/user', userReq).request();
+        let addEditResp;
+        try {
+          addEditResp = editData
+            ? await api.put(`/user/${editData.ident}`, userReq).request()
+            : await api.post('/user', userReq).request();
+        } catch (e) {
+          throw { ...e, errorType: 'user detail' };
+        }
 
         // Project Section
-        if (dirtyFields.projects && editData) {
-          const existingProjects = editData.projects.map(({ ident }) => ident);
-
+        if (dirtyFields.projects) {
+          let existingProjects = [];
+          if (editData) {
+            existingProjects = editData.projects.map(({ ident }) => ident);
+          }
           const toAddProjs = projects.filter((projectId) => !existingProjects.includes(projectId));
           const toRemoveProjs = existingProjects.filter((projectId) => !projects.includes(projectId));
 
@@ -150,8 +159,11 @@ const AddEditUserDialog = ({
         }
 
         // Groups Section
-        if (dirtyFields.groups && editData) {
-          const existingGroups = editData.groups.map(({ ident }) => ident);
+        if (dirtyFields.groups) {
+          let existingGroups = [];
+          if (editData) {
+            existingGroups = editData.groups.map(({ ident }) => ident);
+          }
 
           const toAddGroups = groups.filter((groupId) => !existingGroups.includes(groupId));
           const toRemoveGroups = existingGroups.filter((groupId) => !groups.includes(groupId));
@@ -169,6 +181,7 @@ const AddEditUserDialog = ({
         addEditResp.projects = projectOptions.filter(({ ident }) => projects.includes(ident));
         addEditResp.groups = groupOptions.filter(({ ident }) => groups.includes(ident));
 
+        setIsApiCalling(false);
         snackbar.success(`User successfully ${editData ? 'updated' : 'created'}`);
         onClose(addEditResp);
       } catch (e) {
@@ -179,10 +192,8 @@ const AddEditUserDialog = ({
         if (e.errorType) {
           snackbar.error(`Error setting ${e.errorType}s related to user${content}`);
         } else {
-          console.dir(e);
           snackbar.error(`Error ${editData ? 'editing' : 'creating'} user${content}`);
         }
-        console.error(e);
       }
     }
 
@@ -343,12 +354,12 @@ const AddEditUserDialog = ({
         )}
       </DialogContent>
       <DialogActions className="edit-dialog__actions">
-        <Button color="primary" onClick={() => onClose(null)}>
+        <AsyncButton isLoading={isApiCalling} color="primary" onClick={() => onClose(null)}>
           Cancel
-        </Button>
-        <Button color="primary" onClick={handleSubmit(handleClose)}>
+        </AsyncButton>
+        <AsyncButton isLoading={isApiCalling} color="primary" onClick={handleSubmit(handleClose)}>
           Save
-        </Button>
+        </AsyncButton>
       </DialogActions>
     </Dialog>
   );
