@@ -1,0 +1,11 @@
+@import '../../../../styles/variables';
+
+.tumour-summary {
+  margin: 0 0 32px 0;
+}
+
+.tumour-summary--print {
+  &__title {
+    margin: 0 0 8px;
+  }
+}
