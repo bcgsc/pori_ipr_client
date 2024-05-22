@@ -16,6 +16,7 @@ import SummaryPrintTable from '@/components/SummaryPrintTable';
 import './index.scss';
 
 type TumourSummaryProps = {
+  loadedDispatch: ({ type }: { type: string }) => void;
   canEdit: boolean;
   isPrint: boolean;
   printVersion?: 'standardLayout' | 'condensedLayout' | null;
@@ -23,6 +24,7 @@ type TumourSummaryProps = {
 };
 
 const TumourSummary = ({
+  loadedDispatch,
   canEdit,
   isPrint,
   printVersion,
@@ -77,7 +79,11 @@ const TumourSummary = ({
     if (newTmBurMutBurData) {
       setTmburMutBur(newTmBurMutBurData);
     }
-  }, [setReport]);
+
+    if (loadedDispatch) {
+      loadedDispatch({ type: 'patient-and-tumour' });
+    }
+  }, [loadedDispatch, setReport]);
 
   if (isPrint && printVersion === 'condensedLayout') {
     return (

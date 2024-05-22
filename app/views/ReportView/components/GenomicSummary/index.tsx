@@ -116,8 +116,7 @@ const GenomicSummary = ({
           }
 
           if (loadedDispatch) {
-            // TODO
-            loadedDispatch({ type: 'summary' });
+            loadedDispatch({ type: 'summary-genomic' });
           }
         } catch (err) {
           snackbar.error(`Network error: ${err?.message ?? err}`);

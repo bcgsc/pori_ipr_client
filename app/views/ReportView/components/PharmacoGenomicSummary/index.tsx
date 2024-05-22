@@ -88,7 +88,7 @@ const PharmacoGenomicSummary = ({
           setCancerPredisposition(cancerPredispositionResp.filter(({ variant }) => variant.germline));
 
           if (loadedDispatch) {
-            loadedDispatch({ type: 'summary' });
+            loadedDispatch({ type: 'summary-pcp' });
           }
         } catch (err) {
           snackbar.error(`Network error: ${err}`);

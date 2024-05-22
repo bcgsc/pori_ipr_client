@@ -94,7 +94,7 @@ const ProbeSummary = ({
         } finally {
           setIsLoading(false);
           if (loadedDispatch) {
-            loadedDispatch({ type: 'summary' });
+            loadedDispatch({ type: 'summary-probe' });
           }
         }
       };

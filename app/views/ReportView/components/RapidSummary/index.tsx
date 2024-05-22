@@ -242,7 +242,7 @@ const RapidSummary = ({
         } finally {
           setIsLoading(false);
           if (loadedDispatch) {
-            loadedDispatch({ type: 'summary' });
+            loadedDispatch({ type: 'summary-tgr' });
           }
         }
       };

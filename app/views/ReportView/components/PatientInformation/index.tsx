@@ -82,7 +82,7 @@ const PatientInformation = ({
         } finally {
           setIsLoading(false);
           if (loadedDispatch) {
-            loadedDispatch({ type: 'summary' });
+            loadedDispatch({ type: 'patient-and-tumour' });
           }
         }
       };
