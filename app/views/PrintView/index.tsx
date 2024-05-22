@@ -226,7 +226,7 @@ const Print = ({
           )}
           {((template?.sections.includes('summary') && template?.name === 'genomic') || template?.sections.includes('summary-genomic')) && ( // Continuing key alterations after therapeutic targets for genomic reports
             <>
-              <Summary visibleSections={template?.sections} templateName="genomicAlterations" isPrint printVersion={printVersion} />
+              <Summary visibleSections={template?.sections} templateName="genomicAlterations" isPrint printVersion={printVersion} loadedDispatch={dispatch} />
               <PageBreak />
             </>
           )}
