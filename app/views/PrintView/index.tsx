@@ -34,8 +34,16 @@ const Appendices = lazy(() => import('../ReportView/components/Appendices'));
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case 'summary':
+    case 'summary-genomic':
       return { ...state, summary: true };
+    case 'summary-tgr':
+      return { ...state, summary: true };
+    case 'summary-pcp':
+      return { ...state, summary: true };
+    case 'summary-probe':
+      return { ...state, summary: true };
+    case 'patient-and-tumour':
+      return { ...state, 'patient-and-tumour': true };
     case 'analyst-comments':
       return { ...state, 'analyst-comments': true };
     case 'pathway':
@@ -49,6 +57,7 @@ const reducer = (state, action) => {
     default:
       return {
         summary: false,
+        'patient-and-tumour': false,
         'analyst-comments': false,
         pathway: false,
         therapeutic: false,
@@ -135,6 +144,7 @@ const Print = ({
   const [report, setReport] = useState<ReportType>(null);
   const [reportSectionsLoaded, dispatch] = useReducer(reducer, {
     summary: false,
+    'patient-and-tumour': false,
     'analyst-comments': false,
     pathway: false,
     therapeutic: false,

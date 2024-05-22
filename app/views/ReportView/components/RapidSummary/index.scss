@@ -4,14 +4,6 @@
   margin: 20px auto;
   padding: 0 20px;
 
-  &__patient-information {
-    margin: 0 0 32px;
-
-    &-content {
-      padding: 0 16px;
-    }
-  }
-
   &__sample-information {
     &-title {
       margin: 0 0 32px;
@@ -43,16 +35,9 @@
 
 .rapid-summary--print {
   margin: 0 auto;
+  padding: 0 20px;
 
   .rapid-summary {
-    &__patient-information {
-      margin: 0 0 22px;
-
-      &-title {
-        margin: 0 0 16px;
-      }
-    }
-
     &__sample-information {
       margin: 24px 0;
     }
