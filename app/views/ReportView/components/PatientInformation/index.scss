@@ -1,0 +1,21 @@
+@import '../../../../styles/variables';
+
+.patient-information {
+  margin: 0 0 32px 0;
+
+  &__content {
+    padding: 0 16px;
+  }
+}
+
+.patient-information--print {
+  padding-bottom: 32px;
+
+  &__title {
+    margin: 0 0 8px;
+  }
+
+  &__content {
+    padding: 0 16px;
+  }
+}
