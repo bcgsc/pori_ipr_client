@@ -35,12 +35,14 @@ import PatientInformation from '../PatientInformation';
 type PharmacoGenomicSummaryProps = {
   loadedDispatch: (type: { type: string }) => void;
   isPrint: boolean;
+  printVersion: null | string;
 } & WithLoadingInjectedProps;
 
 const PharmacoGenomicSummary = ({
   loadedDispatch,
   isPrint,
   setIsLoading,
+  printVersion = null,
 }: PharmacoGenomicSummaryProps): JSX.Element => {
   const { report } = useContext(ReportContext);
   let { canEdit } = useReport();
@@ -261,6 +263,7 @@ const PharmacoGenomicSummary = ({
               canEdit={canEdit}
               isPrint={isPrint}
               loadedDispatch={loadedDispatch}
+              printVersion={printVersion}
             />
           )}
           <div className={`${classNamePrefix}__pharmacogenomic`}>
