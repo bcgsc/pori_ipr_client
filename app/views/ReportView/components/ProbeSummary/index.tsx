@@ -26,7 +26,7 @@ import PatientInformation from '../PatientInformation';
 type ProbeSummaryProps = {
   loadedDispatch: (type: { type: string }) => void;
   isPrint: boolean;
-  printVersion: null | string;
+  printVersion?: 'standardLayout' | 'condensedLayout' | null;
 } & WithLoadingInjectedProps;
 
 const ProbeSummary = ({

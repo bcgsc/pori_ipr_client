@@ -35,7 +35,7 @@ import PatientInformation from '../PatientInformation';
 type PharmacoGenomicSummaryProps = {
   loadedDispatch: (type: { type: string }) => void;
   isPrint: boolean;
-  printVersion: null | string;
+  printVersion?: 'standardLayout' | 'condensedLayout' | null;
 } & WithLoadingInjectedProps;
 
 const PharmacoGenomicSummary = ({
