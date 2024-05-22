@@ -169,7 +169,7 @@ const Main = (): JSX.Element => {
                 >
                   <CircularProgress color="secondary" />
                 </Box>
-                )}
+              )}
               >
                 <TimeoutModal authorizationToken={authorizationToken} setAuthorizationToken={setAuthorizationToken} />
                 <Switch>
@@ -185,10 +185,11 @@ const Main = (): JSX.Element => {
                   <AuthenticatedRoute component={ReportView} path="/report/:ident" />
                   <AuthenticatedRoute component={PrintView} path="/print/:ident" showNav={false} onToggleNav={setIsNavVisible} />
                   <AuthenticatedRoute component={CondensedPrintView} path="/condensedLayoutPrint/:ident" showNav={false} onToggleNav={setIsNavVisible} />
-                  <AuthenticatedRoute component={GermlineView} path="/germline" />
+                  <AuthenticatedRoute germlineRequired component={GermlineView} path="/germline" />
                   <AuthenticatedRoute component={ProjectsView} path="/projects" />
+                  <AuthenticatedRoute appendixEditorRequired component={AdminView} path="/admin/appendices" />
                   <AuthenticatedRoute managerRequired component={AdminView} path="/admin" />
-                  <AuthenticatedRoute managerRequired component={TemplateView} path="/template" />
+                  <AuthenticatedRoute templateEditorRequired component={TemplateView} path="/template" />
                 </Switch>
               </Suspense>
             </section>

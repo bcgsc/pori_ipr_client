@@ -31,7 +31,7 @@ import './index.scss';
 const Sidebar = (): JSX.Element => {
   const { pathname } = useLocation();
   const { sidebarMaximized, setSidebarMaximized } = useContext(SidebarContext);
-  const { germlineAccess, reportsAccess, managerAccess, adminAccess } = useResource();
+  const { germlineAccess, reportsAccess, managerAccess, adminAccess, templateEditAccess, appendixEditAccess } = useResource();
 
   const handleSidebarClose = useCallback(() => {
     setSidebarMaximized(false);
@@ -131,25 +131,59 @@ const Sidebar = (): JSX.Element => {
       );
     } else if (!managerAccess && reportsAccess) {
       adminSection = (
-        <ListItem
-          className={`
+        <>
+          <ListItem
+            className={`
             sidebar__list-item
             ${pathname.includes('projects') ? 'sidebar__list-item--active' : ''}
           `}
-          disableGutters
-        >
-          <Link className="sidebar__link" to="/projects">
-            <FolderSharedIcon color="action" />
-            <Typography
-              display="inline"
-              className={`sidebar__text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
-            >
-              Projects
-            </Typography>
-          </Link>
-        </ListItem>
+            disableGutters
+          >
+            <Link className="sidebar__link" to="/projects">
+              <FolderSharedIcon color="action" />
+              <Typography
+                display="inline"
+                className={`sidebar__text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
+              >
+                Projects
+              </Typography>
+            </Link>
+          </ListItem>
+          <ListItem
+            className={`sidebar__list-item ${pathname.includes('template') ? 'sidebar__list-item--active' : ''}`}
+            disableGutters
+          >
+            <Link className="sidebar__link" to="/template">
+              <DashboardIcon color="action" />
+              <Typography
+                display="inline"
+                className={`sidebar__text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
+              >
+                Templates
+              </Typography>
+            </Link>
+          </ListItem>
+          {appendixEditAccess && <ListItem
+            className={`
+                    sidebar__list-item
+                    ${pathname.includes('admin/appendices') ? 'sidebar__list-item--active' : ''}
+                  `}
+            disableGutters
+          >
+            <Link className="sidebar__link" to="/admin/appendices">
+              <FilePresentIcon color="action" />
+              <Typography
+                display="inline"
+                className={`sidebar__text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
+              >
+                Appendices
+              </Typography>
+            </Link>
+          </ListItem>}
+        </>
       );
     }
+
 
     return (
       <div>
@@ -233,7 +267,7 @@ const Sidebar = (): JSX.Element => {
         </List>
       </div>
     );
-  }, [adminAccess, managerAccess, germlineAccess, handleSidebarClose, pathname, reportsAccess, sidebarMaximized]);
+  }, [adminAccess, managerAccess, germlineAccess, handleSidebarClose, pathname, reportsAccess, templateEditAccess, appendixEditAccess, sidebarMaximized]);
 
   let drawerProps: DrawerProps = {
     variant: 'temporary',

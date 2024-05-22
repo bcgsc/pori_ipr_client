@@ -29,7 +29,6 @@ const Groups = (): JSX.Element => {
       let groupsResp = await api.get('/user/group').request();
       groupsResp = groupsResp.filter((group) => ALL_ACCESS.includes(group.name.toLowerCase()));
       groupsResp.sort((a, b) => ALL_ACCESS.indexOf(a.name.toLowerCase()) - ALL_ACCESS.indexOf(b.name.toLowerCase()));
-      console.dir(groupsResp);
       setGroups(groupsResp);
       setLoading(false);
     };
