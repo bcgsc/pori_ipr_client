@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-// TODO when creating new user, projects and groups aren't created
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   Button,
