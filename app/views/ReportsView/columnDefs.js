@@ -60,6 +60,14 @@ const columnDefs = [{
   cellRenderer: dateCellRenderer,
 },
 {
+  headerName: 'Bioinformatician',
+  field: 'bioinformatician',
+},
+{
+  headerName: 'Asigned Reviewer',
+  field: 'reviewer',
+},
+{
   headerName: 'Open',
   pinned: 'right',
   cellRenderer: 'Launch',

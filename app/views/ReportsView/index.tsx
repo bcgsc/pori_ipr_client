@@ -46,8 +46,20 @@ const ReportsTableComponent = (): JSX.Element => {
         const { reports } = await api.get(`/reports${states ? `?states=${states}` : ''}`, {}).request();
 
         setRowData(reports.map((report: ReportType) => {
+          if (report.users.length > 1) {
+            console.dir(report.users);
+            console.dir(Object.keys(report));
+          }
           const [analyst] = report.users
             .filter((u) => u.role === 'analyst')
+            .map((u) => u.user);
+
+          const [reviewer] = report.users
+            .filter((u) => u.role === 'reviewer')
+            .map((u) => u.user);
+
+          const [bioinformatician] = report.users
+            .filter((u) => u.role === 'bioinformatician')
             .map((u) => u.user);
 
           return {
@@ -62,6 +74,8 @@ const ReportsTableComponent = (): JSX.Element => {
             reportIdent: report.ident,
             tumourType: report?.patientInformation?.diagnosis,
             date: report.createdAt,
+            reviewer: reviewer ? `${reviewer.firstName} ${reviewer.lastName}` : null,
+            bioinformatician: bioinformatician ? `${bioinformatician.firstName} ${bioinformatician.lastName}` : null,
           };
         }));
       };
