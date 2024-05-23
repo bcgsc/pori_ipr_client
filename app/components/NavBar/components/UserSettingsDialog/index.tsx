@@ -79,15 +79,13 @@ const UserSettingsDialog = ({
 
     try {
       await req.request();
-      onClose();
       snackbar.success('Test email sent successfully.');
     } catch (err) {
       showErrorSnackbar(`Error sending test email: ${err.message}`);
-      onClose();
     } finally {
       setIsApiCalling(false);
     }
-  }, [onClose, showErrorSnackbar]);
+  }, [showErrorSnackbar]);
 
   return (
     <Dialog open={isOpen} maxWidth="sm" fullWidth className="edit-dialog">
