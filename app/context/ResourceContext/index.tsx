@@ -1,7 +1,7 @@
 import React, {
   createContext, ReactChild, useState, useEffect, useMemo,
 } from 'react';
-import { checkAccess, ALL_ROLES } from '@/utils/checkAccess';
+import { checkAccess, ALL_ROLES, NO_GROUP_MATCH } from '@/utils/checkAccess';
 import useSecurity from '@/hooks/useSecurity';
 import ResourceContextType from './types';
 
@@ -11,9 +11,9 @@ const NONPRODUCTION_ACCESS = ['admin', 'manager', 'bioinformatician', 'non-produ
 const TEMPLATE_EDIT_ACCESS = ['admin', 'manager', 'template edit access'];
 const APPENDIX_EDIT_ACCESS = ['admin', 'manager', 'appendix edit access'];
 
-const GERMLINE_BLOCK = ALL_ROLES;
-const UNREVIEWED_ACCESS_BLOCK = [];
-const NONPRODUCTION_ACCESS_BLOCK = [];
+const GERMLINE_BLOCK = [...ALL_ROLES, ...NO_GROUP_MATCH];
+const UNREVIEWED_ACCESS_BLOCK = NO_GROUP_MATCH;
+const NONPRODUCTION_ACCESS_BLOCK = NO_GROUP_MATCH;
 
 const ALL_STATES = ['signedoff', 'nonproduction', 'uploaded', 'reviewed', 'completed', 'ready', 'active'];
 const UNREVIEWED_STATES = ['uploaded', 'ready', 'active']; // TODO decide if nonproduction should go in unreviewed as well
@@ -22,7 +22,7 @@ const NONPRODUCTION_STATES = ['nonproduction'];
 const REPORTS_ACCESS = ['*'];
 const REPORTS_BLOCK = [];
 const ADMIN_ACCESS = ['admin'];
-const ADMIN_BLOCK = ALL_ROLES;
+const ADMIN_BLOCK = [...ALL_ROLES, ...NO_GROUP_MATCH];
 
 const useResources = (): ResourceContextType => {
   const { userDetails: { groups } } = useSecurity();
@@ -60,7 +60,6 @@ const useResources = (): ResourceContextType => {
       if (checkAccess(groups, [...TEMPLATE_EDIT_ACCESS], GERMLINE_BLOCK)) {
         setTemplateEditAccess(true);
       }
-
       if (checkAccess(groups, [...APPENDIX_EDIT_ACCESS], GERMLINE_BLOCK)) {
         setAppendixEditAccess(true);
       }
