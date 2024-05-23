@@ -1,5 +1,5 @@
 import React, {
-  useState, useEffect, useContext, useCallback,
+  useState, useEffect, useCallback,
 } from 'react';
 import {
   Dialog,
@@ -7,17 +7,20 @@ import {
   DialogContent,
   DialogActions,
   Button,
-  Checkbox,
   FormControlLabel,
+  Table,
+  TableCell,
+  TableRow,
+  Typography,
+  Switch,
 } from '@mui/material';
 
 import api from '@/services/api';
 import AsyncButton from '@/components/AsyncButton';
 
 import snackbar from '@/services/SnackbarUtils';
-import ConfirmContext from '@/context/ConfirmContext';
-import useConfirmDialog from '@/hooks/useConfirmDialog';
 import { UserType } from '@/common';
+import useSecurity from '@/hooks/useSecurity';
 
 import './index.scss';
 
@@ -34,10 +37,9 @@ const UserSettingsDialog = ({
   onClose,
   showErrorSnackbar,
 }: UserSettingsDialogProps): JSX.Element => {
-  const { showConfirmDialog } = useConfirmDialog();
-  const { isSigned } = useContext(ConfirmContext);
   const [checkboxSelected, setCheckboxSelected] = useState(false);
   const [isApiCalling, setIsApiCalling] = useState(false);
+  const { userDetails } = useSecurity();
 
   useEffect(() => {
     if (editData) {
@@ -51,27 +53,22 @@ const UserSettingsDialog = ({
 
   const handleSubmit = useCallback(async () => {
     setIsApiCalling(true);
-    const req = api.put(
-      `/user/${editData.ident}`,
-      { allowNotifications: checkboxSelected },
-      {},
-    );
     try {
-      if (isSigned) {
-        showConfirmDialog(req);
-        setIsApiCalling(false);
-      } else {
-        await req.request();
-        onClose({ ...editData, allowNotifications: checkboxSelected });
-        snackbar.success('User Settings updated successfully.');
-      }
+      const req = api.put(
+        `/user/${editData.ident}/notifications`,
+        { allowNotifications: checkboxSelected },
+        {},
+      );
+      await req.request();
+      onClose({ ...editData, allowNotifications: checkboxSelected });
+      snackbar.success('User Settings updated successfully.');
     } catch (err) {
       showErrorSnackbar(`Error updating user settings: ${err.message}`);
       onClose();
     } finally {
       setIsApiCalling(false);
     }
-  }, [checkboxSelected, editData, isSigned, showConfirmDialog, onClose, showErrorSnackbar]);
+  }, [checkboxSelected, editData, onClose, showErrorSnackbar]);
 
   const handleTestEmail = useCallback(async () => {
     setIsApiCalling(true);
@@ -94,21 +91,85 @@ const UserSettingsDialog = ({
 
   return (
     <Dialog open={isOpen} maxWidth="sm" fullWidth className="edit-dialog">
-      <DialogTitle>Edit User Settings</DialogTitle>
-      <DialogContent>
-        <div>
+      <DialogTitle className="dialog-title">User Profile</DialogTitle>
+      <DialogContent dividers>
+        <Table size="medium">
+          {userDetails && (
+            <>
+              <TableRow>
+                <TableCell>
+                  <Typography variant="body2" fontWeight="bold">Username</Typography>
+                </TableCell>
+                <TableCell sx={{ paddingLeft: 1, width: '80%' }}>
+                  {userDetails.username}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>
+                  <Typography variant="body2" fontWeight="bold">First Name</Typography>
+                </TableCell>
+                <TableCell sx={{ paddingLeft: 1 }}>
+                  {userDetails.firstName}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>
+                  <Typography variant="body2" fontWeight="bold">Last Name</Typography>
+                </TableCell>
+                <TableCell sx={{ paddingLeft: 1 }}>
+                  {userDetails.lastName}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>
+                  <Typography variant="body2" fontWeight="bold">Email</Typography>
+                </TableCell>
+                <TableCell sx={{ paddingLeft: 1 }}>
+                  {userDetails.email}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>
+                  <Typography variant="body2" fontWeight="bold">Projects</Typography>
+                </TableCell>
+                <TableCell sx={{ paddingLeft: 1 }}>
+                  {userDetails.projects.map(({ name }, index, arr) => (
+                    <>
+                      {name}
+                      {(index < arr.length - 1 ? ', ' : '')}
+                    </>
+                  ))}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>
+                  <Typography variant="body2" fontWeight="bold">Groups</Typography>
+                </TableCell>
+                <TableCell sx={{ paddingLeft: 1 }}>
+                  {userDetails.groups.map(({ name }, index, arr) => (
+                    <>
+                      {name}
+                      {(index < arr.length - 1 ? ', ' : '')}
+                    </>
+                  ))}
+                </TableCell>
+              </TableRow>
+            </>
+          )}
+        </Table>
+        <div className="dialog-form">
           <FormControlLabel
-            label={`Allow email notifications to be sent to ${editData.email}`}
+            label={`Allow email notifications to ${editData.email}`}
             control={
-              <Checkbox checked={checkboxSelected} onChange={handleCheckboxChange} />
+              <Switch checked={checkboxSelected} onChange={handleCheckboxChange} />
             }
           />
         </div>
-        <AsyncButton isLoading={isApiCalling} color="primary" variant="contained" onClick={handleTestEmail}>
-          Send me a test notification
+        <AsyncButton isLoading={isApiCalling} color="info" onClick={handleTestEmail} className="test-noti-button">
+          <Typography variant="caption">Send me a test notification</Typography>
         </AsyncButton>
-        <DialogActions className="edit-dialog__actions">
-          <Button onClick={handleSubmit}>
+        <DialogActions className="edit-dialog__actions" disableSpacing>
+          <Button onClick={onClose}>
             Cancel
           </Button>
           <AsyncButton isLoading={isApiCalling} color="primary" onClick={handleSubmit}>
