@@ -3,6 +3,8 @@ type ResourceContextType = {
   reportsAccess: boolean;
   adminAccess: boolean;
   managerAccess: boolean;
+  templateEditAccess: boolean;
+  appendixEditAccess: boolean;
   reportSettingAccess: boolean;
   reportEditAccess: boolean;
   unreviewedAccess: boolean;

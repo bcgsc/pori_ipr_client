@@ -1,20 +1,19 @@
 import React, {
   createContext, ReactChild, useState, useEffect, useMemo,
 } from 'react';
-import { checkAccess, ALL_ROLES } from '@/utils/checkAccess';
+import { checkAccess, ALL_ROLES, NO_GROUP_MATCH } from '@/utils/checkAccess';
 import useSecurity from '@/hooks/useSecurity';
 import ResourceContextType from './types';
 
-// TODO: determine whether bioinformaticians need nonprod or germline access;
-// determine whether report managers do
-// TODO: rename bioinformatician role?
-const GERMLINE_ACCESS = ['admin', 'manager', 'bioinformatician', 'germline access'];
+const GERMLINE_ACCESS = ['admin', 'manager', 'germline access'];
 const UNREVIEWED_ACCESS = ['admin', 'manager', 'report manager', 'bioinformatician', 'unreviewed access'];
 const NONPRODUCTION_ACCESS = ['admin', 'manager', 'bioinformatician', 'non-production access'];
+const TEMPLATE_EDIT_ACCESS = ['admin', 'manager', 'template edit access'];
+const APPENDIX_EDIT_ACCESS = ['admin', 'manager', 'appendix edit access'];
 
-const GERMLINE_BLOCK = ALL_ROLES;
-const UNREVIEWED_ACCESS_BLOCK = [];
-const NONPRODUCTION_ACCESS_BLOCK = [];
+const GERMLINE_BLOCK = [...ALL_ROLES, ...NO_GROUP_MATCH];
+const UNREVIEWED_ACCESS_BLOCK = NO_GROUP_MATCH;
+const NONPRODUCTION_ACCESS_BLOCK = NO_GROUP_MATCH;
 
 const ALL_STATES = ['signedoff', 'nonproduction', 'uploaded', 'reviewed', 'completed', 'ready', 'active'];
 const UNREVIEWED_STATES = ['uploaded', 'ready', 'active']; // TODO decide if nonproduction should go in unreviewed as well
@@ -23,7 +22,7 @@ const NONPRODUCTION_STATES = ['nonproduction'];
 const REPORTS_ACCESS = ['*'];
 const REPORTS_BLOCK = [];
 const ADMIN_ACCESS = ['admin'];
-const ADMIN_BLOCK = ALL_ROLES;
+const ADMIN_BLOCK = [...ALL_ROLES, ...NO_GROUP_MATCH];
 
 const useResources = (): ResourceContextType => {
   const { userDetails: { groups } } = useSecurity();
@@ -36,6 +35,8 @@ const useResources = (): ResourceContextType => {
   const [reportSettingAccess, setReportSettingAccess] = useState(false);
   const [unreviewedAccess, setUnreviewedAccess] = useState(false);
   const [nonproductionAccess, setNonproductionAccess] = useState(false);
+  const [templateEditAccess, setTemplateEditAccess] = useState(false);
+  const [appendixEditAccess, setAppendixEditAccess] = useState(false);
 
   // Check user group first to see which resources they can access
   useEffect(() => {
@@ -54,6 +55,13 @@ const useResources = (): ResourceContextType => {
 
       if (checkAccess(groups, [...ADMIN_ACCESS, 'manager'], ADMIN_BLOCK)) {
         setManagerAccess(true);
+      }
+
+      if (checkAccess(groups, [...TEMPLATE_EDIT_ACCESS], GERMLINE_BLOCK)) {
+        setTemplateEditAccess(true);
+      }
+      if (checkAccess(groups, [...APPENDIX_EDIT_ACCESS], GERMLINE_BLOCK)) {
+        setAppendixEditAccess(true);
       }
 
       if (checkAccess(groups, [...ADMIN_ACCESS, 'manager', 'report manager'], ADMIN_BLOCK)) {
@@ -79,6 +87,8 @@ const useResources = (): ResourceContextType => {
     reportEditAccess,
     unreviewedAccess,
     nonproductionAccess,
+    templateEditAccess,
+    appendixEditAccess,
     allStates: ALL_STATES,
     unreviewedStates: UNREVIEWED_STATES,
     nonproductionStates: NONPRODUCTION_STATES,
@@ -94,6 +104,8 @@ const ResourceContext = createContext<ResourceContextType>({
   reportEditAccess: false,
   unreviewedAccess: false,
   nonproductionAccess: false,
+  templateEditAccess: false,
+  appendixEditAccess: false,
   allStates: ALL_STATES,
   unreviewedStates: UNREVIEWED_STATES,
   nonproductionStates: NONPRODUCTION_STATES,
@@ -106,6 +118,8 @@ type ResourceContextProviderProps = {
 const ResourceContextProvider = ({ children }: ResourceContextProviderProps): JSX.Element => {
   const {
     germlineAccess, reportsAccess, adminAccess, managerAccess, reportSettingAccess, reportEditAccess, unreviewedAccess, nonproductionAccess,
+    templateEditAccess,
+    appendixEditAccess,
     allStates,
     unreviewedStates,
     nonproductionStates,
@@ -120,6 +134,8 @@ const ResourceContextProvider = ({ children }: ResourceContextProviderProps): JS
     reportEditAccess,
     unreviewedAccess,
     nonproductionAccess,
+    templateEditAccess,
+    appendixEditAccess,
     allStates,
     unreviewedStates,
     nonproductionStates,
@@ -132,6 +148,8 @@ const ResourceContextProvider = ({ children }: ResourceContextProviderProps): JS
     reportEditAccess,
     unreviewedAccess,
     nonproductionAccess,
+    templateEditAccess,
+    appendixEditAccess,
     allStates,
     unreviewedStates,
     nonproductionStates,

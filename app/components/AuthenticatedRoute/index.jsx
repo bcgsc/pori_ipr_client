@@ -14,10 +14,10 @@ import { isAuthorized } from '@/services/management/auth';
  * @returns {Route} a route component which checks authorization on render or redirects to login
  */
 const AuthenticatedRoute = ({
-  component: Component, managerRequired, showNav, onToggleNav, ...rest
+  component: Component, managerRequired, templateEditorRequired, appendixEditorRequired, germlineRequired, showNav, onToggleNav, ...rest
 }) => {
   const { authorizationToken } = useSecurity();
-  const { managerAccess, adminAccess } = useResource();
+  const { managerAccess, adminAccess, templateEditAccess, appendixEditAccess, germlineAccess } = useResource();
   const authOk = isAuthorized(authorizationToken);
 
   const ChildComponent = useMemo(() => {
@@ -39,8 +39,23 @@ const AuthenticatedRoute = ({
         <Redirect to="/" />
       );
     }
+    if (!templateEditAccess && templateEditorRequired) {
+      return () => (
+        <Redirect to="/" />
+      );
+    }
+    if (!appendixEditAccess && appendixEditorRequired) {
+      return () => (
+        <Redirect to="/" />
+      );
+    }
+    if (!germlineAccess && germlineRequired) {
+      return () => (
+        <Redirect to="/" />
+      );
+    }
     return Component;
-  }, [Component, adminAccess, managerAccess, managerRequired, authOk]);
+  }, [Component, adminAccess, managerAccess, templateEditAccess, germlineAccess, appendixEditAccess, managerRequired, templateEditorRequired, germlineRequired, appendixEditorRequired, authOk]);
 
   if (showNav) {
     onToggleNav(true);
@@ -58,6 +73,9 @@ const AuthenticatedRoute = ({
 
 AuthenticatedRoute.propTypes = {
   managerRequired: PropTypes.bool,
+  templateEditorRequired: PropTypes.bool,
+  appendixEditorRequired: PropTypes.bool,
+  germlineRequired: PropTypes.bool,
   // eslint-disable-next-line react/forbid-prop-types
   component: PropTypes.object.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
@@ -68,8 +86,11 @@ AuthenticatedRoute.propTypes = {
 
 AuthenticatedRoute.defaultProps = {
   managerRequired: false,
+  templateEditorRequired: false,
+  appendixEditorRequired: false,
+  germlineRequired: false,
   location: null,
-  onToggleNav: () => {},
+  onToggleNav: () => { },
   showNav: false,
 };
 

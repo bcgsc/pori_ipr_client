@@ -14,7 +14,7 @@ import AddEditGroupDialog from './components/AddEditGroupDialog';
 
 import './index.scss';
 
-const ALL_ACCESS = ['admin', 'manager', 'report manager', 'bioinformatician', 'read access', 'germline access', 'non-production access', 'unreviewed access'];
+const ALL_ACCESS = ['admin', 'manager', 'report manager', 'bioinformatician', 'read access', 'germline access', 'non-production access', 'unreviewed access', 'all projects access', 'template edit access', 'appendix edit access'];
 
 const Groups = (): JSX.Element => {
   const [groups, setGroups] = useState<GroupType[]>([]);
