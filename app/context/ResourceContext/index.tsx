@@ -57,11 +57,11 @@ const useResources = (): ResourceContextType => {
         setManagerAccess(true);
       }
 
-      if (checkAccess(groups, [...TEMPLATE_EDIT_ACCESS], REPORTS_BLOCK)) {
+      if (checkAccess(groups, [...TEMPLATE_EDIT_ACCESS], GERMLINE_BLOCK)) {
         setTemplateEditAccess(true);
       }
 
-      if (checkAccess(groups, [...APPENDIX_EDIT_ACCESS], REPORTS_BLOCK)) {
+      if (checkAccess(groups, [...APPENDIX_EDIT_ACCESS], GERMLINE_BLOCK)) {
         setAppendixEditAccess(true);
       }
 

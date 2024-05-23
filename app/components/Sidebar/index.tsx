@@ -149,7 +149,7 @@ const Sidebar = (): JSX.Element => {
               </Typography>
             </Link>
           </ListItem>
-          <ListItem
+          {templateEditAccess && <ListItem
             className={`sidebar__list-item ${pathname.includes('template') ? 'sidebar__list-item--active' : ''}`}
             disableGutters
           >
@@ -162,7 +162,7 @@ const Sidebar = (): JSX.Element => {
                 Templates
               </Typography>
             </Link>
-          </ListItem>
+          </ListItem>}
           {appendixEditAccess && <ListItem
             className={`
                     sidebar__list-item
