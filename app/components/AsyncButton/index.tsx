@@ -11,10 +11,10 @@ import './index.scss';
 
 type AsyncButtonProps = {
   className?: string;
-  children;
+  children?;
   isLoading: boolean;
   onClick?: () => void;
-} & ButtonProps<'label', { component: 'label' }>;
+} & ButtonProps<'label', { component?: 'label' }>;
 
 const AsyncButton = ({
   className,
@@ -46,6 +46,7 @@ const AsyncButton = ({
         classes={{ label: `${loadingStarted ? 'async-button__label' : ''}` }}
         className="async-button"
         onClick={handleClick}
+        disabled={isLoading}
         {...buttonProps}
       >
         {children}
