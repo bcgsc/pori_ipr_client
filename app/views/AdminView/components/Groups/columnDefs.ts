@@ -10,6 +10,9 @@ const columnDefs = [
     headerName: 'Description',
     field: 'description',
     hide: false,
+    flex: 1,
+    autoHeight: true,
+    wrapText: true,
   },
   {
     headerName: 'Created',
