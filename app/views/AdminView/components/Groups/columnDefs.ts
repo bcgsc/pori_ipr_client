@@ -7,8 +7,8 @@ const columnDefs = [
     hide: false,
   },
   {
-    headerName: 'Owner',
-    valueGetter: ({ data }) => `${data?.owner?.firstName ?? data.owner.username} ${data.owner.lastName ?? ''}`,
+    headerName: 'Description',
+    field: 'description',
     hide: false,
   },
   {
