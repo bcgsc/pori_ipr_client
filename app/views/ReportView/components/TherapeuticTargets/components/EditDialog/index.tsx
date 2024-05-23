@@ -9,6 +9,10 @@ import {
   DialogTitle,
   FormControl,
   TextField,
+  Radio,
+  RadioGroup,
+  FormLabel,
+  FormControlLabel
 } from '@mui/material';
 
 import api from '@/services/api';
@@ -56,6 +60,7 @@ const EditDialog = ({
   const [isDirty, setIsDirty] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [variantType, setVariantType] = useState(false);
   const { showConfirmDialog } = useConfirmDialog();
 
   useEffect(() => {
@@ -188,88 +193,120 @@ const EditDialog = ({
     });
   };
 
+  const handleVariantTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setIsDirty(true);
+    setVariantType(event.target.value);
+  };
+
   return (
     <Dialog open={isOpen} maxWidth="sm" fullWidth className="edit-dialog">
       <DialogTitle>{dialogTitle}</DialogTitle>
       <DialogContent>
-        <FormControl fullWidth>
-          <AutocompleteHandler
-            defaultValue={
-              newData.variant && newData.gene
-                ? `${newData.gene} ${newData.variant}`
-                : ''
-            }
-            type="variant"
-            label="Gene and Variant"
-            onChange={handleAutocompleteValueSelected}
-            required
-            error={errors && isDirty && errors.variant}
-          />
-        </FormControl>
-        <FormControl fullWidth>
-          <AutocompleteHandler
-            defaultValue={newData.therapy}
-            type="therapy"
-            label="Therapy"
-            onChange={handleAutocompleteValueSelected}
-            required
-            error={errors && isDirty && errors.therapy}
-          />
-        </FormControl>
-        <FormControl fullWidth>
-          <AutocompleteHandler
-            defaultValue={newData.context}
-            type="context"
-            label="Context"
-            onChange={handleAutocompleteValueSelected}
-            required
-            error={errors && isDirty && errors.context}
-          />
-        </FormControl>
-        <FormControl fullWidth>
-          <AutocompleteHandler
-            defaultValue={newData.evidenceLevel}
-            type="evidenceLevel"
-            label="Evidence Level"
-            onChange={handleAutocompleteValueSelected}
-            minCharacters={1}
-          />
-        </FormControl>
-        <FormControl fullWidth>
-          <TextField
-            label="Notes"
-            variant="outlined"
-            margin="normal"
-            value={newData.notes || undefined}
-            onChange={handleNotesChange}
-            multiline
-          />
-        </FormControl>
-        <DialogActions className="edit-dialog__actions">
-          {newData.ident && (
-            <AsyncButton
-              color="secondary"
-              onClick={handleDelete}
-              className="edit-dialog__actions--delete"
-              isLoading={isDeleting}
-            >
-              Delete
-            </AsyncButton>
-          )}
-          <Button color="secondary" onClick={() => onClose()}>
-            Cancel
-          </Button>
+      <FormControl>
+        <FormLabel id="demo-row-radio-buttons-group-label">Variant Type</FormLabel>
+        <RadioGroup
+          row
+          aria-labelledby="demo-row-radio-buttons-group-label"
+          defaultValue={newData.signature ? "signature" : "gene"}
+          name="row-radio-buttons-group"
+          onChange={handleVariantTypeChange}
+        >
+          <FormControlLabel value="gene" control={<Radio />} label="Gene" />
+          <FormControlLabel value="signature" control={<Radio />} label="Signature" />
+        </RadioGroup>
+      </FormControl>
+      <FormControl fullWidth>
+        <AutocompleteHandler
+          defaultValue={
+            newData.variant && newData.gene
+              ? `${newData.gene} ${newData.variant}`
+              : ''
+          }
+          type="variant"
+          label="Gene and Variant"
+          onChange={handleAutocompleteValueSelected}
+          required
+          error={errors && isDirty && errors.variant}
+        />
+      </FormControl>
+      <FormControl fullWidth>
+        <AutocompleteHandler
+          defaultValue={
+            newData.variant && newData.signature
+              ? `${newData.signature} ${newData.variant}`
+              : ''
+          }
+          type="signature"
+          label="Signature and Variant"
+          onChange={handleAutocompleteValueSelected}
+          required
+          error={errors && isDirty && errors.variant}
+        />
+      </FormControl>
+      <FormControl fullWidth>
+        <AutocompleteHandler
+          defaultValue={newData.therapy}
+          type="therapy"
+          label="Therapy"
+          onChange={handleAutocompleteValueSelected}
+          required
+          error={errors && isDirty && errors.therapy}
+        />
+      </FormControl>
+      <FormControl fullWidth>
+        <AutocompleteHandler
+          defaultValue={newData.context}
+          type="context"
+          label="Context"
+          onChange={handleAutocompleteValueSelected}
+          required
+          error={errors && isDirty && errors.context}
+        />
+      </FormControl>
+      <FormControl fullWidth>
+        <AutocompleteHandler
+          defaultValue={newData.evidenceLevel}
+          type="evidenceLevel"
+          label="Evidence Level"
+          onChange={handleAutocompleteValueSelected}
+          minCharacters={1}
+        />
+      </FormControl>
+      <FormControl fullWidth>
+        <TextField
+          label="Notes"
+          variant="outlined"
+          margin="normal"
+          value={newData.notes || undefined}
+          onChange={handleNotesChange}
+          multiline
+        />
+      </FormControl>
+      <DialogActions className="edit-dialog__actions">
+        {newData.ident && (
           <AsyncButton
             color="secondary"
-            onClick={handleSubmit}
-            disabled={Boolean(errors || !isDirty)}
-            isLoading={isSubmitting}
+            onClick={handleDelete}
+            className="edit-dialog__actions--delete"
+            isLoading={isDeleting}
           >
-            Save
+            Delete
           </AsyncButton>
-        </DialogActions>
-      </DialogContent>
-    </Dialog>
+        )}
+        <Button color="secondary" onClick={() => onClose()}>
+          Cancel
+        </Button>
+        <AsyncButton
+          color="secondary"
+          onClick={handleSubmit}
+          disabled={Boolean(errors || !isDirty)}
+          isLoading={isSubmitting}
+        >
+          Save
+        </AsyncButton>
+      </DialogActions>
+    </DialogContent>
+    </Dialog >
   );
 };
 
