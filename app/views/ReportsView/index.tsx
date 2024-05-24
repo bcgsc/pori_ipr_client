@@ -25,23 +25,24 @@ const ReportsTableComponent = (): JSX.Element => {
     onGridReady,
   } = useGrid();
 
-  const { adminAccess, unreviewedAccess, nonproductionAccess, allStates, unreviewedStates, nonproductionStates } = useResource();
+  const {
+    adminAccess, unreviewedAccess, nonproductionAccess, allStates, unreviewedStates, nonproductionStates,
+  } = useResource();
   const [rowData, setRowData] = useState<ReportType[]>();
 
   useEffect(() => {
     if (!rowData) {
       const getData = async () => {
-
         let statesArray = allStates;
 
         if (!nonproductionAccess) {
-          statesArray = statesArray.filter(elem => !nonproductionStates.includes(elem));
+          statesArray = statesArray.filter((elem) => !nonproductionStates.includes(elem));
         }
 
         if (!unreviewedAccess) {
-          statesArray = statesArray.filter(elem => !unreviewedStates.includes(elem));
+          statesArray = statesArray.filter((elem) => !unreviewedStates.includes(elem));
         }
-        const states = statesArray.join(",");
+        const states = statesArray.join(',');
 
         const { reports } = await api.get(`/reports${states ? `?states=${states}` : ''}`, {}).request();
 
