@@ -78,6 +78,8 @@ const Therapeutic = ({
     geneGraphkbId: null,
     variant: null,
     variantGraphkbId: null,
+    signature: null,
+    signatureGraphkbId: null,
     therapy: null,
     therapyGraphkbId: null,
     context: null,
@@ -99,6 +101,7 @@ const Therapeutic = ({
           `/reports/${report.ident}/therapeutic-targets`,
         ).request();
 
+        console.dir(therapeuticResp);
         const [
           filteredTherapeutic,
           filteredChemoresistance,
