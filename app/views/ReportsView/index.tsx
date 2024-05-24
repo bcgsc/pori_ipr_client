@@ -25,29 +25,42 @@ const ReportsTableComponent = (): JSX.Element => {
     onGridReady,
   } = useGrid();
 
-  const { adminAccess, unreviewedAccess, nonproductionAccess, allStates, unreviewedStates, nonproductionStates } = useResource();
+  const {
+    adminAccess, unreviewedAccess, nonproductionAccess, allStates, unreviewedStates, nonproductionStates,
+  } = useResource();
   const [rowData, setRowData] = useState<ReportType[]>();
 
   useEffect(() => {
     if (!rowData) {
       const getData = async () => {
-
         let statesArray = allStates;
 
         if (!nonproductionAccess) {
-          statesArray = statesArray.filter(elem => !nonproductionStates.includes(elem));
+          statesArray = statesArray.filter((elem) => !nonproductionStates.includes(elem));
         }
 
         if (!unreviewedAccess) {
-          statesArray = statesArray.filter(elem => !unreviewedStates.includes(elem));
+          statesArray = statesArray.filter((elem) => !unreviewedStates.includes(elem));
         }
-        const states = statesArray.join(",");
+        const states = statesArray.join(',');
 
         const { reports } = await api.get(`/reports${states ? `?states=${states}` : ''}`, {}).request();
 
         setRowData(reports.map((report: ReportType) => {
+          if (report.users.length > 1) {
+            console.dir(report.users);
+            console.dir(Object.keys(report));
+          }
           const [analyst] = report.users
             .filter((u) => u.role === 'analyst')
+            .map((u) => u.user);
+
+          const [reviewer] = report.users
+            .filter((u) => u.role === 'reviewer')
+            .map((u) => u.user);
+
+          const [bioinformatician] = report.users
+            .filter((u) => u.role === 'bioinformatician')
             .map((u) => u.user);
 
           return {
@@ -62,6 +75,8 @@ const ReportsTableComponent = (): JSX.Element => {
             reportIdent: report.ident,
             tumourType: report?.patientInformation?.diagnosis,
             date: report.createdAt,
+            reviewer: reviewer ? `${reviewer.firstName} ${reviewer.lastName}` : null,
+            bioinformatician: bioinformatician ? `${bioinformatician.firstName} ${bioinformatician.lastName}` : null,
           };
         }));
       };
