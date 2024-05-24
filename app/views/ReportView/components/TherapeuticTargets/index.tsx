@@ -100,8 +100,6 @@ const Therapeutic = ({
         const therapeuticResp = await api.get(
           `/reports/${report.ident}/therapeutic-targets`,
         ).request();
-
-        console.dir(therapeuticResp);
         const [
           filteredTherapeutic,
           filteredChemoresistance,
@@ -135,7 +133,7 @@ const Therapeutic = ({
       setShowDialog(false);
       let tableData: TherapeuticType[] | Partial<TherapeuticType>[];
       let setter: React.Dispatch<React.SetStateAction<TherapeuticType[] | Partial<TherapeuticType>[]>>;
-
+      let wasDelete = true;
       if (newData) {
         if (newData.type === 'therapeutic') {
           tableData = therapeuticData;
@@ -153,12 +151,16 @@ const Therapeutic = ({
           setter((prevVal) => [...prevVal, newData]);
         }
         snackbar.success('Row updated');
+        wasDelete = false;
       }
       setEditData(null);
 
       // Update state to reflect new data after entry deleted
       getData();
-      snackbar.success('Therapeutic option successfully deleted.');
+      if (wasDelete) {
+        // TODO do not display this message if the popup was closed via 'cancel' button
+        snackbar.success('Therapeutic option successfully deleted.');
+      }
     } catch (err) {
       snackbar.error(`Error, row not updated: ${err}`);
     }
