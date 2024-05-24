@@ -9,7 +9,7 @@ import {
 
 import api from '@/services/api';
 import DataTable from '@/components/DataTable';
-import { GroupType, UserGroupMemberType, UserType } from '@/common';
+import { GroupType, UserGroupMemberType } from '@/common';
 import UserAutocomplete from '@/components/UserAutocomplete';
 import columnDefs from './columnDefs';
 
@@ -39,7 +39,7 @@ const AddEditUserDialog = ({
 }: AddEditGroupDialogProps): JSX.Element => {
   const [dialogTitle, setDialogTitle] = useState<string>('');
   const [users, setUsers] = useState<UserGroupMemberType[]>([]);
-  const [apiCallQueue, apiCallQueueDispatch] = useReducer(reducer, []);
+  const [, apiCallQueueDispatch] = useReducer(reducer, []);
 
   useEffect(() => {
     const {
