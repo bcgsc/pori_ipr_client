@@ -12,7 +12,7 @@ import {
   Radio,
   RadioGroup,
   FormLabel,
-  FormControlLabel
+  FormControlLabel,
 } from '@mui/material';
 
 import api from '@/services/api';
@@ -75,7 +75,7 @@ const EditDialog = ({
         : '');
       setDefaultVariantValue(newData.variant && newData.gene
         ? `${newData.gene} ${newData.variant}`
-          : '');
+        : '');
     } else {
       setDialogTitle('Add Row');
     }
@@ -189,7 +189,7 @@ const EditDialog = ({
     setIsDirty(true);
     if (selectedValue) {
       if (typeName === 'variant') {
-          setNewData({
+        setNewData({
           payload: {
             gene: selectedValue.reference1 && selectedValue.reference2
               ? `${selectedValue.reference1.displayName}, ${selectedValue.reference2.displayName}`
@@ -234,79 +234,84 @@ const EditDialog = ({
     <Dialog open={isOpen} maxWidth="sm" fullWidth className="edit-dialog">
       <DialogTitle>{dialogTitle}</DialogTitle>
       <DialogContent>
-      <FormControl>
-        <FormLabel id="demo-row-radio-buttons-group-label">Variant Type</FormLabel>
-        <RadioGroup
-          row
-          aria-labelledby="demo-row-radio-buttons-group-label"
-          defaultValue={defaultVariantType}
-          name="row-radio-buttons-group"
-          onChange={handleVariantTypeChange}
-        >
-          <FormControlLabel value="gene" control={<Radio />} label="Gene" />
-          <FormControlLabel value="signature" control={<Radio />} label="Signature" />
-        </RadioGroup>
-      </FormControl>
-      {variantType==='gene' && <FormControl fullWidth>
-        <AutocompleteHandler
-          defaultValue={defaultVariantValue}
-          type={"variant"}
-          label={"Gene and Variant"}
-          onChange={handleAutocompleteValueSelected}
-          required
-          error={errors && isDirty && errors.variant}
-        />
-      </FormControl>}
-      {variantType==='signature' && <FormControl fullWidth>
-        <AutocompleteHandler
-          defaultValue={defaultSignatureVariantValue}
-          type={"signature"}
-          label={"Signature"}
-          onChange={handleAutocompleteValueSelected}
-          required
-          error={errors && isDirty && errors.signature}
-        /></FormControl>}
-      <FormControl fullWidth>
-        <AutocompleteHandler
-          defaultValue={newData.therapy}
-          type="therapy"
-          label="Therapy"
-          onChange={handleAutocompleteValueSelected}
-          required
-          error={errors && isDirty && errors.therapy}
-        />
-      </FormControl>
-      <FormControl fullWidth>
-        <AutocompleteHandler
-          defaultValue={newData.context}
-          type="context"
-          label="Context"
-          onChange={handleAutocompleteValueSelected}
-          required
-          error={errors && isDirty && errors.context}
-        />
-      </FormControl>
-      <FormControl fullWidth>
-        <AutocompleteHandler
-          defaultValue={newData.evidenceLevel}
-          type="evidenceLevel"
-          label="Evidence Level"
-          onChange={handleAutocompleteValueSelected}
-          minCharacters={1}
-        />
-      </FormControl>
-      <FormControl fullWidth>
-        <TextField
-          label="Notes"
-          variant="outlined"
-          margin="normal"
-          value={newData.notes || undefined}
-          onChange={handleNotesChange}
-          multiline
-        />
-      </FormControl>
-      <DialogActions className="edit-dialog__actions">
-        {newData.ident && (
+        <FormControl>
+          <FormLabel id="demo-row-radio-buttons-group-label">Variant Type</FormLabel>
+          <RadioGroup
+            row
+            aria-labelledby="demo-row-radio-buttons-group-label"
+            defaultValue={defaultVariantType}
+            name="row-radio-buttons-group"
+            onChange={handleVariantTypeChange}
+          >
+            <FormControlLabel value="gene" control={<Radio />} label="Gene" />
+            <FormControlLabel value="signature" control={<Radio />} label="Signature" />
+          </RadioGroup>
+        </FormControl>
+        {variantType === 'gene' && (
+        <FormControl fullWidth>
+          <AutocompleteHandler
+            defaultValue={defaultVariantValue}
+            type="variant"
+            label="Gene and Variant"
+            onChange={handleAutocompleteValueSelected}
+            required
+            error={errors && isDirty && errors.variant}
+          />
+        </FormControl>
+        )}
+        {variantType === 'signature' && (
+        <FormControl fullWidth>
+          <AutocompleteHandler
+            defaultValue={defaultSignatureVariantValue}
+            type="signature"
+            label="Signature"
+            onChange={handleAutocompleteValueSelected}
+            required
+            error={errors && isDirty && errors.signature}
+          />
+        </FormControl>
+        )}
+        <FormControl fullWidth>
+          <AutocompleteHandler
+            defaultValue={newData.therapy}
+            type="therapy"
+            label="Therapy"
+            onChange={handleAutocompleteValueSelected}
+            required
+            error={errors && isDirty && errors.therapy}
+          />
+        </FormControl>
+        <FormControl fullWidth>
+          <AutocompleteHandler
+            defaultValue={newData.context}
+            type="context"
+            label="Context"
+            onChange={handleAutocompleteValueSelected}
+            required
+            error={errors && isDirty && errors.context}
+          />
+        </FormControl>
+        <FormControl fullWidth>
+          <AutocompleteHandler
+            defaultValue={newData.evidenceLevel}
+            type="evidenceLevel"
+            label="Evidence Level"
+            onChange={handleAutocompleteValueSelected}
+            minCharacters={1}
+          />
+        </FormControl>
+        <FormControl fullWidth>
+          <TextField
+            label="Notes"
+            variant="outlined"
+            margin="normal"
+            value={newData.notes || undefined}
+            onChange={handleNotesChange}
+            multiline
+          />
+        </FormControl>
+        <DialogActions className="edit-dialog__actions">
+          {newData.ident && (
           <AsyncButton
             color="secondary"
             onClick={handleDelete}
@@ -315,21 +320,21 @@ const EditDialog = ({
           >
             Delete
           </AsyncButton>
-        )}
-        <Button color="secondary" onClick={() => onClose()}>
-          Cancel
-        </Button>
-        <AsyncButton
-          color="secondary"
-          onClick={handleSubmit}
-          disabled={Boolean(errors || !isDirty)}
-          isLoading={isSubmitting}
-        >
-          Save
-        </AsyncButton>
-      </DialogActions>
-    </DialogContent>
-    </Dialog >
+          )}
+          <Button color="secondary" onClick={() => onClose()}>
+            Cancel
+          </Button>
+          <AsyncButton
+            color="secondary"
+            onClick={handleSubmit}
+            disabled={Boolean(errors || !isDirty)}
+            isLoading={isSubmitting}
+          >
+            Save
+          </AsyncButton>
+        </DialogActions>
+      </DialogContent>
+    </Dialog>
   );
 };
 
