@@ -42,6 +42,8 @@ const reducer = (state, action) => {
       return { ...state, summary: true };
     case 'summary-probe':
       return { ...state, summary: true };
+    case 'alterations':
+      return { ...state, alterations: true };
     case 'patient-and-tumour':
       return { ...state, 'patient-and-tumour': true };
     case 'analyst-comments':
@@ -57,6 +59,7 @@ const reducer = (state, action) => {
     default:
       return {
         summary: false,
+        alterations: false,
         'patient-and-tumour': false,
         'analyst-comments': false,
         pathway: false,
@@ -144,6 +147,7 @@ const Print = ({
   const [report, setReport] = useState<ReportType>(null);
   const [reportSectionsLoaded, dispatch] = useReducer(reducer, {
     summary: false,
+    alterations: false,
     'patient-and-tumour': false,
     'analyst-comments': false,
     pathway: false,
@@ -199,6 +203,7 @@ const Print = ({
         const formattedDate = `${year}-${month}-${day}_${hours}h${minutes}m${seconds}s`;
 
         document.title = `${report.patientId}${serverName}_${templateName}_report_${formattedDate}`;
+
         window.print();
         setIsPrintDialogShown(true);
       };
@@ -221,7 +226,7 @@ const Print = ({
           )}
           {((template?.sections.includes('summary') && template?.name === 'genomic') || template?.sections.includes('summary-genomic')) && ( // Continuing key alterations after therapeutic targets for genomic reports
             <>
-              <Summary visibleSections={template?.sections} templateName="genomicAlterations" isPrint printVersion={printVersion} />
+              <Summary visibleSections={template?.sections} templateName="genomicAlterations" isPrint printVersion={printVersion} loadedDispatch={dispatch} />
               <PageBreak />
             </>
           )}
