@@ -9,9 +9,9 @@ const descriptions = {
   'unreviewed access': 'can view reports that have not been reviewed',
   'non-production access': 'can view reports that have non-production status',
   'germline access': 'can view germline reports',
-  'report manager': 'can assign users to reports',
+  'report manager': 'can assign users to reports; bioinformatician',
   'read access': 'can read reports',
-  'bioinformatician': 'can read and be assigned to reports',
+  'bioinformatician': 'can read and be assigned to reports; non-production access; unreviewed access',
   'manager': 'can create/edit/delete nonadmin users; template edit access; appendix edit access; unreviewed access; nonproduction access; germline access; report manager; read access; bioinformatician'
 }
 
