@@ -22,6 +22,8 @@ import { UserType, GroupType, UserProjectsType } from '@/common';
 import snackbar from '@/services/SnackbarUtils';
 import AsyncButton from '@/components/AsyncButton';
 import UserAutocomplete from '@/components/UserAutocomplete';
+import useSecurity from '@/hooks/useSecurity';
+import useResource from '@/hooks/useResource';
 
 import './index.scss';
 
@@ -73,6 +75,8 @@ const AddEditUserDialog = ({
   const [groupOptions, setGroupOptions] = useState<GroupType[]>([]);
   const [dialogTitle, setDialogTitle] = useState<string>('');
   const [isApiCalling, setIsApiCalling] = useState(false);
+  const { userDetails } = useSecurity();
+  const { adminAccess } = useResource();
 
   // Grab project and groups
   useEffect(() => {
@@ -83,13 +87,20 @@ const AddEditUserDialog = ({
         api.get('/user/group').request(),
       ]);
       if (!cancelled) {
-        setProjectOptions(projectsResp);
-        setGroupOptions(groupsResp);
+        const nonAdminGroups = [];
+        groupsResp.forEach((group) => (group.name !== 'admin' ? nonAdminGroups.push(group) : null));
+        if (adminAccess) {
+          setProjectOptions(projectsResp);
+          setGroupOptions(groupsResp);
+        } else {
+          setProjectOptions(userDetails.projects);
+          setGroupOptions(nonAdminGroups);
+        }
       }
     };
     getData();
     return function cleanup() { cancelled = true; };
-  }, [editData]);
+  }, [adminAccess, userDetails.projects]);
 
   // When params changed
   useEffect(() => {
