@@ -1,0 +1,36 @@
+.template {
+    &__sections {
+        margin: 8px;
+    }
+
+    &__name {
+        margin: 8px;
+    }
+
+    &__image {
+        margin: 16px;
+        text-align: center;
+
+        &-text {
+            margin: 8px;
+        }
+
+        &-subtitle {
+            margin: 0 16px;
+        }
+    }
+
+    &__upload {
+        margin: 16px;
+
+        &-error {
+            margin: 16px 0;
+        }
+    }
+}
+
+.image {
+    &__delete {
+        vertical-align: top;
+    }
+}

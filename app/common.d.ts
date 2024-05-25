@@ -85,6 +85,16 @@ type UserType = {
   allowNotifications: boolean;
 } & RecordDefaults;
 
+type ProjectType = {
+  name: string;
+} & RecordDefaults;
+
+type AppendixType = {
+  template: string;
+  project: string;
+  text: string;
+} & RecordDefaults;
+
 type ImageType = {
   caption: string | null;
   data: string;
@@ -332,6 +342,7 @@ type MicrobialType = {
 
 export {
   RecordDefaults,
+  AppendixType,
   UserType,
   TemplateType,
   AnyVariantType,

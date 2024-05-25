@@ -150,76 +150,37 @@ const AddEditTemplate = ({
     <Dialog open={isOpen} onClose={() => onClose(null)}>
       <DialogTitle>{dialogTitle}</DialogTitle>
       <DialogContent>
-        <FormControl fullWidth variant="outlined">
-          <TextField
-            className="template__name"
-            label="Template name"
-            onChange={(({ target: { value } }) => setTemplateName(value))}
-            required
-            title="Template name"
-            value={templateName}
-            variant="outlined"
-          />
-        </FormControl>
-        <FormControl required fullWidth variant="outlined">
-          <InputLabel className="template__sections" id="select-sections">Sections</InputLabel>
-          <Select
-            autoWidth
-            className="template__sections"
-            label="Sections"
-            labelId="select-sections"
-            multiple
-            onChange={(({ target: { value } }) => setSelectedSections(value as string[]))}
-            renderValue={() => selectedSections.map((section) => section.name).join(', ')}
-            value={selectedSections}
-          >
-            {sections.map((section) => (
-              <MenuItem key={section.name} value={section}>
-                <Checkbox checked={selectedSections.includes(section)} />
-                <ListItemText>{section.name}</ListItemText>
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <Typography variant="h5" className="template__image-text">
-          Print Report Header Image
-        </Typography>
-        <Typography variant="subtitle1" className="template__image-subtitle">
-          This will be resized to 300 x 96
-        </Typography>
-        {imagePreview ? (
-          <div className="template__image">
-            <img
-              height={96}
-              width={300}
-              alt="Header preview"
-              src={imagePreview}
+        {editData && (
+          <>
+            <UserAutocomplete
+              onSubmit={handleAddUser}
+              label="Add user to group"
             />
-            <IconButton onClick={handleImageDelete} className="image__delete" size="large">
-              <HighlightOffIcon />
-            </IconButton>
-          </div>
-        ) : (
-          <div className="template__upload">
-            <Button
-              variant="outlined"
-              component="label"
-              color="secondary"
-            >
-              Upload image
-              <input
-                accept=".png,.jpg,.jpeg"
-                onChange={handleImageUpload}
-                type="file"
-                hidden
-              />
-            </Button>
-            {imageError && (
-              <Typography color="error" className="template__upload-error">
-                {imageError}
-              </Typography>
-            )}
-          </div>
+            <DataTable
+              rowData={users}
+              columnDefs={columnDefs}
+              canViewDetails={false}
+              onDelete={handleDeleteUser}
+              canDelete
+            />
+          </>
+        )}
+      </DialogContent>
+      <DialogContent>
+      {editData && (
+          <>
+            <UserAutocomplete
+              onSubmit={handleAddUser}
+              label="Add user to group"
+            />
+            <DataTable
+              rowData={users}
+              columnDefs={columnDefs}
+              canViewDetails={false}
+              onDelete={handleDeleteUser}
+              canDelete
+            />
+          </>
         )}
       </DialogContent>
       <DialogActions>

@@ -20,8 +20,14 @@ type FormErrorType = {
   email: boolean;
 };
 
+type TemplateType = {
+  name: string;
+  description: string;
+}
+
 export {
   ShortReportType,
   ProjectType,
+  TemplateType,
   FormErrorType,
 };
