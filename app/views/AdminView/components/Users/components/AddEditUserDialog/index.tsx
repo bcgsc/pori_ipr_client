@@ -118,6 +118,19 @@ const AddEditUserDialog = ({
     }
   }, [editData, groupOptions, projectOptions, setValue]);
 
+  const handleCopyUserPermissions = useCallback(async (user) => {
+    const userResp = await api.get(`/user/${user.ident}`, {}).request();
+    const copiedProjectsAndGroups = (({ projects, groups }) => ({ projects, groups }))(userResp);
+    copiedProjectsAndGroups.groups = copiedProjectsAndGroups.groups.filter((group: { name: string; }) => (group.name !== 'admin')); // Remove possible admin from copied groups
+    Object.entries(copiedProjectsAndGroups).forEach(([key, val]) => {
+      let nextVal = val;
+      if (Array.isArray(val)) {
+        nextVal = val.map(({ ident }) => ident);
+      }
+      setValue(key as keyof UserForm, nextVal as string | string[], { shouldDirty: true });
+    });
+  }, [setValue]);
+
   const handleClose = useCallback(async (formData: UserForm) => {
     setIsApiCalling(true);
     const {
@@ -210,19 +223,6 @@ const AddEditUserDialog = ({
 
     onClose(null);
   }, [dirtyFields, editData, onClose, projectOptions, groupOptions]);
-
-  const handleCopyUserPermissions = useCallback(async (user) => {
-    const userResp = await api.get(`/user/${user.ident}`, {}).request();
-    const copiedProjectsAndGroups = (({ projects, groups }) => ({ projects, groups }))(userResp);
-    copiedProjectsAndGroups.groups = copiedProjectsAndGroups.groups.filter((group: { name: string; }) => (group.name !== 'admin')); // Remove possible admin from copied groups
-    Object.entries(copiedProjectsAndGroups).forEach(([key, val]) => {
-      let nextVal = val;
-      if (Array.isArray(val)) {
-        nextVal = val.map(({ ident }) => ident);
-      }
-      setValue(key as keyof UserForm, nextVal as string | string[]);
-    });
-  }, [setValue]);
 
   // Email error text
   let emailErrorText = '';
