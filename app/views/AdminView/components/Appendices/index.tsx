@@ -75,7 +75,7 @@ function Appendices(): JSX.Element {
 
     console.dir(newData);
     if (newData) {
-      const appendixIndex = appendices.findIndex((appendix) => appendices.ident === newData.ident);
+      const appendixIndex = appendices.findIndex((appendix) => appendix.ident === newData.ident);
       if (appendixIndex !== -1) {
         const newAppendices = [...appendices];
         newAppendices[appendixIndex] = newData;
