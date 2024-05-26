@@ -28,6 +28,7 @@ import {
 } from '../../../../types';
 import './index.scss';
 import { Controller, useForm } from 'react-hook-form';
+import AddEditProjectDialog from '@/views/ProjectsView/components/AddEditProjectDialog';
 
 type AddEditAppendixProps = {
   isOpen: boolean;
@@ -52,7 +53,7 @@ const AddEditAppendix = ({
 
   // Grab project and groups
   useEffect(() => {
-    setDialogTitle('Select Template and Project to begin editing appendix text');
+    setDialogTitle('Select Template and Project');
     let cancelled = false;
     const getData = async () => {
       console.log('in getdata');
@@ -95,8 +96,11 @@ const AddEditAppendix = ({
   }, [projectOptions, templateOptions])
 
   useEffect(() => {
+    console.dir(template);
     if (template) {
       setTemplateSelected(true);
+    } else {
+      setTemplateSelected(false);
     }
   }, [template])
 
@@ -121,41 +125,48 @@ const AddEditAppendix = ({
         res = await api.post(`/appendix?templateId=${template.ident}`, { text: 'Edit me' }).request();
       }
       snackbar.enqueueSnackbar(`Appendix created successfully`);
+      setTemplate(null);
+      setProject(null);
       onClose(res);
     } catch (err) {
       snackbar.enqueueSnackbar(`Error creating appendix: ${err}`);
     }
   }, [project, template, onClose, snackbar]);
 
+  // TODO centre label text vertically in template and project boxes
   return (
     <Dialog open={isOpen}
       maxWidth="sm"
       fullWidth
-      className="add-dialog"
+      className="edit-dialog"
       onClose={() => onClose(null)}>
       <DialogTitle>{dialogTitle}</DialogTitle>
       <DialogContent>
-        <FormControl fullWidth>
+        <FormControl  fullWidth classes={{ root: 'add-item__form-container' }} variant="outlined">
           <InputLabel id="template-select-label">Template</InputLabel>
           <Select
+            variant="outlined"
+            className="add-item__text-field"
+            fullWidth
+            required
             defaultValue={null}
             id="template-select"
             label="Template"
-            variant="outlined"
-            className="add-appendix__select-template"
             onChange={handleTemplateChange}
           >
             {templateMenuOptions}
           </Select>
         </FormControl>
-        <FormControl fullWidth>
+        <FormControl  fullWidth classes={{ root: 'add-item__form-container' }} variant="outlined"h>
           <InputLabel id="projects-select-label">Project</InputLabel>
           <Select
             defaultValue={null}
             id="projects-select"
             label="Project"
             variant="outlined"
-            className="add-appendix__select-project"
+            className="add-item__text-field"
+            fullWidth
+            required
             onChange={handleProjectChange}
           >
             {projectMenuOptions}
@@ -164,7 +175,11 @@ const AddEditAppendix = ({
       </DialogContent>
       <DialogActions>
         <Button
-          onClick={() => onClose(null)}
+          onClick={() => {
+            setTemplate(null);
+            setProject(null);
+            onClose(null);
+          }}
           color="secondary"
         >
           Cancel

@@ -28,6 +28,8 @@ function Appendices(): JSX.Element {
   const [editingData, setEditingData] = useState(null);
   const [showDialog, setShowDialog] = useState(false);
   const [editData, setEditData] = useState<AppendixType>();
+  const [selectedRow, setSelectedRow] = useState();
+
 
   // Grab template appendices
   useEffect(() => {
@@ -54,32 +56,38 @@ function Appendices(): JSX.Element {
 
   const handleOnDelete = useCallback(async (rowData) => {
     console.log('made it into handle on delete');
-    console.dir(editingData.template);
     try {
-      await api.del(`/appendix?templateId=${editingData.template.ident}&projectId=${editingData.project.ident}`, {}, {}).request();
-      //setTemplates((prevVal) => prevVal.filter((template) => template.ident !== rowData.ident));
+      if (rowData.project) {
+        console.dir(rowData.project);
+        await api.del(`/appendix?templateId=${rowData.template.ident}&projectId=${rowData.project.ident}`, {}, {}).request();
+        setAppendices((prevVal) => prevVal.filter((appendix) => appendix.ident !== rowData.ident));
+      } else {
+        await api.del(`/appendix?templateId=${rowData.template.ident}`, {}, {}).request();
+      }
       snackbar.success('Appendix deleted');
     } catch (err) {
       snackbar.error(`Error deleting appendix: ${err}`);
     }
   }, []);
 
-  const handleAddClose = useCallback(async (nextData) => {
-    let cancelled = false;
-    console.log('here we are in handleAddClose');
-    try {
-      if (nextData) {
-        console.dir(nextData);
-        console.log('hello,');
-      }
-    } catch (e) {
-      snackbar.error(`Error adding appendix: ${e.message ?? e}`);
-    } finally {
-      setIsAdding(false);
-    }
+  const handleAddClose = useCallback((newData) => {
+    setShowDialog(false);
 
+    console.dir(newData);
+    if (newData) {
+      const appendixIndex = appendices.findIndex((appendix) => appendices.ident === newData.ident);
+      if (appendixIndex !== -1) {
+        const newAppendices = [...appendices];
+        newAppendices[appendixIndex] = newData;
+        setAppendices(newAppendices);
+      } else {
+        setAppendices((prevVal) => [...prevVal, newData]);
+      }
+    }
+    setSelectedRow(null);
+    setIsAdding(false);
     return function cleanup() { cancelled = true; };
-  }, [addingData]);
+  }, [appendices]);
 
 
   const handleEditClose = useCallback(async (nextData) => {

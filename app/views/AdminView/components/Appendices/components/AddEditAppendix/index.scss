@@ -1,36 +1,16 @@
-.template {
-    &__sections {
-        margin: 8px;
-    }
-
-    &__name {
-        margin: 8px;
-    }
-
-    &__image {
-        margin: 16px;
-        text-align: center;
-
-        &-text {
-            margin: 8px;
-        }
-
-        &-subtitle {
-            margin: 0 16px;
-        }
-    }
-
-    &__upload {
-        margin: 16px;
-
-        &-error {
-            margin: 16px 0;
-        }
+.edit-dialog {
+    &__section-title {
+        margin-top: 24px;
+        margin-bottom: 24px;
     }
 }
 
-.image {
-    &__delete {
-        vertical-align: top;
+.add-item {
+    &__form-container {
+        margin: 8px;
+    }
+
+    &__text-field {
+        margin: 8px;
     }
 }

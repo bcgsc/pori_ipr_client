@@ -8,7 +8,7 @@ const columnDefs: ColDef[] = [
   },
   {
     headerName: 'Project',
-    cellRenderer: ({ data }) => data.project.name || '(default appendix text)',
+    cellRenderer: ({ data }) => data.project?.name || '(default appendix text)',
   },
   {
     headerName: 'Created',
