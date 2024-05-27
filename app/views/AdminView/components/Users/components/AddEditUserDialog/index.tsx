@@ -6,6 +6,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Divider,
   TextField,
   Select,
   MenuItem,
@@ -13,15 +14,16 @@ import {
   ListItemText,
   Checkbox,
   InputLabel,
+  Typography,
 } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import api, { ApiCallSet } from '@/services/api';
-import { UserType, GroupType } from '@/common';
+import { UserType, GroupType, UserProjectsType } from '@/common';
 import snackbar from '@/services/SnackbarUtils';
 import AsyncButton from '@/components/AsyncButton';
-import {
-  ProjectType,
-} from '../../../../types';
+import UserAutocomplete from '@/components/UserAutocomplete';
+import useSecurity from '@/hooks/useSecurity';
+import useResource from '@/hooks/useResource';
 
 import './index.scss';
 
@@ -69,10 +71,12 @@ const AddEditUserDialog = ({
     },
   });
 
-  const [projectOptions, setProjectOptions] = useState<ProjectType[]>([]);
+  const [projectOptions, setProjectOptions] = useState<UserProjectsType[]>([]);
   const [groupOptions, setGroupOptions] = useState<GroupType[]>([]);
   const [dialogTitle, setDialogTitle] = useState<string>('');
   const [isApiCalling, setIsApiCalling] = useState(false);
+  const { userDetails } = useSecurity();
+  const { adminAccess } = useResource();
 
   // Grab project and groups
   useEffect(() => {
@@ -83,13 +87,25 @@ const AddEditUserDialog = ({
         api.get('/user/group').request(),
       ]);
       if (!cancelled) {
-        setProjectOptions(projectsResp);
-        setGroupOptions(groupsResp);
+        const nonAdminGroups = [];
+        groupsResp.forEach((group) => (group.name !== 'admin' ? nonAdminGroups.push(group) : null));
+        if (adminAccess) {
+          setProjectOptions(projectsResp);
+          setGroupOptions(groupsResp);
+        } else if (editData) {
+          const combinedProjects = userDetails.projects.concat(editData.projects);
+          const combinedUniqueProjects = [...new Map(combinedProjects.map((project) => [project.ident, project])).values()];
+          setProjectOptions(combinedUniqueProjects);
+          setGroupOptions(nonAdminGroups);
+        } else {
+          setProjectOptions(userDetails.projects);
+          setGroupOptions(nonAdminGroups);
+        }
       }
     };
     getData();
     return function cleanup() { cancelled = true; };
-  }, [editData]);
+  }, [adminAccess, editData, userDetails.projects]);
 
   // When params changed
   useEffect(() => {
@@ -106,6 +122,21 @@ const AddEditUserDialog = ({
       setDialogTitle('Add user');
     }
   }, [editData, groupOptions, projectOptions, setValue]);
+
+  const handleCopyUserPermissions = useCallback(async (user) => {
+    const userResp = await api.get(`/user/${user.ident}`, {}).request();
+    const copiedProjectsAndGroups = (({ projects, groups }) => ({ projects, groups }))(userResp);
+    const availableProjectIdents = projectOptions.map((project) => project.ident);
+    copiedProjectsAndGroups.projects = copiedProjectsAndGroups.projects.filter((project: { ident: string; }) => (availableProjectIdents.includes(project.ident))); // Filter copied projects to be only ones where adding manager has access to
+    copiedProjectsAndGroups.groups = copiedProjectsAndGroups.groups.filter((group: { name: string; }) => (group.name !== 'admin')); // Remove possible admin from copied groups
+    Object.entries(copiedProjectsAndGroups).forEach(([key, val]) => {
+      let nextVal = val;
+      if (Array.isArray(val)) {
+        nextVal = val.map(({ ident }) => ident);
+      }
+      setValue(key as keyof UserForm, nextVal as string | string[], { shouldDirty: true });
+    });
+  }, [projectOptions, setValue]);
 
   const handleClose = useCallback(async (formData: UserForm) => {
     setIsApiCalling(true);
@@ -213,10 +244,10 @@ const AddEditUserDialog = ({
       open={isOpen}
       onClose={() => onClose(null)}
       maxWidth="sm"
-      fullWidth
       className="edit-dialog"
     >
       <DialogTitle>{dialogTitle}</DialogTitle>
+      <Divider><Typography variant="caption">User Information</Typography></Divider>
       <DialogContent>
         <FormControl fullWidth variant="outlined">
           <TextField
@@ -252,7 +283,7 @@ const AddEditUserDialog = ({
             {...register('lastName', { required: true })}
           />
         </FormControl>
-        <FormControl fullWidth variant="outlined">
+        <FormControl fullWidth variant="outlined" sx={{ paddingBottom: 2 }}>
           <TextField
             label="Email"
             variant="outlined"
@@ -263,8 +294,8 @@ const AddEditUserDialog = ({
             {...register('email', { required: true, pattern: EMAIL_REGEX })}
           />
         </FormControl>
-
-        <FormControl fullWidth variant="outlined">
+        <Divider><Typography variant="caption">Database</Typography></Divider>
+        <FormControl fullWidth variant="outlined" sx={{ marginTop: 2, marginBottom: 2 }}>
           <InputLabel className="add-user__select" id="db-select">Database Type</InputLabel>
           <Select
             id="db-select"
@@ -280,6 +311,11 @@ const AddEditUserDialog = ({
             <MenuItem value="local">local</MenuItem>
           </Select>
         </FormControl>
+        <Divider><Typography variant="caption">Projects and Groups</Typography></Divider>
+        <UserAutocomplete
+          onSubmit={handleCopyUserPermissions}
+          label="Copy an existing user's projects and groups"
+        />
         {projectOptions.length && groupOptions.length ? (
           <>
             <FormControl fullWidth variant="outlined">
@@ -305,8 +341,14 @@ const AddEditUserDialog = ({
                   >
                     {projectOptions.map((project) => (
                       // @ts-ignore - MUI limitations on having value as an object
-                      <MenuItem key={project.ident} value={project.ident}>
-                        <Checkbox checked={Boolean(value?.find((v) => v === project.ident))} />
+                      <MenuItem
+                        key={project.ident}
+                        value={project.ident}
+                        disabled={!userDetails.projects.some((proj) => proj.ident === project.ident) && editData.projects.some((proj) => proj.ident === project.ident)}
+                      >
+                        <Checkbox
+                          checked={Boolean(value?.find((v) => v === project.ident))}
+                        />
                         <ListItemText>{project.name}</ListItemText>
                       </MenuItem>
                     ))}
@@ -354,7 +396,7 @@ const AddEditUserDialog = ({
         )}
       </DialogContent>
       <DialogActions className="edit-dialog__actions">
-        <AsyncButton isLoading={isApiCalling} color="primary" onClick={() => onClose(null)}>
+        <AsyncButton isLoading={isApiCalling} color="inherit" onClick={() => onClose(null)}>
           Cancel
         </AsyncButton>
         <AsyncButton isLoading={isApiCalling} color="primary" onClick={handleSubmit(handleClose)}>
