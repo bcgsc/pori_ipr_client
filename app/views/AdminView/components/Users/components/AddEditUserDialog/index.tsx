@@ -121,6 +121,8 @@ const AddEditUserDialog = ({
   const handleCopyUserPermissions = useCallback(async (user) => {
     const userResp = await api.get(`/user/${user.ident}`, {}).request();
     const copiedProjectsAndGroups = (({ projects, groups }) => ({ projects, groups }))(userResp);
+    const availableProjectIdents = projectOptions.map((project) => project.ident);
+    copiedProjectsAndGroups.projects = copiedProjectsAndGroups.projects.filter((project: { ident: string; }) => (availableProjectIdents.includes(project.ident))); // Filter copied projects to be only ones where adding manager has access to
     copiedProjectsAndGroups.groups = copiedProjectsAndGroups.groups.filter((group: { name: string; }) => (group.name !== 'admin')); // Remove possible admin from copied groups
     Object.entries(copiedProjectsAndGroups).forEach(([key, val]) => {
       let nextVal = val;
@@ -129,7 +131,7 @@ const AddEditUserDialog = ({
       }
       setValue(key as keyof UserForm, nextVal as string | string[], { shouldDirty: true });
     });
-  }, [setValue]);
+  }, [projectOptions, setValue]);
 
   const handleClose = useCallback(async (formData: UserForm) => {
     setIsApiCalling(true);
