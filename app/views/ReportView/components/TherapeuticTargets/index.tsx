@@ -157,8 +157,7 @@ const Therapeutic = ({
 
       // Update state to reflect new data after entry deleted
       getData();
-      if (wasDelete) {
-        // TODO do not display this message if the popup was closed via 'cancel' button
+      if (wasDelete && newData) {
         snackbar.success('Therapeutic option successfully deleted.');
       }
     } catch (err) {

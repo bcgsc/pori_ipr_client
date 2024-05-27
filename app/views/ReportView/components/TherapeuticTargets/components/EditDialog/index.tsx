@@ -321,7 +321,7 @@ const EditDialog = ({
             Delete
           </AsyncButton>
           )}
-          <Button color="secondary" onClick={() => onClose()}>
+          <Button color="inherit" onClick={() => onClose()}>
             Cancel
           </Button>
           <AsyncButton
