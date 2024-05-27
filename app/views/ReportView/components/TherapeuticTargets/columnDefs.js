@@ -7,8 +7,13 @@ const columnDefs = [{
   suppressMenu: true,
   width: 40,
 }, {
-  headerName: 'Gene',
-  field: 'gene',
+  headerName: 'Gene/Biomarker',
+  valueGetter: ({ data }) => {
+    if (data.gene) {
+      return `${data.gene}`;
+    }
+    return `${data.signature}`;
+  },
   hide: false,
   cellRenderer: 'GeneCellRenderer',
   cellRendererParams: { link: true },
