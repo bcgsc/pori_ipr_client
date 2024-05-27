@@ -93,8 +93,9 @@ const AddEditUserDialog = ({
           setProjectOptions(projectsResp);
           setGroupOptions(groupsResp);
         } else if (editData) {
-          const combinedUniqueProjects = new Set(userDetails.projects.concat(editData.projects));
-          setProjectOptions(Array.from(combinedUniqueProjects));
+          const combinedProjects = userDetails.projects.concat(editData.projects);
+          const combinedUniqueProjects = [...new Map(combinedProjects.map((project) => [project.ident, project])).values()];
+          setProjectOptions(combinedUniqueProjects);
           setGroupOptions(nonAdminGroups);
         } else {
           setProjectOptions(userDetails.projects);
@@ -340,8 +341,14 @@ const AddEditUserDialog = ({
                   >
                     {projectOptions.map((project) => (
                       // @ts-ignore - MUI limitations on having value as an object
-                      <MenuItem key={project.ident} value={project.ident}>
-                        <Checkbox checked={Boolean(value?.find((v) => v === project.ident))} />
+                      <MenuItem
+                        key={project.ident}
+                        value={project.ident}
+                        disabled={!userDetails.projects.some((proj) => proj.ident === project.ident) && editData.projects.some((proj) => proj.ident === project.ident)}
+                      >
+                        <Checkbox
+                          checked={Boolean(value?.find((v) => v === project.ident))}
+                        />
                         <ListItemText>{project.name}</ListItemText>
                       </MenuItem>
                     ))}
