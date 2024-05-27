@@ -92,6 +92,10 @@ const AddEditUserDialog = ({
         if (adminAccess) {
           setProjectOptions(projectsResp);
           setGroupOptions(groupsResp);
+        } else if (editData) {
+          const combinedUniqueProjects = new Set(userDetails.projects.concat(editData.projects));
+          setProjectOptions(Array.from(combinedUniqueProjects));
+          setGroupOptions(nonAdminGroups);
         } else {
           setProjectOptions(userDetails.projects);
           setGroupOptions(nonAdminGroups);
@@ -100,7 +104,7 @@ const AddEditUserDialog = ({
     };
     getData();
     return function cleanup() { cancelled = true; };
-  }, [adminAccess, userDetails.projects]);
+  }, [adminAccess, editData, userDetails.projects]);
 
   // When params changed
   useEffect(() => {
