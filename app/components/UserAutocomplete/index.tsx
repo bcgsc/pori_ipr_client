@@ -11,6 +11,7 @@ import api from '@/services/api';
 import { UserType } from '@/common';
 
 import './index.scss';
+import { ArrowCircleRight } from '@mui/icons-material';
 
 type UserAutocompleteProps = {
   defaultValue?: UserType;
@@ -103,7 +104,7 @@ const UserAutocomplete = ({
                 {loading ? <CircularProgress color="inherit" size={20} /> : null}
                 {value && !onChange && (
                   <Button onClick={handleSubmit}>
-                    Add
+                    <ArrowCircleRight />
                   </Button>
                 )}
               </>
