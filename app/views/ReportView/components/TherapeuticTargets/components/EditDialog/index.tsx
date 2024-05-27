@@ -182,6 +182,7 @@ const EditDialog = ({
       snackbar.error(`Error: ${err}`);
     } finally {
       setIsDeleting(false);
+      snackbar.success('Therapeutic option successfully deleted.');
     }
   }, [onClose, newData.ident, report.ident, isSigned, showConfirmDialog]);
 

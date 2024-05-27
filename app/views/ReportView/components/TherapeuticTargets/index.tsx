@@ -133,7 +133,6 @@ const Therapeutic = ({
       setShowDialog(false);
       let tableData: TherapeuticType[] | Partial<TherapeuticType>[];
       let setter: React.Dispatch<React.SetStateAction<TherapeuticType[] | Partial<TherapeuticType>[]>>;
-      let wasDelete = true;
       if (newData) {
         if (newData.type === 'therapeutic') {
           tableData = therapeuticData;
@@ -151,15 +150,11 @@ const Therapeutic = ({
           setter((prevVal) => [...prevVal, newData]);
         }
         snackbar.success('Row updated');
-        wasDelete = false;
       }
       setEditData(null);
 
       // Update state to reflect new data after entry deleted
       getData();
-      if (wasDelete && newData) {
-        snackbar.success('Therapeutic option successfully deleted.');
-      }
     } catch (err) {
       snackbar.error(`Error, row not updated: ${err}`);
     }
