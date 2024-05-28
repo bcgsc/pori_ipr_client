@@ -6,17 +6,10 @@ import { RecordDefaults } from '@/common';
 import IPRWYSIWYGEditor from '@/components/IPRWYSIWYGEditor';
 import sanitizeHtml from 'sanitize-html';
 import api from '@/services/api';
-import { useSnackbar } from 'notistack';
+import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
 import columnDefs from './columnDefs';
 import AddEditAppendix from './components/AddEditAppendix';
-import { AppendixType } from '@/common';
-
-type AddEditAppendixDialogProps = {
-  isOpen: boolean;
-  onClose: (newData?: null | AppendixType) => void;
-  editData: null | AppendixType;
-};
 
 function Appendices(): JSX.Element {
   const [appendices, setAppendices] = useState<RecordDefaults[]>([]);
@@ -27,7 +20,6 @@ function Appendices(): JSX.Element {
   const [showDialog, setShowDialog] = useState(false);
   const [selectedRow, setSelectedRow] = useState();
 
-  const snackbar = useSnackbar()
   // Grab template appendices
   useEffect(() => {
     let cancelled = false;
