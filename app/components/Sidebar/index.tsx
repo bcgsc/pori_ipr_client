@@ -31,7 +31,9 @@ import './index.scss';
 const Sidebar = (): JSX.Element => {
   const { pathname } = useLocation();
   const { sidebarMaximized, setSidebarMaximized } = useContext(SidebarContext);
-  const { germlineAccess, reportsAccess, managerAccess, adminAccess, templateEditAccess, appendixEditAccess } = useResource();
+  const {
+    germlineAccess, reportsAccess, managerAccess, adminAccess, templateEditAccess, appendixEditAccess,
+  } = useResource();
 
   const handleSidebarClose = useCallback(() => {
     setSidebarMaximized(false);
@@ -149,7 +151,8 @@ const Sidebar = (): JSX.Element => {
               </Typography>
             </Link>
           </ListItem>
-          {templateEditAccess && <ListItem
+          {templateEditAccess && (
+          <ListItem
             className={`sidebar__list-item ${pathname.includes('template') ? 'sidebar__list-item--active' : ''}`}
             disableGutters
           >
@@ -162,8 +165,10 @@ const Sidebar = (): JSX.Element => {
                 Templates
               </Typography>
             </Link>
-          </ListItem>}
-          {appendixEditAccess && <ListItem
+          </ListItem>
+          )}
+          {appendixEditAccess && (
+          <ListItem
             className={`
                     sidebar__list-item
                     ${pathname.includes('admin/appendices') ? 'sidebar__list-item--active' : ''}
@@ -179,11 +184,11 @@ const Sidebar = (): JSX.Element => {
                 Appendices
               </Typography>
             </Link>
-          </ListItem>}
+          </ListItem>
+          )}
         </>
       );
     }
-
 
     return (
       <div>

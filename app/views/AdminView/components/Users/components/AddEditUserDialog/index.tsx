@@ -123,13 +123,12 @@ const AddEditUserDialog = ({
     }
   }, [editData, groupOptions, projectOptions, setValue]);
 
-  const handleCopyUserPermissions = useCallback(async (user) => {
+  const handleCopyUserProjects = useCallback(async (user) => {
     const userResp = await api.get(`/user/${user.ident}`, {}).request();
-    const copiedProjectsAndGroups = (({ projects, groups }) => ({ projects, groups }))(userResp);
+    const copiedProjects = (({ projects }) => ({ projects }))(userResp);
     const availableProjectIdents = projectOptions.map((project) => project.ident);
-    copiedProjectsAndGroups.projects = copiedProjectsAndGroups.projects.filter((project: { ident: string; }) => (availableProjectIdents.includes(project.ident))); // Filter copied projects to be only ones where adding manager has access to
-    copiedProjectsAndGroups.groups = copiedProjectsAndGroups.groups.filter((group: { name: string; }) => (group.name !== 'admin')); // Remove possible admin from copied groups
-    Object.entries(copiedProjectsAndGroups).forEach(([key, val]) => {
+    copiedProjects.projects = copiedProjects.projects.filter((project: { ident: string; }) => (availableProjectIdents.includes(project.ident))); // Filter copied projects to be only ones where adding manager has access to
+    Object.entries(copiedProjects).forEach(([key, val]) => {
       let nextVal = val;
       if (Array.isArray(val)) {
         nextVal = val.map(({ ident }) => ident);
@@ -137,6 +136,19 @@ const AddEditUserDialog = ({
       setValue(key as keyof UserForm, nextVal as string | string[], { shouldDirty: true });
     });
   }, [projectOptions, setValue]);
+
+  const handleCopyUserGroups = useCallback(async (user) => {
+    const userResp = await api.get(`/user/${user.ident}`, {}).request();
+    const copiedGroups = (({ groups }) => ({ groups }))(userResp);
+    copiedGroups.groups = copiedGroups.groups.filter((group: { name: string; }) => (group.name !== 'admin')); // Remove possible admin from copied groups
+    Object.entries(copiedGroups).forEach(([key, val]) => {
+      let nextVal = val;
+      if (Array.isArray(val)) {
+        nextVal = val.map(({ ident }) => ident);
+      }
+      setValue(key as keyof UserForm, nextVal as string | string[], { shouldDirty: true });
+    });
+  }, [setValue]);
 
   const handleClose = useCallback(async (formData: UserForm) => {
     setIsApiCalling(true);
@@ -313,8 +325,10 @@ const AddEditUserDialog = ({
         </FormControl>
         <Divider><Typography variant="caption">Projects and Groups</Typography></Divider>
         <UserAutocomplete
-          onSubmit={handleCopyUserPermissions}
+          onSubmitProjects={handleCopyUserProjects}
+          onSubmitGroups={handleCopyUserGroups}
           label="Copy an existing user's projects and groups"
+          addEditUserDialog
         />
         {projectOptions.length && groupOptions.length ? (
           <>
@@ -344,7 +358,7 @@ const AddEditUserDialog = ({
                       <MenuItem
                         key={project.ident}
                         value={project.ident}
-                        disabled={!userDetails.projects.some((proj) => proj.ident === project.ident) && editData.projects.some((proj) => proj.ident === project.ident)}
+                        disabled={!userDetails?.projects.some((proj) => proj.ident === project.ident) && editData?.projects.some((proj) => proj.ident === project.ident)}
                       >
                         <Checkbox
                           checked={Boolean(value?.find((v) => v === project.ident))}
