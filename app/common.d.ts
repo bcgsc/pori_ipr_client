@@ -57,6 +57,7 @@ type GroupType = {
   name: string;
   users: UserGroupMemberType[];
   owner: UserType;
+  description: string;
 };
 
 type UserProjectsType = {
