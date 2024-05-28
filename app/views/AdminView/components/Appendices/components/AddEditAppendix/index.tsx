@@ -56,7 +56,6 @@ const AddEditAppendix = ({
     setDialogTitle('Select Template and Project');
     let cancelled = false;
     const getData = async () => {
-      console.log('in getdata');
       const [projectsResp, templatesResp] = await Promise.all([
         api.get('/project').request(),
         api.get('/templates').request(),
@@ -96,7 +95,6 @@ const AddEditAppendix = ({
   }, [projectOptions, templateOptions])
 
   useEffect(() => {
-    console.dir(template);
     if (template) {
       setTemplateSelected(true);
     } else {
@@ -113,10 +111,6 @@ const AddEditAppendix = ({
   };
 
   const handleSubmit = useCallback(async () => {
-    console.dir(template.name);
-    console.dir(project?.name);
-    console.log('in handleSubmit');
-    //handle case when appendix already exists for this combo
     try {
       let res;
       if (project) {
@@ -142,7 +136,7 @@ const AddEditAppendix = ({
       onClose={() => onClose(null)}>
       <DialogTitle>{dialogTitle}</DialogTitle>
       <DialogContent>
-        <FormControl  fullWidth classes={{ root: 'add-item__form-container' }} variant="outlined">
+        <FormControl fullWidth classes={{ root: 'add-item__form-container' }} variant="outlined">
           <InputLabel id="template-select-label">Template</InputLabel>
           <Select
             variant="outlined"
@@ -157,7 +151,7 @@ const AddEditAppendix = ({
             {templateMenuOptions}
           </Select>
         </FormControl>
-        <FormControl  fullWidth classes={{ root: 'add-item__form-container' }} variant="outlined"h>
+        <FormControl fullWidth classes={{ root: 'add-item__form-container' }} variant="outlined" h>
           <InputLabel id="projects-select-label">Project</InputLabel>
           <Select
             defaultValue={null}

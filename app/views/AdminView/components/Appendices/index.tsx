@@ -55,10 +55,8 @@ function Appendices(): JSX.Element {
   }, []);
 
   const handleOnDelete = useCallback(async (rowData) => {
-    console.log('made it into handle on delete');
     try {
       if (rowData.project) {
-        console.dir(rowData.project);
         await api.del(`/appendix?templateId=${rowData.template.ident}&projectId=${rowData.project.ident}`, {}, {}).request();
         setAppendices((prevVal) => prevVal.filter((appendix) => appendix.ident !== rowData.ident));
       } else {
@@ -86,13 +84,11 @@ function Appendices(): JSX.Element {
     }
     setSelectedRow(null);
     setIsAdding(false);
-    return function cleanup() { cancelled = true; };
   }, [appendices]);
 
 
   const handleEditClose = useCallback(async (nextData) => {
     let cancelled = false;
-    const isNew = !editingData?.text;
     try {
       if (nextData) {
         const sanitizedText = sanitizeHtml(nextData, {
@@ -110,7 +106,7 @@ function Appendices(): JSX.Element {
             }),
           },
         });
-        const res = await (isNew ? api.post : api.put)(`/appendix?templateId=${editingData.template.ident}&projectId=${editingData.project.ident}`, { text: sanitizedText }).request();
+        const res = await api.put(`/appendix?templateId=${editingData.template.ident}&projectId=${editingData.project.ident}`, { text: sanitizedText }).request();
         if (!cancelled) {
           setAppendices((currAppendices) => {
             const index = currAppendices.findIndex((app) => app.ident === editingData.ident);
@@ -118,7 +114,7 @@ function Appendices(): JSX.Element {
             nextAppendices[index] = res;
             return nextAppendices;
           });
-          snackbar.success(isNew ? 'Appendix successfully created.' : 'Appendix successfully updated.');
+          snackbar.success('Appendix successfully updated.');
           setIsEditing(false);
         }
       }
