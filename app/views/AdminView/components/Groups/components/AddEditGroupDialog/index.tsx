@@ -1,5 +1,5 @@
 import React, {
-  useState, useEffect, useCallback, useReducer,
+  useState, useEffect, useCallback,
 } from 'react';
 import {
   Dialog,
@@ -9,7 +9,8 @@ import {
 
 import api from '@/services/api';
 import DataTable from '@/components/DataTable';
-import { GroupType, UserGroupMemberType, UserType } from '@/common';
+import { GroupType, UserGroupMemberType } from '@/common';
+import snackbar from '@/services/SnackbarUtils';
 import UserAutocomplete from '@/components/UserAutocomplete';
 import columnDefs from './columnDefs';
 
@@ -21,17 +22,6 @@ type AddEditGroupDialogProps = {
   editData: null | GroupType;
 };
 
-const reducer = (state, action) => {
-  switch (action.type) {
-    case 'add':
-      return [...state, action.payload];
-    case 'reset':
-      return [];
-    default:
-      return state;
-  }
-};
-
 const AddEditUserDialog = ({
   isOpen,
   onClose,
@@ -39,7 +29,6 @@ const AddEditUserDialog = ({
 }: AddEditGroupDialogProps): JSX.Element => {
   const [dialogTitle, setDialogTitle] = useState<string>('');
   const [users, setUsers] = useState<UserGroupMemberType[]>([]);
-  const [apiCallQueue, apiCallQueueDispatch] = useReducer(reducer, []);
 
   useEffect(() => {
     const {
@@ -50,15 +39,25 @@ const AddEditUserDialog = ({
     setUsers(editUsers);
   }, [editData]);
 
-  const handleDeleteUser = useCallback(({ ident }) => {
-    apiCallQueueDispatch({ type: 'add', payload: api.del(`/user/group/${editData.ident}/member`, { user: ident }, {}) });
-    const newUsers = users.filter((user) => user.ident !== ident);
-    setUsers(newUsers);
+  const handleDeleteUser = useCallback(async (user) => {
+    try {
+      await api.del(`/user/group/${editData.ident}/member`, { user: user.ident }).request();
+      const newUsers = users.filter((userFilter) => userFilter.ident !== user.ident);
+      setUsers(newUsers);
+      snackbar.success(`Successfully removed user ${user.firstName} ${user.lastName}`);
+    } catch {
+      snackbar.error(`Error removing user ${user.firstName} ${user.lastName}`);
+    }
   }, [editData, users]);
 
   const handleAddUser = useCallback(async (user) => {
-    apiCallQueueDispatch({ type: 'add', payload: api.post(`/user/group/${editData.ident}/member`, { user: user.ident }, {}) });
-    setUsers((prevVal) => [...prevVal, user]);
+    try {
+      await api.post(`/user/group/${editData.ident}/member`, { user: user.ident }).request();
+      setUsers((prevVal) => [...prevVal, user]);
+      snackbar.success(`Successfully added user ${user.firstName} ${user.lastName}`);
+    } catch {
+      snackbar.error(`Error adding user ${user.firstName} ${user.lastName}`);
+    }
   }, [editData]);
 
   return (
