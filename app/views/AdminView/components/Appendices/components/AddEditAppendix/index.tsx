@@ -23,12 +23,12 @@ import { useSnackbar } from 'notistack';
 import { ImageType, RecordDefaults } from '@/common';
 import api from '@/services/api';
 import getImageDataURI from '@/utils/getImageDataURI';
-import {
-  ProjectType, TemplateType
-} from '../../../../types';
 import './index.scss';
 import { Controller, useForm } from 'react-hook-form';
 import AddEditProjectDialog from '@/views/ProjectsView/components/AddEditProjectDialog';
+import {
+  ProjectType, TemplateType,
+} from '../../../../types';
 
 type AddEditAppendixProps = {
   isOpen: boolean;
@@ -39,7 +39,6 @@ const AddEditAppendix = ({
   isOpen,
   onClose,
 }: AddEditAppendixProps): JSX.Element => {
-
   const [dialogTitle, setDialogTitle] = useState('');
   const [project, setProject] = useState<any>();
   const [projectOptions, setProjectOptions] = useState<ProjectType[]>();
@@ -76,7 +75,9 @@ const AddEditAppendix = ({
           value={proj}
           key={proj.name}
           onChange={handleProjectChange}
-        > {proj.name}
+        >
+          {' '}
+          {proj.name}
         </MenuItem>
       ));
       setProjectMenuOptions(projopts);
@@ -87,12 +88,14 @@ const AddEditAppendix = ({
           value={temp}
           key={temp.name}
           onChange={handleTemplateChange}
-        > {temp.name}
+        >
+          {' '}
+          {temp.name}
         </MenuItem>
       ));
       setTemplateMenuOptions(tempopts);
     }
-  }, [projectOptions, templateOptions])
+  }, [projectOptions, templateOptions]);
 
   useEffect(() => {
     if (template) {
@@ -100,11 +103,11 @@ const AddEditAppendix = ({
     } else {
       setTemplateSelected(false);
     }
-  }, [template])
+  }, [template]);
 
   const handleTemplateChange = (event) => {
     setTemplate(event.target.value);
-  }
+  };
 
   const handleProjectChange = (event) => {
     setProject(event.target.value);
@@ -118,7 +121,7 @@ const AddEditAppendix = ({
       } else {
         res = await api.post(`/appendix?templateId=${template.ident}`, { text: 'Edit me' }).request();
       }
-      snackbar.enqueueSnackbar(`Appendix created successfully`);
+      snackbar.enqueueSnackbar('Appendix created successfully');
       setTemplate(null);
       setProject(null);
       onClose(res);
@@ -129,11 +132,13 @@ const AddEditAppendix = ({
 
   // TODO centre label text vertically in template and project boxes
   return (
-    <Dialog open={isOpen}
+    <Dialog
+      open={isOpen}
       maxWidth="sm"
       fullWidth
       className="edit-dialog"
-      onClose={() => onClose(null)}>
+      onClose={() => onClose(null)}
+    >
       <DialogTitle>{dialogTitle}</DialogTitle>
       <DialogContent>
         <FormControl fullWidth classes={{ root: 'add-item__form-container' }} variant="outlined">
@@ -151,7 +156,7 @@ const AddEditAppendix = ({
             {templateMenuOptions}
           </Select>
         </FormControl>
-        <FormControl fullWidth classes={{ root: 'add-item__form-container' }} variant="outlined" h>
+        <FormControl fullWidth classes={{ root: 'add-item__form-container' }} variant="outlined">
           <InputLabel id="projects-select-label">Project</InputLabel>
           <Select
             defaultValue={null}

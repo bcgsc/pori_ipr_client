@@ -167,20 +167,20 @@ const AddEditTemplate = ({
         )}
       </DialogContent>
       <DialogContent>
-      {editData && (
-          <>
-            <UserAutocomplete
-              onSubmit={handleAddUser}
-              label="Add user to group"
-            />
-            <DataTable
-              rowData={users}
-              columnDefs={columnDefs}
-              canViewDetails={false}
-              onDelete={handleDeleteUser}
-              canDelete
-            />
-          </>
+        {editData && (
+        <>
+          <UserAutocomplete
+            onSubmit={handleAddUser}
+            label="Add user to group"
+          />
+          <DataTable
+            rowData={users}
+            columnDefs={columnDefs}
+            canViewDetails={false}
+            onDelete={handleDeleteUser}
+            canDelete
+          />
+        </>
         )}
       </DialogContent>
       <DialogActions>
