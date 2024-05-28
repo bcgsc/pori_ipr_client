@@ -22,12 +22,9 @@ function Appendices(): JSX.Element {
   const [appendices, setAppendices] = useState<RecordDefaults[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
-  const [addingData, setAddingData] = useState(null);
   const [editingData, setEditingData] = useState(null);
   const [showDialog, setShowDialog] = useState(false);
-  const [editData, setEditData] = useState<AppendixType>();
   const [selectedRow, setSelectedRow] = useState();
 
   const snackbar = useSnackbar()

@@ -6,26 +6,16 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  IconButton,
   Button,
-  ListItemText,
-  Checkbox,
   MenuItem,
-  TextField,
-  Typography,
   Select,
   FormControl,
   InputLabel,
 } from '@mui/material';
-import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { useSnackbar } from 'notistack';
 
-import { ImageType, RecordDefaults } from '@/common';
 import api from '@/services/api';
-import getImageDataURI from '@/utils/getImageDataURI';
 import './index.scss';
-import { Controller, useForm } from 'react-hook-form';
-import AddEditProjectDialog from '@/views/ProjectsView/components/AddEditProjectDialog';
 import {
   ProjectType, TemplateType,
 } from '../../../../types';
@@ -122,16 +112,25 @@ const AddEditAppendix = ({
       } else {
         res = await api.post(`/appendix?templateId=${template.ident}`, { text: 'Edit me' }).request();
       }
-      snackbar.enqueueSnackbar('Appendix created successfully');
+      snackbar.enqueueSnackbar('Appendix record created successfully');
       setTemplate(null);
       setProject(null);
       onClose(res);
     } catch (err) {
-      snackbar.enqueueSnackbar(`Error creating appendix: ${err}`);
+      if (err.message && err.message.includes("[409]")) {
+        let projectStr = '';
+        if (project) {
+          projectStr = `and project ${project.name}`
+        } else {
+          projectStr = `(default appendix text)`
+        }
+        snackbar.enqueueSnackbar(`Error creating appendix record: record already exists for template ${template.name} ${projectStr}`)
+      } else {
+        snackbar.enqueueSnackbar(`Error creating appendix reord: ${err}`);
+      }
     }
   }, [project, template, onClose, snackbar]);
 
-  // TODO centre label text vertically in template and project boxes
   return (
     <Dialog
       open={isOpen}

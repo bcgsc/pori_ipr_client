@@ -47,10 +47,6 @@ const ReportsTableComponent = (): JSX.Element => {
         const { reports } = await api.get(`/reports${states ? `?states=${states}` : ''}`, {}).request();
 
         setRowData(reports.map((report: ReportType) => {
-          if (report.users.length > 1) {
-            console.dir(report.users);
-            console.dir(Object.keys(report));
-          }
           const [analyst] = report.users
             .filter((u) => u.role === 'analyst')
             .map((u) => u.user);
