@@ -12,7 +12,8 @@ import {
   FormControl,
   InputLabel,
 } from '@mui/material';
-import { useSnackbar } from 'notistack';
+//import { useSnackbar } from 'notistack';
+import snackbar from '@/services/SnackbarUtils';
 
 import api from '@/services/api';
 import './index.scss';
@@ -38,8 +39,6 @@ const AddEditAppendix = ({
   const [projectMenuOptions, setProjectMenuOptions] = useState<any>([]);
   const [templateMenuOptions, setTemplateMenuOptions] = useState<any>([]);
   const [templateSelected, setTemplateSelected] = useState<boolean>(false);
-
-  const snackbar = useSnackbar();
 
   // Grab project and groups
   useEffect(() => {
@@ -112,7 +111,7 @@ const AddEditAppendix = ({
       } else {
         res = await api.post(`/appendix?templateId=${template.ident}`, { text: 'Edit me' }).request();
       }
-      snackbar.enqueueSnackbar('Appendix record created successfully');
+      snackbar.success('Appendix record created successfully');
       setTemplate(null);
       setProject(null);
       onClose(res);
@@ -124,9 +123,9 @@ const AddEditAppendix = ({
         } else {
           projectStr = `(default appendix text)`
         }
-        snackbar.enqueueSnackbar(`Error creating appendix record: record already exists for template ${template.name} ${projectStr}`)
+        snackbar.error(`Error creating appendix record: record already exists for pair: template ${template.name} ${projectStr}`)
       } else {
-        snackbar.enqueueSnackbar(`Error creating appendix reord: ${err}`);
+        snackbar.error(`Error creating appendix reord: ${err}`);
       }
     }
   }, [project, template, onClose, snackbar]);
