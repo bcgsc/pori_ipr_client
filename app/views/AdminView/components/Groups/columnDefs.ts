@@ -1,20 +1,33 @@
-import { formatDate } from '@/utils/date';
+const descriptions = {
+  'admin': 'all access',
+  'all projects access': 'access to all projects',
+  'template edit access': 'can create/edit/delete report templates',
+  'appendix edit access': 'can create/edit/delete template appendix text',
+  'unreviewed access': 'can view reports that have not been reviewed',
+  'non-production access': 'can view reports that have non-production status',
+  'germline access': 'can view germline reports',
+  'report manager': 'can assign users to reports; bioinformatician',
+  'read access': 'can read reports',
+  'bioinformatician': 'can read and be assigned to reports; non-production access; unreviewed access',
+  'manager': 'can create/edit/delete nonadmin users; all other permissions within assigned projects'
+}
 
 const columnDefs = [
   {
     headerName: 'Group Name',
-    field: 'name',
+    valueGetter: ({ data }) => data.name.toLowerCase(),
     hide: false,
+    flex: 1,
+    autoHeight: true,
+    wrapText: true,
   },
   {
-    headerName: 'Owner',
-    valueGetter: ({ data }) => `${data?.owner?.firstName ?? data.owner.username} ${data.owner.lastName ?? ''}`,
+    headerName: 'Description',
+    valueGetter: ({ data }) => data.description ? data.description : descriptions[data.name.toLowerCase()] ? descriptions[data.name.toLowerCase()] : '',
     hide: false,
-  },
-  {
-    headerName: 'Created',
-    valueGetter: ({ data }) => formatDate(data.createdAt),
-    hide: false,
+    flex: 1,
+    autoHeight: true,
+    wrapText: true,
   },
   {
     headerName: 'Actions',
