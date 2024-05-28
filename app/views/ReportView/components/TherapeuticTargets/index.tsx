@@ -78,6 +78,8 @@ const Therapeutic = ({
     geneGraphkbId: null,
     variant: null,
     variantGraphkbId: null,
+    signature: null,
+    signatureGraphkbId: null,
     therapy: null,
     therapyGraphkbId: null,
     context: null,
@@ -98,7 +100,6 @@ const Therapeutic = ({
         const therapeuticResp = await api.get(
           `/reports/${report.ident}/therapeutic-targets`,
         ).request();
-
         const [
           filteredTherapeutic,
           filteredChemoresistance,
@@ -132,7 +133,6 @@ const Therapeutic = ({
       setShowDialog(false);
       let tableData: TherapeuticType[] | Partial<TherapeuticType>[];
       let setter: React.Dispatch<React.SetStateAction<TherapeuticType[] | Partial<TherapeuticType>[]>>;
-
       if (newData) {
         if (newData.type === 'therapeutic') {
           tableData = therapeuticData;
@@ -155,7 +155,6 @@ const Therapeutic = ({
 
       // Update state to reflect new data after entry deleted
       getData();
-      snackbar.success('Therapeutic option successfully deleted.');
     } catch (err) {
       snackbar.error(`Error, row not updated: ${err}`);
     }

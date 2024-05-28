@@ -9,6 +9,10 @@ import {
   DialogTitle,
   FormControl,
   TextField,
+  Radio,
+  RadioGroup,
+  FormLabel,
+  FormControlLabel,
 } from '@mui/material';
 
 import api from '@/services/api';
@@ -56,17 +60,36 @@ const EditDialog = ({
   const [isDirty, setIsDirty] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [variantType, setVariantType] = useState<string>('gene');
+  const [defaultVariantType, setDefaultVariantType] = useState<string>();
+  const [defaultVariantValue, setDefaultVariantValue] = useState<string>();
+  const [defaultSignatureVariantValue, setDefaultSignatureVariantValue] = useState<string>();
+
   const { showConfirmDialog } = useConfirmDialog();
 
   useEffect(() => {
     if (newData.ident) {
       setDialogTitle('Edit Row');
+      setDefaultSignatureVariantValue(newData.signature
+        ? `${newData.signature}`
+        : '');
+      setDefaultVariantValue(newData.variant && newData.gene
+        ? `${newData.gene} ${newData.variant}`
+        : '');
     } else {
       setDialogTitle('Add Row');
     }
   }, [newData]);
 
   useEffect(() => {
+    if (!editData) {
+      setDefaultVariantType('gene');
+    } else if (editData.signature || editData.signatureGraphkbId) {
+      setDefaultVariantType('signature');
+      setVariantType('signature');
+    } else {
+      setDefaultVariantType('gene');
+    }
     setNewData({ type: 'replace', payload: editData || {} });
   }, [editData]);
 
@@ -85,6 +108,15 @@ const EditDialog = ({
 
   const handleSubmit = useCallback(async () => {
     setIsSubmitting(true);
+    if (variantType === 'gene') {
+      newData.signature = null;
+      newData.signatureGraphkbId = null;
+    } else {
+      newData.gene = null;
+      newData.geneGraphkbId = null;
+      newData.variant = 'signature present';
+      newData.variantGraphkbId = null;
+    }
     const {
       ident,
       createdAt,
@@ -130,7 +162,7 @@ const EditDialog = ({
     } finally {
       setIsSubmitting(false);
     }
-  }, [newData, tableType, report, editData.ident, isSigned, onClose, showConfirmDialog]);
+  }, [newData, variantType, tableType, report, editData.ident, isSigned, onClose, showConfirmDialog]);
 
   const handleDelete = useCallback(async () => {
     setIsDeleting(true);
@@ -150,6 +182,7 @@ const EditDialog = ({
       snackbar.error(`Error: ${err}`);
     } finally {
       setIsDeleting(false);
+      snackbar.success('Therapeutic option successfully deleted.');
     }
   }, [onClose, newData.ident, report.ident, isSigned, showConfirmDialog]);
 
@@ -166,6 +199,12 @@ const EditDialog = ({
               ? selectedValue.displayName.split(':').slice(1).join()
               : selectedValue.type.displayName,
             variantGraphkbId: selectedValue['@rid'],
+          },
+        });
+      } else if (typeName === 'signature') {
+        setNewData({
+          payload: {
+            signature: selectedValue.displayName,
           },
         });
       } else {
@@ -188,17 +227,31 @@ const EditDialog = ({
     });
   };
 
+  const handleVariantTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setVariantType(event.target.value);
+  };
+
   return (
     <Dialog open={isOpen} maxWidth="sm" fullWidth className="edit-dialog">
       <DialogTitle>{dialogTitle}</DialogTitle>
       <DialogContent>
+        <FormControl>
+          <FormLabel id="demo-row-radio-buttons-group-label">Variant Type</FormLabel>
+          <RadioGroup
+            row
+            aria-labelledby="demo-row-radio-buttons-group-label"
+            defaultValue={defaultVariantType}
+            name="row-radio-buttons-group"
+            onChange={handleVariantTypeChange}
+          >
+            <FormControlLabel value="gene" control={<Radio />} label="Gene" />
+            <FormControlLabel value="signature" control={<Radio />} label="Signature" />
+          </RadioGroup>
+        </FormControl>
+        {variantType === 'gene' && (
         <FormControl fullWidth>
           <AutocompleteHandler
-            defaultValue={
-              newData.variant && newData.gene
-                ? `${newData.gene} ${newData.variant}`
-                : ''
-            }
+            defaultValue={defaultVariantValue}
             type="variant"
             label="Gene and Variant"
             onChange={handleAutocompleteValueSelected}
@@ -206,6 +259,19 @@ const EditDialog = ({
             error={errors && isDirty && errors.variant}
           />
         </FormControl>
+        )}
+        {variantType === 'signature' && (
+        <FormControl fullWidth>
+          <AutocompleteHandler
+            defaultValue={defaultSignatureVariantValue}
+            type="signature"
+            label="Signature"
+            onChange={handleAutocompleteValueSelected}
+            required
+            error={errors && isDirty && errors.signature}
+          />
+        </FormControl>
+        )}
         <FormControl fullWidth>
           <AutocompleteHandler
             defaultValue={newData.therapy}
@@ -247,16 +313,16 @@ const EditDialog = ({
         </FormControl>
         <DialogActions className="edit-dialog__actions">
           {newData.ident && (
-            <AsyncButton
-              color="secondary"
-              onClick={handleDelete}
-              className="edit-dialog__actions--delete"
-              isLoading={isDeleting}
-            >
-              Delete
-            </AsyncButton>
+          <AsyncButton
+            color="secondary"
+            onClick={handleDelete}
+            className="edit-dialog__actions--delete"
+            isLoading={isDeleting}
+          >
+            Delete
+          </AsyncButton>
           )}
-          <Button color="secondary" onClick={() => onClose()}>
+          <Button color="inherit" onClick={() => onClose()}>
             Cancel
           </Button>
           <AsyncButton
