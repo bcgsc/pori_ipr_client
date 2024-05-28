@@ -41,7 +41,7 @@ const Groups = (): JSX.Element => {
     setEditData(rowData);
   };
 
-  const handleEditClose = useCallback((newData) => {
+  const handleEditClose = useCallback(async (newData) => {
     setShowDialog(false);
     if (newData) {
       const groupIndex = groups.findIndex((group) => group.ident === newData.ident);
@@ -49,6 +49,11 @@ const Groups = (): JSX.Element => {
       newGroups[groupIndex] = newData;
       setGroups(newGroups);
       snackbar.enqueueSnackbar('Group edited');
+      let groupsResp = await api.get('/user/group').request();
+      groupsResp = groupsResp.filter((group) => ALL_ACCESS.includes(group.name.toLowerCase()));
+      groupsResp.sort((a, b) => ALL_ACCESS.indexOf(a.name.toLowerCase()) - ALL_ACCESS.indexOf(b.name.toLowerCase()));
+      setGroups(groupsResp);
+      setLoading(false);
     }
     setEditData(null);
   }, [groups, snackbar]);
