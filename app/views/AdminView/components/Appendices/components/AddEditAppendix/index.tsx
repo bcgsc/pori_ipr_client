@@ -48,6 +48,7 @@ const AddEditAppendix = ({
   const [projectMenuOptions, setProjectMenuOptions] = useState<any>([]);
   const [templateMenuOptions, setTemplateMenuOptions] = useState<any>([]);
   const [templateSelected, setTemplateSelected] = useState<boolean>(false);
+
   const snackbar = useSnackbar();
 
   // Grab project and groups

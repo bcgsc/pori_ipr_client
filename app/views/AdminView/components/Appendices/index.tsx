@@ -6,7 +6,7 @@ import { RecordDefaults } from '@/common';
 import IPRWYSIWYGEditor from '@/components/IPRWYSIWYGEditor';
 import sanitizeHtml from 'sanitize-html';
 import api from '@/services/api';
-import snackbar from '@/services/SnackbarUtils';
+import { useSnackbar } from 'notistack';
 import DataTable from '@/components/DataTable';
 import columnDefs from './columnDefs';
 import AddEditAppendix from './components/AddEditAppendix';
@@ -30,7 +30,7 @@ function Appendices(): JSX.Element {
   const [editData, setEditData] = useState<AppendixType>();
   const [selectedRow, setSelectedRow] = useState();
 
-
+  const snackbar = useSnackbar()
   // Grab template appendices
   useEffect(() => {
     let cancelled = false;
@@ -43,7 +43,7 @@ function Appendices(): JSX.Element {
     };
     getAppendices();
     return function cleanup() { cancelled = true; };
-  }, []);
+  }, [appendices]);
 
   const handleOnEdit = useCallback((rowData) => {
     setEditingData(rowData);
@@ -66,21 +66,14 @@ function Appendices(): JSX.Element {
     } catch (err) {
       snackbar.error(`Error deleting appendix: ${err}`);
     }
-  }, []);
+  }, [snackbar]);
 
   const handleAddClose = useCallback((newData) => {
     setShowDialog(false);
 
     console.dir(newData);
     if (newData) {
-      const appendixIndex = appendices.findIndex((appendix) => appendix.ident === newData.ident);
-      if (appendixIndex !== -1) {
-        const newAppendices = [...appendices];
-        newAppendices[appendixIndex] = newData;
-        setAppendices(newAppendices);
-      } else {
-        setAppendices((prevVal) => [...prevVal, newData]);
-      }
+      setAppendices((prevVal) => [...prevVal, newData]);
     }
     setSelectedRow(null);
     setIsAdding(false);
