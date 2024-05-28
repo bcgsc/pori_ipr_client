@@ -1,6 +1,3 @@
-import { formatDate } from '@/utils/date';
-// TODO replace wraptext with tooltips
-
 const descriptions = {
   'admin': 'all access',
   'all projects access': 'access to all projects',
@@ -12,18 +9,21 @@ const descriptions = {
   'report manager': 'can assign users to reports; bioinformatician',
   'read access': 'can read reports',
   'bioinformatician': 'can read and be assigned to reports; non-production access; unreviewed access',
-  'manager': 'can create/edit/delete nonadmin users; template edit access; appendix edit access; unreviewed access; nonproduction access; germline access; report manager; read access; bioinformatician'
+  'manager': 'can create/edit/delete nonadmin users; all other permissions within assigned projects'
 }
 
 const columnDefs = [
   {
     headerName: 'Group Name',
-    valueGetter: ({data}) => data.name.toLowerCase(),
+    valueGetter: ({ data }) => data.name.toLowerCase(),
     hide: false,
+    flex: 1,
+    autoHeight: true,
+    wrapText: true,
   },
   {
     headerName: 'Description',
-    valueGetter: ({data}) => data.description? data.description : descriptions[data.name.toLowerCase()] ? descriptions[data.name.toLowerCase()] : '',
+    valueGetter: ({ data }) => data.description ? data.description : descriptions[data.name.toLowerCase()] ? descriptions[data.name.toLowerCase()] : '',
     hide: false,
     flex: 1,
     autoHeight: true,
