@@ -95,7 +95,7 @@ const NavBar = (): JSX.Element => {
             open={Boolean(anchorEl)}
             onClose={handleCloseMenu}
           >
-            <MenuItem onClick={handleUserSettingsClick}>User Settings</MenuItem>
+            <MenuItem onClick={handleUserSettingsClick}>User Profile</MenuItem>
             <MenuItem onClick={handleFeedbackClick}>Feedback</MenuItem>
             <MenuItem onClick={logout}>Logout</MenuItem>
           </Menu>
