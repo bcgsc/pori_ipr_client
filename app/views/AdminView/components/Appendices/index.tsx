@@ -20,6 +20,7 @@ function Appendices(): JSX.Element {
 
   // Grab template appendices
   useEffect(() => {
+    let cancelled = false;
     const getAppendices = async () => {
       try {
         const appendixResp = await api.get('/appendix').request();
@@ -33,7 +34,9 @@ function Appendices(): JSX.Element {
               },
             }),
           }));
-          setAppendices(sanitizedAppendices);
+          if (!cancelled) {
+            setAppendices(sanitizedAppendices);
+          }
         }
       } catch (err) {
         snackbar.error(`Network error: ${err}`);
@@ -42,7 +45,8 @@ function Appendices(): JSX.Element {
       }
     };
     getAppendices();
-  }, [appendices]);
+    return function cleanup() { cancelled = true; };
+  }, []);
 
   const handleOnEdit = useCallback((rowData) => {
     setEditingData(rowData);
