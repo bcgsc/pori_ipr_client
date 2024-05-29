@@ -24,6 +24,7 @@ import {
 } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
+import sanitizeHtml from 'sanitize-html';
 import {
   ProjectType, TemplateType,
 } from '../../../../types';
@@ -89,11 +90,26 @@ const AddEditAppendix = ({
 
   const handleSubmit = useCallback(async () => {
     try {
+      const sanitizedText = sanitizeHtml(editor?.getHTML(), {
+        allowedAttributes: {
+          a: ['href', 'target', 'rel'],
+        },
+        transformTags: {
+          a: (_tagName, attribs) => ({
+            tagName: 'a',
+            attribs: {
+              href: attribs.href,
+              target: '_blank',
+              rel: 'noopener noreferrer',
+            },
+          }),
+        },
+      });
       let res;
       if (project) {
-        res = await api.post(`/appendix?templateId=${template?.ident}&projectId=${project.ident}`, { text: editor?.getHTML() }).request();
+        res = await api.post(`/appendix?templateId=${template?.ident}&projectId=${project.ident}`, { text: sanitizedText }).request();
       } else {
-        res = await api.post(`/appendix?templateId=${template?.ident}`, { text: editor?.getHTML() }).request();
+        res = await api.post(`/appendix?templateId=${template?.ident}`, { text: sanitizedText }).request();
       }
       snackbar.success('Appendix record created successfully');
       setTemplate(null);

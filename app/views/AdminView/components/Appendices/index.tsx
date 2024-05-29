@@ -2,7 +2,7 @@ import React, {
   useState, useEffect, useCallback,
 } from 'react';
 import { CircularProgress } from '@mui/material';
-import { RecordDefaults } from '@/common';
+import { AppendixType } from '@/common';
 import IPRWYSIWYGEditor from '@/components/IPRWYSIWYGEditor';
 import sanitizeHtml from 'sanitize-html';
 import api from '@/services/api';
@@ -12,7 +12,7 @@ import columnDefs from './columnDefs';
 import AddEditAppendix from './components/AddEditAppendix';
 
 function Appendices(): JSX.Element {
-  const [appendices, setAppendices] = useState<RecordDefaults[]>([]);
+  const [appendices, setAppendices] = useState<AppendixType[]>();
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
@@ -20,16 +20,28 @@ function Appendices(): JSX.Element {
 
   // Grab template appendices
   useEffect(() => {
-    let cancelled = false;
     const getAppendices = async () => {
-      const appendixResp = await api.get('/appendix').request();
-      if (!cancelled) {
-        setAppendices(appendixResp);
+      try {
+        const appendixResp = await api.get('/appendix').request();
+        if (appendixResp) {
+          const sanitizedAppendices = appendixResp.map((appendix: AppendixType) => ({
+            ...appendix,
+            text: sanitizeHtml(appendix.text, {
+              allowedSchemes: [],
+              allowedAttributes: {
+                '*': ['style'],
+              },
+            }),
+          }));
+          setAppendices(sanitizedAppendices);
+        }
+      } catch (err) {
+        snackbar.error(`Network error: ${err}`);
+      } finally {
         setIsLoading(false);
       }
     };
     getAppendices();
-    return function cleanup() { cancelled = true; };
   }, [appendices]);
 
   const handleOnEdit = useCallback((rowData) => {
