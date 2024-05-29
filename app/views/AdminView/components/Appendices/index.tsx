@@ -17,8 +17,6 @@ function Appendices(): JSX.Element {
   const [isEditing, setIsEditing] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [editingData, setEditingData] = useState(null);
-  const [showDialog, setShowDialog] = useState(false);
-  const [selectedRow, setSelectedRow] = useState();
 
   // Grab template appendices
   useEffect(() => {
@@ -39,7 +37,7 @@ function Appendices(): JSX.Element {
     setIsEditing(true);
   }, []);
 
-  const handleOnAdd = useCallback((rowData) => {
+  const handleOnAdd = useCallback(() => {
     setIsAdding(true);
   }, []);
 
@@ -55,19 +53,14 @@ function Appendices(): JSX.Element {
     } catch (err) {
       snackbar.error(`Error deleting appendix: ${err}`);
     }
-  }, [snackbar]);
+  }, []);
 
   const handleAddClose = useCallback((newData) => {
-    setShowDialog(false);
-
-    console.dir(newData);
     if (newData) {
       setAppendices((prevVal) => [...prevVal, newData]);
     }
-    setSelectedRow(null);
     setIsAdding(false);
-  }, [appendices]);
-
+  }, []);
 
   const handleEditClose = useCallback(async (nextData) => {
     let cancelled = false;
@@ -119,7 +112,7 @@ function Appendices(): JSX.Element {
             titleText="Appendices"
             canAdd
             onAdd={handleOnAdd}
-            addText="Create Custom Template Appendix Text"
+            addText="Create Custom Template Appendix"
             canEdit
             onEdit={handleOnEdit}
             canDelete

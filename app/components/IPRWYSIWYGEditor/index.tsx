@@ -34,17 +34,19 @@ const MenuBarButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
 );
 
 type MenuBarProps = {
-  editor: Editor
+  editor: Editor,
+  className: string,
 };
 const MenuBar = ({
   editor,
+  className,
 }: MenuBarProps) => {
   if (!editor) {
     return null;
   }
 
   return (
-    <Box className="IPRWYSIWYGEditor__toolbar">
+    <Box className={className}>
       <Stack direction="row" spacing={1}>
         <ToggleButtonGroup aria-label="Text formatting">
           <MenuBarButton
@@ -196,7 +198,7 @@ const IPRWYSIWYGEditor = ({
     <Dialog fullWidth maxWidth="lg" open={isOpen} onClose={() => onClose(null)}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
-        <MenuBar editor={editor} />
+        <MenuBar editor={editor} className="IPRWYSIWYGEditor__toolbar" />
         <EditorContent editor={editor} className="IPRWYSIWYGEditor__content" />
       </DialogContent>
       <DialogActions>
@@ -208,4 +210,4 @@ const IPRWYSIWYGEditor = ({
 };
 
 export default IPRWYSIWYGEditor;
-export { IPRWYSIWYGEditorProps };
+export { IPRWYSIWYGEditorProps, MenuBar };

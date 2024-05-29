@@ -11,11 +11,19 @@ import {
   Select,
   FormControl,
   InputLabel,
+  Divider,
+  Typography,
 } from '@mui/material';
 import snackbar from '@/services/SnackbarUtils';
 
 import api from '@/services/api';
 import './index.scss';
+import { MenuBar } from '@/components/IPRWYSIWYGEditor';
+import {
+  useEditor, EditorContent,
+} from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import Underline from '@tiptap/extension-underline';
 import {
   ProjectType, TemplateType,
 } from '../../../../types';
@@ -25,20 +33,29 @@ type AddEditAppendixProps = {
   onClose: (newData?: Record<string, unknown>) => void;
 };
 
+const extensions = [
+  StarterKit,
+  Underline,
+];
+
 const AddEditAppendix = ({
   isOpen,
   onClose,
 }: AddEditAppendixProps): JSX.Element => {
   const [dialogTitle, setDialogTitle] = useState('');
   const [project, setProject] = useState<ProjectType>();
-  const [projectOptions, setProjectOptions] = useState<ProjectType[]>();
+  const [projectOptions, setProjectOptions] = useState([]);
   const [template, setTemplate] = useState<TemplateType>();
-  const [templateOptions, setTemplateOptions] = useState<TemplateType[]>();
+  const [templateOptions, setTemplateOptions] = useState([]);
   const [templateSelected, setTemplateSelected] = useState<boolean>(false);
+
+  const editor = useEditor({
+    extensions,
+  });
 
   // Grab project and groups
   useEffect(() => {
-    setDialogTitle('Select Template and Project');
+    setDialogTitle('Create Custom Template Appendix');
     let cancelled = false;
     const getData = async () => {
       const [projectsResp, templatesResp] = await Promise.all([
@@ -74,9 +91,9 @@ const AddEditAppendix = ({
     try {
       let res;
       if (project) {
-        res = await api.post(`/appendix?templateId=${template.ident}&projectId=${project.ident}`, { text: 'Edit me' }).request();
+        res = await api.post(`/appendix?templateId=${template?.ident}&projectId=${project.ident}`, { text: editor?.getHTML() }).request();
       } else {
-        res = await api.post(`/appendix?templateId=${template.ident}`, { text: 'Edit me' }).request();
+        res = await api.post(`/appendix?templateId=${template?.ident}`, { text: editor?.getHTML() }).request();
       }
       snackbar.success('Appendix record created successfully');
       setTemplate(null);
@@ -95,34 +112,33 @@ const AddEditAppendix = ({
         snackbar.error(`Error creating appendix reord: ${err}`);
       }
     }
-  }, [project, template, onClose]);
+  }, [project, onClose, template?.ident, template?.name, editor]);
 
   return (
     <Dialog
       open={isOpen}
-      maxWidth="sm"
+      maxWidth="md"
       fullWidth
       className="edit-dialog"
       onClose={() => onClose(null)}
     >
       <DialogTitle>{dialogTitle}</DialogTitle>
+      <Divider><Typography variant="caption">Select template and project</Typography></Divider>
       <DialogContent>
         <FormControl fullWidth classes={{ root: 'add-item__form-container' }} variant="outlined">
           <InputLabel id="template-select-label">Template</InputLabel>
           <Select
             variant="outlined"
-            className="add-item__text-field"
+            className="add-item__select-field"
             fullWidth
             required
-            defaultValue={null}
+            defaultValue=""
             id="template-select"
             label="Template"
             onChange={handleTemplateChange}
           >
             {templateOptions && (
               templateOptions.map((temp) => (
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore MUI limitations: not accepting objects as values
                 <MenuItem
                   value={temp}
                   key={temp.name}
@@ -138,19 +154,17 @@ const AddEditAppendix = ({
         <FormControl fullWidth classes={{ root: 'add-item__form-container' }} variant="outlined">
           <InputLabel id="projects-select-label">Project</InputLabel>
           <Select
-            defaultValue={null}
+            defaultValue=""
             id="projects-select"
             label="Project"
             variant="outlined"
-            className="add-item__text-field"
+            className="add-item__select-field"
             fullWidth
             required
             onChange={handleProjectChange}
           >
             {projectOptions && (
               projectOptions.map((proj) => (
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore MUI limitations: not accepting objects as values
                 <MenuItem
                   value={proj}
                   key={proj.name}
@@ -163,6 +177,11 @@ const AddEditAppendix = ({
             )}
           </Select>
         </FormControl>
+      </DialogContent>
+      <Divider><Typography variant="caption">Add appendix text</Typography></Divider>
+      <DialogContent>
+        <MenuBar editor={editor} className="IPRWYSIWYGEditor__toolbar" />
+        <EditorContent editor={editor} className="IPRWYSIWYGEditor__content" />
       </DialogContent>
       <DialogActions>
         <Button
