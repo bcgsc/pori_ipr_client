@@ -67,6 +67,8 @@ const AddEditAppendix = ({
   useEffect(() => {
     if (projectOptions) {
       const projopts = projectOptions.map((proj) => (
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore MUI limitations: not accepting objects as values
         <MenuItem
           value={proj}
           key={proj.name}
@@ -80,6 +82,8 @@ const AddEditAppendix = ({
     }
     if (templateOptions) {
       const tempopts = templateOptions.map((temp) => (
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore MUI limitations: not accepting objects as values
         <MenuItem
           value={temp}
           key={temp.name}
