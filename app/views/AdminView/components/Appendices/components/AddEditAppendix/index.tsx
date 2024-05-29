@@ -34,8 +34,6 @@ const AddEditAppendix = ({
   const [projectOptions, setProjectOptions] = useState<ProjectType[]>();
   const [template, setTemplate] = useState<TemplateType>();
   const [templateOptions, setTemplateOptions] = useState<TemplateType[]>();
-  const [projectMenuOptions, setProjectMenuOptions] = useState<unknown[]>();
-  const [templateMenuOptions, setTemplateMenuOptions] = useState<unknown[]>();
   const [templateSelected, setTemplateSelected] = useState<boolean>(false);
 
   // Grab project and groups
@@ -63,39 +61,6 @@ const AddEditAppendix = ({
   const handleProjectChange = (event) => {
     setProject(event.target.value);
   };
-
-  useEffect(() => {
-    if (projectOptions) {
-      const projopts = projectOptions.map((proj) => (
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore MUI limitations: not accepting objects as values
-        <MenuItem
-          value={proj}
-          key={proj.name}
-          onChange={handleProjectChange}
-        >
-          {' '}
-          {proj.name}
-        </MenuItem>
-      ));
-      setProjectMenuOptions(projopts);
-    }
-    if (templateOptions) {
-      const tempopts = templateOptions.map((temp) => (
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore MUI limitations: not accepting objects as values
-        <MenuItem
-          value={temp}
-          key={temp.name}
-          onChange={handleTemplateChange}
-        >
-          {' '}
-          {temp.name}
-        </MenuItem>
-      ));
-      setTemplateMenuOptions(tempopts);
-    }
-  }, [projectOptions, templateOptions]);
 
   useEffect(() => {
     if (template) {
@@ -154,7 +119,20 @@ const AddEditAppendix = ({
             label="Template"
             onChange={handleTemplateChange}
           >
-            {templateMenuOptions}
+            {templateOptions && (
+              templateOptions.map((temp) => (
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore MUI limitations: not accepting objects as values
+                <MenuItem
+                  value={temp}
+                  key={temp.name}
+                  onChange={handleTemplateChange}
+                >
+                  {' '}
+                  {temp.name}
+                </MenuItem>
+              ))
+            )}
           </Select>
         </FormControl>
         <FormControl fullWidth classes={{ root: 'add-item__form-container' }} variant="outlined">
@@ -169,7 +147,20 @@ const AddEditAppendix = ({
             required
             onChange={handleProjectChange}
           >
-            {projectMenuOptions}
+            {projectOptions && (
+              projectOptions.map((proj) => (
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore MUI limitations: not accepting objects as values
+                <MenuItem
+                  value={proj}
+                  key={proj.name}
+                  onChange={handleProjectChange}
+                >
+                  {' '}
+                  {proj.name}
+                </MenuItem>
+              ))
+            )}
           </Select>
         </FormControl>
       </DialogContent>
