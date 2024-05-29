@@ -12,7 +12,6 @@ import {
   FormControl,
   InputLabel,
 } from '@mui/material';
-//import { useSnackbar } from 'notistack';
 import snackbar from '@/services/SnackbarUtils';
 
 import api from '@/services/api';
@@ -31,13 +30,12 @@ const AddEditAppendix = ({
   onClose,
 }: AddEditAppendixProps): JSX.Element => {
   const [dialogTitle, setDialogTitle] = useState('');
-  const [project, setProject] = useState<any>();
+  const [project, setProject] = useState<ProjectType>();
   const [projectOptions, setProjectOptions] = useState<ProjectType[]>();
-  const [template, setTemplate] = useState<any>();
+  const [template, setTemplate] = useState<TemplateType>();
   const [templateOptions, setTemplateOptions] = useState<TemplateType[]>();
-  const [addData, setAddData] = useState();
-  const [projectMenuOptions, setProjectMenuOptions] = useState<any>([]);
-  const [templateMenuOptions, setTemplateMenuOptions] = useState<any>([]);
+  const [projectMenuOptions, setProjectMenuOptions] = useState<unknown[]>();
+  const [templateMenuOptions, setTemplateMenuOptions] = useState<unknown[]>();
   const [templateSelected, setTemplateSelected] = useState<boolean>(false);
 
   // Grab project and groups
@@ -57,6 +55,14 @@ const AddEditAppendix = ({
     getData();
     return function cleanup() { cancelled = true; };
   }, []);
+
+  const handleTemplateChange = (event) => {
+    setTemplate(event.target.value);
+  };
+
+  const handleProjectChange = (event) => {
+    setProject(event.target.value);
+  };
 
   useEffect(() => {
     if (projectOptions) {
@@ -95,14 +101,6 @@ const AddEditAppendix = ({
     }
   }, [template]);
 
-  const handleTemplateChange = (event) => {
-    setTemplate(event.target.value);
-  };
-
-  const handleProjectChange = (event) => {
-    setProject(event.target.value);
-  };
-
   const handleSubmit = useCallback(async () => {
     try {
       let res;
@@ -116,19 +114,19 @@ const AddEditAppendix = ({
       setProject(null);
       onClose(res);
     } catch (err) {
-      if (err.message && err.message.includes("[409]")) {
+      if (err.message && err.message.includes('[409]')) {
         let projectStr = '';
         if (project) {
-          projectStr = `and project ${project.name}`
+          projectStr = `and project ${project.name}`;
         } else {
-          projectStr = `(default appendix text)`
+          projectStr = '(default appendix text)';
         }
-        snackbar.error(`Error creating appendix record: record already exists for pair: template ${template.name} ${projectStr}`)
+        snackbar.error(`Error creating appendix record: record already exists for pair: template ${template.name} ${projectStr}`);
       } else {
         snackbar.error(`Error creating appendix reord: ${err}`);
       }
     }
-  }, [project, template, onClose, snackbar]);
+  }, [project, template, onClose]);
 
   return (
     <Dialog

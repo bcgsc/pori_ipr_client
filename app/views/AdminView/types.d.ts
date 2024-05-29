@@ -23,7 +23,7 @@ type FormErrorType = {
 type TemplateType = {
   name: string;
   description: string;
-}
+} & RecordDefaults;
 
 export {
   ShortReportType,
