@@ -37,9 +37,9 @@ const Projects = (): JSX.Element => {
       }
       setProjects(projectsResp);
       if (adminAccess) {
-        setEditableProjects(projectsResp.map(elem => elem.ident));
+        setEditableProjects(projectsResp.map((elem) => elem.ident));
       } else {
-        setEditableProjects(userDetails.projects.map(elem => elem.ident));
+        setEditableProjects(userDetails.projects.map((elem) => elem.ident));
       }
       setLoading(false);
     };
@@ -86,7 +86,7 @@ const Projects = (): JSX.Element => {
       {!loading && (
         <>
           <DataTable
-            rowData={projects.filter(elem => editableProjects.includes(elem.ident))}
+            rowData={projects.filter((elem) => editableProjects.includes(elem.ident))}
             columnDefs={managerAccess ? adminColDefs : readOnlyColDefs}
             canViewDetails={false}
             isPaginated

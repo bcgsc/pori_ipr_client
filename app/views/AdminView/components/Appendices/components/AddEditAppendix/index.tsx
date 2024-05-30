@@ -25,13 +25,12 @@ import {
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
 import sanitizeHtml from 'sanitize-html';
-import {
-  ProjectType, TemplateType,
-} from '../../../../types';
+import { AppendixType, TemplateType } from '@/common';
+import { ProjectType } from '../../../../types';
 
 type AddEditAppendixProps = {
   isOpen: boolean;
-  onClose: (newData?: Record<string, unknown>) => void;
+  onClose: (newData?: AppendixType) => void;
 };
 
 const extensions = [
@@ -112,9 +111,14 @@ const AddEditAppendix = ({
         res = await api.post(`/appendix?templateId=${template?.ident}`, { text: sanitizedText }).request();
       }
       snackbar.success('Appendix record created successfully');
+      const returnedData: AppendixType = {
+        ...res,
+        template,
+        project,
+      };
+      onClose(returnedData);
       setTemplate(null);
       setProject(null);
-      onClose(res);
     } catch (err) {
       if (err.message && err.message.includes('[409]')) {
         let projectStr = '';
@@ -128,7 +132,7 @@ const AddEditAppendix = ({
         snackbar.error(`Error creating appendix reord: ${err}`);
       }
     }
-  }, [project, onClose, template?.ident, template?.name, editor]);
+  }, [editor, project, template, onClose]);
 
   return (
     <Dialog

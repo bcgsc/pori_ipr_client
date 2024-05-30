@@ -57,7 +57,7 @@ function Appendices(): JSX.Element {
     setIsAdding(true);
   }, []);
 
-  const handleOnDelete = useCallback(async (rowData) => {
+  const handleOnDelete = useCallback(async (rowData: AppendixType) => {
     try {
       if (rowData.project) {
         await api.del(`/appendix?templateId=${rowData.template.ident}&projectId=${rowData.project.ident}`, {}, {}).request();
