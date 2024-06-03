@@ -354,7 +354,6 @@ const AddEditUserDialog = ({
                     {...field}
                   >
                     {projectOptions.map((project) => (
-                      // @ts-ignore - MUI limitations on having value as an object
                       <MenuItem
                         key={project.ident}
                         value={project.ident}

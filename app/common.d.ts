@@ -86,6 +86,24 @@ type UserType = {
   allowNotifications: boolean;
 } & RecordDefaults;
 
+type ShortReportType = {
+  alternateIdentifier: string | null;
+  patientId: string;
+} & RecordDefaults;
+
+type ProjectType = {
+  name: string;
+  description: string;
+  reports: ShortReportType[];
+  users: UserType[];
+} & RecordDefaults;
+
+type AppendixType = {
+  template: TemplateType;
+  project: ProjectType;
+  text: string;
+} & RecordDefaults;
+
 type ImageType = {
   caption: string | null;
   data: string;
@@ -333,6 +351,9 @@ type MicrobialType = {
 
 export {
   RecordDefaults,
+  ShortReportType,
+  ProjectType,
+  AppendixType,
   UserType,
   TemplateType,
   AnyVariantType,

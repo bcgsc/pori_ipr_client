@@ -64,7 +64,7 @@ const columnDefs = [{
   field: 'bioinformatician',
 },
 {
-  headerName: 'Asigned Reviewer',
+  headerName: 'Assigned Reviewer',
   field: 'reviewer',
 },
 {
