@@ -102,6 +102,21 @@
     }
   }
 
+  &__collapsing-text {
+    transition: visibility $transition-fast;
+    min-width: 166px;
+    color: $black-80;
+    padding: 0 0 0 12px;
+
+    &--visible {
+      visibility: visible;
+    }
+
+    &--hidden {
+      visibility: hidden;
+    }
+  }
+
   &__subtext {
     transition: visibility $transition-fast;
     min-width: 180px;
@@ -126,8 +141,4 @@
   &__link {
     padding: 12px 0 12px 15px;
   }
-}
-
-.expand-arrow {
-  padding-right: 8px;
 }

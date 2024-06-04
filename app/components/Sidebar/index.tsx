@@ -212,7 +212,7 @@ const Sidebar = (): JSX.Element => {
             <HomeIcon color="action" sx={{ scale: '110%' }} />
             <Typography
               display="inline"
-              className={`sidebar__text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
+              className={`sidebar__collapsing-text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
             >
               Reports
             </Typography>
