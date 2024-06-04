@@ -29,6 +29,7 @@ import { Box } from '@mui/system';
 const LoginView = lazy(() => import('../LoginView'));
 const TermsView = lazy(() => import('../TermsView'));
 const ReportsView = lazy(() => import('../ReportsView'));
+const MyReportsView = lazy(() => import('../MyReportsView'));
 const ReportView = lazy(() => import('../ReportView'));
 const PrintView = lazy(() => import('../PrintView'));
 const CondensedPrintView = (props) => <PrintView {...props} printVersion="condensedLayout" />;
@@ -180,6 +181,7 @@ const Main = (): JSX.Element => {
                   </Route>
                   <AuthenticatedRoute component={TermsView} path="/terms" />
                   <AuthenticatedRoute component={ReportsView} path="/reports" />
+                  <AuthenticatedRoute component={MyReportsView} path="/my-reports" />
                   <AuthenticatedRoute exact component={PatientsView} path="/reports/patients/:patientId" />
                   <Redirect exact from="/report/:ident/(genomic|probe)/summary" to="/report/:ident/summary" />
                   <AuthenticatedRoute component={ReportView} path="/report/:ident" />
