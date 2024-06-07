@@ -6,7 +6,7 @@ import { RowClickedEvent } from '@ag-grid-community/core';
 
 import api from '@/services/api';
 import useGrid from '@/hooks/useGrid';
-import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import snackbar from '@/services/SnackbarUtils';
 import columnDefs from '../ReportsView/columnDefs';
 
@@ -18,7 +18,7 @@ const PatientsView = ({
   isLoading,
   setIsLoading,
 }: PatientsViewProps): JSX.Element => {
-  const { patientId } = useParams();
+  const { patientId } = useParams<{ patientId: string }>();
   const history = useHistory();
   const [rowData, setRowData] = useState();
   const { gridApi, colApi, onGridReady } = useGrid();
@@ -70,7 +70,7 @@ const PatientsView = ({
     if (params.clientWidth >= MEDIUM_SCREEN_WIDTH_LOWER) {
       gridApi.sizeColumnsToFit();
     } else {
-      const allCols = colApi.getAllColumns().map((col) => col.colId);
+      const allCols = colApi.getAllColumns().map((col) => col.getColId());
       colApi.autoSizeColumns(allCols);
     }
   };
@@ -79,7 +79,7 @@ const PatientsView = ({
     const selectedRow = gridApi.getSelectedRows();
     const [{ reportIdent }] = selectedRow;
 
-    if (event.ctrlKey || event.metaKey) {
+    if ((event as PointerEvent).ctrlKey || (event as PointerEvent).metaKey) {
       window.open(`/report/${reportIdent}/summary`, '_blank');
     } else {
       history.push({ pathname: `/report/${reportIdent}/summary` });
@@ -111,4 +111,4 @@ const PatientsView = ({
   );
 };
 
-export default PatientsView;
+export default withLoading(PatientsView);
