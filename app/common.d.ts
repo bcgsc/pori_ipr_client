@@ -104,6 +104,12 @@ type AppendixType = {
   text: string;
 } & RecordDefaults;
 
+type VariantTextType = {
+  template: TemplateType;
+  project: ProjectType;
+  text: string;
+} & RecordDefaults;
+
 type ImageType = {
   caption: string | null;
   data: string;
@@ -354,6 +360,7 @@ export {
   ShortReportType,
   ProjectType,
   AppendixType,
+  VariantTextType,
   UserType,
   TemplateType,
   AnyVariantType,

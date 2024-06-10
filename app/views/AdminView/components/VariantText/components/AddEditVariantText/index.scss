@@ -1,0 +1,50 @@
+@import '@/styles/_theme.module.scss';
+
+.edit-dialog {
+    &__section-title {
+        margin-top: 24px;
+        margin-bottom: 24px;
+    }
+}
+
+.add-item {
+    &__form-container {
+        flex-direction: row;
+    }
+
+    &__select-field {
+        margin: 8px;
+    }
+}
+
+.text-field {
+  margin: 8px;
+}
+
+.IPRWYSIWYGEditor {
+    &__content {
+        margin: 8px;
+        padding: 0.5rem;
+        border: 1px solid $palette__grey--300;
+        min-height: 250px;
+    }
+
+    &__toolbar {
+        z-index: +1;
+        position: sticky;
+        top: 0;
+        padding: 8px;
+        width: 100%;
+        background-color: $palette__common--white;
+        border-bottom: none;
+    }
+
+  }
+
+#template-select-label {
+    margin: 8px;
+}
+
+#projects-select-label {
+    margin: 8px;
+}

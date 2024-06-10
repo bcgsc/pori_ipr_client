@@ -129,6 +129,23 @@ const Sidebar = (): JSX.Element => {
               </Typography>
             </Link>
           </ListItem>
+          <ListItem
+            className={`
+                sidebar__list-item
+                ${pathname.includes('admin/variant-text') ? 'sidebar__list-item--active' : ''}
+              `}
+            disableGutters
+          >
+            <Link className="sidebar__link" to="/admin/variant-text">
+              <FilePresentIcon color="action" />
+              <Typography
+                display="inline"
+                className={`sidebar__text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
+              >
+                Variant Text
+              </Typography>
+            </Link>
+          </ListItem>
         </>
       );
     } else if (!managerAccess && reportsAccess) {
