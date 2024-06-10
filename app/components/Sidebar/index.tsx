@@ -21,6 +21,7 @@ import PeopleIcon from '@mui/icons-material/People';
 import FolderSharedIcon from '@mui/icons-material/FolderShared';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import FilePresentIcon from '@mui/icons-material/FilePresent';
+import NotesIcon from '@mui/icons-material/Notes';
 
 import GermlineIcon from '@/statics/images/germline_icon.svg';
 import SidebarContext from '@/context/SidebarContext';
@@ -137,7 +138,7 @@ const Sidebar = (): JSX.Element => {
             disableGutters
           >
             <Link className="sidebar__link" to="/admin/variant-text">
-              <FilePresentIcon color="action" />
+              <NotesIcon color="action" />
               <Typography
                 display="inline"
                 className={`sidebar__text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
