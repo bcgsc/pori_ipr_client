@@ -32,6 +32,7 @@ import { getVariantRelevanceDict } from './utils';
 
 import PatientInformation from '../PatientInformation';
 import TumourSummary from '../TumourSummary';
+import { AppendicesType } from '../Appendices/types';
 
 const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
   const iprRelevanceDict = {};
@@ -136,6 +137,7 @@ const RapidSummary = ({
     canEdit = false;
   }
 
+  const [appendices, setAppendices] = useState<AppendicesType>();
   const [signatures, setSignatures] = useState<SignatureType | null>();
   const [therapeuticAssociationResults, setTherapeuticAssociationResults] = useState<RapidVariantType[] | null>();
   const [cancerRelevanceResults, setCancerRelevanceResults] = useState<RapidVariantType[] | null>();
@@ -162,6 +164,7 @@ const RapidSummary = ({
             api.get(`/reports/${report.ident}/tmbur-mutation-burden`),
             api.get(`/reports/${report.ident}/immune-cell-types`),
             api.get(`/reports/${report.ident}/summary/microbial`),
+            api.get(`/reports/${report.ident}/appendices`),
           ]);
           const [
             signaturesResp,
@@ -171,6 +174,7 @@ const RapidSummary = ({
             tmBurdenResp,
             immuneResp,
             microbialResp,
+            appendicesResp,
           ] = await apiCalls.request(true) as [
             PromiseSettledResult<SignatureType>,
             PromiseSettledResult<RapidVariantType[]>,
@@ -179,6 +183,7 @@ const RapidSummary = ({
             PromiseSettledResult<TmburType>,
             PromiseSettledResult<ImmuneType[]>,
             PromiseSettledResult<MicrobialType[]>,
+            PromiseSettledResult<AppendicesType>,
           ];
 
           try {
@@ -192,6 +197,12 @@ const RapidSummary = ({
             // mutation burden does not exist in records before this implementation, and no backfill will be done on the backend, silent fail this
             // eslint-disable-next-line no-console
             console.error('mutation-burden call error', e?.message);
+          }
+
+          if (appendicesResp.status === 'fulfilled') {
+            setAppendices(appendicesResp.value);
+          } else if (!isPrint) {
+            snackbar.error(appendicesResp.reason?.content?.error?.message);
           }
 
           if (signaturesResp.status === 'fulfilled') {
@@ -608,6 +619,7 @@ const RapidSummary = ({
               <PatientInformation
                 canEdit={canEdit}
                 isPrint={isPrint}
+                appendices={appendices}
                 printVersion={printVersion}
                 loadedDispatch={loadedDispatch}
               />
@@ -667,6 +679,7 @@ const RapidSummary = ({
             <PatientInformation
               canEdit={canEdit}
               isPrint={isPrint}
+              appendices={appendices}
               printVersion={printVersion}
               loadedDispatch={loadedDispatch}
             />

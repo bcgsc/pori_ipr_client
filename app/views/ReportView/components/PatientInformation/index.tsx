@@ -6,7 +6,6 @@ import {
   IconButton,
   Grid,
 } from '@mui/material';
-import api from '@/services/api';
 import EditIcon from '@mui/icons-material/Edit';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import ReportContext, { ReportType, PatientInformationType } from '@/context/ReportContext';
@@ -15,11 +14,13 @@ import PatientEdit from '@/components/PatientEdit';
 import snackbar from '@/services/SnackbarUtils';
 import SummaryPrintTable from '@/components/SummaryPrintTable';
 import './index.scss';
+import { AppendicesType } from '../Appendices/types';
 
 type PatientInformationProps = {
   loadedDispatch: ({ type }: { type: string }) => void;
   canEdit: boolean;
   isPrint: boolean;
+  appendices: AppendicesType;
   printVersion?: 'standardLayout' | 'condensedLayout' | null;
 };
 
@@ -28,6 +29,7 @@ const PatientInformation = ({
   canEdit,
   isPrint,
   printVersion,
+  appendices,
 }: PatientInformationProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
   const [showPatientEdit, setShowPatientEdit] = useState(false);
@@ -41,10 +43,9 @@ const PatientInformation = ({
   useEffect(() => {
     if (report?.ident) {
       const getData = async () => {
-        const appendicesResp = await api.get(`/reports/${report.ident}/appendices`).request();
         let biopsyCollectionDate;
-        if (appendicesResp.sampleInfo) {
-          biopsyCollectionDate = appendicesResp.sampleInfo[0]['Collection Date'];
+        if (appendices && appendices.sampleInfo) {
+          biopsyCollectionDate = appendices.sampleInfo[0]['Collection Date'];
         }
         try {
           setPatientInformation([
@@ -96,7 +97,7 @@ const PatientInformation = ({
 
       getData();
     }
-  }, [loadedDispatch, report, isPrint]);
+  }, [loadedDispatch, report, appendices, isPrint]);
 
   const handlePatientEditClose = useCallback((
     newPatientData: PatientInformationType,
