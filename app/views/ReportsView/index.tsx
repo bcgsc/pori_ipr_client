@@ -1,30 +1,17 @@
 import React, {
-  useState, useEffect, useCallback,
+  useState, useEffect,
 } from 'react';
-import { AgGridReact } from '@ag-grid-community/react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { ColumnState } from '@ag-grid-community/core';
+import ReportsTableComponent from '@/components/ReportsTable';
 
 import startCase from '@/utils/startCase';
-import useGrid from '@/hooks/useGrid';
 import useResource from '@/hooks/useResource';
 import api from '@/services/api';
 import { ReportType } from '@/context/ReportContext';
-import LaunchCell from '@/components/LaunchCell';
-import columnDefs from './columnDefs';
-
-import './index.scss';
 
 /**
  * Report table containing all reports
  */
-const ReportsTableComponent = (): JSX.Element => {
-  const {
-    gridApi,
-    colApi,
-    onGridReady,
-  } = useGrid();
-
+const ReportsView = (): JSX.Element => {
   const {
     adminAccess, unreviewedAccess, nonproductionAccess, allStates, unreviewedStates, nonproductionStates,
   } = useResource();
@@ -80,43 +67,9 @@ const ReportsTableComponent = (): JSX.Element => {
     }
   }, [adminAccess, allStates, nonproductionStates, unreviewedStates, nonproductionAccess, unreviewedAccess, rowData]);
 
-  const onGridSizeChanged = useCallback((params) => {
-    const MEDIUM_SCREEN_WIDTH_LOWER = 992;
-
-    if (params.clientWidth >= MEDIUM_SCREEN_WIDTH_LOWER) {
-      gridApi.sizeColumnsToFit();
-    } else {
-      const colsToAutoSize = colApi.getAllColumns()
-        .filter((col: ColumnState) => !col.pinned)
-        .map((col: ColumnState) => col.colId);
-      colApi.autoSizeColumns(colsToAutoSize);
-    }
-  }, [colApi, gridApi]);
-
-  const defaultColDef = {
-    sortable: true,
-    resizable: true,
-    filter: true,
-  };
-
   return (
-    <div className="ag-theme-material reports-table__container">
-      <AgGridReact
-        columnDefs={columnDefs}
-        defaultColDef={defaultColDef}
-        enableCellTextSelection
-        frameworkComponents={{
-          Launch: LaunchCell,
-        }}
-        onGridReady={onGridReady}
-        onGridSizeChanged={onGridSizeChanged}
-        pagination
-        paginationAutoPageSize
-        rowData={rowData}
-        rowSelection="single"
-      />
-    </div>
+    <ReportsTableComponent rowData={rowData} />
   );
 };
 
-export default ReportsTableComponent;
+export default ReportsView;
