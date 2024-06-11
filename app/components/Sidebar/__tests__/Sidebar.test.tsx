@@ -54,8 +54,11 @@ test('includes basename in links when provided', async () => {
     </ThemeProvider>,
   );
 
-  let link = (await screen.findByText('Reports')).closest('a');
+  let link = (await screen.findByText('All Reports')).closest('a');
   expect(link.href).toEqual(`${window.location.origin}/ipr/reports`);
+
+  link = (await screen.findByText('My Reports')).closest('a');
+  expect(link.href).toEqual(`${window.location.origin}/ipr/my-reports`);
 
   link = (await screen.findByText('Germline')).closest('a');
   expect(link.href).toEqual(`${window.location.origin}/ipr/germline`);
@@ -75,8 +78,11 @@ test('has valid links when no basename provided', async () => {
     </ThemeProvider>,
   );
 
-  let link = (await screen.findByText('Reports')).closest('a');
+  let link = (await screen.findByText('All Reports')).closest('a');
   expect(link.href).toEqual(`${window.location.origin}/reports`);
+
+  link = (await screen.findByText('My Reports')).closest('a');
+  expect(link.href).toEqual(`${window.location.origin}/my-reports`);
 
   link = (await screen.findByText('Germline')).closest('a');
   expect(link.href).toEqual(`${window.location.origin}/germline`);

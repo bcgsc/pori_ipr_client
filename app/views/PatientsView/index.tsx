@@ -8,7 +8,7 @@ import api from '@/services/api';
 import useGrid from '@/hooks/useGrid';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import snackbar from '@/services/SnackbarUtils';
-import columnDefs from '../ReportsView/columnDefs';
+import columnDefs from '@/components/ReportsTable/columnDefs.js';
 
 import '../ReportsView/index.scss';
 

@@ -29,13 +29,14 @@ import { Box } from '@mui/system';
 const LoginView = lazy(() => import('../LoginView'));
 const TermsView = lazy(() => import('../TermsView'));
 const ReportsView = lazy(() => import('../ReportsView'));
+const MyReportsView = lazy(() => import('../MyReportsView'));
+const PatientsView = lazy(() => import('../PatientsView'));
 const ReportView = lazy(() => import('../ReportView'));
 const PrintView = lazy(() => import('../PrintView'));
 const CondensedPrintView = (props) => <PrintView {...props} printVersion="condensedLayout" />;
 const GermlineView = lazy(() => import('../GermlineView'));
 const AdminView = lazy(() => import('../AdminView'));
 const LinkOutView = lazy(() => import('../LinkOutView'));
-const PatientsView = lazy(() => import('../PatientsView'));
 const TemplateView = lazy(() => import('../TemplateView'));
 const ProjectsView = lazy(() => import('../ProjectsView'));
 
@@ -181,6 +182,7 @@ const Main = (): JSX.Element => {
                   <AuthenticatedRoute component={TermsView} path="/terms" />
                   <AuthenticatedRoute exact component={PatientsView} path="/reports/patients/:patientId" />
                   <AuthenticatedRoute component={ReportsView} path="/reports" />
+                  <AuthenticatedRoute component={MyReportsView} path="/my-reports" />
                   <Redirect exact from="/report/:ident/(genomic|probe)/summary" to="/report/:ident/summary" />
                   <AuthenticatedRoute component={ReportView} path="/report/:ident" />
                   <AuthenticatedRoute component={PrintView} path="/print/:ident" showNav={false} onToggleNav={setIsNavVisible} />
