@@ -55,11 +55,11 @@ const customTypeSort = (variant) => {
   return 3;
 };
 
-  type KeyAlterationsProps = {
-    loadedDispatch?: ({ type }: { type: string }) => void;
-    isPrint: boolean;
-    printVersion?: 'standardLayout' | 'condensedLayout' | null;
-  } & WithLoadingInjectedProps;
+type KeyAlterationsProps = {
+  loadedDispatch?: ({ type }: { type: string }) => void;
+  isPrint: boolean;
+  printVersion?: 'standardLayout' | 'condensedLayout' | null;
+} & WithLoadingInjectedProps;
 
 const KeyAlterations = ({
   isPrint = false,

@@ -74,7 +74,6 @@ const useResources = (): ResourceContextType => {
       if (checkAccess(groups, NONPRODUCTION_ACCESS, NONPRODUCTION_ACCESS_BLOCK)) {
         setNonproductionAccess(true);
       }
-
     }
   }, [groups]);
 
