@@ -68,7 +68,7 @@ const ReportsView = (): JSX.Element => {
   }, [adminAccess, allStates, nonproductionStates, unreviewedStates, nonproductionAccess, unreviewedAccess, rowData]);
 
   return (
-    <>{ReportsTableComponent(rowData)}</>
+    <ReportsTableComponent rowData={rowData} />
   );
 };
 

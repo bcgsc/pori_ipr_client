@@ -14,7 +14,12 @@ import './index.scss';
 /**
  * Report table containing all reports
  */
-const ReportsTableComponent = (reportsData: ReportType[]): JSX.Element => {
+
+type ReportsTableProps = {
+  rowData: ReportType[];
+};
+
+const ReportsTableComponent = ({ rowData }: ReportsTableProps): JSX.Element => {
   const {
     gridApi,
     colApi,
@@ -55,7 +60,7 @@ const ReportsTableComponent = (reportsData: ReportType[]): JSX.Element => {
         noRowsOverlayComponent="NoRowsOverlay"
         pagination
         paginationAutoPageSize
-        rowData={reportsData}
+        rowData={rowData}
         rowSelection="single"
       />
     </div>
