@@ -1,4 +1,6 @@
-import React, { useContext, useCallback, useMemo } from 'react';
+import React, {
+  useContext, useCallback, useMemo, useState,
+} from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   Drawer,
@@ -11,9 +13,13 @@ import {
   useMediaQuery,
   Theme,
   DrawerProps,
+  Collapse,
+  Box,
 } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import HomeIcon from '@mui/icons-material/Home';
 import AssignmentIcon from '@mui/icons-material/Assignment';
+import AssignmentInd from '@mui/icons-material/AssignmentInd';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import PersonIcon from '@mui/icons-material/Person';
@@ -23,6 +29,8 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import FilePresentIcon from '@mui/icons-material/FilePresent';
 import NotesIcon from '@mui/icons-material/Notes';
 
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
 import GermlineIcon from '@/statics/images/germline_icon.svg';
 import SidebarContext from '@/context/SidebarContext';
 import useResource from '@/hooks/useResource';
@@ -35,6 +43,7 @@ const Sidebar = (): JSX.Element => {
   const {
     germlineAccess, reportsAccess, managerAccess, adminAccess, templateEditAccess, appendixEditAccess,
   } = useResource();
+  const [open, setOpen] = useState(true);
 
   const handleSidebarClose = useCallback(() => {
     setSidebarMaximized(false);
@@ -208,6 +217,71 @@ const Sidebar = (): JSX.Element => {
       );
     }
 
+    const nestedReportsList = () => {
+      const handleClick = () => {
+        setOpen(!open);
+      };
+
+      return (
+        <>
+          <ListItem
+            className="sidebar__collapsible"
+            onClick={handleClick}
+          >
+            <HomeIcon color="action" sx={{ scale: '110%' }} />
+            <Typography
+              display="inline"
+              className={`sidebar__collapsing-text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
+            >
+              Reports
+            </Typography>
+            {open ? <ExpandLess className="expand-arrow" /> : <ExpandMore className="expand-arrow" />}
+          </ListItem>
+          <Collapse in={open} timeout="auto" unmountOnExit>
+            <ListItem
+              className={`
+              sidebar__collapse-item
+              ${pathname.includes('report') && !pathname.includes('germline') && !pathname.includes('my') ? 'sidebar__collapse-item--active' : ''}
+            `}
+              disableGutters
+            >
+              {sidebarMaximized && (
+                <Box sx={{ width: '8px' }} />
+              )}
+              <Link className="sidebar__link" to="/reports">
+                <AssignmentIcon color="action" />
+                <Typography
+                  display="inline"
+                  className={`sidebar__subtext ${sidebarMaximized ? 'sidebar__subtext--visible' : 'sidebar__subtext--hidden'}`}
+                  variant="subtitle1"
+                >
+                  All Reports
+                </Typography>
+              </Link>
+            </ListItem>
+            <ListItem
+              className={`sidebar__collapse-item ${pathname.includes('my') ? 'sidebar__collapse-item--active' : ''}`}
+              disableGutters
+            >
+              {sidebarMaximized && (
+              <Box sx={{ width: '8px' }} />
+              )}
+              <Link className="sidebar__link" to="/my-reports">
+                <AssignmentInd color="action" />
+                <Typography
+                  display="inline"
+                  className={`sidebar__subtext ${sidebarMaximized ? 'sidebar__subtext--visible' : 'sidebar__subtext--hidden'}`}
+                  variant="subtitle1"
+                >
+                  My Reports
+                </Typography>
+              </Link>
+            </ListItem>
+          </Collapse>
+        </>
+      );
+    };
+
     return (
       <div>
         <div className="sidebar__minimize">
@@ -218,23 +292,7 @@ const Sidebar = (): JSX.Element => {
         <Divider />
         <List disablePadding>
           {reportsAccess && (
-            <ListItem
-              className={`
-              sidebar__list-item
-              ${pathname.includes('report') && !pathname.includes('germline') ? 'sidebar__list-item--active' : ''}
-            `}
-              disableGutters
-            >
-              <Link className="sidebar__link" to="/reports">
-                <AssignmentIcon color="action" />
-                <Typography
-                  display="inline"
-                  className={`sidebar__text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
-                >
-                  Reports
-                </Typography>
-              </Link>
-            </ListItem>
+            nestedReportsList()
           )}
           {germlineAccess && (
             <ListItem
@@ -290,7 +348,7 @@ const Sidebar = (): JSX.Element => {
         </List>
       </div>
     );
-  }, [adminAccess, managerAccess, germlineAccess, handleSidebarClose, pathname, reportsAccess, templateEditAccess, appendixEditAccess, sidebarMaximized]);
+  }, [managerAccess, adminAccess, reportsAccess, handleSidebarClose, germlineAccess, pathname, sidebarMaximized, templateEditAccess, appendixEditAccess, open]);
 
   let drawerProps: DrawerProps = {
     variant: 'temporary',
