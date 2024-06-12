@@ -159,6 +159,7 @@ const AddEditVariantText = ({
     >
       <DialogTitle>{dialogTitle}</DialogTitle>
       <DialogContent>
+        <Divider><Typography variant="caption">Add variant name and cancer type</Typography></Divider>
         <FormControl fullWidth classes={{ root: 'add-item__form-container' }} variant="outlined">
           <TextField
             className="text-field"
@@ -175,6 +176,7 @@ const AddEditVariantText = ({
             fullWidth
           />
         </FormControl>
+        <Divider><Typography variant="caption">Select template and project</Typography></Divider>
         <FormControl fullWidth classes={{ root: 'add-item__form-container' }} variant="outlined">
           <InputLabel id="template-select-label">Template</InputLabel>
           <Select
