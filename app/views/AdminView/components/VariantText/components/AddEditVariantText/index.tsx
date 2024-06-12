@@ -176,13 +176,14 @@ const AddEditVariantText = ({
           />
         </FormControl>
         <FormControl fullWidth classes={{ root: 'add-item__form-container' }} variant="outlined">
-          <InputLabel>Template</InputLabel>
+          <InputLabel id="template-select-label">Template</InputLabel>
           <Select
             variant="outlined"
             className="add-item__select-field"
             fullWidth
             required
             defaultValue=""
+            id="template-select"
             label="Template"
             onChange={handleTemplateChange}
           >
@@ -201,9 +202,10 @@ const AddEditVariantText = ({
           </Select>
         </FormControl>
         <FormControl fullWidth classes={{ root: 'add-item__form-container' }} variant="outlined">
-          <InputLabel>Project</InputLabel>
+          <InputLabel id="projects-select-label">Project</InputLabel>
           <Select
             defaultValue=""
+            id="projects-select"
             label="Project"
             variant="outlined"
             className="add-item__select-field"
