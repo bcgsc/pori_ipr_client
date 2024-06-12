@@ -227,9 +227,7 @@ const AddEditVariantText = ({
             )}
           </Select>
         </FormControl>
-      </DialogContent>
-      <Divider><Typography variant="caption">Add variant text</Typography></Divider>
-      <DialogContent>
+        <Divider><Typography variant="caption">Add variant text</Typography></Divider>
         <MenuBar editor={editor} className="IPRWYSIWYGEditor__toolbar" />
         <EditorContent editor={editor} className="IPRWYSIWYGEditor__content" />
       </DialogContent>
