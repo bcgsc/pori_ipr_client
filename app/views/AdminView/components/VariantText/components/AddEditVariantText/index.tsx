@@ -154,11 +154,10 @@ const AddEditVariantText = ({
       open={isOpen}
       maxWidth="md"
       fullWidth
-      className="edit-dialog"
+      className="variant-text__edit-dialog"
       onClose={() => onClose(null)}
     >
       <DialogTitle>{dialogTitle}</DialogTitle>
-      <Divider><Typography variant="caption">Add variant name and cancer type</Typography></Divider>
       <DialogContent>
         <FormControl fullWidth classes={{ root: 'add-item__form-container' }} variant="outlined">
           <TextField
@@ -176,18 +175,14 @@ const AddEditVariantText = ({
             fullWidth
           />
         </FormControl>
-      </DialogContent>
-      <Divider><Typography variant="caption">Select template and project</Typography></Divider>
-      <DialogContent>
         <FormControl fullWidth classes={{ root: 'add-item__form-container' }} variant="outlined">
-          <InputLabel id="template-select-label">Template</InputLabel>
+          <InputLabel>Template</InputLabel>
           <Select
             variant="outlined"
             className="add-item__select-field"
             fullWidth
             required
             defaultValue=""
-            id="template-select"
             label="Template"
             onChange={handleTemplateChange}
           >
@@ -206,10 +201,9 @@ const AddEditVariantText = ({
           </Select>
         </FormControl>
         <FormControl fullWidth classes={{ root: 'add-item__form-container' }} variant="outlined">
-          <InputLabel id="projects-select-label">Project</InputLabel>
+          <InputLabel>Project</InputLabel>
           <Select
             defaultValue=""
-            id="projects-select"
             label="Project"
             variant="outlined"
             className="add-item__select-field"

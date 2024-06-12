@@ -32,7 +32,7 @@ const columnDefs: ColDef[] = [
   },
   {
     headerName: 'Text',
-    cellRenderer: ({ data }) => (data.text ? `${data.text.substring(0, 300)}....` || '' : ''),
+    cellRenderer: ({ data }) => data.text,
     flex: 1,
     autoHeight: true,
     wrapText: true,
