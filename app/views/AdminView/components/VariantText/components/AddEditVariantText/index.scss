@@ -4,23 +4,15 @@
   .add-item {
     &__form-container {
       flex-direction: row;
+
+      .text-field {
+        margin: 8px;
+      }
     }
 
-    &__select-field {
+    &__select-label, &__select-field {
       margin: 8px;
     }
-  }
-
-  #template-select-label {
-    margin: 8px;
-  }
-
-  #projects-select-label {
-    margin: 8px;
-  }
-
-  .text-field {
-    margin: 8px;
   }
 
   .IPRWYSIWYGEditor {

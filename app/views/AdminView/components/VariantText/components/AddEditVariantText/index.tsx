@@ -26,8 +26,7 @@ import {
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
 import sanitizeHtml from 'sanitize-html';
-import { VariantTextType, TemplateType } from '@/common';
-import { ProjectType } from '../../../../types';
+import { VariantTextType, TemplateType, ProjectType } from '@/common';
 
 type AddEditVariantTextProps = {
   isOpen: boolean;
@@ -178,7 +177,7 @@ const AddEditVariantText = ({
         </FormControl>
         <Divider><Typography variant="caption">Select template and project</Typography></Divider>
         <FormControl fullWidth classes={{ root: 'add-item__form-container' }} variant="outlined">
-          <InputLabel id="template-select-label">Template</InputLabel>
+          <InputLabel id="template-select-label" className="add-item__select-label">Template</InputLabel>
           <Select
             variant="outlined"
             className="add-item__select-field"
@@ -204,7 +203,7 @@ const AddEditVariantText = ({
           </Select>
         </FormControl>
         <FormControl fullWidth classes={{ root: 'add-item__form-container' }} variant="outlined">
-          <InputLabel id="projects-select-label">Project</InputLabel>
+          <InputLabel id="projects-select-label" className="add-item__select-label">Project</InputLabel>
           <Select
             defaultValue=""
             id="projects-select"
