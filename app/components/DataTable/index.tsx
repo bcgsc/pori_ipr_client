@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import React, {
   useRef, useState, useEffect, useCallback, useContext, useMemo,
 } from 'react';
