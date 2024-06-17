@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import api from '@/services/api';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import snackbar from '@/services/SnackbarUtils';
-
+import startCase from '@/utils/startCase';
 import '../ReportsView/index.scss';
 import ReportsTableComponent from '@/components/ReportsTable';
 import { ReportType } from '@/context/ReportContext';
@@ -43,14 +43,14 @@ const PatientsView = ({
             return {
               patientID: report.patientId,
               analysisBiopsy: report.biopsyName,
-              reportType: report.type === 'genomic' ? 'Genomic' : 'Targeted Gene',
+              reportType: report.template.name === 'probe' ? 'Targeted Gene' : startCase(report.template.name),
               state: report.state,
-              caseType: report.patientInformation.caseType,
+              caseType: report?.patientInformation?.caseType,
               project: report.projects.map((project) => project.name).sort().join(', '),
-              physician: report.patientInformation.physician,
+              physician: report?.patientInformation?.physician,
               analyst: analyst ? `${analyst.firstName} ${analyst.lastName}` : null,
               reportIdent: report.ident,
-              tumourType: report.patientInformation.diagnosis,
+              tumourType: report?.patientInformation?.diagnosis,
               date: report.createdAt,
               reviewer: reviewer ? `${reviewer.firstName} ${reviewer.lastName}` : null,
               bioinformatician: bioinformatician ? `${bioinformatician.firstName} ${bioinformatician.lastName}` : null,
