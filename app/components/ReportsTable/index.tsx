@@ -1,7 +1,5 @@
 import React, { useCallback } from 'react';
 import { AgGridReact } from '@ag-grid-community/react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { ColumnState } from '@ag-grid-community/core';
 
 import useGrid from '@/hooks/useGrid';
 import { ReportType } from '@/context/ReportContext';
@@ -32,10 +30,8 @@ const ReportsTableComponent = ({ rowData }: ReportsTableProps): JSX.Element => {
     if (params.clientWidth >= MEDIUM_SCREEN_WIDTH_LOWER) {
       gridApi.sizeColumnsToFit();
     } else {
-      const colsToAutoSize = colApi.getAllColumns()
-        .filter((col: ColumnState) => !col.pinned)
-        .map((col: ColumnState) => col.colId);
-      colApi.autoSizeColumns(colsToAutoSize);
+      const allCols = colApi.getAllColumns().map((col) => col.getColId());
+      colApi.autoSizeColumns(allCols);
     }
   }, [colApi, gridApi]);
 
