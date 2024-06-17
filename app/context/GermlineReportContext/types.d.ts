@@ -1,8 +1,4 @@
-import { RecordDefaults, UserType } from '@/common';
-
-type ProjectType = {
-  name: string;
-} & RecordDefaults;
+import { RecordDefaults, UserType, ProjectType } from '@/common';
 
 type ReviewType = {
   comment: string | null;

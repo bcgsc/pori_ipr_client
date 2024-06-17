@@ -93,9 +93,9 @@ type ShortReportType = {
 
 type ProjectType = {
   name: string;
-  description: string;
-  reports: ShortReportType[];
-  users: UserType[];
+  description?: string;
+  reports?: ShortReportType[];
+  users?: UserType[];
 } & RecordDefaults;
 
 type AppendixType = {
