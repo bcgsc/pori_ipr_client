@@ -31,6 +31,7 @@ import { getDate } from '../../utils/date';
 
 import './index.scss';
 import KbMatchesActionCellRenderer from './components/KbMatchesActionCellRenderer';
+import HyperlinkCellRenderer from './components/HyperlinkCellRenderer';
 
 const MAX_VISIBLE_ROWS = 12;
 const MAX_TABLE_HEIGHT = '517px';
@@ -579,6 +580,7 @@ const DataTable = ({
                 EnsemblCellRenderer,
                 CivicCellRenderer,
                 GeneCellRenderer,
+                HyperlinkCellRenderer,
                 ActionCellRenderer: RowActionCellRenderer,
                 KbMatchesActionCellRenderer: RowKbMatchesActionCellRenderer,
                 headerCellRenderer: Header,
