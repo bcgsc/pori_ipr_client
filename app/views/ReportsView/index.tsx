@@ -3,7 +3,7 @@ import React, {
 } from 'react';
 import ReportsTableComponent from '@/components/ReportsTable';
 
-import startCase from '@/utils/startCase';
+import reportsColumns from '@/utils/reportsColumns';
 import useResource from '@/hooks/useResource';
 import api from '@/services/api';
 import { ReportType } from '@/context/ReportContext';
@@ -46,21 +46,9 @@ const ReportsView = (): JSX.Element => {
             .filter((u) => u.role === 'bioinformatician')
             .map((u) => u.user);
 
-          return {
-            patientID: report.patientId,
-            analysisBiopsy: report.biopsyName,
-            reportType: report.template.name === 'probe' ? 'Targeted Gene' : startCase(report.template.name),
-            state: report.state,
-            caseType: report?.patientInformation?.caseType,
-            project: report.projects.map((project) => project.name).sort().join(', '),
-            physician: report?.patientInformation?.physician,
-            analyst: analyst ? `${analyst.firstName} ${analyst.lastName}` : null,
-            reportIdent: report.ident,
-            tumourType: report?.patientInformation?.diagnosis,
-            date: report.createdAt,
-            reviewer: reviewer ? `${reviewer.firstName} ${reviewer.lastName}` : null,
-            bioinformatician: bioinformatician ? `${bioinformatician.firstName} ${bioinformatician.lastName}` : null,
-          };
+          return (
+            reportsColumns(report, analyst, reviewer, bioinformatician)
+          );
         }));
       };
       getData();
