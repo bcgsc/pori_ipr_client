@@ -44,7 +44,7 @@ const PatientInformation = ({
     if (report?.ident) {
       const getData = async () => {
         let biopsyCollectionDate;
-        if (appendices && appendices.sampleInfo) {
+        if (appendices && appendices.sampleInfo && appendices.sampleInfo[0]['Sample'] === 'Tumour') {
           biopsyCollectionDate = appendices.sampleInfo[0]['Collection Date'];
         }
         try {
