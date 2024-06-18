@@ -133,6 +133,7 @@ const AddEditVariantText = ({
       onClose(returnedData);
       setTemplate(null);
       setProject(null);
+      editor.commands.clearContent();
     } catch (err) {
       if (err.message && err.message.includes('[409]')) {
         let projectStr = '';
