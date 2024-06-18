@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import api from '@/services/api';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import snackbar from '@/services/SnackbarUtils';
-
+import reportsColumns from '@/utils/reportsColumns';
 import '../ReportsView/index.scss';
 import ReportsTableComponent from '@/components/ReportsTable';
 import { ReportType } from '@/context/ReportContext';
@@ -40,21 +40,9 @@ const PatientsView = ({
               report.patientInformation = {};
             }
 
-            return {
-              patientID: report.patientId,
-              analysisBiopsy: report.biopsyName,
-              reportType: report.type === 'genomic' ? 'Genomic' : 'Targeted Gene',
-              state: report.state,
-              caseType: report.patientInformation.caseType,
-              project: report.projects.map((project) => project.name).sort().join(', '),
-              physician: report.patientInformation.physician,
-              analyst: analyst ? `${analyst.firstName} ${analyst.lastName}` : null,
-              reportIdent: report.ident,
-              tumourType: report.patientInformation.diagnosis,
-              date: report.createdAt,
-              reviewer: reviewer ? `${reviewer.firstName} ${reviewer.lastName}` : null,
-              bioinformatician: bioinformatician ? `${bioinformatician.firstName} ${bioinformatician.lastName}` : null,
-            };
+            return (
+              reportsColumns(report, analyst, reviewer, bioinformatician)
+            );
           }).filter((report) => (
             report.patientID === patientId || report.alternateIdentifier === patientId
           )));
