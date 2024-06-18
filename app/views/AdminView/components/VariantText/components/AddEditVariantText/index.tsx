@@ -47,7 +47,7 @@ const AddEditVariantText = ({
   const [projectOptions, setProjectOptions] = useState([]);
   const [template, setTemplate] = useState<TemplateType>();
   const [templateOptions, setTemplateOptions] = useState([]);
-  const [templateSelected, setTemplateSelected] = useState<boolean>(false);
+  const [textEntered, setTextEntered] = useState<boolean>(false);
   const [variantName, setVariantName] = useState<string>('');
   const [cancerType, setCancerType] = useState<string>('');
 
@@ -90,12 +90,12 @@ const AddEditVariantText = ({
   };
 
   useEffect(() => {
-    if (template) {
-      setTemplateSelected(true);
+    if (variantName && cancerType) {
+      setTextEntered(true);
     } else {
-      setTemplateSelected(false);
+      setTextEntered(false);
     }
-  }, [template]);
+  }, [variantName, cancerType]);
 
   const handleSubmit = useCallback(async () => {
     try {
@@ -114,16 +114,9 @@ const AddEditVariantText = ({
           }),
         },
       });
-      let res;
-      if (project) {
-        res = await api.post('/variant-text', {
-          template: template?.ident, project: project.ident, variantName, cancerType, text: sanitizedText,
-        }).request();
-      } else {
-        res = await api.post('/variant-text', {
-          template: template?.ident, variantName, cancerType, text: sanitizedText,
-        }).request();
-      }
+      const res = await api.post('/variant-text', {
+        template: template?.ident, project: project?.ident, variantName, cancerType, text: sanitizedText,
+      }).request();
       snackbar.success('Variant text record created successfully');
       const returnedData: VariantTextType = {
         ...res,
@@ -245,7 +238,7 @@ const AddEditVariantText = ({
           Cancel
         </Button>
         <Button
-          disabled={!templateSelected}
+          disabled={!textEntered}
           onClick={handleSubmit}
           color="secondary"
         >
