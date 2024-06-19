@@ -45,10 +45,9 @@ const PatientInformation = ({
       const getData = async () => {
         let biopsyCollectionDate;
         if (appendices && appendices.sampleInfo) {
-          appendices.sampleInfo.map((info)=>{
-            if (info['Sample']=== 'Tumour')
-              biopsyCollectionDate = info['Collection Date'];
-          })
+          appendices.sampleInfo.forEach((info) => {
+            if (info.Sample === 'Tumour') biopsyCollectionDate = info['Collection Date'];
+          });
         }
         try {
           setPatientInformation([
