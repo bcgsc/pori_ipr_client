@@ -61,10 +61,10 @@ function Appendices(): JSX.Element {
     try {
       if (rowData.project) {
         await api.del(`/appendix?templateId=${rowData.template.ident}&projectId=${rowData.project.ident}`, {}, {}).request();
-        setAppendices((prevVal) => prevVal.filter((appendix) => appendix.ident !== rowData.ident));
       } else {
         await api.del(`/appendix?templateId=${rowData.template.ident}`, {}, {}).request();
       }
+      setAppendices((prevVal) => prevVal.filter((appendix) => appendix.ident !== rowData.ident));
       snackbar.success('Appendix deleted');
     } catch (err) {
       snackbar.error(`Error deleting appendix: ${err}`);

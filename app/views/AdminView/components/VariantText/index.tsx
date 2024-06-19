@@ -61,6 +61,7 @@ function VariantText(): JSX.Element {
     try {
       await api.del(`/variant-text/${rowData.ident}`, {}, {}).request();
       snackbar.success('Variant text deleted');
+      setVariantText((prevVal) => prevVal.filter((variant) => variant.ident !== rowData.ident));
     } catch (err) {
       snackbar.error(`Error deleting variant text: ${err}`);
     }
