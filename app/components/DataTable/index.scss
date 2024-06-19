@@ -46,3 +46,8 @@
 .cell-wrap-text {
   white-space: normal;
 }
+
+.ag-center-cols-clipper,
+.ag-center-cols-container {
+  min-height: 36px !important;
+}
