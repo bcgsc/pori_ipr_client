@@ -25,11 +25,12 @@ import EnsemblCellRenderer from './components/EnsemblCellRenderer';
 import CivicCellRenderer from './components/CivicCellRenderer';
 import GeneCellRenderer from './components/GeneCellRenderer';
 import { ActionCellRenderer } from './components/ActionCellRenderer';
+import { HTMLCellRenderer } from './components/HTMLCellRenderer';
+import KbMatchesActionCellRenderer from './components/KbMatchesActionCellRenderer';
 import NoRowsOverlay from './components/NoRowsOverlay';
 import { getDate } from '../../utils/date';
 
 import './index.scss';
-import KbMatchesActionCellRenderer from './components/KbMatchesActionCellRenderer';
 
 const MAX_VISIBLE_ROWS = 12;
 const MAX_TABLE_HEIGHT = '517px';
@@ -582,6 +583,7 @@ const DataTable = ({
                 KbMatchesActionCellRenderer: RowKbMatchesActionCellRenderer,
                 headerCellRenderer: Header,
                 NoRowsOverlay,
+                HTMLCellRenderer,
               }}
               suppressAnimationFrame
               suppressRowTransform={Boolean(collapseColumnFields)}
