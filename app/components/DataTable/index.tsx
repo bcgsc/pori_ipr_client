@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import React, {
   useRef, useState, useEffect, useCallback, useContext, useMemo,
 } from 'react';
@@ -27,6 +28,8 @@ import GeneCellRenderer from './components/GeneCellRenderer';
 import { ActionCellRenderer } from './components/ActionCellRenderer';
 import { HTMLCellRenderer } from './components/HTMLCellRenderer';
 import KbMatchesActionCellRenderer from './components/KbMatchesActionCellRenderer';
+import HyperlinkCellRenderer from './components/HyperlinkCellRenderer';
+
 import NoRowsOverlay from './components/NoRowsOverlay';
 import { getDate } from '../../utils/date';
 
@@ -579,6 +582,7 @@ const DataTable = ({
                 EnsemblCellRenderer,
                 CivicCellRenderer,
                 GeneCellRenderer,
+                HyperlinkCellRenderer,
                 ActionCellRenderer: RowActionCellRenderer,
                 KbMatchesActionCellRenderer: RowKbMatchesActionCellRenderer,
                 headerCellRenderer: Header,

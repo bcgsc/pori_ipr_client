@@ -30,6 +30,7 @@ const LoginView = lazy(() => import('../LoginView'));
 const TermsView = lazy(() => import('../TermsView'));
 const ReportsView = lazy(() => import('../ReportsView'));
 const MyReportsView = lazy(() => import('../MyReportsView'));
+const PatientsView = lazy(() => import('../PatientsView'));
 const ReportView = lazy(() => import('../ReportView'));
 const PrintView = lazy(() => import('../PrintView'));
 const CondensedPrintView = (props) => <PrintView {...props} printVersion="condensedLayout" />;
@@ -179,6 +180,7 @@ const Main = (): JSX.Element => {
                     <Redirect to={{ pathname: '/reports' }} />
                   </Route>
                   <AuthenticatedRoute component={TermsView} path="/terms" />
+                  <AuthenticatedRoute exact component={PatientsView} path="/reports/patients/:patientId" />
                   <AuthenticatedRoute component={ReportsView} path="/reports" />
                   <AuthenticatedRoute component={MyReportsView} path="/my-reports" />
                   <Redirect exact from="/report/:ident/(genomic|probe)/summary" to="/report/:ident/summary" />
