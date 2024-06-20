@@ -149,7 +149,7 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
             ? (evt) => handleMultiTargets(evt, 'chemoresistance')
             : handleUpdateTherapeuticTargets('chemoresistance')}
         >
-          Add to Potential Chemoresistance
+          Add to Potential Resistance and Toxicity
         </MenuItem>
         {
           isMult && (
