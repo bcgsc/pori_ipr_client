@@ -29,6 +29,7 @@ import { ActionCellRenderer } from './components/ActionCellRenderer';
 import { HTMLCellRenderer } from './components/HTMLCellRenderer';
 import KbMatchesActionCellRenderer from './components/KbMatchesActionCellRenderer';
 import HyperlinkCellRenderer from './components/HyperlinkCellRenderer';
+import { ToolTip } from './components/ToolTip';
 
 import NoRowsOverlay from './components/NoRowsOverlay';
 import { getDate } from '../../utils/date';
@@ -578,6 +579,7 @@ const DataTable = ({
                 canViewDetails,
                 tableType,
               }}
+              tooltipShowDelay={0}
               frameworkComponents={{
                 EnsemblCellRenderer,
                 CivicCellRenderer,
@@ -588,6 +590,7 @@ const DataTable = ({
                 headerCellRenderer: Header,
                 NoRowsOverlay,
                 HTMLCellRenderer,
+                ToolTip,
               }}
               suppressAnimationFrame
               suppressRowTransform={Boolean(collapseColumnFields)}

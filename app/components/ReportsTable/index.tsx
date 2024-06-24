@@ -5,6 +5,7 @@ import useGrid from '@/hooks/useGrid';
 import { ReportType } from '@/context/ReportContext';
 import LaunchCell from '@/components/LaunchCell';
 import NoRowsOverlay from '@/components/DataTable/components/NoRowsOverlay';
+import { ToolTip } from '@/components/DataTable/components/ToolTip';
 import columnDefs from './columnDefs';
 
 import './index.scss';
@@ -50,6 +51,7 @@ const ReportsTableComponent = ({ rowData }: ReportsTableProps): JSX.Element => {
         frameworkComponents={{
           Launch: LaunchCell,
           NoRowsOverlay,
+          ToolTip,
         }}
         onGridReady={onGridReady}
         onGridSizeChanged={onGridSizeChanged}
