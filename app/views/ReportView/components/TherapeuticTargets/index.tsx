@@ -204,6 +204,8 @@ const Therapeutic = ({
     }
   }, [chemoresistanceData, therapeuticData, report]);
 
+  console.log(therapeuticData, chemoresistanceData);
+
   if (isPrint && printVersion === 'standardLayout') {
     return (
       <div className="therapeutic-print">
@@ -217,6 +219,7 @@ const Therapeutic = ({
           fullWidth
           data={therapeuticData}
           columnDefs={columnDefs}
+          collapseableCols={['gene', 'variant']}
         />
         <Typography
           className="therapeutic-print__title"
@@ -228,6 +231,7 @@ const Therapeutic = ({
           fullWidth
           data={chemoresistanceData}
           columnDefs={columnDefs}
+          collapseableCols={['gene', 'variant']}
         />
       </div>
     );
@@ -248,6 +252,7 @@ const Therapeutic = ({
           fullWidth
           data={therapeuticData}
           columnDefs={columnDefs}
+          collapseableCols={['gene', 'variant']}
         />
         <br />
         <Typography
@@ -262,6 +267,7 @@ const Therapeutic = ({
           fullWidth
           data={chemoresistanceData}
           columnDefs={columnDefs}
+          collapseableCols={['gene', 'variant']}
         />
       </div>
     );
