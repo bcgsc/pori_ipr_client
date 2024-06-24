@@ -14,13 +14,11 @@ import PatientEdit from '@/components/PatientEdit';
 import snackbar from '@/services/SnackbarUtils';
 import SummaryPrintTable from '@/components/SummaryPrintTable';
 import './index.scss';
-import { AppendicesType } from '../Appendices/types';
 
 type PatientInformationProps = {
   loadedDispatch: ({ type }: { type: string }) => void;
   canEdit: boolean;
   isPrint: boolean;
-  appendices: AppendicesType;
   printVersion?: 'standardLayout' | 'condensedLayout' | null;
 };
 
@@ -29,7 +27,6 @@ const PatientInformation = ({
   canEdit,
   isPrint,
   printVersion,
-  appendices,
 }: PatientInformationProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
   const [showPatientEdit, setShowPatientEdit] = useState(false);
@@ -43,12 +40,6 @@ const PatientInformation = ({
   useEffect(() => {
     if (report?.ident) {
       const getData = async () => {
-        let biopsyCollectionDate;
-        if (appendices && appendices.sampleInfo) {
-          appendices.sampleInfo.forEach((info) => {
-            if (info.Sample === 'Tumour') biopsyCollectionDate = info['Collection Date'];
-          });
-        }
         try {
           setPatientInformation([
             {
@@ -85,7 +76,11 @@ const PatientInformation = ({
             },
             {
               label: 'Biopsy Collection Date',
-              value: biopsyCollectionDate,
+              value: report?.reportSampleInfo?.find((info) => info.sample === 'Tumour')?.collectionDate,
+            },
+            {
+              label: 'Biopsy Type',
+              value: report?.reportSampleInfo?.find((info) => info.sample === 'Tumour')?.biopsyType,
             },
           ]);
         } catch (err) {
@@ -99,7 +94,7 @@ const PatientInformation = ({
 
       getData();
     }
-  }, [loadedDispatch, report, appendices, isPrint]);
+  }, [loadedDispatch, report, isPrint]);
 
   const handlePatientEditClose = useCallback((
     newPatientData: PatientInformationType,
