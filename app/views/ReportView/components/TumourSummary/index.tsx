@@ -35,13 +35,7 @@ const TumourSummary = ({
   const [primaryBurden, setPrimaryBurden] = useState<MutationBurdenType>();
   const [tmburMutBur, setTmburMutBur] = useState<TmburType>();
 
-  const [microbial, setMicrobial] = useState<MicrobialType[]>([{
-    species: '',
-    integrationSite: '',
-    ident: '',
-    createdAt: null,
-    updatedAt: null,
-  }]);
+  const [microbial, setMicrobial] = useState<MicrobialType[]>();
   const [tCellCd8, setTCellCd8] = useState<ImmuneType>();
 
   const classNamePrefix = isPrint ? 'tumour-summary--print' : 'tumour-summary';

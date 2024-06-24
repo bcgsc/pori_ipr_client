@@ -46,7 +46,7 @@ type TumourSummaryEditProps = {
 };
 
 const TumourSummaryEdit = ({
-  microbial,
+  microbial = [],
   report,
   report: {
     template: { name: reportType },
@@ -361,6 +361,18 @@ const TumourSummaryEdit = ({
 
   const reportDataSection = useMemo(() => {
     if (newReportData) {
+      const captiv8Section = (
+        <TextField
+          className="tumour-dialog__text-field"
+          label="Preliminary CAPTIV-8 Score"
+          value={newReportData.captiv8Score}
+          name="captiv8Score"
+          onChange={handleReportChange}
+          variant="outlined"
+          fullWidth
+          type="number"
+        />
+      );
       if (reportType === 'genomic') {
         return (
           <>
@@ -384,22 +396,12 @@ const TumourSummaryEdit = ({
               multiline
               fullWidth
             />
+            {captiv8Section}
           </>
         );
       }
       if (reportType === 'rapid') {
-        return (
-          <TextField
-            className="tumour-dialog__text-field"
-            label="Preliminary CAPTIV-8 Score"
-            value={newReportData.captiv8Score}
-            name="captiv8Score"
-            onChange={handleReportChange}
-            variant="outlined"
-            fullWidth
-            type="number"
-          />
-        );
+        return captiv8Section;
       }
     }
     return null;
