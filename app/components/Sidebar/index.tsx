@@ -27,6 +27,8 @@ import PeopleIcon from '@mui/icons-material/People';
 import FolderSharedIcon from '@mui/icons-material/FolderShared';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import FilePresentIcon from '@mui/icons-material/FilePresent';
+import NotesIcon from '@mui/icons-material/Notes';
+
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import GermlineIcon from '@/statics/images/germline_icon.svg';
@@ -134,6 +136,23 @@ const Sidebar = (): JSX.Element => {
                 className={`sidebar__text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
               >
                 Appendices
+              </Typography>
+            </Link>
+          </ListItem>
+          <ListItem
+            className={`
+                sidebar__list-item
+                ${pathname.includes('admin/variant-text') ? 'sidebar__list-item--active' : ''}
+              `}
+            disableGutters
+          >
+            <Link className="sidebar__link" to="/admin/variant-text">
+              <NotesIcon color="action" />
+              <Typography
+                display="inline"
+                className={`sidebar__text ${sidebarMaximized ? 'sidebar__text--visible' : 'sidebar__text--hidden'}`}
+              >
+                Variant Text
               </Typography>
             </Link>
           </ListItem>
