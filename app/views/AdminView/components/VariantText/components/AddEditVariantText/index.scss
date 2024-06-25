@@ -1,0 +1,36 @@
+@import '@/styles/_theme.module.scss';
+
+.variant-text__edit-dialog {
+  .add-item {
+    &__form-container {
+      flex-direction: row;
+
+      .text-field {
+        margin: 8px;
+      }
+    }
+
+    &__select-label, &__select-field {
+      margin: 8px;
+    }
+  }
+
+  .IPRWYSIWYGEditor {
+    &__content {
+      margin: 8px;
+      padding: 0.5rem;
+      border: 1px solid $palette__grey--300;
+      min-height: 250px;
+    }
+
+    &__toolbar {
+      z-index: +1;
+      position: sticky;
+      top: 0;
+      padding: 8px;
+      width: 100%;
+      background-color: $palette__common--white;
+      border-bottom: none;
+    }
+  }
+}
