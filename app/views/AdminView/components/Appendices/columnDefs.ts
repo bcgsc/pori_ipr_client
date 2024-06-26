@@ -27,6 +27,7 @@ const columnDefs: ColDef[] = [
     cellRendererParams: {
       mode: DisplayMode.compact,
     },
+    cellClass: 'HTMLCellRenderer__container',
     flex: 1,
     wrapText: true,
     cellStyle: { overflow: 'auto' },

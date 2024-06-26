@@ -3,6 +3,8 @@ import React, {
   useCallback, useEffect, useRef, useState,
 } from 'react';
 
+import './index.scss';
+
 enum DisplayMode {
   normal, compact,
 }
@@ -32,7 +34,7 @@ const HTMLCellRenderer = (props: HTMLCellRendererProps) => {
               Number((entry.target as HTMLElement).style.height)
               !== height
             ) {
-              const htmlContainer = cellRef.current.closest('.HTMLCellRenderer__container');
+              const htmlContainer = cellRef.current.closest('.HTMLCellRenderer__content');
               if (dispMode === DisplayMode.normal) {
                 node.setRowHeight(entry.contentRect.height);
                 api.onRowHeightChanged();
@@ -76,7 +78,7 @@ const HTMLCellRenderer = (props: HTMLCellRendererProps) => {
   return (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events
     <div
-      className="HTMLCellRenderer__container"
+      className="HTMLCellRenderer__content"
       onClick={handleOnClick}
       ref={cellRef}
       role="button"
