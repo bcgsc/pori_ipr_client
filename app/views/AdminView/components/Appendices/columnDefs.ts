@@ -1,5 +1,6 @@
 import { formatDate } from '@/utils/date';
 import { ColDef } from '@ag-grid-community/core';
+import { DisplayMode } from '@/components/DataTable/components/HTMLCellRenderer';
 
 const columnDefs: ColDef[] = [
   {
@@ -22,10 +23,14 @@ const columnDefs: ColDef[] = [
   },
   {
     headerName: 'Appendix Text',
-    cellRenderer: ({ data }) => (data.text ? `${data.text.substring(0, 300)}....` || '' : ''),
+    cellRenderer: 'HTMLCellRenderer',
+    cellRendererParams: {
+      mode: DisplayMode.compact,
+    },
+    cellClass: 'HTMLCellRenderer__container',
     flex: 1,
-    autoHeight: true,
     wrapText: true,
+    cellStyle: { overflow: 'auto' },
   },
   {
     headerName: 'Actions',
