@@ -13,6 +13,7 @@ import {
   InputLabel,
   Divider,
   Typography,
+  TextField,
 } from '@mui/material';
 import snackbar from '@/services/SnackbarUtils';
 
@@ -25,12 +26,11 @@ import {
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
 import sanitizeHtml from 'sanitize-html';
-import { AppendixType, TemplateType } from '@/common';
-import { ProjectType } from '../../../../types';
+import { VariantTextType, TemplateType, ProjectType } from '@/common';
 
-type AddEditAppendixProps = {
+type AddEditVariantTextProps = {
   isOpen: boolean;
-  onClose: (newData?: AppendixType) => void;
+  onClose: (newData?: VariantTextType) => void;
 };
 
 const extensions = [
@@ -38,16 +38,18 @@ const extensions = [
   Underline,
 ];
 
-const AddEditAppendix = ({
+const AddEditVariantText = ({
   isOpen,
   onClose,
-}: AddEditAppendixProps): JSX.Element => {
+}: AddEditVariantTextProps): JSX.Element => {
   const [dialogTitle, setDialogTitle] = useState('');
   const [project, setProject] = useState<ProjectType>();
   const [projectOptions, setProjectOptions] = useState([]);
   const [template, setTemplate] = useState<TemplateType>();
   const [templateOptions, setTemplateOptions] = useState([]);
-  const [templateSelected, setTemplateSelected] = useState<boolean>(false);
+  const [textEntered, setTextEntered] = useState<boolean>(false);
+  const [variantName, setVariantName] = useState<string>('');
+  const [cancerType, setCancerType] = useState<string>('');
 
   const editor = useEditor({
     extensions,
@@ -55,7 +57,7 @@ const AddEditAppendix = ({
 
   // Grab project and groups
   useEffect(() => {
-    setDialogTitle('Create Custom Template Appendix');
+    setDialogTitle('Create Custom Variant Text');
     let cancelled = false;
     const getData = async () => {
       const [projectsResp, templatesResp] = await Promise.all([
@@ -79,13 +81,21 @@ const AddEditAppendix = ({
     setProject(event.target.value);
   };
 
+  const handleVariantNameChange = (event) => {
+    setVariantName(event.target.value);
+  };
+
+  const handleCancerTypeChange = (event) => {
+    setCancerType(event.target.value);
+  };
+
   useEffect(() => {
-    if (template) {
-      setTemplateSelected(true);
+    if (variantName && cancerType) {
+      setTextEntered(true);
     } else {
-      setTemplateSelected(false);
+      setTextEntered(false);
     }
-  }, [template]);
+  }, [variantName, cancerType]);
 
   const handleSubmit = useCallback(async () => {
     try {
@@ -104,14 +114,11 @@ const AddEditAppendix = ({
           }),
         },
       });
-      let res;
-      if (project) {
-        res = await api.post(`/appendix?templateId=${template?.ident}&projectId=${project.ident}`, { text: sanitizedText }).request();
-      } else {
-        res = await api.post(`/appendix?templateId=${template?.ident}`, { text: sanitizedText }).request();
-      }
-      snackbar.success('Appendix record created successfully');
-      const returnedData: AppendixType = {
+      const res = await api.post('/variant-text', {
+        template: template?.ident, project: project?.ident, variantName, cancerType, text: sanitizedText,
+      }).request();
+      snackbar.success('Variant text record created successfully');
+      const returnedData: VariantTextType = {
         ...res,
         template,
         project,
@@ -126,28 +133,45 @@ const AddEditAppendix = ({
         if (project) {
           projectStr = `and project ${project.name}`;
         } else {
-          projectStr = '(default appendix text)';
+          projectStr = '(default variant text)';
         }
-        snackbar.error(`Error creating appendix record: record already exists for pair: template ${template.name} ${projectStr}`);
+        snackbar.error(`Error creating variant text record: record already exists for pair: template ${template.name} ${projectStr}`);
       } else {
-        snackbar.error(`Error creating appendix reord: ${err}`);
+        snackbar.error(`Error creating variant text reord: ${err}`);
       }
     }
-  }, [editor, project, template, onClose]);
+  }, [editor, project, template, cancerType, variantName, onClose]);
 
   return (
     <Dialog
       open={isOpen}
       maxWidth="md"
       fullWidth
-      className="edit-dialog"
+      className="variant-text__edit-dialog"
       onClose={() => onClose(null)}
     >
       <DialogTitle>{dialogTitle}</DialogTitle>
-      <Divider><Typography variant="caption">Select template and project</Typography></Divider>
       <DialogContent>
+        <Divider><Typography variant="caption">Add variant name and cancer type</Typography></Divider>
         <FormControl fullWidth classes={{ root: 'add-item__form-container' }} variant="outlined">
-          <InputLabel id="template-select-label">Template</InputLabel>
+          <TextField
+            className="text-field"
+            label="Variant Name"
+            onChange={handleVariantNameChange}
+            variant="outlined"
+            fullWidth
+          />
+          <TextField
+            className="text-field"
+            label="Cancer Type"
+            onChange={handleCancerTypeChange}
+            variant="outlined"
+            fullWidth
+          />
+        </FormControl>
+        <Divider><Typography variant="caption">Select template and project</Typography></Divider>
+        <FormControl fullWidth classes={{ root: 'add-item__form-container' }} variant="outlined">
+          <InputLabel id="template-select-label" className="add-item__select-label">Template</InputLabel>
           <Select
             variant="outlined"
             className="add-item__select-field"
@@ -173,7 +197,7 @@ const AddEditAppendix = ({
           </Select>
         </FormControl>
         <FormControl fullWidth classes={{ root: 'add-item__form-container' }} variant="outlined">
-          <InputLabel id="projects-select-label">Project</InputLabel>
+          <InputLabel id="projects-select-label" className="add-item__select-label">Project</InputLabel>
           <Select
             defaultValue=""
             id="projects-select"
@@ -198,9 +222,7 @@ const AddEditAppendix = ({
             )}
           </Select>
         </FormControl>
-      </DialogContent>
-      <Divider><Typography variant="caption">Add appendix text</Typography></Divider>
-      <DialogContent>
+        <Divider><Typography variant="caption">Add variant text</Typography></Divider>
         <MenuBar editor={editor} className="IPRWYSIWYGEditor__toolbar" />
         <EditorContent editor={editor} className="IPRWYSIWYGEditor__content" />
       </DialogContent>
@@ -216,7 +238,7 @@ const AddEditAppendix = ({
           Cancel
         </Button>
         <Button
-          disabled={!templateSelected}
+          disabled={!textEntered}
           onClick={handleSubmit}
           color="secondary"
         >
@@ -227,4 +249,4 @@ const AddEditAppendix = ({
   );
 };
 
-export default AddEditAppendix;
+export default AddEditVariantText;

@@ -1,4 +1,6 @@
-const columnDefs = [
+import { ColDef } from '@ag-grid-community/core';
+
+const columnDefs: ColDef[] = [
   {
     headerName: 'Template Name',
     field: 'name',
@@ -6,6 +8,9 @@ const columnDefs = [
   },
   {
     headerName: 'Sections',
+    flex: 1,
+    autoHeight: true,
+    wrapText: true,
     valueGetter: 'data.sections.join(", ")',
     hide: false,
   },
