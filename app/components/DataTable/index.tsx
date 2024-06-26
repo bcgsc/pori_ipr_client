@@ -26,12 +26,15 @@ import EnsemblCellRenderer from './components/EnsemblCellRenderer';
 import CivicCellRenderer from './components/CivicCellRenderer';
 import GeneCellRenderer from './components/GeneCellRenderer';
 import { ActionCellRenderer } from './components/ActionCellRenderer';
+import { HTMLCellRenderer } from './components/HTMLCellRenderer';
+import KbMatchesActionCellRenderer from './components/KbMatchesActionCellRenderer';
+import HyperlinkCellRenderer from './components/HyperlinkCellRenderer';
+import { ToolTip } from './components/ToolTip';
+
 import NoRowsOverlay from './components/NoRowsOverlay';
 import { getDate } from '../../utils/date';
 
 import './index.scss';
-import KbMatchesActionCellRenderer from './components/KbMatchesActionCellRenderer';
-import HyperlinkCellRenderer from './components/HyperlinkCellRenderer';
 
 const MAX_VISIBLE_ROWS = 12;
 const MAX_TABLE_HEIGHT = '517px';
@@ -576,6 +579,7 @@ const DataTable = ({
                 canViewDetails,
                 tableType,
               }}
+              tooltipShowDelay={0}
               frameworkComponents={{
                 EnsemblCellRenderer,
                 CivicCellRenderer,
@@ -585,6 +589,8 @@ const DataTable = ({
                 KbMatchesActionCellRenderer: RowKbMatchesActionCellRenderer,
                 headerCellRenderer: Header,
                 NoRowsOverlay,
+                HTMLCellRenderer,
+                ToolTip,
               }}
               suppressAnimationFrame
               suppressRowTransform={Boolean(collapseColumnFields)}
