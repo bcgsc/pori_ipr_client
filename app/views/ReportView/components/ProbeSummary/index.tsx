@@ -16,6 +16,7 @@ import PrintTable from '@/components/PrintTable';
 import TestInformation, { TestInformationType } from '@/components/TestInformation';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import EventsEditDialog from '@/components/EventsEditDialog';
+import { SmallMutationType } from '@/common';
 import { sampleColumnDefs, eventsColumnDefs } from './columnDefs';
 import ProbeResultsType from './types.d';
 
@@ -71,7 +72,13 @@ const ProbeSummary = ({
             probeResultsData,
             smallMutationsData,
             appendicesData,
-          ] = await apiCalls.request();
+          ] = await apiCalls.request() as [
+            TestInformationType,
+            SignatureType,
+            ProbeResultsType[],
+            SmallMutationType[],
+            AppendicesType,
+          ];
 
           setAppendices(appendicesData);
 
@@ -218,20 +225,20 @@ const ProbeSummary = ({
               loadedDispatch={loadedDispatch}
             />
           )}
-          {report && report.sampleInfo && (
+          {report && report.reportSampleInfo && (
             <div className={`${classNamePrefix}__sample-information`}>
               <Typography variant="h3" display="inline" className={`${classNamePrefix}__sample-information-title`}>
                 Sample Information
               </Typography>
               {isPrint ? (
                 <PrintTable
-                  data={report.sampleInfo}
+                  data={report.reportSampleInfo}
                   columnDefs={sampleColumnDefs}
                 />
               ) : (
                 <DataTable
                   columnDefs={sampleColumnDefs}
-                  rowData={report.sampleInfo}
+                  rowData={report.reportSampleInfo}
                   isPrint={isPrint}
                   isPaginated={!isPrint}
                 />
