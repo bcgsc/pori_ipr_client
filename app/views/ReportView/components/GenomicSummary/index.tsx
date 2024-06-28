@@ -23,7 +23,6 @@ import './index.scss';
 import PatientInformation from '../PatientInformation';
 
 import TumourSummary from '../TumourSummary';
-import { AppendicesType } from '../Appendices/types';
 
 type GenomicSummaryProps = {
   loadedDispatch?: ({ type }: { type: string }) => void;
@@ -50,7 +49,6 @@ const GenomicSummary = ({
   const [primaryBurden, setPrimaryBurden] = useState<MutationBurdenType>();
   const [msi, setMsi] = useState<MsiType>();
   const [tmburMutBur, setTmburMutBur] = useState<TmburType>();
-  const [appendices, setAppendices] = useState<AppendicesType>();
 
   const [microbial, setMicrobial] = useState<MicrobialType[]>([{
     species: '',
@@ -75,7 +73,6 @@ const GenomicSummary = ({
             api.get(`/reports/${report.ident}/mutation-burden`),
             api.get(`/reports/${report.ident}/immune-cell-types`),
             api.get(`/reports/${report.ident}/msi`),
-            api.get(`/reports/${report.ident}/appendices`),
           ]);
 
           const [
@@ -85,7 +82,6 @@ const GenomicSummary = ({
             burdenResp,
             immuneResp,
             msiResp,
-            appendicesResp,
           ] = await apiCalls.request() as [
             MicrobialType[],
             ComparatorType[],
@@ -93,7 +89,6 @@ const GenomicSummary = ({
             MutationBurdenType[],
             ImmuneType[],
             MsiType[],
-            AppendicesType,
           ];
 
           try {
@@ -111,8 +106,6 @@ const GenomicSummary = ({
           setPrimaryBurden(burdenResp.find((entry: Record<string, unknown>) => entry.role === 'primary'));
           setTCellCd8(immuneResp.find(({ cellType }) => cellType === 'T cells CD8'));
           setSignatures(signaturesResp);
-
-          setAppendices(appendicesResp);
 
           if (microbialResp.length) {
             setMicrobial(microbialResp);
@@ -275,7 +268,6 @@ const GenomicSummary = ({
               <PatientInformation
                 canEdit={canEdit}
                 isPrint={isPrint}
-                appendices={appendices}
                 printVersion={printVersion}
                 loadedDispatch={loadedDispatch}
               />
@@ -308,7 +300,6 @@ const GenomicSummary = ({
             <PatientInformation
               canEdit={canEdit}
               isPrint={isPrint}
-              appendices={appendices}
               printVersion={printVersion}
               loadedDispatch={loadedDispatch}
             />
