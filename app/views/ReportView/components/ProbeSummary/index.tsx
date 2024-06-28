@@ -22,7 +22,6 @@ import ProbeResultsType from './types.d';
 import './index.scss';
 
 import PatientInformation from '../PatientInformation';
-import { AppendicesType } from '../Appendices/types';
 
 type ProbeSummaryProps = {
   loadedDispatch: (type: { type: string }) => void;
@@ -48,7 +47,6 @@ const ProbeSummary = ({
   const [signatures, setSignatures] = useState<SignatureType | null>();
   const [probeResults, setProbeResults] = useState<ProbeResultsType[] | null>();
   const [editData, setEditData] = useState();
-  const [appendices, setAppendices] = useState<AppendicesType | null>();
 
   const [showEventsDialog, setShowEventsDialog] = useState(false);
 
@@ -63,17 +61,13 @@ const ProbeSummary = ({
             api.get(`/reports/${report.ident}/signatures`),
             api.get(`/reports/${report.ident}/probe-results`),
             api.get(`/reports/${report.ident}/small-mutations`),
-            api.get(`/reports/${report.ident}/appendices`),
           ]);
           const [
             testInformationData,
             signaturesData,
             probeResultsData,
             smallMutationsData,
-            appendicesData,
           ] = await apiCalls.request();
-
-          setAppendices(appendicesData);
 
           setTestInformation(testInformationData);
           setSignatures(signaturesData);
@@ -213,7 +207,6 @@ const ProbeSummary = ({
             <PatientInformation
               canEdit={canEdit}
               isPrint={isPrint}
-              appendices={appendices}
               printVersion={printVersion}
               loadedDispatch={loadedDispatch}
             />
