@@ -204,8 +204,6 @@ const Therapeutic = ({
     }
   }, [chemoresistanceData, therapeuticData, report]);
 
-  console.log(therapeuticData, chemoresistanceData);
-
   if (isPrint && printVersion === 'standardLayout') {
     return (
       <div className="therapeutic-print">
