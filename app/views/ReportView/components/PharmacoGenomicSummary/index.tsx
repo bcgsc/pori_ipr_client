@@ -31,7 +31,6 @@ import './index.scss';
 import { TestInformationEditDialog, TestInformationEditDialogProps } from './components/TestInformationEditDialog';
 
 import PatientInformation from '../PatientInformation';
-import { AppendicesType } from '../Appendices/types';
 
 type PharmacoGenomicSummaryProps = {
   loadedDispatch: (type: { type: string }) => void;
@@ -57,7 +56,6 @@ const PharmacoGenomicSummary = ({
   const [pharmacoGenomic, setPharmacoGenomic] = useState<KbMatchType[]>([]);
   const [cancerPredisposition, setCancerPredisposition] = useState<KbMatchType[]>([]);
   const [showTestInfoEdit, setTestInfoEdit] = useState(false);
-  const [appendices, setAppendices] = useState<AppendicesType>();
 
   const classNamePrefix = isPrint ? 'summary--print' : 'summary';
 
@@ -76,17 +74,13 @@ const PharmacoGenomicSummary = ({
             api.get(`/reports/${report.ident}/signatures`),
             api.get(`/reports/${report.ident}/kb-matches?category=pharmacogenomic`),
             api.get(`/reports/${report.ident}/kb-matches?category=cancer predisposition`),
-            api.get(`/reports/${report.ident}/appendices`),
           ]);
 
           const [
             signaturesData,
             pharmacoGenomicResp,
             cancerPredispositionResp,
-            appendicesResp,
-          ] = await apiCalls.request() as [SignatureType, KbMatchType[], KbMatchType[], AppendicesType];
-
-          setAppendices(appendicesResp);
+          ] = await apiCalls.request() as [SignatureType, KbMatchType[], KbMatchType[]];
 
           setSignatures(signaturesData);
           setPharmacoGenomic(pharmacoGenomicResp.filter(({ variant }) => variant.germline));
@@ -268,7 +262,6 @@ const PharmacoGenomicSummary = ({
             <PatientInformation
               canEdit={canEdit}
               isPrint={isPrint}
-              appendices={appendices}
               loadedDispatch={loadedDispatch}
               printVersion={printVersion}
             />
