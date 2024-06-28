@@ -15,7 +15,7 @@ import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import useResource from '@/hooks/useResource';
 import { AppendicesType, TcgaType, ComparatorType } from './types';
 import { sampleInformationColumnDefs, sequencingProtocolInformationColumnDefs, tcgaAcronymsColumnDefs } from './columnDefs';
-import ReportOverview from './components/ReportOverview';
+import { ReportOverview } from './components/ReportOverview';
 import ConfigTable from './components/ConfigTable';
 
 import './index.scss';

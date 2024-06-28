@@ -94,19 +94,27 @@ type ShortReportType = {
 type ProjectType = {
   name: string;
   description?: string;
-  reports?: ShortReportType[];
+  reportProject?: {
+    additionalProject: boolean;
+  };
   users?: UserType[];
 } & RecordDefaults;
 
 type AppendixType = {
   template: TemplateType;
-  project: ProjectType;
+  project: {
+    name: string | null;
+    description: string | null;
+  } & RecordDefaults;
   text: string;
 } & RecordDefaults;
 
 type VariantTextType = {
   template: TemplateType;
-  project: ProjectType;
+  project: {
+    ident: string | null;
+    name: string | null;
+  };
   text: string;
 } & RecordDefaults;
 
