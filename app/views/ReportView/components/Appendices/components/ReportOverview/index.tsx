@@ -11,22 +11,20 @@ import './index.scss';
 
 type ReportOverviewProps = {
   canEditReportAppendix: boolean;
-  isNewTemplate: boolean;
+  // Appendix Specific to template ID + project ID
   templateSpecificText: string;
   reportId: string;
+  // Appendix Specific to current Report
   reportSpecificText: string;
   isPrint: boolean;
-  templateId: string;
 };
 
 const ReportOverview = ({
   isPrint,
-  isNewTemplate,
   templateSpecificText,
   reportId,
   reportSpecificText,
   canEditReportAppendix,
-  templateId,
 }: ReportOverviewProps): JSX.Element => {
   const [isLoading, setIsLoading] = useState(false);
   const [isEditingReport, setIsEditingReport] = useState(false);
@@ -83,7 +81,6 @@ const ReportOverview = ({
     );
   }, [
     isLoading,
-    isPrint,
     templateAppendixText,
   ]);
 
@@ -93,7 +90,7 @@ const ReportOverview = ({
     }
     return (
       <>
-        {(canEditReportAppendix && !isEditingReport && !isPrint)
+        {(canEditReportAppendix && !isPrint)
           && (
             <Fab
               className="overview__fab"
@@ -107,13 +104,13 @@ const ReportOverview = ({
           )}
         {canEditReportAppendix && (
           <IPRWYSIWYGEditor
-            title="Edit Appendix"
+            title="Edit Report Appendix"
             isOpen={isEditingReport}
             onClose={handleEditReportClose}
             text={reportAppendixText}
           />
         )}
-        <div dangerouslySetInnerHTML={{ __html: reportAppendixText }} />
+        {reportAppendixText && <div dangerouslySetInnerHTML={{ __html: reportAppendixText }} />}
       </>
     );
   }, [

@@ -12,7 +12,6 @@ import DataTable from '@/components/DataTable';
 import ReportContext from '@/context/ReportContext';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
-import useResource from '@/hooks/useResource';
 import { AppendicesType, TcgaType, ComparatorType } from './types';
 import { sampleInformationColumnDefs, sequencingProtocolInformationColumnDefs, tcgaAcronymsColumnDefs } from './columnDefs';
 import { ReportOverview } from './components/ReportOverview';
@@ -36,10 +35,8 @@ const Appendices = ({
   const [comparators, setComparators] = useState<ComparatorType[]>([]);
   const [appendices, setAppendices] = useState<AppendicesType>();
   const [appendixCText, setAppendixCText] = useState('');
-  const [isNewAppendixC, setIsNewAppendixC] = useState(false);
   const [tcga, setTcga] = useState<TcgaType[]>([]);
   const [analysisSummary, setAnalysisSummary] = useState<Record<string, unknown>[]>([]);
-  const { adminAccess } = useResource();
 
   useEffect(() => {
     if (report) {
@@ -54,11 +51,17 @@ const Appendices = ({
           });
           const appendixCResp = await api.get(`/appendix?templateId=${report.template.ident}&projectId=${primaryProjectId}`).request();
           setAppendixCText(appendixCResp?.text);
-        } catch (e) {
-          if (e.message === 'Not Found') {
-            setIsNewAppendixC(true);
+        } catch (getProjectAppendixErr) {
+          if (getProjectAppendixErr.message === 'Not Found') {
+            // Grab default
+            try {
+              const appendixCResp = await api.get(`/appendix?templateId=${report.template.ident}`).request();
+              setAppendixCText(appendixCResp?.text);
+            } catch (getDefaultAppendixError) {
+              snackbar.error(`Network error getting default appendix C: ${getDefaultAppendixError}`);
+            }
           } else {
-            snackbar.error(`Network error: ${e}`);
+            snackbar.error(`Network error getting project specific appendix C: ${getProjectAppendixErr}`);
           }
         }
         try {
@@ -202,12 +205,9 @@ const Appendices = ({
           )}
           <ReportOverview
             isPrint={isPrint}
-            isNewTemplate={isNewAppendixC}
-            templateId={report.template.ident}
             templateSpecificText={appendixCText}
             reportId={report.ident}
             reportSpecificText={report.appendix}
-            canEditTemplateAppendix={adminAccess}
             canEditReportAppendix={reportEditAccess}
           />
           {!isPrint && (

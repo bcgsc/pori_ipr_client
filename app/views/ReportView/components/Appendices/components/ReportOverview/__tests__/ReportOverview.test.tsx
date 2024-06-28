@@ -11,7 +11,6 @@ jest.mock('@/services/SnackbarUtils');
 const defaultReportOverviewProps: ReportOverviewProps = {
   isPrint: false,
   canEditReportAppendix: false,
-  canEditTemplateAppendix: false,
   isNewTemplate: false,
   templateId: '123456-uuid',
   templateSpecificText: 'template text',
@@ -57,7 +56,6 @@ describe('ReportOverview', () => {
     const { queryByRole, getByText } = render(
       <ReportOverview
         {...defaultReportOverviewProps}
-        canEditTemplateAppendix
         canEditReportAppendix
         isPrint
         reportSpecificText={'Sir, this is a wendy\'s'}
@@ -73,7 +71,6 @@ describe('ReportOverview', () => {
     const { getByRole, queryByRole, getByText } = render(
       <ReportOverview
         {...defaultReportOverviewProps}
-        canEditTemplateAppendix
         canEditReportAppendix
       />,
     );
@@ -90,7 +87,7 @@ describe('ReportOverview', () => {
     expect(within(dialogDiv).getByText(
       defaultReportOverviewProps.reportSpecificText,
     )).toBeInTheDocument();
-    expect(getByText('Edit Appendix')).toBeInTheDocument();
+    expect(getByText('Edit Report Appendix')).toBeInTheDocument();
   });
 
   // These tests are TODO for now since the React-Quill component cannot be targetted for change
