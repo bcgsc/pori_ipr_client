@@ -57,6 +57,7 @@ type GroupType = {
   name: string;
   users: UserGroupMemberType[];
   owner: UserType;
+  description: string;
 };
 
 type UserProjectsType = {
@@ -83,6 +84,30 @@ type UserType = {
   type: string;
   username: string;
   allowNotifications: boolean;
+} & RecordDefaults;
+
+type ShortReportType = {
+  alternateIdentifier: string | null;
+  patientId: string;
+} & RecordDefaults;
+
+type ProjectType = {
+  name: string;
+  description?: string;
+  reports?: ShortReportType[];
+  users?: UserType[];
+} & RecordDefaults;
+
+type AppendixType = {
+  template: TemplateType;
+  project: ProjectType;
+  text: string;
+} & RecordDefaults;
+
+type VariantTextType = {
+  template: TemplateType;
+  project: ProjectType;
+  text: string;
 } & RecordDefaults;
 
 type ImageType = {
@@ -332,6 +357,10 @@ type MicrobialType = {
 
 export {
   RecordDefaults,
+  ShortReportType,
+  ProjectType,
+  AppendixType,
+  VariantTextType,
   UserType,
   TemplateType,
   AnyVariantType,

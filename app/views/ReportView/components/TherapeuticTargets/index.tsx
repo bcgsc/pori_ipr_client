@@ -222,7 +222,7 @@ const Therapeutic = ({
           className="therapeutic-print__title"
           variant="h3"
         >
-          Potential Chemoresistance
+          Potential Resistance and Toxicity
         </Typography>
         <PrintTable
           fullWidth
@@ -256,7 +256,7 @@ const Therapeutic = ({
           variant="h5"
           display="inline"
         >
-          Potential Chemoresistance
+          Potential Resistance and Toxicity
         </Typography>
         <PrintTable
           fullWidth
@@ -293,7 +293,7 @@ const Therapeutic = ({
             Header={EvidenceHeader}
           />
           <DataTable
-            titleText="Potential Chemoresistance"
+            titleText="Potential Resistance and Toxicity"
             columnDefs={columnDefs}
             rowData={chemoresistanceData}
             canEdit={canEdit}

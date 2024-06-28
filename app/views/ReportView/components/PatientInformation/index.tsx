@@ -74,6 +74,14 @@ const PatientInformation = ({
               label: 'Gender',
               value: report.patientInformation.gender,
             },
+            {
+              label: 'Biopsy Collection Date',
+              value: report?.reportSampleInfo?.find((info) => info.sample === 'Tumour')?.collectionDate,
+            },
+            {
+              label: 'Biopsy Type',
+              value: report?.reportSampleInfo?.find((info) => info.sample === 'Tumour')?.biopsyType,
+            },
           ]);
         } catch (err) {
           snackbar.error(`Unknown error: ${err}`);

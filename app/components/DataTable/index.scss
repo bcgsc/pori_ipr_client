@@ -17,10 +17,6 @@
     .ag-row:last-child {
       border-bottom: none;
     }
-
-    .ag-cell-wrapper {
-      align-items: start;
-    }
     
     .cell-span, .cell-span--last {
       display: flex;
@@ -49,4 +45,9 @@
 
 .cell-wrap-text {
   white-space: normal;
+}
+
+.ag-center-cols-clipper,
+.ag-center-cols-container {
+  min-height: 36px !important;
 }

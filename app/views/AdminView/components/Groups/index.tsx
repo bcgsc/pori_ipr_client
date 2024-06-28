@@ -66,7 +66,6 @@ const Groups = (): JSX.Element => {
             rowData={groups}
             columnDefs={columnDefs}
             isPaginated
-            isFullLength
             canEdit
             onEdit={handleEditStart}
             titleText="Groups"

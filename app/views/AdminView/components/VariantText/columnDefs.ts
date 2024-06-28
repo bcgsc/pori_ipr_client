@@ -1,6 +1,5 @@
 import { formatDate } from '@/utils/date';
 import { ColDef } from '@ag-grid-community/core';
-import { DisplayMode } from '@/components/DataTable/components/HTMLCellRenderer';
 
 const columnDefs: ColDef[] = [
   {
@@ -9,7 +8,7 @@ const columnDefs: ColDef[] = [
   },
   {
     headerName: 'Project',
-    cellRenderer: ({ data }) => data.project?.name || '(default appendix text)',
+    cellRenderer: ({ data }) => data.project?.name,
   },
   {
     headerName: 'Created',
@@ -22,15 +21,21 @@ const columnDefs: ColDef[] = [
     minWidth: 90,
   },
   {
-    headerName: 'Appendix Text',
-    cellRenderer: 'HTMLCellRenderer',
-    cellRendererParams: {
-      mode: DisplayMode.compact,
-    },
-    cellClass: 'HTMLCellRenderer__container',
+    headerName: 'Variant Name',
+    valueGetter: ({ data }) => data.variantName,
+    minWidth: 90,
+  },
+  {
+    headerName: 'Cancer Type',
+    valueGetter: ({ data }) => data.cancerType,
+    minWidth: 90,
+  },
+  {
+    headerName: 'Text',
+    cellRenderer: ({ data }) => data.text,
     flex: 1,
+    autoHeight: true,
     wrapText: true,
-    cellStyle: { overflow: 'auto' },
   },
   {
     headerName: 'Actions',

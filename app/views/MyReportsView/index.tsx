@@ -7,14 +7,15 @@ import reportsColumns from '@/utils/reportsColumns';
 import useResource from '@/hooks/useResource';
 import api from '@/services/api';
 import { ReportType } from '@/context/ReportContext';
+import useSecurity from '@/hooks/useSecurity';
 
-/**
- * Report table containing all reports
- */
-const ReportsView = (): JSX.Element => {
+import './index.scss';
+
+const MyReportsView = (): JSX.Element => {
   const {
     adminAccess, unreviewedAccess, nonproductionAccess, allStates, unreviewedStates, nonproductionStates,
   } = useResource();
+  const { userDetails } = useSecurity();
   const [rowData, setRowData] = useState<ReportType[]>();
 
   useEffect(() => {
@@ -33,7 +34,9 @@ const ReportsView = (): JSX.Element => {
 
         const { reports } = await api.get(`/reports${states ? `?states=${states}` : ''}`, {}).request();
 
-        setRowData(reports.map((report: ReportType) => {
+        const myReports = [];
+
+        reports.map((report: ReportType) => {
           const [analyst] = report.users
             .filter((u) => u.role === 'analyst')
             .map((u) => u.user);
@@ -46,18 +49,26 @@ const ReportsView = (): JSX.Element => {
             .filter((u) => u.role === 'bioinformatician')
             .map((u) => u.user);
 
-          return (
-            reportsColumns(report, analyst, reviewer, bioinformatician)
-          );
-        }));
+          const creator = report.createdBy;
+
+          const allUserIdents = report.users.filter((u) => u.role === 'analyst' || 'reviewer' || 'bioinformatician').map((u) => u.user.ident);
+
+          allUserIdents.push(creator.ident);
+
+          if (allUserIdents.includes(userDetails.ident)) {
+            myReports.push(reportsColumns(report, analyst, reviewer, bioinformatician));
+          }
+          return null;
+        });
+        setRowData(myReports);
       };
       getData();
     }
-  }, [adminAccess, allStates, nonproductionStates, unreviewedStates, nonproductionAccess, unreviewedAccess, rowData]);
+  }, [adminAccess, allStates, nonproductionStates, unreviewedStates, nonproductionAccess, unreviewedAccess, rowData, userDetails.ident]);
 
   return (
     <ReportsTableComponent rowData={rowData} />
   );
 };
 
-export default ReportsView;
+export default MyReportsView;

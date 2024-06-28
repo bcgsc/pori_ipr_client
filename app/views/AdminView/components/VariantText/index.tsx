@@ -2,17 +2,17 @@ import React, {
   useState, useEffect, useCallback,
 } from 'react';
 import { CircularProgress } from '@mui/material';
-import { AppendixType } from '@/common';
+import { VariantTextType } from '@/common';
 import IPRWYSIWYGEditor from '@/components/IPRWYSIWYGEditor';
 import sanitizeHtml from 'sanitize-html';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
 import columnDefs from './columnDefs';
-import AddEditAppendix from './components/AddEditAppendix';
+import AddEditVariantText from './components/AddEditVariantText';
 
-function Appendices(): JSX.Element {
-  const [appendices, setAppendices] = useState<AppendixType[]>();
+function VariantText(): JSX.Element {
+  const [variantText, setVariantText] = useState<VariantTextType[]>();
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
@@ -21,13 +21,13 @@ function Appendices(): JSX.Element {
   // Grab template appendices
   useEffect(() => {
     let cancelled = false;
-    const getAppendices = async () => {
+    const getVariantText = async () => {
       try {
-        const appendixResp = await api.get('/appendix').request();
-        if (appendixResp) {
-          const sanitizedAppendices = appendixResp.map((appendix: AppendixType) => ({
-            ...appendix,
-            text: sanitizeHtml(appendix.text, {
+        const variantTextResp = await api.get('/variant-text').request();
+        if (variantTextResp) {
+          const sanitizedVariantText = variantTextResp.map((variant: VariantTextType) => ({
+            ...variant,
+            text: sanitizeHtml(variant.text, {
               allowedSchemes: [],
               allowedAttributes: {
                 '*': ['style'],
@@ -35,7 +35,7 @@ function Appendices(): JSX.Element {
             }),
           }));
           if (!cancelled) {
-            setAppendices(sanitizedAppendices);
+            setVariantText(sanitizedVariantText);
           }
         }
       } catch (err) {
@@ -44,7 +44,7 @@ function Appendices(): JSX.Element {
         setIsLoading(false);
       }
     };
-    getAppendices();
+    getVariantText();
     return function cleanup() { cancelled = true; };
   }, []);
 
@@ -57,23 +57,19 @@ function Appendices(): JSX.Element {
     setIsAdding(true);
   }, []);
 
-  const handleOnDelete = useCallback(async (rowData: AppendixType) => {
+  const handleOnDelete = useCallback(async (rowData: VariantTextType) => {
     try {
-      if (rowData.project) {
-        await api.del(`/appendix?templateId=${rowData.template.ident}&projectId=${rowData.project.ident}`, {}, {}).request();
-      } else {
-        await api.del(`/appendix?templateId=${rowData.template.ident}`, {}, {}).request();
-      }
-      setAppendices((prevVal) => prevVal.filter((appendix) => appendix.ident !== rowData.ident));
-      snackbar.success('Appendix deleted');
+      await api.del(`/variant-text/${rowData.ident}`, {}, {}).request();
+      snackbar.success('Variant text deleted');
+      setVariantText((prevVal) => prevVal.filter((variant) => variant.ident !== rowData.ident));
     } catch (err) {
-      snackbar.error(`Error deleting appendix: ${err}`);
+      snackbar.error(`Error deleting variant text: ${err}`);
     }
   }, []);
 
   const handleAddClose = useCallback((newData) => {
     if (newData) {
-      setAppendices((prevVal) => [...prevVal, newData]);
+      setVariantText((prevVal) => [...prevVal, newData]);
     }
     setIsAdding(false);
   }, []);
@@ -97,20 +93,20 @@ function Appendices(): JSX.Element {
             }),
           },
         });
-        const res = await api.put(`/appendix?templateId=${editingData.template.ident}&projectId=${editingData.project.ident}`, { text: sanitizedText }).request();
+        const res = await api.put(`/variant-text/${editingData.ident}`, { text: sanitizedText }).request();
         if (!cancelled) {
-          setAppendices((currAppendices) => {
-            const index = currAppendices.findIndex((app) => app.ident === editingData.ident);
-            const nextAppendices = [...currAppendices];
-            nextAppendices[index] = res;
-            return nextAppendices;
+          setVariantText((currVariantText) => {
+            const index = currVariantText.findIndex((app) => app.ident === editingData.ident);
+            const nextVariantText = [...currVariantText];
+            nextVariantText[index] = res;
+            return nextVariantText;
           });
-          snackbar.success('Appendix successfully updated.');
+          snackbar.success('Variant Text successfully updated.');
           setIsEditing(false);
         }
       }
     } catch (e) {
-      snackbar.error(`Error editing appendix: ${e.message ?? e}`);
+      snackbar.error(`Error editing variant text: ${e.message ?? e}`);
     } finally {
       setIsEditing(false);
     }
@@ -124,23 +120,23 @@ function Appendices(): JSX.Element {
         <>
           <DataTable
             columnDefs={columnDefs}
-            rowData={appendices}
-            titleText="Appendices"
+            rowData={variantText}
+            titleText="Variant Text"
             canAdd
             onAdd={handleOnAdd}
-            addText="Create Custom Template Appendix"
+            addText="Create Custom Variant Text"
             canEdit
             onEdit={handleOnEdit}
             canDelete
             onDelete={handleOnDelete}
           />
           <IPRWYSIWYGEditor
-            title="Edit Appendix Text"
+            title="Edit Variant Text"
             isOpen={isEditing}
             text={editingData?.text}
             onClose={handleEditClose}
           />
-          <AddEditAppendix
+          <AddEditVariantText
             isOpen={isAdding}
             onClose={handleAddClose}
           />
@@ -150,4 +146,4 @@ function Appendices(): JSX.Element {
     </>
   );
 }
-export default Appendices;
+export default VariantText;
