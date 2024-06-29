@@ -5,6 +5,9 @@ type ProbeResultsType = {
   gene: GeneType;
   sample: string | null;
   variant: string | null;
+  tumourDna: string;
+  tumourRna: string;
+  normalDna: string;
 } & RecordDefaults;
 
 export default ProbeResultsType;
