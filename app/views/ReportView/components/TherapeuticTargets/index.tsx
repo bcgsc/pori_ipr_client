@@ -21,6 +21,13 @@ import TherapeuticType from './types';
 
 import './index.scss';
 
+// Sort by existing rank ascending, then reassign rank based on 0 index, 1 per step
+const orderRankStartingByZero = (data: { rank: number }[]) => data.sort((a, b) => a.rank - b.rank)
+  .map((nextData, idx) => {
+    nextData.rank = idx;
+    return nextData;
+  });
+
 const removeExtraProps = (data: TherapeuticType[]): Partial<TherapeuticType>[] => data.map(({
   gene, variant, therapy, context, evidenceLevel, iprEvidenceLevel, notes,
 }) => ({
@@ -108,8 +115,8 @@ const Therapeutic = ({
           setTherapeuticData(removeExtraProps(filteredTherapeutic));
           setChemoresistanceData(removeExtraProps(filteredChemoresistance));
         } else {
-          setTherapeuticData(filteredTherapeutic);
-          setChemoresistanceData(filteredChemoresistance);
+          setTherapeuticData(orderRankStartingByZero(filteredTherapeutic));
+          setChemoresistanceData(orderRankStartingByZero(filteredChemoresistance));
         }
       } catch (err) {
         snackbar.error(`Network error: ${err}`);
@@ -217,6 +224,7 @@ const Therapeutic = ({
           fullWidth
           data={therapeuticData}
           columnDefs={columnDefs}
+          collapseableCols={['gene', 'variant']}
         />
         <Typography
           className="therapeutic-print__title"
@@ -228,6 +236,7 @@ const Therapeutic = ({
           fullWidth
           data={chemoresistanceData}
           columnDefs={columnDefs}
+          collapseableCols={['gene', 'variant']}
         />
       </div>
     );
@@ -248,6 +257,7 @@ const Therapeutic = ({
           fullWidth
           data={therapeuticData}
           columnDefs={columnDefs}
+          collapseableCols={['gene', 'variant']}
         />
         <br />
         <Typography
@@ -262,6 +272,7 @@ const Therapeutic = ({
           fullWidth
           data={chemoresistanceData}
           columnDefs={columnDefs}
+          collapseableCols={['gene', 'variant']}
         />
       </div>
     );
