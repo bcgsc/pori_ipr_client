@@ -286,7 +286,7 @@ const RapidSummary = ({
     setTumourSummary([
       {
         term: 'Pathology Tumour Content',
-        value: `${report.sampleInfo?.find((samp) => samp?.Sample?.toLowerCase() === 'tumour')['Patho TC'] ?? ''}`,
+        value: `${report.reportSampleInfo?.find((samp) => samp?.sample?.toLowerCase() === 'tumour')['Patho TC'] ?? ''}`,
       },
       {
         term: 'M1M2 Score',
@@ -344,7 +344,7 @@ const RapidSummary = ({
         value: msiStatus,
       },
     ]);
-  }, [microbial, primaryBurden, tmburMutBur, report.m1m2Score, report.sampleInfo, report.tumourContent, tCellCd8?.percentile, tCellCd8?.score, report.captiv8Score,
+  }, [microbial, primaryBurden, tmburMutBur, report.m1m2Score, report.reportSampleInfo, report.tumourContent, tCellCd8?.percentile, tCellCd8?.score, report.captiv8Score,
     tCellCd8?.percentileHidden, tCellCd8, tCellCd8?.pedsScoreComment, tmburMutBur?.adjustedTmb, tmburMutBur?.tmbHidden, tCellCd8?.pedsScore, tCellCd8?.pedsPercentile]);
 
   const handleSign = useCallback((signed: boolean, role: SignatureUserType) => {
@@ -566,7 +566,7 @@ const RapidSummary = ({
   }, [report, handleSign, isPrint, signatures]);
 
   const sampleInfoSection = useMemo(() => {
-    if (!report || !report.sampleInfo) { return null; }
+    if (!report || !report.reportSampleInfo) { return null; }
     return (
       <div className="rapid-summary__sample-information">
         <Typography variant="h3" display="inline" className="rapid-summary__sample-information-title">
@@ -574,14 +574,14 @@ const RapidSummary = ({
         </Typography>
         {isPrint ? (
           <PrintTable
-            data={report.sampleInfo}
+            data={report.reportSampleInfo}
             columnDefs={sampleColumnDefs}
             fullWidth
           />
         ) : (
           <DataTable
             columnDefs={sampleColumnDefs}
-            rowData={report.sampleInfo}
+            rowData={report.reportSampleInfo}
             isPrint={isPrint}
             isPaginated={!isPrint}
           />

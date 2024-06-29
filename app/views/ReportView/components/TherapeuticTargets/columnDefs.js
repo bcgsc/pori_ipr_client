@@ -8,6 +8,7 @@ const columnDefs = [{
   width: 40,
 }, {
   headerName: 'Gene/Biomarker',
+  field: 'gene',
   valueGetter: ({ data }) => {
     if (data.gene) {
       return `${data.gene}`;
