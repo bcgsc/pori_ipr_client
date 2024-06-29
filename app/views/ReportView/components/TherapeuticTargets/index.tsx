@@ -224,6 +224,7 @@ const Therapeutic = ({
           fullWidth
           data={therapeuticData}
           columnDefs={columnDefs}
+          collapseableCols={['gene', 'variant']}
         />
         <Typography
           className="therapeutic-print__title"
@@ -235,6 +236,7 @@ const Therapeutic = ({
           fullWidth
           data={chemoresistanceData}
           columnDefs={columnDefs}
+          collapseableCols={['gene', 'variant']}
         />
       </div>
     );
@@ -255,6 +257,7 @@ const Therapeutic = ({
           fullWidth
           data={therapeuticData}
           columnDefs={columnDefs}
+          collapseableCols={['gene', 'variant']}
         />
         <br />
         <Typography
@@ -269,6 +272,7 @@ const Therapeutic = ({
           fullWidth
           data={chemoresistanceData}
           columnDefs={columnDefs}
+          collapseableCols={['gene', 'variant']}
         />
       </div>
     );
