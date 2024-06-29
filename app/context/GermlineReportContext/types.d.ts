@@ -53,7 +53,10 @@ type GermlineReportType = {
   exported: boolean;
   normalLibrary: string;
   patientId: string;
-  projects: ProjectType[];
+  projects: ({
+    description: string | null;
+    name: string | null;
+  } & RecordDefaults)[];
   reviews: ReviewType[];
   sourcePath: string;
   sourceVersion: string;
