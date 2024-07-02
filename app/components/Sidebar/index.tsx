@@ -20,6 +20,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import HomeIcon from '@mui/icons-material/Home';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import AssignmentInd from '@mui/icons-material/AssignmentInd';
+import ContentPasteSearchIcon from '@mui/icons-material/ContentPasteSearch';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import PersonIcon from '@mui/icons-material/Person';
@@ -274,6 +275,24 @@ const Sidebar = (): JSX.Element => {
                   variant="subtitle1"
                 >
                   My Reports
+                </Typography>
+              </Link>
+            </ListItem>
+            <ListItem
+              className={`sidebar__collapse-item ${pathname.includes('my') ? 'sidebar__collapse-item--active' : ''}`}
+              disableGutters
+            >
+              {sidebarMaximized && (
+              <Box sx={{ width: '8px' }} />
+              )}
+              <Link className="sidebar__link" to="/search">
+                <ContentPasteSearchIcon color="action" />
+                <Typography
+                  display="inline"
+                  className={`sidebar__subtext ${sidebarMaximized ? 'sidebar__subtext--visible' : 'sidebar__subtext--hidden'}`}
+                  variant="subtitle1"
+                >
+                  Search by Variant
                 </Typography>
               </Link>
             </ListItem>

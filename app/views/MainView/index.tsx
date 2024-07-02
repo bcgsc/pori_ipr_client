@@ -31,6 +31,8 @@ const TermsView = lazy(() => import('../TermsView'));
 const ReportsView = lazy(() => import('../ReportsView'));
 const MyReportsView = lazy(() => import('../MyReportsView'));
 const PatientsView = lazy(() => import('../PatientsView'));
+const SearchByVariant = lazy(() => import('../SearchView'));
+const ReportsByVariantView = lazy(() => import('../ReportsByVariantView'));
 const ReportView = lazy(() => import('../ReportView'));
 const PrintView = lazy(() => import('../PrintView'));
 const CondensedPrintView = (props) => <PrintView {...props} printVersion="condensedLayout" />;
@@ -181,8 +183,10 @@ const Main = (): JSX.Element => {
                   </Route>
                   <AuthenticatedRoute component={TermsView} path="/terms" />
                   <AuthenticatedRoute exact component={PatientsView} path="/reports/patients/:patientId" />
+                  <AuthenticatedRoute exact component={ReportsByVariantView} path="/reports/search/:keyVariant" />
                   <AuthenticatedRoute component={ReportsView} path="/reports" />
                   <AuthenticatedRoute component={MyReportsView} path="/my-reports" />
+                  <AuthenticatedRoute component={SearchByVariant} path="/search" />
                   <Redirect exact from="/report/:ident/(genomic|probe)/summary" to="/report/:ident/summary" />
                   <AuthenticatedRoute component={ReportView} path="/report/:ident" />
                   <AuthenticatedRoute component={PrintView} path="/print/:ident" showNav={false} onToggleNav={setIsNavVisible} />
