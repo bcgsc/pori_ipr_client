@@ -4,7 +4,6 @@ import {
   IconButton,
   InputAdornment,
   TextField,
-  Typography,
 } from  '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -18,7 +17,7 @@ const SearchView = () => {
   // Calls submit function
   const handleSubmit = useCallback(() => {
     if (value) {
-      window.location.href = `/search/${value.replace(/^#/, '')}`;
+      window.location.href = `/search/${value}`;
     } else {
       setErrorMessage('Please enter a key variant');
     }
