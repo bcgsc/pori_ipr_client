@@ -17,8 +17,12 @@ const SearchView = () => {
   // Calls submit function
   const handleSubmit = useCallback(() => {
     if (value) {
+      let transformedVariant;
       if (value.toLowerCase().includes(':p.')) {
-        const transformedVariant = `${value.replace(/:/, ' (')})`;
+        transformedVariant = `${value.replace(/:/, ' (')})`;
+        window.location.href = `/search/${transformedVariant.replace(/\./, '%2F')}`;
+      } else if (value.toLowerCase().includes('p.')) {
+        transformedVariant = `${value.replace(/:/, ' (')}`;
         window.location.href = `/search/${transformedVariant.replace(/\./, '%2F')}`;
       } else {
         window.location.href = `/search/${value}`;
