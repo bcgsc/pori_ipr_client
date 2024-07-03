@@ -17,9 +17,12 @@ const SearchView = () => {
   // Calls submit function
   const handleSubmit = useCallback(() => {
     if (value) {
-      let transformedVariant = `${value.replace(/:/, ' (')})`;
-      transformedVariant = transformedVariant.replace(/\./, '%2F');
-      window.location.href = `/search/${transformedVariant}`;
+      if (value.toLowerCase().includes(':p.')) {
+        const transformedVariant = `${value.replace(/:/, ' (')})`;
+        window.location.href = `/search/${transformedVariant.replace(/\./, '%2F')}`;
+      } else {
+        window.location.href = `/search/${value}`;
+      }
     } else {
       setErrorMessage('Please enter a key variant');
     }
