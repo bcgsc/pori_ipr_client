@@ -1,4 +1,5 @@
 .search {
+  margin:auto;
   border: 1px solid grey;
   border-radius: 4px;
   left: 16px;
@@ -23,10 +24,5 @@
     flex-grow: 1;
     outline: none;
     width: 100%;
-  }
-
-  &__advanced-button {
-    display: block;
-    margin: auto;
   }
 }

@@ -279,7 +279,7 @@ const Sidebar = (): JSX.Element => {
               </Link>
             </ListItem>
             <ListItem
-              className={`sidebar__collapse-item ${pathname.includes('my') ? 'sidebar__collapse-item--active' : ''}`}
+              className={`sidebar__collapse-item ${pathname.includes('search') ? 'sidebar__collapse-item--active' : ''}`}
               disableGutters
             >
               {sidebarMaximized && (

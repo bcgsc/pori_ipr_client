@@ -4,35 +4,44 @@ import {
   IconButton,
   InputAdornment,
   TextField,
+  Typography,
 } from  '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import React, { useCallback, useEffect, useState } from 'react';
 
-const SearchByVariant = () => {
+const MIN_WORD_LENGTH = 3;
+
+const SearchView = () => {
   const [value, setValue] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
-  /**
-   * Calls submit function for currently active tab.
-   */
+  // Calls submit function
   const handleSubmit = useCallback(() => {
     if (value) {
-        window.open(`/reports/search/${value.replace(/^#/, '')}`, '');
-      } 
+      window.location.href = `/search/${value.replace(/^#/, '')}`;
+    } else {
+      setErrorMessage('Please enter a key variant');
+    }
     }, [value]);
 
-  // validate
+  // Validate key variant value
   useEffect(() => {
     if (!value) {
       setErrorMessage('');
     } else {
-      try {
+      const trimmed = String(value)
+        .trim()
+        .toLowerCase()
+        .split(/\s+/)
+        .filter((word) => word.length >= MIN_WORD_LENGTH);
+
+      if (!trimmed.length) {
+        setErrorMessage(`Must have 1 or more terms of at least ${MIN_WORD_LENGTH} characters`);
+      } else {
         setErrorMessage('');
-      } catch (err) {
-          setErrorMessage(`${err || err.message}`);
-        }
       }
-    }, [value]);
+    }
+  }, [value]);
 
   const handleInputChange = useCallback((event) => {
     const newValue = event.target.value;
@@ -51,12 +60,13 @@ const SearchByVariant = () => {
           tabIndex={0}
         >
           <TextField
+            variant='standard'
             error={Boolean(errorMessage)}
             fullWidth
             helperText={errorMessage}
             InputProps={{
               endAdornment: (
-                <InputAdornment>
+                <InputAdornment position='end'>
                   <IconButton color="primary" onClick={handleSubmit}>
                     <SearchIcon />
                   </IconButton>
@@ -73,4 +83,4 @@ const SearchByVariant = () => {
   );
 };
 
-export default SearchByVariant;
+export default SearchView;
