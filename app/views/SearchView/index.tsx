@@ -4,7 +4,7 @@ import {
   IconButton,
   InputAdornment,
   TextField,
-} from  '@mui/material';
+} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import React, { useCallback, useEffect, useState } from 'react';
 
@@ -17,13 +17,13 @@ const SearchView = () => {
   // Calls submit function
   const handleSubmit = useCallback(() => {
     if (value) {
-      let transformedVariant = `${value.replace(/:/, " (")})`;
-      transformedVariant = transformedVariant.replace(/\./, "%2F");
+      let transformedVariant = `${value.replace(/:/, ' (')})`;
+      transformedVariant = transformedVariant.replace(/\./, '%2F');
       window.location.href = `/search/${transformedVariant}`;
     } else {
       setErrorMessage('Please enter a key variant');
     }
-    }, [value]);
+  }, [value]);
 
   // Validate key variant value
   useEffect(() => {
@@ -61,13 +61,13 @@ const SearchView = () => {
           tabIndex={0}
         >
           <TextField
-            variant='standard'
+            variant="standard"
             error={Boolean(errorMessage)}
             fullWidth
             helperText={errorMessage}
             InputProps={{
               endAdornment: (
-                <InputAdornment position='end'>
+                <InputAdornment position="end">
                   <IconButton color="primary" onClick={handleSubmit}>
                     <SearchIcon />
                   </IconButton>
@@ -75,7 +75,7 @@ const SearchView = () => {
               ),
             }}
             onChange={handleInputChange}
-            placeholder='Search Reports by Key Variant'
+            placeholder="Search Reports by Key Variant"
             value={value}
           />
         </div>

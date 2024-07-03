@@ -21,7 +21,7 @@ const ReportsByVariantView = ({
     if (keyVariant) {
       const getData = async () => {
         try {
-          const { reports } = await api.get(`/reports?keyVariant=${keyVariant.replace(/%2F/, "\.")}`).request();
+          const { reports } = await api.get(`/reports?keyVariant=${keyVariant.replace(/%2F/, '.')}`).request();
           setRowData(reports.map((report) => {
             const [analyst] = report.users
               .filter((u) => u.role === 'analyst' && !u.deletedAt)
