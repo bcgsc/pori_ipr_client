@@ -29,7 +29,7 @@ import {
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
 import sanitizeHtml from 'sanitize-html';
-import { VariantTextType, TemplateType, ProjectType } from '@/common';
+import { VariantTextType } from '@/common';
 
 type AddEditVariantTextProps = {
   isOpen: boolean;
@@ -46,9 +46,7 @@ const AddEditVariantText = ({
   onClose,
 }: AddEditVariantTextProps): JSX.Element => {
   const [isLoading, setIsLoading] = useState(false);
-  const [project, setProject] = useState<ProjectType>();
   const [projectOptions, setProjectOptions] = useState([]);
-  const [template, setTemplate] = useState<TemplateType>();
   const [templateOptions, setTemplateOptions] = useState([]);
 
   const editor = useEditor({
@@ -81,11 +79,11 @@ const AddEditVariantText = ({
 
   const {
     register, handleSubmit, formState: { dirtyFields }, setValue, getValues, reset, control,
-  } = useForm({
+  } = useForm<VariantTextType>({
     mode: 'onChange',
     defaultValues: {
-      template: '',
-      project: '',
+      template: null,
+      project: null,
       variantName: '',
       cancerType: [],
       text: '',
@@ -162,30 +160,36 @@ const AddEditVariantText = ({
       snackbar.success('Variant text record created successfully');
       const returnedData: VariantTextType = {
         ...res,
-        template,
-        project,
+        template: getValues('template'),
+        project: getValues('project'),
       };
       onClose(returnedData);
-      setTemplate(null);
-      setProject(null);
       editor.commands.clearContent();
       reset();
     } catch (err) {
       if (err.message && err.message.includes('[409]')) {
         let projectStr = '';
-        if (project) {
-          projectStr = `and project ${project.name}`;
+        const temp = getValues('template');
+        const proj = getValues('project');
+        if (proj) {
+          projectStr = `and project ${proj.name}`;
         } else {
           projectStr = '(default variant text)';
         }
-        snackbar.error(`Error creating variant text record: record already exists for pair: template ${template.name} ${projectStr}`);
+        snackbar.error(`Error creating variant text record: record already exists for pair: template ${temp.name} ${projectStr}`);
       } else {
         snackbar.error(`Error creating variant text reord: ${err}`);
       }
     }
-  }, [editor, project, template, onClose, reset]);
+  }, [editor, onClose, getValues, reset]);
 
   const disableSubmit = isLoading || Object.keys(dirtyFields).length === 0;
+
+  const handleCancel = useCallback(() => {
+    reset();
+    editor.commands.clearContent();
+    onClose(null);
+  }, [editor?.commands, onClose, reset]);
 
   return (
     <Dialog
@@ -243,11 +247,12 @@ const AddEditVariantText = ({
             variant="outlined"
             className="add-item__select-field"
             fullWidth
-            required
             defaultValue=""
             id="template-select"
             label="Template"
-            {...register('template')}
+            {...register('template', {
+              required: true,
+            })}
           >
             {templateOptions && (
               templateOptions.map((temp) => (
@@ -271,8 +276,9 @@ const AddEditVariantText = ({
             variant="outlined"
             className="add-item__select-field"
             fullWidth
-            required
-            {...register('project')}
+            {...register('project', {
+              required: true,
+            })}
           >
             {projectOptions && (
               projectOptions.map((proj) => (
@@ -293,11 +299,7 @@ const AddEditVariantText = ({
       </DialogContent>
       <DialogActions>
         <Button
-          onClick={() => {
-            setTemplate(null);
-            setProject(null);
-            onClose(null);
-          }}
+          onClick={handleCancel}
           color="secondary"
         >
           Cancel
