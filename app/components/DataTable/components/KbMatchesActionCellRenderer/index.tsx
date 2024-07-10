@@ -2,7 +2,7 @@ import {
   IconButton, Menu, MenuItem,
 } from '@mui/material';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import React, { useState, useCallback, useContext } from 'react';
+import React, { useState, useCallback, useContext, useEffect } from 'react';
 import api from '@/services/api';
 import { KbMatchType } from '@/common';
 import { useParams } from 'react-router-dom';
@@ -32,8 +32,17 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
   const [therapeuticTargetType, setTherapeuticTargetType] = useState<TherapeuticTargetType>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [iprEvidenceLevels, setIprEvidenceLevels] = useState(null);
+  const [isClinicalTrial, setIsClinicalTrial] = useState(false);
 
   const isMult = Array.isArray(kbStatementId);
+
+  // Filtering whether a statement is clinical trial using context and recruitment status
+  useEffect(() => {
+    if (data.context.includes('Phase') || data.context.includes('Trial') || !!data.kbData.recruitment_status) {
+      setIsClinicalTrial(true);
+    }
+    console.log(data);
+  }, [data])
 
   const handleUpdateTherapeuticTargets = useCallback((type: TherapeuticTargetType, selectedKbStatementId?: string) => async () => {
     const therapeuticResp = await api.get(`/reports/${reportId}/therapeutic-targets`, {}).request();
@@ -62,6 +71,7 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
         const variant = result[0].conditions.find((r) => r['@class'].toLowerCase().includes('variant'));
         const therapy = result[0].conditions.find((r) => r['@class'].toLowerCase().includes('therapy'));
         const context = result[0].relevance;
+        console.log(context);
 
         if (!variant || !therapy || !context) {
           throw new Error(`Required Graphkb fields not populated on GraphKB: ${!variant ? ' variant' : ''}${!therapy ? ' therapy' : ''}${!context ? ' context' : ''}`);
@@ -136,7 +146,7 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
         onClose={() => setMenuAnchor(null)}
       >
         <MenuItem
-          disabled={isLoading}
+          disabled={isLoading || isClinicalTrial}
           onClick={isMult
             ? (evt) => handleMultiTargets(evt, 'therapeutic')
             : handleUpdateTherapeuticTargets('therapeutic')}
@@ -144,7 +154,7 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
           Add to Potential Therapeutic Targets
         </MenuItem>
         <MenuItem
-          disabled={isLoading}
+          disabled={isLoading || isClinicalTrial}
           onClick={isMult
             ? (evt) => handleMultiTargets(evt, 'chemoresistance')
             : handleUpdateTherapeuticTargets('chemoresistance')}
