@@ -126,7 +126,7 @@ const ReportOverview = ({
     || (isPrint && reportSpecificText);
 
   return (
-    <div className="overview">
+    <div className={`overview ${isPrint ? 'overview--print' : ''}`}>
       <section>
         {reportAppendixSection}
       </section>

@@ -1,5 +1,5 @@
-@import '../../../../styles/variables';
-@import '../../../../styles/theme.module';
+@import '@/styles/variables';
+@import '@/styles/theme.module';
 
 .analyst-comments {
   padding: 16px;
@@ -19,21 +19,25 @@
   }
 
   &--print {
-    padding: 0;
+    padding: $print-container-padding;
     font-family: Arial, Helvetica, sans-serif;
 
-    &__user-text {
-      padding: 8px 32px;
-      margin: 8px auto 0;
-      max-width: $print-width;
+    .analyst-comments__user-text {
+      max-width: unset;
+      margin: 0;
+      padding: 20px 0;
 
       & > * {
         display: block;
-        margin: 8px 0;
+      }
+
+      p:empty::before {
+        content: '\00a0';
+        display: inline;
       }
     }
 
-    &__signatures {
+    .analyst-comments__signatures {
       padding: 8px 0;
       max-width: $print-width;
       margin: 0 auto;
@@ -41,10 +45,6 @@
       flex-direction: row;
       border: 1px solid black;
       page-break-inside: avoid;
-    }
-
-    &__title {
-      margin: 8px 0;
     }
   }
 }

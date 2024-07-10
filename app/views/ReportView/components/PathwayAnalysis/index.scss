@@ -1,7 +1,15 @@
-@import '../../../../styles/variables';
+@import '@/styles/variables';
 
 .pathway {
   padding: 16px;
+
+  &--print {
+    padding: $print-container-padding;
+
+    .pathway__legend {
+      padding: 0;
+    }
+  }
 
   &__button {
     float: right;
