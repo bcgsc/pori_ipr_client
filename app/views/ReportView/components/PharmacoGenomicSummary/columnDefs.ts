@@ -1,5 +1,6 @@
 import ArrayCell from '@/components/DataTable/components/ArrayCellRenderer';
 import getGeneProp from '@/utils/getGeneProp';
+import { sampleColumnDefs } from '../../common';
 
 const COMMON_COL_DEFS = [
   {
@@ -87,45 +88,6 @@ const ACTIONS_COL_DEF = {
   sortable: false,
   suppressMenu: true,
 };
-
-const sampleColumnDefs = [
-  {
-    headerName: 'Sample',
-    field: 'Sample',
-    colId: 'Sample',
-    hide: false,
-  },
-  {
-    headerName: 'Sample Name',
-    field: 'Sample Name',
-    colId: 'Sample Name',
-    hide: false,
-  },
-  {
-    headerName: 'Collection Date',
-    field: 'Collection Date',
-    colId: 'Collection Date',
-    hide: false,
-  },
-  {
-    headerName: 'Primary Site',
-    field: 'Primary Site',
-    colId: 'Primary Site',
-    hide: false,
-  },
-  {
-    headerName: 'Biopsy Site',
-    field: 'Biopsy Site',
-    colId: 'Biopsy Site',
-    hide: false,
-  },
-  {
-    headerName: 'Pathology Estimated Tumour Content',
-    field: 'Patho TC',
-    colId: 'Patho TC',
-    hide: false,
-  },
-];
 
 const PHARMACOGEN_EVIDENCE_VAL_GETTER = ({ data: { evidenceLevel, reference } }) => {
   if (reference && !evidenceLevel) {

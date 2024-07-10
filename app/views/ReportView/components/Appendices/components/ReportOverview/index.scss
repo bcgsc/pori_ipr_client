@@ -6,4 +6,8 @@
   &__fab {
     float: right;
   }
+  
+  section:not(:empty) {
+    margin-top: 1rem;
+  }
 }
