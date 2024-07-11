@@ -43,7 +43,6 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
     if (data.context.includes('Phase') || data.context.includes('Trial') || data.relevance === 'eligibility' || !!data.kbData.recruitment_status) {
       setIsClinicalTrial(true);
     }
-    console.log(data);
   }, [data]);
 
   const handleUpdateTherapeuticTargets = useCallback((type: TherapeuticTargetType, selectedKbStatementId?: string) => async () => {
@@ -73,7 +72,6 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
         const variant = result[0].conditions.find((r) => r['@class'].toLowerCase().includes('variant'));
         const therapy = result[0].conditions.find((r) => r['@class'].toLowerCase().includes('therapy'));
         const context = result[0].relevance;
-        console.log(context);
 
         if (!variant || !therapy || !context) {
           throw new Error(`Required Graphkb fields not populated on GraphKB: ${!variant ? ' variant' : ''}${!therapy ? ' therapy' : ''}${!context ? ' context' : ''}`);
