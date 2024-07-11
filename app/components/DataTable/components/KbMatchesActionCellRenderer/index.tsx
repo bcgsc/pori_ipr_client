@@ -3,7 +3,7 @@ import {
 } from '@mui/material';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import React, {
-  useState, useCallback, useContext, useEffect,
+  useState, useCallback, useContext, useMemo,
 } from 'react';
 import api from '@/services/api';
 import { KbMatchType } from '@/common';
@@ -34,15 +34,14 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
   const [therapeuticTargetType, setTherapeuticTargetType] = useState<TherapeuticTargetType>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [iprEvidenceLevels, setIprEvidenceLevels] = useState(null);
-  const [isClinicalTrial, setIsClinicalTrial] = useState(false);
 
   const isMult = Array.isArray(kbStatementId);
 
-  // Filtering whether a statement is clinical trial using context and recruitment status
-  useEffect(() => {
+  const isClinicalTrial = useMemo(() => {
     if (data.context.includes('Phase') || data.context.includes('Trial') || data.relevance === 'eligibility' || !!data.kbData.recruitment_status) {
-      setIsClinicalTrial(true);
+      return true;
     }
+    return false;
   }, [data]);
 
   const handleUpdateTherapeuticTargets = useCallback((type: TherapeuticTargetType, selectedKbStatementId?: string) => async () => {
