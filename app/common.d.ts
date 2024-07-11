@@ -109,13 +109,16 @@ type AppendixType = {
   text: string;
 } & RecordDefaults;
 
-export type VariantTextType = {
+type VariantTextType = {
   cancerType: string[];
   project: {
     ident: string | null;
     name: string | null;
   };
-  template: TemplateType;
+  template: {
+    ident: string | null;
+    name: string | null;
+  };
   text: string;
   variantName: string;
 } & RecordDefaults;
