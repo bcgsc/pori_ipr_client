@@ -2,7 +2,9 @@ import {
   IconButton, Menu, MenuItem,
 } from '@mui/material';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import React, { useState, useCallback, useContext, useEffect } from 'react';
+import React, {
+  useState, useCallback, useContext, useEffect,
+} from 'react';
 import api from '@/services/api';
 import { KbMatchType } from '@/common';
 import { useParams } from 'react-router-dom';
@@ -38,11 +40,11 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
 
   // Filtering whether a statement is clinical trial using context and recruitment status
   useEffect(() => {
-    if (data.context.includes('Phase') || data.context.includes('Trial') || !!data.kbData.recruitment_status) {
+    if (data.context.includes('Phase') || data.context.includes('Trial') || data.relevance === 'eligibility' || !!data.kbData.recruitment_status) {
       setIsClinicalTrial(true);
     }
     console.log(data);
-  }, [data])
+  }, [data]);
 
   const handleUpdateTherapeuticTargets = useCallback((type: TherapeuticTargetType, selectedKbStatementId?: string) => async () => {
     const therapeuticResp = await api.get(`/reports/${reportId}/therapeutic-targets`, {}).request();
