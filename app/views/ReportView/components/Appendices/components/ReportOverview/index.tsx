@@ -110,7 +110,7 @@ const ReportOverview = ({
             text={reportAppendixText}
           />
         )}
-        {reportAppendixText && <div dangerouslySetInnerHTML={{ __html: reportAppendixText }} />}
+        {reportAppendixText && <div className="inner-html" dangerouslySetInnerHTML={{ __html: reportAppendixText }} />}
       </>
     );
   }, [

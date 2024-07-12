@@ -198,7 +198,7 @@ const AnalystComments = ({
           )}
           {comments ? (
             <div
-              className="analyst-comments__user-text"
+              className="analyst-comments__user-text inner-html"
               dangerouslySetInnerHTML={{ __html: comments }}
             />
           ) : (
