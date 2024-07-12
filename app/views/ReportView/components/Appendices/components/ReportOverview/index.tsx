@@ -77,7 +77,7 @@ const ReportOverview = ({
       return <CircularProgress color="inherit" size={20} />;
     }
     return (
-      <div dangerouslySetInnerHTML={{ __html: templateAppendixText }} />
+      <div className="inner-html" dangerouslySetInnerHTML={{ __html: templateAppendixText }} />
     );
   }, [
     isLoading,
@@ -110,7 +110,7 @@ const ReportOverview = ({
             text={reportAppendixText}
           />
         )}
-        {reportAppendixText && <div dangerouslySetInnerHTML={{ __html: reportAppendixText }} />}
+        {reportAppendixText && <div className="inner-html" dangerouslySetInnerHTML={{ __html: reportAppendixText }} />}
       </>
     );
   }, [
