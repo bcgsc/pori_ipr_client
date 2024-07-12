@@ -77,7 +77,7 @@ const ReportOverview = ({
       return <CircularProgress color="inherit" size={20} />;
     }
     return (
-      <div dangerouslySetInnerHTML={{ __html: templateAppendixText }} />
+      <div className="inner-html" dangerouslySetInnerHTML={{ __html: templateAppendixText }} />
     );
   }, [
     isLoading,
