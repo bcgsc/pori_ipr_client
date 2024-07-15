@@ -1,5 +1,5 @@
 import {
-  Table, TableCell, TableRow, Typography,
+  Table, TableBody, TableCell, TableRow, Typography,
 } from '@mui/material';
 import { Dictionary } from 'lodash';
 import React from 'react';
@@ -28,16 +28,18 @@ const SummaryPrintTable = ({
   renderValue = null,
 }: SummaryPrintTableProps) => (
   <Table padding="none" size="small">
-    {data.filter((key) => (key.value !== null && key.value !== '')).map(({ [labelKey]: label, [valueKey]: value }) => (
-      <TableRow>
-        <TableCell>
-          <Typography variant="body2" fontWeight="bold">{variantTypes.includes(String(label)) ? `${variantToStrings[String(label)]}${Object.values(value).length > 1 ? 's' : ''}` : label}</Typography>
-        </TableCell>
-        <TableCell sx={{ paddingLeft: 1 }}>
-          {renderValue ? renderValue(value) : value}
-        </TableCell>
-      </TableRow>
-    ))}
+    <TableBody>
+      {data.filter((key) => (key.value !== null && key.value !== '')).map(({ [labelKey]: label, [valueKey]: value }) => (
+        <TableRow key={`${label}${value}`}>
+          <TableCell>
+            <Typography variant="body2" fontWeight="bold">{variantTypes.includes(String(label)) ? `${variantToStrings[String(label)]}${Object.values(value).length > 1 ? 's' : ''}` : label}</Typography>
+          </TableCell>
+          <TableCell sx={{ paddingLeft: 1 }}>
+            {renderValue ? renderValue(value) : value}
+          </TableCell>
+        </TableRow>
+      ))}
+    </TableBody>
   </Table>
 );
 
