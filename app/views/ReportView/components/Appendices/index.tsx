@@ -122,7 +122,7 @@ const Appendices = ({
   const isPharmacogenomic = useMemo(() => report?.template?.name === 'pharmacogenomic', [report?.template?.name]);
 
   return (
-    <div className="appendices">
+    <div className={`appendices ${isPrint ? 'appendices--print' : ''}`}>
       {!isLoading && (
         <>
           {!isPrint && (
@@ -183,7 +183,7 @@ const Appendices = ({
             </Typography>
           )}
           {(isPrint && !isPharmacogenomic) && (
-            <div className="analysis-summary">
+            <div className="analysis-summary--print">
               <Typography variant="h3">
                 Analysis Summary
               </Typography>

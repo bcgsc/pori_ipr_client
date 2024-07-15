@@ -84,7 +84,7 @@ const HTMLCellRenderer = (props: HTMLCellRendererProps) => {
       role="button"
       tabIndex={0}
     >
-      <div dangerouslySetInnerHTML={{ __html: text }} />
+      <div className="inner-html" dangerouslySetInnerHTML={{ __html: text }} />
     </div>
   );
 };
