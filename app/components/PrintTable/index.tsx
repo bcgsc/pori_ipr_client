@@ -1,8 +1,12 @@
+/* eslint-disable no-plusplus */
 /* eslint-disable react/no-array-index-key */
-import React, { useMemo } from 'react';
+import React, {
+  useLayoutEffect, useMemo,
+} from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { ColDef, ValueGetterParams } from '@ag-grid-community/core';
-
+import { v7 as createUuid } from 'uuid';
+import { registerHandlers, Handler } from 'pagedjs';
 import './index.scss';
 
 export type PrintTableProps = {
@@ -22,14 +26,14 @@ export type PrintTableProps = {
  * Table display for print view, due to unexpected results from AgGrid
  * Note: ColumnDefs with valueGetters should be in function form
  */
-const PrintTable = ({
+function PrintTable({
   data = [],
   columnDefs = [],
   order = [],
   noRowsText = '',
   collapseableCols = null,
   fullWidth = false,
-}: PrintTableProps): JSX.Element => {
+}: PrintTableProps): JSX.Element {
   const sortedColDefs = useMemo(() => columnDefs
     .filter((col) => (col.headerName && col.hide !== true && col.headerName !== 'Actions'))
     .sort((columnA, columnB): number => {
@@ -176,10 +180,54 @@ const PrintTable = ({
     return component;
   }, [sortedColDefs, noRowsText, data, collapseableCols]);
 
+  const tableId = useMemo(() => {
+    if (data?.length) {
+      return createUuid();
+    }
+    return null;
+  }, [data]);
+
+  useLayoutEffect(() => {
+    if (!data.length || !tableId) { return; }
+    class MyHandler extends Handler {
+      // eslint-disable-next-line class-methods-use-this
+      afterRendered() {
+        const targetTables: NodeListOf<HTMLTableElement> = document.querySelectorAll(`[data-table-id='${tableId}']`);
+        const areAllTablesIdChecked = Array
+          .from(targetTables)
+          .every((table) => table.getAttribute('data-id-checked') === 'true');
+        if (areAllTablesIdChecked) { return; }
+
+        const [firstRow] = targetTables[0].rows;
+        const firstRowWidths = Array.from(firstRow.cells).map((cell) => cell.offsetWidth);
+
+        for (let t = 0; t < targetTables.length; t++) {
+          for (let r = 0; r < targetTables[t].rows.length; r++) {
+            const row = targetTables[t].rows[r];
+            if (t > 0 && r === 0) {
+              // Reset css of first row of cut-off table
+              for (let c1 = 0; c1 < row.cells.length; c1++) {
+                if (row.cells[c1].rowSpan < 2 && row.cells[c1].classList.contains('table__cell--skip')) {
+                  row.cells[c1].classList.remove('table__cell--skip');
+                }
+              }
+            }
+            for (let c2 = 0; c2 < row.cells.length; c2++) {
+              row.cells[c2].style.width = `${firstRowWidths[c2]}px`;
+            }
+          }
+          targetTables[t].setAttribute('data-id-checked', 'true');
+          targetTables[t].style.tableLayout = 'fixed';
+        }
+      }
+    }
+    registerHandlers(MyHandler);
+  }, [data, tableId]);
+
   return (
-    <div className="table-container">
+    <div className="table__container">
       {Boolean(columnDefs.length) && (
-        <table className={`table ${fullWidth ? 'table--full-width' : ''}`}>
+        <table data-table-id={tableId} className={`table ${fullWidth ? 'table--full-width' : ''}`}>
           <thead className="table__header">
             <tr>
               {sortedColDefs.map((col) => (
@@ -196,6 +244,6 @@ const PrintTable = ({
       )}
     </div>
   );
-};
+}
 
 export default PrintTable;

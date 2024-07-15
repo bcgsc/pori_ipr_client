@@ -3,6 +3,10 @@
   flex-direction: column;
   padding: 24px 16px;
 
+  &--print {
+    padding: 0;
+  }
+
   &__fab {
     float: right;
   }
