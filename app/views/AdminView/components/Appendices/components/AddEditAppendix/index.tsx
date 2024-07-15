@@ -130,7 +130,7 @@ const AddEditAppendix = ({
         }
         snackbar.error(`Error creating appendix record: record already exists for pair: template ${template.name} ${projectStr}`);
       } else {
-        snackbar.error(`Error creating appendix reord: ${err}`);
+        snackbar.error(`Error creating appendix record: ${err}`);
       }
     }
   }, [editor, project, template, onClose]);
