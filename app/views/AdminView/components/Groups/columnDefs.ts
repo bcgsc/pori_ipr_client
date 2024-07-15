@@ -1,4 +1,5 @@
 import { ColDef } from '@ag-grid-community/core';
+import { basicTooltipValueGetter } from '@/components/DataTable/components/ToolTip';
 
 const descriptions = {
   admin: 'all access',
@@ -31,6 +32,8 @@ const columnDefs: ColDef[] = [
       }
       return '';
     },
+    tooltipComponent: 'ToolTip',
+    tooltipValueGetter: basicTooltipValueGetter,
     hide: false,
     flex: 1,
     autoHeight: true,

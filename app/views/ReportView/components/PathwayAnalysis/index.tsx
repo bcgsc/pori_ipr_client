@@ -87,7 +87,7 @@ const PathwayAnalysis = ({
   }, [legend, report]);
 
   return (
-    <div className="pathway">
+    <div className={`pathway ${isPrint ? 'pathway--print' : ''}`}>
       <Typography variant="h3">Pathway Analysis</Typography>
       <DemoDescription>
         This section is for display of a graphical or visual summary of the sequencing results in the context of biological pathways. This enables the visualization of multiple genomic alterations affecting often diverse biological pathways.

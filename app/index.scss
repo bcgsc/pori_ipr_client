@@ -66,3 +66,9 @@ html body {
 .ag-theme-material {
   -webkit-font-smoothing: auto !important;
 }
+
+.inner-html {
+  p:empty::before {
+    content: "\00a0";
+  }
+}
