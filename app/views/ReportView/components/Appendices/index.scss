@@ -1,18 +1,17 @@
+@import '@/styles/variables';
+
 .appendices {
   margin: 20px auto;
-  padding: 0 20px;
+  padding: $print-container-padding;
   font-family: Arial, Helvetica, sans-serif;
+
+  &--print {
+    margin: 0;
+    padding: 20px;
+  }
 
   &__config {
     padding: 16px;
-
-    @media print {
-      word-break: break-all;
-    }
-
-    &-title {
-      margin: 0 0 8px;
-    }
   }
 }
 
