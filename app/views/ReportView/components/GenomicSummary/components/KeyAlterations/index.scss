@@ -1,3 +1,4 @@
+@import '@/styles/variables';
 // Shared styling between both versions
 .key-alterations, .key-alterations-print {
   &__standardLayout {
@@ -12,7 +13,7 @@
 
 .key-alterations-print {
   margin: 0 auto;
-  padding: 0 20px;
+  padding: $print-container-padding;
 
   &__standardLayout {
     

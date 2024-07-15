@@ -1,8 +1,12 @@
+@import '@/styles/variables';
+
 .therapeutic-print {
+  padding: $print-container-padding;
   margin-bottom: 32px;
 
-  &__title {
-    margin: 24px 0 16px;
-    padding: 0 20px;
+  .table__container {
+    th {
+      text-wrap: nowrap;
+    }
   }
 }
