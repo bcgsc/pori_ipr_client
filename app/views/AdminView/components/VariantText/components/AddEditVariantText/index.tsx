@@ -205,7 +205,7 @@ const AddEditVariantText = ({
         }
         snackbar.error(`Error creating variant text record: record already exists for pair: template ${temp.name} ${projectStr}`);
       } else {
-        snackbar.error(`Error ${editData ? 'modifying' : 'creating'} variant text reord: ${err}`);
+        snackbar.error(`Error ${editData ? 'modifying' : 'creating'} variant text record: ${err}`);
       }
     }
   }, [editor, editData, templateOptions, projectOptions, onClose, reset, getValues]);
