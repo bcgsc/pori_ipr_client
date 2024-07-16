@@ -27,6 +27,15 @@ import {
   ImmuneType, MicrobialType, MutationBurdenType, TmburType,
 } from '@/common';
 import snackbar from '@/services/SnackbarUtils';
+import getMicbSiteIntegrationStatusLabel from '@/utils/getMicbSiteIntegrationStatusLabel';
+
+const MICB_SITE_STEPS = {
+  yes: 'No',
+  no: 'none',
+  none: 'Yes',
+  // In case old reports have empty string
+  '': 'Yes',
+};
 
 type TumourSummaryEditProps = {
   microbial: MicrobialType[];
@@ -335,7 +344,7 @@ const TumourSummaryEdit = ({
       // Add new entry
       setNewMicrobialData((currData) => [...currData, {
         species: target.value,
-        integrationSite: 'No',
+        integrationSite: '',
       } as MicrobialType]);
       setMicrobialDirty(true);
     }
@@ -344,7 +353,7 @@ const TumourSummaryEdit = ({
   const handleClicked = useCallback((idx) => {
     setNewMicrobialData((currData) => {
       const nextData = [...currData];
-      nextData[idx].integrationSite = nextData[idx].integrationSite.toLowerCase() === 'yes' ? 'No' : 'Yes';
+      nextData[idx].integrationSite = MICB_SITE_STEPS[nextData[idx].integrationSite.toLowerCase()];
       return nextData;
     });
     setMicrobialDirty(true);
@@ -422,7 +431,7 @@ const TumourSummaryEdit = ({
               // eslint-disable-next-line react/no-array-index-key
               key={`${species}-${idx}`}
               tabIndex={-1}
-              label={`${species}${integrationSite.toLowerCase() === 'yes' ? ' | (integration)' : ' | (no integration)'}`}
+              label={`${getMicbSiteIntegrationStatusLabel(species, integrationSite)})`}
               onClick={() => handleClicked(idx)}
               onDelete={() => handleDelete(idx)}
             />

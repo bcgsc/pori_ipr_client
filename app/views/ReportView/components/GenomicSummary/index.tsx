@@ -13,6 +13,7 @@ import {
 } from '@/common';
 import useReport from '@/hooks/useReport';
 
+import getMicbSiteIntegrationStatusLabel from '@/utils/getMicbSiteIntegrationStatusLabel';
 import {
   ComparatorType,
 } from '../MutationBurden/types';
@@ -182,13 +183,7 @@ const GenomicSummary = ({
         },
         {
           term: 'Microbial Species',
-          value: microbial ? microbial.map(({ species, integrationSite }) => {
-            let integrationSection = '';
-            if (integrationSite) {
-              integrationSection = integrationSite.toLowerCase() === 'yes' ? ' (integration)' : ' (no integration)';
-            }
-            return `${species}${integrationSection}`;
-          }).join(', ') : null,
+          value: microbial ? microbial.map(({ species, integrationSite }) => getMicbSiteIntegrationStatusLabel(species, integrationSite)).join(', ') : null,
         },
         {
           term:

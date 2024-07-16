@@ -23,6 +23,7 @@ import {
   KbMatchType, TumourSummaryType, ImmuneType, MutationBurdenType, MicrobialType, TmburType,
 } from '@/common';
 import { Box } from '@mui/system';
+import getMicbSiteIntegrationStatusLabel from '@/utils/getMicbSiteIntegrationStatusLabel';
 import {
   therapeuticAssociationColDefs, cancerRelevanceColDefs, sampleColumnDefs, getGenomicEvent,
 } from './columnDefs';
@@ -302,13 +303,7 @@ const RapidSummary = ({
       },
       {
         term: 'Microbial Species',
-        value: microbial ? microbial.map(({ species, integrationSite }) => {
-          let integrationSection = '';
-          if (integrationSite) {
-            integrationSection = integrationSite.toLowerCase() === 'yes' ? ' (integration)' : ' (no integration)';
-          }
-          return `${species}${integrationSection}`;
-        }).join(', ') : null,
+        value: microbial ? microbial.map(({ species, integrationSite }) => getMicbSiteIntegrationStatusLabel(species, integrationSite)).join(', ') : null,
       },
       {
         term:
