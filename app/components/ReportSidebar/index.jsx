@@ -16,7 +16,6 @@ const ReportSidebar = (props) => {
     visibleSections,
     isSidebarVisible,
   } = props;
-
   const { pathname } = useLocation();
   const { report } = useContext(ReportContext);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -87,7 +86,7 @@ const ReportSidebar = (props) => {
         </ListItem>
         {allSections.map((section) => (
           <React.Fragment key={section.name}>
-            {section.uri && visibleSections.includes(section.uri) && (
+            {((section.uri && visibleSections.includes(section.uri)) || (section.uri === 'summary' && visibleSections.some(element => element.startsWith('summary')))) && (
               <Link to={({ pathname: pn }) => `${pn.replace(/\/[^/]*$/, '')}/${section.uri}`} className="report-sidebar__list-link">
                 <ListItem classes={{
                   root: `
@@ -113,23 +112,23 @@ const ReportSidebar = (props) => {
               section.children.map((child) => (
                 <React.Fragment key={child.uri}>
                   {visibleSections.includes(child.uri) && (
-                  <Link
-                    key={child.uri}
-                    to={({ pathname: pn }) => `${pn.replace(/\/[^/]*$/, '')}/${child.uri}`}
-                    className="report-sidebar__list-link"
-                  >
-                    <ListItem classes={{
-                      root: `
+                    <Link
+                      key={child.uri}
+                      to={({ pathname: pn }) => `${pn.replace(/\/[^/]*$/, '')}/${child.uri}`}
+                      className="report-sidebar__list-link"
+                    >
+                      <ListItem classes={{
+                        root: `
                         report-sidebar__list-item--indented
                         ${pathname.split('/').pop() === child.uri ? 'report-sidebar__list-item--active' : ''}
                       `,
-                    }}
-                    >
-                      <ListItemText>
-                        {child.name}
-                      </ListItemText>
-                    </ListItem>
-                  </Link>
+                      }}
+                      >
+                        <ListItemText>
+                          {child.name}
+                        </ListItemText>
+                      </ListItem>
+                    </Link>
                   )}
                 </React.Fragment>
               ))
