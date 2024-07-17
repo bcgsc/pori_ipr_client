@@ -87,7 +87,7 @@ const PatientInformation = ({
           snackbar.error(`Unknown error: ${err}`);
         } finally {
           if (loadedDispatch) {
-            loadedDispatch({ type: 'patient-and-tumour' });
+            loadedDispatch({ type: 'patient' });
           }
         }
       };
