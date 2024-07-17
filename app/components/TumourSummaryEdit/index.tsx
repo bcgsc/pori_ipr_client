@@ -44,7 +44,7 @@ type TumourSummaryEditProps = {
   mutationBurden: MutationBurdenType;
   tmburMutBur: TmburType;
   isOpen: boolean;
-  onClose: (
+  onEditClose: (
     isSaved: boolean,
     newMicrobialData?: MicrobialType[],
     newReportData?: ReportType,
@@ -64,7 +64,7 @@ const TumourSummaryEdit = ({
   mutationBurden,
   tmburMutBur,
   isOpen,
-  onClose,
+  onEditClose,
 }: TumourSummaryEditProps): JSX.Element => {
   const { isSigned } = useContext(ConfirmContext);
   const { showConfirmDialog } = useConfirmDialog();
@@ -196,13 +196,13 @@ const TumourSummaryEdit = ({
     let callSet = null;
     if (!!newTmburMutData?.adjustedTmb && !newTmburMutData?.adjustedTmbComment) {
       snackbar.warning('Please add a comment on the adjusted TMB');
-      isSaved = false;
-      onClose(false);
+      onEditClose(false);
+      return undefined;
     }
     if (!!newTCellCd8Data?.pedsScore && !newTCellCd8Data?.pedsScoreComment) {
       snackbar.warning('Please add a comment on the added pediatric CD8+ t cell score');
-      isSaved = false;
-      onClose(false);
+      onEditClose(false);
+      return undefined;
     }
     if (isSaved) {
       setIsApiCalling(true);
@@ -295,7 +295,7 @@ const TumourSummaryEdit = ({
           }
 
           snackbar.success('Successfully updated Tumour Summary');
-          onClose(
+          onEditClose(
             true,
             microbialDirty ? microbialResp : null,
             reportDirty ? reportResp : null,
@@ -310,7 +310,7 @@ const TumourSummaryEdit = ({
         }
       }
     } else {
-      onClose(false);
+      onEditClose(false);
     }
     return () => callSet.abort();
   }, [
@@ -331,7 +331,7 @@ const TumourSummaryEdit = ({
     mutationBurden?.ident,
     tmburMutBur?.ident,
     showConfirmDialog,
-    onClose,
+    onEditClose,
   ]);
 
   const handleKeyDown = useCallback(({ code, target }) => {
@@ -656,3 +656,7 @@ const TumourSummaryEdit = ({
 };
 
 export default TumourSummaryEdit;
+export {
+  TumourSummaryEdit,
+  TumourSummaryEditProps,
+};

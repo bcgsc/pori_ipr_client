@@ -1,83 +1,70 @@
 import React, {
-  useState, useContext, useCallback,
+  useState, useCallback,
+  useEffect,
 } from 'react';
 import {
   Typography,
   IconButton,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import ReportContext, { ReportType } from '@/context/ReportContext';
+import { ReportType } from '@/context/ReportContext';
 import {
   TumourSummaryType, MicrobialType, ImmuneType, MutationBurdenType, TmburType,
 } from '@/common';
-import TumourSummaryEdit from '@/components/TumourSummaryEdit';
+import { TumourSummaryEdit, TumourSummaryEditProps } from '@/components/TumourSummaryEdit';
 import DescriptionList from '@/components/DescriptionList';
 import SummaryPrintTable from '@/components/SummaryPrintTable';
 import './index.scss';
+import { SummaryProps } from '@/commonComponents';
 
-type TumourSummaryProps = {
-  loadedDispatch: ({ type }: { type: string }) => void;
+interface TumourSummaryProps extends Omit<TumourSummaryEditProps, 'isOpen'> {
   canEdit: boolean;
   isPrint: boolean;
   printVersion?: 'standardLayout' | 'condensedLayout' | null;
+  loadedDispatch: SummaryProps['loadedDispatch'];
   tumourSummary: TumourSummaryType[];
-};
+}
 
 const TumourSummary = ({
-  loadedDispatch,
   canEdit,
+  onEditClose,
+  mutationBurden,
+  tmburMutBur,
+  tCellCd8,
+  loadedDispatch,
+  microbial,
+  report,
   isPrint,
   printVersion,
   tumourSummary,
 }: TumourSummaryProps): JSX.Element => {
-  const { report, setReport } = useContext(ReportContext);
   const [showTumourSummaryEdit, setShowTumourSummaryEdit] = useState(false);
-  const [primaryBurden, setPrimaryBurden] = useState<MutationBurdenType>();
-  const [tmburMutBur, setTmburMutBur] = useState<TmburType>();
-
-  const [microbial, setMicrobial] = useState<MicrobialType[]>();
-  const [tCellCd8, setTCellCd8] = useState<ImmuneType>();
-
   const classNamePrefix = isPrint ? 'tumour-summary--print' : 'tumour-summary';
 
-  const handleTumourSummaryEditClose = useCallback((
+  const handleClose = useCallback((
     isSaved: boolean,
-    newMicrobialData: MicrobialType[],
-    newReportData: ReportType,
-    newTCellCd8Data: ImmuneType,
-    newMutationBurdenData: MutationBurdenType,
-    newTmBurMutBurData: TmburType,
+    newMicrobialData?: MicrobialType[],
+    newReportData?: ReportType,
+    newTCellCd8Data?: ImmuneType,
+    newMutationBurdenData?: MutationBurdenType,
+    newTmBurMutBurData?: TmburType,
   ) => {
     setShowTumourSummaryEdit(false);
+    onEditClose(
+      isSaved,
+      newMicrobialData,
+      newReportData,
+      newTCellCd8Data,
+      newMutationBurdenData,
+      newTmBurMutBurData,
+    );
+  }, [onEditClose]);
 
-    if (!isSaved || (!newMicrobialData && !newReportData && !newTCellCd8Data && !newMutationBurdenData && !newTmBurMutBurData)) {
-      return;
+  useEffect(() => {
+    if (report && loadedDispatch) {
+      loadedDispatch({ type: 'tumour' });
     }
-
-    if (newMicrobialData) {
-      setMicrobial(newMicrobialData);
-    }
-
-    if (newReportData) {
-      setReport(newReportData);
-    }
-
-    if (newTCellCd8Data) {
-      setTCellCd8(newTCellCd8Data);
-    }
-
-    if (newMutationBurdenData) {
-      setPrimaryBurden(newMutationBurdenData);
-    }
-
-    if (newTmBurMutBurData) {
-      setTmburMutBur(newTmBurMutBurData);
-    }
-
-    if (loadedDispatch) {
-      loadedDispatch({ type: 'patient-and-tumour' });
-    }
-  }, [loadedDispatch, setReport]);
+  }, [report, loadedDispatch]);
 
   if (isPrint && printVersion === 'condensedLayout') {
     return (
@@ -99,7 +86,7 @@ const TumourSummary = ({
       <div className={`${classNamePrefix}__title`}>
         <Typography variant="h3">
           Tumour Summary
-          {canEdit && !isPrint && (
+          {canEdit && !isPrint && report && (
             <>
               <IconButton onClick={() => setShowTumourSummaryEdit(true)} size="large">
                 <EditIcon />
@@ -108,10 +95,10 @@ const TumourSummary = ({
                 microbial={microbial}
                 report={report}
                 tCellCd8={tCellCd8}
-                mutationBurden={primaryBurden}
+                mutationBurden={mutationBurden}
                 tmburMutBur={tmburMutBur}
                 isOpen={showTumourSummaryEdit}
-                onClose={handleTumourSummaryEditClose}
+                onEditClose={handleClose}
               />
             </>
           )}
