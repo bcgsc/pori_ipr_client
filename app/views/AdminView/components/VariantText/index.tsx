@@ -3,7 +3,6 @@ import React, {
 } from 'react';
 import { CircularProgress } from '@mui/material';
 import { VariantTextType } from '@/common';
-import IPRWYSIWYGEditor from '@/components/IPRWYSIWYGEditor';
 import sanitizeHtml from 'sanitize-html';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
@@ -130,10 +129,9 @@ function VariantText(): JSX.Element {
             canDelete
             onDelete={handleOnDelete}
           />
-          <IPRWYSIWYGEditor
-            title="Edit Variant Text"
+          <AddEditVariantText
+            editData={editingData}
             isOpen={isEditing}
-            text={editingData?.text}
             onClose={handleEditClose}
           />
           <AddEditVariantText

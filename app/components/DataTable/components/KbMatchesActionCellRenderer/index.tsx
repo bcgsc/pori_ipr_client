@@ -2,7 +2,9 @@ import {
   IconButton, Menu, MenuItem,
 } from '@mui/material';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import React, { useState, useCallback, useContext } from 'react';
+import React, {
+  useState, useCallback, useContext, useMemo,
+} from 'react';
 import api from '@/services/api';
 import { KbMatchType } from '@/common';
 import { useParams } from 'react-router-dom';
@@ -34,6 +36,13 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
   const [iprEvidenceLevels, setIprEvidenceLevels] = useState(null);
 
   const isMult = Array.isArray(kbStatementId);
+
+  const isClinicalTrial = useMemo(() => {
+    if (data.context.includes('Phase') || data.context.includes('Trial') || data.relevance === 'eligibility' || !!data.kbData.recruitment_status) {
+      return true;
+    }
+    return false;
+  }, [data]);
 
   const handleUpdateTherapeuticTargets = useCallback((type: TherapeuticTargetType, selectedKbStatementId?: string) => async () => {
     const therapeuticResp = await api.get(`/reports/${reportId}/therapeutic-targets`, {}).request();
@@ -136,7 +145,7 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
         onClose={() => setMenuAnchor(null)}
       >
         <MenuItem
-          disabled={isLoading}
+          disabled={isLoading || isClinicalTrial}
           onClick={isMult
             ? (evt) => handleMultiTargets(evt, 'therapeutic')
             : handleUpdateTherapeuticTargets('therapeutic')}
@@ -144,7 +153,7 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
           Add to Potential Therapeutic Targets
         </MenuItem>
         <MenuItem
-          disabled={isLoading}
+          disabled={isLoading || isClinicalTrial}
           onClick={isMult
             ? (evt) => handleMultiTargets(evt, 'chemoresistance')
             : handleUpdateTherapeuticTargets('chemoresistance')}
