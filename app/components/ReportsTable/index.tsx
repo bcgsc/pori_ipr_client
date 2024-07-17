@@ -7,7 +7,6 @@ import LaunchCell from '@/components/LaunchCell';
 import NoRowsOverlay from '@/components/DataTable/components/NoRowsOverlay';
 import { ToolTip } from '@/components/DataTable/components/ToolTip';
 import columnDefs from './columnDefs';
-import searchColumnDefs from './searchColumnDefs';
 
 import './index.scss';
 
@@ -17,10 +16,9 @@ import './index.scss';
 
 type ReportsTableProps = {
   rowData: ReportType[];
-  isSearch?: boolean;
 };
 
-const ReportsTableComponent = ({ rowData, isSearch }: ReportsTableProps): JSX.Element => {
+const ReportsTableComponent = ({ rowData }: ReportsTableProps): JSX.Element => {
   const {
     gridApi,
     colApi,
@@ -47,7 +45,7 @@ const ReportsTableComponent = ({ rowData, isSearch }: ReportsTableProps): JSX.El
   return (
     <div className="ag-theme-material reports-table__container">
       <AgGridReact
-        columnDefs={isSearch ? searchColumnDefs : columnDefs}
+        columnDefs={columnDefs}
         defaultColDef={defaultColDef}
         enableCellTextSelection
         frameworkComponents={{

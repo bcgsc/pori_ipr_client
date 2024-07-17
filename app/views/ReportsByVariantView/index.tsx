@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-
+import { Chip, Typography } from '@mui/material';
 import api from '@/services/api';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import snackbar from '@/services/SnackbarUtils';
+import DataTable from '@/components/DataTable';
 import searchReportsColumns from '@/utils/searchReportsColumns';
-import '../ReportsView/index.scss';
-import ReportsTableComponent from '@/components/ReportsTable';
-import { Chip, Typography } from '@mui/material';
+import searchColumnDefs from '@/components/ReportsTable/searchColumnDefs';
 
+import '../ReportsView/index.scss';
 import './index.scss';
+
 
 type ReportsByVariantViewProps = WithLoadingInjectedProps;
 
@@ -17,16 +18,17 @@ const ReportsByVariantView = ({
   isLoading,
   setIsLoading,
 }: ReportsByVariantViewProps): JSX.Element => {
-  const { keyVariant } = useParams<{ keyVariant: string }>();
+  const { param } = useParams<{ param: string }>();
   const [rowData, setRowData] = useState([]);
+  const [tempRowData, setTempRowData] = useState([]);
   const [variants, setVariants] = useState<string[]>();
+  const [chipSelected, setChipSelected] = useState(false);
 
   useEffect(() => {
-    if (keyVariant) {
+    if (param) {
       const getData = async () => {
         try {
-          const {reports} = await api.get(`/reports?keyVariant=${keyVariant.replace(/%2F/, '.')}`).request();
-
+          const {reports} = await api.get(`/reports?${param.replace(/%2F/g, '.')}`).request();
           setVariants(Array.from(new Set(reports.map((report) => {
             return report.genomicAlterationsIdentified[0].geneVariant;
           }))));
@@ -61,16 +63,26 @@ const ReportsByVariantView = ({
 
       getData();
     }
-  }, [keyVariant, setIsLoading]);
+  }, [param, setIsLoading]);
 
   const handleChipDeleted = useCallback((deleteVariant) => {
     try {
       setVariants(variants.filter((variant) => variant !== deleteVariant));
       setRowData(rowData.filter((row) => row.matchedVariant !== deleteVariant));
+      setChipSelected(false);
     } catch (err) {
-      snackbar.error('Entry NOT deleted due to an error');
+      snackbar.error(`Cannot remove variant due to error: ${err}`);
     }
   }, [variants, rowData]);
+
+  const handleChipClicked = useCallback((highlightVariant) => {
+    try {
+      setTempRowData(rowData.filter((row) => row.matchedVariant === highlightVariant));
+      setChipSelected(true);
+    } catch (err) {
+      snackbar.error(`Cannot select variant due to error: ${err}`);
+    }
+  }, [rowData]);
 
 
   if (isLoading) { return null; }
@@ -86,20 +98,23 @@ const ReportsByVariantView = ({
             {variants.map((variant) => (
               <React.Fragment key={variant}>
                 <Chip
+                  sx={{margin: '3px'}}
                   label={`${variant}`}
-                  onDelete={() => handleChipDeleted(variant)} />
+                  clickable
+                  onDelete={() => handleChipDeleted(variant)}
+                  onClick={() => handleChipClicked(variant)}
+                />  
               </React.Fragment>
             ))}
           </div>
         </>
       )}
-      <Typography variant='h3' className='typography'>
-        Matching Reports
-      </Typography>
       <div className="reports-table">
-        <ReportsTableComponent
-          rowData={rowData}
-          isSearch
+        <DataTable
+          rowData={chipSelected ? tempRowData : rowData}
+          columnDefs={searchColumnDefs}
+          titleText='Matching Reports'
+          isFullLength
         />
       </div>
     </>

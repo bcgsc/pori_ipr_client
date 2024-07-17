@@ -29,6 +29,7 @@ import { ActionCellRenderer } from './components/ActionCellRenderer';
 import { HTMLCellRenderer } from './components/HTMLCellRenderer';
 import KbMatchesActionCellRenderer from './components/KbMatchesActionCellRenderer';
 import HyperlinkCellRenderer from './components/HyperlinkCellRenderer';
+import LaunchCell from '@/components/LaunchCell';
 import { ToolTip } from './components/ToolTip';
 
 import NoRowsOverlay from './components/NoRowsOverlay';
@@ -436,7 +437,7 @@ const DataTable = ({
           return !(colD?.headerName === 'Actions' || colD?.field === 'Actions' || col.getColId() === 'Actions');
         })
         .map((col) => col.getColId()),
-      fileName: `ipr_${report.patientId}_${report.ident}_${titleText.split(' ').join('_')}_${date}.tsv`,
+      fileName: `ipr_${report?.patientId}_${report?.ident}_${titleText.split(' ').join('_')}_${date}.tsv`,
       processCellCallback: (({ value }) => (typeof value === 'string' ? value?.replace(/,/g, '') : value)),
     });
   }, [colApi, gridApi, report, titleText]);
@@ -591,6 +592,7 @@ const DataTable = ({
                 NoRowsOverlay,
                 HTMLCellRenderer,
                 ToolTip,
+                Launch: LaunchCell,
               }}
               suppressAnimationFrame
               suppressRowTransform={Boolean(collapseColumnFields)}

@@ -25,4 +25,25 @@
     outline: none;
     width: 100%;
   }
+
+  &__threshold-input {
+    margin: auto;
+    padding-left: 32px;
+  }
+
+  &__button-container {
+    justify-content: space-between;
+    flex-direction: column;
+    height: 100vh;
+    display: flex;
+  }
+
+  .button-holder {
+    justify-content: flex-end;
+    display: flex;
+    margin-top: 16px;
+    margin-right: 16px;
+  }
 }
+
+

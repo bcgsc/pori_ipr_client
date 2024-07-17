@@ -183,7 +183,7 @@ const Main = (): JSX.Element => {
                   </Route>
                   <AuthenticatedRoute component={TermsView} path="/terms" />
                   <AuthenticatedRoute exact component={PatientsView} path="/reports/patients/:patientId" />
-                  <AuthenticatedRoute exact component={ReportsByVariantView} path="/search/:keyVariant" />
+                  <AuthenticatedRoute exact component={ReportsByVariantView} path="/search/:param" />
                   <AuthenticatedRoute component={ReportsView} path="/reports" />
                   <AuthenticatedRoute component={MyReportsView} path="/my-reports" />
                   <AuthenticatedRoute component={SearchView} path="/search" />
