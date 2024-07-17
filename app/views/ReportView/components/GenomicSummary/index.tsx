@@ -1,11 +1,12 @@
 import React, {
   useEffect, useState, useContext,
+  useCallback,
 } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Box } from '@mui/material';
 import api, { ApiCallSet } from '@/services/api';
 import DemoDescription from '@/components/DemoDescription';
-import ReportContext from '@/context/ReportContext';
+import ReportContext, { ReportType } from '@/context/ReportContext';
 import snackbar from '@/services/SnackbarUtils';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import {
@@ -14,6 +15,7 @@ import {
 import useReport from '@/hooks/useReport';
 
 import getMicbSiteIntegrationStatusLabel from '@/utils/getMicbSiteIntegrationStatusLabel';
+import { SummaryProps } from '@/commonComponents';
 import {
   ComparatorType,
 } from '../MutationBurden/types';
@@ -26,7 +28,7 @@ import PatientInformation from '../PatientInformation';
 import TumourSummary from '../TumourSummary';
 
 type GenomicSummaryProps = {
-  loadedDispatch?: ({ type }: { type: string }) => void;
+  loadedDispatch?: SummaryProps['loadedDispatch'];
   isPrint: boolean;
   printVersion?: 'standardLayout' | 'condensedLayout' | null;
 } & WithLoadingInjectedProps;
@@ -38,7 +40,7 @@ const GenomicSummary = ({
   isLoading,
   loadedDispatch,
 }: GenomicSummaryProps): JSX.Element => {
-  const { report } = useContext(ReportContext);
+  const { report, setReport } = useContext(ReportContext);
   let { canEdit } = useReport();
   if (report.state === 'completed') {
     canEdit = false;
@@ -242,6 +244,39 @@ const GenomicSummary = ({
     }
   }, [history, microbial, primaryBurden, primaryComparator, isPrint, report, signatures, tCellCd8, msi, tmburMutBur, report.captiv8Score]);
 
+  const handleTumourSummaryEditClose = useCallback((
+    isSaved: boolean,
+    newMicrobialData: MicrobialType[],
+    newReportData: ReportType,
+    newTCellCd8Data: ImmuneType,
+    newMutationBurdenData: MutationBurdenType,
+    newTmBurMutBurData: TmburType,
+  ) => {
+    if (!isSaved || (!newMicrobialData && !newReportData && !newTCellCd8Data && !newMutationBurdenData && !newTmBurMutBurData)) {
+      return;
+    }
+
+    if (newMicrobialData) {
+      setMicrobial(newMicrobialData);
+    }
+
+    if (newReportData) {
+      setReport(newReportData);
+    }
+
+    if (newTCellCd8Data) {
+      setTCellCd8(newTCellCd8Data);
+    }
+
+    if (newMutationBurdenData) {
+      setPrimaryBurden(newMutationBurdenData);
+    }
+
+    if (newTmBurMutBurData) {
+      setTmburMutBur(newTmBurMutBurData);
+    }
+  }, [setReport]);
+
   if (isLoading || !report || !tumourSummary) {
     return null;
   }
@@ -272,6 +307,12 @@ const GenomicSummary = ({
             {report && tumourSummary && (
               <TumourSummary
                 canEdit={canEdit}
+                onEditClose={handleTumourSummaryEditClose}
+                microbial={microbial}
+                report={report}
+                tCellCd8={tCellCd8}
+                mutationBurden={primaryBurden}
+                tmburMutBur={tmburMutBur}
                 isPrint={isPrint}
                 printVersion={printVersion}
                 tumourSummary={tumourSummary}
@@ -303,6 +344,12 @@ const GenomicSummary = ({
             <TumourSummary
               canEdit={canEdit}
               isPrint={isPrint}
+              onEditClose={handleTumourSummaryEditClose}
+              microbial={microbial}
+              report={report}
+              tCellCd8={tCellCd8}
+              mutationBurden={primaryBurden}
+              tmburMutBur={tmburMutBur}
               printVersion={printVersion}
               tumourSummary={tumourSummary}
               loadedDispatch={loadedDispatch}
