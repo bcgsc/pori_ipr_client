@@ -23,7 +23,8 @@ import {
   KbMatchType, TumourSummaryType, ImmuneType, MutationBurdenType, MicrobialType, TmburType,
 } from '@/common';
 import { Box } from '@mui/system';
-import { getMicbSiteIntegrationStatusLabel } from '@/utils/getMicbSiteIntegrationStatusLabel';
+import { getMicbSiteSummary } from '@/utils/getMicbSiteIntegrationStatusLabel';
+import { TumourSummaryEditProps } from '@/components/TumourSummaryEdit';
 import {
   therapeuticAssociationColDefs, cancerRelevanceColDefs, sampleColumnDefs, getGenomicEvent,
 } from './columnDefs';
@@ -130,7 +131,7 @@ const RapidSummary = ({
   setIsLoading,
   printVersion = null,
 }: RapidSummaryProps): JSX.Element => {
-  const { report } = useContext(ReportContext);
+  const { report, setReport } = useContext(ReportContext);
   const { setIsSigned } = useContext(ConfirmContext);
   let { canEdit } = useReport();
   if (report.state === 'completed') {
@@ -145,7 +146,7 @@ const RapidSummary = ({
   const [primaryBurden, setPrimaryBurden] = useState<MutationBurdenType>();
   const [tmburMutBur, setTmburMutBur] = useState<TmburType>();
   const [tCellCd8, setTCellCd8] = useState<ImmuneType>();
-  const [microbial, setMicrobial] = useState<MicrobialType[]>();
+  const [microbial, setMicrobial] = useState<MicrobialType[]>([]);
   const [editData, setEditData] = useState();
 
   const [showMatchedTumourEditDialog, setShowMatchedTumourEditDialog] = useState(false);
@@ -303,7 +304,7 @@ const RapidSummary = ({
       },
       {
         term: 'Microbial Species',
-        value: microbial ? microbial.map(({ species, integrationSite }) => getMicbSiteIntegrationStatusLabel(species, integrationSite)).join(', ') : null,
+        value: getMicbSiteSummary(microbial),
       },
       {
         term:
@@ -586,6 +587,39 @@ const RapidSummary = ({
   }, [report, isPrint]);
   const classNamePrefix = printVersion ? 'rapid-summary--print' : 'rapid-summary';
 
+  const handleTumourSummaryEditClose: TumourSummaryEditProps['onEditClose'] = useCallback((
+    isSaved,
+    newMicrobialData,
+    newReportData,
+    newTCellCd8Data,
+    newMutationBurdenData,
+    newTmBurMutBurData,
+  ) => {
+    if (!isSaved || (!newMicrobialData && !newReportData && !newTCellCd8Data && !newMutationBurdenData && !newTmBurMutBurData)) {
+      return;
+    }
+
+    if (newMicrobialData) {
+      setMicrobial(newMicrobialData);
+    }
+
+    if (newReportData) {
+      setReport(newReportData);
+    }
+
+    if (newTCellCd8Data) {
+      setTCellCd8(newTCellCd8Data);
+    }
+
+    if (newMutationBurdenData) {
+      setPrimaryBurden(newMutationBurdenData);
+    }
+
+    if (newTmBurMutBurData) {
+      setTmburMutBur(newTmBurMutBurData);
+    }
+  }, [setReport]);
+
   if (printVersion === 'condensedLayout') {
     return (
       <div className={classNamePrefix}>
@@ -613,9 +647,15 @@ const RapidSummary = ({
               <TumourSummary
                 canEdit={canEdit}
                 isPrint={isPrint}
-                printVersion={printVersion}
-                tumourSummary={tumourSummary}
                 loadedDispatch={loadedDispatch}
+                microbial={microbial}
+                mutationBurden={primaryBurden}
+                onEditClose={handleTumourSummaryEditClose}
+                printVersion={printVersion}
+                report={report}
+                tCellCd8={tCellCd8}
+                tmburMutBur={tmburMutBur}
+                tumourSummary={tumourSummary}
               />
             )}
           </Box>
@@ -670,9 +710,15 @@ const RapidSummary = ({
             <TumourSummary
               canEdit={canEdit}
               isPrint={isPrint}
-              printVersion={printVersion}
-              tumourSummary={tumourSummary}
               loadedDispatch={loadedDispatch}
+              microbial={microbial}
+              mutationBurden={primaryBurden}
+              onEditClose={handleTumourSummaryEditClose}
+              printVersion={printVersion}
+              report={report}
+              tCellCd8={tCellCd8}
+              tmburMutBur={tmburMutBur}
+              tumourSummary={tumourSummary}
             />
           )}
           {report && therapeuticAssociationResults && (

@@ -6,7 +6,7 @@ import { useHistory } from 'react-router-dom';
 import { Box } from '@mui/material';
 import api, { ApiCallSet } from '@/services/api';
 import DemoDescription from '@/components/DemoDescription';
-import ReportContext, { ReportType } from '@/context/ReportContext';
+import ReportContext from '@/context/ReportContext';
 import snackbar from '@/services/SnackbarUtils';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import {
@@ -16,6 +16,7 @@ import useReport from '@/hooks/useReport';
 
 import { getMicbSiteSummary } from '@/utils/getMicbSiteIntegrationStatusLabel';
 import { SummaryProps } from '@/commonComponents';
+import { TumourSummaryEditProps } from '@/components/TumourSummaryEdit';
 import {
   ComparatorType,
 } from '../MutationBurden/types';
@@ -238,13 +239,13 @@ const GenomicSummary = ({
     }
   }, [history, microbial, primaryBurden, primaryComparator, isPrint, report, signatures, tCellCd8, msi, tmburMutBur, report.captiv8Score]);
 
-  const handleTumourSummaryEditClose = useCallback((
-    isSaved: boolean,
-    newMicrobialData: MicrobialType[],
-    newReportData: ReportType,
-    newTCellCd8Data: ImmuneType,
-    newMutationBurdenData: MutationBurdenType,
-    newTmBurMutBurData: TmburType,
+  const handleTumourSummaryEditClose: TumourSummaryEditProps['onEditClose'] = useCallback((
+    isSaved,
+    newMicrobialData,
+    newReportData,
+    newTCellCd8Data,
+    newMutationBurdenData,
+    newTmBurMutBurData,
   ) => {
     if (!isSaved || (!newMicrobialData && !newReportData && !newTCellCd8Data && !newMutationBurdenData && !newTmBurMutBurData)) {
       return;
@@ -301,16 +302,16 @@ const GenomicSummary = ({
             {report && tumourSummary && (
               <TumourSummary
                 canEdit={canEdit}
-                onEditClose={handleTumourSummaryEditClose}
+                isPrint={isPrint}
+                loadedDispatch={loadedDispatch}
                 microbial={microbial}
+                mutationBurden={primaryBurden}
+                onEditClose={handleTumourSummaryEditClose}
+                printVersion={printVersion}
                 report={report}
                 tCellCd8={tCellCd8}
-                mutationBurden={primaryBurden}
                 tmburMutBur={tmburMutBur}
-                isPrint={isPrint}
-                printVersion={printVersion}
                 tumourSummary={tumourSummary}
-                loadedDispatch={loadedDispatch}
               />
             )}
           </Box>
@@ -338,15 +339,15 @@ const GenomicSummary = ({
             <TumourSummary
               canEdit={canEdit}
               isPrint={isPrint}
-              onEditClose={handleTumourSummaryEditClose}
+              loadedDispatch={loadedDispatch}
               microbial={microbial}
+              mutationBurden={primaryBurden}
+              onEditClose={handleTumourSummaryEditClose}
+              printVersion={printVersion}
               report={report}
               tCellCd8={tCellCd8}
-              mutationBurden={primaryBurden}
               tmburMutBur={tmburMutBur}
-              printVersion={printVersion}
               tumourSummary={tumourSummary}
-              loadedDispatch={loadedDispatch}
             />
           )}
         </>
