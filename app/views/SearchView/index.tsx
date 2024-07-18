@@ -49,7 +49,7 @@ const SearchView = () => {
       setThresholdErrorMessage('');
     } else {
       const numThreshold = parseFloat(threshold);
-      if (!isNaN(numThreshold)) {
+      if (!Number.isNaN(numThreshold)) {
         if (numThreshold < 0 || numThreshold > 1) {
           setThresholdErrorMessage('Threshold must be between 0 and 1');
         } else {
@@ -97,7 +97,7 @@ const SearchView = () => {
         </div>
         <div className="search__threshold-input">
           <Typography variant="subtitle1">Matching Threshold</Typography>
-          <TextField 
+          <TextField
             size="small"
             variant="outlined"
             helperText={thresholdErrorMessage}
@@ -110,14 +110,14 @@ const SearchView = () => {
       </div>
       <div className="__button-container">
         <div className="button-holder">
-        <Typography 
-          variant="subtitle2" 
-          color="primary"
-          sx={{maxWidth: "80%", marginRight: 4}}
-        >
-          * Matching threshold determines the similarity between the key variant and the search results. 
-          A value of 1 means a 100% exact match and vice versa. The default value is 0.8 if not specified.
-        </Typography>
+          <Typography
+            variant="subtitle2"
+            color="primary"
+            sx={{ maxWidth: '80%', marginRight: 4 }}
+          >
+            * Matching threshold determines the similarity between the key variant and the search results.
+            A value of 1 means a 100% exact match and vice versa. The default value is 0.8 if not specified.
+          </Typography>
           <Button
             variant="contained"
             onClick={handleSubmit}

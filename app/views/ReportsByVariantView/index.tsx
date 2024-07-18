@@ -27,10 +27,8 @@ const ReportsByVariantView = ({
     if (param) {
       const getData = async () => {
         try {
-          const {reports} = await api.get(`/reports?${param.replace(/%2F/g, '.')}`).request();
-          setVariants(Array.from(new Set(reports.map((report) => {
-            return report.genomicAlterationsIdentified[0].geneVariant;
-          }))));
+          const { reports } = await api.get(`/reports?${param.replace(/%2F/g, '.')}`).request();
+          setVariants(Array.from(new Set(reports.map((report) => report.genomicAlterationsIdentified[0].geneVariant))));
 
           setRowData(reports.map((report) => {
             const [analyst] = report.users
@@ -77,7 +75,7 @@ const ReportsByVariantView = ({
   const handleChipClicked = useCallback((highlightVariant) => {
     try {
       if (highlightVariant === chipSelected) {
-        window.location.reload();
+        setChipSelected('');
       } else {
         setTempRowData(rowData.filter((row) => row.matchedVariant === highlightVariant));
         setChipSelected(highlightVariant);
@@ -85,8 +83,7 @@ const ReportsByVariantView = ({
     } catch (err) {
       snackbar.error(`Cannot select variant due to error: ${err}`);
     }
-  }, [rowData]);
-
+  }, [chipSelected, rowData]);
 
   if (isLoading) { return null; }
 
@@ -94,20 +91,20 @@ const ReportsByVariantView = ({
     <>
       {Boolean(variants.length) && (
         <>
-          <Typography variant='h3' className='typography'>
+          <Typography variant="h3" className="typography">
             Matching Variants
           </Typography>
           <div className="variant-chips">
             {variants.map((variant) => (
               <React.Fragment key={variant}>
                 <Chip
-                  sx={{margin: '3px'}}
+                  sx={{ margin: '3px' }}
                   label={`${variant}`}
                   clickable
                   onDelete={() => handleChipDeleted(variant)}
                   onClick={() => handleChipClicked(variant)}
-                  color={variant === chipSelected ? "primary" : "default"}
-                />  
+                  color={variant === chipSelected ? 'primary' : 'default'}
+                />
               </React.Fragment>
             ))}
           </div>
@@ -117,7 +114,7 @@ const ReportsByVariantView = ({
         <DataTable
           rowData={chipSelected ? tempRowData : rowData}
           columnDefs={searchColumnDefs}
-          titleText='Matching Reports'
+          titleText="Matching Reports"
           isFullLength
           isSearch
         />
