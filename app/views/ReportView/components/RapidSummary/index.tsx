@@ -23,7 +23,7 @@ import {
   KbMatchType, TumourSummaryType, ImmuneType, MutationBurdenType, MicrobialType, TmburType,
 } from '@/common';
 import { Box } from '@mui/system';
-import getMicbSiteIntegrationStatusLabel from '@/utils/getMicbSiteIntegrationStatusLabel';
+import { getMicbSiteIntegrationStatusLabel } from '@/utils/getMicbSiteIntegrationStatusLabel';
 import {
   therapeuticAssociationColDefs, cancerRelevanceColDefs, sampleColumnDefs, getGenomicEvent,
 } from './columnDefs';

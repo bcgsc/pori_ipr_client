@@ -1,13 +1,28 @@
 const INT_STATUS_TO_STRING = {
   yes: 'integration',
   no: 'no integration',
-  none: 'not detected',
-  '': 'not detected',
+  none: '',
+  '': '',
 };
 
 const getMicbSiteIntegrationStatusLabel = (species: string, integrationStatus: string) => {
-  if (typeof integrationStatus !== 'string' || !species) return '';
-  return `${species} | (${INT_STATUS_TO_STRING[integrationStatus.toLowerCase()]})`;
+  if (typeof integrationStatus !== 'string' || !species || species === '' || species.toLowerCase() === 'none') return '';
+  const intStatus = INT_STATUS_TO_STRING[integrationStatus.toLowerCase()] ?? integrationStatus;
+  return `${species}${intStatus ? ` | (${intStatus})` : ''}`;
 };
 
-export default getMicbSiteIntegrationStatusLabel;
+const getMicbSiteSummary = (microbial) => {
+  if (
+    microbial?.length < 1
+    || (microbial.length === 1 && microbial.find(({ species }) => species.toLowerCase() === 'none'))
+  ) {
+    return 'Not detected';
+  }
+
+  return microbial.filter(({ species }) => species.toLowerCase() !== 'none').map(({ species, integrationSite }) => getMicbSiteIntegrationStatusLabel(species, integrationSite)).join(', ');
+};
+
+export {
+  getMicbSiteIntegrationStatusLabel,
+  getMicbSiteSummary,
+};

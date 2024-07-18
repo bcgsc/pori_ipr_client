@@ -14,7 +14,7 @@ import {
 } from '@/common';
 import useReport from '@/hooks/useReport';
 
-import getMicbSiteIntegrationStatusLabel from '@/utils/getMicbSiteIntegrationStatusLabel';
+import { getMicbSiteSummary } from '@/utils/getMicbSiteIntegrationStatusLabel';
 import { SummaryProps } from '@/commonComponents';
 import {
   ComparatorType,
@@ -53,13 +53,7 @@ const GenomicSummary = ({
   const [msi, setMsi] = useState<MsiType>();
   const [tmburMutBur, setTmburMutBur] = useState<TmburType>();
 
-  const [microbial, setMicrobial] = useState<MicrobialType[]>([{
-    species: '',
-    integrationSite: '',
-    ident: '',
-    createdAt: null,
-    updatedAt: null,
-  }]);
+  const [microbial, setMicrobial] = useState<MicrobialType[]>([]);
   const [tCellCd8, setTCellCd8] = useState<ImmuneType>();
   const [primaryComparator, setPrimaryComparator] = useState<ComparatorType>();
 
@@ -110,7 +104,7 @@ const GenomicSummary = ({
           setTCellCd8(immuneResp.find(({ cellType }) => cellType === 'T cells CD8'));
           setSignatures(signaturesResp);
 
-          if (microbialResp.length) {
+          if (microbialResp) {
             setMicrobial(microbialResp);
           }
 
@@ -185,7 +179,7 @@ const GenomicSummary = ({
         },
         {
           term: 'Microbial Species',
-          value: microbial ? microbial.map(({ species, integrationSite }) => getMicbSiteIntegrationStatusLabel(species, integrationSite)).join(', ') : null,
+          value: getMicbSiteSummary(microbial),
         },
         {
           term:

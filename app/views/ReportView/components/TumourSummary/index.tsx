@@ -91,15 +91,17 @@ const TumourSummary = ({
               <IconButton onClick={() => setShowTumourSummaryEdit(true)} size="large">
                 <EditIcon />
               </IconButton>
-              <TumourSummaryEdit
-                microbial={microbial}
-                report={report}
-                tCellCd8={tCellCd8}
-                mutationBurden={mutationBurden}
-                tmburMutBur={tmburMutBur}
-                isOpen={showTumourSummaryEdit}
-                onEditClose={handleClose}
-              />
+              {showTumourSummaryEdit && (
+                <TumourSummaryEdit
+                  microbial={microbial}
+                  report={report}
+                  tCellCd8={tCellCd8}
+                  mutationBurden={mutationBurden}
+                  tmburMutBur={tmburMutBur}
+                  isOpen={showTumourSummaryEdit}
+                  onEditClose={handleClose}
+                />
+              )}
             </>
           )}
         </Typography>
