@@ -1,8 +1,6 @@
 import './index.scss';
 
 import {
-  IconButton,
-  InputAdornment,
   TextField,
   Typography,
   Button,
@@ -117,8 +115,8 @@ const SearchView = () => {
           color="primary"
           sx={{maxWidth: "80%", marginRight: 4}}
         >
-          * Matching threshold determines the similarity between the searched variant and its results. 
-          A value of 1 means a 100% match and vise versa. The default value is 0.8 if not specified.
+          * Matching threshold determines the similarity between the key variant and the search results. 
+          A value of 1 means a 100% exact match and vice versa. The default value is 0.8 if not specified.
         </Typography>
           <Button
             variant="contained"

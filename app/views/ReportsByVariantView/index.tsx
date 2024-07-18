@@ -11,7 +11,6 @@ import searchColumnDefs from '@/components/ReportsTable/searchColumnDefs';
 import '../ReportsView/index.scss';
 import './index.scss';
 
-
 type ReportsByVariantViewProps = WithLoadingInjectedProps;
 
 const ReportsByVariantView = ({
@@ -22,7 +21,7 @@ const ReportsByVariantView = ({
   const [rowData, setRowData] = useState([]);
   const [tempRowData, setTempRowData] = useState([]);
   const [variants, setVariants] = useState<string[]>();
-  const [chipSelected, setChipSelected] = useState(false);
+  const [chipSelected, setChipSelected] = useState('');
 
   useEffect(() => {
     if (param) {
@@ -69,7 +68,7 @@ const ReportsByVariantView = ({
     try {
       setVariants(variants.filter((variant) => variant !== deleteVariant));
       setRowData(rowData.filter((row) => row.matchedVariant !== deleteVariant));
-      setChipSelected(false);
+      setChipSelected('');
     } catch (err) {
       snackbar.error(`Cannot remove variant due to error: ${err}`);
     }
@@ -77,8 +76,12 @@ const ReportsByVariantView = ({
 
   const handleChipClicked = useCallback((highlightVariant) => {
     try {
-      setTempRowData(rowData.filter((row) => row.matchedVariant === highlightVariant));
-      setChipSelected(true);
+      if (highlightVariant === chipSelected) {
+        window.location.reload();
+      } else {
+        setTempRowData(rowData.filter((row) => row.matchedVariant === highlightVariant));
+        setChipSelected(highlightVariant);
+      }
     } catch (err) {
       snackbar.error(`Cannot select variant due to error: ${err}`);
     }
@@ -103,6 +106,7 @@ const ReportsByVariantView = ({
                   clickable
                   onDelete={() => handleChipDeleted(variant)}
                   onClick={() => handleChipClicked(variant)}
+                  color={variant === chipSelected ? "primary" : "default"}
                 />  
               </React.Fragment>
             ))}
@@ -115,6 +119,7 @@ const ReportsByVariantView = ({
           columnDefs={searchColumnDefs}
           titleText='Matching Reports'
           isFullLength
+          isSearch
         />
       </div>
     </>
