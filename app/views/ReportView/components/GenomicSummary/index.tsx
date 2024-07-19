@@ -1,5 +1,6 @@
 import React, {
   useEffect, useState, useContext,
+  useCallback,
 } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Box } from '@mui/material';
@@ -13,6 +14,9 @@ import {
 } from '@/common';
 import useReport from '@/hooks/useReport';
 
+import { getMicbSiteSummary } from '@/utils/getMicbSiteIntegrationStatusLabel';
+import { SummaryProps } from '@/commonComponents';
+import { TumourSummaryEditProps } from '@/components/TumourSummaryEdit';
 import {
   ComparatorType,
 } from '../MutationBurden/types';
@@ -25,7 +29,7 @@ import PatientInformation from '../PatientInformation';
 import TumourSummary from '../TumourSummary';
 
 type GenomicSummaryProps = {
-  loadedDispatch?: ({ type }: { type: string }) => void;
+  loadedDispatch?: SummaryProps['loadedDispatch'];
   isPrint: boolean;
   printVersion?: 'standardLayout' | 'condensedLayout' | null;
 } & WithLoadingInjectedProps;
@@ -37,7 +41,7 @@ const GenomicSummary = ({
   isLoading,
   loadedDispatch,
 }: GenomicSummaryProps): JSX.Element => {
-  const { report } = useContext(ReportContext);
+  const { report, setReport } = useContext(ReportContext);
   let { canEdit } = useReport();
   if (report.state === 'completed') {
     canEdit = false;
@@ -50,13 +54,7 @@ const GenomicSummary = ({
   const [msi, setMsi] = useState<MsiType>();
   const [tmburMutBur, setTmburMutBur] = useState<TmburType>();
 
-  const [microbial, setMicrobial] = useState<MicrobialType[]>([{
-    species: '',
-    integrationSite: '',
-    ident: '',
-    createdAt: null,
-    updatedAt: null,
-  }]);
+  const [microbial, setMicrobial] = useState<MicrobialType[]>([]);
   const [tCellCd8, setTCellCd8] = useState<ImmuneType>();
   const [primaryComparator, setPrimaryComparator] = useState<ComparatorType>();
 
@@ -107,7 +105,7 @@ const GenomicSummary = ({
           setTCellCd8(immuneResp.find(({ cellType }) => cellType === 'T cells CD8'));
           setSignatures(signaturesResp);
 
-          if (microbialResp.length) {
+          if (microbialResp) {
             setMicrobial(microbialResp);
           }
 
@@ -182,13 +180,7 @@ const GenomicSummary = ({
         },
         {
           term: 'Microbial Species',
-          value: microbial ? microbial.map(({ species, integrationSite }) => {
-            let integrationSection = '';
-            if (integrationSite) {
-              integrationSection = integrationSite.toLowerCase() === 'yes' ? ' (integration)' : ' (no integration)';
-            }
-            return `${species}${integrationSection}`;
-          }).join(', ') : null,
+          value: getMicbSiteSummary(microbial),
         },
         {
           term:
@@ -247,6 +239,39 @@ const GenomicSummary = ({
     }
   }, [history, microbial, primaryBurden, primaryComparator, isPrint, report, signatures, tCellCd8, msi, tmburMutBur, report.captiv8Score]);
 
+  const handleTumourSummaryEditClose: TumourSummaryEditProps['onEditClose'] = useCallback((
+    isSaved,
+    newMicrobialData,
+    newReportData,
+    newTCellCd8Data,
+    newMutationBurdenData,
+    newTmBurMutBurData,
+  ) => {
+    if (!isSaved || (!newMicrobialData && !newReportData && !newTCellCd8Data && !newMutationBurdenData && !newTmBurMutBurData)) {
+      return;
+    }
+
+    if (newMicrobialData) {
+      setMicrobial(newMicrobialData);
+    }
+
+    if (newReportData) {
+      setReport(newReportData);
+    }
+
+    if (newTCellCd8Data) {
+      setTCellCd8(newTCellCd8Data);
+    }
+
+    if (newMutationBurdenData) {
+      setPrimaryBurden(newMutationBurdenData);
+    }
+
+    if (newTmBurMutBurData) {
+      setTmburMutBur(newTmBurMutBurData);
+    }
+  }, [setReport]);
+
   if (isLoading || !report || !tumourSummary) {
     return null;
   }
@@ -278,9 +303,15 @@ const GenomicSummary = ({
               <TumourSummary
                 canEdit={canEdit}
                 isPrint={isPrint}
-                printVersion={printVersion}
-                tumourSummary={tumourSummary}
                 loadedDispatch={loadedDispatch}
+                microbial={microbial}
+                mutationBurden={primaryBurden}
+                onEditClose={handleTumourSummaryEditClose}
+                printVersion={printVersion}
+                report={report}
+                tCellCd8={tCellCd8}
+                tmburMutBur={tmburMutBur}
+                tumourSummary={tumourSummary}
               />
             )}
           </Box>
@@ -308,9 +339,15 @@ const GenomicSummary = ({
             <TumourSummary
               canEdit={canEdit}
               isPrint={isPrint}
-              printVersion={printVersion}
-              tumourSummary={tumourSummary}
               loadedDispatch={loadedDispatch}
+              microbial={microbial}
+              mutationBurden={primaryBurden}
+              onEditClose={handleTumourSummaryEditClose}
+              printVersion={printVersion}
+              report={report}
+              tCellCd8={tCellCd8}
+              tmburMutBur={tmburMutBur}
+              tumourSummary={tumourSummary}
             />
           )}
         </>

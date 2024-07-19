@@ -580,6 +580,10 @@ const DataTable = ({
               onFilterChanged={handleFilterAndSortChanged}
               onSortChanged={handleFilterAndSortChanged}
               noRowsOverlayComponent="NoRowsOverlay"
+              gridOptions={{
+                // For when table is too short and the popup menus get cut-off
+                popupParent: document.querySelector('body'),
+              }}
               context={{
                 canEdit,
                 canDelete,
