@@ -38,7 +38,7 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
   const isMult = Array.isArray(kbStatementId);
 
   const isClinicalTrial = useMemo(() => {
-    if (data.context.includes('Phase') || data.context.includes('Trial') || data.relevance === 'eligibility' || !!data.kbData.recruitment_status) {
+    if (data.context.includes('Phase') || data.context.includes('Trial') || data.relevance === 'eligibility' || data.kbData?.recruitment_status) {
       return true;
     }
     return false;

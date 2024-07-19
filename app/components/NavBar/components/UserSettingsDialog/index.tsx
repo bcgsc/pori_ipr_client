@@ -132,10 +132,10 @@ const UserSettingsDialog = ({
                 </TableCell>
                 <TableCell sx={{ paddingLeft: 1 }}>
                   {userDetails.projects.map(({ name }, index, arr) => (
-                    <>
+                    <React.Fragment key={`${name}-${arr.toString()}`}>
                       {name}
                       {(index < arr.length - 1 ? ', ' : '')}
-                    </>
+                    </React.Fragment>
                   ))}
                 </TableCell>
               </TableRow>
@@ -145,10 +145,10 @@ const UserSettingsDialog = ({
                 </TableCell>
                 <TableCell sx={{ paddingLeft: 1 }}>
                   {userDetails.groups.map(({ name }, index, arr) => (
-                    <>
+                    <React.Fragment key={`${name}-${arr.toString()}`}>
                       {name}
                       {(index < arr.length - 1 ? ', ' : '')}
-                    </>
+                    </React.Fragment>
                   ))}
                 </TableCell>
               </TableRow>
