@@ -392,7 +392,7 @@ const TumourSummaryEdit = ({
       const captiv8Section = (
         <TextField
           className="tumour-dialog__text-field"
-          label="Preliminary CAPTIV-8 Score"
+          label={`${reportType === 'rapid' ? 'Preliminary ' : ''}CAPTIV-8 Score`}
           value={newReportData.captiv8Score}
           name="captiv8Score"
           onChange={handleReportChange}
