@@ -64,22 +64,18 @@ const Projects = (): JSX.Element => {
     }
   }, [snackbar, projects]);
 
-  const handleEditClose = useCallback((newData) => {
+  const handleEditClose = useCallback((newData, isNew) => {
     setShowDialog(false);
     if (newData) {
-      const projectIndex = projects.findIndex((project) => project.ident === newData.ident);
-      if (projectIndex !== -1) {
-        const newProjects = [...projects];
-        newProjects[projectIndex] = newData;
-        setProjects(newProjects);
-        snackbar.enqueueSnackbar('Project edited');
-      } else {
-        setProjects((prevVal) => [...prevVal, newData]);
+      setProjects(newData);
+      if (isNew) {
         snackbar.enqueueSnackbar('Project added');
+      } else {
+        snackbar.enqueueSnackbar('Project edited');
       }
     }
     setEditData(null);
-  }, [projects, snackbar]);
+  }, [snackbar]);
 
   return (
     <div className="admin-table__container">
