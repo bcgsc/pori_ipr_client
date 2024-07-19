@@ -44,8 +44,10 @@ const reducer = (state, action) => {
       return { ...state, summary: true };
     case 'alterations':
       return { ...state, alterations: true };
-    case 'patient-and-tumour':
-      return { ...state, 'patient-and-tumour': true };
+    case 'patient':
+      return { ...state, patient: true };
+    case 'tumour':
+      return { ...state, tumour: true };
     case 'analyst-comments':
       return { ...state, 'analyst-comments': true };
     case 'pathway':
@@ -60,7 +62,8 @@ const reducer = (state, action) => {
       return {
         summary: false,
         alterations: false,
-        'patient-and-tumour': false,
+        patient: false,
+        tumour: false,
         'analyst-comments': false,
         pathway: false,
         therapeutic: false,
@@ -148,7 +151,8 @@ const Print = ({
   const [reportSectionsLoaded, dispatch] = useReducer(reducer, {
     summary: false,
     alterations: false,
-    'patient-and-tumour': false,
+    patient: false,
+    tumour: false,
     'analyst-comments': false,
     pathway: false,
     therapeutic: false,
