@@ -179,7 +179,6 @@ const SmallMutations = ({
               variantType="snv"
               isOpen={showDialog}
               onClose={handleEditClose}
-              showErrorSnackbar={snackbar.error}
             />
           )}
           { dataTables }

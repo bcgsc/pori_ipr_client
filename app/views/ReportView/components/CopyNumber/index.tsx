@@ -216,7 +216,6 @@ const CopyNumber = ({
               variantType="cnv"
               isOpen={showDialog}
               onClose={handleEditClose}
-              showErrorSnackbar={snackbar.error}
             />
           )}
           {circos ? (
