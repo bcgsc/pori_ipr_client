@@ -16,6 +16,7 @@ import {
 } from '@mui/material';
 
 import api from '@/services/api';
+import snackbar from '@/services/SnackbarUtils';
 import AsyncButton from '@/components/AsyncButton';
 
 import ConfirmContext from '@/context/ConfirmContext';
@@ -29,14 +30,12 @@ type EditDialogProps = {
   editData: SignatureType;
   isOpen: boolean;
   onClose: (newData?: SignatureType) => void;
-  showErrorSnackbar: (message: string) => void;
 };
 
 const EditDialog = ({
   editData,
   isOpen = false,
   onClose,
-  showErrorSnackbar,
 }: EditDialogProps): JSX.Element => {
   const { showConfirmDialog } = useConfirmDialog();
   const { report } = useContext(ReportContext);
@@ -77,7 +76,7 @@ const EditDialog = ({
           onClose({ ...editData, selected: checkboxSelected, kbCategory: selectValue });
         }
       } catch (err) {
-        showErrorSnackbar(`Error updating signature: ${err.message}`);
+        snackbar.error(`Error updating signature: ${err.message}`);
         onClose();
       } finally {
         setIsApiCalling(false);
@@ -85,7 +84,7 @@ const EditDialog = ({
     } else {
       onClose();
     }
-  }, [checkboxSelected, editData, selectValue, report, isSigned, onClose, showErrorSnackbar, showConfirmDialog]);
+  }, [checkboxSelected, editData, selectValue, report, isSigned, onClose, showConfirmDialog]);
 
   return (
     <Dialog open={isOpen} maxWidth="sm" fullWidth className="edit-dialog">

@@ -1,6 +1,9 @@
 // source: https://github.com/iamhosseindhv/notistack/issues/30#issuecomment-542863653
 import {
-  useSnackbar, WithSnackbarProps, OptionsObject, closeSnackbar,
+  useSnackbar,
+  ProviderContext as WithSnackbarProps, // https://github.com/iamhosseindhv/notistack/issues/311
+  OptionsObject,
+  closeSnackbar,
 } from 'notistack';
 import React from 'react';
 import CloseIcon from '@mui/icons-material/Close';
