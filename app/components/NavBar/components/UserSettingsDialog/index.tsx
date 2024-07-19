@@ -28,14 +28,12 @@ type UserSettingsDialogProps = {
   editData: Partial<UserType>;
   isOpen: boolean;
   onClose: (newData?: Partial<UserType>) => void;
-  showErrorSnackbar: (message: string) => void;
 };
 
 const UserSettingsDialog = ({
   editData,
   isOpen = false,
   onClose,
-  showErrorSnackbar,
 }: UserSettingsDialogProps): JSX.Element => {
   const [checkboxSelected, setCheckboxSelected] = useState(false);
   const [isApiCalling, setIsApiCalling] = useState(false);
@@ -63,12 +61,12 @@ const UserSettingsDialog = ({
       onClose({ ...editData, allowNotifications: checkboxSelected });
       snackbar.success('User Settings updated successfully.');
     } catch (err) {
-      showErrorSnackbar(`Error updating user settings: ${err.message}`);
+      snackbar.error(`Error updating user settings: ${err.message}`);
       onClose();
     } finally {
       setIsApiCalling(false);
     }
-  }, [checkboxSelected, editData, onClose, showErrorSnackbar]);
+  }, [checkboxSelected, editData, onClose]);
 
   const handleTestEmail = useCallback(async () => {
     setIsApiCalling(true);
@@ -81,11 +79,11 @@ const UserSettingsDialog = ({
       await req.request();
       snackbar.success('Test email sent successfully.');
     } catch (err) {
-      showErrorSnackbar(`Error sending test email: ${err.message}`);
+      snackbar.error(`Error sending test email: ${err.message}`);
     } finally {
       setIsApiCalling(false);
     }
-  }, [showErrorSnackbar]);
+  }, []);
 
   return (
     <Dialog open={isOpen} maxWidth="sm" fullWidth className="edit-dialog">
