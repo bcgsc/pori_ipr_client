@@ -357,7 +357,11 @@ const AddEditUserDialog = ({
                       <MenuItem
                         key={project.ident}
                         value={project.ident}
-                        disabled={!userDetails?.projects.some((proj) => proj.ident === project.ident) && editData?.projects.some((proj) => proj.ident === project.ident)}
+                        disabled={
+                          !adminAccess
+                          && !userDetails?.projects.some((proj) => proj.ident === project.ident)
+                          && editData?.projects.some((proj) => proj.ident === project.ident)
+                        }
                       >
                         <Checkbox
                           checked={Boolean(value?.find((v) => v === project.ident))}
