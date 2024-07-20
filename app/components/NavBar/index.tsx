@@ -10,7 +10,6 @@ import {
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import PersonIcon from '@mui/icons-material/Person';
-import snackbar from '@/services/SnackbarUtils';
 import { logout } from '@/services/management/auth';
 import useSecurity from '@/hooks/useSecurity';
 import SidebarContext from '@/context/SidebarContext';
@@ -103,7 +102,6 @@ const NavBar = (): JSX.Element => {
             editData={userDetails}
             isOpen={showUserSettingsDialog}
             onClose={() => setShowUserSettingsDialog(false)}
-            showErrorSnackbar={snackbar.error}
           />
           <FeedbackDialog
             isOpen={showFeedbackDialog}

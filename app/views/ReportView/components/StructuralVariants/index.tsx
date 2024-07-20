@@ -193,7 +193,6 @@ const StructuralVariants = ({
               variantType="sv"
               isOpen={showDialog}
               onClose={handleEditClose}
-              showErrorSnackbar={snackbar.error}
             />
           )}
           {(genomeCircos || transcriptomeCircos) ? (
