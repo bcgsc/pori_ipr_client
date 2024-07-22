@@ -89,7 +89,7 @@ const ObjectAttributes = ({
               expandIcon={<ExpandMoreIcon />}
             >
               <Typography variant="subtitle2">
-                {`${idx}: ${mappedValIsArray ? '[' : '{'}`}
+                {`${!!mappedVal?.username ? `${mappedVal?.firstName} ${mappedVal?.lastName}` : idx}: ${mappedValIsArray ? '[' : '{'}`}
               </Typography>
             </AccordionSummary>
             <AccordionDetails
