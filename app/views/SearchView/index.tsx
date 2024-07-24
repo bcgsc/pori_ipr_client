@@ -5,10 +5,12 @@ import {
   Typography,
   Button,
   Dialog,
+  InputAdornment,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import HelpIcon from '@mui/icons-material/Help';
 import React, { useCallback, useEffect, useState } from 'react';
+import { borderRadius } from '@mui/system';
 
 const MIN_WORD_LENGTH = 3;
 
@@ -119,17 +121,34 @@ const SearchView = () => {
           tabIndex={0}
         >
           <TextField
-            variant="standard"
+            variant="outlined"
             error={Boolean(variantErrorMessage)}
             fullWidth
             helperText={variantErrorMessage}
             onChange={handleVariantChange}
-            label="Search Reports by Key Variant"
+            placeholder="Search Reports by Key Variant"
             value={variant}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+              sx: {borderRadius: '15px'}
+            }}
           />
         </div>
         <div className="search__threshold-input">
-          <Typography variant="subtitle1">Threshold</Typography>
+          <div className="search__threshold-input__label">
+            <Typography variant="subtitle1" sx={{width: "fit-content"}}>Threshold</Typography>
+            <Button onClick={handleHelpDialogOpen} className="help-button">
+              <HelpIcon/>
+            </Button>
+            <SearchHelpDialog 
+              open={helpDialogOpen}
+              onClose={handleHelpDialogClose}
+            />
+          </div>
           <TextField
             size="small"
             variant="outlined"
@@ -143,19 +162,12 @@ const SearchView = () => {
       </div>
       <div className="__button-container">
         <div className="button-holder">
-          <Button onClick={handleHelpDialogOpen} className="help-button">
-            <HelpIcon/>
-          </Button>
-          <SearchHelpDialog 
-            open={helpDialogOpen}
-            onClose={handleHelpDialogClose}
-          />
           <Button
             variant="contained"
             onClick={handleSubmit}
-            endIcon={<SearchIcon />}
             color="primary"
             disabled={!!variantErrorMessage || !!thresholdErrorMessage}
+            size="large"
           >
             Search
           </Button>
