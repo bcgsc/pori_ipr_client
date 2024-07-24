@@ -29,6 +29,7 @@
   &__threshold-input {
     margin: auto;
     padding-left: 32px;
+    width: 20%;
   }
 
   &__button-container {
@@ -46,4 +47,17 @@
   }
 }
 
+.help-dialog {
+  min-width: 500px;
+  height: auto;
+  padding: 48px;
+}
 
+.help-button {
+  max-width: 30px;
+  max-height: 30px;
+  min-width: 30px;
+  min-height: 30px;
+  margin-top: 16px;
+  margin-right: 625px;
+}
