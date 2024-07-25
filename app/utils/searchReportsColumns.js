@@ -16,7 +16,6 @@ function searchReportsColumns(report, analyst, reviewer, bioinformatician) {
     date: report.createdAt,
     reviewer: reviewer ? `${reviewer.firstName} ${reviewer.lastName}` : null,
     bioinformatician: bioinformatician ? `${bioinformatician.firstName} ${bioinformatician.lastName}` : null,
-    biopsyType: report?.reportSampleInfo?.find((info) => info.sample === 'Tumour')?.biopsyType,
   };
 }
 
