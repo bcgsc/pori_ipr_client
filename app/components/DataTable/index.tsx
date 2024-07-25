@@ -21,6 +21,7 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 
 import DemoDescription from '@/components/DemoDescription';
 import ReportContext from '@/context/ReportContext';
+import LaunchCell from '@/components/LaunchCell';
 import { ColumnPicker, ColumnPickerProps } from './components/ColumnPicker';
 import EnsemblCellRenderer from './components/EnsemblCellRenderer';
 import CivicCellRenderer from './components/CivicCellRenderer';
@@ -29,7 +30,6 @@ import { ActionCellRenderer } from './components/ActionCellRenderer';
 import { HTMLCellRenderer } from './components/HTMLCellRenderer';
 import KbMatchesActionCellRenderer from './components/KbMatchesActionCellRenderer';
 import HyperlinkCellRenderer from './components/HyperlinkCellRenderer';
-import LaunchCell from '@/components/LaunchCell';
 import { ToolTip } from './components/ToolTip';
 
 import NoRowsOverlay from './components/NoRowsOverlay';
@@ -446,7 +446,7 @@ const DataTable = ({
       fileName: isSearch ? searchReportsFileName : defaultFileName,
       processCellCallback: (({ value }) => (typeof value === 'string' ? value?.replace(/,/g, '') : value)),
     });
-  }, [colApi, gridApi, report, titleText]);
+  }, [colApi, gridApi, isSearch, report?.ident, report?.patientId, titleText]);
 
   const handleFilterAndSortChanged = useCallback(() => {
     if (onRowDataChanged) {
