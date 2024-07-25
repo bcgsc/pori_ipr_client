@@ -278,7 +278,7 @@ const PharmacoGenomicSummary = ({
             </Typography>
             {cancerPredispositionSection}
           </div>
-          {report?.reportSampleInfo && (
+          {report?.sampleInfo && (
             <>
               <Typography variant="h3" display="inline" className={`${classNamePrefix}__sample-information-title`}>
                 Sample Information
@@ -286,12 +286,12 @@ const PharmacoGenomicSummary = ({
               {isPrint ? (
                 <PrintTable
                   columnDefs={sampleColumnDefs}
-                  data={report.reportSampleInfo}
+                  data={report.sampleInfo}
                 />
               ) : (
                 <DataTable
                   columnDefs={sampleColumnDefs}
-                  rowData={report.reportSampleInfo}
+                  rowData={report.sampleInfo}
                   isPrint={isPrint}
                   isPaginated={!isPrint}
                 />
