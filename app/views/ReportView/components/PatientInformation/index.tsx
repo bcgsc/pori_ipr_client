@@ -76,11 +76,11 @@ const PatientInformation = ({
             },
             {
               label: 'Biopsy Collection Date',
-              value: report?.reportSampleInfo?.find((info) => info.sample === 'Tumour')?.collectionDate,
+              value: report?.sampleInfo?.find((info) => info.sample === 'Tumour')?.collectionDate,
             },
             {
               label: 'Biopsy Type',
-              value: report?.reportSampleInfo?.find((info) => info.sample === 'Tumour')?.biopsyType,
+              value: report?.sampleInfo?.find((info) => info.sample === 'Tumour')?.biopsyType,
             },
           ]);
         } catch (err) {
