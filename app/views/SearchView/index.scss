@@ -25,8 +25,8 @@
 
   &__threshold-input {
     margin: auto;
-    padding-left: 32px;
-    width: 20%;
+    padding-left: 16px;
+    width: 15%;
 
     &__label {
       display: flex;
@@ -44,7 +44,6 @@
   .button-holder {
     justify-content: center;
     display: flex;
-    margin-top: 16px;
     margin-right: 32px;
   }
 }
