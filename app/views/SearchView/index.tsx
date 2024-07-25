@@ -110,7 +110,7 @@ const SearchView = () => {
                   </IconButton>
                 </InputAdornment>
               ),
-              sx: { borderRadius: '15px' },
+              sx: { borderRadius: '20px' },
             }}
           />
         </div>
@@ -123,7 +123,7 @@ const SearchView = () => {
             variant="outlined"
             helperText={thresholdErrorMessage}
             error={Boolean(thresholdErrorMessage)}
-            placeholder="0 - 1"
+            placeholder="0.8"
             onChange={handleThresholdChange}
             value={threshold}
           />
@@ -131,8 +131,8 @@ const SearchView = () => {
       </div>
       <div className="help-dialog">
         <Typography variant="subtitle2" color="primary">
-          The matching threshold determines the cutoff of similarity between the key variant and the search results.
-          A value of 1 means a 100% exact match and vice versa. The default value is 0.8 if not specified.
+          The matching threshold determines the cutoff of similarity between the key variant and its matched results.
+          A value of 1 means a 100% match. The default value is 0.8 if not specified.
         </Typography>
       </div>
     </div>
