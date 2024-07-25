@@ -12,8 +12,9 @@ import DataTable from '@/components/DataTable';
 import ReportContext from '@/context/ReportContext';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import { sampleColumnDefs } from '@/views/ReportView/common';
 import { AppendicesType, TcgaType, ComparatorType } from './types';
-import { sampleInformationColumnDefs, sequencingProtocolInformationColumnDefs, tcgaAcronymsColumnDefs } from './columnDefs';
+import { sequencingProtocolInformationColumnDefs, tcgaAcronymsColumnDefs } from './columnDefs';
 import { ReportOverview } from './components/ReportOverview';
 import ConfigTable from './components/ConfigTable';
 
@@ -151,10 +152,10 @@ const Appendices = ({
                 </Grid>
               </div>
               )}
-              {appendices?.sampleInfo && (
+              {report?.sampleInfo && (
                 <DataTable
-                  columnDefs={sampleInformationColumnDefs}
-                  rowData={appendices.sampleInfo}
+                  columnDefs={sampleColumnDefs}
+                  rowData={report.sampleInfo}
                   titleText="Sample Information"
                 />
               )}

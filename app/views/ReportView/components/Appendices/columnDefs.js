@@ -1,35 +1,3 @@
-const sampleInformationColumnDefs = [{
-  headerName: 'Type',
-  field: 'Sample',
-  colId: 'Type',
-  hide: false,
-}, {
-  headerName: 'Sample Name',
-  field: 'Sample Name',
-  colId: 'Sample Name',
-  hide: false,
-}, {
-  headerName: 'Collection Date',
-  field: 'Collection Date',
-  colId: 'Collection Date',
-  hide: false,
-}, {
-  headerName: 'Primary Site',
-  field: 'Primary Site',
-  colId: 'Primary Site',
-  hide: false,
-}, {
-  headerName: 'Biopsy Site',
-  field: 'Biopsy Site',
-  colId: 'Biopsy Site',
-  hide: false,
-}, {
-  headerName: 'Pathology Estimated Tumour Content',
-  field: 'Patho TC',
-  colId: 'Patho TC',
-  hide: false,
-}];
-
 const sequencingProtocolInformationColumnDefs = [{
   headerName: 'Type',
   field: 'Sample',
@@ -110,7 +78,6 @@ const tcgaAcronymsColumnDefs = [{
 }];
 
 export {
-  sampleInformationColumnDefs,
   sequencingProtocolInformationColumnDefs,
   tcgaAcronymsColumnDefs,
 };
