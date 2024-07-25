@@ -48,12 +48,16 @@ const PrimitiveAttribute = ({ keyString, value }: PrimitiveAttributeProps) => (
 
 type ObjectAttributesProps = {
   obj: object;
-  columnMapping: Record<string, string>
+  objKey?: string;
+  columnMapping: Record<string, string>;
+  arrayKeyGetter?: Record<string, (val) => string>;
 };
 
 const ObjectAttributes = ({
   obj,
+  objKey,
   columnMapping,
+  arrayKeyGetter,
 }: ObjectAttributesProps) => {
   if (obj === null || obj === undefined) {
     return null;
@@ -63,7 +67,11 @@ const ObjectAttributes = ({
   if (Array.isArray(obj)) {
     const inner = obj.map((mappedVal, idx) => {
       const mappedValIsArray = Array.isArray(mappedVal);
-      const rowKey = `${mappedVal?.toString()}-${idx}`;
+      const rowKey = `${JSON.stringify(mappedVal)}-${idx}`;
+      let arrayKey = String(idx);
+      if (arrayKeyGetter && arrayKeyGetter[objKey]) {
+        arrayKey = arrayKeyGetter[objKey](mappedVal);
+      }
 
       // Value is primitive or null
       if (!mappedValIsArray && (typeof mappedVal !== 'object' || mappedVal === null)) {
@@ -89,9 +97,7 @@ const ObjectAttributes = ({
               expandIcon={<ExpandMoreIcon />}
             >
               <Typography variant="subtitle2">
-                {!!mappedVal?.name ? `${mappedVal.name}` : ''}
-                {!!mappedVal?.username ? `${mappedVal?.firstName} ${mappedVal?.lastName}` : ''}
-                {`${!mappedVal?.username && !mappedVal?.name ? idx : ''}: ${mappedValIsArray ? '[' : '{'}`}
+                {`${arrayKey}: ${mappedValIsArray ? '[' : '{'}`}
               </Typography>
             </AccordionSummary>
             <AccordionDetails
@@ -99,7 +105,7 @@ const ObjectAttributes = ({
                 padding: 0,
               }}
             >
-              <ObjectAttributes obj={mappedVal} columnMapping={columnMapping} />
+              <ObjectAttributes arrayKeyGetter={arrayKeyGetter} objKey={objKey} obj={mappedVal} columnMapping={columnMapping} />
               <div className="detail-dialog__row">
                 <Typography variant="subtitle2">
                   {`${mappedValIsArray ? ']' : '}'}`}
@@ -157,7 +163,7 @@ const ObjectAttributes = ({
                 {`${keyString}: ${mappedValIsArray ? '[' : '{'}`}
               </Typography>
             </div>
-            <ObjectAttributes obj={mappedVal} columnMapping={columnMapping} />
+            <ObjectAttributes arrayKeyGetter={arrayKeyGetter} obj={mappedVal} objKey={key} columnMapping={columnMapping} />
             <div className="detail-dialog__row">
               <Typography variant="subtitle2">
                 {`${mappedValIsArray ? ']' : '}'}`}
@@ -208,6 +214,11 @@ const DetailDialog = ({
       <ObjectAttributes
         obj={selectedRow}
         columnMapping={columnMapping}
+        arrayKeyGetter={{
+          users: ({ username, firstName, lastName }) => `${firstName} ${lastName}` ?? username,
+          projects: ({ name }) => name,
+          groups: ({ name }) => name,
+        }}
       />
     </DialogContent>
   </Dialog>
