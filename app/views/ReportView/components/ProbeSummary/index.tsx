@@ -217,20 +217,20 @@ const ProbeSummary = ({
               loadedDispatch={loadedDispatch}
             />
           )}
-          {report && report.reportSampleInfo && (
+          {report && report.sampleInfo && (
             <div className={`${classNamePrefix}__sample-information`}>
               <Typography variant="h3" display="inline" className={`${classNamePrefix}__sample-information-title`}>
                 Sample Information
               </Typography>
               {isPrint ? (
                 <PrintTable
-                  data={report.reportSampleInfo}
+                  data={report.sampleInfo}
                   columnDefs={sampleColumnDefs}
                 />
               ) : (
                 <DataTable
                   columnDefs={sampleColumnDefs}
-                  rowData={report.reportSampleInfo}
+                  rowData={report.sampleInfo}
                   isPrint={isPrint}
                   isPaginated={!isPrint}
                 />
