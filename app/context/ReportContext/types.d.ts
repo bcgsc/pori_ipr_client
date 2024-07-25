@@ -19,15 +19,6 @@ type PatientInformationType = {
 } & RecordDefaults;
 
 type SampleInfoType = {
-  'Biopsy Site': string | null;
-  'Collection Date': string | null;
-  'Patho TC': string | null;
-  'Primary Site': string | null;
-  Sample: string | null;
-  'Sample Name': string | null;
-};
-
-type ReportSampleInfoType = {
   biopsySite: string | null;
   biopsyType: string | null;
   collectionDate: string | null;
@@ -35,7 +26,7 @@ type ReportSampleInfoType = {
   primarySite: string | null;
   sample: string | null;
   sampleName: string | null;
-} & RecordDefaults;
+};
 
 type UserRoleType = {
   role: string;
@@ -55,7 +46,6 @@ type ReportType = {
   ploidy: string;
   projects?: ProjectType[];
   reportVersion: string;
-  reportSampleInfo: ReportSampleInfoType[];
   sampleInfo: SampleInfoType[];
   state: string;
   subtyping: string;
