@@ -13,7 +13,8 @@
   &__bar {
     box-sizing: border-box;
     display: flex;
-    padding: 32px;
+    padding-left: 32px;
+    padding-right: 32px;
     width: 100%;
   }
 
@@ -33,32 +34,13 @@
       height: 24px;
     }
   }
-
-  &__button-container {
-    justify-content: space-between;
-    flex-direction: column;
-    height: 100vh;
-    display: flex;
-  }
-
-  .button-holder {
-    justify-content: center;
-    display: flex;
-    margin-right: 32px;
-  }
 }
 
 .help-dialog {
-  min-width: 500px;
+  max-width: 800px;
+  min-width: 800px;
   height: auto;
-  padding: 48px;
-}
-
-.help-button {
-  max-width: 24px;
-  max-height: 24px;
-  min-width: 24px;
-  min-height: 24px;
-  margin-left: 10px;
-  flex: 1;
+  margin-top: 12px;
+  padding-left: 32px;
+  padding-right: 32px;
 }
