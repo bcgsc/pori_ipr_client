@@ -215,8 +215,9 @@ const DetailDialog = ({
         obj={selectedRow}
         columnMapping={columnMapping}
         arrayKeyGetter={{
-          kbMatches: ({ kbStatementId }) => kbStatementId,
-          users: ({ username, firstName, lastName }) => username ?? `${firstName} ${lastName}`,
+          users: ({ username, firstName, lastName }) => `${firstName} ${lastName}` ?? username,
+          projects: ({ name }) => name,
+          groups: ({ name }) => name,
         }}
       />
     </DialogContent>
