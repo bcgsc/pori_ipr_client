@@ -1,12 +1,3 @@
-type SampleInfoType = {
-  'Biopsy Site': string;
-  'Collection Date': string;
-  'Patho TC': string;
-  'Primary Site': string;
-  Sample: string;
-  'Sample Name': string;
-};
-
 type SeqQCType = {
   Coverage: string;
   Duplicate_Reads_Perc: number;
@@ -23,7 +14,6 @@ type SeqQCType = {
 
 type AppendicesType = {
   config: string;
-  sampleInfo: SampleInfoType[];
   seqQC: SeqQCType[];
 };
 
@@ -47,7 +37,6 @@ type ComparatorType = {
 };
 
 export {
-  SampleInfoType,
   SeqQCType,
   AppendicesType,
   TcgaType,
