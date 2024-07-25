@@ -79,10 +79,6 @@ const columnDefs: ColDef[] = [{
   field: 'reviewer',
 },
 {
-  headerName: 'Biopsy Type',
-  field: 'biopsyType',
-},
-{
   headerName: 'Open',
   pinned: 'right',
   cellRenderer: 'Launch',
