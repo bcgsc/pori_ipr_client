@@ -10,7 +10,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
 import React, { useCallback, useEffect, useState } from 'react';
 
-const MIN_WORD_LENGTH = 3;
+const MIN_WORD_LENGTH = 2;
 
 const SearchView = () => {
   const [variant, setVariant] = useState('');
