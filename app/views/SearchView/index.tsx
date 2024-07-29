@@ -18,7 +18,7 @@ const SearchView = () => {
   const [variantErrorMessage, setVariantErrorMessage] = useState('');
   const [thresholdErrorMessage, setThresholdErrorMessage] = useState('');
   const DEFAULT_THRESHOLD = '0.8';
-  const ENTER_KEYCODE = 13;
+  const ENTER_KEY = "Enter";
 
   // Calls submit function
   const handleSubmit = useCallback(() => {
@@ -86,7 +86,7 @@ const SearchView = () => {
       <div className="search__bar">
         <div
           className="search__main"
-          onKeyUp={(event) => event.keyCode === ENTER_KEYCODE && handleSubmit()}
+          onKeyUp={(event) => event.key === ENTER_KEY && handleSubmit()}
           role="textbox"
           tabIndex={0}
         >
@@ -115,7 +115,7 @@ const SearchView = () => {
             }}
           />
         </div>
-        <div className="search__threshold-input" onKeyUp={(event) => event.keyCode === ENTER_KEYCODE && handleSubmit()}>
+        <div className="search__threshold-input" onKeyUp={(event) => event.key === ENTER_KEY && handleSubmit()}>
           <TextField
             label="Threshold"
             InputLabelProps={{shrink: true}}
