@@ -24,6 +24,8 @@ const REPORTS_BLOCK = [];
 const ADMIN_ACCESS = ['admin'];
 const ADMIN_BLOCK = [...ALL_ROLES, ...NO_GROUP_MATCH];
 
+const REPORT_SETTING_AND_EDIT_ACCESS = [...ADMIN_ACCESS, 'manager', 'report manager', 'report assignment access'];
+
 const useResources = (): ResourceContextType => {
   const { userDetails: { groups } } = useSecurity();
 
@@ -64,7 +66,7 @@ const useResources = (): ResourceContextType => {
         setAppendixEditAccess(true);
       }
 
-      if (checkAccess(groups, [...ADMIN_ACCESS, 'manager', 'report manager'], ADMIN_BLOCK)) {
+      if (checkAccess(groups, REPORT_SETTING_AND_EDIT_ACCESS, ADMIN_BLOCK)) {
         setReportSettingAccess(true);
         setReportEditAccess(true);
       }
