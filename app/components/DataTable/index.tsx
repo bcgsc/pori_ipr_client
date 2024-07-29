@@ -21,6 +21,7 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 
 import DemoDescription from '@/components/DemoDescription';
 import ReportContext from '@/context/ReportContext';
+import LaunchCell from '@/components/LaunchCell';
 import { ColumnPicker, ColumnPickerProps } from './components/ColumnPicker';
 import EnsemblCellRenderer from './components/EnsemblCellRenderer';
 import CivicCellRenderer from './components/CivicCellRenderer';
@@ -177,6 +178,8 @@ type DataTableProps = {
   demoDescription?: string,
   /* Column fields to collapse, this will build the key that will combine these column values to be collapsed */
   collapseColumnFields?: string[];
+  /* Whether the data table is being used to display search results for reports by variant */
+  isSearch?: boolean;
 };
 
 const DataTable = ({
@@ -207,6 +210,7 @@ const DataTable = ({
   Header,
   demoDescription = '',
   collapseColumnFields = null,
+  isSearch = false,
 }: DataTableProps): JSX.Element => {
   const domLayout = isPrint ? 'print' : 'autoHeight';
   const { gridApi, colApi, onGridReady } = useGrid();
@@ -427,6 +431,9 @@ const DataTable = ({
   const handleTSVExport = useCallback(() => {
     const date = getDate();
 
+    const defaultFileName = `ipr_${report?.patientId}_${report?.ident}_${titleText.split(' ').join('_')}_${date}.tsv`;
+    const searchReportsFileName = `ipr_${titleText.split(' ').join('_')}_${date}.tsv`;
+
     gridApi.exportDataAsCsv({
       suppressQuotes: true,
       columnSeparator: '\t',
@@ -436,10 +443,10 @@ const DataTable = ({
           return !(colD?.headerName === 'Actions' || colD?.field === 'Actions' || col.getColId() === 'Actions');
         })
         .map((col) => col.getColId()),
-      fileName: `ipr_${report.patientId}_${report.ident}_${titleText.split(' ').join('_')}_${date}.tsv`,
+      fileName: isSearch ? searchReportsFileName : defaultFileName,
       processCellCallback: (({ value }) => (typeof value === 'string' ? value?.replace(/,/g, '') : value)),
     });
-  }, [colApi, gridApi, report, titleText]);
+  }, [colApi, gridApi, isSearch, report?.ident, report?.patientId, titleText]);
 
   const handleFilterAndSortChanged = useCallback(() => {
     if (onRowDataChanged) {
@@ -595,6 +602,7 @@ const DataTable = ({
                 NoRowsOverlay,
                 HTMLCellRenderer,
                 ToolTip,
+                Launch: LaunchCell,
               }}
               suppressAnimationFrame
               suppressRowTransform={Boolean(collapseColumnFields)}
