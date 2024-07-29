@@ -126,6 +126,7 @@ const SearchView = () => {
             placeholder="0.8"
             onChange={handleThresholdChange}
             value={threshold}
+            inputProps={{sx: { textAlign: 'center' }}}
           />
         </div>
       </div>
