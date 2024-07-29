@@ -116,9 +116,6 @@ const SearchView = () => {
           />
         </div>
         <div className="search__threshold-input" onKeyUp={(event) => event.keyCode === ENTER_KEYCODE && handleSubmit()}>
-          {/* <div className="search__threshold-input__label">
-            <Typography variant="subtitle1" sx={{ width: 'fit-content' }}>Threshold</Typography>
-          </div> */}
           <TextField
             label="Threshold"
             InputLabelProps={{shrink: true}}
