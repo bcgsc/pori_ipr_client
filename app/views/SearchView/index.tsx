@@ -17,6 +17,7 @@ const SearchView = () => {
   const [threshold, setThreshold] = useState('');
   const [variantErrorMessage, setVariantErrorMessage] = useState('');
   const [thresholdErrorMessage, setThresholdErrorMessage] = useState('');
+  const DEFAULT_THRESHOLD = '0.8';
   const ENTER_KEYCODE = 13;
 
   // Calls submit function
@@ -24,7 +25,7 @@ const SearchView = () => {
     if (variant && threshold) {
       window.location.href = `/search/keyVariant=${variant.replace(/\./, '%2F')}&&matchingThreshold=${threshold.replace(/\./, '%2F')}`;
     } else if (variant) {
-      window.location.href = `/search/keyVariant=${variant.replace(/\./, '%2F')}&&matchingThreshold=0%2F8`;
+      window.location.href = `/search/keyVariant=${variant.replace(/\./, '%2F')}&&matchingThreshold=${DEFAULT_THRESHOLD.replace(/\./, '%2F')}`;
     } else {
       setVariantErrorMessage('Please enter a key variant');
     }
@@ -115,17 +116,19 @@ const SearchView = () => {
           />
         </div>
         <div className="search__threshold-input" onKeyUp={(event) => event.keyCode === ENTER_KEYCODE && handleSubmit()}>
-          <div className="search__threshold-input__label">
+          {/* <div className="search__threshold-input__label">
             <Typography variant="subtitle1" sx={{ width: 'fit-content' }}>Threshold</Typography>
-          </div>
+          </div> */}
           <TextField
-            size="small"
+            label="Threshold"
+            InputLabelProps={{shrink: true}}
+            size="medium"
             variant="outlined"
             helperText={thresholdErrorMessage}
             error={Boolean(thresholdErrorMessage)}
-            placeholder="0.8"
             onChange={handleThresholdChange}
             value={threshold}
+            placeholder={DEFAULT_THRESHOLD}
             inputProps={{sx: { textAlign: 'center' }}}
           />
         </div>

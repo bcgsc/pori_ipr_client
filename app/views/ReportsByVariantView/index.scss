@@ -1,18 +1,18 @@
 .reports-table {
   height: 73.5%;
-}
 
-.variant-chips {
-  margin-left: 8px;
-  margin-right: 8px;
-  margin-bottom: 12px;
-  padding: 12px;
-  overflow-y: scroll;
-  height: 14%;
-  border: 1px solid gray;
-  border-radius: 8px;
-}
+  &__variant-chips {
+    margin-left: 8px;
+    margin-right: 8px;
+    margin-bottom: 12px;
+    padding: 12px;
+    overflow-y: scroll;
+    height: 14%;
+    border: 1px solid gray;
+    border-radius: 8px;
+  }
 
-.typography {
-  padding: 8px;
+  &__typography {
+    padding: 8px;
+  }
 }

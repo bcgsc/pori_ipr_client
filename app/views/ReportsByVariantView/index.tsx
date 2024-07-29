@@ -91,10 +91,10 @@ const ReportsByVariantView = ({
     <>
       {Boolean(variants.length) && (
         <>
-          <Typography variant="h3" className="typography">
+          <Typography variant="h3" className="reports-table__typography">
             Matching Variants
           </Typography>
-          <div className="variant-chips">
+          <div className="reports-table__variant-chips">
             {variants.map((variant) => (
               <React.Fragment key={variant}>
                 <Chip
