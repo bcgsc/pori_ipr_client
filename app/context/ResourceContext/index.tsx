@@ -6,10 +6,11 @@ import useSecurity from '@/hooks/useSecurity';
 import ResourceContextType from './types';
 
 const GERMLINE_ACCESS = ['admin', 'manager', 'germline access'];
-const UNREVIEWED_ACCESS = ['admin', 'manager', 'report manager', 'bioinformatician', 'unreviewed access'];
-const NONPRODUCTION_ACCESS = ['admin', 'manager', 'bioinformatician', 'non-production access'];
+const UNREVIEWED_ACCESS = ['admin', 'manager', 'unreviewed access'];
+const NONPRODUCTION_ACCESS = ['admin', 'manager', 'non-production access'];
 const TEMPLATE_EDIT_ACCESS = ['admin', 'manager', 'template edit access'];
 const APPENDIX_EDIT_ACCESS = ['admin', 'manager', 'appendix edit access'];
+const REPORT_ASSIGNMENT_ACCESS = ['admin', 'manager', 'report assignment access'];
 
 const GERMLINE_BLOCK = [...ALL_ROLES, ...NO_GROUP_MATCH];
 const UNREVIEWED_ACCESS_BLOCK = NO_GROUP_MATCH;
@@ -30,6 +31,7 @@ const useResources = (): ResourceContextType => {
   const [germlineAccess, setGermlineAccess] = useState(false);
   const [reportsAccess, setReportsAccess] = useState(false);
   const [reportEditAccess, setReportEditAccess] = useState(false);
+  const [reportAssignmentAccess, setReportAssignmentAccess] = useState(false);
   const [adminAccess, setAdminAccess] = useState(false);
   const [managerAccess, setManagerAccess] = useState(false);
   const [reportSettingAccess, setReportSettingAccess] = useState(false);
@@ -60,17 +62,24 @@ const useResources = (): ResourceContextType => {
       if (checkAccess(groups, [...TEMPLATE_EDIT_ACCESS], GERMLINE_BLOCK)) {
         setTemplateEditAccess(true);
       }
+
       if (checkAccess(groups, [...APPENDIX_EDIT_ACCESS], GERMLINE_BLOCK)) {
         setAppendixEditAccess(true);
       }
 
-      if (checkAccess(groups, [...ADMIN_ACCESS, 'manager', 'report manager'], ADMIN_BLOCK)) {
+      if (checkAccess(groups, [...ADMIN_ACCESS, 'manager'], ADMIN_BLOCK)) {
         setReportSettingAccess(true);
         setReportEditAccess(true);
       }
+
+      if (checkAccess(groups, [...REPORT_ASSIGNMENT_ACCESS], ADMIN_BLOCK)) {
+        setReportAssignmentAccess(true);
+      }
+
       if (checkAccess(groups, UNREVIEWED_ACCESS, UNREVIEWED_ACCESS_BLOCK)) {
         setUnreviewedAccess(true);
       }
+
       if (checkAccess(groups, NONPRODUCTION_ACCESS, NONPRODUCTION_ACCESS_BLOCK)) {
         setNonproductionAccess(true);
       }
@@ -84,6 +93,7 @@ const useResources = (): ResourceContextType => {
     managerAccess,
     reportSettingAccess,
     reportEditAccess,
+    reportAssignmentAccess,
     unreviewedAccess,
     nonproductionAccess,
     templateEditAccess,
@@ -101,6 +111,7 @@ const ResourceContext = createContext<ResourceContextType>({
   managerAccess: false,
   reportSettingAccess: false,
   reportEditAccess: false,
+  reportAssignmentAccess: false,
   unreviewedAccess: false,
   nonproductionAccess: false,
   templateEditAccess: false,
@@ -116,7 +127,7 @@ type ResourceContextProviderProps = {
 
 const ResourceContextProvider = ({ children }: ResourceContextProviderProps): JSX.Element => {
   const {
-    germlineAccess, reportsAccess, adminAccess, managerAccess, reportSettingAccess, reportEditAccess, unreviewedAccess, nonproductionAccess,
+    germlineAccess, reportsAccess, adminAccess, managerAccess, reportSettingAccess, reportEditAccess, reportAssignmentAccess, unreviewedAccess, nonproductionAccess,
     templateEditAccess,
     appendixEditAccess,
     allStates,
@@ -131,6 +142,7 @@ const ResourceContextProvider = ({ children }: ResourceContextProviderProps): JS
     managerAccess,
     reportSettingAccess,
     reportEditAccess,
+    reportAssignmentAccess,
     unreviewedAccess,
     nonproductionAccess,
     templateEditAccess,
@@ -145,6 +157,7 @@ const ResourceContextProvider = ({ children }: ResourceContextProviderProps): JS
     managerAccess,
     reportSettingAccess,
     reportEditAccess,
+    reportAssignmentAccess,
     unreviewedAccess,
     nonproductionAccess,
     templateEditAccess,

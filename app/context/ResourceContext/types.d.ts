@@ -7,6 +7,7 @@ type ResourceContextType = {
   appendixEditAccess: boolean;
   reportSettingAccess: boolean;
   reportEditAccess: boolean;
+  reportAssignmentAccess: boolean;
   unreviewedAccess: boolean;
   nonproductionAccess: boolean;
   allStates: string[];
