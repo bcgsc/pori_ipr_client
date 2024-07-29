@@ -29,7 +29,7 @@ const AssociationCard = ({
   onDelete,
 }: AssociationCardProps): JSX.Element => {
   const { report } = useContext(ReportContext);
-  let { reportEditAccess: canEdit } = useResource();
+  let { reportAssignmentAccess: canEdit } = useResource();
   if (report.state === 'completed') {
     canEdit = false;
   }
