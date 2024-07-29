@@ -61,7 +61,7 @@ const AddEditUserDialog = ({
   }, [editData]);
 
   return (
-    <Dialog open={isOpen} onClose={onClose} maxWidth="sm" fullWidth className="edit-dialog">
+    <Dialog open={isOpen} onClose={() => onClose(null)} maxWidth="sm" fullWidth className="edit-dialog">
       <DialogTitle>{dialogTitle}</DialogTitle>
       <DialogContent>
         {editData && (
