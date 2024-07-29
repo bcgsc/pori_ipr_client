@@ -24,7 +24,7 @@ const REPORTS_BLOCK = [];
 const ADMIN_ACCESS = ['admin'];
 const ADMIN_BLOCK = [...ALL_ROLES, ...NO_GROUP_MATCH];
 
-const REPORT_SETTING_AND_EDIT_ACCESS = [...ADMIN_ACCESS, 'manager', 'report manager', 'report assignment access'];
+const REPORT_SETTING_AND_EDIT_ACCESS = [...ADMIN_ACCESS, 'manager', 'report assignment access'];
 
 const useResources = (): ResourceContextType => {
   const { userDetails: { groups } } = useSecurity();
