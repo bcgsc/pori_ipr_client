@@ -11,7 +11,6 @@ jest.mock('@/services/SnackbarUtils');
 const defaultReportOverviewProps: ReportOverviewProps = {
   isPrint: false,
   canEditReportAppendix: false,
-  canEditTemplateAppendix: false,
   isNewTemplate: false,
   templateId: '123456-uuid',
   templateSpecificText: 'template text',
@@ -37,35 +36,7 @@ describe('ReportOverview', () => {
         canEditReportAppendix
       />,
     );
-    const buttonEl = getByText('Report Appendix');
-    expect(buttonEl).not.toBeDisabled();
-    expect(buttonEl).toBeTruthy();
-  });
-
-  test('Show a fab button to edit template appendix if is editable', () => {
-    const { getByText } = render(
-      <ReportOverview
-        {...defaultReportOverviewProps}
-        canEditTemplateAppendix
-      />,
-    );
-    const buttonEl = getByText('Template Appendix');
-    expect(buttonEl).not.toBeDisabled();
-    expect(buttonEl).toBeTruthy();
-  });
-
-  test('Show both fab button to edit report + template appendix if is editable', () => {
-    const { getByText } = render(
-      <ReportOverview
-        {...defaultReportOverviewProps}
-        canEditTemplateAppendix
-        canEditReportAppendix
-      />,
-    );
-    let buttonEl = getByText('Template Appendix');
-    expect(buttonEl).not.toBeDisabled();
-    expect(buttonEl).toBeTruthy();
-    buttonEl = getByText('Report Appendix');
+    const buttonEl = getByText("Add text to this report's appendix");
     expect(buttonEl).not.toBeDisabled();
     expect(buttonEl).toBeTruthy();
   });
@@ -85,7 +56,6 @@ describe('ReportOverview', () => {
     const { queryByRole, getByText } = render(
       <ReportOverview
         {...defaultReportOverviewProps}
-        canEditTemplateAppendix
         canEditReportAppendix
         isPrint
         reportSpecificText={'Sir, this is a wendy\'s'}
@@ -97,35 +67,10 @@ describe('ReportOverview', () => {
     expect(getByText('Madam, this is a wendy\'s')).toBeInTheDocument();
   });
 
-  test('Opens a dialog to edit template appendix text when fab is clicked', async () => {
-    const { getByRole, queryByRole, getByText } = render(
-      <ReportOverview
-        {...defaultReportOverviewProps}
-        canEditTemplateAppendix
-        canEditReportAppendix
-      />,
-    );
-
-    await waitFor(() => {
-      expect(queryByRole('dialog')).toBeNull();
-    });
-    const buttonEl = getByText('Template Appendix');
-    await waitFor(() => {
-      fireEvent.click(buttonEl);
-    });
-    const dialogDiv = getByRole('dialog');
-    expect(dialogDiv).toBeInTheDocument();
-    expect(within(dialogDiv).getByText(
-      defaultReportOverviewProps.templateSpecificText,
-    )).toBeInTheDocument();
-    expect(getByText('Edit Appendix')).toBeInTheDocument();
-  });
-
   test('Opens a dialog to edit report appendix text when fab is clicked', async () => {
     const { getByRole, queryByRole, getByText } = render(
       <ReportOverview
         {...defaultReportOverviewProps}
-        canEditTemplateAppendix
         canEditReportAppendix
       />,
     );
@@ -133,7 +78,7 @@ describe('ReportOverview', () => {
     await waitFor(() => {
       expect(queryByRole('dialog')).toBeNull();
     });
-    const buttonEl = getByText('Report Appendix');
+    const buttonEl = getByText("Add text to this report's appendix");
     await waitFor(() => {
       fireEvent.click(buttonEl);
     });
@@ -142,7 +87,7 @@ describe('ReportOverview', () => {
     expect(within(dialogDiv).getByText(
       defaultReportOverviewProps.reportSpecificText,
     )).toBeInTheDocument();
-    expect(getByText('Edit Appendix')).toBeInTheDocument();
+    expect(getByText('Edit Report Appendix')).toBeInTheDocument();
   });
 
   // These tests are TODO for now since the React-Quill component cannot be targetted for change

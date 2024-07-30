@@ -17,7 +17,7 @@
     .ag-row:last-child {
       border-bottom: none;
     }
-
+    
     .cell-span, .cell-span--last {
       display: flex;
       align-items: center;
@@ -45,4 +45,9 @@
 
 .cell-wrap-text {
   white-space: normal;
+}
+
+.ag-center-cols-clipper,
+.ag-center-cols-container {
+  min-height: 36px !important;
 }

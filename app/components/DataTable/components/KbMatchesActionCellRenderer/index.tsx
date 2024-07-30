@@ -2,12 +2,15 @@ import {
   IconButton, Menu, MenuItem,
 } from '@mui/material';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import React, { useState, useCallback, useContext } from 'react';
+import React, {
+  useState, useCallback, useContext, useMemo,
+} from 'react';
 import api from '@/services/api';
 import { KbMatchType } from '@/common';
 import { useParams } from 'react-router-dom';
 import snackbar from '@/services/SnackbarUtils';
 import ReportContext from '@/context/ReportContext';
+import TherapeuticType from '@/views/ReportView/components/TherapeuticTargets/types';
 import {
   ActionCellRendererProps,
   ActionCellRenderer,
@@ -34,7 +37,22 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
 
   const isMult = Array.isArray(kbStatementId);
 
+  const isClinicalTrial = useMemo(() => {
+    if (data.context.includes('Phase') || data.context.includes('Trial') || data.relevance === 'eligibility' || data.kbData?.recruitment_status) {
+      return true;
+    }
+    return false;
+  }, [data]);
+
   const handleUpdateTherapeuticTargets = useCallback((type: TherapeuticTargetType, selectedKbStatementId?: string) => async () => {
+    const therapeuticResp = await api.get(`/reports/${reportId}/therapeutic-targets`, {}).request();
+    let availableTherapeuticTargets: Partial<TherapeuticType>[];
+    if (therapeuticResp) {
+      availableTherapeuticTargets = therapeuticResp?.map(({
+        ident, createdAt, updatedAt, rank, geneGraphkbId, kbStatementIds, notes, ...therapeuticTarget
+      }) => therapeuticTarget);
+    }
+
     if (!kbStatementId) { return null; }
     setIsLoading(true);
     try {
@@ -59,7 +77,7 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
         }
 
         // Add to targets regardless if it already exists, we don't know at this point without making another API call to search for all these params
-        const newData = {
+        const newData: Partial<TherapeuticType> = {
           type,
           gene: variant.reference1 && variant.reference2
             ? `${variant.reference1.displayName}, ${variant.reference2.displayName}`
@@ -81,15 +99,19 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
           newData.evidenceLevelGraphkbId = iprEvidenceLevelRid;
         }
 
-        await api.post(`/reports/${reportId}/therapeutic-targets`, newData).request();
-        snackbar.success(`Successfully added ${selectedKbStatementId ?? kbStatementId} to potential ${type}`);
+        if (!availableTherapeuticTargets.some((t) => t.gene === newData.gene && t.type === newData.type && t.variant === newData.variant && t.therapy === newData.therapy && t.evidenceLevel === newData.evidenceLevel)) {
+          await api.post(`/reports/${reportId}/therapeutic-targets`, newData).request();
+          snackbar.success(`Successfully added ${selectedKbStatementId ?? kbStatementId} to potential ${type}`);
+        } else {
+          snackbar.error('Statement already added to potential therapeutic targets.');
+          return null;
+        }
       }
     } catch (e) {
       if (e.status === 404) {
         snackbar.error(`Cannot find record, ${e.message}`);
       } else {
         snackbar.error(e.message);
-        console.error(e);
       }
     } finally {
       setMenuAnchor(null);
@@ -123,8 +145,7 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
         onClose={() => setMenuAnchor(null)}
       >
         <MenuItem
-          // disabled={isLoading}
-          disabled
+          disabled={isLoading || isClinicalTrial}
           onClick={isMult
             ? (evt) => handleMultiTargets(evt, 'therapeutic')
             : handleUpdateTherapeuticTargets('therapeutic')}
@@ -132,13 +153,12 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
           Add to Potential Therapeutic Targets
         </MenuItem>
         <MenuItem
-          // disabled={isLoading}
-          disabled
+          disabled={isLoading || isClinicalTrial}
           onClick={isMult
             ? (evt) => handleMultiTargets(evt, 'chemoresistance')
             : handleUpdateTherapeuticTargets('chemoresistance')}
         >
-          Add to Potential Chemoresistance
+          Add to Potential Resistance and Toxicity
         </MenuItem>
         {
           isMult && (

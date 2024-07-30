@@ -1,16 +1,29 @@
 import React, {
   createContext, ReactChild, useState, useEffect, useMemo,
 } from 'react';
-import { checkAccess, ALL_ROLES } from '@/utils/checkAccess';
+import { checkAccess, ALL_ROLES, NO_GROUP_MATCH } from '@/utils/checkAccess';
 import useSecurity from '@/hooks/useSecurity';
 import ResourceContextType from './types';
 
-const GERMLINE_ACCESS = ['admin', 'analyst', 'bioinformatician', 'projects', 'manager'];
-const GERMLINE_BLOCK = ALL_ROLES;
+const GERMLINE_ACCESS = ['admin', 'manager', 'germline access'];
+const UNREVIEWED_ACCESS = ['admin', 'manager', 'unreviewed access'];
+const NONPRODUCTION_ACCESS = ['admin', 'manager', 'non-production access'];
+const TEMPLATE_EDIT_ACCESS = ['admin', 'manager', 'template edit access'];
+const APPENDIX_EDIT_ACCESS = ['admin', 'manager', 'appendix edit access'];
+const REPORT_ASSIGNMENT_ACCESS = ['admin', 'manager', 'report assignment access'];
+
+const GERMLINE_BLOCK = [...ALL_ROLES, ...NO_GROUP_MATCH];
+const UNREVIEWED_ACCESS_BLOCK = NO_GROUP_MATCH;
+const NONPRODUCTION_ACCESS_BLOCK = NO_GROUP_MATCH;
+
+const ALL_STATES = ['signedoff', 'nonproduction', 'uploaded', 'reviewed', 'completed', 'ready', 'active'];
+const UNREVIEWED_STATES = ['uploaded', 'ready', 'active']; // TODO decide if nonproduction should go in unreviewed as well
+const NONPRODUCTION_STATES = ['nonproduction'];
+
 const REPORTS_ACCESS = ['*'];
 const REPORTS_BLOCK = [];
 const ADMIN_ACCESS = ['admin'];
-const ADMIN_BLOCK = ALL_ROLES;
+const ADMIN_BLOCK = [...ALL_ROLES, ...NO_GROUP_MATCH];
 
 const useResources = (): ResourceContextType => {
   const { userDetails: { groups } } = useSecurity();
@@ -18,8 +31,14 @@ const useResources = (): ResourceContextType => {
   const [germlineAccess, setGermlineAccess] = useState(false);
   const [reportsAccess, setReportsAccess] = useState(false);
   const [reportEditAccess, setReportEditAccess] = useState(false);
+  const [reportAssignmentAccess, setReportAssignmentAccess] = useState(false);
   const [adminAccess, setAdminAccess] = useState(false);
+  const [managerAccess, setManagerAccess] = useState(false);
   const [reportSettingAccess, setReportSettingAccess] = useState(false);
+  const [unreviewedAccess, setUnreviewedAccess] = useState(false);
+  const [nonproductionAccess, setNonproductionAccess] = useState(false);
+  const [templateEditAccess, setTemplateEditAccess] = useState(false);
+  const [appendixEditAccess, setAppendixEditAccess] = useState(false);
 
   // Check user group first to see which resources they can access
   useEffect(() => {
@@ -36,9 +55,33 @@ const useResources = (): ResourceContextType => {
         setAdminAccess(true);
       }
 
-      if (checkAccess(groups, [...ADMIN_ACCESS, 'manager', 'Report Manager'], ADMIN_BLOCK)) {
+      if (checkAccess(groups, [...ADMIN_ACCESS, 'manager'], ADMIN_BLOCK)) {
+        setManagerAccess(true);
+      }
+
+      if (checkAccess(groups, [...TEMPLATE_EDIT_ACCESS], GERMLINE_BLOCK)) {
+        setTemplateEditAccess(true);
+      }
+
+      if (checkAccess(groups, [...APPENDIX_EDIT_ACCESS], GERMLINE_BLOCK)) {
+        setAppendixEditAccess(true);
+      }
+
+      if (checkAccess(groups, [...ADMIN_ACCESS, 'manager'], ADMIN_BLOCK)) {
         setReportSettingAccess(true);
         setReportEditAccess(true);
+      }
+
+      if (checkAccess(groups, [...REPORT_ASSIGNMENT_ACCESS], ADMIN_BLOCK)) {
+        setReportAssignmentAccess(true);
+      }
+
+      if (checkAccess(groups, UNREVIEWED_ACCESS, UNREVIEWED_ACCESS_BLOCK)) {
+        setUnreviewedAccess(true);
+      }
+
+      if (checkAccess(groups, NONPRODUCTION_ACCESS, NONPRODUCTION_ACCESS_BLOCK)) {
+        setNonproductionAccess(true);
       }
     }
   }, [groups]);
@@ -47,8 +90,17 @@ const useResources = (): ResourceContextType => {
     germlineAccess,
     reportsAccess,
     adminAccess,
+    managerAccess,
     reportSettingAccess,
     reportEditAccess,
+    reportAssignmentAccess,
+    unreviewedAccess,
+    nonproductionAccess,
+    templateEditAccess,
+    appendixEditAccess,
+    allStates: ALL_STATES,
+    unreviewedStates: UNREVIEWED_STATES,
+    nonproductionStates: NONPRODUCTION_STATES,
   };
 };
 
@@ -56,8 +108,17 @@ const ResourceContext = createContext<ResourceContextType>({
   germlineAccess: false,
   reportsAccess: false,
   adminAccess: false,
+  managerAccess: false,
   reportSettingAccess: false,
   reportEditAccess: false,
+  reportAssignmentAccess: false,
+  unreviewedAccess: false,
+  nonproductionAccess: false,
+  templateEditAccess: false,
+  appendixEditAccess: false,
+  allStates: ALL_STATES,
+  unreviewedStates: UNREVIEWED_STATES,
+  nonproductionStates: NONPRODUCTION_STATES,
 });
 
 type ResourceContextProviderProps = {
@@ -66,21 +127,44 @@ type ResourceContextProviderProps = {
 
 const ResourceContextProvider = ({ children }: ResourceContextProviderProps): JSX.Element => {
   const {
-    germlineAccess, reportsAccess, adminAccess, reportSettingAccess, reportEditAccess,
+    germlineAccess, reportsAccess, adminAccess, managerAccess, reportSettingAccess, reportEditAccess, reportAssignmentAccess, unreviewedAccess, nonproductionAccess,
+    templateEditAccess,
+    appendixEditAccess,
+    allStates,
+    unreviewedStates,
+    nonproductionStates,
   } = useResources();
 
   const providerValue = useMemo(() => ({
     germlineAccess,
     reportsAccess,
     adminAccess,
+    managerAccess,
     reportSettingAccess,
     reportEditAccess,
+    reportAssignmentAccess,
+    unreviewedAccess,
+    nonproductionAccess,
+    templateEditAccess,
+    appendixEditAccess,
+    allStates,
+    unreviewedStates,
+    nonproductionStates,
   }), [
     germlineAccess,
     reportsAccess,
     adminAccess,
+    managerAccess,
     reportSettingAccess,
     reportEditAccess,
+    reportAssignmentAccess,
+    unreviewedAccess,
+    nonproductionAccess,
+    templateEditAccess,
+    appendixEditAccess,
+    allStates,
+    unreviewedStates,
+    nonproductionStates,
   ]);
 
   return (

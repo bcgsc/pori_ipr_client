@@ -131,7 +131,6 @@ const MutationSignatures = ({
               editData={editData}
               isOpen={showDialog}
               onClose={handleEditClose}
-              showErrorSnackbar={snackbar.error}
             />
           )}
           <DataTable

@@ -3,12 +3,6 @@
 .probe-summary, .probe-summary--print {
   padding: 0 20px;
 
-  &__patient-information {
-    &-content {
-      padding: 0 16px;
-    }
-  }
-
   &__test-information {
     page-break-inside: avoid;
 
@@ -42,10 +36,6 @@
 .probe-summary {
   margin: 20px auto;
 
-  &__patient-information {
-    margin: 0 0 32px;
-  }
-
   &__test-information {
     margin: 0 0 32px;
   }
@@ -54,14 +44,6 @@
 
 .probe-summary--print {
   margin: 0 auto;
-
-  &__patient-information {
-    margin: 0 0 22px;
-
-    &-title {
-      margin: 0 0 16px;
-    }
-  }
 
   &__test-information {
     margin: 22px 0;

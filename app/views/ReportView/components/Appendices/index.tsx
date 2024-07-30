@@ -12,10 +12,10 @@ import DataTable from '@/components/DataTable';
 import ReportContext from '@/context/ReportContext';
 import ReadOnlyTextField from '@/components/ReadOnlyTextField';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
-import useResource from '@/hooks/useResource';
+import { sampleColumnDefs } from '@/views/ReportView/common';
 import { AppendicesType, TcgaType, ComparatorType } from './types';
-import { sampleInformationColumnDefs, sequencingProtocolInformationColumnDefs, tcgaAcronymsColumnDefs } from './columnDefs';
-import ReportOverview from './components/ReportOverview';
+import { sequencingProtocolInformationColumnDefs, tcgaAcronymsColumnDefs } from './columnDefs';
+import { ReportOverview } from './components/ReportOverview';
 import ConfigTable from './components/ConfigTable';
 
 import './index.scss';
@@ -36,22 +36,33 @@ const Appendices = ({
   const [comparators, setComparators] = useState<ComparatorType[]>([]);
   const [appendices, setAppendices] = useState<AppendicesType>();
   const [appendixCText, setAppendixCText] = useState('');
-  const [isNewAppendixC, setIsNewAppendixC] = useState(false);
   const [tcga, setTcga] = useState<TcgaType[]>([]);
   const [analysisSummary, setAnalysisSummary] = useState<Record<string, unknown>[]>([]);
-  const { adminAccess } = useResource();
 
   useEffect(() => {
     if (report) {
       const getData = async () => {
         try {
-          const appendixCResp = await api.get(`/templates/${report.template.ident}/appendix`).request();
+          let primaryProjectId;
+          report.projects.map((p) => {
+            if (!p.reportProject.additionalProject) {
+              primaryProjectId = p.ident;
+            }
+            return p.ident;
+          });
+          const appendixCResp = await api.get(`/appendix?templateId=${report.template.ident}&projectId=${primaryProjectId}`).request();
           setAppendixCText(appendixCResp?.text);
-        } catch (e) {
-          if (e.message === 'Not Found') {
-            setIsNewAppendixC(true);
+        } catch (getProjectAppendixErr) {
+          if (getProjectAppendixErr.message === 'Not Found') {
+            // Grab default
+            try {
+              const appendixCResp = await api.get(`/appendix?templateId=${report.template.ident}`).request();
+              setAppendixCText(appendixCResp?.text);
+            } catch (getDefaultAppendixError) {
+              snackbar.error(`Network error getting default appendix C: ${getDefaultAppendixError}`);
+            }
           } else {
-            snackbar.error(`Network error: ${e}`);
+            snackbar.error(`Network error getting project specific appendix C: ${getProjectAppendixErr}`);
           }
         }
         try {
@@ -112,7 +123,7 @@ const Appendices = ({
   const isPharmacogenomic = useMemo(() => report?.template?.name === 'pharmacogenomic', [report?.template?.name]);
 
   return (
-    <div className="appendices">
+    <div className={`appendices ${isPrint ? 'appendices--print' : ''}`}>
       {!isLoading && (
         <>
           {!isPrint && (
@@ -141,10 +152,10 @@ const Appendices = ({
                 </Grid>
               </div>
               )}
-              {appendices?.sampleInfo && (
+              {report?.sampleInfo && (
                 <DataTable
-                  columnDefs={sampleInformationColumnDefs}
-                  rowData={appendices.sampleInfo}
+                  columnDefs={sampleColumnDefs}
+                  rowData={report.sampleInfo}
                   titleText="Sample Information"
                 />
               )}
@@ -173,7 +184,7 @@ const Appendices = ({
             </Typography>
           )}
           {(isPrint && !isPharmacogenomic) && (
-            <div className="analysis-summary">
+            <div className="analysis-summary--print">
               <Typography variant="h3">
                 Analysis Summary
               </Typography>
@@ -195,12 +206,9 @@ const Appendices = ({
           )}
           <ReportOverview
             isPrint={isPrint}
-            isNewTemplate={isNewAppendixC}
-            templateId={report.template.ident}
             templateSpecificText={appendixCText}
             reportId={report.ident}
             reportSpecificText={report.appendix}
-            canEditTemplateAppendix={adminAccess}
             canEditReportAppendix={reportEditAccess}
           />
           {!isPrint && (

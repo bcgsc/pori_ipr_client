@@ -1,14 +1,15 @@
 import { formatDate } from '@/utils/date';
 import { ColDef } from '@ag-grid-community/core';
+import { DisplayMode } from '@/components/DataTable/components/HTMLCellRenderer';
 
 const columnDefs: ColDef[] = [
   {
-    headerName: 'Name',
-    field: 'name',
+    headerName: 'Template Name',
+    field: 'template.name',
   },
   {
-    headerName: 'Org',
-    field: 'organization',
+    headerName: 'Project',
+    cellRenderer: ({ data }) => data.project?.name || '(default appendix text)',
   },
   {
     headerName: 'Created',
@@ -16,11 +17,20 @@ const columnDefs: ColDef[] = [
     minWidth: 90,
   },
   {
+    headerName: 'Updated',
+    valueGetter: ({ data }) => formatDate(data.updatedAt),
+    minWidth: 90,
+  },
+  {
     headerName: 'Appendix Text',
-    cellRenderer: ({ data }) => data.appendix?.text || '',
+    cellRenderer: 'HTMLCellRenderer',
+    cellRendererParams: {
+      mode: DisplayMode.compact,
+    },
+    cellClass: 'HTMLCellRenderer__container',
     flex: 1,
-    autoHeight: true,
     wrapText: true,
+    cellStyle: { overflow: 'auto' },
   },
   {
     headerName: 'Actions',

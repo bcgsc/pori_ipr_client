@@ -1,3 +1,4 @@
+// TODO fix api permissions/error text for adding users to project
 import React, {
   useState, useEffect, useCallback,
 } from 'react';
@@ -19,14 +20,15 @@ import DataTable from '@/components/DataTable';
 import { UserType } from '@/common';
 import ReportAutocomplete from '@/components/ReportAutocomplete';
 import UserAutocomplete from '@/components/UserAutocomplete';
+import useResource from '@/hooks/useResource';
+import AsyncButton from '@/components/AsyncButton';
 import { ProjectType, ShortReportType } from '../../../AdminView/types';
 import { userColumnDefs, reportColumnDefs } from './columnDefs';
-
 import './index.scss';
 
 type AddEditProjectDialogProps = {
   isOpen: boolean;
-  onClose: (newData?: null | { name: string }) => void;
+  onClose: (newData: null | ProjectType[], isNew?: boolean) => void;
   editData: null | ProjectType;
 };
 
@@ -56,7 +58,8 @@ const AddEditProjectDialog = ({
   const [existingReports, setExistingReports] = useState<ShortReportType[]>([]);
 
   const [isReportsLoading, setIsReportsLoading] = useState(true);
-
+  const [isSaving, setIsSaving] = useState(false);
+  const { adminAccess, managerAccess } = useResource();
   useEffect(() => {
     if (isOpen) {
       const getData = async () => {
@@ -118,6 +121,7 @@ const AddEditProjectDialog = ({
       }
 
       try {
+        setIsSaving(true);
         const projectUpdateResp = await projectUpdateCall.request();
 
         // Handle relationships to projects
@@ -132,19 +136,20 @@ const AddEditProjectDialog = ({
 
         await Promise.all(apiCallQueue.map((call) => call.request()));
 
-        // Obtain new project
-        const updatedProject = await api.get(`/project/${projectUpdateResp.ident}`).request();
-        onClose(updatedProject);
+        // Return the updated projects
+        const updatedProjects = await api.get(`/project?admin=${adminAccess}`).request();
+        onClose(updatedProjects, Boolean(!editData));
       } catch (e) {
-        console.error('handleClose ~ e:', e);
-        snackbar.error(`Error ${editData ? 'editing' : 'creating'} report, ${e?.message}`);
+        snackbar.error(`Error ${editData ? 'editing' : 'creating'} project, ${e?.content?.error?.message}`);
+      } finally {
+        setIsSaving(false);
       }
     } else {
       setErrors({
         projectName: true,
       });
     }
-  }, [projectName, projectDesc, editData, users, existingReports, reports, onClose]);
+  }, [projectName, projectDesc, editData, users, existingReports, reports, adminAccess, onClose]);
 
   const handleReportDelete = useCallback(({ ident }) => {
     setReports((oldReports) => oldReports.filter((entry) => entry.ident !== ident));
@@ -186,17 +191,19 @@ const AddEditProjectDialog = ({
             error={errors.projectName}
             helperText={errors.projectName ? 'Project name is required' : null}
             className="add-user__text-field"
+            disabled={!adminAccess}
             required
           />
         </FormControl>
         <FormControl fullWidth classes={{ root: 'add-user__form-container' }} variant="outlined">
           <TextField
-            value={projectDesc}
+            value={projectDesc || 'no project description'}
             fullWidth
             onChange={({ target: { value } }) => setProjectDesc(value)}
             label="Project Description"
             variant="outlined"
             className="add-user__text-field"
+            disabled={!managerAccess}
           />
         </FormControl>
 
@@ -217,11 +224,13 @@ const AddEditProjectDialog = ({
         <Typography className="edit-dialog__section-title" variant="h3">
           Reports
         </Typography>
+        {adminAccess && (
         <ReportAutocomplete
           onSubmit={handleReportAdd}
           label="Add Report"
         />
-        { isReportsLoading
+        )}
+        {isReportsLoading
           ? <CircularProgress />
           : (
             <DataTable
@@ -234,12 +243,17 @@ const AddEditProjectDialog = ({
           )}
       </DialogContent>
       <DialogActions className="edit-dialog__actions">
-        <Button color="primary" onClick={() => onClose(null)}>
+        <Button color="primary" onClick={() => onClose(null, false)}>
           Cancel
         </Button>
-        <Button color="primary" onClick={handleClose}>
+        <AsyncButton
+          color="primary"
+          disabled={isReportsLoading || isSaving}
+          onClick={handleClose}
+          isLoading={isSaving}
+        >
           Save
-        </Button>
+        </AsyncButton>
       </DialogActions>
     </Dialog>
   );

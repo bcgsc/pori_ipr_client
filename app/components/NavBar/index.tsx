@@ -10,11 +10,11 @@ import {
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import PersonIcon from '@mui/icons-material/Person';
-
 import { logout } from '@/services/management/auth';
 import useSecurity from '@/hooks/useSecurity';
 import SidebarContext from '@/context/SidebarContext';
 import FeedbackDialog from './components/FeedbackDialog';
+import UserSettingsDialog from './components/UserSettingsDialog';
 
 import './index.scss';
 
@@ -24,6 +24,7 @@ const NavBar = (): JSX.Element => {
 
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>();
   const [showFeedbackDialog, setShowFeedbackDialog] = useState(false);
+  const [showUserSettingsDialog, setShowUserSettingsDialog] = useState(false);
 
   const handleOpenMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -36,6 +37,11 @@ const NavBar = (): JSX.Element => {
   const handleFeedbackClick = () => {
     handleCloseMenu();
     setShowFeedbackDialog(true);
+  };
+
+  const handleUserSettingsClick = () => {
+    handleCloseMenu();
+    setShowUserSettingsDialog(true);
   };
 
   const handleExpandSidebar = useCallback(() => {
@@ -88,9 +94,15 @@ const NavBar = (): JSX.Element => {
             open={Boolean(anchorEl)}
             onClose={handleCloseMenu}
           >
+            <MenuItem onClick={handleUserSettingsClick}>User Profile</MenuItem>
             <MenuItem onClick={handleFeedbackClick}>Feedback</MenuItem>
             <MenuItem onClick={logout}>Logout</MenuItem>
           </Menu>
+          <UserSettingsDialog
+            editData={userDetails}
+            isOpen={showUserSettingsDialog}
+            onClose={() => setShowUserSettingsDialog(false)}
+          />
           <FeedbackDialog
             isOpen={showFeedbackDialog}
             onClose={() => setShowFeedbackDialog(false)}

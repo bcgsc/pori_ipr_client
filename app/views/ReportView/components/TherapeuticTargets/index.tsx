@@ -21,6 +21,13 @@ import TherapeuticType from './types';
 
 import './index.scss';
 
+// Sort by existing rank ascending, then reassign rank based on 0 index, 1 per step
+const orderRankStartingByZero = (data: { rank: number }[]) => data.sort((a, b) => a.rank - b.rank)
+  .map((nextData, idx) => {
+    nextData.rank = idx;
+    return nextData;
+  });
+
 const removeExtraProps = (data: TherapeuticType[]): Partial<TherapeuticType>[] => data.map(({
   gene, variant, therapy, context, evidenceLevel, iprEvidenceLevel, notes,
 }) => ({
@@ -49,7 +56,7 @@ const filterType = (
 
 type TherapeuticProps = {
   isPrint?: boolean;
-  printVersion?: 'stable' | 'beta' | null;
+  printVersion?: 'standardLayout' | 'condensedLayout' | null;
 } & WithLoadingInjectedProps;
 
 const Therapeutic = ({
@@ -78,6 +85,8 @@ const Therapeutic = ({
     geneGraphkbId: null,
     variant: null,
     variantGraphkbId: null,
+    signature: null,
+    signatureGraphkbId: null,
     therapy: null,
     therapyGraphkbId: null,
     context: null,
@@ -92,35 +101,34 @@ const Therapeutic = ({
   const { canEdit } = useReport();
   const { report } = useContext(ReportContext);
 
-  useEffect(() => {
+  const getData = useCallback(async () => {
     if (report) {
-      const getData = async () => {
-        try {
-          const therapeuticResp = await api.get(
-            `/reports/${report.ident}/therapeutic-targets`,
-          ).request();
-
-          const [
-            filteredTherapeutic,
-            filteredChemoresistance,
-          ] = filterType(therapeuticResp, 'therapeutic', 'chemoresistance');
-          if (isPrint) {
-            setTherapeuticData(removeExtraProps(filteredTherapeutic));
-            setChemoresistanceData(removeExtraProps(filteredChemoresistance));
-          } else {
-            setTherapeuticData(filteredTherapeutic);
-            setChemoresistanceData(filteredChemoresistance);
-          }
-        } catch (err) {
-          snackbar.error(`Network error: ${err}`);
-        } finally {
-          setIsLoading(false);
+      try {
+        const therapeuticResp = await api.get(
+          `/reports/${report.ident}/therapeutic-targets`,
+        ).request();
+        const [
+          filteredTherapeutic,
+          filteredChemoresistance,
+        ] = filterType(therapeuticResp, 'therapeutic', 'chemoresistance');
+        if (isPrint) {
+          setTherapeuticData(removeExtraProps(filteredTherapeutic));
+          setChemoresistanceData(removeExtraProps(filteredChemoresistance));
+        } else {
+          setTherapeuticData(orderRankStartingByZero(filteredTherapeutic));
+          setChemoresistanceData(orderRankStartingByZero(filteredChemoresistance));
         }
-      };
-
-      getData();
+      } catch (err) {
+        snackbar.error(`Network error: ${err}`);
+      } finally {
+        setIsLoading(false);
+      }
     }
   }, [report, setIsLoading, isPrint]);
+
+  useEffect(() => {
+    getData();
+  }, [getData]);
 
   const handleEditStart = (rowData) => {
     setShowDialog(true);
@@ -132,7 +140,6 @@ const Therapeutic = ({
       setShowDialog(false);
       let tableData: TherapeuticType[] | Partial<TherapeuticType>[];
       let setter: React.Dispatch<React.SetStateAction<TherapeuticType[] | Partial<TherapeuticType>[]>>;
-
       if (newData) {
         if (newData.type === 'therapeutic') {
           tableData = therapeuticData;
@@ -152,10 +159,13 @@ const Therapeutic = ({
         snackbar.success('Row updated');
       }
       setEditData(null);
+
+      // Update state to reflect new data after entry deleted
+      getData();
     } catch (err) {
       snackbar.error(`Error, row not updated: ${err}`);
     }
-  }, [chemoresistanceData, therapeuticData]);
+  }, [chemoresistanceData, getData, therapeuticData]);
 
   const handleReorder = useCallback(async (newRow, newRank, tableType) => {
     try {
@@ -201,7 +211,7 @@ const Therapeutic = ({
     }
   }, [chemoresistanceData, therapeuticData, report]);
 
-  if (isPrint && printVersion === 'stable') {
+  if (isPrint && printVersion === 'standardLayout') {
     return (
       <div className="therapeutic-print">
         <Typography
@@ -214,23 +224,25 @@ const Therapeutic = ({
           fullWidth
           data={therapeuticData}
           columnDefs={columnDefs}
+          collapseableCols={['gene', 'variant']}
         />
         <Typography
           className="therapeutic-print__title"
           variant="h3"
         >
-          Potential Chemoresistance
+          Potential Resistance and Toxicity
         </Typography>
         <PrintTable
           fullWidth
           data={chemoresistanceData}
           columnDefs={columnDefs}
+          collapseableCols={['gene', 'variant']}
         />
       </div>
     );
   }
 
-  if (isPrint && printVersion === 'beta') {
+  if (isPrint && printVersion === 'condensedLayout') {
     return (
       <div className="therapeutic-print">
         <Typography
@@ -245,6 +257,7 @@ const Therapeutic = ({
           fullWidth
           data={therapeuticData}
           columnDefs={columnDefs}
+          collapseableCols={['gene', 'variant']}
         />
         <br />
         <Typography
@@ -253,12 +266,13 @@ const Therapeutic = ({
           variant="h5"
           display="inline"
         >
-          Potential Chemoresistance
+          Potential Resistance and Toxicity
         </Typography>
         <PrintTable
           fullWidth
           data={chemoresistanceData}
           columnDefs={columnDefs}
+          collapseableCols={['gene', 'variant']}
         />
       </div>
     );
@@ -290,7 +304,7 @@ const Therapeutic = ({
             Header={EvidenceHeader}
           />
           <DataTable
-            titleText="Potential Chemoresistance"
+            titleText="Potential Resistance and Toxicity"
             columnDefs={columnDefs}
             rowData={chemoresistanceData}
             canEdit={canEdit}

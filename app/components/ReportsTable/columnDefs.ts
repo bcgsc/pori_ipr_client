@@ -1,3 +1,6 @@
+import { ColDef } from '@ag-grid-community/core';
+import { basicTooltipValueGetter } from '../DataTable/components/ToolTip';
+
 const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
 
 const dateCellRenderer = (params) => {
@@ -12,7 +15,7 @@ const dateCellRenderer = (params) => {
   return gui;
 };
 
-const columnDefs = [{
+const columnDefs: ColDef[] = [{
   headerName: 'Patient ID',
   field: 'patientID',
   comparator: collator.compare,
@@ -36,18 +39,26 @@ const columnDefs = [{
 {
   headerName: 'Project',
   field: 'project',
+  tooltipComponent: 'ToolTip',
+  tooltipValueGetter: basicTooltipValueGetter,
 },
 {
   headerName: 'Tumour Type',
   field: 'tumourType',
+  tooltipComponent: 'ToolTip',
+  tooltipValueGetter: basicTooltipValueGetter,
 },
 {
   headerName: 'Report ID',
   field: 'reportIdent',
+  tooltipComponent: 'ToolTip',
+  tooltipValueGetter: basicTooltipValueGetter,
 },
 {
   headerName: 'Physician',
   field: 'physician',
+  tooltipComponent: 'ToolTip',
+  tooltipValueGetter: basicTooltipValueGetter,
 },
 {
   headerName: 'Analyst',
@@ -58,6 +69,14 @@ const columnDefs = [{
   field: 'date',
   sort: 'desc',
   cellRenderer: dateCellRenderer,
+},
+{
+  headerName: 'Bioinformatician',
+  field: 'bioinformatician',
+},
+{
+  headerName: 'Assigned Reviewer',
+  field: 'reviewer',
 },
 {
   headerName: 'Open',

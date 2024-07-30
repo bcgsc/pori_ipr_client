@@ -1,8 +1,4 @@
-import { RecordDefaults, UserType } from '@/common';
-
-type ProjectType = {
-  name: string;
-} & RecordDefaults;
+import { RecordDefaults, UserType, ProjectType } from '@/common';
 
 type ReviewType = {
   comment: string | null;
@@ -57,7 +53,10 @@ type GermlineReportType = {
   exported: boolean;
   normalLibrary: string;
   patientId: string;
-  projects: ProjectType[];
+  projects: ({
+    description: string | null;
+    name: string | null;
+  } & RecordDefaults)[];
   reviews: ReviewType[];
   sourcePath: string;
   sourceVersion: string;

@@ -1,47 +1,35 @@
 import React, {
-  useState, useEffect, useCallback,
+  useState, useEffect,
 } from 'react';
-import { AgGridReact } from '@ag-grid-community/react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { ColumnState } from '@ag-grid-community/core';
+import ReportsTableComponent from '@/components/ReportsTable';
 
-import startCase from '@/utils/startCase';
-import useGrid from '@/hooks/useGrid';
-import useExternalMode from '@/hooks/useExternalMode';
+import reportsColumns from '@/utils/reportsColumns';
 import useResource from '@/hooks/useResource';
 import api from '@/services/api';
 import { ReportType } from '@/context/ReportContext';
-import LaunchCell from '@/components/LaunchCell';
-import columnDefs from './columnDefs';
-
-import './index.scss';
 
 /**
  * Report table containing all reports
  */
-const ReportsTableComponent = (): JSX.Element => {
+const ReportsView = (): JSX.Element => {
   const {
-    gridApi,
-    colApi,
-    onGridReady,
-  } = useGrid();
-
-  const { adminAccess } = useResource();
-  const isExternalMode = useExternalMode();
+    adminAccess, unreviewedAccess, nonproductionAccess, allStates, unreviewedStates, nonproductionStates,
+  } = useResource();
   const [rowData, setRowData] = useState<ReportType[]>();
 
   useEffect(() => {
-    if (!rowData && isExternalMode !== undefined) {
+    if (!rowData) {
       const getData = async () => {
-        let states = '';
+        let statesArray = allStates;
 
-        if (!adminAccess) {
-          states = 'ready,active,uploaded,signedoff,completed,reviewed';
+        if (!nonproductionAccess) {
+          statesArray = statesArray.filter((elem) => !nonproductionStates.includes(elem));
         }
 
-        if (isExternalMode) {
-          states = 'reviewed,completed';
+        if (!unreviewedAccess) {
+          statesArray = statesArray.filter((elem) => !unreviewedStates.includes(elem));
         }
+        const states = statesArray.join(',');
 
         const { reports } = await api.get(`/reports${states ? `?states=${states}` : ''}`, {}).request();
 
@@ -50,62 +38,26 @@ const ReportsTableComponent = (): JSX.Element => {
             .filter((u) => u.role === 'analyst')
             .map((u) => u.user);
 
-          return {
-            patientID: report.patientId,
-            analysisBiopsy: report.biopsyName,
-            reportType: report.template.name === 'probe' ? 'Targeted Gene' : startCase(report.template.name),
-            state: report.state,
-            caseType: report?.patientInformation?.caseType,
-            project: report.projects.map((project) => project.name).sort().join(', '),
-            physician: report?.patientInformation?.physician,
-            analyst: analyst ? `${analyst.firstName} ${analyst.lastName}` : null,
-            reportIdent: report.ident,
-            tumourType: report?.patientInformation?.diagnosis,
-            date: report.createdAt,
-          };
+          const [reviewer] = report.users
+            .filter((u) => u.role === 'reviewer')
+            .map((u) => u.user);
+
+          const [bioinformatician] = report.users
+            .filter((u) => u.role === 'bioinformatician')
+            .map((u) => u.user);
+
+          return (
+            reportsColumns(report, analyst, reviewer, bioinformatician)
+          );
         }));
       };
       getData();
     }
-  }, [adminAccess, isExternalMode, rowData]);
+  }, [adminAccess, allStates, nonproductionStates, unreviewedStates, nonproductionAccess, unreviewedAccess, rowData]);
 
-  const onGridSizeChanged = useCallback((params) => {
-    const MEDIUM_SCREEN_WIDTH_LOWER = 992;
-
-    if (params.clientWidth >= MEDIUM_SCREEN_WIDTH_LOWER) {
-      gridApi.sizeColumnsToFit();
-    } else {
-      const colsToAutoSize = colApi.getAllColumns()
-        .filter((col: ColumnState) => !col.pinned)
-        .map((col: ColumnState) => col.colId);
-      colApi.autoSizeColumns(colsToAutoSize);
-    }
-  }, [colApi, gridApi]);
-
-  const defaultColDef = {
-    sortable: true,
-    resizable: true,
-    filter: true,
-  };
-  
   return (
-    <div className="ag-theme-material reports-table__container">
-      <AgGridReact
-        columnDefs={columnDefs}
-        defaultColDef={defaultColDef}
-        enableCellTextSelection
-        frameworkComponents={{
-          Launch: LaunchCell,
-        }}
-        onGridReady={onGridReady}
-        onGridSizeChanged={onGridSizeChanged}
-        pagination
-        paginationAutoPageSize
-        rowData={rowData}
-        rowSelection="single"
-      />
-    </div>
+    <ReportsTableComponent rowData={rowData} />
   );
 };
 
-export default ReportsTableComponent;
+export default ReportsView;

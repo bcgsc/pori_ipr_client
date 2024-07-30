@@ -3,39 +3,37 @@ import React, {
 } from 'react';
 import {
   Typography,
-  IconButton,
-  Grid,
 } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
+import DemoDescription from '@/components/DemoDescription';
 
 import api, { ApiCallSet } from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
-import ReportContext, { ReportType, PatientInformationType } from '@/context/ReportContext';
+import ReportContext from '@/context/ReportContext';
 import useReport from '@/hooks/useReport';
 import ConfirmContext from '@/context/ConfirmContext';
-import ReadOnlyTextField from '@/components/ReadOnlyTextField';
-import { formatDate } from '@/utils/date';
 import SignatureCard, { SignatureType, SignatureUserType } from '@/components/SignatureCard';
 import PrintTable from '@/components/PrintTable';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
-import PatientEdit from '@/components/PatientEdit';
 import capitalize from 'lodash/capitalize';
 import orderBy from 'lodash/orderBy';
 
 import './index.scss';
-import TumourSummaryEdit from '@/components/TumourSummaryEdit';
-import DescriptionList from '@/components/DescriptionList';
 import {
   KbMatchType, TumourSummaryType, ImmuneType, MutationBurdenType, MicrobialType, TmburType,
 } from '@/common';
 import { Box } from '@mui/system';
+import { getMicbSiteSummary } from '@/utils/getMicbSiteIntegrationStatusLabel';
+import { TumourSummaryEditProps } from '@/components/TumourSummaryEdit';
 import {
   therapeuticAssociationColDefs, cancerRelevanceColDefs, sampleColumnDefs, getGenomicEvent,
 } from './columnDefs';
 import { VariantEditDialog, FIELDS } from './components/VariantEditDialog';
 import { RapidVariantType } from './types';
 import { getVariantRelevanceDict } from './utils';
+
+import PatientInformation from '../PatientInformation';
+import TumourSummary from '../TumourSummary';
 
 const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
   const iprRelevanceDict = {};
@@ -123,6 +121,7 @@ const splitVariantsByRelevance = (data: RapidVariantType[]): RapidVariantType[] 
 type RapidSummaryProps = {
   loadedDispatch: ({ type }: { type: string }) => void;
   isPrint: boolean;
+  printVersion?: 'standardLayout' | 'condensedLayout' | null;
 } & WithLoadingInjectedProps;
 
 const RapidSummary = ({
@@ -130,36 +129,35 @@ const RapidSummary = ({
   isLoading,
   isPrint = false,
   setIsLoading,
+  printVersion = null,
 }: RapidSummaryProps): JSX.Element => {
   const { report, setReport } = useContext(ReportContext);
   const { setIsSigned } = useContext(ConfirmContext);
-  const { canEdit } = useReport();
+  let { canEdit } = useReport();
+  if (report.state === 'completed') {
+    canEdit = false;
+  }
 
   const [signatures, setSignatures] = useState<SignatureType | null>();
   const [therapeuticAssociationResults, setTherapeuticAssociationResults] = useState<RapidVariantType[] | null>();
   const [cancerRelevanceResults, setCancerRelevanceResults] = useState<RapidVariantType[] | null>();
   const [unknownSignificanceResults, setUnknownSignificanceResults] = useState<RapidVariantType[] | null>();
-  const [patientInformation, setPatientInformation] = useState<{
-    label: string;
-    value: string | null;
-  }[] | null>();
   const [tumourSummary, setTumourSummary] = useState<TumourSummaryType[]>();
   const [primaryBurden, setPrimaryBurden] = useState<MutationBurdenType>();
   const [tmburMutBur, setTmburMutBur] = useState<TmburType>();
   const [tCellCd8, setTCellCd8] = useState<ImmuneType>();
-  const [microbial, setMicrobial] = useState<MicrobialType[]>();
+  const [microbial, setMicrobial] = useState<MicrobialType[]>([]);
   const [editData, setEditData] = useState();
 
-  const [showPatientEdit, setShowPatientEdit] = useState(false);
-  const [showTumourSummaryEdit, setShowTumourSummaryEdit] = useState(false);
   const [showMatchedTumourEditDialog, setShowMatchedTumourEditDialog] = useState(false);
   const [showCancerRelevanceEventsDialog, setShowCancerRelevanceEventsDialog] = useState(false);
 
   useEffect(() => {
+    let apiCalls = null;
     if (report?.ident) {
       const getData = async () => {
         try {
-          const apiCalls = new ApiCallSet([
+          apiCalls = new ApiCallSet([
             api.get(`/reports/${report.ident}/signatures`),
             api.get(`/reports/${report.ident}/variants?rapidTable=therapeuticAssociation`),
             api.get(`/reports/${report.ident}/variants?rapidTable=cancerRelevance`),
@@ -242,53 +240,25 @@ const RapidSummary = ({
           } else if (!isPrint) {
             snackbar.error(microbialResp.reason?.content?.error?.message);
           }
-
-          setPatientInformation([
-            {
-              label: 'Alternate ID',
-              value: report.alternateIdentifier,
-            },
-            {
-              label: 'Report Date',
-              value: formatDate(report.createdAt),
-            },
-            {
-              label: 'Case Type',
-              value: report.patientInformation.caseType,
-            },
-            {
-              label: 'Physician',
-              value: report.patientInformation.physician,
-            },
-            {
-              label: 'Biopsy Name',
-              value: report.biopsyName,
-            },
-            {
-              label: 'Biopsy Details',
-              value: report.patientInformation.biopsySite,
-            },
-            {
-              label: 'Gender',
-              value: report.patientInformation.gender,
-            },
-            {
-              label: 'Tumour type for matching',
-              value: report.kbDiseaseMatch,
-            },
-          ]);
         } catch (err) {
           snackbar.error(`Unknown error: ${err}`);
         } finally {
           setIsLoading(false);
           if (loadedDispatch) {
-            loadedDispatch({ type: 'summary' });
+            loadedDispatch({ type: 'summary-tgr' });
           }
         }
+        return apiCalls;
       };
 
       getData();
     }
+
+    return () => {
+      if (apiCalls) {
+        apiCalls.abort();
+      }
+    };
   }, [loadedDispatch, report, setIsLoading, isPrint]);
 
   useEffect(() => {
@@ -326,7 +296,7 @@ const RapidSummary = ({
     setTumourSummary([
       {
         term: 'Pathology Tumour Content',
-        value: `${report.sampleInfo?.find((samp) => samp?.Sample?.toLowerCase() === 'tumour')['Patho TC'] ?? ''}`,
+        value: `${report.sampleInfo?.find((samp) => samp?.sample?.toLowerCase() === 'tumour').pathoTc ?? ''}`,
       },
       {
         term: 'M1M2 Score',
@@ -342,13 +312,7 @@ const RapidSummary = ({
       },
       {
         term: 'Microbial Species',
-        value: microbial ? microbial.map(({ species, integrationSite }) => {
-          let integrationSection = '';
-          if (integrationSite) {
-            integrationSection = integrationSite.toLowerCase() === 'yes' ? ' (integration)' : ' (no integration)';
-          }
-          return `${species}${integrationSection}`;
-        }).join(', ') : null,
+        value: getMicbSiteSummary(microbial),
       },
       {
         term:
@@ -387,58 +351,6 @@ const RapidSummary = ({
   }, [microbial, primaryBurden, tmburMutBur, report.m1m2Score, report.sampleInfo, report.tumourContent, tCellCd8?.percentile, tCellCd8?.score, report.captiv8Score,
     tCellCd8?.percentileHidden, tCellCd8, tCellCd8?.pedsScoreComment, tmburMutBur?.adjustedTmb, tmburMutBur?.tmbHidden, tCellCd8?.pedsScore, tCellCd8?.pedsPercentile]);
 
-  const handlePatientEditClose = useCallback((
-    newPatientData: PatientInformationType,
-    newReportData: ReportType,
-  ) => {
-    setShowPatientEdit(false);
-
-    if (!newPatientData && !newReportData) {
-      return;
-    }
-
-    if (newReportData) {
-      setReport((oldReport) => ({ ...oldReport, ...newReportData }));
-    }
-
-    if (newPatientData) {
-      setPatientInformation([
-        {
-          label: 'Alternate ID',
-          value: newReportData ? newReportData.alternateIdentifier : report.alternateIdentifier,
-        },
-        {
-          label: 'Report Date',
-          value: formatDate(report.createdAt),
-        },
-        {
-          label: 'Case Type',
-          value: newPatientData ? newPatientData.caseType : report.patientInformation.caseType,
-        },
-        {
-          label: 'Physician',
-          value: newPatientData ? newPatientData.physician : report.patientInformation.physician,
-        },
-        {
-          label: 'Biopsy Name',
-          value: newReportData ? newReportData.biopsyName : report.biopsyName,
-        },
-        {
-          label: 'Biopsy Details',
-          value: newPatientData ? newPatientData.biopsySite : report.patientInformation.biopsySite,
-        },
-        {
-          label: 'Gender',
-          value: newPatientData ? newPatientData.gender : report.patientInformation.gender,
-        },
-        {
-          label: 'Tumour type for matching',
-          value: newReportData ? newReportData.kbDiseaseMatch : report.kbDiseaseMatch,
-        },
-      ]);
-    }
-  }, [report, setReport]);
-
   const handleSign = useCallback((signed: boolean, role: SignatureUserType) => {
     let cancelled;
     const sign = async (s: boolean, r: SignatureUserType) => {
@@ -456,73 +368,6 @@ const RapidSummary = ({
     sign(signed, role);
     return function cleanup() { cancelled = true; };
   }, [report.ident, setIsSigned]);
-
-  const handleTumourSummaryEditClose = useCallback((
-    isSaved,
-    newMicrobialData,
-    newReportData,
-    newTCellCd8Data: ImmuneType,
-    newMutationBurdenData: MutationBurdenType,
-    newTmBurMutBurData,
-  ) => {
-    setShowTumourSummaryEdit(false);
-
-    if (!isSaved || (!newMicrobialData && !newReportData && !newTCellCd8Data && !newMutationBurdenData && !newTmBurMutBurData)) {
-      return;
-    }
-
-    if (newMicrobialData) {
-      setMicrobial(newMicrobialData);
-    }
-
-    if (newReportData) {
-      setReport(newReportData);
-    }
-
-    if (newTCellCd8Data) {
-      setTCellCd8(newTCellCd8Data);
-    }
-
-    if (newMutationBurdenData) {
-      setPrimaryBurden(newMutationBurdenData);
-    }
-
-    if (newTmBurMutBurData) {
-      setTmburMutBur(newTmBurMutBurData);
-    }
-  }, [setReport]);
-
-  let tumourSummarySection = null;
-  if (tumourSummary) {
-    tumourSummarySection = (
-      <>
-        <div className="rapid-summary__tumour-summary-title">
-          <Typography variant="h3">
-            Tumour Summary
-            {canEdit && !isPrint && (
-              <>
-                <IconButton onClick={() => setShowTumourSummaryEdit(true)} size="large">
-                  <EditIcon />
-                </IconButton>
-                <TumourSummaryEdit
-                  microbial={microbial}
-                  report={report}
-                  tCellCd8={tCellCd8}
-                  mutationBurden={primaryBurden}
-                  tmburMutBur={tmburMutBur}
-                  isOpen={showTumourSummaryEdit}
-                  onClose={handleTumourSummaryEditClose}
-                />
-              </>
-            )}
-          </Typography>
-        </div>
-        <div className="rapid-summary__tumour-summary-content">
-          <DescriptionList entries={tumourSummary} />
-        </div>
-      </>
-    );
-  }
 
   const handleMatchedTumourEditStart = useCallback((rowData) => {
     setShowMatchedTumourEditDialog(true);
@@ -748,51 +593,141 @@ const RapidSummary = ({
       </div>
     );
   }, [report, isPrint]);
+  const classNamePrefix = printVersion ? 'rapid-summary--print' : 'rapid-summary';
+
+  const handleTumourSummaryEditClose: TumourSummaryEditProps['onEditClose'] = useCallback((
+    isSaved,
+    newMicrobialData,
+    newReportData,
+    newTCellCd8Data,
+    newMutationBurdenData,
+    newTmBurMutBurData,
+  ) => {
+    if (!isSaved || (!newMicrobialData && !newReportData && !newTCellCd8Data && !newMutationBurdenData && !newTmBurMutBurData)) {
+      return;
+    }
+
+    if (newMicrobialData) {
+      setMicrobial(newMicrobialData);
+    }
+
+    if (newReportData) {
+      setReport(newReportData);
+    }
+
+    if (newTCellCd8Data) {
+      setTCellCd8(newTCellCd8Data);
+    }
+
+    if (newMutationBurdenData) {
+      setPrimaryBurden(newMutationBurdenData);
+    }
+
+    if (newTmBurMutBurData) {
+      setTmburMutBur(newTmBurMutBurData);
+    }
+  }, [setReport]);
+
+  if (printVersion === 'condensedLayout') {
+    return (
+      <div className={classNamePrefix}>
+        <DemoDescription>
+          The front page displays general patient and sample information, and provides a highlight of the key sequencing results.
+        </DemoDescription>
+        <Box
+          sx={{
+            display: 'flex',
+            placeContent: 'space-between',
+          }}
+        >
+          <Box sx={{ width: '45%' }}>
+            {report && (
+              <PatientInformation
+                canEdit={canEdit}
+                isPrint={isPrint}
+                printVersion={printVersion}
+                loadedDispatch={loadedDispatch}
+              />
+            )}
+          </Box>
+          <Box sx={{ minWidth: '45%', maxWidth: '54%' }}>
+            {report && tumourSummary && (
+              <TumourSummary
+                canEdit={canEdit}
+                isPrint={isPrint}
+                loadedDispatch={loadedDispatch}
+                microbial={microbial}
+                mutationBurden={primaryBurden}
+                onEditClose={handleTumourSummaryEditClose}
+                printVersion={printVersion}
+                report={report}
+                tCellCd8={tCellCd8}
+                tmburMutBur={tmburMutBur}
+                tumourSummary={tumourSummary}
+              />
+            )}
+          </Box>
+        </Box>
+        {report && therapeuticAssociationResults && (
+        <div className="rapid-summary__events">
+          <Typography className="rapid-summary__events-title" variant="h3" display="inline">
+            Variants with Clinical Evidence for Treatment in This Tumour Type
+          </Typography>
+          {therapeuticAssociationSection}
+        </div>
+        )}
+        {report && cancerRelevanceResults && (
+        <div className="rapid-summary__events">
+          <Typography className="rapid-summary__events-title" variant="h3" display="inline">
+            Variants with Cancer Relevance
+          </Typography>
+          {cancerRelevanceSection}
+        </div>
+        )}
+        {report && unknownSignificanceResults && (
+        <div className="rapid-summary__events">
+          <Typography className="rapid-summary__events-title" variant="h3" display="inline">
+            Variants of Uncertain Significance
+          </Typography>
+          {unknownSignificanceSection}
+        </div>
+        )}
+        {
+            isPrint ? reviewSignaturesSection : sampleInfoSection
+          }
+        {
+            isPrint ? sampleInfoSection : reviewSignaturesSection
+          }
+      </div>
+    );
+  }
 
   return (
     <div className={`rapid-summary${isPrint ? '--print' : ''}`}>
       {!isLoading && (
         <>
-          {report && patientInformation && (
-            <div className="rapid-summary__patient-information">
-              <div className="rapid-summary__patient-information-title">
-                <Typography variant="h3" display="inline">
-                  Patient Information
-                  {canEdit && !isPrint && (
-                    <>
-                      <IconButton onClick={() => setShowPatientEdit(true)} size="large">
-                        <EditIcon />
-                      </IconButton>
-                      <PatientEdit
-                        patientInformation={report.patientInformation}
-                        report={report}
-                        isOpen={Boolean(showPatientEdit)}
-                        onClose={handlePatientEditClose}
-                      />
-                    </>
-                  )}
-                </Typography>
-              </div>
-              <Grid
-                alignItems="flex-end"
-                container
-                spacing={3}
-                className="rapid-summary__patient-information-content"
-              >
-                {patientInformation.map(({ label, value }) => (
-                  <Grid key={label} item>
-                    <ReadOnlyTextField label={label}>
-                      {value}
-                    </ReadOnlyTextField>
-                  </Grid>
-                ))}
-              </Grid>
-            </div>
+          {report && (
+            <PatientInformation
+              canEdit={canEdit}
+              isPrint={isPrint}
+              printVersion={printVersion}
+              loadedDispatch={loadedDispatch}
+            />
           )}
           {report && tumourSummary && (
-            <div className="rapid-summary__tumour-summary">
-              {tumourSummarySection}
-            </div>
+            <TumourSummary
+              canEdit={canEdit}
+              isPrint={isPrint}
+              loadedDispatch={loadedDispatch}
+              microbial={microbial}
+              mutationBurden={primaryBurden}
+              onEditClose={handleTumourSummaryEditClose}
+              printVersion={printVersion}
+              report={report}
+              tCellCd8={tCellCd8}
+              tmburMutBur={tmburMutBur}
+              tumourSummary={tumourSummary}
+            />
           )}
           {report && therapeuticAssociationResults && (
             <div className="rapid-summary__events">

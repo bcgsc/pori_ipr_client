@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
-import { AgGridReact } from '@ag-grid-community/react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { RowClickedEvent } from '@ag-grid-community/core';
+import { useParams } from 'react-router-dom';
 
 import api from '@/services/api';
-import useGrid from '@/hooks/useGrid';
-import { WithLoadingInjectedProps } from '@/hoc/WithLoading';
+import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import snackbar from '@/services/SnackbarUtils';
-import columnDefs from '../ReportsView/columnDefs';
-
+import reportsColumns from '@/utils/reportsColumns';
 import '../ReportsView/index.scss';
+import ReportsTableComponent from '@/components/ReportsTable';
+import { ReportType } from '@/context/ReportContext';
 
 type PatientsViewProps = WithLoadingInjectedProps;
 
@@ -18,10 +15,8 @@ const PatientsView = ({
   isLoading,
   setIsLoading,
 }: PatientsViewProps): JSX.Element => {
-  const { patientId } = useParams();
-  const history = useHistory();
+  const { patientId } = useParams<{ patientId: ReportType['patientId'] }>();
   const [rowData, setRowData] = useState();
-  const { gridApi, colApi, onGridReady } = useGrid();
 
   useEffect(() => {
     if (patientId) {
@@ -33,23 +28,21 @@ const PatientsView = ({
               .filter((u) => u.role === 'analyst' && !u.deletedAt)
               .map((u) => u.user);
 
+            const [reviewer] = report.users
+              .filter((u) => u.role === 'reviewer')
+              .map((u) => u.user);
+
+            const [bioinformatician] = report.users
+              .filter((u) => u.role === 'bioinformatician')
+              .map((u) => u.user);
+
             if (!report.patientInformation) {
               report.patientInformation = {};
             }
 
-            return {
-              patientID: report.patientId,
-              analysisBiopsy: report.biopsyName,
-              reportType: report.type === 'genomic' ? 'Genomic' : 'Targeted Gene',
-              state: report.state,
-              caseType: report.patientInformation.caseType,
-              project: report.projects.map((project) => project.name).sort().join(', '),
-              physician: report.patientInformation.physician,
-              analyst: analyst ? `${analyst.firstName} ${analyst.lastName}` : null,
-              reportIdent: report.ident,
-              tumourType: report.patientInformation.diagnosis,
-              date: report.createdAt,
-            };
+            return (
+              reportsColumns(report, analyst, reviewer, bioinformatician)
+            );
           }).filter((report) => (
             report.patientID === patientId || report.alternateIdentifier === patientId
           )));
@@ -64,51 +57,11 @@ const PatientsView = ({
     }
   }, [patientId, setIsLoading]);
 
-  const onGridSizeChanged = (params) => {
-    const MEDIUM_SCREEN_WIDTH_LOWER = 992;
-
-    if (params.clientWidth >= MEDIUM_SCREEN_WIDTH_LOWER) {
-      gridApi.sizeColumnsToFit();
-    } else {
-      const allCols = colApi.getAllColumns().map((col) => col.colId);
-      colApi.autoSizeColumns(allCols);
-    }
-  };
-
-  const onRowClicked = ({ event }: RowClickedEvent) => {
-    const selectedRow = gridApi.getSelectedRows();
-    const [{ reportIdent }] = selectedRow;
-
-    if (event.ctrlKey || event.metaKey) {
-      window.open(`/report/${reportIdent}/summary`, '_blank');
-    } else {
-      history.push({ pathname: `/report/${reportIdent}/summary` });
-    }
-  };
-
-  const defaultColDef = {
-    sortable: true,
-    resizable: true,
-    filter: true,
-  };
+  if (isLoading) { return null; }
 
   return (
-    <div className="ag-theme-material reports-table__container">
-      {!isLoading && (
-        <AgGridReact
-          columnDefs={columnDefs}
-          rowData={rowData}
-          defaultColDef={defaultColDef}
-          pagination
-          paginationAutoPageSize
-          rowSelection="single"
-          onGridReady={onGridReady}
-          onRowClicked={onRowClicked}
-          onGridSizeChanged={onGridSizeChanged}
-        />
-      )}
-    </div>
+    <ReportsTableComponent rowData={rowData} />
   );
 };
 
-export default PatientsView;
+export default withLoading(PatientsView);

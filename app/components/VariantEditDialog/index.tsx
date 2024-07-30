@@ -28,7 +28,6 @@ import './index.scss';
     variantType: string;
     isOpen: boolean;
     onClose: (newData?: SmallMutationType | CopyNumberType | StructuralVariantType | ExpOutliersType) => void;
-    showErrorSnackbar: (message: string) => void;
   };
 
 const VariantEditDialog = ({
@@ -36,7 +35,6 @@ const VariantEditDialog = ({
   variantType,
   isOpen = false,
   onClose,
-  showErrorSnackbar,
 }: VariantEditDialogProps): JSX.Element => {
   const { showConfirmDialog } = useConfirmDialog();
   const { report } = useContext(ReportContext);
@@ -98,7 +96,7 @@ const VariantEditDialog = ({
           snackbar.success('Variant added to key alterations.');
         }
       } catch (err) {
-        showErrorSnackbar(`Error updating key alterations: ${err.message}`);
+        snackbar.error(`Error updating key alterations: ${err.message}`);
         onClose();
       } finally {
         setIsApiCalling(false);
@@ -107,7 +105,7 @@ const VariantEditDialog = ({
       snackbar.error('Variant already in key alterations.');
       onClose();
     }
-  }, [availableVariants, variant, report.ident, isSigned, showConfirmDialog, onClose, editData, showErrorSnackbar]);
+  }, [availableVariants, variant, report.ident, isSigned, showConfirmDialog, onClose, editData]);
 
   const handleClose = useCallback(() => {
     onClose();

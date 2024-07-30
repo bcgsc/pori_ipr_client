@@ -1,0 +1,4 @@
+.ag-tooltip-custom {
+  // v25 seems to ignore this rule on custom tooltips, leading to bottom left tooltips
+  position: absolute;
+}

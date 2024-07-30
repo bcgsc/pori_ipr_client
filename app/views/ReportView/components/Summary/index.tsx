@@ -1,34 +1,42 @@
 import { SummaryProps } from '@/commonComponents';
-import React, { lazy } from 'react';
+import React from 'react';
 
-const GenomicSummary = lazy(() => import('../GenomicSummary'));
-const KeyAlterations = lazy(() => import('../GenomicSummary/components/KeyAlterations'));
-const ProbeSummary = lazy(() => import('../ProbeSummary'));
-const PharmacoGenomicSummary = lazy(() => import('../PharmacoGenomicSummary'));
-const RapidSummary = lazy(() => import('../RapidSummary'));
+import GenomicSummary from '../GenomicSummary';
+import KeyAlterations from '../GenomicSummary/components/KeyAlterations';
+import ProbeSummary from '../ProbeSummary';
+import PharmacoGenomicSummary from '../PharmacoGenomicSummary';
+import RapidSummary from '../RapidSummary';
 
 const Summary = ({
   templateName,
+  visibleSections,
   ...props
 }: SummaryProps): JSX.Element => {
-  if (templateName === 'probe') {
+  // TODO remove backup template name checks when data is updated in prod
+  let summarySection;
+  if (visibleSections) {
+    summarySection = visibleSections.find((element) => ['summary-genomic', 'summary-tgr', 'summary-pcp', 'summary-probe'].includes(element));
+  }
+
+  if (summarySection === 'summary-probe' || templateName === 'probe') {
     return (
       <ProbeSummary {...props} />
     );
   }
 
-  if (templateName === 'pharmacogenomic') {
+  if (summarySection === 'summary-pcp' || templateName === 'pharmacogenomic') {
     return (
       <PharmacoGenomicSummary {...props} />
     );
   }
 
-  if (templateName === 'rapid') {
+  if (summarySection === 'summary-tgr' || templateName === 'rapid') {
     return (
       <RapidSummary {...props} />
     );
   }
 
+  // default - summary-genomic or summary
   if (templateName === 'genomicPatientandTumour') {
     return (
       <GenomicSummary {...props} />

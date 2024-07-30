@@ -1,8 +1,9 @@
 @import '../../styles/theme.module';
+$padding-right: 8px;
 
 .table {
   border-collapse: collapse;
-  margin: 8px;
+  margin-bottom: 1rem;
   font-family: Arial, Helvetica, sans-serif;
 
   &--full-width {
@@ -17,19 +18,25 @@
     border-bottom: 1px solid $palette__text--hint;
 
     & th {
-      padding: 10px 4px;
+      padding: 10px $padding-right 10px 0px;
     }
   }
 
   &__row {
     font-size: 10pt;
     border-bottom: 0.5px solid lightgray;
+    page-break-inside: avoid;
+    break-inside: avoid;
 
     & td {
-      padding: 3px 4px;
-      max-width: 300px;
+      padding: 3px $padding-right 3px 0;
+      page-break-inside: avoid;
       overflow-wrap: break-word;
       break-inside: avoid;
+
+      &:last-child {
+        padding-right: 0;
+      }
     }
   }
 
@@ -46,8 +53,4 @@
       display: none;
     }
   }
-}
-
-.table-container {
-  margin: 8px;
 }

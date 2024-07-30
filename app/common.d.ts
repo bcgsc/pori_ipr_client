@@ -57,6 +57,7 @@ type GroupType = {
   name: string;
   users: UserGroupMemberType[];
   owner: UserType;
+  description: string;
 };
 
 type UserProjectsType = {
@@ -82,6 +83,44 @@ type UserType = {
   projects?: UserProjectsType[];
   type: string;
   username: string;
+  allowNotifications: boolean;
+} & RecordDefaults;
+
+type ShortReportType = {
+  alternateIdentifier: string | null;
+  patientId: string;
+} & RecordDefaults;
+
+type ProjectType = {
+  name: string;
+  description?: string;
+  reportProject?: {
+    additionalProject: boolean;
+  };
+  users?: UserType[];
+} & RecordDefaults;
+
+type AppendixType = {
+  template: TemplateType;
+  project: {
+    name: string | null;
+    description: string | null;
+  } & RecordDefaults;
+  text: string;
+} & RecordDefaults;
+
+type VariantTextType = {
+  cancerType: string[];
+  project: {
+    ident: string | null;
+    name: string | null;
+  };
+  template: {
+    ident: string | null;
+    name: string | null;
+  };
+  text: string;
+  variantName: string;
 } & RecordDefaults;
 
 type ImageType = {
@@ -329,15 +368,14 @@ type MicrobialType = {
   species: string | null;
 } & RecordDefaults;
 
-type AppendixType = RecordDefaults & {
-  text: string;
-};
-
 export {
   RecordDefaults,
+  ShortReportType,
+  ProjectType,
+  AppendixType,
+  VariantTextType,
   UserType,
   TemplateType,
-  AppendixType,
   AnyVariantType,
   GroupType,
   UserProjectsType,

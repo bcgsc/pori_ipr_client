@@ -22,20 +22,23 @@ import { ResourceContextProvider } from '@/context/ResourceContext';
 import NavBar from '@/components/NavBar';
 import Sidebar from '@/components/Sidebar';
 import snackbar from '@/services/SnackbarUtils';
-import { keycloak } from '@/services/management/auth';
+import { keycloak, logout } from '@/services/management/auth';
 import './index.scss';
 import { Box } from '@mui/system';
 
 const LoginView = lazy(() => import('../LoginView'));
 const TermsView = lazy(() => import('../TermsView'));
 const ReportsView = lazy(() => import('../ReportsView'));
+const MyReportsView = lazy(() => import('../MyReportsView'));
+const PatientsView = lazy(() => import('../PatientsView'));
+const SearchView = lazy(() => import('../SearchView'));
+const ReportsByVariantView = lazy(() => import('../ReportsByVariantView'));
 const ReportView = lazy(() => import('../ReportView'));
 const PrintView = lazy(() => import('../PrintView'));
-const BetaPrintView = (props) => <PrintView {...props} printVersion="beta" />;
+const CondensedPrintView = (props) => <PrintView {...props} printVersion="condensedLayout" />;
 const GermlineView = lazy(() => import('../GermlineView'));
 const AdminView = lazy(() => import('../AdminView'));
 const LinkOutView = lazy(() => import('../LinkOutView'));
-const PatientsView = lazy(() => import('../PatientsView'));
 const TemplateView = lazy(() => import('../TemplateView'));
 const ProjectsView = lazy(() => import('../ProjectsView'));
 
@@ -105,14 +108,14 @@ const TimeoutModal = memo(({ authorizationToken, setAuthorizationToken }: Timeou
         <p>Your session is about to expire, would you like to remain logged in?</p>
       </DialogContent>
       <DialogActions>
-        <Button disabled={isLoading} onClick={() => setIsOpen(false)}>Close</Button>
+        <Button disabled={isLoading} onClick={logout}>Logout</Button>
         <Button
           disabled={isLoading}
           onClick={handleConfirm}
           color="primary"
           variant="contained"
         >
-          {isLoading ? <CircularProgress color="inherit" size={24} /> : 'Yes'}
+          {isLoading ? <CircularProgress color="inherit" size={24} /> : 'Stay logged in'}
         </Button>
       </DialogActions>
     </Dialog>
@@ -169,7 +172,7 @@ const Main = (): JSX.Element => {
                 >
                   <CircularProgress color="secondary" />
                 </Box>
-                )}
+              )}
               >
                 <TimeoutModal authorizationToken={authorizationToken} setAuthorizationToken={setAuthorizationToken} />
                 <Switch>
@@ -179,16 +182,20 @@ const Main = (): JSX.Element => {
                     <Redirect to={{ pathname: '/reports' }} />
                   </Route>
                   <AuthenticatedRoute component={TermsView} path="/terms" />
-                  <AuthenticatedRoute component={ReportsView} path="/reports" />
                   <AuthenticatedRoute exact component={PatientsView} path="/reports/patients/:patientId" />
+                  <AuthenticatedRoute exact component={ReportsByVariantView} path="/search/result" />
+                  <AuthenticatedRoute component={ReportsView} path="/reports" />
+                  <AuthenticatedRoute component={MyReportsView} path="/my-reports" />
+                  <AuthenticatedRoute component={SearchView} path="/search" />
                   <Redirect exact from="/report/:ident/(genomic|probe)/summary" to="/report/:ident/summary" />
                   <AuthenticatedRoute component={ReportView} path="/report/:ident" />
                   <AuthenticatedRoute component={PrintView} path="/print/:ident" showNav={false} onToggleNav={setIsNavVisible} />
-                  <AuthenticatedRoute component={BetaPrintView} path="/printBeta/:ident" showNav={false} onToggleNav={setIsNavVisible} />
-                  <AuthenticatedRoute component={GermlineView} path="/germline" />
+                  <AuthenticatedRoute component={CondensedPrintView} path="/condensedLayoutPrint/:ident" showNav={false} onToggleNav={setIsNavVisible} />
+                  <AuthenticatedRoute germlineRequired component={GermlineView} path="/germline" />
                   <AuthenticatedRoute component={ProjectsView} path="/projects" />
-                  <AuthenticatedRoute adminRequired component={AdminView} path="/admin" />
-                  <AuthenticatedRoute adminRequired component={TemplateView} path="/template" />
+                  <AuthenticatedRoute appendixEditorRequired component={AdminView} path="/admin/appendices" />
+                  <AuthenticatedRoute managerRequired component={AdminView} path="/admin" />
+                  <AuthenticatedRoute templateEditorRequired component={TemplateView} path="/template" />
                 </Switch>
               </Suspense>
             </section>

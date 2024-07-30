@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import React, {
   useRef, useState, useEffect, useCallback, useContext, useMemo,
 } from 'react';
@@ -20,16 +21,21 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 
 import DemoDescription from '@/components/DemoDescription';
 import ReportContext from '@/context/ReportContext';
+import LaunchCell from '@/components/LaunchCell';
 import { ColumnPicker, ColumnPickerProps } from './components/ColumnPicker';
 import EnsemblCellRenderer from './components/EnsemblCellRenderer';
 import CivicCellRenderer from './components/CivicCellRenderer';
 import GeneCellRenderer from './components/GeneCellRenderer';
 import { ActionCellRenderer } from './components/ActionCellRenderer';
+import { HTMLCellRenderer } from './components/HTMLCellRenderer';
+import KbMatchesActionCellRenderer from './components/KbMatchesActionCellRenderer';
+import HyperlinkCellRenderer from './components/HyperlinkCellRenderer';
+import { ToolTip } from './components/ToolTip';
+
 import NoRowsOverlay from './components/NoRowsOverlay';
 import { getDate } from '../../utils/date';
 
 import './index.scss';
-import KbMatchesActionCellRenderer from './components/KbMatchesActionCellRenderer';
 
 const MAX_VISIBLE_ROWS = 12;
 const MAX_TABLE_HEIGHT = '517px';
@@ -172,6 +178,8 @@ type DataTableProps = {
   demoDescription?: string,
   /* Column fields to collapse, this will build the key that will combine these column values to be collapsed */
   collapseColumnFields?: string[];
+  /* Whether the data table is being used to display search results for reports by variant */
+  isSearch?: boolean;
 };
 
 const DataTable = ({
@@ -202,6 +210,7 @@ const DataTable = ({
   Header,
   demoDescription = '',
   collapseColumnFields = null,
+  isSearch = false,
 }: DataTableProps): JSX.Element => {
   const domLayout = isPrint ? 'print' : 'autoHeight';
   const { gridApi, colApi, onGridReady } = useGrid();
@@ -422,6 +431,9 @@ const DataTable = ({
   const handleTSVExport = useCallback(() => {
     const date = getDate();
 
+    const defaultFileName = `ipr_${report?.patientId}_${report?.ident}_${titleText.split(' ').join('_')}_${date}.tsv`;
+    const searchReportsFileName = `ipr_${titleText.split(' ').join('_')}_${date}.tsv`;
+
     gridApi.exportDataAsCsv({
       suppressQuotes: true,
       columnSeparator: '\t',
@@ -431,10 +443,10 @@ const DataTable = ({
           return !(colD?.headerName === 'Actions' || colD?.field === 'Actions' || col.getColId() === 'Actions');
         })
         .map((col) => col.getColId()),
-      fileName: `ipr_${report.patientId}_${report.ident}_${titleText.split(' ').join('_')}_${date}.tsv`,
+      fileName: isSearch ? searchReportsFileName : defaultFileName,
       processCellCallback: (({ value }) => (typeof value === 'string' ? value?.replace(/,/g, '') : value)),
     });
-  }, [colApi, gridApi, report, titleText]);
+  }, [colApi, gridApi, isSearch, report?.ident, report?.patientId, titleText]);
 
   const handleFilterAndSortChanged = useCallback(() => {
     if (onRowDataChanged) {
@@ -568,20 +580,29 @@ const DataTable = ({
               onFilterChanged={handleFilterAndSortChanged}
               onSortChanged={handleFilterAndSortChanged}
               noRowsOverlayComponent="NoRowsOverlay"
+              gridOptions={{
+                // For when table is too short and the popup menus get cut-off
+                popupParent: document.querySelector('body'),
+              }}
               context={{
                 canEdit,
                 canDelete,
                 canViewDetails,
                 tableType,
               }}
+              tooltipShowDelay={0}
               frameworkComponents={{
                 EnsemblCellRenderer,
                 CivicCellRenderer,
                 GeneCellRenderer,
+                HyperlinkCellRenderer,
                 ActionCellRenderer: RowActionCellRenderer,
                 KbMatchesActionCellRenderer: RowKbMatchesActionCellRenderer,
                 headerCellRenderer: Header,
                 NoRowsOverlay,
+                HTMLCellRenderer,
+                ToolTip,
+                Launch: LaunchCell,
               }}
               suppressAnimationFrame
               suppressRowTransform={Boolean(collapseColumnFields)}

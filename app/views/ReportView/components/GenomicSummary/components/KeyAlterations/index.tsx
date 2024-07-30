@@ -55,15 +55,18 @@ const customTypeSort = (variant) => {
   return 3;
 };
 
-  type KeyAlterationsProps = {
-    isPrint: boolean;
-    printVersion?: 'stable' | 'beta' | null;
-  } & WithLoadingInjectedProps;
+type KeyAlterationsProps = {
+  loadedDispatch?: ({ type }: { type: string }) => void;
+  isPrint: boolean;
+  printVersion?: 'standardLayout' | 'condensedLayout' | null;
+} & WithLoadingInjectedProps;
 
 const KeyAlterations = ({
   isPrint = false,
   printVersion = null,
   setIsLoading,
+  isLoading,
+  loadedDispatch,
 }: KeyAlterationsProps): JSX.Element => {
   const { report } = useContext(ReportContext);
   const { canEdit } = useReport();
@@ -118,12 +121,15 @@ const KeyAlterations = ({
           snackbar.error(`Network error: ${err?.message ?? err}`);
         } finally {
           setIsLoading(false);
+          if (loadedDispatch) {
+            loadedDispatch({ type: 'alterations' });
+          }
         }
       };
 
       getData();
     }
-  }, [report, setIsLoading, isPrint]);
+  }, [loadedDispatch, report, setIsLoading, isPrint]);
 
   const handleChipDeleted = useCallback(async (chipIdent, type, comment) => {
     try {
@@ -162,14 +168,14 @@ const KeyAlterations = ({
 
   const alterationsSection = useMemo(() => {
     let titleSection = (
-      <div className={`${classNamePrefix}__stable-title`}>
+      <div className={`${classNamePrefix}__standardLayout-title`}>
         <Typography variant="h3">
           Key Genomic and Transcriptomic Alterations Identified
         </Typography>
       </div>
     );
     let dataSection = (
-      <div className={`${classNamePrefix}__stable-content`}>
+      <div className={`${classNamePrefix}__standardLayout-content`}>
         <VariantCounts
           filter={variantFilter}
           counts={variantCounts}
@@ -185,7 +191,7 @@ const KeyAlterations = ({
       </div>
     );
 
-    if (printVersion === 'beta') {
+    if (printVersion === 'condensedLayout') {
       titleSection = (
         <Typography variant="h5" fontWeight="bold" display="inline">Key Genomic and Transcriptomic Alterations Identified</Typography>
       );
@@ -199,7 +205,7 @@ const KeyAlterations = ({
           });
         });
         dataSection = (
-          <div className={`${classNamePrefix}__beta-content`}>
+          <div className={`${classNamePrefix}__condensedLayout-content`}>
             <SummaryPrintTable
               data={categorizedDataArray}
               labelKey="key"
@@ -225,6 +231,10 @@ const KeyAlterations = ({
       </div>
     );
   }, [canEdit, classNamePrefix, handleChipAdded, handleChipDeleted, printVersion, variantCounts, variantFilter, variants]);
+
+  if (isLoading || !report || !alterationsSection) {
+    return null;
+  }
 
   return (
     <div className={classNamePrefix}>

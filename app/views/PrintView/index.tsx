@@ -34,8 +34,20 @@ const Appendices = lazy(() => import('../ReportView/components/Appendices'));
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case 'summary':
+    case 'summary-genomic':
       return { ...state, summary: true };
+    case 'summary-tgr':
+      return { ...state, summary: true };
+    case 'summary-pcp':
+      return { ...state, summary: true };
+    case 'summary-probe':
+      return { ...state, summary: true };
+    case 'alterations':
+      return { ...state, alterations: true };
+    case 'patient':
+      return { ...state, patient: true };
+    case 'tumour':
+      return { ...state, tumour: true };
     case 'analyst-comments':
       return { ...state, 'analyst-comments': true };
     case 'pathway':
@@ -49,6 +61,9 @@ const reducer = (state, action) => {
     default:
       return {
         summary: false,
+        alterations: false,
+        patient: false,
+        tumour: false,
         'analyst-comments': false,
         pathway: false,
         therapeutic: false,
@@ -73,7 +88,7 @@ const PrintTitleBar = ({
   subtitle,
   subtitleSuffix,
   headerImageURI,
-  printVersion = 'stable',
+  printVersion = 'standardLayout',
 }: PrintTitleBarProps) => {
   if (!report) { return null; }
 
@@ -85,15 +100,15 @@ const PrintTitleBar = ({
     biopsyText = biopsyText.concat(`(${report.patientInformation.tumourSample})`);
   }
 
-  if (printVersion === 'beta') {
+  if (printVersion === 'condensedLayout') {
     return (
-      <div className="printbeta__headers">
-        <div className="printbeta__header-left">
+      <div className="condensedLayout__headers">
+        <div className="condensedLayout__header-left">
           {headerImageURI && (
-            <img className="printbeta__logo" src={headerImageURI} alt="" />
+            <img className="condensedLayout__logo" src={headerImageURI} alt="" />
           )}
         </div>
-        <div className="printbeta__header-right">
+        <div className="condensedLayout__header-right">
           <Typography variant="h2">{`${title ? `${title} Report: ` : ''} ${subtitle}${subtitleSuffix ? ` - ${subtitleSuffix}` : ''}`}</Typography>
           <Typography variant="body2">{biopsyText}</Typography>
         </div>
@@ -126,7 +141,7 @@ type PrintPropTypes = {
 };
 
 const Print = ({
-  printVersion = 'stable',
+  printVersion = 'standardLayout',
 }: PrintPropTypes): JSX.Element => {
   const params = useParams<{
     ident: string;
@@ -135,6 +150,9 @@ const Print = ({
   const [report, setReport] = useState<ReportType>(null);
   const [reportSectionsLoaded, dispatch] = useReducer(reducer, {
     summary: false,
+    alterations: false,
+    patient: false,
+    tumour: false,
     'analyst-comments': false,
     pathway: false,
     therapeutic: false,
@@ -189,6 +207,7 @@ const Print = ({
         const formattedDate = `${year}-${month}-${day}_${hours}h${minutes}m${seconds}s`;
 
         document.title = `${report.patientId}${serverName}_${templateName}_report_${formattedDate}`;
+
         window.print();
         setIsPrintDialogShown(true);
       };
@@ -197,21 +216,21 @@ const Print = ({
   }, [isPrintDialogShown, report, reportSectionsLoaded, template]);
 
   const renderSections = useMemo(() => {
-    if (report && template) {
+    if (report && template) { // TODO remove checks on 'summary' and template name once data updated in prod
       return (
         <>
-          {template?.sections.includes('summary') && template?.name !== 'genomic' && (
-            <Summary templateName={report.template.name} isPrint printVersion={printVersion} loadedDispatch={dispatch} />
+          {((template?.sections.includes('summary') && template?.name !== 'genomic') || (!template?.sections.includes('summary-genomic') && !template?.sections.includes('summary'))) && (
+            <Summary visibleSections={template?.sections} templateName={report.template.name} isPrint printVersion={printVersion} loadedDispatch={dispatch} />
           )}
-          {template?.sections.includes('summary') && template?.name === 'genomic' && ( // Splitting the patient info and tumour summary sections from alterations for genomic reports to insert therapeutic targets
-            <Summary templateName="genomicPatientandTumour" isPrint printVersion={printVersion} loadedDispatch={dispatch} />
+          {((template?.sections.includes('summary') && template?.name === 'genomic') || template?.sections.includes('summary-genomic')) && ( // Splitting the patient info and tumour summary sections from alterations for genomic reports to insert therapeutic targets
+            <Summary visibleSections={template?.sections} templateName="genomicPatientandTumour" isPrint printVersion={printVersion} loadedDispatch={dispatch} />
           )}
           {template?.sections.includes('therapeutic-targets') && (
             <TherapeuticTargets isPrint printVersion={printVersion} loadedDispatch={dispatch} />
           )}
-          {template?.sections.includes('summary') && template?.name === 'genomic' && ( // Continuing key alterations after therapeutic targets for genomic reports
+          {((template?.sections.includes('summary') && template?.name === 'genomic') || template?.sections.includes('summary-genomic')) && ( // Continuing key alterations after therapeutic targets for genomic reports
             <>
-              <Summary templateName="genomicAlterations" isPrint printVersion={printVersion} />
+              <Summary visibleSections={template?.sections} templateName="genomicAlterations" isPrint printVersion={printVersion} loadedDispatch={dispatch} />
               <PageBreak />
             </>
           )}
@@ -250,7 +269,7 @@ const Print = ({
 
   return (
     <ReportContext.Provider value={reportContextValue}>
-      <div className={`${printVersion === 'beta' ? 'printbeta' : 'print'}`}>
+      <div className={`${printVersion === 'condensedLayout' ? 'condensedLayout' : 'print'}`}>
         {report ? (
           <>
             <RunningLeft className="running-left" />

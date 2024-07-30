@@ -242,7 +242,6 @@ const Expression = ({
         variantType="exp"
         isOpen={showDialog}
         onClose={handleEditClose}
-        showErrorSnackbar={snackbar.error}
       />
       )}
       {expOutliers && (Object.entries(TITLE_MAP).map(([key, titleText]) => (

@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "ipr-client",
-  "version": "6.29.2",
+  "version": "6.30.0",
   "keywords": [],
   "license": "GPL-3.0",
   "sideEffects": false,
@@ -54,6 +54,7 @@
     "@types/react-dom": "~17.0.10",
     "@types/react-router-dom": "~5.3.3",
     "@types/sanitize-html": "~2.9.0",
+    "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "~6.6.0",
     "@typescript-eslint/parser": "~6.6.0",
     "acorn": "~8.10.0",
@@ -124,7 +125,7 @@
     "lodash": "^4.17.21",
     "minimist": "~1.2.8",
     "notistack": "~3.0.1",
-    "pagedjs": "^0.4.3",
+    "pagedjs": "^0.5.0-beta.0",
     "prop-types": "~15.8.1",
     "react": "~17.0.2",
     "react-chartjs-2": "~3.3.0",
@@ -138,6 +139,7 @@
     "sanitize-html": "~2.11.0",
     "svg-pan-zoom": "~3.6.1",
     "use-debounce": "^9.0.4",
+    "uuid": "^10.0.0",
     "webpack": "^5.88.2",
     "webpack-merge": "~5.9.0"
   }

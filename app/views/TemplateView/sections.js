@@ -4,6 +4,22 @@ const sections = [
     value: 'summary',
   },
   {
+    name: 'Summary - Genomic Report',
+    value: 'summary-genomic',
+  },
+  {
+    name: 'Summary - Targeted Gene Report',
+    value: 'summary-tgr',
+  },
+  {
+    name: 'Summary - Pharmacogenomic and Cancer Predisposition Report',
+    value: 'summary-pcp',
+  },
+  {
+    name: 'Summary - Probe',
+    value: 'summary-probe',
+  },
+  {
     name: 'Analyst Comments',
     value: 'analyst-comments',
   },

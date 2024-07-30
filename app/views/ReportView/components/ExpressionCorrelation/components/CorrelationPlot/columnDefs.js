@@ -2,6 +2,7 @@ const columnDefs = [
   {
     headerName: 'Patient ID',
     field: 'patientId',
+    cellRenderer: 'HyperlinkCellRenderer',
     hide: false,
   },
   {

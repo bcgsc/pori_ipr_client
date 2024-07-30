@@ -1,6 +1,7 @@
+@import '@/styles/variables';
 // Shared styling between both versions
 .key-alterations, .key-alterations-print {
-  &__stable {
+  &__standardLayout {
     margin: 0 0 32px 0;
   }
 }
@@ -12,9 +13,9 @@
 
 .key-alterations-print {
   margin: 0 auto;
-  padding: 0 20px;
+  padding: $print-container-padding;
 
-  &__stable {
+  &__standardLayout {
     
     &-title {
       margin: 0 0 8px;
@@ -25,7 +26,7 @@
     }
   }
 
-  &__beta {
+  &__condensedLayout {
 
     &-content {
       margin-top: 8px;

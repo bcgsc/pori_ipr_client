@@ -20,11 +20,12 @@ type PatientInformationType = {
 
 type SampleInfoType = {
   biopsySite: string | null;
+  biopsyType: string | null;
   collectionDate: string | null;
-  'Patho TC': string | null;
-  'Primary Site': string | null;
-  Sample: string | null;
-  'Sample Name': string | null;
+  pathoTc: string | null;
+  primarySite: string | null;
+  sample: string | null;
+  sampleName: string | null;
 };
 
 type UserRoleType = {
@@ -37,6 +38,7 @@ type ReportType = {
   pediatricIds?: string;
   analysisStartedAt: string | null;
   biopsyName?: string;
+  createdBy?: UserType;
   expression_matrix: string;
   kbVersion: string;
   patientId: string;

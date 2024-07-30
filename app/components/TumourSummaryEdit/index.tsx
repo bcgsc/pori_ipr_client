@@ -27,6 +27,13 @@ import {
   ImmuneType, MicrobialType, MutationBurdenType, TmburType,
 } from '@/common';
 import snackbar from '@/services/SnackbarUtils';
+import { getMicbSiteIntegrationStatusLabel } from '@/utils/getMicbSiteIntegrationStatusLabel';
+
+const MICB_SITE_STEPS = {
+  yes: 'no',
+  no: 'none',
+  none: 'yes',
+};
 
 type TumourSummaryEditProps = {
   microbial: MicrobialType[];
@@ -35,7 +42,7 @@ type TumourSummaryEditProps = {
   mutationBurden: MutationBurdenType;
   tmburMutBur: TmburType;
   isOpen: boolean;
-  onClose: (
+  onEditClose: (
     isSaved: boolean,
     newMicrobialData?: MicrobialType[],
     newReportData?: ReportType,
@@ -46,7 +53,7 @@ type TumourSummaryEditProps = {
 };
 
 const TumourSummaryEdit = ({
-  microbial,
+  microbial = [],
   report,
   report: {
     template: { name: reportType },
@@ -55,12 +62,12 @@ const TumourSummaryEdit = ({
   mutationBurden,
   tmburMutBur,
   isOpen,
-  onClose,
+  onEditClose,
 }: TumourSummaryEditProps): JSX.Element => {
   const { isSigned } = useContext(ConfirmContext);
   const { showConfirmDialog } = useConfirmDialog();
 
-  const [newMicrobialData, setNewMicrobialData] = useState(cloneDeep(microbial));
+  const [newMicrobialData, setNewMicrobialData] = useState(null);
   const [newReportData, setNewReportData] = useState<Partial<ReportType>>(null);
   const [newTCellCd8Data, setNewTCellCd8Data] = useState<Partial<ImmuneType>>(null);
   const [newMutationBurdenData, setNewMutationBurdenData] = useState<Partial<MutationBurdenType>>(null);
@@ -71,6 +78,13 @@ const TumourSummaryEdit = ({
   const [mutationBurdenDirty, setMutationBurdenDirty] = useState(false);
   const [tmburMutDirty, setTmburMutDirty] = useState(false);
   const [isApiCalling, setIsApiCalling] = useState(false);
+
+  useEffect(() => {
+    if (microbial) {
+      // Note: filter out any placeholder 'none's, it gives a false positive to the front-end code
+      setNewMicrobialData(cloneDeep(microbial).filter(({ species }) => species.toLowerCase() !== 'none'));
+    }
+  }, [microbial]);
 
   useEffect(() => {
     if (report) {
@@ -187,13 +201,13 @@ const TumourSummaryEdit = ({
     let callSet = null;
     if (!!newTmburMutData?.adjustedTmb && !newTmburMutData?.adjustedTmbComment) {
       snackbar.warning('Please add a comment on the adjusted TMB');
-      isSaved = false;
-      onClose(false);
+      onEditClose(false);
+      return undefined;
     }
     if (!!newTCellCd8Data?.pedsScore && !newTCellCd8Data?.pedsScoreComment) {
       snackbar.warning('Please add a comment on the added pediatric CD8+ t cell score');
-      isSaved = false;
-      onClose(false);
+      onEditClose(false);
+      return undefined;
     }
     if (isSaved) {
       setIsApiCalling(true);
@@ -202,15 +216,28 @@ const TumourSummaryEdit = ({
       // Check if new microbialData is diff from previous
       if (microbialDirty) {
         const newMicbIds = newMicrobialData.map(({ ident }) => ident);
-        const microbialIdsToDelete = microbial.filter((oldMicb) => !newMicbIds.includes(oldMicb.ident));
+        const microbialIdsToDelete = new Set<string>();
+
+        microbial.forEach((oldMicb) => {
+          if (oldMicb.ident && !newMicbIds.includes(oldMicb.ident)) {
+            microbialIdsToDelete.add(oldMicb.ident);
+          }
+        });
+
+        // Try to find placeholder id to delete
+        const placeHolder = microbial.find(({ species }) => species.toLowerCase() === 'none');
+        if (placeHolder && newMicrobialData.length > 0) {
+          microbialIdsToDelete.add(placeHolder.ident);
+        }
+
         const newMicbrobialEntries = newMicrobialData.filter((micbData) => !micbData.ident);
         const editedMicrobialEntries = newMicrobialData.filter(({ ident }) => Boolean(ident)).filter((micbData) => {
           const entry = microbial.find(({ ident }) => ident === micbData.ident);
           return Boolean(entry) && entry.integrationSite !== micbData.integrationSite;
         });
 
-        microbialIdsToDelete?.forEach((entry) => {
-          apiCalls.push(api.del(`/reports/${report.ident}/summary/microbial/${entry.ident}`, {}));
+        microbialIdsToDelete?.forEach((id) => {
+          apiCalls.push(api.del(`/reports/${report.ident}/summary/microbial/${id}`, {}));
         });
         newMicbrobialEntries?.forEach((entry) => {
           apiCalls.push(api.post(`/reports/${report.ident}/summary/microbial`, entry, {}));
@@ -286,7 +313,7 @@ const TumourSummaryEdit = ({
           }
 
           snackbar.success('Successfully updated Tumour Summary');
-          onClose(
+          onEditClose(
             true,
             microbialDirty ? microbialResp : null,
             reportDirty ? reportResp : null,
@@ -301,7 +328,7 @@ const TumourSummaryEdit = ({
         }
       }
     } else {
-      onClose(false);
+      onEditClose(false);
     }
     return () => callSet.abort();
   }, [
@@ -322,7 +349,7 @@ const TumourSummaryEdit = ({
     mutationBurden?.ident,
     tmburMutBur?.ident,
     showConfirmDialog,
-    onClose,
+    onEditClose,
   ]);
 
   const handleKeyDown = useCallback(({ code, target }) => {
@@ -335,7 +362,7 @@ const TumourSummaryEdit = ({
       // Add new entry
       setNewMicrobialData((currData) => [...currData, {
         species: target.value,
-        integrationSite: 'No',
+        integrationSite: 'none',
       } as MicrobialType]);
       setMicrobialDirty(true);
     }
@@ -344,7 +371,8 @@ const TumourSummaryEdit = ({
   const handleClicked = useCallback((idx) => {
     setNewMicrobialData((currData) => {
       const nextData = [...currData];
-      nextData[idx].integrationSite = nextData[idx].integrationSite.toLowerCase() === 'yes' ? 'No' : 'Yes';
+      // Coerce this into 'Yes' if its anything other than
+      nextData[idx].integrationSite = MICB_SITE_STEPS[nextData[idx].integrationSite.toLowerCase()] ?? 'Yes';
       return nextData;
     });
     setMicrobialDirty(true);
@@ -361,6 +389,18 @@ const TumourSummaryEdit = ({
 
   const reportDataSection = useMemo(() => {
     if (newReportData) {
+      const captiv8Section = (
+        <TextField
+          className="tumour-dialog__text-field"
+          label={`${reportType === 'rapid' ? 'Preliminary ' : ''}CAPTIV-8 Score`}
+          value={newReportData.captiv8Score}
+          name="captiv8Score"
+          onChange={handleReportChange}
+          variant="outlined"
+          fullWidth
+          type="number"
+        />
+      );
       if (reportType === 'genomic') {
         return (
           <>
@@ -384,22 +424,12 @@ const TumourSummaryEdit = ({
               multiline
               fullWidth
             />
+            {captiv8Section}
           </>
         );
       }
       if (reportType === 'rapid') {
-        return (
-          <TextField
-            className="tumour-dialog__text-field"
-            label="Preliminary CAPTIV-8 Score"
-            value={newReportData.captiv8Score}
-            name="captiv8Score"
-            onChange={handleReportChange}
-            variant="outlined"
-            fullWidth
-            type="number"
-          />
-        );
+        return captiv8Section;
       }
     }
     return null;
@@ -420,7 +450,7 @@ const TumourSummaryEdit = ({
               // eslint-disable-next-line react/no-array-index-key
               key={`${species}-${idx}`}
               tabIndex={-1}
-              label={`${species}${integrationSite.toLowerCase() === 'yes' ? ' | (integration)' : ' | (no integration)'}`}
+              label={`${getMicbSiteIntegrationStatusLabel(species, integrationSite)}`}
               onClick={() => handleClicked(idx)}
               onDelete={() => handleDelete(idx)}
             />
@@ -645,3 +675,7 @@ const TumourSummaryEdit = ({
 };
 
 export default TumourSummaryEdit;
+export {
+  TumourSummaryEdit,
+  TumourSummaryEditProps,
+};

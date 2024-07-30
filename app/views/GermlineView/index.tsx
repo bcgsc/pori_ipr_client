@@ -3,8 +3,8 @@ import {
   Switch, Route, useHistory,
 } from 'react-router-dom';
 
-import useExternalMode from '@/hooks/useExternalMode';
 import snackbar from '@/services/SnackbarUtils';
+import useResource from '@/hooks/useResource';
 
 import './index.scss';
 
@@ -12,16 +12,16 @@ const Board = lazy(() => import('./components/Board'));
 const Report = lazy(() => import('./components/Report'));
 
 const GermlineView = (): JSX.Element => {
-  const isExternalMode = useExternalMode();
+  const { adminAccess, germlineAccess } = useResource();
   const history = useHistory();
 
   /* External users cannot access germline reports */
   useEffect(() => {
-    if (isExternalMode) {
+    if (!germlineAccess && !adminAccess) {
       snackbar.error('User does not have access to Germline reports');
       history.push('/reports');
     }
-  }, [isExternalMode, history]);
+  }, [germlineAccess, adminAccess, history]);
 
   return (
     <div className="germline__container">

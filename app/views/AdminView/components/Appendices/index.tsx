@@ -2,72 +2,84 @@ import React, {
   useState, useEffect, useCallback,
 } from 'react';
 import { CircularProgress } from '@mui/material';
-import { RecordDefaults, AppendixType } from '@/common';
+import { AppendixType } from '@/common';
 import IPRWYSIWYGEditor from '@/components/IPRWYSIWYGEditor';
 import sanitizeHtml from 'sanitize-html';
 import api from '@/services/api';
 import snackbar from '@/services/SnackbarUtils';
 import DataTable from '@/components/DataTable';
 import columnDefs from './columnDefs';
-
-type TemplateWithAppendix = RecordDefaults & { appendix?: AppendixType };
+import AddEditAppendix from './components/AddEditAppendix';
 
 function Appendices(): JSX.Element {
-  const [templates, setTemplates] = useState<RecordDefaults[]>([]);
-  const [appendices, setAppendices] = useState<TemplateWithAppendix[]>([]);
+  const [appendices, setAppendices] = useState<AppendixType[]>();
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
   const [editingData, setEditingData] = useState(null);
-
-  // Grab templates
-  useEffect(() => {
-    let cancelled = false;
-    const getTemplates = async () => {
-      const templatesResp = await api.get('/templates').request();
-      if (!cancelled) {
-        setTemplates(templatesResp);
-      }
-    };
-    getTemplates();
-    return function cleanup() { cancelled = true; };
-  }, []);
 
   // Grab template appendices
   useEffect(() => {
     let cancelled = false;
-    const templateIdToObj = {};
     const getAppendices = async () => {
-      const promises = await Promise.all(templates
-        .map((t) => {
-          templateIdToObj[t.ident] = t;
-          return t.ident;
-        })
-        .map(async (templateId) => api.get(`/templates/${templateId}/appendix`, { raw: true }).request()));
-      const responses = await Promise.all(promises.map((p) => p.json()));
-
-      if (!cancelled) {
-        responses.forEach((resp, i) => {
-          if (!resp.error) {
-            templateIdToObj[templates[i].ident].appendix = resp;
+      try {
+        const appendixResp = await api.get('/appendix').request();
+        if (appendixResp) {
+          const sanitizedAppendices = appendixResp.map((appendix: AppendixType) => ({
+            ...appendix,
+            text: sanitizeHtml(appendix.text, {
+              allowedSchemes: [],
+              allowedAttributes: {
+                '*': ['style'],
+              },
+            }),
+          }));
+          if (!cancelled) {
+            setAppendices(sanitizedAppendices);
           }
-        });
-        const nextAppendices = Object.values(templateIdToObj) as TemplateWithAppendix[];
-        setAppendices(nextAppendices);
+        }
+      } catch (err) {
+        snackbar.error(`Network error: ${err}`);
+      } finally {
         setIsLoading(false);
       }
     };
     getAppendices();
     return function cleanup() { cancelled = true; };
-  }, [templates]);
+  }, []);
 
   const handleOnEdit = useCallback((rowData) => {
     setEditingData(rowData);
     setIsEditing(true);
   }, []);
 
+  const handleOnAdd = useCallback(() => {
+    setIsAdding(true);
+  }, []);
+
+  const handleOnDelete = useCallback(async (rowData: AppendixType) => {
+    try {
+      if (rowData.project) {
+        await api.del(`/appendix?templateId=${rowData.template.ident}&projectId=${rowData.project.ident}`, {}, {}).request();
+      } else {
+        await api.del(`/appendix?templateId=${rowData.template.ident}`, {}, {}).request();
+      }
+      setAppendices((prevVal) => prevVal.filter((appendix) => appendix.ident !== rowData.ident));
+      snackbar.success('Appendix deleted');
+    } catch (err) {
+      snackbar.error(`Error deleting appendix: ${err}`);
+    }
+  }, []);
+
+  const handleAddClose = useCallback((newData) => {
+    if (newData) {
+      setAppendices((prevVal) => [...prevVal, newData]);
+    }
+    setIsAdding(false);
+  }, []);
+
   const handleEditClose = useCallback(async (nextData) => {
     let cancelled = false;
-    const isNew = !editingData?.appendix;
     try {
       if (nextData) {
         const sanitizedText = sanitizeHtml(nextData, {
@@ -85,18 +97,15 @@ function Appendices(): JSX.Element {
             }),
           },
         });
-        const res = await (isNew ? api.post : api.put)(`/templates/${editingData.ident}/appendix`, { text: sanitizedText }).request();
+        const res = await api.put(`/appendix?templateId=${editingData.template.ident}&projectId=${editingData.project.ident}`, { text: sanitizedText }).request();
         if (!cancelled) {
           setAppendices((currAppendices) => {
             const index = currAppendices.findIndex((app) => app.ident === editingData.ident);
             const nextAppendices = [...currAppendices];
-            nextAppendices[index] = {
-              ...nextAppendices[index],
-              appendix: res,
-            };
+            nextAppendices[index] = res;
             return nextAppendices;
           });
-          snackbar.success(isNew ? 'Appendix successfully created.' : 'Appendix successfully updated.');
+          snackbar.success('Appendix successfully updated.');
           setIsEditing(false);
         }
       }
@@ -107,7 +116,7 @@ function Appendices(): JSX.Element {
     }
 
     return function cleanup() { cancelled = true; };
-  }, [editingData?.appendix, editingData?.ident]);
+  }, [editingData]);
 
   return (
     <>
@@ -117,14 +126,23 @@ function Appendices(): JSX.Element {
             columnDefs={columnDefs}
             rowData={appendices}
             titleText="Appendices"
+            canAdd
+            onAdd={handleOnAdd}
+            addText="Create Custom Template Appendix"
             canEdit
             onEdit={handleOnEdit}
+            canDelete
+            onDelete={handleOnDelete}
           />
           <IPRWYSIWYGEditor
-            title="Edit Appendix"
+            title="Edit Appendix Text"
             isOpen={isEditing}
-            text={editingData?.appendix?.text}
+            text={editingData?.text}
             onClose={handleEditClose}
+          />
+          <AddEditAppendix
+            isOpen={isAdding}
+            onClose={handleAddClose}
           />
         </>
       )}
