@@ -6,6 +6,7 @@ import {
   InputAdornment,
   IconButton,
 } from '@mui/material';
+import { useHistory } from 'react-router-dom';
 import SearchIcon from '@mui/icons-material/Search';
 import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -15,21 +16,24 @@ const MIN_WORD_LENGTH = 2;
 const SearchView = () => {
   const [variant, setVariant] = useState('');
   const [threshold, setThreshold] = useState('');
+  const history = useHistory();
   const [variantErrorMessage, setVariantErrorMessage] = useState('');
   const [thresholdErrorMessage, setThresholdErrorMessage] = useState('');
   const DEFAULT_THRESHOLD = '0.8';
-  const ENTER_KEY = "Enter";
+  const ENTER_KEY = 'Enter';
 
   // Calls submit function
   const handleSubmit = useCallback(() => {
-    if (variant && threshold) {
-      window.location.href = `/search/keyVariant=${variant.replace(/\./, '%2F')}&&matchingThreshold=${threshold.replace(/\./, '%2F')}`;
-    } else if (variant) {
-      window.location.href = `/search/keyVariant=${variant.replace(/\./, '%2F')}&&matchingThreshold=${DEFAULT_THRESHOLD.replace(/\./, '%2F')}`;
-    } else {
+    if (!variant) {
       setVariantErrorMessage('Please enter a key variant');
+      return;
     }
-  }, [variant, threshold]);
+
+    history.push({
+      pathname: '/search/result',
+      search: `?keyVariant=${variant}&matchingThreshold=${threshold || DEFAULT_THRESHOLD}`,
+    });
+  }, [variant, threshold, history]);
 
   // Validate key variant and threshold values
   useEffect(() => {
@@ -118,7 +122,7 @@ const SearchView = () => {
         <div className="search__threshold-input" onKeyUp={(event) => event.key === ENTER_KEY && handleSubmit()}>
           <TextField
             label="Threshold"
-            InputLabelProps={{shrink: true}}
+            InputLabelProps={{ shrink: true }}
             size="medium"
             variant="outlined"
             helperText={thresholdErrorMessage}
@@ -126,7 +130,7 @@ const SearchView = () => {
             onChange={handleThresholdChange}
             value={threshold}
             placeholder={DEFAULT_THRESHOLD}
-            inputProps={{sx: { textAlign: 'center' }}}
+            inputProps={{ sx: { textAlign: 'center' } }}
           />
         </div>
       </div>

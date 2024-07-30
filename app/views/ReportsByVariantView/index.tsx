@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { Chip, Typography } from '@mui/material';
 import api from '@/services/api';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
@@ -17,17 +17,17 @@ const ReportsByVariantView = ({
   isLoading,
   setIsLoading,
 }: ReportsByVariantViewProps): JSX.Element => {
-  const { param } = useParams<{ param: string }>();
+  const { search } = useLocation();
   const [rowData, setRowData] = useState([]);
   const [tempRowData, setTempRowData] = useState([]);
   const [variants, setVariants] = useState<string[]>();
   const [chipSelected, setChipSelected] = useState('');
 
   useEffect(() => {
-    if (param) {
+    if (search) {
       const getData = async () => {
         try {
-          const { reports } = await api.get(`/reports?${param.replace(/%2F/g, '.')}`).request();
+          const { reports } = await api.get(`/reports${search}`).request();
           setVariants(Array.from(new Set(reports.map((report) => report.genomicAlterationsIdentified[0].geneVariant))));
 
           setRowData(reports.map((report) => {
@@ -60,7 +60,7 @@ const ReportsByVariantView = ({
 
       getData();
     }
-  }, [param, setIsLoading]);
+  }, [search, setIsLoading]);
 
   const handleChipDeleted = useCallback((deleteVariant) => {
     try {
@@ -89,7 +89,7 @@ const ReportsByVariantView = ({
 
   return (
     <>
-      {Boolean(variants.length) && (
+      {Boolean(variants?.length) && (
         <>
           <Typography variant="h3" className="reports-table__typography">
             Matching Variants
