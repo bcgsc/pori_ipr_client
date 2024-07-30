@@ -15,7 +15,11 @@ const dateCellRenderer = (params) => {
   return gui;
 };
 
-const columnDefs: ColDef[] = [{
+const searchColumnDefs: ColDef[] = [{
+  headerName: 'Matched Variant',
+  field: 'matchedVariant',
+},
+{
   headerName: 'Patient ID',
   field: 'patientID',
   comparator: collator.compare,
@@ -94,4 +98,4 @@ const columnDefs: ColDef[] = [{
 
 // Show physician to external users, analyst to internal
 
-export default columnDefs;
+export default searchColumnDefs;

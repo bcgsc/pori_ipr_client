@@ -1,7 +1,8 @@
 import startCase from '@/utils/startCase';
 
-function reportsColumns(report, analyst, reviewer, bioinformatician) {
+function searchReportsColumns(report, analyst, reviewer, bioinformatician) {
   return {
+    matchedVariant: report?.genomicAlterationsIdentified[0].geneVariant,
     patientID: report.patientId,
     analysisBiopsy: report.biopsyName,
     reportType: report.template.name === 'probe' ? 'Targeted Gene' : startCase(report.template.name),
@@ -18,4 +19,4 @@ function reportsColumns(report, analyst, reviewer, bioinformatician) {
   };
 }
 
-export default reportsColumns;
+export default searchReportsColumns;

@@ -153,10 +153,11 @@ const RapidSummary = ({
   const [showCancerRelevanceEventsDialog, setShowCancerRelevanceEventsDialog] = useState(false);
 
   useEffect(() => {
+    let apiCalls = null;
     if (report?.ident) {
       const getData = async () => {
         try {
-          const apiCalls = new ApiCallSet([
+          apiCalls = new ApiCallSet([
             api.get(`/reports/${report.ident}/signatures`),
             api.get(`/reports/${report.ident}/variants?rapidTable=therapeuticAssociation`),
             api.get(`/reports/${report.ident}/variants?rapidTable=cancerRelevance`),
@@ -247,10 +248,17 @@ const RapidSummary = ({
             loadedDispatch({ type: 'summary-tgr' });
           }
         }
+        return apiCalls;
       };
 
       getData();
     }
+
+    return () => {
+      if (apiCalls) {
+        apiCalls.abort();
+      }
+    };
   }, [loadedDispatch, report, setIsLoading, isPrint]);
 
   useEffect(() => {
@@ -288,7 +296,7 @@ const RapidSummary = ({
     setTumourSummary([
       {
         term: 'Pathology Tumour Content',
-        value: `${report.reportSampleInfo?.find((samp) => samp?.sample?.toLowerCase() === 'tumour')['Patho TC'] ?? ''}`,
+        value: `${report.sampleInfo?.find((samp) => samp?.sample?.toLowerCase() === 'tumour').pathoTc ?? ''}`,
       },
       {
         term: 'M1M2 Score',
@@ -340,7 +348,7 @@ const RapidSummary = ({
         value: msiStatus,
       },
     ]);
-  }, [microbial, primaryBurden, tmburMutBur, report.m1m2Score, report.reportSampleInfo, report.tumourContent, tCellCd8?.percentile, tCellCd8?.score, report.captiv8Score,
+  }, [microbial, primaryBurden, tmburMutBur, report.m1m2Score, report.sampleInfo, report.tumourContent, tCellCd8?.percentile, tCellCd8?.score, report.captiv8Score,
     tCellCd8?.percentileHidden, tCellCd8, tCellCd8?.pedsScoreComment, tmburMutBur?.adjustedTmb, tmburMutBur?.tmbHidden, tCellCd8?.pedsScore, tCellCd8?.pedsPercentile]);
 
   const handleSign = useCallback((signed: boolean, role: SignatureUserType) => {
@@ -562,7 +570,7 @@ const RapidSummary = ({
   }, [report, handleSign, isPrint, signatures]);
 
   const sampleInfoSection = useMemo(() => {
-    if (!report || !report.reportSampleInfo) { return null; }
+    if (!report || !report.sampleInfo) { return null; }
     return (
       <div className="rapid-summary__sample-information">
         <Typography variant="h3" display="inline" className="rapid-summary__sample-information-title">
@@ -570,14 +578,14 @@ const RapidSummary = ({
         </Typography>
         {isPrint ? (
           <PrintTable
-            data={report.reportSampleInfo}
+            data={report.sampleInfo}
             columnDefs={sampleColumnDefs}
             fullWidth
           />
         ) : (
           <DataTable
             columnDefs={sampleColumnDefs}
-            rowData={report.reportSampleInfo}
+            rowData={report.sampleInfo}
             isPrint={isPrint}
             isPaginated={!isPrint}
           />
