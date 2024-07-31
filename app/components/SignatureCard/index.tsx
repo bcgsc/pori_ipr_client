@@ -1,5 +1,5 @@
 import React, {
-  useState, useEffect, useMemo,
+  useState, useEffect, useMemo, useCallback,
 } from 'react';
 import {
   Paper,
@@ -7,11 +7,14 @@ import {
   IconButton,
   Button,
 } from '@mui/material';
+import api from '@/services/api';
 import GestureIcon from '@mui/icons-material/Gesture';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-
+import snackbar from '@/services/SnackbarUtils';
 import { UserType } from '@/common';
 import useReport from '@/hooks/useReport';
+import useResource from '@/hooks/useResource';
+import useSecurity from '@/hooks/useSecurity';
 import { formatDate } from '@/utils/date';
 import { SignatureType, SignatureUserType } from './types';
 
@@ -36,24 +39,43 @@ const SignatureCard = ({
   type,
   isPrint = false,
 }: SignatureCardProps): JSX.Element => {
-  const { canEdit } = useReport();
+  let { reportAssignmentAccess: canEdit } = useResource();
+  let { canEdit: canDeleteSignatures } = useReport();
   const [userSignature, setUserSignature] = useState<UserType>();
+  const [role, setRole] = useState('');
+  const { report, setReport } = useReport();
+  const { userDetails } = useSecurity();
 
   useEffect(() => {
     if (signatures && type) {
       if (type === 'author') {
         setUserSignature(signatures.authorSignature);
+        setRole('analyst');
       } else if (type === 'reviewer') {
         setUserSignature(signatures.reviewerSignature);
+        setRole('reviewer');
       } else if (type === 'creator') {
         setUserSignature(signatures.creatorSignature);
+        setRole('bioinformatician');
       }
     }
-  }, [signatures, type]);
+  }, [signatures, type, setRole]);
 
-  const handleSign = () => {
-    onClick(true, type);
-  };
+  const handleSign = useCallback(async () => {
+      try {
+        const newReport = await api.post(
+          `/reports/${report.ident}/user`,
+          { user: userDetails.ident, role: role },
+          {},
+        ).request();
+        setReport(newReport);
+        snackbar.success('User added!');
+        onClick(true, type);
+      } catch (err) {
+        snackbar.error(`Error adding user: ${err}`);
+      }
+    }, [report, onClick, userDetails, role, setReport]
+  );
 
   const handleRevoke = () => {
     onClick(false, type);
@@ -152,7 +174,7 @@ const SignatureCard = ({
         </Typography>
         )}
       </div>
-      {userSignature?.ident && canEdit && (
+      {userSignature?.ident && canDeleteSignatures && (
         <div className="signatures__button">
           <IconButton
             size="small"
