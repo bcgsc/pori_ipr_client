@@ -16,7 +16,6 @@ import {
 
 import api from '@/services/api';
 import useReport from '@/hooks/useReport';
-import useResource from '@/hooks/useResource';
 import DemoDescription from '@/components/DemoDescription';
 import snackbar from '@/services/SnackbarUtils';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
@@ -37,12 +36,13 @@ const Settings = ({
   isLoading,
   setIsLoading,
 }: SettingsProps): JSX.Element => {
-  /**
-   * Does not matter if they have report access, they need to be in admin or manager role to edit this section
-   */
   const { report, setReport } = useReport();
-  const { reportEditAccess } = useResource();
-  let { canEdit } = useReport();
+  const { canEdit: reportAllowEdit } = useReport();
+
+  /**
+ * If the report is completed, disable all fields except report state field on the front-end
+ */
+  let canEdit = reportAllowEdit;
   if (report.state === 'completed') {
     canEdit = false;
   }
@@ -210,7 +210,7 @@ const Settings = ({
               <FormControl variant="outlined">
                 <InputLabel id="settings-state">Report State</InputLabel>
                 <Select
-                  disabled={!reportEditAccess}
+                  disabled={!reportAllowEdit}
                   labelId="settings-state"
                   label="Report State"
                   onChange={handleStateChange}
@@ -266,7 +266,7 @@ const Settings = ({
                 Delete Report
               </Button>
               <Button
-                disabled={!reportEditAccess}
+                disabled={!reportAllowEdit}
                 color="secondary"
                 onClick={handleReportUpdate}
                 variant="outlined"

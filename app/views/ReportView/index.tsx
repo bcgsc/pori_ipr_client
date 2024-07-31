@@ -49,7 +49,9 @@ const ReportView = (): JSX.Element => {
   }>();
   const theme = useTheme();
   const history = useHistory();
-  const { reportEditAccess, adminAccess, nonproductionAccess, unreviewedAccess, nonproductionStates, unreviewedStates } = useResource();
+  const {
+    reportEditAccess, adminAccess, nonproductionAccess, unreviewedAccess, nonproductionStates, unreviewedStates,
+  } = useResource();
   const { userDetails: { ident: userIdent } } = useSecurity();
 
   const [report, setReport] = useState<ReportType>(null);
@@ -114,13 +116,13 @@ const ReportView = (): JSX.Element => {
 
   const reportValue = useMemo(() => {
     if (!report) { return null; }
+    /**
+     * Note, this param should be used for report edit access first
+     */
     let canEdit = reportEditAccess;
     /**
-     * Check report specific permissions if user isn't admin or overall report access
+     * Checks if user is assigned to report, if not admin
      */
-    if (report.state === 'completed') {
-      canEdit = false;
-    }
     if (!adminAccess && !reportEditAccess) {
       if (report.users && report.users.some(({ user: { ident: i } }) => i === userIdent)) {
         canEdit = true;
@@ -129,7 +131,9 @@ const ReportView = (): JSX.Element => {
       }
     }
 
-    return ({ canEdit, report, setReport });
+    return ({
+      canEdit, report, setReport,
+    });
   }, [report, setReport, adminAccess, reportEditAccess, userIdent]);
   const isSignedValue = useMemo(() => ({ isSigned, setIsSigned }), [isSigned, setIsSigned]);
 

@@ -25,15 +25,27 @@ const REPORTS_BLOCK = [];
 const ADMIN_ACCESS = ['admin'];
 const ADMIN_BLOCK = [...ALL_ROLES, ...NO_GROUP_MATCH];
 
+/**
+ * Checks user permissions based on the groups they are assigned, nothing report-specific
+ */
 const useResources = (): ResourceContextType => {
   const { userDetails: { groups } } = useSecurity();
 
   const [germlineAccess, setGermlineAccess] = useState(false);
   const [reportsAccess, setReportsAccess] = useState(false);
+  /**
+   * Is the user allowed to edit the report
+   */
   const [reportEditAccess, setReportEditAccess] = useState(false);
+  /**
+   * Is the user allowed to assign users to the report
+   */
   const [reportAssignmentAccess, setReportAssignmentAccess] = useState(false);
   const [adminAccess, setAdminAccess] = useState(false);
   const [managerAccess, setManagerAccess] = useState(false);
+  /**
+   * Is the user allowed to see the settings page
+   */
   const [reportSettingAccess, setReportSettingAccess] = useState(false);
   const [unreviewedAccess, setUnreviewedAccess] = useState(false);
   const [nonproductionAccess, setNonproductionAccess] = useState(false);
