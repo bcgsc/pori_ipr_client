@@ -39,8 +39,8 @@ const SignatureCard = ({
   type,
   isPrint = false,
 }: SignatureCardProps): JSX.Element => {
-  let { reportAssignmentAccess: canEdit } = useResource();
-  let { canEdit: canDeleteSignatures } = useReport();
+  let { reportAssignmentAccess: canAddSignatures } = useResource();
+  let { canEdit } = useReport();
   const [userSignature, setUserSignature] = useState<UserType>();
   const [role, setRole] = useState('');
   const { report, setReport } = useReport();
@@ -151,7 +151,7 @@ const SignatureCard = ({
             {userSignature.lastName}
           </Typography>
         )}
-        {!userSignature?.ident && canEdit && (
+        {!userSignature?.ident && canEdit || canAddSignatures && (
           <Button
             onClick={handleSign}
             variant="text"
@@ -174,7 +174,7 @@ const SignatureCard = ({
         </Typography>
         )}
       </div>
-      {userSignature?.ident && canDeleteSignatures && (
+      {userSignature?.ident && canEdit && (
         <div className="signatures__button">
           <IconButton
             size="small"
