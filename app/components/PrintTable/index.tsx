@@ -88,22 +88,27 @@ function PrintTable({
       const colIdxsToCombine = {};
       const rowIdxsToSkip = {};
       const rowIdxsToExpand = {};
-      let outerRowsMaxRank = {};
+      let outerRowsRank = {};
 
       if (orderByInternalCol) {
-        outerRowsMaxRank = data.reduce((map, row) => {
+        outerRowsRank = data.reduce((acc, row) => {
           const rowkey = JSON.stringify(collapseableCols.map((val) => row[val]));
-          if (!map[rowkey] || row[orderByInternalCol] < map[rowkey]) {
-            map[rowkey] = row[orderByInternalCol];
+          if (!acc[rowkey]) {
+            acc[rowkey] = [];
           }
-          return map;
+          acc[rowkey].push(row[orderByInternalCol]);
+          return acc;
         }, {});
+
+        Object.keys(outerRowsRank).forEach(key => {
+          outerRowsRank[key] = JSON.stringify(outerRowsRank[key].sort()); // Sort and stringify the array
+        });
       }
       (collapseableCols?.length > 0 ? [...data].sort((aRow, bRow) => {
         const aKey = JSON.stringify(collapseableCols.map((val) => aRow[val]));
         const bKey = JSON.stringify(collapseableCols.map((val) => bRow[val]));
         // ordering inner rows (rows with matching aKey/bKey)
-        if (JSON.stringify(aKey) === JSON.stringify(bKey)) {
+        if (aKey === bKey) {
           // order by 'orderByInternalCol' if possible, then by 'orderByInternalColBackup' if necessary
           if (orderByInternalCol) {
             if (aRow[orderByInternalCol] === bRow[orderByInternalCol]) {
@@ -122,14 +127,15 @@ function PrintTable({
         // ordering outer rows (rows with different aKey/bKey)
         if (orderByInternalCol) {
           // order by 'orderByInternalCol' if possible, then by outer row key if necessary
-          const maxA = outerRowsMaxRank[JSON.stringify(aKey)];
-          const maxB = outerRowsMaxRank[JSON.stringify(bKey)];
-          if (maxA === maxB) {
-            return JSON.stringify(aKey) > JSON.stringify(bKey) ? 1 : -1;
+          const rankA = outerRowsRank[aKey];
+          const rankB = outerRowsRank[bKey];
+
+          if (rankA === rankB) {
+            return aKey > bKey ? 1 : -1;
           }
-          return maxA > maxB ? 1 : -1;
+          return rankA > rankB ? 1 : -1;
         }
-        return JSON.stringify(aKey) > JSON.stringify(bKey) ? 1 : -1;
+        return aKey > bKey ? 1 : -1;
       }) : data).forEach((dataRow, rowIdx) => {
         const rowData = [];
         currRowKey = '';
