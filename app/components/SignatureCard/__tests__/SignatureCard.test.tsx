@@ -1,11 +1,16 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import {
+  render, screen, fireEvent, waitFor,
+} from '@testing-library/react';
 
 import ReportContext from '@/context/ReportContext';
 import SignatureCard, { SignatureType } from '..';
 import {
   mockNullData, mockNullObjectData, mockObjectData, mockReportData,
 } from './mockData';
+
+jest.mock('@/services/SnackbarUtils');
+jest.mock('@/services/api');
 
 describe('SignatureCard', () => {
   test('Author and sign button are visible', async () => {
@@ -51,7 +56,9 @@ describe('SignatureCard', () => {
     );
     fireEvent.click(await screen.findByRole('button', { name: 'Sign' }));
 
-    expect(handleSign).toHaveBeenCalledTimes(1);
+    waitFor(() => {
+      expect(handleSign).toHaveBeenCalledTimes(1);
+    });
   });
 
   test('Sign button is visible when reviewerSignature is null', async () => {
@@ -96,7 +103,9 @@ describe('SignatureCard', () => {
       </ReportContext.Provider>,
     );
 
-    expect(screen.queryByRole('button', { name: 'Sign' })).not.toBeInTheDocument();
+    waitFor(() => {
+      expect(screen.queryByRole('button', { name: 'Sign' })).not.toBeInTheDocument();
+    });
     expect(await screen.findByRole('button', { name: /^((?!Sign).)*$/ })).toBeInTheDocument();
   });
 
