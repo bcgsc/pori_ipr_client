@@ -86,8 +86,9 @@ function PrintTable({
       const rowIdxsToExpand = {};
 
       (collapseableCols?.length > 0 ? [...data].sort((aRow, bRow) => {
-        const aKey = collapseableCols.map((val) => aRow[val]);
-        const bKey = collapseableCols.map((val) => bRow[val]);
+        // Sort table by columns that are to be collapsed
+        const aKey = JSON.stringify(collapseableCols.map((val) => aRow[val]));
+        const bKey = JSON.stringify(collapseableCols.map((val) => bRow[val]));
         if (aKey === bKey) return 0;
         return aKey > bKey ? 1 : -1;
       }) : data).forEach((dataRow, rowIdx) => {
