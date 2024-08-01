@@ -21,6 +21,8 @@ export type PrintTableProps = {
   collapseableCols?: string[];
   noRowsText?: string;
   fullWidth?: boolean;
+  orderByInternalCol?: string;
+  orderByInternalColBackup?: string;
 };
 
 /**
@@ -34,6 +36,8 @@ function PrintTable({
   noRowsText = '',
   collapseableCols = null,
   fullWidth = false,
+  orderByInternalCol = null,
+  orderByInternalColBackup = null,
 }: PrintTableProps): JSX.Element {
   const sortedColDefs = useMemo(() => columnDefs
     .filter((col) => (col.headerName && col.hide !== true && col.headerName !== 'Actions'))
@@ -86,36 +90,42 @@ function PrintTable({
       const rowIdxsToSkip = {};
       const rowIdxsToExpand = {};
       const fieldList = columnDefs.map((item)=> item.field);
-      let outerRowsMaxEvidenceLevel = {};
+      let outerRowsMaxRank = {};
 
-      if (fieldList.includes('evidenceLevel') && fieldList.includes('gene')) {
-        outerRowsMaxEvidenceLevel = data.reduce((map, row) => {
-          if (!map[row.gene] || row.evidenceLevel < map[row.gene]) {
-              map[row.gene] = row.evidenceLevel;
+      if (orderByInternalCol) {
+      outerRowsMaxRank = data.reduce((map, row) => {
+        const rowkey = JSON.stringify(collapseableCols.map((val) => row[val]));
+        if (!map[rowkey] || row[orderByInternalCol] < map[rowkey]) {
+              map[rowkey] = row[orderByInternalCol];
           }
           return map;
       }, {});
-      }
-
+    }
       (collapseableCols?.length > 0 ? [...data].sort((aRow, bRow) => {
         const aKey = collapseableCols.map((val) => aRow[val]);
         const bKey = collapseableCols.map((val) => bRow[val]);
         // ordering inner rows (rows with matching aKey/bKey)
         if (JSON.stringify(aKey) === JSON.stringify(bKey)) {
-          // order by evidence level if possible, then by therapy if necessary
-          if (fieldList.includes('evidenceLevel') && fieldList.includes('therapy')) {
-            if (aRow.evidenceLevel === bRow.evidenceLevel) {
-              return aRow.therapy > bRow.therapy ? 1 : -1;
+          // order by 'orderByInternalCol' if possible, then by 'orderByInternalColBackup' if necessary
+          if (orderByInternalCol) {
+            if (aRow[orderByInternalCol] === bRow[orderByInternalCol]) {
+              if (orderByInternalColBackup) {
+                if (aRow[orderByInternalColBackup] === bRow[orderByInternalColBackup]) {
+                  return 0;
+                }
+                return aRow[orderByInternalColBackup] > bRow[orderByInternalColBackup] ? 1 : -1;
+              }
+              return 0;
             }
-            return aRow.evidenceLevel > bRow.evidenceLevel ? 1 : -1;
+            return aRow[orderByInternalCol] > bRow[orderByInternalCol] ? 1 : -1;
           }
           return 0;
         }
         // ordering outer rows (rows with different aKey/bKey)
-        if (fieldList.includes('evidenceLevel') && fieldList.includes('gene') && fieldList.includes('therapy')) {
-          // order by evidence level if possible, then by outer row key if necessary
-          const maxA = outerRowsMaxEvidenceLevel[aRow.gene];
-          const maxB = outerRowsMaxEvidenceLevel[bRow.gene];
+        if (orderByInternalCol) {
+          // order by 'orderByInternalCol' if possible, then by outer row key if necessary
+          const maxA = outerRowsMaxRank[JSON.stringify(aKey)];
+          const maxB = outerRowsMaxRank[JSON.stringify(bKey)];
           if (maxA === maxB) {
             return JSON.stringify(aKey) > JSON.stringify(bKey) ? 1 : -1;
           }
