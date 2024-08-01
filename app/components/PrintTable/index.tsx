@@ -8,6 +8,7 @@ import { ColDef, ValueGetterParams } from '@ag-grid-community/core';
 import { v7 as createUuid } from 'uuid';
 import { registerHandlers, Handler } from 'pagedjs';
 import './index.scss';
+import { InsertEmoticon } from '@mui/icons-material';
 
 export type PrintTableProps = {
   data: Record<string, unknown>[];
@@ -84,15 +85,47 @@ function PrintTable({
       const colIdxsToCombine = {};
       const rowIdxsToSkip = {};
       const rowIdxsToExpand = {};
+      const fieldList = columnDefs.map((item)=> item.field);
+      let outerRowsMaxEvidenceLevel = {};
+
+      if (fieldList.includes('evidenceLevel') && fieldList.includes('gene')) {
+        outerRowsMaxEvidenceLevel = data.reduce((map, row) => {
+          if (!map[row.gene] || row.evidenceLevel < map[row.gene]) {
+              map[row.gene] = row.evidenceLevel;
+          }
+          return map;
+      }, {});
+      }
 
       (collapseableCols?.length > 0 ? [...data].sort((aRow, bRow) => {
         const aKey = collapseableCols.map((val) => aRow[val]);
         const bKey = collapseableCols.map((val) => bRow[val]);
-        if (aKey === bKey) return 0;
-        return aKey > bKey ? 1 : -1;
+        // ordering inner rows (rows with matching aKey/bKey)
+        if (JSON.stringify(aKey) === JSON.stringify(bKey)) {
+          // order by evidence level if possible, then by therapy if necessary
+          if (fieldList.includes('evidenceLevel') && fieldList.includes('therapy')) {
+            if (aRow.evidenceLevel === bRow.evidenceLevel) {
+              return aRow.therapy > bRow.therapy ? 1 : -1;
+            }
+            return aRow.evidenceLevel > bRow.evidenceLevel ? 1 : -1;
+          }
+          return 0;
+        }
+        // ordering outer rows (rows with different aKey/bKey)
+        if (fieldList.includes('evidenceLevel') && fieldList.includes('gene') && fieldList.includes('therapy')) {
+          // order by evidence level if possible, then by outer row key if necessary
+          const maxA = outerRowsMaxEvidenceLevel[aRow.gene];
+          const maxB = outerRowsMaxEvidenceLevel[bRow.gene];
+          if (maxA === maxB) {
+            return JSON.stringify(aKey) > JSON.stringify(bKey) ? 1 : -1;
+          }
+          return maxA > maxB ? 1 : -1;
+        }
+        return JSON.stringify(aKey) > JSON.stringify(bKey) ? 1 : -1;
       }) : data).forEach((dataRow, rowIdx) => {
         const rowData = [];
         currRowKey = '';
+
 
         sortedColDefs.forEach((colD, cellIdx) => {
           // Data section
