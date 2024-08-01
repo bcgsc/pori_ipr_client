@@ -8,7 +8,6 @@ import { ColDef, ValueGetterParams } from '@ag-grid-community/core';
 import { v7 as createUuid } from 'uuid';
 import { registerHandlers, Handler } from 'pagedjs';
 import './index.scss';
-import { InsertEmoticon } from '@mui/icons-material';
 
 export type PrintTableProps = {
   data: Record<string, unknown>[];
@@ -89,18 +88,17 @@ function PrintTable({
       const colIdxsToCombine = {};
       const rowIdxsToSkip = {};
       const rowIdxsToExpand = {};
-      const fieldList = columnDefs.map((item)=> item.field);
       let outerRowsMaxRank = {};
 
       if (orderByInternalCol) {
-      outerRowsMaxRank = data.reduce((map, row) => {
-        const rowkey = JSON.stringify(collapseableCols.map((val) => row[val]));
-        if (!map[rowkey] || row[orderByInternalCol] < map[rowkey]) {
-              map[rowkey] = row[orderByInternalCol];
+        outerRowsMaxRank = data.reduce((map, row) => {
+          const rowkey = JSON.stringify(collapseableCols.map((val) => row[val]));
+          if (!map[rowkey] || row[orderByInternalCol] < map[rowkey]) {
+            map[rowkey] = row[orderByInternalCol];
           }
           return map;
-      }, {});
-    }
+        }, {});
+      }
       (collapseableCols?.length > 0 ? [...data].sort((aRow, bRow) => {
         const aKey = JSON.stringify(collapseableCols.map((val) => aRow[val]));
         const bKey = JSON.stringify(collapseableCols.map((val) => bRow[val]));
@@ -220,7 +218,7 @@ function PrintTable({
       }
     }
     return component;
-  }, [sortedColDefs, noRowsText, data, collapseableCols]);
+  }, [sortedColDefs, noRowsText, data, collapseableCols, orderByInternalCol, orderByInternalColBackup]);
 
   const tableId = useMemo(() => {
     if (data?.length) {
