@@ -102,8 +102,8 @@ function PrintTable({
       }, {});
     }
       (collapseableCols?.length > 0 ? [...data].sort((aRow, bRow) => {
-        const aKey = collapseableCols.map((val) => aRow[val]);
-        const bKey = collapseableCols.map((val) => bRow[val]);
+        const aKey = JSON.stringify(collapseableCols.map((val) => aRow[val]));
+        const bKey = JSON.stringify(collapseableCols.map((val) => bRow[val]));
         // ordering inner rows (rows with matching aKey/bKey)
         if (JSON.stringify(aKey) === JSON.stringify(bKey)) {
           // order by 'orderByInternalCol' if possible, then by 'orderByInternalColBackup' if necessary
@@ -135,7 +135,6 @@ function PrintTable({
       }) : data).forEach((dataRow, rowIdx) => {
         const rowData = [];
         currRowKey = '';
-
 
         sortedColDefs.forEach((colD, cellIdx) => {
           // Data section
