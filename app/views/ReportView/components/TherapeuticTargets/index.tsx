@@ -261,6 +261,8 @@ const Therapeutic = ({
           data={therapeuticData}
           columnDefs={columnDefs}
           collapseableCols={['gene', 'variant']}
+          orderByInternalCol="evidenceLevel"
+          orderByInternalColBackup="therapy"
         />
         <br />
         <Typography
@@ -276,6 +278,7 @@ const Therapeutic = ({
           data={chemoresistanceData}
           columnDefs={columnDefs}
           collapseableCols={['gene', 'variant']}
+          orderByInternalCol="evidenceLevel"
         />
       </div>
     );
