@@ -92,9 +92,6 @@ function PrintTable({
       const fieldList = columnDefs.map((item)=> item.field);
       let outerRowsMaxRank = {};
 
-      console.log('orderByInternalCols');
-      console.log(orderByInternalCol);
-      console.log(orderByInternalColBackup);
       if (orderByInternalCol) {
       outerRowsMaxRank = data.reduce((map, row) => {
         const rowkey = JSON.stringify(collapseableCols.map((val) => row[val]));
@@ -104,13 +101,11 @@ function PrintTable({
           return map;
       }, {});
     }
-    console.dir(outerRowsMaxRank);
       (collapseableCols?.length > 0 ? [...data].sort((aRow, bRow) => {
         const aKey = collapseableCols.map((val) => aRow[val]);
         const bKey = collapseableCols.map((val) => bRow[val]);
         // ordering inner rows (rows with matching aKey/bKey)
         if (JSON.stringify(aKey) === JSON.stringify(bKey)) {
-          console.log('here in inner row ordering');
           // order by 'orderByInternalCol' if possible, then by 'orderByInternalColBackup' if necessary
           if (orderByInternalCol) {
             if (aRow[orderByInternalCol] === bRow[orderByInternalCol]) {
@@ -128,12 +123,9 @@ function PrintTable({
         }
         // ordering outer rows (rows with different aKey/bKey)
         if (orderByInternalCol) {
-          console.log('here in outer row ordering')
           // order by 'orderByInternalCol' if possible, then by outer row key if necessary
           const maxA = outerRowsMaxRank[JSON.stringify(aKey)];
           const maxB = outerRowsMaxRank[JSON.stringify(bKey)];
-          console.dir(maxA);
-          console.dir(maxB);
           if (maxA === maxB) {
             return JSON.stringify(aKey) > JSON.stringify(bKey) ? 1 : -1;
           }
