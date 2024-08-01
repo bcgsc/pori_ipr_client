@@ -20,8 +20,7 @@ export type PrintTableProps = {
   collapseableCols?: string[];
   noRowsText?: string;
   fullWidth?: boolean;
-  orderByInternalCol?: string;
-  orderByInternalColBackup?: string;
+  orderByInternalCol?: string[];
 };
 
 /**
@@ -36,7 +35,6 @@ function PrintTable({
   collapseableCols = null,
   fullWidth = false,
   orderByInternalCol = null,
-  orderByInternalColBackup = null,
 }: PrintTableProps): JSX.Element {
   const sortedColDefs = useMemo(() => columnDefs
     .filter((col) => (col.headerName && col.hide !== true && col.headerName !== 'Actions'))
@@ -96,14 +94,22 @@ function PrintTable({
           if (!acc[rowkey]) {
             acc[rowkey] = [];
           }
-          acc[rowkey].push(row[orderByInternalCol]);
+          acc[rowkey].push(
+            row[orderByInternalCol[0]],
+            /**
+             * Note: Commented code below takes whole of orderByInternalCol and sorts the table with prio as
+             * defined in the array
+             */
+            // orderByInternalCol.reduce((buildingKey, colId) => [...buildingKey, row[colId]], [])
+          );
           return acc;
         }, {});
 
-        Object.keys(outerRowsRank).forEach(key => {
+        Object.keys(outerRowsRank).forEach((key) => {
           outerRowsRank[key] = JSON.stringify(outerRowsRank[key].sort()); // Sort and stringify the array
         });
       }
+
       (collapseableCols?.length > 0 ? [...data].sort((aRow, bRow) => {
         const aKey = JSON.stringify(collapseableCols.map((val) => aRow[val]));
         const bKey = JSON.stringify(collapseableCols.map((val) => bRow[val]));
@@ -111,16 +117,14 @@ function PrintTable({
         if (aKey === bKey) {
           // order by 'orderByInternalCol' if possible, then by 'orderByInternalColBackup' if necessary
           if (orderByInternalCol) {
-            if (aRow[orderByInternalCol] === bRow[orderByInternalCol]) {
-              if (orderByInternalColBackup) {
-                if (aRow[orderByInternalColBackup] === bRow[orderByInternalColBackup]) {
-                  return 0;
-                }
-                return aRow[orderByInternalColBackup] > bRow[orderByInternalColBackup] ? 1 : -1;
+            for (let i = 0; i < orderByInternalCol.length; i++) {
+              const col = orderByInternalCol[i];
+              if (aRow[col] === bRow[col]) {
+                continue; // if the current column values are equal, move to next column
+              } else {
+                return aRow[col] > bRow[col] ? 1 : -1;
               }
-              return 0;
             }
-            return aRow[orderByInternalCol] > bRow[orderByInternalCol] ? 1 : -1;
           }
           return 0;
         }
@@ -224,7 +228,7 @@ function PrintTable({
       }
     }
     return component;
-  }, [sortedColDefs, noRowsText, data, collapseableCols, orderByInternalCol, orderByInternalColBackup]);
+  }, [sortedColDefs, noRowsText, data, collapseableCols, orderByInternalCol]);
 
   const tableId = useMemo(() => {
     if (data?.length) {
