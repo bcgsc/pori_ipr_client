@@ -1,5 +1,5 @@
 import React, {
-  useState, useEffect, useMemo, useCallback,
+  useState, useEffect, useMemo,
 } from 'react';
 import {
   Paper,
@@ -39,12 +39,12 @@ const SignatureCard = ({
   type,
   isPrint = false,
 }: SignatureCardProps): JSX.Element => {
-  let { reportAssignmentAccess: canAddSignatures } = useResource();
-  let { canEdit } = useReport();
+  const { reportAssignmentAccess: canAddSignatures } = useResource();
+  const { canEdit, report, setReport } = useReport();
+  const { userDetails } = useSecurity();
+
   const [userSignature, setUserSignature] = useState<UserType>();
   const [role, setRole] = useState('');
-  const { report, setReport } = useReport();
-  const { userDetails } = useSecurity();
 
   useEffect(() => {
     if (signatures && type) {
@@ -61,21 +61,20 @@ const SignatureCard = ({
     }
   }, [signatures, type, setRole]);
 
-  const handleSign = useCallback(async () => {
-      try {
-        const newReport = await api.post(
-          `/reports/${report.ident}/user`,
-          { user: userDetails.ident, role: role },
-          {},
-        ).request();
-        setReport(newReport);
-        snackbar.success('User added!');
-        onClick(true, type);
-      } catch (err) {
-        snackbar.error(`Error adding user: ${err}`);
-      }
-    }, [report, onClick, userDetails, role, setReport]
-  );
+  const handleSign = async () => {
+    try {
+      const newReport = await api.post(
+        `/reports/${report.ident}/user`,
+        { user: userDetails.ident, role },
+        {},
+      ).request();
+      setReport(newReport);
+      onClick(true, type);
+      snackbar.success('User assigned to report');
+    } catch (err) {
+      snackbar.error(`Error adding user: ${err}`);
+    }
+  };
 
   const handleRevoke = () => {
     onClick(false, type);
@@ -151,7 +150,7 @@ const SignatureCard = ({
             {userSignature.lastName}
           </Typography>
         )}
-        {!userSignature?.ident && canEdit || canAddSignatures && (
+        {!userSignature?.ident && (canEdit || canAddSignatures) && (
           <Button
             onClick={handleSign}
             variant="text"
