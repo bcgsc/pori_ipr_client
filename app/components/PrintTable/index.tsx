@@ -103,7 +103,7 @@ function PrintTable({
               }
               acc[rowkey][key].push(row[key]);
             }
-          })
+          });
           return acc;
         }, {});
 
@@ -142,8 +142,9 @@ function PrintTable({
               return rankA > rankB ? 1 : -1;
             }
           }
-        return aKey > bKey ? 1 : -1;
+          return aKey > bKey ? 1 : -1;
         }
+        return 0;
       }) : data).forEach((dataRow, rowIdx) => {
         const rowData = [];
         currRowKey = '';
