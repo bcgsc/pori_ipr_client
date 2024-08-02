@@ -225,8 +225,7 @@ const Therapeutic = ({
           data={therapeuticData}
           columnDefs={columnDefs}
           collapseableCols={['gene', 'variant']}
-          orderByInternalCol="evidenceLevel"
-          orderByInternalColBackup="therapy"
+          orderByInternalCol={['evidenceLevel', 'therapy']}
         />
         <Typography
           className="therapeutic-print__title"
@@ -239,8 +238,8 @@ const Therapeutic = ({
           data={chemoresistanceData}
           columnDefs={columnDefs}
           collapseableCols={['gene', 'variant']}
-          orderByInternalCol="evidenceLevel"
-/>
+          orderByInternalCol={['evidenceLevel']}
+        />
       </div>
     );
   }
@@ -261,8 +260,7 @@ const Therapeutic = ({
           data={therapeuticData}
           columnDefs={columnDefs}
           collapseableCols={['gene', 'variant']}
-          orderByInternalCol="evidenceLevel"
-          orderByInternalColBackup="therapy"
+          orderByInternalCol={['evidenceLevel', 'therapy']}
         />
         <br />
         <Typography
@@ -278,7 +276,7 @@ const Therapeutic = ({
           data={chemoresistanceData}
           columnDefs={columnDefs}
           collapseableCols={['gene', 'variant']}
-          orderByInternalCol="evidenceLevel"
+          orderByInternalCol={['evidenceLevel']}
         />
       </div>
     );
