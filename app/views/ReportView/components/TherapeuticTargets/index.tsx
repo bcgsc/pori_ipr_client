@@ -225,7 +225,8 @@ const Therapeutic = ({
           data={therapeuticData}
           columnDefs={columnDefs}
           collapseableCols={['gene', 'variant']}
-          orderByInternalCol={['evidenceLevel', 'therapy']}
+          outerRowOrderByInternalCol={['evidenceLevel']}
+          innerRowOrderByInternalCol={['evidenceLevel', 'therapy']}
         />
         <Typography
           className="therapeutic-print__title"
@@ -238,7 +239,8 @@ const Therapeutic = ({
           data={chemoresistanceData}
           columnDefs={columnDefs}
           collapseableCols={['gene', 'variant']}
-          orderByInternalCol={['evidenceLevel']}
+          outerRowOrderByInternalCol={['evidenceLevel']}
+          innerRowOrderByInternalCol={['evidenceLevel']}
         />
       </div>
     );
@@ -260,7 +262,8 @@ const Therapeutic = ({
           data={therapeuticData}
           columnDefs={columnDefs}
           collapseableCols={['gene', 'variant']}
-          orderByInternalCol={['evidenceLevel', 'therapy']}
+          outerRowOrderByInternalCol={['evidenceLevel']}
+          innerRowOrderByInternalCol={['evidenceLevel', 'therapy']}
         />
         <br />
         <Typography
@@ -276,7 +279,8 @@ const Therapeutic = ({
           data={chemoresistanceData}
           columnDefs={columnDefs}
           collapseableCols={['gene', 'variant']}
-          orderByInternalCol={['evidenceLevel']}
+          outerRowOrderByInternalCol={['evidenceLevel']}
+          innerRowOrderByInternalCol={['evidenceLevel']}
         />
       </div>
     );

@@ -20,7 +20,8 @@ export type PrintTableProps = {
   collapseableCols?: string[];
   noRowsText?: string;
   fullWidth?: boolean;
-  orderByInternalCol?: string[];
+  outerRowOrderByInternalCol?: string[];
+  innerRowOrderByInternalCol?: string[];
 };
 
 /**
@@ -34,7 +35,8 @@ function PrintTable({
   noRowsText = '',
   collapseableCols = null,
   fullWidth = false,
-  orderByInternalCol = null,
+  outerRowOrderByInternalCol = null,
+  innerRowOrderByInternalCol = null,
 }: PrintTableProps): JSX.Element {
   const sortedColDefs = useMemo(() => columnDefs
     .filter((col) => (col.headerName && col.hide !== true && col.headerName !== 'Actions'))
@@ -88,25 +90,27 @@ function PrintTable({
       const rowIdxsToExpand = {};
       let outerRowsRank = {};
 
-      if (orderByInternalCol) {
+      if (outerRowOrderByInternalCol) {
         outerRowsRank = data.reduce((acc, row) => {
           const rowkey = JSON.stringify(collapseableCols.map((val) => row[val]));
           if (!acc[rowkey]) {
-            acc[rowkey] = [];
+            acc[rowkey] = {};
           }
-          acc[rowkey].push(
-            row[orderByInternalCol[0]],
-            /**
-             * Note: Commented code below takes whole of orderByInternalCol and sorts the table with prio as
-             * defined in the array
-             */
-            // orderByInternalCol.reduce((buildingKey, colId) => [...buildingKey, row[colId]], [])
-          );
+          Object.keys(row).forEach((key) => {
+            if (outerRowOrderByInternalCol.includes(key)) {
+              if (!acc[rowkey][key]) {
+                acc[rowkey][key] = [];
+              }
+              acc[rowkey][key].push(row[key]);
+            }
+          })
           return acc;
         }, {});
 
         Object.keys(outerRowsRank).forEach((key) => {
-          outerRowsRank[key] = JSON.stringify(outerRowsRank[key].sort()); // Sort and stringify the array
+          Object.keys(outerRowsRank[key]).forEach((subkey) => {
+            outerRowsRank[key][subkey] = JSON.stringify(outerRowsRank[key][subkey].sort()); // Sort and stringify
+          });
         });
       }
 
@@ -115,13 +119,13 @@ function PrintTable({
         const bKey = JSON.stringify(collapseableCols.map((val) => bRow[val]));
         // ordering inner rows (rows with matching aKey/bKey)
         if (aKey === bKey) {
-          // order by 'orderByInternalCol' if possible, then by 'orderByInternalColBackup' if necessary
-          if (orderByInternalCol) {
-            for (let i = 0; i < orderByInternalCol.length; i++) {
-              const col = orderByInternalCol[i];
-              if (aRow[col] === bRow[col]) {
-                continue; // if the current column values are equal, move to next column
-              } else {
+          // order by 'innerRowOrderByInternalCol' index 0 if possible, then index 1, etc
+          if (innerRowOrderByInternalCol) {
+            for (let i = 0; i < innerRowOrderByInternalCol.length; i++) {
+              const col = innerRowOrderByInternalCol[i];
+              // if the current column values are equal, move to next column
+              // otherwise return rank based on these columns
+              if (!(aRow[col] === bRow[col])) {
                 return aRow[col] > bRow[col] ? 1 : -1;
               }
             }
@@ -129,17 +133,17 @@ function PrintTable({
           return 0;
         }
         // ordering outer rows (rows with different aKey/bKey)
-        if (orderByInternalCol) {
-          // order by 'orderByInternalCol' if possible, then by outer row key if necessary
-          const rankA = outerRowsRank[aKey];
-          const rankB = outerRowsRank[bKey];
-
-          if (rankA === rankB) {
-            return aKey > bKey ? 1 : -1;
+        if (outerRowOrderByInternalCol) {
+          // order by 'outerRowOrderByInternalCol' if possible, then by outer row key if necessary
+          for (let i = 0; i < outerRowOrderByInternalCol.length; i++) {
+            const rankA = outerRowsRank[aKey][outerRowOrderByInternalCol[i]];
+            const rankB = outerRowsRank[bKey][outerRowOrderByInternalCol[i]];
+            if (!(rankA === rankB)) {
+              return rankA > rankB ? 1 : -1;
+            }
           }
-          return rankA > rankB ? 1 : -1;
-        }
         return aKey > bKey ? 1 : -1;
+        }
       }) : data).forEach((dataRow, rowIdx) => {
         const rowData = [];
         currRowKey = '';
@@ -228,7 +232,7 @@ function PrintTable({
       }
     }
     return component;
-  }, [sortedColDefs, noRowsText, data, collapseableCols, orderByInternalCol]);
+  }, [sortedColDefs, noRowsText, data, collapseableCols, outerRowOrderByInternalCol, innerRowOrderByInternalCol]);
 
   const tableId = useMemo(() => {
     if (data?.length) {
