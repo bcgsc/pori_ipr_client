@@ -108,17 +108,9 @@ const PharmacoGenomicSummary = ({
     setTestInfoEdit(false);
   }, []);
 
-  const handleSign = useCallback(async (signed: boolean, role: SignatureUserType) => {
-    let newSignature: SignatureType;
-
-    if (signed) {
-      newSignature = await api.put(`/reports/${report.ident}/signatures/sign/${role}`, {}).request();
-    } else {
-      newSignature = await api.put(`/reports/${report.ident}/signatures/revoke/${role}`, {}).request();
-    }
-
+  const handleSign = useCallback(async (signed: boolean, updatedSignature: SignatureType) => {
     setIsSigned(signed);
-    setSignatures(newSignature);
+    setSignatures(updatedSignature);
   }, [report, setIsSigned]);
 
   const pharmacogenomicSection = useMemo(() => {

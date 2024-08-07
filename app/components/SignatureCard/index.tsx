@@ -1,5 +1,6 @@
 import React, {
   useState, useEffect, useMemo,
+  useCallback,
 } from 'react';
 import {
   Paper,
@@ -27,7 +28,7 @@ const NON_BREAKING_SPACE = '\u00A0';
 export type SignatureCardProps = {
   title: string;
   signatures: SignatureType;
-  onClick: (isSigned: boolean, type: string) => void;
+  onClick: (isSigned: boolean, updatedSignature: SignatureType) => void;
   type: SignatureUserType;
   isPrint?: boolean;
 };
@@ -61,24 +62,39 @@ const SignatureCard = ({
     }
   }, [signatures, type, setRole]);
 
-  const handleSign = async () => {
+  const handleSign = useCallback(async () => {
     try {
       const newReport = await api.post(
         `/reports/${report.ident}/user`,
         { user: userDetails.ident, role },
         {},
       ).request();
+
+      const newSignature = await api.put(
+        `/reports/${report.ident}/signatures/sign/${role}`,
+        {},
+      ).request();
+
       setReport(newReport);
-      onClick(true, type);
+      onClick(true, newSignature);
       snackbar.success('User assigned to report');
     } catch (err) {
       snackbar.error(`Error adding user: ${err}`);
     }
-  };
+  }, [onClick, report.ident, role, setReport, userDetails.ident]);
 
-  const handleRevoke = () => {
-    onClick(false, type);
-  };
+  const handleRevoke = useCallback(async () => {
+    try {
+      const newSignature = await api.put(
+        `/reports/${report.ident}/signatures/revoke/${role}`,
+        {},
+      ).request();
+      onClick(false, newSignature);
+      snackbar.success('User removed from report');
+    } catch (err) {
+      snackbar.error(`Error removing user: ${err}`);
+    }
+  }, [onClick, report.ident, role]);
 
   const renderDate = useMemo(() => {
     if (signatures?.ident) {

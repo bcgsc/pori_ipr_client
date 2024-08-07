@@ -351,23 +351,10 @@ const RapidSummary = ({
   }, [microbial, primaryBurden, tmburMutBur, report.m1m2Score, report.sampleInfo, report.tumourContent, tCellCd8?.percentile, tCellCd8?.score, report.captiv8Score,
     tCellCd8?.percentileHidden, tCellCd8, tCellCd8?.pedsScoreComment, tmburMutBur?.adjustedTmb, tmburMutBur?.tmbHidden, tCellCd8?.pedsScore, tCellCd8?.pedsPercentile]);
 
-  const handleSign = useCallback((signed: boolean, role: SignatureUserType) => {
-    let cancelled;
-    const sign = async (s: boolean, r: SignatureUserType) => {
-      let newSignature;
-      if (s) {
-        newSignature = await api.put(`/reports/${report.ident}/signatures/sign/${r}`, {}).request();
-      } else {
-        newSignature = await api.put(`/reports/${report.ident}/signatures/revoke/${r}`, {}).request();
-      }
-      if (!cancelled) {
-        setIsSigned(signed);
-        setSignatures(newSignature);
-      }
-    };
-    sign(signed, role);
-    return function cleanup() { cancelled = true; };
-  }, [report.ident, setIsSigned]);
+    const handleSign = useCallback(async (signed: boolean, updatedSignature: SignatureType) => {
+      setIsSigned(signed);
+      setSignatures(updatedSignature);
+    }, [report, setIsSigned]);
 
   const handleMatchedTumourEditStart = useCallback((rowData) => {
     setShowMatchedTumourEditDialog(true);
