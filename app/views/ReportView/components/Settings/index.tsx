@@ -120,7 +120,7 @@ const Settings = ({
 
   const handleReportUpdate = useCallback(async () => {
     const updateFields: {
-      template? : string;
+      template?: string;
       state?: string;
       reportVersion?: string;
       kbVersion?: string;
@@ -281,7 +281,7 @@ const Settings = ({
           </div>
           <Divider />
           <Analysis />
-          {!isProbe && (
+          {
             <>
               <Divider />
               <div className="settings__user-associations">
@@ -310,7 +310,7 @@ const Settings = ({
                 />
               </div>
             </>
-          )}
+          }
         </>
       )}
     </div>
