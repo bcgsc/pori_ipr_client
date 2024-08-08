@@ -48,8 +48,39 @@ const mockObjectData = {
   reviewerSignedAt: '2020',
 };
 
+const mockReportData = {
+  ident: 'mockIdent',
+  createdAt: '2020',
+  updatedAt: '2020',
+  alternateIdentifier: null,
+  pediatricIds: null,
+  analysisStartedAt: null,
+  biopsyName: null,
+  createdBy: null,
+  expression_matrix: null,
+  kbVersion: null,
+  patientId: null,
+  patientInformation: null,
+  ploidy: null,
+  projects: null,
+  reportVersion: null,
+  sampleInfo: null,
+  state: null,
+  subtyping: null,
+  template: null,
+  tumourContent: null,
+  type: null,
+  users: null,
+  oncotreeTumourType: null,
+  kbDiseaseMatch: null,
+  m1m2Score: null,
+  captiv8Score: null,
+  appendix: null,
+};
+
 export {
   mockNullData,
   mockNullObjectData,
   mockObjectData,
+  mockReportData,
 };
