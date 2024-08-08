@@ -51,7 +51,7 @@ const SignatureCard = ({
     if (signatures && type) {
       if (type === 'author') {
         setUserSignature(signatures.authorSignature);
-        setRole('analyst');
+        setRole('author');
       } else if (type === 'reviewer') {
         setUserSignature(signatures.reviewerSignature);
         setRole('reviewer');
@@ -63,19 +63,33 @@ const SignatureCard = ({
   }, [signatures, type, setRole]);
 
   const handleSign = useCallback(async () => {
+    let newReport = null;
+
+    // Assign user
     try {
-      const newReport = await api.post(
+      newReport = await api.post(
         `/reports/${report.ident}/user`,
-        { user: userDetails.ident, role },
+        // Hardcode analyst role here because report does not accept 'author'
+        { user: userDetails.ident, role: 'analyst' },
         {},
       ).request();
+    } catch (e) {
+      // If user already assigned, silent fail this add
+      if (e.content?.status !== 409) {
+        snackbar.error('Error assigning user to report: ', e.message);
+      }
+    }
 
+    // Do signature
+    try {
       const newSignature = await api.put(
         `/reports/${report.ident}/signatures/sign/${role}`,
         {},
       ).request();
 
-      setReport(newReport);
+      if (newReport) {
+        setReport(newReport);
+      }
       onClick(true, newSignature);
       snackbar.success('User assigned to report');
     } catch (err) {
