@@ -111,7 +111,7 @@ const PharmacoGenomicSummary = ({
   const handleSign = useCallback(async (signed: boolean, updatedSignature: SignatureType) => {
     setIsSigned(signed);
     setSignatures(updatedSignature);
-  }, [report, setIsSigned]);
+  }, [setIsSigned]);
 
   const pharmacogenomicSection = useMemo(() => {
     let component = (

@@ -112,7 +112,7 @@ const ProbeSummary = ({
   const handleSign = useCallback(async (signed: boolean, updatedSignature: SignatureType) => {
     setIsSigned(signed);
     setSignatures(updatedSignature);
-  }, [report, setIsSigned]);
+  }, [setIsSigned]);
 
   const handleEditStart = useCallback((rowData) => {
     setShowEventsDialog(true);
