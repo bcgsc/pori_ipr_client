@@ -1,5 +1,6 @@
 import React, {
   useState, useEffect, useMemo,
+  useCallback,
 } from 'react';
 import {
   Paper,
@@ -7,11 +8,14 @@ import {
   IconButton,
   Button,
 } from '@mui/material';
+import api from '@/services/api';
 import GestureIcon from '@mui/icons-material/Gesture';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-
+import snackbar from '@/services/SnackbarUtils';
 import { UserType } from '@/common';
 import useReport from '@/hooks/useReport';
+import useResource from '@/hooks/useResource';
+import useSecurity from '@/hooks/useSecurity';
 import { formatDate } from '@/utils/date';
 import { SignatureType, SignatureUserType } from './types';
 
@@ -24,7 +28,7 @@ const NON_BREAKING_SPACE = '\u00A0';
 export type SignatureCardProps = {
   title: string;
   signatures: SignatureType;
-  onClick: (isSigned: boolean, type: string) => void;
+  onClick: (isSigned: boolean, updatedSignature: SignatureType) => void;
   type: SignatureUserType;
   isPrint?: boolean;
 };
@@ -36,28 +40,75 @@ const SignatureCard = ({
   type,
   isPrint = false,
 }: SignatureCardProps): JSX.Element => {
-  const { canEdit } = useReport();
+  const { reportAssignmentAccess: canAddSignatures } = useResource();
+  const { canEdit, report, setReport } = useReport();
+  const { userDetails } = useSecurity();
+
   const [userSignature, setUserSignature] = useState<UserType>();
+  const [role, setRole] = useState('');
 
   useEffect(() => {
     if (signatures && type) {
       if (type === 'author') {
         setUserSignature(signatures.authorSignature);
+        setRole('author');
       } else if (type === 'reviewer') {
         setUserSignature(signatures.reviewerSignature);
+        setRole('reviewer');
       } else if (type === 'creator') {
         setUserSignature(signatures.creatorSignature);
+        setRole('bioinformatician');
       }
     }
-  }, [signatures, type]);
+  }, [signatures, type, setRole]);
 
-  const handleSign = () => {
-    onClick(true, type);
-  };
+  const handleSign = useCallback(async () => {
+    let newReport = null;
 
-  const handleRevoke = () => {
-    onClick(false, type);
-  };
+    // Assign user
+    try {
+      newReport = await api.post(
+        `/reports/${report.ident}/user`,
+        // Hardcode analyst role here because report does not accept 'author'
+        { user: userDetails.ident, role: 'analyst' },
+        {},
+      ).request();
+    } catch (e) {
+      // If user already assigned, silent fail this add
+      if (e.content?.status !== 409) {
+        snackbar.error('Error assigning user to report: ', e.message);
+      }
+    }
+
+    // Do signature
+    try {
+      const newSignature = await api.put(
+        `/reports/${report.ident}/signatures/sign/${role}`,
+        {},
+      ).request();
+
+      if (newReport) {
+        setReport(newReport);
+      }
+      onClick(true, newSignature);
+      snackbar.success('User assigned to report');
+    } catch (err) {
+      snackbar.error(`Error adding user: ${err}`);
+    }
+  }, [onClick, report.ident, role, setReport, userDetails.ident]);
+
+  const handleRevoke = useCallback(async () => {
+    try {
+      const newSignature = await api.put(
+        `/reports/${report.ident}/signatures/revoke/${role}`,
+        {},
+      ).request();
+      onClick(false, newSignature);
+      snackbar.success('User removed from report');
+    } catch (err) {
+      snackbar.error(`Error removing user: ${err}`);
+    }
+  }, [onClick, report.ident, role]);
 
   const renderDate = useMemo(() => {
     if (signatures?.ident) {
@@ -129,7 +180,7 @@ const SignatureCard = ({
             {userSignature.lastName}
           </Typography>
         )}
-        {!userSignature?.ident && canEdit && (
+        {!userSignature?.ident && (canEdit || canAddSignatures) && (
           <Button
             onClick={handleSign}
             variant="text"

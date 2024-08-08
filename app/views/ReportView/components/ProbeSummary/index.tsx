@@ -109,23 +109,10 @@ const ProbeSummary = ({
     }
   }, [loadedDispatch, report, setIsLoading]);
 
-  const handleSign = useCallback((signed: boolean, role: SignatureUserType) => {
-    let cancelled;
-    const sign = async (s: boolean, r: SignatureUserType) => {
-      let newSignature;
-      if (s) {
-        newSignature = await api.put(`/reports/${report.ident}/signatures/sign/${r}`, {}).request();
-      } else {
-        newSignature = await api.put(`/reports/${report.ident}/signatures/revoke/${r}`, {}).request();
-      }
-      if (!cancelled) {
-        setIsSigned(signed);
-        setSignatures(newSignature);
-      }
-    };
-    sign(signed, role);
-    return function cleanup() { cancelled = true; };
-  }, [report.ident, setIsSigned]);
+  const handleSign = useCallback(async (signed: boolean, updatedSignature: SignatureType) => {
+    setIsSigned(signed);
+    setSignatures(updatedSignature);
+  }, [setIsSigned]);
 
   const handleEditStart = useCallback((rowData) => {
     setShowEventsDialog(true);

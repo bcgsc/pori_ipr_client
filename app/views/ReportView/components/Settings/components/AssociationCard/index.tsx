@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import {
   Button,
   Card,
@@ -11,7 +11,6 @@ import PersonIcon from '@mui/icons-material/Person';
 
 import { UserType, RecordDefaults } from '@/common';
 import startCase from '@/utils/startCase';
-import ReportContext from '@/context/ReportContext';
 import useResource from '@/hooks/useResource';
 
 import './index.scss';
@@ -28,11 +27,7 @@ const AssociationCard = ({
   user,
   onDelete,
 }: AssociationCardProps): JSX.Element => {
-  const { report } = useContext(ReportContext);
-  let { reportAssignmentAccess: canEdit } = useResource();
-  if (report.state === 'completed') {
-    canEdit = false;
-  }
+  const { reportAssignmentAccess: canEdit } = useResource();
 
   return (
     <Card className="association-card">

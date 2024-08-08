@@ -62,6 +62,12 @@ class APIConnectionFailureError extends ErrorMixin {
     this.name = 'APIConnectionFailureError';
   }
 }
+class RecordConflictError extends ErrorMixin {
+  constructor(content) {
+    super(content);
+    this.name = 'RecordConflictError';
+  }
+}
 
 export {
   AbortError,
@@ -69,4 +75,5 @@ export {
   AuthorizationError,
   BadRequestError,
   APIConnectionFailureError,
+  RecordConflictError,
 };
