@@ -138,7 +138,11 @@ const SignatureCard = ({
     return null;
   }, [signatures, type, isPrint]);
 
-  if (isPrint) {
+  if (isPrint && !userSignature) {
+    return null
+  }
+
+  if (isPrint && userSignature) {
     return (
       <span className="signatures-print__group">
         <div className="signatures-print__value">
@@ -198,9 +202,9 @@ const SignatureCard = ({
           Date
         </Typography>
         {renderDate ?? (
-        <Typography>
-          {NON_BREAKING_SPACE}
-        </Typography>
+          <Typography>
+            {NON_BREAKING_SPACE}
+          </Typography>
         )}
       </div>
       {userSignature?.ident && canEdit && (
