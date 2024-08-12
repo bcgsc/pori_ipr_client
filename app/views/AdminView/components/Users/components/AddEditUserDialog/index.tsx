@@ -65,8 +65,8 @@ const AddEditUserDialog = ({
       firstName: '',
       lastName: '',
       email: '',
-      projects: [],
-      groups: [],
+      projects: null,
+      groups: null,
       type: CONFIG.STORAGE.DATABASE_TYPE,
     },
   });
@@ -76,7 +76,7 @@ const AddEditUserDialog = ({
   const [dialogTitle, setDialogTitle] = useState<string>('');
   const [isApiCalling, setIsApiCalling] = useState(false);
   const { userDetails } = useSecurity();
-  const { adminAccess } = useResource();
+  const { adminAccess, allProjectsAccess } = useResource();
 
   // Grab project and groups
   useEffect(() => {
@@ -87,25 +87,28 @@ const AddEditUserDialog = ({
         api.get('/user/group').request(),
       ]);
       if (!cancelled) {
-        const nonAdminGroups = [];
-        groupsResp.forEach((group) => (group.name !== 'admin' ? nonAdminGroups.push(group) : null));
+        const nonAdminGroups = groupsResp.filter((group) => (group.name !== 'admin'));
+
         if (adminAccess) {
           setProjectOptions(projectsResp);
           setGroupOptions(groupsResp);
         } else if (editData) {
+          // Editing existing entry
           const combinedProjects = userDetails.projects.concat(editData.projects);
           const combinedUniqueProjects = [...new Map(combinedProjects.map((project) => [project.ident, project])).values()];
-          setProjectOptions(combinedUniqueProjects);
+
+          setProjectOptions(allProjectsAccess ? projectsResp : combinedUniqueProjects);
           setGroupOptions(nonAdminGroups);
         } else {
-          setProjectOptions(userDetails.projects);
+          // New entry
+          setProjectOptions(allProjectsAccess ? projectsResp : userDetails.projects);
           setGroupOptions(nonAdminGroups);
         }
       }
     };
     getData();
     return function cleanup() { cancelled = true; };
-  }, [adminAccess, editData, userDetails.projects]);
+  }, [adminAccess, allProjectsAccess, editData, userDetails.projects]);
 
   // When params changed
   useEffect(() => {
