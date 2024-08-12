@@ -3,6 +3,7 @@ import {
   AuthorizationError,
   BadRequestError,
   APIConnectionFailureError,
+  RecordConflictError,
 } from './errors';
 
 const errorHandler = async (response) => {
@@ -25,6 +26,9 @@ const errorHandler = async (response) => {
   }
   if (status === 404) {
     throw new APIConnectionFailureError(error);
+  }
+  if (status === 409) {
+    throw new RecordConflictError(error);
   }
   throw new Error(`Unexpected Error [${status}]: ${statusText}`);
 };
