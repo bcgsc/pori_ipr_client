@@ -25,6 +25,7 @@ import snackbar from '@/services/SnackbarUtils';
 import { keycloak, logout } from '@/services/management/auth';
 import './index.scss';
 import { Box } from '@mui/system';
+import { toInteger } from 'lodash';
 
 const LoginView = lazy(() => import('../LoginView'));
 const TermsView = lazy(() => import('../TermsView'));
@@ -42,9 +43,40 @@ const LinkOutView = lazy(() => import('../LinkOutView'));
 const TemplateView = lazy(() => import('../TemplateView'));
 const ProjectsView = lazy(() => import('../ProjectsView'));
 
+function formatTime(seconds) {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+}
+
+const CountDown = memo(({ startingTime }: {
+  startingTime: number;
+}) => {
+  const [seconds, setSeconds] = useState(0);
+  useEffect(() => {
+    setSeconds(startingTime);
+  }, [startingTime]);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setSeconds((s) => {
+        if (s > 0) {
+          return s - 1;
+        }
+        clearInterval(intervalId);
+        return 0;
+      });
+    }, 1000); // countdown interval of 1 second
+
+    return () => clearInterval(intervalId); // cleanup on unmount
+  }, [startingTime]);
+
+  return <span>{formatTime(seconds)}</span>;
+});
+
 // What fraction of TIME ELAPSED should the user be notified of expiring token
 const TIMEOUT_FRACTION = 0.9;
-const MIN_TIMEOUT = 60000;
 
 type TimeoutModalPropTypes = {
   authorizationToken: string;
@@ -54,6 +86,8 @@ type TimeoutModalPropTypes = {
 const TimeoutModal = memo(({ authorizationToken, setAuthorizationToken }: TimeoutModalPropTypes) => {
   const { location: { key: locationKey } } = useHistory();
   const [open, setIsOpen] = useState(false);
+  // Seconds in which to show in the countdown component
+  const [countDown, setCountDown] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const timerRef = useRef(null);
 
@@ -71,12 +105,15 @@ const TimeoutModal = memo(({ authorizationToken, setAuthorizationToken }: Timeou
   // First load is untracked, until authorizationToken changes
   useEffect(() => {
     if (authorizationToken) {
-      // Depending on KC setting, whichever one of these token expire will cause a 400 for refresh, so we take the lower one
-      const leastTimeToExp = (Math.min(keycloak.tokenParsed.exp, keycloak.refreshTokenParsed.exp) * 1000 - Date.now()) * TIMEOUT_FRACTION;
-      // Minimum 1 min timeout timer
-      const timeout = Math.max(leastTimeToExp, MIN_TIMEOUT);
+      // Ms in which token will expire
+      const minTimeToExpire = Math.min(keycloak.tokenParsed.exp, keycloak.refreshTokenParsed.exp) * 1000;
 
-      timerRef.current = setTimeout(() => { setIsOpen(true); }, timeout);
+      const timeToShowModal = (minTimeToExpire - Date.now()) * TIMEOUT_FRACTION;
+
+      timerRef.current = setTimeout(() => {
+        setIsOpen(true);
+        setCountDown(toInteger((minTimeToExpire - Date.now()) / 1000));
+      }, timeToShowModal);
     }
     return () => {
       if (timerRef.current) { clearTimeout(timerRef.current); }
@@ -105,7 +142,11 @@ const TimeoutModal = memo(({ authorizationToken, setAuthorizationToken }: Timeou
     <Dialog open={open} onClose={handleClose} onBackdropClick={null}>
       <DialogTitle>Session Timeout Notification</DialogTitle>
       <DialogContent>
-        <p>Your session is about to expire, would you like to remain logged in?</p>
+        <p>
+          {'Your session is about to expire in '}
+          <CountDown startingTime={countDown} />
+          , would you like to remain logged in?
+        </p>
       </DialogContent>
       <DialogActions>
         <Button disabled={isLoading} onClick={logout}>Logout</Button>
