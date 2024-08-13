@@ -90,6 +90,7 @@ const AddEditUserDialog = ({
   const [groupOptions, setGroupOptions] = useState<GroupType[]>([]);
   const [dialogTitle, setDialogTitle] = useState<string>('');
   const [isApiCalling, setIsApiCalling] = useState(false);
+  const [isDataLoading, setIsDataLoading] = useState(false);
   const { userDetails } = useSecurity();
   const { adminAccess, allProjectsAccess } = useResource();
 
@@ -97,28 +98,36 @@ const AddEditUserDialog = ({
   useEffect(() => {
     let cancelled = false;
     const getData = async () => {
-      const [projectsResp, groupsResp] = await Promise.all([
-        api.get('/project').request(),
-        api.get('/user/group').request(),
-      ]);
-      if (!cancelled) {
-        const nonAdminGroups = groupsResp.filter((group) => (group.name !== 'admin'));
+      try {
+        setIsDataLoading(true);
+        if (!cancelled) {
+          const [projectsResp, groupsResp] = await Promise.all([
+            api.get('/project').request(),
+            api.get('/user/group').request(),
+          ]);
+          const nonAdminGroups = groupsResp.filter((group) => (group.name !== 'admin'));
 
-        if (adminAccess) {
-          setProjectOptions(projectsResp);
-          setGroupOptions(groupsResp);
-        } else if (editData) {
-          // Editing existing entry
-          const combinedProjects = userDetails.projects.concat(editData.projects);
-          const combinedUniqueProjects = [...new Map(combinedProjects.map((project) => [project.ident, project])).values()];
+          if (adminAccess) {
+            setProjectOptions(projectsResp);
+            setGroupOptions(groupsResp);
+          } else if (editData) {
+            // Editing existing entry
+            const combinedProjects = userDetails.projects.concat(editData.projects);
+            const combinedUniqueProjects = [...new Map(combinedProjects.map((project) => [project.ident, project])).values()];
 
-          setProjectOptions(allProjectsAccess ? projectsResp : combinedUniqueProjects);
-          setGroupOptions(nonAdminGroups);
-        } else {
-          // New entry
-          setProjectOptions(allProjectsAccess ? projectsResp : userDetails.projects);
-          setGroupOptions(nonAdminGroups);
+            setProjectOptions(allProjectsAccess ? projectsResp : combinedUniqueProjects);
+            setGroupOptions(nonAdminGroups);
+          } else {
+            // New entry
+            setProjectOptions(allProjectsAccess ? projectsResp : userDetails.projects);
+            setGroupOptions(nonAdminGroups);
+          }
         }
+      } catch (projectGroupErr) {
+        snackbar.error('Failed to retrieve list of project and groups for current user.');
+        console.error(projectGroupErr);
+      } finally {
+        setIsDataLoading(false);
       }
     };
     getData();
@@ -262,6 +271,87 @@ const AddEditUserDialog = ({
     if (type === 'pattern') emailErrorText = 'Email format is invalid';
   }
 
+  const projectSelectSection = useMemo(() => (
+    <FormControl fullWidth variant="outlined">
+      <InputLabel className="add-user__select" id="projects-select">Projects</InputLabel>
+      <Controller
+        name="projects"
+        control={control}
+        render={({
+          field,
+          field: {
+            value,
+          },
+        }) => (
+          <Select
+            id="projects-select"
+            multiple
+            label="Projects"
+            autoWidth
+            variant="outlined"
+            className="add-user__select"
+            renderValue={(values) => `${values.map((val) => projectOptions.find(({ ident }) => ident === val)?.name).join(', ')}`}
+            disabled={!projectOptions.length}
+            {...field}
+          >
+            {projectOptions.length && projectOptions.map((project) => (
+              <MenuItem
+                key={project.ident}
+                value={project.ident}
+                disabled={
+                  !adminAccess
+                  && !userDetails?.projects.some((proj) => proj.ident === project.ident)
+                  && editData?.projects.some((proj) => proj.ident === project.ident)
+                }
+              >
+                <Checkbox
+                  checked={Boolean(value?.find((v) => v === project.ident))}
+                />
+                <ListItemText>{project.name}</ListItemText>
+              </MenuItem>
+            ))}
+          </Select>
+        )}
+      />
+    </FormControl>
+  ), [adminAccess, control, editData?.projects, projectOptions, userDetails?.projects]);
+
+  const groupSelectionSection = useMemo(() => (
+    <FormControl fullWidth variant="outlined">
+      <InputLabel className="add-user__select" id="groups-select">Groups</InputLabel>
+      <Controller
+        name="groups"
+        control={control}
+        render={({
+          field,
+          field: {
+            value,
+          },
+        }) => (
+          <Select
+            id="groups-select"
+            multiple
+            label="groups"
+            autoWidth
+            variant="outlined"
+            className="add-user__select"
+            renderValue={(values) => `${values.map((val) => groupOptions.find(({ ident }) => ident === val)?.name).join(', ')}`}
+            disabled={!groupOptions.length}
+            {...field}
+          >
+            {groupOptions.length && groupOptions.map((group) => (
+              // @ts-ignore - MUI limitations on having value as an object
+              <MenuItem key={group.ident} value={group.ident}>
+                <Checkbox checked={Boolean(value?.find((v) => v === group.ident))} />
+                <ListItemText>{group.name}</ListItemText>
+              </MenuItem>
+            ))}
+          </Select>
+        )}
+      />
+    </FormControl>
+  ), [control, groupOptions]);
+
   return (
     <Dialog
       open={isOpen}
@@ -341,81 +431,10 @@ const AddEditUserDialog = ({
           label="Copy an existing user's projects and groups"
           addEditUserDialog
         />
-        {projectOptions.length && groupOptions.length ? (
+        {!isDataLoading ? (
           <>
-            <FormControl fullWidth variant="outlined">
-              <InputLabel className="add-user__select" id="projects-select">Projects</InputLabel>
-              <Controller
-                name="projects"
-                control={control}
-                render={({
-                  field,
-                  field: {
-                    value,
-                  },
-                }) => (
-                  <Select
-                    id="projects-select"
-                    multiple
-                    label="Projects"
-                    autoWidth
-                    variant="outlined"
-                    className="add-user__select"
-                    renderValue={(values) => `${values.map((val) => projectOptions.find(({ ident }) => ident === val)?.name).join(', ')}`}
-                    {...field}
-                  >
-                    {projectOptions.map((project) => (
-                      <MenuItem
-                        key={project.ident}
-                        value={project.ident}
-                        disabled={
-                          !adminAccess
-                          && !userDetails?.projects.some((proj) => proj.ident === project.ident)
-                          && editData?.projects.some((proj) => proj.ident === project.ident)
-                        }
-                      >
-                        <Checkbox
-                          checked={Boolean(value?.find((v) => v === project.ident))}
-                        />
-                        <ListItemText>{project.name}</ListItemText>
-                      </MenuItem>
-                    ))}
-                  </Select>
-                )}
-              />
-            </FormControl>
-            <FormControl fullWidth variant="outlined">
-              <InputLabel className="add-user__select" id="groups-select">Groups</InputLabel>
-              <Controller
-                name="groups"
-                control={control}
-                render={({
-                  field,
-                  field: {
-                    value,
-                  },
-                }) => (
-                  <Select
-                    id="groups-select"
-                    multiple
-                    label="groups"
-                    autoWidth
-                    variant="outlined"
-                    className="add-user__select"
-                    renderValue={(values) => `${values.map((val) => groupOptions.find(({ ident }) => ident === val)?.name).join(', ')}`}
-                    {...field}
-                  >
-                    {groupOptions.map((group) => (
-                      // @ts-ignore - MUI limitations on having value as an object
-                      <MenuItem key={group.ident} value={group.ident}>
-                        <Checkbox checked={Boolean(value?.find((v) => v === group.ident))} />
-                        <ListItemText>{group.name}</ListItemText>
-                      </MenuItem>
-                    ))}
-                  </Select>
-                )}
-              />
-            </FormControl>
+            {projectSelectSection}
+            {groupSelectionSection}
           </>
         ) : (
           <div className="add-user__loading">
