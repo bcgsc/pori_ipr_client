@@ -106,7 +106,7 @@ const AddEditUserDialog = ({
             api.get('/user/group').request(),
           ]);
           const nonAdminGroups = groupsResp.filter((group) => (group.name !== 'admin'));
-
+          const projectRestrictedGroups = nonAdminGroups.filter((group) => (group.name !== 'all projects access'));
           if (adminAccess) {
             setProjectOptions(projectsResp);
             setGroupOptions(groupsResp);
@@ -116,11 +116,19 @@ const AddEditUserDialog = ({
             const combinedUniqueProjects = [...new Map(combinedProjects.map((project) => [project.ident, project])).values()];
 
             setProjectOptions(allProjectsAccess ? projectsResp : combinedUniqueProjects);
-            setGroupOptions(nonAdminGroups);
+            if (allProjectsAccess) {
+              setGroupOptions(nonAdminGroups);
+            } else {
+              setGroupOptions(projectRestrictedGroups);
+            }
           } else {
             // New entry
             setProjectOptions(allProjectsAccess ? projectsResp : userDetails.projects);
-            setGroupOptions(nonAdminGroups);
+            if (allProjectsAccess) {
+              setGroupOptions(nonAdminGroups);
+            } else {
+              setGroupOptions(projectRestrictedGroups);
+            }
           }
         }
       } catch (projectGroupErr) {
@@ -160,7 +168,13 @@ const AddEditUserDialog = ({
   const handleCopyUserGroups = useCallback(async (user) => {
     const userResp = await api.get(`/user/${user.ident}`, {}).request();
     const copiedGroups = (({ groups }) => ({ groups }))(userResp);
-    copiedGroups.groups = copiedGroups.groups.filter((group: { name: string; }) => (group.name !== 'admin')); // Remove possible admin from copied groups
+
+    if (!adminAccess) {
+      copiedGroups.groups = copiedGroups.groups.filter((group: { name: string; }) => (group.name !== 'admin'));
+      if (!allProjectsAccess) {
+        copiedGroups.groups = copiedGroups.groups.filter((group: { name: string; }) => (group.name !== 'all projects access'));
+      }
+    }
     Object.entries(copiedGroups).forEach(([key, val]) => {
       let nextVal = val;
       if (Array.isArray(val)) {
@@ -168,7 +182,7 @@ const AddEditUserDialog = ({
       }
       setValue(key as keyof UserForm, nextVal as string | string[], { shouldDirty: true });
     });
-  }, [setValue]);
+  }, [setValue, adminAccess, allProjectsAccess]);
 
   const handleClose = useCallback(async (formData: UserForm) => {
     setIsApiCalling(true);
