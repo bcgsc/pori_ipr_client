@@ -12,16 +12,17 @@ import { GroupType } from '@/common';
 import columnDefs from './columnDefs';
 import AddEditGroupDialog from './components/AddEditGroupDialog';
 
+import useResource from '@/hooks/useResource';
 import './index.scss';
 
-const ALL_ACCESS = ['admin', 'manager', 'report assignment access', 'create report access', 'germline access', 'non-production access', 'unreviewed access', 'all projects access', 'template edit access', 'appendix edit access', 'variant-text edit access'];
-
+const ALL_ACCESS = ['admin', 'manager', 'create report access', 'report assignment access', 'germline access', 'non-production access', 'unreviewed access', 'all projects access', 'template edit access', 'appendix edit access', 'variant-text edit access'];
+console.dir(ALL_ACCESS);
 const Groups = (): JSX.Element => {
   const [groups, setGroups] = useState<GroupType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [editData, setEditData] = useState<GroupType | null>();
-
+  const { adminAccess, allProjectsAccess } = useResource();
   const snackbar = useSnackbar();
 
   useEffect(() => {
@@ -37,8 +38,17 @@ const Groups = (): JSX.Element => {
   }, []);
 
   const handleEditStart = (rowData) => {
-    setShowDialog(true);
-    setEditData(rowData);
+    console.dir(rowData);
+    if (rowData.name === 'admin' && !adminAccess) {
+      snackbar.enqueueSnackbar('You do not have permission to edit this group');
+    }
+    else if (rowData.name === 'all projects access' && !(adminAccess || allProjectsAccess)) {
+      snackbar.enqueueSnackbar('You do not have permission to edit this group');
+    }
+    else {
+      setShowDialog(true);
+      setEditData(rowData);
+    }
   };
 
   const handleEditClose = useCallback(async (newData) => {
