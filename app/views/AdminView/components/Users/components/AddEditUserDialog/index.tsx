@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import React, { useState, useEffect, useCallback } from 'react';
+import React, {
+  useState, useEffect, useCallback, useMemo,
+} from 'react';
 import {
   CircularProgress,
   Dialog,
@@ -60,15 +62,28 @@ const AddEditUserDialog = ({
     register, control, handleSubmit, formState: { errors: formErrors, dirtyFields }, setValue,
   } = useForm<UserForm>({
     mode: 'onTouched',
-    defaultValues: {
-      username: '',
-      firstName: '',
-      lastName: '',
-      email: '',
-      projects: null,
-      groups: null,
-      type: CONFIG.STORAGE.DATABASE_TYPE,
-    },
+    defaultValues: useMemo(() => {
+      if (editData) {
+        return ({
+          username: editData.username,
+          firstName: editData.firstName,
+          lastName: editData.lastName,
+          email: editData.email,
+          projects: editData.projects.map(({ ident }) => ident),
+          groups: editData.groups.map(({ ident }) => ident),
+          type: editData.type,
+        });
+      }
+      return ({
+        username: '',
+        firstName: '',
+        lastName: '',
+        email: '',
+        projects: [],
+        groups: [],
+        type: CONFIG.STORAGE.DATABASE_TYPE,
+      });
+    }, [editData]),
   });
 
   const [projectOptions, setProjectOptions] = useState<UserProjectsType[]>([]);
@@ -114,13 +129,6 @@ const AddEditUserDialog = ({
   useEffect(() => {
     if (editData) {
       setDialogTitle('Edit user');
-      Object.entries(editData).forEach(([key, val]) => {
-        let nextVal = val;
-        if (Array.isArray(val)) {
-          nextVal = val.map(({ ident }) => ident);
-        }
-        setValue(key as keyof UserForm, nextVal as string | string[]);
-      });
     } else {
       setDialogTitle('Add user');
     }
