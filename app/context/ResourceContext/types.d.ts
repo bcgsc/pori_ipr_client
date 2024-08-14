@@ -1,18 +1,19 @@
 type ResourceContextType = {
-  germlineAccess: boolean;
-  reportsAccess: boolean;
   adminAccess: boolean;
-  managerAccess: boolean;
-  templateEditAccess: boolean;
-  appendixEditAccess: boolean;
-  reportSettingAccess: boolean;
-  reportEditAccess: boolean;
-  reportAssignmentAccess: boolean;
-  unreviewedAccess: boolean;
-  nonproductionAccess: boolean;
   allStates: string[];
-  unreviewedStates: string[];
+  allProjectsAccess: boolean;
+  appendixEditAccess: boolean;
+  germlineAccess: boolean;
+  managerAccess: boolean;
+  nonproductionAccess: boolean;
   nonproductionStates: string[];
+  reportAssignmentAccess: boolean;
+  reportEditAccess: boolean;
+  reportSettingAccess: boolean;
+  reportsAccess: boolean;
+  templateEditAccess: boolean;
+  unreviewedAccess: boolean;
+  unreviewedStates: string[];
 };
 
 export default ResourceContextType;
