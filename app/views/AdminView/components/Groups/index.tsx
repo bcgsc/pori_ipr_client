@@ -16,7 +16,7 @@ import useResource from '@/hooks/useResource';
 import './index.scss';
 
 const ALL_ACCESS = ['admin', 'manager', 'create report access', 'report assignment access', 'germline access', 'non-production access', 'unreviewed access', 'all projects access', 'template edit access', 'appendix edit access', 'variant-text edit access'];
-console.dir(ALL_ACCESS);
+
 const Groups = (): JSX.Element => {
   const [groups, setGroups] = useState<GroupType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -51,9 +51,6 @@ const Groups = (): JSX.Element => {
   };
 
   const checkGroupEditPermissions = (rowData) => {
-    console.dir(rowData);
-    console.log(adminAccess);
-    console.log(allProjectsAccess);
     if (rowData.name === 'admin' && !adminAccess) {
       return false;
     } else if (rowData.name === 'all projects access' && !(adminAccess || allProjectsAccess)) {
