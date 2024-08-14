@@ -23,7 +23,7 @@ import './index.scss';
 
 type ActionCellRendererProps = {
   context?: {
-    canEdit?: boolean | ((row: Record<string, unknown>) => boolean); // boolean;
+    canEdit?: boolean | ((row: Record<string, unknown>) => boolean);
     canViewDetails?: boolean;
     canDelete?: boolean;
   };

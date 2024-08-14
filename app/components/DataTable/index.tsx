@@ -133,7 +133,7 @@ type DataTableProps = {
   /* String to filter rows by */
   filterText?: string;
   /* Can rows be edited? */
-  canEdit?: boolean | ((row: Record<string, unknown>) => boolean); //boolean;
+  canEdit?: boolean | ((row: Record<string, unknown>) => boolean);
   /* Callback function when edit is started */
   onEdit?: (row: Record<string, unknown>) => void;
   /* Can rows be deleted? */
