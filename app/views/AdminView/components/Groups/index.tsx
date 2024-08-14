@@ -38,7 +38,6 @@ const Groups = (): JSX.Element => {
   }, []);
 
   const handleEditStart = (rowData) => {
-    console.dir(rowData);
     if (rowData.name === 'admin' && !adminAccess) {
       snackbar.enqueueSnackbar('You do not have permission to edit this group');
     }
@@ -49,6 +48,18 @@ const Groups = (): JSX.Element => {
       setShowDialog(true);
       setEditData(rowData);
     }
+  };
+
+  const checkGroupEditPermissions = (rowData) => {
+    console.dir(rowData);
+    console.log(adminAccess);
+    console.log(allProjectsAccess);
+    if (rowData.name === 'admin' && !adminAccess) {
+      return false;
+    } else if (rowData.name === 'all projects access' && !(adminAccess || allProjectsAccess)) {
+      return false;
+    }
+    return true;
   };
 
   const handleEditClose = useCallback(async (newData) => {
@@ -76,7 +87,7 @@ const Groups = (): JSX.Element => {
             rowData={groups}
             columnDefs={columnDefs}
             isPaginated
-            canEdit
+            canEdit={checkGroupEditPermissions}
             onEdit={handleEditStart}
             titleText="Groups"
           />

@@ -23,7 +23,7 @@ import './index.scss';
 
 type ActionCellRendererProps = {
   context?: {
-    canEdit?: boolean;
+    canEdit?: boolean | ((row: Record<string, unknown>) => boolean); // boolean;
     canViewDetails?: boolean;
     canDelete?: boolean;
   };
@@ -35,7 +35,7 @@ type ActionCellRendererProps = {
 const WrapperComponent = ({
   displayMode = 'tableCell',
   children,
-  onClick = () => {},
+  onClick = () => { },
   ...rest
 }: {
   displayMode: ActionCellRendererProps['displayMode'];
@@ -213,7 +213,7 @@ const ActionCellRenderer = ({
           ) : 'Delete Row'}
         </WrapperComponent>
       )}
-      {canEdit && (
+      {((typeof canEdit === 'boolean' && canEdit) || (typeof canEdit === 'function' && canEdit(data))) && (
         <WrapperComponent data-testid="edit" onClick={handleEdit} displayMode={displayMode}>
           {displayMode === 'tableCell' ? (
             <IconButton

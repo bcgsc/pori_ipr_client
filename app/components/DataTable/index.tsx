@@ -133,7 +133,7 @@ type DataTableProps = {
   /* String to filter rows by */
   filterText?: string;
   /* Can rows be edited? */
-  canEdit?: boolean;
+  canEdit?: boolean | ((row: Record<string, unknown>) => boolean); //boolean;
   /* Callback function when edit is started */
   onEdit?: (row: Record<string, unknown>) => void;
   /* Can rows be deleted? */
@@ -239,7 +239,7 @@ const DataTable = ({
       nextColDefs = cloneDeep(colDefs);
       nextColDefs.forEach((cd) => {
         if (collapseColumnFields.includes(cd.field)) {
-        // If collapse rows are to be had, no filter or sort will be allowed
+          // If collapse rows are to be had, no filter or sort will be allowed
           // eslint-disable-next-line no-param-reassign
           cd.sort = 'asc';
           // eslint-disable-next-line no-param-reassign
@@ -413,7 +413,7 @@ const DataTable = ({
   }, [colApi, syncVisibleColumns]);
 
   const RowActionCellRenderer = useCallback((row) => (
-    <ActionCellRenderer
+    < ActionCellRenderer
       onEdit={() => onEdit(row.node.data)}
       onDelete={() => onDelete(row.node.data)}
       {...row}
@@ -499,47 +499,47 @@ const DataTable = ({
 
   return (
     <div className="data-table--padded" style={{ height: isFullLength ? '100%' : '' }}>
-      {Boolean(rowData.length) || canEdit ? (
+      {Boolean(rowData.length) || (typeof canEdit === 'boolean' && canEdit) || typeof canEdit === 'function' ? (
         <>
           <div className="data-table__header-container">
             {titleText && (<Typography variant="h3" className="data-table__header">{titleText}</Typography>)}
             <div>
               {(canAdd || canToggleColumns || canExport || canReorder) && (
-              <span className="data-table__action">
-                <IconButton
-                  onClick={(event) => setMenuAnchor(event.currentTarget)}
-                  className="data-table__icon-button"
-                  size="large"
-                >
-                  <MoreHorizIcon />
-                </IconButton>
-                <Menu
-                  anchorEl={menuAnchor}
-                  open={Boolean(menuAnchor)}
-                  onClose={() => setMenuAnchor(null)}
-                >
-                  {canAdd && (
-                  <MenuItem onClick={() => handleMenuItemClick('add')}>
-                    {addText || 'Add row'}
-                  </MenuItem>
-                  )}
-                  {canToggleColumns && (
-                  <MenuItem onClick={() => handleMenuItemClick('toggle')}>
-                    Toggle Columns
-                  </MenuItem>
-                  )}
-                  {canExport && (
-                  <MenuItem onClick={() => handleMenuItemClick('export')}>
-                    Export to TSV
-                  </MenuItem>
-                  )}
-                  {canReorder && (
-                  <MenuItem onClick={() => handleMenuItemClick('reorder')}>
-                    Reorder Rows
-                  </MenuItem>
-                  )}
-                </Menu>
-              </span>
+                <span className="data-table__action">
+                  <IconButton
+                    onClick={(event) => setMenuAnchor(event.currentTarget)}
+                    className="data-table__icon-button"
+                    size="large"
+                  >
+                    <MoreHorizIcon />
+                  </IconButton>
+                  <Menu
+                    anchorEl={menuAnchor}
+                    open={Boolean(menuAnchor)}
+                    onClose={() => setMenuAnchor(null)}
+                  >
+                    {canAdd && (
+                      <MenuItem onClick={() => handleMenuItemClick('add')}>
+                        {addText || 'Add row'}
+                      </MenuItem>
+                    )}
+                    {canToggleColumns && (
+                      <MenuItem onClick={() => handleMenuItemClick('toggle')}>
+                        Toggle Columns
+                      </MenuItem>
+                    )}
+                    {canExport && (
+                      <MenuItem onClick={() => handleMenuItemClick('export')}>
+                        Export to TSV
+                      </MenuItem>
+                    )}
+                    {canReorder && (
+                      <MenuItem onClick={() => handleMenuItemClick('reorder')}>
+                        Reorder Rows
+                      </MenuItem>
+                    )}
+                  </Menu>
+                </span>
               )}
             </div>
           </div>
