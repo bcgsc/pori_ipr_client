@@ -56,7 +56,6 @@ type GroupType = {
   ident: string;
   name: string;
   users: UserGroupMemberType[];
-  owner: UserType;
   description: string;
 };
 
