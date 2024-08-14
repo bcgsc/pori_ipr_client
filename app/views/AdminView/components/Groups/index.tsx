@@ -38,16 +38,8 @@ const Groups = (): JSX.Element => {
   }, []);
 
   const handleEditStart = (rowData) => {
-    if (rowData.name === 'admin' && !adminAccess) {
-      snackbar.enqueueSnackbar('You do not have permission to edit this group');
-    }
-    else if (rowData.name === 'all projects access' && !(adminAccess || allProjectsAccess)) {
-      snackbar.enqueueSnackbar('You do not have permission to edit this group');
-    }
-    else {
-      setShowDialog(true);
-      setEditData(rowData);
-    }
+    setShowDialog(true);
+    setEditData(rowData);
   };
 
   const checkGroupEditPermissions = (rowData) => {
