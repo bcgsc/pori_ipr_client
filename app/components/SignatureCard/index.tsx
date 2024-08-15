@@ -45,19 +45,25 @@ const SignatureCard = ({
   const { userDetails } = useSecurity();
 
   const [userSignature, setUserSignature] = useState<UserType>();
-  const [role, setRole] = useState('');
+  const [role, setRole] = useState<string>();
 
   useEffect(() => {
+    if (type) { // need to do these separately because signatures may be null
+      if (type === 'author') {
+        setRole('author');
+      } else if (type === 'reviewer') {
+        setRole('reviewer');
+      } else if (type === 'creator') {
+        setRole('creator');
+      }
+    }
     if (signatures && type) {
       if (type === 'author') {
         setUserSignature(signatures.authorSignature);
-        setRole('author');
       } else if (type === 'reviewer') {
         setUserSignature(signatures.reviewerSignature);
-        setRole('reviewer');
       } else if (type === 'creator') {
         setUserSignature(signatures.creatorSignature);
-        setRole('bioinformatician');
       }
     }
   }, [signatures, type, setRole]);
@@ -65,12 +71,18 @@ const SignatureCard = ({
   const handleSign = useCallback(async () => {
     let newReport = null;
 
+    let reportRole = role;
     // Assign user
     try {
+      if (role === 'creator') {
+        reportRole = 'bioinformatician';
+      } else if (role === 'author') {
+        // Hardcode analyst role here because report does not accept 'author'
+        reportRole = 'analyst';
+      }
       newReport = await api.post(
         `/reports/${report.ident}/user`,
-        // Hardcode analyst role here because report does not accept 'author'
-        { user: userDetails.ident, role: 'analyst' },
+        { user: userDetails.ident, role: reportRole },
         {},
       ).request();
     } catch (e) {
@@ -79,7 +91,6 @@ const SignatureCard = ({
         snackbar.error('Error assigning user to report: ', e.message);
       }
     }
-
     // Do signature
     try {
       const newSignature = await api.put(
