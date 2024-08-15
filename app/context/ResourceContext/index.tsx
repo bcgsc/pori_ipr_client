@@ -42,6 +42,7 @@ const useResources = (): ResourceContextType => {
    */
   const [reportAssignmentAccess, setReportAssignmentAccess] = useState(false);
   const [adminAccess, setAdminAccess] = useState(false);
+  const [allProjectsAccess, setAllProjectsAccess] = useState(false);
   const [managerAccess, setManagerAccess] = useState(false);
   /**
    * Is the user allowed to see the settings page
@@ -65,6 +66,10 @@ const useResources = (): ResourceContextType => {
 
       if (checkAccess(groups, ADMIN_ACCESS, ADMIN_BLOCK)) {
         setAdminAccess(true);
+      }
+
+      if (checkAccess(groups, [...ADMIN_ACCESS, 'all projects access'], ADMIN_BLOCK)) {
+        setAllProjectsAccess(true);
       }
 
       if (checkAccess(groups, [...ADMIN_ACCESS, 'manager'], ADMIN_BLOCK)) {
@@ -99,38 +104,40 @@ const useResources = (): ResourceContextType => {
   }, [groups]);
 
   return {
-    germlineAccess,
-    reportsAccess,
     adminAccess,
-    managerAccess,
-    reportSettingAccess,
-    reportEditAccess,
-    reportAssignmentAccess,
-    unreviewedAccess,
-    nonproductionAccess,
-    templateEditAccess,
-    appendixEditAccess,
+    allProjectsAccess,
     allStates: ALL_STATES,
-    unreviewedStates: UNREVIEWED_STATES,
+    appendixEditAccess,
+    germlineAccess,
+    managerAccess,
+    nonproductionAccess,
     nonproductionStates: NONPRODUCTION_STATES,
+    reportAssignmentAccess,
+    reportEditAccess,
+    reportSettingAccess,
+    reportsAccess,
+    templateEditAccess,
+    unreviewedAccess,
+    unreviewedStates: UNREVIEWED_STATES,
   };
 };
 
 const ResourceContext = createContext<ResourceContextType>({
-  germlineAccess: false,
-  reportsAccess: false,
   adminAccess: false,
-  managerAccess: false,
-  reportSettingAccess: false,
-  reportEditAccess: false,
-  reportAssignmentAccess: false,
-  unreviewedAccess: false,
-  nonproductionAccess: false,
-  templateEditAccess: false,
-  appendixEditAccess: false,
+  allProjectsAccess: false,
   allStates: ALL_STATES,
-  unreviewedStates: UNREVIEWED_STATES,
+  appendixEditAccess: false,
+  germlineAccess: false,
+  managerAccess: false,
+  nonproductionAccess: false,
   nonproductionStates: NONPRODUCTION_STATES,
+  reportAssignmentAccess: false,
+  reportEditAccess: false,
+  reportSettingAccess: false,
+  reportsAccess: false,
+  templateEditAccess: false,
+  unreviewedAccess: false,
+  unreviewedStates: UNREVIEWED_STATES,
 });
 
 type ResourceContextProviderProps = {
@@ -139,44 +146,55 @@ type ResourceContextProviderProps = {
 
 const ResourceContextProvider = ({ children }: ResourceContextProviderProps): JSX.Element => {
   const {
-    germlineAccess, reportsAccess, adminAccess, managerAccess, reportSettingAccess, reportEditAccess, reportAssignmentAccess, unreviewedAccess, nonproductionAccess,
-    templateEditAccess,
-    appendixEditAccess,
+    adminAccess,
+    allProjectsAccess,
     allStates,
-    unreviewedStates,
+    appendixEditAccess,
+    germlineAccess,
+    managerAccess,
+    nonproductionAccess,
     nonproductionStates,
+    reportAssignmentAccess,
+    reportEditAccess,
+    reportSettingAccess,
+    reportsAccess,
+    templateEditAccess,
+    unreviewedAccess,
+    unreviewedStates,
   } = useResources();
 
   const providerValue = useMemo(() => ({
-    germlineAccess,
-    reportsAccess,
     adminAccess,
-    managerAccess,
-    reportSettingAccess,
-    reportEditAccess,
-    reportAssignmentAccess,
-    unreviewedAccess,
-    nonproductionAccess,
-    templateEditAccess,
-    appendixEditAccess,
+    allProjectsAccess,
     allStates,
-    unreviewedStates,
+    appendixEditAccess,
+    germlineAccess,
+    managerAccess,
+    nonproductionAccess,
     nonproductionStates,
+    reportAssignmentAccess,
+    reportEditAccess,
+    reportSettingAccess,
+    reportsAccess,
+    templateEditAccess,
+    unreviewedAccess,
+    unreviewedStates,
   }), [
-    germlineAccess,
-    reportsAccess,
     adminAccess,
-    managerAccess,
-    reportSettingAccess,
-    reportEditAccess,
-    reportAssignmentAccess,
-    unreviewedAccess,
-    nonproductionAccess,
-    templateEditAccess,
-    appendixEditAccess,
+    allProjectsAccess,
     allStates,
-    unreviewedStates,
+    appendixEditAccess,
+    germlineAccess,
+    managerAccess,
+    nonproductionAccess,
     nonproductionStates,
+    reportAssignmentAccess,
+    reportEditAccess,
+    reportSettingAccess,
+    reportsAccess,
+    templateEditAccess,
+    unreviewedAccess,
+    unreviewedStates,
   ]);
 
   return (
