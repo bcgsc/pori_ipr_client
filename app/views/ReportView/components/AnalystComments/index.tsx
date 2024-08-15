@@ -128,7 +128,6 @@ const AnalystComments = ({
   }, [report, isSigned, showConfirmDialog]);
 
   const signatureSection = useMemo(() => {
-    if (!comments) return null;
     let order: SignatureUserType[] = ['author', 'reviewer', 'creator'];
     if (isPrint) {
       order = ['creator', 'author', 'reviewer'];
@@ -190,14 +189,12 @@ const AnalystComments = ({
           ) : (
             <Typography align="center" variant="h5">No comments yet</Typography>
           )}
-          {comments && (
-            <div className="analyst-comments__signatures">
-              {!isPrint && (
-                <Typography variant="h5">Signed By</Typography>
-              )}
-              {signatureSection}
-            </div>
-          )}
+          <div className="analyst-comments__signatures">
+            {!isPrint && (
+              <Typography variant="h5">Signed By</Typography>
+            )}
+            {signatureSection}
+          </div>
         </>
       )}
     </div>
