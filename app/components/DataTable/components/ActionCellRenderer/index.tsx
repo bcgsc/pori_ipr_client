@@ -22,6 +22,8 @@ import ImageViewer from '../ImageViewer';
 import './index.scss';
 
 type ActionCellRendererProps = {
+  // Finer Permission control on if row can be Edited, takes precedence over table canEdit via context of AgGridReact
+  canEditRowData?: boolean;
   context?: {
     canEdit?: boolean;
     canViewDetails?: boolean;
@@ -68,8 +70,10 @@ const WrapperComponent = ({
 
 const ActionCellRenderer = ({
   data,
+  // Row-specific edit permissions
+  canEditRowData,
   context: {
-    canEdit,
+    canEdit: canEditTable,
     canViewDetails,
     canDelete,
   } = {},
@@ -82,6 +86,13 @@ const ActionCellRenderer = ({
   const [showSvgViewer, setShowSvgViewer] = useState(false);
   const [showImageViewer, setShowImageViewer] = useState(false);
   const [columnMapping, setColumnMapping] = useState({});
+
+  const canEdit = useMemo(() => {
+    if (canEditRowData === undefined) {
+      return canEditTable;
+    }
+    return canEditRowData;
+  }, [canEditRowData, canEditTable]);
 
   useEffect(() => {
     if (showDetailDialog) {
