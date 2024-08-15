@@ -22,7 +22,7 @@ const Groups = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [editData, setEditData] = useState<GroupType | null>();
-  const { adminAccess, allProjectsAccess } = useResource();
+  const { adminAccess, allProjectsAccess, checkGroupEditPermissions} = useResource();
   const snackbar = useSnackbar();
 
   useEffect(() => {
@@ -41,14 +41,8 @@ const Groups = (): JSX.Element => {
     setShowDialog(true);
     setEditData(rowData);
   };
-
-  const checkGroupEditPermissions = (rowData) => {
-    if (rowData.name === 'admin' && !adminAccess) {
-      return false;
-    } else if (rowData.name === 'all projects access' && !(adminAccess || allProjectsAccess)) {
-      return false;
-    }
-    return true;
+  const checkResourceGroupEditPermissions = (rowData) => {
+    return checkGroupEditPermissions(rowData.name);
   };
 
   const handleEditClose = useCallback(async (newData) => {
@@ -76,7 +70,7 @@ const Groups = (): JSX.Element => {
             rowData={groups}
             columnDefs={columnDefs}
             isPaginated
-            canEdit={checkGroupEditPermissions}
+            canEdit={checkResourceGroupEditPermissions}
             onEdit={handleEditStart}
             titleText="Groups"
           />

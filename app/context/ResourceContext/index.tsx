@@ -53,6 +53,15 @@ const useResources = (): ResourceContextType => {
   const [templateEditAccess, setTemplateEditAccess] = useState(false);
   const [appendixEditAccess, setAppendixEditAccess] = useState(false);
 
+  const checkGroupEditPermissions = (groupName) => {
+    if (groupName === 'admin' && !adminAccess) {
+      return false;
+    } else if (groupName === 'all projects access' && !(adminAccess || allProjectsAccess)) {
+      return false;
+    }
+    return true;
+  };
+
   // Check user group first to see which resources they can access
   useEffect(() => {
     if (groups) {
@@ -119,6 +128,7 @@ const useResources = (): ResourceContextType => {
     templateEditAccess,
     unreviewedAccess,
     unreviewedStates: UNREVIEWED_STATES,
+    checkGroupEditPermissions,
   };
 };
 
@@ -138,6 +148,7 @@ const ResourceContext = createContext<ResourceContextType>({
   templateEditAccess: false,
   unreviewedAccess: false,
   unreviewedStates: UNREVIEWED_STATES,
+  checkGroupEditPermissions: () => false,
 });
 
 type ResourceContextProviderProps = {
@@ -161,6 +172,7 @@ const ResourceContextProvider = ({ children }: ResourceContextProviderProps): JS
     templateEditAccess,
     unreviewedAccess,
     unreviewedStates,
+    checkGroupEditPermissions,
   } = useResources();
 
   const providerValue = useMemo(() => ({
@@ -179,6 +191,7 @@ const ResourceContextProvider = ({ children }: ResourceContextProviderProps): JS
     templateEditAccess,
     unreviewedAccess,
     unreviewedStates,
+    checkGroupEditPermissions,
   }), [
     adminAccess,
     allProjectsAccess,
@@ -195,6 +208,7 @@ const ResourceContextProvider = ({ children }: ResourceContextProviderProps): JS
     templateEditAccess,
     unreviewedAccess,
     unreviewedStates,
+    checkGroupEditPermissions,
   ]);
 
   return (

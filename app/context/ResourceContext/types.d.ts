@@ -14,6 +14,7 @@ type ResourceContextType = {
   templateEditAccess: boolean;
   unreviewedAccess: boolean;
   unreviewedStates: string[];
+  checkGroupEditPermissions(groupName: string): boolean;
 };
 
 export default ResourceContextType;
