@@ -450,12 +450,12 @@ const AddEditUserDialog = ({
       </DialogContent>
       <DialogActions className="add-user__actions">
         <FormControlLabel
-          className='add-user__actions__checkbox'
+          className="add-user__checkbox"
           label="Also create user on GraphKB"
           control={
             <Checkbox checked={gkbAdd} onChange={handleCheckboxChange} />
           }
-          disabled={!!editData}
+          disabled={Boolean(editData)}
         />
         <AsyncButton isLoading={isApiCalling} color="inherit" onClick={() => onClose(null)}>
           Cancel

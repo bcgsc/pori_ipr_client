@@ -17,10 +17,12 @@
   }
 
   &__actions {
-    &__checkbox {
-      position: absolute;
-      left: 0;
-      margin: 16px;
-    }
+    padding: 8px;
+  }
+
+  &__checkbox {
+    position: absolute;
+    left: 0;
+    margin: 8px;
   }
 }
