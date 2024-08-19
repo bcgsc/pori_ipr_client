@@ -1,5 +1,6 @@
 import React, {
   useState, useEffect, useCallback,
+  useMemo,
 } from 'react';
 import {
   CircularProgress,
@@ -9,10 +10,25 @@ import { useSnackbar } from 'notistack';
 import api from '@/services/api';
 import DataTable from '@/components/DataTable';
 import { GroupType } from '@/common';
-import columnDefs from './columnDefs';
+import { basicTooltipValueGetter } from '@/components/DataTable/components/ToolTip';
+import useResource from '@/hooks/useResource';
 import AddEditGroupDialog from './components/AddEditGroupDialog';
 
 import './index.scss';
+
+const descriptions = {
+  admin: 'all access',
+  'all projects access': 'access to all projects',
+  'template edit access': 'can create/edit/delete report templates',
+  'appendix edit access': 'can create/edit/delete template appendix text',
+  'unreviewed access': 'can view reports that have not been reviewed',
+  'non-production access': 'can view reports that have non-production status',
+  'germline access': 'can view germline reports',
+  'report assignment access': 'can assign users to reports; bioinformatician',
+  'create report access': 'can load new reports',
+  'variant-text edit access': 'can create/edit/delete specific variant-text',
+  manager: 'can create/edit/delete nonadmin users; all other permissions within assigned projects',
+};
 
 const ALL_ACCESS = ['admin', 'manager', 'report assignment access', 'create report access', 'germline access', 'non-production access', 'unreviewed access', 'all projects access', 'template edit access', 'appendix edit access', 'variant-text edit access'];
 
@@ -21,6 +37,7 @@ const Groups = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [editData, setEditData] = useState<GroupType | null>();
+  const { adminAccess, allProjectsAccess } = useResource();
 
   const snackbar = useSnackbar();
 
@@ -35,6 +52,51 @@ const Groups = (): JSX.Element => {
 
     getData();
   }, []);
+
+  const groupColumnDefs = useMemo(() => ([
+    {
+      headerName: 'Group Name',
+      valueGetter: ({ data }) => data.name.toLowerCase(),
+      hide: false,
+    },
+    {
+      headerName: 'Description',
+      valueGetter: ({ data }) => {
+        if (data.description) {
+          return data.description;
+        }
+        if (descriptions[data.name.toLowerCase()]) {
+          return descriptions[data.name.toLowerCase()];
+        }
+        return '';
+      },
+      tooltipComponent: 'ToolTip',
+      tooltipValueGetter: basicTooltipValueGetter,
+      hide: false,
+      flex: 1,
+      autoHeight: true,
+      wrapText: true,
+    },
+    {
+      headerName: 'Actions',
+      cellRenderer: 'ActionCellRenderer',
+      cellRendererParams: ({ data: { name } }) => {
+        let nextCanEdit = true;
+        if (name === 'admin' && !adminAccess) {
+          nextCanEdit = false;
+        }
+        if (name === 'all projects access' && !(adminAccess || allProjectsAccess)) {
+          nextCanEdit = false;
+        }
+        return ({
+          canEditRowData: nextCanEdit,
+        });
+      },
+      pinned: 'right',
+      sortable: false,
+      suppressMenu: true,
+    },
+  ]), [adminAccess, allProjectsAccess]);
 
   const handleEditStart = (rowData) => {
     setShowDialog(true);
@@ -64,7 +126,7 @@ const Groups = (): JSX.Element => {
         <>
           <DataTable
             rowData={groups}
-            columnDefs={columnDefs}
+            columnDefs={groupColumnDefs}
             isPaginated
             canEdit
             onEdit={handleEditStart}
