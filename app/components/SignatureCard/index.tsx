@@ -149,7 +149,11 @@ const SignatureCard = ({
     return null;
   }, [signatures, type, isPrint]);
 
-  if (isPrint) {
+  if (isPrint && !userSignature) {
+    return null
+  }
+
+  if (isPrint && userSignature) {
     return (
       <span className="signatures-print__group">
         <div className="signatures-print__value">
