@@ -78,7 +78,7 @@ const AnalystComments = ({
   const handleSign = useCallback(async (signed: boolean, updatedSignature: SignatureType) => {
     setIsSigned(signed);
     setSignatures(updatedSignature);
-  }, [report, setIsSigned]);
+  }, [setIsSigned]);
 
   const handleEditorStart = () => {
     setIsEditorOpen(true);
@@ -148,7 +148,7 @@ const AnalystComments = ({
         />
       );
     });
-  }, [isPrint, handleSign, comments, signatures]);
+  }, [isPrint, handleSign, signatures]);
 
   return (
     <div className={isPrint ? 'analyst-comments--print' : 'analyst-comments'}>
