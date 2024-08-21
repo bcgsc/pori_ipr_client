@@ -78,7 +78,7 @@ const AnalystComments = ({
   const handleSign = useCallback(async (signed: boolean, updatedSignature: SignatureType) => {
     setIsSigned(signed);
     setSignatures(updatedSignature);
-  }, [report, setIsSigned]);
+  }, [setIsSigned]);
 
   const handleEditorStart = () => {
     setIsEditorOpen(true);
@@ -128,7 +128,6 @@ const AnalystComments = ({
   }, [report, isSigned, showConfirmDialog]);
 
   const signatureSection = useMemo(() => {
-    if (!comments) return null;
     let order: SignatureUserType[] = ['author', 'reviewer', 'creator'];
     if (isPrint) {
       order = ['creator', 'author', 'reviewer'];
@@ -149,7 +148,7 @@ const AnalystComments = ({
         />
       );
     });
-  }, [isPrint, handleSign, comments, signatures]);
+  }, [isPrint, handleSign, signatures]);
 
   return (
     <div className={isPrint ? 'analyst-comments--print' : 'analyst-comments'}>
@@ -190,14 +189,12 @@ const AnalystComments = ({
           ) : (
             <Typography align="center" variant="h5">No comments yet</Typography>
           )}
-          {comments && (
-            <div className="analyst-comments__signatures">
-              {!isPrint && (
-                <Typography variant="h5">Signed By</Typography>
-              )}
-              {signatureSection}
-            </div>
-          )}
+          <div className="analyst-comments__signatures">
+            {!isPrint && (
+              <Typography variant="h5">Signed By</Typography>
+            )}
+            {signatureSection}
+          </div>
         </>
       )}
     </div>
