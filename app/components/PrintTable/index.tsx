@@ -38,6 +38,11 @@ function PrintTable({
   outerRowOrderByInternalCol = null,
   innerRowOrderByInternalCol = null,
 }: PrintTableProps): JSX.Element {
+  const originalRowOrder = data.reduce((accumulator, row, index) => {
+    const rowKey = JSON.stringify(row);
+    accumulator[rowKey] = index;
+    return accumulator;
+  }, {});
   const sortedColDefs = useMemo(() => columnDefs
     .filter((col) => (col.headerName && col.hide !== true && col.headerName !== 'Actions'))
     .sort((columnA, columnB): number => {
@@ -129,8 +134,9 @@ function PrintTable({
                 return aRow[col] > bRow[col] ? 1 : -1;
               }
             }
+          } else {
+            return originalRowOrder[JSON.stringify(aRow)] > originalRowOrder[JSON.stringify(bRow)] ? 1 : -1;
           }
-          return 0;
         }
         // ordering outer rows (rows with different aKey/bKey)
         if (outerRowOrderByInternalCol) {
@@ -143,8 +149,9 @@ function PrintTable({
             }
           }
           return aKey > bKey ? 1 : -1;
+        } else {
+            return originalRowOrder[JSON.stringify(aRow)] > originalRowOrder[JSON.stringify(bRow)] ? 1 : -1;
         }
-        return 0;
       }) : data).forEach((dataRow, rowIdx) => {
         const rowData = [];
         currRowKey = '';
