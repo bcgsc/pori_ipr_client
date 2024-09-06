@@ -15,4 +15,14 @@
     display: flex;
     justify-content: center;
   }
+
+  &__actions {
+    padding: 8px;
+  }
+
+  &__checkbox {
+    position: absolute;
+    left: 0;
+    margin: 8px;
+  }
 }
