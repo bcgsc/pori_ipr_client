@@ -127,6 +127,7 @@ const AddEditUserDialog = ({
         }
       } catch (projectGroupErr) {
         snackbar.error('Failed to retrieve list of project and groups for current user.');
+        // eslint-disable-next-line no-console
         console.error(projectGroupErr);
       } finally {
         setIsDataLoading(false);
@@ -456,6 +457,7 @@ const AddEditUserDialog = ({
             <Checkbox checked={gkbAdd} onChange={handleCheckboxChange} />
           }
           disabled={Boolean(editData)}
+          sx={{ paddingLeft: '6px' }}
         />
         <AsyncButton isLoading={isApiCalling} color="inherit" onClick={() => onClose(null)}>
           Cancel
