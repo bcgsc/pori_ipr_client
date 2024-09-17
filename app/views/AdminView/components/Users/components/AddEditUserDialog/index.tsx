@@ -457,7 +457,6 @@ const AddEditUserDialog = ({
             <Checkbox checked={gkbAdd} onChange={handleCheckboxChange} />
           }
           disabled={Boolean(editData)}
-          sx={{ paddingLeft: '6px' }}
         />
         <AsyncButton isLoading={isApiCalling} color="inherit" onClick={() => onClose(null)}>
           Cancel
