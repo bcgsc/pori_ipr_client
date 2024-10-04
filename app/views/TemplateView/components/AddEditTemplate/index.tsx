@@ -20,10 +20,11 @@ import {
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { useSnackbar } from 'notistack';
 
-import { ImageType, RecordDefaults } from '@/common';
-import api from '@/services/api';
+import { ImageType, RecordDefaults, SignatureType } from '@/common';
+import api, { ApiCallSet } from '@/services/api';
 import getImageDataURI from '@/utils/getImageDataURI';
 import sections from '../../sections';
+import signatureTypes from '../../signatureTypes';
 
 import './index.scss';
 
@@ -33,6 +34,7 @@ type AddEditTemplateProps = {
   editData: {
     name: string;
     sections: string[];
+    signatureTypes: SignatureType[] | null;
     headerImage: ImageType | null;
     updatedAt: string | null;
   } & RecordDefaults;
@@ -46,6 +48,7 @@ const AddEditTemplate = ({
   const [dialogTitle, setDialogTitle] = useState('');
   const [templateName, setTemplateName] = useState('');
   const [selectedSections, setSelectedSections] = useState([]);
+  const [selectedSignatureTypes, setSelectedSignatureTypes] = useState([]);
   const [headerImage, setHeaderImage] = useState<Blob>();
   const [imagePreview, setImagePreview] = useState('');
   const [imageError, setImageError] = useState('');
@@ -57,6 +60,9 @@ const AddEditTemplate = ({
       setDialogTitle('Edit Template');
       setTemplateName(editData.name);
       setSelectedSections(sections.filter((section) => editData.sections.includes(section.value)));
+      if (editData.signatureTypes && editData.signatureTypes.length > 0) {
+        setSelectedSignatureTypes(signatureTypes.filter((signatureType) => editData.signatureTypes.map((val) => val.signatureType).includes(signatureType.value)));
+      }
       if (editData.headerImage) {
         setImagePreview(getImageDataURI(editData.headerImage));
       }
@@ -64,6 +70,7 @@ const AddEditTemplate = ({
       setDialogTitle('Create a Template');
       setTemplateName('');
       setSelectedSections([]);
+      setSelectedSignatureTypes([]);
       setImagePreview('');
     }
   }, [editData]);
@@ -105,10 +112,20 @@ const AddEditTemplate = ({
         }
 
         let resp;
+        let apiCalls = [];
         if (editData) {
           resp = await api.put(`/templates/${editData.ident}`, newTemplate, {}, true).request();
         } else {
           resp = await api.post('/templates', newTemplate, {}, true).request();
+        }
+        if (selectedSignatureTypes && selectedSignatureTypes.length > 0) {
+          selectedSignatureTypes.forEach((signatureType) => {
+            const newSignatureType = new FormData();
+            newSignatureType.append('signatureType', signatureType.value);
+            apiCalls.push(api.post(`/templates/${resp.ident}/signature-types`, newSignatureType, {}, true));
+          });
+          const callSet = new ApiCallSet(apiCalls);
+          resp.signatureTypes = await callSet.request();
         }
         snackbar.enqueueSnackbar(`Template ${editData ? 'updated' : 'created'} successfully`);
         onClose(resp);
@@ -133,10 +150,20 @@ const AddEditTemplate = ({
         }
 
         let resp;
+        let apiCalls = [];
         if (editData) {
           resp = await api.put(`/templates/${editData.ident}`, newData, {}, false).request();
         } else {
           resp = await api.post('/templates', newData, {}, false).request();
+        }
+        if (selectedSignatureTypes && selectedSignatureTypes.length > 0) {
+          selectedSignatureTypes.forEach((signatureType) => {
+            const newSignatureType = new FormData();
+            newSignatureType.append('signatureType', signatureType.value);
+            apiCalls.push(api.post(`/templates/${resp.ident}/signature-types`, newSignatureType, {}, true));
+          });
+          const callSet = new ApiCallSet(apiCalls);
+          resp.signatureTypes = await callSet.request();
         }
         snackbar.enqueueSnackbar(`Template ${editData ? 'updated' : 'created'} successfully`);
         onClose(resp);
@@ -144,7 +171,7 @@ const AddEditTemplate = ({
         snackbar.enqueueSnackbar(`Error ${editData ? 'updating' : 'creating'} template: ${err}`);
       }
     }
-  }, [editData, headerImage, onClose, selectedSections, snackbar, templateName]);
+  }, [editData, headerImage, onClose, selectedSections, selectedSignatureTypes, snackbar, templateName]);
 
   return (
     <Dialog open={isOpen} onClose={() => onClose(null)}>
@@ -177,6 +204,26 @@ const AddEditTemplate = ({
               <MenuItem key={section.name} value={section}>
                 <Checkbox checked={selectedSections.includes(section)} />
                 <ListItemText>{section.name}</ListItemText>
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl required fullWidth variant="outlined">
+          <InputLabel className="template__signature" id="select-signature-type">Signature Type</InputLabel>
+          <Select
+            autoWidth
+            className="template__signature"
+            label="Signature Type"
+            labelId="select-signature-type"
+            multiple
+            onChange={(({ target: { value } }) => setSelectedSignatureTypes(value as string[]))}
+            renderValue={() => selectedSignatureTypes.map((signatureType) => signatureType.name).join(', ')}
+            value={selectedSignatureTypes}
+          >
+            {signatureTypes.map((signatureType) => (
+              <MenuItem key={signatureType.name} value={signatureType}>
+                <Checkbox checked={selectedSignatureTypes.includes(signatureType)} />
+                <ListItemText>{signatureType.name}</ListItemText>
               </MenuItem>
             ))}
           </Select>
