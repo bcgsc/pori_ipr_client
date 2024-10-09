@@ -7,9 +7,15 @@ import withLoading from '@/hoc/WithLoading';
 import { ReportType } from '@/context/ReportContext';
 import api, { ApiCall } from '@/services/api';
 import AnalystComments from '..';
+import { TemplateType } from '@/common';
+
+const mockTemplate = {
+  ident: '085afd-957bbc-55acfd',
+} as TemplateType;
 
 const mockReport = {
   ident: '085afd-957bba-55acfd',
+  template: mockTemplate,
 } as ReportType;
 
 const mockComments = {

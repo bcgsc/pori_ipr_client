@@ -45,6 +45,7 @@ const TemplateView = (): JSX.Element => {
 
   const handleDelete = useCallback(async (rowData) => {
     try {
+      await api.del(`/templates/${rowData.ident}/signature-types`, {}, {}).request();
       await api.del(`/templates/${rowData.ident}`, {}, {}).request();
       setTemplates((prevVal) => prevVal.filter((template) => template.ident !== rowData.ident));
       snackbar.enqueueSnackbar('Template deleted');

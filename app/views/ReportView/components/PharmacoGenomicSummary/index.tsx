@@ -56,6 +56,7 @@ const PharmacoGenomicSummary = ({
   const [pharmacoGenomic, setPharmacoGenomic] = useState<KbMatchType[]>([]);
   const [cancerPredisposition, setCancerPredisposition] = useState<KbMatchType[]>([]);
   const [showTestInfoEdit, setTestInfoEdit] = useState(false);
+  const [signatureTypes, setSignatureTypes] = useState<SignatureUserType[]>([]);
 
   const classNamePrefix = isPrint ? 'summary--print' : 'summary';
 
@@ -74,13 +75,15 @@ const PharmacoGenomicSummary = ({
             api.get(`/reports/${report.ident}/signatures`),
             api.get(`/reports/${report.ident}/kb-matches?category=pharmacogenomic`),
             api.get(`/reports/${report.ident}/kb-matches?category=cancer predisposition`),
+            api.get(`/templates/${report.template.ident}/signature-types`),
           ]);
 
           const [
             signaturesData,
             pharmacoGenomicResp,
             cancerPredispositionResp,
-          ] = await apiCalls.request() as [SignatureType, KbMatchType[], KbMatchType[]];
+            signatureTypesResp,
+          ] = await apiCalls.request() as [SignatureType, KbMatchType[], KbMatchType[], SignatureUserType[]];
 
           setSignatures(signaturesData);
           setPharmacoGenomic(pharmacoGenomicResp.filter(({ variant }) => variant.germline));
@@ -89,6 +92,17 @@ const PharmacoGenomicSummary = ({
 
           if (loadedDispatch) {
             loadedDispatch({ type: 'summary-pcp' });
+          }
+
+          if (signatureTypesResp?.length === 0){
+            const defaultSigatureTypes = [
+              {signatureType: 'author'},
+              {signatureType: 'reviewer'},
+              {signatureType: 'creator'},
+            ] as SignatureUserType[];
+            setSignatureTypes(defaultSigatureTypes);
+          } else {
+            setSignatureTypes(signatureTypesResp);
           }
         } catch (err) {
           snackbar.error(`Network error: ${err}`);
@@ -191,13 +205,9 @@ const PharmacoGenomicSummary = ({
   }, [cancerPredisposition, classNamePrefix, isPrint]);
 
   const reviewSignatures = useMemo(() => {
-    let order: SignatureUserType[] = ['author', 'reviewer', 'creator'];
-    if (isPrint) {
-      order = ['creator', 'author', 'reviewer'];
-    }
-    return order.map((sigType) => {
-      let title: string = sigType;
-      if (sigType === 'author') {
+    return signatureTypes.map((sigType) => {
+      let title = sigType.signatureType;
+      if (sigType.signatureType === 'author') {
         title = isPrint ? 'Manual Review' : 'Ready';
       }
       return (
@@ -205,12 +215,12 @@ const PharmacoGenomicSummary = ({
           onClick={handleSign}
           signatures={signatures}
           title={capitalize(title)}
-          type={sigType}
+          type={sigType.signatureType}
           isPrint={isPrint}
         />
       );
     });
-  }, [handleSign, isPrint, signatures]);
+  }, [handleSign, isPrint, signatures, signatureTypes]);
 
   const testInformationSection = useMemo(() => {
     if (!testInformation) { return null; }

@@ -15,6 +15,14 @@ const columnDefs: ColDef[] = [
     hide: false,
   },
   {
+    headerName: 'Signature Types',
+    flex: 1,
+    autoHeight: true,
+    wrapText: true,
+    valueGetter: 'data.signatureTypes.map((val)=>val.signatureType).join(", ")',
+    hide: false,
+  },
+  {
     headerName: 'Actions',
     colId: 'Actions',
     cellRenderer: 'ActionCellRenderer',
