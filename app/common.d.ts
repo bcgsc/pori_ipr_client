@@ -132,11 +132,6 @@ type ImageType = {
   title: string | null;
 } & RecordDefaults;
 
-type SignatureType = {
-  ident: string;
-  signatureType: string | null;
-} & RecordDefaults;
-
 type GeneType = {
   kbStatementRelated: boolean;
   drugTargetable: boolean;
@@ -386,7 +381,6 @@ export {
   UserProjectsType,
   UserGroupMemberType,
   ImageType,
-  SignatureType,
   GeneType,
   KbMatchType,
   CopyNumberType,

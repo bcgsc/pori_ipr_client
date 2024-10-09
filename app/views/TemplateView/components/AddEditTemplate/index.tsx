@@ -20,11 +20,12 @@ import {
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { useSnackbar } from 'notistack';
 
-import { ImageType, RecordDefaults, SignatureType } from '@/common';
+import { ImageType, RecordDefaults } from '@/common';
 import api, { ApiCallSet } from '@/services/api';
 import getImageDataURI from '@/utils/getImageDataURI';
 import sections from '../../sections';
 import signatureTypes from '../../signatureTypes';
+import { SignatureUserType } from '@/components/SignatureCard';
 
 import './index.scss';
 
@@ -34,7 +35,7 @@ type AddEditTemplateProps = {
   editData: {
     name: string;
     sections: string[];
-    signatureTypes: SignatureType[] | null;
+    signatureTypes: SignatureUserType[] | null;
     headerImage: ImageType | null;
     updatedAt: string | null;
   } & RecordDefaults;

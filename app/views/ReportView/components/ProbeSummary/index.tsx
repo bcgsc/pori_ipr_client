@@ -48,6 +48,7 @@ const ProbeSummary = ({
   const [signatures, setSignatures] = useState<SignatureType | null>();
   const [probeResults, setProbeResults] = useState<ProbeResultsType[] | null>();
   const [editData, setEditData] = useState();
+  const [signatureTypes, setSignatureTypes] = useState<SignatureUserType[]>([]);
 
   const [showEventsDialog, setShowEventsDialog] = useState(false);
 
@@ -62,17 +63,20 @@ const ProbeSummary = ({
             api.get(`/reports/${report.ident}/signatures`),
             api.get(`/reports/${report.ident}/probe-results`),
             api.get(`/reports/${report.ident}/small-mutations`),
+            api.get(`/templates/${report.template.ident}/signature-types`),
           ]);
           const [
             testInformationData,
             signaturesData,
             probeResultsData,
             smallMutationsData,
+            signatureTypesData,
           ] = await apiCalls.request() as [
             TestInformationType,
             SignatureType,
             ProbeResultsType[],
             SmallMutationType[],
+            SignatureUserType[],
           ];
 
           setTestInformation(testInformationData);
@@ -95,6 +99,16 @@ const ProbeSummary = ({
             });
           });
           setProbeResults(probeResultsData);
+          if (signatureTypesData?.length === 0){
+            const defaultSigatureTypes = [
+              {signatureType: 'author'},
+              {signatureType: 'reviewer'},
+              {signatureType: 'creator'},
+            ];
+            setSignatureTypes(defaultSigatureTypes);
+          } else {
+            setSignatureTypes(signatureTypesData);
+          }
         } catch (err) {
           snackbar.error(`Network error: ${err}`);
         } finally {
@@ -171,13 +185,9 @@ const ProbeSummary = ({
   }
 
   const reviewSignatures = useMemo(() => {
-    let order: SignatureUserType[] = ['author', 'reviewer', 'creator'];
-    if (isPrint) {
-      order = ['creator', 'author', 'reviewer'];
-    }
-    return order.map((sigType) => {
-      let title: string = sigType;
-      if (sigType === 'author') {
+    return signatureTypes.map((sigType) => {
+      let title = sigType.signatureType;
+      if (sigType.signatureType === 'author') {
         title = isPrint ? 'Manual Review' : 'Ready';
       }
       return (
@@ -185,12 +195,12 @@ const ProbeSummary = ({
           onClick={handleSign}
           signatures={signatures}
           title={capitalize(title)}
-          type={sigType}
+          type={sigType.signatureType}
           isPrint={isPrint}
         />
       );
     });
-  }, [handleSign, isPrint, signatures]);
+  }, [handleSign, isPrint, signatures, signatureTypes]);
 
   return (
     <div className={classNamePrefix}>
