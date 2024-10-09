@@ -69,9 +69,9 @@ const AnalystComments = ({
               {signatureType: 'author'},
               {signatureType: 'reviewer'},
               {signatureType: 'creator'},
-            ];
+            ] as SignatureUserType[];
             setSignatureTypes(defaultSigatureTypes);
-          } else {
+          } else if (signatureTypesResp?.length > 0) {
             setSignatureTypes(signatureTypesResp);
           }
         } catch (err) {

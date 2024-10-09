@@ -251,7 +251,7 @@ const RapidSummary = ({
                 {signatureType: 'author'},
                 {signatureType: 'reviewer'},
                 {signatureType: 'creator'},
-              ];
+              ] as SignatureUserType[];
               setSignatureTypes(defaultSigatureTypes);
             } else {
               setSignatureTypes(signatureTypesResp.value);

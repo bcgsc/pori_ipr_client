@@ -104,7 +104,7 @@ const ProbeSummary = ({
               {signatureType: 'author'},
               {signatureType: 'reviewer'},
               {signatureType: 'creator'},
-            ];
+            ] as SignatureUserType[];
             setSignatureTypes(defaultSigatureTypes);
           } else {
             setSignatureTypes(signatureTypesData);
