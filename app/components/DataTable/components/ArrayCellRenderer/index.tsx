@@ -72,7 +72,7 @@ const RenderArrayCell = (field: string, isLink: boolean): (cellParams: ICellRend
     } else if (field === 'variant') {
       const kbMatches = data['kbMatches'];
       const kbMatchesNonNull = kbMatches?.filter((match) => !Array.isArray(match));
-      const variantArr = [];
+      let variantArr = [];
 
       if (kbMatchesNonNull) {
         for (const kbMatch of kbMatchesNonNull) {
@@ -93,8 +93,10 @@ const RenderArrayCell = (field: string, isLink: boolean): (cellParams: ICellRend
             case ('msi' || 'tmb'):
               variantArr.push(kbMatch?.variant.kbCategory);
               break;
-            default:
+            case ('cnv' || 'exp'):
               variantArr.push(`${kbMatch?.variant.gene.name} ${kbMatch?.variant.expressionState}`);
+              break;
+            default:
               break;
           }
         }

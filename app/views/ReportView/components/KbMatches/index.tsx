@@ -112,7 +112,7 @@ const KbMatches = ({
             unknown: coalesceEntries(unknownResp),
             targetedGermlineGenes: coalesceEntries([
               ...pharmacogenomicResp,
-              ...cancerPredisResp.filter(({ kbMatches }) => (kbMatches as any)?.variant.germline),
+              ...cancerPredisResp.filter(({ kbMatches }) => (kbMatches as any)?.variant?.germline),
             ]),
             targetedSomaticGenes: targetedSomaticGenesResp.filter((tg) => !/germline/.test(tg?.sample)),
           });
