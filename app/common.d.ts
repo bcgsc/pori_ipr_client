@@ -177,7 +177,7 @@ type KbMatchedStatementType<T extends KbMatchType = KbMatchType> = {
     inferred: boolean;
     recruitment_status: string;
   } | null;
-  kbMatches: T;
+  kbMatches: T[];
   kbStatementId: string;
   matchedCancer: boolean;
   pmidRef: string;

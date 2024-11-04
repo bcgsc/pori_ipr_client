@@ -62,16 +62,44 @@ const coalesceEntries = <T extends KbMatchedStatementType[]>(entries: T): Coales
   const getBucketKey = (entry: KbMatchedStatementType, delimiter = '||') => {
     const {
       context,
-      kbMatches
+      kbMatches,
     } = entry;
+
+    if (kbMatches.length > 1) {
+      const bucketKey = '';
+      for (const kbMatch of kbMatches) {
+        const variantName = getVariantName(kbMatch?.variant, kbMatch?.variantType);
+        const { relevance, disease } = entry;
+        const commonSuffix = `${context}${delimiter}${variantName}${delimiter}${relevance}${delimiter}${disease}`;
+        if (kbMatch?.variantType === 'sv') {
+          const {
+            variant: { gene1: { name: gene1Name }, gene2: { name: gene2Name } },
+          } = kbMatch as KbMatchType<'sv'>;
+          bucketKey.concat(`${gene1Name}${delimiter}${gene2Name}${delimiter}${commonSuffix}`);
+        }
+
+        if (kbMatch?.variantType === 'msi' || kbMatch?.variantType === 'tmb') {
+          const { kbCategory } = kbMatch.variant as KbMatchType<'tmb' | 'msi'>['variant'];
+          bucketKey.concat(`${kbCategory}${delimiter}${commonSuffix}`);
+        }
+
+        const {
+          variant: { gene: { name: geneName } },
+        } = kbMatch as KbMatchType<'cnv' | 'exp' | 'mut'>;
+        bucketKey.concat(`${geneName}${delimiter}${commonSuffix}`);
+      }
+      return bucketKey;
+    }
+
     const kbMatch = kbMatches[0];
     const variantName = getVariantName(kbMatch?.variant, kbMatch?.variantType);
     const { relevance, disease } = entry;
     const commonSuffix = `${context}${delimiter}${variantName}${delimiter}${relevance}${delimiter}${disease}`;
     if (kbMatch?.variantType === 'sv') {
+      const matchedVariant = entry.kbMatches[0];
       const {
-        kbMatches: { variant: { gene1: { name: gene1Name }, gene2: { name: gene2Name } } },
-      } = entry as KbMatchedStatementType;
+        variant: { gene1: { name: gene1Name }, gene2: { name: gene2Name } },
+      } = matchedVariant as KbMatchType<'sv'>;
       return `${gene1Name}${delimiter}${gene2Name}${delimiter}${commonSuffix}`;
     }
 
@@ -81,8 +109,8 @@ const coalesceEntries = <T extends KbMatchedStatementType[]>(entries: T): Coales
     }
 
     const {
-      kbMatches: { variant: { gene: { name: geneName } } },
-    } = entry as KbMatchedStatementType;
+      variant: { gene: { name: geneName } },
+    } = entry.kbMatches[0] as KbMatchType<'cnv' | 'exp' | 'mut'>;
     return `${geneName}${delimiter}${commonSuffix}`;
   };
 

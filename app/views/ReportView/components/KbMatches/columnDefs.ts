@@ -11,17 +11,19 @@ const columnDefs: ColDef[] = [
     hide: false,
     valueGetter: (params) => {
       const { data: { kbMatches } } = params;
-      // msi and tmb doesn't have gene field
-      if (kbMatches[0]?.variantType === 'msi' || kbMatches[0]?.variantType === 'tmb') {
-        return '';
+      if (kbMatches) {
+        const kbMatch = kbMatches[0];
+        // msi and tmb doesn't have gene field
+        if (kbMatch.variantType === 'msi' || kbMatch.variantType === 'tmb') {
+          return '';
+        }
+        if (kbMatch.variant.gene) {
+          return kbMatch.variant.gene.name;
+        }
+        return kbMatch.variant.gene1.name && kbMatch.variant.gene2.name
+          ? `${kbMatch.variant.gene1.name}, ${kbMatch.variant.gene2.name}`
+          : kbMatch.variant.gene1.name || kbMatch.variant.gene2.name;
       }
-
-      if (kbMatches[0]?.variant.gene) {
-        return kbMatches[0].variant.gene.name;
-      }
-      return kbMatches[0]?.variant.gene1.name && kbMatches[0]?.variant.gene2.name
-        ? `${kbMatches[0]?.variant.gene1.name}, ${kbMatches[0]?.variant.gene2.name}`
-        : kbMatches[0]?.variant.gene1.name || kbMatches[0]?.variant.gene2.name;
     },
     sort: 'asc',
   },
@@ -30,48 +32,32 @@ const columnDefs: ColDef[] = [
     colId: 'kbVariant',
     valueGetter: (params) => {
       const { data: { kbMatches } } = params;
-      // msi and tmb doesn't have gene field
-      if (kbMatches[0]?.kbVariant) {
-        return kbMatches[0]?.kbVariant;
+
+      if (kbMatches) {
+        const kbMatch = kbMatches[0];
+        if (kbMatch.kbVariant) {
+          return kbMatch.kbVariant;
+        }
       }
     },
-    cellRendererFramework: ArrayCell('kbVariant', false),
+    cellRendererFramework: ArrayCell('kbMatches', false),
     hide: false,
     maxWidth: 300,
   },
   {
     headerName: 'Observed Variant',
     colId: 'variant',
+    field: 'variant',
+    cellRendererFramework: ArrayCell('variant', false),
     hide: false,
     maxWidth: 300,
-    valueGetter: (params) => {
-      const { data: { kbMatches } } = params;
-
-      if (kbMatches[0]?.variantType === 'cnv') {
-        return `${kbMatches[0].variant.gene.name} ${kbMatches[0].variant.cnvState}`;
-      }
-      if (kbMatches[0]?.variantType === 'sv') {
-        return `(${kbMatches[0].variant.gene1.name || '?'
-        },${kbMatches[0].variant.gene2.name || '?'
-        }):fusion(e.${kbMatches[0].variant.exon1 || '?'
-        },e.${kbMatches[0].variant.exon2 || '?'
-        })`;
-      }
-      if (kbMatches[0]?.variantType === 'mut') {
-        return `${kbMatches[0].variant.gene.name}:${kbMatches[0].variant.proteinChange}`;
-      }
-
-      if (kbMatches[0]?.variantType === 'msi' || kbMatches[0]?.variantType === 'tmb') {
-        return kbMatches[0].variant.kbCategory;
-      }
-
-      return `${kbMatches[0]?.variant.gene.name} ${kbMatches[0]?.variant.expressionState}`;
-    },
   },
   {
     headerName: 'Cancer Type',
-    valueGetter: 'data.kbMatchedStatements.map((val)=>val.disease).join(", ")',
+    colId: 'disease',
+    field: 'disease',
     hide: false,
+    cellRendererFramework: ArrayCell('disease', false),
   },
   {
     headerName: 'Association',
