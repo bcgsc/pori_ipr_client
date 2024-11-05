@@ -63,7 +63,15 @@ const columnDefs: ColDef[] = [
     sort: 'asc',
   },
   {
-    headerName: 'Known Variant',
+    headerName: 'Observed Variant(s)',
+    colId: 'variant',
+    field: 'variant',
+    cellRendererFramework: ArrayCell('variant', false),
+    hide: false,
+    maxWidth: 300,
+  },
+  {
+    headerName: 'Known Variant(s)',
     colId: 'kbVariant',
     valueGetter: (params) => {
       const { data: { kbMatches } } = params;
@@ -76,14 +84,6 @@ const columnDefs: ColDef[] = [
       }
     },
     cellRendererFramework: ArrayCell('kbMatches', false),
-    hide: false,
-    maxWidth: 300,
-  },
-  {
-    headerName: 'Observed Variant',
-    colId: 'variant',
-    field: 'variant',
-    cellRendererFramework: ArrayCell('variant', false),
     hide: false,
     maxWidth: 300,
   },
