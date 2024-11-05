@@ -65,6 +65,7 @@ const coalesceEntries = <T extends KbMatchedStatementType[]>(entries: T): Coales
       kbMatches,
     } = entry;
 
+    // If statement has multiple matches, loop through matches and create composite bucket key of different suffixes to coalesce similar statements
     if (kbMatches.length > 1) {
       let bucketKey = '';
       for (const kbMatch of kbMatches) {

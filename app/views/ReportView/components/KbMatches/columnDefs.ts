@@ -65,8 +65,41 @@ const columnDefs: ColDef[] = [
   {
     headerName: 'Observed Variant(s)',
     colId: 'variant',
-    field: 'variant',
-    cellRendererFramework: ArrayCell('variant', false),
+    valueGetter: (params) => {
+      const { data: { kbMatches } } = params;
+      const kbMatchesNonNull = kbMatches?.filter((match) => !Array.isArray(match));
+
+      if (kbMatchesNonNull) {
+        const variantArr = [];
+        for (const kbMatch of kbMatchesNonNull) {
+          switch (kbMatch?.variantType) {
+            case ('cnv'):
+              variantArr.push(`${kbMatch?.variant.gene.name} ${kbMatch?.variant.cnvState}`);
+              break;
+            case ('sv'):
+              variantArr.push(`(${kbMatch?.variant.gene1.name || '?'
+              },${kbMatch?.variant.gene2.name || '?'
+              }):fusion(e.${kbMatch?.variant.exon1 || '?'
+              },e.${kbMatch?.variant.exon2 || '?'
+              })`);
+              break;
+            case ('mut'):
+              variantArr.push(`${kbMatch?.variant.gene.name}:${kbMatch?.variant.proteinChange}`);
+              break;
+            case ('msi' || 'tmb'):
+              variantArr.push(kbMatch?.variant.kbCategory);
+              break;
+            case ('cnv' || 'exp'):
+              variantArr.push(`${kbMatch?.variant.gene.name} ${kbMatch?.variant.expressionState}`);
+              break;
+            default:
+              break;
+          }
+        }
+        return variantArr.join(', ');
+      }
+      return null;
+    },
     hide: false,
     maxWidth: 300,
   },
@@ -75,15 +108,12 @@ const columnDefs: ColDef[] = [
     colId: 'kbVariant',
     valueGetter: (params) => {
       const { data: { kbMatches } } = params;
-
       if (kbMatches) {
-        const kbMatch = kbMatches[0];
-        if (kbMatch?.kbVariant) {
-          return kbMatch?.kbVariant;
-        }
+        const kbVariants = kbMatches?.map((match) => match.kbVariant).filter((kbVariant) => kbVariant !== undefined);
+        return kbVariants.join(', ');
       }
+      return null;
     },
-    cellRendererFramework: ArrayCell('kbMatches', false),
     hide: false,
     maxWidth: 300,
   },
