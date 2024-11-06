@@ -18,7 +18,7 @@ import useReport from '@/hooks/useReport';
 import DataTable from '@/components/DataTable';
 import withLoading, { WithLoadingInjectedProps } from '@/hoc/WithLoading';
 import ReportContext from '@/context/ReportContext';
-import { KbMatchType } from '@/common';
+import { KbMatchedStatementType } from '@/common';
 import { columnDefs, targetedColumnDefs } from './columnDefs';
 import coalesceEntries from './coalesce';
 
@@ -68,7 +68,7 @@ const KbMatches = ({
     if (report) {
       const getData = async () => {
         try {
-          const baseUri = `/reports/${report.ident}/kb-matches`;
+          const baseUri = `/reports/${report.ident}/kb-matches/kb-matched-statements`;
           const apiCalls = new ApiCallSet([
             api.get(`${baseUri}?approvedTherapy=false&category=therapeutic`, {}),
             api.get(`${baseUri}?approvedTherapy=false&category=biological`, {}),
@@ -92,15 +92,15 @@ const KbMatches = ({
             pharmacogenomicResp,
             cancerPredisResp,
           ] = await apiCalls.request() as [
-            KbMatchType[],
-            KbMatchType[],
-            KbMatchType[],
-            KbMatchType[],
-            KbMatchType[],
-            KbMatchType[],
+            KbMatchedStatementType[],
+            KbMatchedStatementType[],
+            KbMatchedStatementType[],
+            KbMatchedStatementType[],
+            KbMatchedStatementType[],
+            KbMatchedStatementType[],
             ProbeResultsType[],
-            KbMatchType[],
-            KbMatchType[],
+            KbMatchedStatementType[],
+            KbMatchedStatementType[],
           ];
 
           setGroupedMatches({
@@ -112,7 +112,7 @@ const KbMatches = ({
             unknown: coalesceEntries(unknownResp),
             targetedGermlineGenes: coalesceEntries([
               ...pharmacogenomicResp,
-              ...cancerPredisResp.filter(({ variant }) => (variant as any)?.germline),
+              ...cancerPredisResp.filter(({ kbMatches }) => (kbMatches as any)?.variant?.germline),
             ]),
             targetedSomaticGenes: targetedSomaticGenesResp.filter((tg) => !/germline/.test(tg?.sample)),
           });

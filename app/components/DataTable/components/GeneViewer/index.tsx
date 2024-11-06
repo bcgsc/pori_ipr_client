@@ -122,7 +122,7 @@ const GeneViewer = ({
             {tabValue === 0 && (
               <div className="ag-theme-material">
                 <AgGridReact
-                  rowData={geneData.kbMatches}
+                  rowData={geneData.kbMatchedStatements}
                   columnDefs={columnDefs}
                   domLayout="autoHeight"
                   {...defaultTableOptions}

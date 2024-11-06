@@ -1,7 +1,7 @@
 import {
   CopyNumberType,
   ExpOutliersType,
-  KbMatchType,
+  KbMatchedStatementType,
   SmallMutationType,
   StructuralVariantType,
 } from '@/common';
@@ -11,7 +11,7 @@ type GeneViewerType = {
   copyNumber: CopyNumberType[];
   expDensityGraph: ImageType[];
   expRNA: ExpOutliersType[];
-  kbMatches: KbMatchType[];
+  kbMatchedStatements: KbMatchedStatementType[];
   smallMutations: SmallMutationType[];
   structuralVariants: StructuralVariantType[];
 };
