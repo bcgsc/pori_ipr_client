@@ -20,7 +20,7 @@ import orderBy from 'lodash/orderBy';
 
 import './index.scss';
 import {
-  KbMatchType, TumourSummaryType, ImmuneType, MutationBurdenType, MicrobialType, TmburType,
+  TumourSummaryType, ImmuneType, MutationBurdenType, MicrobialType, TmburType, KbMatchedStatementType,
 } from '@/common';
 import { Box } from '@mui/system';
 import { getMicbSiteSummary } from '@/utils/getMicbSiteIntegrationStatusLabel';
@@ -35,7 +35,7 @@ import { getVariantRelevanceDict } from './utils';
 import PatientInformation from '../PatientInformation';
 import TumourSummary from '../TumourSummary';
 
-const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
+const splitIprEvidenceLevels = (kbMatches: KbMatchedStatementType[]) => {
   const iprRelevanceDict = {};
 
   kbMatches.forEach(({ iprEvidenceLevel }) => {
@@ -47,7 +47,7 @@ const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
   orderBy(
     kbMatches,
     ['iprEvidenceLevel', 'context'],
-  ).forEach(({ iprEvidenceLevel, context }: KbMatchType) => {
+  ).forEach(({ iprEvidenceLevel, context }: KbMatchedStatementType) => {
     // Remove square brackets and add to dictionary
     if (iprEvidenceLevel && context) {
       iprRelevanceDict[iprEvidenceLevel].add(context.replace(/ *\[[^)]*\] */g, '').toLowerCase());
@@ -57,7 +57,7 @@ const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
   return iprRelevanceDict;
 };
 
-const processPotentialClinicalAssociation = (variant: RapidVariantType) => Object.entries(getVariantRelevanceDict(variant.kbMatches))
+const processPotentialClinicalAssociation = (variant: any) => Object.entries(getVariantRelevanceDict(variant.kbMatches))
   .map(([relevanceKey, kbMatches]) => {
     const iprEvidenceDict = splitIprEvidenceLevels(kbMatches);
 

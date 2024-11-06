@@ -1,9 +1,9 @@
 import {
-  KbMatchType,
+  KbMatchedStatementType,
 } from '@/common';
 
-const getVariantRelevanceDict = (kbMatches: KbMatchType[]) => {
-  const relevanceDict: Record<string, KbMatchType[]> = {};
+const getVariantRelevanceDict = (kbMatches: KbMatchedStatementType[]) => {
+  const relevanceDict: Record<string, KbMatchedStatementType[]> = {};
   kbMatches.forEach((match) => {
     if (!relevanceDict[match.relevance]) {
       relevanceDict[match.relevance] = [match];

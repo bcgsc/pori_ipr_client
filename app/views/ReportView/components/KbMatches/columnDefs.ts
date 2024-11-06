@@ -63,7 +63,21 @@ const columnDefs: ColDef[] = [
     sort: 'asc',
   },
   {
-    headerName: 'Observed Variant(s)',
+    headerName: 'Known Variants',
+    colId: 'kbVariant',
+    valueGetter: (params) => {
+      const { data: { kbMatches } } = params;
+      if (kbMatches) {
+        const kbVariants = kbMatches?.map((match) => match.kbVariant).filter((kbVariant) => kbVariant !== undefined);
+        return kbVariants.join(', ');
+      }
+      return null;
+    },
+    hide: false,
+    maxWidth: 300,
+  },
+  {
+    headerName: 'Observed Variants',
     colId: 'variant',
     valueGetter: (params) => {
       const { data: { kbMatches } } = params;
@@ -89,28 +103,12 @@ const columnDefs: ColDef[] = [
             case ('msi' || 'tmb'):
               variantArr.push(kbMatch?.variant.kbCategory);
               break;
-            case ('cnv' || 'exp'):
-              variantArr.push(`${kbMatch?.variant.gene.name} ${kbMatch?.variant.expressionState}`);
-              break;
             default:
+              variantArr.push(`${kbMatch?.variant.gene.name} ${kbMatch?.variant.expressionState}`);
               break;
           }
         }
         return variantArr.join(', ');
-      }
-      return null;
-    },
-    hide: false,
-    maxWidth: 300,
-  },
-  {
-    headerName: 'Known Variant(s)',
-    colId: 'kbVariant',
-    valueGetter: (params) => {
-      const { data: { kbMatches } } = params;
-      if (kbMatches) {
-        const kbVariants = kbMatches?.map((match) => match.kbVariant).filter((kbVariant) => kbVariant !== undefined);
-        return kbVariants.join(', ');
       }
       return null;
     },
