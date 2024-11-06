@@ -275,11 +275,14 @@ const RapidSummary = ({
       msiStatus = null;
     }
 
-    let svBurden: null | string;
-    if (primaryBurden && primaryBurden.qualitySvCount !== null) {
-      svBurden = `${primaryBurden.qualitySvCount} ${primaryBurden.qualitySvPercentile ? `(${primaryBurden.qualitySvPercentile}%)` : ''}`;
-    } else {
-      svBurden = null;
+    let svBurden: null | string = null;
+    if (primaryBurden) {
+      const { qualitySvCount, svBurdenHidden, qualitySvPercentile } = primaryBurden;
+      if (qualitySvCount !== null && !svBurdenHidden) {
+        svBurden = `${qualitySvCount} ${qualitySvPercentile ? `(${qualitySvPercentile}%)` : ''}`;
+      } else {
+        svBurden = null;
+      }
     }
 
     let tCell: null | string;
