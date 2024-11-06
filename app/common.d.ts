@@ -155,6 +155,15 @@ type VariantTypeMap<T extends AnyVariantType> = {
 }[T];
 
 type KbMatchType<T extends AnyVariantType = AnyVariantType> = {
+  kbMatchedStatements: KbMatchedStatementType[];
+  kbStatementId: string;
+  kbVariant: string;
+  kbVariantId: string;
+  variant?: VariantTypeMap<T>;
+  variantType: T;
+} & RecordDefaults;
+
+type KbMatchedStatementType<T extends KbMatchType = KbMatchType> = {
   approvedTherapy: boolean;
   category: string;
   context: string;
@@ -168,9 +177,8 @@ type KbMatchType<T extends AnyVariantType = AnyVariantType> = {
     inferred: boolean;
     recruitment_status: string;
   } | null;
+  kbMatches: T[];
   kbStatementId: string;
-  kbVariant: string;
-  kbVariantId: string;
   matchedCancer: boolean;
   pmidRef: string;
   reference: string;
@@ -178,8 +186,6 @@ type KbMatchType<T extends AnyVariantType = AnyVariantType> = {
   reviewStatus: string;
   sample: string | null;
   status: string | null;
-  variant?: VariantTypeMap<T>;
-  variantType: T;
 } & RecordDefaults;
 
 type CopyNumberType = {
@@ -383,6 +389,7 @@ export {
   ImageType,
   GeneType,
   KbMatchType,
+  KbMatchedStatementType,
   CopyNumberType,
   StructuralVariantType,
   SmallMutationType,

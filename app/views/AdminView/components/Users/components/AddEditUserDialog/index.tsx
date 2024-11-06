@@ -367,6 +367,14 @@ const AddEditUserDialog = ({
       className="edit-dialog"
     >
       <DialogTitle>{dialogTitle}</DialogTitle>
+      <Typography
+        className="edit-dialog__new-user-notice"
+        color="red" 
+        variant="caption"
+      >
+        User must also be added to Keycloak with the roles IPR and GraphKB. 
+        If you are at the BCGSC, make a Systems ticket to request that this user be added, specifying their email address.
+      </Typography>
       <Divider><Typography variant="caption">User Information</Typography></Divider>
       <DialogContent>
         <FormControl fullWidth variant="outlined">
