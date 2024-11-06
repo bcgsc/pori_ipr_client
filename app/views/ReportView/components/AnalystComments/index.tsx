@@ -98,7 +98,7 @@ const AnalystComments = ({
 
   const handleEditorClose = useCallback(async (editedComments?: string) => {
     try {
-      if (editedComments) {
+      if (editedComments !== null) {
         const sanitizedText = sanitizeHtml(editedComments, {
           allowedAttributes: {
             a: ['href', 'target', 'rel'],
