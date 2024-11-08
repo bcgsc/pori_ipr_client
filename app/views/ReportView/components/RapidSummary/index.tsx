@@ -149,6 +149,7 @@ const RapidSummary = ({
   const [microbial, setMicrobial] = useState<MicrobialType[]>([]);
   const [editData, setEditData] = useState();
 
+  const [signatureTypes, setSignatureTypes] = useState<SignatureUserType[]>([]);
   const [showMatchedTumourEditDialog, setShowMatchedTumourEditDialog] = useState(false);
   const [showCancerRelevanceEventsDialog, setShowCancerRelevanceEventsDialog] = useState(false);
 
@@ -165,6 +166,7 @@ const RapidSummary = ({
             api.get(`/reports/${report.ident}/tmbur-mutation-burden`),
             api.get(`/reports/${report.ident}/immune-cell-types`),
             api.get(`/reports/${report.ident}/summary/microbial`),
+            api.get(`/templates/${report.template.ident}/signature-types`),
           ]);
           const [
             signaturesResp,
@@ -174,6 +176,7 @@ const RapidSummary = ({
             tmBurdenResp,
             immuneResp,
             microbialResp,
+            signatureTypesResp,
           ] = await apiCalls.request(true) as [
             PromiseSettledResult<SignatureType>,
             PromiseSettledResult<RapidVariantType[]>,
@@ -182,6 +185,7 @@ const RapidSummary = ({
             PromiseSettledResult<TmburType>,
             PromiseSettledResult<ImmuneType[]>,
             PromiseSettledResult<MicrobialType[]>,
+            PromiseSettledResult<SignatureUserType[]>,
           ];
 
           try {
@@ -240,6 +244,22 @@ const RapidSummary = ({
           } else if (!isPrint) {
             snackbar.error(microbialResp.reason?.content?.error?.message);
           }
+
+          if (signatureTypesResp.status === 'fulfilled') {
+            if (signatureTypesResp.value?.length === 0){
+              const defaultSigatureTypes = [
+                {signatureType: 'author'},
+                {signatureType: 'reviewer'},
+                {signatureType: 'creator'},
+              ] as SignatureUserType[];
+              setSignatureTypes(defaultSigatureTypes);
+            } else {
+              setSignatureTypes(signatureTypesResp.value);
+            }
+          } else if (!isPrint) {
+            snackbar.error(signatureTypesResp.reason?.content?.error?.message);
+          }
+
         } catch (err) {
           snackbar.error(`Unknown error: ${err}`);
         } finally {
@@ -523,10 +543,6 @@ const RapidSummary = ({
 
   const reviewSignaturesSection = useMemo(() => {
     if (!report) return null;
-    let order: SignatureUserType[] = ['author', 'reviewer', 'creator'];
-    if (isPrint) {
-      order = ['creator', 'author', 'reviewer'];
-    }
     const component = (
       <div className="rapid-summary__reviews">
         {!isPrint && (
@@ -536,18 +552,18 @@ const RapidSummary = ({
         )}
         <div className="rapid-summary__signatures">
           {
-            order.map((sigType) => {
-              let title: string = sigType;
-              if (sigType === 'author') {
+            signatureTypes.map((sigType) => {
+              let title = sigType.signatureType;
+              if (sigType.signatureType === 'author') {
                 title = isPrint ? 'Manual Review' : 'Ready';
               }
               return (
                 <SignatureCard
-                  key={sigType}
+                  key={sigType.signatureType}
                   onClick={handleSign}
                   signatures={signatures}
                   title={capitalize(title)}
-                  type={sigType}
+                  type={sigType.signatureType}
                   isPrint={isPrint}
                 />
               );
@@ -557,7 +573,7 @@ const RapidSummary = ({
       </div>
     );
     return component;
-  }, [report, handleSign, isPrint, signatures]);
+  }, [report, handleSign, isPrint, signatures, signatureTypes]);
 
   const sampleInfoSection = useMemo(() => {
     if (!report || !report.sampleInfo) { return null; }

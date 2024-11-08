@@ -6,7 +6,7 @@ import React, {
   useState, useCallback, useContext, useMemo,
 } from 'react';
 import api from '@/services/api';
-import { KbMatchType } from '@/common';
+import { KbMatchedStatementType } from '@/common';
 import { useParams } from 'react-router-dom';
 import snackbar from '@/services/SnackbarUtils';
 import ReportContext from '@/context/ReportContext';
@@ -27,8 +27,11 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
 
   const {
     kbStatementId,
+    context,
+    kbData,
+    relevance,
     iprEvidenceLevel,
-  } = data as KbMatchType;
+  } = data as KbMatchedStatementType;
   const [menuAnchor, setMenuAnchor] = useState<HTMLElement>();
   const [subMenuAnchor, setSubMenuAnchor] = useState<HTMLElement>();
   const [therapeuticTargetType, setTherapeuticTargetType] = useState<TherapeuticTargetType>(null);
@@ -38,7 +41,7 @@ const KbMatchesActionCellRenderer = (props: ActionCellRendererProps) => {
   const isMult = Array.isArray(kbStatementId);
 
   const isClinicalTrial = useMemo(() => {
-    if (data.context.includes('Phase') || data.context.includes('Trial') || data.relevance === 'eligibility' || data.kbData?.recruitment_status) {
+    if (context?.includes('Phase') || context?.includes('Trial') || relevance === 'eligibility' || kbData?.recruitment_status) {
       return true;
     }
     return false;
