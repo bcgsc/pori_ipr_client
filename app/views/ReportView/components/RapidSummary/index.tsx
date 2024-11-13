@@ -20,7 +20,7 @@ import orderBy from 'lodash/orderBy';
 
 import './index.scss';
 import {
-  TumourSummaryType, ImmuneType, MutationBurdenType, MicrobialType, TmburType, KbMatchedStatementType,
+  TumourSummaryType, ImmuneType, MutationBurdenType, MicrobialType, TmburType, KbMatchType,
 } from '@/common';
 import { Box } from '@mui/system';
 import { getMicbSiteSummary } from '@/utils/getMicbSiteIntegrationStatusLabel';
@@ -35,29 +35,33 @@ import { getVariantRelevanceDict } from './utils';
 import PatientInformation from '../PatientInformation';
 import TumourSummary from '../TumourSummary';
 
-const splitIprEvidenceLevels = (kbMatches: KbMatchedStatementType[]) => {
+const splitIprEvidenceLevels = (kbMatches: KbMatchType[]) => {
   const iprRelevanceDict = {};
 
-  kbMatches.forEach(({ iprEvidenceLevel }) => {
-    if (!iprRelevanceDict[iprEvidenceLevel]) {
-      iprRelevanceDict[iprEvidenceLevel] = new Set();
+  kbMatches.forEach(({ kbMatchedStatements }) => {
+    for (const statement of kbMatchedStatements) {
+      if (!iprRelevanceDict[statement.iprEvidenceLevel]) {
+        iprRelevanceDict[statement.iprEvidenceLevel] = new Set();
+      }
     }
   });
 
   orderBy(
     kbMatches,
     ['iprEvidenceLevel', 'context'],
-  ).forEach(({ iprEvidenceLevel, context }: KbMatchedStatementType) => {
+  ).forEach(({ kbMatchedStatements }: KbMatchType) => {
     // Remove square brackets and add to dictionary
-    if (iprEvidenceLevel && context) {
-      iprRelevanceDict[iprEvidenceLevel].add(context.replace(/ *\[[^)]*\] */g, '').toLowerCase());
+    for (const statement of kbMatchedStatements) {
+      if (statement.iprEvidenceLevel && statement.context) {
+        iprRelevanceDict[statement.iprEvidenceLevel].add(statement.context.replace(/ *\[[^)]*\] */g, '').toLowerCase());
+      }
     }
   });
 
   return iprRelevanceDict;
 };
 
-const processPotentialClinicalAssociation = (variant: any) => Object.entries(getVariantRelevanceDict(variant.kbMatches))
+const processPotentialClinicalAssociation = (variant: RapidVariantType) => Object.entries(getVariantRelevanceDict(variant.kbMatches))
   .map(([relevanceKey, kbMatches]) => {
     const iprEvidenceDict = splitIprEvidenceLevels(kbMatches);
 
