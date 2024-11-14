@@ -20,5 +20,5 @@ type ProcessedExpressionOutliers = {
 export {
   ComparatorsType,
   ProcessedExpressionOutliers,
-  TissueSitesType,
+  TissueSitesType, ExpOutliersType,
 };
