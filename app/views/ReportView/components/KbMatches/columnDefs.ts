@@ -68,7 +68,13 @@ const columnDefs: ColDef[] = [
     valueGetter: (params) => {
       const { data: { kbMatches } } = params;
       if (kbMatches) {
-        const kbVariants = kbMatches?.map((match) => match.kbVariant).filter((kbVariant) => kbVariant !== undefined);
+        // const kbVariants = kbMatches?.map((match) => match.kbVariant).filter((kbVariant) => kbVariant !== undefined);
+        const kbVariants = kbMatches?.reduce((accumulator, match) => {
+          if (match.kbVariant !== undefined) {
+            accumulator.push(match.kbVariant);
+          }
+          return accumulator;
+        }, []);
         return kbVariants.join(', ');
       }
       return null;
@@ -100,7 +106,10 @@ const columnDefs: ColDef[] = [
             case ('mut'):
               variantArr.push(`${kbMatch?.variant.gene.name}:${kbMatch?.variant.proteinChange}`);
               break;
-            case ('msi' || 'tmb'):
+            case ('tmb'):
+              variantArr.push(kbMatch?.variant.kbCategory);
+              break;
+            case ('msi'):
               variantArr.push(kbMatch?.variant.kbCategory);
               break;
             default:
