@@ -143,11 +143,11 @@ const KbMatches = ({
       if (Array.isArray(row.ident)) {
         const apiCalls = new ApiCallSet();
         row.ident.forEach((ident: string) => {
-          apiCalls.push(api.del(`/reports/${report.ident}/kb-matches/${ident}`, {}, {}));
+          apiCalls.push(api.del(`/reports/${report.ident}/kb-matches/kb-matched-statements/${ident}`, {}, {}));
         });
         await apiCalls.request();
       } else {
-        await api.del(`/reports/${report.ident}/kb-matches/${row.ident}`, {}, {}).request();
+        await api.del(`/reports/${report.ident}/kb-matches/kb-matched-statements/${row.ident}`, {}, {}).request();
       }
 
       setGroupedMatches((oldMatches) => {

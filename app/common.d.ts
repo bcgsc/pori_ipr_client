@@ -135,6 +135,7 @@ type ImageType = {
 type GeneType = {
   kbStatementRelated: boolean;
   drugTargetable: boolean;
+  expressionVariants?: ExpOutliersType;
   knownFusionPartner: boolean;
   knownSmallMutation: boolean;
   name: string;
@@ -282,6 +283,7 @@ type ExpOutliersType = {
   expressionState: string | null;
   gene: GeneType;
   kbCategory: string | null;
+  kbMatches?: KbMatchType<'exp'>[];
   location: number | null;
   primarySiteFoldChange: number | null;
   primarySitePercentile: number | null;

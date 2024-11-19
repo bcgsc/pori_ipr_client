@@ -115,17 +115,17 @@ const SmallMutations = ({
       smallMutations.forEach((row) => {
         let isUnknown = true;
 
-        if (row.kbMatches.some((m) => m.category === 'therapeutic')) {
+        if (row.kbMatches.some((m) => m.kbMatchedStatements.some((statement) => statement.category === 'therapeutic'))) {
           mutations.therapeutic.push(row);
           isUnknown = false;
         }
 
-        if (row.kbMatches.some((m) => (m.category === 'diagnostic' || m.category === 'prognostic'))) {
+        if (row.kbMatches.some((m) => m.kbMatchedStatements.some((statement) => statement.category === 'diagnostic' || statement.category === 'prognostic'))) {
           mutations.nostic.push(row);
           isUnknown = false;
         }
 
-        if (row.kbMatches.some((m) => m.category === 'biological')) {
+        if (row.kbMatches.some((m) => m.kbMatchedStatements.some((statement) => statement.category === 'biological'))) {
           mutations.biological.push(row);
           isUnknown = false;
         }
