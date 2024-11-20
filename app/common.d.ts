@@ -354,6 +354,7 @@ type MutationBurdenType = {
   qualitySvExpressedCount: number | null;
   qualitySvPercentile: number | null;
   role: string;
+  svBurdenHidden: boolean | null;
   totalIndelCount: number | null;
   totalMutationsPerMb: number | null;
   totalSnvCount: number | null;
