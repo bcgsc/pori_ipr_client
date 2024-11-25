@@ -40,6 +40,15 @@ const defaultTableOptions = {
   enableCellTextSelection: true,
 };
 
+const nullGeneViewerResp: GeneViewerType = {
+  copyNumber: [],
+  expDensityGraph: [],
+  expRNA: [],
+  kbMatchedStatements: [],
+  smallMutations: [],
+  structuralVariants: [],
+};
+
 type GeneViewerProps = {
   isLink: boolean;
   gene: string;
@@ -66,8 +75,8 @@ const GeneViewer = ({
           const resp = await api.get(`/reports/${report.ident}/gene-viewer/${gene}`).request();
           setGeneData(resp);
         } catch {
-          snackbar.error(`Error: gene viewer data does not exist for ${gene}`);
-          setIsOpen(false);
+          // DEVSU-2482 Show table with no rows to show instead of snackbar error for genes that do not exist in report's profile
+          setGeneData(nullGeneViewerResp);
         }
       };
       getData();
