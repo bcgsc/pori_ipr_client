@@ -15,7 +15,6 @@ import {
 import { AgGridReact } from '@ag-grid-community/react';
 
 import api from '@/services/api';
-import snackbar from '@/services/SnackbarUtils';
 import ReportContext from '@/context/ReportContext';
 import { columnDefs } from '@/views/ReportView/components/KbMatches/columnDefs';
 import { columnDefs as smallMutationsColumnDefs } from '@/views/ReportView/components/SmallMutations/columnDefs';
