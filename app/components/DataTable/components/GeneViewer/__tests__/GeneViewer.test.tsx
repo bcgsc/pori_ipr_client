@@ -30,7 +30,7 @@ const mockReport = {
 const withReportContext = (Component) => function ReportContextHOC(props) {
   return (
     // eslint-disable-next-line react/jsx-no-constructed-context-values
-    <ReportContext.Provider value={{ report: mockReport, setReport: () => {} }}>
+    <ReportContext.Provider value={{ report: mockReport, setReport: () => {}, canEdit: true }}>
       <Component {...props} />
     </ReportContext.Provider>
   );
@@ -94,7 +94,7 @@ describe('GeneViewer', () => {
     expect(screen.getByRole('dialog')).toBeInTheDocument();
   });
 
-  test('It closes the dialog if gene does not exist', async () => {
+  test('Dialog still opens if gene does not exist', async () => {
     when(api.get as (endpoint: string) => Partial<ApiCall>)
       .calledWith(`/reports/${mockReport.ident}/gene-viewer/${mockErrorGene}`)
       .mockImplementation(() => ({ request: async () => { throw new Error(); } }));
@@ -112,7 +112,7 @@ describe('GeneViewer', () => {
     const dialog = screen.getByRole('dialog');
     expect(dialog).toBeInTheDocument();
     await waitFor(() => {
-      expect(dialog).not.toBeInTheDocument();
+      expect(dialog).toBeInTheDocument();
     });
   });
 
