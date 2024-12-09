@@ -15,7 +15,6 @@ import {
 import { AgGridReact } from '@ag-grid-community/react';
 
 import api from '@/services/api';
-import snackbar from '@/services/SnackbarUtils';
 import ReportContext from '@/context/ReportContext';
 import { columnDefs } from '@/views/ReportView/components/KbMatches/columnDefs';
 import { columnDefs as smallMutationsColumnDefs } from '@/views/ReportView/components/SmallMutations/columnDefs';
@@ -38,6 +37,15 @@ const defaultTableOptions = {
   },
   noRowsOverlayComponent: 'NoRowsOverlay',
   enableCellTextSelection: true,
+};
+
+const nullGeneViewerResp: GeneViewerType = {
+  copyNumber: [],
+  expDensityGraph: [],
+  expRNA: [],
+  kbMatchedStatements: [],
+  smallMutations: [],
+  structuralVariants: [],
 };
 
 type GeneViewerProps = {
@@ -66,8 +74,8 @@ const GeneViewer = ({
           const resp = await api.get(`/reports/${report.ident}/gene-viewer/${gene}`).request();
           setGeneData(resp);
         } catch {
-          snackbar.error(`Error: gene viewer data does not exist for ${gene}`);
-          setIsOpen(false);
+          // DEVSU-2482 Show table with no rows to show instead of snackbar error for genes that do not exist in report's profile
+          setGeneData(nullGeneViewerResp);
         }
       };
       getData();
