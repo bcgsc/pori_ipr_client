@@ -1,6 +1,7 @@
 import {
   KbMatchedStatementType, AnyVariantType, KbMatchType,
 } from '@/common';
+import { isArray } from 'lodash';
 
 class CoalesceEntriesError extends Error {
   constructor(error) {
@@ -69,31 +70,28 @@ const coalesceEntries = <T extends KbMatchedStatementType[]>(entries: T): Coales
     if (kbMatches.length > 1) {
       let bucketKey = '';
       for (const kbMatch of kbMatches) {
-        const variantName = getVariantName(kbMatch.variant, kbMatch.variantType);
-        const { relevance, disease } = entry;
-        const commonSuffix = `${context}${delimiter}${variantName}${delimiter}${relevance}${delimiter}${disease}`;
-        switch (kbMatch.variantType) {
-          case ('sv'):
+        if(!isArray(kbMatch)) {
+          const variantName = getVariantName(kbMatch?.variant, kbMatch?.variantType);
+          const { relevance, disease } = entry;
+          const commonSuffix = `${context}${delimiter}${variantName}${delimiter}${relevance}${delimiter}${disease}`;
+          if (kbMatch?.variantType === 'sv') {
             const {
               variant: { gene1: { name: gene1Name }, gene2: { name: gene2Name } },
             } = kbMatch as KbMatchType<'sv'>;
             bucketKey += `${gene1Name}${delimiter}${gene2Name}${delimiter}${commonSuffix}`;
-            break;
-          case ('msi' || 'tmb'):
+          }
+  
+          if (kbMatch?.variantType === 'msi' || kbMatch?.variantType === 'tmb') {
             const { kbCategory } = kbMatch.variant as KbMatchType<'tmb' | 'msi'>['variant'];
             bucketKey += `${kbCategory}${delimiter}${commonSuffix}`;
-            break;
-          case ('cnv' || 'exp' || 'mut'):
-            const {
-              variant: { gene: { name: geneName } },
-            } = kbMatch as KbMatchType<'cnv' | 'exp' | 'mut'>;
-            bucketKey += `${geneName}${delimiter}${commonSuffix}`;
-            break;
-          default:
-            break;
+          }
+  
+          const {
+            variant: { gene: { name: geneName } },
+          } = kbMatch as KbMatchType<'cnv' | 'exp' | 'mut'>;
+          bucketKey += `${geneName}${delimiter}${commonSuffix}`;
         }
       }
-
       return bucketKey;
     }
 
