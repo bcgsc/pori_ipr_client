@@ -170,17 +170,17 @@ const CopyNumber = ({
 
         // KB-matches
         // Therapeutic? => clinical
-        if (row.kbMatches.some((m) => m.category === 'therapeutic')) {
+        if (row.kbMatches.some((m) => m.kbMatchedStatements.some((statement) => statement.category === 'therapeutic'))) {
           groups.clinical.push(row);
         }
 
         // Diagnostic || Prognostic? => nostic
-        if (row.kbMatches.some((m) => m.category === 'diagnostic' || m.category === 'prognostic')) {
+        if (row.kbMatches.some((m) => m.kbMatchedStatements.some((statement) => statement.category === 'diagnostic' || statement.category === 'prognostic'))) {
           groups.nostic.push(row);
         }
 
         // Biological ? => Biological
-        if (row.kbMatches.some((m) => m.category === 'biological')) {
+        if (row.kbMatches.some((m) => m.kbMatchedStatements.some((statement) => statement.category === 'biological'))) {
           groups.biological.push(row);
         }
       });

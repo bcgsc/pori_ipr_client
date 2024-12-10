@@ -135,6 +135,7 @@ type ImageType = {
 type GeneType = {
   kbStatementRelated: boolean;
   drugTargetable: boolean;
+  expressionVariants?: ExpOutliersType;
   knownFusionPartner: boolean;
   knownSmallMutation: boolean;
   name: string;
@@ -155,6 +156,15 @@ type VariantTypeMap<T extends AnyVariantType> = {
 }[T];
 
 type KbMatchType<T extends AnyVariantType = AnyVariantType> = {
+  kbMatchedStatements: KbMatchedStatementType[];
+  kbStatementId: string;
+  kbVariant: string;
+  kbVariantId: string;
+  variant?: VariantTypeMap<T>;
+  variantType: T;
+} & RecordDefaults;
+
+type KbMatchedStatementType<T extends KbMatchType = KbMatchType> = {
   approvedTherapy: boolean;
   category: string;
   context: string;
@@ -168,9 +178,8 @@ type KbMatchType<T extends AnyVariantType = AnyVariantType> = {
     inferred: boolean;
     recruitment_status: string;
   } | null;
+  kbMatches: T[];
   kbStatementId: string;
-  kbVariant: string;
-  kbVariantId: string;
   matchedCancer: boolean;
   pmidRef: string;
   reference: string;
@@ -178,8 +187,6 @@ type KbMatchType<T extends AnyVariantType = AnyVariantType> = {
   reviewStatus: string;
   sample: string | null;
   status: string | null;
-  variant?: VariantTypeMap<T>;
-  variantType: T;
 } & RecordDefaults;
 
 type CopyNumberType = {
@@ -276,6 +283,7 @@ type ExpOutliersType = {
   expressionState: string | null;
   gene: GeneType;
   kbCategory: string | null;
+  kbMatches?: KbMatchType<'exp'>[];
   location: number | null;
   primarySiteFoldChange: number | null;
   primarySitePercentile: number | null;
@@ -347,6 +355,7 @@ type MutationBurdenType = {
   qualitySvExpressedCount: number | null;
   qualitySvPercentile: number | null;
   role: string;
+  svBurdenHidden: boolean | null;
   totalIndelCount: number | null;
   totalMutationsPerMb: number | null;
   totalSnvCount: number | null;
@@ -384,6 +393,7 @@ export {
   ImageType,
   GeneType,
   KbMatchType,
+  KbMatchedStatementType,
   CopyNumberType,
   StructuralVariantType,
   SmallMutationType,

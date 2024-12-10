@@ -130,7 +130,11 @@ const GenomicSummary = ({
   useEffect(() => {
     if (report) {
       let svBurden: null | string;
-      if (primaryBurden && primaryBurden.qualitySvCount !== null) {
+      if (
+        primaryBurden
+        && primaryBurden.qualitySvCount !== null
+        && !primaryBurden.svBurdenHidden
+      ) {
         svBurden = `${primaryBurden.qualitySvCount} ${primaryBurden.qualitySvPercentile ? `(${primaryBurden.qualitySvPercentile}%)` : ''}`;
       } else {
         svBurden = null;

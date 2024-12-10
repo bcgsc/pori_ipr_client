@@ -18,44 +18,76 @@ const testData1 = [
     ident: 'test-ident',
     kbMatches: [
       {
-        relevance: 'sensitivity',
-        context: 'afatinib [DB08916]',
-        iprEvidenceLevel: 'IPR-A',
+        kbMatchedStatements: [
+          {
+            relevance: 'sensitivity',
+            context: 'afatinib [DB08916]',
+            iprEvidenceLevel: 'IPR-A',
+          },
+        ],
       },
       {
-        relevance: 'sensitivity',
-        context: 'afatinib [DB08916]',
-        iprEvidenceLevel: 'IPR-A',
+        kbMatchedStatements: [
+          {
+            relevance: 'sensitivity',
+            context: 'afatinib [DB08916]',
+            iprEvidenceLevel: 'IPR-A',
+          },
+        ],
       },
       {
-        relevance: 'reactive',
-        context: 'afatinib [DB08916]',
-        iprEvidenceLevel: 'IPR-B',
+        kbMatchedStatements: [
+          {
+            relevance: 'reactive',
+            context: 'afatinib [DB08916]',
+            iprEvidenceLevel: 'IPR-B',
+          },
+        ],
       },
       {
-        relevance: 'reactive',
-        context: 'cabozantinib [DB08875]',
-        iprEvidenceLevel: 'IPR-B',
+        kbMatchedStatements: [
+          {
+            relevance: 'reactive',
+            context: 'cabozantinib [DB08875]',
+            iprEvidenceLevel: 'IPR-B',
+          },
+        ],
       },
       {
-        relevance: 'sensitivity',
-        context: 'afatinib [DB08916]',
-        iprEvidenceLevel: 'IPR-B',
+        kbMatchedStatements: [
+          {
+            relevance: 'sensitivity',
+            context: 'afatinib [DB08916]',
+            iprEvidenceLevel: 'IPR-B',
+          },
+        ],
       },
       {
-        relevance: 'sensitivity',
-        context: 'cabozantinib [DB08875]',
-        iprEvidenceLevel: 'IPR-B',
+        kbMatchedStatements: [
+          {
+            relevance: 'sensitivity',
+            context: 'cabozantinib [DB08875]',
+            iprEvidenceLevel: 'IPR-B',
+          },
+        ],
       },
       {
-        relevance: 'reactive',
-        context: 'afatinib [DB08916]',
-        iprEvidenceLevel: 'IPR-A',
+        kbMatchedStatements: [
+          {
+            relevance: 'reactive',
+            context: 'afatinib [DB08916]',
+            iprEvidenceLevel: 'IPR-A',
+          },
+        ],
       },
       {
-        relevance: 'reactive',
-        context: 'afatinib [DB08916]',
-        iprEvidenceLevel: 'IPR-A',
+        kbMatchedStatements: [
+          {
+            relevance: 'reactive',
+            context: 'afatinib [DB08916]',
+            iprEvidenceLevel: 'IPR-A',
+          },
+        ],
       },
     ],
   },

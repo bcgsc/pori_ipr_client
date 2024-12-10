@@ -115,6 +115,7 @@ const TumourSummaryEdit = ({
         role: mutationBurden.role,
         qualitySvCount: mutationBurden.qualitySvCount,
         qualitySvPercentile: mutationBurden.qualitySvPercentile,
+        svBurdenHidden: mutationBurden.svBurdenHidden,
       });
     }
   }, [mutationBurden]);
@@ -170,6 +171,12 @@ const TumourSummaryEdit = ({
   const handleMutationBurdenChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const { target: { value, name } } = event;
     setNewMutationBurdenData((prevVal) => ({ ...prevVal, [name]: value }));
+    setMutationBurdenDirty(true);
+  }, []);
+
+  const handleSVBurdenVisibility = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const { target: { checked, name } } = event;
+    setNewMutationBurdenData((prevVal) => ({ ...prevVal, [name]: checked }));
     setMutationBurdenDirty(true);
   }, []);
 
@@ -554,7 +561,7 @@ const TumourSummaryEdit = ({
     <>
       <TextField
         className="tumour-dialog__text-field"
-        label="SV Burden (POG average)"
+        label="SV Burden (Count)"
         value={newMutationBurdenData?.qualitySvCount ?? null}
         name="qualitySvCount"
         onChange={handleMutationBurdenChange}
@@ -572,8 +579,29 @@ const TumourSummaryEdit = ({
         fullWidth
         type="number"
       />
+      <FormControlLabel
+        className="tumour-dialog__check-box"
+        control={(
+          <Checkbox
+            size="small"
+            icon={<Visibility />}
+            checkedIcon={<VisibilityOff />}
+            checked={newMutationBurdenData?.svBurdenHidden}
+            name="svBurdenHidden"
+            onChange={handleSVBurdenVisibility}
+            sx={{
+              color: 'default',
+              '&.Mui-checked': {
+                color: pink[800],
+              },
+              marginLeft: 1,
+            }}
+          />
+        )}
+        label={<div className="checkbox-label">Show/Hide SV Burden</div>}
+      />
     </>
-  ), [newMutationBurdenData, handleMutationBurdenChange]);
+  ), [newMutationBurdenData?.qualitySvCount, newMutationBurdenData?.qualitySvPercentile, newMutationBurdenData?.svBurdenHidden, handleMutationBurdenChange, handleSVBurdenVisibility]);
 
   const tmburMutBurSection = useMemo(() => (
     <>
