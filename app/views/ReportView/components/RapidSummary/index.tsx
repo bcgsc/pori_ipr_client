@@ -371,6 +371,11 @@ const RapidSummary = ({
           tmburMutBur?.adjustedTmbComment && !tmburMutBur.tmbHidden ? tmburMutBur.adjustedTmbComment : null,
       },
       {
+        term: 'Intersect TMB Score',
+        value:
+          tmburMutBur?.intersectTmbScore ?? null,
+      },
+      {
         term: 'MSI Status',
         value: msiStatus,
       },

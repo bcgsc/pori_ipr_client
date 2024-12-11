@@ -651,7 +651,7 @@ const TumourSummaryEdit = ({
         className="tumour-dialog__text-field"
         label="Intersect TMB Score"
         value={newTmburMutData?.intersectTmbScore ?? null}
-        name="intersectTmbScore "
+        name="intersectTmbScore"
         onChange={handleTmburChange}
         variant="outlined"
         fullWidth
