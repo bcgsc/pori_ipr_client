@@ -1,0 +1,39 @@
+.search-by-kbmatch {
+  margin:auto;
+  left: 16px;
+  max-width: 800px;
+  min-width: 800px;
+  padding-bottom: 32px;
+  position: relative;
+  right: 16px;
+  top: 35vh;
+
+  &__bar {
+    box-sizing: border-box;
+    display: flex;
+    padding-left: 32px;
+    padding-right: 32px;
+    width: 100%;
+  }
+
+  &__main {
+    -webkit-tap-highlight-color: transparent;
+    width: 100%;
+    padding-top: 8.5px;
+  }
+
+  &__threshold-input {
+    padding-top: 8.5px;
+    padding-left: 16px;
+    width: 15%;
+  }
+}
+
+.help-dialog {
+  max-width: 800px;
+  min-width: 800px;
+  height: auto;
+  margin-top: 12px;
+  padding-left: 32px;
+  padding-right: 32px;
+}
