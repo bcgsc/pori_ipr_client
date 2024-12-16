@@ -136,7 +136,7 @@ const SearchByKbmatchView = () => {
       </div>
       <div className="help-dialog">
         <Typography variant="subtitle2" color="primary">
-          The matching threshold determines the cutoff of similarity between the key variant and its matched results.
+          The matching threshold determines the cutoff of similarity between the kb variant and its matched results.
           A value of 1 means a 100% match. The default value is 0.8 if not specified.
         </Typography>
       </div>
