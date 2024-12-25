@@ -94,11 +94,11 @@ const PharmacoGenomicSummary = ({
             loadedDispatch({ type: 'summary-pcp' });
           }
 
-          if (signatureTypesResp?.length === 0){
+          if (signatureTypesResp?.length === 0) {
             const defaultSigatureTypes = [
-              {signatureType: 'author'},
-              {signatureType: 'reviewer'},
-              {signatureType: 'creator'},
+              { signatureType: 'author' },
+              { signatureType: 'reviewer' },
+              { signatureType: 'creator' },
             ] as SignatureUserType[];
             setSignatureTypes(defaultSigatureTypes);
           } else {
@@ -139,7 +139,8 @@ const PharmacoGenomicSummary = ({
       if (isPrint) {
         tableComponent = (
           <PrintTable
-            collapseableCols={['gene', 'variant', 'variant.hgvsProtein', 'Alt/Total']}
+            // DEVSU-2540 - turn off coalescing for now until more permanent solution
+            // collapseableCols={['gene', 'variant', 'variant.hgvsProtein', 'Alt/Total']}
             columnDefs={pharmacoGenomicPrintColumnDefs}
             data={pharmacoGenomic}
           />
@@ -204,23 +205,21 @@ const PharmacoGenomicSummary = ({
     return component;
   }, [cancerPredisposition, classNamePrefix, isPrint]);
 
-  const reviewSignatures = useMemo(() => {
-    return signatureTypes.map((sigType) => {
-      let title = sigType.signatureType;
-      if (sigType.signatureType === 'author') {
-        title = isPrint ? 'Manual Review' : 'Ready';
-      }
-      return (
-        <SignatureCard
-          onClick={handleSign}
-          signatures={signatures}
-          title={capitalize(title)}
-          type={sigType.signatureType}
-          isPrint={isPrint}
-        />
-      );
-    });
-  }, [handleSign, isPrint, signatures, signatureTypes]);
+  const reviewSignatures = useMemo(() => signatureTypes.map((sigType) => {
+    let title = sigType.signatureType;
+    if (sigType.signatureType === 'author') {
+      title = isPrint ? 'Manual Review' : 'Ready';
+    }
+    return (
+      <SignatureCard
+        onClick={handleSign}
+        signatures={signatures}
+        title={capitalize(title)}
+        type={sigType.signatureType}
+        isPrint={isPrint}
+      />
+    );
+  }), [handleSign, isPrint, signatures, signatureTypes]);
 
   const testInformationSection = useMemo(() => {
     if (!testInformation) { return null; }

@@ -250,11 +250,11 @@ const RapidSummary = ({
           }
 
           if (signatureTypesResp.status === 'fulfilled') {
-            if (signatureTypesResp.value?.length === 0){
+            if (signatureTypesResp.value?.length === 0) {
               const defaultSigatureTypes = [
-                {signatureType: 'author'},
-                {signatureType: 'reviewer'},
-                {signatureType: 'creator'},
+                { signatureType: 'author' },
+                { signatureType: 'reviewer' },
+                { signatureType: 'creator' },
               ] as SignatureUserType[];
               setSignatureTypes(defaultSigatureTypes);
             } else {
@@ -263,7 +263,6 @@ const RapidSummary = ({
           } else if (!isPrint) {
             snackbar.error(signatureTypesResp.reason?.content?.error?.message);
           }
-
         } catch (err) {
           snackbar.error(`Unknown error: ${err}`);
         } finally {
@@ -414,7 +413,8 @@ const RapidSummary = ({
         <PrintTable
           data={therapeuticAssociationResults}
           columnDefs={therapeuticAssociationColDefs.filter((col) => col.headerName !== 'Actions')}
-          collapseableCols={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth', 'comments']}
+          // DEVSU-2540 - turn off coalescing for now until more permanent solution
+          // collapseableCols={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth', 'comments']}
           fullWidth
         />
       );
@@ -477,7 +477,8 @@ const RapidSummary = ({
         <PrintTable
           data={cancerRelevanceResults}
           columnDefs={cancerRelevanceColDefs.filter((col) => col.headerName !== 'Actions')}
-          collapseableCols={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth']}
+          // DEVSU-2540 - turn off coalescing for now until more permanent solution
+          // collapseableCols={['genomicEvents', 'Alt/Total (Tumour)', 'tumourAltCount/tumourDepth']}
           fullWidth
         />
       );
