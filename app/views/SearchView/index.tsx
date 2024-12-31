@@ -1,5 +1,3 @@
-import './index.scss';
-
 import {
   TextField,
   Typography,
@@ -86,10 +84,10 @@ const SearchView = () => {
   }, [threshold]);
 
   return (
-    <div className="search">
-      <div className="search__bar">
+    <div className="search-view">
+      <div className="search-view__bar">
         <div
-          className="search__main"
+          className="search-view__main"
           onKeyUp={(event) => event.key === ENTER_KEY && handleSubmit()}
           role="textbox"
           tabIndex={0}
@@ -119,7 +117,7 @@ const SearchView = () => {
             }}
           />
         </div>
-        <div className="search__threshold-input" onKeyUp={(event) => event.key === ENTER_KEY && handleSubmit()}>
+        <div className="search-view__threshold-input">
           <TextField
             label="Threshold"
             InputLabelProps={{ shrink: true }}
@@ -130,7 +128,11 @@ const SearchView = () => {
             onChange={handleThresholdChange}
             value={threshold}
             placeholder={DEFAULT_THRESHOLD}
-            inputProps={{ sx: { textAlign: 'center' } }}
+            inputProps={{
+              type: 'number',
+              sx: { textAlign: 'center' },
+              onKeyUp: (event) => event.key === ENTER_KEY && handleSubmit(),
+            }}
           />
         </div>
       </div>
