@@ -372,15 +372,19 @@ const RapidSummary = ({
       {
         term: 'Intersect TMB Score',
         value:
-          tmburMutBur?.intersectTmbScore ?? null,
+          report?.genomeTmb ?? null,
       },
       {
         term: 'MSI Status',
         value: msiStatus,
       },
     ]);
-  }, [microbial, primaryBurden, tmburMutBur, report.m1m2Score, report.sampleInfo, report.tumourContent, tCellCd8?.percentile, tCellCd8?.score, report.captiv8Score,
-    tCellCd8?.percentileHidden, tCellCd8, tCellCd8?.pedsScoreComment, tmburMutBur?.adjustedTmb, tmburMutBur?.tmbHidden, tCellCd8?.pedsScore, tCellCd8?.pedsPercentile]);
+  }, [
+    microbial, primaryBurden, tmburMutBur, tCellCd8,
+    report.m1m2Score, report.sampleInfo, report.tumourContent, report?.genomeTmb, report.captiv8Score,
+    tCellCd8?.percentile, tCellCd8?.score, tCellCd8?.percentileHidden, tCellCd8?.pedsScoreComment, tCellCd8?.pedsScore, tCellCd8?.pedsPercentile,
+    tmburMutBur?.adjustedTmb, tmburMutBur?.tmbHidden,
+  ]);
 
   const handleSign = useCallback(async (signed: boolean, updatedSignature: SignatureType) => {
     setIsSigned(signed);

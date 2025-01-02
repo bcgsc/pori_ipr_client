@@ -436,7 +436,21 @@ const TumourSummaryEdit = ({
         );
       }
       if (reportType === 'rapid') {
-        return captiv8Section;
+        return (
+          <>
+            <TextField
+              className="tumour-dialog__text-field"
+              label="Intersect TMB Score"
+              value={newReportData?.genomeTmb ?? ''}
+              name="genomeTmb"
+              onChange={handleReportChange}
+              variant="outlined"
+              multiline
+              fullWidth
+            />
+            {captiv8Section}
+          </>
+        );
       }
     }
     return null;
@@ -647,16 +661,6 @@ const TumourSummaryEdit = ({
         fullWidth
         type="text"
       />
-      <TextField
-        className="tumour-dialog__text-field"
-        label="Intersect TMB Score"
-        value={newTmburMutData?.intersectTmbScore ?? null}
-        name="intersectTmbScore"
-        onChange={handleTmburChange}
-        variant="outlined"
-        fullWidth
-        type="number"
-      />
       <FormControlLabel
         className="tumour-dialog__check-box"
         control={(
@@ -685,7 +689,6 @@ const TumourSummaryEdit = ({
     newTmburMutData?.adjustedTmb,
     newTmburMutData?.adjustedTmbComment,
     newTmburMutData?.tmbHidden,
-    newTmburMutData?.intersectTmbScore,
     handleTmburChange,
     handleAdjustedTmbCommentChange,
     handleAdjustedTmbVisibleChange,
