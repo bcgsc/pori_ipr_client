@@ -11,7 +11,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 const MIN_WORD_LENGTH = 2;
 
-const SearchView = () => {
+const SearchByKbmatchView = () => {
   const [variant, setVariant] = useState('');
   const [threshold, setThreshold] = useState('');
   const history = useHistory();
@@ -23,13 +23,13 @@ const SearchView = () => {
   // Calls submit function
   const handleSubmit = useCallback(() => {
     if (!variant) {
-      setVariantErrorMessage('Please enter a key variant');
+      setVariantErrorMessage('Please enter a kb variant');
       return;
     }
 
     history.push({
-      pathname: '/search/result',
-      search: `?keyVariant=${variant}&matchingThreshold=${threshold || DEFAULT_THRESHOLD}`,
+      pathname: '/search-by-kbmatches/result',
+      search: `?kbVariant=${variant}&matchingThreshold=${threshold || DEFAULT_THRESHOLD}`,
     });
   }, [variant, threshold, history]);
 
@@ -98,7 +98,7 @@ const SearchView = () => {
             fullWidth
             helperText={variantErrorMessage}
             onChange={handleVariantChange}
-            placeholder="Search Reports by Key Variant"
+            placeholder="Search Reports by KB Matches"
             value={variant}
             InputProps={{
               startAdornment: (
@@ -138,7 +138,7 @@ const SearchView = () => {
       </div>
       <div className="help-dialog">
         <Typography variant="subtitle2" color="primary">
-          The matching threshold determines the cutoff of similarity between the key variant and its matched results.
+          The matching threshold determines the cutoff of similarity between the kb variant and its matched results.
           A value of 1 means a 100% match. The default value is 0.8 if not specified.
         </Typography>
       </div>
@@ -146,4 +146,4 @@ const SearchView = () => {
   );
 };
 
-export default SearchView;
+export default SearchByKbmatchView;
