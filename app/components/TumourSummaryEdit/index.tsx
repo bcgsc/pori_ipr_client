@@ -92,6 +92,7 @@ const TumourSummaryEdit = ({
         tumourContent: report.tumourContent,
         subtyping: report.subtyping,
         captiv8Score: report.captiv8Score,
+        genomeTmb: report.genomeTmb,
       });
     }
   }, [report]);
@@ -398,7 +399,7 @@ const TumourSummaryEdit = ({
     if (newReportData) {
       const captiv8Section = (
         <TextField
-          className="tumour-dialog__text-field"
+          className="tumour-dialog__number-field"
           label={`${reportType === 'rapid' ? 'Preliminary ' : ''}CAPTIV-8 Score`}
           value={newReportData.captiv8Score}
           name="captiv8Score"
@@ -439,14 +440,14 @@ const TumourSummaryEdit = ({
         return (
           <>
             <TextField
-              className="tumour-dialog__text-field"
+              className="tumour-dialog__number-field"
               label="Intersect TMB Score"
               value={newReportData?.genomeTmb ?? ''}
               name="genomeTmb"
               onChange={handleReportChange}
               variant="outlined"
-              multiline
               fullWidth
+              type="number"
             />
             {captiv8Section}
           </>
@@ -494,7 +495,7 @@ const TumourSummaryEdit = ({
   const tCellCd8DataSection = useMemo(() => (
     <>
       <TextField
-        className="tumour-dialog__text-field"
+        className="tumour-dialog__number-field"
         label="CD8+ T Cell Score"
         value={newTCellCd8Data?.score ?? null}
         name="score"
@@ -504,7 +505,7 @@ const TumourSummaryEdit = ({
         type="number"
       />
       <TextField
-        className="tumour-dialog__text-field"
+        className="tumour-dialog__number-field"
         label="CD8+ T Cell Percentile"
         value={newTCellCd8Data?.percentile ?? null}
         name="percentile"
@@ -535,7 +536,7 @@ const TumourSummaryEdit = ({
         label={<div className="checkbox-label">Show/Hide CD8+ Percentile</div>}
       />
       <TextField
-        className="tumour-dialog__text-field"
+        className="tumour-dialog__number-field"
         label="Pediatric CD8+ T Cell Score"
         value={newTCellCd8Data?.pedsScore ?? null}
         name="pedsScore"
@@ -546,7 +547,7 @@ const TumourSummaryEdit = ({
         type="number"
       />
       <TextField
-        className="tumour-dialog__text-field"
+        className="tumour-dialog__number-field"
         label="Pediatric CD8+ T Cell Percentile"
         value={newTCellCd8Data?.pedsPercentile ?? null}
         name="pedsPercentile"
@@ -574,7 +575,7 @@ const TumourSummaryEdit = ({
   const mutBurDataSection = useMemo(() => (
     <>
       <TextField
-        className="tumour-dialog__text-field"
+        className="tumour-dialog__number-field"
         label="SV Burden (Count)"
         value={newMutationBurdenData?.qualitySvCount ?? null}
         name="qualitySvCount"
@@ -584,7 +585,7 @@ const TumourSummaryEdit = ({
         type="number"
       />
       <TextField
-        className="tumour-dialog__text-field"
+        className="tumour-dialog__number-field"
         label="SV Burden (Percentile)"
         value={newMutationBurdenData?.qualitySvPercentile ?? null}
         name="qualitySvPercentile"
@@ -620,7 +621,7 @@ const TumourSummaryEdit = ({
   const tmburMutBurSection = useMemo(() => (
     <>
       <TextField
-        className="tumour-dialog__text-field"
+        className="tumour-dialog__number-field"
         label="genomeSnvTmb"
         value={newTmburMutData?.genomeSnvTmb ?? null}
         name="genomeSnvTmb"
@@ -630,7 +631,7 @@ const TumourSummaryEdit = ({
         type="number"
       />
       <TextField
-        className="tumour-dialog__text-field"
+        className="tumour-dialog__number-field"
         label="genomeIndelTmb"
         value={newTmburMutData?.genomeIndelTmb ?? null}
         name="genomeIndelTmb"
@@ -640,7 +641,7 @@ const TumourSummaryEdit = ({
         type="number"
       />
       <TextField
-        className="tumour-dialog__text-field"
+        className="tumour-dialog__number-field"
         label="Adjusted TMB"
         value={newTmburMutData?.adjustedTmb ?? null}
         name="adjustedTmb"
