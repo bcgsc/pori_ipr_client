@@ -28,7 +28,13 @@ const ReportsByVariantView = ({
       const getData = async () => {
         try {
           const { reports } = await api.get(`/reports${search}`).request();
-          setVariants(Array.from(new Set(reports.map((report) => report.genomicAlterationsIdentified[0].geneVariant))));
+          let searchType;
+          if (window.location.pathname.includes('kbmatches')) {
+            searchType = 'kbmatches';
+            setVariants(Array.from(new Set(reports.map((report) => report.kbMatches[0].kbVariant))));
+          } else {
+            setVariants(Array.from(new Set(reports.map((report) => report.genomicAlterationsIdentified[0].geneVariant))));
+          }
 
           setRowData(reports.map((report) => {
             const [analyst] = report.users
@@ -48,7 +54,7 @@ const ReportsByVariantView = ({
             }
 
             return (
-              searchReportsColumns(report, analyst, reviewer, bioinformatician)
+              searchReportsColumns(report, analyst, reviewer, bioinformatician, searchType)
             );
           }));
         } catch (err) {
