@@ -308,7 +308,6 @@ type TmburType = {
   comments: string;
   genomeSnvTmb: number;
   genomeIndelTmb: number;
-  intersectTmbScore: number;
   kbCategory: string | null;
   kbMatches: KbMatchType[];
   msiScore: number;
