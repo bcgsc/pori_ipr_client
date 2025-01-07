@@ -308,7 +308,6 @@ type TmburType = {
   comments: string;
   genomeSnvTmb: number;
   genomeIndelTmb: number;
-  tmbHidden: boolean;
   kbCategory: string | null;
   kbMatches: KbMatchType[];
   msiScore: number;
@@ -318,6 +317,7 @@ type TmburType = {
   proteinIndelTmb: number;
   proteinSnvs: number;
   proteinSnvTmb: number;
+  tmbHidden: boolean;
   totalGenomeIndels: number;
   totalGenomeSnvs: number;
   tumour: string;
