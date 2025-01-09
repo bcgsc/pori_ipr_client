@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "ipr-client",
-  "version": "6.31.1",
+  "version": "6.32.0",
   "keywords": [],
   "license": "GPL-3.0",
   "sideEffects": false,
