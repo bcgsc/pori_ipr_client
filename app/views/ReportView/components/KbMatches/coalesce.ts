@@ -13,8 +13,8 @@ class CoalesceEntriesError extends Error {
 
 type CoalesceEntriesResult<T extends KbMatchedStatementType[]> = Array<{
   [K in keyof T[number]]: T[number][K] extends Array<infer U>
-    ? U[]
-    : T[number][K];
+  ? U[]
+  : T[number][K];
 }>;
 
 /**
@@ -36,15 +36,11 @@ const coalesceEntries = <T extends KbMatchedStatementType[]>(entries: T): Coales
         exon1,
         exon2,
       } = variant as KbMatchType<'sv'>['variant'];
-      return `(${
-        name1 || '?'
-      },${
-        name2 || '?'
-      }):fusion(e.${
-        exon1 || '?'
-      },e.${
-        exon2 || '?'
-      })`;
+      return `(${name1 || '?'
+        },${name2 || '?'
+        }):fusion(e.${exon1 || '?'
+        },e.${exon2 || '?'
+        })`;
     }
 
     if (variantType === 'mut') {
@@ -70,7 +66,7 @@ const coalesceEntries = <T extends KbMatchedStatementType[]>(entries: T): Coales
     if (kbMatches.length > 1) {
       let bucketKey = '';
       for (const kbMatch of kbMatches) {
-        if(!isArray(kbMatch)) {
+        if (!isArray(kbMatch)) {
           const variantName = getVariantName(kbMatch?.variant, kbMatch?.variantType);
           const { relevance, disease } = entry;
           const commonSuffix = `${context}${delimiter}${variantName}${delimiter}${relevance}${delimiter}${disease}`;
@@ -79,17 +75,15 @@ const coalesceEntries = <T extends KbMatchedStatementType[]>(entries: T): Coales
               variant: { gene1: { name: gene1Name }, gene2: { name: gene2Name } },
             } = kbMatch as KbMatchType<'sv'>;
             bucketKey += `${gene1Name}${delimiter}${gene2Name}${delimiter}${commonSuffix}`;
-          }
-  
-          if (kbMatch?.variantType === 'msi' || kbMatch?.variantType === 'tmb') {
+          } else if (kbMatch?.variantType === 'msi' || kbMatch?.variantType === 'tmb') {
             const { kbCategory } = kbMatch.variant as KbMatchType<'tmb' | 'msi'>['variant'];
             bucketKey += `${kbCategory}${delimiter}${commonSuffix}`;
+          } else {
+            const {
+              variant: { gene: { name: geneName } },
+            } = kbMatch as KbMatchType<'cnv' | 'exp' | 'mut'>;
+            bucketKey += `${geneName}${delimiter}${commonSuffix}`;
           }
-  
-          const {
-            variant: { gene: { name: geneName } },
-          } = kbMatch as KbMatchType<'cnv' | 'exp' | 'mut'>;
-          bucketKey += `${geneName}${delimiter}${commonSuffix}`;
         }
       }
       return bucketKey;
