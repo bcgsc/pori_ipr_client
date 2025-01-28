@@ -100,21 +100,33 @@ const KbMatches = ({
             !oldHighEvidence.some(obj => obj.ident === item.ident)
           );
 
+          // might be inconsistent with existing filtering - currently items that have
+          // 'approvedTherapy' True but not category 'therapeutic' are not displayed.
+          // (there are no examples in the db currently). here, we ignore approvedTherapy
+          // except for therapeutic stmts, so it's possible for items that previously
+          // would never be displayed, to be displayed here
           const oldBiological = oldStmts.filter(item => item.category === 'biological')
           const oldDiagnostic = oldStmts.filter(item => item.category === 'diagnostic')
           const oldPrognostic = oldStmts.filter(item => item.category === 'prognostic')
-          const oldUnknown = oldStmts.filter(item => ['unknown', 'novel'].includes(item.category))
           const oldPcp = oldStmts.filter(item => ['cancer-predisposition', 'pharmacogenomic'].includes(item.category))
 
           const taggedKbMatches = allKbMatchesResp.filter((stmt) => stmt?.kbData?.kbmatchTag)
+
+          const highEvidence = coalesceEntries([...oldHighEvidence, ...taggedKbMatches.filter((stmt) => stmt?.kbData?.kbmatchTag === 'bestTherapeutic')])
+          const therapeutic = coalesceEntries([...oldTherapeutic, ...taggedKbMatches.filter((stmt) => stmt?.kbData?.kbmatchTag === 'therapeutic')])
+          const biological = coalesceEntries([...oldBiological, ...taggedKbMatches.filter((stmt) => stmt?.kbData?.kbmatchTag === 'biological')])
+          const diagnostic = coalesceEntries([...oldDiagnostic, ...taggedKbMatches.filter((stmt) => stmt?.kbData?.kbmatchTag === 'diagnostic')])
+          const prognostic = coalesceEntries([...oldPrognostic, ...taggedKbMatches.filter((stmt) => stmt?.kbData?.kbmatchTag === 'prognostic')])
+          const targetedGermlineGenes = coalesceEntries([...oldPcp, ...taggedKbMatches.filter((stmt) => stmt?.kbData?.kbmatchTag === 'pcp')])
+
           setGroupedMatches({
-            highEvidence: coalesceEntries([...oldHighEvidence, ...taggedKbMatches.filter((stmt) => stmt?.kbData?.kbmatchTag === 'bestTherapeutic')]),
-            therapeutic: coalesceEntries([...oldTherapeutic, ...taggedKbMatches.filter((stmt) => stmt?.kbData?.kbmatchTag === 'therapeutic')]),
-            biological: coalesceEntries([...oldBiological, ...taggedKbMatches.filter((stmt) => stmt?.kbData?.kbmatchTag === 'biological')]),
-            diagnostic: coalesceEntries([...oldDiagnostic, ...taggedKbMatches.filter((stmt) => stmt?.kbData?.kbmatchTag === 'diagnostic')]),
-            prognostic: coalesceEntries([...oldPrognostic, ...taggedKbMatches.filter((stmt) => stmt?.kbData?.kbmatchTag === 'prognostic')]),
-            unknown: coalesceEntries([...oldUnknown, ...taggedKbMatches.filter((stmt) => stmt?.kbData?.kbmatchTag === 'other')]),
-            targetedGermlineGenes: coalesceEntries([...oldPcp, ...taggedKbMatches.filter((stmt) => stmt?.kbData?.kbmatchTag === 'pcp')]),
+            highEvidence,
+            therapeutic,
+            biological,
+            diagnostic,
+            prognostic,
+            targetedGermlineGenes,
+            unknown: coalesceEntries(allKbMatchesResp.filter((stmt) => ![...highEvidence, ...therapeutic, ...biological, ...diagnostic, ...prognostic, ...targetedGermlineGenes].some(obj => obj.ident === stmt.ident))),
             targetedSomaticGenes: targetedSomaticGenesResp.filter((tg) => !/germline/.test(tg?.sample)),
           });
         } catch (err) {
