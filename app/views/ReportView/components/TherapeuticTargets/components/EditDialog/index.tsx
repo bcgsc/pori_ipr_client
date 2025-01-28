@@ -55,7 +55,8 @@ const EditDialog = ({
   const { report } = useContext(ReportContext);
 
   const [dialogTitle, setDialogTitle] = useState('Add Row');
-  const [requiredFields] = useState(['variant', 'context', 'therapy']);
+  const [requiredGeneFields] = useState(['variant', 'context', 'therapy']);
+  const [requiredSignatureFields] = useState(['signature', 'context', 'therapy']);
   const [errors, setErrors] = useState(null);
   const [isDirty, setIsDirty] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -94,9 +95,14 @@ const EditDialog = ({
   }, [editData]);
 
   useEffect(() => {
-    const missing = requiredFields.filter((field) => !newData[field]);
-
-    if (missing.length) {
+    let missing;
+    if (variantType === 'gene') {
+      missing = requiredGeneFields.filter((field) => !newData[field]);
+    }
+    if (variantType === 'signature') {
+      missing = requiredSignatureFields.filter((field) => !newData[field]);
+    }
+    if (missing.length && isDirty) {
       setErrors(missing.reduce((acc, curr) => {
         acc[curr] = `${curr} is required`;
         return acc;
@@ -104,7 +110,7 @@ const EditDialog = ({
     } else {
       setErrors(null);
     }
-  }, [newData, requiredFields]);
+  }, [isDirty, newData, requiredGeneFields, requiredSignatureFields]);
 
   const handleSubmit = useCallback(async () => {
     setIsSubmitting(true);
